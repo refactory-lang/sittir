@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { seq } from '../evaluate.ts';
-import { buildRuleCatalog } from '../rule-catalog.ts';
+import { buildRuleCatalog, seq } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import type { RawGrammar } from '../types.ts';
 import type { AssembledBranch } from '../model/node-map.ts';
-import { classifyChildFactorySurface, classifyFactoryShape, resolveSingleFieldFactorySlot } from '../../emitters/shared.ts';
+import {
+	classifyChildFactorySurface,
+	classifyFactoryShape,
+	resolveSingleFieldFactorySlot
+} from '../../emitters/shared.ts';
 import { runTemplateEmitter } from '../../emitters/templates.ts';
 
 function buildNodeMap(rules: Record<string, unknown>) {
@@ -21,7 +24,7 @@ function buildNodeMap(rules: Record<string, unknown>) {
 		inline: [],
 		conflicts: [],
 		word: null,
-		references: [],
+		references: []
 	};
 	const normalized = normalizeGrammar(link(raw));
 	return assemble(AssembleCtx.from(normalized));
@@ -40,7 +43,7 @@ describe('slot structural signals', () => {
 	it('treats fieldless slots as unnamed without consulting origin', () => {
 		const nodeMap = buildNodeMap({
 			box: seq({ type: 'SYMBOL', name: 'identifier' }),
-			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
+			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
 		const slot = getBranch(nodeMap, 'box').fields[0];
 		expect(slot?.fieldName).toBeUndefined();
@@ -53,10 +56,10 @@ describe('slot structural signals', () => {
 				type: 'ALIAS',
 				content: { type: 'SYMBOL', name: 'interface_body' },
 				named: true,
-				value: 'object_type',
+				value: 'object_type'
 			}),
 			interface_body: seq({ type: 'SYMBOL', name: 'identifier' }),
-			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
+			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
 		const slot = getBranch(nodeMap, 'box').fields[0];
 		expect(slot?.isUnnamed).toBe(true);
@@ -67,7 +70,7 @@ describe('slot structural signals', () => {
 	it('behavior-facing emitters honor isUnnamed', () => {
 		const nodeMap = buildNodeMap({
 			box: seq({ type: 'SYMBOL', name: 'identifier' }),
-			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
+			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
 		const box = getBranch(nodeMap, 'box');
 		const slot = box.fields[0];
@@ -78,7 +81,7 @@ describe('slot structural signals', () => {
 	it('shared factory classifiers key unnamed-child direct surfaces off isUnnamed', () => {
 		const nodeMap = buildNodeMap({
 			box: seq({ type: 'SYMBOL', name: 'identifier' }),
-			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
+			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
 		const box = getBranch(nodeMap, 'box');
 		const slot = box.fields[0];
@@ -91,9 +94,9 @@ describe('slot structural signals', () => {
 		const nodeMap = buildNodeMap({
 			box: seq({
 				type: 'REPEAT1',
-				content: { type: 'SYMBOL', name: 'identifier' },
+				content: { type: 'SYMBOL', name: 'identifier' }
 			}),
-			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
+			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
 		const box = getBranch(nodeMap, 'box');
 		const slot = box.fields[0];
@@ -108,10 +111,10 @@ describe('slot structural signals', () => {
 				type: 'ALIAS',
 				content: { type: 'SYMBOL', name: '_helper' },
 				named: true,
-				value: 'obj',
+				value: 'obj'
 			}),
 			_helper: seq({ type: 'SYMBOL', name: 'identifier' }),
-			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' },
+			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
 		const slot = getBranch(nodeMap, 'box').fields[0];
 		expect(slot?.isUnnamed).toBe(true);

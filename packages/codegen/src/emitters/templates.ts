@@ -25,7 +25,19 @@
  * `cli.ts` from this source of truth; never edit those copies by hand.
  */
 
-import { CHOICE, DEDENT, GROUP, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import {
+	CHOICE,
+	DEDENT,
+	GROUP,
+	INDENT,
+	NEWLINE,
+	PATTERN,
+	SEQ,
+	STRING,
+	SUPERTYPE,
+	SYMBOL,
+	VARIANT
+} from '../types/rule-types.ts'; // @rule-type-consts
 import { isNonterminalRuleType } from '../compiler/rule-catalog.ts';
 import * as fs from 'node:fs';
 import { join } from 'node:path';
@@ -146,10 +158,6 @@ export function escapeLiteral(value: string): string {
 	return value.replaceAll('{', '{ ').replaceAll('}', ' }').replaceAll('{  }', '{ }');
 }
 
-export function snakeToCamel(value: string): string {
-	return value.replace(/_([a-z0-9])/g, (_match, char: string) => char.toUpperCase());
-}
-
 export function escapeJinjaString(value: string): string {
 	return value.replaceAll('\\', '\\\\').replaceAll('"', '\\"');
 }
@@ -268,7 +276,9 @@ function emitOne(node: AssembledNode, ctx: EmitCtx): string | undefined {
 		case 'multi':
 			// classifyTemplateEmission always skips 'multi' nodes before emitOne
 			// is reached — this arm is an unreachable safety fallback.
-			throw new Error(`emitOne: 'multi' node reached emitOne (should be skipped by classifyTemplateEmission): ${node.kind}`);
+			throw new Error(
+				`emitOne: 'multi' node reached emitOne (should be skipped by classifyTemplateEmission): ${node.kind}`
+			);
 		// TEMPORARY (separator-as-slot Task 2 follow-up — see
 		// isSlotBearingCompound's doc comment, shared.ts): 'separatedList'
 		// shares 'branch's template emission for byte-identical output pending
@@ -943,7 +953,9 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 				// contribute their real first/last chars instead of being treated
 				// as opaque slot emissions.
 				const needsInnerSpace = needsSeqSpace(
-					prevRule, currRule, ctx.wordMatcher,
+					prevRule,
+					currRule,
+					ctx.wordMatcher,
 					prevIsCond ? prevText : undefined,
 					currIsCond ? currText : undefined
 				);
@@ -954,9 +966,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 					// rule-only check (no text) since the absent case has no
 					// conditional body to consult.
 					const beforePrev = emitted[i - 2]?.rule;
-					const needsOuterSpace =
-						beforePrev !== undefined &&
-						needsSeqSpace(beforePrev, currRule, ctx.wordMatcher);
+					const needsOuterSpace = beforePrev !== undefined && needsSeqSpace(beforePrev, currRule, ctx.wordMatcher);
 
 					if (needsOuterSpace) {
 						// Outer space handles BOTH the absent case (prev=empty,
@@ -1126,7 +1136,12 @@ function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | unde
 		// map it. Only fires for symbols without fieldName (fieldName symbols are
 		// handled by Fallback A). Uses the EXACT name (no leading-_ stripping) to
 		// avoid false positives where `_hidden_rule` would match slot `hidden_rule`.
-		if (recovered === undefined && rule.type === SYMBOL && (rule as { fieldName?: string }).fieldName === undefined && !rule.name.startsWith('_')) {
+		if (
+			recovered === undefined &&
+			rule.type === SYMBOL &&
+			(rule as { fieldName?: string }).fieldName === undefined &&
+			!rule.name.startsWith('_')
+		) {
 			const exactName = rule.name.toLowerCase();
 			const byExactName = ctx.ownerSlots[exactName];
 			if (byExactName) {
@@ -1200,7 +1215,10 @@ function isNonterminalSeparatorRule(rule: RenderRule): boolean {
  * `stampSeparatorOnValues` when the separator flowed from a repeat wrapper
  * through wrapper-deletion onto the slot entries.
  */
-function selectJoinFilter(rule: RenderRule, slot?: AssembledNonterminal): 'join' | 'joinWithTrailing' | 'joinWithLeading' | 'joinWithFlanks' {
+function selectJoinFilter(
+	rule: RenderRule,
+	slot?: AssembledNonterminal
+): 'join' | 'joinWithTrailing' | 'joinWithLeading' | 'joinWithFlanks' {
 	// trailing/leading now live NESTED inside `separator` (PR-S) — no more
 	// top-level siblings on the rule to check directly.
 	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
@@ -1220,9 +1238,7 @@ function selectJoinFilter(rule: RenderRule, slot?: AssembledNonterminal): 'join'
 	// by `stampSeparatorOnValues` but the rule itself (a rebuilt choice from
 	// `fanOutSeqChoices`/`factorChoiceBranches`) carries no flank flags.
 	if (slot !== undefined) {
-		const multiVal = slot.values.find(
-			(v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray'
-		);
+		const multiVal = slot.values.find((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
 		if (multiVal) {
 			const t = (multiVal as { trailing?: boolean }).trailing === true;
 			const l = (multiVal as { leading?: boolean }).leading === true;
@@ -1475,13 +1491,12 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 				if (multiplicity === 'array' || multiplicity === 'nonEmptyArray') {
 					const listName = slot
 						? (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase()
-						: (pickConditionalKey(helperRenderRule, ctx)
-							?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase());
+						: (pickConditionalKey(helperRenderRule, ctx) ?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase());
 					return emitListSlot(listName, rule, slot);
 				}
 				if (multiplicity === 'optional' && helperBody) {
-					const condKey = pickConditionalKey(helperRenderRule, ctx)
-						?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+					const condKey =
+						pickConditionalKey(helperRenderRule, ctx) ?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
 					return `{% if ${condKey} | isPresent %}${helperBody}{% endif %}`;
 				}
 				return helperBody;
@@ -1519,8 +1534,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 			if (multiplicity === 'array' || multiplicity === 'nonEmptyArray') {
 				const listName = slot
 					? (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase()
-					: (pickConditionalKey(target, ctx)
-						?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase());
+					: (pickConditionalKey(target, ctx) ?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase());
 				return emitListSlot(listName, rule, slot);
 			}
 			// Bug 5 fix (hidden-helper path): when the surrounding context stamped
@@ -1530,8 +1544,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 			// path's behavior (lines 780-789) and ensures optional hidden helpers
 			// produce `{% if condKey | isPresent %}body{% endif %}` not bare `body`.
 			if (multiplicity === 'optional' && helperBody) {
-				const condKey = pickConditionalKey(target, ctx)
-					?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+				const condKey = pickConditionalKey(target, ctx) ?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
 				return `{% if ${condKey} | isPresent %}${helperBody}{% endif %}`;
 			}
 			return helperBody;
@@ -1592,10 +1605,7 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 	// leaf attributes or unwrapped them to content, so those cases are
 	// unreachable here and are not switch arms.
 	// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from RenderRule union.
-	if (
-		content.type === VARIANT ||
-		content.type === GROUP
-	) {
+	if (content.type === VARIANT || content.type === GROUP) {
 		return pickConditionalKey(content.content, ctx);
 	}
 	// A seq with a member that has a field name — use that field.
@@ -1781,7 +1791,9 @@ function assertSlotPreservation(node: AssembledNode, body: string): void {
 		const slotDetails = missing.map((m) => {
 			const s = slots.find((sl) => sl.storageName === m);
 			const named = s?.isUnnamed ? 'positional' : 'named';
-			return s ? `${m}(${named},mult=${s.values.map((v) => v.multiplicity).join('|')},kinds=${kindsOf(s).join(',')})` : m;
+			return s
+				? `${m}(${named},mult=${s.values.map((v) => v.multiplicity).join('|')},kinds=${kindsOf(s).join(',')})`
+				: m;
 		});
 		throw new Error(
 			`TemplateEmitter slot-preservation violation on kind '${node.kind}' (${node.modelType}): ` +
@@ -1835,9 +1847,7 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 				break;
 			default: {
 				const _exhaustive: never = node;
-				throw new Error(
-					`runTemplateEmitter: unhandled modelType ${(_exhaustive as AssembledNode).modelType}`
-				);
+				throw new Error(`runTemplateEmitter: unhandled modelType ${(_exhaustive as AssembledNode).modelType}`);
 			}
 		}
 	}

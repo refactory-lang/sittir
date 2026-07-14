@@ -85,7 +85,7 @@ const KNOWN_NON_BRANCH_PARENTS: readonly KnownNonBranchParent[] = [
 		modelType: 'supertype',
 		reason:
 			"classifyHiddenChoiceRule flattens this hidden choice's alias/symbol arms into a bare SupertypeRule " +
-			"(subtypes: string[]) before assemble runs; the declared variantArms fact (RuleBase.variantArms) lets " +
+			'(subtypes: string[]) before assemble runs; the declared variantArms fact (RuleBase.variantArms) lets ' +
 			"assemble.ts's markUserFacing still give simple_pattern_negative a render path, but AssembledSupertype " +
 			'has no variantChildKinds field at all, so it can never get a node-model.json5 polymorphVariants entry.'
 	},
@@ -107,7 +107,8 @@ const KNOWN_NON_BRANCH_PARENTS: readonly KnownNonBranchParent[] = [
 		grammar: 'typescript',
 		parent: '_for_header',
 		modelType: 'group',
-		reason: 'GROUP-classified (has fields: kind/left/operator/right) — same structural boundary as the decl_arm cascade.'
+		reason:
+			'GROUP-classified (has fields: kind/left/operator/right) — same structural boundary as the decl_arm cascade.'
 	}
 ] as const;
 
@@ -140,7 +141,9 @@ function diffSets(a: readonly string[], b: readonly string[]): { extra: string[]
 
 async function runForGrammar(grammar: string): Promise<GrammarResult> {
 	const normalized = await buildSimplifiedGrammar(grammar);
-	const structuralMap = await load('variantStructural').then((m) => m.deriveStructuralVariantChildren(normalized.linkRules));
+	const structuralMap = await load('variantStructural').then((m) =>
+		m.deriveStructuralVariantChildren(normalized.linkRules)
+	);
 
 	const { assemble, AssembleCtx } = await load('assemble');
 	const ctx = AssembleCtx.from(normalized);
@@ -159,9 +162,7 @@ async function runForGrammar(grammar: string): Promise<GrammarResult> {
 	// not diffed.
 	const isBranchParent = (parent: string): boolean => nodeMap.nodes.get(parent)?.modelType === 'branch';
 
-	const parents = new Set<string>(
-		[...structuralMap.keys(), ...committedMap.keys()].filter(isBranchParent)
-	);
+	const parents = new Set<string>([...structuralMap.keys(), ...committedMap.keys()].filter(isBranchParent));
 	const rows: ParentRow[] = [];
 	for (const parent of [...parents].sort()) {
 		const structural = structuralMap.get(parent) ?? [];
@@ -202,7 +203,9 @@ function formatGrammarResult(result: GrammarResult): string {
 	lines.push(`-- ${result.grammar}: ${matched}/${result.rows.length} MATCH, ${result.driftCount} DRIFT`);
 	const nonBranch = KNOWN_NON_BRANCH_PARENTS.filter((e) => e.grammar === result.grammar);
 	if (nonBranch.length > 0) {
-		lines.push(`   (${nonBranch.length} non-branch qualifying parent(s) excluded from comparison — see KNOWN_NON_BRANCH_PARENTS)`);
+		lines.push(
+			`   (${nonBranch.length} non-branch qualifying parent(s) excluded from comparison — see KNOWN_NON_BRANCH_PARENTS)`
+		);
 	}
 	return lines.join('\n');
 }

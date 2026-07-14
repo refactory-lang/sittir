@@ -30,24 +30,34 @@ describe('utils facade surface', () => {
 	it('$toEdit and $replace produce correct Edit objects (via mock engine)', () => {
 		// Use a mock engine so this test does not depend on the native render boundary.
 		const mockEngine: WithMethodsEngine = {
-			render(n: AnyNodeData): string { return n.$text ?? ''; },
-			toEdit(n: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): ReturnType<WithMethodsEngine['toEdit']> {
+			render(n: AnyNodeData): string {
+				return n.$text ?? '';
+			},
+			toEdit(
+				n: AnyNodeData,
+				startOrRange: number | ByteRange,
+				endPos?: number
+			): ReturnType<WithMethodsEngine['toEdit']> {
 				const text = n.$text ?? '';
 				const start = typeof startOrRange === 'number' ? startOrRange : startOrRange.start.index;
-				const end   = typeof startOrRange === 'number' ? (endPos ?? start) : startOrRange.end.index;
+				const end = typeof startOrRange === 'number' ? (endPos ?? start) : startOrRange.end.index;
 				return { startPos: start, endPos: end, insertedText: text };
-			},
+			}
 		};
 		const node = withMethods(
 			{ $type: TSKindId.Identifier, $source: 2 as const, $named: true, $text: 'main' },
-			mockEngine,
+			mockEngine
 		);
 
 		expect(node.$toEdit({ start: { index: 0 }, end: { index: 4 } })).toEqual({
-			startPos: 0, endPos: 4, insertedText: 'main',
+			startPos: 0,
+			endPos: 4,
+			insertedText: 'main'
 		});
 		expect(node.$replace({ range: () => ({ start: { index: 1 }, end: { index: 3 } }) })).toEqual({
-			startPos: 1, endPos: 3, insertedText: 'main',
+			startPos: 1,
+			endPos: 3,
+			insertedText: 'main'
 		});
 	});
 });

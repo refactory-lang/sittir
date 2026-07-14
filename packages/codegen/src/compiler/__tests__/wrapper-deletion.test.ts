@@ -18,7 +18,7 @@ import type {
 	Repeat1Rule,
 	FieldRule,
 	SymbolRule,
-	SeqRule,
+	SeqRule
 } from '../../types/rule.ts';
 
 // ---------------------------------------------------------------------------
@@ -69,7 +69,7 @@ describe('deleteWrapper — repeat', () => {
 		const wrapped: RepeatRule = {
 			type: REPEAT,
 			content: sym('item'),
-			separator: { value: { type: 'STRING', value: ',' } },
+			separator: { value: { type: 'STRING', value: ',' } }
 		};
 		const out = deleteWrapper(wrapped);
 		expect(out.type).toBe('SYMBOL');
@@ -84,7 +84,7 @@ describe('deleteWrapper — repeat', () => {
 		const wrapped: RepeatRule = {
 			type: REPEAT,
 			content: sym('item'),
-			separator: { value: { type: 'STRING', value: ',' }, trailing: 'optional', leading: 'mandatory' },
+			separator: { value: { type: 'STRING', value: ',' }, trailing: 'optional', leading: 'mandatory' }
 		};
 		const out = deleteWrapper(wrapped);
 		expect(out.type).toBe('SYMBOL');
@@ -92,7 +92,7 @@ describe('deleteWrapper — repeat', () => {
 		expect(out.separator).toEqual({
 			value: { type: 'STRING', value: ',' },
 			trailing: 'optional',
-			leading: 'mandatory',
+			leading: 'mandatory'
 		});
 	});
 
@@ -193,7 +193,7 @@ describe('applyWrapperDeletion — map form', () => {
 	it('transforms every rule in the map', () => {
 		const rules: Record<string, Rule<'link'>> = {
 			foo: { type: OPTIONAL, content: sym('bar') } as OptionalRule,
-			baz: sym('qux'),
+			baz: sym('qux')
 		};
 		const result = applyWrapperDeletion(rules);
 		expect(result['foo']!.type).toBe('SYMBOL');
@@ -217,10 +217,10 @@ describe('separator sub-rules get the same push-down as ordinary content', () =>
 					type: CHOICE,
 					members: [
 						{ type: FIELD, name: 'sep_kind', content: { type: STRING, value: ',' } },
-						{ type: STRING, value: ';' },
-					],
-				},
-			},
+						{ type: STRING, value: ';' }
+					]
+				}
+			}
 		} as unknown as Rule<'link'>;
 		const out = deleteWrapper(rule) as unknown as {
 			separator: { value: { members: { fieldName?: string; type: string }[] } };

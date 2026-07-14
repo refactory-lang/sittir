@@ -18522,8 +18522,8 @@
       "fields": [
         {
           "name": "constructor",
-          "propertyName": "constructor",
-          "paramName": "constructor",
+          "propertyName": "constructor_",
+          "paramName": "constructor_",
           "required": true,
           "multiple": false,
           "nonEmpty": false,

@@ -26,7 +26,10 @@ function findKind(node: Parser.SyntaxNode, kind: string): Parser.SyntaxNode | nu
 }
 
 const node1 = findKind(tree.rootNode, 'await_expression');
-if (!node1) { console.log('NOT FOUND'); process.exit(1); }
+if (!node1) {
+  console.log('NOT FOUND');
+  process.exit(1);
+}
 
 const kindIdFromName = lang.idForNodeType.bind(lang);
 
@@ -34,12 +37,20 @@ const handle = buildReadHandle('rust', tree, src, 'native', kindIdFromName);
 console.log('handle.read:', !!handle.read);
 
 // Use readTreeNode directly on node1
-const adapted = { 
-  id: node1.id, type: node1.type, startIndex: node1.startIndex, endIndex: node1.endIndex,
-  startPosition: node1.startPosition, endPosition: node1.endPosition,
-  childCount: node1.childCount, namedChildCount: node1.namedChildCount,
-  hasError: node1.hasError, children: node1.children, parent: node1.parent,
-  text: node1.text, isNamed: node1.isNamed
+const adapted = {
+  id: node1.id,
+  type: node1.type,
+  startIndex: node1.startIndex,
+  endIndex: node1.endIndex,
+  startPosition: node1.startPosition,
+  endPosition: node1.endPosition,
+  childCount: node1.childCount,
+  namedChildCount: node1.namedChildCount,
+  hasError: node1.hasError,
+  children: node1.children,
+  parent: node1.parent,
+  text: node1.text,
+  isNamed: node1.isNamed
 };
 
 // Just use WASM path to inspect the wrapped node
@@ -52,10 +63,37 @@ try {
   (handle as any).rootNode = prev;
 }
 
-console.log('readData.$children:', JSON.stringify(readData?.$children?.map((c: any) => ({ $type: c?.$type, $named: c?.$named, hasNodeHandle: c?.$nodeHandle != null })), null, 2));
+console.log(
+  'readData.$children:',
+  JSON.stringify(
+    readData?.$children?.map((c: any) => ({
+      $type: c?.$type,
+      $named: c?.$named,
+      hasNodeHandle: c?.$nodeHandle != null
+    })),
+    null,
+    2
+  )
+);
 
 const fromResult = awaitExpressionFrom(readData) as any;
-console.log('\nfromResult.$children:', JSON.stringify(fromResult.$children?.map((c: any) => ({ type: typeof c, $type: c?.$type, $named: c?.$named })), null, 2));
+console.log(
+  '\nfromResult.$children:',
+  JSON.stringify(
+    fromResult.$children?.map((c: any) => ({ type: typeof c, $type: c?.$type, $named: c?.$named })),
+    null,
+    2
+  )
+);
 
-const factoryResult = awaitExpression(readData.$children?.filter((c: any) => typeof c !== 'number' && c?.$named !== false)?.[0] as any) as any;
-console.log('\nfactoryResult.$children:', JSON.stringify(factoryResult.$children?.map((c: any) => ({ type: typeof c, $type: c?.$type, $named: c?.$named })), null, 2));
+const factoryResult = awaitExpression(
+  readData.$children?.filter((c: any) => typeof c !== 'number' && c?.$named !== false)?.[0] as any
+) as any;
+console.log(
+  '\nfactoryResult.$children:',
+  JSON.stringify(
+    factoryResult.$children?.map((c: any) => ({ type: typeof c, $type: c?.$type, $named: c?.$named })),
+    null,
+    2
+  )
+);

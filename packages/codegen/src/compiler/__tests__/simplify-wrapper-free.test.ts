@@ -71,17 +71,16 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 				type: CHOICE,
 				members: [
 					{ type: PATTERN, value: '' },
-					{ type: SYMBOL, name: 'a' },
-				],
-			},
+					{ type: SYMBOL, name: 'a' }
+				]
+			}
 		};
 		const normalizedRules = applyWrapperDeletion(input);
-		const simplified = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() }));
+		const simplified = computeSimplifiedRules(
+			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
+		);
 		const wrappers = findWrappersInMap(simplified as Record<string, Rule>);
-		expect(
-			wrappers,
-			`Wrappers re-introduced by computeSimplifiedRules: ${JSON.stringify(wrappers)}`
-		).toEqual([]);
+		expect(wrappers, `Wrappers re-introduced by computeSimplifiedRules: ${JSON.stringify(wrappers)}`).toEqual([]);
 	});
 
 	it('repeat/optional of a field does not produce field/repeat nodes in output', () => {
@@ -99,19 +98,18 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 						content: {
 							type: FIELD,
 							name: 'items',
-							content: { type: SYMBOL, name: 'item' },
-						},
-					},
-				],
-			},
+							content: { type: SYMBOL, name: 'item' }
+						}
+					}
+				]
+			}
 		};
 		const normalizedRules = applyWrapperDeletion(input);
-		const simplified = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() }));
+		const simplified = computeSimplifiedRules(
+			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
+		);
 		const wrappers = findWrappersInMap(simplified as Record<string, Rule>);
-		expect(
-			wrappers,
-			`Wrappers re-introduced by computeSimplifiedRules: ${JSON.stringify(wrappers)}`
-		).toEqual([]);
+		expect(wrappers, `Wrappers re-introduced by computeSimplifiedRules: ${JSON.stringify(wrappers)}`).toEqual([]);
 	});
 
 	it('extractFieldFromBranchesForChoice does not produce optional or field in output', () => {
@@ -127,19 +125,18 @@ describe('computeSimplifiedRules wrapper-free output — unit shapes', () => {
 						type: SEQ,
 						members: [
 							{ type: FIELD, name: 'b', content: { type: SYMBOL, name: 'Y' } },
-							{ type: FIELD, name: 'a', content: { type: SYMBOL, name: 'X' } },
-						],
-					},
-				],
-			},
+							{ type: FIELD, name: 'a', content: { type: SYMBOL, name: 'X' } }
+						]
+					}
+				]
+			}
 		};
 		const normalizedRules = applyWrapperDeletion(input);
-		const simplified = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() }));
+		const simplified = computeSimplifiedRules(
+			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
+		);
 		const wrappers = findWrappersInMap(simplified as Record<string, Rule>);
-		expect(
-			wrappers,
-			`Wrappers re-introduced by computeSimplifiedRules: ${JSON.stringify(wrappers)}`
-		).toEqual([]);
+		expect(wrappers, `Wrappers re-introduced by computeSimplifiedRules: ${JSON.stringify(wrappers)}`).toEqual([]);
 	});
 });
 
@@ -163,11 +160,11 @@ describe('computeSimplifiedRules — wrapper-free invariant', () => {
 						content: {
 							type: FIELD,
 							name: 'type_params',
-							content: { type: SYMBOL, name: 'type_parameters' },
-						},
+							content: { type: SYMBOL, name: 'type_parameters' }
+						}
 					},
-					{ type: FIELD, name: 'body', content: { type: SYMBOL, name: 'block' } },
-				],
+					{ type: FIELD, name: 'body', content: { type: SYMBOL, name: 'block' } }
+				]
 			},
 			// choice with empty-match branch (becomes optional)
 			visibility: {
@@ -175,8 +172,8 @@ describe('computeSimplifiedRules — wrapper-free invariant', () => {
 				members: [
 					{ type: PATTERN, value: '' },
 					{ type: STRING, value: 'pub' },
-					{ type: STRING, value: 'priv' },
-				],
+					{ type: STRING, value: 'priv' }
+				]
 			},
 			// repeat of a field — wrapper-deletion turns it into a fieldName+multiplicity leaf
 			parameter_list: {
@@ -184,8 +181,8 @@ describe('computeSimplifiedRules — wrapper-free invariant', () => {
 				content: {
 					type: FIELD,
 					name: 'parameter',
-					content: { type: SYMBOL, name: 'parameter' },
-				},
+					content: { type: SYMBOL, name: 'parameter' }
+				}
 			},
 			// choice where all branches share a field (exercices extractFieldFromBranchesForChoice)
 			binary_expr: {
@@ -196,35 +193,43 @@ describe('computeSimplifiedRules — wrapper-free invariant', () => {
 						members: [
 							{ type: FIELD, name: 'left', content: { type: SYMBOL, name: 'expr' } },
 							{ type: FIELD, name: 'op', content: { type: STRING, value: '+' } },
-							{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'expr' } },
-						],
+							{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'expr' } }
+						]
 					},
 					{
 						type: SEQ,
 						members: [
 							{ type: FIELD, name: 'left', content: { type: SYMBOL, name: 'expr' } },
 							{ type: FIELD, name: 'op', content: { type: STRING, value: '-' } },
-							{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'expr' } },
-						],
-					},
-				],
+							{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'expr' } }
+						]
+					}
+				]
 			},
 			// leaf rules
 			identifier: { type: PATTERN, value: '[a-zA-Z_][a-zA-Z0-9_]*' },
 			block: { type: SYMBOL, name: 'block_inner' },
-			block_inner: { type: SEQ, members: [{ type: STRING, value: '{' }, { type: STRING, value: '}' }] },
+			block_inner: {
+				type: SEQ,
+				members: [
+					{ type: STRING, value: '{' },
+					{ type: STRING, value: '}' }
+				]
+			},
 			type_parameters: { type: SYMBOL, name: 'identifier' },
 			parameter: { type: SYMBOL, name: 'identifier' },
-			expr: { type: SYMBOL, name: 'identifier' },
+			expr: { type: SYMBOL, name: 'identifier' }
 		};
 
 		const normalizedRules = applyWrapperDeletion(inputRules);
-		const simplified = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() }));
+		const simplified = computeSimplifiedRules(
+			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
+		);
 		const wrappers = findWrappersInMap(simplified as Record<string, Rule>);
 
 		expect(
 			wrappers,
-			`Wrappers found in computeSimplifiedRules output:\n${wrappers.map(w => `  ${w.kind}${w.path.slice(w.kind.length)}: ${w.type}`).join('\n')}`
+			`Wrappers found in computeSimplifiedRules output:\n${wrappers.map((w) => `  ${w.kind}${w.path.slice(w.kind.length)}: ${w.type}`).join('\n')}`
 		).toEqual([]);
 	});
 });

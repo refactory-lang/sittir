@@ -2,7 +2,7 @@
  * Core type definitions for sittir — canonical source of truth.
  *
  * All type definitions live in @sittir/types (zero runtime).
- * @sittir/core re-exports these for backward compatibility.
+ * @sittir/legacy-core re-exports these for backward compatibility.
  */
 
 // ---------------------------------------------------------------------------
@@ -47,13 +47,7 @@ export type NodeMemberValue = AnyNodeData | string | number;
 export type NodeChildren = NodeMemberValue | readonly NodeMemberValue[];
 
 /**
- * @deprecated NodeId branded type removed in ADR-0017. Use plain `number` instead.
- * Kept as a simple alias during migration so downstream imports resolve without error.
- */
-export type NodeId = number;
-
-/**
- * Runtime node shape — grammar-agnostic. Used by @sittir/core functions
+ * Runtime node shape — grammar-agnostic. Used by @sittir/legacy-core functions
  * that accept any node regardless of grammar.
  *
  * Spec 008 US7: metadata keys are `$`-prefixed to eliminate the entire
@@ -83,7 +77,7 @@ export interface AnyNodeData {
 	 * **Branch nodes** (`_<name>` storage and/or `$other` present): omitted by
 	 * default. Branches reconstruct their text via the render template,
 	 * so carrying `$text` is redundant and confusing. Set the environment
-	 * variable `SITTIR_DEBUG_TEXT=1` before loading `@sittir/core` to
+	 * variable `SITTIR_DEBUG_TEXT=1` before loading `@sittir/legacy-core` to
 	 * include `$text` on branch nodes (read once at module load time in
 	 * `readNode.ts`).
 	 *

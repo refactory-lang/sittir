@@ -52,7 +52,10 @@ function makeMinimalNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('call_expression', new AssembledBranch('call_expression', callRule, deleteWrapper(callRule), deleteWrapper(callRule)));
+	nodes.set(
+		'call_expression',
+		new AssembledBranch('call_expression', callRule, deleteWrapper(callRule), deleteWrapper(callRule))
+	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('kw_fn', new AssembledKeyword('kw_fn', { type: STRING, value: 'fn' }));
 	nodes.set('self', new AssembledKeyword('self', { type: STRING, value: 'self' }));
@@ -76,7 +79,10 @@ function makeRequiredChildrenNodeMap(): NodeMap {
 		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('child_parent', new AssembledBranch('child_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
+	nodes.set(
+		'child_parent',
+		new AssembledBranch('child_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
+	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return nodeMapWith(nodes);
 }
@@ -92,7 +98,10 @@ function makeOptionalChildrenNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('optional_parent', new AssembledBranch('optional_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
+	nodes.set(
+		'optional_parent',
+		new AssembledBranch('optional_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
+	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return nodeMapWith(nodes);
 }
@@ -108,7 +117,10 @@ function makeRepeatedChildrenNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('repeated_parent', new AssembledBranch('repeated_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
+	nodes.set(
+		'repeated_parent',
+		new AssembledBranch('repeated_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
+	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return nodeMapWith(nodes);
 }
@@ -128,7 +140,10 @@ function makeRepeatedFieldNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('repeated_field_parent', new AssembledBranch('repeated_field_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
+	nodes.set(
+		'repeated_field_parent',
+		new AssembledBranch('repeated_field_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
+	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return nodeMapWith(nodes);
 }
@@ -148,7 +163,15 @@ function makeOptionalRepeatedFieldNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('optional_repeated_field_parent', new AssembledBranch('optional_repeated_field_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
+	nodes.set(
+		'optional_repeated_field_parent',
+		new AssembledBranch(
+			'optional_repeated_field_parent',
+			parentRule,
+			deleteWrapper(parentRule),
+			deleteWrapper(parentRule)
+		)
+	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return nodeMapWith(nodes);
 }
@@ -176,7 +199,10 @@ function makeReservedNestedSupertypeNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('parent_expression', new AssembledBranch('parent_expression', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
+	nodes.set(
+		'parent_expression',
+		new AssembledBranch('parent_expression', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
+	);
 	nodes.set('string_literal', new AssembledPattern('string_literal', { type: PATTERN, value: '".*"' }));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('_literal', new AssembledSupertype('_literal', literalRule, ['string_literal']));
@@ -204,10 +230,16 @@ function makeSupertypeAndSubtypeChildrenNodeMap(): NodeMap {
 		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('supertype_alias_parent', new AssembledBranch('supertype_alias_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
+	nodes.set(
+		'supertype_alias_parent',
+		new AssembledBranch('supertype_alias_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
+	);
 	nodes.set('_expression', new AssembledSupertype('_expression', expressionRule, ['identifier', 'call_expression']));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set('call_expression', new AssembledBranch('call_expression', callRule, deleteWrapper(callRule), deleteWrapper(callRule)));
+	nodes.set(
+		'call_expression',
+		new AssembledBranch('call_expression', callRule, deleteWrapper(callRule), deleteWrapper(callRule))
+	);
 	return nodeMapWith(nodes);
 }
 
@@ -224,8 +256,14 @@ function makeHiddenWrapperChildEnumNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('hidden_wrapper_parent', new AssembledBranch('hidden_wrapper_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
-	nodes.set('_wrapped_item', new AssembledBranch('_wrapped_item', wrapperRule, deleteWrapper(wrapperRule), deleteWrapper(wrapperRule)));
+	nodes.set(
+		'hidden_wrapper_parent',
+		new AssembledBranch('hidden_wrapper_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
+	);
+	nodes.set(
+		'_wrapped_item',
+		new AssembledBranch('_wrapped_item', wrapperRule, deleteWrapper(wrapperRule), deleteWrapper(wrapperRule))
+	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }));
 	return nodeMapWith(nodes);
@@ -242,7 +280,10 @@ function makeOptionalRepeatedChildrenNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('optional_repeated_parent', new AssembledBranch('optional_repeated_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
+	nodes.set(
+		'optional_repeated_parent',
+		new AssembledBranch('optional_repeated_parent', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
+	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return nodeMapWith(nodes);
 }
@@ -270,9 +311,15 @@ function makeTransparentStatementWrapperNodeMap(): NodeMap {
 		members: [{ type: SYMBOL, name: '_simple_statements' }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('_simple_statement', new AssembledSupertype('_simple_statement', simpleStatementRule, ['expression_statement']));
+	nodes.set(
+		'_simple_statement',
+		new AssembledSupertype('_simple_statement', simpleStatementRule, ['expression_statement'])
+	);
 	nodes.set('_statement', new AssembledSupertype('_statement', statementRule, ['_simple_statements']));
-	nodes.set('_simple_statements', new AssembledBranch('_simple_statements', wrapperRule, deleteWrapper(wrapperRule), deleteWrapper(wrapperRule)));
+	nodes.set(
+		'_simple_statements',
+		new AssembledBranch('_simple_statements', wrapperRule, deleteWrapper(wrapperRule), deleteWrapper(wrapperRule))
+	);
 	nodes.set('expression_statement', new AssembledPattern('expression_statement', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('module', new AssembledBranch('module', moduleRule, deleteWrapper(moduleRule), deleteWrapper(moduleRule)));
 	return nodeMapWith(nodes);
@@ -300,7 +347,10 @@ function makeNamedHeterogeneousFieldNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('field_expression', new AssembledBranch('field_expression', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
+	nodes.set(
+		'field_expression',
+		new AssembledBranch('field_expression', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
+	);
 	nodes.set(
 		'field_identifier',
 		new AssembledPattern('field_identifier', { type: PATTERN, value: '[a-zA-Z_][a-zA-Z0-9_]*' })
@@ -337,20 +387,17 @@ function makeSupertypeBackedChildEnumNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('object_like', new AssembledBranch('object_like', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
+	nodes.set(
+		'object_like',
+		new AssembledBranch('object_like', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
+	);
 	nodes.set('pair', new AssembledBranch('pair', pairRule, deleteWrapper(pairRule), deleteWrapper(pairRule)));
 	nodes.set(
 		'_shorthand_property_identifier',
-		new AssembledSupertype('_shorthand_property_identifier', shorthandRule, [
-			'identifier',
-			'_reserved_identifier'
-		])
+		new AssembledSupertype('_shorthand_property_identifier', shorthandRule, ['identifier', '_reserved_identifier'])
 	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
-	nodes.set(
-		'_reserved_identifier',
-		new AssembledPattern('_reserved_identifier', { type: PATTERN, value: '[a-z]+' })
-	);
+	nodes.set('_reserved_identifier', new AssembledPattern('_reserved_identifier', { type: PATTERN, value: '[a-z]+' }));
 	return nodeMapWith(nodes);
 }
 

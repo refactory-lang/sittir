@@ -9,10 +9,7 @@
 		"tsBuildInfoFile": "./tsconfig.build.tsbuildinfo",
 		"paths": {}
 	},
-	"references": [
-		{ "path": "../codegen/tsconfig.build.json" },
-		{ "path": "../tools/tsconfig.build.json" }
-	],
+	"references": [{ "path": "../codegen/tsconfig.build.json" }, { "path": "../tools/tsconfig.build.json" }],
 	"include": ["src"],
 	"exclude": ["node_modules", "dist", "tests"]
 }

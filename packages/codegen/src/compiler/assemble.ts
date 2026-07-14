@@ -5,7 +5,22 @@
  * detectToken, modelType) derived from the rule tree — not carried on Rule<'link'> nodes.
  */
 
-import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import {
+	ALIAS,
+	CHOICE,
+	FIELD,
+	GROUP,
+	OPTIONAL,
+	PATTERN,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SUPERTYPE,
+	SYMBOL,
+	TOKEN,
+	VARIANT
+} from '../types/rule-types.ts'; // @rule-type-consts
 import type {
 	Rule,
 	RenderRule,
@@ -16,7 +31,6 @@ import type {
 	ChoiceRule,
 	RepeatRule,
 	Repeat1Rule,
-	PatternRule,
 	StringRule,
 	EnumRule,
 	SupertypeRule
@@ -24,13 +38,8 @@ import type {
 import { isLinkSymbol, isEnumChoiceRule } from '../types/rule.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
-import { computePolymorphFormKinds } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
-import {
-	collectGeneratedKindEntries,
-	type GeneratedIdTables,
-	type GeneratedKindEntry
-} from './generated-metadata.ts';
+import { collectGeneratedKindEntries, type GeneratedIdTables, type GeneratedKindEntry } from './generated-metadata.ts';
 import type { AssembledNode, AssembledNonterminal, UnresolvedRef } from './model/node-map.ts';
 import {
 	AssembledBranch,
@@ -53,7 +62,6 @@ import {
 	isNodeRef,
 	isUnresolvedRef,
 	allSlotsOf,
-	type ParseKindCollisionContext,
 	resetParseKindCollisionDiagnostics,
 	resetDeriveShapeDiagnostics,
 	setOptionalBodyKinds,
@@ -356,10 +364,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					break;
 				}
 				case 'keyword': {
-					nodes.set(
-						kind,
-						new AssembledKeyword(kind, assemblyRule as StringRule<'link'>, { kindEntries })
-					);
+					nodes.set(kind, new AssembledKeyword(kind, assemblyRule as StringRule<'link'>, { kindEntries }));
 					break;
 				}
 				case 'token': {
@@ -408,22 +413,26 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 				case 'separatedList': {
 					const listRule = inlinedRule as RepeatRule | Repeat1Rule;
 					const sep = listRule.separator;
-					const separatorRule =
-						sep && isNonterminalRuleType(sep.value as Rule<'evaluate'>) ? sep.value : undefined;
+					const separatorRule = sep && isNonterminalRuleType(sep.value as Rule<'evaluate'>) ? sep.value : undefined;
 					nodes.set(
 						kind,
-						new AssembledSeparatedList(kind, listRule, { kindEntries }, {
-							separatorRule,
-							// TEMPORARY behavior-preserving stub (see
-							// AssembledSeparatedList's doc comment) — the SAME
-							// simplifiedRule/renderRule/parseKindCollisionContext
-							// the 'branch' case above passes, so wrap/render/
-							// factory emission reusing 'branch's code path stays
-							// byte-identical to pre-Task-2 output.
-							simplifiedRule,
-							renderRule,
-							parseKindCollisionContext
-						})
+						new AssembledSeparatedList(
+							kind,
+							listRule,
+							{ kindEntries },
+							{
+								separatorRule,
+								// TEMPORARY behavior-preserving stub (see
+								// AssembledSeparatedList's doc comment) — the SAME
+								// simplifiedRule/renderRule/parseKindCollisionContext
+								// the 'branch' case above passes, so wrap/render/
+								// factory emission reusing 'branch's code path stays
+								// byte-identical to pre-Task-2 output.
+								simplifiedRule,
+								renderRule,
+								parseKindCollisionContext
+							}
+						)
 					);
 					break;
 				}
@@ -583,6 +592,12 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	}
 }
 
+// No PolymorphRule/AssembledPolymorph model types exist at runtime —
+// polymorphFormKinds is always empty. Kept in NodeMap for API stability.
+function computePolymorphFormKinds(_nodes: Map<string, AssembledNode>): Set<string> {
+	return new Set<string>();
+}
+
 /**
  * Identify rule kinds whose resolved body is wholly optional — references
  * to these are effectively optional at every use site, regardless of how
@@ -608,8 +623,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 function collectOptionalBodyKinds(rules: Record<string, Rule<'link'>>): ReadonlySet<string> {
 	const out = new Set<string>();
 	const isBlank = (r: Rule<'link'>): boolean =>
-		(r.type === CHOICE && r.members.length === 0) ||
-		(r.type === SEQ && r.members.length === 0);
+		(r.type === CHOICE && r.members.length === 0) || (r.type === SEQ && r.members.length === 0);
 	const unwrap = (r: Rule<'link'>): Rule<'link'> => {
 		if (r.type === ALIAS || r.type === TOKEN) {
 			// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
@@ -666,11 +680,7 @@ function resolveSupertypeSubtypes(rule: Rule<'link'>, ctx: AssembleCtx): string[
 	} else {
 		subtypes = [];
 	}
-	return resolveHiddenSubtypes(
-		subtypes,
-		ctx,
-		rule.type === SUPERTYPE ? rule.name : undefined
-	);
+	return resolveHiddenSubtypes(subtypes, ctx, rule.type === SUPERTYPE ? rule.name : undefined);
 }
 
 /**
@@ -848,12 +858,15 @@ function isAliasMemberKind(name: string, ctx: AssembleCtx, subtypeSet: ReadonlyS
 	if (!body) return false;
 	const resolved = resolveHiddenRuleContent(body, new Set([name]), ctx);
 	if (resolved.length === 0) return false;
-	return resolved.every((member) =>
-		isCompatibleSubtypeMember(member, ctx, subtypeSet, new Set())
-	);
+	return resolved.every((member) => isCompatibleSubtypeMember(member, ctx, subtypeSet, new Set()));
 }
 
-function isCompatibleSubtypeMember(name: string, ctx: AssembleCtx, subtypeSet: ReadonlySet<string>, seen: Set<string>): boolean {
+function isCompatibleSubtypeMember(
+	name: string,
+	ctx: AssembleCtx,
+	subtypeSet: ReadonlySet<string>,
+	seen: Set<string>
+): boolean {
 	const { normalizedRules: rules } = ctx;
 	if (subtypeSet.has(name)) return true;
 	if (!name.startsWith('_')) return false;
@@ -863,9 +876,7 @@ function isCompatibleSubtypeMember(name: string, ctx: AssembleCtx, subtypeSet: R
 	seen.add(name);
 	const resolved = resolveHiddenRuleContent(rule, new Set([name]), ctx);
 	if (resolved.length === 0) return false;
-	return resolved.every((member) =>
-		isCompatibleSubtypeMember(member, ctx, subtypeSet, seen)
-	);
+	return resolved.every((member) => isCompatibleSubtypeMember(member, ctx, subtypeSet, seen));
 }
 
 /**
@@ -986,9 +997,7 @@ function resolveHiddenRuleContent(rule: RenderRule, seen: Set<string>, ctx: Asse
 			// grammar's own word-matcher (R12 Camp A); single source of
 			// truth via matchesWordShape, replacing the former hardcoded
 			// identifier-shape regex.
-			const isWordShape = ctx.wordMatcher
-				? ctx.wordMatcher(rule.value)
-				: matchesWordShape(rule.value, undefined);
+			const isWordShape = ctx.wordMatcher ? ctx.wordMatcher(rule.value) : matchesWordShape(rule.value, undefined);
 			return isWordShape ? [] : [rule.value];
 		}
 		case VARIANT:
@@ -1207,9 +1216,7 @@ function markUserFacing(node: AssembledNode, ctx: _UserFacingCtx): void {
 		return;
 	}
 	// Hidden — user-facing when any of the conditions above hold (b/c/d).
-	node.userFacing =
-		ctx.aliasSourceKinds.has(kind) ||
-		ctx.variantChildKinds.has(kind);
+	node.userFacing = ctx.aliasSourceKinds.has(kind) || ctx.variantChildKinds.has(kind);
 }
 
 function resolveCollidingNames(nodes: Map<string, AssembledNode>): void {
@@ -1460,11 +1467,7 @@ function collectAnonymousNodes(
 		// We deliberately EXCLUDE bare STRING/PATTERN rules from this guard: those contribute
 		// their own literal as the first `seen` entry, preserving the collection order that
 		// was established when they were top-level STRING/PATTERN rules before TOKEN-flattening.
-		if (
-			rule.type !== STRING &&
-			rule.type !== PATTERN &&
-			isAllTextShape(rule)
-		) continue;
+		if (rule.type !== STRING && rule.type !== PATTERN && isAllTextShape(rule)) continue;
 		walkForStrings(rule, seen);
 	}
 
@@ -1478,10 +1481,7 @@ function collectAnonymousNodes(
 		if (isWordShape) {
 			// Keyword token (e.g., "if", "class", "pub")
 			// Anonymous keywords from grammar — no factory (hidden: no user construction path)
-			nodes.set(
-				kindName,
-				new AssembledKeyword(kindName, syntheticStringRule, { hidden: true, kindEntries })
-			);
+			nodes.set(kindName, new AssembledKeyword(kindName, syntheticStringRule, { hidden: true, kindEntries }));
 		} else {
 			// Operator/punctuation token (e.g., "+", "->", "{")
 			nodes.set(kindName, new AssembledToken(kindName, syntheticStringRule, { kindEntries }));
@@ -1643,11 +1643,7 @@ function isSeparatedListShape(rule: Rule<'link'>): boolean {
  *   are NOT inlined — tree-sitter exposes them as concrete named nodes. They must
  *   classify as `branch` so the Rust transport can dispatch on their kind ID.
  */
-function isHiddenRepeatHelper(
-	kind: string,
-	rule: Rule<'link'>,
-	parentAliasedKinds?: ReadonlySet<string>
-): boolean {
+function isHiddenRepeatHelper(kind: string, rule: Rule<'link'>, parentAliasedKinds?: ReadonlySet<string>): boolean {
 	if (!kind.startsWith('_')) return false;
 	if (extractRepeatShape(rule) === null) return false;
 	// If this kind appears as the content of a named alias in any parent rule,
@@ -1759,57 +1755,6 @@ export { simplifyRule };
 // backwards compatibility with assemble.test.ts and any other callers that
 // import it from this module.
 export { nameNode } from './model/node-map.ts';
-
-// Reserved words that cannot be used as parameter/method names in TypeScript.
-const TS_RESERVED_WORDS = new Set([
-	'arguments',
-	'await',
-	'break',
-	'case',
-	'catch',
-	'class',
-	'const',
-	'continue',
-	'debugger',
-	'default',
-	'delete',
-	'do',
-	'else',
-	'enum',
-	'export',
-	'extends',
-	'false',
-	'finally',
-	'for',
-	'function',
-	'if',
-	'import',
-	'in',
-	'instanceof',
-	'new',
-	'null',
-	'return',
-	'super',
-	'switch',
-	'this',
-	'throw',
-	'true',
-	'try',
-	'typeof',
-	'var',
-	'void',
-	'while',
-	'with',
-	'yield',
-	'let',
-	'static',
-	'implements',
-	'interface',
-	'package',
-	'private',
-	'protected',
-	'public'
-]);
 
 // `extractRepeatShape` moved to `simplify.ts` (needed by the inlining
 // fixpoint and re-exported for the remaining assemble call sites). The

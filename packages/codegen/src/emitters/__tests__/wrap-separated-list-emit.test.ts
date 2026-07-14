@@ -2,7 +2,7 @@ import { CHOICE, FIELD, PATTERN, REPEAT1, SEQ, STRING, SYMBOL } from '../../type
 import { describe, expect, it } from 'vitest';
 import { emitWrap } from '../../__tests__/helpers/emit-wrap.ts';
 import { AssembledPattern, AssembledSeparatedList, type AssembledNode } from '../../compiler/model/node-map.ts';
-import type { Repeat1Rule, Rule } from '../../types/rule.ts';
+import type { Repeat1Rule, Rule, SimplifiedRule } from '../../types/rule.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
 
@@ -90,14 +90,23 @@ describe('wrap emitter — separatedList', () => {
 			},
 			separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 		};
-		const contentRule: Rule<'link'> = rule.content;
+		// Post-wrapper-deletion (normalize/simplify) view of the same content:
+		// FIELD wrappers are gone — `fieldName` is stamped directly onto each
+		// leaf instead (see RuleBase's NormalizedPhase branch, types/rule.ts).
+		const normalizedContentRule: SimplifiedRule = {
+			type: SEQ,
+			members: [
+				{ type: SYMBOL, name: 'key_item', fieldName: 'key' },
+				{ type: SYMBOL, name: 'val_item', fieldName: 'value' }
+			]
+		};
 		const nodes = new Map<string, AssembledNode>();
 		nodes.set(
 			'multi_field_list',
 			new AssembledSeparatedList('multi_field_list', rule, undefined, {
 				separatorRule: undefined,
-				simplifiedRule: contentRule,
-				renderRule: contentRule
+				simplifiedRule: normalizedContentRule,
+				renderRule: normalizedContentRule
 			})
 		);
 		nodes.set('key_item', new AssembledPattern('key_item', { type: PATTERN, value: '[a-z]+' }));

@@ -1,6 +1,11 @@
 import { FIELD, PATTERN, SEQ, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import { AssembledBranch, AssembledNonterminal, AssembledPattern, type AssembledNode } from '../../compiler/model/node-map.ts';
+import {
+	AssembledBranch,
+	AssembledNonterminal,
+	AssembledPattern,
+	type AssembledNode
+} from '../../compiler/model/node-map.ts';
 import type { SeqRule } from '../../types/rule.ts';
 import { buildNodeModel, emitNodeModel } from '../node-model.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';

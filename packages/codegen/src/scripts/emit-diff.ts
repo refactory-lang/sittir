@@ -187,11 +187,11 @@ function joinRanges(ranges: string[], max = 6): string {
 export function formatEmitDiff(grammar: Grammar): string | null {
 	let raw: string;
 	try {
-		raw = execFileSync(
-			'git',
-			['diff', '--unified=0', '--no-color', 'HEAD', '--', ...generatedRootsFor(grammar)],
-			{ cwd: REPO_ROOT, encoding: 'utf-8', maxBuffer: 64 * 1024 * 1024 }
-		);
+		raw = execFileSync('git', ['diff', '--unified=0', '--no-color', 'HEAD', '--', ...generatedRootsFor(grammar)], {
+			cwd: REPO_ROOT,
+			encoding: 'utf-8',
+			maxBuffer: 64 * 1024 * 1024
+		});
 	} catch {
 		return null; // not a git repo / git absent / no HEAD — skip silently
 	}
@@ -212,19 +212,14 @@ export function formatEmitDiff(grammar: Grammar): string | null {
 
 	// Align the file column across all rows for scannability.
 	const pathWidth = Math.min(48, Math.max(...changes.map((c) => c.path.length)));
-	const fmtCounts = (c: FileChange): string =>
-		c.binary ? 'binary' : `+${c.added} -${c.removed}`;
+	const fmtCounts = (c: FileChange): string => (c.binary ? 'binary' : `+${c.added} -${c.removed}`);
 
 	for (const emitter of EMITTER_ORDER) {
 		const group = changes.filter((c) => c.emitter === emitter).sort((a, b) => a.path.localeCompare(b.path));
 		if (group.length === 0) continue;
 		for (const c of group) {
 			const counts = fmtCounts(c).padStart(9);
-			const ranges = c.collapsed
-				? c.binary
-					? ''
-					: '(parser artifact)'
-				: joinRanges(c.ranges);
+			const ranges = c.collapsed ? (c.binary ? '' : '(parser artifact)') : joinRanges(c.ranges);
 			const label = emitter.padEnd(9);
 			lines.push(`  ${label} ${c.path.padEnd(pathWidth)} ${counts}${ranges ? `  ${ranges}` : ''}`);
 		}

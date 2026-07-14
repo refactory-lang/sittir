@@ -4,9 +4,6 @@ import {
 	normalizeGrammar,
 	factorSeqChoice,
 	rulesEqual,
-	wrapVariants,
-	deduplicateVariants,
-	nameVariant,
 	tokenToName,
 	collapseWrappers,
 	fanOutSeqChoices,
@@ -78,46 +75,6 @@ describe('Normalize — factorSeqChoice', () => {
 		];
 		const result = factorSeqChoice(branches);
 		expect(result).toHaveLength(2);
-	});
-});
-
-describe('Normalize — variant construction', () => {
-	it('wrapVariants wraps choice members in variant nodes', () => {
-		const choice: Rule = {
-			type: CHOICE,
-			members: [
-				{ type: SEQ, members: [{ type: STRING, value: 'a' }] },
-				{ type: SEQ, members: [{ type: STRING, value: 'b' }] }
-			]
-		};
-		const result = wrapVariants(choice);
-		expect(result.type).toBe('CHOICE');
-		const members = (result as any).members;
-		expect(members).toHaveLength(2);
-		expect(members[0].type).toBe('VARIANT');
-		expect(members[1].type).toBe('VARIANT');
-	});
-
-	it('deduplicateVariants removes structurally identical variants', () => {
-		const variants: Rule[] = [
-			{ type: VARIANT, name: 'v1', content: { type: STRING, value: 'x' } },
-			{ type: VARIANT, name: 'v2', content: { type: STRING, value: 'x' } },
-			{ type: VARIANT, name: 'v3', content: { type: STRING, value: 'y' } }
-		];
-		const result = deduplicateVariants(variants);
-		expect(result).toHaveLength(2);
-	});
-
-	it('nameVariant derives name from detect token', () => {
-		const variant: Rule = {
-			type: SEQ,
-			members: [
-				{ type: STRING, value: 'pub' },
-				{ type: SYMBOL, name: 'item' }
-			]
-		};
-		const name = nameVariant(variant, 0, [variant]);
-		expect(name).toBe('pub');
 	});
 });
 

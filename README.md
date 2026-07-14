@@ -142,11 +142,10 @@ shipped them yet but they are in scope:
   on the canonical rule tree; `.from()` coercion, `$with` immutability,
   fluent getters, and `.$trivia()` are projections over the same
   `NodeData`.
-- **Two backends, one contract.** A Nunjucks-based JS engine and an
-  Askama-based native engine sit behind one engine interface. Native is
-  preferred when the platform binary is loadable and its baked
-  template-bundle hash matches the JS-side bundle; otherwise JS handles the
-  same call. Consumers don't branch on backend.
+- **One engine, one contract.** An Askama-based native engine sits behind a
+  single `SittirEngineLike` interface. `createEngine()` throws if the
+  native binding for the grammar isn't loadable rather than silently
+  falling back — there is no JS rendering engine to fall back to.
 - **Determinism.** Same grammar version, same overrides, byte-identical
   generated output. No timestamps, no Map iteration order, no PRNG.
 - **DRY as a correctness rule.** Every fact (a field name, a separator, a
@@ -209,8 +208,11 @@ Three commitments worth flagging:
 
 ### Runtime
 
-The runtime is split into a backend-neutral contract layer and two
-interchangeable engine implementations.
+The runtime is split into a backend-neutral contract layer and a single
+native engine implementation. The JS (Nunjucks) `SittirEngineLike` engine
+has been removed — native is the only supported backend, and
+`createEngine()` throws if the native binding is unavailable rather than
+falling back.
 
 ```
                  ┌──────────────────────────────────┐
@@ -220,16 +222,13 @@ interchangeable engine implementations.
                  │   templates/*.jinja               │
                  │   createEngine() ──┐              │
                  └────────────────────┼──────────────┘
-                                      │  picks first available
-                       ┌──────────────┴───────────────┐
-                       ▼                              ▼
-        ┌──────────────────────────┐    ┌────────────────────────────────┐
-        │  @sittir/core            │    │  @sittir/<grammar>-native       │
-        │  JS engine (Nunjucks)    │    │  N-API binding (Askama crate)   │
-        │  createJsEngine()        │    │  rust/crates/sittir-<grammar>/  │
-        └──────────┬───────────────┘    └──────────────┬─────────────────┘
-                   │   both implement SittirEngineLike │
-                   └──────────────────┬────────────────┘
+                                      ▼
+                       ┌────────────────────────────────┐
+                       │  @sittir/<grammar>-native       │
+                       │  N-API binding (Askama crate)   │
+                       │  rust/crates/sittir-<grammar>/  │
+                       └──────────────┬───────────────────┘
+                                      │  implements SittirEngineLike
                                       ▼
                           ┌────────────────────────────┐
                           │  @sittir/common             │
@@ -253,13 +252,21 @@ interchangeable engine implementations.
 - **`@sittir/common`** — backend-neutral runtime. Implements
   `readNode(tree, handle?, childIndex?)` (parse-tree → `NodeData`),
   `applyEdits(source, edits)`, `freezeNodeData()`, the native boundary
-  invariants (`assertNativeNodeData`, `normalizeNativeReadNode`), and the
-  engine and tree-handle interfaces both backends implement.
-- **`@sittir/core`** — the Nunjucks-based JS render engine and reference
-  implementation.
+  invariants (`assertRenderableNodeData`, `normalizeNativeReadNode`), and
+  `createNativeEngine()`, which the native backend implements against the
+  shared `SittirEngineLike`/tree-handle interfaces.
+- **`@sittir/legacy-core`** — deprecated as a production engine (native is
+  the source of truth; the package name itself signals this — see its
+  `index.ts` doc comment). Still live as intentionally-kept diagnostic/
+  validator tooling: shared engine option/handle types
+  (`resolveEngineFormat`) plus a lower-level Nunjucks-backed renderer
+  (`createRenderer`/`createRendererFromConfig`) used by `tool bench`,
+  `tool probe-kind --engine js`, `tool walk --render`, and the corpus
+  validators' `backend: 'js'` mode. It no longer hosts a
+  `SittirEngineLike`-conforming JS engine.
 - **Generated `@sittir/<grammar>` packages** — per-grammar surface. Each
-  one exposes `createEngine()`, an `ir.*` namespace, `.from()` coercion,
-  `wrapNode`, `readTreeNode`, the `is.*` / `assert.*` guards, kind
+  one exposes `createEngine()` (native-only), an `ir.*` namespace, `.from()`
+  coercion, `wrapNode`, `readTreeNode`, the `is.*` / `assert.*` guards, kind
   constants, and the native template-bundle hash.
 
 #### NodeData shape
@@ -327,15 +334,16 @@ Simplify, so anonymous delimiters and separator placement survive.
 Field/child derivation reads the simplified rule; templates and derivation
 are two views of the same tree.
 
-`createEngine()` returns an engine that delegates to the native binding
-when its `templateBundleHash` matches the JS-side hash, and to
-`@sittir/core` otherwise. The native FFI path is N-API direct — no
-`serde_json` round-trip on either side — and streams `Renderable::Transport`
-references through Askama templates rather than materializing
-per-field intermediate strings. The fallback to JS is silent (no throw,
-no log) unless `SITTIR_BACKEND_DEBUG=1` is set; force a backend with
-`SITTIR_BACKEND=native` or `SITTIR_BACKEND=js`. Inspect the resolved
-engine with `getActiveBackend()`.
+`createEngine()` delegates to the native binding and throws if it isn't
+loadable or its baked `templateBundleHash` doesn't match the generated
+package's hash — there is no JS engine left to fall back to. The native
+FFI path is N-API direct — no `serde_json` round-trip on either side — and
+streams `Renderable::Transport` references through Askama templates rather
+than materializing per-field intermediate strings. `getActiveBackend()`
+still reports a `'js'` status in the unavailable/mismatched case (a
+holdover name meaning "native isn't being used", not an active JS render
+path); `SITTIR_BACKEND=native|js|wasm` forces that status for testing, and
+`SITTIR_BACKEND_DEBUG=1` logs which status was selected and why.
 
 #### Read pipeline
 
@@ -384,7 +392,7 @@ lives in `packages/<lang>/overrides.ts`.
 | `is.ts`                                       | Type guards (`is.*`, `isNode`, `isTree`, `assert.*`)                                           |
 | `consts.ts`                                   | Discoverable arrays/maps: kind names, keywords, operators                                      |
 | `utils.ts`                                    | Per-grammar resolution helpers and transport coercion                                          |
-| `engine.ts`                                   | `createEngine()` — native first, JS fallback                                                   |
+| `engine.ts`                                   | `createEngine()` — native-only, throws if the native binding is unavailable                    |
 | `backend.ts` / `boundary.ts` / `hash.ts`      | Backend selection, dispatching shims, baked template-bundle hash                               |
 | `grammar.ts`, `node-model.json5`              | Grammar literal type and a debug snapshot of the assembled model                               |
 | `templates/*.jinja`                           | One render template per renderable kind                                                        |
@@ -471,7 +479,7 @@ target API in flight.
 | ------------------------------------------- | ------------------------------------------------------------------------------------ |
 | [`@sittir/types`](packages/types)           | Pure TypeScript types — zero runtime                                                 |
 | [`@sittir/common`](packages/common)         | Backend-neutral runtime: `readNode`, `applyEdits`, native boundary, engine interface |
-| [`@sittir/core`](packages/core)             | JS render engine (Nunjucks); reference implementation                                |
+| [`@sittir/legacy-core`](packages/legacy-core) | Deprecated JS/Nunjucks render engine; diagnostic + validator tooling only, not production |
 | [`@sittir/codegen`](packages/codegen)       | Seven-phase compiler, emitters, and CLI                                              |
 | [`@sittir/tools`](packages/tools)           | Diagnostics + validation facade: `probe-*`, `counts`, `probe-factory`, `history`, `walk`, `exercise`, `inspect-*` (CLI + run APIs) |
 | [`@sittir/rust`](packages/rust)             | Generated Rust package                                                               |

@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { alias, choice } from '../evaluate.ts';
-import { buildRuleCatalog } from '../rule-catalog.ts';
+import { alias, buildRuleCatalog, choice } from '../evaluate.ts';
 import {
 	collectGrammarDiagnostics,
 	collectGrammarDiagnosticsForGrammar,
@@ -94,14 +93,15 @@ describe('grammar diagnostics preflight', () => {
 			code: 'seq-with-nested-seq',
 			severity: 'error',
 			ownerKind: 'host',
-			message: "Kind 'host' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
+			message:
+				"Kind 'host' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
 			canProceed: false,
-			details: { rawShape: 'seq-with-nested-seq', ruleType: 'seq', context: 'fields' },
+			details: { rawShape: 'seq-with-nested-seq', ruleType: 'seq', context: 'fields' }
 		};
 		const result = collectGrammarDiagnostics({
 			grammar: 'synth',
 			parseKindCollisions: [],
-			deriveShapeDiagnostics: [deriveD],
+			deriveShapeDiagnostics: [deriveD]
 		});
 		expect(result.diagnostics).toEqual([
 			expect.objectContaining({
@@ -109,8 +109,8 @@ describe('grammar diagnostics preflight', () => {
 				code: 'seq-with-nested-seq',
 				grammar: 'synth',
 				ownerKind: 'host',
-				canProceed: true,
-			}),
+				canProceed: true
+			})
 		]);
 	});
 

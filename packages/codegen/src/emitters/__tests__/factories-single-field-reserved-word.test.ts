@@ -15,7 +15,7 @@
 
 import { FIELD, SEQ, SYMBOL, PATTERN } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import { emitFactories } from '../factories.ts';
+import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import { computeSlotClasses } from '../shared.ts';
 import { AssembledBranch, AssembledPattern, type AssembledNode } from '../../compiler/model/node-map.ts';
 import type { SeqRule } from '../../types/rule.ts';

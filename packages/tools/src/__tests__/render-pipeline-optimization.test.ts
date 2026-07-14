@@ -1,15 +1,21 @@
-import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../../codegen/src/types/rule-types.ts'; // @rule-type-consts
+import {
+	CHOICE,
+	FIELD,
+	OPTIONAL,
+	PATTERN,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SYMBOL
+} from '../../../codegen/src/types/rule-types.ts'; // @rule-type-consts
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import {
-	AssembledBranch,
-	AssembledKeyword,
-	AssembledPattern
-} from '../../../codegen/src/compiler/model/node-map.ts';
+import { AssembledBranch, AssembledKeyword, AssembledPattern } from '../../../codegen/src/compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../../../codegen/src/compiler/generated-metadata.ts';
 import type { ChoiceRule, SeqRule } from '../../../codegen/src/types/rule.ts';
 import type { NodeMap } from '../../../codegen/src/compiler/types.ts';
@@ -172,36 +178,6 @@ function makeChoiceParentSingularChildrenNodeMap(): NodeMap {
 		['integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' })]
 	]);
 	return makeNodeMapWith(nodes, new Set());
-}
-
-function makeTokenOnlyGeneratedIdTables(): GeneratedIdTables {
-	return {
-		kindIds: {
-			token_child_parent: {
-				id: 1,
-				parser: {
-					cSymbol: 'sym_token_child_parent',
-					parserName: 'token_child_parent',
-					anon: false,
-					aux: false,
-					alias: false,
-					hidden: false
-				}
-			},
-			kw_j: {
-				id: 2,
-				parser: {
-					cSymbol: 'anon_sym_jjjj',
-					parserName: 'kw_j',
-					anon: true,
-					aux: false,
-					alias: false,
-					hidden: false
-				}
-			}
-		},
-		sourceArtifact: 'parser.wasm'
-	};
 }
 
 // NOTE: assertRustRenderRuntimeBehavior previously verified render_dispatch (bridge.rs path)

@@ -45,7 +45,12 @@ import { computeTemplateBundleHash } from './template-hash.ts';
 import { renderModuleSrcDir, renderModuleTemplatesDir } from './render-module-paths.ts';
 import { type TransportLiteral } from './transport-projection.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
-import { acceptedTransportKinds, buildSupertypeTransportSet, classifySlot, type SlotClass } from './transport-common.ts';
+import {
+	acceptedTransportKinds,
+	buildSupertypeTransportSet,
+	classifySlot,
+	type SlotClass
+} from './transport-common.ts';
 import { keywordPresenceValue, slotLiteralValues, isSlotBearingCompound } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
@@ -383,18 +388,6 @@ export function planRenderModuleTemplateCopies(lang: Grammar, templates: Emitted
 	return { directory, files };
 }
 
-export function emitRenderModuleBundle(
-	lang: Grammar,
-	templates: EmittedTemplates,
-	nodeMap: NodeMap,
-	generatedIdTables?: GeneratedIdTables
-): RenderModuleBundle {
-	return {
-		emit: emitRenderModule(lang, templateFilesFromEmittedTemplates(templates), nodeMap, generatedIdTables),
-		templateCopies: planRenderModuleTemplateCopies(lang, templates)
-	};
-}
-
 /** Struct name: PascalCase(kind). Mirrors the AssembledNode.typeName
  *  conventions so emitted struct names match the factory/type naming
  *  per the T027 struct-name directive.
@@ -504,11 +497,12 @@ function mergeRenderSlots(slots: readonly AssembledNonterminal[]): AssembledNont
 	const [first, ...rest] = slots;
 	if (!first) return undefined;
 	return rest.reduce<AssembledNonterminal>(
-		(merged, slot) => merged.with({
-			values: [...merged.values, ...slot.values],
-			hasTrailing: merged.hasTrailing || slot.hasTrailing,
-			hasLeading: merged.hasLeading || slot.hasLeading,
-		}),
+		(merged, slot) =>
+			merged.with({
+				values: [...merged.values, ...slot.values],
+				hasTrailing: merged.hasTrailing || slot.hasTrailing,
+				hasLeading: merged.hasLeading || slot.hasLeading
+			}),
 		first.with({ values: [...first.values] })
 	);
 }
@@ -573,7 +567,12 @@ function renderSlotModelOf(node: AssembledNode | undefined): RenderSlotModel {
 	};
 }
 
-function emitStruct(kind: string, node: AssembledNode | undefined, surface: RenderTemplateSurface, nodeMap?: NodeMap): EmittedStruct {
+function emitStruct(
+	kind: string,
+	node: AssembledNode | undefined,
+	surface: RenderTemplateSurface,
+	nodeMap?: NodeMap
+): EmittedStruct {
 	const name = structNameFor(kind, node);
 	const slotModel = renderSlotModelOf(node);
 	// Build name→multiple and name→required lookups from the assembled node's
@@ -1074,9 +1073,7 @@ function renderTypedDispatch(
 		);
 	}
 	// Verbatim variant — text carried verbatim from a bare-string input.
-	lines.push(
-		`            AnyTransport::Verbatim(t) => dest.write_str(&t.text).map_err(::askama::Error::from),`
-	);
+	lines.push(`            AnyTransport::Verbatim(t) => dest.write_str(&t.text).map_err(::askama::Error::from),`);
 	lines.push(`        }`);
 	lines.push(`    }`);
 	lines.push(`}`);
@@ -1172,9 +1169,7 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 			const slotKinds = kindsOf(slot);
 			const slotLits = slotLiteralValues(slot);
 			const hasMixedContent = slotKinds.length > 0 && slotLits.length > 0;
-			const baseCls = hasMixedContent
-				? ({ tag: 'heterogeneous' } as const)
-				: classifySlotForEmit(slotKinds, nodeMap);
+			const baseCls = hasMixedContent ? ({ tag: 'heterogeneous' } as const) : classifySlotForEmit(slotKinds, nodeMap);
 			const slotCls: SlotClass =
 				baseCls.tag === 'heterogeneous'
 					? { tag: 'heterogeneous', useBox: !hasAnyConcreteChildKind(slotKinds, nodeMap) }
@@ -1284,7 +1279,16 @@ function renderTypedBranchFn(
 
 	lines.push(`fn ${fnName}(node: &${structName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	lines.push(
-		...buildTypedTemplateBody(struct, nodeSeparator, fieldKindsByName, fieldMixedByName, nodeMap, slotModel, node, kindIdByKind)
+		...buildTypedTemplateBody(
+			struct,
+			nodeSeparator,
+			fieldKindsByName,
+			fieldMixedByName,
+			nodeMap,
+			slotModel,
+			node,
+			kindIdByKind
+		)
 	);
 	lines.push(`}`);
 	lines.push('');
@@ -1606,7 +1610,9 @@ function buildTypedTemplateBody(
 			} else if (isBoxed) {
 				// Heterogeneous fallback — type is Box<AnyTransport> (no concrete
 				// child kind to ground a per-slot enum). Deref through Box.
-				lines.push(`        ${templateIdent}: SingleNonterminalView(${R}Renderable::Transport(node.${rIdent}.as_ref())),`);
+				lines.push(
+					`        ${templateIdent}: SingleNonterminalView(${R}Renderable::Transport(node.${rIdent}.as_ref())),`
+				);
 			} else {
 				// Concrete / supertype / per-slot enum — Rust auto-coerces &T to
 				// &dyn RenderableTransport (per-slot enum impls RenderableTransport).
@@ -1659,14 +1665,18 @@ function buildTypedTemplateBody(
 				} else if (f.backingInnerRequired) {
 					// Inner field is a direct (required) transport — reference directly.
 					lines.push(`        ${templateIdent}: match &node.${backingRIdent} {`);
-					lines.push(`            Some(v) => OptionalNonterminalView::Present(${R}Renderable::Transport(&v.${templateIdent})),`);
+					lines.push(
+						`            Some(v) => OptionalNonterminalView::Present(${R}Renderable::Transport(&v.${templateIdent})),`
+					);
 					lines.push(`            None => OptionalNonterminalView::Missing,`);
 					lines.push(`        },`);
 				} else {
 					// Inner field is itself Option<T> — flatten with a nested match.
 					lines.push(`        ${templateIdent}: match &node.${backingRIdent} {`);
 					lines.push(`            Some(v) => match &v.${templateIdent} {`);
-					lines.push(`                Some(inner) => OptionalNonterminalView::Present(${R}Renderable::Transport(inner)),`);
+					lines.push(
+						`                Some(inner) => OptionalNonterminalView::Present(${R}Renderable::Transport(inner)),`
+					);
 					lines.push(`                None => OptionalNonterminalView::Missing,`);
 					lines.push(`            },`);
 					lines.push(`            None => OptionalNonterminalView::Missing,`);
@@ -1780,9 +1790,6 @@ export function emitRenderModule(
 	}
 	const meta = collectMetaData(nodeMap);
 	const hasNumericDispatch = generatedIdTables !== undefined;
-	const kindIdByKind = generatedIdTables
-		? buildKindIdByKind(collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables))
-		: undefined;
 
 	// --- templates.rs ---
 	// Per-kind Template structs. The `filters` module must live here because
@@ -1880,28 +1887,30 @@ function renderTransportSupport(
 		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey)
 	);
 
-	return pruneUnreferencedBridges([
-		...anyTransportLines,
-		'',
-		...renderTransportValueTypeHelper(),
-		...renderVerbatimTransportStruct(),
-		...renderLiteralTransportStruct(projection.literals),
-		'',
-		// Per-supertype transport enums must precede per-kind transport structs
-		// so struct field type references resolve correctly.
-		...(supertypeEnumLines.length > 0 ? [...supertypeEnumLines, ''] : []),
-		// Per-slot child enums also precede per-kind transport structs.
-		...(perSlotEnumLines.length > 0 ? [...perSlotEnumLines, ''] : []),
-		...nodes.flatMap((node) => renderTransportStruct(node, nodeMap, generatedIdTables !== undefined, kindEntries)),
-		'',
-		...renderGrammarRenderable(),
-		'',
-		// Typed dispatch: render_transport_dispatch + per-kind render_<kind>_transport fns.
-		// These are emitted AFTER renderGrammarRenderable() so Renderable::Node is in scope,
-		// and BEFORE renderTransportEntry() so render_transport can call render_transport_dispatch.
-		...renderTypedDispatch(structs, nodes, projection.literals, meta, nodeMap, usedSupertypeNames, kidByKind),
-		...renderTransportEntry()
-	].join('\n'));
+	return pruneUnreferencedBridges(
+		[
+			...anyTransportLines,
+			'',
+			...renderTransportValueTypeHelper(),
+			...renderVerbatimTransportStruct(),
+			...renderLiteralTransportStruct(projection.literals),
+			'',
+			// Per-supertype transport enums must precede per-kind transport structs
+			// so struct field type references resolve correctly.
+			...(supertypeEnumLines.length > 0 ? [...supertypeEnumLines, ''] : []),
+			// Per-slot child enums also precede per-kind transport structs.
+			...(perSlotEnumLines.length > 0 ? [...perSlotEnumLines, ''] : []),
+			...nodes.flatMap((node) => renderTransportStruct(node, nodeMap, generatedIdTables !== undefined, kindEntries)),
+			'',
+			...renderGrammarRenderable(),
+			'',
+			// Typed dispatch: render_transport_dispatch + per-kind render_<kind>_transport fns.
+			// These are emitted AFTER renderGrammarRenderable() so Renderable::Node is in scope,
+			// and BEFORE renderTransportEntry() so render_transport can call render_transport_dispatch.
+			...renderTypedDispatch(structs, nodes, projection.literals, meta, nodeMap, usedSupertypeNames, kidByKind),
+			...renderTransportEntry()
+		].join('\n')
+	);
 }
 
 /**
@@ -2218,7 +2227,12 @@ function isLeafLikeNode(n: AssembledNode): boolean {
 	return n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
 }
 
-function boxedInEnum(variantKind: string, enumOwnerKind: string, variantNode: AssembledNode, nodeMap: NodeMap): boolean {
+function boxedInEnum(
+	variantKind: string,
+	enumOwnerKind: string,
+	variantNode: AssembledNode,
+	nodeMap: NodeMap
+): boolean {
 	// All transport enum variants are now inline. Box decisions moved to
 	// the slot-field level (see `rustTransportSlotType` — singular slots
 	// whose admit-set intersects parentKind's SCC get `Box<T>` at the
@@ -2312,7 +2326,9 @@ function emitTransportEnumFromNapiValueBody(
 	lines.push(`            ::napi::ValueType::Object => {`);
 	lines.push(`                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
 	lines.push(`                let kind_id: u16 = obj.get("$type")?.ok_or_else(||`);
-	lines.push(`                    ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)})`);
+	lines.push(
+		`                    ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)})`
+	);
 	lines.push(`                )?;`);
 	lines.push(`                match kind_id {`);
 	for (const arm of kindIdArms) lines.push(`    ${arm}`);
@@ -3184,34 +3200,6 @@ function renderTransportEntry(): string[] {
 	];
 }
 
-
-
-/**
- * Typed bridge classification for a field — returns how to convert the
- * typed transport field to `AnyTransport` for the per-slot bridges.
- *
- * Returns `{ kind: 'concrete', variant }` — wrap with `AnyTransport::Variant(…)`.
- * Returns `{ kind: 'supertype', toAnyFn }` — call `<supertype>_transport_to_any(…)`.
- * Returns `{ kind: 'transportSlot', toAnyFn }` — call
- *   `<ownerSnake>_<fieldSnake>_transport_slot_to_any(…)` (the heterogeneous
- *   per-slot typed enum landed on the named field after spec 024 cleanup-§E1).
- * Returns `undefined` — already `AnyTransport`, pass unchanged.
- */
-type BridgeFieldClass =
-	| { readonly kind: 'concrete'; readonly variant: string }
-	| { readonly kind: 'supertype'; readonly toAnyFn: string }
-	| { readonly kind: 'transportSlot'; readonly toAnyFn: string }
-	| undefined;
-
-
-
-
-
-
-
-
-
-
 /**
  * Previously emitted a `pub struct LiteralTransport { text: String, ... }` napi
  * object so JS could send the literal text across the FFI boundary. Now that
@@ -3256,7 +3244,7 @@ function renderVerbatimTransportStruct(): string[] {
 		'        napi_val: ::napi::sys::napi_value,',
 		'    ) -> ::napi::Result<Self> {',
 		'        // typeof guard: never call String::from_napi_value on a non-string',
-		'        // (its failure path JSON.stringify\'s Object inputs — see',
+		"        // (its failure path JSON.stringify's Object inputs — see",
 		'        // transport_value_type).',
 		'        if transport_value_type(env, napi_val)? != ::napi::ValueType::String {',
 		'            return Err(::napi::Error::from_reason("VerbatimTransport: expected bare string"));',
@@ -3931,37 +3919,6 @@ function findSupertypeKindByTypeName(supertypeName: string, nodeMap: NodeMap): s
 }
 
 /**
- * Returns true when a singular slot's emitted Rust type is `Box<T>` because
- * the slot closes a size cycle through the singular-reference graph. Mirrors
- * the logic in `rustTransportSlotType` so bridge expression builders (which
- * pass field values to `*_transport_to_any` fns expecting unboxed types) can
- * emit a `*` deref when needed. Vec slots are never Boxed (they don't
- * propagate size cycles), so this returns false for `isMultiple(field)`.
- */
-function slotCreatesBackEdge(
-	field: AssembledNonterminal,
-	parentKind: string,
-	nodeMap: NodeMap
-): boolean {
-	if (isMultiple(field)) return false;
-	const scc = nodeMap.scc;
-	if (scc === undefined) return false;
-	const slotKinds = kindsOf(field);
-	const hasMixedContent = slotKinds.length > 0 && slotLiteralValues(field).length > 0;
-	const cls = hasMixedContent ? ({ tag: 'heterogeneous' } as const) : classifySlotForEmit(slotKinds, nodeMap);
-	let reachableKinds: readonly string[] = [];
-	if (cls.tag === 'concrete') {
-		reachableKinds = [cls.kind];
-	} else if (cls.tag === 'supertype') {
-		const supertypeKind = findSupertypeKindByTypeName(cls.supertypeName, nodeMap);
-		reachableKinds = supertypeKind !== undefined ? [supertypeKind] : slotKinds;
-	} else {
-		reachableKinds = slotKinds;
-	}
-	return reachableKinds.some((k) => scc.sameSCC(parentKind, k));
-}
-
-/**
  * Emit `FromNapiValue` / `ToNapiValue` impls for `Box<EnumName>`. napi-rs's
  * derive does not auto-generate Box-wrapping impls for custom enums, but
  * `Box-at-back-edge` slot typing makes `Box<EnumName>` show up as a field
@@ -4038,9 +3995,7 @@ function perSlotEnumName(typeName: string, fieldName: string): string {
 	// Field names are typically snake_case / lowercase (e.g. `body`, `type_arguments`).
 	// PascalCase them so the resulting enum name reads correctly.
 	const segments = fieldName.split(/[^A-Za-z0-9]+/).filter((s) => s.length > 0);
-	const pascalField = segments
-		.map((s) => (s.length === 0 ? s : s[0]!.toUpperCase() + s.slice(1)))
-		.join('');
+	const pascalField = segments.map((s) => (s.length === 0 ? s : s[0]!.toUpperCase() + s.slice(1))).join('');
 	const sanitized = rustTypeIdent(pascalField);
 	return `${base}${sanitized}TransportSlot`;
 }
@@ -4061,7 +4016,6 @@ function rustTransportStructName(node: AssembledNode): string {
 function rustTransportVariantName(node: AssembledNode): string {
 	return rustTypeIdent(node.typeName);
 }
-
 
 function rustSnakeIdent(name: string): string {
 	const snake = name

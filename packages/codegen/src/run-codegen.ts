@@ -15,6 +15,8 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { join, dirname, resolve } from 'node:path';
+import { format as oxfmtFormat } from 'oxfmt';
+import { OXFMT_EFFECTIVE_CONFIG } from './oxfmt-config.ts';
 
 import { validateRenderableFromNodeMap, formatRenderableReport } from './validate/renderable.ts';
 
@@ -25,6 +27,7 @@ import {
 	collectGrammarDiagnosticsForGrammar,
 	GrammarDiagnosticError,
 	formatGrammarDiagnostics,
+	writeGrammarDiagnosticsJson,
 	fromSlotGrouping,
 	type GrammarDiagnostic
 } from './compiler/diagnostics/grammar-diagnostics.ts';
@@ -84,6 +87,25 @@ export interface CodegenOptions {
 /**
  * Write `content` to `path`, creating parent directories as needed.
  *
+ * `.ts` output is run through oxfmt (the project's own formatter, config
+ * from `./oxfmt-config.ts` — the repo-root `oxfmt.config.ts` derives from
+ * that same module rather than the other way around, since a package's
+ * `src/` can't reach outside its own `tsconfig.build.json` rootDir once
+ * only `dist` is packaged) before the content-aware comparison below, so
+ * generated `.ts` files land on disk already matching `pnpm run format`'s
+ * output —
+ * no separate formatting pass needed, and no risk of a formatter
+ * reformatting generated code out from under the emitters (oxfmt must
+ * never run over `packages/*\/src/*` directly; only codegen writes there).
+ *
+ * `node-model.json5` is deliberately NOT run through oxfmt here even
+ * though it matches `pnpm run format`'s scope: `packages/tools/src/
+ * validate/common.ts`'s `loadNodeModel` parses it with strict `JSON.parse`,
+ * and oxfmt reformats JSON5 idiomatically (unquoted keys, single-quoted
+ * strings) — valid JSON5, but not valid JSON, breaking that parser. Fix
+ * belongs in `loadNodeModel` (use a real JSON5 parser) before this file
+ * can be formatted too.
+ *
  * Content-aware: skips the write when the file already holds identical
  * bytes. Generated outputs are rewritten wholesale on every regen even
  * when nothing changed, and the mtime bump alone forced cargo (release
@@ -91,18 +113,32 @@ export interface CodegenOptions {
  * made every mtime-based freshness signal noisy. Skipping no-op writes
  * keeps mtimes meaningful: unchanged crates fingerprint-match in cargo,
  * so rebuilds and the workspace check finish in seconds on a no-change
- * regen.
+ * regen. Formatting BEFORE this comparison (not after) is what makes the
+ * skip meaningful — comparing against on-disk (already-formatted) content
+ * with pre-format content would never match, causing a spurious rewrite
+ * on every single regen.
  */
-export function writeFile(path: string, content: string): void {
+export async function writeFile(path: string, content: string): Promise<void> {
+	let finalContent = content;
+	if (path.endsWith('.ts')) {
+		const result = await oxfmtFormat(path, content, OXFMT_EFFECTIVE_CONFIG);
+		if (result.errors.length === 0) {
+			finalContent = result.code;
+		} else {
+			console.warn(
+				`  ⚠ oxfmt failed to format ${path} (${result.errors.length} error(s)) — writing unformatted content.`
+			);
+		}
+	}
 	if (existsSync(path)) {
 		try {
-			if (readFileSync(path, 'utf8') === content) return;
+			if (readFileSync(path, 'utf8') === finalContent) return;
 		} catch {
 			// Unreadable existing file — fall through and overwrite.
 		}
 	}
 	mkdirSync(dirname(path), { recursive: true });
-	writeFileSync(path, content, 'utf8');
+	writeFileSync(path, finalContent, 'utf8');
 }
 
 /**
@@ -182,9 +218,7 @@ export async function runGrammarDiagnosticsPreflight(input: {
 		diagnostics = collectGrammarDiagnosticsForGrammar({ rawGrammar }).diagnostics;
 	}
 
-	const blockedSet = new Set(
-		diagnostics.filter((d) => !input.allowDiagnostics.has(d.code) && d.canProceed === false)
-	);
+	const blockedSet = new Set(diagnostics.filter((d) => !input.allowDiagnostics.has(d.code) && d.canProceed === false));
 	const blocked = [...blockedSet];
 
 	// Non-blocking (and allow-listed) diagnostics are always surfaced as
@@ -193,6 +227,21 @@ export async function runGrammarDiagnosticsPreflight(input: {
 	const nonBlocking = diagnostics.filter((d) => !blockedSet.has(d));
 	if (nonBlocking.length > 0) {
 		process.stderr.write(formatGrammarDiagnostics(nonBlocking) + '\n');
+	}
+	// Persist the COMPLETE diagnostic set (blocking + non-blocking) — writing
+	// only `nonBlocking` silently dropped blocking diagnostics from the
+	// persisted artifact even when the run went on to proceed (allow-listed,
+	// or confirmed interactively).
+	//
+	// Only write when running against a REAL loaded grammar. `injectedDiagnostics`
+	// is a test-only seam (`cli-grammar-diagnostics.test.ts` injects diagnostics
+	// for an arbitrary/fake grammar to exercise the gate's allow-list/confirm
+	// logic in isolation, bypassing real grammar loading) — writing through to
+	// the tracked `packages/<grammar>/.sittir/grammar-diagnostics.json` in that
+	// case would contaminate the real artifact with test fixtures. Keep the
+	// injection seam side-effect-free.
+	if (input.injectedDiagnostics === undefined) {
+		writeGrammarDiagnosticsJson(diagnostics, resolve('packages', input.grammar, '.sittir', 'grammar-diagnostics.json'));
 	}
 
 	if (blocked.length === 0) return;
@@ -209,9 +258,7 @@ export async function runGrammarDiagnosticsPreflight(input: {
 }
 
 async function confirmProceed(diagnostics: readonly GrammarDiagnostic[]): Promise<boolean> {
-	process.stderr.write(
-		`Diagnostics present (${diagnostics.map((d) => d.code).join(', ')}). Proceed? [y/N] `
-	);
+	process.stderr.write(`Diagnostics present (${diagnostics.map((d) => d.code).join(', ')}). Proceed? [y/N] `);
 	const chunks: Buffer[] = [];
 	for await (const chunk of process.stdin) {
 		chunks.push(chunk as Buffer);
@@ -324,17 +371,17 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	const outDir = outputDir;
 
 	// Write source files
-	writeFile(join(outDir, 'grammar.ts'), result.grammar);
-	writeFile(join(outDir, 'engine.ts'), result.engine);
-	writeFile(join(outDir, 'types.ts'), result.types);
-	writeFile(join(outDir, 'factories.ts'), result.factories);
-	writeFile(join(outDir, 'wrap.ts'), result.wrap);
-	writeFile(join(outDir, 'utils.ts'), result.utils);
-	writeFile(join(outDir, 'from.ts'), result.from);
-	writeFile(join(outDir, 'ir.ts'), result.irNamespace);
-	writeFile(join(outDir, 'consts.ts'), result.consts);
-	writeFile(join(outDir, 'is.ts'), result.is);
-	writeFile(join(outDir, 'index.ts'), result.index);
+	await writeFile(join(outDir, 'grammar.ts'), result.grammar);
+	await writeFile(join(outDir, 'engine.ts'), result.engine);
+	await writeFile(join(outDir, 'types.ts'), result.types);
+	await writeFile(join(outDir, 'factories.ts'), result.factories);
+	await writeFile(join(outDir, 'wrap.ts'), result.wrap);
+	await writeFile(join(outDir, 'utils.ts'), result.utils);
+	await writeFile(join(outDir, 'from.ts'), result.from);
+	await writeFile(join(outDir, 'ir.ts'), result.irNamespace);
+	await writeFile(join(outDir, 'consts.ts'), result.consts);
+	await writeFile(join(outDir, 'is.ts'), result.is);
+	await writeFile(join(outDir, 'index.ts'), result.index);
 
 	// Write per-rule `.jinja` files to packages/<grammar>/templates/
 	// (feature 011). writeJinjaTemplates also deletes stale `.jinja` files
@@ -356,11 +403,11 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 			throw new Error(`generate() did not return renderModule output for ${grammar}`);
 		}
 		const emit = renderModule.emit;
-		writeFile(emit.hashRs.path, emit.hashRs.contents);
-		writeFile(emit.hashTs.path, emit.hashTs.contents);
-		writeFile(emit.templatesRs.path, emit.templatesRs.contents);
-		writeFile(emit.transportRs.path, emit.transportRs.contents);
-		writeFile(emit.libRs.path, emit.libRs.contents);
+		await writeFile(emit.hashRs.path, emit.hashRs.contents);
+		await writeFile(emit.hashTs.path, emit.hashTs.contents);
+		await writeFile(emit.templatesRs.path, emit.templatesRs.contents);
+		await writeFile(emit.transportRs.path, emit.transportRs.contents);
+		await writeFile(emit.libRs.path, emit.libRs.contents);
 		// Copy the per-kind `.jinja` files into the grammar crate's templates/
 		// directory so askama's build-time `#[template(path = ...)]` can
 		// resolve them (T030). Stale files (no longer in the generated copy
@@ -369,7 +416,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		mkdirSync(dstTemplatesDir, { recursive: true });
 		const emittedNames = new Set<string>();
 		for (const file of renderModule.templateCopies.files) {
-			writeFile(file.path, file.contents);
+			await writeFile(file.path, file.contents);
 			emittedNames.add(file.path.split('/').pop() ?? file.path);
 		}
 		for (const existing of readdirSync(dstTemplatesDir)) {
@@ -380,7 +427,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 		// This file exports one pub const per kind matching the TS-side TSKindId enum.
 		if (result.kindIds) {
 			const kindIdsPath = `${renderModuleSrcDir(grammarTyped)}/kind_ids.rs`;
-			writeFile(kindIdsPath, result.kindIds);
+			await writeFile(kindIdsPath, result.kindIds);
 			console.log(`    ${kindIdsPath}`);
 		}
 		console.log(`  → Rust render module regenerated for ${grammar}:`);
@@ -453,24 +500,32 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 
 	// Write node model (single on-disk metadata source — PR-K folded the
 	// former factory-map.json5 sections in here).
-	writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
+	await writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
 
 	// Write suggested overrides log (T042f) next to overrides.ts at the
-	// package root. This is a documentation file — not runnable.
-	writeFile(join(dirname(outDir), 'overrides.suggested.ts'), result.suggested);
+	// package root. This is a documentation file — not runnable. `undefined`
+	// means the emitter has nothing to suggest (emission disabled or empty
+	// result) — skip the write, and remove any stale file left by a prior
+	// run so re-enabling the emitter later naturally recreates it.
+	const suggestedPath = join(dirname(outDir), 'overrides.suggested.ts');
+	if (result.suggested !== undefined) {
+		await writeFile(suggestedPath, result.suggested);
+	} else if (existsSync(suggestedPath)) {
+		rmSync(suggestedPath);
+	}
 
 	// Write tests
 	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
-	writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);
+	await writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);
 
 	// Write type-level tests
-	writeFile(join(outDir, 'type-test.ts'), result.typeTests);
+	await writeFile(join(outDir, 'type-test.ts'), result.typeTests);
 
 	// Write vitest config
-	writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
+	await writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
 
 	// --- Renderability check: every named kind in node-types.json must be
-	// reachable by @sittir/core's render() function (supertype, leaf, or rule).
+	// reachable by @sittir/legacy-core's render() function (supertype, leaf, or rule).
 	// Uses the NodeMap directly for a structural truth check.
 	const config = { grammar, nodes: all ? undefined : nodes, outputDir };
 	const renderable = validateRenderableFromNodeMap(config.grammar, result.nodeMap);
@@ -569,9 +624,7 @@ export async function runFullRegen(opts: CodegenOptions): Promise<NodeMap> {
 	// recent `field(...)` / `variant(...)` additions, producing silent
 	// AST mismatches in round-trip tests.
 	if (!skipTsChain && !transpile && !tsGenerate) {
-		console.log(
-			`Full regenerate for ${grammar}: transpile + tree-sitter generate + compile-parser + sittir codegen`
-		);
+		console.log(`Full regenerate for ${grammar}: transpile + tree-sitter generate + compile-parser + sittir codegen`);
 		const grammarDir = resolve('packages', grammar);
 		console.log(`Transpiling ${grammar} overrides...`);
 		const tr = await transpileOverrides({ grammar });

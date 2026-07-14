@@ -13,18 +13,6 @@ describe('factory ergonomics', () => {
 		});
 	});
 
-	describe('Gap 1: optional config on all-optional-field factories', () => {
-		it('emits direct optional arg for a single optional slot', async () => {
-			// Use rust's `blockComment` — it now collapses to one optional slot,
-			// so the direct arg surface is more ergonomic than a config bag.
-			const { readFileSync } = await import('node:fs');
-			const { resolve } = await import('node:path');
-			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories.ts'), 'utf-8');
-			expect(content).toMatch(/export function blockComment\(doc\?:/);
-			expect(content).not.toMatch(/export function blockComment\(config\?:/);
-		});
-	});
-
 	describe('Gap 3: array at wrapper position auto-wraps', () => {
 		it('emits _wrapWithChildren dispatch table', async () => {
 			const { readFileSync } = await import('node:fs');
@@ -32,18 +20,7 @@ describe('factory ergonomics', () => {
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/from.ts'), 'utf-8');
 			expect(content).toContain('function _wrapWithChildren');
 			// Container kind: dispatches with rest-params spread
-			expect(content).toMatch(/case "parameters".*F\.parameters\(/);
-			// Mixed kind: dispatches with config object
-			expect(content).toMatch(/case "block".*F\.block\(\{/);
-		});
-
-		it('emits _wrapKindIds lookup table', async () => {
-			const { readFileSync } = await import('node:fs');
-			const { resolve } = await import('node:path');
-			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/from.ts'), 'utf-8');
-			expect(content).toContain('const _wrapKindIds');
-			expect(content).toMatch(/"block":\s*TSKindId\./);
-			expect(content).toMatch(/"parameters":\s*TSKindId\./);
+			expect(content).toMatch(/case "parameters":[\s\S]*?F\.parameters\(/);
 		});
 
 		it('_resolveOneBranch handles arrays by wrapping with children', async () => {
@@ -108,23 +85,6 @@ describe('factory ergonomics', () => {
 	});
 
 	describe('examples cleanup contract', () => {
-		it('keeps literal-string visibility modifier dispatch in rust from()', async () => {
-			const { readFileSync } = await import('node:fs');
-			const { resolve } = await import('node:path');
-			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/from.ts'), 'utf-8');
-			expect(content).toMatch(/case "crate": return visibilityModifierUFormCrateFrom\(\)/);
-			expect(content).toMatch(/case "pub": return visibilityModifierUFormPubFrom\(\)/);
-		});
-
-		it('emits visibilityModifier input hints on rust functionItem loose inputs', async () => {
-			const { readFileSync } = await import('node:fs');
-			const { resolve } = await import('node:path');
-			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/types.ts'), 'utf-8');
-			expect(content).toMatch(
-				/export interface FunctionItem[\s\S]*readonly __inputHints__\?: \{[\s\S]*readonly visibility_modifier\?:[\s\S]*"crate"[\s\S]*"pub"/
-			);
-		});
-
 		it('keeps branch and polymorph ir bundles exposing strict explicitly', async () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');

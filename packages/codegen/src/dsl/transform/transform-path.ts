@@ -159,7 +159,7 @@ export function parsePath(pathStr: string): PathSegment[] {
 			segments.push({ kind: 'fieldName', name: part.slice(0, -1) });
 		} else if (part === '*') {
 			throw new Error(`parsePath: path segment '*' is no longer valid — use '_' for wildcard; see ADR-0010`);
-		// ASCII-identifier shape — kept inline (NOT util/isAsciiIdentifier): this file is bundled into the transpiled grammar.js override runtime, so importing the util would pull it into that generated artifact.
+			// ASCII-identifier shape — kept inline (NOT util/isAsciiIdentifier): this file is bundled into the transpiled grammar.js override runtime, so importing the util would pull it into that generated artifact.
 		} else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) {
 			throw new Error(
 				`parsePath: bare kind name '${part}' is no longer valid as a path segment — use '(${part})' instead; see ADR-0010`
@@ -821,10 +821,7 @@ function reconstructRepeatWithMetadata(rule: RuntimeRule, newContent: RuntimeRul
 		trailing?: unknown;
 	};
 	const t = r.type;
-	const baseNode = nativeRequired(t === 'REPEAT' ? 'repeat' : 'repeat1')(newContent) as Record<
-		string,
-		unknown
-	>;
+	const baseNode = nativeRequired(t === 'REPEAT' ? 'repeat' : 'repeat1')(newContent) as Record<string, unknown>;
 	if (r.separator !== undefined) baseNode.separator = r.separator;
 	if (r.leading !== undefined) baseNode.leading = r.leading;
 	if (r.trailing !== undefined) baseNode.trailing = r.trailing;

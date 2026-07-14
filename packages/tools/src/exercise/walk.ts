@@ -1,4 +1,4 @@
-import { createRenderer } from '@sittir/core';
+import { createRenderer } from '@sittir/legacy-core';
 import type { AnyNodeData } from '@sittir/types';
 
 type GrammarName = 'rust' | 'typescript' | 'python';
@@ -20,13 +20,13 @@ interface CommonModule {
 	loadKindIdFromName(grammar: string): Promise<((name: string) => number) | undefined>;
 	loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined>;
 	loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined>;
+	materializeWrappedNodeData(root: unknown): AnyNodeData;
 }
 
 interface WalkNode {
 	readonly $type: string | number;
 	readonly $nodeHandle?: number;
 	readonly $childIndex?: number;
-	readonly $children?: readonly unknown[];
 	readonly [key: string]: unknown;
 }
 
@@ -36,7 +36,7 @@ export interface WalkOptions {
 	render: boolean;
 }
 
-const COMMON_MODULE_PATH = '../../../codegen/src/validate/common.ts';
+const COMMON_MODULE_PATH = '../validate/common.ts';
 const TEMPLATE_DIR_PATHS: Record<GrammarName, string> = {
 	rust: '../../../rust/templates',
 	typescript: '../../../typescript/templates',
@@ -63,19 +63,12 @@ function isWalkNode(value: unknown): value is WalkNode {
 	);
 }
 
-function isAnyNodeData(value: unknown): value is AnyNodeData {
-	return value !== null && typeof value === 'object' && '$type' in value;
-}
-
 function resolveKindName(node: WalkNode, kindNameFromId: ((id: number) => string | undefined) | undefined): string {
 	return typeof node.$type === 'number' ? (kindNameFromId?.(node.$type) ?? String(node.$type)) : node.$type;
 }
 
 function collectChildren(node: WalkNode): unknown[] {
 	const children: unknown[] = [];
-	if (Array.isArray(node.$children)) {
-		children.push(...node.$children);
-	}
 	for (const [key, value] of Object.entries(node)) {
 		if (key.startsWith('$') || key.startsWith('_')) continue;
 		if (typeof value !== 'function' || value.length !== 0) continue;
@@ -86,42 +79,6 @@ function collectChildren(node: WalkNode): unknown[] {
 		}
 	}
 	return children;
-}
-
-function toRenderableNode(value: unknown, seen = new WeakMap<object, unknown>()): unknown {
-	if (Array.isArray(value)) {
-		return value.map((entry) => toRenderableNode(entry, seen));
-	}
-	if (value === null || typeof value !== 'object') {
-		return value;
-	}
-	const ref = value as Record<string, unknown>;
-	const cached = seen.get(ref);
-	if (cached !== undefined) {
-		return cached;
-	}
-	const out: Record<string, unknown> = {};
-	seen.set(ref, out);
-	for (const [key, entry] of Object.entries(ref)) {
-		if (!key.startsWith('$')) continue;
-		if (key === '$children') {
-			const childReader = ref['children'];
-			const renderedChildren =
-				typeof childReader === 'function' && childReader.length === 0 ? childReader.call(ref) : entry;
-			out.$children = toRenderableNode(renderedChildren, seen);
-			continue;
-		}
-		if (typeof entry === 'function') continue;
-		out[key] = toRenderableNode(entry, seen);
-	}
-	for (const [key, entry] of Object.entries(ref)) {
-		if (!key.startsWith('_')) continue;
-		const getterName = key.slice(1).replace(/_([a-z])/g, (_match, letter: string) => letter.toUpperCase());
-		const getter = ref[getterName];
-		const fieldValue = typeof getter === 'function' && getter.length === 0 ? getter.call(ref) : entry;
-		out[key] = toRenderableNode(fieldValue, seen);
-	}
-	return out;
 }
 
 function walkTree(root: unknown, visit: (node: WalkNode) => void): void {
@@ -201,10 +158,7 @@ export async function run(opts: WalkOptions): Promise<number> {
 		total += 1;
 		if (!render) return;
 		try {
-			const renderable = toRenderableNode(node);
-			if (!isAnyNodeData(renderable)) {
-				throw new Error('failed to materialize wrapped node as NodeData');
-			}
+			const renderable = common.materializeWrappedNodeData(node);
 			const rendered = renderNode(renderable);
 			process.stdout.write(`${kind}: ${JSON.stringify(rendered)}\n`);
 		} catch (error) {

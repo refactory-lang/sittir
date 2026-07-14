@@ -17,8 +17,7 @@
 		"directory": "packages/typescript"
 	},
 	"files": [
-		"dist",
-		"templates/*.jinja"
+		"dist"
 	],
 	"type": "module",
 	"main": "./dist/index.js",
@@ -49,7 +48,7 @@
 		"type-check": "tsgo --noEmit"
 	},
 	"dependencies": {
-		"@sittir/core": "workspace:*",
+		"@sittir/legacy-core": "workspace:*",
 		"@sittir/types": "workspace:*",
 		"@sittir/common": "workspace:*"
 	},

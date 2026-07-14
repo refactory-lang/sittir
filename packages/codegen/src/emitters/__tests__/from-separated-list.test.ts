@@ -92,6 +92,8 @@ describe('from emitter — separatedList', () => {
 		expect(emitted).toContain('function _wrapWithChildren(');
 		expect(emitted).not.toContain('return F.memberList(...(children');
 		expect(emitted).not.toContain('return F.memberList(children[0]');
-		expect(emitted).toMatch(/case "member_list": return F\.memberList\(children as Parameters<typeof F\.memberList>\[0\]\);/);
+		expect(emitted).toMatch(
+			/case "member_list": return F\.memberList\(children as Parameters<typeof F\.memberList>\[0\]\);/
+		);
 	});
 });

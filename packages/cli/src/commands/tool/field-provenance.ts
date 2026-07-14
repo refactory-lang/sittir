@@ -15,9 +15,9 @@ export const fieldProvenance: CommandModule = {
 					grammar: opts.grammar ?? 'rust',
 					kind: opts.kind,
 					redundant: opts.redundant ?? false,
-					source: opts.source,
+					source: opts.source
 				});
 				if (code !== 0) process.exitCode = code;
 			});
-	},
+	}
 };

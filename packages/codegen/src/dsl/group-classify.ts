@@ -32,7 +32,7 @@ import {
 	isStringType,
 	isSymbolType,
 	typeEq,
-	type RuntimeRule,
+	type RuntimeRule
 } from '../types/runtime-shapes.ts';
 import { detectRepeatSeparator } from './list-patterns.ts';
 
@@ -248,7 +248,9 @@ function isOptionalSeparatorFlank(member: unknown, sepValue: string): boolean {
 			(m) =>
 				m &&
 				typeof m === 'object' &&
-				isStringType(typeof (m as Record<string, unknown>).type === 'string' ? ((m as Record<string, unknown>).type as string) : '') &&
+				isStringType(
+					typeof (m as Record<string, unknown>).type === 'string' ? ((m as Record<string, unknown>).type as string) : ''
+				) &&
 				(m as Record<string, unknown>).value === sepValue
 		);
 		return hasBlank && hasMatchingLiteral;

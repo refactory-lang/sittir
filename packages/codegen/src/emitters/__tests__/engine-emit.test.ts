@@ -7,14 +7,10 @@ describe('emitEngine', () => {
 		expect(output).toContain("from '@sittir/common/engine'");
 	});
 
-	it('imports createJsEngine from @sittir/core/engine at the top level', () => {
+	it('does not import createJsEngine from @sittir/legacy-core/engine', () => {
 		const output = emitEngine({ grammar: 'rust' });
-		const lines = output.split('\n');
-		const staticImports = lines.filter(
-			(l) => l.startsWith('import') && l.includes('createJsEngine')
-		);
-		expect(staticImports.length).toBeGreaterThan(0);
-		expect(staticImports[0]).toContain("'@sittir/core/engine'");
+		expect(output).not.toContain('createJsEngine');
+		expect(output).not.toContain("'@sittir/legacy-core/engine'");
 	});
 
 	it('does not contain createGrammarEngine(', () => {
@@ -22,9 +18,9 @@ describe('emitEngine', () => {
 		expect(output).not.toContain('createGrammarEngine(');
 	});
 
-	it('does not use dynamic import of @sittir/core/engine', () => {
+	it('does not use dynamic import of @sittir/legacy-core/engine', () => {
 		const output = emitEngine({ grammar: 'typescript' });
-		expect(output).not.toContain("import('@sittir/core/engine')");
+		expect(output).not.toContain("import('@sittir/legacy-core/engine')");
 	});
 
 	it('createEngine is synchronous (not async)', () => {
@@ -38,10 +34,11 @@ describe('emitEngine', () => {
 		expect(output).toContain('): SittirEngineLike {');
 	});
 
-	it('falls back to createJsEngine when native is not available', () => {
+	it('throws when native engine is unavailable (no JS-engine fallback)', () => {
 		const output = emitEngine({ grammar: 'typescript' });
-		expect(output).toContain('createJsEngine(');
+		expect(output).not.toContain('createJsEngine');
 		expect(output).toContain('createNativeEngine(');
+		expect(output).toContain('throw new Error');
 	});
 
 	it('does not thread deprecated native transport projection through createNativeEngine', () => {

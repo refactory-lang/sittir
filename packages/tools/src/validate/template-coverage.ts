@@ -81,7 +81,7 @@ function jinjaBodyToLegacyRule(body: string): TemplateRule {
  * `joinWithLeading`, `joinWithFlanks`, `join_with_trailing`,
  * `join_with_leading`, `join_with_flanks`) signals a multi-valued slot
  * (maps to `$$$`); the bare form is single-valued (`$`). See
- * `packages/core/src/templates/nunjucks-env.ts:registerSittirFilters`
+ * `packages/legacy-core/src/templates/nunjucks-env.ts:registerSittirFilters`
  * for the filter inventory the walker picks from.
  */
 function jinjaInterpolationsToLegacy(body: string): string {

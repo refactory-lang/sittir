@@ -12,7 +12,7 @@
 	"references": [
 		{ "path": "../types/tsconfig.build.json" },
 		{ "path": "../common/tsconfig.build.json" },
-		{ "path": "../core/tsconfig.build.json" }
+		{ "path": "../legacy-core/tsconfig.build.json" }
 	],
 	"include": ["src"],
 	"exclude": ["node_modules", "dist", "tests"]

@@ -31,7 +31,20 @@
  * own final naming.
  */
 
-import { ALIAS, CHOICE, FIELD, GROUP, OPTIONAL, REPEAT, REPEAT1, SEQ, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import {
+	ALIAS,
+	CHOICE,
+	FIELD,
+	GROUP,
+	OPTIONAL,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	SUPERTYPE,
+	SYMBOL,
+	TOKEN,
+	VARIANT
+} from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, Multiplicity } from '../types/rule.ts';
 import type { GeneratedKindEntry } from './generated-metadata.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
@@ -43,11 +56,9 @@ import {
 	dedupeValues,
 	extractSeparatorString,
 	mergeSourceRuleIds,
-	stampSeparatorOnValues,
+	stampSeparatorOnValues
 } from './model/node-map.ts';
 import { findRepeatFlag } from '../dsl/rule-transforms.ts';
-
-
 
 /**
  * Walk a rule tree to find the first separator string nested inside it.
@@ -185,9 +196,7 @@ function isStructuralChoice(rule: Extract<AnyRule, { type: 'CHOICE' }>): boolean
 	// All arms field-named with the SAME name → operator-enum style; that is a
 	// single slot recovered by `sharedArmFieldName`, NOT structural.
 	if (sharedArmFieldName(rule) !== undefined) return false;
-	return rule.members.some(
-		(m) => (m.type === SEQ && m.members.length > 1) || carriesNamedField(m)
-	);
+	return rule.members.some((m) => (m.type === SEQ && m.members.length > 1) || carriesNamedField(m));
 }
 
 /** Merge same-named slots within one arm (collapse duplicate field positions). */
@@ -200,12 +209,15 @@ function mergeByName(slots: AssembledNonterminal[]): AssembledNonterminal[] {
 			byName.set(s.name, s);
 			continue;
 		}
-		byName.set(s.name, prev.with({
-			values: dedupeValues([...prev.values, ...s.values]),
-			hasTrailing: prev.hasTrailing || s.hasTrailing,
-			hasLeading: prev.hasLeading || s.hasLeading,
-			sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, s.sourceRuleIds),
-		}));
+		byName.set(
+			s.name,
+			prev.with({
+				values: dedupeValues([...prev.values, ...s.values]),
+				hasTrailing: prev.hasTrailing || s.hasTrailing,
+				hasLeading: prev.hasLeading || s.hasLeading,
+				sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, s.sourceRuleIds)
+			})
+		);
 	}
 	return [...byName.values()];
 }
@@ -227,12 +239,15 @@ function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[]
 				merged.set(slot.name, slot);
 				continue;
 			}
-			merged.set(slot.name, prev.with({
-				values: dedupeValues([...prev.values, ...slot.values]),
-				hasTrailing: prev.hasTrailing || slot.hasTrailing,
-				hasLeading: prev.hasLeading || slot.hasLeading,
-				sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, slot.sourceRuleIds),
-			}));
+			merged.set(
+				slot.name,
+				prev.with({
+					values: dedupeValues([...prev.values, ...slot.values]),
+					hasTrailing: prev.hasTrailing || slot.hasTrailing,
+					hasLeading: prev.hasLeading || slot.hasLeading,
+					sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, slot.sourceRuleIds)
+				})
+			);
 		}
 	}
 	return [...merged.values()].map((slot) =>
@@ -249,7 +264,7 @@ function relaxToOptional(slot: AssembledNonterminal): AssembledNonterminal {
 				: v.multiplicity === 'nonEmptyArray'
 					? { ...v, multiplicity: 'array' as const }
 					: v
-		),
+		)
 	});
 }
 
@@ -399,9 +414,7 @@ function buildSlot(
 		);
 	}
 
-	const isMultiSlot = dedupedValues.some(
-		(v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray'
-	);
+	const isMultiSlot = dedupedValues.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
 
 	// --- Separator + trailing/leading flags (array slots only) ---
 	// A member that inherits its array multiplicity from an enclosing seq also
@@ -440,7 +453,7 @@ function buildSlot(
 		// (debt PR-P1, item 4) Blind opaque passthrough — never read/branched
 		// on here or by any compiler consumer. Only a dsl-sanctioned reader
 		// (diagnostics / node-model serialization) may open this bag.
-		ruleMetadata: rule.metadata,
+		ruleMetadata: rule.metadata
 	});
 }
 
@@ -525,41 +538,4 @@ export function collectSlots(
 			return slot ? [slot] : [];
 		}
 	}
-}
-/**
- * Collect the names of named fields whose content contains a `repeat` /
- * `repeat1` with the given flag (`trailing` or `leading`). Returns a
- * `Set<string>` of field names — empty when no such field is found.
- *
- * Used by the template emitter to build a per-field trailing-separator
- * set so `selectJoinFilter` (emitters/templates.ts) can restrict
- * `joinWithTrailing` to the specific fields whose repeats carry the
- * flag, rather than applying it globally whenever the whole rule has
- * any trailing repeat.
- */
-
-export function findFieldsWithRepeatFlag(rule: AnyRule, flag: 'trailing' | 'leading'): Set<string> {
-    const out = new Set<string>();
-    collectFieldsWithRepeatFlag(rule, flag, out);
-    return out;
-}
-function collectFieldsWithRepeatFlag(rule: AnyRule, flag: 'trailing' | 'leading', acc: Set<string>): void {
-    switch (rule.type) {
-        case FIELD:
-            if (findRepeatFlag(rule.content, flag)) acc.add(rule.name);
-            return;
-        case SEQ:
-        case CHOICE:
-            for (const m of rule.members) collectFieldsWithRepeatFlag(m, flag, acc);
-            return;
-        case REPEAT:
-        case REPEAT1:
-        case OPTIONAL:
-        case VARIANT:
-        case GROUP:
-            collectFieldsWithRepeatFlag(rule.content, flag, acc);
-            return;
-        default:
-            return;
-    }
 }

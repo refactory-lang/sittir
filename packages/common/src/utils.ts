@@ -1,5 +1,10 @@
 import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit, NodeTrivia } from '@sittir/types';
 
+/**
+ * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
+ * runtime shape backing the `$with` update namespace. Not yet wired into
+ * generated output; scaffolding only.
+ */
 export interface WithMethodsRuntime<T extends object = AnyNodeData> {
 	$render(): string;
 	$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
@@ -35,12 +40,14 @@ export function isNodeData(v: unknown): v is AnyNodeData {
 	const o = v as Record<string, unknown>;
 	if (typeof o.$type !== 'number') return false;
 	const hasStoredFields = Object.keys(o).some((k) => k.startsWith('_'));
-	return hasStoredFields
-		|| typeof o.$text === 'string'
-		|| o.$other !== undefined
-		|| o.$source === 0
-		|| o.$source === 1
-		|| o.$source === 2;
+	return (
+		hasStoredFields ||
+		typeof o.$text === 'string' ||
+		o.$other !== undefined ||
+		o.$source === 0 ||
+		o.$source === 1 ||
+		o.$source === 2
+	);
 }
 
 export function isTreeNode(v: unknown): v is AnyTreeNodeOf {

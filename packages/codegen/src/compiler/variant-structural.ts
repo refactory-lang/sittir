@@ -415,9 +415,7 @@ export function findStructuralVariantChoices(
  * same reason; this derivation preserves the same one-entry-per-child-kind
  * shape structurally.
  */
-export function deriveStructuralVariantChildren(
-	rules: Record<string, Rule<'link'>>
-): Map<string, string[]> {
+export function deriveStructuralVariantChildren(rules: Record<string, Rule<'link'>>): Map<string, string[]> {
 	const out = new Map<string, string[]>();
 	for (const [kind, rule] of Object.entries(rules)) {
 		const choices = findStructuralVariantChoices(kind, rule, rules);

@@ -6,7 +6,7 @@ import {
 	isTreeNode,
 	hasKind,
 	coerceBooleanKeywordStorage,
-	coerceBitflagStorage,
+	coerceBitflagStorage
 } from '../src/utils.ts';
 
 describe('@sittir/common/utils runtime surface', () => {
@@ -23,8 +23,7 @@ describe('@sittir/common/utils runtime surface', () => {
 		const render = vi.fn(() => 'rendered');
 		const toEdit = vi.fn((_node, startOrRange, endPos) => ({
 			startPos: typeof startOrRange === 'number' ? startOrRange : startOrRange.start.index,
-			endPos:
-				typeof startOrRange === 'number' ? (endPos ?? startOrRange) : startOrRange.end.index,
+			endPos: typeof startOrRange === 'number' ? (endPos ?? startOrRange) : startOrRange.end.index,
 			insertedText: 'rendered'
 		}));
 		const node = withMethods({ $type: 1, $source: 2, _name: 'x' }, { render, toEdit });

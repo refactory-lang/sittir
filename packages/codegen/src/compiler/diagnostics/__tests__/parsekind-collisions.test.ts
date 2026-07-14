@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { choice, alias, seq } from '../../evaluate.ts';
-import { buildRuleCatalog } from '../../rule-catalog.ts';
+import { alias, buildRuleCatalog, choice, seq } from '../../evaluate.ts';
 import { link } from '../../link.ts';
 import { normalizeGrammar } from '../../normalize.ts';
 import { assemble, AssembleCtx } from '../../assemble.ts';
@@ -108,7 +107,9 @@ describe('diagnoseParseKindCollisions', () => {
 
 		const host = nodeMap.nodes.get('host');
 		expect(host?.modelType).toBe('branch');
-		const slot = Object.values((host as { slots: Record<string, { name: string; values: readonly unknown[] }> }).slots)[0];
+		const slot = Object.values(
+			(host as { slots: Record<string, { name: string; values: readonly unknown[] }> }).slots
+		)[0];
 		expect(slot?.name).toBe('shared');
 		expect(slot?.values).toHaveLength(1);
 	});

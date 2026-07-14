@@ -1,6 +1,10 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
 import type { AnyNodeData, CSTNode, Position } from '@sittir/types';
 
+/**
+ * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
+ * $toEdit/CST rendering. Not yet wired into generated output; scaffolding only.
+ */
 export interface CstRenderer {
 	render(node: AnyNodeData): string;
 }
@@ -15,6 +19,9 @@ function offsetToPosition(offset: number, fullText: string, baseOffset: number):
 }
 
 /**
+ * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
+ * $toEdit/CST rendering. Not yet wired into generated output; scaffolding only.
+ *
  * Build a lightweight CST node tree with byte offsets.
  *
  * @param kindNameFromId - Optional resolver for numeric `$type` values to string

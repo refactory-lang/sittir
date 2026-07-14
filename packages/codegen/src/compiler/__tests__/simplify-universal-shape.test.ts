@@ -21,11 +21,7 @@
 import { CHOICE, FIELD, OPTIONAL, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { canonicalizeSeqOfLeaves, assertUniversalShape } from '../simplify.ts';
-import {
-	AssembledBranch,
-	AssembledGroup,
-	AssembledPattern,
-} from '../model/node-map.ts';
+import { AssembledBranch, AssembledGroup, AssembledPattern } from '../model/node-map.ts';
 import type { RenderRule, Rule, SeqRule, SimplifiedRule } from '../../types/rule.ts';
 
 // ---------------------------------------------------------------------------
@@ -40,8 +36,8 @@ describe('canonicalizeSeqOfLeaves', () => {
 				{ type: STRING, value: 'fn' },
 				{ type: SYMBOL, name: 'name' },
 				{ type: STRING, value: '(' },
-				{ type: STRING, value: ')' },
-			],
+				{ type: STRING, value: ')' }
+			]
 		};
 		expect(canonicalizeSeqOfLeaves(rule)).toEqual(rule);
 	});
@@ -57,7 +53,7 @@ describe('canonicalizeSeqOfLeaves', () => {
 		const inner: Rule<'link'> = { type: SYMBOL, name: 'X' };
 		const rule: SeqRule<'link'> = {
 			type: SEQ,
-			members: [{ type: SEQ, members: [inner] }],
+			members: [{ type: SEQ, members: [inner] }]
 		};
 		expect(canonicalizeSeqOfLeaves(rule)).toEqual(inner);
 	});
@@ -68,8 +64,8 @@ describe('canonicalizeSeqOfLeaves', () => {
 			members: [
 				{ type: STRING, value: '{' },
 				{ type: SEQ, members: [{ type: SYMBOL, name: 'body' }] },
-				{ type: STRING, value: '}' },
-			],
+				{ type: STRING, value: '}' }
+			]
 		};
 		const once = canonicalizeSeqOfLeaves(rule);
 		const twice = canonicalizeSeqOfLeaves(once);
@@ -83,12 +79,12 @@ describe('canonicalizeSeqOfLeaves', () => {
 		const rule: Rule<'link'> = {
 			type: FIELD,
 			name: 'op',
-			content: { type: SEQ, members: [{ type: STRING, value: '+' }] },
+			content: { type: SEQ, members: [{ type: STRING, value: '+' }] }
 		};
 		expect(canonicalizeSeqOfLeaves(rule)).toEqual({
 			type: 'FIELD',
 			name: 'op',
-			content: { type: 'STRING', value: '+' },
+			content: { type: 'STRING', value: '+' }
 		});
 	});
 });
@@ -103,10 +99,15 @@ describe('assertUniversalShape', () => {
 			type: SEQ,
 			members: [
 				{ type: STRING, value: 'fn' },
-				{ type: SYMBOL, name: 'name' },
-			],
+				{ type: SYMBOL, name: 'name' }
+			]
 		};
-		const node = new AssembledBranch('function_decl', body, body as unknown as SimplifiedRule, body as unknown as RenderRule);
+		const node = new AssembledBranch(
+			'function_decl',
+			body,
+			body as unknown as SimplifiedRule,
+			body as unknown as RenderRule
+		);
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
@@ -115,10 +116,15 @@ describe('assertUniversalShape', () => {
 			type: SEQ,
 			members: [
 				{ type: SYMBOL, name: 'modifier' },
-				{ type: STRING, value: 'static' },
-			],
+				{ type: STRING, value: 'static' }
+			]
 		};
-		const node = new AssembledGroup('_modifiers', body, body as unknown as SimplifiedRule, body as unknown as RenderRule);
+		const node = new AssembledGroup(
+			'_modifiers',
+			body,
+			body as unknown as SimplifiedRule,
+			body as unknown as RenderRule
+		);
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
@@ -128,7 +134,12 @@ describe('assertUniversalShape', () => {
 		// However AssembledBranch's R generic doesn't permit a bare symbol,
 		// so we test the case via AssembledGroup which accepts any Rule.
 		const body: Rule<'link'> = { type: SYMBOL, name: 'X' };
-		const node = new AssembledGroup('_passthrough', body, body as unknown as SimplifiedRule, body as unknown as RenderRule);
+		const node = new AssembledGroup(
+			'_passthrough',
+			body,
+			body as unknown as SimplifiedRule,
+			body as unknown as RenderRule
+		);
 		expect(() => assertUniversalShape(node)).not.toThrow();
 	});
 
@@ -142,14 +153,17 @@ describe('assertUniversalShape', () => {
 				{ type: STRING, value: 'fn' },
 				{
 					type: OPTIONAL,
-					content: { type: SYMBOL, name: 'type_params' },
-				},
-			],
+					content: { type: SYMBOL, name: 'type_params' }
+				}
+			]
 		};
-		const node = new AssembledGroup('function_decl', body, body as unknown as SimplifiedRule, body as unknown as RenderRule);
-		expect(() => assertUniversalShape(node)).toThrow(
-			/Universal-shape violation in kind 'function_decl'/
+		const node = new AssembledGroup(
+			'function_decl',
+			body,
+			body as unknown as SimplifiedRule,
+			body as unknown as RenderRule
 		);
+		expect(() => assertUniversalShape(node)).toThrow(/Universal-shape violation in kind 'function_decl'/);
 	});
 
 	it('throws with offending sub-rule type in error message', () => {
@@ -160,12 +174,17 @@ describe('assertUniversalShape', () => {
 					type: CHOICE,
 					members: [
 						{ type: SYMBOL, name: 'a' },
-						{ type: SYMBOL, name: 'b' },
-					],
-				},
-			],
+						{ type: SYMBOL, name: 'b' }
+					]
+				}
+			]
 		};
-		const node = new AssembledGroup('_choice_wrap', body, body as unknown as SimplifiedRule, body as unknown as RenderRule);
+		const node = new AssembledGroup(
+			'_choice_wrap',
+			body,
+			body as unknown as SimplifiedRule,
+			body as unknown as RenderRule
+		);
 		expect(() => assertUniversalShape(node)).toThrow(/CHOICE/);
 	});
 
@@ -174,19 +193,22 @@ describe('assertUniversalShape', () => {
 			type: CHOICE,
 			members: [
 				{ type: SYMBOL, name: 'a' },
-				{ type: SYMBOL, name: 'b' },
-			],
+				{ type: SYMBOL, name: 'b' }
+			]
 		};
-		const node = new AssembledGroup('_choice_kind', body, body as unknown as SimplifiedRule, body as unknown as RenderRule);
-		expect(() => assertUniversalShape(node)).toThrow(
-			/Universal-shape violation/
+		const node = new AssembledGroup(
+			'_choice_kind',
+			body,
+			body as unknown as SimplifiedRule,
+			body as unknown as RenderRule
 		);
+		expect(() => assertUniversalShape(node)).toThrow(/Universal-shape violation/);
 	});
 
 	it('no-ops for non-branch / non-group nodes (e.g. pattern leaves)', () => {
 		const leaf = new AssembledPattern('identifier', {
 			type: PATTERN,
-			value: '[a-z]+',
+			value: '[a-z]+'
 		});
 		expect(() => assertUniversalShape(leaf)).not.toThrow();
 	});

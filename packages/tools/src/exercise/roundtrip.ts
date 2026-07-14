@@ -1,4 +1,4 @@
-import { createRenderer } from '@sittir/core';
+import { createRenderer } from '@sittir/legacy-core';
 import type { AnyNodeData } from '@sittir/types';
 
 type GrammarName = 'rust' | 'typescript' | 'python';
@@ -108,7 +108,7 @@ export interface ExerciseOptions {
 	kinds: string[];
 }
 
-const COMMON_MODULE_PATH = '../../../codegen/src/validate/common.ts';
+const COMMON_MODULE_PATH = '../validate/common.ts';
 const FACTORY_MODULE_PATHS: Record<GrammarName, string> = {
 	rust: '../../../rust/src/factories.ts',
 	typescript: '../../../typescript/src/factories.ts',
@@ -201,13 +201,6 @@ function toRenderableNode(value: unknown, seen = new WeakMap<object, unknown>())
 	seen.set(ref, out);
 	for (const [key, entry] of Object.entries(ref)) {
 		if (!key.startsWith('$')) continue;
-		if (key === '$children') {
-			const childReader = ref['children'];
-			const renderedChildren =
-				typeof childReader === 'function' && childReader.length === 0 ? childReader.call(ref) : entry;
-			out.$children = toRenderableNode(renderedChildren, seen);
-			continue;
-		}
 		if (typeof entry === 'function') continue;
 		out[key] = toRenderableNode(entry, seen);
 	}

@@ -8,7 +8,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { evaluate } from './evaluate.ts';
 import { link } from './link.ts';
-import { normalizeGrammar, NormalizeCtx } from './normalize.ts';
+import { normalizeGrammar as normalize, NormalizeCtx } from './normalize.ts';
 import { assemble, AssembleCtx, hydrateSlotRefs, classifyNode } from './assemble.ts';
 import { computeTransportSCC } from './scc.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts';
@@ -41,7 +41,7 @@ import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 export interface GeneratedFiles {
 	grammar: string;
 	types: string;
-	/** engine.ts — thin wrapper around createNativeEngine from @sittir/common/engine plus createJsEngine from @sittir/core/engine */
+	/** engine.ts — thin wrapper around createNativeEngine from @sittir/common/engine. Native-only; no JS-engine fallback (see emitters/engine.ts). */
 	engine: string;
 	/** Per-rule `.jinja` files. `EmittedTemplates.bodies`
 	 *  is keyed by rule kind with the full file contents (incl.
@@ -61,8 +61,8 @@ export interface GeneratedFiles {
 	typeTests: string;
 	config: string;
 	nodeModel: string;
-	/** overrides.suggested.ts — human-readable derivation log. */
-	suggested: string;
+	/** overrides.suggested.ts — human-readable derivation log. `undefined` when there's nothing to suggest (emission disabled or empty result); the caller skips writing the file in that case. */
+	suggested: string | undefined;
 	/** is.ts — per-grammar type guards (is/assert/isTree/isNode). */
 	is: string;
 	/** kind_ids.rs — per-grammar numeric KindId constants for the Rust render crate */
@@ -148,7 +148,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		diagnostics.info({
 			code: 'unnamed-choice-slot',
 			message: `Unnamed choice slot in kind '${kind ?? '(unknown)'}'`,
-			canProceed: true,
+			canProceed: true
 		});
 	});
 
@@ -182,6 +182,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// Loaded BEFORE normalize so inlineRefs in computeSimplifiedRules can inline
 	// auto-synthesized helpers (e.g., _type_arguments_repeat1) that tree-sitter
 	// expands at parse time.
+	//TODO: Pull into evaluate() so the inline list is available to link() and normalize() without a separate read.
 	const inlineKindsArray = loadGrammarJsonInlineList(cfg.grammar);
 	const inlineKinds = new Set(inlineKindsArray ?? []);
 
@@ -199,14 +200,13 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// use as the "skip emitting this inlined kind" list (emitters/shared.ts).
 	// Filtering that list would un-skip supertypes/keywords and emit phantom
 	// concrete kinds — so the decision set is kept distinct.
+	// TODO: Pull this into simplify() so that inlineKinds is available to the simplify pass without a separate read.
 	const NON_INLINABLE_MODEL_TYPES = new Set(['supertype', 'keyword', 'token', 'pattern', 'enum']);
 	const inlinableKinds = new Set(
 		[...inlineKinds].filter((k) => {
 			const rule = linked.rules[k];
 			if (!rule) return true; // un-classifiable (no IR rule) — leave inlinable
-			return !NON_INLINABLE_MODEL_TYPES.has(
-				classifyNode(k, rule, { parentAliasedKinds: linked.parentAliasedKinds })
-			);
+			return !NON_INLINABLE_MODEL_TYPES.has(classifyNode(k, rule, { parentAliasedKinds: linked.parentAliasedKinds }));
 		})
 	);
 
@@ -237,11 +237,14 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		grammar: linked,
 		inlineKinds: inlinableKinds,
 		diagnostics,
-		polymorphSkip: polymorphsConfigSkip,
+		polymorphSkip: polymorphsConfigSkip
 	});
-	const normalized = normalizeGrammar(linked, normalizeCtx);
-	tracePhaseRules('normalize', normalized.linkRules);
-	tracePhaseRules('simplify', normalized.rules);
+	const normalized = normalize(linked, normalizeCtx);
+	tracePhaseRules('normalize', normalized.rules);
+	// tracePhaseRules('simplify', simplified.rules); — `simplified` doesn't exist yet;
+	// simplify() is still called inside assemble() below. Re-enable once the TODO
+	// below is implemented (simplify() hoisted out and called here directly).
+	//TODO: call simplify here and pass the simplified grammar to assemble() so the pipeline is evaluate → link → normalize → simplify → assemble → emitters. Currently simplify() is called inside assemble(). The pipeline should be refactored to call simplify() here and pass the simplified grammar to assemble().
 
 	// Phase 4: Assemble — caller-owned ctx (R12): built from `normalized` via
 	// the canonical factory, threading the pipeline's live DiagnosticSink.
@@ -274,8 +277,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	const compilerWarnings = diagnostics
 		.all()
 		.filter(
-			(d): d is CompilerDiagnostic =>
-				d.severity === 'warning' && (d as { scope?: unknown }).scope === 'compiler'
+			(d): d is CompilerDiagnostic => d.severity === 'warning' && (d as { scope?: unknown }).scope === 'compiler'
 		);
 	if (compilerWarnings.length > 0) {
 		process.stderr.write(formatCompilerDiagnostics(compilerWarnings) + '\n');
@@ -328,6 +330,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// Single-loop orchestrator: factory/from/wrap share ONE iteration
 	// over nodeMap.nodes; other emitters run their own internal loops
 	// via emitAll. See emitters/emit.ts for architecture.
+	//TODO: Only input should be the NodeMap and normalized.rules (for render emission); all other inputsgeneratedIdTables, inlineKinds, etc.) should be read off the NodeMap
 	const emitted = emitAll({
 		grammar: cfg.grammar,
 		nodeMap,

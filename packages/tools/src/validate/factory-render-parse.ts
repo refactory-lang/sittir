@@ -10,13 +10,14 @@
  * 5. Re-parse and verify the kind exists
  */
 
-import { createRenderer } from '@sittir/core';
+import { createRenderer } from '@sittir/legacy-core';
 import type { AnyNodeData, NodeMemberValue } from '@sittir/types';
 import type { PolymorphVariantMap, FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
 import { deriveRuleKinds } from './templates-path.ts';
 
 const { loadRawEntries } = await load('nodeTypesLoader');
+const { snakeToCamel } = await load('modelNodeMap');
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
@@ -165,9 +166,7 @@ function stripToFactory(data: AnyNodeData): AnyNodeData {
 		);
 		if (namedChildren.length > 0) {
 			result.$other = (
-				Array.isArray(data.$other)
-					? stripMemberValue(namedChildren)
-					: stripMemberValue(namedChildren[0])
+				Array.isArray(data.$other) ? stripMemberValue(namedChildren) : stripMemberValue(namedChildren[0])
 			) as AnyNodeData['$other'];
 		}
 	}
@@ -454,19 +453,19 @@ function alignReadDataToRenderedKind(
 	kindNameFromId?: (id: number) => string | undefined
 ): AnyNodeData {
 	if (matchesRenderedKind(rawReadData, renderedKind, kindNameFromId)) return rawReadData;
-	const childEntries = rawReadData.$other === undefined
-		? []
-		: Array.isArray(rawReadData.$other)
-			? rawReadData.$other
-			: [rawReadData.$other];
-	const matchingChildren =
-		childEntries.filter(
-			(child): child is AnyNodeData =>
-				child != null &&
-				typeof child === 'object' &&
-				(child as { $named?: boolean }).$named !== false &&
-				matchesRenderedKind(child as AnyNodeData, renderedKind, kindNameFromId)
-		);
+	const childEntries =
+		rawReadData.$other === undefined
+			? []
+			: Array.isArray(rawReadData.$other)
+				? rawReadData.$other
+				: [rawReadData.$other];
+	const matchingChildren = childEntries.filter(
+		(child): child is AnyNodeData =>
+			child != null &&
+			typeof child === 'object' &&
+			(child as { $named?: boolean }).$named !== false &&
+			matchesRenderedKind(child as AnyNodeData, renderedKind, kindNameFromId)
+	);
 	if (matchingChildren.length === 1) return matchingChildren[0]!;
 	return { ...rawReadData, $type: renderedKind };
 }
@@ -574,11 +573,9 @@ function buildFactoryNodeData(
 				// names one, otherwise treat it as a single child call.
 				const fieldNames = factoryFields[renderedKind];
 				const rawName = fieldNames?.[0];
-				const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
+				const camelName = rawName ? snakeToCamel(rawName) : undefined;
 				const childArgs = getChildFactoryArgs(renderedKind, config, factorySlots);
-				const value = camelName
-					? (config as Record<string, unknown>)[camelName]
-					: childArgs[0];
+				const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
 				return (factory as (v: unknown) => AnyNodeData)(value);
 			}
 			return factory(config) as AnyNodeData;
@@ -808,6 +805,14 @@ export async function validateFactoryRenderParse(
 		const tree1 = parser.parse(entry.source) as TSTree;
 		if (tree1.rootNode.hasError) continue;
 
+		// buildReadHandle failures (missing/stale native engine, debug-binary
+		// refusal, etc.) are whole-grammar loader failures, not per-entry
+		// rendering failures — they throw identically for every remaining
+		// entry once the engine is unavailable. Swallowing them here (as a
+		// prior fix did) meant `total` never incremented and `fail =
+		// total - pass - skip` came out 0, so a completely missing native
+		// engine was reported as a passing 0/0 run. Let it propagate to
+		// runCountsCli's grammar-collection catch, which records it properly.
 		const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
 		const rawKinds = new Set(collectKinds(tree1.rootNode));
 		const kinds = new Set(rawKinds);

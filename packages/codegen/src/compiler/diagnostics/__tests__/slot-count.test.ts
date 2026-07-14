@@ -32,8 +32,7 @@ describe('countSlots — Table 1 distribution', () => {
 		expect(countSlots(seq(str('('), seq(sym('a'), str(','), sym('b')), str(')')))).toBe(2));
 	it('choice is ONE union slot (not distributed)', () =>
 		expect(countSlots(choice(sym('a'), sym('b'), str('lit')))).toBe(1));
-	it('literal-only choice still 1 slot', () =>
-		expect(countSlots(choice(str('<'), str('>')))).toBe(1));
+	it('literal-only choice still 1 slot', () => expect(countSlots(choice(str('<'), str('>')))).toBe(1));
 	it('field = 1', () => expect(countSlots(field('n', seq(sym('a'), sym('b'))))).toBe(1));
 	it('repeat of single symbol = 1', () => expect(countSlots(repeat(sym('x')))).toBe(1));
 	it('seq of only literals = 0', () => expect(countSlots(seq(str(','), str(';')))).toBe(0));
@@ -84,7 +83,7 @@ describe('countSlots ≡ collectSlots.length (convergence)', () => {
 		const rule: Rule = {
 			type: 'SYMBOL',
 			name: '_type',
-			multiplicity: 'array',
+			multiplicity: 'array'
 		} as any;
 		expect(countSlots(rule)).toBe(1);
 		expect(slotsLen(rule)).toBe(1);

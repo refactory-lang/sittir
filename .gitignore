@@ -35,6 +35,7 @@ packages/*/.sittir/*
 !packages/*/.sittir/package.json
 !packages/*/.sittir/tree-sitter.json
 !packages/*/.sittir/generated.manifest.json
+!packages/*/.sittir/grammar-diagnostics.json
 
 
 # Stray tree-sitter build artifacts (parser.wasm should be in .sittir/)
@@ -54,6 +55,9 @@ rust/crates/sittir-*/*.node
 tmp-scripts/
 graphify-out/cache/**
 
+# vitest JSON reporter side-artifact (scripts/test-and-record.ts)
+/.vitest-report.json
+
 # tsc build outputs accidentally landing alongside .ts source. These four
 # packages have ZERO intentionally-tracked .js/.d.ts in src/ (verified
 # 2026-05-15) — pure TS source. (packages/codegen and packages/validator
@@ -62,10 +66,10 @@ packages/common/src/**/*.js
 packages/common/src/**/*.js.map
 packages/common/src/**/*.d.ts
 packages/common/src/**/*.d.ts.map
-packages/core/src/**/*.js
-packages/core/src/**/*.js.map
-packages/core/src/**/*.d.ts
-packages/core/src/**/*.d.ts.map
+packages/legacy-core/src/**/*.js
+packages/legacy-core/src/**/*.js.map
+packages/legacy-core/src/**/*.d.ts
+packages/legacy-core/src/**/*.d.ts.map
 packages/types/src/**/*.js
 packages/types/src/**/*.js.map
 packages/types/src/**/*.d.ts

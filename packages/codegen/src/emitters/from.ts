@@ -159,7 +159,7 @@ function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEnt
 	} else {
 		lines.push(`import { kindIdFromName } from './types.js';`);
 	}
-	lines.push("import type { AnyNodeData, ConfigOf } from '@sittir/types';");
+	lines.push("import type { AnyNodeData } from '@sittir/types';");
 	lines.push("import { coerceKindEnumStorage, isNodeData } from './utils.js';");
 	lines.push('');
 }
@@ -263,16 +263,6 @@ function emitInternedKindTable(lines: string[], namedEntries: Map<string, string
  * instance-local instead of living in module globals.
  */
 export namespace from {
-	/** Back-compat no-op; collection state now lives on emitter instances. */
-	export function init(): void {
-		// No-op.
-	}
-
-	/** Back-compat stub; callers now own the output buffer directly. */
-	export function collect(): string[] {
-		return [];
-	}
-
 	/**
 	 * Emit a leaf from() resolver — string-like (pattern, enum) or keyword.
 	 */
@@ -343,7 +333,6 @@ export namespace from {
 		const result = emitSeparatedListFrom(node, kindEntries, nodeMap);
 		if (result) output.push(result);
 	}
-
 }
 
 // ---------------------------------------------------------------------------
@@ -363,7 +352,6 @@ interface BranchLikeNode {
 	readonly slotClass?: BranchSlotClass;
 }
 
-
 /**
  * Builds the input signature parts for a branch from() function.
  * Return type is omitted — TS infers it from the body.
@@ -378,11 +366,7 @@ function buildBranchSignatureParts(
 	return { inputType, inputOptional };
 }
 
-function stampedConfigFieldExpr(
-	field: AssembledNonterminal,
-	nodeMap: NodeMap,
-	intern: KindInterner
-): string | null {
+function stampedConfigFieldExpr(field: AssembledNonterminal, nodeMap: NodeMap, intern: KindInterner): string | null {
 	const literal = resolveEffectiveLiteral(field, nodeMap);
 	if (literal === undefined) return null;
 	const storageInfo = resolveFieldStorageInfo(field, nodeMap);
@@ -398,7 +382,6 @@ function emitBranchNodeDataPassthrough(lines: string[], inputOptional: boolean, 
 	const passGuard = inputOptional ? 'input !== undefined && ' : '';
 	lines.push(`  if (${passGuard}isNodeData(input)) return input as unknown as ${returnType};`);
 }
-
 
 /**
  * Returns the target factory name when a required field can default to an
@@ -455,11 +438,7 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	return targetNode.rawFactoryName;
 }
 
-function emitBranchFrom(
-	node: BranchLikeForFrom,
-	nodeMap: NodeMap,
-	intern: KindInterner
-): string {
+function emitBranchFrom(node: BranchLikeForFrom, nodeMap: NodeMap, intern: KindInterner): string {
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const fields = node.fields;
@@ -512,7 +491,12 @@ function emitBranchFrom(
 		if (canDirectFactoryCall) {
 			const inputExpr = `(input !== null && typeof input === 'object' && !isNodeData(input) && ${JSON.stringify(soleField.configKey)} in input ? input.${soleField.configKey} : input)`;
 			const call = resolveFieldCall(inputExpr, soleField, isMultiple(soleField), nodeMap, intern);
-			lines.push(`  return ${factory}(${call});`);
+			// Gap A: sole-slot direct-call factories skip the Config object
+			// literal entirely, so a required sole field needs its own guard.
+			const guardedCall = isRequired(soleField)
+				? `_requireField(${JSON.stringify(node.kind)}, ${JSON.stringify(soleField.configKey)}, ${call})`
+				: call;
+			lines.push(`  return ${factory}(${guardedCall});`);
 		} else {
 			lines.push(`  return ${factory}({`);
 			for (const f of fields) {
@@ -529,6 +513,12 @@ function emitBranchFrom(
 					const defaultFactory = canDefaultToEmpty(f, nodeMap);
 					if (defaultFactory) {
 						lines.push(`    ${f.configKey}: ${call} ?? F.${defaultFactory}(),`);
+					} else if (isRequired(f)) {
+						// Gap A: a required field whose loose-input value didn't
+						// resolve is otherwise silently `undefined` here.
+						lines.push(
+							`    ${f.configKey}: _requireField(${JSON.stringify(node.kind)}, ${JSON.stringify(f.configKey)}, ${call}),`
+						);
 					} else {
 						lines.push(`    ${f.configKey}: ${call},`);
 					}
@@ -710,7 +700,6 @@ function emitRepeatedContainerFrom(
 		(varExpr) => `${factory}(...(${varExpr} as unknown as Parameters<typeof ${factory}>))`
 	);
 }
-
 
 /**
  * Emits the singular-child variant of a container from() function.
@@ -1234,8 +1223,7 @@ function resolveFieldCall(
 		if (kwCall !== undefined) return kwCall;
 	}
 
-	const storageInfo =
-		'name' in field ? resolveFieldStorageInfo(field as AssembledNonterminal, nodeMap) : undefined;
+	const storageInfo = 'name' in field ? resolveFieldStorageInfo(field as AssembledNonterminal, nodeMap) : undefined;
 
 	const expanded = expandAndDedupeContentTypes(slotKindNames(field), nodeMap);
 	const { leafKinds, branchKinds } = classifyKindsForResolver(expanded, nodeMap);
@@ -1437,6 +1425,15 @@ function emitResolveOneHelper(lines: string[]): void {
 	lines.push('    const bk = branchKinds[0]!;');
 	lines.push('    if (_isFromKind(bk)) return _resolveByKind(bk, v) as T;');
 	lines.push('  }');
+	// Gap B: an unresolved object/array would otherwise pass through raw and
+	// get embedded in the tree, surfacing only later as a confusing transport
+	// error. Scalars (string/number/boolean) are excluded — some call sites
+	// deliberately rely on scalar passthrough to coerceKindEnumStorage.
+	lines.push('  if (typeof v === "object") {');
+	lines.push(
+		'    throw new Error(`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(", ")}]: ${JSON.stringify(v)}`);'
+	);
+	lines.push('  }');
 	lines.push('  return v as T;');
 	lines.push('}');
 	lines.push('');
@@ -1463,6 +1460,28 @@ function emitAssertNonEmptyHelper(lines: string[]): void {
 	lines.push('  if (arr.length === 0) {');
 	lines.push('    throw new Error(`${label}: requires at least one element`);');
 	lines.push('  }');
+	lines.push('}');
+}
+
+/**
+ * Emits the `_requireField` runtime guard into generated from.ts.
+ *
+ * @remarks
+ * Gap A: a required slot whose loose-input value didn't resolve to any
+ * known branch/leaf kind comes back `undefined` from `_resolveOne` —
+ * indistinguishable from a legitimately-absent optional slot. Call sites
+ * for REQUIRED, non-defaultable fields wrap the resolver result in this
+ * guard so the failure surfaces at the `from()` boundary (naming the kind
+ * and slot) instead of silently constructing a node with a missing field.
+ *
+ * @param lines - Output lines array to push into.
+ */
+function emitRequireFieldHelper(lines: string[]): void {
+	lines.push('function _requireField<T>(kind: string, slot: string, v: T): T {');
+	lines.push('  if (v === undefined || v === null) {');
+	lines.push("    throw new Error(`Missing required slot '${slot}' on ${kind}.from()`);");
+	lines.push('  }');
+	lines.push('  return v;');
 	lines.push('}');
 }
 
@@ -1683,6 +1702,12 @@ function emitResolverHelpers(
 	lines.push('    const { kind: k, ...rest } = v;');
 	lines.push('    if (typeof k === "string" && _isFromKind(k)) return _resolveByKind(k, rest) as T;');
 	lines.push('  }');
+	// Gap B: see _resolveOne — same object/array-only throw, scalars pass through.
+	lines.push('  if (typeof v === "object") {');
+	lines.push(
+		"    throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${JSON.stringify(v)}`);"
+	);
+	lines.push('  }');
 	lines.push('  return v as T;');
 	lines.push('}');
 	lines.push('');
@@ -1732,6 +1757,12 @@ function emitResolverHelpers(
 	lines.push('    }');
 	lines.push('    if (_isFromKind(kind)) return _resolveByKind(kind, v) as T;');
 	lines.push('  }');
+	// Gap B: see _resolveOne — same object/array-only throw, scalars pass through.
+	lines.push('  if (typeof v === "object") {');
+	lines.push(
+		"    throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${JSON.stringify(v)}`);"
+	);
+	lines.push('  }');
 	lines.push('  return v as T;');
 	lines.push('}');
 	lines.push('');
@@ -1776,6 +1807,8 @@ function emitResolverHelpers(
 	lines.push('');
 
 	emitAssertNonEmptyHelper(lines);
+	lines.push('');
+	emitRequireFieldHelper(lines);
 }
 
 // ---------------------------------------------------------------------------

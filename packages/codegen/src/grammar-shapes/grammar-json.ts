@@ -161,9 +161,20 @@ export type GrammarRule =
  */
 export type AuthoringRule = GrammarRule | string | RegExp;
 
-export type ToGrammarRule<S extends string | RegExp | GrammarRule> = S extends string ? StringRule<S> : S extends RegExp ? PatternRule<S> : S extends GrammarRule ? S : S;
+export type ToGrammarRule<S extends string | RegExp | GrammarRule> = S extends string
+	? StringRule<S>
+	: S extends RegExp
+		? PatternRule<S>
+		: S extends GrammarRule
+			? S
+			: S;
 
-export type AuthoringRulesToRules<M extends readonly AuthoringRule[]> = M extends readonly [infer Head extends AuthoringRule, ...infer Rest extends AuthoringRule[]] ? [ToGrammarRule<Head>, ...AuthoringRulesToRules<Rest>] : [];
+export type AuthoringRulesToRules<M extends readonly AuthoringRule[]> = M extends readonly [
+	infer Head extends AuthoringRule,
+	...infer Rest extends AuthoringRule[]
+]
+	? [ToGrammarRule<Head>, ...AuthoringRulesToRules<Rest>]
+	: [];
 
 /** Top-level compiled grammar.json shape (the subset we type off). */
 export interface GrammarJson {
@@ -184,9 +195,6 @@ export type PrecRuleUnion = PrecRule | PrecLeftRule | PrecRightRule | PrecDynami
 
 /** Single-content wrappers that CONSUME a path segment (index 0 / -1). */
 export type SingleContentWrapper = RepeatRule | Repeat1Rule | FieldRule | AliasRule | TokenRule | ImmediateTokenRule;
-
-/** Container rules whose members are positionally addressable. */
-export type ContainerRule<M extends readonly GrammarRule[] = GrammarRule[]> = SeqRule<M> | ChoiceRule<M>;
 
 // ---------------------------------------------------------------------------
 // MutableDeep<> — the readonly→mutable bridge used ONLY to PROVE the

@@ -451,10 +451,7 @@ describe('nodeToConfig field promotion', () => {
 				$type: 'return_statement',
 				$source: 0,
 				$named: true,
-				$other: [
-					{ $type: 'return', $source: 0, $named: false, $text: 'return' },
-					expr
-				]
+				$other: [{ $type: 'return', $source: 0, $named: false, $text: 'return' }, expr]
 			} as never,
 			{
 				factorySlots: makeFactorySlots('return_statement', {
@@ -752,7 +749,7 @@ describe('nodeToConfig field promotion', () => {
 		const templatesPath = resolve(import.meta.dirname, '../../../python/templates');
 		const result = await validateFactoryRenderParse('python', templatesPath, 'native');
 		const regression = result.errors.find(
-			(error) => error.kind === 'assignment' && error.message.includes("factory threw: assignment: unknown $variant")
+			(error) => error.kind === 'assignment' && error.message.includes('factory threw: assignment: unknown $variant')
 		);
 
 		expect(regression).toBeUndefined();

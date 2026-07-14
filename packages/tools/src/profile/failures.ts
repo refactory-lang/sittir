@@ -25,7 +25,7 @@ type Grammar = 'rust' | 'typescript' | 'python';
 // ---------------------------------------------------------------------------
 
 const VALIDATOR_PATHS: Record<string, string> = {
-	run: '../run.ts',
+	run: '../run.ts'
 };
 
 interface FromResult {
@@ -61,7 +61,7 @@ async function loadValidatorModules(): Promise<ValidatorModules> {
 		runRt: mod.runRt,
 		runCoverage: mod.runCoverage,
 		runFactory: mod.runFactory,
-		defaultTemplatesPath: mod.defaultTemplatesPath,
+		defaultTemplatesPath: mod.defaultTemplatesPath
 	};
 }
 
@@ -96,13 +96,12 @@ function kindFromRtName(name: string): string {
 
 /** Run all four validators for one grammar and collect Failure records. */
 async function profileGrammar(grammar: Grammar): Promise<Failure[]> {
-	const { runFrom, runRt, runCoverage, runFactory, defaultTemplatesPath } =
-		await loadValidatorModules();
+	const { runFrom, runRt, runCoverage, runFactory, defaultTemplatesPath } = await loadValidatorModules();
 	const tp = defaultTemplatesPath(grammar);
 	const [from, rt, fac] = await Promise.all([
 		runFrom(grammar, 'native'),
 		runRt(grammar, tp, 'native'),
-		runFactory(grammar, tp, 'native'),
+		runFactory(grammar, tp, 'native')
 	]);
 	const cov = runCoverage(grammar, tp);
 

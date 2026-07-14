@@ -22,9 +22,14 @@
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it, afterEach } from 'vitest';
-import { computeSimplifiedRules, drainSlotGroupingDiagnostics, SimplifyCtx, makeNormalizedGrammar } from '../simplify.ts';
+import {
+	computeSimplifiedRules,
+	drainSlotGroupingDiagnostics,
+	SimplifyCtx,
+	makeNormalizedGrammar
+} from '../simplify.ts';
 import { applyWrapperDeletion } from '../wrapper-deletion.ts';
-import type { Rule, RenderRule } from '../../types/rule.ts';
+import type { Rule } from '../../types/rule.ts';
 
 afterEach(() => {
 	drainSlotGroupingDiagnostics();
@@ -87,10 +92,10 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 						source: 'group-lift',
 						// wrapper-deletion already pushed optional down to multiplicity
 						multiplicity: 'optional',
-						nonterminal: true,
+						nonterminal: true
 					} as unknown as Rule,
-					{ type: 'STRING', value: ';' } as Rule,
-				],
+					{ type: 'STRING', value: ';' } as Rule
+				]
 			} as Rule,
 			// Helper rule: group with seq content
 			_const_item_optional1: {
@@ -105,26 +110,27 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 							name: '_expression',
 							hidden: true,
 							fieldName: 'value',
-							nonterminal: true,
-						} as unknown as Rule,
-					],
-				},
+							nonterminal: true
+						} as unknown as Rule
+					]
+				}
 			} as unknown as Rule,
 			// Content kind leaf
-			_expression: { type: 'SYMBOL', name: '_expression' } as Rule,
+			_expression: { type: 'SYMBOL', name: '_expression' } as Rule
 		};
 
 		const normalizedRules = applyWrapperDeletion(inputRules);
-		const simplified = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() }));
+		const simplified = computeSimplifiedRules(
+			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
+		);
 
 		const constItemSimplified = simplified['const_item']!;
 
 		// The helper name must NOT appear in the simplified parent rule.
 		const helperRefs = findSymbolRefs(constItemSimplified as Rule, '_const_item_optional1');
-		expect(
-			helperRefs,
-			'_const_item_optional1 helper ref must be dissolved — not remain as a slot value'
-		).toHaveLength(0);
+		expect(helperRefs, '_const_item_optional1 helper ref must be dissolved — not remain as a slot value').toHaveLength(
+			0
+		);
 
 		// The content kind (_expression) must appear in the parent rule.
 		const contentRefs = collectSymbolNames(constItemSimplified as Rule);
@@ -146,10 +152,10 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 						hidden: true,
 						source: 'group-lift',
 						multiplicity: 'nonEmptyArray',
-						nonterminal: true,
+						nonterminal: true
 					} as unknown as Rule,
-					{ type: 'STRING', value: '>' } as Rule,
-				],
+					{ type: 'STRING', value: '>' } as Rule
+				]
 			} as Rule,
 			// Helper: group with seq content (but it's a repeat context)
 			_type_arguments_repeat1: {
@@ -157,16 +163,16 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 				name: '_type_arguments_repeat1',
 				content: {
 					type: 'SEQ',
-					members: [
-						{ type: 'SYMBOL', name: '_type', hidden: true, nonterminal: true } as unknown as Rule,
-					],
-				},
+					members: [{ type: 'SYMBOL', name: '_type', hidden: true, nonterminal: true } as unknown as Rule]
+				}
 			} as unknown as Rule,
-			_type: { type: 'SYMBOL', name: '_type' } as Rule,
+			_type: { type: 'SYMBOL', name: '_type' } as Rule
 		};
 
 		const normalizedRules = applyWrapperDeletion(inputRules);
-		const simplified = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() }));
+		const simplified = computeSimplifiedRules(
+			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
+		);
 
 		const typeArgsSimplified = simplified['type_arguments']!;
 
@@ -192,23 +198,25 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 						hidden: true,
 						source: 'group-lift',
 						// No multiplicity attribute
-						nonterminal: true,
-					} as unknown as Rule,
-				],
+						nonterminal: true
+					} as unknown as Rule
+				]
 			} as Rule,
 			_parent_group1: {
 				type: 'GROUP',
 				name: '_parent_group1',
 				content: {
 					type: 'SEQ',
-					members: [{ type: 'SYMBOL', name: 'some_kind', nonterminal: true } as unknown as Rule],
-				},
+					members: [{ type: 'SYMBOL', name: 'some_kind', nonterminal: true } as unknown as Rule]
+				}
 			} as unknown as Rule,
-			some_kind: { type: 'SYMBOL', name: 'some_kind' } as Rule,
+			some_kind: { type: 'SYMBOL', name: 'some_kind' } as Rule
 		};
 
 		const normalizedRules = applyWrapperDeletion(inputRules);
-		const simplified = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() }));
+		const simplified = computeSimplifiedRules(
+			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
+		);
 
 		const parentSimplified = simplified['parent_rule']!;
 
@@ -235,9 +243,9 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 						hidden: true,
 						source: 'group-lift',
 						multiplicity: 'optional',
-						nonterminal: true,
-					} as unknown as Rule,
-				],
+						nonterminal: true
+					} as unknown as Rule
+				]
 			} as Rule,
 			_let_declaration_optional1: {
 				type: 'GROUP',
@@ -251,18 +259,24 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 							name: '_type',
 							hidden: true,
 							fieldName: 'type',
-							nonterminal: true,
-						} as unknown as Rule,
-					],
-				},
+							nonterminal: true
+						} as unknown as Rule
+					]
+				}
 			} as unknown as Rule,
-			_type: { type: 'SYMBOL', name: '_type' } as Rule,
+			_type: { type: 'SYMBOL', name: '_type' } as Rule
 		};
 
 		const normalizedRules = applyWrapperDeletion(inputRules);
 		// Pass _let_declaration_optional1 in inlineKinds (as in the real pipeline).
 		const inlineKinds = new Set(['_let_declaration_optional1']);
-		const simplified = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), inlineKinds, diagnostics: new DiagnosticSink() }));
+		const simplified = computeSimplifiedRules(
+			new SimplifyCtx({
+				grammar: makeNormalizedGrammar(normalizedRules),
+				inlineKinds,
+				diagnostics: new DiagnosticSink()
+			})
+		);
 
 		const letDeclSimplified = simplified['let_declaration']!;
 

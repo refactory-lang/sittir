@@ -38,7 +38,7 @@ export function registerNamespace(
 	program: Command,
 	namespace: string,
 	describe: string,
-	modules: readonly CommandModule[],
+	modules: readonly CommandModule[]
 ): void {
 	const group = program.command(namespace).description(describe);
 	for (const mod of modules) mod.register(group);

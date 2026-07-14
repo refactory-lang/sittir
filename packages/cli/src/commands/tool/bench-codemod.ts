@@ -11,5 +11,5 @@ export const benchCodemod: CommandModule = {
 				const code = await runBenchCodemod({ corpus: corpusDir });
 				if (code !== 0) process.exitCode = code;
 			});
-	},
+	}
 };

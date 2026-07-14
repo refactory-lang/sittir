@@ -61,11 +61,35 @@ export interface Divergence {
  */
 export const ALLOWLISTED_RENAMES: readonly Divergence[] = [
 	// format_specifier.content: genuinely 1 value → format_expression.
-	{ kind: 'format_specifier', slot: 'content', projection: 'storageName', legacy: 'content', recomputed: 'format_expression' },
+	{
+		kind: 'format_specifier',
+		slot: 'content',
+		projection: 'storageName',
+		legacy: 'content',
+		recomputed: 'format_expression'
+	},
 	{ kind: 'format_specifier', slot: 'content', projection: 'name', legacy: 'content', recomputed: 'format_expression' },
-	{ kind: 'format_specifier', slot: 'content', projection: 'configKey', legacy: 'content', recomputed: 'formatExpression' },
-	{ kind: 'format_specifier', slot: 'content', projection: 'propertyName', legacy: 'contents', recomputed: 'formatExpressions' },
-	{ kind: 'format_specifier', slot: 'content', projection: 'paramName', legacy: 'contents', recomputed: 'formatExpressions' },
+	{
+		kind: 'format_specifier',
+		slot: 'content',
+		projection: 'configKey',
+		legacy: 'content',
+		recomputed: 'formatExpression'
+	},
+	{
+		kind: 'format_specifier',
+		slot: 'content',
+		projection: 'propertyName',
+		legacy: 'contents',
+		recomputed: 'formatExpressions'
+	},
+	{
+		kind: 'format_specifier',
+		slot: 'content',
+		projection: 'paramName',
+		legacy: 'contents',
+		recomputed: 'formatExpressions'
+	},
 	// _suite.block: the OPPOSITE-direction correction (kind name → `content`).
 	// _suite's values have storage-kinds {_simple_statements, block, _newline}
 	// (all `parseKind=block`). storageKind→storageName makes this MULTI-storage
@@ -87,7 +111,7 @@ export const ALLOWLISTED_RENAMES: readonly Divergence[] = [
 	{ kind: 'match_block', slot: 'match_arm', projection: 'name', legacy: 'match_arm', recomputed: 'content' },
 	{ kind: 'match_block', slot: 'match_arm', projection: 'configKey', legacy: 'matchArm', recomputed: 'content' },
 	{ kind: 'match_block', slot: 'match_arm', projection: 'propertyName', legacy: 'matchArms', recomputed: 'contents' },
-	{ kind: 'match_block', slot: 'match_arm', projection: 'paramName', legacy: 'matchArms', recomputed: 'contents' },
+	{ kind: 'match_block', slot: 'match_arm', projection: 'paramName', legacy: 'matchArms', recomputed: 'contents' }
 ];
 
 /** A divergence is allowlisted only if it matches an expected rename on ALL fields. */
@@ -98,7 +122,7 @@ function isAllowlisted(d: Divergence): boolean {
 			e.slot === d.slot &&
 			e.projection === d.projection &&
 			e.legacy === d.legacy &&
-			e.recomputed === d.recomputed,
+			e.recomputed === d.recomputed
 	);
 }
 
@@ -163,8 +187,8 @@ export async function run(argv: string[]): Promise<number> {
 		args: argv,
 		options: {
 			grammar: { type: 'string' },
-			first: { type: 'string', default: '10' },
-		},
+			first: { type: 'string', default: '10' }
+		}
 	});
 	const repoRoot = resolve(new URL('../../../..', import.meta.url).pathname);
 	const first = Number.parseInt(values.first ?? '10', 10);
@@ -186,7 +210,7 @@ export async function run(argv: string[]): Promise<number> {
 			process.stdout.write(`${grammar}: ${unexpected.length} unexpected, ${allowlisted} allowlisted\n`);
 			for (const d of unexpected.slice(0, first)) {
 				process.stdout.write(
-					`  ${d.kind}.${d.slot} [${d.projection}] legacy=${JSON.stringify(d.legacy)} recomputed=${JSON.stringify(d.recomputed)}\n`,
+					`  ${d.kind}.${d.slot} [${d.projection}] legacy=${JSON.stringify(d.legacy)} recomputed=${JSON.stringify(d.recomputed)}\n`
 				);
 			}
 			if (unexpected.length > first) {

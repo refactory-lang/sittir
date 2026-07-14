@@ -129,6 +129,10 @@ function assertNativeNodeDataInternal(value: unknown, path: string): asserts val
 }
 
 /**
+ * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
+ * napi-direct native boundary validation. Not yet wired into generated
+ * output; scaffolding only.
+ *
  * Type guard — returns `true` iff `node` passes all runtime invariants
  * required by the native (napi) render boundary.
  *

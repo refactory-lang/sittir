@@ -26,11 +26,6 @@ import type { SCMCapture } from './parse.ts';
 // Public types
 // ---------------------------------------------------------------------------
 
-export interface TriviaRoleMap {
-	grammar: string;
-	triviaKinds: string[];
-}
-
 /**
  * Semantic roles extracted from tree-sitter SCM query captures.
  *
@@ -426,4 +421,3 @@ export function extractGrammarRoles(grammar: string): GrammarRoles {
 		}
 	};
 }
-

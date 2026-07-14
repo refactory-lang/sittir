@@ -41,11 +41,7 @@ export interface InspectRefsOptions {
 // Entry resolution
 // ---------------------------------------------------------------------------
 
-function resolveEntryPath(
-	overridesPath: string,
-	grammarJsPath: string,
-	useBase: boolean,
-): string {
+function resolveEntryPath(overridesPath: string, grammarJsPath: string, useBase: boolean): string {
 	if (!useBase && existsSync(overridesPath)) return overridesPath;
 	return grammarJsPath;
 }
@@ -58,7 +54,7 @@ async function runRefs(args: InspectRefsOptions): Promise<number> {
 	const entryPath = resolveEntryPath(
 		await invoke('resolveGrammar', 'resolveOverridesPath', args.grammar),
 		await invoke('resolveGrammar', 'resolveGrammarJsPath', args.grammar),
-		args.useBase,
+		args.useBase
 	);
 	process.stdout.write(`entry: ${entryPath}\n`);
 
@@ -74,19 +70,13 @@ async function runRefs(args: InspectRefsOptions): Promise<number> {
 
 	process.stdout.write('Named references (parent → fieldName):\n');
 	for (const r of named) {
-		const flags = [r.optional ? '[optional]' : '', r.repeated ? '[repeated]' : '']
-			.filter(Boolean)
-			.join(' ');
-		process.stdout.write(
-			`  ${r.from} → field('${r.fieldName}')${flags ? ' ' + flags : ''}\n`,
-		);
+		const flags = [r.optional ? '[optional]' : '', r.repeated ? '[repeated]' : ''].filter(Boolean).join(' ');
+		process.stdout.write(`  ${r.from} → field('${r.fieldName}')${flags ? ' ' + flags : ''}\n`);
 	}
 
 	process.stdout.write('\nUnnamed references (parent only):\n');
 	for (const r of unnamed) {
-		const flags = [r.optional ? '[optional]' : '', r.repeated ? '[repeated]' : '']
-			.filter(Boolean)
-			.join(' ');
+		const flags = [r.optional ? '[optional]' : '', r.repeated ? '[repeated]' : ''].filter(Boolean).join(' ');
 		process.stdout.write(`  ${r.from}${flags ? ' ' + flags : ''}\n`);
 	}
 
@@ -101,7 +91,7 @@ async function runSuggestions(args: InspectRefsOptions): Promise<number> {
 	const entryPath = resolveEntryPath(
 		await invoke('resolveGrammar', 'resolveOverridesPath', args.grammar),
 		await invoke('resolveGrammar', 'resolveGrammarJsPath', args.grammar),
-		args.useBase,
+		args.useBase
 	);
 	process.stdout.write(`entry: ${entryPath}\n`);
 
@@ -121,7 +111,7 @@ async function runSuggestions(args: InspectRefsOptions): Promise<number> {
 	process.stdout.write(
 		`\n${args.grammar}: ${inferredFields.length} inferred fields, ` +
 			`${promotedRules.length} promoted rules, ` +
-			`${repeatedShapes.length} repeated shapes\n`,
+			`${repeatedShapes.length} repeated shapes\n`
 	);
 
 	// By classification
@@ -139,7 +129,7 @@ async function runSuggestions(args: InspectRefsOptions): Promise<number> {
 		process.stdout.write(
 			`  ${f.kind}: field('${f.fieldName}', $.${f.targetSymbol})  ` +
 				`[${f.confidence}] agreement=${f.agreement.toFixed(2)} n=${f.sampleSize}` +
-				`${f.applied ? '' : ' [held]'}\n`,
+				`${f.applied ? '' : ' [held]'}\n`
 		);
 	}
 	process.stdout.write('\n');
@@ -149,9 +139,7 @@ async function runSuggestions(args: InspectRefsOptions): Promise<number> {
 	n = 0;
 	for (const p of promotedRules) {
 		if (n++ >= args.limit) break;
-		process.stdout.write(
-			`  ${p.kind}: ${p.classification}${p.applied ? '' : ' [held]'}\n`,
-		);
+		process.stdout.write(`  ${p.kind}: ${p.classification}${p.applied ? '' : ' [held]'}\n`);
 	}
 	process.stdout.write('\n');
 
@@ -161,8 +149,7 @@ async function runSuggestions(args: InspectRefsOptions): Promise<number> {
 	for (const s of repeatedShapes) {
 		if (n++ >= args.limit) break;
 		process.stdout.write(
-			`  ${s.suggestedName} [${s.shape}]: kinds=[${s.kinds.join(', ')}]  ` +
-				`parents=[${s.parents.join(', ')}]\n`,
+			`  ${s.suggestedName} [${s.shape}]: kinds=[${s.kinds.join(', ')}]  ` + `parents=[${s.parents.join(', ')}]\n`
 		);
 	}
 

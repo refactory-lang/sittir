@@ -15,7 +15,7 @@ import {
 	NEWLINE,
 	SYMBOL,
 	ALIAS,
-	TOKEN,
+	TOKEN
 } from './rule-types.ts';
 import type { RuleMetadata } from './rule-metadata-brand.ts';
 /**
@@ -227,7 +227,7 @@ export type RuleBase<Phase extends PhaseName = 'normalize'> = {
 			 */
 			readonly aliasedFrom?: string;
 			readonly aliasNamed?: boolean;
-	  }
+		}
 	: {});
 
 /**
@@ -321,19 +321,19 @@ export type SimplifiedRule = Rule<'simplify'> & {
 export type SeqRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof SEQ;
 	readonly members: Rule<T>[];
-}
+};
 
 export type OptionalRule<T extends PhaseName = 'link'> = T extends WrapperPhase
 	? RuleBase<T> & {
 			readonly type: typeof OPTIONAL;
 			readonly content: Rule<T>;
-	  }
+		}
 	: never;
 
 export type ChoiceRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof CHOICE;
 	readonly members: Rule<T>[];
-}
+};
 
 /**
  * A separator flank's (`leading`/`trailing`) presence state: `'mandatory'`
@@ -360,19 +360,19 @@ export type RepeatRule<T extends PhaseName = 'link'> = T extends 'link'
 				readonly trailing?: SeparatorFlankMode;
 				readonly leading?: SeparatorFlankMode;
 			};
-	  }
+		}
 	: T extends 'evaluate'
-	? RuleBase<T> & {
-			readonly type: typeof REPEAT;
-			readonly content: Rule<T>;
-			/** Evaluate-phase separators are always literal strings,
-			 *  reconstructed fresh by link's lift — not carried through, so
-			 *  this stays the original sibling shape (unchanged by PR-S). */
-			readonly separator?: string;
-			readonly trailing?: SeparatorFlankMode;
-			readonly leading?: SeparatorFlankMode;
-	  }
-	: never;
+		? RuleBase<T> & {
+				readonly type: typeof REPEAT;
+				readonly content: Rule<T>;
+				/** Evaluate-phase separators are always literal strings,
+				 *  reconstructed fresh by link's lift — not carried through, so
+				 *  this stays the original sibling shape (unchanged by PR-S). */
+				readonly separator?: string;
+				readonly trailing?: SeparatorFlankMode;
+				readonly leading?: SeparatorFlankMode;
+			}
+		: never;
 
 export type Repeat1Rule<T extends PhaseName = 'link'> = T extends 'link'
 	? RuleBase<T> & {
@@ -387,19 +387,19 @@ export type Repeat1Rule<T extends PhaseName = 'link'> = T extends 'link'
 				readonly trailing?: SeparatorFlankMode;
 				readonly leading?: SeparatorFlankMode;
 			};
-	  }
+		}
 	: T extends 'evaluate'
-	? RuleBase<T> & {
-			readonly type: typeof REPEAT1;
-			readonly content: Rule<T>;
-			/** Evaluate-phase separators are always literal strings,
-			 *  reconstructed fresh by link's lift — not carried through, so
-			 *  this stays the original sibling shape (unchanged by PR-S). */
-			readonly separator?: string;
-			readonly trailing?: SeparatorFlankMode;
-			readonly leading?: SeparatorFlankMode;
-	  }
-	: never;
+		? RuleBase<T> & {
+				readonly type: typeof REPEAT1;
+				readonly content: Rule<T>;
+				/** Evaluate-phase separators are always literal strings,
+				 *  reconstructed fresh by link's lift — not carried through, so
+				 *  this stays the original sibling shape (unchanged by PR-S). */
+				readonly separator?: string;
+				readonly trailing?: SeparatorFlankMode;
+				readonly leading?: SeparatorFlankMode;
+			}
+		: never;
 
 // ---------------------------------------------------------------------------
 // Named patterns
@@ -436,15 +436,14 @@ export type FieldRule<T extends PhaseName = 'link'> = T extends WrapperPhase
 			 * `resolvePatch` — if this shows up anywhere else, it's a bug.
 			 */
 			readonly _needsContent?: boolean;
-	  }
+		}
 	: never;
 
 export type VariantRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof VARIANT;
 	readonly name: string;
 	readonly content: Rule<T>;
-}
-
+};
 
 /**
  * (debt: source-homonym resolution, decision 6) `RuleSource` ('grammar' |
@@ -519,13 +518,13 @@ export type SupertypeRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof SUPERTYPE;
 	readonly name: string;
 	readonly subtypes: string[];
-}
+};
 
 export type GroupRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof GROUP;
 	readonly name: string;
 	readonly content: Rule<T>;
-}
+};
 
 // ---------------------------------------------------------------------------
 // Terminals
@@ -534,12 +533,12 @@ export type GroupRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 export type StringRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof STRING;
 	readonly value: string;
-}
+};
 
 export type PatternRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof PATTERN;
 	readonly value: string;
-}
+};
 
 // ---------------------------------------------------------------------------
 // Structural whitespace
@@ -547,15 +546,15 @@ export type PatternRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 
 export type IndentRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof INDENT;
-}
+};
 
 export type DedentRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof DEDENT;
-}
+};
 
 export type NewlineRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof NEWLINE;
-}
+};
 
 // ---------------------------------------------------------------------------
 // References. Symbol refs persist through EVERY phase (wrapper-deletion
@@ -589,7 +588,7 @@ export type SymbolRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	 * Used by the wrap emitter for alias-target rewrites.
 	 */
 	readonly aliasedFrom?: string;
-}
+};
 
 export type AliasRule<Phase extends PhaseName = 'link'> = Phase extends WrapperPhase
 	? RuleBase<Phase> & {
@@ -597,7 +596,7 @@ export type AliasRule<Phase extends PhaseName = 'link'> = Phase extends WrapperP
 			readonly content: Rule<Phase>;
 			readonly named: boolean;
 			readonly value: string;
-	  }
+		}
 	: never;
 
 export type TokenRule<Phase extends PhaseName = 'link'> = Phase extends WrapperPhase
@@ -605,7 +604,7 @@ export type TokenRule<Phase extends PhaseName = 'link'> = Phase extends WrapperP
 			readonly type: typeof TOKEN;
 			readonly content: Rule<Phase>;
 			readonly immediate: boolean;
-	  }
+		}
 	: never;
 
 // ---------------------------------------------------------------------------
@@ -742,7 +741,10 @@ function replaceAtPathRec(rule: AnyRule, segments: readonly string[], depth: num
 		case ALIAS:
 		case VARIANT:
 		case GROUP:
-			return { ...rule, content: replaceAtPathRec((rule as { content: AnyRule }).content, segments, depth + 1, replacement) } as AnyRule;
+			return {
+				...rule,
+				content: replaceAtPathRec((rule as { content: AnyRule }).content, segments, depth + 1, replacement)
+			} as AnyRule;
 		default:
 			throw new Error(`replaceAtPath: cannot descend into '${rule.type}' at segment ${depth}`);
 	}

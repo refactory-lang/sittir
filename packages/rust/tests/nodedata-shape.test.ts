@@ -14,11 +14,6 @@ import { TSKindId } from '../src/types.js';
 
 // ---------- helpers ----------
 
-/** Get all own keys including non-enumerable. */
-function allOwnKeys(obj: object): string[] {
-	return Object.getOwnPropertyNames(obj);
-}
-
 /** True if `key` is a non-enumerable own property. */
 function isNonEnumerable(obj: object, key: string): boolean {
 	const desc = Object.getOwnPropertyDescriptor(obj, key);

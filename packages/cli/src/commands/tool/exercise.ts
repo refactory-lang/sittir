@@ -9,15 +9,17 @@ export const exercise: CommandModule = {
 		withGrammar(defineCommand(program, exercise))
 			.option('-k, --kinds <kind,...>', 'Comma-separated kind list to exercise')
 			.action(async (opts: { grammar?: string; kinds?: string }) => {
-				const kinds =
-					opts.kinds
-						? opts.kinds.split(',').map((k) => k.trim()).filter((k) => k.length > 0)
-						: [];
+				const kinds = opts.kinds
+					? opts.kinds
+							.split(',')
+							.map((k) => k.trim())
+							.filter((k) => k.length > 0)
+					: [];
 				const code = await runExercise({
 					grammar: opts.grammar ?? 'rust',
-					kinds,
+					kinds
 				});
 				if (code !== 0) process.exitCode = code;
 			});
-	},
+	}
 };

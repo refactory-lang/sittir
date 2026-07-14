@@ -104,9 +104,7 @@ interface DiffRun {
 }
 
 async function runSingle(grammar: Grammar, mode: Exclude<Mode, 'diff'>): Promise<SingleRun> {
-	const { validateReadRenderParse } = await import(
-		'./read-render-parse.ts'
-	);
+	const { validateReadRenderParse } = await import('./read-render-parse.ts');
 	const result = await validateReadRenderParse(grammar, defaultTemplatesPath(grammar), {
 		backend: 'native',
 		recursive: mode === 'deep'
@@ -163,13 +161,29 @@ async function runGrammar(opts: RunOptions): Promise<void> {
 	if (opts.mode === 'diff') {
 		const r = await runDiff(opts.grammar);
 		if (opts.format === 'json') {
-			console.log(JSON.stringify({
-				grammar: r.grammar,
-				mode: 'diff',
-				deep: { pass: r.deep.pass, total: r.deep.total, astMatchPass: r.deep.astMatchPass, mismatches: r.deep.mismatches.length },
-				shallow: { pass: r.shallow.pass, total: r.shallow.total, astMatchPass: r.shallow.astMatchPass, mismatches: r.shallow.mismatches.length },
-				deepOnly: r.deepOnly
-			}, null, 2));
+			console.log(
+				JSON.stringify(
+					{
+						grammar: r.grammar,
+						mode: 'diff',
+						deep: {
+							pass: r.deep.pass,
+							total: r.deep.total,
+							astMatchPass: r.deep.astMatchPass,
+							mismatches: r.deep.mismatches.length
+						},
+						shallow: {
+							pass: r.shallow.pass,
+							total: r.shallow.total,
+							astMatchPass: r.shallow.astMatchPass,
+							mismatches: r.shallow.mismatches.length
+						},
+						deepOnly: r.deepOnly
+					},
+					null,
+					2
+				)
+			);
 			return;
 		}
 		console.log(
@@ -218,9 +232,7 @@ export async function run(opts: DumpAstMismatchesOptions): Promise<number> {
 		process.stderr.write(`invalid --format '${format}', expected one of: list, json\n`);
 		return 2;
 	}
-	const grammars: readonly Grammar[] = opts.allGrammars
-		? GRAMMARS
-		: [opts.grammar as Grammar];
+	const grammars: readonly Grammar[] = opts.allGrammars ? GRAMMARS : [opts.grammar as Grammar];
 	for (const grammar of grammars) {
 		if (grammars.length > 1) console.log(`\n# === ${grammar} ===`);
 		await runGrammar({

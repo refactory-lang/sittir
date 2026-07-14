@@ -10,13 +10,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { createRequire } from 'node:module';
 import { loadWebTreeSitter } from '../engine-loader.ts';
-import {
-	KindPresenceFlag,
-	type GeneratedMetadata,
-	type GeneratedMetadataCatalog,
-	type KindParserMetadata,
-	type RuleCatalog
-} from './types.ts';
+import { type KindParserMetadata } from './types.ts';
 import type * as TS from 'web-tree-sitter';
 
 /**
@@ -105,9 +99,7 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 	};
 }
 
-export function collectGeneratedKindEntries(
-	tables: GeneratedIdTables | undefined
-): readonly GeneratedKindEntry[] {
+export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefined): readonly GeneratedKindEntry[] {
 	if (!tables?.kindIds) return [];
 	return toEntries(tables.kindIds)
 		.filter(([, entry]) => entry.id !== undefined)
@@ -171,14 +163,6 @@ function collectFieldIds(language: TreeSitterLanguageMetadata): Map<string, numb
 	}
 
 	return result;
-}
-
-function collectEdgeNames(ruleCatalog: RuleCatalog): Set<string> {
-	const names = new Set<string>();
-	for (const classification of ruleCatalog.classificationById.values()) {
-		if (classification.edgeName) names.add(classification.edgeName);
-	}
-	return names;
 }
 
 function toEntries(input: GeneratedIdTable | undefined): readonly (readonly [string, GeneratedIdEntry])[] {
@@ -338,11 +322,7 @@ function createParserMetadata(
 	};
 }
 
-function disambiguateAnonKey(
-	baseKey: string,
-	existing: ReadonlyMap<string, GeneratedIdEntry>,
-	id: number
-): string {
+function disambiguateAnonKey(baseKey: string, existing: ReadonlyMap<string, GeneratedIdEntry>, id: number): string {
 	const preferred = `anon_${baseKey}`;
 	if (!existing.has(preferred)) return preferred;
 	return `${preferred}_${id}`;

@@ -80,13 +80,37 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 			// mint actually fires.
 			const original = g.seq(
 				g.choice(
-					{ type: 'SEQ', members: [{ type: 'STRING', value: '=' }, { type: 'SYMBOL', name: 'A' }] } as any,
-					{ type: 'SEQ', members: [{ type: 'STRING', value: ':' }, { type: 'SYMBOL', name: 'B' }] } as any
+					{
+						type: 'SEQ',
+						members: [
+							{ type: 'STRING', value: '=' },
+							{ type: 'SYMBOL', name: 'A' }
+						]
+					} as any,
+					{
+						type: 'SEQ',
+						members: [
+							{ type: 'STRING', value: ':' },
+							{ type: 'SYMBOL', name: 'B' }
+						]
+					} as any
 				),
 				{ type: 'STRING', value: '|' } as any,
 				g.choice(
-					{ type: 'SEQ', members: [{ type: 'STRING', value: '+' }, { type: 'SYMBOL', name: 'C' }] } as any,
-					{ type: 'SEQ', members: [{ type: 'STRING', value: '-' }, { type: 'SYMBOL', name: 'D' }] } as any
+					{
+						type: 'SEQ',
+						members: [
+							{ type: 'STRING', value: '+' },
+							{ type: 'SYMBOL', name: 'C' }
+						]
+					} as any,
+					{
+						type: 'SEQ',
+						members: [
+							{ type: 'STRING', value: '-' },
+							{ type: 'SYMBOL', name: 'D' }
+						]
+					} as any
 				)
 			);
 			transform(original, {

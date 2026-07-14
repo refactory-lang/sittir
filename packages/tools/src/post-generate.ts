@@ -15,7 +15,7 @@
  * `tools → codegen` declaration edge.
  */
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
 import { invoke, type NodeMap, type RoundTripDiagnostic } from './codegen-surface.ts';
@@ -56,9 +56,8 @@ function writeFile(path: string, content: string): void {
  * than emitting an insufficient fixture set.
  */
 export async function emitParityFixtures(grammar: string, templatesPath: string): Promise<void> {
-	const { extractParityFixtures, serializeFixtures, fixturesOutputPath } = await import(
-		'./validate/parity-fixtures.ts'
-	);
+	const { extractParityFixtures, serializeFixtures, fixturesOutputPath } =
+		await import('./validate/parity-fixtures.ts');
 	const extracted = await extractParityFixtures(grammar, templatesPath);
 	const fxPath = fixturesOutputPath(grammar);
 	writeFile(fxPath, serializeFixtures(extracted.fixtures));
@@ -80,22 +79,13 @@ export async function emitParityFixtures(grammar: string, templatesPath: string)
  * set `process.exitCode`. Reaches codegen's `emitSuggested` emitter via the
  * dynamic codegen-surface (it consumes validation results + the NodeMap).
  */
-export async function runRoundtripProbes(
-	grammar: string,
-	templatesDir: string,
-	nodeMap: NodeMap
-): Promise<number> {
+export async function runRoundtripProbes(grammar: string, templatesDir: string, nodeMap: NodeMap): Promise<number> {
 	console.log('\nRunning validator probes...');
 
-	const { validateReadProjection, formatReadProjectionReport } = await import(
-		'./validate/read-projection.ts'
-	);
-	const { validateReadRenderParse, formatReadRenderParseReport } = await import(
-		'./validate/read-render-parse.ts'
-	);
-	const { validateFactoryRenderParse, formatFactoryRenderParseReport } = await import(
-		'./validate/factory-render-parse.ts'
-	);
+	const { validateReadProjection, formatReadProjectionReport } = await import('./validate/read-projection.ts');
+	const { validateReadRenderParse, formatReadRenderParseReport } = await import('./validate/read-render-parse.ts');
+	const { validateFactoryRenderParse, formatFactoryRenderParseReport } =
+		await import('./validate/factory-render-parse.ts');
 	const { validateFrom, formatFromReport } = await import('./validate/from.ts');
 
 	// read projection (structural) — upstream of render/factory. A regression
@@ -178,17 +168,22 @@ export async function runRoundtripProbes(
 		});
 	}
 	if (diagnostics.length > 0) {
-		const suggestedWithFailures = await invoke('suggested', 'emitSuggested', {
+		const suggestedWithFailures: string | undefined = await invoke('suggested', 'emitSuggested', {
 			grammar,
 			nodeMap,
 			roundTripFailures: diagnostics
 		});
 		// overrides.suggested.ts lives at the package root, next to overrides.ts —
-		// i.e. the parent of the templates directory.
-		writeFile(join(dirname(templatesDir), 'overrides.suggested.ts'), suggestedWithFailures);
-		console.log(
-			`  → overrides.suggested.ts updated with ${diagnostics.length} render-parse diagnostic(s)`
-		);
+		// i.e. the parent of the templates directory. `undefined` means the
+		// emitter has nothing to suggest (emission disabled) — skip the write
+		// and clear any stale file from a prior run.
+		const suggestedPath = join(dirname(templatesDir), 'overrides.suggested.ts');
+		if (suggestedWithFailures !== undefined) {
+			writeFile(suggestedPath, suggestedWithFailures);
+			console.log(`  → overrides.suggested.ts updated with ${diagnostics.length} render-parse diagnostic(s)`);
+		} else if (existsSync(suggestedPath)) {
+			rmSync(suggestedPath);
+		}
 	}
 
 	return readRenderParseResult.fail + factoryRenderParseResult.fail + fromResult.fail;

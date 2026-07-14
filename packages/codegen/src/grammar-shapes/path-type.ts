@@ -1,15 +1,22 @@
 /**
- * path-type.ts — type-level transform PATH addressing over a (post-Enrich)
- * rule shape. Mirrors `dsl/transform/transform-path.ts`'s navigation:
+ * path-type.ts — type-level FIRST-SEGMENT addressing for transform PATH
+ * keys over a (post-Enrich) rule shape.
  *
- *   - SEQ / CHOICE  : a numeric segment indexes `members[N]` (consumes 1).
- *   - PREC*         : TRANSPARENT — descend into `content`, DO NOT consume a
- *                     segment (path skips prec wrappers).
- *   - FIELD/ALIAS/REPEAT/REPEAT1/TOKEN/IMMEDIATE_TOKEN : single-content
- *                     wrappers — index 0 (or -1) descends into `content` and
- *                     CONSUMES the segment. FIELD is NOT transparent (it is a
- *                     real level — consistent with enrich INSERTING fields).
- *   - leaves (SYMBOL/STRING/PATTERN/BLANK) : no descent.
+ * Only the first path segment is resolved precisely (`TopLevelKeys`), after
+ * transparently peeling PREC wrappers (PREC does not consume a segment):
+ *
+ *   - SEQ / CHOICE  : the segment must be a valid `members` index.
+ *   - single-content wrappers (FIELD/ALIAS/REPEAT/REPEAT1/TOKEN/
+ *     IMMEDIATE_TOKEN) : the only valid segment is `'0'`.
+ *   - leaves (SYMBOL/STRING/PATTERN/BLANK) : no valid segment (`never`).
+ *
+ * Everything past the first segment (`PathKey`'s `/${string}` tail) is
+ * free-form and unchecked — deep paths are accepted permissively rather
+ * than walked and bounds-checked (soundness: never REJECT a deep path we
+ * can't prove invalid). The full recursive path-to-rule resolver this
+ * module used to expose (`RuleAtPath`) was deleted as dead code (Track 1
+ * sweep, commit `662fde555`); this module now only powers segment-1
+ * autocomplete/validation, not full path resolution.
  *
  * Paths are `/`-joined segments, e.g. `'4/0'`, `'1/0'`. We model numeric
  * segments only (the dominant authoring form). Wildcard `_`, kind-match
@@ -17,13 +24,12 @@
  * left as `string`-typed escape hatches here (see PathKey below) — typing
  * them precisely is future work and degrading to `string` is sound.
  *
- * DEPTH / PERF (the stated risk): this resolves a CONCRETE path string to
- * the rule at that position (`RuleAtPath`) — depth bounded by the path
- * length, NOT by enumerating all paths (no `type-fest` `Paths` over the
- * 182-rule registry, which would blow up). SYMBOL stays a lazy name-tagged
- * leaf: we do NOT follow symbols cross-rule (authored paths address within
- * one rule's inline nesting). First-segment autocomplete (`TopLevelKeys`) is
- * a cheap hand-rolled union over the top-level members tuple.
+ * PERF (the stated risk): First-segment autocomplete (`TopLevelKeys`) is a
+ * cheap hand-rolled union over the top-level members tuple, NOT a full path
+ * walk over all paths (no `type-fest` `Paths` over the 182-rule registry,
+ * which would blow up). SYMBOL stays a lazy name-tagged leaf: we do NOT
+ * follow symbols cross-rule (authored paths address within one rule's
+ * inline nesting).
  */
 
 import type { GrammarRule, SeqRule, ChoiceRule, PrecRuleUnion, SingleContentWrapper } from './grammar-json.ts';
@@ -35,64 +41,12 @@ import type { AliasPlaceholder } from '../dsl/primitives/alias.ts';
 import type { FieldLike } from '../types/runtime-shapes.ts';
 
 // ---------------------------------------------------------------------------
-// Split a `/`-joined path into a segment tuple.
-// ---------------------------------------------------------------------------
-
-type Split<S extends string> = S extends `${infer Head}/${infer Tail}` ? [Head, ...Split<Tail>] : [S];
-
-// ---------------------------------------------------------------------------
 // Resolve a single positional index against a rule's children, after
 // transparently peeling PREC wrappers.
 // ---------------------------------------------------------------------------
 
 /** Peel all leading PREC wrappers (transparent) to the structural rule. */
 type PeelPrec<N extends GrammarRule> = N extends PrecRuleUnion ? PeelPrec<N['content']> : N;
-
-/** Parse a numeric-literal segment into a number; else never. */
-type ToIndex<S extends string> = S extends `${infer N extends number}` ? N : never;
-
-/**
- * The child rule reached by index `I` at rule `N` (after PREC peel):
- *   - container: members[I]
- *   - single-content wrapper: content (I must be 0 / -1; we accept any
- *     numeric for ergonomics since wrappers have one slot)
- */
-type ChildAt<N extends GrammarRule, I extends number> = PeelPrec<N> extends infer P
-	? P extends SeqRule | ChoiceRule
-		? I extends keyof P['members']
-			? P['members'][I] extends GrammarRule
-				? P['members'][I]
-				: never
-			: never
-		: P extends SingleContentWrapper
-			? P['content']
-			: never
-	: never;
-
-/**
- * Walk a tuple of (string) segments down the rule tree. Each segment is a
- * numeric index. Returns the rule at the addressed position, or `never` if
- * the path runs off a leaf / out of bounds.
- */
-type WalkSegments<N extends GrammarRule, Segs extends readonly string[]> = Segs extends readonly [
-	infer Head extends string,
-	...infer Rest extends string[]
-]
-	? ToIndex<Head> extends infer I
-		? I extends number
-			? ChildAt<N, I> extends infer Child
-				? Child extends GrammarRule
-					? Rest extends readonly []
-						? Child
-						: WalkSegments<Child, Rest>
-					: never
-				: never
-			: never // non-numeric segment -> unresolved
-		: never
-	: N;
-
-/** The rule a concrete path string resolves to within rule `N`. */
-export type RuleAtPath<N extends GrammarRule, P extends string> = WalkSegments<N, Split<P>>;
 
 // ---------------------------------------------------------------------------
 // First-segment autocomplete (shallow). The cheap, perf-safe layer: the
@@ -103,13 +57,14 @@ export type RuleAtPath<N extends GrammarRule, P extends string> = WalkSegments<N
 type IndicesOf<M extends readonly unknown[]> = Extract<keyof M, `${number}`>;
 
 /** Valid first-segment index strings for rule `N` (top-level). */
-export type TopLevelKeys<N extends GrammarRule> = PeelPrec<N> extends infer P
-	? P extends SeqRule | ChoiceRule
-		? IndicesOf<P['members']>
-		: P extends SingleContentWrapper
-			? '0'
-			: never
-	: never;
+export type TopLevelKeys<N extends GrammarRule> =
+	PeelPrec<N> extends infer P
+		? P extends SeqRule | ChoiceRule
+			? IndicesOf<P['members']>
+			: P extends SingleContentWrapper
+				? '0'
+				: never
+		: never;
 
 // ---------------------------------------------------------------------------
 // PathKey — the type a transform patch-object KEY should have for rule `N`.
@@ -175,12 +130,7 @@ export type PathKey<N extends GrammarRule> =
  *  has no effect on the `unknown`-typed alias() expression. Reported as a
  *  residual — NOT papered with a `unknown`/`any` union (that would collapse
  *  the whole value type and accept anything). */
-export type TransformPatchValue =
-	| RuleOrLiteral
-	| FieldPlaceholder
-	| FieldLike
-	| VariantPlaceholder
-	| AliasPlaceholder;
+export type TransformPatchValue = RuleOrLiteral | FieldPlaceholder | FieldLike | VariantPlaceholder | AliasPlaceholder;
 
 /** A single patch-map for one rule: path-key → patch value. */
 export type TransformPatchMap<Keys extends string> = Partial<Record<Keys, TransformPatchValue>>;

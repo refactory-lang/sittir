@@ -129,4 +129,3 @@ export async function run(opts: ListKindsOptions): Promise<number> {
 
 	return 0;
 }
-

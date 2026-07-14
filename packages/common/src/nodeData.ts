@@ -28,6 +28,10 @@ import type { AnyNodeData } from '@sittir/types';
 // ---------------------------------------------------------------------------
 
 /**
+ * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
+ * frozen NodeData / $with update namespace. Not yet wired into generated
+ * output; scaffolding only.
+ *
  * Freeze a NodeData object and all its array-valued `_*` storage slots.
  *
  * @param node - The mutable node object to freeze.
@@ -58,6 +62,10 @@ export function freezeNodeData<T extends object>(node: T): Readonly<T> & AnyNode
 // ---------------------------------------------------------------------------
 
 /**
+ * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
+ * frozen NodeData / $with update namespace. Not yet wired into generated
+ * output; scaffolding only.
+ *
  * Build the `$with` non-enumerable namespace for a NodeData object.
  *
  * Each entry in `slotKeys` gets a `$with.<slotKey>(v)` updater that calls

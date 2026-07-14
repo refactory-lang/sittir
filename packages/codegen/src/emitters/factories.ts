@@ -16,7 +16,12 @@ import {
 	hasCatalogEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
-import { type AssembledNode, type AssembledNonterminal, type AssembledSeparatedList, AssembledGroup } from '../compiler/model/node-map.ts';
+import {
+	type AssembledNode,
+	type AssembledNonterminal,
+	type AssembledSeparatedList,
+	AssembledGroup
+} from '../compiler/model/node-map.ts';
 import { isNodeRef, isTerminalValue, isUnresolvedRef, allSlotsOf } from '../compiler/model/node-map.ts';
 import {
 	stampExpressionFor,
@@ -72,20 +77,8 @@ export interface EmitFactoriesConfig {
 	synthesizedKinds?: ReadonlySet<string>;
 }
 
-/**
- * Standalone entry point — preserved for backwards compatibility (tests,
- * CLI callers). Delegates to the emitter protocol (init → loop → finalize).
- */
-export function emitFactories(config: EmitFactoriesConfig): string {
-	const factoryEmitter = new FactoryEmitter(config);
-	for (const [kind, node] of config.nodeMap.nodes) {
-		factoryEmitter.dispatchNode(kind, node);
-	}
-	return factoryEmitter.finalize();
-}
-
 // ---------------------------------------------------------------------------
-// emitFactories helpers
+// FactoryEmitter helpers
 // ---------------------------------------------------------------------------
 
 /**
@@ -113,10 +106,7 @@ function collectUsesNonEmptyArray(nodeMap: NodeMap): boolean {
 	return false;
 }
 
-function collectStorageCoercionImports(
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): string[] {
+function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
 	const imports = new Set<string>();
 	for (const node of nodeMap.nodes.values()) {
 		for (const slot of allSlotsOf(node)) {
@@ -139,10 +129,7 @@ function collectStorageCoercionImports(
 	return [...imports].sort();
 }
 
-function collectUsesKindIdFromName(
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): boolean {
+function collectUsesKindIdFromName(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): boolean {
 	if (!kindEntries) return false;
 	for (const node of nodeMap.nodes.values()) {
 		for (const slot of allSlotsOf(node)) {
@@ -155,9 +142,14 @@ function collectUsesKindIdFromName(
 }
 
 /**
- * The old `_setField`, `_setFields`, `_branchMethods`, and
- * `_leafMethods` helpers are replaced by the `withMethods`/`freezeNodeData`/
- * `buildWithNamespace` runtime helpers from `@sittir/core`. Nothing to emit here.
+ * The old `_setField`, `_setFields`, `_branchMethods`, and `_leafMethods`
+ * helpers are replaced by `withMethods` — emitted per-grammar in each
+ * package's own `utils.ts` as a facade over `withMethods` from
+ * `@sittir/common/utils` (not `@sittir/legacy-core`; see
+ * `.claude/codegen-conventions.md` rule 3). `freezeNodeData`/
+ * `buildWithNamespace` in `@sittir/legacy-core/src/nodeData.ts` are
+ * `@forFutureUse` scaffolding, not currently wired into generated output.
+ * Nothing to emit here.
  *
  * @returns Empty array — kept for call-site symmetry with `emitNonEmptyAssertHelper`.
  */
@@ -189,7 +181,6 @@ function emitNonEmptyAssertHelper(): string[] {
 		'}'
 	];
 }
-
 
 /**
  * Compile leaf-pattern `RegExp` constants and push their declarations into `lines`.
@@ -411,16 +402,6 @@ function emitFactoryMapConst(mapEntries: MapEntry[]): string[] {
  * instance-local instead of living in module globals.
  */
 export namespace factory {
-	/** Back-compat no-op; collection state now lives on emitter instances. */
-	export function init(): void {
-		// No-op.
-	}
-
-	/** Back-compat stub; callers now own the output buffer directly. */
-	export function collect(): string[] {
-		return [];
-	}
-
 	/**
 	 * Emit a leaf factory (pattern, keyword, enum).
 	 */
@@ -1336,7 +1317,8 @@ function emitSeparatedListFactory(
 	// in the catalog (mirrors `childElementType`/`fieldElementType`'s own
 	// zero-parts fallback) — an uninhabited type communicates "no valid
 	// choice exists" rather than emitting an invalid empty union.
-	const separatorKindUnion = candidateKindNames.length > 0 ? candidateKindNames.map((k) => JSON.stringify(k)).join(' | ') : 'never';
+	const separatorKindUnion =
+		candidateKindNames.length > 0 ? candidateKindNames.map((k) => JSON.stringify(k)).join(' | ') : 'never';
 
 	const optionsTypeParts: string[] = [];
 	if (hasSeparatorKindOption) optionsTypeParts.push(`separatorKind?: ${separatorKindUnion}`);
@@ -1356,7 +1338,9 @@ function emitSeparatedListFactory(
 	lines.push('  const _content = elements;');
 	if (hasSeparatorKindOption) {
 		if (candidateKindNames.length > 0) {
-			const arms = candidateKindNames.map((k) => `${JSON.stringify(k)}: ${kindDiscriminantExpr(k, nodeMap, kindEntries)}`).join(', ');
+			const arms = candidateKindNames
+				.map((k) => `${JSON.stringify(k)}: ${kindDiscriminantExpr(k, nodeMap, kindEntries)}`)
+				.join(', ');
 			lines.push(
 				`  const _separator_kind = ({ ${arms} } as Record<string, number>)[options.separatorKind ?? ${JSON.stringify(candidateKindNames[0])}];`
 			);
@@ -1582,7 +1566,9 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		const utilImports = ['FluentNode'];
 		if (usesNonEmptyArray) utilImports.push('NonEmptyArray');
 		lines.push(`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`);
-		lines.push(`import { ${['withMethods', 'methodsEngine', ...storageCoercionImports].join(', ')} } from './utils.js';`);
+		lines.push(
+			`import { ${['withMethods', 'methodsEngine', ...storageCoercionImports].join(', ')} } from './utils.js';`
+		);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
 		lines.push(...emitNonEmptyAssertHelper());

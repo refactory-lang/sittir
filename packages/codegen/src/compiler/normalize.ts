@@ -12,11 +12,28 @@
  * re-collapse.
  */
 
-import { CHOICE, DEDENT, FIELD, GROUP, INDENT, NEWLINE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, TOKEN, VARIANT } from '../types/rule-types.ts'; // @rule-type-consts
+import {
+	ALIAS,
+	CHOICE,
+	DEDENT,
+	FIELD,
+	GROUP,
+	INDENT,
+	NEWLINE,
+	OPTIONAL,
+	PATTERN,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SUPERTYPE,
+	SYMBOL,
+	TOKEN,
+	VARIANT
+} from '../types/rule-types.ts'; // @rule-type-consts
 import type { Rule, RuleBase, SeqRule } from '../types/rule.ts';
 import { isChoice, isEnumChoiceRule } from '../types/rule.ts';
-import { isTerminalShape } from './link.ts';
-import type { LinkedGrammar, NormalizedGrammar, SimplifiedGrammar } from './types.ts';
+import type { LinkedGrammar, NormalizedGrammar } from './types.ts';
 import { computeSimplifiedRules, resetSlotGroupingDiagnostics, attributeBuilder, SimplifyCtx } from './simplify.ts';
 import { resolveGroupOrMultiInlineTarget, combineMultiplicity, type LeafMultiplicity } from '../dsl/rule-transforms.ts';
 import { applyWrapperDeletion } from './wrapper-deletion.ts';
@@ -387,10 +404,7 @@ function applyNormalizationPasses(
 	return rules;
 }
 
-export function normalizeGrammar(
-	linked: LinkedGrammar,
-	ctx?: NormalizeCtx
-): SimplifiedGrammar {
+export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): SimplifiedGrammar {
 	// Read phase-shared state from ctx; fall back to empty defaults when called
 	// without ctx (e.g. existing tests that only pass `linked`).
 	const inlineKinds: ReadonlySet<string> = ctx?.inlineKinds ?? new Set();
@@ -464,21 +478,43 @@ export function normalizeGrammar(
 		visibleAliasTargets: linked.visibleAliasTargets,
 		refineForms: linked.refineForms
 	};
-	const simplifiedRules = computeSimplifiedRules(new SimplifyCtx({ grammar: normalizedGrammarView, diagnostics: ctx?.diagnostics ?? new DiagnosticSink(), wordMatcher: ctx?.wordMatcher, inlineKinds, polymorphSkipExtra: variantSkip, builder: attributeBuilder }));
+	const simplifiedRules = computeSimplifiedRules(
+		new SimplifyCtx({
+			grammar: normalizedGrammarView,
+			diagnostics: ctx?.diagnostics ?? new DiagnosticSink(),
+			wordMatcher: ctx?.wordMatcher,
+			inlineKinds,
+			polymorphSkipExtra: variantSkip,
+			builder: attributeBuilder
+		})
+	);
 
 	// Alias-body kinds: thread the alias-target bodies through the same pipeline
 	// so normalizedRules / simplifiedRules cover them too. Eliminates the
 	// assemble.ts simplifyRule(assemblyRule) fallback (PR1's TODO PR2).
 	if (linked.topLevelAliasBodies) {
 		const aliasBodiesRaw: Record<string, Rule<'link'>> = Object.fromEntries(linked.topLevelAliasBodies);
-		const aliasBodiesNormalized = applyNormalizationPasses(aliasBodiesRaw, ctx, preserveKinds.size > 0 ? preserveKinds : undefined);
+		const aliasBodiesNormalized = applyNormalizationPasses(
+			aliasBodiesRaw,
+			ctx,
+			preserveKinds.size > 0 ? preserveKinds : undefined
+		);
 		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesNormalized);
 		const aliasBodiesGrammarView: NormalizedGrammar = {
 			...normalizedGrammarView,
 			rules: aliasBodiesRender,
 			linkRules: aliasBodiesNormalized
 		};
-		const aliasBodiesSimplified = computeSimplifiedRules(new SimplifyCtx({ grammar: aliasBodiesGrammarView, diagnostics: ctx?.diagnostics ?? new DiagnosticSink(), wordMatcher: ctx?.wordMatcher, inlineKinds, polymorphSkipExtra: variantSkip, builder: attributeBuilder }));
+		const aliasBodiesSimplified = computeSimplifiedRules(
+			new SimplifyCtx({
+				grammar: aliasBodiesGrammarView,
+				diagnostics: ctx?.diagnostics ?? new DiagnosticSink(),
+				wordMatcher: ctx?.wordMatcher,
+				inlineKinds,
+				polymorphSkipExtra: variantSkip,
+				builder: attributeBuilder
+			})
+		);
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
 			normalizedRules[kind] = rule;
 		}
@@ -673,10 +709,7 @@ export function factorChoiceBranches(rule: Rule<'link'>, _ctx?: NormalizeCtx): R
 			// Spread `rule` (the factored choice) to preserve separator/multiplicity/
 			// etc., then override only `members`. When there's exactly one branch,
 			// skip the choice wrapper (shape is already correct).
-			const core: Rule<'link'> =
-				nonEmpty.length === 1
-					? nonEmpty[0]!
-					: { ...rule, type: CHOICE, members: nonEmpty };
+			const core: Rule<'link'> = nonEmpty.length === 1 ? nonEmpty[0]! : { ...rule, type: CHOICE, members: nonEmpty };
 			const inner: Rule<'link'> = hasEmpty ? { type: OPTIONAL, content: core } : core;
 			const outerMembers: Rule<'link'>[] = [...prefix, inner, ...suffix];
 			return outerMembers.length === 1 ? outerMembers[0]! : { type: SEQ, members: outerMembers };
@@ -758,7 +791,11 @@ export function dedupeSeqMembers(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<
  * produce the same downstream shape whether the helper exists as
  * its own entry or as an expansion in its parent.
  */
-function inlineSingleUseHidden(rules: Record<string, Rule<'link'>>, ctx?: NormalizeCtx, preserveKinds?: ReadonlySet<string>): Record<string, Rule<'link'>> {
+function inlineSingleUseHidden(
+	rules: Record<string, Rule<'link'>>,
+	ctx?: NormalizeCtx,
+	preserveKinds?: ReadonlySet<string>
+): Record<string, Rule<'link'>> {
 	// Work on a shallow copy — we mutate entries and delete keys.
 	// ctx is currently unused-but-uniform: it is threaded so the
 	// future trace wrapper (#14) can intercept all normalize passes.
@@ -800,6 +837,100 @@ function iterateInliningToFixedPoint(work: Record<string, Rule<'link'>>, preserv
 }
 
 /**
+ * A rule is terminal-shaped when its subtree has no fields and no symbol
+ * references — hidden or visible. Tree-sitter exposes such a kind as a
+ * pure text node at parse time.
+ *
+ * Skips rules that already have a classification wrapper (enum, supertype,
+ * group) — those are structural but Assemble has dedicated classifiers.
+ * PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
+ * (Formerly exported from `link.ts`; moved here since this is its only caller.)
+ */
+function isTerminalShape(rule: Rule<'link'>): boolean {
+	switch (rule.type) {
+		// PR-P: ENUM case removed — isEnumChoiceRule guard in CHOICE arm handles this.
+		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
+		case SUPERTYPE:
+		case GROUP:
+			return false; // already has a structural classification
+
+		case FIELD:
+			return false; // a field means it's a branch
+
+		case SYMBOL:
+		case 'supertype' as never:
+			return false; // a symbol means it carries children
+
+		case STRING:
+		case PATTERN:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
+			// Bare terminals don't need wrapping — they're already leaf-shaped
+			// at the point Assemble inspects them. We only wrap composed
+			// terminal structures.
+			return false;
+
+		case SEQ:
+			return rule.members.every(isTerminalShape_allowBareTerm);
+		case CHOICE:
+			// PR-P: enum-shaped choices (all-STRING members) are classified as enum,
+			// not terminal — guard here to prevent double-wrapping.
+			if (isEnumChoiceRule(rule)) return false;
+			return rule.members.every(isTerminalShape_allowBareTerm);
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+			return isTerminalShape_allowBareTerm(rule.content);
+		case VARIANT:
+			return isTerminalShape_allowBareTerm(rule.content);
+		case ALIAS:
+		case TOKEN:
+			// Should be resolved by Link, but handle defensively
+			return isTerminalShape_allowBareTerm(rule.content);
+	}
+	return false;
+}
+
+/**
+ * Like isTerminalShape but bare terminals (string/pattern/whitespace) count
+ * as terminal. Used to recurse into composed structures.
+ */
+function isTerminalShape_allowBareTerm(rule: Rule<'link'>): boolean {
+	switch (rule.type) {
+		case STRING:
+		case PATTERN:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
+			return true;
+		// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE arm above.
+		// All-STRING ChoiceRules are terminal-like but classified as enum, not terminal.
+		case FIELD:
+			return false;
+		case SYMBOL:
+			return false;
+		case SUPERTYPE:
+			return false;
+		case GROUP:
+			return false;
+		case SEQ:
+		case CHOICE:
+			return rule.members.every(isTerminalShape_allowBareTerm);
+		case OPTIONAL:
+		case REPEAT:
+		case REPEAT1:
+			return isTerminalShape_allowBareTerm(rule.content);
+		case VARIANT:
+			return isTerminalShape_allowBareTerm(rule.content);
+		case ALIAS:
+		case TOKEN:
+			return isTerminalShape_allowBareTerm(rule.content);
+	}
+	return false;
+}
+
+/**
  * Determine whether a hidden rule carries explicit structural classification
  * that downstream phases rely on, making it ineligible for inlining.
  *
@@ -815,12 +946,7 @@ function isStructurallyMeaningfulHiddenRule(rule: Rule<'link'>): boolean {
 	// PR-P Task 2: rule.type === TERMINAL replaced with isTerminalShape — TerminalRule deleted;
 	// terminal-shape rules now classify by shape at Assemble, but must still be preserved
 	// during normalize so they remain top-level kinds for Assemble to dispatch on.
-	return (
-		rule.type === SUPERTYPE ||
-		isEnumChoiceRule(rule) ||
-		isTerminalShape(rule) ||
-		rule.type === GROUP
-	);
+	return rule.type === SUPERTYPE || isEnumChoiceRule(rule) || isTerminalShape(rule) || rule.type === GROUP;
 }
 
 /**
@@ -833,7 +959,11 @@ function isStructurallyMeaningfulHiddenRule(rule: Rule<'link'>): boolean {
  * @param rule - The hidden rule's current content.
  * @returns `true` when a parent was found and the inline succeeded.
  */
-function spliceHiddenRuleIntoSingleParent(work: Record<string, Rule<'link'>>, name: string, rule: Rule<'link'>): boolean {
+function spliceHiddenRuleIntoSingleParent(
+	work: Record<string, Rule<'link'>>,
+	name: string,
+	rule: Rule<'link'>
+): boolean {
 	for (const [parentName, parentRule] of Object.entries(work)) {
 		if (parentName === name) continue;
 		const replaced = replaceSymbolRef(parentRule, name, rule);
@@ -965,11 +1095,10 @@ export function collapseWrappers(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<
 				if (outerMult !== undefined) {
 					const combined = combineMultiplicity(
 						outerMult,
-						(survivor as { multiplicity?: LeafMultiplicity }).multiplicity,
+						(survivor as { multiplicity?: LeafMultiplicity }).multiplicity
 					);
 					// Only stamp when non-default (single → undefined per combineMultiplicity).
-					if (combined !== undefined)
-						return { ...carried, multiplicity: combined } as unknown as Rule<'link'>;
+					if (combined !== undefined) return { ...carried, multiplicity: combined } as unknown as Rule<'link'>;
 				}
 				return carried;
 			}
@@ -1041,8 +1170,7 @@ export function rulesEqual(a: Rule<'link'>, b: Rule<'link'>): boolean {
 			// (e.g. two `repeat(seq(X, ','))`-shaped occurrences) as unequal.
 			// Delegate to the shared SSOT comparator instead.
 			return (
-				rulesEqual(a.content, (b as typeof a).content) &&
-				separatorFactsEqual(a.separator, (b as typeof a).separator)
+				rulesEqual(a.content, (b as typeof a).content) && separatorFactsEqual(a.separator, (b as typeof a).separator)
 			);
 		case FIELD:
 			return a.name === (b as typeof a).name && rulesEqual(a.content, (b as typeof a).content);
@@ -1116,5 +1244,4 @@ function findCommonSuffix(seqs: Rule<'link'>[][], prefixLen: number): number {
 // wrapVariants / deduplicateVariants / nameVariant / tokenToName all
 // moved to compiler/link.ts — they're classification, not simplification.
 // Re-export from there if test files or callers still need them.
-export { wrapVariants, deduplicateVariants, nameVariant, tokenToName } from './link.ts';
-
+export { tokenToName } from './link.ts';

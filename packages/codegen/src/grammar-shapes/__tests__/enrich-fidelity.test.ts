@@ -70,7 +70,7 @@ function skel(n: unknown): unknown {
 	return b;
 }
 
-type Rules = typeof rustGrammarShape['rules'];
+type Rules = (typeof rustGrammarShape)['rules'];
 
 describe('EnrichRule<> structural fidelity vs runtime enrich()', () => {
 	it('await_expression: Shape 1 unique supertype -> field(expression)', () => {
@@ -156,7 +156,13 @@ describe('EnrichRule<> structural fidelity vs runtime enrich()', () => {
 		expect(sk.m[0]).toEqual({
 			t: 'CHOICE',
 			m: [
-				{ t: 'SEQ', m: [{ t: 'FIELD', name: 'label', c: { t: 'SYMBOL', name: 'label' } }, { t: 'STRING', v: ':' }] },
+				{
+					t: 'SEQ',
+					m: [
+						{ t: 'FIELD', name: 'label', c: { t: 'SYMBOL', name: 'label' } },
+						{ t: 'STRING', v: ':' }
+					]
+				},
 				{ t: 'BLANK' }
 			]
 		});
@@ -197,10 +203,13 @@ describe('EnrichRule<> structural fidelity vs runtime enrich()', () => {
 	it('whole-grammar structural parity: EnrichRule has the same FIELD insertion sites as enrich (runtime check)', () => {
 		// This guards the type model indirectly: it asserts the runtime
 		// invariant that the type model is built on — zero structural skips.
-		const supers = new Set((gj.supertypes ?? []).map((s) => (typeof s === 'string' ? s : (s as { name: string }).name)));
+		const supers = new Set(
+			(gj.supertypes ?? []).map((s) => (typeof s === 'string' ? s : (s as { name: string }).name))
+		);
 		const peelPrec = (r: any): any => {
 			let c = r;
-			while (c && (c.type === 'PREC' || c.type === 'PREC_LEFT' || c.type === 'PREC_RIGHT' || c.type === 'PREC_DYNAMIC')) c = c.content;
+			while (c && (c.type === 'PREC' || c.type === 'PREC_LEFT' || c.type === 'PREC_RIGHT' || c.type === 'PREC_DYNAMIC'))
+				c = c.content;
 			return c;
 		};
 		const peelOpt = (m: any) => {
@@ -218,8 +227,10 @@ describe('EnrichRule<> structural fidelity vs runtime enrich()', () => {
 			if (inner.type === 'SEQ') {
 				let sym: string | null = null;
 				for (const s of inner.members) {
-					if (s.type === 'SYMBOL') { if (sym) return null; sym = s.name; }
-					else if (s.type !== 'STRING' && s.type !== 'PATTERN') return null;
+					if (s.type === 'SYMBOL') {
+						if (sym) return null;
+						sym = s.name;
+					} else if (s.type !== 'STRING' && s.type !== 'PATTERN') return null;
 				}
 				return sym && !sym.startsWith('_') ? { name: sym } : null;
 			}

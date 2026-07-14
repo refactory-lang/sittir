@@ -23,7 +23,6 @@ import type { AnyRule, PhaseName, Rule, RenderRule, SimplifiedRule, RuleId, Symb
 import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
 
-
 // ExternalRole lives in the IR type layer (R11) — re-exported here so
 // existing compiler-side importers keep working. (R12/decision-7 V2 Task 2:
 // PolymorphVariant, formerly re-exported alongside it, is deleted.)
@@ -719,10 +718,4 @@ export interface NodeMap {
 	 * Undefined for callers that never compute it (legacy fixtures, etc.).
 	 */
 	scc?: SCCAnalysis;
-}
-
-// No PolymorphRule/AssembledPolymorph model types exist at runtime —
-// polymorphFormKinds is always empty. Kept in NodeMap for API stability.
-export function computePolymorphFormKinds(_nodes: Map<string, AssembledNode>): Set<string> {
-	return new Set<string>();
 }

@@ -11,7 +11,15 @@ describe('tool dump-ast-mismatches command', () => {
 		dumpAstMismatchesCmd.register(program);
 		const cmd = program.commands.find((c) => c.name() === 'dump-ast-mismatches')!;
 		expect(cmd.options.map((o) => o.long)).toEqual(
-			expect.arrayContaining(['--grammar', '--all-grammars', '--mode', '--filter', '--cluster', '--format', '--verbose']),
+			expect.arrayContaining([
+				'--grammar',
+				'--all-grammars',
+				'--mode',
+				'--filter',
+				'--cluster',
+				'--format',
+				'--verbose'
+			])
 		);
 	});
 
@@ -19,8 +27,21 @@ describe('tool dump-ast-mismatches command', () => {
 		const program = new Command();
 		dumpAstMismatchesCmd.register(program);
 		await program.parseAsync(
-			['dump-ast-mismatches', '--grammar', 'rust', '--all-grammars', '--mode', 'diff', '--filter', 'foo', '--cluster', '--format', 'json', '--verbose'],
-			{ from: 'user' },
+			[
+				'dump-ast-mismatches',
+				'--grammar',
+				'rust',
+				'--all-grammars',
+				'--mode',
+				'diff',
+				'--filter',
+				'foo',
+				'--cluster',
+				'--format',
+				'json',
+				'--verbose'
+			],
+			{ from: 'user' }
 		);
 		expect(vi.mocked(runDumpAstMismatches)).toHaveBeenCalledWith({
 			grammar: 'rust',
@@ -29,7 +50,7 @@ describe('tool dump-ast-mismatches command', () => {
 			filter: 'foo',
 			cluster: true,
 			format: 'json',
-			verbose: true,
+			verbose: true
 		});
 	});
 });

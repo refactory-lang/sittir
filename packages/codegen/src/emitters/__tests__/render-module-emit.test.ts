@@ -14,15 +14,9 @@ import { describe, expect, it } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import {
-	classifySlot,
-	buildSupertypeTransportSet,
-	deriveChildrenKinds,
-	type SlotClass
-} from '../transport-common.ts';
-import { emitRenderModule, emitRenderModuleBundle } from '../render-module.ts';
-import { runRenderModuleEmitter } from '../render-module-runner.ts';
-import type { AssembledNonterminal, AssembledNode } from '../../compiler/model/node-map.ts';
+import { classifySlot, buildSupertypeTransportSet, deriveChildrenKinds, type SlotClass } from '../transport-common.ts';
+import { emitRenderModule } from '../render-module.ts';
+import type { AssembledNonterminal } from '../../compiler/model/node-map.ts';
 import { evaluate } from '../../compiler/evaluate.ts';
 import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
@@ -40,10 +34,7 @@ const repoRoot = fileURLToPath(new URL('../../../../..', import.meta.url)).repla
 // ---------------------------------------------------------------------------
 
 it('regen-templates-rs uses the shared render-module runner', () => {
-	const script = readFileSync(
-		resolve(repoRoot, 'packages/codegen/src/scripts/regen-templates-rs.ts'),
-		'utf8'
-	);
+	const script = readFileSync(resolve(repoRoot, 'packages/codegen/src/scripts/regen-templates-rs.ts'), 'utf8');
 	expect(script).toContain("from '../emitters/render-module-runner.ts'");
 	expect(script).toContain('runRenderModuleEmitter(');
 	expect(script).not.toContain('emitRenderModuleBundle(');
@@ -273,7 +264,7 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		expect(fnBody).not.toContain('render_block');
 	});
 
-it('leaf transport napi impls accept strings, structured objects, and boolean-presence leaves', async () => {
+	it('leaf transport napi impls accept strings, structured objects, and boolean-presence leaves', async () => {
 		const src = await getTypescriptTransportRs();
 		expect(src).toContain('let text = if let Ok(text) = String::from_napi_value(env, napi_val) {');
 		expect(src).toContain('obj.get("$text")?.unwrap_or_default()');
@@ -339,21 +330,4 @@ it('override-polymorph variant pairing: array_expression_list maps to "list" (no
 	expect(transport).toContain(`"_array_expression_semi"`);
 	// Key regression guard: list field must not be labelled as semi
 	expect(transport).not.toContain(`array_expression_list: Box<ArrayExpressionSemiTransport>`);
-}, 60_000);
-
-it('collectMetaData path matches buildMetaDataFromEntries path (render metadata parity)', async () => {
-	const { grammar, nodeMap, generatedIdTables, jinjaTemplates } = await buildRustFixtureForParity();
-
-	// Old path: emitRenderModuleBundle → emitRenderModule (no precomputed) → collectMetaData(nodeMap)
-	const viaOldPath = emitRenderModuleBundle(grammar, jinjaTemplates, nodeMap, generatedIdTables);
-
-	// New path: RenderModuleEmitter collecting loop → buildMetaDataFromEntries → emitRenderModule(precomputed)
-	const viaNewPath = runRenderModuleEmitter({
-		grammar,
-		nodeMap,
-		generatedIdTables,
-		jinjaTemplates
-	});
-
-	expect(viaNewPath.emit).toEqual(viaOldPath.emit);
 }, 60_000);

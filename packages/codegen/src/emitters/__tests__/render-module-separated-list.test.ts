@@ -12,7 +12,12 @@
 
 import { CHOICE, FIELD, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import { AssembledBranch, AssembledPattern, AssembledSeparatedList, type AssembledNode } from '../../compiler/model/node-map.ts';
+import {
+	AssembledBranch,
+	AssembledPattern,
+	AssembledSeparatedList,
+	type AssembledNode
+} from '../../compiler/model/node-map.ts';
 import type { Repeat1Rule, RepeatRule, Rule, SeqRule } from '../../types/rule.ts';
 import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
@@ -59,7 +64,10 @@ function makeBranchWithListFieldNodeMap() {
 		]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('branch_with_list_field', new AssembledBranch('branch_with_list_field', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule)));
+	nodes.set(
+		'branch_with_list_field',
+		new AssembledBranch('branch_with_list_field', parentRule, deleteWrapper(parentRule), deleteWrapper(parentRule))
+	);
 	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }));
 	return makeNodeMapWith(nodes);
 }
@@ -70,11 +78,27 @@ const GENERATED_ID_TABLES: GeneratedIdTables = {
 		member: 2,
 		comma: {
 			id: 3,
-			parser: { cSymbol: 'anon_sym_COMMA', parserName: 'comma', symbolName: ',', anon: true, aux: false, alias: false, hidden: false }
+			parser: {
+				cSymbol: 'anon_sym_COMMA',
+				parserName: 'comma',
+				symbolName: ',',
+				anon: true,
+				aux: false,
+				alias: false,
+				hidden: false
+			}
 		},
 		semi: {
 			id: 4,
-			parser: { cSymbol: 'anon_sym_SEMI', parserName: 'semi', symbolName: ';', anon: true, aux: false, alias: false, hidden: false }
+			parser: {
+				cSymbol: 'anon_sym_SEMI',
+				parserName: 'semi',
+				symbolName: ';',
+				anon: true,
+				aux: false,
+				alias: false,
+				hidden: false
+			}
 		}
 	},
 	sourceArtifact: 'test'
@@ -240,7 +264,7 @@ describe('buildTypedTemplateBody — separatedList ListNonterminalView wiring', 
 		expect(emitted).toContain('trailing: false,');
 	});
 
-	it('leaves a plain branch kind\'s list-shaped field hardcoded leading:false/trailing:false and a plain literal separator (guard scoping)', () => {
+	it("leaves a plain branch kind's list-shaped field hardcoded leading:false/trailing:false and a plain literal separator (guard scoping)", () => {
 		const nodeMap = makeBranchWithListFieldNodeMap();
 		const emitted = emitRenderModule(
 			'rust',

@@ -15,520 +15,726 @@ import * as F from './factories.js';
 import * as FR from './from.js';
 
 function _attach<T extends (...args: never[]) => unknown, P extends Record<string, unknown>>(fn: T, props: P): T & P {
-  for (const key of Object.keys(props)) {
-    Object.defineProperty(fn, key, { value: props[key], writable: true, configurable: true, enumerable: true });
-  }
-  return fn as T & P;
+	for (const key of Object.keys(props)) {
+		Object.defineProperty(fn, key, { value: props[key], writable: true, configurable: true, enumerable: true });
+	}
+	return fn as T & P;
 }
 
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
 export const destructuringPattern = {
-  object: _attach(FR.objectPatternFrom, { from: FR.objectPatternFrom, strict: F.objectPattern }),
-  array: _attach(FR.arrayPatternFrom, { from: FR.arrayPatternFrom, strict: F.arrayPattern }),
+	object: _attach(FR.objectPatternFrom, { from: FR.objectPatternFrom, strict: F.objectPattern }),
+	array: _attach(FR.arrayPatternFrom, { from: FR.arrayPatternFrom, strict: F.arrayPattern })
 } as const;
 
 export const expressions = {
-  sequence: _attach(FR.sequenceExpressionFrom, { from: FR.sequenceExpressionFrom, strict: F.sequenceExpression }),
+	sequence: _attach(FR.sequenceExpressionFrom, { from: FR.sequenceExpressionFrom, strict: F.sequenceExpression })
 } as const;
 
 export const formalParameter = {
-  required: _attach(FR.requiredParameterFrom, { from: FR.requiredParameterFrom, strict: F.requiredParameter }),
-  optional: _attach(FR.optionalParameterFrom, { from: FR.optionalParameterFrom, strict: F.optionalParameter }),
+	required: _attach(FR.requiredParameterFrom, { from: FR.requiredParameterFrom, strict: F.requiredParameter }),
+	optional: _attach(FR.optionalParameterFrom, { from: FR.optionalParameterFrom, strict: F.optionalParameter })
 } as const;
 
 export const identifier = {
-  undefined: F.undefined_,
-  identifier: F.identifier,
+	undefined: F.undefined_,
+	identifier: F.identifier
 } as const;
 
 export const importIdentifier = {
-  identifier: F.identifier,
+	identifier: F.identifier
 } as const;
 
 export const jsxAttributeName = {
-  identifier: F.identifier,
+	identifier: F.identifier
 } as const;
 
 export const jsxChild = {
-  jsx: F.jsxText,
+	jsx: F.jsxText
 } as const;
 
 export const jsxElementName = {
-  identifier: F.identifier,
-  nested: _attach(FR.nestedIdentifierFrom, { from: FR.nestedIdentifierFrom, strict: F.nestedIdentifier }),
+	identifier: F.identifier,
+	nested: _attach(FR.nestedIdentifierFrom, { from: FR.nestedIdentifierFrom, strict: F.nestedIdentifier })
 } as const;
 
 export const jsxIdentifier = {
-  identifier: F.identifier,
+	identifier: F.identifier
 } as const;
 
 export const moduleExportName = {
-  identifier: F.identifier,
-  string: _attach(FR.stringFrom, { from: FR.stringFrom, strict: F.string }),
+	identifier: F.identifier,
+	string: _attach(FR.stringFrom, { from: FR.stringFrom, strict: F.string })
 } as const;
 
 export const propertyIdentifier = {
-  identifier: F.identifier,
+	identifier: F.identifier
 } as const;
 
 export const propertyName = {
-  identifier: F.identifier,
-  privateProperty: F.privatePropertyIdentifier,
-  string: _attach(FR.stringFrom, { from: FR.stringFrom, strict: F.string }),
-  number: F.number,
-  computedProperty: _attach(FR.computedPropertyNameFrom, { from: FR.computedPropertyNameFrom, strict: F.computedPropertyName }),
+	identifier: F.identifier,
+	privateProperty: F.privatePropertyIdentifier,
+	string: _attach(FR.stringFrom, { from: FR.stringFrom, strict: F.string }),
+	number: F.number,
+	computedProperty: _attach(FR.computedPropertyNameFrom, {
+		from: FR.computedPropertyNameFrom,
+		strict: F.computedPropertyName
+	})
 } as const;
 
 export const shorthandPropertyIdentifier = {
-  identifier: F.identifier,
+	identifier: F.identifier
 } as const;
 
 export const shorthandPropertyIdentifierPattern = {
-  identifier: F.identifier,
+	identifier: F.identifier
 } as const;
 
 export const statementIdentifier = {
-  identifier: F.identifier,
+	identifier: F.identifier
 } as const;
 
 export const tupleTypeMember = {
-  tuple: _attach(FR.tupleParameterFrom, { from: FR.tupleParameterFrom, strict: F.tupleParameter }),
-  optionalTuple: _attach(FR.optionalTupleParameterFrom, { from: FR.optionalTupleParameterFrom, strict: F.optionalTupleParameter }),
-  optional: _attach(FR.optionalTypeFrom, { from: FR.optionalTypeFrom, strict: F.optionalType }),
-  rest: _attach(FR.restTypeFrom, { from: FR.restTypeFrom, strict: F.restType }),
+	tuple: _attach(FR.tupleParameterFrom, { from: FR.tupleParameterFrom, strict: F.tupleParameter }),
+	optionalTuple: _attach(FR.optionalTupleParameterFrom, {
+		from: FR.optionalTupleParameterFrom,
+		strict: F.optionalTupleParameter
+	}),
+	optional: _attach(FR.optionalTypeFrom, { from: FR.optionalTypeFrom, strict: F.optionalType }),
+	rest: _attach(FR.restTypeFrom, { from: FR.restTypeFrom, strict: F.restType })
 } as const;
 
 export const declaration = {
-  function: _attach(FR.functionDeclarationFrom, { from: FR.functionDeclarationFrom, strict: F.functionDeclaration }),
-  generatorFunction: _attach(FR.generatorFunctionDeclarationFrom, { from: FR.generatorFunctionDeclarationFrom, strict: F.generatorFunctionDeclaration }),
-  class: _attach(FR.classDeclarationFrom, { from: FR.classDeclarationFrom, strict: F.classDeclaration }),
-  lexical: _attach(FR.lexicalDeclarationFrom, { from: FR.lexicalDeclarationFrom, strict: F.lexicalDeclaration }),
-  variable: _attach(FR.variableDeclarationFrom, { from: FR.variableDeclarationFrom, strict: F.variableDeclaration }),
-  abstractClass: _attach(FR.abstractClassDeclarationFrom, { from: FR.abstractClassDeclarationFrom, strict: F.abstractClassDeclaration }),
-  module: _attach(FR.moduleFrom, { from: FR.moduleFrom, strict: F.module }),
-  internal: _attach(FR.internalModuleFrom, { from: FR.internalModuleFrom, strict: F.internalModule }),
-  typeAlias: _attach(FR.typeAliasDeclarationFrom, { from: FR.typeAliasDeclarationFrom, strict: F.typeAliasDeclaration }),
-  enum: _attach(FR.enumDeclarationFrom, { from: FR.enumDeclarationFrom, strict: F.enumDeclaration }),
-  interface: _attach(FR.interfaceDeclarationFrom, { from: FR.interfaceDeclarationFrom, strict: F.interfaceDeclaration }),
-  import: _attach(FR.importAliasFrom, { from: FR.importAliasFrom, strict: F.importAlias }),
-  ambient: _attach(FR.ambientDeclarationFrom, { from: FR.ambientDeclarationFrom, strict: F.ambientDeclaration }),
+	function: _attach(FR.functionDeclarationFrom, { from: FR.functionDeclarationFrom, strict: F.functionDeclaration }),
+	generatorFunction: _attach(FR.generatorFunctionDeclarationFrom, {
+		from: FR.generatorFunctionDeclarationFrom,
+		strict: F.generatorFunctionDeclaration
+	}),
+	class: _attach(FR.classDeclarationFrom, { from: FR.classDeclarationFrom, strict: F.classDeclaration }),
+	lexical: _attach(FR.lexicalDeclarationFrom, { from: FR.lexicalDeclarationFrom, strict: F.lexicalDeclaration }),
+	variable: _attach(FR.variableDeclarationFrom, { from: FR.variableDeclarationFrom, strict: F.variableDeclaration }),
+	abstractClass: _attach(FR.abstractClassDeclarationFrom, {
+		from: FR.abstractClassDeclarationFrom,
+		strict: F.abstractClassDeclaration
+	}),
+	module: _attach(FR.moduleFrom, { from: FR.moduleFrom, strict: F.module }),
+	internal: _attach(FR.internalModuleFrom, { from: FR.internalModuleFrom, strict: F.internalModule }),
+	typeAlias: _attach(FR.typeAliasDeclarationFrom, {
+		from: FR.typeAliasDeclarationFrom,
+		strict: F.typeAliasDeclaration
+	}),
+	enum: _attach(FR.enumDeclarationFrom, { from: FR.enumDeclarationFrom, strict: F.enumDeclaration }),
+	interface: _attach(FR.interfaceDeclarationFrom, {
+		from: FR.interfaceDeclarationFrom,
+		strict: F.interfaceDeclaration
+	}),
+	import: _attach(FR.importAliasFrom, { from: FR.importAliasFrom, strict: F.importAlias }),
+	ambient: _attach(FR.ambientDeclarationFrom, { from: FR.ambientDeclarationFrom, strict: F.ambientDeclaration })
 } as const;
 
 export const expression = {
-  as: _attach(FR.asExpressionFrom, { from: FR.asExpressionFrom, strict: F.asExpression }),
-  satisfies: _attach(FR.satisfiesExpressionFrom, { from: FR.satisfiesExpressionFrom, strict: F.satisfiesExpression }),
-  instantiation: _attach(FR.instantiationExpressionFrom, { from: FR.instantiationExpressionFrom, strict: F.instantiationExpression }),
-  internal: _attach(FR.internalModuleFrom, { from: FR.internalModuleFrom, strict: F.internalModule }),
-  type: _attach(FR.typeAssertionFrom, { from: FR.typeAssertionFrom, strict: F.typeAssertion }),
-  assignment: _attach(FR.assignmentExpressionFrom, { from: FR.assignmentExpressionFrom, strict: F.assignmentExpression }),
-  augmentedAssignment: _attach(FR.augmentedAssignmentExpressionFrom, { from: FR.augmentedAssignmentExpressionFrom, strict: F.augmentedAssignmentExpression }),
-  await: _attach(FR.awaitExpressionFrom, { from: FR.awaitExpressionFrom, strict: F.awaitExpression }),
-  unary: _attach(FR.unaryExpressionFrom, { from: FR.unaryExpressionFrom, strict: F.unaryExpression }),
-  binary: _attach(FR.binaryExpressionFrom, { from: FR.binaryExpressionFrom, strict: F.binaryExpression }),
-  ternary: _attach(FR.ternaryExpressionFrom, { from: FR.ternaryExpressionFrom, strict: F.ternaryExpression }),
-  update: _attach(FR.updateExpressionFrom, { from: FR.updateExpressionFrom, strict: F.updateExpression }),
-  new: _attach(FR.newExpressionFrom, { from: FR.newExpressionFrom, strict: F.newExpression }),
-  yield: _attach(FR.yieldExpressionFrom, { from: FR.yieldExpressionFrom, strict: F.yieldExpression }),
+	as: _attach(FR.asExpressionFrom, { from: FR.asExpressionFrom, strict: F.asExpression }),
+	satisfies: _attach(FR.satisfiesExpressionFrom, { from: FR.satisfiesExpressionFrom, strict: F.satisfiesExpression }),
+	instantiation: _attach(FR.instantiationExpressionFrom, {
+		from: FR.instantiationExpressionFrom,
+		strict: F.instantiationExpression
+	}),
+	internal: _attach(FR.internalModuleFrom, { from: FR.internalModuleFrom, strict: F.internalModule }),
+	type: _attach(FR.typeAssertionFrom, { from: FR.typeAssertionFrom, strict: F.typeAssertion }),
+	assignment: _attach(FR.assignmentExpressionFrom, {
+		from: FR.assignmentExpressionFrom,
+		strict: F.assignmentExpression
+	}),
+	augmentedAssignment: _attach(FR.augmentedAssignmentExpressionFrom, {
+		from: FR.augmentedAssignmentExpressionFrom,
+		strict: F.augmentedAssignmentExpression
+	}),
+	await: _attach(FR.awaitExpressionFrom, { from: FR.awaitExpressionFrom, strict: F.awaitExpression }),
+	unary: _attach(FR.unaryExpressionFrom, { from: FR.unaryExpressionFrom, strict: F.unaryExpression }),
+	binary: _attach(FR.binaryExpressionFrom, { from: FR.binaryExpressionFrom, strict: F.binaryExpression }),
+	ternary: _attach(FR.ternaryExpressionFrom, { from: FR.ternaryExpressionFrom, strict: F.ternaryExpression }),
+	update: _attach(FR.updateExpressionFrom, { from: FR.updateExpressionFrom, strict: F.updateExpression }),
+	new: _attach(FR.newExpressionFrom, { from: FR.newExpressionFrom, strict: F.newExpression }),
+	yield: _attach(FR.yieldExpressionFrom, { from: FR.yieldExpressionFrom, strict: F.yieldExpression })
 } as const;
 
 export const pattern = {
-  member: _attach(FR.memberExpressionFrom, { from: FR.memberExpressionFrom, strict: F.memberExpression }),
-  subscript: _attach(FR.subscriptExpressionFrom, { from: FR.subscriptExpressionFrom, strict: F.subscriptExpression }),
-  undefined: F.undefined_,
-  identifier: F.identifier,
-  object: _attach(FR.objectPatternFrom, { from: FR.objectPatternFrom, strict: F.objectPattern }),
-  array: _attach(FR.arrayPatternFrom, { from: FR.arrayPatternFrom, strict: F.arrayPattern }),
-  nonNull: _attach(FR.nonNullExpressionFrom, { from: FR.nonNullExpressionFrom, strict: F.nonNullExpression }),
-  rest: _attach(FR.restPatternFrom, { from: FR.restPatternFrom, strict: F.restPattern }),
+	member: _attach(FR.memberExpressionFrom, { from: FR.memberExpressionFrom, strict: F.memberExpression }),
+	subscript: _attach(FR.subscriptExpressionFrom, { from: FR.subscriptExpressionFrom, strict: F.subscriptExpression }),
+	undefined: F.undefined_,
+	identifier: F.identifier,
+	object: _attach(FR.objectPatternFrom, { from: FR.objectPatternFrom, strict: F.objectPattern }),
+	array: _attach(FR.arrayPatternFrom, { from: FR.arrayPatternFrom, strict: F.arrayPattern }),
+	nonNull: _attach(FR.nonNullExpressionFrom, { from: FR.nonNullExpressionFrom, strict: F.nonNullExpression }),
+	rest: _attach(FR.restPatternFrom, { from: FR.restPatternFrom, strict: F.restPattern })
 } as const;
 
 export const primaryExpression = {
-  subscript: _attach(FR.subscriptExpressionFrom, { from: FR.subscriptExpressionFrom, strict: F.subscriptExpression }),
-  member: _attach(FR.memberExpressionFrom, { from: FR.memberExpressionFrom, strict: F.memberExpression }),
-  parenthesized: _attach(FR.parenthesizedExpressionFrom, { from: FR.parenthesizedExpressionFrom, strict: F.parenthesizedExpression }),
-  undefined: F.undefined_,
-  identifier: F.identifier,
-  this: F.this_,
-  super: F.super_,
-  number: F.number,
-  string: _attach(FR.stringFrom, { from: FR.stringFrom, strict: F.string }),
-  template: _attach(FR.templateStringFrom, { from: FR.templateStringFrom, strict: F.templateString }),
-  regex: _attach(FR.regexFrom, { from: FR.regexFrom, strict: F.regex }),
-  true: F.true_,
-  false: F.false_,
-  null: F.null_,
-  object: _attach(FR.objectFrom, { from: FR.objectFrom, strict: F.object }),
-  array: _attach(FR.arrayFrom, { from: FR.arrayFrom, strict: F.array }),
-  function: _attach(FR.functionExpressionFrom, { from: FR.functionExpressionFrom, strict: F.functionExpression }),
-  arrow: _attach(FR.arrowFunctionFrom, { from: FR.arrowFunctionFrom, strict: F.arrowFunction }),
-  generator: _attach(FR.generatorFunctionFrom, { from: FR.generatorFunctionFrom, strict: F.generatorFunction }),
-  class: _attach(FR.class_From, { from: FR.class_From, strict: F.class_ }),
-  meta: F.metaProperty,
-  call: _attach(FR.callExpressionFrom, { from: FR.callExpressionFrom, strict: F.callExpression }),
-  nonNull: _attach(FR.nonNullExpressionFrom, { from: FR.nonNullExpressionFrom, strict: F.nonNullExpression }),
+	subscript: _attach(FR.subscriptExpressionFrom, { from: FR.subscriptExpressionFrom, strict: F.subscriptExpression }),
+	member: _attach(FR.memberExpressionFrom, { from: FR.memberExpressionFrom, strict: F.memberExpression }),
+	parenthesized: _attach(FR.parenthesizedExpressionFrom, {
+		from: FR.parenthesizedExpressionFrom,
+		strict: F.parenthesizedExpression
+	}),
+	undefined: F.undefined_,
+	identifier: F.identifier,
+	this: F.this_,
+	super: F.super_,
+	number: F.number,
+	string: _attach(FR.stringFrom, { from: FR.stringFrom, strict: F.string }),
+	template: _attach(FR.templateStringFrom, { from: FR.templateStringFrom, strict: F.templateString }),
+	regex: _attach(FR.regexFrom, { from: FR.regexFrom, strict: F.regex }),
+	true: F.true_,
+	false: F.false_,
+	null: F.null_,
+	object: _attach(FR.objectFrom, { from: FR.objectFrom, strict: F.object }),
+	array: _attach(FR.arrayFrom, { from: FR.arrayFrom, strict: F.array }),
+	function: _attach(FR.functionExpressionFrom, { from: FR.functionExpressionFrom, strict: F.functionExpression }),
+	arrow: _attach(FR.arrowFunctionFrom, { from: FR.arrowFunctionFrom, strict: F.arrowFunction }),
+	generator: _attach(FR.generatorFunctionFrom, { from: FR.generatorFunctionFrom, strict: F.generatorFunction }),
+	class: _attach(FR.class_From, { from: FR.class_From, strict: F.class_ }),
+	meta: F.metaProperty,
+	call: _attach(FR.callExpressionFrom, { from: FR.callExpressionFrom, strict: F.callExpression }),
+	nonNull: _attach(FR.nonNullExpressionFrom, { from: FR.nonNullExpressionFrom, strict: F.nonNullExpression })
 } as const;
 
 export const primaryType = {
-  parenthesized: _attach(FR.parenthesizedTypeFrom, { from: FR.parenthesizedTypeFrom, strict: F.parenthesizedType }),
-  predefined: F.predefinedType,
-  nestedType: _attach(FR.nestedTypeIdentifierFrom, { from: FR.nestedTypeIdentifierFrom, strict: F.nestedTypeIdentifier }),
-  generic: _attach(FR.genericTypeFrom, { from: FR.genericTypeFrom, strict: F.genericType }),
-  object: _attach(FR.objectTypeFrom, { from: FR.objectTypeFrom, strict: F.objectType }),
-  array: _attach(FR.arrayTypeFrom, { from: FR.arrayTypeFrom, strict: F.arrayType }),
-  tuple: _attach(FR.tupleTypeFrom, { from: FR.tupleTypeFrom, strict: F.tupleType }),
-  flowMaybe: _attach(FR.flowMaybeTypeFrom, { from: FR.flowMaybeTypeFrom, strict: F.flowMaybeType }),
-  type: _attach(FR.typeQueryFrom, { from: FR.typeQueryFrom, strict: F.typeQuery }),
-  indexType: _attach(FR.indexTypeQueryFrom, { from: FR.indexTypeQueryFrom, strict: F.indexTypeQuery }),
-  this: F.this_,
-  literal: _attach(FR.literalTypeFrom, { from: FR.literalTypeFrom, strict: F.literalType }),
-  lookup: _attach(FR.lookupTypeFrom, { from: FR.lookupTypeFrom, strict: F.lookupType }),
-  conditional: _attach(FR.conditionalTypeFrom, { from: FR.conditionalTypeFrom, strict: F.conditionalType }),
-  templateLiteral: _attach(FR.templateLiteralTypeFrom, { from: FR.templateLiteralTypeFrom, strict: F.templateLiteralType }),
-  intersection: _attach(FR.intersectionTypeFrom, { from: FR.intersectionTypeFrom, strict: F.intersectionType }),
-  union: _attach(FR.unionTypeFrom, { from: FR.unionTypeFrom, strict: F.unionType }),
+	parenthesized: _attach(FR.parenthesizedTypeFrom, { from: FR.parenthesizedTypeFrom, strict: F.parenthesizedType }),
+	predefined: F.predefinedType,
+	nestedType: _attach(FR.nestedTypeIdentifierFrom, {
+		from: FR.nestedTypeIdentifierFrom,
+		strict: F.nestedTypeIdentifier
+	}),
+	generic: _attach(FR.genericTypeFrom, { from: FR.genericTypeFrom, strict: F.genericType }),
+	object: _attach(FR.objectTypeFrom, { from: FR.objectTypeFrom, strict: F.objectType }),
+	array: _attach(FR.arrayTypeFrom, { from: FR.arrayTypeFrom, strict: F.arrayType }),
+	tuple: _attach(FR.tupleTypeFrom, { from: FR.tupleTypeFrom, strict: F.tupleType }),
+	flowMaybe: _attach(FR.flowMaybeTypeFrom, { from: FR.flowMaybeTypeFrom, strict: F.flowMaybeType }),
+	type: _attach(FR.typeQueryFrom, { from: FR.typeQueryFrom, strict: F.typeQuery }),
+	indexType: _attach(FR.indexTypeQueryFrom, { from: FR.indexTypeQueryFrom, strict: F.indexTypeQuery }),
+	this: F.this_,
+	literal: _attach(FR.literalTypeFrom, { from: FR.literalTypeFrom, strict: F.literalType }),
+	lookup: _attach(FR.lookupTypeFrom, { from: FR.lookupTypeFrom, strict: F.lookupType }),
+	conditional: _attach(FR.conditionalTypeFrom, { from: FR.conditionalTypeFrom, strict: F.conditionalType }),
+	templateLiteral: _attach(FR.templateLiteralTypeFrom, {
+		from: FR.templateLiteralTypeFrom,
+		strict: F.templateLiteralType
+	}),
+	intersection: _attach(FR.intersectionTypeFrom, { from: FR.intersectionTypeFrom, strict: F.intersectionType }),
+	union: _attach(FR.unionTypeFrom, { from: FR.unionTypeFrom, strict: F.unionType })
 } as const;
 
 export const statement = {
-  export: _attach(FR.exportStatementFrom, { from: FR.exportStatementFrom, strict: F.exportStatement }),
-  import: _attach(FR.importStatementFrom, { from: FR.importStatementFrom, strict: F.importStatement }),
-  debugger: _attach(FR.debuggerStatementFrom, { from: FR.debuggerStatementFrom, strict: F.debuggerStatement }),
-  expression: _attach(FR.expressionStatementFrom, { from: FR.expressionStatementFrom, strict: F.expressionStatement }),
-  statementBlock: _attach(FR.statementBlockFrom, { from: FR.statementBlockFrom, strict: F.statementBlock }),
-  if: _attach(FR.ifStatementFrom, { from: FR.ifStatementFrom, strict: F.ifStatement }),
-  switch: _attach(FR.switchStatementFrom, { from: FR.switchStatementFrom, strict: F.switchStatement }),
-  for: _attach(FR.forStatementFrom, { from: FR.forStatementFrom, strict: F.forStatement }),
-  forIn: _attach(FR.forInStatementFrom, { from: FR.forInStatementFrom, strict: F.forInStatement }),
-  while: _attach(FR.whileStatementFrom, { from: FR.whileStatementFrom, strict: F.whileStatement }),
-  do: _attach(FR.doStatementFrom, { from: FR.doStatementFrom, strict: F.doStatement }),
-  try: _attach(FR.tryStatementFrom, { from: FR.tryStatementFrom, strict: F.tryStatement }),
-  with: _attach(FR.withStatementFrom, { from: FR.withStatementFrom, strict: F.withStatement }),
-  break: _attach(FR.breakStatementFrom, { from: FR.breakStatementFrom, strict: F.breakStatement }),
-  continue: _attach(FR.continueStatementFrom, { from: FR.continueStatementFrom, strict: F.continueStatement }),
-  return: _attach(FR.returnStatementFrom, { from: FR.returnStatementFrom, strict: F.returnStatement }),
-  throw: _attach(FR.throwStatementFrom, { from: FR.throwStatementFrom, strict: F.throwStatement }),
-  labeled: _attach(FR.labeledStatementFrom, { from: FR.labeledStatementFrom, strict: F.labeledStatement }),
+	export: _attach(FR.exportStatementFrom, { from: FR.exportStatementFrom, strict: F.exportStatement }),
+	import: _attach(FR.importStatementFrom, { from: FR.importStatementFrom, strict: F.importStatement }),
+	debugger: _attach(FR.debuggerStatementFrom, { from: FR.debuggerStatementFrom, strict: F.debuggerStatement }),
+	expression: _attach(FR.expressionStatementFrom, { from: FR.expressionStatementFrom, strict: F.expressionStatement }),
+	statementBlock: _attach(FR.statementBlockFrom, { from: FR.statementBlockFrom, strict: F.statementBlock }),
+	if: _attach(FR.ifStatementFrom, { from: FR.ifStatementFrom, strict: F.ifStatement }),
+	switch: _attach(FR.switchStatementFrom, { from: FR.switchStatementFrom, strict: F.switchStatement }),
+	for: _attach(FR.forStatementFrom, { from: FR.forStatementFrom, strict: F.forStatement }),
+	forIn: _attach(FR.forInStatementFrom, { from: FR.forInStatementFrom, strict: F.forInStatement }),
+	while: _attach(FR.whileStatementFrom, { from: FR.whileStatementFrom, strict: F.whileStatement }),
+	do: _attach(FR.doStatementFrom, { from: FR.doStatementFrom, strict: F.doStatement }),
+	try: _attach(FR.tryStatementFrom, { from: FR.tryStatementFrom, strict: F.tryStatement }),
+	with: _attach(FR.withStatementFrom, { from: FR.withStatementFrom, strict: F.withStatement }),
+	break: _attach(FR.breakStatementFrom, { from: FR.breakStatementFrom, strict: F.breakStatement }),
+	continue: _attach(FR.continueStatementFrom, { from: FR.continueStatementFrom, strict: F.continueStatement }),
+	return: _attach(FR.returnStatementFrom, { from: FR.returnStatementFrom, strict: F.returnStatement }),
+	throw: _attach(FR.throwStatementFrom, { from: FR.throwStatementFrom, strict: F.throwStatement }),
+	labeled: _attach(FR.labeledStatementFrom, { from: FR.labeledStatementFrom, strict: F.labeledStatement })
 } as const;
 
 export const type = {
-  function: _attach(FR.functionTypeFrom, { from: FR.functionTypeFrom, strict: F.functionType }),
-  readonly: _attach(FR.readonlyTypeFrom, { from: FR.readonlyTypeFrom, strict: F.readonlyType }),
-  constructor: _attach(FR.constructorTypeFrom, { from: FR.constructorTypeFrom, strict: F.constructorType }),
-  infer: _attach(FR.inferTypeFrom, { from: FR.inferTypeFrom, strict: F.inferType }),
+	function: _attach(FR.functionTypeFrom, { from: FR.functionTypeFrom, strict: F.functionType }),
+	readonly: _attach(FR.readonlyTypeFrom, { from: FR.readonlyTypeFrom, strict: F.readonlyType }),
+	constructor: _attach(FR.constructorTypeFrom, { from: FR.constructorTypeFrom, strict: F.constructorType }),
+	infer: _attach(FR.inferTypeFrom, { from: FR.inferTypeFrom, strict: F.inferType })
 } as const;
 
 // Canonical factories — `from.*` resolves native JS values to grammar-specific NodeData.
 // Spec 023 US6. Tree-shakeable via standalone `from` export; also `ir.from.*`.
 export const from = {
-  boolean(value: boolean): ReturnType<typeof F.true_> | ReturnType<typeof F.false_> {
-    return value ? F.true_() : F.false_();
-  },
-  number(value: number): ReturnType<typeof F.number> {
-    return F.number(String(value));
-  },
-  comment(text: string): ReturnType<typeof F.comment> {
-    return F.comment(text);
-  },
-  type(name: string): ReturnType<typeof F.typeIdentifier> {
-    return F.typeIdentifier(name);
-  },
-  identifier(name: string): ReturnType<typeof F.identifier> {
-    return F.identifier(name);
-  },
-  // definition.function → function_signature
-  get function() { return ir.functionSignature; },
-  // definition.class → abstract_class_declaration
-  get class() { return ir.abstractClassDeclaration; },
-  // definition.method → method_signature
-  get method() { return ir.methodSignature; },
-  // definition.module → module
-  get module() { return ir.module; },
-  // definition.interface → interface_declaration
-  get interface() { return ir.interfaceDeclaration; },
+	boolean(value: boolean): ReturnType<typeof F.true_> | ReturnType<typeof F.false_> {
+		return value ? F.true_() : F.false_();
+	},
+	number(value: number): ReturnType<typeof F.number> {
+		return F.number(String(value));
+	},
+	comment(text: string): ReturnType<typeof F.comment> {
+		return F.comment(text);
+	},
+	type(name: string): ReturnType<typeof F.typeIdentifier> {
+		return F.typeIdentifier(name);
+	},
+	identifier(name: string): ReturnType<typeof F.identifier> {
+		return F.identifier(name);
+	},
+	// definition.function → function_signature
+	get function() {
+		return ir.functionSignature;
+	},
+	// definition.class → abstract_class_declaration
+	get class() {
+		return ir.abstractClassDeclaration;
+	},
+	// definition.method → method_signature
+	get method() {
+		return ir.methodSignature;
+	},
+	// definition.module → module
+	get module() {
+		return ir.module;
+	},
+	// definition.interface → interface_declaration
+	get interface() {
+		return ir.interfaceDeclaration;
+	}
 } as const;
 
 export const ir = {
-  // Node factories
-  abstractClassDeclaration: _attach(FR.abstractClassDeclarationFrom, { from: FR.abstractClassDeclarationFrom, strict: F.abstractClassDeclaration }),
-  abstractMethodSignature: _attach(FR.abstractMethodSignatureFrom, { from: FR.abstractMethodSignatureFrom, strict: F.abstractMethodSignature }),
-  addingTypeAnnotation: _attach(FR.addingTypeAnnotationFrom, { from: FR.addingTypeAnnotationFrom, strict: F.addingTypeAnnotation }),
-  ambientDeclaration: _attach(FR.ambientDeclarationFrom, { from: FR.ambientDeclarationFrom, strict: F.ambientDeclaration }),
-  arguments: _attach(FR.arguments_From, { from: FR.arguments_From, strict: F.arguments_ }),
-  array: _attach(FR.arrayFrom, { from: FR.arrayFrom, strict: F.array }),
-  arrayPattern: _attach(FR.arrayPatternFrom, { from: FR.arrayPatternFrom, strict: F.arrayPattern }),
-  arrayType: _attach(FR.arrayTypeFrom, { from: FR.arrayTypeFrom, strict: F.arrayType }),
-  arrowFunction: _attach(FR.arrowFunctionFrom, { from: FR.arrowFunctionFrom, strict: F.arrowFunction }),
-  asExpression: _attach(FR.asExpressionFrom, { from: FR.asExpressionFrom, strict: F.asExpression }),
-  asserts: _attach(FR.assertsFrom, { from: FR.assertsFrom, strict: F.asserts }),
-  assertsAnnotation: _attach(FR.assertsAnnotationFrom, { from: FR.assertsAnnotationFrom, strict: F.assertsAnnotation }),
-  assignmentExpression: _attach(FR.assignmentExpressionFrom, { from: FR.assignmentExpressionFrom, strict: F.assignmentExpression }),
-  assignmentPattern: _attach(FR.assignmentPatternFrom, { from: FR.assignmentPatternFrom, strict: F.assignmentPattern }),
-  augmentedAssignmentExpression: _attach(FR.augmentedAssignmentExpressionFrom, { from: FR.augmentedAssignmentExpressionFrom, strict: F.augmentedAssignmentExpression }),
-  awaitExpression: _attach(FR.awaitExpressionFrom, { from: FR.awaitExpressionFrom, strict: F.awaitExpression }),
-  binaryExpression: _attach(FR.binaryExpressionFrom, { from: FR.binaryExpressionFrom, strict: F.binaryExpression }),
-  breakStatement: _attach(FR.breakStatementFrom, { from: FR.breakStatementFrom, strict: F.breakStatement }),
-  callExpression: _attach(FR.callExpressionFrom, { from: FR.callExpressionFrom, strict: F.callExpression }),
-  callSignature: _attach(FR.callSignatureFrom, { from: FR.callSignatureFrom, strict: F.callSignature }),
-  catchClause: _attach(FR.catchClauseFrom, { from: FR.catchClauseFrom, strict: F.catchClause }),
-  class: _attach(FR.class_From, { from: FR.class_From, strict: F.class_ }),
-  classBody: _attach(FR.classBodyFrom, { from: FR.classBodyFrom, strict: F.classBody }),
-  classDeclaration: _attach(FR.classDeclarationFrom, { from: FR.classDeclarationFrom, strict: F.classDeclaration }),
-  classHeritage: _attach(FR.classHeritageFrom, { from: FR.classHeritageFrom, strict: F.classHeritage }),
-  classStaticBlock: _attach(FR.classStaticBlockFrom, { from: FR.classStaticBlockFrom, strict: F.classStaticBlock }),
-  computedPropertyName: _attach(FR.computedPropertyNameFrom, { from: FR.computedPropertyNameFrom, strict: F.computedPropertyName }),
-  conditionalType: _attach(FR.conditionalTypeFrom, { from: FR.conditionalTypeFrom, strict: F.conditionalType }),
-  constraint: _attach(FR.constraintFrom, { from: FR.constraintFrom, strict: F.constraint }),
-  constructSignature: _attach(FR.constructSignatureFrom, { from: FR.constructSignatureFrom, strict: F.constructSignature }),
-  constructorType: _attach(FR.constructorTypeFrom, { from: FR.constructorTypeFrom, strict: F.constructorType }),
-  continueStatement: _attach(FR.continueStatementFrom, { from: FR.continueStatementFrom, strict: F.continueStatement }),
-  debuggerStatement: _attach(FR.debuggerStatementFrom, { from: FR.debuggerStatementFrom, strict: F.debuggerStatement }),
-  decorator: _attach(FR.decoratorFrom, { from: FR.decoratorFrom, strict: F.decorator }),
-  decoratorCallExpression: _attach(FR.decoratorCallExpressionFrom, { from: FR.decoratorCallExpressionFrom, strict: F.decoratorCallExpression }),
-  decoratorMemberExpression: _attach(FR.decoratorMemberExpressionFrom, { from: FR.decoratorMemberExpressionFrom, strict: F.decoratorMemberExpression }),
-  decoratorParenthesizedExpression: _attach(FR.decoratorParenthesizedExpressionFrom, { from: FR.decoratorParenthesizedExpressionFrom, strict: F.decoratorParenthesizedExpression }),
-  defaultType: _attach(FR.defaultTypeFrom, { from: FR.defaultTypeFrom, strict: F.defaultType }),
-  doStatement: _attach(FR.doStatementFrom, { from: FR.doStatementFrom, strict: F.doStatement }),
-  elseClause: _attach(FR.elseClauseFrom, { from: FR.elseClauseFrom, strict: F.elseClause }),
-  enumAssignment: _attach(FR.enumAssignmentFrom, { from: FR.enumAssignmentFrom, strict: F.enumAssignment }),
-  enumBody: _attach(FR.enumBodyFrom, { from: FR.enumBodyFrom, strict: F.enumBody }),
-  enumDeclaration: _attach(FR.enumDeclarationFrom, { from: FR.enumDeclarationFrom, strict: F.enumDeclaration }),
-  exportClause: _attach(FR.exportClauseFrom, { from: FR.exportClauseFrom, strict: F.exportClause }),
-  exportSpecifier: _attach(FR.exportSpecifierFrom, { from: FR.exportSpecifierFrom, strict: F.exportSpecifier }),
-  exportStatement: _attach(FR.exportStatementFrom, { from: FR.exportStatementFrom, strict: F.exportStatement }),
-  expressionStatement: _attach(FR.expressionStatementFrom, { from: FR.expressionStatementFrom, strict: F.expressionStatement }),
-  extendsClause: _attach(FR.extendsClauseFrom, { from: FR.extendsClauseFrom, strict: F.extendsClause }),
-  extendsTypeClause: _attach(FR.extendsTypeClauseFrom, { from: FR.extendsTypeClauseFrom, strict: F.extendsTypeClause }),
-  finallyClause: _attach(FR.finallyClauseFrom, { from: FR.finallyClauseFrom, strict: F.finallyClause }),
-  flowMaybeType: _attach(FR.flowMaybeTypeFrom, { from: FR.flowMaybeTypeFrom, strict: F.flowMaybeType }),
-  forInStatement: _attach(FR.forInStatementFrom, { from: FR.forInStatementFrom, strict: F.forInStatement }),
-  forStatement: _attach(FR.forStatementFrom, { from: FR.forStatementFrom, strict: F.forStatement }),
-  formalParameters: _attach(FR.formalParametersFrom, { from: FR.formalParametersFrom, strict: F.formalParameters }),
-  functionDeclaration: _attach(FR.functionDeclarationFrom, { from: FR.functionDeclarationFrom, strict: F.functionDeclaration }),
-  functionExpression: _attach(FR.functionExpressionFrom, { from: FR.functionExpressionFrom, strict: F.functionExpression }),
-  functionSignature: _attach(FR.functionSignatureFrom, { from: FR.functionSignatureFrom, strict: F.functionSignature }),
-  functionType: _attach(FR.functionTypeFrom, { from: FR.functionTypeFrom, strict: F.functionType }),
-  generatorFunction: _attach(FR.generatorFunctionFrom, { from: FR.generatorFunctionFrom, strict: F.generatorFunction }),
-  generatorFunctionDeclaration: _attach(FR.generatorFunctionDeclarationFrom, { from: FR.generatorFunctionDeclarationFrom, strict: F.generatorFunctionDeclaration }),
-  genericType: _attach(FR.genericTypeFrom, { from: FR.genericTypeFrom, strict: F.genericType }),
-  ifStatement: _attach(FR.ifStatementFrom, { from: FR.ifStatementFrom, strict: F.ifStatement }),
-  implementsClause: _attach(FR.implementsClauseFrom, { from: FR.implementsClauseFrom, strict: F.implementsClause }),
-  importAlias: _attach(FR.importAliasFrom, { from: FR.importAliasFrom, strict: F.importAlias }),
-  importAttribute: _attach(FR.importAttributeFrom, { from: FR.importAttributeFrom, strict: F.importAttribute }),
-  importClause: _attach(FR.importClauseFrom, { from: FR.importClauseFrom, strict: F.importClause }),
-  importRequireClause: _attach(FR.importRequireClauseFrom, { from: FR.importRequireClauseFrom, strict: F.importRequireClause }),
-  importSpecifier: _attach(FR.importSpecifierFrom, { from: FR.importSpecifierFrom, strict: F.importSpecifier }),
-  importStatement: _attach(FR.importStatementFrom, { from: FR.importStatementFrom, strict: F.importStatement }),
-  indexSignature: _attach(FR.indexSignatureFrom, { from: FR.indexSignatureFrom, strict: F.indexSignature }),
-  indexTypeQuery: _attach(FR.indexTypeQueryFrom, { from: FR.indexTypeQueryFrom, strict: F.indexTypeQuery }),
-  inferType: _attach(FR.inferTypeFrom, { from: FR.inferTypeFrom, strict: F.inferType }),
-  instantiationExpression: _attach(FR.instantiationExpressionFrom, { from: FR.instantiationExpressionFrom, strict: F.instantiationExpression }),
-  interfaceDeclaration: _attach(FR.interfaceDeclarationFrom, { from: FR.interfaceDeclarationFrom, strict: F.interfaceDeclaration }),
-  internalModule: _attach(FR.internalModuleFrom, { from: FR.internalModuleFrom, strict: F.internalModule }),
-  intersectionType: _attach(FR.intersectionTypeFrom, { from: FR.intersectionTypeFrom, strict: F.intersectionType }),
-  labeledStatement: _attach(FR.labeledStatementFrom, { from: FR.labeledStatementFrom, strict: F.labeledStatement }),
-  lexicalDeclaration: _attach(FR.lexicalDeclarationFrom, { from: FR.lexicalDeclarationFrom, strict: F.lexicalDeclaration }),
-  literalType: _attach(FR.literalTypeFrom, { from: FR.literalTypeFrom, strict: F.literalType }),
-  lookupType: _attach(FR.lookupTypeFrom, { from: FR.lookupTypeFrom, strict: F.lookupType }),
-  mappedTypeClause: _attach(FR.mappedTypeClauseFrom, { from: FR.mappedTypeClauseFrom, strict: F.mappedTypeClause }),
-  memberExpression: _attach(FR.memberExpressionFrom, { from: FR.memberExpressionFrom, strict: F.memberExpression }),
-  methodDefinition: _attach(FR.methodDefinitionFrom, { from: FR.methodDefinitionFrom, strict: F.methodDefinition }),
-  methodSignature: _attach(FR.methodSignatureFrom, { from: FR.methodSignatureFrom, strict: F.methodSignature }),
-  module: _attach(FR.moduleFrom, { from: FR.moduleFrom, strict: F.module }),
-  namedImports: _attach(FR.namedImportsFrom, { from: FR.namedImportsFrom, strict: F.namedImports }),
-  namespaceExport: _attach(FR.namespaceExportFrom, { from: FR.namespaceExportFrom, strict: F.namespaceExport }),
-  namespaceImport: _attach(FR.namespaceImportFrom, { from: FR.namespaceImportFrom, strict: F.namespaceImport }),
-  nestedIdentifier: _attach(FR.nestedIdentifierFrom, { from: FR.nestedIdentifierFrom, strict: F.nestedIdentifier }),
-  nestedTypeIdentifier: _attach(FR.nestedTypeIdentifierFrom, { from: FR.nestedTypeIdentifierFrom, strict: F.nestedTypeIdentifier }),
-  newExpression: _attach(FR.newExpressionFrom, { from: FR.newExpressionFrom, strict: F.newExpression }),
-  nonNullExpression: _attach(FR.nonNullExpressionFrom, { from: FR.nonNullExpressionFrom, strict: F.nonNullExpression }),
-  object: _attach(FR.objectFrom, { from: FR.objectFrom, strict: F.object }),
-  objectAssignmentPattern: _attach(FR.objectAssignmentPatternFrom, { from: FR.objectAssignmentPatternFrom, strict: F.objectAssignmentPattern }),
-  objectPattern: _attach(FR.objectPatternFrom, { from: FR.objectPatternFrom, strict: F.objectPattern }),
-  objectType: _attach(FR.objectTypeFrom, { from: FR.objectTypeFrom, strict: F.objectType, "curly": F.objectTypeCurly, "flow": F.objectTypeFlow }),
-  objectTypeContent: _attach(FR.objectTypeContentFrom, { from: FR.objectTypeContentFrom, strict: F.objectTypeContent }),
-  omittingTypeAnnotation: _attach(FR.omittingTypeAnnotationFrom, { from: FR.omittingTypeAnnotationFrom, strict: F.omittingTypeAnnotation }),
-  optingTypeAnnotation: _attach(FR.optingTypeAnnotationFrom, { from: FR.optingTypeAnnotationFrom, strict: F.optingTypeAnnotation }),
-  optionalParameter: _attach(FR.optionalParameterFrom, { from: FR.optionalParameterFrom, strict: F.optionalParameter }),
-  optionalTupleParameter: _attach(FR.optionalTupleParameterFrom, { from: FR.optionalTupleParameterFrom, strict: F.optionalTupleParameter }),
-  optionalType: _attach(FR.optionalTypeFrom, { from: FR.optionalTypeFrom, strict: F.optionalType }),
-  pair: _attach(FR.pairFrom, { from: FR.pairFrom, strict: F.pair }),
-  pairPattern: _attach(FR.pairPatternFrom, { from: FR.pairPatternFrom, strict: F.pairPattern }),
-  parenthesizedExpression: _attach(FR.parenthesizedExpressionFrom, { from: FR.parenthesizedExpressionFrom, strict: F.parenthesizedExpression }),
-  parenthesizedType: _attach(FR.parenthesizedTypeFrom, { from: FR.parenthesizedTypeFrom, strict: F.parenthesizedType }),
-  program: _attach(FR.programFrom, { from: FR.programFrom, strict: F.program }),
-  propertySignature: _attach(FR.propertySignatureFrom, { from: FR.propertySignatureFrom, strict: F.propertySignature }),
-  publicFieldDefinition: _attach(FR.publicFieldDefinitionFrom, { from: FR.publicFieldDefinitionFrom, strict: F.publicFieldDefinition }),
-  readonlyType: _attach(FR.readonlyTypeFrom, { from: FR.readonlyTypeFrom, strict: F.readonlyType }),
-  regex: _attach(FR.regexFrom, { from: FR.regexFrom, strict: F.regex }),
-  requiredParameter: _attach(FR.requiredParameterFrom, { from: FR.requiredParameterFrom, strict: F.requiredParameter }),
-  restPattern: _attach(FR.restPatternFrom, { from: FR.restPatternFrom, strict: F.restPattern }),
-  restType: _attach(FR.restTypeFrom, { from: FR.restTypeFrom, strict: F.restType }),
-  returnStatement: _attach(FR.returnStatementFrom, { from: FR.returnStatementFrom, strict: F.returnStatement }),
-  satisfiesExpression: _attach(FR.satisfiesExpressionFrom, { from: FR.satisfiesExpressionFrom, strict: F.satisfiesExpression }),
-  sequenceExpression: _attach(FR.sequenceExpressionFrom, { from: FR.sequenceExpressionFrom, strict: F.sequenceExpression }),
-  spreadElement: _attach(FR.spreadElementFrom, { from: FR.spreadElementFrom, strict: F.spreadElement }),
-  statementBlock: _attach(FR.statementBlockFrom, { from: FR.statementBlockFrom, strict: F.statementBlock }),
-  string: _attach(FR.stringFrom, { from: FR.stringFrom, strict: F.string, "double": F.stringDouble, "single": F.stringSingle }),
-  subscriptExpression: _attach(FR.subscriptExpressionFrom, { from: FR.subscriptExpressionFrom, strict: F.subscriptExpression }),
-  switchBody: _attach(FR.switchBodyFrom, { from: FR.switchBodyFrom, strict: F.switchBody }),
-  switchCase: _attach(FR.switchCaseFrom, { from: FR.switchCaseFrom, strict: F.switchCase }),
-  switchDefault: _attach(FR.switchDefaultFrom, { from: FR.switchDefaultFrom, strict: F.switchDefault }),
-  switchStatement: _attach(FR.switchStatementFrom, { from: FR.switchStatementFrom, strict: F.switchStatement }),
-  templateLiteralType: _attach(FR.templateLiteralTypeFrom, { from: FR.templateLiteralTypeFrom, strict: F.templateLiteralType }),
-  templateString: _attach(FR.templateStringFrom, { from: FR.templateStringFrom, strict: F.templateString }),
-  templateSubstitution: _attach(FR.templateSubstitutionFrom, { from: FR.templateSubstitutionFrom, strict: F.templateSubstitution }),
-  templateType: _attach(FR.templateTypeFrom, { from: FR.templateTypeFrom, strict: F.templateType }),
-  ternaryExpression: _attach(FR.ternaryExpressionFrom, { from: FR.ternaryExpressionFrom, strict: F.ternaryExpression }),
-  throwStatement: _attach(FR.throwStatementFrom, { from: FR.throwStatementFrom, strict: F.throwStatement }),
-  tryStatement: _attach(FR.tryStatementFrom, { from: FR.tryStatementFrom, strict: F.tryStatement }),
-  tupleParameter: _attach(FR.tupleParameterFrom, { from: FR.tupleParameterFrom, strict: F.tupleParameter }),
-  tupleType: _attach(FR.tupleTypeFrom, { from: FR.tupleTypeFrom, strict: F.tupleType }),
-  typeAliasDeclaration: _attach(FR.typeAliasDeclarationFrom, { from: FR.typeAliasDeclarationFrom, strict: F.typeAliasDeclaration }),
-  typeAnnotation: _attach(FR.typeAnnotationFrom, { from: FR.typeAnnotationFrom, strict: F.typeAnnotation }),
-  typeArguments: _attach(FR.typeArgumentsFrom, { from: FR.typeArgumentsFrom, strict: F.typeArguments }),
-  typeAssertion: _attach(FR.typeAssertionFrom, { from: FR.typeAssertionFrom, strict: F.typeAssertion }),
-  typeParameter: _attach(FR.typeParameterFrom, { from: FR.typeParameterFrom, strict: F.typeParameter }),
-  typeParameters: _attach(FR.typeParametersFrom, { from: FR.typeParametersFrom, strict: F.typeParameters }),
-  typePredicate: _attach(FR.typePredicateFrom, { from: FR.typePredicateFrom, strict: F.typePredicate }),
-  typePredicateAnnotation: _attach(FR.typePredicateAnnotationFrom, { from: FR.typePredicateAnnotationFrom, strict: F.typePredicateAnnotation }),
-  typeQuery: _attach(FR.typeQueryFrom, { from: FR.typeQueryFrom, strict: F.typeQuery }),
-  unaryExpression: _attach(FR.unaryExpressionFrom, { from: FR.unaryExpressionFrom, strict: F.unaryExpression }),
-  unionType: _attach(FR.unionTypeFrom, { from: FR.unionTypeFrom, strict: F.unionType }),
-  updateExpression: _attach(FR.updateExpressionFrom, { from: FR.updateExpressionFrom, strict: F.updateExpression }),
-  variableDeclaration: _attach(FR.variableDeclarationFrom, { from: FR.variableDeclarationFrom, strict: F.variableDeclaration }),
-  variableDeclarator: _attach(FR.variableDeclaratorFrom, { from: FR.variableDeclaratorFrom, strict: F.variableDeclarator }),
-  whileStatement: _attach(FR.whileStatementFrom, { from: FR.whileStatementFrom, strict: F.whileStatement }),
-  withStatement: _attach(FR.withStatementFrom, { from: FR.withStatementFrom, strict: F.withStatement }),
-  yieldExpression: _attach(FR.yieldExpressionFrom, { from: FR.yieldExpressionFrom, strict: F.yieldExpression }),
-  importClauseGroup1: _attach(FR.importClauseGroup1From, { from: FR.importClauseGroup1From, strict: F.importClauseGroup1 }),
-  catchClauseGroup1: _attach(FR.catchClauseGroup1From, { from: FR.catchClauseGroup1From, strict: F.catchClauseGroup1 }),
-  enumBodyGroup1: _attach(FR.enumBodyGroup1From, { from: FR.enumBodyGroup1From, strict: F.enumBodyGroup1 }),
-  exportClauseGroup1: _attach(FR.exportClauseGroup1From, { from: FR.exportClauseGroup1From, strict: F.exportClauseGroup1 }),
-  formalParametersGroup1: _attach(FR.formalParametersGroup1From, { from: FR.formalParametersGroup1From, strict: F.formalParametersGroup1 }),
-  namedImportsGroup1: _attach(FR.namedImportsGroup1From, { from: FR.namedImportsGroup1From, strict: F.namedImportsGroup1 }),
-  tupleTypeGroup1: _attach(FR.tupleTypeGroup1From, { from: FR.tupleTypeGroup1From, strict: F.tupleTypeGroup1 }),
+	// Node factories
+	abstractClassDeclaration: _attach(FR.abstractClassDeclarationFrom, {
+		from: FR.abstractClassDeclarationFrom,
+		strict: F.abstractClassDeclaration
+	}),
+	abstractMethodSignature: _attach(FR.abstractMethodSignatureFrom, {
+		from: FR.abstractMethodSignatureFrom,
+		strict: F.abstractMethodSignature
+	}),
+	addingTypeAnnotation: _attach(FR.addingTypeAnnotationFrom, {
+		from: FR.addingTypeAnnotationFrom,
+		strict: F.addingTypeAnnotation
+	}),
+	ambientDeclaration: _attach(FR.ambientDeclarationFrom, {
+		from: FR.ambientDeclarationFrom,
+		strict: F.ambientDeclaration
+	}),
+	arguments: _attach(FR.arguments_From, { from: FR.arguments_From, strict: F.arguments_ }),
+	array: _attach(FR.arrayFrom, { from: FR.arrayFrom, strict: F.array }),
+	arrayPattern: _attach(FR.arrayPatternFrom, { from: FR.arrayPatternFrom, strict: F.arrayPattern }),
+	arrayType: _attach(FR.arrayTypeFrom, { from: FR.arrayTypeFrom, strict: F.arrayType }),
+	arrowFunction: _attach(FR.arrowFunctionFrom, { from: FR.arrowFunctionFrom, strict: F.arrowFunction }),
+	asExpression: _attach(FR.asExpressionFrom, { from: FR.asExpressionFrom, strict: F.asExpression }),
+	asserts: _attach(FR.assertsFrom, { from: FR.assertsFrom, strict: F.asserts }),
+	assertsAnnotation: _attach(FR.assertsAnnotationFrom, { from: FR.assertsAnnotationFrom, strict: F.assertsAnnotation }),
+	assignmentExpression: _attach(FR.assignmentExpressionFrom, {
+		from: FR.assignmentExpressionFrom,
+		strict: F.assignmentExpression
+	}),
+	assignmentPattern: _attach(FR.assignmentPatternFrom, { from: FR.assignmentPatternFrom, strict: F.assignmentPattern }),
+	augmentedAssignmentExpression: _attach(FR.augmentedAssignmentExpressionFrom, {
+		from: FR.augmentedAssignmentExpressionFrom,
+		strict: F.augmentedAssignmentExpression
+	}),
+	awaitExpression: _attach(FR.awaitExpressionFrom, { from: FR.awaitExpressionFrom, strict: F.awaitExpression }),
+	binaryExpression: _attach(FR.binaryExpressionFrom, { from: FR.binaryExpressionFrom, strict: F.binaryExpression }),
+	breakStatement: _attach(FR.breakStatementFrom, { from: FR.breakStatementFrom, strict: F.breakStatement }),
+	callExpression: _attach(FR.callExpressionFrom, { from: FR.callExpressionFrom, strict: F.callExpression }),
+	callSignature: _attach(FR.callSignatureFrom, { from: FR.callSignatureFrom, strict: F.callSignature }),
+	catchClause: _attach(FR.catchClauseFrom, { from: FR.catchClauseFrom, strict: F.catchClause }),
+	class: _attach(FR.class_From, { from: FR.class_From, strict: F.class_ }),
+	classBody: _attach(FR.classBodyFrom, { from: FR.classBodyFrom, strict: F.classBody }),
+	classDeclaration: _attach(FR.classDeclarationFrom, { from: FR.classDeclarationFrom, strict: F.classDeclaration }),
+	classHeritage: _attach(FR.classHeritageFrom, { from: FR.classHeritageFrom, strict: F.classHeritage }),
+	classStaticBlock: _attach(FR.classStaticBlockFrom, { from: FR.classStaticBlockFrom, strict: F.classStaticBlock }),
+	computedPropertyName: _attach(FR.computedPropertyNameFrom, {
+		from: FR.computedPropertyNameFrom,
+		strict: F.computedPropertyName
+	}),
+	conditionalType: _attach(FR.conditionalTypeFrom, { from: FR.conditionalTypeFrom, strict: F.conditionalType }),
+	constraint: _attach(FR.constraintFrom, { from: FR.constraintFrom, strict: F.constraint }),
+	constructSignature: _attach(FR.constructSignatureFrom, {
+		from: FR.constructSignatureFrom,
+		strict: F.constructSignature
+	}),
+	constructorType: _attach(FR.constructorTypeFrom, { from: FR.constructorTypeFrom, strict: F.constructorType }),
+	continueStatement: _attach(FR.continueStatementFrom, { from: FR.continueStatementFrom, strict: F.continueStatement }),
+	debuggerStatement: _attach(FR.debuggerStatementFrom, { from: FR.debuggerStatementFrom, strict: F.debuggerStatement }),
+	decorator: _attach(FR.decoratorFrom, { from: FR.decoratorFrom, strict: F.decorator }),
+	decoratorCallExpression: _attach(FR.decoratorCallExpressionFrom, {
+		from: FR.decoratorCallExpressionFrom,
+		strict: F.decoratorCallExpression
+	}),
+	decoratorMemberExpression: _attach(FR.decoratorMemberExpressionFrom, {
+		from: FR.decoratorMemberExpressionFrom,
+		strict: F.decoratorMemberExpression
+	}),
+	decoratorParenthesizedExpression: _attach(FR.decoratorParenthesizedExpressionFrom, {
+		from: FR.decoratorParenthesizedExpressionFrom,
+		strict: F.decoratorParenthesizedExpression
+	}),
+	defaultType: _attach(FR.defaultTypeFrom, { from: FR.defaultTypeFrom, strict: F.defaultType }),
+	doStatement: _attach(FR.doStatementFrom, { from: FR.doStatementFrom, strict: F.doStatement }),
+	elseClause: _attach(FR.elseClauseFrom, { from: FR.elseClauseFrom, strict: F.elseClause }),
+	enumAssignment: _attach(FR.enumAssignmentFrom, { from: FR.enumAssignmentFrom, strict: F.enumAssignment }),
+	enumBody: _attach(FR.enumBodyFrom, { from: FR.enumBodyFrom, strict: F.enumBody }),
+	enumDeclaration: _attach(FR.enumDeclarationFrom, { from: FR.enumDeclarationFrom, strict: F.enumDeclaration }),
+	exportClause: _attach(FR.exportClauseFrom, { from: FR.exportClauseFrom, strict: F.exportClause }),
+	exportSpecifier: _attach(FR.exportSpecifierFrom, { from: FR.exportSpecifierFrom, strict: F.exportSpecifier }),
+	exportStatement: _attach(FR.exportStatementFrom, { from: FR.exportStatementFrom, strict: F.exportStatement }),
+	expressionStatement: _attach(FR.expressionStatementFrom, {
+		from: FR.expressionStatementFrom,
+		strict: F.expressionStatement
+	}),
+	extendsClause: _attach(FR.extendsClauseFrom, { from: FR.extendsClauseFrom, strict: F.extendsClause }),
+	extendsTypeClause: _attach(FR.extendsTypeClauseFrom, { from: FR.extendsTypeClauseFrom, strict: F.extendsTypeClause }),
+	finallyClause: _attach(FR.finallyClauseFrom, { from: FR.finallyClauseFrom, strict: F.finallyClause }),
+	flowMaybeType: _attach(FR.flowMaybeTypeFrom, { from: FR.flowMaybeTypeFrom, strict: F.flowMaybeType }),
+	forInStatement: _attach(FR.forInStatementFrom, { from: FR.forInStatementFrom, strict: F.forInStatement }),
+	forStatement: _attach(FR.forStatementFrom, { from: FR.forStatementFrom, strict: F.forStatement }),
+	formalParameters: _attach(FR.formalParametersFrom, { from: FR.formalParametersFrom, strict: F.formalParameters }),
+	functionDeclaration: _attach(FR.functionDeclarationFrom, {
+		from: FR.functionDeclarationFrom,
+		strict: F.functionDeclaration
+	}),
+	functionExpression: _attach(FR.functionExpressionFrom, {
+		from: FR.functionExpressionFrom,
+		strict: F.functionExpression
+	}),
+	functionSignature: _attach(FR.functionSignatureFrom, { from: FR.functionSignatureFrom, strict: F.functionSignature }),
+	functionType: _attach(FR.functionTypeFrom, { from: FR.functionTypeFrom, strict: F.functionType }),
+	generatorFunction: _attach(FR.generatorFunctionFrom, { from: FR.generatorFunctionFrom, strict: F.generatorFunction }),
+	generatorFunctionDeclaration: _attach(FR.generatorFunctionDeclarationFrom, {
+		from: FR.generatorFunctionDeclarationFrom,
+		strict: F.generatorFunctionDeclaration
+	}),
+	genericType: _attach(FR.genericTypeFrom, { from: FR.genericTypeFrom, strict: F.genericType }),
+	ifStatement: _attach(FR.ifStatementFrom, { from: FR.ifStatementFrom, strict: F.ifStatement }),
+	implementsClause: _attach(FR.implementsClauseFrom, { from: FR.implementsClauseFrom, strict: F.implementsClause }),
+	importAlias: _attach(FR.importAliasFrom, { from: FR.importAliasFrom, strict: F.importAlias }),
+	importAttribute: _attach(FR.importAttributeFrom, { from: FR.importAttributeFrom, strict: F.importAttribute }),
+	importClause: _attach(FR.importClauseFrom, { from: FR.importClauseFrom, strict: F.importClause }),
+	importRequireClause: _attach(FR.importRequireClauseFrom, {
+		from: FR.importRequireClauseFrom,
+		strict: F.importRequireClause
+	}),
+	importSpecifier: _attach(FR.importSpecifierFrom, { from: FR.importSpecifierFrom, strict: F.importSpecifier }),
+	importStatement: _attach(FR.importStatementFrom, { from: FR.importStatementFrom, strict: F.importStatement }),
+	indexSignature: _attach(FR.indexSignatureFrom, { from: FR.indexSignatureFrom, strict: F.indexSignature }),
+	indexTypeQuery: _attach(FR.indexTypeQueryFrom, { from: FR.indexTypeQueryFrom, strict: F.indexTypeQuery }),
+	inferType: _attach(FR.inferTypeFrom, { from: FR.inferTypeFrom, strict: F.inferType }),
+	instantiationExpression: _attach(FR.instantiationExpressionFrom, {
+		from: FR.instantiationExpressionFrom,
+		strict: F.instantiationExpression
+	}),
+	interfaceDeclaration: _attach(FR.interfaceDeclarationFrom, {
+		from: FR.interfaceDeclarationFrom,
+		strict: F.interfaceDeclaration
+	}),
+	internalModule: _attach(FR.internalModuleFrom, { from: FR.internalModuleFrom, strict: F.internalModule }),
+	intersectionType: _attach(FR.intersectionTypeFrom, { from: FR.intersectionTypeFrom, strict: F.intersectionType }),
+	labeledStatement: _attach(FR.labeledStatementFrom, { from: FR.labeledStatementFrom, strict: F.labeledStatement }),
+	lexicalDeclaration: _attach(FR.lexicalDeclarationFrom, {
+		from: FR.lexicalDeclarationFrom,
+		strict: F.lexicalDeclaration
+	}),
+	literalType: _attach(FR.literalTypeFrom, { from: FR.literalTypeFrom, strict: F.literalType }),
+	lookupType: _attach(FR.lookupTypeFrom, { from: FR.lookupTypeFrom, strict: F.lookupType }),
+	mappedTypeClause: _attach(FR.mappedTypeClauseFrom, { from: FR.mappedTypeClauseFrom, strict: F.mappedTypeClause }),
+	memberExpression: _attach(FR.memberExpressionFrom, { from: FR.memberExpressionFrom, strict: F.memberExpression }),
+	methodDefinition: _attach(FR.methodDefinitionFrom, { from: FR.methodDefinitionFrom, strict: F.methodDefinition }),
+	methodSignature: _attach(FR.methodSignatureFrom, { from: FR.methodSignatureFrom, strict: F.methodSignature }),
+	module: _attach(FR.moduleFrom, { from: FR.moduleFrom, strict: F.module }),
+	namedImports: _attach(FR.namedImportsFrom, { from: FR.namedImportsFrom, strict: F.namedImports }),
+	namespaceExport: _attach(FR.namespaceExportFrom, { from: FR.namespaceExportFrom, strict: F.namespaceExport }),
+	namespaceImport: _attach(FR.namespaceImportFrom, { from: FR.namespaceImportFrom, strict: F.namespaceImport }),
+	nestedIdentifier: _attach(FR.nestedIdentifierFrom, { from: FR.nestedIdentifierFrom, strict: F.nestedIdentifier }),
+	nestedTypeIdentifier: _attach(FR.nestedTypeIdentifierFrom, {
+		from: FR.nestedTypeIdentifierFrom,
+		strict: F.nestedTypeIdentifier
+	}),
+	newExpression: _attach(FR.newExpressionFrom, { from: FR.newExpressionFrom, strict: F.newExpression }),
+	nonNullExpression: _attach(FR.nonNullExpressionFrom, { from: FR.nonNullExpressionFrom, strict: F.nonNullExpression }),
+	object: _attach(FR.objectFrom, { from: FR.objectFrom, strict: F.object }),
+	objectAssignmentPattern: _attach(FR.objectAssignmentPatternFrom, {
+		from: FR.objectAssignmentPatternFrom,
+		strict: F.objectAssignmentPattern
+	}),
+	objectPattern: _attach(FR.objectPatternFrom, { from: FR.objectPatternFrom, strict: F.objectPattern }),
+	objectType: _attach(FR.objectTypeFrom, {
+		from: FR.objectTypeFrom,
+		strict: F.objectType,
+		curly: F.objectTypeCurly,
+		flow: F.objectTypeFlow
+	}),
+	objectTypeContent: _attach(FR.objectTypeContentFrom, { from: FR.objectTypeContentFrom, strict: F.objectTypeContent }),
+	omittingTypeAnnotation: _attach(FR.omittingTypeAnnotationFrom, {
+		from: FR.omittingTypeAnnotationFrom,
+		strict: F.omittingTypeAnnotation
+	}),
+	optingTypeAnnotation: _attach(FR.optingTypeAnnotationFrom, {
+		from: FR.optingTypeAnnotationFrom,
+		strict: F.optingTypeAnnotation
+	}),
+	optionalParameter: _attach(FR.optionalParameterFrom, { from: FR.optionalParameterFrom, strict: F.optionalParameter }),
+	optionalTupleParameter: _attach(FR.optionalTupleParameterFrom, {
+		from: FR.optionalTupleParameterFrom,
+		strict: F.optionalTupleParameter
+	}),
+	optionalType: _attach(FR.optionalTypeFrom, { from: FR.optionalTypeFrom, strict: F.optionalType }),
+	pair: _attach(FR.pairFrom, { from: FR.pairFrom, strict: F.pair }),
+	pairPattern: _attach(FR.pairPatternFrom, { from: FR.pairPatternFrom, strict: F.pairPattern }),
+	parenthesizedExpression: _attach(FR.parenthesizedExpressionFrom, {
+		from: FR.parenthesizedExpressionFrom,
+		strict: F.parenthesizedExpression
+	}),
+	parenthesizedType: _attach(FR.parenthesizedTypeFrom, { from: FR.parenthesizedTypeFrom, strict: F.parenthesizedType }),
+	program: _attach(FR.programFrom, { from: FR.programFrom, strict: F.program }),
+	propertySignature: _attach(FR.propertySignatureFrom, { from: FR.propertySignatureFrom, strict: F.propertySignature }),
+	publicFieldDefinition: _attach(FR.publicFieldDefinitionFrom, {
+		from: FR.publicFieldDefinitionFrom,
+		strict: F.publicFieldDefinition
+	}),
+	readonlyType: _attach(FR.readonlyTypeFrom, { from: FR.readonlyTypeFrom, strict: F.readonlyType }),
+	regex: _attach(FR.regexFrom, { from: FR.regexFrom, strict: F.regex }),
+	requiredParameter: _attach(FR.requiredParameterFrom, { from: FR.requiredParameterFrom, strict: F.requiredParameter }),
+	restPattern: _attach(FR.restPatternFrom, { from: FR.restPatternFrom, strict: F.restPattern }),
+	restType: _attach(FR.restTypeFrom, { from: FR.restTypeFrom, strict: F.restType }),
+	returnStatement: _attach(FR.returnStatementFrom, { from: FR.returnStatementFrom, strict: F.returnStatement }),
+	satisfiesExpression: _attach(FR.satisfiesExpressionFrom, {
+		from: FR.satisfiesExpressionFrom,
+		strict: F.satisfiesExpression
+	}),
+	sequenceExpression: _attach(FR.sequenceExpressionFrom, {
+		from: FR.sequenceExpressionFrom,
+		strict: F.sequenceExpression
+	}),
+	spreadElement: _attach(FR.spreadElementFrom, { from: FR.spreadElementFrom, strict: F.spreadElement }),
+	statementBlock: _attach(FR.statementBlockFrom, { from: FR.statementBlockFrom, strict: F.statementBlock }),
+	string: _attach(FR.stringFrom, {
+		from: FR.stringFrom,
+		strict: F.string,
+		double: F.stringDouble,
+		single: F.stringSingle
+	}),
+	subscriptExpression: _attach(FR.subscriptExpressionFrom, {
+		from: FR.subscriptExpressionFrom,
+		strict: F.subscriptExpression
+	}),
+	switchBody: _attach(FR.switchBodyFrom, { from: FR.switchBodyFrom, strict: F.switchBody }),
+	switchCase: _attach(FR.switchCaseFrom, { from: FR.switchCaseFrom, strict: F.switchCase }),
+	switchDefault: _attach(FR.switchDefaultFrom, { from: FR.switchDefaultFrom, strict: F.switchDefault }),
+	switchStatement: _attach(FR.switchStatementFrom, { from: FR.switchStatementFrom, strict: F.switchStatement }),
+	templateLiteralType: _attach(FR.templateLiteralTypeFrom, {
+		from: FR.templateLiteralTypeFrom,
+		strict: F.templateLiteralType
+	}),
+	templateString: _attach(FR.templateStringFrom, { from: FR.templateStringFrom, strict: F.templateString }),
+	templateSubstitution: _attach(FR.templateSubstitutionFrom, {
+		from: FR.templateSubstitutionFrom,
+		strict: F.templateSubstitution
+	}),
+	templateType: _attach(FR.templateTypeFrom, { from: FR.templateTypeFrom, strict: F.templateType }),
+	ternaryExpression: _attach(FR.ternaryExpressionFrom, { from: FR.ternaryExpressionFrom, strict: F.ternaryExpression }),
+	throwStatement: _attach(FR.throwStatementFrom, { from: FR.throwStatementFrom, strict: F.throwStatement }),
+	tryStatement: _attach(FR.tryStatementFrom, { from: FR.tryStatementFrom, strict: F.tryStatement }),
+	tupleParameter: _attach(FR.tupleParameterFrom, { from: FR.tupleParameterFrom, strict: F.tupleParameter }),
+	tupleType: _attach(FR.tupleTypeFrom, { from: FR.tupleTypeFrom, strict: F.tupleType }),
+	typeAliasDeclaration: _attach(FR.typeAliasDeclarationFrom, {
+		from: FR.typeAliasDeclarationFrom,
+		strict: F.typeAliasDeclaration
+	}),
+	typeAnnotation: _attach(FR.typeAnnotationFrom, { from: FR.typeAnnotationFrom, strict: F.typeAnnotation }),
+	typeArguments: _attach(FR.typeArgumentsFrom, { from: FR.typeArgumentsFrom, strict: F.typeArguments }),
+	typeAssertion: _attach(FR.typeAssertionFrom, { from: FR.typeAssertionFrom, strict: F.typeAssertion }),
+	typeParameter: _attach(FR.typeParameterFrom, { from: FR.typeParameterFrom, strict: F.typeParameter }),
+	typeParameters: _attach(FR.typeParametersFrom, { from: FR.typeParametersFrom, strict: F.typeParameters }),
+	typePredicate: _attach(FR.typePredicateFrom, { from: FR.typePredicateFrom, strict: F.typePredicate }),
+	typePredicateAnnotation: _attach(FR.typePredicateAnnotationFrom, {
+		from: FR.typePredicateAnnotationFrom,
+		strict: F.typePredicateAnnotation
+	}),
+	typeQuery: _attach(FR.typeQueryFrom, { from: FR.typeQueryFrom, strict: F.typeQuery }),
+	unaryExpression: _attach(FR.unaryExpressionFrom, { from: FR.unaryExpressionFrom, strict: F.unaryExpression }),
+	unionType: _attach(FR.unionTypeFrom, { from: FR.unionTypeFrom, strict: F.unionType }),
+	updateExpression: _attach(FR.updateExpressionFrom, { from: FR.updateExpressionFrom, strict: F.updateExpression }),
+	variableDeclaration: _attach(FR.variableDeclarationFrom, {
+		from: FR.variableDeclarationFrom,
+		strict: F.variableDeclaration
+	}),
+	variableDeclarator: _attach(FR.variableDeclaratorFrom, {
+		from: FR.variableDeclaratorFrom,
+		strict: F.variableDeclarator
+	}),
+	whileStatement: _attach(FR.whileStatementFrom, { from: FR.whileStatementFrom, strict: F.whileStatement }),
+	withStatement: _attach(FR.withStatementFrom, { from: FR.withStatementFrom, strict: F.withStatement }),
+	yieldExpression: _attach(FR.yieldExpressionFrom, { from: FR.yieldExpressionFrom, strict: F.yieldExpression }),
+	importClauseGroup1: _attach(FR.importClauseGroup1From, {
+		from: FR.importClauseGroup1From,
+		strict: F.importClauseGroup1
+	}),
+	catchClauseGroup1: _attach(FR.catchClauseGroup1From, { from: FR.catchClauseGroup1From, strict: F.catchClauseGroup1 }),
+	enumBodyGroup1: _attach(FR.enumBodyGroup1From, { from: FR.enumBodyGroup1From, strict: F.enumBodyGroup1 }),
+	exportClauseGroup1: _attach(FR.exportClauseGroup1From, {
+		from: FR.exportClauseGroup1From,
+		strict: F.exportClauseGroup1
+	}),
+	formalParametersGroup1: _attach(FR.formalParametersGroup1From, {
+		from: FR.formalParametersGroup1From,
+		strict: F.formalParametersGroup1
+	}),
+	namedImportsGroup1: _attach(FR.namedImportsGroup1From, {
+		from: FR.namedImportsGroup1From,
+		strict: F.namedImportsGroup1
+	}),
+	tupleTypeGroup1: _attach(FR.tupleTypeGroup1From, { from: FR.tupleTypeGroup1From, strict: F.tupleTypeGroup1 }),
 
-  // Keyword factories
-  false: F.false_,
-  import: F.import_,
-  null: F.null_,
-  overrideModifier: F.overrideModifier,
-  super: F.super_,
-  this: F.this_,
-  true: F.true_,
-  undefined: F.undefined_,
+	// Keyword factories
+	false: F.false_,
+	import: F.import_,
+	null: F.null_,
+	overrideModifier: F.overrideModifier,
+	super: F.super_,
+	this: F.this_,
+	true: F.true_,
+	undefined: F.undefined_,
 
-  // Leaf node factories
-  accessibilityModifier: F.accessibilityModifier,
-  comment: F.comment,
-  escapeSequence: F.escapeSequence,
-  hashBangLine: F.hashBangLine,
-  identifier2: F.identifier,
-  metaProperty: F.metaProperty,
-  number: F.number,
-  predefinedType: F.predefinedType,
-  privatePropertyIdentifier: F.privatePropertyIdentifier,
-  regexFlags: F.regexFlags,
-  regexPattern: F.regexPattern,
-  unescapedDoubleStringFragment: F.unescapedDoubleStringFragment,
-  unescapedSingleStringFragment: F.unescapedSingleStringFragment,
-  htmlComment: F.htmlComment,
-  jsxText: F.jsxText,
+	// Leaf node factories
+	accessibilityModifier: F.accessibilityModifier,
+	comment: F.comment,
+	escapeSequence: F.escapeSequence,
+	hashBangLine: F.hashBangLine,
+	identifier2: F.identifier,
+	metaProperty: F.metaProperty,
+	number: F.number,
+	predefinedType: F.predefinedType,
+	privatePropertyIdentifier: F.privatePropertyIdentifier,
+	regexFlags: F.regexFlags,
+	regexPattern: F.regexPattern,
+	unescapedDoubleStringFragment: F.unescapedDoubleStringFragment,
+	unescapedSingleStringFragment: F.unescapedSingleStringFragment,
+	htmlComment: F.htmlComment,
+	jsxText: F.jsxText,
 
-  // Supertype-stripped short aliases
-  abstractClass: _attach(FR.abstractClassDeclarationFrom, { from: FR.abstractClassDeclarationFrom, strict: F.abstractClassDeclaration }),
-  ambient: _attach(FR.ambientDeclarationFrom, { from: FR.ambientDeclarationFrom, strict: F.ambientDeclaration }),
-  arrow: _attach(FR.arrowFunctionFrom, { from: FR.arrowFunctionFrom, strict: F.arrowFunction }),
-  as: _attach(FR.asExpressionFrom, { from: FR.asExpressionFrom, strict: F.asExpression }),
-  assignment: _attach(FR.assignmentExpressionFrom, { from: FR.assignmentExpressionFrom, strict: F.assignmentExpression }),
-  augmentedAssignment: _attach(FR.augmentedAssignmentExpressionFrom, { from: FR.augmentedAssignmentExpressionFrom, strict: F.augmentedAssignmentExpression }),
-  await: _attach(FR.awaitExpressionFrom, { from: FR.awaitExpressionFrom, strict: F.awaitExpression }),
-  binary: _attach(FR.binaryExpressionFrom, { from: FR.binaryExpressionFrom, strict: F.binaryExpression }),
-  break: _attach(FR.breakStatementFrom, { from: FR.breakStatementFrom, strict: F.breakStatement }),
-  call: _attach(FR.callExpressionFrom, { from: FR.callExpressionFrom, strict: F.callExpression }),
-  computedProperty: _attach(FR.computedPropertyNameFrom, { from: FR.computedPropertyNameFrom, strict: F.computedPropertyName }),
-  conditional: _attach(FR.conditionalTypeFrom, { from: FR.conditionalTypeFrom, strict: F.conditionalType }),
-  constructor: _attach(FR.constructorTypeFrom, { from: FR.constructorTypeFrom, strict: F.constructorType }),
-  continue: _attach(FR.continueStatementFrom, { from: FR.continueStatementFrom, strict: F.continueStatement }),
-  debugger: _attach(FR.debuggerStatementFrom, { from: FR.debuggerStatementFrom, strict: F.debuggerStatement }),
-  do: _attach(FR.doStatementFrom, { from: FR.doStatementFrom, strict: F.doStatement }),
-  enum: _attach(FR.enumDeclarationFrom, { from: FR.enumDeclarationFrom, strict: F.enumDeclaration }),
-  export: _attach(FR.exportStatementFrom, { from: FR.exportStatementFrom, strict: F.exportStatement }),
-  flowMaybe: _attach(FR.flowMaybeTypeFrom, { from: FR.flowMaybeTypeFrom, strict: F.flowMaybeType }),
-  for: _attach(FR.forStatementFrom, { from: FR.forStatementFrom, strict: F.forStatement }),
-  forIn: _attach(FR.forInStatementFrom, { from: FR.forInStatementFrom, strict: F.forInStatement }),
-  function: _attach(FR.functionDeclarationFrom, { from: FR.functionDeclarationFrom, strict: F.functionDeclaration }),
-  generator: _attach(FR.generatorFunctionFrom, { from: FR.generatorFunctionFrom, strict: F.generatorFunction }),
-  generic: _attach(FR.genericTypeFrom, { from: FR.genericTypeFrom, strict: F.genericType }),
-  if: _attach(FR.ifStatementFrom, { from: FR.ifStatementFrom, strict: F.ifStatement }),
-  indexType: _attach(FR.indexTypeQueryFrom, { from: FR.indexTypeQueryFrom, strict: F.indexTypeQuery }),
-  infer: _attach(FR.inferTypeFrom, { from: FR.inferTypeFrom, strict: F.inferType }),
-  instantiation: _attach(FR.instantiationExpressionFrom, { from: FR.instantiationExpressionFrom, strict: F.instantiationExpression }),
-  interface: _attach(FR.interfaceDeclarationFrom, { from: FR.interfaceDeclarationFrom, strict: F.interfaceDeclaration }),
-  internal: _attach(FR.internalModuleFrom, { from: FR.internalModuleFrom, strict: F.internalModule }),
-  intersection: _attach(FR.intersectionTypeFrom, { from: FR.intersectionTypeFrom, strict: F.intersectionType }),
-  jsx: F.jsxText,
-  labeled: _attach(FR.labeledStatementFrom, { from: FR.labeledStatementFrom, strict: F.labeledStatement }),
-  lexical: _attach(FR.lexicalDeclarationFrom, { from: FR.lexicalDeclarationFrom, strict: F.lexicalDeclaration }),
-  literal: _attach(FR.literalTypeFrom, { from: FR.literalTypeFrom, strict: F.literalType }),
-  lookup: _attach(FR.lookupTypeFrom, { from: FR.lookupTypeFrom, strict: F.lookupType }),
-  member: _attach(FR.memberExpressionFrom, { from: FR.memberExpressionFrom, strict: F.memberExpression }),
-  meta: F.metaProperty,
-  nested: _attach(FR.nestedIdentifierFrom, { from: FR.nestedIdentifierFrom, strict: F.nestedIdentifier }),
-  nestedType: _attach(FR.nestedTypeIdentifierFrom, { from: FR.nestedTypeIdentifierFrom, strict: F.nestedTypeIdentifier }),
-  new: _attach(FR.newExpressionFrom, { from: FR.newExpressionFrom, strict: F.newExpression }),
-  nonNull: _attach(FR.nonNullExpressionFrom, { from: FR.nonNullExpressionFrom, strict: F.nonNullExpression }),
-  optional: _attach(FR.optionalParameterFrom, { from: FR.optionalParameterFrom, strict: F.optionalParameter }),
-  optionalTuple: _attach(FR.optionalTupleParameterFrom, { from: FR.optionalTupleParameterFrom, strict: F.optionalTupleParameter }),
-  parenthesized: _attach(FR.parenthesizedExpressionFrom, { from: FR.parenthesizedExpressionFrom, strict: F.parenthesizedExpression }),
-  predefined: F.predefinedType,
-  privateProperty: F.privatePropertyIdentifier,
-  readonly: _attach(FR.readonlyTypeFrom, { from: FR.readonlyTypeFrom, strict: F.readonlyType }),
-  required: _attach(FR.requiredParameterFrom, { from: FR.requiredParameterFrom, strict: F.requiredParameter }),
-  rest: _attach(FR.restTypeFrom, { from: FR.restTypeFrom, strict: F.restType }),
-  return: _attach(FR.returnStatementFrom, { from: FR.returnStatementFrom, strict: F.returnStatement }),
-  satisfies: _attach(FR.satisfiesExpressionFrom, { from: FR.satisfiesExpressionFrom, strict: F.satisfiesExpression }),
-  sequence: _attach(FR.sequenceExpressionFrom, { from: FR.sequenceExpressionFrom, strict: F.sequenceExpression }),
-  subscript: _attach(FR.subscriptExpressionFrom, { from: FR.subscriptExpressionFrom, strict: F.subscriptExpression }),
-  switch: _attach(FR.switchStatementFrom, { from: FR.switchStatementFrom, strict: F.switchStatement }),
-  template: _attach(FR.templateStringFrom, { from: FR.templateStringFrom, strict: F.templateString }),
-  templateLiteral: _attach(FR.templateLiteralTypeFrom, { from: FR.templateLiteralTypeFrom, strict: F.templateLiteralType }),
-  ternary: _attach(FR.ternaryExpressionFrom, { from: FR.ternaryExpressionFrom, strict: F.ternaryExpression }),
-  throw: _attach(FR.throwStatementFrom, { from: FR.throwStatementFrom, strict: F.throwStatement }),
-  try: _attach(FR.tryStatementFrom, { from: FR.tryStatementFrom, strict: F.tryStatement }),
-  tuple: _attach(FR.tupleParameterFrom, { from: FR.tupleParameterFrom, strict: F.tupleParameter }),
-  typeAlias: _attach(FR.typeAliasDeclarationFrom, { from: FR.typeAliasDeclarationFrom, strict: F.typeAliasDeclaration }),
-  unary: _attach(FR.unaryExpressionFrom, { from: FR.unaryExpressionFrom, strict: F.unaryExpression }),
-  union: _attach(FR.unionTypeFrom, { from: FR.unionTypeFrom, strict: F.unionType }),
-  update: _attach(FR.updateExpressionFrom, { from: FR.updateExpressionFrom, strict: F.updateExpression }),
-  variable: _attach(FR.variableDeclarationFrom, { from: FR.variableDeclarationFrom, strict: F.variableDeclaration }),
-  while: _attach(FR.whileStatementFrom, { from: FR.whileStatementFrom, strict: F.whileStatement }),
-  with: _attach(FR.withStatementFrom, { from: FR.withStatementFrom, strict: F.withStatement }),
-  yield: _attach(FR.yieldExpressionFrom, { from: FR.yieldExpressionFrom, strict: F.yieldExpression }),
+	// Supertype-stripped short aliases
+	abstractClass: _attach(FR.abstractClassDeclarationFrom, {
+		from: FR.abstractClassDeclarationFrom,
+		strict: F.abstractClassDeclaration
+	}),
+	ambient: _attach(FR.ambientDeclarationFrom, { from: FR.ambientDeclarationFrom, strict: F.ambientDeclaration }),
+	arrow: _attach(FR.arrowFunctionFrom, { from: FR.arrowFunctionFrom, strict: F.arrowFunction }),
+	as: _attach(FR.asExpressionFrom, { from: FR.asExpressionFrom, strict: F.asExpression }),
+	assignment: _attach(FR.assignmentExpressionFrom, {
+		from: FR.assignmentExpressionFrom,
+		strict: F.assignmentExpression
+	}),
+	augmentedAssignment: _attach(FR.augmentedAssignmentExpressionFrom, {
+		from: FR.augmentedAssignmentExpressionFrom,
+		strict: F.augmentedAssignmentExpression
+	}),
+	await: _attach(FR.awaitExpressionFrom, { from: FR.awaitExpressionFrom, strict: F.awaitExpression }),
+	binary: _attach(FR.binaryExpressionFrom, { from: FR.binaryExpressionFrom, strict: F.binaryExpression }),
+	break: _attach(FR.breakStatementFrom, { from: FR.breakStatementFrom, strict: F.breakStatement }),
+	call: _attach(FR.callExpressionFrom, { from: FR.callExpressionFrom, strict: F.callExpression }),
+	computedProperty: _attach(FR.computedPropertyNameFrom, {
+		from: FR.computedPropertyNameFrom,
+		strict: F.computedPropertyName
+	}),
+	conditional: _attach(FR.conditionalTypeFrom, { from: FR.conditionalTypeFrom, strict: F.conditionalType }),
+	constructor: _attach(FR.constructorTypeFrom, { from: FR.constructorTypeFrom, strict: F.constructorType }),
+	continue: _attach(FR.continueStatementFrom, { from: FR.continueStatementFrom, strict: F.continueStatement }),
+	debugger: _attach(FR.debuggerStatementFrom, { from: FR.debuggerStatementFrom, strict: F.debuggerStatement }),
+	do: _attach(FR.doStatementFrom, { from: FR.doStatementFrom, strict: F.doStatement }),
+	enum: _attach(FR.enumDeclarationFrom, { from: FR.enumDeclarationFrom, strict: F.enumDeclaration }),
+	export: _attach(FR.exportStatementFrom, { from: FR.exportStatementFrom, strict: F.exportStatement }),
+	flowMaybe: _attach(FR.flowMaybeTypeFrom, { from: FR.flowMaybeTypeFrom, strict: F.flowMaybeType }),
+	for: _attach(FR.forStatementFrom, { from: FR.forStatementFrom, strict: F.forStatement }),
+	forIn: _attach(FR.forInStatementFrom, { from: FR.forInStatementFrom, strict: F.forInStatement }),
+	function: _attach(FR.functionDeclarationFrom, { from: FR.functionDeclarationFrom, strict: F.functionDeclaration }),
+	generator: _attach(FR.generatorFunctionFrom, { from: FR.generatorFunctionFrom, strict: F.generatorFunction }),
+	generic: _attach(FR.genericTypeFrom, { from: FR.genericTypeFrom, strict: F.genericType }),
+	if: _attach(FR.ifStatementFrom, { from: FR.ifStatementFrom, strict: F.ifStatement }),
+	indexType: _attach(FR.indexTypeQueryFrom, { from: FR.indexTypeQueryFrom, strict: F.indexTypeQuery }),
+	infer: _attach(FR.inferTypeFrom, { from: FR.inferTypeFrom, strict: F.inferType }),
+	instantiation: _attach(FR.instantiationExpressionFrom, {
+		from: FR.instantiationExpressionFrom,
+		strict: F.instantiationExpression
+	}),
+	interface: _attach(FR.interfaceDeclarationFrom, {
+		from: FR.interfaceDeclarationFrom,
+		strict: F.interfaceDeclaration
+	}),
+	internal: _attach(FR.internalModuleFrom, { from: FR.internalModuleFrom, strict: F.internalModule }),
+	intersection: _attach(FR.intersectionTypeFrom, { from: FR.intersectionTypeFrom, strict: F.intersectionType }),
+	jsx: F.jsxText,
+	labeled: _attach(FR.labeledStatementFrom, { from: FR.labeledStatementFrom, strict: F.labeledStatement }),
+	lexical: _attach(FR.lexicalDeclarationFrom, { from: FR.lexicalDeclarationFrom, strict: F.lexicalDeclaration }),
+	literal: _attach(FR.literalTypeFrom, { from: FR.literalTypeFrom, strict: F.literalType }),
+	lookup: _attach(FR.lookupTypeFrom, { from: FR.lookupTypeFrom, strict: F.lookupType }),
+	member: _attach(FR.memberExpressionFrom, { from: FR.memberExpressionFrom, strict: F.memberExpression }),
+	meta: F.metaProperty,
+	nested: _attach(FR.nestedIdentifierFrom, { from: FR.nestedIdentifierFrom, strict: F.nestedIdentifier }),
+	nestedType: _attach(FR.nestedTypeIdentifierFrom, {
+		from: FR.nestedTypeIdentifierFrom,
+		strict: F.nestedTypeIdentifier
+	}),
+	new: _attach(FR.newExpressionFrom, { from: FR.newExpressionFrom, strict: F.newExpression }),
+	nonNull: _attach(FR.nonNullExpressionFrom, { from: FR.nonNullExpressionFrom, strict: F.nonNullExpression }),
+	optional: _attach(FR.optionalParameterFrom, { from: FR.optionalParameterFrom, strict: F.optionalParameter }),
+	optionalTuple: _attach(FR.optionalTupleParameterFrom, {
+		from: FR.optionalTupleParameterFrom,
+		strict: F.optionalTupleParameter
+	}),
+	parenthesized: _attach(FR.parenthesizedExpressionFrom, {
+		from: FR.parenthesizedExpressionFrom,
+		strict: F.parenthesizedExpression
+	}),
+	predefined: F.predefinedType,
+	privateProperty: F.privatePropertyIdentifier,
+	readonly: _attach(FR.readonlyTypeFrom, { from: FR.readonlyTypeFrom, strict: F.readonlyType }),
+	required: _attach(FR.requiredParameterFrom, { from: FR.requiredParameterFrom, strict: F.requiredParameter }),
+	rest: _attach(FR.restTypeFrom, { from: FR.restTypeFrom, strict: F.restType }),
+	return: _attach(FR.returnStatementFrom, { from: FR.returnStatementFrom, strict: F.returnStatement }),
+	satisfies: _attach(FR.satisfiesExpressionFrom, { from: FR.satisfiesExpressionFrom, strict: F.satisfiesExpression }),
+	sequence: _attach(FR.sequenceExpressionFrom, { from: FR.sequenceExpressionFrom, strict: F.sequenceExpression }),
+	subscript: _attach(FR.subscriptExpressionFrom, { from: FR.subscriptExpressionFrom, strict: F.subscriptExpression }),
+	switch: _attach(FR.switchStatementFrom, { from: FR.switchStatementFrom, strict: F.switchStatement }),
+	template: _attach(FR.templateStringFrom, { from: FR.templateStringFrom, strict: F.templateString }),
+	templateLiteral: _attach(FR.templateLiteralTypeFrom, {
+		from: FR.templateLiteralTypeFrom,
+		strict: F.templateLiteralType
+	}),
+	ternary: _attach(FR.ternaryExpressionFrom, { from: FR.ternaryExpressionFrom, strict: F.ternaryExpression }),
+	throw: _attach(FR.throwStatementFrom, { from: FR.throwStatementFrom, strict: F.throwStatement }),
+	try: _attach(FR.tryStatementFrom, { from: FR.tryStatementFrom, strict: F.tryStatement }),
+	tuple: _attach(FR.tupleParameterFrom, { from: FR.tupleParameterFrom, strict: F.tupleParameter }),
+	typeAlias: _attach(FR.typeAliasDeclarationFrom, {
+		from: FR.typeAliasDeclarationFrom,
+		strict: F.typeAliasDeclaration
+	}),
+	unary: _attach(FR.unaryExpressionFrom, { from: FR.unaryExpressionFrom, strict: F.unaryExpression }),
+	union: _attach(FR.unionTypeFrom, { from: FR.unionTypeFrom, strict: F.unionType }),
+	update: _attach(FR.updateExpressionFrom, { from: FR.updateExpressionFrom, strict: F.updateExpression }),
+	variable: _attach(FR.variableDeclarationFrom, { from: FR.variableDeclarationFrom, strict: F.variableDeclaration }),
+	while: _attach(FR.whileStatementFrom, { from: FR.whileStatementFrom, strict: F.whileStatement }),
+	with: _attach(FR.withStatementFrom, { from: FR.withStatementFrom, strict: F.withStatement }),
+	yield: _attach(FR.yieldExpressionFrom, { from: FR.yieldExpressionFrom, strict: F.yieldExpression }),
 
-  // Supertype-grouped sub-namespaces (also exported standalone above)
-  destructuringPattern,
-  expressions,
-  formalParameter,
-  identifier,
-  importIdentifier,
-  jsxAttributeName,
-  jsxChild,
-  jsxElementName,
-  jsxIdentifier,
-  moduleExportName,
-  propertyIdentifier,
-  propertyName,
-  shorthandPropertyIdentifier,
-  shorthandPropertyIdentifierPattern,
-  statementIdentifier,
-  tupleTypeMember,
-  declaration,
-  expression,
-  pattern,
-  primaryExpression,
-  primaryType,
-  statement,
-  type,
-  from,
+	// Supertype-grouped sub-namespaces (also exported standalone above)
+	destructuringPattern,
+	expressions,
+	formalParameter,
+	identifier,
+	importIdentifier,
+	jsxAttributeName,
+	jsxChild,
+	jsxElementName,
+	jsxIdentifier,
+	moduleExportName,
+	propertyIdentifier,
+	propertyName,
+	shorthandPropertyIdentifier,
+	shorthandPropertyIdentifierPattern,
+	statementIdentifier,
+	tupleTypeMember,
+	declaration,
+	expression,
+	pattern,
+	primaryExpression,
+	primaryType,
+	statement,
+	type,
+	from
 } as const;

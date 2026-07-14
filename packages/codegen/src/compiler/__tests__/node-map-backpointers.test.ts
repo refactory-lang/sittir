@@ -1,7 +1,6 @@
 import { PATTERN } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import { choice, field, seq } from '../evaluate.ts';
-import { buildRuleCatalog } from '../rule-catalog.ts';
+import { buildRuleCatalog, choice, field, seq } from '../evaluate.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
@@ -126,7 +125,7 @@ describe('NodeMap back-pointer maps', () => {
 		const slot = (nodeMap.nodes.get('test') as AssembledBranch | undefined)?.slots.parameter;
 		expect(slot).toBeDefined();
 
-		const simplifiedIds = ((simplifiedRules.test as { members: readonly { id?: string }[] }).members)
+		const simplifiedIds = (simplifiedRules.test as { members: readonly { id?: string }[] }).members
 			.map((member) => member.id)
 			.filter((id): id is string => Boolean(id));
 
@@ -137,7 +136,11 @@ describe('NodeMap back-pointer maps', () => {
 	});
 
 	it('slot.sourceRuleIds includes both simplified and render-view ids when the views diverge', () => {
-		const { rules: simplifiedRules, normalizedRules, nodeMap } = buildNodeMap({
+		const {
+			rules: simplifiedRules,
+			normalizedRules,
+			nodeMap
+		} = buildNodeMap({
 			test: seq(
 				field('lhs', { type: 'SYMBOL', name: 'identifier' }),
 				choice(
@@ -153,7 +156,7 @@ describe('NodeMap back-pointer maps', () => {
 		expect(slot).toBeDefined();
 
 		const simplifiedChoiceId = (simplifiedRules.test as { members: readonly { id?: string }[] }).members[1]?.id;
-		const renderChoice = ((normalizedRules.test as RenderRule & { members: readonly Rule[] }).members[1] as ChoiceRule);
+		const renderChoice = (normalizedRules.test as RenderRule & { members: readonly Rule[] }).members[1] as ChoiceRule;
 		const renderIds = renderChoice.members
 			.map((member) => (member as { members?: readonly { id?: string }[] }).members?.[1]?.id)
 			.filter((id): id is string => Boolean(id));

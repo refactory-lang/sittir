@@ -72,7 +72,10 @@ for (const grammar of GRAMMARS) {
 			expect(result.factories).toBeDefined();
 			expect(result.types).toBeDefined();
 			expect(result.from).toBeDefined();
-			expect(result.suggested).toBeDefined();
+			// emitSuggested is disabled for now (cleanup-slot-naming-source,
+			// see packages/codegen/src/emitters/suggested.ts) and always
+			// returns undefined until the slot-naming/source refactor settles.
+			expect(result.suggested).toBeUndefined();
 		});
 
 		// SKIPPED: these exercise the default JS backend (`readNode` tree-walk),
@@ -100,9 +103,7 @@ for (const grammar of GRAMMARS) {
 				expect(
 					frt.fail,
 					`factory-render-parse regressions (ceiling ${ceiling.factoryRenderParse})`
-				).toBeLessThanOrEqual(
-					ceiling.factoryRenderParse
-				);
+				).toBeLessThanOrEqual(ceiling.factoryRenderParse);
 			}, 30_000);
 		});
 	});

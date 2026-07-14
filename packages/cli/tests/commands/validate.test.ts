@@ -14,11 +14,11 @@ describe('validate namespace', () => {
 			expect(program.commands.map((c) => c.name())).toEqual([mod.name]);
 		}
 	});
-	it('counts command exposes --backend with native default', () => {
+	it('counts command does not expose --backend', () => {
 		const program = new Command();
 		validateModules.find((m) => m.name === 'counts')!.register(program);
 		const counts = program.commands.find((c) => c.name() === 'counts')!;
 		const opt = counts.options.find((o) => o.long === '--backend');
-		expect(opt?.defaultValue).toBe('native');
+		expect(opt).toBeUndefined();
 	});
 });

@@ -9,7 +9,19 @@
  * field emissions. Other cases keep an empty map.
  */
 
-import { CHOICE, DEDENT, GROUP, INDENT, NEWLINE, PATTERN, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
+import {
+	CHOICE,
+	DEDENT,
+	GROUP,
+	INDENT,
+	NEWLINE,
+	PATTERN,
+	SEQ,
+	STRING,
+	SUPERTYPE,
+	SYMBOL,
+	VARIANT
+} from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import type {
 	ChoiceRule,
@@ -460,5 +472,4 @@ describe('emitRule — exhaustive default', () => {
 		};
 		expect(emitRule(rule, makeCtx())).toBe('');
 	});
-
 });

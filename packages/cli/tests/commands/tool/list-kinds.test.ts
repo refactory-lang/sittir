@@ -10,7 +10,9 @@ describe('tool list-kinds command', () => {
 		const program = new Command();
 		listKindsCmd.register(program);
 		const cmd = program.commands.find((c) => c.name() === 'list-kinds')!;
-		expect(cmd.options.map((o) => o.long)).toEqual(expect.arrayContaining(['--grammar', '--groups', '--unaliased', '--phantom']));
+		expect(cmd.options.map((o) => o.long)).toEqual(
+			expect.arrayContaining(['--grammar', '--groups', '--unaliased', '--phantom'])
+		);
 	});
 	it('passes parsed options to the tool run()', async () => {
 		const program = new Command();

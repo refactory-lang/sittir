@@ -1,3 +1,5 @@
+import { writeFileSync } from 'node:fs';
+
 import { assemble, AssembleCtx, type AssembledNodeMap } from '../assemble.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
@@ -15,20 +17,13 @@ export class GrammarDiagnosticError extends Error {
 	readonly codes: readonly string[];
 
 	constructor(readonly diagnostics: readonly GrammarDiagnostic[]) {
-		super(
-			diagnostics
-				.map((diagnostic) => `${diagnostic.code}: ${diagnostic.message}`)
-				.join('\n')
-		);
+		super(diagnostics.map((diagnostic) => `${diagnostic.code}: ${diagnostic.message}`).join('\n'));
 		this.name = 'GrammarDiagnosticError';
 		this.codes = diagnostics.map((diagnostic) => diagnostic.code);
 	}
 }
 
-export function fromParseKindCollision(
-	grammar: string,
-	diagnostic: ParseKindCollisionDiagnostic
-): GrammarDiagnostic {
+export function fromParseKindCollision(grammar: string, diagnostic: ParseKindCollisionDiagnostic): GrammarDiagnostic {
 	return {
 		scope: 'grammar',
 		code: diagnostic.code,
@@ -48,10 +43,7 @@ export function fromParseKindCollision(
 	};
 }
 
-export function fromDeriveShape(
-	grammar: string,
-	diagnostic: DeriveShapeDiagnostic
-): GrammarDiagnostic {
+export function fromDeriveShape(grammar: string, diagnostic: DeriveShapeDiagnostic): GrammarDiagnostic {
 	return {
 		scope: 'grammar',
 		code: diagnostic.code,
@@ -68,10 +60,7 @@ export function fromDeriveShape(
 	};
 }
 
-export function fromAssembleWarning(
-	grammar: string,
-	warning: AssembleWarning
-): GrammarDiagnostic {
+export function fromAssembleWarning(grammar: string, warning: AssembleWarning): GrammarDiagnostic {
 	// typename-collision is auto-resolved at assemble time (the rename already
 	// succeeded). Downgrade to 'info' so the channel stays signal-only; genuine
 	// unresolved collisions keep 'warning'.
@@ -89,10 +78,7 @@ export function fromAssembleWarning(
 	};
 }
 
-export function fromSlotGrouping(
-	grammar: string,
-	diagnostic: SlotGroupingDiagnostic
-): GrammarDiagnostic {
+export function fromSlotGrouping(grammar: string, diagnostic: SlotGroupingDiagnostic): GrammarDiagnostic {
 	return {
 		scope: 'grammar',
 		code: diagnostic.code,
@@ -122,15 +108,14 @@ export function collectGrammarDiagnostics(input: {
 	const assembleWarningMapped = (input.assembleWarnings ?? []).map((warning) =>
 		fromAssembleWarning(input.grammar, warning)
 	);
-	const slotGroupingMapped = (input.slotGroupingDiagnostics ?? []).map((d) =>
-		fromSlotGrouping(input.grammar, d)
-	);
+	const slotGroupingMapped = (input.slotGroupingDiagnostics ?? []).map((d) => fromSlotGrouping(input.grammar, d));
 	return { diagnostics: [...parseKindMapped, ...deriveShapeMapped, ...assembleWarningMapped, ...slotGroupingMapped] };
 }
 
-export function collectGrammarDiagnosticsForGrammar(input: {
-	rawGrammar: RawGrammar;
-}): { nodeMap: AssembledNodeMap; diagnostics: readonly GrammarDiagnostic[] } {
+export function collectGrammarDiagnosticsForGrammar(input: { rawGrammar: RawGrammar }): {
+	nodeMap: AssembledNodeMap;
+	diagnostics: readonly GrammarDiagnostic[];
+} {
 	const linked = link(input.rawGrammar);
 	const normalized = normalizeGrammar(linked);
 	const nodeMap = assemble(AssembleCtx.from(normalized));
@@ -157,12 +142,13 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 	};
 }
 
-export function formatGrammarDiagnostics(
-	diagnostics: readonly GrammarDiagnostic[]
-): string {
+export function formatGrammarDiagnostics(diagnostics: readonly GrammarDiagnostic[]): string {
 	if (diagnostics.length === 0) return 'No grammar diagnostics.';
 	return diagnostics
-		.map((d) => `[${d.severity}] ${d.code}  ${d.ownerKind ?? '-'}.${d.slotName ?? '-'}\n  ${d.message}${d.proposal !== undefined ? `\n  Proposal: ${d.proposal}` : ''}`)
+		.map(
+			(d) =>
+				`[${d.severity}] ${d.code}  ${d.ownerKind ?? '-'}.${d.slotName ?? '-'}\n  ${d.message}${d.proposal !== undefined ? `\n  Proposal: ${d.proposal}` : ''}`
+		)
 		.join('\n');
 }
 
@@ -173,13 +159,30 @@ export function formatGrammarDiagnostics(
  * are `GrammarDiagnostic`-only fields); reusing `formatGrammarDiagnostics`
  * as-is would print literal `-.-` noise, so this formats on `phase` instead.
  */
-export function formatCompilerDiagnostics(
-	diagnostics: readonly CompilerDiagnostic[]
-): string {
+export function formatCompilerDiagnostics(diagnostics: readonly CompilerDiagnostic[]): string {
 	if (diagnostics.length === 0) return 'No compiler diagnostics.';
 	return diagnostics
-		.map((d) => `[${d.severity}] ${d.code}  (${d.phase})\n  ${d.message}${d.proposal !== undefined ? `\n  Proposal: ${d.proposal}` : ''}`)
+		.map(
+			(d) =>
+				`[${d.severity}] ${d.code}  (${d.phase})\n  ${d.message}${d.proposal !== undefined ? `\n  Proposal: ${d.proposal}` : ''}`
+		)
 		.join('\n');
+}
+
+/**
+ * Persist a diagnostics array to JSON (Cluster D task 13). Sibling of
+ * {@link formatGrammarDiagnostics}/{@link formatCompilerDiagnostics} — those
+ * format for stderr, this serializes the same shape for a later task
+ * (Cluster D task 14) to merge into a unified validation report. Works for
+ * either `GrammarDiagnostic` or `CompilerDiagnostic` since both extend the
+ * shared `Diagnostic` base (code/severity/message/proposal + scope-specific
+ * fields), so no shape adaptation is needed — the array is written as-is.
+ */
+export function writeGrammarDiagnosticsJson(
+	diagnostics: readonly (GrammarDiagnostic | CompilerDiagnostic)[],
+	outPath: string
+): void {
+	writeFileSync(outPath, JSON.stringify(diagnostics, null, 2));
 }
 
 /**

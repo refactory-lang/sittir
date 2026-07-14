@@ -2,16 +2,16 @@
  * Read-render-parse validation (Checks 6 & 7) — parse → readNode → render → parse.
  *
  * Uses tree-sitter test corpus files (downloaded from grammar repos) as
- * source fixtures. Each corpus entry is parsed, readNode'd, rendered, and
+ * source fixtures. Each corpus entry is parsed'd, rendered, and
  * re-parsed. Structural match is checked.
  *
  * Requires web-tree-sitter + language WASM files.
  */
 
 import { writeSync } from 'node:fs';
-import { readNode } from '@sittir/common';
-import { createRenderer } from '@sittir/core';
-import type { TreeHandle } from '@sittir/common';
+
+import { createRenderer } from '@sittir/legacy-core';
+
 import type { AnyNodeData } from '@sittir/types';
 import { deriveRuleKinds } from './templates-path.ts';
 import { load } from '../codegen-surface.ts';
@@ -24,10 +24,6 @@ import {
 	loadKindNames,
 	loadKindIdFromName,
 	buildReadHandle,
-	findFirst,
-	findNativeNodeId,
-	adaptNode,
-	collectKinds,
 	buildKindToSupertypes,
 	wrapForReparse,
 	loadReadTreeNode,
@@ -40,8 +36,6 @@ import {
 	type TSTree,
 	type WrappedNodeData
 } from './common.ts';
-
-type KindMembership = { has(value: number): boolean };
 
 /**
  * Build the set of `$type` values the validator should deep-read,
@@ -67,28 +61,6 @@ async function loadVariantAdoptedKinds(grammar: string): Promise<ReadonlySet<str
 		for (const childKind of Object.keys(desc.childKind)) kinds.add(childKind);
 	}
 	return kinds;
-}
-
-/**
- * Parser-visible named kinds that require structural materialization for the
- * native transport path.
- *
- * @remarks
- * JS render can short-circuit any structureless named node to `$text`, even
- * when that node is a non-leaf branch/supertype like `ambient_declaration`.
- * Native render goes through the generated transport unions instead, so a
- * shallow descendant with only `$text` will fail `FromNapiValue` when the
- * transport expects fields/children. For native RT validation we therefore
- * deep-read parser-visible named kinds that have structure in node-types
- * (fields, children, or subtypes) so nested descendants arrive with the shape
- * the native transport layer expects.
- */
-function loadNativeStructuredKinds(rawEntries: readonly ReturnType<typeof loadRawEntries>[number][]): ReadonlySet<string> {
-	return new Set(
-		rawEntries
-			.filter((entry) => entry.named && (entry.fields !== undefined || entry.children !== undefined || entry.subtypes !== undefined))
-			.map((entry) => entry.type)
-	);
 }
 
 /**
@@ -268,7 +240,6 @@ export interface ReadRenderParseResult {
 	}[];
 }
 
-
 /**
  * Locate the reparsed target node at the exact byte offset where the rendered
  * fragment was spliced into the wrapper.
@@ -421,8 +392,6 @@ export async function validateReadRenderParse(
 
 	const readTreeNodeFn = await loadReadTreeNode(grammar);
 	const adoptedVariantKindNames = await loadVariantAdoptedKinds(grammar);
-	const nativeStructuredKindNames = backend === 'native' ? loadNativeStructuredKinds(rawEntries) : new Set<string>();
-	const deepReadKindNames = new Set([...adoptedVariantKindNames, ...nativeStructuredKindNames]);
 	const rawKindIdFromName = await loadKindIdFromName(grammar);
 	// Wrap so unknown kind names return undefined (instead of throwing).
 	// The generated kindIdFromName throws on missing entries; readNode's
@@ -437,16 +406,7 @@ export async function validateReadRenderParse(
 				}
 			}
 		: rawKindIdFromName;
-	// Phase D: $type is numeric; translate string kind names to numeric IDs for
-	// the KindMembership Set<number> check.
-	// When `recursive: true`, deep-read ALL named kinds (not just variant-adopted).
 	const { recursive } = options;
-	const deepReadKinds: KindMembership = recursive
-		? { has: (_id: number): boolean => true }
-		: kindIdFromName
-			? new Set([...deepReadKindNames].map((k) => kindIdFromName(k)).filter((id): id is number => id !== undefined))
-			: new Set<number>();
-
 	const entries = loadCorpusEntries(grammar);
 	const errors: {
 		name: string;
@@ -552,7 +512,10 @@ export async function validateReadRenderParse(
 								? (handle.read(cand.node.$nodeHandle, cand.node.$childIndex ?? 0) as unknown as AnyNodeData)
 								: (stripStructuralNodeText(materializeWrappedNodeData(cand.node)) as AnyNodeData);
 					} catch (e) {
-						kindErrors.push({ name: `${entry.name} [${kind}]`, message: `read: ${(e as Error).message.slice(0, 100)}` });
+						kindErrors.push({
+							name: `${entry.name} [${kind}]`,
+							message: `read: ${(e as Error).message.slice(0, 100)}`
+						});
 						continue;
 					}
 					const renderedKind = kind;
@@ -572,8 +535,6 @@ export async function validateReadRenderParse(
 						const rendered = render(data);
 
 						// Wrap for reparse using supertype context
-						// Pass the original string-named deepReadKindNames to wrapForReparse
-						// (which uses string kind names internally), not the numeric deepReadKinds.
 						const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, {
 							adoptedVariantKinds: adoptedVariantKindNames,
 							targetKind
@@ -768,10 +729,7 @@ export async function validateReadRenderParse(
 	};
 }
 
-function reportFailure(
-	options: ValidateReadRenderParseOptions,
-	failure: ReadRenderParseFailure
-): void {
+function reportFailure(options: ValidateReadRenderParseOptions, failure: ReadRenderParseFailure): void {
 	options.onFailure?.(failure);
 }
 

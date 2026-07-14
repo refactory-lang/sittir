@@ -17,7 +17,7 @@
 
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { loadLanguageForGrammar } from '../../packages/codegen/src/validate/common.ts';
+import { loadLanguageForGrammar } from '../../packages/tools/src/validate/common.ts';
 import { applyEdits } from '@sittir/rust';
 import type { Edit } from '@sittir/types';
 

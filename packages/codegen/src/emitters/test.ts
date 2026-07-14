@@ -171,7 +171,6 @@ function emitBranchTest(
 
 	// Gap 5: single-field-no-children factories take the value directly.
 	// Detect and emit a direct-value call instead of a config-object.
-	const nonStampFields = node.fields.filter((f) => !isAutoStampField(f, nodeMap));
 	const singleFieldSlot = resolveSingleFieldFactorySlot(node, nodeMap);
 
 	let typeConfigArg: string;
@@ -563,10 +562,7 @@ function buildDummyStub(
 	const base = dummyNodeLiteral(kind, dummyText, nodeMap, kindEntries);
 	// TEMPORARY: 'separatedList' widened in alongside 'branch'/'group' — see
 	// isSlotBearingCompound's doc comment (shared.ts).
-	if (
-		!node ||
-		(node.modelType !== 'branch' && node.modelType !== 'group' && node.modelType !== 'separatedList')
-	)
+	if (!node || (node.modelType !== 'branch' && node.modelType !== 'group' && node.modelType !== 'separatedList'))
 		return base;
 	if (depth >= MAX_DUMMY_DEPTH || visiting.has(kind)) return base;
 

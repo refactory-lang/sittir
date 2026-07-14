@@ -13,7 +13,7 @@
 
 import { CHOICE, PATTERN, REPEAT, REPEAT1, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import { emitFactories } from '../factories.ts';
+import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import { AssembledPattern, AssembledSeparatedList, type AssembledNode } from '../../compiler/model/node-map.ts';
 import type { Repeat1Rule, RepeatRule, Rule } from '../../types/rule.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
@@ -54,7 +54,13 @@ function makeMultiKindMemberNodeMap(): ReturnType<typeof makeNodeMapWith> {
 	// `[]` suffix appended directly to a multi-member union does).
 	const rule: RepeatRule = {
 		type: REPEAT,
-		content: { type: CHOICE, members: [{ type: SYMBOL, name: 'memberA' }, { type: SYMBOL, name: 'memberB' }] },
+		content: {
+			type: CHOICE,
+			members: [
+				{ type: SYMBOL, name: 'memberA' },
+				{ type: SYMBOL, name: 'memberB' }
+			]
+		},
 		separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 	};
 	const contentRule: Rule<'link'> = rule.content;

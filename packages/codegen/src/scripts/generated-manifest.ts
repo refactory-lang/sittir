@@ -10,10 +10,10 @@
  *   at the end of each successful per-grammar regen. There is intentionally no
  *   separate CLI for writing — the manifest must always be in lockstep with the
  *   codegen output it describes.
- * - `verifyAll()` is called by the validator (`packages/validator/src/cli.ts`)
- *   at startup, before any counts/probe-factory work. Verification failure
- *   aborts the validator; the only legitimate way to update a manifest is to
- *   re-run codegen.
+ * - `assertGeneratedManifestsClean()` is called by the validator
+ *   (`packages/tools/src/validate/common.ts`) at startup, before any
+ *   counts/probe-factory work. Verification failure aborts the validator;
+ *   the only legitimate way to update a manifest is to re-run codegen.
  *
  * The manifest excludes itself (would otherwise be a chicken-and-egg).
  *
@@ -37,14 +37,7 @@
  */
 
 import { createHash } from 'node:crypto';
-import {
-	existsSync,
-	mkdirSync,
-	readFileSync,
-	readdirSync,
-	statSync,
-	writeFileSync
-} from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { hostBinaryFreshnessFor } from './native-binary-freshness.ts';
@@ -130,12 +123,14 @@ function sha256(file: string): string {
 /**
  * Files that `generatedRootsFor` lists (so `emit-diff.ts` still reports their
  * regen drift) but that the manifest must NOT hash-track. Currently just
- * `test-fixtures.json`: it is derived output, regenerated on every run, and is
- * NEVER committed in feature work (standing discipline — a pre-commit hook
- * blocks staging it). Tracking it would record a hash that can never match the
- * committed file, so `assertGeneratedManifestsClean` would fail on a clean
- * checkout. Excluding it here keeps the write side (manifest generation) and the
- * read side (verification) in agreement: no entry written, none expected.
+ * `test-fixtures.json`: it is derived output, regenerated on every run, and
+ * lands in its own dedicated `chore(validator): record validation run`
+ * commit rather than bundled with feature/source changes (standing
+ * discipline, not hook-enforced). Tracking it would record a hash that can
+ * never match the committed file, so `assertGeneratedManifestsClean` would
+ * fail on a clean checkout. Excluding it here keeps the write side (manifest
+ * generation) and the read side (verification) in agreement: no entry
+ * written, none expected.
  */
 function isManifestUntracked(relPath: string): boolean {
 	return relPath.endsWith('/test-fixtures.json');
@@ -182,10 +177,7 @@ interface Manifest {
 const HOST_BINARY_SENTINEL = 'freshness-checked';
 
 function sourceInputsFor(grammar: Grammar): string[] {
-	return [
-		join(REPO_ROOT, `packages/${grammar}/overrides.ts`),
-		join(REPO_ROOT, `packages/${grammar}/package.json`)
-	];
+	return [join(REPO_ROOT, `packages/${grammar}/overrides.ts`), join(REPO_ROOT, `packages/${grammar}/package.json`)];
 }
 
 /**
@@ -356,10 +348,6 @@ export function verifyManifestForGrammar(grammar: Grammar): VerifyResult {
 	return result;
 }
 
-export function verifyAll(): VerifyResult[] {
-	return GRAMMARS.map((g) => verifyManifestForGrammar(g));
-}
-
 /**
  * Throw a formatted error if any grammar's manifest verification fails.
  * Convenience for callers that just want a boolean gate.
@@ -399,7 +387,9 @@ export function assertGeneratedManifestsClean(grammars?: readonly Grammar[]): vo
 			continue;
 		}
 		if (r.sourceHashMismatch) {
-			lines.push(`    SOURCE INPUTS CHANGED (overrides.ts, package.json, or packages/codegen/src/** edited since last regen)`);
+			lines.push(
+				`    SOURCE INPUTS CHANGED (overrides.ts, package.json, or packages/codegen/src/** edited since last regen)`
+			);
 		}
 		for (const f of r.modified) lines.push(`    MODIFIED: ${f}`);
 		for (const f of r.missing) lines.push(`    MISSING : ${f}`);

@@ -1,4 +1,17 @@
-import { CHOICE, FIELD, GROUP, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SUPERTYPE, SYMBOL, VARIANT } from '../../types/rule-types.ts'; // @rule-type-consts
+import {
+	CHOICE,
+	FIELD,
+	GROUP,
+	OPTIONAL,
+	PATTERN,
+	REPEAT,
+	REPEAT1,
+	SEQ,
+	STRING,
+	SUPERTYPE,
+	SYMBOL,
+	VARIANT
+} from '../../types/rule-types.ts'; // @rule-type-consts
 // PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
 import { assemble, AssembleCtx, classifyNode, simplifyRule, nameNode } from '../assemble.ts';
@@ -19,15 +32,22 @@ function deriveFields(rule: Rule<'link'>) {
 	return deriveSlots(deleteWrapper(rule)).filter((s) => !s.isUnnamed);
 }
 
-function makeNormalized(rules: Record<string, Rule<'link'>>, overrides?: Partial<SimplifiedGrammar>): SimplifiedGrammar {
+function makeNormalized(
+	rules: Record<string, Rule<'link'>>,
+	overrides?: Partial<SimplifiedGrammar>
+): SimplifiedGrammar {
 	const normalizedRules = applyWrapperDeletion(rules);
-	const simplifiedRules = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() }));
+	const simplifiedRules = computeSimplifiedRules(
+		new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
+	);
 	// If topLevelAliasBodies are provided, thread them through the same pipeline
 	// so their canonical snapshots are available under the alias kind name.
 	if (overrides?.topLevelAliasBodies) {
 		const aliasBodiesRaw: Record<string, Rule<'link'>> = Object.fromEntries(overrides.topLevelAliasBodies);
 		const aliasBodiesRender = applyWrapperDeletion(aliasBodiesRaw);
-		const aliasBodiesSimplified = computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(aliasBodiesRender), diagnostics: new DiagnosticSink() }));
+		const aliasBodiesSimplified = computeSimplifiedRules(
+			new SimplifyCtx({ grammar: makeNormalizedGrammar(aliasBodiesRender), diagnostics: new DiagnosticSink() })
+		);
 		for (const [kind, rule] of Object.entries(aliasBodiesRender)) {
 			normalizedRules[kind] = rule;
 		}
@@ -262,9 +282,7 @@ describe('Assemble — classifyNode', () => {
 				}
 			},
 			{
-				topLevelAliasBodies: new Map([
-					['_type_identifier', { type: PATTERN, value: '[A-Za-z_]\\w*' } satisfies Rule]
-				])
+				topLevelAliasBodies: new Map([['_type_identifier', { type: PATTERN, value: '[A-Za-z_]\\w*' } satisfies Rule]])
 			}
 		);
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_type_identifier');
@@ -327,12 +345,7 @@ describe('Assemble — classifyNode', () => {
 				string: { type: PATTERN, value: '".*"' }
 			},
 			{
-				topLevelAliasBodies: new Map([
-					[
-						'_property_identifier',
-						{ type: SYMBOL, name: 'identifier' } satisfies Rule
-					]
-				])
+				topLevelAliasBodies: new Map([['_property_identifier', { type: SYMBOL, name: 'identifier' } satisfies Rule]])
 			}
 		);
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_property_name');
@@ -385,12 +398,7 @@ describe('Assemble — classifyNode', () => {
 		);
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_property_name');
 		expect(node?.modelType).toBe('supertype');
-		expect((node as any).subtypes).toEqual([
-			'identifier',
-			'string',
-			'_type_identifier',
-			'_property_identifier'
-		]);
+		expect((node as any).subtypes).toEqual(['identifier', 'string', '_type_identifier', '_property_identifier']);
 	});
 
 	// PR-137 grammar-phase-ctx regression fixture (2026-07-05): reproduces
@@ -794,9 +802,7 @@ describe('Rule — deriveFields', () => {
 		// slot; the bare-symbol arm yields its kind-named (inferred) slot. Neither
 		// collapses into a single opaque `content` union.
 		const slotNames = slots.map((s) => s.name).sort();
-		expect(slotNames).toEqual(
-			['declaration', 'export_statement_default_decl_arm_default_kw_value'].sort()
-		);
+		expect(slotNames).toEqual(['declaration', 'export_statement_default_decl_arm_default_kw_value'].sort());
 		const declSlot = slots.find((s) => s.name === 'declaration')!;
 		expect(declSlot.isUnnamed).toBe(false);
 		const declValueNames = declSlot.values.map((value) =>
@@ -816,7 +822,6 @@ describe('Assemble — naming', () => {
 		const result = nameNode('function_item');
 		expect(result.factoryName).toBe('functionItem');
 	});
-
 });
 
 describe('Assemble — assemble()', () => {
@@ -861,4 +866,3 @@ describe('Assemble — assemble()', () => {
 		expect(fnNode.factoryName).toBe('functionItem');
 	});
 });
-

@@ -14,7 +14,12 @@
 
 import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { describe, it, expect, afterEach } from 'vitest';
-import { computeSimplifiedRules, drainSlotGroupingDiagnostics, SimplifyCtx, makeNormalizedGrammar } from '../simplify.ts';
+import {
+	computeSimplifiedRules,
+	drainSlotGroupingDiagnostics,
+	SimplifyCtx,
+	makeNormalizedGrammar
+} from '../simplify.ts';
 import type { RenderRule } from '../../types/rule.ts';
 
 afterEach(() => {
@@ -32,12 +37,18 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 				type: 'SEQ',
 				members: [
 					{ type: 'SYMBOL', name: '_a' },
-					{ type: 'SYMBOL', name: '_b' },
-				],
-			} as any,
+					{ type: 'SYMBOL', name: '_b' }
+				]
+			} as any
 		};
 		const inlineKinds = new Set(['_parent_repeat1']);
-		computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), inlineKinds, diagnostics: new DiagnosticSink() }));
+		computeSimplifiedRules(
+			new SimplifyCtx({
+				grammar: makeNormalizedGrammar(normalizedRules),
+				inlineKinds,
+				diagnostics: new DiagnosticSink()
+			})
+		);
 		const diagnostics = drainSlotGroupingDiagnostics();
 		const multiSlot = diagnostics.filter((d) => d.code === 'multi-slot-nested-seq');
 		expect(multiSlot.length).toBeGreaterThanOrEqual(1);
@@ -54,11 +65,13 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 				members: [
 					{ type: 'SYMBOL', name: 'left', fieldName: 'left' } as any,
 					{ type: 'STRING', value: '=' } as any,
-					{ type: 'SYMBOL', name: 'right', fieldName: 'right' } as any,
-				],
-			} as any,
+					{ type: 'SYMBOL', name: 'right', fieldName: 'right' } as any
+				]
+			} as any
 		};
-		computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() }));
+		computeSimplifiedRules(
+			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
+		);
 		const diagnostics = drainSlotGroupingDiagnostics();
 		expect(diagnostics.filter((d) => d.code === 'multi-slot-nested-seq')).toHaveLength(0);
 	});
@@ -69,11 +82,13 @@ describe('computeSimplifiedRules — slot-grouping diagnostic wiring', () => {
 				type: 'SEQ',
 				members: [
 					{ type: 'STRING', value: 'fn' },
-					{ type: 'SYMBOL', name: 'name' },
-				],
-			} as any,
+					{ type: 'SYMBOL', name: 'name' }
+				]
+			} as any
 		};
-		computeSimplifiedRules(new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() }));
+		computeSimplifiedRules(
+			new SimplifyCtx({ grammar: makeNormalizedGrammar(normalizedRules), diagnostics: new DiagnosticSink() })
+		);
 		const diagnostics = drainSlotGroupingDiagnostics();
 		expect(diagnostics).toHaveLength(0);
 	});

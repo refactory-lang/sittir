@@ -1,13 +1,5 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
-import type {
-	AnyNodeData,
-	AnyTreeNode,
-	Edit,
-	FormatRecord,
-	KindOf,
-	Renderable,
-	ReplaceTarget
-} from '@sittir/types';
+import type { AnyNodeData, AnyTreeNode, Edit, FormatRecord, KindOf, Renderable, ReplaceTarget } from '@sittir/types';
 import { rebaseTrivia } from './format.ts';
 
 export type { ReplaceTarget, AnyTreeNode, Renderable, KindOf };
@@ -16,6 +8,10 @@ export type { ReplaceTarget, AnyTreeNode, Renderable, KindOf };
 // replace — loosely typed, any AnyNodeData
 // ---------------------------------------------------------------------------
 
+/**
+ * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
+ * $replace method. Not yet wired into generated output; scaffolding only.
+ */
 export function replace(target: ReplaceTarget, replacement: AnyNodeData & Renderable): Edit {
 	const range = target.range();
 	return {
@@ -30,6 +26,9 @@ export function replace(target: ReplaceTarget, replacement: AnyNodeData & Render
 // ---------------------------------------------------------------------------
 
 /**
+ * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
+ * $replace method. Not yet wired into generated output; scaffolding only.
+ *
  * Attach a target's byte range to a factory output, enabling no-arg `.toEdit()`.
  *
  * This is the low-level helper used by generated `edit()` functions.
@@ -59,6 +58,10 @@ export function bindRange<T extends { readonly type: string; render(): string }>
 // replaceField — type-safe field replacement via selector lambda
 // ---------------------------------------------------------------------------
 
+/**
+ * @forFutureUse ADR-0018 (docs/adr/0018-dehoist-nodedata-surface.md) —
+ * $replace method. Not yet wired into generated output; scaffolding only.
+ */
 export function replaceField<TNode extends { readonly type: string }, TField extends ReplaceTarget>(
 	target: TNode,
 	selector: (node: TNode) => TField | undefined,

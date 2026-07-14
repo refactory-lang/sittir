@@ -16,11 +16,7 @@
 
 import { FIELD, STRING, TOKEN } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
-import {
-	deriveSlots,
-	isTerminalValue,
-	AssembledToken
-} from '../model/node-map.ts';
+import { deriveSlots, isTerminalValue, AssembledToken } from '../model/node-map.ts';
 import type { Rule, TokenRule, StringRule } from '../../types/rule.ts';
 
 describe('§H1 — TokenRule metadata threading', () => {
@@ -57,9 +53,7 @@ describe('§H1 — TokenRule metadata threading', () => {
 			}
 		};
 		const slots = deriveSlots(rule);
-		const terminal = slots
-			.find((s) => s.name === 'x')!
-			.values.find(isTerminalValue);
+		const terminal = slots.find((s) => s.name === 'x')!.values.find(isTerminalValue);
 		expect(terminal!.immediate).toBe(false);
 		expect(terminal!.tokenized).toBe(true);
 	});
@@ -72,9 +66,7 @@ describe('§H1 — TokenRule metadata threading', () => {
 			content: { type: STRING, value: 'foo' }
 		};
 		const slots = deriveSlots(rule);
-		const terminal = slots
-			.find((s) => s.name === 'x')!
-			.values.find(isTerminalValue);
+		const terminal = slots.find((s) => s.name === 'x')!.values.find(isTerminalValue);
 		expect(terminal!.immediate).toBeUndefined();
 		expect(terminal!.tokenized).toBeUndefined();
 	});

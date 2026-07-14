@@ -4,7 +4,9 @@
 	"description": "Unified sittir command-line surface",
 	"license": "MIT",
 	"type": "module",
-	"bin": { "sittir": "./dist/cli.js" },
+	"bin": {
+		"sittir": "./dist/cli.js"
+	},
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"exports": {

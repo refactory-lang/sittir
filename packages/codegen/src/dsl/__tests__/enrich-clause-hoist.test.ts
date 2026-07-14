@@ -129,10 +129,7 @@ describe('enrich clause-hoist pass — CHOICE[seq, BLANK] form', () => {
 					{ type: 'STRING', value: 'abstract' },
 					{
 						type: 'CHOICE',
-						members: [
-							seqBody,
-							{ type: 'BLANK' }
-						]
+						members: [seqBody, { type: 'BLANK' }]
 					}
 				]
 			}
@@ -438,7 +435,9 @@ describe('enrich clause-hoist pass — trailing separator absorption (listSepara
 		// `_parent_optional1` inline-hoist) — same path a multi-slot/bare-choice
 		// body already uses. Absorption itself (this test's actual subject) is
 		// unaffected: the fold still happens before the isInlineSafe branch runs.
-		const hoisted = rules['_parent_group1'] as { members: Array<{ type: string; content?: { type: string; value?: string } }> };
+		const hoisted = rules['_parent_group1'] as {
+			members: Array<{ type: string; content?: { type: string; value?: string } }>;
+		};
 		expect(hoisted.members.length).toBe(3);
 		expect(hoisted.members[2]!.type).toBe('OPTIONAL');
 		expect(hoisted.members[2]!.content!.type).toBe('STRING');
@@ -462,7 +461,13 @@ describe('enrich clause-hoist pass — trailing separator absorption (listSepara
 									content: {
 										type: 'SEQ',
 										members: [
-											{ type: 'CHOICE', members: [{ type: 'STRING', value: ',' }, { type: 'STRING', value: ';' }] },
+											{
+												type: 'CHOICE',
+												members: [
+													{ type: 'STRING', value: ',' },
+													{ type: 'STRING', value: ';' }
+												]
+											},
 											{ type: 'FIELD', name: 'item', content: { type: 'SYMBOL', name: 'expr' } }
 										]
 									}
@@ -484,7 +489,9 @@ describe('enrich clause-hoist pass — trailing separator absorption (listSepara
 		// A CHOICE-shaped separator (',' or ';') is itself a genuinely
 		// per-instance-variable separator, so this body also takes the VISIBLE
 		// promotion path (`_parent_group1`) — see the plain-STRING case above.
-		const hoisted = rules['_parent_group1'] as { members: Array<{ type: string; content?: { type: string; value?: string } }> };
+		const hoisted = rules['_parent_group1'] as {
+			members: Array<{ type: string; content?: { type: string; value?: string } }>;
+		};
 		expect(hoisted.members.length).toBe(3);
 		expect(hoisted.members[2]!.type).toBe('OPTIONAL');
 		expect(hoisted.members[2]!.content!.value).toBe(',');
@@ -515,7 +522,13 @@ describe('enrich clause-hoist pass — trailing separator absorption (listSepara
 									content: {
 										type: 'SEQ',
 										members: [
-											{ type: 'CHOICE', members: [{ type: 'SYMBOL', name: '_a' }, { type: 'SYMBOL', name: '_b' }] },
+											{
+												type: 'CHOICE',
+												members: [
+													{ type: 'SYMBOL', name: '_a' },
+													{ type: 'SYMBOL', name: '_b' }
+												]
+											},
 											{ type: 'FIELD', name: 'decoy', content: { type: 'SYMBOL', name: 'expr' } }
 										]
 									}
@@ -546,7 +559,9 @@ describe('enrich clause-hoist pass — trailing separator absorption (listSepara
 		const parent = rules.parent as { members: unknown[] };
 		expect(parent.members.length).toBe(3);
 
-		const hoisted = rules['_parent_optional1'] as { members: Array<{ type: string; content?: { type: string; value?: string } }> };
+		const hoisted = rules['_parent_optional1'] as {
+			members: Array<{ type: string; content?: { type: string; value?: string } }>;
+		};
 		expect(hoisted.members.length).toBe(4);
 		expect(hoisted.members[3]!.type).toBe('OPTIONAL');
 		expect(hoisted.members[3]!.content!.type).toBe('STRING');

@@ -25,12 +25,14 @@ describe('tool field-provenance command', () => {
 		vi.clearAllMocks();
 		const program = new Command();
 		fieldProvenanceCmd.register(program);
-		await program.parseAsync(['field-provenance', '--grammar', 'rust', '--kind', 'block', '--redundant'], { from: 'user' });
+		await program.parseAsync(['field-provenance', '--grammar', 'rust', '--kind', 'block', '--redundant'], {
+			from: 'user'
+		});
 		expect(vi.mocked(runFieldProvenance)).toHaveBeenCalledWith({
 			grammar: 'rust',
 			kind: 'block',
 			redundant: true,
-			source: undefined,
+			source: undefined
 		});
 	});
 });

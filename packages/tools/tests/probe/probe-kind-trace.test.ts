@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { stripStructuralNodeText, type WrappedNodeData } from '../../../codegen/src/validate/common.ts';
+import { stripStructuralNodeText, type WrappedNodeData } from '../../src/validate/common.ts';
 import { materializeProbeWrappedNodeData, probeTrace, resolveNativeTraceNodeData } from '../../src/probe/kind.ts';
 
 function leaf(handle: number, text: string): WrappedNodeData {
@@ -45,19 +45,19 @@ describe('probe-kind native trace helpers', () => {
 			$source: 0,
 			$named: true,
 			$text: 'ψ1 = β_γ + Ψ_5',
-			$children: []
+			_children: []
 		};
 
 		const stripped = asRecord(stripStructuralNodeText(nodeData));
 
 		expect(stripped).not.toHaveProperty('$text');
-		expect(stripped.$children).toEqual([]);
+		expect(stripped._children).toEqual([]);
 	});
 
 	it('materialized probe data strips $text from children-only roots', () => {
 		const wrapped = {
 			...leaf(1, 'ψ1 = β_γ + Ψ_5'),
-			$children: [],
+			_children: [],
 			children() {
 				return [];
 			}
@@ -66,7 +66,7 @@ describe('probe-kind native trace helpers', () => {
 		const materialized = asRecord(materializeProbeWrappedNodeData(wrapped));
 
 		expect(materialized).not.toHaveProperty('$text');
-		expect(materialized.$children).toEqual([]);
+		expect(materialized._children).toEqual([]);
 	});
 
 	it('prefers the materialized wrapped path over the legacy deep walker', () => {
@@ -117,7 +117,9 @@ describe('probe-kind native trace helpers', () => {
 
 		expect(trace.trace.js).toBeUndefined();
 		expect(trace.trace.native).toMatchObject({
-			wrapError: expect.stringContaining('singular slot "comprehension_clauses" on "generator_expression" requires one value')
+			wrapError: expect.stringContaining(
+				'singular slot "comprehension_clauses" on "generator_expression" requires one value'
+			)
 		});
 	});
 });

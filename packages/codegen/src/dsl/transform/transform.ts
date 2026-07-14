@@ -534,7 +534,12 @@ function deField(rule: RuntimeRule): RuntimeRule {
 	const stripPropagated = (r: RuntimeRule): RuntimeRule => {
 		const { fieldName: _drop, ...rest } = r as Record<string, unknown>;
 		const content = (rest as { content?: RuntimeRule }).content;
-		if (content && typeof content === 'object' && !isSeqType((rest as { type: string }).type) && !isChoiceType((rest as { type: string }).type)) {
+		if (
+			content &&
+			typeof content === 'object' &&
+			!isSeqType((rest as { type: string }).type) &&
+			!isChoiceType((rest as { type: string }).type)
+		) {
 			return { ...rest, content: stripPropagated(content) } as unknown as RuntimeRule;
 		}
 		return rest as unknown as RuntimeRule;
@@ -941,62 +946,6 @@ function resolveAliasPlaceholder(
 ): RuntimeRule {
 	const hiddenName = '_' + patch.name;
 	return registerAliasedVariant(hiddenName, patch.name, originalMember, (body) => wrapInPrec(body, precStack));
-}
-
-/**
- * Wrap a member at a position using a wrapper function that receives
- * the original content. The wrapper's result is marked
- * `metadata.fieldSource: 'override'`.
- *
- * Reconstructs via the runtime's native `seq()` so the result has the
- * runtime-correct rule shape (sittir lowercase vs tree-sitter
- * uppercase) — same cross-runtime contract as `transform()`.
- */
-export function insert(
-	original: RuntimeRule,
-	position: number,
-	wrapper: (content: RuntimeRule) => RuntimeRule
-): RuntimeRule {
-	const t = original.type;
-	if (!isSeqType(t)) {
-		throw new Error(`insert() expects a seq rule, got '${original.type}'`);
-	}
-
-	const members = [...membersOf(original)];
-	if (position < 0 || position >= members.length) {
-		throw new Error(`insert(): position ${position} out of bounds (rule has ${members.length} members)`);
-	}
-
-	const wrapped = wrapper(members[position]!);
-	members[position] = isFieldLike(wrapped)
-		? ({ ...wrapped, metadata: makeRuleMetadata({ fieldSource: 'override' }) } as unknown as RuntimeRule)
-		: wrapped;
-
-	return reconstructContainer(original, members);
-}
-
-/**
- * Replace content at a position. Pass `null` to suppress (remove the
- * member). Reconstructs via the runtime's native `seq()`.
- */
-export function replace(original: RuntimeRule, position: number, replacement: RuntimeRule | null): RuntimeRule {
-	const t = original.type;
-	if (!isSeqType(t)) {
-		throw new Error(`replace() expects a seq rule, got '${original.type}'`);
-	}
-
-	const members = [...membersOf(original)];
-	if (position < 0 || position >= members.length) {
-		throw new Error(`replace(): position ${position} out of bounds (rule has ${members.length} members)`);
-	}
-
-	if (replacement === null) {
-		members.splice(position, 1);
-	} else {
-		members[position] = replacement;
-	}
-
-	return reconstructContainer(original, members);
 }
 
 // ---------------------------------------------------------------------------

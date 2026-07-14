@@ -40,7 +40,10 @@ function makeHiddenHelperNodeMap(): NodeMap {
 		members: [{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'identifier' } }]
 	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('_assignment_eq', new AssembledGroup('_assignment_eq', helperRule, deleteWrapper(helperRule), deleteWrapper(helperRule)));
+	nodes.set(
+		'_assignment_eq',
+		new AssembledGroup('_assignment_eq', helperRule, deleteWrapper(helperRule), deleteWrapper(helperRule))
+	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	return {
 		...makeNodeMap(),
@@ -114,14 +117,18 @@ describe('loop-driven emitters', () => {
 	it('emitAll routes group nodes through the wrap emitter', () => {
 		const { wrap } = emitAll({ grammar: 'synth', nodeMap: makeHiddenHelperNodeMap() });
 
-		expect(wrap).toContain("export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {");
+		expect(wrap).toContain('export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle) {');
 		expect(wrap).toContain("'_assignment_eq': (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),");
 	});
 
 	it('emitAll routes supertype nodes through the wrap emitter', () => {
 		const { wrap } = emitAll({ grammar: 'synth', nodeMap: makeHiddenSupertypeNodeMap() });
 
-		expect(wrap).toContain("export function wrapExportStatementDefault(data: T.ExportStatementDefault, tree: TreeHandle) {");
-		expect(wrap).toContain("'_export_statement_default': (d, t) => wrapExportStatementDefault(d as unknown as T.ExportStatementDefault, t),");
+		expect(wrap).toContain(
+			'export function wrapExportStatementDefault(data: T.ExportStatementDefault & { readonly $other?: T.ExportStatementDefault | readonly T.ExportStatementDefault[]; }, tree: TreeHandle) {'
+		);
+		expect(wrap).toContain(
+			"'_export_statement_default': (d, t) => wrapExportStatementDefault(d as unknown as T.ExportStatementDefault, t),"
+		);
 	});
 });

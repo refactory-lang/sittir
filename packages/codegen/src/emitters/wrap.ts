@@ -16,11 +16,7 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import type {
-	AssembledEnum,
-	AssembledNode,
-	AssembledSupertype
-} from '../compiler/model/node-map.ts';
+import type { AssembledEnum, AssembledNode, AssembledSupertype } from '../compiler/model/node-map.ts';
 import type { AssembledSeparatedList } from '../compiler/model/node-map.ts';
 import { AssembledNonterminal, aliasTargetToSourceMapOf, valueParseKindsOf } from '../compiler/model/node-map.ts';
 import type { Rule } from '../types/rule.ts';
@@ -87,7 +83,6 @@ export interface EmitWrapConfig {
 	kindEntries?: readonly KindEnumEntry[];
 }
 
-
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -118,16 +113,6 @@ function collectTypeImports(_nodeMap: NodeMap): Set<string> {
  * instance-local instead of living in module globals.
  */
 export namespace wrap {
-	/** Back-compat no-op; collection state now lives on emitter instances. */
-	export function init(): void {
-		// No-op.
-	}
-
-	/** Back-compat stub; callers now own the output buffer directly. */
-	export function collect(): string[] {
-		return [];
-	}
-
 	/**
 	 * Emit a branch wrap function — field-carrying (handles both regular
 	 * and container shapes; fields is `[]` for the container case).
@@ -421,10 +406,7 @@ function resolveSlotAliasRewrite(slot: AssembledNonterminal): readonly [string, 
  * matches the slot's nominal `_<slot.name>` — the legacy single-key access
  * is sufficient and no probe shape is needed.
  */
-function collectConcreteStorageKeys(
-	slot: AssembledNonterminal,
-	nodeMap: NodeMap
-): readonly string[] | undefined {
+function collectConcreteStorageKeys(slot: AssembledNonterminal, nodeMap: NodeMap): readonly string[] | undefined {
 	if (!slot.isUnnamed) return undefined;
 	// Route by the slot's parse-names — the kinds the parser can actually emit:
 	// ref-kinds PLUS alias targets (collect-slots now folds the targets into
@@ -446,6 +428,94 @@ function collectConcreteStorageKeys(
 	return storageKeys;
 }
 
+/**
+ * Union the wire-only `_<kind>` storage keys (see `collectConcreteStorageKeys`)
+ * across every field of a wrap function, mapped to the SAME element type as
+ * the field's own canonical key (`fieldElementType`) — not a generic
+ * catch-all. This matters: each probe key feeds the same `??`-coalesce /
+ * `_concatInSourceOrder` expression as the field's canonical key, whose
+ * result flows (via the generic `normalizeSingularWrapSlot<T>` /
+ * `normalizeRepeatedWrapSlot<T>` helpers) into a `drillIn<ElemType>`-typed
+ * accessor. A broad probe-key type would widen that inferred `T`, breaking
+ * the accessor's explicit generic argument — so precision here isn't
+ * cosmetic, it's required for the coalesce chain to type-check.
+ *
+ * Excludes each field's own canonical `storageKey` (already declared on the
+ * canonical `T.X` interface). When the SAME wire key is probed by more than
+ * one field with different element types (a key collision that can't
+ * actually happen at runtime — a physical key holds one value shape — but
+ * isn't structurally impossible to encode), the member types are unioned.
+ */
+function collectWrapWireKeyTypes(
+	fields: readonly AssembledNonterminal[],
+	nodeMap: NodeMap
+): ReadonlyMap<string, string> {
+	// A wire key that coincides with SOME OTHER field's own canonical
+	// `storageKey` (e.g. a `block`-aliased field sharing the physical wire
+	// key with an unrelated `_block` field — tree-sitter alias-source
+	// sharing) is already declared, with its own authoritative type, on the
+	// canonical `T.X` interface. Adding a second, differently-typed member
+	// for that same key would form an incoherent property-type intersection
+	// (e.g. `Block & (SimpleStatements | Newline)`) and break assignability
+	// at every existing `T.X`-typed call site. The field that legitimately
+	// owns that key already reads it through its canonical declaration; skip
+	// re-declaring it here.
+	const canonicalKeys = new Set(fields.map((f) => f.storageKey));
+	const keyTypes = new Map<string, string>();
+	for (const f of fields) {
+		const candidates = collectConcreteStorageKeys(f, nodeMap);
+		if (!candidates) continue;
+		const elemType = fieldElementType(f, nodeMap);
+		// `resolveSlotStoreExpr`'s `arity: 'many'` branch documents that each
+		// wire candidate key may hold EITHER a scalar (text-collapsed leaf) OR
+		// an array of node stubs — that's what `_toArr`/`_concatInSourceOrder`
+		// normalize. Mirror that shape here (same widening pattern as
+		// `resolveSlotAccessorBody`'s `arrayElemType`), or the declared type
+		// would be narrower than what the runtime actually delivers.
+		const candidateType =
+			f.arity === 'many'
+				? `${elemType} | readonly ${elemType.includes(' | ') ? `(${elemType})` : elemType}[]`
+				: elemType;
+		for (const k of candidates) {
+			if (k === f.storageKey || canonicalKeys.has(k)) continue;
+			const existing = keyTypes.get(k);
+			keyTypes.set(
+				k,
+				existing === undefined || existing === candidateType ? candidateType : `${existing} | ${candidateType}`
+			);
+		}
+	}
+	return keyTypes;
+}
+
+/**
+ * Build the wrap function's `data` parameter type: the canonical `T.X`
+ * interface widened with the wire-only keys the function body actually
+ * reads/writes (`_<concreteKind>` probe keys from `collectWrapWireKeyTypes`,
+ * and/or `$other`). The canonical interface intentionally omits these —
+ * they're wire-shape artifacts, not part of the public `T.X` surface — so
+ * the wrap body needs a widened LOCAL view. All added members are optional,
+ * so `T.X` values remain assignable to the widened type (no cast needed at
+ * existing `T.X`-typed call sites).
+ *
+ * `otherType`, when provided, is the PRECISE type for `$other` (e.g.
+ * `T.Condition | readonly T.Condition[]` for a transparent supertype whose
+ * body reads `data.$other` through the same generic-inference chain as the
+ * field probe keys above — see `emitTransparentSupertypeWrap`). Pass a
+ * generic fallback for call sites that only ever WRITE `$other` inside a
+ * `{ ...data, $other: v }` argument literal (no local read, so no inference
+ * chain to keep narrow — see the `childSurface` branch in
+ * `emitInlineWithProperty`).
+ */
+function buildWrapParamType(typeName: string, wireKeyTypes: ReadonlyMap<string, string>, otherType?: string): string {
+	if (wireKeyTypes.size === 0 && otherType === undefined) return `T.${typeName}`;
+	const members = [
+		...[...wireKeyTypes].map(([k, t]) => `readonly ${JSON.stringify(k)}?: ${t};`),
+		...(otherType !== undefined ? [`readonly $other?: ${otherType};`] : [])
+	];
+	return `T.${typeName} & { ${members.join(' ')} }`;
+}
+
 // `_<ident>` where ident is a valid JS identifier suffix. Keys outside this
 // shape must be accessed via bracket notation. Tree-sitter exposes some kinds
 // as literal token strings (`'`, `$`, `.`), which become storage keys like
@@ -461,12 +531,21 @@ function dataAccessExpr(dataExpr: string, storageKey: string): string {
 
 function resolveSlotStoreExpr(slot: SlotModel, dataExpr: string, candidateKeys?: readonly string[]): string {
 	if (candidateKeys && candidateKeys.length > 0) {
-		// Append the slot's nominal storage key as a final fallback for any
-		// edge case the analysis missed (e.g. a tree-sitter-injected alias the
-		// supertype-expansion doesn't see).
-		const allKeys = candidateKeys.includes(slot.storageKey)
-			? candidateKeys
-			: [...candidateKeys, slot.storageKey];
+		// Probe the slot's own canonical storage key WITH PRIORITY over the
+		// concrete-kind candidate keys, rather than as a final fallback. On a
+		// genuinely fresh wire read the reader never populates the canonical
+		// key (only the concrete-kind-keyed candidates), so this is a no-op for
+		// that case. But `$with` setters re-invoke the wrap function via
+		// `{ ...data, [storageKey]: v }` (see `emitInlineWithProperty`), which
+		// spreads the ORIGINAL data — carrying the stale candidate-key values
+		// from the original read — alongside the newly patched canonical key.
+		// Probing candidates first would mask the patched value entirely
+		// (singular: the stale `??` operand wins) or merge stale-and-patched
+		// (repeated: concat includes both) — the canonical key must win
+		// outright once populated. Exclude it from the candidate list itself
+		// so it isn't probed twice.
+		const candidates = candidateKeys.filter((k) => k !== slot.storageKey);
+		const canonicalExpr = dataAccessExpr(dataExpr, slot.storageKey);
 
 		if (slot.arity === 'many') {
 			// Repeated supertype-list slot: the runtime reader populates EACH
@@ -486,13 +565,19 @@ function resolveSlotStoreExpr(slot: SlotModel, dataExpr: string, candidateKeys?:
 			// `call_signature` + `property_signature` swap). `_concatInSourceOrder`
 			// normalizes each source (via _toArr) and STABLE-sorts the result by
 			// CST position (`$span.start` / `$childIndex`) to restore source order.
-			const sources = allKeys.map((k) => dataAccessExpr(dataExpr, k));
-			return `_concatInSourceOrder([${sources.join(', ')}])`;
+			//
+			// The canonical key, once populated by a `$with` setter, is
+			// authoritative on its own — normalize it (scalar-or-array, via the
+			// same `_toArr` the concat path uses) rather than merging it into
+			// the candidate concat.
+			const sources = candidates.map((k) => dataAccessExpr(dataExpr, k));
+			const candidateExpr = sources.length > 0 ? `_concatInSourceOrder([${sources.join(', ')}])` : '[]';
+			return `(${canonicalExpr} !== undefined ? _toArr(${canonicalExpr}) : ${candidateExpr})`;
 		}
 
-		// Singular slot: exactly one of these will be populated.
-		// ??-coalesce is correct — return the first non-null source.
-		const probes = allKeys.map((k) => dataAccessExpr(dataExpr, k));
+		// Singular slot: exactly one of these will be populated on a fresh
+		// read; the canonical key wins outright once a `$with` setter patches it.
+		const probes = [canonicalExpr, ...candidates.map((k) => dataAccessExpr(dataExpr, k))];
 		return `(${probes.join(' ?? ')})`;
 	}
 	return dataAccessExpr(dataExpr, slot.storageKey);
@@ -508,9 +593,18 @@ function resolveSlotAccessorBody(slot: SlotModel, valueType: string): string {
 
 function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 	const fn = `wrap${node.typeName}`;
-	const allowedKinds = [...new Set(node.subtypes.flatMap((kind) => (kind.startsWith('_') ? [kind, kind.slice(1)] : [kind])))];
+	const allowedKinds = [
+		...new Set(node.subtypes.flatMap((kind) => (kind.startsWith('_') ? [kind, kind.slice(1)] : [kind])))
+	];
+	// `data.$other` flows through the generic `_filterWrapChildrenByKind<T>` /
+	// `normalizeSingularWrapSlot<T>` helpers into an explicit
+	// `drillIn<T.${typeName}>(...)` check below — the inferred `T` must stay
+	// exactly `T.${typeName}` (the supertype's own member union), or the
+	// explicit generic argument mismatches. Array-inclusive: the wire may
+	// deliver the single member wrapped in a 1-element array.
+	const paramType = buildWrapParamType(node.typeName, new Map(), `T.${node.typeName} | readonly T.${node.typeName}[]`);
 	return [
-		`export function ${fn}(data: T.${node.typeName}, tree: TreeHandle) {`,
+		`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`,
 		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ${JSON.stringify(allowedKinds)}), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);`,
 		`}`
 	].join('\n');
@@ -602,7 +696,10 @@ export function buildSeparatedListContentSlot(node: AssembledSeparatedList): Ass
  * their CONCRETE kind, e.g. `data._with_item` / `data._identifier`, never
  * by a generic slot name). Always returns the real expansion instead.
  */
-function collectSeparatedListContentStorageKeys(contentSlot: AssembledNonterminal, nodeMap: NodeMap): readonly string[] {
+function collectSeparatedListContentStorageKeys(
+	contentSlot: AssembledNonterminal,
+	nodeMap: NodeMap
+): readonly string[] {
 	const parseKinds = valueParseKindsOf(contentSlot);
 	if (parseKinds.length === 0) return [];
 	const concrete = expandRuntimeDiscriminatorKinds(parseKinds, nodeMap);
@@ -667,7 +764,7 @@ function buildSeparatedListWrapParamType(typeName: string, wireKeyTypes: Readonl
 	const members = [
 		...[...wireKeyTypes].map(([k, t]) => `readonly ${JSON.stringify(k)}?: ${t};`),
 		"readonly $other?: _NodeData['$other'];",
-		"readonly $span?: { start: number; end: number };"
+		'readonly $span?: { start: number; end: number };'
 	];
 	return `T.${typeName} & { ${members.join(' ')} }`;
 }
@@ -745,7 +842,7 @@ function emitSeparatedListWrap(
 	// through the exact same per-field drilling logic
 	// `emitFieldCarryingWrap` uses (`emitFieldStorageLines`/
 	// `emitFieldAccessorLines`) instead of one shared bucket.
-	const canonical = node.fields.find((f) => f.multiple) ?? node.fields[0]!;
+	const canonical = node.fields.find((f) => f.arity === 'many') ?? node.fields[0]!;
 	// `node.fields` (Task-2 `_slots` stub) is the SAME source `types.ts`
 	// derives `T.<TypeName>`'s declared members from — the canonical-key
 	// exclusion set for `collectSeparatedListWireKeyTypes` must match it
@@ -793,7 +890,9 @@ function emitSeparatedListWrap(
 		lines.push(`    _leading_sep: _hasSeparatorFlank(data, _content, data.$other, "leading", ${bothFlanksOptional}),`);
 	}
 	if (node.trailingMode === 'optional') {
-		lines.push(`    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", ${bothFlanksOptional}),`);
+		lines.push(
+			`    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", ${bothFlanksOptional}),`
+		);
 	}
 	lines.push('');
 	if (node.fields.length > 1) {
@@ -968,7 +1067,16 @@ function emitFieldCarryingWrap(
 ): string {
 	const fn = `wrap${node.typeName}`;
 	const lines: string[] = [];
-	lines.push(`export function ${fn}(data: T.${node.typeName}, tree: TreeHandle) {`);
+	const wireKeyTypes = collectWrapWireKeyTypes(fields, nodeMap);
+	// $other is real ONLY when the assembled node's own children slot is
+	// non-empty — the model's structural fact that this kind's wire data can
+	// carry unfielded/unnamed children. (`node.childSurface` governs $with
+	// CALLING CONVENTION, not wire storage shape — see investigation note
+	// below; using it here would describe the body's ACCESS, not the data's
+	// real shape.)
+	const needsOther = children.length > 0;
+	const paramType = buildWrapParamType(node.typeName, wireKeyTypes, needsOther ? "_NodeData['$other']" : undefined);
+	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
 
 	// Shape A: inline object literal wrapped by withMethods<T>. No
 	// Object.defineProperty, no freezeNodeData, no Record<string,unknown> cast.
@@ -1038,14 +1146,22 @@ function emitFieldCarryingWrap(
 /**
  * Emit the inline `$with: { ... }` property for a wrap function literal.
  *
- * Container-shape nodes emit `$other`/`$child` lambdas calling the
- * rest-param factory. Field-carrying nodes emit per-field setters that
- * build a lazy config and call the factory with a patched value.
+ * Container-shape nodes with a real unnamed-children wire slot (`children`
+ * non-empty) emit `$other`/`$child` lambdas calling the rest-param factory.
+ * `node.childSurface` alone is NOT sufficient to pick that path — it
+ * describes the factory's own calling convention, and under the unified-slot
+ * model an unnamed slot lives in `fields` with a real `_<name>` storage key,
+ * not in `$other`. All other nodes (including childSurface spread/direct
+ * nodes whose unnamed slot is a `fields` entry) fall through to the
+ * per-field setters below, which build a lazy config and call the factory
+ * with a patched value at the field's real storage key.
  *
  * @param lines - Output line buffer to append to.
  * @param node - The assembled node descriptor.
  * @param fields - Named field slots.
- * @param children - Unnamed child slots.
+ * @param children - Unnamed child slots (currently always `[]` from both
+ *   call sites — `AssembledBranch/Group.fields` already unifies unnamed
+ *   slots into `fields`).
  */
 function emitInlineWithProperty(
 	lines: string[],
@@ -1061,7 +1177,7 @@ function emitInlineWithProperty(
 
 	const spreadData = '...data';
 
-	if (node.childSurface === 'spread' || node.childSurface === 'direct') {
+	if ((node.childSurface === 'spread' || node.childSurface === 'direct') && children.length > 0) {
 		const childrenConfig = resolveUnnamedSlotConfig(children, nodeMap);
 		const childElem = childrenConfig.elemType;
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
@@ -1069,9 +1185,7 @@ function emitInlineWithProperty(
 			lines.push(`    $with: { $child: (v: ${childElem}) => ${wrapFn}({ ${spreadData}, $other: v }, tree) },`);
 		} else {
 			const restType = childrenSetterRestType(children, childElem, childRest);
-			lines.push(
-				`    $with: { $children: (...vs: ${restType}) => ${wrapFn}({ ${spreadData}, $other: vs }, tree) },`
-			);
+			lines.push(`    $with: { $children: (...vs: ${restType}) => ${wrapFn}({ ${spreadData}, $other: vs }, tree) },`);
 		}
 		return;
 	}
@@ -1322,11 +1436,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 									'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: true, nodeType: string | number, context: WrapDiagnosticContext): T;',
 									'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: false, nodeType: string | number, context: WrapDiagnosticContext): T | undefined;',
 									'function normalizeSingularWrapSlot<T>(value: T | readonly T[] | undefined, slotName: string, required: boolean, nodeType: string | number, context: WrapDiagnosticContext): T | undefined {',
-						'  if (Array.isArray(value)) {',
-						'    if (value.length === 0) {',
+									'  if (Array.isArray(value)) {',
+									'    if (value.length === 0) {',
 									'      if (required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined, context);',
-						'      return undefined;',
-						'    }',
+									'      return undefined;',
+									'    }',
 									'    if (value.length !== 1) {',
 									'      // read_node concatenates grammar-agnostically; the named/unnamed',
 									'      // disparity for SINGULAR slots is resolved HERE (the per-kind layer',
@@ -1340,11 +1454,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 									'      if (substantive.length === 1) return substantive[0] as T;',
 									'      return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} received ${value.length} values; got ${describeWrapSlotValue(value)}`, value[0] as T, context);',
 									'    }',
-						'    return value[0] as T;',
-						'  }',
+									'    return value[0] as T;',
+									'  }',
 									'  if (value == null && required) return handleWrapViolation(`singular slot ${JSON.stringify(slotName)} on ${JSON.stringify(describeWrapNodeType(nodeType))} requires one value; got ${describeWrapSlotValue(value)}`, undefined as T | undefined, context);',
-						'  return value as T | undefined;',
-						'}'
+									'  return value as T | undefined;',
+									'}'
 								]
 							: [])
 					]
@@ -1506,11 +1620,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'// present on this instance.',
 						'//',
 						'// Preferred signal: compare the container span against the first/last',
-						'// content element span. A literal separator\'s $other entry is a bare',
+						"// content element span. A literal separator's $other entry is a bare",
 						'// kind-id number with no position of its own (verified against real',
 						'// parsed payloads — a "," token is indistinguishable from any other ","',
 						'// at a different position), so it cannot answer "which side is this on".',
-						'// The container span extending past the content\'s own extent is direct,',
+						"// The container span extending past the content's own extent is direct,",
 						'// order-independent evidence instead: no separator ever falls OUTSIDE',
 						'// [firstContent.start, lastContent.end] except a leading/trailing flank.',
 						'//',
@@ -1518,12 +1632,12 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'// when content is text-collapsed (no per-element span survives — e.g. a',
 						'// bare-identifier tuple element arriving as the plain string "a"). That',
 						'// fallback is correct ONLY when the OPPOSITE flank direction is',
-						'// structurally \'none\' on this kind — otherwise a single extra $other',
+						"// structurally 'none' on this kind — otherwise a single extra $other",
 						'// entry is genuinely ambiguous between "this is the leading flank" and',
 						'// "this is the trailing flank", and the count alone cannot tell them',
 						'// apart (both queries would compute the identical boolean off the',
 						'// identical formula). `otherFlankOptional` is the codegen-time fact',
-						'// (`node.leadingMode === \'optional\' && node.trailingMode === \'optional\'`)',
+						"// (`node.leadingMode === 'optional' && node.trailingMode === 'optional'`)",
 						'// that flags this — a kind combining both-optional flanks with',
 						'// text-collapsed content has no real-grammar coverage today (all such',
 						'// kinds currently retain per-element span), so this throws loudly rather',
@@ -1692,15 +1806,17 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push(' * raw pointer cast — different parses yield different ids — so');
 		lines.push(' * the engine that parsed the tree is the only thing that can');
 		lines.push(' * dereference its ids. Native handles set `tree.read` to a');
-		lines.push(' * closure that routes through napi; wasm/JS handles leave it');
-		lines.push(' * absent and fall back to `readNodeJs` (the in-process walker).');
+		lines.push(' * closure that routes through napi; wasm/JS handles (used by');
+		lines.push(' * retained diagnostic tooling — `tool walk`, `tool probe-kind');
+		lines.push(' * --engine js`) leave it absent and fall back to `readNodeJs`');
+		lines.push(' * (the in-process walker).');
 		lines.push(' */');
 		lines.push('function readNode(tree: TreeHandle, handle?: number, childIndex?: number): AnyNodeData {');
 		lines.push('  // Per-handle dispatch: native-engine handles carry a `read`');
 		lines.push('  // closure that routes through napi (engine owns the tree;');
-		lines.push('  // Navigation via handle + childIndex replaces nodeId).');
-		lines.push('  // Wasm/JS handles leave `read` absent and fall');
-		lines.push('  // back to the in-process JS walker.');
+		lines.push('  // navigation via handle + childIndex replaces nodeId).');
+		lines.push('  // Wasm/JS handles (retained diagnostic tooling) leave `read`');
+		lines.push('  // absent and fall back to the in-process JS walker.');
 		lines.push('  return tree.read ? tree.read(handle, childIndex) : readNodeJs(tree, handle, childIndex);');
 		lines.push('}');
 		lines.push('');

@@ -15,9 +15,9 @@ export const listKinds: CommandModule = {
 					grammar: opts.grammar ?? 'rust',
 					groups: opts.groups ?? false,
 					unaliased: opts.unaliased ?? false,
-					phantom: opts.phantom ?? false,
+					phantom: opts.phantom ?? false
 				});
 				if (code !== 0) process.exitCode = code;
 			});
-	},
+	}
 };

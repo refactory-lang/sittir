@@ -21,9 +21,9 @@ interface GenCliOptions {
 	compileParser?: boolean;
 	tsGenerate?: boolean;
 	skipTsChain?: boolean;
-	buildNative?: boolean;     // commander sets false for --no-build-native
-	workspaceCheck?: boolean;  // commander sets false for --no-workspace-check
-	emitDiff?: boolean;        // commander sets false for --no-emit-diff
+	buildNative?: boolean; // commander sets false for --no-build-native
+	workspaceCheck?: boolean; // commander sets false for --no-workspace-check
+	emitDiff?: boolean; // commander sets false for --no-emit-diff
 	roundtrip?: boolean;
 	allowDiagnostic?: string[];
 }
@@ -53,12 +53,7 @@ export const gen: CommandModule = {
 				)
 			)
 			.addOption(new Option('--no-emit-diff', 'Suppress the post-regen emit diff'))
-			.option(
-				'--allow-diagnostic <code>',
-				'Allow a blocking grammar diagnostic (repeatable)',
-				collectRepeatable,
-				[],
-			)
+			.option('--allow-diagnostic <code>', 'Allow a blocking grammar diagnostic (repeatable)', collectRepeatable, [])
 			.action(async (opts: GenCliOptions) => {
 				if (!opts.grammar) throw new Error('Missing required option: --grammar');
 				const codegenOpts: CodegenOptions = {
@@ -71,10 +66,10 @@ export const gen: CommandModule = {
 					transpile: opts.transpile,
 					tsGenerate: opts.tsGenerate,
 					skipTsChain: opts.skipTsChain,
-					buildNative: opts.buildNative,       // false only if --no-build-native
+					buildNative: opts.buildNative, // false only if --no-build-native
 					workspaceCheck: opts.workspaceCheck, // false only if --no-workspace-check
 					noEmitDiff: opts.emitDiff === false, // true only if --no-emit-diff
-					allowDiagnostics: opts.allowDiagnostic,
+					allowDiagnostics: opts.allowDiagnostic
 				};
 
 				// Standalone maintenance steps (--transpile / --compile-parser /
@@ -89,18 +84,14 @@ export const gen: CommandModule = {
 				if (!opts.all && !opts.nodes) throw new Error('Must provide --nodes or --all');
 
 				// Generate (codegen) → returns the assembled NodeMap.
-				const nodeMap = opts.all
-					? await runFullRegen(codegenOpts)
-					: await runCodegen(codegenOpts);
+				const nodeMap = opts.all ? await runFullRegen(codegenOpts) : await runCodegen(codegenOpts);
 
 				// Post-generate validation (tools). Codegen now only generates +
 				// builds; the cli orchestrates the validation passes that used to run
 				// inline in run-codegen — this is what keeps codegen free of any
 				// dependency on the tools/validation layer.
 				const templatesDir = join(dirname(opts.output), 'templates');
-				const isRustRender =
-					opts.all === true &&
-					(RUST_RENDER_GRAMMARS as readonly string[]).includes(opts.grammar);
+				const isRustRender = opts.all === true && (RUST_RENDER_GRAMMARS as readonly string[]).includes(opts.grammar);
 
 				// Parity fixtures emit on every --all regen (the Rust parity harness
 				// reads test-fixtures.json). Extraction requires the post-regen native
@@ -125,5 +116,5 @@ export const gen: CommandModule = {
 					}
 				}
 			});
-	},
+	}
 };

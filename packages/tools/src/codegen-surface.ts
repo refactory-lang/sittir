@@ -48,7 +48,7 @@ const MODULES = {
 	modelNodeMap: '../../codegen/src/compiler/model/node-map.ts',
 	generatedManifest: '../../codegen/src/scripts/generated-manifest.ts',
 	suggested: '../../codegen/src/emitters/suggested.ts',
-	variantStructural: '../../codegen/src/compiler/variant-structural.ts',
+	variantStructural: '../../codegen/src/compiler/variant-structural.ts'
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -95,10 +95,7 @@ function moduleUrl(module: keyof typeof MODULES): string {
 	return new URL(MODULES[module], import.meta.url).href;
 }
 
-export async function invoke<
-	M extends keyof CodegenSurface,
-	F extends FunctionKeys<CodegenSurface[M]> & string,
->(
+export async function invoke<M extends keyof CodegenSurface, F extends FunctionKeys<CodegenSurface[M]> & string>(
 	module: M,
 	method: F,
 	...args: Parameters<Extract<CodegenSurface[M][F], AnyFn>>
@@ -133,7 +130,8 @@ export type RawGrammar = Awaited<ReturnType<CodegenSurface['evaluate']['evaluate
 export type LinkedGrammar = ReturnType<CodegenSurface['link']['link']>;
 export type SimplifiedGrammar = ReturnType<CodegenSurface['normalize']['normalizeGrammar']>;
 export type AssembledNodeMap = ReturnType<CodegenSurface['assemble']['assemble']>;
-export type GrammarDiagnostic = import('../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts').GrammarDiagnostic;
+export type GrammarDiagnostic =
+	import('../../codegen/src/compiler/diagnostics/grammar-diagnostics.ts').GrammarDiagnostic;
 export type PolymorphVariantDescriptor = import('../../codegen/src/polymorph-variant.ts').PolymorphVariantDescriptor;
 export type PolymorphVariantMap = import('../../codegen/src/polymorph-variant.ts').PolymorphVariantMap;
 export type FactoryShape = import('../../codegen/src/emitters/factory-map.ts').FactoryShape;

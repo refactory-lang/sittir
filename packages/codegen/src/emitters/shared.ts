@@ -312,55 +312,6 @@ function isHiddenInfraKind(kindName: string, nodeMap: NodeMap): boolean {
 // ---------------------------------------------------------------------------
 
 /**
- * Returns `true` when `slot` is auto-stamp-eligible.
- *
- * A slot is eligible when:
- * - Optional (`isRequired(slot) === false`) — user can omit it; it does not
- *   block parameterless classification of the parent compound.
- * - Required, non-repeated, and its content is fixed:
- *   (a) Inline literal: exactly one TerminalValue in values.
- *   (b) Single NodeRef that is itself marked `parameterless` on its
- *       AssembledNode (populated by the `markParameterlessKinds` pass in
- *       `assemble.ts`).
- *
- * Required repeated slots are never auto-stamp-eligible — their cardinality
- * is user-determined.
- *
- * @remarks
- * This function works on any `AssembledNonterminal`, applying equally to
- * named-field slots and inferred-positional slots. The `parameterless`
- * property on `AssembledNodeBase` must already be populated before calling.
- */
-export function isAutoStampSlot(slot: AssembledNonterminal, nodeMap: NodeMap): boolean {
-	if (!isRequired(slot)) return true; // optional → does not block
-	if (isMultiple(slot)) return false; // required repeated → user must supply
-
-	// Must be single-value to auto-stamp
-	if (slot.values.length !== 1) return false;
-	const v = slot.values[0]!;
-
-	// Source A: inline literal
-	if (isTerminalValue(v)) return true;
-
-	// Source B/C: single NodeRef — check if the referenced kind is parameterless
-	if (isNodeRef(v)) {
-		const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
-		const ref = nodeMap.nodes.get(kindName);
-
-		// Source C: parameterless compound (set by fixpoint pass)
-		if (ref?.parameterless) return true;
-
-		// Legacy Source B fallback: hidden single-literal kind
-		// (keyword OR token — the classifier split doesn't affect
-		// factory stamping; see `stampExpressionFor` for the
-		// corresponding branch).
-		if (kindName.startsWith('_') && (ref instanceof AssembledKeyword || ref instanceof AssembledToken)) return true;
-	}
-
-	return false;
-}
-
-/**
  * Build the TypeScript stamp expression for an auto-stamp-eligible REQUIRED slot.
  *
  * Returns `undefined` when:
@@ -659,10 +610,7 @@ export function keywordPresenceIsNonEmptyRepeat(field: AssembledNonterminal): bo
 	return field.values.every((v) => v.multiplicity === 'nonEmptyArray');
 }
 
-function classifyFieldStorageInfo(
-	field: AssembledNonterminal,
-	nodeMap: NodeMap
-): FieldStorageInfo {
+function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap): FieldStorageInfo {
 	const keywordKind = keywordPresenceKind(field, nodeMap);
 	if (keywordKind === 'boolean') {
 		const text = keywordPresenceValue(field, nodeMap);
@@ -1055,11 +1003,7 @@ export function classifyWrapEmission(
 	return 'emit';
 }
 
-export type TemplateEmission =
-	| 'emit'
-	| 'skip-non-user-facing'
-	| 'skip-polymorph-form-group'
-	| 'skip-leaf-model-type';
+export type TemplateEmission = 'emit' | 'skip-non-user-facing' | 'skip-polymorph-form-group' | 'skip-leaf-model-type';
 
 export function classifyTemplateEmission(node: AssembledNode): TemplateEmission {
 	if (!node.userFacing) return 'skip-non-user-facing';

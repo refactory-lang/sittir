@@ -32,7 +32,7 @@ import type {
 	PolymorphVariantMap,
 	FactoryShape,
 	FactorySlotMeta,
-	OpaqueFacts,
+	OpaqueFacts
 } from '../codegen-surface.ts';
 
 const { loadWebTreeSitter } = await load('engineLoader');
@@ -64,7 +64,12 @@ function createNamedSlotModel(name: string, arity: SlotArity): SlotModel {
 	return { name, storageKey: `_${name}`, arity, metadata: opaqueFacts({ origin: 'field' satisfies SlotOrigin }) };
 }
 function createUnnamedChildrenSlotModel(arity: SlotArity): SlotModel {
-	return { name: 'children', storageKey: '$other', arity, metadata: opaqueFacts({ origin: 'kind' satisfies SlotOrigin }) };
+	return {
+		name: 'children',
+		storageKey: '$other',
+		arity,
+		metadata: opaqueFacts({ origin: 'kind' satisfies SlotOrigin })
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -294,7 +299,9 @@ const nativePackages: Record<string, string> = {
 	typescript: 'sittir-typescript',
 	python: 'sittir-python'
 };
-function loadNativeEngineForGrammar(grammar: string): NativeEngineLike | null {
+type NativeEngineLoadResult = { engine: NativeEngineLike; reason?: undefined } | { engine: null; reason: string };
+
+function loadNativeEngineForGrammar(grammar: string): NativeEngineLoadResult {
 	const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
 	// Freshness report doubles as the cache-key source: napi modules can
 	// never be re-dlopened in-process, so the binary's mtime at first load
@@ -313,7 +320,7 @@ function loadNativeEngineForGrammar(grammar: string): NativeEngineLike | null {
 					`napi modules cannot be reloaded in-process. Re-run the command in a fresh process.`
 			);
 		}
-		return _cachedNativeEngine.engine;
+		return { engine: _cachedNativeEngine.engine };
 	}
 
 	// Staleness gate: a binary older than the crate's generated src/templates
@@ -325,18 +332,25 @@ function loadNativeEngineForGrammar(grammar: string): NativeEngineLike | null {
 	// Match probe-kind's loader — try the package name, then fall
 	// back to the workspace-local grammar crate directory.
 	const pkg = nativePackages[grammar];
-	if (!pkg) return null;
+	if (!pkg) return { engine: null, reason: `no native package mapping registered for grammar '${grammar}'` };
 	const localCratePath = `${repoRoot}/rust/crates/sittir-${grammar}`;
 	let mod: { SittirEngine: new () => NativeEngineLike };
+	const req = createRequire(import.meta.url);
+	let pkgLoadError: Error | undefined;
 	try {
-		const req = createRequire(import.meta.url);
+		mod = req(pkg) as typeof mod;
+	} catch (e) {
+		pkgLoadError = e as Error;
 		try {
-			mod = req(pkg) as typeof mod;
-		} catch {
 			mod = req(localCratePath) as typeof mod;
+		} catch (e2) {
+			return {
+				engine: null,
+				reason:
+					`require('${pkg}') failed: ${pkgLoadError.message}; ` +
+					`require('${localCratePath}') failed: ${(e2 as Error).message}`
+			};
 		}
-	} catch {
-		return null;
 	}
 	const engine = new mod.SittirEngine();
 
@@ -354,7 +368,7 @@ function loadNativeEngineForGrammar(grammar: string): NativeEngineLike | null {
 	}
 
 	_cachedNativeEngine = { grammar, engine, binaryMtimeMs };
-	return engine;
+	return { engine };
 }
 
 export function buildReadHandle(
@@ -366,11 +380,13 @@ export function buildReadHandle(
 ): TreeHandle {
 	const effectiveBackend = backend ?? process.env.SITTIR_BACKEND;
 	if (effectiveBackend === 'native') {
-		const engine = loadNativeEngineForGrammar(grammar);
-		if (!engine) {
-			throw new Error(`SITTIR_BACKEND=native but no native engine is available for grammar '${grammar}'`);
+		const result = loadNativeEngineForGrammar(grammar);
+		if (!result.engine) {
+			throw new Error(
+				`SITTIR_BACKEND=native but no native engine is available for grammar '${grammar}': ${result.reason}`
+			);
 		}
-		return nativeTreeHandle(engine, source);
+		return nativeTreeHandle(result.engine, source);
 	}
 	return treeHandle(tree, source, kindIdFromName);
 }
@@ -387,9 +403,9 @@ export function buildReadHandle(
 export function readNodeAt(handle: TreeHandle, node: AnyTreeNode, nativeCoords: NativeNodeCoords | null): AnyNodeData {
 	if (nativeCoords && handle.read) {
 		if (nativeCoords.handle === undefined) {
-			return readNodeFn(handle);
+			return handle.read();
 		}
-		return readNodeFn(handle, nativeCoords.handle, nativeCoords.childIndex);
+		return handle.read(nativeCoords.handle, nativeCoords.childIndex);
 	}
 	// WASM/JS path: temporarily set rootNode to the target node and read
 	// with no navigation coords (readNode reads rootNode when handle is undefined).
@@ -477,8 +493,8 @@ export function findNativeNodeId(
 		if (legacyFields != null && typeof legacyFields === 'object') {
 			return Object.keys(legacyFields as Record<string, unknown>).length > 0;
 		}
-	return false;
-}
+		return false;
+	}
 
 	function kindOf(d: AnyNodeData): string {
 		return typeof d.$type === 'number' ? (kindNameFromId?.(d.$type) ?? String(d.$type)) : d.$type;
@@ -970,12 +986,7 @@ export const WRAP_MODULE_PATHS: Record<string, string> = {
 export async function loadReadTreeNode(
 	grammar: string
 ): Promise<
-	| ((
-			handle: TreeHandle,
-			nodeHandle?: number,
-			childIndex?: number,
-			asType?: { from: string; to: string }
-	  ) => unknown)
+	| ((handle: TreeHandle, nodeHandle?: number, childIndex?: number, asType?: { from: string; to: string }) => unknown)
 	| null
 > {
 	const p = WRAP_MODULE_PATHS[grammar];
@@ -1109,9 +1120,9 @@ export function stripStructuralNodeText<T>(root: T): T {
 	const isNodeData = (value: unknown): value is AnyNodeData =>
 		typeof value === 'object' && value !== null && '$type' in value;
 	const hasStructure = (record: Record<string, unknown>): boolean =>
-		Object.keys(record).some((key) => key.startsWith('_'))
-		|| (record.$fields != null && typeof record.$fields === 'object')
-		|| record.$other != null;
+		Object.keys(record).some((key) => key.startsWith('_')) ||
+		(record.$fields != null && typeof record.$fields === 'object') ||
+		record.$other != null;
 	const recurse = (value: unknown): void => {
 		if (!isNodeData(value)) return;
 		if (seen.has(value)) return;
@@ -1592,7 +1603,7 @@ function shouldPromoteOrphanChildren(
 	if (!declaredFields || namedChildren.length === 0) return false;
 	if (namedChildren.length > declaredFields.length) return false;
 	const noFieldMatched = declaredFields.every((name) => {
-		const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+		const camel = snakeToCamel(name);
 		return populatedOut[camel] === undefined;
 	});
 	return noFieldMatched;
@@ -1606,7 +1617,7 @@ function slotOrigin(slot: SlotModel): SlotOrigin {
 }
 
 function slotConfigKey(slot: SlotModel): string {
-	return slotOrigin(slot) === 'kind' ? slot.name : slot.name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+	return slotOrigin(slot) === 'kind' ? slot.name : snakeToCamel(slot.name);
 }
 
 function memberValueOpts(
@@ -1655,11 +1666,7 @@ function createChildrenConfigSlotModel(
 	return createUnnamedChildrenSlotModel(slotModelArityFromMeta(slotMeta, true));
 }
 
-function hasDeclaredFactorySlot(
-	parentKind: string | undefined,
-	name: string,
-	opts: NodeToConfigOpts
-): boolean {
+function hasDeclaredFactorySlot(parentKind: string | undefined, name: string, opts: NodeToConfigOpts): boolean {
 	if (!parentKind) return false;
 	if (opts.factorySlots?.[parentKind]?.[name] !== undefined) return true;
 	return opts.factoryFields?.[parentKind]?.includes(name) ?? false;
@@ -1686,14 +1693,18 @@ function narrowSingularUnnamedChildrenValue(
 	childOpts: NodeToConfigOpts,
 	slotMeta: FactorySlotMeta | undefined
 ): readonly unknown[] | unknown {
-	if (slotOrigin(slot) !== 'kind' || slot.name !== 'children' || !slotMeta || slotMeta.multiple || slotMeta.slotCount !== 1) {
+	if (
+		slotOrigin(slot) !== 'kind' ||
+		slot.name !== 'children' ||
+		!slotMeta ||
+		slotMeta.multiple ||
+		slotMeta.slotCount !== 1
+	) {
 		return value;
 	}
 	if (!Array.isArray(value) || value.length <= 1) return value;
 	const hintedKind =
-		childOpts.namedChildKindHints?.length === 1
-			? childOpts.namedChildKindHints[0]
-			: childOpts.firstNamedChildKindHint;
+		childOpts.namedChildKindHints?.length === 1 ? childOpts.namedChildKindHints[0] : childOpts.firstNamedChildKindHint;
 	if (hintedKind) {
 		const hinted = value.filter((item) => rawChildKindName(item, childOpts.kindNameFromId) === hintedKind);
 		if (hinted.length === 1) return hinted[0]!;
@@ -1776,7 +1787,7 @@ function getMissingDeclaredFields(
 ): string[] {
 	if (!declaredFields) return [];
 	return declaredFields.filter((name) => {
-		const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+		const camel = snakeToCamel(name);
 		return out[camel] === undefined;
 	});
 }
@@ -1786,7 +1797,9 @@ function isAnonymousTokenNode(value: unknown): value is ReadNodeLike {
 }
 
 function filterStructuralChildren(children: unknown | readonly unknown[] | undefined): readonly unknown[] {
-	return childEntries(children).filter((child) => child != null && typeof child === 'object' && !isAnonymousTokenNode(child));
+	return childEntries(children).filter(
+		(child) => child != null && typeof child === 'object' && !isAnonymousTokenNode(child)
+	);
 }
 
 function shouldOmitResidualScalarChildren(
@@ -1825,11 +1838,9 @@ function resolveOverrideVariantFromKind(
 }
 
 function namedChildNodes(value: unknown | readonly unknown[] | undefined): ReadNodeLike[] {
-	return (
-		childEntries(value).filter(
-			(child): child is ReadNodeLike =>
-				child != null && typeof child === 'object' && (child as { $named?: boolean }).$named !== false
-		)
+	return childEntries(value).filter(
+		(child): child is ReadNodeLike =>
+			child != null && typeof child === 'object' && (child as { $named?: boolean }).$named !== false
 	);
 }
 
@@ -1866,11 +1877,11 @@ function buildVariantHelperData(data: ReadNodeLike, helperKind: string): ReadNod
 
 function helperDeclaredConfigKeys(helperKind: string, opts: NodeToConfigOpts): string[] {
 	const fieldKeys =
-		opts.factoryFields?.[helperKind]?.map((name) => name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase())) ?? [];
-	const slotKeys =
-		Object.keys(opts.factorySlots?.[helperKind] ?? {})
-			.filter((name) => name !== 'children')
-			.map((name) => name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase()));
+		opts.factoryFields?.[helperKind]?.map((name) => name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase())) ??
+		[];
+	const slotKeys = Object.keys(opts.factorySlots?.[helperKind] ?? {})
+		.filter((name) => name !== 'children')
+		.map((name) => name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase()));
 	return [...new Set([...fieldKeys, ...slotKeys])];
 }
 
@@ -2146,7 +2157,10 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 			(c) => c != null && typeof c === 'object' && (c as { $named?: boolean }).$named !== false
 		);
 		const childOpts = memberValueOpts(opts, parentKind, undefined);
-		if (!overrideHelperVariant && promoteNamedChildrenToMissingFields(declaredFields, parentKind, namedChildren, opts, out)) {
+		if (
+			!overrideHelperVariant &&
+			promoteNamedChildrenToMissingFields(declaredFields, parentKind, namedChildren, opts, out)
+		) {
 			// Missing declared fields were recovered from surviving named children.
 		} else if (!overrideHelperVariant && shouldPromoteOrphanChildren(declaredFields, out, namedChildren)) {
 			// Assign by position: first N named children → first N declared fields.
@@ -2160,7 +2174,12 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 			// Residual scalar children on optional singular `children` slots are token
 			// baggage from the native read path, not structural children for the factory surface.
 		} else {
-			assignSlotToConfig(createChildrenConfigSlotModel(parentKind, opts.factorySlots), structuralChildren, childOpts, out);
+			assignSlotToConfig(
+				createChildrenConfigSlotModel(parentKind, opts.factorySlots),
+				structuralChildren,
+				childOpts,
+				out
+			);
 		}
 	}
 	// Polymorph $variant stamping — the dispatcher's `switch
@@ -2297,12 +2316,12 @@ function inferFromChildKind(
 			if (namedChildren.length !== 1) return undefined;
 			const onlyChild: ReadNodeLike = namedChildren[0]!;
 			const onlyChildType = onlyChild.$type;
-				const onlyChildKind =
-					onlyChildType === undefined
-						? undefined
-						: typeof onlyChildType === 'number'
-							? kindNameFromId?.(onlyChildType) ?? String(onlyChildType)
-							: onlyChildType;
+			const onlyChildKind =
+				onlyChildType === undefined
+					? undefined
+					: typeof onlyChildType === 'number'
+						? (kindNameFromId?.(onlyChildType) ?? String(onlyChildType))
+						: onlyChildType;
 			const resolved = resolveOverrideVariantFromKind(childKind, onlyChildKind);
 			if (resolved !== undefined) return resolved;
 			current = onlyChild;
@@ -2551,7 +2570,7 @@ function inferFromFieldPresence(
  * → `'native'`; anything else → `'ts'`. No-op when `SITTIR_METRICS=1`
  * is unset (the underlying `dumpMetrics` short-circuits).
  *
- * @see packages/core/src/metrics.ts for the accumulator + writer.
+ * @see packages/legacy-core/src/metrics.ts for the accumulator + writer.
  */
 export function emitValidatorMetrics(): void {
 	if (!metricsEnabled) return;

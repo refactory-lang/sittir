@@ -21,7 +21,9 @@ describe('factory-roundtrip harness', () => {
 	it('uses metadata-driven child args in from validation spread reconstruction', () => {
 		const content = readFileSync(resolve(import.meta.dirname, '../src/validate/from.ts'), 'utf-8');
 		expect(content).toMatch(/const childArgs = getChildFactoryArgs\(kind, config, factorySlots\);/);
-		expect(content).toMatch(/factoryResult = \(factory as \(\.\.\.args: unknown\[\]\) => AnyNodeData\)\(\.\.\.childArgs\);/);
+		expect(content).toMatch(
+			/factoryResult = \(factory as \(\.\.\.args: unknown\[\]\) => AnyNodeData\)\(\.\.\.childArgs\);/
+		);
 		expect(content).not.toMatch(/const namedChildren = \(readData\.\$children \?\? \[\]\)\.filter/);
 	});
 });
