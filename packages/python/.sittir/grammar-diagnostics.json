@@ -4,15 +4,47 @@
     "code": "seq-with-nested-seq",
     "severity": "error",
     "grammar": "python",
-    "ownerKind": "dict_pattern",
-    "ruleId": "rule:dict_pattern:root",
-    "message": "Kind 'dict_pattern' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
+    "ownerKind": "_dict_pattern_group1",
+    "ruleId": "rule:_dict_pattern_group1:root",
+    "message": "Kind '_dict_pattern_group1' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
     "proposal": "Introduce a visible group or normalize the nested seq earlier.",
     "canProceed": true,
     "details": {
       "rawShape": "seq-with-nested-seq",
       "ruleType": "SEQ",
       "context": "fields"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "seq-with-nested-seq",
+    "severity": "error",
+    "grammar": "python",
+    "ownerKind": "dict_pattern_group1",
+    "ruleId": "rule:_dict_pattern_group1:root",
+    "message": "Kind 'dict_pattern_group1' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
+    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
+    "canProceed": true,
+    "details": {
+      "rawShape": "seq-with-nested-seq",
+      "ruleType": "SEQ",
+      "context": "fields"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "_argument_list_group1",
+    "message": "[assemble] typeName collision: kind '_argument_list_group1' renamed 'ArgumentListGroup1' → '_ArgumentListGroup1' (visible sibling(s): 'argument_list_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "ArgumentListGroup1",
+      "newType": "_ArgumentListGroup1",
+      "visibleKinds": [
+        "argument_list_group1"
+      ]
     }
   },
   {
@@ -36,6 +68,38 @@
     "code": "typename-collision",
     "severity": "info",
     "grammar": "python",
+    "ownerKind": "_dict_pattern_group1",
+    "message": "[assemble] typeName collision: kind '_dict_pattern_group1' renamed 'DictPatternGroup1' → '_DictPatternGroup1' (visible sibling(s): 'dict_pattern_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "DictPatternGroup1",
+      "newType": "_DictPatternGroup1",
+      "visibleKinds": [
+        "dict_pattern_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "_dictionary_group1",
+    "message": "[assemble] typeName collision: kind '_dictionary_group1' renamed 'DictionaryGroup1' → '_DictionaryGroup1' (visible sibling(s): 'dictionary_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "DictionaryGroup1",
+      "newType": "_DictionaryGroup1",
+      "visibleKinds": [
+        "dictionary_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
     "ownerKind": "_list_pattern",
     "message": "[assemble] typeName collision: kind '_list_pattern' renamed 'ListPattern' → '_ListPattern' (visible sibling(s): 'list_pattern')",
     "canProceed": true,
@@ -44,6 +108,22 @@
       "newType": "_ListPattern",
       "visibleKinds": [
         "list_pattern"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "_list_pattern_group1",
+    "message": "[assemble] typeName collision: kind '_list_pattern_group1' renamed 'ListPatternGroup1' → '_ListPatternGroup1' (visible sibling(s): 'list_pattern_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "ListPatternGroup1",
+      "newType": "_ListPatternGroup1",
+      "visibleKinds": [
+        "list_pattern_group1"
       ]
     }
   },

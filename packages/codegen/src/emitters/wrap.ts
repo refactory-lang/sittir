@@ -31,8 +31,7 @@ import {
 	resolveFieldStorageInfo,
 	classifyChildFactorySurface,
 	classifyWrapEmission,
-	warnSkippedParserSymbol,
-	isSlotBearingCompound
+	warnSkippedParserSymbol
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType } from './factories.ts';
 import { deriveChildrenKinds } from './transport-common.ts';
@@ -1643,7 +1642,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'// kinds currently retain per-element span), so this throws loudly rather',
 						'// than silently returning a wrong-for-one-edge answer if that combination',
 						'// is ever reached.',
-						'function _hasSeparatorFlank(container: { $span?: { start: number; end: number } }, content: readonly unknown[], other: readonly unknown[] | undefined, edge: "leading" | "trailing", otherFlankOptional: boolean): boolean {',
+						'function _hasSeparatorFlank(container: { $span?: { start: number; end: number } }, content: readonly unknown[], other: unknown, edge: "leading" | "trailing", otherFlankOptional: boolean): boolean {',
 						'  const containerSpan = container.$span;',
 						'  const anchor = edge === "leading" ? content[0] : content[content.length - 1];',
 						'  const anchorSpan = anchor && typeof anchor === "object" ? (anchor as { $span?: { start: number; end: number } }).$span : undefined;',

@@ -291,7 +291,7 @@ function readTerminalFromOther(data: _NodeData, allowedKindIds: readonly number[
 function _hasSeparatorFlank(
 	container: { $span?: { start: number; end: number } },
 	content: readonly unknown[],
-	other: readonly unknown[] | undefined,
+	other: unknown,
 	edge: 'leading' | 'trailing',
 	otherFlankOptional: boolean
 ): boolean {

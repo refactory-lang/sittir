@@ -102,6 +102,70 @@
     "code": "typename-collision",
     "severity": "info",
     "grammar": "rust",
+    "ownerKind": "_arguments_group1",
+    "message": "[assemble] typeName collision: kind '_arguments_group1' renamed 'ArgumentsGroup1' → '_ArgumentsGroup1' (visible sibling(s): 'arguments_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "ArgumentsGroup1",
+      "newType": "_ArgumentsGroup1",
+      "visibleKinds": [
+        "arguments_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
+    "ownerKind": "_enum_variant_list_group1",
+    "message": "[assemble] typeName collision: kind '_enum_variant_list_group1' renamed 'EnumVariantListGroup1' → '_EnumVariantListGroup1' (visible sibling(s): 'enum_variant_list_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "EnumVariantListGroup1",
+      "newType": "_EnumVariantListGroup1",
+      "visibleKinds": [
+        "enum_variant_list_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
+    "ownerKind": "_field_declaration_list_group1",
+    "message": "[assemble] typeName collision: kind '_field_declaration_list_group1' renamed 'FieldDeclarationListGroup1' → '_FieldDeclarationListGroup1' (visible sibling(s): 'field_declaration_list_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "FieldDeclarationListGroup1",
+      "newType": "_FieldDeclarationListGroup1",
+      "visibleKinds": [
+        "field_declaration_list_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
+    "ownerKind": "_field_initializer_list_group1",
+    "message": "[assemble] typeName collision: kind '_field_initializer_list_group1' renamed 'FieldInitializerListGroup1' → '_FieldInitializerListGroup1' (visible sibling(s): 'field_initializer_list_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "FieldInitializerListGroup1",
+      "newType": "_FieldInitializerListGroup1",
+      "visibleKinds": [
+        "field_initializer_list_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
     "ownerKind": "_mutable_specifier",
     "message": "[assemble] typeName collision: kind '_mutable_specifier' renamed 'MutableSpecifier' → '_MutableSpecifier' (visible sibling(s): 'mutable_specifier')",
     "canProceed": true,
@@ -110,6 +174,86 @@
       "newType": "_MutableSpecifier",
       "visibleKinds": [
         "mutable_specifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
+    "ownerKind": "_ordered_field_declaration_list_group1",
+    "message": "[assemble] typeName collision: kind '_ordered_field_declaration_list_group1' renamed 'OrderedFieldDeclarationListGroup1' → '_OrderedFieldDeclarationListGroup1' (visible sibling(s): 'ordered_field_declaration_list_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "OrderedFieldDeclarationListGroup1",
+      "newType": "_OrderedFieldDeclarationListGroup1",
+      "visibleKinds": [
+        "ordered_field_declaration_list_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
+    "ownerKind": "_parameters_group1",
+    "message": "[assemble] typeName collision: kind '_parameters_group1' renamed 'ParametersGroup1' → '_ParametersGroup1' (visible sibling(s): 'parameters_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "ParametersGroup1",
+      "newType": "_ParametersGroup1",
+      "visibleKinds": [
+        "parameters_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
+    "ownerKind": "_slice_pattern_group1",
+    "message": "[assemble] typeName collision: kind '_slice_pattern_group1' renamed 'SlicePatternGroup1' → '_SlicePatternGroup1' (visible sibling(s): 'slice_pattern_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "SlicePatternGroup1",
+      "newType": "_SlicePatternGroup1",
+      "visibleKinds": [
+        "slice_pattern_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
+    "ownerKind": "_struct_pattern_group1",
+    "message": "[assemble] typeName collision: kind '_struct_pattern_group1' renamed 'StructPatternGroup1' → '_StructPatternGroup1' (visible sibling(s): 'struct_pattern_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "StructPatternGroup1",
+      "newType": "_StructPatternGroup1",
+      "visibleKinds": [
+        "struct_pattern_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
+    "ownerKind": "_tuple_pattern_group1",
+    "message": "[assemble] typeName collision: kind '_tuple_pattern_group1' renamed 'TuplePatternGroup1' → '_TuplePatternGroup1' (visible sibling(s): 'tuple_pattern_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "TuplePatternGroup1",
+      "newType": "_TuplePatternGroup1",
+      "visibleKinds": [
+        "tuple_pattern_group1"
       ]
     }
   },
@@ -134,6 +278,38 @@
     "code": "typename-collision",
     "severity": "info",
     "grammar": "rust",
+    "ownerKind": "_use_bounds_group1",
+    "message": "[assemble] typeName collision: kind '_use_bounds_group1' renamed 'UseBoundsGroup1' → '_UseBoundsGroup1' (visible sibling(s): 'use_bounds_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "UseBoundsGroup1",
+      "newType": "_UseBoundsGroup1",
+      "visibleKinds": [
+        "use_bounds_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
+    "ownerKind": "_use_list_group1",
+    "message": "[assemble] typeName collision: kind '_use_list_group1' renamed 'UseListGroup1' → '_UseListGroup1' (visible sibling(s): 'use_list_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "UseListGroup1",
+      "newType": "_UseListGroup1",
+      "visibleKinds": [
+        "use_list_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
     "ownerKind": "_visibility_modifier_group1",
     "message": "[assemble] typeName collision: kind '_visibility_modifier_group1' renamed 'VisibilityModifierGroup1' → '_VisibilityModifierGroup1' (visible sibling(s): 'visibility_modifier_group1')",
     "canProceed": true,
@@ -142,6 +318,22 @@
       "newType": "_VisibilityModifierGroup1",
       "visibleKinds": [
         "visibility_modifier_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
+    "ownerKind": "_where_clause_group1",
+    "message": "[assemble] typeName collision: kind '_where_clause_group1' renamed 'WhereClauseGroup1' → '_WhereClauseGroup1' (visible sibling(s): 'where_clause_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "WhereClauseGroup1",
+      "newType": "_WhereClauseGroup1",
+      "visibleKinds": [
+        "where_clause_group1"
       ]
     }
   }

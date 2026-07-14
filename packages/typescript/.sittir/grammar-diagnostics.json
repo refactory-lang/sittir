@@ -192,6 +192,54 @@
     "code": "typename-collision",
     "severity": "info",
     "grammar": "typescript",
+    "ownerKind": "_enum_body_group1",
+    "message": "[assemble] typeName collision: kind '_enum_body_group1' renamed 'EnumBodyGroup1' → '_EnumBodyGroup1' (visible sibling(s): 'enum_body_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "EnumBodyGroup1",
+      "newType": "_EnumBodyGroup1",
+      "visibleKinds": [
+        "enum_body_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_export_clause_group1",
+    "message": "[assemble] typeName collision: kind '_export_clause_group1' renamed 'ExportClauseGroup1' → '_ExportClauseGroup1' (visible sibling(s): 'export_clause_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "ExportClauseGroup1",
+      "newType": "_ExportClauseGroup1",
+      "visibleKinds": [
+        "export_clause_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_formal_parameters_group1",
+    "message": "[assemble] typeName collision: kind '_formal_parameters_group1' renamed 'FormalParametersGroup1' → '_FormalParametersGroup1' (visible sibling(s): 'formal_parameters_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "FormalParametersGroup1",
+      "newType": "_FormalParametersGroup1",
+      "visibleKinds": [
+        "formal_parameters_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
     "ownerKind": "_identifier",
     "message": "[assemble] typeName collision: kind '_identifier' renamed 'Identifier' → '_Identifier' (visible sibling(s): 'identifier')",
     "canProceed": true,
@@ -288,6 +336,22 @@
     "code": "typename-collision",
     "severity": "info",
     "grammar": "typescript",
+    "ownerKind": "_named_imports_group1",
+    "message": "[assemble] typeName collision: kind '_named_imports_group1' renamed 'NamedImportsGroup1' → '_NamedImportsGroup1' (visible sibling(s): 'named_imports_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "NamedImportsGroup1",
+      "newType": "_NamedImportsGroup1",
+      "visibleKinds": [
+        "named_imports_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
     "ownerKind": "_number",
     "message": "[assemble] typeName collision: kind '_number' renamed 'Number' → '_Number' (visible sibling(s): 'number')",
     "canProceed": true,
@@ -317,15 +381,31 @@
   },
   {
     "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_tuple_type_group1",
+    "message": "[assemble] typeName collision: kind '_tuple_type_group1' renamed 'TupleTypeGroup1' → '_TupleTypeGroup1' (visible sibling(s): 'tuple_type_group1')",
+    "canProceed": true,
+    "details": {
+      "typeName": "TupleTypeGroup1",
+      "newType": "_TupleTypeGroup1",
+      "visibleKinds": [
+        "tuple_type_group1"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
     "code": "content-collision",
     "severity": "warning",
     "grammar": "typescript",
-    "ownerKind": "_object_type_optional1",
-    "message": "Kind '_object_type_optional1' has 3 anonymous 'content' slots that would share the '_content' storage key.",
-    "proposal": "Kind '_object_type_optional1' has 3 anonymous 'content' slots that would share the '_content' storage key (an unemittable ambiguity). field()-name at least one in overrides.ts.",
+    "ownerKind": "_object_type_group1",
+    "message": "Kind '_object_type_group1' has 2 anonymous 'content' slots that would share the '_content' storage key.",
+    "proposal": "Kind '_object_type_group1' has 2 anonymous 'content' slots that would share the '_content' storage key (an unemittable ambiguity). field()-name at least one in overrides.ts.",
     "canProceed": true,
     "details": {
-      "slotCount": 3
+      "slotCount": 2
     }
   },
   {
