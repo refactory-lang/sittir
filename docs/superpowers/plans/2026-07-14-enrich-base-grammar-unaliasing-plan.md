@@ -375,10 +375,20 @@ Run: `git stash` (stashing this task's uncommitted work), then `pnpm exec vitest
 Run: `pnpm exec vitest run packages/codegen/src/dsl` again with the work restored.
 Expected: same failure count both times (zero new failures introduced by this task) — per this project's established A/B discipline, don't assume a pre-existing baseline of zero.
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 8: Regenerate all 3 grammars, sanity-check the diff, and commit**
+
+Third revision note (mid Task 1, 2026-07-14): the pre-commit hook (`verify-manifests-cli.ts`) hashes every non-test `.ts` under `packages/codegen/src/**` and blocks ANY commit where that hash doesn't match the committed manifest — this fires for every codegen-source-touching commit, not just a designated "final" one. This step originally deferred the regen to Task 2; that's wrong given the hook's actual behavior (confirmed via an isolated worktree A/B test) and given the Global Constraints already say every codegen-source-touching task must regenerate + stage before committing. Regen happens HERE, in this commit — Task 2 shifts to verifying this regen's correctness (probe-kind, validate:native) rather than triggering its own regen.
+
+Run:
+```bash
+pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
+pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
+pnpm exec tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
+```
+Expected: the "Regen diff vs HEAD" summary shows changes ONLY for the 7 targeted kinds (rust: `scoped_type_identifier`; typescript: `_arrow_function_parameter`, `_index_signature_colon`, `_jsx_string`, `augmented_assignment_expression`, `string`, `type_predicate`, and anything referencing the storage kinds they were aliased to/from) plus manifest/fixture metadata — python should show no kind-level change (no live instances there). If anything ELSE changed, stop and investigate before committing — that's a sign the pass is doing more than intended.
 
 ```bash
-git add packages/codegen/src/dsl/enrich.ts packages/codegen/src/dsl/__tests__/enrich-unalias.test.ts
+git add packages/codegen/src/dsl/enrich.ts packages/codegen/src/dsl/__tests__/enrich-unalias.test.ts packages/rust/src packages/rust/.sittir packages/typescript/src packages/typescript/.sittir packages/python/src packages/python/.sittir
 git commit -m "feat(codegen): auto-drop structurally-distinct base-grammar aliases
 
 New enrich pass (applyUnaliasDistinct) detects alias(X, Y) sites where
@@ -390,29 +400,34 @@ own name, and still emits a downgraded (info, non-blocking) diagnostic
 as an audit trail of the auto-fix.
 
 Wired into applyEnrichPasses, after the existing clause-hoist pass.
-Not yet regenerated against real grammars — next commit."
+Regenerated all 3 grammars — diff confirmed scoped to the 7 targeted
+kinds. Deeper round-trip/validate:native verification is Task 2."
 ```
 
 ---
 
-## Task 2: Full 3-grammar regen + verification
+## Task 2: Verify Task 1's regen (probe-kind round-trip)
 
-**Files:**
-- Regenerate: `packages/{rust,typescript,python}/src/*`, `.sittir/*`, `tests/nodes.test.ts` (via the `gen` CLI command, never hand-edited)
+Fourth revision note: Task 1 (per its Step 8, revised — see Third revision note there) already ran the regen and committed its output as part of landing `applyUnaliasDistinct`, since the pre-commit hook forces this for any codegen-source-touching commit. This task no longer triggers its own regen — it verifies the regen Task 1 already committed is actually CORRECT (round-trip, not just "the diff looked scoped-right"). Only re-run `gen` here if something looks wrong and needs reproducing/isolating.
+
+**Files:** none (verification-only task, unless a re-regen is needed to investigate a problem)
 
 **Interfaces:**
-- Consumes: Task 1's `applyUnaliasDistinct`, wired live.
-- Produces: regenerated grammar output for all 3 grammars, reflecting the 7 un-aliased kinds.
+- Consumes: Task 1's committed regen output (all 3 grammars).
+- Produces: a per-kind pass/fail verdict for the 7 targeted kinds.
 
-- [ ] **Step 1: Regenerate all 3 grammars**
+- [ ] **Step 1: Confirm Task 1's regen actually landed as expected**
 
-Run for each grammar:
+Run: `git log --oneline -3` and `git show --stat HEAD` — confirm the most recent commit is Task 1's `applyUnaliasDistinct` feat commit, and its diff includes `packages/{rust,typescript}/src/*` + `.sittir/*` changes (not just `dsl/enrich.ts`). If Task 1's commit is missing the regen (e.g. it stopped before Step 8's revised ending), that's a real gap — go back and complete Task 1's Step 8 first, don't proceed here with a stale/unregenerated tree.
+
+- [ ] **Step 1b (reference only, not normally needed): re-run regen if investigating an issue**
+
 ```bash
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
 pnpm exec tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
 ```
-Expected: each completes without error; the "Regen diff vs HEAD" summary each command prints should show changes ONLY for the touched kinds (rust: `scoped_type_identifier` and whatever else references `generic_type_with_turbofish`/`generic_type`; typescript: `_arrow_function_parameter`, `_index_signature_colon`, `_jsx_string`, `augmented_assignment_expression`, `string`, `type_predicate`, and anything referencing `_reserved_identifier`/`identifier`/`unescaped_double_jsx_string_fragment`/etc.) — python is not expected to change (no live instances there).
+Expected (if run): the "Regen diff vs HEAD" summary each command prints should show NO further changes beyond what Task 1 already committed (this should be a no-op re-confirming Task 1's output, not a source of new changes) — the touched kinds are rust: `scoped_type_identifier` and whatever else references `generic_type_with_turbofish`/`generic_type`; typescript: `_arrow_function_parameter`, `_index_signature_colon`, `_jsx_string`, `augmented_assignment_expression`, `string`, `type_predicate`, and anything referencing `_reserved_identifier`/`identifier`/`unescaped_double_jsx_string_fragment`/etc.) — python is not expected to change (no live instances there).
 
 - [ ] **Step 2: Confirm the 7 known diagnostics resolved/downgraded**
 
@@ -431,21 +446,9 @@ pnpm exec tsx packages/cli/src/cli.ts tool probe-kind --grammar <rust|typescript
 ```
 Expected: for each, confirm the kind still round-trips correctly (parse → read → render → reparse, byte-identical or the tool's own pass criterion) — a real CST shape change happened here (the un-aliased storage kind now surfaces under its own name instead of being coerced), so this is the check that confirms the change didn't break anything, not an automatic pass.
 
-- [ ] **Step 4: Stage the regenerated files**
+- [ ] **Step 4: Nothing to stage/commit under normal conditions**
 
-```bash
-git add packages/rust/src packages/rust/.sittir packages/typescript/src packages/typescript/.sittir packages/python/src packages/python/.sittir
-```
-
-- [ ] **Step 5: Commit the regen**
-
-```bash
-git commit -m "chore(codegen): regenerate all 3 grammars for un-aliasing pass
-
-Reflects the new applyUnaliasDistinct enrich pass: the 7 previously-live
-parsekind-noninjective kinds now surface their un-aliased storage kinds
-under their own names. probe-kind round-trip verified for all 7."
-```
+Task 1's commit already includes the regenerated output — this task is verification-only. Only if Step 1b's optional re-run actually changed something (a real discrepancy found and fixed) would there be anything to stage here; if so, commit it as `fix(codegen): correct <specific issue> found during Task 2 verification`, not a generic regen-chore commit.
 
 ---
 
