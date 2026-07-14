@@ -170,6 +170,11 @@ describe('enrich — base-grammar un-aliasing', () => {
 		expect(aliasMember.value).toBe('reserved_identifier');
 		expect(aliasMember.content?.type).toBe('SYMBOL');
 		expect(aliasMember.content?.name).toBe('_reserved_identifier');
+		// The retargeted alias must stay NAMED — the whole point of retargeting
+		// instead of dropping is to preserve the hidden rule's independent,
+		// named CST visibility (a dropped/un-aliased hidden rule would produce
+		// no node of its own at all, let alone a named one).
+		expect((aliasMember as unknown as { named: boolean }).named).toBe(true);
 
 		const diagnostics = drainUnaliasDiagnostics();
 		expect(diagnostics).toHaveLength(1);
@@ -268,6 +273,59 @@ describe('enrich — base-grammar un-aliasing', () => {
 		expect(aliasMembers).toHaveLength(2);
 		expect(aliasMembers.find((m) => m.content?.name === '_simple_statements')?.value).toBe('simple_statements');
 		expect(aliasMembers.find((m) => m.content?.name === '_newline')?.value).toBe('newline');
+
+		const diagnostics = drainUnaliasDiagnostics();
+		expect(diagnostics).toHaveLength(1);
+		expect(diagnostics[0]!.severity).not.toBe('error');
+	});
+
+	it('mixed-bucket guard: leaves a structurally-identical alias-bearing candidate untouched, acting only on the genuinely-distinct one', () => {
+		// A 3-entry bucket sharing target 'generic_type': a bare (non-alias)
+		// entry, an alias whose storage body is structurally IDENTICAL to the
+		// bare entry's body (majority signature — 2 of 3), and an alias whose
+		// storage body is genuinely distinct (minority signature — 1 of 3).
+		// Only the genuinely-distinct alias should be dropped; the
+		// identical-to-majority alias must be left untouched even though the
+		// bucket as a whole still fires the collision diagnostic.
+		resetUnaliasDiagnostics();
+		const g = globalThis as unknown as {
+			seq: (...m: unknown[]) => unknown;
+			choice: (...m: unknown[]) => unknown;
+			alias: (rule: unknown, value: unknown) => unknown;
+			sym: (name: string) => unknown;
+		};
+		const base = {
+			grammar: {
+				name: 'test',
+				rules: {
+					generic_type: g.seq(g.sym('type_identifier')),
+					generic_type_with_turbofish: g.seq(g.sym('type_identifier'), '::<>'),
+					generic_type_alias_dup: g.seq(g.sym('type_identifier')),
+					scoped_type_identifier: g.choice(
+						g.sym('generic_type'),
+						g.alias(g.sym('generic_type_with_turbofish'), g.sym('generic_type')),
+						g.alias(g.sym('generic_type_alias_dup'), g.sym('generic_type'))
+					)
+				}
+			}
+		};
+
+		const result = enrich(base) as typeof base;
+
+		const scoped = result.grammar.rules.scoped_type_identifier as unknown as {
+			members: Array<{ type: string; name?: string; content?: { name?: string } }>;
+		};
+		// The genuinely-distinct alias was dropped: bare reference now, no
+		// ALIAS wrapper.
+		expect(scoped.members.some((m) => m.type === 'ALIAS' && m.content?.name === 'generic_type_with_turbofish')).toBe(
+			false
+		);
+		expect(scoped.members.some((m) => m.name === 'generic_type_with_turbofish')).toBe(true);
+		// The structurally-identical-to-majority alias is untouched: still an
+		// ALIAS wrapping its original storage kind.
+		expect(scoped.members.some((m) => m.type === 'ALIAS' && m.content?.name === 'generic_type_alias_dup')).toBe(
+			true
+		);
 
 		const diagnostics = drainUnaliasDiagnostics();
 		expect(diagnostics).toHaveLength(1);

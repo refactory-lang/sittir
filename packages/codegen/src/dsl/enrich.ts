@@ -1802,7 +1802,9 @@ function rewriteUnaliasAt(node: Rule, path: readonly (string | number)[], replac
  * `structuralSignatureOfValue`/`canonicalRuleSignature` comparison, and the
  * two CAN disagree in principle. No rule name is special-cased here anymore
  * (the former `GRANULARITY_MISMATCH_EXCLUSIONS` python `_suite` carve-out was
- * removed 2026-07-14 — see `docs/KNOWN_ISSUES.md` for the resolved outcome).
+ * removed in `cb44e218b` — both `_simple_statements`/`_newline` retargeted
+ * cleanly with no live issue remaining, and python's baseline actually
+ * improved 107→108).
  * The diagnostic is downgraded to non-blocking severity and kept only as an
  * audit trail of the auto-fix, not a build-blocking error.
  *
@@ -1867,18 +1869,41 @@ function applyUnaliasDistinct(
 			storageKind: candidate.storageKind,
 			structuralSignature: signatures[i]!
 		}));
+		// Bucket's most-common ("representative") signature, if a genuine
+		// majority exists (count > 1) — a candidate whose OWN signature matches
+		// it is structurally identical to the bucket's dominant shape and needs
+		// no distinct alias, even though the bucket as a whole fired the
+		// collision diagnostic because of some OTHER, genuinely-distinct
+		// candidate. When every signature is unique (today's real 2-way
+		// distinct buckets — no signature repeats), no majority exists and
+		// `representativeSignature` stays `undefined`, so every alias-bearing
+		// candidate is still acted on exactly as before (a true no-op for
+		// today's cases).
+		const signatureCounts = new Map<string, number>();
+		for (const signature of signatures) signatureCounts.set(signature, (signatureCounts.get(signature) ?? 0) + 1);
+		let representativeSignature: string | undefined;
+		let representativeCount = 1;
+		for (const [signature, count] of signatureCounts) {
+			if (count > representativeCount) {
+				representativeSignature = signature;
+				representativeCount = count;
+			}
+		}
 		const resolution = diagnoseParseKindCollisions({ ownerKind: ruleName, slotName: targetName, values });
 		for (const diagnostic of resolution.diagnostics) {
 			// diagnoseParseKindCollisions reasons in aggregate over the bucket and
 			// doesn't identify which specific site(s) collided — since the
 			// diagnostic only fires on genuine structural distinctness, acting on
-			// every alias site in the bucket is always correct (never safe to
-			// keep one aliased and not another once distinctness is proven). Each
-			// site independently branches drop vs. retarget vs. decline-with-
-			// original-severity below.
+			// every GENUINELY DISTINCT alias site in the bucket is correct (never
+			// safe to keep one aliased and not another once distinctness is
+			// proven) — but a candidate matching the bucket's majority signature
+			// (see `representativeSignature` above) is NOT genuinely distinct and
+			// is skipped. Each remaining site independently branches drop vs.
+			// retarget vs. decline-with-original-severity below.
 			let anyActed = false;
-			for (const candidate of bucket) {
+			for (const [index, candidate] of bucket.entries()) {
 				if (!candidate.aliasSite || candidate.storageKind === undefined) continue;
+				if (representativeSignature !== undefined && signatures[index] === representativeSignature) continue;
 				const isHidden = candidate.storageKind.startsWith('_');
 				if (!isHidden) {
 					toDrop.add(candidate);
@@ -1887,7 +1912,9 @@ function applyUnaliasDistinct(
 				}
 				const strippedName = candidate.storageKind.replace(/^_+/, '');
 				const collides =
-					strippedName in rulesBag || strippedName in kwRules || strippedName in clauseGroupRules;
+					Object.hasOwn(rulesBag, strippedName) ||
+					Object.hasOwn(kwRules, strippedName) ||
+					Object.hasOwn(clauseGroupRules, strippedName);
 				if (collides) {
 					// Name-collision guard: leave this candidate's alias untouched;
 					// its diagnostic keeps original (error) severity below — do not

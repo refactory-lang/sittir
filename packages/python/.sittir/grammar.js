@@ -1829,11 +1829,22 @@ function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRule
       storageKind: candidate.storageKind,
       structuralSignature: signatures[i]
     }));
+    const signatureCounts = /* @__PURE__ */ new Map();
+    for (const signature of signatures) signatureCounts.set(signature, (signatureCounts.get(signature) ?? 0) + 1);
+    let representativeSignature;
+    let representativeCount = 1;
+    for (const [signature, count] of signatureCounts) {
+      if (count > representativeCount) {
+        representativeSignature = signature;
+        representativeCount = count;
+      }
+    }
     const resolution = diagnoseParseKindCollisions({ ownerKind: ruleName, slotName: targetName, values });
     for (const diagnostic of resolution.diagnostics) {
       let anyActed = false;
-      for (const candidate of bucket) {
+      for (const [index, candidate] of bucket.entries()) {
         if (!candidate.aliasSite || candidate.storageKind === void 0) continue;
+        if (representativeSignature !== void 0 && signatures[index] === representativeSignature) continue;
         const isHidden = candidate.storageKind.startsWith("_");
         if (!isHidden) {
           toDrop.add(candidate);
@@ -1841,7 +1852,7 @@ function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRule
           continue;
         }
         const strippedName = candidate.storageKind.replace(/^_+/, "");
-        const collides = strippedName in rulesBag || strippedName in kwRules || strippedName in clauseGroupRules;
+        const collides = Object.hasOwn(rulesBag, strippedName) || Object.hasOwn(kwRules, strippedName) || Object.hasOwn(clauseGroupRules, strippedName);
         if (collides) {
           continue;
         }
