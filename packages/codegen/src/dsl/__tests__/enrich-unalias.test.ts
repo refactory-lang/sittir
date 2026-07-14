@@ -223,12 +223,14 @@ describe('enrich — base-grammar un-aliasing', () => {
 		expect(drainUnaliasDiagnostics()).toHaveLength(0);
 	});
 
-	it('skips a rule name in GRANULARITY_MISMATCH_EXCLUSIONS even with a synthetic distinct-alias collision', () => {
-		// _suite's real python collision ([_simple_statements, block, _newline])
-		// disagrees with the assemble-time check's post-simplify comparison
-		// (see docs/KNOWN_ISSUES.md) — this rule name is excluded entirely, so
-		// even an otherwise-clear-cut structurally-distinct collision must be
-		// left untouched, not just the real _suite shape specifically.
+	it('retargets multiple HIDDEN storage kinds independently when they collide on the same visible target', () => {
+		// Mirrors the real python collision (no longer excluded — the
+		// GRANULARITY_MISMATCH_EXCLUSIONS/'_suite' carve-out was removed
+		// 2026-07-14, see docs/KNOWN_ISSUES.md): _suite collapses
+		// [_simple_statements, block, _newline] onto parse kind 'block'.
+		// Both _simple_statements and _newline are hidden — each gets its OWN
+		// independent retarget (not a drop, and not a single shared target),
+		// same as typescript's _reserved_identifier case.
 		resetUnaliasDiagnostics();
 		const g = globalThis as unknown as {
 			seq: (...m: unknown[]) => unknown;
@@ -245,18 +247,31 @@ describe('enrich — base-grammar un-aliasing', () => {
 						g.sym('block'),
 						g.alias(g.sym('_newline'), g.sym('block'))
 					),
-					_simple_statements: g.seq('a'),
-					block: g.seq('b'),
-					_newline: g.seq('c')
+					// Well-formed STRING leaves (not bare JS strings) — a bare string
+					// as a raw SEQ member is not a real production shape (evaluate/
+					// tree-sitter always wrap literals as `{type:'STRING',value}`)
+					// and would crash rulesEqual's recursive descent, which expects
+					// every member to be an already-typed Rule node.
+					_simple_statements: g.seq({ type: 'STRING', value: 'a' }),
+					block: g.seq({ type: 'STRING', value: 'b' }),
+					_newline: g.seq({ type: 'STRING', value: 'c' })
 				}
 			}
 		};
 
 		const result = enrich(base) as typeof base;
 
-		const suite = result.grammar.rules._suite as unknown as { members: Array<{ type: string }> };
-		expect(suite.members.filter((m) => m.type === 'ALIAS')).toHaveLength(2);
-		expect(drainUnaliasDiagnostics()).toHaveLength(0);
+		const suite = result.grammar.rules._suite as unknown as {
+			members: Array<{ type: string; value?: string; content?: { name?: string } }>;
+		};
+		const aliasMembers = suite.members.filter((m) => m.type === 'ALIAS');
+		expect(aliasMembers).toHaveLength(2);
+		expect(aliasMembers.find((m) => m.content?.name === '_simple_statements')?.value).toBe('simple_statements');
+		expect(aliasMembers.find((m) => m.content?.name === '_newline')?.value).toBe('newline');
+
+		const diagnostics = drainUnaliasDiagnostics();
+		expect(diagnostics).toHaveLength(1);
+		expect(diagnostics[0]!.severity).not.toBe('error');
 	});
 });
 

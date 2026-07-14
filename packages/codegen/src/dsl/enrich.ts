@@ -1800,8 +1800,10 @@ function rewriteUnaliasAt(node: Rule, path: readonly (string | number)[], replac
  * is judged by `rulesEqual` over RAW, pre-simplify rule shapes — a shallower
  * notion than the assemble-time check's post-simplify/catalog-resolved
  * `structuralSignatureOfValue`/`canonicalRuleSignature` comparison, and the
- * two can disagree (see `GRANULARITY_MISMATCH_EXCLUSIONS` below). The
- * diagnostic is downgraded to non-blocking severity and kept only as an
+ * two CAN disagree in principle. No rule name is special-cased here anymore
+ * (the former `GRANULARITY_MISMATCH_EXCLUSIONS` python `_suite` carve-out was
+ * removed 2026-07-14 — see `docs/KNOWN_ISSUES.md` for the resolved outcome).
+ * The diagnostic is downgraded to non-blocking severity and kept only as an
  * audit trail of the auto-fix, not a build-blocking error.
  *
  * Per firing candidate, the fix branches on whether `X`'s OWN top-level rule
@@ -1828,15 +1830,6 @@ function rewriteUnaliasAt(node: Rule, path: readonly (string | number)[], replac
  * own independent call from `applyEnrichPasses`, and is fixed only if ITS OWN
  * local bucket independently diagnoses a collision).
  */
-// KNOWN GRANULARITY MISMATCH (2026-07-14, see docs/KNOWN_ISSUES.md): this
-// pass's raw pre-simplify rulesEqual disagrees with the assemble-time
-// check's post-simplify/catalog-resolved structuralSignatureOfValue for
-// this rule — _simple_statements/block/_newline read as distinct raw
-// shapes here but the assemble-time check has never flagged them,
-// suggesting they reduce to equivalent post-simplify behavior. Skip until
-// investigated, rather than ship an unreviewed python grammar change.
-const GRANULARITY_MISMATCH_EXCLUSIONS = new Set(['_suite']);
-
 function applyUnaliasDistinct(
 	ruleName: string,
 	rule: Rule,
@@ -1844,7 +1837,6 @@ function applyUnaliasDistinct(
 	kwRules: Record<string, Rule>,
 	clauseGroupRules: Record<string, Rule>
 ): { rule: Rule; diagnostics: ParseKindCollisionDiagnostic[] } {
-	if (GRANULARITY_MISMATCH_EXCLUSIONS.has(ruleName)) return { rule, diagnostics: [] };
 	const candidates: UnaliasCandidate[] = [];
 	collectUnaliasCandidates(rule, [], rulesBag, candidates);
 	if (candidates.length === 0) return { rule, diagnostics: [] };

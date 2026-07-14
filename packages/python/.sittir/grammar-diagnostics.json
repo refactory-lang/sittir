@@ -254,5 +254,24 @@
         "true"
       ]
     }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "_suite",
+    "slotName": "block",
+    "message": "Slot 'block' of kind '_suite' collapses [_simple_statements, block, _newline] onto parse kind 'block'.",
+    "proposal": "Slot 'block' of kind '_suite' collapses distinct storage kinds [_simple_statements, block, _newline] onto parse kind 'block'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "block",
+      "storageKinds": [
+        "_simple_statements",
+        "block",
+        "_newline"
+      ]
+    }
   }
 ]

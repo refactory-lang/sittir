@@ -1805,9 +1805,7 @@ function rewriteUnaliasAt(node, path, replacement) {
   const content = node.content;
   return { ...node, content: rest.length > 0 ? rewriteUnaliasAt(content, rest, replacement) : replacement };
 }
-var GRANULARITY_MISMATCH_EXCLUSIONS = /* @__PURE__ */ new Set(["_suite"]);
 function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRules) {
-  if (GRANULARITY_MISMATCH_EXCLUSIONS.has(ruleName)) return { rule, diagnostics: [] };
   const candidates = [];
   collectUnaliasCandidates(rule, [], rulesBag, candidates);
   if (candidates.length === 0) return { rule, diagnostics: [] };

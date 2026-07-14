@@ -1996,7 +1996,7 @@
             "name": "_simple_statements"
           },
           "named": true,
-          "value": "block"
+          "value": "simple_statements"
         },
         {
           "type": "SEQ",
@@ -2018,7 +2018,7 @@
             "name": "_newline"
           },
           "named": true,
-          "value": "block"
+          "value": "newline"
         }
       ]
     },
