@@ -118,6 +118,35 @@ export function rulesEqual(a: RuntimeRule, b: RuntimeRule): boolean {
 		}
 		case 'field':
 			return A.name === B.name && rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule);
+		case 'blank':
+			// No fields to compare — two BLANKs are always structurally equal
+			// (the type-tag match above already confirmed both are BLANK).
+			return true;
+		case 'token':
+		case 'immediate_token':
+			// Wrapper types: `.content` is the wrapped rule. `immediate` is a
+			// TYPE distinction (TOKEN vs IMMEDIATE_TOKEN), already separated by
+			// the type-tag match above, so only `.content` remains to compare.
+			return rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule);
+		case 'prec':
+		case 'prec_left':
+		case 'prec_right':
+		case 'prec_dynamic':
+			// Precedence wrappers carry the precedence level/number as `.value`
+			// (number for PREC_DYNAMIC, number-or-name for the others) plus the
+			// wrapped `.content`. Both must match — two identical bodies at
+			// different precedence levels are NOT interchangeable.
+			return A.value === B.value && rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule);
+		case 'alias':
+			// ALIAS renames its `.content` to the display name `.value`, with
+			// `.named` toggling named-vs-anonymous CST visibility. All three
+			// (content shape, target name, named-ness) must match for two
+			// ALIAS nodes to be structurally equal.
+			return (
+				A.value === B.value &&
+				A.named === B.named &&
+				rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule)
+			);
 		default:
 			return false;
 	}

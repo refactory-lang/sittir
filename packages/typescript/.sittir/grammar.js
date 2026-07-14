@@ -510,7 +510,156 @@ var REPEAT = "REPEAT";
 var REPEAT1 = "REPEAT1";
 var STRING = "STRING";
 var PATTERN = "PATTERN";
+var SYMBOL = "SYMBOL";
 var TOKEN = "TOKEN";
+
+// packages/codegen/src/dsl/rule-walker.ts
+var RuleWalker = class {
+  #rules;
+  /** Sink for future diagnostic-emitting walks (slot-grouping family). Public
+   *  readonly (not #private) — nothing reads it yet; a private field would
+   *  trip the unused-member lint. */
+  diagnostics;
+  constructor(rules, diagnostics) {
+    this.#rules = rules;
+    this.diagnostics = diagnostics;
+  }
+  /**
+   * THE canonical child-edge relation WITH the property path to reach each
+   * child — single source of truth for both "what are this rule's children"
+   * and "how do I address one for a targeted rewrite". Edges: `members`
+   * (seq/choice) at `['members', i]`, `content` (wrappers/variant/group/
+   * token/alias) at `['content']`, and the stamped separator rule (the
+   * nested `separator.value` — a single `Rule`, PR-S) at
+   * `['separator', 'value']` (`trailing`/`leading` live alongside it on the
+   * wrapper object but aren't rule-tree edges). Leaves return [].
+   * `childrenOf` derives from this so there is exactly ONE edge relation;
+   * path-aware callers (e.g. enrich's un-aliasing rewrite) walk the edges
+   * directly to record a rewrite path without maintaining a second,
+   * possibly-incomplete descent of their own.
+   */
+  childEdgesOf(rule) {
+    const out = [];
+    const bag = rule;
+    if (Array.isArray(bag.members)) {
+      bag.members.forEach((child, i) => out.push({ segment: ["members", i], child }));
+    } else if (bag.content && typeof bag.content === "object") {
+      out.push({ segment: ["content"], child: bag.content });
+    }
+    if (bag.separator && typeof bag.separator === "object" && "value" in bag.separator)
+      out.push({ segment: ["separator", "value"], child: bag.separator.value });
+    return out;
+  }
+  /**
+   * THE canonical child-edge relation — single source of truth for "what
+   * are this rule's children" (see `childEdgesOf` for the edge/path detail).
+   * map, fold, find, foldDeep, and findDeep all use this relation
+   * identically — no narrower traversal exists.
+   */
+  childrenOf(rule) {
+    return this.childEdgesOf(rule).map((e) => e.child);
+  }
+  /**
+   * Bottom-up rebuild. Applies `visit` to each child's mapped result, then
+   * rebuilds this node ONLY if a child changed. Returns the SAME reference
+   * when nothing changed — load-bearing for fixpoint loops that compare
+   * `r === before` (enrich). Each edge (`members`, `content`, separator)
+   * tracks its own change independently, so an untouched sibling edge keeps
+   * its exact input reference even when another edge on the same node is
+   * rebuilt. Rebuilds via the SAME `childrenOf` edge relation `fold`/`find`
+   * use.
+   */
+  map(rule, visit) {
+    const bag = rule;
+    const patch = {};
+    if (Array.isArray(bag.members)) {
+      let membersChanged = false;
+      const next = bag.members.map((m) => {
+        const out = visit(this.map(m, visit));
+        if (out !== m) membersChanged = true;
+        return out;
+      });
+      if (membersChanged) patch.members = next;
+    } else if (bag.content && typeof bag.content === "object") {
+      const out = visit(this.map(bag.content, visit));
+      if (out !== bag.content) patch.content = out;
+    }
+    const sep = bag.separator;
+    if (sep && typeof sep === "object" && "value" in sep) {
+      const out = visit(this.map(sep.value, visit));
+      if (out !== sep.value) patch.separator = { ...sep, value: out };
+    }
+    return Object.keys(patch).length > 0 ? { ...rule, ...patch } : rule;
+  }
+  /** Pre-order accumulate: visits `rule` itself, then descends childrenOf. */
+  fold(rule, init, f) {
+    let acc = f(init, rule);
+    for (const child of this.childrenOf(rule)) acc = this.fold(child, acc, f);
+    return acc;
+  }
+  /** Pre-order search: tests `rule` itself, short-circuits on first match. */
+  find(rule, pred) {
+    if (pred(rule)) return rule;
+    for (const child of this.childrenOf(rule)) {
+      const hit = this.find(child, pred);
+      if (hit !== void 0) return hit;
+    }
+    return void 0;
+  }
+  /** One-step SYMBOL resolve through the bound rules map. */
+  deref(ref) {
+    if (this.#rules === void 0) {
+      throw new Error("RuleWalker.deref: walker was constructed without a rules map");
+    }
+    if (ref.type !== SYMBOL) return void 0;
+    return this.#rules[ref.name];
+  }
+  /**
+   * fold that additionally descends THROUGH symbol refs (cycle-safe). Each
+   * reachable rule node is visited at most once per invocation (seen-set
+   * keyed on node identity); symbol refs are followed through the bound
+   * rules map.
+   */
+  foldDeep(rule, init, f) {
+    const seen = /* @__PURE__ */ new Set();
+    const go = (r, acc) => {
+      if (seen.has(r)) return acc;
+      seen.add(r);
+      acc = f(acc, r);
+      if (r.type === SYMBOL) {
+        const target = this.deref(r);
+        return target === void 0 ? acc : go(target, acc);
+      }
+      for (const child of this.childrenOf(r)) acc = go(child, acc);
+      return acc;
+    };
+    return go(rule, init);
+  }
+  /**
+   * find that additionally descends THROUGH symbol refs (cycle-safe). Each
+   * reachable rule node is visited at most once per invocation (seen-set
+   * keyed on node identity); symbol refs are followed through the bound
+   * rules map.
+   */
+  findDeep(rule, pred) {
+    const seen = /* @__PURE__ */ new Set();
+    const go = (r) => {
+      if (seen.has(r)) return void 0;
+      seen.add(r);
+      if (pred(r)) return r;
+      if (r.type === SYMBOL) {
+        const target = this.deref(r);
+        return target === void 0 ? void 0 : go(target);
+      }
+      for (const child of this.childrenOf(r)) {
+        const hit = go(child);
+        if (hit !== void 0) return hit;
+      }
+      return void 0;
+    };
+    return go(rule);
+  }
+};
 
 // packages/codegen/src/dsl/rule-metadata.ts
 function makeRuleMetadata(shape) {
@@ -555,6 +704,18 @@ function rulesEqual(a, b) {
     }
     case "field":
       return A.name === B.name && rulesEqual(A.content, B.content);
+    case "blank":
+      return true;
+    case "token":
+    case "immediate_token":
+      return rulesEqual(A.content, B.content);
+    case "prec":
+    case "prec_left":
+    case "prec_right":
+    case "prec_dynamic":
+      return A.value === B.value && rulesEqual(A.content, B.content);
+    case "alias":
+      return A.value === B.value && A.named === B.named && rulesEqual(A.content, B.content);
     default:
       return false;
   }
@@ -892,6 +1053,7 @@ function enrich(baseInput) {
   const clauseDedupeMap = {};
   const groupDedupeMap = {};
   const visibleGroupHiddenNames = /* @__PURE__ */ new Set();
+  const unaliasSink = { diagnostics: [], seen: /* @__PURE__ */ new Set() };
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
     const rule = rulesBag[name];
@@ -905,7 +1067,8 @@ function enrich(baseInput) {
       clauseDedupeMap,
       groupDedupeMap,
       visibleGroupHiddenNames,
-      wordMatcher
+      wordMatcher,
+      unaliasSink
     ) : rule;
   }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
@@ -925,6 +1088,14 @@ function enrich(baseInput) {
       configurable: true
     });
   }
+  if (unaliasSink.diagnostics.length > 0) {
+    Object.defineProperty(result, ENRICH_UNALIAS_DIAGNOSTICS_KEY, {
+      value: unaliasSink.diagnostics,
+      enumerable: false,
+      writable: false,
+      configurable: true
+    });
+  }
   return result;
 }
 var ENRICH_CLAUSE_GROUPS_KEY = "__enrichedClauseGroups__";
@@ -934,7 +1105,7 @@ function getEnrichClauseGroups(grammar2) {
   if (names instanceof Set) return names;
   return /* @__PURE__ */ new Set();
 }
-function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, wordMatcher) {
+function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, wordMatcher, unaliasSink) {
   const MAX_ITERATIONS = 8;
   let r = rule;
   let converged = false;
@@ -965,7 +1136,7 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
   const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag, kwRules, clauseGroupRules);
   r = unaliasResult.rule;
   for (const diagnostic of unaliasResult.diagnostics) {
-    recordUnaliasDiagnostic(diagnostic);
+    recordUnaliasDiagnostic(unaliasSink, diagnostic);
   }
   return r;
 }
@@ -1729,8 +1900,7 @@ function clusterSignatures(values) {
   }
   return clusterOf;
 }
-var _unaliasDiagnostics = [];
-var _unaliasDiagnosticsSeen = /* @__PURE__ */ new Set();
+var ENRICH_UNALIAS_DIAGNOSTICS_KEY = "__enrichUnaliasDiagnostics__";
 function unaliasDiagnosticKey(diagnostic) {
   return [
     diagnostic.code,
@@ -1740,13 +1910,13 @@ function unaliasDiagnosticKey(diagnostic) {
     diagnostic.storageKinds.join(",")
   ].join(" ");
 }
-function recordUnaliasDiagnostic(diagnostic) {
+function recordUnaliasDiagnostic(sink, diagnostic) {
   const key = unaliasDiagnosticKey(diagnostic);
-  if (_unaliasDiagnosticsSeen.has(key)) return;
-  _unaliasDiagnosticsSeen.add(key);
-  _unaliasDiagnostics.push(diagnostic);
+  if (sink.seen.has(key)) return;
+  sink.seen.add(key);
+  sink.diagnostics.push(diagnostic);
 }
-function collectUnaliasCandidates(node, path, rulesBag, out) {
+function collectUnaliasCandidates(node, path, slotKey, rulesBag, out, walker) {
   const t = node.type;
   if (!t) return;
   if (t === "ALIAS") {
@@ -1757,6 +1927,7 @@ function collectUnaliasCandidates(node, path, rulesBag, out) {
     );
     out.push({
       targetName: aliasRule.value,
+      slotKey,
       storageKind,
       resolvedBody,
       aliasSite: { path, content: aliasRule.content, named: aliasRule.named }
@@ -1767,26 +1938,13 @@ function collectUnaliasCandidates(node, path, rulesBag, out) {
     const name = node.name;
     if (typeof name === "string") {
       const resolvedBody = normalizeMember(rulesBag[name] ?? node);
-      out.push({ targetName: name, storageKind: name, resolvedBody });
+      out.push({ targetName: name, slotKey, storageKind: name, resolvedBody });
     }
     return;
   }
-  if (isFieldType(t)) {
-    const content = node.content;
-    if (content) collectUnaliasCandidates(content, [...path, "content"], rulesBag, out);
-    return;
-  }
-  if (isSeqType(t) || isChoiceType(t)) {
-    const members = node.members;
-    if (Array.isArray(members)) {
-      members.forEach((m, i) => collectUnaliasCandidates(m, [...path, "members", i], rulesBag, out));
-    }
-    return;
-  }
-  if (isRepeatType(t) || isOptionalType(t) || isPrecWrapper(node)) {
-    const content = node.content;
-    if (content) collectUnaliasCandidates(content, [...path, "content"], rulesBag, out);
-    return;
+  const nextSlotKey = isFieldType(t) ? node.name ?? slotKey : slotKey;
+  for (const { segment, child } of walker.childEdgesOf(node)) {
+    collectUnaliasCandidates(child, [...path, ...segment], nextSlotKey, rulesBag, out, walker);
   }
 }
 function rewriteUnaliasAt(node, path, replacement) {
@@ -1798,23 +1956,27 @@ function rewriteUnaliasAt(node, path, replacement) {
     members[idx] = rest.length > 1 ? rewriteUnaliasAt(members[idx], rest.slice(1), replacement) : replacement;
     return { ...node, members };
   }
-  const content = node.content;
-  return { ...node, content: rest.length > 0 ? rewriteUnaliasAt(content, rest, replacement) : replacement };
+  const k = key;
+  const child = node[k];
+  return { ...node, [k]: rest.length > 0 ? rewriteUnaliasAt(child, rest, replacement) : replacement };
 }
 function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRules) {
   const candidates = [];
-  collectUnaliasCandidates(rule, [], rulesBag, candidates);
+  collectUnaliasCandidates(rule, [], void 0, rulesBag, candidates, new RuleWalker());
   if (candidates.length === 0) return { rule, diagnostics: [] };
-  const byTargetName = /* @__PURE__ */ new Map();
+  const byBucket = /* @__PURE__ */ new Map();
   for (const candidate of candidates) {
-    const bucket = byTargetName.get(candidate.targetName) ?? [];
-    bucket.push(candidate);
-    byTargetName.set(candidate.targetName, bucket);
+    const slotName = candidate.slotKey ?? candidate.targetName;
+    const key = `${slotName}\0${candidate.targetName}`;
+    const entry = byBucket.get(key) ?? { slotName, targetName: candidate.targetName, bucket: [] };
+    entry.bucket.push(candidate);
+    byBucket.set(key, entry);
   }
   const toDrop = /* @__PURE__ */ new Set();
   const toRetarget = /* @__PURE__ */ new Map();
   const diagnostics = [];
-  for (const [targetName, bucket] of byTargetName) {
+  const claimedRetargetNames = /* @__PURE__ */ new Set();
+  for (const { slotName, targetName, bucket } of byBucket.values()) {
     if (bucket.length < 2 || !bucket.some((c) => c.aliasSite)) continue;
     const signatures = clusterSignatures(bucket.map((c) => c.resolvedBody));
     const values = bucket.map((candidate, i) => ({
@@ -1823,17 +1985,22 @@ function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRule
       storageKind: candidate.storageKind,
       structuralSignature: signatures[i]
     }));
-    const signatureCounts = /* @__PURE__ */ new Map();
-    for (const signature of signatures) signatureCounts.set(signature, (signatureCounts.get(signature) ?? 0) + 1);
     let representativeSignature;
-    let representativeCount = 1;
-    for (const [signature, count] of signatureCounts) {
-      if (count > representativeCount) {
-        representativeSignature = signature;
-        representativeCount = count;
+    const nativeIndex = bucket.findIndex((c) => c.storageKind !== void 0 && c.storageKind === targetName);
+    if (nativeIndex !== -1) {
+      representativeSignature = signatures[nativeIndex];
+    } else {
+      const signatureCounts = /* @__PURE__ */ new Map();
+      for (const signature of signatures) signatureCounts.set(signature, (signatureCounts.get(signature) ?? 0) + 1);
+      let representativeCount = 1;
+      for (const [signature, count] of signatureCounts) {
+        if (count > representativeCount) {
+          representativeSignature = signature;
+          representativeCount = count;
+        }
       }
     }
-    const resolution = diagnoseParseKindCollisions({ ownerKind: ruleName, slotName: targetName, values });
+    const resolution = diagnoseParseKindCollisions({ ownerKind: ruleName, slotName, values });
     for (const diagnostic of resolution.diagnostics) {
       let anyActed = false;
       for (const [index, candidate] of bucket.entries()) {
@@ -1846,10 +2013,18 @@ function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRule
           continue;
         }
         const strippedName = candidate.storageKind.replace(/^_+/, "");
-        const collides = Object.hasOwn(rulesBag, strippedName) || Object.hasOwn(kwRules, strippedName) || Object.hasOwn(clauseGroupRules, strippedName);
+        const collides = (
+          // Empty stripped name (a storage kind that is all underscores, e.g.
+          // `_`): there's no valid name to retarget to — decline.
+          strippedName === "" || // Already claimed by an EARLIER retarget in this same call (see
+          // `claimedRetargetNames`) — declining here avoids re-introducing a
+          // non-injective collision under the stripped name.
+          claimedRetargetNames.has(strippedName) || Object.hasOwn(rulesBag, strippedName) || Object.hasOwn(kwRules, strippedName) || Object.hasOwn(clauseGroupRules, strippedName)
+        );
         if (collides) {
           continue;
         }
+        claimedRetargetNames.add(strippedName);
         toRetarget.set(candidate, strippedName);
         anyActed = true;
       }

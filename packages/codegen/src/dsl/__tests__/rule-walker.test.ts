@@ -35,6 +35,37 @@ describe('RuleWalker.childrenOf', () => {
 	});
 });
 
+describe('RuleWalker.childEdgesOf (path-tracking edge relation)', () => {
+	const w = new RuleWalker();
+	it('members carry members-index segments', () => {
+		const a = str('a'),
+			b = str('b');
+		expect(w.childEdgesOf({ type: SEQ, members: [a, b] } as AnyRule)).toEqual([
+			{ segment: ['members', 0], child: a },
+			{ segment: ['members', 1], child: b }
+		]);
+	});
+	it('content carries a content segment', () => {
+		const inner = sym('x');
+		expect(w.childEdgesOf({ type: FIELD, name: 'f', content: inner } as AnyRule)).toEqual([
+			{ segment: ['content'], child: inner }
+		]);
+	});
+	it('separator value carries a separator-value segment (nested-object form)', () => {
+		const sep = str(',');
+		const inner = sym('x');
+		const r = { type: REPEAT, content: inner, separator: { value: sep, trailing: true } } as AnyRule;
+		expect(w.childEdgesOf(r)).toEqual([
+			{ segment: ['content'], child: inner },
+			{ segment: ['separator', 'value'], child: sep }
+		]);
+	});
+	it('childrenOf is exactly the children of childEdgesOf (one edge relation)', () => {
+		const r = { type: SEQ, members: [str('a'), sym('x')] } as AnyRule;
+		expect(w.childrenOf(r)).toEqual(w.childEdgesOf(r).map((e) => e.child));
+	});
+});
+
 describe('RuleWalker.map', () => {
 	const w = new RuleWalker();
 	it('returns the SAME reference when visit changes nothing (fixpoint identity)', () => {

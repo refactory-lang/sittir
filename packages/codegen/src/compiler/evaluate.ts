@@ -51,6 +51,7 @@ import { classifyByType } from './rule-catalog.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { withRoleScope } from '../dsl/primitives/role.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
+import { ENRICH_UNALIAS_DIAGNOSTICS_KEY, getEnrichUnaliasDiagnostics } from '../dsl/enrich.ts';
 import type { WireContext, RefineForm } from '../dsl/wire/wire.ts';
 
 // ---------------------------------------------------------------------------
@@ -727,28 +728,42 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const identified = buildRuleCatalog(rules, { provenanceByKind });
 	const references = attachReferenceRuleIds(refs, { ruleCatalog: identified.ruleCatalog });
 
-	return {
-		grammar: {
-			name: opts.name,
-			rules: identified.rules,
-			extras,
-			externals,
-			supertypes,
-			inline,
-			conflicts,
-			word,
-			references,
-			ruleCatalog: identified.ruleCatalog,
-			// Per-grammar role bindings collected from inline `role()`
-			// calls inside externals/rules. Empty when the grammar
-			// declares no roles.
-			externalRoles: collectedRoles.size > 0 ? collectedRoles : undefined,
-			refineForms,
-			groups,
-			polymorphsConfig,
-			renderAs
-		} satisfies RawGrammar
-	};
+	const grammarResult = {
+		name: opts.name,
+		rules: identified.rules,
+		extras,
+		externals,
+		supertypes,
+		inline,
+		conflicts,
+		word,
+		references,
+		ruleCatalog: identified.ruleCatalog,
+		// Per-grammar role bindings collected from inline `role()`
+		// calls inside externals/rules. Empty when the grammar
+		// declares no roles.
+		externalRoles: collectedRoles.size > 0 ? collectedRoles : undefined,
+		refineForms,
+		groups,
+		polymorphsConfig,
+		renderAs
+	} satisfies RawGrammar;
+	// Propagate enrich()'s un-aliasing diagnostics from the base grammar result
+	// (the `optionsOrBase` first arg in extension mode) onto this evaluated
+	// grammar, so the downgraded parsekind-noninjective diagnostics travel with
+	// the grammar object `evaluate()` returns — read by run-codegen's diagnostics
+	// preflight via getEnrichUnaliasDiagnostics — instead of a module-global
+	// accumulator. Non-enumerable, matching enrich()'s own attachment.
+	const inheritedUnaliasDiagnostics = getEnrichUnaliasDiagnostics(optionsOrBase);
+	if (inheritedUnaliasDiagnostics.length > 0) {
+		Object.defineProperty(grammarResult, ENRICH_UNALIAS_DIAGNOSTICS_KEY, {
+			value: inheritedUnaliasDiagnostics,
+			enumerable: false,
+			writable: false,
+			configurable: true
+		});
+	}
+	return { grammar: grammarResult };
 }
 
 /**

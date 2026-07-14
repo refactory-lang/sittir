@@ -32,7 +32,7 @@ import {
 	fromParseKindCollision,
 	type GrammarDiagnostic
 } from './compiler/diagnostics/grammar-diagnostics.ts';
-import { drainUnaliasDiagnostics } from './dsl/enrich.ts';
+import { getEnrichUnaliasDiagnostics } from './dsl/enrich.ts';
 import { drainUnnamedChoiceSlots } from './compiler/collect-slots.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { writeJinjaTemplates } from './emitters/templates.ts';
@@ -217,12 +217,17 @@ export async function runGrammarDiagnosticsPreflight(input: {
 		const grammarJsPath = resolveGrammarJsPath(input.grammar);
 		const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
 		const rawGrammar = await evaluate(entryPath);
-		// enrich() ran as part of producing `rawGrammar` above and populated
-		// the module-level un-aliasing accumulator as a side effect — drain it
-		// here (the real-grammar path only) so its downgraded
-		// parsekind-noninjective diagnostics land in the same persisted
-		// grammar-diagnostics.json as every other grammar diagnostic source.
-		const unaliasDiagnostics = drainUnaliasDiagnostics().map((d) => fromParseKindCollision(input.grammar, d));
+		// enrich() ran as part of producing `rawGrammar` above and attached its
+		// downgraded parsekind-noninjective diagnostics to that grammar object
+		// (evaluate propagates them from the enriched base). Read them off
+		// `rawGrammar`'s own return value — NOT a module-global accumulator — so
+		// they are correct even on a repeated evaluate() of the same grammar in
+		// one process, and never interleave across concurrent grammar
+		// evaluations. They land in the same persisted grammar-diagnostics.json
+		// as every other grammar diagnostic source.
+		const unaliasDiagnostics = getEnrichUnaliasDiagnostics(rawGrammar).map((d) =>
+			fromParseKindCollision(input.grammar, d)
+		);
 		diagnostics = [...collectGrammarDiagnosticsForGrammar({ rawGrammar }).diagnostics, ...unaliasDiagnostics];
 	}
 

@@ -25,25 +25,40 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 	}
 
 	/**
+	 * THE canonical child-edge relation WITH the property path to reach each
+	 * child — single source of truth for both "what are this rule's children"
+	 * and "how do I address one for a targeted rewrite". Edges: `members`
+	 * (seq/choice) at `['members', i]`, `content` (wrappers/variant/group/
+	 * token/alias) at `['content']`, and the stamped separator rule (the
+	 * nested `separator.value` — a single `Rule`, PR-S) at
+	 * `['separator', 'value']` (`trailing`/`leading` live alongside it on the
+	 * wrapper object but aren't rule-tree edges). Leaves return [].
+	 * `childrenOf` derives from this so there is exactly ONE edge relation;
+	 * path-aware callers (e.g. enrich's un-aliasing rewrite) walk the edges
+	 * directly to record a rewrite path without maintaining a second,
+	 * possibly-incomplete descent of their own.
+	 */
+	childEdgesOf(rule: R): readonly { readonly segment: readonly (string | number)[]; readonly child: R }[] {
+		const out: { readonly segment: readonly (string | number)[]; readonly child: R }[] = [];
+		const bag = rule as { members?: readonly R[]; content?: R; separator?: { value: R } };
+		if (Array.isArray(bag.members)) {
+			bag.members.forEach((child, i) => out.push({ segment: ['members', i], child }));
+		} else if (bag.content && typeof bag.content === 'object') {
+			out.push({ segment: ['content'], child: bag.content });
+		}
+		if (bag.separator && typeof bag.separator === 'object' && 'value' in bag.separator)
+			out.push({ segment: ['separator', 'value'], child: bag.separator.value as R });
+		return out;
+	}
+
+	/**
 	 * THE canonical child-edge relation — single source of truth for "what
-	 * are this rule's children": `members` (seq/choice), `content` (wrappers/
-	 * variant/group/token/alias), and a stamped separator rule (the nested
-	 * `separator.value` — a single `Rule`, PR-S — `trailing`/`leading` live
-	 * alongside it on the wrapper object but aren't rule-tree edges). Leaves
-	 * return [].
-	 * Walks needing a narrower set early-return on those types in their own
-	 * lambda; this relation never grows per-walk options.
+	 * are this rule's children" (see `childEdgesOf` for the edge/path detail).
 	 * map, fold, find, foldDeep, and findDeep all use this relation
 	 * identically — no narrower traversal exists.
 	 */
 	childrenOf(rule: R): readonly R[] {
-		const out: R[] = [];
-		const bag = rule as { members?: readonly R[]; content?: R; separator?: { value: R } };
-		if (Array.isArray(bag.members)) out.push(...bag.members);
-		else if (bag.content && typeof bag.content === 'object') out.push(bag.content);
-		if (bag.separator && typeof bag.separator === 'object' && 'value' in bag.separator)
-			out.push(bag.separator.value as R);
-		return out;
+		return this.childEdgesOf(rule).map((e) => e.child);
 	}
 
 	/**

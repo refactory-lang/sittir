@@ -14,7 +14,7 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { enrich, drainUnaliasDiagnostics, resetUnaliasDiagnostics, clusterSignatures } from '../enrich.ts';
+import { enrich, getEnrichUnaliasDiagnostics, clusterSignatures } from '../enrich.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 
@@ -23,7 +23,6 @@ afterAll(() => restoreFakeDsl());
 
 describe('enrich — base-grammar un-aliasing', () => {
 	it('drops an alias when the colliding storage kinds are structurally distinct', () => {
-		resetUnaliasDiagnostics();
 		const g = globalThis as unknown as {
 			seq: (...m: unknown[]) => unknown;
 			choice: (...m: unknown[]) => unknown;
@@ -59,7 +58,7 @@ describe('enrich — base-grammar un-aliasing', () => {
 		expect(scoped.members.some((m) => m.name === 'generic_type_with_turbofish')).toBe(true);
 
 		// A diagnostic was still emitted, at a downgraded (non-blocking) severity.
-		const diagnostics = drainUnaliasDiagnostics();
+		const diagnostics = getEnrichUnaliasDiagnostics(result);
 		expect(diagnostics).toHaveLength(1);
 		expect(diagnostics[0]!.code).toBe('parsekind-noninjective');
 		expect(diagnostics[0]!.severity).not.toBe('error');
@@ -67,7 +66,6 @@ describe('enrich — base-grammar un-aliasing', () => {
 	});
 
 	it('leaves a structurally-identical alias untouched, with no diagnostic', () => {
-		resetUnaliasDiagnostics();
 		const g = globalThis as unknown as {
 			choice: (...m: unknown[]) => unknown;
 			alias: (rule: unknown, value: unknown) => unknown;
@@ -91,7 +89,7 @@ describe('enrich — base-grammar un-aliasing', () => {
 
 		const parent = result.grammar.rules.some_parent as unknown as { members: Array<{ type: string }> };
 		expect(parent.members.every((m) => m.type === 'ALIAS')).toBe(true);
-		expect(drainUnaliasDiagnostics()).toHaveLength(0);
+		expect(getEnrichUnaliasDiagnostics(result)).toHaveLength(0);
 	});
 
 	it('leaves a bare optional(alias(...)) untouched when there is no collision', () => {
@@ -100,7 +98,6 @@ describe('enrich — base-grammar un-aliasing', () => {
 		// (sittir's own evaluate runtime shape, not yet lowered to
 		// CHOICE[x,BLANK]) must not crash or be mistakenly dropped when
 		// there is no colliding sibling.
-		resetUnaliasDiagnostics();
 		const g = globalThis as unknown as {
 			seq: (...m: unknown[]) => unknown;
 			optional: (content: unknown) => unknown;
@@ -124,7 +121,7 @@ describe('enrich — base-grammar un-aliasing', () => {
 		};
 		const optionalMember = parent.members.find((m) => m.type === 'OPTIONAL')!;
 		expect(optionalMember.content?.type).toBe('ALIAS');
-		expect(drainUnaliasDiagnostics()).toHaveLength(0);
+		expect(getEnrichUnaliasDiagnostics(result)).toHaveLength(0);
 	});
 
 	it('retargets (not drops) an alias whose storage kind is a HIDDEN rule', () => {
@@ -136,7 +133,6 @@ describe('enrich — base-grammar un-aliasing', () => {
 		// storage kind would get) is wrong here. It must be RETARGETED to a
 		// non-colliding name instead: alias($._reserved_identifier,
 		// $.identifier) -> alias($._reserved_identifier, $.reserved_identifier).
-		resetUnaliasDiagnostics();
 		const g = globalThis as unknown as {
 			seq: (...m: unknown[]) => unknown;
 			choice: (...m: unknown[]) => unknown;
@@ -176,7 +172,7 @@ describe('enrich — base-grammar un-aliasing', () => {
 		// no node of its own at all, let alone a named one).
 		expect((aliasMember as unknown as { named: boolean }).named).toBe(true);
 
-		const diagnostics = drainUnaliasDiagnostics();
+		const diagnostics = getEnrichUnaliasDiagnostics(result);
 		expect(diagnostics).toHaveLength(1);
 		expect(diagnostics[0]!.severity).not.toBe('error');
 	});
@@ -189,7 +185,6 @@ describe('enrich — base-grammar un-aliasing', () => {
 		// later assemble-time parsekind-noninjective check still fires at its
 		// original 'error' severity, same as if this pass didn't exist for
 		// this case).
-		resetUnaliasDiagnostics();
 		const g = globalThis as unknown as {
 			seq: (...m: unknown[]) => unknown;
 			choice: (...m: unknown[]) => unknown;
@@ -225,7 +220,7 @@ describe('enrich — base-grammar un-aliasing', () => {
 
 		// No diagnostic recorded by this pass — it declined to act, so nothing
 		// is downgraded (the assemble-time check keeps its own error severity).
-		expect(drainUnaliasDiagnostics()).toHaveLength(0);
+		expect(getEnrichUnaliasDiagnostics(result)).toHaveLength(0);
 	});
 
 	it('retargets multiple HIDDEN storage kinds independently when they collide on the same visible target', () => {
@@ -236,7 +231,6 @@ describe('enrich — base-grammar un-aliasing', () => {
 		// Both _simple_statements and _newline are hidden — each gets its OWN
 		// independent retarget (not a drop, and not a single shared target),
 		// same as typescript's _reserved_identifier case.
-		resetUnaliasDiagnostics();
 		const g = globalThis as unknown as {
 			seq: (...m: unknown[]) => unknown;
 			choice: (...m: unknown[]) => unknown;
@@ -274,7 +268,7 @@ describe('enrich — base-grammar un-aliasing', () => {
 		expect(aliasMembers.find((m) => m.content?.name === '_simple_statements')?.value).toBe('simple_statements');
 		expect(aliasMembers.find((m) => m.content?.name === '_newline')?.value).toBe('newline');
 
-		const diagnostics = drainUnaliasDiagnostics();
+		const diagnostics = getEnrichUnaliasDiagnostics(result);
 		expect(diagnostics).toHaveLength(1);
 		expect(diagnostics[0]!.severity).not.toBe('error');
 	});
@@ -287,7 +281,6 @@ describe('enrich — base-grammar un-aliasing', () => {
 		// Only the genuinely-distinct alias should be dropped; the
 		// identical-to-majority alias must be left untouched even though the
 		// bucket as a whole still fires the collision diagnostic.
-		resetUnaliasDiagnostics();
 		const g = globalThis as unknown as {
 			seq: (...m: unknown[]) => unknown;
 			choice: (...m: unknown[]) => unknown;
@@ -327,9 +320,265 @@ describe('enrich — base-grammar un-aliasing', () => {
 			true
 		);
 
-		const diagnostics = drainUnaliasDiagnostics();
+		const diagnostics = getEnrichUnaliasDiagnostics(result);
 		expect(diagnostics).toHaveLength(1);
 		expect(diagnostics[0]!.severity).not.toBe('error');
+	});
+
+	it('item 2 — collects and rewrites an alias sitting in a repeat separator position (RuleWalker separator edge)', () => {
+		// The former hand-rolled descent omitted the repeat separator.value edge,
+		// so an alias there was invisible. Routing through RuleWalker.childEdgesOf
+		// covers it; rewriteUnaliasAt round-trips the 'separator','value' path and
+		// preserves the separator wrapper's trailing flank.
+		const g = globalThis as unknown as {
+			seq: (...m: unknown[]) => unknown;
+			alias: (rule: unknown, value: unknown) => unknown;
+			sym: (name: string) => unknown;
+		};
+		const base = {
+			grammar: {
+				name: 'test',
+				rules: {
+					generic_type: g.seq(g.sym('type_identifier')),
+					generic_type_with_turbofish: g.seq(g.sym('type_identifier'), g.sym('turbofish')),
+					parent: {
+						type: 'REPEAT',
+						content: g.sym('generic_type'),
+						separator: {
+							value: g.alias(g.sym('generic_type_with_turbofish'), g.sym('generic_type')),
+							trailing: 'optional'
+						}
+					}
+				}
+			}
+		};
+
+		const result = enrich(base) as typeof base;
+		const parent = result.grammar.rules.parent as unknown as {
+			separator: { value: { type: string; name?: string }; trailing?: string };
+		};
+		// The visible storage kind was dropped: the separator now references the
+		// bare symbol under its own name, not an ALIAS.
+		expect(parent.separator.value.type).toBe('SYMBOL');
+		expect(parent.separator.value.name).toBe('generic_type_with_turbofish');
+		// The sibling trailing flank on the separator wrapper is preserved.
+		expect(parent.separator.trailing).toBe('optional');
+		expect(getEnrichUnaliasDiagnostics(result)).toHaveLength(1);
+	});
+
+	it('item 3 — the persisted diagnostic slotName is the enclosing FIELD name, not the target name', () => {
+		const g = globalThis as unknown as {
+			seq: (...m: unknown[]) => unknown;
+			choice: (...m: unknown[]) => unknown;
+			field: (name: string, content: unknown) => unknown;
+			alias: (rule: unknown, value: unknown) => unknown;
+			sym: (name: string) => unknown;
+		};
+		const base = {
+			grammar: {
+				name: 'test',
+				rules: {
+					generic_type: g.seq(g.sym('type_identifier')),
+					generic_type_with_turbofish: g.seq(g.sym('type_identifier'), g.sym('turbofish')),
+					parent: g.seq(
+						g.field(
+							'operand',
+							g.choice(
+								g.sym('generic_type'),
+								g.alias(g.sym('generic_type_with_turbofish'), g.sym('generic_type'))
+							)
+						)
+					)
+				}
+			}
+		};
+
+		const result = enrich(base) as typeof base;
+		const diagnostics = getEnrichUnaliasDiagnostics(result);
+		expect(diagnostics).toHaveLength(1);
+		// slotName reflects the real slot (the enclosing field), fixing the
+		// cosmetic inaccuracy where it was always the target name.
+		expect(diagnostics[0]!.slotName).toBe('operand');
+	});
+
+	it('item 3 — two same-target aliases in DIFFERENT fields are not merged into one collision bucket', () => {
+		// Bucketing by (slotKey, targetName) keeps field-'left' and field-'right'
+		// apart. Each bucket has a single entry, so neither fires a collision and
+		// both aliases are left untouched. Under the old target-name-only
+		// bucketing they would collide (2 distinct aliases on 'ident') and get
+		// acted on — which would be wrong, since per-field read-time dispatch is
+		// injective.
+		const g = globalThis as unknown as {
+			seq: (...m: unknown[]) => unknown;
+			field: (name: string, content: unknown) => unknown;
+			alias: (rule: unknown, value: unknown) => unknown;
+			sym: (name: string) => unknown;
+		};
+		const base = {
+			grammar: {
+				name: 'test',
+				rules: {
+					foo: g.seq(g.sym('t'), g.sym('a')),
+					bar: g.seq(g.sym('t'), g.sym('b')),
+					parent: g.seq(
+						g.field('left', g.alias(g.sym('foo'), g.sym('ident'))),
+						g.field('right', g.alias(g.sym('bar'), g.sym('ident')))
+					)
+				}
+			}
+		};
+
+		const result = enrich(base) as typeof base;
+		const parent = result.grammar.rules.parent as unknown as {
+			members: Array<{ type: string; name?: string; content: { type: string; value?: string } }>;
+		};
+		const leftField = parent.members.find((m) => m.name === 'left')!;
+		const rightField = parent.members.find((m) => m.name === 'right')!;
+		expect(leftField.content.type).toBe('ALIAS');
+		expect(leftField.content.value).toBe('ident');
+		expect(rightField.content.type).toBe('ALIAS');
+		expect(rightField.content.value).toBe('ident');
+		expect(getEnrichUnaliasDiagnostics(result)).toHaveLength(0);
+	});
+
+	it('item 4 — Copilot counter-example: both distinct aliases resolve when the native value is the minority signature', () => {
+		// choice(alias(a1, y), alias(a2, y), y) with a1/a2 structurally identical
+		// and the bare y distinct. Majority-vote representative (a1/a2, 2 vs 1)
+		// would skip BOTH aliases and leave the real a1/a2-vs-y collision
+		// unresolved. Preferring the native value (storageKind === targetName)'s
+		// signature as representative fixes it — both aliases get dropped.
+		const g = globalThis as unknown as {
+			seq: (...m: unknown[]) => unknown;
+			choice: (...m: unknown[]) => unknown;
+			alias: (rule: unknown, value: unknown) => unknown;
+			sym: (name: string) => unknown;
+		};
+		const base = {
+			grammar: {
+				name: 'test',
+				rules: {
+					y: g.seq(g.sym('t')),
+					a1: g.seq(g.sym('t'), g.sym('u')),
+					a2: g.seq(g.sym('t'), g.sym('u')),
+					parent: g.choice(
+						g.alias(g.sym('a1'), g.sym('y')),
+						g.alias(g.sym('a2'), g.sym('y')),
+						g.sym('y')
+					)
+				}
+			}
+		};
+
+		const result = enrich(base) as typeof base;
+		const parent = result.grammar.rules.parent as unknown as {
+			members: Array<{ type: string; name?: string; content?: { name?: string } }>;
+		};
+		// Neither distinct alias survives: both dropped to bare symbol refs.
+		expect(parent.members.some((m) => m.type === 'ALIAS')).toBe(false);
+		expect(parent.members.some((m) => m.name === 'a1')).toBe(true);
+		expect(parent.members.some((m) => m.name === 'a2')).toBe(true);
+		expect(getEnrichUnaliasDiagnostics(result)).toHaveLength(1);
+	});
+
+	it('item 5 — two hidden storage kinds stripping to the SAME name: only the first retargets, the second declines', () => {
+		// _foo and __foo both strip to 'foo'. Scheduling both would recreate the
+		// non-injective collision under 'foo'. First-claimer wins; the second
+		// declines and keeps its original alias untouched.
+		const g = globalThis as unknown as {
+			seq: (...m: unknown[]) => unknown;
+			choice: (...m: unknown[]) => unknown;
+			alias: (rule: unknown, value: unknown) => unknown;
+			sym: (name: string) => unknown;
+		};
+		const base = {
+			grammar: {
+				name: 'test',
+				rules: {
+					ident: g.seq(g.sym('t')),
+					_foo: g.seq(g.sym('t'), g.sym('a')),
+					__foo: g.seq(g.sym('t'), g.sym('b')),
+					parent: g.choice(
+						g.sym('ident'),
+						g.alias(g.sym('_foo'), g.sym('ident')),
+						g.alias(g.sym('__foo'), g.sym('ident'))
+					)
+				}
+			}
+		};
+
+		const result = enrich(base) as typeof base;
+		const parent = result.grammar.rules.parent as unknown as {
+			members: Array<{ type: string; value?: string; content?: { name?: string } }>;
+		};
+		const fooAlias = parent.members.find((m) => m.type === 'ALIAS' && m.content?.name === '_foo')!;
+		const dblFooAlias = parent.members.find((m) => m.type === 'ALIAS' && m.content?.name === '__foo')!;
+		// First hidden kind retargeted to the stripped name.
+		expect(fooAlias.value).toBe('foo');
+		// Second declined (stripped name already claimed) — untouched.
+		expect(dblFooAlias.value).toBe('ident');
+	});
+
+	it('item 5 — a hidden storage kind that strips to an EMPTY name declines cleanly', () => {
+		const g = globalThis as unknown as {
+			seq: (...m: unknown[]) => unknown;
+			choice: (...m: unknown[]) => unknown;
+			alias: (rule: unknown, value: unknown) => unknown;
+			sym: (name: string) => unknown;
+		};
+		const base = {
+			grammar: {
+				name: 'test',
+				rules: {
+					ident: g.seq(g.sym('t')),
+					_: g.seq(g.sym('t'), g.sym('z')),
+					parent: g.choice(g.sym('ident'), g.alias(g.sym('_'), g.sym('ident')))
+				}
+			}
+		};
+
+		const result = enrich(base) as typeof base;
+		const parent = result.grammar.rules.parent as unknown as {
+			members: Array<{ type: string; value?: string; content?: { name?: string } }>;
+		};
+		const underscoreAlias = parent.members.find((m) => m.type === 'ALIAS' && m.content?.name === '_')!;
+		// No valid stripped name -> declined, left aliased to the original target.
+		expect(underscoreAlias.value).toBe('ident');
+		// Declined, so nothing downgraded/recorded by this pass.
+		expect(getEnrichUnaliasDiagnostics(result)).toHaveLength(0);
+	});
+
+	it('item 6 — diagnostics travel with each evaluation own result (not a drained-once module global)', () => {
+		// Evaluating the same grammar shape twice must yield the diagnostics on
+		// BOTH results, not just the first — proving the accumulator is no longer
+		// module-level state that a second (cached) evaluation would find empty.
+		const g = globalThis as unknown as {
+			seq: (...m: unknown[]) => unknown;
+			choice: (...m: unknown[]) => unknown;
+			alias: (rule: unknown, value: unknown) => unknown;
+			sym: (name: string) => unknown;
+		};
+		const makeBase = () => ({
+			grammar: {
+				name: 'test',
+				rules: {
+					generic_type: g.seq(g.sym('type_identifier')),
+					generic_type_with_turbofish: g.seq(g.sym('type_identifier'), g.sym('turbofish')),
+					scoped_type_identifier: g.choice(
+						g.sym('generic_type'),
+						g.alias(g.sym('generic_type_with_turbofish'), g.sym('generic_type'))
+					)
+				}
+			}
+		});
+
+		const first = enrich(makeBase());
+		const second = enrich(makeBase());
+		const firstDiagnostics = getEnrichUnaliasDiagnostics(first);
+		const secondDiagnostics = getEnrichUnaliasDiagnostics(second);
+		expect(firstDiagnostics).toHaveLength(1);
+		expect(secondDiagnostics).toHaveLength(1);
+		// Independent arrays — no shared global accumulator.
+		expect(secondDiagnostics).not.toBe(firstDiagnostics);
 	});
 });
 

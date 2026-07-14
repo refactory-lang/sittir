@@ -325,9 +325,9 @@
     "severity": "info",
     "grammar": "rust",
     "ownerKind": "scoped_type_identifier",
-    "slotName": "generic_type",
-    "message": "Slot 'generic_type' of kind 'scoped_type_identifier' collapses [generic_type_with_turbofish, generic_type] onto parse kind 'generic_type'.",
-    "proposal": "Slot 'generic_type' of kind 'scoped_type_identifier' collapses distinct storage kinds [generic_type_with_turbofish, generic_type] onto parse kind 'generic_type'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
+    "slotName": "path",
+    "message": "Slot 'path' of kind 'scoped_type_identifier' collapses [generic_type_with_turbofish, generic_type] onto parse kind 'generic_type'.",
+    "proposal": "Slot 'path' of kind 'scoped_type_identifier' collapses distinct storage kinds [generic_type_with_turbofish, generic_type] onto parse kind 'generic_type'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
     "canProceed": true,
     "details": {
       "parseKind": "generic_type",

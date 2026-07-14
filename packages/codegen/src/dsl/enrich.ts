@@ -59,7 +59,8 @@
  * picks them up via line-315 `Object.assign({}, baseGrammar.rules)`.
  */
 
-import type { Rule } from '../types/rule.ts';
+import type { Rule, AnyRule } from '../types/rule.ts';
+import { RuleWalker } from './rule-walker.ts';
 import { makeRuleMetadata } from './rule-metadata.ts';
 import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
 import type { EnrichRule } from '../grammar-shapes/enrich-type.ts';
@@ -171,6 +172,9 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	// stay in `inline:`. Tagged ONCE at creation (visibleGroupSynthName) — read
 	// here, never re-derived.
 	const visibleGroupHiddenNames = new Set<string>();
+	// Per-call un-aliasing diagnostic sink (see ENRICH_UNALIAS_DIAGNOSTICS_KEY):
+	// local to THIS enrich() invocation, attached to its result below.
+	const unaliasSink: UnaliasDiagnosticSink = { diagnostics: [], seen: new Set() };
 	const enrichedRules: Record<string, Rule> = {};
 	for (const name of Object.keys(rulesBag)) {
 		const rule = rulesBag[name];
@@ -185,7 +189,8 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 					clauseDedupeMap,
 					groupDedupeMap,
 					visibleGroupHiddenNames,
-					wordMatcher
+					wordMatcher,
+					unaliasSink
 				)
 			: rule!;
 	}
@@ -228,6 +233,17 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 			configurable: true
 		});
 	}
+	// Attach this call's un-aliasing diagnostics to its own result (non-enumerable,
+	// like the clause-groups key) so they travel with the grammar object instead
+	// of a module-global accumulator — see ENRICH_UNALIAS_DIAGNOSTICS_KEY.
+	if (unaliasSink.diagnostics.length > 0) {
+		Object.defineProperty(result, ENRICH_UNALIAS_DIAGNOSTICS_KEY, {
+			value: unaliasSink.diagnostics,
+			enumerable: false,
+			writable: false,
+			configurable: true
+		});
+	}
 	return result as unknown as EnrichedGrammar<B>;
 }
 
@@ -262,7 +278,8 @@ function applyEnrichPasses(
 	clauseDedupeMap: Record<string, string>,
 	groupDedupeMap: Record<string, string>,
 	visibleGroupHiddenNames: Set<string>,
-	wordMatcher: RegExp | undefined
+	wordMatcher: RegExp | undefined,
+	unaliasSink: UnaliasDiagnosticSink
 ): Rule {
 	// Fixed-point loop. The current pass set has well-defined
 	// non-overlapping outputs (symbol-to-field wraps SYMBOLs as FIELD;
@@ -319,7 +336,7 @@ function applyEnrichPasses(
 	const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag, kwRules, clauseGroupRules);
 	r = unaliasResult.rule;
 	for (const diagnostic of unaliasResult.diagnostics) {
-		recordUnaliasDiagnostic(diagnostic);
+		recordUnaliasDiagnostic(unaliasSink, diagnostic);
 	}
 	return r;
 }
@@ -1639,13 +1656,22 @@ export function clusterSignatures(values: readonly RuntimeRule[]): string[] {
 	return clusterOf;
 }
 
-// Module-level accumulator, mirroring the exact pattern used by the later,
-// assemble-time parsekind-noninjective check (compiler/model/node-map.ts's
-// _parseKindCollisionDiagnostics / recordParseKindCollisionDiagnostic /
-// resetParseKindCollisionDiagnostics / drainParseKindCollisionDiagnostics):
-// a dedupe-by-key Set alongside the array, and drain resets both.
-const _unaliasDiagnostics: ParseKindCollisionDiagnostic[] = [];
-const _unaliasDiagnosticsSeen = new Set<string>();
+/**
+ * Well-known non-enumerable key under which `enrich()` attaches the
+ * (downgraded, non-blocking) `parsekind-noninjective` diagnostics its
+ * un-aliasing pass produced for a given grammar evaluation. Read via
+ * `getEnrichUnaliasDiagnostics`.
+ *
+ * Attached to the SAME evaluation's own return object rather than a
+ * module-level accumulator (the former design): a module-global array only
+ * populated on the FIRST import of a grammar's entry path — Node caches the
+ * module, so a second `evaluate()` of the same grammar in one process would
+ * observe an empty drain even though the diagnostics conceptually still apply;
+ * concurrent evaluations of different grammars would also interleave into one
+ * shared array. Travelling with the result object avoids both: the diagnostics
+ * stay on the (cached) grammar object, correct on every read, per-grammar.
+ */
+export const ENRICH_UNALIAS_DIAGNOSTICS_KEY = '__enrichUnaliasDiagnostics__' as const;
 
 function unaliasDiagnosticKey(diagnostic: ParseKindCollisionDiagnostic): string {
 	return [
@@ -1657,24 +1683,30 @@ function unaliasDiagnosticKey(diagnostic: ParseKindCollisionDiagnostic): string 
 	].join(' ');
 }
 
-function recordUnaliasDiagnostic(diagnostic: ParseKindCollisionDiagnostic): void {
+/** A per-`enrich()`-call sink for un-aliasing diagnostics — array + dedupe-by-key
+ *  Set, mirroring the assemble-time check's shape but WITHOUT the module-global
+ *  lifetime. Created fresh per invocation and attached to that call's result. */
+interface UnaliasDiagnosticSink {
+	readonly diagnostics: ParseKindCollisionDiagnostic[];
+	readonly seen: Set<string>;
+}
+
+function recordUnaliasDiagnostic(sink: UnaliasDiagnosticSink, diagnostic: ParseKindCollisionDiagnostic): void {
 	const key = unaliasDiagnosticKey(diagnostic);
-	if (_unaliasDiagnosticsSeen.has(key)) return;
-	_unaliasDiagnosticsSeen.add(key);
-	_unaliasDiagnostics.push(diagnostic);
+	if (sink.seen.has(key)) return;
+	sink.seen.add(key);
+	sink.diagnostics.push(diagnostic);
 }
 
-/** @internal — exported for testing only, matching this file's existing convention. */
-export function resetUnaliasDiagnostics(): void {
-	_unaliasDiagnostics.length = 0;
-	_unaliasDiagnosticsSeen.clear();
-}
-
-/** @internal — exported for testing only, matching this file's existing convention. */
-export function drainUnaliasDiagnostics(): ParseKindCollisionDiagnostic[] {
-	const out = [..._unaliasDiagnostics];
-	resetUnaliasDiagnostics();
-	return out;
+/**
+ * Extract the un-aliasing diagnostics `enrich()` attached to an enriched
+ * grammar result (or a grammar object that inherited them, e.g. via
+ * `grammarFn`). Returns an empty array when none were attached.
+ */
+export function getEnrichUnaliasDiagnostics(grammar: unknown): readonly ParseKindCollisionDiagnostic[] {
+	if (!grammar || typeof grammar !== 'object') return [];
+	const diagnostics = (grammar as Record<string, unknown>)[ENRICH_UNALIAS_DIAGNOSTICS_KEY];
+	return Array.isArray(diagnostics) ? (diagnostics as ParseKindCollisionDiagnostic[]) : [];
 }
 
 /**
@@ -1689,6 +1721,17 @@ export function drainUnaliasDiagnostics(): ParseKindCollisionDiagnostic[] {
  */
 interface UnaliasCandidate {
 	readonly targetName: string;
+	/**
+	 * Enclosing FIELD name, when this value sits (directly or transitively)
+	 * inside a `field(name, …)` wrapper — otherwise `undefined` (positional).
+	 * Two aliases sharing a `targetName` but living in DIFFERENT fields are
+	 * genuinely distinguishable (the field name disambiguates the read-time
+	 * slot), so the collision bucketing keys on `(slotKey ?? targetName,
+	 * targetName)` rather than `targetName` alone. When `undefined` the
+	 * effective key falls back to `targetName`, preserving the pre-slotKey
+	 * behavior for positional (non-field-wrapped) collisions.
+	 */
+	readonly slotKey: string | undefined;
 	readonly storageKind: string | undefined;
 	readonly resolvedBody: RuntimeRule;
 	readonly aliasSite?: { readonly path: readonly (string | number)[]; readonly content: Rule; readonly named: boolean };
@@ -1697,24 +1740,41 @@ interface UnaliasCandidate {
 /**
  * @internal — walk `node` collecting every ALIAS site and bare SYMBOL leaf,
  * resolving each to its referenced rule body via `rulesBag` for structural
- * comparison. Mirrors the descent pattern used elsewhere in this file
- * (`countSymbolsInRepeat`): SEQ/CHOICE members, REPEAT/OPTIONAL/PREC/FIELD
- * content. Does not descend into an ALIAS's own content (its resolved body is
- * looked up directly instead) — mirrors `applyClauseHoist`'s treatment of its
- * own synthesized wrappers as opaque once classified.
+ * comparison. Descent runs through `RuleWalker.childEdgesOf` — the ONE
+ * canonical child-edge relation (`dsl/rule-walker.ts`) — so every edge the
+ * project's walker knows about is covered automatically: SEQ/CHOICE members,
+ * FIELD/OPTIONAL/REPEAT/REPEAT1/PREC/TOKEN content, AND a repeat's
+ * `separator.value`. (The former hand-rolled descent here silently omitted
+ * the separator and token-wrapper edges, so an alias in one of those
+ * positions was invisible — a coverage gap and a second, incomplete rule-tree
+ * edge relation alongside the canonical one.)
  *
- * Includes the OPTIONAL case (absent from `applyClauseHoist`'s own descent,
- * which is `optional(seq(...))`-specific rather than a generic walker):
- * sittir's own evaluate runtime produces bare `OPTIONAL` nodes (not always
- * the tree-sitter-CLI-lowered `CHOICE[x,BLANK]` form) before tree-sitter's
- * `grammar()` runs, so a base-grammar alias can sit directly under an
- * `optional(...)` at this phase.
+ * Two node kinds get special handling BEFORE the generic descent:
+ *   - ALIAS: recorded as a candidate; NOT descended into (its resolved body
+ *     is looked up directly via `rulesBag` instead) — mirrors
+ *     `applyClauseHoist`'s treatment of its own synthesized wrappers as
+ *     opaque once classified.
+ *   - SYMBOL: recorded as a candidate leaf (its own storage kind IS its parse
+ *     kind); leaves have no edges so descent is a no-op regardless.
+ *
+ * FIELD additionally rebinds `slotKey` to the field's name for its subtree, so
+ * a field-wrapped alias buckets under its enclosing field rather than merging
+ * with a same-target alias in a sibling field.
+ *
+ * The bare `OPTIONAL` edge (absent from `applyClauseHoist`'s
+ * `optional(seq(...))`-specific descent) is covered too: sittir's own evaluate
+ * runtime produces bare `OPTIONAL` nodes (not always the tree-sitter-CLI-lowered
+ * `CHOICE[x,BLANK]` form) before tree-sitter's `grammar()` runs, so a
+ * base-grammar alias can sit directly under `optional(...)` at this phase —
+ * and `childEdgesOf` descends its `content` edge.
  */
 function collectUnaliasCandidates(
 	node: Rule,
 	path: readonly (string | number)[],
+	slotKey: string | undefined,
 	rulesBag: Record<string, Rule>,
-	out: UnaliasCandidate[]
+	out: UnaliasCandidate[],
+	walker: RuleWalker
 ): void {
 	const t = (node as { type?: string }).type;
 	if (!t) return;
@@ -1728,6 +1788,7 @@ function collectUnaliasCandidates(
 		);
 		out.push({
 			targetName: aliasRule.value,
+			slotKey,
 			storageKind,
 			resolvedBody,
 			aliasSite: { path, content: aliasRule.content, named: aliasRule.named }
@@ -1738,35 +1799,24 @@ function collectUnaliasCandidates(
 		const name = (node as unknown as { name?: string }).name;
 		if (typeof name === 'string') {
 			const resolvedBody = normalizeMember(rulesBag[name] ?? node);
-			out.push({ targetName: name, storageKind: name, resolvedBody });
+			out.push({ targetName: name, slotKey, storageKind: name, resolvedBody });
 		}
 		return;
 	}
-	if (isFieldType(t)) {
-		const content = (node as unknown as { content?: Rule }).content;
-		if (content) collectUnaliasCandidates(content, [...path, 'content'], rulesBag, out);
-		return;
+	const nextSlotKey = isFieldType(t) ? ((node as unknown as { name?: string }).name ?? slotKey) : slotKey;
+	for (const { segment, child } of walker.childEdgesOf(node as unknown as AnyRule)) {
+		collectUnaliasCandidates(child as unknown as Rule, [...path, ...segment], nextSlotKey, rulesBag, out, walker);
 	}
-	if (isSeqType(t) || isChoiceType(t)) {
-		const members = (node as unknown as { members?: Rule[] }).members;
-		if (Array.isArray(members)) {
-			members.forEach((m, i) => collectUnaliasCandidates(m, [...path, 'members', i], rulesBag, out));
-		}
-		return;
-	}
-	if (isRepeatType(t) || isOptionalType(t) || isPrecWrapper(node as { type: string })) {
-		const content = (node as unknown as { content?: Rule }).content;
-		if (content) collectUnaliasCandidates(content, [...path, 'content'], rulesBag, out);
-		return;
-	}
-	// STRING / PATTERN / TOKEN / BLANK — leaves, nothing to collect.
 }
 
 /**
  * @internal — replace the node at `path` (as recorded by
- * `collectUnaliasCandidates`) with `replacement`. `path` alternates
- * `'members', <index>` (SEQ/CHOICE) and `'content'` (FIELD/OPTIONAL/
- * REPEAT/REPEAT1/PREC*) segments, mirroring that function's own descent.
+ * `collectUnaliasCandidates`, mirroring `RuleWalker.childEdgesOf`'s segments)
+ * with `replacement`. Segments are `'members', <index>` (SEQ/CHOICE),
+ * `'content'` (FIELD/OPTIONAL/REPEAT/REPEAT1/PREC/TOKEN), or
+ * `'separator', 'value'` (a repeat's separator inner rule). The generic
+ * single-property branch handles `content`/`separator`/`value` uniformly (an
+ * object spread of the separator wrapper preserves its `trailing`/`leading`).
  */
 function rewriteUnaliasAt(node: Rule, path: readonly (string | number)[], replacement: Rule): Rule {
 	if (path.length === 0) return replacement;
@@ -1777,9 +1827,9 @@ function rewriteUnaliasAt(node: Rule, path: readonly (string | number)[], replac
 		members[idx] = rest.length > 1 ? rewriteUnaliasAt(members[idx]!, rest.slice(1), replacement) : replacement;
 		return { ...node, members } as Rule;
 	}
-	// key === 'content'
-	const content = (node as unknown as { content: Rule }).content;
-	return { ...node, content: rest.length > 0 ? rewriteUnaliasAt(content, rest, replacement) : replacement } as Rule;
+	const k = key as string;
+	const child = (node as unknown as Record<string, Rule>)[k]!;
+	return { ...node, [k]: rest.length > 0 ? rewriteUnaliasAt(child, rest, replacement) : replacement } as Rule;
 }
 
 /**
@@ -1840,14 +1890,23 @@ function applyUnaliasDistinct(
 	clauseGroupRules: Record<string, Rule>
 ): { rule: Rule; diagnostics: ParseKindCollisionDiagnostic[] } {
 	const candidates: UnaliasCandidate[] = [];
-	collectUnaliasCandidates(rule, [], rulesBag, candidates);
+	collectUnaliasCandidates(rule, [], undefined, rulesBag, candidates, new RuleWalker());
 	if (candidates.length === 0) return { rule, diagnostics: [] };
 
-	const byTargetName = new Map<string, UnaliasCandidate[]>();
+	// Bucket by `(slotKey ?? targetName, targetName)` — NOT `targetName` alone.
+	// Two aliases sharing a target name but living in different fields are
+	// genuinely distinguishable (the field name disambiguates the read-time
+	// slot), so they must not be merged into one collision bucket. `slotName`
+	// is the effective slot key carried onto the diagnostic (the enclosing
+	// field name when field-wrapped, else the target name — matching the
+	// assemble-time caller's use of the resolved slot name).
+	const byBucket = new Map<string, { slotName: string; targetName: string; bucket: UnaliasCandidate[] }>();
 	for (const candidate of candidates) {
-		const bucket = byTargetName.get(candidate.targetName) ?? [];
-		bucket.push(candidate);
-		byTargetName.set(candidate.targetName, bucket);
+		const slotName = candidate.slotKey ?? candidate.targetName;
+		const key = `${slotName} ${candidate.targetName}`;
+		const entry = byBucket.get(key) ?? { slotName, targetName: candidate.targetName, bucket: [] };
+		entry.bucket.push(candidate);
+		byBucket.set(key, entry);
 	}
 
 	// Per-candidate resolution: 'drop' (visible storage kind — bare content
@@ -1856,8 +1915,16 @@ function applyUnaliasDistinct(
 	const toDrop = new Set<UnaliasCandidate>();
 	const toRetarget = new Map<UnaliasCandidate, string>();
 	const diagnostics: ParseKindCollisionDiagnostic[] = [];
+	// Retarget names already claimed EARLIER in THIS call (across all buckets).
+	// Two distinct hidden storage kinds that strip to the same name (e.g.
+	// `_foo` and `__foo` → `foo`) would otherwise both be scheduled to retarget
+	// to `foo`, recreating the exact non-injective collision this pass exists to
+	// eliminate — under the new name. First-claimer wins; later collisions
+	// decline (their diagnostic stays at original severity, same as the
+	// pre-existing name-collision guard against `rulesBag`/etc.).
+	const claimedRetargetNames = new Set<string>();
 
-	for (const [targetName, bucket] of byTargetName) {
+	for (const { slotName, targetName, bucket } of byBucket.values()) {
 		// A collision needs at least one ALIAS site (only aliasing can make a
 		// storage kind's parse kind differ from its own name) plus 2+ entries
 		// overall sharing the target name.
@@ -1869,27 +1936,35 @@ function applyUnaliasDistinct(
 			storageKind: candidate.storageKind,
 			structuralSignature: signatures[i]!
 		}));
-		// Bucket's most-common ("representative") signature, if a genuine
-		// majority exists (count > 1) — a candidate whose OWN signature matches
-		// it is structurally identical to the bucket's dominant shape and needs
-		// no distinct alias, even though the bucket as a whole fired the
-		// collision diagnostic because of some OTHER, genuinely-distinct
-		// candidate. When every signature is unique (today's real 2-way
-		// distinct buckets — no signature repeats), no majority exists and
-		// `representativeSignature` stays `undefined`, so every alias-bearing
-		// candidate is still acted on exactly as before (a true no-op for
-		// today's cases).
-		const signatureCounts = new Map<string, number>();
-		for (const signature of signatures) signatureCounts.set(signature, (signatureCounts.get(signature) ?? 0) + 1);
+		// Representative ("this parse kind's canonical shape") signature. A
+		// candidate whose OWN signature matches it is NOT genuinely distinct and
+		// is skipped, even though the bucket as a whole fired the diagnostic
+		// because of some OTHER candidate.
+		//
+		// Prefer the signature of the candidate whose `storageKind === targetName`
+		// — the bare, self-referencing value that IS the native identity for this
+		// parse kind. Only when the bucket has no such native value do we fall
+		// back to majority-by-frequency. Frequency alone is wrong: for
+		// `choice(alias(a1, y), alias(a2, y), y)` where a1/a2 share one shape and
+		// the bare `y` differs, majority-vote (2 vs 1) would pick a1/a2's shape as
+		// representative and skip BOTH aliases, leaving the real a1/a2-vs-y
+		// collision unresolved. Anchoring on the native `y` fixes that.
 		let representativeSignature: string | undefined;
-		let representativeCount = 1;
-		for (const [signature, count] of signatureCounts) {
-			if (count > representativeCount) {
-				representativeSignature = signature;
-				representativeCount = count;
+		const nativeIndex = bucket.findIndex((c) => c.storageKind !== undefined && c.storageKind === targetName);
+		if (nativeIndex !== -1) {
+			representativeSignature = signatures[nativeIndex];
+		} else {
+			const signatureCounts = new Map<string, number>();
+			for (const signature of signatures) signatureCounts.set(signature, (signatureCounts.get(signature) ?? 0) + 1);
+			let representativeCount = 1;
+			for (const [signature, count] of signatureCounts) {
+				if (count > representativeCount) {
+					representativeSignature = signature;
+					representativeCount = count;
+				}
 			}
 		}
-		const resolution = diagnoseParseKindCollisions({ ownerKind: ruleName, slotName: targetName, values });
+		const resolution = diagnoseParseKindCollisions({ ownerKind: ruleName, slotName, values });
 		for (const diagnostic of resolution.diagnostics) {
 			// diagnoseParseKindCollisions reasons in aggregate over the bucket and
 			// doesn't identify which specific site(s) collided — since the
@@ -1912,6 +1987,13 @@ function applyUnaliasDistinct(
 				}
 				const strippedName = candidate.storageKind.replace(/^_+/, '');
 				const collides =
+					// Empty stripped name (a storage kind that is all underscores, e.g.
+					// `_`): there's no valid name to retarget to — decline.
+					strippedName === '' ||
+					// Already claimed by an EARLIER retarget in this same call (see
+					// `claimedRetargetNames`) — declining here avoids re-introducing a
+					// non-injective collision under the stripped name.
+					claimedRetargetNames.has(strippedName) ||
 					Object.hasOwn(rulesBag, strippedName) ||
 					Object.hasOwn(kwRules, strippedName) ||
 					Object.hasOwn(clauseGroupRules, strippedName);
@@ -1921,6 +2003,7 @@ function applyUnaliasDistinct(
 					// downgrade or suppress it.
 					continue;
 				}
+				claimedRetargetNames.add(strippedName);
 				toRetarget.set(candidate, strippedName);
 				anyActed = true;
 			}
