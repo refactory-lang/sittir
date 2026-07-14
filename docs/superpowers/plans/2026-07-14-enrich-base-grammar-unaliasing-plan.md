@@ -4,19 +4,25 @@
 
 **Goal:** Add a new enrich pass that automatically drops a base-grammar `alias($.X, $.Y)` whenever `X`'s rule body is structurally distinct from the other rule(s) aliasing onto the same target name `Y`, resolving all 7 currently-live `parsekind-noninjective` diagnostics.
 
-**Architecture:** Reuse the existing `diagnoseParseKindCollisions` decision function unmodified, fed by a new per-rule enrich pass that walks each rule's `ALIAS` nodes, groups them by target name, and computes structural signatures via a phase-generalized `rulesEqual`. On a genuine collision, rewrite the grammar to drop the offending alias(es) and emit the diagnostic at a downgraded (non-blocking) severity as an audit trail.
+**Architecture:** Reuse the existing `diagnoseParseKindCollisions` decision function unmodified, fed by a new per-rule enrich pass that walks each rule's `ALIAS` nodes, groups them by target name, and clusters by structural equality via `dsl/list-patterns.ts`'s existing, already phase-agnostic `rulesEqual`. On a genuine collision, rewrite the grammar to drop the offending alias(es) and emit the diagnostic at a downgraded (non-blocking) severity as an audit trail.
 
 **Tech Stack:** TypeScript, sittir's phase-tagged `Rule<Phase>` compiler IR (`packages/codegen/src/types/rule.ts`), `packages/codegen/src/dsl/enrich.ts`.
 
+## Revision note (post Task 1 attempt, 2026-07-14)
+
+This plan originally had a Task 1 generalizing `compiler/normalize.ts`'s `rulesEqual` (typed `Rule<'link'>`) to a phase-generic signature. An implementer correctly got BLOCKED on it: `RepeatRule<T>`'s `.separator` field type is a conditional type keyed on the *concrete* phase literal (object-shaped for `'link'`, string for `'evaluate'`) — under a generic, unresolved `P`, TypeScript widens `.separator` to the union of both shapes, breaking the existing `separatorFactsEqual` call with a real type error (not fixable without a cast, which the Global Constraints forbid). Separately, `dsl/enrich.ts` cannot import from `compiler/normalize.ts` at all — this codebase enforces a `dsl → types ← compiler` layering (confirmed via `docs/superpowers/plans/2026-07-06-separator-canonical-mechanism-refresh.md`'s Task 2, which explicitly keeps a second `rulesEqual` in `dsl/list-patterns.ts` "so this stays inside the dsl→types←compiler layering — no compiler/ import"). Generalizing the `compiler/`-side function was never actually usable from `dsl/enrich.ts` regardless of the type issue.
+
+The correct fix: `dsl/list-patterns.ts`'s existing `rulesEqual(a: RuntimeRule, b: RuntimeRule): boolean` (`RuntimeRule = { readonly type: string }`, `types/runtime-shapes.ts:68`) is ALREADY phase-agnostic (any `Rule<Phase>` trivially satisfies the loose `RuntimeRule` shape), already lives in the right layer (`dsl/`, a sibling of `dsl/enrich.ts` — same-layer import, no violation), and already correctly handles the exact separator ambiguity that broke the generic-`compiler/normalize.ts` approach (its own comment: "`.separator` is either a plain string (evaluate-phase, unlifted) or the nested `{value, trailing?, leading?}` fact (link-phase, PR-S)" — it branches on `typeof` at runtime instead of relying on a type-level distinction). Per DRY, this plan now imports and reuses it directly — no generalization work needed at all. The original Task 1 is eliminated; former Tasks 2/3/4 are renumbered 1/2/3 below. This also simplifies what was Task 2's design: no `canonicalRuleSignature` custom serialization helper is needed — `rulesEqual` is used directly for pairwise clustering (see Task 1 below).
+
 ## Global Constraints
 
-- DRY is the #1 rule: reuse `diagnoseParseKindCollisions` (`compiler/diagnostics/parsekind-collisions.ts:35`) and the generalized `rulesEqual` (`compiler/normalize.ts:1138`) — do not reimplement either's decision logic.
+- DRY is the #1 rule: reuse `diagnoseParseKindCollisions` (`compiler/diagnostics/parsekind-collisions.ts:35`) and `dsl/list-patterns.ts`'s existing `rulesEqual` — do not reimplement either's decision logic, and do not re-attempt generalizing `compiler/normalize.ts`'s `rulesEqual` (see Revision note above — it's both type-infeasible and a layering violation).
 - Never hand-edit generated artifacts (`packages/{rust,python,typescript}/src/*`, `templates/*.jinja`, `.sittir/*`, `overrides.suggested.ts`) — fix codegen source and regenerate.
 - No casts to clear type errors — fix the real type.
 - Every codegen-source-touching task must regenerate all 3 grammars and stage the regenerated manifest/fixtures before committing.
 - `validate:native` output changes land in dedicated `chore(validator)` commits, separate from feature/source commits.
 - Rust-touching tasks must run `cargo check --workspace --features napi-bindings` cleanly (this plan touches no Rust source directly, but the regen tasks still trigger native builds — run it anyway).
-- Every codegen-source-touching or regen-touching task must run the FULL `SITTIR_NATIVE_DEBUG=0 pnpm run validate:native` sweep (not a targeted subset). Baseline to reconfirm fresh at Task 1: `rust=125 / typescript=76 / python=107` (`readRenderParseAstMatchPass`). Some baseline movement in the 7 specifically-touched kinds (listed in Task 3) is *expected* (real CST shape change) — verify each via `probe-kind` round-trip, don't wave it through OR treat it as an automatic regression. Any movement outside those 7 kinds is stop-and-investigate.
+- Every codegen-source-touching or regen-touching task must run the FULL `SITTIR_NATIVE_DEBUG=0 pnpm run validate:native` sweep (not a targeted subset). Baseline to reconfirm fresh at Task 1: `rust=125 / typescript=76 / python=107` (`readRenderParseAstMatchPass`). Some baseline movement in the 7 specifically-touched kinds (listed in Task 2) is *expected* (real CST shape change) — verify each via `probe-kind` round-trip, don't wave it through OR treat it as an automatic regression. Any movement outside those 7 kinds is stop-and-investigate.
 
 ## Known facts (verified this session — use directly, do not re-derive)
 
@@ -26,121 +32,20 @@
 - `dsl/enrich.ts`'s `enrich(base)` (L109-227) iterates every top-level rule name in `base.grammar.rules` (a `Record<string, Rule>`, aliased as `rulesBag`), calling `applyEnrichPasses(name, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, wordMatcher)` per rule, then merges all results back into `base.grammar.rules` before returning. `rulesBag` gives lookup access to every OTHER top-level rule's current body by name.
 - `applyEnrichPasses` (`dsl/enrich.ts:250-311`) runs a fixed-point loop of `applySymbolToField`/`applyOptionalKeyword`, then (once converged) runs `applyClauseHoist` once. The new pass is added as a further step, after `applyClauseHoist`, in this same per-rule function.
 - `diagnoseParseKindCollisions<T>(input: {ownerKind: string, slotName: string, values: {original: T, parseKind: string|undefined, storageKind: string|undefined, structuralSignature: string}[]})` (`compiler/diagnostics/parsekind-collisions.ts:35-98`) returns `{values: T[], diagnostics: ParseKindCollisionDiagnostic[]}`. Buckets `values` by `parseKind`; for buckets with 2+ distinct `storageKind`s, checks `distinct(structuralSignature)`: length 1 → silently picks a representative (merges); length >1 → emits a `ParseKindCollisionDiagnostic` (`code: 'parsekind-noninjective'`, `severity: 'error'`, `canProceed: true`, `shape: 'propose-distinct-alias'`, plus `ownerKind`/`slotName`/`parseKind`/`storageKinds`/`message`/`proposal`).
-- `rulesEqual(a: Rule<'link'>, b: Rule<'link'>): boolean` (`compiler/normalize.ts:1138-1189`) recursively compares `STRING`/`PATTERN`/`SYMBOL`/`SEQ`/`CHOICE`/`OPTIONAL`/`REPEAT`/`FIELD`/`VARIANT`/`SUPERTYPE` rule shapes by structure (not reference). Every field it reads (`type`, `members`, `content`, `name`, `value`, `separator`, `aliasedFrom`) exists identically on the corresponding `Rule<'evaluate'>` variant.
+- `dsl/list-patterns.ts`'s `rulesEqual(a: RuntimeRule, b: RuntimeRule): boolean` (`RuntimeRule = { readonly type: string }`) recursively compares `string`/`pattern`/`symbol`/`enum`/`seq`/`choice`/`optional`/`repeat`/`repeat1`/`field` shapes (lowercased `.type` comparison) by structure, with a runtime `typeof`-branch specifically handling the evaluate-vs-link separator shape difference. Falls through to `default: return false` for any other type (including `alias` — irrelevant here since the pass resolves through `content` before comparing, never comparing an ALIAS node to another ALIAS node directly). No generic/phase-parameter issues: any `Rule<Phase>` trivially satisfies `RuntimeRule`'s single `{type: string}` requirement.
 - The 7 live `parsekind-noninjective` instances (as of 2026-07-14, `packages/{rust,typescript}/.sittir/grammar-diagnostics.json`) to expect resolved after this plan: rust `scoped_type_identifier.path` (`[generic_type_with_turbofish, generic_type]` → `generic_type`); typescript `_arrow_function_parameter.parameter`, `_index_signature_colon.name`, `augmented_assignment_expression.left` (all `[_reserved_identifier, identifier]`/`[identifier, _reserved_identifier]` → `identifier`), `_jsx_string.content` (`[unescaped_double_jsx_string_fragment, unescaped_single_jsx_string_fragment]` → `string_fragment`), `string.contents` (`[unescaped_double_string_fragment, unescaped_single_string_fragment]` → `string_fragment`), `type_predicate.name` (`[identifier, predefined_type]` → `identifier`).
 
 ---
 
-## Task 1: Generalize `rulesEqual`'s phase typing
-
-**Files:**
-- Modify: `packages/codegen/src/compiler/normalize.ts:1138` (the `rulesEqual` function signature only — body is unchanged, it already only touches phase-generic fields)
-- Test: `packages/codegen/src/compiler/__tests__/normalize.test.ts` (check this file exists and find `rulesEqual`'s existing test coverage first; if no dedicated test file, create `packages/codegen/src/compiler/__tests__/rules-equal.test.ts`)
-
-**Interfaces:**
-- Consumes: nothing new — reads the existing `Rule<Phase>`/`PhaseName`/`WrapperPhase` types from `types/rule.ts`.
-- Produces: `rulesEqual<P extends PhaseName>(a: Rule<P>, b: Rule<P>): boolean` — a phase-generic version callable at any phase, used by Task 2's new enrich pass with `P = 'evaluate'`, and still callable by all existing `Rule<'link'>` call sites unchanged (TypeScript will infer `P = 'link'` there).
-
-- [ ] **Step 1: Read `rulesEqual`'s current full body and existing call sites**
-
-Read `packages/codegen/src/compiler/normalize.ts:1138-1189` (the full function, already quoted above in "Known facts" — confirm no drift since this plan was written) and find every current call site via `find_all_references`/`trace_callers` on `rulesEqual`. Confirm all existing callers pass `Rule<'link'>` values (if any pass something else, that changes this task's risk — note it before proceeding).
-
-- [ ] **Step 2: Write a failing test proving the current signature rejects `Rule<'evaluate'>`**
-
-Add to the test file:
-
-```typescript
-import { describe, it, expect } from 'vitest';
-import { rulesEqual } from '../normalize.ts';
-import type { Rule } from '../../types/rule.ts';
-import { STRING, SEQ } from '../../types/rule-types.ts';
-
-describe('rulesEqual — phase-generic', () => {
-	it('accepts Rule<\'evaluate\'> values (not just Rule<\'link\'>)', () => {
-		const a: Rule<'evaluate'> = { type: STRING, value: 'x' } as Rule<'evaluate'>;
-		const b: Rule<'evaluate'> = { type: STRING, value: 'x' } as Rule<'evaluate'>;
-		// This line is the actual test: it must TYPE-CHECK, not just run.
-		// Before Step 3, rulesEqual is typed (a: Rule<'link'>, b: Rule<'link'>),
-		// so passing Rule<'evaluate'> values is a TYPE ERROR — the test file
-		// itself will fail to compile (tsgo), which is the "RED" state here.
-		expect(rulesEqual(a, b)).toBe(true);
-	});
-
-	it('still works for Rule<\'link\'> values (existing behavior unchanged)', () => {
-		const a: Rule<'link'> = { type: SEQ, members: [{ type: STRING, value: 'x' } as Rule<'link'>] } as Rule<'link'>;
-		const b: Rule<'link'> = { type: SEQ, members: [{ type: STRING, value: 'x' } as Rule<'link'>] } as Rule<'link'>;
-		expect(rulesEqual(a, b)).toBe(true);
-	});
-
-	it('detects structurally distinct rules', () => {
-		const a: Rule<'evaluate'> = { type: STRING, value: 'x' } as Rule<'evaluate'>;
-		const b: Rule<'evaluate'> = { type: STRING, value: 'y' } as Rule<'evaluate'>;
-		expect(rulesEqual(a, b)).toBe(false);
-	});
-});
-```
-
-- [ ] **Step 2b: Run tsgo to confirm the RED state is a type error, not a runtime failure**
-
-Run: `pnpm exec tsgo --noEmit -p packages/codegen/tsconfig.json`
-Expected: FAIL — a type error on the `rulesEqual(a, b)` call in the first test (`Rule<'evaluate'>` not assignable to `Rule<'link'>`), confirming the current signature is the thing under test.
-
-- [ ] **Step 3: Generalize the signature**
-
-In `packages/codegen/src/compiler/normalize.ts`, change:
-
-```typescript
-export function rulesEqual(a: Rule<'link'>, b: Rule<'link'>): boolean {
-```
-
-to:
-
-```typescript
-export function rulesEqual<P extends PhaseName>(a: Rule<P>, b: Rule<P>): boolean {
-```
-
-Add `PhaseName` to the existing `Rule` import from `../types/rule.ts` at the top of the file if not already imported (check the current import line first — `Rule` is almost certainly already imported given the function's existing usage; `PhaseName` likely needs adding). Every internal recursive call (`rulesEqual(m, (b as typeof a).members[i]!)` etc.) and every `as typeof a` cast in the function body stays exactly as-is — they already operate structurally and don't reference the phase parameter by name.
-
-- [ ] **Step 4: Run tsgo + tests to confirm they pass**
-
-Run: `pnpm exec tsgo --noEmit -p packages/codegen/tsconfig.json`
-Expected: PASS (no type errors)
-
-Run: `pnpm exec vitest run packages/codegen/src/compiler/__tests__/rules-equal.test.ts` (or the actual test file path from Step 1)
-Expected: PASS, all 3 new tests green
-
-- [ ] **Step 5: Run the full codegen vitest suite to confirm zero regressions from the signature change**
-
-Run: `pnpm exec vitest run packages/codegen/src`
-Expected: same failure count as HEAD before this change (record the exact count first via `git stash` + a baseline run, per this project's established A/B discipline — do not assume zero pre-existing failures)
-
-- [ ] **Step 6: Commit**
-
-```bash
-git add packages/codegen/src/compiler/normalize.ts packages/codegen/src/compiler/__tests__/rules-equal.test.ts
-git commit -m "refactor(codegen): generalize rulesEqual to any Rule<Phase>
-
-Widens rulesEqual's signature from Rule<'link'> to a phase-generic
-<P extends PhaseName>(a: Rule<P>, b: Rule<P>) — the comparison body
-already only touches fields (type/members/content/name/value/separator/
-aliasedFrom) that exist identically across every phase's Rule<Phase>
-variant, so this is a type-only change with no behavior difference for
-existing Rule<'link'> callers. Needed so the new enrich un-aliasing pass
-(next commit) can reuse this exact comparison logic on Rule<'evaluate'>
-values, per DRY."
-```
-
----
-
-## Task 2: Implement the new enrich un-aliasing pass
+## Task 1: Implement the new enrich un-aliasing pass
 
 **Files:**
 - Modify: `packages/codegen/src/dsl/enrich.ts` (add the new pass function + wire it into `applyEnrichPasses`)
 - Test: `packages/codegen/src/dsl/__tests__/enrich-unalias.test.ts` (new file, following the naming convention of the existing `enrich-clause-hoist.test.ts` in the same directory)
 
 **Interfaces:**
-- Consumes: `rulesEqual<P extends PhaseName>` (Task 1), `diagnoseParseKindCollisions` (`compiler/diagnostics/parsekind-collisions.ts`), `ALIAS`/`CHOICE`/`SEQ`/`SYMBOL` type guards already imported in `enrich.ts` (`isChoiceType`/`isSeqType` from `types/runtime-shapes.ts`, matching `applyClauseHoist`'s existing import pattern).
-- Produces: a new internal function `applyUnaliasDistinct(ruleName: string, rule: Rule, rulesBag: Record<string, Rule>): { rule: Rule; diagnostics: ParseKindCollisionDiagnostic[] }`, called from `applyEnrichPasses` after the existing `applyClauseHoist` call; a module-level diagnostic accumulator with exported `resetUnaliasDiagnostics(): void` / `drainUnaliasDiagnostics(): ParseKindCollisionDiagnostic[]` (test-facing, matching this file's existing export convention) and internal `recordUnaliasDiagnostic(d: ParseKindCollisionDiagnostic): void`; an exported `canonicalRuleSignature(node: unknown): string` helper.
+- Consumes: `rulesEqual` from `dsl/list-patterns.ts` (already exists, phase-agnostic — see Revision note above), `diagnoseParseKindCollisions` (`compiler/diagnostics/parsekind-collisions.ts`), `ALIAS`/`CHOICE`/`SEQ`/`SYMBOL` type guards already imported in `enrich.ts` (`isChoiceType`/`isSeqType` from `types/runtime-shapes.ts`, matching `applyClauseHoist`'s existing import pattern).
+- Produces: a new internal function `applyUnaliasDistinct(ruleName: string, rule: Rule, rulesBag: Record<string, Rule>): { rule: Rule; diagnostics: ParseKindCollisionDiagnostic[] }`, called from `applyEnrichPasses` after the existing `applyClauseHoist` call; a module-level diagnostic accumulator with exported `resetUnaliasDiagnostics(): void` / `drainUnaliasDiagnostics(): ParseKindCollisionDiagnostic[]` (test-facing, matching this file's existing export convention) and internal `recordUnaliasDiagnostic(d: ParseKindCollisionDiagnostic): void`; a test-facing exported `clusterSignatures(values: readonly RuntimeRule[]): string[]` helper.
 
 - [ ] **Step 1: Read the exact current `applyEnrichPasses` body one more time to confirm no drift**
 
@@ -228,41 +133,24 @@ describe('enrich — base-grammar un-aliasing', () => {
 	});
 });
 
-describe('canonicalRuleSignature — agrees with rulesEqual', () => {
-	// The design (docs/superpowers/specs/2026-07-14-enrich-base-grammar-unaliasing-design.md
-	// §4 point 2) uses canonicalRuleSignature for the actual bucketing key in
-	// applyUnaliasDistinct, but relies on rulesEqual as the independently-
-	// verified ground truth for "structurally equal" — this test proves the
-	// two agree, so a future change to either can't silently diverge them.
-	function check(a: Rule, b: Rule, expectedEqual: boolean): void {
-		expect(canonicalRuleSignature(a) === canonicalRuleSignature(b)).toBe(expectedEqual);
-		expect(rulesEqual(a as Rule<'evaluate'>, b as Rule<'evaluate'>)).toBe(expectedEqual);
-	}
-
-	it('identical rules: both signature-equal and rulesEqual-true', () => {
-		check({ type: STRING, value: 'x' } as Rule, { type: STRING, value: 'x' } as Rule, true);
-	});
-
-	it('distinct rules: both signature-unequal and rulesEqual-false', () => {
-		check(
-			{ type: SEQ, members: [{ type: SYMBOL, name: 'a' } as Rule] } as Rule,
-			{
-				type: SEQ,
-				members: [{ type: SYMBOL, name: 'a' } as Rule, { type: STRING, value: '::<>' } as Rule]
-			} as Rule,
-			false
-		);
-	});
-
-	it('key insertion order does not affect either check', () => {
-		const a = { value: 'x', type: STRING } as Rule;
-		const b = { type: STRING, value: 'x' } as Rule;
-		check(a, b, true);
+describe('clusterSignatures', () => {
+	// rulesEqual itself is pre-existing and already used/tested elsewhere
+	// (dsl/list-patterns.ts) — this only tests the new clustering wrapper
+	// applyUnaliasDistinct actually relies on: 3+ values, some equal to
+	// each other and some not, must land in the correct number of distinct
+	// clusters using rulesEqual's own equality, not any other proxy.
+	it('groups structurally-equal values into the same cluster id, distinct ones apart', () => {
+		const a = { type: 'STRING', value: 'x' } as unknown as RuntimeRule;
+		const b = { type: 'STRING', value: 'x' } as unknown as RuntimeRule;
+		const c = { type: 'STRING', value: 'y' } as unknown as RuntimeRule;
+		const signatures = clusterSignatures([a, b, c]);
+		expect(signatures[0]).toBe(signatures[1]); // a, b structurally equal
+		expect(signatures[0]).not.toBe(signatures[2]); // c distinct
 	});
 });
 ```
 
-This requires importing `rulesEqual` from `../../compiler/normalize.ts` and `canonicalRuleSignature` from `../enrich.ts` (export it, even though it's otherwise `@internal` — mark it `/** @internal — exported for testing only */` matching this file's existing convention for other test-only exports, if any; check `applyClauseHoist`'s own export status first, since it's also referenced directly by `enrich-clause-hoist.test.ts`).
+This requires importing `clusterSignatures` and `RuntimeRule` — `clusterSignatures` needs a test-only export from `enrich.ts` (mark `/** @internal — exported for testing only */`, matching this file's existing convention).
 
 Adjust the exact literal `Rule` shapes above (field names like `name` on `SYMBOL`, `value` on `STRING`/`ALIAS`) against the REAL current `types/rule.ts` definitions if anything doesn't match — the shapes above are drawn from this session's direct reading of `AliasRule` and the `alias()` DSL primitive, but confirm against the file before trusting the test compiles.
 
@@ -277,28 +165,28 @@ In `packages/codegen/src/dsl/enrich.ts`, add:
 
 ```typescript
 /**
- * Deterministic JSON serialization of a rule tree, for use as a bucketing
- * key. A flat `JSON.stringify(x, keys)` replacer-array only whitelists
- * TOP-LEVEL keys and does not sort nested objects' own keys, which would
- * silently corrupt comparisons for a nested Rule tree (inner `members`/
- * `content` objects have different key sets at each level). This sorts
- * every object's keys recursively before stringifying, so two
- * structurally-identical rules always produce byte-identical strings
- * regardless of property insertion order.
+ * Assign a stable cluster-id string to each value in `values`, where two
+ * values get the SAME id iff `rulesEqual` (dsl/list-patterns.ts) says they're
+ * structurally equal. Used as `diagnoseParseKindCollisions`'s
+ * `structuralSignature` input — that function only needs values sharing a
+ * signature to be groupable via `distinct()`, not a globally-canonical hash,
+ * so an arbitrary-but-consistent per-call cluster index is sufficient and
+ * avoids hand-rolling a serializer (DRY: reuses the existing, already
+ * separator-shape-aware `rulesEqual` instead).
  */
-function canonicalRuleSignature(node: unknown): string {
-	function sortKeysDeep(value: unknown): unknown {
-		if (Array.isArray(value)) return value.map(sortKeysDeep);
-		if (value !== null && typeof value === 'object') {
-			const sorted: Record<string, unknown> = {};
-			for (const key of Object.keys(value as Record<string, unknown>).sort()) {
-				sorted[key] = sortKeysDeep((value as Record<string, unknown>)[key]);
-			}
-			return sorted;
+function clusterSignatures(values: readonly RuntimeRule[]): string[] {
+	const clusterOf: string[] = [];
+	const representatives: RuntimeRule[] = [];
+	for (const value of values) {
+		const existingIdx = representatives.findIndex((rep) => rulesEqual(rep, value));
+		if (existingIdx === -1) {
+			representatives.push(value);
+			clusterOf.push(String(representatives.length - 1));
+		} else {
+			clusterOf.push(String(existingIdx));
 		}
-		return value;
 	}
-	return JSON.stringify(sortKeysDeep(node));
+	return clusterOf;
 }
 
 // Module-level accumulator, mirroring the exact pattern already used for
@@ -396,20 +284,18 @@ function applyUnaliasDistinct(
 
 	for (const [targetName, group] of byTargetName) {
 		if (group.length < 2) continue; // no collision possible with a single aliaser
-		const values = group.map((site) => {
-			// Resolve content to its underlying rule body for comparison —
-			// content is typically SYMBOL(name); look it up in rulesBag.
-			const resolved =
-				site.aliasRule.content.type === SYMBOL
-					? (rulesBag[(site.aliasRule.content as { name: string }).name] ?? site.aliasRule.content)
-					: site.aliasRule.content;
-			return {
-				original: site,
-				parseKind: targetName,
-				storageKind: site.aliasRule.content.type === SYMBOL ? (site.aliasRule.content as { name: string }).name : undefined,
-				structuralSignature: canonicalRuleSignature(resolved)
-			};
-		});
+		const resolvedBodies = group.map((site) =>
+			site.aliasRule.content.type === SYMBOL
+				? (rulesBag[(site.aliasRule.content as { name: string }).name] ?? site.aliasRule.content)
+				: site.aliasRule.content
+		);
+		const signatures = clusterSignatures(resolvedBodies);
+		const values = group.map((site, i) => ({
+			original: site,
+			parseKind: targetName,
+			storageKind: site.aliasRule.content.type === SYMBOL ? (site.aliasRule.content as { name: string }).name : undefined,
+			structuralSignature: signatures[i]!
+		}));
 		const resolution = diagnoseParseKindCollisions({ ownerKind: ruleName, slotName: targetName, values });
 		for (const diag of resolution.diagnostics) {
 			diagnostics.push({ ...diag, severity: 'info', canProceed: true });
@@ -452,7 +338,7 @@ function applyUnaliasDistinct(
 }
 ```
 
-Import `diagnoseParseKindCollisions` and `ParseKindCollisionDiagnostic` from `../compiler/diagnostics/parsekind-collisions.ts`, and `SYMBOL`/`ALIAS` from `../types/rule-types.ts` (add to the existing type-guard imports already present in `enrich.ts` — check the current import block first, since `isSeqType`/`isChoiceType`/`isRepeatType`/`isPrecWrapper`/`isFieldType` are already imported per `applyClauseHoist`'s existing usage).
+Import `diagnoseParseKindCollisions` and `ParseKindCollisionDiagnostic` from `../compiler/diagnostics/parsekind-collisions.ts`; `rulesEqual` and the `RuntimeRule` type from `./list-patterns.ts` / `../types/runtime-shapes.ts` (same `dsl/` layer — no layering violation, see Revision note); and `SYMBOL`/`ALIAS` from `../types/rule-types.ts` (add to the existing type-guard imports already present in `enrich.ts` — check the current import block first, since `isSeqType`/`isChoiceType`/`isRepeatType`/`isPrecWrapper`/`isFieldType` are already imported per `applyClauseHoist`'s existing usage).
 
 **This is a first-pass implementation — validate the path-based rewrite mechanism (`rewriteAt`) carefully against a REAL rule shape during Step 5's regen, not just the unit test's synthetic fixtures.** The `path` tracking (`'members'`/index vs `'content'`) must exactly mirror `collectAliasSites`'s own descent, and needs a case added for any rule position `applyClauseHoist`'s own descent pattern doesn't cover (it currently omits `OPTIONAL` — check if base-grammar aliases ever sit directly under `optional(...)` without a `CHOICE[x,BLANK]` wrapper already normalizing it away by evaluate time; add an `OPTIONAL` case to both `collectAliasSites` and `rewriteAt` if so).
 
@@ -477,10 +363,11 @@ This matches the exact established pattern `resolveParseKindCollisionsInSlot` (`
 
 Separately, trace `enrich()`'s own callers (`find_all_references` on `enrich`) to find where `.sittir/grammar-diagnostics.json` currently gets assembled from other diagnostic sources (`compiler/diagnostics/grammar-diagnostics.ts`'s `collectGrammarDiagnostics`, or its caller) and wire in a call to `drainUnaliasDiagnostics()` there, merging its output into the same diagnostics list the later `parsekind-noninjective`/other checks feed — so these new, downgraded diagnostics actually surface in the generated `grammar-diagnostics.json` file, not just in-memory for tests.
 
-- [ ] **Step 7: Run the full dsl test suite**
+- [ ] **Step 7: Run the full dsl test suite, confirming zero new failures**
 
-Run: `pnpm exec vitest run packages/codegen/src/dsl`
-Expected: same failure count as the Task 1 Step 5 baseline (zero new failures from this task)
+Run: `git stash` (stashing this task's uncommitted work), then `pnpm exec vitest run packages/codegen/src/dsl` to record the pre-existing failure count, then `git stash pop` to restore the work.
+Run: `pnpm exec vitest run packages/codegen/src/dsl` again with the work restored.
+Expected: same failure count both times (zero new failures introduced by this task) — per this project's established A/B discipline, don't assume a pre-existing baseline of zero.
 
 - [ ] **Step 8: Commit**
 
@@ -502,13 +389,13 @@ Not yet regenerated against real grammars — next commit."
 
 ---
 
-## Task 3: Full 3-grammar regen + verification
+## Task 2: Full 3-grammar regen + verification
 
 **Files:**
 - Regenerate: `packages/{rust,typescript,python}/src/*`, `.sittir/*`, `tests/nodes.test.ts` (via the `gen` CLI command, never hand-edited)
 
 **Interfaces:**
-- Consumes: Task 2's `applyUnaliasDistinct`, wired live.
+- Consumes: Task 1's `applyUnaliasDistinct`, wired live.
 - Produces: regenerated grammar output for all 3 grammars, reflecting the 7 un-aliased kinds.
 
 - [ ] **Step 1: Regenerate all 3 grammars**
@@ -528,7 +415,7 @@ Run:
 cat packages/rust/.sittir/grammar-diagnostics.json | node -e "const d=JSON.parse(require('fs').readFileSync(0,'utf8')); console.log((Array.isArray(d)?d:d.diagnostics||[]).filter(x=>x.code==='parsekind-noninjective'))"
 cat packages/typescript/.sittir/grammar-diagnostics.json | node -e "const d=JSON.parse(require('fs').readFileSync(0,'utf8')); console.log((Array.isArray(d)?d:d.diagnostics||[]).filter(x=>x.code==='parsekind-noninjective'))"
 ```
-Expected: rust's blocking-severity `parsekind-noninjective` list is empty (the one instance is gone or downgraded); typescript's is empty too (all 6 gone/downgraded). If Task 2 Step 6's diagnostic-emission wiring routes the downgraded diagnostics into a DIFFERENT file/field than `grammar-diagnostics.json`'s existing `parsekind-noninjective` bucket, check there instead — confirm the actual output location against what Task 2 Step 6 implemented, don't assume it matches this exact command.
+Expected: rust's blocking-severity `parsekind-noninjective` list is empty (the one instance is gone or downgraded); typescript's is empty too (all 6 gone/downgraded). If Task 1 Step 6's diagnostic-emission wiring routes the downgraded diagnostics into a DIFFERENT file/field than `grammar-diagnostics.json`'s existing `parsekind-noninjective` bucket, check there instead — confirm the actual output location against what Task 1 Step 6 implemented, don't assume it matches this exact command.
 
 - [ ] **Step 3: `probe-kind` round-trip verification for each of the 7 touched kinds**
 
@@ -556,7 +443,7 @@ under their own names. probe-kind round-trip verified for all 7."
 
 ---
 
-## Task 4: Full validate:native + cargo check gate
+## Task 3: Full validate:native + cargo check gate
 
 **Files:** none (verification-only task)
 
@@ -568,7 +455,7 @@ Expected: clean, no errors
 - [ ] **Step 2: Run the full validate:native sweep**
 
 Run: `SITTIR_NATIVE_DEBUG=0 pnpm run validate:native`
-Expected: `readRenderParseAstMatchPass` for rust/typescript/python — compare against the Task 1 baseline (reconfirmed fresh at that task's start). Movement in the 7 touched kinds specifically is expected and already verified via Task 3 Step 3's `probe-kind` checks; movement ANYWHERE ELSE is stop-and-investigate, not something to explain away.
+Expected: `readRenderParseAstMatchPass` for rust/typescript/python — compare against the Task 1 baseline (reconfirmed fresh at that task's start). Movement in the 7 touched kinds specifically is expected and already verified via Task 2 Step 3's `probe-kind` checks; movement ANYWHERE ELSE is stop-and-investigate, not something to explain away.
 
 - [ ] **Step 3: If validator output changed, commit it separately**
 
