@@ -263,12 +263,17 @@ function emitContainerTest(
  * positional `elements` array — never a config object — so this mirrors that
  * function's own derivation of the content slot ({@link
  * buildSeparatedListContentSlot}) rather than routing through
- * `emitBranchTest`'s field-config-object shape. `dummyValue` already wraps a
- * multi-valued slot in a one-element array literal, which both satisfies
- * `nonEmpty` lists' `_assertNonEmpty` runtime check and guarantees non-empty
- * render output — so no separate empty-config render-test branch is needed
- * here (unlike `emitBranchTest`, which must accommodate an all-optional
- * minimal config).
+ * `emitBranchTest`'s field-config-object shape. Builds a dummy for ONE
+ * element via `dummyValueForField` and wraps it in an array literal here,
+ * rather than delegating to `dummyValue` — `dummyValue`'s keyword-presence
+ * fast path returns a bare scalar (`true` / `0 as never`) for the WHOLE
+ * field before checking multiplicity, which is correct for a genuine
+ * Config-object field but wrong for this synthetic elements slot (every
+ * separatedList factory requires a real array, even when its content is
+ * keyword/literal-shaped). This both satisfies `nonEmpty` lists'
+ * `_assertNonEmpty` runtime check and guarantees non-empty render output —
+ * so no separate empty-config render-test branch is needed here (unlike
+ * `emitBranchTest`, which must accommodate an all-optional minimal config).
  */
 function emitSeparatedListTest(
 	lines: string[],
@@ -281,7 +286,7 @@ function emitSeparatedListTest(
 	if (node.modelType !== 'separatedList') return;
 
 	const contentSlot = buildSeparatedListContentSlot(node);
-	const elementsArg = dummyValue(contentSlot, nodeMap, kindEntries);
+	const elementsArg = `[${dummyValueForField(contentSlot, nodeMap, kindEntries, 0, new Set())}]`;
 
 	lines.push(`describe('${kind}', () => {`);
 	lines.push(`  it('factory produces correct type', () => {`);
