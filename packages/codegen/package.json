@@ -36,12 +36,12 @@
 		}
 	},
 	"scripts": {
-		"build": "pnpm run clean && tsgo -p tsconfig.build.json",
+		"build": "pnpm run clean && tsc -p tsconfig.build.json",
 		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
-		"dev": "tsgo -p tsconfig.build.json --watch",
+		"dev": "tsc -p tsconfig.build.json --watch",
 		"test": "vitest run",
 		"test:coverage": "vitest run --coverage",
-		"type-check": "tsgo --noEmit",
+		"type-check": "tsc --noEmit",
 		"generate:rust": "tsx ./src/cli.ts --grammar rust -a --output packages/rust/src",
 		"generate:ts": "tsx ./src/cli.ts --grammar typescript -a --output packages/typescript/src",
 		"generate:python": "tsx ./src/cli.ts --grammar python -a --output packages/python/src",

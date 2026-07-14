@@ -29,10 +29,10 @@
 		}
 	},
 	"scripts": {
-		"build": "tsgo -p tsconfig.build.json",
+		"build": "tsc -p tsconfig.build.json",
 		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
-		"dev": "tsgo -p tsconfig.build.json --watch",
-		"type-check": "tsgo --noEmit"
+		"dev": "tsc -p tsconfig.build.json --watch",
+		"type-check": "tsc --noEmit"
 	},
 	"dependencies": {
 		"type-fest": "^5.6.0"

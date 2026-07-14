@@ -18,10 +18,10 @@
 		}
 	},
 	"scripts": {
-		"build": "pnpm run clean && tsgo -p tsconfig.build.json",
+		"build": "pnpm run clean && tsc -p tsconfig.build.json",
 		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
 		"test": "vitest run",
-		"type-check": "tsgo --noEmit"
+		"type-check": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@sittir/codegen": "workspace:*",
