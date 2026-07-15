@@ -2574,24 +2574,24 @@ export function patternList(...children: T.Pattern[]) {
 }
 
 export function printStatement(config: Partial<T.PrintStatement.Config> = {}) {
-	const _chevron = config.chevron;
 	const _argument = config.argument;
+	const _chevron = config.chevron;
 	return withMethods(
 		{
 			$type: TSKindId.PrintStatement as const,
 			$source: 2 as const,
 			$named: true as const,
-			_chevron,
 			_argument,
-			chevron() {
-				return _chevron;
-			},
+			_chevron,
 			arguments() {
 				return _argument;
 			},
+			chevron() {
+				return _chevron;
+			},
 			$with: {
-				chevron: (value?: T.Chevron) => printStatement({ ...config, chevron: value }),
-				arguments: (...values: T.Expression[]) => printStatement({ ...config, argument: values })
+				arguments: (...values: T.Expression[]) => printStatement({ ...config, argument: values }),
+				chevron: (value?: T.Chevron) => printStatement({ ...config, chevron: value })
 			}
 		},
 		methodsEngine
@@ -2761,7 +2761,7 @@ export function splatPattern(config: T.SplatPattern.Config) {
 			$with: {
 				operator: (value: NonNullable<Parameters<typeof splatPattern>[0]>['operator']) =>
 					splatPattern({ ...config, operator: value }),
-				identifier: (value: T.Identifier | '_') => splatPattern({ ...config, identifier: value })
+				identifier: (value: '_' | T.Identifier) => splatPattern({ ...config, identifier: value })
 			}
 		},
 		methodsEngine

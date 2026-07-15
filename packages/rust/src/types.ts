@@ -3986,13 +3986,13 @@ export interface FunctionSignatureItem {
 export interface FunctionType {
 	readonly $type: TSKindId.FunctionType;
 	readonly _for_lifetimes?: ForLifetimes;
-	readonly _function_type_trait_form?: FunctionTypeTraitForm;
 	readonly _parameters: Parameters;
+	readonly _function_type_trait_form?: FunctionTypeTraitForm;
 	readonly _function_type_fn_form?: FunctionTypeFnForm;
 	readonly _return_type?: _Type;
 	forLifetimes(): ForLifetimes | undefined;
-	functionTypeTraitForm(): FunctionTypeTraitForm | undefined;
 	parameters(): Parameters;
+	functionTypeTraitForm(): FunctionTypeTraitForm | undefined;
 	functionTypeFnForm(): FunctionTypeFnForm | undefined;
 	returnType(): _Type | undefined;
 }

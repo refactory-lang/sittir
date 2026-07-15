@@ -2878,8 +2878,8 @@ export function functionSignatureItem(config: T.FunctionSignatureItem.Config) {
 
 export function functionType(config: T.FunctionType.Config) {
 	const _for_lifetimes = config.forLifetimes;
-	const _function_type_trait_form = config.functionTypeTraitForm;
 	const _parameters = config.parameters;
+	const _function_type_trait_form = config.functionTypeTraitForm;
 	const _function_type_fn_form = config.functionTypeFnForm;
 	const _return_type = config.returnType;
 	return withMethods(
@@ -2888,18 +2888,18 @@ export function functionType(config: T.FunctionType.Config) {
 			$source: 2 as const,
 			$named: true as const,
 			_for_lifetimes,
-			_function_type_trait_form,
 			_parameters,
+			_function_type_trait_form,
 			_function_type_fn_form,
 			_return_type,
 			forLifetimes() {
 				return _for_lifetimes;
 			},
-			functionTypeTraitForm() {
-				return _function_type_trait_form;
-			},
 			parameters() {
 				return _parameters;
+			},
+			functionTypeTraitForm() {
+				return _function_type_trait_form;
 			},
 			functionTypeFnForm() {
 				return _function_type_fn_form;
@@ -2909,9 +2909,9 @@ export function functionType(config: T.FunctionType.Config) {
 			},
 			$with: {
 				forLifetimes: (value?: T.ForLifetimes) => functionType({ ...config, forLifetimes: value }),
+				parameters: (value: T.Parameters) => functionType({ ...config, parameters: value }),
 				functionTypeTraitForm: (value?: T.FunctionTypeTraitForm) =>
 					functionType({ ...config, functionTypeTraitForm: value }),
-				parameters: (value: T.Parameters) => functionType({ ...config, parameters: value }),
 				functionTypeFnForm: (value?: T.FunctionTypeFnForm) => functionType({ ...config, functionTypeFnForm: value }),
 				returnType: (value?: T._Type) => functionType({ ...config, returnType: value })
 			}

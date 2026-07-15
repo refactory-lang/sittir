@@ -202,24 +202,34 @@ function isStructuralChoice(rule: Extract<AnyRule, { type: 'CHOICE' }>): boolean
 /** Merge same-named slots within one arm (collapse duplicate field positions). */
 function mergeByName(slots: AssembledNonterminal[]): AssembledNonterminal[] {
 	if (slots.length <= 1) return slots;
-	const byName = new Map<string, AssembledNonterminal>();
+	const out: AssembledNonterminal[] = [];
+	const namedIndexByName = new Map<string, number>();
 	for (const s of slots) {
-		const prev = byName.get(s.name);
-		if (!prev) {
-			byName.set(s.name, s);
+		if (s.isUnnamed) {
+			// Positional/kind-derived name: never silently merge with anything else
+			// sharing that name, even another unnamed slot — that IS a genuine
+			// storageName collision (two structurally distinct positions), and
+			// downstream diagnostics (buildSlotsRecord's storagename-collision
+			// check) must see both entries to catch it. Merging here would union
+			// their values and erase the fact they were ever distinct.
+			out.push(s);
 			continue;
 		}
-		byName.set(
-			s.name,
-			prev.with({
-				values: dedupeValues([...prev.values, ...s.values]),
-				hasTrailing: prev.hasTrailing || s.hasTrailing,
-				hasLeading: prev.hasLeading || s.hasLeading,
-				sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, s.sourceRuleIds)
-			})
-		);
+		const idx = namedIndexByName.get(s.name);
+		if (idx === undefined) {
+			namedIndexByName.set(s.name, out.length);
+			out.push(s);
+			continue;
+		}
+		const prev = out[idx]!;
+		out[idx] = prev.with({
+			values: dedupeValues([...prev.values, ...s.values]),
+			hasTrailing: prev.hasTrailing || s.hasTrailing,
+			hasLeading: prev.hasLeading || s.hasLeading,
+			sourceRuleIds: mergeSourceRuleIds(prev.sourceRuleIds, s.sourceRuleIds)
+		});
 	}
-	return [...byName.values()];
+	return out;
 }
 
 /**
@@ -231,9 +241,30 @@ function mergeByName(slots: AssembledNonterminal[]): AssembledNonterminal[] {
 function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[] {
 	const merged = new Map<string, AssembledNonterminal>();
 	const presence = new Map<string, number>();
+	const unnamedByName = new Map<string, AssembledNonterminal[]>();
 	for (const arm of arms) {
+		const namesSeenInArm = new Set<string>();
 		for (const slot of arm) {
-			presence.set(slot.name, (presence.get(slot.name) ?? 0) + 1);
+			if (!namesSeenInArm.has(slot.name)) {
+				namesSeenInArm.add(slot.name);
+				presence.set(slot.name, (presence.get(slot.name) ?? 0) + 1);
+			}
+			if (slot.isUnnamed) {
+				// Positional/kind-derived name: never union this slot's values with
+				// another instance sharing its name — arms (or repeated positions
+				// within one arm) are structurally distinct, and unioning would
+				// silently discard that distinction. It STILL needs the same
+				// cross-arm presence-based optionality relaxation a named slot gets
+				// below (a kind-derived name that only appears in SOME arms — e.g. a
+				// polymorph form's own unnamed child — must become optional, or a
+				// parse that takes a different arm produces "requires one value; got
+				// undefined" downstream). Applied per-instance after the loop, once
+				// presence is fully counted across all arms.
+				const list = unnamedByName.get(slot.name) ?? [];
+				list.push(slot);
+				unnamedByName.set(slot.name, list);
+				continue;
+			}
 			const prev = merged.get(slot.name);
 			if (!prev) {
 				merged.set(slot.name, slot);
@@ -250,9 +281,12 @@ function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[]
 			);
 		}
 	}
-	return [...merged.values()].map((slot) =>
-		(presence.get(slot.name) ?? 0) < arms.length ? relaxToOptional(slot) : slot
+	const isPresentInEveryArm = (name: string) => (presence.get(name) ?? 0) >= arms.length;
+	const namedOut = [...merged.values()].map((slot) => (isPresentInEveryArm(slot.name) ? slot : relaxToOptional(slot)));
+	const unnamedOut = [...unnamedByName.values()].flatMap((instances) =>
+		instances.map((slot) => (isPresentInEveryArm(slot.name) ? slot : relaxToOptional(slot)))
 	);
+	return [...namedOut, ...unnamedOut];
 }
 
 /** Relax a slot's singular/required values to optional (cross-arm absence). */

@@ -3399,19 +3399,19 @@ export interface ArrayType {
 export interface ArrowFunction {
 	readonly $type: TSKindId.ArrowFunction;
 	readonly _async_marker?: boolean;
-	readonly _arrow_function_parameter?: ArrowFunctionParameter;
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters?: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
+	readonly _arrow_function_parameter?: ArrowFunctionParameter;
 	readonly _body: Expression | StatementBlock;
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
 	};
 	asyncMarker(): boolean | undefined;
-	arrowFunctionParameter(): ArrowFunctionParameter | undefined;
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters | undefined;
 	returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
+	arrowFunctionParameter(): ArrowFunctionParameter | undefined;
 	body(): Expression | StatementBlock;
 }
 
@@ -4613,10 +4613,10 @@ export interface PublicFieldDefinition {
 	readonly $type: TSKindId.PublicFieldDefinition;
 	readonly _decorator?: readonly Decorator[];
 	readonly _content?: PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst;
+	readonly _accessor_marker?: boolean;
 	readonly _public_field_definition_static_mods?: PublicFieldDefinitionStaticMods;
 	readonly _public_field_definition_abstract_first?: PublicFieldDefinitionAbstractFirst;
 	readonly _public_field_definition_readonly_first?: PublicFieldDefinitionReadonlyFirst;
-	readonly _accessor_marker?: boolean;
 	readonly _name: PropertyName;
 	readonly _optionality_marker?: number;
 	readonly _type?: TypeAnnotation;
@@ -4627,10 +4627,10 @@ export interface PublicFieldDefinition {
 	};
 	decorators(): readonly Decorator[];
 	content(): PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst | undefined;
+	accessorMarker(): boolean | undefined;
 	publicFieldDefinitionStaticMods(): PublicFieldDefinitionStaticMods | undefined;
 	publicFieldDefinitionAbstractFirst(): PublicFieldDefinitionAbstractFirst | undefined;
 	publicFieldDefinitionReadonlyFirst(): PublicFieldDefinitionReadonlyFirst | undefined;
-	accessorMarker(): boolean | undefined;
 	name(): PropertyName;
 	optionalityMarker(): number | undefined;
 	type(): TypeAnnotation | undefined;

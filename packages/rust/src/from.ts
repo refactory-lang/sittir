@@ -1615,11 +1615,11 @@ export function functionTypeFrom(input: T.FunctionType.Loose): ReturnType<typeof
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.functionType>;
 	return F.functionType({
 		forLifetimes: _resolveOneBranch<T.ForLifetimes>(input.forLifetimes, 'for_lifetimes'),
+		parameters: _resolveOneBranch<T.Parameters>(input.parameters, 'parameters') ?? F.parameters(),
 		functionTypeTraitForm: _resolveOneBranch<T.FunctionTypeTraitForm>(
 			input.functionTypeTraitForm,
 			'_function_type_trait_form'
 		),
-		parameters: _resolveOneBranch<T.Parameters>(input.parameters, 'parameters') ?? F.parameters(),
 		functionTypeFnForm: _resolveOneBranch<T.FunctionTypeFnForm>(input.functionTypeFnForm, '_function_type_fn_form'),
 		returnType: _resolveOne<T._Type>(input.returnType, _K2, _K3)
 	});

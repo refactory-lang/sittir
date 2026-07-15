@@ -6558,6 +6558,12 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle) {
 				slotName: 'for_lifetimes',
 				span: (data as _NodeData).$span
 			}),
+			_parameters: normalizeSingularWrapSlot(data._parameters, 'parameters', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'parameters',
+				span: (data as _NodeData).$span
+			}),
 			_function_type_trait_form: normalizeSingularWrapSlot(
 				data._function_type_trait_form,
 				'function_type_trait_form',
@@ -6565,12 +6571,6 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle) {
 				data.$type,
 				{ tree, nodeType: data.$type, slotName: 'function_type_trait_form', span: (data as _NodeData).$span }
 			),
-			_parameters: normalizeSingularWrapSlot(data._parameters, 'parameters', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'parameters',
-				span: (data as _NodeData).$span
-			}),
 			_function_type_fn_form: normalizeSingularWrapSlot(
 				data._function_type_fn_form,
 				'function_type_fn_form',
@@ -6588,6 +6588,9 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle) {
 			forLifetimes() {
 				return drillIn<T.ForLifetimes | undefined>(this._for_lifetimes, tree);
 			},
+			parameters() {
+				return drillIn<T.Parameters>(this._parameters, tree);
+			},
 			functionTypeTraitForm() {
 				return drillAs<T.FunctionTypeTraitForm | undefined>(
 					this._function_type_trait_form,
@@ -6595,9 +6598,6 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle) {
 					'function_type_trait_form',
 					'_function_type_trait_form'
 				);
-			},
-			parameters() {
-				return drillIn<T.Parameters>(this._parameters, tree);
 			},
 			functionTypeFnForm() {
 				return drillAs<T.FunctionTypeFnForm | undefined>(
@@ -6613,10 +6613,10 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle) {
 			$with: {
 				forLifetimes: (v: NonNullable<T.FunctionType['_for_lifetimes']>) =>
 					wrapFunctionType({ ...data, _for_lifetimes: v }, tree),
-				functionTypeTraitForm: (v: NonNullable<T.FunctionType['_function_type_trait_form']>) =>
-					wrapFunctionType({ ...data, _function_type_trait_form: v }, tree),
 				parameters: (v: NonNullable<T.FunctionType['_parameters']>) =>
 					wrapFunctionType({ ...data, _parameters: v }, tree),
+				functionTypeTraitForm: (v: NonNullable<T.FunctionType['_function_type_trait_form']>) =>
+					wrapFunctionType({ ...data, _function_type_trait_form: v }, tree),
 				functionTypeFnForm: (v: NonNullable<T.FunctionType['_function_type_fn_form']>) =>
 					wrapFunctionType({ ...data, _function_type_fn_form: v }, tree),
 				returnType: (v: NonNullable<T.FunctionType['_return_type']>) =>

@@ -1724,8 +1724,8 @@ export function patternListFrom(...input: readonly (T.Pattern | T.PatternList)[]
 export function printStatementFrom(input?: T.PrintStatement.Loose): ReturnType<typeof F.printStatement> {
 	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.printStatement>;
 	return F.printStatement({
-		chevron: _resolveOneBranch<T.Chevron>(input?.chevron, 'chevron'),
-		argument: _resolveMany<T.Expression>(input?.argument, _K0, _K1)
+		argument: _resolveMany<T.Expression>(input?.argument, _K0, _K1),
+		chevron: _resolveOneBranch<T.Chevron>(input?.chevron, 'chevron')
 	});
 }
 
@@ -1800,7 +1800,7 @@ export function splatPatternFrom(input: T.SplatPattern.Loose): ReturnType<typeof
 		identifier: _requireField(
 			'splat_pattern',
 			'identifier',
-			_resolveOneLeaf<T.Identifier | '_'>(input.identifier, 'identifier')
+			_resolveOneLeaf<'_' | T.Identifier>(input.identifier, 'identifier')
 		)
 	});
 }

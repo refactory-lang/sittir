@@ -1451,8 +1451,8 @@ export const FIELD_MAP: Record<
 	pattern_group: [{ name: 'patterns', required: true, multiple: true }],
 	pattern_list: [{ name: 'patterns', required: true, multiple: true }],
 	print_statement: [
-		{ name: 'chevron', required: false, multiple: false },
-		{ name: 'arguments', required: false, multiple: true }
+		{ name: 'arguments', required: false, multiple: true },
+		{ name: 'chevron', required: false, multiple: false }
 	],
 	raise_statement: [
 		{ name: 'expressions', required: false, multiple: false },

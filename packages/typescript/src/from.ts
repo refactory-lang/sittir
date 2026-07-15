@@ -1035,16 +1035,16 @@ export function arrowFunctionFrom(input: T.ArrowFunction.Loose): ReturnType<type
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.arrowFunction>;
 	return F.arrowFunction({
 		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
-		arrowFunctionParameter: _resolveOneBranch<T.ArrowFunctionParameter>(
-			input.arrowFunctionParameter,
-			'_arrow_function_parameter'
-		),
 		typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, 'type_parameters'),
 		parameters: _resolveOneBranch<T.FormalParameters>(input.parameters, 'formal_parameters'),
 		returnType: _resolveOne<T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation>(
 			input.returnType,
 			_K2,
 			_K3
+		),
+		arrowFunctionParameter: _resolveOneBranch<T.ArrowFunctionParameter>(
+			input.arrowFunctionParameter,
+			'_arrow_function_parameter'
 		),
 		body: _requireField('arrow_function', 'body', _resolveOne<T.Expression | T.StatementBlock>(input.body, _K6, _K10))
 	});
@@ -2646,6 +2646,7 @@ export function publicFieldDefinitionFrom(
 			_K2,
 			_K40
 		),
+		accessorMarker: _resolveBooleanKeyword(input.accessorMarker),
 		publicFieldDefinitionStaticMods: _resolveOneBranch<T.PublicFieldDefinitionStaticMods>(
 			input.publicFieldDefinitionStaticMods,
 			'_public_field_definition_static_mods'
@@ -2658,7 +2659,6 @@ export function publicFieldDefinitionFrom(
 			input.publicFieldDefinitionReadonlyFirst,
 			'_public_field_definition_readonly_first'
 		),
-		accessorMarker: _resolveBooleanKeyword(input.accessorMarker),
 		name: _requireField('public_field_definition', 'name', _resolveOne<T.PropertyName>(input.name, _K0, _K1)),
 		optionalityMarker: coerceKindEnumStorage(
 			_resolveOneLeaf<T.PublicFieldDefinitionOptionalityMarker>(

@@ -1259,13 +1259,6 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "arrow_function_parameter": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "type_parameters": {
         "unnamed": false,
         "slotCount": 1,
@@ -1281,6 +1274,13 @@
         "nonEmpty": false
       },
       "return_type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "arrow_function_parameter": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3358,6 +3358,13 @@
         "multiple": false,
         "nonEmpty": false
       },
+      "accessor_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "public_field_definition_static_mods": {
         "unnamed": false,
         "slotCount": 1,
@@ -3373,13 +3380,6 @@
         "nonEmpty": false
       },
       "public_field_definition_readonly_first": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "accessor_marker": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -10093,29 +10093,6 @@
           }
         },
         {
-          "name": "arrow_function_parameter",
-          "propertyName": "arrowFunctionParameter",
-          "paramName": "arrowFunctionParameter",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_arrow_function_parameter",
-              "parseKind": "arrow_function_parameter",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_arrow_function_parameter"
-            ]
-          }
-        },
-        {
           "name": "type_parameters",
           "propertyName": "typeParameters",
           "paramName": "typeParameters",
@@ -10201,6 +10178,29 @@
           }
         },
         {
+          "name": "arrow_function_parameter",
+          "propertyName": "arrowFunctionParameter",
+          "paramName": "arrowFunctionParameter",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_arrow_function_parameter",
+              "parseKind": "arrow_function_parameter",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_arrow_function_parameter"
+            ]
+          }
+        },
+        {
           "name": "body",
           "propertyName": "body",
           "paramName": "body",
@@ -10235,10 +10235,10 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "arrow_function_parameter",
         "type_parameters",
         "parameters",
         "return_type",
+        "arrow_function_parameter",
         "body"
       ]
     },
@@ -20032,6 +20032,26 @@
           }
         },
         {
+          "name": "accessor_marker",
+          "propertyName": "accessorMarker",
+          "paramName": "accessorMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "accessor",
+              "parseKind": "accessor"
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
           "name": "public_field_definition_static_mods",
           "propertyName": "publicFieldDefinitionStaticMods",
           "paramName": "publicFieldDefinitionStaticMods",
@@ -20098,26 +20118,6 @@
             "kinds": [
               "_public_field_definition_readonly_first"
             ]
-          }
-        },
-        {
-          "name": "accessor_marker",
-          "propertyName": "accessorMarker",
-          "paramName": "accessorMarker",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "accessor",
-              "parseKind": "accessor"
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": []
           }
         },
         {

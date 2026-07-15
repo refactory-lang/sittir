@@ -1853,10 +1853,10 @@ export const FIELD_MAP: Record<
 	array_type: [{ name: 'primaryType', required: true, multiple: false }],
 	arrow_function: [
 		{ name: 'asyncMarker', required: false, multiple: false },
-		{ name: 'arrowFunctionParameter', required: false, multiple: false },
 		{ name: 'typeParameters', required: false, multiple: false },
 		{ name: 'parameters', required: false, multiple: false },
 		{ name: 'returnType', required: false, multiple: false },
+		{ name: 'arrowFunctionParameter', required: false, multiple: false },
 		{ name: 'body', required: true, multiple: false }
 	],
 	as_expression: [
@@ -2266,10 +2266,10 @@ export const FIELD_MAP: Record<
 	public_field_definition: [
 		{ name: 'decorators', required: false, multiple: true },
 		{ name: 'content', required: false, multiple: false },
+		{ name: 'accessorMarker', required: false, multiple: false },
 		{ name: 'publicFieldDefinitionStaticMods', required: false, multiple: false },
 		{ name: 'publicFieldDefinitionAbstractFirst', required: false, multiple: false },
 		{ name: 'publicFieldDefinitionReadonlyFirst', required: false, multiple: false },
-		{ name: 'accessorMarker', required: false, multiple: false },
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'optionalityMarker', required: false, multiple: false },
 		{ name: 'type', required: false, multiple: false },

@@ -1439,18 +1439,18 @@
       }
     },
     "print_statement": {
-      "chevron": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "argument": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
+        "nonEmpty": false
+      },
+      "chevron": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -9325,29 +9325,6 @@
       "hidden": false,
       "fields": [
         {
-          "name": "chevron",
-          "propertyName": "chevron",
-          "paramName": "chevron",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "chevron",
-              "parseKind": "chevron",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "chevron"
-            ]
-          }
-        },
-        {
           "name": "argument",
           "propertyName": "arguments",
           "paramName": "arguments_",
@@ -9376,13 +9353,36 @@
               "expression"
             ]
           }
+        },
+        {
+          "name": "chevron",
+          "propertyName": "chevron",
+          "paramName": "chevron",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "chevron",
+              "parseKind": "chevron",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "chevron"
+            ]
+          }
         }
       ],
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "chevron",
-        "argument"
+        "argument",
+        "chevron"
       ]
     },
     {
@@ -9853,17 +9853,17 @@
           "nonEmpty": false,
           "values": [
             {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "_",
+              "parseKind": "_"
+            },
+            {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
               "parseKind": "identifier",
               "unresolved": true
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "_",
-              "parseKind": "_"
             }
           ],
           "projection": {

@@ -3893,13 +3893,6 @@ export function wrapArrowFunction(data: T.ArrowFunction, tree: TreeHandle) {
 					span: (data as _NodeData).$span
 				})
 			),
-			_arrow_function_parameter: normalizeSingularWrapSlot(
-				data._arrow_function_parameter,
-				'arrow_function_parameter',
-				false,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'arrow_function_parameter', span: (data as _NodeData).$span }
-			),
 			_type_parameters: normalizeSingularWrapSlot(data._type_parameters, 'type_parameters', false, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -3918,6 +3911,13 @@ export function wrapArrowFunction(data: T.ArrowFunction, tree: TreeHandle) {
 				slotName: 'return_type',
 				span: (data as _NodeData).$span
 			}),
+			_arrow_function_parameter: normalizeSingularWrapSlot(
+				data._arrow_function_parameter,
+				'arrow_function_parameter',
+				false,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'arrow_function_parameter', span: (data as _NodeData).$span }
+			),
 			_body: normalizeSingularWrapSlot(data._body, 'body', true, data.$type, {
 				tree,
 				nodeType: data.$type,
@@ -3927,14 +3927,6 @@ export function wrapArrowFunction(data: T.ArrowFunction, tree: TreeHandle) {
 
 			asyncMarker() {
 				return this._async_marker;
-			},
-			arrowFunctionParameter() {
-				return drillAs<T.ArrowFunctionParameter | undefined>(
-					this._arrow_function_parameter,
-					tree,
-					'arrow_function_parameter',
-					'_arrow_function_parameter'
-				);
 			},
 			typeParameters() {
 				return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree);
@@ -3948,20 +3940,28 @@ export function wrapArrowFunction(data: T.ArrowFunction, tree: TreeHandle) {
 					tree
 				);
 			},
+			arrowFunctionParameter() {
+				return drillAs<T.ArrowFunctionParameter | undefined>(
+					this._arrow_function_parameter,
+					tree,
+					'arrow_function_parameter',
+					'_arrow_function_parameter'
+				);
+			},
 			body() {
 				return drillIn<T.Expression | T.StatementBlock>(this._body, tree);
 			},
 			$with: {
 				asyncMarker: (v: NonNullable<T.ArrowFunction['_async_marker']>) =>
 					wrapArrowFunction({ ...data, _async_marker: v }, tree),
-				arrowFunctionParameter: (v: NonNullable<T.ArrowFunction['_arrow_function_parameter']>) =>
-					wrapArrowFunction({ ...data, _arrow_function_parameter: v }, tree),
 				typeParameters: (v: NonNullable<T.ArrowFunction['_type_parameters']>) =>
 					wrapArrowFunction({ ...data, _type_parameters: v }, tree),
 				parameters: (v: NonNullable<T.ArrowFunction['_parameters']>) =>
 					wrapArrowFunction({ ...data, _parameters: v }, tree),
 				returnType: (v: NonNullable<T.ArrowFunction['_return_type']>) =>
 					wrapArrowFunction({ ...data, _return_type: v }, tree),
+				arrowFunctionParameter: (v: NonNullable<T.ArrowFunction['_arrow_function_parameter']>) =>
+					wrapArrowFunction({ ...data, _arrow_function_parameter: v }, tree),
 				body: (v: NonNullable<T.ArrowFunction['_body']>) => wrapArrowFunction({ ...data, _body: v }, tree)
 			}
 		},
@@ -9012,6 +9012,14 @@ export function wrapPublicFieldDefinition(
 				data.$type,
 				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
+			_accessor_marker: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._accessor_marker, 'accessor_marker', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'accessor_marker',
+					span: (data as _NodeData).$span
+				})
+			),
 			_public_field_definition_static_mods: normalizeSingularWrapSlot(
 				data._public_field_definition_static_mods,
 				'public_field_definition_static_mods',
@@ -9042,14 +9050,6 @@ export function wrapPublicFieldDefinition(
 					slotName: 'public_field_definition_readonly_first',
 					span: (data as _NodeData).$span
 				}
-			),
-			_accessor_marker: coerceBooleanKeywordStorage(
-				normalizeSingularWrapSlot(data._accessor_marker, 'accessor_marker', false, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'accessor_marker',
-					span: (data as _NodeData).$span
-				})
 			),
 			_name: normalizeSingularWrapSlot(data._name, 'name', true, data.$type, {
 				tree,
@@ -9088,6 +9088,9 @@ export function wrapPublicFieldDefinition(
 					tree
 				);
 			},
+			accessorMarker() {
+				return this._accessor_marker;
+			},
 			publicFieldDefinitionStaticMods() {
 				return drillAs<T.PublicFieldDefinitionStaticMods | undefined>(
 					this._public_field_definition_static_mods,
@@ -9112,9 +9115,6 @@ export function wrapPublicFieldDefinition(
 					'_public_field_definition_readonly_first'
 				);
 			},
-			accessorMarker() {
-				return this._accessor_marker;
-			},
 			name() {
 				return drillIn<T.PropertyName>(this._name, tree);
 			},
@@ -9132,6 +9132,8 @@ export function wrapPublicFieldDefinition(
 					wrapPublicFieldDefinition({ ...data, _decorator: v }, tree),
 				content: (v: NonNullable<T.PublicFieldDefinition['_content']>) =>
 					wrapPublicFieldDefinition({ ...data, _content: v }, tree),
+				accessorMarker: (v: NonNullable<T.PublicFieldDefinition['_accessor_marker']>) =>
+					wrapPublicFieldDefinition({ ...data, _accessor_marker: v }, tree),
 				publicFieldDefinitionStaticMods: (
 					v: NonNullable<T.PublicFieldDefinition['_public_field_definition_static_mods']>
 				) => wrapPublicFieldDefinition({ ...data, _public_field_definition_static_mods: v }, tree),
@@ -9141,8 +9143,6 @@ export function wrapPublicFieldDefinition(
 				publicFieldDefinitionReadonlyFirst: (
 					v: NonNullable<T.PublicFieldDefinition['_public_field_definition_readonly_first']>
 				) => wrapPublicFieldDefinition({ ...data, _public_field_definition_readonly_first: v }, tree),
-				accessorMarker: (v: NonNullable<T.PublicFieldDefinition['_accessor_marker']>) =>
-					wrapPublicFieldDefinition({ ...data, _accessor_marker: v }, tree),
 				name: (v: NonNullable<T.PublicFieldDefinition['_name']>) =>
 					wrapPublicFieldDefinition({ ...data, _name: v }, tree),
 				optionalityMarker: (v: NonNullable<T.PublicFieldDefinition['_optionality_marker']>) =>

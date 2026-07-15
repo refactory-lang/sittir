@@ -1944,8 +1944,8 @@ export const FIELD_MAP: Record<
 	],
 	function_type: [
 		{ name: 'forLifetimes', required: false, multiple: false },
-		{ name: 'functionTypeTraitForm', required: false, multiple: false },
 		{ name: 'parameters', required: true, multiple: false },
+		{ name: 'functionTypeTraitForm', required: false, multiple: false },
 		{ name: 'functionTypeFnForm', required: false, multiple: false },
 		{ name: 'returnType', required: false, multiple: false }
 	],

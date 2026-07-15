@@ -2625,10 +2625,10 @@ export interface PatternList {
 
 export interface PrintStatement {
 	readonly $type: TSKindId.PrintStatement;
-	readonly _chevron?: Chevron;
 	readonly _argument?: readonly Expression[];
-	chevron(): Chevron | undefined;
+	readonly _chevron?: Chevron;
 	arguments(): readonly Expression[];
+	chevron(): Chevron | undefined;
 }
 
 export interface RaiseStatement {
@@ -2680,12 +2680,12 @@ export interface Slice {
 export interface SplatPattern {
 	readonly $type: TSKindId.SplatPattern;
 	readonly _operator: number;
-	readonly _identifier: Identifier | '_';
+	readonly _identifier: '_' | Identifier;
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'*' | '**', TSKindId.Star2 | TSKindId.StarStar>;
 	};
 	operator(): number;
-	identifier(): Identifier | '_';
+	identifier(): '_' | Identifier;
 }
 
 export interface SplatType {
