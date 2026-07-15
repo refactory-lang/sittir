@@ -35814,8 +35814,10 @@ pub struct JsxNamespaceNameTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_identifier"))]
-    pub jsx_identifier: _JsxIdentifierTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace"))]
+    pub namespace: _JsxIdentifierTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    pub name: _JsxIdentifierTransport,
 }
 
 impl RenderableTransport for JsxNamespaceNameTransport {
@@ -55251,7 +55253,8 @@ fn render_jsx_identifier(t: &JsxIdentifierTransport, dest: &mut dyn ::std::fmt::
 
 fn render_jsx_namespace_name(node: &JsxNamespaceNameTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = JsxNamespaceNameTemplate {
-        jsx_identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.jsx_identifier)),
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
+        namespace: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.namespace)),
     };
     template.render_into(dest)
 }

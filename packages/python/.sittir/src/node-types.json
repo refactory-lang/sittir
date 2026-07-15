@@ -3399,11 +3399,15 @@
     "fields": {
       "identifier": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "_",
             "named": false
+          },
+          {
+            "type": "identifier",
+            "named": true
           }
         ]
       },
@@ -3421,16 +3425,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        }
-      ]
     }
   },
   {

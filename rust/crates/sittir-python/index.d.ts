@@ -1402,7 +1402,7 @@ export interface SplatPatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _operator: SplatPatternOperatorEnum
-  _identifier: IdentifierTransport
+  _identifier: SplatPatternIdentifierTransportSlot
 }
 
 export interface SplatTypeTransport {

@@ -949,6 +949,16 @@ export default grammar(
 				// doesn't exist at runtime, clobbering all five declared fields.
 				// Positions 1/2/3 (the `?`, the type field, and the initializer)
 				// are already correctly structured in the base rule.
+				// jsx_namespace_name — base is `seq($._jsx_identifier, ':',
+				// $._jsx_identifier)`: an XML-namespace-style `<ns:name>` JSX
+				// tag/attribute head where BOTH positions are the same
+				// `_jsx_identifier` kind but distinct structural roles. Neither
+				// is field-named upstream, so both collapse to the same
+				// kind-derived storageName. Field them by role (`namespace` /
+				// `name`) — two genuinely distinct positions, not a union.
+				jsx_namespace_name: ($) =>
+					seq(field('namespace', $._jsx_identifier), ':', field('name', $._jsx_identifier)),
+
 				_ambient_declaration_global: ($) => seq('global', field('body', $.statement_block)),
 				_ambient_declaration_module: ($) =>
 					prec.right(

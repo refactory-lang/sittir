@@ -1611,7 +1611,8 @@ export interface JsxNamespaceNameTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _jsx_identifier: _JsxIdentifierTransport
+  _namespace: _JsxIdentifierTransport
+  _name: _JsxIdentifierTransport
 }
 
 export interface JsxOpeningElementContentTransport {

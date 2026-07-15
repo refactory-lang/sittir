@@ -3351,12 +3351,22 @@ var overrides_default = grammar(
           3: field("step")
           // expression [struct=2]
         },
-        // splat_pattern: 1 field(s)
+        // splat_pattern: base is `seq(choice('*', '**'), choice($.identifier, '_'))`.
+        // Position 1 is one semantic slot — "what's being splatted" —
+        // that can be a real identifier OR the `_` discard marker; the
+        // prior override only field-named the `_` arm (`'1/1'`), leaving
+        // the `$.identifier` arm unnamed. Both then derived the SAME
+        // kind-derived storageName ('identifier'), a storagename-
+        // collision whose last-write-wins merge silently dropped the
+        // `_` value. Field-naming the WHOLE choice (not one arm) makes
+        // this the same-name-both-positions "genuinely one combined
+        // slot" case: one named `identifier` slot unioning both values,
+        // same convention as `argument_list`'s naked-choice `1: field(...)` above.
         splat_pattern: {
           "0": field("operator"),
           // '*' | '**'
-          "1/1": field("identifier")
-          // identifier [struct=0]
+          1: field("identifier")
+          // identifier | '_'
         },
         // splat_type: 1 field(s)
         splat_type: {

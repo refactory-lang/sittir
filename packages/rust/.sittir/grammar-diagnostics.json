@@ -81,45 +81,6 @@
   },
   {
     "scope": "grammar",
-    "code": "storagename-collision",
-    "severity": "warning",
-    "grammar": "rust",
-    "ownerKind": "_let_chain",
-    "message": "[assemble] storageName collision: kind '_let_chain' has 2 slots with storageName 'let_chain':\n    let_chain (positional, multiplicity: optional, values: [_let_chain])\n    let_chain (positional, multiplicity: optional, values: [_let_chain])",
-    "canProceed": true,
-    "details": {
-      "storageName": "let_chain",
-      "slotCount": 2
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "storagename-collision",
-    "severity": "warning",
-    "grammar": "rust",
-    "ownerKind": "_let_chain",
-    "message": "[assemble] storageName collision: kind '_let_chain' has 5 slots with storageName 'let_condition':\n    let_condition (positional, multiplicity: optional, values: [let_condition])\n    let_condition (positional, multiplicity: optional, values: [let_condition])\n    let_condition (positional, multiplicity: optional, values: [let_condition])\n    let_condition (positional, multiplicity: optional, values: [let_condition])\n    let_condition (positional, multiplicity: optional, values: [let_condition])",
-    "canProceed": true,
-    "details": {
-      "storageName": "let_condition",
-      "slotCount": 5
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "storagename-collision",
-    "severity": "warning",
-    "grammar": "rust",
-    "ownerKind": "_let_chain",
-    "message": "[assemble] storageName collision: kind '_let_chain' has 3 slots with storageName 'expression':\n    expression (positional, multiplicity: optional, values: [_expression])\n    expression (positional, multiplicity: optional, values: [_expression])\n    expression (positional, multiplicity: optional, values: [_expression])",
-    "canProceed": true,
-    "details": {
-      "storageName": "expression",
-      "slotCount": 3
-    }
-  },
-  {
-    "scope": "grammar",
     "code": "typename-collision",
     "severity": "info",
     "grammar": "rust",

@@ -6179,7 +6179,7 @@ export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle) {
 				return this._operator;
 			},
 			identifier() {
-				return drillIn<T.Identifier>(this._identifier, tree);
+				return drillIn<T.Identifier | '_'>(this._identifier, tree);
 			},
 			$with: {
 				operator: (v: NonNullable<T.SplatPattern['_operator']>) => wrapSplatPattern({ ...data, _operator: v }, tree),

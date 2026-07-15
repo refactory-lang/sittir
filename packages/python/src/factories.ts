@@ -2761,7 +2761,7 @@ export function splatPattern(config: T.SplatPattern.Config) {
 			$with: {
 				operator: (value: NonNullable<Parameters<typeof splatPattern>[0]>['operator']) =>
 					splatPattern({ ...config, operator: value }),
-				identifier: (value: T.Identifier) => splatPattern({ ...config, identifier: value })
+				identifier: (value: T.Identifier | '_') => splatPattern({ ...config, identifier: value })
 			}
 		},
 		methodsEngine

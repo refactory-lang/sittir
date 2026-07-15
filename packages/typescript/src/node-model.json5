@@ -2658,7 +2658,14 @@
       }
     },
     "jsx_namespace_name": {
-      "jsx_identifier": {
+      "namespace": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -16858,9 +16865,32 @@
       "hidden": false,
       "fields": [
         {
-          "name": "jsx_identifier",
-          "propertyName": "jsxIdentifier",
-          "paramName": "jsxIdentifier",
+          "name": "namespace",
+          "propertyName": "namespace",
+          "paramName": "namespace",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_jsx_identifier",
+              "parseKind": "_jsx_identifier",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_jsx_identifier"
+            ]
+          }
+        },
+        {
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -16882,9 +16912,10 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
-        "jsx_identifier"
+        "namespace",
+        "name"
       ]
     },
     {

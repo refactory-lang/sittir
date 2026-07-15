@@ -1025,7 +1025,8 @@ pub struct JsxExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "jsx_namespace_name.jinja", escape = "none")]
 pub struct JsxNamespaceNameTemplate<'a> {
-    pub jsx_identifier: SingleNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub namespace: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

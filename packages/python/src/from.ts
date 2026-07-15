@@ -1800,7 +1800,7 @@ export function splatPatternFrom(input: T.SplatPattern.Loose): ReturnType<typeof
 		identifier: _requireField(
 			'splat_pattern',
 			'identifier',
-			_resolveOneLeaf<T.Identifier>(input.identifier, 'identifier')
+			_resolveOneLeaf<T.Identifier | '_'>(input.identifier, 'identifier')
 		)
 	});
 }

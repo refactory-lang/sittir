@@ -4210,8 +4210,10 @@ export interface JsxExpression {
 
 export interface JsxNamespaceName {
 	readonly $type: 'jsx_namespace_name';
-	readonly _jsx_identifier: _JsxIdentifier;
-	jsxIdentifier(): _JsxIdentifier;
+	readonly _namespace: _JsxIdentifier;
+	readonly _name: _JsxIdentifier;
+	namespace(): _JsxIdentifier;
+	name(): _JsxIdentifier;
 }
 
 export interface JsxOpeningElement {

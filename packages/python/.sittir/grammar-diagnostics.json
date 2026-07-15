@@ -33,19 +33,6 @@
   },
   {
     "scope": "grammar",
-    "code": "storagename-collision",
-    "severity": "warning",
-    "grammar": "python",
-    "ownerKind": "splat_pattern",
-    "message": "[assemble] storageName collision: kind 'splat_pattern' has 2 slots with storageName 'identifier':\n    identifier (named, multiplicity: single, values: [\"_\"])\n    identifier (positional, multiplicity: single, values: [identifier])",
-    "canProceed": true,
-    "details": {
-      "storageName": "identifier",
-      "slotCount": 2
-    }
-  },
-  {
-    "scope": "grammar",
     "code": "typename-collision",
     "severity": "info",
     "grammar": "python",

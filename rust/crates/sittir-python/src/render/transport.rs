@@ -45,7 +45,6 @@ pub enum AnyTransport {
     IsNot(IsNotTransport),
     KeyValuePattern(KeyValuePatternTransport),
     KwAsyncMarker(KwAsyncMarkerTransport),
-    KwIdentifier(KwIdentifierTransport),
     KwType(KwTypeTransport),
     _ListPattern(_ListPatternTransport),
     _ListPatternGroup1(_ListPatternGroup1Transport),
@@ -210,7 +209,6 @@ pub enum AnyTransport {
     Async(AsyncTransport),
     Comma(CommaTransport),
     Arrow(ArrowTransport),
-    Anonymous(AnonymousTransport),
     Bracket(BracketTransport),
     TokBs(TokBsTransport),
     From(FromTransport),
@@ -266,6 +264,7 @@ pub enum AnyTransport {
     Print(PrintTransport),
     Raise(RaiseTransport),
     Return(ReturnTransport),
+    Anonymous(AnonymousTransport),
     True2(True2Transport),
     Try(TryTransport),
     Pipe(PipeTransport),
@@ -970,10 +969,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 93 => Ok(AnyTransport::Arrow(
                     ArrowTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: _ (_ANONYMOUS)
-                47 => Ok(AnyTransport::Anonymous(
-                    AnonymousTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: [ (BRACKET)
                 44 => Ok(AnyTransport::Bracket(
                     BracketTransport::from_napi_value(env, napi_val)?
@@ -1157,6 +1152,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: return (RETURN)
                 16 => Ok(AnyTransport::Return(
                     ReturnTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _ (_ANONYMOUS)
+                47 => Ok(AnyTransport::Anonymous(
+                    AnonymousTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: try (TRY)
                 32 => Ok(AnyTransport::Try(
@@ -9724,6 +9723,101 @@ impl RenderableTransport for ParenthesizedListSplatContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum SplatPatternIdentifierTransportSlot {
+    Identifier(IdentifierTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternIdentifierTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SplatPatternIdentifierTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in SplatPatternIdentifierTransportSlot")
+                )?;
+                match kind_id {
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SplatPatternIdentifierTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("SplatPatternIdentifierTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SplatPatternIdentifierTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("SplatPatternIdentifierTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SplatPatternIdentifierTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SplatPatternIdentifierTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SplatPatternIdentifierTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SplatPatternIdentifierTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn splat_pattern_identifier_transport_slot_to_any(t: SplatPatternIdentifierTransportSlot) -> AnyTransport {
+    match t {
+        SplatPatternIdentifierTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        SplatPatternIdentifierTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for SplatPatternIdentifierTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            SplatPatternIdentifierTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            SplatPatternIdentifierTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum SplatTypeIdentifierTransportSlot {
     SplatPatternOperator(SplatPatternOperatorEnum),
     Identifier(IdentifierTransport),
@@ -14181,109 +14275,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<KwAsyncMarkerTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         KwAsyncMarkerTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct KwIdentifierTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for KwIdentifierTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for KwIdentifierTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "_".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                obj.get("$text")?.unwrap_or_else(|| "_".to_string())
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for KwIdentifierTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "_".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for KwIdentifierTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<KwIdentifierTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        KwIdentifierTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<KwIdentifierTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        KwIdentifierTransport::to_napi_value(env, *val)
     }
 }
 
@@ -21221,7 +21212,7 @@ pub struct SplatPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: SplatPatternOperatorEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
-    pub identifier: IdentifierTransport,
+    pub identifier: SplatPatternIdentifierTransportSlot,
 }
 
 impl RenderableTransport for SplatPatternTransport {
@@ -24738,109 +24729,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ArrowTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         ArrowTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct AnonymousTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for AnonymousTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "_".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                obj.get("$text")?.unwrap_or_else(|| "_".to_string())
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "_".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AnonymousTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AnonymousTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        AnonymousTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonymousTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        AnonymousTransport::to_napi_value(env, *val)
     }
 }
 
@@ -30510,6 +30398,109 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ReturnTransport> {
 }
 
 #[derive(Debug, Clone)]
+pub struct AnonymousTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for AnonymousTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "_".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                obj.get("$text")?.unwrap_or_else(|| "_".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(true),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "_".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AnonymousTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AnonymousTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        AnonymousTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonymousTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        AnonymousTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct True2Transport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -31268,10 +31259,6 @@ fn render_key_value_pattern(node: &KeyValuePatternTransport, dest: &mut dyn ::st
 }
 
 fn render_kw_async_marker(t: &KwAsyncMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render_kw_identifier(t: &KwIdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -33068,10 +33055,6 @@ fn render_arrow(t: &ArrowTransport, dest: &mut dyn ::std::fmt::Write) -> Result<
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_anonymous(t: &AnonymousTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
 fn render_bracket(t: &BracketTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -33289,6 +33272,10 @@ fn render_raise(t: &RaiseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<
 }
 
 fn render_return(t: &ReturnTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_anonymous(t: &AnonymousTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -33545,7 +33532,6 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::IsNot(t) => t.render_into(dest),
             AnyTransport::KeyValuePattern(t) => render_key_value_pattern(t, dest),
             AnyTransport::KwAsyncMarker(t) => t.render_into(dest),
-            AnyTransport::KwIdentifier(t) => t.render_into(dest),
             AnyTransport::KwType(t) => t.render_into(dest),
             AnyTransport::_ListPattern(t) => render__list_pattern(t, dest),
             AnyTransport::_ListPatternGroup1(t) => render__list_pattern_group1(t, dest),
@@ -33710,7 +33696,6 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Async(t) => t.render_into(dest),
             AnyTransport::Comma(t) => t.render_into(dest),
             AnyTransport::Arrow(t) => t.render_into(dest),
-            AnyTransport::Anonymous(t) => t.render_into(dest),
             AnyTransport::Bracket(t) => t.render_into(dest),
             AnyTransport::TokBs(t) => t.render_into(dest),
             AnyTransport::From(t) => t.render_into(dest),
@@ -33766,6 +33751,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Print(t) => t.render_into(dest),
             AnyTransport::Raise(t) => t.render_into(dest),
             AnyTransport::Return(t) => t.render_into(dest),
+            AnyTransport::Anonymous(t) => t.render_into(dest),
             AnyTransport::True2(t) => t.render_into(dest),
             AnyTransport::Try(t) => t.render_into(dest),
             AnyTransport::Pipe(t) => t.render_into(dest),
@@ -33817,7 +33803,6 @@ impl AnyTransport {
             Self::IsNot(t) => t.transport_named,
             Self::KeyValuePattern(t) => t.transport_named,
             Self::KwAsyncMarker(t) => t.transport_named,
-            Self::KwIdentifier(t) => t.transport_named,
             Self::KwType(t) => t.transport_named,
             Self::_ListPattern(t) => t.transport_named,
             Self::_ListPatternGroup1(t) => t.transport_named,
@@ -33980,7 +33965,6 @@ impl AnyTransport {
             Self::Async(t) => t.transport_named,
             Self::Comma(t) => t.transport_named,
             Self::Arrow(t) => t.transport_named,
-            Self::Anonymous(t) => t.transport_named,
             Self::Bracket(t) => t.transport_named,
             Self::TokBs(t) => t.transport_named,
             Self::From(t) => t.transport_named,
@@ -34036,6 +34020,7 @@ impl AnyTransport {
             Self::Print(t) => t.transport_named,
             Self::Raise(t) => t.transport_named,
             Self::Return(t) => t.transport_named,
+            Self::Anonymous(t) => t.transport_named,
             Self::True2(t) => t.transport_named,
             Self::Try(t) => t.transport_named,
             Self::Pipe(t) => t.transport_named,

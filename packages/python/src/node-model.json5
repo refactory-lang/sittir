@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 263,
+  "nodeCount": 262,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -3145,17 +3145,6 @@
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
       "text": "async"
-    },
-    {
-      "kind": "_kw_identifier",
-      "modelType": "keyword",
-      "typeName": "KwIdentifier",
-      "factoryName": "kwIdentifier",
-      "irKey": "kwIdentifier",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"_\" as const",
-      "text": "_"
     },
     {
       "kind": "_kw_type",
@@ -9858,6 +9847,12 @@
               "name": "identifier",
               "parseKind": "identifier",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "_",
+              "parseKind": "_"
             }
           ],
           "projection": {

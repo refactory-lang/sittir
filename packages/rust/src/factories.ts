@@ -584,31 +584,25 @@ export function _implItemPositiveClause(config: T.ImplItemPositiveClause.Config)
 	);
 }
 
-export function letChain(config: Partial<T.LetChain.Config> = {}) {
-	const _let_chain = config.letChain;
-	const _let_condition = config.letCondition;
-	const _expression = config.expression;
+export function letChain(config: T.LetChain.Config) {
+	const _left = config.left;
+	const _right = config.right;
 	return withMethods(
 		{
 			$type: TSKindId.LetChain as const,
 			$source: 2 as const,
 			$named: true as const,
-			_let_chain,
-			_let_condition,
-			_expression,
-			letChain() {
-				return _let_chain;
+			_left,
+			_right,
+			left() {
+				return _left;
 			},
-			letCondition() {
-				return _let_condition;
-			},
-			expression() {
-				return _expression;
+			right() {
+				return _right;
 			},
 			$with: {
-				letChain: (value?: T.LetChain) => letChain({ ...config, letChain: value }),
-				letCondition: (value?: T.LetCondition) => letChain({ ...config, letCondition: value }),
-				expression: (value?: T.Expression) => letChain({ ...config, expression: value })
+				left: (value: T.LetChain | T.LetCondition | T.Expression) => letChain({ ...config, left: value }),
+				right: (value: T.LetCondition | T.Expression) => letChain({ ...config, right: value })
 			}
 		},
 		methodsEngine

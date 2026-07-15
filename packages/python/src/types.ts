@@ -40,7 +40,6 @@ export type LeafStringMap = {
 		| '|=';
 	_complex_pattern_operator: '+' | '-';
 	_kw_async_marker: 'async';
-	_kw_identifier: '_';
 	_kw_type: 'type';
 	_splat_pattern_operator: '*' | '**';
 	_unary_operator_operator: '+' | '-' | '~';
@@ -52,7 +51,6 @@ export type LeafStringMap = {
 	true: 'True';
 	as: 'as';
 	async: 'async';
-	_: '_';
 	from: 'from';
 	assert: 'assert';
 	and: 'and';
@@ -82,6 +80,7 @@ export type LeafStringMap = {
 	print: 'print';
 	raise: 'raise';
 	return: 'return';
+	_: '_';
 	True: 'True';
 	try: 'try';
 	while: 'while';
@@ -235,7 +234,6 @@ export const enum SyntaxKind {
 	ComplexPatternOperator = '_complex_pattern_operator',
 	IsNot = '_is_not',
 	KwAsyncMarker = '_kw_async_marker',
-	KwIdentifier = '_kw_identifier',
 	KwType = '_kw_type',
 	NotIn = '_not_in',
 	SplatPatternOperator = '_splat_pattern_operator',
@@ -267,7 +265,6 @@ export const enum SyntaxKind {
 	Except = 'except',
 	As = 'as',
 	Async = 'async',
-	Anonymous = '_',
 	From = 'from',
 	Assert = 'assert',
 	And = 'and',
@@ -297,6 +294,7 @@ export const enum SyntaxKind {
 	Print = 'print',
 	Raise = 'raise',
 	Return = 'return',
+	Anonymous = '_',
 	True2 = 'True',
 	Try = 'try',
 	While = 'while',
@@ -2680,12 +2678,12 @@ export interface Slice {
 export interface SplatPattern {
 	readonly $type: TSKindId.SplatPattern;
 	readonly _operator: number;
-	readonly _identifier: Identifier;
+	readonly _identifier: Identifier | '_';
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'*' | '**', TSKindId.Star2 | TSKindId.StarStar>;
 	};
 	operator(): number;
-	identifier(): Identifier;
+	identifier(): Identifier | '_';
 }
 
 export interface SplatType {

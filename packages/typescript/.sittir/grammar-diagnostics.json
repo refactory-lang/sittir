@@ -46,19 +46,6 @@
   },
   {
     "scope": "grammar",
-    "code": "storagename-collision",
-    "severity": "warning",
-    "grammar": "typescript",
-    "ownerKind": "jsx_namespace_name",
-    "message": "[assemble] storageName collision: kind 'jsx_namespace_name' has 2 slots with storageName 'jsx_identifier':\n    jsx_identifier (positional, multiplicity: single, values: [_jsx_identifier])\n    jsx_identifier (positional, multiplicity: single, values: [_jsx_identifier])",
-    "canProceed": true,
-    "details": {
-      "storageName": "jsx_identifier",
-      "slotCount": 2
-    }
-  },
-  {
-    "scope": "grammar",
     "code": "typename-collision",
     "severity": "info",
     "grammar": "typescript",

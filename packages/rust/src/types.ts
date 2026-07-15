@@ -3018,12 +3018,10 @@ export interface InPath {
 
 export interface LetChain {
 	readonly $type: TSKindId.LetChain;
-	readonly _let_chain?: LetChain;
-	readonly _let_condition?: LetCondition;
-	readonly _expression?: Expression;
-	letChain(): LetChain | undefined;
-	letCondition(): LetCondition | undefined;
-	expression(): Expression | undefined;
+	readonly _left: LetChain | LetCondition | Expression;
+	readonly _right: LetCondition | Expression;
+	left(): LetChain | LetCondition | Expression;
+	right(): LetCondition | Expression;
 }
 
 export interface LetDeclarationOptional1 {

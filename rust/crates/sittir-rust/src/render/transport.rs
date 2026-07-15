@@ -2003,6 +2003,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         if let Ok(value) = LetConditionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::LetCondition(value));
                         }
+                        if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LetChain(value));
+                        }
                         if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Expression(value));
                         }
@@ -2026,9 +2029,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         }
                         if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Block(value));
-                        }
-                        if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::LetChain(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ConditionTransport"))
                     },
@@ -2315,6 +2315,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         if let Ok(value) = LetConditionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::LetCondition(value));
                         }
+                        if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LetChain(value));
+                        }
                         if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Expression(value));
                         }
@@ -2338,9 +2341,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         }
                         if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Block(value));
-                        }
-                        if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::LetChain(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ConditionTransport"))
                     },
@@ -9334,6 +9334,1081 @@ impl RenderableTransport for ImplItemPositiveClauseTraitTransportSlot {
             ImplItemPositiveClauseTraitTransportSlot::ScopedTypeIdentifier(inner) => render_scoped_type_identifier(inner, dest),
             ImplItemPositiveClauseTraitTransportSlot::GenericType(inner) => render_generic_type(inner, dest),
             ImplItemPositiveClauseTraitTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum LetChainLeftTransportSlot {
+    LetChain(LetChainTransport),
+    LetCondition(LetConditionTransport),
+    UnaryExpression(UnaryExpressionTransport),
+    ReferenceExpression(ReferenceExpressionTransport),
+    TryExpression(TryExpressionTransport),
+    BinaryExpression(BinaryExpressionTransport),
+    AssignmentExpression(AssignmentExpressionTransport),
+    CompoundAssignmentExpr(CompoundAssignmentExprTransport),
+    TypeCastExpression(TypeCastExpressionTransport),
+    CallExpression(CallExpressionTransport),
+    ReturnExpression(ReturnExpressionTransport),
+    YieldExpression(YieldExpressionTransport),
+    StringLiteral(StringLiteralTransport),
+    RawStringLiteral(RawStringLiteralTransport),
+    CharLiteral(CharLiteralTransport),
+    BooleanLiteral(BooleanLiteralEnum),
+    IntegerLiteral(IntegerLiteralTransport),
+    FloatLiteral(FloatLiteralTransport),
+    Identifier(IdentifierTransport),
+    ReservedIdentifier(ReservedIdentifierEnum),
+    Self_(Self_Transport),
+    ScopedIdentifier(ScopedIdentifierTransport),
+    GenericFunction(GenericFunctionTransport),
+    AwaitExpression(AwaitExpressionTransport),
+    FieldExpression(FieldExpressionTransport),
+    ArrayExpression(ArrayExpressionTransport),
+    TupleExpression(TupleExpressionTransport),
+    MacroInvocation(MacroInvocationTransport),
+    UnitExpression(UnitExpressionTransport),
+    BreakExpression(BreakExpressionTransport),
+    ContinueExpression(ContinueExpressionTransport),
+    IndexExpression(IndexExpressionTransport),
+    Metavariable(MetavariableTransport),
+    ClosureExpression(ClosureExpressionTransport),
+    ParenthesizedExpression(ParenthesizedExpressionTransport),
+    StructExpression(StructExpressionTransport),
+    UnsafeBlock(UnsafeBlockTransport),
+    AsyncBlock(AsyncBlockTransport),
+    GenBlock(GenBlockTransport),
+    TryBlock(TryBlockTransport),
+    Block(BlockTransport),
+    IfExpression(IfExpressionTransport),
+    MatchExpression(MatchExpressionTransport),
+    WhileExpression(WhileExpressionTransport),
+    LoopExpression(LoopExpressionTransport),
+    ForExpression(ForExpressionTransport),
+    ConstBlock(ConstBlockTransport),
+    RangeExpression(RangeExpressionTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for LetChainLeftTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    269 => Ok(Self::LetChain(
+                        LetChainTransport::from_napi_value(env, napi_val)?
+                    )),
+                    268 => Ok(Self::LetCondition(
+                        LetConditionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    247 => Ok(Self::UnaryExpression(
+                        UnaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    249 => Ok(Self::ReferenceExpression(
+                        ReferenceExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    248 => Ok(Self::TryExpression(
+                        TryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    250 => Ok(Self::BinaryExpression(
+                        BinaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    251 => Ok(Self::AssignmentExpression(
+                        AssignmentExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    252 => Ok(Self::CompoundAssignmentExpr(
+                        CompoundAssignmentExprTransport::from_napi_value(env, napi_val)?
+                    )),
+                    253 => Ok(Self::TypeCastExpression(
+                        TypeCastExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    256 => Ok(Self::CallExpression(
+                        CallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    254 => Ok(Self::ReturnExpression(
+                        ReturnExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    255 => Ok(Self::YieldExpression(
+                        YieldExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    311 => Ok(Self::StringLiteral(
+                        StringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    312 => Ok(Self::RawStringLiteral(
+                        RawStringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    128 => Ok(Self::CharLiteral(
+                        CharLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    313 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    130 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    131 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    125 => Ok(Self::IntegerLiteral(
+                        IntegerLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    151 => Ok(Self::FloatLiteral(
+                        FloatLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    90 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    138 => Ok(Self::Self_(
+                        Self_Transport::from_napi_value(env, napi_val)?
+                    )),
+                    243 => Ok(Self::ScopedIdentifier(
+                        ScopedIdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    225 => Ok(Self::GenericFunction(
+                        GenericFunctionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    287 => Ok(Self::AwaitExpression(
+                        AwaitExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    288 => Ok(Self::FieldExpression(
+                        FieldExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    258 => Ok(Self::ArrayExpression(
+                        ArrayExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    260 => Ok(Self::TupleExpression(
+                        TupleExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    239 => Ok(Self::MacroInvocation(
+                        MacroInvocationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    261 => Ok(Self::UnitExpression(
+                        UnitExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    284 => Ok(Self::BreakExpression(
+                        BreakExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    285 => Ok(Self::ContinueExpression(
+                        ContinueExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    286 => Ok(Self::IndexExpression(
+                        IndexExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    141 => Ok(Self::Metavariable(
+                        MetavariableTransport::from_napi_value(env, napi_val)?
+                    )),
+                    281 => Ok(Self::ClosureExpression(
+                        ClosureExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    259 => Ok(Self::ParenthesizedExpression(
+                        ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    262 => Ok(Self::StructExpression(
+                        StructExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    289 => Ok(Self::UnsafeBlock(
+                        UnsafeBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    290 => Ok(Self::AsyncBlock(
+                        AsyncBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    291 => Ok(Self::GenBlock(
+                        GenBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    292 => Ok(Self::TryBlock(
+                        TryBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    293 => Ok(Self::Block(
+                        BlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    267 => Ok(Self::IfExpression(
+                        IfExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    272 => Ok(Self::MatchExpression(
+                        MatchExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    277 => Ok(Self::WhileExpression(
+                        WhileExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    278 => Ok(Self::LoopExpression(
+                        LoopExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    279 => Ok(Self::ForExpression(
+                        ForExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    280 => Ok(Self::ConstBlock(
+                        ConstBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    246 => Ok(Self::RangeExpression(
+                        RangeExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in LetChainLeftTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in LetChainLeftTransportSlot")
+                )?;
+                match kind_id {
+                    269 => Ok(Self::LetChain(
+                        LetChainTransport::from_napi_value(env, napi_val)?
+                    )),
+                    268 => Ok(Self::LetCondition(
+                        LetConditionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    247 => Ok(Self::UnaryExpression(
+                        UnaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    249 => Ok(Self::ReferenceExpression(
+                        ReferenceExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    248 => Ok(Self::TryExpression(
+                        TryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    250 => Ok(Self::BinaryExpression(
+                        BinaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    251 => Ok(Self::AssignmentExpression(
+                        AssignmentExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    252 => Ok(Self::CompoundAssignmentExpr(
+                        CompoundAssignmentExprTransport::from_napi_value(env, napi_val)?
+                    )),
+                    253 => Ok(Self::TypeCastExpression(
+                        TypeCastExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    256 => Ok(Self::CallExpression(
+                        CallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    254 => Ok(Self::ReturnExpression(
+                        ReturnExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    255 => Ok(Self::YieldExpression(
+                        YieldExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    311 => Ok(Self::StringLiteral(
+                        StringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    312 => Ok(Self::RawStringLiteral(
+                        RawStringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    128 => Ok(Self::CharLiteral(
+                        CharLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    313 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    130 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    131 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    125 => Ok(Self::IntegerLiteral(
+                        IntegerLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    151 => Ok(Self::FloatLiteral(
+                        FloatLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    90 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    138 => Ok(Self::Self_(
+                        Self_Transport::from_napi_value(env, napi_val)?
+                    )),
+                    243 => Ok(Self::ScopedIdentifier(
+                        ScopedIdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    225 => Ok(Self::GenericFunction(
+                        GenericFunctionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    287 => Ok(Self::AwaitExpression(
+                        AwaitExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    288 => Ok(Self::FieldExpression(
+                        FieldExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    258 => Ok(Self::ArrayExpression(
+                        ArrayExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    260 => Ok(Self::TupleExpression(
+                        TupleExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    239 => Ok(Self::MacroInvocation(
+                        MacroInvocationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    261 => Ok(Self::UnitExpression(
+                        UnitExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    284 => Ok(Self::BreakExpression(
+                        BreakExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    285 => Ok(Self::ContinueExpression(
+                        ContinueExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    286 => Ok(Self::IndexExpression(
+                        IndexExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    141 => Ok(Self::Metavariable(
+                        MetavariableTransport::from_napi_value(env, napi_val)?
+                    )),
+                    281 => Ok(Self::ClosureExpression(
+                        ClosureExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    259 => Ok(Self::ParenthesizedExpression(
+                        ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    262 => Ok(Self::StructExpression(
+                        StructExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    289 => Ok(Self::UnsafeBlock(
+                        UnsafeBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    290 => Ok(Self::AsyncBlock(
+                        AsyncBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    291 => Ok(Self::GenBlock(
+                        GenBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    292 => Ok(Self::TryBlock(
+                        TryBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    293 => Ok(Self::Block(
+                        BlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    267 => Ok(Self::IfExpression(
+                        IfExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    272 => Ok(Self::MatchExpression(
+                        MatchExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    277 => Ok(Self::WhileExpression(
+                        WhileExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    278 => Ok(Self::LoopExpression(
+                        LoopExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    279 => Ok(Self::ForExpression(
+                        ForExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    280 => Ok(Self::ConstBlock(
+                        ConstBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    246 => Ok(Self::RangeExpression(
+                        RangeExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in LetChainLeftTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("LetChainLeftTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for LetChainLeftTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("LetChainLeftTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LetChainLeftTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        LetChainLeftTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LetChainLeftTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        LetChainLeftTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn let_chain_left_transport_slot_to_any(t: LetChainLeftTransportSlot) -> AnyTransport {
+    match t {
+        LetChainLeftTransportSlot::LetChain(inner) => AnyTransport::LetChain(inner),
+        LetChainLeftTransportSlot::LetCondition(inner) => AnyTransport::LetCondition(inner),
+        LetChainLeftTransportSlot::UnaryExpression(inner) => AnyTransport::UnaryExpression(inner),
+        LetChainLeftTransportSlot::ReferenceExpression(inner) => AnyTransport::ReferenceExpression(inner),
+        LetChainLeftTransportSlot::TryExpression(inner) => AnyTransport::TryExpression(inner),
+        LetChainLeftTransportSlot::BinaryExpression(inner) => AnyTransport::BinaryExpression(inner),
+        LetChainLeftTransportSlot::AssignmentExpression(inner) => AnyTransport::AssignmentExpression(inner),
+        LetChainLeftTransportSlot::CompoundAssignmentExpr(inner) => AnyTransport::CompoundAssignmentExpr(inner),
+        LetChainLeftTransportSlot::TypeCastExpression(inner) => AnyTransport::TypeCastExpression(inner),
+        LetChainLeftTransportSlot::CallExpression(inner) => AnyTransport::CallExpression(inner),
+        LetChainLeftTransportSlot::ReturnExpression(inner) => AnyTransport::ReturnExpression(inner),
+        LetChainLeftTransportSlot::YieldExpression(inner) => AnyTransport::YieldExpression(inner),
+        LetChainLeftTransportSlot::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
+        LetChainLeftTransportSlot::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
+        LetChainLeftTransportSlot::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
+        LetChainLeftTransportSlot::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
+        LetChainLeftTransportSlot::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
+        LetChainLeftTransportSlot::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
+        LetChainLeftTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        LetChainLeftTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
+        LetChainLeftTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
+        LetChainLeftTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
+        LetChainLeftTransportSlot::GenericFunction(inner) => AnyTransport::GenericFunction(inner),
+        LetChainLeftTransportSlot::AwaitExpression(inner) => AnyTransport::AwaitExpression(inner),
+        LetChainLeftTransportSlot::FieldExpression(inner) => AnyTransport::FieldExpression(inner),
+        LetChainLeftTransportSlot::ArrayExpression(inner) => AnyTransport::ArrayExpression(inner),
+        LetChainLeftTransportSlot::TupleExpression(inner) => AnyTransport::TupleExpression(inner),
+        LetChainLeftTransportSlot::MacroInvocation(inner) => AnyTransport::MacroInvocation(inner),
+        LetChainLeftTransportSlot::UnitExpression(inner) => AnyTransport::UnitExpression(inner),
+        LetChainLeftTransportSlot::BreakExpression(inner) => AnyTransport::BreakExpression(inner),
+        LetChainLeftTransportSlot::ContinueExpression(inner) => AnyTransport::ContinueExpression(inner),
+        LetChainLeftTransportSlot::IndexExpression(inner) => AnyTransport::IndexExpression(inner),
+        LetChainLeftTransportSlot::Metavariable(inner) => AnyTransport::Metavariable(inner),
+        LetChainLeftTransportSlot::ClosureExpression(inner) => AnyTransport::ClosureExpression(inner),
+        LetChainLeftTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
+        LetChainLeftTransportSlot::StructExpression(inner) => AnyTransport::StructExpression(inner),
+        LetChainLeftTransportSlot::UnsafeBlock(inner) => AnyTransport::UnsafeBlock(inner),
+        LetChainLeftTransportSlot::AsyncBlock(inner) => AnyTransport::AsyncBlock(inner),
+        LetChainLeftTransportSlot::GenBlock(inner) => AnyTransport::GenBlock(inner),
+        LetChainLeftTransportSlot::TryBlock(inner) => AnyTransport::TryBlock(inner),
+        LetChainLeftTransportSlot::Block(inner) => AnyTransport::Block(inner),
+        LetChainLeftTransportSlot::IfExpression(inner) => AnyTransport::IfExpression(inner),
+        LetChainLeftTransportSlot::MatchExpression(inner) => AnyTransport::MatchExpression(inner),
+        LetChainLeftTransportSlot::WhileExpression(inner) => AnyTransport::WhileExpression(inner),
+        LetChainLeftTransportSlot::LoopExpression(inner) => AnyTransport::LoopExpression(inner),
+        LetChainLeftTransportSlot::ForExpression(inner) => AnyTransport::ForExpression(inner),
+        LetChainLeftTransportSlot::ConstBlock(inner) => AnyTransport::ConstBlock(inner),
+        LetChainLeftTransportSlot::RangeExpression(inner) => AnyTransport::RangeExpression(inner),
+        LetChainLeftTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for LetChainLeftTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            LetChainLeftTransportSlot::LetChain(inner) => render_let_chain(inner, dest),
+            LetChainLeftTransportSlot::LetCondition(inner) => render_let_condition(inner, dest),
+            LetChainLeftTransportSlot::UnaryExpression(inner) => render_unary_expression(inner, dest),
+            LetChainLeftTransportSlot::ReferenceExpression(inner) => render_reference_expression(inner, dest),
+            LetChainLeftTransportSlot::TryExpression(inner) => render_try_expression(inner, dest),
+            LetChainLeftTransportSlot::BinaryExpression(inner) => render_binary_expression(inner, dest),
+            LetChainLeftTransportSlot::AssignmentExpression(inner) => render_assignment_expression(inner, dest),
+            LetChainLeftTransportSlot::CompoundAssignmentExpr(inner) => render_compound_assignment_expr(inner, dest),
+            LetChainLeftTransportSlot::TypeCastExpression(inner) => render_type_cast_expression(inner, dest),
+            LetChainLeftTransportSlot::CallExpression(inner) => render_call_expression(inner, dest),
+            LetChainLeftTransportSlot::ReturnExpression(inner) => render_return_expression(inner, dest),
+            LetChainLeftTransportSlot::YieldExpression(inner) => render_yield_expression(inner, dest),
+            LetChainLeftTransportSlot::StringLiteral(inner) => render_string_literal(inner, dest),
+            LetChainLeftTransportSlot::RawStringLiteral(inner) => render_raw_string_literal(inner, dest),
+            LetChainLeftTransportSlot::CharLiteral(inner) => render_char_literal(inner, dest),
+            LetChainLeftTransportSlot::BooleanLiteral(inner) => render_boolean_literal(inner, dest),
+            LetChainLeftTransportSlot::IntegerLiteral(inner) => render_integer_literal(inner, dest),
+            LetChainLeftTransportSlot::FloatLiteral(inner) => render_float_literal(inner, dest),
+            LetChainLeftTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            LetChainLeftTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
+            LetChainLeftTransportSlot::Self_(inner) => render_self(inner, dest),
+            LetChainLeftTransportSlot::ScopedIdentifier(inner) => render_scoped_identifier(inner, dest),
+            LetChainLeftTransportSlot::GenericFunction(inner) => render_generic_function(inner, dest),
+            LetChainLeftTransportSlot::AwaitExpression(inner) => render_await_expression(inner, dest),
+            LetChainLeftTransportSlot::FieldExpression(inner) => render_field_expression(inner, dest),
+            LetChainLeftTransportSlot::ArrayExpression(inner) => render_array_expression(inner, dest),
+            LetChainLeftTransportSlot::TupleExpression(inner) => render_tuple_expression(inner, dest),
+            LetChainLeftTransportSlot::MacroInvocation(inner) => render_macro_invocation(inner, dest),
+            LetChainLeftTransportSlot::UnitExpression(inner) => render_unit_expression(inner, dest),
+            LetChainLeftTransportSlot::BreakExpression(inner) => render_break_expression(inner, dest),
+            LetChainLeftTransportSlot::ContinueExpression(inner) => render_continue_expression(inner, dest),
+            LetChainLeftTransportSlot::IndexExpression(inner) => render_index_expression(inner, dest),
+            LetChainLeftTransportSlot::Metavariable(inner) => render_metavariable(inner, dest),
+            LetChainLeftTransportSlot::ClosureExpression(inner) => render_closure_expression(inner, dest),
+            LetChainLeftTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
+            LetChainLeftTransportSlot::StructExpression(inner) => render_struct_expression(inner, dest),
+            LetChainLeftTransportSlot::UnsafeBlock(inner) => render_unsafe_block(inner, dest),
+            LetChainLeftTransportSlot::AsyncBlock(inner) => render_async_block(inner, dest),
+            LetChainLeftTransportSlot::GenBlock(inner) => render_gen_block(inner, dest),
+            LetChainLeftTransportSlot::TryBlock(inner) => render_try_block(inner, dest),
+            LetChainLeftTransportSlot::Block(inner) => render_block(inner, dest),
+            LetChainLeftTransportSlot::IfExpression(inner) => render_if_expression(inner, dest),
+            LetChainLeftTransportSlot::MatchExpression(inner) => render_match_expression(inner, dest),
+            LetChainLeftTransportSlot::WhileExpression(inner) => render_while_expression(inner, dest),
+            LetChainLeftTransportSlot::LoopExpression(inner) => render_loop_expression(inner, dest),
+            LetChainLeftTransportSlot::ForExpression(inner) => render_for_expression(inner, dest),
+            LetChainLeftTransportSlot::ConstBlock(inner) => render_const_block(inner, dest),
+            LetChainLeftTransportSlot::RangeExpression(inner) => render_range_expression(inner, dest),
+            LetChainLeftTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum LetChainRightTransportSlot {
+    LetCondition(LetConditionTransport),
+    UnaryExpression(UnaryExpressionTransport),
+    ReferenceExpression(ReferenceExpressionTransport),
+    TryExpression(TryExpressionTransport),
+    BinaryExpression(BinaryExpressionTransport),
+    AssignmentExpression(AssignmentExpressionTransport),
+    CompoundAssignmentExpr(CompoundAssignmentExprTransport),
+    TypeCastExpression(TypeCastExpressionTransport),
+    CallExpression(CallExpressionTransport),
+    ReturnExpression(ReturnExpressionTransport),
+    YieldExpression(YieldExpressionTransport),
+    StringLiteral(StringLiteralTransport),
+    RawStringLiteral(RawStringLiteralTransport),
+    CharLiteral(CharLiteralTransport),
+    BooleanLiteral(BooleanLiteralEnum),
+    IntegerLiteral(IntegerLiteralTransport),
+    FloatLiteral(FloatLiteralTransport),
+    Identifier(IdentifierTransport),
+    ReservedIdentifier(ReservedIdentifierEnum),
+    Self_(Self_Transport),
+    ScopedIdentifier(ScopedIdentifierTransport),
+    GenericFunction(GenericFunctionTransport),
+    AwaitExpression(AwaitExpressionTransport),
+    FieldExpression(FieldExpressionTransport),
+    ArrayExpression(ArrayExpressionTransport),
+    TupleExpression(TupleExpressionTransport),
+    MacroInvocation(MacroInvocationTransport),
+    UnitExpression(UnitExpressionTransport),
+    BreakExpression(BreakExpressionTransport),
+    ContinueExpression(ContinueExpressionTransport),
+    IndexExpression(IndexExpressionTransport),
+    Metavariable(MetavariableTransport),
+    ClosureExpression(ClosureExpressionTransport),
+    ParenthesizedExpression(ParenthesizedExpressionTransport),
+    StructExpression(StructExpressionTransport),
+    UnsafeBlock(UnsafeBlockTransport),
+    AsyncBlock(AsyncBlockTransport),
+    GenBlock(GenBlockTransport),
+    TryBlock(TryBlockTransport),
+    Block(BlockTransport),
+    IfExpression(IfExpressionTransport),
+    MatchExpression(MatchExpressionTransport),
+    WhileExpression(WhileExpressionTransport),
+    LoopExpression(LoopExpressionTransport),
+    ForExpression(ForExpressionTransport),
+    ConstBlock(ConstBlockTransport),
+    RangeExpression(RangeExpressionTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for LetChainRightTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    268 => Ok(Self::LetCondition(
+                        LetConditionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    247 => Ok(Self::UnaryExpression(
+                        UnaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    249 => Ok(Self::ReferenceExpression(
+                        ReferenceExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    248 => Ok(Self::TryExpression(
+                        TryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    250 => Ok(Self::BinaryExpression(
+                        BinaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    251 => Ok(Self::AssignmentExpression(
+                        AssignmentExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    252 => Ok(Self::CompoundAssignmentExpr(
+                        CompoundAssignmentExprTransport::from_napi_value(env, napi_val)?
+                    )),
+                    253 => Ok(Self::TypeCastExpression(
+                        TypeCastExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    256 => Ok(Self::CallExpression(
+                        CallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    254 => Ok(Self::ReturnExpression(
+                        ReturnExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    255 => Ok(Self::YieldExpression(
+                        YieldExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    311 => Ok(Self::StringLiteral(
+                        StringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    312 => Ok(Self::RawStringLiteral(
+                        RawStringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    128 => Ok(Self::CharLiteral(
+                        CharLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    313 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    130 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    131 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    125 => Ok(Self::IntegerLiteral(
+                        IntegerLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    151 => Ok(Self::FloatLiteral(
+                        FloatLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    90 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    138 => Ok(Self::Self_(
+                        Self_Transport::from_napi_value(env, napi_val)?
+                    )),
+                    243 => Ok(Self::ScopedIdentifier(
+                        ScopedIdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    225 => Ok(Self::GenericFunction(
+                        GenericFunctionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    287 => Ok(Self::AwaitExpression(
+                        AwaitExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    288 => Ok(Self::FieldExpression(
+                        FieldExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    258 => Ok(Self::ArrayExpression(
+                        ArrayExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    260 => Ok(Self::TupleExpression(
+                        TupleExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    239 => Ok(Self::MacroInvocation(
+                        MacroInvocationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    261 => Ok(Self::UnitExpression(
+                        UnitExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    284 => Ok(Self::BreakExpression(
+                        BreakExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    285 => Ok(Self::ContinueExpression(
+                        ContinueExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    286 => Ok(Self::IndexExpression(
+                        IndexExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    141 => Ok(Self::Metavariable(
+                        MetavariableTransport::from_napi_value(env, napi_val)?
+                    )),
+                    281 => Ok(Self::ClosureExpression(
+                        ClosureExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    259 => Ok(Self::ParenthesizedExpression(
+                        ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    262 => Ok(Self::StructExpression(
+                        StructExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    289 => Ok(Self::UnsafeBlock(
+                        UnsafeBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    290 => Ok(Self::AsyncBlock(
+                        AsyncBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    291 => Ok(Self::GenBlock(
+                        GenBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    292 => Ok(Self::TryBlock(
+                        TryBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    293 => Ok(Self::Block(
+                        BlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    267 => Ok(Self::IfExpression(
+                        IfExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    272 => Ok(Self::MatchExpression(
+                        MatchExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    277 => Ok(Self::WhileExpression(
+                        WhileExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    278 => Ok(Self::LoopExpression(
+                        LoopExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    279 => Ok(Self::ForExpression(
+                        ForExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    280 => Ok(Self::ConstBlock(
+                        ConstBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    246 => Ok(Self::RangeExpression(
+                        RangeExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in LetChainRightTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in LetChainRightTransportSlot")
+                )?;
+                match kind_id {
+                    268 => Ok(Self::LetCondition(
+                        LetConditionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    247 => Ok(Self::UnaryExpression(
+                        UnaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    249 => Ok(Self::ReferenceExpression(
+                        ReferenceExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    248 => Ok(Self::TryExpression(
+                        TryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    250 => Ok(Self::BinaryExpression(
+                        BinaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    251 => Ok(Self::AssignmentExpression(
+                        AssignmentExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    252 => Ok(Self::CompoundAssignmentExpr(
+                        CompoundAssignmentExprTransport::from_napi_value(env, napi_val)?
+                    )),
+                    253 => Ok(Self::TypeCastExpression(
+                        TypeCastExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    256 => Ok(Self::CallExpression(
+                        CallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    254 => Ok(Self::ReturnExpression(
+                        ReturnExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    255 => Ok(Self::YieldExpression(
+                        YieldExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    311 => Ok(Self::StringLiteral(
+                        StringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    312 => Ok(Self::RawStringLiteral(
+                        RawStringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    128 => Ok(Self::CharLiteral(
+                        CharLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    313 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    130 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    131 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    125 => Ok(Self::IntegerLiteral(
+                        IntegerLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    151 => Ok(Self::FloatLiteral(
+                        FloatLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    90 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    138 => Ok(Self::Self_(
+                        Self_Transport::from_napi_value(env, napi_val)?
+                    )),
+                    243 => Ok(Self::ScopedIdentifier(
+                        ScopedIdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    225 => Ok(Self::GenericFunction(
+                        GenericFunctionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    287 => Ok(Self::AwaitExpression(
+                        AwaitExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    288 => Ok(Self::FieldExpression(
+                        FieldExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    258 => Ok(Self::ArrayExpression(
+                        ArrayExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    260 => Ok(Self::TupleExpression(
+                        TupleExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    239 => Ok(Self::MacroInvocation(
+                        MacroInvocationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    261 => Ok(Self::UnitExpression(
+                        UnitExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    284 => Ok(Self::BreakExpression(
+                        BreakExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    285 => Ok(Self::ContinueExpression(
+                        ContinueExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    286 => Ok(Self::IndexExpression(
+                        IndexExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    141 => Ok(Self::Metavariable(
+                        MetavariableTransport::from_napi_value(env, napi_val)?
+                    )),
+                    281 => Ok(Self::ClosureExpression(
+                        ClosureExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    259 => Ok(Self::ParenthesizedExpression(
+                        ParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    262 => Ok(Self::StructExpression(
+                        StructExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    289 => Ok(Self::UnsafeBlock(
+                        UnsafeBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    290 => Ok(Self::AsyncBlock(
+                        AsyncBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    291 => Ok(Self::GenBlock(
+                        GenBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    292 => Ok(Self::TryBlock(
+                        TryBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    293 => Ok(Self::Block(
+                        BlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    267 => Ok(Self::IfExpression(
+                        IfExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    272 => Ok(Self::MatchExpression(
+                        MatchExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    277 => Ok(Self::WhileExpression(
+                        WhileExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    278 => Ok(Self::LoopExpression(
+                        LoopExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    279 => Ok(Self::ForExpression(
+                        ForExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    280 => Ok(Self::ConstBlock(
+                        ConstBlockTransport::from_napi_value(env, napi_val)?
+                    )),
+                    246 => Ok(Self::RangeExpression(
+                        RangeExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in LetChainRightTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("LetChainRightTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for LetChainRightTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("LetChainRightTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LetChainRightTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        LetChainRightTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LetChainRightTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        LetChainRightTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn let_chain_right_transport_slot_to_any(t: LetChainRightTransportSlot) -> AnyTransport {
+    match t {
+        LetChainRightTransportSlot::LetCondition(inner) => AnyTransport::LetCondition(inner),
+        LetChainRightTransportSlot::UnaryExpression(inner) => AnyTransport::UnaryExpression(inner),
+        LetChainRightTransportSlot::ReferenceExpression(inner) => AnyTransport::ReferenceExpression(inner),
+        LetChainRightTransportSlot::TryExpression(inner) => AnyTransport::TryExpression(inner),
+        LetChainRightTransportSlot::BinaryExpression(inner) => AnyTransport::BinaryExpression(inner),
+        LetChainRightTransportSlot::AssignmentExpression(inner) => AnyTransport::AssignmentExpression(inner),
+        LetChainRightTransportSlot::CompoundAssignmentExpr(inner) => AnyTransport::CompoundAssignmentExpr(inner),
+        LetChainRightTransportSlot::TypeCastExpression(inner) => AnyTransport::TypeCastExpression(inner),
+        LetChainRightTransportSlot::CallExpression(inner) => AnyTransport::CallExpression(inner),
+        LetChainRightTransportSlot::ReturnExpression(inner) => AnyTransport::ReturnExpression(inner),
+        LetChainRightTransportSlot::YieldExpression(inner) => AnyTransport::YieldExpression(inner),
+        LetChainRightTransportSlot::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
+        LetChainRightTransportSlot::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
+        LetChainRightTransportSlot::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
+        LetChainRightTransportSlot::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
+        LetChainRightTransportSlot::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
+        LetChainRightTransportSlot::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
+        LetChainRightTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        LetChainRightTransportSlot::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
+        LetChainRightTransportSlot::Self_(inner) => AnyTransport::Self_(inner),
+        LetChainRightTransportSlot::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
+        LetChainRightTransportSlot::GenericFunction(inner) => AnyTransport::GenericFunction(inner),
+        LetChainRightTransportSlot::AwaitExpression(inner) => AnyTransport::AwaitExpression(inner),
+        LetChainRightTransportSlot::FieldExpression(inner) => AnyTransport::FieldExpression(inner),
+        LetChainRightTransportSlot::ArrayExpression(inner) => AnyTransport::ArrayExpression(inner),
+        LetChainRightTransportSlot::TupleExpression(inner) => AnyTransport::TupleExpression(inner),
+        LetChainRightTransportSlot::MacroInvocation(inner) => AnyTransport::MacroInvocation(inner),
+        LetChainRightTransportSlot::UnitExpression(inner) => AnyTransport::UnitExpression(inner),
+        LetChainRightTransportSlot::BreakExpression(inner) => AnyTransport::BreakExpression(inner),
+        LetChainRightTransportSlot::ContinueExpression(inner) => AnyTransport::ContinueExpression(inner),
+        LetChainRightTransportSlot::IndexExpression(inner) => AnyTransport::IndexExpression(inner),
+        LetChainRightTransportSlot::Metavariable(inner) => AnyTransport::Metavariable(inner),
+        LetChainRightTransportSlot::ClosureExpression(inner) => AnyTransport::ClosureExpression(inner),
+        LetChainRightTransportSlot::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
+        LetChainRightTransportSlot::StructExpression(inner) => AnyTransport::StructExpression(inner),
+        LetChainRightTransportSlot::UnsafeBlock(inner) => AnyTransport::UnsafeBlock(inner),
+        LetChainRightTransportSlot::AsyncBlock(inner) => AnyTransport::AsyncBlock(inner),
+        LetChainRightTransportSlot::GenBlock(inner) => AnyTransport::GenBlock(inner),
+        LetChainRightTransportSlot::TryBlock(inner) => AnyTransport::TryBlock(inner),
+        LetChainRightTransportSlot::Block(inner) => AnyTransport::Block(inner),
+        LetChainRightTransportSlot::IfExpression(inner) => AnyTransport::IfExpression(inner),
+        LetChainRightTransportSlot::MatchExpression(inner) => AnyTransport::MatchExpression(inner),
+        LetChainRightTransportSlot::WhileExpression(inner) => AnyTransport::WhileExpression(inner),
+        LetChainRightTransportSlot::LoopExpression(inner) => AnyTransport::LoopExpression(inner),
+        LetChainRightTransportSlot::ForExpression(inner) => AnyTransport::ForExpression(inner),
+        LetChainRightTransportSlot::ConstBlock(inner) => AnyTransport::ConstBlock(inner),
+        LetChainRightTransportSlot::RangeExpression(inner) => AnyTransport::RangeExpression(inner),
+        LetChainRightTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for LetChainRightTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            LetChainRightTransportSlot::LetCondition(inner) => render_let_condition(inner, dest),
+            LetChainRightTransportSlot::UnaryExpression(inner) => render_unary_expression(inner, dest),
+            LetChainRightTransportSlot::ReferenceExpression(inner) => render_reference_expression(inner, dest),
+            LetChainRightTransportSlot::TryExpression(inner) => render_try_expression(inner, dest),
+            LetChainRightTransportSlot::BinaryExpression(inner) => render_binary_expression(inner, dest),
+            LetChainRightTransportSlot::AssignmentExpression(inner) => render_assignment_expression(inner, dest),
+            LetChainRightTransportSlot::CompoundAssignmentExpr(inner) => render_compound_assignment_expr(inner, dest),
+            LetChainRightTransportSlot::TypeCastExpression(inner) => render_type_cast_expression(inner, dest),
+            LetChainRightTransportSlot::CallExpression(inner) => render_call_expression(inner, dest),
+            LetChainRightTransportSlot::ReturnExpression(inner) => render_return_expression(inner, dest),
+            LetChainRightTransportSlot::YieldExpression(inner) => render_yield_expression(inner, dest),
+            LetChainRightTransportSlot::StringLiteral(inner) => render_string_literal(inner, dest),
+            LetChainRightTransportSlot::RawStringLiteral(inner) => render_raw_string_literal(inner, dest),
+            LetChainRightTransportSlot::CharLiteral(inner) => render_char_literal(inner, dest),
+            LetChainRightTransportSlot::BooleanLiteral(inner) => render_boolean_literal(inner, dest),
+            LetChainRightTransportSlot::IntegerLiteral(inner) => render_integer_literal(inner, dest),
+            LetChainRightTransportSlot::FloatLiteral(inner) => render_float_literal(inner, dest),
+            LetChainRightTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            LetChainRightTransportSlot::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
+            LetChainRightTransportSlot::Self_(inner) => render_self(inner, dest),
+            LetChainRightTransportSlot::ScopedIdentifier(inner) => render_scoped_identifier(inner, dest),
+            LetChainRightTransportSlot::GenericFunction(inner) => render_generic_function(inner, dest),
+            LetChainRightTransportSlot::AwaitExpression(inner) => render_await_expression(inner, dest),
+            LetChainRightTransportSlot::FieldExpression(inner) => render_field_expression(inner, dest),
+            LetChainRightTransportSlot::ArrayExpression(inner) => render_array_expression(inner, dest),
+            LetChainRightTransportSlot::TupleExpression(inner) => render_tuple_expression(inner, dest),
+            LetChainRightTransportSlot::MacroInvocation(inner) => render_macro_invocation(inner, dest),
+            LetChainRightTransportSlot::UnitExpression(inner) => render_unit_expression(inner, dest),
+            LetChainRightTransportSlot::BreakExpression(inner) => render_break_expression(inner, dest),
+            LetChainRightTransportSlot::ContinueExpression(inner) => render_continue_expression(inner, dest),
+            LetChainRightTransportSlot::IndexExpression(inner) => render_index_expression(inner, dest),
+            LetChainRightTransportSlot::Metavariable(inner) => render_metavariable(inner, dest),
+            LetChainRightTransportSlot::ClosureExpression(inner) => render_closure_expression(inner, dest),
+            LetChainRightTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
+            LetChainRightTransportSlot::StructExpression(inner) => render_struct_expression(inner, dest),
+            LetChainRightTransportSlot::UnsafeBlock(inner) => render_unsafe_block(inner, dest),
+            LetChainRightTransportSlot::AsyncBlock(inner) => render_async_block(inner, dest),
+            LetChainRightTransportSlot::GenBlock(inner) => render_gen_block(inner, dest),
+            LetChainRightTransportSlot::TryBlock(inner) => render_try_block(inner, dest),
+            LetChainRightTransportSlot::Block(inner) => render_block(inner, dest),
+            LetChainRightTransportSlot::IfExpression(inner) => render_if_expression(inner, dest),
+            LetChainRightTransportSlot::MatchExpression(inner) => render_match_expression(inner, dest),
+            LetChainRightTransportSlot::WhileExpression(inner) => render_while_expression(inner, dest),
+            LetChainRightTransportSlot::LoopExpression(inner) => render_loop_expression(inner, dest),
+            LetChainRightTransportSlot::ForExpression(inner) => render_for_expression(inner, dest),
+            LetChainRightTransportSlot::ConstBlock(inner) => render_const_block(inner, dest),
+            LetChainRightTransportSlot::RangeExpression(inner) => render_range_expression(inner, dest),
+            LetChainRightTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -23597,12 +24672,10 @@ pub struct LetChainTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_let_chain"))]
-    pub let_chain: Option<Box<LetChainTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_let_condition"))]
-    pub let_condition: Option<Box<LetConditionTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
-    pub expression: Option<Box<ExpressionTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
+    pub left: Box<LetChainLeftTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
+    pub right: Box<LetChainRightTransportSlot>,
 }
 
 impl RenderableTransport for LetChainTransport {
@@ -47741,20 +48814,9 @@ fn render_kw_unsafe_marker(t: &KwUnsafeMarkerTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_let_chain(node: &LetChainTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.let_chain.is_none() && node.let_condition.is_none() && node.expression.is_none() {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
     let template = LetChainTemplate {
-        let_chain: match &node.let_chain {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        let_condition: match &node.let_condition {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
+        right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
     template.render_into(dest)
 }

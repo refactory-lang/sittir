@@ -1289,10 +1289,13 @@ export type PythonGrammar = {
 		type: 'splat_pattern';
 		named: true;
 		fields: {
-			identifier: { multiple: false; required: false; types: [{ type: '_'; named: false }] };
+			identifier: {
+				multiple: false;
+				required: true;
+				types: [{ type: '_'; named: false }, { type: 'identifier'; named: true }];
+			};
 			operator: { multiple: false; required: true; types: [{ type: '*'; named: false }, { type: '**'; named: false }] };
 		};
-		children: { multiple: false; required: false; types: [{ type: 'identifier'; named: true }] };
 	};
 	readonly splat_type: {
 		type: 'splat_type';

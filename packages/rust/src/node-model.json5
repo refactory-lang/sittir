@@ -729,24 +729,17 @@
       }
     },
     "_let_chain": {
-      "let_chain": {
+      "left": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "let_condition": {
+      "right": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -5944,62 +5937,30 @@
       "hidden": false,
       "fields": [
         {
-          "name": "let_chain",
-          "propertyName": "letChain",
-          "paramName": "letChain",
-          "required": false,
+          "name": "left",
+          "propertyName": "left",
+          "paramName": "left",
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_let_chain",
               "parseKind": "_let_chain",
               "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_let_chain"
-            ]
-          }
-        },
-        {
-          "name": "let_condition",
-          "propertyName": "letCondition",
-          "paramName": "letCondition",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "let_condition",
               "parseKind": "let_condition",
               "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "let_condition"
-            ]
-          }
-        },
-        {
-          "name": "expression",
-          "propertyName": "expression",
-          "paramName": "expression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_expression",
               "parseKind": "_expression",
               "unresolved": true
@@ -6008,6 +5969,39 @@
           "projection": {
             "typeName": "",
             "kinds": [
+              "_let_chain",
+              "let_condition",
+              "_expression"
+            ]
+          }
+        },
+        {
+          "name": "right",
+          "propertyName": "right",
+          "paramName": "right",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "let_condition",
+              "parseKind": "let_condition",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_expression",
+              "parseKind": "_expression",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "let_condition",
               "_expression"
             ]
           }
@@ -6016,9 +6010,8 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "let_chain",
-        "let_condition",
-        "expression"
+        "left",
+        "right"
       ]
     },
     {

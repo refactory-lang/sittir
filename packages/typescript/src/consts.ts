@@ -2136,7 +2136,10 @@ export const FIELD_MAP: Record<
 		{ name: 'closeTag', required: true, multiple: false }
 	],
 	jsx_expression: [{ name: 'expression', required: false, multiple: false }],
-	jsx_namespace_name: [{ name: 'jsxIdentifier', required: true, multiple: false }],
+	jsx_namespace_name: [
+		{ name: 'namespace', required: true, multiple: false },
+		{ name: 'name', required: true, multiple: false }
+	],
 	jsx_opening_element: [{ name: 'jsxOpeningElementContent', required: false, multiple: false }],
 	jsx_self_closing_element: [{ name: 'jsxOpeningElementContent', required: false, multiple: false }],
 	labeled_statement: [
