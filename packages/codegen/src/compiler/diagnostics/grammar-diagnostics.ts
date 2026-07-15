@@ -130,7 +130,11 @@ export function collectGrammarDiagnostics(input: {
 		// accepted, non-blocking instances) — do not touch fromAssembleWarning
 		// itself, which would flip it as a side effect.
 		if (warning.code !== 'storagename-collision') return mapped;
-		if (warning.ownerKind !== undefined && STORAGENAME_COLLISION_ACCEPTED_FLOOR_KINDS.has(warning.ownerKind)) {
+		if (
+			input.grammar === 'typescript' &&
+			warning.ownerKind !== undefined &&
+			STORAGENAME_COLLISION_ACCEPTED_FLOOR_KINDS.has(warning.ownerKind)
+		) {
 			return mapped;
 		}
 		return { ...mapped, canProceed: false };
