@@ -1,8 +1,8 @@
 {
   "grammar": "typescript",
-  "source_hash": "7c54601ef0b79e759b1044e727cba3764ca0a38c1eaad29113dd03ec13a823f2",
+  "source_hash": "4b0ffa528fd4e405268e74a1bdf0e493cdc45c48fa0c4a4f22581e6a7c02c52e",
   "files": {
-    "packages/typescript/.sittir/grammar-diagnostics.json": "a92ba5901a8377162d0e3333f7300ad166de16766b17dca8503345b5fd68cdda",
+    "packages/typescript/.sittir/grammar-diagnostics.json": "bf1be39f06ee4d2074a7acc49c666c0ee995faa9206bf9c486f7ece6cccb46aa",
     "packages/typescript/.sittir/grammar.js": "6415cf5a36fdc3d898ca3165146a536027087de1accd3cbec744a0cd6a69f141",
     "packages/typescript/.sittir/package.json": "058010057a69b8b5a606687bc5fb1c185a21878b06eecb6801493e77b704b3fd",
     "packages/typescript/.sittir/parser.wasm": "0c75ccd9dd339801ba45f422fda8272ba436c29d449f487ff933703895582fd1",
@@ -26,9 +26,9 @@
     "packages/typescript/src/index.ts": "880825c1918b377123a9d40694e8e53aff1483cb384c8a0e4a025e1e23f4de0c",
     "packages/typescript/src/ir.ts": "8dc756fd083609f044398783f939feaebcf07dab99cc64a3e20409e48fc626ec",
     "packages/typescript/src/is.ts": "15c83600f39c886b248791873e3a31037b3c7fb8ecc3169b867a7aa7d0866ee9",
-    "packages/typescript/src/node-model.json5": "fcf9adccf40c4f6179fa9e1a910e3856f6a95377293d1e650b3f7daa9eeedbdf",
+    "packages/typescript/src/node-model.json5": "ebbb00a0683fc1197816cce6e91e45e0bd8234d561a0b135bd9569804137129a",
     "packages/typescript/src/type-test.ts": "f2323e71cb1f6c5f438dcc32a4662bb9d2279bae6aac3c764cc389efbf85baa4",
-    "packages/typescript/src/types.ts": "b53a350d06015e7f23882fcb75b137efe3ea192d3bc6113923f1874759eb8d40",
+    "packages/typescript/src/types.ts": "04a7ea26d6d38a0e5313a156e9b0d24bfb342aaaad3bbee452d56775f139aa9c",
     "packages/typescript/src/utils.ts": "0f2757262288a61ac52f96d3814d4149f0c5f5e62d0a0f3b821a4aef97f464ec",
     "packages/typescript/src/wrap.ts": "5418dfe2790461fabf4e9dbe7dc97c2c66cb7a57a937cc599dcc5909bf6b51e7",
     "packages/typescript/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",

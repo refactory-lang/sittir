@@ -6257,13 +6257,6 @@
               "name": "macro_rule",
               "parseKind": "macro_rule",
               "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "macro_rule",
-              "parseKind": "macro_rule",
-              "unresolved": true
             }
           ],
           "projection": {
@@ -6302,13 +6295,6 @@
               "name": "macro_rule",
               "parseKind": "macro_rule",
               "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "macro_rule",
-              "parseKind": "macro_rule",
-              "unresolved": true
             }
           ],
           "projection": {
@@ -6344,13 +6330,6 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "macro_rule",
-              "parseKind": "macro_rule",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
               "name": "macro_rule",
               "parseKind": "macro_rule",
               "unresolved": true

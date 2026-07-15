@@ -9853,12 +9853,6 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
-              "multiplicity": "single",
-              "value": "_",
-              "parseKind": "_"
-            },
-            {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",

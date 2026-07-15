@@ -7846,18 +7846,6 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": ",",
-              "parseKind": "comma"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": ";",
-              "parseKind": "semi"
-            },
-            {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "export_statement",

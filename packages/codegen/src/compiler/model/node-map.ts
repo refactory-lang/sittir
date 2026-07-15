@@ -980,24 +980,34 @@ function _deriveSlotsInternal(rule: Rule<'link'>, ctx?: DeriveCtx): AssembledNon
  */
 function mergeSlotsByName(fields: AssembledNonterminal[]): AssembledNonterminal[] {
 	if (fields.length <= 1) return fields;
-	const byName = new Map<string, AssembledNonterminal>();
+	const out: AssembledNonterminal[] = [];
+	const namedIndexByName = new Map<string, number>();
 	for (const f of fields) {
-		const existing = byName.get(f.name);
-		if (!existing) {
-			byName.set(f.name, f);
+		if (f.isUnnamed) {
+			// Positional/kind-derived name: never silently merge with anything else
+			// sharing that name — mirrors collect-slots.ts's mergeByName (same bug
+			// class, a different location in the pipeline). Two unnamed slots
+			// sharing a kind-derived name are genuinely distinct positions, not
+			// "the same field appearing twice" (this function's actual documented
+			// purpose — see the if_statement.alternative example above).
+			out.push(f);
 			continue;
 		}
-		byName.set(
-			f.name,
-			existing.with({
-				values: dedupeValues([...existing.values, ...f.values]),
-				hasTrailing: existing.hasTrailing || f.hasTrailing,
-				hasLeading: existing.hasLeading || f.hasLeading,
-				sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, f.sourceRuleIds)
-			})
-		);
+		const idx = namedIndexByName.get(f.name);
+		if (idx === undefined) {
+			namedIndexByName.set(f.name, out.length);
+			out.push(f);
+			continue;
+		}
+		const existing = out[idx]!;
+		out[idx] = existing.with({
+			values: dedupeValues([...existing.values, ...f.values]),
+			hasTrailing: existing.hasTrailing || f.hasTrailing,
+			hasLeading: existing.hasLeading || f.hasLeading,
+			sourceRuleIds: mergeSourceRuleIds(existing.sourceRuleIds, f.sourceRuleIds)
+		});
 	}
-	return Array.from(byName.values());
+	return out;
 }
 
 export interface ParseKindCollisionContext {
@@ -2262,7 +2272,7 @@ function buildSlotsRecord(
 	// collisions via the override layer; this warning surfaces any that
 	// slip through during development.
 	const byStorageName = new Map<string, AssembledNonterminal[]>();
-	for (const slot of Object.values(out)) {
+	for (const slot of resolvedSlots) {
 		const list = byStorageName.get(slot.storageName) ?? [];
 		list.push(slot);
 		byStorageName.set(slot.storageName, list);

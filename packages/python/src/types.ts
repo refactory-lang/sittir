@@ -2680,12 +2680,12 @@ export interface Slice {
 export interface SplatPattern {
 	readonly $type: TSKindId.SplatPattern;
 	readonly _operator: number;
-	readonly _identifier: '_' | Identifier;
+	readonly _identifier: Identifier;
 	readonly __inputHints__?: {
 		readonly operator: KindEnum<'*' | '**', TSKindId.Star2 | TSKindId.StarStar>;
 	};
 	operator(): number;
-	identifier(): '_' | Identifier;
+	identifier(): Identifier;
 }
 
 export interface SplatType {

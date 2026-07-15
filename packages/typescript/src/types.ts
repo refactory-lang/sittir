@@ -3109,8 +3109,6 @@ export interface _Number {
 export interface ObjectTypeGroup1 {
 	readonly $type: '_object_type_group1';
 	readonly _content?: readonly (
-		| ','
-		| ';'
 		| ExportStatement
 		| PropertySignature
 		| CallSignature
@@ -3119,8 +3117,6 @@ export interface ObjectTypeGroup1 {
 		| MethodSignature
 	)[];
 	contents(): readonly (
-		| ','
-		| ';'
 		| ExportStatement
 		| PropertySignature
 		| CallSignature
