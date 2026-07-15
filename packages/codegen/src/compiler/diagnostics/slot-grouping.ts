@@ -84,7 +84,7 @@ export interface SlotGroupingDiagnostic extends Diagnostic {
 	readonly code: SlotGroupingShape;
 	readonly severity: 'warning';
 	readonly message: string;
-	readonly canProceed: true;
+	readonly canProceed: boolean;
 	/** The kind that owns the rule containing the violation. */
 	readonly ownerKind: string;
 	/** The slot count of the offending sub-rule (for multi-slot-nested-seq). */
@@ -92,6 +92,15 @@ export interface SlotGroupingDiagnostic extends Diagnostic {
 	/** Human-readable propose-promotion text for the author. */
 	readonly proposal: string;
 }
+
+// Permanently accepted floor: `_object_type_group1`'s two anonymous content slots
+// (the separator choice and the member choice inside `object_type_content`'s inner
+// `seq(SEP, member)`) cannot be field-named without breaking `detectRepeatSeparator`'s
+// bare STRING/CHOICE pattern match (`dsl/list-patterns.ts`), which regresses the kind's
+// correct `separatedList` classification back to plain `branch`. See
+// docs/KNOWN_ISSUES.md ("`_object_type_group1`'s two diagnostics...") for the full
+// investigation (two independent, empirically-verified attempts, both reverted).
+const CONTENT_COLLISION_ACCEPTED_FLOOR_KINDS = new Set(['_object_type_group1']);
 
 // ---------------------------------------------------------------------------
 // Main entry point
@@ -141,7 +150,10 @@ export function diagnoseSlotGrouping(
 					code: 'content-collision',
 					severity: 'warning',
 					message: `Kind '${ownerKind}' has ${contentCount} anonymous 'content' slots that would share the '_content' storage key.`,
-					canProceed: true,
+					// NOTE: intentionally NOT negated — membership in the accepted-floor
+					// set means this instance stays non-blocking (canProceed: true);
+					// every other kind now blocks (canProceed: false).
+					canProceed: CONTENT_COLLISION_ACCEPTED_FLOOR_KINDS.has(ownerKind),
 					ownerKind,
 					slotCount: contentCount,
 					proposal:

@@ -87,10 +87,20 @@ export function fromSlotGrouping(grammar: string, diagnostic: SlotGroupingDiagno
 		ownerKind: diagnostic.ownerKind,
 		message: diagnostic.message,
 		proposal: diagnostic.proposal,
-		canProceed: true,
+		// Forward the producer's canProceed verbatim (content-collision now
+		// computes it per-kind, gated on the accepted-floor exception in
+		// slot-grouping.ts; the other 3 SlotGroupingShape codes still always
+		// push canProceed: true) rather than hardcoding true here, which would
+		// silently swallow the flip.
+		canProceed: diagnostic.canProceed,
 		details: { slotCount: diagnostic.slotCount }
 	};
 }
+
+// Permanently accepted floor: see docs/KNOWN_ISSUES.md ("`_object_type_group1`'s two
+// diagnostics..."). Mirrors the analogous exception in diagnostics/slot-grouping.ts's
+// content-collision construction — same kind, same root cause.
+const STORAGENAME_COLLISION_ACCEPTED_FLOOR_KINDS = new Set(['_object_type_group1']);
 
 export function collectGrammarDiagnostics(input: {
 	grammar: string;
@@ -99,15 +109,32 @@ export function collectGrammarDiagnostics(input: {
 	assembleWarnings?: readonly AssembleWarning[];
 	slotGroupingDiagnostics?: readonly SlotGroupingDiagnostic[];
 }): { diagnostics: readonly GrammarDiagnostic[] } {
-	const parseKindMapped = input.parseKindCollisions.map((diagnostic) =>
-		fromParseKindCollision(input.grammar, diagnostic)
-	);
+	const parseKindMapped = input.parseKindCollisions.map((diagnostic) => ({
+		...fromParseKindCollision(input.grammar, diagnostic),
+		// Assemble-time parsekind-noninjective means enrich did NOT resolve this
+		// collision (an enrich-resolved one would already be gone from the
+		// grammar by assemble time) — always genuinely blocking. Enrich's own
+		// info-severity audit-trail diagnostics never reach this line (they merge
+		// in separately, in run-codegen.ts's getEnrichUnaliasDiagnostics path),
+		// so this override cannot affect them.
+		canProceed: false
+	}));
 	const deriveShapeMapped = (input.deriveShapeDiagnostics ?? []).map((diagnostic) =>
 		fromDeriveShape(input.grammar, diagnostic)
 	);
-	const assembleWarningMapped = (input.assembleWarnings ?? []).map((warning) =>
-		fromAssembleWarning(input.grammar, warning)
-	);
+	const assembleWarningMapped = (input.assembleWarnings ?? []).map((warning) => {
+		const mapped = fromAssembleWarning(input.grammar, warning);
+		// storagename-collision is the ONLY assemble-warning code PR-L blocks on.
+		// typename-collision (the only other code sharing fromAssembleWarning)
+		// stays exactly as fromAssembleWarning already maps it (still has live,
+		// accepted, non-blocking instances) — do not touch fromAssembleWarning
+		// itself, which would flip it as a side effect.
+		if (warning.code !== 'storagename-collision') return mapped;
+		if (warning.ownerKind !== undefined && STORAGENAME_COLLISION_ACCEPTED_FLOOR_KINDS.has(warning.ownerKind)) {
+			return mapped;
+		}
+		return { ...mapped, canProceed: false };
+	});
 	const slotGroupingMapped = (input.slotGroupingDiagnostics ?? []).map((d) => fromSlotGrouping(input.grammar, d));
 	return { diagnostics: [...parseKindMapped, ...deriveShapeMapped, ...assembleWarningMapped, ...slotGroupingMapped] };
 }
