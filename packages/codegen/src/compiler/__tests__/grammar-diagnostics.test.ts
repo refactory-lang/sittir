@@ -248,13 +248,13 @@ describe('grammar diagnostics preflight', () => {
 	describe('_object_type_group1 accepted-floor exception (see docs/KNOWN_ISSUES.md)', () => {
 		// Same shape as content-collision.test.ts's '_class_body_member shape' fixture:
 		// an unnamed seq of two unnamed multi-kind choices, both resolving to `content`.
-		const twoContentSlotRule = {
+		const twoContentSlotRule: SimplifiedRule = {
 			type: 'SEQ',
 			members: [
 				{ type: 'CHOICE', members: [{ type: 'SYMBOL', name: 'a' }, { type: 'SYMBOL', name: 'b' }] },
 				{ type: 'CHOICE', members: [{ type: 'SYMBOL', name: 'c' }, { type: 'SYMBOL', name: 'd' }] }
 			]
-		} as unknown as SimplifiedRule;
+		};
 
 		it('content-collision stays canProceed: true for _object_type_group1 (the accepted floor)', () => {
 			const records = diagnoseSlotGrouping({ _object_type_group1: twoContentSlotRule });
