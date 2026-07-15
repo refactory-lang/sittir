@@ -827,7 +827,9 @@ export type _Type_Operator = _TypeAssert<_TypeExtends<Operator['$type'], TSKindI
 export type _Type_PublicFieldDefinitionOptionalityMarker = _TypeAssert<
 	_TypeExtends<PublicFieldDefinitionOptionalityMarker['$type'], TSKindId.Qmark | TSKindId.Bang>
 >;
-export type _Type_ReservedIdentifier = _TypeAssert<_TypeExtends<ReservedIdentifier['$type'], '_reserved_identifier'>>;
+export type _Type_ReservedIdentifier = _TypeAssert<
+	_TypeExtends<ReservedIdentifier['$type'], TSKindId.ReservedIdentifier>
+>;
 export type _Type_Semicolon = _TypeAssert<_TypeExtends<Semicolon['$type'], '_semicolon'>>;
 export type _Type_StringOpening = _TypeAssert<_TypeExtends<StringOpening['$type'], TSKindId.Dquote | TSKindId.Squote>>;
 export type _Type_TypeIdentifier = _TypeAssert<_TypeExtends<TypeIdentifier['$type'], TSKindId.TypeIdentifier>>;

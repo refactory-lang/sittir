@@ -934,6 +934,14 @@
           {
             "type": "block",
             "named": true
+          },
+          {
+            "type": "newline",
+            "named": true
+          },
+          {
+            "type": "simple_statements",
+            "named": true
           }
         ]
       },
@@ -1060,6 +1068,14 @@
         "types": [
           {
             "type": "block",
+            "named": true
+          },
+          {
+            "type": "newline",
+            "named": true
+          },
+          {
+            "type": "simple_statements",
             "named": true
           }
         ]
@@ -1819,6 +1835,14 @@
           {
             "type": "block",
             "named": true
+          },
+          {
+            "type": "newline",
+            "named": true
+          },
+          {
+            "type": "simple_statements",
+            "named": true
           }
         ]
       }
@@ -1834,6 +1858,14 @@
         "types": [
           {
             "type": "block",
+            "named": true
+          },
+          {
+            "type": "newline",
+            "named": true
+          },
+          {
+            "type": "simple_statements",
             "named": true
           }
         ]
@@ -1858,6 +1890,14 @@
         },
         {
           "type": "except_clause_list",
+          "named": true
+        },
+        {
+          "type": "newline",
+          "named": true
+        },
+        {
+          "type": "simple_statements",
           "named": true
         }
       ]
@@ -2015,6 +2055,14 @@
           {
             "type": "block",
             "named": true
+          },
+          {
+            "type": "newline",
+            "named": true
+          },
+          {
+            "type": "simple_statements",
+            "named": true
           }
         ]
       }
@@ -2084,6 +2132,14 @@
         "types": [
           {
             "type": "block",
+            "named": true
+          },
+          {
+            "type": "newline",
+            "named": true
+          },
+          {
+            "type": "simple_statements",
             "named": true
           }
         ]
@@ -2191,6 +2247,14 @@
         "types": [
           {
             "type": "block",
+            "named": true
+          },
+          {
+            "type": "newline",
+            "named": true
+          },
+          {
+            "type": "simple_statements",
             "named": true
           }
         ]
@@ -2378,6 +2442,14 @@
         "types": [
           {
             "type": "block",
+            "named": true
+          },
+          {
+            "type": "newline",
+            "named": true
+          },
+          {
+            "type": "simple_statements",
             "named": true
           }
         ]
@@ -3256,6 +3328,21 @@
     }
   },
   {
+    "type": "simple_statements",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "_simple_statement",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "slice",
     "named": true,
     "fields": {
@@ -3469,6 +3556,14 @@
         "types": [
           {
             "type": "block",
+            "named": true
+          },
+          {
+            "type": "newline",
+            "named": true
+          },
+          {
+            "type": "simple_statements",
             "named": true
           }
         ]
@@ -3843,6 +3938,14 @@
           {
             "type": "block",
             "named": true
+          },
+          {
+            "type": "newline",
+            "named": true
+          },
+          {
+            "type": "simple_statements",
+            "named": true
           }
         ]
       },
@@ -3938,6 +4041,14 @@
         "types": [
           {
             "type": "block",
+            "named": true
+          },
+          {
+            "type": "newline",
+            "named": true
+          },
+          {
+            "type": "simple_statements",
             "named": true
           }
         ]
@@ -4290,6 +4401,10 @@
   {
     "type": "match",
     "named": false
+  },
+  {
+    "type": "newline",
+    "named": true
   },
   {
     "type": "none",

@@ -194,7 +194,7 @@ describe('asserts_annotation', () => {
 describe('assignment_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.assignmentExpression({
-			left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			left: { $type: TSKindId.ReservedIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.AssignmentExpression);
@@ -202,7 +202,7 @@ describe('assignment_expression', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.assignmentExpression({
-			left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
+			left: { $type: TSKindId.ReservedIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -230,7 +230,7 @@ describe('assignment_pattern', () => {
 describe('augmented_assignment_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.augmentedAssignmentExpression({
-			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			left: { $type: TSKindId.ReservedIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			operator: '+=',
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
@@ -239,7 +239,7 @@ describe('augmented_assignment_expression', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.augmentedAssignmentExpression({
-			left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+			left: { $type: TSKindId.ReservedIdentifier, $text: 'test', $source: 2, $named: true } as any,
 			operator: '+=',
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
 		});
@@ -808,7 +808,7 @@ describe('for_in_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+				_left: { $type: TSKindId.ReservedIdentifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
 			operator: 'in',
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,
@@ -824,7 +824,7 @@ describe('for_in_statement', () => {
 				$text: 'test',
 				$source: 2,
 				$named: true,
-				_left: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any
+				_left: { $type: TSKindId.ReservedIdentifier, $text: 'test', $source: 2, $named: true } as any
 			} as any,
 			operator: 'in',
 			right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any,

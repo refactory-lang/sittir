@@ -8491,11 +8491,9 @@ export function wrapScopedTypeIdentifier(data: T.ScopedTypeIdentifier, tree: Tre
 			}),
 
 			path() {
-				return drillAs<T.Path | T.GenericTypeWithTurbofish | T.BracketedType | T.GenericType | undefined>(
+				return drillIn<T.Path | T.GenericTypeWithTurbofish | T.BracketedType | T.GenericType | undefined>(
 					this._path,
-					tree,
-					'generic_type',
-					'generic_type_with_turbofish'
+					tree
 				);
 			},
 			name() {

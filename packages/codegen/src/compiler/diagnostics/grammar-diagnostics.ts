@@ -3,7 +3,7 @@ import { writeFileSync } from 'node:fs';
 import { assemble, AssembleCtx, type AssembledNodeMap } from '../assemble.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar } from '../normalize.ts';
-import type { ParseKindCollisionDiagnostic } from './parsekind-collisions.ts';
+import type { ParseKindCollisionDiagnostic } from '../../types/parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './derive-shapes.ts';
 import type { AssembleWarning } from '../model/node-map.ts';
 import { drainSlotGroupingDiagnostics } from '../simplify.ts';

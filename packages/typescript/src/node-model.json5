@@ -137,12 +137,6 @@
         "public_field_definition_readonly_first": "readonly_first"
       }
     },
-    "string": {
-      "definedBy": "override",
-      "childKind": {
-        "string_fragment": "fragment"
-      }
-    },
     "update_expression": {
       "definedBy": "override",
       "childKind": {
@@ -156,7 +150,7 @@
       "property_identifier": "identifier"
     },
     "_arrow_function_parameter.parameter": {
-      "identifier": "_reserved_identifier"
+      "reserved_identifier": "_reserved_identifier"
     },
     "_export_statement_default.content": {
       "export_statement_default_from_arm": "_export_statement_default_from_arm",
@@ -182,16 +176,13 @@
       "identifier": "_reserved_identifier"
     },
     "_index_signature_colon.name": {
-      "identifier": "_reserved_identifier"
+      "reserved_identifier": "_reserved_identifier"
     },
     "_jsx_opening_element_content.name": {
       "member_expression": "nested_identifier"
     },
     "_jsx_start_opening_element.jsx_opening_element_content": {
       "jsx_opening_element_content": "_jsx_opening_element_content"
-    },
-    "_jsx_string.content": {
-      "string_fragment": "unescaped_single_jsx_string_fragment"
     },
     "_lhs_expression.content": {
       "identifier": "_reserved_identifier"
@@ -241,7 +232,7 @@
       "identifier": "_reserved_identifier"
     },
     "augmented_assignment_expression.left": {
-      "identifier": "_reserved_identifier"
+      "reserved_identifier": "_reserved_identifier"
     },
     "break_statement.label": {
       "statement_identifier": "identifier"
@@ -378,9 +369,6 @@
     "rest_pattern.content": {
       "identifier": "_reserved_identifier"
     },
-    "string.contents": {
-      "string_fragment": "unescaped_single_string_fragment"
-    },
     "template_literal_type.content": {
       "string_fragment": "_template_chars"
     },
@@ -392,9 +380,6 @@
     },
     "type_parameter.name": {
       "type_identifier": "identifier"
-    },
-    "type_predicate.name": {
-      "identifier": "predefined_type"
     },
     "type_query.content": {
       "subscript_expression": "_type_query_subscript_expression",
@@ -4639,7 +4624,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_reserved_identifier",
-              "parseKind": "identifier",
+              "parseKind": "reserved_identifier",
               "unresolved": true
             },
             {
@@ -6982,7 +6967,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_reserved_identifier",
-              "parseKind": "identifier",
+              "parseKind": "reserved_identifier",
               "unresolved": true
             }
           ],
@@ -7387,7 +7372,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "unescaped_double_jsx_string_fragment",
-              "parseKind": "string_fragment",
+              "parseKind": "unescaped_double_jsx_string_fragment",
               "unresolved": true
             },
             {
@@ -7401,7 +7386,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "unescaped_single_jsx_string_fragment",
-              "parseKind": "string_fragment",
+              "parseKind": "unescaped_single_jsx_string_fragment",
               "unresolved": true
             }
           ],
@@ -10673,7 +10658,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_reserved_identifier",
-              "parseKind": "identifier",
+              "parseKind": "reserved_identifier",
               "unresolved": true
             },
             {
@@ -21070,7 +21055,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "unescaped_double_string_fragment",
-              "parseKind": "string_fragment",
+              "parseKind": "unescaped_double_string_fragment",
               "unresolved": true
             },
             {
@@ -21084,7 +21069,7 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "unescaped_single_string_fragment",
-              "parseKind": "string_fragment",
+              "parseKind": "unescaped_single_string_fragment",
               "unresolved": true
             }
           ],
@@ -22486,7 +22471,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "predefined_type",
-              "parseKind": "identifier",
+              "parseKind": "predefined_type",
               "unresolved": true
             }
           ],

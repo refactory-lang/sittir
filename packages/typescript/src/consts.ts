@@ -736,7 +736,8 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	_export_statement_equals_export: 383,
 	_export_statement_namespace_export: 384,
 	_public_field_definition_declare_first: 419,
-	_type_identifier: 426
+	_reserved_identifier: 422,
+	_type_identifier: 427
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -1011,7 +1012,8 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[383]: '_export_statement_equals_export',
 	[384]: '_export_statement_namespace_export',
 	[419]: '_public_field_definition_declare_first',
-	[426]: '_type_identifier'
+	[422]: '_reserved_identifier',
+	[427]: '_type_identifier'
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -1431,7 +1433,13 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		enumName: 'AliasPublicFieldDefinitionDeclareFirst',
 		cName: 'alias_sym_public_field_definition_declare_first'
 	},
-	{ name: '_type_identifier', id: 426, enumName: 'AliasTypeIdentifier', cName: 'alias_sym_type_identifier' }
+	{
+		name: '_reserved_identifier',
+		id: 422,
+		enumName: 'AliasReservedIdentifier',
+		cName: 'alias_sym_reserved_identifier'
+	},
+	{ name: '_type_identifier', id: 427, enumName: 'AliasTypeIdentifier', cName: 'alias_sym_type_identifier' }
 ] as const;
 
 export const enum TSFieldId {

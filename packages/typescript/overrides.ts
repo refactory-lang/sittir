@@ -980,6 +980,16 @@ export default grammar(
 				// / `closing` are real field-wrapped choices in the override
 				// grammar; refine correlates them so the double/single forms
 				// share one NodeData shape with auto-stamped delimiters.
+				//
+				// The double/single fragment tokens surface under their OWN names
+				// (not coerced onto a shared `string_fragment` alias): the two
+				// tokens are structurally distinct (different quote-char patterns),
+				// so aliasing them onto one parse kind was read-time non-injective
+				// (parsekind-noninjective) — the same class of collision the new
+				// enrich un-aliasing pass auto-drops at the base-grammar layer;
+				// this override reintroduces an equivalent alias independently
+				// (it wholesale-replaces the rule after enrich runs), so it needs
+				// the same fix applied here directly.
 				string: ($) =>
 					refine(
 						seq(
@@ -987,8 +997,8 @@ export default grammar(
 							field(
 								'contents',
 								choice(
-									repeat(choice(alias($.unescaped_double_string_fragment, $.string_fragment), $.escape_sequence)),
-									repeat(choice(alias($.unescaped_single_string_fragment, $.string_fragment), $.escape_sequence))
+									repeat(choice($.unescaped_double_string_fragment, $.escape_sequence)),
+									repeat(choice($.unescaped_single_string_fragment, $.escape_sequence))
 								)
 							),
 							field('closing', choice('"', "'"))

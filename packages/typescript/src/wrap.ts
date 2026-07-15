@@ -808,7 +808,7 @@ export function wrapArrowFunctionParameter(data: T.ArrowFunctionParameter, tree:
 				return drillAs<T.ReservedIdentifier | T.Identifier>(
 					this._parameter,
 					tree,
-					'identifier',
+					'reserved_identifier',
 					'_reserved_identifier'
 				);
 			},
@@ -2284,7 +2284,12 @@ export function wrapIndexSignatureColon(data: T.IndexSignatureColon, tree: TreeH
 			}),
 
 			name() {
-				return drillAs<T.Identifier | T.ReservedIdentifier>(this._name, tree, 'identifier', '_reserved_identifier');
+				return drillAs<T.Identifier | T.ReservedIdentifier>(
+					this._name,
+					tree,
+					'reserved_identifier',
+					'_reserved_identifier'
+				);
 			},
 			indexType() {
 				return drillIn<T.Type>(this._index_type, tree);
@@ -4201,7 +4206,7 @@ export function wrapAugmentedAssignmentExpression(data: T.AugmentedAssignmentExp
 					| T.Identifier
 					| T.ParenthesizedExpression
 					| T.NonNullExpression
-				>(this._left, tree, 'identifier', '_reserved_identifier');
+				>(this._left, tree, 'reserved_identifier', '_reserved_identifier');
 			},
 			operator() {
 				return this._operator;
@@ -9851,11 +9856,11 @@ export function wrapString(data: T.String, tree: TreeHandle) {
 				return this._opening;
 			},
 			contents() {
-				return drillAsAll<T.UnescapedDoubleStringFragment | T.EscapeSequence | T.UnescapedSingleStringFragment>(
-					this._contents,
-					tree,
-					'string_fragment',
-					'unescaped_single_string_fragment'
+				return drillInAll<T.UnescapedDoubleStringFragment | T.EscapeSequence | T.UnescapedSingleStringFragment>(
+					this._contents as
+						| readonly (T.UnescapedDoubleStringFragment | T.EscapeSequence | T.UnescapedSingleStringFragment)[]
+						| undefined,
+					tree
 				);
 			},
 			closing() {
@@ -10927,7 +10932,7 @@ export function wrapTypePredicate(data: T.TypePredicate, tree: TreeHandle) {
 			}),
 
 			name() {
-				return drillAs<T.Identifier | T.This | T.PredefinedType>(this._name, tree, 'identifier', 'predefined_type');
+				return drillIn<T.Identifier | T.This | T.PredefinedType>(this._name, tree);
 			},
 			type() {
 				return drillIn<T.Type>(this._type, tree);
@@ -11721,6 +11726,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 		wrapPublicFieldDefinitionReadonlyFirst(d as unknown as T.PublicFieldDefinitionReadonlyFirst, t),
 	_public_field_definition_static_mods: (d, t) =>
 		wrapPublicFieldDefinitionStaticMods(d as unknown as T.PublicFieldDefinitionStaticMods, t),
+	_reserved_identifier: (d) => ({ ...d, $type: TSKindId.ReservedIdentifier as const }),
 	_shorthand_property_identifier: (d, t) =>
 		wrapShorthandPropertyIdentifier(d as unknown as T.ShorthandPropertyIdentifier, t),
 	_shorthand_property_identifier_pattern: (d, t) =>

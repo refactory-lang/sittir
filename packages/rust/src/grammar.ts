@@ -1677,6 +1677,7 @@ export type RustGrammar = {
 					{ type: 'bracketed_type'; named: true },
 					{ type: 'crate'; named: true },
 					{ type: 'generic_type'; named: true },
+					{ type: 'generic_type_with_turbofish'; named: true },
 					{ type: 'identifier'; named: true },
 					{ type: 'metavariable'; named: true },
 					{ type: 'scoped_identifier'; named: true },

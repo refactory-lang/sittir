@@ -96,3 +96,46 @@ describe('detectRepeatSeparator preserves a choice-shaped separator', () => {
 		});
 	});
 });
+
+describe('rulesEqual handles previously-unhandled rule shapes (no false-negative on identical nodes)', () => {
+	it('BLANK equals BLANK', () => {
+		expect(rulesEqual({ type: 'BLANK' } as never, { type: 'BLANK' } as never)).toBe(true);
+	});
+
+	it('TOKEN / IMMEDIATE_TOKEN compare by content (and are not equal across the two token types)', () => {
+		const a = { type: 'TOKEN', content: { type: 'STRING', value: 'x' } };
+		const b = { type: 'TOKEN', content: { type: 'STRING', value: 'x' } };
+		const c = { type: 'TOKEN', content: { type: 'STRING', value: 'y' } };
+		const imm = { type: 'IMMEDIATE_TOKEN', content: { type: 'STRING', value: 'x' } };
+		expect(rulesEqual(a as never, b as never)).toBe(true);
+		expect(rulesEqual(a as never, c as never)).toBe(false);
+		// Different type tag (TOKEN vs IMMEDIATE_TOKEN) is never equal even with same content.
+		expect(rulesEqual(a as never, imm as never)).toBe(false);
+	});
+
+	it('PREC family compares BOTH value and content', () => {
+		const p1 = { type: 'PREC', value: 5, content: { type: 'STRING', value: 'x' } };
+		const p2 = { type: 'PREC', value: 5, content: { type: 'STRING', value: 'x' } };
+		const pDiffValue = { type: 'PREC', value: 6, content: { type: 'STRING', value: 'x' } };
+		const pDiffContent = { type: 'PREC', value: 5, content: { type: 'STRING', value: 'y' } };
+		expect(rulesEqual(p1 as never, p2 as never)).toBe(true);
+		expect(rulesEqual(p1 as never, pDiffValue as never)).toBe(false);
+		expect(rulesEqual(p1 as never, pDiffContent as never)).toBe(false);
+		// PREC_LEFT / PREC_RIGHT / PREC_DYNAMIC each carry value + content too.
+		const left1 = { type: 'PREC_LEFT', value: 1, content: { type: 'SYMBOL', name: 'e' } };
+		const left2 = { type: 'PREC_LEFT', value: 1, content: { type: 'SYMBOL', name: 'e' } };
+		expect(rulesEqual(left1 as never, left2 as never)).toBe(true);
+	});
+
+	it('ALIAS compares content, value (target name), and named', () => {
+		const base = { type: 'ALIAS', content: { type: 'SYMBOL', name: '_x' }, value: 'y', named: true };
+		const same = { type: 'ALIAS', content: { type: 'SYMBOL', name: '_x' }, value: 'y', named: true };
+		const diffValue = { type: 'ALIAS', content: { type: 'SYMBOL', name: '_x' }, value: 'z', named: true };
+		const diffNamed = { type: 'ALIAS', content: { type: 'SYMBOL', name: '_x' }, value: 'y', named: false };
+		const diffContent = { type: 'ALIAS', content: { type: 'SYMBOL', name: '_w' }, value: 'y', named: true };
+		expect(rulesEqual(base as never, same as never)).toBe(true);
+		expect(rulesEqual(base as never, diffValue as never)).toBe(false);
+		expect(rulesEqual(base as never, diffNamed as never)).toBe(false);
+		expect(rulesEqual(base as never, diffContent as never)).toBe(false);
+	});
+});
