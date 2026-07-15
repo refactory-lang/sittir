@@ -1988,15 +1988,21 @@ export type TypescriptGrammar = {
 			};
 			type: { multiple: false; required: false; types: [{ type: 'type_annotation'; named: true }] };
 			value: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
+			visibility_prefix: {
+				multiple: false;
+				required: false;
+				types: [
+					{ type: 'public_field_definition_access_first'; named: true },
+					{ type: 'public_field_definition_declare_first'; named: true }
+				];
+			};
 		};
 		children: {
-			multiple: true;
+			multiple: false;
 			required: false;
 			types: [
 				{ type: 'public_field_definition_abstract_first'; named: true },
-				{ type: 'public_field_definition_access_first'; named: true },
 				{ type: 'public_field_definition_accessor_opt'; named: true },
-				{ type: 'public_field_definition_declare_first'; named: true },
 				{ type: 'public_field_definition_readonly_first'; named: true },
 				{ type: 'public_field_definition_static_mods'; named: true }
 			];

@@ -353,7 +353,7 @@
       "member_expression": "decorator_member_expression",
       "call_expression": "decorator_call_expression"
     },
-    "public_field_definition.content": {
+    "public_field_definition.visibility_prefix": {
       "public_field_definition_declare_first": "_public_field_definition_declare_first",
       "public_field_definition_access_first": "_public_field_definition_access_first"
     },
@@ -3358,7 +3358,7 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "content": {
+      "visibility_prefix": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -20020,9 +20020,9 @@
           }
         },
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "visibility_prefix",
+          "propertyName": "visibilityPrefix",
+          "paramName": "visibilityPrefix",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -20236,7 +20236,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "decorator",
-        "content",
+        "visibility_prefix",
         "public_field_definition_static_mods",
         "public_field_definition_abstract_first",
         "public_field_definition_readonly_first",

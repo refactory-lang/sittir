@@ -2641,8 +2641,8 @@ export function publicFieldDefinitionFrom(
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.publicFieldDefinition>;
 	return F.publicFieldDefinition({
 		decorator: _resolveManyBranch<T.Decorator>(input.decorator, 'decorator'),
-		content: _resolveOne<T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst>(
-			input.content,
+		visibilityPrefix: _resolveOne<T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst>(
+			input.visibilityPrefix,
 			_K2,
 			_K40
 		),

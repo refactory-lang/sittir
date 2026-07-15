@@ -315,19 +315,6 @@
   },
   {
     "scope": "grammar",
-    "code": "content-collision",
-    "severity": "warning",
-    "grammar": "typescript",
-    "ownerKind": "public_field_definition",
-    "message": "Kind 'public_field_definition' has 2 anonymous 'content' slots that would share the '_content' storage key.",
-    "proposal": "Kind 'public_field_definition' has 2 anonymous 'content' slots that would share the '_content' storage key (an unemittable ambiguity). field()-name at least one in overrides.ts.",
-    "canProceed": true,
-    "details": {
-      "slotCount": 2
-    }
-  },
-  {
-    "scope": "grammar",
     "code": "parsekind-noninjective",
     "severity": "info",
     "grammar": "typescript",

@@ -5608,10 +5608,24 @@
             "named": true
           }
         ]
+      },
+      "visibility_prefix": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "public_field_definition_access_first",
+            "named": true
+          },
+          {
+            "type": "public_field_definition_declare_first",
+            "named": true
+          }
+        ]
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
         {
@@ -5619,15 +5633,7 @@
           "named": true
         },
         {
-          "type": "public_field_definition_access_first",
-          "named": true
-        },
-        {
           "type": "public_field_definition_accessor_opt",
-          "named": true
-        },
-        {
-          "type": "public_field_definition_declare_first",
           "named": true
         },
         {

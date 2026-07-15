@@ -4610,7 +4610,7 @@ export interface PropertySignature {
 export interface PublicFieldDefinition {
 	readonly $type: TSKindId.PublicFieldDefinition;
 	readonly _decorator?: readonly Decorator[];
-	readonly _content?: PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst;
+	readonly _visibility_prefix?: PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst;
 	readonly _accessor_marker?: boolean;
 	readonly _public_field_definition_static_mods?: PublicFieldDefinitionStaticMods;
 	readonly _public_field_definition_abstract_first?: PublicFieldDefinitionAbstractFirst;
@@ -4624,7 +4624,7 @@ export interface PublicFieldDefinition {
 		readonly optionality_marker?: KindEnum<'?' | '!', TSKindId.Qmark | TSKindId.Bang>;
 	};
 	decorators(): readonly Decorator[];
-	content(): PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst | undefined;
+	visibilityPrefix(): PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst | undefined;
 	accessorMarker(): boolean | undefined;
 	publicFieldDefinitionStaticMods(): PublicFieldDefinitionStaticMods | undefined;
 	publicFieldDefinitionAbstractFirst(): PublicFieldDefinitionAbstractFirst | undefined;

@@ -5099,7 +5099,7 @@ export function propertySignature(config: T.PropertySignature.Config) {
 
 export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
 	const _decorator = config.decorator;
-	const _content = config.content;
+	const _visibility_prefix = config.visibilityPrefix;
 	const _accessor_marker = coerceBooleanKeywordStorage(config.accessorMarker);
 	const _public_field_definition_static_mods = config.publicFieldDefinitionStaticMods;
 	const _public_field_definition_abstract_first = config.publicFieldDefinitionAbstractFirst;
@@ -5117,7 +5117,7 @@ export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
 			$source: 2 as const,
 			$named: true as const,
 			_decorator,
-			_content,
+			_visibility_prefix,
 			_accessor_marker,
 			_public_field_definition_static_mods,
 			_public_field_definition_abstract_first,
@@ -5129,8 +5129,8 @@ export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
 			decorators() {
 				return _decorator;
 			},
-			content() {
-				return _content;
+			visibilityPrefix() {
+				return _visibility_prefix;
 			},
 			accessorMarker() {
 				return _accessor_marker;
@@ -5158,8 +5158,8 @@ export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
 			},
 			$with: {
 				decorators: (...values: T.Decorator[]) => publicFieldDefinition({ ...config, decorator: values }),
-				content: (value?: T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst) =>
-					publicFieldDefinition({ ...config, content: value }),
+				visibilityPrefix: (value?: T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst) =>
+					publicFieldDefinition({ ...config, visibilityPrefix: value }),
 				accessorMarker: (value?: NonNullable<Parameters<typeof publicFieldDefinition>[0]>['accessorMarker']) =>
 					publicFieldDefinition({ ...config, accessorMarker: value }),
 				publicFieldDefinitionStaticMods: (value?: T.PublicFieldDefinitionStaticMods) =>

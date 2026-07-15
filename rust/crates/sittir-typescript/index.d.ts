@@ -2266,12 +2266,12 @@ export interface PublicFieldDefinitionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _decorator?: Array<DecoratorTransport>
+  _visibility_prefix?: PublicFieldDefinitionVisibilityPrefixTransportSlot
   _accessor_marker?: Box<AnyTransport>
   _name: PropertyNameTransport
   _optionality_marker?: PublicFieldDefinitionOptionalityMarkerEnum
   _type?: TypeAnnotationTransport
   _value?: ExpressionTransport
-  _content?: PublicFieldDefinitionContentTransportSlot
   _public_field_definition_static_mods?: PublicFieldDefinitionStaticModsTransport
   _public_field_definition_abstract_first?: PublicFieldDefinitionAbstractFirstTransport
   _public_field_definition_readonly_first?: PublicFieldDefinitionReadonlyFirstTransport

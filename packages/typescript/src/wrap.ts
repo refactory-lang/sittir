@@ -8984,17 +8984,7 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 	return _node;
 }
 
-export function wrapPublicFieldDefinition(
-	data: T.PublicFieldDefinition & {
-		readonly _public_field_definition_declare_first?:
-			| T.PublicFieldDefinitionDeclareFirst
-			| T.PublicFieldDefinitionAccessFirst;
-		readonly _public_field_definition_access_first?:
-			| T.PublicFieldDefinitionDeclareFirst
-			| T.PublicFieldDefinitionAccessFirst;
-	},
-	tree: TreeHandle
-) {
+export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -9005,13 +8995,12 @@ export function wrapPublicFieldDefinition(
 				slotName: 'decorator',
 				span: (data as _NodeData).$span
 			}),
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._public_field_definition_declare_first ?? data._public_field_definition_access_first,
-				'content',
-				false,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
-			),
+			_visibility_prefix: normalizeSingularWrapSlot(data._visibility_prefix, 'visibility_prefix', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'visibility_prefix',
+				span: (data as _NodeData).$span
+			}),
 			_accessor_marker: coerceBooleanKeywordStorage(
 				normalizeSingularWrapSlot(data._accessor_marker, 'accessor_marker', false, data.$type, {
 					tree,
@@ -9082,9 +9071,9 @@ export function wrapPublicFieldDefinition(
 			decorators() {
 				return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree);
 			},
-			content() {
+			visibilityPrefix() {
 				return drillIn<T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst | undefined>(
-					this._content,
+					this._visibility_prefix,
 					tree
 				);
 			},
@@ -9130,8 +9119,8 @@ export function wrapPublicFieldDefinition(
 			$with: {
 				decorators: (...v: NonNullable<T.PublicFieldDefinition['_decorator']>[number][]) =>
 					wrapPublicFieldDefinition({ ...data, _decorator: v }, tree),
-				content: (v: NonNullable<T.PublicFieldDefinition['_content']>) =>
-					wrapPublicFieldDefinition({ ...data, _content: v }, tree),
+				visibilityPrefix: (v: NonNullable<T.PublicFieldDefinition['_visibility_prefix']>) =>
+					wrapPublicFieldDefinition({ ...data, _visibility_prefix: v }, tree),
 				accessorMarker: (v: NonNullable<T.PublicFieldDefinition['_accessor_marker']>) =>
 					wrapPublicFieldDefinition({ ...data, _accessor_marker: v }, tree),
 				publicFieldDefinitionStaticMods: (
