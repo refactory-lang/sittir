@@ -224,6 +224,18 @@ export interface RawGrammar {
 	 * example (typescript's `_object_type_group1`).
 	 */
 	readonly expectDiagnostics?: Readonly<Record<string, readonly string[]>>;
+	/**
+	 * Enrich-synthesized clause-hoist rule names (`_<parent>_optional<N>` /
+	 * `_<parent>_group<N>`) whose recorded owning parent this grammar's own
+	 * `rules:` config redeclares — the override author could never reference
+	 * a name that doesn't exist until enrich() mints it from the base
+	 * grammar's pre-override shape, so redeclaring the owner unconditionally
+	 * orphans it. Read by `collectGrammarDiagnosticsForGrammar` to suppress
+	 * the phantom content-collision/storagename-collision diagnostic these
+	 * orphans would otherwise raise for a kind that can never occur in a
+	 * parse. See docs/KNOWN_ISSUES.md's `_object_type_group1` entry.
+	 */
+	readonly orphanedSyntheticGroups?: readonly string[];
 }
 
 /**

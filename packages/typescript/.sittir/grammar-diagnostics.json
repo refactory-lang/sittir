@@ -33,19 +33,6 @@
   },
   {
     "scope": "grammar",
-    "code": "storagename-collision",
-    "severity": "warning",
-    "grammar": "typescript",
-    "ownerKind": "_object_type_group1",
-    "message": "[assemble] storageName collision: kind '_object_type_group1' has 2 slots with storageName 'content':\n    content (positional, multiplicity: optional, values: [\",\", \";\"])\n    content (positional, multiplicity: array, values: [export_statement, property_signature, call_signature, construct_signature, index_signature, method_signature])",
-    "canProceed": true,
-    "details": {
-      "storageName": "content",
-      "slotCount": 2
-    }
-  },
-  {
-    "scope": "grammar",
     "code": "typename-collision",
     "severity": "info",
     "grammar": "typescript",
@@ -298,19 +285,6 @@
       "visibleKinds": [
         "tuple_type_group1"
       ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "content-collision",
-    "severity": "warning",
-    "grammar": "typescript",
-    "ownerKind": "_object_type_group1",
-    "message": "Kind '_object_type_group1' has 2 anonymous 'content' slots that would share the '_content' storage key.",
-    "proposal": "Kind '_object_type_group1' has 2 anonymous 'content' slots that would share the '_content' storage key (an unemittable ambiguity). field()-name at least one in overrides.ts.",
-    "canProceed": true,
-    "details": {
-      "slotCount": 2
     }
   },
   {

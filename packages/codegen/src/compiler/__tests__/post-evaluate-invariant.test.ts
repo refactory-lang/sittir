@@ -129,7 +129,11 @@ describe('post-evaluate invariant', () => {
 				'renderAs',
 				// Per-kind diagnostic exceptions from overrides.ts `expectDiagnostics:` —
 				// read by collectGrammarDiagnostics (grammar-diagnostics.ts).
-				'expectDiagnostics'
+				'expectDiagnostics',
+				// Enrich-synthesized clause-hoist names orphaned by an override
+				// redeclaring their recorded owner — read by
+				// collectGrammarDiagnosticsForGrammar to suppress phantom diagnostics.
+				'orphanedSyntheticGroups'
 			]);
 			const extra = Object.keys(raw as unknown as Record<string, unknown>).filter((k) => !ALLOWED.has(k));
 			expect(extra, `unexpected RawGrammar fields: ${extra.join(', ')}`).toEqual([]);

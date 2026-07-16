@@ -707,6 +707,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const groups = drainGroupsMetadata(opts);
 	const polymorphsConfig = drainPolymorphsConfigMetadata(opts);
 	const expectDiagnostics = drainExpectDiagnosticsMetadata(opts);
+	const orphanedSyntheticGroups = drainOrphanedSyntheticGroupsMetadata(opts);
 	// renderAs must be drained BEFORE buildRuleCatalog so the synthesized
 	// rule bodies appear in the catalog. It also strips any base-grammar
 	// body for the same key (keeping the sittir-side def authoritative).
@@ -748,7 +749,8 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		groups,
 		polymorphsConfig,
 		renderAs,
-		expectDiagnostics
+		expectDiagnostics,
+		orphanedSyntheticGroups
 	} satisfies RawGrammar;
 	// Propagate enrich()'s un-aliasing diagnostics from the base grammar result
 	// (the `optionsOrBase` first arg in extension mode) onto this evaluated
@@ -1618,6 +1620,20 @@ function drainExpectDiagnosticsMetadata(opts: GrammarOptions): Record<string, re
 	}
 	if (Object.keys(e).length === 0) return undefined;
 	return e;
+}
+
+/**
+ * Read `WireContext.orphanedSyntheticGroups` — enrich-synthesized clause-hoist
+ * names whose recorded owning parent this grammar's own `rules:` config
+ * redeclares, so the synthesized name can no longer be referenced from
+ * anywhere. Read by `collectGrammarDiagnosticsForGrammar` to suppress the
+ * phantom content-collision/storagename-collision diagnostic these orphans
+ * would otherwise raise.
+ */
+function drainOrphanedSyntheticGroupsMetadata(opts: GrammarOptions): readonly string[] | undefined {
+	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+	if (!wireCtx || wireCtx.orphanedSyntheticGroups.size === 0) return undefined;
+	return [...wireCtx.orphanedSyntheticGroups];
 }
 
 /**

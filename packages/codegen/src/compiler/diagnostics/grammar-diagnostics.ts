@@ -182,19 +182,28 @@ export function collectGrammarDiagnosticsForGrammar(input: { rawGrammar: RawGram
 		grammar: input.rawGrammar.name,
 		contentAliasedTo: linked.contentAliasedTo
 	});
+	const orphanedSyntheticGroups = new Set(input.rawGrammar.orphanedSyntheticGroups ?? []);
+	const allDiagnostics = [
+		...collectGrammarDiagnostics({
+			grammar: input.rawGrammar.name,
+			parseKindCollisions: nodeMap.parseKindCollisions,
+			deriveShapeDiagnostics: nodeMap.deriveShapeDiagnostics,
+			assembleWarnings: nodeMap.assembleWarnings,
+			slotGroupingDiagnostics,
+			expectDiagnostics: input.rawGrammar.expectDiagnostics
+		}).diagnostics,
+		...contentAliasDiagnostics
+	];
 	return {
 		nodeMap,
-		diagnostics: [
-			...collectGrammarDiagnostics({
-				grammar: input.rawGrammar.name,
-				parseKindCollisions: nodeMap.parseKindCollisions,
-				deriveShapeDiagnostics: nodeMap.deriveShapeDiagnostics,
-				assembleWarnings: nodeMap.assembleWarnings,
-				slotGroupingDiagnostics,
-				expectDiagnostics: input.rawGrammar.expectDiagnostics
-			}).diagnostics,
-			...contentAliasDiagnostics
-		]
+		// Drop diagnostics for a kind this grammar's own override provably
+		// orphaned (see `RawGrammar.orphanedSyntheticGroups`) — it can never
+		// occur in a real parse, so any diagnostic about it is phantom
+		// regardless of code.
+		diagnostics:
+			orphanedSyntheticGroups.size === 0
+				? allDiagnostics
+				: allDiagnostics.filter((d) => d.ownerKind === undefined || !orphanedSyntheticGroups.has(d.ownerKind))
 	};
 }
 

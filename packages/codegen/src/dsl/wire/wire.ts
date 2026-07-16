@@ -40,7 +40,7 @@ import { transform as transformFn } from '../transform/transform.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isVariantPlaceholder } from '../primitives/variant.ts';
-import { getEnrichClauseGroups } from '../enrich.ts';
+import { getEnrichClauseGroups, getEnrichClauseGroupOwners } from '../enrich.ts';
 // Phase-2: tuple-precise base-grammar constraint + per-rule transform path keys.
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { FastKeys, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
@@ -83,6 +83,17 @@ export interface WireContext {
 	/** Hidden `_kw_*` helper names that should be appended to the
 	 *  grammar's inline list after rule evaluation deposits their body. */
 	readonly syntheticInline: Set<string>;
+	/** Enrich-synthesized clause-hoist names (both inline-safe and
+	 *  visible-aliased categories — see `getEnrichClauseGroupOwners`) whose
+	 *  recorded owning parent is redeclared in THIS grammar's own
+	 *  `rules:` config. An override author can never reference a
+	 *  synthesized name by hand (it doesn't exist until enrich() mints it
+	 *  from the base grammar's pre-override shape), so redeclaring the
+	 *  owner unconditionally orphans it. Read by
+	 *  `collectGrammarDiagnosticsForGrammar` to suppress the phantom
+	 *  content-collision/storagename-collision diagnostic these orphans
+	 *  would otherwise raise for a kind that can never occur in a parse. */
+	readonly orphanedSyntheticGroups: Set<string>;
 	/** Conflict groups (rule-name arrays) registered by variant() for
 	 *  sibling-variant ambiguity. Drained by the wrapped `conflicts`
 	 *  callback when tree-sitter invokes it. */
@@ -223,6 +234,7 @@ export function withWireContext<T>(
 	const ctx: WireContext = {
 		deposits: new Map(),
 		syntheticInline: new Set(),
+		orphanedSyntheticGroups: new Set(),
 		conflictGroups: [],
 		refineForms: new Map(),
 		groups: undefined,
@@ -580,6 +592,7 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 	const context: WireContext = {
 		deposits: new Map(),
 		syntheticInline: new Set(),
+		orphanedSyntheticGroups: new Set(),
 		conflictGroups: [],
 		refineForms: new Map(),
 		groups: cfg.groups,
@@ -658,6 +671,18 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 	if (baseArg) {
 		for (const name of getEnrichClauseGroups(base)) {
 			context.syntheticInline.add(name);
+		}
+		// A synthesized clause-hoist name (recorded owner = the parent kind
+		// enrich() hoisted it FROM) is orphaned once THIS grammar's own
+		// `rules:` config redeclares that owner — the override text could
+		// never reference a name that didn't exist until this enrich() call
+		// minted it from the base grammar's pre-override shape, so replacing
+		// the owner's body necessarily drops the only reference. See
+		// `WireContext.orphanedSyntheticGroups`.
+		for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base)) {
+			if (context.authoredRuleNames.has(ownerKind)) {
+				context.orphanedSyntheticGroups.add(syntheticName);
+			}
 		}
 		// Re-run body-pattern replacement so any `groups:` body-pattern can match
 		// rule bodies wrapped by the first pass above. Idempotent on already-aliased
