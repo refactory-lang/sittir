@@ -1150,11 +1150,21 @@ export type RustGrammar = {
 	readonly let_chain: {
 		type: 'let_chain';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: true;
-			types: [{ type: '_expression'; named: true }, { type: 'let_condition'; named: true }];
+		fields: {
+			left: {
+				multiple: true;
+				required: true;
+				types: [
+					{ type: '&&'; named: false },
+					{ type: '_expression'; named: true },
+					{ type: 'let_condition'; named: true }
+				];
+			};
+			right: {
+				multiple: true;
+				required: true;
+				types: [{ type: '_expression'; named: true }, { type: 'let_condition'; named: true }];
+			};
 		};
 	};
 	readonly let_condition: {

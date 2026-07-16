@@ -782,7 +782,9 @@ export default grammar(
 				// unreachable `_let_chain_and` / `_let_chain_base` kinds. The
 				// non-canonical audit for this kind reflects the derive walker's
 				// view of an inlined helper; it doesn't surface as a user-facing
-				// shape. Leave as-is.
+				// shape. No variant() here — see the `_let_chain` entry in
+				// `rules:` below for the storagename-collision fix (field()
+				// naming, not variant()).
 
 				// block_comment: deferred. Inner choice at `1/0` branches on
 				// doc-marker form vs bare `_block_comment_content`, but the
@@ -905,6 +907,31 @@ export default grammar(
 						field('type', $._type),
 						optional(field('where_clause', $.where_clause)),
 						choice(alias($._impl_item_body, $.impl_item_body), alias($._impl_item_semi, $.impl_item_semi))
+					),
+
+				// _let_chain — left-recursive `left && right` chain where each
+				// operand independently ranges over {_let_chain, let_condition,
+				// _expression} (base grammar has neither operand field-named).
+				// Un-fielded, the 5 choice arms' 10 operand positions get
+				// kind-derived storageNames ("let_chain"/"let_condition"/
+				// "expression") that collide across arms once merged onto this
+				// owner kind. Fielding BOTH operands with the SAME name
+				// ('left'/'right') across every arm is the "genuinely one
+				// combined slot" case: each field stays eligible for the
+				// named-slot merge path, collapsing to a single `left` slot and
+				// a single `right` slot (each a union of the 3 operand kinds)
+				// instead of 3 colliding positional slots. `3` mirrors base
+				// tree-sitter-rust's `PREC.and`.
+				_let_chain: ($) =>
+					prec.left(
+						3,
+						choice(
+							seq(field('left', $._let_chain), '&&', field('right', $.let_condition)),
+							seq(field('left', $._let_chain), '&&', field('right', $._expression)),
+							seq(field('left', $.let_condition), '&&', field('right', $._expression)),
+							seq(field('left', $.let_condition), '&&', field('right', $.let_condition)),
+							seq(field('left', $._expression), '&&', field('right', $.let_condition))
+						)
 					)
 			},
 

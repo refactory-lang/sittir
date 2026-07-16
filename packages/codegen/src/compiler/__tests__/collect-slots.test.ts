@@ -153,4 +153,87 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 		const out = collectSlots(deleteWrapper(rule) as Rule);
 		expect(out.map((s) => s.name)).toEqual(['left', 'right']);
 	});
+
+	it('structural choice, same arm: two unnamed same-kind members stay distinct (no silent merge)', () => {
+		// choice( seq(field('op'), sym('identifier'), sym('identifier')) ) — a single
+		// structural arm containing two unnamed references to `identifier`. Before
+		// the fix, mergeByName (invoked once per arm) would union these into ONE
+		// 'identifier' slot with 2 values. After the fix, they must remain 2 separate
+		// slot entries (both named 'identifier') so a downstream storageName-collision
+		// check can see there were really two structurally distinct positions.
+		const rule: Rule<'link'> = {
+			type: CHOICE,
+			members: [
+				{
+					type: SEQ,
+					members: [{ type: FIELD, name: 'op', content: str('+') }, sym('identifier'), sym('identifier')]
+				}
+			]
+		};
+		const out = collectSlots(deleteWrapper(rule) as Rule);
+		const identifierSlots = out.filter((s) => s.name === 'identifier');
+		expect(identifierSlots).toHaveLength(2);
+		expect(identifierSlots[0]!.values).toHaveLength(1);
+		expect(identifierSlots[1]!.values).toHaveLength(1);
+	});
+
+	it('structural choice, same arm: two NAMED same-field slots still merge (unchanged legitimate case)', () => {
+		// Two field('label', ...) occurrences within one arm ARE the same semantic
+		// slot (e.g. a repeated-reference pattern) — merging must still happen when
+		// both sides carry a real fieldName.
+		const rule: Rule<'link'> = {
+			type: CHOICE,
+			members: [
+				{
+					type: SEQ,
+					members: [
+						{ type: FIELD, name: 'label', content: sym('a') },
+						{ type: FIELD, name: 'op', content: str('+') },
+						{ type: FIELD, name: 'label', content: sym('b') }
+					]
+				}
+			]
+		};
+		const out = collectSlots(deleteWrapper(rule) as Rule);
+		const labelSlots = out.filter((s) => s.name === 'label');
+		expect(labelSlots).toHaveLength(1);
+		expect(labelSlots[0]!.values).toHaveLength(2);
+	});
+
+	it('structural choice, across arms: two unnamed same-kind slots in different arms stay distinct (no silent merge)', () => {
+		// arm 1: seq(field('op'), sym('identifier')) ; arm 2: seq(field('op'), sym('identifier'), sym('identifier'))
+		// mergeChoiceArms must not collapse the unnamed 'identifier' slots from
+		// different arms into one presence-counted/relaxed-to-optional slot.
+		const rule: Rule<'link'> = {
+			type: CHOICE,
+			members: [
+				{ type: SEQ, members: [{ type: FIELD, name: 'op', content: str('+') }, sym('identifier')] },
+				{
+					type: SEQ,
+					members: [{ type: FIELD, name: 'op', content: str('-') }, sym('identifier'), sym('identifier')]
+				}
+			]
+		};
+		const out = collectSlots(deleteWrapper(rule) as Rule);
+		const identifierSlots = out.filter((s) => s.name === 'identifier');
+		expect(identifierSlots.length).toBeGreaterThanOrEqual(2);
+	});
+
+	it('structural choice, across arms: unnamed slot present in only ONE arm becomes optional (polymorph-form-sibling shape)', () => {
+		// arm 1: seq(field('op'), sym('trait_form_marker')) — trait_form_marker ONLY here
+		// arm 2: seq(field('op'), sym('other'))              — trait_form_marker absent
+		// Mirrors the real function_type shape (fn_form/trait_form each appear in
+		// exactly one arm). Must relax to optional, not stay required.
+		const rule: Rule<'link'> = {
+			type: CHOICE,
+			members: [
+				{ type: SEQ, members: [{ type: FIELD, name: 'op', content: str('trait') }, sym('trait_form_marker')] },
+				{ type: SEQ, members: [{ type: FIELD, name: 'op', content: str('fn') }, sym('other')] }
+			]
+		};
+		const out = collectSlots(deleteWrapper(rule) as Rule);
+		const marker = out.find((s) => s.name === 'trait_form_marker');
+		expect(marker).toBeDefined();
+		expect(marker!.values[0]!.multiplicity).toBe('optional');
+	});
 });

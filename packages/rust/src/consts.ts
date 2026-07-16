@@ -1739,9 +1739,8 @@ export const FIELD_MAP: Record<
 	_impl_item_body: [{ name: 'declarationList', required: true, multiple: false }],
 	_in_path: [{ name: 'path', required: true, multiple: false }],
 	_let_chain: [
-		{ name: 'letChain', required: false, multiple: false },
-		{ name: 'letCondition', required: false, multiple: false },
-		{ name: 'expression', required: false, multiple: false }
+		{ name: 'left', required: true, multiple: false },
+		{ name: 'right', required: true, multiple: false }
 	],
 	_macro_definition_brace: [{ name: 'macroRules', required: false, multiple: true }],
 	_macro_definition_bracket: [{ name: 'macroRules', required: false, multiple: true }],
@@ -1944,8 +1943,8 @@ export const FIELD_MAP: Record<
 	],
 	function_type: [
 		{ name: 'forLifetimes', required: false, multiple: false },
-		{ name: 'functionTypeTraitForm', required: false, multiple: false },
 		{ name: 'parameters', required: true, multiple: false },
+		{ name: 'functionTypeTraitForm', required: false, multiple: false },
 		{ name: 'functionTypeFnForm', required: false, multiple: false },
 		{ name: 'returnType', required: false, multiple: false }
 	],

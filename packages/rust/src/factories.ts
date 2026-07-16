@@ -584,31 +584,25 @@ export function _implItemPositiveClause(config: T.ImplItemPositiveClause.Config)
 	);
 }
 
-export function letChain(config: Partial<T.LetChain.Config> = {}) {
-	const _let_chain = config.letChain;
-	const _let_condition = config.letCondition;
-	const _expression = config.expression;
+export function letChain(config: T.LetChain.Config) {
+	const _left = config.left;
+	const _right = config.right;
 	return withMethods(
 		{
 			$type: TSKindId.LetChain as const,
 			$source: 2 as const,
 			$named: true as const,
-			_let_chain,
-			_let_condition,
-			_expression,
-			letChain() {
-				return _let_chain;
+			_left,
+			_right,
+			left() {
+				return _left;
 			},
-			letCondition() {
-				return _let_condition;
-			},
-			expression() {
-				return _expression;
+			right() {
+				return _right;
 			},
 			$with: {
-				letChain: (value?: T.LetChain) => letChain({ ...config, letChain: value }),
-				letCondition: (value?: T.LetCondition) => letChain({ ...config, letCondition: value }),
-				expression: (value?: T.Expression) => letChain({ ...config, expression: value })
+				left: (value: T.LetChain | T.LetCondition | T.Expression) => letChain({ ...config, left: value }),
+				right: (value: T.LetCondition | T.Expression) => letChain({ ...config, right: value })
 			}
 		},
 		methodsEngine
@@ -2878,8 +2872,8 @@ export function functionSignatureItem(config: T.FunctionSignatureItem.Config) {
 
 export function functionType(config: T.FunctionType.Config) {
 	const _for_lifetimes = config.forLifetimes;
-	const _function_type_trait_form = config.functionTypeTraitForm;
 	const _parameters = config.parameters;
+	const _function_type_trait_form = config.functionTypeTraitForm;
 	const _function_type_fn_form = config.functionTypeFnForm;
 	const _return_type = config.returnType;
 	return withMethods(
@@ -2888,18 +2882,18 @@ export function functionType(config: T.FunctionType.Config) {
 			$source: 2 as const,
 			$named: true as const,
 			_for_lifetimes,
-			_function_type_trait_form,
 			_parameters,
+			_function_type_trait_form,
 			_function_type_fn_form,
 			_return_type,
 			forLifetimes() {
 				return _for_lifetimes;
 			},
-			functionTypeTraitForm() {
-				return _function_type_trait_form;
-			},
 			parameters() {
 				return _parameters;
+			},
+			functionTypeTraitForm() {
+				return _function_type_trait_form;
 			},
 			functionTypeFnForm() {
 				return _function_type_fn_form;
@@ -2909,9 +2903,9 @@ export function functionType(config: T.FunctionType.Config) {
 			},
 			$with: {
 				forLifetimes: (value?: T.ForLifetimes) => functionType({ ...config, forLifetimes: value }),
+				parameters: (value: T.Parameters) => functionType({ ...config, parameters: value }),
 				functionTypeTraitForm: (value?: T.FunctionTypeTraitForm) =>
 					functionType({ ...config, functionTypeTraitForm: value }),
-				parameters: (value: T.Parameters) => functionType({ ...config, parameters: value }),
 				functionTypeFnForm: (value?: T.FunctionTypeFnForm) => functionType({ ...config, functionTypeFnForm: value }),
 				returnType: (value?: T._Type) => functionType({ ...config, returnType: value })
 			}

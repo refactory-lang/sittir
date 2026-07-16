@@ -2476,24 +2476,24 @@
             }
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "identifier"
-              },
-              {
-                "type": "FIELD",
-                "name": "identifier",
-                "content": {
+            "type": "FIELD",
+            "name": "identifier",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
                   "type": "SYMBOL",
-                  "name": "_kw_identifier"
+                  "name": "identifier"
                 },
-                "metadata": {
-                  "fieldSource": "override"
+                {
+                  "type": "STRING",
+                  "value": "_"
                 }
-              }
-            ]
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         ]
       }
@@ -6717,12 +6717,7 @@
       "type": "BLANK"
     },
     "_kw_identifier": {
-      "type": "PREC",
-      "value": 1,
-      "content": {
-        "type": "STRING",
-        "value": "_"
-      }
+      "type": "BLANK"
     },
     "_kw_wildcard_import": {
       "type": "BLANK"
@@ -6957,7 +6952,6 @@
     "_exec_statement_optional1",
     "_kw_real",
     "_kw_async_marker",
-    "_kw_identifier",
     "_kw_type"
   ],
   "supertypes": [

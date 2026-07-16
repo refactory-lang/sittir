@@ -5740,12 +5740,6 @@ export function wrapPrintStatement(data: T.PrintStatement, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.PrintStatement as const,
-			_chevron: normalizeSingularWrapSlot(data._chevron, 'chevron', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'chevron',
-				span: (data as _NodeData).$span
-			}),
 			_argument: normalizeRepeatedWrapSlot(
 				_filterWrapChildrenByKind(data._argument, [
 					'expression',
@@ -5788,17 +5782,23 @@ export function wrapPrintStatement(data: T.PrintStatement, tree: TreeHandle) {
 				'argument',
 				{ tree, nodeType: data.$type, slotName: 'argument', span: (data as _NodeData).$span }
 			),
+			_chevron: normalizeSingularWrapSlot(data._chevron, 'chevron', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'chevron',
+				span: (data as _NodeData).$span
+			}),
 
-			chevron() {
-				return drillIn<T.Chevron | undefined>(this._chevron, tree);
-			},
 			arguments() {
 				return drillInAll<T.Expression>(this._argument as readonly T.Expression[] | undefined, tree);
 			},
+			chevron() {
+				return drillIn<T.Chevron | undefined>(this._chevron, tree);
+			},
 			$with: {
-				chevron: (v: NonNullable<T.PrintStatement['_chevron']>) => wrapPrintStatement({ ...data, _chevron: v }, tree),
 				arguments: (...v: NonNullable<T.PrintStatement['_argument']>[number][]) =>
-					wrapPrintStatement({ ...data, _argument: v }, tree)
+					wrapPrintStatement({ ...data, _argument: v }, tree),
+				chevron: (v: NonNullable<T.PrintStatement['_chevron']>) => wrapPrintStatement({ ...data, _chevron: v }, tree)
 			}
 		},
 		methodsEngine
@@ -6154,7 +6154,7 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapSplatPattern(data: T.SplatPattern & { readonly _?: T.Identifier | '_' }, tree: TreeHandle) {
+export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle) {
 	const _node = withMethods(
 		{
 			...data,
@@ -6168,7 +6168,7 @@ export function wrapSplatPattern(data: T.SplatPattern & { readonly _?: T.Identif
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				)
 			),
-			_identifier: normalizeSingularWrapSlot(data._identifier ?? data['_'], 'identifier', true, data.$type, {
+			_identifier: normalizeSingularWrapSlot(data._identifier, 'identifier', true, data.$type, {
 				tree,
 				nodeType: data.$type,
 				slotName: 'identifier',

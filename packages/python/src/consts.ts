@@ -150,7 +150,6 @@ export const LEAF_KINDS = [
 	'_indent',
 	'_is_not',
 	'_kw_async_marker',
-	'_kw_identifier',
 	'_kw_type',
 	'_newline',
 	'_not_in',
@@ -221,7 +220,6 @@ export const KEYWORDS = [
 	'__future__',
 	'_async_marker',
 	'_kw_async_marker',
-	'_kw_identifier',
 	'_kw_type',
 	'_not_escape_sequence',
 	'amp',
@@ -1451,8 +1449,8 @@ export const FIELD_MAP: Record<
 	pattern_group: [{ name: 'patterns', required: true, multiple: true }],
 	pattern_list: [{ name: 'patterns', required: true, multiple: true }],
 	print_statement: [
-		{ name: 'chevron', required: false, multiple: false },
-		{ name: 'arguments', required: false, multiple: true }
+		{ name: 'arguments', required: false, multiple: true },
+		{ name: 'chevron', required: false, multiple: false }
 	],
 	raise_statement: [
 		{ name: 'expressions', required: false, multiple: false },

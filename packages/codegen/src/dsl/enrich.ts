@@ -172,6 +172,14 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	// stay in `inline:`. Tagged ONCE at creation (visibleGroupSynthName) — read
 	// here, never re-derived.
 	const visibleGroupHiddenNames = new Set<string>();
+	// Synthesized clause-hoist name → the parent kind whose body it was
+	// hoisted FROM (recorded once, at first mint — see the two record sites
+	// inside `applyClauseHoist`). Exposed via `ENRICH_CLAUSE_GROUP_OWNERS_KEY`
+	// so wire() can tell, once an override redeclares that owner, that the
+	// synthesized name is now orphaned (the override author could never have
+	// typed a reference to a name that doesn't exist until THIS enrich() call
+	// mints it from the base grammar's own, pre-override shape).
+	const clauseGroupOwners = new Map<string, string>();
 	// Per-call un-aliasing diagnostic sink (see ENRICH_UNALIAS_DIAGNOSTICS_KEY):
 	// local to THIS enrich() invocation, attached to its result below.
 	const unaliasSink: UnaliasDiagnosticSink = { diagnostics: [], seen: new Set() };
@@ -189,6 +197,7 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 					clauseDedupeMap,
 					groupDedupeMap,
 					visibleGroupHiddenNames,
+					clauseGroupOwners,
 					wordMatcher,
 					unaliasSink
 				)
@@ -233,6 +242,18 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 			configurable: true
 		});
 	}
+	// Attach the synthesized-name → owning-parent-kind map (BOTH categories —
+	// inline-safe AND visible-aliased) so wire() can detect when an override
+	// redeclares the owner and orphans the synthesized rule. See
+	// `getEnrichClauseGroupOwners`.
+	if (clauseGroupOwners.size > 0) {
+		Object.defineProperty(result, ENRICH_CLAUSE_GROUP_OWNERS_KEY, {
+			value: clauseGroupOwners,
+			enumerable: false,
+			writable: false,
+			configurable: true
+		});
+	}
 	// Attach this call's un-aliasing diagnostics to its own result (non-enumerable,
 	// like the clause-groups key) so they travel with the grammar object instead
 	// of a module-global accumulator — see ENRICH_UNALIAS_DIAGNOSTICS_KEY.
@@ -268,6 +289,29 @@ export function getEnrichClauseGroups(grammar: unknown): ReadonlySet<string> {
 	return new Set();
 }
 
+/**
+ * Well-known non-enumerable key attached by `enrich()` to the grammar result:
+ * synthesized clause-hoist name → the parent kind whose (pre-override) body
+ * it was hoisted from. Covers BOTH categories `ENRICH_CLAUSE_GROUPS_KEY`
+ * covers (inline-safe) AND the visible-aliased hidden names it deliberately
+ * excludes (`_<parent>_group<N>`) — wire() needs both, since an override
+ * redeclaring the recorded owner orphans the synthesized rule regardless of
+ * which category it's in.
+ */
+export const ENRICH_CLAUSE_GROUP_OWNERS_KEY = '__enrichedClauseGroupOwners__' as const;
+
+/**
+ * Extract the synthesized-name → owning-parent-kind map from an enriched
+ * grammar result. Returns an empty map when the grammar was not enriched or
+ * no clause groups were synthesized.
+ */
+export function getEnrichClauseGroupOwners(grammar: unknown): ReadonlyMap<string, string> {
+	if (!grammar || typeof grammar !== 'object') return new Map();
+	const owners = (grammar as Record<string, unknown>)[ENRICH_CLAUSE_GROUP_OWNERS_KEY];
+	if (owners instanceof Map) return owners as ReadonlyMap<string, string>;
+	return new Map();
+}
+
 function applyEnrichPasses(
 	ruleName: string,
 	rule: Rule,
@@ -278,6 +322,7 @@ function applyEnrichPasses(
 	clauseDedupeMap: Record<string, string>,
 	groupDedupeMap: Record<string, string>,
 	visibleGroupHiddenNames: Set<string>,
+	clauseGroupOwners: Map<string, string>,
 	wordMatcher: RegExp | undefined,
 	unaliasSink: UnaliasDiagnosticSink
 ): Rule {
@@ -327,7 +372,8 @@ function applyEnrichPasses(
 		clauseDedupeMap,
 		clauseHoistCounter,
 		groupDedupeMap,
-		visibleGroupHiddenNames
+		visibleGroupHiddenNames,
+		clauseGroupOwners
 	);
 	// Base-grammar un-aliasing: drop (visible X) or retarget (hidden X)
 	// alias($.X, $.Y) sites where X's storage kind is structurally distinct
@@ -1421,7 +1467,8 @@ function applyClauseHoist(
 	dedupeMap: Record<string, string>,
 	counter: ClauseHoistCounter,
 	groupDedupeMap: Record<string, string>,
-	visibleGroupHiddenNames: Set<string>
+	visibleGroupHiddenNames: Set<string>,
+	clauseGroupOwners: Map<string, string>
 ): Rule {
 	// Check if this node is an optional(seq) or CHOICE[seq,BLANK] pattern.
 	const peeled = peelOptionalSeq(rule);
@@ -1435,7 +1482,8 @@ function applyClauseHoist(
 			dedupeMap,
 			counter,
 			groupDedupeMap,
-			visibleGroupHiddenNames
+			visibleGroupHiddenNames,
+			clauseGroupOwners
 		);
 
 		if (ruleMatchesEmpty(recursedSeqBody)) {
@@ -1461,6 +1509,9 @@ function applyClauseHoist(
 			// clauseHoistSynthName increments the counter internally.
 			const name = clauseHoistSynthName(recursedSeqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules);
 			if (name !== null) {
+				// Record which parent's body this hoist was minted from — see
+				// `ENRICH_CLAUSE_GROUP_OWNERS_KEY` for why wire() needs this.
+				if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
 				const symbolRef = makeGroupLiftSymbol(rule, name);
 				if (peeled.form === 'optional') {
 					return rebuildOptional(rule, symbolRef);
@@ -1508,6 +1559,12 @@ function applyClauseHoist(
 				// the `inline:` list (so tree-sitter aliases the symbol-node, not the
 				// expanded seq). Classify ONCE here; read in enrich() at clauseGroupNames.
 				visibleGroupHiddenNames.add(names.hiddenName);
+				// Record which parent's body this visible-group hoist was minted
+				// from — see `ENRICH_CLAUSE_GROUP_OWNERS_KEY` for why wire() needs
+				// this (an override that redeclares `parentKind` orphans this hidden
+				// rule, since the synthesized name could never appear in the
+				// override author's own text).
+				if (!clauseGroupOwners.has(names.hiddenName)) clauseGroupOwners.set(names.hiddenName, parentKind);
 				// Pass 1: symbol ref to the hidden rule (mirrors makeGroupLiftSymbol).
 				const symbolRef = makeGroupLiftSymbol(rule, names.hiddenName);
 				// Pass 2: wrap in a visible alias so the inline-unsafe group surfaces
@@ -1555,7 +1612,8 @@ function applyClauseHoist(
 				dedupeMap,
 				counter,
 				groupDedupeMap,
-				visibleGroupHiddenNames
+				visibleGroupHiddenNames,
+				clauseGroupOwners
 			);
 			if (out !== m) changed = true;
 			return out;
@@ -1578,7 +1636,8 @@ function applyClauseHoist(
 				dedupeMap,
 				counter,
 				groupDedupeMap,
-				visibleGroupHiddenNames
+				visibleGroupHiddenNames,
+				clauseGroupOwners
 			);
 			if (out !== m) changed = true;
 			return out;
@@ -1598,7 +1657,8 @@ function applyClauseHoist(
 			dedupeMap,
 			counter,
 			groupDedupeMap,
-			visibleGroupHiddenNames
+			visibleGroupHiddenNames,
+			clauseGroupOwners
 		);
 		if (newContent === content) return rule;
 		return { ...rule, content: newContent } as Rule;
@@ -1616,7 +1676,8 @@ function applyClauseHoist(
 			dedupeMap,
 			counter,
 			groupDedupeMap,
-			visibleGroupHiddenNames
+			visibleGroupHiddenNames,
+			clauseGroupOwners
 		);
 		if (newContent === content) return rule;
 		return { ...rule, content: newContent } as Rule;

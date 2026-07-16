@@ -1520,7 +1520,8 @@ export const enum TSFieldId {
 	FieldTypeParameters = 76,
 	FieldTypePredicate = 77,
 	FieldUsingMarker = 78,
-	FieldValue = 79
+	FieldValue = 79,
+	FieldVisibilityPrefix = 80
 }
 
 export const TREE_SITTER_FIELD_ID_BY_NAME = {
@@ -1601,7 +1602,8 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
 	type_parameters: TSFieldId.FieldTypeParameters,
 	type_predicate: TSFieldId.FieldTypePredicate,
 	using_marker: TSFieldId.FieldUsingMarker,
-	value: TSFieldId.FieldValue
+	value: TSFieldId.FieldValue,
+	visibility_prefix: TSFieldId.FieldVisibilityPrefix
 } as const satisfies Record<string, TSFieldId>;
 
 export const TREE_SITTER_FIELD_NAME_BY_ID = {
@@ -1682,7 +1684,8 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
 	[TSFieldId.FieldTypeParameters]: 'type_parameters',
 	[TSFieldId.FieldTypePredicate]: 'type_predicate',
 	[TSFieldId.FieldUsingMarker]: 'using_marker',
-	[TSFieldId.FieldValue]: 'value'
+	[TSFieldId.FieldValue]: 'value',
+	[TSFieldId.FieldVisibilityPrefix]: 'visibility_prefix'
 } as const;
 
 export const TREE_SITTER_FIELD_ID_JSON = [
@@ -1768,7 +1771,8 @@ export const TREE_SITTER_FIELD_ID_JSON = [
 	{ name: 'type_parameters', id: 76, enumName: 'FieldTypeParameters', cName: 'field_type_parameters' },
 	{ name: 'type_predicate', id: 77, enumName: 'FieldTypePredicate', cName: 'field_type_predicate' },
 	{ name: 'using_marker', id: 78, enumName: 'FieldUsingMarker', cName: 'field_using_marker' },
-	{ name: 'value', id: 79, enumName: 'FieldValue', cName: 'field_value' }
+	{ name: 'value', id: 79, enumName: 'FieldValue', cName: 'field_value' },
+	{ name: 'visibility_prefix', id: 80, enumName: 'FieldVisibilityPrefix', cName: 'field_visibility_prefix' }
 ] as const;
 
 /** Per-node-kind field metadata. */
@@ -1853,10 +1857,10 @@ export const FIELD_MAP: Record<
 	array_type: [{ name: 'primaryType', required: true, multiple: false }],
 	arrow_function: [
 		{ name: 'asyncMarker', required: false, multiple: false },
-		{ name: 'arrowFunctionParameter', required: false, multiple: false },
 		{ name: 'typeParameters', required: false, multiple: false },
 		{ name: 'parameters', required: false, multiple: false },
 		{ name: 'returnType', required: false, multiple: false },
+		{ name: 'arrowFunctionParameter', required: false, multiple: false },
 		{ name: 'body', required: true, multiple: false }
 	],
 	as_expression: [
@@ -2136,7 +2140,10 @@ export const FIELD_MAP: Record<
 		{ name: 'closeTag', required: true, multiple: false }
 	],
 	jsx_expression: [{ name: 'expression', required: false, multiple: false }],
-	jsx_namespace_name: [{ name: 'jsxIdentifier', required: true, multiple: false }],
+	jsx_namespace_name: [
+		{ name: 'namespace', required: true, multiple: false },
+		{ name: 'name', required: true, multiple: false }
+	],
 	jsx_opening_element: [{ name: 'jsxOpeningElementContent', required: false, multiple: false }],
 	jsx_self_closing_element: [{ name: 'jsxOpeningElementContent', required: false, multiple: false }],
 	labeled_statement: [
@@ -2265,11 +2272,11 @@ export const FIELD_MAP: Record<
 	],
 	public_field_definition: [
 		{ name: 'decorators', required: false, multiple: true },
-		{ name: 'content', required: false, multiple: false },
+		{ name: 'visibilityPrefix', required: false, multiple: false },
+		{ name: 'accessorMarker', required: false, multiple: false },
 		{ name: 'publicFieldDefinitionStaticMods', required: false, multiple: false },
 		{ name: 'publicFieldDefinitionAbstractFirst', required: false, multiple: false },
 		{ name: 'publicFieldDefinitionReadonlyFirst', required: false, multiple: false },
-		{ name: 'accessorMarker', required: false, multiple: false },
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'optionalityMarker', required: false, multiple: false },
 		{ name: 'type', required: false, multiple: false },

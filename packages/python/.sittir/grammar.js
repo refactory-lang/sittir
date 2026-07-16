@@ -1059,6 +1059,7 @@ function enrich(baseInput) {
   const clauseDedupeMap = {};
   const groupDedupeMap = {};
   const visibleGroupHiddenNames = /* @__PURE__ */ new Set();
+  const clauseGroupOwners = /* @__PURE__ */ new Map();
   const unaliasSink = { diagnostics: [], seen: /* @__PURE__ */ new Set() };
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
@@ -1073,6 +1074,7 @@ function enrich(baseInput) {
       clauseDedupeMap,
       groupDedupeMap,
       visibleGroupHiddenNames,
+      clauseGroupOwners,
       wordMatcher,
       unaliasSink
     ) : rule;
@@ -1089,6 +1091,14 @@ function enrich(baseInput) {
   if (clauseGroupNames.size > 0) {
     Object.defineProperty(result, ENRICH_CLAUSE_GROUPS_KEY, {
       value: clauseGroupNames,
+      enumerable: false,
+      writable: false,
+      configurable: true
+    });
+  }
+  if (clauseGroupOwners.size > 0) {
+    Object.defineProperty(result, ENRICH_CLAUSE_GROUP_OWNERS_KEY, {
+      value: clauseGroupOwners,
       enumerable: false,
       writable: false,
       configurable: true
@@ -1111,7 +1121,14 @@ function getEnrichClauseGroups(grammar2) {
   if (names instanceof Set) return names;
   return /* @__PURE__ */ new Set();
 }
-function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, wordMatcher, unaliasSink) {
+var ENRICH_CLAUSE_GROUP_OWNERS_KEY = "__enrichedClauseGroupOwners__";
+function getEnrichClauseGroupOwners(grammar2) {
+  if (!grammar2 || typeof grammar2 !== "object") return /* @__PURE__ */ new Map();
+  const owners = grammar2[ENRICH_CLAUSE_GROUP_OWNERS_KEY];
+  if (owners instanceof Map) return owners;
+  return /* @__PURE__ */ new Map();
+}
+function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, wordMatcher, unaliasSink) {
   const MAX_ITERATIONS = 8;
   let r = rule;
   let converged = false;
@@ -1137,7 +1154,8 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
     clauseDedupeMap,
     clauseHoistCounter,
     groupDedupeMap,
-    visibleGroupHiddenNames
+    visibleGroupHiddenNames,
+    clauseGroupOwners
   );
   const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag, kwRules, clauseGroupRules);
   r = unaliasResult.rule;
@@ -1744,7 +1762,7 @@ function absorbTrailingListSeparators(members) {
   }
   return changed ? out : null;
 }
-function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames) {
+function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners) {
   const peeled = peelOptionalSeq(rule);
   if (peeled !== null) {
     const recursedSeqBody = applyClauseHoist(
@@ -1755,7 +1773,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       dedupeMap,
       counter,
       groupDedupeMap,
-      visibleGroupHiddenNames
+      visibleGroupHiddenNames,
+      clauseGroupOwners
     );
     if (ruleMatchesEmpty(recursedSeqBody)) {
       counter.opt += 1;
@@ -1771,6 +1790,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
     } else if (isInlineSafe(recursedSeqBody)) {
       const name = clauseHoistSynthName(recursedSeqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules);
       if (name !== null) {
+        if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
         const symbolRef = makeGroupLiftSymbol(rule, name);
         if (peeled.form === "optional") {
           return rebuildOptional(rule, symbolRef);
@@ -1794,6 +1814,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       );
       if (names !== null) {
         visibleGroupHiddenNames.add(names.hiddenName);
+        if (!clauseGroupOwners.has(names.hiddenName)) clauseGroupOwners.set(names.hiddenName, parentKind);
         const symbolRef = makeGroupLiftSymbol(rule, names.hiddenName);
         const aliasRule = makeVisibleGroupAlias(symbolRef, names.visibleName);
         if (peeled.form === "optional") {
@@ -1831,7 +1852,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         dedupeMap,
         counter,
         groupDedupeMap,
-        visibleGroupHiddenNames
+        visibleGroupHiddenNames,
+        clauseGroupOwners
       );
       if (out !== m) changed = true;
       return out;
@@ -1851,7 +1873,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         dedupeMap,
         counter,
         groupDedupeMap,
-        visibleGroupHiddenNames
+        visibleGroupHiddenNames,
+        clauseGroupOwners
       );
       if (out !== m) changed = true;
       return out;
@@ -1869,7 +1892,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       dedupeMap,
       counter,
       groupDedupeMap,
-      visibleGroupHiddenNames
+      visibleGroupHiddenNames,
+      clauseGroupOwners
     );
     if (newContent === content) return rule;
     return { ...rule, content: newContent };
@@ -1885,7 +1909,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       dedupeMap,
       counter,
       groupDedupeMap,
-      visibleGroupHiddenNames
+      visibleGroupHiddenNames,
+      clauseGroupOwners
     );
     if (newContent === content) return rule;
     return { ...rule, content: newContent };
@@ -2143,11 +2168,13 @@ function wire(config, base2) {
   const context = {
     deposits: /* @__PURE__ */ new Map(),
     syntheticInline: /* @__PURE__ */ new Set(),
+    orphanedSyntheticGroups: /* @__PURE__ */ new Set(),
     conflictGroups: [],
     refineForms: /* @__PURE__ */ new Map(),
     groups: cfg.groups,
     polymorphsConfig: cfg.polymorphs,
     renderAs: cfg.renderAs,
+    expectDiagnostics: cfg.expectDiagnostics,
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
@@ -2170,6 +2197,11 @@ function wire(config, base2) {
   if (baseArg) {
     for (const name of getEnrichClauseGroups(base2)) {
       context.syntheticInline.add(name);
+    }
+    for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base2)) {
+      if (context.authoredRuleNames.has(ownerKind)) {
+        context.orphanedSyntheticGroups.add(syntheticName);
+      }
     }
     applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
   }
@@ -3351,12 +3383,22 @@ var overrides_default = grammar(
           3: field("step")
           // expression [struct=2]
         },
-        // splat_pattern: 1 field(s)
+        // splat_pattern: base is `seq(choice('*', '**'), choice($.identifier, '_'))`.
+        // Position 1 is one semantic slot — "what's being splatted" —
+        // that can be a real identifier OR the `_` discard marker; the
+        // prior override only field-named the `_` arm (`'1/1'`), leaving
+        // the `$.identifier` arm unnamed. Both then derived the SAME
+        // kind-derived storageName ('identifier'), a storagename-
+        // collision whose last-write-wins merge silently dropped the
+        // `_` value. Field-naming the WHOLE choice (not one arm) makes
+        // this the same-name-both-positions "genuinely one combined
+        // slot" case: one named `identifier` slot unioning both values,
+        // same convention as `argument_list`'s naked-choice `1: field(...)` above.
         splat_pattern: {
           "0": field("operator"),
           // '*' | '**'
-          "1/1": field("identifier")
-          // identifier [struct=0]
+          1: field("identifier")
+          // identifier | '_'
         },
         // splat_type: 1 field(s)
         splat_type: {

@@ -1025,7 +1025,8 @@ pub struct JsxExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "jsx_namespace_name.jinja", escape = "none")]
 pub struct JsxNamespaceNameTemplate<'a> {
-    pub jsx_identifier: SingleNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub namespace: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1298,10 +1299,10 @@ pub struct PublicFieldDefinitionTemplate<'a> {
     pub decorator: ListNonterminalView<'a>,
     pub name: SingleNonterminalView<'a>,
     pub optionality_marker: OptionalNonterminalView<'a>,
-    pub public_field_definition_declare_first: SingleNonterminalView<'a>,
     pub public_field_definition_static_mods: OptionalNonterminalView<'a>,
     pub type_: OptionalNonterminalView<'a>,
     pub value: OptionalNonterminalView<'a>,
+    pub visibility_prefix: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

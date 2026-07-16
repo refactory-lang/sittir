@@ -122,4 +122,27 @@ describe('slot structural signals', () => {
 		const templates = runTemplateEmitter({ grammar: 'synth', nodeMap });
 		expect(templates.bodies.get('box')).toContain('{{ obj }}');
 	});
+
+	it('two unnamed same-kind slots in one branch fire storagename-collision (not silently collapsed)', () => {
+		const nodeMap = buildNodeMap({
+			host: {
+				type: 'CHOICE',
+				members: [
+					{
+						type: 'SEQ',
+						members: [
+							{ type: 'SYMBOL', name: 'identifier' },
+							{ type: 'SYMBOL', name: 'op', fieldName: 'op' },
+							{ type: 'SYMBOL', name: 'identifier' }
+						]
+					}
+				]
+			},
+			op: { type: 'STRING', value: '+' },
+			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
+		});
+		const collisionWarnings = nodeMap.assembleWarnings.filter((w) => w.code === 'storagename-collision');
+		expect(collisionWarnings).toHaveLength(1);
+		expect(collisionWarnings[0]!.details).toMatchObject({ storageName: 'identifier', slotCount: 2 });
+	});
 });

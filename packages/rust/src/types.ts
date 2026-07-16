@@ -3018,12 +3018,10 @@ export interface InPath {
 
 export interface LetChain {
 	readonly $type: TSKindId.LetChain;
-	readonly _let_chain?: LetChain;
-	readonly _let_condition?: LetCondition;
-	readonly _expression?: Expression;
-	letChain(): LetChain | undefined;
-	letCondition(): LetCondition | undefined;
-	expression(): Expression | undefined;
+	readonly _left: LetChain | LetCondition | Expression;
+	readonly _right: LetCondition | Expression;
+	left(): LetChain | LetCondition | Expression;
+	right(): LetCondition | Expression;
 }
 
 export interface LetDeclarationOptional1 {
@@ -3986,13 +3984,13 @@ export interface FunctionSignatureItem {
 export interface FunctionType {
 	readonly $type: TSKindId.FunctionType;
 	readonly _for_lifetimes?: ForLifetimes;
-	readonly _function_type_trait_form?: FunctionTypeTraitForm;
 	readonly _parameters: Parameters;
+	readonly _function_type_trait_form?: FunctionTypeTraitForm;
 	readonly _function_type_fn_form?: FunctionTypeFnForm;
 	readonly _return_type?: _Type;
 	forLifetimes(): ForLifetimes | undefined;
-	functionTypeTraitForm(): FunctionTypeTraitForm | undefined;
 	parameters(): Parameters;
+	functionTypeTraitForm(): FunctionTypeTraitForm | undefined;
 	functionTypeFnForm(): FunctionTypeFnForm | undefined;
 	returnType(): _Type | undefined;
 }

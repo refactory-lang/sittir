@@ -1057,6 +1057,7 @@ function enrich(baseInput) {
   const clauseDedupeMap = {};
   const groupDedupeMap = {};
   const visibleGroupHiddenNames = /* @__PURE__ */ new Set();
+  const clauseGroupOwners = /* @__PURE__ */ new Map();
   const unaliasSink = { diagnostics: [], seen: /* @__PURE__ */ new Set() };
   const enrichedRules = {};
   for (const name of Object.keys(rulesBag)) {
@@ -1071,6 +1072,7 @@ function enrich(baseInput) {
       clauseDedupeMap,
       groupDedupeMap,
       visibleGroupHiddenNames,
+      clauseGroupOwners,
       wordMatcher,
       unaliasSink
     ) : rule;
@@ -1087,6 +1089,14 @@ function enrich(baseInput) {
   if (clauseGroupNames.size > 0) {
     Object.defineProperty(result, ENRICH_CLAUSE_GROUPS_KEY, {
       value: clauseGroupNames,
+      enumerable: false,
+      writable: false,
+      configurable: true
+    });
+  }
+  if (clauseGroupOwners.size > 0) {
+    Object.defineProperty(result, ENRICH_CLAUSE_GROUP_OWNERS_KEY, {
+      value: clauseGroupOwners,
       enumerable: false,
       writable: false,
       configurable: true
@@ -1109,7 +1119,14 @@ function getEnrichClauseGroups(grammar2) {
   if (names instanceof Set) return names;
   return /* @__PURE__ */ new Set();
 }
-function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, wordMatcher, unaliasSink) {
+var ENRICH_CLAUSE_GROUP_OWNERS_KEY = "__enrichedClauseGroupOwners__";
+function getEnrichClauseGroupOwners(grammar2) {
+  if (!grammar2 || typeof grammar2 !== "object") return /* @__PURE__ */ new Map();
+  const owners = grammar2[ENRICH_CLAUSE_GROUP_OWNERS_KEY];
+  if (owners instanceof Map) return owners;
+  return /* @__PURE__ */ new Map();
+}
+function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, wordMatcher, unaliasSink) {
   const MAX_ITERATIONS = 8;
   let r = rule;
   let converged = false;
@@ -1135,7 +1152,8 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
     clauseDedupeMap,
     clauseHoistCounter,
     groupDedupeMap,
-    visibleGroupHiddenNames
+    visibleGroupHiddenNames,
+    clauseGroupOwners
   );
   const unaliasResult = applyUnaliasDistinct(ruleName, r, rulesBag, kwRules, clauseGroupRules);
   r = unaliasResult.rule;
@@ -1742,7 +1760,7 @@ function absorbTrailingListSeparators(members) {
   }
   return changed ? out : null;
 }
-function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames) {
+function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners) {
   const peeled = peelOptionalSeq(rule);
   if (peeled !== null) {
     const recursedSeqBody = applyClauseHoist(
@@ -1753,7 +1771,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       dedupeMap,
       counter,
       groupDedupeMap,
-      visibleGroupHiddenNames
+      visibleGroupHiddenNames,
+      clauseGroupOwners
     );
     if (ruleMatchesEmpty(recursedSeqBody)) {
       counter.opt += 1;
@@ -1769,6 +1788,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
     } else if (isInlineSafe(recursedSeqBody)) {
       const name = clauseHoistSynthName(recursedSeqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules);
       if (name !== null) {
+        if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
         const symbolRef = makeGroupLiftSymbol(rule, name);
         if (peeled.form === "optional") {
           return rebuildOptional(rule, symbolRef);
@@ -1792,6 +1812,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       );
       if (names !== null) {
         visibleGroupHiddenNames.add(names.hiddenName);
+        if (!clauseGroupOwners.has(names.hiddenName)) clauseGroupOwners.set(names.hiddenName, parentKind);
         const symbolRef = makeGroupLiftSymbol(rule, names.hiddenName);
         const aliasRule = makeVisibleGroupAlias(symbolRef, names.visibleName);
         if (peeled.form === "optional") {
@@ -1829,7 +1850,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         dedupeMap,
         counter,
         groupDedupeMap,
-        visibleGroupHiddenNames
+        visibleGroupHiddenNames,
+        clauseGroupOwners
       );
       if (out !== m) changed = true;
       return out;
@@ -1849,7 +1871,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         dedupeMap,
         counter,
         groupDedupeMap,
-        visibleGroupHiddenNames
+        visibleGroupHiddenNames,
+        clauseGroupOwners
       );
       if (out !== m) changed = true;
       return out;
@@ -1867,7 +1890,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       dedupeMap,
       counter,
       groupDedupeMap,
-      visibleGroupHiddenNames
+      visibleGroupHiddenNames,
+      clauseGroupOwners
     );
     if (newContent === content) return rule;
     return { ...rule, content: newContent };
@@ -1883,7 +1907,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       dedupeMap,
       counter,
       groupDedupeMap,
-      visibleGroupHiddenNames
+      visibleGroupHiddenNames,
+      clauseGroupOwners
     );
     if (newContent === content) return rule;
     return { ...rule, content: newContent };
@@ -2589,11 +2614,13 @@ function wire(config, base2) {
   const context = {
     deposits: /* @__PURE__ */ new Map(),
     syntheticInline: /* @__PURE__ */ new Set(),
+    orphanedSyntheticGroups: /* @__PURE__ */ new Set(),
     conflictGroups: [],
     refineForms: /* @__PURE__ */ new Map(),
     groups: cfg.groups,
     polymorphsConfig: cfg.polymorphs,
     renderAs: cfg.renderAs,
+    expectDiagnostics: cfg.expectDiagnostics,
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
@@ -2616,6 +2643,11 @@ function wire(config, base2) {
   if (baseArg) {
     for (const name of getEnrichClauseGroups(base2)) {
       context.syntheticInline.add(name);
+    }
+    for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base2)) {
+      if (context.authoredRuleNames.has(ownerKind)) {
+        context.orphanedSyntheticGroups.add(syntheticName);
+      }
     }
     applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
   }
@@ -3714,7 +3746,9 @@ var overrides_default = grammar(
         // unreachable `_let_chain_and` / `_let_chain_base` kinds. The
         // non-canonical audit for this kind reflects the derive walker's
         // view of an inlined helper; it doesn't surface as a user-facing
-        // shape. Leave as-is.
+        // shape. No variant() here — see the `_let_chain` entry in
+        // `rules:` below for the storagename-collision fix (field()
+        // naming, not variant()).
         // block_comment: deferred. Inner choice at `1/0` branches on
         // doc-marker form vs bare `_block_comment_content`, but the
         // latter is an EXTERNAL token (lexer callback). Variant hoist
@@ -3826,6 +3860,29 @@ var overrides_default = grammar(
           field2("type", $._type),
           optional(field2("where_clause", $.where_clause)),
           choice(alias2($._impl_item_body, $.impl_item_body), alias2($._impl_item_semi, $.impl_item_semi))
+        ),
+        // _let_chain — left-recursive `left && right` chain where each
+        // operand independently ranges over {_let_chain, let_condition,
+        // _expression} (base grammar has neither operand field-named).
+        // Un-fielded, the 5 choice arms' 10 operand positions get
+        // kind-derived storageNames ("let_chain"/"let_condition"/
+        // "expression") that collide across arms once merged onto this
+        // owner kind. Fielding BOTH operands with the SAME name
+        // ('left'/'right') across every arm is the "genuinely one
+        // combined slot" case: each field stays eligible for the
+        // named-slot merge path, collapsing to a single `left` slot and
+        // a single `right` slot (each a union of the 3 operand kinds)
+        // instead of 3 colliding positional slots. `3` mirrors base
+        // tree-sitter-rust's `PREC.and`.
+        _let_chain: ($) => prec.left(
+          3,
+          choice(
+            seq(field2("left", $._let_chain), "&&", field2("right", $.let_condition)),
+            seq(field2("left", $._let_chain), "&&", field2("right", $._expression)),
+            seq(field2("left", $.let_condition), "&&", field2("right", $._expression)),
+            seq(field2("left", $.let_condition), "&&", field2("right", $.let_condition)),
+            seq(field2("left", $._expression), "&&", field2("right", $.let_condition))
+          )
         )
       },
       // renderAs — sittir-side rule bodies for external scanner symbols.

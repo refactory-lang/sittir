@@ -20381,13 +20381,13 @@ impl RenderableTransport for ParenthesizedExpressionContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum PublicFieldDefinitionContentTransportSlot {
+pub enum PublicFieldDefinitionVisibilityPrefixTransportSlot {
     PublicFieldDefinitionDeclareFirst(PublicFieldDefinitionDeclareFirstTransport),
     PublicFieldDefinitionAccessFirst(PublicFieldDefinitionAccessFirstTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionContentTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionVisibilityPrefixTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -20402,14 +20402,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionContentTran
                         PublicFieldDefinitionAccessFirstTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in PublicFieldDefinitionContentTransportSlot",
+                        "unknown kind id {other} in PublicFieldDefinitionVisibilityPrefixTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionContentTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionVisibilityPrefixTransportSlot")
                 )?;
                 match kind_id {
                     419 => Ok(Self::PublicFieldDefinitionDeclareFirst(
@@ -20419,60 +20419,60 @@ impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionContentTran
                         PublicFieldDefinitionAccessFirstTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in PublicFieldDefinitionContentTransportSlot",
+                        "unknown kind id {other} in PublicFieldDefinitionVisibilityPrefixTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("PublicFieldDefinitionContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("PublicFieldDefinitionVisibilityPrefixTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PublicFieldDefinitionContentTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for PublicFieldDefinitionVisibilityPrefixTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PublicFieldDefinitionContentTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("PublicFieldDefinitionVisibilityPrefixTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PublicFieldDefinitionContentTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PublicFieldDefinitionVisibilityPrefixTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        PublicFieldDefinitionContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        PublicFieldDefinitionVisibilityPrefixTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionContentTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionVisibilityPrefixTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        PublicFieldDefinitionContentTransportSlot::to_napi_value(env, *val)
+        PublicFieldDefinitionVisibilityPrefixTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn public_field_definition_content_transport_slot_to_any(t: PublicFieldDefinitionContentTransportSlot) -> AnyTransport {
+fn public_field_definition_visibility_prefix_transport_slot_to_any(t: PublicFieldDefinitionVisibilityPrefixTransportSlot) -> AnyTransport {
     match t {
-        PublicFieldDefinitionContentTransportSlot::PublicFieldDefinitionDeclareFirst(inner) => AnyTransport::PublicFieldDefinitionDeclareFirst(inner),
-        PublicFieldDefinitionContentTransportSlot::PublicFieldDefinitionAccessFirst(inner) => AnyTransport::PublicFieldDefinitionAccessFirst(inner),
+        PublicFieldDefinitionVisibilityPrefixTransportSlot::PublicFieldDefinitionDeclareFirst(inner) => AnyTransport::PublicFieldDefinitionDeclareFirst(inner),
+        PublicFieldDefinitionVisibilityPrefixTransportSlot::PublicFieldDefinitionAccessFirst(inner) => AnyTransport::PublicFieldDefinitionAccessFirst(inner),
     }
 }
 
-impl RenderableTransport for PublicFieldDefinitionContentTransportSlot {
+impl RenderableTransport for PublicFieldDefinitionVisibilityPrefixTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            PublicFieldDefinitionContentTransportSlot::PublicFieldDefinitionDeclareFirst(inner) => render_public_field_definition_declare_first(inner, dest),
-            PublicFieldDefinitionContentTransportSlot::PublicFieldDefinitionAccessFirst(inner) => render_public_field_definition_access_first(inner, dest),
+            PublicFieldDefinitionVisibilityPrefixTransportSlot::PublicFieldDefinitionDeclareFirst(inner) => render_public_field_definition_declare_first(inner, dest),
+            PublicFieldDefinitionVisibilityPrefixTransportSlot::PublicFieldDefinitionAccessFirst(inner) => render_public_field_definition_access_first(inner, dest),
         }
     }
 }
@@ -35814,8 +35814,10 @@ pub struct JsxNamespaceNameTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_identifier"))]
-    pub jsx_identifier: _JsxIdentifierTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_namespace"))]
+    pub namespace: _JsxIdentifierTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    pub name: _JsxIdentifierTransport,
 }
 
 impl RenderableTransport for JsxNamespaceNameTransport {
@@ -38383,6 +38385,8 @@ pub struct PublicFieldDefinitionTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_decorator"))]
     pub decorator: Option<Vec<DecoratorTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_visibility_prefix"))]
+    pub visibility_prefix: Option<PublicFieldDefinitionVisibilityPrefixTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_marker"))]
     pub accessor_marker: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
@@ -38393,8 +38397,6 @@ pub struct PublicFieldDefinitionTransport {
     pub type_: Option<TypeAnnotationTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: Option<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Option<PublicFieldDefinitionContentTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_public_field_definition_static_mods"))]
     pub public_field_definition_static_mods: Option<PublicFieldDefinitionStaticModsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_public_field_definition_abstract_first"))]
@@ -55251,7 +55253,8 @@ fn render_jsx_identifier(t: &JsxIdentifierTransport, dest: &mut dyn ::std::fmt::
 
 fn render_jsx_namespace_name(node: &JsxNamespaceNameTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = JsxNamespaceNameTemplate {
-        jsx_identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.jsx_identifier)),
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
+        namespace: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.namespace)),
     };
     template.render_into(dest)
 }
@@ -55804,7 +55807,6 @@ fn render_public_field_definition(node: &PublicFieldDefinitionTransport, dest: &
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        public_field_definition_declare_first: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
         public_field_definition_static_mods: match &node.public_field_definition_static_mods {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -55814,6 +55816,10 @@ fn render_public_field_definition(node: &PublicFieldDefinitionTransport, dest: &
             None => OptionalNonterminalView::Missing,
         },
         value: match &node.value {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+        visibility_prefix: match &node.visibility_prefix {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },

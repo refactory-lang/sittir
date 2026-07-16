@@ -353,7 +353,7 @@
       "member_expression": "decorator_member_expression",
       "call_expression": "decorator_call_expression"
     },
-    "public_field_definition.content": {
+    "public_field_definition.visibility_prefix": {
       "public_field_definition_declare_first": "_public_field_definition_declare_first",
       "public_field_definition_access_first": "_public_field_definition_access_first"
     },
@@ -1259,13 +1259,6 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "arrow_function_parameter": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
       "type_parameters": {
         "unnamed": false,
         "slotCount": 1,
@@ -1281,6 +1274,13 @@
         "nonEmpty": false
       },
       "return_type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "arrow_function_parameter": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2658,7 +2658,14 @@
       }
     },
     "jsx_namespace_name": {
-      "jsx_identifier": {
+      "namespace": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3351,7 +3358,14 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "content": {
+      "visibility_prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "accessor_marker": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3373,13 +3387,6 @@
         "nonEmpty": false
       },
       "public_field_definition_readonly_first": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "accessor_marker": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -7846,18 +7853,6 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": ",",
-              "parseKind": "comma"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": ";",
-              "parseKind": "semi"
-            },
-            {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "export_statement",
@@ -10093,29 +10088,6 @@
           }
         },
         {
-          "name": "arrow_function_parameter",
-          "propertyName": "arrowFunctionParameter",
-          "paramName": "arrowFunctionParameter",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_arrow_function_parameter",
-              "parseKind": "arrow_function_parameter",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_arrow_function_parameter"
-            ]
-          }
-        },
-        {
           "name": "type_parameters",
           "propertyName": "typeParameters",
           "paramName": "typeParameters",
@@ -10201,6 +10173,29 @@
           }
         },
         {
+          "name": "arrow_function_parameter",
+          "propertyName": "arrowFunctionParameter",
+          "paramName": "arrowFunctionParameter",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_arrow_function_parameter",
+              "parseKind": "arrow_function_parameter",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_arrow_function_parameter"
+            ]
+          }
+        },
+        {
           "name": "body",
           "propertyName": "body",
           "paramName": "body",
@@ -10235,10 +10230,10 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "arrow_function_parameter",
         "type_parameters",
         "parameters",
         "return_type",
+        "arrow_function_parameter",
         "body"
       ]
     },
@@ -16870,9 +16865,32 @@
       "hidden": false,
       "fields": [
         {
-          "name": "jsx_identifier",
-          "propertyName": "jsxIdentifier",
-          "paramName": "jsxIdentifier",
+          "name": "namespace",
+          "propertyName": "namespace",
+          "paramName": "namespace",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_jsx_identifier",
+              "parseKind": "_jsx_identifier",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_jsx_identifier"
+            ]
+          }
+        },
+        {
+          "name": "name",
+          "propertyName": "name",
+          "paramName": "name",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -16894,9 +16912,10 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
-        "jsx_identifier"
+        "namespace",
+        "name"
       ]
     },
     {
@@ -20001,9 +20020,9 @@
           }
         },
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "visibility_prefix",
+          "propertyName": "visibilityPrefix",
+          "paramName": "visibilityPrefix",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -20029,6 +20048,26 @@
               "_public_field_definition_declare_first",
               "_public_field_definition_access_first"
             ]
+          }
+        },
+        {
+          "name": "accessor_marker",
+          "propertyName": "accessorMarker",
+          "paramName": "accessorMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "accessor",
+              "parseKind": "accessor"
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": []
           }
         },
         {
@@ -20098,26 +20137,6 @@
             "kinds": [
               "_public_field_definition_readonly_first"
             ]
-          }
-        },
-        {
-          "name": "accessor_marker",
-          "propertyName": "accessorMarker",
-          "paramName": "accessorMarker",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "terminal",
-              "multiplicity": "optional",
-              "value": "accessor",
-              "parseKind": "accessor"
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": []
           }
         },
         {
@@ -20217,7 +20236,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "decorator",
-        "content",
+        "visibility_prefix",
         "public_field_definition_static_mods",
         "public_field_definition_abstract_first",
         "public_field_definition_readonly_first",

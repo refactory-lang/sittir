@@ -2745,16 +2745,30 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "_jsx_identifier"
+          "type": "FIELD",
+          "name": "namespace",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_jsx_identifier"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "STRING",
           "value": ":"
         },
         {
-          "type": "SYMBOL",
-          "name": "_jsx_identifier"
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_jsx_identifier"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -6925,35 +6939,39 @@
           }
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_public_field_definition_declare_first"
+          "type": "FIELD",
+          "name": "visibility_prefix",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_public_field_definition_declare_first"
+                    },
+                    "named": true,
+                    "value": "public_field_definition_declare_first"
                   },
-                  "named": true,
-                  "value": "public_field_definition_declare_first"
-                },
-                {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_public_field_definition_access_first"
-                  },
-                  "named": true,
-                  "value": "public_field_definition_access_first"
-                }
-              ]
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_public_field_definition_access_first"
+                    },
+                    "named": true,
+                    "value": "public_field_definition_access_first"
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
         },
         {
           "type": "CHOICE",
@@ -12301,6 +12319,9 @@
       "type": "BLANK"
     },
     "_kw_import_kind": {
+      "type": "BLANK"
+    },
+    "_kw_visibility_prefix": {
       "type": "BLANK"
     },
     "_kw_optionality_marker": {

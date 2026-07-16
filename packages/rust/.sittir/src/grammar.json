@@ -6463,16 +6463,30 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "_let_chain"
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_let_chain"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               },
               {
                 "type": "STRING",
                 "value": "&&"
               },
               {
-                "type": "SYMBOL",
-                "name": "let_condition"
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "let_condition"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               }
             ]
           },
@@ -6480,16 +6494,30 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "_let_chain"
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_let_chain"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               },
               {
                 "type": "STRING",
                 "value": "&&"
               },
               {
-                "type": "SYMBOL",
-                "name": "_expression"
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_expression"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               }
             ]
           },
@@ -6497,16 +6525,30 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "let_condition"
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "let_condition"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               },
               {
                 "type": "STRING",
                 "value": "&&"
               },
               {
-                "type": "SYMBOL",
-                "name": "_expression"
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_expression"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               }
             ]
           },
@@ -6514,16 +6556,30 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "let_condition"
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "let_condition"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               },
               {
                 "type": "STRING",
                 "value": "&&"
               },
               {
-                "type": "SYMBOL",
-                "name": "let_condition"
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "let_condition"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               }
             ]
           },
@@ -6531,16 +6587,30 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "_expression"
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_expression"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               },
               {
                 "type": "STRING",
                 "value": "&&"
               },
               {
-                "type": "SYMBOL",
-                "name": "let_condition"
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "let_condition"
+                },
+                "metadata": {
+                  "fieldSource": "override"
+                }
               }
             ]
           }

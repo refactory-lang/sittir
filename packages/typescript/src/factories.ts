@@ -1808,10 +1808,10 @@ export function arrayType(primaryType: T.ArrayType.Config['primaryType']) {
 
 export function arrowFunction(config: T.ArrowFunction.Config) {
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
-	const _arrow_function_parameter = config.arrowFunctionParameter;
 	const _type_parameters = config.typeParameters;
 	const _parameters = config.parameters;
 	const _return_type = config.returnType;
+	const _arrow_function_parameter = config.arrowFunctionParameter;
 	const _body = config.body;
 	return withMethods(
 		{
@@ -1819,16 +1819,13 @@ export function arrowFunction(config: T.ArrowFunction.Config) {
 			$source: 2 as const,
 			$named: true as const,
 			_async_marker,
-			_arrow_function_parameter,
 			_type_parameters,
 			_parameters,
 			_return_type,
+			_arrow_function_parameter,
 			_body,
 			asyncMarker() {
 				return _async_marker;
-			},
-			arrowFunctionParameter() {
-				return _arrow_function_parameter;
 			},
 			typeParameters() {
 				return _type_parameters;
@@ -1839,18 +1836,21 @@ export function arrowFunction(config: T.ArrowFunction.Config) {
 			returnType() {
 				return _return_type;
 			},
+			arrowFunctionParameter() {
+				return _arrow_function_parameter;
+			},
 			body() {
 				return _body;
 			},
 			$with: {
 				asyncMarker: (value?: NonNullable<Parameters<typeof arrowFunction>[0]>['asyncMarker']) =>
 					arrowFunction({ ...config, asyncMarker: value }),
-				arrowFunctionParameter: (value?: T.ArrowFunctionParameter) =>
-					arrowFunction({ ...config, arrowFunctionParameter: value }),
 				typeParameters: (value?: T.TypeParameters) => arrowFunction({ ...config, typeParameters: value }),
 				parameters: (value?: T.FormalParameters) => arrowFunction({ ...config, parameters: value }),
 				returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) =>
 					arrowFunction({ ...config, returnType: value }),
+				arrowFunctionParameter: (value?: T.ArrowFunctionParameter) =>
+					arrowFunction({ ...config, arrowFunctionParameter: value }),
 				body: (value: T.Expression | T.StatementBlock) => arrowFunction({ ...config, body: value })
 			}
 		},
@@ -5099,11 +5099,11 @@ export function propertySignature(config: T.PropertySignature.Config) {
 
 export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
 	const _decorator = config.decorator;
-	const _content = config.content;
+	const _visibility_prefix = config.visibilityPrefix;
+	const _accessor_marker = coerceBooleanKeywordStorage(config.accessorMarker);
 	const _public_field_definition_static_mods = config.publicFieldDefinitionStaticMods;
 	const _public_field_definition_abstract_first = config.publicFieldDefinitionAbstractFirst;
 	const _public_field_definition_readonly_first = config.publicFieldDefinitionReadonlyFirst;
-	const _accessor_marker = coerceBooleanKeywordStorage(config.accessorMarker);
 	const _name = config.name;
 	const _optionality_marker = coerceKindEnumStorage(config.optionalityMarker, [
 		['?', TSKindId.Qmark] as const,
@@ -5117,11 +5117,11 @@ export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
 			$source: 2 as const,
 			$named: true as const,
 			_decorator,
-			_content,
+			_visibility_prefix,
+			_accessor_marker,
 			_public_field_definition_static_mods,
 			_public_field_definition_abstract_first,
 			_public_field_definition_readonly_first,
-			_accessor_marker,
 			_name,
 			_optionality_marker,
 			_type,
@@ -5129,8 +5129,11 @@ export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
 			decorators() {
 				return _decorator;
 			},
-			content() {
-				return _content;
+			visibilityPrefix() {
+				return _visibility_prefix;
+			},
+			accessorMarker() {
+				return _accessor_marker;
 			},
 			publicFieldDefinitionStaticMods() {
 				return _public_field_definition_static_mods;
@@ -5140,9 +5143,6 @@ export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
 			},
 			publicFieldDefinitionReadonlyFirst() {
 				return _public_field_definition_readonly_first;
-			},
-			accessorMarker() {
-				return _accessor_marker;
 			},
 			name() {
 				return _name;
@@ -5158,16 +5158,16 @@ export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
 			},
 			$with: {
 				decorators: (...values: T.Decorator[]) => publicFieldDefinition({ ...config, decorator: values }),
-				content: (value?: T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst) =>
-					publicFieldDefinition({ ...config, content: value }),
+				visibilityPrefix: (value?: T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst) =>
+					publicFieldDefinition({ ...config, visibilityPrefix: value }),
+				accessorMarker: (value?: NonNullable<Parameters<typeof publicFieldDefinition>[0]>['accessorMarker']) =>
+					publicFieldDefinition({ ...config, accessorMarker: value }),
 				publicFieldDefinitionStaticMods: (value?: T.PublicFieldDefinitionStaticMods) =>
 					publicFieldDefinition({ ...config, publicFieldDefinitionStaticMods: value }),
 				publicFieldDefinitionAbstractFirst: (value?: T.PublicFieldDefinitionAbstractFirst) =>
 					publicFieldDefinition({ ...config, publicFieldDefinitionAbstractFirst: value }),
 				publicFieldDefinitionReadonlyFirst: (value?: T.PublicFieldDefinitionReadonlyFirst) =>
 					publicFieldDefinition({ ...config, publicFieldDefinitionReadonlyFirst: value }),
-				accessorMarker: (value?: NonNullable<Parameters<typeof publicFieldDefinition>[0]>['accessorMarker']) =>
-					publicFieldDefinition({ ...config, accessorMarker: value }),
 				name: (value: T.PropertyName) => publicFieldDefinition({ ...config, name: value }),
 				optionalityMarker: (value?: NonNullable<Parameters<typeof publicFieldDefinition>[0]>['optionalityMarker']) =>
 					publicFieldDefinition({ ...config, optionalityMarker: value }),

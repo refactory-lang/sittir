@@ -84,7 +84,7 @@ export interface SlotGroupingDiagnostic extends Diagnostic {
 	readonly code: SlotGroupingShape;
 	readonly severity: 'warning';
 	readonly message: string;
-	readonly canProceed: true;
+	readonly canProceed: boolean;
 	/** The kind that owns the rule containing the violation. */
 	readonly ownerKind: string;
 	/** The slot count of the offending sub-rule (for multi-slot-nested-seq). */
@@ -141,7 +141,13 @@ export function diagnoseSlotGrouping(
 					code: 'content-collision',
 					severity: 'warning',
 					message: `Kind '${ownerKind}' has ${contentCount} anonymous 'content' slots that would share the '_content' storage key.`,
-					canProceed: true,
+					// Always blocking here — accepted-floor exceptions are applied later,
+					// in grammar-diagnostics.ts's `collectGrammarDiagnostics`, driven by
+					// the grammar's OWN `expectDiagnostics:` declaration in its
+					// overrides.ts. This function has no grammar identity, so a
+					// kind-name-only check here would incorrectly except a same-named
+					// kind in ANY grammar.
+					canProceed: false,
 					ownerKind,
 					slotCount: contentCount,
 					proposal:

@@ -292,8 +292,16 @@ export default grammar(
 				// canonical. Variant adoption stays a pure sittir-side concern;
 				// tree-sitter parses the same tree as before.
 				public_field_definition: {
-					'1/0/0': 'declare_first',
-					'1/0/1': 'access_first',
+					// Paths carry an extra '/0' hop at position 1 vs. the raw base
+					// shape ('1/0/0/0' not '1/0/0') because `transforms:` below wraps
+					// position 1 in `field('visibility_prefix', …)` — transforms
+					// compose innermost, polymorphs outermost (see wire.ts), so these
+					// polymorph paths address the ALREADY-field-wrapped tree. FIELD is
+					// a single-content wrapper (like OPTIONAL) that consumes one
+					// index-0 hop to descend into its content, shifting every path
+					// under position 1 by one segment.
+					'1/0/0/0': 'declare_first',
+					'1/0/0/1': 'access_first',
 					// Position 2: a four-arm modifier choice (heterogeneous).
 					'2/0': 'static_mods',
 					'2/1': 'abstract_first',
@@ -822,7 +830,20 @@ export default grammar(
 				// as `optionality_marker`. Different semantics in one slot
 				// (`?` = optional field, `!` = definite-assignment) — keep as one
 				// discriminator field; the literal value distinguishes.
+				//
+				// content-collision (PR-L task 4): positions 1 and 2 are both
+				// unnamed POLYMORPHED unions (declare/access-first, and the
+				// 4-arm modifier choice) — 2 anonymous 'content' slots sharing
+				// the `_content` storage key. Name position 1's outer union
+				// `visibility_prefix` (>1 drops to 1, silencing the diagnostic;
+				// position 2 stays unnamed, no collision remains since only one
+				// unnamed content slot is left). The polymorphs map above adds
+				// an extra '/0' hop under position 1 to compensate — this
+				// field() wrap runs BEFORE polymorphs (transforms innermost,
+				// polymorphs outermost), so it shifts every path under
+				// position 1 by one segment.
 				public_field_definition: {
+					'1': field('visibility_prefix'),
 					'4/0': field('optionality_marker')
 				},
 
@@ -949,6 +970,16 @@ export default grammar(
 				// doesn't exist at runtime, clobbering all five declared fields.
 				// Positions 1/2/3 (the `?`, the type field, and the initializer)
 				// are already correctly structured in the base rule.
+				// jsx_namespace_name — base is `seq($._jsx_identifier, ':',
+				// $._jsx_identifier)`: an XML-namespace-style `<ns:name>` JSX
+				// tag/attribute head where BOTH positions are the same
+				// `_jsx_identifier` kind but distinct structural roles. Neither
+				// is field-named upstream, so both collapse to the same
+				// kind-derived storageName. Field them by role (`namespace` /
+				// `name`) — two genuinely distinct positions, not a union.
+				jsx_namespace_name: ($) =>
+					seq(field('namespace', $._jsx_identifier), ':', field('name', $._jsx_identifier)),
+
 				_ambient_declaration_global: ($) => seq('global', field('body', $.statement_block)),
 				_ambient_declaration_module: ($) =>
 					prec.right(
