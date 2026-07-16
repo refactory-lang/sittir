@@ -18,6 +18,8 @@ Thumbs.db
 .pnpm-debug.log*
 *.tsbuildinfo
 .claude/settings.local.json
+# infigraph's local code-graph cache/index (embeddings, kuzu db, session logs)
+.infigraph/
 .claude/scheduled_tasks.lock
 # `.sittir/` is the per-grammar generated-output staging area. Its CONTENTS
 # are ignored, EXCEPT the well-known tracked artifacts un-ignored below — so
