@@ -212,6 +212,18 @@ export interface RawGrammar {
 	 * bodies (e.g. `{ type: 'STRING', value: '!' }`).
 	 */
 	readonly renderAs?: Record<string, Rule<'evaluate'>>;
+	/**
+	 * Per-kind, per-diagnostic-code exceptions from `expectDiagnostics:` in
+	 * the override layer — the grammar author's own declaration that a
+	 * specific diagnostic code is EXPECTED (and accepted as non-blocking)
+	 * for a specific kind, e.g. `{ 'content-collision': ['_object_type_group1'] }`.
+	 * Read directly by `collectGrammarDiagnostics`/`collectGrammarDiagnosticsForGrammar`
+	 * (`compiler/diagnostics/grammar-diagnostics.ts`) — grammar-scoped by
+	 * construction, since only the grammar whose OWN overrides.ts declares an
+	 * entry gets the exception. See docs/KNOWN_ISSUES.md for the canonical
+	 * example (typescript's `_object_type_group1`).
+	 */
+	readonly expectDiagnostics?: Readonly<Record<string, readonly string[]>>;
 }
 
 /**

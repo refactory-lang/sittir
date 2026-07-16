@@ -2594,6 +2594,7 @@ function wire(config, base2) {
     groups: cfg.groups,
     polymorphsConfig: cfg.polymorphs,
     renderAs: cfg.renderAs,
+    expectDiagnostics: cfg.expectDiagnostics,
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };

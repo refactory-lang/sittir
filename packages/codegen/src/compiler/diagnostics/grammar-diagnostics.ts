@@ -87,20 +87,35 @@ export function fromSlotGrouping(grammar: string, diagnostic: SlotGroupingDiagno
 		ownerKind: diagnostic.ownerKind,
 		message: diagnostic.message,
 		proposal: diagnostic.proposal,
-		// Forward the producer's canProceed verbatim (content-collision now
-		// computes it per-kind, gated on the accepted-floor exception in
-		// slot-grouping.ts; the other 3 SlotGroupingShape codes still always
-		// push canProceed: true) rather than hardcoding true here, which would
-		// silently swallow the flip.
+		// Forward the producer's canProceed verbatim (content-collision now always
+		// pushes false when it fires — the accepted-floor exception is applied by
+		// this function's caller, collectGrammarDiagnostics, where `grammar` is
+		// known; the other 3 SlotGroupingShape codes still always push
+		// canProceed: true) rather than hardcoding true here, which would silently
+		// swallow the flip.
 		canProceed: diagnostic.canProceed,
 		details: { slotCount: diagnostic.slotCount }
 	};
 }
 
-// Permanently accepted floor: see docs/KNOWN_ISSUES.md ("`_object_type_group1`'s two
-// diagnostics..."). Mirrors the analogous exception in diagnostics/slot-grouping.ts's
-// content-collision construction — same kind, same root cause.
-const STORAGENAME_COLLISION_ACCEPTED_FLOOR_KINDS = new Set(['_object_type_group1']);
+/**
+ * Is `ownerKind` declared as an expected (non-blocking) exception for `code`?
+ * `expectDiagnostics` comes from the grammar's OWN `overrides.ts` (`wire()`'s
+ * `expectDiagnostics:` block, threaded through `RawGrammar.expectDiagnostics`)
+ * — grammar-scoped by construction, since only the grammar whose overrides.ts
+ * declares an entry ever supplies a non-empty `expectDiagnostics` here. See
+ * docs/KNOWN_ISSUES.md for the canonical example (typescript's
+ * `_object_type_group1`, exempted from both `content-collision` and
+ * `storagename-collision`).
+ */
+function isExpectedDiagnostic(
+	expectDiagnostics: Readonly<Record<string, readonly string[]>> | undefined,
+	code: string,
+	ownerKind: string | undefined
+): boolean {
+	if (ownerKind === undefined) return false;
+	return (expectDiagnostics?.[code] ?? []).includes(ownerKind);
+}
 
 export function collectGrammarDiagnostics(input: {
 	grammar: string;
@@ -108,6 +123,7 @@ export function collectGrammarDiagnostics(input: {
 	deriveShapeDiagnostics?: readonly DeriveShapeDiagnostic[];
 	assembleWarnings?: readonly AssembleWarning[];
 	slotGroupingDiagnostics?: readonly SlotGroupingDiagnostic[];
+	expectDiagnostics?: Readonly<Record<string, readonly string[]>>;
 }): { diagnostics: readonly GrammarDiagnostic[] } {
 	const parseKindMapped = input.parseKindCollisions.map((diagnostic) => ({
 		...fromParseKindCollision(input.grammar, diagnostic),
@@ -130,16 +146,24 @@ export function collectGrammarDiagnostics(input: {
 		// accepted, non-blocking instances) — do not touch fromAssembleWarning
 		// itself, which would flip it as a side effect.
 		if (warning.code !== 'storagename-collision') return mapped;
-		if (
-			input.grammar === 'typescript' &&
-			warning.ownerKind !== undefined &&
-			STORAGENAME_COLLISION_ACCEPTED_FLOOR_KINDS.has(warning.ownerKind)
-		) {
-			return mapped;
-		}
+		if (isExpectedDiagnostic(input.expectDiagnostics, warning.code, warning.ownerKind)) return mapped;
 		return { ...mapped, canProceed: false };
 	});
-	const slotGroupingMapped = (input.slotGroupingDiagnostics ?? []).map((d) => fromSlotGrouping(input.grammar, d));
+	const slotGroupingMapped = (input.slotGroupingDiagnostics ?? []).map((diagnostic) => {
+		const mapped = fromSlotGrouping(input.grammar, diagnostic);
+		// content-collision's producer (slot-grouping.ts) always emits canProceed:
+		// false when it fires — the expectDiagnostics exception is applied here
+		// instead, mirroring the storagename-collision override above. The other
+		// 3 SlotGroupingShape codes always push canProceed: true at their own
+		// construction sites, so this override never touches them.
+		if (
+			diagnostic.code === 'content-collision' &&
+			isExpectedDiagnostic(input.expectDiagnostics, diagnostic.code, diagnostic.ownerKind)
+		) {
+			return { ...mapped, canProceed: true };
+		}
+		return mapped;
+	});
 	return { diagnostics: [...parseKindMapped, ...deriveShapeMapped, ...assembleWarningMapped, ...slotGroupingMapped] };
 }
 
@@ -166,7 +190,8 @@ export function collectGrammarDiagnosticsForGrammar(input: { rawGrammar: RawGram
 				parseKindCollisions: nodeMap.parseKindCollisions,
 				deriveShapeDiagnostics: nodeMap.deriveShapeDiagnostics,
 				assembleWarnings: nodeMap.assembleWarnings,
-				slotGroupingDiagnostics
+				slotGroupingDiagnostics,
+				expectDiagnostics: input.rawGrammar.expectDiagnostics
 			}).diagnostics,
 			...contentAliasDiagnostics
 		]

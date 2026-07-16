@@ -93,15 +93,6 @@ export interface SlotGroupingDiagnostic extends Diagnostic {
 	readonly proposal: string;
 }
 
-// Permanently accepted floor: `_object_type_group1`'s two anonymous content slots
-// (the separator choice and the member choice inside `object_type_content`'s inner
-// `seq(SEP, member)`) cannot be field-named without breaking `detectRepeatSeparator`'s
-// bare STRING/CHOICE pattern match (`dsl/list-patterns.ts`), which regresses the kind's
-// correct `separatedList` classification back to plain `branch`. See
-// docs/KNOWN_ISSUES.md ("`_object_type_group1`'s two diagnostics...") for the full
-// investigation (two independent, empirically-verified attempts, both reverted).
-const CONTENT_COLLISION_ACCEPTED_FLOOR_KINDS = new Set(['_object_type_group1']);
-
 // ---------------------------------------------------------------------------
 // Main entry point
 // ---------------------------------------------------------------------------
@@ -150,10 +141,13 @@ export function diagnoseSlotGrouping(
 					code: 'content-collision',
 					severity: 'warning',
 					message: `Kind '${ownerKind}' has ${contentCount} anonymous 'content' slots that would share the '_content' storage key.`,
-					// NOTE: intentionally NOT negated — membership in the accepted-floor
-					// set means this instance stays non-blocking (canProceed: true);
-					// every other kind now blocks (canProceed: false).
-					canProceed: CONTENT_COLLISION_ACCEPTED_FLOOR_KINDS.has(ownerKind),
+					// Always blocking here — accepted-floor exceptions are applied later,
+					// in grammar-diagnostics.ts's `collectGrammarDiagnostics`, driven by
+					// the grammar's OWN `expectDiagnostics:` declaration in its
+					// overrides.ts. This function has no grammar identity, so a
+					// kind-name-only check here would incorrectly except a same-named
+					// kind in ANY grammar.
+					canProceed: false,
 					ownerKind,
 					slotCount: contentCount,
 					proposal:

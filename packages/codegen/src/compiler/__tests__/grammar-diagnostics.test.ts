@@ -256,28 +256,111 @@ describe('grammar diagnostics preflight', () => {
 			]
 		};
 
-		it('content-collision stays canProceed: true for _object_type_group1 (the accepted floor)', () => {
+		// Mirrors the `expectDiagnostics:` block typescript's own overrides.ts
+		// declares for `_object_type_group1` — the exception now lives entirely
+		// in the grammar's own declaration, not in a `grammar === 'typescript'`
+		// string comparison.
+		const objectTypeGroup1ExpectDiagnostics = {
+			'content-collision': ['_object_type_group1'],
+			'storagename-collision': ['_object_type_group1']
+		};
+
+		it('diagnoseSlotGrouping (the producer) always reports canProceed: false — it has no `grammar` to scope on', () => {
+			// The producer has no grammar parameter (see slot-grouping.ts), so it can
+			// never safely except a kind by name alone — doing so would except a
+			// same-named kind in ANY grammar. The accepted-floor exception is applied
+			// later, in collectGrammarDiagnostics, where `expectDiagnostics` is known.
 			const records = diagnoseSlotGrouping({ _object_type_group1: twoContentSlotRule });
 			expect(records).toEqual([
 				expect.objectContaining({
 					code: 'content-collision',
 					ownerKind: '_object_type_group1',
 					slotCount: 2,
-					canProceed: true
+					canProceed: false
 				})
 			]);
 		});
 
-		it('content-collision becomes canProceed: false for a different kind with the same slotCount', () => {
-			const records = diagnoseSlotGrouping({ host: twoContentSlotRule });
-			expect(records).toEqual([
-				expect.objectContaining({ code: 'content-collision', ownerKind: 'host', slotCount: 2, canProceed: false })
+		it('content-collision stays canProceed: true for _object_type_group1 when expectDiagnostics declares it (the accepted floor)', () => {
+			const result = collectGrammarDiagnostics({
+				grammar: 'typescript',
+				parseKindCollisions: [],
+				slotGroupingDiagnostics: diagnoseSlotGrouping({ _object_type_group1: twoContentSlotRule }),
+				expectDiagnostics: objectTypeGroup1ExpectDiagnostics
+			});
+			expect(result.diagnostics).toEqual([
+				expect.objectContaining({ code: 'content-collision', ownerKind: '_object_type_group1', canProceed: true })
 			]);
 		});
 
-		it('storagename-collision stays canProceed: true for _object_type_group1 (the accepted floor)', () => {
+		it('content-collision becomes canProceed: false for a different kind with the same slotCount, even with expectDiagnostics declared', () => {
 			const result = collectGrammarDiagnostics({
-				grammar: 'synth',
+				grammar: 'typescript',
+				parseKindCollisions: [],
+				slotGroupingDiagnostics: diagnoseSlotGrouping({ host: twoContentSlotRule }),
+				expectDiagnostics: objectTypeGroup1ExpectDiagnostics
+			});
+			expect(result.diagnostics).toEqual([
+				expect.objectContaining({ code: 'content-collision', ownerKind: 'host', canProceed: false })
+			]);
+		});
+
+		it('content-collision becomes canProceed: false for _object_type_group1 when no expectDiagnostics is supplied (the real bug this guards against)', () => {
+			// Same kind name, same shape, but the calling grammar's own overrides.ts
+			// never declared the exception — scoping is achieved by presence of the
+			// grammar's OWN expectDiagnostics declaration, not a grammar-name string
+			// comparison, so omitting it must not silently inherit the floor.
+			const result = collectGrammarDiagnostics({
+				grammar: 'rust',
+				parseKindCollisions: [],
+				slotGroupingDiagnostics: diagnoseSlotGrouping({ _object_type_group1: twoContentSlotRule })
+			});
+			expect(result.diagnostics).toEqual([
+				expect.objectContaining({ code: 'content-collision', ownerKind: '_object_type_group1', canProceed: false })
+			]);
+		});
+
+		it('storagename-collision stays canProceed: true for _object_type_group1 when expectDiagnostics declares it (the accepted floor)', () => {
+			const result = collectGrammarDiagnostics({
+				grammar: 'typescript',
+				parseKindCollisions: [],
+				assembleWarnings: [
+					{
+						code: 'storagename-collision',
+						ownerKind: '_object_type_group1',
+						message: "storageName collision: kind '_object_type_group1' has 2 slots with storageName 'content'",
+						details: {}
+					}
+				],
+				expectDiagnostics: objectTypeGroup1ExpectDiagnostics
+			});
+			expect(result.diagnostics).toEqual([
+				expect.objectContaining({ code: 'storagename-collision', ownerKind: '_object_type_group1', canProceed: true })
+			]);
+		});
+
+		it('storagename-collision becomes canProceed: false for a different kind, even with expectDiagnostics declared', () => {
+			const result = collectGrammarDiagnostics({
+				grammar: 'typescript',
+				parseKindCollisions: [],
+				assembleWarnings: [
+					{
+						code: 'storagename-collision',
+						ownerKind: 'host',
+						message: "storageName collision: kind 'host' has 2 slots with storageName 'content'",
+						details: {}
+					}
+				],
+				expectDiagnostics: objectTypeGroup1ExpectDiagnostics
+			});
+			expect(result.diagnostics).toEqual([
+				expect.objectContaining({ code: 'storagename-collision', ownerKind: 'host', canProceed: false })
+			]);
+		});
+
+		it('storagename-collision becomes canProceed: false for _object_type_group1 when no expectDiagnostics is supplied (the real bug this guards against)', () => {
+			const result = collectGrammarDiagnostics({
+				grammar: 'rust',
 				parseKindCollisions: [],
 				assembleWarnings: [
 					{
@@ -289,25 +372,22 @@ describe('grammar diagnostics preflight', () => {
 				]
 			});
 			expect(result.diagnostics).toEqual([
-				expect.objectContaining({ code: 'storagename-collision', ownerKind: '_object_type_group1', canProceed: true })
+				expect.objectContaining({ code: 'storagename-collision', ownerKind: '_object_type_group1', canProceed: false })
 			]);
 		});
 
-		it('storagename-collision becomes canProceed: false for a different kind', () => {
+		it('content-collision becomes canProceed: false when expectDiagnostics declares a DIFFERENT code for the kind', () => {
+			// expectDiagnostics is keyed per diagnostic code, not just per kind — a
+			// kind exempted from storagename-collision alone must still block on
+			// content-collision.
 			const result = collectGrammarDiagnostics({
-				grammar: 'synth',
+				grammar: 'typescript',
 				parseKindCollisions: [],
-				assembleWarnings: [
-					{
-						code: 'storagename-collision',
-						ownerKind: 'host',
-						message: "storageName collision: kind 'host' has 2 slots with storageName 'content'",
-						details: {}
-					}
-				]
+				slotGroupingDiagnostics: diagnoseSlotGrouping({ _object_type_group1: twoContentSlotRule }),
+				expectDiagnostics: { 'storagename-collision': ['_object_type_group1'] }
 			});
 			expect(result.diagnostics).toEqual([
-				expect.objectContaining({ code: 'storagename-collision', ownerKind: 'host', canProceed: false })
+				expect.objectContaining({ code: 'content-collision', ownerKind: '_object_type_group1', canProceed: false })
 			]);
 		});
 	});

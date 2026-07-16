@@ -2147,6 +2147,7 @@ function wire(config, base2) {
     groups: cfg.groups,
     polymorphsConfig: cfg.polymorphs,
     renderAs: cfg.renderAs,
+    expectDiagnostics: cfg.expectDiagnostics,
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
@@ -3942,6 +3943,22 @@ var overrides_default = grammar(
         _automatic_semicolon: blank(),
         _function_signature_automatic_semicolon: blank()
       }),
+      // `_object_type_group1` is tree-sitter's OWN grammar-compiler-synthesized
+      // auxiliary rule for `object_type_content`'s `repeat(seq(SEP, member))`
+      // body (not something this override authored) — its own two anonymous
+      // positional slots (the separator choice, the 6-kind member choice)
+      // can't be field()-named without breaking `detectRepeatSeparator`'s bare
+      // STRING/CHOICE pattern match, which regresses `object_type_content`'s
+      // already-correct `separatedList` classification. Two independent,
+      // empirically-verified overrides.ts attempts confirmed this (see
+      // docs/KNOWN_ISSUES.md). Accepted as a permanent floor rather than a
+      // hand-rolled compiler-level exception — real fix needs `classifyNode`
+      // (compiler/assemble.ts) to recognize a hidden rule already absorbed
+      // into an outer rule's separatedList lift.
+      expectDiagnostics: {
+        "content-collision": ["_object_type_group1"],
+        "storagename-collision": ["_object_type_group1"]
+      },
       rules: {
         // parenthesized_expression: held. Base is plain `seq('(',
         // _expressions, ')')` with no outer prec — my hoist's prec

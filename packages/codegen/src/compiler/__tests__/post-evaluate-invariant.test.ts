@@ -122,7 +122,14 @@ describe('post-evaluate invariant', () => {
 				// Nested-alias polymorph metadata — populated by alias() in transform.
 				'polymorphVariants',
 				// refine() form metadata — populated per ADR-0010 phase 2.
-				'refineForms'
+				'refineForms',
+				// wire() config sidecars — drained from __wireContext__ in evaluate.ts.
+				'groups',
+				'polymorphsConfig',
+				'renderAs',
+				// Per-kind diagnostic exceptions from overrides.ts `expectDiagnostics:` —
+				// read by collectGrammarDiagnostics (grammar-diagnostics.ts).
+				'expectDiagnostics'
 			]);
 			const extra = Object.keys(raw as unknown as Record<string, unknown>).filter((k) => !ALLOWED.has(k));
 			expect(extra, `unexpected RawGrammar fields: ${extra.join(', ')}`).toEqual([]);

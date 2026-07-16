@@ -109,6 +109,9 @@ export interface WireContext {
 	 *  is stripped (the external scanner still produces the symbol).
 	 *  See: renderAs mechanism. */
 	readonly renderAs?: RenderAsConfig;
+	/** Per-kind, per-diagnostic-code exceptions from `expectDiagnostics:`.
+	 *  See `WireConfig.expectDiagnostics` for the full description. */
+	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
 	/** Name of the rule currently being evaluated, for variant()'s
 	 *  auto-prefix behavior (`variant('eq')` under `assignment` →
 	 *  `_assignment_eq`). Set by the rule-fn wrapper. */
@@ -462,6 +465,18 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 	 *   })
 	 */
 	readonly renderAs?: RenderAsConfig;
+	/**
+	 * Per-kind, per-diagnostic-code exceptions — declares that a specific
+	 * grammar diagnostic (e.g. `'content-collision'`, `'storagename-collision'`)
+	 * is EXPECTED and should stay non-blocking for the listed kind names,
+	 * instead of the grammar-wide blocking default. Use this ONLY for a
+	 * genuinely accepted, documented floor (see docs/KNOWN_ISSUES.md) — not
+	 * as a way to silence a diagnostic you haven't investigated.
+	 *
+	 * @example
+	 *   expectDiagnostics: { 'content-collision': ['_object_type_group1'] }
+	 */
+	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
 };
 
 export interface WiredOpts {
@@ -570,6 +585,7 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		groups: cfg.groups,
 		polymorphsConfig: cfg.polymorphs,
 		renderAs: cfg.renderAs,
+		expectDiagnostics: cfg.expectDiagnostics,
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
 	};

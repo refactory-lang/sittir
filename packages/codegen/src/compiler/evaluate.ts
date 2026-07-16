@@ -706,6 +706,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const refineForms = drainRefineMetadata(opts);
 	const groups = drainGroupsMetadata(opts);
 	const polymorphsConfig = drainPolymorphsConfigMetadata(opts);
+	const expectDiagnostics = drainExpectDiagnosticsMetadata(opts);
 	// renderAs must be drained BEFORE buildRuleCatalog so the synthesized
 	// rule bodies appear in the catalog. It also strips any base-grammar
 	// body for the same key (keeping the sittir-side def authoritative).
@@ -746,7 +747,8 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		refineForms,
 		groups,
 		polymorphsConfig,
-		renderAs
+		renderAs,
+		expectDiagnostics
 	} satisfies RawGrammar;
 	// Propagate enrich()'s un-aliasing diagnostics from the base grammar result
 	// (the `optionsOrBase` first arg in extension mode) onto this evaluated
@@ -1596,6 +1598,26 @@ function drainPolymorphsConfigMetadata(
 	const p = wireCtx.polymorphsConfig as Record<string, Record<string, string> | undefined>;
 	if (Object.keys(p).length === 0) return undefined;
 	return { ...p };
+}
+
+/**
+ * Read the `expectDiagnostics:` config from the wire context — the grammar
+ * author's own declaration of accepted, non-blocking diagnostic exceptions
+ * per kind. Returns `undefined` when no `expectDiagnostics:` block was
+ * supplied (keeps `RawGrammar.expectDiagnostics` absent for downstream
+ * consumers that check presence).
+ */
+function drainExpectDiagnosticsMetadata(opts: GrammarOptions): Record<string, readonly string[]> | undefined {
+	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+	if (!wireCtx || !wireCtx.expectDiagnostics) return undefined;
+	// WireConfig's Partial<Record<...>> admits undefined values; drop them so
+	// RawGrammar.expectDiagnostics carries only defined kind lists.
+	const e: Record<string, readonly string[]> = {};
+	for (const [code, kinds] of Object.entries(wireCtx.expectDiagnostics)) {
+		if (kinds !== undefined) e[code] = kinds;
+	}
+	if (Object.keys(e).length === 0) return undefined;
+	return e;
 }
 
 /**
