@@ -23,7 +23,7 @@ import { PATTERN, REPEAT1, STRING, SYMBOL } from '../../types/rule-types.ts'; //
 import { describe, expect, it } from 'vitest';
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
 import { AssembledPattern, AssembledSeparatedList, type AssembledNode } from '../../compiler/model/node-map.ts';
-import type { Repeat1Rule, Rule } from '../../types/rule.ts';
+import type { Repeat1Rule, Rule, SimplifiedRule, RenderRule } from '../../types/rule.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
 
@@ -35,8 +35,8 @@ function makeMemberNodeMap(rule: Repeat1Rule, opts: { separatorRule: Rule<'link'
 		'member_list',
 		new AssembledSeparatedList('member_list', rule, undefined, {
 			separatorRule: opts.separatorRule,
-			simplifiedRule: MEMBER_ELEMENT_RULE,
-			renderRule: MEMBER_ELEMENT_RULE
+			simplifiedRule: MEMBER_ELEMENT_RULE as unknown as SimplifiedRule,
+			renderRule: MEMBER_ELEMENT_RULE as unknown as RenderRule
 		})
 	);
 	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }));

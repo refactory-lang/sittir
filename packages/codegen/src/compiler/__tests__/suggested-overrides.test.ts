@@ -22,7 +22,7 @@ describe.skip('US6 — overrides.suggested.ts (T067)', () => {
 			grammar: 'rust',
 			outputDir: '/tmp/rust-suggested'
 		});
-		const suggested = result.suggested;
+		const suggested = result.suggested!;
 		// The file is now a real TS module, so we check for the
 		// exported data instead of comment fragments. Each inferred
 		// field shows up as an object literal with `applied: true/false`
@@ -67,7 +67,7 @@ describe.skip('US6 — manual overrides win over inference (T069 / T069a)', () =
 		// overridden field positions (e.g. rust function_item's
 		// `body`, `name`, `parameters` fields) aren't surfaced as
 		// inference suggestions.
-		const suggested = result.suggested;
+		const suggested = result.suggested!;
 		// The suggested file only lists INFERRED or PROMOTED
 		// entries, never manual ones — search for the header that
 		// separates sections.
@@ -94,7 +94,7 @@ describe.skip('US6 — suggested.ts is valid TypeScript (T070)', () => {
 		// arrays (`promotedRules`, `inferredFields`, `repeatedShapes`)
 		// alongside their type interfaces. The file must advertise
 		// each export so downstream tooling can `import { ... }` it.
-		const suggested = result.suggested;
+		const suggested = result.suggested!;
 		expect(suggested).toContain('export interface PromotedRule');
 		expect(suggested).toContain('export const promotedRules:');
 		expect(suggested).toContain('export interface InferredField');

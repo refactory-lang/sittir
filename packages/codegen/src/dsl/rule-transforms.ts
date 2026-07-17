@@ -514,11 +514,15 @@ function tryFusePair(head: AnyRule, next: AnyRule | undefined): AnyRule | null {
 		if (sepArm && repArm) {
 			const repSep = (repArm as { separator?: RuleBase<'normalize'>['separator'] }).separator;
 			if (repSep !== undefined) return repArm;
-			// Fall back to the choice's separator-string arm, marking trailing.
+			// Fall back to the choice's separator-string arm, marking a
+			// mandatory trailing separator. `repArm`'s static type is the
+			// full AnyRule union (the `.find()` predicate above doesn't
+			// narrow it), so spread through `object` first to sidestep the
+			// excess-property check on the added `separator` key.
 			const sepStr = (sepArm as { value: string }).value;
 			return {
-				...repArm,
-				separator: { value: { type: STRING, value: sepStr } as Rule, trailing: true }
+				...(repArm as object),
+				separator: { value: { type: STRING, value: sepStr } as Rule, trailing: 'mandatory' as const }
 			} as AnyRule;
 		}
 	}

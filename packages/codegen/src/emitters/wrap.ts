@@ -719,15 +719,26 @@ function collectSeparatedListContentStorageKeys(
  * `NonEmptyArray<WithItem>` there) — re-declaring that same key with a
  * different (optional, elemType-only) shape here would form an incoherent
  * intersection.
+ *
+ * The widened type is derived from `canonicalField` — `node.fields`'s own
+ * slot, the SAME `_slots`-derived source `types.ts` types `T.<TypeName>`'s
+ * declared members from (see `emitSeparatedListWrap`'s Bug B fix comment) —
+ * not from `contentSlot`. `contentSlot` (`buildSeparatedListContentSlot`)
+ * is a raw, pre-simplify-normalization view used here only to enumerate the
+ * real wire-level `_<kind>` discriminator keys; its per-kind element types
+ * can disagree with the post-normalization kind `types.ts` settled on for
+ * an equivalent choice arm (e.g. a merged/aliased sibling), which is
+ * exactly the mismatch this widening exists to avoid re-introducing.
  */
 function collectSeparatedListWireKeyTypes(
 	contentSlot: AssembledNonterminal,
+	canonicalField: AssembledNonterminal,
 	canonicalKeys: ReadonlySet<string>,
 	fallbackStorageKey: string,
 	nodeMap: NodeMap
 ): ReadonlyMap<string, string> {
 	const candidates = collectSeparatedListContentStorageKeys(contentSlot, nodeMap);
-	const elemType = fieldElementType(contentSlot, nodeMap);
+	const elemType = fieldElementType(canonicalField, nodeMap);
 	const keyTypes = new Map<string, string>();
 	for (const k of candidates) {
 		if (canonicalKeys.has(k)) continue;
@@ -848,7 +859,7 @@ function emitSeparatedListWrap(
 	// exactly, or a still-declared key gets redundantly (and incoherently)
 	// re-widened.
 	const canonicalKeys = new Set(node.fields.map((f) => f.storageKey));
-	const wireKeyTypes = collectSeparatedListWireKeyTypes(contentSlot, canonicalKeys, canonical.storageKey, nodeMap);
+	const wireKeyTypes = collectSeparatedListWireKeyTypes(contentSlot, canonical, canonicalKeys, canonical.storageKey, nodeMap);
 	const paramType = buildSeparatedListWrapParamType(node.typeName, wireKeyTypes);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
 

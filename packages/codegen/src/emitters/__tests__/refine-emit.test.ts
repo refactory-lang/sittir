@@ -14,7 +14,7 @@
 import { CHOICE, FIELD, OPTIONAL, PATTERN, REPEAT, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
-import type { RawGrammar, RefineForm } from '../../compiler/types.ts';
+import type { LinkedGrammar, RawGrammar, RefineForm } from '../../compiler/types.ts';
 import { link } from '../../compiler/link.ts';
 import { resolveRefinePath, narrowedFieldLiteralsForForm } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
@@ -235,7 +235,7 @@ describe('link-refine — validateRefineForms', () => {
 describe('link-refine — resolveRefinePath + narrowedFieldLiteralsForForm', () => {
 	it('resolves field-traversal paths to the choice', () => {
 		const raw = makeRefineRaw([]);
-		const rule = raw.rules.iface_body!;
+		const rule = link(raw).rules.iface_body!;
 		const res = resolveRefinePath('iface_body', 'curly', 'opening:', rule);
 		expect(res.fieldName).toBe('opening');
 		expect(res.choice.type).toBe('CHOICE');
@@ -248,7 +248,7 @@ describe('link-refine — resolveRefinePath + narrowedFieldLiteralsForForm', () 
 			selections: { 'opening:': '{', 'closing:': '}' }
 		};
 		const raw = makeRefineRaw([form]);
-		const rule = raw.rules.iface_body!;
+		const rule = link(raw).rules.iface_body!;
 		const narrowed = narrowedFieldLiteralsForForm(rule, form);
 		expect(narrowed).toEqual([
 			{ fieldName: 'opening', literal: '{' },
@@ -262,7 +262,7 @@ describe('link-refine — resolveRefinePath + narrowedFieldLiteralsForForm', () 
 			selections: { 'opening:': 1, 'closing:': 1 }
 		};
 		const raw = makeRefineRaw([form]);
-		const rule = raw.rules.iface_body!;
+		const rule = link(raw).rules.iface_body!;
 		const narrowed = narrowedFieldLiteralsForForm(rule, form);
 		expect(narrowed).toEqual([
 			{ fieldName: 'opening', literal: '{|' },
@@ -276,8 +276,9 @@ describe('link-refine — resolveRefinePath + narrowedFieldLiteralsForForm', () 
 			selections: { 'opening:': '"', 'contents:': 0, 'closing:': '"' }
 		};
 		const raw = makeStringRefineRaw([form]);
-		expect(() => link(raw)).not.toThrow();
-		const narrowed = narrowedFieldLiteralsForForm(raw.rules.string!, form);
+		let linked: LinkedGrammar | undefined;
+		expect(() => (linked = link(raw))).not.toThrow();
+		const narrowed = narrowedFieldLiteralsForForm(linked!.rules.string!, form);
 		expect(narrowed).toEqual([
 			{ fieldName: 'opening', literal: '"' },
 			{ fieldName: 'closing', literal: '"' }
@@ -290,7 +291,8 @@ describe('link-refine — resolveRefinePath + narrowedFieldLiteralsForForm', () 
 			selections: { 'opening:': 1, 'closing:': 1 }
 		};
 		const raw = makeRefineSymbolRaw([form], true);
-		const narrowed = narrowedFieldLiteralsForForm(raw.rules.iface_body!, form, raw.rules);
+		const linked = link(raw);
+		const narrowed = narrowedFieldLiteralsForForm(linked.rules.iface_body!, form, linked.rules);
 		expect(narrowed).toEqual([
 			{ fieldName: 'opening', literal: '{|' },
 			{ fieldName: 'closing', literal: '|}' }

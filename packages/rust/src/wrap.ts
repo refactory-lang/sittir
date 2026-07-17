@@ -3842,8 +3842,8 @@ export function wrapTypeArgument(
 
 export function wrap_UseBoundsGroup1(
 	data: T._UseBoundsGroup1 & {
-		readonly _lifetime?: T.Lifetime | T.TypeIdentifier;
-		readonly _type_identifier?: T.Lifetime | T.TypeIdentifier;
+		readonly _lifetime?: T.Lifetime | T.Identifier;
+		readonly _type_identifier?: T.Lifetime | T.Identifier;
 		readonly $other?: _NodeData['$other'];
 		readonly $span?: { start: number; end: number };
 	},
@@ -10899,8 +10899,8 @@ export function wrapTuplePatternGroup1(
 
 export function wrapUseBoundsGroup1(
 	data: T.UseBoundsGroup1 & {
-		readonly _lifetime?: T.Lifetime | T.TypeIdentifier;
-		readonly _type_identifier?: T.Lifetime | T.TypeIdentifier;
+		readonly _lifetime?: T.Lifetime | T.Identifier;
+		readonly _type_identifier?: T.Lifetime | T.Identifier;
 		readonly $other?: _NodeData['$other'];
 		readonly $span?: { start: number; end: number };
 	},

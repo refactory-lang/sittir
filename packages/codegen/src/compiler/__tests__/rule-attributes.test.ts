@@ -1,6 +1,6 @@
 import { CHOICE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, SYMBOL, TOKEN } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import type { Multiplicity, Rule, SymbolRule } from '../../types/rule.ts';
+import type { AnyRule, Multiplicity, Rule, SymbolRule } from '../../types/rule.ts';
 import { isNonterminalRuleType } from '../rule-catalog.ts';
 
 const str = (value: string): Rule => ({ type: STRING, value });
@@ -50,11 +50,11 @@ describe('isNonterminalRuleType (Table 1 refined terminality)', () => {
 	});
 
 	it("token(string('fn')) → terminal (recursive: literal content)", () => {
-		expect(isNonterminalRuleType({ type: TOKEN, content: str('fn'), immediate: false })).toBe(false);
+		expect(isNonterminalRuleType({ type: TOKEN, content: str('fn'), immediate: false } as AnyRule)).toBe(false);
 	});
 
 	it('token(pattern(/x/)) → nonterminal (recursive: value content)', () => {
-		expect(isNonterminalRuleType({ type: TOKEN, content: pat('/x/'), immediate: false })).toBe(true);
+		expect(isNonterminalRuleType({ type: TOKEN, content: pat('/x/'), immediate: false } as AnyRule)).toBe(true);
 	});
 
 	it('choice of all string literals → nonterminal (unconditional)', () => {
@@ -62,20 +62,20 @@ describe('isNonterminalRuleType (Table 1 refined terminality)', () => {
 	});
 
 	it('repeat(terminal) → nonterminal (unconditional)', () => {
-		expect(isNonterminalRuleType({ type: REPEAT, content: str(',') })).toBe(true);
+		expect(isNonterminalRuleType({ type: REPEAT, content: str(',') } as AnyRule)).toBe(true);
 	});
 
 	it('repeat1(terminal) → nonterminal (unconditional)', () => {
-		expect(isNonterminalRuleType({ type: REPEAT1, content: str(',') })).toBe(true);
+		expect(isNonterminalRuleType({ type: REPEAT1, content: str(',') } as AnyRule)).toBe(true);
 	});
 
 	// --- preserved (recursive) ---
 	it('optional(terminal) → terminal (stays recursive)', () => {
-		expect(isNonterminalRuleType({ type: OPTIONAL, content: str(',') })).toBe(false);
+		expect(isNonterminalRuleType({ type: OPTIONAL, content: str(',') } as AnyRule)).toBe(false);
 	});
 
 	it('optional(symbol) → nonterminal (recursive)', () => {
-		expect(isNonterminalRuleType({ type: OPTIONAL, content: sym('y') })).toBe(true);
+		expect(isNonterminalRuleType({ type: OPTIONAL, content: sym('y') } as AnyRule)).toBe(true);
 	});
 
 	it('seq distributes recursively (nonterminal iff any member is)', () => {

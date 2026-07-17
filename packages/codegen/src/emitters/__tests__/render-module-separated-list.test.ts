@@ -18,7 +18,7 @@ import {
 	AssembledSeparatedList,
 	type AssembledNode
 } from '../../compiler/model/node-map.ts';
-import type { Repeat1Rule, RepeatRule, Rule, SeqRule } from '../../types/rule.ts';
+import type { Repeat1Rule, RepeatRule, Rule, SeqRule, SimplifiedRule, RenderRule } from '../../types/rule.ts';
 import type { GeneratedIdTables } from '../../compiler/generated-metadata.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
@@ -32,8 +32,8 @@ function makeMemberNodeMap(rule: Repeat1Rule | RepeatRule, opts: { separatorRule
 		'member_list',
 		new AssembledSeparatedList('member_list', rule, undefined, {
 			separatorRule: opts.separatorRule,
-			simplifiedRule: MEMBER_ELEMENT_RULE,
-			renderRule: MEMBER_ELEMENT_RULE
+			simplifiedRule: MEMBER_ELEMENT_RULE as unknown as SimplifiedRule,
+			renderRule: MEMBER_ELEMENT_RULE as unknown as RenderRule
 		})
 	);
 	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }));

@@ -36,7 +36,8 @@ import {
 	classifyFactoryShape,
 	classifyChildFactorySurface,
 	classifyFromEmission,
-	unnamedChildSlotFacts
+	unnamedChildSlotFacts,
+	childTypeComponents
 } from './shared.ts';
 import { fieldElementType } from './factories.ts';
 import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
@@ -931,25 +932,41 @@ function emitSeparatedListFrom(
 
 /**
  * Compute the TypeScript element-type union for a single unnamed-child slot.
- * Mirrors `childElementType` but operates on the post-unification slot in
- * `node.fields[0]` rather than the legacy `node.children` list.
+ * Mirrors `childElementType` (factories.ts) but operates on the
+ * post-unification slot in `node.fields[0]` rather than the legacy
+ * `node.children` list — routed through the same `childTypeComponents`
+ * derivation so a hidden token/keyword kind with a fixed literal text
+ * (e.g. Python's `_not_escape_sequence` → `'\\'`) resolves to that literal
+ * instead of a dangling `T.<TypeName>` reference to a type `types.ts` never
+ * exports for such kinds.
  */
 function containerSlotElementType(slot: AssembledNonterminal, nodeMap: NodeMap): string {
 	const parts = new Set<string>();
-	for (const v of slot.values) {
-		if (isTerminalValue(v)) {
-			parts.add(JSON.stringify(v.value));
+	for (const component of childTypeComponents(slot, nodeMap)) {
+		if (component.kind === 'literal') {
+			parts.add(JSON.stringify(component.value));
 			continue;
 		}
-		if (!isNodeRef(v)) continue;
-		const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
-		const ref = nodeMap.nodes.get(name);
+		if (component.kind === 'missing') {
+			parts.add(JSON.stringify(component.rawKind));
+			continue;
+		}
+		let ref = nodeMap.nodes.get(component.rawKind);
 		if (!ref) {
-			parts.add(JSON.stringify(name));
+			parts.add(JSON.stringify(component.rawKind));
 			continue;
 		}
-		const typeName = ref.typeName;
-		parts.add(/^[A-Za-z_$][\w$]*$/.test(typeName) ? `T.${typeName}` : JSON.stringify(name));
+		// Hidden kinds with `multi` or `token` modelType don't get exported
+		// interfaces (types.ts excludes them from emission). Redirect to
+		// the visible counterpart (strip leading `_`), same as
+		// `childElementType` — the runtime shapes are structurally
+		// compatible (same fields/children).
+		if (component.rawKind.startsWith('_') && (ref.modelType === 'multi' || ref.modelType === 'token')) {
+			const visible = nodeMap.nodes.get(component.rawKind.slice(1));
+			if (visible) ref = visible;
+		}
+		const name = ref.typeName;
+		parts.add(/^[A-Za-z_$][\w$]*$/.test(name) ? `T.${name}` : JSON.stringify(component.rawKind));
 	}
 	if (parts.size === 0) return 'never';
 	const union = [...parts].join(' | ');

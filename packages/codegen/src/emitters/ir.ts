@@ -14,7 +14,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNode, AssembledSupertype } from '../compiler/model/node-map.ts';
-import { isValidIdent } from './shared.ts';
+import { isValidIdent, classifyChildFactorySurface } from './shared.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
 import { camelCase, collectRefineKindInfos, refineFormFactoryName } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
@@ -528,11 +528,16 @@ function emitFromString(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: strin
 		return;
 	}
 
-	// Branch string: look for a string-content leaf child to compose
+	// Branch string: look for a string-content leaf child to compose. Only
+	// when the branch is container-shaped (`classifyChildFactorySurface`
+	// 'direct'/'spread' — a single positional child, or `...children`,
+	// either of which accepts one positional argument the same way) —
+	// composing via a hardcoded `{ children: [...] }` config object here
+	// previously assumed a calling convention the factory doesn't have.
 	const contentNode = nodeMap.nodes.get('string_content');
-	if (contentNode && isLeafFactory(contentNode)) {
+	if (contentNode && isLeafFactory(contentNode) && classifyChildFactorySurface(primaryNode, nodeMap) !== null) {
 		fns.push(`  string(value: string): ${returnTypeExpr(primaryNode)} {`);
-		fns.push(`    return F.${primaryNode.rawFactoryName}({ children: [F.${contentNode.rawFactoryName}(value)] });`);
+		fns.push(`    return F.${primaryNode.rawFactoryName}(F.${contentNode.rawFactoryName}(value));`);
 		fns.push('  },');
 	}
 	// Otherwise: skip — too complex to auto-compose
