@@ -665,7 +665,16 @@ function slotStorageExpr(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
-	return slotStorageFromValueExpr(f, `${configAccess}.${f.configKey}`, nodeMap, kindEntries);
+	const valueExpr = `${configAccess}.${f.configKey}`;
+	// types.ts declares every multiple field's accessor as always returning
+	// an array, never `| undefined` — storage draws no distinction between
+	// "empty array" and "absent" for array-shaped slots; "must have at least
+	// one" is enforced elsewhere (the Config type's required key, or
+	// `_assertNonEmpty` at the from.ts boundary), not by leaving storage
+	// `undefined`. Default here unconditionally for any multiple field so a
+	// bypassed/omitted value still stores `[]` rather than `undefined`.
+	const withDefault = isMultiple(f) ? `(${valueExpr} ?? [])` : valueExpr;
+	return slotStorageFromValueExpr(f, withDefault, nodeMap, kindEntries);
 }
 
 /**
