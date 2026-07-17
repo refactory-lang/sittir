@@ -74,6 +74,17 @@
             },
             "$nodeHandle": 11
           },
+          "_body": {
+            "$type": 186,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 4,
+              "end": 6
+            },
+            "$nodeHandle": 16,
+            "_statements": []
+          },
           "_finalizer": {
             "$type": 208,
             "$source": 0,
@@ -86,7 +97,7 @@
                 "start": 37,
                 "end": 39
               },
-              "$nodeHandle": 17,
+              "$nodeHandle": 18,
               "_statements": []
             },
             "$other": [
@@ -96,18 +107,7 @@
               "start": 29,
               "end": 39
             },
-            "$nodeHandle": 16
-          },
-          "_body": {
-            "$type": 186,
-            "$source": 0,
-            "$named": true,
-            "$span": {
-              "start": 4,
-              "end": 6
-            },
-            "$nodeHandle": 18,
-            "_statements": []
+            "$nodeHandle": 17
           },
           "$other": [
             30
@@ -153,7 +153,6 @@
           "$type": 355,
           "$source": 0,
           "$named": true,
-          "_parameter": "e",
           "_type": {
             "$type": 302,
             "$source": 0,
@@ -178,6 +177,7 @@
             },
             "$nodeHandle": 21
           },
+          "_parameter": "e",
           "$other": [
             22,
             24
@@ -269,6 +269,46 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
+      "$type": 302,
+      "$source": 0,
+      "$named": true,
+      "_type": {
+        "$type": 335,
+        "$source": 0,
+        "$named": true,
+        "$text": "unknown",
+        "$span": {
+          "start": 17,
+          "end": 24
+        },
+        "$nodeHandle": 31
+      },
+      "$other": [
+        36
+      ],
+      "$span": {
+        "start": 15,
+        "end": 24
+      },
+      "$nodeHandle": 4
+    },
+    "expectedOutput": ":unknown"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": ": unknown",
+    "pattern": "type_annotation",
+    "edits": [],
+    "expectedSourceOut": ":unknown",
+    "expectedReparseTree": "(type_annotation type: (predefined_type))",
+    "wrappedText": "let _:unknown;",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
       "$type": 186,
       "$source": 0,
       "$named": true,
@@ -276,7 +316,7 @@
         "start": 26,
         "end": 28
       },
-      "$nodeHandle": 3,
+      "$nodeHandle": 6,
       "_statements": []
     },
     "expectedOutput": "{  }"
@@ -350,126 +390,6 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
-      "$type": 302,
-      "$source": 0,
-      "$named": true,
-      "_type": {
-        "$type": 335,
-        "$source": 0,
-        "$named": true,
-        "$text": "unknown",
-        "$span": {
-          "start": 17,
-          "end": 24
-        },
-        "$nodeHandle": 31
-      },
-      "$other": [
-        36
-      ],
-      "$span": {
-        "start": 15,
-        "end": 24
-      },
-      "$nodeHandle": 5
-    },
-    "expectedOutput": ":unknown"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": ": unknown",
-    "pattern": "type_annotation",
-    "edits": [],
-    "expectedSourceOut": ":unknown",
-    "expectedReparseTree": "(type_annotation type: (predefined_type))",
-    "wrappedText": "let _:unknown;",
-    "wrappedOffset": 5
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 302,
-      "$source": 0,
-      "$named": true,
-      "_type": {
-        "$type": 335,
-        "$source": 0,
-        "$named": true,
-        "$text": "number",
-        "$span": {
-          "start": 34,
-          "end": 40
-        },
-        "$nodeHandle": 88
-      },
-      "$other": [
-        36
-      ],
-      "$span": {
-        "start": 32,
-        "end": 40
-      },
-      "$nodeHandle": 8
-    },
-    "expectedOutput": ":number"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": ": number",
-    "pattern": "type_annotation",
-    "edits": [],
-    "expectedSourceOut": ":number",
-    "expectedReparseTree": "(type_annotation type: (predefined_type))",
-    "wrappedText": "let _:number;",
-    "wrappedOffset": 5
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 302,
-      "$source": 0,
-      "$named": true,
-      "_type": {
-        "$type": 335,
-        "$source": 0,
-        "$named": true,
-        "$text": "number",
-        "$span": {
-          "start": 89,
-          "end": 95
-        },
-        "$nodeHandle": 89
-      },
-      "$other": [
-        36
-      ],
-      "$span": {
-        "start": 87,
-        "end": 95
-      },
-      "$nodeHandle": 19
-    },
-    "expectedOutput": ":number"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": ": number",
-    "pattern": "type_annotation",
-    "edits": [],
-    "expectedSourceOut": ":number",
-    "expectedReparseTree": "(type_annotation type: (predefined_type))",
-    "wrappedText": "let _:number;",
-    "wrappedOffset": 5
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
       "$type": 257,
       "$source": 0,
       "$named": true,
@@ -478,7 +398,7 @@
         "start": 30,
         "end": 32
       },
-      "$nodeHandle": 10
+      "$nodeHandle": 8
     },
     "expectedOutput": "()"
   },
@@ -532,7 +452,7 @@
         "start": 85,
         "end": 87
       },
-      "$nodeHandle": 18
+      "$nodeHandle": 20
     },
     "expectedOutput": "()"
   },
@@ -578,6 +498,86 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
+      "$type": 302,
+      "$source": 0,
+      "$named": true,
+      "_type": {
+        "$type": 335,
+        "$source": 0,
+        "$named": true,
+        "$text": "number",
+        "$span": {
+          "start": 34,
+          "end": 40
+        },
+        "$nodeHandle": 88
+      },
+      "$other": [
+        36
+      ],
+      "$span": {
+        "start": 32,
+        "end": 40
+      },
+      "$nodeHandle": 9
+    },
+    "expectedOutput": ":number"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": ": number",
+    "pattern": "type_annotation",
+    "edits": [],
+    "expectedSourceOut": ":number",
+    "expectedReparseTree": "(type_annotation type: (predefined_type))",
+    "wrappedText": "let _:number;",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 302,
+      "$source": 0,
+      "$named": true,
+      "_type": {
+        "$type": 335,
+        "$source": 0,
+        "$named": true,
+        "$text": "number",
+        "$span": {
+          "start": 89,
+          "end": 95
+        },
+        "$nodeHandle": 89
+      },
+      "$other": [
+        36
+      ],
+      "$span": {
+        "start": 87,
+        "end": 95
+      },
+      "$nodeHandle": 18
+    },
+    "expectedOutput": ":number"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": ": number",
+    "pattern": "type_annotation",
+    "edits": [],
+    "expectedSourceOut": ":number",
+    "expectedReparseTree": "(type_annotation type: (predefined_type))",
+    "wrappedText": "let _:number;",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
       "$type": 166,
       "$source": 0,
       "$named": true,
@@ -610,11 +610,12 @@
             "$type": 360,
             "$source": 0,
             "$named": true,
+            "_name": "exports",
             "_type": {
               "$type": 337,
               "$source": 0,
               "$named": true,
-              "_opening": 5,
+              "_closing": 6,
               "_members": {
                 "$type": 361,
                 "$source": 0,
@@ -680,14 +681,13 @@
                 "_leading_sep": false,
                 "_trailing_sep": true
               },
-              "_closing": 6,
+              "_opening": 5,
               "$span": {
                 "start": 24,
                 "end": 42
               },
               "$nodeHandle": 10
             },
-            "_name": "exports",
             "$other": [
               126,
               45,
@@ -751,10 +751,12 @@
         "$type": 360,
         "$source": 0,
         "$named": true,
+        "_name": "exports",
         "_type": {
           "$type": 337,
           "$source": 0,
           "$named": true,
+          "_opening": 5,
           "_closing": 6,
           "_members": {
             "$type": 361,
@@ -785,7 +787,6 @@
                 "$type": 339,
                 "$source": 0,
                 "$named": true,
-                "_name": "foo",
                 "_type": {
                   "$type": 302,
                   "$source": 0,
@@ -810,6 +811,7 @@
                   },
                   "$nodeHandle": 19
                 },
+                "_name": "foo",
                 "$span": {
                   "start": 28,
                   "end": 39
@@ -821,14 +823,12 @@
             "_leading_sep": false,
             "_trailing_sep": true
           },
-          "_opening": 5,
           "$span": {
             "start": 24,
             "end": 42
           },
           "$nodeHandle": 16
         },
-        "_name": "exports",
         "$other": [
           126,
           45,
@@ -861,6 +861,8 @@
       "$type": 337,
       "$source": 0,
       "$named": true,
+      "_opening": 5,
+      "_closing": 6,
       "_members": {
         "$type": 361,
         "$source": 0,
@@ -890,6 +892,7 @@
             "$type": 339,
             "$source": 0,
             "$named": true,
+            "_name": "foo",
             "_type": {
               "$type": 302,
               "$source": 0,
@@ -914,7 +917,6 @@
               },
               "$nodeHandle": 23
             },
-            "_name": "foo",
             "$span": {
               "start": 28,
               "end": 39
@@ -926,8 +928,6 @@
         "_leading_sep": false,
         "_trailing_sep": true
       },
-      "_opening": 5,
-      "_closing": 6,
       "$span": {
         "start": 24,
         "end": 42
@@ -999,7 +999,6 @@
           "$type": 200,
           "$source": 0,
           "$named": true,
-          "_semicolon": 23,
           "_object": {
             "$type": 213,
             "$source": 0,
@@ -1009,9 +1008,10 @@
               "start": 65,
               "end": 73
             },
-            "$nodeHandle": 88,
+            "$nodeHandle": 86,
             "$childIndex": 1
           },
+          "_semicolon": 23,
           "$other": [
             34
           ],
@@ -1019,7 +1019,7 @@
             "start": 58,
             "end": 74
           },
-          "$nodeHandle": 88,
+          "$nodeHandle": 86,
           "_expressions": {
             "$type": 213,
             "$source": 0,
@@ -1036,7 +1036,7 @@
               "start": 65,
               "end": 73
             },
-            "$nodeHandle": 89
+            "$nodeHandle": 87
           }
         }
       ],
@@ -1048,7 +1048,7 @@
         "start": 52,
         "end": 76
       },
-      "$nodeHandle": 10
+      "$nodeHandle": 8
     },
     "expectedOutput": "{ return { x,y } ; }"
   },
@@ -1079,7 +1079,7 @@
           "start": 65,
           "end": 73
         },
-        "$nodeHandle": 11,
+        "$nodeHandle": 9,
         "$childIndex": 1
       },
       "_semicolon": 23,
@@ -1090,7 +1090,7 @@
         "start": 58,
         "end": 74
       },
-      "$nodeHandle": 11,
+      "$nodeHandle": 9,
       "_expressions": {
         "$type": 213,
         "$source": 0,
@@ -1107,7 +1107,7 @@
           "start": 65,
           "end": 73
         },
-        "$nodeHandle": 90
+        "$nodeHandle": 88
       }
     },
     "expectedOutput": "return { x,y } ;"
@@ -1135,7 +1135,7 @@
         "start": 65,
         "end": 73
       },
-      "$nodeHandle": 11,
+      "$nodeHandle": 9,
       "$childIndex": 1
     },
     "expectedOutput": "{ x, y }"
@@ -1293,6 +1293,7 @@
           "$type": 286,
           "$source": 0,
           "$named": true,
+          "_name": "r",
           "_value": {
             "$type": 219,
             "$source": 0,
@@ -1309,7 +1310,6 @@
             "$nodeHandle": 4
           },
           "_semicolon": 23,
-          "_name": "r",
           "$other": [
             9,
             42
@@ -1348,12 +1348,13 @@
       "$source": 0,
       "$named": true,
       "_semicolon": 23,
+      "_name": "r",
       "_value": {
         "$type": 219,
         "$source": 0,
         "$named": true,
-        "_property": "N",
         "_object": "X",
+        "_property": "N",
         "$other": [
           45
         ],
@@ -1363,7 +1364,6 @@
         },
         "$nodeHandle": 5
       },
-      "_name": "r",
       "$other": [
         9,
         42
@@ -1408,8 +1408,6 @@
                 "$type": 286,
                 "$source": 0,
                 "$named": true,
-                "_name": "r",
-                "_semicolon": 23,
                 "_value": {
                   "$type": 219,
                   "$source": 0,
@@ -1425,6 +1423,8 @@
                   },
                   "$nodeHandle": 8
                 },
+                "_name": "r",
+                "_semicolon": 23,
                 "$other": [
                   9,
                   42
@@ -1483,7 +1483,6 @@
       "$type": 283,
       "$source": 0,
       "$named": true,
-      "_name": "C",
       "_body": {
         "$type": 186,
         "$source": 0,
@@ -1493,8 +1492,8 @@
             "$type": 286,
             "$source": 0,
             "$named": true,
-            "_semicolon": 23,
             "_name": "r",
+            "_semicolon": 23,
             "_value": {
               "$type": 219,
               "$source": 0,
@@ -1531,6 +1530,7 @@
         },
         "$nodeHandle": 9
       },
+      "_name": "C",
       "$other": [
         126
       ],
@@ -1566,6 +1566,7 @@
           "$source": 0,
           "$named": true,
           "_name": "r",
+          "_semicolon": 23,
           "_value": {
             "$type": 219,
             "$source": 0,
@@ -1581,7 +1582,6 @@
             },
             "$nodeHandle": 13
           },
-          "_semicolon": 23,
           "$other": [
             9,
             42
@@ -1638,8 +1638,8 @@
         },
         "$nodeHandle": 14
       },
-      "_name": "r",
       "_semicolon": 23,
+      "_name": "r",
       "$other": [
         9,
         42
@@ -1675,7 +1675,6 @@
           "$type": 283,
           "$source": 0,
           "$named": true,
-          "_name": "M",
           "_body": {
             "$type": 186,
             "$source": 0,
@@ -1731,7 +1730,6 @@
                       "$type": 283,
                       "$source": 0,
                       "$named": true,
-                      "_name": "N",
                       "_body": {
                         "$type": 186,
                         "$source": 0,
@@ -1743,6 +1741,7 @@
                         "$nodeHandle": 19,
                         "_statements": []
                       },
+                      "_name": "N",
                       "$other": [
                         126
                       ],
@@ -1814,9 +1813,9 @@
                       "$type": 286,
                       "$source": 0,
                       "$named": true,
-                      "_semicolon": 23,
                       "_name": "X",
                       "_value": "N",
+                      "_semicolon": 23,
                       "$other": [
                         9,
                         42
@@ -1850,6 +1849,7 @@
             },
             "$nodeHandle": 13
           },
+          "_name": "M",
           "$other": [
             126
           ],
@@ -2025,9 +2025,9 @@
                   "$type": 286,
                   "$source": 0,
                   "$named": true,
-                  "_semicolon": 23,
                   "_name": "X",
                   "_value": "N",
+                  "_semicolon": 23,
                   "$other": [
                     9,
                     42
@@ -2090,6 +2090,7 @@
       "$type": 283,
       "$source": 0,
       "$named": true,
+      "_name": "N",
       "_body": {
         "$type": 186,
         "$source": 0,
@@ -2101,7 +2102,6 @@
         "$nodeHandle": 33,
         "_statements": []
       },
-      "_name": "N",
       "$other": [
         126
       ],
@@ -2265,8 +2265,8 @@
                 "$type": 286,
                 "$source": 0,
                 "$named": true,
-                "_value": "N",
                 "_name": "X",
+                "_value": "N",
                 "_semicolon": 23,
                 "$other": [
                   9,
@@ -2348,8 +2348,8 @@
       "$type": 286,
       "$source": 0,
       "$named": true,
-      "_name": "X",
       "_semicolon": 23,
+      "_name": "X",
       "_value": "N",
       "$other": [
         9,
@@ -2381,17 +2381,6 @@
       "$type": 349,
       "$source": 0,
       "$named": true,
-      "_right": {
-        "$type": 335,
-        "$source": 0,
-        "$named": true,
-        "$text": "number",
-        "$span": {
-          "start": 69,
-          "end": 75
-        },
-        "$nodeHandle": 49
-      },
       "_left": {
         "$type": 335,
         "$source": 0,
@@ -2400,6 +2389,17 @@
         "$span": {
           "start": 60,
           "end": 66
+        },
+        "$nodeHandle": 49
+      },
+      "_right": {
+        "$type": 335,
+        "$source": 0,
+        "$named": true,
+        "$text": "number",
+        "$span": {
+          "start": 69,
+          "end": 75
         },
         "$nodeHandle": 50
       },
@@ -2566,6 +2566,7 @@
       "$type": 293,
       "$source": 0,
       "$named": true,
+      "_name": "formatFunction",
       "_semicolon": 23,
       "_value": {
         "$type": 351,
@@ -2602,7 +2603,6 @@
         },
         "$nodeHandle": 121
       },
-      "_name": "formatFunction",
       "$other": [
         7,
         42
@@ -2923,8 +2923,8 @@
       "$type": 290,
       "$source": 0,
       "$named": true,
-      "_name": "Blah",
       "_const_marker": true,
+      "_name": "Blah",
       "_body": {
         "$type": 291,
         "$source": 0,
@@ -3017,7 +3017,6 @@
             "$type": 284,
             "$source": 0,
             "$named": true,
-            "_name": "Foo",
             "_body": {
               "$type": 186,
               "$source": 0,
@@ -3078,8 +3077,8 @@
                           "$type": 337,
                           "$source": 0,
                           "$named": true,
-                          "_closing": 6,
                           "_opening": 5,
+                          "_closing": 6,
                           "$span": {
                             "start": 47,
                             "end": 52
@@ -3118,6 +3117,7 @@
               },
               "$nodeHandle": 11
             },
+            "_name": "Foo",
             "$other": [
               120
             ],
@@ -3179,6 +3179,7 @@
         "$type": 284,
         "$source": 0,
         "$named": true,
+        "_name": "Foo",
         "_body": {
           "$type": 186,
           "$source": 0,
@@ -3239,8 +3240,8 @@
                       "$type": 337,
                       "$source": 0,
                       "$named": true,
-                      "_closing": 6,
                       "_opening": 5,
+                      "_closing": 6,
                       "$span": {
                         "start": 47,
                         "end": 52
@@ -3279,7 +3280,6 @@
           },
           "$nodeHandle": 18
         },
-        "_name": "Foo",
         "$other": [
           120
         ],
@@ -3430,8 +3430,8 @@
         "$type": 337,
         "$source": 0,
         "$named": true,
-        "_closing": 6,
         "_opening": 5,
+        "_closing": 6,
         "$span": {
           "start": 47,
           "end": 52
@@ -3468,8 +3468,8 @@
       "$type": 337,
       "$source": 0,
       "$named": true,
-      "_opening": 5,
       "_closing": 6,
+      "_opening": 5,
       "$span": {
         "start": 47,
         "end": 52
@@ -3590,7 +3590,6 @@
               "$type": 183,
               "$source": 0,
               "$named": true,
-              "_semicolon": 23,
               "_declarators": [
                 {
                   "$type": 185,
@@ -3604,6 +3603,7 @@
                   "$nodeHandle": 22
                 }
               ],
+              "_semicolon": 23,
               "$other": [
                 13
               ],
@@ -3740,6 +3740,7 @@
       "$type": 183,
       "$source": 0,
       "$named": true,
+      "_semicolon": 23,
       "_declarators": [
         {
           "$type": 185,
@@ -3753,7 +3754,6 @@
           "$nodeHandle": 25
         }
       ],
-      "_semicolon": 23,
       "$other": [
         13
       ],
@@ -3942,92 +3942,6 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
-      "$type": 340,
-      "$source": 0,
-      "$named": true,
-      "_type_parameter": [
-        {
-          "$type": 341,
-          "$source": 0,
-          "$named": true,
-          "_name": "T",
-          "$span": {
-            "start": 35,
-            "end": 36
-          },
-          "$nodeHandle": 93
-        }
-      ],
-      "$other": [
-        81,
-        88
-      ],
-      "$span": {
-        "start": 34,
-        "end": 37
-      },
-      "$nodeHandle": 11
-    },
-    "expectedOutput": "<T>"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "<T>",
-    "pattern": "type_parameters",
-    "edits": [],
-    "expectedSourceOut": "<T>",
-    "expectedReparseTree": "(type_parameters (type_parameter name: (type_identifier)))",
-    "wrappedText": "function _f<T>() {}",
-    "wrappedOffset": 11
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 340,
-      "$source": 0,
-      "$named": true,
-      "_type_parameter": [
-        {
-          "$type": 341,
-          "$source": 0,
-          "$named": true,
-          "_name": "T",
-          "$span": {
-            "start": 219,
-            "end": 220
-          },
-          "$nodeHandle": 94
-        }
-      ],
-      "$other": [
-        81,
-        88
-      ],
-      "$span": {
-        "start": 218,
-        "end": 221
-      },
-      "$nodeHandle": 17
-    },
-    "expectedOutput": "<T>"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "<T>",
-    "pattern": "type_parameters",
-    "edits": [],
-    "expectedSourceOut": "<T>",
-    "expectedReparseTree": "(type_parameters (type_parameter name: (type_identifier)))",
-    "wrappedText": "function _f<T>() {}",
-    "wrappedOffset": 11
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
       "$type": 257,
       "$source": 0,
       "$named": true,
@@ -4090,7 +4004,7 @@
         "start": 275,
         "end": 277
       },
-      "$nodeHandle": 23
+      "$nodeHandle": 22
     },
     "expectedOutput": "()"
   },
@@ -4109,6 +4023,92 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
+      "$type": 340,
+      "$source": 0,
+      "$named": true,
+      "_type_parameter": [
+        {
+          "$type": 341,
+          "$source": 0,
+          "$named": true,
+          "_name": "T",
+          "$span": {
+            "start": 35,
+            "end": 36
+          },
+          "$nodeHandle": 91
+        }
+      ],
+      "$other": [
+        81,
+        88
+      ],
+      "$span": {
+        "start": 34,
+        "end": 37
+      },
+      "$nodeHandle": 10
+    },
+    "expectedOutput": "<T>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "<T>",
+    "pattern": "type_parameters",
+    "edits": [],
+    "expectedSourceOut": "<T>",
+    "expectedReparseTree": "(type_parameters (type_parameter name: (type_identifier)))",
+    "wrappedText": "function _f<T>() {}",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 340,
+      "$source": 0,
+      "$named": true,
+      "_type_parameter": [
+        {
+          "$type": 341,
+          "$source": 0,
+          "$named": true,
+          "_name": "T",
+          "$span": {
+            "start": 219,
+            "end": 220
+          },
+          "$nodeHandle": 92
+        }
+      ],
+      "$other": [
+        81,
+        88
+      ],
+      "$span": {
+        "start": 218,
+        "end": 221
+      },
+      "$nodeHandle": 17
+    },
+    "expectedOutput": "<T>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "<T>",
+    "pattern": "type_parameters",
+    "edits": [],
+    "expectedSourceOut": "<T>",
+    "expectedReparseTree": "(type_parameters (type_parameter name: (type_identifier)))",
+    "wrappedText": "function _f<T>() {}",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
       "$type": 186,
       "$source": 0,
       "$named": true,
@@ -4116,7 +4116,7 @@
         "start": 35,
         "end": 40
       },
-      "$nodeHandle": 5,
+      "$nodeHandle": 7,
       "_statements": []
     },
     "expectedOutput": "{  }"
@@ -4144,7 +4144,7 @@
         "start": 32,
         "end": 34
       },
-      "$nodeHandle": 6
+      "$nodeHandle": 8
     },
     "expectedOutput": "()"
   },
@@ -4375,33 +4375,6 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
-      "$type": 257,
-      "$source": 0,
-      "$named": true,
-      "$text": "()",
-      "$span": {
-        "start": 43,
-        "end": 45
-      },
-      "$nodeHandle": 5
-    },
-    "expectedOutput": "()"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "()",
-    "pattern": "formal_parameters",
-    "edits": [],
-    "expectedSourceOut": "()",
-    "expectedReparseTree": "(formal_parameters)",
-    "wrappedText": "function _f() {}",
-    "wrappedOffset": 11
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
       "$type": 186,
       "$source": 0,
       "$named": true,
@@ -4409,7 +4382,7 @@
         "start": 46,
         "end": 49
       },
-      "$nodeHandle": 6,
+      "$nodeHandle": 8,
       "_statements": []
     },
     "expectedOutput": "{  }"
@@ -4424,6 +4397,33 @@
     "expectedReparseTree": "(statement_block)",
     "wrappedText": "{  }",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 257,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 43,
+        "end": 45
+      },
+      "$nodeHandle": 9
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "()",
+    "pattern": "formal_parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(formal_parameters)",
+    "wrappedText": "function _f() {}",
+    "wrappedOffset": 11
   },
   {
     "kind": "render",
@@ -4555,19 +4555,19 @@
       "$type": 288,
       "$source": 0,
       "$named": true,
-      "_name": "I",
       "_body": {
         "$type": 337,
         "$source": 0,
         "$named": true,
-        "_closing": 6,
         "_opening": 5,
+        "_closing": 6,
         "$span": {
           "start": 132,
           "end": 135
         },
         "$nodeHandle": 90
       },
+      "_name": "I",
       "$other": [
         140
       ],
@@ -4597,8 +4597,8 @@
       "$type": 337,
       "$source": 0,
       "$named": true,
-      "_opening": 5,
       "_closing": 6,
+      "_opening": 5,
       "$span": {
         "start": 109,
         "end": 112
@@ -4625,8 +4625,8 @@
       "$type": 337,
       "$source": 0,
       "$named": true,
-      "_opening": 5,
       "_closing": 6,
+      "_opening": 5,
       "$span": {
         "start": 132,
         "end": 135
@@ -4704,141 +4704,6 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
-      "$type": 256,
-      "$source": 0,
-      "$named": true,
-      "$span": {
-        "start": 37,
-        "end": 39
-      },
-      "$nodeHandle": 6,
-      "_content": []
-    },
-    "expectedOutput": "{    }"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "{}",
-    "pattern": "class_body",
-    "edits": [],
-    "expectedSourceOut": "{    }",
-    "expectedReparseTree": "(class_body)",
-    "wrappedText": "class _C {    }",
-    "wrappedOffset": 9
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 256,
-      "$source": 0,
-      "$named": true,
-      "$span": {
-        "start": 84,
-        "end": 86
-      },
-      "$nodeHandle": 18,
-      "_content": []
-    },
-    "expectedOutput": "{    }"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "{}",
-    "pattern": "class_body",
-    "edits": [],
-    "expectedSourceOut": "{    }",
-    "expectedReparseTree": "(class_body)",
-    "wrappedText": "class _C {    }",
-    "wrappedOffset": 9
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 256,
-      "$source": 0,
-      "$named": true,
-      "$span": {
-        "start": 128,
-        "end": 130
-      },
-      "$nodeHandle": 36,
-      "_content": []
-    },
-    "expectedOutput": "{    }"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "{}",
-    "pattern": "class_body",
-    "edits": [],
-    "expectedSourceOut": "{    }",
-    "expectedReparseTree": "(class_body)",
-    "wrappedText": "class _C {    }",
-    "wrappedOffset": 9
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 256,
-      "$source": 0,
-      "$named": true,
-      "$span": {
-        "start": 178,
-        "end": 180
-      },
-      "$nodeHandle": 40,
-      "_content": []
-    },
-    "expectedOutput": "{    }"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "{}",
-    "pattern": "class_body",
-    "edits": [],
-    "expectedSourceOut": "{    }",
-    "expectedReparseTree": "(class_body)",
-    "wrappedText": "class _C {    }",
-    "wrappedOffset": 9
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 256,
-      "$source": 0,
-      "$named": true,
-      "$span": {
-        "start": 226,
-        "end": 228
-      },
-      "$nodeHandle": 58,
-      "_content": []
-    },
-    "expectedOutput": "{    }"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "{}",
-    "pattern": "class_body",
-    "edits": [],
-    "expectedSourceOut": "{    }",
-    "expectedReparseTree": "(class_body)",
-    "wrappedText": "class _C {    }",
-    "wrappedOffset": 9
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
       "$type": 252,
       "$source": 0,
       "$named": true,
@@ -4853,7 +4718,7 @@
         "start": 20,
         "end": 23
       },
-      "$nodeHandle": 13
+      "$nodeHandle": 12
     },
     "expectedOutput": "(D)"
   },
@@ -4919,7 +4784,7 @@
         "start": 108,
         "end": 111
       },
-      "$nodeHandle": 33
+      "$nodeHandle": 34
     },
     "expectedOutput": "(D)"
   },
@@ -4966,6 +4831,141 @@
     "expectedReparseTree": "(arguments arguments: (identifier))",
     "wrappedText": "_f(D);",
     "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 256,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 37,
+        "end": 39
+      },
+      "$nodeHandle": 14,
+      "_content": []
+    },
+    "expectedOutput": "{    }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{}",
+    "pattern": "class_body",
+    "edits": [],
+    "expectedSourceOut": "{    }",
+    "expectedReparseTree": "(class_body)",
+    "wrappedText": "class _C {    }",
+    "wrappedOffset": 9
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 256,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 84,
+        "end": 86
+      },
+      "$nodeHandle": 26,
+      "_content": []
+    },
+    "expectedOutput": "{    }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{}",
+    "pattern": "class_body",
+    "edits": [],
+    "expectedSourceOut": "{    }",
+    "expectedReparseTree": "(class_body)",
+    "wrappedText": "class _C {    }",
+    "wrappedOffset": 9
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 256,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 128,
+        "end": 130
+      },
+      "$nodeHandle": 27,
+      "_content": []
+    },
+    "expectedOutput": "{    }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{}",
+    "pattern": "class_body",
+    "edits": [],
+    "expectedSourceOut": "{    }",
+    "expectedReparseTree": "(class_body)",
+    "wrappedText": "class _C {    }",
+    "wrappedOffset": 9
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 256,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 178,
+        "end": 180
+      },
+      "$nodeHandle": 40,
+      "_content": []
+    },
+    "expectedOutput": "{    }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{}",
+    "pattern": "class_body",
+    "edits": [],
+    "expectedSourceOut": "{    }",
+    "expectedReparseTree": "(class_body)",
+    "wrappedText": "class _C {    }",
+    "wrappedOffset": 9
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 256,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 226,
+        "end": 228
+      },
+      "$nodeHandle": 53,
+      "_content": []
+    },
+    "expectedOutput": "{    }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{}",
+    "pattern": "class_body",
+    "edits": [],
+    "expectedSourceOut": "{    }",
+    "expectedReparseTree": "(class_body)",
+    "wrappedText": "class _C {    }",
+    "wrappedOffset": 9
   },
   {
     "kind": "render",
@@ -5058,18 +5058,6 @@
             "$type": 261,
             "$source": 0,
             "$named": true,
-            "_name": "baz",
-            "_body": {
-              "$type": 186,
-              "$source": 0,
-              "$named": true,
-              "$span": {
-                "start": 89,
-                "end": 91
-              },
-              "$nodeHandle": 46,
-              "_statements": []
-            },
             "_parameters": {
               "$type": 257,
               "$source": 0,
@@ -5079,9 +5067,21 @@
                 "start": 86,
                 "end": 88
               },
-              "$nodeHandle": 47
+              "$nodeHandle": 46
             },
             "_override_modifier": true,
+            "_body": {
+              "$type": 186,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 89,
+                "end": 91
+              },
+              "$nodeHandle": 47,
+              "_statements": []
+            },
+            "_name": "baz",
             "$span": {
               "start": 74,
               "end": 91
@@ -5114,46 +5114,6 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
-      "$type": 302,
-      "$source": 0,
-      "$named": true,
-      "_type": {
-        "$type": 335,
-        "$source": 0,
-        "$named": true,
-        "$text": "void",
-        "$span": {
-          "start": 39,
-          "end": 43
-        },
-        "$nodeHandle": 48
-      },
-      "$other": [
-        36
-      ],
-      "$span": {
-        "start": 37,
-        "end": 43
-      },
-      "$nodeHandle": 6
-    },
-    "expectedOutput": ":void"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": ": void",
-    "pattern": "type_annotation",
-    "edits": [],
-    "expectedSourceOut": ":void",
-    "expectedReparseTree": "(type_annotation type: (predefined_type))",
-    "wrappedText": "let _:void;",
-    "wrappedOffset": 5
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
       "$type": 257,
       "$source": 0,
       "$named": true,
@@ -5162,7 +5122,7 @@
         "start": 35,
         "end": 37
       },
-      "$nodeHandle": 8
+      "$nodeHandle": 6
     },
     "expectedOutput": "()"
   },
@@ -5189,7 +5149,7 @@
         "start": 86,
         "end": 88
       },
-      "$nodeHandle": 15
+      "$nodeHandle": 16
     },
     "expectedOutput": "()"
   },
@@ -5208,6 +5168,46 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
+      "$type": 302,
+      "$source": 0,
+      "$named": true,
+      "_type": {
+        "$type": 335,
+        "$source": 0,
+        "$named": true,
+        "$text": "void",
+        "$span": {
+          "start": 39,
+          "end": 43
+        },
+        "$nodeHandle": 48
+      },
+      "$other": [
+        36
+      ],
+      "$span": {
+        "start": 37,
+        "end": 43
+      },
+      "$nodeHandle": 7
+    },
+    "expectedOutput": ":void"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": ": void",
+    "pattern": "type_annotation",
+    "edits": [],
+    "expectedSourceOut": ":void",
+    "expectedReparseTree": "(type_annotation type: (predefined_type))",
+    "wrappedText": "let _:void;",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
       "$type": 186,
       "$source": 0,
       "$named": true,
@@ -5215,7 +5215,7 @@
         "start": 89,
         "end": 91
       },
-      "$nodeHandle": 16,
+      "$nodeHandle": 15,
       "_statements": []
     },
     "expectedOutput": "{  }"
@@ -5272,13 +5272,13 @@
       "$type": 337,
       "$source": 0,
       "$named": true,
-      "_opening": 5,
       "_closing": 6,
+      "_opening": 5,
       "$span": {
         "start": 18,
         "end": 20
       },
-      "$nodeHandle": 13
+      "$nodeHandle": 8
     },
     "expectedOutput": "{ }"
   },
@@ -5300,13 +5300,13 @@
       "$type": 337,
       "$source": 0,
       "$named": true,
-      "_opening": 5,
       "_closing": 6,
+      "_opening": 5,
       "$span": {
         "start": 42,
         "end": 44
       },
-      "$nodeHandle": 22
+      "$nodeHandle": 17
     },
     "expectedOutput": "{ }"
   },
@@ -5362,8 +5362,8 @@
       "$type": 337,
       "$source": 0,
       "$named": true,
-      "_closing": 6,
       "_opening": 5,
+      "_closing": 6,
       "$span": {
         "start": 32,
         "end": 34
@@ -5396,7 +5396,7 @@
         "start": 63,
         "end": 65
       },
-      "$nodeHandle": 27
+      "$nodeHandle": 17
     },
     "expectedOutput": "{ }"
   },
@@ -5521,6 +5521,7 @@
           "$type": 182,
           "$source": 0,
           "$named": true,
+          "_semicolon": 23,
           "_binary_expression": {
             "$type": 243,
             "$source": 0,
@@ -5533,7 +5534,6 @@
             "$nodeHandle": 10,
             "$childIndex": 0
           },
-          "_semicolon": 23,
           "$span": {
             "start": 0,
             "end": 15
@@ -5547,8 +5547,8 @@
               "$type": 234,
               "$source": 0,
               "$named": true,
-              "_property": "length",
               "_object": "foo",
+              "_property": "length",
               "$other": [
                 45
               ],
@@ -5571,6 +5571,7 @@
           "$type": 182,
           "$source": 0,
           "$named": true,
+          "_semicolon": 23,
           "_binary_expression": {
             "$type": 243,
             "$source": 0,
@@ -5583,7 +5584,6 @@
             "$nodeHandle": 11,
             "$childIndex": 0
           },
-          "_semicolon": 23,
           "$span": {
             "start": 16,
             "end": 32
@@ -5593,13 +5593,12 @@
             "$type": 243,
             "$source": 0,
             "$named": true,
-            "_left": "i",
             "_right": {
               "$type": 234,
               "$source": 0,
               "$named": true,
-              "_property": "length",
               "_object": "type",
+              "_property": "length",
               "$other": [
                 45
               ],
@@ -5610,6 +5609,7 @@
               "$nodeHandle": 16
             },
             "_operator": 81,
+            "_left": "i",
             "$span": {
               "start": 16,
               "end": 31
@@ -5621,6 +5621,7 @@
           "$type": 182,
           "$source": 0,
           "$named": true,
+          "_semicolon": 23,
           "_binary_expression": {
             "$type": 243,
             "$source": 0,
@@ -5633,7 +5634,6 @@
             "$nodeHandle": 12,
             "$childIndex": 0
           },
-          "_semicolon": 23,
           "$span": {
             "start": 33,
             "end": 51
@@ -5644,12 +5644,13 @@
             "$source": 0,
             "$named": true,
             "_operator": 81,
+            "_left": "i",
             "_right": {
               "$type": 234,
               "$source": 0,
               "$named": true,
-              "_property": "length",
               "_object": "string",
+              "_property": "length",
               "$other": [
                 45
               ],
@@ -5659,7 +5660,6 @@
               },
               "$nodeHandle": 18
             },
-            "_left": "i",
             "$span": {
               "start": 33,
               "end": 50
@@ -5716,13 +5716,12 @@
         "$type": 243,
         "$source": 0,
         "$named": true,
-        "_left": "i",
         "_right": {
           "$type": 234,
           "$source": 0,
           "$named": true,
-          "_property": "length",
           "_object": "foo",
+          "_property": "length",
           "$other": [
             45
           ],
@@ -5732,6 +5731,7 @@
           },
           "$nodeHandle": 20
         },
+        "_left": "i",
         "_operator": 81,
         "$span": {
           "start": 0,
@@ -5782,8 +5782,6 @@
         "$type": 243,
         "$source": 0,
         "$named": true,
-        "_operator": 81,
-        "_left": "i",
         "_right": {
           "$type": 234,
           "$source": 0,
@@ -5799,6 +5797,8 @@
           },
           "$nodeHandle": 22
         },
+        "_left": "i",
+        "_operator": 81,
         "$span": {
           "start": 16,
           "end": 31
@@ -5826,6 +5826,7 @@
       "$type": 182,
       "$source": 0,
       "$named": true,
+      "_semicolon": 23,
       "_binary_expression": {
         "$type": 243,
         "$source": 0,
@@ -5838,7 +5839,6 @@
         "$nodeHandle": 3,
         "$childIndex": 0
       },
-      "_semicolon": 23,
       "$span": {
         "start": 33,
         "end": 51
@@ -5852,8 +5852,8 @@
           "$type": 234,
           "$source": 0,
           "$named": true,
-          "_object": "string",
           "_property": "length",
+          "_object": "string",
           "$other": [
             45
           ],
@@ -5863,8 +5863,8 @@
           },
           "$nodeHandle": 24
         },
-        "_left": "i",
         "_operator": 81,
+        "_left": "i",
         "$span": {
           "start": 33,
           "end": 50
@@ -5923,8 +5923,8 @@
       "$type": 234,
       "$source": 0,
       "$named": true,
-      "_object": "type",
       "_property": "length",
+      "_object": "type",
       "$other": [
         45
       ],
@@ -5954,8 +5954,8 @@
       "$type": 234,
       "$source": 0,
       "$named": true,
-      "_property": "length",
       "_object": "string",
+      "_property": "length",
       "$other": [
         45
       ],
@@ -5989,7 +5989,7 @@
         "start": 28,
         "end": 30
       },
-      "$nodeHandle": 6,
+      "$nodeHandle": 10,
       "_arguments": []
     },
     "expectedOutput": "()"
@@ -6079,7 +6079,7 @@
         "start": 4,
         "end": 7
       },
-      "$nodeHandle": 4
+      "$nodeHandle": 5
     },
     "expectedOutput": "(x)"
   },
@@ -6110,7 +6110,7 @@
         "start": 12,
         "end": 15
       },
-      "$nodeHandle": 9
+      "$nodeHandle": 6
     },
     "expectedOutput": "e . f"
   },
@@ -6137,7 +6137,7 @@
         "start": 12,
         "end": 14
       },
-      "$nodeHandle": 6
+      "$nodeHandle": 4
     },
     "expectedOutput": "()"
   },
@@ -6163,7 +6163,7 @@
         "start": 33,
         "end": 35
       },
-      "$nodeHandle": 5,
+      "$nodeHandle": 4,
       "_arguments": []
     },
     "expectedOutput": "()"
@@ -6186,6 +6186,7 @@
       "$type": 182,
       "$source": 0,
       "$named": true,
+      "_semicolon": 23,
       "_call_expression": {
         "$type": 231,
         "$source": 0,
@@ -6198,7 +6199,6 @@
         "$nodeHandle": 2,
         "$childIndex": 0
       },
-      "_semicolon": 23,
       "$span": {
         "start": 12,
         "end": 23
@@ -6229,7 +6229,6 @@
           "$type": 385,
           "$source": 0,
           "$named": true,
-          "_function": "a",
           "_type_arguments": {
             "$type": 336,
             "$source": 0,
@@ -6264,8 +6263,8 @@
                   "$type": 287,
                   "$source": 0,
                   "$named": true,
-                  "_module": "C",
                   "_name": "D",
+                  "_module": "C",
                   "$other": [
                     45
                   ],
@@ -6287,6 +6286,7 @@
               }
             ]
           },
+          "_function": "a",
           "_arguments": {
             "$type": 252,
             "$source": 0,
@@ -6357,7 +6357,7 @@
         "start": 20,
         "end": 22
       },
-      "$nodeHandle": 12,
+      "$nodeHandle": 15,
       "_arguments": []
     },
     "expectedOutput": "()"
@@ -6377,6 +6377,37 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
+      "$type": 234,
+      "$source": 0,
+      "$named": true,
+      "_object": "a",
+      "_property": "b",
+      "$other": [
+        45
+      ],
+      "$span": {
+        "start": 0,
+        "end": 3
+      },
+      "$nodeHandle": 6
+    },
+    "expectedOutput": "a . b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "a.b",
+    "pattern": "member_expression",
+    "edits": [],
+    "expectedSourceOut": "a . b",
+    "expectedReparseTree": "(member_expression object: (identifier) property: (property_identifier))",
+    "wrappedText": "let _ = a . b;",
+    "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
       "$type": 347,
       "$source": 0,
       "$named": true,
@@ -6385,7 +6416,7 @@
         "start": 4,
         "end": 7
       },
-      "$nodeHandle": 6,
+      "$nodeHandle": 7,
       "$childIndex": 1
     },
     "expectedOutput": "[C]"
@@ -6405,37 +6436,6 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
-      "$type": 234,
-      "$source": 0,
-      "$named": true,
-      "_object": "a",
-      "_property": "b",
-      "$other": [
-        45
-      ],
-      "$span": {
-        "start": 0,
-        "end": 3
-      },
-      "$nodeHandle": 9
-    },
-    "expectedOutput": "a . b"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "a.b",
-    "pattern": "member_expression",
-    "edits": [],
-    "expectedSourceOut": "a . b",
-    "expectedReparseTree": "(member_expression object: (identifier) property: (property_identifier))",
-    "wrappedText": "let _ = a . b;",
-    "wrappedOffset": 8
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
       "$type": 287,
       "$source": 0,
       "$named": true,
@@ -6448,7 +6448,7 @@
         "start": 14,
         "end": 17
       },
-      "$nodeHandle": 15
+      "$nodeHandle": 14
     },
     "expectedOutput": "C.D"
   },
@@ -6474,7 +6474,7 @@
         "start": 6,
         "end": 8
       },
-      "$nodeHandle": 5,
+      "$nodeHandle": 4,
       "_arguments": []
     },
     "expectedOutput": "()"
@@ -6494,6 +6494,126 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
+      "$type": 302,
+      "$source": 0,
+      "$named": true,
+      "_type": {
+        "$type": 335,
+        "$source": 0,
+        "$named": true,
+        "$text": "number",
+        "$span": {
+          "start": 37,
+          "end": 43
+        },
+        "$nodeHandle": 71
+      },
+      "$other": [
+        36
+      ],
+      "$span": {
+        "start": 35,
+        "end": 43
+      },
+      "$nodeHandle": 5
+    },
+    "expectedOutput": ":number"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": ": number",
+    "pattern": "type_annotation",
+    "edits": [],
+    "expectedSourceOut": ":number",
+    "expectedReparseTree": "(type_annotation type: (predefined_type))",
+    "wrappedText": "let _:number;",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 302,
+      "$source": 0,
+      "$named": true,
+      "_type": {
+        "$type": 335,
+        "$source": 0,
+        "$named": true,
+        "$text": "number",
+        "$span": {
+          "start": 100,
+          "end": 106
+        },
+        "$nodeHandle": 72
+      },
+      "$other": [
+        36
+      ],
+      "$span": {
+        "start": 98,
+        "end": 106
+      },
+      "$nodeHandle": 11
+    },
+    "expectedOutput": ":number"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": ": number",
+    "pattern": "type_annotation",
+    "edits": [],
+    "expectedSourceOut": ":number",
+    "expectedReparseTree": "(type_annotation type: (predefined_type))",
+    "wrappedText": "let _:number;",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 302,
+      "$source": 0,
+      "$named": true,
+      "_type": {
+        "$type": 335,
+        "$source": 0,
+        "$named": true,
+        "$text": "number",
+        "$span": {
+          "start": 172,
+          "end": 178
+        },
+        "$nodeHandle": 73
+      },
+      "$other": [
+        36
+      ],
+      "$span": {
+        "start": 170,
+        "end": 178
+      },
+      "$nodeHandle": 24
+    },
+    "expectedOutput": ":number"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": ": number",
+    "pattern": "type_annotation",
+    "edits": [],
+    "expectedSourceOut": ":number",
+    "expectedReparseTree": "(type_annotation type: (predefined_type))",
+    "wrappedText": "let _:number;",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
       "$type": 340,
       "$source": 0,
       "$named": true,
@@ -6507,7 +6627,7 @@
             "start": 1,
             "end": 2
           },
-          "$nodeHandle": 71
+          "$nodeHandle": 74
         }
       ],
       "$other": [
@@ -6518,7 +6638,7 @@
         "start": 0,
         "end": 3
       },
-      "$nodeHandle": 5
+      "$nodeHandle": 7
     },
     "expectedOutput": "<A>"
   },
@@ -6550,7 +6670,7 @@
             "start": 64,
             "end": 65
           },
-          "$nodeHandle": 72
+          "$nodeHandle": 75
         }
       ],
       "$other": [
@@ -6561,7 +6681,7 @@
         "start": 63,
         "end": 66
       },
-      "$nodeHandle": 11
+      "$nodeHandle": 13
     },
     "expectedOutput": "<A>"
   },
@@ -6575,126 +6695,6 @@
     "expectedReparseTree": "(type_parameters (type_parameter name: (type_identifier)))",
     "wrappedText": "function _f<A>() {}",
     "wrappedOffset": 11
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 302,
-      "$source": 0,
-      "$named": true,
-      "_type": {
-        "$type": 335,
-        "$source": 0,
-        "$named": true,
-        "$text": "number",
-        "$span": {
-          "start": 37,
-          "end": 43
-        },
-        "$nodeHandle": 76
-      },
-      "$other": [
-        36
-      ],
-      "$span": {
-        "start": 35,
-        "end": 43
-      },
-      "$nodeHandle": 9
-    },
-    "expectedOutput": ":number"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": ": number",
-    "pattern": "type_annotation",
-    "edits": [],
-    "expectedSourceOut": ":number",
-    "expectedReparseTree": "(type_annotation type: (predefined_type))",
-    "wrappedText": "let _:number;",
-    "wrappedOffset": 5
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 302,
-      "$source": 0,
-      "$named": true,
-      "_type": {
-        "$type": 335,
-        "$source": 0,
-        "$named": true,
-        "$text": "number",
-        "$span": {
-          "start": 100,
-          "end": 106
-        },
-        "$nodeHandle": 77
-      },
-      "$other": [
-        36
-      ],
-      "$span": {
-        "start": 98,
-        "end": 106
-      },
-      "$nodeHandle": 13
-    },
-    "expectedOutput": ":number"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": ": number",
-    "pattern": "type_annotation",
-    "edits": [],
-    "expectedSourceOut": ":number",
-    "expectedReparseTree": "(type_annotation type: (predefined_type))",
-    "wrappedText": "let _:number;",
-    "wrappedOffset": 5
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 302,
-      "$source": 0,
-      "$named": true,
-      "_type": {
-        "$type": 335,
-        "$source": 0,
-        "$named": true,
-        "$text": "number",
-        "$span": {
-          "start": 172,
-          "end": 178
-        },
-        "$nodeHandle": 78
-      },
-      "$other": [
-        36
-      ],
-      "$span": {
-        "start": 170,
-        "end": 178
-      },
-      "$nodeHandle": 24
-    },
-    "expectedOutput": ":number"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": ": number",
-    "pattern": "type_annotation",
-    "edits": [],
-    "expectedSourceOut": ":number",
-    "expectedReparseTree": "(type_annotation type: (predefined_type))",
-    "wrappedText": "let _:number;",
-    "wrappedOffset": 5
   },
   {
     "kind": "render",
@@ -6742,11 +6742,11 @@
               "$type": 185,
               "$source": 0,
               "$named": true,
-              "_name": "x",
               "_value": {
                 "$type": 227,
                 "$source": 0,
                 "$named": true,
+                "_body": "async",
                 "_arrow_function_parameter": {
                   "$type": 366,
                   "$source": 0,
@@ -6758,7 +6758,6 @@
                   },
                   "$nodeHandle": 8
                 },
-                "_body": "async",
                 "$other": [
                   49
                 ],
@@ -6768,6 +6767,7 @@
                 },
                 "$nodeHandle": 7
               },
+              "_name": "x",
               "$other": [
                 42
               ],
@@ -6812,13 +6812,11 @@
       "$type": 184,
       "$source": 0,
       "$named": true,
-      "_kind": 16,
       "_declarators": [
         {
           "$type": 185,
           "$source": 0,
           "$named": true,
-          "_name": "x",
           "_value": {
             "$type": 227,
             "$source": 0,
@@ -6844,6 +6842,7 @@
             },
             "$nodeHandle": 10
           },
+          "_name": "x",
           "$other": [
             42
           ],
@@ -6854,6 +6853,7 @@
           "$nodeHandle": 9
         }
       ],
+      "_kind": 16,
       "_semicolon": 23,
       "$span": {
         "start": 0,
@@ -6969,7 +6969,7 @@
         "start": 27,
         "end": 29
       },
-      "$nodeHandle": 7
+      "$nodeHandle": 6
     },
     "expectedOutput": "()"
   },
@@ -6991,17 +6991,6 @@
       "$type": 224,
       "$source": 0,
       "$named": true,
-      "_parameters": {
-        "$type": 257,
-        "$source": 0,
-        "$named": true,
-        "$text": "()",
-        "$span": {
-          "start": 12,
-          "end": 14
-        },
-        "$nodeHandle": 69
-      },
       "_name": "foo",
       "_body": {
         "$type": 186,
@@ -7011,8 +7000,19 @@
           "start": 15,
           "end": 17
         },
-        "$nodeHandle": 70,
+        "$nodeHandle": 69,
         "_statements": []
+      },
+      "_parameters": {
+        "$type": 257,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 12,
+          "end": 14
+        },
+        "$nodeHandle": 70
       },
       "$other": [
         47
@@ -7040,6 +7040,60 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
+      "$type": 186,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 15,
+        "end": 17
+      },
+      "$nodeHandle": 7,
+      "_statements": []
+    },
+    "expectedOutput": "{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{}",
+    "pattern": "statement_block",
+    "edits": [],
+    "expectedSourceOut": "{  }",
+    "expectedReparseTree": "(statement_block)",
+    "wrappedText": "{  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 186,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 164,
+        "end": 166
+      },
+      "$nodeHandle": 25,
+      "_statements": []
+    },
+    "expectedOutput": "{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{}",
+    "pattern": "statement_block",
+    "edits": [],
+    "expectedSourceOut": "{  }",
+    "expectedReparseTree": "(statement_block)",
+    "wrappedText": "{  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
       "$type": 257,
       "$source": 0,
       "$named": true,
@@ -7048,7 +7102,7 @@
         "start": 12,
         "end": 14
       },
-      "$nodeHandle": 7
+      "$nodeHandle": 8
     },
     "expectedOutput": "()"
   },
@@ -7129,7 +7183,7 @@
         "start": 134,
         "end": 136
       },
-      "$nodeHandle": 25
+      "$nodeHandle": 26
     },
     "expectedOutput": "()"
   },
@@ -7156,7 +7210,7 @@
         "start": 138,
         "end": 140
       },
-      "$nodeHandle": 34
+      "$nodeHandle": 29
     },
     "expectedOutput": "()"
   },
@@ -7170,60 +7224,6 @@
     "expectedReparseTree": "(formal_parameters)",
     "wrappedText": "function _f() {}",
     "wrappedOffset": 11
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 186,
-      "$source": 0,
-      "$named": true,
-      "$span": {
-        "start": 15,
-        "end": 17
-      },
-      "$nodeHandle": 8,
-      "_statements": []
-    },
-    "expectedOutput": "{  }"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "{}",
-    "pattern": "statement_block",
-    "edits": [],
-    "expectedSourceOut": "{  }",
-    "expectedReparseTree": "(statement_block)",
-    "wrappedText": "{  }",
-    "wrappedOffset": 0
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 186,
-      "$source": 0,
-      "$named": true,
-      "$span": {
-        "start": 164,
-        "end": 166
-      },
-      "$nodeHandle": 26,
-      "_statements": []
-    },
-    "expectedOutput": "{  }"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "{}",
-    "pattern": "statement_block",
-    "edits": [],
-    "expectedSourceOut": "{  }",
-    "expectedReparseTree": "(statement_block)",
-    "wrappedText": "{  }",
-    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -7305,7 +7305,7 @@
         "start": 61,
         "end": 63
       },
-      "$nodeHandle": 10
+      "$nodeHandle": 9
     },
     "expectedOutput": "()"
   },
@@ -7332,7 +7332,7 @@
         "start": 117,
         "end": 119
       },
-      "$nodeHandle": 11
+      "$nodeHandle": 13
     },
     "expectedOutput": "()"
   },
@@ -7354,7 +7354,6 @@
       "$type": 182,
       "$source": 0,
       "$named": true,
-      "_semicolon": 23,
       "_call_expression": {
         "$type": 231,
         "$source": 0,
@@ -7367,6 +7366,7 @@
         "$nodeHandle": 2,
         "$childIndex": 0
       },
+      "_semicolon": 23,
       "$span": {
         "start": 41,
         "end": 47
@@ -7397,7 +7397,6 @@
           "$type": 385,
           "$source": 0,
           "$named": true,
-          "_function": "foo",
           "_arguments": {
             "$type": 252,
             "$source": 0,
@@ -7409,6 +7408,7 @@
             "$nodeHandle": 33,
             "_arguments": []
           },
+          "_function": "foo",
           "$span": {
             "start": 41,
             "end": 46
@@ -7464,19 +7464,7 @@
       "$type": 224,
       "$source": 0,
       "$named": true,
-      "_body": {
-        "$type": 186,
-        "$source": 0,
-        "$named": true,
-        "$span": {
-          "start": 101,
-          "end": 103
-        },
-        "$nodeHandle": 34,
-        "_statements": []
-      },
       "_comment": "// above is a function declaration",
-      "_name": "bar",
       "_parameters": {
         "$type": 257,
         "$source": 0,
@@ -7486,8 +7474,20 @@
           "start": 61,
           "end": 63
         },
-        "$nodeHandle": 35
+        "$nodeHandle": 34
       },
+      "_body": {
+        "$type": 186,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 101,
+          "end": 103
+        },
+        "$nodeHandle": 35,
+        "_statements": []
+      },
+      "_name": "bar",
       "$other": [
         47
       ],
@@ -7521,7 +7521,7 @@
         "start": 101,
         "end": 103
       },
-      "$nodeHandle": 9,
+      "$nodeHandle": 10,
       "_statements": []
     },
     "expectedOutput": "{  }"
@@ -7562,7 +7562,7 @@
         "start": 122,
         "end": 130
       },
-      "$nodeHandle": 12
+      "$nodeHandle": 11
     },
     "expectedOutput": ":number"
   },
@@ -7589,12 +7589,12 @@
           "$type": 183,
           "$source": 0,
           "$named": true,
+          "_semicolon": 23,
           "_declarators": [
             {
               "$type": 185,
               "$source": 0,
               "$named": true,
-              "_name": "x",
               "_type": {
                 "$type": 302,
                 "$source": 0,
@@ -7633,6 +7633,7 @@
                 },
                 "$nodeHandle": 18
               },
+              "_name": "x",
               "$span": {
                 "start": 4,
                 "end": 15
@@ -7640,7 +7641,6 @@
               "$nodeHandle": 17
             }
           ],
-          "_semicolon": 23,
           "$other": [
             13
           ],
@@ -7654,6 +7654,7 @@
           "$type": 183,
           "$source": 0,
           "$named": true,
+          "_semicolon": 23,
           "_declarators": [
             {
               "$type": 185,
@@ -7672,8 +7673,6 @@
                     "$type": 337,
                     "$source": 0,
                     "$named": true,
-                    "_closing": 6,
-                    "_opening": 5,
                     "_members": {
                       "$type": 361,
                       "$source": 0,
@@ -7700,6 +7699,7 @@
                           "$type": 339,
                           "$source": 0,
                           "$named": true,
+                          "_name": "a",
                           "_type": {
                             "$type": 302,
                             "$source": 0,
@@ -7724,7 +7724,6 @@
                             },
                             "$nodeHandle": 27
                           },
-                          "_name": "a",
                           "$span": {
                             "start": 26,
                             "end": 32
@@ -7735,6 +7734,8 @@
                       "_leading_sep": false,
                       "_trailing_sep": false
                     },
+                    "_opening": 5,
+                    "_closing": 6,
                     "$span": {
                       "start": 25,
                       "end": 33
@@ -7767,7 +7768,6 @@
               "$nodeHandle": 21
             }
           ],
-          "_semicolon": 23,
           "$other": [
             13
           ],
@@ -7903,6 +7903,8 @@
                 "$type": 337,
                 "$source": 0,
                 "$named": true,
+                "_closing": 6,
+                "_opening": 5,
                 "_members": {
                   "$type": 361,
                   "$source": 0,
@@ -7929,7 +7931,6 @@
                       "$type": 339,
                       "$source": 0,
                       "$named": true,
-                      "_name": "a",
                       "_type": {
                         "$type": 302,
                         "$source": 0,
@@ -7954,6 +7955,7 @@
                         },
                         "$nodeHandle": 39
                       },
+                      "_name": "a",
                       "$span": {
                         "start": 26,
                         "end": 32
@@ -7964,8 +7966,6 @@
                   "_leading_sep": false,
                   "_trailing_sep": false
                 },
-                "_closing": 6,
-                "_opening": 5,
                 "$span": {
                   "start": 25,
                   "end": 33
@@ -8132,6 +8132,7 @@
                   "$type": 339,
                   "$source": 0,
                   "$named": true,
+                  "_name": "a",
                   "_type": {
                     "$type": 302,
                     "$source": 0,
@@ -8156,7 +8157,6 @@
                     },
                     "$nodeHandle": 49
                   },
-                  "_name": "a",
                   "$span": {
                     "start": 26,
                     "end": 32
@@ -8167,8 +8167,8 @@
               "_leading_sep": false,
               "_trailing_sep": false
             },
-            "_closing": 6,
             "_opening": 5,
+            "_closing": 6,
             "$span": {
               "start": 25,
               "end": 33
@@ -8282,8 +8282,8 @@
           "$type": 337,
           "$source": 0,
           "$named": true,
-          "_closing": 6,
           "_opening": 5,
+          "_closing": 6,
           "_members": {
             "$type": 361,
             "$source": 0,
@@ -8310,6 +8310,7 @@
                 "$type": 339,
                 "$source": 0,
                 "$named": true,
+                "_name": "a",
                 "_type": {
                   "$type": 302,
                   "$source": 0,
@@ -8334,7 +8335,6 @@
                   },
                   "$nodeHandle": 57
                 },
-                "_name": "a",
                 "$span": {
                   "start": 26,
                   "end": 32
@@ -8503,6 +8503,7 @@
               "$type": 339,
               "$source": 0,
               "$named": true,
+              "_name": "a",
               "_type": {
                 "$type": 302,
                 "$source": 0,
@@ -8527,7 +8528,6 @@
                 },
                 "$nodeHandle": 64
               },
-              "_name": "a",
               "$span": {
                 "start": 26,
                 "end": 32
@@ -8635,8 +8635,8 @@
         "_leading_sep": false,
         "_trailing_sep": false
       },
-      "_opening": 5,
       "_closing": 6,
+      "_opening": 5,
       "$span": {
         "start": 25,
         "end": 33
@@ -8669,7 +8669,6 @@
           "$type": 185,
           "$source": 0,
           "$named": true,
-          "_name": "person",
           "_type": {
             "$type": 302,
             "$source": 0,
@@ -8678,6 +8677,7 @@
               "$type": 337,
               "$source": 0,
               "$named": true,
+              "_closing": 6,
               "_opening": 5,
               "_members": {
                 "$type": 361,
@@ -8722,6 +8722,7 @@
                     "$type": 339,
                     "$source": 0,
                     "$named": true,
+                    "_name": "name",
                     "_type": {
                       "$type": 302,
                       "$source": 0,
@@ -8746,7 +8747,6 @@
                       },
                       "$nodeHandle": 97
                     },
-                    "_name": "name",
                     "$span": {
                       "start": 13,
                       "end": 25
@@ -8793,7 +8793,6 @@
                 "_leading_sep": false,
                 "_trailing_sep": false
               },
-              "_closing": 6,
               "$span": {
                 "start": 12,
                 "end": 39
@@ -8809,6 +8808,7 @@
             },
             "$nodeHandle": 92
           },
+          "_name": "person",
           "$span": {
             "start": 4,
             "end": 39
@@ -8848,7 +8848,6 @@
           "$type": 185,
           "$source": 0,
           "$named": true,
-          "_name": "thing",
           "_type": {
             "$type": 302,
             "$source": 0,
@@ -8857,6 +8856,7 @@
               "$type": 337,
               "$source": 0,
               "$named": true,
+              "_closing": 6,
               "_opening": 5,
               "_members": {
                 "$type": 361,
@@ -8959,7 +8959,6 @@
                 "_leading_sep": false,
                 "_trailing_sep": false
               },
-              "_closing": 6,
               "$span": {
                 "start": 52,
                 "end": 78
@@ -8975,6 +8974,7 @@
             },
             "$nodeHandle": 102
           },
+          "_name": "thing",
           "$span": {
             "start": 45,
             "end": 78
@@ -9019,8 +9019,6 @@
           "$type": 337,
           "$source": 0,
           "$named": true,
-          "_closing": 6,
-          "_opening": 5,
           "_members": {
             "$type": 361,
             "$source": 0,
@@ -9064,7 +9062,6 @@
                 "$type": 339,
                 "$source": 0,
                 "$named": true,
-                "_name": "name",
                 "_type": {
                   "$type": 302,
                   "$source": 0,
@@ -9089,6 +9086,7 @@
                   },
                   "$nodeHandle": 115
                 },
+                "_name": "name",
                 "$span": {
                   "start": 13,
                   "end": 25
@@ -9099,7 +9097,6 @@
                 "$type": 339,
                 "$source": 0,
                 "$named": true,
-                "_name": "age",
                 "_type": {
                   "$type": 302,
                   "$source": 0,
@@ -9124,6 +9121,7 @@
                   },
                   "$nodeHandle": 117
                 },
+                "_name": "age",
                 "$span": {
                   "start": 27,
                   "end": 38
@@ -9135,6 +9133,8 @@
             "_leading_sep": false,
             "_trailing_sep": false
           },
+          "_opening": 5,
+          "_closing": 6,
           "$span": {
             "start": 12,
             "end": 39
@@ -9176,7 +9176,6 @@
       "$type": 185,
       "$source": 0,
       "$named": true,
-      "_name": "thing",
       "_type": {
         "$type": 302,
         "$source": 0,
@@ -9185,8 +9184,6 @@
           "$type": 337,
           "$source": 0,
           "$named": true,
-          "_closing": 6,
-          "_opening": 5,
           "_members": {
             "$type": 361,
             "$source": 0,
@@ -9213,6 +9210,18 @@
                 "$type": 345,
                 "$source": 0,
                 "$named": true,
+                "_index_signature_colon": {
+                  "$type": 370,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "type: string",
+                  "$span": {
+                    "start": 55,
+                    "end": 67
+                  },
+                  "$nodeHandle": 122,
+                  "$childIndex": 1
+                },
                 "_type": {
                   "$type": 302,
                   "$source": 0,
@@ -9237,18 +9246,6 @@
                   },
                   "$nodeHandle": 123
                 },
-                "_index_signature_colon": {
-                  "$type": 370,
-                  "$source": 0,
-                  "$named": true,
-                  "$text": "type: string",
-                  "$span": {
-                    "start": 55,
-                    "end": 67
-                  },
-                  "$nodeHandle": 122,
-                  "$childIndex": 1
-                },
                 "$other": [
                   43,
                   44
@@ -9262,6 +9259,7 @@
                   "$type": 370,
                   "$source": 0,
                   "$named": true,
+                  "_name": "type",
                   "_index_type": {
                     "$type": 335,
                     "$source": 0,
@@ -9273,7 +9271,6 @@
                     },
                     "$nodeHandle": 126
                   },
-                  "_name": "type",
                   "$other": [
                     36
                   ],
@@ -9288,6 +9285,8 @@
             "_leading_sep": false,
             "_trailing_sep": false
           },
+          "_closing": 6,
+          "_opening": 5,
           "$span": {
             "start": 52,
             "end": 78
@@ -9303,6 +9302,7 @@
         },
         "$nodeHandle": 119
       },
+      "_name": "thing",
       "$span": {
         "start": 45,
         "end": 78
@@ -9333,7 +9333,7 @@
         "$type": 337,
         "$source": 0,
         "$named": true,
-        "_closing": 6,
+        "_opening": 5,
         "_members": {
           "$type": 361,
           "$source": 0,
@@ -9377,7 +9377,6 @@
               "$type": 339,
               "$source": 0,
               "$named": true,
-              "_name": "name",
               "_type": {
                 "$type": 302,
                 "$source": 0,
@@ -9402,6 +9401,7 @@
                 },
                 "$nodeHandle": 131
               },
+              "_name": "name",
               "$span": {
                 "start": 13,
                 "end": 25
@@ -9412,6 +9412,7 @@
               "$type": 339,
               "$source": 0,
               "$named": true,
+              "_name": "age",
               "_type": {
                 "$type": 302,
                 "$source": 0,
@@ -9436,7 +9437,6 @@
                 },
                 "$nodeHandle": 133
               },
-              "_name": "age",
               "$span": {
                 "start": 27,
                 "end": 38
@@ -9448,7 +9448,7 @@
           "_leading_sep": false,
           "_trailing_sep": false
         },
-        "_opening": 5,
+        "_closing": 6,
         "$span": {
           "start": 12,
           "end": 39
@@ -9568,8 +9568,8 @@
         "$type": 337,
         "$source": 0,
         "$named": true,
-        "_opening": 5,
         "_closing": 6,
+        "_opening": 5,
         "_members": {
           "$type": 361,
           "$source": 0,
@@ -9596,6 +9596,18 @@
               "$type": 345,
               "$source": 0,
               "$named": true,
+              "_index_signature_colon": {
+                "$type": 370,
+                "$source": 0,
+                "$named": true,
+                "$text": "type: string",
+                "$span": {
+                  "start": 55,
+                  "end": 67
+                },
+                "$nodeHandle": 139,
+                "$childIndex": 1
+              },
               "_type": {
                 "$type": 302,
                 "$source": 0,
@@ -9619,18 +9631,6 @@
                   "end": 76
                 },
                 "$nodeHandle": 140
-              },
-              "_index_signature_colon": {
-                "$type": 370,
-                "$source": 0,
-                "$named": true,
-                "$text": "type: string",
-                "$span": {
-                  "start": 55,
-                  "end": 67
-                },
-                "$nodeHandle": 139,
-                "$childIndex": 1
               },
               "$other": [
                 43,
@@ -9829,6 +9829,7 @@
             "$type": 339,
             "$source": 0,
             "$named": true,
+            "_name": "name",
             "_type": {
               "$type": 302,
               "$source": 0,
@@ -9853,7 +9854,6 @@
               },
               "$nodeHandle": 149
             },
-            "_name": "name",
             "$span": {
               "start": 13,
               "end": 25
@@ -9864,6 +9864,7 @@
             "$type": 339,
             "$source": 0,
             "$named": true,
+            "_name": "age",
             "_type": {
               "$type": 302,
               "$source": 0,
@@ -9888,7 +9889,6 @@
               },
               "$nodeHandle": 151
             },
-            "_name": "age",
             "$span": {
               "start": 27,
               "end": 38
@@ -9900,8 +9900,8 @@
         "_leading_sep": false,
         "_trailing_sep": false
       },
-      "_closing": 6,
       "_opening": 5,
+      "_closing": 6,
       "$span": {
         "start": 12,
         "end": 39
@@ -9929,7 +9929,6 @@
       "$source": 0,
       "$named": true,
       "_closing": 6,
-      "_opening": 5,
       "_members": {
         "$type": 361,
         "$source": 0,
@@ -9956,18 +9955,6 @@
             "$type": 345,
             "$source": 0,
             "$named": true,
-            "_index_signature_colon": {
-              "$type": 370,
-              "$source": 0,
-              "$named": true,
-              "$text": "type: string",
-              "$span": {
-                "start": 55,
-                "end": 67
-              },
-              "$nodeHandle": 154,
-              "$childIndex": 1
-            },
             "_type": {
               "$type": 302,
               "$source": 0,
@@ -9991,6 +9978,18 @@
                 "end": 76
               },
               "$nodeHandle": 155
+            },
+            "_index_signature_colon": {
+              "$type": 370,
+              "$source": 0,
+              "$named": true,
+              "$text": "type: string",
+              "$span": {
+                "start": 55,
+                "end": 67
+              },
+              "$nodeHandle": 154,
+              "$childIndex": 1
             },
             "$other": [
               43,
@@ -10031,6 +10030,7 @@
         "_leading_sep": false,
         "_trailing_sep": false
       },
+      "_opening": 5,
       "$span": {
         "start": 52,
         "end": 78
@@ -10057,6 +10057,7 @@
       "$type": 337,
       "$source": 0,
       "$named": true,
+      "_closing": 6,
       "_members": {
         "$type": 361,
         "$source": 0,
@@ -10083,6 +10084,18 @@
             "$type": 345,
             "$source": 0,
             "$named": true,
+            "_mapped_type_clause": {
+              "$type": 329,
+              "$source": 0,
+              "$named": true,
+              "$text": "K in keyof T",
+              "$span": {
+                "start": 92,
+                "end": 104
+              },
+              "$nodeHandle": 160,
+              "$childIndex": 1
+            },
             "_type": {
               "$type": 299,
               "$source": 0,
@@ -10107,18 +10120,6 @@
               },
               "$nodeHandle": 161
             },
-            "_mapped_type_clause": {
-              "$type": 329,
-              "$source": 0,
-              "$named": true,
-              "$text": "K in keyof T",
-              "$span": {
-                "start": 92,
-                "end": 104
-              },
-              "$nodeHandle": 160,
-              "$childIndex": 1
-            },
             "$other": [
               43,
               44
@@ -10132,6 +10133,7 @@
               "$type": 329,
               "$source": 0,
               "$named": true,
+              "_name": "K",
               "_type": {
                 "$type": 327,
                 "$source": 0,
@@ -10146,7 +10148,6 @@
                 },
                 "$nodeHandle": 164
               },
-              "_name": "K",
               "$other": [
                 26
               ],
@@ -10161,7 +10162,6 @@
         "_leading_sep": false,
         "_trailing_sep": false
       },
-      "_closing": 6,
       "_opening": 5,
       "$span": {
         "start": 89,
@@ -10216,6 +10216,18 @@
             "$type": 345,
             "$source": 0,
             "$named": true,
+            "_mapped_type_clause": {
+              "$type": 329,
+              "$source": 0,
+              "$named": true,
+              "$text": "K in keyof T",
+              "$span": {
+                "start": 127,
+                "end": 139
+              },
+              "$nodeHandle": 166,
+              "$childIndex": 1
+            },
             "_type": {
               "$type": 301,
               "$source": 0,
@@ -10240,18 +10252,6 @@
               },
               "$nodeHandle": 167
             },
-            "_mapped_type_clause": {
-              "$type": 329,
-              "$source": 0,
-              "$named": true,
-              "$text": "K in keyof T",
-              "$span": {
-                "start": 127,
-                "end": 139
-              },
-              "$nodeHandle": 166,
-              "$childIndex": 1
-            },
             "$other": [
               43,
               44
@@ -10265,6 +10265,7 @@
               "$type": 329,
               "$source": 0,
               "$named": true,
+              "_name": "K",
               "_type": {
                 "$type": 327,
                 "$source": 0,
@@ -10279,7 +10280,6 @@
                 },
                 "$nodeHandle": 170
               },
-              "_name": "K",
               "$other": [
                 26
               ],
@@ -10321,7 +10321,6 @@
       "$type": 337,
       "$source": 0,
       "$named": true,
-      "_closing": 6,
       "_opening": 5,
       "_members": {
         "$type": 361,
@@ -10349,6 +10348,7 @@
             "$type": 345,
             "$source": 0,
             "$named": true,
+            "_sign": 77,
             "_mapped_type_clause": {
               "$type": 329,
               "$source": 0,
@@ -10385,7 +10385,6 @@
               },
               "$nodeHandle": 173
             },
-            "_sign": 77,
             "$other": [
               125,
               43,
@@ -10400,6 +10399,7 @@
               "$type": 329,
               "$source": 0,
               "$named": true,
+              "_name": "K",
               "_type": {
                 "$type": 327,
                 "$source": 0,
@@ -10414,7 +10414,6 @@
                 },
                 "$nodeHandle": 176
               },
-              "_name": "K",
               "$other": [
                 26
               ],
@@ -10429,6 +10428,7 @@
         "_leading_sep": false,
         "_trailing_sep": false
       },
+      "_closing": 6,
       "$span": {
         "start": 158,
         "end": 191
@@ -10455,11 +10455,12 @@
       "$type": 293,
       "$source": 0,
       "$named": true,
+      "_name": "T",
       "_value": {
         "$type": 337,
         "$source": 0,
         "$named": true,
-        "_closing": 6,
+        "_opening": 5,
         "_members": {
           "$type": 361,
           "$source": 0,
@@ -10486,18 +10487,6 @@
               "$type": 345,
               "$source": 0,
               "$named": true,
-              "_mapped_type_clause": {
-                "$type": 329,
-                "$source": 0,
-                "$named": true,
-                "$text": "K in keyof T",
-                "$span": {
-                  "start": 92,
-                  "end": 104
-                },
-                "$nodeHandle": 205,
-                "$childIndex": 1
-              },
               "_type": {
                 "$type": 299,
                 "$source": 0,
@@ -10522,6 +10511,18 @@
                 },
                 "$nodeHandle": 206
               },
+              "_mapped_type_clause": {
+                "$type": 329,
+                "$source": 0,
+                "$named": true,
+                "$text": "K in keyof T",
+                "$span": {
+                  "start": 92,
+                  "end": 104
+                },
+                "$nodeHandle": 205,
+                "$childIndex": 1
+              },
               "$other": [
                 43,
                 44
@@ -10535,7 +10536,6 @@
                 "$type": 329,
                 "$source": 0,
                 "$named": true,
-                "_name": "K",
                 "_type": {
                   "$type": 327,
                   "$source": 0,
@@ -10550,6 +10550,7 @@
                   },
                   "$nodeHandle": 209
                 },
+                "_name": "K",
                 "$other": [
                   26
                 ],
@@ -10564,14 +10565,13 @@
           "_leading_sep": false,
           "_trailing_sep": false
         },
-        "_opening": 5,
+        "_closing": 6,
         "$span": {
           "start": 89,
           "end": 114
         },
         "$nodeHandle": 203
       },
-      "_name": "T",
       "$other": [
         7,
         42
@@ -10602,7 +10602,6 @@
       "$type": 293,
       "$source": 0,
       "$named": true,
-      "_name": "T",
       "_value": {
         "$type": 337,
         "$source": 0,
@@ -10719,6 +10718,7 @@
         },
         "$nodeHandle": 210
       },
+      "_name": "T",
       "$other": [
         7,
         42
@@ -10754,7 +10754,6 @@
         "$type": 337,
         "$source": 0,
         "$named": true,
-        "_opening": 5,
         "_members": {
           "$type": 361,
           "$source": 0,
@@ -10793,7 +10792,6 @@
                 "$nodeHandle": 219,
                 "$childIndex": 3
               },
-              "_sign": 77,
               "_type": {
                 "$type": 302,
                 "$source": 0,
@@ -10818,6 +10816,7 @@
                 },
                 "$nodeHandle": 220
               },
+              "_sign": 77,
               "$other": [
                 125,
                 43,
@@ -10861,6 +10860,7 @@
           "_leading_sep": false,
           "_trailing_sep": false
         },
+        "_opening": 5,
         "_closing": 6,
         "$span": {
           "start": 158,
@@ -11006,7 +11006,7 @@
         "start": 28,
         "end": 36
       },
-      "$nodeHandle": 8
+      "$nodeHandle": 10
     },
     "expectedOutput": ":string"
   },
@@ -11158,6 +11158,7 @@
               "$type": 185,
               "$source": 0,
               "$named": true,
+              "_name": "x",
               "_type": {
                 "$type": 302,
                 "$source": 0,
@@ -11186,7 +11187,6 @@
                 },
                 "$nodeHandle": 7
               },
-              "_name": "x",
               "$span": {
                 "start": 4,
                 "end": 10
@@ -11194,8 +11194,8 @@
               "$nodeHandle": 6
             }
           ],
-          "_kind": 15,
           "_semicolon": 23,
+          "_kind": 15,
           "$span": {
             "start": 0,
             "end": 11
@@ -11229,13 +11229,11 @@
       "$type": 184,
       "$source": 0,
       "$named": true,
-      "_kind": 15,
       "_declarators": [
         {
           "$type": 185,
           "$source": 0,
           "$named": true,
-          "_name": "x",
           "_type": {
             "$type": 302,
             "$source": 0,
@@ -11264,6 +11262,7 @@
             },
             "$nodeHandle": 10
           },
+          "_name": "x",
           "$span": {
             "start": 4,
             "end": 10
@@ -11271,6 +11270,7 @@
           "$nodeHandle": 9
         }
       ],
+      "_kind": 15,
       "_semicolon": 23,
       "$span": {
         "start": 0,
@@ -11617,7 +11617,6 @@
       "$type": 184,
       "$source": 0,
       "$named": true,
-      "_kind": 16,
       "_declarators": [
         {
           "$type": 185,
@@ -11672,6 +11671,7 @@
           "$nodeHandle": 22
         }
       ],
+      "_kind": 16,
       "$span": {
         "start": 26,
         "end": 47
@@ -11698,6 +11698,7 @@
       "$type": 185,
       "$source": 0,
       "$named": true,
+      "_name": "editor",
       "_type": {
         "$type": 302,
         "$source": 0,
@@ -11725,7 +11726,6 @@
         },
         "$nodeHandle": 26
       },
-      "_name": "editor",
       "$span": {
         "start": 6,
         "end": 25
@@ -12025,7 +12025,6 @@
       "$type": 293,
       "$source": 0,
       "$named": true,
-      "_name": "UserType",
       "_value": {
         "$type": 337,
         "$source": 0,
@@ -12038,6 +12037,7 @@
         },
         "$nodeHandle": 29
       },
+      "_name": "UserType",
       "_semicolon": 23,
       "$other": [
         7,
@@ -12069,8 +12069,8 @@
       "$type": 337,
       "$source": 0,
       "$named": true,
-      "_closing": 6,
       "_opening": 5,
+      "_closing": 6,
       "$span": {
         "start": 23,
         "end": 25
@@ -12097,8 +12097,8 @@
       "$type": 337,
       "$source": 0,
       "$named": true,
-      "_closing": 6,
       "_opening": 5,
+      "_closing": 6,
       "$span": {
         "start": 58,
         "end": 60
@@ -12273,7 +12273,7 @@
         "start": 56,
         "end": 58
       },
-      "$nodeHandle": 9,
+      "$nodeHandle": 13,
       "_content": []
     },
     "expectedOutput": "{    }"
@@ -12300,7 +12300,7 @@
         "start": 111,
         "end": 113
       },
-      "$nodeHandle": 14,
+      "$nodeHandle": 21,
       "_content": []
     },
     "expectedOutput": "{    }"
@@ -12327,7 +12327,7 @@
         "start": 139,
         "end": 141
       },
-      "$nodeHandle": 22,
+      "$nodeHandle": 26,
       "_content": []
     },
     "expectedOutput": "{    }"
@@ -12371,6 +12371,7 @@
         "$type": 385,
         "$source": 0,
         "$named": true,
+        "_function": "funThatEvalsToClass",
         "_arguments": {
           "$type": 252,
           "$source": 0,
@@ -12382,7 +12383,6 @@
           "$nodeHandle": 96,
           "_arguments": []
         },
-        "_function": "funThatEvalsToClass",
         "$span": {
           "start": 76,
           "end": 97
@@ -12442,7 +12442,6 @@
           "$type": 184,
           "$source": 0,
           "$named": true,
-          "_kind": 15,
           "_declarators": [
             {
               "$type": 185,
@@ -12456,6 +12455,7 @@
                   "$type": 319,
                   "$source": 0,
                   "$named": true,
+                  "_name": "Array",
                   "_type_arguments": {
                     "$type": 336,
                     "$source": 0,
@@ -12495,7 +12495,6 @@
                       }
                     ]
                   },
-                  "_name": "Array",
                   "$span": {
                     "start": 7,
                     "end": 15
@@ -12519,6 +12518,7 @@
               "$nodeHandle": 8
             }
           ],
+          "_kind": 15,
           "$span": {
             "start": 0,
             "end": 15
@@ -12552,12 +12552,12 @@
       "$type": 184,
       "$source": 0,
       "$named": true,
+      "_kind": 15,
       "_declarators": [
         {
           "$type": 185,
           "$source": 0,
           "$named": true,
-          "_name": "x",
           "_type": {
             "$type": 302,
             "$source": 0,
@@ -12566,7 +12566,6 @@
               "$type": 319,
               "$source": 0,
               "$named": true,
-              "_name": "Array",
               "_type_arguments": {
                 "$type": 336,
                 "$source": 0,
@@ -12606,6 +12605,7 @@
                   }
                 ]
               },
+              "_name": "Array",
               "$span": {
                 "start": 7,
                 "end": 15
@@ -12621,6 +12621,7 @@
             },
             "$nodeHandle": 14
           },
+          "_name": "x",
           "$span": {
             "start": 4,
             "end": 15
@@ -12628,7 +12629,6 @@
           "$nodeHandle": 13
         }
       ],
-      "_kind": 15,
       "$span": {
         "start": 0,
         "end": 15
@@ -12663,7 +12663,6 @@
           "$type": 319,
           "$source": 0,
           "$named": true,
-          "_name": "Array",
           "_type_arguments": {
             "$type": 336,
             "$source": 0,
@@ -12703,6 +12702,7 @@
               }
             ]
           },
+          "_name": "Array",
           "$span": {
             "start": 7,
             "end": 15
@@ -12895,22 +12895,10 @@
           "$type": 293,
           "$source": 0,
           "$named": true,
-          "_semicolon": 23,
           "_value": {
             "$type": 350,
             "$source": 0,
             "$named": true,
-            "_right": {
-              "$type": 335,
-              "$source": 0,
-              "$named": true,
-              "$text": "string",
-              "$span": {
-                "start": 44,
-                "end": 50
-              },
-              "$nodeHandle": 7
-            },
             "_left": {
               "$type": 335,
               "$source": 0,
@@ -12919,6 +12907,17 @@
               "$span": {
                 "start": 35,
                 "end": 41
+              },
+              "$nodeHandle": 7
+            },
+            "_right": {
+              "$type": 335,
+              "$source": 0,
+              "$named": true,
+              "$text": "string",
+              "$span": {
+                "start": 44,
+                "end": 50
               },
               "$nodeHandle": 8
             },
@@ -12932,6 +12931,7 @@
             "$nodeHandle": 6
           },
           "_name": "BrowserStats$ResourceTiming",
+          "_semicolon": 23,
           "$other": [
             7,
             42
@@ -12970,7 +12970,6 @@
       "$source": 0,
       "$named": true,
       "_name": "BrowserStats$ResourceTiming",
-      "_semicolon": 23,
       "_value": {
         "$type": 350,
         "$source": 0,
@@ -13006,6 +13005,7 @@
         },
         "$nodeHandle": 9
       },
+      "_semicolon": 23,
       "$other": [
         7,
         42
@@ -13036,17 +13036,6 @@
       "$type": 350,
       "$source": 0,
       "$named": true,
-      "_left": {
-        "$type": 335,
-        "$source": 0,
-        "$named": true,
-        "$text": "number",
-        "$span": {
-          "start": 35,
-          "end": 41
-        },
-        "$nodeHandle": 12
-      },
       "_right": {
         "$type": 335,
         "$source": 0,
@@ -13055,6 +13044,17 @@
         "$span": {
           "start": 44,
           "end": 50
+        },
+        "$nodeHandle": 12
+      },
+      "_left": {
+        "$type": 335,
+        "$source": 0,
+        "$named": true,
+        "$text": "number",
+        "$span": {
+          "start": 35,
+          "end": 41
         },
         "$nodeHandle": 13
       },
@@ -13092,11 +13092,12 @@
           "$type": 293,
           "$source": 0,
           "$named": true,
+          "_name": "BrowserStats",
           "_value": {
             "$type": 337,
             "$source": 0,
             "$named": true,
-            "_opening": 152,
+            "_closing": 153,
             "_members": {
               "$type": 361,
               "$source": 0,
@@ -13140,6 +13141,7 @@
                   "$type": 339,
                   "$source": 0,
                   "$named": true,
+                  "_name": "url",
                   "_type": {
                     "$type": 302,
                     "$source": 0,
@@ -13164,7 +13166,6 @@
                     },
                     "$nodeHandle": 15
                   },
-                  "_name": "url",
                   "$span": {
                     "start": 25,
                     "end": 36
@@ -13211,14 +13212,13 @@
               "_leading_sep": false,
               "_trailing_sep": false
             },
-            "_closing": 153,
+            "_opening": 152,
             "$span": {
               "start": 20,
               "end": 53
             },
             "$nodeHandle": 11
           },
-          "_name": "BrowserStats",
           "$other": [
             7,
             42
@@ -13256,6 +13256,7 @@
       "$type": 293,
       "$source": 0,
       "$named": true,
+      "_name": "BrowserStats",
       "_value": {
         "$type": 337,
         "$source": 0,
@@ -13382,7 +13383,6 @@
         },
         "$nodeHandle": 19
       },
-      "_name": "BrowserStats",
       "$other": [
         7,
         42
@@ -13413,6 +13413,7 @@
       "$type": 337,
       "$source": 0,
       "$named": true,
+      "_closing": 153,
       "_members": {
         "$type": 361,
         "$source": 0,
@@ -13491,6 +13492,7 @@
             "$type": 339,
             "$source": 0,
             "$named": true,
+            "_name": "ms",
             "_type": {
               "$type": 302,
               "$source": 0,
@@ -13515,7 +13517,6 @@
               },
               "$nodeHandle": 32
             },
-            "_name": "ms",
             "$span": {
               "start": 40,
               "end": 50
@@ -13528,7 +13529,6 @@
         "_trailing_sep": false
       },
       "_opening": 152,
-      "_closing": 153,
       "$span": {
         "start": 20,
         "end": 53
@@ -13787,33 +13787,6 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
-      "$type": 257,
-      "$source": 0,
-      "$named": true,
-      "$text": "()",
-      "$span": {
-        "start": 66,
-        "end": 68
-      },
-      "$nodeHandle": 17
-    },
-    "expectedOutput": "()"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "()",
-    "pattern": "formal_parameters",
-    "edits": [],
-    "expectedSourceOut": "()",
-    "expectedReparseTree": "(formal_parameters)",
-    "wrappedText": "function _f() {}",
-    "wrappedOffset": 11
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
       "$type": 186,
       "$source": 0,
       "$named": true,
@@ -13821,7 +13794,7 @@
         "start": 40,
         "end": 43
       },
-      "$nodeHandle": 6,
+      "$nodeHandle": 8,
       "_statements": []
     },
     "expectedOutput": "{  }"
@@ -13863,6 +13836,33 @@
     "expectedReparseTree": "(statement_block)",
     "wrappedText": "{  }",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 257,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 66,
+        "end": 68
+      },
+      "$nodeHandle": 17
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "()",
+    "pattern": "formal_parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(formal_parameters)",
+    "wrappedText": "function _f() {}",
+    "wrappedOffset": 11
   },
   {
     "kind": "render",
@@ -13918,7 +13918,7 @@
         "start": 40,
         "end": 43
       },
-      "$nodeHandle": 7,
+      "$nodeHandle": 3,
       "_statements": []
     },
     "expectedOutput": "{  }"
@@ -13945,7 +13945,7 @@
         "start": 91,
         "end": 94
       },
-      "$nodeHandle": 13,
+      "$nodeHandle": 11,
       "_statements": []
     },
     "expectedOutput": "{  }"
@@ -13968,7 +13968,6 @@
       "$type": 293,
       "$source": 0,
       "$named": true,
-      "_name": "t",
       "_value": {
         "$type": 346,
         "$source": 0,
@@ -13984,6 +13983,7 @@
         },
         "$nodeHandle": 41
       },
+      "_name": "t",
       "$other": [
         7,
         42
@@ -14014,6 +14014,7 @@
       "$type": 293,
       "$source": 0,
       "$named": true,
+      "_name": "t",
       "_value": {
         "$type": 348,
         "$source": 0,
@@ -14042,7 +14043,6 @@
         },
         "$nodeHandle": 42
       },
-      "_name": "t",
       "$other": [
         7,
         42
@@ -14146,7 +14146,6 @@
       "$type": 293,
       "$source": 0,
       "$named": true,
-      "_name": "t",
       "_value": {
         "$type": 346,
         "$source": 0,
@@ -14203,6 +14202,7 @@
         },
         "$nodeHandle": 47
       },
+      "_name": "t",
       "$other": [
         7,
         42
@@ -14233,6 +14233,7 @@
       "$type": 293,
       "$source": 0,
       "$named": true,
+      "_name": "t",
       "_value": {
         "$type": 348,
         "$source": 0,
@@ -14302,7 +14303,6 @@
         },
         "$nodeHandle": 51
       },
-      "_name": "t",
       "$other": [
         7,
         42
@@ -15068,6 +15068,7 @@
       "$type": 293,
       "$source": 0,
       "$named": true,
+      "_name": "t",
       "_value": {
         "$type": 347,
         "$source": 0,
@@ -15079,7 +15080,6 @@
         },
         "$nodeHandle": 37
       },
-      "_name": "t",
       "$other": [
         7,
         42
@@ -15407,7 +15407,7 @@
         "start": 302,
         "end": 305
       },
-      "$nodeHandle": 48
+      "$nodeHandle": 53
     },
     "expectedOutput": "<X>"
   },
@@ -15450,7 +15450,7 @@
         "start": 349,
         "end": 352
       },
-      "$nodeHandle": 55
+      "$nodeHandle": 62
     },
     "expectedOutput": "<X>"
   },
@@ -15493,7 +15493,7 @@
         "start": 399,
         "end": 402
       },
-      "$nodeHandle": 71
+      "$nodeHandle": 64
     },
     "expectedOutput": "<X>"
   },
@@ -15537,7 +15537,7 @@
         "start": 318,
         "end": 327
       },
-      "$nodeHandle": 53
+      "$nodeHandle": 50
     },
     "expectedOutput": "(infer X)"
   },
@@ -15559,6 +15559,7 @@
       "$type": 319,
       "$source": 0,
       "$named": true,
+      "_name": "X",
       "_type_arguments": {
         "$type": 336,
         "$source": 0,
@@ -15601,7 +15602,6 @@
           }
         ]
       },
-      "_name": "X",
       "$span": {
         "start": 277,
         "end": 287
@@ -15636,7 +15636,7 @@
         "start": 319,
         "end": 326
       },
-      "$nodeHandle": 54
+      "$nodeHandle": 51
     },
     "expectedOutput": "infer X"
   },
@@ -15666,7 +15666,7 @@
         "start": 370,
         "end": 377
       },
-      "$nodeHandle": 62
+      "$nodeHandle": 61
     },
     "expectedOutput": "infer X"
   },
@@ -15724,7 +15724,7 @@
         "start": 318,
         "end": 329
       },
-      "$nodeHandle": 52
+      "$nodeHandle": 49
     },
     "expectedOutput": "(infer X)[]"
   },
@@ -15746,7 +15746,6 @@
       "$type": 337,
       "$source": 0,
       "$named": true,
-      "_opening": 5,
       "_members": {
         "$type": 361,
         "$source": 0,
@@ -15811,12 +15810,13 @@
         "_leading_sep": false,
         "_trailing_sep": false
       },
+      "_opening": 5,
       "_closing": 6,
       "$span": {
         "start": 365,
         "end": 379
       },
-      "$nodeHandle": 58
+      "$nodeHandle": 57
     },
     "expectedOutput": "{  x :infer X }"
   },
@@ -15859,7 +15859,7 @@
         "start": 368,
         "end": 377
       },
-      "$nodeHandle": 61
+      "$nodeHandle": 60
     },
     "expectedOutput": ":infer X"
   },
@@ -15905,20 +15905,133 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
+      "$type": 316,
+      "$source": 0,
+      "$named": true,
+      "_string_fragment": "2",
+      "_template_type": {
+        "$type": 315,
+        "$source": 0,
+        "$named": true,
+        "$text": "${P}",
+        "$span": {
+          "start": 129,
+          "end": 133
+        },
+        "$nodeHandle": 29,
+        "$childIndex": 1
+      },
+      "$other": [
+        100,
+        100
+      ],
+      "$span": {
+        "start": 128,
+        "end": 135
+      },
+      "$nodeHandle": 29,
+      "_content": [
+        {
+          "$type": 315,
+          "$source": 0,
+          "$named": true,
+          "_type_identifier": "P",
+          "$other": [
+            101,
+            6
+          ],
+          "$span": {
+            "start": 129,
+            "end": 133
+          },
+          "$nodeHandle": 165,
+          "_content": "P"
+        },
+        "2"
+      ]
+    },
+    "expectedOutput": "`${ P } 2`"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "`${P}2`",
+    "pattern": "template_literal_type",
+    "edits": [],
+    "expectedSourceOut": "`${ P } 2`",
+    "expectedReparseTree": "(template_literal_type (template_type (type_identifier)) (string_fragment))",
+    "wrappedText": "type _X = `${ P } 2`;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 316,
+      "$source": 0,
+      "$named": true,
+      "_template_type": {
+        "$type": 315,
+        "$source": 0,
+        "$named": true,
+        "$text": "${P}",
+        "$span": {
+          "start": 119,
+          "end": 123
+        },
+        "$nodeHandle": 31,
+        "$childIndex": 1
+      },
+      "_string_fragment": "1",
+      "$other": [
+        100,
+        100
+      ],
+      "$span": {
+        "start": 118,
+        "end": 125
+      },
+      "$nodeHandle": 31,
+      "_content": [
+        {
+          "$type": 315,
+          "$source": 0,
+          "$named": true,
+          "_type_identifier": "P",
+          "$other": [
+            101,
+            6
+          ],
+          "$span": {
+            "start": 119,
+            "end": 123
+          },
+          "$nodeHandle": 166,
+          "_content": "P"
+        },
+        "1"
+      ]
+    },
+    "expectedOutput": "`${ P } 1`"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "`${P}1`",
+    "pattern": "template_literal_type",
+    "edits": [],
+    "expectedSourceOut": "`${ P } 1`",
+    "expectedReparseTree": "(template_literal_type (template_type (type_identifier)) (string_fragment))",
+    "wrappedText": "type _X = `${ P } 1`;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
       "$type": 350,
       "$source": 0,
       "$named": true,
-      "_right": {
-        "$type": 335,
-        "$source": 0,
-        "$named": true,
-        "$text": "string",
-        "$span": {
-          "start": 30,
-          "end": 36
-        },
-        "$nodeHandle": 162
-      },
       "_left": {
         "$type": 327,
         "$source": 0,
@@ -15931,7 +16044,18 @@
           "start": 20,
           "end": 27
         },
-        "$nodeHandle": 163
+        "$nodeHandle": 167
+      },
+      "_right": {
+        "$type": 335,
+        "$source": 0,
+        "$named": true,
+        "$text": "string",
+        "$span": {
+          "start": 30,
+          "end": 36
+        },
+        "$nodeHandle": 168
       },
       "$other": [
         73
@@ -15940,7 +16064,7 @@
         "start": 20,
         "end": 36
       },
-      "$nodeHandle": 11
+      "$nodeHandle": 15
     },
     "expectedOutput": "keyof C&string"
   },
@@ -15974,7 +16098,7 @@
           "start": 98,
           "end": 105
         },
-        "$nodeHandle": 164
+        "$nodeHandle": 169
       },
       "_right": {
         "$type": 335,
@@ -15985,7 +16109,7 @@
           "start": 108,
           "end": 114
         },
-        "$nodeHandle": 165
+        "$nodeHandle": 170
       },
       "$other": [
         73
@@ -15994,7 +16118,7 @@
         "start": 98,
         "end": 114
       },
-      "$nodeHandle": 28
+      "$nodeHandle": 33
     },
     "expectedOutput": "keyof C&string"
   },
@@ -16024,7 +16148,7 @@
         "start": 20,
         "end": 27
       },
-      "$nodeHandle": 13
+      "$nodeHandle": 16
     },
     "expectedOutput": "keyof C"
   },
@@ -16054,7 +16178,7 @@
         "start": 98,
         "end": 105
       },
-      "$nodeHandle": 29
+      "$nodeHandle": 34
     },
     "expectedOutput": "keyof C"
   },
@@ -16067,130 +16191,6 @@
     "expectedSourceOut": "keyof C",
     "expectedReparseTree": "(index_type_query primary_type: (type_identifier))",
     "wrappedText": "type _X = keyof C;",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 316,
-      "$source": 0,
-      "$named": true,
-      "_string_fragment": "1",
-      "_template_type": {
-        "$type": 315,
-        "$source": 0,
-        "$named": true,
-        "$text": "${P}",
-        "$span": {
-          "start": 119,
-          "end": 123
-        },
-        "$nodeHandle": 32,
-        "$childIndex": 1
-      },
-      "$other": [
-        100,
-        100
-      ],
-      "$span": {
-        "start": 118,
-        "end": 125
-      },
-      "$nodeHandle": 32,
-      "_content": [
-        {
-          "$type": 315,
-          "$source": 0,
-          "$named": true,
-          "_type_identifier": "P",
-          "$other": [
-            101,
-            6
-          ],
-          "$span": {
-            "start": 119,
-            "end": 123
-          },
-          "$nodeHandle": 169,
-          "_content": "P"
-        },
-        "1"
-      ]
-    },
-    "expectedOutput": "`${ P } 1`"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "`${P}1`",
-    "pattern": "template_literal_type",
-    "edits": [],
-    "expectedSourceOut": "`${ P } 1`",
-    "expectedReparseTree": "(template_literal_type (template_type (type_identifier)) (string_fragment))",
-    "wrappedText": "type _X = `${ P } 1`;",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 316,
-      "$source": 0,
-      "$named": true,
-      "_template_type": {
-        "$type": 315,
-        "$source": 0,
-        "$named": true,
-        "$text": "${P}",
-        "$span": {
-          "start": 129,
-          "end": 133
-        },
-        "$nodeHandle": 34,
-        "$childIndex": 1
-      },
-      "_string_fragment": "2",
-      "$other": [
-        100,
-        100
-      ],
-      "$span": {
-        "start": 128,
-        "end": 135
-      },
-      "$nodeHandle": 34,
-      "_content": [
-        {
-          "$type": 315,
-          "$source": 0,
-          "$named": true,
-          "_type_identifier": "P",
-          "$other": [
-            101,
-            6
-          ],
-          "$span": {
-            "start": 129,
-            "end": 133
-          },
-          "$nodeHandle": 170,
-          "_content": "P"
-        },
-        "2"
-      ]
-    },
-    "expectedOutput": "`${ P } 2`"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "`${P}2`",
-    "pattern": "template_literal_type",
-    "edits": [],
-    "expectedSourceOut": "`${ P } 2`",
-    "expectedReparseTree": "(template_literal_type (template_type (type_identifier)) (string_fragment))",
-    "wrappedText": "type _X = `${ P } 2`;",
     "wrappedOffset": 10
   },
   {
@@ -16286,56 +16286,11 @@
       "$type": 349,
       "$source": 0,
       "$named": true,
-      "_left": {
-        "$type": 316,
-        "$source": 0,
-        "$named": true,
-        "_string_fragment": "1",
-        "_template_type": {
-          "$type": 315,
-          "$source": 0,
-          "$named": true,
-          "$text": "${P}",
-          "$span": {
-            "start": 119,
-            "end": 123
-          },
-          "$nodeHandle": 173,
-          "$childIndex": 1
-        },
-        "$other": [
-          100,
-          100
-        ],
-        "$span": {
-          "start": 118,
-          "end": 125
-        },
-        "$nodeHandle": 173,
-        "_content": [
-          {
-            "$type": 315,
-            "$source": 0,
-            "$named": true,
-            "_type_identifier": "P",
-            "$other": [
-              101,
-              6
-            ],
-            "$span": {
-              "start": 119,
-              "end": 123
-            },
-            "$nodeHandle": 174,
-            "_content": "P"
-          },
-          "1"
-        ]
-      },
       "_right": {
         "$type": 316,
         "$source": 0,
         "$named": true,
+        "_string_fragment": "2",
         "_template_type": {
           "$type": 315,
           "$source": 0,
@@ -16345,10 +16300,9 @@
             "start": 129,
             "end": 133
           },
-          "$nodeHandle": 175,
+          "$nodeHandle": 173,
           "$childIndex": 1
         },
-        "_string_fragment": "2",
         "$other": [
           100,
           100
@@ -16357,7 +16311,7 @@
           "start": 128,
           "end": 135
         },
-        "$nodeHandle": 175,
+        "$nodeHandle": 173,
         "_content": [
           {
             "$type": 315,
@@ -16372,10 +16326,56 @@
               "start": 129,
               "end": 133
             },
-            "$nodeHandle": 176,
+            "$nodeHandle": 174,
             "_content": "P"
           },
           "2"
+        ]
+      },
+      "_left": {
+        "$type": 316,
+        "$source": 0,
+        "$named": true,
+        "_string_fragment": "1",
+        "_template_type": {
+          "$type": 315,
+          "$source": 0,
+          "$named": true,
+          "$text": "${P}",
+          "$span": {
+            "start": 119,
+            "end": 123
+          },
+          "$nodeHandle": 175,
+          "$childIndex": 1
+        },
+        "$other": [
+          100,
+          100
+        ],
+        "$span": {
+          "start": 118,
+          "end": 125
+        },
+        "$nodeHandle": 175,
+        "_content": [
+          {
+            "$type": 315,
+            "$source": 0,
+            "$named": true,
+            "_type_identifier": "P",
+            "$other": [
+              101,
+              6
+            ],
+            "$span": {
+              "start": 119,
+              "end": 123
+            },
+            "$nodeHandle": 176,
+            "_content": "P"
+          },
+          "1"
         ]
       },
       "$other": [
@@ -16385,7 +16385,7 @@
         "start": 118,
         "end": 135
       },
-      "$nodeHandle": 31
+      "$nodeHandle": 28
     },
     "expectedOutput": "`${ P } 1`|`${ P } 2`"
   },
@@ -16482,25 +16482,11 @@
           "$type": 293,
           "$source": 0,
           "$named": true,
+          "_name": "X1",
           "_value": {
             "$type": 328,
             "$source": 0,
             "$named": true,
-            "_primary_type": {
-              "$type": 326,
-              "$source": 0,
-              "$named": true,
-              "_identifier": "Y",
-              "$other": [
-                8
-              ],
-              "$span": {
-                "start": 87,
-                "end": 95
-              },
-              "$nodeHandle": 15,
-              "_content": "Y"
-            },
             "_index_type": {
               "$type": 327,
               "$source": 0,
@@ -16517,7 +16503,7 @@
                   "start": 102,
                   "end": 110
                 },
-                "$nodeHandle": 17,
+                "$nodeHandle": 16,
                 "_content": "Z"
               },
               "$other": [
@@ -16527,7 +16513,22 @@
                 "start": 96,
                 "end": 110
               },
-              "$nodeHandle": 16
+              "$nodeHandle": 15
+            },
+            "_primary_type": {
+              "$type": 326,
+              "$source": 0,
+              "$named": true,
+              "_identifier": "Y",
+              "$other": [
+                8
+              ],
+              "$span": {
+                "start": 87,
+                "end": 95
+              },
+              "$nodeHandle": 17,
+              "_content": "Y"
             },
             "$other": [
               43,
@@ -16539,7 +16540,6 @@
             },
             "$nodeHandle": 14
           },
-          "_name": "X1",
           "_semicolon": 23,
           "$other": [
             7,
@@ -16555,40 +16555,11 @@
           "$type": 293,
           "$source": 0,
           "$named": true,
-          "_name": "X2",
+          "_semicolon": 23,
           "_value": {
             "$type": 328,
             "$source": 0,
             "$named": true,
-            "_primary_type": {
-              "$type": 334,
-              "$source": 0,
-              "$named": true,
-              "_type": {
-                "$type": 326,
-                "$source": 0,
-                "$named": true,
-                "_identifier": "Y",
-                "$other": [
-                  8
-                ],
-                "$span": {
-                  "start": 124,
-                  "end": 132
-                },
-                "$nodeHandle": 20,
-                "_content": "Y"
-              },
-              "$other": [
-                22,
-                24
-              ],
-              "$span": {
-                "start": 123,
-                "end": 133
-              },
-              "$nodeHandle": 19
-            },
             "_index_type": {
               "$type": 327,
               "$source": 0,
@@ -16605,7 +16576,7 @@
                   "start": 140,
                   "end": 148
                 },
-                "$nodeHandle": 22,
+                "$nodeHandle": 20,
                 "_content": "Z"
               },
               "$other": [
@@ -16614,6 +16585,35 @@
               "$span": {
                 "start": 134,
                 "end": 148
+              },
+              "$nodeHandle": 19
+            },
+            "_primary_type": {
+              "$type": 334,
+              "$source": 0,
+              "$named": true,
+              "_type": {
+                "$type": 326,
+                "$source": 0,
+                "$named": true,
+                "_identifier": "Y",
+                "$other": [
+                  8
+                ],
+                "$span": {
+                  "start": 124,
+                  "end": 132
+                },
+                "$nodeHandle": 22,
+                "_content": "Y"
+              },
+              "$other": [
+                22,
+                24
+              ],
+              "$span": {
+                "start": 123,
+                "end": 133
               },
               "$nodeHandle": 21
             },
@@ -16627,7 +16627,7 @@
             },
             "$nodeHandle": 18
           },
-          "_semicolon": 23,
+          "_name": "X2",
           "$other": [
             7,
             42
@@ -16666,27 +16666,10 @@
       "$type": 293,
       "$source": 0,
       "$named": true,
-      "_semicolon": 23,
-      "_name": "X1",
       "_value": {
         "$type": 328,
         "$source": 0,
         "$named": true,
-        "_primary_type": {
-          "$type": 326,
-          "$source": 0,
-          "$named": true,
-          "_identifier": "Y",
-          "$other": [
-            8
-          ],
-          "$span": {
-            "start": 87,
-            "end": 95
-          },
-          "$nodeHandle": 24,
-          "_content": "Y"
-        },
         "_index_type": {
           "$type": 327,
           "$source": 0,
@@ -16703,7 +16686,7 @@
               "start": 102,
               "end": 110
             },
-            "$nodeHandle": 26,
+            "$nodeHandle": 25,
             "_content": "Z"
           },
           "$other": [
@@ -16713,7 +16696,22 @@
             "start": 96,
             "end": 110
           },
-          "$nodeHandle": 25
+          "$nodeHandle": 24
+        },
+        "_primary_type": {
+          "$type": 326,
+          "$source": 0,
+          "$named": true,
+          "_identifier": "Y",
+          "$other": [
+            8
+          ],
+          "$span": {
+            "start": 87,
+            "end": 95
+          },
+          "$nodeHandle": 26,
+          "_content": "Y"
         },
         "$other": [
           43,
@@ -16725,6 +16723,8 @@
         },
         "$nodeHandle": 23
       },
+      "_semicolon": 23,
+      "_name": "X1",
       "$other": [
         7,
         42
@@ -16755,7 +16755,6 @@
       "$type": 293,
       "$source": 0,
       "$named": true,
-      "_semicolon": 23,
       "_value": {
         "$type": 328,
         "$source": 0,
@@ -16828,6 +16827,7 @@
         "$nodeHandle": 27
       },
       "_name": "X2",
+      "_semicolon": 23,
       "$other": [
         7,
         42
@@ -16858,21 +16858,6 @@
       "$type": 328,
       "$source": 0,
       "$named": true,
-      "_primary_type": {
-        "$type": 326,
-        "$source": 0,
-        "$named": true,
-        "_identifier": "Y",
-        "$other": [
-          8
-        ],
-        "$span": {
-          "start": 87,
-          "end": 95
-        },
-        "$nodeHandle": 32,
-        "_content": "Y"
-      },
       "_index_type": {
         "$type": 327,
         "$source": 0,
@@ -16889,7 +16874,7 @@
             "start": 102,
             "end": 110
           },
-          "$nodeHandle": 34,
+          "$nodeHandle": 33,
           "_content": "Z"
         },
         "$other": [
@@ -16899,7 +16884,22 @@
           "start": 96,
           "end": 110
         },
-        "$nodeHandle": 33
+        "$nodeHandle": 32
+      },
+      "_primary_type": {
+        "$type": 326,
+        "$source": 0,
+        "$named": true,
+        "_identifier": "Y",
+        "$other": [
+          8
+        ],
+        "$span": {
+          "start": 87,
+          "end": 95
+        },
+        "$nodeHandle": 34,
+        "_content": "Y"
       },
       "$other": [
         43,
@@ -16931,35 +16931,6 @@
       "$type": 328,
       "$source": 0,
       "$named": true,
-      "_primary_type": {
-        "$type": 334,
-        "$source": 0,
-        "$named": true,
-        "_type": {
-          "$type": 326,
-          "$source": 0,
-          "$named": true,
-          "_identifier": "Y",
-          "$other": [
-            8
-          ],
-          "$span": {
-            "start": 124,
-            "end": 132
-          },
-          "$nodeHandle": 36,
-          "_content": "Y"
-        },
-        "$other": [
-          22,
-          24
-        ],
-        "$span": {
-          "start": 123,
-          "end": 133
-        },
-        "$nodeHandle": 35
-      },
       "_index_type": {
         "$type": 327,
         "$source": 0,
@@ -16976,7 +16947,7 @@
             "start": 140,
             "end": 148
           },
-          "$nodeHandle": 38,
+          "$nodeHandle": 36,
           "_content": "Z"
         },
         "$other": [
@@ -16985,6 +16956,35 @@
         "$span": {
           "start": 134,
           "end": 148
+        },
+        "$nodeHandle": 35
+      },
+      "_primary_type": {
+        "$type": 334,
+        "$source": 0,
+        "$named": true,
+        "_type": {
+          "$type": 326,
+          "$source": 0,
+          "$named": true,
+          "_identifier": "Y",
+          "$other": [
+            8
+          ],
+          "$span": {
+            "start": 124,
+            "end": 132
+          },
+          "$nodeHandle": 38,
+          "_content": "Y"
+        },
+        "$other": [
+          22,
+          24
+        ],
+        "$span": {
+          "start": 123,
+          "end": 133
         },
         "$nodeHandle": 37
       },
@@ -17009,130 +17009,6 @@
     "expectedSourceOut": "(typeof Y)[keyof typeof Z]",
     "expectedReparseTree": "(lookup_type primary_type: (parenthesized_type type: (type_query (identifier))) index_type: (index_type_query primary_type: (type_query (identifier))))",
     "wrappedText": "type _X = (typeof Y)[keyof typeof Z];",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 326,
-      "$source": 0,
-      "$named": true,
-      "_identifier": "Y",
-      "$other": [
-        8
-      ],
-      "$span": {
-        "start": 87,
-        "end": 95
-      },
-      "$nodeHandle": 4,
-      "_content": "Y"
-    },
-    "expectedOutput": "typeof Y"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "typeof Y",
-    "pattern": "type_query",
-    "edits": [],
-    "expectedSourceOut": "typeof Y",
-    "expectedReparseTree": "(type_query (identifier))",
-    "wrappedText": "type _X = typeof Y;",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 326,
-      "$source": 0,
-      "$named": true,
-      "_identifier": "Z",
-      "$other": [
-        8
-      ],
-      "$span": {
-        "start": 102,
-        "end": 110
-      },
-      "$nodeHandle": 6,
-      "_content": "Z"
-    },
-    "expectedOutput": "typeof Z"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "typeof Z",
-    "pattern": "type_query",
-    "edits": [],
-    "expectedSourceOut": "typeof Z",
-    "expectedReparseTree": "(type_query (identifier))",
-    "wrappedText": "type _X = typeof Z;",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 326,
-      "$source": 0,
-      "$named": true,
-      "_identifier": "Y",
-      "$other": [
-        8
-      ],
-      "$span": {
-        "start": 124,
-        "end": 132
-      },
-      "$nodeHandle": 9,
-      "_content": "Y"
-    },
-    "expectedOutput": "typeof Y"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "typeof Y",
-    "pattern": "type_query",
-    "edits": [],
-    "expectedSourceOut": "typeof Y",
-    "expectedReparseTree": "(type_query (identifier))",
-    "wrappedText": "type _X = typeof Y;",
-    "wrappedOffset": 10
-  },
-  {
-    "kind": "render",
-    "grammar": "typescript",
-    "input": {
-      "$type": 326,
-      "$source": 0,
-      "$named": true,
-      "_identifier": "Z",
-      "$other": [
-        8
-      ],
-      "$span": {
-        "start": 140,
-        "end": 148
-      },
-      "$nodeHandle": 11,
-      "_content": "Z"
-    },
-    "expectedOutput": "typeof Z"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "typescript",
-    "sourceIn": "typeof Z",
-    "pattern": "type_query",
-    "edits": [],
-    "expectedSourceOut": "typeof Z",
-    "expectedReparseTree": "(type_query (identifier))",
-    "wrappedText": "type _X = typeof Z;",
     "wrappedOffset": 10
   },
   {
@@ -17164,7 +17040,7 @@
         "start": 96,
         "end": 110
       },
-      "$nodeHandle": 5
+      "$nodeHandle": 4
     },
     "expectedOutput": "keyof typeof Z"
   },
@@ -17208,7 +17084,7 @@
         "start": 134,
         "end": 148
       },
-      "$nodeHandle": 10
+      "$nodeHandle": 8
     },
     "expectedOutput": "keyof typeof Z"
   },
@@ -17221,6 +17097,130 @@
     "expectedSourceOut": "keyof typeof Z",
     "expectedReparseTree": "(index_type_query primary_type: (type_query (identifier)))",
     "wrappedText": "type _X = keyof typeof Z;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 326,
+      "$source": 0,
+      "$named": true,
+      "_identifier": "Z",
+      "$other": [
+        8
+      ],
+      "$span": {
+        "start": 102,
+        "end": 110
+      },
+      "$nodeHandle": 5,
+      "_content": "Z"
+    },
+    "expectedOutput": "typeof Z"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "typeof Z",
+    "pattern": "type_query",
+    "edits": [],
+    "expectedSourceOut": "typeof Z",
+    "expectedReparseTree": "(type_query (identifier))",
+    "wrappedText": "type _X = typeof Z;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 326,
+      "$source": 0,
+      "$named": true,
+      "_identifier": "Y",
+      "$other": [
+        8
+      ],
+      "$span": {
+        "start": 87,
+        "end": 95
+      },
+      "$nodeHandle": 6,
+      "_content": "Y"
+    },
+    "expectedOutput": "typeof Y"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "typeof Y",
+    "pattern": "type_query",
+    "edits": [],
+    "expectedSourceOut": "typeof Y",
+    "expectedReparseTree": "(type_query (identifier))",
+    "wrappedText": "type _X = typeof Y;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 326,
+      "$source": 0,
+      "$named": true,
+      "_identifier": "Z",
+      "$other": [
+        8
+      ],
+      "$span": {
+        "start": 140,
+        "end": 148
+      },
+      "$nodeHandle": 9,
+      "_content": "Z"
+    },
+    "expectedOutput": "typeof Z"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "typeof Z",
+    "pattern": "type_query",
+    "edits": [],
+    "expectedSourceOut": "typeof Z",
+    "expectedReparseTree": "(type_query (identifier))",
+    "wrappedText": "type _X = typeof Z;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 326,
+      "$source": 0,
+      "$named": true,
+      "_identifier": "Y",
+      "$other": [
+        8
+      ],
+      "$span": {
+        "start": 124,
+        "end": 132
+      },
+      "$nodeHandle": 11,
+      "_content": "Y"
+    },
+    "expectedOutput": "typeof Y"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "typeof Y",
+    "pattern": "type_query",
+    "edits": [],
+    "expectedSourceOut": "typeof Y",
+    "expectedReparseTree": "(type_query (identifier))",
+    "wrappedText": "type _X = typeof Y;",
     "wrappedOffset": 10
   },
   {
@@ -17253,7 +17253,7 @@
         "start": 123,
         "end": 133
       },
-      "$nodeHandle": 8
+      "$nodeHandle": 10
     },
     "expectedOutput": "(typeof Y)"
   },
