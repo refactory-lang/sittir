@@ -294,15 +294,20 @@ function emitSeparatedListTest(
 
 	const contentSlot = buildSeparatedListContentSlot(node);
 	const elementsArg = `[${dummyValueForField(contentSlot, nodeMap, kindEntries, 0, new Set())}]`;
+	// `ir.<key>` resolves to the coerceTo* resolver (see emitRestParamFromResolver,
+	// from.ts), whose signature is `...input: readonly T[]` — rest params, not a
+	// single array param like the underlying factory. Spread the elements here or
+	// TS sees a lone `T[]` argument failing to match the first rest slot's `T`.
+	const callArgs = `...${elementsArg}`;
 
 	lines.push(`describe('${kind}', () => {`);
 	lines.push(`  it('factory produces correct type', () => {`);
-	lines.push(`    const node = ir.${key}(${elementsArg});`);
+	lines.push(`    const node = ir.${key}(${callArgs});`);
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push('  });');
 	lines.push(`  it('render produces non-empty string', () => {`);
-	lines.push(`    const node = ir.${key}(${elementsArg});`);
+	lines.push(`    const node = ir.${key}(${callArgs});`);
 	lines.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
 	lines.push('  });');
 	lines.push('});');

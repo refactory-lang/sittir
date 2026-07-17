@@ -168,7 +168,7 @@ describe('engine', () => {
 			$nodeHandle: 0,
 			$childIndex: 1
 		});
-		expect(parsed.root.$children).toBeUndefined();
+		expect((parsed.root as unknown as Record<string, unknown>).$children).toBeUndefined();
 		expect((parsed.root as unknown as Record<string, unknown>)._pub).toMatchObject({
 			$text: 'pub',
 			$nodeHandle: 0,

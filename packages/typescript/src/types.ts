@@ -10,6 +10,7 @@ import type {
 	AnyTreeNodeOf as AnyTreeNode,
 	Terminal,
 	NonEmptyArray,
+	AutoStamp,
 	BooleanKeyword,
 	KindEnum
 } from '@sittir/types';
@@ -2957,13 +2958,13 @@ export interface ForHeaderLhs {
 
 export interface ForHeaderVarKind {
 	readonly $type: TSKindId.ForHeaderVarKind;
-	readonly _kind: number;
+	readonly _kind: AutoStamp<number>;
 	readonly _left: Identifier | DestructuringPattern;
 	readonly _value?: Expression;
 	readonly __inputHints__?: {
-		readonly kind: KindEnum<'var', TSKindId.Var>;
+		readonly kind: AutoStamp<KindEnum<'var', TSKindId.Var>>;
 	};
-	kind(): number;
+	kind(): AutoStamp<number>;
 	left(): Identifier | DestructuringPattern;
 	value(): Expression | undefined;
 }
@@ -3158,13 +3159,13 @@ export interface ParenthesizedExpressionTyped {
 
 export interface PublicFieldDefinitionAbstractFirst {
 	readonly $type: TSKindId.PublicFieldDefinitionAbstractFirst;
-	readonly _abstract_marker: number;
+	readonly _abstract_marker: AutoStamp<number>;
 	readonly _readonly_marker?: boolean;
 	readonly __inputHints__?: {
-		readonly abstract_marker: KindEnum<'abstract', TSKindId.Abstract>;
+		readonly abstract_marker: AutoStamp<KindEnum<'abstract', TSKindId.Abstract>>;
 		readonly readonly_marker?: BooleanKeyword<'readonly'>;
 	};
-	abstractMarker(): number;
+	abstractMarker(): AutoStamp<number>;
 	readonlyMarker(): boolean | undefined;
 }
 
@@ -3197,27 +3198,27 @@ export interface PublicFieldDefinitionDeclareFirst {
 
 export interface PublicFieldDefinitionReadonlyFirst {
 	readonly $type: TSKindId.PublicFieldDefinitionReadonlyFirst;
-	readonly _readonly_marker: number;
+	readonly _readonly_marker: AutoStamp<number>;
 	readonly _abstract_marker?: boolean;
 	readonly __inputHints__?: {
-		readonly readonly_marker: KindEnum<'readonly', TSKindId.Readonly>;
+		readonly readonly_marker: AutoStamp<KindEnum<'readonly', TSKindId.Readonly>>;
 		readonly abstract_marker?: BooleanKeyword<'abstract'>;
 	};
-	readonlyMarker(): number;
+	readonlyMarker(): AutoStamp<number>;
 	abstractMarker(): boolean | undefined;
 }
 
 export interface PublicFieldDefinitionStaticMods {
 	readonly $type: TSKindId.PublicFieldDefinitionStaticMods;
-	readonly _static_marker: number;
+	readonly _static_marker: AutoStamp<number>;
 	readonly _override_modifier?: boolean;
 	readonly _readonly_marker?: boolean;
 	readonly __inputHints__?: {
-		readonly static_marker: KindEnum<'static', TSKindId.Static>;
+		readonly static_marker: AutoStamp<KindEnum<'static', TSKindId.Static>>;
 		readonly override_modifier?: BooleanKeyword<'override'>;
 		readonly readonly_marker?: BooleanKeyword<'readonly'>;
 	};
-	staticMarker(): number;
+	staticMarker(): AutoStamp<number>;
 	overrideModifier(): boolean | undefined;
 	readonlyMarker(): boolean | undefined;
 }

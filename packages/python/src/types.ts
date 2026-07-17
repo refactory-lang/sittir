@@ -10,6 +10,7 @@ import type {
 	AnyTreeNodeOf as AnyTreeNode,
 	Terminal,
 	NonEmptyArray,
+	AutoStamp,
 	BooleanKeyword,
 	KindEnum
 } from '@sittir/types';
@@ -2748,13 +2749,13 @@ export interface Type {
 
 export interface TypeAliasStatement {
 	readonly $type: TSKindId.TypeAliasStatement;
-	readonly _type: number;
+	readonly _type: AutoStamp<number>;
 	readonly _left: Type;
 	readonly _right: Type;
 	readonly __inputHints__?: {
-		readonly type: KindEnum<'type', TSKindId.Type>;
+		readonly type: AutoStamp<KindEnum<'type', TSKindId.Type>>;
 	};
-	type(): number;
+	type(): AutoStamp<number>;
 	left(): Type;
 	right(): Type;
 }

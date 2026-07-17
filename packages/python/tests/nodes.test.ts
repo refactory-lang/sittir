@@ -1873,44 +1873,48 @@ describe('yield', () => {
 
 describe('list_pattern_group1', () => {
 	it('factory produces correct type', () => {
-		const node = ir.listPatternGroup1([
-			{
-				$type: TSKindId.CasePattern,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
-			} as any
-		]);
+		const node = ir.listPatternGroup1(
+			...[
+				{
+					$type: TSKindId.CasePattern,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+				} as any
+			]
+		);
 		expect(node.$type).toBe(TSKindId._ListPatternGroup1);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.listPatternGroup1([
-			{
-				$type: TSKindId.CasePattern,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
-			} as any
-		]);
+		const node = ir.listPatternGroup1(
+			...[
+				{
+					$type: TSKindId.CasePattern,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+				} as any
+			]
+		);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
 describe('argument_list_group1', () => {
 	it('factory produces correct type', () => {
-		const node = ir.argumentListGroup1([
-			{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		]);
+		const node = ir.argumentListGroup1(
+			...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+		);
 		expect(node.$type).toBe(TSKindId._ArgumentListGroup1);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.argumentListGroup1([
-			{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		]);
+		const node = ir.argumentListGroup1(
+			...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]
+		);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -1959,30 +1963,34 @@ describe('dict_pattern_group1', () => {
 
 describe('dictionary_group1', () => {
 	it('factory produces correct type', () => {
-		const node = ir.dictionaryGroup1([
-			{
-				$type: TSKindId.Pair,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_key: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-				_value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-			} as any
-		]);
+		const node = ir.dictionaryGroup1(
+			...[
+				{
+					$type: TSKindId.Pair,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_key: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					_value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
+		);
 		expect(node.$type).toBe(TSKindId._DictionaryGroup1);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.dictionaryGroup1([
-			{
-				$type: TSKindId.Pair,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_key: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-				_value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-			} as any
-		]);
+		const node = ir.dictionaryGroup1(
+			...[
+				{
+					$type: TSKindId.Pair,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_key: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+					_value: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			]
+		);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

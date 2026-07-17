@@ -17,7 +17,7 @@ import { describe, expect, it } from 'vitest';
 
 import { AssembledBranch, AssembledKeyword, AssembledPattern } from '../../../codegen/src/compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../../../codegen/src/compiler/generated-metadata.ts';
-import type { ChoiceRule, SeqRule } from '../../../codegen/src/types/rule.ts';
+import type { ChoiceRule, RenderRule, SeqRule, SimplifiedRule } from '../../../codegen/src/types/rule.ts';
 import type { NodeMap } from '../../../codegen/src/compiler/types.ts';
 import { emitHashFiles, emitRenderModule } from '../../../codegen/src/emitters/render-module.ts';
 import { fixturesOutputPath } from '../validate/parity-fixtures.ts';
@@ -26,7 +26,7 @@ import { makeNodeMapWith } from '../../../codegen/src/__tests__/helpers/node-map
 const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
 
 function makeMinimalNodeMap(): NodeMap {
-	const nameRule: SeqRule = {
+	const nameRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{
@@ -36,8 +36,19 @@ function makeMinimalNodeMap(): NodeMap {
 			}
 		]
 	};
+	// FIELD wrappers don't survive normalize/simplify — post-wrapper-deletion,
+	// `fieldName` is stamped directly onto the leaf instead (see RuleBase's
+	// NormalizedPhase branch, types/rule.ts).
+	const nameSimplifiedRule: SimplifiedRule = {
+		type: SEQ,
+		members: [{ type: SYMBOL, name: '_identifier', fieldName: 'name' }]
+	};
+	const nameRenderRule: RenderRule = {
+		type: SEQ,
+		members: [{ type: SYMBOL, name: '_identifier', fieldName: 'name' }]
+	};
 	const nodes = new Map<string, AssembledBranch | AssembledPattern | AssembledKeyword>([
-		['function_item', new AssembledBranch('function_item', nameRule, nameRule)],
+		['function_item', new AssembledBranch('function_item', nameRule, nameSimplifiedRule, nameRenderRule)],
 		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })],
 		['kw_fn', new AssembledKeyword('kw_fn', { type: STRING, value: 'fn' })]
 	]);
@@ -52,12 +63,20 @@ function makeMinimalNodeMap(): NodeMap {
 }
 
 function makeRequiredChildrenNodeMap(): NodeMap {
-	const parentRule: SeqRule = {
+	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: SYMBOL, name: 'identifier' }]
 	};
+	// No wrapper nodes here, so the wrapper-deleted view is structurally
+	// identical — still needs its own phase-branded declaration (nominal
+	// __simplifiedRule/__renderRule markers, not just structural shape).
+	const parentSimplifiedRule: SimplifiedRule = { type: SEQ, members: [{ type: SYMBOL, name: 'identifier' }] };
+	const parentRenderRule: RenderRule = { type: SEQ, members: [{ type: SYMBOL, name: 'identifier' }] };
 	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
-		['required_child_parent', new AssembledBranch('required_child_parent', parentRule, parentRule)],
+		[
+			'required_child_parent',
+			new AssembledBranch('required_child_parent', parentRule, parentSimplifiedRule, parentRenderRule)
+		],
 		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })]
 	]);
 	return {
@@ -71,7 +90,7 @@ function makeRequiredChildrenNodeMap(): NodeMap {
 }
 
 function makeOptionalChildrenNodeMap(): NodeMap {
-	const parentRule: SeqRule = {
+	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{
@@ -80,8 +99,21 @@ function makeOptionalChildrenNodeMap(): NodeMap {
 			}
 		]
 	};
+	// OPTIONAL wrappers don't survive normalize/simplify — the leaf carries
+	// `multiplicity: 'optional'` directly instead.
+	const parentSimplifiedRule: SimplifiedRule = {
+		type: SEQ,
+		members: [{ type: SYMBOL, name: 'identifier', multiplicity: 'optional' }]
+	};
+	const parentRenderRule: RenderRule = {
+		type: SEQ,
+		members: [{ type: SYMBOL, name: 'identifier', multiplicity: 'optional' }]
+	};
 	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
-		['optional_child_parent', new AssembledBranch('optional_child_parent', parentRule, parentRule)],
+		[
+			'optional_child_parent',
+			new AssembledBranch('optional_child_parent', parentRule, parentSimplifiedRule, parentRenderRule)
+		],
 		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })]
 	]);
 	return {
@@ -95,7 +127,7 @@ function makeOptionalChildrenNodeMap(): NodeMap {
 }
 
 function makeRepeatedChildrenNodeMap(): NodeMap {
-	const parentRule: SeqRule = {
+	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{
@@ -104,8 +136,21 @@ function makeRepeatedChildrenNodeMap(): NodeMap {
 			}
 		]
 	};
+	// REPEAT1 wrappers don't survive normalize/simplify — the leaf carries
+	// `multiplicity: 'nonEmptyArray'` directly instead.
+	const parentSimplifiedRule: SimplifiedRule = {
+		type: SEQ,
+		members: [{ type: SYMBOL, name: 'identifier', multiplicity: 'nonEmptyArray' }]
+	};
+	const parentRenderRule: RenderRule = {
+		type: SEQ,
+		members: [{ type: SYMBOL, name: 'identifier', multiplicity: 'nonEmptyArray' }]
+	};
 	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
-		['repeated_child_parent', new AssembledBranch('repeated_child_parent', parentRule, parentRule)],
+		[
+			'repeated_child_parent',
+			new AssembledBranch('repeated_child_parent', parentRule, parentSimplifiedRule, parentRenderRule)
+		],
 		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })]
 	]);
 	return {
@@ -119,7 +164,7 @@ function makeRepeatedChildrenNodeMap(): NodeMap {
 }
 
 function makeOptionalRepeatedChildrenNodeMap(): NodeMap {
-	const parentRule: SeqRule = {
+	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [
 			{
@@ -128,8 +173,21 @@ function makeOptionalRepeatedChildrenNodeMap(): NodeMap {
 			}
 		]
 	};
+	// REPEAT wrappers don't survive normalize/simplify — the leaf carries
+	// `multiplicity: 'array'` directly instead.
+	const parentSimplifiedRule: SimplifiedRule = {
+		type: SEQ,
+		members: [{ type: SYMBOL, name: 'identifier', multiplicity: 'array' }]
+	};
+	const parentRenderRule: RenderRule = {
+		type: SEQ,
+		members: [{ type: SYMBOL, name: 'identifier', multiplicity: 'array' }]
+	};
 	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
-		['optional_repeated_child_parent', new AssembledBranch('optional_repeated_child_parent', parentRule, parentRule)],
+		[
+			'optional_repeated_child_parent',
+			new AssembledBranch('optional_repeated_child_parent', parentRule, parentSimplifiedRule, parentRenderRule)
+		],
 		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })]
 	]);
 	return {
@@ -143,12 +201,17 @@ function makeOptionalRepeatedChildrenNodeMap(): NodeMap {
 }
 
 function makeTokenOnlyChildrenNodeMap(): NodeMap {
-	const parentRule: SeqRule = {
+	const parentRule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: SYMBOL, name: 'kw_j' }]
 	};
+	const parentSimplifiedRule: SimplifiedRule = { type: SEQ, members: [{ type: SYMBOL, name: 'kw_j' }] };
+	const parentRenderRule: RenderRule = { type: SEQ, members: [{ type: SYMBOL, name: 'kw_j' }] };
 	const nodes = new Map<string, AssembledBranch | AssembledKeyword>([
-		['token_child_parent', new AssembledBranch('token_child_parent', parentRule, parentRule)],
+		[
+			'token_child_parent',
+			new AssembledBranch('token_child_parent', parentRule, parentSimplifiedRule, parentRenderRule)
+		],
 		['kw_j', new AssembledKeyword('kw_j', { type: STRING, value: 'jjjj' })]
 	]);
 	return {
@@ -165,7 +228,21 @@ function makeChoiceParentSingularChildrenNodeMap(): NodeMap {
 	// Formerly an AssembledPolymorph fixture — the retired class merged its
 	// forms into a single singular unnamed children slot, which a plain
 	// branch over a choice of the two leaf kinds reproduces directly.
-	const parentRule: ChoiceRule = {
+	const parentRule: ChoiceRule<'link'> = {
+		type: CHOICE,
+		members: [
+			{ type: SYMBOL, name: 'identifier' },
+			{ type: SYMBOL, name: 'integer' }
+		]
+	};
+	const parentSimplifiedRule: SimplifiedRule = {
+		type: CHOICE,
+		members: [
+			{ type: SYMBOL, name: 'identifier' },
+			{ type: SYMBOL, name: 'integer' }
+		]
+	};
+	const parentRenderRule: RenderRule = {
 		type: CHOICE,
 		members: [
 			{ type: SYMBOL, name: 'identifier' },
@@ -173,7 +250,7 @@ function makeChoiceParentSingularChildrenNodeMap(): NodeMap {
 		]
 	};
 	const nodes = new Map<string, AssembledBranch | AssembledPattern>([
-		['expression', new AssembledBranch('expression', parentRule, parentRule)],
+		['expression', new AssembledBranch('expression', parentRule, parentSimplifiedRule, parentRenderRule)],
 		['identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' })],
 		['integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' })]
 	]);
