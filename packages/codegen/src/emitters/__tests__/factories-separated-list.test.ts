@@ -94,7 +94,7 @@ describe('factories emitter — separatedList', () => {
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: sepChoice }));
 
-		expect(emitted).toContain('export function memberList(elements: NonEmptyArray<T.Member>, options');
+		expect(emitted).toContain('export function buildMemberList(elements: NonEmptyArray<T.Member>, options');
 		expect(emitted).toContain('separatorKind?: "," | ";"');
 		expect(emitted).toContain('leading?: boolean');
 		expect(emitted).toContain('trailing?: boolean');
@@ -116,7 +116,7 @@ describe('factories emitter — separatedList', () => {
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
 
-		expect(emitted).toContain('export function memberList(elements: NonEmptyArray<T.Member>, options');
+		expect(emitted).toContain('export function buildMemberList(elements: NonEmptyArray<T.Member>, options');
 		expect(emitted).not.toContain('separatorKind?:');
 		expect(emitted).not.toContain('leading?: boolean');
 		expect(emitted).toContain('trailing?: boolean');
@@ -149,7 +149,7 @@ describe('factories emitter — separatedList', () => {
 		};
 		const emitted = emit(makeMemberNodeMap(rule, { separatorRule: undefined }));
 
-		expect(emitted).toContain('export function memberList(elements: NonEmptyArray<T.Member>) {');
+		expect(emitted).toContain('export function buildMemberList(elements: NonEmptyArray<T.Member>) {');
 		expect(emitted).not.toContain('options');
 		expect(emitted).not.toContain('_separator_kind');
 		expect(emitted).not.toContain('_leading_sep');
@@ -160,7 +160,7 @@ describe('factories emitter — separatedList', () => {
 		const emitted = emit(makeMultiKindMemberNodeMap());
 
 		// Correct: the union is parenthesized before the array suffix.
-		expect(emitted).toContain('export function memberList(elements: (T.MemberA | T.MemberB)[], options');
+		expect(emitted).toContain('export function buildMemberList(elements: (T.MemberA | T.MemberB)[], options');
 		// The precedence bug this guards against: `[]` binding to the LAST
 		// union member alone instead of the whole union.
 		expect(emitted).not.toContain('T.MemberA | T.MemberB[]');

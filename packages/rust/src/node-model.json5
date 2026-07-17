@@ -7754,7 +7754,7 @@
       "irKey": "referenceExpressionRawMut",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "referenceExpressionRawMut()",
+      "stampExpression": "buildReferenceExpressionRawMut()",
       "fields": [
         {
           "name": "mutable_specifier",
@@ -8780,7 +8780,7 @@
       "irKey": "visibilityModifierPub",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "_visibilityModifierPub()",
+      "stampExpression": "buildVisibilityModifierPub()",
       "name": "_visibility_modifier_pub",
       "fields": [
         {
@@ -16709,7 +16709,7 @@
       "irKey": "selfParameter",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "selfParameter()",
+      "stampExpression": "buildSelfParameter()",
       "fields": [
         {
           "name": "reference",

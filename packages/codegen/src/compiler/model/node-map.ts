@@ -1434,55 +1434,6 @@ export function dedupeValues(values: NodeOrTerminal[]): NodeOrTerminal[] {
 // as we collapse logic into the classes.
 // ---------------------------------------------------------------------------
 
-/**
- * JS reserved words that a raw factory function name collides with —
- * those get a trailing underscore so the emitted code parses.
- */
-const JS_RESERVED_FACTORY_NAMES = new Set([
-	'break',
-	'case',
-	'catch',
-	'class',
-	'const',
-	'continue',
-	'debugger',
-	'default',
-	'delete',
-	'do',
-	'else',
-	'enum',
-	'export',
-	'extends',
-	'false',
-	'finally',
-	'for',
-	'function',
-	'if',
-	'import',
-	'in',
-	'instanceof',
-	'let',
-	'new',
-	'null',
-	'return',
-	'static',
-	'super',
-	'switch',
-	'this',
-	'throw',
-	'true',
-	'try',
-	'typeof',
-	'var',
-	'void',
-	'while',
-	'with',
-	'yield',
-	'async',
-	'await',
-	'arguments'
-]);
-
 // Reserved or restricted identifiers that cannot be top-level function names
 // in strict-mode TypeScript (or would shadow globals in problematic ways).
 const FACTORY_NAME_RESERVED = new Set([
@@ -1727,13 +1678,14 @@ export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 	 * AssembledNode subclasses reach into the raw rule.
 	 */
 	/**
-	 * Factory function name to emit in factories.ts — factoryName with a
-	 * trailing `_` when the bare name collides with a JS reserved word.
-	 * Returns `undefined` for hidden nodes.
+	 * Factory function name to emit in factories.ts — `build${typeName}`,
+	 * unconditionally. The `build` prefix never collides with a JS reserved
+	 * word (PascalCase typeName can't start a keyword), so no per-name
+	 * escaping is needed. Returns `undefined` for hidden nodes.
 	 */
 	get rawFactoryName(): string | undefined {
 		if (this.factoryName === undefined) return undefined;
-		return JS_RESERVED_FACTORY_NAMES.has(this.factoryName) ? `${this.factoryName}_` : this.factoryName;
+		return `build${this.typeName}`;
 	}
 
 	/** Tree interface name: `${typeName}Tree`. */
@@ -1752,10 +1704,10 @@ export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 		return `Loose${this.typeName}`;
 	}
 
-	/** `from()` resolver function name: `${factoryName}From` for non-hidden nodes. */
+	/** `from()` resolver function name: `coerceTo${typeName}` for non-hidden nodes. */
 	get fromFunctionName(): string | undefined {
 		if (this.factoryName === undefined) return undefined;
-		return `${this.factoryName}From`;
+		return `coerceTo${this.typeName}`;
 	}
 }
 
