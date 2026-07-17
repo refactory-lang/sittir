@@ -112,7 +112,11 @@ export function isNonterminalRuleType<Phase extends PhaseName>(rule: Rule<Phase>
 
 function ruleChildren<Phase extends PhaseName>(rule: Rule<Phase>): readonly Rule<Phase>[] {
 	// See isNonterminalRuleType's @remarks: narrow via AnyRule, cast back —
-	// children share the parent's phase by construction.
+	// children share the parent's phase by construction. Exhaustive over
+	// every AnyRule variant (no default fallthrough) so a newly added rule
+	// type fails compilation here instead of silently contributing no
+	// children — see classifyByType's own exhaustive switch for the sibling
+	// convention.
 	const anyRule = rule as AnyRule;
 	switch (anyRule.type) {
 		case TOKEN:
@@ -125,7 +129,26 @@ function ruleChildren<Phase extends PhaseName>(rule: Rule<Phase>): readonly Rule
 			return [anyRule.content as Rule<Phase>];
 		case SEQ:
 			return anyRule.members as Rule<Phase>[];
-		default:
+		case CHOICE:
+		case REPEAT:
+		case REPEAT1:
+			// Unconditionally nonterminal per classifyByType — these children
+			// never actually feed a classification decision — but returned
+			// for real (not `[]`) so `ruleChildren` stays structurally honest
+			// about what each rule type's children are.
+			return (anyRule.type === CHOICE ? anyRule.members : [anyRule.content]) as Rule<Phase>[];
+		case SYMBOL:
+		case SUPERTYPE:
+		case PATTERN:
+		case STRING:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
+			// Genuinely childless: SYMBOL/PATTERN/STRING/INDENT/DEDENT/NEWLINE
+			// are leaves; SUPERTYPE's `subtypes` are kind-name strings, not
+			// Rule<Phase> nodes.
 			return [];
+		default:
+			return assertNever(anyRule);
 	}
 }

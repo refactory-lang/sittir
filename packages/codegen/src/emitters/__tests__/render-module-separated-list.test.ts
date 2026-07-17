@@ -24,7 +24,12 @@ import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
 import { emitRenderModule } from '../render-module.ts';
 
-const MEMBER_ELEMENT_RULE: Rule<'link'> = { type: SYMBOL, name: 'member' };
+// A bare SYMBOL rule is structurally identical across compiler phases, but
+// `simplifiedRule`/`renderRule` are nominally branded (SimplifiedRule/RenderRule
+// each carry a distinct `__brand?: never` marker) — one Rule<'link'>-typed
+// constant can't satisfy both, so each gets its own phase-typed declaration.
+const MEMBER_ELEMENT_SIMPLIFIED_RULE: SimplifiedRule = { type: SYMBOL, name: 'member' };
+const MEMBER_ELEMENT_RENDER_RULE: RenderRule = { type: SYMBOL, name: 'member' };
 
 function makeMemberNodeMap(rule: Repeat1Rule | RepeatRule, opts: { separatorRule: Rule<'link'> | undefined }) {
 	const nodes = new Map<string, AssembledNode>();
@@ -32,8 +37,8 @@ function makeMemberNodeMap(rule: Repeat1Rule | RepeatRule, opts: { separatorRule
 		'member_list',
 		new AssembledSeparatedList('member_list', rule, undefined, {
 			separatorRule: opts.separatorRule,
-			simplifiedRule: MEMBER_ELEMENT_RULE as unknown as SimplifiedRule,
-			renderRule: MEMBER_ELEMENT_RULE as unknown as RenderRule
+			simplifiedRule: MEMBER_ELEMENT_SIMPLIFIED_RULE,
+			renderRule: MEMBER_ELEMENT_RENDER_RULE
 		})
 	);
 	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }));

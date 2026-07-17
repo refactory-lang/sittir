@@ -1530,7 +1530,9 @@ export function coerceToFieldInitializerList(
 	);
 }
 
-export function coerceToFieldPattern(input?: never | T.FieldPattern): ReturnType<typeof F.buildFieldPattern> {
+export function coerceToFieldPattern(
+	input?: ('mut' | T.Identifier | T.FieldPatternNamed) | T.FieldPattern
+): ReturnType<typeof F.buildFieldPattern> {
 	if (isNodeData(input) && input.$type === TSKindId.FieldPattern) {
 		const data = input;
 		const child = (data as unknown as { _ref_marker?: unknown })._ref_marker;

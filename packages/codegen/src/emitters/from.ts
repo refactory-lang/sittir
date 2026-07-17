@@ -36,10 +36,9 @@ import {
 	classifyFactoryShape,
 	classifyChildFactorySurface,
 	classifyFromEmission,
-	unnamedChildSlotFacts,
-	childTypeComponents
+	unnamedChildSlotFacts
 } from './shared.ts';
-import { fieldElementType } from './factories.ts';
+import { fieldElementType, childElementType } from './factories.ts';
 import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
 import { isNodeRef, isTerminalValue, isUnresolvedRef } from '../compiler/model/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/model/node-map.ts';
@@ -797,7 +796,7 @@ function emitContainerFrom(
 	// the data read is `data._<storageName>`.
 	const facts = unnamedChildSlotFacts(node.fields ?? []);
 	const elementType = facts
-		? containerSlotElementType(facts.slot, nodeMap)
+		? childElementType({ children: node.fields ?? [] }, nodeMap)
 		: `NonNullable<T.${node.typeName}['$other']> extends readonly [infer E] ? E : NonNullable<T.${node.typeName}['$other']>`;
 	const storageKey = facts ? facts.slot.storageKey : '$other';
 	if (facts?.multiple) {
@@ -928,49 +927,6 @@ function emitSeparatedListFrom(
 				: `${factory}(${varExpr} as Parameters<typeof ${factory}>[0])`,
 		': readonly unknown[]'
 	);
-}
-
-/**
- * Compute the TypeScript element-type union for a single unnamed-child slot.
- * Mirrors `childElementType` (factories.ts) but operates on the
- * post-unification slot in `node.fields[0]` rather than the legacy
- * `node.children` list — routed through the same `childTypeComponents`
- * derivation so a hidden token/keyword kind with a fixed literal text
- * (e.g. Python's `_not_escape_sequence` → `'\\'`) resolves to that literal
- * instead of a dangling `T.<TypeName>` reference to a type `types.ts` never
- * exports for such kinds.
- */
-function containerSlotElementType(slot: AssembledNonterminal, nodeMap: NodeMap): string {
-	const parts = new Set<string>();
-	for (const component of childTypeComponents(slot, nodeMap)) {
-		if (component.kind === 'literal') {
-			parts.add(JSON.stringify(component.value));
-			continue;
-		}
-		if (component.kind === 'missing') {
-			parts.add(JSON.stringify(component.rawKind));
-			continue;
-		}
-		let ref = nodeMap.nodes.get(component.rawKind);
-		if (!ref) {
-			parts.add(JSON.stringify(component.rawKind));
-			continue;
-		}
-		// Hidden kinds with `multi` or `token` modelType don't get exported
-		// interfaces (types.ts excludes them from emission). Redirect to
-		// the visible counterpart (strip leading `_`), same as
-		// `childElementType` — the runtime shapes are structurally
-		// compatible (same fields/children).
-		if (component.rawKind.startsWith('_') && (ref.modelType === 'multi' || ref.modelType === 'token')) {
-			const visible = nodeMap.nodes.get(component.rawKind.slice(1));
-			if (visible) ref = visible;
-		}
-		const name = ref.typeName;
-		parts.add(/^[A-Za-z_$][\w$]*$/.test(name) ? `T.${name}` : JSON.stringify(component.rawKind));
-	}
-	if (parts.size === 0) return 'never';
-	const union = [...parts].join(' | ');
-	return parts.size > 1 ? `(${union})` : union;
 }
 
 // ---------------------------------------------------------------------------
