@@ -418,9 +418,9 @@ describe('factories emitter — per-form factory emission', () => {
 			{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } },
 			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
 		]);
-		expect(factoriesSrc).toMatch(/export function ifaceBody\(/);
-		expect(factoriesSrc).toMatch(/export function ifaceBodyCurly\(/);
-		expect(factoriesSrc).toMatch(/export function ifaceBodyFlow\(/);
+		expect(factoriesSrc).toMatch(/export function buildIfaceBody\(/);
+		expect(factoriesSrc).toMatch(/export function buildIfaceBodyCurly\(/);
+		expect(factoriesSrc).toMatch(/export function buildIfaceBodyFlow\(/);
 	});
 
 	it('stamps the selected literal into _<name> storage', () => {
@@ -429,15 +429,15 @@ describe('factories emitter — per-form factory emission', () => {
 			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
 		]);
 		// Curly factory stamps '{' / '}' via _<name> storage.
-		expect(factoriesSrc).toMatch(/ifaceBodyCurly[\s\S]*_opening = "\{" as const[\s\S]*_closing = "\}" as const/);
+		expect(factoriesSrc).toMatch(/buildIfaceBodyCurly[\s\S]*_opening = "\{" as const[\s\S]*_closing = "\}" as const/);
 		// Flow factory stamps '{|' / '|}' via _<name> storage.
-		expect(factoriesSrc).toMatch(/ifaceBodyFlow[\s\S]*_opening = "\{\|" as const[\s\S]*_closing = "\|\}" as const/);
+		expect(factoriesSrc).toMatch(/buildIfaceBodyFlow[\s\S]*_opening = "\{\|" as const[\s\S]*_closing = "\|\}" as const/);
 	});
 
 	it('does not emit a $variant tag (NodeData round-trips through readNode)', () => {
 		const { factoriesSrc } = runPipeline([{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } }]);
 		// Pull out just the curly function body and assert no $variant.
-		const match = factoriesSrc.match(/export function ifaceBodyCurly[\s\S]*?\n\}/);
+		const match = factoriesSrc.match(/export function buildIfaceBodyCurly[\s\S]*?\n\}/);
 		expect(match).toBeTruthy();
 		expect(match![0]).not.toContain('$variant');
 	});
@@ -447,7 +447,7 @@ describe('factories emitter — per-form factory emission', () => {
 		// Per-form Config lives under the parent namespace as a sub-namespace
 		// (`T.IfaceBody.Curly.Config`), not as a flat alias. See
 		// emitRefineFormSubNamespaces in emitters/types.ts.
-		expect(factoriesSrc).toMatch(/export function ifaceBodyCurly\(config\??: T\.IfaceBody\.Curly\.Config\)/);
+		expect(factoriesSrc).toMatch(/export function buildIfaceBodyCurly\(config\??: T\.IfaceBody\.Curly\.Config\)/);
 	});
 
 	it('emitAll keeps refine form factories in the real generation path', () => {
@@ -459,8 +459,8 @@ describe('factories emitter — per-form factory emission', () => {
 		const normalized = normalizeGrammar(linked);
 		const nodeMap = assemble(AssembleCtx.from(normalized));
 		const { factories } = emitAll({ grammar: 'synth', nodeMap });
-		expect(factories).toMatch(/export function ifaceBodyCurly\(/);
-		expect(factories).toMatch(/export function ifaceBodyFlow\(/);
+		expect(factories).toMatch(/export function buildIfaceBodyCurly\(/);
+		expect(factories).toMatch(/export function buildIfaceBodyFlow\(/);
 	});
 });
 
@@ -472,7 +472,7 @@ describe('ir emitter — per-form key attachment', () => {
 		]);
 		// The bundle expression should list curly and flow entries alongside `from`.
 		expect(irSrc).toMatch(
-			/ifaceBody: _attach\(FR\.ifaceBodyFrom, \{ from: FR\.ifaceBodyFrom, strict: F\.ifaceBody, "curly": F\.ifaceBodyCurly, "flow": F\.ifaceBodyFlow \}\)/
+			/ifaceBody: _attach\(FR\.coerceToIfaceBody, \{ from: FR\.coerceToIfaceBody, strict: F\.buildIfaceBody, "curly": F\.buildIfaceBodyCurly, "flow": F\.buildIfaceBodyFlow \}\)/
 		);
 	});
 });

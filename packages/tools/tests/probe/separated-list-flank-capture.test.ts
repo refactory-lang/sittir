@@ -25,7 +25,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { probeTrace } from '../../src/probe/kind.ts';
-import { objectTypeContentFrom } from '../../../typescript/src/from.ts';
+import { coerceToObjectTypeContent } from '../../../typescript/src/from.ts';
 
 describe('separatedList wrap capture — real typescript grammar integration', () => {
 	it('captures a present trailing comma with no leading comma', async () => {
@@ -100,7 +100,7 @@ describe('separatedList from() reconstruction — preserves original separator f
 		expect(wrapped._trailing_sep).toBe(true);
 		expect(wrapped._separator_kind).toBeDefined();
 
-		const reconstructed = objectTypeContentFrom(wrapped as never);
+		const reconstructed = coerceToObjectTypeContent(wrapped as never);
 		expect((reconstructed as unknown as { _trailing_sep: boolean })._trailing_sep).toBe(true);
 		expect((reconstructed as unknown as { _separator_kind: number })._separator_kind).toBe(wrapped._separator_kind);
 		expect(reconstructed.$render!()).toContain(';');

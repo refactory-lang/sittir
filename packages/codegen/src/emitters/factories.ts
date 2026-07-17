@@ -39,7 +39,8 @@ import {
 	classifyChildFactorySurface,
 	classifyFactoryEmission,
 	collectAliasSourceKinds,
-	warnSkippedParserSymbol
+	warnSkippedParserSymbol,
+	unnamedChildSlotFacts
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -446,23 +447,7 @@ export namespace factory {
 		nodeMap: NodeMap,
 		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
-		let result: string;
-		if (classifyChildFactorySurface(node, nodeMap) !== null) {
-			result = emitContainerFactory(
-				{
-					kind: node.kind,
-					typeName: node.typeName,
-					treeTypeName: node.treeTypeName,
-					rawFactoryName: node.rawFactoryName,
-					fields: node.fields
-				},
-				nodeMap,
-				kindEntries
-			);
-		} else {
-			result = emitFieldCarryingFactory(node, node.fields, nodeMap, kindEntries);
-		}
-		output.push(result);
+		output.push(emitFieldCarryingFactory(node, node.fields, nodeMap, kindEntries));
 	}
 
 	/**
@@ -734,6 +719,17 @@ export function fieldElementType(f: AssembledNonterminal, nodeMap: NodeMap): str
 	return [...new Set(parts)].join(' | ');
 }
 
+/**
+ * Emit a branch/group factory — one field-list-driven body shared by all
+ * three calling conventions (container/single-field/config), mirroring
+ * `emitInterface` in types.ts: one loop over `fields` producing storage +
+ * getters, with the calling convention affecting ONLY the signature line
+ * and the `$with` block. Each convention resolves its own per-field
+ * storage-value expression (`valueSourceFor`) up front — this is where the
+ * three genuinely differ (raw `child`/`children` vs a bare param name vs
+ * `config.<key>` routed through the boolean/bitflag/kindEnum coercion
+ * helpers), not in how storage/getters/the `withMethods` wrapper get built.
+ */
 function emitFieldCarryingFactory(
 	node: FieldCarryingNode,
 	fields: readonly AssembledNonterminal[],
@@ -742,9 +738,17 @@ function emitFieldCarryingFactory(
 ): string {
 	const fn = node.rawFactoryName!;
 	fields = fields ?? [];
-	const opt = resolveConfigOptional(fields, nodeMap);
 	const typeKind = node.modelType === 'group' ? (node.parentKind ?? node.kind) : node.kind;
-	const configType = resolveConfigType(node, nodeMap.refineForms?.has(typeKind) ?? false);
+	const variantName = node.modelType == 'group' ? resolvePolymorphFormVariantName(node) : undefined;
+
+	// Container shape: unnamed single/multiple child slot, positional
+	// `child`/`...children` calling convention. Never applies to 'group' —
+	// `classifyChildFactorySurface` only recognizes 'branch' modelType, since
+	// polymorph FORM factories (group) are always field-carrying.
+	const containerFacts =
+		node.modelType === 'branch' && classifyChildFactorySurface(node, nodeMap) !== null
+			? unnamedChildSlotFacts(fields)
+			: null;
 
 	// Gap 5: Single-field-no-children factories take the value directly
 	// instead of a config object. Uses the pre-computed slotClass
@@ -757,176 +761,138 @@ function emitFieldCarryingFactory(
 	// with config objects by the polymorph form wrapper. Also exclude
 	// polymorph forms and keyword-presence / multiple fields.
 	const sc = typeof node === 'object' && node !== null && 'slotClass' in node ? node.slotClass : undefined;
-	if (
+	const singleField =
+		!containerFacts &&
 		nonStampFields.length === 1 &&
 		!node.kind.startsWith('_') &&
 		sc?.tag === 'singleSlot' &&
 		sc.arity === 'singular'
-	) {
-		return emitSingleFieldFactory(node, fields, sc.slot, nodeMap, kindEntries);
-	}
+			? sc.slot
+			: undefined;
 
-	// Post-unification: `children` is always empty — the former dedicated
-	// child slot is replaced by per-slot fields with kind-based names.
+	let signature: string;
+	let valueSourceFor: (f: AssembledNonterminal) => string;
+	let withLines: string[];
+	// Which fields actually get storage + a getter. Container shape only
+	// stamps its ONE real slot — `node.fields` can hold other entries
+	// (e.g. keyword-presence markers) that `classifyBranchSlots`' userSlot
+	// filtering already excluded from the single-slot classification, and
+	// the original per-shape emitters never touched those for a container.
+	// The other two shapes (single-field, config) always use every field.
+	let fieldsToEmit: readonly AssembledNonterminal[] = fields;
 
-	// When opt is '?' (all fields optional), emit a local `_config` default so
-	// property access can use `config.x` (no optional chaining). Only emit
-	// the default when the body actually reads from config — avoids dead code
-	// when all fields auto-stamp.
-	const hasConfigReads = fields.some((f) => autoStampExpression(f, nodeMap) === undefined);
-	const configAccess = 'config';
-
-	const lines: string[] = [];
-	const signature =
-		opt === '?' && hasConfigReads
-			? `export function ${fn}(config: Partial<${configType}> = {}) {`
-			: `export function ${fn}(config${opt}: ${configType}) {`;
-	lines.push(signature);
-
-	// Post-unification (slot-model spec 2026-05-17): `children` is always empty —
-	// kind-named slots flow through `fields`. The former `$children` storage path
-	// is dead code; per-slot storage emits below via `_<f.name>`.
-
-	const variantName = node.modelType == 'group' ? resolvePolymorphFormVariantName(node) : undefined;
-
-	// Shape A — closure-based locals + property shorthand storage +
-	// pure-getter methods reading the local consts + `$with` block with
-	// setter wiring. No `Object.defineProperty`. No `..._sharedMethods`
-	// spread. No freeze.
-	//
-	// Step 1: hoist each field's storage value to a local `_<name>` const so
-	// the getter method can `return _<name>;` directly via lexical closure.
-	// All-leaf fields hoist `.$text` so storage holds the string directly
-	// (the wrapper carries no info beyond `$text` for leaf kinds).
-	for (const f of fields) {
-		const stamp = autoStampExpression(f, nodeMap);
-		if (stamp !== undefined) {
-			lines.push(`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
-			continue;
+	if (containerFacts) {
+		fieldsToEmit = [containerFacts.slot];
+		const elementType = resolveContainerElementType(
+			{
+				kind: node.kind,
+				typeName: node.typeName,
+				treeTypeName: node.treeTypeName,
+				rawFactoryName: node.rawFactoryName,
+				fields
+			},
+			nodeMap
+		);
+		if (containerFacts.multiple) {
+			signature = `export function ${fn}(...children: ${elementType}[]) {`;
+			valueSourceFor = () => 'children';
+			withLines = [`    $with: { $children: (...vs: ${elementType}[]) => ${fn}(...vs) },`];
+		} else {
+			const optMark = containerFacts.required ? '' : '?';
+			signature = `export function ${fn}(child${optMark}: ${elementType}) {`;
+			valueSourceFor = () => 'child';
+			withLines = [`    $with: { $child: (v: ${elementType}) => ${fn}(v) },`];
 		}
-		lines.push(`  const ${f.storageKey} = ${slotStorageExpr(f, configAccess, nodeMap, kindEntries)};`);
+	} else if (singleField) {
+		const elemType = `T.${node.typeName}.Config['${singleField.configKey}']`;
+		const paramName = singleField.paramName;
+		const optMark = isRequired(singleField) ? '' : '?';
+		signature = `export function ${fn}(${paramName}${optMark}: ${elemType}) {`;
+		valueSourceFor = (f) =>
+			f === singleField
+				? slotStorageFromValueExpr(f, paramName, nodeMap, kindEntries)
+				: slotStorageFromValueExpr(f, autoStampExpression(f, nodeMap)!, nodeMap, kindEntries);
+		const setterType = setterElemType(singleField, elemType, fn, nodeMap);
+		withLines = [
+			'    $with: {',
+			`      ${singleField.propertyName}: (${setterValueSignature(singleField, setterType)}) => ${fn}(value),`,
+			'    },'
+		];
+	} else {
+		const opt = resolveConfigOptional(fields, nodeMap);
+		const configType = resolveConfigType(node, nodeMap.refineForms?.has(typeKind) ?? false);
+		// When opt is '?' (all fields optional), emit a local `_config` default so
+		// property access can use `config.x` (no optional chaining). Only emit
+		// the default when the body actually reads from config — avoids dead code
+		// when all fields auto-stamp.
+		const hasConfigReads = fields.some((f) => autoStampExpression(f, nodeMap) === undefined);
+		signature =
+			opt === '?' && hasConfigReads
+				? `export function ${fn}(config: Partial<${configType}> = {}) {`
+				: `export function ${fn}(config${opt}: ${configType}) {`;
+		const configAccess = 'config';
+		valueSourceFor = (f) => {
+			const stamp = autoStampExpression(f, nodeMap);
+			return stamp !== undefined
+				? slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)
+				: slotStorageExpr(f, configAccess, nodeMap, kindEntries);
+		};
+		// $with: setters call the factory directly with a patched config —
+		// `(value) => factory({ ...config, <key>: value })`. No `_setField` /
+		// `_setFields` indirection (those were old helpers serving
+		// the combined getter/setter method; under shape A getters are pure and
+		// the setter is purely a rebuild). Auto-stamp fields are skipped — no
+		// setter exposed because the value is fixed.
+		withLines = ['    $with: {'];
+		for (const f of fields) {
+			if (autoStampExpression(f, nodeMap) !== undefined) continue;
+			const method = f.propertyName;
+			const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
+			if (isMultiple(f) && storageInfo.kind === 'verbatim') {
+				const elemType = fieldElementType(f, nodeMap);
+				const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
+				const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`;
+				withLines.push(`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: values }),`);
+			} else {
+				const elemType = setterElemType(f, fieldElementType(f, nodeMap), fn, nodeMap);
+				withLines.push(
+					`      ${method}: (${setterValueSignature(f, elemType)}) => ${fn}({ ...${configAccess}, ${f.configKey}: value }),`
+				);
+			}
+		}
+		// Post-unification: the legacy `children` setter is gone — per-slot setters
+		// above cover every slot through the unified `fields` loop.
+		withLines.push('    },');
 	}
 
-	// Step 2: emit the literal. Storage uses property shorthand so the local
-	// const flows in by name. Getters are method shorthand that read the
-	// local const via closure. `withMethods<T>` adds the four `$`-prefixed
-	// methods at the boundary — generic on T preserves the literal's type.
+	// --- Shared body, all three shapes: storage hoist, withMethods literal,
+	// getters. Storage uses property shorthand so the local const flows in
+	// by name; getters are method shorthand reading the local const via
+	// closure. `withMethods<T>` adds the four `$`-prefixed methods at the
+	// boundary — generic on T preserves the literal's type. ---
+	const lines: string[] = [signature];
+	if (containerFacts?.multiple && containerFacts.nonEmpty) {
+		lines.push(`  _assertNonEmpty(children, '${node.kind}.children');`);
+	}
+	for (const f of fieldsToEmit) {
+		lines.push(`  const ${f.storageKey} = ${valueSourceFor(f)};`);
+	}
 	lines.push('  return withMethods({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	if (variantName) lines.push(`    $variant: '${variantName}' as const,`);
-	for (const f of fields) {
+	for (const f of fieldsToEmit) {
 		lines.push(`    ${f.storageKey},`);
 	}
-
-	// Pure getters — method shorthand, body returns the local const.
-	for (const f of fields) {
+	for (const f of fieldsToEmit) {
 		const propName = f.propertyName;
 		lines.push(`    ${propName}() { return ${f.storageKey}; },`);
 	}
-
-	// $with: setters call the factory directly with a patched config —
-	// `(value) => factory({ ...config, <key>: value })`. No `_setField` /
-	// `_setFields` indirection (those were old helpers serving
-	// the combined getter/setter method; under shape A getters are pure and
-	// the setter is purely a rebuild). Auto-stamp fields are skipped — no
-	// setter exposed because the value is fixed.
-	lines.push('    $with: {');
-	for (const f of fields) {
-		if (autoStampExpression(f, nodeMap) !== undefined) continue;
-		const method = f.propertyName;
-		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
-		if (isMultiple(f) && storageInfo.kind === 'verbatim') {
-			const elemType = fieldElementType(f, nodeMap);
-			const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
-			const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`;
-			lines.push(`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: values }),`);
-		} else {
-			const elemType = setterElemType(f, fieldElementType(f, nodeMap), fn, nodeMap);
-			lines.push(
-				`      ${method}: (${setterValueSignature(f, elemType)}) => ${fn}({ ...${configAccess}, ${f.configKey}: value }),`
-			);
-		}
-	}
-	// Post-unification: the legacy `children` setter is gone — per-slot setters
-	// above cover every slot through the unified `fields` loop.
-	lines.push('    },');
+	lines.push(...withLines);
 	lines.push('  }, methodsEngine);');
 	lines.push('}');
 	return renameUnusedConfigParam(lines);
-}
-
-/**
- * Emit a factory with a direct-value signature for single-field-no-children kinds.
- *
- * @remarks
- * When a kind has exactly one non-auto-stamp field and no children, the config
- * object wrapper is unnecessary ceremony. Instead of `label(config: T.Label.Config)`
- * the factory signature becomes `label(identifier: T.Identifier)` and the `$with`
- * setter rebuilds via `fn(value)` (direct call, not config-spread).
- *
- * @param node - The assembled node descriptor.
- * @param allFields - All fields including auto-stamp ones (for storage hoisting).
- * @param soleField - The single non-auto-stamp field.
- * @param nodeMap - Grammar-wide node map.
- * @param kindEntries - KindEnumEntry table for numeric `$type` emission.
- * @returns The emitted factory function source string.
- */
-function emitSingleFieldFactory(
-	node: FieldCarryingNode,
-	allFields: readonly AssembledNonterminal[],
-	soleField: AssembledNonterminal,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): string {
-	const fn = node.rawFactoryName!;
-	const typeKind = node.modelType === 'group' ? (node.parentKind ?? node.kind) : node.kind;
-	const variantName = node.modelType === 'group' ? resolvePolymorphFormVariantName(node as AssembledGroup) : undefined;
-	const elemType = `T.${node.typeName}.Config['${soleField.configKey}']`;
-	const paramName = soleField.paramName;
-	const fieldOptional = !isRequired(soleField);
-	const optMark = fieldOptional ? '?' : '';
-
-	const lines: string[] = [];
-	lines.push(`export function ${fn}(${paramName}${optMark}: ${elemType}) {`);
-
-	// Storage hoists for all fields — auto-stamp ones get their stamp expression,
-	// the sole user-facing field reads directly from the parameter.
-	for (const f of allFields) {
-		const stamp = autoStampExpression(f, nodeMap);
-		if (stamp !== undefined) {
-			lines.push(`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
-			continue;
-		}
-		lines.push(`  const ${f.storageKey} = ${slotStorageFromValueExpr(f, paramName, nodeMap, kindEntries)};`);
-	}
-
-	// Emit the literal object with withMethods wrapper.
-	lines.push('  return withMethods({');
-	lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
-	lines.push('    $source: 2 as const,');
-	lines.push('    $named: true as const,');
-	if (variantName) lines.push(`    $variant: '${variantName}' as const,`);
-	for (const f of allFields) {
-		lines.push(`    ${f.storageKey},`);
-	}
-
-	// Pure getters.
-	for (const f of allFields) {
-		const propName = f.propertyName;
-		lines.push(`    ${propName}() { return ${f.storageKey}; },`);
-	}
-
-	// $with: setter calls the factory directly with the new value.
-	lines.push('    $with: {');
-	const method = soleField.propertyName;
-	const setterType = setterElemType(soleField, elemType, fn, nodeMap);
-	lines.push(`      ${method}: (${setterValueSignature(soleField, setterType)}) => ${fn}(value),`);
-	lines.push('    },');
-	lines.push('  }, methodsEngine);');
-	lines.push('}');
-	return lines.join('\n');
 }
 
 /**
@@ -1164,63 +1130,6 @@ interface ContainerNode {
 	readonly treeTypeName: string;
 	readonly rawFactoryName?: string;
 	readonly fields: readonly AssembledNonterminal[];
-}
-
-function emitContainerFactory(
-	node: ContainerNode,
-	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined = undefined
-): string {
-	const fn = node.rawFactoryName!;
-	const lines: string[] = [];
-	// Post-unification (slot-model spec 2026-05-17): the unnamed-child slot now
-	// lives in `node.fields` with a kind-derived `storageName` (e.g. `type`).
-	// Storage uses `_<storageName>` per slot rather than a flat `$children` key.
-	// Surface argument naming (`child` / `...children`) is preserved for
-	// caller-side ergonomics; the slot drives where the data is stored.
-	const slot = node.fields[0];
-	const anyMultiple = slot ? isMultiple(slot) : false;
-	const anyNonEmpty = slot ? isNonEmpty(slot) : false;
-	const elementType = resolveContainerElementType(node, nodeMap);
-	// Storage key + property name for the single unnamed slot. Falls back to the
-	// legacy `$children` / `children` shape only if no slot exists (defensive —
-	// shouldn't happen for branches that classifyChildFactorySurface accepts).
-	const storageKey = slot ? slot.storageKey : '$other';
-	const propName = slot ? slot.propertyName : 'children';
-	if (anyMultiple) {
-		lines.push(`export function ${fn}(...children: ${elementType}[]) {`);
-		if (anyNonEmpty) {
-			lines.push(`  _assertNonEmpty(children, '${node.kind}.children');`);
-		}
-		lines.push(`  const ${storageKey} = children;`);
-	} else {
-		const required = slot ? isRequired(slot) : false;
-		const optMark = required ? '' : '?';
-		lines.push(`export function ${fn}(child${optMark}: ${elementType}) {`);
-		// Required: store the value directly. Optional: store undefined when absent.
-		// For singular slots the storage holds the bare value (not an array) so
-		// the per-slot getter returns the element type the interface declares.
-		lines.push(required ? `  const ${storageKey} = child;` : `  const ${storageKey} = child;`);
-	}
-	// Inline literal wrapped by withMethods<T>. No defineProperty,
-	// no spread, no Record cast.
-	lines.push('  return withMethods({');
-	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
-	lines.push(`    $source: 2 as const,`);
-	lines.push('    $named: true as const,');
-	lines.push(`    ${storageKey},`);
-	lines.push(`    ${propName}() { return ${storageKey}; },`);
-	// Container $with: unnamed slot updater. Multiple → `$children`; single → `$child`.
-	// Both call the factory directly (no config object). These meta-keys are
-	// part of the runtime $with convention and intentionally NOT kind-named.
-	if (anyMultiple) {
-		lines.push(`    $with: { $children: (...vs: ${elementType}[]) => ${fn}(...vs) },`);
-	} else {
-		lines.push(`    $with: { $child: (v: ${elementType}) => ${fn}(v) },`);
-	}
-	lines.push('  }, methodsEngine);');
-	lines.push('}');
-	return lines.join('\n');
 }
 
 /**
@@ -1563,8 +1472,13 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		}
 		const usesNonEmptyArray = collectUsesNonEmptyArray(nodeMap);
 		const storageCoercionImports = collectStorageCoercionImports(nodeMap, kindEntries);
+		const refineKindInfos = collectRefineKindInfos(nodeMap) ?? [];
 		const utilImports = ['FluentNode'];
 		if (usesNonEmptyArray) utilImports.push('NonEmptyArray');
+		// resolveConfigType() emits `ConfigOf<T.X>` (rather than `T.X.Config`)
+		// for every refine-form kind's config parameter — import it whenever
+		// at least one such kind exists.
+		if (refineKindInfos.length > 0) utilImports.push('ConfigOf');
 		lines.push(`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`);
 		lines.push(
 			`import { ${['withMethods', 'methodsEngine', ...storageCoercionImports].join(', ')} } from './utils.js';`
@@ -1579,7 +1493,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 
 		const aliasSourceKinds = collectAliasSourceKinds(nodeMap);
 		const refineByKind = new Map<string, RefineKindInfo>();
-		for (const info of collectRefineKindInfos(nodeMap) ?? []) {
+		for (const info of refineKindInfos) {
 			refineByKind.set(info.kind, info);
 		}
 

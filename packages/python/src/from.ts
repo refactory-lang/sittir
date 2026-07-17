@@ -10,133 +10,133 @@ import { coerceKindEnumStorage, isNodeData } from './utils.js';
 type _FromFieldInput = unknown;
 
 export const _fromMap = {
-	aliased_import: aliasedImportFrom,
-	argument_list: argumentListFrom,
-	as_pattern: asPatternFrom,
-	assert_statement: assertStatementFrom,
-	assignment: assignmentFrom,
-	attribute: attributeFrom,
-	augmented_assignment: augmentedAssignmentFrom,
-	await: await_From,
-	binary_operator: binaryOperatorFrom,
-	block: blockFrom,
-	boolean_operator: booleanOperatorFrom,
-	break_statement: breakStatementFrom,
-	call: callFrom,
-	case_clause: caseClauseFrom,
-	case_pattern: casePatternFrom,
-	chevron: chevronFrom,
-	class_definition: classDefinitionFrom,
-	class_pattern: classPatternFrom,
-	comment: commentFrom,
-	comparison_operator: comparisonOperatorFrom,
-	complex_pattern: complexPatternFrom,
-	concatenated_string: concatenatedStringFrom,
-	conditional_expression: conditionalExpressionFrom,
-	constrained_type: constrainedTypeFrom,
-	continue_statement: continueStatementFrom,
-	decorated_definition: decoratedDefinitionFrom,
-	decorator: decoratorFrom,
-	default_parameter: defaultParameterFrom,
-	delete_statement: deleteStatementFrom,
-	dict_pattern: dictPatternFrom,
-	dictionary: dictionaryFrom,
-	dictionary_comprehension: dictionaryComprehensionFrom,
-	dictionary_splat: dictionarySplatFrom,
-	dictionary_splat_pattern: dictionarySplatPatternFrom,
-	dotted_name: dottedNameFrom,
-	elif_clause: elifClauseFrom,
-	else_clause: elseClauseFrom,
-	escape_sequence: escapeSequenceFrom,
-	except_clause: exceptClauseFrom,
-	exec_statement: execStatementFrom,
-	expression_list: expressionListFrom,
-	expression_statement: expressionStatementFrom,
-	false: false_From,
-	finally_clause: finallyClauseFrom,
-	float: floatFrom,
-	for_in_clause: forInClauseFrom,
-	for_statement: forStatementFrom,
-	format_specifier: formatSpecifierFrom,
-	function_definition: functionDefinitionFrom,
-	future_import_statement: futureImportStatementFrom,
-	generator_expression: generatorExpressionFrom,
-	generic_type: genericTypeFrom,
-	global_statement: globalStatementFrom,
-	identifier: identifierFrom,
-	if_clause: ifClauseFrom,
-	if_statement: ifStatementFrom,
-	import_from_statement: importFromStatementFrom,
-	import_prefix: importPrefixFrom,
-	import_statement: importStatementFrom,
-	integer: integerFrom,
-	interpolation: interpolationFrom,
-	keyword_argument: keywordArgumentFrom,
-	keyword_pattern: keywordPatternFrom,
-	lambda: lambdaFrom,
-	lambda_parameters: lambdaParametersFrom,
-	lambda_within_for_in_clause: lambdaWithinForInClauseFrom,
-	line_continuation: lineContinuationFrom,
-	list: listFrom,
-	list_comprehension: listComprehensionFrom,
-	list_pattern: listPatternFrom,
-	list_splat: listSplatFrom,
-	list_splat_pattern: listSplatPatternFrom,
-	match_statement: matchStatementFrom,
-	member_type: memberTypeFrom,
-	module: moduleFrom,
-	named_expression: namedExpressionFrom,
-	none: noneFrom,
-	nonlocal_statement: nonlocalStatementFrom,
-	not_operator: notOperatorFrom,
-	pair: pairFrom,
-	parameters: parametersFrom,
-	parenthesized_expression: parenthesizedExpressionFrom,
-	parenthesized_list_splat: parenthesizedListSplatFrom,
-	pass_statement: passStatementFrom,
-	pattern_list: patternListFrom,
-	print_statement: printStatementFrom,
-	raise_statement: raiseStatementFrom,
-	relative_import: relativeImportFrom,
-	return_statement: returnStatementFrom,
-	set: setFrom,
-	set_comprehension: setComprehensionFrom,
-	slice: sliceFrom,
-	splat_pattern: splatPatternFrom,
-	splat_type: splatTypeFrom,
-	string: stringFrom,
-	string_content: stringContentFrom,
-	subscript: subscriptFrom,
-	true: true_From,
-	try_statement: tryStatementFrom,
-	tuple: tupleFrom,
-	tuple_pattern: tuplePatternFrom,
-	type: typeFrom,
-	type_alias_statement: typeAliasStatementFrom,
-	type_conversion: typeConversionFrom,
-	type_parameter: typeParameterFrom,
-	typed_default_parameter: typedDefaultParameterFrom,
-	typed_parameter: typedParameterFrom,
-	unary_operator: unaryOperatorFrom,
-	union_pattern: unionPatternFrom,
-	union_type: unionTypeFrom,
-	while_statement: whileStatementFrom,
-	with_clause: withClauseFrom,
-	with_item: withItemFrom,
-	with_statement: withStatementFrom,
-	yield: yield_From,
-	list_pattern_group1: listPatternGroup1From,
-	argument_list_group1: argumentListGroup1From,
-	dict_pattern_group1: dictPatternGroup1From,
-	dictionary_group1: dictionaryGroup1From,
-	slice_group1: sliceGroup1From,
-	string_start: stringStartFrom,
-	escape_interpolation: escapeInterpolationFrom,
-	string_end: stringEndFrom,
-	']': closeBracketFrom,
-	')': closeParenFrom,
-	'}': closeBraceFrom,
-	except: exceptFrom
+	aliased_import: coerceToAliasedImport,
+	argument_list: coerceToArgumentList,
+	as_pattern: coerceToAsPattern,
+	assert_statement: coerceToAssertStatement,
+	assignment: coerceToAssignment,
+	attribute: coerceToAttribute,
+	augmented_assignment: coerceToAugmentedAssignment,
+	await: coerceToAwait,
+	binary_operator: coerceToBinaryOperator,
+	block: coerceToBlock,
+	boolean_operator: coerceToBooleanOperator,
+	break_statement: coerceToBreakStatement,
+	call: coerceToCall,
+	case_clause: coerceToCaseClause,
+	case_pattern: coerceToCasePattern,
+	chevron: coerceToChevron,
+	class_definition: coerceToClassDefinition,
+	class_pattern: coerceToClassPattern,
+	comment: coerceToComment,
+	comparison_operator: coerceToComparisonOperator,
+	complex_pattern: coerceToComplexPattern,
+	concatenated_string: coerceToConcatenatedString,
+	conditional_expression: coerceToConditionalExpression,
+	constrained_type: coerceToConstrainedType,
+	continue_statement: coerceToContinueStatement,
+	decorated_definition: coerceToDecoratedDefinition,
+	decorator: coerceToDecorator,
+	default_parameter: coerceToDefaultParameter,
+	delete_statement: coerceToDeleteStatement,
+	dict_pattern: coerceToDictPattern,
+	dictionary: coerceToDictionary,
+	dictionary_comprehension: coerceToDictionaryComprehension,
+	dictionary_splat: coerceToDictionarySplat,
+	dictionary_splat_pattern: coerceToDictionarySplatPattern,
+	dotted_name: coerceToDottedName,
+	elif_clause: coerceToElifClause,
+	else_clause: coerceToElseClause,
+	escape_sequence: coerceToEscapeSequence,
+	except_clause: coerceToExceptClause,
+	exec_statement: coerceToExecStatement,
+	expression_list: coerceToExpressionList,
+	expression_statement: coerceToExpressionStatement,
+	false: coerceToFalse,
+	finally_clause: coerceToFinallyClause,
+	float: coerceToFloat,
+	for_in_clause: coerceToForInClause,
+	for_statement: coerceToForStatement,
+	format_specifier: coerceToFormatSpecifier,
+	function_definition: coerceToFunctionDefinition,
+	future_import_statement: coerceToFutureImportStatement,
+	generator_expression: coerceToGeneratorExpression,
+	generic_type: coerceToGenericType,
+	global_statement: coerceToGlobalStatement,
+	identifier: coerceToIdentifier,
+	if_clause: coerceToIfClause,
+	if_statement: coerceToIfStatement,
+	import_from_statement: coerceToImportFromStatement,
+	import_prefix: coerceToImportPrefix,
+	import_statement: coerceToImportStatement,
+	integer: coerceToInteger,
+	interpolation: coerceToInterpolation,
+	keyword_argument: coerceToKeywordArgument,
+	keyword_pattern: coerceToKeywordPattern,
+	lambda: coerceToLambda,
+	lambda_parameters: coerceToLambdaParameters,
+	lambda_within_for_in_clause: coerceToLambdaWithinForInClause,
+	line_continuation: coerceToLineContinuation,
+	list: coerceToList,
+	list_comprehension: coerceToListComprehension,
+	list_pattern: coerceToListPattern,
+	list_splat: coerceToListSplat,
+	list_splat_pattern: coerceToListSplatPattern,
+	match_statement: coerceToMatchStatement,
+	member_type: coerceToMemberType,
+	module: coerceToModule,
+	named_expression: coerceToNamedExpression,
+	none: coerceToNone,
+	nonlocal_statement: coerceToNonlocalStatement,
+	not_operator: coerceToNotOperator,
+	pair: coerceToPair,
+	parameters: coerceToParameters,
+	parenthesized_expression: coerceToParenthesizedExpression,
+	parenthesized_list_splat: coerceToParenthesizedListSplat,
+	pass_statement: coerceToPassStatement,
+	pattern_list: coerceToPatternList,
+	print_statement: coerceToPrintStatement,
+	raise_statement: coerceToRaiseStatement,
+	relative_import: coerceToRelativeImport,
+	return_statement: coerceToReturnStatement,
+	set: coerceToSet,
+	set_comprehension: coerceToSetComprehension,
+	slice: coerceToSlice,
+	splat_pattern: coerceToSplatPattern,
+	splat_type: coerceToSplatType,
+	string: coerceToString,
+	string_content: coerceToStringContent,
+	subscript: coerceToSubscript,
+	true: coerceToTrue,
+	try_statement: coerceToTryStatement,
+	tuple: coerceToTuple,
+	tuple_pattern: coerceToTuplePattern,
+	type: coerceToType,
+	type_alias_statement: coerceToTypeAliasStatement,
+	type_conversion: coerceToTypeConversion,
+	type_parameter: coerceToTypeParameter,
+	typed_default_parameter: coerceToTypedDefaultParameter,
+	typed_parameter: coerceToTypedParameter,
+	unary_operator: coerceToUnaryOperator,
+	union_pattern: coerceToUnionPattern,
+	union_type: coerceToUnionType,
+	while_statement: coerceToWhileStatement,
+	with_clause: coerceToWithClause,
+	with_item: coerceToWithItem,
+	with_statement: coerceToWithStatement,
+	yield: coerceToYield,
+	list_pattern_group1: coerceToListPatternGroup1,
+	argument_list_group1: coerceToArgumentListGroup1,
+	dict_pattern_group1: coerceToDictPatternGroup1,
+	dictionary_group1: coerceToDictionaryGroup1,
+	slice_group1: coerceToSliceGroup1,
+	string_start: coerceToStringStart,
+	escape_interpolation: coerceToEscapeInterpolation,
+	string_end: coerceToStringEnd,
+	']': coerceToCloseBracket,
+	')': coerceToCloseParen,
+	'}': coerceToCloseBrace,
+	except: coerceToExcept
 } as const;
 export type _FromMap = typeof _fromMap;
 
@@ -147,27 +147,27 @@ interface _LeafEntry {
 	readonly factory: (text: string) => AnyNodeData;
 }
 const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
-	break_statement: { values: ['break'], factory: () => F.breakStatement() },
-	comment: { factory: F.comment },
-	continue_statement: { values: ['continue'], factory: () => F.continueStatement() },
-	escape_sequence: { factory: F.escapeSequence },
-	false: { values: ['False'], factory: () => F.false_() },
-	float: { factory: F.float },
-	identifier: { factory: F.identifier },
-	import_prefix: { factory: F.importPrefix },
-	integer: { factory: F.integer },
-	line_continuation: { factory: F.lineContinuation },
-	none: { values: ['None'], factory: () => F.none() },
-	pass_statement: { values: ['pass'], factory: () => F.passStatement() },
-	true: { values: ['True'], factory: () => F.true_() },
-	type_conversion: { factory: F.typeConversion },
-	string_start: { factory: F.stringStart },
-	escape_interpolation: { factory: F.escapeInterpolation },
-	string_end: { factory: F.stringEnd },
-	']': { factory: F.closeBracket },
-	')': { factory: F.closeParen },
-	'}': { factory: F.closeBrace },
-	except: { factory: F.except }
+	break_statement: { values: ['break'], factory: () => F.buildBreakStatement() },
+	comment: { factory: F.buildComment },
+	continue_statement: { values: ['continue'], factory: () => F.buildContinueStatement() },
+	escape_sequence: { factory: F.buildEscapeSequence },
+	false: { values: ['False'], factory: () => F.buildFalse() },
+	float: { factory: F.buildFloat },
+	identifier: { factory: F.buildIdentifier },
+	import_prefix: { factory: F.buildImportPrefix },
+	integer: { factory: F.buildInteger },
+	line_continuation: { factory: F.buildLineContinuation },
+	none: { values: ['None'], factory: () => F.buildNone() },
+	pass_statement: { values: ['pass'], factory: () => F.buildPassStatement() },
+	true: { values: ['True'], factory: () => F.buildTrue() },
+	type_conversion: { factory: F.buildTypeConversion },
+	string_start: { factory: F.buildStringStart },
+	escape_interpolation: { factory: F.buildEscapeInterpolation },
+	string_end: { factory: F.buildStringEnd },
+	']': { factory: F.buildCloseBracket },
+	')': { factory: F.buildCloseParen },
+	'}': { factory: F.buildCloseBrace },
+	except: { factory: F.buildExcept }
 };
 
 function _resolveLeafString(v: string, kinds: readonly string[]): AnyNodeData | undefined {
@@ -314,95 +314,95 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
 	switch (kind) {
 		case '_collection_elements':
-			return F.collectionElements(children as Parameters<typeof F.collectionElements>[0]);
+			return F.buildCollectionElements(children as Parameters<typeof F.buildCollectionElements>[0]);
 		case '_comprehension_clauses':
-			return F.comprehensionClauses(...(children as Parameters<typeof F.comprehensionClauses>));
+			return F.buildComprehensionClauses(...(children as Parameters<typeof F.buildComprehensionClauses>));
 		case '_expression_statement_tuple':
-			return F.expressionStatementTuple(children as Parameters<typeof F.expressionStatementTuple>[0]);
+			return F.buildExpressionStatementTuple(children as Parameters<typeof F.buildExpressionStatementTuple>[0]);
 		case '_match_block':
-			return F.matchBlock(...(children as Parameters<typeof F.matchBlock>));
+			return F.buildMatchBlock(children[0] as Parameters<typeof F.buildMatchBlock>[0]);
 		case '_parameters':
-			return F._parameters(children as Parameters<typeof F._parameters>[0]);
+			return F.build_Parameters(children as Parameters<typeof F.build_Parameters>[0]);
 		case '_simple_pattern_negative':
-			return F.simplePatternNegative(...(children as Parameters<typeof F.simplePatternNegative>));
+			return F.buildSimplePatternNegative(children[0] as Parameters<typeof F.buildSimplePatternNegative>[0]);
 		case '_simple_statements':
-			return F.simpleStatements(...(children as Parameters<typeof F.simpleStatements>));
+			return F.buildSimpleStatements(...(children as Parameters<typeof F.buildSimpleStatements>));
 		case '_with_clause_bare':
-			return F.withClauseBare(children as Parameters<typeof F.withClauseBare>[0]);
+			return F.buildWithClauseBare(children as Parameters<typeof F.buildWithClauseBare>[0]);
 		case '_with_clause_paren':
-			return F.withClauseParen(...(children as Parameters<typeof F.withClauseParen>));
+			return F.buildWithClauseParen(...(children as Parameters<typeof F.buildWithClauseParen>));
 		case 'assert_statement':
-			return F.assertStatement(...(children as Parameters<typeof F.assertStatement>));
+			return F.buildAssertStatement(...(children as Parameters<typeof F.buildAssertStatement>));
 		case 'block':
-			return F.block(...(children as Parameters<typeof F.block>));
+			return F.buildBlock(...(children as Parameters<typeof F.buildBlock>));
 		case 'case_pattern':
-			return F.casePattern(children[0] as Parameters<typeof F.casePattern>[0]);
+			return F.buildCasePattern(children[0] as Parameters<typeof F.buildCasePattern>[0]);
 		case 'concatenated_string':
-			return F.concatenatedString(...(children as Parameters<typeof F.concatenatedString>));
+			return F.buildConcatenatedString(...(children as Parameters<typeof F.buildConcatenatedString>));
 		case 'delete_statement':
-			return F.deleteStatement(children[0] as Parameters<typeof F.deleteStatement>[0]);
+			return F.buildDeleteStatement(children[0] as Parameters<typeof F.buildDeleteStatement>[0]);
 		case 'dict_pattern':
-			return F.dictPattern(children[0] as Parameters<typeof F.dictPattern>[0]);
+			return F.buildDictPattern(children[0] as Parameters<typeof F.buildDictPattern>[0]);
 		case 'dictionary_splat_pattern':
-			return F.dictionarySplatPattern(children[0] as Parameters<typeof F.dictionarySplatPattern>[0]);
+			return F.buildDictionarySplatPattern(children[0] as Parameters<typeof F.buildDictionarySplatPattern>[0]);
 		case 'dotted_name':
-			return F.dottedName(...(children as Parameters<typeof F.dottedName>));
+			return F.buildDottedName(...(children as Parameters<typeof F.buildDottedName>));
 		case 'expression_list':
-			return F.expressionList(...(children as Parameters<typeof F.expressionList>));
+			return F.buildExpressionList(...(children as Parameters<typeof F.buildExpressionList>));
 		case 'expression_statement':
-			return F.expressionStatement(children[0] as Parameters<typeof F.expressionStatement>[0]);
+			return F.buildExpressionStatement(children[0] as Parameters<typeof F.buildExpressionStatement>[0]);
 		case 'format_specifier':
-			return F.formatSpecifier(...(children as Parameters<typeof F.formatSpecifier>));
+			return F.buildFormatSpecifier(...(children as Parameters<typeof F.buildFormatSpecifier>));
 		case 'global_statement':
-			return F.globalStatement(...(children as Parameters<typeof F.globalStatement>));
+			return F.buildGlobalStatement(...(children as Parameters<typeof F.buildGlobalStatement>));
 		case 'lambda_parameters':
-			return F.lambdaParameters(children[0] as Parameters<typeof F.lambdaParameters>[0]);
+			return F.buildLambdaParameters(children[0] as Parameters<typeof F.buildLambdaParameters>[0]);
 		case 'list':
-			return F.list(children[0] as Parameters<typeof F.list>[0]);
+			return F.buildList(children[0] as Parameters<typeof F.buildList>[0]);
 		case 'list_pattern':
-			return F.listPattern(children[0] as Parameters<typeof F.listPattern>[0]);
+			return F.buildListPattern(children[0] as Parameters<typeof F.buildListPattern>[0]);
 		case 'list_splat_pattern':
-			return F.listSplatPattern(children[0] as Parameters<typeof F.listSplatPattern>[0]);
+			return F.buildListSplatPattern(children[0] as Parameters<typeof F.buildListSplatPattern>[0]);
 		case 'module':
-			return F.module(...(children as Parameters<typeof F.module>));
+			return F.buildModule(...(children as Parameters<typeof F.buildModule>));
 		case 'nonlocal_statement':
-			return F.nonlocalStatement(...(children as Parameters<typeof F.nonlocalStatement>));
+			return F.buildNonlocalStatement(...(children as Parameters<typeof F.buildNonlocalStatement>));
 		case 'parameters':
-			return F.parameters(children[0] as Parameters<typeof F.parameters>[0]);
+			return F.buildParameters(children[0] as Parameters<typeof F.buildParameters>[0]);
 		case 'parenthesized_expression':
-			return F.parenthesizedExpression(children[0] as Parameters<typeof F.parenthesizedExpression>[0]);
+			return F.buildParenthesizedExpression(children[0] as Parameters<typeof F.buildParenthesizedExpression>[0]);
 		case 'parenthesized_list_splat':
-			return F.parenthesizedListSplat(children[0] as Parameters<typeof F.parenthesizedListSplat>[0]);
+			return F.buildParenthesizedListSplat(children[0] as Parameters<typeof F.buildParenthesizedListSplat>[0]);
 		case 'pattern_list':
-			return F.patternList(...(children as Parameters<typeof F.patternList>));
+			return F.buildPatternList(...(children as Parameters<typeof F.buildPatternList>));
 		case 'return_statement':
-			return F.returnStatement(children[0] as Parameters<typeof F.returnStatement>[0]);
+			return F.buildReturnStatement(children[0] as Parameters<typeof F.buildReturnStatement>[0]);
 		case 'set':
-			return F.set(children[0] as Parameters<typeof F.set>[0]);
+			return F.buildSet(children[0] as Parameters<typeof F.buildSet>[0]);
 		case 'string_content':
-			return F.stringContent(...(children as Parameters<typeof F.stringContent>));
+			return F.buildStringContent(...(children as Parameters<typeof F.buildStringContent>));
 		case 'tuple':
-			return F.tuple(children[0] as Parameters<typeof F.tuple>[0]);
+			return F.buildTuple(children[0] as Parameters<typeof F.buildTuple>[0]);
 		case 'tuple_pattern':
-			return F.tuplePattern(children[0] as Parameters<typeof F.tuplePattern>[0]);
+			return F.buildTuplePattern(children[0] as Parameters<typeof F.buildTuplePattern>[0]);
 		case 'type':
-			return F.type(children[0] as Parameters<typeof F.type>[0]);
+			return F.buildType(children[0] as Parameters<typeof F.buildType>[0]);
 		case 'type_parameter':
-			return F.typeParameter(...(children as Parameters<typeof F.typeParameter>));
+			return F.buildTypeParameter(...(children as Parameters<typeof F.buildTypeParameter>));
 		case 'union_pattern':
-			return F.unionPattern(...(children as Parameters<typeof F.unionPattern>));
+			return F.buildUnionPattern(...(children as Parameters<typeof F.buildUnionPattern>));
 		case 'with_clause':
-			return F.withClause(children[0] as Parameters<typeof F.withClause>[0]);
+			return F.buildWithClause(children[0] as Parameters<typeof F.buildWithClause>[0]);
 		case 'yield':
-			return F.yield_(children[0] as Parameters<typeof F.yield_>[0]);
+			return F.buildYield(children[0] as Parameters<typeof F.buildYield>[0]);
 		case 'list_pattern_group1':
-			return F.listPatternGroup1(children as Parameters<typeof F.listPatternGroup1>[0]);
+			return F.buildListPatternGroup1(children as Parameters<typeof F.buildListPatternGroup1>[0]);
 		case 'argument_list_group1':
-			return F.argumentListGroup1(children as Parameters<typeof F.argumentListGroup1>[0]);
+			return F.buildArgumentListGroup1(children as Parameters<typeof F.buildArgumentListGroup1>[0]);
 		case 'dictionary_group1':
-			return F.dictionaryGroup1(children as Parameters<typeof F.dictionaryGroup1>[0]);
+			return F.buildDictionaryGroup1(children as Parameters<typeof F.buildDictionaryGroup1>[0]);
 		case 'slice_group1':
-			return F.sliceGroup1(children[0] as Parameters<typeof F.sliceGroup1>[0]);
+			return F.buildSliceGroup1(children[0] as Parameters<typeof F.buildSliceGroup1>[0]);
 		default:
 			return undefined;
 	}
@@ -735,18 +735,18 @@ const _K27: readonly string[] = [
 ];
 const _K28: readonly string[] = ['list_splat_pattern', 'dictionary_splat_pattern'];
 
-export function aliasedImportFrom(input: T.AliasedImport.Loose): ReturnType<typeof F.aliasedImport> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.aliasedImport>;
-	return F.aliasedImport({
-		name: _resolveOneBranch<T.DottedName>(input.name, 'dotted_name') ?? F.dottedName(),
+export function coerceToAliasedImport(input: T.AliasedImport.Loose): ReturnType<typeof F.buildAliasedImport> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildAliasedImport>;
+	return F.buildAliasedImport({
+		name: _resolveOneBranch<T.DottedName>(input.name, 'dotted_name') ?? F.buildDottedName(),
 		alias: _requireField('aliased_import', 'alias', _resolveOneLeaf<T.Identifier>(input.alias, 'identifier'))
 	});
 }
 
-export function argumentListFrom(input?: T.ArgumentList.Loose): ReturnType<typeof F.argumentList> {
+export function coerceToArgumentList(input?: T.ArgumentList.Loose): ReturnType<typeof F.buildArgumentList> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === kindIdFromName('argument_list'))
-		return input as unknown as ReturnType<typeof F.argumentList>;
-	return F.argumentList(
+		return input as unknown as ReturnType<typeof F.buildArgumentList>;
+	return F.buildArgumentList(
 		_resolveOneBranch<T.ArgumentListGroup1>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'arguments' in input
 				? input.arguments
@@ -756,29 +756,29 @@ export function argumentListFrom(input?: T.ArgumentList.Loose): ReturnType<typeo
 	);
 }
 
-export function asPatternFrom(input: T.AsPattern.Loose): ReturnType<typeof F.asPattern> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.asPattern>;
-	return F.asPattern({
+export function coerceToAsPattern(input: T.AsPattern.Loose): ReturnType<typeof F.buildAsPattern> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildAsPattern>;
+	return F.buildAsPattern({
 		expression: _requireField('as_pattern', 'expression', _resolveOne<T.Expression>(input.expression, _K0, _K1)),
 		alias: _requireField('as_pattern', 'alias', _resolveOne<T.Expression>(input.alias, _K0, _K1))
 	});
 }
 
-export function assertStatementFrom(
+export function coerceToAssertStatement(
 	...input: readonly (T.Expression | T.AssertStatement)[]
-): ReturnType<typeof F.assertStatement> {
+): ReturnType<typeof F.buildAssertStatement> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.AssertStatement) {
 		const data = input[0];
 		const stored = (data as unknown as { _expression?: unknown })._expression;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.assertStatement(...(children as unknown as Parameters<typeof F.assertStatement>));
+		return F.buildAssertStatement(...(children as unknown as Parameters<typeof F.buildAssertStatement>));
 	}
-	return F.assertStatement(...(input as unknown as Parameters<typeof F.assertStatement>));
+	return F.buildAssertStatement(...(input as unknown as Parameters<typeof F.buildAssertStatement>));
 }
 
-export function assignmentFrom(input: T.Assignment.Loose): ReturnType<typeof F.assignment> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.assignment>;
-	return F.assignment({
+export function coerceToAssignment(input: T.Assignment.Loose): ReturnType<typeof F.buildAssignment> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildAssignment>;
+	return F.buildAssignment({
 		left: _requireField('assignment', 'left', _resolveOne<T.LeftHandSide>(input.left, _K2, _K3)),
 		content: _requireField(
 			'assignment',
@@ -788,17 +788,19 @@ export function assignmentFrom(input: T.Assignment.Loose): ReturnType<typeof F.a
 	});
 }
 
-export function attributeFrom(input: T.Attribute.Loose): ReturnType<typeof F.attribute> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.attribute>;
-	return F.attribute({
+export function coerceToAttribute(input: T.Attribute.Loose): ReturnType<typeof F.buildAttribute> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildAttribute>;
+	return F.buildAttribute({
 		object: _requireField('attribute', 'object', _resolveOne<T.PrimaryExpression>(input.object, _K0, _K6)),
 		attribute: _requireField('attribute', 'attribute', _resolveOneLeaf<T.Identifier>(input.attribute, 'identifier'))
 	});
 }
 
-export function augmentedAssignmentFrom(input: T.AugmentedAssignment.Loose): ReturnType<typeof F.augmentedAssignment> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.augmentedAssignment>;
-	return F.augmentedAssignment({
+export function coerceToAugmentedAssignment(
+	input: T.AugmentedAssignment.Loose
+): ReturnType<typeof F.buildAugmentedAssignment> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildAugmentedAssignment>;
+	return F.buildAugmentedAssignment({
 		left: _requireField('augmented_assignment', 'left', _resolveOne<T.LeftHandSide>(input.left, _K2, _K3)),
 		operator: _requireField(
 			'augmented_assignment',
@@ -826,10 +828,10 @@ export function augmentedAssignmentFrom(input: T.AugmentedAssignment.Loose): Ret
 	});
 }
 
-export function await_From(input: T.Await.Loose): ReturnType<typeof F.await_> {
+export function coerceToAwait(input: T.Await.Loose): ReturnType<typeof F.buildAwait> {
 	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('await'))
-		return input as unknown as ReturnType<typeof F.await_>;
-	return F.await_(
+		return input as unknown as ReturnType<typeof F.buildAwait>;
+	return F.buildAwait(
 		_requireField(
 			'await',
 			'primaryExpression',
@@ -844,9 +846,9 @@ export function await_From(input: T.Await.Loose): ReturnType<typeof F.await_> {
 	);
 }
 
-export function binaryOperatorFrom(input: T.BinaryOperator.Loose): ReturnType<typeof F.binaryOperator> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.binaryOperator>;
-	return F.binaryOperator({
+export function coerceToBinaryOperator(input: T.BinaryOperator.Loose): ReturnType<typeof F.buildBinaryOperator> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildBinaryOperator>;
+	return F.buildBinaryOperator({
 		left: _requireField('binary_operator', 'left', _resolveOne<T.PrimaryExpression>(input.left, _K0, _K6)),
 		operator: _requireField(
 			'binary_operator',
@@ -878,19 +880,19 @@ export function binaryOperatorFrom(input: T.BinaryOperator.Loose): ReturnType<ty
 	});
 }
 
-export function blockFrom(...input: readonly (T.Statement | T.Block)[]): ReturnType<typeof F.block> {
+export function coerceToBlock(...input: readonly (T.Statement | T.Block)[]): ReturnType<typeof F.buildBlock> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Block) {
 		const data = input[0];
 		const stored = (data as unknown as { _statement?: unknown })._statement;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.block(...(children as unknown as Parameters<typeof F.block>));
+		return F.buildBlock(...(children as unknown as Parameters<typeof F.buildBlock>));
 	}
-	return F.block(...(input as unknown as Parameters<typeof F.block>));
+	return F.buildBlock(...(input as unknown as Parameters<typeof F.buildBlock>));
 }
 
-export function booleanOperatorFrom(input: T.BooleanOperator.Loose): ReturnType<typeof F.booleanOperator> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.booleanOperator>;
-	return F.booleanOperator({
+export function coerceToBooleanOperator(input: T.BooleanOperator.Loose): ReturnType<typeof F.buildBooleanOperator> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildBooleanOperator>;
+	return F.buildBooleanOperator({
 		left: _requireField('boolean_operator', 'left', _resolveOne<T.Expression>(input.left, _K0, _K1)),
 		operator: _requireField(
 			'boolean_operator',
@@ -904,14 +906,14 @@ export function booleanOperatorFrom(input: T.BooleanOperator.Loose): ReturnType<
 	});
 }
 
-export function breakStatementFrom(input?: T.BreakStatement): ReturnType<typeof F.breakStatement> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.breakStatement>;
-	return F.breakStatement();
+export function coerceToBreakStatement(input?: T.BreakStatement): ReturnType<typeof F.buildBreakStatement> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildBreakStatement>;
+	return F.buildBreakStatement();
 }
 
-export function callFrom(input: T.Call.Loose): ReturnType<typeof F.call> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.call>;
-	return F.call({
+export function coerceToCall(input: T.Call.Loose): ReturnType<typeof F.buildCall> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildCall>;
+	return F.buildCall({
 		function: _requireField('call', 'function', _resolveOne<T.PrimaryExpression>(input.function, _K0, _K6)),
 		arguments: _requireField(
 			'call',
@@ -921,11 +923,11 @@ export function callFrom(input: T.Call.Loose): ReturnType<typeof F.call> {
 	});
 }
 
-export function caseClauseFrom(input: T.CaseClause.Loose): ReturnType<typeof F.caseClause> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.caseClause>;
+export function coerceToCaseClause(input: T.CaseClause.Loose): ReturnType<typeof F.buildCaseClause> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildCaseClause>;
 	const _ne_casePatterns = _resolveManyBranch<T.CasePattern>(input.casePattern, 'case_pattern');
 	_assertNonEmpty(_ne_casePatterns, 'case_clause.casePatterns');
-	return F.caseClause({
+	return F.buildCaseClause({
 		casePattern: _ne_casePatterns,
 		guard: _resolveOneBranch<T.IfClause>(input.guard, 'if_clause'),
 		consequence: _requireField(
@@ -936,21 +938,21 @@ export function caseClauseFrom(input: T.CaseClause.Loose): ReturnType<typeof F.c
 	});
 }
 
-export function casePatternFrom(
+export function coerceToCasePattern(
 	input?: (T._AsPattern | T.KeywordPattern | T.SimplePattern) | T.CasePattern
-): ReturnType<typeof F.casePattern> {
+): ReturnType<typeof F.buildCasePattern> {
 	if (isNodeData(input) && input.$type === TSKindId.CasePattern) {
 		const data = input;
 		const child = (data as unknown as { _content?: unknown })._content;
-		return F.casePattern(child as Parameters<typeof F.casePattern>[0]);
+		return F.buildCasePattern(child as Parameters<typeof F.buildCasePattern>[0]);
 	}
-	return F.casePattern(input as Parameters<typeof F.casePattern>[0]);
+	return F.buildCasePattern(input as Parameters<typeof F.buildCasePattern>[0]);
 }
 
-export function chevronFrom(input: T.Chevron.Loose): ReturnType<typeof F.chevron> {
+export function coerceToChevron(input: T.Chevron.Loose): ReturnType<typeof F.buildChevron> {
 	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('chevron'))
-		return input as unknown as ReturnType<typeof F.chevron>;
-	return F.chevron(
+		return input as unknown as ReturnType<typeof F.buildChevron>;
+	return F.buildChevron(
 		_requireField(
 			'chevron',
 			'expression',
@@ -965,9 +967,9 @@ export function chevronFrom(input: T.Chevron.Loose): ReturnType<typeof F.chevron
 	);
 }
 
-export function classDefinitionFrom(input: T.ClassDefinition.Loose): ReturnType<typeof F.classDefinition> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.classDefinition>;
-	return F.classDefinition({
+export function coerceToClassDefinition(input: T.ClassDefinition.Loose): ReturnType<typeof F.buildClassDefinition> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildClassDefinition>;
+	return F.buildClassDefinition({
 		name: _requireField('class_definition', 'name', _resolveOneLeaf<T.Identifier>(input.name, 'identifier')),
 		typeParameters: _resolveOneBranch<T.TypeParameter>(input.typeParameters, 'type_parameter'),
 		superclasses: _resolveOneBranch<T.ArgumentList>(input.superclasses, 'argument_list'),
@@ -979,35 +981,37 @@ export function classDefinitionFrom(input: T.ClassDefinition.Loose): ReturnType<
 	});
 }
 
-export function classPatternFrom(input: T.ClassPattern.Loose): ReturnType<typeof F.classPattern> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.classPattern>;
-	return F.classPattern({
-		dottedName: _resolveOneBranch<T.DottedName>(input.dottedName, 'dotted_name') ?? F.dottedName(),
+export function coerceToClassPattern(input: T.ClassPattern.Loose): ReturnType<typeof F.buildClassPattern> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildClassPattern>;
+	return F.buildClassPattern({
+		dottedName: _resolveOneBranch<T.DottedName>(input.dottedName, 'dotted_name') ?? F.buildDottedName(),
 		arguments: _resolveOneBranch<T.ListPatternGroup1>(input.arguments, 'list_pattern_group1')
 	});
 }
 
-export function commentFrom(input: string | T.Comment): ReturnType<typeof F.comment> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.comment>;
-	return F.comment(input as Parameters<typeof F.comment>[0]);
+export function coerceToComment(input: string | T.Comment): ReturnType<typeof F.buildComment> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildComment>;
+	return F.buildComment(input as Parameters<typeof F.buildComment>[0]);
 }
 
-export function comparisonOperatorFrom(input: T.ComparisonOperator.Loose): ReturnType<typeof F.comparisonOperator> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.comparisonOperator>;
+export function coerceToComparisonOperator(
+	input: T.ComparisonOperator.Loose
+): ReturnType<typeof F.buildComparisonOperator> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildComparisonOperator>;
 	const _ne_comparators = _resolveManyBranch<T.ComparisonOperatorComparator>(
 		input.comparators,
 		'_comparison_operator_comparator'
 	);
 	_assertNonEmpty(_ne_comparators, 'comparison_operator.comparators');
-	return F.comparisonOperator({
+	return F.buildComparisonOperator({
 		left: _requireField('comparison_operator', 'left', _resolveOne<T.PrimaryExpression>(input.left, _K0, _K6)),
 		comparators: _ne_comparators
 	});
 }
 
-export function complexPatternFrom(input: T.ComplexPattern.Loose): ReturnType<typeof F.complexPattern> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.complexPattern>;
-	return F.complexPattern({
+export function coerceToComplexPattern(input: T.ComplexPattern.Loose): ReturnType<typeof F.buildComplexPattern> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildComplexPattern>;
+	return F.buildComplexPattern({
 		real: _resolveBooleanKeyword(input.real),
 		imaginary: _requireField(
 			'complex_pattern',
@@ -1026,23 +1030,23 @@ export function complexPatternFrom(input: T.ComplexPattern.Loose): ReturnType<ty
 	});
 }
 
-export function concatenatedStringFrom(
+export function coerceToConcatenatedString(
 	...input: readonly (T.String | T.ConcatenatedString)[]
-): ReturnType<typeof F.concatenatedString> {
+): ReturnType<typeof F.buildConcatenatedString> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ConcatenatedString) {
 		const data = input[0];
 		const stored = (data as unknown as { _string?: unknown })._string;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.concatenatedString(...(children as unknown as Parameters<typeof F.concatenatedString>));
+		return F.buildConcatenatedString(...(children as unknown as Parameters<typeof F.buildConcatenatedString>));
 	}
-	return F.concatenatedString(...(input as unknown as Parameters<typeof F.concatenatedString>));
+	return F.buildConcatenatedString(...(input as unknown as Parameters<typeof F.buildConcatenatedString>));
 }
 
-export function conditionalExpressionFrom(
+export function coerceToConditionalExpression(
 	input: T.ConditionalExpression.Loose
-): ReturnType<typeof F.conditionalExpression> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.conditionalExpression>;
-	return F.conditionalExpression({
+): ReturnType<typeof F.buildConditionalExpression> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildConditionalExpression>;
+	return F.buildConditionalExpression({
 		body: _requireField('conditional_expression', 'body', _resolveOne<T.Expression>(input.body, _K0, _K1)),
 		condition: _requireField(
 			'conditional_expression',
@@ -1057,24 +1061,26 @@ export function conditionalExpressionFrom(
 	});
 }
 
-export function constrainedTypeFrom(input: T.ConstrainedType.Loose): ReturnType<typeof F.constrainedType> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.constrainedType>;
-	return F.constrainedType({
-		baseType: _resolveOneBranch<T.Type>(input.baseType, 'type') ?? F.type(),
-		constraint: _resolveOneBranch<T.Type>(input.constraint, 'type') ?? F.type()
+export function coerceToConstrainedType(input: T.ConstrainedType.Loose): ReturnType<typeof F.buildConstrainedType> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildConstrainedType>;
+	return F.buildConstrainedType({
+		baseType: _requireField('constrained_type', 'baseType', _resolveOneBranch<T.Type>(input.baseType, 'type')),
+		constraint: _requireField('constrained_type', 'constraint', _resolveOneBranch<T.Type>(input.constraint, 'type'))
 	});
 }
 
-export function continueStatementFrom(input?: T.ContinueStatement): ReturnType<typeof F.continueStatement> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.continueStatement>;
-	return F.continueStatement();
+export function coerceToContinueStatement(input?: T.ContinueStatement): ReturnType<typeof F.buildContinueStatement> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildContinueStatement>;
+	return F.buildContinueStatement();
 }
 
-export function decoratedDefinitionFrom(input: T.DecoratedDefinition.Loose): ReturnType<typeof F.decoratedDefinition> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.decoratedDefinition>;
+export function coerceToDecoratedDefinition(
+	input: T.DecoratedDefinition.Loose
+): ReturnType<typeof F.buildDecoratedDefinition> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildDecoratedDefinition>;
 	const _ne_decorators = _resolveManyBranch<T.Decorator>(input.decorator, 'decorator');
 	_assertNonEmpty(_ne_decorators, 'decorated_definition.decorators');
-	return F.decoratedDefinition({
+	return F.buildDecoratedDefinition({
 		decorator: _ne_decorators,
 		definition: _requireField(
 			'decorated_definition',
@@ -1084,10 +1090,10 @@ export function decoratedDefinitionFrom(input: T.DecoratedDefinition.Loose): Ret
 	});
 }
 
-export function decoratorFrom(input: T.Decorator.Loose): ReturnType<typeof F.decorator> {
+export function coerceToDecorator(input: T.Decorator.Loose): ReturnType<typeof F.buildDecorator> {
 	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('decorator'))
-		return input as unknown as ReturnType<typeof F.decorator>;
-	return F.decorator(
+		return input as unknown as ReturnType<typeof F.buildDecorator>;
+	return F.buildDecorator(
 		_requireField(
 			'decorator',
 			'expression',
@@ -1102,36 +1108,40 @@ export function decoratorFrom(input: T.Decorator.Loose): ReturnType<typeof F.dec
 	);
 }
 
-export function defaultParameterFrom(input: T.DefaultParameter.Loose): ReturnType<typeof F.defaultParameter> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.defaultParameter>;
-	return F.defaultParameter({
+export function coerceToDefaultParameter(input: T.DefaultParameter.Loose): ReturnType<typeof F.buildDefaultParameter> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildDefaultParameter>;
+	return F.buildDefaultParameter({
 		name: _requireField('default_parameter', 'name', _resolveOne<T.Identifier | T.TuplePattern>(input.name, _K2, _K13)),
 		value: _requireField('default_parameter', 'value', _resolveOne<T.Expression>(input.value, _K0, _K1))
 	});
 }
 
-export function deleteStatementFrom(input?: T.Expressions | T.DeleteStatement): ReturnType<typeof F.deleteStatement> {
+export function coerceToDeleteStatement(
+	input?: T.Expressions | T.DeleteStatement
+): ReturnType<typeof F.buildDeleteStatement> {
 	if (isNodeData(input) && input.$type === TSKindId.DeleteStatement) {
 		const data = input;
 		const child = (data as unknown as { _expressions?: unknown })._expressions;
-		return F.deleteStatement(child as Parameters<typeof F.deleteStatement>[0]);
+		return F.buildDeleteStatement(child as Parameters<typeof F.buildDeleteStatement>[0]);
 	}
-	return F.deleteStatement(input as Parameters<typeof F.deleteStatement>[0]);
+	return F.buildDeleteStatement(input as Parameters<typeof F.buildDeleteStatement>[0]);
 }
 
-export function dictPatternFrom(input?: T.DictPatternGroup1 | T.DictPattern): ReturnType<typeof F.dictPattern> {
+export function coerceToDictPattern(
+	input?: T.DictPatternGroup1 | T.DictPattern
+): ReturnType<typeof F.buildDictPattern> {
 	if (isNodeData(input) && input.$type === TSKindId.DictPattern) {
 		const data = input;
 		const child = (data as unknown as { _dict_pattern_group1?: unknown })._dict_pattern_group1;
-		return F.dictPattern(child as Parameters<typeof F.dictPattern>[0]);
+		return F.buildDictPattern(child as Parameters<typeof F.buildDictPattern>[0]);
 	}
-	return F.dictPattern(input as Parameters<typeof F.dictPattern>[0]);
+	return F.buildDictPattern(input as Parameters<typeof F.buildDictPattern>[0]);
 }
 
-export function dictionaryFrom(input?: T.Dictionary.Loose): ReturnType<typeof F.dictionary> {
+export function coerceToDictionary(input?: T.Dictionary.Loose): ReturnType<typeof F.buildDictionary> {
 	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === kindIdFromName('dictionary'))
-		return input as unknown as ReturnType<typeof F.dictionary>;
-	return F.dictionary(
+		return input as unknown as ReturnType<typeof F.buildDictionary>;
+	return F.buildDictionary(
 		_resolveOneBranch<T.DictionaryGroup1>(
 			input !== null && typeof input === 'object' && !isNodeData(input) && 'entries' in input ? input.entries : input,
 			'dictionary_group1'
@@ -1139,22 +1149,22 @@ export function dictionaryFrom(input?: T.Dictionary.Loose): ReturnType<typeof F.
 	);
 }
 
-export function dictionaryComprehensionFrom(
+export function coerceToDictionaryComprehension(
 	input: T.DictionaryComprehension.Loose
-): ReturnType<typeof F.dictionaryComprehension> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.dictionaryComprehension>;
-	return F.dictionaryComprehension({
+): ReturnType<typeof F.buildDictionaryComprehension> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildDictionaryComprehension>;
+	return F.buildDictionaryComprehension({
 		body: _requireField('dictionary_comprehension', 'body', _resolveOneBranch<T.Pair>(input.body, 'pair')),
 		comprehensionClauses:
 			_resolveOneBranch<T.ComprehensionClauses>(input.comprehensionClauses, '_comprehension_clauses') ??
-			F.comprehensionClauses()
+			F.buildComprehensionClauses()
 	});
 }
 
-export function dictionarySplatFrom(input: T.DictionarySplat.Loose): ReturnType<typeof F.dictionarySplat> {
+export function coerceToDictionarySplat(input: T.DictionarySplat.Loose): ReturnType<typeof F.buildDictionarySplat> {
 	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('dictionary_splat'))
-		return input as unknown as ReturnType<typeof F.dictionarySplat>;
-	return F.dictionarySplat(
+		return input as unknown as ReturnType<typeof F.buildDictionarySplat>;
+	return F.buildDictionarySplat(
 		_requireField(
 			'dictionary_splat',
 			'expression',
@@ -1169,30 +1179,32 @@ export function dictionarySplatFrom(input: T.DictionarySplat.Loose): ReturnType<
 	);
 }
 
-export function dictionarySplatPatternFrom(
+export function coerceToDictionarySplatPattern(
 	input?: (T.Identifier | T.Subscript | T.Attribute) | T.DictionarySplatPattern
-): ReturnType<typeof F.dictionarySplatPattern> {
+): ReturnType<typeof F.buildDictionarySplatPattern> {
 	if (isNodeData(input) && input.$type === TSKindId.DictionarySplatPattern) {
 		const data = input;
 		const child = (data as unknown as { _content?: unknown })._content;
-		return F.dictionarySplatPattern(child as Parameters<typeof F.dictionarySplatPattern>[0]);
+		return F.buildDictionarySplatPattern(child as Parameters<typeof F.buildDictionarySplatPattern>[0]);
 	}
-	return F.dictionarySplatPattern(input as Parameters<typeof F.dictionarySplatPattern>[0]);
+	return F.buildDictionarySplatPattern(input as Parameters<typeof F.buildDictionarySplatPattern>[0]);
 }
 
-export function dottedNameFrom(...input: readonly (T.Identifier | T.DottedName)[]): ReturnType<typeof F.dottedName> {
+export function coerceToDottedName(
+	...input: readonly (T.Identifier | T.DottedName)[]
+): ReturnType<typeof F.buildDottedName> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.DottedName) {
 		const data = input[0];
 		const stored = (data as unknown as { _identifier?: unknown })._identifier;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.dottedName(...(children as unknown as Parameters<typeof F.dottedName>));
+		return F.buildDottedName(...(children as unknown as Parameters<typeof F.buildDottedName>));
 	}
-	return F.dottedName(...(input as unknown as Parameters<typeof F.dottedName>));
+	return F.buildDottedName(...(input as unknown as Parameters<typeof F.buildDottedName>));
 }
 
-export function elifClauseFrom(input: T.ElifClause.Loose): ReturnType<typeof F.elifClause> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.elifClause>;
-	return F.elifClause({
+export function coerceToElifClause(input: T.ElifClause.Loose): ReturnType<typeof F.buildElifClause> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildElifClause>;
+	return F.buildElifClause({
 		condition: _requireField('elif_clause', 'condition', _resolveOne<T.Expression>(input.condition, _K0, _K1)),
 		consequence: _requireField(
 			'elif_clause',
@@ -1202,10 +1214,10 @@ export function elifClauseFrom(input: T.ElifClause.Loose): ReturnType<typeof F.e
 	});
 }
 
-export function elseClauseFrom(input: T.ElseClause.Loose): ReturnType<typeof F.elseClause> {
+export function coerceToElseClause(input: T.ElseClause.Loose): ReturnType<typeof F.buildElseClause> {
 	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('else_clause'))
-		return input as unknown as ReturnType<typeof F.elseClause>;
-	return F.elseClause(
+		return input as unknown as ReturnType<typeof F.buildElseClause>;
+	return F.buildElseClause(
 		_requireField(
 			'else_clause',
 			'body',
@@ -1218,14 +1230,14 @@ export function elseClauseFrom(input: T.ElseClause.Loose): ReturnType<typeof F.e
 	);
 }
 
-export function escapeSequenceFrom(input: string | T.EscapeSequence): ReturnType<typeof F.escapeSequence> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.escapeSequence>;
-	return F.escapeSequence(input as Parameters<typeof F.escapeSequence>[0]);
+export function coerceToEscapeSequence(input: string | T.EscapeSequence): ReturnType<typeof F.buildEscapeSequence> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildEscapeSequence>;
+	return F.buildEscapeSequence(input as Parameters<typeof F.buildEscapeSequence>[0]);
 }
 
-export function exceptClauseFrom(input?: T.ExceptClause.Loose): ReturnType<typeof F.exceptClause> {
-	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.exceptClause>;
-	return F.exceptClause({
+export function coerceToExceptClause(input?: T.ExceptClause.Loose): ReturnType<typeof F.buildExceptClause> {
+	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildExceptClause>;
+	return F.buildExceptClause({
 		content: _resolveOne<T.ExceptClauseAs | T.ExceptClauseList>(input?.content, _K4, _K14),
 		simpleStatements: _resolveOneBranch<T.SimpleStatements>(input?.simpleStatements, '_simple_statements'),
 		block: _resolveOneBranch<T.Block>(input?.block, 'block'),
@@ -1233,48 +1245,48 @@ export function exceptClauseFrom(input?: T.ExceptClause.Loose): ReturnType<typeo
 	});
 }
 
-export function execStatementFrom(input: T.ExecStatement.Loose): ReturnType<typeof F.execStatement> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.execStatement>;
-	return F.execStatement({
+export function coerceToExecStatement(input: T.ExecStatement.Loose): ReturnType<typeof F.buildExecStatement> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildExecStatement>;
+	return F.buildExecStatement({
 		code: _requireField('exec_statement', 'code', _resolveOne<T.String | T.Identifier>(input.code, _K2, _K15)),
 		inClause: _resolveMany<T.Expression>(input.inClause, _K0, _K1)
 	});
 }
 
-export function expressionListFrom(
+export function coerceToExpressionList(
 	...input: readonly (T.Expression | T.ExpressionList)[]
-): ReturnType<typeof F.expressionList> {
+): ReturnType<typeof F.buildExpressionList> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.ExpressionList) {
 		const data = input[0];
 		const stored = (data as unknown as { _expression?: unknown })._expression;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.expressionList(...(children as unknown as Parameters<typeof F.expressionList>));
+		return F.buildExpressionList(...(children as unknown as Parameters<typeof F.buildExpressionList>));
 	}
-	return F.expressionList(...(input as unknown as Parameters<typeof F.expressionList>));
+	return F.buildExpressionList(...(input as unknown as Parameters<typeof F.buildExpressionList>));
 }
 
-export function expressionStatementFrom(
+export function coerceToExpressionStatement(
 	input?:
 		| (T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield)
 		| T.ExpressionStatement
-): ReturnType<typeof F.expressionStatement> {
+): ReturnType<typeof F.buildExpressionStatement> {
 	if (isNodeData(input) && input.$type === TSKindId.ExpressionStatement) {
 		const data = input;
 		const child = (data as unknown as { _content?: unknown })._content;
-		return F.expressionStatement(child as Parameters<typeof F.expressionStatement>[0]);
+		return F.buildExpressionStatement(child as Parameters<typeof F.buildExpressionStatement>[0]);
 	}
-	return F.expressionStatement(input as Parameters<typeof F.expressionStatement>[0]);
+	return F.buildExpressionStatement(input as Parameters<typeof F.buildExpressionStatement>[0]);
 }
 
-export function false_From(input?: T.False): ReturnType<typeof F.false_> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.false_>;
-	return F.false_();
+export function coerceToFalse(input?: T.False): ReturnType<typeof F.buildFalse> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildFalse>;
+	return F.buildFalse();
 }
 
-export function finallyClauseFrom(input: T.FinallyClause.Loose): ReturnType<typeof F.finallyClause> {
+export function coerceToFinallyClause(input: T.FinallyClause.Loose): ReturnType<typeof F.buildFinallyClause> {
 	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('finally_clause'))
-		return input as unknown as ReturnType<typeof F.finallyClause>;
-	return F.finallyClause(
+		return input as unknown as ReturnType<typeof F.buildFinallyClause>;
+	return F.buildFinallyClause(
 		_requireField(
 			'finally_clause',
 			'block',
@@ -1287,25 +1299,25 @@ export function finallyClauseFrom(input: T.FinallyClause.Loose): ReturnType<type
 	);
 }
 
-export function floatFrom(input: string | T.Float): ReturnType<typeof F.float> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.float>;
-	return F.float(input as Parameters<typeof F.float>[0]);
+export function coerceToFloat(input: string | T.Float): ReturnType<typeof F.buildFloat> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildFloat>;
+	return F.buildFloat(input as Parameters<typeof F.buildFloat>[0]);
 }
 
-export function forInClauseFrom(input: T.ForInClause.Loose): ReturnType<typeof F.forInClause> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.forInClause>;
+export function coerceToForInClause(input: T.ForInClause.Loose): ReturnType<typeof F.buildForInClause> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildForInClause>;
 	const _ne_rights = _resolveMany<T.ExpressionWithinForInClause>(input.right, _K0, _K16);
 	_assertNonEmpty(_ne_rights, 'for_in_clause.rights');
-	return F.forInClause({
+	return F.buildForInClause({
 		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
 		left: _requireField('for_in_clause', 'left', _resolveOne<T.LeftHandSide>(input.left, _K2, _K3)),
 		right: _ne_rights
 	});
 }
 
-export function forStatementFrom(input: T.ForStatement.Loose): ReturnType<typeof F.forStatement> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.forStatement>;
-	return F.forStatement({
+export function coerceToForStatement(input: T.ForStatement.Loose): ReturnType<typeof F.buildForStatement> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildForStatement>;
+	return F.buildForStatement({
 		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
 		left: _requireField('for_statement', 'left', _resolveOne<T.LeftHandSide>(input.left, _K2, _K3)),
 		right: _requireField('for_statement', 'right', _resolveOne<T.Expressions>(input.right, _K0, _K17)),
@@ -1318,25 +1330,27 @@ export function forStatementFrom(input: T.ForStatement.Loose): ReturnType<typeof
 	});
 }
 
-export function formatSpecifierFrom(
+export function coerceToFormatSpecifier(
 	...input: readonly (('[^{}\\n]+' | T.Interpolation) | T.FormatSpecifier)[]
-): ReturnType<typeof F.formatSpecifier> {
+): ReturnType<typeof F.buildFormatSpecifier> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.FormatSpecifier) {
 		const data = input[0];
 		const stored = (data as unknown as { _content?: unknown })._content;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.formatSpecifier(...(children as unknown as Parameters<typeof F.formatSpecifier>));
+		return F.buildFormatSpecifier(...(children as unknown as Parameters<typeof F.buildFormatSpecifier>));
 	}
-	return F.formatSpecifier(...(input as unknown as Parameters<typeof F.formatSpecifier>));
+	return F.buildFormatSpecifier(...(input as unknown as Parameters<typeof F.buildFormatSpecifier>));
 }
 
-export function functionDefinitionFrom(input: T.FunctionDefinition.Loose): ReturnType<typeof F.functionDefinition> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.functionDefinition>;
-	return F.functionDefinition({
+export function coerceToFunctionDefinition(
+	input: T.FunctionDefinition.Loose
+): ReturnType<typeof F.buildFunctionDefinition> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildFunctionDefinition>;
+	return F.buildFunctionDefinition({
 		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
 		name: _requireField('function_definition', 'name', _resolveOneLeaf<T.Identifier>(input.name, 'identifier')),
 		typeParameters: _resolveOneBranch<T.TypeParameter>(input.typeParameters, 'type_parameter'),
-		parameters: _resolveOneBranch<T.Parameters>(input.parameters, 'parameters') ?? F.parameters(),
+		parameters: _resolveOneBranch<T.Parameters>(input.parameters, 'parameters') ?? F.buildParameters(),
 		returnType: _resolveOneBranch<T.Type>(input.returnType, 'type'),
 		body: _requireField(
 			'function_definition',
@@ -1346,60 +1360,62 @@ export function functionDefinitionFrom(input: T.FunctionDefinition.Loose): Retur
 	});
 }
 
-export function futureImportStatementFrom(
+export function coerceToFutureImportStatement(
 	input: T.FutureImportStatement.Loose
-): ReturnType<typeof F.futureImportStatement> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.futureImportStatement>;
+): ReturnType<typeof F.buildFutureImportStatement> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildFutureImportStatement>;
 	const _ne_names = _resolveMany<T.DottedName | T.AliasedImport>(input.name, _K4, _K18);
 	_assertNonEmpty(_ne_names, 'future_import_statement.names');
-	return F.futureImportStatement({
+	return F.buildFutureImportStatement({
 		name: _ne_names
 	});
 }
 
-export function generatorExpressionFrom(input: T.GeneratorExpression.Loose): ReturnType<typeof F.generatorExpression> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.generatorExpression>;
-	return F.generatorExpression({
+export function coerceToGeneratorExpression(
+	input: T.GeneratorExpression.Loose
+): ReturnType<typeof F.buildGeneratorExpression> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildGeneratorExpression>;
+	return F.buildGeneratorExpression({
 		body: _requireField('generator_expression', 'body', _resolveOne<T.Expression>(input.body, _K0, _K1)),
 		comprehensionClauses:
 			_resolveOneBranch<T.ComprehensionClauses>(input.comprehensionClauses, '_comprehension_clauses') ??
-			F.comprehensionClauses()
+			F.buildComprehensionClauses()
 	});
 }
 
-export function genericTypeFrom(input: T.GenericType.Loose): ReturnType<typeof F.genericType> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.genericType>;
-	return F.genericType({
+export function coerceToGenericType(input: T.GenericType.Loose): ReturnType<typeof F.buildGenericType> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildGenericType>;
+	return F.buildGenericType({
 		identifier: _requireField(
 			'generic_type',
 			'identifier',
 			_resolveOneLeaf<T.Identifier>(input.identifier, 'identifier')
 		),
-		typeParameter: _resolveOneBranch<T.TypeParameter>(input.typeParameter, 'type_parameter') ?? F.typeParameter()
+		typeParameter: _resolveOneBranch<T.TypeParameter>(input.typeParameter, 'type_parameter') ?? F.buildTypeParameter()
 	});
 }
 
-export function globalStatementFrom(
+export function coerceToGlobalStatement(
 	...input: readonly (T.Identifier | T.GlobalStatement)[]
-): ReturnType<typeof F.globalStatement> {
+): ReturnType<typeof F.buildGlobalStatement> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.GlobalStatement) {
 		const data = input[0];
 		const stored = (data as unknown as { _identifier?: unknown })._identifier;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.globalStatement(...(children as unknown as Parameters<typeof F.globalStatement>));
+		return F.buildGlobalStatement(...(children as unknown as Parameters<typeof F.buildGlobalStatement>));
 	}
-	return F.globalStatement(...(input as unknown as Parameters<typeof F.globalStatement>));
+	return F.buildGlobalStatement(...(input as unknown as Parameters<typeof F.buildGlobalStatement>));
 }
 
-export function identifierFrom(input: string | T.Identifier): ReturnType<typeof F.identifier> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.identifier>;
-	return F.identifier(input as Parameters<typeof F.identifier>[0]);
+export function coerceToIdentifier(input: string | T.Identifier): ReturnType<typeof F.buildIdentifier> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildIdentifier>;
+	return F.buildIdentifier(input as Parameters<typeof F.buildIdentifier>[0]);
 }
 
-export function ifClauseFrom(input: T.IfClause.Loose): ReturnType<typeof F.ifClause> {
+export function coerceToIfClause(input: T.IfClause.Loose): ReturnType<typeof F.buildIfClause> {
 	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('if_clause'))
-		return input as unknown as ReturnType<typeof F.ifClause>;
-	return F.ifClause(
+		return input as unknown as ReturnType<typeof F.buildIfClause>;
+	return F.buildIfClause(
 		_requireField(
 			'if_clause',
 			'expression',
@@ -1414,9 +1430,9 @@ export function ifClauseFrom(input: T.IfClause.Loose): ReturnType<typeof F.ifCla
 	);
 }
 
-export function ifStatementFrom(input: T.IfStatement.Loose): ReturnType<typeof F.ifStatement> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.ifStatement>;
-	return F.ifStatement({
+export function coerceToIfStatement(input: T.IfStatement.Loose): ReturnType<typeof F.buildIfStatement> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildIfStatement>;
+	return F.buildIfStatement({
 		condition: _requireField('if_statement', 'condition', _resolveOne<T.Expression>(input.condition, _K0, _K1)),
 		consequence: _requireField(
 			'if_statement',
@@ -1427,15 +1443,17 @@ export function ifStatementFrom(input: T.IfStatement.Loose): ReturnType<typeof F
 	});
 }
 
-export function importFromStatementFrom(input: T.ImportFromStatement.Loose): ReturnType<typeof F.importFromStatement> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.importFromStatement>;
+export function coerceToImportFromStatement(
+	input: T.ImportFromStatement.Loose
+): ReturnType<typeof F.buildImportFromStatement> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildImportFromStatement>;
 	const _ne_wildcardImports = _resolveMany<T.WildcardImport | T.DottedName | T.AliasedImport>(
 		input.wildcardImport,
 		_K4,
 		_K18
 	);
 	_assertNonEmpty(_ne_wildcardImports, 'import_from_statement.wildcardImports');
-	return F.importFromStatement({
+	return F.buildImportFromStatement({
 		moduleName: _requireField(
 			'import_from_statement',
 			'moduleName',
@@ -1445,45 +1463,45 @@ export function importFromStatementFrom(input: T.ImportFromStatement.Loose): Ret
 	});
 }
 
-export function importPrefixFrom(input: string | T.ImportPrefix): ReturnType<typeof F.importPrefix> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.importPrefix>;
-	return F.importPrefix(input as Parameters<typeof F.importPrefix>[0]);
+export function coerceToImportPrefix(input: string | T.ImportPrefix): ReturnType<typeof F.buildImportPrefix> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildImportPrefix>;
+	return F.buildImportPrefix(input as Parameters<typeof F.buildImportPrefix>[0]);
 }
 
-export function importStatementFrom(input: T.ImportStatement.Loose): ReturnType<typeof F.importStatement> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.importStatement>;
+export function coerceToImportStatement(input: T.ImportStatement.Loose): ReturnType<typeof F.buildImportStatement> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildImportStatement>;
 	const _ne_names = _resolveMany<T.DottedName | T.AliasedImport>(input.name, _K4, _K18);
 	_assertNonEmpty(_ne_names, 'import_statement.names');
-	return F.importStatement({
+	return F.buildImportStatement({
 		name: _ne_names
 	});
 }
 
-export function integerFrom(input: string | T.Integer): ReturnType<typeof F.integer> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.integer>;
-	return F.integer(input as Parameters<typeof F.integer>[0]);
+export function coerceToInteger(input: string | T.Integer): ReturnType<typeof F.buildInteger> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildInteger>;
+	return F.buildInteger(input as Parameters<typeof F.buildInteger>[0]);
 }
 
-export function interpolationFrom(input: T.Interpolation.Loose): ReturnType<typeof F.interpolation> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.interpolation>;
-	return F.interpolation({
+export function coerceToInterpolation(input: T.Interpolation.Loose): ReturnType<typeof F.buildInterpolation> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildInterpolation>;
+	return F.buildInterpolation({
 		expression: _requireField('interpolation', 'expression', _resolveOne<T.FExpression>(input.expression, _K0, _K21)),
 		typeConversion: _resolveOneLeaf<T.TypeConversion>(input.typeConversion, 'type_conversion'),
 		formatSpecifier: _resolveOneBranch<T.FormatSpecifier>(input.formatSpecifier, 'format_specifier')
 	});
 }
 
-export function keywordArgumentFrom(input: T.KeywordArgument.Loose): ReturnType<typeof F.keywordArgument> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.keywordArgument>;
-	return F.keywordArgument({
+export function coerceToKeywordArgument(input: T.KeywordArgument.Loose): ReturnType<typeof F.buildKeywordArgument> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildKeywordArgument>;
+	return F.buildKeywordArgument({
 		name: _requireField('keyword_argument', 'name', _resolveOneLeaf<T.Identifier>(input.name, 'identifier')),
 		value: _requireField('keyword_argument', 'value', _resolveOne<T.Expression>(input.value, _K0, _K1))
 	});
 }
 
-export function keywordPatternFrom(input: T.KeywordPattern.Loose): ReturnType<typeof F.keywordPattern> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.keywordPattern>;
-	return F.keywordPattern({
+export function coerceToKeywordPattern(input: T.KeywordPattern.Loose): ReturnType<typeof F.buildKeywordPattern> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildKeywordPattern>;
+	return F.buildKeywordPattern({
 		identifier: _requireField(
 			'keyword_pattern',
 			'identifier',
@@ -1497,30 +1515,30 @@ export function keywordPatternFrom(input: T.KeywordPattern.Loose): ReturnType<ty
 	});
 }
 
-export function lambdaFrom(input: T.Lambda.Loose): ReturnType<typeof F.lambda> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.lambda>;
-	return F.lambda({
+export function coerceToLambda(input: T.Lambda.Loose): ReturnType<typeof F.buildLambda> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildLambda>;
+	return F.buildLambda({
 		parameters: _resolveOneBranch<T.LambdaParameters>(input.parameters, 'lambda_parameters'),
 		body: _requireField('lambda', 'body', _resolveOne<T.Expression>(input.body, _K0, _K1))
 	});
 }
 
-export function lambdaParametersFrom(
+export function coerceToLambdaParameters(
 	input?: T._Parameters | T.LambdaParameters
-): ReturnType<typeof F.lambdaParameters> {
+): ReturnType<typeof F.buildLambdaParameters> {
 	if (isNodeData(input) && input.$type === TSKindId.LambdaParameters) {
 		const data = input;
 		const child = (data as unknown as { _parameters?: unknown })._parameters;
-		return F.lambdaParameters(child as Parameters<typeof F.lambdaParameters>[0]);
+		return F.buildLambdaParameters(child as Parameters<typeof F.buildLambdaParameters>[0]);
 	}
-	return F.lambdaParameters(input as Parameters<typeof F.lambdaParameters>[0]);
+	return F.buildLambdaParameters(input as Parameters<typeof F.buildLambdaParameters>[0]);
 }
 
-export function lambdaWithinForInClauseFrom(
+export function coerceToLambdaWithinForInClause(
 	input: T.LambdaWithinForInClause.Loose
-): ReturnType<typeof F.lambdaWithinForInClause> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.lambdaWithinForInClause>;
-	return F.lambdaWithinForInClause({
+): ReturnType<typeof F.buildLambdaWithinForInClause> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildLambdaWithinForInClause>;
+	return F.buildLambdaWithinForInClause({
 		parameters: _resolveOneBranch<T.LambdaParameters>(input.parameters, 'lambda_parameters'),
 		body: _requireField(
 			'lambda_within_for_in_clause',
@@ -1530,43 +1548,47 @@ export function lambdaWithinForInClauseFrom(
 	});
 }
 
-export function lineContinuationFrom(input: string | T.LineContinuation): ReturnType<typeof F.lineContinuation> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.lineContinuation>;
-	return F.lineContinuation(input as Parameters<typeof F.lineContinuation>[0]);
+export function coerceToLineContinuation(
+	input: string | T.LineContinuation
+): ReturnType<typeof F.buildLineContinuation> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildLineContinuation>;
+	return F.buildLineContinuation(input as Parameters<typeof F.buildLineContinuation>[0]);
 }
 
-export function listFrom(input?: T.ElementList | T.List): ReturnType<typeof F.list> {
+export function coerceToList(input?: T.ElementList | T.List): ReturnType<typeof F.buildList> {
 	if (isNodeData(input) && input.$type === TSKindId.List) {
 		const data = input;
 		const child = (data as unknown as { _element_list?: unknown })._element_list;
-		return F.list(child as Parameters<typeof F.list>[0]);
+		return F.buildList(child as Parameters<typeof F.buildList>[0]);
 	}
-	return F.list(input as Parameters<typeof F.list>[0]);
+	return F.buildList(input as Parameters<typeof F.buildList>[0]);
 }
 
-export function listComprehensionFrom(input: T.ListComprehension.Loose): ReturnType<typeof F.listComprehension> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.listComprehension>;
-	return F.listComprehension({
+export function coerceToListComprehension(
+	input: T.ListComprehension.Loose
+): ReturnType<typeof F.buildListComprehension> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildListComprehension>;
+	return F.buildListComprehension({
 		body: _requireField('list_comprehension', 'body', _resolveOne<T.Expression>(input.body, _K0, _K1)),
 		comprehensionClauses:
 			_resolveOneBranch<T.ComprehensionClauses>(input.comprehensionClauses, '_comprehension_clauses') ??
-			F.comprehensionClauses()
+			F.buildComprehensionClauses()
 	});
 }
 
-export function listPatternFrom(input?: T.PatternGroup | T.ListPattern): ReturnType<typeof F.listPattern> {
+export function coerceToListPattern(input?: T.PatternGroup | T.ListPattern): ReturnType<typeof F.buildListPattern> {
 	if (isNodeData(input) && input.$type === TSKindId.ListPattern) {
 		const data = input;
 		const child = (data as unknown as { _pattern_group?: unknown })._pattern_group;
-		return F.listPattern(child as Parameters<typeof F.listPattern>[0]);
+		return F.buildListPattern(child as Parameters<typeof F.buildListPattern>[0]);
 	}
-	return F.listPattern(input as Parameters<typeof F.listPattern>[0]);
+	return F.buildListPattern(input as Parameters<typeof F.buildListPattern>[0]);
 }
 
-export function listSplatFrom(input: T.ListSplat.Loose): ReturnType<typeof F.listSplat> {
+export function coerceToListSplat(input: T.ListSplat.Loose): ReturnType<typeof F.buildListSplat> {
 	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('list_splat'))
-		return input as unknown as ReturnType<typeof F.listSplat>;
-	return F.listSplat(
+		return input as unknown as ReturnType<typeof F.buildListSplat>;
+	return F.buildListSplat(
 		_requireField(
 			'list_splat',
 			'expression',
@@ -1581,31 +1603,31 @@ export function listSplatFrom(input: T.ListSplat.Loose): ReturnType<typeof F.lis
 	);
 }
 
-export function listSplatPatternFrom(
+export function coerceToListSplatPattern(
 	input?: (T.Identifier | T.Subscript | T.Attribute) | T.ListSplatPattern
-): ReturnType<typeof F.listSplatPattern> {
+): ReturnType<typeof F.buildListSplatPattern> {
 	if (isNodeData(input) && input.$type === TSKindId.ListSplatPattern) {
 		const data = input;
 		const child = (data as unknown as { _content?: unknown })._content;
-		return F.listSplatPattern(child as Parameters<typeof F.listSplatPattern>[0]);
+		return F.buildListSplatPattern(child as Parameters<typeof F.buildListSplatPattern>[0]);
 	}
-	return F.listSplatPattern(input as Parameters<typeof F.listSplatPattern>[0]);
+	return F.buildListSplatPattern(input as Parameters<typeof F.buildListSplatPattern>[0]);
 }
 
-export function matchStatementFrom(input: T.MatchStatement.Loose): ReturnType<typeof F.matchStatement> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.matchStatement>;
+export function coerceToMatchStatement(input: T.MatchStatement.Loose): ReturnType<typeof F.buildMatchStatement> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildMatchStatement>;
 	const _ne_subjects = _resolveMany<T.Expression>(input.subject, _K0, _K1);
 	_assertNonEmpty(_ne_subjects, 'match_statement.subjects');
-	return F.matchStatement({
+	return F.buildMatchStatement({
 		subject: _ne_subjects,
-		body: _resolveOneBranch<T.MatchBlock>(input.body, '_match_block') ?? F.matchBlock()
+		body: _requireField('match_statement', 'body', _resolveOneBranch<T.MatchBlock>(input.body, '_match_block'))
 	});
 }
 
-export function memberTypeFrom(input: T.MemberType.Loose): ReturnType<typeof F.memberType> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.memberType>;
-	return F.memberType({
-		baseType: _resolveOneBranch<T.Type>(input.baseType, 'type') ?? F.type(),
+export function coerceToMemberType(input: T.MemberType.Loose): ReturnType<typeof F.buildMemberType> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildMemberType>;
+	return F.buildMemberType({
+		baseType: _requireField('member_type', 'baseType', _resolveOneBranch<T.Type>(input.baseType, 'type')),
 		identifier: _requireField(
 			'member_type',
 			'identifier',
@@ -1614,45 +1636,45 @@ export function memberTypeFrom(input: T.MemberType.Loose): ReturnType<typeof F.m
 	});
 }
 
-export function moduleFrom(...input: readonly (T.Statement | T.Module)[]): ReturnType<typeof F.module> {
+export function coerceToModule(...input: readonly (T.Statement | T.Module)[]): ReturnType<typeof F.buildModule> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.Module) {
 		const data = input[0];
 		const stored = (data as unknown as { _statement?: unknown })._statement;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.module(...(children as unknown as Parameters<typeof F.module>));
+		return F.buildModule(...(children as unknown as Parameters<typeof F.buildModule>));
 	}
-	return F.module(...(input as unknown as Parameters<typeof F.module>));
+	return F.buildModule(...(input as unknown as Parameters<typeof F.buildModule>));
 }
 
-export function namedExpressionFrom(input: T.NamedExpression.Loose): ReturnType<typeof F.namedExpression> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.namedExpression>;
-	return F.namedExpression({
+export function coerceToNamedExpression(input: T.NamedExpression.Loose): ReturnType<typeof F.buildNamedExpression> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildNamedExpression>;
+	return F.buildNamedExpression({
 		name: _requireField('named_expression', 'name', _resolveOne<T.NamedExpressionLhs>(input.name, _K2, _K24)),
 		value: _requireField('named_expression', 'value', _resolveOne<T.Expression>(input.value, _K0, _K1))
 	});
 }
 
-export function noneFrom(input?: T.None): ReturnType<typeof F.none> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.none>;
-	return F.none();
+export function coerceToNone(input?: T.None): ReturnType<typeof F.buildNone> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildNone>;
+	return F.buildNone();
 }
 
-export function nonlocalStatementFrom(
+export function coerceToNonlocalStatement(
 	...input: readonly (T.Identifier | T.NonlocalStatement)[]
-): ReturnType<typeof F.nonlocalStatement> {
+): ReturnType<typeof F.buildNonlocalStatement> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.NonlocalStatement) {
 		const data = input[0];
 		const stored = (data as unknown as { _identifier?: unknown })._identifier;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.nonlocalStatement(...(children as unknown as Parameters<typeof F.nonlocalStatement>));
+		return F.buildNonlocalStatement(...(children as unknown as Parameters<typeof F.buildNonlocalStatement>));
 	}
-	return F.nonlocalStatement(...(input as unknown as Parameters<typeof F.nonlocalStatement>));
+	return F.buildNonlocalStatement(...(input as unknown as Parameters<typeof F.buildNonlocalStatement>));
 }
 
-export function notOperatorFrom(input: T.NotOperator.Loose): ReturnType<typeof F.notOperator> {
+export function coerceToNotOperator(input: T.NotOperator.Loose): ReturnType<typeof F.buildNotOperator> {
 	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('not_operator'))
-		return input as unknown as ReturnType<typeof F.notOperator>;
-	return F.notOperator(
+		return input as unknown as ReturnType<typeof F.buildNotOperator>;
+	return F.buildNotOperator(
 		_requireField(
 			'not_operator',
 			'argument',
@@ -1667,79 +1689,81 @@ export function notOperatorFrom(input: T.NotOperator.Loose): ReturnType<typeof F
 	);
 }
 
-export function pairFrom(input: T.Pair.Loose): ReturnType<typeof F.pair> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.pair>;
-	return F.pair({
+export function coerceToPair(input: T.Pair.Loose): ReturnType<typeof F.buildPair> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildPair>;
+	return F.buildPair({
 		key: _requireField('pair', 'key', _resolveOne<T.Expression>(input.key, _K0, _K1)),
 		value: _requireField('pair', 'value', _resolveOne<T.Expression>(input.value, _K0, _K1))
 	});
 }
 
-export function parametersFrom(input?: T.ParameterList | T.Parameters): ReturnType<typeof F.parameters> {
+export function coerceToParameters(input?: T.ParameterList | T.Parameters): ReturnType<typeof F.buildParameters> {
 	if (isNodeData(input) && input.$type === TSKindId.Parameters) {
 		const data = input;
 		const child = (data as unknown as { _parameter_list?: unknown })._parameter_list;
-		return F.parameters(child as Parameters<typeof F.parameters>[0]);
+		return F.buildParameters(child as Parameters<typeof F.buildParameters>[0]);
 	}
-	return F.parameters(input as Parameters<typeof F.parameters>[0]);
+	return F.buildParameters(input as Parameters<typeof F.buildParameters>[0]);
 }
 
-export function parenthesizedExpressionFrom(
+export function coerceToParenthesizedExpression(
 	input?: (T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat) | T.ParenthesizedExpression
-): ReturnType<typeof F.parenthesizedExpression> {
+): ReturnType<typeof F.buildParenthesizedExpression> {
 	if (isNodeData(input) && input.$type === TSKindId.ParenthesizedExpression) {
 		const data = input;
 		const child = (data as unknown as { _content?: unknown })._content;
-		return F.parenthesizedExpression(child as Parameters<typeof F.parenthesizedExpression>[0]);
+		return F.buildParenthesizedExpression(child as Parameters<typeof F.buildParenthesizedExpression>[0]);
 	}
-	return F.parenthesizedExpression(input as Parameters<typeof F.parenthesizedExpression>[0]);
+	return F.buildParenthesizedExpression(input as Parameters<typeof F.buildParenthesizedExpression>[0]);
 }
 
-export function parenthesizedListSplatFrom(
+export function coerceToParenthesizedListSplat(
 	input?: (T.ParenthesizedListSplat | T.ListSplat) | T.ParenthesizedListSplat
-): ReturnType<typeof F.parenthesizedListSplat> {
+): ReturnType<typeof F.buildParenthesizedListSplat> {
 	if (isNodeData(input) && input.$type === TSKindId.ParenthesizedListSplat) {
 		const data = input;
 		const child = (data as unknown as { _content?: unknown })._content;
-		return F.parenthesizedListSplat(child as Parameters<typeof F.parenthesizedListSplat>[0]);
+		return F.buildParenthesizedListSplat(child as Parameters<typeof F.buildParenthesizedListSplat>[0]);
 	}
-	return F.parenthesizedListSplat(input as Parameters<typeof F.parenthesizedListSplat>[0]);
+	return F.buildParenthesizedListSplat(input as Parameters<typeof F.buildParenthesizedListSplat>[0]);
 }
 
-export function passStatementFrom(input?: T.PassStatement): ReturnType<typeof F.passStatement> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.passStatement>;
-	return F.passStatement();
+export function coerceToPassStatement(input?: T.PassStatement): ReturnType<typeof F.buildPassStatement> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildPassStatement>;
+	return F.buildPassStatement();
 }
 
-export function patternListFrom(...input: readonly (T.Pattern | T.PatternList)[]): ReturnType<typeof F.patternList> {
+export function coerceToPatternList(
+	...input: readonly (T.Pattern | T.PatternList)[]
+): ReturnType<typeof F.buildPatternList> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.PatternList) {
 		const data = input[0];
 		const stored = (data as unknown as { _pattern?: unknown })._pattern;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.patternList(...(children as unknown as Parameters<typeof F.patternList>));
+		return F.buildPatternList(...(children as unknown as Parameters<typeof F.buildPatternList>));
 	}
-	return F.patternList(...(input as unknown as Parameters<typeof F.patternList>));
+	return F.buildPatternList(...(input as unknown as Parameters<typeof F.buildPatternList>));
 }
 
-export function printStatementFrom(input?: T.PrintStatement.Loose): ReturnType<typeof F.printStatement> {
-	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.printStatement>;
-	return F.printStatement({
+export function coerceToPrintStatement(input?: T.PrintStatement.Loose): ReturnType<typeof F.buildPrintStatement> {
+	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildPrintStatement>;
+	return F.buildPrintStatement({
 		argument: _resolveMany<T.Expression>(input?.argument, _K0, _K1),
 		chevron: _resolveOneBranch<T.Chevron>(input?.chevron, 'chevron')
 	});
 }
 
-export function raiseStatementFrom(input?: T.RaiseStatement.Loose): ReturnType<typeof F.raiseStatement> {
-	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.raiseStatement>;
-	return F.raiseStatement({
+export function coerceToRaiseStatement(input?: T.RaiseStatement.Loose): ReturnType<typeof F.buildRaiseStatement> {
+	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildRaiseStatement>;
+	return F.buildRaiseStatement({
 		expressions: _resolveOne<T.Expressions>(input?.expressions, _K0, _K17),
 		cause: _resolveOne<T.Expression>(input?.cause, _K0, _K1)
 	});
 }
 
-export function relativeImportFrom(input: T.RelativeImport.Loose): ReturnType<typeof F.relativeImport> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.relativeImport>;
-	return F.relativeImport({
+export function coerceToRelativeImport(input: T.RelativeImport.Loose): ReturnType<typeof F.buildRelativeImport> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildRelativeImport>;
+	return F.buildRelativeImport({
 		importPrefix: _requireField(
 			'relative_import',
 			'importPrefix',
@@ -1749,46 +1773,48 @@ export function relativeImportFrom(input: T.RelativeImport.Loose): ReturnType<ty
 	});
 }
 
-export function returnStatementFrom(input?: T.Expressions | T.ReturnStatement): ReturnType<typeof F.returnStatement> {
+export function coerceToReturnStatement(
+	input?: T.Expressions | T.ReturnStatement
+): ReturnType<typeof F.buildReturnStatement> {
 	if (isNodeData(input) && input.$type === TSKindId.ReturnStatement) {
 		const data = input;
 		const child = (data as unknown as { _expressions?: unknown })._expressions;
-		return F.returnStatement(child as Parameters<typeof F.returnStatement>[0]);
+		return F.buildReturnStatement(child as Parameters<typeof F.buildReturnStatement>[0]);
 	}
-	return F.returnStatement(input as Parameters<typeof F.returnStatement>[0]);
+	return F.buildReturnStatement(input as Parameters<typeof F.buildReturnStatement>[0]);
 }
 
-export function setFrom(input?: T.CollectionElements | T.Set): ReturnType<typeof F.set> {
+export function coerceToSet(input?: T.CollectionElements | T.Set): ReturnType<typeof F.buildSet> {
 	if (isNodeData(input) && input.$type === TSKindId.Set) {
 		const data = input;
 		const child = (data as unknown as { _collection_elements?: unknown })._collection_elements;
-		return F.set(child as Parameters<typeof F.set>[0]);
+		return F.buildSet(child as Parameters<typeof F.buildSet>[0]);
 	}
-	return F.set(input as Parameters<typeof F.set>[0]);
+	return F.buildSet(input as Parameters<typeof F.buildSet>[0]);
 }
 
-export function setComprehensionFrom(input: T.SetComprehension.Loose): ReturnType<typeof F.setComprehension> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.setComprehension>;
-	return F.setComprehension({
+export function coerceToSetComprehension(input: T.SetComprehension.Loose): ReturnType<typeof F.buildSetComprehension> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildSetComprehension>;
+	return F.buildSetComprehension({
 		body: _requireField('set_comprehension', 'body', _resolveOne<T.Expression>(input.body, _K0, _K1)),
 		comprehensionClauses:
 			_resolveOneBranch<T.ComprehensionClauses>(input.comprehensionClauses, '_comprehension_clauses') ??
-			F.comprehensionClauses()
+			F.buildComprehensionClauses()
 	});
 }
 
-export function sliceFrom(input?: T.Slice.Loose): ReturnType<typeof F.slice> {
-	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.slice>;
-	return F.slice({
+export function coerceToSlice(input?: T.Slice.Loose): ReturnType<typeof F.buildSlice> {
+	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildSlice>;
+	return F.buildSlice({
 		start: _resolveOne<T.Expression>(input?.start, _K0, _K1),
 		stop: _resolveOne<T.Expression>(input?.stop, _K0, _K1),
 		step: _resolveOneBranch<T.SliceGroup1>(input?.step, 'slice_group1')
 	});
 }
 
-export function splatPatternFrom(input: T.SplatPattern.Loose): ReturnType<typeof F.splatPattern> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.splatPattern>;
-	return F.splatPattern({
+export function coerceToSplatPattern(input: T.SplatPattern.Loose): ReturnType<typeof F.buildSplatPattern> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildSplatPattern>;
+	return F.buildSplatPattern({
 		operator: _requireField(
 			'splat_pattern',
 			'operator',
@@ -1805,10 +1831,10 @@ export function splatPatternFrom(input: T.SplatPattern.Loose): ReturnType<typeof
 	});
 }
 
-export function splatTypeFrom(input: T.SplatType.Loose): ReturnType<typeof F.splatType> {
+export function coerceToSplatType(input: T.SplatType.Loose): ReturnType<typeof F.buildSplatType> {
 	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('splat_type'))
-		return input as unknown as ReturnType<typeof F.splatType>;
-	return F.splatType(
+		return input as unknown as ReturnType<typeof F.buildSplatType>;
+	return F.buildSplatType(
 		_requireField(
 			'splat_type',
 			'identifier',
@@ -1823,9 +1849,9 @@ export function splatTypeFrom(input: T.SplatType.Loose): ReturnType<typeof F.spl
 	);
 }
 
-export function stringFrom(input: T.String.Loose): ReturnType<typeof F.string> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.string>;
-	return F.string({
+export function coerceToString(input: T.String.Loose): ReturnType<typeof F.buildString> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildString>;
+	return F.buildString({
 		stringStart: _requireField(
 			'string',
 			'stringStart',
@@ -1836,39 +1862,39 @@ export function stringFrom(input: T.String.Loose): ReturnType<typeof F.string> {
 	});
 }
 
-export function stringContentFrom(
+export function coerceToStringContent(
 	...input: readonly (
 		| (T.EscapeInterpolation | T.EscapeSequence | T.NotEscapeSequence | T._StringContent)
 		| T.StringContent
 	)[]
-): ReturnType<typeof F.stringContent> {
+): ReturnType<typeof F.buildStringContent> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.StringContent) {
 		const data = input[0];
 		const stored = (data as unknown as { _content?: unknown })._content;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.stringContent(...(children as unknown as Parameters<typeof F.stringContent>));
+		return F.buildStringContent(...(children as unknown as Parameters<typeof F.buildStringContent>));
 	}
-	return F.stringContent(...(input as unknown as Parameters<typeof F.stringContent>));
+	return F.buildStringContent(...(input as unknown as Parameters<typeof F.buildStringContent>));
 }
 
-export function subscriptFrom(input: T.Subscript.Loose): ReturnType<typeof F.subscript> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.subscript>;
+export function coerceToSubscript(input: T.Subscript.Loose): ReturnType<typeof F.buildSubscript> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildSubscript>;
 	const _ne_subscripts = _resolveMany<T.Expression | T.Slice>(input.subscript, _K0, _K27);
 	_assertNonEmpty(_ne_subscripts, 'subscript.subscripts');
-	return F.subscript({
+	return F.buildSubscript({
 		value: _requireField('subscript', 'value', _resolveOne<T.PrimaryExpression>(input.value, _K0, _K6)),
 		subscript: _ne_subscripts
 	});
 }
 
-export function true_From(input?: T.True): ReturnType<typeof F.true_> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.true_>;
-	return F.true_();
+export function coerceToTrue(input?: T.True): ReturnType<typeof F.buildTrue> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTrue>;
+	return F.buildTrue();
 }
 
-export function tryStatementFrom(input: T.TryStatement.Loose): ReturnType<typeof F.tryStatement> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.tryStatement>;
-	return F.tryStatement({
+export function coerceToTryStatement(input: T.TryStatement.Loose): ReturnType<typeof F.buildTryStatement> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTryStatement>;
+	return F.buildTryStatement({
 		body: _requireField(
 			'try_statement',
 			'body',
@@ -1880,85 +1906,89 @@ export function tryStatementFrom(input: T.TryStatement.Loose): ReturnType<typeof
 	});
 }
 
-export function tupleFrom(input?: T.ElementList | T.Tuple): ReturnType<typeof F.tuple> {
+export function coerceToTuple(input?: T.ElementList | T.Tuple): ReturnType<typeof F.buildTuple> {
 	if (isNodeData(input) && input.$type === TSKindId.Tuple) {
 		const data = input;
 		const child = (data as unknown as { _element_list?: unknown })._element_list;
-		return F.tuple(child as Parameters<typeof F.tuple>[0]);
+		return F.buildTuple(child as Parameters<typeof F.buildTuple>[0]);
 	}
-	return F.tuple(input as Parameters<typeof F.tuple>[0]);
+	return F.buildTuple(input as Parameters<typeof F.buildTuple>[0]);
 }
 
-export function tuplePatternFrom(input?: T.PatternGroup | T.TuplePattern): ReturnType<typeof F.tuplePattern> {
+export function coerceToTuplePattern(input?: T.PatternGroup | T.TuplePattern): ReturnType<typeof F.buildTuplePattern> {
 	if (isNodeData(input) && input.$type === TSKindId.TuplePattern) {
 		const data = input;
 		const child = (data as unknown as { _pattern_group?: unknown })._pattern_group;
-		return F.tuplePattern(child as Parameters<typeof F.tuplePattern>[0]);
+		return F.buildTuplePattern(child as Parameters<typeof F.buildTuplePattern>[0]);
 	}
-	return F.tuplePattern(input as Parameters<typeof F.tuplePattern>[0]);
+	return F.buildTuplePattern(input as Parameters<typeof F.buildTuplePattern>[0]);
 }
 
-export function typeFrom(
+export function coerceToType(
 	input?: (T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType) | T.Type
-): ReturnType<typeof F.type> {
+): ReturnType<typeof F.buildType> {
 	if (isNodeData(input) && input.$type === TSKindId.Type) {
 		const data = input;
 		const child = (data as unknown as { _content?: unknown })._content;
-		return F.type(child as Parameters<typeof F.type>[0]);
+		return F.buildType(child as Parameters<typeof F.buildType>[0]);
 	}
-	return F.type(input as Parameters<typeof F.type>[0]);
+	return F.buildType(input as Parameters<typeof F.buildType>[0]);
 }
 
-export function typeAliasStatementFrom(input: T.TypeAliasStatement.Loose): ReturnType<typeof F.typeAliasStatement> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.typeAliasStatement>;
-	return F.typeAliasStatement({
+export function coerceToTypeAliasStatement(
+	input: T.TypeAliasStatement.Loose
+): ReturnType<typeof F.buildTypeAliasStatement> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypeAliasStatement>;
+	return F.buildTypeAliasStatement({
 		type: coerceKindEnumStorage(_resolveOne<'type'>('type', _K4, _K4), [['type', kindIdFromName('type')] as const]),
-		left: _resolveOneBranch<T.Type>(input.left, 'type') ?? F.type(),
-		right: _resolveOneBranch<T.Type>(input.right, 'type') ?? F.type()
+		left: _requireField('type_alias_statement', 'left', _resolveOneBranch<T.Type>(input.left, 'type')),
+		right: _requireField('type_alias_statement', 'right', _resolveOneBranch<T.Type>(input.right, 'type'))
 	});
 }
 
-export function typeConversionFrom(input: string | T.TypeConversion): ReturnType<typeof F.typeConversion> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.typeConversion>;
-	return F.typeConversion(input as Parameters<typeof F.typeConversion>[0]);
+export function coerceToTypeConversion(input: string | T.TypeConversion): ReturnType<typeof F.buildTypeConversion> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildTypeConversion>;
+	return F.buildTypeConversion(input as Parameters<typeof F.buildTypeConversion>[0]);
 }
 
-export function typeParameterFrom(...input: readonly (T.Type | T.TypeParameter)[]): ReturnType<typeof F.typeParameter> {
+export function coerceToTypeParameter(
+	...input: readonly (T.Type | T.TypeParameter)[]
+): ReturnType<typeof F.buildTypeParameter> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.TypeParameter) {
 		const data = input[0];
 		const stored = (data as unknown as { _type?: unknown })._type;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.typeParameter(...(children as unknown as Parameters<typeof F.typeParameter>));
+		return F.buildTypeParameter(...(children as unknown as Parameters<typeof F.buildTypeParameter>));
 	}
-	return F.typeParameter(...(input as unknown as Parameters<typeof F.typeParameter>));
+	return F.buildTypeParameter(...(input as unknown as Parameters<typeof F.buildTypeParameter>));
 }
 
-export function typedDefaultParameterFrom(
+export function coerceToTypedDefaultParameter(
 	input: T.TypedDefaultParameter.Loose
-): ReturnType<typeof F.typedDefaultParameter> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.typedDefaultParameter>;
-	return F.typedDefaultParameter({
+): ReturnType<typeof F.buildTypedDefaultParameter> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypedDefaultParameter>;
+	return F.buildTypedDefaultParameter({
 		name: _requireField('typed_default_parameter', 'name', _resolveOneLeaf<T.Identifier>(input.name, 'identifier')),
-		type: _resolveOneBranch<T.Type>(input.type, 'type') ?? F.type(),
+		type: _requireField('typed_default_parameter', 'type', _resolveOneBranch<T.Type>(input.type, 'type')),
 		value: _requireField('typed_default_parameter', 'value', _resolveOne<T.Expression>(input.value, _K0, _K1))
 	});
 }
 
-export function typedParameterFrom(input: T.TypedParameter.Loose): ReturnType<typeof F.typedParameter> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.typedParameter>;
-	return F.typedParameter({
+export function coerceToTypedParameter(input: T.TypedParameter.Loose): ReturnType<typeof F.buildTypedParameter> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypedParameter>;
+	return F.buildTypedParameter({
 		content: _requireField(
 			'typed_parameter',
 			'content',
 			_resolveOne<T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern>(input.content, _K2, _K28)
 		),
-		type: _resolveOneBranch<T.Type>(input.type, 'type') ?? F.type()
+		type: _requireField('typed_parameter', 'type', _resolveOneBranch<T.Type>(input.type, 'type'))
 	});
 }
 
-export function unaryOperatorFrom(input: T.UnaryOperator.Loose): ReturnType<typeof F.unaryOperator> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.unaryOperator>;
-	return F.unaryOperator({
+export function coerceToUnaryOperator(input: T.UnaryOperator.Loose): ReturnType<typeof F.buildUnaryOperator> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildUnaryOperator>;
+	return F.buildUnaryOperator({
 		operator: _requireField(
 			'unary_operator',
 			'operator',
@@ -1972,29 +2002,29 @@ export function unaryOperatorFrom(input: T.UnaryOperator.Loose): ReturnType<type
 	});
 }
 
-export function unionPatternFrom(
+export function coerceToUnionPattern(
 	...input: readonly (T.SimplePattern | T.UnionPattern)[]
-): ReturnType<typeof F.unionPattern> {
+): ReturnType<typeof F.buildUnionPattern> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.UnionPattern) {
 		const data = input[0];
 		const stored = (data as unknown as { _simple_pattern?: unknown })._simple_pattern;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.unionPattern(...(children as unknown as Parameters<typeof F.unionPattern>));
+		return F.buildUnionPattern(...(children as unknown as Parameters<typeof F.buildUnionPattern>));
 	}
-	return F.unionPattern(...(input as unknown as Parameters<typeof F.unionPattern>));
+	return F.buildUnionPattern(...(input as unknown as Parameters<typeof F.buildUnionPattern>));
 }
 
-export function unionTypeFrom(input: T.UnionType.Loose): ReturnType<typeof F.unionType> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.unionType>;
-	return F.unionType({
-		left: _resolveOneBranch<T.Type>(input.left, 'type') ?? F.type(),
-		right: _resolveOneBranch<T.Type>(input.right, 'type') ?? F.type()
+export function coerceToUnionType(input: T.UnionType.Loose): ReturnType<typeof F.buildUnionType> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildUnionType>;
+	return F.buildUnionType({
+		left: _requireField('union_type', 'left', _resolveOneBranch<T.Type>(input.left, 'type')),
+		right: _requireField('union_type', 'right', _resolveOneBranch<T.Type>(input.right, 'type'))
 	});
 }
 
-export function whileStatementFrom(input: T.WhileStatement.Loose): ReturnType<typeof F.whileStatement> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.whileStatement>;
-	return F.whileStatement({
+export function coerceToWhileStatement(input: T.WhileStatement.Loose): ReturnType<typeof F.buildWhileStatement> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildWhileStatement>;
+	return F.buildWhileStatement({
 		condition: _requireField('while_statement', 'condition', _resolveOne<T.Expression>(input.condition, _K0, _K1)),
 		body: _requireField(
 			'while_statement',
@@ -2005,21 +2035,21 @@ export function whileStatementFrom(input: T.WhileStatement.Loose): ReturnType<ty
 	});
 }
 
-export function withClauseFrom(
+export function coerceToWithClause(
 	input?: (T.WithClauseBare | T.WithClauseParen) | T.WithClause
-): ReturnType<typeof F.withClause> {
+): ReturnType<typeof F.buildWithClause> {
 	if (isNodeData(input) && input.$type === TSKindId.WithClause) {
 		const data = input;
 		const child = (data as unknown as { _content?: unknown })._content;
-		return F.withClause(child as Parameters<typeof F.withClause>[0]);
+		return F.buildWithClause(child as Parameters<typeof F.buildWithClause>[0]);
 	}
-	return F.withClause(input as Parameters<typeof F.withClause>[0]);
+	return F.buildWithClause(input as Parameters<typeof F.buildWithClause>[0]);
 }
 
-export function withItemFrom(input: T.WithItem.Loose): ReturnType<typeof F.withItem> {
+export function coerceToWithItem(input: T.WithItem.Loose): ReturnType<typeof F.buildWithItem> {
 	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('with_item'))
-		return input as unknown as ReturnType<typeof F.withItem>;
-	return F.withItem(
+		return input as unknown as ReturnType<typeof F.buildWithItem>;
+	return F.buildWithItem(
 		_requireField(
 			'with_item',
 			'value',
@@ -2032,11 +2062,15 @@ export function withItemFrom(input: T.WithItem.Loose): ReturnType<typeof F.withI
 	);
 }
 
-export function withStatementFrom(input: T.WithStatement.Loose): ReturnType<typeof F.withStatement> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.withStatement>;
-	return F.withStatement({
+export function coerceToWithStatement(input: T.WithStatement.Loose): ReturnType<typeof F.buildWithStatement> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildWithStatement>;
+	return F.buildWithStatement({
 		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
-		withClause: _resolveOneBranch<T.WithClause>(input.withClause, 'with_clause') ?? F.withClause(),
+		withClause: _requireField(
+			'with_statement',
+			'withClause',
+			_resolveOneBranch<T.WithClause>(input.withClause, 'with_clause')
+		),
 		body: _requireField(
 			'with_statement',
 			'body',
@@ -2045,22 +2079,22 @@ export function withStatementFrom(input: T.WithStatement.Loose): ReturnType<type
 	});
 }
 
-export function yield_From(input?: (T.Expression | T.Expressions) | T.Yield): ReturnType<typeof F.yield_> {
+export function coerceToYield(input?: (T.Expression | T.Expressions) | T.Yield): ReturnType<typeof F.buildYield> {
 	if (isNodeData(input) && input.$type === TSKindId.Yield) {
 		const data = input;
 		const child = (data as unknown as { _content?: unknown })._content;
-		return F.yield_(child as Parameters<typeof F.yield_>[0]);
+		return F.buildYield(child as Parameters<typeof F.buildYield>[0]);
 	}
-	return F.yield_(input as Parameters<typeof F.yield_>[0]);
+	return F.buildYield(input as Parameters<typeof F.buildYield>[0]);
 }
 
-export function listPatternGroup1From(
+export function coerceToListPatternGroup1(
 	...input: readonly (T.CasePattern | T.ListPatternGroup1)[]
-): ReturnType<typeof F.listPatternGroup1> {
-	return F.listPatternGroup1(input as Parameters<typeof F.listPatternGroup1>[0]);
+): ReturnType<typeof F.buildListPatternGroup1> {
+	return F.buildListPatternGroup1(input as Parameters<typeof F.buildListPatternGroup1>[0]);
 }
 
-export function argumentListGroup1From(
+export function coerceToArgumentListGroup1(
 	...input: readonly (
 		| T.Expression
 		| T.ListSplat
@@ -2069,13 +2103,15 @@ export function argumentListGroup1From(
 		| T.KeywordArgument
 		| T.ArgumentListGroup1
 	)[]
-): ReturnType<typeof F.argumentListGroup1> {
-	return F.argumentListGroup1(input as Parameters<typeof F.argumentListGroup1>[0]);
+): ReturnType<typeof F.buildArgumentListGroup1> {
+	return F.buildArgumentListGroup1(input as Parameters<typeof F.buildArgumentListGroup1>[0]);
 }
 
-export function dictPatternGroup1From(input: T.DictPatternGroup1.Loose): ReturnType<typeof F.dictPatternGroup1> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.dictPatternGroup1>;
-	return F.dictPatternGroup1({
+export function coerceToDictPatternGroup1(
+	input: T.DictPatternGroup1.Loose
+): ReturnType<typeof F.buildDictPatternGroup1> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildDictPatternGroup1>;
+	return F.buildDictPatternGroup1({
 		dictPatternKv: _requireField(
 			'dict_pattern_group1',
 			'dictPatternKv',
@@ -2087,49 +2123,49 @@ export function dictPatternGroup1From(input: T.DictPatternGroup1.Loose): ReturnT
 	});
 }
 
-export function dictionaryGroup1From(
+export function coerceToDictionaryGroup1(
 	...input: readonly (T.Pair | T.DictionarySplat | T.DictionaryGroup1)[]
-): ReturnType<typeof F.dictionaryGroup1> {
-	return F.dictionaryGroup1(input as Parameters<typeof F.dictionaryGroup1>[0]);
+): ReturnType<typeof F.buildDictionaryGroup1> {
+	return F.buildDictionaryGroup1(input as Parameters<typeof F.buildDictionaryGroup1>[0]);
 }
 
-export function sliceGroup1From(input?: T.Expression | T.SliceGroup1): ReturnType<typeof F.sliceGroup1> {
-	return F.sliceGroup1(input as Parameters<typeof F.sliceGroup1>[0]);
+export function coerceToSliceGroup1(input?: T.Expression | T.SliceGroup1): ReturnType<typeof F.buildSliceGroup1> {
+	return F.buildSliceGroup1(input as Parameters<typeof F.buildSliceGroup1>[0]);
 }
 
-export function stringStartFrom(input: string | T.StringStart): ReturnType<typeof F.stringStart> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.stringStart>;
-	return F.stringStart(input as Parameters<typeof F.stringStart>[0]);
+export function coerceToStringStart(input: string | T.StringStart): ReturnType<typeof F.buildStringStart> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringStart>;
+	return F.buildStringStart(input as Parameters<typeof F.buildStringStart>[0]);
 }
 
-export function escapeInterpolationFrom(
+export function coerceToEscapeInterpolation(
 	input: string | T.EscapeInterpolation
-): ReturnType<typeof F.escapeInterpolation> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.escapeInterpolation>;
-	return F.escapeInterpolation(input as Parameters<typeof F.escapeInterpolation>[0]);
+): ReturnType<typeof F.buildEscapeInterpolation> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildEscapeInterpolation>;
+	return F.buildEscapeInterpolation(input as Parameters<typeof F.buildEscapeInterpolation>[0]);
 }
 
-export function stringEndFrom(input: string | T.StringEnd): ReturnType<typeof F.stringEnd> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.stringEnd>;
-	return F.stringEnd(input as Parameters<typeof F.stringEnd>[0]);
+export function coerceToStringEnd(input: string | T.StringEnd): ReturnType<typeof F.buildStringEnd> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildStringEnd>;
+	return F.buildStringEnd(input as Parameters<typeof F.buildStringEnd>[0]);
 }
 
-export function closeBracketFrom(input: string | T.CloseBracket): ReturnType<typeof F.closeBracket> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.closeBracket>;
-	return F.closeBracket(input as Parameters<typeof F.closeBracket>[0]);
+export function coerceToCloseBracket(input: string | T.CloseBracket): ReturnType<typeof F.buildCloseBracket> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildCloseBracket>;
+	return F.buildCloseBracket(input as Parameters<typeof F.buildCloseBracket>[0]);
 }
 
-export function closeParenFrom(input: string | T.CloseParen): ReturnType<typeof F.closeParen> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.closeParen>;
-	return F.closeParen(input as Parameters<typeof F.closeParen>[0]);
+export function coerceToCloseParen(input: string | T.CloseParen): ReturnType<typeof F.buildCloseParen> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildCloseParen>;
+	return F.buildCloseParen(input as Parameters<typeof F.buildCloseParen>[0]);
 }
 
-export function closeBraceFrom(input: string | T.CloseBrace): ReturnType<typeof F.closeBrace> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.closeBrace>;
-	return F.closeBrace(input as Parameters<typeof F.closeBrace>[0]);
+export function coerceToCloseBrace(input: string | T.CloseBrace): ReturnType<typeof F.buildCloseBrace> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildCloseBrace>;
+	return F.buildCloseBrace(input as Parameters<typeof F.buildCloseBrace>[0]);
 }
 
-export function exceptFrom(input: string | T.Except): ReturnType<typeof F.except> {
-	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.except>;
-	return F.except(input as Parameters<typeof F.except>[0]);
+export function coerceToExcept(input: string | T.Except): ReturnType<typeof F.buildExcept> {
+	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildExcept>;
+	return F.buildExcept(input as Parameters<typeof F.buildExcept>[0]);
 }

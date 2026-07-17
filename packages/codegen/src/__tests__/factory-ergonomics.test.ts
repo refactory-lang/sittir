@@ -6,10 +6,10 @@ describe('factory ergonomics', () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/from.ts'), 'utf-8');
-			// functionItemFrom should default body to F.block()
-			expect(content).toMatch(/body:.*\?\? F\.block\(\)/);
-			// functionItemFrom should default parameters to F.parameters()
-			expect(content).toMatch(/parameters:.*\?\? F\.parameters\(\)/);
+			// functionItemFrom should default body to F.buildBlock()
+			expect(content).toMatch(/body:.*\?\? F\.buildBlock\(\)/);
+			// functionItemFrom should default parameters to F.buildParameters()
+			expect(content).toMatch(/parameters:.*\?\? F\.buildParameters\(\)/);
 		});
 	});
 
@@ -20,7 +20,7 @@ describe('factory ergonomics', () => {
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/from.ts'), 'utf-8');
 			expect(content).toContain('function _wrapWithChildren');
 			// Container kind: dispatches with rest-params spread
-			expect(content).toMatch(/case "parameters":[\s\S]*?F\.parameters\(/);
+			expect(content).toMatch(/case "parameters":[\s\S]*?F\.buildParameters\(/);
 		});
 
 		it('_resolveOneBranch handles arrays by wrapping with children', async () => {
@@ -45,10 +45,10 @@ describe('factory ergonomics', () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories.ts'), 'utf-8');
-			// label(identifier: ...) — direct value, not label(config: T.Label.Config)
-			expect(content).toMatch(/export function label\(identifier:/);
+			// buildLabel(identifier: ...) — direct value, not buildLabel(config: T.Label.Config)
+			expect(content).toMatch(/export function buildLabel\(identifier:/);
 			// Should NOT have a config parameter
-			expect(content).not.toMatch(/export function label\(config/);
+			expect(content).not.toMatch(/export function buildLabel\(config/);
 		});
 
 		it('keeps config form for single-field-with-children factories', async () => {
@@ -56,20 +56,20 @@ describe('factory ergonomics', () => {
 			const { resolve } = await import('node:path');
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories.ts'), 'utf-8');
 			// block has label (1 field) + children — must keep config form
-			expect(content).toMatch(/export function block\(config/);
+			expect(content).toMatch(/export function buildBlock\(config/);
 		});
 
 		it('emits $with setter that calls factory with direct value', async () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories.ts'), 'utf-8');
-			// $with.identifier setter should call label(value) not label({...config, identifier: value})
+			// $with.identifier setter should call buildLabel(value) not buildLabel({...config, identifier: value})
 			// Find the label factory and check its $with block
-			const labelMatch = content.match(/export function label\(identifier:[\s\S]*?\n\}/);
+			const labelMatch = content.match(/export function buildLabel\(identifier:[\s\S]*?\n\}/);
 			expect(labelMatch).not.toBeNull();
 			const labelBody = labelMatch![0];
-			// The setter calls label(value) directly
-			expect(labelBody).toMatch(/=> label\(value\)/);
+			// The setter calls buildLabel(value) directly
+			expect(labelBody).toMatch(/=> buildLabel\(value\)/);
 			// Not the config-spread form
 			expect(labelBody).not.toMatch(/\.\.\.\s*config/);
 		});
@@ -78,9 +78,9 @@ describe('factory ergonomics', () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/from.ts'), 'utf-8');
-			// labelFrom should call F.label(resolvedIdentifier) not F.label({ identifier: ... })
+			// coerceToLabel should call F.buildLabel(resolvedIdentifier) not F.buildLabel({ identifier: ... })
 			// It should NOT have the config-object form for label
-			expect(content).not.toMatch(/F\.label\(\{/);
+			expect(content).not.toMatch(/F\.buildLabel\(\{/);
 		});
 	});
 

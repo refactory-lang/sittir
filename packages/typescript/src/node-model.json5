@@ -5334,7 +5334,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
         "method_signature"
       ]
@@ -5586,7 +5586,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
         "content"
       ]
@@ -8200,7 +8200,7 @@
       "irKey": "publicFieldDefinitionAbstractFirst",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "_publicFieldDefinitionAbstractFirst()",
+      "stampExpression": "buildPublicFieldDefinitionAbstractFirst()",
       "name": "_public_field_definition_abstract_first",
       "fields": [
         {
@@ -8345,7 +8345,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
         "accessibility_modifier"
       ]
@@ -8371,7 +8371,7 @@
       "irKey": "publicFieldDefinitionReadonlyFirst",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "_publicFieldDefinitionReadonlyFirst()",
+      "stampExpression": "buildPublicFieldDefinitionReadonlyFirst()",
       "name": "_public_field_definition_readonly_first",
       "fields": [
         {
@@ -8432,7 +8432,7 @@
       "irKey": "publicFieldDefinitionStaticMods",
       "hidden": false,
       "isParameterless": true,
-      "stampExpression": "_publicFieldDefinitionStaticMods()",
+      "stampExpression": "buildPublicFieldDefinitionStaticMods()",
       "name": "_public_field_definition_static_mods",
       "fields": [
         {

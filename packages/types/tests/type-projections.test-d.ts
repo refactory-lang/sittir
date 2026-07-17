@@ -8,7 +8,7 @@
  * Run with: pnpm --filter @sittir/types type-check
  */
 
-import type { NodeData, NodeConfig, TreeNode, NodeKind, FieldName, KindOf } from '../src/index.ts';
+import type { NodeData, NodeConfig, TreeNode, NodeKind, FieldName, KindOf, SetterKey, FluentNode } from '../src/index.ts';
 
 // ---------------------------------------------------------------------------
 // Use the Rust grammar type from the generated package
@@ -215,3 +215,19 @@ type _16a = Expect<Equal<NodeData<RustGrammar, 'identifier'>['type'], TreeNode<R
 type _16b = Expect<Equal<NodeData<RustGrammar, 'function_item'>['type'], 'function_item'>>;
 
 type _16c = Expect<Equal<TreeNode<RustGrammar, 'function_item'>['type'], 'function_item'>>;
+
+// ---------------------------------------------------------------------------
+// 17. SetterKey / FluentNode — Object.prototype-colliding field names escape
+//     to a trailing underscore, matching the runtime's snakeToCamel(). A
+//     grammar field named `constructor` (e.g. TypeScript's new_expression)
+//     must project to a `constructor_` setter key, not `constructor` — the
+//     latter would shadow Object.prototype.constructor.
+// ---------------------------------------------------------------------------
+
+type _17a = Expect<Equal<SetterKey<'constructor'>, 'constructor_'>>;
+type _17b = Expect<Equal<SetterKey<'name'>, 'name'>>;
+
+type NewExpressionFluent = FluentNode<'new_expression', { constructor: string; type_arguments?: string }>;
+
+type _17c = Expect<Extends<'constructor_', keyof NewExpressionFluent>>;
+type _17d = Expect<Equal<Extends<'constructor', keyof NewExpressionFluent>, false>>;

@@ -12,14 +12,17 @@ function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is re
 	}
 }
 
-const _leafRe_fieldIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
-const _leafRe_lineCommentContent = /^(?:.*)/u;
-const _leafRe_typeIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
-const _leafRe_identifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
-const _leafRe_metavariable = /^(?:\$[a-zA-Z_]\w*)/u;
-const _leafRe_shebang = /^(?:#![\r\f\t\v ]*([^[\n].*)?\n)/u;
+const _leafRe_buildFieldIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
+const _leafRe_buildLineCommentContent = /^(?:.*)/u;
+const _leafRe_buildTypeIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
+const _leafRe_buildIdentifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
+const _leafRe_buildMetavariable = /^(?:\$[a-zA-Z_]\w*)/u;
+const _leafRe_buildShebang = /^(?:#![\r\f\t\v ]*([^[\n].*)?\n)/u;
 
-export function _argumentsGroup1(elements: NonEmptyArray<T.AttributedArgument>, options: { trailing?: boolean } = {}) {
+export function build_ArgumentsGroup1(
+	elements: NonEmptyArray<T.AttributedArgument>,
+	options: { trailing?: boolean } = {}
+) {
 	_assertNonEmpty(elements, '_arguments_group1.elements');
 	const _content = elements;
 	const _trailing_sep = options.trailing ?? false;
@@ -34,15 +37,15 @@ export function _argumentsGroup1(elements: NonEmptyArray<T.AttributedArgument>, 
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.AttributedArgument>) => _argumentsGroup1(vs, options),
-				trailing: (v: boolean) => _argumentsGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.AttributedArgument>) => build_ArgumentsGroup1(vs, options),
+				trailing: (v: boolean) => build_ArgumentsGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _arrayExpressionList(config: Partial<T.ArrayExpressionList.Config> = {}) {
+export function buildArrayExpressionList(config: Partial<T.ArrayExpressionList.Config> = {}) {
 	const _attributes = config.attributes;
 	const _arguments_group1 = config.argumentsGroup1;
 	return withMethods(
@@ -59,15 +62,15 @@ export function _arrayExpressionList(config: Partial<T.ArrayExpressionList.Confi
 				return _arguments_group1;
 			},
 			$with: {
-				attributes: (...values: T.AttributeItem[]) => _arrayExpressionList({ ...config, attributes: values }),
-				argumentsGroup1: (value?: T.ArgumentsGroup1) => _arrayExpressionList({ ...config, argumentsGroup1: value })
+				attributes: (...values: T.AttributeItem[]) => buildArrayExpressionList({ ...config, attributes: values }),
+				argumentsGroup1: (value?: T.ArgumentsGroup1) => buildArrayExpressionList({ ...config, argumentsGroup1: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _arrayExpressionSemi(config: T.ArrayExpressionSemi.Config) {
+export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config) {
 	const _attributes = config.attributes;
 	const _expression = config.expression;
 	const _length = config.length;
@@ -89,16 +92,16 @@ export function _arrayExpressionSemi(config: T.ArrayExpressionSemi.Config) {
 				return _length;
 			},
 			$with: {
-				attributes: (...values: T.AttributeItem[]) => _arrayExpressionSemi({ ...config, attributes: values }),
-				expression: (value: T.Expression) => _arrayExpressionSemi({ ...config, expression: value }),
-				length: (value: T.Expression) => _arrayExpressionSemi({ ...config, length: value })
+				attributes: (...values: T.AttributeItem[]) => buildArrayExpressionSemi({ ...config, attributes: values }),
+				expression: (value: T.Expression) => buildArrayExpressionSemi({ ...config, expression: value }),
+				length: (value: T.Expression) => buildArrayExpressionSemi({ ...config, length: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function attributedArgument(config: T.AttributedArgument.Config) {
+export function buildAttributedArgument(config: T.AttributedArgument.Config) {
 	const _attribute_item = config.attributeItem;
 	const _expression = config.expression;
 	return withMethods(
@@ -115,15 +118,15 @@ export function attributedArgument(config: T.AttributedArgument.Config) {
 				return _expression;
 			},
 			$with: {
-				attributeItems: (...values: T.AttributeItem[]) => attributedArgument({ ...config, attributeItem: values }),
-				expression: (value: T.Expression) => attributedArgument({ ...config, expression: value })
+				attributeItems: (...values: T.AttributeItem[]) => buildAttributedArgument({ ...config, attributeItem: values }),
+				expression: (value: T.Expression) => buildAttributedArgument({ ...config, expression: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function attributedEnumVariant(config: T.AttributedEnumVariant.Config) {
+export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Config) {
 	const _attribute_item = config.attributeItem;
 	const _enum_variant = config.enumVariant;
 	return withMethods(
@@ -140,15 +143,16 @@ export function attributedEnumVariant(config: T.AttributedEnumVariant.Config) {
 				return _enum_variant;
 			},
 			$with: {
-				attributeItems: (...values: T.AttributeItem[]) => attributedEnumVariant({ ...config, attributeItem: values }),
-				enumVariant: (value: T.EnumVariant) => attributedEnumVariant({ ...config, enumVariant: value })
+				attributeItems: (...values: T.AttributeItem[]) =>
+					buildAttributedEnumVariant({ ...config, attributeItem: values }),
+				enumVariant: (value: T.EnumVariant) => buildAttributedEnumVariant({ ...config, enumVariant: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function attributedFieldDeclaration(config: T.AttributedFieldDeclaration.Config) {
+export function buildAttributedFieldDeclaration(config: T.AttributedFieldDeclaration.Config) {
 	const _attribute_item = config.attributeItem;
 	const _field_declaration = config.fieldDeclaration;
 	return withMethods(
@@ -166,16 +170,16 @@ export function attributedFieldDeclaration(config: T.AttributedFieldDeclaration.
 			},
 			$with: {
 				attributeItems: (...values: T.AttributeItem[]) =>
-					attributedFieldDeclaration({ ...config, attributeItem: values }),
+					buildAttributedFieldDeclaration({ ...config, attributeItem: values }),
 				fieldDeclaration: (value: T.FieldDeclaration) =>
-					attributedFieldDeclaration({ ...config, fieldDeclaration: value })
+					buildAttributedFieldDeclaration({ ...config, fieldDeclaration: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _attributedOrderedField(config: T.AttributedOrderedField.Config) {
+export function buildAttributedOrderedField(config: T.AttributedOrderedField.Config) {
 	const _attribute_item = config.attributeItem;
 	const _visibility_modifier = config.visibilityModifier;
 	const _type = config.type;
@@ -197,17 +201,18 @@ export function _attributedOrderedField(config: T.AttributedOrderedField.Config)
 				return _type;
 			},
 			$with: {
-				attributeItems: (...values: T.AttributeItem[]) => _attributedOrderedField({ ...config, attributeItem: values }),
+				attributeItems: (...values: T.AttributeItem[]) =>
+					buildAttributedOrderedField({ ...config, attributeItem: values }),
 				visibilityModifier: (value?: T.VisibilityModifier) =>
-					_attributedOrderedField({ ...config, visibilityModifier: value }),
-				type: (value: T._Type) => _attributedOrderedField({ ...config, type: value })
+					buildAttributedOrderedField({ ...config, visibilityModifier: value }),
+				type: (value: T._Type) => buildAttributedOrderedField({ ...config, type: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function attributedParameter(config: T.AttributedParameter.Config) {
+export function buildAttributedParameter(config: T.AttributedParameter.Config) {
 	const _attribute_item = config.attributeItem;
 	const _content = config.content;
 	return withMethods(
@@ -224,16 +229,16 @@ export function attributedParameter(config: T.AttributedParameter.Config) {
 				return _content;
 			},
 			$with: {
-				attributeItem: (value?: T.AttributeItem) => attributedParameter({ ...config, attributeItem: value }),
+				attributeItem: (value?: T.AttributeItem) => buildAttributedParameter({ ...config, attributeItem: value }),
 				content: (value: T.Parameter | T.SelfParameter | T.VariadicParameter | '_' | T._Type) =>
-					attributedParameter({ ...config, content: value })
+					buildAttributedParameter({ ...config, content: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function attributedTypeParameter(config: T.AttributedTypeParameter.Config) {
+export function buildAttributedTypeParameter(config: T.AttributedTypeParameter.Config) {
 	const _attribute_item = config.attributeItem;
 	const _content = config.content;
 	return withMethods(
@@ -250,16 +255,17 @@ export function attributedTypeParameter(config: T.AttributedTypeParameter.Config
 				return _content;
 			},
 			$with: {
-				attributeItems: (...values: T.AttributeItem[]) => attributedTypeParameter({ ...config, attributeItem: values }),
+				attributeItems: (...values: T.AttributeItem[]) =>
+					buildAttributedTypeParameter({ ...config, attributeItem: values }),
 				content: (value: T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter) =>
-					attributedTypeParameter({ ...config, content: value })
+					buildAttributedTypeParameter({ ...config, content: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _closureExpressionBlock(config: T.ClosureExpressionBlock.Config) {
+export function buildClosureExpressionBlock(config: T.ClosureExpressionBlock.Config) {
 	const _return_type = config.returnType;
 	const _body = config.body;
 	return withMethods(
@@ -276,15 +282,15 @@ export function _closureExpressionBlock(config: T.ClosureExpressionBlock.Config)
 				return _body;
 			},
 			$with: {
-				returnType: (value?: T._Type) => _closureExpressionBlock({ ...config, returnType: value }),
-				body: (value: T.Block) => _closureExpressionBlock({ ...config, body: value })
+				returnType: (value?: T._Type) => buildClosureExpressionBlock({ ...config, returnType: value }),
+				body: (value: T.Block) => buildClosureExpressionBlock({ ...config, body: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function closureExpressionExpr(config: T.ClosureExpressionExpr.Config) {
+export function buildClosureExpressionExpr(config: T.ClosureExpressionExpr.Config) {
 	const _body = config.body;
 	return withMethods(
 		{
@@ -296,14 +302,14 @@ export function closureExpressionExpr(config: T.ClosureExpressionExpr.Config) {
 				return _body;
 			},
 			$with: {
-				body: (value: T.Expression | '_') => closureExpressionExpr({ ...config, body: value })
+				body: (value: T.Expression | '_') => buildClosureExpressionExpr({ ...config, body: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function delimTokenTreeBrace(...children: T.DelimTokens[]) {
+export function buildDelimTokenTreeBrace(...children: T.DelimTokens[]) {
 	const _delim_tokens = children;
 	return withMethods(
 		{
@@ -314,13 +320,13 @@ export function delimTokenTreeBrace(...children: T.DelimTokens[]) {
 			delimTokens() {
 				return _delim_tokens;
 			},
-			$with: { $children: (...vs: T.DelimTokens[]) => delimTokenTreeBrace(...vs) }
+			$with: { $children: (...vs: T.DelimTokens[]) => buildDelimTokenTreeBrace(...vs) }
 		},
 		methodsEngine
 	);
 }
 
-export function delimTokenTreeBracket(...children: T.DelimTokens[]) {
+export function buildDelimTokenTreeBracket(...children: T.DelimTokens[]) {
 	const _delim_tokens = children;
 	return withMethods(
 		{
@@ -331,13 +337,13 @@ export function delimTokenTreeBracket(...children: T.DelimTokens[]) {
 			delimTokens() {
 				return _delim_tokens;
 			},
-			$with: { $children: (...vs: T.DelimTokens[]) => delimTokenTreeBracket(...vs) }
+			$with: { $children: (...vs: T.DelimTokens[]) => buildDelimTokenTreeBracket(...vs) }
 		},
 		methodsEngine
 	);
 }
 
-export function delimTokenTreeParen(...children: T.DelimTokens[]) {
+export function buildDelimTokenTreeParen(...children: T.DelimTokens[]) {
 	const _delim_tokens = children;
 	return withMethods(
 		{
@@ -348,13 +354,13 @@ export function delimTokenTreeParen(...children: T.DelimTokens[]) {
 			delimTokens() {
 				return _delim_tokens;
 			},
-			$with: { $children: (...vs: T.DelimTokens[]) => delimTokenTreeParen(...vs) }
+			$with: { $children: (...vs: T.DelimTokens[]) => buildDelimTokenTreeParen(...vs) }
 		},
 		methodsEngine
 	);
 }
 
-export function _enumVariantListGroup1(
+export function build_EnumVariantListGroup1(
 	elements: NonEmptyArray<T.AttributedEnumVariant>,
 	options: { trailing?: boolean } = {}
 ) {
@@ -372,15 +378,15 @@ export function _enumVariantListGroup1(
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.AttributedEnumVariant>) => _enumVariantListGroup1(vs, options),
-				trailing: (v: boolean) => _enumVariantListGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.AttributedEnumVariant>) => build_EnumVariantListGroup1(vs, options),
+				trailing: (v: boolean) => build_EnumVariantListGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function expressionStatementWithSemi(child: T.Expression) {
+export function buildExpressionStatementWithSemi(child: T.Expression) {
 	const _expression = child;
 	return withMethods(
 		{
@@ -391,13 +397,13 @@ export function expressionStatementWithSemi(child: T.Expression) {
 			expression() {
 				return _expression;
 			},
-			$with: { $child: (v: T.Expression) => expressionStatementWithSemi(v) }
+			$with: { $child: (v: T.Expression) => buildExpressionStatementWithSemi(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function _fieldDeclarationListGroup1(
+export function build_FieldDeclarationListGroup1(
 	elements: NonEmptyArray<T.AttributedFieldDeclaration>,
 	options: { trailing?: boolean } = {}
 ) {
@@ -415,18 +421,19 @@ export function _fieldDeclarationListGroup1(
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.AttributedFieldDeclaration>) => _fieldDeclarationListGroup1(vs, options),
-				trailing: (v: boolean) => _fieldDeclarationListGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.AttributedFieldDeclaration>) =>
+					build_FieldDeclarationListGroup1(vs, options),
+				trailing: (v: boolean) => build_FieldDeclarationListGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function fieldIdentifier(text: string) {
+export function buildFieldIdentifier(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_field_identifier: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_fieldIdentifier.test(text))
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildFieldIdentifier.test(text))
 		throw new Error(`_field_identifier: text does not match pattern: ${text}`);
 	return withMethods(
 		{
@@ -439,7 +446,7 @@ export function fieldIdentifier(text: string) {
 	);
 }
 
-export function _fieldInitializerListGroup1(
+export function build_FieldInitializerListGroup1(
 	elements: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>,
 	options: { trailing?: boolean } = {}
 ) {
@@ -458,15 +465,15 @@ export function _fieldInitializerListGroup1(
 			},
 			$with: {
 				$children: (...vs: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>) =>
-					_fieldInitializerListGroup1(vs, options),
-				trailing: (v: boolean) => _fieldInitializerListGroup1(elements, { ...options, trailing: v })
+					build_FieldInitializerListGroup1(vs, options),
+				trailing: (v: boolean) => build_FieldInitializerListGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _fieldPatternNamed(config: T.FieldPatternNamed.Config) {
+export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config) {
 	const _name = config.name;
 	const _pattern = config.pattern;
 	return withMethods(
@@ -483,15 +490,15 @@ export function _fieldPatternNamed(config: T.FieldPatternNamed.Config) {
 				return _pattern;
 			},
 			$with: {
-				name: (value: T.Identifier) => _fieldPatternNamed({ ...config, name: value }),
-				pattern: (value: T.Pattern) => _fieldPatternNamed({ ...config, pattern: value })
+				name: (value: T.Identifier) => buildFieldPatternNamed({ ...config, name: value }),
+				pattern: (value: T.Pattern) => buildFieldPatternNamed({ ...config, pattern: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function functionTypeFnForm(child?: T.FunctionModifiers) {
+export function buildFunctionTypeFnForm(child?: T.FunctionModifiers) {
 	const _function_modifiers = child;
 	return withMethods(
 		{
@@ -502,13 +509,13 @@ export function functionTypeFnForm(child?: T.FunctionModifiers) {
 			functionModifiers() {
 				return _function_modifiers;
 			},
-			$with: { $child: (v: T.FunctionModifiers) => functionTypeFnForm(v) }
+			$with: { $child: (v: T.FunctionModifiers) => buildFunctionTypeFnForm(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function functionTypeTraitForm(config: T.FunctionTypeTraitForm.Config) {
+export function buildFunctionTypeTraitForm(config: T.FunctionTypeTraitForm.Config) {
 	const _trait = config.trait;
 	return withMethods(
 		{
@@ -520,14 +527,14 @@ export function functionTypeTraitForm(config: T.FunctionTypeTraitForm.Config) {
 				return _trait;
 			},
 			$with: {
-				trait: (value: T.Identifier | T.ScopedTypeIdentifier) => functionTypeTraitForm({ ...config, trait: value })
+				trait: (value: T.Identifier | T.ScopedTypeIdentifier) => buildFunctionTypeTraitForm({ ...config, trait: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function implItemBody(child: T.DeclarationList) {
+export function buildImplItemBody(child: T.DeclarationList) {
 	const _declaration_list = child;
 	return withMethods(
 		{
@@ -538,13 +545,13 @@ export function implItemBody(child: T.DeclarationList) {
 			declarationList() {
 				return _declaration_list;
 			},
-			$with: { $child: (v: T.DeclarationList) => implItemBody(v) }
+			$with: { $child: (v: T.DeclarationList) => buildImplItemBody(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function _implItemNegativeClause(config: T.ImplItemNegativeClause.Config) {
+export function buildImplItemNegativeClause(config: T.ImplItemNegativeClause.Config) {
 	const _trait = config.trait;
 	return withMethods(
 		{
@@ -557,14 +564,14 @@ export function _implItemNegativeClause(config: T.ImplItemNegativeClause.Config)
 			},
 			$with: {
 				trait: (value: T.Identifier | T.ScopedTypeIdentifier | T.GenericType) =>
-					_implItemNegativeClause({ ...config, trait: value })
+					buildImplItemNegativeClause({ ...config, trait: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _implItemPositiveClause(config: T.ImplItemPositiveClause.Config) {
+export function buildImplItemPositiveClause(config: T.ImplItemPositiveClause.Config) {
 	const _trait = config.trait;
 	return withMethods(
 		{
@@ -577,14 +584,14 @@ export function _implItemPositiveClause(config: T.ImplItemPositiveClause.Config)
 			},
 			$with: {
 				trait: (value: T.Identifier | T.ScopedTypeIdentifier | T.GenericType) =>
-					_implItemPositiveClause({ ...config, trait: value })
+					buildImplItemPositiveClause({ ...config, trait: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function letChain(config: T.LetChain.Config) {
+export function buildLetChain(config: T.LetChain.Config) {
 	const _left = config.left;
 	const _right = config.right;
 	return withMethods(
@@ -601,18 +608,18 @@ export function letChain(config: T.LetChain.Config) {
 				return _right;
 			},
 			$with: {
-				left: (value: T.LetChain | T.LetCondition | T.Expression) => letChain({ ...config, left: value }),
-				right: (value: T.LetCondition | T.Expression) => letChain({ ...config, right: value })
+				left: (value: T.LetChain | T.LetCondition | T.Expression) => buildLetChain({ ...config, left: value }),
+				right: (value: T.LetCondition | T.Expression) => buildLetChain({ ...config, right: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function lineCommentContent(text: string) {
+export function buildLineCommentContent(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_line_comment_content: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_lineCommentContent.test(text))
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildLineCommentContent.test(text))
 		throw new Error(`_line_comment_content: text does not match pattern: ${text}`);
 	return withMethods(
 		{
@@ -625,7 +632,7 @@ export function lineCommentContent(text: string) {
 	);
 }
 
-export function _lineCommentDoc(config: T.LineCommentDoc.Config) {
+export function buildLineCommentDoc(config: T.LineCommentDoc.Config) {
 	const _outer = coerceBooleanKeywordStorage(config.outer);
 	const _inner = coerceBooleanKeywordStorage(config.inner);
 	const _doc = config.doc;
@@ -647,18 +654,18 @@ export function _lineCommentDoc(config: T.LineCommentDoc.Config) {
 				return _doc;
 			},
 			$with: {
-				outer: (value?: NonNullable<Parameters<typeof _lineCommentDoc>[0]>['outer']) =>
-					_lineCommentDoc({ ...config, outer: value }),
-				inner: (value?: NonNullable<Parameters<typeof _lineCommentDoc>[0]>['inner']) =>
-					_lineCommentDoc({ ...config, inner: value }),
-				doc: (value: T.LineDocContent) => _lineCommentDoc({ ...config, doc: value })
+				outer: (value?: NonNullable<Parameters<typeof buildLineCommentDoc>[0]>['outer']) =>
+					buildLineCommentDoc({ ...config, outer: value }),
+				inner: (value?: NonNullable<Parameters<typeof buildLineCommentDoc>[0]>['inner']) =>
+					buildLineCommentDoc({ ...config, inner: value }),
+				doc: (value: T.LineDocContent) => buildLineCommentDoc({ ...config, doc: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function lineCommentRegularDslash(text: string) {
+export function buildLineCommentRegularDslash(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_line_comment_regular_dslash: text must be non-empty`);
 	return withMethods(
@@ -672,7 +679,7 @@ export function lineCommentRegularDslash(text: string) {
 	);
 }
 
-export function macroDefinitionBrace(...children: T.MacroRule[]) {
+export function buildMacroDefinitionBrace(...children: T.MacroRule[]) {
 	const _macro_rule = children;
 	return withMethods(
 		{
@@ -683,13 +690,13 @@ export function macroDefinitionBrace(...children: T.MacroRule[]) {
 			macroRules() {
 				return _macro_rule;
 			},
-			$with: { $children: (...vs: T.MacroRule[]) => macroDefinitionBrace(...vs) }
+			$with: { $children: (...vs: T.MacroRule[]) => buildMacroDefinitionBrace(...vs) }
 		},
 		methodsEngine
 	);
 }
 
-export function macroDefinitionBracket(...children: T.MacroRule[]) {
+export function buildMacroDefinitionBracket(...children: T.MacroRule[]) {
 	const _macro_rule = children;
 	return withMethods(
 		{
@@ -700,13 +707,13 @@ export function macroDefinitionBracket(...children: T.MacroRule[]) {
 			macroRules() {
 				return _macro_rule;
 			},
-			$with: { $children: (...vs: T.MacroRule[]) => macroDefinitionBracket(...vs) }
+			$with: { $children: (...vs: T.MacroRule[]) => buildMacroDefinitionBracket(...vs) }
 		},
 		methodsEngine
 	);
 }
 
-export function macroDefinitionParen(...children: T.MacroRule[]) {
+export function buildMacroDefinitionParen(...children: T.MacroRule[]) {
 	const _macro_rule = children;
 	return withMethods(
 		{
@@ -717,13 +724,13 @@ export function macroDefinitionParen(...children: T.MacroRule[]) {
 			macroRules() {
 				return _macro_rule;
 			},
-			$with: { $children: (...vs: T.MacroRule[]) => macroDefinitionParen(...vs) }
+			$with: { $children: (...vs: T.MacroRule[]) => buildMacroDefinitionParen(...vs) }
 		},
 		methodsEngine
 	);
 }
 
-export function _matchArmWithComma(config: T.MatchArmWithComma.Config) {
+export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config) {
 	const _value = config.value;
 	return withMethods(
 		{
@@ -735,14 +742,14 @@ export function _matchArmWithComma(config: T.MatchArmWithComma.Config) {
 				return _value;
 			},
 			$with: {
-				value: (value: T.Expression) => _matchArmWithComma({ ...config, value: value })
+				value: (value: T.Expression) => buildMatchArmWithComma({ ...config, value: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _matchBlockArms(config: T.MatchBlockArms.Config) {
+export function buildMatchBlockArms(config: T.MatchBlockArms.Config) {
 	const _match_arm = config.matchArm;
 	const _last_arm = config.lastArm;
 	return withMethods(
@@ -759,15 +766,15 @@ export function _matchBlockArms(config: T.MatchBlockArms.Config) {
 				return _last_arm;
 			},
 			$with: {
-				matchArms: (...values: T.MatchArm[]) => _matchBlockArms({ ...config, matchArm: values }),
-				lastArm: (value: T.LastMatchArm) => _matchBlockArms({ ...config, lastArm: value })
+				matchArms: (...values: T.MatchArm[]) => buildMatchBlockArms({ ...config, matchArm: values }),
+				lastArm: (value: T.LastMatchArm) => buildMatchBlockArms({ ...config, lastArm: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _orPatternBinary(config: T.OrPatternBinary.Config) {
+export function buildOrPatternBinary(config: T.OrPatternBinary.Config) {
 	const _left = config.left;
 	const _right = config.right;
 	return withMethods(
@@ -784,15 +791,15 @@ export function _orPatternBinary(config: T.OrPatternBinary.Config) {
 				return _right;
 			},
 			$with: {
-				left: (value: T.Pattern) => _orPatternBinary({ ...config, left: value }),
-				right: (value: T.Pattern) => _orPatternBinary({ ...config, right: value })
+				left: (value: T.Pattern) => buildOrPatternBinary({ ...config, left: value }),
+				right: (value: T.Pattern) => buildOrPatternBinary({ ...config, right: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _orPatternPrefix(config: T.OrPatternPrefix.Config) {
+export function buildOrPatternPrefix(config: T.OrPatternPrefix.Config) {
 	const _right = config.right;
 	return withMethods(
 		{
@@ -804,14 +811,14 @@ export function _orPatternPrefix(config: T.OrPatternPrefix.Config) {
 				return _right;
 			},
 			$with: {
-				right: (value: T.Pattern) => _orPatternPrefix({ ...config, right: value })
+				right: (value: T.Pattern) => buildOrPatternPrefix({ ...config, right: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _orderedFieldDeclarationListGroup1(
+export function build_OrderedFieldDeclarationListGroup1(
 	elements: NonEmptyArray<T.AttributedOrderedField>,
 	options: { trailing?: boolean } = {}
 ) {
@@ -829,15 +836,16 @@ export function _orderedFieldDeclarationListGroup1(
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.AttributedOrderedField>) => _orderedFieldDeclarationListGroup1(vs, options),
-				trailing: (v: boolean) => _orderedFieldDeclarationListGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.AttributedOrderedField>) =>
+					build_OrderedFieldDeclarationListGroup1(vs, options),
+				trailing: (v: boolean) => build_OrderedFieldDeclarationListGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _parametersGroup1(
+export function build_ParametersGroup1(
 	elements: NonEmptyArray<T.AttributedParameter>,
 	options: { trailing?: boolean } = {}
 ) {
@@ -855,15 +863,15 @@ export function _parametersGroup1(
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.AttributedParameter>) => _parametersGroup1(vs, options),
-				trailing: (v: boolean) => _parametersGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.AttributedParameter>) => build_ParametersGroup1(vs, options),
+				trailing: (v: boolean) => build_ParametersGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _rangeExpressionBinary(config: T.RangeExpressionBinary.Config) {
+export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Config) {
 	const _start = config.start;
 	const _operator = coerceKindEnumStorage(config.operator, [
 		['..', TSKindId.DotDot] as const,
@@ -889,17 +897,17 @@ export function _rangeExpressionBinary(config: T.RangeExpressionBinary.Config) {
 				return _end;
 			},
 			$with: {
-				start: (value: T.Expression) => _rangeExpressionBinary({ ...config, start: value }),
-				operator: (value: NonNullable<Parameters<typeof _rangeExpressionBinary>[0]>['operator']) =>
-					_rangeExpressionBinary({ ...config, operator: value }),
-				end: (value: T.Expression) => _rangeExpressionBinary({ ...config, end: value })
+				start: (value: T.Expression) => buildRangeExpressionBinary({ ...config, start: value }),
+				operator: (value: NonNullable<Parameters<typeof buildRangeExpressionBinary>[0]>['operator']) =>
+					buildRangeExpressionBinary({ ...config, operator: value }),
+				end: (value: T.Expression) => buildRangeExpressionBinary({ ...config, end: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _rangeExpressionPostfix(config: T.RangeExpressionPostfix.Config) {
+export function buildRangeExpressionPostfix(config: T.RangeExpressionPostfix.Config) {
 	const _start = config.start;
 	const _operator = coerceKindEnumStorage('..' as const, []);
 	return withMethods(
@@ -916,14 +924,14 @@ export function _rangeExpressionPostfix(config: T.RangeExpressionPostfix.Config)
 				return _operator;
 			},
 			$with: {
-				start: (value: T.Expression) => _rangeExpressionPostfix({ ...config, start: value })
+				start: (value: T.Expression) => buildRangeExpressionPostfix({ ...config, start: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _rangeExpressionPrefix(config: T.RangeExpressionPrefix.Config) {
+export function buildRangeExpressionPrefix(config: T.RangeExpressionPrefix.Config) {
 	const _operator = coerceKindEnumStorage('..' as const, []);
 	const _end = config.end;
 	return withMethods(
@@ -940,14 +948,14 @@ export function _rangeExpressionPrefix(config: T.RangeExpressionPrefix.Config) {
 				return _end;
 			},
 			$with: {
-				end: (value: T.Expression) => _rangeExpressionPrefix({ ...config, end: value })
+				end: (value: T.Expression) => buildRangeExpressionPrefix({ ...config, end: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _rangePatternLeftWithRight(config: T.RangePatternLeftWithRight.Config) {
+export function buildRangePatternLeftWithRight(config: T.RangePatternLeftWithRight.Config) {
 	const _content = coerceKindEnumStorage(config.content, [
 		['...', TSKindId.DotDotDot] as const,
 		['..=', TSKindId.DotDotEq] as const,
@@ -968,16 +976,16 @@ export function _rangePatternLeftWithRight(config: T.RangePatternLeftWithRight.C
 				return _right;
 			},
 			$with: {
-				content: (value: NonNullable<Parameters<typeof _rangePatternLeftWithRight>[0]>['content']) =>
-					_rangePatternLeftWithRight({ ...config, content: value }),
-				right: (value: T.LiteralPattern | T.Path) => _rangePatternLeftWithRight({ ...config, right: value })
+				content: (value: NonNullable<Parameters<typeof buildRangePatternLeftWithRight>[0]>['content']) =>
+					buildRangePatternLeftWithRight({ ...config, content: value }),
+				right: (value: T.LiteralPattern | T.Path) => buildRangePatternLeftWithRight({ ...config, right: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _rangePatternPrefix(config: T.RangePatternPrefix.Config) {
+export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config) {
 	const _content = coerceKindEnumStorage(config.content, [
 		['..=', TSKindId.DotDotEq] as const,
 		['..', TSKindId.DotDot] as const
@@ -997,16 +1005,16 @@ export function _rangePatternPrefix(config: T.RangePatternPrefix.Config) {
 				return _right;
 			},
 			$with: {
-				content: (value: NonNullable<Parameters<typeof _rangePatternPrefix>[0]>['content']) =>
-					_rangePatternPrefix({ ...config, content: value }),
-				right: (value: T.LiteralPattern | T.Path) => _rangePatternPrefix({ ...config, right: value })
+				content: (value: NonNullable<Parameters<typeof buildRangePatternPrefix>[0]>['content']) =>
+					buildRangePatternPrefix({ ...config, content: value }),
+				right: (value: T.LiteralPattern | T.Path) => buildRangePatternPrefix({ ...config, right: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function referenceExpressionRawConst(text: string) {
+export function buildReferenceExpressionRawConst(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_reference_expression_raw_const: text must be non-empty`);
 	return withMethods(
@@ -1020,7 +1028,7 @@ export function referenceExpressionRawConst(text: string) {
 	);
 }
 
-export function referenceExpressionRawMut(_config?: T.ReferenceExpressionRawMut.Config) {
+export function buildReferenceExpressionRawMut(_config?: T.ReferenceExpressionRawMut.Config) {
 	const _mutable_specifier = 'mut' as const;
 	return withMethods(
 		{
@@ -1037,7 +1045,7 @@ export function referenceExpressionRawMut(_config?: T.ReferenceExpressionRawMut.
 	);
 }
 
-export function _slicePatternGroup1(elements: NonEmptyArray<T.Pattern>, options: { trailing?: boolean } = {}) {
+export function build_SlicePatternGroup1(elements: NonEmptyArray<T.Pattern>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, '_slice_pattern_group1.elements');
 	const _content = elements;
 	const _trailing_sep = options.trailing ?? false;
@@ -1052,15 +1060,15 @@ export function _slicePatternGroup1(elements: NonEmptyArray<T.Pattern>, options:
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.Pattern>) => _slicePatternGroup1(vs, options),
-				trailing: (v: boolean) => _slicePatternGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.Pattern>) => build_SlicePatternGroup1(vs, options),
+				trailing: (v: boolean) => build_SlicePatternGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _structItemBrace(config: T.StructItemBrace.Config) {
+export function buildStructItemBrace(config: T.StructItemBrace.Config) {
 	const _where_clause = config.whereClause;
 	const _body = config.body;
 	return withMethods(
@@ -1077,15 +1085,15 @@ export function _structItemBrace(config: T.StructItemBrace.Config) {
 				return _body;
 			},
 			$with: {
-				whereClause: (value?: T.WhereClause) => _structItemBrace({ ...config, whereClause: value }),
-				body: (value: T.FieldDeclarationList) => _structItemBrace({ ...config, body: value })
+				whereClause: (value?: T.WhereClause) => buildStructItemBrace({ ...config, whereClause: value }),
+				body: (value: T.FieldDeclarationList) => buildStructItemBrace({ ...config, body: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _structItemTuple(config: T.StructItemTuple.Config) {
+export function buildStructItemTuple(config: T.StructItemTuple.Config) {
 	const _body = config.body;
 	const _where_clause = config.whereClause;
 	return withMethods(
@@ -1102,15 +1110,15 @@ export function _structItemTuple(config: T.StructItemTuple.Config) {
 				return _where_clause;
 			},
 			$with: {
-				body: (value: T.OrderedFieldDeclarationList) => _structItemTuple({ ...config, body: value }),
-				whereClause: (value?: T.WhereClause) => _structItemTuple({ ...config, whereClause: value })
+				body: (value: T.OrderedFieldDeclarationList) => buildStructItemTuple({ ...config, body: value }),
+				whereClause: (value?: T.WhereClause) => buildStructItemTuple({ ...config, whereClause: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _structPatternGroup1(
+export function build_StructPatternGroup1(
 	elements: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>,
 	options: { trailing?: boolean } = {}
 ) {
@@ -1129,15 +1137,15 @@ export function _structPatternGroup1(
 			},
 			$with: {
 				$children: (...vs: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>) =>
-					_structPatternGroup1(vs, options),
-				trailing: (v: boolean) => _structPatternGroup1(elements, { ...options, trailing: v })
+					build_StructPatternGroup1(vs, options),
+				trailing: (v: boolean) => build_StructPatternGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function tokenTreeBrace(...children: T.Tokens[]) {
+export function buildTokenTreeBrace(...children: T.Tokens[]) {
 	const _tokens = children;
 	return withMethods(
 		{
@@ -1148,13 +1156,13 @@ export function tokenTreeBrace(...children: T.Tokens[]) {
 			tokens() {
 				return _tokens;
 			},
-			$with: { $children: (...vs: T.Tokens[]) => tokenTreeBrace(...vs) }
+			$with: { $children: (...vs: T.Tokens[]) => buildTokenTreeBrace(...vs) }
 		},
 		methodsEngine
 	);
 }
 
-export function tokenTreeBracket(...children: T.Tokens[]) {
+export function buildTokenTreeBracket(...children: T.Tokens[]) {
 	const _tokens = children;
 	return withMethods(
 		{
@@ -1165,13 +1173,13 @@ export function tokenTreeBracket(...children: T.Tokens[]) {
 			tokens() {
 				return _tokens;
 			},
-			$with: { $children: (...vs: T.Tokens[]) => tokenTreeBracket(...vs) }
+			$with: { $children: (...vs: T.Tokens[]) => buildTokenTreeBracket(...vs) }
 		},
 		methodsEngine
 	);
 }
 
-export function tokenTreeParen(...children: T.Tokens[]) {
+export function buildTokenTreeParen(...children: T.Tokens[]) {
 	const _tokens = children;
 	return withMethods(
 		{
@@ -1182,13 +1190,13 @@ export function tokenTreeParen(...children: T.Tokens[]) {
 			tokens() {
 				return _tokens;
 			},
-			$with: { $children: (...vs: T.Tokens[]) => tokenTreeParen(...vs) }
+			$with: { $children: (...vs: T.Tokens[]) => buildTokenTreeParen(...vs) }
 		},
 		methodsEngine
 	);
 }
 
-export function tokenTreePatternBrace(...children: T.TokenPattern[]) {
+export function buildTokenTreePatternBrace(...children: T.TokenPattern[]) {
 	const _token_pattern = children;
 	return withMethods(
 		{
@@ -1199,13 +1207,13 @@ export function tokenTreePatternBrace(...children: T.TokenPattern[]) {
 			tokenPatterns() {
 				return _token_pattern;
 			},
-			$with: { $children: (...vs: T.TokenPattern[]) => tokenTreePatternBrace(...vs) }
+			$with: { $children: (...vs: T.TokenPattern[]) => buildTokenTreePatternBrace(...vs) }
 		},
 		methodsEngine
 	);
 }
 
-export function tokenTreePatternBracket(...children: T.TokenPattern[]) {
+export function buildTokenTreePatternBracket(...children: T.TokenPattern[]) {
 	const _token_pattern = children;
 	return withMethods(
 		{
@@ -1216,13 +1224,13 @@ export function tokenTreePatternBracket(...children: T.TokenPattern[]) {
 			tokenPatterns() {
 				return _token_pattern;
 			},
-			$with: { $children: (...vs: T.TokenPattern[]) => tokenTreePatternBracket(...vs) }
+			$with: { $children: (...vs: T.TokenPattern[]) => buildTokenTreePatternBracket(...vs) }
 		},
 		methodsEngine
 	);
 }
 
-export function tokenTreePatternParen(...children: T.TokenPattern[]) {
+export function buildTokenTreePatternParen(...children: T.TokenPattern[]) {
 	const _token_pattern = children;
 	return withMethods(
 		{
@@ -1233,13 +1241,13 @@ export function tokenTreePatternParen(...children: T.TokenPattern[]) {
 			tokenPatterns() {
 				return _token_pattern;
 			},
-			$with: { $children: (...vs: T.TokenPattern[]) => tokenTreePatternParen(...vs) }
+			$with: { $children: (...vs: T.TokenPattern[]) => buildTokenTreePatternParen(...vs) }
 		},
 		methodsEngine
 	);
 }
 
-export function _tuplePatternGroup1(
+export function build_TuplePatternGroup1(
 	elements: NonEmptyArray<T.Pattern | T.ClosureExpression>,
 	options: { trailing?: boolean } = {}
 ) {
@@ -1257,15 +1265,15 @@ export function _tuplePatternGroup1(
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.Pattern | T.ClosureExpression>) => _tuplePatternGroup1(vs, options),
-				trailing: (v: boolean) => _tuplePatternGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.Pattern | T.ClosureExpression>) => build_TuplePatternGroup1(vs, options),
+				trailing: (v: boolean) => build_TuplePatternGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function typeArgument(config: T.TypeArgument.Config) {
+export function buildTypeArgument(config: T.TypeArgument.Config) {
 	const _content = config.content;
 	const _trait_bounds = config.traitBounds;
 	return withMethods(
@@ -1283,18 +1291,18 @@ export function typeArgument(config: T.TypeArgument.Config) {
 			},
 			$with: {
 				content: (value: T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block) =>
-					typeArgument({ ...config, content: value }),
-				traitBounds: (value?: T.TraitBounds) => typeArgument({ ...config, traitBounds: value })
+					buildTypeArgument({ ...config, content: value }),
+				traitBounds: (value?: T.TraitBounds) => buildTypeArgument({ ...config, traitBounds: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function typeIdentifier(text: string) {
+export function buildTypeIdentifier(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_type_identifier: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_typeIdentifier.test(text))
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildTypeIdentifier.test(text))
 		throw new Error(`_type_identifier: text does not match pattern: ${text}`);
 	return withMethods(
 		{
@@ -1307,7 +1315,7 @@ export function typeIdentifier(text: string) {
 	);
 }
 
-export function _useBoundsGroup1(
+export function build_UseBoundsGroup1(
 	elements: NonEmptyArray<T.Lifetime | T.TypeIdentifier>,
 	options: { trailing?: boolean } = {}
 ) {
@@ -1325,15 +1333,15 @@ export function _useBoundsGroup1(
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.Lifetime | T.TypeIdentifier>) => _useBoundsGroup1(vs, options),
-				trailing: (v: boolean) => _useBoundsGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.Lifetime | T.TypeIdentifier>) => build_UseBoundsGroup1(vs, options),
+				trailing: (v: boolean) => build_UseBoundsGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _useListGroup1(elements: NonEmptyArray<T.UseClause>, options: { trailing?: boolean } = {}) {
+export function build_UseListGroup1(elements: NonEmptyArray<T.UseClause>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, '_use_list_group1.elements');
 	const _content = elements;
 	const _trailing_sep = options.trailing ?? false;
@@ -1348,15 +1356,15 @@ export function _useListGroup1(elements: NonEmptyArray<T.UseClause>, options: { 
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.UseClause>) => _useListGroup1(vs, options),
-				trailing: (v: boolean) => _useListGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.UseClause>) => build_UseListGroup1(vs, options),
+				trailing: (v: boolean) => build_UseListGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _useWildcardClause(config: T.UseWildcardClause.Config) {
+export function buildUseWildcardClause(config: T.UseWildcardClause.Config) {
 	const _path = config.path;
 	return withMethods(
 		{
@@ -1368,14 +1376,14 @@ export function _useWildcardClause(config: T.UseWildcardClause.Config) {
 				return _path;
 			},
 			$with: {
-				path: (value: T.Path) => _useWildcardClause({ ...config, path: value })
+				path: (value: T.Path) => buildUseWildcardClause({ ...config, path: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _visibilityModifierGroup1(child: T.Self | T.Super | T.Crate | T.InPath) {
+export function build_VisibilityModifierGroup1(child: T.Self | T.Super | T.Crate | T.InPath) {
 	const _content = child;
 	return withMethods(
 		{
@@ -1386,13 +1394,13 @@ export function _visibilityModifierGroup1(child: T.Self | T.Super | T.Crate | T.
 			content() {
 				return _content;
 			},
-			$with: { $child: (v: T.Self | T.Super | T.Crate | T.InPath) => _visibilityModifierGroup1(v) }
+			$with: { $child: (v: T.Self | T.Super | T.Crate | T.InPath) => build_VisibilityModifierGroup1(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function _visibilityModifierInPath(config: T.VisibilityModifierInPath.Config) {
+export function buildVisibilityModifierInPath(config: T.VisibilityModifierInPath.Config) {
 	const _in = coerceKindEnumStorage('in' as const, [['in', TSKindId.In] as const]);
 	const _path = config.path;
 	return withMethods(
@@ -1409,14 +1417,14 @@ export function _visibilityModifierInPath(config: T.VisibilityModifierInPath.Con
 				return _path;
 			},
 			$with: {
-				path: (value: T.Path) => _visibilityModifierInPath({ ...config, path: value })
+				path: (value: T.Path) => buildVisibilityModifierInPath({ ...config, path: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _visibilityModifierPub(config: Partial<T.VisibilityModifierPub.Config> = {}) {
+export function buildVisibilityModifierPub(config: Partial<T.VisibilityModifierPub.Config> = {}) {
 	const _pub = coerceKindEnumStorage('pub' as const, [['pub', TSKindId.Pub] as const]);
 	const _visibility_modifier_group1 = config.visibilityModifierGroup1;
 	return withMethods(
@@ -1434,14 +1442,17 @@ export function _visibilityModifierPub(config: Partial<T.VisibilityModifierPub.C
 			},
 			$with: {
 				visibilityModifierGroup1: (value?: T.VisibilityModifierGroup1) =>
-					_visibilityModifierPub({ ...config, visibilityModifierGroup1: value })
+					buildVisibilityModifierPub({ ...config, visibilityModifierGroup1: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function _whereClauseGroup1(elements: NonEmptyArray<T.WherePredicate>, options: { trailing?: boolean } = {}) {
+export function build_WhereClauseGroup1(
+	elements: NonEmptyArray<T.WherePredicate>,
+	options: { trailing?: boolean } = {}
+) {
 	_assertNonEmpty(elements, '_where_clause_group1.elements');
 	const _content = elements;
 	const _trailing_sep = options.trailing ?? false;
@@ -1456,15 +1467,15 @@ export function _whereClauseGroup1(elements: NonEmptyArray<T.WherePredicate>, op
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.WherePredicate>) => _whereClauseGroup1(vs, options),
-				trailing: (v: boolean) => _whereClauseGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.WherePredicate>) => build_WhereClauseGroup1(vs, options),
+				trailing: (v: boolean) => build_WhereClauseGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function abstractType(config: T.AbstractType.Config) {
+export function buildAbstractType(config: T.AbstractType.Config) {
 	const _type_parameters = config.typeParameters;
 	const _trait = config.trait;
 	return withMethods(
@@ -1481,7 +1492,7 @@ export function abstractType(config: T.AbstractType.Config) {
 				return _trait;
 			},
 			$with: {
-				typeParameters: (value?: T.TypeParameters) => abstractType({ ...config, typeParameters: value }),
+				typeParameters: (value?: T.TypeParameters) => buildAbstractType({ ...config, typeParameters: value }),
 				trait: (
 					value:
 						| T.Identifier
@@ -1491,14 +1502,14 @@ export function abstractType(config: T.AbstractType.Config) {
 						| T.FunctionType
 						| T.TupleType
 						| T.BoundedType
-				) => abstractType({ ...config, trait: value })
+				) => buildAbstractType({ ...config, trait: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function arguments_(child?: T.ArgumentsGroup1) {
+export function buildArguments(child?: T.ArgumentsGroup1) {
 	const _arguments_group1 = child;
 	return withMethods(
 		{
@@ -1509,13 +1520,13 @@ export function arguments_(child?: T.ArgumentsGroup1) {
 			argumentsGroup1() {
 				return _arguments_group1;
 			},
-			$with: { $child: (v: T.ArgumentsGroup1) => arguments_(v) }
+			$with: { $child: (v: T.ArgumentsGroup1) => buildArguments(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function arrayExpression(child: T.ArrayExpressionSemi | T.ArrayExpressionList) {
+export function buildArrayExpression(child: T.ArrayExpressionSemi | T.ArrayExpressionList) {
 	const _content = child;
 	return withMethods(
 		{
@@ -1526,13 +1537,13 @@ export function arrayExpression(child: T.ArrayExpressionSemi | T.ArrayExpression
 			content() {
 				return _content;
 			},
-			$with: { $child: (v: T.ArrayExpressionSemi | T.ArrayExpressionList) => arrayExpression(v) }
+			$with: { $child: (v: T.ArrayExpressionSemi | T.ArrayExpressionList) => buildArrayExpression(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function arrayType(config: T.ArrayType.Config) {
+export function buildArrayType(config: T.ArrayType.Config) {
 	const _element = config.element;
 	const _length = config.length;
 	return withMethods(
@@ -1549,15 +1560,15 @@ export function arrayType(config: T.ArrayType.Config) {
 				return _length;
 			},
 			$with: {
-				element: (value: T._Type) => arrayType({ ...config, element: value }),
-				length: (value?: T.Expression) => arrayType({ ...config, length: value })
+				element: (value: T._Type) => buildArrayType({ ...config, element: value }),
+				length: (value?: T.Expression) => buildArrayType({ ...config, length: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function assignmentExpression(config: T.AssignmentExpression.Config) {
+export function buildAssignmentExpression(config: T.AssignmentExpression.Config) {
 	const _left = config.left;
 	const _right = config.right;
 	return withMethods(
@@ -1574,15 +1585,15 @@ export function assignmentExpression(config: T.AssignmentExpression.Config) {
 				return _right;
 			},
 			$with: {
-				left: (value: T.Expression) => assignmentExpression({ ...config, left: value }),
-				right: (value: T.Expression) => assignmentExpression({ ...config, right: value })
+				left: (value: T.Expression) => buildAssignmentExpression({ ...config, left: value }),
+				right: (value: T.Expression) => buildAssignmentExpression({ ...config, right: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function associatedType(config: T.AssociatedType.Config) {
+export function buildAssociatedType(config: T.AssociatedType.Config) {
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _bounds = config.bounds;
@@ -1609,17 +1620,17 @@ export function associatedType(config: T.AssociatedType.Config) {
 				return _where_clause;
 			},
 			$with: {
-				name: (value: T.Identifier) => associatedType({ ...config, name: value }),
-				typeParameters: (value?: T.TypeParameters) => associatedType({ ...config, typeParameters: value }),
-				bounds: (value?: T.TraitBounds) => associatedType({ ...config, bounds: value }),
-				whereClause: (value?: T.WhereClause) => associatedType({ ...config, whereClause: value })
+				name: (value: T.Identifier) => buildAssociatedType({ ...config, name: value }),
+				typeParameters: (value?: T.TypeParameters) => buildAssociatedType({ ...config, typeParameters: value }),
+				bounds: (value?: T.TraitBounds) => buildAssociatedType({ ...config, bounds: value }),
+				whereClause: (value?: T.WhereClause) => buildAssociatedType({ ...config, whereClause: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function asyncBlock(config: T.AsyncBlock.Config) {
+export function buildAsyncBlock(config: T.AsyncBlock.Config) {
 	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
 	const _block = config.block;
 	return withMethods(
@@ -1636,16 +1647,16 @@ export function asyncBlock(config: T.AsyncBlock.Config) {
 				return _block;
 			},
 			$with: {
-				moveMarker: (value?: NonNullable<Parameters<typeof asyncBlock>[0]>['moveMarker']) =>
-					asyncBlock({ ...config, moveMarker: value }),
-				block: (value: T.Block) => asyncBlock({ ...config, block: value })
+				moveMarker: (value?: NonNullable<Parameters<typeof buildAsyncBlock>[0]>['moveMarker']) =>
+					buildAsyncBlock({ ...config, moveMarker: value }),
+				block: (value: T.Block) => buildAsyncBlock({ ...config, block: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function attribute(config: T.Attribute.Config) {
+export function buildAttribute(config: T.Attribute.Config) {
 	const _path = config.path;
 	const _value = config.value;
 	const _arguments = config.arguments;
@@ -1667,16 +1678,16 @@ export function attribute(config: T.Attribute.Config) {
 				return _arguments;
 			},
 			$with: {
-				path: (value: T.Path) => attribute({ ...config, path: value }),
-				value: (value?: T.Expression) => attribute({ ...config, value: value }),
-				arguments: (value?: T.DelimTokenTree) => attribute({ ...config, arguments: value })
+				path: (value: T.Path) => buildAttribute({ ...config, path: value }),
+				value: (value?: T.Expression) => buildAttribute({ ...config, value: value }),
+				arguments: (value?: T.DelimTokenTree) => buildAttribute({ ...config, arguments: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function attributeItem(attribute: T.AttributeItem.Config['attribute']) {
+export function buildAttributeItem(attribute: T.AttributeItem.Config['attribute']) {
 	const _attribute = attribute;
 	return withMethods(
 		{
@@ -1688,14 +1699,14 @@ export function attributeItem(attribute: T.AttributeItem.Config['attribute']) {
 				return _attribute;
 			},
 			$with: {
-				attribute: (value: T.AttributeItem.Config['attribute']) => attributeItem(value)
+				attribute: (value: T.AttributeItem.Config['attribute']) => buildAttributeItem(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function awaitExpression(expression: T.AwaitExpression.Config['expression']) {
+export function buildAwaitExpression(expression: T.AwaitExpression.Config['expression']) {
 	const _expression = expression;
 	return withMethods(
 		{
@@ -1707,14 +1718,14 @@ export function awaitExpression(expression: T.AwaitExpression.Config['expression
 				return _expression;
 			},
 			$with: {
-				expression: (value: T.AwaitExpression.Config['expression']) => awaitExpression(value)
+				expression: (value: T.AwaitExpression.Config['expression']) => buildAwaitExpression(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function baseFieldInitializer(expression: T.BaseFieldInitializer.Config['expression']) {
+export function buildBaseFieldInitializer(expression: T.BaseFieldInitializer.Config['expression']) {
 	const _expression = expression;
 	return withMethods(
 		{
@@ -1726,14 +1737,14 @@ export function baseFieldInitializer(expression: T.BaseFieldInitializer.Config['
 				return _expression;
 			},
 			$with: {
-				expression: (value: T.BaseFieldInitializer.Config['expression']) => baseFieldInitializer(value)
+				expression: (value: T.BaseFieldInitializer.Config['expression']) => buildBaseFieldInitializer(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function binaryExpression(config: T.BinaryExpression.Config) {
+export function buildBinaryExpression(config: T.BinaryExpression.Config) {
 	const _left = config.left;
 	const _operator = coerceKindEnumStorage(config.operator, [
 		['&&', TSKindId.AmpAmp] as const,
@@ -1774,17 +1785,17 @@ export function binaryExpression(config: T.BinaryExpression.Config) {
 				return _right;
 			},
 			$with: {
-				left: (value: T.Expression) => binaryExpression({ ...config, left: value }),
-				operator: (value: NonNullable<Parameters<typeof binaryExpression>[0]>['operator']) =>
-					binaryExpression({ ...config, operator: value }),
-				right: (value: T.Expression) => binaryExpression({ ...config, right: value })
+				left: (value: T.Expression) => buildBinaryExpression({ ...config, left: value }),
+				operator: (value: NonNullable<Parameters<typeof buildBinaryExpression>[0]>['operator']) =>
+					buildBinaryExpression({ ...config, operator: value }),
+				right: (value: T.Expression) => buildBinaryExpression({ ...config, right: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function block(config: Partial<T.Block.Config> = {}) {
+export function buildBlock(config: Partial<T.Block.Config> = {}) {
 	const _label = config.label;
 	const _statement = config.statement;
 	const _trailing_expression = config.trailingExpression;
@@ -1806,16 +1817,16 @@ export function block(config: Partial<T.Block.Config> = {}) {
 				return _trailing_expression;
 			},
 			$with: {
-				label: (value?: T.Label) => block({ ...config, label: value }),
-				statements: (...values: T.Statement[]) => block({ ...config, statement: values }),
-				trailingExpression: (value?: T.Expression) => block({ ...config, trailingExpression: value })
+				label: (value?: T.Label) => buildBlock({ ...config, label: value }),
+				statements: (...values: T.Statement[]) => buildBlock({ ...config, statement: values }),
+				trailingExpression: (value?: T.Expression) => buildBlock({ ...config, trailingExpression: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function blockComment(config: Partial<T.BlockComment.Config> = {}) {
+export function buildBlockComment(config: Partial<T.BlockComment.Config> = {}) {
 	const _outer = coerceBooleanKeywordStorage(config.outer);
 	const _inner = coerceBooleanKeywordStorage(config.inner);
 	const _doc = config.doc;
@@ -1837,18 +1848,18 @@ export function blockComment(config: Partial<T.BlockComment.Config> = {}) {
 				return _doc;
 			},
 			$with: {
-				outer: (value?: NonNullable<Parameters<typeof blockComment>[0]>['outer']) =>
-					blockComment({ ...config, outer: value }),
-				inner: (value?: NonNullable<Parameters<typeof blockComment>[0]>['inner']) =>
-					blockComment({ ...config, inner: value }),
-				doc: (value?: T.BlockCommentContent) => blockComment({ ...config, doc: value })
+				outer: (value?: NonNullable<Parameters<typeof buildBlockComment>[0]>['outer']) =>
+					buildBlockComment({ ...config, outer: value }),
+				inner: (value?: NonNullable<Parameters<typeof buildBlockComment>[0]>['inner']) =>
+					buildBlockComment({ ...config, inner: value }),
+				doc: (value?: T.BlockCommentContent) => buildBlockComment({ ...config, doc: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function booleanLiteral(text: 'true' | 'false') {
+export function buildBooleanLiteral(text: 'true' | 'false') {
 	return withMethods(
 		{
 			$type: TSKindId.BooleanLiteral as const,
@@ -1860,7 +1871,7 @@ export function booleanLiteral(text: 'true' | 'false') {
 	);
 }
 
-export function boundedType(config: T.BoundedType.Config) {
+export function buildBoundedType(config: T.BoundedType.Config) {
 	const _left = config.left;
 	const _right = config.right;
 	return withMethods(
@@ -1877,15 +1888,15 @@ export function boundedType(config: T.BoundedType.Config) {
 				return _right;
 			},
 			$with: {
-				left: (value: T.Lifetime | T._Type | T.UseBounds) => boundedType({ ...config, left: value }),
-				right: (value: T.Lifetime | T._Type | T.UseBounds) => boundedType({ ...config, right: value })
+				left: (value: T.Lifetime | T._Type | T.UseBounds) => buildBoundedType({ ...config, left: value }),
+				right: (value: T.Lifetime | T._Type | T.UseBounds) => buildBoundedType({ ...config, right: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function bracketedType(child: T._Type | T.QualifiedType) {
+export function buildBracketedType(child: T._Type | T.QualifiedType) {
 	const _content = child;
 	return withMethods(
 		{
@@ -1896,13 +1907,13 @@ export function bracketedType(child: T._Type | T.QualifiedType) {
 			content() {
 				return _content;
 			},
-			$with: { $child: (v: T._Type | T.QualifiedType) => bracketedType(v) }
+			$with: { $child: (v: T._Type | T.QualifiedType) => buildBracketedType(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function breakExpression(config: Partial<T.BreakExpression.Config> = {}) {
+export function buildBreakExpression(config: Partial<T.BreakExpression.Config> = {}) {
 	const _label = config.label;
 	const _expression = config.expression;
 	return withMethods(
@@ -1919,15 +1930,15 @@ export function breakExpression(config: Partial<T.BreakExpression.Config> = {}) 
 				return _expression;
 			},
 			$with: {
-				label: (value?: T.Label) => breakExpression({ ...config, label: value }),
-				expression: (value?: T.Expression) => breakExpression({ ...config, expression: value })
+				label: (value?: T.Label) => buildBreakExpression({ ...config, label: value }),
+				expression: (value?: T.Expression) => buildBreakExpression({ ...config, expression: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function callExpression(config: T.CallExpression.Config) {
+export function buildCallExpression(config: T.CallExpression.Config) {
 	const _function = config.function;
 	const _arguments = config.arguments;
 	return withMethods(
@@ -1944,15 +1955,15 @@ export function callExpression(config: T.CallExpression.Config) {
 				return _arguments;
 			},
 			$with: {
-				function: (value: T.ExpressionExceptRange) => callExpression({ ...config, function: value }),
-				arguments: (value: T.Arguments) => callExpression({ ...config, arguments: value })
+				function: (value: T.ExpressionExceptRange) => buildCallExpression({ ...config, function: value }),
+				arguments: (value: T.Arguments) => buildCallExpression({ ...config, arguments: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function capturedPattern(config: T.CapturedPattern.Config) {
+export function buildCapturedPattern(config: T.CapturedPattern.Config) {
 	const _identifier = config.identifier;
 	const _pattern = config.pattern;
 	return withMethods(
@@ -1969,15 +1980,15 @@ export function capturedPattern(config: T.CapturedPattern.Config) {
 				return _pattern;
 			},
 			$with: {
-				identifier: (value: T.Identifier) => capturedPattern({ ...config, identifier: value }),
-				pattern: (value: T.Pattern) => capturedPattern({ ...config, pattern: value })
+				identifier: (value: T.Identifier) => buildCapturedPattern({ ...config, identifier: value }),
+				pattern: (value: T.Pattern) => buildCapturedPattern({ ...config, pattern: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function charLiteral(text: string) {
+export function buildCharLiteral(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`char_literal: text must be non-empty`);
 	return withMethods(
@@ -1991,7 +2002,7 @@ export function charLiteral(text: string) {
 	);
 }
 
-export function closureExpression(config: T.ClosureExpression.Config) {
+export function buildClosureExpression(config: T.ClosureExpression.Config) {
 	const _static_marker = coerceBooleanKeywordStorage(config.staticMarker);
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
@@ -2023,22 +2034,22 @@ export function closureExpression(config: T.ClosureExpression.Config) {
 				return _content;
 			},
 			$with: {
-				staticMarker: (value?: NonNullable<Parameters<typeof closureExpression>[0]>['staticMarker']) =>
-					closureExpression({ ...config, staticMarker: value }),
-				asyncMarker: (value?: NonNullable<Parameters<typeof closureExpression>[0]>['asyncMarker']) =>
-					closureExpression({ ...config, asyncMarker: value }),
-				moveMarker: (value?: NonNullable<Parameters<typeof closureExpression>[0]>['moveMarker']) =>
-					closureExpression({ ...config, moveMarker: value }),
-				parameters: (value: T.ClosureParameters) => closureExpression({ ...config, parameters: value }),
+				staticMarker: (value?: NonNullable<Parameters<typeof buildClosureExpression>[0]>['staticMarker']) =>
+					buildClosureExpression({ ...config, staticMarker: value }),
+				asyncMarker: (value?: NonNullable<Parameters<typeof buildClosureExpression>[0]>['asyncMarker']) =>
+					buildClosureExpression({ ...config, asyncMarker: value }),
+				moveMarker: (value?: NonNullable<Parameters<typeof buildClosureExpression>[0]>['moveMarker']) =>
+					buildClosureExpression({ ...config, moveMarker: value }),
+				parameters: (value: T.ClosureParameters) => buildClosureExpression({ ...config, parameters: value }),
 				content: (value: T.ClosureExpressionBlock | T.ClosureExpressionExpr) =>
-					closureExpression({ ...config, content: value })
+					buildClosureExpression({ ...config, content: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function closureParameters(config: Partial<T.ClosureParameters.Config> = {}) {
+export function buildClosureParameters(config: Partial<T.ClosureParameters.Config> = {}) {
 	const _parameters = config.parameters;
 	return withMethods(
 		{
@@ -2050,14 +2061,15 @@ export function closureParameters(config: Partial<T.ClosureParameters.Config> = 
 				return _parameters;
 			},
 			$with: {
-				parameters: (...values: (T.Pattern | T.Parameter)[]) => closureParameters({ ...config, parameters: values })
+				parameters: (...values: (T.Pattern | T.Parameter)[]) =>
+					buildClosureParameters({ ...config, parameters: values })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function compoundAssignmentExpr(config: T.CompoundAssignmentExpr.Config) {
+export function buildCompoundAssignmentExpr(config: T.CompoundAssignmentExpr.Config) {
 	const _left = config.left;
 	const _operator = coerceKindEnumStorage(config.operator, [
 		['+=', TSKindId.PlusEq] as const,
@@ -2090,17 +2102,17 @@ export function compoundAssignmentExpr(config: T.CompoundAssignmentExpr.Config) 
 				return _right;
 			},
 			$with: {
-				left: (value: T.Expression) => compoundAssignmentExpr({ ...config, left: value }),
-				operator: (value: NonNullable<Parameters<typeof compoundAssignmentExpr>[0]>['operator']) =>
-					compoundAssignmentExpr({ ...config, operator: value }),
-				right: (value: T.Expression) => compoundAssignmentExpr({ ...config, right: value })
+				left: (value: T.Expression) => buildCompoundAssignmentExpr({ ...config, left: value }),
+				operator: (value: NonNullable<Parameters<typeof buildCompoundAssignmentExpr>[0]>['operator']) =>
+					buildCompoundAssignmentExpr({ ...config, operator: value }),
+				right: (value: T.Expression) => buildCompoundAssignmentExpr({ ...config, right: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function constBlock(body: T.ConstBlock.Config['body']) {
+export function buildConstBlock(body: T.ConstBlock.Config['body']) {
 	const _body = body;
 	return withMethods(
 		{
@@ -2112,14 +2124,14 @@ export function constBlock(body: T.ConstBlock.Config['body']) {
 				return _body;
 			},
 			$with: {
-				body: (value: T.ConstBlock.Config['body']) => constBlock(value)
+				body: (value: T.ConstBlock.Config['body']) => buildConstBlock(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function constItem(config: T.ConstItem.Config) {
+export function buildConstItem(config: T.ConstItem.Config) {
 	const _visibility_modifier = config.visibilityModifier;
 	const _name = config.name;
 	const _type = config.type;
@@ -2146,17 +2158,17 @@ export function constItem(config: T.ConstItem.Config) {
 				return _value;
 			},
 			$with: {
-				visibilityModifier: (value?: T.VisibilityModifier) => constItem({ ...config, visibilityModifier: value }),
-				name: (value: T.Identifier) => constItem({ ...config, name: value }),
-				type: (value: T._Type) => constItem({ ...config, type: value }),
-				value: (value?: T.Expression) => constItem({ ...config, value: value })
+				visibilityModifier: (value?: T.VisibilityModifier) => buildConstItem({ ...config, visibilityModifier: value }),
+				name: (value: T.Identifier) => buildConstItem({ ...config, name: value }),
+				type: (value: T._Type) => buildConstItem({ ...config, type: value }),
+				value: (value?: T.Expression) => buildConstItem({ ...config, value: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function constParameter(config: T.ConstParameter.Config) {
+export function buildConstParameter(config: T.ConstParameter.Config) {
 	const _name = config.name;
 	const _type = config.type;
 	const _value = config.value;
@@ -2178,17 +2190,17 @@ export function constParameter(config: T.ConstParameter.Config) {
 				return _value;
 			},
 			$with: {
-				name: (value: T.Identifier) => constParameter({ ...config, name: value }),
-				type: (value: T._Type) => constParameter({ ...config, type: value }),
+				name: (value: T.Identifier) => buildConstParameter({ ...config, name: value }),
+				type: (value: T._Type) => buildConstParameter({ ...config, type: value }),
 				value: (value?: T.Block | T.Identifier | T.Literal | T.NegativeLiteral) =>
-					constParameter({ ...config, value: value })
+					buildConstParameter({ ...config, value: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function continueExpression(label?: T.ContinueExpression.Config['label']) {
+export function buildContinueExpression(label?: T.ContinueExpression.Config['label']) {
 	const _label = label;
 	return withMethods(
 		{
@@ -2200,14 +2212,14 @@ export function continueExpression(label?: T.ContinueExpression.Config['label'])
 				return _label;
 			},
 			$with: {
-				label: (value?: T.ContinueExpression.Config['label']) => continueExpression(value)
+				label: (value?: T.ContinueExpression.Config['label']) => buildContinueExpression(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function crate() {
+export function buildCrate() {
 	return withMethods(
 		{
 			$type: TSKindId.Crate as const,
@@ -2219,7 +2231,7 @@ export function crate() {
 	);
 }
 
-export function declarationList(...children: T.DeclarationStatement[]) {
+export function buildDeclarationList(...children: T.DeclarationStatement[]) {
 	const _declaration_statement = children;
 	return withMethods(
 		{
@@ -2230,13 +2242,13 @@ export function declarationList(...children: T.DeclarationStatement[]) {
 			declarationStatements() {
 				return _declaration_statement;
 			},
-			$with: { $children: (...vs: T.DeclarationStatement[]) => declarationList(...vs) }
+			$with: { $children: (...vs: T.DeclarationStatement[]) => buildDeclarationList(...vs) }
 		},
 		methodsEngine
 	);
 }
 
-export function delimTokenTree(child: T.DelimTokenTreeParen | T.DelimTokenTreeBracket | T.DelimTokenTreeBrace) {
+export function buildDelimTokenTree(child: T.DelimTokenTreeParen | T.DelimTokenTreeBracket | T.DelimTokenTreeBrace) {
 	const _content = child;
 	return withMethods(
 		{
@@ -2248,14 +2260,14 @@ export function delimTokenTree(child: T.DelimTokenTreeParen | T.DelimTokenTreeBr
 				return _content;
 			},
 			$with: {
-				$child: (v: T.DelimTokenTreeParen | T.DelimTokenTreeBracket | T.DelimTokenTreeBrace) => delimTokenTree(v)
+				$child: (v: T.DelimTokenTreeParen | T.DelimTokenTreeBracket | T.DelimTokenTreeBrace) => buildDelimTokenTree(v)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function dynamicType(trait: T.DynamicType.Config['trait']) {
+export function buildDynamicType(trait: T.DynamicType.Config['trait']) {
 	const _trait = trait;
 	return withMethods(
 		{
@@ -2267,14 +2279,14 @@ export function dynamicType(trait: T.DynamicType.Config['trait']) {
 				return _trait;
 			},
 			$with: {
-				trait: (value: T.DynamicType.Config['trait']) => dynamicType(value)
+				trait: (value: T.DynamicType.Config['trait']) => buildDynamicType(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function elseClause(child: T.Block | T.IfExpression) {
+export function buildElseClause(child: T.Block | T.IfExpression) {
 	const _content = child;
 	return withMethods(
 		{
@@ -2285,13 +2297,13 @@ export function elseClause(child: T.Block | T.IfExpression) {
 			content() {
 				return _content;
 			},
-			$with: { $child: (v: T.Block | T.IfExpression) => elseClause(v) }
+			$with: { $child: (v: T.Block | T.IfExpression) => buildElseClause(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function enumItem(config: T.EnumItem.Config) {
+export function buildEnumItem(config: T.EnumItem.Config) {
 	const _visibility_modifier = config.visibilityModifier;
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
@@ -2323,18 +2335,18 @@ export function enumItem(config: T.EnumItem.Config) {
 				return _body;
 			},
 			$with: {
-				visibilityModifier: (value?: T.VisibilityModifier) => enumItem({ ...config, visibilityModifier: value }),
-				name: (value: T.Identifier) => enumItem({ ...config, name: value }),
-				typeParameters: (value?: T.TypeParameters) => enumItem({ ...config, typeParameters: value }),
-				whereClause: (value?: T.WhereClause) => enumItem({ ...config, whereClause: value }),
-				body: (value: T.EnumVariantList) => enumItem({ ...config, body: value })
+				visibilityModifier: (value?: T.VisibilityModifier) => buildEnumItem({ ...config, visibilityModifier: value }),
+				name: (value: T.Identifier) => buildEnumItem({ ...config, name: value }),
+				typeParameters: (value?: T.TypeParameters) => buildEnumItem({ ...config, typeParameters: value }),
+				whereClause: (value?: T.WhereClause) => buildEnumItem({ ...config, whereClause: value }),
+				body: (value: T.EnumVariantList) => buildEnumItem({ ...config, body: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function enumVariant(config: T.EnumVariant.Config) {
+export function buildEnumVariant(config: T.EnumVariant.Config) {
 	const _visibility_modifier = config.visibilityModifier;
 	const _name = config.name;
 	const _body = config.body;
@@ -2361,18 +2373,19 @@ export function enumVariant(config: T.EnumVariant.Config) {
 				return _value;
 			},
 			$with: {
-				visibilityModifier: (value?: T.VisibilityModifier) => enumVariant({ ...config, visibilityModifier: value }),
-				name: (value: T.Identifier) => enumVariant({ ...config, name: value }),
+				visibilityModifier: (value?: T.VisibilityModifier) =>
+					buildEnumVariant({ ...config, visibilityModifier: value }),
+				name: (value: T.Identifier) => buildEnumVariant({ ...config, name: value }),
 				body: (value?: T.FieldDeclarationList | T.OrderedFieldDeclarationList) =>
-					enumVariant({ ...config, body: value }),
-				value: (value?: T.Expression) => enumVariant({ ...config, value: value })
+					buildEnumVariant({ ...config, body: value }),
+				value: (value?: T.Expression) => buildEnumVariant({ ...config, value: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function enumVariantList(child?: T.EnumVariantListGroup1) {
+export function buildEnumVariantList(child?: T.EnumVariantListGroup1) {
 	const _enum_variant_list_group1 = child;
 	return withMethods(
 		{
@@ -2383,13 +2396,13 @@ export function enumVariantList(child?: T.EnumVariantListGroup1) {
 			enumVariantListGroup1() {
 				return _enum_variant_list_group1;
 			},
-			$with: { $child: (v: T.EnumVariantListGroup1) => enumVariantList(v) }
+			$with: { $child: (v: T.EnumVariantListGroup1) => buildEnumVariantList(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function escapeSequence(text: string) {
+export function buildEscapeSequence(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`escape_sequence: text must be non-empty`);
 	return withMethods(
@@ -2403,7 +2416,7 @@ export function escapeSequence(text: string) {
 	);
 }
 
-export function expressionStatement(child: T.ExpressionStatementWithSemi | T.ExpressionEndingWithBlock) {
+export function buildExpressionStatement(child: T.ExpressionStatementWithSemi | T.ExpressionEndingWithBlock) {
 	const _content = child;
 	return withMethods(
 		{
@@ -2414,13 +2427,13 @@ export function expressionStatement(child: T.ExpressionStatementWithSemi | T.Exp
 			content() {
 				return _content;
 			},
-			$with: { $child: (v: T.ExpressionStatementWithSemi | T.ExpressionEndingWithBlock) => expressionStatement(v) }
+			$with: { $child: (v: T.ExpressionStatementWithSemi | T.ExpressionEndingWithBlock) => buildExpressionStatement(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function externCrateDeclaration(config: T.ExternCrateDeclaration.Config) {
+export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Config) {
 	const _visibility_modifier = config.visibilityModifier;
 	const _crate = coerceKindEnumStorage('crate' as const, [['crate', TSKindId.Crate] as const]);
 	const _name = config.name;
@@ -2448,16 +2461,16 @@ export function externCrateDeclaration(config: T.ExternCrateDeclaration.Config) 
 			},
 			$with: {
 				visibilityModifier: (value?: T.VisibilityModifier) =>
-					externCrateDeclaration({ ...config, visibilityModifier: value }),
-				name: (value: T.Identifier) => externCrateDeclaration({ ...config, name: value }),
-				alias: (value?: T.Identifier) => externCrateDeclaration({ ...config, alias: value })
+					buildExternCrateDeclaration({ ...config, visibilityModifier: value }),
+				name: (value: T.Identifier) => buildExternCrateDeclaration({ ...config, name: value }),
+				alias: (value?: T.Identifier) => buildExternCrateDeclaration({ ...config, alias: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function externModifier(stringLiteral?: T.ExternModifier.Config['stringLiteral']) {
+export function buildExternModifier(stringLiteral?: T.ExternModifier.Config['stringLiteral']) {
 	const _string_literal = stringLiteral;
 	return withMethods(
 		{
@@ -2469,14 +2482,14 @@ export function externModifier(stringLiteral?: T.ExternModifier.Config['stringLi
 				return _string_literal;
 			},
 			$with: {
-				stringLiteral: (value?: T.ExternModifier.Config['stringLiteral']) => externModifier(value)
+				stringLiteral: (value?: T.ExternModifier.Config['stringLiteral']) => buildExternModifier(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function fieldDeclaration(config: T.FieldDeclaration.Config) {
+export function buildFieldDeclaration(config: T.FieldDeclaration.Config) {
 	const _visibility_modifier = config.visibilityModifier;
 	const _name = config.name;
 	const _type = config.type;
@@ -2499,16 +2512,16 @@ export function fieldDeclaration(config: T.FieldDeclaration.Config) {
 			},
 			$with: {
 				visibilityModifier: (value?: T.VisibilityModifier) =>
-					fieldDeclaration({ ...config, visibilityModifier: value }),
-				name: (value: T.Identifier) => fieldDeclaration({ ...config, name: value }),
-				type: (value: T._Type) => fieldDeclaration({ ...config, type: value })
+					buildFieldDeclaration({ ...config, visibilityModifier: value }),
+				name: (value: T.Identifier) => buildFieldDeclaration({ ...config, name: value }),
+				type: (value: T._Type) => buildFieldDeclaration({ ...config, type: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function fieldDeclarationList(child?: T.FieldDeclarationListGroup1) {
+export function buildFieldDeclarationList(child?: T.FieldDeclarationListGroup1) {
 	const _field_declaration_list_group1 = child;
 	return withMethods(
 		{
@@ -2519,13 +2532,13 @@ export function fieldDeclarationList(child?: T.FieldDeclarationListGroup1) {
 			fieldDeclarationListGroup1() {
 				return _field_declaration_list_group1;
 			},
-			$with: { $child: (v: T.FieldDeclarationListGroup1) => fieldDeclarationList(v) }
+			$with: { $child: (v: T.FieldDeclarationListGroup1) => buildFieldDeclarationList(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function fieldExpression(config: T.FieldExpression.Config) {
+export function buildFieldExpression(config: T.FieldExpression.Config) {
 	const _value = config.value;
 	const _field = config.field;
 	return withMethods(
@@ -2542,15 +2555,15 @@ export function fieldExpression(config: T.FieldExpression.Config) {
 				return _field;
 			},
 			$with: {
-				value: (value: T.Expression) => fieldExpression({ ...config, value: value }),
-				field: (value: T.Identifier | T.IntegerLiteral) => fieldExpression({ ...config, field: value })
+				value: (value: T.Expression) => buildFieldExpression({ ...config, value: value }),
+				field: (value: T.Identifier | T.IntegerLiteral) => buildFieldExpression({ ...config, field: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function fieldInitializer(config: T.FieldInitializer.Config) {
+export function buildFieldInitializer(config: T.FieldInitializer.Config) {
 	const _attribute_item = config.attributeItem;
 	const _field = config.field;
 	const _value = config.value;
@@ -2572,16 +2585,16 @@ export function fieldInitializer(config: T.FieldInitializer.Config) {
 				return _value;
 			},
 			$with: {
-				attributeItems: (...values: T.AttributeItem[]) => fieldInitializer({ ...config, attributeItem: values }),
-				field: (value: T.Identifier | T.IntegerLiteral) => fieldInitializer({ ...config, field: value }),
-				value: (value: T.Expression) => fieldInitializer({ ...config, value: value })
+				attributeItems: (...values: T.AttributeItem[]) => buildFieldInitializer({ ...config, attributeItem: values }),
+				field: (value: T.Identifier | T.IntegerLiteral) => buildFieldInitializer({ ...config, field: value }),
+				value: (value: T.Expression) => buildFieldInitializer({ ...config, value: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function fieldInitializerList(initializers?: T.FieldInitializerList.Config['initializers']) {
+export function buildFieldInitializerList(initializers?: T.FieldInitializerList.Config['initializers']) {
 	const _initializers = initializers;
 	return withMethods(
 		{
@@ -2593,14 +2606,14 @@ export function fieldInitializerList(initializers?: T.FieldInitializerList.Confi
 				return _initializers;
 			},
 			$with: {
-				initializers: (value?: T.FieldInitializerList.Config['initializers']) => fieldInitializerList(value)
+				initializers: (value?: T.FieldInitializerList.Config['initializers']) => buildFieldInitializerList(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function fieldPattern(child?: 'mut' | T.Identifier | T.FieldPatternNamed) {
+export function buildFieldPattern(child?: 'mut' | T.Identifier | T.FieldPatternNamed) {
 	const _ref_marker = child;
 	return withMethods(
 		{
@@ -2611,13 +2624,13 @@ export function fieldPattern(child?: 'mut' | T.Identifier | T.FieldPatternNamed)
 			refMarker() {
 				return _ref_marker;
 			},
-			$with: { $child: (v: 'mut' | T.Identifier | T.FieldPatternNamed) => fieldPattern(v) }
+			$with: { $child: (v: 'mut' | T.Identifier | T.FieldPatternNamed) => buildFieldPattern(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function forExpression(config: T.ForExpression.Config) {
+export function buildForExpression(config: T.ForExpression.Config) {
 	const _label = config.label;
 	const _pattern = config.pattern;
 	const _value = config.value;
@@ -2644,17 +2657,17 @@ export function forExpression(config: T.ForExpression.Config) {
 				return _body;
 			},
 			$with: {
-				label: (value?: T.Label) => forExpression({ ...config, label: value }),
-				pattern: (value: T.Pattern) => forExpression({ ...config, pattern: value }),
-				value: (value: T.Expression) => forExpression({ ...config, value: value }),
-				body: (value: T.Block) => forExpression({ ...config, body: value })
+				label: (value?: T.Label) => buildForExpression({ ...config, label: value }),
+				pattern: (value: T.Pattern) => buildForExpression({ ...config, pattern: value }),
+				value: (value: T.Expression) => buildForExpression({ ...config, value: value }),
+				body: (value: T.Block) => buildForExpression({ ...config, body: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function forLifetimes(...children: T.Lifetime[]) {
+export function buildForLifetimes(...children: T.Lifetime[]) {
 	_assertNonEmpty(children, 'for_lifetimes.children');
 	const _lifetime = children;
 	return withMethods(
@@ -2666,13 +2679,13 @@ export function forLifetimes(...children: T.Lifetime[]) {
 			lifetimes() {
 				return _lifetime;
 			},
-			$with: { $children: (...vs: T.Lifetime[]) => forLifetimes(...vs) }
+			$with: { $children: (...vs: T.Lifetime[]) => buildForLifetimes(...vs) }
 		},
 		methodsEngine
 	);
 }
 
-export function foreignModItem(config: T.ForeignModItem.Config) {
+export function buildForeignModItem(config: T.ForeignModItem.Config) {
 	const _visibility_modifier = config.visibilityModifier;
 	const _extern_modifier = config.externModifier;
 	const _content = config.content;
@@ -2694,16 +2707,17 @@ export function foreignModItem(config: T.ForeignModItem.Config) {
 				return _content;
 			},
 			$with: {
-				visibilityModifier: (value?: T.VisibilityModifier) => foreignModItem({ ...config, visibilityModifier: value }),
-				externModifier: (value: T.ExternModifier) => foreignModItem({ ...config, externModifier: value }),
-				content: (value: ';' | T.DeclarationList) => foreignModItem({ ...config, content: value })
+				visibilityModifier: (value?: T.VisibilityModifier) =>
+					buildForeignModItem({ ...config, visibilityModifier: value }),
+				externModifier: (value: T.ExternModifier) => buildForeignModItem({ ...config, externModifier: value }),
+				content: (value: ';' | T.DeclarationList) => buildForeignModItem({ ...config, content: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function fragmentSpecifier(
+export function buildFragmentSpecifier(
 	text:
 		| 'block'
 		| 'expr'
@@ -2732,7 +2746,7 @@ export function fragmentSpecifier(
 	);
 }
 
-export function functionItem(config: T.FunctionItem.Config) {
+export function buildFunctionItem(config: T.FunctionItem.Config) {
 	const _visibility_modifier = config.visibilityModifier;
 	const _function_modifiers = config.functionModifiers;
 	const _name = config.name;
@@ -2779,21 +2793,22 @@ export function functionItem(config: T.FunctionItem.Config) {
 				return _body;
 			},
 			$with: {
-				visibilityModifier: (value?: T.VisibilityModifier) => functionItem({ ...config, visibilityModifier: value }),
-				functionModifiers: (value?: T.FunctionModifiers) => functionItem({ ...config, functionModifiers: value }),
-				name: (value: T.Identifier | T.Metavariable) => functionItem({ ...config, name: value }),
-				typeParameters: (value?: T.TypeParameters) => functionItem({ ...config, typeParameters: value }),
-				parameters: (value: T.Parameters) => functionItem({ ...config, parameters: value }),
-				returnType: (value?: T._Type) => functionItem({ ...config, returnType: value }),
-				whereClause: (value?: T.WhereClause) => functionItem({ ...config, whereClause: value }),
-				body: (value: T.Block) => functionItem({ ...config, body: value })
+				visibilityModifier: (value?: T.VisibilityModifier) =>
+					buildFunctionItem({ ...config, visibilityModifier: value }),
+				functionModifiers: (value?: T.FunctionModifiers) => buildFunctionItem({ ...config, functionModifiers: value }),
+				name: (value: T.Identifier | T.Metavariable) => buildFunctionItem({ ...config, name: value }),
+				typeParameters: (value?: T.TypeParameters) => buildFunctionItem({ ...config, typeParameters: value }),
+				parameters: (value: T.Parameters) => buildFunctionItem({ ...config, parameters: value }),
+				returnType: (value?: T._Type) => buildFunctionItem({ ...config, returnType: value }),
+				whereClause: (value?: T.WhereClause) => buildFunctionItem({ ...config, whereClause: value }),
+				body: (value: T.Block) => buildFunctionItem({ ...config, body: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function functionModifiers(config: T.FunctionModifiers.Config) {
+export function buildFunctionModifiers(config: T.FunctionModifiers.Config) {
 	const _modifier = config.modifier;
 	return withMethods(
 		{
@@ -2806,14 +2821,14 @@ export function functionModifiers(config: T.FunctionModifiers.Config) {
 			},
 			$with: {
 				modifiers: (...values: NonEmptyArray<'async' | 'default' | 'const' | 'unsafe' | T.ExternModifier>) =>
-					functionModifiers({ ...config, modifier: values })
+					buildFunctionModifiers({ ...config, modifier: values })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function functionSignatureItem(config: T.FunctionSignatureItem.Config) {
+export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Config) {
 	const _visibility_modifier = config.visibilityModifier;
 	const _function_modifiers = config.functionModifiers;
 	const _name = config.name;
@@ -2856,21 +2871,21 @@ export function functionSignatureItem(config: T.FunctionSignatureItem.Config) {
 			},
 			$with: {
 				visibilityModifier: (value?: T.VisibilityModifier) =>
-					functionSignatureItem({ ...config, visibilityModifier: value }),
+					buildFunctionSignatureItem({ ...config, visibilityModifier: value }),
 				functionModifiers: (value?: T.FunctionModifiers) =>
-					functionSignatureItem({ ...config, functionModifiers: value }),
-				name: (value: T.Identifier | T.Metavariable) => functionSignatureItem({ ...config, name: value }),
-				typeParameters: (value?: T.TypeParameters) => functionSignatureItem({ ...config, typeParameters: value }),
-				parameters: (value: T.Parameters) => functionSignatureItem({ ...config, parameters: value }),
-				returnType: (value?: T._Type) => functionSignatureItem({ ...config, returnType: value }),
-				whereClause: (value?: T.WhereClause) => functionSignatureItem({ ...config, whereClause: value })
+					buildFunctionSignatureItem({ ...config, functionModifiers: value }),
+				name: (value: T.Identifier | T.Metavariable) => buildFunctionSignatureItem({ ...config, name: value }),
+				typeParameters: (value?: T.TypeParameters) => buildFunctionSignatureItem({ ...config, typeParameters: value }),
+				parameters: (value: T.Parameters) => buildFunctionSignatureItem({ ...config, parameters: value }),
+				returnType: (value?: T._Type) => buildFunctionSignatureItem({ ...config, returnType: value }),
+				whereClause: (value?: T.WhereClause) => buildFunctionSignatureItem({ ...config, whereClause: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function functionType(config: T.FunctionType.Config) {
+export function buildFunctionType(config: T.FunctionType.Config) {
 	const _for_lifetimes = config.forLifetimes;
 	const _parameters = config.parameters;
 	const _function_type_trait_form = config.functionTypeTraitForm;
@@ -2902,19 +2917,20 @@ export function functionType(config: T.FunctionType.Config) {
 				return _return_type;
 			},
 			$with: {
-				forLifetimes: (value?: T.ForLifetimes) => functionType({ ...config, forLifetimes: value }),
-				parameters: (value: T.Parameters) => functionType({ ...config, parameters: value }),
+				forLifetimes: (value?: T.ForLifetimes) => buildFunctionType({ ...config, forLifetimes: value }),
+				parameters: (value: T.Parameters) => buildFunctionType({ ...config, parameters: value }),
 				functionTypeTraitForm: (value?: T.FunctionTypeTraitForm) =>
-					functionType({ ...config, functionTypeTraitForm: value }),
-				functionTypeFnForm: (value?: T.FunctionTypeFnForm) => functionType({ ...config, functionTypeFnForm: value }),
-				returnType: (value?: T._Type) => functionType({ ...config, returnType: value })
+					buildFunctionType({ ...config, functionTypeTraitForm: value }),
+				functionTypeFnForm: (value?: T.FunctionTypeFnForm) =>
+					buildFunctionType({ ...config, functionTypeFnForm: value }),
+				returnType: (value?: T._Type) => buildFunctionType({ ...config, returnType: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function genBlock(config: T.GenBlock.Config) {
+export function buildGenBlock(config: T.GenBlock.Config) {
 	const _move_marker = coerceBooleanKeywordStorage(config.moveMarker);
 	const _block = config.block;
 	return withMethods(
@@ -2931,16 +2947,16 @@ export function genBlock(config: T.GenBlock.Config) {
 				return _block;
 			},
 			$with: {
-				moveMarker: (value?: NonNullable<Parameters<typeof genBlock>[0]>['moveMarker']) =>
-					genBlock({ ...config, moveMarker: value }),
-				block: (value: T.Block) => genBlock({ ...config, block: value })
+				moveMarker: (value?: NonNullable<Parameters<typeof buildGenBlock>[0]>['moveMarker']) =>
+					buildGenBlock({ ...config, moveMarker: value }),
+				block: (value: T.Block) => buildGenBlock({ ...config, block: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function genericFunction(config: T.GenericFunction.Config) {
+export function buildGenericFunction(config: T.GenericFunction.Config) {
 	const _function = config.function;
 	const _type_arguments = config.typeArguments;
 	return withMethods(
@@ -2958,15 +2974,15 @@ export function genericFunction(config: T.GenericFunction.Config) {
 			},
 			$with: {
 				function: (value: T.Identifier | T.ScopedIdentifier | T.FieldExpression) =>
-					genericFunction({ ...config, function: value }),
-				typeArguments: (value: T.TypeArguments) => genericFunction({ ...config, typeArguments: value })
+					buildGenericFunction({ ...config, function: value }),
+				typeArguments: (value: T.TypeArguments) => buildGenericFunction({ ...config, typeArguments: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function genericPattern(config: T.GenericPattern.Config) {
+export function buildGenericPattern(config: T.GenericPattern.Config) {
 	const _content = config.content;
 	const _type_arguments = config.typeArguments;
 	return withMethods(
@@ -2983,15 +2999,15 @@ export function genericPattern(config: T.GenericPattern.Config) {
 				return _type_arguments;
 			},
 			$with: {
-				content: (value: T.Identifier | T.ScopedIdentifier) => genericPattern({ ...config, content: value }),
-				typeArguments: (value: T.TypeArguments) => genericPattern({ ...config, typeArguments: value })
+				content: (value: T.Identifier | T.ScopedIdentifier) => buildGenericPattern({ ...config, content: value }),
+				typeArguments: (value: T.TypeArguments) => buildGenericPattern({ ...config, typeArguments: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function genericType(config: T.GenericType.Config) {
+export function buildGenericType(config: T.GenericType.Config) {
 	const _type = config.type;
 	const _type_arguments = config.typeArguments;
 	return withMethods(
@@ -3008,15 +3024,15 @@ export function genericType(config: T.GenericType.Config) {
 				return _type_arguments;
 			},
 			$with: {
-				type: (value: T.Identifier | T.ScopedTypeIdentifier) => genericType({ ...config, type: value }),
-				typeArguments: (value: T.TypeArguments) => genericType({ ...config, typeArguments: value })
+				type: (value: T.Identifier | T.ScopedTypeIdentifier) => buildGenericType({ ...config, type: value }),
+				typeArguments: (value: T.TypeArguments) => buildGenericType({ ...config, typeArguments: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function genericTypeWithTurbofish(config: T.GenericTypeWithTurbofish.Config) {
+export function buildGenericTypeWithTurbofish(config: T.GenericTypeWithTurbofish.Config) {
 	const _type = config.type;
 	const _turbofish = coerceKindEnumStorage('::' as const, [['::', TSKindId.ColonColon] as const]);
 	const _type_arguments = config.typeArguments;
@@ -3038,15 +3054,15 @@ export function genericTypeWithTurbofish(config: T.GenericTypeWithTurbofish.Conf
 				return _type_arguments;
 			},
 			$with: {
-				type: (value: T.Identifier | T.ScopedIdentifier) => genericTypeWithTurbofish({ ...config, type: value }),
-				typeArguments: (value: T.TypeArguments) => genericTypeWithTurbofish({ ...config, typeArguments: value })
+				type: (value: T.Identifier | T.ScopedIdentifier) => buildGenericTypeWithTurbofish({ ...config, type: value }),
+				typeArguments: (value: T.TypeArguments) => buildGenericTypeWithTurbofish({ ...config, typeArguments: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function higherRankedTraitBound(config: T.HigherRankedTraitBound.Config) {
+export function buildHigherRankedTraitBound(config: T.HigherRankedTraitBound.Config) {
 	const _type_parameters = config.typeParameters;
 	const _type = config.type;
 	return withMethods(
@@ -3063,18 +3079,18 @@ export function higherRankedTraitBound(config: T.HigherRankedTraitBound.Config) 
 				return _type;
 			},
 			$with: {
-				typeParameters: (value: T.TypeParameters) => higherRankedTraitBound({ ...config, typeParameters: value }),
-				type: (value: T._Type) => higherRankedTraitBound({ ...config, type: value })
+				typeParameters: (value: T.TypeParameters) => buildHigherRankedTraitBound({ ...config, typeParameters: value }),
+				type: (value: T._Type) => buildHigherRankedTraitBound({ ...config, type: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function identifier(text: string) {
+export function buildIdentifier(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`identifier: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_identifier.test(text))
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildIdentifier.test(text))
 		throw new Error(`identifier: text does not match pattern: ${text}`);
 	return withMethods(
 		{
@@ -3087,7 +3103,7 @@ export function identifier(text: string) {
 	);
 }
 
-export function ifExpression(config: T.IfExpression.Config) {
+export function buildIfExpression(config: T.IfExpression.Config) {
 	const _condition = config.condition;
 	const _consequence = config.consequence;
 	const _alternative = config.alternative;
@@ -3109,16 +3125,16 @@ export function ifExpression(config: T.IfExpression.Config) {
 				return _alternative;
 			},
 			$with: {
-				condition: (value: T.Condition) => ifExpression({ ...config, condition: value }),
-				consequence: (value: T.Block) => ifExpression({ ...config, consequence: value }),
-				alternative: (value?: T.ElseClause) => ifExpression({ ...config, alternative: value })
+				condition: (value: T.Condition) => buildIfExpression({ ...config, condition: value }),
+				consequence: (value: T.Block) => buildIfExpression({ ...config, consequence: value }),
+				alternative: (value?: T.ElseClause) => buildIfExpression({ ...config, alternative: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function implItem(config: T.ImplItem.Config) {
+export function buildImplItem(config: T.ImplItem.Config) {
 	const _unsafe_marker = coerceBooleanKeywordStorage(config.unsafeMarker);
 	const _type_parameters = config.typeParameters;
 	const _trait_clause = config.traitClause;
@@ -3155,21 +3171,21 @@ export function implItem(config: T.ImplItem.Config) {
 				return _content;
 			},
 			$with: {
-				unsafeMarker: (value?: NonNullable<Parameters<typeof implItem>[0]>['unsafeMarker']) =>
-					implItem({ ...config, unsafeMarker: value }),
-				typeParameters: (value?: T.TypeParameters) => implItem({ ...config, typeParameters: value }),
+				unsafeMarker: (value?: NonNullable<Parameters<typeof buildImplItem>[0]>['unsafeMarker']) =>
+					buildImplItem({ ...config, unsafeMarker: value }),
+				typeParameters: (value?: T.TypeParameters) => buildImplItem({ ...config, typeParameters: value }),
 				traitClause: (value?: T.ImplItemPositiveClause | T.ImplItemNegativeClause) =>
-					implItem({ ...config, traitClause: value }),
-				type: (value: T._Type) => implItem({ ...config, type: value }),
-				whereClause: (value?: T.WhereClause) => implItem({ ...config, whereClause: value }),
-				content: (value: T.ImplItemBody | ';') => implItem({ ...config, content: value })
+					buildImplItem({ ...config, traitClause: value }),
+				type: (value: T._Type) => buildImplItem({ ...config, type: value }),
+				whereClause: (value?: T.WhereClause) => buildImplItem({ ...config, whereClause: value }),
+				content: (value: T.ImplItemBody | ';') => buildImplItem({ ...config, content: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function indexExpression(config: T.IndexExpression.Config) {
+export function buildIndexExpression(config: T.IndexExpression.Config) {
 	const _object = config.object;
 	const _index = config.index;
 	return withMethods(
@@ -3186,15 +3202,15 @@ export function indexExpression(config: T.IndexExpression.Config) {
 				return _index;
 			},
 			$with: {
-				object: (value: T.Expression) => indexExpression({ ...config, object: value }),
-				index: (value: T.Expression) => indexExpression({ ...config, index: value })
+				object: (value: T.Expression) => buildIndexExpression({ ...config, object: value }),
+				index: (value: T.Expression) => buildIndexExpression({ ...config, index: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function innerAttributeItem(attribute: T.InnerAttributeItem.Config['attribute']) {
+export function buildInnerAttributeItem(attribute: T.InnerAttributeItem.Config['attribute']) {
 	const _attribute = attribute;
 	return withMethods(
 		{
@@ -3206,14 +3222,14 @@ export function innerAttributeItem(attribute: T.InnerAttributeItem.Config['attri
 				return _attribute;
 			},
 			$with: {
-				attribute: (value: T.InnerAttributeItem.Config['attribute']) => innerAttributeItem(value)
+				attribute: (value: T.InnerAttributeItem.Config['attribute']) => buildInnerAttributeItem(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function integerLiteral(text: string) {
+export function buildIntegerLiteral(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`integer_literal: text must be non-empty`);
 	return withMethods(
@@ -3227,7 +3243,7 @@ export function integerLiteral(text: string) {
 	);
 }
 
-export function label(identifier: T.Label.Config['identifier']) {
+export function buildLabel(identifier: T.Label.Config['identifier']) {
 	const _identifier = identifier;
 	return withMethods(
 		{
@@ -3239,14 +3255,14 @@ export function label(identifier: T.Label.Config['identifier']) {
 				return _identifier;
 			},
 			$with: {
-				identifier: (value: T.Label.Config['identifier']) => label(value)
+				identifier: (value: T.Label.Config['identifier']) => buildLabel(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function lastMatchArm(config: T.LastMatchArm.Config) {
+export function buildLastMatchArm(config: T.LastMatchArm.Config) {
 	const _attributes = config.attributes;
 	const _pattern = config.pattern;
 	const _value = config.value;
@@ -3269,16 +3285,16 @@ export function lastMatchArm(config: T.LastMatchArm.Config) {
 			},
 			$with: {
 				attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
-					lastMatchArm({ ...config, attributes: values }),
-				pattern: (value: T.MatchPattern) => lastMatchArm({ ...config, pattern: value }),
-				value: (value: T.Expression) => lastMatchArm({ ...config, value: value })
+					buildLastMatchArm({ ...config, attributes: values }),
+				pattern: (value: T.MatchPattern) => buildLastMatchArm({ ...config, pattern: value }),
+				value: (value: T.Expression) => buildLastMatchArm({ ...config, value: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function letCondition(config: T.LetCondition.Config) {
+export function buildLetCondition(config: T.LetCondition.Config) {
 	const _pattern = config.pattern;
 	const _value = config.value;
 	return withMethods(
@@ -3295,15 +3311,15 @@ export function letCondition(config: T.LetCondition.Config) {
 				return _value;
 			},
 			$with: {
-				pattern: (value: T.Pattern) => letCondition({ ...config, pattern: value }),
-				value: (value: T.Expression) => letCondition({ ...config, value: value })
+				pattern: (value: T.Pattern) => buildLetCondition({ ...config, pattern: value }),
+				value: (value: T.Expression) => buildLetCondition({ ...config, value: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function letDeclaration(config: T.LetDeclaration.Config) {
+export function buildLetDeclaration(config: T.LetDeclaration.Config) {
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
 	const _pattern = config.pattern;
 	const _type = config.type;
@@ -3335,19 +3351,19 @@ export function letDeclaration(config: T.LetDeclaration.Config) {
 				return _alternative;
 			},
 			$with: {
-				mutableSpecifier: (value?: NonNullable<Parameters<typeof letDeclaration>[0]>['mutableSpecifier']) =>
-					letDeclaration({ ...config, mutableSpecifier: value }),
-				pattern: (value: T.Pattern) => letDeclaration({ ...config, pattern: value }),
-				type: (value?: T._Type) => letDeclaration({ ...config, type: value }),
-				value: (value?: T.Expression) => letDeclaration({ ...config, value: value }),
-				alternative: (value?: T.Block) => letDeclaration({ ...config, alternative: value })
+				mutableSpecifier: (value?: NonNullable<Parameters<typeof buildLetDeclaration>[0]>['mutableSpecifier']) =>
+					buildLetDeclaration({ ...config, mutableSpecifier: value }),
+				pattern: (value: T.Pattern) => buildLetDeclaration({ ...config, pattern: value }),
+				type: (value?: T._Type) => buildLetDeclaration({ ...config, type: value }),
+				value: (value?: T.Expression) => buildLetDeclaration({ ...config, value: value }),
+				alternative: (value?: T.Block) => buildLetDeclaration({ ...config, alternative: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function lifetime(identifier: T.Lifetime.Config['identifier']) {
+export function buildLifetime(identifier: T.Lifetime.Config['identifier']) {
 	const _identifier = identifier;
 	return withMethods(
 		{
@@ -3359,14 +3375,14 @@ export function lifetime(identifier: T.Lifetime.Config['identifier']) {
 				return _identifier;
 			},
 			$with: {
-				identifier: (value: T.Lifetime.Config['identifier']) => lifetime(value)
+				identifier: (value: T.Lifetime.Config['identifier']) => buildLifetime(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function lifetimeParameter(config: T.LifetimeParameter.Config) {
+export function buildLifetimeParameter(config: T.LifetimeParameter.Config) {
 	const _name = config.name;
 	const _bounds = config.bounds;
 	return withMethods(
@@ -3383,15 +3399,15 @@ export function lifetimeParameter(config: T.LifetimeParameter.Config) {
 				return _bounds;
 			},
 			$with: {
-				name: (value: T.Lifetime) => lifetimeParameter({ ...config, name: value }),
-				bounds: (value?: T.TraitBounds) => lifetimeParameter({ ...config, bounds: value })
+				name: (value: T.Lifetime) => buildLifetimeParameter({ ...config, name: value }),
+				bounds: (value?: T.TraitBounds) => buildLifetimeParameter({ ...config, bounds: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function lineComment(child: T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent) {
+export function buildLineComment(child: T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent) {
 	const _content = child;
 	return withMethods(
 		{
@@ -3402,13 +3418,15 @@ export function lineComment(child: T.LineCommentRegularDslash | T.LineCommentDoc
 			content() {
 				return _content;
 			},
-			$with: { $child: (v: T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent) => lineComment(v) }
+			$with: {
+				$child: (v: T.LineCommentRegularDslash | T.LineCommentDoc | T.LineCommentContent) => buildLineComment(v)
+			}
 		},
 		methodsEngine
 	);
 }
 
-export function loopExpression(config: T.LoopExpression.Config) {
+export function buildLoopExpression(config: T.LoopExpression.Config) {
 	const _label = config.label;
 	const _body = config.body;
 	return withMethods(
@@ -3425,15 +3443,15 @@ export function loopExpression(config: T.LoopExpression.Config) {
 				return _body;
 			},
 			$with: {
-				label: (value?: T.Label) => loopExpression({ ...config, label: value }),
-				body: (value: T.Block) => loopExpression({ ...config, body: value })
+				label: (value?: T.Label) => buildLoopExpression({ ...config, label: value }),
+				body: (value: T.Block) => buildLoopExpression({ ...config, body: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function macroDefinition(config: T.MacroDefinition.Config) {
+export function buildMacroDefinition(config: T.MacroDefinition.Config) {
 	const _name = config.name;
 	const _content = config.content;
 	return withMethods(
@@ -3450,16 +3468,16 @@ export function macroDefinition(config: T.MacroDefinition.Config) {
 				return _content;
 			},
 			$with: {
-				name: (value: T.Identifier) => macroDefinition({ ...config, name: value }),
+				name: (value: T.Identifier) => buildMacroDefinition({ ...config, name: value }),
 				content: (value: T.MacroDefinitionParen | T.MacroDefinitionBracket | T.MacroDefinitionBrace) =>
-					macroDefinition({ ...config, content: value })
+					buildMacroDefinition({ ...config, content: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function macroInvocation(config: T.MacroInvocation.Config) {
+export function buildMacroInvocation(config: T.MacroInvocation.Config) {
 	const _macro = config.macro;
 	const _token_tree = config.tokenTree;
 	return withMethods(
@@ -3476,15 +3494,15 @@ export function macroInvocation(config: T.MacroInvocation.Config) {
 				return _token_tree;
 			},
 			$with: {
-				macro: (value: T.ScopedIdentifier | T.Identifier) => macroInvocation({ ...config, macro: value }),
-				tokenTree: (value: T.DelimTokenTree) => macroInvocation({ ...config, tokenTree: value })
+				macro: (value: T.ScopedIdentifier | T.Identifier) => buildMacroInvocation({ ...config, macro: value }),
+				tokenTree: (value: T.DelimTokenTree) => buildMacroInvocation({ ...config, tokenTree: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function macroRule(config: T.MacroRule.Config) {
+export function buildMacroRule(config: T.MacroRule.Config) {
 	const _left = config.left;
 	const _right = config.right;
 	return withMethods(
@@ -3501,15 +3519,15 @@ export function macroRule(config: T.MacroRule.Config) {
 				return _right;
 			},
 			$with: {
-				left: (value: T.TokenTreePattern) => macroRule({ ...config, left: value }),
-				right: (value: T.TokenTree) => macroRule({ ...config, right: value })
+				left: (value: T.TokenTreePattern) => buildMacroRule({ ...config, left: value }),
+				right: (value: T.TokenTree) => buildMacroRule({ ...config, right: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function matchArm(config: T.MatchArm.Config) {
+export function buildMatchArm(config: T.MatchArm.Config) {
 	const _attributes = config.attributes;
 	const _pattern = config.pattern;
 	const _content = config.content;
@@ -3532,16 +3550,17 @@ export function matchArm(config: T.MatchArm.Config) {
 			},
 			$with: {
 				attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
-					matchArm({ ...config, attributes: values }),
-				pattern: (value: T.MatchPattern) => matchArm({ ...config, pattern: value }),
-				content: (value: T.MatchArmWithComma | T.ExpressionEndingWithBlock) => matchArm({ ...config, content: value })
+					buildMatchArm({ ...config, attributes: values }),
+				pattern: (value: T.MatchPattern) => buildMatchArm({ ...config, pattern: value }),
+				content: (value: T.MatchArmWithComma | T.ExpressionEndingWithBlock) =>
+					buildMatchArm({ ...config, content: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function matchBlock(child?: T.MatchBlockArms) {
+export function buildMatchBlock(child?: T.MatchBlockArms) {
 	const _match_block_arms = child;
 	return withMethods(
 		{
@@ -3552,13 +3571,13 @@ export function matchBlock(child?: T.MatchBlockArms) {
 			matchBlockArms() {
 				return _match_block_arms;
 			},
-			$with: { $child: (v: T.MatchBlockArms) => matchBlock(v) }
+			$with: { $child: (v: T.MatchBlockArms) => buildMatchBlock(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function matchExpression(config: T.MatchExpression.Config) {
+export function buildMatchExpression(config: T.MatchExpression.Config) {
 	const _value = config.value;
 	const _body = config.body;
 	return withMethods(
@@ -3575,15 +3594,15 @@ export function matchExpression(config: T.MatchExpression.Config) {
 				return _body;
 			},
 			$with: {
-				value: (value: T.Expression) => matchExpression({ ...config, value: value }),
-				body: (value: T.MatchBlock) => matchExpression({ ...config, body: value })
+				value: (value: T.Expression) => buildMatchExpression({ ...config, value: value }),
+				body: (value: T.MatchBlock) => buildMatchExpression({ ...config, body: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function matchPattern(config: T.MatchPattern.Config) {
+export function buildMatchPattern(config: T.MatchPattern.Config) {
 	const _pattern = config.pattern;
 	const _condition = config.condition;
 	return withMethods(
@@ -3600,18 +3619,18 @@ export function matchPattern(config: T.MatchPattern.Config) {
 				return _condition;
 			},
 			$with: {
-				pattern: (value: T.Pattern) => matchPattern({ ...config, pattern: value }),
-				condition: (value?: T.Condition) => matchPattern({ ...config, condition: value })
+				pattern: (value: T.Pattern) => buildMatchPattern({ ...config, pattern: value }),
+				condition: (value?: T.Condition) => buildMatchPattern({ ...config, condition: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function metavariable(text: string) {
+export function buildMetavariable(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`metavariable: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_metavariable.test(text))
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildMetavariable.test(text))
 		throw new Error(`metavariable: text does not match pattern: ${text}`);
 	return withMethods(
 		{
@@ -3624,7 +3643,7 @@ export function metavariable(text: string) {
 	);
 }
 
-export function modItem(config: T.ModItem.Config) {
+export function buildModItem(config: T.ModItem.Config) {
 	const _visibility_modifier = config.visibilityModifier;
 	const _name = config.name;
 	const _content = config.content;
@@ -3646,16 +3665,16 @@ export function modItem(config: T.ModItem.Config) {
 				return _content;
 			},
 			$with: {
-				visibilityModifier: (value?: T.VisibilityModifier) => modItem({ ...config, visibilityModifier: value }),
-				name: (value: T.Identifier) => modItem({ ...config, name: value }),
-				content: (value: ';' | T.DeclarationList) => modItem({ ...config, content: value })
+				visibilityModifier: (value?: T.VisibilityModifier) => buildModItem({ ...config, visibilityModifier: value }),
+				name: (value: T.Identifier) => buildModItem({ ...config, name: value }),
+				content: (value: ';' | T.DeclarationList) => buildModItem({ ...config, content: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function mutPattern(pattern: T.MutPattern.Config['pattern']) {
+export function buildMutPattern(pattern: T.MutPattern.Config['pattern']) {
 	const _mutable_specifier = 'mut' as const;
 	const _pattern = pattern;
 	return withMethods(
@@ -3672,14 +3691,14 @@ export function mutPattern(pattern: T.MutPattern.Config['pattern']) {
 				return _pattern;
 			},
 			$with: {
-				pattern: (value: T.MutPattern.Config['pattern']) => mutPattern(value)
+				pattern: (value: T.MutPattern.Config['pattern']) => buildMutPattern(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function mutableSpecifier() {
+export function buildMutableSpecifier() {
 	return withMethods(
 		{
 			$type: TSKindId.MutableSpecifier as const,
@@ -3691,7 +3710,7 @@ export function mutableSpecifier() {
 	);
 }
 
-export function negativeLiteral(value: T.NegativeLiteral.Config['value']) {
+export function buildNegativeLiteral(value: T.NegativeLiteral.Config['value']) {
 	const _value = value;
 	return withMethods(
 		{
@@ -3703,14 +3722,14 @@ export function negativeLiteral(value: T.NegativeLiteral.Config['value']) {
 				return _value;
 			},
 			$with: {
-				value: (value: T.NegativeLiteral.Config['value']) => negativeLiteral(value)
+				value: (value: T.NegativeLiteral.Config['value']) => buildNegativeLiteral(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function orPattern(child: T.OrPatternBinary | T.OrPatternPrefix) {
+export function buildOrPattern(child: T.OrPatternBinary | T.OrPatternPrefix) {
 	const _content = child;
 	return withMethods(
 		{
@@ -3721,13 +3740,13 @@ export function orPattern(child: T.OrPatternBinary | T.OrPatternPrefix) {
 			content() {
 				return _content;
 			},
-			$with: { $child: (v: T.OrPatternBinary | T.OrPatternPrefix) => orPattern(v) }
+			$with: { $child: (v: T.OrPatternBinary | T.OrPatternPrefix) => buildOrPattern(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function orderedFieldDeclarationList(attributes?: T.OrderedFieldDeclarationList.Config['attributes']) {
+export function buildOrderedFieldDeclarationList(attributes?: T.OrderedFieldDeclarationList.Config['attributes']) {
 	const _attributes = attributes;
 	return withMethods(
 		{
@@ -3739,14 +3758,15 @@ export function orderedFieldDeclarationList(attributes?: T.OrderedFieldDeclarati
 				return _attributes;
 			},
 			$with: {
-				attributes: (value?: T.OrderedFieldDeclarationList.Config['attributes']) => orderedFieldDeclarationList(value)
+				attributes: (value?: T.OrderedFieldDeclarationList.Config['attributes']) =>
+					buildOrderedFieldDeclarationList(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function parameter(config: T.Parameter.Config) {
+export function buildParameter(config: T.Parameter.Config) {
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
 	const _pattern = config.pattern;
 	const _type = config.type;
@@ -3768,17 +3788,17 @@ export function parameter(config: T.Parameter.Config) {
 				return _type;
 			},
 			$with: {
-				mutableSpecifier: (value?: NonNullable<Parameters<typeof parameter>[0]>['mutableSpecifier']) =>
-					parameter({ ...config, mutableSpecifier: value }),
-				pattern: (value: T.Pattern | T.Self) => parameter({ ...config, pattern: value }),
-				type: (value: T._Type) => parameter({ ...config, type: value })
+				mutableSpecifier: (value?: NonNullable<Parameters<typeof buildParameter>[0]>['mutableSpecifier']) =>
+					buildParameter({ ...config, mutableSpecifier: value }),
+				pattern: (value: T.Pattern | T.Self) => buildParameter({ ...config, pattern: value }),
+				type: (value: T._Type) => buildParameter({ ...config, type: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function parameters(child?: T.ParametersGroup1) {
+export function buildParameters(child?: T.ParametersGroup1) {
 	const _parameters_group1 = child;
 	return withMethods(
 		{
@@ -3789,13 +3809,13 @@ export function parameters(child?: T.ParametersGroup1) {
 			parametersGroup1() {
 				return _parameters_group1;
 			},
-			$with: { $child: (v: T.ParametersGroup1) => parameters(v) }
+			$with: { $child: (v: T.ParametersGroup1) => buildParameters(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function parenthesizedExpression(expression: T.ParenthesizedExpression.Config['expression']) {
+export function buildParenthesizedExpression(expression: T.ParenthesizedExpression.Config['expression']) {
 	const _expression = expression;
 	return withMethods(
 		{
@@ -3807,14 +3827,14 @@ export function parenthesizedExpression(expression: T.ParenthesizedExpression.Co
 				return _expression;
 			},
 			$with: {
-				expression: (value: T.ParenthesizedExpression.Config['expression']) => parenthesizedExpression(value)
+				expression: (value: T.ParenthesizedExpression.Config['expression']) => buildParenthesizedExpression(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function pointerType(config: T.PointerType.Config) {
+export function buildPointerType(config: T.PointerType.Config) {
 	const _content = config.content;
 	const _type = config.type;
 	return withMethods(
@@ -3831,15 +3851,15 @@ export function pointerType(config: T.PointerType.Config) {
 				return _type;
 			},
 			$with: {
-				content: (value: 'const' | T.MutableSpecifier) => pointerType({ ...config, content: value }),
-				type: (value: T._Type) => pointerType({ ...config, type: value })
+				content: (value: 'const' | T.MutableSpecifier) => buildPointerType({ ...config, content: value }),
+				type: (value: T._Type) => buildPointerType({ ...config, type: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function qualifiedType(config: T.QualifiedType.Config) {
+export function buildQualifiedType(config: T.QualifiedType.Config) {
 	const _type = config.type;
 	const _alias = config.alias;
 	return withMethods(
@@ -3856,15 +3876,17 @@ export function qualifiedType(config: T.QualifiedType.Config) {
 				return _alias;
 			},
 			$with: {
-				type: (value: T._Type) => qualifiedType({ ...config, type: value }),
-				alias: (value: T._Type) => qualifiedType({ ...config, alias: value })
+				type: (value: T._Type) => buildQualifiedType({ ...config, type: value }),
+				alias: (value: T._Type) => buildQualifiedType({ ...config, alias: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function rangeExpression(child: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix) {
+export function buildRangeExpression(
+	child: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix
+) {
 	const _content = child;
 	return withMethods(
 		{
@@ -3876,14 +3898,15 @@ export function rangeExpression(child: T.RangeExpressionBinary | T.RangeExpressi
 				return _content;
 			},
 			$with: {
-				$child: (v: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix) => rangeExpression(v)
+				$child: (v: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix) =>
+					buildRangeExpression(v)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function rangePattern(config: Partial<T.RangePattern.Config> = {}) {
+export function buildRangePattern(config: Partial<T.RangePattern.Config> = {}) {
 	const _left = config.left;
 	const _content = config.content;
 	const _range_pattern_prefix = config.rangePatternPrefix;
@@ -3905,16 +3928,17 @@ export function rangePattern(config: Partial<T.RangePattern.Config> = {}) {
 				return _range_pattern_prefix;
 			},
 			$with: {
-				left: (value?: T.LiteralPattern | T.Path) => rangePattern({ ...config, left: value }),
-				content: (value?: T.RangePatternLeftWithRight | '..') => rangePattern({ ...config, content: value }),
-				rangePatternPrefix: (value?: T.RangePatternPrefix) => rangePattern({ ...config, rangePatternPrefix: value })
+				left: (value?: T.LiteralPattern | T.Path) => buildRangePattern({ ...config, left: value }),
+				content: (value?: T.RangePatternLeftWithRight | '..') => buildRangePattern({ ...config, content: value }),
+				rangePatternPrefix: (value?: T.RangePatternPrefix) =>
+					buildRangePattern({ ...config, rangePatternPrefix: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function rawStringLiteral(stringContent: T.RawStringLiteral.Config['stringContent']) {
+export function buildRawStringLiteral(stringContent: T.RawStringLiteral.Config['stringContent']) {
 	const _string_content = stringContent;
 	return withMethods(
 		{
@@ -3926,14 +3950,14 @@ export function rawStringLiteral(stringContent: T.RawStringLiteral.Config['strin
 				return _string_content;
 			},
 			$with: {
-				stringContent: (value: T.RawStringLiteral.Config['stringContent']) => rawStringLiteral(value)
+				stringContent: (value: T.RawStringLiteral.Config['stringContent']) => buildRawStringLiteral(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function refPattern(pattern: T.RefPattern.Config['pattern']) {
+export function buildRefPattern(pattern: T.RefPattern.Config['pattern']) {
 	const _pattern = pattern;
 	return withMethods(
 		{
@@ -3945,14 +3969,14 @@ export function refPattern(pattern: T.RefPattern.Config['pattern']) {
 				return _pattern;
 			},
 			$with: {
-				pattern: (value: T.RefPattern.Config['pattern']) => refPattern(value)
+				pattern: (value: T.RefPattern.Config['pattern']) => buildRefPattern(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function referenceExpression(config: T.ReferenceExpression.Config) {
+export function buildReferenceExpression(config: T.ReferenceExpression.Config) {
 	const _content = config.content;
 	const _value = config.value;
 	return withMethods(
@@ -3970,15 +3994,15 @@ export function referenceExpression(config: T.ReferenceExpression.Config) {
 			},
 			$with: {
 				content: (value?: T.ReferenceExpressionRawConst | T.ReferenceExpressionRawMut | T.MutableSpecifier) =>
-					referenceExpression({ ...config, content: value }),
-				value: (value: T.Expression) => referenceExpression({ ...config, value: value })
+					buildReferenceExpression({ ...config, content: value }),
+				value: (value: T.Expression) => buildReferenceExpression({ ...config, value: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function referencePattern(config: T.ReferencePattern.Config) {
+export function buildReferencePattern(config: T.ReferencePattern.Config) {
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
 	const _pattern = config.pattern;
 	return withMethods(
@@ -3995,16 +4019,16 @@ export function referencePattern(config: T.ReferencePattern.Config) {
 				return _pattern;
 			},
 			$with: {
-				mutableSpecifier: (value?: NonNullable<Parameters<typeof referencePattern>[0]>['mutableSpecifier']) =>
-					referencePattern({ ...config, mutableSpecifier: value }),
-				pattern: (value: T.Pattern) => referencePattern({ ...config, pattern: value })
+				mutableSpecifier: (value?: NonNullable<Parameters<typeof buildReferencePattern>[0]>['mutableSpecifier']) =>
+					buildReferencePattern({ ...config, mutableSpecifier: value }),
+				pattern: (value: T.Pattern) => buildReferencePattern({ ...config, pattern: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function referenceType(config: T.ReferenceType.Config) {
+export function buildReferenceType(config: T.ReferenceType.Config) {
 	const _lifetime = config.lifetime;
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
 	const _type = config.type;
@@ -4026,17 +4050,17 @@ export function referenceType(config: T.ReferenceType.Config) {
 				return _type;
 			},
 			$with: {
-				lifetime: (value?: T.Lifetime) => referenceType({ ...config, lifetime: value }),
-				mutableSpecifier: (value?: NonNullable<Parameters<typeof referenceType>[0]>['mutableSpecifier']) =>
-					referenceType({ ...config, mutableSpecifier: value }),
-				type: (value: T._Type) => referenceType({ ...config, type: value })
+				lifetime: (value?: T.Lifetime) => buildReferenceType({ ...config, lifetime: value }),
+				mutableSpecifier: (value?: NonNullable<Parameters<typeof buildReferenceType>[0]>['mutableSpecifier']) =>
+					buildReferenceType({ ...config, mutableSpecifier: value }),
+				type: (value: T._Type) => buildReferenceType({ ...config, type: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function removedTraitBound(type: T.RemovedTraitBound.Config['type']) {
+export function buildRemovedTraitBound(type: T.RemovedTraitBound.Config['type']) {
 	const _type = type;
 	return withMethods(
 		{
@@ -4048,14 +4072,14 @@ export function removedTraitBound(type: T.RemovedTraitBound.Config['type']) {
 				return _type;
 			},
 			$with: {
-				type: (value: T.RemovedTraitBound.Config['type']) => removedTraitBound(value)
+				type: (value: T.RemovedTraitBound.Config['type']) => buildRemovedTraitBound(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function returnExpression(child?: T.Expression) {
+export function buildReturnExpression(child?: T.Expression) {
 	const _expression = child;
 	return withMethods(
 		{
@@ -4066,13 +4090,13 @@ export function returnExpression(child?: T.Expression) {
 			expression() {
 				return _expression;
 			},
-			$with: { $child: (v: T.Expression) => returnExpression(v) }
+			$with: { $child: (v: T.Expression) => buildReturnExpression(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function scopedIdentifier(config: T.ScopedIdentifier.Config) {
+export function buildScopedIdentifier(config: T.ScopedIdentifier.Config) {
 	const _path = config.path;
 	const _name = config.name;
 	return withMethods(
@@ -4090,15 +4114,15 @@ export function scopedIdentifier(config: T.ScopedIdentifier.Config) {
 			},
 			$with: {
 				path: (value?: T.Path | T.BracketedType | T.GenericTypeWithTurbofish) =>
-					scopedIdentifier({ ...config, path: value }),
-				name: (value: T.Identifier | T.Super) => scopedIdentifier({ ...config, name: value })
+					buildScopedIdentifier({ ...config, path: value }),
+				name: (value: T.Identifier | T.Super) => buildScopedIdentifier({ ...config, name: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function scopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config) {
+export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config) {
 	const _path = config.path;
 	const _name = config.name;
 	return withMethods(
@@ -4116,15 +4140,17 @@ export function scopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config) {
 			},
 			$with: {
 				path: (value?: T.Path | T.GenericTypeWithTurbofish | T.BracketedType | T.GenericType) =>
-					scopedTypeIdentifier({ ...config, path: value }),
-				name: (value: T.Identifier) => scopedTypeIdentifier({ ...config, name: value })
+					buildScopedTypeIdentifier({ ...config, path: value }),
+				name: (value: T.Identifier) => buildScopedTypeIdentifier({ ...config, name: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function scopedTypeIdentifierInExpressionPosition(config: T.ScopedTypeIdentifierInExpressionPosition.Config) {
+export function buildScopedTypeIdentifierInExpressionPosition(
+	config: T.ScopedTypeIdentifierInExpressionPosition.Config
+) {
 	const _path = config.path;
 	const _name = config.name;
 	return withMethods(
@@ -4142,15 +4168,15 @@ export function scopedTypeIdentifierInExpressionPosition(config: T.ScopedTypeIde
 			},
 			$with: {
 				path: (value?: T.Path | T.GenericTypeWithTurbofish) =>
-					scopedTypeIdentifierInExpressionPosition({ ...config, path: value }),
-				name: (value: T.Identifier) => scopedTypeIdentifierInExpressionPosition({ ...config, name: value })
+					buildScopedTypeIdentifierInExpressionPosition({ ...config, path: value }),
+				name: (value: T.Identifier) => buildScopedTypeIdentifierInExpressionPosition({ ...config, name: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function scopedUseList(config: T.ScopedUseList.Config) {
+export function buildScopedUseList(config: T.ScopedUseList.Config) {
 	const _path = config.path;
 	const _list = config.list;
 	return withMethods(
@@ -4167,15 +4193,15 @@ export function scopedUseList(config: T.ScopedUseList.Config) {
 				return _list;
 			},
 			$with: {
-				path: (value?: T.Path) => scopedUseList({ ...config, path: value }),
-				list: (value: T.UseList) => scopedUseList({ ...config, list: value })
+				path: (value?: T.Path) => buildScopedUseList({ ...config, path: value }),
+				list: (value: T.UseList) => buildScopedUseList({ ...config, list: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function self() {
+export function buildSelf() {
 	return withMethods(
 		{
 			$type: TSKindId.Self as const,
@@ -4187,7 +4213,7 @@ export function self() {
 	);
 }
 
-export function selfParameter(config: Partial<T.SelfParameter.Config> = {}) {
+export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {}) {
 	const _reference = coerceBooleanKeywordStorage(config.reference);
 	const _lifetime = config.lifetime;
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
@@ -4214,21 +4240,21 @@ export function selfParameter(config: Partial<T.SelfParameter.Config> = {}) {
 				return _self;
 			},
 			$with: {
-				reference: (value?: NonNullable<Parameters<typeof selfParameter>[0]>['reference']) =>
-					selfParameter({ ...config, reference: value }),
-				lifetime: (value?: T.Lifetime) => selfParameter({ ...config, lifetime: value }),
-				mutableSpecifier: (value?: NonNullable<Parameters<typeof selfParameter>[0]>['mutableSpecifier']) =>
-					selfParameter({ ...config, mutableSpecifier: value })
+				reference: (value?: NonNullable<Parameters<typeof buildSelfParameter>[0]>['reference']) =>
+					buildSelfParameter({ ...config, reference: value }),
+				lifetime: (value?: T.Lifetime) => buildSelfParameter({ ...config, lifetime: value }),
+				mutableSpecifier: (value?: NonNullable<Parameters<typeof buildSelfParameter>[0]>['mutableSpecifier']) =>
+					buildSelfParameter({ ...config, mutableSpecifier: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function shebang(text: string) {
+export function buildShebang(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`shebang: text must be non-empty`);
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_shebang.test(text))
+	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_buildShebang.test(text))
 		throw new Error(`shebang: text does not match pattern: ${text}`);
 	return withMethods(
 		{
@@ -4241,7 +4267,7 @@ export function shebang(text: string) {
 	);
 }
 
-export function shorthandFieldInitializer(config: T.ShorthandFieldInitializer.Config) {
+export function buildShorthandFieldInitializer(config: T.ShorthandFieldInitializer.Config) {
 	const _attributes = config.attributes;
 	const _identifier = config.identifier;
 	return withMethods(
@@ -4258,15 +4284,15 @@ export function shorthandFieldInitializer(config: T.ShorthandFieldInitializer.Co
 				return _identifier;
 			},
 			$with: {
-				attributes: (...values: T.AttributeItem[]) => shorthandFieldInitializer({ ...config, attributes: values }),
-				identifier: (value: T.Identifier) => shorthandFieldInitializer({ ...config, identifier: value })
+				attributes: (...values: T.AttributeItem[]) => buildShorthandFieldInitializer({ ...config, attributes: values }),
+				identifier: (value: T.Identifier) => buildShorthandFieldInitializer({ ...config, identifier: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function slicePattern(child?: T.SlicePatternGroup1) {
+export function buildSlicePattern(child?: T.SlicePatternGroup1) {
 	const _slice_pattern_group1 = child;
 	return withMethods(
 		{
@@ -4277,13 +4303,13 @@ export function slicePattern(child?: T.SlicePatternGroup1) {
 			slicePatternGroup1() {
 				return _slice_pattern_group1;
 			},
-			$with: { $child: (v: T.SlicePatternGroup1) => slicePattern(v) }
+			$with: { $child: (v: T.SlicePatternGroup1) => buildSlicePattern(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function sourceFile(config: Partial<T.SourceFile.Config> = {}) {
+export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}) {
 	const _shebang = config.shebang;
 	const _statements = config.statements;
 	return withMethods(
@@ -4300,15 +4326,15 @@ export function sourceFile(config: Partial<T.SourceFile.Config> = {}) {
 				return _statements;
 			},
 			$with: {
-				shebang: (value?: T.Shebang) => sourceFile({ ...config, shebang: value }),
-				statements: (...values: T.Statement[]) => sourceFile({ ...config, statements: values })
+				shebang: (value?: T.Shebang) => buildSourceFile({ ...config, shebang: value }),
+				statements: (...values: T.Statement[]) => buildSourceFile({ ...config, statements: values })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function staticItem(config: T.StaticItem.Config) {
+export function buildStaticItem(config: T.StaticItem.Config) {
 	const _visibility_modifier = config.visibilityModifier;
 	const _mutable_specifier = config.mutableSpecifier;
 	const _name = config.name;
@@ -4340,18 +4366,19 @@ export function staticItem(config: T.StaticItem.Config) {
 				return _value;
 			},
 			$with: {
-				visibilityModifier: (value?: T.VisibilityModifier) => staticItem({ ...config, visibilityModifier: value }),
-				mutableSpecifier: (value?: 'ref' | T.MutableSpecifier) => staticItem({ ...config, mutableSpecifier: value }),
-				name: (value: T.Identifier) => staticItem({ ...config, name: value }),
-				type: (value: T._Type) => staticItem({ ...config, type: value }),
-				value: (value?: T.Expression) => staticItem({ ...config, value: value })
+				visibilityModifier: (value?: T.VisibilityModifier) => buildStaticItem({ ...config, visibilityModifier: value }),
+				mutableSpecifier: (value?: 'ref' | T.MutableSpecifier) =>
+					buildStaticItem({ ...config, mutableSpecifier: value }),
+				name: (value: T.Identifier) => buildStaticItem({ ...config, name: value }),
+				type: (value: T._Type) => buildStaticItem({ ...config, type: value }),
+				value: (value?: T.Expression) => buildStaticItem({ ...config, value: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function stringLiteral(...children: (T.EscapeSequence | T.StringContent)[]) {
+export function buildStringLiteral(...children: (T.EscapeSequence | T.StringContent)[]) {
 	const _content = children;
 	return withMethods(
 		{
@@ -4362,13 +4389,13 @@ export function stringLiteral(...children: (T.EscapeSequence | T.StringContent)[
 			contents() {
 				return _content;
 			},
-			$with: { $children: (...vs: (T.EscapeSequence | T.StringContent)[]) => stringLiteral(...vs) }
+			$with: { $children: (...vs: (T.EscapeSequence | T.StringContent)[]) => buildStringLiteral(...vs) }
 		},
 		methodsEngine
 	);
 }
 
-export function structExpression(config: T.StructExpression.Config) {
+export function buildStructExpression(config: T.StructExpression.Config) {
 	const _name = config.name;
 	const _body = config.body;
 	return withMethods(
@@ -4386,15 +4413,15 @@ export function structExpression(config: T.StructExpression.Config) {
 			},
 			$with: {
 				name: (value: T.Identifier | T.ScopedTypeIdentifierInExpressionPosition | T.GenericTypeWithTurbofish) =>
-					structExpression({ ...config, name: value }),
-				body: (value: T.FieldInitializerList) => structExpression({ ...config, body: value })
+					buildStructExpression({ ...config, name: value }),
+				body: (value: T.FieldInitializerList) => buildStructExpression({ ...config, body: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function structItem(config: T.StructItem.Config) {
+export function buildStructItem(config: T.StructItem.Config) {
 	const _visibility_modifier = config.visibilityModifier;
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
@@ -4421,17 +4448,17 @@ export function structItem(config: T.StructItem.Config) {
 				return _content;
 			},
 			$with: {
-				visibilityModifier: (value?: T.VisibilityModifier) => structItem({ ...config, visibilityModifier: value }),
-				name: (value: T.Identifier) => structItem({ ...config, name: value }),
-				typeParameters: (value?: T.TypeParameters) => structItem({ ...config, typeParameters: value }),
-				content: (value: T.StructItemBrace | T.StructItemTuple | ';') => structItem({ ...config, content: value })
+				visibilityModifier: (value?: T.VisibilityModifier) => buildStructItem({ ...config, visibilityModifier: value }),
+				name: (value: T.Identifier) => buildStructItem({ ...config, name: value }),
+				typeParameters: (value?: T.TypeParameters) => buildStructItem({ ...config, typeParameters: value }),
+				content: (value: T.StructItemBrace | T.StructItemTuple | ';') => buildStructItem({ ...config, content: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function structPattern(config: T.StructPattern.Config) {
+export function buildStructPattern(config: T.StructPattern.Config) {
 	const _type = config.type;
 	const _fields = config.fields;
 	return withMethods(
@@ -4448,15 +4475,15 @@ export function structPattern(config: T.StructPattern.Config) {
 				return _fields;
 			},
 			$with: {
-				type: (value: T.Identifier | T.ScopedTypeIdentifier) => structPattern({ ...config, type: value }),
-				fields: (value?: T.StructPatternGroup1) => structPattern({ ...config, fields: value })
+				type: (value: T.Identifier | T.ScopedTypeIdentifier) => buildStructPattern({ ...config, type: value }),
+				fields: (value?: T.StructPatternGroup1) => buildStructPattern({ ...config, fields: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function super_() {
+export function buildSuper() {
 	return withMethods(
 		{
 			$type: TSKindId.Super as const,
@@ -4468,7 +4495,7 @@ export function super_() {
 	);
 }
 
-export function tokenBindingPattern(config: T.TokenBindingPattern.Config) {
+export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config) {
 	const _name = config.name;
 	const _type = coerceKindEnumStorage(config.type, [
 		['block', TSKindId.Block] as const,
@@ -4501,16 +4528,16 @@ export function tokenBindingPattern(config: T.TokenBindingPattern.Config) {
 				return _type;
 			},
 			$with: {
-				name: (value: T.Metavariable) => tokenBindingPattern({ ...config, name: value }),
-				type: (value: NonNullable<Parameters<typeof tokenBindingPattern>[0]>['type']) =>
-					tokenBindingPattern({ ...config, type: value })
+				name: (value: T.Metavariable) => buildTokenBindingPattern({ ...config, name: value }),
+				type: (value: NonNullable<Parameters<typeof buildTokenBindingPattern>[0]>['type']) =>
+					buildTokenBindingPattern({ ...config, type: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function tokenRepetition(config: T.TokenRepetition.Config) {
+export function buildTokenRepetition(config: T.TokenRepetition.Config) {
 	const _tokens = config.tokens;
 	const _separator = coerceBooleanKeywordStorage(config.separator);
 	const _operator = coerceKindEnumStorage(config.operator, [
@@ -4536,18 +4563,18 @@ export function tokenRepetition(config: T.TokenRepetition.Config) {
 				return _operator;
 			},
 			$with: {
-				tokens: (...values: T.Tokens[]) => tokenRepetition({ ...config, tokens: values }),
-				separator: (value?: NonNullable<Parameters<typeof tokenRepetition>[0]>['separator']) =>
-					tokenRepetition({ ...config, separator: value }),
-				operator: (value: NonNullable<Parameters<typeof tokenRepetition>[0]>['operator']) =>
-					tokenRepetition({ ...config, operator: value })
+				tokens: (...values: T.Tokens[]) => buildTokenRepetition({ ...config, tokens: values }),
+				separator: (value?: NonNullable<Parameters<typeof buildTokenRepetition>[0]>['separator']) =>
+					buildTokenRepetition({ ...config, separator: value }),
+				operator: (value: NonNullable<Parameters<typeof buildTokenRepetition>[0]>['operator']) =>
+					buildTokenRepetition({ ...config, operator: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function tokenRepetitionPattern(config: T.TokenRepetitionPattern.Config) {
+export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Config) {
 	const _token_pattern = config.tokenPattern;
 	const _separator = coerceBooleanKeywordStorage(config.separator);
 	const _operator = coerceKindEnumStorage(config.operator, [
@@ -4573,18 +4600,19 @@ export function tokenRepetitionPattern(config: T.TokenRepetitionPattern.Config) 
 				return _operator;
 			},
 			$with: {
-				tokenPatterns: (...values: T.TokenPattern[]) => tokenRepetitionPattern({ ...config, tokenPattern: values }),
-				separator: (value?: NonNullable<Parameters<typeof tokenRepetitionPattern>[0]>['separator']) =>
-					tokenRepetitionPattern({ ...config, separator: value }),
-				operator: (value: NonNullable<Parameters<typeof tokenRepetitionPattern>[0]>['operator']) =>
-					tokenRepetitionPattern({ ...config, operator: value })
+				tokenPatterns: (...values: T.TokenPattern[]) =>
+					buildTokenRepetitionPattern({ ...config, tokenPattern: values }),
+				separator: (value?: NonNullable<Parameters<typeof buildTokenRepetitionPattern>[0]>['separator']) =>
+					buildTokenRepetitionPattern({ ...config, separator: value }),
+				operator: (value: NonNullable<Parameters<typeof buildTokenRepetitionPattern>[0]>['operator']) =>
+					buildTokenRepetitionPattern({ ...config, operator: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function tokenTree(
+export function buildTokenTree(
 	child:
 		| T.TokenTreeParen
 		| T.TokenTreeBracket
@@ -4612,14 +4640,16 @@ export function tokenTree(
 						| T.DelimTokenTreeParen
 						| T.DelimTokenTreeBracket
 						| T.DelimTokenTreeBrace
-				) => tokenTree(v)
+				) => buildTokenTree(v)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function tokenTreePattern(child: T.TokenTreePatternParen | T.TokenTreePatternBracket | T.TokenTreePatternBrace) {
+export function buildTokenTreePattern(
+	child: T.TokenTreePatternParen | T.TokenTreePatternBracket | T.TokenTreePatternBrace
+) {
 	const _content = child;
 	return withMethods(
 		{
@@ -4632,14 +4662,14 @@ export function tokenTreePattern(child: T.TokenTreePatternParen | T.TokenTreePat
 			},
 			$with: {
 				$child: (v: T.TokenTreePatternParen | T.TokenTreePatternBracket | T.TokenTreePatternBrace) =>
-					tokenTreePattern(v)
+					buildTokenTreePattern(v)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function traitBounds(config: T.TraitBounds.Config) {
+export function buildTraitBounds(config: T.TraitBounds.Config) {
 	const _bounds = config.bounds;
 	return withMethods(
 		{
@@ -4652,14 +4682,14 @@ export function traitBounds(config: T.TraitBounds.Config) {
 			},
 			$with: {
 				bounds: (...values: NonEmptyArray<T._Type | T.Lifetime | T.HigherRankedTraitBound>) =>
-					traitBounds({ ...config, bounds: values })
+					buildTraitBounds({ ...config, bounds: values })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function traitItem(config: T.TraitItem.Config) {
+export function buildTraitItem(config: T.TraitItem.Config) {
 	const _visibility_modifier = config.visibilityModifier;
 	const _unsafe_marker = coerceBooleanKeywordStorage(config.unsafeMarker);
 	const _name = config.name;
@@ -4701,21 +4731,21 @@ export function traitItem(config: T.TraitItem.Config) {
 				return _body;
 			},
 			$with: {
-				visibilityModifier: (value?: T.VisibilityModifier) => traitItem({ ...config, visibilityModifier: value }),
-				unsafeMarker: (value?: NonNullable<Parameters<typeof traitItem>[0]>['unsafeMarker']) =>
-					traitItem({ ...config, unsafeMarker: value }),
-				name: (value: T.Identifier) => traitItem({ ...config, name: value }),
-				typeParameters: (value?: T.TypeParameters) => traitItem({ ...config, typeParameters: value }),
-				bounds: (value?: T.TraitBounds) => traitItem({ ...config, bounds: value }),
-				whereClause: (value?: T.WhereClause) => traitItem({ ...config, whereClause: value }),
-				body: (value: T.DeclarationList) => traitItem({ ...config, body: value })
+				visibilityModifier: (value?: T.VisibilityModifier) => buildTraitItem({ ...config, visibilityModifier: value }),
+				unsafeMarker: (value?: NonNullable<Parameters<typeof buildTraitItem>[0]>['unsafeMarker']) =>
+					buildTraitItem({ ...config, unsafeMarker: value }),
+				name: (value: T.Identifier) => buildTraitItem({ ...config, name: value }),
+				typeParameters: (value?: T.TypeParameters) => buildTraitItem({ ...config, typeParameters: value }),
+				bounds: (value?: T.TraitBounds) => buildTraitItem({ ...config, bounds: value }),
+				whereClause: (value?: T.WhereClause) => buildTraitItem({ ...config, whereClause: value }),
+				body: (value: T.DeclarationList) => buildTraitItem({ ...config, body: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function tryBlock(block: T.TryBlock.Config['block']) {
+export function buildTryBlock(block: T.TryBlock.Config['block']) {
 	const _block = block;
 	return withMethods(
 		{
@@ -4727,14 +4757,14 @@ export function tryBlock(block: T.TryBlock.Config['block']) {
 				return _block;
 			},
 			$with: {
-				block: (value: T.TryBlock.Config['block']) => tryBlock(value)
+				block: (value: T.TryBlock.Config['block']) => buildTryBlock(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function tryExpression(value: T.TryExpression.Config['value']) {
+export function buildTryExpression(value: T.TryExpression.Config['value']) {
 	const _value = value;
 	return withMethods(
 		{
@@ -4746,14 +4776,14 @@ export function tryExpression(value: T.TryExpression.Config['value']) {
 				return _value;
 			},
 			$with: {
-				value: (value: T.TryExpression.Config['value']) => tryExpression(value)
+				value: (value: T.TryExpression.Config['value']) => buildTryExpression(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function tupleExpression(config: Partial<T.TupleExpression.Config> = {}) {
+export function buildTupleExpression(config: Partial<T.TupleExpression.Config> = {}) {
 	const _attributes = config.attributes;
 	const _elements = config.elements;
 	return withMethods(
@@ -4770,15 +4800,15 @@ export function tupleExpression(config: Partial<T.TupleExpression.Config> = {}) 
 				return _elements;
 			},
 			$with: {
-				attributes: (...values: T.AttributeItem[]) => tupleExpression({ ...config, attributes: values }),
-				elements: (...values: T.Expression[]) => tupleExpression({ ...config, elements: values })
+				attributes: (...values: T.AttributeItem[]) => buildTupleExpression({ ...config, attributes: values }),
+				elements: (...values: T.Expression[]) => buildTupleExpression({ ...config, elements: values })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function tuplePattern(elements?: T.TuplePattern.Config['elements']) {
+export function buildTuplePattern(elements?: T.TuplePattern.Config['elements']) {
 	const _elements = elements;
 	return withMethods(
 		{
@@ -4790,14 +4820,14 @@ export function tuplePattern(elements?: T.TuplePattern.Config['elements']) {
 				return _elements;
 			},
 			$with: {
-				elements: (value?: T.TuplePattern.Config['elements']) => tuplePattern(value)
+				elements: (value?: T.TuplePattern.Config['elements']) => buildTuplePattern(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function tupleStructPattern(config: T.TupleStructPattern.Config) {
+export function buildTupleStructPattern(config: T.TupleStructPattern.Config) {
 	const _type = config.type;
 	const _slice_pattern_group1 = config.slicePatternGroup1;
 	return withMethods(
@@ -4815,16 +4845,16 @@ export function tupleStructPattern(config: T.TupleStructPattern.Config) {
 			},
 			$with: {
 				type: (value: T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish) =>
-					tupleStructPattern({ ...config, type: value }),
+					buildTupleStructPattern({ ...config, type: value }),
 				slicePatternGroup1: (value?: T.SlicePatternGroup1) =>
-					tupleStructPattern({ ...config, slicePatternGroup1: value })
+					buildTupleStructPattern({ ...config, slicePatternGroup1: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function tupleType(config: T.TupleType.Config) {
+export function buildTupleType(config: T.TupleType.Config) {
 	const _type = config.type;
 	return withMethods(
 		{
@@ -4836,14 +4866,14 @@ export function tupleType(config: T.TupleType.Config) {
 				return _type;
 			},
 			$with: {
-				types: (...values: NonEmptyArray<T._Type>) => tupleType({ ...config, type: values })
+				types: (...values: NonEmptyArray<T._Type>) => buildTupleType({ ...config, type: values })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function typeArguments(...children: T.TypeArgument[]) {
+export function buildTypeArguments(...children: T.TypeArgument[]) {
 	_assertNonEmpty(children, 'type_arguments.children');
 	const _type_argument = children;
 	return withMethods(
@@ -4855,13 +4885,13 @@ export function typeArguments(...children: T.TypeArgument[]) {
 			typeArguments() {
 				return _type_argument;
 			},
-			$with: { $children: (...vs: T.TypeArgument[]) => typeArguments(...vs) }
+			$with: { $children: (...vs: T.TypeArgument[]) => buildTypeArguments(...vs) }
 		},
 		methodsEngine
 	);
 }
 
-export function typeBinding(config: T.TypeBinding.Config) {
+export function buildTypeBinding(config: T.TypeBinding.Config) {
 	const _name = config.name;
 	const _type_arguments = config.typeArguments;
 	const _type = config.type;
@@ -4883,16 +4913,16 @@ export function typeBinding(config: T.TypeBinding.Config) {
 				return _type;
 			},
 			$with: {
-				name: (value: T.Identifier) => typeBinding({ ...config, name: value }),
-				typeArguments: (value?: T.TypeArguments) => typeBinding({ ...config, typeArguments: value }),
-				type: (value: T._Type) => typeBinding({ ...config, type: value })
+				name: (value: T.Identifier) => buildTypeBinding({ ...config, name: value }),
+				typeArguments: (value?: T.TypeArguments) => buildTypeBinding({ ...config, typeArguments: value }),
+				type: (value: T._Type) => buildTypeBinding({ ...config, type: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function typeCastExpression(config: T.TypeCastExpression.Config) {
+export function buildTypeCastExpression(config: T.TypeCastExpression.Config) {
 	const _value = config.value;
 	const _type = config.type;
 	return withMethods(
@@ -4909,15 +4939,15 @@ export function typeCastExpression(config: T.TypeCastExpression.Config) {
 				return _type;
 			},
 			$with: {
-				value: (value: T.Expression) => typeCastExpression({ ...config, value: value }),
-				type: (value: T._Type) => typeCastExpression({ ...config, type: value })
+				value: (value: T.Expression) => buildTypeCastExpression({ ...config, value: value }),
+				type: (value: T._Type) => buildTypeCastExpression({ ...config, type: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function typeItem(config: T.TypeItem.Config) {
+export function buildTypeItem(config: T.TypeItem.Config) {
 	const _visibility_modifier = config.visibilityModifier;
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
@@ -4954,19 +4984,19 @@ export function typeItem(config: T.TypeItem.Config) {
 				return _trailing_where_clause;
 			},
 			$with: {
-				visibilityModifier: (value?: T.VisibilityModifier) => typeItem({ ...config, visibilityModifier: value }),
-				name: (value: T.Identifier) => typeItem({ ...config, name: value }),
-				typeParameters: (value?: T.TypeParameters) => typeItem({ ...config, typeParameters: value }),
-				whereClause: (value?: T.WhereClause) => typeItem({ ...config, whereClause: value }),
-				type: (value: T._Type) => typeItem({ ...config, type: value }),
-				trailingWhereClause: (value?: T.WhereClause) => typeItem({ ...config, trailingWhereClause: value })
+				visibilityModifier: (value?: T.VisibilityModifier) => buildTypeItem({ ...config, visibilityModifier: value }),
+				name: (value: T.Identifier) => buildTypeItem({ ...config, name: value }),
+				typeParameters: (value?: T.TypeParameters) => buildTypeItem({ ...config, typeParameters: value }),
+				whereClause: (value?: T.WhereClause) => buildTypeItem({ ...config, whereClause: value }),
+				type: (value: T._Type) => buildTypeItem({ ...config, type: value }),
+				trailingWhereClause: (value?: T.WhereClause) => buildTypeItem({ ...config, trailingWhereClause: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function typeParameter(config: T.TypeParameter.Config) {
+export function buildTypeParameter(config: T.TypeParameter.Config) {
 	const _name = config.name;
 	const _bounds = config.bounds;
 	const _default_type = config.defaultType;
@@ -4988,16 +5018,16 @@ export function typeParameter(config: T.TypeParameter.Config) {
 				return _default_type;
 			},
 			$with: {
-				name: (value: T.Identifier) => typeParameter({ ...config, name: value }),
-				bounds: (value?: T.TraitBounds) => typeParameter({ ...config, bounds: value }),
-				defaultType: (value?: T._Type) => typeParameter({ ...config, defaultType: value })
+				name: (value: T.Identifier) => buildTypeParameter({ ...config, name: value }),
+				bounds: (value?: T.TraitBounds) => buildTypeParameter({ ...config, bounds: value }),
+				defaultType: (value?: T._Type) => buildTypeParameter({ ...config, defaultType: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function typeParameters(...children: T.AttributedTypeParameter[]) {
+export function buildTypeParameters(...children: T.AttributedTypeParameter[]) {
 	_assertNonEmpty(children, 'type_parameters.children');
 	const _attributed_type_parameter = children;
 	return withMethods(
@@ -5009,13 +5039,13 @@ export function typeParameters(...children: T.AttributedTypeParameter[]) {
 			attributedTypeParameters() {
 				return _attributed_type_parameter;
 			},
-			$with: { $children: (...vs: T.AttributedTypeParameter[]) => typeParameters(...vs) }
+			$with: { $children: (...vs: T.AttributedTypeParameter[]) => buildTypeParameters(...vs) }
 		},
 		methodsEngine
 	);
 }
 
-export function unaryExpression(config: T.UnaryExpression.Config) {
+export function buildUnaryExpression(config: T.UnaryExpression.Config) {
 	const _operator = coerceKindEnumStorage(config.operator, [
 		['-', TSKindId.Dash] as const,
 		['*', TSKindId.Star] as const,
@@ -5036,16 +5066,16 @@ export function unaryExpression(config: T.UnaryExpression.Config) {
 				return _operand;
 			},
 			$with: {
-				operator: (value: NonNullable<Parameters<typeof unaryExpression>[0]>['operator']) =>
-					unaryExpression({ ...config, operator: value }),
-				operand: (value: T.Expression) => unaryExpression({ ...config, operand: value })
+				operator: (value: NonNullable<Parameters<typeof buildUnaryExpression>[0]>['operator']) =>
+					buildUnaryExpression({ ...config, operator: value }),
+				operand: (value: T.Expression) => buildUnaryExpression({ ...config, operand: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function unionItem(config: T.UnionItem.Config) {
+export function buildUnionItem(config: T.UnionItem.Config) {
 	const _visibility_modifier = config.visibilityModifier;
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
@@ -5077,18 +5107,18 @@ export function unionItem(config: T.UnionItem.Config) {
 				return _body;
 			},
 			$with: {
-				visibilityModifier: (value?: T.VisibilityModifier) => unionItem({ ...config, visibilityModifier: value }),
-				name: (value: T.Identifier) => unionItem({ ...config, name: value }),
-				typeParameters: (value?: T.TypeParameters) => unionItem({ ...config, typeParameters: value }),
-				whereClause: (value?: T.WhereClause) => unionItem({ ...config, whereClause: value }),
-				body: (value: T.FieldDeclarationList) => unionItem({ ...config, body: value })
+				visibilityModifier: (value?: T.VisibilityModifier) => buildUnionItem({ ...config, visibilityModifier: value }),
+				name: (value: T.Identifier) => buildUnionItem({ ...config, name: value }),
+				typeParameters: (value?: T.TypeParameters) => buildUnionItem({ ...config, typeParameters: value }),
+				whereClause: (value?: T.WhereClause) => buildUnionItem({ ...config, whereClause: value }),
+				body: (value: T.FieldDeclarationList) => buildUnionItem({ ...config, body: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function unitExpression(text: string) {
+export function buildUnitExpression(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`unit_expression: text must be non-empty`);
 	return withMethods(
@@ -5102,7 +5132,7 @@ export function unitExpression(text: string) {
 	);
 }
 
-export function unitType(text: string) {
+export function buildUnitType(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`unit_type: text must be non-empty`);
 	return withMethods(
@@ -5116,7 +5146,7 @@ export function unitType(text: string) {
 	);
 }
 
-export function unsafeBlock(block: T.UnsafeBlock.Config['block']) {
+export function buildUnsafeBlock(block: T.UnsafeBlock.Config['block']) {
 	const _block = block;
 	return withMethods(
 		{
@@ -5128,14 +5158,14 @@ export function unsafeBlock(block: T.UnsafeBlock.Config['block']) {
 				return _block;
 			},
 			$with: {
-				block: (value: T.UnsafeBlock.Config['block']) => unsafeBlock(value)
+				block: (value: T.UnsafeBlock.Config['block']) => buildUnsafeBlock(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function useAsClause(config: T.UseAsClause.Config) {
+export function buildUseAsClause(config: T.UseAsClause.Config) {
 	const _path = config.path;
 	const _alias = config.alias;
 	return withMethods(
@@ -5152,15 +5182,15 @@ export function useAsClause(config: T.UseAsClause.Config) {
 				return _alias;
 			},
 			$with: {
-				path: (value: T.Path) => useAsClause({ ...config, path: value }),
-				alias: (value: T.Identifier) => useAsClause({ ...config, alias: value })
+				path: (value: T.Path) => buildUseAsClause({ ...config, path: value }),
+				alias: (value: T.Identifier) => buildUseAsClause({ ...config, alias: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function useBounds(bounds?: T.UseBounds.Config['bounds']) {
+export function buildUseBounds(bounds?: T.UseBounds.Config['bounds']) {
 	const _bounds = bounds;
 	return withMethods(
 		{
@@ -5172,14 +5202,14 @@ export function useBounds(bounds?: T.UseBounds.Config['bounds']) {
 				return _bounds;
 			},
 			$with: {
-				bounds: (value?: T.UseBounds.Config['bounds']) => useBounds(value)
+				bounds: (value?: T.UseBounds.Config['bounds']) => buildUseBounds(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function useDeclaration(config: T.UseDeclaration.Config) {
+export function buildUseDeclaration(config: T.UseDeclaration.Config) {
 	const _visibility_modifier = config.visibilityModifier;
 	const _argument = config.argument;
 	return withMethods(
@@ -5196,15 +5226,16 @@ export function useDeclaration(config: T.UseDeclaration.Config) {
 				return _argument;
 			},
 			$with: {
-				visibilityModifier: (value?: T.VisibilityModifier) => useDeclaration({ ...config, visibilityModifier: value }),
-				argument: (value: T.UseClause) => useDeclaration({ ...config, argument: value })
+				visibilityModifier: (value?: T.VisibilityModifier) =>
+					buildUseDeclaration({ ...config, visibilityModifier: value }),
+				argument: (value: T.UseClause) => buildUseDeclaration({ ...config, argument: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function useList(child?: T.UseListGroup1) {
+export function buildUseList(child?: T.UseListGroup1) {
 	const _use_list_group1 = child;
 	return withMethods(
 		{
@@ -5215,13 +5246,13 @@ export function useList(child?: T.UseListGroup1) {
 			useListGroup1() {
 				return _use_list_group1;
 			},
-			$with: { $child: (v: T.UseListGroup1) => useList(v) }
+			$with: { $child: (v: T.UseListGroup1) => buildUseList(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function useWildcard(path?: T.UseWildcard.Config['path']) {
+export function buildUseWildcard(path?: T.UseWildcard.Config['path']) {
 	const _path = path;
 	return withMethods(
 		{
@@ -5233,14 +5264,14 @@ export function useWildcard(path?: T.UseWildcard.Config['path']) {
 				return _path;
 			},
 			$with: {
-				path: (value?: T.UseWildcard.Config['path']) => useWildcard(value)
+				path: (value?: T.UseWildcard.Config['path']) => buildUseWildcard(value)
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function variadicParameter(config: Partial<T.VariadicParameter.Config> = {}) {
+export function buildVariadicParameter(config: Partial<T.VariadicParameter.Config> = {}) {
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
 	const _pattern = config.pattern;
 	return withMethods(
@@ -5257,16 +5288,16 @@ export function variadicParameter(config: Partial<T.VariadicParameter.Config> = 
 				return _pattern;
 			},
 			$with: {
-				mutableSpecifier: (value?: NonNullable<Parameters<typeof variadicParameter>[0]>['mutableSpecifier']) =>
-					variadicParameter({ ...config, mutableSpecifier: value }),
-				pattern: (value?: T.Pattern) => variadicParameter({ ...config, pattern: value })
+				mutableSpecifier: (value?: NonNullable<Parameters<typeof buildVariadicParameter>[0]>['mutableSpecifier']) =>
+					buildVariadicParameter({ ...config, mutableSpecifier: value }),
+				pattern: (value?: T.Pattern) => buildVariadicParameter({ ...config, pattern: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function visibilityModifier(child: T.Crate | T.VisibilityModifierPub) {
+export function buildVisibilityModifier(child: T.Crate | T.VisibilityModifierPub) {
 	const _content = child;
 	return withMethods(
 		{
@@ -5277,13 +5308,13 @@ export function visibilityModifier(child: T.Crate | T.VisibilityModifierPub) {
 			content() {
 				return _content;
 			},
-			$with: { $child: (v: T.Crate | T.VisibilityModifierPub) => visibilityModifier(v) }
+			$with: { $child: (v: T.Crate | T.VisibilityModifierPub) => buildVisibilityModifier(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function whereClause(child?: T.WhereClauseGroup1) {
+export function buildWhereClause(child?: T.WhereClauseGroup1) {
 	const _where_clause_group1 = child;
 	return withMethods(
 		{
@@ -5294,13 +5325,13 @@ export function whereClause(child?: T.WhereClauseGroup1) {
 			whereClauseGroup1() {
 				return _where_clause_group1;
 			},
-			$with: { $child: (v: T.WhereClauseGroup1) => whereClause(v) }
+			$with: { $child: (v: T.WhereClauseGroup1) => buildWhereClause(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function wherePredicate(config: T.WherePredicate.Config) {
+export function buildWherePredicate(config: T.WherePredicate.Config) {
 	const _left = config.left;
 	const _bounds = config.bounds;
 	return withMethods(
@@ -5329,15 +5360,15 @@ export function wherePredicate(config: T.WherePredicate.Config) {
 						| T.ArrayType
 						| T.HigherRankedTraitBound
 						| T.PrimitiveType
-				) => wherePredicate({ ...config, left: value }),
-				bounds: (value: T.TraitBounds) => wherePredicate({ ...config, bounds: value })
+				) => buildWherePredicate({ ...config, left: value }),
+				bounds: (value: T.TraitBounds) => buildWherePredicate({ ...config, bounds: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function whileExpression(config: T.WhileExpression.Config) {
+export function buildWhileExpression(config: T.WhileExpression.Config) {
 	const _label = config.label;
 	const _condition = config.condition;
 	const _body = config.body;
@@ -5359,16 +5390,16 @@ export function whileExpression(config: T.WhileExpression.Config) {
 				return _body;
 			},
 			$with: {
-				label: (value?: T.Label) => whileExpression({ ...config, label: value }),
-				condition: (value: T.Condition) => whileExpression({ ...config, condition: value }),
-				body: (value: T.Block) => whileExpression({ ...config, body: value })
+				label: (value?: T.Label) => buildWhileExpression({ ...config, label: value }),
+				condition: (value: T.Condition) => buildWhileExpression({ ...config, condition: value }),
+				body: (value: T.Block) => buildWhileExpression({ ...config, body: value })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function yieldExpression(child?: T.Expression) {
+export function buildYieldExpression(child?: T.Expression) {
 	const _expression = child;
 	return withMethods(
 		{
@@ -5379,13 +5410,16 @@ export function yieldExpression(child?: T.Expression) {
 			expression() {
 				return _expression;
 			},
-			$with: { $child: (v: T.Expression) => yieldExpression(v) }
+			$with: { $child: (v: T.Expression) => buildYieldExpression(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function argumentsGroup1(elements: NonEmptyArray<T.AttributedArgument>, options: { trailing?: boolean } = {}) {
+export function buildArgumentsGroup1(
+	elements: NonEmptyArray<T.AttributedArgument>,
+	options: { trailing?: boolean } = {}
+) {
 	_assertNonEmpty(elements, 'arguments_group1.elements');
 	const _content = elements;
 	const _trailing_sep = options.trailing ?? false;
@@ -5400,15 +5434,15 @@ export function argumentsGroup1(elements: NonEmptyArray<T.AttributedArgument>, o
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.AttributedArgument>) => argumentsGroup1(vs, options),
-				trailing: (v: boolean) => argumentsGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.AttributedArgument>) => buildArgumentsGroup1(vs, options),
+				trailing: (v: boolean) => buildArgumentsGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function visibilityModifierGroup1(child: T.Self | T.Super | T.Crate | T.InPath) {
+export function buildVisibilityModifierGroup1(child: T.Self | T.Super | T.Crate | T.InPath) {
 	const _content = child;
 	return withMethods(
 		{
@@ -5419,13 +5453,13 @@ export function visibilityModifierGroup1(child: T.Self | T.Super | T.Crate | T.I
 			content() {
 				return _content;
 			},
-			$with: { $child: (v: T.Self | T.Super | T.Crate | T.InPath) => visibilityModifierGroup1(v) }
+			$with: { $child: (v: T.Self | T.Super | T.Crate | T.InPath) => buildVisibilityModifierGroup1(v) }
 		},
 		methodsEngine
 	);
 }
 
-export function enumVariantListGroup1(
+export function buildEnumVariantListGroup1(
 	elements: NonEmptyArray<T.AttributedEnumVariant>,
 	options: { trailing?: boolean } = {}
 ) {
@@ -5443,15 +5477,15 @@ export function enumVariantListGroup1(
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.AttributedEnumVariant>) => enumVariantListGroup1(vs, options),
-				trailing: (v: boolean) => enumVariantListGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.AttributedEnumVariant>) => buildEnumVariantListGroup1(vs, options),
+				trailing: (v: boolean) => buildEnumVariantListGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function fieldDeclarationListGroup1(
+export function buildFieldDeclarationListGroup1(
 	elements: NonEmptyArray<T.AttributedFieldDeclaration>,
 	options: { trailing?: boolean } = {}
 ) {
@@ -5469,15 +5503,15 @@ export function fieldDeclarationListGroup1(
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.AttributedFieldDeclaration>) => fieldDeclarationListGroup1(vs, options),
-				trailing: (v: boolean) => fieldDeclarationListGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.AttributedFieldDeclaration>) => buildFieldDeclarationListGroup1(vs, options),
+				trailing: (v: boolean) => buildFieldDeclarationListGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function fieldInitializerListGroup1(
+export function buildFieldInitializerListGroup1(
 	elements: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>,
 	options: { trailing?: boolean } = {}
 ) {
@@ -5496,15 +5530,15 @@ export function fieldInitializerListGroup1(
 			},
 			$with: {
 				$children: (...vs: NonEmptyArray<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>) =>
-					fieldInitializerListGroup1(vs, options),
-				trailing: (v: boolean) => fieldInitializerListGroup1(elements, { ...options, trailing: v })
+					buildFieldInitializerListGroup1(vs, options),
+				trailing: (v: boolean) => buildFieldInitializerListGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function orderedFieldDeclarationListGroup1(
+export function buildOrderedFieldDeclarationListGroup1(
 	elements: NonEmptyArray<T.AttributedOrderedField>,
 	options: { trailing?: boolean } = {}
 ) {
@@ -5522,15 +5556,19 @@ export function orderedFieldDeclarationListGroup1(
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.AttributedOrderedField>) => orderedFieldDeclarationListGroup1(vs, options),
-				trailing: (v: boolean) => orderedFieldDeclarationListGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.AttributedOrderedField>) =>
+					buildOrderedFieldDeclarationListGroup1(vs, options),
+				trailing: (v: boolean) => buildOrderedFieldDeclarationListGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function parametersGroup1(elements: NonEmptyArray<T.AttributedParameter>, options: { trailing?: boolean } = {}) {
+export function buildParametersGroup1(
+	elements: NonEmptyArray<T.AttributedParameter>,
+	options: { trailing?: boolean } = {}
+) {
 	_assertNonEmpty(elements, 'parameters_group1.elements');
 	const _content = elements;
 	const _trailing_sep = options.trailing ?? false;
@@ -5545,15 +5583,15 @@ export function parametersGroup1(elements: NonEmptyArray<T.AttributedParameter>,
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.AttributedParameter>) => parametersGroup1(vs, options),
-				trailing: (v: boolean) => parametersGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.AttributedParameter>) => buildParametersGroup1(vs, options),
+				trailing: (v: boolean) => buildParametersGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function slicePatternGroup1(elements: NonEmptyArray<T.Pattern>, options: { trailing?: boolean } = {}) {
+export function buildSlicePatternGroup1(elements: NonEmptyArray<T.Pattern>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, 'slice_pattern_group1.elements');
 	const _content = elements;
 	const _trailing_sep = options.trailing ?? false;
@@ -5568,15 +5606,15 @@ export function slicePatternGroup1(elements: NonEmptyArray<T.Pattern>, options: 
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.Pattern>) => slicePatternGroup1(vs, options),
-				trailing: (v: boolean) => slicePatternGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.Pattern>) => buildSlicePatternGroup1(vs, options),
+				trailing: (v: boolean) => buildSlicePatternGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function structPatternGroup1(
+export function buildStructPatternGroup1(
 	elements: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>,
 	options: { trailing?: boolean } = {}
 ) {
@@ -5594,15 +5632,16 @@ export function structPatternGroup1(
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>) => structPatternGroup1(vs, options),
-				trailing: (v: boolean) => structPatternGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.FieldPattern | T.RemainingFieldPattern>) =>
+					buildStructPatternGroup1(vs, options),
+				trailing: (v: boolean) => buildStructPatternGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function tuplePatternGroup1(
+export function buildTuplePatternGroup1(
 	elements: NonEmptyArray<T.Pattern | T.ClosureExpression>,
 	options: { trailing?: boolean } = {}
 ) {
@@ -5620,15 +5659,15 @@ export function tuplePatternGroup1(
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.Pattern | T.ClosureExpression>) => tuplePatternGroup1(vs, options),
-				trailing: (v: boolean) => tuplePatternGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.Pattern | T.ClosureExpression>) => buildTuplePatternGroup1(vs, options),
+				trailing: (v: boolean) => buildTuplePatternGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function useBoundsGroup1(
+export function buildUseBoundsGroup1(
 	elements: NonEmptyArray<T.Lifetime | T.TypeIdentifier>,
 	options: { trailing?: boolean } = {}
 ) {
@@ -5646,15 +5685,15 @@ export function useBoundsGroup1(
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.Lifetime | T.TypeIdentifier>) => useBoundsGroup1(vs, options),
-				trailing: (v: boolean) => useBoundsGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.Lifetime | T.TypeIdentifier>) => buildUseBoundsGroup1(vs, options),
+				trailing: (v: boolean) => buildUseBoundsGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function useListGroup1(elements: NonEmptyArray<T.UseClause>, options: { trailing?: boolean } = {}) {
+export function buildUseListGroup1(elements: NonEmptyArray<T.UseClause>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, 'use_list_group1.elements');
 	const _content = elements;
 	const _trailing_sep = options.trailing ?? false;
@@ -5669,15 +5708,18 @@ export function useListGroup1(elements: NonEmptyArray<T.UseClause>, options: { t
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.UseClause>) => useListGroup1(vs, options),
-				trailing: (v: boolean) => useListGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.UseClause>) => buildUseListGroup1(vs, options),
+				trailing: (v: boolean) => buildUseListGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function whereClauseGroup1(elements: NonEmptyArray<T.WherePredicate>, options: { trailing?: boolean } = {}) {
+export function buildWhereClauseGroup1(
+	elements: NonEmptyArray<T.WherePredicate>,
+	options: { trailing?: boolean } = {}
+) {
 	_assertNonEmpty(elements, 'where_clause_group1.elements');
 	const _content = elements;
 	const _trailing_sep = options.trailing ?? false;
@@ -5692,15 +5734,15 @@ export function whereClauseGroup1(elements: NonEmptyArray<T.WherePredicate>, opt
 				return _content;
 			},
 			$with: {
-				$children: (...vs: NonEmptyArray<T.WherePredicate>) => whereClauseGroup1(vs, options),
-				trailing: (v: boolean) => whereClauseGroup1(elements, { ...options, trailing: v })
+				$children: (...vs: NonEmptyArray<T.WherePredicate>) => buildWhereClauseGroup1(vs, options),
+				trailing: (v: boolean) => buildWhereClauseGroup1(elements, { ...options, trailing: v })
 			}
 		},
 		methodsEngine
 	);
 }
 
-export function stringContent(text: string) {
+export function buildStringContent(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`string_content: text must be non-empty`);
 	return withMethods(
@@ -5714,7 +5756,7 @@ export function stringContent(text: string) {
 	);
 }
 
-export function rawStringLiteralContent(text: string) {
+export function buildRawStringLiteralContent(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`raw_string_literal_content: text must be non-empty`);
 	return withMethods(
@@ -5728,7 +5770,7 @@ export function rawStringLiteralContent(text: string) {
 	);
 }
 
-export function floatLiteral(text: string) {
+export function buildFloatLiteral(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`float_literal: text must be non-empty`);
 	return withMethods(
@@ -5742,7 +5784,7 @@ export function floatLiteral(text: string) {
 	);
 }
 
-export function lineDocContent(text: string) {
+export function buildLineDocContent(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_line_doc_content: text must be non-empty`);
 	return withMethods(
@@ -5756,7 +5798,7 @@ export function lineDocContent(text: string) {
 	);
 }
 
-export function errorSentinel(text: string) {
+export function buildErrorSentinel(text: string) {
 	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
 		throw new Error(`_error_sentinel: text must be non-empty`);
 	return withMethods(
@@ -6019,241 +6061,241 @@ export type FluentKindMap = {
 };
 
 export const _factoryMap = {
-	_arguments_group1: _argumentsGroup1,
-	_array_expression_list: _arrayExpressionList,
-	_array_expression_semi: _arrayExpressionSemi,
-	_attributed_argument: attributedArgument,
-	_attributed_enum_variant: attributedEnumVariant,
-	_attributed_field_declaration: attributedFieldDeclaration,
-	_attributed_ordered_field: _attributedOrderedField,
-	_attributed_parameter: attributedParameter,
-	_attributed_type_parameter: attributedTypeParameter,
-	_closure_expression_block: _closureExpressionBlock,
-	_closure_expression_expr: closureExpressionExpr,
-	_delim_token_tree_brace: delimTokenTreeBrace,
-	_delim_token_tree_bracket: delimTokenTreeBracket,
-	_delim_token_tree_paren: delimTokenTreeParen,
-	_enum_variant_list_group1: _enumVariantListGroup1,
-	_expression_statement_with_semi: expressionStatementWithSemi,
-	_field_declaration_list_group1: _fieldDeclarationListGroup1,
-	_field_identifier: fieldIdentifier,
-	_field_initializer_list_group1: _fieldInitializerListGroup1,
-	_field_pattern_named: _fieldPatternNamed,
-	_function_type_fn_form: functionTypeFnForm,
-	_function_type_trait_form: functionTypeTraitForm,
-	_impl_item_body: implItemBody,
-	_impl_item_negative_clause: _implItemNegativeClause,
-	_impl_item_positive_clause: _implItemPositiveClause,
-	_let_chain: letChain,
-	_line_comment_content: lineCommentContent,
-	_line_comment_doc: _lineCommentDoc,
-	_line_comment_regular_dslash: lineCommentRegularDslash,
-	_macro_definition_brace: macroDefinitionBrace,
-	_macro_definition_bracket: macroDefinitionBracket,
-	_macro_definition_paren: macroDefinitionParen,
-	_match_arm_with_comma: _matchArmWithComma,
-	_match_block_arms: _matchBlockArms,
-	_or_pattern_binary: _orPatternBinary,
-	_or_pattern_prefix: _orPatternPrefix,
-	_ordered_field_declaration_list_group1: _orderedFieldDeclarationListGroup1,
-	_parameters_group1: _parametersGroup1,
-	_range_expression_binary: _rangeExpressionBinary,
-	_range_expression_postfix: _rangeExpressionPostfix,
-	_range_expression_prefix: _rangeExpressionPrefix,
-	_range_pattern_left_with_right: _rangePatternLeftWithRight,
-	_range_pattern_prefix: _rangePatternPrefix,
-	_reference_expression_raw_const: referenceExpressionRawConst,
-	_reference_expression_raw_mut: referenceExpressionRawMut,
-	_slice_pattern_group1: _slicePatternGroup1,
-	_struct_item_brace: _structItemBrace,
-	_struct_item_tuple: _structItemTuple,
-	_struct_pattern_group1: _structPatternGroup1,
-	_token_tree_brace: tokenTreeBrace,
-	_token_tree_bracket: tokenTreeBracket,
-	_token_tree_paren: tokenTreeParen,
-	_token_tree_pattern_brace: tokenTreePatternBrace,
-	_token_tree_pattern_bracket: tokenTreePatternBracket,
-	_token_tree_pattern_paren: tokenTreePatternParen,
-	_tuple_pattern_group1: _tuplePatternGroup1,
-	_type_argument: typeArgument,
-	_type_identifier: typeIdentifier,
-	_use_bounds_group1: _useBoundsGroup1,
-	_use_list_group1: _useListGroup1,
-	_use_wildcard_clause: _useWildcardClause,
-	_visibility_modifier_group1: _visibilityModifierGroup1,
-	_visibility_modifier_in_path: _visibilityModifierInPath,
-	_visibility_modifier_pub: _visibilityModifierPub,
-	_where_clause_group1: _whereClauseGroup1,
-	abstract_type: abstractType,
-	arguments: arguments_,
-	array_expression: arrayExpression,
-	array_type: arrayType,
-	assignment_expression: assignmentExpression,
-	associated_type: associatedType,
-	async_block: asyncBlock,
-	attribute: attribute,
-	attribute_item: attributeItem,
-	await_expression: awaitExpression,
-	base_field_initializer: baseFieldInitializer,
-	binary_expression: binaryExpression,
-	block: block,
-	block_comment: blockComment,
-	boolean_literal: booleanLiteral,
-	bounded_type: boundedType,
-	bracketed_type: bracketedType,
-	break_expression: breakExpression,
-	call_expression: callExpression,
-	captured_pattern: capturedPattern,
-	char_literal: charLiteral,
-	closure_expression: closureExpression,
-	closure_parameters: closureParameters,
-	compound_assignment_expr: compoundAssignmentExpr,
-	const_block: constBlock,
-	const_item: constItem,
-	const_parameter: constParameter,
-	continue_expression: continueExpression,
-	crate: crate,
-	declaration_list: declarationList,
-	delim_token_tree: delimTokenTree,
-	dynamic_type: dynamicType,
-	else_clause: elseClause,
-	enum_item: enumItem,
-	enum_variant: enumVariant,
-	enum_variant_list: enumVariantList,
-	escape_sequence: escapeSequence,
-	expression_statement: expressionStatement,
-	extern_crate_declaration: externCrateDeclaration,
-	extern_modifier: externModifier,
-	field_declaration: fieldDeclaration,
-	field_declaration_list: fieldDeclarationList,
-	field_expression: fieldExpression,
-	field_initializer: fieldInitializer,
-	field_initializer_list: fieldInitializerList,
-	field_pattern: fieldPattern,
-	for_expression: forExpression,
-	for_lifetimes: forLifetimes,
-	foreign_mod_item: foreignModItem,
-	fragment_specifier: fragmentSpecifier,
-	function_item: functionItem,
-	function_modifiers: functionModifiers,
-	function_signature_item: functionSignatureItem,
-	function_type: functionType,
-	gen_block: genBlock,
-	generic_function: genericFunction,
-	generic_pattern: genericPattern,
-	generic_type: genericType,
-	generic_type_with_turbofish: genericTypeWithTurbofish,
-	higher_ranked_trait_bound: higherRankedTraitBound,
-	identifier: identifier,
-	if_expression: ifExpression,
-	impl_item: implItem,
-	index_expression: indexExpression,
-	inner_attribute_item: innerAttributeItem,
-	integer_literal: integerLiteral,
-	label: label,
-	last_match_arm: lastMatchArm,
-	let_condition: letCondition,
-	let_declaration: letDeclaration,
-	lifetime: lifetime,
-	lifetime_parameter: lifetimeParameter,
-	line_comment: lineComment,
-	loop_expression: loopExpression,
-	macro_definition: macroDefinition,
-	macro_invocation: macroInvocation,
-	macro_rule: macroRule,
-	match_arm: matchArm,
-	match_block: matchBlock,
-	match_expression: matchExpression,
-	match_pattern: matchPattern,
-	metavariable: metavariable,
-	mod_item: modItem,
-	mut_pattern: mutPattern,
-	mutable_specifier: mutableSpecifier,
-	negative_literal: negativeLiteral,
-	or_pattern: orPattern,
-	ordered_field_declaration_list: orderedFieldDeclarationList,
-	parameter: parameter,
-	parameters: parameters,
-	parenthesized_expression: parenthesizedExpression,
-	pointer_type: pointerType,
-	qualified_type: qualifiedType,
-	range_expression: rangeExpression,
-	range_pattern: rangePattern,
-	raw_string_literal: rawStringLiteral,
-	ref_pattern: refPattern,
-	reference_expression: referenceExpression,
-	reference_pattern: referencePattern,
-	reference_type: referenceType,
-	removed_trait_bound: removedTraitBound,
-	return_expression: returnExpression,
-	scoped_identifier: scopedIdentifier,
-	scoped_type_identifier: scopedTypeIdentifier,
-	scoped_type_identifier_in_expression_position: scopedTypeIdentifierInExpressionPosition,
-	scoped_use_list: scopedUseList,
-	self: self,
-	self_parameter: selfParameter,
-	shebang: shebang,
-	shorthand_field_initializer: shorthandFieldInitializer,
-	slice_pattern: slicePattern,
-	source_file: sourceFile,
-	static_item: staticItem,
-	string_literal: stringLiteral,
-	struct_expression: structExpression,
-	struct_item: structItem,
-	struct_pattern: structPattern,
-	super: super_,
-	token_binding_pattern: tokenBindingPattern,
-	token_repetition: tokenRepetition,
-	token_repetition_pattern: tokenRepetitionPattern,
-	token_tree: tokenTree,
-	token_tree_pattern: tokenTreePattern,
-	trait_bounds: traitBounds,
-	trait_item: traitItem,
-	try_block: tryBlock,
-	try_expression: tryExpression,
-	tuple_expression: tupleExpression,
-	tuple_pattern: tuplePattern,
-	tuple_struct_pattern: tupleStructPattern,
-	tuple_type: tupleType,
-	type_arguments: typeArguments,
-	type_binding: typeBinding,
-	type_cast_expression: typeCastExpression,
-	type_item: typeItem,
-	type_parameter: typeParameter,
-	type_parameters: typeParameters,
-	unary_expression: unaryExpression,
-	union_item: unionItem,
-	unit_expression: unitExpression,
-	unit_type: unitType,
-	unsafe_block: unsafeBlock,
-	use_as_clause: useAsClause,
-	use_bounds: useBounds,
-	use_declaration: useDeclaration,
-	use_list: useList,
-	use_wildcard: useWildcard,
-	variadic_parameter: variadicParameter,
-	visibility_modifier: visibilityModifier,
-	where_clause: whereClause,
-	where_predicate: wherePredicate,
-	while_expression: whileExpression,
-	yield_expression: yieldExpression,
-	arguments_group1: argumentsGroup1,
-	visibility_modifier_group1: visibilityModifierGroup1,
-	enum_variant_list_group1: enumVariantListGroup1,
-	field_declaration_list_group1: fieldDeclarationListGroup1,
-	field_initializer_list_group1: fieldInitializerListGroup1,
-	ordered_field_declaration_list_group1: orderedFieldDeclarationListGroup1,
-	parameters_group1: parametersGroup1,
-	slice_pattern_group1: slicePatternGroup1,
-	struct_pattern_group1: structPatternGroup1,
-	tuple_pattern_group1: tuplePatternGroup1,
-	use_bounds_group1: useBoundsGroup1,
-	use_list_group1: useListGroup1,
-	where_clause_group1: whereClauseGroup1,
-	string_content: stringContent,
-	raw_string_literal_content: rawStringLiteralContent,
-	float_literal: floatLiteral,
-	_line_doc_content: lineDocContent,
-	_error_sentinel: errorSentinel
+	_arguments_group1: build_ArgumentsGroup1,
+	_array_expression_list: buildArrayExpressionList,
+	_array_expression_semi: buildArrayExpressionSemi,
+	_attributed_argument: buildAttributedArgument,
+	_attributed_enum_variant: buildAttributedEnumVariant,
+	_attributed_field_declaration: buildAttributedFieldDeclaration,
+	_attributed_ordered_field: buildAttributedOrderedField,
+	_attributed_parameter: buildAttributedParameter,
+	_attributed_type_parameter: buildAttributedTypeParameter,
+	_closure_expression_block: buildClosureExpressionBlock,
+	_closure_expression_expr: buildClosureExpressionExpr,
+	_delim_token_tree_brace: buildDelimTokenTreeBrace,
+	_delim_token_tree_bracket: buildDelimTokenTreeBracket,
+	_delim_token_tree_paren: buildDelimTokenTreeParen,
+	_enum_variant_list_group1: build_EnumVariantListGroup1,
+	_expression_statement_with_semi: buildExpressionStatementWithSemi,
+	_field_declaration_list_group1: build_FieldDeclarationListGroup1,
+	_field_identifier: buildFieldIdentifier,
+	_field_initializer_list_group1: build_FieldInitializerListGroup1,
+	_field_pattern_named: buildFieldPatternNamed,
+	_function_type_fn_form: buildFunctionTypeFnForm,
+	_function_type_trait_form: buildFunctionTypeTraitForm,
+	_impl_item_body: buildImplItemBody,
+	_impl_item_negative_clause: buildImplItemNegativeClause,
+	_impl_item_positive_clause: buildImplItemPositiveClause,
+	_let_chain: buildLetChain,
+	_line_comment_content: buildLineCommentContent,
+	_line_comment_doc: buildLineCommentDoc,
+	_line_comment_regular_dslash: buildLineCommentRegularDslash,
+	_macro_definition_brace: buildMacroDefinitionBrace,
+	_macro_definition_bracket: buildMacroDefinitionBracket,
+	_macro_definition_paren: buildMacroDefinitionParen,
+	_match_arm_with_comma: buildMatchArmWithComma,
+	_match_block_arms: buildMatchBlockArms,
+	_or_pattern_binary: buildOrPatternBinary,
+	_or_pattern_prefix: buildOrPatternPrefix,
+	_ordered_field_declaration_list_group1: build_OrderedFieldDeclarationListGroup1,
+	_parameters_group1: build_ParametersGroup1,
+	_range_expression_binary: buildRangeExpressionBinary,
+	_range_expression_postfix: buildRangeExpressionPostfix,
+	_range_expression_prefix: buildRangeExpressionPrefix,
+	_range_pattern_left_with_right: buildRangePatternLeftWithRight,
+	_range_pattern_prefix: buildRangePatternPrefix,
+	_reference_expression_raw_const: buildReferenceExpressionRawConst,
+	_reference_expression_raw_mut: buildReferenceExpressionRawMut,
+	_slice_pattern_group1: build_SlicePatternGroup1,
+	_struct_item_brace: buildStructItemBrace,
+	_struct_item_tuple: buildStructItemTuple,
+	_struct_pattern_group1: build_StructPatternGroup1,
+	_token_tree_brace: buildTokenTreeBrace,
+	_token_tree_bracket: buildTokenTreeBracket,
+	_token_tree_paren: buildTokenTreeParen,
+	_token_tree_pattern_brace: buildTokenTreePatternBrace,
+	_token_tree_pattern_bracket: buildTokenTreePatternBracket,
+	_token_tree_pattern_paren: buildTokenTreePatternParen,
+	_tuple_pattern_group1: build_TuplePatternGroup1,
+	_type_argument: buildTypeArgument,
+	_type_identifier: buildTypeIdentifier,
+	_use_bounds_group1: build_UseBoundsGroup1,
+	_use_list_group1: build_UseListGroup1,
+	_use_wildcard_clause: buildUseWildcardClause,
+	_visibility_modifier_group1: build_VisibilityModifierGroup1,
+	_visibility_modifier_in_path: buildVisibilityModifierInPath,
+	_visibility_modifier_pub: buildVisibilityModifierPub,
+	_where_clause_group1: build_WhereClauseGroup1,
+	abstract_type: buildAbstractType,
+	arguments: buildArguments,
+	array_expression: buildArrayExpression,
+	array_type: buildArrayType,
+	assignment_expression: buildAssignmentExpression,
+	associated_type: buildAssociatedType,
+	async_block: buildAsyncBlock,
+	attribute: buildAttribute,
+	attribute_item: buildAttributeItem,
+	await_expression: buildAwaitExpression,
+	base_field_initializer: buildBaseFieldInitializer,
+	binary_expression: buildBinaryExpression,
+	block: buildBlock,
+	block_comment: buildBlockComment,
+	boolean_literal: buildBooleanLiteral,
+	bounded_type: buildBoundedType,
+	bracketed_type: buildBracketedType,
+	break_expression: buildBreakExpression,
+	call_expression: buildCallExpression,
+	captured_pattern: buildCapturedPattern,
+	char_literal: buildCharLiteral,
+	closure_expression: buildClosureExpression,
+	closure_parameters: buildClosureParameters,
+	compound_assignment_expr: buildCompoundAssignmentExpr,
+	const_block: buildConstBlock,
+	const_item: buildConstItem,
+	const_parameter: buildConstParameter,
+	continue_expression: buildContinueExpression,
+	crate: buildCrate,
+	declaration_list: buildDeclarationList,
+	delim_token_tree: buildDelimTokenTree,
+	dynamic_type: buildDynamicType,
+	else_clause: buildElseClause,
+	enum_item: buildEnumItem,
+	enum_variant: buildEnumVariant,
+	enum_variant_list: buildEnumVariantList,
+	escape_sequence: buildEscapeSequence,
+	expression_statement: buildExpressionStatement,
+	extern_crate_declaration: buildExternCrateDeclaration,
+	extern_modifier: buildExternModifier,
+	field_declaration: buildFieldDeclaration,
+	field_declaration_list: buildFieldDeclarationList,
+	field_expression: buildFieldExpression,
+	field_initializer: buildFieldInitializer,
+	field_initializer_list: buildFieldInitializerList,
+	field_pattern: buildFieldPattern,
+	for_expression: buildForExpression,
+	for_lifetimes: buildForLifetimes,
+	foreign_mod_item: buildForeignModItem,
+	fragment_specifier: buildFragmentSpecifier,
+	function_item: buildFunctionItem,
+	function_modifiers: buildFunctionModifiers,
+	function_signature_item: buildFunctionSignatureItem,
+	function_type: buildFunctionType,
+	gen_block: buildGenBlock,
+	generic_function: buildGenericFunction,
+	generic_pattern: buildGenericPattern,
+	generic_type: buildGenericType,
+	generic_type_with_turbofish: buildGenericTypeWithTurbofish,
+	higher_ranked_trait_bound: buildHigherRankedTraitBound,
+	identifier: buildIdentifier,
+	if_expression: buildIfExpression,
+	impl_item: buildImplItem,
+	index_expression: buildIndexExpression,
+	inner_attribute_item: buildInnerAttributeItem,
+	integer_literal: buildIntegerLiteral,
+	label: buildLabel,
+	last_match_arm: buildLastMatchArm,
+	let_condition: buildLetCondition,
+	let_declaration: buildLetDeclaration,
+	lifetime: buildLifetime,
+	lifetime_parameter: buildLifetimeParameter,
+	line_comment: buildLineComment,
+	loop_expression: buildLoopExpression,
+	macro_definition: buildMacroDefinition,
+	macro_invocation: buildMacroInvocation,
+	macro_rule: buildMacroRule,
+	match_arm: buildMatchArm,
+	match_block: buildMatchBlock,
+	match_expression: buildMatchExpression,
+	match_pattern: buildMatchPattern,
+	metavariable: buildMetavariable,
+	mod_item: buildModItem,
+	mut_pattern: buildMutPattern,
+	mutable_specifier: buildMutableSpecifier,
+	negative_literal: buildNegativeLiteral,
+	or_pattern: buildOrPattern,
+	ordered_field_declaration_list: buildOrderedFieldDeclarationList,
+	parameter: buildParameter,
+	parameters: buildParameters,
+	parenthesized_expression: buildParenthesizedExpression,
+	pointer_type: buildPointerType,
+	qualified_type: buildQualifiedType,
+	range_expression: buildRangeExpression,
+	range_pattern: buildRangePattern,
+	raw_string_literal: buildRawStringLiteral,
+	ref_pattern: buildRefPattern,
+	reference_expression: buildReferenceExpression,
+	reference_pattern: buildReferencePattern,
+	reference_type: buildReferenceType,
+	removed_trait_bound: buildRemovedTraitBound,
+	return_expression: buildReturnExpression,
+	scoped_identifier: buildScopedIdentifier,
+	scoped_type_identifier: buildScopedTypeIdentifier,
+	scoped_type_identifier_in_expression_position: buildScopedTypeIdentifierInExpressionPosition,
+	scoped_use_list: buildScopedUseList,
+	self: buildSelf,
+	self_parameter: buildSelfParameter,
+	shebang: buildShebang,
+	shorthand_field_initializer: buildShorthandFieldInitializer,
+	slice_pattern: buildSlicePattern,
+	source_file: buildSourceFile,
+	static_item: buildStaticItem,
+	string_literal: buildStringLiteral,
+	struct_expression: buildStructExpression,
+	struct_item: buildStructItem,
+	struct_pattern: buildStructPattern,
+	super: buildSuper,
+	token_binding_pattern: buildTokenBindingPattern,
+	token_repetition: buildTokenRepetition,
+	token_repetition_pattern: buildTokenRepetitionPattern,
+	token_tree: buildTokenTree,
+	token_tree_pattern: buildTokenTreePattern,
+	trait_bounds: buildTraitBounds,
+	trait_item: buildTraitItem,
+	try_block: buildTryBlock,
+	try_expression: buildTryExpression,
+	tuple_expression: buildTupleExpression,
+	tuple_pattern: buildTuplePattern,
+	tuple_struct_pattern: buildTupleStructPattern,
+	tuple_type: buildTupleType,
+	type_arguments: buildTypeArguments,
+	type_binding: buildTypeBinding,
+	type_cast_expression: buildTypeCastExpression,
+	type_item: buildTypeItem,
+	type_parameter: buildTypeParameter,
+	type_parameters: buildTypeParameters,
+	unary_expression: buildUnaryExpression,
+	union_item: buildUnionItem,
+	unit_expression: buildUnitExpression,
+	unit_type: buildUnitType,
+	unsafe_block: buildUnsafeBlock,
+	use_as_clause: buildUseAsClause,
+	use_bounds: buildUseBounds,
+	use_declaration: buildUseDeclaration,
+	use_list: buildUseList,
+	use_wildcard: buildUseWildcard,
+	variadic_parameter: buildVariadicParameter,
+	visibility_modifier: buildVisibilityModifier,
+	where_clause: buildWhereClause,
+	where_predicate: buildWherePredicate,
+	while_expression: buildWhileExpression,
+	yield_expression: buildYieldExpression,
+	arguments_group1: buildArgumentsGroup1,
+	visibility_modifier_group1: buildVisibilityModifierGroup1,
+	enum_variant_list_group1: buildEnumVariantListGroup1,
+	field_declaration_list_group1: buildFieldDeclarationListGroup1,
+	field_initializer_list_group1: buildFieldInitializerListGroup1,
+	ordered_field_declaration_list_group1: buildOrderedFieldDeclarationListGroup1,
+	parameters_group1: buildParametersGroup1,
+	slice_pattern_group1: buildSlicePatternGroup1,
+	struct_pattern_group1: buildStructPatternGroup1,
+	tuple_pattern_group1: buildTuplePatternGroup1,
+	use_bounds_group1: buildUseBoundsGroup1,
+	use_list_group1: buildUseListGroup1,
+	where_clause_group1: buildWhereClauseGroup1,
+	string_content: buildStringContent,
+	raw_string_literal_content: buildRawStringLiteralContent,
+	float_literal: buildFloatLiteral,
+	_line_doc_content: buildLineDocContent,
+	_error_sentinel: buildErrorSentinel
 } as const;
 export type _FactoryMap = typeof _factoryMap;
