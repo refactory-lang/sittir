@@ -422,7 +422,7 @@ type EscapeReservedAccessor<S extends string> = S extends keyof ReservedAccessor
 	? ReservedAccessorEscapes[S]
 	: S;
 
-export type SetterKey<K extends string> = CamelCase<K>;
+export type SetterKey<K extends string> = EscapeReservedAccessor<CamelCase<K>>;
 
 type Vowel = 'a' | 'e' | 'i' | 'o' | 'u';
 type Pluralize<S extends string> = S extends `${string}s`
@@ -443,7 +443,9 @@ type Pluralize<S extends string> = S extends `${string}s`
 								? `${Pre}ies`
 								: `${S}s`;
 
-type FieldKey<K extends string, V> = NonNullable<V> extends readonly any[] ? Pluralize<CamelCase<K>> : CamelCase<K>;
+type FieldKey<K extends string, V> = NonNullable<V> extends readonly any[]
+	? Pluralize<CamelCase<K>>
+	: EscapeReservedAccessor<CamelCase<K>>;
 
 /** Common render/edit methods attached to every fluent node. */
 export type NodeMethods<K extends string> = {

@@ -874,14 +874,14 @@ export interface UnnamedChildSlotFacts {
  * container-shape branch's single unnamed child slot (`fields[0]`).
  *
  * @remarks
- * `classifyFactoryShape`'s 'direct'/'spread' label special-cases hidden
- * (`_`-prefixed) kind names out of 'direct' regardless of arity, so a
- * hidden kind's required SINGULAR slot (e.g. a polymorph's hoisted child,
- * `_match_block`) gets mislabeled 'spread' even though the emitted factory
- * takes one mandatory positional `child`, not `...children`. Every consumer
- * that needs to know the real `...children` vs `child` shape — and whether
- * the resulting parameter is optional/defaultable — should read these facts
- * directly instead of trusting that label.
+ * The single canonical source for these facts. `classifyFactoryShape`'s
+ * 'direct'/'spread' label only says which calling convention applies — it
+ * doesn't carry the shape's multiplicity/requiredness/non-emptiness, and
+ * every call site that needs those (factories.ts, from.ts, test.ts) used to
+ * re-derive them independently, which is how a hidden kind's required
+ * singular unnamed slot (e.g. a polymorph's hoisted child, `_match_block`)
+ * once got mislabeled 'spread' in one of those derivations despite its real
+ * arity being singular. Read the facts from here instead of re-deriving them.
  *
  * Takes `fields` directly (not a full `AssembledNode`) since every call site
  * has already gated on container-shape-ness (typically via
