@@ -396,6 +396,32 @@ export type KindOf<T> = T extends { readonly $type: infer K extends string }
 
 import type { Edit, ReplaceTarget } from './core-types.ts';
 
+/**
+ * Mirrors `RESERVED_ACCESSOR_NAMES` in the codegen's `node-map.ts` — the
+ * runtime's `snakeToCamel()` appends a trailing `_` to a camelCased field
+ * name that would otherwise shadow an `Object.prototype` member (e.g. a
+ * grammar field named `constructor`). `CamelCase<K>` from `type-fest` has
+ * no knowledge of that escaping, so any generic projection that recomputes
+ * a field's camelCase key must route it through this lookup to match the
+ * real generated code. A plain table, not a chain of per-name conditionals —
+ * extend this map (and its runtime twin) together, never branch on the name.
+ */
+type ReservedAccessorEscapes = {
+	constructor: 'constructor_';
+	toString: 'toString_';
+	valueOf: 'valueOf_';
+	hasOwnProperty: 'hasOwnProperty_';
+	isPrototypeOf: 'isPrototypeOf_';
+	propertyIsEnumerable: 'propertyIsEnumerable_';
+	toLocaleString: 'toLocaleString_';
+	__proto__: '__proto___';
+};
+
+/** Escapes a camelCased field key that collides with an `Object.prototype` member. */
+type EscapeReservedAccessor<S extends string> = S extends keyof ReservedAccessorEscapes
+	? ReservedAccessorEscapes[S]
+	: S;
+
 export type SetterKey<K extends string> = CamelCase<K>;
 
 type Vowel = 'a' | 'e' | 'i' | 'o' | 'u';
@@ -615,7 +641,7 @@ export type ConfigOf<T> = T extends unknown
 			{
 				[K in keyof FieldsOf<T> as IsAutoStamp<FieldsOf<T>[K]> extends true
 					? never
-					: CamelCase<K & string>]: IsBooleanKeywordSlot<FieldInputType<T, K>> extends true
+					: EscapeReservedAccessor<CamelCase<K & string>>]: IsBooleanKeywordSlot<FieldInputType<T, K>> extends true
 					? boolean | BooleanKeywordSlotText<FieldInputType<T, K>> | undefined
 					: IsBitflagSlot<FieldInputType<T, K>> extends true
 						? BitflagSlotEnum<FieldInputType<T, K>> | undefined
@@ -796,11 +822,11 @@ type FromInputBody<T, Scalars, Strings, Depth extends number[], NsMap, Visited e
 	? { readonly $type?: K }
 	: {}) & {
 	readonly [K in keyof FieldsOf<T> as K extends RequiredNonAutoStampKeys<FieldsOf<T>>
-		? CamelCase<K>
+		? EscapeReservedAccessor<CamelCase<K & string>>
 		: never]: WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
 } & {
 	readonly [K in keyof FieldsOf<T> as K extends OptionalNonAutoStampKeys<FieldsOf<T>>
-		? CamelCase<K>
+		? EscapeReservedAccessor<CamelCase<K & string>>
 		: never]?: WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
 } & (T extends { readonly $other?: infer C }
 		? {
