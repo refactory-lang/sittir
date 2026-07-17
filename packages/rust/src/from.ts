@@ -1441,9 +1441,6 @@ export function coerceToExternCrateDeclaration(
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildExternCrateDeclaration>;
 	return F.buildExternCrateDeclaration({
 		visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, 'visibility_modifier'),
-		crate: coerceKindEnumStorage(_resolveOne<'crate'>('crate', _K8, _K8), [
-			['crate', kindIdFromName('crate')] as const
-		]),
 		name: _requireField('extern_crate_declaration', 'name', _resolveOneLeaf<T.Identifier>(input.name, 'identifier')),
 		alias: _resolveOneLeaf<T.Identifier>(input.alias, 'identifier')
 	});
@@ -1699,7 +1696,6 @@ export function coerceToGenericTypeWithTurbofish(
 			'type',
 			_resolveOne<T.Identifier | T.ScopedIdentifier>(input.type, _K0, _K7)
 		),
-		turbofish: coerceKindEnumStorage(_resolveOne<'::'>('::', _K8, _K8), [['::', kindIdFromName('::')] as const]),
 		typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, 'type_arguments') ?? F.buildTypeArguments()
 	});
 }
@@ -2252,8 +2248,7 @@ export function coerceToSelfParameter(input?: T.SelfParameter.Loose): ReturnType
 	return F.buildSelfParameter({
 		reference: _resolveBooleanKeyword(input?.reference),
 		lifetime: _resolveOneBranch<T.Lifetime>(input?.lifetime, 'lifetime'),
-		mutableSpecifier: _resolveBooleanKeyword(input?.mutableSpecifier),
-		self: coerceKindEnumStorage(_resolveOne<'self'>('self', _K8, _K8), [['self', kindIdFromName('self')] as const])
+		mutableSpecifier: _resolveBooleanKeyword(input?.mutableSpecifier)
 	});
 }
 

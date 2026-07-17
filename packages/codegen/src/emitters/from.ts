@@ -29,7 +29,6 @@ import {
 	keywordPresenceKind,
 	resolveSingleFieldFactorySlot,
 	resolveFieldStorageInfo,
-	resolveEffectiveLiteral,
 	stampExpressionFor,
 	isHiddenInfraSlot,
 	type BranchSlotClass,
@@ -351,14 +350,6 @@ function buildBranchSignatureParts(
 	return { inputType, inputOptional };
 }
 
-function stampedConfigFieldExpr(field: AssembledNonterminal, nodeMap: NodeMap, intern: KindInterner): string | null {
-	const literal = resolveEffectiveLiteral(field, nodeMap);
-	if (literal === undefined) return null;
-	const storageInfo = resolveFieldStorageInfo(field, nodeMap);
-	if (storageInfo.kind !== 'kindEnum') return null;
-	return resolveFieldCall(JSON.stringify(literal), field, isMultiple(field), nodeMap, intern);
-}
-
 function factoryReturnTypeExpr(factory: string): string {
 	return `ReturnType<typeof ${factory}>`;
 }
@@ -487,7 +478,6 @@ function emitBranchFrom(
 		const needsNonEmptyHoist = (f: AssembledNonterminal): boolean =>
 			isNonEmpty(f) && isMultiple(f) && keywordPresenceKind(f, nodeMap) === null;
 		for (const f of fields) {
-			if (stampedConfigFieldExpr(f, nodeMap, intern) !== null) continue;
 			if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
 			if (needsNonEmptyHoist(f)) {
 				const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional);
@@ -512,11 +502,6 @@ function emitBranchFrom(
 		} else {
 			lines.push(`  return ${factory}({`);
 			for (const f of fields) {
-				const stampedExpr = stampedConfigFieldExpr(f, nodeMap, intern);
-				if (stampedExpr !== null) {
-					lines.push(`    ${f.configKey}: ${stampedExpr},`);
-					continue;
-				}
 				if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
 				if (needsNonEmptyHoist(f)) {
 					lines.push(`    ${f.configKey}: ${neName(f)},`);
