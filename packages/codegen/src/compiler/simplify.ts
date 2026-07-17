@@ -971,10 +971,15 @@ export function hoistInnerFieldsForTemplate(rule: AnyRule): AnyRule {
 				content: hoistInnerFieldsForTemplate((rule as { content: AnyRule }).content)
 			} as AnyRule;
 		case FIELD: {
-			const recursed: AnyRule = {
+			// `hoistInnerFieldsForTemplate` widens its return to `AnyRule`
+			// regardless of the phase `rule.content` narrowed to, so the
+			// rebuilt object no longer structurally matches this FIELD
+			// variant's own `content: Rule<P>` slot — same widening every
+			// other case in this switch handles with `as AnyRule` below.
+			const recursed = {
 				...rule,
 				content: hoistInnerFieldsForTemplate(rule.content)
-			};
+			} as AnyRule;
 			return hoistInnerFieldFromWrapperForField(recursed);
 		}
 		default:

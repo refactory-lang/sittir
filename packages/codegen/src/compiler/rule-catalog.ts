@@ -29,7 +29,7 @@ import {
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import { assertNever } from '../polymorph-variant.ts';
-import type { Rule } from '../types/rule.ts';
+import type { AnyRule, PhaseName, Rule } from '../types/rule.ts';
 import type { RuleClassification } from './types.ts';
 
 /**
@@ -79,7 +79,24 @@ export function classifyByType(
 }
 
 /**
- * Pure, children-free terminality predicate over a {@link Rule<'evaluate'>}.
+ * Pure, children-free terminality predicate over a {@link Rule}, generic
+ * over its phase so callers keep their own `Rule<P>` precision (not widened
+ * to {@link AnyRule} at the call site).
+ *
+ * @remarks
+ * The body routes through `AnyRule` internally, then casts back: narrowing
+ * `rule.type` on a `Rule<Phase>` with an UNRESOLVED generic `Phase` doesn't
+ * work, because `Rule<Phase>` unions in a conditional member
+ * (`OptionalRule<T> = T extends WrapperPhase ? ... : never`) that
+ * TypeScript can't distribute over a generic — the switch below produces an
+ * unresolvable `Rule<'evaluate'> | Rule<'link'> | Rule<Phase>` type instead
+ * of collapsing to the matched arm if written directly against `Rule<Phase>`.
+ * `AnyRule` is a fully resolved union (every phase already substituted), so
+ * narrowing on it works. The cast back to `Rule<Phase>` is sound because a
+ * rule's structural children are always the SAME phase as their parent —
+ * phase is a whole-tree property, not a per-node one — so `AnyRule`'s
+ * narrowed `.content`/`.members` really are `Rule<Phase>` values here, just
+ * not something TypeScript can verify through the conditional type.
  *
  * Shares the per-rule-type decision table with {@link classifyIntrinsic} (in
  * evaluate.ts) via {@link classifyByType}, but recurses on the rule's own
@@ -88,13 +105,20 @@ export function classifyByType(
  *
  * Returns `true` when the rule is intrinsically a slot-bearing nonterminal.
  */
-export function isNonterminalRuleType(rule: Rule<'evaluate'>): boolean {
-	const anyChildNonterminal = ruleChildren(rule).some(isNonterminalRuleType);
+export function isNonterminalRuleType<Phase extends PhaseName>(rule: Rule<Phase>): boolean {
+	const anyChildNonterminal = ruleChildren(rule).some((child) => isNonterminalRuleType(child));
 	return classifyByType(rule.type, anyChildNonterminal) === 'nonterminal';
 }
 
-function ruleChildren(rule: Rule<'evaluate'>): readonly Rule<'evaluate'>[] {
-	switch (rule.type) {
+function ruleChildren<Phase extends PhaseName>(rule: Rule<Phase>): readonly Rule<Phase>[] {
+	// See isNonterminalRuleType's @remarks: narrow via AnyRule, cast back —
+	// children share the parent's phase by construction. Exhaustive over
+	// every AnyRule variant (no default fallthrough) so a newly added rule
+	// type fails compilation here instead of silently contributing no
+	// children — see classifyByType's own exhaustive switch for the sibling
+	// convention.
+	const anyRule = rule as AnyRule;
+	switch (anyRule.type) {
 		case TOKEN:
 		case FIELD:
 		case ALIAS:
@@ -102,10 +126,29 @@ function ruleChildren(rule: Rule<'evaluate'>): readonly Rule<'evaluate'>[] {
 		case VARIANT:
 		case GROUP:
 			// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'evaluate'> union.
-			return [rule.content];
+			return [anyRule.content as Rule<Phase>];
 		case SEQ:
-			return rule.members;
-		default:
+			return anyRule.members as Rule<Phase>[];
+		case CHOICE:
+		case REPEAT:
+		case REPEAT1:
+			// Unconditionally nonterminal per classifyByType — these children
+			// never actually feed a classification decision — but returned
+			// for real (not `[]`) so `ruleChildren` stays structurally honest
+			// about what each rule type's children are.
+			return (anyRule.type === CHOICE ? anyRule.members : [anyRule.content]) as Rule<Phase>[];
+		case SYMBOL:
+		case SUPERTYPE:
+		case PATTERN:
+		case STRING:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
+			// Genuinely childless: SYMBOL/PATTERN/STRING/INDENT/DEDENT/NEWLINE
+			// are leaves; SUPERTYPE's `subtypes` are kind-name strings, not
+			// Rule<Phase> nodes.
 			return [];
+		default:
+			return assertNever(anyRule);
 	}
 }

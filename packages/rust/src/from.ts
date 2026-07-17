@@ -1530,7 +1530,9 @@ export function coerceToFieldInitializerList(
 	);
 }
 
-export function coerceToFieldPattern(input?: 'ref' | T.FieldPattern): ReturnType<typeof F.buildFieldPattern> {
+export function coerceToFieldPattern(
+	input?: ('mut' | T.Identifier | T.FieldPatternNamed) | T.FieldPattern
+): ReturnType<typeof F.buildFieldPattern> {
 	if (isNodeData(input) && input.$type === TSKindId.FieldPattern) {
 		const data = input;
 		const child = (data as unknown as { _ref_marker?: unknown })._ref_marker;
@@ -2088,7 +2090,7 @@ export function coerceToQualifiedType(input: T.QualifiedType.Loose): ReturnType<
 }
 
 export function coerceToRangeExpression(
-	input?: (T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..') | T.RangeExpression
+	input?: (T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix) | T.RangeExpression
 ): ReturnType<typeof F.buildRangeExpression> {
 	if (isNodeData(input) && input.$type === TSKindId.RangeExpression) {
 		const data = input;

@@ -1331,7 +1331,7 @@ export function coerceToForStatement(input: T.ForStatement.Loose): ReturnType<ty
 }
 
 export function coerceToFormatSpecifier(
-	...input: readonly (('[^{}\\n]+' | T.Interpolation) | T.FormatSpecifier)[]
+	...input: readonly (T.Interpolation | T.FormatSpecifier)[]
 ): ReturnType<typeof F.buildFormatSpecifier> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.FormatSpecifier) {
 		const data = input[0];
@@ -1863,10 +1863,7 @@ export function coerceToString(input: T.String.Loose): ReturnType<typeof F.build
 }
 
 export function coerceToStringContent(
-	...input: readonly (
-		| (T.EscapeInterpolation | T.EscapeSequence | T.NotEscapeSequence | T._StringContent)
-		| T.StringContent
-	)[]
+	...input: readonly ((T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent) | T.StringContent)[]
 ): ReturnType<typeof F.buildStringContent> {
 	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.StringContent) {
 		const data = input[0];

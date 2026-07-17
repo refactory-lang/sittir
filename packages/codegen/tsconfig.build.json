@@ -15,5 +15,5 @@
 		{ "path": "../legacy-core/tsconfig.build.json" }
 	],
 	"include": ["src"],
-	"exclude": ["node_modules", "dist", "tests", "src/__tests__", "src/emitters/*-ir.ts"]
+	"exclude": ["node_modules", "dist", "tests", "src/__tests__", "**/__tests__", "**/*.test.ts", "src/emitters/*-ir.ts"]
 }

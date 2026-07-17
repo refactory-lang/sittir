@@ -38,7 +38,7 @@ import {
 	classifyFromEmission,
 	unnamedChildSlotFacts
 } from './shared.ts';
-import { fieldElementType } from './factories.ts';
+import { fieldElementType, childElementType } from './factories.ts';
 import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
 import { isNodeRef, isTerminalValue, isUnresolvedRef } from '../compiler/model/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/model/node-map.ts';
@@ -796,7 +796,7 @@ function emitContainerFrom(
 	// the data read is `data._<storageName>`.
 	const facts = unnamedChildSlotFacts(node.fields ?? []);
 	const elementType = facts
-		? containerSlotElementType(facts.slot, nodeMap)
+		? childElementType({ children: node.fields ?? [] }, nodeMap)
 		: `NonNullable<T.${node.typeName}['$other']> extends readonly [infer E] ? E : NonNullable<T.${node.typeName}['$other']>`;
 	const storageKey = facts ? facts.slot.storageKey : '$other';
 	if (facts?.multiple) {
@@ -927,33 +927,6 @@ function emitSeparatedListFrom(
 				: `${factory}(${varExpr} as Parameters<typeof ${factory}>[0])`,
 		': readonly unknown[]'
 	);
-}
-
-/**
- * Compute the TypeScript element-type union for a single unnamed-child slot.
- * Mirrors `childElementType` but operates on the post-unification slot in
- * `node.fields[0]` rather than the legacy `node.children` list.
- */
-function containerSlotElementType(slot: AssembledNonterminal, nodeMap: NodeMap): string {
-	const parts = new Set<string>();
-	for (const v of slot.values) {
-		if (isTerminalValue(v)) {
-			parts.add(JSON.stringify(v.value));
-			continue;
-		}
-		if (!isNodeRef(v)) continue;
-		const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
-		const ref = nodeMap.nodes.get(name);
-		if (!ref) {
-			parts.add(JSON.stringify(name));
-			continue;
-		}
-		const typeName = ref.typeName;
-		parts.add(/^[A-Za-z_$][\w$]*$/.test(typeName) ? `T.${typeName}` : JSON.stringify(name));
-	}
-	if (parts.size === 0) return 'never';
-	const union = [...parts].join(' | ');
-	return parts.size > 1 ? `(${union})` : union;
 }
 
 // ---------------------------------------------------------------------------

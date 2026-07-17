@@ -11400,12 +11400,12 @@ export function wrapCatchClauseGroup1(data: T.CatchClauseGroup1, tree: TreeHandl
 
 export function wrapEnumBodyGroup1(
 	data: T.EnumBodyGroup1 & {
-		readonly _identifier?: T.PropertyName | T.EnumAssignment;
-		readonly _reserved_identifier?: T.PropertyName | T.EnumAssignment;
-		readonly _private_property_identifier?: T.PropertyName | T.EnumAssignment;
-		readonly _string?: T.PropertyName | T.EnumAssignment;
-		readonly _number?: T.PropertyName | T.EnumAssignment;
-		readonly _computed_property_name?: T.PropertyName | T.EnumAssignment;
+		readonly _identifier?: T.PropertyName;
+		readonly _reserved_identifier?: T.PropertyName;
+		readonly _private_property_identifier?: T.PropertyName;
+		readonly _string?: T.PropertyName;
+		readonly _number?: T.PropertyName;
+		readonly _computed_property_name?: T.PropertyName;
 		readonly $other?: _NodeData['$other'];
 		readonly $span?: { start: number; end: number };
 	},

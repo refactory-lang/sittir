@@ -15,11 +15,16 @@ import { CHOICE, PATTERN, REPEAT, REPEAT1, STRING, SYMBOL } from '../../types/ru
 import { describe, expect, it } from 'vitest';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import { AssembledPattern, AssembledSeparatedList, type AssembledNode } from '../../compiler/model/node-map.ts';
-import type { Repeat1Rule, RepeatRule, Rule } from '../../types/rule.ts';
+import type { Repeat1Rule, RepeatRule, Rule, SimplifiedRule, RenderRule } from '../../types/rule.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
 
-const MEMBER_ELEMENT_RULE: Rule<'link'> = { type: SYMBOL, name: 'member' };
+// A bare SYMBOL rule is structurally identical across compiler phases, but
+// `simplifiedRule`/`renderRule` are nominally branded (SimplifiedRule/RenderRule
+// each carry a distinct `__brand?: never` marker) — one Rule<'link'>-typed
+// constant can't satisfy both, so each gets its own phase-typed declaration.
+const MEMBER_ELEMENT_SIMPLIFIED_RULE: SimplifiedRule = { type: SYMBOL, name: 'member' };
+const MEMBER_ELEMENT_RENDER_RULE: RenderRule = { type: SYMBOL, name: 'member' };
 
 function makeMemberNodeMap(rule: Repeat1Rule, opts: { separatorRule: Rule<'link'> | undefined }) {
 	const nodes = new Map<string, AssembledNode>();
@@ -27,8 +32,8 @@ function makeMemberNodeMap(rule: Repeat1Rule, opts: { separatorRule: Rule<'link'
 		'member_list',
 		new AssembledSeparatedList('member_list', rule, undefined, {
 			separatorRule: opts.separatorRule,
-			simplifiedRule: MEMBER_ELEMENT_RULE,
-			renderRule: MEMBER_ELEMENT_RULE
+			simplifiedRule: MEMBER_ELEMENT_SIMPLIFIED_RULE,
+			renderRule: MEMBER_ELEMENT_RENDER_RULE
 		})
 	);
 	nodes.set('member', new AssembledPattern('member', { type: PATTERN, value: '[a-z]+' }));
@@ -52,25 +57,27 @@ function makeMultiKindMemberNodeMap(): ReturnType<typeof makeNodeMapWith> {
 	// the actual shape the union-parenthesization guard protects (a
 	// NonEmptyArray<...> wrapper never needs the extra parens; only a bare
 	// `[]` suffix appended directly to a multi-member union does).
+	const contentMembers = [
+		{ type: SYMBOL, name: 'memberA' },
+		{ type: SYMBOL, name: 'memberB' }
+	] as const;
 	const rule: RepeatRule = {
 		type: REPEAT,
-		content: {
-			type: CHOICE,
-			members: [
-				{ type: SYMBOL, name: 'memberA' },
-				{ type: SYMBOL, name: 'memberB' }
-			]
-		},
+		content: { type: CHOICE, members: [...contentMembers] },
 		separator: { value: { type: STRING, value: ',' }, trailing: 'optional' }
 	};
-	const contentRule: Rule<'link'> = rule.content;
+	// Same phase-branding constraint as MEMBER_ELEMENT_SIMPLIFIED_RULE/
+	// MEMBER_ELEMENT_RENDER_RULE above — `rule.content` is structurally
+	// identical to both, but nominally satisfies only one at a time.
+	const contentSimplifiedRule: SimplifiedRule = { type: CHOICE, members: [...contentMembers] };
+	const contentRenderRule: RenderRule = { type: CHOICE, members: [...contentMembers] };
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'member_list',
 		new AssembledSeparatedList('member_list', rule, undefined, {
 			separatorRule: undefined,
-			simplifiedRule: contentRule,
-			renderRule: contentRule
+			simplifiedRule: contentSimplifiedRule,
+			renderRule: contentRenderRule
 		})
 	);
 	nodes.set('memberA', new AssembledPattern('memberA', { type: PATTERN, value: '[a-z]+' }));

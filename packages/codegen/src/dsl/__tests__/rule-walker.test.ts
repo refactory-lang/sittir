@@ -54,7 +54,7 @@ describe('RuleWalker.childEdgesOf (path-tracking edge relation)', () => {
 	it('separator value carries a separator-value segment (nested-object form)', () => {
 		const sep = str(',');
 		const inner = sym('x');
-		const r = { type: REPEAT, content: inner, separator: { value: sep, trailing: true } } as AnyRule;
+		const r = { type: REPEAT, content: inner, separator: { value: sep, trailing: 'mandatory' as const } } as AnyRule;
 		expect(w.childEdgesOf(r)).toEqual([
 			{ segment: ['content'], child: inner },
 			{ segment: ['separator', 'value'], child: sep }

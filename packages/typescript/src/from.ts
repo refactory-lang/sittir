@@ -1316,7 +1316,7 @@ export function coerceToClass(input: T.Class.Loose): ReturnType<typeof F.buildCl
 
 export function coerceToClassBody(
 	...input: readonly (
-		| (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')
+		| (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember)
 		| T.ClassBody
 	)[]
 ): ReturnType<typeof F.buildClassBody> {
