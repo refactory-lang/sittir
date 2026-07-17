@@ -386,7 +386,7 @@ export function collectValidatorFailuresForGrammar(counts: GrammarCounts): Valid
 			stage: 'read-render-parse-ast-mismatch',
 			code: 'read-render-parse-ast-mismatch',
 			severity: 'error',
-			label: m.name,
+			label: m.entry ? `${m.entry} (${m.kind})` : m.kind,
 			message: m.message
 		});
 	for (const e of readRenderParseShallow.errors)
@@ -402,7 +402,7 @@ export function collectValidatorFailuresForGrammar(counts: GrammarCounts): Valid
 			stage: 'read-render-parse-shallow-ast-mismatch',
 			code: 'read-render-parse-shallow-ast-mismatch',
 			severity: 'error',
-			label: m.name,
+			label: m.entry ? `${m.entry} (${m.kind})` : m.kind,
 			message: m.message
 		});
 	for (const e of factoryRenderParse.errors)

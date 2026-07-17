@@ -116,7 +116,7 @@ async function runSingle(grammar: Grammar, mode: Exclude<Mode, 'diff'>): Promise
 		total: result.total,
 		astMatchPass: result.astMatchPass,
 		mismatches: result.astMismatches.map((m) => ({
-			name: m.name,
+			name: m.entry ? `${m.entry} [${m.kind}]` : m.kind,
 			message: m.message,
 			input: m.input,
 			rendered: m.rendered

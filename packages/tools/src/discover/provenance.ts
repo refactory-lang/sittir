@@ -19,7 +19,7 @@
 
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { readRuleMetadata } from '../../../codegen/src/dsl/rule-metadata.ts';
+import { load, type CodegenSurface } from '../codegen-surface.ts';
 
 export interface FieldProvenanceOptions {
 	grammar: string;
@@ -69,7 +69,13 @@ function collectFieldsInSubtree(node: unknown, out: Set<string>): void {
 	}
 }
 
-function walkRule(kind: string, node: unknown, path: string[], rows: FieldRow[]): void {
+function walkRule(
+	readRuleMetadata: CodegenSurface['ruleMetadata']['readRuleMetadata'],
+	kind: string,
+	node: unknown,
+	path: string[],
+	rows: FieldRow[]
+): void {
 	if (!node || typeof node !== 'object') return;
 	if (isField(node)) {
 		const innerFieldNames = new Set<string>();
@@ -84,10 +90,10 @@ function walkRule(kind: string, node: unknown, path: string[], rows: FieldRow[])
 	}
 	const n = node as { content?: unknown; members?: unknown[] };
 	if (n.content !== undefined) {
-		walkRule(kind, n.content, [...path, 'content'], rows);
+		walkRule(readRuleMetadata, kind, n.content, [...path, 'content'], rows);
 	}
 	if (Array.isArray(n.members)) {
-		n.members.forEach((m, i) => walkRule(kind, m, [...path, String(i)], rows));
+		n.members.forEach((m, i) => walkRule(readRuleMetadata, kind, m, [...path, String(i)], rows));
 	}
 }
 
@@ -97,11 +103,12 @@ export async function run(opts: FieldProvenanceOptions): Promise<number> {
 		`packages/${opts.grammar}/.sittir/src/grammar.json`
 	);
 	const gj = JSON.parse(readFileSync(gjPath, 'utf-8')) as GrammarJson;
+	const { readRuleMetadata } = await load('ruleMetadata');
 
 	const rows: FieldRow[] = [];
 	for (const [kind, rule] of Object.entries(gj.rules)) {
 		if (opts.kind && kind !== opts.kind) continue;
-		walkRule(kind, rule, [], rows);
+		walkRule(readRuleMetadata, kind, rule, [], rows);
 	}
 
 	let filtered = rows;

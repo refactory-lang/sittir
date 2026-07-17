@@ -131,10 +131,9 @@ export async function runRoundtripProbes(grammar: string, templatesDir: string, 
 		});
 	}
 	for (const m of readRenderParseResult.astMismatches ?? []) {
-		const { entry, kind } = parseFrag(m.name);
 		diagnostics.push({
-			entry,
-			kind,
+			entry: m.entry ?? '(unknown)',
+			kind: m.kind,
 			source: 'render',
 			category: 'ast-mismatch',
 			message: String(m.message),

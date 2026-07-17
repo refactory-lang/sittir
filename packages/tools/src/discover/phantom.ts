@@ -7,9 +7,7 @@
  * during parser compilation and it will never carry a runtime $type.
  */
 
-import { generate } from '../../../codegen/src/compiler/generate.ts';
-import { loadGeneratedIdTables } from '../../../codegen/src/compiler/generated-metadata.ts';
-import { collectCatalogKinds } from '../../../codegen/src/emitters/kind-discriminant.ts';
+import { invoke } from '../codegen-surface.ts';
 
 export interface PhantomKindsOptions {
 	grammars: string[];
@@ -31,16 +29,16 @@ interface SymbolNameCollision {
 }
 
 async function diagnoseGrammar(grammar: string): Promise<PhantomReport> {
-	const result = await generate({ grammar, outputDir: '/dev/null' });
+	const result = await invoke('generate', 'generate', { grammar, outputDir: '/dev/null' });
 	const { nodeMap } = result;
 
-	const tables = await loadGeneratedIdTables(grammar);
+	const tables = await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar);
 
 	const nodeMapKinds = new Set(nodeMap.nodes.keys());
 	const catalogKinds = new Set<string>();
 
 	if (tables) {
-		for (const k of collectCatalogKinds(tables)) {
+		for (const k of await invoke('kindDiscriminant', 'collectCatalogKinds', tables)) {
 			catalogKinds.add(k);
 		}
 	}

@@ -27,7 +27,7 @@ export async function run(opts: DiffFailuresOptions): Promise<number> {
 		console.log(`\n=== READ_RENDER_PARSE (${r.pass}/${r.total}, ast=${r.astMatchPass}) ===`);
 		for (const e of r.errors) console.log(`  E ${e.name}: ${e.message}`);
 		console.log(`-- AST mismatches --`);
-		for (const e of r.astMismatches) console.log(`  M ${e.name}: ${e.message}`);
+		for (const e of r.astMismatches) console.log(`  M ${e.entry ? `${e.entry} (${e.kind})` : e.kind}: ${e.message}`);
 	}
 	if (which === 'all' || which === 'cov') {
 		const r = validateTemplateCoverage(opts.grammar, tp);
