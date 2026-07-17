@@ -3250,7 +3250,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
         "match_block_block"
       ]

@@ -363,12 +363,12 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
 	switch (kind) {
 		case '_class_body_method_sig':
-			return F.buildClassBodyMethodSig(...(children as Parameters<typeof F.buildClassBodyMethodSig>));
+			return F.buildClassBodyMethodSig(children[0] as Parameters<typeof F.buildClassBodyMethodSig>[0]);
 		case '_export_statement_default':
-			return F.buildExportStatementDefault(...(children as Parameters<typeof F.buildExportStatementDefault>));
+			return F.buildExportStatementDefault(children[0] as Parameters<typeof F.buildExportStatementDefault>[0]);
 		case '_public_field_definition_declare_first':
 			return F.buildPublicFieldDefinitionDeclareFirst(
-				...(children as Parameters<typeof F.buildPublicFieldDefinitionDeclareFirst>)
+				children[0] as Parameters<typeof F.buildPublicFieldDefinitionDeclareFirst>[0]
 			);
 		case 'ambient_declaration':
 			return F.buildAmbientDeclaration(children[0] as Parameters<typeof F.buildAmbientDeclaration>[0]);
@@ -1550,9 +1550,11 @@ export function coerceToDoStatement(input: T.DoStatement.Loose): ReturnType<type
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildDoStatement>;
 	return F.buildDoStatement({
 		body: _requireField('do_statement', 'body', _resolveOne<T.Statement>(input.body, _K2, _K18)),
-		condition:
-			_resolveOneBranch<T.ParenthesizedExpression>(input.condition, 'parenthesized_expression') ??
-			F.buildParenthesizedExpression(),
+		condition: _requireField(
+			'do_statement',
+			'condition',
+			_resolveOneBranch<T.ParenthesizedExpression>(input.condition, 'parenthesized_expression')
+		),
 		semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon')
 	});
 }
@@ -1917,9 +1919,11 @@ export function coerceToIdentifier(input: string | T.Identifier): ReturnType<typ
 export function coerceToIfStatement(input: T.IfStatement.Loose): ReturnType<typeof F.buildIfStatement> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildIfStatement>;
 	return F.buildIfStatement({
-		condition:
-			_resolveOneBranch<T.ParenthesizedExpression>(input.condition, 'parenthesized_expression') ??
-			F.buildParenthesizedExpression(),
+		condition: _requireField(
+			'if_statement',
+			'condition',
+			_resolveOneBranch<T.ParenthesizedExpression>(input.condition, 'parenthesized_expression')
+		),
 		consequence: _requireField('if_statement', 'consequence', _resolveOne<T.Statement>(input.consequence, _K2, _K18)),
 		alternative: _resolveOneBranch<T.ElseClause>(input.alternative, 'else_clause')
 	});
@@ -2953,9 +2957,11 @@ export function coerceToSwitchDefault(input?: T.SwitchDefault.Loose): ReturnType
 export function coerceToSwitchStatement(input: T.SwitchStatement.Loose): ReturnType<typeof F.buildSwitchStatement> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildSwitchStatement>;
 	return F.buildSwitchStatement({
-		value:
-			_resolveOneBranch<T.ParenthesizedExpression>(input.value, 'parenthesized_expression') ??
-			F.buildParenthesizedExpression(),
+		value: _requireField(
+			'switch_statement',
+			'value',
+			_resolveOneBranch<T.ParenthesizedExpression>(input.value, 'parenthesized_expression')
+		),
 		body: _resolveOneBranch<T.SwitchBody>(input.body, 'switch_body') ?? F.buildSwitchBody()
 	});
 }
@@ -3290,9 +3296,11 @@ export function coerceToVariableDeclarator(
 export function coerceToWhileStatement(input: T.WhileStatement.Loose): ReturnType<typeof F.buildWhileStatement> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildWhileStatement>;
 	return F.buildWhileStatement({
-		condition:
-			_resolveOneBranch<T.ParenthesizedExpression>(input.condition, 'parenthesized_expression') ??
-			F.buildParenthesizedExpression(),
+		condition: _requireField(
+			'while_statement',
+			'condition',
+			_resolveOneBranch<T.ParenthesizedExpression>(input.condition, 'parenthesized_expression')
+		),
 		body: _requireField('while_statement', 'body', _resolveOne<T.Statement>(input.body, _K2, _K18))
 	});
 }
@@ -3300,9 +3308,11 @@ export function coerceToWhileStatement(input: T.WhileStatement.Loose): ReturnTyp
 export function coerceToWithStatement(input: T.WithStatement.Loose): ReturnType<typeof F.buildWithStatement> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildWithStatement>;
 	return F.buildWithStatement({
-		object:
-			_resolveOneBranch<T.ParenthesizedExpression>(input.object, 'parenthesized_expression') ??
-			F.buildParenthesizedExpression(),
+		object: _requireField(
+			'with_statement',
+			'object',
+			_resolveOneBranch<T.ParenthesizedExpression>(input.object, 'parenthesized_expression')
+		),
 		body: _requireField('with_statement', 'body', _resolveOne<T.Statement>(input.body, _K2, _K18))
 	});
 }

@@ -394,11 +394,13 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 		case '_delim_token_tree_paren':
 			return F.buildDelimTokenTreeParen(...(children as Parameters<typeof F.buildDelimTokenTreeParen>));
 		case '_expression_statement_with_semi':
-			return F.buildExpressionStatementWithSemi(...(children as Parameters<typeof F.buildExpressionStatementWithSemi>));
+			return F.buildExpressionStatementWithSemi(
+				children[0] as Parameters<typeof F.buildExpressionStatementWithSemi>[0]
+			);
 		case '_function_type_fn_form':
-			return F.buildFunctionTypeFnForm(...(children as Parameters<typeof F.buildFunctionTypeFnForm>));
+			return F.buildFunctionTypeFnForm(children[0] as Parameters<typeof F.buildFunctionTypeFnForm>[0]);
 		case '_impl_item_body':
-			return F.buildImplItemBody(...(children as Parameters<typeof F.buildImplItemBody>));
+			return F.buildImplItemBody(children[0] as Parameters<typeof F.buildImplItemBody>[0]);
 		case '_macro_definition_brace':
 			return F.buildMacroDefinitionBrace(...(children as Parameters<typeof F.buildMacroDefinitionBrace>));
 		case '_macro_definition_bracket':
@@ -1888,15 +1890,19 @@ export function coerceToMacroInvocation(input: T.MacroInvocation.Loose): ReturnT
 			'macro',
 			_resolveOne<T.ScopedIdentifier | T.Identifier>(input.macro, _K0, _K7)
 		),
-		tokenTree: _resolveOneBranch<T.DelimTokenTree>(input.tokenTree, 'delim_token_tree') ?? F.buildDelimTokenTree()
+		tokenTree: _requireField(
+			'macro_invocation',
+			'tokenTree',
+			_resolveOneBranch<T.DelimTokenTree>(input.tokenTree, 'delim_token_tree')
+		)
 	});
 }
 
 export function coerceToMacroRule(input: T.MacroRule.Loose): ReturnType<typeof F.buildMacroRule> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildMacroRule>;
 	return F.buildMacroRule({
-		left: _resolveOneBranch<T.TokenTreePattern>(input.left, 'token_tree_pattern') ?? F.buildTokenTreePattern(),
-		right: _resolveOneBranch<T.TokenTree>(input.right, 'token_tree') ?? F.buildTokenTree()
+		left: _requireField('macro_rule', 'left', _resolveOneBranch<T.TokenTreePattern>(input.left, 'token_tree_pattern')),
+		right: _requireField('macro_rule', 'right', _resolveOneBranch<T.TokenTree>(input.right, 'token_tree'))
 	});
 }
 

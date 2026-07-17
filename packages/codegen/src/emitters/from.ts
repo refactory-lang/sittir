@@ -35,7 +35,8 @@ import {
 	type BranchSlotClass,
 	classifyFactoryShape,
 	classifyChildFactorySurface,
-	classifyFromEmission
+	classifyFromEmission,
+	unnamedChildSlotFacts
 } from './shared.ts';
 import { fieldElementType } from './factories.ts';
 import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
@@ -301,23 +302,7 @@ export namespace from {
 		intern: KindInterner,
 		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
-		let result: string;
-		if (classifyChildFactorySurface(node, nodeMap) !== null) {
-			result = emitContainerFrom(
-				{
-					kind: node.kind,
-					typeName: node.typeName,
-					rawFactoryName: node.rawFactoryName,
-					fromFunctionName: node.fromFunctionName,
-					fields: node.fields
-				},
-				kindEntries,
-				nodeMap
-			);
-		} else {
-			result = emitBranchFrom(node, nodeMap, intern);
-		}
-		output.push(result);
+		output.push(emitBranchFrom(node, nodeMap, intern, kindEntries));
 	}
 
 	/**
@@ -418,13 +403,14 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	// AssembledSeparatedList, so narrow on modelType instead.
 	const branchTarget = targetNode.modelType === 'branch' ? targetNode : null;
 	const childSurface = branchTarget !== null ? classifyChildFactorySurface(branchTarget, nodeMap) : null;
-	// Positional-child factories (`direct`/`spread`): the sole slot backing
-	// them always lives in `.fields` now, so there is no separate child slot
-	// to check for requiredness — the factory is always callable with zero
-	// args on this path.
-	if (childSurface !== null) {
+	if (childSurface === 'direct' || childSurface === 'spread') {
 		if (branchTarget === null) return null;
-		return targetNode.rawFactoryName;
+		const facts = unnamedChildSlotFacts(branchTarget.fields);
+		if (!facts) return null;
+		// Rest params (`...children`) always accept zero args. A singular
+		// positional `child` is safe only when it's itself optional.
+		if (facts.multiple || !facts.required) return targetNode.rawFactoryName;
+		return null;
 	}
 
 	// Branch / group with fields: check if the factory config is all-optional.
@@ -438,7 +424,33 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	return targetNode.rawFactoryName;
 }
 
-function emitBranchFrom(node: BranchLikeForFrom, nodeMap: NodeMap, intern: KindInterner): string {
+/**
+ * Emit a branch from() resolver — dispatches to the container calling
+ * convention (positional element args) when `classifyChildFactorySurface`
+ * recognizes an unnamed child slot, otherwise falls through to the regular
+ * field-carrying Loose-input resolution below. Single entry point so
+ * `branch()`'s dispatcher doesn't have to know about the two shapes.
+ */
+function emitBranchFrom(
+	node: BranchLikeForFrom,
+	nodeMap: NodeMap,
+	intern: KindInterner,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	if (classifyChildFactorySurface(node, nodeMap) !== null) {
+		return emitContainerFrom(
+			{
+				kind: node.kind,
+				typeName: node.typeName,
+				rawFactoryName: node.rawFactoryName,
+				fromFunctionName: node.fromFunctionName,
+				fields: node.fields
+			},
+			kindEntries,
+			nodeMap
+		);
+	}
+
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const fields = node.fields;
@@ -782,13 +794,12 @@ function emitContainerFrom(
 	// kind-derived `storageName`. The interface declares `_<storageName>` per
 	// slot (no `$other`), so the element type is the slot's element type and
 	// the data read is `data._<storageName>`.
-	const slot = node.fields?.[0];
-	const elementType = slot
-		? containerSlotElementType(slot, nodeMap)
+	const facts = unnamedChildSlotFacts(node.fields ?? []);
+	const elementType = facts
+		? containerSlotElementType(facts.slot, nodeMap)
 		: `NonNullable<T.${node.typeName}['$other']> extends readonly [infer E] ? E : NonNullable<T.${node.typeName}['$other']>`;
-	const childrenMultiple = slot ? isMultiple(slot) : false;
-	const storageKey = slot ? slot.storageKey : '$other';
-	if (childrenMultiple) {
+	const storageKey = facts ? facts.slot.storageKey : '$other';
+	if (facts?.multiple) {
 		return emitRepeatedContainerFrom(fn, factory, tName, elementType, node.kind, kindEntries, nodeMap, storageKey);
 	}
 	return emitSingularContainerFrom(fn, factory, tName, elementType, node.kind, kindEntries, nodeMap, storageKey);
@@ -1529,8 +1540,16 @@ function collectWrapChildrenEntries(
 		if (!kindEntries) continue;
 		const entry = findKindEntry(kindEntries, kind);
 		if (!entry) continue;
-		const childSurface = node.modelType === 'separatedList' ? 'array' : classifyChildFactorySurface(node, nodeMap);
-		if (!childSurface) continue;
+		let childSurface: 'direct' | 'spread' | 'array' | null;
+		if (node.modelType === 'separatedList') {
+			childSurface = 'array';
+		} else {
+			if (classifyChildFactorySurface(node, nodeMap) === null) continue;
+			// Real arity decides direct-vs-spread — see `unnamedChildSlotFacts`'s
+			// doc comment for why this reads the slot directly rather than
+			// trusting `classifyFactoryShape`'s label for the shape itself.
+			childSurface = unnamedChildSlotFacts(node.fields)?.multiple ? 'spread' : 'direct';
+		}
 		entries.push({
 			kind,
 			factoryName: node.rawFactoryName,

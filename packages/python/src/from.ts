@@ -320,11 +320,11 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 		case '_expression_statement_tuple':
 			return F.buildExpressionStatementTuple(children as Parameters<typeof F.buildExpressionStatementTuple>[0]);
 		case '_match_block':
-			return F.buildMatchBlock(...(children as Parameters<typeof F.buildMatchBlock>));
+			return F.buildMatchBlock(children[0] as Parameters<typeof F.buildMatchBlock>[0]);
 		case '_parameters':
 			return F.build_Parameters(children as Parameters<typeof F.build_Parameters>[0]);
 		case '_simple_pattern_negative':
-			return F.buildSimplePatternNegative(...(children as Parameters<typeof F.buildSimplePatternNegative>));
+			return F.buildSimplePatternNegative(children[0] as Parameters<typeof F.buildSimplePatternNegative>[0]);
 		case '_simple_statements':
 			return F.buildSimpleStatements(...(children as Parameters<typeof F.buildSimpleStatements>));
 		case '_with_clause_bare':
@@ -1064,8 +1064,8 @@ export function coerceToConditionalExpression(
 export function coerceToConstrainedType(input: T.ConstrainedType.Loose): ReturnType<typeof F.buildConstrainedType> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildConstrainedType>;
 	return F.buildConstrainedType({
-		baseType: _resolveOneBranch<T.Type>(input.baseType, 'type') ?? F.buildType(),
-		constraint: _resolveOneBranch<T.Type>(input.constraint, 'type') ?? F.buildType()
+		baseType: _requireField('constrained_type', 'baseType', _resolveOneBranch<T.Type>(input.baseType, 'type')),
+		constraint: _requireField('constrained_type', 'constraint', _resolveOneBranch<T.Type>(input.constraint, 'type'))
 	});
 }
 
@@ -1620,14 +1620,14 @@ export function coerceToMatchStatement(input: T.MatchStatement.Loose): ReturnTyp
 	_assertNonEmpty(_ne_subjects, 'match_statement.subjects');
 	return F.buildMatchStatement({
 		subject: _ne_subjects,
-		body: _resolveOneBranch<T.MatchBlock>(input.body, '_match_block') ?? F.buildMatchBlock()
+		body: _requireField('match_statement', 'body', _resolveOneBranch<T.MatchBlock>(input.body, '_match_block'))
 	});
 }
 
 export function coerceToMemberType(input: T.MemberType.Loose): ReturnType<typeof F.buildMemberType> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildMemberType>;
 	return F.buildMemberType({
-		baseType: _resolveOneBranch<T.Type>(input.baseType, 'type') ?? F.buildType(),
+		baseType: _requireField('member_type', 'baseType', _resolveOneBranch<T.Type>(input.baseType, 'type')),
 		identifier: _requireField(
 			'member_type',
 			'identifier',
@@ -1941,8 +1941,8 @@ export function coerceToTypeAliasStatement(
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypeAliasStatement>;
 	return F.buildTypeAliasStatement({
 		type: coerceKindEnumStorage(_resolveOne<'type'>('type', _K4, _K4), [['type', kindIdFromName('type')] as const]),
-		left: _resolveOneBranch<T.Type>(input.left, 'type') ?? F.buildType(),
-		right: _resolveOneBranch<T.Type>(input.right, 'type') ?? F.buildType()
+		left: _requireField('type_alias_statement', 'left', _resolveOneBranch<T.Type>(input.left, 'type')),
+		right: _requireField('type_alias_statement', 'right', _resolveOneBranch<T.Type>(input.right, 'type'))
 	});
 }
 
@@ -1969,7 +1969,7 @@ export function coerceToTypedDefaultParameter(
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypedDefaultParameter>;
 	return F.buildTypedDefaultParameter({
 		name: _requireField('typed_default_parameter', 'name', _resolveOneLeaf<T.Identifier>(input.name, 'identifier')),
-		type: _resolveOneBranch<T.Type>(input.type, 'type') ?? F.buildType(),
+		type: _requireField('typed_default_parameter', 'type', _resolveOneBranch<T.Type>(input.type, 'type')),
 		value: _requireField('typed_default_parameter', 'value', _resolveOne<T.Expression>(input.value, _K0, _K1))
 	});
 }
@@ -1982,7 +1982,7 @@ export function coerceToTypedParameter(input: T.TypedParameter.Loose): ReturnTyp
 			'content',
 			_resolveOne<T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern>(input.content, _K2, _K28)
 		),
-		type: _resolveOneBranch<T.Type>(input.type, 'type') ?? F.buildType()
+		type: _requireField('typed_parameter', 'type', _resolveOneBranch<T.Type>(input.type, 'type'))
 	});
 }
 
@@ -2017,8 +2017,8 @@ export function coerceToUnionPattern(
 export function coerceToUnionType(input: T.UnionType.Loose): ReturnType<typeof F.buildUnionType> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildUnionType>;
 	return F.buildUnionType({
-		left: _resolveOneBranch<T.Type>(input.left, 'type') ?? F.buildType(),
-		right: _resolveOneBranch<T.Type>(input.right, 'type') ?? F.buildType()
+		left: _requireField('union_type', 'left', _resolveOneBranch<T.Type>(input.left, 'type')),
+		right: _requireField('union_type', 'right', _resolveOneBranch<T.Type>(input.right, 'type'))
 	});
 }
 
@@ -2066,7 +2066,11 @@ export function coerceToWithStatement(input: T.WithStatement.Loose): ReturnType<
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildWithStatement>;
 	return F.buildWithStatement({
 		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
-		withClause: _resolveOneBranch<T.WithClause>(input.withClause, 'with_clause') ?? F.buildWithClause(),
+		withClause: _requireField(
+			'with_statement',
+			'withClause',
+			_resolveOneBranch<T.WithClause>(input.withClause, 'with_clause')
+		),
 		body: _requireField(
 			'with_statement',
 			'body',

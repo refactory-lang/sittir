@@ -5334,7 +5334,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
         "method_signature"
       ]
@@ -5586,7 +5586,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
         "content"
       ]
@@ -8345,7 +8345,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
         "accessibility_modifier"
       ]

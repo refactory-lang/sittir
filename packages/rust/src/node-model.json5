@@ -5336,7 +5336,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
         "expression"
       ]
@@ -5523,7 +5523,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
         "function_modifiers"
       ]
@@ -5607,7 +5607,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
         "declaration_list"
       ]
@@ -5827,7 +5827,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "spread",
+      "factoryShape": "direct",
       "factoryFields": [
         "path"
       ]

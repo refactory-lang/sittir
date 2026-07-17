@@ -861,6 +861,39 @@ export function classifyChildFactorySurface(node: AssembledNode, nodeMap: NodeMa
 	return slotClass.tag === 'singleSlot' && slotClass.slot.isUnnamed ? 'direct' : null;
 }
 
+/** Real facts about a container-shape branch's single unnamed child slot. */
+export interface UnnamedChildSlotFacts {
+	readonly slot: AssembledNonterminal;
+	readonly multiple: boolean;
+	readonly required: boolean;
+	readonly nonEmpty: boolean;
+}
+
+/**
+ * Resolve the real multiplicity/requiredness/non-emptiness of a
+ * container-shape branch's single unnamed child slot (`fields[0]`).
+ *
+ * @remarks
+ * `classifyFactoryShape`'s 'direct'/'spread' label special-cases hidden
+ * (`_`-prefixed) kind names out of 'direct' regardless of arity, so a
+ * hidden kind's required SINGULAR slot (e.g. a polymorph's hoisted child,
+ * `_match_block`) gets mislabeled 'spread' even though the emitted factory
+ * takes one mandatory positional `child`, not `...children`. Every consumer
+ * that needs to know the real `...children` vs `child` shape — and whether
+ * the resulting parameter is optional/defaultable — should read these facts
+ * directly instead of trusting that label.
+ *
+ * Takes `fields` directly (not a full `AssembledNode`) since every call site
+ * has already gated on container-shape-ness (typically via
+ * `classifyChildFactorySurface(...) !== null`) before reaching for the slot
+ * itself. Returns `null` when there's no field (not a container shape).
+ */
+export function unnamedChildSlotFacts(fields: readonly AssembledNonterminal[]): UnnamedChildSlotFacts | null {
+	const slot = fields[0];
+	if (!slot) return null;
+	return { slot, multiple: isMultiple(slot), required: isRequired(slot), nonEmpty: isNonEmpty(slot) };
+}
+
 /**
  * Shared factory-shape classification used by emitters and validator metadata.
  *
@@ -888,8 +921,22 @@ export function classifyFactoryShape(
 		case 'separatedList': {
 			const slotClass = node.slotClass ?? classifyBranchSlots(node, nodeMap);
 			if (slotClass.tag === 'singleSlot') {
+				if (slotClass.slot.isUnnamed) {
+					// Unnamed child slot: real arity decides direct-vs-spread,
+					// independent of whether the kind name is hidden — a hidden
+					// kind's unnamed child (e.g. a polymorph's hoisted
+					// `_match_block`) is still called positionally by its parent
+					// either way, same as a visible kind's. (Per the
+					// rust-slot-surface-contract architecture: named and unnamed
+					// slots share one derivation path, driven by real arity —
+					// not by kind-name prefix.)
+					return slotClass.arity === 'singular' ? 'direct' : 'spread';
+				}
+				// Named single field: hidden kinds keep the config-object
+				// surface — their factories are always called with a config
+				// object by the polymorph form wrapper that owns them, never
+				// the ergonomic direct-value shortcut.
 				if (!node.kind.startsWith('_') && slotClass.arity === 'singular') return 'direct';
-				if (slotClass.slot.isUnnamed) return 'spread';
 				return 'config';
 			}
 			return 'config';

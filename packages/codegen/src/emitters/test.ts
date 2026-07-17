@@ -21,10 +21,10 @@ import {
 	classifyChildFactorySurface,
 	isRequired,
 	isMultiple,
-	isNonEmpty,
 	slotKindNames,
 	keywordPresenceKind,
-	resolveFieldStorageInfo
+	resolveFieldStorageInfo,
+	unnamedChildSlotFacts
 } from './shared.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
 
@@ -111,11 +111,7 @@ export function emitTests(config: EmitTestsConfig): string {
 
 		switch (node.modelType) {
 			case 'branch':
-				if (classifyChildFactorySurface(node, nodeMap) !== null) {
-					emitContainerTest(lines, node, kind, key, kindEntries, nodeMap);
-				} else {
-					emitBranchTest(lines, node, kind, key, nodeMap, kindEntries);
-				}
+				emitBranchTest(lines, node, kind, key, nodeMap, kindEntries);
 				break;
 			case 'separatedList':
 				emitSeparatedListTest(lines, node, kind, key, kindEntries, nodeMap);
@@ -135,6 +131,13 @@ export function emitTests(config: EmitTestsConfig): string {
 	return lines.join('\n');
 }
 
+/**
+ * Emit a branch test — dispatches to the container calling convention
+ * (positional element args) when `classifyChildFactorySurface` recognizes
+ * an unnamed child slot, otherwise falls through to the regular
+ * field-carrying config-object test below. Single entry point so
+ * `emitTests`' dispatch loop doesn't have to know about the two shapes.
+ */
 function emitBranchTest(
 	lines: string[],
 	node: AssembledNode,
@@ -144,6 +147,10 @@ function emitBranchTest(
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): void {
 	if (node.modelType !== 'branch') return;
+	if (classifyChildFactorySurface(node, nodeMap) !== null) {
+		emitContainerTest(lines, node, kind, key, kindEntries, nodeMap);
+		return;
+	}
 
 	lines.push(`describe('${kind}', () => {`);
 	lines.push(`  it('factory produces correct type', () => {`);
@@ -237,14 +244,14 @@ function emitContainerTest(
 	//     runtime even though it type-checks.
 	//
 	// The unnamed slot backing a container factory lives at `node.fields[0]`
-	// (post-unification) — the same fact `emitContainerFactory` in
-	// factories.ts keys off (`const slot = node.fields[0]`) to decide
-	// `anyMultiple`/`anyNonEmpty`/required. Read it here too, so the test
-	// placeholder matches what the factory actually requires.
-	const slot = node.fields[0];
-	const requiredSingular = slot && !isMultiple(slot) && isRequired(slot);
-	const anyNonEmpty = slot ? isNonEmpty(slot) : false;
-	const firstKindName = slot ? slotKindNames(slot)[0] : undefined;
+	// (post-unification) — `unnamedChildSlotFacts` is the same canonical
+	// derivation `emitContainerFactory` (factories.ts) bases its real
+	// signature on. Read it here too, so the test placeholder matches what
+	// the factory actually requires.
+	const facts = unnamedChildSlotFacts(node.fields);
+	const requiredSingular = facts && !facts.multiple && facts.required;
+	const anyNonEmpty = facts?.nonEmpty ?? false;
+	const firstKindName = facts ? slotKindNames(facts.slot)[0] : undefined;
 	const placeholder =
 		(requiredSingular || anyNonEmpty) && firstKindName ? `{ type: ${JSON.stringify(firstKindName)} } as never` : '';
 

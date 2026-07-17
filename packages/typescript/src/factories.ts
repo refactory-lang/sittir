@@ -2,7 +2,7 @@
 
 import type * as T from './types.js';
 import { TSKindId } from './types.js';
-import type { FluentNode, NonEmptyArray } from '@sittir/types';
+import type { ConfigOf, FluentNode, NonEmptyArray } from '@sittir/types';
 import { withMethods, methodsEngine, coerceBooleanKeywordStorage, coerceKindEnumStorage } from './utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {

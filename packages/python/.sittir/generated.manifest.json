@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "24c93ffa4ef8e6444e24193f7eec9601e1714cc6ca90dac5b2820ca5974c5fa6",
+  "source_hash": "4ee7ca41e3decd47ea5c14a1869ea1b9f1ad434be4c7298a732760e6b45d7011",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "95d30e3601a516ceb578e461ce900531876f7ab3641605d8a2b606fc7755a028",
     "packages/python/.sittir/grammar.js": "3fbbf904f42dd044d037fe7f46923b2a8cfba817853c351b38a37d1442ea1141",
@@ -20,13 +20,13 @@
     "packages/python/src/consts.ts": "9eca7b71a9bb4990087338a0be4878be4cdf551949fd7476af0c6c9b0ceb5708",
     "packages/python/src/engine.ts": "8ad98d46d0066af6603ea5971daf4ae709bd85773b6897c7d12446e73b4958c5",
     "packages/python/src/factories.ts": "9dcd4747ed45d530d2e9fcf54cec48eae7c4a4926da87f121968049320ae2ca7",
-    "packages/python/src/from.ts": "d20dd33f0219945c5ee93b615fcdc0e19ceb9e6e60fe180bdc537f1ecaf627d3",
+    "packages/python/src/from.ts": "430816f2ffc86a607cc8d004d76ff04eb7c7ad7e1307b48ae4a1c440a1e09a0f",
     "packages/python/src/grammar.ts": "313ddac9960a72aa339e3831f41199e4c4b35f9a68170342b7139042788268ec",
     "packages/python/src/hash.ts": "6dc293c7dc74391d5d4e9243d9985d9610ebbb1a7f76124480d89b73761b6165",
     "packages/python/src/index.ts": "880825c1918b377123a9d40694e8e53aff1483cb384c8a0e4a025e1e23f4de0c",
     "packages/python/src/ir.ts": "8b181710ecb6f42fadf755e5a936f86bac32491032a9b829a0855ef4abc30f8c",
     "packages/python/src/is.ts": "9f2bdc891d01b870f845a9f6f289cdccf842a9d56d7b148b8f6d4afaafbea559",
-    "packages/python/src/node-model.json5": "c98cf58d67aabbada044ac6c1e1cf37bae5ed34b27cc888f96959cbbe0940478",
+    "packages/python/src/node-model.json5": "78c346d1648856fb2cc8233b33f14f60e899a2a5affaf603a18efb9ebbff515c",
     "packages/python/src/type-test.ts": "4ff26b80d445fd6e850c0a8420f2080f9bba90f2f78b5f2cd42f71f61a87e590",
     "packages/python/src/types.ts": "c68ae9ce3e21fe3c1de092b57502c843c27fe84743ca68dbe949ccc935195b3e",
     "packages/python/src/utils.ts": "0f2757262288a61ac52f96d3814d4149f0c5f5e62d0a0f3b821a4aef97f464ec",
