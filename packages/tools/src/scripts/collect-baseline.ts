@@ -338,9 +338,9 @@ async function collectValidatorsForGrammar(grammar: Grammar, backend: Backend): 
 			total: rt.total,
 			astMatchPass: rt.astMatchPass,
 			failingKinds: uniqSorted(
-				[...rt.errors, ...rt.astMismatches]
-					.map((e) => kindFromRoundtripName(e.name))
-					.filter((k): k is string => k !== null)
+				[...rt.errors.map((e) => kindFromRoundtripName(e.name)), ...rt.astMismatches.map((e) => e.kind)].filter(
+					(k): k is string => k !== null
+				)
 			),
 			formatDeferredKinds: empty
 		},

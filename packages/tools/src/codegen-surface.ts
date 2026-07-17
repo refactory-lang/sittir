@@ -48,7 +48,13 @@ const MODULES = {
 	modelNodeMap: '../../codegen/src/compiler/model/node-map.ts',
 	generatedManifest: '../../codegen/src/scripts/generated-manifest.ts',
 	suggested: '../../codegen/src/emitters/suggested.ts',
-	variantStructural: '../../codegen/src/compiler/variant-structural.ts'
+	variantStructural: '../../codegen/src/compiler/variant-structural.ts',
+	generate: '../../codegen/src/compiler/generate.ts',
+	generatedMetadata: '../../codegen/src/compiler/generated-metadata.ts',
+	kindDiscriminant: '../../codegen/src/emitters/kind-discriminant.ts',
+	ruleMetadata: '../../codegen/src/dsl/rule-metadata.ts',
+	types: '../../codegen/src/emitters/types.ts',
+	templates: '../../codegen/src/emitters/templates.ts'
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -71,6 +77,12 @@ export interface CodegenSurface {
 	generatedManifest: typeof import('../../codegen/src/scripts/generated-manifest.ts');
 	suggested: typeof import('../../codegen/src/emitters/suggested.ts');
 	variantStructural: typeof import('../../codegen/src/compiler/variant-structural.ts');
+	generate: typeof import('../../codegen/src/compiler/generate.ts');
+	generatedMetadata: typeof import('../../codegen/src/compiler/generated-metadata.ts');
+	kindDiscriminant: typeof import('../../codegen/src/emitters/kind-discriminant.ts');
+	ruleMetadata: typeof import('../../codegen/src/dsl/rule-metadata.ts');
+	types: typeof import('../../codegen/src/emitters/types.ts');
+	templates: typeof import('../../codegen/src/emitters/templates.ts');
 }
 
 type AnyFn = (...args: never[]) => unknown;

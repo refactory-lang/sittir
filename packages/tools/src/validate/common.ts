@@ -28,6 +28,7 @@ import type { TreeHandle } from '@sittir/common';
 // call synchronously — no per-call invoke()).
 import { load } from '../codegen-surface.ts';
 import type {
+	CodegenSurface,
 	PolymorphVariantDescriptor,
 	PolymorphVariantMap,
 	FactoryShape,
@@ -35,7 +36,8 @@ import type {
 	OpaqueFacts
 } from '../codegen-surface.ts';
 
-const { loadWebTreeSitter } = await load('engineLoader');
+const loadWebTreeSitter: CodegenSurface['engineLoader']['loadWebTreeSitter'] = (await load('engineLoader'))
+	.loadWebTreeSitter;
 const { opaqueFacts, readFacts } = await load('opaqueFacts');
 const { assertNativeBinaryFresh, hostBinaryFreshnessFor } = await load('nativeBinaryFreshness');
 const { pluralize, snakeToCamel } = await load('modelNodeMap');

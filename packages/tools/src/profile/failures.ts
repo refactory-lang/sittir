@@ -34,7 +34,7 @@ interface FromResult {
 
 interface RtResult {
 	errors: Array<{ name: string; message: string }>;
-	astMismatches: Array<{ name: string; message: string }>;
+	astMismatches: Array<{ kind: string; entry?: string; message: string }>;
 }
 
 interface CovResult {
@@ -115,7 +115,7 @@ async function profileGrammar(grammar: Grammar): Promise<Failure[]> {
 		failures.push({ grammar, check: 'rt-reparse', kind: kindFromRtName(e.name), message: e.message });
 	}
 	for (const e of rt.astMismatches) {
-		failures.push({ grammar, check: 'rt-ast', kind: kindFromRtName(e.name), message: e.message });
+		failures.push({ grammar, check: 'rt-ast', kind: e.kind, message: e.message, entry: e.entry });
 	}
 
 	for (const i of cov.issues) {

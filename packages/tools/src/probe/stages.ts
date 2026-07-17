@@ -44,14 +44,7 @@
 
 import { resolve } from 'node:path';
 import { existsSync } from 'node:fs';
-import { resolveGrammarJsPath } from '../../../codegen/src/compiler/resolve-grammar.ts';
-import { evaluate } from '../../../codegen/src/compiler/evaluate.ts';
-import { link } from '../../../codegen/src/compiler/link.ts';
-import { normalizeGrammar } from '../../../codegen/src/compiler/normalize.ts';
-import { assemble, AssembleCtx, hydrateSlotRefs } from '../../../codegen/src/compiler/assemble.ts';
-import { loadGeneratedIdTables } from '../../../codegen/src/compiler/generated-metadata.ts';
-import { emitTypes } from '../../../codegen/src/emitters/types.ts';
-import { runTemplateEmitter } from '../../../codegen/src/emitters/templates.ts';
+import { load } from '../codegen-surface.ts';
 
 export interface ProbeStagesOptions {
 	grammar: string;
@@ -67,6 +60,7 @@ export async function run(opts: ProbeStagesOptions): Promise<number> {
 	const kind = opts.kind;
 	const repoRoot = resolve(new URL('../../../..', import.meta.url).pathname);
 
+	const { resolveGrammarJsPath } = await load('resolveGrammar');
 	const overridesPath = resolve(repoRoot, `packages/${grammar}/overrides.ts`);
 	const grammarJsPath = resolveGrammarJsPath(grammar);
 	const useOverrides = !opts.noOverrides && existsSync(overridesPath);
@@ -83,24 +77,30 @@ export async function run(opts: ProbeStagesOptions): Promise<number> {
 	console.log = (...a: unknown[]) => void process.stderr.write(a.map(String).join(' ') + '\n');
 	console.warn = (...a: unknown[]) => void process.stderr.write(a.map(String).join(' ') + '\n');
 
+	const { evaluate } = await load('evaluate');
 	const raw = await evaluate(entryPath);
 	stages.evaluate = raw.rules[kind] ?? null;
 
+	const { link } = await load('link');
 	const linked = link(raw, undefined);
 	stages.link = linked.rules[kind] ?? null;
 
+	const { normalizeGrammar } = await load('normalize');
 	const normalized = normalizeGrammar(linked);
 	stages.normalize = normalized.linkRules[kind] ?? null;
 	stages.simplify = normalized.rules?.[kind] ?? null;
 
+	const { assemble, AssembleCtx, hydrateSlotRefs } = await load('assemble');
 	const nodeMap = assemble(AssembleCtx.from(normalized));
 	const node = nodeMap.nodes.get(kind) ?? null;
 	stages.assemble = node ? summarizeAssembled(node) : null;
+	const { loadGeneratedIdTables } = await load('generatedMetadata');
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 
 	if (!opts.skipEmit) {
 		hydrateSlotRefs(nodeMap);
 		try {
+			const { emitTypes } = await load('types');
 			const types = emitTypes({ grammar, nodeMap, generatedIdTables });
 			const ifacePat = new RegExp(`export interface ${kindToPascal(kind)}[^\\{]*\\{[\\s\\S]*?\\n\\}`, 'm');
 			const m = (types as unknown as string).match(ifacePat);
@@ -109,6 +109,7 @@ export async function run(opts: ProbeStagesOptions): Promise<number> {
 			stages.emitInterface = { error: String((e as Error).message ?? e) };
 		}
 		try {
+			const { runTemplateEmitter } = await load('templates');
 			const tpl = runTemplateEmitter({ grammar, nodeMap });
 			const body = tpl.bodies.get(kind);
 			stages.emitTemplate = body ?? null;

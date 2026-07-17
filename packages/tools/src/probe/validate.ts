@@ -72,7 +72,7 @@ export async function run(opts: ProbeValidateOptions): Promise<number> {
 				return 0;
 			}
 			const stripKind = (name: string): string => name.replace(/\s*\[[^\]]+\]\s*$/, '');
-			const failName = firstFail.name;
+			const failName = 'name' in firstFail ? firstFail.name : (firstFail.entry ?? firstFail.kind);
 			target = entries.find((e) => e.name === failName) ?? entries.find((e) => e.name === stripKind(failName));
 			if (!target) {
 				process.stderr.write(

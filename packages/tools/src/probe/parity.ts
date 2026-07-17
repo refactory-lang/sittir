@@ -33,9 +33,9 @@ export async function run(opts: ProbeParityOptions): Promise<number> {
 	console.log(
 		`  all astMismatches involving '${opts.target}':`,
 		r.astMismatches
-			.filter((e) => e.name.includes(opts.target))
+			.filter((e) => e.kind.includes(opts.target) || (e.entry?.includes(opts.target) ?? false))
 			.slice(0, 5)
-			.map((e) => e.name)
+			.map((e) => (e.entry ? `${e.entry} (${e.kind})` : e.kind))
 	);
 	console.log(`  pass=${r.pass}/${r.total} astMatchPass=${r.astMatchPass} skip=${r.skip}`);
 	console.log();

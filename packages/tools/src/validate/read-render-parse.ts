@@ -233,7 +233,8 @@ export interface ReadRenderParseResult {
 	}[];
 	/** Structural mismatches — distinct from render / reparse errors. */
 	astMismatches: {
-		name: string;
+		kind: string;
+		entry?: string;
 		message: string;
 		input?: string;
 		rendered?: string;
@@ -415,7 +416,8 @@ export async function validateReadRenderParse(
 		rendered?: string;
 	}[] = [];
 	const astMismatches: {
-		name: string;
+		kind: string;
+		entry?: string;
 		message: string;
 		input?: string;
 		rendered?: string;
@@ -625,7 +627,8 @@ export async function validateReadRenderParse(
 						const diff = node1ForAst ? astStructuralDiff(node1ForAst, node2, namedExtras) : null;
 						if (diff) {
 							kindAstMismatches.push({
-								name: `${entry.name} [${renderedKind}]`,
+								kind: renderedKind,
+								entry: entry.name,
 								message: diff.slice(0, 160),
 								input: inputSource,
 								rendered
@@ -755,7 +758,7 @@ export function formatReadRenderParseReport(result: ReadRenderParseResult): stri
 		lines.push('');
 		lines.push('    AST mismatches:');
 		for (const e of result.astMismatches.slice(0, 20)) {
-			lines.push(`    ~ ${e.name}: ${e.message}`);
+			lines.push(`    ~ ${e.entry ? `${e.entry} (${e.kind})` : e.kind}: ${e.message}`);
 			if (e.input) lines.push(`      source:   ${JSON.stringify(e.input.slice(0, 80))}`);
 			if (e.rendered) lines.push(`      rendered: ${JSON.stringify(e.rendered.slice(0, 80))}`);
 		}
