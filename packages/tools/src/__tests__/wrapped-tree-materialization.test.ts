@@ -9,7 +9,7 @@ import {
 	AssembledPattern,
 	type AssembledNode
 } from '../../../codegen/src/compiler/model/node-map.ts';
-import type { SeqRule } from '../../../codegen/src/types/rule.ts';
+import type { RenderRule, SeqRule, SimplifiedRule } from '../../../codegen/src/types/rule.ts';
 import { emitWrap } from '../../../codegen/src/__tests__/helpers/emit-wrap.ts';
 import { verifyManifestForGrammar } from '../../../codegen/src/scripts/generated-manifest.ts';
 import {
@@ -44,12 +44,23 @@ function asRecord(value: unknown): Record<string, unknown> {
 async function loadFreshWrapWitnessModule(): Promise<{
 	wrapListSplat: (node: unknown, tree: TreeHandle) => unknown;
 }> {
-	const rule: SeqRule = {
+	const rule: SeqRule<'link'> = {
 		type: SEQ,
 		members: [{ type: FIELD, name: 'value', content: { type: SYMBOL, name: 'identifier' } }]
 	};
+	// FIELD wrappers don't survive normalize/simplify — post-wrapper-deletion,
+	// `fieldName` is stamped directly onto the leaf instead (see RuleBase's
+	// NormalizedPhase branch, types/rule.ts).
+	const simplifiedRule: SimplifiedRule = {
+		type: SEQ,
+		members: [{ type: SYMBOL, name: 'identifier', fieldName: 'value' }]
+	};
+	const renderRule: RenderRule = {
+		type: SEQ,
+		members: [{ type: SYMBOL, name: 'identifier', fieldName: 'value' }]
+	};
 	const nodes = new Map<string, AssembledNode>();
-	nodes.set('list_splat', new AssembledBranch('list_splat', rule, rule, rule));
+	nodes.set('list_splat', new AssembledBranch('list_splat', rule, simplifiedRule, renderRule));
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	const source = emitWrap({ grammar: 'synth', nodeMap: makeNodeMapWith(nodes) });
 	const stubbedSource = [
