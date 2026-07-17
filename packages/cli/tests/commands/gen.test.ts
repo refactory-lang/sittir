@@ -4,7 +4,8 @@ import { Command } from 'commander';
 vi.mock('@sittir/codegen/run-codegen', () => ({
 	runCodegen: vi.fn().mockResolvedValue(undefined),
 	runFullRegen: vi.fn().mockResolvedValue(undefined),
-	runStandaloneSteps: vi.fn().mockResolvedValue(undefined)
+	runStandaloneSteps: vi.fn().mockResolvedValue(undefined),
+	RUST_RENDER_GRAMMARS: ['rust', 'typescript', 'python']
 }));
 
 import { gen } from '../../src/commands/gen.ts';

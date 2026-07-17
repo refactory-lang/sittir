@@ -18,19 +18,21 @@ import { ir, TSKindId } from '../src/index.ts';
 describe('python type_alias_statement collision (spec 008 US7)', () => {
 	it('$type holds the kind discriminant, _type holds the `type` keyword field (ADR-0018)', () => {
 		const node = ir.typeAlias({
-			left: { $type: 'type', $text: 'Foo' } as any,
-			right: { $type: 'type', $text: 'u64' } as any
+			left: { $type: TSKindId.Type, $text: 'Foo', $source: 2 } as any,
+			right: { $type: TSKindId.Type, $text: 'u64', $source: 2 } as any
 		});
 
 		// Kind discriminant — numeric TSKindId post Phase A KindID migration
 		expect(node.$type).toBe(TSKindId.TypeAliasStatement);
 
-		// `type` keyword field — auto-stamped by the factory (ADR-0010)
-		// ADR-0018: stored under `_type`, not `$fields.type`
-		expect((node as unknown as Record<string, unknown>)['_type']).toBe('type');
+		// `type` keyword field — auto-stamped by the factory (ADR-0010). Post
+		// the AutoStamp<KindEnum<...>> branding fix, this is the numeric
+		// kindEnum discriminant for the single-candidate 'type' keyword, not
+		// the literal string — ADR-0018: stored under `_type`, not `$fields.type`.
+		expect((node as unknown as Record<string, unknown>)['_type']).toBe(TSKindId.Type);
 
 		// The de-hoisted storage key differs from the kind discriminant
-		expect(node.$type).not.toBe('type');
+		expect(node.$type).not.toBe(TSKindId.Type);
 
 		// Provenance tag also present on the factory output
 		expect(node.$source).toBe(2);
@@ -38,12 +40,12 @@ describe('python type_alias_statement collision (spec 008 US7)', () => {
 
 	it('the two instances have distinct _left/_right content, shared _type stamp', () => {
 		const a = ir.typeAlias({
-			left: { $type: 'type', $text: 'A' } as any,
-			right: { $type: 'type', $text: 'B' } as any
+			left: { $type: TSKindId.Type, $text: 'A', $source: 2 } as any,
+			right: { $type: TSKindId.Type, $text: 'B', $source: 2 } as any
 		});
 		const b = ir.typeAlias({
-			left: { $type: 'type', $text: 'X' } as any,
-			right: { $type: 'type', $text: 'Y' } as any
+			left: { $type: TSKindId.Type, $text: 'X', $source: 2 } as any,
+			right: { $type: TSKindId.Type, $text: 'Y', $source: 2 } as any
 		});
 
 		// Both instances share kind and the auto-stamp `type` literal

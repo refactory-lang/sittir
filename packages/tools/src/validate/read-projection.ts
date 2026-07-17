@@ -85,7 +85,10 @@ function parseCorpus(content: string): CorpusEntry[] {
 	return entries;
 }
 
-const FIXTURES_DIR = new URL('../../fixtures', import.meta.url).pathname;
+// Fixtures live under packages/codegen/fixtures/, not this package's own
+// fixtures dir (stale path from the packages/validator -> packages/tools
+// relocation) -- shared corpus source, read cross-package deliberately.
+const FIXTURES_DIR = new URL('../../../codegen/fixtures', import.meta.url).pathname;
 
 function loadCorpusEntries(grammar: string): CorpusEntry[] {
 	const entries: CorpusEntry[] = [];

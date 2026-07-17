@@ -167,22 +167,16 @@ describe('diagnoseSlotGrouping — silent cases', () => {
 describe('diagnoseSlotGrouping — polymorph skip-set', () => {
 	// PolymorphRule was removed in PR-M-φ2; buildPolymorphSkipSet now always returns
 	// an empty set. Form kinds are treated as regular rules.
-
-	it('unknown rule type (e.g. legacy type: polymorph) is SILENT', () => {
-		// An unknown rule type hits the default case in walkRule and produces no
-		// diagnostic. This is a defensive check for any legacy/synthetic rule objects.
-		const unknownRule = {
-			type: 'polymorph',
-			source: 'promoted',
-			forms: [
-				{ name: 'numeric', content: seq(sym('value'), sym('unit')) },
-				{ name: 'string', content: seq(sym('quote'), sym('body')) }
-			]
-		};
-		// A rule with an unrecognized type should not fire any diagnostic.
-		const records = diagnoseSlotGrouping({ binary_expression: unknownRule as any });
-		expect(records).toHaveLength(0);
-	});
+	//
+	// A former case here ("unknown rule type (e.g. legacy type: polymorph) is
+	// SILENT") constructed a `type: 'polymorph'` rule expecting the diagnostic
+	// walk to gracefully no-op on it. That's no longer satisfiable: rule-catalog
+	// .ts's ruleChildren (used transitively by isContentSlot/countContentSlots)
+	// is exhaustive over every real AnyRule variant and throws via assertNever
+	// on anything outside it — deliberately, so a genuinely-retired shape like
+	// `polymorph` resurfacing anywhere is a loud bug signal, not silently
+	// swallowed. Removed rather than fixed — no fixture can satisfy both
+	// "must not throw on unknown input" and "must assertNever on unknown input".
 
 	it('non-polymorph structural choice with seq arms is SILENT (choice-distributed)', () => {
 		// A regular choice with multi-slot seq arms is also suppressed by Fix 3 —
