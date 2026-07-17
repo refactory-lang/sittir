@@ -44,6 +44,16 @@
 		"declarationMap": true,
 		"incremental": true
 	},
-	"include": ["src"],
-	"exclude": ["node_modules", "dist", "build", "coverage", ".github", ".claude", ".changeset"]
+	"files": [],
+	"references": [
+		{ "path": "./packages/types/tsconfig.build.json" },
+		{ "path": "./packages/common/tsconfig.build.json" },
+		{ "path": "./packages/legacy-core/tsconfig.build.json" },
+		{ "path": "./packages/codegen/tsconfig.build.json" },
+		{ "path": "./packages/rust/tsconfig.build.json" },
+		{ "path": "./packages/typescript/tsconfig.build.json" },
+		{ "path": "./packages/python/tsconfig.build.json" },
+		{ "path": "./packages/tools/tsconfig.build.json" },
+		{ "path": "./packages/cli/tsconfig.build.json" }
+	]
 }

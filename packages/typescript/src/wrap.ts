@@ -11411,10 +11411,10 @@ export function wrapEnumBodyGroup1(
 	},
 	tree: TreeHandle
 ) {
-	const _content = normalizeRepeatedWrapSlot(
+	const _content = normalizeRepeatedWrapSlot<unknown>(
 		data._name !== undefined
 			? _toArr(data._name)
-			: _concatInSourceOrder([
+			: _concatInSourceOrder<unknown>([
 					data._identifier,
 					data._reserved_identifier,
 					data._private_property_identifier,

@@ -272,6 +272,21 @@ interface ResolveSlotDrillConfig {
 	 * `nodeMap` + `kindEntries` for `kindDiscriminantExpr` resolution.
 	 */
 	readonly reclaimKindIdsExpr?: string;
+	/**
+	 * Emit `normalizeRepeatedWrapSlot<unknown>`/`normalizeSingularWrapSlot<unknown>`
+	 * with an EXPLICIT type argument instead of leaving `T` to be inferred from
+	 * `reclaimedStoreExpr`. For a multi-field `AssembledSeparatedList`
+	 * (`emitSeparatedListWrap`'s `_content` local — see its doc comment), the
+	 * probe combines candidate storage keys from MORE THAN ONE real slot (e.g.
+	 * TypeScript's `enum_body_group1`: `PropertyName`-kind keys AND a
+	 * `EnumAssignment`-kind key), which don't share a common element type.
+	 * `_content` there is consumed only by `_hasSeparatorFlank`/
+	 * `_separatorKindOf` (both take `readonly unknown[]`), never stored or
+	 * exposed as a typed accessor — so forcing `T = unknown` is the correct
+	 * type, not a type-hole cast: it matches what the value is actually used
+	 * for, rather than masking a real mismatch.
+	 */
+	readonly forceUnknownElement?: boolean;
 }
 
 function resolveSlotDrillExprs(
@@ -281,7 +296,12 @@ function resolveSlotDrillExprs(
 	storeExpr: string;
 	accessorBody: string;
 } {
-	const slotStoreExpr = resolveSlotStoreExpr(slot, config.dataExpr, config.candidateStorageKeys);
+	const slotStoreExpr = resolveSlotStoreExpr(
+		slot,
+		config.dataExpr,
+		config.candidateStorageKeys,
+		config.forceUnknownElement
+	);
 	const filteredStoreExpr =
 		config.allowedKinds && config.allowedKinds.length > 0
 			? `_filterWrapChildrenByKind(${slotStoreExpr}, ${JSON.stringify(config.allowedKinds)})`
@@ -298,10 +318,11 @@ function resolveSlotDrillExprs(
 		config.storageInfo?.kind === 'kindEnum' && config.reclaimKindIdsExpr
 			? `(${filteredStoreExpr} ?? readTerminalFromOther(${config.dataExpr}, ${config.reclaimKindIdsExpr}))`
 			: filteredStoreExpr;
+	const typeArg = config.forceUnknownElement ? '<unknown>' : '';
 	const normalizedStoreExpr =
 		slot.arity === 'many'
-			? `normalizeRepeatedWrapSlot(${reclaimedStoreExpr}, ${config.nonEmpty ? 'true' : 'false'}, ${JSON.stringify(slot.name)}, ${diagnosticContextExpr})`
-			: `normalizeSingularWrapSlot(${reclaimedStoreExpr}, ${JSON.stringify(slot.name)}, ${config.required ? 'true' : 'false'}, ${config.dataExpr}.$type, ${diagnosticContextExpr})`;
+			? `normalizeRepeatedWrapSlot${typeArg}(${reclaimedStoreExpr}, ${config.nonEmpty ? 'true' : 'false'}, ${JSON.stringify(slot.name)}, ${diagnosticContextExpr})`
+			: `normalizeSingularWrapSlot${typeArg}(${reclaimedStoreExpr}, ${JSON.stringify(slot.name)}, ${config.required ? 'true' : 'false'}, ${config.dataExpr}.$type, ${diagnosticContextExpr})`;
 	const storageInfo = config.storageInfo;
 	if (storageInfo?.kind === 'boolean') {
 		return {
@@ -528,7 +549,12 @@ function dataAccessExpr(dataExpr: string, storageKey: string): string {
 	return `${dataExpr}[${JSON.stringify(storageKey)}]`;
 }
 
-function resolveSlotStoreExpr(slot: SlotModel, dataExpr: string, candidateKeys?: readonly string[]): string {
+function resolveSlotStoreExpr(
+	slot: SlotModel,
+	dataExpr: string,
+	candidateKeys?: readonly string[],
+	forceUnknownElement?: boolean
+): string {
 	if (candidateKeys && candidateKeys.length > 0) {
 		// Probe the slot's own canonical storage key WITH PRIORITY over the
 		// concrete-kind candidate keys, rather than as a final fallback. On a
@@ -570,7 +596,16 @@ function resolveSlotStoreExpr(slot: SlotModel, dataExpr: string, candidateKeys?:
 			// same `_toArr` the concat path uses) rather than merging it into
 			// the candidate concat.
 			const sources = candidates.map((k) => dataAccessExpr(dataExpr, k));
-			const candidateExpr = sources.length > 0 ? `_concatInSourceOrder([${sources.join(', ')}])` : '[]';
+			// See resolveSlotDrillExprs's ResolveSlotDrillConfig.forceUnknownElement
+			// doc comment: a multi-field AssembledSeparatedList's internal
+			// `_content` probe can combine candidate keys from more than one real
+			// slot with no common element type — `_concatInSourceOrder`'s own
+			// generic inference (independent of the outer normalizeRepeatedWrapSlot
+			// call) needs the same explicit widening, or it silently picks one
+			// candidate's type and rejects the others.
+			const concatTypeArg = forceUnknownElement ? '<unknown>' : '';
+			const candidateExpr =
+				sources.length > 0 ? `_concatInSourceOrder${concatTypeArg}([${sources.join(', ')}])` : '[]';
 			return `(${canonicalExpr} !== undefined ? _toArr(${canonicalExpr}) : ${candidateExpr})`;
 		}
 
@@ -872,7 +907,15 @@ function emitSeparatedListWrap(
 		required: node.nonEmpty,
 		nonEmpty: node.nonEmpty,
 		storageInfo,
-		candidateStorageKeys: candidateStorageKeys.length > 0 ? candidateStorageKeys : undefined
+		candidateStorageKeys: candidateStorageKeys.length > 0 ? candidateStorageKeys : undefined,
+		// Multi-field kinds (see doc comment above) route each field through
+		// emitFieldStorageLines/emitFieldAccessorLines separately — `_content`
+		// here is ONLY the internal `_hasSeparatorFlank`/`_separatorKindOf`
+		// probe bucket, never a real storage key or accessor. Its candidate
+		// keys can span more than one field's element type (e.g. TypeScript's
+		// enum_body_group1 mixes PropertyName-kind and EnumAssignment-kind
+		// keys), which don't share a common generic T.
+		forceUnknownElement: node.fields.length > 1
 	});
 	lines.push(`  const _content = ${storeExpr};`);
 	lines.push('  return withMethods({');
