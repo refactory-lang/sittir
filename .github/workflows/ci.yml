@@ -83,14 +83,6 @@ jobs:
         # to be two separate steps (`pnpm run test` then `pnpm run
         # test:coverage`), each running all ~208 test files.
         run: pnpm run test -- --coverage
-        # TEMPORARY — 20 pre-existing test failures across 7 files (ADR-0018
-        # Phase 2 factory-shape gaps, render-pipeline-optimization,
-        # from-loose polymorph dispatch, etc.) block every downstream job
-        # (cargo check, napi build, regression-checkers) that `needs: CI`,
-        # even though they'd otherwise pass. These predate this PR (confirmed
-        # via a clean `master` worktree A/B) and are being fixed directly.
-        # Remove this once they're green.
-        continue-on-error: true
 
       - name: Security Audit
         run: pnpm audit --audit-level moderate
