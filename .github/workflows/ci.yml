@@ -50,6 +50,22 @@ jobs:
       - name: Build
         run: pnpm run build
 
+      # TEMPORARY DIAGNOSTIC — investigating why us1-hash-mismatch.test.ts
+      # can't find packages/rust/dist/index.js at Test-step time despite
+      # this step (right after Build) reporting it present. Remove once
+      # root-caused.
+      - name: DEBUG dist state (post-build)
+        run: |
+          echo "--- packages/rust/dist ---"
+          ls -la packages/rust/dist/ 2>&1 | head -5
+          echo "--- node_modules/@sittir/rust ---"
+          ls -la node_modules/@sittir/rust 2>&1
+          echo "--- node_modules/@sittir/rust/dist ---"
+          ls -la node_modules/@sittir/rust/dist 2>&1 | head -5
+          echo "--- realpath ---"
+          realpath node_modules/@sittir/rust 2>&1
+          node -e "console.log(import.meta.resolve('@sittir/rust'))" --input-type=module 2>&1 || true
+
       - name: Type check
         run: pnpm run type-check
 
@@ -75,6 +91,16 @@ jobs:
       - name: Format check
         run: pnpm run format:check
         continue-on-error: true
+
+      # TEMPORARY DIAGNOSTIC — see matching step above. Remove once
+      # root-caused.
+      - name: DEBUG dist state (pre-test)
+        run: |
+          echo "--- packages/rust/dist ---"
+          ls -la packages/rust/dist/ 2>&1 | head -5
+          echo "--- node_modules/@sittir/rust/dist ---"
+          ls -la node_modules/@sittir/rust/dist 2>&1 | head -5
+          node -e "console.log(import.meta.resolve('@sittir/rust'))" --input-type=module 2>&1 || true
 
       - name: Test
         run: pnpm run test
