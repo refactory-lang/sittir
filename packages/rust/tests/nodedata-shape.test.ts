@@ -43,11 +43,11 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 
 	it('FR-001: named field is stored under _<name> prefix (full NodeData, not the raw config value)', () => {
 		// A loose string config value ('my_fn') is coerced into a proper leaf
-		// NodeData object before storage — every _<name> slot holds a NodeData
-		// object, never a bare primitive (matches every typed accessor
-		// signature in types.ts, e.g. `identifier(): Identifier`, never
-		// `identifier(): string`). This is consistent, current behavior, not
-		// something this specific field skips.
+		// NodeData object before storage for the `_name` child slot exercised
+		// here (matches its typed accessor signature, `identifier(): Identifier`,
+		// never `identifier(): string`). This is NOT a blanket claim about every
+		// `_<name>` slot — auto-stamped kind-enum slots (e.g. python's `_type`)
+		// legitimately store a primitive numeric `TSKindId`, not NodeData.
 		const rec = node as unknown as Record<string, unknown>;
 		expect(rec['_name']).toBeDefined();
 		expect(typeof rec['_name']).toBe('object');

@@ -43,9 +43,11 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 	});
 
 	it('field(modifiers, repeat(string)) → one array slot (enum)', () => {
-		// A repeat(terminal) becomes an array slot only when nameable — here
-		// via the field wrapper. The bare unnamed `repeat(',')` has no name
-		// source and elides (it is pure syntactic separation).
+		// A repeat(terminal) becomes an array slot named via the field wrapper
+		// here. A BARE unnamed `repeat(',')` (no field wrapper) also produces
+		// one array slot today — see 'bare unnamed repeat(string)' below;
+		// `nonterminal` is the sole authoritative slot signal, not "has a name
+		// source" (that used to be the elision rule, no longer is).
 		const out = slots({ type: FIELD, name: 'modifiers', content: { type: REPEAT, content: str('kw') } });
 		expect(out).toHaveLength(1);
 		expect(out[0]!.name).toBe('modifiers');
