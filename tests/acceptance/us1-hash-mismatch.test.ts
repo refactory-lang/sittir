@@ -31,22 +31,22 @@ import { describe, it, expect, vi } from 'vitest';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-// Resolve the absolute path to `dist/hash.js` inside the @sittir/rust
-// package. Vite's module graph keys mocks on resolved file paths when
-// the import was resolved relative to another module — `backend.js`
-// imports `./hash.js` from inside the same dist directory, so the
-// mock target must be the absolute path on disk.
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const HASH_MODULE = join(__dirname, '..', '..', 'packages', 'rust', 'dist', 'hash.js');
-// This test specifically exercises the BUILT dist package's internal
-// wiring (backend.js's relative `./hash.js` import, which the mock
-// above targets) — it must import the real dist entry, not the bare
-// `@sittir/rust` specifier, which the root vitest config aliases to
-// source for other root-level tests (tests/format-roundtrip/*) that
-// don't care about dist-specific behavior. Source's `backend.ts`
-// imports `./hash.ts` directly, which the mock above would never
-// intercept, silently defeating this test.
-const RUST_DIST_ENTRY = join(__dirname, '..', '..', 'packages', 'rust', 'dist', 'index.js');
+// Resolve the REAL dist entry via Node's native ESM resolver (bypasses
+// Vite's module graph entirely). This test specifically exercises the
+// BUILT dist package's internal wiring (backend.js's relative
+// `./hash.js` import, which the mock below targets), so it must
+// resolve to the real dist entry, not the bare `@sittir/rust`
+// specifier — the root vitest config aliases that to source for other
+// root-level tests (tests/format-roundtrip/*) that don't care about
+// dist-specific behavior, and source's `backend.ts` imports
+// `./hash.ts` directly, which the mock below would never intercept,
+// silently defeating this test. `import.meta.resolve` (not
+// `createRequire(...).resolve`, which needs a CJS `"require"` export
+// condition this ESM-only package doesn't declare) stays correct
+// regardless of where dist actually resolves to, unlike a hardcoded
+// relative path from this file to packages/rust/dist.
+const RUST_DIST_ENTRY = fileURLToPath(import.meta.resolve('@sittir/rust'));
+const HASH_MODULE = join(dirname(RUST_DIST_ENTRY), 'hash.js');
 
 describe('US1 acceptance — hash-mismatch silent fallback (T052)', () => {
 	it('falls through to js with reason containing "hash mismatch"', async () => {
