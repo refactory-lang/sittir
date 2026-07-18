@@ -54,7 +54,24 @@ describe('US1 acceptance — hash-mismatch silent fallback (T052)', () => {
 		vi.doMock(HASH_MODULE, () => ({
 			TEMPLATE_BUNDLE_HASH: 'deadbeef-tampered-hash-not-the-real-one'
 		}));
-		const { getActiveBackend } = await import(RUST_DIST_ENTRY);
+		// Import via Vite's `/@fs/`-prefixed absolute-path convention,
+		// not a bare filesystem path. A plain absolute path handed to
+		// `import()` under Vite's SSR module graph is ambiguous — Vite
+		// may treat it as a URL route under its serving root rather
+		// than a filesystem path — which fails to load on CI's Linux
+		// runner with "Cannot find module ... imported from
+		// .../vitest/dist/module-evaluator.js" even though the file is
+		// confirmed present on disk (vitest-dev/vitest#6055 is the
+		// same class of pnpm-symlink issue). `/@fs/` is Vite's own
+		// documented escape hatch for referencing an absolute
+		// filesystem path unambiguously. This (unlike the bare
+		// `@sittir/rust` specifier) also isn't touched by this
+		// config's `resolve.alias`, which only rewrites the bare
+		// specifier string, and it still goes through Vite's
+		// transform/SSR module graph (not auto-externalized to native
+		// `import()`), so `vi.doMock` above still takes effect.
+		const rustDistEntryFsUrl = '/@fs/' + RUST_DIST_ENTRY;
+		const { getActiveBackend } = await import(/* @vite-ignore */ rustDistEntryFsUrl);
 		const backend = getActiveBackend();
 		expect(backend.name).toBe('js');
 		if (backend.hashMatch !== undefined) {

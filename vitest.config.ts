@@ -44,23 +44,6 @@ export default defineConfig({
 		// runs with a cached wasm are a no-op (~1ms). Cold compile pays
 		// ~10s total across the three grammars, paid once per session.
 		globalSetup: ['./vitest.setup.ts'],
-		server: {
-			deps: {
-				// `tests/acceptance/us1-hash-mismatch.test.ts` dynamically imports
-				// a grammar package's *built* dist entry (not the source-aliased
-				// bare specifier) to exercise the compiled `backend.js`'s relative
-				// `./hash.js` import. On CI (Linux) only, externalizing this path
-				// (native `import()`, bypassing Vite's transform pipeline) fails
-				// with "Cannot find module ... imported from
-				// .../vitest/dist/module-evaluator.js" even though the file is
-				// confirmed present on disk — a known pnpm-workspace-symlink +
-				// Vite external-module-loader interaction (vitest-dev/vitest#6055).
-				// `inline` forces the OPPOSITE: load through Vite's own resolver
-				// (which follows the symlink correctly) instead of Node's native
-				// loader.
-				inline: [/@sittir\/(rust|typescript|python)\/dist\//]
-			}
-		},
 		// JSON report as a side artifact of the SAME run (gitignored scratch
 		// path) — `scripts/test-and-record.ts` reads it to append a
 		// test-history.jsonl entry without spawning a second, separate
