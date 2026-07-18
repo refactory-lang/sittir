@@ -137,24 +137,34 @@ describe('Evaluate — DSL functions', () => {
 			});
 		});
 
-		it('detects leading separator in seq(STRING, x)', () => {
+		// Separator detection deliberately moved OUT of evaluate: the
+		// separated-list LIFT (commaSep1 -> repeat1{separator} and
+		// trailing-separator absorption) now runs ONCE in the link pass
+		// (liftSeparators in compiler/link.ts), after wire and enrich-injection,
+		// so author callbacks see the un-lifted shape — see the @remarks on
+		// evaluate.ts's seq(). These two cases now pin evaluate's
+		// preserve-the-raw-shape contract instead of the old eager lift.
+		it('preserves leading-separator seq(STRING, x) un-lifted (lift happens at link)', () => {
 			const sym = { type: 'SYMBOL' as const, name: 'item' };
 			const rule = repeat(seq(',', sym));
 			expect(rule).toEqual({
 				type: 'REPEAT',
-				content: expect.objectContaining({ type: 'SYMBOL', name: 'item' }),
-				separator: ','
+				content: {
+					type: 'SEQ',
+					members: [{ type: 'STRING', value: ',' }, expect.objectContaining({ type: 'SYMBOL', name: 'item' })]
+				}
 			});
 		});
 
-		it('detects trailing separator in seq(x, STRING)', () => {
+		it('preserves trailing-separator seq(x, STRING) un-lifted (lift happens at link)', () => {
 			const sym = { type: 'SYMBOL' as const, name: 'item' };
 			const rule = repeat(seq(sym, ';'));
 			expect(rule).toEqual({
 				type: 'REPEAT',
-				content: expect.objectContaining({ type: 'SYMBOL', name: 'item' }),
-				separator: ';',
-				trailing: true
+				content: {
+					type: 'SEQ',
+					members: [expect.objectContaining({ type: 'SYMBOL', name: 'item' }), { type: 'STRING', value: ';' }]
+				}
 			});
 		});
 	});
@@ -694,10 +704,19 @@ module.exports = grammar(base, {
 			byRuleType.set(entry.ruleType, list);
 		}
 
-		expect(classifications.get(byRuleType.get('symbol')![0]!)!.kind).toBe('nonterminal');
-		expect(classifications.get(byRuleType.get('pattern')![0]!)!.kind).toBe('terminal');
-		expect(classifications.get(byRuleType.get('token')![0]!)!.kind).toBe('terminal');
-		expect(classifications.get(byRuleType.get('field')![0]!)!.kind).toBe('nonterminal');
+		// Updated to the current classifyByType (rule-catalog.ts) contract:
+		// - ruleType vocabulary is UPPERCASE everywhere (case-as-origin
+		//   signal retired) — lowercase keys no longer exist in the catalog.
+		// - PATTERN is unconditionally 'nonterminal' now: patterns/enums
+		//   are slots (PR-P; classifyByType groups PATTERN with SYMBOL).
+		// - TOKEN classifies recursively (nonterminal iff any child is);
+		//   this fixture's token() wraps a PATTERN, so it is nonterminal.
+		// - STRING remains the intrinsic terminal case.
+		expect(classifications.get(byRuleType.get('SYMBOL')![0]!)!.kind).toBe('nonterminal');
+		expect(classifications.get(byRuleType.get('PATTERN')![0]!)!.kind).toBe('nonterminal');
+		expect(classifications.get(byRuleType.get('TOKEN')![0]!)!.kind).toBe('nonterminal');
+		expect(classifications.get(byRuleType.get('FIELD')![0]!)!.kind).toBe('nonterminal');
+		expect(classifications.get(byRuleType.get('STRING')![0]!)!.kind).toBe('terminal');
 	});
 
 	it('forces only the immediately wrapped field and named-alias content', async () => {
