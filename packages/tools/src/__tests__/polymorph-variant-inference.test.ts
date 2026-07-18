@@ -270,9 +270,21 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 // ---------------------------------------------------------------------------
 
 describe('nodeToConfig — polymorph $variant (promoted source)', () => {
+	// docs/superpowers/plans/2026-05-13-rust-slot-surface-contract.md Task 3
+	// made nodeToConfig metadata-driven instead of payload-driven:
+	// hasDeclaredFactorySlot (validate/common.ts) now gates every `_<name>`
+	// key on being a DECLARED factory field for the parent kind before it's
+	// promoted into the derived config — an undeclared `_start`/`_end` key is
+	// silently skipped, not trusted just because it's present on the raw
+	// payload. `factoryFields` is the minimal declaration form
+	// (hasDeclaredFactorySlot accepts either `factorySlots` metadata or a
+	// plain `factoryFields` name list).
 	const makeOpts = (fields: Record<string, readonly string[]>): NodeToConfigOpts => ({
 		polymorphVariants: {
 			range_expression: { definedBy: 'promoted', fields }
+		},
+		factoryFields: {
+			range_expression: [...new Set(Object.values(fields).flat())]
 		},
 		kindNameFromId
 	});
