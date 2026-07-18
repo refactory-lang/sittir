@@ -102,6 +102,14 @@ jobs:
           ls -la node_modules/@sittir/rust/dist 2>&1 | head -5
           node -e "console.log(import.meta.resolve('@sittir/rust'))" --input-type=module 2>&1 || true
 
+      # TEMPORARY DIAGNOSTIC — does the failure reproduce for this ONE
+      # file in isolation (bypassing the full 208-file suite), on this
+      # CI runner specifically? Narrows "vitest quirk" vs "full-suite
+      # interaction." Remove once root-caused.
+      - name: DEBUG isolated us1-hash-mismatch run
+        run: pnpm exec vitest run tests/acceptance/us1-hash-mismatch.test.ts
+        continue-on-error: true
+
       - name: Test
         run: pnpm run test
 
