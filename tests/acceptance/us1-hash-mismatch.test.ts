@@ -38,6 +38,15 @@ import { fileURLToPath } from 'node:url';
 // mock target must be the absolute path on disk.
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const HASH_MODULE = join(__dirname, '..', '..', 'packages', 'rust', 'dist', 'hash.js');
+// This test specifically exercises the BUILT dist package's internal
+// wiring (backend.js's relative `./hash.js` import, which the mock
+// above targets) — it must import the real dist entry, not the bare
+// `@sittir/rust` specifier, which the root vitest config aliases to
+// source for other root-level tests (tests/format-roundtrip/*) that
+// don't care about dist-specific behavior. Source's `backend.ts`
+// imports `./hash.ts` directly, which the mock above would never
+// intercept, silently defeating this test.
+const RUST_DIST_ENTRY = join(__dirname, '..', '..', 'packages', 'rust', 'dist', 'index.js');
 
 describe('US1 acceptance — hash-mismatch silent fallback (T052)', () => {
 	it('falls through to js with reason containing "hash mismatch"', async () => {
@@ -45,7 +54,7 @@ describe('US1 acceptance — hash-mismatch silent fallback (T052)', () => {
 		vi.doMock(HASH_MODULE, () => ({
 			TEMPLATE_BUNDLE_HASH: 'deadbeef-tampered-hash-not-the-real-one'
 		}));
-		const { getActiveBackend } = await import('@sittir/rust');
+		const { getActiveBackend } = await import(RUST_DIST_ENTRY);
 		const backend = getActiveBackend();
 		expect(backend.name).toBe('js');
 		if (backend.hashMatch !== undefined) {
