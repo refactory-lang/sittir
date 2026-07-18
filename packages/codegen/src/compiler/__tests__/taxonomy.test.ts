@@ -52,16 +52,30 @@ describe('classifyBranchSlots', () => {
 		}
 	});
 
-	it('returns singleSlot multiple for container with repeated children', () => {
-		// parameters has 2 children: attribute_item (auto-stamped) and
-		// parameter (repeated, non-stamp) — sole user-facing slot.
-		const node = nodeMap.nodes.get('parameters')!;
+	it('returns singleSlot multiple for branch with repeated children', () => {
+		// closure_parameters has a sole repeated user-facing slot (its
+		// parameter choice), so it classifies singleSlot/multiple.
+		//
+		// This case originally used `parameters`, expecting its
+		// attribute_item child to be filtered as auto-stamped. Under the
+		// kind-named-slots unification (docs/superpowers/specs/
+		// 2026-05-17-kind-named-slots-design.md) unnamed positional slots
+		// get real kind-derived names, and the old "container" shape was
+		// absorbed into branch (specs/022-binding-simplify-assemble/
+		// data-model.md: "AssembledBranch absorbs Container + Multi").
+		// `parameters` now genuinely carries 2 user-facing slots
+		// (attribute_item is optional+repeated, so never auto-stamped —
+		// stamps only apply to required singular constant slots) and is
+		// intentionally multiSlot; the shipped node-model.json5 agrees.
+		const node = nodeMap.nodes.get('closure_parameters')!;
 		expect(node).toBeDefined();
 		const result = classifyBranchSlots(node, nodeMap);
 		expect(result.tag).toBe('singleSlot');
 		if (result.tag === 'singleSlot') {
 			expect(result.arity).toBe('multiple');
 		}
+		// The old fixture is now genuinely multi-slot:
+		expect(classifyBranchSlots(nodeMap.nodes.get('parameters')!, nodeMap).tag).toBe('multiSlot');
 	});
 
 	it('returns multiSlot for nodes with fields + non-stamp children', () => {
@@ -74,10 +88,19 @@ describe('classifyBranchSlots', () => {
 	});
 
 	it('excludes auto-stamp children from slot count', () => {
-		// reference_expression has field 'value' (non-stamp) + child
-		// 'mutable_specifier' (auto-stamped). After filtering, only
-		// 'value' survives → singleSlot singular, required.
-		const node = nodeMap.nodes.get('reference_expression')!;
+		// mut_pattern has child 'mutable_specifier' (required singular
+		// constant → auto-stamped) + child 'pattern' (non-stamp). After
+		// filtering, only 'pattern' survives → singleSlot singular,
+		// required.
+		//
+		// This case originally used `reference_expression`, but under the
+		// kind-named-slots unification its unnamed optional
+		// choice(const, mutable_specifier) prefix became a real user-facing
+		// `content` slot (two distinct kinds — not a single
+		// keyword-presence toggle, so no filter removes it), making
+		// reference_expression intentionally multiSlot; the shipped
+		// node-model.json5 agrees (slots: content + value).
+		const node = nodeMap.nodes.get('mut_pattern')!;
 		expect(node).toBeDefined();
 		const result = classifyBranchSlots(node, nodeMap);
 		expect(result.tag).toBe('singleSlot');
@@ -85,6 +108,8 @@ describe('classifyBranchSlots', () => {
 			expect(result.arity).toBe('singular');
 			expect(result.optional).toBe(false);
 		}
+		// The old fixture is now genuinely multi-slot:
+		expect(classifyBranchSlots(nodeMap.nodes.get('reference_expression')!, nodeMap).tag).toBe('multiSlot');
 	});
 
 	it('returns multiSlot for non-branch/group model types', () => {
@@ -95,11 +120,18 @@ describe('classifyBranchSlots', () => {
 		expect(result.tag).toBe('multiSlot');
 	});
 
-	it('returns singleSlot multiple for container-shape branch', () => {
-		// block has 3 children: label (stamped), statement (non-stamp,
-		// repeated), expression (stamped). Sole user-facing slot is
-		// 'statement' with array multiplicity.
-		const node = nodeMap.nodes.get('block')!;
+	it('returns singleSlot multiple+required for repeated-only branch', () => {
+		// tuple_type's sole user-facing slot is its repeated 'type' slot
+		// → singleSlot with array multiplicity, required.
+		//
+		// This case originally used `block`, expecting its label /
+		// trailing-expression children to be filtered as auto-stamped.
+		// They are optional (never stamped — stamps only apply to required
+		// singular constant slots), and under the kind-named-slots
+		// unification each is a real named slot (label, statement,
+		// trailing_expression), so block is intentionally multiSlot now;
+		// the shipped node-model.json5 agrees.
+		const node = nodeMap.nodes.get('tuple_type')!;
 		expect(node).toBeDefined();
 		const result = classifyBranchSlots(node, nodeMap);
 		expect(result.tag).toBe('singleSlot');
@@ -107,5 +139,7 @@ describe('classifyBranchSlots', () => {
 			expect(result.arity).toBe('multiple');
 			expect(result.optional).toBe(false);
 		}
+		// The old fixture is now genuinely multi-slot:
+		expect(classifyBranchSlots(nodeMap.nodes.get('block')!, nodeMap).tag).toBe('multiSlot');
 	});
 });

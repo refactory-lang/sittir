@@ -41,12 +41,27 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 		expect((node as unknown as Record<string, unknown>)['$fields']).toBeUndefined();
 	});
 
-	it('FR-001: named field is stored under _<name> prefix (enumerable)', () => {
+	it('FR-001: named field is stored under _<name> prefix (full NodeData, not the raw config value)', () => {
+		// A loose string config value ('my_fn') is coerced into a proper leaf
+		// NodeData object before storage for the `_name` child slot exercised
+		// here (matches its typed accessor signature, `identifier(): Identifier`,
+		// never `identifier(): string`). This is NOT a blanket claim about every
+		// `_<name>` slot — auto-stamped kind-enum slots (e.g. python's `_type`)
+		// legitimately store a primitive numeric `TSKindId`, not NodeData.
 		const rec = node as unknown as Record<string, unknown>;
 		expect(rec['_name']).toBeDefined();
-		expect(rec['_name']).toBe('my_fn');
+		expect(typeof rec['_name']).toBe('object');
+		expect((rec['_name'] as { $text?: string }).$text).toBe('my_fn');
 	});
 
+	// CONFIRMED GAP (not a stale assertion — verified against actual factory
+	// output 2026-07-17): accessor methods are currently ENUMERABLE, contradicting
+	// ADR-0018's documented contract (specs/022-binding-simplify-assemble/
+	// IMPLEMENTATION-STATUS.md groups this under "Phase 2: Surface reshape...
+	// ✅ Shipped", but `Object.keys(node)` demonstrably includes accessor names
+	// like 'name', 'body', 'parameters'). Left failing on purpose rather than
+	// weakening the assertion — this is a real deviation from the documented
+	// surface, root cause not yet isolated to a specific emitter line.
 	it('FR-002: accessor function is non-enumerable', () => {
 		expect(isNonEnumerable(node, 'name')).toBe(true);
 	});
@@ -55,9 +70,12 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 		const rec = node as unknown as Record<string, unknown>;
 		const accessor = rec['name'] as () => unknown;
 		expect(typeof accessor).toBe('function');
-		expect(accessor.call(node)).toBe('my_fn');
+		const value = accessor.call(node) as { $text?: string };
+		expect(value.$text).toBe('my_fn');
 	});
 
+	// See the CONFIRMED GAP note above FR-002 — this fails for the same
+	// reason (accessor names currently enumerable).
 	it('SC-004: Object.keys() returns only $-metadata and _-storage keys (no accessor names)', () => {
 		const keys = Object.keys(node);
 		// No accessor names in enumerable keys
@@ -71,6 +89,14 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 		expect(keys).not.toContain('$fields');
 	});
 
+	// CONFIRMED DEFERRED (not a stale assertion or regression):
+	// specs/022-binding-simplify-assemble/IMPLEMENTATION-STATUS.md's Phase 2
+	// row explicitly says "Freeze deferred (hygiene rule: iterative
+	// optimizations)" — `freezeNodeData` (packages/common/src/nodeData.ts)
+	// carries an `@forFutureUse ADR-0018` tag and is not yet wired into
+	// generated factory output. Left failing on purpose, same discipline as
+	// the other two confirmed-real, deliberately-deferred bugs found this
+	// session (acceptedTransportKinds, python _patterns).
 	it('Object.isFrozen() returns true (freeze contract)', () => {
 		expect(Object.isFrozen(node)).toBe(true);
 	});
@@ -102,6 +128,8 @@ describe('ADR-0018 Phase 2 factory shape — leaf node', () => {
 		expect((leaf as unknown as Record<string, unknown>)['$fields']).toBeUndefined();
 	});
 
+	// See the "CONFIRMED DEFERRED" note above the branch-node isFrozen case —
+	// freeze is deliberately not yet wired (ADR-0018 Phase 2, deferred).
 	it('leaf: Object.isFrozen() returns true', () => {
 		expect(Object.isFrozen(leaf)).toBe(true);
 	});
@@ -109,6 +137,18 @@ describe('ADR-0018 Phase 2 factory shape — leaf node', () => {
 
 // ---------- $with namespace ----------
 
+// CONFIRMED DEFERRED (not stale assertions or a regression): `$with` does not
+// exist on factory output at all today — `buildWithNamespace` (packages/
+// common/src/nodeData.ts) carries an `@forFutureUse ADR-0018 ... frozen
+// NodeData / $with update namespace` tag, and `replaceField`/`replace`/
+// `bindRange` (packages/common/src/edit.ts) are tagged "$replace method. Not
+// yet wired into gener[ated factories]". specs/022-binding-simplify-assemble/
+// IMPLEMENTATION-STATUS.md's Phase 2 summary row lists `$with` as "✅
+// Shipped" alongside `_<name>` storage and freeze, but that line is stale —
+// freeze is separately confirmed deferred in the same doc, and $with is
+// empirically absent (`original.$with` is `undefined`). All 4 cases below
+// left failing on purpose, same discipline as the other confirmed-deferred
+// findings in this file and this session.
 describe('ADR-0018 Phase 2 — $with namespace', () => {
 	const original = ir.function({ name: 'original', parameters: [], body: minimalBlock } as any);
 
@@ -151,10 +191,12 @@ describe('ADR-0018 Phase 2 — JSON serialization (SC-007)', () => {
 	const node = ir.function({ name: 'serialize_me', parameters: [], body: minimalBlock } as any);
 
 	it('SC-007: JSON.stringify includes $type, $source, _<field> keys', () => {
+		// _name holds the coerced leaf NodeData object, not the raw config
+		// string — see the FR-001 note above (same current, consistent shape).
 		const parsed = JSON.parse(JSON.stringify(node)) as Record<string, unknown>;
 		expect(parsed['$type']).toBe(TSKindId.FunctionItem);
 		expect(parsed['$source']).toBe(2);
-		expect(parsed['_name']).toBe('serialize_me');
+		expect(parsed['_name']).toMatchObject({ $text: 'serialize_me' });
 	});
 
 	it('SC-007: JSON.stringify does NOT include $fields', () => {
@@ -185,13 +227,19 @@ describe('ADR-0018 Phase 2 factory shape — container node', () => {
 	// declarationList() is a pure container with variadic children and no named fields.
 	const container = ir.declarationList();
 
-	it('container: no _<field> keys (uses $children for content)', () => {
+	it('container: variadic child slot uses its kind-derived storage key, even when empty', () => {
+		// Kind-named slots (docs/superpowers/specs/2026-05-17-kind-named-slots-design.md)
+		// give every positional slot — including a container's repeated-child
+		// slot — its own kind-derived `_<kind>` storage key, present as a
+		// structural fact regardless of whether the array is empty. There is
+		// no generic `$children` fallback key.
 		const keys = Object.keys(container);
-		// The container key set is only $-metadata (no named fields → no _<name> keys).
 		const storageKeys = keys.filter((k) => k.startsWith('_'));
-		expect(storageKeys).toEqual([]);
+		expect(storageKeys).toEqual(['_declaration_statement']);
 	});
 
+	// See the "CONFIRMED DEFERRED" note above the branch-node isFrozen case —
+	// freeze is deliberately not yet wired (ADR-0018 Phase 2, deferred).
 	it('container: Object.isFrozen() returns true', () => {
 		expect(Object.isFrozen(container)).toBe(true);
 	});

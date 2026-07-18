@@ -25,18 +25,33 @@ export async function setup() {
 	// Rebuild core + grammar package dists so tests never run against
 	// stale compiled output. pnpm build is mtime-aware via tsgo's
 	// incremental mode — no-op when sources haven't changed (~50ms).
-	try {
-		const t0 = Date.now();
-		execFileSync('pnpm', ['-r', 'run', 'build'], {
-			cwd: import.meta.dirname,
-			stdio: 'pipe'
-		});
-		console.log(`[vitest-setup] pnpm -r run build (${Date.now() - t0}ms)`);
-	} catch {
-		// The dist artifacts are already present from the last successful build.
-		// Warn but continue — tests resolve via tsconfig paths (tsx runtime),
-		// not from dist.
-		console.warn('[vitest-setup] pnpm -r run build failed — continuing with cached dist');
+	//
+	// Skipped in CI: the workflow's own "Build" step already ran this
+	// exact command moments earlier. Running it again here — a second
+	// `pnpm -r run build` in the same job, against a cross-run-warm
+	// cargo cache (Swatinem/rust-cache) — is what triggers a napi-rs
+	// build-determinism bug: the second build's napi codegen pass
+	// regenerates `rust/crates/sittir-*/index.d.ts` incompletely,
+	// dropping dependency-crate type defs (e.g. `Edit`/`Span`), which
+	// then fails `assertGeneratedManifestsClean`. Confirmed reproducible
+	// (identical failure across 2 independent CI runs, 2026-07-18).
+	// Local dev runs are unaffected and keep rebuilding here as before.
+	if (!process.env.CI) {
+		try {
+			const t0 = Date.now();
+			execFileSync('pnpm', ['-r', 'run', 'build'], {
+				cwd: import.meta.dirname,
+				stdio: 'pipe'
+			});
+			console.log(`[vitest-setup] pnpm -r run build (${Date.now() - t0}ms)`);
+		} catch {
+			// The dist artifacts are already present from the last successful build.
+			// Warn but continue — tests resolve via tsconfig paths (tsx runtime),
+			// not from dist.
+			console.warn('[vitest-setup] pnpm -r run build failed — continuing with cached dist');
+		}
+	} else {
+		console.log('[vitest-setup] CI detected — skipping redundant pnpm -r run build (workflow already built)');
 	}
 
 	for (const grammar of GRAMMARS) {

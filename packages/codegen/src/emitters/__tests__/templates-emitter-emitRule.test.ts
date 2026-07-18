@@ -94,9 +94,14 @@ describe('emitRule — string', () => {
 });
 
 describe('emitRule — pattern', () => {
-	it('emits nothing for raw patterns', () => {
+	it('emits an unnamed content slot reference when no slot is registered', () => {
+		// Patterns are nonterminal slots (classifyByType) — they emit a slot
+		// REFERENCE, not inline text, so collectSlots-registered pattern slots
+		// survive emission. With no registered slot and no fieldName, the
+		// deterministic unnamed `content` fallback fires (see emitRule's
+		// PATTERN case).
 		const rule: PatternRule = { type: PATTERN, value: '[a-z]+' };
-		expect(emitRule(rule, makeCtx())).toBe('');
+		expect(emitRule(rule, makeCtx())).toBe('{{ content }}');
 	});
 });
 
@@ -132,7 +137,10 @@ describe('emitRule — seq', () => {
 		expect(emitRule(rule, makeCtx())).toBe('fn main');
 	});
 
-	it('recurses into nested seqs', () => {
+	it('recurses into nested seqs, inserting a word-boundary space between adjacent word literals', () => {
+		// Bug 6 fix: consecutive seq members that would merge into a single
+		// lexeme at render time ('a' + 'b' -> 'ab', a different token) get a
+		// space inserted between them, per the grammar's wordMatcher.
 		const rule: SeqRule = {
 			type: SEQ,
 			members: [
@@ -147,7 +155,7 @@ describe('emitRule — seq', () => {
 				{ type: STRING, value: ')' }
 			]
 		};
-		expect(emitRule(rule, makeCtx())).toBe('(ab)');
+		expect(emitRule(rule, makeCtx())).toBe('(a b)');
 	});
 });
 
@@ -326,8 +334,12 @@ describe('emitRule — symbol', () => {
 	});
 
 	it('inlines a hidden helper rule when present in ctx.rules', () => {
+		// emitSymbol's ctx.rules fallback requires `inline: true` (RuleBase's
+		// per-ref inline decision — real rules get this stamped at construction
+		// for hidden (`_`-prefixed) names; this hand-built literal must set it
+		// explicitly to exercise the same path).
 		const helperBody: StringRule = { type: STRING, value: 'pub(crate)' };
-		const rule: SymbolRule = { type: SYMBOL, name: '_visibility' };
+		const rule: SymbolRule = { type: SYMBOL, name: '_visibility', inline: true };
 		const ctx = makeCtx({ rules: { _visibility: helperBody } });
 		expect(emitRule(rule, ctx)).toBe('pub(crate)');
 	});
@@ -424,10 +436,14 @@ describe('emitRule — choice', () => {
 	});
 
 	it('skips empty branches and emits the first non-empty one', () => {
+		// A nested empty CHOICE (zero members) is the reliably-empty fixture
+		// here — PATTERN no longer emits '' (it emits an unnamed content slot
+		// reference; see the 'emitRule — pattern' suite above), so it can't
+		// stand in for "an arm that produces no output" anymore.
 		const rule: ChoiceRule = {
 			type: CHOICE,
 			members: [
-				{ type: PATTERN, value: '' },
+				{ type: CHOICE, members: [] },
 				{ type: STRING, value: '*' }
 			]
 		};
@@ -438,8 +454,8 @@ describe('emitRule — choice', () => {
 		const rule: ChoiceRule = {
 			type: CHOICE,
 			members: [
-				{ type: PATTERN, value: '' },
-				{ type: PATTERN, value: '' }
+				{ type: CHOICE, members: [] },
+				{ type: CHOICE, members: [] }
 			]
 		};
 		expect(emitRule(rule, makeCtx())).toBe('');

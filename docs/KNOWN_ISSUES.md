@@ -97,3 +97,35 @@ This is a general "scanner-delimited / token-adjacent slot" rendering gap in the
 **Status: knowingly accepted, not deferred-as-a-TODO.** The user has explicitly decided to accept this regression rather than block the un-aliasing plan on it: rust's `read-render-parseAstMatchPass` baseline is now 123 (not 125) going forward — this is the new accepted floor for rust, not a discrepancy to chase in a future session. `compiler/model/node-map.ts`'s `renderTemplate()` is a shared chokepoint across all rules in all 3 grammars, already flagged fragile in project memory ("Walker hotspot — `walkRuleForTemplate` has 3 edge fixes, no unit tests"), and a general fix carries real risk of regressing AST-match elsewhere if rushed — explicitly judged out of scope for the un-aliasing plan.
 
 **Fix, if/when prioritized:** give the template-emission walker a way to mark a FIELD slot (or the anonymous token it wraps) as requiring token-adjacent rendering — likely keyed off `token.immediate` or a similar existing marker already tracked for other scanner-delimited cases (see project memory "Preserve token wrappers" and "Template walker adjacency — scanner-delimited kinds need adjacent rendering"). Verify against all 3 grammars' deep-AST counts before landing, given the walker's blast radius.
+
+## `acceptedTransportKinds` is a no-op stub — hidden-wrapper kinds with a visible alias silently lose native `FromNapiValue` dispatch
+
+**Found during:** pre-existing test-debt triage (`fix-pretriage-test-debt`), `packages/codegen/src/emitters/__tests__/native-transport-emit.test.ts` — `'accepts visible alias kind ids for hidden-wrapper child enums'`.
+
+`acceptedTransportKinds` (`packages/codegen/src/emitters/transport-common.ts:124-130`) is a no-op stub — both its branches (`node.modelType === 'supertype'` vs not) return `[kind]` unconditionally. `emitPerSlotChildEnum` (`render-module.ts:2841-2843`) uses it to build the `FromNapiValue` kind-id → variant match arms for heterogeneous per-slot transport enums. When one of the enum's member kinds is a HIDDEN grammar rule (leading underscore, e.g. `_wrapped_item`) that's been given a VISIBLE ALIAS name+id in `generatedIdTables` (e.g. `wrapped_item: 410`), the lookup `kindIdByKind.get('_wrapped_item')` misses (the table is keyed by the alias-stripped visible name), so that numeric id never gets a dispatch arm. Reproduced with a minimal fixture: the `WrappedItem` enum variant exists in the generated Rust but is genuinely unreachable via numeric kind-id routing, for both the `Number` and `Object` napi input shapes.
+
+**Status: confirmed, not fixed.** Left failing on purpose in `native-transport-emit.test.ts` with an in-test comment rather than papered over — this is real production behavior, not a stale-test issue.
+
+**Fix, if/when prioritized:** `acceptedTransportKinds` needs to also resolve a hidden kind's registered visible-alias target (nodeMap likely tracks this via `visibleAliasTargets`/`aliasedFrom`/`aliasNamed` attributes) and include that name in the returned kind list before the `kindIdByKind` lookup. Do not just underscore-strip — verify against nodeMap's real alias registry.
+
+## Python's `_patterns` has no render template — breaks `collect-baseline.test.ts`'s whole suite
+
+**Found during:** pre-existing test-debt triage (`fix-pretriage-test-debt`), `packages/tools/src/__tests__/collect-baseline.test.ts`.
+
+`collect-baseline.test.ts`'s `beforeAll` throws (killing all 12 tests in the suite, not just one assertion): `[python][js][render #8] 146: No render template for '_patterns' (no <kind>.jinja file and node has named fields/children)`. Confirmed: no `_patterns.jinja`/`patterns.jinja` exists under `packages/python/templates/`.
+
+`_patterns` is one of the 3 grammar-authored, standalone top-level hidden python kinds identified as "Track B" in the already-written, not-yet-executed plan [`docs/superpowers/plans/2026-07-13-hidden-repeat-helper-visibility-plan.md`](superpowers/plans/2026-07-13-hidden-repeat-helper-visibility-plan.md) (the other two: `_collection_elements`, `_parameters`). Track B's prescribed fix is hand-authored `alias($._parameters, $.parameters)`-style declarations directly in `packages/python/overrides.ts` — NOT the `groups:`/`applyGroupOverrides` mechanism (a different operation).
+
+**Status: confirmed, not fixed.** Do not hack around this in `collect-baseline.test.ts` — the test is correctly catching a real gap. Fixing it properly means running the hidden-repeat-helper-visibility plan's own required pre-flight checks first (per-kind reachability — is `_patterns` even hit by a live corpus instance — and an alias-distribution empirical check on one representative kind) before promoting it, per that plan's own explicit warnings against skipping those checks.
+
+**Fix, if/when prioritized:** execute (or at minimum run the pre-flight checks from) the hidden-repeat-helper-visibility plan's Track B for `_patterns` (and ideally the other 2 kinds it covers).
+
+## Factory accessor methods are enumerable, contradicting ADR-0018's documented (and falsely "shipped") contract
+
+**Found during:** pre-existing test-debt triage (`fix-pretriage-test-debt`), `packages/rust/tests/nodedata-shape.test.ts` — `'FR-002: accessor function is non-enumerable'` and `'SC-004: Object.keys() returns only $-metadata and _-storage keys'`.
+
+Confirmed against actual factory output: accessor methods on generated factory output (`node.name`, `node.body`, `node.parameters`, etc.) are currently **enumerable** — `Object.keys(node)` includes accessor names, not just `$`-metadata and `_`-storage keys. This contradicts ADR-0018's documented contract; `specs/022-binding-simplify-assemble/IMPLEMENTATION-STATUS.md` marks this "Phase 2: Surface reshape... ✅ Shipped" — that claim is wrong for this specific property. Distinct from the OTHER two related failures in the same test file (`Object.isFrozen()`/freeze and the `$with` namespace) — those ARE legitimately not-yet-implemented per the same status doc (freeze deferred; `buildWithNamespace`/`replaceField` carry `@forFutureUse` ADR-0018 tags, not wired into generated factories) and don't need fixing yet.
+
+**Status: confirmed, not fixed.** Left failing on purpose with in-test citations rather than weakening the assertion. Root cause not yet isolated to a specific emitter line.
+
+**Fix, if/when prioritized:** needs its own investigation into the factory emitter (`packages/codegen/src/emitters/factories.ts`) to find where accessor methods get attached to the returned node object — likely a missing `Object.defineProperty(..., {enumerable: false})` or equivalent, compared against whatever mechanism attaches the genuinely-non-enumerable members correctly today.
