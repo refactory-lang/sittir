@@ -49,17 +49,16 @@ export default defineConfig({
 				// `tests/acceptance/us1-hash-mismatch.test.ts` dynamically imports
 				// a grammar package's *built* dist entry (not the source-aliased
 				// bare specifier) to exercise the compiled `backend.js`'s relative
-				// `./hash.js` import. Vite's SSR module graph resolves the
-				// pnpm-symlinked `node_modules/@sittir/*` entry to its real,
-				// in-repo path (`packages/*/dist`) before deciding whether to
-				// externalize it — since that real path isn't itself inside
-				// `node_modules`, Vite treats it as a project-internal module
-				// needing transformation rather than a plain externalized
-				// dependency, which fails to load ("Cannot find module ...
-				// imported from .../vitest/dist/module-evaluator.js") for files
-				// under `dist/`. Force externalization explicitly so it's loaded
-				// via native `import()` instead.
-				external: [/@sittir\/(rust|typescript|python)\/dist\//]
+				// `./hash.js` import. On CI (Linux) only, externalizing this path
+				// (native `import()`, bypassing Vite's transform pipeline) fails
+				// with "Cannot find module ... imported from
+				// .../vitest/dist/module-evaluator.js" even though the file is
+				// confirmed present on disk — a known pnpm-workspace-symlink +
+				// Vite external-module-loader interaction (vitest-dev/vitest#6055).
+				// `inline` forces the OPPOSITE: load through Vite's own resolver
+				// (which follows the symlink correctly) instead of Node's native
+				// loader.
+				inline: [/@sittir\/(rust|typescript|python)\/dist\//]
 			}
 		},
 		// JSON report as a side artifact of the SAME run (gitignored scratch
