@@ -703,7 +703,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         266 => "base_field_initializer", // "base_field_initializer"
         267 => "if_expression", // "if_expression"
         268 => "let_condition", // "let_condition"
-        269 => "_let_chain", // "_let_chain"
+        269 => "let_chain", // "_let_chain"
         270 => "_condition", // "_condition"
         271 => "else_clause", // "else_clause"
         272 => "match_expression", // "match_expression"

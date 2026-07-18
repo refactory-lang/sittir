@@ -299,6 +299,19 @@ function joinIdNames(
 			continue;
 		}
 		if (!shouldReplaceSymbol(existing.parser.cSymbol, entry.cName)) {
+			// The dropped entry can still be the one carrying the real
+			// display name for this kind — e.g. `_newline`'s `sym__newline`
+			// (kept as `existing`) and `alias_sym_newline` (dropped here)
+			// both join to key `_newline`, but only the alias row's
+			// `names` lookup resolves to the visible name `"newline"`.
+			// Without this, the alias's display name is lost entirely:
+			// `kindIdFromName('newline')` throws at runtime even though
+			// the kind IS cataloged (under its hidden name), which
+			// readNode's resolveKindId silently converts into a `0`
+			// sentinel `$type` instead of surfacing the real error.
+			if (parser.alias && parser.symbolName !== undefined && parser.symbolName !== existing.parser.symbolName) {
+				result.set(key, { id: existing.id, parser: { ...existing.parser, symbolName: parser.symbolName } });
+			}
 			continue;
 		}
 		result.set(key, { id: entry.id, parser });

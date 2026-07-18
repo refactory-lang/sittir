@@ -1566,6 +1566,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Gt;
 		case '<>':
 			return TSKindId.LtGt;
+		case 'newline':
+			return TSKindId.Newline;
+		case 'simple_statements':
+			return TSKindId.SimpleStatements;
 		case 'parameter_list':
 			return TSKindId._Parameters;
 		case 'pattern_group':
