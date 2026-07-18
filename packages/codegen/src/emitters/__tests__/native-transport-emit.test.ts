@@ -266,7 +266,11 @@ function makeHiddenWrapperChildEnumNodeMap(): NodeMap {
 	);
 	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
 	nodes.set('integer', new AssembledPattern('integer', { type: PATTERN, value: '[0-9]+' }));
-	return nodeMapWith(nodes);
+	// `_wrapped_item` is the hidden CONTENT of a named alias to the
+	// visible `wrapped_item` — the fixture's generatedIdTables catalogs
+	// the shared kind id under that visible name (see acceptedTransportKinds
+	// in transport-common.ts).
+	return nodeMapWith(nodes, undefined, new Map([['_wrapped_item', 'wrapped_item']]));
 }
 
 function makeOptionalRepeatedChildrenNodeMap(): NodeMap {

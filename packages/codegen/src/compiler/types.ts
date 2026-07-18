@@ -626,6 +626,21 @@ export interface NodeMap {
 	 * See feedback_ruleid_backpointer.
 	 */
 	readonly slotByRuleId: ReadonlyMap<RuleId, AssembledNonterminal>;
+	/**
+	 * Carried from {@link SimplifiedGrammar.aliasedHiddenKinds} (itself
+	 * carried from `LinkedGrammar`) — hidden alias-source kind → visible
+	 * alias-target name, e.g. `_wrapped_item` → `wrapped_item`. The
+	 * hidden/subtype-resolution family in `compiler/assemble.ts`
+	 * (`resolveHiddenSubtypes`) migrated off this map for ITS purpose
+	 * (see that function's doc comment), but the underlying fact — a
+	 * hidden kind sharing its runtime numeric kind id with a visible
+	 * alias — is still needed by transport emission: the generated id
+	 * catalog (KIND_NAMES, `emitters/types.ts`) records that id under
+	 * the visible name only, so per-slot child enum id-dispatch
+	 * (`emitters/transport-common.ts`'s `acceptedTransportKinds`) must
+	 * resolve a hidden kind to its alias target before looking up its id.
+	 */
+	readonly aliasedHiddenKinds?: ReadonlyMap<string, string>;
 	readonly signatures: SignaturePool;
 	/**
 	 * Sidecar log of every derivation Link produced. Emitters read

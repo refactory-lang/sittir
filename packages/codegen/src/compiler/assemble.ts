@@ -571,6 +571,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			nodes,
 			nodeByRuleId,
 			slotByRuleId,
+			aliasedHiddenKinds: normalized.aliasedHiddenKinds,
 			signatures: computeSignatures(nodes),
 			derivations: normalized.derivations,
 			linkRules: normalized.linkRules,
