@@ -77,7 +77,12 @@ jobs:
         continue-on-error: true
 
       - name: Test
-        run: pnpm run test
+        # `-- --coverage` instruments this same whole-suite run instead of
+        # running it a second time — test-and-record.ts treats --coverage
+        # as compatible with recording (see its own doc comment). This used
+        # to be two separate steps (`pnpm run test` then `pnpm run
+        # test:coverage`), each running all ~208 test files.
+        run: pnpm run test -- --coverage
         # TEMPORARY — 20 pre-existing test failures across 7 files (ADR-0018
         # Phase 2 factory-shape gaps, render-pipeline-optimization,
         # from-loose polymorph dispatch, etc.) block every downstream job
@@ -86,10 +91,6 @@ jobs:
         # via a clean `master` worktree A/B) and are being fixed directly.
         # Remove this once they're green.
         continue-on-error: true
-
-      - name: Test Coverage
-        run: pnpm run test:coverage
-        if: matrix.node-version == '24.x'
 
       - name: Security Audit
         run: pnpm audit --audit-level moderate
