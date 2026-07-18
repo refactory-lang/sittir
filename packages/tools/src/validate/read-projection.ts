@@ -42,7 +42,6 @@ import {
 	collectKinds,
 	emitValidatorMetrics,
 	loadCorpusEntries,
-	type CorpusEntry,
 	type TSNode,
 	type TSTree
 } from './common.ts';
