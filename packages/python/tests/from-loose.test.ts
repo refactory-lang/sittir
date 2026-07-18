@@ -9,6 +9,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { ir } from '../src/ir.js';
+import * as F from '../src/factories.js';
 import { TSKindId } from '../src/types.js';
 
 describe('loose from() — string input for leaf-typed fields (T052d-i)', () => {
@@ -37,17 +38,18 @@ describe('loose from() — string input for leaf-typed fields (T052d-i)', () => 
 
 describe('loose from() — kind-tagged object dispatch (T052d-ii)', () => {
 	it('object with `kind` field routes through _resolveByKind', () => {
-		// ir.assignment.eq → polymorph form factory (variant 'eq' on parent
-		// 'assignment'). Returns NodeData with type='assignment' wrapping a
-		// variant child of type='assignment_eq'.
-		const result = (ir.assignment as any).eq({
+		// assignment's `content` field resolves across 3 hidden branch
+		// kinds (_assignment_eq/_assignment_type/_assignment_typed) —
+		// hidden kinds have no entry in _fromMap, so bare `{ kind: ... }`
+		// tagging can't reach them (see _resolveOne/_isFromKind in
+		// from.ts); the loose resolver's other path — a pre-built
+		// NodeData passed straight through (isNodeData check) — is how
+		// a caller supplies one. `ir.assignment.eq(...)` (a synthesized
+		// per-form factory) no longer exists; F.buildAssignmentEq is the
+		// current way to construct that branch's NodeData directly.
+		const result = ir.assignment.from({
 			left: 'x' as any,
-			children: [
-				{
-					$type: 'assignment_eq',
-					$fields: { right: { kind: 'integer', text: '42' } }
-				}
-			] as any
+			content: F.buildAssignmentEq({ right: { kind: 'integer', text: '42' } as any })
 		}) as any;
 		expect(result.$type).toBe(TSKindId.Assignment);
 	});
@@ -69,14 +71,13 @@ describe('loose from() — supertype subtype (T052d-iii)', () => {
 describe('loose from() — NodeData passthrough still works', () => {
 	it('pre-built NodeData is passed through unchanged', () => {
 		const nodeData = ir.integer('42') as any;
-		const child = {
-			$type: 'assignment_eq',
-			$fields: { right: nodeData }
-		} as any;
-		// ir.assignment.eq → polymorph form factory (see T052d-ii test above).
-		const result = (ir.assignment as any).eq({
+		// See the T052d-ii test above for why F.buildAssignmentEq (not
+		// ir.assignment.eq, which no longer exists) is how a caller
+		// supplies assignment's hidden-branch-kind `content` field.
+		const child = F.buildAssignmentEq({ right: nodeData });
+		const result = ir.assignment.from({
 			left: 'x' as any,
-			children: [child]
+			content: child
 		}) as any;
 		expect(result.$type).toBe(TSKindId.Assignment);
 	});

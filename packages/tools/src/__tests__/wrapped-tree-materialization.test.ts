@@ -317,13 +317,17 @@ describe('wrapped tree materialization', () => {
 			};
 			const root = readTreeNode(handle) as {
 				statements: () => Array<{
-					children: () => {
-						declaration: () => unknown;
+					content: () => {
+						content: () => {
+							declaration: () => unknown;
+						};
 					};
 				}>;
 			};
 			const exportStatement = root.statements()[0]!;
-			const declarationArm = exportStatement.children();
+			// export_statement → export_statement_default → export_statement_default_decl_arm
+			// (kind-named merged-choice accessors, not a generic `children()`).
+			const declarationArm = exportStatement.content().content();
 
 			expect(() => declarationArm.declaration()).not.toThrow();
 

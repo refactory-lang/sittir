@@ -363,32 +363,40 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 	});
 
 	it('keeps token-only singular children on direct transport views so jjjj does not widen', () => {
+		// Kind-named slots (docs/superpowers/specs/2026-05-17-kind-named-slots-design.md)
+		// give the token-only singular child its own kind-derived storage
+		// key (`kw_j`) on the transport struct — there is no generic
+		// `children` field for the emitted binding to match against, so the
+		// jinja must reference the real field name.
 		const emitted = emitRenderModule(
 			'rust',
 			[
 				{
 					filename: 'token_child_parent.jinja',
-					content: '{{ children }}'
+					content: '{{ kw_j }}'
 				}
 			],
 			makeTokenOnlyChildrenNodeMap()
 		);
 
-		expect(emitted.templatesRs.contents).toContain("    pub children: SingleNonterminalView<'a>,");
+		expect(emitted.templatesRs.contents).toContain("    pub kw_j: SingleNonterminalView<'a>,");
 		expect(emitted.transportRs.contents).toContain(
-			'children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),'
+			'kw_j: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.kw_j)),'
 		);
-		expect(emitted.transportRs.contents).not.toContain('let children_buf: Vec<::sittir_core::filters::Renderable');
+		expect(emitted.transportRs.contents).not.toContain('let kw_j_buf: Vec<::sittir_core::filters::Renderable');
 		assertRustRenderRuntimeBehavior();
 	}, 20_000);
 
 	it('keeps choice-parent singular unnamed children on direct transport views', () => {
+		// mergeChoiceBranches (PR-A) arm-lifts a choice-parent's unnamed
+		// child onto a merged `content` slot (ExpressionContentTransportSlot)
+		// on the transport struct — not a generic `children` field.
 		const emitted = emitRenderModule(
 			'rust',
 			[
 				{
 					filename: 'expression.jinja',
-					content: '{{ children }}'
+					content: '{{ content }}'
 				}
 			],
 			makeChoiceParentSingularChildrenNodeMap()
@@ -398,12 +406,12 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
 
 		expect(emitted.templatesRs.contents).toContain("pub struct ExpressionTemplate<'a> {");
-		expect(emitted.templatesRs.contents).toContain("    pub children: SingleNonterminalView<'a>,");
+		expect(emitted.templatesRs.contents).toContain("    pub content: SingleNonterminalView<'a>,");
 		expect(renderBody).toContain(
-			'children: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.children)),'
+			'content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),'
 		);
-		expect(renderBody).not.toContain('let children_buf: Vec<::sittir_core::filters::Renderable');
-		expect(renderBody).not.toContain('children: ListNonterminalView {');
+		expect(renderBody).not.toContain('let content_buf: Vec<::sittir_core::filters::Renderable');
+		expect(renderBody).not.toContain('content: ListNonterminalView {');
 	});
 
 	it('keeps repeated unnamed children on direct Vec-backed transport views', () => {
@@ -412,7 +420,7 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 			[
 				{
 					filename: 'optional_repeated_child_parent.jinja',
-					content: '{{ children | join(" ") }}'
+					content: '{{ identifier | join(" ") }}'
 				}
 			],
 			makeOptionalRepeatedChildrenNodeMap()
@@ -422,21 +430,26 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
 
 		expect(emitted.templatesRs.contents).toContain("pub struct OptionalRepeatedChildParentTemplate<'a> {");
-		expect(emitted.templatesRs.contents).toContain("    pub children: ListNonterminalView<'a>,");
+		expect(emitted.templatesRs.contents).toContain("    pub identifier: ListNonterminalView<'a>,");
+		// The slot is genuinely Option<Vec<...>> (its own fixture name says
+		// "optional"), so the buffer is built from the deref'd slice, not
+		// from `node.identifier` directly.
+		expect(renderBody).toContain('let identifier_owned = node.identifier.as_deref().unwrap_or(&[]);');
 		expect(renderBody).toContain(
-			"let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()"
+			"let identifier_buf: Vec<::sittir_core::filters::Renderable<'_>> = identifier_owned.iter()"
 		);
-		expect(renderBody).not.toContain('node.children.as_deref().unwrap_or(&[])');
 	});
 
 	it('keeps fallback repeated unnamed children on direct Vec-backed transport views', () => {
+		// Same kind-named slot (`identifier`, Option<Vec<...>>) as the test
+		// above, exercised via the fallback (no custom jinja) render path.
 		const emitted = emitRenderModule('rust', [], makeOptionalRepeatedChildrenNodeMap());
 		const renderStart = emitted.transportRs.contents.indexOf('fn render_optional_repeated_child_parent(');
 		const renderEnd = emitted.transportRs.contents.indexOf('\n}', renderStart) + 2;
 		const renderBody = emitted.transportRs.contents.slice(renderStart, renderEnd);
 
-		expect(renderBody).toContain('for child in node.children.iter() {');
-		expect(renderBody).not.toContain('if let Some(children) = &node.children {');
+		expect(renderBody).toContain('if let Some(items) = &node.identifier {');
+		expect(renderBody).toContain('for child in items.iter() {');
 	});
 
 	it('renders choice parents through the parent helper without per-form typed helpers', () => {
@@ -529,8 +542,10 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted.libRs.contents).not.toContain('pub mod dispatch');
 		expect(emitted.libRs.contents).not.toContain('render_nodedata_into');
 		expect(emitted.libRs.contents).not.toContain('render_dispatch');
+		// render_transport itself was retired (R5 — dead transport→NodeData
+		// inverse bridge deleted); only the dispatch/parts helpers remain.
 		expect(emitted.libRs.contents).toContain(
-			'pub use transport::{render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};'
+			'pub use transport::{render_transport_dispatch, render_transport_parts, AnyTransport};'
 		);
 		expect(emitted.libRs.contents).not.toContain('RustGrammarMeta');
 	});
