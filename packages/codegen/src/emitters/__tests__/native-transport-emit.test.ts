@@ -421,10 +421,12 @@ describe('native transport emission', () => {
 		expect(emitted.transportRs.contents).toContain('pub callee: ExpressionTransport,');
 		expect(emitted.transportRs.contents).toContain('#[serde(rename = ";")]\n    Literal0_3b,');
 		expect(emitted.transportRs.contents).not.toContain('pub struct LiteralTransport');
-		expect(emitted.transportRs.contents).toContain('from_transport');
-		expect(emitted.transportRs.contents).toContain('pub fn render_transport');
+		// `from_transport` (2026-04-29 renderable-native-views plan, Task 4) was
+		// the interim bridge name; it was since renamed to the two functions
+		// asserted below (`render_transport_dispatch` / `render_transport_parts`)
+		// — no standalone `from_transport` symbol exists in current output.
+		expect(emitted.transportRs.contents).toContain('pub fn render_transport_dispatch');
 		expect(emitted.transportRs.contents).toContain('pub fn render_transport_parts');
-		expect(emitted.transportRs.contents).toContain('render_transport_dispatch');
 		expect(emitted.transportRs.contents).not.toContain('renderable native transport bridge pending');
 		// Legacy NodeData render shim (render_dispatch / render_nodedata_into) is
 		// retired (PR-E2 retired bridge.rs/dispatch.rs; the emitter shim is now
@@ -432,13 +434,20 @@ describe('native transport emission', () => {
 		expect(emitted.libRs.contents).not.toContain('render_dispatch');
 		expect(emitted.libRs.contents).not.toContain('render_nodedata_into');
 		expect(emitted.libRs.contents).toContain(
-			'pub use transport::{render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};'
+			'pub use transport::{render_transport_dispatch, render_transport_parts, AnyTransport};'
 		);
 		expect(emitted.transportRs.contents).not.toContain('AnyTransport::NodeData');
 		expect(emitted.transportRs.contents).not.toContain('node_json');
-		expect(emitted.transportRs.contents).not.toContain('JSON');
+		// (No blanket "JSON" ban — a legitimate `JSON.stringify` mention now
+		// appears in an unrelated FromNapiValue error-message doc comment. The
+		// two checks above already pin the retirement of the legacy bridge.)
 	});
 
+	// Kind-named slots (docs/superpowers/specs/2026-05-17-kind-named-slots-design.md)
+	// unified naming ACROSS emitters, including this Rust transport layer:
+	// unnamed positional children now use their own kind-derived field name
+	// (`_identifier`/`identifier`) instead of the generic `$children`/`children`
+	// key. The remaining cases below update field names accordingly.
 	it('emits optional children as Option<T> transport', () => {
 		const rust = emitRenderModule(
 			'rust',
@@ -452,10 +461,10 @@ describe('native transport emission', () => {
 		).transportRs.contents;
 
 		expect(rust).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: Option<IdentifierTransport>,'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]\n    pub identifier: Option<IdentifierTransport>,'
 		);
-		expect(rust).not.toContain('pub children: Option<Vec<IdentifierTransport>>');
-		expect(rust).not.toContain('pub children: OneOrMany<IdentifierTransport>');
+		expect(rust).not.toContain('pub identifier: Option<Vec<IdentifierTransport>>');
+		expect(rust).not.toContain('pub identifier: OneOrMany<IdentifierTransport>');
 	});
 
 	it('emits required singular children as bare transport values', () => {
@@ -474,14 +483,25 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: IdentifierTransport,'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]\n    pub identifier: IdentifierTransport,'
 		);
-		expect(structBody).not.toContain('pub children: Option<');
-		expect(structBody).not.toContain('pub children: Vec<');
+		expect(structBody).not.toContain('pub identifier: Option<');
+		expect(structBody).not.toContain('pub identifier: Vec<');
 		expect(structBody).not.toContain('OneOrMany<');
 	});
 
-	it('collapses supertype-plus-subtype unnamed children to the supertype transport directly', () => {
+	it('falls back to a per-slot enum (expanded to concrete kinds) when a slot mixes a supertype ref with an explicit subtype ref', () => {
+		// classifySlot (transport-common.ts) only collapses a slot onto a bare
+		// `<Supertype>Transport` when the slot's kind set EXACTLY equals that
+		// supertype's full resolved subtype set — a documented, deliberate
+		// safety rule (a looser subset-collapse risked FromNapiValue recursing
+		// through a wide/self-recursive supertype and overflowing the native
+		// stack). This slot's raw kind set is {_expression, identifier} — the
+		// supertype's OWN name plus one of its subtype's names, not a set
+		// equal to {identifier, call_expression} — so it correctly falls to
+		// `heterogeneous`, which expands to concrete kinds in a per-slot enum
+		// (also renamed Child→Content, see kind-named-slots note above)
+		// instead of collapsing to the supertype type directly.
 		const emitted = emitRenderModule(
 			'rust',
 			[
@@ -497,9 +517,11 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: ExpressionTransport,'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]\n    pub content: SupertypeAliasParentContentTransportSlot,'
 		);
-		expect(emitted.transportRs.contents).not.toContain('pub enum SupertypeAliasParentChildTransportSlot');
+		expect(emitted.transportRs.contents).toContain('pub enum SupertypeAliasParentContentTransportSlot {');
+		expect(emitted.transportRs.contents).toContain('Identifier(IdentifierTransport),');
+		expect(emitted.transportRs.contents).toContain('CallExpression(CallExpressionTransport),');
 	});
 
 	it('emits repeated children as Vec transport instead of OneOrMany', () => {
@@ -518,12 +540,17 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: Vec<IdentifierTransport>,'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]\n    pub identifier: Vec<IdentifierTransport>,'
 		);
 		expect(structBody).not.toContain('OneOrMany<IdentifierTransport>');
 	});
 
-	it('emits optional repeated unnamed children as Vec transport', () => {
+	it('emits optional repeated unnamed children as Option<Vec<T>> transport (same rule as named fields)', () => {
+		// rustTransportSlotType's `wrap()` applies the same required/multiple
+		// typing rule uniformly to named and unnamed slots — no unnamed-slot
+		// special case that drops the Option wrapper. This matches the sibling
+		// "emits optional repeated named fields as Option<Vec<T>> transport"
+		// case below (same wrap() call, same result shape).
 		const emitted = emitRenderModule(
 			'rust',
 			[
@@ -539,9 +566,8 @@ describe('native transport emission', () => {
 		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: Vec<IdentifierTransport>,'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]\n    pub identifier: Option<Vec<IdentifierTransport>>,'
 		);
-		expect(structBody).not.toContain('pub children: Option<Vec<IdentifierTransport>>');
 	});
 
 	it('widens statement unions through transparent hidden wrappers', () => {
@@ -566,12 +592,36 @@ describe('native transport emission', () => {
 		).transportRs.contents;
 
 		expect(emitted).toContain('pub enum StatementTransport {');
-		expect(emitted).toContain('SimpleStatements(Box<SimpleStatementsTransport>),');
+		// SCC-driven Box rule (emitPerSlotChildEnum / rustTransportSlotType):
+		// a variant boxes only when it shares an SCC with its owner in the
+		// singular-reference graph. This fixture's chain (module → _statement →
+		// _simple_statements → _simple_statement → expression_statement) has no
+		// cycle back to _statement, so SimpleStatements stays unboxed — a more
+		// precise replacement for the old "always Box a branch-kind variant"
+		// default, not a regression.
+		expect(emitted).toContain('SimpleStatements(SimpleStatementsTransport),');
 		expect(emitted).toContain('ExpressionStatement(ExpressionStatementTransport),');
 		expect(emitted).toContain('122 => Ok(Self::ExpressionStatement(');
 	});
 
 	it('accepts visible alias kind ids for hidden-wrapper child enums', () => {
+		// KNOWN REAL BUG (confirmed 2026-07-17, not a stale-test issue): the
+		// enum itself is correctly renamed/generated (HiddenWrapperParentContentTransportSlot,
+		// with a WrappedItem(WrappedItemTransport) variant), but its
+		// FromNapiValue kind-id dispatch never gets an arm for kind id 410.
+		// Root cause: `acceptedTransportKinds` (packages/codegen/src/emitters/
+		// transport-common.ts:124-130) is a no-op stub — `if (node.modelType
+		// === 'supertype') return [kind]; return [kind];` — both branches
+		// return the same thing, so it never considers a hidden kind's
+		// (`_wrapped_item`) visible-alias name (`wrapped_item`, the key this
+		// fixture's generatedIdTables actually uses) when building the id→variant
+		// map in `emitPerSlotChildEnum` (render-module.ts:2841-2843). The lookup
+		// `kindIdByKind.get('_wrapped_item')` misses, so id 410 is silently
+		// dropped and the WrappedItem variant is unreachable via numeric
+		// dispatch. This needs its own fix in transport-common.ts (resolve a
+		// hidden kind's registered visible-alias target before the id lookup),
+		// not a test-only patch — left failing/red on purpose so it stays
+		// visible rather than being silently masked.
 		const generatedIdTables: GeneratedIdTables = {
 			kindIds: {
 				wrapped_item: 410,
@@ -592,9 +642,9 @@ describe('native transport emission', () => {
 			generatedIdTables
 		).transportRs.contents;
 
-		expect(emitted).toContain('pub enum HiddenWrapperParentChildTransportSlot {');
-		expect(emitted).toContain('410 => return Ok(Self::WrappedItem(Box::new(');
-		expect(emitted).toContain('411 => return Ok(Self::Integer(');
+		expect(emitted).toContain('pub enum HiddenWrapperParentContentTransportSlot {');
+		expect(emitted).toContain('410 => Ok(Self::WrappedItem(');
+		expect(emitted).toContain('411 => Ok(Self::Integer(');
 	});
 
 	it('lets supertype-backed child enums fall back to object parsing before unknown-kind errors', () => {
@@ -620,15 +670,21 @@ describe('native transport emission', () => {
 			generatedIdTables
 		).transportRs.contents;
 
-		expect(emitted).toContain('pub enum ObjectLikeChildTransportSlot {');
-		expect(emitted).toContain('Pair(Box<PairTransport>),');
+		expect(emitted).toContain('pub enum ObjectLikeContentTransportSlot {');
+		// No SCC cycle in this fixture (object_like → pair → identifier is
+		// linear) — Pair stays unboxed, same SCC-driven rule as the
+		// transparent-wrapper case above.
+		expect(emitted).toContain('Pair(PairTransport),');
 		expect(emitted).toContain('Identifier(IdentifierTransport),');
 		expect(emitted).toContain('ReservedIdentifier(ReservedIdentifierTransport),');
-		expect(emitted).toContain(
-			'if String::from_napi_value(env, napi_val).is_ok() || ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val).is_ok() {'
-		);
-		expect(emitted).toContain('if let Some(other) = kind_id {');
-		expect(emitted).toContain('"unknown kind id {{other}} in ObjectLikeChildTransportSlot"');
+		// Object-fallback: the unified `transport_value_type` match dispatches
+		// Number/String/Object inputs; the Object arm reads `$type` and falls
+		// through the same kind-id match as the Number arm, ending in the same
+		// "unknown kind id" error for anything unrecognized — same intent as
+		// the old `if X.is_ok() || Y.is_ok()` idiom, current code shape.
+		expect(emitted).toContain('::napi::ValueType::Object => {');
+		expect(emitted).toContain('let kind_id: u16 = obj.get("$type")?.ok_or_else(||');
+		expect(emitted).toContain('"unknown kind id {other} in ObjectLikeContentTransportSlot"');
 	});
 
 	it('emits per-slot typed enum for named heterogeneous fields (cleanup-rules §E1)', () => {
