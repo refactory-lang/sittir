@@ -2270,6 +2270,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.InnerBlockDocCommentMarker;
 		case 'doc_comment':
 			return TSKindId.LineDocContent;
+		case 'let_chain':
+			return TSKindId.LetChain;
 		case 'enum_variant_list_group1':
 			return TSKindId._EnumVariantListGroup1;
 		case 'field_declaration_list_group1':

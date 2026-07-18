@@ -3,7 +3,7 @@
 //! the invariants in data-model.md §1.
 
 use sittir_core::types::{Edit, FieldValue, KindId, NodeData, Source, Span};
-use std::collections::HashMap;
+use indexmap::IndexMap;
 
 // KindId fixtures — values match the Rust grammar's parser.c symbol ids.
 const K_IDENTIFIER: KindId = KindId(1);
@@ -43,7 +43,7 @@ fn sample_slot_leaf() -> NodeData {
 /// Build a branch NodeData with one field (single) + one children
 /// entry + no span/nodeId/text — exercises both elision modes.
 fn sample_branch() -> NodeData {
-    let mut fields = HashMap::new();
+    let mut fields = IndexMap::new();
     fields.insert(
         "name".to_string(),
         FieldValue::Single(Box::new(sample_slot_leaf())),

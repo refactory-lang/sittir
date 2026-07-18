@@ -260,6 +260,25 @@ export async function collectParityFixtures(
 			actual = renderer.render(fx.input);
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
+			// The deprecated JS/Nunjucks backend (createRenderer) resolves a
+			// node's template by NAME (via KIND_NAMES), but a kind minted by
+			// mintContentAliasKinds (e.g. python's `_patterns` -> `pattern_group`)
+			// never gets its own TSKindId — KIND_NAMES still resolves the raw
+			// hidden name, whose template was never emitted (see
+			// docs/KNOWN_ISSUES.md). Native rendering dispatches by numeric id,
+			// not name, and is unaffected. Record this documented, JS-backend-
+			// only gap as a fixture failure instead of hard-crashing the whole
+			// collection; any other exception (e.g. a genuine native
+			// regression, or an infra failure like a bad boundary import)
+			// still throws.
+			if (backend === 'js' && /No render template for/.test(message)) {
+				const kind = fx.input.$type;
+				const id = `render #${idx}`;
+				const existing = failingByKind.get(kind) ?? [];
+				existing.push(id);
+				failingByKind.set(kind, existing);
+				return;
+			}
 			throw new Error(`[${grammar}][${backend}][render #${idx}] ${fx.input.$type}: ${message}`);
 		}
 		if (actual === fx.expectedOutput) {
