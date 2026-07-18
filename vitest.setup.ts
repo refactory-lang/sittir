@@ -27,14 +27,10 @@ export async function setup() {
 	// incremental mode — no-op when sources haven't changed (~50ms).
 	//
 	// Skipped in CI: the workflow's own "Build" step already ran this
-	// exact command moments earlier. Running it again here — a second
-	// `pnpm -r run build` in the same job, against a cross-run-warm
-	// cargo cache (Swatinem/rust-cache) — is what triggers a napi-rs
-	// build-determinism bug: the second build's napi codegen pass
-	// regenerates `rust/crates/sittir-*/index.d.ts` incompletely,
-	// dropping dependency-crate type defs (e.g. `Edit`/`Span`), which
-	// then fails `assertGeneratedManifestsClean`. Confirmed reproducible
-	// (identical failure across 2 independent CI runs, 2026-07-18).
+	// exact command moments earlier — rebuilding here is pure redundancy.
+	// (Historically the redundant rebuild also amplified a napi-rs
+	// index.d.ts nondeterminism bug; that root cause is fixed at
+	// `rust/crates/sittir-core/build.rs` — see its doc comment.)
 	// Local dev runs are unaffected and keep rebuilding here as before.
 	if (!process.env.CI) {
 		try {
