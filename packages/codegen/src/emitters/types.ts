@@ -538,7 +538,18 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[]): vo
 
 	lines.push('export const KIND_NAMES: ReadonlyMap<number, string> = new Map([');
 	for (const entry of entries) {
-		lines.push(`  [${entry.id}, ${JSON.stringify(entry.kind)}],`);
+		// Prefer the parser's own display name (`symbolName`) over the raw
+		// catalog key when one exists and this isn't an anonymous token
+		// (anon symbolName carries literal punctuation text, e.g. "+", not
+		// a kind name — `kind` stays correct there). This matters for
+		// alias-collision-preserved entries: `_patterns`'s row also covers
+		// its promoted alias `pattern_group`, and `kindIdFromName` already
+		// resolves both names to this id — KIND_NAMES needs to agree on
+		// the SAME display name for id -> name lookups (e.g. the JS
+		// backend's name-based template resolution) to work, since a Map
+		// can only carry one name per id.
+		const displayName = entry.symbolName && !entry.anon ? entry.symbolName : entry.kind;
+		lines.push(`  [${entry.id}, ${JSON.stringify(displayName)}],`);
 	}
 	lines.push(']);');
 	lines.push('');

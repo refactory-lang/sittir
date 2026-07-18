@@ -108,20 +108,6 @@ This is a general "scanner-delimited / token-adjacent slot" rendering gap in the
 
 **Fix, if/when prioritized:** `acceptedTransportKinds` needs to also resolve a hidden kind's registered visible-alias target (nodeMap likely tracks this via `visibleAliasTargets`/`aliasedFrom`/`aliasNamed` attributes) and include that name in the returned kind list before the `kindIdByKind` lookup. Do not just underscore-strip — verify against nodeMap's real alias registry.
 
-## `mintContentAliasKinds`-promoted kinds have no `TSKindId` — deprecated JS backend can't resolve their template by name
-
-**Found during:** pre-existing test-debt triage (`fix-pretriage-test-debt`), `packages/tools/src/__tests__/collect-baseline.test.ts`. **Correction to a prior entry** (was titled "Python's `_patterns` has no render template" — that framing was stale and wrong; superseded by this entry).
-
-The prior entry's premise was wrong: `_patterns` was ALREADY promoted to a visible `pattern_group` kind via `alias($._patterns, $.pattern_group)` in `packages/python/overrides.ts` (landed earlier, via the separator-as-slot plan's own Track B — see the `mintContentAliasKinds`-related entries above), and `pattern_group.jinja` exists and is correct. There is no missing template.
-
-The REAL gap is narrower than "no `TSKindId` at all": `packages/python/src/types.ts`'s `kindIdFromName` DOES already have `case 'pattern_group': return TSKindId.Patterns;` (name → id resolves fine, to the same id, 176, as `_patterns` — `pattern_group` never got a DISTINCT numeric id of its own, it shares `_patterns`'s). The actual break is the REVERSE direction: `KIND_NAMES` (id → name, a separate generated map keyed purely by the raw catalog key) still maps `176` to `"_patterns"`, never `"pattern_group"`. This means at runtime a promoted node's `$type` (176) round-trips fine through `kindIdFromName`, but any code that resolves a template BY NAME off that id via `KIND_NAMES` (the deprecated JS/Nunjucks `createRenderer`, used only by `collect-baseline.test.ts`'s js/native parity check) looks up `_patterns.jinja` — which was never emitted, since all codegen output for this kind is correctly named after the promoted alias instead. **Native rendering is unaffected** (id-indexed dispatch, not name-based) — confirmed via `validate:native` holding baseline with zero regressions.
-
-This is the same underlying gap as the "Reference-site-alias-minted kinds never get a dedicated `factories.ts`/`wrap.ts` function" entry above (`mintContentAliasKinds` kinds are systematically under-cataloged downstream of `link.ts`) — not a new, separate bug class.
-
-**Status: worked around for the JS backend, not root-caused.** `packages/tools/src/scripts/collect-baseline.ts`'s `collectParityFixtures` now tolerates a `"No render template for"` exception specifically for `backend === 'js'` (records it as a fixture failure instead of hard-crashing the whole baseline collection) rather than fixing the underlying catalog gap — consistent with project convention of not investing further in the deprecated JS render path. `collect-baseline.test.ts`'s shared test setup was also moved off the js backend entirely (`collectBaseline('native')`) per explicit user decision, so this gap is no longer exercised by tests at all; it would only resurface if something re-adds JS-backend testing or someone runs the CLI's `ts.json` baseline generation directly.
-
-**Fix, if/when prioritized:** `emitKindIdEnumAndLookups` (`emitters/types.ts`)'s `KIND_NAMES` map is emitted keyed by the raw catalog `kind` (e.g. `_patterns`), not by `entry.symbolName` (e.g. `pattern_group`) — make it prefer the alias-minted display name when one exists, the same information `kindIdFromName`'s symbol-value-cases loop already consults for the reverse direction.
-
 ## Factory accessor methods are enumerable, contradicting ADR-0018's documented (and falsely "shipped") contract
 
 **Found during:** pre-existing test-debt triage (`fix-pretriage-test-debt`), `packages/rust/tests/nodedata-shape.test.ts` — `'FR-002: accessor function is non-enumerable'` and `'SC-004: Object.keys() returns only $-metadata and _-storage keys'`.
