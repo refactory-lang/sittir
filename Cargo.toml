@@ -43,9 +43,3 @@ tree-sitter-language = "0.1.7"
 sha2 = "0.10"
 askama = "0.15"
 cc = "1"
-# Insertion-order-preserving map for NodeData.fields (sittir-core) —
-# std::collections::HashMap's per-instance random iteration order made
-# native slot-key serialization order (and therefore "first node of
-# kind K" candidate selection during validation) nondeterministic
-# across parses. IndexMap preserves tree-sitter child insertion order.
-indexmap = { version = "2", features = ["serde"] }

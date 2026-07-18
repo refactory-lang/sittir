@@ -12,7 +12,7 @@
 //! `rename` attribute is set.
 
 use sittir_core::types::{FieldValue, KindId, NodeData, Source, Span};
-use indexmap::IndexMap;
+use std::collections::HashMap;
 use std::collections::HashSet;
 
 // Arbitrary KindId values used for test fixtures — shape tests do not
@@ -26,7 +26,7 @@ const K_BLOCK: KindId = KindId(293);
 /// serialized payload exercises the maximum-key surface. Anything
 /// outside the fixed metadata + `_<slot>` contract would surface here.
 fn complex_node() -> NodeData {
-    let mut fields = IndexMap::new();
+    let mut fields = HashMap::new();
     fields.insert(
         "name".to_string(),
         FieldValue::Single(Box::new(NodeData {
@@ -67,7 +67,7 @@ fn complex_node() -> NodeData {
             type_: K_BLOCK,
             source: Source::Ts,
             named: true,
-            fields: Some(IndexMap::new()),
+            fields: Some(HashMap::new()),
             children: Some(vec![]),
             text: None,
             span: Some(Span { start: 7, end: 9 }),

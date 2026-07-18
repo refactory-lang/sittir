@@ -29,7 +29,6 @@
 #[cfg(feature = "napi-bindings")]
 use napi_derive::napi;
 use serde::{de::{SeqAccess, Visitor}, ser::{SerializeMap, SerializeSeq}, Deserialize, Deserializer, Serialize, Serializer};
-use indexmap::IndexMap;
 use std::collections::HashMap;
 use std::fmt;
 
@@ -218,7 +217,7 @@ pub struct NodeData {
     /// Stored named slots keyed by the raw tree-sitter field / promoted
     /// keyword name. On the wire these serialize as top-level `_<name>`
     /// properties (ADR-0018 de-hoisted storage).
-    pub fields: Option<IndexMap<String, FieldValue>>,
+    pub fields: Option<HashMap<String, FieldValue>>,
 
     pub children: Option<Vec<NodeData>>,
 
@@ -258,7 +257,7 @@ struct NodeDataSer<'a> {
     #[serde(rename = "$named")]
     named: bool,
     #[serde(flatten, serialize_with = "serialize_slot_fields")]
-    fields: &'a Option<IndexMap<String, FieldValue>>,
+    fields: &'a Option<HashMap<String, FieldValue>>,
     #[serde(
         rename = "$other",
         default,
@@ -299,9 +298,9 @@ struct NodeDataDe {
     #[serde(rename = "$named")]
     named: bool,
     #[serde(rename = "$fields", default)]
-    legacy_fields: IndexMap<String, FieldValue>,
+    legacy_fields: HashMap<String, FieldValue>,
     #[serde(flatten, deserialize_with = "deserialize_slot_fields", default)]
-    fields: Option<IndexMap<String, FieldValue>>,
+    fields: Option<HashMap<String, FieldValue>>,
     #[serde(rename = "$other", deserialize_with = "deserialize_children", default)]
     children: Option<Vec<NodeData>>,
     #[serde(rename = "$text", default)]
@@ -317,13 +316,13 @@ struct NodeDataDe {
 }
 
 fn serialize_slot_fields<S>(
-    fields: &Option<IndexMap<String, FieldValue>>,
+    fields: &Option<HashMap<String, FieldValue>>,
     serializer: S,
 ) -> Result<S::Ok, S::Error>
 where
     S: Serializer,
 {
-    let mut map = serializer.serialize_map(Some(fields.as_ref().map_or(0, IndexMap::len)))?;
+    let mut map = serializer.serialize_map(Some(fields.as_ref().map_or(0, HashMap::len)))?;
     if let Some(fields) = fields {
         for (name, value) in fields {
             map.serialize_entry(&format!("_{name}"), value)?;
@@ -334,15 +333,15 @@ where
 
 fn deserialize_slot_fields<'de, D>(
     deserializer: D,
-) -> Result<Option<IndexMap<String, FieldValue>>, D::Error>
+) -> Result<Option<HashMap<String, FieldValue>>, D::Error>
 where
     D: Deserializer<'de>,
 {
-    let raw = IndexMap::<String, FieldValue>::deserialize(deserializer)?;
+    let raw = HashMap::<String, FieldValue>::deserialize(deserializer)?;
     if raw.is_empty() {
         return Ok(None);
     }
-    let mut fields = IndexMap::with_capacity(raw.len());
+    let mut fields = HashMap::with_capacity(raw.len());
     for (key, value) in raw {
         let Some(name) = key.strip_prefix('_') else {
             return Err(serde::de::Error::custom(format!(

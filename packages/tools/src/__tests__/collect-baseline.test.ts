@@ -17,16 +17,11 @@
  * - Native-mode boundary-import failure surfaces as a thrown error,
  *   never as a silent TS-fallback masquerading under `"backend": "native"`.
  *
- * Performance note: most tests share a single `collectBaseline('native')`
+ * Performance note: most tests share a single `collectBaseline('typescript')`
  * result hoisted in `beforeAll`. The determinism test keeps its own pair of
  * calls so it actually exercises two collection runs. Net cost across the
  * suite is exactly 3 collection runs (2 determinism + 1 shared), down from
  * 8 — corpus collection is non-trivial and the result is read-only here.
- *
- * Sourced from the native backend only — the js/Nunjucks pipeline is
- * deprecated (production uses --backend native; see docs/KNOWN_ISSUES.md
- * for documented js-backend-only template-resolution gaps this suite no
- * longer exercises).
  */
 
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
@@ -38,10 +33,7 @@ describe('collect-baseline', () => {
 	let result: baseline.BackendBaseline;
 
 	beforeAll(async () => {
-		// Sourced from the native backend — the js/Nunjucks pipeline is
-		// deprecated (see docs/KNOWN_ISSUES.md and project convention:
-		// production uses --backend native, don't fix/test the JS path).
-		result = await baseline.collectBaseline('native');
+		result = await baseline.collectBaseline('typescript');
 	}, 600_000);
 
 	afterEach(() => {
@@ -51,8 +43,8 @@ describe('collect-baseline', () => {
 	});
 
 	it('determinism — two runs produce byte-identical serialised output', async () => {
-		const a = await baseline.collectBaseline('native');
-		const b = await baseline.collectBaseline('native');
+		const a = await baseline.collectBaseline('typescript');
+		const b = await baseline.collectBaseline('typescript');
 		const sa = baseline.serialiseBaseline(a);
 		const sb = baseline.serialiseBaseline(b);
 		// Surface mismatches as a small diff for pinpoint diagnosis.

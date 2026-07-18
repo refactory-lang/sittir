@@ -28,7 +28,7 @@
 //!   stubs. `None` on the returned node itself.
 
 use crate::types::{FieldValue, KindId, NodeData, Source, Span};
-use indexmap::IndexMap;
+use std::collections::HashMap;
 
 /// Read a tree-sitter node (or the whole tree's root) into a primitive
 /// `NodeData`. See module docs for the shape contract.
@@ -119,8 +119,8 @@ fn read_children(
     node: tree_sitter::Node<'_>,
     source: &str,
     node_handle: Option<u32>,
-) -> (Option<IndexMap<String, FieldValue>>, Option<Vec<NodeData>>) {
-    let mut fields_acc: IndexMap<String, Vec<NodeData>> = IndexMap::new();
+) -> (Option<HashMap<String, FieldValue>>, Option<Vec<NodeData>>) {
+    let mut fields_acc: HashMap<String, Vec<NodeData>> = HashMap::new();
     let mut children_acc: Vec<NodeData> = Vec::new();
     let child_count = node.child_count() as u32;
     for i in 0..child_count {
@@ -161,7 +161,7 @@ fn read_children(
     let fields = if fields_acc.is_empty() {
         None
     } else {
-        let mut fields = IndexMap::with_capacity(fields_acc.len());
+        let mut fields = HashMap::with_capacity(fields_acc.len());
         for (k, mut v) in fields_acc {
             let value = if v.len() == 1 {
                 FieldValue::Single(Box::new(v.pop().expect("len==1")))
@@ -224,7 +224,7 @@ fn read_materialized_leaf(child: tree_sitter::Node<'_>, source: &str) -> NodeDat
 }
 
 fn assign_named_slot(
-    fields_acc: &mut IndexMap<String, Vec<NodeData>>,
+    fields_acc: &mut HashMap<String, Vec<NodeData>>,
     field_name: &str,
     data: NodeData,
 ) {

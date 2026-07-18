@@ -23,7 +23,6 @@ debug-transport = []
 serde = { workspace = true }
 serde_json = { workspace = true }
 tree-sitter = { workspace = true }
-indexmap = { workspace = true }
 # napi + napi-derive: `#[napi(object)]` on boundary types (see
 # data-model.md §3 for `Edit`) expands to references against the napi
 # runtime crate. Both are pure Rust — no Node.js is required at
