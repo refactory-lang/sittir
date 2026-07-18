@@ -604,8 +604,7 @@ function resolveSlotStoreExpr(
 			// call) needs the same explicit widening, or it silently picks one
 			// candidate's type and rejects the others.
 			const concatTypeArg = forceUnknownElement ? '<unknown>' : '';
-			const candidateExpr =
-				sources.length > 0 ? `_concatInSourceOrder${concatTypeArg}([${sources.join(', ')}])` : '[]';
+			const candidateExpr = sources.length > 0 ? `_concatInSourceOrder${concatTypeArg}([${sources.join(', ')}])` : '[]';
 			return `(${canonicalExpr} !== undefined ? _toArr(${canonicalExpr}) : ${candidateExpr})`;
 		}
 
@@ -894,7 +893,13 @@ function emitSeparatedListWrap(
 	// exactly, or a still-declared key gets redundantly (and incoherently)
 	// re-widened.
 	const canonicalKeys = new Set(node.fields.map((f) => f.storageKey));
-	const wireKeyTypes = collectSeparatedListWireKeyTypes(contentSlot, canonical, canonicalKeys, canonical.storageKey, nodeMap);
+	const wireKeyTypes = collectSeparatedListWireKeyTypes(
+		contentSlot,
+		canonical,
+		canonicalKeys,
+		canonical.storageKey,
+		nodeMap
+	);
 	const paramType = buildSeparatedListWrapParamType(node.typeName, wireKeyTypes);
 	lines.push(`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`);
 

@@ -8,7 +8,16 @@
  * Run with: pnpm --filter @sittir/types type-check
  */
 
-import type { NodeData, NodeConfig, TreeNode, NodeKind, FieldName, KindOf, SetterKey, FluentNode } from '../src/index.ts';
+import type {
+	NodeData,
+	NodeConfig,
+	TreeNode,
+	NodeKind,
+	FieldName,
+	KindOf,
+	SetterKey,
+	FluentNode
+} from '../src/index.ts';
 
 // ---------------------------------------------------------------------------
 // Use the Rust grammar type from the generated package

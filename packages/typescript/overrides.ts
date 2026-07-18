@@ -977,8 +977,7 @@ export default grammar(
 				// is field-named upstream, so both collapse to the same
 				// kind-derived storageName. Field them by role (`namespace` /
 				// `name`) — two genuinely distinct positions, not a union.
-				jsx_namespace_name: ($) =>
-					seq(field('namespace', $._jsx_identifier), ':', field('name', $._jsx_identifier)),
+				jsx_namespace_name: ($) => seq(field('namespace', $._jsx_identifier), ':', field('name', $._jsx_identifier)),
 
 				_ambient_declaration_global: ($) => seq('global', field('body', $.statement_block)),
 				_ambient_declaration_module: ($) =>

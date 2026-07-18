@@ -188,7 +188,9 @@ describe('grammar diagnostics preflight', () => {
 			})
 		});
 		expect(result.diagnostics).toEqual(
-			expect.arrayContaining([expect.objectContaining({ code: 'content-collision', ownerKind: 'host', canProceed: false })])
+			expect.arrayContaining([
+				expect.objectContaining({ code: 'content-collision', ownerKind: 'host', canProceed: false })
+			])
 		);
 	});
 
@@ -221,7 +223,9 @@ describe('grammar diagnostics preflight', () => {
 			})
 		});
 		expect(result.diagnostics).toEqual(
-			expect.arrayContaining([expect.objectContaining({ code: 'storagename-collision', ownerKind: 'host', canProceed: false })])
+			expect.arrayContaining([
+				expect.objectContaining({ code: 'storagename-collision', ownerKind: 'host', canProceed: false })
+			])
 		);
 	});
 
@@ -251,8 +255,20 @@ describe('grammar diagnostics preflight', () => {
 		const twoContentSlotRule: SimplifiedRule = {
 			type: 'SEQ',
 			members: [
-				{ type: 'CHOICE', members: [{ type: 'SYMBOL', name: 'a' }, { type: 'SYMBOL', name: 'b' }] },
-				{ type: 'CHOICE', members: [{ type: 'SYMBOL', name: 'c' }, { type: 'SYMBOL', name: 'd' }] }
+				{
+					type: 'CHOICE',
+					members: [
+						{ type: 'SYMBOL', name: 'a' },
+						{ type: 'SYMBOL', name: 'b' }
+					]
+				},
+				{
+					type: 'CHOICE',
+					members: [
+						{ type: 'SYMBOL', name: 'c' },
+						{ type: 'SYMBOL', name: 'd' }
+					]
+				}
 			]
 		};
 

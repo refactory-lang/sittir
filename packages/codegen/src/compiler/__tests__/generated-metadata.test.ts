@@ -97,7 +97,7 @@ static const char * const ts_field_names[] = {
 		expect(nameField?.parser.parserName).toBe('name');
 	});
 
-	it('preserves an alias symbol\'s display name when it collides with its hidden-source counterpart', async () => {
+	it("preserves an alias symbol's display name when it collides with its hidden-source counterpart", async () => {
 		// Regression test: `sym__newline` (the hidden source rule) and
 		// `alias_sym_newline` (its visible alias, e.g. python's `_suite`
 		// role-aliasing) both fallback-derive to the same catalog key

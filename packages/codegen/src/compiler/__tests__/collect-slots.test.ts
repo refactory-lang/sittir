@@ -133,7 +133,6 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 		expect(warned).toEqual([]);
 	});
 
-
 	it('seq distributes — two symbol members → two slots', () => {
 		const rule: Rule<'link'> = {
 			type: SEQ,

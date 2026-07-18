@@ -143,9 +143,7 @@ export function rulesEqual(a: RuntimeRule, b: RuntimeRule): boolean {
 			// (content shape, target name, named-ness) must match for two
 			// ALIAS nodes to be structurally equal.
 			return (
-				A.value === B.value &&
-				A.named === B.named &&
-				rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule)
+				A.value === B.value && A.named === B.named && rulesEqual(A.content as RuntimeRule, B.content as RuntimeRule)
 			);
 		default:
 			return false;
