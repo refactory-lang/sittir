@@ -46,7 +46,7 @@ export function build_ArgumentsGroup1(
 }
 
 export function buildArrayExpressionList(config: Partial<T.ArrayExpressionList.Config> = {}) {
-	const _attributes = config.attributes;
+	const _attributes = config.attributes ?? [];
 	const _arguments_group1 = config.argumentsGroup1;
 	return withMethods(
 		{
@@ -71,7 +71,7 @@ export function buildArrayExpressionList(config: Partial<T.ArrayExpressionList.C
 }
 
 export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config) {
-	const _attributes = config.attributes;
+	const _attributes = config.attributes ?? [];
 	const _expression = config.expression;
 	const _length = config.length;
 	return withMethods(
@@ -102,7 +102,7 @@ export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config) {
 }
 
 export function buildAttributedArgument(config: T.AttributedArgument.Config) {
-	const _attribute_item = config.attributeItem;
+	const _attribute_item = config.attributeItem ?? [];
 	const _expression = config.expression;
 	return withMethods(
 		{
@@ -127,7 +127,7 @@ export function buildAttributedArgument(config: T.AttributedArgument.Config) {
 }
 
 export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Config) {
-	const _attribute_item = config.attributeItem;
+	const _attribute_item = config.attributeItem ?? [];
 	const _enum_variant = config.enumVariant;
 	return withMethods(
 		{
@@ -153,7 +153,7 @@ export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Confi
 }
 
 export function buildAttributedFieldDeclaration(config: T.AttributedFieldDeclaration.Config) {
-	const _attribute_item = config.attributeItem;
+	const _attribute_item = config.attributeItem ?? [];
 	const _field_declaration = config.fieldDeclaration;
 	return withMethods(
 		{
@@ -180,7 +180,7 @@ export function buildAttributedFieldDeclaration(config: T.AttributedFieldDeclara
 }
 
 export function buildAttributedOrderedField(config: T.AttributedOrderedField.Config) {
-	const _attribute_item = config.attributeItem;
+	const _attribute_item = config.attributeItem ?? [];
 	const _visibility_modifier = config.visibilityModifier;
 	const _type = config.type;
 	return withMethods(
@@ -239,7 +239,7 @@ export function buildAttributedParameter(config: T.AttributedParameter.Config) {
 }
 
 export function buildAttributedTypeParameter(config: T.AttributedTypeParameter.Config) {
-	const _attribute_item = config.attributeItem;
+	const _attribute_item = config.attributeItem ?? [];
 	const _content = config.content;
 	return withMethods(
 		{
@@ -750,7 +750,7 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config) {
 }
 
 export function buildMatchBlockArms(config: T.MatchBlockArms.Config) {
-	const _match_arm = config.matchArm;
+	const _match_arm = config.matchArm ?? [];
 	const _last_arm = config.lastArm;
 	return withMethods(
 		{
@@ -1797,7 +1797,7 @@ export function buildBinaryExpression(config: T.BinaryExpression.Config) {
 
 export function buildBlock(config: Partial<T.Block.Config> = {}) {
 	const _label = config.label;
-	const _statement = config.statement;
+	const _statement = config.statement ?? [];
 	const _trailing_expression = config.trailingExpression;
 	return withMethods(
 		{
@@ -2050,7 +2050,7 @@ export function buildClosureExpression(config: T.ClosureExpression.Config) {
 }
 
 export function buildClosureParameters(config: Partial<T.ClosureParameters.Config> = {}) {
-	const _parameters = config.parameters;
+	const _parameters = config.parameters ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.ClosureParameters as const,
@@ -2564,7 +2564,7 @@ export function buildFieldExpression(config: T.FieldExpression.Config) {
 }
 
 export function buildFieldInitializer(config: T.FieldInitializer.Config) {
-	const _attribute_item = config.attributeItem;
+	const _attribute_item = config.attributeItem ?? [];
 	const _field = config.field;
 	const _value = config.value;
 	return withMethods(
@@ -2809,7 +2809,7 @@ export function buildFunctionItem(config: T.FunctionItem.Config) {
 }
 
 export function buildFunctionModifiers(config: T.FunctionModifiers.Config) {
-	const _modifier = config.modifier;
+	const _modifier = config.modifier ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.FunctionModifiers as const,
@@ -3263,7 +3263,7 @@ export function buildLabel(identifier: T.Label.Config['identifier']) {
 }
 
 export function buildLastMatchArm(config: T.LastMatchArm.Config) {
-	const _attributes = config.attributes;
+	const _attributes = config.attributes ?? [];
 	const _pattern = config.pattern;
 	const _value = config.value;
 	return withMethods(
@@ -3528,7 +3528,7 @@ export function buildMacroRule(config: T.MacroRule.Config) {
 }
 
 export function buildMatchArm(config: T.MatchArm.Config) {
-	const _attributes = config.attributes;
+	const _attributes = config.attributes ?? [];
 	const _pattern = config.pattern;
 	const _content = config.content;
 	return withMethods(
@@ -4268,7 +4268,7 @@ export function buildShebang(text: string) {
 }
 
 export function buildShorthandFieldInitializer(config: T.ShorthandFieldInitializer.Config) {
-	const _attributes = config.attributes;
+	const _attributes = config.attributes ?? [];
 	const _identifier = config.identifier;
 	return withMethods(
 		{
@@ -4311,7 +4311,7 @@ export function buildSlicePattern(child?: T.SlicePatternGroup1) {
 
 export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}) {
 	const _shebang = config.shebang;
-	const _statements = config.statements;
+	const _statements = config.statements ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.SourceFile as const,
@@ -4538,7 +4538,7 @@ export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config) {
 }
 
 export function buildTokenRepetition(config: T.TokenRepetition.Config) {
-	const _tokens = config.tokens;
+	const _tokens = config.tokens ?? [];
 	const _separator = coerceBooleanKeywordStorage(config.separator);
 	const _operator = coerceKindEnumStorage(config.operator, [
 		['+', TSKindId.Plus] as const,
@@ -4575,7 +4575,7 @@ export function buildTokenRepetition(config: T.TokenRepetition.Config) {
 }
 
 export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Config) {
-	const _token_pattern = config.tokenPattern;
+	const _token_pattern = config.tokenPattern ?? [];
 	const _separator = coerceBooleanKeywordStorage(config.separator);
 	const _operator = coerceKindEnumStorage(config.operator, [
 		['+', TSKindId.Plus] as const,
@@ -4670,7 +4670,7 @@ export function buildTokenTreePattern(
 }
 
 export function buildTraitBounds(config: T.TraitBounds.Config) {
-	const _bounds = config.bounds;
+	const _bounds = config.bounds ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.TraitBounds as const,
@@ -4784,8 +4784,8 @@ export function buildTryExpression(value: T.TryExpression.Config['value']) {
 }
 
 export function buildTupleExpression(config: Partial<T.TupleExpression.Config> = {}) {
-	const _attributes = config.attributes;
-	const _elements = config.elements;
+	const _attributes = config.attributes ?? [];
+	const _elements = config.elements ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.TupleExpression as const,
@@ -4855,7 +4855,7 @@ export function buildTupleStructPattern(config: T.TupleStructPattern.Config) {
 }
 
 export function buildTupleType(config: T.TupleType.Config) {
-	const _type = config.type;
+	const _type = config.type ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.TupleType as const,

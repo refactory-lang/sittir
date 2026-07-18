@@ -1937,7 +1937,6 @@ export function coerceToTypeAliasStatement(
 ): ReturnType<typeof F.buildTypeAliasStatement> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildTypeAliasStatement>;
 	return F.buildTypeAliasStatement({
-		type: coerceKindEnumStorage(_resolveOne<'type'>('type', _K4, _K4), [['type', kindIdFromName('type')] as const]),
 		left: _requireField('type_alias_statement', 'left', _resolveOneBranch<T.Type>(input.left, 'type')),
 		right: _requireField('type_alias_statement', 'right', _resolveOneBranch<T.Type>(input.right, 'type'))
 	});

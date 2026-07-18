@@ -264,7 +264,7 @@ export function buildClassBodyMember(config: T.ClassBodyMember.Config) {
 }
 
 export function buildClassBodyMethod(config: T.ClassBodyMethod.Config) {
-	const _decorator = config.decorator;
+	const _decorator = config.decorator ?? [];
 	const _method_definition = config.methodDefinition;
 	const _semicolon = config.semicolon;
 	return withMethods(
@@ -338,8 +338,8 @@ export function buildClassHeritageExtendsClause(config: T.ClassHeritageExtendsCl
 }
 
 export function build_EnumBodyGroup1(config: Partial<T._EnumBodyGroup1.Config> = {}) {
-	const _name = config.name;
-	const _enum_assignment = config.enumAssignment;
+	const _name = config.name ?? [];
+	const _enum_assignment = config.enumAssignment ?? [];
 	return withMethods(
 		{
 			$type: TSKindId._EnumBodyGroup1 as const,
@@ -408,7 +408,7 @@ export function buildExportStatementDefault(child: T.ExportStatementDefaultFromA
 }
 
 export function buildExportStatementDefaultDeclArm(config: Partial<T.ExportStatementDefaultDeclArm.Config> = {}) {
-	const _decorator = config.decorator;
+	const _decorator = config.decorator ?? [];
 	const _declaration = config.declaration;
 	const _export_statement_default_decl_arm_default_kw = config.exportStatementDefaultDeclArmDefaultKw;
 	return withMethods(
@@ -1066,7 +1066,7 @@ export function build_Number(config: T._Number.Config) {
 }
 
 export function buildParameterName(config: T.ParameterName.Config) {
-	const _decorator = config.decorator;
+	const _decorator = config.decorator ?? [];
 	const _accessibility_modifier = coerceKindEnumStorage(config.accessibilityModifier, [
 		['public', TSKindId.Public] as const,
 		['private', TSKindId.Private] as const,
@@ -1579,7 +1579,7 @@ export function buildUpdateExpressionPrefix(config: T.UpdateExpressionPrefix.Con
 }
 
 export function buildAbstractClassDeclaration(config: T.AbstractClassDeclaration.Config) {
-	const _decorator = config.decorator;
+	const _decorator = config.decorator ?? [];
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _class_heritage = config.classHeritage;
@@ -1753,7 +1753,7 @@ export function buildAmbientDeclaration(
 }
 
 export function buildArguments(config: Partial<T.Arguments.Config> = {}) {
-	const _arguments = config.arguments;
+	const _arguments = config.arguments ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.Arguments as const,
@@ -1772,7 +1772,7 @@ export function buildArguments(config: Partial<T.Arguments.Config> = {}) {
 }
 
 export function buildArray(config: Partial<T.Array.Config> = {}) {
-	const _elements = config.elements;
+	const _elements = config.elements ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.Array as const,
@@ -1791,7 +1791,7 @@ export function buildArray(config: Partial<T.Array.Config> = {}) {
 }
 
 export function buildArrayPattern(config: Partial<T.ArrayPattern.Config> = {}) {
-	const _elements = config.elements;
+	const _elements = config.elements ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.ArrayPattern as const,
@@ -2245,7 +2245,7 @@ export function buildCatchClause(config: T.CatchClause.Config) {
 }
 
 export function buildClass(config: T.Class.Config) {
-	const _decorator = config.decorator;
+	const _decorator = config.decorator ?? [];
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _class_heritage = config.classHeritage;
@@ -2310,7 +2310,7 @@ export function buildClassBody(
 }
 
 export function buildClassDeclaration(config: T.ClassDeclaration.Config) {
-	const _decorator = config.decorator;
+	const _decorator = config.decorator ?? [];
 	const _name = config.name;
 	const _type_parameters = config.typeParameters;
 	const _class_heritage = config.classHeritage;
@@ -2976,8 +2976,8 @@ export function buildExpressionStatement(config: T.ExpressionStatement.Config) {
 }
 
 export function buildExtendsClause(config: T.ExtendsClause.Config) {
-	const _value = config.value;
-	const _type_arguments = config.typeArguments;
+	const _value = config.value ?? [];
+	const _type_arguments = config.typeArguments ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.ExtendsClause as const,
@@ -3001,7 +3001,7 @@ export function buildExtendsClause(config: T.ExtendsClause.Config) {
 }
 
 export function buildExtendsTypeClause(config: T.ExtendsTypeClause.Config) {
-	const _type = config.type;
+	const _type = config.type ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.ExtendsTypeClause as const,
@@ -3962,7 +3962,7 @@ export function buildLexicalDeclaration(config: T.LexicalDeclaration.Config) {
 		['let', TSKindId.Let] as const,
 		['const', TSKindId.Const] as const
 	]);
-	const _declarators = config.declarators;
+	const _declarators = config.declarators ?? [];
 	const _semicolon = config.semicolon;
 	return withMethods(
 		{
@@ -4519,7 +4519,7 @@ export function buildNumber(text: string) {
 }
 
 export function buildObject(config: Partial<T.Object.Config> = {}) {
-	const _properties = config.properties;
+	const _properties = config.properties ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.Object as const,
@@ -4565,7 +4565,7 @@ export function buildObjectAssignmentPattern(config: T.ObjectAssignmentPattern.C
 }
 
 export function buildObjectPattern(config: Partial<T.ObjectPattern.Config> = {}) {
-	const _properties = config.properties;
+	const _properties = config.properties ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.ObjectPattern as const,
@@ -4788,7 +4788,7 @@ export function buildOptingTypeAnnotation(type: T.OptingTypeAnnotation.Config['t
 }
 
 export function buildOptionalParameter(config: T.OptionalParameter.Config) {
-	const _decorator = config.decorator;
+	const _decorator = config.decorator ?? [];
 	const _accessibility_modifier = coerceKindEnumStorage(config.accessibilityModifier, [
 		['public', TSKindId.Public] as const,
 		['private', TSKindId.Private] as const,
@@ -5038,7 +5038,7 @@ export function buildPrivatePropertyIdentifier(text: string) {
 
 export function buildProgram(config: Partial<T.Program.Config> = {}) {
 	const _hash_bang_line = config.hashBangLine;
-	const _statements = config.statements;
+	const _statements = config.statements ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.Program as const,
@@ -5127,7 +5127,7 @@ export function buildPropertySignature(config: T.PropertySignature.Config) {
 }
 
 export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Config) {
-	const _decorator = config.decorator;
+	const _decorator = config.decorator ?? [];
 	const _visibility_prefix = config.visibilityPrefix;
 	const _accessor_marker = coerceBooleanKeywordStorage(config.accessorMarker);
 	const _public_field_definition_static_mods = config.publicFieldDefinitionStaticMods;
@@ -5284,7 +5284,7 @@ export function buildRegexPattern(text: string) {
 }
 
 export function buildRequiredParameter(config: T.RequiredParameter.Config) {
-	const _decorator = config.decorator;
+	const _decorator = config.decorator ?? [];
 	const _accessibility_modifier = coerceKindEnumStorage(config.accessibilityModifier, [
 		['public', TSKindId.Public] as const,
 		['private', TSKindId.Private] as const,
@@ -5488,7 +5488,7 @@ export function buildSpreadElement(expression: T.SpreadElement.Config['expressio
 }
 
 export function buildStatementBlock(config: Partial<T.StatementBlock.Config> = {}) {
-	const _statements = config.statements;
+	const _statements = config.statements ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.StatementBlock as const,
@@ -5511,7 +5511,7 @@ export function buildString(config: ConfigOf<T.String>) {
 		['"', TSKindId.Dquote] as const,
 		["'", TSKindId.Squote] as const
 	]);
-	const _contents = config.contents;
+	const _contents = config.contents ?? [];
 	const _closing = coerceKindEnumStorage(config.closing, [
 		['"', TSKindId.Dquote] as const,
 		["'", TSKindId.Squote] as const
@@ -5552,7 +5552,7 @@ export function buildStringDouble(config?: T.String.Double.Config) {
 		['"', TSKindId.Dquote] as const,
 		["'", TSKindId.Squote] as const
 	]);
-	const _contents = config?.contents;
+	const _contents = config?.contents ?? [];
 	const _closing = coerceKindEnumStorage('"' as const, [
 		['"', TSKindId.Dquote] as const,
 		["'", TSKindId.Squote] as const
@@ -5589,7 +5589,7 @@ export function buildStringSingle(config?: T.String.Single.Config) {
 		['"', TSKindId.Dquote] as const,
 		["'", TSKindId.Squote] as const
 	]);
-	const _contents = config?.contents;
+	const _contents = config?.contents ?? [];
 	const _closing = coerceKindEnumStorage("'" as const, [
 		['"', TSKindId.Dquote] as const,
 		["'", TSKindId.Squote] as const
@@ -5666,7 +5666,7 @@ export function buildSuper() {
 }
 
 export function buildSwitchBody(config: Partial<T.SwitchBody.Config> = {}) {
-	const _cases = config.cases;
+	const _cases = config.cases ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.SwitchBody as const,
@@ -5686,7 +5686,7 @@ export function buildSwitchBody(config: Partial<T.SwitchBody.Config> = {}) {
 
 export function buildSwitchCase(config: T.SwitchCase.Config) {
 	const _value = config.value;
-	const _body = config.body;
+	const _body = config.body ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.SwitchCase as const,
@@ -5710,7 +5710,7 @@ export function buildSwitchCase(config: T.SwitchCase.Config) {
 }
 
 export function buildSwitchDefault(config: Partial<T.SwitchDefault.Config> = {}) {
-	const _body = config.body;
+	const _body = config.body ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.SwitchDefault as const,
@@ -6340,7 +6340,7 @@ export function buildUpdateExpression(child: T.UpdateExpressionPostfix | T.Updat
 }
 
 export function buildVariableDeclaration(config: T.VariableDeclaration.Config) {
-	const _declarators = config.declarators;
+	const _declarators = config.declarators ?? [];
 	const _semicolon = config.semicolon;
 	return withMethods(
 		{

@@ -72,14 +72,29 @@ describe('wire()', () => {
 	});
 
 	it('deposits captured content when the synthesized parent rule runs', () => {
-		// `assignment` original: seq(a, b) — path '0' → 'a', path '1' → 'b'
-		const origSeq = {
+		// FIXTURE UPDATE: arms were bare SYMBOLs (`a` / `b`), which are now
+		// deliberately SKIPPED by the variant transform — a transparent
+		// unit-production branch (single named symbol, no anonymous token)
+		// cannot become a CST node (tree-sitter inlines it), so no
+		// `<parent>_<suffix>` alias is minted and no deposit registered
+		// (see transform.ts's isVariantPlaceholder resolution). Arms now
+		// each carry an anonymous token so they are materializable.
+		// `assignment` original: seq(seq('=', a), seq(':', b))
+		const eqArm = {
 			type: 'SEQ',
 			members: [
-				{ type: 'SYMBOL', name: 'a' },
+				{ type: 'STRING', value: '=' },
+				{ type: 'SYMBOL', name: 'a' }
+			]
+		};
+		const typeArm = {
+			type: 'SEQ',
+			members: [
+				{ type: 'STRING', value: ':' },
 				{ type: 'SYMBOL', name: 'b' }
 			]
 		};
+		const origSeq = { type: 'SEQ', members: [eqArm, typeArm] };
 		const wired = wire({
 			name: 'test',
 			rules: {},
@@ -100,10 +115,35 @@ describe('wire()', () => {
 		// The hidden-rule fns should now return the captured content.
 		const eqFn = wired.rules._assignment_eq!;
 		const eqBody = eqFn.call({}, {});
-		expect(eqBody).toEqual({ type: 'SYMBOL', name: 'a' });
+		expect(eqBody).toEqual(eqArm);
 		const typeFn = wired.rules._assignment_type!;
 		const typeBody = typeFn.call({}, {});
-		expect(typeBody).toEqual({ type: 'SYMBOL', name: 'b' });
+		expect(typeBody).toEqual(typeArm);
+	});
+
+	it('skips alias-minting and deposits for transparent unit-production arms', () => {
+		// Pin of the behavior described above: bare-SYMBOL arms stay bare
+		// (tagged with override field-source metadata) and deposit nothing —
+		// wire never promises a `<parent>_<suffix>` kind that no parse tree
+		// can contain.
+		const origSeq = {
+			type: 'SEQ',
+			members: [
+				{ type: 'SYMBOL', name: 'a' },
+				{ type: 'SYMBOL', name: 'b' }
+			]
+		};
+		const wired = wire({
+			name: 'test',
+			rules: {},
+			polymorphs: { assignment: { '0': 'eq', '1': 'type' } }
+		});
+		const out = wired.rules.assignment!.call({}, {}, origSeq) as { members: Array<{ type: string; name?: string }> };
+		expect(out.members[0]!.type).toBe('SYMBOL');
+		expect(out.members[0]!.name).toBe('a');
+		expect(out.members[1]!.type).toBe('SYMBOL');
+		// No deposit was made — hidden-rule fns fall back to blank().
+		expect(wired.rules._assignment_eq!.call({}, {})).toEqual({ type: 'BLANK' });
 	});
 
 	it('hidden-rule fn returns blank() when no deposit was made (e.g. parent never ran)', () => {
@@ -121,11 +161,25 @@ describe('wire()', () => {
 	it('composes user-supplied parent fn with the variant transform', () => {
 		// User fn wraps the original in an outer field() before wire's
 		// variant transform runs on its output.
+		// FIXTURE UPDATE: arms carry anonymous tokens (see the
+		// transparent-unit-production skip note in the deposit test above).
 		const origSeq = {
 			type: 'SEQ',
 			members: [
-				{ type: 'SYMBOL', name: 'a' },
-				{ type: 'SYMBOL', name: 'b' }
+				{
+					type: 'SEQ',
+					members: [
+						{ type: 'STRING', value: '=' },
+						{ type: 'SYMBOL', name: 'a' }
+					]
+				},
+				{
+					type: 'SEQ',
+					members: [
+						{ type: 'STRING', value: ':' },
+						{ type: 'SYMBOL', name: 'b' }
+					]
+				}
 			]
 		};
 		const wired = wire({
@@ -225,7 +279,20 @@ describe('wire()', () => {
 		expect(ctxA).not.toBe(ctxB);
 
 		// Run A's assignment — deposits should appear in A's context only.
-		const origSeq = { type: 'SEQ', members: [{ type: 'SYMBOL', name: 'a' }] };
+		// FIXTURE UPDATE: the arm carries an anonymous token (see the
+		// transparent-unit-production skip note in the deposit test above).
+		const origSeq = {
+			type: 'SEQ',
+			members: [
+				{
+					type: 'SEQ',
+					members: [
+						{ type: 'STRING', value: '=' },
+						{ type: 'SYMBOL', name: 'a' }
+					]
+				}
+			]
+		};
 		wiredA.rules.assignment!.call({}, {}, origSeq);
 		const depositsA = (ctxA as { deposits: Map<string, unknown> }).deposits;
 		const depositsB = (ctxB as { deposits: Map<string, unknown> }).deposits;
@@ -486,7 +553,10 @@ describe('wire()', () => {
 			}
 		);
 		const inline = wired.inline!;
-		expect(inline.call({}, $, [])).toEqual([{ type: 'SYMBOL', name: '_kw_async' }]);
+		// Synthesized keyword refs now carry per-ref hidden/inline stamps
+		// (the per-ref inline-flag model: inline = hidden && !aliased) —
+		// wire's own symbol for a `_kw_*` helper is hidden and inlined.
+		expect(inline.call({}, $, [])).toEqual([{ type: 'SYMBOL', name: '_kw_async', hidden: true, inline: true }]);
 	});
 
 	it('dedupes synthesized keyword helpers against explicit inline entries', () => {

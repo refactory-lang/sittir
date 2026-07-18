@@ -78,9 +78,13 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 
 		const inputRules: Record<string, Rule> = {
 			// Parent rule: seq containing an optional group-lift ref.
-			// Note: real synthesized group-lift refs do NOT have hidden:true — the
-			// synthesizer (auto-groups.ts) does not stamp hidden. The fix must handle
-			// both hidden and non-hidden refs; omitting hidden here matches reality.
+			// FIXTURE UPDATE (§15 cleanup): inlineRefs' non-inline-listed path
+			// now gates on the AUTHORITATIVE per-ref `inline` flag (stamped
+			// upstream as hidden && !aliased && !supertype && !self-recursive)
+			// instead of the `source`/`multiplicity` heuristics this fixture
+			// originally exercised. In the real pipeline `_const_item_optional1`
+			// is hidden (underscore) and un-aliased, so its refs carry
+			// `inline: true` by the time simplify runs — stamp it here to match.
 			const_item: {
 				type: 'SEQ',
 				members: [
@@ -88,7 +92,8 @@ describe('inlineRefs — optional(seq) group-lift inline (PR-D2 fix)', () => {
 					{
 						type: 'SYMBOL',
 						name: '_const_item_optional1',
-						// No hidden:true — matches synthesizeOptionalGroups behavior
+						hidden: true,
+						inline: true,
 						source: 'group-lift',
 						// wrapper-deletion already pushed optional down to multiplicity
 						multiplicity: 'optional',

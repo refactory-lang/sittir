@@ -218,9 +218,9 @@ export function buildComprehensionClauses(...children: (T.ForInClause | T.IfClau
 
 export function build_DictPatternGroup1(config: T._DictPatternGroup1.Config) {
 	const _dict_pattern_kv = config.dictPatternKv;
-	const _key = config.key;
-	const _value = config.value;
-	const _splat_pattern = config.splatPattern;
+	const _key = config.key ?? [];
+	const _value = config.value ?? [];
+	const _splat_pattern = config.splatPattern ?? [];
 	return withMethods(
 		{
 			$type: TSKindId._DictPatternGroup1 as const,
@@ -305,7 +305,7 @@ export function buildExceptClauseAs(config: T.ExceptClauseAs.Config) {
 }
 
 export function buildExceptClauseList(config: T.ExceptClauseList.Config) {
-	const _value = config.value;
+	const _value = config.value ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.ExceptClauseList as const,
@@ -350,7 +350,7 @@ export function buildExpressionStatementTuple(
 }
 
 export function buildImportList(config: T.ImportList.Config) {
-	const _name = config.name;
+	const _name = config.name ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.ImportList as const,
@@ -466,7 +466,7 @@ export function buildMatchBlock(child: T.MatchBlockBlock) {
 }
 
 export function buildMatchBlockBlock(config: Partial<T.MatchBlockBlock.Config> = {}) {
-	const _alternative = config.alternative;
+	const _alternative = config.alternative ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.MatchBlockBlock as const,
@@ -993,7 +993,7 @@ export function buildCall(config: T.Call.Config) {
 }
 
 export function buildCaseClause(config: T.CaseClause.Config) {
-	const _case_pattern = config.casePattern;
+	const _case_pattern = config.casePattern ?? [];
 	const _guard = config.guard;
 	const _consequence = config.consequence;
 	return withMethods(
@@ -1138,7 +1138,7 @@ export function buildComment(text: string) {
 
 export function buildComparisonOperator(config: T.ComparisonOperator.Config) {
 	const _left = config.left;
-	const _comparators = config.comparators;
+	const _comparators = config.comparators ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.ComparisonOperator as const,
@@ -1291,7 +1291,7 @@ export function buildContinueStatement() {
 }
 
 export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config) {
-	const _decorator = config.decorator;
+	const _decorator = config.decorator ?? [];
 	const _definition = config.definition;
 	return withMethods(
 		{
@@ -1592,7 +1592,7 @@ export function buildExceptClause(config: Partial<T.ExceptClause.Config> = {}) {
 
 export function buildExecStatement(config: T.ExecStatement.Config) {
 	const _code = config.code;
-	const _in_clause = config.inClause;
+	const _in_clause = config.inClause ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.ExecStatement as const,
@@ -1703,7 +1703,7 @@ export function buildFloat(text: string) {
 export function buildForInClause(config: T.ForInClause.Config) {
 	const _async_marker = coerceBooleanKeywordStorage(config.asyncMarker);
 	const _left = config.left;
-	const _right = config.right;
+	const _right = config.right ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.ForInClause as const,
@@ -1845,7 +1845,7 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config) {
 }
 
 export function buildFutureImportStatement(config: T.FutureImportStatement.Config) {
-	const _name = config.name;
+	const _name = config.name ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.FutureImportStatement as const,
@@ -1971,7 +1971,7 @@ export function buildIfClause(expression: T.IfClause.Config['expression']) {
 export function buildIfStatement(config: T.IfStatement.Config) {
 	const _condition = config.condition;
 	const _consequence = config.consequence;
-	const _alternative = config.alternative;
+	const _alternative = config.alternative ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.IfStatement as const,
@@ -2003,7 +2003,7 @@ export function buildIfStatement(config: T.IfStatement.Config) {
 
 export function buildImportFromStatement(config: T.ImportFromStatement.Config) {
 	const _module_name = config.moduleName;
-	const _wildcard_import = config.wildcardImport;
+	const _wildcard_import = config.wildcardImport ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.ImportFromStatement as const,
@@ -2043,7 +2043,7 @@ export function buildImportPrefix(text: string) {
 }
 
 export function buildImportStatement(config: T.ImportStatement.Config) {
-	const _name = config.name;
+	const _name = config.name ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.ImportStatement as const,
@@ -2335,7 +2335,7 @@ export function buildListSplatPattern(child: T.Identifier | T.Subscript | T.Attr
 }
 
 export function buildMatchStatement(config: T.MatchStatement.Config) {
-	const _subject = config.subject;
+	const _subject = config.subject ?? [];
 	const _body = config.body;
 	return withMethods(
 		{
@@ -2584,7 +2584,7 @@ export function buildPatternList(...children: T.Pattern[]) {
 }
 
 export function buildPrintStatement(config: Partial<T.PrintStatement.Config> = {}) {
-	const _argument = config.argument;
+	const _argument = config.argument ?? [];
 	const _chevron = config.chevron;
 	return withMethods(
 		{
@@ -2799,7 +2799,7 @@ export function buildSplatType(identifier: T.SplatType.Config['identifier']) {
 
 export function buildString(config: T.String.Config) {
 	const _string_start = config.stringStart;
-	const _content = config.content;
+	const _content = config.content ?? [];
 	const _string_end = config.stringEnd;
 	return withMethods(
 		{
@@ -2852,7 +2852,7 @@ export function buildStringContent(
 
 export function buildSubscript(config: T.Subscript.Config) {
 	const _value = config.value;
-	const _subscript = config.subscript;
+	const _subscript = config.subscript ?? [];
 	return withMethods(
 		{
 			$type: TSKindId.Subscript as const,
@@ -2890,7 +2890,7 @@ export function buildTrue() {
 
 export function buildTryStatement(config: T.TryStatement.Config) {
 	const _body = config.body;
-	const _except_clauses = config.exceptClauses;
+	const _except_clauses = config.exceptClauses ?? [];
 	const _else_clause = config.elseClause;
 	const _finally_clause = config.finallyClause;
 	return withMethods(
@@ -3348,9 +3348,9 @@ export function buildArgumentListGroup1(
 
 export function buildDictPatternGroup1(config: T.DictPatternGroup1.Config) {
 	const _dict_pattern_kv = config.dictPatternKv;
-	const _key = config.key;
-	const _value = config.value;
-	const _splat_pattern = config.splatPattern;
+	const _key = config.key ?? [];
+	const _value = config.value ?? [];
+	const _splat_pattern = config.splatPattern ?? [];
 	return withMethods(
 		{
 			$type: TSKindId._DictPatternGroup1 as const,

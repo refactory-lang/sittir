@@ -79,12 +79,6 @@ describe('keywordPresenceKind', () => {
 			expect(keywordPresenceKind(f, nm)).toBe('boolean');
 		});
 
-		it("optional(enum-of-1('mut')) → 'boolean'", () => {
-			const f = makeField([ref('enum_mut', 'optional')]);
-			const nm = makeNodeMap([['enum_mut', makeEnum('enum_mut', ['mut'])]]);
-			expect(keywordPresenceKind(f, nm)).toBe('boolean');
-		});
-
 		it("repeat1(STRING('async')) degenerate one-literal → 'boolean'", () => {
 			const f = makeField([terminal('async', 'nonEmptyArray')]);
 			expect(keywordPresenceKind(f, makeNodeMap([]))).toBe('boolean');

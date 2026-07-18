@@ -167,10 +167,16 @@ describe('generate() — non-literal-separator diagnostic surfacing (PR-S task 5
 		// This diagnostic is expected to keep firing here until that follow-up
 		// (or PR-T) lands; the assertion below pins the count so a REGRESSION
 		// (more occurrences, or occurrences in rust/python) fails loudly.
+		//
+		// Both occurrences emit byte-identical diagnostic text (the message
+		// carries no per-kind label) -- verified via a direct capture that both
+		// fire on separate sites: object_type's own inherited shape and
+		// interface_body's synthesized _object_type_optional1 wrapper, the exact
+		// two known gaps described above.
 		const cases: readonly [string, number][] = [
 			['rust', 0],
 			['python', 0],
-			['typescript', 1]
+			['typescript', 2]
 		];
 		for (const [grammar, expectedCount] of cases) {
 			const capture = captureStderr();

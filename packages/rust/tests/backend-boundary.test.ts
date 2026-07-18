@@ -88,7 +88,17 @@ describe('boundary', () => {
 		);
 	});
 
-	it('normalizes raw parsed children into native transport fields', async () => {
+	it('passes readNode-shaped children straight through to native render (no normalization step)', async () => {
+		// boundary.ts's render() is a pure pass-through to the engine
+		// (`getDefaultEngine().render(node)`) — no $children-to-named-field
+		// normalization logic exists there or anywhere else on the JS side.
+		// That's correct: readNode.ts itself emits the de-hoisted `_<name>`
+		// storage shape directly (specs/022-binding-simplify-assemble/
+		// IMPLEMENTATION-STATUS.md: "`@sittir/core/readNode.ts` emits `_<name>`
+		// directly (no shim)"), matching source_file's real named `statements`
+		// field (`_statements`, per types.ts's `SourceFile` interface) — a
+		// generic `$children` intermediate shape is never actually produced,
+		// so there is nothing for boundary.ts to normalize.
 		const renderSpy = vi.fn((node: Record<string, unknown>) => `ok:${String(node.$type)}`);
 		mockNativeBackend(
 			class {
@@ -107,7 +117,7 @@ describe('boundary', () => {
 			$type: TSKindId.SourceFile,
 			$source: 0,
 			$named: true,
-			$children: [{ $type: TSKindId.EmptyStatement, $source: 0, $named: true, $text: ';' }]
+			_statements: [{ $type: TSKindId.EmptyStatement, $source: 0, $named: true, $text: ';' }]
 		} as const;
 
 		// $type is TSKindId.SourceFile (157). Children carry TSKindId.EmptyStatement.
@@ -115,7 +125,7 @@ describe('boundary', () => {
 		expect(renderSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
 				$type: TSKindId.SourceFile,
-				statements: [
+				_statements: [
 					expect.objectContaining({
 						$type: TSKindId.EmptyStatement,
 						$text: ';'
@@ -125,7 +135,20 @@ describe('boundary', () => {
 		);
 	});
 
-	it('infers polymorph variants from raw parsed child aliases', async () => {
+	it('does not inject $variant — polymorph dispatch is by child $type alone', async () => {
+		// DECIDED DOCTRINE (docs/superpowers/specs/2026-05-22-compiler-simplification-design.md
+		// §4d): "$variant is diagnostics/validate-only... it may appear in the
+		// serialized Model and the validator's dispatch map, never in
+		// generated types.ts / factories.ts / from.ts / wrap.ts / transports /
+		// templates." And: "Dispatch is by child kind ONLY — no runtime
+		// structural recovery... this supersedes any runtime slot-presence
+		// probe." This test previously asserted boundary.ts's render() infers
+		// and injects a `$variant: 'list'` tag from raw parsed child aliases —
+		// that's the superseded runtime-$variant-dispatch model. render() is
+		// in fact a pure pass-through to the engine (no transform logic exists
+		// in boundary.ts at all) — real polymorph dispatch happens natively,
+		// keyed on the child's own concrete $type, which the raw parsed data
+		// already carries untouched.
 		const renderSpy = vi.fn((node: Record<string, unknown>) => `ok:${String(node.$type)}`);
 		mockNativeBackend(
 			class {
@@ -144,31 +167,18 @@ describe('boundary', () => {
 			$type: TSKindId.ArrayExpression,
 			$source: 0,
 			$named: true,
-			$children: [
-				{
-					$type: TSKindId.ArrayExpressionList,
-					$source: 0,
-					$named: true,
-					$children: [identifier]
-				}
-			]
+			_content: {
+				// array_expression_list aliases to _array_expression_list → TSKindId.ArrayExpressionList
+				$type: TSKindId.ArrayExpressionList,
+				$source: 0,
+				$named: true,
+				_elements: [identifier]
+			}
 		} as const;
 
-		// After projection: $type is TSKindId.ArrayExpression (258)
 		expect(render(rawArrayExpression)).toBe(`ok:${TSKindId.ArrayExpression}`);
-		expect(renderSpy).toHaveBeenCalledWith(
-			expect.objectContaining({
-				$type: TSKindId.ArrayExpression,
-				$variant: 'list',
-				$children: [
-					expect.objectContaining({
-						// array_expression_list aliases to _array_expression_list → TSKindId.ArrayExpressionList
-						$type: TSKindId.ArrayExpressionList,
-						elements: [expect.objectContaining({ $type: TSKindId.Identifier })]
-					})
-				]
-			})
-		);
+		// Passed straight through — no $variant tag, no restructuring.
+		expect(renderSpy).toHaveBeenCalledWith(rawArrayExpression);
 	});
 
 	it('does not pre-validate payloads against a JS transport contract', async () => {
@@ -241,7 +251,12 @@ describe('boundary', () => {
 		// Engine created with reader support
 		const { createEngine } = await import('../src/engine.ts');
 		const engine = createEngine({ format: { boundary: { leading: '\t' } } });
-		expect(engine.render(identifier)).toBe('\tx');
+		// engine.render() returns a RenderHandle ({ save, print, toString }),
+		// not a raw string — boundary.ts's own render() calls .toString() on
+		// this same return value (packages/rust/src/boundary.ts:29). This
+		// test calls the lower-level engine API directly, so it must do the
+		// same unwrap.
+		expect(engine.render(identifier).toString()).toBe('\tx');
 		expect(renderSpy).toHaveBeenCalledTimes(1);
 
 		// Reader should be available on native engine

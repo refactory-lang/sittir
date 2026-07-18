@@ -7,21 +7,16 @@ import * as F from '../src/factories.js';
 import type { LineComment } from '../src/types.js';
 
 function makeFn(name: string) {
-	return F.functionItem({
-		name: F.identifier(name),
-		parameters: F.parameters(),
-		body: F.block()
+	return F.buildFunctionItem({
+		name: F.buildIdentifier(name),
+		parameters: F.buildParameters(),
+		body: F.buildBlock()
 	});
 }
 
-/** Build a `LineComment` trivia node from raw text.
- *  Cast through `unknown` because the factory's optional-default `$children`
- *  type (`[] | readonly [LineCommentContent]`) doesn't narrow to the concrete
- *  interface's required tuple (`readonly [LineCommentContent]`). */
+/** Build a `LineComment` trivia node from raw text. */
 function makeComment(text: string): LineComment {
-	return F.lineCommentUFormContent({
-		children: F.lineCommentContent(text)
-	}) as unknown as LineComment;
+	return F.buildLineComment(F.buildLineCommentContent(text));
 }
 
 describe('$trivia() integration', () => {
@@ -64,7 +59,7 @@ describe('$trivia() integration', () => {
 		const fn = makeFn('main');
 		fn.$trivia(comment);
 		expect((fn as Record<string, unknown>).$triviaData).toBeDefined();
-		const rebuilt = fn.$with.name(F.identifier('other'));
+		const rebuilt = fn.$with.name(F.buildIdentifier('other'));
 		expect((rebuilt as Record<string, unknown>).$triviaData).toBeUndefined();
 	});
 });

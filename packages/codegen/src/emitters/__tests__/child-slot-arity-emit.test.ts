@@ -94,26 +94,37 @@ function makeOptionalKeywordChildNodeMap(): NodeMap {
 }
 
 describe('types emitter child slot arity', () => {
-	it('emits singular unnamed children as single values instead of singleton tuples', () => {
+	// Kind-named slots (docs/superpowers/specs/2026-05-17-kind-named-slots-design.md)
+	// keeps unnamed positional children under their own kind-derived field name
+	// (`_identifier`, `_number_literal`, ...) rather than folding them into a
+	// generic `$other` key. AssembledBranch's own doc comment (node-map.ts)
+	// confirms the `$other`/`$child`/`$children` remap this file used to assert
+	// is a deferred, not-yet-scheduled future migration ("Owner A") — these
+	// cases now pin the current kind-derived-name behavior instead, preserving
+	// the original regression-guard intent (no singleton-tuple wrapping, no
+	// lossy union collapse, no literal pollution in the emitted type).
+	it('emits singular unnamed children as their own kind-derived field, not a tuple', () => {
 		const requiredSrc = emitTypes({ grammar: 'synth', nodeMap: makeRequiredSingleChildNodeMap() });
 		const optionalSrc = emitTypes({ grammar: 'synth', nodeMap: makeOptionalSingleChildNodeMap() });
 
-		expect(requiredSrc).toContain('readonly $other: Identifier;');
-		expect(requiredSrc).not.toContain('readonly $other: readonly [Identifier];');
-		expect(optionalSrc).toContain('readonly $other?: Identifier;');
+		expect(requiredSrc).toContain('readonly _identifier: Identifier;');
+		expect(requiredSrc).not.toContain('readonly _identifier: readonly [Identifier];');
+		expect(optionalSrc).toContain('readonly _identifier?: Identifier;');
 	});
 
-	it('keeps multi-slot unnamed children list-shaped instead of collapsing to a scalar', () => {
+	it('keeps distinct unnamed children as separately-typed fields instead of folding into one ambiguous union', () => {
 		const src = emitTypes({ grammar: 'synth', nodeMap: makeMultiSingularChildNodeMap() });
 
-		expect(src).toContain('readonly $other: readonly [Identifier | NumberLiteral];');
-		expect(src).not.toContain('readonly $other: Identifier | NumberLiteral;');
+		expect(src).toContain('readonly _identifier: Identifier;');
+		expect(src).toContain('readonly _number_literal: NumberLiteral;');
+		expect(src).not.toContain('Identifier | NumberLiteral');
 	});
 
 	it('drops inline terminal literals from child slot types', () => {
 		const src = emitTypes({ grammar: 'synth', nodeMap: makeOptionalKeywordChildNodeMap() });
 
-		expect(src).toContain('readonly $other?: Expression | ExpressionList;');
-		expect(src).not.toContain('readonly $other?: "from" | Expression | ExpressionList;');
+		expect(src).toContain('readonly _expression?: Expression;');
+		expect(src).toContain('readonly _expression_list?: ExpressionList;');
+		expect(src).not.toContain('"from"');
 	});
 });

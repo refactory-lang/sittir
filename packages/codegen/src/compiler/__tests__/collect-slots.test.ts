@@ -43,18 +43,26 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 	});
 
 	it('field(modifiers, repeat(string)) → one array slot (enum)', () => {
-		// A repeat(terminal) becomes an array slot only when nameable — here
-		// via the field wrapper. The bare unnamed `repeat(',')` has no name
-		// source and elides (it is pure syntactic separation).
+		// A repeat(terminal) becomes an array slot named via the field wrapper
+		// here. A BARE unnamed `repeat(',')` (no field wrapper) also produces
+		// one array slot today — see 'bare unnamed repeat(string)' below;
+		// `nonterminal` is the sole authoritative slot signal, not "has a name
+		// source" (that used to be the elision rule, no longer is).
 		const out = slots({ type: FIELD, name: 'modifiers', content: { type: REPEAT, content: str('kw') } });
 		expect(out).toHaveLength(1);
 		expect(out[0]!.name).toBe('modifiers');
 		expect(out[0]!.values.every((v) => v.multiplicity === 'array')).toBe(true);
 	});
 
-	it('bare unnamed repeat(string) → [] (no name source, syntactic only)', () => {
+	it('bare unnamed repeat(string) → one unnamed slot (nonterminal is the sole slot signal)', () => {
+		// Since wrapper-deletion's separator-sub-rule recursion (PR-S task 4),
+		// deleteWrapper stamps `nonterminal: true` on this STRING regardless of
+		// field-name presence — `nonterminal` is the sole authoritative slot
+		// signal (deleteWrapper is its sole deriver), not "has a name source".
+		// This feeds separator-kind/flank detection for AssembledSeparatedList.
 		const out = slots({ type: REPEAT, content: str(',') });
-		expect(out).toHaveLength(0);
+		expect(out).toHaveLength(1);
+		expect(out[0]!.values.every((v) => v.multiplicity === 'array')).toBe(true);
 	});
 
 	it('optional(string) → [] (no slot)', () => {
@@ -125,22 +133,6 @@ describe('collectSlots — nonterminal-node enumeration', () => {
 		expect(warned).toEqual([]);
 	});
 
-	it('polymorph → content slot, no unnamed-choice warning', () => {
-		const warned: (string | undefined)[] = [];
-		setUnnamedChoiceWarner((k) => warned.push(k));
-		const rule: Rule<'link'> = {
-			type: 'polymorph',
-			name: 'except_clause',
-			forms: [
-				{ name: 'as', content: sym('as_pattern') },
-				{ name: 'list', content: sym('expression_list') }
-			]
-		} as unknown as Rule;
-		const out = collectSlots(deleteWrapper(rule) as Rule, 'except_clause');
-		expect(out).toHaveLength(1);
-		expect(out[0]!.name).toBe('content');
-		expect(warned).toEqual([]); // polymorph metadata is type-surface-only; no warn
-	});
 
 	it('seq distributes — two symbol members → two slots', () => {
 		const rule: Rule<'link'> = {

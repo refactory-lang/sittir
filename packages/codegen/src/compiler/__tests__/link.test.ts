@@ -378,9 +378,22 @@ describe('Link — top-level alias bodies', () => {
 			{ supertypes: ['_expression'] }
 		);
 		const linked = link(raw);
-		expect(linked.topLevelAliasBodies?.get('_as_pattern_target')).toEqual({
+		// The non-dereference guarantee is now enforced by a different
+		// mechanism: `_expression` is a complex-body alias target
+		// (deriveComplexAliasTargetHidden), so collectTopLevelAliasBodies
+		// SKIPS the entry entirely — the load-bearing guard documented in
+		// link.ts ("Never inline a named-alias-target's hidden body into
+		// the visible-alias parent", isolation-test-verified; see
+		// project_pr_e_spec_premises_false). The normalized rule keeps the
+		// wrapper-deleted SYMBOL(visible, aliasedFrom) reference form
+		// instead of an inlined supertype body — which is exactly the
+		// original intent: the supertype's choice body is never
+		// dereferenced into the alias.
+		expect(linked.topLevelAliasBodies?.get('_as_pattern_target')).toBeUndefined();
+		expect(linked.rules['_as_pattern_target']).toMatchObject({
 			type: 'SYMBOL',
-			name: '_expression'
+			name: 'as_pattern_target',
+			aliasedFrom: '_expression'
 		});
 	});
 });
@@ -504,7 +517,7 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		expect(stmt.members.every((m: any) => m.type === 'SEQ')).toBe(true);
 	});
 
-	it('promotePolymorph detects heterogeneous-field choices (suggestion-only, no mutation)', () => {
+	it('does NOT auto-promote heterogeneous-field choices — polymorph classification is variant()-metadata-only', () => {
 		const raw = makeRaw({
 			assignment: {
 				type: CHOICE,
@@ -538,11 +551,16 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		const linked = link(raw);
 		const assignment = linked.rules['assignment'] as any;
 		expect(assignment.type).not.toBe('polymorph');
-		expect(
-			linked.derivations.promotedRules.some(
-				(p: any) => p.kind === 'assignment' && p.classification === 'polymorph' && !p.applied
-			)
-		).toBe(true);
+		// Originally this asserted a suggestion-only promotedRules entry from
+		// the heterogeneous-field-choice HEURISTIC. That heuristic was
+		// retired: polymorph classification now comes ONLY from explicit
+		// variant() metadata (structural derivation via
+		// deriveStructuralVariantChildren / emitVariantChildDerivations) and
+		// from hidden/supertype-rule classification — explicit overrides over
+		// inference. A visible choice with heterogeneous fields must produce
+		// NO polymorph entry at all: no mutation AND no suggestion.
+		expect(assignment.type).toBe('CHOICE');
+		expect(linked.derivations.promotedRules.filter((p) => p.kind === 'assignment')).toEqual([]);
 	});
 
 	it('applyOverridePolymorphs pushes ambient scaffold into variant-child hidden rules when they live deep in the parent rule', () => {

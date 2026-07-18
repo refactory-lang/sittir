@@ -3298,22 +3298,22 @@ export interface RangeExpressionBinary {
 export interface RangeExpressionPostfix {
 	readonly $type: TSKindId.RangeExpressionPostfix;
 	readonly _start: Expression;
-	readonly _operator: number;
+	readonly _operator: AutoStamp<number>;
 	readonly __inputHints__?: {
-		readonly operator: KindEnum<'..', TSKindId.DotDot>;
+		readonly operator: AutoStamp<KindEnum<'..', TSKindId.DotDot>>;
 	};
 	start(): Expression;
-	operator(): number;
+	operator(): AutoStamp<number>;
 }
 
 export interface RangeExpressionPrefix {
 	readonly $type: TSKindId.RangeExpressionPrefix;
-	readonly _operator: number;
+	readonly _operator: AutoStamp<number>;
 	readonly _end: Expression;
 	readonly __inputHints__?: {
-		readonly operator: KindEnum<'..', TSKindId.DotDot>;
+		readonly operator: AutoStamp<KindEnum<'..', TSKindId.DotDot>>;
 	};
-	operator(): number;
+	operator(): AutoStamp<number>;
 	end(): Expression;
 }
 
@@ -3467,23 +3467,23 @@ export interface _VisibilityModifierGroup1 {
 
 export interface VisibilityModifierInPath {
 	readonly $type: TSKindId.VisibilityModifierInPath;
-	readonly _in: number;
+	readonly _in: AutoStamp<number>;
 	readonly _path: Path;
 	readonly __inputHints__?: {
-		readonly in: KindEnum<'in', TSKindId.In>;
+		readonly in: AutoStamp<KindEnum<'in', TSKindId.In>>;
 	};
-	in(): number;
+	in(): AutoStamp<number>;
 	path(): Path;
 }
 
 export interface VisibilityModifierPub {
 	readonly $type: TSKindId.VisibilityModifierPub;
-	readonly _pub: number;
+	readonly _pub: AutoStamp<number>;
 	readonly _visibility_modifier_group1?: VisibilityModifierGroup1;
 	readonly __inputHints__?: {
-		readonly pub: KindEnum<'pub', TSKindId.Pub>;
+		readonly pub: AutoStamp<KindEnum<'pub', TSKindId.Pub>>;
 	};
-	pub(): number;
+	pub(): AutoStamp<number>;
 	visibilityModifierGroup1(): VisibilityModifierGroup1 | undefined;
 }
 
@@ -3837,14 +3837,14 @@ export interface ExpressionStatement {
 export interface ExternCrateDeclaration {
 	readonly $type: TSKindId.ExternCrateDeclaration;
 	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _crate: number;
+	readonly _crate: AutoStamp<number>;
 	readonly _name: Identifier;
 	readonly _alias?: Identifier;
 	readonly __inputHints__?: {
-		readonly crate: KindEnum<'crate', TSKindId.Crate>;
+		readonly crate: AutoStamp<KindEnum<'crate', TSKindId.Crate>>;
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
-	crate(): number;
+	crate(): AutoStamp<number>;
 	name(): Identifier;
 	alias(): Identifier | undefined;
 }
@@ -4033,13 +4033,13 @@ export interface GenericType {
 export interface GenericTypeWithTurbofish {
 	readonly $type: TSKindId.GenericTypeWithTurbofish;
 	readonly _type: Identifier | ScopedIdentifier;
-	readonly _turbofish: number;
+	readonly _turbofish: AutoStamp<number>;
 	readonly _type_arguments: TypeArguments;
 	readonly __inputHints__?: {
-		readonly turbofish: KindEnum<'::', TSKindId.ColonColon>;
+		readonly turbofish: AutoStamp<KindEnum<'::', TSKindId.ColonColon>>;
 	};
 	type(): Identifier | ScopedIdentifier;
-	turbofish(): number;
+	turbofish(): AutoStamp<number>;
 	typeArguments(): TypeArguments;
 }
 
@@ -4405,16 +4405,16 @@ export interface SelfParameter {
 	readonly _reference?: boolean;
 	readonly _lifetime?: Lifetime;
 	readonly _mutable_specifier?: boolean;
-	readonly _self: number;
+	readonly _self: AutoStamp<number>;
 	readonly __inputHints__?: {
 		readonly reference?: BooleanKeyword<'&'>;
 		readonly mutable_specifier?: BooleanKeyword<'mut'>;
-		readonly self: KindEnum<'self', TSKindId.Self>;
+		readonly self: AutoStamp<KindEnum<'self', TSKindId.Self>>;
 	};
 	reference(): boolean | undefined;
 	lifetime(): Lifetime | undefined;
 	mutableSpecifier(): boolean | undefined;
-	self(): number;
+	self(): AutoStamp<number>;
 }
 
 export interface ShorthandFieldInitializer {

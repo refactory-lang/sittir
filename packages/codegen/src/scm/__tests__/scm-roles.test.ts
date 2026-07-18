@@ -1,16 +1,21 @@
 import { describe, it, expect } from 'vitest';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { extractGrammarRoles } from '../extract-roles.ts';
 
 // Dynamic imports use computed paths to prevent TypeScript from following
 // cross-package references during type-check (codegen's tsconfig doesn't
 // include grammar package source files).
-const RUST_IR = '../../../rust/src/ir.ts';
-const TS_IR = '../../../typescript/src/ir.ts';
-const PY_IR = '../../../python/src/ir.ts';
+const RUST_IR = '../../../../rust/src/ir.ts';
+const TS_IR = '../../../../typescript/src/ir.ts';
+const PY_IR = '../../../../python/src/ir.ts';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function loadFrom(path: string): Promise<{ from: any }> {
-	return import(path);
+	// A bare relative-string dynamic import doesn't reliably resolve across
+	// package boundaries under vitest's Vite-based module loader — resolve
+	// to an absolute file:// URL ourselves instead.
+	const absolute = fileURLToPath(new URL(path, import.meta.url));
+	return import(pathToFileURL(absolute).href);
 }
 
 describe('general role extraction', () => {

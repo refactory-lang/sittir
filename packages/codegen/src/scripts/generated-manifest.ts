@@ -38,7 +38,7 @@
 
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
-import { join, relative, dirname } from 'node:path';
+import { basename, join, relative, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { hostBinaryFreshnessFor } from './native-binary-freshness.ts';
 
@@ -104,10 +104,24 @@ function manifestPath(grammar: Grammar): string {
 	return join(REPO_ROOT, `packages/${grammar}/.sittir/${MANIFEST_FILENAME}`);
 }
 
+/**
+ * OS/editor junk that can appear anywhere under a generated root (e.g.
+ * Finder drops `.DS_Store` into any directory it has opened) but is never
+ * part of codegen's own output. Tracking it would record a machine-local
+ * path that's absent on a clean checkout, failing verification for no
+ * codegen-related reason — same class of problem `isManifestUntracked`
+ * solves for `test-fixtures.json`, but this one is skipped at the walk
+ * itself since it was never a real generated file to begin with.
+ */
+function isJunkFile(name: string): boolean {
+	return name === '.DS_Store';
+}
+
 function walk(path: string, out: string[]): void {
 	if (!existsSync(path)) return;
 	const stat = statSync(path);
 	if (stat.isFile()) {
+		if (isJunkFile(basename(path))) return;
 		out.push(path);
 		return;
 	}

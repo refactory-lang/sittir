@@ -235,13 +235,25 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		expect(structBody).toMatch(/pub body: BlockTransport,/);
 	});
 
-	it('function_item.name is PathTransport (multi-kind field covered by _path supertype)', async () => {
+	it('function_item.name is FunctionItemNameTransportSlot (proper subset of _path stays heterogeneous, not collapsed)', async () => {
 		const src = await getRustTemplatesRs();
 		const structBody = extractStructBody(src, 'FunctionItemTransport');
-		// name field has kinds: ["identifier", "metavariable"] — both are subtypes of
-		// rust's _path supertype → classified as PathTransport (Phase 2).
+		// name field has kinds: ["identifier", "metavariable"] — both are subtypes
+		// of rust's _path supertype, but _path's full resolved subtype set has
+		// 7 members (self, identifier, metavariable, super, crate,
+		// scoped_identifier, _reserved_identifier). classifySlot only collapses
+		// a slot onto the supertype type when the slot's kind set EXACTLY
+		// equals the supertype's full subtype set — a deliberate safety rule
+		// (transport-common.ts:58-67): a looser subset-collapse risked
+		// FromNapiValue recursing through a wide/self-recursive supertype and
+		// overflowing the native stack. A proper-subset slot like this one
+		// falls to `heterogeneous` instead, emitting a per-slot enum of
+		// exactly its own kinds.
 		const nameLine = structBody.split('\n').find((l) => l.trim().startsWith('pub name:'));
-		expect(nameLine).toContain('PathTransport');
+		expect(nameLine).toContain('FunctionItemNameTransportSlot');
+		expect(src).toContain('pub enum FunctionItemNameTransportSlot {');
+		expect(src).toContain('Identifier(IdentifierTransport),');
+		expect(src).toContain('Metavariable(MetavariableTransport),');
 	});
 
 	it('render_const_item uses Renderable::Transport for name (zero-alloc)', async () => {
@@ -265,16 +277,26 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 	});
 
 	it('leaf transport napi impls accept strings, structured objects, and boolean-presence leaves', async () => {
+		// napi typeof-dispatch transport fix: leaf FromNapiValue impls now
+		// branch on `transport_value_type(env, napi_val)?` up front instead of
+		// speculatively trying `String::from_napi_value`/`bool::from_napi_value`
+		// and catching failures — calling `String::from_napi_value` on a
+		// non-string input had a bad failure path (JSON.stringify on Object
+		// inputs). Same accept surface (string / object $text / boolean
+		// presence), different, safer dispatch shape.
 		const src = await getTypescriptTransportRs();
-		expect(src).toContain('let text = if let Ok(text) = String::from_napi_value(env, napi_val) {');
+		expect(src).toContain('::napi::ValueType::String => String::from_napi_value(env, napi_val)?,');
 		expect(src).toContain('obj.get("$text")?.unwrap_or_default()');
-		expect(src).toContain('if let Ok(present) = bool::from_napi_value(env, napi_val) {');
+		expect(src).toContain('::napi::ValueType::Boolean => {');
+		expect(src).toContain('if !bool::from_napi_value(env, napi_val)? {');
 		expect(src).toContain('received false; omit the field instead of sending false');
 	});
 
 	it('leaf token transport napi impls recover literal text from numeric kind ids', async () => {
 		const src = await getTypescriptTransportRs();
-		expect(src).toContain('} else if u16::from_napi_value(env, napi_val).is_ok() {');
+		// Raw kind_id (Number) input is matched directly via the same
+		// transport_value_type dispatch, not a speculative u16 try-parse.
+		expect(src).toContain('::napi::ValueType::Number => "+".to_string(),');
 		expect(src).toContain('obj.get("$text")?.unwrap_or_else(|| "+".to_string())');
 	});
 });
@@ -321,13 +343,23 @@ it('override-polymorph variant pairing: array_expression_list maps to "list" (no
 	}
 	const emit = emitRenderModule(grammar, templateFiles, nodeMap, generatedIdTables);
 	// bridge.rs has been retired (PR-E2) — variant pairing is now structural in transport.rs.
-	// The transport struct for array_expression has distinct fields for list and semi,
-	// each with their own napi js_name. Verify the transport reflects correct naming.
+	// Kind-named slots (2026-05-17) additionally collapsed array_expression's
+	// two polymorph forms onto ONE unnamed top-level-choice `content` slot
+	// (ArrayExpressionContentTransportSlot, same "unnamed top-level choice →
+	// content slot" convention as every other unnamed-choice case in this
+	// codebase) instead of two separate top-level struct fields with their own
+	// `_array_expression_list`/`_array_expression_semi` js_names. The
+	// regression this test guards against (the `|| true` find() predicate
+	// pairing every variantChildKind with forms[0]) is now verified through
+	// the enum's variant→render-fn mapping instead.
 	const transport = emit.transportRs.contents;
-	// The list form's napi slot should use "_array_expression_list" (not "_array_expression_semi")
-	// and the semi form should use "_array_expression_semi".
-	expect(transport).toContain(`"_array_expression_list"`);
-	expect(transport).toContain(`"_array_expression_semi"`);
-	// Key regression guard: list field must not be labelled as semi
-	expect(transport).not.toContain(`array_expression_list: Box<ArrayExpressionSemiTransport>`);
+	expect(transport).toContain('pub enum ArrayExpressionContentTransportSlot {');
+	// Key regression guard: each variant must render via its OWN form, not
+	// both collapsing onto forms[0] (semi).
+	expect(transport).toContain(
+		'ArrayExpressionContentTransportSlot::ArrayExpressionList(inner) => render_array_expression_list(inner, dest),'
+	);
+	expect(transport).toContain(
+		'ArrayExpressionContentTransportSlot::ArrayExpressionSemi(inner) => render_array_expression_semi(inner, dest),'
+	);
 }, 60_000);

@@ -1169,7 +1169,15 @@ function storageFieldTypeExpr(
 		return 'number';
 	}
 	if (storageInfo.kind === 'kindEnum') {
-		return 'number';
+		// A single-member kindEnum (e.g. python's type_alias_statement.type,
+		// whose only candidate text is "type") is ALSO auto-stamp-eligible —
+		// isAutoStampField's resolveEffectiveLiteral resolves it to that one
+		// literal. Brand it here too, or ConfigOf/FromInputOf's key filter
+		// (which reads THIS raw storage type via FieldsOf<T>[K], not the
+		// __inputHints__ value type) never excludes the key, wrongly
+		// requiring callers to supply a field the factory always stamps
+		// itself and never reads from Config.
+		return isAutoStampField(f, nodeMap) ? 'AutoStamp<number>' : 'number';
 	}
 	if (isAutoStampField(f, nodeMap)) return `AutoStamp<${typeExpr}>`;
 	return typeExpr;
@@ -1191,7 +1199,12 @@ function fieldInputHintTypeExpr(
 		return `Bitflag<${constName}, number>`;
 	}
 	if (storageInfo.kind === 'kindEnum') {
-		return `KindEnum<${stringUnion(storageInfo.texts)}, ${enumStorageDiscriminantExpr(storageInfo, nodeMap, kindEntries)}>`;
+		const kindEnumExpr = `KindEnum<${stringUnion(storageInfo.texts)}, ${enumStorageDiscriminantExpr(storageInfo, nodeMap, kindEntries)}>`;
+		// See storageFieldTypeExpr's matching branch — a single-member
+		// kindEnum can also be auto-stamp-eligible; brand its hint the same
+		// way so FieldInputType (which prefers this hint over raw storage)
+		// stays consistent with the (now-excluded) Config/Loose key.
+		return isAutoStampField(f, nodeMap) ? `AutoStamp<${kindEnumExpr}>` : kindEnumExpr;
 	}
 	return undefined;
 }

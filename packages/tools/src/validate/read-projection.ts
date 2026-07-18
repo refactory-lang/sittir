@@ -26,8 +26,6 @@
  * render-parse, from(), render) will be working on a corrupted view.
  */
 
-import { readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
 import type { AnyNodeData } from '@sittir/types';
 import { load } from '../codegen-surface.ts';
 
@@ -43,58 +41,15 @@ import {
 	adaptNode,
 	collectKinds,
 	emitValidatorMetrics,
+	loadCorpusEntries,
+	type CorpusEntry,
 	type TSNode,
 	type TSTree
 } from './common.ts';
 
-// Tree-sitter adapter + tree walkers imported from validate/common.ts.
-// See that file for the canonical TSNode/TSTree shapes (backed by web-tree-sitter's
-// published TS.Node / TS.Tree types).
-
-// ---------------------------------------------------------------------------
-// Corpus parser — shared shape
-// ---------------------------------------------------------------------------
-
-interface CorpusEntry {
-	name: string;
-	source: string;
-}
-
-function parseCorpus(content: string): CorpusEntry[] {
-	const entries: CorpusEntry[] = [];
-	const lines = content.split('\n');
-	let i = 0;
-	while (i < lines.length) {
-		if (!lines[i]!.startsWith('====')) {
-			i++;
-			continue;
-		}
-		i++;
-		const name = lines[i]?.trim() ?? '';
-		i++;
-		while (i < lines.length && lines[i]!.startsWith('====')) i++;
-		const sourceLines: string[] = [];
-		while (i < lines.length && !lines[i]!.match(/^-{3,}$/)) {
-			sourceLines.push(lines[i]!);
-			i++;
-		}
-		while (i < lines.length && !lines[i]!.startsWith('====')) i++;
-		const source = sourceLines.join('\n').trim();
-		if (source) entries.push({ name, source });
-	}
-	return entries;
-}
-
-const FIXTURES_DIR = new URL('../../fixtures', import.meta.url).pathname;
-
-function loadCorpusEntries(grammar: string): CorpusEntry[] {
-	const entries: CorpusEntry[] = [];
-	const files = readdirSync(FIXTURES_DIR).filter((f) => f.startsWith(`${grammar}-`) && f.endsWith('.txt'));
-	for (const file of files) {
-		entries.push(...parseCorpus(readFileSync(join(FIXTURES_DIR, file), 'utf-8')));
-	}
-	return entries;
-}
+// Tree-sitter adapter + tree walkers, and the corpus loader (canonical
+// FIXTURES_DIR + parseCorpus), imported from validate/common.ts — the single
+// source of truth for both, rather than a second, drift-prone copy here.
 
 // ---------------------------------------------------------------------------
 // node-types.json → field name set per kind
