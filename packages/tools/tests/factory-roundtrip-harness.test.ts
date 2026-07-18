@@ -6,7 +6,7 @@ describe('factory-roundtrip harness', () => {
 	it('uses metadata-driven child args for child-backed direct factories', () => {
 		const content = readFileSync(resolve(import.meta.dirname, '../src/validate/factory-render-parse.ts'), 'utf-8');
 		expect(content).toMatch(/const childArgs = getChildFactoryArgs\(renderedKind, config, factorySlots\);/);
-		expect(content).toMatch(/\? \(config as Record<string, unknown>\)\[camelName\]\s*\n\s*: childArgs\[0\]/);
+		expect(content).toMatch(/\? \(config as Record<string, unknown>\)\[camelName\]\s*:\s*childArgs\[0\]/);
 		expect(content).not.toMatch(/: \(\(readData\.\$children \?\? \[\]\)\.filter/);
 		expect(content).not.toMatch(/: \(\(config\.children \?\? \[\]\) as unknown\[\]\)\[0\]/);
 	});

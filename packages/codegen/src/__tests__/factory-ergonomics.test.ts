@@ -20,7 +20,7 @@ describe('factory ergonomics', () => {
 			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/from.ts'), 'utf-8');
 			expect(content).toContain('function _wrapWithChildren');
 			// Container kind: dispatches with rest-params spread
-			expect(content).toMatch(/case "parameters":[\s\S]*?F\.buildParameters\(/);
+			expect(content).toMatch(/case ['"]parameters['"]:[\s\S]*?F\.buildParameters\(/);
 		});
 
 		it('_resolveOneBranch handles arrays by wrapping with children', async () => {
