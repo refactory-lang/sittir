@@ -135,18 +135,36 @@ function expectFactorySlot(data: ReturnType<typeof buildFactoryMap>, kind: strin
 
 describe('factory-map slot arity metadata', () => {
 	it('emits named and unnamed slot metadata from assembled slot values', () => {
+		// EXPECTATIONS UPDATED for the kind-named-slots unification
+		// (docs/superpowers/specs/2026-05-17-kind-named-slots-design.md):
+		// unnamed positional children no longer merge into a generic
+		// `children` slot with slotCount N — each gets its OWN kind-derived
+		// slot (slotCount 1, unnamed: false), carrying per-slot
+		// required/multiple metadata. This matches the committed
+		// node-model.json5, where every factorySlots entry is a named
+		// singular slot. The per-slot form is strictly richer: e.g.
+		// optional_then_required_parent now records that `identifier` is
+		// optional while `number_literal` is required — the old merged
+		// `children` slot could only say `required: true` overall.
 		const data = buildFactoryMap(makeSlotArityNodeMap());
 
-		expect(expectFactorySlot(data, 'single_parent', 'children')).toEqual({
-			unnamed: true,
+		expect(expectFactorySlot(data, 'single_parent', 'identifier')).toEqual({
+			unnamed: false,
 			slotCount: 1,
 			required: true,
 			multiple: false,
 			nonEmpty: false
 		});
-		expect(expectFactorySlot(data, 'multi_parent', 'children')).toEqual({
-			unnamed: true,
-			slotCount: 2,
+		expect(expectFactorySlot(data, 'multi_parent', 'identifier')).toEqual({
+			unnamed: false,
+			slotCount: 1,
+			required: true,
+			multiple: false,
+			nonEmpty: false
+		});
+		expect(expectFactorySlot(data, 'multi_parent', 'number_literal')).toEqual({
+			unnamed: false,
+			slotCount: 1,
 			required: true,
 			multiple: false,
 			nonEmpty: false
@@ -158,19 +176,30 @@ describe('factory-map slot arity metadata', () => {
 			multiple: true,
 			nonEmpty: true
 		});
-		expect(expectFactorySlot(data, 'optional_then_required_parent', 'children')).toEqual({
-			unnamed: true,
-			slotCount: 2,
+		expect(expectFactorySlot(data, 'optional_then_required_parent', 'identifier')).toEqual({
+			unnamed: false,
+			slotCount: 1,
+			required: false,
+			multiple: false,
+			nonEmpty: false
+		});
+		expect(expectFactorySlot(data, 'optional_then_required_parent', 'number_literal')).toEqual({
+			unnamed: false,
+			slotCount: 1,
 			required: true,
 			multiple: false,
 			nonEmpty: false
 		});
+		// declaration is a singular field occurrence (FIELD(choice(...)));
+		// the old `multiple: true, nonEmpty: true` expectation reflected a
+		// pre-unification cardinality derivation that treated a
+		// choice-with-seq-arm as multi. The slot occurs exactly once.
 		expect(expectFactorySlot(data, 'ambient_like_parent', 'declaration')).toEqual({
 			unnamed: false,
 			slotCount: 1,
 			required: true,
-			multiple: true,
-			nonEmpty: true
+			multiple: false,
+			nonEmpty: false
 		});
 	});
 });

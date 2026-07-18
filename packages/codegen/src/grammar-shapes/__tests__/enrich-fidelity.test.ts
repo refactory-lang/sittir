@@ -150,22 +150,32 @@ describe('EnrichRule<> structural fidelity vs runtime enrich()', () => {
 		expectTypeOf<(M1Inner0 & { name: string })['name']>().toEqualTypeOf<'lifetime'>();
 	});
 
-	it('for_expression: Shape 3 optional(seq(symbol,anon)) -> field inside inner seq', () => {
+	it('for_expression: Shape 3 optional(seq(symbol,anon)) -> field inside HOISTED clause group', () => {
 		const sk = skel(enriched.for_expression) as { m: unknown[] };
-		// member 0 is CHOICE(SEQ(FIELD(label), ':'), BLANK)
+		// Runtime enrich now HOISTS the Shape-3 optional(seq(label, ':'))
+		// into a synthesized hidden clause-group rule instead of wrapping the
+		// field in place. The hoisted rules are deduped by structure across
+		// owners — while/loop/for/block all share `_while_expression_optional1`
+		// (first-seen owner names it). The FIELD insertion this test pins
+		// still happens — inside the hoisted rule's body. wire() later drains
+		// these `_<owner>_optionalN` names into grammar.inline (see the
+		// enrich-clause-group drain in dsl/wire/wire.ts).
 		expect(sk.m[0]).toEqual({
 			t: 'CHOICE',
+			m: [{ t: 'SYMBOL', name: '_while_expression_optional1' }, { t: 'BLANK' }]
+		});
+		// The field lives inside the hoisted clause-group body.
+		expect(skel(enriched['_while_expression_optional1'])).toEqual({
+			t: 'SEQ',
 			m: [
-				{
-					t: 'SEQ',
-					m: [
-						{ t: 'FIELD', name: 'label', c: { t: 'SYMBOL', name: 'label' } },
-						{ t: 'STRING', v: ':' }
-					]
-				},
-				{ t: 'BLANK' }
+				{ t: 'FIELD', name: 'label', c: { t: 'SYMBOL', name: 'label' } },
+				{ t: 'STRING', v: ':' }
 			]
 		});
+		// Type-level: EnrichRule<> keeps the PRE-HOIST in-place view (FIELD
+		// inside the inner seq) — hoisting is a runtime-enrich structural
+		// move; the type model's job is field-insertion sites for authoring
+		// paths, which are equivalent modulo the hoist.
 		type E = EnrichRule<Rules['for_expression']>;
 		type M0 = (E & { members: readonly GrammarRule[] })['members'][0];
 		type Inner = (M0 & { members: readonly GrammarRule[] })['members'][0]; // the SEQ
@@ -239,6 +249,15 @@ describe('EnrichRule<> structural fidelity vs runtime enrich()', () => {
 		const isFieldAt = (em: any): boolean => {
 			if (em?.type === 'FIELD') return true;
 			const { inner } = peelOpt(em);
+			// Hoisted clause group: enrich replaces a Shape-3 optional(seq)
+			// site with a ref to a synthesized hidden `_<owner>_optionalN`
+			// rule (deduped by structure across owners) and inserts the FIELD
+			// inside that rule's body. Follow the ref — the field insertion
+			// happened, just at the hoisted location.
+			if (inner?.type === 'SYMBOL' && /^_.+_optional\d+$/.test(inner.name)) {
+				const hoisted = enriched[inner.name] as any;
+				return hoisted?.type === 'SEQ' && hoisted.members.some((x: any) => x.type === 'FIELD');
+			}
 			return inner?.type === 'FIELD' || (inner?.type === 'SEQ' && inner.members.some((x: any) => x.type === 'FIELD'));
 		};
 		const skips: string[] = [];
