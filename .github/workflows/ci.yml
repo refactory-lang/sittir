@@ -340,9 +340,9 @@ jobs:
         # render behavior — the pipeline fails LOUDLY if a codegen
         # change silently shifts the capture without a matching commit.
         run: |
-          tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
-          tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
-          tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
+          npx tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
+          npx tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
+          npx tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
       - name: Fixture check — no drift from committed
         # ENFORCING (no per-step continue-on-error). 016 Cluster A
         # established that fixture drift → silent data-rot → 6
@@ -378,27 +378,34 @@ jobs:
           - target: aarch64-apple-darwin
             host: macos-14
             cross: false
+            buildFlag: ""
           - target: x86_64-apple-darwin
             host: macos-13
             cross: false
+            buildFlag: ""
           # T054 — Linux x64
           - target: x86_64-unknown-linux-gnu
             host: ubuntu-22.04
             cross: false
+            buildFlag: ""
           - target: x86_64-unknown-linux-musl
             host: ubuntu-22.04
             cross: true
+            buildFlag: "--cross-compile"
           # T055 — Linux arm64
           - target: aarch64-unknown-linux-gnu
             host: ubuntu-22.04
             cross: true
+            buildFlag: "--use-napi-cross"
           - target: aarch64-unknown-linux-musl
             host: ubuntu-22.04
             cross: true
+            buildFlag: "--cross-compile"
           # T056 — Windows x64
           - target: x86_64-pc-windows-msvc
             host: windows-2022
             cross: false
+            buildFlag: ""
     steps:
       - uses: actions/checkout@v6
       - name: Install pnpm
@@ -414,11 +421,24 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
-      - name: Setup cross-compile (musl / arm64)
-        if: matrix.cross == true
-        uses: napi-rs/setup-node-and-napi@v3
+      # `napi-rs/setup-node-and-napi@v3` was removed upstream (repo no
+      # longer resolves), which failed EVERY matrix leg — GitHub Actions
+      # fails job setup if any referenced action can't be resolved, even
+      # one gated behind `if:`. Replaced with the current napi-rs CLI's
+      # own cross-compile flags (see `buildFlag` above): musl targets
+      # cross-compile via cargo-zigbuild (needs zig + cargo-zigbuild on
+      # PATH), the gnu arm64 target uses napi's bundled cross-toolchain
+      # (`--use-napi-cross`, no extra setup needed).
+      - name: Setup zig (musl cross-compile)
+        if: contains(matrix.target, 'musl')
+        uses: mlugg/setup-zig@v2
         with:
-          target: ${{ matrix.target }}
+          version: 0.14.1
+      - name: Install cargo-zigbuild (musl cross-compile)
+        if: contains(matrix.target, 'musl')
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-zigbuild
       - name: Cache cargo registry + target
         uses: Swatinem/rust-cache@v2
         with:
@@ -426,7 +446,7 @@ jobs:
       - name: napi build — grammar-owned native packages
         run: |
           for crate in rust typescript python; do
-            pnpm -C "rust/crates/sittir-${crate}" exec napi build --platform --release --target "${{ matrix.target }}"
+            pnpm -C "rust/crates/sittir-${crate}" exec napi build --platform --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
           done
       - name: cargo test --workspace (skip cross-compiled targets)
         if: matrix.cross == false

@@ -60,6 +60,32 @@ export async function emitParityFixtures(grammar: string, templatesPath: string)
 		await import('./validate/parity-fixtures.ts');
 	const extracted = await extractParityFixtures(grammar, templatesPath);
 	const fxPath = fixturesOutputPath(grammar);
+
+	// Refuse to clobber a non-trivial committed fixture set with an empty
+	// extraction. A zero-candidate result means the corpus walk never got a
+	// working native engine (debug build refused, stale binary, missing
+	// binary) — extractParityFixtures/validateReadRenderParse swallow that
+	// per-candidate rather than throwing, so without this guard the failure
+	// is invisible: this function would silently overwrite real fixture
+	// data with `[]`. Surface it loudly instead.
+	if (extracted.fixtures.length === 0 && existsSync(fxPath)) {
+		let existingCount = 0;
+		try {
+			existingCount = JSON.parse(readFileSync(fxPath, 'utf8')).length;
+		} catch {
+			// Unreadable/malformed existing file — nothing to protect.
+		}
+		if (existingCount > 0) {
+			throw new Error(
+				`emitParityFixtures[${grammar}]: extraction produced 0 fixtures, refusing to ` +
+					`overwrite ${fxPath} (currently ${existingCount} fixtures). The native engine ` +
+					`likely failed to load for this grammar (debug build refused, stale binary, or ` +
+					`missing .node) — check the console output above for the real error, rebuild ` +
+					`release native bindings, and re-run.`
+			);
+		}
+	}
+
 	writeFile(fxPath, serializeFixtures(extracted.fixtures));
 	console.log(
 		`    ${fxPath} (${extracted.renderCount} render + ${extracted.roundTripCount} roundtrip, ${extracted.coveredKinds.size} kinds)`
