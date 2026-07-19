@@ -439,7 +439,19 @@ jobs:
       - name: cargo test parity (native targets only)
         if: matrix.cross == false
         run: cargo test -p sittir-parity-tests --test parity --target ${{ matrix.target }} -- --ignored --nocapture
+      # `if: !cancelled()` — without this, a failure in either test step
+      # above (e.g. the pre-existing native_parser.rs failure that
+      # currently fails on every platform) skips this step entirely by
+      # GitHub Actions' default fail-fast-within-job behavior, even
+      # though `napi build` already produced a valid, working `.node`.
+      # regression-checker-native and perf-regression-checker both
+      # `needs: napi-build` and download `bindings-x86_64-unknown-linux-gnu`
+      # specifically — without the artifact, they fail outright (or, when
+      # blocked on the full 7-target matrix pre-#167, could never even
+      # start). Upload regardless of test outcome; the binary itself is
+      # still a valid build artifact independent of test pass/fail.
       - name: Upload `.node` artifact
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
           name: bindings-${{ matrix.target }}
