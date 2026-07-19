@@ -523,6 +523,21 @@ export async function run(_argv: string[]): Promise<number> {
 	return 0;
 }
 
+// NOT `process.exit(await run(...))` — genuine top-level await here made
+// Node's top-level-await watchdog false-positive: it force-exits with
+// code 13 ("Unsettled Top-Level Await") even though run()'s promise was
+// simply taking normal time to resolve (the native backend's async N-API
+// work apparently isn't tracked by whatever bookkeeping the watchdog uses
+// to decide "still pending" vs "abandoned"). Confirmed by reproducing:
+// calling run() as an ordinary (non-top-level) async call — including
+// from this exact file, at this exact call site, differing only in
+// whether the `await` is syntactically top-level — never hangs.
 if (isCli) {
-	process.exit(await run(process.argv.slice(2)));
+	run(process.argv.slice(2)).then(
+		(code) => process.exit(code),
+		(err) => {
+			console.error(err);
+			process.exit(1);
+		}
+	);
 }
