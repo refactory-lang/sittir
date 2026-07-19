@@ -1,0 +1,13 @@
+# Force LF line endings on checkout for all text files, on every
+# platform. Without this, Windows CI runners (default core.autocrlf=true)
+# convert checked-out files to CRLF — including rust/crates/sittir-*/
+# templates/*.jinja, which askama's Template derive macro reads directly
+# from disk at compile time. CRLF inside those files breaks askama's
+# parser (`LexError("comment or whitespace around literal")`), which is
+# how this was discovered: napi-build's windows-x64 leg failed to compile
+# sittir-python while every other platform succeeded.
+* text=auto eol=lf
+
+# Tracked binary artifacts — explicit, so `text=auto`'s heuristic is
+# never the only thing standing between these and EOL corruption.
+*.wasm binary
