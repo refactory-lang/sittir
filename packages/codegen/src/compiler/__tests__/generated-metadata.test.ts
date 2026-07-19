@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+	collectGeneratedKindEntries,
 	deriveGeneratedIdTablesFromLanguage,
 	deriveGeneratedIdTablesFromParserCSource,
 	type TreeSitterLanguageMetadata
@@ -94,5 +95,54 @@ static const char * const ts_field_names[] = {
 		expect(nameField?.id).toBe(1);
 		expect(nameField?.parser.cSymbol).toBe('field_name');
 		expect(nameField?.parser.parserName).toBe('name');
+	});
+
+	it("preserves an alias symbol's display name when it collides with its hidden-source counterpart", async () => {
+		// Regression test: `sym__newline` (the hidden source rule) and
+		// `alias_sym_newline` (its visible alias, e.g. python's `_suite`
+		// role-aliasing) both fallback-derive to the same catalog key
+		// `_newline` (`deriveSymbolRuntimeName` maps `alias_sym_X` back to
+		// `_X`). Before the fix, `joinIdNames` silently dropped whichever
+		// of the two lost `shouldReplaceSymbol` — losing the alias's
+		// display name (`"newline"`) entirely, so `kindIdFromName('newline')`
+		// would throw at runtime even though the kind IS cataloged under
+		// its hidden name `_newline`.
+		const tables = await deriveGeneratedIdTablesFromParserCSource(
+			`
+enum ts_symbol_identifiers {
+  sym__newline = 101,
+  alias_sym_newline = 291,
+};
+
+static const char * const ts_symbol_names[] = {
+  [sym__newline] = "_newline",
+  [alias_sym_newline] = "newline",
+};
+
+enum ts_field_identifiers {
+  field_name = 1,
+};
+
+static const char * const ts_field_names[] = {
+  [0] = NULL,
+  [field_name] = "name",
+};
+`,
+			'parser.c'
+		);
+
+		const entries = collectGeneratedKindEntries(tables);
+		const newlineEntry = entries.find((entry) => entry.kind === '_newline');
+
+		expect(newlineEntry).toBeDefined();
+		expect(newlineEntry?.id).toBe(101);
+		// The alias's display name ("newline") survives on the surviving
+		// `_newline` row instead of being dropped — this is what lets
+		// `kindIdFromName('newline')` resolve at runtime.
+		expect(newlineEntry?.symbolName).toBe('newline');
+
+		// No separate `alias_sym_newline`-derived entry — it was merged
+		// into `_newline`, not kept as its own catalog row.
+		expect(entries.find((entry) => entry.kind === 'newline')).toBeUndefined();
 	});
 });

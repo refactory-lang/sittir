@@ -146,10 +146,7 @@ describe('enrich — base-grammar un-aliasing', () => {
 					_reserved_identifier: g.choice('declare', 'type'),
 					identifier: g.seq(g.sym('word')),
 					word: 'x',
-					primary_expression: g.choice(
-						g.sym('identifier'),
-						g.alias(g.sym('_reserved_identifier'), g.sym('identifier'))
-					)
+					primary_expression: g.choice(g.sym('identifier'), g.alias(g.sym('_reserved_identifier'), g.sym('identifier')))
 				}
 			}
 		};
@@ -199,10 +196,7 @@ describe('enrich — base-grammar un-aliasing', () => {
 					identifier: g.seq(g.sym('word')),
 					reserved_identifier: g.seq('already_taken'),
 					word: 'x',
-					primary_expression: g.choice(
-						g.sym('identifier'),
-						g.alias(g.sym('_reserved_identifier'), g.sym('identifier'))
-					)
+					primary_expression: g.choice(g.sym('identifier'), g.alias(g.sym('_reserved_identifier'), g.sym('identifier')))
 				}
 			}
 		};
@@ -316,9 +310,7 @@ describe('enrich — base-grammar un-aliasing', () => {
 		expect(scoped.members.some((m) => m.name === 'generic_type_with_turbofish')).toBe(true);
 		// The structurally-identical-to-majority alias is untouched: still an
 		// ALIAS wrapping its original storage kind.
-		expect(scoped.members.some((m) => m.type === 'ALIAS' && m.content?.name === 'generic_type_alias_dup')).toBe(
-			true
-		);
+		expect(scoped.members.some((m) => m.type === 'ALIAS' && m.content?.name === 'generic_type_alias_dup')).toBe(true);
 
 		const diagnostics = getEnrichUnaliasDiagnostics(result);
 		expect(diagnostics).toHaveLength(1);
@@ -383,10 +375,7 @@ describe('enrich — base-grammar un-aliasing', () => {
 					parent: g.seq(
 						g.field(
 							'operand',
-							g.choice(
-								g.sym('generic_type'),
-								g.alias(g.sym('generic_type_with_turbofish'), g.sym('generic_type'))
-							)
+							g.choice(g.sym('generic_type'), g.alias(g.sym('generic_type_with_turbofish'), g.sym('generic_type')))
 						)
 					)
 				}
@@ -460,11 +449,7 @@ describe('enrich — base-grammar un-aliasing', () => {
 					y: g.seq(g.sym('t')),
 					a1: g.seq(g.sym('t'), g.sym('u')),
 					a2: g.seq(g.sym('t'), g.sym('u')),
-					parent: g.choice(
-						g.alias(g.sym('a1'), g.sym('y')),
-						g.alias(g.sym('a2'), g.sym('y')),
-						g.sym('y')
-					)
+					parent: g.choice(g.alias(g.sym('a1'), g.sym('y')), g.alias(g.sym('a2'), g.sym('y')), g.sym('y'))
 				}
 			}
 		};

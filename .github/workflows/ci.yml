@@ -77,11 +77,12 @@ jobs:
         continue-on-error: true
 
       - name: Test
-        run: pnpm run test
-
-      - name: Test Coverage
-        run: pnpm run test:coverage
-        if: matrix.node-version == '24.x'
+        # `-- --coverage` instruments this same whole-suite run instead of
+        # running it a second time — test-and-record.ts treats --coverage
+        # as compatible with recording (see its own doc comment). This used
+        # to be two separate steps (`pnpm run test` then `pnpm run
+        # test:coverage`), each running all ~208 test files.
+        run: pnpm run test -- --coverage
 
       - name: Security Audit
         run: pnpm audit --audit-level moderate

@@ -433,7 +433,9 @@ describe('factories emitter — per-form factory emission', () => {
 		// Curly factory stamps '{' / '}' via _<name> storage.
 		expect(factoriesSrc).toMatch(/buildIfaceBodyCurly[\s\S]*_opening = "\{" as const[\s\S]*_closing = "\}" as const/);
 		// Flow factory stamps '{|' / '|}' via _<name> storage.
-		expect(factoriesSrc).toMatch(/buildIfaceBodyFlow[\s\S]*_opening = "\{\|" as const[\s\S]*_closing = "\|\}" as const/);
+		expect(factoriesSrc).toMatch(
+			/buildIfaceBodyFlow[\s\S]*_opening = "\{\|" as const[\s\S]*_closing = "\|\}" as const/
+		);
 	});
 
 	it('does not emit a $variant tag (NodeData round-trips through readNode)', () => {

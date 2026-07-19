@@ -22,9 +22,20 @@ import { execFileSync } from 'node:child_process';
 const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 
 export async function setup() {
-	// Rebuild core + grammar package dists so tests never run against
-	// stale compiled output. pnpm build is mtime-aware via tsgo's
-	// incremental mode — no-op when sources haven't changed (~50ms).
+	// Rebuild TS package dists so tests never run against stale compiled
+	// output. tsc's incremental mode makes this a near-no-op when sources
+	// haven't changed. Scoped to `packages/**` (`--filter`) — the napi/
+	// cargo crates under `rust/crates/*` are ALSO pnpm workspace members
+	// with their own `build` script, and an unscoped `pnpm -r run build`
+	// pulls those in too: cargo's own incremental check still costs
+	// 30-50s wall-clock even when nothing changed (verified locally),
+	// versus ~2s for every TS package combined. Native binary staleness
+	// is a separate, much rarer concern (requires actual Rust source
+	// changes) already handled by the project's own SITTIR_NATIVE_DEBUG /
+	// validate:native discipline — not something this global test setup
+	// should pay for on every run. Tests resolve via tsconfig paths (tsx
+	// runtime) in the common case anyway; only a handful of root-level
+	// tests actually need dist/ fresh.
 	//
 	// Skipped in CI: the workflow's own "Build" step already ran this
 	// exact command moments earlier — rebuilding here is pure redundancy.
@@ -35,11 +46,11 @@ export async function setup() {
 	if (!process.env.CI) {
 		try {
 			const t0 = Date.now();
-			execFileSync('pnpm', ['-r', 'run', 'build'], {
+			execFileSync('pnpm', ['--filter', './packages/**', '-r', 'run', 'build'], {
 				cwd: import.meta.dirname,
 				stdio: 'pipe'
 			});
-			console.log(`[vitest-setup] pnpm -r run build (${Date.now() - t0}ms)`);
+			console.log(`[vitest-setup] pnpm --filter ./packages/** -r run build (${Date.now() - t0}ms)`);
 		} catch {
 			// The dist artifacts are already present from the last successful build.
 			// Warn but continue — tests resolve via tsconfig paths (tsx runtime),

@@ -18,7 +18,8 @@ import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
 
 export function makeNodeMapWith(
 	nodes: Map<string, AssembledNode>,
-	polymorphFormKinds: ReadonlySet<string> = new Set()
+	polymorphFormKinds: ReadonlySet<string> = new Set(),
+	aliasedHiddenKinds?: Map<string, string>
 ): NodeMap {
 	return {
 		name: 'rust',
@@ -34,7 +35,8 @@ export function makeNodeMapWith(
 		linkRules: {},
 		externals: new Set(),
 		word: undefined,
-		polymorphFormKinds
+		polymorphFormKinds,
+		aliasedHiddenKinds
 	} satisfies NodeMap;
 }
 

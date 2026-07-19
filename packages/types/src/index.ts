@@ -443,9 +443,8 @@ type Pluralize<S extends string> = S extends `${string}s`
 								? `${Pre}ies`
 								: `${S}s`;
 
-type FieldKey<K extends string, V> = NonNullable<V> extends readonly any[]
-	? Pluralize<CamelCase<K>>
-	: EscapeReservedAccessor<CamelCase<K>>;
+type FieldKey<K extends string, V> =
+	NonNullable<V> extends readonly any[] ? Pluralize<CamelCase<K>> : EscapeReservedAccessor<CamelCase<K>>;
 
 /** Common render/edit methods attached to every fluent node. */
 export type NodeMethods<K extends string> = {

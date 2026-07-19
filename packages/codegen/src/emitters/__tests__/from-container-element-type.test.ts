@@ -1,6 +1,11 @@
 import { CHOICE, FIELD, OPTIONAL, PATTERN, SEQ, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
-import { AssembledBranch, AssembledKeyword, AssembledPattern, type AssembledNode } from '../../compiler/model/node-map.ts';
+import {
+	AssembledBranch,
+	AssembledKeyword,
+	AssembledPattern,
+	type AssembledNode
+} from '../../compiler/model/node-map.ts';
 import type { SeqRule } from '../../types/rule.ts';
 import { deleteWrapper } from '../../compiler/wrapper-deletion.ts';
 import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';

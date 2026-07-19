@@ -282,13 +282,18 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		factoryFields = mapData.factoryFields;
 		factorySlots = mapData.factorySlots;
 		polymorphVariants = mapData.polymorphVariants;
-		// Load KIND_NAMES (static Map) and kindIdFromName from the grammar's
-		// types module.
+		// Load KIND_DISPLAY_NAMES (static Map) and kindIdFromName from the
+		// grammar's types module. KIND_DISPLAY_NAMES (not KIND_NAMES) —
+		// this feeds the native<->WASM kind-name bridge (findNativeNodeId /
+		// matchesRenderedKind below), which must match tree-sitter's own
+		// raw `.type` string (the display label), not the canonical
+		// wrap-dispatch catalog key. See emitKindIdEnumAndLookups's
+		// KIND_DISPLAY_NAMES doc comment (packages/codegen/src/emitters/types.ts).
 		const typesModulePath = TYPES_MODULE_PATHS[grammar];
 		if (typesModulePath) {
 			try {
 				const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
-				const kindNamesMap = typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
+				const kindNamesMap = typesModule.KIND_DISPLAY_NAMES as ReadonlyMap<number, string> | undefined;
 				if (kindNamesMap) {
 					kindNames = kindNamesMap;
 					kindNameFromId = (id: number) => kindNamesMap.get(id);

@@ -260,6 +260,31 @@ export async function collectParityFixtures(
 			actual = renderer.render(fx.input);
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
+			// The deprecated JS/Nunjucks backend (createRenderer) resolves a
+			// node's template by NAME, via KIND_DISPLAY_NAMES — NOT
+			// KIND_NAMES, which is reserved for wrapNode's canonical-key
+			// dispatch (see emitKindIdEnumAndLookups in
+			// emitters/types.ts). KIND_DISPLAY_NAMES carries the parser's
+			// own display label, so grammar-aliased-at-a-reference-site
+			// kinds like python's `_patterns` (aliased to `pattern_group`
+			// via `alias($._patterns, $.pattern_group)` in overrides.ts)
+			// resolve their template correctly. This tolerance branch
+			// stays as a general safety net for the JS backend regardless —
+			// any kind with NO emitted template at all (rather than a
+			// name-resolution mismatch) still needs to fail gracefully
+			// here rather than hard-crashing the whole collection. Native
+			// rendering dispatches by numeric id, not name, and is
+			// unaffected either way; any other exception (e.g. a genuine
+			// native regression, or an infra failure like a bad boundary
+			// import) still throws.
+			if (backend === 'js' && /No render template for/.test(message)) {
+				const kind = fx.input.$type;
+				const id = `render #${idx}`;
+				const existing = failingByKind.get(kind) ?? [];
+				existing.push(id);
+				failingByKind.set(kind, existing);
+				return;
+			}
 			throw new Error(`[${grammar}][${backend}][render #${idx}] ${fx.input.$type}: ${message}`);
 		}
 		if (actual === fx.expectedOutput) {

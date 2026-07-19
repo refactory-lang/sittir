@@ -125,7 +125,16 @@ export function acceptedTransportKinds(kind: string, nodeMap?: NodeMap): string[
 	if (!nodeMap) return [kind];
 	const node = nodeMap.nodes.get(kind);
 	if (!node) return [kind];
-	if (node.modelType === 'supertype') return [kind];
+	// A hidden kind that's also the CONTENT of a named alias
+	// (`alias(symbol(_X), $.visible)`) shares its runtime kind id with
+	// that alias's visible name — the generated id catalog (KIND_NAMES,
+	// see emitters/types.ts) records the id under the visible name, not
+	// the raw hidden kind key. Without this, `kindIdByKind.get(kind)`
+	// (the hidden key) misses entirely and the id arm silently drops —
+	// see native-transport-emit.test.ts's "accepts visible alias kind
+	// ids for hidden-wrapper child enums".
+	const aliasTarget = nodeMap.aliasedHiddenKinds?.get(kind);
+	if (aliasTarget !== undefined) return [kind, aliasTarget];
 	return [kind];
 }
 

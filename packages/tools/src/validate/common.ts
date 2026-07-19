@@ -1237,7 +1237,11 @@ export async function loadKindNames(grammar: string): Promise<ReadonlyMap<number
 	if (!typesModulePath) return undefined;
 	try {
 		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
-		return typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
+		// KIND_DISPLAY_NAMES (not KIND_NAMES) — this feeds the JS-backend
+		// template renderer's name resolution, which needs the parser's
+		// display label, not the canonical (wrap-dispatch) catalog key.
+		// See emitKindIdEnumAndLookups's KIND_DISPLAY_NAMES doc comment.
+		return typesModule.KIND_DISPLAY_NAMES as ReadonlyMap<number, string> | undefined;
 	} catch {
 		return undefined;
 	}
@@ -1248,10 +1252,12 @@ export async function loadKindNameFromId(grammar: string): Promise<((id: number)
 	if (!typesModulePath) return undefined;
 	try {
 		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
-		// Phase D: types.ts now exports KIND_NAMES (static Map) instead of
-		// kindNameFromId (function). Wrap the Map in a function to keep the
-		// validator's existing interface.
-		const kindNames = typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
+		// KIND_DISPLAY_NAMES (not KIND_NAMES) — this feeds findNativeNodeId/
+		// walkNativeForKind's native<->WASM kind-name bridge, which must
+		// match tree-sitter's own raw `.type` string (the display label),
+		// not the canonical catalog key. See emitKindIdEnumAndLookups's
+		// KIND_DISPLAY_NAMES doc comment.
+		const kindNames = typesModule.KIND_DISPLAY_NAMES as ReadonlyMap<number, string> | undefined;
 		if (kindNames) {
 			return (id: number) => kindNames.get(id);
 		}

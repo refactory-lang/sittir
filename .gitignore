@@ -83,3 +83,4 @@ packages/tools/src/**/*.d.ts.map
 
 # Local cargo build tuning (e.g. lld linker) — per-machine, requires lld installed
 .cargo/config.toml
+**/.DS_Store

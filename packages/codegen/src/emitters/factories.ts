@@ -861,7 +861,9 @@ function emitFieldCarryingFactory(
 				const elemType = fieldElementType(f, nodeMap);
 				const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
 				const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`;
-				withLines.push(`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: values }),`);
+				withLines.push(
+					`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: values }),`
+				);
 			} else {
 				const elemType = setterElemType(f, fieldElementType(f, nodeMap), fn, nodeMap);
 				withLines.push(

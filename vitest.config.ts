@@ -13,10 +13,25 @@ import { fileURLToPath } from 'node:url';
  */
 export default defineConfig({
 	resolve: {
+		// Root-level tests (tests/format-roundtrip/*, tests/acceptance/*) have
+		// no per-package tsconfig `paths` mapping to fall back on, so `@sittir/*`
+		// imports there resolve via real Node/Vite package resolution — which
+		// requires `dist/` to already be built (package.json's `exports`).
+		// Package-scoped tests avoid this via tsconfig paths (`tsx` honors them
+		// at runtime — see project convention), resolving straight to source.
+		// Mirror that here so root-level tests don't have a hard dependency on
+		// a fresh `dist/` build either — matches tsconfig.json's paths exactly.
 		alias: {
 			'@sittir/legacy-core/engine': fileURLToPath(
 				new URL('./packages/legacy-core/src/engine-boundary.ts', import.meta.url)
-			)
+			),
+			'@sittir/python/utils': fileURLToPath(new URL('./packages/python/src/utils.ts', import.meta.url)),
+			'@sittir/python': fileURLToPath(new URL('./packages/python/src/index.ts', import.meta.url)),
+			'@sittir/rust/utils': fileURLToPath(new URL('./packages/rust/src/utils.ts', import.meta.url)),
+			'@sittir/rust': fileURLToPath(new URL('./packages/rust/src/index.ts', import.meta.url)),
+			'@sittir/typescript/utils': fileURLToPath(new URL('./packages/typescript/src/utils.ts', import.meta.url)),
+			'@sittir/typescript/tsx': fileURLToPath(new URL('./packages/typescript/src/tsx/index.ts', import.meta.url)),
+			'@sittir/typescript': fileURLToPath(new URL('./packages/typescript/src/index.ts', import.meta.url))
 		}
 	},
 	test: {
