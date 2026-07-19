@@ -88,63 +88,22 @@ jobs:
         run: pnpm audit --audit-level moderate
         continue-on-error: true
 
-  # Spec 016 T009 — regression-checker (TS mode). Compares the PR base's
-  # `specs/016-parity-regressions/baselines/ts.json` against the head's.
-  # Fails the job on any of the five verdict rules in
-  # `specs/016-parity-regressions/contracts/baseline-json.md`
-  # (pass-count drop, total drop, total-fail rise, schema violation,
-  # format-deferred-count rise).
-  #
-  # TS mode runs in its own job (rather than alongside native) because
-  # it has no napi dependency: it can run as soon as `CI` finishes and
-  # doesn't need the `.node` artifacts produced by the `napi-build`
-  # matrix. The native-mode equivalent runs as `regression-checker-native`
-  # below, gated on `napi-build`.
-  #
-  # Skipped on direct pushes (no base ref to diff against). Only runs
-  # on `pull_request` events.
-  regression-checker:
-    name: 016 baseline regression-checker (ts)
-    runs-on: ubuntu-latest
-    needs: CI
-    if: github.event_name == 'pull_request'
-    steps:
-      - name: Checkout PR head with full history
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-      - name: Use Node.js 24.x
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.x
-          cache: "pnpm"
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      - name: Resolve base SHA
-        id: base
-        run: echo "sha=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
-      - name: Snapshot base ts.json
-        run: |
-          mkdir -p /tmp/016-base
-          git show "${{ steps.base.outputs.sha }}:specs/016-parity-regressions/baselines/ts.json" \
-            > /tmp/016-base/ts.json
-      - name: Collect head ts.json
-        run: |
-          mkdir -p /tmp/016-head
-          SITTIR_BACKEND=typescript npx tsx packages/tools/src/scripts/collect-baseline.ts \
-            > /tmp/016-head/ts.json
-      - name: Diff ts.json against base (verdict rules)
-        run: |
-          npx tsx packages/tools/src/scripts/check-baseline-regression.ts \
-            --base /tmp/016-base/ts.json \
-            --head /tmp/016-head/ts.json
-
   # Spec 016 T009 (follow-up) — regression-checker (native mode).
-  # Sibling to `regression-checker`, gated on `napi-build` so the linux
-  # x86_64-gnu `.node` artifacts produced by that matrix are available
-  # to dispatch `SITTIR_BACKEND=native` through the shared native boundary.
+  #
+  # RETIRED the TS/JS-mode sibling job (`regression-checker`, compared
+  # against `specs/016-parity-regressions/baselines/ts.json` via
+  # `SITTIR_BACKEND=typescript`) — it drove the deprecated js/dispatch
+  # engine, which is no longer the source of truth (the Rust native
+  # engine is, per CLAUDE.md) and per
+  # docs/superpowers/specs/2026-04-27-js-backend-rename-design.md,
+  # `SITTIR_BACKEND=typescript` isn't even the supported non-native
+  # selector anymore (`js` is). This native-mode job is the durable gate
+  # going forward; `ts.json` / the retired job's history remain under
+  # specs/016-parity-regressions/ as a record of the completed feature.
+  #
+  # Gated on `napi-build` so the linux x86_64-gnu `.node` artifacts
+  # produced by that matrix are available to dispatch
+  # `SITTIR_BACKEND=native` through the shared native boundary.
   #
   # The check-baseline-regression script is backend-agnostic (the same
   # five verdict rules apply to both `ts.json` and `native.json` per
