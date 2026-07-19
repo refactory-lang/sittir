@@ -341,6 +341,19 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Cache cargo registry + target
         uses: Swatinem/rust-cache@v2
+      # Fixture extraction (below) requires a NATIVE engine loaded via
+      # backend: 'native' — without a freshly built release .node, it
+      # silently sees 0 candidates. This job never built one before, so
+      # "Regenerate fixtures" was either producing an empty extraction
+      # (masked by the "Fixture check" glob bug below, now fixed) or —
+      # after emitParityFixtures's clobber guard was added — would fail
+      # outright instead. Build once, host-platform-only (no --target /
+      # cross-compile matrix needed here, unlike napi-build/napi-publish).
+      - name: Build native release bindings (for fixture extraction)
+        run: |
+          for crate in rust typescript python; do
+            pnpm -C "rust/crates/sittir-${crate}" exec napi build --platform --release
+          done
       - name: Regenerate fixtures
         # The test-fixtures.json files are checked in, but regenerating
         # here catches drift between committed fixtures and current
@@ -356,7 +369,12 @@ jobs:
         # parity tests failing for the wrong reason. Failing CI
         # forces the next maintainer to commit the regen output
         # alongside whatever codegen change caused the drift.
-        run: git diff --exit-code rust/crates/sittir-*/render/test-fixtures.json
+        #
+        # Path fixed to match the real output location (no `render/`
+        # segment — see packages/codegen/src/emitters/render-module-paths.ts).
+        # The old glob matched zero files, so this check was a permanent
+        # no-op regardless of what "Regenerate fixtures" actually did.
+        run: git diff --exit-code rust/crates/sittir-*/test-fixtures.json
       - name: cargo test parity (--ignored for diagnostic)
         # Advisory until #[ignore]'d tests pass un-ignored — see job
         # docstring above.
