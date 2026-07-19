@@ -523,15 +523,21 @@ export async function run(_argv: string[]): Promise<number> {
 	return 0;
 }
 
-// NOT `process.exit(await run(...))` — genuine top-level await here made
-// Node's top-level-await watchdog false-positive: it force-exits with
-// code 13 ("Unsettled Top-Level Await") even though run()'s promise was
-// simply taking normal time to resolve (the native backend's async N-API
-// work apparently isn't tracked by whatever bookkeeping the watchdog uses
-// to decide "still pending" vs "abandoned"). Confirmed by reproducing:
-// calling run() as an ordinary (non-top-level) async call — including
-// from this exact file, at this exact call site, differing only in
-// whether the `await` is syntactically top-level — never hangs.
+// NOT `process.exit(await run(...))` — that creates a genuine ESM cycle on
+// the native backend, not a watchdog false-positive. This module's static
+// import of validateReadRenderParse (above) is resolved before this file's
+// own top-level code runs; but `run()` → collectValidatorsForGrammar() →
+// validateReadRenderParse(..., { backend: 'native' }) dynamically
+// `import()`s THIS file back (read-render-parse.ts, to reach
+// loadBoundaryRender). If this file's top-level evaluation is itself
+// suspended on a top-level `await run(...)`, that dynamic import can't
+// resolve until this module finishes evaluating — which can't happen until
+// the dynamic import resolves. A real deadlock; Node's exit code 13
+// ("Unsettled Top-Level Await") is diagnosing it correctly, not
+// misfiring. Moving `run()` off the top-level await lets this module's
+// own evaluation complete synchronously, so by the time the dynamic
+// import fires, the module is already in the cache and it resolves
+// immediately — no cycle.
 if (isCli) {
 	run(process.argv.slice(2)).then(
 		(code) => process.exit(code),
