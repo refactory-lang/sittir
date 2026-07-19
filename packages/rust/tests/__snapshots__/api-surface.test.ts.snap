@@ -13,6 +13,7 @@ exports[`@sittir/rust — API surface snapshot (SC-008) > top-level exports 1`] 
   "FIELD_MAP": "object",
   "FRAGMENT_SPECIFIERS": "array",
   "KEYWORDS": "array",
+  "KIND_DISPLAY_NAMES": "object",
   "KIND_NAMES": "object",
   "LEAF_KINDS": "array",
   "LiteralKind": "object",

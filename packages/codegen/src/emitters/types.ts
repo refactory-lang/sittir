@@ -538,16 +538,57 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[]): vo
 
 	lines.push('export const KIND_NAMES: ReadonlyMap<number, string> = new Map([');
 	for (const entry of entries) {
-		// Prefer the parser's own display name (`symbolName`) over the raw
-		// catalog key when one exists and this isn't an anonymous token
-		// (anon symbolName carries literal punctuation text, e.g. "+", not
-		// a kind name — `kind` stays correct there). This matters for
-		// alias-collision-preserved entries: `_patterns`'s row also covers
-		// its promoted alias `pattern_group`, and `kindIdFromName` already
-		// resolves both names to this id — KIND_NAMES needs to agree on
-		// the SAME display name for id -> name lookups (e.g. the JS
-		// backend's name-based template resolution) to work, since a Map
-		// can only carry one name per id.
+		// Always the canonical catalog key (`entry.kind`), never
+		// `entry.symbolName`. KIND_NAMES id->name lookups feed `wrapNode`'s
+		// dispatch tables (`_wrapTable` / `_aliasTargetToSource`,
+		// packages/*/src/wrap.ts), which are keyed by the catalog's
+		// canonical (possibly hidden, `_`-prefixed) name — NOT by the raw
+		// C-parser display label `ts_symbol_names[]` happens to carry.
+		// Substituting a symbolName here (e.g. `_template_chars`'s
+		// `string_fragment`, or `_patterns`'s `pattern_group`) breaks that
+		// lookup silently: the node falls through to the unknown-kind
+		// fallback and comes back unwrapped, with no error thrown. This
+		// holds even for entries whose symbolName was preserved across a
+		// `joinIdNames` alias-id collision — genuinely visible-aliased
+		// kinds are resolved through a *different* path (tree-sitter's own
+		// string `$type` output, via `_aliasTargetToSource`), not through
+		// this numeric-id map.
+		//
+		// Two OTHER consumers prefer the C-parser display label instead
+		// (`entry.symbolName`) and must NOT read this map — see
+		// `KIND_DISPLAY_NAMES` below, which serves them:
+		//  - The deprecated JS/Nunjucks backend's name-based template
+		//    resolution (`resolveKindName` / `renderNunjucks`,
+		//    packages/legacy-core/src/render.ts).
+		//  - The validator's native/WASM coordinate bridge
+		//    (`findNativeNodeId` / `walkNativeForKind`,
+		//    packages/tools/src/validate/common.ts): it matches a native
+		//    numeric `$type` against a WASM-parsed tree's raw string
+		//    `.type` field, which tree-sitter itself populates from
+		//    `ts_symbol_names[]` — the display label, not the catalog key.
+		//    Using this (canonical-keyed) map there silently breaks that
+		//    match for every hidden kind whose display label differs from
+		//    its catalog key (`_newline` vs `"newline"`, etc.), which
+		//    surfaces as native/WASM node-lookup misses across
+		//    `from.ts`/`read-render-parse.ts`/`factory-render-parse.ts` —
+		//    confirmed empirically: reusing this map there dropped
+		//    python's `from` validator from 102/120 to 97/120 with zero
+		//    new *reported* errors, because the failure mode is a silent
+		//    `continue` (`nativeCoords === null`), not a thrown error.
+		lines.push(`  [${entry.id}, ${JSON.stringify(entry.kind)}],`);
+	}
+	lines.push(']);');
+	lines.push('');
+
+	lines.push(
+		'/** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */'
+	);
+	lines.push('export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([');
+	for (const entry of entries) {
+		// Mirrors 2026-07-18's original (pre-split) KIND_NAMES rule: prefer
+		// the parser's own display name over the raw catalog key, except
+		// for anonymous tokens (their symbolName carries literal
+		// punctuation text, e.g. "+", not a kind name).
 		const displayName = entry.symbolName && !entry.anon ? entry.symbolName : entry.kind;
 		lines.push(`  [${entry.id}, ${JSON.stringify(displayName)}],`);
 	}
