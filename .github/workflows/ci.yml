@@ -317,7 +317,14 @@ jobs:
   # parity-test step to enforcing once those tests pass un-ignored.
   rust-parity:
     name: cargo test parity (advisory)
-    runs-on: ubuntu-22.04
+    # ubuntu-latest (not ubuntu-22.04, unlike the other rust-* jobs — this
+    # one doesn't produce a distributable artifact so there's no glibc-
+    # compat target to pin to): the "Regenerate fixtures" step's `npx tsx
+    # ... gen --all` runs `tree-sitter generate`, and the locked
+    # tree-sitter-cli@0.26.9 prebuilt binary requires GLIBC 2.39, which
+    # ubuntu-22.04's 2.35 doesn't have. `CI (24.x)` already runs the same
+    # codegen path successfully on ubuntu-latest.
+    runs-on: ubuntu-latest
     needs: rust
     steps:
       - uses: actions/checkout@v6
