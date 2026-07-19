@@ -95,7 +95,8 @@ echo "[scope] (d) scanning Rust dep graph for derive / proc-macro crates…"
 # list in spec 012.
 allow=(
     # Spec-named: render templates + boundary + serde + tree-sitter
-    "askama_derive"            # askama 0.14 — `#[derive(Template)]`
+    "askama_derive"            # askama 0.15 — `#[derive(Template)]`
+    "askama_macros"            # askama 0.15 — `askama` crate's proc-macro entrypoint, wraps askama_derive
     "napi-derive"              # napi 3 — `#[napi(object)]` + `#[napi]`
     "serde_derive"             # serde 1 — `#[derive(Serialize/Deserialize)]`
     # Tree-sitter internals (transitive — pulled in by tree-sitter and

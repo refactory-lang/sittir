@@ -88,63 +88,22 @@ jobs:
         run: pnpm audit --audit-level moderate
         continue-on-error: true
 
-  # Spec 016 T009 — regression-checker (TS mode). Compares the PR base's
-  # `specs/016-parity-regressions/baselines/ts.json` against the head's.
-  # Fails the job on any of the five verdict rules in
-  # `specs/016-parity-regressions/contracts/baseline-json.md`
-  # (pass-count drop, total drop, total-fail rise, schema violation,
-  # format-deferred-count rise).
-  #
-  # TS mode runs in its own job (rather than alongside native) because
-  # it has no napi dependency: it can run as soon as `CI` finishes and
-  # doesn't need the `.node` artifacts produced by the `napi-build`
-  # matrix. The native-mode equivalent runs as `regression-checker-native`
-  # below, gated on `napi-build`.
-  #
-  # Skipped on direct pushes (no base ref to diff against). Only runs
-  # on `pull_request` events.
-  regression-checker:
-    name: 016 baseline regression-checker (ts)
-    runs-on: ubuntu-latest
-    needs: CI
-    if: github.event_name == 'pull_request'
-    steps:
-      - name: Checkout PR head with full history
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-      - name: Use Node.js 24.x
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.x
-          cache: "pnpm"
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      - name: Resolve base SHA
-        id: base
-        run: echo "sha=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
-      - name: Snapshot base ts.json
-        run: |
-          mkdir -p /tmp/016-base
-          git show "${{ steps.base.outputs.sha }}:specs/016-parity-regressions/baselines/ts.json" \
-            > /tmp/016-base/ts.json
-      - name: Collect head ts.json
-        run: |
-          mkdir -p /tmp/016-head
-          SITTIR_BACKEND=typescript npx tsx packages/tools/src/scripts/collect-baseline.ts \
-            > /tmp/016-head/ts.json
-      - name: Diff ts.json against base (verdict rules)
-        run: |
-          npx tsx packages/tools/src/scripts/check-baseline-regression.ts \
-            --base /tmp/016-base/ts.json \
-            --head /tmp/016-head/ts.json
-
   # Spec 016 T009 (follow-up) — regression-checker (native mode).
-  # Sibling to `regression-checker`, gated on `napi-build` so the linux
-  # x86_64-gnu `.node` artifacts produced by that matrix are available
-  # to dispatch `SITTIR_BACKEND=native` through the shared native boundary.
+  #
+  # RETIRED the TS/JS-mode sibling job (`regression-checker`, compared
+  # against `specs/016-parity-regressions/baselines/ts.json` via
+  # `SITTIR_BACKEND=typescript`) — it drove the deprecated js/dispatch
+  # engine, which is no longer the source of truth (the Rust native
+  # engine is, per CLAUDE.md) and per
+  # docs/superpowers/specs/2026-04-27-js-backend-rename-design.md,
+  # `SITTIR_BACKEND=typescript` isn't even the supported non-native
+  # selector anymore (`js` is). This native-mode job is the durable gate
+  # going forward; `ts.json` / the retired job's history remain under
+  # specs/016-parity-regressions/ as a record of the completed feature.
+  #
+  # Gated on `napi-build` so the linux x86_64-gnu `.node` artifacts
+  # produced by that matrix are available to dispatch
+  # `SITTIR_BACKEND=native` through the shared native boundary.
   #
   # The check-baseline-regression script is backend-agnostic (the same
   # five verdict rules apply to both `ts.json` and `native.json` per
@@ -317,7 +276,14 @@ jobs:
   # parity-test step to enforcing once those tests pass un-ignored.
   rust-parity:
     name: cargo test parity (advisory)
-    runs-on: ubuntu-22.04
+    # ubuntu-latest (not ubuntu-22.04, unlike the other rust-* jobs — this
+    # one doesn't produce a distributable artifact so there's no glibc-
+    # compat target to pin to): the "Regenerate fixtures" step's `npx tsx
+    # ... gen --all` runs `tree-sitter generate`, and the locked
+    # tree-sitter-cli@0.26.9 prebuilt binary requires GLIBC 2.39, which
+    # ubuntu-22.04's 2.35 doesn't have. `CI (24.x)` already runs the same
+    # codegen path successfully on ubuntu-latest.
+    runs-on: ubuntu-latest
     needs: rust
     steps:
       - uses: actions/checkout@v6
@@ -334,22 +300,40 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
       - name: Cache cargo registry + target
         uses: Swatinem/rust-cache@v2
+      # Fixture extraction (below) requires a NATIVE engine loaded via
+      # backend: 'native' — without a freshly built release .node, it
+      # silently sees 0 candidates. This job never built one before, so
+      # "Regenerate fixtures" was either producing an empty extraction
+      # (masked by the "Fixture check" glob bug below, now fixed) or —
+      # after emitParityFixtures's clobber guard was added — would fail
+      # outright instead. Build once, host-platform-only (no --target /
+      # cross-compile matrix needed here, unlike napi-build/napi-publish).
+      - name: Build native release bindings (for fixture extraction)
+        run: |
+          for crate in rust typescript python; do
+            pnpm -C "rust/crates/sittir-${crate}" exec napi build --platform --release
+          done
       - name: Regenerate fixtures
         # The test-fixtures.json files are checked in, but regenerating
         # here catches drift between committed fixtures and current
         # render behavior — the pipeline fails LOUDLY if a codegen
         # change silently shifts the capture without a matching commit.
         run: |
-          tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
-          tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
-          tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
+          npx tsx packages/cli/src/cli.ts gen --grammar rust --all --output packages/rust/src
+          npx tsx packages/cli/src/cli.ts gen --grammar typescript --all --output packages/typescript/src
+          npx tsx packages/cli/src/cli.ts gen --grammar python --all --output packages/python/src
       - name: Fixture check — no drift from committed
         # ENFORCING (no per-step continue-on-error). 016 Cluster A
         # established that fixture drift → silent data-rot → 6
         # parity tests failing for the wrong reason. Failing CI
         # forces the next maintainer to commit the regen output
         # alongside whatever codegen change caused the drift.
-        run: git diff --exit-code rust/crates/sittir-*/render/test-fixtures.json
+        #
+        # Path fixed to match the real output location (no `render/`
+        # segment — see packages/codegen/src/emitters/render-module-paths.ts).
+        # The old glob matched zero files, so this check was a permanent
+        # no-op regardless of what "Regenerate fixtures" actually did.
+        run: git diff --exit-code rust/crates/sittir-*/test-fixtures.json
       - name: cargo test parity (--ignored for diagnostic)
         # Advisory until #[ignore]'d tests pass un-ignored — see job
         # docstring above.
@@ -378,27 +362,34 @@ jobs:
           - target: aarch64-apple-darwin
             host: macos-14
             cross: false
+            buildFlag: ""
           - target: x86_64-apple-darwin
             host: macos-13
             cross: false
+            buildFlag: ""
           # T054 — Linux x64
           - target: x86_64-unknown-linux-gnu
             host: ubuntu-22.04
             cross: false
+            buildFlag: ""
           - target: x86_64-unknown-linux-musl
             host: ubuntu-22.04
             cross: true
+            buildFlag: "--cross-compile"
           # T055 — Linux arm64
           - target: aarch64-unknown-linux-gnu
             host: ubuntu-22.04
             cross: true
+            buildFlag: "--use-napi-cross"
           - target: aarch64-unknown-linux-musl
             host: ubuntu-22.04
             cross: true
+            buildFlag: "--cross-compile"
           # T056 — Windows x64
           - target: x86_64-pc-windows-msvc
             host: windows-2022
             cross: false
+            buildFlag: ""
     steps:
       - uses: actions/checkout@v6
       - name: Install pnpm
@@ -414,23 +405,49 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
-      - name: Setup cross-compile (musl / arm64)
-        if: matrix.cross == true
-        uses: napi-rs/setup-node-and-napi@v3
+      # `napi-rs/setup-node-and-napi@v3` was removed upstream (repo no
+      # longer resolves), which failed EVERY matrix leg — GitHub Actions
+      # fails job setup if any referenced action can't be resolved, even
+      # one gated behind `if:`. Replaced with the current napi-rs CLI's
+      # own cross-compile flags (see `buildFlag` above): musl targets
+      # cross-compile via cargo-zigbuild (needs zig + cargo-zigbuild on
+      # PATH), the gnu arm64 target uses napi's bundled cross-toolchain
+      # (`--use-napi-cross`, no extra setup needed).
+      - name: Setup zig (musl cross-compile)
+        if: contains(matrix.target, 'musl')
+        uses: mlugg/setup-zig@v2
         with:
-          target: ${{ matrix.target }}
+          version: 0.14.1
+      - name: Install cargo-zigbuild (musl cross-compile)
+        if: contains(matrix.target, 'musl')
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-zigbuild
       - name: Cache cargo registry + target
         uses: Swatinem/rust-cache@v2
         with:
           key: ${{ matrix.target }}
+      # `shell: bash` is required here: this `for` loop is bash syntax, but
+      # windows-latest runners default `run:` steps to PowerShell, which
+      # can't parse it ("Missing opening '(' after keyword 'for'").
       - name: napi build — grammar-owned native packages
+        shell: bash
         run: |
           for crate in rust typescript python; do
-            pnpm -C "rust/crates/sittir-${crate}" exec napi build --platform --release --target "${{ matrix.target }}"
+            pnpm -C "rust/crates/sittir-${crate}" exec napi build --platform --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
           done
+      # `--no-default-features` is required for a bare `cargo test
+      # --workspace`: sittir-{rust,typescript,python} default to
+      # `napi-bindings` ON (needed for `napi build` above), and workspace
+      # feature unification means a plain `cargo test --workspace` links
+      # each grammar crate's own test binary WITH napi symbols — which
+      # only resolve inside a real Node.js host, so the standalone test
+      # binary fails at link time. sittir-parity-tests already requests
+      # `default-features = false` on these deps, but that request gets
+      # unified away unless the whole workspace test run also disables it.
       - name: cargo test --workspace (skip cross-compiled targets)
         if: matrix.cross == false
-        run: cargo test --workspace --target ${{ matrix.target }}
+        run: cargo test --workspace --no-default-features --target ${{ matrix.target }}
       # T061 — every platform job runs the parity suite (SC-006 gate).
       # On cross-compiled hosts we still invoke the test binary build
       # but skip execution (the resulting binary cannot run on the CI

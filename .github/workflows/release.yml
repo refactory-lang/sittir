@@ -17,10 +17,12 @@
 
 name: Release
 
+# DISABLED (temporary): no npm Trusted Publisher / NPM_TOKEN is configured
+# yet, so this failed `ENEEDAUTH` on every push to master. Gated to manual
+# dispatch until publishing credentials are set up per the Setup notes
+# above — flip back to `push: branches: [master]` once that's done.
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -127,24 +129,31 @@ jobs:
           - target: aarch64-apple-darwin
             host: macos-14
             cross: false
+            buildFlag: ""
           - target: x86_64-apple-darwin
             host: macos-13
             cross: false
+            buildFlag: ""
           - target: x86_64-unknown-linux-gnu
             host: ubuntu-22.04
             cross: false
+            buildFlag: ""
           - target: x86_64-unknown-linux-musl
             host: ubuntu-22.04
             cross: true
+            buildFlag: "--cross-compile"
           - target: aarch64-unknown-linux-gnu
             host: ubuntu-22.04
             cross: true
+            buildFlag: "--use-napi-cross"
           - target: aarch64-unknown-linux-musl
             host: ubuntu-22.04
             cross: true
+            buildFlag: "--cross-compile"
           - target: x86_64-pc-windows-msvc
             host: windows-2022
             cross: false
+            buildFlag: ""
     steps:
       - uses: actions/checkout@v6
       - name: Install pnpm
@@ -161,19 +170,30 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
-      - name: Setup cross-compile (musl / arm64)
-        if: matrix.cross == true
-        uses: napi-rs/setup-node-and-napi@v3
+      # See ci.yml's `napi-build` job for why `napi-rs/setup-node-and-napi@v3`
+      # was replaced with these flag-driven cross-compile steps.
+      - name: Setup zig (musl cross-compile)
+        if: contains(matrix.target, 'musl')
+        uses: mlugg/setup-zig@v2
         with:
-          target: ${{ matrix.target }}
+          version: 0.14.1
+      - name: Install cargo-zigbuild (musl cross-compile)
+        if: contains(matrix.target, 'musl')
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-zigbuild
       - name: Cache cargo registry + target
         uses: Swatinem/rust-cache@v2
         with:
           key: release-${{ matrix.target }}
+      # `shell: bash` is required here: this `for` loop is bash syntax, but
+      # windows-latest runners default `run:` steps to PowerShell, which
+      # can't parse it ("Missing opening '(' after keyword 'for'").
       - name: napi build (release) — grammar-owned native packages
+        shell: bash
         run: |
           for crate in rust typescript python; do
-            pnpm -C "rust/crates/sittir-${crate}" exec napi build --platform --release --target "${{ matrix.target }}"
+            pnpm -C "rust/crates/sittir-${crate}" exec napi build --platform --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
           done
       - name: Upload artifact
         uses: actions/upload-artifact@v4
