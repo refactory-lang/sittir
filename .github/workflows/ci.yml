@@ -356,40 +356,24 @@ jobs:
     continue-on-error: true
     strategy:
       fail-fast: false
+      # Only x86_64-unknown-linux-gnu builds on every push/PR — it's the
+      # sole artifact regression-checker-native + perf-regression-checker
+      # (below) actually consume; nothing else in ci.yml touches the
+      # other 6 legs' output. Those 6 are pure "does it compile on
+      # platform X" checks with no per-PR consumer: release.yml's
+      # napi-publish job already builds (and verifies) all 7 targets
+      # independently on tag push before publishing, so building them
+      # again here on every PR was pure duplicated CI time — doubly so
+      # since continue-on-error above already meant nothing was gated on
+      # their result. Gated to tag pushes so a platform-specific break
+      # still surfaces (at release time) without paying the cost per PR.
+      #
+      # `matrix.*` isn't available in job-level `if:` (GitHub Actions
+      # evaluates job `if:` before matrix expansion), so the matrix
+      # itself has to be conditional — computed via fromJSON rather than
+      # a plain `include:` list.
       matrix:
-        include:
-          # T053 — macOS
-          - target: aarch64-apple-darwin
-            host: macos-14
-            cross: false
-            buildFlag: ""
-          - target: x86_64-apple-darwin
-            host: macos-13
-            cross: false
-            buildFlag: ""
-          # T054 — Linux x64
-          - target: x86_64-unknown-linux-gnu
-            host: ubuntu-22.04
-            cross: false
-            buildFlag: ""
-          - target: x86_64-unknown-linux-musl
-            host: ubuntu-22.04
-            cross: true
-            buildFlag: "--cross-compile"
-          # T055 — Linux arm64
-          - target: aarch64-unknown-linux-gnu
-            host: ubuntu-22.04
-            cross: true
-            buildFlag: "--use-napi-cross"
-          - target: aarch64-unknown-linux-musl
-            host: ubuntu-22.04
-            cross: true
-            buildFlag: "--cross-compile"
-          # T056 — Windows x64
-          - target: x86_64-pc-windows-msvc
-            host: windows-2022
-            cross: false
-            buildFlag: ""
+        include: ${{ startsWith(github.ref, 'refs/tags/v') && fromJSON('[{"target":"aarch64-apple-darwin","host":"macos-14","cross":false,"buildFlag":""},{"target":"x86_64-apple-darwin","host":"macos-13","cross":false,"buildFlag":""},{"target":"x86_64-unknown-linux-gnu","host":"ubuntu-22.04","cross":false,"buildFlag":""},{"target":"x86_64-unknown-linux-musl","host":"ubuntu-22.04","cross":true,"buildFlag":"--cross-compile"},{"target":"aarch64-unknown-linux-gnu","host":"ubuntu-22.04","cross":true,"buildFlag":"--use-napi-cross"},{"target":"aarch64-unknown-linux-musl","host":"ubuntu-22.04","cross":true,"buildFlag":"--cross-compile"},{"target":"x86_64-pc-windows-msvc","host":"windows-2022","cross":false,"buildFlag":""}]') || fromJSON('[{"target":"x86_64-unknown-linux-gnu","host":"ubuntu-22.04","cross":false,"buildFlag":""}]') }}
     steps:
       - uses: actions/checkout@v6
       - name: Install pnpm
