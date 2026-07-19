@@ -195,7 +195,10 @@ jobs:
     needs: napi-build
     if: github.event_name == 'pull_request'
     env:
-      # Warn-only window: 2026-04-26 → 2026-05-26 per spec 054 FR-008.
+      # Warn-only window: 2026-07-19 → 2026-08-18 per spec 054 FR-008.
+      # Re-baselined on this date because FFI round-trip tracking (recordFfi)
+      # had been drafted but never wired to a real call site since the
+      # original 2026-04-26 baseline — see the boundary.ts render() wiring.
       # Flip to enforcing by removing this env block after the window.
       SITTIR_METRICS_FFI_WARN_ONLY: "1"
     steps:

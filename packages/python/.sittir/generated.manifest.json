@@ -16,7 +16,7 @@
     "packages/python/.sittir/tree-sitter.json": "3950b01c1615b2635ff9b254e6dbfca6d068240af7df192da0c0cdd396115c62",
     "packages/python/src/.gitignore": "f88dc1e9a9e22edc543fca920b569a3ea4bef48d02700fd098ea1bf22b2e7102",
     "packages/python/src/backend.ts": "ab39be3c39cea0601de33e650b578c363d741609e7ba58a1632bd4680421895e",
-    "packages/python/src/boundary.ts": "3d134bb2d602f2072fda61aa748bf51b557d915c70fb220e6faebd01522567e9",
+    "packages/python/src/boundary.ts": "24637b5d59f133c9bcf18cc4a8f941ac745dc9ad4f6f0643f9ad5d4103c0c71d",
     "packages/python/src/consts.ts": "9eca7b71a9bb4990087338a0be4878be4cdf551949fd7476af0c6c9b0ceb5708",
     "packages/python/src/engine.ts": "8ad98d46d0066af6603ea5971daf4ae709bd85773b6897c7d12446e73b4958c5",
     "packages/python/src/factories.ts": "5af011a453f585ee9fec7091695fc3937e67f88ed8cae91ae985f21634e234a0",
