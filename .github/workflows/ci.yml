@@ -443,14 +443,27 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           key: ${{ matrix.target }}
+      # `shell: bash` is required here: this `for` loop is bash syntax, but
+      # windows-latest runners default `run:` steps to PowerShell, which
+      # can't parse it ("Missing opening '(' after keyword 'for'").
       - name: napi build — grammar-owned native packages
+        shell: bash
         run: |
           for crate in rust typescript python; do
             pnpm -C "rust/crates/sittir-${crate}" exec napi build --platform --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
           done
+      # `--no-default-features` is required for a bare `cargo test
+      # --workspace`: sittir-{rust,typescript,python} default to
+      # `napi-bindings` ON (needed for `napi build` above), and workspace
+      # feature unification means a plain `cargo test --workspace` links
+      # each grammar crate's own test binary WITH napi symbols — which
+      # only resolve inside a real Node.js host, so the standalone test
+      # binary fails at link time. sittir-parity-tests already requests
+      # `default-features = false` on these deps, but that request gets
+      # unified away unless the whole workspace test run also disables it.
       - name: cargo test --workspace (skip cross-compiled targets)
         if: matrix.cross == false
-        run: cargo test --workspace --target ${{ matrix.target }}
+        run: cargo test --workspace --no-default-features --target ${{ matrix.target }}
       # T061 — every platform job runs the parity suite (SC-006 gate).
       # On cross-compiled hosts we still invoke the test binary build
       # but skip execution (the resulting binary cannot run on the CI

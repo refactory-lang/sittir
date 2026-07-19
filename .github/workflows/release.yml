@@ -186,7 +186,11 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           key: release-${{ matrix.target }}
+      # `shell: bash` is required here: this `for` loop is bash syntax, but
+      # windows-latest runners default `run:` steps to PowerShell, which
+      # can't parse it ("Missing opening '(' after keyword 'for'").
       - name: napi build (release) — grammar-owned native packages
+        shell: bash
         run: |
           for crate in rust typescript python; do
             pnpm -C "rust/crates/sittir-${crate}" exec napi build --platform --release --target "${{ matrix.target }}" ${{ matrix.buildFlag }}
