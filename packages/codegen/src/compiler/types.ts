@@ -225,6 +225,14 @@ export interface RawGrammar {
 	 */
 	readonly expectDiagnostics?: Readonly<Record<string, readonly string[]>>;
 	/**
+	 * Per-kind known-failing generated-test declarations from
+	 * `expectTestFailures:` in the override layer — kind name → short reason
+	 * string referencing the tracking issue. `emitters/test.ts` emits listed
+	 * kinds' tests as `describe.skip` with the reason inline. Remove an entry
+	 * (and regen) once the underlying defect is fixed.
+	 */
+	readonly expectTestFailures?: Readonly<Record<string, string>>;
+	/**
 	 * Enrich-synthesized clause-hoist rule names (`_<parent>_optional<N>` /
 	 * `_<parent>_group<N>`) whose recorded owning parent this grammar's own
 	 * `rules:` config redeclares — the override author could never reference

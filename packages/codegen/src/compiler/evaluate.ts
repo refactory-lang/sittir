@@ -707,6 +707,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	const groups = drainGroupsMetadata(opts);
 	const polymorphsConfig = drainPolymorphsConfigMetadata(opts);
 	const expectDiagnostics = drainExpectDiagnosticsMetadata(opts);
+	const expectTestFailures = drainExpectTestFailuresMetadata(opts);
 	const orphanedSyntheticGroups = drainOrphanedSyntheticGroupsMetadata(opts);
 	// renderAs must be drained BEFORE buildRuleCatalog so the synthesized
 	// rule bodies appear in the catalog. It also strips any base-grammar
@@ -750,6 +751,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		polymorphsConfig,
 		renderAs,
 		expectDiagnostics,
+		expectTestFailures,
 		orphanedSyntheticGroups
 	} satisfies RawGrammar;
 	// Propagate enrich()'s un-aliasing diagnostics from the base grammar result
@@ -1617,6 +1619,24 @@ function drainExpectDiagnosticsMetadata(opts: GrammarOptions): Record<string, re
 	const e: Record<string, readonly string[]> = {};
 	for (const [code, kinds] of Object.entries(wireCtx.expectDiagnostics)) {
 		if (kinds !== undefined) e[code] = kinds;
+	}
+	if (Object.keys(e).length === 0) return undefined;
+	return e;
+}
+
+/**
+ * Read the `expectTestFailures:` config from the wire context — the grammar
+ * author's declaration of kinds whose generated `nodes.test.ts` tests are
+ * known-failing (tracked defects); `emitters/test.ts` emits those as
+ * `describe.skip` with the declared reason. Returns `undefined` when no
+ * block was supplied, mirroring {@link drainExpectDiagnosticsMetadata}.
+ */
+function drainExpectTestFailuresMetadata(opts: GrammarOptions): Record<string, string> | undefined {
+	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+	if (!wireCtx || !wireCtx.expectTestFailures) return undefined;
+	const e: Record<string, string> = {};
+	for (const [kind, reason] of Object.entries(wireCtx.expectTestFailures)) {
+		if (reason !== undefined) e[kind] = reason;
 	}
 	if (Object.keys(e).length === 0) return undefined;
 	return e;

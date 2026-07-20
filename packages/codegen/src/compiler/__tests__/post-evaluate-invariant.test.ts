@@ -130,6 +130,10 @@ describe('post-evaluate invariant', () => {
 				// Per-kind diagnostic exceptions from overrides.ts `expectDiagnostics:` —
 				// read by collectGrammarDiagnostics (grammar-diagnostics.ts).
 				'expectDiagnostics',
+				// Per-kind known-failing generated-test declarations from
+				// `expectTestFailures:` — read by emitTests (emitters/test.ts)
+				// for describe.skip emission.
+				'expectTestFailures',
 				// Enrich-synthesized clause-hoist names orphaned by an override
 				// redeclaring their recorded owner — read by
 				// collectGrammarDiagnosticsForGrammar to suppress phantom diagnostics.

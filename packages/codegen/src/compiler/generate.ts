@@ -340,7 +340,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		strict: cfg.strict,
 		triviaKinds,
 		grammarRoles,
-		emitRenderModule: cfg.emitRenderModule
+		emitRenderModule: cfg.emitRenderModule,
+		expectTestFailures: raw.expectTestFailures
 	});
 
 	const result: GeneratedFiles = {

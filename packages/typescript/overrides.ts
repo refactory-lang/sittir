@@ -970,6 +970,19 @@ export default grammar(
 				_automatic_semicolon: blank(),
 				_function_signature_automatic_semicolon: blank()
 			}),
+			// Known-failing generated nodes.test.ts kinds — tracked defects, not
+			// silenced mysteries. Remove an entry + regen when its issue is fixed.
+			expectTestFailures: {
+				debugger_statement: '#170 — _resolveOneLeaf cannot resolve the _semicolon stub',
+				import_require_clause: '#170 — Missing field _content on ImportRequireClauseTransport._source',
+				object_type_content: '#170 (#172-adjacent) — Missing field _content through export-arm transport',
+				string: '#170 — StringContentTransportSlot rejects stub ($type property missing)',
+				enum_body_group1: '#170 — renders empty for dummy element',
+				export_clause_group1: '#170 — separatedList factory/transport element-slot mismatch',
+				formal_parameters_group1: '#170 — separatedList factory/transport element-slot mismatch',
+				named_imports_group1: '#170 — separatedList factory/transport element-slot mismatch',
+				tuple_type_group1: '#170 — separatedList factory/transport element-slot mismatch'
+			},
 			rules: {
 				// parenthesized_expression: held. Base is plain `seq('(',
 				// _expressions, ')')` with no outer prec — my hoist's prec

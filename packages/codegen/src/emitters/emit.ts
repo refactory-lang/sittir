@@ -51,6 +51,9 @@ export interface EmitAllConfig {
 	triviaKinds?: string[];
 	grammarRoles?: GrammarRoles;
 	emitRenderModule?: boolean;
+	/** Kind → reason for known-failing generated tests (`expectTestFailures:`
+	 *  in overrides.ts) — threaded to `emitTests` for `describe.skip` emission. */
+	expectTestFailures?: Readonly<Record<string, string>>;
 }
 
 export interface EmitAllResult {
@@ -93,7 +96,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		strict,
 		triviaKinds,
 		grammarRoles,
-		emitRenderModule
+		emitRenderModule,
+		expectTestFailures
 	} = config;
 	const renderModuleEmission = classifyRenderModuleEmission(grammar, emitRenderModule);
 	const kindEntries = generatedIdTables
@@ -244,7 +248,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
 	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
-	const tests = emitTests({ grammar, nodeMap, generatedIdTables });
+	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures });
 	const typeTests = emitTypeTests({ nodeMap, generatedIdTables });
 	const utils = emitClientUtils({ nodeMap, generatedIdTables, triviaKinds });
 

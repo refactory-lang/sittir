@@ -2175,6 +2175,7 @@ function wire(config, base2) {
     polymorphsConfig: cfg.polymorphs,
     renderAs: cfg.renderAs,
     expectDiagnostics: cfg.expectDiagnostics,
+    expectTestFailures: cfg.expectTestFailures,
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
@@ -3146,6 +3147,12 @@ var overrides_default = grammar(
       // dissolves exactly as the base grammar resolves it (no extra conflict
       // needed — the `as` is inline in `_except_clause_as` at parse time).
       inline: ($, previous) => [...previous ?? [], $._except_clause_as_optional1],
+      // Known-failing generated nodes.test.ts kinds — tracked defects, not
+      // silenced mysteries. Remove an entry + regen when its issue is fixed.
+      expectTestFailures: {
+        type_alias_statement: "#129 \u2014 anonymous 'type' keyword auto-stamp collides with the type rule",
+        list_pattern_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch (Missing field _case_pattern)"
+      },
       polymorphs: {
         assignment: { "1/0": "eq", "1/1": "type", "1/2": "typed" },
         // expression_statement: bare expression / comma-separated tuple

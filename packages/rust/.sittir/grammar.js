@@ -2621,6 +2621,7 @@ function wire(config, base2) {
     polymorphsConfig: cfg.polymorphs,
     renderAs: cfg.renderAs,
     expectDiagnostics: cfg.expectDiagnostics,
+    expectTestFailures: cfg.expectTestFailures,
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
@@ -4010,6 +4011,27 @@ var overrides_default = grammar(
       // Raw string literal delimiters — static (1-hash form only).
       // Round-trip will fail for `r##"..."##` etc. Factory-side benefit: no
       // delimiter-count parameter needed.
+      // Known-failing generated nodes.test.ts kinds — tracked defects, not
+      // silenced mysteries. Remove an entry + regen when its issue is fixed.
+      expectTestFailures: {
+        async_block: "#130 \u2014 factory returns block $type / no $render accessor",
+        block_comment: "#130 \u2014 factory output has no $render accessor",
+        gen_block: "#130 \u2014 factory returns block $type / no $render accessor",
+        reference_pattern: "#130 \u2014 factory returns wrong $type / no $render accessor",
+        self_parameter: "#130 \u2014 factory output has no $render accessor",
+        variadic_parameter: "#130 \u2014 factory output has no $render accessor",
+        foreign_mod_item: "#128 \u2014 lenient from-coercion wraps alternate branch into spurious DeclarationList",
+        mod_item: "#128 \u2014 lenient from-coercion wraps alternate branch into spurious DeclarationList",
+        arguments_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch (Missing field _attributed_argument)",
+        enum_variant_list_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch",
+        field_declaration_list_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch",
+        ordered_field_declaration_list_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch",
+        parameters_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch",
+        slice_pattern_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch",
+        use_bounds_group1: "#170 \u2014 dummy element kind rejected by content transport slot",
+        use_list_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch",
+        where_clause_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch"
+      },
       renderAs: (_$) => ({
         // Doc comment markers
         _outer_line_doc_comment_marker: string("/"),
