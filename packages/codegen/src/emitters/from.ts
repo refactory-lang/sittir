@@ -1055,9 +1055,10 @@ function expandAndDedupeContentTypes(contentTypes: readonly string[], nodeMap: N
 function classifyKindsForResolver(
 	expanded: string[],
 	nodeMap: NodeMap
-): { leafKinds: string[]; branchKinds: string[] } {
+): { leafKinds: string[]; branchKinds: string[]; tokenKinds: string[] } {
 	const leafKinds: string[] = [];
 	const branchKinds: string[] = [];
+	const tokenKinds: string[] = [];
 	for (const t of expanded) {
 		const n = nodeMap.nodes.get(t);
 		if (!n) {
@@ -1072,7 +1073,12 @@ function classifyKindsForResolver(
 				leafKinds.push(t);
 				break;
 			case 'token':
-				// Anonymous tokens have no factory binding — skip.
+				// Anonymous tokens have no factory binding — no resolver
+				// dispatch, but they are still VALID union members: report
+				// them so the single-kind fast path can pass an already-built
+				// token NodeData through instead of auto-wrapping it into the
+				// primary branch's container (#128).
+				tokenKinds.push(t);
 				break;
 			case 'supertype':
 			case 'branch':
@@ -1084,7 +1090,7 @@ function classifyKindsForResolver(
 				break;
 		}
 	}
-	return { leafKinds, branchKinds };
+	return { leafKinds, branchKinds, tokenKinds };
 }
 
 /**
@@ -1112,6 +1118,7 @@ function buildSingleKindFastPath(
 	prop: string,
 	leafKinds: string[],
 	branchKinds: string[],
+	tokenKinds: string[],
 	fieldMultiple: boolean,
 	elementType?: string
 ): string | undefined {
@@ -1127,7 +1134,13 @@ function buildSingleKindFastPath(
 			? '_resolveOneLeaf'
 			: '_resolveOneBranch';
 	const tArg = elementType ? `<${elementType}>` : '';
-	return `${specialized}${tArg}(${prop}, ${JSON.stringify(kindName)})`;
+	// Branch fast path with anonymous-token union siblings (e.g.
+	// mod_item.content's `';' | DeclarationList`): pass the token kinds so
+	// the resolver recognizes an already-valid alternate-branch NodeData
+	// instead of auto-wrapping it into the primary container (#128). Leaf
+	// resolvers never wrap, so they need no alternate list.
+	const altArg = !isLeaf && tokenKinds.length > 0 ? `, ${JSON.stringify(tokenKinds)}` : '';
+	return `${specialized}${tArg}(${prop}, ${JSON.stringify(kindName)}${altArg})`;
 }
 
 /**
@@ -1195,7 +1208,7 @@ function resolveFieldCall(
 	const storageInfo = 'name' in field ? resolveFieldStorageInfo(field as AssembledNonterminal, nodeMap) : undefined;
 
 	const expanded = expandAndDedupeContentTypes(slotKindNames(field), nodeMap);
-	const { leafKinds, branchKinds } = classifyKindsForResolver(expanded, nodeMap);
+	const { leafKinds, branchKinds, tokenKinds } = classifyKindsForResolver(expanded, nodeMap);
 
 	// Pass an explicit element type when we have one — `resolveFieldCall` is
 	// also invoked with merged children pseudo-fields (no AssembledNonterminal
@@ -1204,7 +1217,7 @@ function resolveFieldCall(
 	const elementType =
 		elementTypeOverride ?? ('name' in field ? fieldElementType(field as AssembledNonterminal, nodeMap) : undefined);
 
-	const fastPath = buildSingleKindFastPath(prop, leafKinds, branchKinds, fieldMultiple, elementType);
+	const fastPath = buildSingleKindFastPath(prop, leafKinds, branchKinds, tokenKinds, fieldMultiple, elementType);
 	const baseCall =
 		fastPath !== undefined
 			? fastPath
@@ -1693,13 +1706,19 @@ function emitResolverHelpers(
 	// since _resolveOneBranch references _wrapKindIds and _wrapWithChildren.
 	emitWrapWithChildrenTable(lines, nodeMap, kindEntries);
 
-	lines.push('function _resolveOneBranch<T>(v: _FromFieldInput, kind: string): T {');
+	lines.push('function _resolveOneBranch<T>(v: _FromFieldInput, kind: string, altKinds?: readonly string[]): T {');
 	lines.push('  if (v === undefined || v === null) return v as T;');
 	// Gap 4: NodeData pass-through if $type matches; wrap as single child
-	// when it doesn't and target kind supports children.
+	// when it doesn't and target kind supports children. `altKinds` carries
+	// the slot's OTHER union members (anonymous tokens the resolver
+	// classification has no factory dispatch for, e.g. mod_item.content's
+	// `';'` external form) — a NodeData already matching one is a VALID
+	// alternate branch and must pass through, not get auto-wrapped into the
+	// primary branch's container (#128).
 	lines.push('  if (isNodeData(v)) {');
 	lines.push('    const wrapId = _wrapKindIds[kind];');
 	lines.push('    if (wrapId !== undefined && v.$type !== wrapId) {');
+	lines.push('      if (altKinds !== undefined && altKinds.some(k => kindIdFromName(k) === v.$type)) return v as T;');
 	lines.push('      return _wrapWithChildren(kind, [v]) as T;');
 	lines.push('    }');
 	lines.push('    return v as T;');
@@ -1751,10 +1770,10 @@ function emitResolverHelpers(
 	lines.push('}');
 	lines.push('');
 
-	lines.push('function _resolveManyBranch<T>(v: _FromFieldInput, kind: string): readonly T[] {');
+	lines.push('function _resolveManyBranch<T>(v: _FromFieldInput, kind: string, altKinds?: readonly string[]): readonly T[] {');
 	lines.push('  if (v === undefined || v === null) return [];');
 	lines.push('  const arr: readonly _FromFieldInput[] = Array.isArray(v) ? v : [v];');
-	lines.push('  return arr.map(e => _resolveOneBranch<T>(e, kind));');
+	lines.push('  return arr.map(e => _resolveOneBranch<T>(e, kind, altKinds));');
 	lines.push('}');
 	lines.push('');
 

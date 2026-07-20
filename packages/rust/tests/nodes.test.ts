@@ -684,8 +684,7 @@ describe('for_lifetimes', () => {
 	});
 });
 
-// known-failing: #128 — lenient from-coercion wraps alternate branch into spurious DeclarationList
-describe.skip('foreign_mod_item', () => {
+describe('foreign_mod_item', () => {
 	it('factory produces correct type', () => {
 		const node = ir.foreignModItem({
 			externModifier: { $type: TSKindId.ExternModifier, $text: 'test', $source: 2, $named: true } as any,
@@ -1439,8 +1438,7 @@ describe('metavariable', () => {
 	});
 });
 
-// known-failing: #128 — lenient from-coercion wraps alternate branch into spurious DeclarationList
-describe.skip('mod_item', () => {
+describe('mod_item', () => {
 	it('factory produces correct type', () => {
 		const node = ir.modItem({
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,

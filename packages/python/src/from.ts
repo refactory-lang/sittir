@@ -408,11 +408,12 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 	}
 }
 
-function _resolveOneBranch<T>(v: _FromFieldInput, kind: string): T {
+function _resolveOneBranch<T>(v: _FromFieldInput, kind: string, altKinds?: readonly string[]): T {
 	if (v === undefined || v === null) return v as T;
 	if (isNodeData(v)) {
 		const wrapId = _wrapKindIds[kind];
 		if (wrapId !== undefined && v.$type !== wrapId) {
+			if (altKinds !== undefined && altKinds.some((k) => kindIdFromName(k) === v.$type)) return v as T;
 			return _wrapWithChildren(kind, [v]) as T;
 		}
 		return v as T;
@@ -454,10 +455,10 @@ function _resolveManyLeaf<T>(v: _FromFieldInput, kind: string): readonly T[] {
 	return arr.map((e) => _resolveOneLeaf<T>(e, kind));
 }
 
-function _resolveManyBranch<T>(v: _FromFieldInput, kind: string): readonly T[] {
+function _resolveManyBranch<T>(v: _FromFieldInput, kind: string, altKinds?: readonly string[]): readonly T[] {
 	if (v === undefined || v === null) return [];
 	const arr: readonly _FromFieldInput[] = Array.isArray(v) ? v : [v];
-	return arr.map((e) => _resolveOneBranch<T>(e, kind));
+	return arr.map((e) => _resolveOneBranch<T>(e, kind, altKinds));
 }
 
 function _resolveBooleanKeyword<T>(v: _FromFieldInput): T {

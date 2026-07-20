@@ -506,11 +506,12 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 	}
 }
 
-function _resolveOneBranch<T>(v: _FromFieldInput, kind: string): T {
+function _resolveOneBranch<T>(v: _FromFieldInput, kind: string, altKinds?: readonly string[]): T {
 	if (v === undefined || v === null) return v as T;
 	if (isNodeData(v)) {
 		const wrapId = _wrapKindIds[kind];
 		if (wrapId !== undefined && v.$type !== wrapId) {
+			if (altKinds !== undefined && altKinds.some((k) => kindIdFromName(k) === v.$type)) return v as T;
 			return _wrapWithChildren(kind, [v]) as T;
 		}
 		return v as T;
@@ -552,10 +553,10 @@ function _resolveManyLeaf<T>(v: _FromFieldInput, kind: string): readonly T[] {
 	return arr.map((e) => _resolveOneLeaf<T>(e, kind));
 }
 
-function _resolveManyBranch<T>(v: _FromFieldInput, kind: string): readonly T[] {
+function _resolveManyBranch<T>(v: _FromFieldInput, kind: string, altKinds?: readonly string[]): readonly T[] {
 	if (v === undefined || v === null) return [];
 	const arr: readonly _FromFieldInput[] = Array.isArray(v) ? v : [v];
-	return arr.map((e) => _resolveOneBranch<T>(e, kind));
+	return arr.map((e) => _resolveOneBranch<T>(e, kind, altKinds));
 }
 
 function _resolveBooleanKeyword<T>(v: _FromFieldInput): T {
@@ -1571,7 +1572,7 @@ export function coerceToForeignModItem(input: T.ForeignModItem.Loose): ReturnTyp
 		content: _requireField(
 			'foreign_mod_item',
 			'content',
-			_resolveOneBranch<';' | T.DeclarationList>(input.content, 'declaration_list')
+			_resolveOneBranch<';' | T.DeclarationList>(input.content, 'declaration_list', ['_foreign_mod_item_semi'])
 		)
 	});
 }
@@ -1738,7 +1739,7 @@ export function coerceToImplItem(input: T.ImplItem.Loose): ReturnType<typeof F.b
 		content: _requireField(
 			'impl_item',
 			'content',
-			_resolveOneBranch<T.ImplItemBody | ';'>(input.content, '_impl_item_body')
+			_resolveOneBranch<T.ImplItemBody | ';'>(input.content, '_impl_item_body', ['_impl_item_semi'])
 		)
 	});
 }
@@ -1957,7 +1958,7 @@ export function coerceToModItem(input: T.ModItem.Loose): ReturnType<typeof F.bui
 		content: _requireField(
 			'mod_item',
 			'content',
-			_resolveOneBranch<';' | T.DeclarationList>(input.content, 'declaration_list')
+			_resolveOneBranch<';' | T.DeclarationList>(input.content, 'declaration_list', ['_mod_item_external'])
 		)
 	});
 }
@@ -2102,7 +2103,9 @@ export function coerceToRangePattern(input?: T.RangePattern.Loose): ReturnType<t
 	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildRangePattern>;
 	return F.buildRangePattern({
 		left: _resolveOne<T.LiteralPattern | T.Path>(input?.left, _K32, _K33),
-		content: _resolveOneBranch<T.RangePatternLeftWithRight | '..'>(input?.content, '_range_pattern_left_with_right'),
+		content: _resolveOneBranch<T.RangePatternLeftWithRight | '..'>(input?.content, '_range_pattern_left_with_right', [
+			'_range_pattern_left_bare'
+		]),
 		rangePatternPrefix: _resolveOneBranch<T.RangePatternPrefix>(input?.rangePatternPrefix, '_range_pattern_prefix')
 	});
 }

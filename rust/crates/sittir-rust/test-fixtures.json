@@ -3309,6 +3309,115 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_paren": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "$text": "(\"Got: {}\", slice)",
+        "$span": {
+          "start": 109,
+          "end": 127
+        },
+        "$nodeHandle": 26,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 109,
+        "end": 127
+      },
+      "$nodeHandle": 26,
+      "_content": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "_string_literal": {
+          "$type": 311,
+          "$source": 0,
+          "$named": true,
+          "$text": "\"Got: {}\"",
+          "$span": {
+            "start": 110,
+            "end": 119
+          },
+          "$nodeHandle": 214,
+          "$childIndex": 1
+        },
+        "_token_tree_punctuation": {
+          "$type": 333,
+          "$source": 0,
+          "$named": true,
+          "$text": ",",
+          "$span": {
+            "start": 119,
+            "end": 120
+          },
+          "$nodeHandle": 214,
+          "$childIndex": 2
+        },
+        "_identifier": "slice",
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 109,
+          "end": 127
+        },
+        "$nodeHandle": 214,
+        "_delim_tokens": [
+          {
+            "$type": 311,
+            "$source": 0,
+            "$named": true,
+            "_string_content": "Got: {}",
+            "$other": [
+              124,
+              124
+            ],
+            "$span": {
+              "start": 110,
+              "end": 119
+            },
+            "$nodeHandle": 215,
+            "_content": [
+              "Got: {}"
+            ]
+          },
+          {
+            "$type": 333,
+            "$source": 0,
+            "$named": true,
+            "$text": ",",
+            "$span": {
+              "start": 119,
+              "end": 120
+            },
+            "$nodeHandle": 216
+          },
+          "slice"
+        ]
+      }
+    },
+    "expectedOutput": "(\"Got: {}\" , slice)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(\"Got: {}\", slice)",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(\"Got: {}\" , slice)",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren (string_literal (string_content)) (token_tree_punctuation) (identifier)))",
+    "wrappedText": "fn _f() { mac! (\"Got: {}\" , slice) }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
       "$type": 311,
       "$source": 0,
       "$named": true,
@@ -11250,6 +11359,62 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_paren": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "$text": "(Debug)",
+        "$span": {
+          "start": 34,
+          "end": 41
+        },
+        "$nodeHandle": 15,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 34,
+        "end": 41
+      },
+      "$nodeHandle": 15,
+      "_content": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "_identifier": "Debug",
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 34,
+          "end": 41
+        },
+        "$nodeHandle": 107,
+        "_delim_tokens": [
+          "Debug"
+        ]
+      }
+    },
+    "expectedOutput": "(Debug)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(Debug)",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(Debug)",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren (identifier)))",
+    "wrappedText": "fn _f() { mac! (Debug) }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
       "$type": 176,
       "$source": 0,
       "$named": true,
@@ -12246,6 +12411,90 @@
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (string_literal (string_content)))))",
     "wrappedText": "fn _f() { let _ = include_str!(\"foo-doc.md\"); }",
     "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_paren": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "$text": "(\"foo-doc.md\")",
+        "$span": {
+          "start": 20,
+          "end": 34
+        },
+        "$nodeHandle": 7,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 20,
+        "end": 34
+      },
+      "$nodeHandle": 7,
+      "_content": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "_string_literal": {
+          "$type": 311,
+          "$source": 0,
+          "$named": true,
+          "$text": "\"foo-doc.md\"",
+          "$span": {
+            "start": 21,
+            "end": 33
+          },
+          "$nodeHandle": 46,
+          "$childIndex": 1
+        },
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 20,
+          "end": 34
+        },
+        "$nodeHandle": 46,
+        "_delim_tokens": [
+          {
+            "$type": 311,
+            "$source": 0,
+            "$named": true,
+            "_string_content": "foo-doc.md",
+            "$other": [
+              124,
+              124
+            ],
+            "$span": {
+              "start": 21,
+              "end": 33
+            },
+            "$nodeHandle": 47,
+            "_content": [
+              "foo-doc.md"
+            ]
+          }
+        ]
+      }
+    },
+    "expectedOutput": "(\"foo-doc.md\")"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(\"foo-doc.md\")",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(\"foo-doc.md\")",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren (string_literal (string_content))))",
+    "wrappedText": "fn _f() { mac! (\"foo-doc.md\") }",
+    "wrappedOffset": 15
   },
   {
     "kind": "render",
@@ -17045,6 +17294,55 @@
     "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub))",
     "wrappedText": "pub fn _f() {}",
     "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_brace": {
+        "$type": 381,
+        "$source": 0,
+        "$named": true,
+        "$text": "{}",
+        "$span": {
+          "start": 42,
+          "end": 44
+        },
+        "$nodeHandle": 8,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 42,
+        "end": 44
+      },
+      "$nodeHandle": 8,
+      "_content": {
+        "$type": 381,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 42,
+          "end": 44
+        },
+        "$nodeHandle": 40,
+        "_delim_tokens": []
+      }
+    },
+    "expectedOutput": "{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{}",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "{  }",
+    "expectedReparseTree": "(token_tree (delim_token_tree_brace))",
+    "wrappedText": "fn _f() { mac! {  } }",
+    "wrappedOffset": 15
   },
   {
     "kind": "render",
@@ -25200,6 +25498,62 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_paren": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "$text": "(foo)",
+        "$span": {
+          "start": 53,
+          "end": 58
+        },
+        "$nodeHandle": 25,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 53,
+        "end": 58
+      },
+      "$nodeHandle": 25,
+      "_content": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "_identifier": "foo",
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 53,
+          "end": 58
+        },
+        "$nodeHandle": 82,
+        "_delim_tokens": [
+          "foo"
+        ]
+      }
+    },
+    "expectedOutput": "(foo)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(foo)",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(foo)",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren (identifier)))",
+    "wrappedText": "fn _f() { mac! (foo) }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
       "$type": 260,
       "$source": 0,
       "$named": true,
@@ -28053,6 +28407,62 @@
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (integer_literal))))",
     "wrappedText": "fn _f() { let _ = macro!(4); }",
     "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_paren": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "$text": "(4)",
+        "$span": {
+          "start": 116,
+          "end": 119
+        },
+        "$nodeHandle": 31,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 116,
+        "end": 119
+      },
+      "$nodeHandle": 31,
+      "_content": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "_integer_literal": "4",
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 116,
+          "end": 119
+        },
+        "$nodeHandle": 335,
+        "_delim_tokens": [
+          "4"
+        ]
+      }
+    },
+    "expectedOutput": "(4)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(4)",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(4)",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren (integer_literal)))",
+    "wrappedText": "fn _f() { mac! (4) }",
+    "wrappedOffset": 15
   },
   {
     "kind": "render",
@@ -32463,6 +32873,55 @@
     "expectedReparseTree": "(scoped_identifier path: (bracketed_type (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_bracket)))) name: (identifier))",
     "wrappedText": "fn _f() { let _ = <Token![]>::foo; }",
     "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_bracket": {
+        "$type": 380,
+        "$source": 0,
+        "$named": true,
+        "$text": "[]",
+        "$span": {
+          "start": 7,
+          "end": 9
+        },
+        "$nodeHandle": 7,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 7,
+        "end": 9
+      },
+      "$nodeHandle": 7,
+      "_content": {
+        "$type": 380,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 7,
+          "end": 9
+        },
+        "$nodeHandle": 34,
+        "_delim_tokens": []
+      }
+    },
+    "expectedOutput": "[]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "[]",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "[]",
+    "expectedReparseTree": "(token_tree (delim_token_tree_bracket))",
+    "wrappedText": "fn _f() { mac! [] }",
+    "wrappedOffset": 15
   },
   {
     "kind": "render",
@@ -37457,6 +37916,251 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_paren": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 2,
+          "end": 4
+        },
+        "$nodeHandle": 8,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 2,
+        "end": 4
+      },
+      "$nodeHandle": 8,
+      "_content": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 2,
+          "end": 4
+        },
+        "$nodeHandle": 80,
+        "_delim_tokens": []
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "()",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren))",
+    "wrappedText": "fn _f() { mac! () }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_bracket": {
+        "$type": 380,
+        "$source": 0,
+        "$named": true,
+        "$text": "[]",
+        "$span": {
+          "start": 8,
+          "end": 10
+        },
+        "$nodeHandle": 12,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 8,
+        "end": 10
+      },
+      "$nodeHandle": 12,
+      "_content": {
+        "$type": 380,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 8,
+          "end": 10
+        },
+        "$nodeHandle": 81,
+        "_delim_tokens": []
+      }
+    },
+    "expectedOutput": "[]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "[]",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "[]",
+    "expectedReparseTree": "(token_tree (delim_token_tree_bracket))",
+    "wrappedText": "fn _f() { mac! [] }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_brace": {
+        "$type": 381,
+        "$source": 0,
+        "$named": true,
+        "$text": "{}",
+        "$span": {
+          "start": 14,
+          "end": 16
+        },
+        "$nodeHandle": 16,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 14,
+        "end": 16
+      },
+      "$nodeHandle": 16,
+      "_content": {
+        "$type": 381,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 14,
+          "end": 16
+        },
+        "$nodeHandle": 82,
+        "_delim_tokens": []
+      }
+    },
+    "expectedOutput": "{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{}",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "{  }",
+    "expectedReparseTree": "(token_tree (delim_token_tree_brace))",
+    "wrappedText": "fn _f() { mac! {  } }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_paren": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 23,
+          "end": 25
+        },
+        "$nodeHandle": 21,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 23,
+        "end": 25
+      },
+      "$nodeHandle": 21,
+      "_content": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 23,
+          "end": 25
+        },
+        "$nodeHandle": 83,
+        "_delim_tokens": []
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "()",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren))",
+    "wrappedText": "fn _f() { mac! () }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_brace": {
+        "$type": 381,
+        "$source": 0,
+        "$named": true,
+        "$text": "{}",
+        "$span": {
+          "start": 35,
+          "end": 37
+        },
+        "$nodeHandle": 27,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 35,
+        "end": 37
+      },
+      "$nodeHandle": 27,
+      "_content": {
+        "$type": 381,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 35,
+          "end": 37
+        },
+        "$nodeHandle": 84,
+        "_delim_tokens": []
+      }
+    },
+    "expectedOutput": "{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{}",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "{  }",
+    "expectedReparseTree": "(token_tree (delim_token_tree_brace))",
+    "wrappedText": "fn _f() { mac! {  } }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
       "$type": 243,
       "$source": 0,
       "$named": true,
@@ -37559,6 +38263,118 @@
     "expectedReparseTree": "(scoped_identifier path: (identifier) name: (identifier))",
     "wrappedText": "fn _f() { let _ = f::g; }",
     "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_paren": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "$text": "(a)",
+        "$span": {
+          "start": 108,
+          "end": 111
+        },
+        "$nodeHandle": 54,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 108,
+        "end": 111
+      },
+      "$nodeHandle": 54,
+      "_content": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "_identifier": "a",
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 108,
+          "end": 111
+        },
+        "$nodeHandle": 251,
+        "_delim_tokens": [
+          "a"
+        ]
+      }
+    },
+    "expectedOutput": "(a)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(a)",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(a)",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren (identifier)))",
+    "wrappedText": "fn _f() { mac! (a) }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_paren": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "$text": "(a)",
+        "$span": {
+          "start": 119,
+          "end": 122
+        },
+        "$nodeHandle": 58,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 119,
+        "end": 122
+      },
+      "$nodeHandle": 58,
+      "_content": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "_identifier": "a",
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 119,
+          "end": 122
+        },
+        "$nodeHandle": 252,
+        "_delim_tokens": [
+          "a"
+        ]
+      }
+    },
+    "expectedOutput": "(a)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(a)",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(a)",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren (identifier)))",
+    "wrappedText": "fn _f() { mac! (a) }",
+    "wrappedOffset": 15
   },
   {
     "kind": "render",
@@ -37753,6 +38569,83 @@
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_brace)))",
     "wrappedText": "fn _f() { let _ = ok!{  }; }",
     "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_brace": {
+        "$type": 381,
+        "$source": 0,
+        "$named": true,
+        "$text": "{\n  // one\n  /* two */\n}",
+        "$span": {
+          "start": 4,
+          "end": 28
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 4,
+        "end": 28
+      },
+      "$nodeHandle": 2,
+      "_content": {
+        "$type": 381,
+        "$source": 0,
+        "$named": true,
+        "_line_comment": {
+          "$type": 314,
+          "$source": 0,
+          "$named": true,
+          "$text": "// one",
+          "$span": {
+            "start": 8,
+            "end": 14
+          },
+          "$nodeHandle": 9,
+          "$childIndex": 1
+        },
+        "_block_comment": {
+          "$type": 318,
+          "$source": 0,
+          "$named": true,
+          "$text": "/* two */",
+          "$span": {
+            "start": 17,
+            "end": 26
+          },
+          "$nodeHandle": 9,
+          "$childIndex": 2
+        },
+        "$other": [
+          79,
+          80
+        ],
+        "$span": {
+          "start": 4,
+          "end": 28
+        },
+        "$nodeHandle": 9,
+        "_delim_tokens": []
+      }
+    },
+    "expectedOutput": "{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{\n  // one\n  /* two */\n}",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "{  }",
+    "expectedReparseTree": "(token_tree (delim_token_tree_brace))",
+    "wrappedText": "fn _f() { mac! {  } }",
+    "wrappedOffset": 15
   },
   {
     "kind": "render",
@@ -39159,6 +40052,90 @@
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (string_literal (string_content)))))",
     "wrappedText": "fn _f() { let _ = println!(\"{x}\"); }",
     "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_paren": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "$text": "(\"{x}\")",
+        "$span": {
+          "start": 179,
+          "end": 186
+        },
+        "$nodeHandle": 42,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 179,
+        "end": 186
+      },
+      "$nodeHandle": 42,
+      "_content": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "_string_literal": {
+          "$type": 311,
+          "$source": 0,
+          "$named": true,
+          "$text": "\"{x}\"",
+          "$span": {
+            "start": 180,
+            "end": 185
+          },
+          "$nodeHandle": 261,
+          "$childIndex": 1
+        },
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 179,
+          "end": 186
+        },
+        "$nodeHandle": 261,
+        "_delim_tokens": [
+          {
+            "$type": 311,
+            "$source": 0,
+            "$named": true,
+            "_string_content": "{x}",
+            "$other": [
+              124,
+              124
+            ],
+            "$span": {
+              "start": 180,
+              "end": 185
+            },
+            "$nodeHandle": 262,
+            "_content": [
+              "{x}"
+            ]
+          }
+        ]
+      }
+    },
+    "expectedOutput": "(\"{x}\")"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(\"{x}\")",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(\"{x}\")",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren (string_literal (string_content))))",
+    "wrappedText": "fn _f() { mac! (\"{x}\") }",
+    "wrappedOffset": 15
   },
   {
     "kind": "render",
@@ -43467,6 +44444,104 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_paren": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 345,
+          "end": 347
+        },
+        "$nodeHandle": 100,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 345,
+        "end": 347
+      },
+      "$nodeHandle": 100,
+      "_content": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 345,
+          "end": 347
+        },
+        "$nodeHandle": 450,
+        "_delim_tokens": []
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "()",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren))",
+    "wrappedText": "fn _f() { mac! () }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_paren": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 352,
+          "end": 354
+        },
+        "$nodeHandle": 103,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 352,
+        "end": 354
+      },
+      "$nodeHandle": 103,
+      "_content": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 352,
+          "end": 354
+        },
+        "$nodeHandle": 451,
+        "_delim_tokens": []
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "()",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren))",
+    "wrappedText": "fn _f() { mac! () }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
       "$type": 293,
       "$source": 0,
       "$named": true,
@@ -43774,6 +44849,174 @@
     "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (string_literal (string_content)))))",
     "wrappedText": "fn _f() { let _ = println!(\"three cubed\"); }",
     "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_paren": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "$text": "(\"three cubed\")",
+        "$span": {
+          "start": 87,
+          "end": 102
+        },
+        "$nodeHandle": 19,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 87,
+        "end": 102
+      },
+      "$nodeHandle": 19,
+      "_content": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "_string_literal": {
+          "$type": 311,
+          "$source": 0,
+          "$named": true,
+          "$text": "\"three cubed\"",
+          "$span": {
+            "start": 88,
+            "end": 101
+          },
+          "$nodeHandle": 269,
+          "$childIndex": 1
+        },
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 87,
+          "end": 102
+        },
+        "$nodeHandle": 269,
+        "_delim_tokens": [
+          {
+            "$type": 311,
+            "$source": 0,
+            "$named": true,
+            "_string_content": "three cubed",
+            "$other": [
+              124,
+              124
+            ],
+            "$span": {
+              "start": 88,
+              "end": 101
+            },
+            "$nodeHandle": 270,
+            "_content": [
+              "three cubed"
+            ]
+          }
+        ]
+      }
+    },
+    "expectedOutput": "(\"three cubed\")"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(\"three cubed\")",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(\"three cubed\")",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren (string_literal (string_content))))",
+    "wrappedText": "fn _f() { mac! (\"three cubed\") }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_delim_token_tree_paren": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "$text": "(\"three cubed\")",
+        "$span": {
+          "start": 198,
+          "end": 213
+        },
+        "$nodeHandle": 43,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 198,
+        "end": 213
+      },
+      "$nodeHandle": 43,
+      "_content": {
+        "$type": 379,
+        "$source": 0,
+        "$named": true,
+        "_string_literal": {
+          "$type": 311,
+          "$source": 0,
+          "$named": true,
+          "$text": "\"three cubed\"",
+          "$span": {
+            "start": 199,
+            "end": 212
+          },
+          "$nodeHandle": 271,
+          "$childIndex": 1
+        },
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 198,
+          "end": 213
+        },
+        "$nodeHandle": 271,
+        "_delim_tokens": [
+          {
+            "$type": 311,
+            "$source": 0,
+            "$named": true,
+            "_string_content": "three cubed",
+            "$other": [
+              124,
+              124
+            ],
+            "$span": {
+              "start": 199,
+              "end": 212
+            },
+            "$nodeHandle": 272,
+            "_content": [
+              "three cubed"
+            ]
+          }
+        ]
+      }
+    },
+    "expectedOutput": "(\"three cubed\")"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(\"three cubed\")",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(\"three cubed\")",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren (string_literal (string_content))))",
+    "wrappedText": "fn _f() { mac! (\"three cubed\") }",
+    "wrappedOffset": 15
   },
   {
     "kind": "render",

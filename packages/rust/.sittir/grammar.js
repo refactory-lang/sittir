@@ -4020,8 +4020,6 @@ var overrides_default = grammar(
         reference_pattern: "#130 \u2014 factory returns wrong $type / no $render accessor",
         self_parameter: "#130 \u2014 factory output has no $render accessor",
         variadic_parameter: "#130 \u2014 factory output has no $render accessor",
-        foreign_mod_item: "#128 \u2014 lenient from-coercion wraps alternate branch into spurious DeclarationList",
-        mod_item: "#128 \u2014 lenient from-coercion wraps alternate branch into spurious DeclarationList",
         arguments_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch (Missing field _attributed_argument)",
         enum_variant_list_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch",
         field_declaration_list_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch",
