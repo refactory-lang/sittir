@@ -46,6 +46,26 @@ export function isSlotBearingCompound(
 ): node is AssembledBranch | AssembledGroup | AssembledSeparatedList {
 	return node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList';
 }
+
+/**
+ * A separatedList's single-field-storage canonical slot — the `node.fields`
+ * entry whose storage key wrap.ts/render-module.ts's transport-struct
+ * emission actually use for the "whole element union" bucket (Bug B fix,
+ * wrap.ts's `emitSeparatedListWrap`). Prefers the `arity === 'many'` field
+ * (the real repeated-content slot) and falls back to the first field for
+ * kinds with no such slot.
+ *
+ * SHARED across wrap.ts, factories.ts, from.ts, and test.ts so all four
+ * emitters agree on the same canonical storage key a separatedList's
+ * elements are read from / written to on the wire — see wrap.ts's
+ * `emitSeparatedListWrap` doc comment ("Bug B fix") for the full rationale.
+ * Multi-field kinds (`node.fields.length > 1`) must NOT use this helper for
+ * storage — they route each field through `emitFieldStorageLines`/
+ * `emitFieldAccessorLines` instead (see callers).
+ */
+export function canonicalSeparatedListField(node: AssembledSeparatedList): AssembledNonterminal {
+	return node.fields.find((f) => f.arity === 'many') ?? node.fields[0]!;
+}
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { hasCatalogEntry } from './kind-discriminant.ts';
 

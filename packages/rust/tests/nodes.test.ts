@@ -2421,8 +2421,7 @@ describe('yield_expression', () => {
 	});
 });
 
-// known-failing: #170 — separatedList factory/transport element-slot mismatch (Missing field _attributed_argument)
-describe.skip('arguments_group1', () => {
+describe('arguments_group1', () => {
 	it('factory produces correct type', () => {
 		const node = ir.argumentsGroup1(
 			...[
@@ -2462,8 +2461,7 @@ describe('visibility_modifier_group1', () => {
 	});
 });
 
-// known-failing: #170 — separatedList factory/transport element-slot mismatch
-describe.skip('enum_variant_list_group1', () => {
+describe('enum_variant_list_group1', () => {
 	it('factory produces correct type', () => {
 		const node = ir.enumVariantListGroup1(
 			...[
@@ -2507,8 +2505,7 @@ describe.skip('enum_variant_list_group1', () => {
 	});
 });
 
-// known-failing: #170 — separatedList factory/transport element-slot mismatch
-describe.skip('field_declaration_list_group1', () => {
+describe('field_declaration_list_group1', () => {
 	it('factory produces correct type', () => {
 		const node = ir.fieldDeclarationListGroup1(
 			...[
@@ -2586,8 +2583,7 @@ describe('field_initializer_list_group1', () => {
 	});
 });
 
-// known-failing: #170 — separatedList factory/transport element-slot mismatch
-describe.skip('ordered_field_declaration_list_group1', () => {
+describe('ordered_field_declaration_list_group1', () => {
 	it('factory produces correct type', () => {
 		const node = ir.orderedFieldDeclarationListGroup1(
 			...[
@@ -2619,8 +2615,7 @@ describe.skip('ordered_field_declaration_list_group1', () => {
 	});
 });
 
-// known-failing: #170 — separatedList factory/transport element-slot mismatch
-describe.skip('parameters_group1', () => {
+describe('parameters_group1', () => {
 	it('factory produces correct type', () => {
 		const node = ir.parametersGroup1(
 			...[
@@ -2652,8 +2647,7 @@ describe.skip('parameters_group1', () => {
 	});
 });
 
-// known-failing: #170 — separatedList factory/transport element-slot mismatch
-describe.skip('slice_pattern_group1', () => {
+describe('slice_pattern_group1', () => {
 	it('factory produces correct type', () => {
 		const node = ir.slicePatternGroup1(
 			...[{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
@@ -2701,8 +2695,7 @@ describe('tuple_pattern_group1', () => {
 	});
 });
 
-// known-failing: #170 — dummy element kind rejected by content transport slot
-describe.skip('use_bounds_group1', () => {
+describe('use_bounds_group1', () => {
 	it('factory produces correct type', () => {
 		const node = ir.useBoundsGroup1(
 			...[{ $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any]
@@ -2718,8 +2711,7 @@ describe.skip('use_bounds_group1', () => {
 	});
 });
 
-// known-failing: #170 — separatedList factory/transport element-slot mismatch
-describe.skip('use_list_group1', () => {
+describe('use_list_group1', () => {
 	it('factory produces correct type', () => {
 		const node = ir.useListGroup1(...[{ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any]);
 		expect(node.$type).toBe(TSKindId._UseListGroup1);
@@ -2731,8 +2723,7 @@ describe.skip('use_list_group1', () => {
 	});
 });
 
-// known-failing: #170 — separatedList factory/transport element-slot mismatch
-describe.skip('where_clause_group1', () => {
+describe('where_clause_group1', () => {
 	it('factory produces correct type', () => {
 		const node = ir.whereClauseGroup1(
 			...[

@@ -977,11 +977,7 @@ export default grammar(
 				import_require_clause: '#170 — Missing field _content on ImportRequireClauseTransport._source',
 				object_type_content: '#170 (#172-adjacent) — Missing field _content through export-arm transport',
 				string: '#170 — StringContentTransportSlot rejects stub ($type property missing)',
-				enum_body_group1: '#170 — renders empty for dummy element',
-				export_clause_group1: '#170 — separatedList factory/transport element-slot mismatch',
-				formal_parameters_group1: '#170 — separatedList factory/transport element-slot mismatch',
-				named_imports_group1: '#170 — separatedList factory/transport element-slot mismatch',
-				tuple_type_group1: '#170 — separatedList factory/transport element-slot mismatch'
+				enum_body_group1: '#170 — multi-field separatedList (name/enum_assignment); emitSeparatedListFactory only fixes the single-field-storage case, needs a real per-field partition of the flat elements array'
 			},
 			rules: {
 				// parenthesized_expression: held. Base is plain `seq('(',

@@ -9780,6 +9780,161 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
+      "$type": 256,
+      "$source": 0,
+      "$named": true,
+      "_class_body_method": {
+        "$type": 375,
+        "$source": 0,
+        "$named": true,
+        "$text": "@(super.decorate)\n    method2() { }",
+        "$span": {
+          "start": 14,
+          "end": 49
+        },
+        "$nodeHandle": 2,
+        "$childIndex": 1
+      },
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 8,
+        "end": 51
+      },
+      "$nodeHandle": 2,
+      "_content": [
+        {
+          "$type": 375,
+          "$source": 0,
+          "$named": true,
+          "_decorator": [
+            {
+              "$type": 253,
+              "$source": 0,
+              "$named": true,
+              "_parenthesized_expression": {
+                "$type": 209,
+                "$source": 0,
+                "$named": true,
+                "$text": "(super.decorate)",
+                "$span": {
+                  "start": 15,
+                  "end": 31
+                },
+                "$nodeHandle": 28,
+                "$childIndex": 1
+              },
+              "$other": [
+                113
+              ],
+              "$span": {
+                "start": 14,
+                "end": 31
+              },
+              "$nodeHandle": 28,
+              "_content": {
+                "$type": 209,
+                "$source": 0,
+                "$named": true,
+                "_member_expression": {
+                  "$type": 234,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "super.decorate",
+                  "$span": {
+                    "start": 16,
+                    "end": 30
+                  },
+                  "$nodeHandle": 29,
+                  "$childIndex": 1
+                },
+                "$other": [
+                  22,
+                  24
+                ],
+                "$span": {
+                  "start": 15,
+                  "end": 31
+                },
+                "$nodeHandle": 29,
+                "_content": {
+                  "$type": 234,
+                  "$source": 0,
+                  "$named": true,
+                  "_object": "super",
+                  "_property": "decorate",
+                  "$other": [
+                    45
+                  ],
+                  "$span": {
+                    "start": 16,
+                    "end": 30
+                  },
+                  "$nodeHandle": 30
+                }
+              }
+            }
+          ],
+          "_method_definition": {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_name": "method2",
+            "_parameters": {
+              "$type": 257,
+              "$source": 0,
+              "$named": true,
+              "$text": "()",
+              "$span": {
+                "start": 43,
+                "end": 45
+              },
+              "$nodeHandle": 32
+            },
+            "_body": {
+              "$type": 186,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 46,
+                "end": 49
+              },
+              "$nodeHandle": 33,
+              "_statements": []
+            },
+            "$span": {
+              "start": 36,
+              "end": 49
+            },
+            "$nodeHandle": 31
+          },
+          "$span": {
+            "start": 14,
+            "end": 49
+          },
+          "$nodeHandle": 27
+        }
+      ]
+    },
+    "expectedOutput": "{  @(super.decorate)  method2() {  }  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{\n    @(super.decorate)\n    method2() { }\n}",
+    "pattern": "class_body",
+    "edits": [],
+    "expectedSourceOut": "{  @(super.decorate)  method2() {  }  }",
+    "expectedReparseTree": "(class_body (class_body_method decorator: (decorator (parenthesized_expression (member_expression object: (identifier) property: (property_identifier)))) (method_definition name: (property_identifier) parameters: (formal_parameters) body: (statement_block))))",
+    "wrappedText": "class _C {  @(super.decorate)  method2() {  }  }",
+    "wrappedOffset": 9
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
       "$type": 257,
       "$source": 0,
       "$named": true,

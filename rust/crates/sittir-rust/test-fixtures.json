@@ -26274,6 +26274,181 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
+      "$type": 262,
+      "$source": 0,
+      "$named": true,
+      "_name": {
+        "$type": 245,
+        "$source": 0,
+        "$named": true,
+        "_path": "game",
+        "_name": "User",
+        "$other": [
+          85
+        ],
+        "$span": {
+          "start": 110,
+          "end": 120
+        },
+        "$nodeHandle": 87
+      },
+      "_body": {
+        "$type": 263,
+        "$source": 0,
+        "$named": true,
+        "_initializers": {
+          "$type": 329,
+          "$source": 0,
+          "$named": true,
+          "_field_initializer": [
+            {
+              "$type": 265,
+              "$source": 0,
+              "$named": true,
+              "$text": "name: \"Joe\"",
+              "$span": {
+                "start": 122,
+                "end": 133
+              },
+              "$nodeHandle": 89,
+              "$childIndex": 0
+            },
+            {
+              "$type": 265,
+              "$source": 0,
+              "$named": true,
+              "$text": "age: 35",
+              "$span": {
+                "start": 135,
+                "end": 142
+              },
+              "$nodeHandle": 89,
+              "$childIndex": 2
+            },
+            {
+              "$type": 265,
+              "$source": 0,
+              "$named": true,
+              "$text": "score: 100_000",
+              "$span": {
+                "start": 144,
+                "end": 158
+              },
+              "$nodeHandle": 89,
+              "$childIndex": 4
+            }
+          ],
+          "$other": [
+            83,
+            83
+          ],
+          "$span": {
+            "start": 122,
+            "end": 158
+          },
+          "$nodeHandle": 89,
+          "_content": [
+            {
+              "$type": 265,
+              "$source": 0,
+              "$named": true,
+              "_field": "name",
+              "_value": {
+                "$type": 311,
+                "$source": 0,
+                "$named": true,
+                "_string_content": "Joe",
+                "$other": [
+                  124,
+                  124
+                ],
+                "$span": {
+                  "start": 128,
+                  "end": 133
+                },
+                "$nodeHandle": 93,
+                "_content": [
+                  "Joe"
+                ]
+              },
+              "$other": [
+                5
+              ],
+              "$span": {
+                "start": 122,
+                "end": 133
+              },
+              "$nodeHandle": 90,
+              "_attribute_item": []
+            },
+            {
+              "$type": 265,
+              "$source": 0,
+              "$named": true,
+              "_field": "age",
+              "_value": "35",
+              "$other": [
+                5
+              ],
+              "$span": {
+                "start": 135,
+                "end": 142
+              },
+              "$nodeHandle": 91,
+              "_attribute_item": []
+            },
+            {
+              "$type": 265,
+              "$source": 0,
+              "$named": true,
+              "_field": "score",
+              "_value": "100_000",
+              "$other": [
+                5
+              ],
+              "$span": {
+                "start": 144,
+                "end": 158
+              },
+              "$nodeHandle": 92,
+              "_attribute_item": []
+            }
+          ],
+          "_trailing_sep": false
+        },
+        "$other": [
+          79,
+          80
+        ],
+        "$span": {
+          "start": 121,
+          "end": 159
+        },
+        "$nodeHandle": 88
+      },
+      "$span": {
+        "start": 110,
+        "end": 159
+      },
+      "$nodeHandle": 21
+    },
+    "expectedOutput": "game::User {  name:\"Joe\", age:35, score:100_000 }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "game::User {name: \"Joe\", age: 35, score: 100_000}",
+    "pattern": "struct_expression",
+    "edits": [],
+    "expectedSourceOut": "game::User {  name:\"Joe\", age:35, score:100_000 }",
+    "expectedReparseTree": "(struct_expression name: (scoped_type_identifier path: (identifier) name: (type_identifier)) body: (field_initializer_list initializers: (field_initializer_list_group1 (field_initializer field: (field_identifier) value: (string_literal (string_content))) (field_initializer field: (field_identifier) value: (integer_literal)) (field_initializer field: (field_identifier) value: (integer_literal)))))",
+    "wrappedText": "fn _f() { let _ = game::User {  name:\"Joe\", age:35, score:100_000 }; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
       "$type": 203,
       "$source": 0,
       "$named": true,
@@ -26421,6 +26596,197 @@
     "expectedSourceOut": "let a =SomeStruct {  field1, field2:expression, field3, };",
     "expectedReparseTree": "(let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list initializers: (field_initializer_list_group1 (shorthand_field_initializer identifier: (identifier)) (field_initializer field: (field_identifier) value: (identifier)) (shorthand_field_initializer identifier: (identifier))))))",
     "wrappedText": "let a =SomeStruct {  field1, field2:expression, field3, };",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 203,
+      "$source": 0,
+      "$named": true,
+      "_pattern": "u",
+      "_value": {
+        "$type": 262,
+        "$source": 0,
+        "$named": true,
+        "_name": {
+          "$type": 245,
+          "$source": 0,
+          "$named": true,
+          "_path": "game",
+          "_name": "User",
+          "$other": [
+            85
+          ],
+          "$span": {
+            "start": 110,
+            "end": 120
+          },
+          "$nodeHandle": 140
+        },
+        "_body": {
+          "$type": 263,
+          "$source": 0,
+          "$named": true,
+          "_initializers": {
+            "$type": 329,
+            "$source": 0,
+            "$named": true,
+            "_field_initializer": [
+              {
+                "$type": 265,
+                "$source": 0,
+                "$named": true,
+                "$text": "name: \"Joe\"",
+                "$span": {
+                  "start": 122,
+                  "end": 133
+                },
+                "$nodeHandle": 142,
+                "$childIndex": 0
+              },
+              {
+                "$type": 265,
+                "$source": 0,
+                "$named": true,
+                "$text": "age: 35",
+                "$span": {
+                  "start": 135,
+                  "end": 142
+                },
+                "$nodeHandle": 142,
+                "$childIndex": 2
+              },
+              {
+                "$type": 265,
+                "$source": 0,
+                "$named": true,
+                "$text": "score: 100_000",
+                "$span": {
+                  "start": 144,
+                  "end": 158
+                },
+                "$nodeHandle": 142,
+                "$childIndex": 4
+              }
+            ],
+            "$other": [
+              83,
+              83
+            ],
+            "$span": {
+              "start": 122,
+              "end": 158
+            },
+            "$nodeHandle": 142,
+            "_content": [
+              {
+                "$type": 265,
+                "$source": 0,
+                "$named": true,
+                "_field": "name",
+                "_value": {
+                  "$type": 311,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_content": "Joe",
+                  "$other": [
+                    124,
+                    124
+                  ],
+                  "$span": {
+                    "start": 128,
+                    "end": 133
+                  },
+                  "$nodeHandle": 146,
+                  "_content": [
+                    "Joe"
+                  ]
+                },
+                "$other": [
+                  5
+                ],
+                "$span": {
+                  "start": 122,
+                  "end": 133
+                },
+                "$nodeHandle": 143,
+                "_attribute_item": []
+              },
+              {
+                "$type": 265,
+                "$source": 0,
+                "$named": true,
+                "_field": "age",
+                "_value": "35",
+                "$other": [
+                  5
+                ],
+                "$span": {
+                  "start": 135,
+                  "end": 142
+                },
+                "$nodeHandle": 144,
+                "_attribute_item": []
+              },
+              {
+                "$type": 265,
+                "$source": 0,
+                "$named": true,
+                "_field": "score",
+                "_value": "100_000",
+                "$other": [
+                  5
+                ],
+                "$span": {
+                  "start": 144,
+                  "end": 158
+                },
+                "$nodeHandle": 145,
+                "_attribute_item": []
+              }
+            ],
+            "_trailing_sep": false
+          },
+          "$other": [
+            79,
+            80
+          ],
+          "$span": {
+            "start": 121,
+            "end": 159
+          },
+          "$nodeHandle": 141
+        },
+        "$span": {
+          "start": 110,
+          "end": 159
+        },
+        "$nodeHandle": 139
+      },
+      "$other": [
+        59,
+        78,
+        2
+      ],
+      "$span": {
+        "start": 102,
+        "end": 160
+      },
+      "$nodeHandle": 4
+    },
+    "expectedOutput": "let u =game::User {  name:\"Joe\", age:35, score:100_000 };"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "let u = game::User {name: \"Joe\", age: 35, score: 100_000};",
+    "pattern": "let_declaration",
+    "edits": [],
+    "expectedSourceOut": "let u =game::User {  name:\"Joe\", age:35, score:100_000 };",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (struct_expression name: (scoped_type_identifier path: (identifier) name: (type_identifier)) body: (field_initializer_list initializers: (field_initializer_list_group1 (field_initializer field: (field_identifier) value: (string_literal (string_content))) (field_initializer field: (field_identifier) value: (integer_literal)) (field_initializer field: (field_identifier) value: (integer_literal))))))",
+    "wrappedText": "let u =game::User {  name:\"Joe\", age:35, score:100_000 };",
     "wrappedOffset": 0
   },
   {

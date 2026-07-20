@@ -37,7 +37,8 @@ import {
 	kindsOf,
 	structuralFieldsOf,
 	allFormFieldsOf,
-	allSlotsOf
+	allSlotsOf,
+	aliasTargetToSourceMapOf
 } from '../compiler/model/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import type { TemplateFile } from './template-hash.ts';
@@ -2672,6 +2673,22 @@ interface PerSlotChildEnum {
 	kinds: readonly string[];
 	/** Terminal literal children that may appear in runtime `$children`. */
 	literals: readonly TransportLiteral[];
+	/**
+	 * `parseKind -> storageKind` pairs for this slot's values whose wire
+	 * `$type` (`parseKind`, e.g. `type_identifier`) diverges from the
+	 * canonical storage kind sittir models it under (`node`, e.g.
+	 * `identifier` — see `aliasTargetToSourceMapOf`'s doc comment,
+	 * node-map.ts). A visible-to-visible `alias($.identifier,
+	 * $.type_identifier)` reference site canonicalizes to the SOURCE kind
+	 * here (unlike a hidden hidden-rule alias, which `nodeMap.aliasedHiddenKinds`
+	 * already covers) — so the runtime kind id for the ALIAS TARGET
+	 * (`type_identifier`) is otherwise missing from the generated
+	 * `FromNapiValue` match arms. Threaded into `acceptedTransportKinds` so
+	 * the id arm for the storage kind (`identifier`) also accepts the
+	 * alias-target id, per slot (the alias-target set is per-reference-site,
+	 * not global to the kind).
+	 */
+	parseAliases: Readonly<Record<string, string>>;
 }
 
 /**
@@ -2743,7 +2760,8 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 		if (seen.has(enumName)) return;
 		if (reservedTransportNames.has(enumName)) return;
 		seen.add(enumName);
-		entries.push({ typeName, ownerKind, fieldName: field.name, kinds: slotKinds, literals });
+		const parseAliases = aliasTargetToSourceMapOf(field);
+		entries.push({ typeName, ownerKind, fieldName: field.name, kinds: slotKinds, literals, parseAliases });
 	};
 
 	for (const node of nodes) {
@@ -2833,7 +2851,7 @@ function emitPerSlotChildEnum(
 		for (const { kind, node, concreteName } of validKinds) {
 			const variant = rustTypeIdent(node.typeName);
 			const typeName = concreteName;
-			const acceptedKinds = new Set<string>(acceptedTransportKinds(kind, nodeMap));
+			const acceptedKinds = new Set<string>(acceptedTransportKinds(kind, nodeMap, entry.parseAliases));
 			if (node instanceof AssembledEnum) {
 				for (const resolvedKind of node.resolvedKinds) {
 					acceptedKinds.add(resolvedKind);

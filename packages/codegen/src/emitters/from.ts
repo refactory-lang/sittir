@@ -35,7 +35,8 @@ import {
 	classifyFactoryShape,
 	classifyChildFactorySurface,
 	classifyFromEmission,
-	unnamedChildSlotFacts
+	unnamedChildSlotFacts,
+	canonicalSeparatedListField
 } from './shared.ts';
 import { fieldElementType, childElementType, kindEnumTextMapExpr } from './factories.ts';
 import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
@@ -859,6 +860,11 @@ function emitSeparatedListFrom(
 	const tName = `T.${node.typeName}`;
 	const contentSlot = buildSeparatedListContentSlot(node);
 	const elemType = fieldElementType(contentSlot, nodeMap);
+	// Same single-field-storage rule as `emitSeparatedListFactory`
+	// (factories.ts): the self-NodeData-unwrap path must read the SAME wire
+	// storage key the factory actually wrote. Multi-field kinds keep the
+	// generic `_content` bucket (see factories.ts's doc comment).
+	const contentStorageKey = node.fields.length > 1 ? '_content' : canonicalSeparatedListField(node).storageKey;
 
 	// Mirrors emitSeparatedListFactory's own gating exactly (see that
 	// function's doc comment, factories.ts) — kept consistent across
@@ -905,7 +911,7 @@ function emitSeparatedListFrom(
 		node.kind,
 		kindEntries,
 		nodeMap,
-		'_content',
+		contentStorageKey,
 		(varExpr, isSelfUnwrap) =>
 			isSelfUnwrap && hasOptions
 				? buildOptionsPreservingCall(varExpr)

@@ -31,7 +31,8 @@ import {
 	resolveFieldStorageInfo,
 	classifyChildFactorySurface,
 	classifyWrapEmission,
-	warnSkippedParserSymbol
+	warnSkippedParserSymbol,
+	canonicalSeparatedListField
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType } from './factories.ts';
 import { deriveChildrenKinds } from './transport-common.ts';
@@ -886,7 +887,7 @@ function emitSeparatedListWrap(
 	// through the exact same per-field drilling logic
 	// `emitFieldCarryingWrap` uses (`emitFieldStorageLines`/
 	// `emitFieldAccessorLines`) instead of one shared bucket.
-	const canonical = node.fields.find((f) => f.arity === 'many') ?? node.fields[0]!;
+	const canonical = canonicalSeparatedListField(node);
 	// `node.fields` (Task-2 `_slots` stub) is the SAME source `types.ts`
 	// derives `T.<TypeName>`'s declared members from — the canonical-key
 	// exclusion set for `collectSeparatedListWireKeyTypes` must match it

@@ -1871,8 +1871,7 @@ describe('yield', () => {
 	});
 });
 
-// known-failing: #170 — separatedList factory/transport element-slot mismatch (Missing field _case_pattern)
-describe.skip('list_pattern_group1', () => {
+describe('list_pattern_group1', () => {
 	it('factory produces correct type', () => {
 		const node = ir.listPatternGroup1(
 			...[

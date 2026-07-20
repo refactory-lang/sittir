@@ -42,7 +42,8 @@ import {
 	classifyFactoryEmission,
 	collectAliasSourceKinds,
 	warnSkippedParserSymbol,
-	unnamedChildSlotFacts
+	unnamedChildSlotFacts,
+	canonicalSeparatedListField
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -1194,16 +1195,23 @@ function resolveContainerElementType(node: ContainerNode, nodeMap: NodeMap): str
  * `renderTransportDataStruct` (render-module.ts, Task 5) conditionally
  * capture/emit.
  *
- * Storage keys (`_content`/`_separator_kind`/`_leading_sep`/`_trailing_sep`)
- * and the `content()` getter match wrap.ts's `emitSeparatedListWrap` naming
- * exactly (Task 4) — the same three per-instance concepts share one naming
- * scheme across capture/render/construct, rather than a fourth bespoke one
- * here. This deliberately diverges from the Task-2 `_slots` stub's
- * kind-derived naming still declared on `T.<TypeName>` in types.ts (e.g.
- * `_with_item`/`withItems()`) — safe because the factory's return type is
- * always inferred, never assigned against that stale interface (confirmed
- * by wrap.ts's own `content()`/`_content` divergence from the same stale
- * interface, already shipped and gated in Task 4).
+ * Storage keys (`_separator_kind`/`_leading_sep`/`_trailing_sep`) match
+ * wrap.ts's `emitSeparatedListWrap` naming exactly (Task 4) — the same
+ * per-instance concepts share one naming scheme across capture/render/
+ * construct. The elements' own storage key/accessor, however, is NOT a
+ * fixed `_content`/`content()` bucket — it is derived via
+ * `canonicalSeparatedListField` (shared.ts), the SAME single-field
+ * canonical-slot derivation `emitSeparatedListWrap`'s "Bug B fix" and
+ * `renderTransportDataStruct`'s transport struct use, so the constructed
+ * object's storage key matches the model's real slot name (e.g.
+ * `_attributed_argument`, not `_content`) and satisfies both the wire
+ * transport and the Task-2 `_slots` stub's `T.<TypeName>` interface in
+ * types.ts (which declares `_<name>`/`<name>()` from the identical
+ * `node.fields` source). Multi-field kinds (`node.fields.length > 1`, e.g.
+ * TypeScript's `enum_body_group1`) can't route a flat `elements` array to
+ * more than one field without partitioning by kind — they keep the generic
+ * `_content`/`content()` bucket, which remains WRONG for those kinds (see
+ * `expectTestFailures`) pending a real per-field partition.
  *
  * Bypasses `node.fields`/`.slots` (the Task-2 stub) entirely, reading
  * `node.elements`/`.nonEmpty`/`.leadingMode`/`.trailingMode`/`.separatorRule`
@@ -1225,6 +1233,16 @@ function emitSeparatedListFactory(
 
 	const contentSlot = buildSeparatedListContentSlot(node);
 	const elemType = fieldElementType(contentSlot, nodeMap);
+	// Single-field kinds (the common case) store/expose the elements under
+	// the model's real slot name (Bug B fix — shared with wrap.ts/
+	// render-module.ts via `canonicalSeparatedListField`), not a generic
+	// `_content` bucket. Multi-field kinds (`node.fields.length > 1`) can't
+	// be split from a flat `elements` array without a real per-field
+	// partition (see doc comment) — they keep the old generic bucket.
+	const isMultiField = node.fields.length > 1;
+	const canonical = isMultiField ? undefined : canonicalSeparatedListField(node);
+	const contentStorageKey = canonical?.storageKey ?? '_content';
+	const contentAccessorName = canonical?.propertyName ?? 'content';
 	// `fieldElementType` doesn't parenthesize multi-member unions (unlike
 	// `childElementType`) — guard the bare-array case the same way
 	// `emitFieldCarryingFactory`'s `$with` setter block already does for
@@ -1269,7 +1287,7 @@ function emitSeparatedListFactory(
 	if (node.nonEmpty) {
 		lines.push(`  _assertNonEmpty(elements, '${node.kind}.elements');`);
 	}
-	lines.push('  const _content = elements;');
+	lines.push(`  const ${contentStorageKey} = elements;`);
 	if (hasSeparatorKindOption) {
 		if (candidateKindNames.length > 0) {
 			const arms = candidateKindNames
@@ -1289,7 +1307,7 @@ function emitSeparatedListFactory(
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push('    $source: 2 as const,');
 	lines.push('    $named: true as const,');
-	lines.push('    _content,');
+	lines.push(`    ${contentStorageKey},`);
 	if (hasSeparatorKindOption) lines.push('    _separator_kind,');
 	if (hasLeadingOption) lines.push('    _leading_sep,');
 	if (hasTrailingOption) lines.push('    _trailing_sep,');
@@ -1319,7 +1337,7 @@ function emitSeparatedListFactory(
 	if (hasTrailingOption) lines.push(`      trailing: (v: boolean) => ${fn}(elements, { ...options, trailing: v }),`);
 	lines.push('    },');
 	lines.push('  }, {');
-	lines.push('    content: () => _content,');
+	lines.push(`    ${contentAccessorName}: () => ${contentStorageKey},`);
 	lines.push('  }), methodsEngine);');
 	lines.push('}');
 	return lines.join('\n');

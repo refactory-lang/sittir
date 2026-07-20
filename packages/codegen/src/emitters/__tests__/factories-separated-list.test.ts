@@ -6,9 +6,11 @@
  * `elements` argument, plus a trailing options object (only emitted when at
  * least one of separatorKind/leading/trailing genuinely varies per-instance)
  * for `separatorKind`/`leading`/`trailing` overrides — mirroring wrap.ts's
- * `_content`/`_separator_kind`/`_leading_sep`/`_trailing_sep` wire-key
- * naming (Task 4) so the same three concepts share one naming scheme across
- * capture/render/construct.
+ * `_separator_kind`/`_leading_sep`/`_trailing_sep` wire-key naming (Task 4)
+ * so the same three concepts share one naming scheme across
+ * capture/render/construct. The elements' own storage key is NOT a fixed
+ * `_content` bucket — it's the fixture's real single-field canonical slot
+ * name (`_member`, via `canonicalSeparatedListField`, shared.ts).
  */
 
 import { CHOICE, PATTERN, REPEAT, REPEAT1, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
@@ -105,7 +107,7 @@ describe('factories emitter — separatedList', () => {
 		expect(emitted).toContain('separatorKind?: "," | ";"');
 		expect(emitted).toContain('leading?: boolean');
 		expect(emitted).toContain('trailing?: boolean');
-		expect(emitted).toContain('_content');
+		expect(emitted).toContain('_member');
 		expect(emitted).toContain('_separator_kind');
 		expect(emitted).toContain('_leading_sep');
 		expect(emitted).toContain('_trailing_sep');

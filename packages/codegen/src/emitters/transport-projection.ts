@@ -92,7 +92,7 @@ function fieldTransportLiterals(
 	field: AssembledNonterminal,
 	nodeMap: NodeMap
 ): Array<{ literal: TransportLiteral; fromKind: boolean }> {
-	return fieldTypeComponents(field, nodeMap).flatMap((component) => {
+	return fieldTypeComponents(field, nodeMap).flatMap((component): Array<{ literal: TransportLiteral; fromKind: boolean }> => {
 		if (component.kind === 'literal') {
 			return [{ literal: { kind: component.value, text: component.value }, fromKind: false }];
 		}

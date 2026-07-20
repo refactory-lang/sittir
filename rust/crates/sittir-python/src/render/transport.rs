@@ -6421,6 +6421,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
                     165 => Ok(Self::_AsPattern(
                         _AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
+                    185 => Ok(Self::_AsPattern(
+                        _AsPatternTransport::from_napi_value(env, napi_val)?
+                    )),
                     171 => Ok(Self::KeywordPattern(
                         KeywordPatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -6478,6 +6481,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
                 )?;
                 match kind_id {
                     165 => Ok(Self::_AsPattern(
+                        _AsPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    185 => Ok(Self::_AsPattern(
                         _AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     171 => Ok(Self::KeywordPattern(
@@ -8331,6 +8337,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierContentTransportS
                     233 => Ok(Self::Interpolation(
                         InterpolationTransport::from_napi_value(env, napi_val)?
                     )),
+                    290 => Ok(Self::Interpolation(
+                        InterpolationTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FormatSpecifierContentTransportSlot",
                     ))),
@@ -8343,6 +8352,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierContentTransportS
                 )?;
                 match kind_id {
                     233 => Ok(Self::Interpolation(
+                        InterpolationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    290 => Ok(Self::Interpolation(
                         InterpolationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9659,6 +9671,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedListSplatContentTra
                     156 => Ok(Self::ParenthesizedListSplat(
                         ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
                     )),
+                    225 => Ok(Self::ParenthesizedListSplat(
+                        ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
+                    )),
                     148 => Ok(Self::ListSplat(
                         ListSplatTransport::from_napi_value(env, napi_val)?
                     )),
@@ -9674,6 +9689,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedListSplatContentTra
                 )?;
                 match kind_id {
                     156 => Ok(Self::ParenthesizedListSplat(
+                        ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
+                    )),
+                    225 => Ok(Self::ParenthesizedListSplat(
                         ParenthesizedListSplatTransport::from_napi_value(env, napi_val)?
                     )),
                     148 => Ok(Self::ListSplat(

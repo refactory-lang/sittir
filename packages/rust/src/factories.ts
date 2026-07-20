@@ -30,7 +30,7 @@ export function build_ArgumentsGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_arguments_group1.elements');
-	const _content = elements;
+	const _attributed_argument = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -38,7 +38,7 @@ export function build_ArgumentsGroup1(
 				$type: TSKindId._ArgumentsGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_attributed_argument,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedArgument>) => build_ArgumentsGroup1(vs, options),
@@ -46,7 +46,7 @@ export function build_ArgumentsGroup1(
 				}
 			},
 			{
-				content: () => _content
+				attributedArguments: () => _attributed_argument
 			}
 		),
 		methodsEngine
@@ -379,7 +379,7 @@ export function build_EnumVariantListGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_enum_variant_list_group1.elements');
-	const _content = elements;
+	const _attributed_enum_variant = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -387,7 +387,7 @@ export function build_EnumVariantListGroup1(
 				$type: TSKindId._EnumVariantListGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_attributed_enum_variant,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedEnumVariant>) => build_EnumVariantListGroup1(vs, options),
@@ -395,7 +395,7 @@ export function build_EnumVariantListGroup1(
 				}
 			},
 			{
-				content: () => _content
+				attributedEnumVariants: () => _attributed_enum_variant
 			}
 		),
 		methodsEngine
@@ -426,7 +426,7 @@ export function build_FieldDeclarationListGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_field_declaration_list_group1.elements');
-	const _content = elements;
+	const _attributed_field_declaration = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -434,7 +434,7 @@ export function build_FieldDeclarationListGroup1(
 				$type: TSKindId._FieldDeclarationListGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_attributed_field_declaration,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedFieldDeclaration>) =>
@@ -443,7 +443,7 @@ export function build_FieldDeclarationListGroup1(
 				}
 			},
 			{
-				content: () => _content
+				attributedFieldDeclarations: () => _attributed_field_declaration
 			}
 		),
 		methodsEngine
@@ -489,7 +489,7 @@ export function build_FieldInitializerListGroup1(
 				}
 			},
 			{
-				content: () => _content
+				contents: () => _content
 			}
 		),
 		methodsEngine
@@ -865,7 +865,7 @@ export function build_OrderedFieldDeclarationListGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_ordered_field_declaration_list_group1.elements');
-	const _content = elements;
+	const _attributed_ordered_field = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -873,7 +873,7 @@ export function build_OrderedFieldDeclarationListGroup1(
 				$type: TSKindId._OrderedFieldDeclarationListGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_attributed_ordered_field,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedOrderedField>) =>
@@ -882,7 +882,7 @@ export function build_OrderedFieldDeclarationListGroup1(
 				}
 			},
 			{
-				content: () => _content
+				attributedOrderedFields: () => _attributed_ordered_field
 			}
 		),
 		methodsEngine
@@ -894,7 +894,7 @@ export function build_ParametersGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_parameters_group1.elements');
-	const _content = elements;
+	const _attributed_parameter = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -902,7 +902,7 @@ export function build_ParametersGroup1(
 				$type: TSKindId._ParametersGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_attributed_parameter,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedParameter>) => build_ParametersGroup1(vs, options),
@@ -910,7 +910,7 @@ export function build_ParametersGroup1(
 				}
 			},
 			{
-				content: () => _content
+				attributedParameters: () => _attributed_parameter
 			}
 		),
 		methodsEngine
@@ -1093,7 +1093,7 @@ export function buildReferenceExpressionRawMut(_config?: T.ReferenceExpressionRa
 
 export function build_SlicePatternGroup1(elements: NonEmptyArray<T.Pattern>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, '_slice_pattern_group1.elements');
-	const _content = elements;
+	const _pattern = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -1101,7 +1101,7 @@ export function build_SlicePatternGroup1(elements: NonEmptyArray<T.Pattern>, opt
 				$type: TSKindId._SlicePatternGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_pattern,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.Pattern>) => build_SlicePatternGroup1(vs, options),
@@ -1109,7 +1109,7 @@ export function build_SlicePatternGroup1(elements: NonEmptyArray<T.Pattern>, opt
 				}
 			},
 			{
-				content: () => _content
+				patterns: () => _pattern
 			}
 		),
 		methodsEngine
@@ -1188,7 +1188,7 @@ export function build_StructPatternGroup1(
 				}
 			},
 			{
-				content: () => _content
+				contents: () => _content
 			}
 		),
 		methodsEngine
@@ -1388,7 +1388,7 @@ export function build_TuplePatternGroup1(
 				}
 			},
 			{
-				content: () => _content
+				contents: () => _content
 			}
 		),
 		methodsEngine
@@ -1458,7 +1458,7 @@ export function build_UseBoundsGroup1(
 				}
 			},
 			{
-				content: () => _content
+				contents: () => _content
 			}
 		),
 		methodsEngine
@@ -1467,7 +1467,7 @@ export function build_UseBoundsGroup1(
 
 export function build_UseListGroup1(elements: NonEmptyArray<T.UseClause>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, '_use_list_group1.elements');
-	const _content = elements;
+	const _use_clause = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -1475,7 +1475,7 @@ export function build_UseListGroup1(elements: NonEmptyArray<T.UseClause>, option
 				$type: TSKindId._UseListGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_use_clause,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.UseClause>) => build_UseListGroup1(vs, options),
@@ -1483,7 +1483,7 @@ export function build_UseListGroup1(elements: NonEmptyArray<T.UseClause>, option
 				}
 			},
 			{
-				content: () => _content
+				useClauses: () => _use_clause
 			}
 		),
 		methodsEngine
@@ -1584,7 +1584,7 @@ export function build_WhereClauseGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_where_clause_group1.elements');
-	const _content = elements;
+	const _where_predicate = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -1592,7 +1592,7 @@ export function build_WhereClauseGroup1(
 				$type: TSKindId._WhereClauseGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_where_predicate,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.WherePredicate>) => build_WhereClauseGroup1(vs, options),
@@ -1600,7 +1600,7 @@ export function build_WhereClauseGroup1(
 				}
 			},
 			{
-				content: () => _content
+				wherePredicates: () => _where_predicate
 			}
 		),
 		methodsEngine
@@ -5517,7 +5517,7 @@ export function buildArgumentsGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, 'arguments_group1.elements');
-	const _content = elements;
+	const _attributed_argument = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -5525,7 +5525,7 @@ export function buildArgumentsGroup1(
 				$type: TSKindId._ArgumentsGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_attributed_argument,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedArgument>) => buildArgumentsGroup1(vs, options),
@@ -5533,7 +5533,7 @@ export function buildArgumentsGroup1(
 				}
 			},
 			{
-				content: () => _content
+				attributedArguments: () => _attributed_argument
 			}
 		),
 		methodsEngine
@@ -5564,7 +5564,7 @@ export function buildEnumVariantListGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, 'enum_variant_list_group1.elements');
-	const _content = elements;
+	const _attributed_enum_variant = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -5572,7 +5572,7 @@ export function buildEnumVariantListGroup1(
 				$type: TSKindId._EnumVariantListGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_attributed_enum_variant,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedEnumVariant>) => buildEnumVariantListGroup1(vs, options),
@@ -5580,7 +5580,7 @@ export function buildEnumVariantListGroup1(
 				}
 			},
 			{
-				content: () => _content
+				attributedEnumVariants: () => _attributed_enum_variant
 			}
 		),
 		methodsEngine
@@ -5592,7 +5592,7 @@ export function buildFieldDeclarationListGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, 'field_declaration_list_group1.elements');
-	const _content = elements;
+	const _attributed_field_declaration = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -5600,7 +5600,7 @@ export function buildFieldDeclarationListGroup1(
 				$type: TSKindId._FieldDeclarationListGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_attributed_field_declaration,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedFieldDeclaration>) =>
@@ -5609,7 +5609,7 @@ export function buildFieldDeclarationListGroup1(
 				}
 			},
 			{
-				content: () => _content
+				attributedFieldDeclarations: () => _attributed_field_declaration
 			}
 		),
 		methodsEngine
@@ -5639,7 +5639,7 @@ export function buildFieldInitializerListGroup1(
 				}
 			},
 			{
-				content: () => _content
+				contents: () => _content
 			}
 		),
 		methodsEngine
@@ -5651,7 +5651,7 @@ export function buildOrderedFieldDeclarationListGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, 'ordered_field_declaration_list_group1.elements');
-	const _content = elements;
+	const _attributed_ordered_field = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -5659,7 +5659,7 @@ export function buildOrderedFieldDeclarationListGroup1(
 				$type: TSKindId._OrderedFieldDeclarationListGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_attributed_ordered_field,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedOrderedField>) =>
@@ -5668,7 +5668,7 @@ export function buildOrderedFieldDeclarationListGroup1(
 				}
 			},
 			{
-				content: () => _content
+				attributedOrderedFields: () => _attributed_ordered_field
 			}
 		),
 		methodsEngine
@@ -5680,7 +5680,7 @@ export function buildParametersGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, 'parameters_group1.elements');
-	const _content = elements;
+	const _attributed_parameter = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -5688,7 +5688,7 @@ export function buildParametersGroup1(
 				$type: TSKindId._ParametersGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_attributed_parameter,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.AttributedParameter>) => buildParametersGroup1(vs, options),
@@ -5696,7 +5696,7 @@ export function buildParametersGroup1(
 				}
 			},
 			{
-				content: () => _content
+				attributedParameters: () => _attributed_parameter
 			}
 		),
 		methodsEngine
@@ -5705,7 +5705,7 @@ export function buildParametersGroup1(
 
 export function buildSlicePatternGroup1(elements: NonEmptyArray<T.Pattern>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, 'slice_pattern_group1.elements');
-	const _content = elements;
+	const _pattern = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -5713,7 +5713,7 @@ export function buildSlicePatternGroup1(elements: NonEmptyArray<T.Pattern>, opti
 				$type: TSKindId._SlicePatternGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_pattern,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.Pattern>) => buildSlicePatternGroup1(vs, options),
@@ -5721,7 +5721,7 @@ export function buildSlicePatternGroup1(elements: NonEmptyArray<T.Pattern>, opti
 				}
 			},
 			{
-				content: () => _content
+				patterns: () => _pattern
 			}
 		),
 		methodsEngine
@@ -5750,7 +5750,7 @@ export function buildStructPatternGroup1(
 				}
 			},
 			{
-				content: () => _content
+				contents: () => _content
 			}
 		),
 		methodsEngine
@@ -5778,7 +5778,7 @@ export function buildTuplePatternGroup1(
 				}
 			},
 			{
-				content: () => _content
+				contents: () => _content
 			}
 		),
 		methodsEngine
@@ -5806,7 +5806,7 @@ export function buildUseBoundsGroup1(
 				}
 			},
 			{
-				content: () => _content
+				contents: () => _content
 			}
 		),
 		methodsEngine
@@ -5815,7 +5815,7 @@ export function buildUseBoundsGroup1(
 
 export function buildUseListGroup1(elements: NonEmptyArray<T.UseClause>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, 'use_list_group1.elements');
-	const _content = elements;
+	const _use_clause = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -5823,7 +5823,7 @@ export function buildUseListGroup1(elements: NonEmptyArray<T.UseClause>, options
 				$type: TSKindId._UseListGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_use_clause,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.UseClause>) => buildUseListGroup1(vs, options),
@@ -5831,7 +5831,7 @@ export function buildUseListGroup1(elements: NonEmptyArray<T.UseClause>, options
 				}
 			},
 			{
-				content: () => _content
+				useClauses: () => _use_clause
 			}
 		),
 		methodsEngine
@@ -5843,7 +5843,7 @@ export function buildWhereClauseGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, 'where_clause_group1.elements');
-	const _content = elements;
+	const _where_predicate = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -5851,7 +5851,7 @@ export function buildWhereClauseGroup1(
 				$type: TSKindId._WhereClauseGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_where_predicate,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.WherePredicate>) => buildWhereClauseGroup1(vs, options),
@@ -5859,7 +5859,7 @@ export function buildWhereClauseGroup1(
 				}
 			},
 			{
-				content: () => _content
+				wherePredicates: () => _where_predicate
 			}
 		),
 		methodsEngine

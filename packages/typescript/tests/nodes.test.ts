@@ -2774,7 +2774,7 @@ describe('catch_clause_group1', () => {
 	});
 });
 
-// known-failing: #170 — renders empty for dummy element
+// known-failing: #170 — multi-field separatedList (name/enum_assignment); emitSeparatedListFactory only fixes the single-field-storage case, needs a real per-field partition of the flat elements array
 describe.skip('enum_body_group1', () => {
 	it('factory produces correct type', () => {
 		const node = ir.enumBodyGroup1(...[{ $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any]);
@@ -2787,8 +2787,7 @@ describe.skip('enum_body_group1', () => {
 	});
 });
 
-// known-failing: #170 — separatedList factory/transport element-slot mismatch
-describe.skip('export_clause_group1', () => {
+describe('export_clause_group1', () => {
 	it('factory produces correct type', () => {
 		const node = ir.exportClauseGroup1(
 			...[
@@ -2820,8 +2819,7 @@ describe.skip('export_clause_group1', () => {
 	});
 });
 
-// known-failing: #170 — separatedList factory/transport element-slot mismatch
-describe.skip('formal_parameters_group1', () => {
+describe('formal_parameters_group1', () => {
 	it('factory produces correct type', () => {
 		const node = ir.formalParametersGroup1(
 			...[
@@ -2853,8 +2851,7 @@ describe.skip('formal_parameters_group1', () => {
 	});
 });
 
-// known-failing: #170 — separatedList factory/transport element-slot mismatch
-describe.skip('named_imports_group1', () => {
+describe('named_imports_group1', () => {
 	it('factory produces correct type', () => {
 		const node = ir.namedImportsGroup1(
 			...[
@@ -2886,8 +2883,7 @@ describe.skip('named_imports_group1', () => {
 	});
 });
 
-// known-failing: #170 — separatedList factory/transport element-slot mismatch
-describe.skip('tuple_type_group1', () => {
+describe('tuple_type_group1', () => {
 	it('factory produces correct type', () => {
 		const node = ir.tupleTypeGroup1(
 			...[{ $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any]

@@ -4019,16 +4019,7 @@ var overrides_default = grammar(
         gen_block: "#130 \u2014 factory returns block $type / no $render accessor",
         reference_pattern: "#130 \u2014 factory returns wrong $type / no $render accessor",
         self_parameter: "#130 \u2014 factory output has no $render accessor",
-        variadic_parameter: "#130 \u2014 factory output has no $render accessor",
-        arguments_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch (Missing field _attributed_argument)",
-        enum_variant_list_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch",
-        field_declaration_list_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch",
-        ordered_field_declaration_list_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch",
-        parameters_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch",
-        slice_pattern_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch",
-        use_bounds_group1: "#170 \u2014 dummy element kind rejected by content transport slot",
-        use_list_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch",
-        where_clause_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch"
+        variadic_parameter: "#130 \u2014 factory output has no $render accessor"
       },
       renderAs: (_$) => ({
         // Doc comment markers

@@ -48,7 +48,7 @@ export function build_ArgumentListGroup1(
 				}
 			},
 			{
-				content: () => _content
+				contents: () => _content
 			}
 		),
 		methodsEngine
@@ -169,7 +169,7 @@ export function buildCollectionElements(
 				}
 			},
 			{
-				content: () => _content
+				contents: () => _content
 			}
 		),
 		methodsEngine
@@ -286,7 +286,7 @@ export function build_DictionaryGroup1(
 				}
 			},
 			{
-				content: () => _content
+				contents: () => _content
 			}
 		),
 		methodsEngine
@@ -344,7 +344,7 @@ export function buildExpressionStatementTuple(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_expression_statement_tuple.elements');
-	const _content = elements;
+	const _expression = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -352,7 +352,7 @@ export function buildExpressionStatementTuple(
 				$type: TSKindId.ExpressionStatementTuple as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_expression,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.Expression>) => buildExpressionStatementTuple(vs, options),
@@ -360,7 +360,7 @@ export function buildExpressionStatementTuple(
 				}
 			},
 			{
-				content: () => _content
+				expressions: () => _expression
 			}
 		),
 		methodsEngine
@@ -449,7 +449,7 @@ export function build_ListPattern(child?: T.ListPatternGroup1) {
 
 export function build_ListPatternGroup1(elements: NonEmptyArray<T.CasePattern>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, '_list_pattern_group1.elements');
-	const _content = elements;
+	const _case_pattern = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -457,7 +457,7 @@ export function build_ListPatternGroup1(elements: NonEmptyArray<T.CasePattern>, 
 				$type: TSKindId._ListPatternGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_case_pattern,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.CasePattern>) => build_ListPatternGroup1(vs, options),
@@ -465,7 +465,7 @@ export function build_ListPatternGroup1(elements: NonEmptyArray<T.CasePattern>, 
 				}
 			},
 			{
-				content: () => _content
+				casePatterns: () => _case_pattern
 			}
 		),
 		methodsEngine
@@ -528,7 +528,7 @@ export function buildNotIn(text: string) {
 
 export function build_Parameters(elements: NonEmptyArray<T.Parameter>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, '_parameters.elements');
-	const _content = elements;
+	const _parameter = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -536,7 +536,7 @@ export function build_Parameters(elements: NonEmptyArray<T.Parameter>, options: 
 				$type: TSKindId._Parameters as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_parameter,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.Parameter>) => build_Parameters(vs, options),
@@ -544,7 +544,7 @@ export function build_Parameters(elements: NonEmptyArray<T.Parameter>, options: 
 				}
 			},
 			{
-				content: () => _content
+				parameters: () => _parameter
 			}
 		),
 		methodsEngine
@@ -553,7 +553,7 @@ export function build_Parameters(elements: NonEmptyArray<T.Parameter>, options: 
 
 export function buildPatterns(elements: NonEmptyArray<T.Pattern>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, '_patterns.elements');
-	const _content = elements;
+	const _pattern = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -561,7 +561,7 @@ export function buildPatterns(elements: NonEmptyArray<T.Pattern>, options: { tra
 				$type: TSKindId.Patterns as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_pattern,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.Pattern>) => buildPatterns(vs, options),
@@ -569,7 +569,7 @@ export function buildPatterns(elements: NonEmptyArray<T.Pattern>, options: { tra
 				}
 			},
 			{
-				content: () => _content
+				patterns: () => _pattern
 			}
 		),
 		methodsEngine
@@ -655,7 +655,7 @@ export function build_TuplePattern(child?: T.ListPatternGroup1) {
 
 export function buildWithClauseBare(elements: NonEmptyArray<T.WithItem>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, '_with_clause_bare.elements');
-	const _content = elements;
+	const _with_item = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -663,7 +663,7 @@ export function buildWithClauseBare(elements: NonEmptyArray<T.WithItem>, options
 				$type: TSKindId.WithClauseBare as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_with_item,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.WithItem>) => buildWithClauseBare(vs, options),
@@ -671,7 +671,7 @@ export function buildWithClauseBare(elements: NonEmptyArray<T.WithItem>, options
 				}
 			},
 			{
-				content: () => _content
+				withItems: () => _with_item
 			}
 		),
 		methodsEngine
@@ -3375,7 +3375,7 @@ export function buildYield(child?: T.Expression | T.Expressions) {
 
 export function buildListPatternGroup1(elements: NonEmptyArray<T.CasePattern>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, 'list_pattern_group1.elements');
-	const _content = elements;
+	const _case_pattern = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -3383,7 +3383,7 @@ export function buildListPatternGroup1(elements: NonEmptyArray<T.CasePattern>, o
 				$type: TSKindId._ListPatternGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_case_pattern,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.CasePattern>) => buildListPatternGroup1(vs, options),
@@ -3391,7 +3391,7 @@ export function buildListPatternGroup1(elements: NonEmptyArray<T.CasePattern>, o
 				}
 			},
 			{
-				content: () => _content
+				casePatterns: () => _case_pattern
 			}
 		),
 		methodsEngine
@@ -3425,7 +3425,7 @@ export function buildArgumentListGroup1(
 				}
 			},
 			{
-				content: () => _content
+				contents: () => _content
 			}
 		),
 		methodsEngine
@@ -3486,7 +3486,7 @@ export function buildDictionaryGroup1(
 				}
 			},
 			{
-				content: () => _content
+				contents: () => _content
 			}
 		),
 		methodsEngine

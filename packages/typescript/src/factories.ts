@@ -372,7 +372,7 @@ export function build_ExportClauseGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_export_clause_group1.elements');
-	const _content = elements;
+	const _export_specifier = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -380,7 +380,7 @@ export function build_ExportClauseGroup1(
 				$type: TSKindId._ExportClauseGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_export_specifier,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.ExportSpecifier>) => build_ExportClauseGroup1(vs, options),
@@ -388,7 +388,7 @@ export function build_ExportClauseGroup1(
 				}
 			},
 			{
-				content: () => _content
+				exportSpecifiers: () => _export_specifier
 			}
 		),
 		methodsEngine
@@ -842,7 +842,7 @@ export function build_FormalParametersGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_formal_parameters_group1.elements');
-	const _content = elements;
+	const _formal_parameter = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -850,7 +850,7 @@ export function build_FormalParametersGroup1(
 				$type: TSKindId._FormalParametersGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_formal_parameter,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.FormalParameter>) => build_FormalParametersGroup1(vs, options),
@@ -858,7 +858,7 @@ export function build_FormalParametersGroup1(
 				}
 			},
 			{
-				content: () => _content
+				formalParameters: () => _formal_parameter
 			}
 		),
 		methodsEngine
@@ -1033,7 +1033,7 @@ export function build_NamedImportsGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_named_imports_group1.elements');
-	const _content = elements;
+	const _import_specifier = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -1041,7 +1041,7 @@ export function build_NamedImportsGroup1(
 				$type: TSKindId._NamedImportsGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_import_specifier,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.ImportSpecifier>) => build_NamedImportsGroup1(vs, options),
@@ -1049,7 +1049,7 @@ export function build_NamedImportsGroup1(
 				}
 			},
 			{
-				content: () => _content
+				importSpecifiers: () => _import_specifier
 			}
 		),
 		methodsEngine
@@ -1356,7 +1356,7 @@ export function build_TupleTypeGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_tuple_type_group1.elements');
-	const _content = elements;
+	const _tuple_type_member = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -1364,7 +1364,7 @@ export function build_TupleTypeGroup1(
 				$type: TSKindId._TupleTypeGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_tuple_type_member,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.TupleTypeMember>) => build_TupleTypeGroup1(vs, options),
@@ -1372,7 +1372,7 @@ export function build_TupleTypeGroup1(
 				}
 			},
 			{
-				content: () => _content
+				tupleTypeMembers: () => _tuple_type_member
 			}
 		),
 		methodsEngine
@@ -4702,7 +4702,7 @@ export function buildObjectTypeContent(
 				}
 			},
 			{
-				content: () => _content
+				contents: () => _content
 			}
 		),
 		methodsEngine
@@ -6396,7 +6396,7 @@ export function buildExportClauseGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, 'export_clause_group1.elements');
-	const _content = elements;
+	const _export_specifier = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -6404,7 +6404,7 @@ export function buildExportClauseGroup1(
 				$type: TSKindId._ExportClauseGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_export_specifier,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.ExportSpecifier>) => buildExportClauseGroup1(vs, options),
@@ -6412,7 +6412,7 @@ export function buildExportClauseGroup1(
 				}
 			},
 			{
-				content: () => _content
+				exportSpecifiers: () => _export_specifier
 			}
 		),
 		methodsEngine
@@ -6424,7 +6424,7 @@ export function buildFormalParametersGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, 'formal_parameters_group1.elements');
-	const _content = elements;
+	const _formal_parameter = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -6432,7 +6432,7 @@ export function buildFormalParametersGroup1(
 				$type: TSKindId._FormalParametersGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_formal_parameter,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.FormalParameter>) => buildFormalParametersGroup1(vs, options),
@@ -6440,7 +6440,7 @@ export function buildFormalParametersGroup1(
 				}
 			},
 			{
-				content: () => _content
+				formalParameters: () => _formal_parameter
 			}
 		),
 		methodsEngine
@@ -6452,7 +6452,7 @@ export function buildNamedImportsGroup1(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, 'named_imports_group1.elements');
-	const _content = elements;
+	const _import_specifier = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -6460,7 +6460,7 @@ export function buildNamedImportsGroup1(
 				$type: TSKindId._NamedImportsGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_import_specifier,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.ImportSpecifier>) => buildNamedImportsGroup1(vs, options),
@@ -6468,7 +6468,7 @@ export function buildNamedImportsGroup1(
 				}
 			},
 			{
-				content: () => _content
+				importSpecifiers: () => _import_specifier
 			}
 		),
 		methodsEngine
@@ -6477,7 +6477,7 @@ export function buildNamedImportsGroup1(
 
 export function buildTupleTypeGroup1(elements: NonEmptyArray<T.TupleTypeMember>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, 'tuple_type_group1.elements');
-	const _content = elements;
+	const _tuple_type_member = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
 		withAccessors(
@@ -6485,7 +6485,7 @@ export function buildTupleTypeGroup1(elements: NonEmptyArray<T.TupleTypeMember>,
 				$type: TSKindId._TupleTypeGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_tuple_type_member,
 				_trailing_sep,
 				$with: {
 					$children: (...vs: NonEmptyArray<T.TupleTypeMember>) => buildTupleTypeGroup1(vs, options),
@@ -6493,7 +6493,7 @@ export function buildTupleTypeGroup1(elements: NonEmptyArray<T.TupleTypeMember>,
 				}
 			},
 			{
-				content: () => _content
+				tupleTypeMembers: () => _tuple_type_member
 			}
 		),
 		methodsEngine

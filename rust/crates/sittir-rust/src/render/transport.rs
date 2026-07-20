@@ -9619,6 +9619,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionTypeTraitFormTraitTransp
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    423 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     245 => Ok(Self::ScopedTypeIdentifier(
                         ScopedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -9638,6 +9641,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionTypeTraitFormTraitTransp
                 )?;
                 match kind_id {
                     1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    423 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     245 => Ok(Self::ScopedTypeIdentifier(
@@ -9724,6 +9730,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemGroup1TraitTransportSlot
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    423 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     245 => Ok(Self::ScopedTypeIdentifier(
                         ScopedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -9746,6 +9755,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemGroup1TraitTransportSlot
                 )?;
                 match kind_id {
                     1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    423 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     245 => Ok(Self::ScopedTypeIdentifier(
@@ -9837,6 +9849,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemNegativeClauseTraitTrans
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    423 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     245 => Ok(Self::ScopedTypeIdentifier(
                         ScopedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -9859,6 +9874,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemNegativeClauseTraitTrans
                 )?;
                 match kind_id {
                     1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    423 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     245 => Ok(Self::ScopedTypeIdentifier(
@@ -9950,6 +9968,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemPositiveClauseTraitTrans
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    423 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     245 => Ok(Self::ScopedTypeIdentifier(
                         ScopedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -9972,6 +9993,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemPositiveClauseTraitTrans
                 )?;
                 match kind_id {
                     1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    423 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     245 => Ok(Self::ScopedTypeIdentifier(
@@ -12481,6 +12505,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for _UseBoundsGroup1ContentTransport
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    423 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in _UseBoundsGroup1ContentTransportSlot",
                     ))),
@@ -12500,6 +12527,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for _UseBoundsGroup1ContentTransport
                         LifetimeTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    423 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -12696,6 +12726,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractTypeTraitTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    423 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     245 => Ok(Self::ScopedTypeIdentifier(
                         ScopedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -12730,6 +12763,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AbstractTypeTraitTransportSlot {
                 )?;
                 match kind_id {
                     1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    423 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     245 => Ok(Self::ScopedTypeIdentifier(
@@ -14817,6 +14853,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for DynamicTypeTraitTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    423 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     245 => Ok(Self::ScopedTypeIdentifier(
                         ScopedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -14848,6 +14887,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for DynamicTypeTraitTransportSlot {
                         HigherRankedTraitBoundTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    423 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     245 => Ok(Self::ScopedTypeIdentifier(
@@ -15331,6 +15373,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for FieldExpressionFieldTransportSlo
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    420 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     122 => Ok(Self::IntegerLiteral(
                         IntegerLiteralTransport::from_napi_value(env, napi_val)?
                     )),
@@ -15350,6 +15395,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for FieldExpressionFieldTransportSlo
                 )?;
                 match kind_id {
                     1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    420 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     122 => Ok(Self::IntegerLiteral(
@@ -15435,6 +15483,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for FieldInitializerFieldTransportSl
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    420 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     122 => Ok(Self::IntegerLiteral(
                         IntegerLiteralTransport::from_napi_value(env, napi_val)?
                     )),
@@ -15454,6 +15505,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for FieldInitializerFieldTransportSl
                 )?;
                 match kind_id {
                     1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    420 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     122 => Ok(Self::IntegerLiteral(
@@ -15539,6 +15593,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for FieldPatternContentTransportSlot
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    422 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     347 => Ok(Self::FieldPatternNamed(
                         FieldPatternNamedTransport::from_napi_value(env, napi_val)?
                     )),
@@ -15558,6 +15615,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for FieldPatternContentTransportSlot
                 )?;
                 match kind_id {
                     1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    422 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     347 => Ok(Self::FieldPatternNamed(
@@ -16273,6 +16333,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenericTypeTypeTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    423 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     245 => Ok(Self::ScopedTypeIdentifier(
                         ScopedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -16292,6 +16355,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenericTypeTypeTransportSlot {
                 )?;
                 match kind_id {
                     1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    423 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     245 => Ok(Self::ScopedTypeIdentifier(
@@ -16377,6 +16443,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenericTypeWithTurbofishTypeTran
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    423 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     243 => Ok(Self::ScopedIdentifier(
                         ScopedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -16396,6 +16465,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenericTypeWithTurbofishTypeTran
                 )?;
                 match kind_id {
                     1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    423 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     243 => Ok(Self::ScopedIdentifier(
@@ -18712,6 +18784,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ScopedIdentifierPathTransportSlo
                     227 => Ok(Self::GenericTypeWithTurbofish(
                         GenericTypeWithTurbofishTransport::from_napi_value(env, napi_val)?
                     )),
+                    226 => Ok(Self::GenericTypeWithTurbofish(
+                        GenericTypeWithTurbofishTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ScopedIdentifierPathTransportSlot",
                     ))),
@@ -18758,6 +18833,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ScopedIdentifierPathTransportSlo
                         BracketedTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     227 => Ok(Self::GenericTypeWithTurbofish(
+                        GenericTypeWithTurbofishTransport::from_napi_value(env, napi_val)?
+                    )),
+                    226 => Ok(Self::GenericTypeWithTurbofish(
                         GenericTypeWithTurbofishTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -19179,6 +19257,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ScopedTypeIdentifierInExpression
                     227 => Ok(Self::GenericTypeWithTurbofish(
                         GenericTypeWithTurbofishTransport::from_napi_value(env, napi_val)?
                     )),
+                    226 => Ok(Self::GenericTypeWithTurbofish(
+                        GenericTypeWithTurbofishTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ScopedTypeIdentifierInExpressionPositionPathTransportSlot",
                     ))),
@@ -19222,6 +19303,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ScopedTypeIdentifierInExpression
                         ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     227 => Ok(Self::GenericTypeWithTurbofish(
+                        GenericTypeWithTurbofishTransport::from_napi_value(env, napi_val)?
+                    )),
+                    226 => Ok(Self::GenericTypeWithTurbofish(
                         GenericTypeWithTurbofishTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -19514,7 +19598,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructExpressionNameTransportSlo
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    423 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     244 => Ok(Self::ScopedTypeIdentifierInExpressionPosition(
+                        ScopedTypeIdentifierInExpressionPositionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    245 => Ok(Self::ScopedTypeIdentifierInExpressionPosition(
                         ScopedTypeIdentifierInExpressionPositionTransport::from_napi_value(env, napi_val)?
                     )),
                     227 => Ok(Self::GenericTypeWithTurbofish(
@@ -19538,7 +19628,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructExpressionNameTransportSlo
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    423 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     244 => Ok(Self::ScopedTypeIdentifierInExpressionPosition(
+                        ScopedTypeIdentifierInExpressionPositionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    245 => Ok(Self::ScopedTypeIdentifierInExpressionPosition(
                         ScopedTypeIdentifierInExpressionPositionTransport::from_napi_value(env, napi_val)?
                     )),
                     227 => Ok(Self::GenericTypeWithTurbofish(
@@ -19732,6 +19828,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructPatternTypeTransportSlot {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    423 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     245 => Ok(Self::ScopedTypeIdentifier(
                         ScopedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -19751,6 +19850,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructPatternTypeTransportSlot {
                 )?;
                 match kind_id {
                     1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    423 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     245 => Ok(Self::ScopedTypeIdentifier(
@@ -20435,6 +20537,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleStructPatternTypeTransportS
                     227 => Ok(Self::GenericTypeWithTurbofish(
                         GenericTypeWithTurbofishTransport::from_napi_value(env, napi_val)?
                     )),
+                    226 => Ok(Self::GenericTypeWithTurbofish(
+                        GenericTypeWithTurbofishTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TupleStructPatternTypeTransportSlot",
                     ))),
@@ -20457,6 +20562,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleStructPatternTypeTransportS
                         ScopedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     227 => Ok(Self::GenericTypeWithTurbofish(
+                        GenericTypeWithTurbofishTransport::from_napi_value(env, napi_val)?
+                    )),
+                    226 => Ok(Self::GenericTypeWithTurbofish(
                         GenericTypeWithTurbofishTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -20649,6 +20757,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for WherePredicateLeftTransportSlot 
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    423 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     245 => Ok(Self::ScopedTypeIdentifier(
                         ScopedTypeIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -20740,6 +20851,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for WherePredicateLeftTransportSlot 
                         LifetimeTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    423 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     245 => Ok(Self::ScopedTypeIdentifier(
@@ -21569,6 +21683,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseBoundsGroup1ContentTransportS
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    423 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in UseBoundsGroup1ContentTransportSlot",
                     ))),
@@ -21588,6 +21705,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseBoundsGroup1ContentTransportS
                         LifetimeTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    423 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
