@@ -373,8 +373,10 @@ import type {
 	StatementBlock,
 	StatementBlockTree,
 	String,
-	StringOpening,
-	StringOpeningTree,
+	StringDouble,
+	StringDoubleTree,
+	StringSingle,
+	StringSingleTree,
 	StringTree,
 	SubscriptExpression,
 	SubscriptExpressionTree,
@@ -541,6 +543,8 @@ export type _Type_ObjectTypeGroup1 = _TypeAssert<_TypeExtends<ObjectTypeGroup1['
 export type _Type_PublicFieldDefinitionDeclareFirst = _TypeAssert<
 	_TypeExtends<PublicFieldDefinitionDeclareFirst['$type'], TSKindId.PublicFieldDefinitionDeclareFirst>
 >;
+export type _Type_StringDouble = _TypeAssert<_TypeExtends<StringDouble['$type'], TSKindId.StringDouble>>;
+export type _Type_StringSingle = _TypeAssert<_TypeExtends<StringSingle['$type'], TSKindId.StringSingle>>;
 export type _Type__TupleTypeGroup1 = _TypeAssert<_TypeExtends<_TupleTypeGroup1['$type'], TSKindId._TupleTypeGroup1>>;
 export type _Type_AbstractClassDeclaration = _TypeAssert<
 	_TypeExtends<AbstractClassDeclaration['$type'], TSKindId.AbstractClassDeclaration>
@@ -831,7 +835,6 @@ export type _Type_ReservedIdentifier = _TypeAssert<
 	_TypeExtends<ReservedIdentifier['$type'], TSKindId.ReservedIdentifier>
 >;
 export type _Type_Semicolon = _TypeAssert<_TypeExtends<Semicolon['$type'], '_semicolon'>>;
-export type _Type_StringOpening = _TypeAssert<_TypeExtends<StringOpening['$type'], TSKindId.Dquote | TSKindId.Squote>>;
 export type _Type_TypeIdentifier = _TypeAssert<_TypeExtends<TypeIdentifier['$type'], TSKindId.TypeIdentifier>>;
 export type _Type_UnaryExpressionOperator = _TypeAssert<
 	_TypeExtends<
@@ -958,6 +961,8 @@ export type _Tree_ObjectTypeGroup1 = _TypeAssert<_TypeExtends<ObjectTypeGroup1Tr
 export type _Tree_PublicFieldDefinitionDeclareFirst = _TypeAssert<
 	_TypeExtends<PublicFieldDefinitionDeclareFirstTree['type'], '_public_field_definition_declare_first'>
 >;
+export type _Tree_StringDouble = _TypeAssert<_TypeExtends<StringDoubleTree['type'], '_string_double'>>;
+export type _Tree_StringSingle = _TypeAssert<_TypeExtends<StringSingleTree['type'], '_string_single'>>;
 export type _Tree__TupleTypeGroup1 = _TypeAssert<_TypeExtends<_TupleTypeGroup1Tree['type'], '_tuple_type_group1'>>;
 export type _Tree_AbstractClassDeclaration = _TypeAssert<
 	_TypeExtends<AbstractClassDeclarationTree['type'], 'abstract_class_declaration'>
@@ -1219,7 +1224,6 @@ export type _Tree_ReservedIdentifier = _TypeAssert<
 	_TypeExtends<ReservedIdentifierTree['type'], '_reserved_identifier'>
 >;
 export type _Tree_Semicolon = _TypeAssert<_TypeExtends<SemicolonTree['type'], '_semicolon'>>;
-export type _Tree_StringOpening = _TypeAssert<_TypeExtends<StringOpeningTree['type'], '_string_opening'>>;
 export type _Tree_TypeIdentifier = _TypeAssert<_TypeExtends<TypeIdentifierTree['type'], '_type_identifier'>>;
 export type _Tree_UnaryExpressionOperator = _TypeAssert<
 	_TypeExtends<UnaryExpressionOperatorTree['type'], '_unary_expression_operator'>

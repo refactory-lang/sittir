@@ -88,6 +88,8 @@ export interface IsGuards {
 	PublicFieldDefinitionDeclareFirst<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
+	StringDouble<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StringDouble };
+	StringSingle<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StringSingle };
 	TupleTypeGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TupleTypeGroup1 };
 	abstractClassDeclaration<T extends { readonly $type: number }>(
 		v: T
@@ -413,6 +415,8 @@ export interface AssertGuards {
 	PublicFieldDefinitionDeclareFirst(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
+	StringDouble(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StringDouble };
+	StringSingle(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StringSingle };
 	TupleTypeGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TupleTypeGroup1 };
 	abstractClassDeclaration(v: {
 		readonly $type: number;
@@ -633,18 +637,18 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boole
 const _supertype_destructuringPattern_ids = new Set<number>([214, 218]);
 const _supertype_expressions_ids = new Set<number>([246]);
 const _supertype_formalParameter_ids = new Set<number>([296, 297]);
-const _supertype_identifier_ids = new Set<number>([114, 1]);
+const _supertype_identifier_ids = new Set<number>([112, 1]);
 const _supertype_importIdentifier_ids = new Set<number>([1]);
 const _supertype_jsxAttributeName_ids = new Set<number>([1]);
 const _supertype_jsxChild_ids = new Set<number>([163]);
 const _supertype_jsxElementName_ids = new Set<number>([1, 219]);
 const _supertype_jsxIdentifier_ids = new Set<number>([1]);
 const _supertype_moduleExportName_ids = new Set<number>([1, 247]);
-const _supertype_propertyIdentifier_ids = new Set<number>([1, 422]);
-const _supertype_propertyName_ids = new Set<number>([1, 106, 247, 105, 265]);
-const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 422]);
-const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 422]);
-const _supertype_statementIdentifier_ids = new Set<number>([1, 422]);
+const _supertype_propertyIdentifier_ids = new Set<number>([1, 424]);
+const _supertype_propertyName_ids = new Set<number>([1, 104, 247, 103, 265]);
+const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 424]);
+const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 424]);
+const _supertype_statementIdentifier_ids = new Set<number>([1, 424]);
 const _supertype_tupleTypeMember_ids = new Set<number>([308, 309, 310, 311]);
 const _supertype_declaration_ids = new Set<number>([
 	224, 226, 221, 184, 183, 271, 282, 283, 284, 293, 290, 288, 286, 281
@@ -652,12 +656,12 @@ const _supertype_declaration_ids = new Set<number>([
 const _supertype_expression_ids = new Set<number>([
 	274, 275, 276, 284, 273, 236, 238, 233, 244, 243, 242, 245, 232, 212
 ]);
-const _supertype_pattern_ids = new Set<number>([234, 235, 114, 1, 214, 218, 268, 260]);
+const _supertype_pattern_ids = new Set<number>([234, 235, 112, 1, 214, 218, 268, 260]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	235, 234, 209, 114, 1, 422, 109, 110, 105, 247, 248, 250, 111, 112, 113, 213, 217, 223, 227, 225, 220, 251, 231, 268
+	235, 234, 209, 112, 1, 424, 107, 108, 103, 247, 248, 250, 109, 110, 111, 213, 217, 223, 227, 225, 220, 251, 231, 268
 ]);
 const _supertype_primaryType_ids = new Set<number>([
-	334, 335, 427, 287, 319, 337, 346, 347, 333, 326, 327, 109, 330, 328, 318, 316, 350, 349
+	334, 335, 429, 287, 319, 337, 346, 347, 333, 326, 327, 107, 330, 328, 318, 316, 350, 349
 ]);
 const _supertype_statement_ids = new Set<number>([
 	167, 174, 199, 182, 186, 188, 189, 190, 191, 193, 194, 195, 196, 197, 198, 200, 201, 203
@@ -939,6 +943,8 @@ const _kindIdByKind = new Map<string, number>([
 	['_call_expression_call', TSKindId.CallExpressionCall],
 	['_call_expression_template_call', TSKindId.CallExpressionTemplateCall],
 	['_call_expression_member', TSKindId.CallExpressionMember],
+	['_string_double', TSKindId.StringDouble],
+	['_string_single', TSKindId.StringSingle],
 	['_update_expression_postfix', TSKindId.UpdateExpressionPostfix],
 	['_update_expression_prefix', TSKindId.UpdateExpressionPrefix],
 	['_public_field_definition_abstract_first', TSKindId.PublicFieldDefinitionAbstractFirst],
@@ -969,6 +975,8 @@ export const is = {
 	ImportClauseGroup1: _g(TSKindId._ImportClauseGroup1),
 	NamedImportsGroup1: _g(TSKindId._NamedImportsGroup1),
 	PublicFieldDefinitionDeclareFirst: _g(TSKindId.PublicFieldDefinitionDeclareFirst),
+	StringDouble: _g(TSKindId.StringDouble),
+	StringSingle: _g(TSKindId.StringSingle),
 	TupleTypeGroup1: _g(TSKindId._TupleTypeGroup1),
 	abstractClassDeclaration: _g(TSKindId.AbstractClassDeclaration),
 	abstractMethodSignature: _g(TSKindId.AbstractMethodSignature),
@@ -1212,6 +1220,8 @@ export const assert = {
 		'PublicFieldDefinitionDeclareFirst',
 		is.PublicFieldDefinitionDeclareFirst as _AnyGuard
 	),
+	StringDouble: _makeAssert('StringDouble', is.StringDouble as _AnyGuard),
+	StringSingle: _makeAssert('StringSingle', is.StringSingle as _AnyGuard),
 	TupleTypeGroup1: _makeAssert('TupleTypeGroup1', is.TupleTypeGroup1 as _AnyGuard),
 	abstractClassDeclaration: _makeAssert('abstractClassDeclaration', is.abstractClassDeclaration as _AnyGuard),
 	abstractMethodSignature: _makeAssert('abstractMethodSignature', is.abstractMethodSignature as _AnyGuard),

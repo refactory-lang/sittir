@@ -1295,6 +1295,40 @@ export function buildReservedIdentifier(text: string) {
 	);
 }
 
+export function buildStringDouble(...children: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) {
+	const _content = children;
+	return withMethods(
+		{
+			$type: TSKindId.StringDouble as const,
+			$source: 2 as const,
+			$named: true as const,
+			_content,
+			contents() {
+				return _content;
+			},
+			$with: { $children: (...vs: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) => buildStringDouble(...vs) }
+		},
+		methodsEngine
+	);
+}
+
+export function buildStringSingle(...children: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) {
+	const _content = children;
+	return withMethods(
+		{
+			$type: TSKindId.StringSingle as const,
+			$source: 2 as const,
+			$named: true as const,
+			_content,
+			contents() {
+				return _content;
+			},
+			$with: { $children: (...vs: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) => buildStringSingle(...vs) }
+		},
+		methodsEngine
+	);
+}
+
 export function build_TupleTypeGroup1(
 	elements: NonEmptyArray<T.TupleTypeMember>,
 	options: { trailing?: boolean } = {}
@@ -5506,116 +5540,18 @@ export function buildStatementBlock(config: Partial<T.StatementBlock.Config> = {
 	);
 }
 
-export function buildString(config: ConfigOf<T.String>) {
-	const _opening = coerceKindEnumStorage(config.opening, [
-		['"', TSKindId.Dquote] as const,
-		["'", TSKindId.Squote] as const
-	]);
-	const _contents = config.contents ?? [];
-	const _closing = coerceKindEnumStorage(config.closing, [
-		['"', TSKindId.Dquote] as const,
-		["'", TSKindId.Squote] as const
-	]);
+export function buildString(child: T.StringDouble | T.StringSingle) {
+	const _content = child;
 	return withMethods(
 		{
 			$type: TSKindId.String as const,
 			$source: 2 as const,
 			$named: true as const,
-			_opening,
-			_contents,
-			_closing,
-			opening() {
-				return _opening;
+			_content,
+			content() {
+				return _content;
 			},
-			contents() {
-				return _contents;
-			},
-			closing() {
-				return _closing;
-			},
-			$with: {
-				opening: (value: NonNullable<Parameters<typeof buildString>[0]>['opening']) =>
-					buildString({ ...config, opening: value }),
-				contents: (
-					...values: (T.UnescapedDoubleStringFragment | T.EscapeSequence | T.UnescapedSingleStringFragment)[]
-				) => buildString({ ...config, contents: values }),
-				closing: (value: NonNullable<Parameters<typeof buildString>[0]>['closing']) =>
-					buildString({ ...config, closing: value })
-			}
-		},
-		methodsEngine
-	);
-}
-
-export function buildStringDouble(config?: T.String.Double.Config) {
-	const _opening = coerceKindEnumStorage('"' as const, [
-		['"', TSKindId.Dquote] as const,
-		["'", TSKindId.Squote] as const
-	]);
-	const _contents = config?.contents ?? [];
-	const _closing = coerceKindEnumStorage('"' as const, [
-		['"', TSKindId.Dquote] as const,
-		["'", TSKindId.Squote] as const
-	]);
-	return withMethods(
-		{
-			$type: TSKindId.String as const,
-			$source: 2 as const,
-			$named: true as const,
-			_opening,
-			_contents,
-			_closing,
-			opening() {
-				return _opening;
-			},
-			contents() {
-				return _contents;
-			},
-			closing() {
-				return _closing;
-			},
-			$with: {
-				contents: (
-					...values: (T.UnescapedDoubleStringFragment | T.EscapeSequence | T.UnescapedSingleStringFragment)[]
-				) => buildStringDouble({ ...config, contents: values })
-			}
-		},
-		methodsEngine
-	);
-}
-
-export function buildStringSingle(config?: T.String.Single.Config) {
-	const _opening = coerceKindEnumStorage("'" as const, [
-		['"', TSKindId.Dquote] as const,
-		["'", TSKindId.Squote] as const
-	]);
-	const _contents = config?.contents ?? [];
-	const _closing = coerceKindEnumStorage("'" as const, [
-		['"', TSKindId.Dquote] as const,
-		["'", TSKindId.Squote] as const
-	]);
-	return withMethods(
-		{
-			$type: TSKindId.String as const,
-			$source: 2 as const,
-			$named: true as const,
-			_opening,
-			_contents,
-			_closing,
-			opening() {
-				return _opening;
-			},
-			contents() {
-				return _contents;
-			},
-			closing() {
-				return _closing;
-			},
-			$with: {
-				contents: (
-					...values: (T.UnescapedDoubleStringFragment | T.EscapeSequence | T.UnescapedSingleStringFragment)[]
-				) => buildStringSingle({ ...config, contents: values })
-			}
+			$with: { $child: (v: T.StringDouble | T.StringSingle) => buildString(v) }
 		},
 		methodsEngine
 	);
@@ -6786,6 +6722,8 @@ export type FluentKindMap = {
 	_public_field_definition_readonly_first: T.PublicFieldDefinitionReadonlyFirst;
 	_public_field_definition_static_mods: T.PublicFieldDefinitionStaticMods;
 	_reserved_identifier: T.ReservedIdentifier;
+	_string_double: FluentNode<'_string_double', T.StringDouble.Config>;
+	_string_single: FluentNode<'_string_single', T.StringSingle.Config>;
 	_tuple_type_group1: FluentNode<'_tuple_type_group1', T._TupleTypeGroup1.Config>;
 	_type_identifier: T.TypeIdentifier;
 	_type_query_call_expression: T.TypeQueryCallExpression;
@@ -7038,6 +6976,8 @@ export const _factoryMap = {
 	_public_field_definition_readonly_first: buildPublicFieldDefinitionReadonlyFirst,
 	_public_field_definition_static_mods: buildPublicFieldDefinitionStaticMods,
 	_reserved_identifier: buildReservedIdentifier,
+	_string_double: buildStringDouble,
+	_string_single: buildStringSingle,
 	_tuple_type_group1: build_TupleTypeGroup1,
 	_type_identifier: buildTypeIdentifier,
 	_type_query_call_expression: buildTypeQueryCallExpression,
