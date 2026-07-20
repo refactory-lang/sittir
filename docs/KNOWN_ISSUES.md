@@ -152,6 +152,8 @@ Severity is broader than the corpus shows: this affects any macro invocation/def
 
 ## `nodes.test.ts`'s live generator was mistakenly believed dead; per-node emitter has a known `nonEmptyArray` mock-construction gap
 
+**Tracked in:** [#170](https://github.com/refactory-lang/sittir/issues/170) (full 28-failure breakdown, cross-referenced with #129 and #130).
+
 **Found during:** PR #169 — regenerating rust surfaced `packages/rust/tests/nodes.test.ts` as a brand-new file with 20 failing tests, none related to the punctuation fix that triggered the regen.
 
 Two separate, unrelated facts:
