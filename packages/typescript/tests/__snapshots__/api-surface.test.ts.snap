@@ -58,7 +58,6 @@ exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level export
   "_OBJECT_TYPE_OPENINGS": "array",
   "_OPERATORS": "array",
   "_PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKERS": "array",
-  "_STRING_OPENINGS": "array",
   "_UNARY_EXPRESSION_OPERATORS": "array",
   "__FOR_HEADER_OPERATORS": "array",
   "__NUMBER_OPERATORS": "array",

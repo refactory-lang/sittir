@@ -707,12 +707,7 @@ export const ir = {
 		from: FR.coerceToStatementBlock,
 		strict: F.buildStatementBlock
 	}),
-	string: _attach(FR.coerceToString, {
-		from: FR.coerceToString,
-		strict: F.buildString,
-		double: F.buildStringDouble,
-		single: F.buildStringSingle
-	}),
+	string: _attach(FR.coerceToString, { from: FR.coerceToString, strict: F.buildString }),
 	subscriptExpression: _attach(FR.coerceToSubscriptExpression, {
 		from: FR.coerceToSubscriptExpression,
 		strict: F.buildSubscriptExpression

@@ -1,6 +1,6 @@
 {
     "backend": "native",
-    "commit": "ff6c7af",
+    "commit": "f5b044a",
     "grammars": {
         "python": {
             "parityFixtures": {
@@ -70,8 +70,8 @@
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
-                "pass": 651,
-                "total": 651
+                "pass": 652,
+                "total": 652
             },
             "validators": {
                 "coverage": {
@@ -143,8 +143,8 @@
             "parityFixtures": {
                 "failingByKind": {},
                 "formatDeferredByKind": {},
-                "pass": 307,
-                "total": 307
+                "pass": 556,
+                "total": 556
             },
             "validators": {
                 "coverage": {
@@ -160,11 +160,11 @@
                         "required_parameter"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 174,
-                    "total": 183
+                    "pass": 176,
+                    "total": 185
                 },
                 "factoryRoundtrip": {
-                    "astMatchPass": 409,
+                    "astMatchPass": 572,
                     "failingKinds": [
                         "ambient_declaration",
                         "array",
@@ -174,8 +174,11 @@
                         "class_body",
                         "enum_body_group1",
                         "expression_statement",
+                        "for_in_statement",
                         "function_declaration",
                         "function_signature",
+                        "import_attribute",
+                        "import_statement",
                         "index_signature",
                         "instantiation_expression",
                         "member_expression",
@@ -183,31 +186,37 @@
                         "parenthesized_expression",
                         "program",
                         "property_signature",
+                        "public_field_definition",
                         "required_parameter",
                         "rest_pattern",
                         "return_statement",
+                        "statement_block",
                         "template_literal_type",
+                        "throw_statement",
                         "type_parameters",
                         "type_predicate_annotation",
                         "type_query",
                         "variable_declarator"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 440,
-                    "total": 671
+                    "pass": 615,
+                    "total": 983
                 },
                 "from": {
                     "failingKinds": [
                         "call_expression"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 106,
-                    "total": 113
+                    "pass": 134,
+                    "total": 147
                 },
                 "roundtrip": {
-                    "astMatchPass": 49,
+                    "astMatchPass": 68,
                     "failingKinds": [
                         "array_type",
+                        "break_statement",
+                        "continue_statement",
+                        "debugger_statement",
                         "expression_statement",
                         "member_expression",
                         "program",
@@ -216,15 +225,15 @@
                         "variable_declarator"
                     ],
                     "formatDeferredKinds": [],
-                    "pass": 82,
+                    "pass": 109,
                     "total": 111
                 }
             }
         }
     },
     "totals": {
-        "fail": 1483,
-        "pass": 3631,
-        "total": 5114
+        "fail": 1599,
+        "pass": 4113,
+        "total": 5712
     }
 }

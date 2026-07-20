@@ -323,6 +323,8 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_class_body_method_sig: TSKindId.ClassBodyMethodSig,
 	_export_statement_default: TSKindId.ExportStatementDefault,
 	_public_field_definition_declare_first: TSKindId.PublicFieldDefinitionDeclareFirst,
+	_string_double: TSKindId.StringDouble,
+	_string_single: TSKindId.StringSingle,
 	ambient_declaration: TSKindId.AmbientDeclaration,
 	asserts: TSKindId.Asserts,
 	call_expression: TSKindId.CallExpression,
@@ -343,6 +345,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	parenthesized_expression: TSKindId.ParenthesizedExpression,
 	rest_pattern: TSKindId.RestPattern,
 	sequence_expression: TSKindId.SequenceExpression,
+	string: TSKindId.String,
 	template_literal_type: TSKindId.TemplateLiteralType,
 	template_string: TSKindId.TemplateString,
 	template_substitution: TSKindId.TemplateSubstitution,
@@ -370,6 +373,10 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildPublicFieldDefinitionDeclareFirst(
 				children[0] as Parameters<typeof F.buildPublicFieldDefinitionDeclareFirst>[0]
 			);
+		case '_string_double':
+			return F.buildStringDouble(...(children as Parameters<typeof F.buildStringDouble>));
+		case '_string_single':
+			return F.buildStringSingle(...(children as Parameters<typeof F.buildStringSingle>));
 		case 'ambient_declaration':
 			return F.buildAmbientDeclaration(children[0] as Parameters<typeof F.buildAmbientDeclaration>[0]);
 		case 'asserts':
@@ -412,6 +419,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildRestPattern(children[0] as Parameters<typeof F.buildRestPattern>[0]);
 		case 'sequence_expression':
 			return F.buildSequenceExpression(...(children as Parameters<typeof F.buildSequenceExpression>));
+		case 'string':
+			return F.buildString(children[0] as Parameters<typeof F.buildString>[0]);
 		case 'template_literal_type':
 			return F.buildTemplateLiteralType(...(children as Parameters<typeof F.buildTemplateLiteralType>));
 		case 'template_string':
@@ -903,14 +912,9 @@ const _K37: readonly string[] = ['pair', 'spread_element', 'method_definition'];
 const _K38: readonly string[] = ['pair_pattern', 'rest_pattern', 'object_assignment_pattern'];
 const _K39: readonly string[] = ['undefined', 'identifier', 'this'];
 const _K40: readonly string[] = ['_public_field_definition_declare_first', '_public_field_definition_access_first'];
-const _K41: readonly string[] = [
-	'unescaped_double_string_fragment',
-	'escape_sequence',
-	'unescaped_single_string_fragment'
-];
-const _K42: readonly string[] = ['switch_case', 'switch_default'];
-const _K43: readonly string[] = ['rest_pattern'];
-const _K44: readonly string[] = ['identifier', 'this', 'predefined_type'];
+const _K41: readonly string[] = ['switch_case', 'switch_default'];
+const _K42: readonly string[] = ['rest_pattern'];
+const _K43: readonly string[] = ['identifier', 'this', 'predefined_type'];
 
 export function coerceToAbstractClassDeclaration(
 	input: T.AbstractClassDeclaration.Loose
@@ -2885,31 +2889,13 @@ export function coerceToStatementBlock(input?: T.StatementBlock.Loose): ReturnTy
 	});
 }
 
-export function coerceToString(input: T.String.Loose): ReturnType<typeof F.buildString> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildString>;
-	return F.buildString({
-		opening: _requireField(
-			'string',
-			'opening',
-			coerceKindEnumStorage(_resolveOneLeaf<T.StringOpening>(input.opening, '_string_opening'), [
-				['"', kindIdFromName('"')] as const,
-				["'", kindIdFromName("'")] as const
-			])
-		),
-		contents: _resolveMany<T.UnescapedDoubleStringFragment | T.EscapeSequence | T.UnescapedSingleStringFragment>(
-			input.contents,
-			_K41,
-			_K2
-		),
-		closing: _requireField(
-			'string',
-			'closing',
-			coerceKindEnumStorage(_resolveOneLeaf<T.StringOpening>(input.closing, '_string_opening'), [
-				['"', kindIdFromName('"')] as const,
-				["'", kindIdFromName("'")] as const
-			])
-		)
-	});
+export function coerceToString(input?: (T.StringDouble | T.StringSingle) | T.String): ReturnType<typeof F.buildString> {
+	if (isNodeData(input) && input.$type === TSKindId.String) {
+		const data = input;
+		const child = (data as unknown as { _content?: unknown })._content;
+		return F.buildString(child as Parameters<typeof F.buildString>[0]);
+	}
+	return F.buildString(input as Parameters<typeof F.buildString>[0]);
 }
 
 export function coerceToSubscriptExpression(
@@ -2935,7 +2921,7 @@ export function coerceToSuper(input?: T.Super): ReturnType<typeof F.buildSuper> 
 export function coerceToSwitchBody(input?: T.SwitchBody.Loose): ReturnType<typeof F.buildSwitchBody> {
 	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildSwitchBody>;
 	return F.buildSwitchBody({
-		cases: _resolveMany<T.SwitchCase | T.SwitchDefault>(input?.cases, _K2, _K42)
+		cases: _resolveMany<T.SwitchCase | T.SwitchDefault>(input?.cases, _K2, _K41)
 	});
 }
 
@@ -3068,7 +3054,7 @@ export function coerceToTupleParameter(input: T.TupleParameter.Loose): ReturnTyp
 		name: _requireField(
 			'tuple_parameter',
 			'name',
-			_resolveOne<T.Identifier | T.RestPattern>(input.name, _super_import_identifier, _K43)
+			_resolveOne<T.Identifier | T.RestPattern>(input.name, _super_import_identifier, _K42)
 		),
 		type: _requireField('tuple_parameter', 'type', _resolveOneBranch<T.TypeAnnotation>(input.type, 'type_annotation'))
 	});
@@ -3159,7 +3145,7 @@ export function coerceToTypePredicate(input: T.TypePredicate.Loose): ReturnType<
 		name: _requireField(
 			'type_predicate',
 			'name',
-			_resolveOne<T.Identifier | T.This | T.PredefinedType>(input.name, _K44, _K2)
+			_resolveOne<T.Identifier | T.This | T.PredefinedType>(input.name, _K43, _K2)
 		),
 		type: _requireField('type_predicate', 'type', _resolveOne<T.Type>(input.type, _K4, _K5))
 	});

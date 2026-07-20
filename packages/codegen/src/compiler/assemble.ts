@@ -974,6 +974,23 @@ function resolveHiddenRuleContent(rule: RenderRule, seen: Set<string>, ctx: Asse
 	if (rule.aliasedFrom !== undefined && rule.type !== SYMBOL) {
 		return [rule.aliasedFrom];
 	}
+	// A closed literal-enum body (bare `choice` of all-STRING members, e.g.
+	// rust's `_primitive_type` / the alias-minted `_token_tree_punctuation`
+	// sentinel) is an opaque terminal set, not a compound structure to
+	// decompose. Without this check, `case CHOICE` below flatMaps into every
+	// member and `case STRING` returns non-word-shape literals verbatim —
+	// harmless for word-shaped enums (`u8`, `i32`, ... all filtered out by
+	// the STRING case's word-shape check, so they silently contribute
+	// nothing), but for a punctuation enum (`+`, `-`, `%`, ...) every member
+	// IS non-word-shape, so they all survive the flatMap and get reported as
+	// bogus subtype names — crashing `emitSupertypeUnionDeclarations` with
+	// "references subtype '%' which is not in NodeMap". Treating the WHOLE
+	// enum as opaque (matching the existing SEQ case's opacity rationale)
+	// makes punctuation enums behave the same as word-shaped ones instead of
+	// applying the STRING case's word-shape filter per-member.
+	if (isEnumChoiceRule(rule)) {
+		return [];
+	}
 	switch (rule.type) {
 		case SYMBOL: {
 			const refName = rule.aliasedFrom ?? rule.name;

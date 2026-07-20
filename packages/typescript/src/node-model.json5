@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 433,
+  "nodeCount": 434,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -135,6 +135,13 @@
         "public_field_definition_static_mods": "static_mods",
         "public_field_definition_abstract_first": "abstract_first",
         "public_field_definition_readonly_first": "readonly_first"
+      }
+    },
+    "string": {
+      "definedBy": "override",
+      "childKind": {
+        "string_double": "double",
+        "string_single": "single"
       }
     },
     "update_expression": {
@@ -368,6 +375,10 @@
     },
     "rest_pattern.content": {
       "identifier": "_reserved_identifier"
+    },
+    "string.content": {
+      "string_double": "_string_double",
+      "string_single": "_string_single"
     },
     "template_literal_type.content": {
       "string_fragment": "_template_chars"
@@ -964,6 +975,24 @@
         "slotCount": 1,
         "required": false,
         "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_string_double": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "_string_single": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
         "nonEmpty": false
       }
     },
@@ -3576,21 +3605,7 @@
       }
     },
     "string": {
-      "opening": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "contents": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "closing": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -8585,17 +8600,96 @@
       "factoryShape": "text"
     },
     {
-      "kind": "_string_opening",
-      "modelType": "enum",
-      "typeName": "StringOpening",
-      "factoryName": "stringOpening",
-      "irKey": "stringOpening",
+      "kind": "_string_double",
+      "modelType": "branch",
+      "typeName": "StringDouble",
+      "factoryName": "stringDouble",
+      "irKey": "stringDouble",
       "hidden": false,
-      "values": [
-        "\"",
-        "'"
+      "fields": [
+        {
+          "name": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "unescaped_double_string_fragment",
+              "parseKind": "unescaped_double_string_fragment",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "escape_sequence",
+              "parseKind": "escape_sequence",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "unescaped_double_string_fragment",
+              "escape_sequence"
+            ]
+          }
+        }
       ],
-      "factoryShape": "text"
+      "children": [],
+      "factoryShape": "spread",
+      "factoryFields": [
+        "content"
+      ]
+    },
+    {
+      "kind": "_string_single",
+      "modelType": "branch",
+      "typeName": "StringSingle",
+      "factoryName": "stringSingle",
+      "irKey": "stringSingle",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "unescaped_single_string_fragment",
+              "parseKind": "unescaped_single_string_fragment",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "escape_sequence",
+              "parseKind": "escape_sequence",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "unescaped_single_string_fragment",
+              "escape_sequence"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "spread",
+      "factoryFields": [
+        "content"
+      ]
     },
     {
       "kind": "_template_chars",
@@ -21040,9 +21134,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "opening",
-          "propertyName": "opening",
-          "paramName": "opening",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -21050,87 +21144,31 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_string_opening",
-              "parseKind": "_string_opening",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_string_opening"
-            ]
-          }
-        },
-        {
-          "name": "contents",
-          "propertyName": "contents",
-          "paramName": "contents",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "unescaped_double_string_fragment",
-              "parseKind": "unescaped_double_string_fragment",
+              "name": "_string_double",
+              "parseKind": "string_double",
               "unresolved": true
             },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "escape_sequence",
-              "parseKind": "escape_sequence",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "unescaped_single_string_fragment",
-              "parseKind": "unescaped_single_string_fragment",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "unescaped_double_string_fragment",
-              "escape_sequence",
-              "unescaped_single_string_fragment"
-            ]
-          }
-        },
-        {
-          "name": "closing",
-          "propertyName": "closing",
-          "paramName": "closing",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_string_opening",
-              "parseKind": "_string_opening",
+              "name": "_string_single",
+              "parseKind": "string_single",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_string_opening"
+              "_string_double",
+              "_string_single"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "opening",
-        "contents",
-        "closing"
+        "content"
       ]
     },
     {

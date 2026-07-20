@@ -1556,17 +1556,6 @@ export interface NegativeLiteralTransport {
   _value: NegativeLiteralValueTransportSlot
 }
 
-export interface NonSpecialTokenTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _content?: Array<NonSpecialTokenContentTransportSlot>
-}
-
 export interface OrderedFieldDeclarationListGroup1Transport {
   '$source'?: Source
   '$named'?: boolean

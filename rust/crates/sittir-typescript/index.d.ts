@@ -2399,6 +2399,28 @@ export interface StatementBlockTransport {
   _statements?: Array<StatementTransport>
 }
 
+export interface StringDoubleTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _content?: Array<StringDoubleContentTransportSlot>
+}
+
+export interface StringSingleTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _content?: Array<StringSingleContentTransportSlot>
+}
+
 export interface StringTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -2407,9 +2429,7 @@ export interface StringTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _opening: StringOpeningEnum
-  _contents?: Array<StringContentsTransportSlot>
-  _closing: StringOpeningEnum
+  _content: StringContentTransportSlot
 }
 
 export interface SubscriptExpressionTransport {

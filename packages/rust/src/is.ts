@@ -15,6 +15,7 @@ import type {
 	Literal,
 	LiteralPattern,
 	NonDelimToken,
+	NonSpecialToken,
 	Path,
 	Pattern,
 	Statement,
@@ -327,6 +328,7 @@ export interface IsGuards {
 	literal(v: { readonly $type: string | number }): v is Literal;
 	literalPattern(v: { readonly $type: string | number }): v is LiteralPattern;
 	nonDelimToken(v: { readonly $type: string | number }): v is NonDelimToken;
+	nonSpecialToken(v: { readonly $type: string | number }): v is NonSpecialToken;
 	path(v: { readonly $type: string | number }): v is Path;
 	pattern(v: { readonly $type: string | number }): v is Pattern;
 	statement(v: { readonly $type: string | number }): v is Statement;
@@ -565,6 +567,7 @@ export interface AssertGuards {
 	literal(v: { readonly $type: string | number }): asserts v is Literal;
 	literalPattern(v: { readonly $type: string | number }): asserts v is LiteralPattern;
 	nonDelimToken(v: { readonly $type: string | number }): asserts v is NonDelimToken;
+	nonSpecialToken(v: { readonly $type: string | number }): asserts v is NonSpecialToken;
 	path(v: { readonly $type: string | number }): asserts v is Path;
 	pattern(v: { readonly $type: string | number }): asserts v is Pattern;
 	statement(v: { readonly $type: string | number }): asserts v is Statement;
@@ -583,53 +586,52 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boole
 }
 
 const _supertype_condition_ids = new Set<number>([
-	247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 128, 313, 125, 151, 1, 138, 243, 225, 287, 288, 258, 260,
-	239, 261, 284, 285, 286, 141, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280, 246, 268, 269
+	247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 125, 313, 122, 151, 1, 135, 243, 225, 287, 288, 258, 260,
+	239, 261, 284, 285, 286, 138, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280, 246, 268, 269
 ]);
 const _supertype_declarationStatement_ids = new Set<number>([
 	185, 239, 161, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186
 ]);
-const _supertype_delimTokens_ids = new Set<number>([311, 312, 128, 313, 125, 151, 1, 119, 138, 139, 140, 240]);
+const _supertype_delimTokens_ids = new Set<number>([311, 312, 125, 313, 122, 151, 1, 90, 135, 136, 137, 240]);
 const _supertype_expression_ids = new Set<number>([
-	247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 128, 313, 125, 151, 1, 138, 243, 225, 287, 288, 258, 260,
-	239, 261, 284, 285, 286, 141, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280, 246
+	247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 125, 313, 122, 151, 1, 135, 243, 225, 287, 288, 258, 260,
+	239, 261, 284, 285, 286, 138, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280, 246
 ]);
 const _supertype_expressionEndingWithBlock_ids = new Set<number>([
 	289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280
 ]);
 const _supertype_expressionExceptRange_ids = new Set<number>([
-	247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 128, 313, 125, 151, 1, 138, 243, 225, 287, 288, 258, 260,
-	239, 261, 284, 285, 286, 141, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280
+	247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 125, 313, 122, 151, 1, 135, 243, 225, 287, 288, 258, 260,
+	239, 261, 284, 285, 286, 138, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280
 ]);
-const _supertype_literal_ids = new Set<number>([311, 312, 128, 313, 125, 151]);
-const _supertype_literalPattern_ids = new Set<number>([311, 312, 128, 313, 125, 151, 310]);
-const _supertype_nonDelimToken_ids = new Set<number>([311, 312, 128, 313, 125, 151, 1, 119, 138, 139, 140]);
-const _supertype_path_ids = new Set<number>([138, 1, 141, 139, 140, 243]);
+const _supertype_literal_ids = new Set<number>([311, 312, 125, 313, 122, 151]);
+const _supertype_literalPattern_ids = new Set<number>([311, 312, 125, 313, 122, 151, 310]);
+const _supertype_nonDelimToken_ids = new Set<number>([311, 312, 125, 313, 122, 151, 1, 90, 135, 136, 137]);
+const _supertype_nonSpecialToken_ids = new Set<number>([311, 312, 125, 313, 122, 151, 1, 90, 135, 136, 137, 333]);
+const _supertype_path_ids = new Set<number>([135, 1, 138, 136, 137, 243]);
 const _supertype_pattern_ids = new Set<number>([
-	311, 312, 128, 313, 125, 151, 310, 1, 243, 295, 296, 298, 299, 304, 297, 305, 306, 302, 303, 307, 280, 239, 334
+	311, 312, 125, 313, 122, 151, 310, 1, 243, 295, 296, 298, 299, 304, 297, 305, 306, 302, 303, 307, 280, 239, 335
 ]);
 const _supertype_statement_ids = new Set<number>([
 	160, 185, 239, 161, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186
 ]);
 const _supertype_tokenPattern_ids = new Set<number>([
-	164, 166, 165, 141, 311, 312, 128, 313, 125, 151, 1, 119, 138, 139, 140
+	164, 166, 165, 138, 311, 312, 125, 313, 122, 151, 1, 90, 135, 136, 137
 ]);
-const _supertype_tokens_ids = new Set<number>([168, 169, 141, 311, 312, 128, 313, 125, 151, 1, 119, 138, 139, 140]);
+const _supertype_tokens_ids = new Set<number>([168, 169, 138, 311, 312, 125, 313, 122, 151, 1, 90, 135, 136, 137]);
 const _supertype_type_ids = new Set<number>([
-	235, 232, 141, 233, 226, 245, 223, 224, 220, 222, 423, 239, 236, 228, 198
+	235, 232, 138, 233, 226, 245, 223, 224, 220, 222, 423, 239, 236, 228, 198
 ]);
-const _supertype_useClause_ids = new Set<number>([138, 1, 141, 139, 140, 243, 208, 207, 206, 209]);
+const _supertype_useClause_ids = new Set<number>([135, 1, 138, 136, 137, 243, 208, 207, 206, 209]);
 
 const _kindIdByKind = new Map<string, number>([
 	['identifier', TSKindId.Identifier],
-	['_', TSKindId.Anonymous],
 	['as', TSKindId.As],
 	['async', TSKindId.Async],
 	['await', TSKindId.Await],
 	['break', TSKindId.Break],
 	['const', TSKindId.Const],
 	['continue', TSKindId.Continue],
-	['default', TSKindId.Default],
 	['enum', TSKindId.Enum],
 	['fn', TSKindId.Fn],
 	['for', TSKindId.For],
@@ -667,6 +669,7 @@ const _kindIdByKind = new Map<string, number>([
 	['super', TSKindId.Super],
 	['crate', TSKindId.Crate],
 	['metavariable', TSKindId.Metavariable],
+	['_', TSKindId.Anonymous],
 	['raw', TSKindId.Raw],
 	['move', TSKindId.Move],
 	['_line_comment_content', TSKindId.LineCommentContent],
@@ -832,6 +835,7 @@ const _kindIdByKind = new Map<string, number>([
 	['_tuple_pattern_group1', TSKindId._TuplePatternGroup1],
 	['_slice_pattern_group1', TSKindId._SlicePatternGroup1],
 	['_struct_pattern_group1', TSKindId._StructPatternGroup1],
+	['_token_tree_punctuation', TSKindId.TokenTreePunctuation],
 	['_use_wildcard_clause', TSKindId.UseWildcardClause],
 	['_wildcard_pattern', TSKindId.WildcardPattern],
 	['_reference_expression_raw_const', TSKindId.ReferenceExpressionRawConst],
@@ -1078,6 +1082,7 @@ export const is = {
 	literal: _sg(_supertype_literal_ids),
 	literalPattern: _sg(_supertype_literalPattern_ids),
 	nonDelimToken: _sg(_supertype_nonDelimToken_ids),
+	nonSpecialToken: _sg(_supertype_nonSpecialToken_ids),
 	path: _sg(_supertype_path_ids),
 	pattern: _sg(_supertype_pattern_ids),
 	statement: _sg(_supertype_statement_ids),
@@ -1303,6 +1308,7 @@ export const assert = {
 	literal: _makeAssert('literal', is.literal as _AnyGuard),
 	literalPattern: _makeAssert('literalPattern', is.literalPattern as _AnyGuard),
 	nonDelimToken: _makeAssert('nonDelimToken', is.nonDelimToken as _AnyGuard),
+	nonSpecialToken: _makeAssert('nonSpecialToken', is.nonSpecialToken as _AnyGuard),
 	path: _makeAssert('path', is.path as _AnyGuard),
 	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
 	statement: _makeAssert('statement', is.statement as _AnyGuard),

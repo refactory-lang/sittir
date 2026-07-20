@@ -907,7 +907,9 @@ const _K42: readonly string[] = [
 	'mutable_specifier',
 	'self',
 	'super',
-	'crate'
+	'crate',
+	'_primitive_type',
+	'_token_tree_punctuation'
 ];
 const _K43: readonly string[] = ['token_tree', 'token_repetition', 'string_literal', 'raw_string_literal'];
 const _K44: readonly string[] = [

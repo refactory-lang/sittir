@@ -3949,6 +3949,39 @@ var overrides_default = grammar(
           1: variant("template_call"),
           2: variant("member")
         },
+        // string: variant() adoption on the quote-style choice. Base
+        // grammar: `choice(seq('"', …, '"'), seq("'", …, "'"))`. The
+        // walker's primary-branch-wins would always pick the first
+        // (double-quoted) branch as the template, so `'x'` source
+        // round-trips as `"x"` — AST mismatch. Splitting into variant
+        // children (`string_double` / `string_single`) gives each its
+        // own template that preserves the quote style.
+        //
+        // Restored 2026-07-20 (was removed in c5f7f88ff, 2026-05-12,
+        // in favor of a `rules:` rewrite using `refine()` to
+        // correlate an uncorrelated flat seq — see that rule's
+        // former doc comment for the intent). refine() is
+        // authoring-only metadata (packages/codegen/src/dsl/primitives/refine.ts)
+        // and never constrains the actual generated parser: the
+        // rewritten grammar left `unescaped_double_string_fragment`
+        // and `unescaped_single_string_fragment` lexically reachable
+        // in the SAME parser state regardless of which quote char
+        // opened the string, so tree-sitter's longest-match lexer
+        // could pick the wrong fragment token and consume past the
+        // intended closing quote — every plain string literal
+        // produced ERROR (rust/crates/sittir-parity-tests/tests/native_parser.rs's
+        // `typescript_lexical_declaration_reads_override_named_fields`,
+        // confirmed via `tree-sitter parse` on the compiled parser
+        // directly, no read/transport layer involved). This variant
+        // split leaves the base grammar's already-correlated
+        // `choice(seq('"',…,'"'), seq("'",…,"'"))` untouched — the
+        // quote literal and its matching fragment token are baked
+        // into the same seq branch, so there's no cross-branch
+        // lexical ambiguity for tree-sitter to resolve at runtime.
+        string: {
+          0: variant("double"),
+          1: variant("single")
+        },
         // update_expression: postfix vs prefix `++` / `--`.
         update_expression: {
           0: variant("postfix"),
@@ -4035,38 +4068,6 @@ var overrides_default = grammar(
         // `?` — drop the synthetic `parameter_name` wrapper override and
         // let the walker inline the `_parameter_name` helper's fields.
         required_parameter: ($, original) => original,
-        // string — model quote style as one fielded structural shape
-        // instead of a top-level polymorph split. `opening` / `contents`
-        // / `closing` are real field-wrapped choices in the override
-        // grammar; refine correlates them so the double/single forms
-        // share one NodeData shape with auto-stamped delimiters.
-        //
-        // The double/single fragment tokens surface under their OWN names
-        // (not coerced onto a shared `string_fragment` alias): the two
-        // tokens are structurally distinct (different quote-char patterns),
-        // so aliasing them onto one parse kind was read-time non-injective
-        // (parsekind-noninjective) — the same class of collision the new
-        // enrich un-aliasing pass auto-drops at the base-grammar layer;
-        // this override reintroduces an equivalent alias independently
-        // (it wholesale-replaces the rule after enrich runs), so it needs
-        // the same fix applied here directly.
-        string: ($) => refine(
-          seq(
-            field("opening", choice('"', "'")),
-            field(
-              "contents",
-              choice(
-                repeat(choice($.unescaped_double_string_fragment, $.escape_sequence)),
-                repeat(choice($.unescaped_single_string_fragment, $.escape_sequence))
-              )
-            ),
-            field("closing", choice('"', "'"))
-          ),
-          {
-            double: { "opening:": '"', "contents:": 0, "closing:": '"' },
-            single: { "opening:": "'", "contents:": 1, "closing:": "'" }
-          }
-        ),
         // object_type — full manual rewrite (deviates from author intent).
         // Upstream is
         //   seq(brace,

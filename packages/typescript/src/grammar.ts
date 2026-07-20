@@ -2105,18 +2105,31 @@ export type TypescriptGrammar = {
 	readonly string: {
 		type: 'string';
 		named: true;
-		fields: {
-			closing: { multiple: false; required: true; types: [{ type: '"'; named: false }, { type: "'"; named: false }] };
-			contents: {
-				multiple: true;
-				required: false;
-				types: [
-					{ type: 'escape_sequence'; named: true },
-					{ type: 'unescaped_double_string_fragment'; named: true },
-					{ type: 'unescaped_single_string_fragment'; named: true }
-				];
-			};
-			opening: { multiple: false; required: true; types: [{ type: '"'; named: false }, { type: "'"; named: false }] };
+		fields: {};
+		children: {
+			multiple: false;
+			required: true;
+			types: [{ type: 'string_double'; named: true }, { type: 'string_single'; named: true }];
+		};
+	};
+	readonly string_double: {
+		type: 'string_double';
+		named: true;
+		fields: {};
+		children: {
+			multiple: true;
+			required: false;
+			types: [{ type: 'escape_sequence'; named: true }, { type: 'unescaped_double_string_fragment'; named: true }];
+		};
+	};
+	readonly string_single: {
+		type: 'string_single';
+		named: true;
+		fields: {};
+		children: {
+			multiple: true;
+			required: false;
+			types: [{ type: 'escape_sequence'; named: true }, { type: 'unescaped_single_string_fragment'; named: true }];
 		};
 	};
 	readonly subscript_expression: {

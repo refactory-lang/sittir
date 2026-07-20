@@ -2937,6 +2937,90 @@ export function wrapStatementIdentifier(
 	);
 }
 
+export function wrapStringDouble(
+	data: T.StringDouble & {
+		readonly _unescaped_double_string_fragment?:
+			| T.UnescapedDoubleStringFragment
+			| T.EscapeSequence
+			| readonly (T.UnescapedDoubleStringFragment | T.EscapeSequence)[];
+		readonly _escape_sequence?:
+			| T.UnescapedDoubleStringFragment
+			| T.EscapeSequence
+			| readonly (T.UnescapedDoubleStringFragment | T.EscapeSequence)[];
+	},
+	tree: TreeHandle
+) {
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.StringDouble as const,
+			_content: normalizeRepeatedWrapSlot(
+				data._content !== undefined
+					? _toArr(data._content)
+					: _concatInSourceOrder([data._unescaped_double_string_fragment, data._escape_sequence]),
+				false,
+				'content',
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			),
+
+			contents() {
+				return drillInAll<T.UnescapedDoubleStringFragment | T.EscapeSequence>(
+					this._content as readonly (T.UnescapedDoubleStringFragment | T.EscapeSequence)[] | undefined,
+					tree
+				);
+			},
+			$with: {
+				contents: (...v: NonNullable<T.StringDouble['_content']>[number][]) =>
+					wrapStringDouble({ ...data, _content: v }, tree)
+			}
+		},
+		methodsEngine
+	);
+	return _node;
+}
+
+export function wrapStringSingle(
+	data: T.StringSingle & {
+		readonly _unescaped_single_string_fragment?:
+			| T.UnescapedSingleStringFragment
+			| T.EscapeSequence
+			| readonly (T.UnescapedSingleStringFragment | T.EscapeSequence)[];
+		readonly _escape_sequence?:
+			| T.UnescapedSingleStringFragment
+			| T.EscapeSequence
+			| readonly (T.UnescapedSingleStringFragment | T.EscapeSequence)[];
+	},
+	tree: TreeHandle
+) {
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.StringSingle as const,
+			_content: normalizeRepeatedWrapSlot(
+				data._content !== undefined
+					? _toArr(data._content)
+					: _concatInSourceOrder([data._unescaped_single_string_fragment, data._escape_sequence]),
+				false,
+				'content',
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			),
+
+			contents() {
+				return drillInAll<T.UnescapedSingleStringFragment | T.EscapeSequence>(
+					this._content as readonly (T.UnescapedSingleStringFragment | T.EscapeSequence)[] | undefined,
+					tree
+				);
+			},
+			$with: {
+				contents: (...v: NonNullable<T.StringSingle['_content']>[number][]) =>
+					wrapStringSingle({ ...data, _content: v }, tree)
+			}
+		},
+		methodsEngine
+	);
+	return _node;
+}
+
 export function wrap_TupleTypeGroup1(
 	data: T._TupleTypeGroup1 & {
 		readonly _tuple_parameter?: T.TupleTypeMember;
@@ -9813,52 +9897,30 @@ export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapString(data: T.String, tree: TreeHandle) {
+export function wrapString(
+	data: T.String & {
+		readonly _string_double?: T.StringDouble | T.StringSingle;
+		readonly _string_single?: T.StringDouble | T.StringSingle;
+	},
+	tree: TreeHandle
+) {
 	const _node = withMethods(
 		{
 			...data,
 			$type: TSKindId.String as const,
-			_opening: projectKindEnumStorage(
-				normalizeSingularWrapSlot(data._opening, 'opening', true, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'opening',
-					span: (data as _NodeData).$span
-				})
-			),
-			_contents: normalizeRepeatedWrapSlot(data._contents, false, 'contents', {
-				tree,
-				nodeType: data.$type,
-				slotName: 'contents',
-				span: (data as _NodeData).$span
-			}),
-			_closing: projectKindEnumStorage(
-				normalizeSingularWrapSlot(data._closing, 'closing', true, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'closing',
-					span: (data as _NodeData).$span
-				})
+			_content: normalizeSingularWrapSlot(
+				data._content ?? data._string_double ?? data._string_single,
+				'content',
+				true,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
 
-			opening() {
-				return this._opening;
-			},
-			contents() {
-				return drillInAll<T.UnescapedDoubleStringFragment | T.EscapeSequence | T.UnescapedSingleStringFragment>(
-					this._contents as
-						| readonly (T.UnescapedDoubleStringFragment | T.EscapeSequence | T.UnescapedSingleStringFragment)[]
-						| undefined,
-					tree
-				);
-			},
-			closing() {
-				return this._closing;
+			content() {
+				return drillIn<T.StringDouble | T.StringSingle>(this._content, tree);
 			},
 			$with: {
-				opening: (v: NonNullable<T.String['_opening']>) => wrapString({ ...data, _opening: v }, tree),
-				contents: (...v: NonNullable<T.String['_contents']>[number][]) => wrapString({ ...data, _contents: v }, tree),
-				closing: (v: NonNullable<T.String['_closing']>) => wrapString({ ...data, _closing: v }, tree)
+				content: (v: NonNullable<T.String['_content']>) => wrapString({ ...data, _content: v }, tree)
 			}
 		},
 		methodsEngine
@@ -11721,6 +11783,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_shorthand_property_identifier_pattern: (d, t) =>
 		wrapShorthandPropertyIdentifierPattern(d as unknown as T.ShorthandPropertyIdentifierPattern, t),
 	_statement_identifier: (d, t) => wrapStatementIdentifier(d as unknown as T.StatementIdentifier, t),
+	_string_double: (d, t) => wrapStringDouble(d as unknown as T.StringDouble, t),
+	_string_single: (d, t) => wrapStringSingle(d as unknown as T.StringSingle, t),
 	_tuple_type_group1: (d, t) => wrap_TupleTypeGroup1(d as unknown as T._TupleTypeGroup1, t),
 	_tuple_type_member: (d, t) => wrapTupleTypeMember(d as unknown as T.TupleTypeMember, t),
 	_type_identifier: (d) => ({ ...d, $type: TSKindId.TypeIdentifier as const }),
@@ -12001,7 +12065,8 @@ const _aliasTargetToSource: Record<string, string> = {
 	shorthand_property_identifier_pattern: '_shorthand_property_identifier_pattern',
 	statement_identifier: '_statement_identifier',
 	static_marker: '_static_marker',
-	string_opening: '_string_opening',
+	string_double: '_string_double',
+	string_single: '_string_single',
 	template_chars: '_template_chars',
 	tuple_type_member: '_tuple_type_member',
 	type_query_call_expression: '_type_query_call_expression',

@@ -330,6 +330,18 @@ pub struct PublicFieldDefinitionStaticModsTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_string_double.jinja", escape = "none")]
+pub struct StringDoubleTemplate<'a> {
+    pub content: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_string_single.jinja", escape = "none")]
+pub struct StringSingleTemplate<'a> {
+    pub content: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_type_query_call_expression_in_type_annotation.jinja", escape = "none")]
 pub struct TypeQueryCallExpressionInTypeAnnotationTemplate<'a> {
     pub arguments: SingleNonterminalView<'a>,
@@ -1378,9 +1390,7 @@ pub struct StatementBlockTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "string.jinja", escape = "none")]
 pub struct StringTemplate<'a> {
-    pub closing: SingleNonterminalView<'a>,
-    pub contents: ListNonterminalView<'a>,
-    pub opening: SingleNonterminalView<'a>,
+    pub content: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
