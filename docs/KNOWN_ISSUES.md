@@ -2,18 +2,6 @@
 
 Running list of known, non-blocking gaps discovered during feature work — documented here rather than silently forgotten, but not urgent enough to have blocked the work that found them. When one gets fixed, delete its entry rather than marking it done.
 
-## `emitListSlot`'s nonterminal-separator fix doesn't cover the `slotValueSep` fallback path
-
-**Found during:** [separator-as-slot plan](superpowers/plans/2026-07-12-separator-as-slot-plan.md), Task 7 (`packages/codegen/src/emitters/templates.ts`).
-
-`emitListSlot` resolves a list slot's join-separator text via a fallback chain: `ruleSep ?? slotValueSep ?? DEFAULT_JOIN_SEPARATOR`. Task 7 added a branch that intercepts the `ruleSep === undefined` case specifically when the separator is genuinely nonterminal, emitting a reference to the transport struct's own runtime `.separator` field instead of falling through to the hardcoded space.
-
-That fix only covers the `ruleSep` path. The parallel `slotValueSep` fallback exists for rules that go through `fanOutSeqChoices`/`factorChoiceBranches` rebuilds, which strip the rule-level separator and stamp it onto slot values instead — via `stampSeparatorOnValues(values, separatorStr: string | undefined)`, which only accepts a `string`. Callers pass `separatorToString(...)`, which returns `undefined` for a nonterminal separator (same reason `ruleSep` does) — so nothing ever gets stamped for that case, and `slotValueSep` structurally cannot carry a nonterminal separator today.
-
-**Status: inert.** No current kind in any of the 3 grammars routes a nonterminal-separator rule through this rebuild path (confirmed empirically — `object_type_content`, the one real nonterminal-separator kind, doesn't hit it). If a future grammar override or upstream tree-sitter grammar change ever produces a nonterminal-separator rule that DOES go through `fanOutSeqChoices`/`factorChoiceBranches`, it would silently fall back to a hardcoded space — the exact failure mode Task 7's fix was written to prevent, just on the other of the two fallback paths.
-
-**Fix, if/when a real kind hits this:** thread the same nonterminal-separator detection Task 7 added for the `ruleSep` path into the `slotValueSep` path — likely requires `stampSeparatorOnValues` (or its caller) to accept a "nonterminal, resolve at runtime via struct field" marker instead of only a literal string.
-
 ## `mintContentAliasKinds`'s self-referential classification bug when an alias target's name equals the kind's own natural stripped name
 
 **Found during:** Track B (separator-as-slot follow-up), `packages/python/overrides.ts`, promoting `_patterns`/`_collection_elements` to visible `separatedList` kinds.
@@ -24,16 +12,6 @@ When a hidden rule `_foo` is promoted via a reference-site `alias($._foo, $.<vis
 
 **Fix, if/when prioritized:** trace why a self-matching alias-target name causes the classifier to treat the kind's own slot as a reference to itself instead of resolving through to the real repeat/separator shape, likely in `assemble.ts`'s parse-kind resolution or `resolveParseKindCollisions` (`compiler/model/node-map.ts`).
 
-## `mintContentAliasKinds` requires the alias to be the IMMEDIATE content of `optional(...)`/`CHOICE[x, BLANK]` — `field()`-wrapping silently prevents the mint
-
-**Found during:** Track B, same task as above.
-
-`link.ts`'s `mintContentAliasKinds` (the pass that registers a visible kind from a reference-site `alias($._hidden, $.visible)`) only mints when `isClauseHoistVisibleGroupAlias`'s `parentIsOptionalSeq` check is true — which requires the alias to be the DIRECT content of `optional(...)` or a 2-member `CHOICE[x, BLANK]`. The structural walk treats `field()` as opaque (falls through to the generic `'content' in rule` case, which resets `parentIsOptionalSeq` to `false`), so writing `optional(field('name', alias($._hidden, $.visible)))` in an override silently prevents the mint entirely — the promoted kind simply never gets registered (confirmed: `no NodeMap render path for '<name>'`, absent from `node-model.json5`), with no error surfaced at regen time.
-
-**Status: not a bug needing a fix — a documented gotcha.** The correct pattern is to alias the BARE symbol directly inside `optional(...)`, with NO `field()` wrapper: `optional(alias($._hidden, $.visible))`. (This turned out to also make a separately-suspected `field()`-wrap workaround for a naming divergence unnecessary — see `packages/python/overrides.ts`'s Track B comment block for the full resolved picture.) Documented here so a future author doesn't lose time rediscovering it.
-
-**Fix, if ever worth doing:** `isClauseHoistVisibleGroupAlias`'s structural walk (`compiler/evaluate.ts`) could treat `FIELD` as transparent (like it already treats `OPTIONAL`/`CHOICE`), so a field-wrapped alias still mints — but there is no current need since the field-name divergence this was meant to work around doesn't occur when aliasing the bare symbol directly (see the previous point).
-
 ## `tuple_pattern`'s case-context variant renders as `'()'` — a deeper two-rules-one-parse-kind model-merge gap
 
 **Found during:** Track B, `_patterns` promotion follow-up (flagged by a research pass, not fixed in that task).
@@ -42,19 +20,7 @@ Python's assignment-context `tuple_pattern` (`seq('(', optional($._patterns), ')
 
 **Status: deferred, not fixed.** This is a distinct, more complex shared-codegen problem (the node-map/template layer needs to properly model TWO source rules merging into one parse kind, each potentially needing different render logic) — explicitly out of scope for the `_patterns`/Track B promotion task that surfaced it.
 
-**Fix, if/when prioritized:** needs node-map-level support for a parse kind whose real shape can vary depending on which of several distinct SOURCE rules produced it (not just which grammar POSITION references it, the case Track A/B already handle) — likely a template/render-module change, not a small overrides.ts patch.
-
-## Reference-site-alias-minted kinds (`link.ts`'s `mintContentAliasKinds`) never get a dedicated `factories.ts`/`wrap.ts` function
-
-**Found during:** [separator-as-slot plan](superpowers/plans/2026-07-12-separator-as-slot-plan.md), Task 5 (Track B, `packages/python/overrides.ts`).
-
-After fixing the body-alias vs reference-site-alias bug (see below) and the `field()`-wrap mint gotcha, the 3 promoted kinds (`parameter_list`, `pattern_group`, `element_list`) correctly classify as `modelType: "separatedList"` in `node-model.json5`, with the correct `factoryName` (e.g. `"parameterList"`). But `emitters/factories.ts` never actually emits a dedicated `export function parameterList(...)`, and `emitters/wrap.ts` never emits a dedicated `wrapParameterList`, for any of the 3 — confirmed via temporary debug instrumentation in `emitSeparatedListFactory` that it is dispatched to for pre-existing Track-A-minted kinds (`_list_pattern_group1`/`list_pattern_group1`, both `hidden: false`) but never for these 3 link-time-minted kinds. The skip happens upstream, in `emitters/shared.ts`'s `classifyFactoryEmission`/`classifyParserSymbolEmission` gate (most likely `hasCatalogEntry(kindEntries, kind)` returning `false` for these kinds, since they're minted during `link.ts` rather than registered in `base.grammar.rules` before catalog collection the way Track A's enrich-synthesized kinds are).
-
-The kind is still fully constructible and renders correctly — only reachable via the WRAPPING kind's factory (e.g. `ir.parameters({...})`, whose `_parameter_list` field holds a plain `NodeData`-shaped literal for the nested value), not via a standalone `F.parameterList(...)` call. This is the same "TS factories/wrap surface is the deprecated JS-side view, not the native production path" situation documented in project memory (`feedback_ts_readnode_deprecated`) — the NATIVE render path (verified via `probe-kind --backend native` and the `validate:native` sweep) is confirmed correct and unaffected; this gap is cosmetic to the deprecated TS construction surface, not a correctness bug in production rendering.
-
-**Status:** documented gap, not fixed. Root cause not conclusively pinned down (suspected `hasCatalogEntry`/`synthesizedKinds` treating link-time-minted kinds differently from enrich-time-registered ones) — would need further tracing in `emitters/shared.ts` + wherever `kindEntries`/`synthesizedKinds` get populated to confirm and fix cleanly.
-
-**Fix, if/when prioritized:** make `classifyParserSymbolEmission`'s catalog/synthesized-kind checks recognize link-time-minted kinds (from `mintContentAliasKinds`) the same way it already recognizes enrich-time-minted ones, so `factories.ts`/`wrap.ts` emit dedicated functions for them too.
+**Fix (decided 2026-07-20, planned):** re-alias the case-context `_tuple_pattern` reference to its own unique visible name via `packages/python/overrides.ts` (e.g. `case_tuple_pattern` — must be a NON-natural name per the `mintContentAliasKinds` self-ref classification bug above, and `tuple_pattern` is taken anyway), so each source rule gets its own parse kind and template. Dissolves the two-rules-one-parse-kind merge without node-map-level machinery. Touches the override parser → gate on a corpus A/B (python's override-parser regression count is 1; must not grow).
 
 ## `_concatInSourceOrder` sorts text-collapsed leaves (no `$span`/`$childIndex`) to the end, losing source order
 
@@ -65,20 +31,6 @@ The kind is still fully constructible and renders correctly — only reachable v
 **Status: deferred, not blocking.** Small (1-2 mismatches), isolated to this specific mixed-leaf-shape ordering case, and not required to resolve the separator-variability qualification's own regression (which Bugs A and B above fully account for).
 
 **Fix, if/when prioritized:** text-collapsed leaves need SOME source-position signal to sort correctly among span-bearing siblings — likely requires either preserving a positional marker through the text-collapse step, or falling back to declaration order relative to neighboring spans instead of a global end-of-list sort.
-
-## `collect-slots.ts`'s `mergeByName`/`mergeChoiceArms` silently discard per-arm "surrounding" context when folding same-named slots
-
-**Found during:** PR-L scoping (compiler-simplification master plan's final PR), via a 2026-06-04 followup already noted in the master plan doc (`§slot-naming note`) and reconfirmed while designing PR-L's real implementation scope.
-
-`mergeByName` and `mergeChoiceArms` (`compiler/collect-slots.ts:203-256`) fold multiple same-named positional/field slots — including across a choice's distinct arms — into one slot, keeping only `values` (deduped), `hasLeading`/`hasTrailing` booleans, and `sourceRuleIds`. The per-arm "surrounding" facts (the actual literals/separators each occurrence sat behind — e.g. `param ,` vs `param ;`) are discarded entirely. When two folded arms genuinely differ in surrounding, that lost difference IS the variant signal — the merge silently turns "should be a polymorph/promotion, or at least a diagnostic" into one flat, ambiguous slot. This already caused two real render bugs before being worked around via manual overrides: rust `visibility_modifier`'s `pub(crate)` rendering as `pub ( )`, and python `except_clause`'s `except E:` rendering as `except E as:`.
-
-A "gate the merge on surrounding-equivalence" fix (compare arms structurally, merge only when truly equivalent) turns out to be **architecturally infeasible at the point the merge runs**: `simplify.ts`'s `simplifySeqRule` already strips the surrounding literal (`if (m.type === STRING && !isSlotPromotedLiteral(m)) return false`) as a normal, load-bearing part of turning grammar rules into render-shaped rules — by the time `collect-slots` runs, the information needed to distinguish "safe to merge" from "hides a real difference" is already gone.
-
-**Status: deferred, not fixed.** The only architecturally sound alternatives are (a) preserve a lightweight surrounding fingerprint earlier in the pipeline, before simplify erases it, so it survives to merge time — smaller blast radius but real pipeline surgery — or (b) remove the silent fold entirely, replacing every same-named-arm collision with a fail-diagnostic requiring an explicit override (consistent with this project's "prefer overrides over inference" stance and with PR-L's own theme). Full removal's blast radius is unmeasured — an unknown, possibly large number of currently-working kinds across all 3 grammars rely on the merge succeeding silently. Explicitly scoped out of PR-L (2026-07-14) to keep that PR's own two real items (the `unslotted-child` check and the `parsekind-noninjective`/`content-collision` burn-down+flip) independently reviewable.
-
-PR-L (this plan) added an `isUnnamed` guard to `mergeByName`/`mergeChoiceArms` (`collect-slots.ts`) AND a matching guard to the previously-unguarded `mergeSlotsByName` (`compiler/model/node-map.ts:981`) — unnamed/positional same-name slots no longer merge AT ALL now (they surface as a `storagename-collision` diagnostic instead, now blocking). This resolves the "should these ever have been merged" question for unnamed slots specifically, but does NOT address this entry's own concern about surrounding-context loss for slots that DO still legitimately merge (named fields sharing an identity across arms) — that part of the entry is unchanged and still accurate.
-
-**Fix, if/when prioritized:** first measure the actual blast radius (how many kinds/slots across the 3 grammars currently depend on a non-trivial fold, e.g. via slots whose `sourceRuleIds` carry 2+ distinct entries) before committing to option (a) or (b) above — this was flagged as needed but not done during PR-L's scoping, since the user explicitly deferred the whole item rather than pursuing it further at that time.
 
 ## Rust `generic_type_with_turbofish`'s render template injects illegal whitespace around the `::<` turbofish token — accepted regression, not a TODO
 
@@ -120,37 +72,17 @@ Confirmed against actual factory output: accessor methods on generated factory o
 
 **Fix, if/when prioritized:** needs its own investigation into the factory emitter (`packages/codegen/src/emitters/factories.ts`) to find where accessor methods get attached to the returned node object — likely a missing `Object.defineProperty(..., {enumerable: false})` or equivalent, compared against whatever mechanism attaches the genuinely-non-enumerable members correctly today.
 
-## Rust `token_tree`/`delim_token_tree`'s comma (and other anonymous punctuation) is silently dropped on render — FIXED
+## `REPARSE_WRAPPERS.rust` still keyed to pre-alias-catalog-split name `delim_token_tree` — token-tree probing and fixtures silently vanished
 
-**Status: fixed** (PR #169, `ba31945a5`). `packages/rust/overrides.ts` now mints a real, alias-minted `token_tree_punctuation` kind from `_non_special_token`'s `PREC_RIGHT(REPEAT1(CHOICE(...TOKEN_TREE_NON_SPECIAL_PUNCTUATION)))` arm — the whole compound is replaced by a single named alias into a hand-declared `_token_tree_punctuation` sentinel (the 44-literal set copied verbatim from upstream), so punctuation is no longer anonymous and reaches a typed slot instead of the `$other` bucket.
+**Found during:** PR #168 baseline-refresh investigation. Residual of the (since-fixed, PR #169 `ba31945a5`) token-tree punctuation-drop entry — the render defect is fixed; this coverage gap is what remains.
 
-That construct exposed a separate, pre-existing bug in `assemble.ts`'s `resolveHiddenRuleContent`: recursing through a `SYMBOL`'s `aliasedFrom` chain into a hidden closed-literal-enum body unconditionally flattened it into individual `STRING` members instead of treating it as an opaque leaf (word-shaped enums like `_primitive_type` survived this harmlessly since non-word members get filtered; an all-punctuation enum has none, so every literal survived and got reported as a bogus supertype subtype, crashing `emitSupertypeUnionDeclarations`). Fixed alongside — see `resolveHiddenRuleContent`'s doc comment.
+`REPARSE_WRAPPERS.rust` (`packages/tools/src/validate/common.ts`, ~line 726) is keyed only to the pre-alias-catalog-split name `delim_token_tree`. Since PR #165's alias-catalog determinism fix, this content reads as `token_tree` (168) / hidden `_delim_token_tree_paren` (378) instead — `probe-kind -k delim_token_tree` finds nothing, the wrapper-map lookup misses, `wrapForReparse` returns null, and `read-render-parse.ts:544` silently `continue`s. No error, no fixture, invisible in counts — the kind's fixture count dropped 19→0 without any validator noticing.
 
-Verified via `probe-kind` (comma now lands inside `_delim_tokens`'s array) and `validate:native`/`validation-history.jsonl` (zero regressions across all three grammars, matching every prior recorded run).
+**Fix (safe, low risk):** add a `token_tree` key to `REPARSE_WRAPPERS.rust` with the same wrapper body as the existing `delim_token_tree` entry. Validator-only, no codegen change — restores probing/fixtures and surfaces any remaining token-tree mismatches as visible failures.
 
-**Remaining, separate, lower-priority gaps** (not fixed by this change):
-- `_delim_token_tree_paren.jinja`'s naive `{{ delim_tokens | join(" ") }}` renders a stray space before punctuation (`"hi" , x` instead of `"hi", x`) — cosmetic template-join issue.
-- A pre-existing `delim_token_tree_paren` AST mismatch involving `'` (lifetime/char-literal marker) remains in the corpus, unconfirmed as new-vs-pre-existing.
-- The `REPARSE_WRAPPERS.rust` coverage gap described below (item 1 in the original writeup) is unaffected by this fix and still needs its own follow-up.
-
-<details>
-<summary>Original writeup (pre-fix, kept for context)</summary>
-
-**Found during:** PR #168 baseline-refresh investigation (`specs/016-parity-regressions/baselines/native.json` refresh) — noticed the fixture count for this kind's `paren` variant dropped from 19 (as of `8eed718ff`, 2026-07-16) to 0 in today's regen, dispatched a research pass to root-cause it.
-
-Confirmed via direct probe: `probe-kind --grammar rust -s 'm!("hi", x);' -k token_tree` renders `("hi", x)` as `("hi" x)` — the comma is missing. Root cause is at the READ layer, not render: `rust/crates/sittir-core/src/read_node.rs:147-156` routes anonymous children (including punctuation like `,`, `'`) into the untyped `$other` bucket — only NAMED children reach `_<kind>` slots. `token_tree`/`delim_token_tree`'s content is an ordered mix of named nodes and anonymous punctuation (the `PREC_RIGHT(REPEAT1(CHOICE("+","-",",",…)))` branch of `_non_special_token`), so `_delim_tokens` structurally cannot carry the punctuation, and `packages/rust/templates/_delim_token_tree_paren.jinja`'s `({{ delim_tokens | join(" ") }})` has never had it to render — confirmed the template is byte-identical back to `8eed718ff`. This is a **longstanding defect, not a new regression**: all 19 previously-"passing" fixtures for this kind contained zero commas (single-token/empty trees only), so the bug was simply never exercised by the corpus.
-
-The 19→0 fixture-count drop is a SEPARATE, real coverage regression (not the same bug): `REPARSE_WRAPPERS.rust` in `packages/tools/src/validate/common.ts` (~line 726) is keyed only to the pre-alias-catalog-split name `delim_token_tree`. Since the alias-catalog determinism fix (PR #165, `9d204ac00`), this content reads as `token_tree` (168) / hidden `_delim_token_tree_paren` (378) instead — `probe-kind -k delim_token_tree` now finds nothing at all. The wrapper-map lookup misses on the new name, `wrapForReparse` returns null, and `read-render-parse.ts:544` silently `continue`s — no error, no fixture, invisible in counts. See `packages/rust/overrides.ts:759-776` for the `token_tree`/`token_tree_pattern`/`delim_token_tree` variant-split overrides (`paren`/`bracket`/`brace`) — purely about delimiter shape, no awareness of the punctuation-loss issue.
-
-Severity is broader than the corpus shows: this affects any macro invocation/definition with punctuation inside its delimiters — i.e. most real-world macros (`vec![1, 2]`, `format!("{}", x)`, etc.), not just the 1 corpus case currently failing (`validate:native`'s "Macro invocation - arbitrary tokens" ast-mismatch).
-
-**Status: confirmed, not fixed.** Two independent fixes needed:
-1. **Coverage (safe, low risk):** add a `token_tree` key to `REPARSE_WRAPPERS.rust` (`packages/tools/src/validate/common.ts`), same wrapper body as the existing `delim_token_tree` entry. Validator-only, no codegen change — restores probing and regenerates fixtures for the simple (punctuation-free) cases, and correctly surfaces punctuation cases as AST mismatches instead of silently vanishing.
-2. **Render defect:** not fixable in wrap/transport/template — the punctuation is destroyed at the native read layer, before any of those. Two candidate approaches, neither safely scoped yet: (a) classify `_delim_token_tree_*`/`_token_tree_*`/`_token_tree_pattern_*` as verbatim/text-carrier kinds (render `{{ text }}` directly — matches the existing `common.ts:724` comment's own characterization of token-tree content as "author-declared-verbatim by definition"; trade-off: loses structural factory construction of macro bodies), or (b) alias the punctuation REPEAT1 branch into named leaves via `overrides.ts` so punctuation enters `_delim_tokens` as named leaves — but this touches the override parser, which already carries known regression debt (rust base-vs-override errors: 2→12 per the project's own override-parser-comparison tracking) and needs a corpus A/B before it's safe to land.
-
-**Fix, if/when prioritized:** land the coverage fix (item 1) first — it's independently safe and immediately useful (turns a silent gap into a visible, tracked failure). ~~The render fix (item 2) needs a design decision between the verbatim-text and structural-alias approaches before implementation.~~ Item 2 landed via approach (b), the structural alias, in PR #169 — see the fixed-status note above.
-
-</details>
+**Also remaining from the fixed entry:**
+- A pre-existing `delim_token_tree_paren` AST mismatch involving `'` (lifetime/char-literal marker), unconfirmed as new-vs-pre-existing.
+- `_delim_token_tree_paren.jinja`'s `{{ delim_tokens | join(" ") }}` stray-space-before-punctuation — part of the token-adjacency walker class tracked in the `generic_type_with_turbofish` entry above.
 
 ## `nodes.test.ts`'s live generator was mistakenly believed dead; per-node emitter has a known `nonEmptyArray` mock-construction gap
 

@@ -56,6 +56,7 @@ import {
 	dedupeValues,
 	extractSeparatorString,
 	mergeSourceRuleIds,
+	recordAssembleWarning,
 	stampSeparatorOnValues
 } from './model/node-map.ts';
 import { findRepeatFlag } from '../dsl/rule-transforms.ts';
@@ -457,10 +458,10 @@ function buildSlot(
 	// choices rebuilt by `fanOutSeqChoices`/`factorChoiceBranches` (which carry
 	// only the rule id, not the separator) still inherit the separator from the
 	// arm that has it (e.g. the inlined `_import_list` arm with `sep=",trailing"`).
-	const sep =
-		(rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ??
-		inheritedSeparator ??
-		(isMultiSlot ? findNestedSeparator(rule) : undefined);
+	const ownOrInheritedSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
+	const nestedScanSep =
+		ownOrInheritedSep === undefined && isMultiSlot ? findNestedSeparator(rule) : undefined;
+	const sep = ownOrInheritedSep ?? nestedScanSep;
 	// `sep` is always the nested {value, trailing?, leading?} object (or
 	// undefined) post-PR-S — no more string/array shapes to type-dispatch on.
 	// OR with `findRepeatFlag`'s full-tree walk as a fallback for shapes `sep`
@@ -476,6 +477,31 @@ function buildSlot(
 	const hasLeading = isMultiSlot && (sep?.leading !== undefined || findRepeatFlag(rule, 'leading'));
 
 	const separatorStr = isMultiSlot ? extractSeparatorString(sep) : undefined;
+	// A NESTED-SCAN separator (the fanOutSeqChoices/factorChoiceBranches rebuild
+	// path — the rule-level separator was stripped, so the slot-value stamp is
+	// the ONLY carrier left) that extractSeparatorString cannot render to a
+	// literal string is nonterminal (rule-shaped). Nothing gets stamped for it,
+	// and emitListSlot's `slotValueSep` fallback would silently render a
+	// hardcoded space where the real separator belongs. Own/inherited separators
+	// are exempt: those survive to emit time as the rule-level separator, where
+	// emitListSlot's `ruleSep` path already handles the nonterminal case (e.g.
+	// object_type_content renders via the transport's runtime `.separator`
+	// field). No kind in any current grammar routes a nonterminal separator
+	// through the rebuild path, so fail loudly instead of silently
+	// mis-rendering if one ever does. Fix shape if this fires: thread that same
+	// `ruleSep`-path nonterminal handling (templates.ts) into the slot-value
+	// stamp path here.
+	if (isMultiSlot && nestedScanSep !== undefined && separatorStr === undefined) {
+		recordAssembleWarning({
+			code: 'nonterminal-separator-unstamped',
+			ownerKind: kindForName,
+			message:
+				`[collect-slots] kind '${kindForName ?? '(unknown)'}': array slot carries a nonterminal (rule-shaped) ` +
+				`separator that cannot be stamped as a literal — rendering would silently fall back to a hardcoded ` +
+				`space. Extend the nonterminal-separator handling from emitListSlot's ruleSep path to the ` +
+				`slot-value stamp path (see this guard's comment in collect-slots.ts).`
+		});
+	}
 	const values: readonly NodeOrTerminal[] = stampSeparatorOnValues([...dedupedValues], separatorStr);
 
 	return new AssembledNonterminal({
