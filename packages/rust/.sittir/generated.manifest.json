@@ -16,7 +16,7 @@
     "packages/rust/.sittir/tree-sitter.json": "62549e4e88f7fc25503802bc296424d02453ede3e8f85b7c156d6a3b522719f4",
     "packages/rust/src/.gitignore": "f88dc1e9a9e22edc543fca920b569a3ea4bef48d02700fd098ea1bf22b2e7102",
     "packages/rust/src/backend.ts": "812951b29c12d0ea8d3dbc0d6fd0a998085d5329541e66a0b1c33244b8f6d135",
-    "packages/rust/src/boundary.ts": "3d134bb2d602f2072fda61aa748bf51b557d915c70fb220e6faebd01522567e9",
+    "packages/rust/src/boundary.ts": "7afd529ffef4b6ea432fc8d10ad21ea31fb55119d4101d4c9dff39b020d827ba",
     "packages/rust/src/consts.ts": "9eb3109062c9c8c8a23f5656bf58714b36ae6e2bb9d7af77e1473b0b0d6e610d",
     "packages/rust/src/engine.ts": "92808a26b2ef44a0046984e41a76bc7471fc0e97639ccdddb201eca5b67ae03a",
     "packages/rust/src/factories.ts": "65f0a4d0137b26e04f640802b9ea2c39fd5d89bc2f5f03b272fcbf276ffb3f13",

@@ -1,0 +1,15 @@
+{
+	"schemaVersion": 1,
+	"warnOnlyUntil": "2026-08-18",
+	"collectedOn": {
+		"platform": "darwin",
+		"nodeVersion": "v26.5.0",
+		"cpuModel": "Apple M4 Pro"
+	},
+	"ffi": {
+		"totalCalls": 3450,
+		"meanRoundtripMs": 0.0085,
+		"p99RoundtripMs": 0.0227,
+		"meanPayloadBytes": 237
+	}
+}

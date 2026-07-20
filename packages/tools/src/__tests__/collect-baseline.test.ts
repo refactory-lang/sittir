@@ -29,6 +29,8 @@
  * longer exercises).
  */
 
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import * as baseline from '../scripts/collect-baseline.ts';
 
@@ -36,13 +38,37 @@ const grammarKeys = ['python', 'rust', 'typescript'] as const;
 
 describe('collect-baseline', () => {
 	let result: baseline.BackendBaseline;
+	let cli: { status: number | null; stdout: string; stderr: string };
 
-	beforeAll(async () => {
-		// Sourced from the native backend — the js/Nunjucks pipeline is
-		// deprecated (see docs/KNOWN_ISSUES.md and project convention:
-		// production uses --backend native, don't fix/test the JS path).
-		result = await baseline.collectBaseline('native');
+	beforeAll(() => {
+		// Runs the actual CLI entry point (the `isCli` branch at the bottom of
+		// collect-baseline.ts) via a real subprocess, not `collectBaseline()`
+		// called in-process. Calling the exported function directly — as every
+		// other test in this suite does — never touches that branch (`isCli`
+		// is false when the module is imported rather than executed), so a
+		// regression there (e.g. reverting to `process.exit(await run(...))`,
+		// which reintroduces the exit-13 ESM self-import cycle documented at
+		// that call site) would go undetected by the rest of this suite.
+		// Reuses this one subprocess run as the shared native collection
+		// result below instead of paying for a second expensive corpus run.
+		const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url));
+		const tsxBin = `${repoRoot}/node_modules/.bin/tsx`;
+		const scriptPath = `${repoRoot}/packages/tools/src/scripts/collect-baseline.ts`;
+		cli = spawnSync(tsxBin, [scriptPath], {
+			encoding: 'utf8',
+			env: { ...process.env, SITTIR_BACKEND: 'native' },
+			timeout: 600_000
+		});
+		if (cli.status === 0) {
+			result = JSON.parse(cli.stdout) as baseline.BackendBaseline;
+		}
 	}, 600_000);
+
+	it('CLI entry point exits 0 with complete, parseable output', () => {
+		expect(cli.status).toBe(0);
+		expect(() => JSON.parse(cli.stdout)).not.toThrow();
+		expect(result.backend).toBe('native');
+	});
 
 	afterEach(() => {
 		vi.restoreAllMocks();

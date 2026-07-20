@@ -121,7 +121,7 @@ jobs:
   # Skipped on direct pushes (no base ref to diff against). Only runs
   # on `pull_request` events.
   regression-checker-native:
-    name: 016 baseline regression-checker (native)
+    name: baseline regression check
     runs-on: ubuntu-22.04
     needs: napi-build
     if: github.event_name == 'pull_request'
@@ -190,12 +190,15 @@ jobs:
   # collection is a follow-up; until then, the gate is a no-op on linux
   # CI but the metrics artifacts still get uploaded for inspection.
   perf-regression-checker:
-    name: 054 perf regression-checker (native, warn-only)
+    name: perf regression check (warn-only)
     runs-on: ubuntu-22.04
     needs: napi-build
     if: github.event_name == 'pull_request'
     env:
-      # Warn-only window: 2026-04-26 → 2026-05-26 per spec 054 FR-008.
+      # Warn-only window: 2026-07-19 → 2026-08-18 per spec 054 FR-008.
+      # Re-baselined on this date because FFI round-trip tracking (recordFfi)
+      # had been drafted but never wired to a real call site since the
+      # original 2026-04-26 baseline — see the boundary.ts render() wiring.
       # Flip to enforcing by removing this env block after the window.
       SITTIR_METRICS_FFI_WARN_ONLY: "1"
     steps:

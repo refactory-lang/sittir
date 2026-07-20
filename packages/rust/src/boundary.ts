@@ -13,6 +13,8 @@
 import type { AnyNodeData, ByteRange, Edit } from '@sittir/types';
 import { createEngine } from './engine.js';
 import type { SittirEngineLike } from '@sittir/common/engine';
+import { metricsEnabled, recordFfi } from '@sittir/common';
+import { KIND_NAMES } from './types.js';
 
 let defaultEngine: SittirEngineLike | null = null;
 
@@ -25,9 +27,21 @@ function getDefaultEngine(): SittirEngineLike {
 
 /**
  * Render a NodeData to source. Dispatches through the default engine.
+ *
+ * When `SITTIR_METRICS=1`, times the napi round-trip and records it via
+ * `recordFfi` (packages/common/src/metrics.ts) — the FFI-cost half of spec
+ * 054, previously drafted but never wired to a real call site.
  */
 export function render(node: AnyNodeData): string {
-	return getDefaultEngine().render(node).toString();
+	if (!metricsEnabled) {
+		return getDefaultEngine().render(node).toString();
+	}
+	const kind = typeof node.$type === 'number' ? (KIND_NAMES.get(node.$type) ?? String(node.$type)) : node.$type;
+	const payloadBytes = JSON.stringify(node).length;
+	const before = performance.now();
+	const result = getDefaultEngine().render(node).toString();
+	recordFfi('rust', kind, payloadBytes, performance.now() - before, result.length);
+	return result;
 }
 
 /**

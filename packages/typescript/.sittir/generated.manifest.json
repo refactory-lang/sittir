@@ -16,7 +16,7 @@
     "packages/typescript/.sittir/tree-sitter.json": "9f1a0a28bf7b0d72fde59956be9d85aea276447d08ad124cb9b474aa9575ae8e",
     "packages/typescript/src/.gitignore": "f88dc1e9a9e22edc543fca920b569a3ea4bef48d02700fd098ea1bf22b2e7102",
     "packages/typescript/src/backend.ts": "9239f7f7667dcedf7783d6d90b05d0a0953ba8e0275fe6e42fd1df97a21ff05a",
-    "packages/typescript/src/boundary.ts": "3d134bb2d602f2072fda61aa748bf51b557d915c70fb220e6faebd01522567e9",
+    "packages/typescript/src/boundary.ts": "b6af1716a00167f1f83f375781b58ef22fd510584f01a36e0315845c82800228",
     "packages/typescript/src/consts.ts": "7027a8cc2901adb780dedf48edee3270a3a253dd8df1fabb32c6072c6d8e1584",
     "packages/typescript/src/engine.ts": "6b0239f4389dd1bf2ab850eeb31f5d264ae88e7efb76936db1434e3ff3248ca2",
     "packages/typescript/src/factories.ts": "40cb1b7c4e7641ea6ea5ee7ab3cbb39051a58f71ac0e357a508d3b9f948603c1",

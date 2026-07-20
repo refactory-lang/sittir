@@ -523,6 +523,27 @@ export async function run(_argv: string[]): Promise<number> {
 	return 0;
 }
 
+// NOT `process.exit(await run(...))` — that creates a genuine ESM cycle on
+// the native backend, not a watchdog false-positive. This module's static
+// import of validateReadRenderParse (above) is resolved before this file's
+// own top-level code runs; but `run()` → collectValidatorsForGrammar() →
+// validateReadRenderParse(..., { backend: 'native' }) dynamically
+// `import()`s THIS file back (read-render-parse.ts, to reach
+// loadBoundaryRender). If this file's top-level evaluation is itself
+// suspended on a top-level `await run(...)`, that dynamic import can't
+// resolve until this module finishes evaluating — which can't happen until
+// the dynamic import resolves. A real deadlock; Node's exit code 13
+// ("Unsettled Top-Level Await") is diagnosing it correctly, not
+// misfiring. Moving `run()` off the top-level await lets this module's
+// own evaluation complete synchronously, so by the time the dynamic
+// import fires, the module is already in the cache and it resolves
+// immediately — no cycle.
 if (isCli) {
-	process.exit(await run(process.argv.slice(2)));
+	run(process.argv.slice(2)).then(
+		(code) => process.exit(code),
+		(err) => {
+			console.error(err);
+			process.exit(1);
+		}
+	);
 }
