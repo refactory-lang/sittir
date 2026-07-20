@@ -118,7 +118,21 @@ Confirmed against actual factory output: accessor methods on generated factory o
 
 **Fix, if/when prioritized:** needs its own investigation into the factory emitter (`packages/codegen/src/emitters/factories.ts`) to find where accessor methods get attached to the returned node object — likely a missing `Object.defineProperty(..., {enumerable: false})` or equivalent, compared against whatever mechanism attaches the genuinely-non-enumerable members correctly today.
 
-## Rust `token_tree`/`delim_token_tree`'s comma (and other anonymous punctuation) is silently dropped on render
+## Rust `token_tree`/`delim_token_tree`'s comma (and other anonymous punctuation) is silently dropped on render — FIXED
+
+**Status: fixed** (PR #169, `ba31945a5`). `packages/rust/overrides.ts` now mints a real, alias-minted `token_tree_punctuation` kind from `_non_special_token`'s `PREC_RIGHT(REPEAT1(CHOICE(...TOKEN_TREE_NON_SPECIAL_PUNCTUATION)))` arm — the whole compound is replaced by a single named alias into a hand-declared `_token_tree_punctuation` sentinel (the 44-literal set copied verbatim from upstream), so punctuation is no longer anonymous and reaches a typed slot instead of the `$other` bucket.
+
+That construct exposed a separate, pre-existing bug in `assemble.ts`'s `resolveHiddenRuleContent`: recursing through a `SYMBOL`'s `aliasedFrom` chain into a hidden closed-literal-enum body unconditionally flattened it into individual `STRING` members instead of treating it as an opaque leaf (word-shaped enums like `_primitive_type` survived this harmlessly since non-word members get filtered; an all-punctuation enum has none, so every literal survived and got reported as a bogus supertype subtype, crashing `emitSupertypeUnionDeclarations`). Fixed alongside — see `resolveHiddenRuleContent`'s doc comment.
+
+Verified via `probe-kind` (comma now lands inside `_delim_tokens`'s array) and `validate:native`/`validation-history.jsonl` (zero regressions across all three grammars, matching every prior recorded run).
+
+**Remaining, separate, lower-priority gaps** (not fixed by this change):
+- `_delim_token_tree_paren.jinja`'s naive `{{ delim_tokens | join(" ") }}` renders a stray space before punctuation (`"hi" , x` instead of `"hi", x`) — cosmetic template-join issue.
+- A pre-existing `delim_token_tree_paren` AST mismatch involving `'` (lifetime/char-literal marker) remains in the corpus, unconfirmed as new-vs-pre-existing.
+- The `REPARSE_WRAPPERS.rust` coverage gap described below (item 1 in the original writeup) is unaffected by this fix and still needs its own follow-up.
+
+<details>
+<summary>Original writeup (pre-fix, kept for context)</summary>
 
 **Found during:** PR #168 baseline-refresh investigation (`specs/016-parity-regressions/baselines/native.json` refresh) — noticed the fixture count for this kind's `paren` variant dropped from 19 (as of `8eed718ff`, 2026-07-16) to 0 in today's regen, dispatched a research pass to root-cause it.
 
@@ -132,7 +146,25 @@ Severity is broader than the corpus shows: this affects any macro invocation/def
 1. **Coverage (safe, low risk):** add a `token_tree` key to `REPARSE_WRAPPERS.rust` (`packages/tools/src/validate/common.ts`), same wrapper body as the existing `delim_token_tree` entry. Validator-only, no codegen change — restores probing and regenerates fixtures for the simple (punctuation-free) cases, and correctly surfaces punctuation cases as AST mismatches instead of silently vanishing.
 2. **Render defect:** not fixable in wrap/transport/template — the punctuation is destroyed at the native read layer, before any of those. Two candidate approaches, neither safely scoped yet: (a) classify `_delim_token_tree_*`/`_token_tree_*`/`_token_tree_pattern_*` as verbatim/text-carrier kinds (render `{{ text }}` directly — matches the existing `common.ts:724` comment's own characterization of token-tree content as "author-declared-verbatim by definition"; trade-off: loses structural factory construction of macro bodies), or (b) alias the punctuation REPEAT1 branch into named leaves via `overrides.ts` so punctuation enters `_delim_tokens` as named leaves — but this touches the override parser, which already carries known regression debt (rust base-vs-override errors: 2→12 per the project's own override-parser-comparison tracking) and needs a corpus A/B before it's safe to land.
 
-**Fix, if/when prioritized:** land the coverage fix (item 1) first — it's independently safe and immediately useful (turns a silent gap into a visible, tracked failure). The render fix (item 2) needs a design decision between the verbatim-text and structural-alias approaches before implementation.
+**Fix, if/when prioritized:** land the coverage fix (item 1) first — it's independently safe and immediately useful (turns a silent gap into a visible, tracked failure). ~~The render fix (item 2) needs a design decision between the verbatim-text and structural-alias approaches before implementation.~~ Item 2 landed via approach (b), the structural alias, in PR #169 — see the fixed-status note above.
+
+</details>
+
+## `nodes.test.ts`'s live generator was mistakenly believed dead; per-node emitter has a known `nonEmptyArray` mock-construction gap
+
+**Found during:** PR #169 — regenerating rust surfaced `packages/rust/tests/nodes.test.ts` as a brand-new file with 20 failing tests, none related to the punctuation fix that triggered the regen.
+
+Two separate, unrelated facts:
+
+1. **The "orphaned nodes.test.ts" retirement (`c11d1a009`, 2026-07-17) was based on a mistaken premise.** That commit deleted `packages/{rust,python,typescript}/tests/nodes.test.ts`, reasoning that its generator (`packages/codegen/src/emitters/test-new.ts`) had been deleted in an earlier v1→v2 emitter migration with no replacement. That's true of `test-new.ts` — but `nodes.test.ts` is actually produced by a *different* file, `packages/codegen/src/emitters/test.ts` (`emitTests`), which was never deleted and has been continuously wired into `emitAll()` (`packages/codegen/src/emitters/emit.ts`) the whole time, including commits after the retirement. Every `gen` run since 2026-07-17 has been silently regenerating this file; nobody had run a full regen-and-diff for all three grammars until this PR did, which is why it reappeared now.
+
+2. **The per-kind test emitter (`test.ts`) can't construct valid mock data for `nonEmptyArray`-multiplicity slots.** This is a long-documented, low-priority gap — see `docs/superpowers/specs/2026-05-22-compiler-simplification-design.md` ("LOW-PRI CRITERION... the generated node-test emitter must construct a valid non-empty child for `nonEmptyArray` slots") and `2026-05-26-generated-code-cleanup-design.md` item 4 (flagged by Copilot review, still open). Confirmed via a clean `git worktree` at pre-fix master (`2a465172b`): regenerating there produces the *identical* 20 failing test names — none introduced by this PR. All failures are in `_group1`-synthesized kinds (`arguments_group1`, `enum_variant_list_group1`, `field_declaration_list_group1`, `ordered_field_declaration_list_group1`, `parameters_group1`, `slice_pattern_group1`, `use_bounds_group1`, `use_list_group1`, `where_clause_group1`) plus a handful of others (`async_block`, `block_comment`, `foreign_mod_item`, `gen_block`, `mod_item`, `reference_pattern`, `self_parameter`, `variadic_parameter`) — consistent with the documented non-empty-array-child gap.
+
+**Status: confirmed pre-existing, not fixed.** `nodes.test.ts` (all 3 grammars) is committed as its generator's current, correct output — reverting it would just have it silently reappear on the next full regen, same as before.
+
+**Fix, if/when prioritized — two independent decisions, not one fix:**
+1. Either fix `test.ts`'s mock-data construction for `nonEmptyArray` slots (small, scoped — construct a 1-element array instead of an empty one for repeat1-backed fields), or mark the ~20 known-failing cases as expected-fail so CI stays meaningfully green without masking new regressions.
+2. Decide whether `nodes.test.ts` should exist at all going forward — the original (mistaken) retirement's stated rationale ("corpus-validation.test.ts against real, evolving data is a strictly more robust guard than frozen numeric-literal snapshots") may still be a valid argument for killing `emitTests` properly this time, as opposed to reverting to the current state where it's silently alive again.
 
 ## TypeScript `_export_statement_default_decl_arm`'s `default` arm is unrenderable — `emitChoice`'s unnamed-arm fallback silently drops non-first choice arms
 
