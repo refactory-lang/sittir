@@ -234,8 +234,6 @@ import type {
 	MutableSpecifierTree,
 	NegativeLiteral,
 	NegativeLiteralTree,
-	NonSpecialToken,
-	NonSpecialTokenTree,
 	Operator,
 	OperatorTree,
 	OrPattern,
@@ -347,6 +345,8 @@ import type {
 	TokenTreePatternParen,
 	TokenTreePatternParenTree,
 	TokenTreePatternTree,
+	TokenTreePunctuation,
+	TokenTreePunctuationTree,
 	TokenTreeTree,
 	TraitBounds,
 	TraitBoundsTree,
@@ -517,7 +517,6 @@ export type _Type_MacroDefinitionBracket = _TypeAssert<
 export type _Type_MacroDefinitionParen = _TypeAssert<
 	_TypeExtends<MacroDefinitionParen['$type'], TSKindId.MacroDefinitionParen>
 >;
-export type _Type_NonSpecialToken = _TypeAssert<_TypeExtends<NonSpecialToken['$type'], '_non_special_token'>>;
 export type _Type__OrderedFieldDeclarationListGroup1 = _TypeAssert<
 	_TypeExtends<_OrderedFieldDeclarationListGroup1['$type'], TSKindId._OrderedFieldDeclarationListGroup1>
 >;
@@ -843,6 +842,55 @@ export type _Type_TokenBindingPatternType = _TypeAssert<
 		| TSKindId.Vis
 	>
 >;
+export type _Type_TokenTreePunctuation = _TypeAssert<
+	_TypeExtends<
+		TokenTreePunctuation['$type'],
+		| TSKindId.Plus
+		| TSKindId.Dash
+		| TSKindId.Star
+		| TSKindId.Slash
+		| TSKindId.Percent
+		| TSKindId.Caret
+		| TSKindId.Bang
+		| TSKindId.Amp2
+		| TSKindId.Pipe2
+		| TSKindId.AmpAmp
+		| TSKindId.PipePipe
+		| TSKindId.LtLt
+		| TSKindId.GtGt
+		| TSKindId.PlusEq
+		| TSKindId.DashEq
+		| TSKindId.StarEq
+		| TSKindId.SlashEq
+		| TSKindId.PercentEq
+		| TSKindId.CaretEq
+		| TSKindId.AmpEq
+		| TSKindId.PipeEq
+		| TSKindId.LtLtEq
+		| TSKindId.GtGtEq
+		| TSKindId.Eq
+		| TSKindId.EqEq
+		| TSKindId.BangEq
+		| TSKindId.Gt
+		| TSKindId.Lt
+		| TSKindId.GtEq
+		| TSKindId.LtEq
+		| TSKindId.At
+		| TSKindId.Anonymous
+		| TSKindId.Dot
+		| TSKindId.DotDot
+		| TSKindId.DotDotDot
+		| TSKindId.DotDotEq
+		| TSKindId.Comma
+		| TSKindId.Semi
+		| TSKindId.Colon
+		| TSKindId.ColonColon
+		| TSKindId.DashGt
+		| TSKindId.EqGt
+		| TSKindId.Pound
+		| TSKindId.Qmark
+	>
+>;
 export type _Type_TypeIdentifier = _TypeAssert<_TypeExtends<TypeIdentifier['$type'], TSKindId.TypeIdentifier>>;
 export type _Type_UnaryExpressionOperator = _TypeAssert<
 	_TypeExtends<UnaryExpressionOperator['$type'], TSKindId.Dash | TSKindId.Star | TSKindId.Bang>
@@ -947,7 +995,6 @@ export type _Tree_MacroDefinitionBracket = _TypeAssert<
 export type _Tree_MacroDefinitionParen = _TypeAssert<
 	_TypeExtends<MacroDefinitionParenTree['type'], '_macro_definition_paren'>
 >;
-export type _Tree_NonSpecialToken = _TypeAssert<_TypeExtends<NonSpecialTokenTree['type'], '_non_special_token'>>;
 export type _Tree__OrderedFieldDeclarationListGroup1 = _TypeAssert<
 	_TypeExtends<_OrderedFieldDeclarationListGroup1Tree['type'], '_ordered_field_declaration_list_group1'>
 >;
@@ -1220,6 +1267,9 @@ export type _Tree_ReservedIdentifier = _TypeAssert<
 >;
 export type _Tree_TokenBindingPatternType = _TypeAssert<
 	_TypeExtends<TokenBindingPatternTypeTree['type'], '_token_binding_pattern_type'>
+>;
+export type _Tree_TokenTreePunctuation = _TypeAssert<
+	_TypeExtends<TokenTreePunctuationTree['type'], '_token_tree_punctuation'>
 >;
 export type _Tree_TypeIdentifier = _TypeAssert<_TypeExtends<TypeIdentifierTree['type'], '_type_identifier'>>;
 export type _Tree_UnaryExpressionOperator = _TypeAssert<

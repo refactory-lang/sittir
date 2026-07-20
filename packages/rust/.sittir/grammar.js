@@ -3115,6 +3115,14 @@ var overrides_default = grammar(
         // unit as call arguments. The conflict declaration allows tree-sitter's
         // GLR mechanism to disambiguate at parse time.
         [$._attributed_argument]
+        // NOTE: two conflicts were added here for an earlier shape of the
+        // _token_tree_punctuation fix ([$._non_delim_token, ...] and
+        // [$._token_pattern, ...], both resolving a nested-repeat ambiguity
+        // from wrapping the alias in its own repeat1). Removed — the
+        // current shape (rules: below aliases the whole
+        // prec.right(repeat1(choice(...))) arm, no repeat of our own) has
+        // no inner repeat, so the ambiguity these existed to resolve no
+        // longer arises.
       ],
       polymorphs: {
         array_expression: { "2/0": "semi", "2/1": "list" },
@@ -3760,6 +3768,99 @@ var overrides_default = grammar(
         // branch.
       },
       rules: {
+        // _token_tree_punctuation — the punctuation choice previously
+        // inline at _non_special_token's position 7 (TOKEN_TREE_NON_SPECIAL_PUNCTUATION
+        // from the base grammar, copied verbatim). `alias('token_tree_punctuation')`
+        // below is the one-arg placeholder form; despite its own doc
+        // comment ("resolvePatch fills it in with the original content at
+        // the patch target"), confirmed via packages/rust/.sittir/src/grammar.json
+        // that pre-declaring this rule makes THIS declaration's body the
+        // real compiled content — the "auto-fill from original" behavior
+        // does not apply once a same-named rule already exists. (An
+        // earlier attempt left this as a placeholder-only sentinel
+        // matching a single literal; that silently replaced all 41
+        // punctuation literals with just that one character, turning the
+        // comma into a genuine parse error — caught by checking the
+        // compiled grammar.json directly, not by trusting the doc comment.)
+        _token_tree_punctuation: ($) => choice(
+          "+",
+          "-",
+          "*",
+          "/",
+          "%",
+          "^",
+          "!",
+          "&",
+          "|",
+          "&&",
+          "||",
+          "<<",
+          ">>",
+          "+=",
+          "-=",
+          "*=",
+          "/=",
+          "%=",
+          "^=",
+          "&=",
+          "|=",
+          "<<=",
+          ">>=",
+          "=",
+          "==",
+          "!=",
+          ">",
+          "<",
+          ">=",
+          "<=",
+          "@",
+          "_",
+          ".",
+          "..",
+          "...",
+          "..=",
+          ",",
+          ";",
+          ":",
+          "::",
+          "->",
+          "=>",
+          "#",
+          "?"
+        ),
+        // _non_special_token — the punctuation run inside a token tree (`,`,
+        // `::`, `->`, etc.) is a bare anonymous choice/repeat1 arm (position
+        // 7 of 37): tree-sitter never names it, so readNode routes it to
+        // $other and it never reaches _delim_tokens/_tokens — punctuation
+        // between token-tree elements (e.g. the comma in `m!("hi", x)`) is
+        // silently lost on render (docs/KNOWN_ISSUES.md, "Rust token_tree/
+        // delim_token_tree's comma..."). Replace the WHOLE
+        // prec.right(repeat1(choice(...))) arm with a bare aliased choice —
+        // no repeat of our own. Two earlier shapes were tried and reverted:
+        // (a) `7/0` — alias just the inner choice, leaving prec.right/
+        // repeat1 wrapping it. Grammar-compiled fine but created a genuine
+        // nested-repeat ambiguity (this rule's own repeat1 vs the outer
+        // `_delim_tokens`/`_tokens` repeat one level up, both able to
+        // absorb a run of consecutive punctuation) — needed `conflicts:`
+        // entries to even generate, and even then the native read layer
+        // materialized `token_tree_punctuation` as its own singular field
+        // instead of folding it into `_delim_tokens`'s array (confirmed via
+        // probe-kind + a full clean rebuild of every crate, including
+        // sittir-core, ruling out staleness). (b) `7/0/0` — one segment too
+        // many, silently aliased only the choice's FIRST member ('+')
+        // instead of the whole choice (confirmed via grammar.json). This
+        // shape sidesteps both: no inner repeat means no nested-repeat
+        // ambiguity, and the outer `_delim_tokens`/`_tokens` repeat alone
+        // produces one `token_tree_punctuation` array element per
+        // consecutive punctuation token, matching how every other element
+        // already reaches that array. Negative index (`-30` = position 7 of
+        // 37 members) is required for `alias(...)` as a patch value to
+        // compile — see `applyToIndexedMember`'s negative-index convention
+        // and `transform()`'s flat-vs-path-mode dispatch in
+        // packages/codegen/src/dsl/transform/transform.ts.
+        _non_special_token: ($, original) => transform2(original, {
+          "-30": alias2("token_tree_punctuation")
+        }),
         // use_wildcard — re-authored as a VISIBLE clause group. Base was the
         // double-optional `seq(optional(seq(optional($._path), '::')), '*')`, which
         // (once detectClause is gone) the enrich auto-hoist inlines into a presence-

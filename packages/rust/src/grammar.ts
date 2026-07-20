@@ -621,7 +621,8 @@ export type RustGrammar = {
 				{ type: 'primitive_type'; named: true },
 				{ type: 'self'; named: true },
 				{ type: 'super'; named: true },
-				{ type: 'token_tree'; named: true }
+				{ type: 'token_tree'; named: true },
+				{ type: 'token_tree_punctuation'; named: true }
 			];
 		};
 	};
@@ -640,7 +641,8 @@ export type RustGrammar = {
 				{ type: 'primitive_type'; named: true },
 				{ type: 'self'; named: true },
 				{ type: 'super'; named: true },
-				{ type: 'token_tree'; named: true }
+				{ type: 'token_tree'; named: true },
+				{ type: 'token_tree_punctuation'; named: true }
 			];
 		};
 	};
@@ -659,7 +661,8 @@ export type RustGrammar = {
 				{ type: 'primitive_type'; named: true },
 				{ type: 'self'; named: true },
 				{ type: 'super'; named: true },
-				{ type: 'token_tree'; named: true }
+				{ type: 'token_tree'; named: true },
+				{ type: 'token_tree_punctuation'; named: true }
 			];
 		};
 	};
@@ -1886,7 +1889,8 @@ export type RustGrammar = {
 				{ type: 'self'; named: true },
 				{ type: 'super'; named: true },
 				{ type: 'token_repetition'; named: true },
-				{ type: 'token_tree'; named: true }
+				{ type: 'token_tree'; named: true },
+				{ type: 'token_tree_punctuation'; named: true }
 			];
 		};
 	};
@@ -1914,7 +1918,8 @@ export type RustGrammar = {
 				{ type: 'super'; named: true },
 				{ type: 'token_binding_pattern'; named: true },
 				{ type: 'token_repetition_pattern'; named: true },
-				{ type: 'token_tree_pattern'; named: true }
+				{ type: 'token_tree_pattern'; named: true },
+				{ type: 'token_tree_punctuation'; named: true }
 			];
 		};
 	};
@@ -1952,7 +1957,8 @@ export type RustGrammar = {
 				{ type: 'self'; named: true },
 				{ type: 'super'; named: true },
 				{ type: 'token_repetition'; named: true },
-				{ type: 'token_tree'; named: true }
+				{ type: 'token_tree'; named: true },
+				{ type: 'token_tree_punctuation'; named: true }
 			];
 		};
 	};
@@ -1973,7 +1979,8 @@ export type RustGrammar = {
 				{ type: 'self'; named: true },
 				{ type: 'super'; named: true },
 				{ type: 'token_repetition'; named: true },
-				{ type: 'token_tree'; named: true }
+				{ type: 'token_tree'; named: true },
+				{ type: 'token_tree_punctuation'; named: true }
 			];
 		};
 	};
@@ -1994,7 +2001,8 @@ export type RustGrammar = {
 				{ type: 'self'; named: true },
 				{ type: 'super'; named: true },
 				{ type: 'token_repetition'; named: true },
-				{ type: 'token_tree'; named: true }
+				{ type: 'token_tree'; named: true },
+				{ type: 'token_tree_punctuation'; named: true }
 			];
 		};
 	};
@@ -2030,7 +2038,8 @@ export type RustGrammar = {
 				{ type: 'super'; named: true },
 				{ type: 'token_binding_pattern'; named: true },
 				{ type: 'token_repetition_pattern'; named: true },
-				{ type: 'token_tree_pattern'; named: true }
+				{ type: 'token_tree_pattern'; named: true },
+				{ type: 'token_tree_punctuation'; named: true }
 			];
 		};
 	};
@@ -2052,7 +2061,8 @@ export type RustGrammar = {
 				{ type: 'super'; named: true },
 				{ type: 'token_binding_pattern'; named: true },
 				{ type: 'token_repetition_pattern'; named: true },
-				{ type: 'token_tree_pattern'; named: true }
+				{ type: 'token_tree_pattern'; named: true },
+				{ type: 'token_tree_punctuation'; named: true }
 			];
 		};
 	};
@@ -2074,10 +2084,12 @@ export type RustGrammar = {
 				{ type: 'super'; named: true },
 				{ type: 'token_binding_pattern'; named: true },
 				{ type: 'token_repetition_pattern'; named: true },
-				{ type: 'token_tree_pattern'; named: true }
+				{ type: 'token_tree_pattern'; named: true },
+				{ type: 'token_tree_punctuation'; named: true }
 			];
 		};
 	};
+	readonly token_tree_punctuation: { type: 'token_tree_punctuation'; named: true; fields: {} };
 	readonly trait_bounds: {
 		type: 'trait_bounds';
 		named: true;

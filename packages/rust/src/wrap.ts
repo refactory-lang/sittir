@@ -403,6 +403,10 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 	_delim_tokens: new Set([
 		'_non_delim_token',
 		'non_delim_token',
+		'_non_special_token',
+		'non_special_token',
+		'_literal',
+		'literal',
 		'string_literal',
 		'raw_string_literal',
 		'char_literal',
@@ -416,6 +420,72 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'self',
 		'super',
 		'crate',
+		'_primitive_type',
+		'primitive_type',
+		'u8',
+		'i8',
+		'u16',
+		'i16',
+		'u32',
+		'i32',
+		'u64',
+		'i64',
+		'u128',
+		'i128',
+		'isize',
+		'usize',
+		'f32',
+		'f64',
+		'bool',
+		'str',
+		'char',
+		'_token_tree_punctuation',
+		'token_tree_punctuation',
+		'plus',
+		'dash',
+		'star',
+		'slash',
+		'percent',
+		'caret',
+		'bang',
+		'amp',
+		'pipe',
+		'amp_amp',
+		'pipe_pipe',
+		'lt_lt',
+		'gt_gt',
+		'plus_eq',
+		'dash_eq',
+		'star_eq',
+		'slash_eq',
+		'percent_eq',
+		'caret_eq',
+		'amp_eq',
+		'pipe_eq',
+		'lt_lt_eq',
+		'gt_gt_eq',
+		'eq',
+		'eq_eq',
+		'bang_eq',
+		'gt',
+		'lt',
+		'gt_eq',
+		'lt_eq',
+		'at',
+		'_',
+		'',
+		'dot',
+		'dot_dot',
+		'dot_dot_dot',
+		'dot_dot_eq',
+		'comma',
+		'semi',
+		'colon',
+		'colon_colon',
+		'dash_gt',
+		'eq_gt',
+		'pound',
+		'qmark',
 		"'",
 		'$',
 		'delim_token_tree'
@@ -572,6 +642,10 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'negative_literal'
 	]),
 	_non_delim_token: new Set([
+		'_non_special_token',
+		'non_special_token',
+		'_literal',
+		'literal',
 		'string_literal',
 		'raw_string_literal',
 		'char_literal',
@@ -585,8 +659,158 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'self',
 		'super',
 		'crate',
+		'_primitive_type',
+		'primitive_type',
+		'u8',
+		'i8',
+		'u16',
+		'i16',
+		'u32',
+		'i32',
+		'u64',
+		'i64',
+		'u128',
+		'i128',
+		'isize',
+		'usize',
+		'f32',
+		'f64',
+		'bool',
+		'str',
+		'char',
+		'_token_tree_punctuation',
+		'token_tree_punctuation',
+		'plus',
+		'dash',
+		'star',
+		'slash',
+		'percent',
+		'caret',
+		'bang',
+		'amp',
+		'pipe',
+		'amp_amp',
+		'pipe_pipe',
+		'lt_lt',
+		'gt_gt',
+		'plus_eq',
+		'dash_eq',
+		'star_eq',
+		'slash_eq',
+		'percent_eq',
+		'caret_eq',
+		'amp_eq',
+		'pipe_eq',
+		'lt_lt_eq',
+		'gt_gt_eq',
+		'eq',
+		'eq_eq',
+		'bang_eq',
+		'gt',
+		'lt',
+		'gt_eq',
+		'lt_eq',
+		'at',
+		'_',
+		'',
+		'dot',
+		'dot_dot',
+		'dot_dot_dot',
+		'dot_dot_eq',
+		'comma',
+		'semi',
+		'colon',
+		'colon_colon',
+		'dash_gt',
+		'eq_gt',
+		'pound',
+		'qmark',
 		"'",
 		'$'
+	]),
+	_non_special_token: new Set([
+		'_literal',
+		'literal',
+		'string_literal',
+		'raw_string_literal',
+		'char_literal',
+		'boolean_literal',
+		'true',
+		'false',
+		'integer_literal',
+		'float_literal',
+		'identifier',
+		'mutable_specifier',
+		'self',
+		'super',
+		'crate',
+		'_primitive_type',
+		'primitive_type',
+		'u8',
+		'i8',
+		'u16',
+		'i16',
+		'u32',
+		'i32',
+		'u64',
+		'i64',
+		'u128',
+		'i128',
+		'isize',
+		'usize',
+		'f32',
+		'f64',
+		'bool',
+		'str',
+		'char',
+		'_token_tree_punctuation',
+		'token_tree_punctuation',
+		'plus',
+		'dash',
+		'star',
+		'slash',
+		'percent',
+		'caret',
+		'bang',
+		'amp',
+		'pipe',
+		'amp_amp',
+		'pipe_pipe',
+		'lt_lt',
+		'gt_gt',
+		'plus_eq',
+		'dash_eq',
+		'star_eq',
+		'slash_eq',
+		'percent_eq',
+		'caret_eq',
+		'amp_eq',
+		'pipe_eq',
+		'lt_lt_eq',
+		'gt_gt_eq',
+		'eq',
+		'eq_eq',
+		'bang_eq',
+		'gt',
+		'lt',
+		'gt_eq',
+		'lt_eq',
+		'at',
+		'_',
+		'',
+		'dot',
+		'dot_dot',
+		'dot_dot_dot',
+		'dot_dot_eq',
+		'comma',
+		'semi',
+		'colon',
+		'colon_colon',
+		'dash_gt',
+		'eq_gt',
+		'pound',
+		'qmark',
+		"'"
 	]),
 	_path: new Set([
 		'self',
@@ -668,6 +892,10 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'token_repetition_pattern',
 		'token_binding_pattern',
 		'metavariable',
+		'_non_special_token',
+		'non_special_token',
+		'_literal',
+		'literal',
 		'string_literal',
 		'raw_string_literal',
 		'char_literal',
@@ -681,12 +909,82 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'self',
 		'super',
 		'crate',
+		'_primitive_type',
+		'primitive_type',
+		'u8',
+		'i8',
+		'u16',
+		'i16',
+		'u32',
+		'i32',
+		'u64',
+		'i64',
+		'u128',
+		'i128',
+		'isize',
+		'usize',
+		'f32',
+		'f64',
+		'bool',
+		'str',
+		'char',
+		'_token_tree_punctuation',
+		'token_tree_punctuation',
+		'plus',
+		'dash',
+		'star',
+		'slash',
+		'percent',
+		'caret',
+		'bang',
+		'amp',
+		'pipe',
+		'amp_amp',
+		'pipe_pipe',
+		'lt_lt',
+		'gt_gt',
+		'plus_eq',
+		'dash_eq',
+		'star_eq',
+		'slash_eq',
+		'percent_eq',
+		'caret_eq',
+		'amp_eq',
+		'pipe_eq',
+		'lt_lt_eq',
+		'gt_gt_eq',
+		'eq',
+		'eq_eq',
+		'bang_eq',
+		'gt',
+		'lt',
+		'gt_eq',
+		'lt_eq',
+		'at',
+		'_',
+		'',
+		'dot',
+		'dot_dot',
+		'dot_dot_dot',
+		'dot_dot_eq',
+		'comma',
+		'semi',
+		'colon',
+		'colon_colon',
+		'dash_gt',
+		'eq_gt',
+		'pound',
+		'qmark',
 		"'"
 	]),
 	_tokens: new Set([
 		'token_tree',
 		'token_repetition',
 		'metavariable',
+		'_non_special_token',
+		'non_special_token',
+		'_literal',
+		'literal',
 		'string_literal',
 		'raw_string_literal',
 		'char_literal',
@@ -700,6 +998,72 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'self',
 		'super',
 		'crate',
+		'_primitive_type',
+		'primitive_type',
+		'u8',
+		'i8',
+		'u16',
+		'i16',
+		'u32',
+		'i32',
+		'u64',
+		'i64',
+		'u128',
+		'i128',
+		'isize',
+		'usize',
+		'f32',
+		'f64',
+		'bool',
+		'str',
+		'char',
+		'_token_tree_punctuation',
+		'token_tree_punctuation',
+		'plus',
+		'dash',
+		'star',
+		'slash',
+		'percent',
+		'caret',
+		'bang',
+		'amp',
+		'pipe',
+		'amp_amp',
+		'pipe_pipe',
+		'lt_lt',
+		'gt_gt',
+		'plus_eq',
+		'dash_eq',
+		'star_eq',
+		'slash_eq',
+		'percent_eq',
+		'caret_eq',
+		'amp_eq',
+		'pipe_eq',
+		'lt_lt_eq',
+		'gt_gt_eq',
+		'eq',
+		'eq_eq',
+		'bang_eq',
+		'gt',
+		'lt',
+		'gt_eq',
+		'lt_eq',
+		'at',
+		'_',
+		'',
+		'dot',
+		'dot_dot',
+		'dot_dot_dot',
+		'dot_dot_eq',
+		'comma',
+		'semi',
+		'colon',
+		'colon_colon',
+		'dash_gt',
+		'eq_gt',
+		'pound',
+		'qmark',
 		"'"
 	]),
 	_type: new Set([
@@ -1551,6 +1915,8 @@ export function wrapDelimTokenTreeBrace(
 		readonly _self?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _super?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _crate?: T.DelimTokens | readonly T.DelimTokens[];
+		readonly _primitive_type?: T.DelimTokens | readonly T.DelimTokens[];
+		readonly _token_tree_punctuation?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly "_'"?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _$?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _delim_token_tree?: T.DelimTokens | readonly T.DelimTokens[];
@@ -1576,6 +1942,8 @@ export function wrapDelimTokenTreeBrace(
 							data._self,
 							data._super,
 							data._crate,
+							data._primitive_type,
+							data._token_tree_punctuation,
 							data["_'"],
 							data._$,
 							data._delim_token_tree
@@ -1611,6 +1979,8 @@ export function wrapDelimTokenTreeBracket(
 		readonly _self?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _super?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _crate?: T.DelimTokens | readonly T.DelimTokens[];
+		readonly _primitive_type?: T.DelimTokens | readonly T.DelimTokens[];
+		readonly _token_tree_punctuation?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly "_'"?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _$?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _delim_token_tree?: T.DelimTokens | readonly T.DelimTokens[];
@@ -1636,6 +2006,8 @@ export function wrapDelimTokenTreeBracket(
 							data._self,
 							data._super,
 							data._crate,
+							data._primitive_type,
+							data._token_tree_punctuation,
 							data["_'"],
 							data._$,
 							data._delim_token_tree
@@ -1671,6 +2043,8 @@ export function wrapDelimTokenTreeParen(
 		readonly _self?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _super?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _crate?: T.DelimTokens | readonly T.DelimTokens[];
+		readonly _primitive_type?: T.DelimTokens | readonly T.DelimTokens[];
+		readonly _token_tree_punctuation?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly "_'"?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _$?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _delim_token_tree?: T.DelimTokens | readonly T.DelimTokens[];
@@ -1696,6 +2070,8 @@ export function wrapDelimTokenTreeParen(
 							data._self,
 							data._super,
 							data._crate,
+							data._primitive_type,
+							data._token_tree_punctuation,
 							data["_'"],
 							data._$,
 							data._delim_token_tree
@@ -2552,6 +2928,8 @@ export function wrapNonDelimToken(
 	return drillIn<T.NonDelimToken>(
 		normalizeSingularWrapSlot(
 			_filterWrapChildrenByKind(data.$other, [
+				'_non_special_token',
+				'non_special_token',
 				'string_literal',
 				'raw_string_literal',
 				'char_literal',
@@ -3228,6 +3606,8 @@ export function wrapTokenPattern(
 				'token_repetition_pattern',
 				'token_binding_pattern',
 				'metavariable',
+				'_non_special_token',
+				'non_special_token',
 				'string_literal',
 				'raw_string_literal',
 				'char_literal',
@@ -3266,6 +3646,8 @@ export function wrapTokenTreeBrace(
 		readonly _self?: T.Tokens | readonly T.Tokens[];
 		readonly _super?: T.Tokens | readonly T.Tokens[];
 		readonly _crate?: T.Tokens | readonly T.Tokens[];
+		readonly _primitive_type?: T.Tokens | readonly T.Tokens[];
+		readonly _token_tree_punctuation?: T.Tokens | readonly T.Tokens[];
 		readonly "_'"?: T.Tokens | readonly T.Tokens[];
 	},
 	tree: TreeHandle
@@ -3292,6 +3674,8 @@ export function wrapTokenTreeBrace(
 							data._self,
 							data._super,
 							data._crate,
+							data._primitive_type,
+							data._token_tree_punctuation,
 							data["_'"]
 						]),
 				false,
@@ -3328,6 +3712,8 @@ export function wrapTokenTreeBracket(
 		readonly _self?: T.Tokens | readonly T.Tokens[];
 		readonly _super?: T.Tokens | readonly T.Tokens[];
 		readonly _crate?: T.Tokens | readonly T.Tokens[];
+		readonly _primitive_type?: T.Tokens | readonly T.Tokens[];
+		readonly _token_tree_punctuation?: T.Tokens | readonly T.Tokens[];
 		readonly "_'"?: T.Tokens | readonly T.Tokens[];
 	},
 	tree: TreeHandle
@@ -3354,6 +3740,8 @@ export function wrapTokenTreeBracket(
 							data._self,
 							data._super,
 							data._crate,
+							data._primitive_type,
+							data._token_tree_punctuation,
 							data["_'"]
 						]),
 				false,
@@ -3390,6 +3778,8 @@ export function wrapTokenTreeParen(
 		readonly _self?: T.Tokens | readonly T.Tokens[];
 		readonly _super?: T.Tokens | readonly T.Tokens[];
 		readonly _crate?: T.Tokens | readonly T.Tokens[];
+		readonly _primitive_type?: T.Tokens | readonly T.Tokens[];
+		readonly _token_tree_punctuation?: T.Tokens | readonly T.Tokens[];
 		readonly "_'"?: T.Tokens | readonly T.Tokens[];
 	},
 	tree: TreeHandle
@@ -3416,6 +3806,8 @@ export function wrapTokenTreeParen(
 							data._self,
 							data._super,
 							data._crate,
+							data._primitive_type,
+							data._token_tree_punctuation,
 							data["_'"]
 						]),
 				false,
@@ -3453,6 +3845,8 @@ export function wrapTokenTreePatternBrace(
 		readonly _self?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _super?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _crate?: T.TokenPattern | readonly T.TokenPattern[];
+		readonly _primitive_type?: T.TokenPattern | readonly T.TokenPattern[];
+		readonly _token_tree_punctuation?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly "_'"?: T.TokenPattern | readonly T.TokenPattern[];
 	},
 	tree: TreeHandle
@@ -3480,6 +3874,8 @@ export function wrapTokenTreePatternBrace(
 							data._self,
 							data._super,
 							data._crate,
+							data._primitive_type,
+							data._token_tree_punctuation,
 							data["_'"]
 						]),
 				false,
@@ -3517,6 +3913,8 @@ export function wrapTokenTreePatternBracket(
 		readonly _self?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _super?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _crate?: T.TokenPattern | readonly T.TokenPattern[];
+		readonly _primitive_type?: T.TokenPattern | readonly T.TokenPattern[];
+		readonly _token_tree_punctuation?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly "_'"?: T.TokenPattern | readonly T.TokenPattern[];
 	},
 	tree: TreeHandle
@@ -3544,6 +3942,8 @@ export function wrapTokenTreePatternBracket(
 							data._self,
 							data._super,
 							data._crate,
+							data._primitive_type,
+							data._token_tree_punctuation,
 							data["_'"]
 						]),
 				false,
@@ -3581,6 +3981,8 @@ export function wrapTokenTreePatternParen(
 		readonly _self?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _super?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _crate?: T.TokenPattern | readonly T.TokenPattern[];
+		readonly _primitive_type?: T.TokenPattern | readonly T.TokenPattern[];
+		readonly _token_tree_punctuation?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly "_'"?: T.TokenPattern | readonly T.TokenPattern[];
 	},
 	tree: TreeHandle
@@ -3608,6 +4010,8 @@ export function wrapTokenTreePatternParen(
 							data._self,
 							data._super,
 							data._crate,
+							data._primitive_type,
+							data._token_tree_punctuation,
 							data["_'"]
 						]),
 				false,
@@ -8949,6 +9353,8 @@ export function wrapTokenRepetition(
 		readonly _self?: T.Tokens | readonly T.Tokens[];
 		readonly _super?: T.Tokens | readonly T.Tokens[];
 		readonly _crate?: T.Tokens | readonly T.Tokens[];
+		readonly _primitive_type?: T.Tokens | readonly T.Tokens[];
+		readonly _token_tree_punctuation?: T.Tokens | readonly T.Tokens[];
 		readonly "_'"?: T.Tokens | readonly T.Tokens[];
 	},
 	tree: TreeHandle
@@ -8975,6 +9381,8 @@ export function wrapTokenRepetition(
 							data._self,
 							data._super,
 							data._crate,
+							data._primitive_type,
+							data._token_tree_punctuation,
 							data["_'"]
 						]),
 				false,
@@ -9039,6 +9447,8 @@ export function wrapTokenRepetitionPattern(
 		readonly _self?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _super?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _crate?: T.TokenPattern | readonly T.TokenPattern[];
+		readonly _primitive_type?: T.TokenPattern | readonly T.TokenPattern[];
+		readonly _token_tree_punctuation?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly "_'"?: T.TokenPattern | readonly T.TokenPattern[];
 	},
 	tree: TreeHandle
@@ -9066,6 +9476,8 @@ export function wrapTokenRepetitionPattern(
 							data._self,
 							data._super,
 							data._crate,
+							data._primitive_type,
+							data._token_tree_punctuation,
 							data["_'"]
 						]),
 				false,
@@ -11086,6 +11498,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_token_tree_pattern_brace: (d, t) => wrapTokenTreePatternBrace(d as unknown as T.TokenTreePatternBrace, t),
 	_token_tree_pattern_bracket: (d, t) => wrapTokenTreePatternBracket(d as unknown as T.TokenTreePatternBracket, t),
 	_token_tree_pattern_paren: (d, t) => wrapTokenTreePatternParen(d as unknown as T.TokenTreePatternParen, t),
+	_token_tree_punctuation: (d) => ({ ...d, $type: TSKindId.TokenTreePunctuation as const }),
 	_tuple_pattern_group1: (d, t) => wrap_TuplePatternGroup1(d as unknown as T._TuplePatternGroup1, t),
 	_type: (d, t) => wrap_Type(d as unknown as T._Type, t),
 	_type_argument: (d, t) => wrapTypeArgument(d as unknown as T.TypeArgument, t),
@@ -11345,6 +11758,7 @@ const _aliasTargetToSource: Record<string, string> = {
 	token_tree_pattern_brace: '_token_tree_pattern_brace',
 	token_tree_pattern_bracket: '_token_tree_pattern_bracket',
 	token_tree_pattern_paren: '_token_tree_pattern_paren',
+	token_tree_punctuation: '_token_tree_punctuation',
 	tokens: '_tokens',
 	type_argument: '_type_argument',
 	unary_expression_operator: '_unary_expression_operator',

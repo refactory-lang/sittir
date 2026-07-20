@@ -12,6 +12,7 @@
     "_literal",
     "_literal_pattern",
     "_non_delim_token",
+    "_non_special_token",
     "_path",
     "_pattern",
     "_statement",
@@ -221,9 +222,6 @@
     },
     "_match_block_arms.last_arm": {
       "match_arm": "last_match_arm"
-    },
-    "_non_special_token.content": {
-      "primitive_type": "_primitive_type"
     },
     "_ordered_field_declaration_list_group1.attributed_ordered_field": {
       "attributed_ordered_field": "_attributed_ordered_field"
@@ -6522,6 +6520,7 @@
       "subtypes": [
         "$",
         "'",
+        "_non_special_token",
         "boolean_literal",
         "char_literal",
         "crate",
@@ -6537,523 +6536,27 @@
     },
     {
       "kind": "_non_special_token",
-      "modelType": "branch",
+      "modelType": "supertype",
       "typeName": "NonSpecialToken",
-      "factoryName": "nonSpecialToken",
       "irKey": "nonSpecialToken",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_literal",
-              "parseKind": "_literal",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "identifier",
-              "parseKind": "identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "mutable_specifier",
-              "parseKind": "mutable_specifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "self",
-              "parseKind": "self",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "super",
-              "parseKind": "super",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "crate",
-              "parseKind": "crate",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_primitive_type",
-              "parseKind": "primitive_type",
-              "unresolved": true
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "+",
-              "parseKind": "plus"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "-",
-              "parseKind": "dash"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "*",
-              "parseKind": "star"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "/",
-              "parseKind": "slash"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "%",
-              "parseKind": "percent"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "^",
-              "parseKind": "caret"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "!",
-              "parseKind": "bang"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "&",
-              "parseKind": "amp"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "|",
-              "parseKind": "pipe"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "&&",
-              "parseKind": "amp_amp"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "||",
-              "parseKind": "pipe_pipe"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "<<",
-              "parseKind": "lt_lt"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": ">>",
-              "parseKind": "gt_gt"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "+=",
-              "parseKind": "plus_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "-=",
-              "parseKind": "dash_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "*=",
-              "parseKind": "star_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "/=",
-              "parseKind": "slash_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "%=",
-              "parseKind": "percent_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "^=",
-              "parseKind": "caret_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "&=",
-              "parseKind": "amp_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "|=",
-              "parseKind": "pipe_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "<<=",
-              "parseKind": "lt_lt_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": ">>=",
-              "parseKind": "gt_gt_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "=",
-              "parseKind": "eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "==",
-              "parseKind": "eq_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "!=",
-              "parseKind": "bang_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": ">",
-              "parseKind": "gt"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "<",
-              "parseKind": "lt"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": ">=",
-              "parseKind": "gt_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "<=",
-              "parseKind": "lt_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "@",
-              "parseKind": "at"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "_",
-              "parseKind": "_"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": ".",
-              "parseKind": "dot"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "..",
-              "parseKind": "dot_dot"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "...",
-              "parseKind": "dot_dot_dot"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "..=",
-              "parseKind": "dot_dot_eq"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": ",",
-              "parseKind": "comma"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": ";",
-              "parseKind": "semi"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": ":",
-              "parseKind": "colon"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "::",
-              "parseKind": "colon_colon"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "->",
-              "parseKind": "dash_gt"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "=>",
-              "parseKind": "eq_gt"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "#",
-              "parseKind": "pound"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "?",
-              "parseKind": "qmark"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "'",
-              "parseKind": "squote"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "as",
-              "parseKind": "as"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "async",
-              "parseKind": "async"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "await",
-              "parseKind": "await"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "break",
-              "parseKind": "break"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "const",
-              "parseKind": "const"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "continue",
-              "parseKind": "continue"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "default",
-              "parseKind": "default"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "enum",
-              "parseKind": "enum"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "fn",
-              "parseKind": "fn"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "for",
-              "parseKind": "for"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "gen",
-              "parseKind": "gen"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "if",
-              "parseKind": "if"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "impl",
-              "parseKind": "impl"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "let",
-              "parseKind": "let"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "loop",
-              "parseKind": "loop"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "match",
-              "parseKind": "match"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "mod",
-              "parseKind": "mod"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "pub",
-              "parseKind": "pub"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "return",
-              "parseKind": "return"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "static",
-              "parseKind": "static"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "struct",
-              "parseKind": "struct"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "trait",
-              "parseKind": "trait"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "type",
-              "parseKind": "type"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "union",
-              "parseKind": "union"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "unsafe",
-              "parseKind": "unsafe"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "use",
-              "parseKind": "use"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "where",
-              "parseKind": "where"
-            },
-            {
-              "kind": "terminal",
-              "multiplicity": "array",
-              "value": "while",
-              "parseKind": "while"
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_literal",
-              "identifier",
-              "mutable_specifier",
-              "self",
-              "super",
-              "crate",
-              "_primitive_type"
-            ]
-          }
-        }
-      ],
-      "children": []
+      "hidden": true,
+      "subtypes": [
+        "'",
+        "_literal",
+        "_primitive_type",
+        "_token_tree_punctuation",
+        "boolean_literal",
+        "char_literal",
+        "crate",
+        "float_literal",
+        "identifier",
+        "integer_literal",
+        "mutable_specifier",
+        "raw_string_literal",
+        "self",
+        "string_literal",
+        "super"
+      ]
     },
     {
       "kind": "_operator",
@@ -8029,6 +7532,7 @@
       "hidden": true,
       "subtypes": [
         "'",
+        "_non_special_token",
         "boolean_literal",
         "char_literal",
         "crate",
@@ -8275,6 +7779,60 @@
       ]
     },
     {
+      "kind": "_token_tree_punctuation",
+      "modelType": "enum",
+      "typeName": "TokenTreePunctuation",
+      "factoryName": "tokenTreePunctuation",
+      "irKey": "tokenTreePunctuation",
+      "hidden": false,
+      "values": [
+        "+",
+        "-",
+        "*",
+        "/",
+        "%",
+        "^",
+        "!",
+        "&",
+        "|",
+        "&&",
+        "||",
+        "<<",
+        ">>",
+        "+=",
+        "-=",
+        "*=",
+        "/=",
+        "%=",
+        "^=",
+        "&=",
+        "|=",
+        "<<=",
+        ">>=",
+        "=",
+        "==",
+        "!=",
+        ">",
+        "<",
+        ">=",
+        "<=",
+        "@",
+        "_",
+        ".",
+        "..",
+        "...",
+        "..=",
+        ",",
+        ";",
+        ":",
+        "::",
+        "->",
+        "=>",
+        "#",
+        "?"
+      ]
+    },
+    {
       "kind": "_tokens",
       "modelType": "supertype",
       "typeName": "Tokens",
@@ -8282,6 +7840,7 @@
       "hidden": true,
       "subtypes": [
         "'",
+        "_non_special_token",
         "boolean_literal",
         "char_literal",
         "crate",
@@ -11054,17 +10613,6 @@
       "factoryFields": [
         "declaration_statement"
       ]
-    },
-    {
-      "kind": "default",
-      "modelType": "keyword",
-      "typeName": "Default",
-      "irKey": "default",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"default\" as const",
-      "text": "default",
-      "factoryShape": "text"
     },
     {
       "kind": "delim_token_tree",

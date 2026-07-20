@@ -1868,6 +1868,10 @@
         {
           "type": "token_tree",
           "named": true
+        },
+        {
+          "type": "token_tree_punctuation",
+          "named": true
         }
       ]
     }
@@ -1911,6 +1915,10 @@
         {
           "type": "token_tree",
           "named": true
+        },
+        {
+          "type": "token_tree_punctuation",
+          "named": true
         }
       ]
     }
@@ -1953,6 +1961,10 @@
         },
         {
           "type": "token_tree",
+          "named": true
+        },
+        {
+          "type": "token_tree_punctuation",
           "named": true
         }
       ]
@@ -5417,6 +5429,10 @@
         {
           "type": "token_tree",
           "named": true
+        },
+        {
+          "type": "token_tree_punctuation",
+          "named": true
         }
       ]
     }
@@ -5490,6 +5506,10 @@
         },
         {
           "type": "token_tree_pattern",
+          "named": true
+        },
+        {
+          "type": "token_tree_punctuation",
           "named": true
         }
       ]
@@ -5577,6 +5597,10 @@
         {
           "type": "token_tree",
           "named": true
+        },
+        {
+          "type": "token_tree_punctuation",
+          "named": true
         }
       ]
     }
@@ -5628,6 +5652,10 @@
         {
           "type": "token_tree",
           "named": true
+        },
+        {
+          "type": "token_tree_punctuation",
+          "named": true
         }
       ]
     }
@@ -5678,6 +5706,10 @@
         },
         {
           "type": "token_tree",
+          "named": true
+        },
+        {
+          "type": "token_tree_punctuation",
           "named": true
         }
       ]
@@ -5757,6 +5789,10 @@
         {
           "type": "token_tree_pattern",
           "named": true
+        },
+        {
+          "type": "token_tree_punctuation",
+          "named": true
         }
       ]
     }
@@ -5811,6 +5847,10 @@
         },
         {
           "type": "token_tree_pattern",
+          "named": true
+        },
+        {
+          "type": "token_tree_punctuation",
           "named": true
         }
       ]
@@ -5867,9 +5907,18 @@
         {
           "type": "token_tree_pattern",
           "named": true
+        },
+        {
+          "type": "token_tree_punctuation",
+          "named": true
         }
       ]
     }
+  },
+  {
+    "type": "token_tree_punctuation",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "trait_bounds",

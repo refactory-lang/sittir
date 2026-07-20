@@ -1247,6 +1247,64 @@ export function buildTokenTreePatternParen(...children: T.TokenPattern[]) {
 	);
 }
 
+export function buildTokenTreePunctuation(
+	text:
+		| '+'
+		| '-'
+		| '*'
+		| '/'
+		| '%'
+		| '^'
+		| '!'
+		| '&'
+		| '|'
+		| '&&'
+		| '||'
+		| '<<'
+		| '>>'
+		| '+='
+		| '-='
+		| '*='
+		| '/='
+		| '%='
+		| '^='
+		| '&='
+		| '|='
+		| '<<='
+		| '>>='
+		| '='
+		| '=='
+		| '!='
+		| '>'
+		| '<'
+		| '>='
+		| '<='
+		| '@'
+		| '_'
+		| '.'
+		| '..'
+		| '...'
+		| '..='
+		| ','
+		| ';'
+		| ':'
+		| '::'
+		| '->'
+		| '=>'
+		| '#'
+		| '?'
+) {
+	return withMethods(
+		{
+			$type: TSKindId.TokenTreePunctuation as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
 export function build_TuplePatternGroup1(
 	elements: NonEmptyArray<T.Pattern | T.ClosureExpression>,
 	options: { trailing?: boolean } = {}
@@ -5871,6 +5929,7 @@ export type FluentKindMap = {
 	_token_tree_pattern_brace: FluentNode<'_token_tree_pattern_brace', T.TokenTreePatternBrace.Config>;
 	_token_tree_pattern_bracket: FluentNode<'_token_tree_pattern_bracket', T.TokenTreePatternBracket.Config>;
 	_token_tree_pattern_paren: FluentNode<'_token_tree_pattern_paren', T.TokenTreePatternParen.Config>;
+	_token_tree_punctuation: T.TokenTreePunctuation;
 	_tuple_pattern_group1: FluentNode<'_tuple_pattern_group1', T._TuplePatternGroup1.Config>;
 	_type_argument: FluentNode<'_type_argument', T.TypeArgument.Config>;
 	_type_identifier: T.TypeIdentifier;
@@ -6116,6 +6175,7 @@ export const _factoryMap = {
 	_token_tree_pattern_brace: buildTokenTreePatternBrace,
 	_token_tree_pattern_bracket: buildTokenTreePatternBracket,
 	_token_tree_pattern_paren: buildTokenTreePatternParen,
+	_token_tree_punctuation: buildTokenTreePunctuation,
 	_tuple_pattern_group1: build_TuplePatternGroup1,
 	_type_argument: buildTypeArgument,
 	_type_identifier: buildTypeIdentifier,

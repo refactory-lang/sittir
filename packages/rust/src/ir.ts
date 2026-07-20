@@ -341,6 +341,23 @@ export const nonDelimToken = {
 	crate: F.buildCrate
 } as const;
 
+export const nonSpecialToken = {
+	string: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
+	rawString: _attach(FR.coerceToRawStringLiteral, {
+		from: FR.coerceToRawStringLiteral,
+		strict: F.buildRawStringLiteral
+	}),
+	char: F.buildCharLiteral,
+	boolean: F.buildBooleanLiteral,
+	integer: F.buildIntegerLiteral,
+	float: F.buildFloatLiteral,
+	identifier: F.buildIdentifier,
+	mutable: F.buildMutableSpecifier,
+	self: F.buildSelf,
+	super: F.buildSuper,
+	crate: F.buildCrate
+} as const;
+
 export const path = {
 	self: F.buildSelf,
 	identifier: F.buildIdentifier,
@@ -1102,6 +1119,7 @@ export const ir = {
 	literal,
 	literalPattern,
 	nonDelimToken,
+	nonSpecialToken,
 	path,
 	pattern,
 	statement,
