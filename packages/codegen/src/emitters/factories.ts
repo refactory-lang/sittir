@@ -13,6 +13,8 @@ import {
 	collectKindEntries,
 	collectCatalogKinds,
 	kindDiscriminantExpr,
+	kindDiscriminantExprForLiteral,
+	findKindEntryForLiteral,
 	hasCatalogEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
@@ -609,7 +611,11 @@ function bitflagTextsExpr(texts: readonly string[]): string {
 	return `[${texts.map((text) => JSON.stringify(text)).join(', ')}]`;
 }
 
-function kindEnumTextMapExpr(
+// Exported: from.ts's resolver emission shares this map builder (it
+// previously had its own duplicate emitting runtime `kindIdFromName(text)`
+// lookups — which resolve literal texts through the name-polymorphic
+// runtime switch and reintroduce the #129 shadowing at runtime).
+export function kindEnumTextMapExpr(
 	f: AssembledNonterminal,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
@@ -617,23 +623,29 @@ function kindEnumTextMapExpr(
 	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 	if (storageInfo.kind !== 'kindEnum' || !kindEntries) return '[]';
 	const byText: Array<readonly [string, string]> = [];
+	// Every text below is a LITERAL TOKEN TEXT (enum member values and
+	// terminal STRING values), so resolution goes through the literal-aware
+	// lookup — the anonymous token must win over a same-spelled named rule
+	// (#129: python's `'type'` keyword stamped the `type` RULE's id, which
+	// the transport dispatched to TypeTransport → "Missing field `_content`").
 	for (const value of f.values) {
 		if (isNodeRef(value)) {
 			const kind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
 			const resolved = nodeMap.nodes.get(kind);
 			if (!resolved || resolved.modelType !== 'enum') continue;
 			for (const text of resolved.values) {
-				const discriminant = hasCatalogEntry(kindEntries, text)
-					? kindDiscriminantExpr(text, nodeMap, kindEntries)
-					: hasCatalogEntry(kindEntries, resolved.kind)
-						? kindDiscriminantExpr(resolved.kind, nodeMap, kindEntries)
-						: `kindIdFromName(${JSON.stringify(resolved.kind)})`;
+				const discriminant =
+					findKindEntryForLiteral(kindEntries, text) !== undefined
+						? kindDiscriminantExprForLiteral(text, kindEntries)
+						: hasCatalogEntry(kindEntries, resolved.kind)
+							? kindDiscriminantExpr(resolved.kind, nodeMap, kindEntries)
+							: `kindIdFromName(${JSON.stringify(resolved.kind)})`;
 				byText.push([text, discriminant]);
 			}
 			continue;
 		}
-		if (!isTerminalValue(value) || !hasCatalogEntry(kindEntries, value.value)) continue;
-		byText.push([value.value, kindDiscriminantExpr(value.value, nodeMap, kindEntries)]);
+		if (!isTerminalValue(value) || findKindEntryForLiteral(kindEntries, value.value) === undefined) continue;
+		byText.push([value.value, kindDiscriminantExprForLiteral(value.value, kindEntries)]);
 	}
 	return `[${byText.map(([text, discriminant]) => `[${JSON.stringify(text)}, ${discriminant}] as const`).join(', ')}]`;
 }
@@ -888,7 +900,7 @@ function emitFieldCarryingFactory(
 	for (const f of fieldsToEmit) {
 		lines.push(`  const ${f.storageKey} = ${valueSourceFor(f)};`);
 	}
-	lines.push('  return withMethods({');
+	lines.push('  return withMethods(withAccessors({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
@@ -896,12 +908,13 @@ function emitFieldCarryingFactory(
 	for (const f of fieldsToEmit) {
 		lines.push(`    ${f.storageKey},`);
 	}
+	lines.push(...withLines);
+	lines.push('  }, {');
 	for (const f of fieldsToEmit) {
 		const propName = f.propertyName;
-		lines.push(`    ${propName}() { return ${f.storageKey}; },`);
+		lines.push(`    ${propName}: () => ${f.storageKey},`);
 	}
-	lines.push(...withLines);
-	lines.push('  }, methodsEngine);');
+	lines.push('  }), methodsEngine);');
 	lines.push('}');
 	return renameUnusedConfigParam(lines);
 }
@@ -1011,16 +1024,12 @@ function emitRefineFormFactory(
 		}
 		lines.push(`  const ${f.storageKey} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries)};`);
 	}
-	lines.push('  return withMethods({');
+	lines.push('  return withMethods(withAccessors({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	for (const f of fields) {
 		lines.push(`    ${f.storageKey},`);
-	}
-	for (const f of fields) {
-		const propName = f.propertyName;
-		lines.push(`    ${propName}() { return ${f.storageKey}; },`);
 	}
 	lines.push('    $with: {');
 	for (const f of fields) {
@@ -1045,7 +1054,12 @@ function emitRefineFormFactory(
 	// Post-unification: legacy children setter is gone — per-slot setters above
 	// cover every slot.
 	lines.push('    },');
-	lines.push('  }, methodsEngine);');
+	lines.push('  }, {');
+	for (const f of fields) {
+		const propName = f.propertyName;
+		lines.push(`    ${propName}: () => ${f.storageKey},`);
+	}
+	lines.push('  }), methodsEngine);');
 	lines.push('}');
 	return lines.join('\n');
 }
@@ -1271,7 +1285,7 @@ function emitSeparatedListFactory(
 	if (hasLeadingOption) lines.push('  const _leading_sep = options.leading ?? false;');
 	if (hasTrailingOption) lines.push('  const _trailing_sep = options.trailing ?? false;');
 
-	lines.push('  return withMethods({');
+	lines.push('  return withMethods(withAccessors({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push('    $source: 2 as const,');
 	lines.push('    $named: true as const,');
@@ -1279,7 +1293,6 @@ function emitSeparatedListFactory(
 	if (hasSeparatorKindOption) lines.push('    _separator_kind,');
 	if (hasLeadingOption) lines.push('    _leading_sep,');
 	if (hasTrailingOption) lines.push('    _trailing_sep,');
-	lines.push('    content() { return _content; },');
 	lines.push('    $with: {');
 	const optionsArg = hasOptions ? ', options' : '';
 	// Rest param type must match `elementsType` exactly (`NonEmptyArray<T>`
@@ -1305,7 +1318,9 @@ function emitSeparatedListFactory(
 	if (hasLeadingOption) lines.push(`      leading: (v: boolean) => ${fn}(elements, { ...options, leading: v }),`);
 	if (hasTrailingOption) lines.push(`      trailing: (v: boolean) => ${fn}(elements, { ...options, trailing: v }),`);
 	lines.push('    },');
-	lines.push('  }, methodsEngine);');
+	lines.push('  }, {');
+	lines.push('    content: () => _content,');
+	lines.push('  }), methodsEngine);');
 	lines.push('}');
 	return lines.join('\n');
 }
@@ -1492,7 +1507,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		if (refineKindInfos.length > 0) utilImports.push('ConfigOf');
 		lines.push(`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`);
 		lines.push(
-			`import { ${['withMethods', 'methodsEngine', ...storageCoercionImports].join(', ')} } from './utils.js';`
+			`import { ${['withMethods', 'withAccessors', 'methodsEngine', ...storageCoercionImports].join(', ')} } from './utils.js';`
 		);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());

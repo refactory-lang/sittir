@@ -52,46 +52,6 @@ This is a general "scanner-delimited / token-adjacent slot" rendering gap in the
 
 **More confirmed instances (2026-07-20, PR #169):** fixing typescript's `string` rule (see the `string_double`/`string_single` entry below — unrelated bug, unrelated fix) let previously-parse-blocked corpus fixtures reach far enough to exercise `break_statement`, `continue_statement`, and `debugger_statement` for the first time; all three render their trailing `;` with a leading space (`"break ;"`, `"continue ;"`, `"debugger ;"` instead of `"break;"`/`"continue;"`/`"debugger;"`), and rust's `_delim_token_tree_paren.jinja` has the same shape (`"hi" , x` instead of `"hi", x` — see that entry above). Same root cause, same deferred status — not re-litigated here, just logged as more evidence for whoever picks up the general walker fix. `regression-checker-native`'s `format-deferred-rise` verdict flagged this as typescript's `roundtrip` failingKinds growing 7→10 on PR #169 — accepted per the same reasoning as the turbofish case above (net `roundtrip` pass count went 82→109 on the same PR; the 3 new failures are pre-existing-but-newly-reachable, not caused by the string fix itself).
 
-## Factory accessor methods are enumerable, contradicting ADR-0018's documented (and falsely "shipped") contract
-
-**Found during:** pre-existing test-debt triage (`fix-pretriage-test-debt`), `packages/rust/tests/nodedata-shape.test.ts` — `'FR-002: accessor function is non-enumerable'` and `'SC-004: Object.keys() returns only $-metadata and _-storage keys'`.
-
-Confirmed against actual factory output: accessor methods on generated factory output (`node.name`, `node.body`, `node.parameters`, etc.) are currently **enumerable** — `Object.keys(node)` includes accessor names, not just `$`-metadata and `_`-storage keys. This contradicts ADR-0018's documented contract; `specs/022-binding-simplify-assemble/IMPLEMENTATION-STATUS.md` marks this "Phase 2: Surface reshape... ✅ Shipped" — that claim is wrong for this specific property. Distinct from the OTHER two related failures in the same test file (`Object.isFrozen()`/freeze and the `$with` namespace) — those ARE legitimately not-yet-implemented per the same status doc (freeze deferred; `buildWithNamespace`/`replaceField` carry `@forFutureUse` ADR-0018 tags, not wired into generated factories) and don't need fixing yet.
-
-**Status: confirmed, not fixed.** Left failing on purpose with in-test citations rather than weakening the assertion. Root cause not yet isolated to a specific emitter line.
-
-**Fix, if/when prioritized:** needs its own investigation into the factory emitter (`packages/codegen/src/emitters/factories.ts`) to find where accessor methods get attached to the returned node object — likely a missing `Object.defineProperty(..., {enumerable: false})` or equivalent, compared against whatever mechanism attaches the genuinely-non-enumerable members correctly today.
-
-## `REPARSE_WRAPPERS.rust` still keyed to pre-alias-catalog-split name `delim_token_tree` — token-tree probing and fixtures silently vanished
-
-**Found during:** PR #168 baseline-refresh investigation. Residual of the (since-fixed, PR #169 `ba31945a5`) token-tree punctuation-drop entry — the render defect is fixed; this coverage gap is what remains.
-
-`REPARSE_WRAPPERS.rust` (`packages/tools/src/validate/common.ts`, ~line 726) is keyed only to the pre-alias-catalog-split name `delim_token_tree`. Since PR #165's alias-catalog determinism fix, this content reads as `token_tree` (168) / hidden `_delim_token_tree_paren` (378) instead — `probe-kind -k delim_token_tree` finds nothing, the wrapper-map lookup misses, `wrapForReparse` returns null, and `read-render-parse.ts:544` silently `continue`s. No error, no fixture, invisible in counts — the kind's fixture count dropped 19→0 without any validator noticing.
-
-**Fix (safe, low risk):** add a `token_tree` key to `REPARSE_WRAPPERS.rust` with the same wrapper body as the existing `delim_token_tree` entry. Validator-only, no codegen change — restores probing/fixtures and surfaces any remaining token-tree mismatches as visible failures.
-
-**Also remaining from the fixed entry:**
-- A pre-existing `delim_token_tree_paren` AST mismatch involving `'` (lifetime/char-literal marker), unconfirmed as new-vs-pre-existing.
-- `_delim_token_tree_paren.jinja`'s `{{ delim_tokens | join(" ") }}` stray-space-before-punctuation — part of the token-adjacency walker class tracked in the `generic_type_with_turbofish` entry above.
-
-## `nodes.test.ts`'s live generator was mistakenly believed dead; per-node emitter has a known `nonEmptyArray` mock-construction gap
-
-**Tracked in:** [#170](https://github.com/refactory-lang/sittir/issues/170) (full 28-failure breakdown, cross-referenced with #129 and #130).
-
-**Found during:** PR #169 — regenerating rust surfaced `packages/rust/tests/nodes.test.ts` as a brand-new file with 20 failing tests, none related to the punctuation fix that triggered the regen.
-
-Two separate, unrelated facts:
-
-1. **The "orphaned nodes.test.ts" retirement (`c11d1a009`, 2026-07-17) was based on a mistaken premise.** That commit deleted `packages/{rust,python,typescript}/tests/nodes.test.ts`, reasoning that its generator (`packages/codegen/src/emitters/test-new.ts`) had been deleted in an earlier v1→v2 emitter migration with no replacement. That's true of `test-new.ts` — but `nodes.test.ts` is actually produced by a *different* file, `packages/codegen/src/emitters/test.ts` (`emitTests`), which was never deleted and has been continuously wired into `emitAll()` (`packages/codegen/src/emitters/emit.ts`) the whole time, including commits after the retirement. Every `gen` run since 2026-07-17 has been silently regenerating this file; nobody had run a full regen-and-diff for all three grammars until this PR did, which is why it reappeared now.
-
-2. **The per-kind test emitter (`test.ts`) can't construct valid mock data for `nonEmptyArray`-multiplicity slots.** This is a long-documented, low-priority gap — see `docs/superpowers/specs/2026-05-22-compiler-simplification-design.md` ("LOW-PRI CRITERION... the generated node-test emitter must construct a valid non-empty child for `nonEmptyArray` slots") and `2026-05-26-generated-code-cleanup-design.md` item 4 (flagged by Copilot review, still open). Confirmed via a clean `git worktree` at pre-fix master (`2a465172b`): regenerating there produces the *identical* 20 failing test names — none introduced by this PR. All failures are in `_group1`-synthesized kinds (`arguments_group1`, `enum_variant_list_group1`, `field_declaration_list_group1`, `ordered_field_declaration_list_group1`, `parameters_group1`, `slice_pattern_group1`, `use_bounds_group1`, `use_list_group1`, `where_clause_group1`) plus a handful of others (`async_block`, `block_comment`, `foreign_mod_item`, `gen_block`, `mod_item`, `reference_pattern`, `self_parameter`, `variadic_parameter`) — consistent with the documented non-empty-array-child gap.
-
-**Status: confirmed pre-existing, not fixed.** `nodes.test.ts` (all 3 grammars) was reverted out of PR #169 (`0cdf40360`) rather than committed with known failures, since `pnpm test`/CI has zero tolerance for any failing test and there's no existing accept-known-failures mechanism for this path. It will silently reappear on the next full `gen`/`validate:native` run for these grammars (confirmed: `generated.manifest.json` never tracked it, so its presence/absence doesn't affect manifest verification either way) — whoever hits that should land it via #170 with the failures actually resolved or explicitly skipped, not silently re-included.
-
-**Fix, if/when prioritized — two independent decisions, not one fix:**
-1. Either fix `test.ts`'s mock-data construction for `nonEmptyArray` slots (small, scoped — construct a 1-element array instead of an empty one for repeat1-backed fields), or mark the ~20 known-failing cases as expected-fail so CI stays meaningfully green without masking new regressions.
-2. Decide whether `nodes.test.ts` should exist at all going forward — the original (mistaken) retirement's stated rationale ("corpus-validation.test.ts against real, evolving data is a strictly more robust guard than frozen numeric-literal snapshots") may still be a valid argument for killing `emitTests` properly this time, as opposed to reverting to the current state where it's silently alive again.
-
 ## TypeScript `_export_statement_default_decl_arm`'s `default` arm is unrenderable — `emitChoice`'s unnamed-arm fallback silently drops non-first choice arms
 
 **Found during:** PR #168 baseline-refresh investigation, same research pass as the rust `token_tree` entry above — the `gen --all` run's own FR-011 coverage warning ("parity-fixtures[typescript]: FR-011 exception kind(s) not covered: export_statement") pointed at this kind.

@@ -1587,8 +1587,7 @@ describe('type', () => {
 	});
 });
 
-// known-failing: #129 — anonymous 'type' keyword auto-stamp collides with the type rule
-describe.skip('type_alias_statement', () => {
+describe('type_alias_statement', () => {
 	it('factory produces correct type', () => {
 		const node = ir.typeAliasStatement({
 			left: {

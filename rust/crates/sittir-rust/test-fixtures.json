@@ -16049,6 +16049,506 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 193,
+          "$source": 0,
+          "$named": true,
+          "_type": "Foo",
+          "_impl_item_body": {
+            "$type": 339,
+            "$source": 0,
+            "$named": true,
+            "$text": "{\n  const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }\n}",
+            "$span": {
+              "start": 9,
+              "end": 120
+            },
+            "$nodeHandle": 13,
+            "$childIndex": 2
+          },
+          "$other": [
+            58
+          ],
+          "$span": {
+            "start": 0,
+            "end": 120
+          },
+          "$nodeHandle": 13,
+          "_content": {
+            "$type": 339,
+            "$source": 0,
+            "$named": true,
+            "_declaration_list": {
+              "$type": 175,
+              "$source": 0,
+              "$named": true,
+              "_function_item": {
+                "$type": 188,
+                "$source": 0,
+                "$named": true,
+                "$text": "const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }",
+                "$span": {
+                  "start": 13,
+                  "end": 118
+                },
+                "$nodeHandle": 15,
+                "$childIndex": 1
+              },
+              "$other": [
+                79,
+                80
+              ],
+              "$span": {
+                "start": 9,
+                "end": 120
+              },
+              "$nodeHandle": 15,
+              "_declaration_statement": [
+                {
+                  "$type": 188,
+                  "$source": 0,
+                  "$named": true,
+                  "_function_modifiers": {
+                    "$type": 190,
+                    "$source": 0,
+                    "$named": true,
+                    "_modifier": [
+                      50,
+                      52
+                    ],
+                    "$span": {
+                      "start": 13,
+                      "end": 26
+                    },
+                    "$nodeHandle": 17
+                  },
+                  "_name": "bar",
+                  "_parameters": {
+                    "$type": 210,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "()",
+                    "$span": {
+                      "start": 33,
+                      "end": 35
+                    },
+                    "$nodeHandle": 18
+                  },
+                  "_return_type": "i32",
+                  "_body": {
+                    "$type": 293,
+                    "$source": 0,
+                    "$named": true,
+                    "_line_comment": {
+                      "$type": 314,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": "// Make 'default' still works as an identifier",
+                      "$span": {
+                        "start": 49,
+                        "end": 95
+                      },
+                      "$nodeHandle": 19,
+                      "$childIndex": 1
+                    },
+                    "_expression_statement": {
+                      "$type": 160,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": "default.bar();",
+                      "$span": {
+                        "start": 100,
+                        "end": 114
+                      },
+                      "$nodeHandle": 19,
+                      "$childIndex": 2
+                    },
+                    "$other": [
+                      79,
+                      80
+                    ],
+                    "$span": {
+                      "start": 43,
+                      "end": 118
+                    },
+                    "$nodeHandle": 19,
+                    "_statement": [
+                      {
+                        "$type": 160,
+                        "$source": 0,
+                        "$named": true,
+                        "_expression_statement_with_semi": {
+                          "$type": 368,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "default.bar();",
+                          "$span": {
+                            "start": 100,
+                            "end": 114
+                          },
+                          "$nodeHandle": 20,
+                          "$childIndex": 0
+                        },
+                        "$span": {
+                          "start": 100,
+                          "end": 114
+                        },
+                        "$nodeHandle": 20,
+                        "_content": {
+                          "$type": 368,
+                          "$source": 0,
+                          "$named": true,
+                          "_call_expression": {
+                            "$type": 256,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "default.bar()",
+                            "$span": {
+                              "start": 100,
+                              "end": 113
+                            },
+                            "$nodeHandle": 21,
+                            "$childIndex": 0
+                          },
+                          "$other": [
+                            2
+                          ],
+                          "$span": {
+                            "start": 100,
+                            "end": 114
+                          },
+                          "$nodeHandle": 21,
+                          "_expression": {
+                            "$type": 256,
+                            "$source": 0,
+                            "$named": true,
+                            "_function": {
+                              "$type": 288,
+                              "$source": 0,
+                              "$named": true,
+                              "_value": "default",
+                              "_field": "bar",
+                              "$other": [
+                                118
+                              ],
+                              "$span": {
+                                "start": 100,
+                                "end": 111
+                              },
+                              "$nodeHandle": 23
+                            },
+                            "_arguments": {
+                              "$type": 257,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "()",
+                              "$span": {
+                                "start": 111,
+                                "end": 113
+                              },
+                              "$nodeHandle": 24
+                            },
+                            "$span": {
+                              "start": 100,
+                              "end": 113
+                            },
+                            "$nodeHandle": 22
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "$other": [
+                    54,
+                    139
+                  ],
+                  "$span": {
+                    "start": 13,
+                    "end": 118
+                  },
+                  "$nodeHandle": 16
+                }
+              ]
+            },
+            "$span": {
+              "start": 9,
+              "end": 120
+            },
+            "$nodeHandle": 14
+          }
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 120
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "impl Foo {  const default fn bar ()->i32 { default.bar (); } }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "impl Foo {\n  const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }\n}",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "impl Foo {  const default fn bar ()->i32 { default.bar (); } }",
+    "expectedReparseTree": "(source_file statements: (impl_item type: (type_identifier) (impl_item_body (declaration_list (function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) return_type: (primitive_type) body: (block (expression_statement (expression_statement_with_semi (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))))))))",
+    "wrappedText": "impl Foo {  const default fn bar ()->i32 { default.bar (); } }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 193,
+      "$source": 0,
+      "$named": true,
+      "_type": "Foo",
+      "_impl_item_body": {
+        "$type": 339,
+        "$source": 0,
+        "$named": true,
+        "$text": "{\n  const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }\n}",
+        "$span": {
+          "start": 9,
+          "end": 120
+        },
+        "$nodeHandle": 1,
+        "$childIndex": 2
+      },
+      "$other": [
+        58
+      ],
+      "$span": {
+        "start": 0,
+        "end": 120
+      },
+      "$nodeHandle": 1,
+      "_content": {
+        "$type": 339,
+        "$source": 0,
+        "$named": true,
+        "_declaration_list": {
+          "$type": 175,
+          "$source": 0,
+          "$named": true,
+          "_function_item": {
+            "$type": 188,
+            "$source": 0,
+            "$named": true,
+            "$text": "const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }",
+            "$span": {
+              "start": 13,
+              "end": 118
+            },
+            "$nodeHandle": 26,
+            "$childIndex": 1
+          },
+          "$other": [
+            79,
+            80
+          ],
+          "$span": {
+            "start": 9,
+            "end": 120
+          },
+          "$nodeHandle": 26,
+          "_declaration_statement": [
+            {
+              "$type": 188,
+              "$source": 0,
+              "$named": true,
+              "_function_modifiers": {
+                "$type": 190,
+                "$source": 0,
+                "$named": true,
+                "_modifier": [
+                  50,
+                  52
+                ],
+                "$span": {
+                  "start": 13,
+                  "end": 26
+                },
+                "$nodeHandle": 28
+              },
+              "_name": "bar",
+              "_parameters": {
+                "$type": 210,
+                "$source": 0,
+                "$named": true,
+                "$text": "()",
+                "$span": {
+                  "start": 33,
+                  "end": 35
+                },
+                "$nodeHandle": 29
+              },
+              "_return_type": "i32",
+              "_body": {
+                "$type": 293,
+                "$source": 0,
+                "$named": true,
+                "_line_comment": {
+                  "$type": 314,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "// Make 'default' still works as an identifier",
+                  "$span": {
+                    "start": 49,
+                    "end": 95
+                  },
+                  "$nodeHandle": 30,
+                  "$childIndex": 1
+                },
+                "_expression_statement": {
+                  "$type": 160,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "default.bar();",
+                  "$span": {
+                    "start": 100,
+                    "end": 114
+                  },
+                  "$nodeHandle": 30,
+                  "$childIndex": 2
+                },
+                "$other": [
+                  79,
+                  80
+                ],
+                "$span": {
+                  "start": 43,
+                  "end": 118
+                },
+                "$nodeHandle": 30,
+                "_statement": [
+                  {
+                    "$type": 160,
+                    "$source": 0,
+                    "$named": true,
+                    "_expression_statement_with_semi": {
+                      "$type": 368,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": "default.bar();",
+                      "$span": {
+                        "start": 100,
+                        "end": 114
+                      },
+                      "$nodeHandle": 31,
+                      "$childIndex": 0
+                    },
+                    "$span": {
+                      "start": 100,
+                      "end": 114
+                    },
+                    "$nodeHandle": 31,
+                    "_content": {
+                      "$type": 368,
+                      "$source": 0,
+                      "$named": true,
+                      "_call_expression": {
+                        "$type": 256,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "default.bar()",
+                        "$span": {
+                          "start": 100,
+                          "end": 113
+                        },
+                        "$nodeHandle": 32,
+                        "$childIndex": 0
+                      },
+                      "$other": [
+                        2
+                      ],
+                      "$span": {
+                        "start": 100,
+                        "end": 114
+                      },
+                      "$nodeHandle": 32,
+                      "_expression": {
+                        "$type": 256,
+                        "$source": 0,
+                        "$named": true,
+                        "_function": {
+                          "$type": 288,
+                          "$source": 0,
+                          "$named": true,
+                          "_value": "default",
+                          "_field": "bar",
+                          "$other": [
+                            118
+                          ],
+                          "$span": {
+                            "start": 100,
+                            "end": 111
+                          },
+                          "$nodeHandle": 34
+                        },
+                        "_arguments": {
+                          "$type": 257,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "()",
+                          "$span": {
+                            "start": 111,
+                            "end": 113
+                          },
+                          "$nodeHandle": 35
+                        },
+                        "$span": {
+                          "start": 100,
+                          "end": 113
+                        },
+                        "$nodeHandle": 33
+                      }
+                    }
+                  }
+                ]
+              },
+              "$other": [
+                54,
+                139
+              ],
+              "$span": {
+                "start": 13,
+                "end": 118
+              },
+              "$nodeHandle": 27
+            }
+          ]
+        },
+        "$span": {
+          "start": 9,
+          "end": 120
+        },
+        "$nodeHandle": 25
+      }
+    },
+    "expectedOutput": "impl Foo {  const default fn bar ()->i32 { default.bar (); } }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "impl Foo {\n  const default fn bar() -> i32 {\n    // Make 'default' still works as an identifier\n    default.bar();\n  }\n}",
+    "pattern": "impl_item",
+    "edits": [],
+    "expectedSourceOut": "impl Foo {  const default fn bar ()->i32 { default.bar (); } }",
+    "expectedReparseTree": "(impl_item type: (type_identifier) (impl_item_body (declaration_list (function_item function_modifiers: (function_modifiers) name: (identifier) parameters: (parameters) return_type: (primitive_type) body: (block (expression_statement (expression_statement_with_semi (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))))))))",
+    "wrappedText": "impl Foo {  const default fn bar ()->i32 { default.bar (); } }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
       "$type": 210,
       "$source": 0,
       "$named": true,

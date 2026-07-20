@@ -4282,7 +4282,7 @@ export interface ExportSpecifier {
 	readonly _name: ModuleExportName;
 	readonly _alias?: ModuleExportName;
 	readonly __inputHints__?: {
-		readonly export_kind?: KindEnum<'type' | 'typeof', TSKindId.Type | TSKindId.Typeof>;
+		readonly export_kind?: KindEnum<'type' | 'typeof', TSKindId.Type | TSKindId.Typeof | TSKindId.AnonType>;
 	};
 	exportKind(): number | undefined;
 	name(): ModuleExportName;
@@ -4552,7 +4552,7 @@ export interface ImportSpecifier {
 	readonly _import_kind?: number;
 	readonly _content: ImportIdentifier | ImportSpecifierAs;
 	readonly __inputHints__?: {
-		readonly import_kind?: KindEnum<'type' | 'typeof', TSKindId.Type | TSKindId.Typeof>;
+		readonly import_kind?: KindEnum<'type' | 'typeof', TSKindId.Type | TSKindId.Typeof | TSKindId.AnonType>;
 	};
 	importKind(): number | undefined;
 	content(): ImportIdentifier | ImportSpecifierAs;
@@ -4565,7 +4565,7 @@ export interface ImportStatement {
 	readonly _import_attribute?: ImportAttribute;
 	readonly _semicolon?: Semicolon;
 	readonly __inputHints__?: {
-		readonly import_clause?: KindEnum<'type' | 'typeof', TSKindId.Type | TSKindId.Typeof>;
+		readonly import_clause?: KindEnum<'type' | 'typeof', TSKindId.Type | TSKindId.Typeof | TSKindId.AnonType>;
 	};
 	importClause(): number | undefined;
 	fromClause(): ImportClause | String | ImportRequireClause;

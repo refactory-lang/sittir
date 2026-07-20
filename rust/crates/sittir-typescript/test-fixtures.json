@@ -5510,6 +5510,98 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
+      "$type": 182,
+      "$source": 0,
+      "$named": true,
+      "_as_expression": {
+        "$type": 274,
+        "$source": 0,
+        "$named": true,
+        "$text": "\"foobar\" as const",
+        "$span": {
+          "start": 51,
+          "end": 68
+        },
+        "$nodeHandle": 3,
+        "$childIndex": 0
+      },
+      "$span": {
+        "start": 51,
+        "end": 68
+      },
+      "$nodeHandle": 3,
+      "_expressions": {
+        "$type": 274,
+        "$source": 0,
+        "$named": true,
+        "_expression": {
+          "$type": 247,
+          "$source": 0,
+          "$named": true,
+          "_string_double": {
+            "$type": 388,
+            "$source": 0,
+            "$named": true,
+            "$text": "\"foobar\"",
+            "$span": {
+              "start": 51,
+              "end": 59
+            },
+            "$nodeHandle": 41,
+            "$childIndex": 0
+          },
+          "$span": {
+            "start": 51,
+            "end": 59
+          },
+          "$nodeHandle": 41,
+          "_content": {
+            "$type": 388,
+            "$source": 0,
+            "$named": true,
+            "_unescaped_double_string_fragment": "foobar",
+            "$other": [
+              155,
+              155
+            ],
+            "$span": {
+              "start": 51,
+              "end": 59
+            },
+            "$nodeHandle": 42,
+            "_content": [
+              "foobar"
+            ]
+          }
+        },
+        "_type_annotation": 16,
+        "$other": [
+          4
+        ],
+        "$span": {
+          "start": 51,
+          "end": 68
+        },
+        "$nodeHandle": 40
+      }
+    },
+    "expectedOutput": "\"foobar\" as const"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "\"foobar\" as const",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "\"foobar\" as const",
+    "expectedReparseTree": "(expression_statement (as_expression expression: (string (string_double (unescaped_double_string_fragment)))))",
+    "wrappedText": "\"foobar\" as const",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
       "$type": 319,
       "$source": 0,
       "$named": true,

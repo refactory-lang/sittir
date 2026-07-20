@@ -938,16 +938,16 @@ export function coerceToAbstractMethodSignature(
 		accessibilityModifier: coerceKindEnumStorage(
 			_resolveOneLeaf<T._AccessibilityModifier>(input.accessibilityModifier, '_accessibility_modifier'),
 			[
-				['public', kindIdFromName('public')] as const,
-				['private', kindIdFromName('private')] as const,
-				['protected', kindIdFromName('protected')] as const
+				['public', TSKindId.Public] as const,
+				['private', TSKindId.Private] as const,
+				['protected', TSKindId.Protected] as const
 			]
 		),
 		overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
 		accessorKind: coerceKindEnumStorage(_resolveOneLeaf<T.AccessorKind>(input.accessorKind, '_accessor_kind'), [
-			['get', kindIdFromName('get')] as const,
-			['set', kindIdFromName('set')] as const,
-			['*', kindIdFromName('*')] as const
+			['get', TSKindId.Get] as const,
+			['set', TSKindId.Set] as const,
+			['*', TSKindId.Star2] as const
 		]),
 		name: _requireField('abstract_method_signature', 'name', _resolveOne<T.PropertyName>(input.name, _K0, _K1)),
 		optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
@@ -1156,21 +1156,21 @@ export function coerceToAugmentedAssignmentExpression(
 					'_augmented_assignment_expression_operator'
 				),
 				[
-					['+=', kindIdFromName('+=')] as const,
-					['-=', kindIdFromName('-=')] as const,
-					['*=', kindIdFromName('*=')] as const,
-					['/=', kindIdFromName('/=')] as const,
-					['%=', kindIdFromName('%=')] as const,
-					['^=', kindIdFromName('^=')] as const,
-					['&=', kindIdFromName('&=')] as const,
-					['|=', kindIdFromName('|=')] as const,
-					['>>=', kindIdFromName('>>=')] as const,
-					['>>>=', kindIdFromName('>>>=')] as const,
-					['<<=', kindIdFromName('<<=')] as const,
-					['**=', kindIdFromName('**=')] as const,
-					['&&=', kindIdFromName('&&=')] as const,
-					['||=', kindIdFromName('||=')] as const,
-					['??=', kindIdFromName('??=')] as const
+					['+=', TSKindId.PlusEq] as const,
+					['-=', TSKindId.DashEq] as const,
+					['*=', TSKindId.StarEq] as const,
+					['/=', TSKindId.SlashEq] as const,
+					['%=', TSKindId.PercentEq] as const,
+					['^=', TSKindId.CaretEq] as const,
+					['&=', TSKindId.AmpEq] as const,
+					['|=', TSKindId.PipeEq] as const,
+					['>>=', TSKindId.GtGtEq] as const,
+					['>>>=', TSKindId.GtGtGtEq] as const,
+					['<<=', TSKindId.LtLtEq] as const,
+					['**=', TSKindId.StarStarEq] as const,
+					['&&=', TSKindId.AmpAmpEq] as const,
+					['||=', TSKindId.PipePipeEq] as const,
+					['??=', TSKindId.QmarkQmarkEq] as const
 				]
 			)
 		),
@@ -1236,31 +1236,31 @@ export function coerceToBinaryExpression(input: T.BinaryExpression.Loose): Retur
 					| 'in'
 				>(input.operator, _K2, _K2),
 				[
-					['&&', kindIdFromName('&&')] as const,
-					['||', kindIdFromName('||')] as const,
-					['>>', kindIdFromName('>>')] as const,
-					['>>>', kindIdFromName('>>>')] as const,
-					['<<', kindIdFromName('<<')] as const,
-					['&', kindIdFromName('&')] as const,
-					['^', kindIdFromName('^')] as const,
-					['|', kindIdFromName('|')] as const,
-					['+', kindIdFromName('+')] as const,
-					['-', kindIdFromName('-')] as const,
-					['*', kindIdFromName('*')] as const,
-					['/', kindIdFromName('/')] as const,
-					['%', kindIdFromName('%')] as const,
-					['**', kindIdFromName('**')] as const,
-					['<', kindIdFromName('<')] as const,
-					['<=', kindIdFromName('<=')] as const,
-					['==', kindIdFromName('==')] as const,
-					['===', kindIdFromName('===')] as const,
-					['!=', kindIdFromName('!=')] as const,
-					['!==', kindIdFromName('!==')] as const,
-					['>=', kindIdFromName('>=')] as const,
-					['>', kindIdFromName('>')] as const,
-					['??', kindIdFromName('??')] as const,
-					['instanceof', kindIdFromName('instanceof')] as const,
-					['in', kindIdFromName('in')] as const
+					['&&', TSKindId.AmpAmp] as const,
+					['||', TSKindId.PipePipe] as const,
+					['>>', TSKindId.GtGt] as const,
+					['>>>', TSKindId.GtGtGt] as const,
+					['<<', TSKindId.LtLt] as const,
+					['&', TSKindId.Amp2] as const,
+					['^', TSKindId.Caret] as const,
+					['|', TSKindId.Pipe2] as const,
+					['+', TSKindId.Plus] as const,
+					['-', TSKindId.Dash] as const,
+					['*', TSKindId.Star2] as const,
+					['/', TSKindId.Slash2] as const,
+					['%', TSKindId.Percent] as const,
+					['**', TSKindId.StarStar] as const,
+					['<', TSKindId.Lt2] as const,
+					['<=', TSKindId.LtEq] as const,
+					['==', TSKindId.EqEq] as const,
+					['===', TSKindId.EqEqEq] as const,
+					['!=', TSKindId.BangEq] as const,
+					['!==', TSKindId.BangEqEq] as const,
+					['>=', TSKindId.GtEq] as const,
+					['>', TSKindId.Gt2] as const,
+					['??', TSKindId.QmarkQmark] as const,
+					['instanceof', TSKindId.Instanceof] as const,
+					['in', TSKindId.In] as const
 				]
 			)
 		),
@@ -1414,8 +1414,8 @@ export function coerceToConstraint(input: T.Constraint.Loose): ReturnType<typeof
 			'constraint',
 			'content',
 			coerceKindEnumStorage(_resolveOne<'extends' | ':'>(input.content, _K2, _K2), [
-				['extends', kindIdFromName('extends')] as const,
-				[':', kindIdFromName(':')] as const
+				['extends', TSKindId.Extends] as const,
+				[':', TSKindId.Colon] as const
 			])
 		),
 		type: _requireField('constraint', 'type', _resolveOne<T.Type>(input.type, _K4, _K5))
@@ -1630,7 +1630,7 @@ export function coerceToExportSpecifier(input: T.ExportSpecifier.Loose): ReturnT
 	return F.buildExportSpecifier({
 		exportKind: coerceKindEnumStorage(
 			_resolveOneLeaf<T.ExportSpecifierExportKind>(input.exportKind, '_export_specifier_export_kind'),
-			[['type', kindIdFromName('type')] as const, ['typeof', kindIdFromName('typeof')] as const]
+			[['type', TSKindId.AnonType] as const, ['typeof', TSKindId.Typeof] as const]
 		),
 		name: _requireField(
 			'export_specifier',
@@ -1749,8 +1749,8 @@ export function coerceToForInStatement(input: T.ForInStatement.Loose): ReturnTyp
 			'for_in_statement',
 			'operator',
 			coerceKindEnumStorage(_resolveOneLeaf<T.ForHeaderOperator>(input.operator, '__for_header_operator'), [
-				['in', kindIdFromName('in')] as const,
-				['of', kindIdFromName('of')] as const
+				['in', TSKindId.In] as const,
+				['of', TSKindId.Of] as const
 			])
 		),
 		right: _requireField('for_in_statement', 'right', _resolveOne<T.Expressions>(input.right, _K6, _K20)),
@@ -2011,7 +2011,7 @@ export function coerceToImportSpecifier(input: T.ImportSpecifier.Loose): ReturnT
 	return F.buildImportSpecifier({
 		importKind: coerceKindEnumStorage(
 			_resolveOneLeaf<T.ExportSpecifierExportKind>(input.importKind, '_export_specifier_export_kind'),
-			[['type', kindIdFromName('type')] as const, ['typeof', kindIdFromName('typeof')] as const]
+			[['type', TSKindId.AnonType] as const, ['typeof', TSKindId.Typeof] as const]
 		),
 		content: _requireField(
 			'import_specifier',
@@ -2025,8 +2025,8 @@ export function coerceToImportStatement(input: T.ImportStatement.Loose): ReturnT
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildImportStatement>;
 	return F.buildImportStatement({
 		importClause: coerceKindEnumStorage(_resolveOne<'type' | 'typeof'>(input.importClause, _K2, _K2), [
-			['type', kindIdFromName('type')] as const,
-			['typeof', kindIdFromName('typeof')] as const
+			['type', TSKindId.AnonType] as const,
+			['typeof', TSKindId.Typeof] as const
 		]),
 		fromClause: _requireField(
 			'import_statement',
@@ -2042,8 +2042,8 @@ export function coerceToIndexSignature(input: T.IndexSignature.Loose): ReturnTyp
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildIndexSignature>;
 	return F.buildIndexSignature({
 		sign: coerceKindEnumStorage(_resolveOne<'-' | '+'>(input.sign, _K2, _K2), [
-			['-', kindIdFromName('-')] as const,
-			['+', kindIdFromName('+')] as const
+			['-', TSKindId.Dash] as const,
+			['+', TSKindId.Plus] as const
 		]),
 		content: _requireField(
 			'index_signature',
@@ -2161,8 +2161,8 @@ export function coerceToLexicalDeclaration(
 			'lexical_declaration',
 			'kind',
 			coerceKindEnumStorage(_resolveOneLeaf<T.Kind>(input.kind, '_kind'), [
-				['let', kindIdFromName('let')] as const,
-				['const', kindIdFromName('const')] as const
+				['let', TSKindId.Let] as const,
+				['const', TSKindId.Const] as const
 			])
 		),
 		declarators: _ne_declarators,
@@ -2226,9 +2226,9 @@ export function coerceToMethodDefinition(input: T.MethodDefinition.Loose): Retur
 		accessibilityModifier: coerceKindEnumStorage(
 			_resolveOneLeaf<T._AccessibilityModifier>(input.accessibilityModifier, '_accessibility_modifier'),
 			[
-				['public', kindIdFromName('public')] as const,
-				['private', kindIdFromName('private')] as const,
-				['protected', kindIdFromName('protected')] as const
+				['public', TSKindId.Public] as const,
+				['private', TSKindId.Private] as const,
+				['protected', TSKindId.Protected] as const
 			]
 		),
 		staticMarker: _resolveBooleanKeyword(input.staticMarker),
@@ -2236,9 +2236,9 @@ export function coerceToMethodDefinition(input: T.MethodDefinition.Loose): Retur
 		readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
 		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
 		accessorKind: coerceKindEnumStorage(_resolveOneLeaf<T.AccessorKind>(input.accessorKind, '_accessor_kind'), [
-			['get', kindIdFromName('get')] as const,
-			['set', kindIdFromName('set')] as const,
-			['*', kindIdFromName('*')] as const
+			['get', TSKindId.Get] as const,
+			['set', TSKindId.Set] as const,
+			['*', TSKindId.Star2] as const
 		]),
 		name: _requireField('method_definition', 'name', _resolveOne<T.PropertyName>(input.name, _K0, _K1)),
 		optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
@@ -2260,9 +2260,9 @@ export function coerceToMethodSignature(input: T.MethodSignature.Loose): ReturnT
 		accessibilityModifier: coerceKindEnumStorage(
 			_resolveOneLeaf<T._AccessibilityModifier>(input.accessibilityModifier, '_accessibility_modifier'),
 			[
-				['public', kindIdFromName('public')] as const,
-				['private', kindIdFromName('private')] as const,
-				['protected', kindIdFromName('protected')] as const
+				['public', TSKindId.Public] as const,
+				['private', TSKindId.Private] as const,
+				['protected', TSKindId.Protected] as const
 			]
 		),
 		staticMarker: _resolveBooleanKeyword(input.staticMarker),
@@ -2270,9 +2270,9 @@ export function coerceToMethodSignature(input: T.MethodSignature.Loose): ReturnT
 		readonlyMarker: _resolveBooleanKeyword(input.readonlyMarker),
 		asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
 		accessorKind: coerceKindEnumStorage(_resolveOneLeaf<T.AccessorKind>(input.accessorKind, '_accessor_kind'), [
-			['get', kindIdFromName('get')] as const,
-			['set', kindIdFromName('set')] as const,
-			['*', kindIdFromName('*')] as const
+			['get', TSKindId.Get] as const,
+			['set', TSKindId.Set] as const,
+			['*', TSKindId.Star2] as const
 		]),
 		name: _requireField('method_signature', 'name', _resolveOne<T.PropertyName>(input.name, _K0, _K1)),
 		optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
@@ -2456,8 +2456,8 @@ export function coerceToObjectType(input: T.ObjectType.Loose): ReturnType<typeof
 			'object_type',
 			'opening',
 			coerceKindEnumStorage(_resolveOneLeaf<T.ObjectTypeOpening>(input.opening, '_object_type_opening'), [
-				['{', kindIdFromName('{')] as const,
-				['{|', kindIdFromName('{|')] as const
+				['{', TSKindId.Lbrace] as const,
+				['{|', TSKindId.LbracePipe] as const
 			])
 		),
 		members: _resolveOneBranch<T.ObjectTypeContent>(input.members, 'object_type_content'),
@@ -2465,8 +2465,8 @@ export function coerceToObjectType(input: T.ObjectType.Loose): ReturnType<typeof
 			'object_type',
 			'closing',
 			coerceKindEnumStorage(_resolveOneLeaf<T.ObjectTypeClosing>(input.closing, '_object_type_closing'), [
-				['}', kindIdFromName('}')] as const,
-				['|}', kindIdFromName('|}')] as const
+				['}', TSKindId.Rbrace] as const,
+				['|}', TSKindId.PipeRbrace] as const
 			])
 		)
 	});
@@ -2552,9 +2552,9 @@ export function coerceToOptionalParameter(
 		accessibilityModifier: coerceKindEnumStorage(
 			_resolveOneLeaf<T.AccessibilityModifier>(input.accessibilityModifier, 'accessibility_modifier'),
 			[
-				['public', kindIdFromName('public')] as const,
-				['private', kindIdFromName('private')] as const,
-				['protected', kindIdFromName('protected')] as const
+				['public', TSKindId.Public] as const,
+				['private', TSKindId.Private] as const,
+				['protected', TSKindId.Protected] as const
 			]
 		),
 		overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
@@ -2685,9 +2685,9 @@ export function coerceToPropertySignature(
 		accessibilityModifier: coerceKindEnumStorage(
 			_resolveOneLeaf<T._AccessibilityModifier>(input.accessibilityModifier, '_accessibility_modifier'),
 			[
-				['public', kindIdFromName('public')] as const,
-				['private', kindIdFromName('private')] as const,
-				['protected', kindIdFromName('protected')] as const
+				['public', TSKindId.Public] as const,
+				['private', TSKindId.Private] as const,
+				['protected', TSKindId.Protected] as const
 			]
 		),
 		staticMarker: _resolveBooleanKeyword(input.staticMarker),
@@ -2729,7 +2729,7 @@ export function coerceToPublicFieldDefinition(
 				input.optionalityMarker,
 				'_public_field_definition_optionality_marker'
 			),
-			[['?', kindIdFromName('?')] as const, ['!', kindIdFromName('!')] as const]
+			[['?', TSKindId.Qmark] as const, ['!', TSKindId.Bang] as const]
 		),
 		type: _resolveOneBranch<T.TypeAnnotation>(input.type, 'type_annotation'),
 		value: _resolveOne<T.Expression>(input.value, _K6, _K11)
@@ -2779,9 +2779,9 @@ export function coerceToRequiredParameter(
 		accessibilityModifier: coerceKindEnumStorage(
 			_resolveOneLeaf<T.AccessibilityModifier>(input.accessibilityModifier, 'accessibility_modifier'),
 			[
-				['public', kindIdFromName('public')] as const,
-				['private', kindIdFromName('private')] as const,
-				['protected', kindIdFromName('protected')] as const
+				['public', TSKindId.Public] as const,
+				['private', TSKindId.Private] as const,
+				['protected', TSKindId.Protected] as const
 			]
 		),
 		overrideModifier: _resolveBooleanKeyword(input.overrideModifier),
@@ -3200,13 +3200,13 @@ export function coerceToUnaryExpression(input: T.UnaryExpression.Loose): ReturnT
 			'unary_expression',
 			'operator',
 			coerceKindEnumStorage(_resolveOneLeaf<T.UnaryExpressionOperator>(input.operator, '_unary_expression_operator'), [
-				['!', kindIdFromName('!')] as const,
-				['~', kindIdFromName('~')] as const,
-				['-', kindIdFromName('-')] as const,
-				['+', kindIdFromName('+')] as const,
-				['typeof', kindIdFromName('typeof')] as const,
-				['void', kindIdFromName('void')] as const,
-				['delete', kindIdFromName('delete')] as const
+				['!', TSKindId.Bang] as const,
+				['~', TSKindId.Tilde] as const,
+				['-', TSKindId.Dash] as const,
+				['+', TSKindId.Plus] as const,
+				['typeof', TSKindId.Typeof] as const,
+				['void', TSKindId.Void] as const,
+				['delete', TSKindId.Delete] as const
 			])
 		),
 		argument: _requireField('unary_expression', 'argument', _resolveOne<T.Expression>(input.argument, _K6, _K11))

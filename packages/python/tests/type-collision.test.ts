@@ -29,7 +29,12 @@ describe('python type_alias_statement collision (spec 008 US7)', () => {
 		// the AutoStamp<KindEnum<...>> branding fix, this is the numeric
 		// kindEnum discriminant for the single-candidate 'type' keyword, not
 		// the literal string — ADR-0018: stored under `_type`, not `$fields.type`.
-		expect((node as unknown as Record<string, unknown>)['_type']).toBe(TSKindId.Type);
+		// The stamp is the anonymous `'type'` KEYWORD token's id (AnonType),
+		// NOT the structural `type` RULE's id — the original expectation here
+		// (TSKindId.Type) codified #129's literal-text shadowing bug; the
+		// transport dispatched that id to TypeTransport and every
+		// ir.typeAliasStatement render failed with "Missing field `_content`".
+		expect((node as unknown as Record<string, unknown>)['_type']).toBe(TSKindId.AnonType);
 
 		// The de-hoisted storage key differs from the kind discriminant
 		expect(node.$type).not.toBe(TSKindId.Type);

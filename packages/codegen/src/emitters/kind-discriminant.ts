@@ -156,6 +156,37 @@ export function findKindEntry(kindEntries: readonly KindEnumEntry[], kind: strin
 }
 
 /**
+ * Resolve a LITERAL TOKEN TEXT (a `STRING` rule's value — e.g. `'type'`,
+ * `'+'`) to its catalog entry. The anon-scoped symbolName match runs FIRST:
+ * the caller holds a literal, so the anonymous token (`anon_sym_*`,
+ * tree-sitter `named: false`) is the correct identity even when a NAMED
+ * rule shares the same spelling (#129: python's `'type'` keyword literal
+ * was resolved through {@link findKindEntry}, whose exact-catalog-key step
+ * matched the `type` RULE first — the factory then stamped the rule's kind
+ * id where the transport expects the anon token's, failing every
+ * `ir.typeAliasStatement` render with "Missing field `_content`").
+ *
+ * Falls back to {@link findKindEntry} for literals with no anonymous twin —
+ * tree-sitter compiles some keyword literals to named terminal symbols
+ * (rust's `'crate'`/`'self'`), and those stamps were already correct via
+ * the named match.
+ *
+ * Deliberately a SEPARATE function: the anon-first ordering is only sound
+ * when the caller is known to hold literal text. Reordering
+ * {@link findKindEntry} itself would reintroduce the `_as_pattern`
+ * shadowing bug its step-3 comment records.
+ */
+export function findKindEntryForLiteral(
+	kindEntries: readonly KindEnumEntry[],
+	literalText: string
+): KindEnumEntry | undefined {
+	return (
+		kindEntries.find((e) => e.anon === true && e.symbolName === literalText) ??
+		findKindEntry(kindEntries, literalText)
+	);
+}
+
+/**
  * Return true when a kind has a parser symbol in the catalog — matches on
  * the catalog key (`entry.kind`) only, NOT on `entry.symbolName`.
  *
@@ -203,6 +234,28 @@ export function kindDiscriminantExpr(kind: string, nodeMap: NodeMap, kindEntries
 			`kindDiscriminantExpr: kind '${kind}' has no parser symbol (TSGrammar-only). ` +
 				`Tree-sitter inlined this rule during parser compilation; it can never carry a runtime $type. ` +
 				`Either remove the codegen surface that references it, or add a synthetic parser-symbol entry to the catalog.`
+		);
+	}
+	return `TSKindId.${entry.member}`;
+}
+
+/**
+ * {@link kindDiscriminantExpr} for call sites holding a LITERAL TOKEN TEXT
+ * (a `STRING` rule's value) rather than a kind/rule name — resolves via
+ * {@link findKindEntryForLiteral} so the anonymous token wins over a
+ * same-spelled named rule (#129). The grammar's own rule-type
+ * discrimination (STRING vs SYMBOL) decides which of the two functions a
+ * call site uses; this must never be called with a rule name.
+ */
+export function kindDiscriminantExprForLiteral(
+	literalText: string,
+	kindEntries: readonly KindEnumEntry[]
+): string {
+	const entry = findKindEntryForLiteral(kindEntries, literalText);
+	if (!entry) {
+		throw new Error(
+			`kindDiscriminantExprForLiteral: literal '${literalText}' has no parser symbol (TSGrammar-only). ` +
+				`See kindDiscriminantExpr for the loud-error rationale.`
 		);
 	}
 	return `TSKindId.${entry.member}`;

@@ -57,6 +57,7 @@ import {
 	collectKindEntries,
 	collectCatalogKinds,
 	findKindEntry,
+	findKindEntryForLiteral,
 	kindIdMemberName,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
@@ -1884,7 +1885,7 @@ function renderTransportSupport(
 		)
 	);
 	const perSlotEnumLines: string[] = perSlotEnums.flatMap((entry) =>
-		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey)
+		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey, kindEntries)
 	);
 
 	return pruneUnreferencedBridges(
@@ -2771,7 +2772,8 @@ function emitPerSlotChildEnum(
 	entry: PerSlotChildEnum,
 	kindIdByKind: ReadonlyMap<string, number> | undefined,
 	nodeMap: NodeMap,
-	literalVariantByKey: ReadonlyMap<string, string>
+	literalVariantByKey: ReadonlyMap<string, string>,
+	kindEntries?: readonly KindEnumEntry[]
 ): string[] {
 	const enumName = perSlotEnumName(entry.typeName, entry.fieldName);
 	const lines: string[] = [];
@@ -2854,7 +2856,16 @@ function emitPerSlotChildEnum(
 			}
 		}
 		for (const literal of entry.literals) {
-			const id = kindIdByKind.get(literal.kind);
+			// Literal-first resolution (#129): literal.kind carries the literal
+			// TEXT here (see the `consider` collection above), so the map's
+			// catalog-kind-first keying can shadow it with a same-spelled
+			// NAMED rule. Resolve through the anon-scoped lookup when the
+			// catalog is available; the map stays only as the no-catalog
+			// fallback.
+			const id =
+				kindEntries !== undefined
+					? (findKindEntryForLiteral(kindEntries, literal.text) ?? findKindEntry(kindEntries, literal.kind))?.id
+					: kindIdByKind.get(literal.kind);
 			const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 			if (id === undefined || variant === undefined || emittedIds.has(id)) continue;
 			emittedIds.add(id);
@@ -2997,19 +3008,10 @@ function renderAnyTransportWithNapiFromValue(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]
 ): string[] {
-	// Index by both `kind` (canonical catalog name) and `symbolName` (anon-token
-	// literal text). Literal arms are keyed by `literal.kind`, which for
-	// component literals carries the literal text (`"+"`) rather than the
-	// parser-symbol name (`"PLUS"`). Without the symbolName index, `+` and
-	// other operator-token literals would fall through to `id === undefined` and
-	// silently skip — leaving the dispatch incomplete.
-	const kindIdByKind = new Map<string, number>();
-	for (const e of kindEntries) {
-		kindIdByKind.set(e.kind, e.id);
-		if (e.symbolName !== undefined && !kindIdByKind.has(e.symbolName)) {
-			kindIdByKind.set(e.symbolName, e.id);
-		}
-	}
+	// Node-arm id index — the shared `buildKindIdByKind` construction (DRY:
+	// this was previously an inline duplicate of that helper). Literal arms
+	// do NOT resolve through this map — see the literal-first note below.
+	const kindIdByKind = buildKindIdByKind(kindEntries);
 
 	const lines: string[] = [];
 
@@ -3076,8 +3078,15 @@ function renderAnyTransportWithNapiFromValue(
 	// One match arm per literal kind — unit variants, no payload.
 	// The literal text is a compile-time constant; JS does not need to send it.
 	// Use the same emittedNodeIds set to skip KindIds already claimed by node arms.
+	// Resolution is literal-first (#129): `kindIdByKind` keys every entry by
+	// its catalog kind BEFORE symbolName, so a literal whose text equals a
+	// NAMED rule's name (python's `'type'`) resolved to the rule's id — which
+	// a node arm had already claimed, so the literal arm was deduped away and
+	// the anon token's id had NO arm at all. Resolve the literal TEXT through
+	// the anon-scoped lookup, falling back to the catalog-key form for
+	// literals keyed by parser-symbol name.
 	for (const [index, literal] of literals.entries()) {
-		const id = kindIdByKind.get(literal.kind);
+		const id = (findKindEntryForLiteral(kindEntries, literal.text) ?? findKindEntry(kindEntries, literal.kind))?.id;
 		if (id === undefined) continue;
 		if (emittedNodeIds.has(id)) continue; // T016: skip duplicate KindId
 		emittedNodeIds.add(id);
@@ -4354,7 +4363,9 @@ function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: rea
 			// inputs; see transport_value_type).
 			const kindIdMatchArms = (indent: string): void => {
 				for (const v of values) {
-					const entry = findKindEntry(kindEntries, v);
+					// `values` are LITERAL member texts — anon-scoped lookup
+					// first so a same-spelled named rule can't shadow (#129).
+					const entry = findKindEntryForLiteral(kindEntries, v);
 					const variant = literalToVariantName(v);
 					if (entry !== undefined) {
 						lines.push(`${indent}${entry.id} => return Ok(Self::${variant}), // ${JSON.stringify(v)}`);

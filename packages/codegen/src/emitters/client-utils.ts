@@ -27,11 +27,11 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push("import { kindIdFromName } from './types.js';");
 	lines.push("import { render, toEdit } from './boundary.ts';");
 	lines.push(
-		"import { withMethods as withCommonMethods, isNodeData as _isNodeData, isTreeNode as _isTreeNode, hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage } from '@sittir/common/utils';"
+		"import { withMethods as withCommonMethods, isNodeData as _isNodeData, isTreeNode as _isTreeNode, hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors } from '@sittir/common/utils';"
 	);
 	lines.push("import type { WithMethodsEngine } from '@sittir/common/utils';");
 	lines.push('');
-	lines.push('export { hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage };');
+	lines.push('export { hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage, withAccessors };');
 	lines.push('');
 	lines.push(...emitIsNodeData());
 	lines.push('');

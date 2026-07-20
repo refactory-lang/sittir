@@ -22,7 +22,7 @@ describe('utils engine facade emission', () => {
 		const factoriesSrc = emitFactories({ grammar: 'synth', nodeMap });
 		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap });
 
-		expect(factoriesSrc).toContain('import { withMethods, methodsEngine');
+		expect(factoriesSrc).toContain('import { withMethods, withAccessors, methodsEngine');
 		expect(factoriesSrc).toContain('}, methodsEngine);');
 		expect(wrapSrc).toContain('import { withMethods, methodsEngine');
 		expect(wrapSrc).toContain('}, methodsEngine);');

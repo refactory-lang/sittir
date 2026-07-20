@@ -37,7 +37,7 @@ import {
 	classifyFromEmission,
 	unnamedChildSlotFacts
 } from './shared.ts';
-import { fieldElementType, childElementType } from './factories.ts';
+import { fieldElementType, childElementType, kindEnumTextMapExpr } from './factories.ts';
 import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
 import { isNodeRef, isTerminalValue, isUnresolvedRef } from '../compiler/model/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/model/node-map.ts';
@@ -480,7 +480,7 @@ function emitBranchFrom(
 		for (const f of fields) {
 			if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
 			if (needsNonEmptyHoist(f)) {
-				const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional);
+				const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional, kindEntries);
 				lines.push(`  const ${neName(f)} = ${call};`);
 				lines.push(`  _assertNonEmpty(${neName(f)}, '${node.kind}.${f.propertyName}');`);
 			}
@@ -492,7 +492,7 @@ function emitBranchFrom(
 		// and multiple (array) fields.
 		if (canDirectFactoryCall) {
 			const inputExpr = `(input !== null && typeof input === 'object' && !isNodeData(input) && ${JSON.stringify(soleField.configKey)} in input ? input.${soleField.configKey} : input)`;
-			const call = resolveFieldCall(inputExpr, soleField, isMultiple(soleField), nodeMap, intern);
+			const call = resolveFieldCall(inputExpr, soleField, isMultiple(soleField), nodeMap, intern, true, undefined, kindEntries);
 			// Gap A: sole-slot direct-call factories skip the Config object
 			// literal entirely, so a required sole field needs its own guard.
 			const guardedCall = isRequired(soleField)
@@ -506,7 +506,7 @@ function emitBranchFrom(
 				if (needsNonEmptyHoist(f)) {
 					lines.push(`    ${f.configKey}: ${neName(f)},`);
 				} else {
-					const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional);
+					const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional, kindEntries);
 					const defaultFactory = canDefaultToEmpty(f, nodeMap);
 					if (defaultFactory) {
 						lines.push(`    ${f.configKey}: ${call} ?? F.${defaultFactory}(),`);
@@ -981,7 +981,8 @@ function resolveFieldFromTypedInput(
 	parentTypeName: string,
 	intern: KindInterner,
 	sourceVar: string,
-	inputOptional: boolean
+	inputOptional: boolean,
+	kindEntries?: readonly KindEnumEntry[]
 ): string {
 	// parentTypeName is retained for signature stability with callers;
 	// the prior implementation used it to build an explicit
@@ -999,7 +1000,7 @@ function resolveFieldFromTypedInput(
 	 */
 	const optChain = inputOptional ? '?' : '';
 	const access = `${sourceVar}${optChain}.${field.configKey}`;
-	return resolveFieldCall(access, field, isMultiple(field), nodeMap, intern);
+	return resolveFieldCall(access, field, isMultiple(field), nodeMap, intern, true, undefined, kindEntries);
 }
 
 /**
@@ -1194,7 +1195,10 @@ function resolveFieldCall(
 	/** Pre-computed element type expression for the explicit `<T>` type
 	 * argument on the resolver call. When omitted, falls back to deriving
 	 * from the field shape (only possible when `field` is an `AssembledNonterminal`). */
-	elementTypeOverride?: string
+	elementTypeOverride?: string,
+	/** Catalog entries — required for kindEnum fields to emit compile-time
+	 * literal-aware discriminants (shared kindEnumTextMapExpr, #129). */
+	kindEntries?: readonly KindEnumEntry[]
 ): string {
 	// Short-circuit keyword-presence fields through dedicated
 	// resolvers. Boolean / bitflag inputs must NOT get routed through the
@@ -1223,28 +1227,16 @@ function resolveFieldCall(
 			? fastPath
 			: buildInternedArrayResolverCall(prop, leafKinds, branchKinds, fieldMultiple, intern, elementType);
 	if (storageInfo?.kind === 'kindEnum') {
-		return `coerceKindEnumStorage(${baseCall}, ${kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap)})`;
+		return `coerceKindEnumStorage(${baseCall}, ${kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap, kindEntries)})`;
 	}
 	return baseCall;
 }
 
-function kindEnumTextMapExpr(field: AssembledNonterminal, nodeMap: NodeMap): string {
-	const entries: string[] = [];
-	for (const value of field.values) {
-		if (isNodeRef(value)) {
-			const kind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
-			const node = nodeMap.nodes.get(kind);
-			if (!(node?.modelType === 'enum')) continue;
-			for (const text of node.values) {
-				entries.push(`[${JSON.stringify(text)}, kindIdFromName(${JSON.stringify(text)})] as const`);
-			}
-			continue;
-		}
-		if (!isTerminalValue(value)) continue;
-		entries.push(`[${JSON.stringify(value.value)}, kindIdFromName(${JSON.stringify(value.value)})] as const`);
-	}
-	return `[${entries.join(', ')}]`;
-}
+// kindEnumTextMapExpr: shared with factories.ts (imported above) — from.ts
+// previously carried a duplicate that emitted runtime `kindIdFromName(text)`
+// lookups, resolving literal texts through the name-polymorphic runtime
+// switch (rust `'block'` → the named block RULE's id instead of the
+// anon_sym_block token's) — the runtime face of the #129 shadowing class.
 
 /**
  * Emit the resolver call string for a keyword-presence field.

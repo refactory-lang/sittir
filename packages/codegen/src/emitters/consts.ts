@@ -14,6 +14,7 @@ import {
 	keywordPresenceValues,
 	keywordPresenceIsNonEmptyRepeat
 } from './shared.ts';
+import { collectCatalogKinds } from './kind-discriminant.ts';
 
 export interface EmitConstsConfig {
 	grammar: string;
@@ -118,7 +119,20 @@ export function emitConsts(config: EmitConstsConfig): string {
 	emitTreeSitterIdConsts(lines, {
 		kindIds: generatedIdTables?.kindIds,
 		fieldIds: generatedIdTables?.fieldIds,
-		kinds: [...new Set([...nodeKinds, ...leafKinds, ...keywords, ...operators])],
+		// TSKindId's key universe MUST be the full parser-symbol catalog —
+		// the same source `collectKindEntries` feeds every other runtime
+		// dispatch surface from (see collectCatalogKinds' doc: TSKindId /
+		// kindIdFromName / kind_ids.rs / AnyTransport "MUST share the same
+		// kind universe"). The previous nodeMap-derived name list could
+		// never contain collision-disambiguated catalog keys (rust's
+		// `anon_block` — the fragment-specifier keyword whose text collides
+		// with the `block` rule), so emitters resolving those entries
+		// (findKindEntryForLiteral, #129) referenced TSKindId members that
+		// were never emitted. Fall back to the old list only when no id
+		// catalog exists (legacy callers).
+		kinds: generatedIdTables
+			? collectCatalogKinds(generatedIdTables)
+			: [...new Set([...nodeKinds, ...leafKinds, ...keywords, ...operators])],
 		fields: collectFieldNames(nodeMap),
 		sourceArtifact: generatedIdTables?.sourceArtifact
 	});

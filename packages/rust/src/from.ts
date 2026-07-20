@@ -1118,24 +1118,24 @@ export function coerceToBinaryExpression(input: T.BinaryExpression.Loose): Retur
 					| '%'
 				>(input.operator, _K8, _K8),
 				[
-					['&&', kindIdFromName('&&')] as const,
-					['||', kindIdFromName('||')] as const,
-					['&', kindIdFromName('&')] as const,
-					['|', kindIdFromName('|')] as const,
-					['^', kindIdFromName('^')] as const,
-					['==', kindIdFromName('==')] as const,
-					['!=', kindIdFromName('!=')] as const,
-					['<', kindIdFromName('<')] as const,
-					['<=', kindIdFromName('<=')] as const,
-					['>', kindIdFromName('>')] as const,
-					['>=', kindIdFromName('>=')] as const,
-					['<<', kindIdFromName('<<')] as const,
-					['>>', kindIdFromName('>>')] as const,
-					['+', kindIdFromName('+')] as const,
-					['-', kindIdFromName('-')] as const,
-					['*', kindIdFromName('*')] as const,
-					['/', kindIdFromName('/')] as const,
-					['%', kindIdFromName('%')] as const
+					['&&', TSKindId.AmpAmp] as const,
+					['||', TSKindId.PipePipe] as const,
+					['&', TSKindId.Amp2] as const,
+					['|', TSKindId.Pipe2] as const,
+					['^', TSKindId.Caret] as const,
+					['==', TSKindId.EqEq] as const,
+					['!=', TSKindId.BangEq] as const,
+					['<', TSKindId.Lt] as const,
+					['<=', TSKindId.LtEq] as const,
+					['>', TSKindId.Gt] as const,
+					['>=', TSKindId.GtEq] as const,
+					['<<', TSKindId.LtLt] as const,
+					['>>', TSKindId.GtGt] as const,
+					['+', TSKindId.Plus] as const,
+					['-', TSKindId.Dash] as const,
+					['*', TSKindId.Star] as const,
+					['/', TSKindId.Slash] as const,
+					['%', TSKindId.Percent] as const
 				]
 			)
 		),
@@ -1265,16 +1265,16 @@ export function coerceToCompoundAssignmentExpr(
 			coerceKindEnumStorage(
 				_resolveOneLeaf<T.CompoundAssignmentExprOperator>(input.operator, '_compound_assignment_expr_operator'),
 				[
-					['+=', kindIdFromName('+=')] as const,
-					['-=', kindIdFromName('-=')] as const,
-					['*=', kindIdFromName('*=')] as const,
-					['/=', kindIdFromName('/=')] as const,
-					['%=', kindIdFromName('%=')] as const,
-					['&=', kindIdFromName('&=')] as const,
-					['|=', kindIdFromName('|=')] as const,
-					['^=', kindIdFromName('^=')] as const,
-					['<<=', kindIdFromName('<<=')] as const,
-					['>>=', kindIdFromName('>>=')] as const
+					['+=', TSKindId.PlusEq] as const,
+					['-=', TSKindId.DashEq] as const,
+					['*=', TSKindId.StarEq] as const,
+					['/=', TSKindId.SlashEq] as const,
+					['%=', TSKindId.PercentEq] as const,
+					['&=', TSKindId.AmpEq] as const,
+					['|=', TSKindId.PipeEq] as const,
+					['^=', TSKindId.CaretEq] as const,
+					['<<=', TSKindId.LtLtEq] as const,
+					['>>=', TSKindId.GtGtEq] as const
 				]
 			)
 		),
@@ -2376,21 +2376,21 @@ export function coerceToTokenBindingPattern(
 			'token_binding_pattern',
 			'type',
 			coerceKindEnumStorage(_resolveOneLeaf<T.TokenBindingPatternType>(input.type, '_token_binding_pattern_type'), [
-				['block', kindIdFromName('block')] as const,
-				['expr', kindIdFromName('expr')] as const,
-				['expr_2021', kindIdFromName('expr_2021')] as const,
-				['ident', kindIdFromName('ident')] as const,
-				['item', kindIdFromName('item')] as const,
-				['lifetime', kindIdFromName('lifetime')] as const,
-				['literal', kindIdFromName('literal')] as const,
-				['meta', kindIdFromName('meta')] as const,
-				['pat', kindIdFromName('pat')] as const,
-				['pat_param', kindIdFromName('pat_param')] as const,
-				['path', kindIdFromName('path')] as const,
-				['stmt', kindIdFromName('stmt')] as const,
-				['tt', kindIdFromName('tt')] as const,
-				['ty', kindIdFromName('ty')] as const,
-				['vis', kindIdFromName('vis')] as const
+				['block', TSKindId.AnonBlock] as const,
+				['expr', TSKindId.Expr] as const,
+				['expr_2021', TSKindId.Expr2021] as const,
+				['ident', TSKindId.Ident] as const,
+				['item', TSKindId.Item] as const,
+				['lifetime', TSKindId.AnonLifetime] as const,
+				['literal', TSKindId.Literal] as const,
+				['meta', TSKindId.Meta] as const,
+				['pat', TSKindId.Pat] as const,
+				['pat_param', TSKindId.PatParam] as const,
+				['path', TSKindId.Path] as const,
+				['stmt', TSKindId.Stmt] as const,
+				['tt', TSKindId.Tt] as const,
+				['ty', TSKindId.Ty] as const,
+				['vis', TSKindId.Vis] as const
 			])
 		)
 	});
@@ -2405,9 +2405,9 @@ export function coerceToTokenRepetition(input: T.TokenRepetition.Loose): ReturnT
 			'token_repetition',
 			'operator',
 			coerceKindEnumStorage(_resolveOneLeaf<T.Operator>(input.operator, '_operator'), [
-				['+', kindIdFromName('+')] as const,
-				['*', kindIdFromName('*')] as const,
-				['?', kindIdFromName('?')] as const
+				['+', TSKindId.Plus] as const,
+				['*', TSKindId.Star] as const,
+				['?', TSKindId.Qmark] as const
 			])
 		)
 	});
@@ -2424,9 +2424,9 @@ export function coerceToTokenRepetitionPattern(
 			'token_repetition_pattern',
 			'operator',
 			coerceKindEnumStorage(_resolveOneLeaf<T.Operator>(input.operator, '_operator'), [
-				['+', kindIdFromName('+')] as const,
-				['*', kindIdFromName('*')] as const,
-				['?', kindIdFromName('?')] as const
+				['+', TSKindId.Plus] as const,
+				['*', TSKindId.Star] as const,
+				['?', TSKindId.Qmark] as const
 			])
 		)
 	});
@@ -2629,9 +2629,9 @@ export function coerceToUnaryExpression(input: T.UnaryExpression.Loose): ReturnT
 			'unary_expression',
 			'operator',
 			coerceKindEnumStorage(_resolveOneLeaf<T.UnaryExpressionOperator>(input.operator, '_unary_expression_operator'), [
-				['-', kindIdFromName('-')] as const,
-				['*', kindIdFromName('*')] as const,
-				['!', kindIdFromName('!')] as const
+				['-', TSKindId.Dash] as const,
+				['*', TSKindId.Star] as const,
+				['!', TSKindId.Bang] as const
 			])
 		),
 		operand: _requireField('unary_expression', 'operand', _resolveOne<T.Expression>(input.operand, _K4, _K5))

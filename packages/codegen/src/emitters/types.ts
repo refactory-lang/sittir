@@ -23,6 +23,7 @@ import {
 	kindDiscriminantExpr,
 	kindIdMemberName,
 	findKindEntry,
+	findKindEntryForLiteral,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 export {
@@ -1195,13 +1196,18 @@ function enumStorageDiscriminantExpr(
 		if (entry) members.add(`TSKindId.${entry.member}`);
 		const node = nodeMap.nodes.get(enumKind);
 		if (!(node instanceof AssembledEnum)) continue;
+		// Enum member values and storageInfo.texts are LITERAL TOKEN TEXTS —
+		// resolve via the literal-aware lookup so the anonymous token wins
+		// over a same-spelled named rule (#129); must stay consistent with
+		// factories.ts's kindEnumTextMapExpr or the declared Config type and
+		// the runtime stamp diverge.
 		for (const value of node.values) {
-			const valueEntry = findKindEntry(kindEntries, value);
+			const valueEntry = findKindEntryForLiteral(kindEntries, value);
 			if (valueEntry) members.add(`TSKindId.${valueEntry.member}`);
 		}
 	}
 	for (const text of storageInfo.texts) {
-		const entry = findKindEntry(kindEntries, text);
+		const entry = findKindEntryForLiteral(kindEntries, text);
 		if (entry) members.add(`TSKindId.${entry.member}`);
 	}
 	return members.size === 0 ? 'number' : [...members].join(' | ');

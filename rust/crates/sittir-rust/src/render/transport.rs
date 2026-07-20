@@ -394,19 +394,44 @@ pub enum AnyTransport {
     Where(WhereTransport),
     While(WhileTransport),
     Yield(YieldTransport),
-    Literal0_2e_2e_3d,
-    Literal1_7c_7c,
-    Literal2_5e,
-    Literal3_3d_3d,
-    Literal4_21_3d,
-    Literal5_3c_3d,
-    Literal6_3e_3d,
-    Literal7_3c_3c,
-    Literal8_3e_3e,
-    Literal9_25,
-    Literal10_64_65_66_61_75_6c_74,
-    Literal11_3a_3a,
-    Literal12_5b_5e_2b_2a_3f_5d_2b,
+    Literal0_5f,
+    Literal1_2f,
+    Literal2_21,
+    Literal3_2e_2e,
+    Literal4_2e_2e_2e,
+    Literal5_2e_2e_3d,
+    Literal6_69_6e,
+    Literal7_70_75_62,
+    Literal8_6d_6f_76_65,
+    Literal9_26_26,
+    Literal10_7c_7c,
+    Literal11_26,
+    Literal12_7c,
+    Literal13_5e,
+    Literal14_3d_3d,
+    Literal15_21_3d,
+    Literal16_3c,
+    Literal17_3c_3d,
+    Literal18_3e,
+    Literal19_3e_3d,
+    Literal20_3c_3c,
+    Literal21_3e_3e,
+    Literal22_2b,
+    Literal23_2d,
+    Literal24_2a,
+    Literal25_25,
+    Literal26_73_74_61_74_69_63,
+    Literal27_61_73_79_6e_63,
+    Literal28_63_72_61_74_65,
+    Literal29_72_65_66,
+    Literal30_6d_75_74,
+    Literal31_3b,
+    Literal32_64_65_66_61_75_6c_74,
+    Literal33_63_6f_6e_73_74,
+    Literal34_75_6e_73_61_66_65,
+    Literal35_3a_3a,
+    Literal36_73_65_6c_66,
+    Literal37_5b_5e_2b_2a_3f_5d_2b,
     Verbatim(VerbatimTransport),
 }
 
@@ -1686,25 +1711,25 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     YieldTransport::from_napi_value(env, napi_val)?
                 )),
                 // literal kind: ..= → "..="
-                141 => Ok(AnyTransport::Literal0_2e_2e_3d),
+                141 => Ok(AnyTransport::Literal5_2e_2e_3d),
                 // literal kind: == → "=="
-                96 => Ok(AnyTransport::Literal3_3d_3d),
+                96 => Ok(AnyTransport::Literal14_3d_3d),
                 // literal kind: != → "!="
-                97 => Ok(AnyTransport::Literal4_21_3d),
+                97 => Ok(AnyTransport::Literal15_21_3d),
                 // literal kind: <= → "<="
-                98 => Ok(AnyTransport::Literal5_3c_3d),
+                98 => Ok(AnyTransport::Literal17_3c_3d),
                 // literal kind: >= → ">="
-                99 => Ok(AnyTransport::Literal6_3e_3d),
+                99 => Ok(AnyTransport::Literal19_3e_3d),
                 // literal kind: << → "<<"
-                100 => Ok(AnyTransport::Literal7_3c_3c),
+                100 => Ok(AnyTransport::Literal20_3c_3c),
                 // literal kind: >> → ">>"
-                101 => Ok(AnyTransport::Literal8_3e_3e),
+                101 => Ok(AnyTransport::Literal21_3e_3e),
                 // literal kind: % → "%"
-                103 => Ok(AnyTransport::Literal9_25),
+                103 => Ok(AnyTransport::Literal25_25),
                 // literal kind: default → "default"
-                52 => Ok(AnyTransport::Literal10_64_65_66_61_75_6c_74),
+                52 => Ok(AnyTransport::Literal32_64_65_66_61_75_6c_74),
                 // literal kind: :: → "::"
-                85 => Ok(AnyTransport::Literal11_3a_3a),
+                85 => Ok(AnyTransport::Literal35_3a_3a),
                 other => Err(::napi::Error::from_reason(format!(
                     "unknown kind id {other} in AnyTransport"
                 ))),
@@ -8294,6 +8319,7 @@ pub enum AttributedParameterContentTransportSlot {
     BoundedType(BoundedTypeTransport),
     RemovedTraitBound(RemovedTraitBoundTransport),
     PrimitiveType(PrimitiveTypeEnum),
+    Literal0_5f,
     Verbatim(VerbatimTransport),
 }
 
@@ -8414,6 +8440,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AttributedParameterContentTransp
                     44 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
+                    140 => Ok(Self::Literal0_5f),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AttributedParameterContentTransportSlot",
                     ))),
@@ -8537,6 +8564,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AttributedParameterContentTransp
                     44 => Ok(Self::PrimitiveType(
                         PrimitiveTypeEnum::from_napi_value(env, napi_val)?
                     )),
+                    140 => Ok(Self::Literal0_5f),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AttributedParameterContentTransportSlot",
                     ))),
@@ -8599,6 +8627,7 @@ fn attributed_parameter_content_transport_slot_to_any(t: AttributedParameterCont
         AttributedParameterContentTransportSlot::BoundedType(inner) => AnyTransport::BoundedType(inner),
         AttributedParameterContentTransportSlot::RemovedTraitBound(inner) => AnyTransport::RemovedTraitBound(inner),
         AttributedParameterContentTransportSlot::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        AttributedParameterContentTransportSlot::Literal0_5f => AnyTransport::Literal0_5f,
         AttributedParameterContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -8629,6 +8658,7 @@ impl RenderableTransport for AttributedParameterContentTransportSlot {
             AttributedParameterContentTransportSlot::BoundedType(inner) => render_bounded_type(inner, dest),
             AttributedParameterContentTransportSlot::RemovedTraitBound(inner) => render_removed_trait_bound(inner, dest),
             AttributedParameterContentTransportSlot::PrimitiveType(inner) => render_primitive_type(inner, dest),
+            AttributedParameterContentTransportSlot::Literal0_5f => dest.write_str("_").map_err(::askama::Error::from),
             AttributedParameterContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -8804,6 +8834,7 @@ pub enum ClosureExpressionExprBodyTransportSlot {
     ForExpression(ForExpressionTransport),
     ConstBlock(ConstBlockTransport),
     RangeExpression(RangeExpressionTransport),
+    Literal0_5f,
     Verbatim(VerbatimTransport),
 }
 
@@ -8966,6 +8997,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClosureExpressionExprBodyTranspo
                     246 => Ok(Self::RangeExpression(
                         RangeExpressionTransport::from_napi_value(env, napi_val)?
                     )),
+                    140 => Ok(Self::Literal0_5f),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ClosureExpressionExprBodyTransportSlot",
                     ))),
@@ -9131,6 +9163,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClosureExpressionExprBodyTranspo
                     246 => Ok(Self::RangeExpression(
                         RangeExpressionTransport::from_napi_value(env, napi_val)?
                     )),
+                    140 => Ok(Self::Literal0_5f),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ClosureExpressionExprBodyTransportSlot",
                     ))),
@@ -9219,6 +9252,7 @@ fn closure_expression_expr_body_transport_slot_to_any(t: ClosureExpressionExprBo
         ClosureExpressionExprBodyTransportSlot::ForExpression(inner) => AnyTransport::ForExpression(inner),
         ClosureExpressionExprBodyTransportSlot::ConstBlock(inner) => AnyTransport::ConstBlock(inner),
         ClosureExpressionExprBodyTransportSlot::RangeExpression(inner) => AnyTransport::RangeExpression(inner),
+        ClosureExpressionExprBodyTransportSlot::Literal0_5f => AnyTransport::Literal0_5f,
         ClosureExpressionExprBodyTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -9275,6 +9309,7 @@ impl RenderableTransport for ClosureExpressionExprBodyTransportSlot {
             ClosureExpressionExprBodyTransportSlot::ForExpression(inner) => render_for_expression(inner, dest),
             ClosureExpressionExprBodyTransportSlot::ConstBlock(inner) => render_const_block(inner, dest),
             ClosureExpressionExprBodyTransportSlot::RangeExpression(inner) => render_range_expression(inner, dest),
+            ClosureExpressionExprBodyTransportSlot::Literal0_5f => dest.write_str("_").map_err(::askama::Error::from),
             ClosureExpressionExprBodyTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -15793,7 +15828,10 @@ impl RenderableTransport for FunctionItemNameTransportSlot {
 #[derive(Debug, Clone)]
 pub enum FunctionModifiersModifierTransportSlot {
     ExternModifier(ExternModifierTransport),
-    Literal10_64_65_66_61_75_6c_74,
+    Literal27_61_73_79_6e_63,
+    Literal32_64_65_66_61_75_6c_74,
+    Literal33_63_6f_6e_73_74,
+    Literal34_75_6e_73_61_66_65,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -15808,7 +15846,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionModifiersModifierTranspo
                     214 => Ok(Self::ExternModifier(
                         ExternModifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    52 => Ok(Self::Literal10_64_65_66_61_75_6c_74),
+                    47 => Ok(Self::Literal27_61_73_79_6e_63),
+                    52 => Ok(Self::Literal32_64_65_66_61_75_6c_74),
+                    50 => Ok(Self::Literal33_63_6f_6e_73_74),
+                    70 => Ok(Self::Literal34_75_6e_73_61_66_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FunctionModifiersModifierTransportSlot",
                     ))),
@@ -15823,7 +15864,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionModifiersModifierTranspo
                     214 => Ok(Self::ExternModifier(
                         ExternModifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    52 => Ok(Self::Literal10_64_65_66_61_75_6c_74),
+                    47 => Ok(Self::Literal27_61_73_79_6e_63),
+                    52 => Ok(Self::Literal32_64_65_66_61_75_6c_74),
+                    50 => Ok(Self::Literal33_63_6f_6e_73_74),
+                    70 => Ok(Self::Literal34_75_6e_73_61_66_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FunctionModifiersModifierTransportSlot",
                     ))),
@@ -15867,7 +15911,10 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionModifiersModifierTrans
 fn function_modifiers_modifier_transport_slot_to_any(t: FunctionModifiersModifierTransportSlot) -> AnyTransport {
     match t {
         FunctionModifiersModifierTransportSlot::ExternModifier(inner) => AnyTransport::ExternModifier(inner),
-        FunctionModifiersModifierTransportSlot::Literal10_64_65_66_61_75_6c_74 => AnyTransport::Literal10_64_65_66_61_75_6c_74,
+        FunctionModifiersModifierTransportSlot::Literal27_61_73_79_6e_63 => AnyTransport::Literal27_61_73_79_6e_63,
+        FunctionModifiersModifierTransportSlot::Literal32_64_65_66_61_75_6c_74 => AnyTransport::Literal32_64_65_66_61_75_6c_74,
+        FunctionModifiersModifierTransportSlot::Literal33_63_6f_6e_73_74 => AnyTransport::Literal33_63_6f_6e_73_74,
+        FunctionModifiersModifierTransportSlot::Literal34_75_6e_73_61_66_65 => AnyTransport::Literal34_75_6e_73_61_66_65,
     }
 }
 
@@ -15878,7 +15925,10 @@ impl RenderableTransport for FunctionModifiersModifierTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             FunctionModifiersModifierTransportSlot::ExternModifier(inner) => render_extern_modifier(inner, dest),
-            FunctionModifiersModifierTransportSlot::Literal10_64_65_66_61_75_6c_74 => dest.write_str("default").map_err(::askama::Error::from),
+            FunctionModifiersModifierTransportSlot::Literal27_61_73_79_6e_63 => dest.write_str("async").map_err(::askama::Error::from),
+            FunctionModifiersModifierTransportSlot::Literal32_64_65_66_61_75_6c_74 => dest.write_str("default").map_err(::askama::Error::from),
+            FunctionModifiersModifierTransportSlot::Literal33_63_6f_6e_73_74 => dest.write_str("const").map_err(::askama::Error::from),
+            FunctionModifiersModifierTransportSlot::Literal34_75_6e_73_61_66_65 => dest.write_str("unsafe").map_err(::askama::Error::from),
         }
     }
 }
@@ -18054,6 +18104,7 @@ pub enum RangeExpressionContentTransportSlot {
     RangeExpressionBinary(RangeExpressionBinaryTransport),
     RangeExpressionPostfix(RangeExpressionPostfixTransport),
     RangeExpressionPrefix(RangeExpressionPrefixTransport),
+    Literal3_2e_2e,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -18074,6 +18125,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangeExpressionContentTransportS
                     358 => Ok(Self::RangeExpressionPrefix(
                         RangeExpressionPrefixTransport::from_napi_value(env, napi_val)?
                     )),
+                    115 => Ok(Self::Literal3_2e_2e),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in RangeExpressionContentTransportSlot",
                     ))),
@@ -18094,6 +18146,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangeExpressionContentTransportS
                     358 => Ok(Self::RangeExpressionPrefix(
                         RangeExpressionPrefixTransport::from_napi_value(env, napi_val)?
                     )),
+                    115 => Ok(Self::Literal3_2e_2e),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in RangeExpressionContentTransportSlot",
                     ))),
@@ -18139,6 +18192,7 @@ fn range_expression_content_transport_slot_to_any(t: RangeExpressionContentTrans
         RangeExpressionContentTransportSlot::RangeExpressionBinary(inner) => AnyTransport::RangeExpressionBinary(inner),
         RangeExpressionContentTransportSlot::RangeExpressionPostfix(inner) => AnyTransport::RangeExpressionPostfix(inner),
         RangeExpressionContentTransportSlot::RangeExpressionPrefix(inner) => AnyTransport::RangeExpressionPrefix(inner),
+        RangeExpressionContentTransportSlot::Literal3_2e_2e => AnyTransport::Literal3_2e_2e,
     }
 }
 
@@ -18151,6 +18205,7 @@ impl RenderableTransport for RangeExpressionContentTransportSlot {
             RangeExpressionContentTransportSlot::RangeExpressionBinary(inner) => render_range_expression_binary(inner, dest),
             RangeExpressionContentTransportSlot::RangeExpressionPostfix(inner) => render_range_expression_postfix(inner, dest),
             RangeExpressionContentTransportSlot::RangeExpressionPrefix(inner) => render_range_expression_prefix(inner, dest),
+            RangeExpressionContentTransportSlot::Literal3_2e_2e => dest.write_str("..").map_err(::askama::Error::from),
         }
     }
 }
@@ -19245,6 +19300,7 @@ impl RenderableTransport for ScopedTypeIdentifierInExpressionPositionPathTranspo
 #[derive(Debug, Clone)]
 pub enum StaticItemMutableSpecifierTransportSlot {
     MutableSpecifier(MutableSpecifierTransport),
+    Literal29_72_65_66,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -19259,6 +19315,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticItemMutableSpecifierTransp
                     90 => Ok(Self::MutableSpecifier(
                         MutableSpecifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    120 => Ok(Self::Literal29_72_65_66),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in StaticItemMutableSpecifierTransportSlot",
                     ))),
@@ -19273,6 +19330,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticItemMutableSpecifierTransp
                     90 => Ok(Self::MutableSpecifier(
                         MutableSpecifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    120 => Ok(Self::Literal29_72_65_66),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in StaticItemMutableSpecifierTransportSlot",
                     ))),
@@ -19316,6 +19374,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<StaticItemMutableSpecifierTran
 fn static_item_mutable_specifier_transport_slot_to_any(t: StaticItemMutableSpecifierTransportSlot) -> AnyTransport {
     match t {
         StaticItemMutableSpecifierTransportSlot::MutableSpecifier(inner) => AnyTransport::MutableSpecifier(inner),
+        StaticItemMutableSpecifierTransportSlot::Literal29_72_65_66 => AnyTransport::Literal29_72_65_66,
     }
 }
 
@@ -19326,6 +19385,7 @@ impl RenderableTransport for StaticItemMutableSpecifierTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             StaticItemMutableSpecifierTransportSlot::MutableSpecifier(inner) => render_mutable_specifier(inner, dest),
+            StaticItemMutableSpecifierTransportSlot::Literal29_72_65_66 => dest.write_str("ref").map_err(::askama::Error::from),
         }
     }
 }
@@ -28361,12 +28421,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenBindingPatternTypeEnum {
             ::napi::ValueType::Number => {
                 if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
                     match kind_id {
-                        293 => return Ok(Self::Block), // "block"
+                        13 => return Ok(Self::Block), // "block"
                         14 => return Ok(Self::Expr), // "expr"
                         15 => return Ok(Self::Expr2021), // "expr_2021"
                         16 => return Ok(Self::Ident), // "ident"
                         17 => return Ok(Self::Item), // "item"
-                        219 => return Ok(Self::Lifetime), // "lifetime"
+                        18 => return Ok(Self::Lifetime), // "lifetime"
                         19 => return Ok(Self::Literal), // "literal"
                         20 => return Ok(Self::Meta), // "meta"
                         21 => return Ok(Self::Pat), // "pat"
@@ -28404,12 +28464,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenBindingPatternTypeEnum {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 if let Some(kind_id) = obj.get::<u16>("$type")? {
                     match kind_id {
-                        293 => return Ok(Self::Block), // "block"
+                        13 => return Ok(Self::Block), // "block"
                         14 => return Ok(Self::Expr), // "expr"
                         15 => return Ok(Self::Expr2021), // "expr_2021"
                         16 => return Ok(Self::Ident), // "ident"
                         17 => return Ok(Self::Item), // "item"
-                        219 => return Ok(Self::Lifetime), // "lifetime"
+                        18 => return Ok(Self::Lifetime), // "lifetime"
                         19 => return Ok(Self::Literal), // "literal"
                         20 => return Ok(Self::Meta), // "meta"
                         21 => return Ok(Self::Pat), // "pat"
@@ -33217,12 +33277,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for FragmentSpecifierEnum {
             ::napi::ValueType::Number => {
                 if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
                     match kind_id {
-                        293 => return Ok(Self::Block), // "block"
+                        13 => return Ok(Self::Block), // "block"
                         14 => return Ok(Self::Expr), // "expr"
                         15 => return Ok(Self::Expr2021), // "expr_2021"
                         16 => return Ok(Self::Ident), // "ident"
                         17 => return Ok(Self::Item), // "item"
-                        219 => return Ok(Self::Lifetime), // "lifetime"
+                        18 => return Ok(Self::Lifetime), // "lifetime"
                         19 => return Ok(Self::Literal), // "literal"
                         20 => return Ok(Self::Meta), // "meta"
                         21 => return Ok(Self::Pat), // "pat"
@@ -33260,12 +33320,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for FragmentSpecifierEnum {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 if let Some(kind_id) = obj.get::<u16>("$type")? {
                     match kind_id {
-                        293 => return Ok(Self::Block), // "block"
+                        13 => return Ok(Self::Block), // "block"
                         14 => return Ok(Self::Expr), // "expr"
                         15 => return Ok(Self::Expr2021), // "expr_2021"
                         16 => return Ok(Self::Ident), // "ident"
                         17 => return Ok(Self::Item), // "item"
-                        219 => return Ok(Self::Lifetime), // "lifetime"
+                        18 => return Ok(Self::Lifetime), // "lifetime"
                         19 => return Ok(Self::Literal), // "literal"
                         20 => return Ok(Self::Meta), // "meta"
                         21 => return Ok(Self::Pat), // "pat"
@@ -53217,19 +53277,44 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Where(t) => t.render_into(dest),
             AnyTransport::While(t) => t.render_into(dest),
             AnyTransport::Yield(t) => t.render_into(dest),
-            AnyTransport::Literal0_2e_2e_3d => dest.write_str("..=").map_err(::askama::Error::from),
-            AnyTransport::Literal1_7c_7c => dest.write_str("||").map_err(::askama::Error::from),
-            AnyTransport::Literal2_5e => dest.write_str("^").map_err(::askama::Error::from),
-            AnyTransport::Literal3_3d_3d => dest.write_str("==").map_err(::askama::Error::from),
-            AnyTransport::Literal4_21_3d => dest.write_str("!=").map_err(::askama::Error::from),
-            AnyTransport::Literal5_3c_3d => dest.write_str("<=").map_err(::askama::Error::from),
-            AnyTransport::Literal6_3e_3d => dest.write_str(">=").map_err(::askama::Error::from),
-            AnyTransport::Literal7_3c_3c => dest.write_str("<<").map_err(::askama::Error::from),
-            AnyTransport::Literal8_3e_3e => dest.write_str(">>").map_err(::askama::Error::from),
-            AnyTransport::Literal9_25 => dest.write_str("%").map_err(::askama::Error::from),
-            AnyTransport::Literal10_64_65_66_61_75_6c_74 => dest.write_str("default").map_err(::askama::Error::from),
-            AnyTransport::Literal11_3a_3a => dest.write_str("::").map_err(::askama::Error::from),
-            AnyTransport::Literal12_5b_5e_2b_2a_3f_5d_2b => dest.write_str("[^+*?]+").map_err(::askama::Error::from),
+            AnyTransport::Literal0_5f => dest.write_str("_").map_err(::askama::Error::from),
+            AnyTransport::Literal1_2f => dest.write_str("/").map_err(::askama::Error::from),
+            AnyTransport::Literal2_21 => dest.write_str("!").map_err(::askama::Error::from),
+            AnyTransport::Literal3_2e_2e => dest.write_str("..").map_err(::askama::Error::from),
+            AnyTransport::Literal4_2e_2e_2e => dest.write_str("...").map_err(::askama::Error::from),
+            AnyTransport::Literal5_2e_2e_3d => dest.write_str("..=").map_err(::askama::Error::from),
+            AnyTransport::Literal6_69_6e => dest.write_str("in").map_err(::askama::Error::from),
+            AnyTransport::Literal7_70_75_62 => dest.write_str("pub").map_err(::askama::Error::from),
+            AnyTransport::Literal8_6d_6f_76_65 => dest.write_str("move").map_err(::askama::Error::from),
+            AnyTransport::Literal9_26_26 => dest.write_str("&&").map_err(::askama::Error::from),
+            AnyTransport::Literal10_7c_7c => dest.write_str("||").map_err(::askama::Error::from),
+            AnyTransport::Literal11_26 => dest.write_str("&").map_err(::askama::Error::from),
+            AnyTransport::Literal12_7c => dest.write_str("|").map_err(::askama::Error::from),
+            AnyTransport::Literal13_5e => dest.write_str("^").map_err(::askama::Error::from),
+            AnyTransport::Literal14_3d_3d => dest.write_str("==").map_err(::askama::Error::from),
+            AnyTransport::Literal15_21_3d => dest.write_str("!=").map_err(::askama::Error::from),
+            AnyTransport::Literal16_3c => dest.write_str("<").map_err(::askama::Error::from),
+            AnyTransport::Literal17_3c_3d => dest.write_str("<=").map_err(::askama::Error::from),
+            AnyTransport::Literal18_3e => dest.write_str(">").map_err(::askama::Error::from),
+            AnyTransport::Literal19_3e_3d => dest.write_str(">=").map_err(::askama::Error::from),
+            AnyTransport::Literal20_3c_3c => dest.write_str("<<").map_err(::askama::Error::from),
+            AnyTransport::Literal21_3e_3e => dest.write_str(">>").map_err(::askama::Error::from),
+            AnyTransport::Literal22_2b => dest.write_str("+").map_err(::askama::Error::from),
+            AnyTransport::Literal23_2d => dest.write_str("-").map_err(::askama::Error::from),
+            AnyTransport::Literal24_2a => dest.write_str("*").map_err(::askama::Error::from),
+            AnyTransport::Literal25_25 => dest.write_str("%").map_err(::askama::Error::from),
+            AnyTransport::Literal26_73_74_61_74_69_63 => dest.write_str("static").map_err(::askama::Error::from),
+            AnyTransport::Literal27_61_73_79_6e_63 => dest.write_str("async").map_err(::askama::Error::from),
+            AnyTransport::Literal28_63_72_61_74_65 => dest.write_str("crate").map_err(::askama::Error::from),
+            AnyTransport::Literal29_72_65_66 => dest.write_str("ref").map_err(::askama::Error::from),
+            AnyTransport::Literal30_6d_75_74 => dest.write_str("mut").map_err(::askama::Error::from),
+            AnyTransport::Literal31_3b => dest.write_str(";").map_err(::askama::Error::from),
+            AnyTransport::Literal32_64_65_66_61_75_6c_74 => dest.write_str("default").map_err(::askama::Error::from),
+            AnyTransport::Literal33_63_6f_6e_73_74 => dest.write_str("const").map_err(::askama::Error::from),
+            AnyTransport::Literal34_75_6e_73_61_66_65 => dest.write_str("unsafe").map_err(::askama::Error::from),
+            AnyTransport::Literal35_3a_3a => dest.write_str("::").map_err(::askama::Error::from),
+            AnyTransport::Literal36_73_65_6c_66 => dest.write_str("self").map_err(::askama::Error::from),
+            AnyTransport::Literal37_5b_5e_2b_2a_3f_5d_2b => dest.write_str("[^+*?]+").map_err(::askama::Error::from),
             AnyTransport::Verbatim(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
         }
     }

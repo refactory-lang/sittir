@@ -3150,7 +3150,6 @@ var overrides_default = grammar(
       // Known-failing generated nodes.test.ts kinds — tracked defects, not
       // silenced mysteries. Remove an entry + regen when its issue is fixed.
       expectTestFailures: {
-        type_alias_statement: "#129 \u2014 anonymous 'type' keyword auto-stamp collides with the type rule",
         list_pattern_group1: "#170 \u2014 separatedList factory/transport element-slot mismatch (Missing field _case_pattern)"
       },
       polymorphs: {

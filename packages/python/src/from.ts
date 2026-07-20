@@ -809,19 +809,19 @@ export function coerceToAugmentedAssignment(
 			coerceKindEnumStorage(
 				_resolveOneLeaf<T.AugmentedAssignmentOperator>(input.operator, '_augmented_assignment_operator'),
 				[
-					['+=', kindIdFromName('+=')] as const,
-					['-=', kindIdFromName('-=')] as const,
-					['*=', kindIdFromName('*=')] as const,
-					['/=', kindIdFromName('/=')] as const,
-					['@=', kindIdFromName('@=')] as const,
-					['//=', kindIdFromName('//=')] as const,
-					['%=', kindIdFromName('%=')] as const,
-					['**=', kindIdFromName('**=')] as const,
-					['>>=', kindIdFromName('>>=')] as const,
-					['<<=', kindIdFromName('<<=')] as const,
-					['&=', kindIdFromName('&=')] as const,
-					['^=', kindIdFromName('^=')] as const,
-					['|=', kindIdFromName('|=')] as const
+					['+=', TSKindId.PlusEq] as const,
+					['-=', TSKindId.DashEq] as const,
+					['*=', TSKindId.StarEq] as const,
+					['/=', TSKindId.SlashEq] as const,
+					['@=', TSKindId.AtEq] as const,
+					['//=', TSKindId.SlashSlashEq] as const,
+					['%=', TSKindId.PercentEq] as const,
+					['**=', TSKindId.StarStarEq] as const,
+					['>>=', TSKindId.GtGtEq] as const,
+					['<<=', TSKindId.LtLtEq] as const,
+					['&=', TSKindId.AmpEq] as const,
+					['^=', TSKindId.CaretEq] as const,
+					['|=', TSKindId.PipeEq] as const
 				]
 			)
 		),
@@ -861,19 +861,19 @@ export function coerceToBinaryOperator(input: T.BinaryOperator.Loose): ReturnTyp
 					_K4
 				),
 				[
-					['+', kindIdFromName('+')] as const,
-					['-', kindIdFromName('-')] as const,
-					['*', kindIdFromName('*')] as const,
-					['@', kindIdFromName('@')] as const,
-					['/', kindIdFromName('/')] as const,
-					['%', kindIdFromName('%')] as const,
-					['//', kindIdFromName('//')] as const,
-					['**', kindIdFromName('**')] as const,
-					['|', kindIdFromName('|')] as const,
-					['&', kindIdFromName('&')] as const,
-					['^', kindIdFromName('^')] as const,
-					['<<', kindIdFromName('<<')] as const,
-					['>>', kindIdFromName('>>')] as const
+					['+', TSKindId.Plus] as const,
+					['-', TSKindId.Dash] as const,
+					['*', TSKindId.Star2] as const,
+					['@', TSKindId.At2] as const,
+					['/', TSKindId.Slash2] as const,
+					['%', TSKindId.Percent] as const,
+					['//', TSKindId.SlashSlash] as const,
+					['**', TSKindId.StarStar] as const,
+					['|', TSKindId.Pipe2] as const,
+					['&', TSKindId.Amp] as const,
+					['^', TSKindId.Caret] as const,
+					['<<', TSKindId.LtLt] as const,
+					['>>', TSKindId.GtGt] as const
 				]
 			)
 		),
@@ -899,8 +899,8 @@ export function coerceToBooleanOperator(input: T.BooleanOperator.Loose): ReturnT
 			'boolean_operator',
 			'operator',
 			coerceKindEnumStorage(_resolveOne<'and' | 'or'>(input.operator, _K4, _K4), [
-				['and', kindIdFromName('and')] as const,
-				['or', kindIdFromName('or')] as const
+				['and', TSKindId.And] as const,
+				['or', TSKindId.Or] as const
 			])
 		),
 		right: _requireField('boolean_operator', 'right', _resolveOne<T.Expression>(input.right, _K0, _K1))
@@ -1023,8 +1023,8 @@ export function coerceToComplexPattern(input: T.ComplexPattern.Loose): ReturnTyp
 			'complex_pattern',
 			'operator',
 			coerceKindEnumStorage(_resolveOneLeaf<T.ComplexPatternOperator>(input.operator, '_complex_pattern_operator'), [
-				['+', kindIdFromName('+')] as const,
-				['-', kindIdFromName('-')] as const
+				['+', TSKindId.Plus] as const,
+				['-', TSKindId.Dash] as const
 			])
 		),
 		content: _requireField('complex_pattern', 'content', _resolveOne<T.Integer | T.Float>(input.content, _K11, _K4))
@@ -1820,8 +1820,8 @@ export function coerceToSplatPattern(input: T.SplatPattern.Loose): ReturnType<ty
 			'splat_pattern',
 			'operator',
 			coerceKindEnumStorage(_resolveOneLeaf<T.SplatPatternOperator>(input.operator, '_splat_pattern_operator'), [
-				['*', kindIdFromName('*')] as const,
-				['**', kindIdFromName('**')] as const
+				['*', TSKindId.Star2] as const,
+				['**', TSKindId.StarStar] as const
 			])
 		),
 		identifier: _requireField(
@@ -1990,9 +1990,9 @@ export function coerceToUnaryOperator(input: T.UnaryOperator.Loose): ReturnType<
 			'unary_operator',
 			'operator',
 			coerceKindEnumStorage(_resolveOneLeaf<T.UnaryOperatorOperator>(input.operator, '_unary_operator_operator'), [
-				['+', kindIdFromName('+')] as const,
-				['-', kindIdFromName('-')] as const,
-				['~', kindIdFromName('~')] as const
+				['+', TSKindId.Plus] as const,
+				['-', TSKindId.Dash] as const,
+				['~', TSKindId.Tilde] as const
 			])
 		),
 		argument: _requireField('unary_operator', 'argument', _resolveOne<T.PrimaryExpression>(input.argument, _K0, _K6))
