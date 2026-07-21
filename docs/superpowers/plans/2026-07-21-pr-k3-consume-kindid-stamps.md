@@ -114,7 +114,17 @@ information, not noise.
       values via the `resolvedKind` NAME flipped import_statement's `'type'`
       to the named rule's id — names collide, ids don't; hence
       `kindDiscriminantExprForId`.)
-- [ ] K3b — buildKindIdByKind consumer shrink
+- [x] K3b — buildKindIdByKind consumer shrink (census result: the only
+      slot-value-origin lookups through the two maps were the
+      `AssembledEnum.resolvedKinds` name loops in `emitSupertypeTransportEnum`
+      + `emitPerSlotChildEnum` — both now read the construction-time
+      `resolvedByText` stamps via `enumMemberAcceptedIds`. Everything else is
+      owner-kind (`node.kind` AnyTransport arms, supertype self/suppressed
+      ids — keep-list), rule-walk-derived (`buildSeparatorKindMatchLines` —
+      no value in hand), or `acceptedTransportKinds` (K3c). A/B: byte-identical
+      all 3 grammars — the last-wins name map happened to agree with the
+      stamps here, so this converts ordering luck into a guarantee; floors
+      123/117/103/108 hold.)
 - [ ] K3c — acceptedTransportKinds dual-id supply
 - [ ] K3d — kindIdFromName baking
 - [ ] K3e — simplify-class projections (may split to own PR)

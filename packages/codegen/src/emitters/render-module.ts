@@ -2116,6 +2116,19 @@ function buildKindIdByKind(kindEntries: readonly KindEnumEntry[]): ReadonlyMap<s
 }
 
 /**
+ * Accepted wire ids for an `AssembledEnum` transport variant — the
+ * construction-time literal-chain stamps (`resolvedByText`), NOT the member
+ * kind NAMES re-resolved through `buildKindIdByKind`. That map is last-wins
+ * across catalog entries whose `kind` text collides (anon-token text ==
+ * named-rule name, the #129 class), while the TS side emits the stamped
+ * anon ids on the wire (`kindEnumTextMapExpr`) — dispatch arms must accept
+ * the same ids the sender bakes.
+ */
+function enumMemberAcceptedIds(node: AssembledEnum): number[] {
+	return [...node.resolvedByText.values()].map((e) => e.id);
+}
+
+/**
  * Emit `AnyTransport` with the string-tagged `#[serde(tag = "$type")]` derive.
  * Fallback path when `generatedIdTables` is unavailable (no parser.c).
  */
@@ -2446,16 +2459,18 @@ function emitSupertypeTransportEnum(
 			for (const { subKind, subNode } of validSubtypes) {
 				const variant = rustTypeIdent(subNode.typeName);
 				const typeName = rustTransportStructName(subNode);
+				// Owner-kind / supertype-membership ids stay name-resolved (spec §2.3
+				// keep-list); enum member ids are stamped facts (PR-K3b).
 				const acceptedKinds = new Set([subKind, ...collectConcreteTransportKinds(subKind, nodeMap)]);
+				const acceptedIds = [...acceptedKinds]
+					.map((k) => kindIdByKind.get(k))
+					.filter((id): id is number => id !== undefined);
 				if (subNode instanceof AssembledEnum) {
-					for (const resolvedKind of subNode.resolvedKinds) {
-						acceptedKinds.add(resolvedKind);
-					}
+					acceptedIds.push(...enumMemberAcceptedIds(subNode));
 				}
 				const boxed = isBoxed(subKind, subNode);
-				for (const acceptedKind of acceptedKinds) {
-					const id = kindIdByKind.get(acceptedKind);
-					if (id === undefined || emittedIds.has(id)) continue;
+				for (const id of acceptedIds) {
+					if (emittedIds.has(id)) continue;
 					emittedIds.add(id);
 					if (boxed) {
 						arms.push(`                ${id} => Ok(Self::${variant}(Box::new(`);
@@ -2856,16 +2871,18 @@ function emitPerSlotChildEnum(
 		for (const { kind, node, concreteName } of validKinds) {
 			const variant = rustTypeIdent(node.typeName);
 			const typeName = concreteName;
+			// Alias-redirect kinds stay name-resolved until the dual-id supply
+			// lands (PR-K3c); enum member ids are stamped facts (PR-K3b).
 			const acceptedKinds = new Set<string>(acceptedTransportKinds(kind, nodeMap, entry.parseAliases));
+			const acceptedIds = [...acceptedKinds]
+				.map((k) => kindIdByKind.get(k))
+				.filter((id): id is number => id !== undefined);
 			if (node instanceof AssembledEnum) {
-				for (const resolvedKind of node.resolvedKinds) {
-					acceptedKinds.add(resolvedKind);
-				}
+				acceptedIds.push(...enumMemberAcceptedIds(node));
 			}
 			const boxed = isBoxed(kind, node);
-			for (const acceptedKind of acceptedKinds) {
-				const id = kindIdByKind.get(acceptedKind);
-				if (id === undefined || emittedIds.has(id)) continue;
+			for (const id of acceptedIds) {
+				if (emittedIds.has(id)) continue;
 				emittedIds.add(id);
 				if (boxed) {
 					kindIdArms.push(`                ${id} => Ok(Self::${variant}(Box::new(`);
