@@ -430,25 +430,6 @@ export function buildKeyValuePattern(config: T.KeyValuePattern.Config) {
 	);
 }
 
-export function build_ListPattern(child?: T.ListPatternGroup1) {
-	const _list_pattern_group1 = child;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId._ListPattern as const,
-				$source: 2 as const,
-				$named: true as const,
-				_list_pattern_group1,
-				$with: { $child: (v: T.ListPatternGroup1) => build_ListPattern(v) }
-			},
-			{
-				listPatternGroup1: () => _list_pattern_group1
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function build_ListPatternGroup1(elements: NonEmptyArray<T.CasePattern>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, '_list_pattern_group1.elements');
 	const _case_pattern = elements;
@@ -630,25 +611,6 @@ export function build_SliceGroup1(child?: T.Expression) {
 			},
 			{
 				expression: () => _expression
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function build_TuplePattern(child?: T.ListPatternGroup1) {
-	const _list_pattern_group1 = child;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId._TuplePattern as const,
-				$source: 2 as const,
-				$named: true as const,
-				_list_pattern_group1,
-				$with: { $child: (v: T.ListPatternGroup1) => build_TuplePattern(v) }
-			},
-			{
-				listPatternGroup1: () => _list_pattern_group1
 			}
 		),
 		methodsEngine
@@ -1071,6 +1033,25 @@ export function buildCaseClause(config: T.CaseClause.Config) {
 	);
 }
 
+export function buildCaseListPattern(...children: T.CasePattern[]) {
+	const _case_pattern = children;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CaseListPattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_case_pattern,
+				$with: { $children: (...vs: T.CasePattern[]) => buildCaseListPattern(...vs) }
+			},
+			{
+				casePatterns: () => _case_pattern
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildCasePattern(child: T._AsPattern | T.KeywordPattern | T.SimplePattern) {
 	const _content = child;
 	return withMethods(
@@ -1084,6 +1065,25 @@ export function buildCasePattern(child: T._AsPattern | T.KeywordPattern | T.Simp
 			},
 			{
 				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildCaseTuplePattern(...children: T.CasePattern[]) {
+	const _case_pattern = children;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CaseTuplePattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_case_pattern,
+				$with: { $children: (...vs: T.CasePattern[]) => buildCaseTuplePattern(...vs) }
+			},
+			{
+				casePatterns: () => _case_pattern
 			}
 		),
 		methodsEngine
@@ -3764,7 +3764,6 @@ export type FluentKindMap = {
 	_import_list: T.ImportList;
 	_is_not: T.IsNot;
 	_key_value_pattern: T.KeyValuePattern;
-	_list_pattern: FluentNode<'_list_pattern', T._ListPattern.Config>;
 	_list_pattern_group1: FluentNode<'_list_pattern_group1', T._ListPatternGroup1.Config>;
 	_match_block: FluentNode<'_match_block', T.MatchBlock.Config>;
 	_match_block_block: T.MatchBlockBlock;
@@ -3774,7 +3773,6 @@ export type FluentKindMap = {
 	_simple_pattern_negative: FluentNode<'_simple_pattern_negative', T.SimplePatternNegative.Config>;
 	_simple_statements: FluentNode<'_simple_statements', T.SimpleStatements.Config>;
 	_slice_group1: FluentNode<'_slice_group1', T._SliceGroup1.Config>;
-	_tuple_pattern: FluentNode<'_tuple_pattern', T._TuplePattern.Config>;
 	_with_clause_bare: FluentNode<'_with_clause_bare', T.WithClauseBare.Config>;
 	_with_clause_paren: FluentNode<'_with_clause_paren', T.WithClauseParen.Config>;
 	aliased_import: FluentNode<'aliased_import', T.AliasedImport.Config>;
@@ -3791,7 +3789,9 @@ export type FluentKindMap = {
 	break_statement: T.BreakStatement;
 	call: FluentNode<'call', T.Call.Config>;
 	case_clause: FluentNode<'case_clause', T.CaseClause.Config>;
+	case_list_pattern: FluentNode<'case_list_pattern', T.CaseListPattern.Config>;
 	case_pattern: FluentNode<'case_pattern', T.CasePattern.Config>;
+	case_tuple_pattern: FluentNode<'case_tuple_pattern', T.CaseTuplePattern.Config>;
 	chevron: FluentNode<'chevron', T.Chevron.Config>;
 	class_definition: FluentNode<'class_definition', T.ClassDefinition.Config>;
 	class_pattern: FluentNode<'class_pattern', T.ClassPattern.Config>;
@@ -3930,7 +3930,6 @@ export const _factoryMap = {
 	_import_list: buildImportList,
 	_is_not: buildIsNot,
 	_key_value_pattern: buildKeyValuePattern,
-	_list_pattern: build_ListPattern,
 	_list_pattern_group1: build_ListPatternGroup1,
 	_match_block: buildMatchBlock,
 	_match_block_block: buildMatchBlockBlock,
@@ -3940,7 +3939,6 @@ export const _factoryMap = {
 	_simple_pattern_negative: buildSimplePatternNegative,
 	_simple_statements: buildSimpleStatements,
 	_slice_group1: build_SliceGroup1,
-	_tuple_pattern: build_TuplePattern,
 	_with_clause_bare: buildWithClauseBare,
 	_with_clause_paren: buildWithClauseParen,
 	aliased_import: buildAliasedImport,
@@ -3957,7 +3955,9 @@ export const _factoryMap = {
 	break_statement: buildBreakStatement,
 	call: buildCall,
 	case_clause: buildCaseClause,
+	case_list_pattern: buildCaseListPattern,
 	case_pattern: buildCasePattern,
+	case_tuple_pattern: buildCaseTuplePattern,
 	chevron: buildChevron,
 	class_definition: buildClassDefinition,
 	class_pattern: buildClassPattern,

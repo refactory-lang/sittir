@@ -12,16 +12,6 @@ When a hidden rule `_foo` is promoted via a reference-site `alias($._foo, $.<vis
 
 **Fix, if/when prioritized:** trace why a self-matching alias-target name causes the classifier to treat the kind's own slot as a reference to itself instead of resolving through to the real repeat/separator shape, likely in `assemble.ts`'s parse-kind resolution or `resolveParseKindCollisions` (`compiler/model/node-map.ts`).
 
-## `tuple_pattern`'s case-context variant renders as `'()'` — a deeper two-rules-one-parse-kind model-merge gap
-
-**Found during:** Track B, `_patterns` promotion follow-up (flagged by a research pass, not fixed in that task).
-
-Python's assignment-context `tuple_pattern` (`seq('(', optional($._patterns), ')')`) and match-statement's case-context `_tuple_pattern` are two DIFFERENT grammar rules that both parse to the same `tuple_pattern` kind at the tree-sitter level (one parse kind, two source rules) — a base-grammar quirk pythonlang's own tree-sitter grammar already has. `case (a, b):` wraps without throwing, but renders as `'()'` — `templates/tuple_pattern.jinja` only emits the `pattern_group` field (Track B's promoted assignment-context slot); it has no branch for whatever field/shape the case-context `_tuple_pattern` production actually needs. Confirmed via `validate:native`: `tuple_pattern[1].pattern_group: type pattern_group ≠ list_pattern_group1` — the real parsed CST in a case-pattern position carries a DIFFERENT child kind (`list_pattern_group1`, a separate pre-existing Track-A promotion) than the assignment-context template expects.
-
-**Status: deferred, not fixed.** This is a distinct, more complex shared-codegen problem (the node-map/template layer needs to properly model TWO source rules merging into one parse kind, each potentially needing different render logic) — explicitly out of scope for the `_patterns`/Track B promotion task that surfaced it.
-
-**Fix (decided 2026-07-20, planned):** re-alias the case-context `_tuple_pattern` reference to its own unique visible name via `packages/python/overrides.ts` (e.g. `case_tuple_pattern` — must be a NON-natural name per the `mintContentAliasKinds` self-ref classification bug above, and `tuple_pattern` is taken anyway), so each source rule gets its own parse kind and template. Dissolves the two-rules-one-parse-kind merge without node-map-level machinery. Touches the override parser → gate on a corpus A/B (python's override-parser regression count is 1; must not grow).
-
 ## `_concatInSourceOrder` sorts text-collapsed leaves (no `$span`/`$childIndex`) to the end, losing source order
 
 **Found during:** `isInlineSafe` separator-variability qualification follow-on (rust render-emptiness regression investigation), `packages/codegen/src/emitters/wrap.ts`, `_concatInSourceOrder` (~line 1384, emitted runtime helper).

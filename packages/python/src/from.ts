@@ -24,7 +24,9 @@ export const _fromMap = {
 	break_statement: coerceToBreakStatement,
 	call: coerceToCall,
 	case_clause: coerceToCaseClause,
+	case_list_pattern: coerceToCaseListPattern,
 	case_pattern: coerceToCasePattern,
+	case_tuple_pattern: coerceToCaseTuplePattern,
 	chevron: coerceToChevron,
 	class_definition: coerceToClassDefinition,
 	class_pattern: coerceToClassPattern,
@@ -278,7 +280,9 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_with_clause_paren: TSKindId.WithClauseParen,
 	assert_statement: TSKindId.AssertStatement,
 	block: TSKindId.Block,
+	case_list_pattern: TSKindId.CaseListPattern,
 	case_pattern: TSKindId.CasePattern,
+	case_tuple_pattern: TSKindId.CaseTuplePattern,
 	concatenated_string: TSKindId.ConcatenatedString,
 	delete_statement: TSKindId.DeleteStatement,
 	dict_pattern: TSKindId.DictPattern,
@@ -341,8 +345,12 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildAssertStatement(...(children as Parameters<typeof F.buildAssertStatement>));
 		case 'block':
 			return F.buildBlock(...(children as Parameters<typeof F.buildBlock>));
+		case 'case_list_pattern':
+			return F.buildCaseListPattern(...(children as Parameters<typeof F.buildCaseListPattern>));
 		case 'case_pattern':
 			return F.buildCasePattern(children[0] as Parameters<typeof F.buildCasePattern>[0]);
+		case 'case_tuple_pattern':
+			return F.buildCaseTuplePattern(...(children as Parameters<typeof F.buildCaseTuplePattern>));
 		case 'concatenated_string':
 			return F.buildConcatenatedString(...(children as Parameters<typeof F.buildConcatenatedString>));
 		case 'delete_statement':
@@ -709,8 +717,8 @@ const _K23: readonly string[] = [
 	'class_pattern',
 	'splat_pattern',
 	'union_pattern',
-	'_list_pattern',
-	'_tuple_pattern',
+	'case_list_pattern',
+	'case_tuple_pattern',
 	'dict_pattern',
 	'string',
 	'concatenated_string',
@@ -955,6 +963,18 @@ export function coerceToCaseClause(input: T.CaseClause.Loose): ReturnType<typeof
 	});
 }
 
+export function coerceToCaseListPattern(
+	...input: readonly (T.CasePattern | T.CaseListPattern)[]
+): ReturnType<typeof F.buildCaseListPattern> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.CaseListPattern) {
+		const data = input[0];
+		const stored = (data as unknown as { _case_pattern?: unknown })._case_pattern;
+		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildCaseListPattern(...(children as unknown as Parameters<typeof F.buildCaseListPattern>));
+	}
+	return F.buildCaseListPattern(...(input as unknown as Parameters<typeof F.buildCaseListPattern>));
+}
+
 export function coerceToCasePattern(
 	input?: (T._AsPattern | T.KeywordPattern | T.SimplePattern) | T.CasePattern
 ): ReturnType<typeof F.buildCasePattern> {
@@ -964,6 +984,18 @@ export function coerceToCasePattern(
 		return F.buildCasePattern(child as Parameters<typeof F.buildCasePattern>[0]);
 	}
 	return F.buildCasePattern(input as Parameters<typeof F.buildCasePattern>[0]);
+}
+
+export function coerceToCaseTuplePattern(
+	...input: readonly (T.CasePattern | T.CaseTuplePattern)[]
+): ReturnType<typeof F.buildCaseTuplePattern> {
+	if (input.length === 1 && isNodeData(input[0]) && input[0].$type === TSKindId.CaseTuplePattern) {
+		const data = input[0];
+		const stored = (data as unknown as { _case_pattern?: unknown })._case_pattern;
+		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+		return F.buildCaseTuplePattern(...(children as unknown as Parameters<typeof F.buildCaseTuplePattern>));
+	}
+	return F.buildCaseTuplePattern(...(input as unknown as Parameters<typeof F.buildCaseTuplePattern>));
 }
 
 export function coerceToChevron(input: T.Chevron.Loose): ReturnType<typeof F.buildChevron> {

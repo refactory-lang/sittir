@@ -34,8 +34,12 @@ import type {
 	CallTree,
 	CaseClause,
 	CaseClauseTree,
+	CaseListPattern,
+	CaseListPatternTree,
 	CasePattern,
 	CasePatternTree,
+	CaseTuplePattern,
+	CaseTuplePatternTree,
 	Chevron,
 	ChevronTree,
 	ClassDefinition,
@@ -349,7 +353,7 @@ export type _Type_ExceptClauseList = _TypeAssert<_TypeExtends<ExceptClauseList['
 export type _Type_ExpressionStatementTuple = _TypeAssert<
 	_TypeExtends<ExpressionStatementTuple['$type'], TSKindId.ExpressionStatementTuple>
 >;
-export type _Type__ListPattern = _TypeAssert<_TypeExtends<_ListPattern['$type'], TSKindId._ListPattern>>;
+export type _Type__ListPattern = _TypeAssert<_TypeExtends<_ListPattern['$type'], '_list_pattern'>>;
 export type _Type__ListPatternGroup1 = _TypeAssert<
 	_TypeExtends<_ListPatternGroup1['$type'], TSKindId._ListPatternGroup1>
 >;
@@ -362,7 +366,7 @@ export type _Type_SimplePatternNegative = _TypeAssert<
 export type _Type_SimpleStatements = _TypeAssert<_TypeExtends<SimpleStatements['$type'], TSKindId.SimpleStatements>>;
 export type _Type__SliceGroup1 = _TypeAssert<_TypeExtends<_SliceGroup1['$type'], TSKindId._SliceGroup1>>;
 export type _Type_Suite = _TypeAssert<_TypeExtends<Suite['$type'], '_suite'>>;
-export type _Type__TuplePattern = _TypeAssert<_TypeExtends<_TuplePattern['$type'], TSKindId._TuplePattern>>;
+export type _Type__TuplePattern = _TypeAssert<_TypeExtends<_TuplePattern['$type'], '_tuple_pattern'>>;
 export type _Type_WithClauseBare = _TypeAssert<_TypeExtends<WithClauseBare['$type'], TSKindId.WithClauseBare>>;
 export type _Type_WithClauseParen = _TypeAssert<_TypeExtends<WithClauseParen['$type'], TSKindId.WithClauseParen>>;
 export type _Type_AliasedImport = _TypeAssert<_TypeExtends<AliasedImport['$type'], TSKindId.AliasedImport>>;
@@ -380,7 +384,9 @@ export type _Type_Block = _TypeAssert<_TypeExtends<Block['$type'], TSKindId.Bloc
 export type _Type_BooleanOperator = _TypeAssert<_TypeExtends<BooleanOperator['$type'], TSKindId.BooleanOperator>>;
 export type _Type_Call = _TypeAssert<_TypeExtends<Call['$type'], TSKindId.Call>>;
 export type _Type_CaseClause = _TypeAssert<_TypeExtends<CaseClause['$type'], TSKindId.CaseClause>>;
+export type _Type_CaseListPattern = _TypeAssert<_TypeExtends<CaseListPattern['$type'], TSKindId.CaseListPattern>>;
 export type _Type_CasePattern = _TypeAssert<_TypeExtends<CasePattern['$type'], TSKindId.CasePattern>>;
+export type _Type_CaseTuplePattern = _TypeAssert<_TypeExtends<CaseTuplePattern['$type'], TSKindId.CaseTuplePattern>>;
 export type _Type_Chevron = _TypeAssert<_TypeExtends<Chevron['$type'], TSKindId.Chevron>>;
 export type _Type_ClassDefinition = _TypeAssert<_TypeExtends<ClassDefinition['$type'], TSKindId.ClassDefinition>>;
 export type _Type_ClassPattern = _TypeAssert<_TypeExtends<ClassPattern['$type'], TSKindId.ClassPattern>>;
@@ -616,7 +622,9 @@ export type _Tree_Block = _TypeAssert<_TypeExtends<BlockTree['type'], 'block'>>;
 export type _Tree_BooleanOperator = _TypeAssert<_TypeExtends<BooleanOperatorTree['type'], 'boolean_operator'>>;
 export type _Tree_Call = _TypeAssert<_TypeExtends<CallTree['type'], 'call'>>;
 export type _Tree_CaseClause = _TypeAssert<_TypeExtends<CaseClauseTree['type'], 'case_clause'>>;
+export type _Tree_CaseListPattern = _TypeAssert<_TypeExtends<CaseListPatternTree['type'], 'case_list_pattern'>>;
 export type _Tree_CasePattern = _TypeAssert<_TypeExtends<CasePatternTree['type'], 'case_pattern'>>;
+export type _Tree_CaseTuplePattern = _TypeAssert<_TypeExtends<CaseTuplePatternTree['type'], 'case_tuple_pattern'>>;
 export type _Tree_Chevron = _TypeAssert<_TypeExtends<ChevronTree['type'], 'chevron'>>;
 export type _Tree_ClassDefinition = _TypeAssert<_TypeExtends<ClassDefinitionTree['type'], 'class_definition'>>;
 export type _Tree_ClassPattern = _TypeAssert<_TypeExtends<ClassPatternTree['type'], 'class_pattern'>>;

@@ -279,10 +279,26 @@ describe('case_clause', () => {
 	});
 });
 
+describe('case_list_pattern', () => {
+	it('factory produces correct type', () => {
+		const node = ir.caseListPattern();
+		expect(node.$type).toBe(TSKindId.CaseListPattern);
+		expect(node.$source).toBe(2);
+	});
+});
+
 describe('case_pattern', () => {
 	it('factory produces correct type', () => {
 		const node = ir.casePattern({ type: '_as_pattern' } as never);
 		expect(node.$type).toBe(TSKindId.CasePattern);
+		expect(node.$source).toBe(2);
+	});
+});
+
+describe('case_tuple_pattern', () => {
+	it('factory produces correct type', () => {
+		const node = ir.caseTuplePattern();
+		expect(node.$type).toBe(TSKindId.CaseTuplePattern);
 		expect(node.$source).toBe(2);
 	});
 });

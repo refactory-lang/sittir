@@ -7,11 +7,11 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_typed_parameter": {
-          "$type": 207,
+          "$type": 205,
           "$source": 0,
           "$named": true,
           "$text": "region: str",
@@ -29,12 +29,12 @@
         "$nodeHandle": 15,
         "_parameter": [
           {
-            "$type": 207,
+            "$type": 205,
             "$source": 0,
             "$named": true,
             "_identifier": "region",
             "_type": {
-              "$type": 208,
+              "$type": 206,
               "$source": 0,
               "$named": true,
               "_identifier": "str",
@@ -85,7 +85,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 208,
+      "$type": 206,
       "$source": 0,
       "$named": true,
       "_identifier": "str",
@@ -113,7 +113,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 208,
+      "$type": 206,
       "$source": 0,
       "$named": true,
       "_identifier": "bool",
@@ -145,7 +145,7 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_identifier": "print",
@@ -190,11 +190,11 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_list_splat_pattern": {
-          "$type": 183,
+          "$type": 181,
           "$source": 0,
           "$named": true,
           "$text": "*print",
@@ -212,7 +212,7 @@
         "$nodeHandle": 48,
         "_parameter": [
           {
-            "$type": 183,
+            "$type": 181,
             "$source": 0,
             "$named": true,
             "_identifier": "print",
@@ -260,11 +260,11 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_dictionary_splat_pattern": {
-          "$type": 184,
+          "$type": 182,
           "$source": 0,
           "$named": true,
           "$text": "**print",
@@ -282,7 +282,7 @@
         "$nodeHandle": 50,
         "_parameter": [
           {
-            "$type": 184,
+            "$type": 182,
             "$source": 0,
             "$named": true,
             "_identifier": "print",
@@ -384,11 +384,11 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_default_parameter": {
-          "$type": 181,
+          "$type": 179,
           "$source": 0,
           "$named": true,
           "$text": "(a, b)=(3, 4)",
@@ -406,15 +406,15 @@
         "$nodeHandle": 19,
         "_parameter": [
           {
-            "$type": 181,
+            "$type": 179,
             "$source": 0,
             "$named": true,
             "_name": {
-              "$type": 179,
+              "$type": 177,
               "$source": 0,
               "$named": true,
               "_pattern_group": {
-                "$type": 176,
+                "$type": 174,
                 "$source": 0,
                 "$named": true,
                 "_identifier": [
@@ -446,11 +446,11 @@
               "$nodeHandle": 21
             },
             "_value": {
-              "$type": 217,
+              "$type": 215,
               "$source": 0,
               "$named": true,
               "_element_list": {
-                "$type": 226,
+                "$type": 224,
                 "$source": 0,
                 "$named": true,
                 "_integer": [
@@ -520,11 +520,11 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 217,
+      "$type": 215,
       "$source": 0,
       "$named": true,
       "_element_list": {
-        "$type": 226,
+        "$type": 224,
         "$source": 0,
         "$named": true,
         "_integer": [
@@ -630,7 +630,7 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_identifier": "self",
@@ -671,11 +671,451 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 206,
+      "$type": 204,
       "$source": 0,
       "$named": true,
       "_function": {
-        "$type": 203,
+        "$type": 201,
+        "$source": 0,
+        "$named": true,
+        "_object": "command",
+        "_attribute": "split",
+        "$other": [
+          4
+        ],
+        "$span": {
+          "start": 6,
+          "end": 19
+        },
+        "$nodeHandle": 69
+      },
+      "_arguments": {
+        "$type": 157,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 19,
+          "end": 21
+        },
+        "$nodeHandle": 70
+      },
+      "$span": {
+        "start": 6,
+        "end": 21
+      },
+      "$nodeHandle": 2
+    },
+    "expectedOutput": "command.split ()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "command.split()",
+    "pattern": "call",
+    "edits": [],
+    "expectedSourceOut": "command.split ()",
+    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))",
+    "wrappedText": "_ = command.split ()",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 201,
+      "$source": 0,
+      "$named": true,
+      "_object": "command",
+      "_attribute": "split",
+      "$other": [
+        4
+      ],
+      "$span": {
+        "start": 6,
+        "end": 19
+      },
+      "$nodeHandle": 3
+    },
+    "expectedOutput": "command.split"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "command.split",
+    "pattern": "attribute",
+    "edits": [],
+    "expectedSourceOut": "command.split",
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "[command.split]",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 19,
+        "end": 21
+      },
+      "$nodeHandle": 4
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 204,
+      "$source": 0,
+      "$named": true,
+      "_function": {
+        "$type": 201,
+        "$source": 0,
+        "$named": true,
+        "_object": "command",
+        "_attribute": "split",
+        "$other": [
+          4
+        ],
+        "$span": {
+          "start": 6,
+          "end": 19
+        },
+        "$nodeHandle": 33
+      },
+      "_arguments": {
+        "$type": 157,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 19,
+          "end": 21
+        },
+        "$nodeHandle": 34
+      },
+      "$span": {
+        "start": 6,
+        "end": 21
+      },
+      "$nodeHandle": 2
+    },
+    "expectedOutput": "command.split ()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "command.split()",
+    "pattern": "call",
+    "edits": [],
+    "expectedSourceOut": "command.split ()",
+    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))",
+    "wrappedText": "_ = command.split ()",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 201,
+      "$source": 0,
+      "$named": true,
+      "_object": "command",
+      "_attribute": "split",
+      "$other": [
+        4
+      ],
+      "$span": {
+        "start": 6,
+        "end": 19
+      },
+      "$nodeHandle": 3
+    },
+    "expectedOutput": "command.split"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "command.split",
+    "pattern": "attribute",
+    "edits": [],
+    "expectedSourceOut": "command.split",
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "[command.split]",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 19,
+        "end": 21
+      },
+      "$nodeHandle": 4
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 204,
+      "$source": 0,
+      "$named": true,
+      "_function": {
+        "$type": 201,
+        "$source": 0,
+        "$named": true,
+        "_object": "command",
+        "_attribute": "split",
+        "$other": [
+          4
+        ],
+        "$span": {
+          "start": 6,
+          "end": 19
+        },
+        "$nodeHandle": 63
+      },
+      "_arguments": {
+        "$type": 157,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 19,
+          "end": 21
+        },
+        "$nodeHandle": 64
+      },
+      "$span": {
+        "start": 6,
+        "end": 21
+      },
+      "$nodeHandle": 2
+    },
+    "expectedOutput": "command.split ()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "command.split()",
+    "pattern": "call",
+    "edits": [],
+    "expectedSourceOut": "command.split ()",
+    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))",
+    "wrappedText": "_ = command.split ()",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 201,
+      "$source": 0,
+      "$named": true,
+      "_object": "command",
+      "_attribute": "split",
+      "$other": [
+        4
+      ],
+      "$span": {
+        "start": 6,
+        "end": 19
+      },
+      "$nodeHandle": 3
+    },
+    "expectedOutput": "command.split"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "command.split",
+    "pattern": "attribute",
+    "edits": [],
+    "expectedSourceOut": "command.split",
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "[command.split]",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 19,
+        "end": 21
+      },
+      "$nodeHandle": 4
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 204,
+      "$source": 0,
+      "$named": true,
+      "_function": {
+        "$type": 201,
+        "$source": 0,
+        "$named": true,
+        "_object": "command",
+        "_attribute": "split",
+        "$other": [
+          4
+        ],
+        "$span": {
+          "start": 6,
+          "end": 19
+        },
+        "$nodeHandle": 83
+      },
+      "_arguments": {
+        "$type": 157,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 19,
+          "end": 21
+        },
+        "$nodeHandle": 84
+      },
+      "$span": {
+        "start": 6,
+        "end": 21
+      },
+      "$nodeHandle": 2
+    },
+    "expectedOutput": "command.split ()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "command.split()",
+    "pattern": "call",
+    "edits": [],
+    "expectedSourceOut": "command.split ()",
+    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))",
+    "wrappedText": "_ = command.split ()",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 201,
+      "$source": 0,
+      "$named": true,
+      "_object": "command",
+      "_attribute": "split",
+      "$other": [
+        4
+      ],
+      "$span": {
+        "start": 6,
+        "end": 19
+      },
+      "$nodeHandle": 3
+    },
+    "expectedOutput": "command.split"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "command.split",
+    "pattern": "attribute",
+    "edits": [],
+    "expectedSourceOut": "command.split",
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "[command.split]",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 19,
+        "end": 21
+      },
+      "$nodeHandle": 4
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(argument_list)",
+    "wrappedText": "_f()",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 204,
+      "$source": 0,
+      "$named": true,
+      "_function": {
+        "$type": 201,
         "$source": 0,
         "$named": true,
         "_object": "command",
@@ -723,7 +1163,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 203,
+      "$type": 201,
       "$source": 0,
       "$named": true,
       "_object": "command",
@@ -776,838 +1216,6 @@
     "expectedReparseTree": "(argument_list)",
     "wrappedText": "_f()",
     "wrappedOffset": 2
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 180,
-      "$source": 0,
-      "$named": true,
-      "$text": "[\"quit\"]",
-      "$span": {
-        "start": 32,
-        "end": 40
-      },
-      "$nodeHandle": 11,
-      "$childIndex": 0
-    },
-    "expectedOutput": "[\"quit\"]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "[\"quit\"]",
-    "pattern": "list_pattern",
-    "edits": [],
-    "expectedSourceOut": "[\"quit\"]",
-    "expectedReparseTree": "(list_pattern (list_pattern_group1 (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end)))))",
-    "wrappedText": "match _:\n  case [\"quit\"]: pass",
-    "wrappedOffset": 16
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 180,
-      "$source": 0,
-      "$named": true,
-      "$text": "[\"look\"]",
-      "$span": {
-        "start": 97,
-        "end": 105
-      },
-      "$nodeHandle": 14,
-      "$childIndex": 0
-    },
-    "expectedOutput": "[\"look\"]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "[\"look\"]",
-    "pattern": "list_pattern",
-    "edits": [],
-    "expectedSourceOut": "[\"look\"]",
-    "expectedReparseTree": "(list_pattern (list_pattern_group1 (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end)))))",
-    "wrappedText": "match _:\n  case [\"look\"]: pass",
-    "wrappedOffset": 16
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 180,
-      "$source": 0,
-      "$named": true,
-      "$text": "[\"get\", obj]",
-      "$span": {
-        "start": 148,
-        "end": 160
-      },
-      "$nodeHandle": 17,
-      "$childIndex": 0
-    },
-    "expectedOutput": "[\"get\", obj]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "[\"get\", obj]",
-    "pattern": "list_pattern",
-    "edits": [],
-    "expectedSourceOut": "[\"get\", obj]",
-    "expectedReparseTree": "(list_pattern (list_pattern_group1 (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier)))))",
-    "wrappedText": "match _:\n  case [\"get\", obj]: pass",
-    "wrappedOffset": 16
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 180,
-      "$source": 0,
-      "$named": true,
-      "$text": "[\"go\", direction]",
-      "$span": {
-        "start": 212,
-        "end": 229
-      },
-      "$nodeHandle": 20,
-      "$childIndex": 0
-    },
-    "expectedOutput": "[\"go\", direction]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "[\"go\", direction]",
-    "pattern": "list_pattern",
-    "edits": [],
-    "expectedSourceOut": "[\"go\", direction]",
-    "expectedReparseTree": "(list_pattern (list_pattern_group1 (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier)))))",
-    "wrappedText": "match _:\n  case [\"go\", direction]: pass",
-    "wrappedOffset": 16
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 206,
-      "$source": 0,
-      "$named": true,
-      "_function": {
-        "$type": 203,
-        "$source": 0,
-        "$named": true,
-        "_object": "command",
-        "_attribute": "split",
-        "$other": [
-          4
-        ],
-        "$span": {
-          "start": 6,
-          "end": 19
-        },
-        "$nodeHandle": 25
-      },
-      "_arguments": {
-        "$type": 157,
-        "$source": 0,
-        "$named": true,
-        "$text": "()",
-        "$span": {
-          "start": 19,
-          "end": 21
-        },
-        "$nodeHandle": 26
-      },
-      "$span": {
-        "start": 6,
-        "end": 21
-      },
-      "$nodeHandle": 2
-    },
-    "expectedOutput": "command.split ()"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "command.split()",
-    "pattern": "call",
-    "edits": [],
-    "expectedSourceOut": "command.split ()",
-    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))",
-    "wrappedText": "_ = command.split ()",
-    "wrappedOffset": 4
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 203,
-      "$source": 0,
-      "$named": true,
-      "_object": "command",
-      "_attribute": "split",
-      "$other": [
-        4
-      ],
-      "$span": {
-        "start": 6,
-        "end": 19
-      },
-      "$nodeHandle": 3
-    },
-    "expectedOutput": "command.split"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "command.split",
-    "pattern": "attribute",
-    "edits": [],
-    "expectedSourceOut": "command.split",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
-    "wrappedText": "[command.split]",
-    "wrappedOffset": 1
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 157,
-      "$source": 0,
-      "$named": true,
-      "$text": "()",
-      "$span": {
-        "start": 19,
-        "end": 21
-      },
-      "$nodeHandle": 4
-    },
-    "expectedOutput": "()"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "()",
-    "pattern": "argument_list",
-    "edits": [],
-    "expectedSourceOut": "()",
-    "expectedReparseTree": "(argument_list)",
-    "wrappedText": "_f()",
-    "wrappedOffset": 2
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 180,
-      "$source": 0,
-      "$named": true,
-      "$text": "[\"drop\", *objects]",
-      "$span": {
-        "start": 32,
-        "end": 50
-      },
-      "$nodeHandle": 8,
-      "$childIndex": 0
-    },
-    "expectedOutput": "[\"drop\", *objects]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "[\"drop\", *objects]",
-    "pattern": "list_pattern",
-    "edits": [],
-    "expectedSourceOut": "[\"drop\", *objects]",
-    "expectedReparseTree": "(list_pattern (list_pattern_group1 (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (splat_pattern identifier: (identifier)))))",
-    "wrappedText": "match _:\n  case [\"drop\", *objects]: pass",
-    "wrappedOffset": 16
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 206,
-      "$source": 0,
-      "$named": true,
-      "_function": {
-        "$type": 203,
-        "$source": 0,
-        "$named": true,
-        "_object": "command",
-        "_attribute": "split",
-        "$other": [
-          4
-        ],
-        "$span": {
-          "start": 6,
-          "end": 19
-        },
-        "$nodeHandle": 43
-      },
-      "_arguments": {
-        "$type": 157,
-        "$source": 0,
-        "$named": true,
-        "$text": "()",
-        "$span": {
-          "start": 19,
-          "end": 21
-        },
-        "$nodeHandle": 44
-      },
-      "$span": {
-        "start": 6,
-        "end": 21
-      },
-      "$nodeHandle": 2
-    },
-    "expectedOutput": "command.split ()"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "command.split()",
-    "pattern": "call",
-    "edits": [],
-    "expectedSourceOut": "command.split ()",
-    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))",
-    "wrappedText": "_ = command.split ()",
-    "wrappedOffset": 4
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 203,
-      "$source": 0,
-      "$named": true,
-      "_object": "command",
-      "_attribute": "split",
-      "$other": [
-        4
-      ],
-      "$span": {
-        "start": 6,
-        "end": 19
-      },
-      "$nodeHandle": 3
-    },
-    "expectedOutput": "command.split"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "command.split",
-    "pattern": "attribute",
-    "edits": [],
-    "expectedSourceOut": "command.split",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
-    "wrappedText": "[command.split]",
-    "wrappedOffset": 1
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 157,
-      "$source": 0,
-      "$named": true,
-      "$text": "()",
-      "$span": {
-        "start": 19,
-        "end": 21
-      },
-      "$nodeHandle": 4
-    },
-    "expectedOutput": "()"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "()",
-    "pattern": "argument_list",
-    "edits": [],
-    "expectedSourceOut": "()",
-    "expectedReparseTree": "(argument_list)",
-    "wrappedText": "_f()",
-    "wrappedOffset": 2
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 180,
-      "$source": 0,
-      "$named": true,
-      "$text": "[\"quit\"]",
-      "$span": {
-        "start": 48,
-        "end": 56
-      },
-      "$nodeHandle": 11,
-      "$childIndex": 0
-    },
-    "expectedOutput": "[\"quit\"]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "[\"quit\"]",
-    "pattern": "list_pattern",
-    "edits": [],
-    "expectedSourceOut": "[\"quit\"]",
-    "expectedReparseTree": "(list_pattern (list_pattern_group1 (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end)))))",
-    "wrappedText": "match _:\n  case [\"quit\"]: pass",
-    "wrappedOffset": 16
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 180,
-      "$source": 0,
-      "$named": true,
-      "$text": "[\"go\", direction]",
-      "$span": {
-        "start": 98,
-        "end": 115
-      },
-      "$nodeHandle": 14,
-      "$childIndex": 0
-    },
-    "expectedOutput": "[\"go\", direction]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "[\"go\", direction]",
-    "pattern": "list_pattern",
-    "edits": [],
-    "expectedSourceOut": "[\"go\", direction]",
-    "expectedReparseTree": "(list_pattern (list_pattern_group1 (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier)))))",
-    "wrappedText": "match _:\n  case [\"go\", direction]: pass",
-    "wrappedOffset": 16
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 180,
-      "$source": 0,
-      "$named": true,
-      "$text": "[\"drop\", *objects]",
-      "$span": {
-        "start": 131,
-        "end": 149
-      },
-      "$nodeHandle": 17,
-      "$childIndex": 0
-    },
-    "expectedOutput": "[\"drop\", *objects]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "[\"drop\", *objects]",
-    "pattern": "list_pattern",
-    "edits": [],
-    "expectedSourceOut": "[\"drop\", *objects]",
-    "expectedReparseTree": "(list_pattern (list_pattern_group1 (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (splat_pattern identifier: (identifier)))))",
-    "wrappedText": "match _:\n  case [\"drop\", *objects]: pass",
-    "wrappedOffset": 16
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 206,
-      "$source": 0,
-      "$named": true,
-      "_function": {
-        "$type": 203,
-        "$source": 0,
-        "$named": true,
-        "_object": "command",
-        "_attribute": "split",
-        "$other": [
-          4
-        ],
-        "$span": {
-          "start": 6,
-          "end": 19
-        },
-        "$nodeHandle": 39
-      },
-      "_arguments": {
-        "$type": 157,
-        "$source": 0,
-        "$named": true,
-        "$text": "()",
-        "$span": {
-          "start": 19,
-          "end": 21
-        },
-        "$nodeHandle": 40
-      },
-      "$span": {
-        "start": 6,
-        "end": 21
-      },
-      "$nodeHandle": 2
-    },
-    "expectedOutput": "command.split ()"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "command.split()",
-    "pattern": "call",
-    "edits": [],
-    "expectedSourceOut": "command.split ()",
-    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))",
-    "wrappedText": "_ = command.split ()",
-    "wrappedOffset": 4
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 203,
-      "$source": 0,
-      "$named": true,
-      "_object": "command",
-      "_attribute": "split",
-      "$other": [
-        4
-      ],
-      "$span": {
-        "start": 6,
-        "end": 19
-      },
-      "$nodeHandle": 3
-    },
-    "expectedOutput": "command.split"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "command.split",
-    "pattern": "attribute",
-    "edits": [],
-    "expectedSourceOut": "command.split",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
-    "wrappedText": "[command.split]",
-    "wrappedOffset": 1
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 157,
-      "$source": 0,
-      "$named": true,
-      "$text": "()",
-      "$span": {
-        "start": 19,
-        "end": 21
-      },
-      "$nodeHandle": 4
-    },
-    "expectedOutput": "()"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "()",
-    "pattern": "argument_list",
-    "edits": [],
-    "expectedSourceOut": "()",
-    "expectedReparseTree": "(argument_list)",
-    "wrappedText": "_f()",
-    "wrappedOffset": 2
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 180,
-      "$source": 0,
-      "$named": true,
-      "$text": "[\"north\"]",
-      "$span": {
-        "start": 32,
-        "end": 41
-      },
-      "$nodeHandle": 10,
-      "$childIndex": 0
-    },
-    "expectedOutput": "[\"north\"]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "[\"north\"]",
-    "pattern": "list_pattern",
-    "edits": [],
-    "expectedSourceOut": "[\"north\"]",
-    "expectedReparseTree": "(list_pattern (list_pattern_group1 (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end)))))",
-    "wrappedText": "match _:\n  case [\"north\"]: pass",
-    "wrappedOffset": 16
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 180,
-      "$source": 0,
-      "$named": true,
-      "$text": "[\"go\", \"north\"]",
-      "$span": {
-        "start": 44,
-        "end": 59
-      },
-      "$nodeHandle": 10,
-      "$childIndex": 2
-    },
-    "expectedOutput": "[\"go\", \"north\"]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "[\"go\", \"north\"]",
-    "pattern": "list_pattern",
-    "edits": [],
-    "expectedSourceOut": "[\"go\", \"north\"]",
-    "expectedReparseTree": "(list_pattern (list_pattern_group1 (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end)))))",
-    "wrappedText": "match _:\n  case [\"go\", \"north\"]: pass",
-    "wrappedOffset": 16
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 180,
-      "$source": 0,
-      "$named": true,
-      "$text": "[\"get\", obj]",
-      "$span": {
-        "start": 124,
-        "end": 136
-      },
-      "$nodeHandle": 15,
-      "$childIndex": 0
-    },
-    "expectedOutput": "[\"get\", obj]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "[\"get\", obj]",
-    "pattern": "list_pattern",
-    "edits": [],
-    "expectedSourceOut": "[\"get\", obj]",
-    "expectedReparseTree": "(list_pattern (list_pattern_group1 (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier)))))",
-    "wrappedText": "match _:\n  case [\"get\", obj]: pass",
-    "wrappedOffset": 16
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 180,
-      "$source": 0,
-      "$named": true,
-      "$text": "[\"pick\", \"up\", obj]",
-      "$span": {
-        "start": 139,
-        "end": 158
-      },
-      "$nodeHandle": 15,
-      "$childIndex": 2
-    },
-    "expectedOutput": "[\"pick\", \"up\", obj]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "[\"pick\", \"up\", obj]",
-    "pattern": "list_pattern",
-    "edits": [],
-    "expectedSourceOut": "[\"pick\", \"up\", obj]",
-    "expectedReparseTree": "(list_pattern (list_pattern_group1 (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier)))))",
-    "wrappedText": "match _:\n  case [\"pick\", \"up\", obj]: pass",
-    "wrappedOffset": 16
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 180,
-      "$source": 0,
-      "$named": true,
-      "$text": "[\"pick\", obj, \"up\"]",
-      "$span": {
-        "start": 161,
-        "end": 180
-      },
-      "$nodeHandle": 15,
-      "$childIndex": 4
-    },
-    "expectedOutput": "[\"pick\", obj, \"up\"]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "[\"pick\", obj, \"up\"]",
-    "pattern": "list_pattern",
-    "edits": [],
-    "expectedSourceOut": "[\"pick\", obj, \"up\"]",
-    "expectedReparseTree": "(list_pattern (list_pattern_group1 (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier))) (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end)))))",
-    "wrappedText": "match _:\n  case [\"pick\", obj, \"up\"]: pass",
-    "wrappedOffset": 16
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 206,
-      "$source": 0,
-      "$named": true,
-      "_function": {
-        "$type": 203,
-        "$source": 0,
-        "$named": true,
-        "_object": "command",
-        "_attribute": "split",
-        "$other": [
-          4
-        ],
-        "$span": {
-          "start": 6,
-          "end": 19
-        },
-        "$nodeHandle": 21
-      },
-      "_arguments": {
-        "$type": 157,
-        "$source": 0,
-        "$named": true,
-        "$text": "()",
-        "$span": {
-          "start": 19,
-          "end": 21
-        },
-        "$nodeHandle": 22
-      },
-      "$span": {
-        "start": 6,
-        "end": 21
-      },
-      "$nodeHandle": 2
-    },
-    "expectedOutput": "command.split ()"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "command.split()",
-    "pattern": "call",
-    "edits": [],
-    "expectedSourceOut": "command.split ()",
-    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list))",
-    "wrappedText": "_ = command.split ()",
-    "wrappedOffset": 4
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 203,
-      "$source": 0,
-      "$named": true,
-      "_object": "command",
-      "_attribute": "split",
-      "$other": [
-        4
-      ],
-      "$span": {
-        "start": 6,
-        "end": 19
-      },
-      "$nodeHandle": 3
-    },
-    "expectedOutput": "command.split"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "command.split",
-    "pattern": "attribute",
-    "edits": [],
-    "expectedSourceOut": "command.split",
-    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
-    "wrappedText": "[command.split]",
-    "wrappedOffset": 1
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 157,
-      "$source": 0,
-      "$named": true,
-      "$text": "()",
-      "$span": {
-        "start": 19,
-        "end": 21
-      },
-      "$nodeHandle": 4
-    },
-    "expectedOutput": "()"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "()",
-    "pattern": "argument_list",
-    "edits": [],
-    "expectedSourceOut": "()",
-    "expectedReparseTree": "(argument_list)",
-    "wrappedText": "_f()",
-    "wrappedOffset": 2
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 180,
-      "$source": 0,
-      "$named": true,
-      "$text": "[\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]",
-      "$span": {
-        "start": 32,
-        "end": 90
-      },
-      "$nodeHandle": 8,
-      "$childIndex": 0
-    },
-    "expectedOutput": "[\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "[\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]",
-    "pattern": "list_pattern",
-    "edits": [],
-    "expectedSourceOut": "[\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]",
-    "expectedReparseTree": "(list_pattern (list_pattern_group1 (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (as_pattern (case_pattern (tuple_pattern (list_pattern_group1 (case_pattern (union_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end))))))) (identifier)))))",
-    "wrappedText": "match _:\n  case [\"go\", (\"north\" | \"south\" | \"east\" | \"west\") as direction]: pass",
-    "wrappedOffset": 16
   },
   {
     "kind": "render",
@@ -1617,11 +1225,11 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_dictionary_splat_pattern": {
-          "$type": 184,
+          "$type": 182,
           "$source": 0,
           "$named": true,
           "$text": "**match",
@@ -1639,7 +1247,7 @@
         "$nodeHandle": 11,
         "_parameter": [
           {
-            "$type": 184,
+            "$type": 182,
             "$source": 0,
             "$named": true,
             "_identifier": "match",
@@ -1683,11 +1291,11 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 217,
+      "$type": 215,
       "$source": 0,
       "$named": true,
       "_element_list": {
-        "$type": 226,
+        "$type": 224,
         "$source": 0,
         "$named": true,
         "_integer": [
@@ -1738,7 +1346,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 203,
+      "$type": 201,
       "$source": 0,
       "$named": true,
       "_object": "re",
@@ -1769,7 +1377,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 203,
+      "$type": 201,
       "$source": 0,
       "$named": true,
       "_object": "re",
@@ -1800,11 +1408,11 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 206,
+      "$type": 204,
       "$source": 0,
       "$named": true,
       "_function": {
-        "$type": 203,
+        "$type": 201,
         "$source": 0,
         "$named": true,
         "_object": "event",
@@ -1852,7 +1460,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 203,
+      "$type": 201,
       "$source": 0,
       "$named": true,
       "_object": "event",
@@ -2055,11 +1663,11 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 206,
+      "$type": 204,
       "$source": 0,
       "$named": true,
       "_function": {
-        "$type": 203,
+        "$type": 201,
         "$source": 0,
         "$named": true,
         "_object": "event",
@@ -2107,7 +1715,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 203,
+      "$type": 201,
       "$source": 0,
       "$named": true,
       "_object": "event",
@@ -2194,11 +1802,11 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 206,
+      "$type": 204,
       "$source": 0,
       "$named": true,
       "_function": {
-        "$type": 203,
+        "$type": 201,
         "$source": 0,
         "$named": true,
         "_object": "event",
@@ -2246,7 +1854,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 203,
+      "$type": 201,
       "$source": 0,
       "$named": true,
       "_object": "event",
@@ -2627,16 +2235,16 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 215,
+      "$type": 213,
       "$source": 0,
       "$named": true,
       "_element_list": {
-        "$type": 226,
+        "$type": 224,
         "$source": 0,
         "$named": true,
         "_tuple": [
           {
-            "$type": 217,
+            "$type": 215,
             "$source": 0,
             "$named": true,
             "$text": "(1,)",
@@ -2648,7 +2256,7 @@
             "$childIndex": 0
           },
           {
-            "$type": 217,
+            "$type": 215,
             "$source": 0,
             "$named": true,
             "$text": "(2,)",
@@ -2660,7 +2268,7 @@
             "$childIndex": 2
           },
           {
-            "$type": 217,
+            "$type": 215,
             "$source": 0,
             "$named": true,
             "$text": "(3,)",
@@ -2683,11 +2291,11 @@
         "$nodeHandle": 43,
         "_content": [
           {
-            "$type": 217,
+            "$type": 215,
             "$source": 0,
             "$named": true,
             "_element_list": {
-              "$type": 226,
+              "$type": 224,
               "$source": 0,
               "$named": true,
               "_integer": "1",
@@ -2715,11 +2323,11 @@
             "$nodeHandle": 44
           },
           {
-            "$type": 217,
+            "$type": 215,
             "$source": 0,
             "$named": true,
             "_element_list": {
-              "$type": 226,
+              "$type": 224,
               "$source": 0,
               "$named": true,
               "_integer": "2",
@@ -2747,11 +2355,11 @@
             "$nodeHandle": 45
           },
           {
-            "$type": 217,
+            "$type": 215,
             "$source": 0,
             "$named": true,
             "_element_list": {
-              "$type": 226,
+              "$type": 224,
               "$source": 0,
               "$named": true,
               "_integer": "3",
@@ -2808,7 +2416,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 217,
+      "$type": 215,
       "$source": 0,
       "$named": true,
       "$text": "(1,)",
@@ -2836,7 +2444,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 217,
+      "$type": 215,
       "$source": 0,
       "$named": true,
       "$text": "(2,)",
@@ -2864,7 +2472,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 217,
+      "$type": 215,
       "$source": 0,
       "$named": true,
       "$text": "(3,)",
@@ -2923,7 +2531,7 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_identifier": "d",
@@ -2968,7 +2576,7 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_identifier": [
@@ -3021,11 +2629,11 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_typed_parameter": {
-          "$type": 207,
+          "$type": 205,
           "$source": 0,
           "$named": true,
           "$text": "a: str",
@@ -3043,12 +2651,12 @@
         "$nodeHandle": 117,
         "_parameter": [
           {
-            "$type": 207,
+            "$type": 205,
             "$source": 0,
             "$named": true,
             "_identifier": "a",
             "_type": {
-              "$type": 208,
+              "$type": 206,
               "$source": 0,
               "$named": true,
               "_identifier": "str",
@@ -3103,11 +2711,11 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_typed_parameter": {
-          "$type": 207,
+          "$type": 205,
           "$source": 0,
           "$named": true,
           "$text": "a: b.c",
@@ -3125,16 +2733,16 @@
         "$nodeHandle": 120,
         "_parameter": [
           {
-            "$type": 207,
+            "$type": 205,
             "$source": 0,
             "$named": true,
             "_identifier": "a",
             "_type": {
-              "$type": 208,
+              "$type": 206,
               "$source": 0,
               "$named": true,
               "_attribute": {
-                "$type": 203,
+                "$type": 201,
                 "$source": 0,
                 "$named": true,
                 "$text": "b.c",
@@ -3151,7 +2759,7 @@
               },
               "$nodeHandle": 122,
               "_content": {
-                "$type": 203,
+                "$type": 201,
                 "$source": 0,
                 "$named": true,
                 "_object": "b",
@@ -3210,11 +2818,11 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_typed_parameter": {
-          "$type": 207,
+          "$type": 205,
           "$source": 0,
           "$named": true,
           "$text": "a: Sequence[T]",
@@ -3232,16 +2840,16 @@
         "$nodeHandle": 124,
         "_parameter": [
           {
-            "$type": 207,
+            "$type": 205,
             "$source": 0,
             "$named": true,
             "_identifier": "a",
             "_type": {
-              "$type": 208,
+              "$type": 206,
               "$source": 0,
               "$named": true,
               "_generic_type": {
-                "$type": 210,
+                "$type": 208,
                 "$source": 0,
                 "$named": true,
                 "$text": "Sequence[T]",
@@ -3258,7 +2866,7 @@
               },
               "$nodeHandle": 126,
               "_content": {
-                "$type": 210,
+                "$type": 208,
                 "$source": 0,
                 "$named": true,
                 "_identifier": "Sequence",
@@ -3268,7 +2876,7 @@
                   "$named": true,
                   "_type": [
                     {
-                      "$type": 208,
+                      "$type": 206,
                       "$source": 0,
                       "$named": true,
                       "_identifier": "T",
@@ -3341,11 +2949,11 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_typed_parameter": {
-          "$type": 207,
+          "$type": 205,
           "$source": 0,
           "$named": true,
           "$text": "a: str",
@@ -3363,12 +2971,12 @@
         "$nodeHandle": 134,
         "_parameter": [
           {
-            "$type": 207,
+            "$type": 205,
             "$source": 0,
             "$named": true,
             "_identifier": "a",
             "_type": {
-              "$type": 208,
+              "$type": 206,
               "$source": 0,
               "$named": true,
               "_identifier": "str",
@@ -3419,7 +3027,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 208,
+      "$type": 206,
       "$source": 0,
       "$named": true,
       "_identifier": "str",
@@ -3447,11 +3055,11 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 208,
+      "$type": 206,
       "$source": 0,
       "$named": true,
       "_attribute": {
-        "$type": 203,
+        "$type": 201,
         "$source": 0,
         "$named": true,
         "$text": "b.c",
@@ -3468,7 +3076,7 @@
       },
       "$nodeHandle": 26,
       "_content": {
-        "$type": 203,
+        "$type": 201,
         "$source": 0,
         "$named": true,
         "_object": "b",
@@ -3500,11 +3108,11 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 208,
+      "$type": 206,
       "$source": 0,
       "$named": true,
       "_generic_type": {
-        "$type": 210,
+        "$type": 208,
         "$source": 0,
         "$named": true,
         "$text": "Sequence[T]",
@@ -3521,7 +3129,7 @@
       },
       "$nodeHandle": 32,
       "_content": {
-        "$type": 210,
+        "$type": 208,
         "$source": 0,
         "$named": true,
         "_identifier": "Sequence",
@@ -3531,7 +3139,7 @@
           "$named": true,
           "_type": [
             {
-              "$type": 208,
+              "$type": 206,
               "$source": 0,
               "$named": true,
               "_identifier": "T",
@@ -3577,7 +3185,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 208,
+      "$type": 206,
       "$source": 0,
       "$named": true,
       "_identifier": "T",
@@ -3605,7 +3213,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 208,
+      "$type": 206,
       "$source": 0,
       "$named": true,
       "_identifier": "T",
@@ -3633,7 +3241,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 208,
+      "$type": 206,
       "$source": 0,
       "$named": true,
       "_identifier": "str",
@@ -3661,7 +3269,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 208,
+      "$type": 206,
       "$source": 0,
       "$named": true,
       "_none": "None",
@@ -3689,7 +3297,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 208,
+      "$type": 206,
       "$source": 0,
       "$named": true,
       "_identifier": "str",
@@ -3717,7 +3325,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 208,
+      "$type": 206,
       "$source": 0,
       "$named": true,
       "_none": "None",
@@ -3749,11 +3357,11 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_tuple_pattern": {
-          "$type": 179,
+          "$type": 177,
           "$source": 0,
           "$named": true,
           "$text": "(a,b)",
@@ -3771,11 +3379,11 @@
         "$nodeHandle": 79,
         "_parameter": [
           {
-            "$type": 179,
+            "$type": 177,
             "$source": 0,
             "$named": true,
             "_pattern_group": {
-              "$type": 176,
+              "$type": 174,
               "$source": 0,
               "$named": true,
               "_identifier": [
@@ -3840,11 +3448,11 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_typed_parameter": {
-          "$type": 207,
+          "$type": 205,
           "$source": 0,
           "$named": true,
           "$text": "*list: str",
@@ -3862,11 +3470,11 @@
         "$nodeHandle": 82,
         "_parameter": [
           {
-            "$type": 207,
+            "$type": 205,
             "$source": 0,
             "$named": true,
             "_list_splat_pattern": {
-              "$type": 183,
+              "$type": 181,
               "$source": 0,
               "$named": true,
               "$text": "*list",
@@ -3878,7 +3486,7 @@
               "$childIndex": 0
             },
             "_type": {
-              "$type": 208,
+              "$type": 206,
               "$source": 0,
               "$named": true,
               "_identifier": "str",
@@ -3898,7 +3506,7 @@
             },
             "$nodeHandle": 83,
             "_content": {
-              "$type": 183,
+              "$type": 181,
               "$source": 0,
               "$named": true,
               "_identifier": "list",
@@ -3947,11 +3555,11 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_typed_parameter": {
-          "$type": 207,
+          "$type": 205,
           "$source": 0,
           "$named": true,
           "$text": "**list: str",
@@ -3969,11 +3577,11 @@
         "$nodeHandle": 86,
         "_parameter": [
           {
-            "$type": 207,
+            "$type": 205,
             "$source": 0,
             "$named": true,
             "_dictionary_splat_pattern": {
-              "$type": 184,
+              "$type": 182,
               "$source": 0,
               "$named": true,
               "$text": "**list",
@@ -3985,7 +3593,7 @@
               "$childIndex": 0
             },
             "_type": {
-              "$type": 208,
+              "$type": 206,
               "$source": 0,
               "$named": true,
               "_identifier": "str",
@@ -4005,7 +3613,7 @@
             },
             "$nodeHandle": 87,
             "_content": {
-              "$type": 184,
+              "$type": 182,
               "$source": 0,
               "$named": true,
               "_identifier": "list",
@@ -4081,11 +3689,11 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_list_splat_pattern": {
-          "$type": 183,
+          "$type": 181,
           "$source": 0,
           "$named": true,
           "$text": "*a",
@@ -4103,7 +3711,7 @@
         "$nodeHandle": 95,
         "_parameter": [
           {
-            "$type": 183,
+            "$type": 181,
             "$source": 0,
             "$named": true,
             "_identifier": "a",
@@ -4174,7 +3782,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 208,
+      "$type": 206,
       "$source": 0,
       "$named": true,
       "_identifier": "str",
@@ -4202,7 +3810,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 208,
+      "$type": 206,
       "$source": 0,
       "$named": true,
       "_identifier": "str",
@@ -4234,7 +3842,7 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_identifier": [
@@ -4282,7 +3890,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 206,
+      "$type": 204,
       "$source": 0,
       "$named": true,
       "_function": "f",
@@ -4351,7 +3959,7 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_identifier": "self",
@@ -4396,7 +4004,7 @@
       "$source": 0,
       "$named": true,
       "_parameter_list": {
-        "$type": 175,
+        "$type": 173,
         "$source": 0,
         "$named": true,
         "_identifier": "self",
@@ -4468,7 +4076,7 @@
       "$source": 0,
       "$named": true,
       "_arguments": {
-        "$type": 240,
+        "$type": 238,
         "$source": 0,
         "$named": true,
         "_identifier": "method1",
@@ -4513,11 +4121,11 @@
       "$source": 0,
       "$named": true,
       "_arguments": {
-        "$type": 240,
+        "$type": 238,
         "$source": 0,
         "$named": true,
         "_subscript": {
-          "$type": 204,
+          "$type": 202,
           "$source": 0,
           "$named": true,
           "$text": "Sequence[T, U]",
@@ -4535,7 +4143,7 @@
         "$nodeHandle": 68,
         "_content": [
           {
-            "$type": 204,
+            "$type": 202,
             "$source": 0,
             "$named": true,
             "_value": "Sequence",
@@ -4588,7 +4196,7 @@
       "$source": 0,
       "$named": true,
       "_arguments": {
-        "$type": 240,
+        "$type": 238,
         "$source": 0,
         "$named": true,
         "_identifier": [
@@ -4663,7 +4271,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 203,
+      "$type": 201,
       "$source": 0,
       "$named": true,
       "_object": "a",
@@ -4694,15 +4302,15 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 203,
+      "$type": 201,
       "$source": 0,
       "$named": true,
       "_object": {
-        "$type": 203,
+        "$type": 201,
         "$source": 0,
         "$named": true,
         "_object": {
-          "$type": 204,
+          "$type": 202,
           "$source": 0,
           "$named": true,
           "_value": "e",
@@ -4756,11 +4364,11 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 203,
+      "$type": 201,
       "$source": 0,
       "$named": true,
       "_object": {
-        "$type": 204,
+        "$type": 202,
         "$source": 0,
         "$named": true,
         "_value": "e",
@@ -4804,15 +4412,15 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 203,
+      "$type": 201,
       "$source": 0,
       "$named": true,
       "_object": {
-        "$type": 203,
+        "$type": 201,
         "$source": 0,
         "$named": true,
         "_object": {
-          "$type": 204,
+          "$type": 202,
           "$source": 0,
           "$named": true,
           "_value": "buttons",
@@ -4866,11 +4474,11 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 203,
+      "$type": 201,
       "$source": 0,
       "$named": true,
       "_object": {
-        "$type": 204,
+        "$type": 202,
         "$source": 0,
         "$named": true,
         "_value": "buttons",
@@ -4914,7 +4522,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 206,
+      "$type": 204,
       "$source": 0,
       "$named": true,
       "_function": "d",
@@ -4923,7 +4531,7 @@
         "$source": 0,
         "$named": true,
         "_arguments": {
-          "$type": 240,
+          "$type": 238,
           "$source": 0,
           "$named": true,
           "_integer": "1",
@@ -4970,7 +4578,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 206,
+      "$type": 204,
       "$source": 0,
       "$named": true,
       "_function": "f",
@@ -5012,7 +4620,7 @@
       "$source": 0,
       "$named": true,
       "_arguments": {
-        "$type": 240,
+        "$type": 238,
         "$source": 0,
         "$named": true,
         "_integer": "1",
@@ -5080,7 +4688,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 204,
+      "$type": 202,
       "$source": 0,
       "$named": true,
       "_value": "e",
@@ -5114,7 +4722,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 204,
+      "$type": 202,
       "$source": 0,
       "$named": true,
       "_value": "buttons",
@@ -5283,7 +4891,7 @@
     "kind": "render",
     "grammar": "python",
     "input": {
-      "$type": 208,
+      "$type": 206,
       "$source": 0,
       "$named": true,
       "_identifier": "T",

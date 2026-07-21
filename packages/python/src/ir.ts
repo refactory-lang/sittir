@@ -85,6 +85,11 @@ export const simplePattern = {
 	class: _attach(FR.coerceToClassPattern, { from: FR.coerceToClassPattern, strict: F.buildClassPattern }),
 	splat: _attach(FR.coerceToSplatPattern, { from: FR.coerceToSplatPattern, strict: F.buildSplatPattern }),
 	union: _attach(FR.coerceToUnionPattern, { from: FR.coerceToUnionPattern, strict: F.buildUnionPattern }),
+	caseList: _attach(FR.coerceToCaseListPattern, { from: FR.coerceToCaseListPattern, strict: F.buildCaseListPattern }),
+	caseTuple: _attach(FR.coerceToCaseTuplePattern, {
+		from: FR.coerceToCaseTuplePattern,
+		strict: F.buildCaseTuplePattern
+	}),
 	dict: _attach(FR.coerceToDictPattern, { from: FR.coerceToDictPattern, strict: F.buildDictPattern }),
 	string: _attach(FR.coerceToString, { from: FR.coerceToString, strict: F.buildString }),
 	concatenated: _attach(FR.coerceToConcatenatedString, {
@@ -298,7 +303,15 @@ export const ir = {
 	}),
 	call: _attach(FR.coerceToCall, { from: FR.coerceToCall, strict: F.buildCall }),
 	caseClause: _attach(FR.coerceToCaseClause, { from: FR.coerceToCaseClause, strict: F.buildCaseClause }),
+	caseListPattern: _attach(FR.coerceToCaseListPattern, {
+		from: FR.coerceToCaseListPattern,
+		strict: F.buildCaseListPattern
+	}),
 	casePattern: _attach(FR.coerceToCasePattern, { from: FR.coerceToCasePattern, strict: F.buildCasePattern }),
+	caseTuplePattern: _attach(FR.coerceToCaseTuplePattern, {
+		from: FR.coerceToCaseTuplePattern,
+		strict: F.buildCaseTuplePattern
+	}),
 	chevron: _attach(FR.coerceToChevron, { from: FR.coerceToChevron, strict: F.buildChevron }),
 	classDefinition: _attach(FR.coerceToClassDefinition, {
 		from: FR.coerceToClassDefinition,
@@ -562,6 +575,11 @@ export const ir = {
 	binary: _attach(FR.coerceToBinaryOperator, { from: FR.coerceToBinaryOperator, strict: F.buildBinaryOperator }),
 	boolean: _attach(FR.coerceToBooleanOperator, { from: FR.coerceToBooleanOperator, strict: F.buildBooleanOperator }),
 	break: F.buildBreakStatement,
+	caseList: _attach(FR.coerceToCaseListPattern, { from: FR.coerceToCaseListPattern, strict: F.buildCaseListPattern }),
+	caseTuple: _attach(FR.coerceToCaseTuplePattern, {
+		from: FR.coerceToCaseTuplePattern,
+		strict: F.buildCaseTuplePattern
+	}),
 	class: _attach(FR.coerceToClassDefinition, { from: FR.coerceToClassDefinition, strict: F.buildClassDefinition }),
 	comparison: _attach(FR.coerceToComparisonOperator, {
 		from: FR.coerceToComparisonOperator,
