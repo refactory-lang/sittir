@@ -342,25 +342,21 @@ export function buildClassHeritageExtendsClause(config: T.ClassHeritageExtendsCl
 }
 
 export function build_EnumBodyGroup1(config: Partial<T._EnumBodyGroup1.Config> = {}) {
-	const _name = config.name ?? [];
-	const _enum_assignment = config.enumAssignment ?? [];
+	const _content = config.content ?? [];
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId._EnumBodyGroup1 as const,
 				$source: 2 as const,
 				$named: true as const,
-				_name,
-				_enum_assignment,
+				_content,
 				$with: {
-					names: (...values: T.PropertyName[]) => build_EnumBodyGroup1({ ...config, name: values }),
-					enumAssignments: (...values: T.EnumAssignment[]) =>
-						build_EnumBodyGroup1({ ...config, enumAssignment: values })
+					contents: (...values: (T.EnumAssignment | T.PropertyName)[]) =>
+						build_EnumBodyGroup1({ ...config, content: values })
 				}
 			},
 			{
-				names: () => _name,
-				enumAssignments: () => _enum_assignment
+				contents: () => _content
 			}
 		),
 		methodsEngine
@@ -417,10 +413,9 @@ export function buildExportStatementDefault(child: T.ExportStatementDefaultFromA
 	);
 }
 
-export function buildExportStatementDefaultDeclArm(config: Partial<T.ExportStatementDefaultDeclArm.Config> = {}) {
+export function buildExportStatementDefaultDeclArm(config: T.ExportStatementDefaultDeclArm.Config) {
 	const _decorator = config.decorator ?? [];
-	const _declaration = config.declaration;
-	const _export_statement_default_decl_arm_default_kw = config.exportStatementDefaultDeclArmDefaultKw;
+	const _content = config.content;
 	return withMethods(
 		withAccessors(
 			{
@@ -428,52 +423,39 @@ export function buildExportStatementDefaultDeclArm(config: Partial<T.ExportState
 				$source: 2 as const,
 				$named: true as const,
 				_decorator,
-				_declaration,
-				_export_statement_default_decl_arm_default_kw,
+				_content,
 				$with: {
 					decorators: (...values: T.Decorator[]) =>
 						buildExportStatementDefaultDeclArm({ ...config, decorator: values }),
-					declaration: (value?: T.Declaration) => buildExportStatementDefaultDeclArm({ ...config, declaration: value }),
-					exportStatementDefaultDeclArmDefaultKw: (value?: T.ExportStatementDefaultDeclArmDefaultKw) =>
-						buildExportStatementDefaultDeclArm({ ...config, exportStatementDefaultDeclArmDefaultKw: value })
+					content: (value: T.ExportStatementDefaultDeclArmDefaultKw | T.Declaration) =>
+						buildExportStatementDefaultDeclArm({ ...config, content: value })
 				}
 			},
 			{
 				decorators: () => _decorator,
-				declaration: () => _declaration,
-				exportStatementDefaultDeclArmDefaultKw: () => _export_statement_default_decl_arm_default_kw
+				content: () => _content
 			}
 		),
 		methodsEngine
 	);
 }
 
-export function buildExportStatementDefaultDeclArmDefaultKw(
-	config: Partial<T.ExportStatementDefaultDeclArmDefaultKw.Config> = {}
-) {
-	const _declaration = config.declaration;
-	const _export_statement_default_decl_arm_default_kw_value = config.exportStatementDefaultDeclArmDefaultKwValue;
+export function buildExportStatementDefaultDeclArmDefaultKw(config: T.ExportStatementDefaultDeclArmDefaultKw.Config) {
+	const _content = config.content;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.ExportStatementDefaultDeclArmDefaultKw as const,
 				$source: 2 as const,
 				$named: true as const,
-				_declaration,
-				_export_statement_default_decl_arm_default_kw_value,
+				_content,
 				$with: {
-					declaration: (value?: T.Declaration) =>
-						buildExportStatementDefaultDeclArmDefaultKw({ ...config, declaration: value }),
-					exportStatementDefaultDeclArmDefaultKwValue: (value?: T.ExportStatementDefaultDeclArmDefaultKwValue) =>
-						buildExportStatementDefaultDeclArmDefaultKw({
-							...config,
-							exportStatementDefaultDeclArmDefaultKwValue: value
-						})
+					content: (value: T.ExportStatementDefaultDeclArmDefaultKwValue | T.Declaration) =>
+						buildExportStatementDefaultDeclArmDefaultKw({ ...config, content: value })
 				}
 			},
 			{
-				declaration: () => _declaration,
-				exportStatementDefaultDeclArmDefaultKwValue: () => _export_statement_default_decl_arm_default_kw_value
+				content: () => _content
 			}
 		),
 		methodsEngine
@@ -6384,7 +6366,7 @@ export function buildEnumBodyGroup1(
 				}
 			},
 			{
-				content: () => _content
+				contents: () => _content
 			}
 		),
 		methodsEngine

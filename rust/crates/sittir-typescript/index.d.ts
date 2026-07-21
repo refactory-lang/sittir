@@ -725,8 +725,7 @@ export interface EnumBodyGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name?: Array<PropertyNameTransport>
-  _enum_assignment?: Array<EnumAssignmentTransport>
+  _content?: Array<_EnumBodyGroup1ContentTransportSlot>
 }
 
 export interface EnumBodyGroup1Transport {
@@ -737,8 +736,7 @@ export interface EnumBodyGroup1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name?: Array<PropertyNameTransport>
-  _enum_assignment?: Array<EnumAssignmentTransport>
+  _content?: Array<EnumBodyGroup1ContentTransportSlot>
   _trailing_sep?: boolean
 }
 
@@ -751,7 +749,6 @@ export interface EnumBodyTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _enum_body_group1?: EnumBodyGroup1Transport
-  _name?: Array<PropertyNameTransport>
 }
 
 export interface EnumDeclarationTransport {
@@ -834,9 +831,7 @@ export interface ExportStatementDefaultDeclArmDefaultKwTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _declaration?: DeclarationTransport
-  _export_statement_default_decl_arm_default_kw_value?: ExportStatementDefaultDeclArmDefaultKwValueTransport
-  _value?: ExpressionTransport
+  _content: ExportStatementDefaultDeclArmDefaultKwContentTransportSlot
 }
 
 export interface ExportStatementDefaultDeclArmDefaultKwValueTransport {
@@ -860,8 +855,7 @@ export interface ExportStatementDefaultDeclArmTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _decorator?: Array<DecoratorTransport>
-  _declaration?: DeclarationTransport
-  _export_statement_default_decl_arm_default_kw?: ExportStatementDefaultDeclArmDefaultKwTransport
+  _content: ExportStatementDefaultDeclArmContentTransportSlot
 }
 
 export interface ExportStatementDefaultFromArmClauseFromTransport {

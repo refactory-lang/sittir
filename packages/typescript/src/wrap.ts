@@ -1228,44 +1228,69 @@ export function wrapDestructuringPattern(
 	);
 }
 
-export function wrap_EnumBodyGroup1(data: T._EnumBodyGroup1, tree: TreeHandle) {
+export function wrap_EnumBodyGroup1(
+	data: T._EnumBodyGroup1 & {
+		readonly _name?: T.EnumAssignment | T.PropertyName | readonly (T.EnumAssignment | T.PropertyName)[];
+		readonly _enum_assignment?: T.EnumAssignment | T.PropertyName | readonly (T.EnumAssignment | T.PropertyName)[];
+		readonly _identifier?: T.EnumAssignment | T.PropertyName | readonly (T.EnumAssignment | T.PropertyName)[];
+		readonly _reserved_identifier?: T.EnumAssignment | T.PropertyName | readonly (T.EnumAssignment | T.PropertyName)[];
+		readonly _private_property_identifier?:
+			| T.EnumAssignment
+			| T.PropertyName
+			| readonly (T.EnumAssignment | T.PropertyName)[];
+		readonly _string?: T.EnumAssignment | T.PropertyName | readonly (T.EnumAssignment | T.PropertyName)[];
+		readonly _number?: T.EnumAssignment | T.PropertyName | readonly (T.EnumAssignment | T.PropertyName)[];
+		readonly _computed_property_name?:
+			| T.EnumAssignment
+			| T.PropertyName
+			| readonly (T.EnumAssignment | T.PropertyName)[];
+	},
+	tree: TreeHandle
+) {
 	const _node = withMethods(
 		{
 			...data,
 			$type: TSKindId._EnumBodyGroup1 as const,
-			_name: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._name, [
-					'_property_name',
-					'_property_identifier',
-					'identifier',
-					'_reserved_identifier',
-					'private_property_identifier',
-					'string',
-					'number',
-					'computed_property_name'
-				]),
+			_content: normalizeRepeatedWrapSlot(
+				_filterWrapChildrenByKind(
+					data._content !== undefined
+						? _toArr(data._content)
+						: _concatInSourceOrder([
+								data._name,
+								data._enum_assignment,
+								data._identifier,
+								data._reserved_identifier,
+								data._private_property_identifier,
+								data._string,
+								data._number,
+								data._computed_property_name
+							]),
+					[
+						'enum_assignment',
+						'_property_name',
+						'_property_identifier',
+						'identifier',
+						'_reserved_identifier',
+						'private_property_identifier',
+						'string',
+						'number',
+						'computed_property_name'
+					]
+				),
 				false,
-				'name',
-				{ tree, nodeType: data.$type, slotName: 'name', span: (data as _NodeData).$span }
-			),
-			_enum_assignment: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._enum_assignment, ['enum_assignment']),
-				false,
-				'enum_assignment',
-				{ tree, nodeType: data.$type, slotName: 'enum_assignment', span: (data as _NodeData).$span }
+				'content',
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
 
-			names() {
-				return drillInAll<T.PropertyName>(this._name as readonly T.PropertyName[] | undefined, tree);
-			},
-			enumAssignments() {
-				return drillInAll<T.EnumAssignment>(this._enum_assignment as readonly T.EnumAssignment[] | undefined, tree);
+			contents() {
+				return drillInAll<T.EnumAssignment | T.PropertyName>(
+					this._content as readonly (T.EnumAssignment | T.PropertyName)[] | undefined,
+					tree
+				);
 			},
 			$with: {
-				names: (...v: NonNullable<T._EnumBodyGroup1['_name']>[number][]) =>
-					wrap_EnumBodyGroup1({ ...data, _name: v }, tree),
-				enumAssignments: (...v: NonNullable<T._EnumBodyGroup1['_enum_assignment']>[number][]) =>
-					wrap_EnumBodyGroup1({ ...data, _enum_assignment: v }, tree)
+				contents: (...v: NonNullable<T._EnumBodyGroup1['_content']>[number][]) =>
+					wrap_EnumBodyGroup1({ ...data, _content: v }, tree)
 			}
 		},
 		methodsEngine
@@ -1334,7 +1359,13 @@ export function wrapExportStatementDefault(
 	return _node;
 }
 
-export function wrapExportStatementDefaultDeclArm(data: T.ExportStatementDefaultDeclArm, tree: TreeHandle) {
+export function wrapExportStatementDefaultDeclArm(
+	data: T.ExportStatementDefaultDeclArm & {
+		readonly _declaration?: T.ExportStatementDefaultDeclArmDefaultKw | T.Declaration;
+		readonly _export_statement_default_decl_arm_default_kw?: T.ExportStatementDefaultDeclArmDefaultKw | T.Declaration;
+	},
+	tree: TreeHandle
+) {
 	const _node = withMethods(
 		{
 			...data,
@@ -1345,34 +1376,20 @@ export function wrapExportStatementDefaultDeclArm(data: T.ExportStatementDefault
 				slotName: 'decorator',
 				span: (data as _NodeData).$span
 			}),
-			_declaration: normalizeSingularWrapSlot(data._declaration, 'declaration', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'declaration',
-				span: (data as _NodeData).$span
-			}),
-			_export_statement_default_decl_arm_default_kw: normalizeSingularWrapSlot(
-				data._export_statement_default_decl_arm_default_kw,
-				'export_statement_default_decl_arm_default_kw',
-				false,
+			_content: normalizeSingularWrapSlot(
+				data._content ?? data._declaration ?? data._export_statement_default_decl_arm_default_kw,
+				'content',
+				true,
 				data.$type,
-				{
-					tree,
-					nodeType: data.$type,
-					slotName: 'export_statement_default_decl_arm_default_kw',
-					span: (data as _NodeData).$span
-				}
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
 
 			decorators() {
 				return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree);
 			},
-			declaration() {
-				return drillIn<T.Declaration | undefined>(this._declaration, tree);
-			},
-			exportStatementDefaultDeclArmDefaultKw() {
-				return drillAs<T.ExportStatementDefaultDeclArmDefaultKw | undefined>(
-					this._export_statement_default_decl_arm_default_kw,
+			content() {
+				return drillAs<T.ExportStatementDefaultDeclArmDefaultKw | T.Declaration>(
+					this._content,
 					tree,
 					'export_statement_default_decl_arm_default_kw',
 					'_export_statement_default_decl_arm_default_kw'
@@ -1381,11 +1398,8 @@ export function wrapExportStatementDefaultDeclArm(data: T.ExportStatementDefault
 			$with: {
 				decorators: (...v: NonNullable<T.ExportStatementDefaultDeclArm['_decorator']>[number][]) =>
 					wrapExportStatementDefaultDeclArm({ ...data, _decorator: v }, tree),
-				declaration: (v: NonNullable<T.ExportStatementDefaultDeclArm['_declaration']>) =>
-					wrapExportStatementDefaultDeclArm({ ...data, _declaration: v }, tree),
-				exportStatementDefaultDeclArmDefaultKw: (
-					v: NonNullable<T.ExportStatementDefaultDeclArm['_export_statement_default_decl_arm_default_kw']>
-				) => wrapExportStatementDefaultDeclArm({ ...data, _export_statement_default_decl_arm_default_kw: v }, tree)
+				content: (v: NonNullable<T.ExportStatementDefaultDeclArm['_content']>) =>
+					wrapExportStatementDefaultDeclArm({ ...data, _content: v }, tree)
 			}
 		},
 		methodsEngine
@@ -1394,55 +1408,37 @@ export function wrapExportStatementDefaultDeclArm(data: T.ExportStatementDefault
 }
 
 export function wrapExportStatementDefaultDeclArmDefaultKw(
-	data: T.ExportStatementDefaultDeclArmDefaultKw,
+	data: T.ExportStatementDefaultDeclArmDefaultKw & {
+		readonly _declaration?: T.ExportStatementDefaultDeclArmDefaultKwValue | T.Declaration;
+		readonly _export_statement_default_decl_arm_default_kw_value?:
+			| T.ExportStatementDefaultDeclArmDefaultKwValue
+			| T.Declaration;
+	},
 	tree: TreeHandle
 ) {
 	const _node = withMethods(
 		{
 			...data,
 			$type: TSKindId.ExportStatementDefaultDeclArmDefaultKw as const,
-			_declaration: normalizeSingularWrapSlot(data._declaration, 'declaration', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'declaration',
-				span: (data as _NodeData).$span
-			}),
-			_export_statement_default_decl_arm_default_kw_value: normalizeSingularWrapSlot(
-				data._export_statement_default_decl_arm_default_kw_value,
-				'export_statement_default_decl_arm_default_kw_value',
-				false,
+			_content: normalizeSingularWrapSlot(
+				data._content ?? data._declaration ?? data._export_statement_default_decl_arm_default_kw_value,
+				'content',
+				true,
 				data.$type,
-				{
-					tree,
-					nodeType: data.$type,
-					slotName: 'export_statement_default_decl_arm_default_kw_value',
-					span: (data as _NodeData).$span
-				}
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 			),
 
-			declaration() {
-				return drillIn<T.Declaration | undefined>(this._declaration, tree);
-			},
-			exportStatementDefaultDeclArmDefaultKwValue() {
-				return drillAs<T.ExportStatementDefaultDeclArmDefaultKwValue | undefined>(
-					this._export_statement_default_decl_arm_default_kw_value,
+			content() {
+				return drillAs<T.ExportStatementDefaultDeclArmDefaultKwValue | T.Declaration>(
+					this._content,
 					tree,
 					'export_statement_default_decl_arm_default_kw_value',
 					'_export_statement_default_decl_arm_default_kw_value'
 				);
 			},
 			$with: {
-				declaration: (v: NonNullable<T.ExportStatementDefaultDeclArmDefaultKw['_declaration']>) =>
-					wrapExportStatementDefaultDeclArmDefaultKw({ ...data, _declaration: v }, tree),
-				exportStatementDefaultDeclArmDefaultKwValue: (
-					v: NonNullable<
-						T.ExportStatementDefaultDeclArmDefaultKw['_export_statement_default_decl_arm_default_kw_value']
-					>
-				) =>
-					wrapExportStatementDefaultDeclArmDefaultKw(
-						{ ...data, _export_statement_default_decl_arm_default_kw_value: v },
-						tree
-					)
+				content: (v: NonNullable<T.ExportStatementDefaultDeclArmDefaultKw['_content']>) =>
+					wrapExportStatementDefaultDeclArmDefaultKw({ ...data, _content: v }, tree)
 			}
 		},
 		methodsEngine
@@ -11462,21 +11458,22 @@ export function wrapCatchClauseGroup1(data: T.CatchClauseGroup1, tree: TreeHandl
 
 export function wrapEnumBodyGroup1(
 	data: T.EnumBodyGroup1 & {
-		readonly _identifier?: T.PropertyName;
-		readonly _reserved_identifier?: T.PropertyName;
-		readonly _private_property_identifier?: T.PropertyName;
-		readonly _string?: T.PropertyName;
-		readonly _number?: T.PropertyName;
-		readonly _computed_property_name?: T.PropertyName;
+		readonly _identifier?: T.EnumAssignment | T.PropertyName;
+		readonly _reserved_identifier?: T.EnumAssignment | T.PropertyName;
+		readonly _private_property_identifier?: T.EnumAssignment | T.PropertyName;
+		readonly _string?: T.EnumAssignment | T.PropertyName;
+		readonly _number?: T.EnumAssignment | T.PropertyName;
+		readonly _computed_property_name?: T.EnumAssignment | T.PropertyName;
+		readonly _enum_assignment?: T.EnumAssignment | T.PropertyName;
 		readonly $other?: _NodeData['$other'];
 		readonly $span?: { start: number; end: number };
 	},
 	tree: TreeHandle
 ) {
-	const _content = normalizeRepeatedWrapSlot<unknown>(
-		data._name !== undefined
-			? _toArr(data._name)
-			: _concatInSourceOrder<unknown>([
+	const _content = normalizeRepeatedWrapSlot(
+		data._content !== undefined
+			? _toArr(data._content)
+			: _concatInSourceOrder([
 					data._identifier,
 					data._reserved_identifier,
 					data._private_property_identifier,
@@ -11486,40 +11483,20 @@ export function wrapEnumBodyGroup1(
 					data._enum_assignment
 				]),
 		true,
-		'name',
-		{ tree, nodeType: data.$type, slotName: 'name', span: (data as _NodeData).$span }
+		'content',
+		{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 	);
 	return withMethods(
 		{
 			...data,
-			_name: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._name, [
-					'_property_name',
-					'_property_identifier',
-					'identifier',
-					'_reserved_identifier',
-					'private_property_identifier',
-					'string',
-					'number',
-					'computed_property_name'
-				]),
-				false,
-				'name',
-				{ tree, nodeType: data.$type, slotName: 'name', span: (data as _NodeData).$span }
-			),
-			_enum_assignment: normalizeRepeatedWrapSlot(
-				_filterWrapChildrenByKind(data._enum_assignment, ['enum_assignment']),
-				false,
-				'enum_assignment',
-				{ tree, nodeType: data.$type, slotName: 'enum_assignment', span: (data as _NodeData).$span }
-			),
+			_content: _content,
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
 
-			names() {
-				return drillInAll<T.PropertyName>(this._name as readonly T.PropertyName[] | undefined, tree);
-			},
-			enumAssignments() {
-				return drillInAll<T.EnumAssignment>(this._enum_assignment as readonly T.EnumAssignment[] | undefined, tree);
+			content() {
+				return drillInAll<T.PropertyName | T.EnumAssignment>(
+					this._content as readonly (T.PropertyName | T.EnumAssignment)[] | undefined,
+					tree
+				);
 			},
 			$with: {}
 		},

@@ -46,6 +46,24 @@
   },
   {
     "source": "grammar",
+    "severity": "warning",
+    "code": "union-slot-mixed-row",
+    "grammar": "rust",
+    "backend": "native",
+    "location": "block_comment",
+    "message": "[collect-slots] kind 'block_comment': choice rule:block_comment:members.1/content is a singular mixed row — structured named arm(s) [seq[2](choice doc_comment)] alongside union arm(s) [\"\"]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "union-slot-mixed-row",
+    "grammar": "rust",
+    "backend": "native",
+    "location": "range_pattern",
+    "message": "[collect-slots] kind 'range_pattern': choice rule:range_pattern:root is a singular mixed row — structured named arm(s) [seq[2](choice choice)] alongside union arm(s) [range_pattern_prefix]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot."
+  },
+  {
+    "source": "grammar",
     "severity": "info",
     "code": "typename-collision",
     "grammar": "rust",
@@ -205,6 +223,60 @@
     "backend": "native",
     "location": "for_in_statement",
     "message": "Kind 'for_in_statement' still contains a nested seq that should have been flattened, grouped, or normalized before derive."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "union-slot-routed",
+    "grammar": "typescript",
+    "backend": "native",
+    "location": "_enum_body_group1",
+    "message": "[collect-slots] kind '_enum_body_group1': choice rule:_enum_body_group1:members.0/members.1/content/members.1 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 1 label-routed arm(s) [field(name):_property_name] (PR 1.5)"
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "union-slot-routed",
+    "grammar": "typescript",
+    "backend": "native",
+    "location": "_export_statement_default_decl_arm",
+    "message": "[collect-slots] kind '_export_statement_default_decl_arm': choice rule:_export_statement_default_decl_arm:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_decl_arm_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)"
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "union-slot-routed",
+    "grammar": "typescript",
+    "backend": "native",
+    "location": "_export_statement_default_decl_arm_default_kw",
+    "message": "[collect-slots] kind '_export_statement_default_decl_arm_default_kw': choice rule:_export_statement_default_decl_arm_default_kw:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_decl_arm_default_kw_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)"
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "union-slot-mixed-row",
+    "grammar": "typescript",
+    "backend": "native",
+    "location": "arrow_function",
+    "message": "[collect-slots] kind 'arrow_function': choice rule:arrow_function:root is a singular mixed row — structured named arm(s) [seq[3](type_parameters formal_parameters choice)] alongside union arm(s) [arrow_function_parameter]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "union-slot-unaddressable",
+    "grammar": "typescript",
+    "backend": "native",
+    "location": "public_field_definition",
+    "message": "[collect-slots] kind 'public_field_definition': fieldless structural choice qualifies for union routing but carries no rule id (rebuilt without id preservation) — union slot would be unaddressable at emit; keeping distribution. Fix the rebuild site to preserve ids."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "union-slot-routed",
+    "grammar": "typescript",
+    "backend": "native",
+    "location": "enum_body_group1",
+    "message": "[collect-slots] kind 'enum_body_group1': choice rule:_enum_body_group1:members.0/members.1/content/members.1 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 1 label-routed arm(s) [field(name):_property_name] (PR 1.5)"
   },
   {
     "source": "grammar",
@@ -430,6 +502,51 @@
     "backend": "native",
     "location": "dict_pattern_group1",
     "message": "Kind 'dict_pattern_group1' still contains a nested seq that should have been flattened, grouped, or normalized before derive."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "union-slot-mixed-row",
+    "grammar": "python",
+    "backend": "native",
+    "location": "_dict_pattern_group1",
+    "message": "[collect-slots] kind '_dict_pattern_group1': choice rule:_dict_pattern_group1:members.0/members.1/content/members.1 is a REPEATED (order-lossy) mixed row — structured named arm(s) [seq[2](_simple_pattern case_pattern)] alongside union arm(s) [splat_pattern]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "union-slot-nondegenerate-arm",
+    "grammar": "python",
+    "backend": "native",
+    "location": "_suite",
+    "message": "[collect-slots] kind '_suite': choice rule:_suite:root has unnamed-nonterminal arm(s) [simple_statements, newline] but cannot union-route — offending arm(s): structured seq[2](indent block). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "union-slot-nondegenerate-arm",
+    "grammar": "python",
+    "backend": "native",
+    "location": "future_import_statement",
+    "message": "[collect-slots] kind 'future_import_statement': choice rule:future_import_statement:root has unnamed-nonterminal arm(s) [_import_list] but cannot union-route — offending arm(s): structured seq[3](\"(\" _import_list \")\"). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "union-slot-nondegenerate-arm",
+    "grammar": "python",
+    "backend": "native",
+    "location": "yield",
+    "message": "[collect-slots] kind 'yield': choice rule:yield:root has unnamed-nonterminal arm(s) [_expressions] but cannot union-route — offending arm(s): structured seq[2](\"from\" expression). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "union-slot-mixed-row",
+    "grammar": "python",
+    "backend": "native",
+    "location": "dict_pattern_group1",
+    "message": "[collect-slots] kind 'dict_pattern_group1': choice rule:_dict_pattern_group1:members.0/members.1/content/members.1 is a REPEATED (order-lossy) mixed row — structured named arm(s) [seq[2](_simple_pattern case_pattern)] alongside union arm(s) [splat_pattern]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot."
   },
   {
     "source": "grammar",
@@ -2723,16 +2840,6 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "factory-render-parse",
-    "location": "Ambient type alias declarations in namespaces (enum_body_group1)",
-    "message": "No render template for 'undefined' (no <kind>.jinja file and node has named fiel"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "factory-render-parse",
     "location": "Export interfaces in namespaces (ambient_declaration)",
     "message": "kind not found in re-parse (rendered: \"declare \")"
   },
@@ -3165,16 +3272,6 @@
     "stage": "factory-render-parse",
     "location": "Type alias declarations (program)",
     "message": "re-parse error: \"type FileMergeData = {\n  document: Doc,\n  headDocument: Doc,\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "factory-render-parse",
-    "location": "Enum declarations (enum_body_group1)",
-    "message": "No render template for 'undefined' (no <kind>.jinja file and node has named fiel"
   },
   {
     "source": "validator",
@@ -4013,6 +4110,36 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "coverage",
+    "location": "enum_body_group1",
+    "message": "field 'name' declared but not referenced in any template: \"$$$CONTENT\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "coverage-missing-field",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "coverage",
+    "location": "export_statement_default_decl_arm",
+    "message": "field 'declaration' declared but not referenced in any template: \"$$$DECORATOR export $CONTENT\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "coverage-missing-field",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "coverage",
+    "location": "export_statement_default_decl_arm_default_kw",
+    "message": "field 'declaration' declared but not referenced in any template: \"default $CONTENT\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "coverage-missing-field",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "coverage",
     "location": "extends_clause",
     "message": "field 'type_arguments' declared but not referenced in any template: \"extends $$$VALUE\""
   },
@@ -4163,16 +4290,6 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse-ast-mismatch",
-    "location": "Default Tuple Arguments (tuple_pattern)",
-    "message": "tuple_pattern[1].pattern_group: type pattern_group ≠ list_pattern_group1"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
     "location": "Arbitrary indentation between brackets (module)",
     "message": "module[0].function_definition[4].block: type block ≠ newline"
   },
@@ -4185,16 +4302,6 @@
     "stage": "read-render-parse-ast-mismatch",
     "location": "Format strings (module)",
     "message": "module: childCount 13 ≠ 1 [expression_statement,expression_statement,expression_statement,expression_statement,expression_statement,expression_statement,express"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Function definitions (tuple_pattern)",
-    "message": "tuple_pattern[1].pattern_group: type pattern_group ≠ list_pattern_group1"
   },
   {
     "source": "validator",
@@ -4573,8 +4680,28 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse",
+    "location": "lambdas (tuple_pattern)",
+    "message": "kind not found in re-parse (rendered: \"(a, b)\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
     "location": "Tuples with splats (list_splat)",
     "message": "kind not found in re-parse (rendered: \"*bar\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Default Tuple Arguments (tuple_pattern)",
+    "message": "kind not found in re-parse (rendered: \"(a, b)\")"
   },
   {
     "source": "validator",
@@ -4665,6 +4792,16 @@
     "stage": "factory-render-parse",
     "location": "List comprehensions (list_comprehension)",
     "message": "kind not found in re-parse (rendered: \"[a + b  ]\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "List comprehensions (tuple_pattern)",
+    "message": "kind not found in re-parse (rendered: \"(a, b)\")"
   },
   {
     "source": "validator",
@@ -4873,6 +5010,16 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse",
+    "location": "Function definitions (tuple_pattern)",
+    "message": "kind not found in re-parse (rendered: \"(a,b)\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
     "location": "Function definitions (list_splat_pattern)",
     "message": "re-parse error: \"*\""
   },
@@ -4973,28 +5120,8 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
-    "location": "lambdas (tuple_pattern)",
-    "message": "tuple_pattern[1].pattern_group: type pattern_group ≠ list_pattern_group1"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
     "location": "Default Tuple Arguments (function_definition)",
     "message": "function_definition[4].block: type block ≠ simple_statements"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Default Tuple Arguments (tuple_pattern)",
-    "message": "tuple_pattern[1].pattern_group: type pattern_group ≠ list_pattern_group1"
   },
   {
     "source": "validator",
@@ -5033,106 +5160,6 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
-    "location": "List comprehensions (tuple_pattern)",
-    "message": "tuple_pattern[1].pattern_group: type pattern_group ≠ list_pattern_group1"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Matching specific values (list_pattern)",
-    "message": "list_pattern: childCount 3 ≠ 2 [\"[\",list_pattern_group1,\"]\"] vs [\"[\",\"]\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Matching multiple values (list_pattern)",
-    "message": "list_pattern: childCount 3 ≠ 2 [\"[\",list_pattern_group1,\"]\"] vs [\"[\",\"]\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Adding a wild card (list_pattern)",
-    "message": "list_pattern: childCount 3 ≠ 2 [\"[\",list_pattern_group1,\"]\"] vs [\"[\",\"]\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Or patterns (list_pattern)",
-    "message": "list_pattern: childCount 3 ≠ 2 [\"[\",list_pattern_group1,\"]\"] vs [\"[\",\"]\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "As patterns (list_pattern)",
-    "message": "list_pattern: childCount 3 ≠ 2 [\"[\",list_pattern_group1,\"]\"] vs [\"[\",\"]\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "As patterns (tuple_pattern)",
-    "message": "tuple_pattern: childCount 3 ≠ 2 [\"(\",list_pattern_group1,\")\"] vs [\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Matching objects (tuple_pattern)",
-    "message": "tuple_pattern: childCount 3 ≠ 2 [\"(\",list_pattern_group1,\")\"] vs [\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Positional arguments (tuple_pattern)",
-    "message": "tuple_pattern: childCount 3 ≠ 2 [\"(\",list_pattern_group1,\")\"] vs [\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Constants and enums (tuple_pattern)",
-    "message": "tuple_pattern: childCount 3 ≠ 2 [\"(\",list_pattern_group1,\")\"] vs [\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
     "location": "Async Function definitions (function_definition)",
     "message": "function_definition: childCount 6 ≠ 5 [\"async\",\"def\",identifier,parameters,\":\",block] vs [\"def\",identifier,parameters,\":\",simple_statements]"
   },
@@ -5145,16 +5172,6 @@
     "stage": "factory-render-parse-ast-mismatch",
     "location": "Function definitions (function_definition)",
     "message": "function_definition[4].block: type block ≠ simple_statements"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Function definitions (tuple_pattern)",
-    "message": "tuple_pattern[1].pattern_group: type pattern_group ≠ list_pattern_group1"
   },
   {
     "source": "validator",

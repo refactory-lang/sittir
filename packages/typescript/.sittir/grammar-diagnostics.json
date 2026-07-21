@@ -33,29 +33,29 @@
   },
   {
     "scope": "grammar",
-    "code": "union-slot-mixed-row",
+    "code": "union-slot-routed",
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "_enum_body_group1",
-    "message": "[collect-slots] kind '_enum_body_group1': choice rule:_enum_body_group1:members.0/members.1/content/members.1 is a REPEATED (order-lossy) mixed row — named arm(s) [field(name):_property_name] alongside union arm(s) [enum_assignment]. Keeping status quo. END-STATE: named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind '_enum_body_group1': choice rule:_enum_body_group1:members.0/members.1/content/members.1 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 1 label-routed arm(s) [field(name):_property_name] (PR 1.5)",
     "canProceed": true
   },
   {
     "scope": "grammar",
-    "code": "union-slot-mixed-row",
+    "code": "union-slot-routed",
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "_export_statement_default_decl_arm",
-    "message": "[collect-slots] kind '_export_statement_default_decl_arm': choice rule:_export_statement_default_decl_arm:root is a singular mixed row — named arm(s) [field(declaration):declaration] alongside union arm(s) [export_statement_default_decl_arm_default_kw]. Keeping status quo. END-STATE: named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind '_export_statement_default_decl_arm': choice rule:_export_statement_default_decl_arm:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_decl_arm_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
     "canProceed": true
   },
   {
     "scope": "grammar",
-    "code": "union-slot-mixed-row",
+    "code": "union-slot-routed",
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "_export_statement_default_decl_arm_default_kw",
-    "message": "[collect-slots] kind '_export_statement_default_decl_arm_default_kw': choice rule:_export_statement_default_decl_arm_default_kw:root is a singular mixed row — named arm(s) [field(declaration):declaration] alongside union arm(s) [export_statement_default_decl_arm_default_kw_value]. Keeping status quo. END-STATE: named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind '_export_statement_default_decl_arm_default_kw': choice rule:_export_statement_default_decl_arm_default_kw:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_decl_arm_default_kw_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
     "canProceed": true
   },
   {
@@ -64,25 +64,25 @@
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "arrow_function",
-    "message": "[collect-slots] kind 'arrow_function': choice rule:arrow_function:root is a singular mixed row — named arm(s) [seq[3](type_parameters formal_parameters choice)] alongside union arm(s) [arrow_function_parameter]. Keeping status quo. END-STATE: named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind 'arrow_function': choice rule:arrow_function:root is a singular mixed row — structured named arm(s) [seq[3](type_parameters formal_parameters choice)] alongside union arm(s) [arrow_function_parameter]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
     "canProceed": true
   },
   {
     "scope": "grammar",
-    "code": "union-slot-mixed-row",
+    "code": "union-slot-unaddressable",
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "public_field_definition",
-    "message": "[collect-slots] kind 'public_field_definition': choice (no id) is a singular mixed row — named arm(s) [field(accessor_marker):\"accessor\"] alongside union arm(s) [public_field_definition_static_mods, public_field_definition_abstract_first, public_field_definition_readonly_first]. Keeping status quo. END-STATE: named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind 'public_field_definition': fieldless structural choice qualifies for union routing but carries no rule id (rebuilt without id preservation) — union slot would be unaddressable at emit; keeping distribution. Fix the rebuild site to preserve ids.",
     "canProceed": true
   },
   {
     "scope": "grammar",
-    "code": "union-slot-mixed-row",
+    "code": "union-slot-routed",
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "enum_body_group1",
-    "message": "[collect-slots] kind 'enum_body_group1': choice rule:_enum_body_group1:members.0/members.1/content/members.1 is a REPEATED (order-lossy) mixed row — named arm(s) [field(name):_property_name] alongside union arm(s) [enum_assignment]. Keeping status quo. END-STATE: named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind 'enum_body_group1': choice rule:_enum_body_group1:members.0/members.1/content/members.1 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 1 label-routed arm(s) [field(name):_property_name] (PR 1.5)",
     "canProceed": true
   },
   {

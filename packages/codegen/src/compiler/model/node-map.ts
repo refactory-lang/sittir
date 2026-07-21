@@ -387,6 +387,14 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	// Parser kind id of the wire `$type` (`parseKind`'s name). Same stamped-
 	// fact semantics as `storageKindId`.
 	readonly parseKindId?: number;
+	// Field-label routing key (union-slot design §5, PR 1.5): set when this
+	// value came from a DEGENERATE fielded arm of a union-routed choice
+	// (`partitionChoiceArms`'s `degenerateNamedArms`) — tree-sitter labels
+	// this child by FIELD NAME, not by kind, so `parseKind` alone would route
+	// it wrong. Absent for plain union-member (by-kind) values. `parseNames`
+	// projects `parseName ?? parseKind?.name` per value, so the union slot's
+	// routing keys become `fieldLabels ∪ kinds`.
+	readonly parseName?: string;
 	readonly multiplicity: Multiplicity;
 	readonly separator?: string;
 	readonly trailing?: boolean;
@@ -1086,6 +1094,19 @@ export interface DeriveCtx {
 	readonly simplifiedRules?: Record<string, SimplifiedRule>;
 	/** Assembled node table — resolves UnresolvedRef in the parameterless cascade. */
 	readonly nodes?: ReadonlyMap<string, AssembledNodeBase<Rule<'link'>>>;
+	/**
+	 * Union-slot design §5 (PR 1.5): when deriving values for the SANCTIONED
+	 * union-routing choice only (`collect-slots.ts` restricts a choice's
+	 * members to its `unionArms ∪ degenerateNamedArms` and calls `buildSlot`
+	 * with `sanctionedUnion = true`), stamp each degenerate arm's OWN
+	 * `fieldName` onto its derived values as `parseName`. Scoped to this ctx
+	 * flag (rather than firing on any fieldName-carrying CHOICE member) so the
+	 * pre-existing shared-arm-fieldName choice (operator enums — `buildSlot`
+	 * called on the WHOLE original choice, `sanctionedUnion` false) keeps
+	 * deriving `parseNames` from kinds only; only the restricted union-slot
+	 * choice's arms are eligible for label-routing.
+	 */
+	readonly stampArmFieldNamesAsParseName?: boolean;
 }
 
 /** {@link DeriveCtx} with the owning kind bound — per-kind record builders. */
@@ -1437,7 +1458,22 @@ export function deriveValuesForRule(
 					: multiplicity;
 			// Each arm is independent — union all entries. Arms may differ in
 			// their own multiplicity if they wrap repeat/optional differently.
-			return nonBlank.flatMap((m) => deriveValuesForRule(m, ctx, armMult));
+			if (!ctx?.stampArmFieldNamesAsParseName) {
+				return nonBlank.flatMap((m) => deriveValuesForRule(m, ctx, armMult));
+			}
+			// Union-slot design §5 (PR 1.5): this CHOICE is the SANCTIONED
+			// union-routing restriction (collect-slots.ts builds it from
+			// `unionArms ∪ degenerateNamedArms` only) — a member carrying its
+			// OWN `fieldName` directly (post-wrapper-deletion push-down; a
+			// degenerate fielded arm, not a genuine FIELD wrapper) is routed by
+			// FIELD LABEL at read time, not by kind. Stamp `parseName` so
+			// `projectSlotNaming`'s parseNames union in the label alongside the
+			// plain union arms' kinds.
+			return nonBlank.flatMap((m) => {
+				const values = deriveValuesForRule(m, ctx, armMult);
+				const fieldName = (m as { fieldName?: string }).fieldName;
+				return fieldName === undefined ? values : values.map((v) => ({ ...v, parseName: fieldName }));
+			});
 		}
 		case OPTIONAL: {
 			// `optional(repeat1(X, sep))` survives evaluate when the
@@ -1504,9 +1540,14 @@ export function dedupeValues(values: NodeOrTerminal[]): NodeOrTerminal[] {
 	for (const v of values) {
 		const parseKind = v.parseKind?.name ?? '';
 		const nodeName = isNodeRef(v) ? (storageKindOfRef(v.node)) : undefined;
+		// `parseName` (union-slot design §5, PR 1.5) is a SEPARATE routing key
+		// from `parseKind` — two degenerate arms of the same kind but different
+		// field labels are distinct entries (tree-sitter routes them by field,
+		// not by kind), so it must ride in the dedup key too. Always `''` for
+		// every pre-PR-1.5 value, so existing dedup behavior is unchanged.
 		const key = isNodeRef(v)
-			? `node-ref:${nodeName ?? '?'}:${parseKind}:${v.multiplicity}`
-			: `terminal:${v.value ?? ''}:${parseKind}:${v.multiplicity}`;
+			? `node-ref:${nodeName ?? '?'}:${parseKind}:${v.multiplicity}:${v.parseName ?? ''}`
+			: `terminal:${v.value ?? ''}:${parseKind}:${v.multiplicity}:${v.parseName ?? ''}`;
 		if (!seen.has(key)) {
 			seen.add(key);
 			result.push(v);
@@ -2018,6 +2059,50 @@ export function valueParseKindsOf(slot: { values: readonly NodeOrTerminal[] }): 
 }
 
 /**
+ * Per-value routing-name projection for an UNNAMED slot (union-slot design
+ * §5, PR 1.5): prefers the field-label routing key (`parseName`, stamped
+ * only on a union slot's degenerate arms — {@link DeriveCtx.stampArmFieldNamesAsParseName})
+ * over the plain CST kind (`parseKind.name`). The union slot's routing keys
+ * become `fieldLabels ∪ kinds` — for every other slot (no value carries
+ * `parseName`) this is identical to {@link valueParseKindsOf}.
+ */
+function valueParseNamesOf(slot: { values: readonly NodeOrTerminal[] }): readonly string[] {
+	const seen = new Set<string>();
+	const out: string[] = [];
+	for (const value of slot.values) {
+		const name = value.parseName ?? value.parseKind?.name;
+		if (name === undefined || seen.has(name)) continue;
+		seen.add(name);
+		out.push(name);
+	}
+	return out;
+}
+
+/**
+ * Distinct per-value field-LABEL routing keys from a slot's `values[]`
+ * (union-slot design §5, PR 1.5) — the subset of `parseNames` that came from
+ * a degenerate arm's `parseName`, not from a plain CST `parseKind`. For a
+ * label-routed value, `storageName != parseName` by construction (the wire
+ * key IS the tree-sitter field name, e.g. `_declaration`) — a supertype
+ * expansion of the label (treating it as a kind to expand, e.g. `declaration`
+ * as the supertype) would replace the literal wire key with its subtype
+ * kinds and never match. Consumers that expand `parseNames` through the
+ * supertype tree (`wrap.ts`'s `collectConcreteStorageKeys`) must union these
+ * back in UNEXPANDED, as literal keys. Empty for every non-PR-1.5 slot.
+ */
+export function valueParseLabelsOf(slot: { values: readonly NodeOrTerminal[] }): readonly string[] {
+	const seen = new Set<string>();
+	const out: string[] = [];
+	for (const value of slot.values) {
+		const name = value.parseName;
+		if (name === undefined || seen.has(name)) continue;
+		seen.add(name);
+		out.push(name);
+	}
+	return out;
+}
+
+/**
  * Derive the alias-target -> canonical-source map for a slot from per-value
  * `parseKind` metadata.
  */
@@ -2094,7 +2179,7 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 	// slot routes by its field name (`childByFieldName('body')`) — so the field
 	// name IS the parse name. An UNNAMED slot routes by child kind — so the parse
 	// names are the distinct value parse-as (CST / alias-target) kinds.
-	const parseNames = slot.fieldName !== undefined ? [slot.fieldName] : valueParseKindsOf(slot);
+	const parseNames = slot.fieldName !== undefined ? [slot.fieldName] : valueParseNamesOf(slot);
 	// storageName derives from the STORAGE / render-source kind (`value.node` —
 	// how the value is stored and keyed via `drillAs`), NOT `parseKind`. The two
 	// projections are parallel and must NOT cross: storageKind→storageName,

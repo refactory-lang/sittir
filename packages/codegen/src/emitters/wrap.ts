@@ -18,7 +18,12 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledEnum, AssembledNode, AssembledSupertype } from '../compiler/model/node-map.ts';
 import type { AssembledSeparatedList } from '../compiler/model/node-map.ts';
-import { AssembledNonterminal, aliasTargetToSourceMapOf, valueParseKindsOf } from '../compiler/model/node-map.ts';
+import {
+	AssembledNonterminal,
+	aliasTargetToSourceMapOf,
+	valueParseKindsOf,
+	valueParseLabelsOf
+} from '../compiler/model/node-map.ts';
 import type { Rule } from '../types/rule.ts';
 
 type BranchLikeForWrap = Extract<AssembledNode, { modelType: 'branch' }>;
@@ -426,6 +431,16 @@ function resolveSlotAliasRewrite(slot: AssembledNonterminal): readonly [string, 
  * Returns undefined when expansion produces a single key that already
  * matches the slot's nominal `_<slot.name>` — the legacy single-key access
  * is sufficient and no probe shape is needed.
+ *
+ * Union-slot design §5 (PR 1.5): a degenerate arm's value is LABEL-routed
+ * (`parseName`, {@link valueParseLabelsOf}) — for that value, `storageName !=
+ * parseName` by construction, and the wire key IS the literal tree-sitter
+ * field name (`read_node.rs` keys a field-tagged child by field name, not by
+ * kind). Expanding a label through the supertype tree — treating it as a
+ * kind to expand — replaces the literal wire key with subtype kinds that are
+ * never populated for a field-tagged child, so label names are unioned in
+ * UNEXPANDED. Kind-derived names (including any that happen to equal a
+ * label, e.g. `field('declaration', declaration)`) keep expanding as before.
  */
 function collectConcreteStorageKeys(slot: AssembledNonterminal, nodeMap: NodeMap): readonly string[] | undefined {
 	if (!slot.isUnnamed) return undefined;
@@ -437,11 +452,12 @@ function collectConcreteStorageKeys(slot: AssembledNonterminal, nodeMap: NodeMap
 	// instantiation_expression) AND the alias target (real tree-sitter aliases
 	// like decorator, which the parser emits as the target). The old rewrite
 	// REPLACED base with target, mis-routing the validation-only case.
-	const refKinds = [...slot.parseNames];
-	if (refKinds.length === 0) return undefined;
-	const concrete = expandRuntimeDiscriminatorKinds(refKinds, nodeMap);
-	if (concrete.length === 0) return undefined;
-	const storageKeys = [...new Set(concrete.map((k) => `_${k}`))];
+	const labelNames = valueParseLabelsOf(slot);
+	const kindNames = valueParseKindsOf(slot).filter((k) => !labelNames.includes(k));
+	if (labelNames.length === 0 && kindNames.length === 0) return undefined;
+	const concrete = kindNames.length > 0 ? expandRuntimeDiscriminatorKinds(kindNames, nodeMap) : [];
+	if (labelNames.length === 0 && concrete.length === 0) return undefined;
+	const storageKeys = [...new Set([...labelNames, ...concrete].map((k) => `_${k}`))];
 	const legacyKey = `_${slot.name}`;
 	if (storageKeys.length === 1 && storageKeys[0] === legacyKey) {
 		return undefined;

@@ -2155,7 +2155,6 @@ export const enum TSFieldId {
 	FieldConstMarker = 17,
 	FieldConstraint = 18,
 	FieldConstructor = 19,
-	FieldDeclaration = 20,
 	FieldDeclarators = 21,
 	FieldDecorator = 22,
 	FieldElements = 23,
@@ -2236,7 +2235,6 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
 	const_marker: TSFieldId.FieldConstMarker,
 	constraint: TSFieldId.FieldConstraint,
 	constructor: TSFieldId.FieldConstructor,
-	declaration: TSFieldId.FieldDeclaration,
 	declarators: TSFieldId.FieldDeclarators,
 	decorator: TSFieldId.FieldDecorator,
 	elements: TSFieldId.FieldElements,
@@ -2317,7 +2315,6 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
 	[TSFieldId.FieldConstMarker]: 'const_marker',
 	[TSFieldId.FieldConstraint]: 'constraint',
 	[TSFieldId.FieldConstructor]: 'constructor',
-	[TSFieldId.FieldDeclaration]: 'declaration',
 	[TSFieldId.FieldDeclarators]: 'declarators',
 	[TSFieldId.FieldDecorator]: 'decorator',
 	[TSFieldId.FieldElements]: 'elements',
@@ -2403,7 +2400,6 @@ export const TREE_SITTER_FIELD_ID_JSON = [
 	{ name: 'const_marker', id: 17, enumName: 'FieldConstMarker', cName: 'field_const_marker' },
 	{ name: 'constraint', id: 18, enumName: 'FieldConstraint', cName: 'field_constraint' },
 	{ name: 'constructor', id: 19, enumName: 'FieldConstructor', cName: 'field_constructor' },
-	{ name: 'declaration', id: 20, enumName: 'FieldDeclaration', cName: 'field_declaration' },
 	{ name: 'declarators', id: 21, enumName: 'FieldDeclarators', cName: 'field_declarators' },
 	{ name: 'decorator', id: 22, enumName: 'FieldDecorator', cName: 'field_decorator' },
 	{ name: 'elements', id: 23, enumName: 'FieldElements', cName: 'field_elements' },
@@ -2667,10 +2663,7 @@ export const FIELD_MAP: Record<
 		{ name: 'value', required: true, multiple: false }
 	],
 	enum_body: [{ name: 'enumBodyGroup1', required: false, multiple: false }],
-	enum_body_group1: [
-		{ name: 'names', required: false, multiple: true },
-		{ name: 'enumAssignments', required: false, multiple: true }
-	],
+	enum_body_group1: [{ name: 'contents', required: false, multiple: true }],
 	enum_declaration: [
 		{ name: 'constMarker', required: false, multiple: false },
 		{ name: 'name', required: true, multiple: false },

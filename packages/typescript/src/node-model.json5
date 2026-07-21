@@ -163,10 +163,10 @@
       "export_statement_default_from_arm": "_export_statement_default_from_arm",
       "export_statement_default_decl_arm": "_export_statement_default_decl_arm"
     },
-    "_export_statement_default_decl_arm.export_statement_default_decl_arm_default_kw": {
+    "_export_statement_default_decl_arm.content": {
       "export_statement_default_decl_arm_default_kw": "_export_statement_default_decl_arm_default_kw"
     },
-    "_export_statement_default_decl_arm_default_kw.export_statement_default_decl_arm_default_kw_value": {
+    "_export_statement_default_decl_arm_default_kw.content": {
       "export_statement_default_decl_arm_default_kw_value": "_export_statement_default_decl_arm_default_kw_value"
     },
     "_export_statement_default_from_arm.content": {
@@ -588,33 +588,19 @@
         "multiple": true,
         "nonEmpty": false
       },
-      "declaration": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "export_statement_default_decl_arm_default_kw": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
     },
     "_export_statement_default_decl_arm_default_kw": {
-      "declaration": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "export_statement_default_decl_arm_default_kw_value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -4093,14 +4079,7 @@
       }
     },
     "enum_body_group1": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "enum_assignment": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -5449,13 +5428,20 @@
       "name": "_enum_body_group1",
       "fields": [
         {
-          "name": "name",
-          "propertyName": "names",
-          "paramName": "names",
+          "name": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
           "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "enum_assignment",
+              "parseKind": "enum_assignment",
+              "unresolved": true
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -5467,30 +5453,8 @@
           "projection": {
             "typeName": "",
             "kinds": [
+              "enum_assignment",
               "_property_name"
-            ]
-          }
-        },
-        {
-          "name": "enum_assignment",
-          "propertyName": "enumAssignments",
-          "paramName": "enumAssignments",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "enum_assignment",
-              "parseKind": "enum_assignment",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "enum_assignment"
             ]
           }
         }
@@ -5639,16 +5603,23 @@
           }
         },
         {
-          "name": "declaration",
-          "propertyName": "declaration",
-          "paramName": "declaration",
-          "required": false,
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
+              "name": "_export_statement_default_decl_arm_default_kw",
+              "parseKind": "export_statement_default_decl_arm_default_kw",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
               "name": "declaration",
               "parseKind": "declaration",
               "unresolved": true
@@ -5657,30 +5628,8 @@
           "projection": {
             "typeName": "",
             "kinds": [
+              "_export_statement_default_decl_arm_default_kw",
               "declaration"
-            ]
-          }
-        },
-        {
-          "name": "export_statement_default_decl_arm_default_kw",
-          "propertyName": "exportStatementDefaultDeclArmDefaultKw",
-          "paramName": "exportStatementDefaultDeclArmDefaultKw",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_export_statement_default_decl_arm_default_kw",
-              "parseKind": "export_statement_default_decl_arm_default_kw",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_export_statement_default_decl_arm_default_kw"
             ]
           }
         }
@@ -5689,8 +5638,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "decorator",
-        "declaration",
-        "export_statement_default_decl_arm_default_kw"
+        "content"
       ]
     },
     {
@@ -5703,16 +5651,23 @@
       "name": "_export_statement_default_decl_arm_default_kw",
       "fields": [
         {
-          "name": "declaration",
-          "propertyName": "declaration",
-          "paramName": "declaration",
-          "required": false,
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
+              "name": "_export_statement_default_decl_arm_default_kw_value",
+              "parseKind": "export_statement_default_decl_arm_default_kw_value",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
               "name": "declaration",
               "parseKind": "declaration",
               "unresolved": true
@@ -5721,30 +5676,8 @@
           "projection": {
             "typeName": "",
             "kinds": [
+              "_export_statement_default_decl_arm_default_kw_value",
               "declaration"
-            ]
-          }
-        },
-        {
-          "name": "export_statement_default_decl_arm_default_kw_value",
-          "propertyName": "exportStatementDefaultDeclArmDefaultKwValue",
-          "paramName": "exportStatementDefaultDeclArmDefaultKwValue",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_export_statement_default_decl_arm_default_kw_value",
-              "parseKind": "export_statement_default_decl_arm_default_kw_value",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_export_statement_default_decl_arm_default_kw_value"
             ]
           }
         }
@@ -5752,8 +5685,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "declaration",
-        "export_statement_default_decl_arm_default_kw_value"
+        "content"
       ]
     },
     {
@@ -13194,7 +13126,7 @@
         "_property_name",
         "enum_assignment"
       ],
-      "factoryShape": "config"
+      "factoryShape": "spread"
     },
     {
       "kind": "enum_declaration",

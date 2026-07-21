@@ -3235,10 +3235,8 @@ export interface ClassHeritageExtendsClause {
 
 export interface _EnumBodyGroup1 {
 	readonly $type: TSKindId._EnumBodyGroup1;
-	readonly _name?: readonly PropertyName[];
-	readonly _enum_assignment?: readonly EnumAssignment[];
-	names(): readonly PropertyName[];
-	enumAssignments(): readonly EnumAssignment[];
+	readonly _content?: readonly (EnumAssignment | PropertyName)[];
+	contents(): readonly (EnumAssignment | PropertyName)[];
 }
 
 export interface _ExportClauseGroup1 {
@@ -3262,19 +3260,15 @@ export interface ExportStatementDefault {
 export interface ExportStatementDefaultDeclArm {
 	readonly $type: TSKindId.ExportStatementDefaultDeclArm;
 	readonly _decorator?: readonly Decorator[];
-	readonly _declaration?: Declaration;
-	readonly _export_statement_default_decl_arm_default_kw?: ExportStatementDefaultDeclArmDefaultKw;
+	readonly _content: ExportStatementDefaultDeclArmDefaultKw | Declaration;
 	decorators(): readonly Decorator[];
-	declaration(): Declaration | undefined;
-	exportStatementDefaultDeclArmDefaultKw(): ExportStatementDefaultDeclArmDefaultKw | undefined;
+	content(): ExportStatementDefaultDeclArmDefaultKw | Declaration;
 }
 
 export interface ExportStatementDefaultDeclArmDefaultKw {
 	readonly $type: TSKindId.ExportStatementDefaultDeclArmDefaultKw;
-	readonly _declaration?: Declaration;
-	readonly _export_statement_default_decl_arm_default_kw_value?: ExportStatementDefaultDeclArmDefaultKwValue;
-	declaration(): Declaration | undefined;
-	exportStatementDefaultDeclArmDefaultKwValue(): ExportStatementDefaultDeclArmDefaultKwValue | undefined;
+	readonly _content: ExportStatementDefaultDeclArmDefaultKwValue | Declaration;
+	content(): ExportStatementDefaultDeclArmDefaultKwValue | Declaration;
 }
 
 export interface ExportStatementDefaultDeclArmDefaultKwValue {
@@ -5473,10 +5467,8 @@ export interface CatchClauseGroup1 {
 
 export interface EnumBodyGroup1 {
 	readonly $type: 'enum_body_group1';
-	readonly _name?: readonly PropertyName[];
-	readonly _enum_assignment?: readonly EnumAssignment[];
-	names(): readonly PropertyName[];
-	enumAssignments(): readonly EnumAssignment[];
+	readonly _content?: readonly (EnumAssignment | PropertyName)[];
+	contents(): readonly (EnumAssignment | PropertyName)[];
 }
 
 export interface ExportClauseGroup1 {

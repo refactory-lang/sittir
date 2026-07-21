@@ -1,6 +1,6 @@
 # Union-slot choices — explicit routing predicate, `'content'` storage, VariantRule retirement
 
-**Status:** 📋 DESIGN — approved direction (user, 2026-07-21); implementation not started.
+**Status:** 🚧 IN PROGRESS — PR 1 (pure-union routing + census diagnostics, `01a7729f7`) and PR 1.5 (label-routed degenerate fielded arms) landed 2026-07-21. PR 2 (VariantRule retype cut) and PR 3 (structured-arm enrich mint) not started.
 **Owner phase:** Assemble-time slot derivation (`compiler/collect-slots.ts`), with a follow-up Evaluate/Rule-IR cut.
 **Supersedes:** the KNOWN_ISSUES `emitChoice` fallback-B fix sketch (template-layer conditional emission) — reframed as a model-level fix per the 2026-07-21 design discussion.
 **Related:** compiler-simplification §4c (sanctioned `content` slot) + §B (VariantRule cut, PR-M scope); `specs/013-canonical-surface/tagvariants-removal-plan.md`; todo-debt-cleanup Track 2 (`VARIANT` rule-type removal); KNOWN_ISSUES "`_export_statement_default_decl_arm` … emitChoice fallback drops non-first arms" (entry retired by this design).

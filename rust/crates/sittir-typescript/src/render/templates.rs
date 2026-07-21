@@ -169,13 +169,13 @@ pub struct ExportStatementDefaultDeclArmDefaultKwValueTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_export_statement_default_decl_arm_default_kw.jinja", escape = "none")]
 pub struct ExportStatementDefaultDeclArmDefaultKwTemplate<'a> {
-    pub declaration: OptionalNonterminalView<'a>,
+    pub content: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_export_statement_default_decl_arm.jinja", escape = "none")]
 pub struct ExportStatementDefaultDeclArmTemplate<'a> {
-    pub declaration: OptionalNonterminalView<'a>,
+    pub content: SingleNonterminalView<'a>,
     pub decorator: ListNonterminalView<'a>,
 }
 
@@ -708,7 +708,7 @@ pub struct EnumAssignmentTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "enum_body_group1.jinja", escape = "none")]
 pub struct EnumBodyGroup1Template<'a> {
-    pub name: ListNonterminalView<'a>,
+    pub content: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

@@ -37,7 +37,7 @@
     "severity": "warning",
     "grammar": "python",
     "ownerKind": "_dict_pattern_group1",
-    "message": "[collect-slots] kind '_dict_pattern_group1': choice rule:_dict_pattern_group1:members.0/members.1/content/members.1 is a REPEATED (order-lossy) mixed row — named arm(s) [seq[2](_simple_pattern case_pattern)] alongside union arm(s) [splat_pattern]. Keeping status quo. END-STATE: named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind '_dict_pattern_group1': choice rule:_dict_pattern_group1:members.0/members.1/content/members.1 is a REPEATED (order-lossy) mixed row — structured named arm(s) [seq[2](_simple_pattern case_pattern)] alongside union arm(s) [splat_pattern]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
     "canProceed": true
   },
   {
@@ -73,7 +73,7 @@
     "severity": "warning",
     "grammar": "python",
     "ownerKind": "dict_pattern_group1",
-    "message": "[collect-slots] kind 'dict_pattern_group1': choice rule:_dict_pattern_group1:members.0/members.1/content/members.1 is a REPEATED (order-lossy) mixed row — named arm(s) [seq[2](_simple_pattern case_pattern)] alongside union arm(s) [splat_pattern]. Keeping status quo. END-STATE: named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind 'dict_pattern_group1': choice rule:_dict_pattern_group1:members.0/members.1/content/members.1 is a REPEATED (order-lossy) mixed row — structured named arm(s) [seq[2](_simple_pattern case_pattern)] alongside union arm(s) [splat_pattern]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
     "canProceed": true
   },
   {
