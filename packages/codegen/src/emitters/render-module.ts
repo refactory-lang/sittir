@@ -39,7 +39,8 @@ import {
 	structuralFieldsOf,
 	allFormFieldsOf,
 	allSlotsOf,
-	aliasTargetToSourceMapOf
+	aliasTargetToSourceMapOf,
+	acceptedIdPairsByKindOf
 } from '../compiler/model/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import type { TemplateFile } from './template-hash.ts';
@@ -2703,8 +2704,18 @@ interface PerSlotChildEnum {
 	 * the id arm for the storage kind (`identifier`) also accepts the
 	 * alias-target id, per slot (the alias-target set is per-reference-site,
 	 * not global to the kind).
+	 *
+	 * PR-K3c: retained ONLY for the name-based fallback — kinds present in
+	 * `acceptedIdsByKind` never consult it.
 	 */
 	parseAliases: Readonly<Record<string, string>>;
+	/**
+	 * Per-storage-kind accepted wire ids from the mint stamps
+	 * (`acceptedIdPairsByKindOf`, node-map.ts). Kinds absent here (id-less
+	 * values, supertype-expanded arms with no value in hand) fall back to
+	 * the name chain (`acceptedTransportKinds` + `kindIdByKind`).
+	 */
+	acceptedIdsByKind: ReadonlyMap<string, readonly number[]>;
 }
 
 /**
@@ -2781,7 +2792,8 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 		if (reservedTransportNames.has(enumName)) return;
 		seen.add(enumName);
 		const parseAliases = aliasTargetToSourceMapOf(field);
-		entries.push({ typeName, ownerKind, fieldName: field.name, kinds: slotKinds, literals, parseAliases });
+		const acceptedIdsByKind = acceptedIdPairsByKindOf(field);
+		entries.push({ typeName, ownerKind, fieldName: field.name, kinds: slotKinds, literals, parseAliases, acceptedIdsByKind });
 	};
 
 	for (const node of nodes) {
@@ -2871,12 +2883,18 @@ function emitPerSlotChildEnum(
 		for (const { kind, node, concreteName } of validKinds) {
 			const variant = rustTypeIdent(node.typeName);
 			const typeName = concreteName;
-			// Alias-redirect kinds stay name-resolved until the dual-id supply
-			// lands (PR-K3c); enum member ids are stamped facts (PR-K3b).
-			const acceptedKinds = new Set<string>(acceptedTransportKinds(kind, nodeMap, entry.parseAliases));
-			const acceptedIds = [...acceptedKinds]
-				.map((k) => kindIdByKind.get(k))
-				.filter((id): id is number => id !== undefined);
+			// PR-K3c: value-backed kinds take their accepted ids straight from
+			// the mint stamps (storageKindId + parseKindId subsume both name-
+			// keyed alias redirects, per reference site). The name chain remains
+			// only for kinds with no value in hand (supertype-expanded arms) or
+			// id-less values.
+			const stampedIds = entry.acceptedIdsByKind.get(kind);
+			const acceptedIds =
+				stampedIds !== undefined
+					? [...stampedIds]
+					: [...new Set<string>(acceptedTransportKinds(kind, nodeMap, entry.parseAliases))]
+							.map((k) => kindIdByKind.get(k))
+							.filter((id): id is number => id !== undefined);
 			if (node instanceof AssembledEnum) {
 				acceptedIds.push(...enumMemberAcceptedIds(node));
 			}

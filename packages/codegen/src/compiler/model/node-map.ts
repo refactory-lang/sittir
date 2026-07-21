@@ -1966,6 +1966,38 @@ export function aliasTargetToSourceMapOf(slot: {
 	return out;
 }
 
+/**
+ * Per-storage-kind accepted wire ids for a slot, from the mint stamps
+ * (KindId-NodeRefs §2.3 / PR-K3c): for each node-ref value, the union of
+ * `storageKindId` (the modeled storage kind) and `parseKindId` (the wire
+ * `$type` tree-sitter actually stamps — the alias TARGET at aliased
+ * reference sites). For value-backed kinds this subsumes both name-keyed
+ * redirects (`nodeMap.aliasedHiddenKinds` + `aliasTargetToSourceMapOf`
+ * pairs) — per-slot, since alias facts are per-reference-site. Kinds whose
+ * values carry no ids (enrich-synthesized markers, IR-only enum kinds,
+ * erased hidden supertypes, hand-built test values) are ABSENT from the
+ * map — callers keep the name-based fallback for those.
+ */
+export function acceptedIdPairsByKindOf(slot: {
+	values: readonly NodeOrTerminal[];
+}): ReadonlyMap<string, readonly number[]> {
+	const out = new Map<string, number[]>();
+	for (const value of slot.values) {
+		if (!isNodeRef(value)) continue;
+		const kind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
+		for (const id of [value.storageKindId, value.parseKindId]) {
+			if (id === undefined) continue;
+			const ids = out.get(kind);
+			if (ids === undefined) {
+				out.set(kind, [id]);
+			} else if (!ids.includes(id)) {
+				ids.push(id);
+			}
+		}
+	}
+	return out;
+}
+
 /** The slot-naming inputs a projection needs (the only stored facts). */
 export interface SlotNamingInputs {
 	readonly fieldName?: string;

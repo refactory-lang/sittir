@@ -125,7 +125,20 @@ information, not noise.
       all 3 grammars — the last-wins name map happened to agree with the
       stamps here, so this converts ordering luck into a guarantee; floors
       123/117/103/108 hold.)
-- [ ] K3c — acceptedTransportKinds dual-id supply
+- [x] K3c — acceptedTransportKinds dual-id supply (new
+      `acceptedIdPairsByKindOf` projection in node-map.ts: per-storage-kind
+      union of `storageKindId`+`parseKindId`, threaded through
+      `PerSlotChildEnum.acceptedIdsByKind`; `emitPerSlotChildEnum` consumes
+      stamps for value-backed kinds, name chain remains ONLY for
+      supertype-expanded / id-less arms. Probe on ts: 258 stamped arms (38
+      dual-id alias redirects, e.g. `_reserved_identifier` [424,1]) vs 580
+      fallback (supertype expansions). Contrary to the plan's expectation, A/B
+      was byte-identical for all 3 grammars — no triage diffs; the per-slot
+      stamps agreed with the global name redirects everywhere they were
+      exercised. wrap.ts `resolveSlotAliasRewrite` + factory-map
+      `fieldAliasMap` consumers of `aliasTargetToSourceMapOf` stay name→name
+      by design: they feed the runtime READ side / validator metadata, which
+      key by CST type strings, not ids. Floors 123/117/103/108 hold.)
 - [ ] K3d — kindIdFromName baking
 - [ ] K3e — simplify-class projections (may split to own PR)
 - [ ] K3f — hydrate retry (open question — diagnose before changing)
