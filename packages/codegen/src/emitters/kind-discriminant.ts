@@ -15,6 +15,7 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import { findEntryForKindName, findEntryForLiteralText } from '../compiler/generated-metadata.ts';
 
 function toPascal(kind: string): string {
 	return kind
@@ -134,25 +135,15 @@ export function collectKindEntries(
  * @returns The matching entry, or `undefined` if the kind has no parser symbol.
  */
 export function findKindEntry(kindEntries: readonly KindEnumEntry[], kind: string): KindEnumEntry | undefined {
-	// 1. Exact catalog key match (the canonical case).
-	// 2. Hidden-source fallback: visible variant-child kinds (e.g.
-	//    `closure_expression_expr`) are emitted by sittir from hidden alias
-	//    sources (`_closure_expression_expr`). The catalog keys are the
-	//    hidden form (from `sym__closure_expression_expr` → strip `sym_` →
-	//    `_closure_expression_expr`). Try the underscore-prefixed form so
-	//    the join succeeds for Pattern B kinds.
-	// 3. Anon-symbol literal-value match: resolve punctuation/operator literals
-	//    like `'+'` to their parser symbol (`anon_sym_PLUS` → catalog key `plus`,
-	//    symbolName `"+"`). ONLY matches when the catalog row is an anonymous
-	//    token (`anon === true`) — NOT a general symbolName match, which caused
-	//    the `_as_pattern` shadowing bug (hidden `_as_pattern` symbolName
-	//    `"as_pattern"` shadowed the real `as_pattern` entry).
-	return (
-		kindEntries.find((e) => e.kind === kind) ??
-		kindEntries.find((e) => e.kind === `_${kind}`) ??
-		kindEntries.find((e) => e.anon === true && e.symbolName === kind) ??
-		undefined
-	);
+	// Delegates to THE shared kind-name chain (PR-K1 — see KindEntryLike in
+	// compiler/generated-metadata.ts for the full step documentation,
+	// including why step 3 is anon-scoped: the `_as_pattern` shadowing bug).
+	// Behavior delta vs this module's historical inline chain: a step 4
+	// (named-symbolName fallback for hidden compound tokens like `_is_not` ←
+	// `"is not"`) is now present, reachable only when steps 1-3 all miss —
+	// previously such lookups returned undefined here while the
+	// compiler-side chain resolved them.
+	return findEntryForKindName(kindEntries, kind);
 }
 
 /**
@@ -180,10 +171,8 @@ export function findKindEntryForLiteral(
 	kindEntries: readonly KindEnumEntry[],
 	literalText: string
 ): KindEnumEntry | undefined {
-	return (
-		kindEntries.find((e) => e.anon === true && e.symbolName === literalText) ??
-		findKindEntry(kindEntries, literalText)
-	);
+	// Delegates to THE shared literal-text chain (PR-K1).
+	return findEntryForLiteralText(kindEntries, literalText);
 }
 
 /**

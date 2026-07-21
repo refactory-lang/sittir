@@ -129,6 +129,9 @@ export const _fromMap = {
 	argument_list_group1: coerceToArgumentListGroup1,
 	dict_pattern_group1: coerceToDictPatternGroup1,
 	dictionary_group1: coerceToDictionaryGroup1,
+	element_list: coerceToElementList,
+	pattern_group: coerceToPatternGroup,
+	parameter_list: coerceToParameterList,
 	slice_group1: coerceToSliceGroup1,
 	string_start: coerceToStringStart,
 	escape_interpolation: coerceToEscapeInterpolation,
@@ -308,6 +311,9 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	list_pattern_group1: TSKindId._ListPatternGroup1,
 	argument_list_group1: TSKindId._ArgumentListGroup1,
 	dictionary_group1: TSKindId._DictionaryGroup1,
+	element_list: TSKindId.CollectionElements,
+	pattern_group: TSKindId.Patterns,
+	parameter_list: TSKindId._Parameters,
 	slice_group1: TSKindId._SliceGroup1
 };
 
@@ -401,6 +407,12 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildArgumentListGroup1(children as Parameters<typeof F.buildArgumentListGroup1>[0]);
 		case 'dictionary_group1':
 			return F.buildDictionaryGroup1(children as Parameters<typeof F.buildDictionaryGroup1>[0]);
+		case 'element_list':
+			return F.buildElementList(children as Parameters<typeof F.buildElementList>[0]);
+		case 'pattern_group':
+			return F.buildPatternGroup(children as Parameters<typeof F.buildPatternGroup>[0]);
+		case 'parameter_list':
+			return F.buildParameterList(children as Parameters<typeof F.buildParameterList>[0]);
 		case 'slice_group1':
 			return F.buildSliceGroup1(children[0] as Parameters<typeof F.buildSliceGroup1>[0]);
 		default:
@@ -2124,6 +2136,24 @@ export function coerceToDictionaryGroup1(
 	...input: readonly (T.Pair | T.DictionarySplat | T.DictionaryGroup1)[]
 ): ReturnType<typeof F.buildDictionaryGroup1> {
 	return F.buildDictionaryGroup1(input as Parameters<typeof F.buildDictionaryGroup1>[0]);
+}
+
+export function coerceToElementList(
+	...input: readonly (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat | T.ElementList)[]
+): ReturnType<typeof F.buildElementList> {
+	return F.buildElementList(input as Parameters<typeof F.buildElementList>[0]);
+}
+
+export function coerceToPatternGroup(
+	...input: readonly (T.Pattern | T.PatternGroup)[]
+): ReturnType<typeof F.buildPatternGroup> {
+	return F.buildPatternGroup(input as Parameters<typeof F.buildPatternGroup>[0]);
+}
+
+export function coerceToParameterList(
+	...input: readonly (T.Parameter | T.ParameterList)[]
+): ReturnType<typeof F.buildParameterList> {
+	return F.buildParameterList(input as Parameters<typeof F.buildParameterList>[0]);
 }
 
 export function coerceToSliceGroup1(input?: T.Expression | T.SliceGroup1): ReturnType<typeof F.buildSliceGroup1> {

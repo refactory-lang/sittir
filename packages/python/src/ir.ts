@@ -525,6 +525,9 @@ export const ir = {
 		from: FR.coerceToDictionaryGroup1,
 		strict: F.buildDictionaryGroup1
 	}),
+	elementList: _attach(FR.coerceToElementList, { from: FR.coerceToElementList, strict: F.buildElementList }),
+	patternGroup: _attach(FR.coerceToPatternGroup, { from: FR.coerceToPatternGroup, strict: F.buildPatternGroup }),
+	parameterList: _attach(FR.coerceToParameterList, { from: FR.coerceToParameterList, strict: F.buildParameterList }),
 	sliceGroup1: _attach(FR.coerceToSliceGroup1, { from: FR.coerceToSliceGroup1, strict: F.buildSliceGroup1 }),
 
 	// Keyword factories

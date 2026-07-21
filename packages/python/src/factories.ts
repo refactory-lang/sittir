@@ -186,7 +186,9 @@ export function buildComparisonOperatorComparator(config: T.ComparisonOperatorCo
 		['>', TSKindId.Gt] as const,
 		['<>', TSKindId.LtGt] as const,
 		['in', TSKindId.In] as const,
-		['is', TSKindId.Is] as const
+		['not in', TSKindId.NotIn] as const,
+		['is', TSKindId.Is] as const,
+		['is not', TSKindId.IsNot] as const
 	]);
 	const _primary_expression = config.primaryExpression;
 	return withMethods(
@@ -3493,6 +3495,85 @@ export function buildDictionaryGroup1(
 	);
 }
 
+export function buildElementList(
+	elements: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>,
+	options: { trailing?: boolean } = {}
+) {
+	_assertNonEmpty(elements, 'element_list.elements');
+	const _content = elements;
+	const _trailing_sep = options.trailing ?? false;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CollectionElements as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				_trailing_sep,
+				$with: {
+					$children: (...vs: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>) =>
+						buildElementList(vs, options),
+					trailing: (v: boolean) => buildElementList(elements, { ...options, trailing: v })
+				}
+			},
+			{
+				contents: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildPatternGroup(elements: NonEmptyArray<T.Pattern>, options: { trailing?: boolean } = {}) {
+	_assertNonEmpty(elements, 'pattern_group.elements');
+	const _pattern = elements;
+	const _trailing_sep = options.trailing ?? false;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.Patterns as const,
+				$source: 2 as const,
+				$named: true as const,
+				_pattern,
+				_trailing_sep,
+				$with: {
+					$children: (...vs: NonEmptyArray<T.Pattern>) => buildPatternGroup(vs, options),
+					trailing: (v: boolean) => buildPatternGroup(elements, { ...options, trailing: v })
+				}
+			},
+			{
+				patterns: () => _pattern
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildParameterList(elements: NonEmptyArray<T.Parameter>, options: { trailing?: boolean } = {}) {
+	_assertNonEmpty(elements, 'parameter_list.elements');
+	const _parameter = elements;
+	const _trailing_sep = options.trailing ?? false;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId._Parameters as const,
+				$source: 2 as const,
+				$named: true as const,
+				_parameter,
+				_trailing_sep,
+				$with: {
+					$children: (...vs: NonEmptyArray<T.Parameter>) => buildParameterList(vs, options),
+					trailing: (v: boolean) => buildParameterList(elements, { ...options, trailing: v })
+				}
+			},
+			{
+				parameters: () => _parameter
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildSliceGroup1(child?: T.Expression) {
 	const _expression = child;
 	return withMethods(
@@ -3815,6 +3896,9 @@ export type FluentKindMap = {
 	argument_list_group1: FluentNode<'argument_list_group1', T.ArgumentListGroup1.Config>;
 	dict_pattern_group1: FluentNode<'dict_pattern_group1', T.DictPatternGroup1.Config>;
 	dictionary_group1: FluentNode<'dictionary_group1', T.DictionaryGroup1.Config>;
+	element_list: FluentNode<'element_list', T.ElementList.Config>;
+	pattern_group: FluentNode<'pattern_group', T.PatternGroup.Config>;
+	parameter_list: FluentNode<'parameter_list', T.ParameterList.Config>;
 	slice_group1: FluentNode<'slice_group1', T.SliceGroup1.Config>;
 	_newline: T.Newline;
 	_indent: T.Indent;
@@ -3978,6 +4062,9 @@ export const _factoryMap = {
 	argument_list_group1: buildArgumentListGroup1,
 	dict_pattern_group1: buildDictPatternGroup1,
 	dictionary_group1: buildDictionaryGroup1,
+	element_list: buildElementList,
+	pattern_group: buildPatternGroup,
+	parameter_list: buildParameterList,
 	slice_group1: buildSliceGroup1,
 	_newline: buildNewline,
 	_indent: buildIndent,
