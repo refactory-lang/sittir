@@ -4834,12 +4834,12 @@ export interface TokenBindingPattern {
 			| 'tt'
 			| 'ty'
 			| 'vis',
-			| TSKindId.Block
+			| TSKindId.AnonBlock
 			| TSKindId.Expr
 			| TSKindId.Expr2021
 			| TSKindId.Ident
 			| TSKindId.Item
-			| TSKindId.Lifetime
+			| TSKindId.AnonLifetime
 			| TSKindId.Literal
 			| TSKindId.Meta
 			| TSKindId.Pat
@@ -5310,12 +5310,12 @@ export type ReservedIdentifier = Terminal<
 	'default' | 'union' | 'gen'
 >;
 export type TokenBindingPatternType = Terminal<
-	| TSKindId.Block
+	| TSKindId.AnonBlock
 	| TSKindId.Expr
 	| TSKindId.Expr2021
 	| TSKindId.Ident
 	| TSKindId.Item
-	| TSKindId.Lifetime
+	| TSKindId.AnonLifetime
 	| TSKindId.Literal
 	| TSKindId.Meta
 	| TSKindId.Pat
@@ -5438,12 +5438,12 @@ export type CharLiteral = Terminal<TSKindId.CharLiteral, string>;
 export type Crate = Terminal<TSKindId.Crate, 'crate'>;
 export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
 export type FragmentSpecifier = Terminal<
-	| TSKindId.Block
+	| TSKindId.AnonBlock
 	| TSKindId.Expr
 	| TSKindId.Expr2021
 	| TSKindId.Ident
 	| TSKindId.Item
-	| TSKindId.Lifetime
+	| TSKindId.AnonLifetime
 	| TSKindId.Literal
 	| TSKindId.Meta
 	| TSKindId.Pat

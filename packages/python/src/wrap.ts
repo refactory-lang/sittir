@@ -498,10 +498,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'class_pattern',
 		'splat_pattern',
 		'union_pattern',
-		'_list_pattern',
-		'list_pattern',
-		'_tuple_pattern',
-		'tuple_pattern',
+		'case_list_pattern',
+		'case_tuple_pattern',
 		'dict_pattern',
 		'string',
 		'concatenated_string',
@@ -1289,8 +1287,8 @@ export function wrap_DictPatternGroup1(data: T._DictPatternGroup1, tree: TreeHan
 					'class_pattern',
 					'splat_pattern',
 					'union_pattern',
-					'_list_pattern',
-					'_tuple_pattern',
+					'case_list_pattern',
+					'case_tuple_pattern',
 					'dict_pattern',
 					'string',
 					'concatenated_string',
@@ -1685,32 +1683,6 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrap_ListPattern(data: T._ListPattern, tree: TreeHandle) {
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId._ListPattern as const,
-			_list_pattern_group1: normalizeSingularWrapSlot(
-				data._list_pattern_group1,
-				'list_pattern_group1',
-				false,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'list_pattern_group1', span: (data as _NodeData).$span }
-			),
-
-			listPatternGroup1() {
-				return drillIn<T.ListPatternGroup1 | undefined>(this._list_pattern_group1, tree);
-			},
-			$with: {
-				listPatternGroup1: (v: NonNullable<T._ListPattern['_list_pattern_group1']>) =>
-					wrap_ListPattern({ ...data, _list_pattern_group1: v }, tree)
-			}
-		},
-		methodsEngine
-	);
-	return _node;
-}
-
 export function wrap_ListPatternGroup1(
 	data: T._ListPatternGroup1 & {
 		readonly $other?: _NodeData['$other'];
@@ -1935,10 +1907,8 @@ export function wrapSimplePattern(
 				'class_pattern',
 				'splat_pattern',
 				'union_pattern',
-				'_list_pattern',
-				'list_pattern',
-				'_tuple_pattern',
-				'tuple_pattern',
+				'case_list_pattern',
+				'case_tuple_pattern',
 				'dict_pattern',
 				'string',
 				'concatenated_string',
@@ -2196,32 +2166,6 @@ export function wrapStatement(
 		),
 		tree
 	);
-}
-
-export function wrap_TuplePattern(data: T._TuplePattern, tree: TreeHandle) {
-	const _node = withMethods(
-		{
-			...data,
-			$type: TSKindId._TuplePattern as const,
-			_list_pattern_group1: normalizeSingularWrapSlot(
-				data._list_pattern_group1,
-				'list_pattern_group1',
-				false,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'list_pattern_group1', span: (data as _NodeData).$span }
-			),
-
-			listPatternGroup1() {
-				return drillIn<T.ListPatternGroup1 | undefined>(this._list_pattern_group1, tree);
-			},
-			$with: {
-				listPatternGroup1: (v: NonNullable<T._TuplePattern['_list_pattern_group1']>) =>
-					wrap_TuplePattern({ ...data, _list_pattern_group1: v }, tree)
-			}
-		},
-		methodsEngine
-	);
-	return _node;
 }
 
 export function wrapWithClauseBare(
@@ -2927,6 +2871,31 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle) {
 	return _node;
 }
 
+export function wrapCaseListPattern(data: T.CaseListPattern, tree: TreeHandle) {
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.CaseListPattern as const,
+			_case_pattern: normalizeRepeatedWrapSlot(
+				_filterWrapChildrenByKind(data._case_pattern, ['case_pattern']),
+				false,
+				'case_pattern',
+				{ tree, nodeType: data.$type, slotName: 'case_pattern', span: (data as _NodeData).$span }
+			),
+
+			casePatterns() {
+				return drillInAll<T.CasePattern>(this._case_pattern as readonly T.CasePattern[] | undefined, tree);
+			},
+			$with: {
+				casePatterns: (...v: NonNullable<T.CaseListPattern['_case_pattern']>[number][]) =>
+					wrapCaseListPattern({ ...data, _case_pattern: v }, tree)
+			}
+		},
+		methodsEngine
+	);
+	return _node;
+}
+
 export function wrapCasePattern(
 	data: T.CasePattern & {
 		readonly _as_pattern?: T._AsPattern | T.KeywordPattern | T.SimplePattern;
@@ -2934,8 +2903,8 @@ export function wrapCasePattern(
 		readonly _class_pattern?: T._AsPattern | T.KeywordPattern | T.SimplePattern;
 		readonly _splat_pattern?: T._AsPattern | T.KeywordPattern | T.SimplePattern;
 		readonly _union_pattern?: T._AsPattern | T.KeywordPattern | T.SimplePattern;
-		readonly _list_pattern?: T._AsPattern | T.KeywordPattern | T.SimplePattern;
-		readonly _tuple_pattern?: T._AsPattern | T.KeywordPattern | T.SimplePattern;
+		readonly _case_list_pattern?: T._AsPattern | T.KeywordPattern | T.SimplePattern;
+		readonly _case_tuple_pattern?: T._AsPattern | T.KeywordPattern | T.SimplePattern;
 		readonly _dict_pattern?: T._AsPattern | T.KeywordPattern | T.SimplePattern;
 		readonly _string?: T._AsPattern | T.KeywordPattern | T.SimplePattern;
 		readonly _concatenated_string?: T._AsPattern | T.KeywordPattern | T.SimplePattern;
@@ -2959,8 +2928,8 @@ export function wrapCasePattern(
 					data._class_pattern ??
 					data._splat_pattern ??
 					data._union_pattern ??
-					data._list_pattern ??
-					data._tuple_pattern ??
+					data._case_list_pattern ??
+					data._case_tuple_pattern ??
 					data._dict_pattern ??
 					data._string ??
 					data._concatenated_string ??
@@ -2986,6 +2955,31 @@ export function wrapCasePattern(
 			},
 			$with: {
 				content: (v: NonNullable<T.CasePattern['_content']>) => wrapCasePattern({ ...data, _content: v }, tree)
+			}
+		},
+		methodsEngine
+	);
+	return _node;
+}
+
+export function wrapCaseTuplePattern(data: T.CaseTuplePattern, tree: TreeHandle) {
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.CaseTuplePattern as const,
+			_case_pattern: normalizeRepeatedWrapSlot(
+				_filterWrapChildrenByKind(data._case_pattern, ['case_pattern']),
+				false,
+				'case_pattern',
+				{ tree, nodeType: data.$type, slotName: 'case_pattern', span: (data as _NodeData).$span }
+			),
+
+			casePatterns() {
+				return drillInAll<T.CasePattern>(this._case_pattern as readonly T.CasePattern[] | undefined, tree);
+			},
+			$with: {
+				casePatterns: (...v: NonNullable<T.CaseTuplePattern['_case_pattern']>[number][]) =>
+					wrapCaseTuplePattern({ ...data, _case_pattern: v }, tree)
 			}
 		},
 		methodsEngine
@@ -6724,7 +6718,7 @@ export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHan
 			$type: TSKindId.TypeAliasStatement as const,
 			_type: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._type ?? readTerminalFromOther(data, [TSKindId.Type]),
+					data._type ?? readTerminalFromOther(data, [TSKindId.AnonType]),
 					'type',
 					true,
 					data.$type,
@@ -6920,8 +6914,8 @@ export function wrapUnionPattern(
 		readonly _class_pattern?: T.SimplePattern | readonly T.SimplePattern[];
 		readonly _splat_pattern?: T.SimplePattern | readonly T.SimplePattern[];
 		readonly _union_pattern?: T.SimplePattern | readonly T.SimplePattern[];
-		readonly _list_pattern?: T.SimplePattern | readonly T.SimplePattern[];
-		readonly _tuple_pattern?: T.SimplePattern | readonly T.SimplePattern[];
+		readonly _case_list_pattern?: T.SimplePattern | readonly T.SimplePattern[];
+		readonly _case_tuple_pattern?: T.SimplePattern | readonly T.SimplePattern[];
 		readonly _dict_pattern?: T.SimplePattern | readonly T.SimplePattern[];
 		readonly _string?: T.SimplePattern | readonly T.SimplePattern[];
 		readonly _concatenated_string?: T.SimplePattern | readonly T.SimplePattern[];
@@ -6946,8 +6940,8 @@ export function wrapUnionPattern(
 								data._class_pattern,
 								data._splat_pattern,
 								data._union_pattern,
-								data._list_pattern,
-								data._tuple_pattern,
+								data._case_list_pattern,
+								data._case_tuple_pattern,
 								data._dict_pattern,
 								data._string,
 								data._concatenated_string,
@@ -6963,8 +6957,8 @@ export function wrapUnionPattern(
 						'class_pattern',
 						'splat_pattern',
 						'union_pattern',
-						'_list_pattern',
-						'_tuple_pattern',
+						'case_list_pattern',
+						'case_tuple_pattern',
 						'dict_pattern',
 						'string',
 						'concatenated_string',
@@ -7533,8 +7527,8 @@ export function wrapDictPatternGroup1(data: T.DictPatternGroup1, tree: TreeHandl
 					'class_pattern',
 					'splat_pattern',
 					'union_pattern',
-					'_list_pattern',
-					'_tuple_pattern',
+					'case_list_pattern',
+					'case_tuple_pattern',
 					'dict_pattern',
 					'string',
 					'concatenated_string',
@@ -7616,6 +7610,206 @@ export function wrapDictionaryGroup1(
 					this._content as readonly (T.Pair | T.DictionarySplat)[] | undefined,
 					tree
 				);
+			},
+			$with: {}
+		},
+		methodsEngine
+	);
+}
+
+export function wrapElementList(
+	data: T.ElementList & {
+		readonly _comparison_operator?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _not_operator?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _boolean_operator?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _lambda?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _await?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _binary_operator?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _identifier?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _keyword_identifier?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _string?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _concatenated_string?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _integer?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _float?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _true?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _false?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _none?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _unary_operator?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _attribute?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _subscript?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _call?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _list?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _list_comprehension?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _dictionary?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _dictionary_comprehension?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _set?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _set_comprehension?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _tuple?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _parenthesized_expression?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _generator_expression?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _ellipsis?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _list_splat_pattern?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _conditional_expression?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _named_expression?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _as_pattern?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _yield?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _list_splat?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly _parenthesized_list_splat?: T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat;
+		readonly $other?: _NodeData['$other'];
+		readonly $span?: { start: number; end: number };
+	},
+	tree: TreeHandle
+) {
+	const _content = normalizeRepeatedWrapSlot(
+		data._content !== undefined
+			? _toArr(data._content)
+			: _concatInSourceOrder([
+					data._comparison_operator,
+					data._not_operator,
+					data._boolean_operator,
+					data._lambda,
+					data._await,
+					data._binary_operator,
+					data._identifier,
+					data._keyword_identifier,
+					data._string,
+					data._concatenated_string,
+					data._integer,
+					data._float,
+					data._true,
+					data._false,
+					data._none,
+					data._unary_operator,
+					data._attribute,
+					data._subscript,
+					data._call,
+					data._list,
+					data._list_comprehension,
+					data._dictionary,
+					data._dictionary_comprehension,
+					data._set,
+					data._set_comprehension,
+					data._tuple,
+					data._parenthesized_expression,
+					data._generator_expression,
+					data._ellipsis,
+					data._list_splat_pattern,
+					data._conditional_expression,
+					data._named_expression,
+					data._as_pattern,
+					data._yield,
+					data._list_splat,
+					data._parenthesized_list_splat
+				]),
+		true,
+		'content',
+		{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+	);
+	return withMethods(
+		{
+			...data,
+			_content: _content,
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+
+			content() {
+				return drillInAll<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(
+					this._content as readonly (T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)[] | undefined,
+					tree
+				);
+			},
+			$with: {}
+		},
+		methodsEngine
+	);
+}
+
+export function wrapPatternGroup(
+	data: T.PatternGroup & {
+		readonly _identifier?: T.Pattern;
+		readonly _keyword_identifier?: T.Pattern;
+		readonly _subscript?: T.Pattern;
+		readonly _attribute?: T.Pattern;
+		readonly _list_splat_pattern?: T.Pattern;
+		readonly _tuple_pattern?: T.Pattern;
+		readonly _list_pattern?: T.Pattern;
+		readonly $other?: _NodeData['$other'];
+		readonly $span?: { start: number; end: number };
+	},
+	tree: TreeHandle
+) {
+	const _content = normalizeRepeatedWrapSlot(
+		data._pattern !== undefined
+			? _toArr(data._pattern)
+			: _concatInSourceOrder([
+					data._identifier,
+					data._keyword_identifier,
+					data._subscript,
+					data._attribute,
+					data._list_splat_pattern,
+					data._tuple_pattern,
+					data._list_pattern
+				]),
+		true,
+		'pattern',
+		{ tree, nodeType: data.$type, slotName: 'pattern', span: (data as _NodeData).$span }
+	);
+	return withMethods(
+		{
+			...data,
+			_pattern: _content,
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+
+			pattern() {
+				return drillInAll<T.Pattern>(this._pattern as readonly T.Pattern[] | undefined, tree);
+			},
+			$with: {}
+		},
+		methodsEngine
+	);
+}
+
+export function wrapParameterList(
+	data: T.ParameterList & {
+		readonly _identifier?: T.Parameter;
+		readonly _typed_parameter?: T.Parameter;
+		readonly _default_parameter?: T.Parameter;
+		readonly _typed_default_parameter?: T.Parameter;
+		readonly _list_splat_pattern?: T.Parameter;
+		readonly _tuple_pattern?: T.Parameter;
+		readonly _keyword_separator?: T.Parameter;
+		readonly _positional_separator?: T.Parameter;
+		readonly _dictionary_splat_pattern?: T.Parameter;
+		readonly $other?: _NodeData['$other'];
+		readonly $span?: { start: number; end: number };
+	},
+	tree: TreeHandle
+) {
+	const _content = normalizeRepeatedWrapSlot(
+		data._parameter !== undefined
+			? _toArr(data._parameter)
+			: _concatInSourceOrder([
+					data._identifier,
+					data._typed_parameter,
+					data._default_parameter,
+					data._typed_default_parameter,
+					data._list_splat_pattern,
+					data._tuple_pattern,
+					data._keyword_separator,
+					data._positional_separator,
+					data._dictionary_splat_pattern
+				]),
+		true,
+		'parameter',
+		{ tree, nodeType: data.$type, slotName: 'parameter', span: (data as _NodeData).$span }
+	);
+	return withMethods(
+		{
+			...data,
+			_parameter: _content,
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+
+			parameter() {
+				return drillInAll<T.Parameter>(this._parameter as readonly T.Parameter[] | undefined, tree);
 			},
 			$with: {}
 		},
@@ -7739,7 +7933,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_import_list: (d, t) => wrapImportList(d as unknown as T.ImportList, t),
 	_is_not: (d) => ({ ...d, $type: TSKindId.IsNot as const }),
 	_key_value_pattern: (d, t) => wrapKeyValuePattern(d as unknown as T.KeyValuePattern, t),
-	_list_pattern: (d, t) => wrap_ListPattern(d as unknown as T._ListPattern, t),
 	_list_pattern_group1: (d, t) => wrap_ListPatternGroup1(d as unknown as T._ListPatternGroup1, t),
 	_match_block: (d, t) => wrapMatchBlock(d as unknown as T.MatchBlock, t),
 	_match_block_block: (d, t) => wrapMatchBlockBlock(d as unknown as T.MatchBlockBlock, t),
@@ -7753,7 +7946,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_simple_statements: (d, t) => wrapSimpleStatements(d as unknown as T.SimpleStatements, t),
 	_slice_group1: (d, t) => wrap_SliceGroup1(d as unknown as T._SliceGroup1, t),
 	_statement: (d, t) => wrapStatement(d as unknown as T.Statement, t),
-	_tuple_pattern: (d, t) => wrap_TuplePattern(d as unknown as T._TuplePattern, t),
 	_with_clause_bare: (d, t) => wrapWithClauseBare(d as unknown as T.WithClauseBare, t),
 	_with_clause_paren: (d, t) => wrapWithClauseParen(d as unknown as T.WithClauseParen, t),
 	aliased_import: (d, t) => wrapAliasedImport(d as unknown as T.AliasedImport, t),
@@ -7770,7 +7962,9 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	break_statement: (d) => ({ ...d, $type: TSKindId.BreakStatement as const }),
 	call: (d, t) => wrapCall(d as unknown as T.Call, t),
 	case_clause: (d, t) => wrapCaseClause(d as unknown as T.CaseClause, t),
+	case_list_pattern: (d, t) => wrapCaseListPattern(d as unknown as T.CaseListPattern, t),
 	case_pattern: (d, t) => wrapCasePattern(d as unknown as T.CasePattern, t),
+	case_tuple_pattern: (d, t) => wrapCaseTuplePattern(d as unknown as T.CaseTuplePattern, t),
 	chevron: (d, t) => wrapChevron(d as unknown as T.Chevron, t),
 	class_definition: (d, t) => wrapClassDefinition(d as unknown as T.ClassDefinition, t),
 	class_pattern: (d, t) => wrapClassPattern(d as unknown as T.ClassPattern, t),
@@ -7879,6 +8073,9 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	argument_list_group1: (d, t) => wrapArgumentListGroup1(d as unknown as T.ArgumentListGroup1, t),
 	dict_pattern_group1: (d, t) => wrapDictPatternGroup1(d as unknown as T.DictPatternGroup1, t),
 	dictionary_group1: (d, t) => wrapDictionaryGroup1(d as unknown as T.DictionaryGroup1, t),
+	element_list: (d, t) => wrapElementList(d as unknown as T.ElementList, t),
+	pattern_group: (d, t) => wrapPatternGroup(d as unknown as T.PatternGroup, t),
+	parameter_list: (d, t) => wrapParameterList(d as unknown as T.ParameterList, t),
 	slice_group1: (d, t) => wrapSliceGroup1(d as unknown as T.SliceGroup1, t),
 	_newline: (d) => ({ ...d, $type: TSKindId.Newline as const }),
 	_indent: (d) => ({ ...d, $type: TSKindId.Indent as const }),

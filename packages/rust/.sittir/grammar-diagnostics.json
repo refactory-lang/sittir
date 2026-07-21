@@ -81,6 +81,24 @@
   },
   {
     "scope": "grammar",
+    "code": "union-slot-mixed-row",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "block_comment",
+    "message": "[collect-slots] kind 'block_comment': choice rule:block_comment:members.1/content is a singular mixed row — structured named arm(s) [seq[2](choice doc_comment)] alongside union arm(s) [\"\"]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "canProceed": true
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-mixed-row",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "range_pattern",
+    "message": "[collect-slots] kind 'range_pattern': choice rule:range_pattern:root is a singular mixed row — structured named arm(s) [seq[2](choice choice)] alongside union arm(s) [range_pattern_prefix]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "canProceed": true
+  },
+  {
+    "scope": "grammar",
     "code": "typename-collision",
     "severity": "info",
     "grammar": "rust",

@@ -13,6 +13,9 @@ import {
 	collectKindEntries,
 	collectCatalogKinds,
 	kindDiscriminantExpr,
+	kindDiscriminantExprForId,
+	kindDiscriminantExprForLiteral,
+	findKindEntryForLiteral,
 	hasCatalogEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
@@ -22,7 +25,7 @@ import {
 	type AssembledSeparatedList,
 	AssembledGroup
 } from '../compiler/model/node-map.ts';
-import { isNodeRef, isTerminalValue, isUnresolvedRef, allSlotsOf } from '../compiler/model/node-map.ts';
+import { isNodeRef, isTerminalValue, allSlotsOf, storageKindOfRef } from '../compiler/model/node-map.ts';
 import {
 	stampExpressionFor,
 	isRequired,
@@ -40,7 +43,8 @@ import {
 	classifyFactoryEmission,
 	collectAliasSourceKinds,
 	warnSkippedParserSymbol,
-	unnamedChildSlotFacts
+	unnamedChildSlotFacts,
+	canonicalSeparatedListField
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -609,7 +613,11 @@ function bitflagTextsExpr(texts: readonly string[]): string {
 	return `[${texts.map((text) => JSON.stringify(text)).join(', ')}]`;
 }
 
-function kindEnumTextMapExpr(
+// Exported: from.ts's resolver emission shares this map builder (it
+// previously had its own duplicate emitting runtime `kindIdFromName(text)`
+// lookups — which resolve literal texts through the name-polymorphic
+// runtime switch and reintroduce the #129 shadowing at runtime).
+export function kindEnumTextMapExpr(
 	f: AssembledNonterminal,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
@@ -617,23 +625,48 @@ function kindEnumTextMapExpr(
 	const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 	if (storageInfo.kind !== 'kindEnum' || !kindEntries) return '[]';
 	const byText: Array<readonly [string, string]> = [];
+	// Every text below is a LITERAL TOKEN TEXT (enum member values and
+	// terminal STRING values), so resolution goes through the literal-aware
+	// lookup — the anonymous token must win over a same-spelled named rule
+	// (#129: python's `'type'` keyword stamped the `type` RULE's id, which
+	// the transport dispatched to TypeTransport → "Missing field `_content`").
 	for (const value of f.values) {
 		if (isNodeRef(value)) {
-			const kind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
+			const kind = storageKindOfRef(value.node);
 			const resolved = nodeMap.nodes.get(kind);
 			if (!resolved || resolved.modelType !== 'enum') continue;
 			for (const text of resolved.values) {
-				const discriminant = hasCatalogEntry(kindEntries, text)
-					? kindDiscriminantExpr(text, nodeMap, kindEntries)
-					: hasCatalogEntry(kindEntries, resolved.kind)
-						? kindDiscriminantExpr(resolved.kind, nodeMap, kindEntries)
-						: `kindIdFromName(${JSON.stringify(resolved.kind)})`;
+				// PR-K3a: the enum node's construction-time literal-chain
+				// record is authoritative; its resolved KIND is an exact
+				// catalog key, so kindDiscriminantExpr maps it straight to
+				// the TSKindId member. The old chain remains only for
+				// catalog-less construction (fixtures).
+				const rec = resolved.resolvedByText.get(text);
+				const discriminant =
+					rec !== undefined
+						? kindDiscriminantExpr(rec.kind, nodeMap, kindEntries)
+						: findKindEntryForLiteral(kindEntries, text) !== undefined
+							? kindDiscriminantExprForLiteral(text, kindEntries)
+							: hasCatalogEntry(kindEntries, resolved.kind)
+								? kindDiscriminantExpr(resolved.kind, nodeMap, kindEntries)
+								: `kindIdFromName(${JSON.stringify(resolved.kind)})`;
 				byText.push([text, discriminant]);
 			}
 			continue;
 		}
-		if (!isTerminalValue(value) || !hasCatalogEntry(kindEntries, value.value)) continue;
-		byText.push([value.value, kindDiscriminantExpr(value.value, nodeMap, kindEntries)]);
+		if (!isTerminalValue(value)) continue;
+		// PR-K3a: the mint ID stamp (resolvedKindId, minted through the
+		// literal chain) is authoritative when present — the resolvedKind
+		// NAME is not a resolution key (a link-minted name can collide with
+		// a rule name; the id cannot). Chain fallback for stamp-less values
+		// (fixtures); genuinely kindless literals skip.
+		const discriminant =
+			(value.resolvedKindId !== undefined ? kindDiscriminantExprForId(value.resolvedKindId, kindEntries) : undefined) ??
+			(findKindEntryForLiteral(kindEntries, value.value) !== undefined
+				? kindDiscriminantExprForLiteral(value.value, kindEntries)
+				: undefined);
+		if (discriminant === undefined) continue;
+		byText.push([value.value, discriminant]);
 	}
 	return `[${byText.map(([text, discriminant]) => `[${JSON.stringify(text)}, ${discriminant}] as const`).join(', ')}]`;
 }
@@ -888,7 +921,7 @@ function emitFieldCarryingFactory(
 	for (const f of fieldsToEmit) {
 		lines.push(`  const ${f.storageKey} = ${valueSourceFor(f)};`);
 	}
-	lines.push('  return withMethods({');
+	lines.push('  return withMethods(withAccessors({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
@@ -896,12 +929,13 @@ function emitFieldCarryingFactory(
 	for (const f of fieldsToEmit) {
 		lines.push(`    ${f.storageKey},`);
 	}
+	lines.push(...withLines);
+	lines.push('  }, {');
 	for (const f of fieldsToEmit) {
 		const propName = f.propertyName;
-		lines.push(`    ${propName}() { return ${f.storageKey}; },`);
+		lines.push(`    ${propName}: () => ${f.storageKey},`);
 	}
-	lines.push(...withLines);
-	lines.push('  }, methodsEngine);');
+	lines.push('  }), methodsEngine);');
 	lines.push('}');
 	return renameUnusedConfigParam(lines);
 }
@@ -1011,16 +1045,12 @@ function emitRefineFormFactory(
 		}
 		lines.push(`  const ${f.storageKey} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries)};`);
 	}
-	lines.push('  return withMethods({');
+	lines.push('  return withMethods(withAccessors({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	for (const f of fields) {
 		lines.push(`    ${f.storageKey},`);
-	}
-	for (const f of fields) {
-		const propName = f.propertyName;
-		lines.push(`    ${propName}() { return ${f.storageKey}; },`);
 	}
 	lines.push('    $with: {');
 	for (const f of fields) {
@@ -1045,7 +1075,12 @@ function emitRefineFormFactory(
 	// Post-unification: legacy children setter is gone — per-slot setters above
 	// cover every slot.
 	lines.push('    },');
-	lines.push('  }, methodsEngine);');
+	lines.push('  }, {');
+	for (const f of fields) {
+		const propName = f.propertyName;
+		lines.push(`    ${propName}: () => ${f.storageKey},`);
+	}
+	lines.push('  }), methodsEngine);');
 	lines.push('}');
 	return lines.join('\n');
 }
@@ -1180,16 +1215,23 @@ function resolveContainerElementType(node: ContainerNode, nodeMap: NodeMap): str
  * `renderTransportDataStruct` (render-module.ts, Task 5) conditionally
  * capture/emit.
  *
- * Storage keys (`_content`/`_separator_kind`/`_leading_sep`/`_trailing_sep`)
- * and the `content()` getter match wrap.ts's `emitSeparatedListWrap` naming
- * exactly (Task 4) — the same three per-instance concepts share one naming
- * scheme across capture/render/construct, rather than a fourth bespoke one
- * here. This deliberately diverges from the Task-2 `_slots` stub's
- * kind-derived naming still declared on `T.<TypeName>` in types.ts (e.g.
- * `_with_item`/`withItems()`) — safe because the factory's return type is
- * always inferred, never assigned against that stale interface (confirmed
- * by wrap.ts's own `content()`/`_content` divergence from the same stale
- * interface, already shipped and gated in Task 4).
+ * Storage keys (`_separator_kind`/`_leading_sep`/`_trailing_sep`) match
+ * wrap.ts's `emitSeparatedListWrap` naming exactly (Task 4) — the same
+ * per-instance concepts share one naming scheme across capture/render/
+ * construct. The elements' own storage key/accessor, however, is NOT a
+ * fixed `_content`/`content()` bucket — it is derived via
+ * `canonicalSeparatedListField` (shared.ts), the SAME single-field
+ * canonical-slot derivation `emitSeparatedListWrap`'s "Bug B fix" and
+ * `renderTransportDataStruct`'s transport struct use, so the constructed
+ * object's storage key matches the model's real slot name (e.g.
+ * `_attributed_argument`, not `_content`) and satisfies both the wire
+ * transport and the Task-2 `_slots` stub's `T.<TypeName>` interface in
+ * types.ts (which declares `_<name>`/`<name>()` from the identical
+ * `node.fields` source). Multi-field kinds (`node.fields.length > 1`, e.g.
+ * TypeScript's `enum_body_group1`) can't route a flat `elements` array to
+ * more than one field without partitioning by kind — they keep the generic
+ * `_content`/`content()` bucket, which remains WRONG for those kinds (see
+ * `expectTestFailures`) pending a real per-field partition.
  *
  * Bypasses `node.fields`/`.slots` (the Task-2 stub) entirely, reading
  * `node.elements`/`.nonEmpty`/`.leadingMode`/`.trailingMode`/`.separatorRule`
@@ -1211,6 +1253,16 @@ function emitSeparatedListFactory(
 
 	const contentSlot = buildSeparatedListContentSlot(node);
 	const elemType = fieldElementType(contentSlot, nodeMap);
+	// Single-field kinds (the common case) store/expose the elements under
+	// the model's real slot name (Bug B fix — shared with wrap.ts/
+	// render-module.ts via `canonicalSeparatedListField`), not a generic
+	// `_content` bucket. Multi-field kinds (`node.fields.length > 1`) can't
+	// be split from a flat `elements` array without a real per-field
+	// partition (see doc comment) — they keep the old generic bucket.
+	const isMultiField = node.fields.length > 1;
+	const canonical = isMultiField ? undefined : canonicalSeparatedListField(node);
+	const contentStorageKey = canonical?.storageKey ?? '_content';
+	const contentAccessorName = canonical?.propertyName ?? 'content';
 	// `fieldElementType` doesn't parenthesize multi-member unions (unlike
 	// `childElementType`) — guard the bare-array case the same way
 	// `emitFieldCarryingFactory`'s `$with` setter block already does for
@@ -1255,7 +1307,7 @@ function emitSeparatedListFactory(
 	if (node.nonEmpty) {
 		lines.push(`  _assertNonEmpty(elements, '${node.kind}.elements');`);
 	}
-	lines.push('  const _content = elements;');
+	lines.push(`  const ${contentStorageKey} = elements;`);
 	if (hasSeparatorKindOption) {
 		if (candidateKindNames.length > 0) {
 			const arms = candidateKindNames
@@ -1271,15 +1323,14 @@ function emitSeparatedListFactory(
 	if (hasLeadingOption) lines.push('  const _leading_sep = options.leading ?? false;');
 	if (hasTrailingOption) lines.push('  const _trailing_sep = options.trailing ?? false;');
 
-	lines.push('  return withMethods({');
+	lines.push('  return withMethods(withAccessors({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push('    $source: 2 as const,');
 	lines.push('    $named: true as const,');
-	lines.push('    _content,');
+	lines.push(`    ${contentStorageKey},`);
 	if (hasSeparatorKindOption) lines.push('    _separator_kind,');
 	if (hasLeadingOption) lines.push('    _leading_sep,');
 	if (hasTrailingOption) lines.push('    _trailing_sep,');
-	lines.push('    content() { return _content; },');
 	lines.push('    $with: {');
 	const optionsArg = hasOptions ? ', options' : '';
 	// Rest param type must match `elementsType` exactly (`NonEmptyArray<T>`
@@ -1305,7 +1356,9 @@ function emitSeparatedListFactory(
 	if (hasLeadingOption) lines.push(`      leading: (v: boolean) => ${fn}(elements, { ...options, leading: v }),`);
 	if (hasTrailingOption) lines.push(`      trailing: (v: boolean) => ${fn}(elements, { ...options, trailing: v }),`);
 	lines.push('    },');
-	lines.push('  }, methodsEngine);');
+	lines.push('  }, {');
+	lines.push(`    ${contentAccessorName}: () => ${contentStorageKey},`);
+	lines.push('  }), methodsEngine);');
 	lines.push('}');
 	return lines.join('\n');
 }
@@ -1492,7 +1545,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		if (refineKindInfos.length > 0) utilImports.push('ConfigOf');
 		lines.push(`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`);
 		lines.push(
-			`import { ${['withMethods', 'methodsEngine', ...storageCoercionImports].join(', ')} } from './utils.js';`
+			`import { ${['withMethods', 'withAccessors', 'methodsEngine', ...storageCoercionImports].join(', ')} } from './utils.js';`
 		);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());

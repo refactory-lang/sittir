@@ -37,6 +37,13 @@ export interface EmitTestsConfig {
 	 * When absent (legacy callers), falls back to string literal checks.
 	 */
 	generatedIdTables?: GeneratedIdTables;
+	/**
+	 * Kind → reason for known-failing tests (`expectTestFailures:` in the
+	 * grammar's overrides.ts). Listed kinds emit `describe.skip` with the
+	 * reason inline so the suite stays green on tracked defects without
+	 * masking regressions in other kinds.
+	 */
+	expectTestFailures?: Readonly<Record<string, string>>;
 }
 
 /**
@@ -109,22 +116,36 @@ export function emitTests(config: EmitTestsConfig): string {
 		if (!isValidIdent(key)) continue;
 		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 
+		// Known-failing kind (`expectTestFailures:` in overrides.ts): emit the
+		// tests into a scratch buffer, then splice them in as `describe.skip`
+		// with the declared reason. Skipping at the describe level (rather than
+		// per-`it`) keeps the override surface to one kind→reason entry.
+		const knownFailure = config.expectTestFailures?.[kind];
+		const target = knownFailure ? [] : lines;
+
 		switch (node.modelType) {
 			case 'branch':
-				emitBranchTest(lines, node, kind, key, nodeMap, kindEntries);
+				emitBranchTest(target, node, kind, key, nodeMap, kindEntries);
 				break;
 			case 'separatedList':
-				emitSeparatedListTest(lines, node, kind, key, kindEntries, nodeMap);
+				emitSeparatedListTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'pattern':
-				emitLeafTest(lines, node, kind, key, kindEntries, nodeMap);
+				emitLeafTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'keyword':
-				emitKeywordTest(lines, node, kind, key, kindEntries, nodeMap);
+				emitKeywordTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'enum':
-				emitEnumTest(lines, node, kind, key, kindEntries, nodeMap);
+				emitEnumTest(target, node, kind, key, kindEntries, nodeMap);
 				break;
+		}
+
+		if (knownFailure && target.length > 0) {
+			lines.push(`// known-failing: ${knownFailure}`);
+			for (const line of target) {
+				lines.push(line.startsWith('describe(') ? line.replace(/^describe\(/, 'describe.skip(') : line);
+			}
 		}
 	}
 

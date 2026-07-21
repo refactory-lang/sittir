@@ -33,11 +33,14 @@ import {
 	isMultiple,
 	isRequired,
 	isNodeRef,
-	isUnresolvedRef,
+	isTerminalValue,
 	kindsOf,
 	structuralFieldsOf,
 	allFormFieldsOf,
-	allSlotsOf
+	allSlotsOf,
+	aliasTargetToSourceMapOf,
+	acceptedIdPairsByKindOf,
+	storageKindOfRef
 } from '../compiler/model/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import type { TemplateFile } from './template-hash.ts';
@@ -57,6 +60,7 @@ import {
 	collectKindEntries,
 	collectCatalogKinds,
 	findKindEntry,
+	findKindEntryForLiteral,
 	kindIdMemberName,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
@@ -1884,7 +1888,7 @@ function renderTransportSupport(
 		)
 	);
 	const perSlotEnumLines: string[] = perSlotEnums.flatMap((entry) =>
-		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey)
+		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey, kindEntries)
 	);
 
 	return pruneUnreferencedBridges(
@@ -2110,6 +2114,19 @@ function buildKindIdByKind(kindEntries: readonly KindEnumEntry[]): ReadonlyMap<s
 		}
 	}
 	return map;
+}
+
+/**
+ * Accepted wire ids for an `AssembledEnum` transport variant — the
+ * construction-time literal-chain stamps (`resolvedByText`), NOT the member
+ * kind NAMES re-resolved through `buildKindIdByKind`. That map is last-wins
+ * across catalog entries whose `kind` text collides (anon-token text ==
+ * named-rule name, the #129 class), while the TS side emits the stamped
+ * anon ids on the wire (`kindEnumTextMapExpr`) — dispatch arms must accept
+ * the same ids the sender bakes.
+ */
+function enumMemberAcceptedIds(node: AssembledEnum): number[] {
+	return [...node.resolvedByText.values()].map((e) => e.id);
 }
 
 /**
@@ -2443,16 +2460,18 @@ function emitSupertypeTransportEnum(
 			for (const { subKind, subNode } of validSubtypes) {
 				const variant = rustTypeIdent(subNode.typeName);
 				const typeName = rustTransportStructName(subNode);
+				// Owner-kind / supertype-membership ids stay name-resolved (spec §2.3
+				// keep-list); enum member ids are stamped facts (PR-K3b).
 				const acceptedKinds = new Set([subKind, ...collectConcreteTransportKinds(subKind, nodeMap)]);
+				const acceptedIds = [...acceptedKinds]
+					.map((k) => kindIdByKind.get(k))
+					.filter((id): id is number => id !== undefined);
 				if (subNode instanceof AssembledEnum) {
-					for (const resolvedKind of subNode.resolvedKinds) {
-						acceptedKinds.add(resolvedKind);
-					}
+					acceptedIds.push(...enumMemberAcceptedIds(subNode));
 				}
 				const boxed = isBoxed(subKind, subNode);
-				for (const acceptedKind of acceptedKinds) {
-					const id = kindIdByKind.get(acceptedKind);
-					if (id === undefined || emittedIds.has(id)) continue;
+				for (const id of acceptedIds) {
+					if (emittedIds.has(id)) continue;
 					emittedIds.add(id);
 					if (boxed) {
 						arms.push(`                ${id} => Ok(Self::${variant}(Box::new(`);
@@ -2671,6 +2690,32 @@ interface PerSlotChildEnum {
 	kinds: readonly string[];
 	/** Terminal literal children that may appear in runtime `$children`. */
 	literals: readonly TransportLiteral[];
+	/**
+	 * `parseKind -> storageKind` pairs for this slot's values whose wire
+	 * `$type` (`parseKind`, e.g. `type_identifier`) diverges from the
+	 * canonical storage kind sittir models it under (`node`, e.g.
+	 * `identifier` — see `aliasTargetToSourceMapOf`'s doc comment,
+	 * node-map.ts). A visible-to-visible `alias($.identifier,
+	 * $.type_identifier)` reference site canonicalizes to the SOURCE kind
+	 * here (unlike a hidden hidden-rule alias, which `nodeMap.aliasedHiddenKinds`
+	 * already covers) — so the runtime kind id for the ALIAS TARGET
+	 * (`type_identifier`) is otherwise missing from the generated
+	 * `FromNapiValue` match arms. Threaded into `acceptedTransportKinds` so
+	 * the id arm for the storage kind (`identifier`) also accepts the
+	 * alias-target id, per slot (the alias-target set is per-reference-site,
+	 * not global to the kind).
+	 *
+	 * PR-K3c: retained ONLY for the name-based fallback — kinds present in
+	 * `acceptedIdsByKind` never consult it.
+	 */
+	parseAliases: Readonly<Record<string, string>>;
+	/**
+	 * Per-storage-kind accepted wire ids from the mint stamps
+	 * (`acceptedIdPairsByKindOf`, node-map.ts). Kinds absent here (id-less
+	 * values, supertype-expanded arms with no value in hand) fall back to
+	 * the name chain (`acceptedTransportKinds` + `kindIdByKind`).
+	 */
+	acceptedIdsByKind: ReadonlyMap<string, readonly number[]>;
 }
 
 /**
@@ -2726,11 +2771,15 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 		const slotKinds = kindsOf(field);
 		const literalSet = new Set<string>();
 		const literals: TransportLiteral[] = [];
-		for (const text of slotLiteralValues(field)) {
+		// Iterate the terminal values directly (not slotLiteralValues) so the
+		// mint-time resolvedKindId stamp rides along (PR-K3a).
+		for (const v of field.values) {
+			if (!isTerminalValue(v)) continue;
+			const text = v.value;
 			const key = `${text}\0${text}`;
 			if (literalSet.has(key)) continue;
 			literalSet.add(key);
-			literals.push({ kind: text, text });
+			literals.push({ kind: text, text, resolvedKindId: v.resolvedKindId });
 		}
 		// Mixed-content override: a slot with named kinds AND anonymous literal
 		// content is heterogeneous regardless of classifier.
@@ -2742,7 +2791,9 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 		if (seen.has(enumName)) return;
 		if (reservedTransportNames.has(enumName)) return;
 		seen.add(enumName);
-		entries.push({ typeName, ownerKind, fieldName: field.name, kinds: slotKinds, literals });
+		const parseAliases = aliasTargetToSourceMapOf(field);
+		const acceptedIdsByKind = acceptedIdPairsByKindOf(field);
+		entries.push({ typeName, ownerKind, fieldName: field.name, kinds: slotKinds, literals, parseAliases, acceptedIdsByKind });
 	};
 
 	for (const node of nodes) {
@@ -2771,7 +2822,8 @@ function emitPerSlotChildEnum(
 	entry: PerSlotChildEnum,
 	kindIdByKind: ReadonlyMap<string, number> | undefined,
 	nodeMap: NodeMap,
-	literalVariantByKey: ReadonlyMap<string, string>
+	literalVariantByKey: ReadonlyMap<string, string>,
+	kindEntries?: readonly KindEnumEntry[]
 ): string[] {
 	const enumName = perSlotEnumName(entry.typeName, entry.fieldName);
 	const lines: string[] = [];
@@ -2831,16 +2883,24 @@ function emitPerSlotChildEnum(
 		for (const { kind, node, concreteName } of validKinds) {
 			const variant = rustTypeIdent(node.typeName);
 			const typeName = concreteName;
-			const acceptedKinds = new Set<string>(acceptedTransportKinds(kind, nodeMap));
+			// PR-K3c: value-backed kinds take their accepted ids straight from
+			// the mint stamps (storageKindId + parseKindId subsume both name-
+			// keyed alias redirects, per reference site). The name chain remains
+			// only for kinds with no value in hand (supertype-expanded arms) or
+			// id-less values.
+			const stampedIds = entry.acceptedIdsByKind.get(kind);
+			const acceptedIds =
+				stampedIds !== undefined
+					? [...stampedIds]
+					: [...new Set<string>(acceptedTransportKinds(kind, nodeMap, entry.parseAliases))]
+							.map((k) => kindIdByKind.get(k))
+							.filter((id): id is number => id !== undefined);
 			if (node instanceof AssembledEnum) {
-				for (const resolvedKind of node.resolvedKinds) {
-					acceptedKinds.add(resolvedKind);
-				}
+				acceptedIds.push(...enumMemberAcceptedIds(node));
 			}
 			const boxed = isBoxed(kind, node);
-			for (const acceptedKind of acceptedKinds) {
-				const id = kindIdByKind.get(acceptedKind);
-				if (id === undefined || emittedIds.has(id)) continue;
+			for (const id of acceptedIds) {
+				if (emittedIds.has(id)) continue;
 				emittedIds.add(id);
 				if (boxed) {
 					kindIdArms.push(`                ${id} => Ok(Self::${variant}(Box::new(`);
@@ -2854,7 +2914,15 @@ function emitPerSlotChildEnum(
 			}
 		}
 		for (const literal of entry.literals) {
-			const id = kindIdByKind.get(literal.kind);
+			// PR-K3a: the mint stamp (resolvedKindId, minted through the same
+			// literal-first chain — #129) is authoritative when present. The
+			// emit-time chain remains only for stamp-less literals (kind-
+			// derived keyword/token texts) and the no-catalog fallback.
+			const id =
+				literal.resolvedKindId ??
+				(kindEntries !== undefined
+					? (findKindEntryForLiteral(kindEntries, literal.text) ?? findKindEntry(kindEntries, literal.kind))?.id
+					: kindIdByKind.get(literal.kind));
 			const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 			if (id === undefined || variant === undefined || emittedIds.has(id)) continue;
 			emittedIds.add(id);
@@ -2997,19 +3065,10 @@ function renderAnyTransportWithNapiFromValue(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]
 ): string[] {
-	// Index by both `kind` (canonical catalog name) and `symbolName` (anon-token
-	// literal text). Literal arms are keyed by `literal.kind`, which for
-	// component literals carries the literal text (`"+"`) rather than the
-	// parser-symbol name (`"PLUS"`). Without the symbolName index, `+` and
-	// other operator-token literals would fall through to `id === undefined` and
-	// silently skip — leaving the dispatch incomplete.
-	const kindIdByKind = new Map<string, number>();
-	for (const e of kindEntries) {
-		kindIdByKind.set(e.kind, e.id);
-		if (e.symbolName !== undefined && !kindIdByKind.has(e.symbolName)) {
-			kindIdByKind.set(e.symbolName, e.id);
-		}
-	}
+	// Node-arm id index — the shared `buildKindIdByKind` construction (DRY:
+	// this was previously an inline duplicate of that helper). Literal arms
+	// do NOT resolve through this map — see the literal-first note below.
+	const kindIdByKind = buildKindIdByKind(kindEntries);
 
 	const lines: string[] = [];
 
@@ -3076,8 +3135,19 @@ function renderAnyTransportWithNapiFromValue(
 	// One match arm per literal kind — unit variants, no payload.
 	// The literal text is a compile-time constant; JS does not need to send it.
 	// Use the same emittedNodeIds set to skip KindIds already claimed by node arms.
+	// Resolution is literal-first (#129): `kindIdByKind` keys every entry by
+	// its catalog kind BEFORE symbolName, so a literal whose text equals a
+	// NAMED rule's name (python's `'type'`) resolved to the rule's id — which
+	// a node arm had already claimed, so the literal arm was deduped away and
+	// the anon token's id had NO arm at all. Resolve the literal TEXT through
+	// the anon-scoped lookup, falling back to the catalog-key form for
+	// literals keyed by parser-symbol name.
 	for (const [index, literal] of literals.entries()) {
-		const id = kindIdByKind.get(literal.kind);
+		// PR-K3a: mint stamp first; emit-time chain only for stamp-less
+		// (kind-derived) literals.
+		const id =
+			literal.resolvedKindId ??
+			(findKindEntryForLiteral(kindEntries, literal.text) ?? findKindEntry(kindEntries, literal.kind))?.id;
 		if (id === undefined) continue;
 		if (emittedNodeIds.has(id)) continue; // T016: skip duplicate KindId
 		emittedNodeIds.add(id);
@@ -3276,7 +3346,7 @@ function leafBooleanPresenceLiteral(node: AssembledNode, nodeMap: NodeMap): stri
 			if (keywordPresenceValue(field, nodeMap) !== literal) continue;
 			if (
 				field.values.some(
-					(value) => isNodeRef(value) && (isUnresolvedRef(value.node) ? value.node.name : value.node.kind) === node.kind
+					(value) => isNodeRef(value) && (storageKindOfRef(value.node)) === node.kind
 				)
 			) {
 				return literal;
@@ -4354,7 +4424,11 @@ function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: rea
 			// inputs; see transport_value_type).
 			const kindIdMatchArms = (indent: string): void => {
 				for (const v of values) {
-					const entry = findKindEntry(kindEntries, v);
+					// `values` are LITERAL member texts — read the node's
+					// construction-time literal-chain resolution (PR-K3a;
+					// anon-scoped first so a same-spelled named rule can't
+					// shadow, #129).
+					const entry = node.resolvedByText.get(v);
 					const variant = literalToVariantName(v);
 					if (entry !== undefined) {
 						lines.push(`${indent}${entry.id} => return Ok(Self::${variant}), // ${JSON.stringify(v)}`);

@@ -559,6 +559,20 @@ export function mergeBranchesForChoice(rule: ChoiceRule, ctx?: SimplifyCtx): Any
 		const position = unwrapped.map((br) => br.members[i]!);
 		if (!positionsAreMergeable(position)) return liftSharedArmAttrs(rule);
 	}
+	// Soundness guard (#171): merging unions each position INDEPENDENTLY,
+	// which is only sound when at most one position actually varies across
+	// branches. Two or more co-varying positions are correlated by branch
+	// construction (e.g. a string rule's opening/contents/closing arms) —
+	// independent unioning would produce a decorrelated grammar accepting
+	// combinations no branch authored. Bail to the attr-lift path instead.
+	let varyingPositions = 0;
+	for (let i = 0; i < len; i++) {
+		const position = unwrapped.map((br) => br.members[i]!);
+		if (dedupeByJson(position).length > 1) {
+			varyingPositions++;
+			if (varyingPositions >= 2) return liftSharedArmAttrs(rule);
+		}
+	}
 	// All positions mergeable. Build the merged seq.
 	const mergedMembers: AnyRule[] = [];
 	for (let i = 0; i < len; i++) {

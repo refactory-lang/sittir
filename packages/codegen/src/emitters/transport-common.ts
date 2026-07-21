@@ -5,7 +5,7 @@ import type {
 	AssembledSupertype,
 	UnresolvedRef
 } from '../compiler/model/node-map.ts';
-import { isNodeRef, isUnresolvedRef } from '../compiler/model/node-map.ts';
+import { isNodeRef, storageKindOfRef } from '../compiler/model/node-map.ts';
 
 /**
  * Classification of a transport slot by its type width.
@@ -121,10 +121,32 @@ function expandWrapRuntimeKinds(kind: string, nodeMap: NodeMap | undefined, seen
 	return [kind];
 }
 
-export function acceptedTransportKinds(kind: string, nodeMap?: NodeMap): string[] {
+/**
+ * @param parseAliases - Optional per-slot `parseKind -> storageKind` pairs
+ *   (see `aliasTargetToSourceMapOf`, node-map.ts) for the specific slot
+ *   `kind` was drawn from. Covers the VISIBLE-to-visible alias case a
+ *   reference site canonicalizes to its storage/source kind (e.g.
+ *   `alias($.identifier, $.type_identifier)` used inline at a CHOICE
+ *   member — the value's `node` resolves to `identifier`, but its
+ *   `parseKind` — the wire `$type` tree-sitter actually stamps — is
+ *   `type_identifier`). This is the SAME kind of "runtime id diverges
+ *   from the modeled storage kind" fact `aliasedHiddenKinds` covers for
+ *   HIDDEN alias-source rules, just carried per-value (on `NodeOrTerminal.
+ *   parseKind`) instead of globally keyed by hidden rule name — a
+ *   visible-to-visible alias reference site has no hidden rule name to key
+ *   `aliasedHiddenKinds` by, so it can only be recovered from the slot
+ *   that actually saw the alias. Any entry whose source equals `kind` adds
+ *   its target id too.
+ */
+export function acceptedTransportKinds(
+	kind: string,
+	nodeMap?: NodeMap,
+	parseAliases?: Readonly<Record<string, string>>
+): string[] {
 	if (!nodeMap) return [kind];
 	const node = nodeMap.nodes.get(kind);
 	if (!node) return [kind];
+	const out = new Set<string>([kind]);
 	// A hidden kind that's also the CONTENT of a named alias
 	// (`alias(symbol(_X), $.visible)`) shares its runtime kind id with
 	// that alias's visible name — the generated id catalog (KIND_NAMES,
@@ -134,8 +156,13 @@ export function acceptedTransportKinds(kind: string, nodeMap?: NodeMap): string[
 	// see native-transport-emit.test.ts's "accepts visible alias kind
 	// ids for hidden-wrapper child enums".
 	const aliasTarget = nodeMap.aliasedHiddenKinds?.get(kind);
-	if (aliasTarget !== undefined) return [kind, aliasTarget];
-	return [kind];
+	if (aliasTarget !== undefined) out.add(aliasTarget);
+	if (parseAliases) {
+		for (const [target, source] of Object.entries(parseAliases)) {
+			if (source === kind) out.add(target);
+		}
+	}
+	return [...out];
 }
 
 /**
@@ -159,7 +186,7 @@ export function deriveChildrenKinds(
 	const kinds = new Set<string>();
 	for (const v of child.values) {
 		if (!isNodeRef(v)) continue;
-		const kind = isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : (v.node as AssembledNode).kind;
+		const kind = storageKindOfRef(v.node);
 		for (const expanded of expandWrapRuntimeKinds(kind, nodeMap, seen)) kinds.add(expanded);
 	}
 	return [...kinds];

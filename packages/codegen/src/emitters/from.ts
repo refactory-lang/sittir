@@ -13,6 +13,7 @@ import {
 	collectKindEntries,
 	collectCatalogKinds,
 	kindDiscriminantExpr,
+	kindDiscriminantExprForId,
 	hasCatalogEntry,
 	findKindEntry,
 	type KindEnumEntry
@@ -35,11 +36,12 @@ import {
 	classifyFactoryShape,
 	classifyChildFactorySurface,
 	classifyFromEmission,
-	unnamedChildSlotFacts
+	unnamedChildSlotFacts,
+	canonicalSeparatedListField
 } from './shared.ts';
-import { fieldElementType, childElementType } from './factories.ts';
+import { fieldElementType, childElementType, kindEnumTextMapExpr } from './factories.ts';
 import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
-import { isNodeRef, isTerminalValue, isUnresolvedRef } from '../compiler/model/node-map.ts';
+import { isNodeRef, isTerminalValue, storageKindIdByNameOf, storageKindOfRef } from '../compiler/model/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/model/node-map.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
@@ -464,7 +466,7 @@ function emitBranchFrom(
 	if (fields.length > 0) {
 		if (canDirectFactoryCall) {
 			lines.push(
-				`  if (${inputOptional ? 'input !== undefined && ' : ''}isNodeData(input) && (input.$type as string | number) === kindIdFromName(${JSON.stringify(node.kind)})) return input as unknown as ${returnType};`
+				`  if (${inputOptional ? 'input !== undefined && ' : ''}isNodeData(input) && (input.$type as string | number) === ${containerTypeCheck(node.kind, kindEntries, nodeMap)}) return input as unknown as ${returnType};`
 			);
 		} else {
 			emitBranchNodeDataPassthrough(lines, inputOptional, returnType);
@@ -480,7 +482,7 @@ function emitBranchFrom(
 		for (const f of fields) {
 			if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
 			if (needsNonEmptyHoist(f)) {
-				const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional);
+				const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional, kindEntries);
 				lines.push(`  const ${neName(f)} = ${call};`);
 				lines.push(`  _assertNonEmpty(${neName(f)}, '${node.kind}.${f.propertyName}');`);
 			}
@@ -492,7 +494,7 @@ function emitBranchFrom(
 		// and multiple (array) fields.
 		if (canDirectFactoryCall) {
 			const inputExpr = `(input !== null && typeof input === 'object' && !isNodeData(input) && ${JSON.stringify(soleField.configKey)} in input ? input.${soleField.configKey} : input)`;
-			const call = resolveFieldCall(inputExpr, soleField, isMultiple(soleField), nodeMap, intern);
+			const call = resolveFieldCall(inputExpr, soleField, isMultiple(soleField), nodeMap, intern, true, undefined, kindEntries);
 			// Gap A: sole-slot direct-call factories skip the Config object
 			// literal entirely, so a required sole field needs its own guard.
 			const guardedCall = isRequired(soleField)
@@ -506,7 +508,7 @@ function emitBranchFrom(
 				if (needsNonEmptyHoist(f)) {
 					lines.push(`    ${f.configKey}: ${neName(f)},`);
 				} else {
-					const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional);
+					const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional, kindEntries);
 					const defaultFactory = canDefaultToEmpty(f, nodeMap);
 					if (defaultFactory) {
 						lines.push(`    ${f.configKey}: ${call} ?? F.${defaultFactory}(),`);
@@ -859,6 +861,11 @@ function emitSeparatedListFrom(
 	const tName = `T.${node.typeName}`;
 	const contentSlot = buildSeparatedListContentSlot(node);
 	const elemType = fieldElementType(contentSlot, nodeMap);
+	// Same single-field-storage rule as `emitSeparatedListFactory`
+	// (factories.ts): the self-NodeData-unwrap path must read the SAME wire
+	// storage key the factory actually wrote. Multi-field kinds keep the
+	// generic `_content` bucket (see factories.ts's doc comment).
+	const contentStorageKey = node.fields.length > 1 ? '_content' : canonicalSeparatedListField(node).storageKey;
 
 	// Mirrors emitSeparatedListFactory's own gating exactly (see that
 	// function's doc comment, factories.ts) — kept consistent across
@@ -905,7 +912,7 @@ function emitSeparatedListFrom(
 		node.kind,
 		kindEntries,
 		nodeMap,
-		'_content',
+		contentStorageKey,
 		(varExpr, isSelfUnwrap) =>
 			isSelfUnwrap && hasOptions
 				? buildOptionsPreservingCall(varExpr)
@@ -981,7 +988,8 @@ function resolveFieldFromTypedInput(
 	parentTypeName: string,
 	intern: KindInterner,
 	sourceVar: string,
-	inputOptional: boolean
+	inputOptional: boolean,
+	kindEntries?: readonly KindEnumEntry[]
 ): string {
 	// parentTypeName is retained for signature stability with callers;
 	// the prior implementation used it to build an explicit
@@ -999,7 +1007,7 @@ function resolveFieldFromTypedInput(
 	 */
 	const optChain = inputOptional ? '?' : '';
 	const access = `${sourceVar}${optChain}.${field.configKey}`;
-	return resolveFieldCall(access, field, isMultiple(field), nodeMap, intern);
+	return resolveFieldCall(access, field, isMultiple(field), nodeMap, intern, true, undefined, kindEntries);
 }
 
 /**
@@ -1022,7 +1030,11 @@ function resolveFieldFromTypedInput(
  * @param nodeMap - The assembled node map (used to look up supertype subtypes).
  * @returns Deduplicated list of concrete kind strings.
  */
-function expandAndDedupeContentTypes(contentTypes: readonly string[], nodeMap: NodeMap): string[] {
+function expandAndDedupeContentTypes(
+	contentTypes: readonly string[],
+	nodeMap: NodeMap,
+	idByKind?: ReadonlyMap<string, number>
+): string[] {
 	const seen = new Set<string>();
 	const expanded: string[] = [];
 	const visit = (kind: string): void => {
@@ -1031,8 +1043,13 @@ function expandAndDedupeContentTypes(contentTypes: readonly string[], nodeMap: N
 			for (const subtype of node.subtypes) visit(subtype);
 			return;
 		}
-		if (seen.has(kind)) return;
-		seen.add(kind);
+		// PR-K3e: dedupe by the mint-stamped id where the slot's values carry
+		// one — same-id kinds are one runtime identity even under different
+		// names. Name key for stamp-less kinds (incl. supertype expansions).
+		const id = idByKind?.get(kind);
+		const key = id !== undefined ? `#${id}` : `n:${kind}`;
+		if (seen.has(key)) return;
+		seen.add(key);
 		expanded.push(kind);
 	};
 	for (const t of contentTypes) visit(t);
@@ -1055,9 +1072,10 @@ function expandAndDedupeContentTypes(contentTypes: readonly string[], nodeMap: N
 function classifyKindsForResolver(
 	expanded: string[],
 	nodeMap: NodeMap
-): { leafKinds: string[]; branchKinds: string[] } {
+): { leafKinds: string[]; branchKinds: string[]; tokenKinds: string[] } {
 	const leafKinds: string[] = [];
 	const branchKinds: string[] = [];
+	const tokenKinds: string[] = [];
 	for (const t of expanded) {
 		const n = nodeMap.nodes.get(t);
 		if (!n) {
@@ -1072,7 +1090,12 @@ function classifyKindsForResolver(
 				leafKinds.push(t);
 				break;
 			case 'token':
-				// Anonymous tokens have no factory binding — skip.
+				// Anonymous tokens have no factory binding — no resolver
+				// dispatch, but they are still VALID union members: report
+				// them so the single-kind fast path can pass an already-built
+				// token NodeData through instead of auto-wrapping it into the
+				// primary branch's container (#128).
+				tokenKinds.push(t);
 				break;
 			case 'supertype':
 			case 'branch':
@@ -1084,7 +1107,7 @@ function classifyKindsForResolver(
 				break;
 		}
 	}
-	return { leafKinds, branchKinds };
+	return { leafKinds, branchKinds, tokenKinds };
 }
 
 /**
@@ -1112,6 +1135,7 @@ function buildSingleKindFastPath(
 	prop: string,
 	leafKinds: string[],
 	branchKinds: string[],
+	altKindExprs: readonly string[],
 	fieldMultiple: boolean,
 	elementType?: string
 ): string | undefined {
@@ -1127,7 +1151,42 @@ function buildSingleKindFastPath(
 			? '_resolveOneLeaf'
 			: '_resolveOneBranch';
 	const tArg = elementType ? `<${elementType}>` : '';
-	return `${specialized}${tArg}(${prop}, ${JSON.stringify(kindName)})`;
+	// Branch fast path with anonymous-token union siblings (e.g.
+	// mod_item.content's `';' | DeclarationList`): pass the token kinds'
+	// discriminants so the resolver recognizes an already-valid
+	// alternate-branch NodeData instead of auto-wrapping it into the
+	// primary container (#128). Leaf resolvers never wrap, so they need
+	// no alternate list. PR-K3d: the discriminants are baked at codegen
+	// (`altKindDiscriminants`) — no runtime `kindIdFromName` re-resolution.
+	const altArg = !isLeaf && altKindExprs.length > 0 ? `, [${altKindExprs.join(', ')}]` : '';
+	return `${specialized}${tArg}(${prop}, ${JSON.stringify(kindName)}${altArg})`;
+}
+
+/**
+ * Baked discriminant expressions for a slot's anonymous-token union
+ * siblings (the `altKinds` argument of `_resolveOneBranch`). Resolution
+ * order per token kind (PR-K3d): the slot value's mint `storageKindId`
+ * stamp when present (collision-free id), else the name chain via
+ * {@link containerTypeCheck} (`TSKindId.X` for catalog-backed kinds,
+ * string literal for catalog-less fixtures — matching the string `$type`
+ * world those pipelines run in).
+ */
+function altKindDiscriminants(
+	tokenKinds: readonly string[],
+	values: readonly NodeOrTerminal[],
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string[] {
+	return tokenKinds.map((t) => {
+		const stampedId = values.find(
+			(v) => isNodeRef(v) && (storageKindOfRef(v.node)) === t && v.storageKindId !== undefined
+		)?.storageKindId;
+		const stamped =
+			stampedId !== undefined && kindEntries !== undefined
+				? kindDiscriminantExprForId(stampedId, kindEntries)
+				: undefined;
+		return stamped ?? containerTypeCheck(t, kindEntries, nodeMap);
+	});
 }
 
 /**
@@ -1181,7 +1240,10 @@ function resolveFieldCall(
 	/** Pre-computed element type expression for the explicit `<T>` type
 	 * argument on the resolver call. When omitted, falls back to deriving
 	 * from the field shape (only possible when `field` is an `AssembledNonterminal`). */
-	elementTypeOverride?: string
+	elementTypeOverride?: string,
+	/** Catalog entries — required for kindEnum fields to emit compile-time
+	 * literal-aware discriminants (shared kindEnumTextMapExpr, #129). */
+	kindEntries?: readonly KindEnumEntry[]
 ): string {
 	// Short-circuit keyword-presence fields through dedicated
 	// resolvers. Boolean / bitflag inputs must NOT get routed through the
@@ -1194,8 +1256,8 @@ function resolveFieldCall(
 
 	const storageInfo = 'name' in field ? resolveFieldStorageInfo(field as AssembledNonterminal, nodeMap) : undefined;
 
-	const expanded = expandAndDedupeContentTypes(slotKindNames(field), nodeMap);
-	const { leafKinds, branchKinds } = classifyKindsForResolver(expanded, nodeMap);
+	const expanded = expandAndDedupeContentTypes(slotKindNames(field), nodeMap, storageKindIdByNameOf(field));
+	const { leafKinds, branchKinds, tokenKinds } = classifyKindsForResolver(expanded, nodeMap);
 
 	// Pass an explicit element type when we have one — `resolveFieldCall` is
 	// also invoked with merged children pseudo-fields (no AssembledNonterminal
@@ -1204,34 +1266,29 @@ function resolveFieldCall(
 	const elementType =
 		elementTypeOverride ?? ('name' in field ? fieldElementType(field as AssembledNonterminal, nodeMap) : undefined);
 
-	const fastPath = buildSingleKindFastPath(prop, leafKinds, branchKinds, fieldMultiple, elementType);
+	const fastPath = buildSingleKindFastPath(
+		prop,
+		leafKinds,
+		branchKinds,
+		altKindDiscriminants(tokenKinds, field.values, nodeMap, kindEntries),
+		fieldMultiple,
+		elementType
+	);
 	const baseCall =
 		fastPath !== undefined
 			? fastPath
 			: buildInternedArrayResolverCall(prop, leafKinds, branchKinds, fieldMultiple, intern, elementType);
 	if (storageInfo?.kind === 'kindEnum') {
-		return `coerceKindEnumStorage(${baseCall}, ${kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap)})`;
+		return `coerceKindEnumStorage(${baseCall}, ${kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap, kindEntries)})`;
 	}
 	return baseCall;
 }
 
-function kindEnumTextMapExpr(field: AssembledNonterminal, nodeMap: NodeMap): string {
-	const entries: string[] = [];
-	for (const value of field.values) {
-		if (isNodeRef(value)) {
-			const kind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
-			const node = nodeMap.nodes.get(kind);
-			if (!(node?.modelType === 'enum')) continue;
-			for (const text of node.values) {
-				entries.push(`[${JSON.stringify(text)}, kindIdFromName(${JSON.stringify(text)})] as const`);
-			}
-			continue;
-		}
-		if (!isTerminalValue(value)) continue;
-		entries.push(`[${JSON.stringify(value.value)}, kindIdFromName(${JSON.stringify(value.value)})] as const`);
-	}
-	return `[${entries.join(', ')}]`;
-}
+// kindEnumTextMapExpr: shared with factories.ts (imported above) — from.ts
+// previously carried a duplicate that emitted runtime `kindIdFromName(text)`
+// lookups, resolving literal texts through the name-polymorphic runtime
+// switch (rust `'block'` → the named block RULE's id instead of the
+// anon_sym_block token's) — the runtime face of the #129 shadowing class.
 
 /**
  * Emit the resolver call string for a keyword-presence field.
@@ -1693,13 +1750,19 @@ function emitResolverHelpers(
 	// since _resolveOneBranch references _wrapKindIds and _wrapWithChildren.
 	emitWrapWithChildrenTable(lines, nodeMap, kindEntries);
 
-	lines.push('function _resolveOneBranch<T>(v: _FromFieldInput, kind: string): T {');
+	lines.push('function _resolveOneBranch<T>(v: _FromFieldInput, kind: string, altKinds?: readonly (string | number)[]): T {');
 	lines.push('  if (v === undefined || v === null) return v as T;');
 	// Gap 4: NodeData pass-through if $type matches; wrap as single child
-	// when it doesn't and target kind supports children.
+	// when it doesn't and target kind supports children. `altKinds` carries
+	// the slot's OTHER union members (anonymous tokens the resolver
+	// classification has no factory dispatch for, e.g. mod_item.content's
+	// `';'` external form) — a NodeData already matching one is a VALID
+	// alternate branch and must pass through, not get auto-wrapped into the
+	// primary branch's container (#128).
 	lines.push('  if (isNodeData(v)) {');
 	lines.push('    const wrapId = _wrapKindIds[kind];');
 	lines.push('    if (wrapId !== undefined && v.$type !== wrapId) {');
+	lines.push('      if (altKinds !== undefined && altKinds.some(k => k === v.$type)) return v as T;');
 	lines.push('      return _wrapWithChildren(kind, [v]) as T;');
 	lines.push('    }');
 	lines.push('    return v as T;');
@@ -1751,10 +1814,10 @@ function emitResolverHelpers(
 	lines.push('}');
 	lines.push('');
 
-	lines.push('function _resolveManyBranch<T>(v: _FromFieldInput, kind: string): readonly T[] {');
+	lines.push('function _resolveManyBranch<T>(v: _FromFieldInput, kind: string, altKinds?: readonly (string | number)[]): readonly T[] {');
 	lines.push('  if (v === undefined || v === null) return [];');
 	lines.push('  const arr: readonly _FromFieldInput[] = Array.isArray(v) ? v : [v];');
-	lines.push('  return arr.map(e => _resolveOneBranch<T>(e, kind));');
+	lines.push('  return arr.map(e => _resolveOneBranch<T>(e, kind, altKinds));');
 	lines.push('}');
 	lines.push('');
 

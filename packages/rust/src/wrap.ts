@@ -9298,12 +9298,12 @@ export function wrapTokenBindingPattern(data: T.TokenBindingPattern, tree: TreeH
 				normalizeSingularWrapSlot(
 					data._type ??
 						readTerminalFromOther(data, [
-							TSKindId.Block,
+							TSKindId.AnonBlock,
 							TSKindId.Expr,
 							TSKindId.Expr2021,
 							TSKindId.Ident,
 							TSKindId.Item,
-							TSKindId.Lifetime,
+							TSKindId.AnonLifetime,
 							TSKindId.Literal,
 							TSKindId.Meta,
 							TSKindId.Pat,

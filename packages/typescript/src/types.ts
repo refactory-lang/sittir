@@ -3235,10 +3235,8 @@ export interface ClassHeritageExtendsClause {
 
 export interface _EnumBodyGroup1 {
 	readonly $type: TSKindId._EnumBodyGroup1;
-	readonly _name?: readonly PropertyName[];
-	readonly _enum_assignment?: readonly EnumAssignment[];
-	names(): readonly PropertyName[];
-	enumAssignments(): readonly EnumAssignment[];
+	readonly _content?: readonly (EnumAssignment | PropertyName)[];
+	contents(): readonly (EnumAssignment | PropertyName)[];
 }
 
 export interface _ExportClauseGroup1 {
@@ -3262,19 +3260,15 @@ export interface ExportStatementDefault {
 export interface ExportStatementDefaultDeclArm {
 	readonly $type: TSKindId.ExportStatementDefaultDeclArm;
 	readonly _decorator?: readonly Decorator[];
-	readonly _declaration?: Declaration;
-	readonly _export_statement_default_decl_arm_default_kw?: ExportStatementDefaultDeclArmDefaultKw;
+	readonly _content: ExportStatementDefaultDeclArmDefaultKw | Declaration;
 	decorators(): readonly Decorator[];
-	declaration(): Declaration | undefined;
-	exportStatementDefaultDeclArmDefaultKw(): ExportStatementDefaultDeclArmDefaultKw | undefined;
+	content(): ExportStatementDefaultDeclArmDefaultKw | Declaration;
 }
 
 export interface ExportStatementDefaultDeclArmDefaultKw {
 	readonly $type: TSKindId.ExportStatementDefaultDeclArmDefaultKw;
-	readonly _declaration?: Declaration;
-	readonly _export_statement_default_decl_arm_default_kw_value?: ExportStatementDefaultDeclArmDefaultKwValue;
-	declaration(): Declaration | undefined;
-	exportStatementDefaultDeclArmDefaultKwValue(): ExportStatementDefaultDeclArmDefaultKwValue | undefined;
+	readonly _content: ExportStatementDefaultDeclArmDefaultKwValue | Declaration;
+	content(): ExportStatementDefaultDeclArmDefaultKwValue | Declaration;
 }
 
 export interface ExportStatementDefaultDeclArmDefaultKwValue {
@@ -4282,7 +4276,7 @@ export interface ExportSpecifier {
 	readonly _name: ModuleExportName;
 	readonly _alias?: ModuleExportName;
 	readonly __inputHints__?: {
-		readonly export_kind?: KindEnum<'type' | 'typeof', TSKindId.Type | TSKindId.Typeof>;
+		readonly export_kind?: KindEnum<'type' | 'typeof', TSKindId.AnonType | TSKindId.Typeof>;
 	};
 	exportKind(): number | undefined;
 	name(): ModuleExportName;
@@ -4552,7 +4546,7 @@ export interface ImportSpecifier {
 	readonly _import_kind?: number;
 	readonly _content: ImportIdentifier | ImportSpecifierAs;
 	readonly __inputHints__?: {
-		readonly import_kind?: KindEnum<'type' | 'typeof', TSKindId.Type | TSKindId.Typeof>;
+		readonly import_kind?: KindEnum<'type' | 'typeof', TSKindId.AnonType | TSKindId.Typeof>;
 	};
 	importKind(): number | undefined;
 	content(): ImportIdentifier | ImportSpecifierAs;
@@ -4565,7 +4559,7 @@ export interface ImportStatement {
 	readonly _import_attribute?: ImportAttribute;
 	readonly _semicolon?: Semicolon;
 	readonly __inputHints__?: {
-		readonly import_clause?: KindEnum<'type' | 'typeof', TSKindId.Type | TSKindId.Typeof>;
+		readonly import_clause?: KindEnum<'type' | 'typeof', TSKindId.Type | TSKindId.Typeof | TSKindId.AnonType>;
 	};
 	importClause(): number | undefined;
 	fromClause(): ImportClause | String | ImportRequireClause;
@@ -5473,10 +5467,8 @@ export interface CatchClauseGroup1 {
 
 export interface EnumBodyGroup1 {
 	readonly $type: 'enum_body_group1';
-	readonly _name?: readonly PropertyName[];
-	readonly _enum_assignment?: readonly EnumAssignment[];
-	names(): readonly PropertyName[];
-	enumAssignments(): readonly EnumAssignment[];
+	readonly _content?: readonly (EnumAssignment | PropertyName)[];
+	contents(): readonly (EnumAssignment | PropertyName)[];
 }
 
 export interface ExportClauseGroup1 {
@@ -5529,7 +5521,7 @@ export type AugmentedAssignmentExpressionOperator = Terminal<
 	| TSKindId.QmarkQmarkEq,
 	'+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '&=' | '|=' | '>>=' | '>>>=' | '<<=' | '**=' | '&&=' | '||=' | '??='
 >;
-export type ExportSpecifierExportKind = Terminal<TSKindId.Type | TSKindId.Typeof, 'type' | 'typeof'>;
+export type ExportSpecifierExportKind = Terminal<TSKindId.AnonType | TSKindId.Typeof, 'type' | 'typeof'>;
 export type ImportAttributeObject = Terminal<TSKindId.With | TSKindId.Assert, 'with' | 'assert'>;
 export type Kind = Terminal<TSKindId.Let | TSKindId.Const, 'let' | 'const'>;
 export type ObjectTypeClosing = Terminal<TSKindId.Rbrace | TSKindId.PipeRbrace, '}' | '|}'>;
@@ -5561,15 +5553,15 @@ export type Number = Terminal<TSKindId.Number, string>;
 export type OverrideModifier = Terminal<TSKindId.OverrideModifier, 'override'>;
 export type PredefinedType = Terminal<
 	| TSKindId.Any
-	| TSKindId.Number
+	| TSKindId.AnonNumber
 	| TSKindId.Boolean
-	| TSKindId.String
+	| TSKindId.AnonString
 	| TSKindId.Symbol
 	| TSKindId.Unique
 	| TSKindId.Void
 	| TSKindId.Unknown
 	| TSKindId.Never
-	| TSKindId.Object,
+	| TSKindId.AnonObject,
 	'any' | 'number' | 'boolean' | 'string' | 'symbol' | 'unique symbol' | 'void' | 'unknown' | 'never' | 'object'
 >;
 export type PrivatePropertyIdentifier = Terminal<TSKindId.PrivatePropertyIdentifier, string>;

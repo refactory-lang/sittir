@@ -249,6 +249,28 @@ describe('grammar diagnostics preflight', () => {
 		]);
 	});
 
+	it('nonterminal-separator-unstamped blocks (canProceed: false) — zero-instance guard', () => {
+		// No grammar fixture can fire this today (no kind in any of the 3 grammars
+		// routes a nonterminal separator through the slot-value stamp path's
+		// nested-arm-scan source — see the guard in collect-slots.ts's buildSlot),
+		// so this pins only the mapping: if the warning is ever recorded, it must
+		// block.
+		const result = collectGrammarDiagnostics({
+			grammar: 'synth',
+			parseKindCollisions: [],
+			assembleWarnings: [
+				{
+					code: 'nonterminal-separator-unstamped',
+					ownerKind: 'host',
+					message: 'nonterminal separator reached the slot-value stamp path'
+				}
+			]
+		});
+		expect(result.diagnostics).toEqual([
+			expect.objectContaining({ code: 'nonterminal-separator-unstamped', ownerKind: 'host', canProceed: false })
+		]);
+	});
+
 	describe('_object_type_group1 accepted-floor exception (see docs/KNOWN_ISSUES.md)', () => {
 		// Same shape as content-collision.test.ts's '_class_body_member shape' fixture:
 		// an unnamed seq of two unnamed multi-kind choices, both resolving to `content`.

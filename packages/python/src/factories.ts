@@ -3,7 +3,13 @@
 import type * as T from './types.js';
 import { TSKindId } from './types.js';
 import type { FluentNode, NonEmptyArray } from '@sittir/types';
-import { withMethods, methodsEngine, coerceBooleanKeywordStorage, coerceKindEnumStorage } from './utils.js';
+import {
+	withMethods,
+	withAccessors,
+	methodsEngine,
+	coerceBooleanKeywordStorage,
+	coerceKindEnumStorage
+} from './utils.js';
 
 function _assertNonEmpty<T>(arr: readonly T[], label: string): asserts arr is readonly [T, ...(readonly T[])] {
 	if (typeof process !== 'undefined' && !process.env.SITTIR_DEBUG) return;
@@ -25,24 +31,26 @@ export function build_ArgumentListGroup1(
 	const _content = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
-		{
-			$type: TSKindId._ArgumentListGroup1 as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			_trailing_sep,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId._ArgumentListGroup1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				_trailing_sep,
+				$with: {
+					$children: (
+						...vs: NonEmptyArray<
+							T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
+						>
+					) => build_ArgumentListGroup1(vs, options),
+					trailing: (v: boolean) => build_ArgumentListGroup1(elements, { ...options, trailing: v })
+				}
 			},
-			$with: {
-				$children: (
-					...vs: NonEmptyArray<
-						T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
-					>
-				) => build_ArgumentListGroup1(vs, options),
-				trailing: (v: boolean) => build_ArgumentListGroup1(elements, { ...options, trailing: v })
+			{
+				contents: () => _content
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -51,23 +59,23 @@ export function build_AsPattern(config: T._AsPattern.Config) {
 	const _case_pattern = config.casePattern;
 	const _identifier = config.identifier;
 	return withMethods(
-		{
-			$type: TSKindId._AsPattern as const,
-			$source: 2 as const,
-			$named: true as const,
-			_case_pattern,
-			_identifier,
-			casePattern() {
-				return _case_pattern;
+		withAccessors(
+			{
+				$type: TSKindId._AsPattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_case_pattern,
+				_identifier,
+				$with: {
+					casePattern: (value: T.CasePattern) => build_AsPattern({ ...config, casePattern: value }),
+					identifier: (value: T.Identifier) => build_AsPattern({ ...config, identifier: value })
+				}
 			},
-			identifier() {
-				return _identifier;
-			},
-			$with: {
-				casePattern: (value: T.CasePattern) => build_AsPattern({ ...config, casePattern: value }),
-				identifier: (value: T.Identifier) => build_AsPattern({ ...config, identifier: value })
+			{
+				casePattern: () => _case_pattern,
+				identifier: () => _identifier
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -75,18 +83,20 @@ export function build_AsPattern(config: T._AsPattern.Config) {
 export function buildAssignmentEq(config: T.AssignmentEq.Config) {
 	const _right = config.right;
 	return withMethods(
-		{
-			$type: TSKindId.AssignmentEq as const,
-			$source: 2 as const,
-			$named: true as const,
-			_right,
-			right() {
-				return _right;
+		withAccessors(
+			{
+				$type: TSKindId.AssignmentEq as const,
+				$source: 2 as const,
+				$named: true as const,
+				_right,
+				$with: {
+					right: (value: T.RightHandSide) => buildAssignmentEq({ ...config, right: value })
+				}
 			},
-			$with: {
-				right: (value: T.RightHandSide) => buildAssignmentEq({ ...config, right: value })
+			{
+				right: () => _right
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -94,18 +104,20 @@ export function buildAssignmentEq(config: T.AssignmentEq.Config) {
 export function buildAssignmentType(config: T.AssignmentType.Config) {
 	const _type = config.type;
 	return withMethods(
-		{
-			$type: TSKindId.AssignmentType as const,
-			$source: 2 as const,
-			$named: true as const,
-			_type,
-			type() {
-				return _type;
+		withAccessors(
+			{
+				$type: TSKindId.AssignmentType as const,
+				$source: 2 as const,
+				$named: true as const,
+				_type,
+				$with: {
+					type: (value: T.Type) => buildAssignmentType({ ...config, type: value })
+				}
 			},
-			$with: {
-				type: (value: T.Type) => buildAssignmentType({ ...config, type: value })
+			{
+				type: () => _type
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -114,23 +126,23 @@ export function buildAssignmentTyped(config: T.AssignmentTyped.Config) {
 	const _type = config.type;
 	const _right = config.right;
 	return withMethods(
-		{
-			$type: TSKindId.AssignmentTyped as const,
-			$source: 2 as const,
-			$named: true as const,
-			_type,
-			_right,
-			type() {
-				return _type;
+		withAccessors(
+			{
+				$type: TSKindId.AssignmentTyped as const,
+				$source: 2 as const,
+				$named: true as const,
+				_type,
+				_right,
+				$with: {
+					type: (value: T.Type) => buildAssignmentTyped({ ...config, type: value }),
+					right: (value: T.RightHandSide) => buildAssignmentTyped({ ...config, right: value })
+				}
 			},
-			right() {
-				return _right;
-			},
-			$with: {
-				type: (value: T.Type) => buildAssignmentTyped({ ...config, type: value }),
-				right: (value: T.RightHandSide) => buildAssignmentTyped({ ...config, right: value })
+			{
+				type: () => _type,
+				right: () => _right
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -143,21 +155,23 @@ export function buildCollectionElements(
 	const _content = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
-		{
-			$type: TSKindId.CollectionElements as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			_trailing_sep,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId.CollectionElements as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				_trailing_sep,
+				$with: {
+					$children: (...vs: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>) =>
+						buildCollectionElements(vs, options),
+					trailing: (v: boolean) => buildCollectionElements(elements, { ...options, trailing: v })
+				}
 			},
-			$with: {
-				$children: (...vs: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>) =>
-					buildCollectionElements(vs, options),
-				trailing: (v: boolean) => buildCollectionElements(elements, { ...options, trailing: v })
+			{
+				contents: () => _content
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -172,29 +186,31 @@ export function buildComparisonOperatorComparator(config: T.ComparisonOperatorCo
 		['>', TSKindId.Gt] as const,
 		['<>', TSKindId.LtGt] as const,
 		['in', TSKindId.In] as const,
-		['is', TSKindId.Is] as const
+		['not in', TSKindId.NotIn] as const,
+		['is', TSKindId.Is] as const,
+		['is not', TSKindId.IsNot] as const
 	]);
 	const _primary_expression = config.primaryExpression;
 	return withMethods(
-		{
-			$type: TSKindId.ComparisonOperatorComparator as const,
-			$source: 2 as const,
-			$named: true as const,
-			_operators,
-			_primary_expression,
-			operators() {
-				return _operators;
+		withAccessors(
+			{
+				$type: TSKindId.ComparisonOperatorComparator as const,
+				$source: 2 as const,
+				$named: true as const,
+				_operators,
+				_primary_expression,
+				$with: {
+					operators: (value: NonNullable<Parameters<typeof buildComparisonOperatorComparator>[0]>['operators']) =>
+						buildComparisonOperatorComparator({ ...config, operators: value }),
+					primaryExpression: (value: T.PrimaryExpression) =>
+						buildComparisonOperatorComparator({ ...config, primaryExpression: value })
+				}
 			},
-			primaryExpression() {
-				return _primary_expression;
-			},
-			$with: {
-				operators: (value: NonNullable<Parameters<typeof buildComparisonOperatorComparator>[0]>['operators']) =>
-					buildComparisonOperatorComparator({ ...config, operators: value }),
-				primaryExpression: (value: T.PrimaryExpression) =>
-					buildComparisonOperatorComparator({ ...config, primaryExpression: value })
+			{
+				operators: () => _operators,
+				primaryExpression: () => _primary_expression
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -202,16 +218,18 @@ export function buildComparisonOperatorComparator(config: T.ComparisonOperatorCo
 export function buildComprehensionClauses(...children: (T.ForInClause | T.IfClause)[]) {
 	const _content = children;
 	return withMethods(
-		{
-			$type: TSKindId.ComprehensionClauses as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			contents() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId.ComprehensionClauses as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: { $children: (...vs: (T.ForInClause | T.IfClause)[]) => buildComprehensionClauses(...vs) }
 			},
-			$with: { $children: (...vs: (T.ForInClause | T.IfClause)[]) => buildComprehensionClauses(...vs) }
-		},
+			{
+				contents: () => _content
+			}
+		),
 		methodsEngine
 	);
 }
@@ -222,33 +240,29 @@ export function build_DictPatternGroup1(config: T._DictPatternGroup1.Config) {
 	const _value = config.value ?? [];
 	const _splat_pattern = config.splatPattern ?? [];
 	return withMethods(
-		{
-			$type: TSKindId._DictPatternGroup1 as const,
-			$source: 2 as const,
-			$named: true as const,
-			_dict_pattern_kv,
-			_key,
-			_value,
-			_splat_pattern,
-			dictPatternKv() {
-				return _dict_pattern_kv;
+		withAccessors(
+			{
+				$type: TSKindId._DictPatternGroup1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_dict_pattern_kv,
+				_key,
+				_value,
+				_splat_pattern,
+				$with: {
+					dictPatternKv: (value: T.DictPatternKv) => build_DictPatternGroup1({ ...config, dictPatternKv: value }),
+					keys: (...values: T.SimplePattern[]) => build_DictPatternGroup1({ ...config, key: values }),
+					values: (...values: T.CasePattern[]) => build_DictPatternGroup1({ ...config, value: values }),
+					splatPatterns: (...values: T.SplatPattern[]) => build_DictPatternGroup1({ ...config, splatPattern: values })
+				}
 			},
-			keys() {
-				return _key;
-			},
-			values() {
-				return _value;
-			},
-			splatPatterns() {
-				return _splat_pattern;
-			},
-			$with: {
-				dictPatternKv: (value: T.DictPatternKv) => build_DictPatternGroup1({ ...config, dictPatternKv: value }),
-				keys: (...values: T.SimplePattern[]) => build_DictPatternGroup1({ ...config, key: values }),
-				values: (...values: T.CasePattern[]) => build_DictPatternGroup1({ ...config, value: values }),
-				splatPatterns: (...values: T.SplatPattern[]) => build_DictPatternGroup1({ ...config, splatPattern: values })
+			{
+				dictPatternKv: () => _dict_pattern_kv,
+				keys: () => _key,
+				values: () => _value,
+				splatPatterns: () => _splat_pattern
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -261,20 +275,22 @@ export function build_DictionaryGroup1(
 	const _content = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
-		{
-			$type: TSKindId._DictionaryGroup1 as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			_trailing_sep,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId._DictionaryGroup1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				_trailing_sep,
+				$with: {
+					$children: (...vs: NonEmptyArray<T.Pair | T.DictionarySplat>) => build_DictionaryGroup1(vs, options),
+					trailing: (v: boolean) => build_DictionaryGroup1(elements, { ...options, trailing: v })
+				}
 			},
-			$with: {
-				$children: (...vs: NonEmptyArray<T.Pair | T.DictionarySplat>) => build_DictionaryGroup1(vs, options),
-				trailing: (v: boolean) => build_DictionaryGroup1(elements, { ...options, trailing: v })
+			{
+				contents: () => _content
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -283,23 +299,23 @@ export function buildExceptClauseAs(config: T.ExceptClauseAs.Config) {
 	const _value = config.value;
 	const _alias = config.alias;
 	return withMethods(
-		{
-			$type: TSKindId.ExceptClauseAs as const,
-			$source: 2 as const,
-			$named: true as const,
-			_value,
-			_alias,
-			value() {
-				return _value;
+		withAccessors(
+			{
+				$type: TSKindId.ExceptClauseAs as const,
+				$source: 2 as const,
+				$named: true as const,
+				_value,
+				_alias,
+				$with: {
+					value: (value: T.Expression) => buildExceptClauseAs({ ...config, value: value }),
+					alias: (value?: T.Expression) => buildExceptClauseAs({ ...config, alias: value })
+				}
 			},
-			alias() {
-				return _alias;
-			},
-			$with: {
-				value: (value: T.Expression) => buildExceptClauseAs({ ...config, value: value }),
-				alias: (value?: T.Expression) => buildExceptClauseAs({ ...config, alias: value })
+			{
+				value: () => _value,
+				alias: () => _alias
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -307,18 +323,20 @@ export function buildExceptClauseAs(config: T.ExceptClauseAs.Config) {
 export function buildExceptClauseList(config: T.ExceptClauseList.Config) {
 	const _value = config.value ?? [];
 	return withMethods(
-		{
-			$type: TSKindId.ExceptClauseList as const,
-			$source: 2 as const,
-			$named: true as const,
-			_value,
-			values() {
-				return _value;
+		withAccessors(
+			{
+				$type: TSKindId.ExceptClauseList as const,
+				$source: 2 as const,
+				$named: true as const,
+				_value,
+				$with: {
+					values: (...values: NonEmptyArray<T.Expression>) => buildExceptClauseList({ ...config, value: values })
+				}
 			},
-			$with: {
-				values: (...values: NonEmptyArray<T.Expression>) => buildExceptClauseList({ ...config, value: values })
+			{
+				values: () => _value
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -328,23 +346,25 @@ export function buildExpressionStatementTuple(
 	options: { trailing?: boolean } = {}
 ) {
 	_assertNonEmpty(elements, '_expression_statement_tuple.elements');
-	const _content = elements;
+	const _expression = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
-		{
-			$type: TSKindId.ExpressionStatementTuple as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			_trailing_sep,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId.ExpressionStatementTuple as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expression,
+				_trailing_sep,
+				$with: {
+					$children: (...vs: NonEmptyArray<T.Expression>) => buildExpressionStatementTuple(vs, options),
+					trailing: (v: boolean) => buildExpressionStatementTuple(elements, { ...options, trailing: v })
+				}
 			},
-			$with: {
-				$children: (...vs: NonEmptyArray<T.Expression>) => buildExpressionStatementTuple(vs, options),
-				trailing: (v: boolean) => buildExpressionStatementTuple(elements, { ...options, trailing: v })
+			{
+				expressions: () => _expression
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -352,19 +372,21 @@ export function buildExpressionStatementTuple(
 export function buildImportList(config: T.ImportList.Config) {
 	const _name = config.name ?? [];
 	return withMethods(
-		{
-			$type: TSKindId.ImportList as const,
-			$source: 2 as const,
-			$named: true as const,
-			_name,
-			names() {
-				return _name;
+		withAccessors(
+			{
+				$type: TSKindId.ImportList as const,
+				$source: 2 as const,
+				$named: true as const,
+				_name,
+				$with: {
+					names: (...values: NonEmptyArray<T.DottedName | T.AliasedImport>) =>
+						buildImportList({ ...config, name: values })
+				}
 			},
-			$with: {
-				names: (...values: NonEmptyArray<T.DottedName | T.AliasedImport>) =>
-					buildImportList({ ...config, name: values })
+			{
+				names: () => _name
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -387,63 +409,48 @@ export function buildKeyValuePattern(config: T.KeyValuePattern.Config) {
 	const _key = config.key;
 	const _value = config.value;
 	return withMethods(
-		{
-			$type: TSKindId.KeyValuePattern as const,
-			$source: 2 as const,
-			$named: true as const,
-			_key,
-			_value,
-			key() {
-				return _key;
+		withAccessors(
+			{
+				$type: TSKindId.KeyValuePattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_key,
+				_value,
+				$with: {
+					key: (value: T.SimplePattern) => buildKeyValuePattern({ ...config, key: value }),
+					value: (value: T.CasePattern) => buildKeyValuePattern({ ...config, value: value })
+				}
 			},
-			value() {
-				return _value;
-			},
-			$with: {
-				key: (value: T.SimplePattern) => buildKeyValuePattern({ ...config, key: value }),
-				value: (value: T.CasePattern) => buildKeyValuePattern({ ...config, value: value })
+			{
+				key: () => _key,
+				value: () => _value
 			}
-		},
-		methodsEngine
-	);
-}
-
-export function build_ListPattern(child?: T.ListPatternGroup1) {
-	const _list_pattern_group1 = child;
-	return withMethods(
-		{
-			$type: TSKindId._ListPattern as const,
-			$source: 2 as const,
-			$named: true as const,
-			_list_pattern_group1,
-			listPatternGroup1() {
-				return _list_pattern_group1;
-			},
-			$with: { $child: (v: T.ListPatternGroup1) => build_ListPattern(v) }
-		},
+		),
 		methodsEngine
 	);
 }
 
 export function build_ListPatternGroup1(elements: NonEmptyArray<T.CasePattern>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, '_list_pattern_group1.elements');
-	const _content = elements;
+	const _case_pattern = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
-		{
-			$type: TSKindId._ListPatternGroup1 as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			_trailing_sep,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId._ListPatternGroup1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_case_pattern,
+				_trailing_sep,
+				$with: {
+					$children: (...vs: NonEmptyArray<T.CasePattern>) => build_ListPatternGroup1(vs, options),
+					trailing: (v: boolean) => build_ListPatternGroup1(elements, { ...options, trailing: v })
+				}
 			},
-			$with: {
-				$children: (...vs: NonEmptyArray<T.CasePattern>) => build_ListPatternGroup1(vs, options),
-				trailing: (v: boolean) => build_ListPatternGroup1(elements, { ...options, trailing: v })
+			{
+				casePatterns: () => _case_pattern
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -451,16 +458,18 @@ export function build_ListPatternGroup1(elements: NonEmptyArray<T.CasePattern>, 
 export function buildMatchBlock(child: T.MatchBlockBlock) {
 	const _match_block_block = child;
 	return withMethods(
-		{
-			$type: TSKindId.MatchBlock as const,
-			$source: 2 as const,
-			$named: true as const,
-			_match_block_block,
-			matchBlockBlock() {
-				return _match_block_block;
+		withAccessors(
+			{
+				$type: TSKindId.MatchBlock as const,
+				$source: 2 as const,
+				$named: true as const,
+				_match_block_block,
+				$with: { $child: (v: T.MatchBlockBlock) => buildMatchBlock(v) }
 			},
-			$with: { $child: (v: T.MatchBlockBlock) => buildMatchBlock(v) }
-		},
+			{
+				matchBlockBlock: () => _match_block_block
+			}
+		),
 		methodsEngine
 	);
 }
@@ -468,18 +477,20 @@ export function buildMatchBlock(child: T.MatchBlockBlock) {
 export function buildMatchBlockBlock(config: Partial<T.MatchBlockBlock.Config> = {}) {
 	const _alternative = config.alternative ?? [];
 	return withMethods(
-		{
-			$type: TSKindId.MatchBlockBlock as const,
-			$source: 2 as const,
-			$named: true as const,
-			_alternative,
-			alternatives() {
-				return _alternative;
+		withAccessors(
+			{
+				$type: TSKindId.MatchBlockBlock as const,
+				$source: 2 as const,
+				$named: true as const,
+				_alternative,
+				$with: {
+					alternatives: (...values: T.CaseClause[]) => buildMatchBlockBlock({ ...config, alternative: values })
+				}
 			},
-			$with: {
-				alternatives: (...values: T.CaseClause[]) => buildMatchBlockBlock({ ...config, alternative: values })
+			{
+				alternatives: () => _alternative
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -500,46 +511,50 @@ export function buildNotIn(text: string) {
 
 export function build_Parameters(elements: NonEmptyArray<T.Parameter>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, '_parameters.elements');
-	const _content = elements;
+	const _parameter = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
-		{
-			$type: TSKindId._Parameters as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			_trailing_sep,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId._Parameters as const,
+				$source: 2 as const,
+				$named: true as const,
+				_parameter,
+				_trailing_sep,
+				$with: {
+					$children: (...vs: NonEmptyArray<T.Parameter>) => build_Parameters(vs, options),
+					trailing: (v: boolean) => build_Parameters(elements, { ...options, trailing: v })
+				}
 			},
-			$with: {
-				$children: (...vs: NonEmptyArray<T.Parameter>) => build_Parameters(vs, options),
-				trailing: (v: boolean) => build_Parameters(elements, { ...options, trailing: v })
+			{
+				parameters: () => _parameter
 			}
-		},
+		),
 		methodsEngine
 	);
 }
 
 export function buildPatterns(elements: NonEmptyArray<T.Pattern>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, '_patterns.elements');
-	const _content = elements;
+	const _pattern = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
-		{
-			$type: TSKindId.Patterns as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			_trailing_sep,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId.Patterns as const,
+				$source: 2 as const,
+				$named: true as const,
+				_pattern,
+				_trailing_sep,
+				$with: {
+					$children: (...vs: NonEmptyArray<T.Pattern>) => buildPatterns(vs, options),
+					trailing: (v: boolean) => buildPatterns(elements, { ...options, trailing: v })
+				}
 			},
-			$with: {
-				$children: (...vs: NonEmptyArray<T.Pattern>) => buildPatterns(vs, options),
-				trailing: (v: boolean) => buildPatterns(elements, { ...options, trailing: v })
+			{
+				patterns: () => _pattern
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -547,16 +562,18 @@ export function buildPatterns(elements: NonEmptyArray<T.Pattern>, options: { tra
 export function buildSimplePatternNegative(child: T.Integer | T.Float) {
 	const _content = child;
 	return withMethods(
-		{
-			$type: TSKindId.SimplePatternNegative as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId.SimplePatternNegative as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: { $child: (v: T.Integer | T.Float) => buildSimplePatternNegative(v) }
 			},
-			$with: { $child: (v: T.Integer | T.Float) => buildSimplePatternNegative(v) }
-		},
+			{
+				content: () => _content
+			}
+		),
 		methodsEngine
 	);
 }
@@ -565,16 +582,18 @@ export function buildSimpleStatements(...children: T.SimpleStatement[]) {
 	_assertNonEmpty(children, '_simple_statements.children');
 	const _simple_statement = children;
 	return withMethods(
-		{
-			$type: TSKindId.SimpleStatements as const,
-			$source: 2 as const,
-			$named: true as const,
-			_simple_statement,
-			simpleStatements() {
-				return _simple_statement;
+		withAccessors(
+			{
+				$type: TSKindId.SimpleStatements as const,
+				$source: 2 as const,
+				$named: true as const,
+				_simple_statement,
+				$with: { $children: (...vs: T.SimpleStatement[]) => buildSimpleStatements(...vs) }
 			},
-			$with: { $children: (...vs: T.SimpleStatement[]) => buildSimpleStatements(...vs) }
-		},
+			{
+				simpleStatements: () => _simple_statement
+			}
+		),
 		methodsEngine
 	);
 }
@@ -582,56 +601,43 @@ export function buildSimpleStatements(...children: T.SimpleStatement[]) {
 export function build_SliceGroup1(child?: T.Expression) {
 	const _expression = child;
 	return withMethods(
-		{
-			$type: TSKindId._SliceGroup1 as const,
-			$source: 2 as const,
-			$named: true as const,
-			_expression,
-			expression() {
-				return _expression;
+		withAccessors(
+			{
+				$type: TSKindId._SliceGroup1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expression,
+				$with: { $child: (v: T.Expression) => build_SliceGroup1(v) }
 			},
-			$with: { $child: (v: T.Expression) => build_SliceGroup1(v) }
-		},
-		methodsEngine
-	);
-}
-
-export function build_TuplePattern(child?: T.ListPatternGroup1) {
-	const _list_pattern_group1 = child;
-	return withMethods(
-		{
-			$type: TSKindId._TuplePattern as const,
-			$source: 2 as const,
-			$named: true as const,
-			_list_pattern_group1,
-			listPatternGroup1() {
-				return _list_pattern_group1;
-			},
-			$with: { $child: (v: T.ListPatternGroup1) => build_TuplePattern(v) }
-		},
+			{
+				expression: () => _expression
+			}
+		),
 		methodsEngine
 	);
 }
 
 export function buildWithClauseBare(elements: NonEmptyArray<T.WithItem>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, '_with_clause_bare.elements');
-	const _content = elements;
+	const _with_item = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
-		{
-			$type: TSKindId.WithClauseBare as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			_trailing_sep,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId.WithClauseBare as const,
+				$source: 2 as const,
+				$named: true as const,
+				_with_item,
+				_trailing_sep,
+				$with: {
+					$children: (...vs: NonEmptyArray<T.WithItem>) => buildWithClauseBare(vs, options),
+					trailing: (v: boolean) => buildWithClauseBare(elements, { ...options, trailing: v })
+				}
 			},
-			$with: {
-				$children: (...vs: NonEmptyArray<T.WithItem>) => buildWithClauseBare(vs, options),
-				trailing: (v: boolean) => buildWithClauseBare(elements, { ...options, trailing: v })
+			{
+				withItems: () => _with_item
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -640,16 +646,18 @@ export function buildWithClauseParen(...children: T.WithItem[]) {
 	_assertNonEmpty(children, '_with_clause_paren.children');
 	const _with_item = children;
 	return withMethods(
-		{
-			$type: TSKindId.WithClauseParen as const,
-			$source: 2 as const,
-			$named: true as const,
-			_with_item,
-			withItems() {
-				return _with_item;
+		withAccessors(
+			{
+				$type: TSKindId.WithClauseParen as const,
+				$source: 2 as const,
+				$named: true as const,
+				_with_item,
+				$with: { $children: (...vs: T.WithItem[]) => buildWithClauseParen(...vs) }
 			},
-			$with: { $children: (...vs: T.WithItem[]) => buildWithClauseParen(...vs) }
-		},
+			{
+				withItems: () => _with_item
+			}
+		),
 		methodsEngine
 	);
 }
@@ -658,23 +666,23 @@ export function buildAliasedImport(config: T.AliasedImport.Config) {
 	const _name = config.name;
 	const _alias = config.alias;
 	return withMethods(
-		{
-			$type: TSKindId.AliasedImport as const,
-			$source: 2 as const,
-			$named: true as const,
-			_name,
-			_alias,
-			name() {
-				return _name;
+		withAccessors(
+			{
+				$type: TSKindId.AliasedImport as const,
+				$source: 2 as const,
+				$named: true as const,
+				_name,
+				_alias,
+				$with: {
+					name: (value: T.DottedName) => buildAliasedImport({ ...config, name: value }),
+					alias: (value: T.Identifier) => buildAliasedImport({ ...config, alias: value })
+				}
 			},
-			alias() {
-				return _alias;
-			},
-			$with: {
-				name: (value: T.DottedName) => buildAliasedImport({ ...config, name: value }),
-				alias: (value: T.Identifier) => buildAliasedImport({ ...config, alias: value })
+			{
+				name: () => _name,
+				alias: () => _alias
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -682,18 +690,20 @@ export function buildAliasedImport(config: T.AliasedImport.Config) {
 export function buildArgumentList(arguments_?: T.ArgumentList.Config['arguments']) {
 	const _arguments = arguments_;
 	return withMethods(
-		{
-			$type: TSKindId.ArgumentList as const,
-			$source: 2 as const,
-			$named: true as const,
-			_arguments,
-			arguments() {
-				return _arguments;
+		withAccessors(
+			{
+				$type: TSKindId.ArgumentList as const,
+				$source: 2 as const,
+				$named: true as const,
+				_arguments,
+				$with: {
+					arguments: (value?: T.ArgumentList.Config['arguments']) => buildArgumentList(value)
+				}
 			},
-			$with: {
-				arguments: (value?: T.ArgumentList.Config['arguments']) => buildArgumentList(value)
+			{
+				arguments: () => _arguments
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -702,23 +712,23 @@ export function buildAsPattern(config: T.AsPattern.Config) {
 	const _expression = config.expression;
 	const _alias = config.alias;
 	return withMethods(
-		{
-			$type: TSKindId.AsPattern as const,
-			$source: 2 as const,
-			$named: true as const,
-			_expression,
-			_alias,
-			expression() {
-				return _expression;
+		withAccessors(
+			{
+				$type: TSKindId.AsPattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expression,
+				_alias,
+				$with: {
+					expression: (value: T.Expression) => buildAsPattern({ ...config, expression: value }),
+					alias: (value: T.Expression) => buildAsPattern({ ...config, alias: value })
+				}
 			},
-			alias() {
-				return _alias;
-			},
-			$with: {
-				expression: (value: T.Expression) => buildAsPattern({ ...config, expression: value }),
-				alias: (value: T.Expression) => buildAsPattern({ ...config, alias: value })
+			{
+				expression: () => _expression,
+				alias: () => _alias
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -727,16 +737,18 @@ export function buildAssertStatement(...children: T.Expression[]) {
 	_assertNonEmpty(children, 'assert_statement.children');
 	const _expression = children;
 	return withMethods(
-		{
-			$type: TSKindId.AssertStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			_expression,
-			expressions() {
-				return _expression;
+		withAccessors(
+			{
+				$type: TSKindId.AssertStatement as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expression,
+				$with: { $children: (...vs: T.Expression[]) => buildAssertStatement(...vs) }
 			},
-			$with: { $children: (...vs: T.Expression[]) => buildAssertStatement(...vs) }
-		},
+			{
+				expressions: () => _expression
+			}
+		),
 		methodsEngine
 	);
 }
@@ -745,24 +757,24 @@ export function buildAssignment(config: T.Assignment.Config) {
 	const _left = config.left;
 	const _content = config.content;
 	return withMethods(
-		{
-			$type: TSKindId.Assignment as const,
-			$source: 2 as const,
-			$named: true as const,
-			_left,
-			_content,
-			left() {
-				return _left;
+		withAccessors(
+			{
+				$type: TSKindId.Assignment as const,
+				$source: 2 as const,
+				$named: true as const,
+				_left,
+				_content,
+				$with: {
+					left: (value: T.LeftHandSide) => buildAssignment({ ...config, left: value }),
+					content: (value: T.AssignmentEq | T.AssignmentType | T.AssignmentTyped) =>
+						buildAssignment({ ...config, content: value })
+				}
 			},
-			content() {
-				return _content;
-			},
-			$with: {
-				left: (value: T.LeftHandSide) => buildAssignment({ ...config, left: value }),
-				content: (value: T.AssignmentEq | T.AssignmentType | T.AssignmentTyped) =>
-					buildAssignment({ ...config, content: value })
+			{
+				left: () => _left,
+				content: () => _content
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -771,23 +783,23 @@ export function buildAttribute(config: T.Attribute.Config) {
 	const _object = config.object;
 	const _attribute = config.attribute;
 	return withMethods(
-		{
-			$type: TSKindId.Attribute as const,
-			$source: 2 as const,
-			$named: true as const,
-			_object,
-			_attribute,
-			object() {
-				return _object;
+		withAccessors(
+			{
+				$type: TSKindId.Attribute as const,
+				$source: 2 as const,
+				$named: true as const,
+				_object,
+				_attribute,
+				$with: {
+					object: (value: T.PrimaryExpression) => buildAttribute({ ...config, object: value }),
+					attribute: (value: T.Identifier) => buildAttribute({ ...config, attribute: value })
+				}
 			},
-			attribute() {
-				return _attribute;
-			},
-			$with: {
-				object: (value: T.PrimaryExpression) => buildAttribute({ ...config, object: value }),
-				attribute: (value: T.Identifier) => buildAttribute({ ...config, attribute: value })
+			{
+				object: () => _object,
+				attribute: () => _attribute
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -811,29 +823,27 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config) {
 	]);
 	const _right = config.right;
 	return withMethods(
-		{
-			$type: TSKindId.AugmentedAssignment as const,
-			$source: 2 as const,
-			$named: true as const,
-			_left,
-			_operator,
-			_right,
-			left() {
-				return _left;
+		withAccessors(
+			{
+				$type: TSKindId.AugmentedAssignment as const,
+				$source: 2 as const,
+				$named: true as const,
+				_left,
+				_operator,
+				_right,
+				$with: {
+					left: (value: T.LeftHandSide) => buildAugmentedAssignment({ ...config, left: value }),
+					operator: (value: NonNullable<Parameters<typeof buildAugmentedAssignment>[0]>['operator']) =>
+						buildAugmentedAssignment({ ...config, operator: value }),
+					right: (value: T.RightHandSide) => buildAugmentedAssignment({ ...config, right: value })
+				}
 			},
-			operator() {
-				return _operator;
-			},
-			right() {
-				return _right;
-			},
-			$with: {
-				left: (value: T.LeftHandSide) => buildAugmentedAssignment({ ...config, left: value }),
-				operator: (value: NonNullable<Parameters<typeof buildAugmentedAssignment>[0]>['operator']) =>
-					buildAugmentedAssignment({ ...config, operator: value }),
-				right: (value: T.RightHandSide) => buildAugmentedAssignment({ ...config, right: value })
+			{
+				left: () => _left,
+				operator: () => _operator,
+				right: () => _right
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -841,18 +851,20 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config) {
 export function buildAwait(primaryExpression: T.Await.Config['primaryExpression']) {
 	const _primary_expression = primaryExpression;
 	return withMethods(
-		{
-			$type: TSKindId.Await as const,
-			$source: 2 as const,
-			$named: true as const,
-			_primary_expression,
-			primaryExpression() {
-				return _primary_expression;
+		withAccessors(
+			{
+				$type: TSKindId.Await as const,
+				$source: 2 as const,
+				$named: true as const,
+				_primary_expression,
+				$with: {
+					primaryExpression: (value: T.Await.Config['primaryExpression']) => buildAwait(value)
+				}
 			},
-			$with: {
-				primaryExpression: (value: T.Await.Config['primaryExpression']) => buildAwait(value)
+			{
+				primaryExpression: () => _primary_expression
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -876,29 +888,27 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config) {
 	]);
 	const _right = config.right;
 	return withMethods(
-		{
-			$type: TSKindId.BinaryOperator as const,
-			$source: 2 as const,
-			$named: true as const,
-			_left,
-			_operator,
-			_right,
-			left() {
-				return _left;
+		withAccessors(
+			{
+				$type: TSKindId.BinaryOperator as const,
+				$source: 2 as const,
+				$named: true as const,
+				_left,
+				_operator,
+				_right,
+				$with: {
+					left: (value: T.PrimaryExpression) => buildBinaryOperator({ ...config, left: value }),
+					operator: (value: NonNullable<Parameters<typeof buildBinaryOperator>[0]>['operator']) =>
+						buildBinaryOperator({ ...config, operator: value }),
+					right: (value: T.PrimaryExpression) => buildBinaryOperator({ ...config, right: value })
+				}
 			},
-			operator() {
-				return _operator;
-			},
-			right() {
-				return _right;
-			},
-			$with: {
-				left: (value: T.PrimaryExpression) => buildBinaryOperator({ ...config, left: value }),
-				operator: (value: NonNullable<Parameters<typeof buildBinaryOperator>[0]>['operator']) =>
-					buildBinaryOperator({ ...config, operator: value }),
-				right: (value: T.PrimaryExpression) => buildBinaryOperator({ ...config, right: value })
+			{
+				left: () => _left,
+				operator: () => _operator,
+				right: () => _right
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -906,16 +916,18 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config) {
 export function buildBlock(...children: T.Statement[]) {
 	const _statement = children;
 	return withMethods(
-		{
-			$type: TSKindId.Block as const,
-			$source: 2 as const,
-			$named: true as const,
-			_statement,
-			statements() {
-				return _statement;
+		withAccessors(
+			{
+				$type: TSKindId.Block as const,
+				$source: 2 as const,
+				$named: true as const,
+				_statement,
+				$with: { $children: (...vs: T.Statement[]) => buildBlock(...vs) }
 			},
-			$with: { $children: (...vs: T.Statement[]) => buildBlock(...vs) }
-		},
+			{
+				statements: () => _statement
+			}
+		),
 		methodsEngine
 	);
 }
@@ -928,29 +940,27 @@ export function buildBooleanOperator(config: T.BooleanOperator.Config) {
 	]);
 	const _right = config.right;
 	return withMethods(
-		{
-			$type: TSKindId.BooleanOperator as const,
-			$source: 2 as const,
-			$named: true as const,
-			_left,
-			_operator,
-			_right,
-			left() {
-				return _left;
+		withAccessors(
+			{
+				$type: TSKindId.BooleanOperator as const,
+				$source: 2 as const,
+				$named: true as const,
+				_left,
+				_operator,
+				_right,
+				$with: {
+					left: (value: T.Expression) => buildBooleanOperator({ ...config, left: value }),
+					operator: (value: NonNullable<Parameters<typeof buildBooleanOperator>[0]>['operator']) =>
+						buildBooleanOperator({ ...config, operator: value }),
+					right: (value: T.Expression) => buildBooleanOperator({ ...config, right: value })
+				}
 			},
-			operator() {
-				return _operator;
-			},
-			right() {
-				return _right;
-			},
-			$with: {
-				left: (value: T.Expression) => buildBooleanOperator({ ...config, left: value }),
-				operator: (value: NonNullable<Parameters<typeof buildBooleanOperator>[0]>['operator']) =>
-					buildBooleanOperator({ ...config, operator: value }),
-				right: (value: T.Expression) => buildBooleanOperator({ ...config, right: value })
+			{
+				left: () => _left,
+				operator: () => _operator,
+				right: () => _right
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -971,23 +981,23 @@ export function buildCall(config: T.Call.Config) {
 	const _function = config.function;
 	const _arguments = config.arguments;
 	return withMethods(
-		{
-			$type: TSKindId.Call as const,
-			$source: 2 as const,
-			$named: true as const,
-			_function,
-			_arguments,
-			function() {
-				return _function;
+		withAccessors(
+			{
+				$type: TSKindId.Call as const,
+				$source: 2 as const,
+				$named: true as const,
+				_function,
+				_arguments,
+				$with: {
+					function: (value: T.PrimaryExpression) => buildCall({ ...config, function: value }),
+					arguments: (value: T.GeneratorExpression | T.ArgumentList) => buildCall({ ...config, arguments: value })
+				}
 			},
-			arguments() {
-				return _arguments;
-			},
-			$with: {
-				function: (value: T.PrimaryExpression) => buildCall({ ...config, function: value }),
-				arguments: (value: T.GeneratorExpression | T.ArgumentList) => buildCall({ ...config, arguments: value })
+			{
+				function: () => _function,
+				arguments: () => _arguments
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -997,29 +1007,47 @@ export function buildCaseClause(config: T.CaseClause.Config) {
 	const _guard = config.guard;
 	const _consequence = config.consequence;
 	return withMethods(
-		{
-			$type: TSKindId.CaseClause as const,
-			$source: 2 as const,
-			$named: true as const,
-			_case_pattern,
-			_guard,
-			_consequence,
-			casePatterns() {
-				return _case_pattern;
+		withAccessors(
+			{
+				$type: TSKindId.CaseClause as const,
+				$source: 2 as const,
+				$named: true as const,
+				_case_pattern,
+				_guard,
+				_consequence,
+				$with: {
+					casePatterns: (...values: NonEmptyArray<T.CasePattern>) =>
+						buildCaseClause({ ...config, casePattern: values }),
+					guard: (value?: T.IfClause) => buildCaseClause({ ...config, guard: value }),
+					consequence: (value: T.SimpleStatements | T.Block | T.Newline) =>
+						buildCaseClause({ ...config, consequence: value })
+				}
 			},
-			guard() {
-				return _guard;
-			},
-			consequence() {
-				return _consequence;
-			},
-			$with: {
-				casePatterns: (...values: NonEmptyArray<T.CasePattern>) => buildCaseClause({ ...config, casePattern: values }),
-				guard: (value?: T.IfClause) => buildCaseClause({ ...config, guard: value }),
-				consequence: (value: T.SimpleStatements | T.Block | T.Newline) =>
-					buildCaseClause({ ...config, consequence: value })
+			{
+				casePatterns: () => _case_pattern,
+				guard: () => _guard,
+				consequence: () => _consequence
 			}
-		},
+		),
+		methodsEngine
+	);
+}
+
+export function buildCaseListPattern(...children: T.CasePattern[]) {
+	const _case_pattern = children;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CaseListPattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_case_pattern,
+				$with: { $children: (...vs: T.CasePattern[]) => buildCaseListPattern(...vs) }
+			},
+			{
+				casePatterns: () => _case_pattern
+			}
+		),
 		methodsEngine
 	);
 }
@@ -1027,16 +1055,37 @@ export function buildCaseClause(config: T.CaseClause.Config) {
 export function buildCasePattern(child: T._AsPattern | T.KeywordPattern | T.SimplePattern) {
 	const _content = child;
 	return withMethods(
-		{
-			$type: TSKindId.CasePattern as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId.CasePattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: { $child: (v: T._AsPattern | T.KeywordPattern | T.SimplePattern) => buildCasePattern(v) }
 			},
-			$with: { $child: (v: T._AsPattern | T.KeywordPattern | T.SimplePattern) => buildCasePattern(v) }
-		},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildCaseTuplePattern(...children: T.CasePattern[]) {
+	const _case_pattern = children;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CaseTuplePattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_case_pattern,
+				$with: { $children: (...vs: T.CasePattern[]) => buildCaseTuplePattern(...vs) }
+			},
+			{
+				casePatterns: () => _case_pattern
+			}
+		),
 		methodsEngine
 	);
 }
@@ -1044,18 +1093,20 @@ export function buildCasePattern(child: T._AsPattern | T.KeywordPattern | T.Simp
 export function buildChevron(expression: T.Chevron.Config['expression']) {
 	const _expression = expression;
 	return withMethods(
-		{
-			$type: TSKindId.Chevron as const,
-			$source: 2 as const,
-			$named: true as const,
-			_expression,
-			expression() {
-				return _expression;
+		withAccessors(
+			{
+				$type: TSKindId.Chevron as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expression,
+				$with: {
+					expression: (value: T.Chevron.Config['expression']) => buildChevron(value)
+				}
 			},
-			$with: {
-				expression: (value: T.Chevron.Config['expression']) => buildChevron(value)
+			{
+				expression: () => _expression
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1066,33 +1117,29 @@ export function buildClassDefinition(config: T.ClassDefinition.Config) {
 	const _superclasses = config.superclasses;
 	const _body = config.body;
 	return withMethods(
-		{
-			$type: TSKindId.ClassDefinition as const,
-			$source: 2 as const,
-			$named: true as const,
-			_name,
-			_type_parameters,
-			_superclasses,
-			_body,
-			name() {
-				return _name;
+		withAccessors(
+			{
+				$type: TSKindId.ClassDefinition as const,
+				$source: 2 as const,
+				$named: true as const,
+				_name,
+				_type_parameters,
+				_superclasses,
+				_body,
+				$with: {
+					name: (value: T.Identifier) => buildClassDefinition({ ...config, name: value }),
+					typeParameters: (value?: T.TypeParameter) => buildClassDefinition({ ...config, typeParameters: value }),
+					superclasses: (value?: T.ArgumentList) => buildClassDefinition({ ...config, superclasses: value }),
+					body: (value: T.SimpleStatements | T.Block | T.Newline) => buildClassDefinition({ ...config, body: value })
+				}
 			},
-			typeParameters() {
-				return _type_parameters;
-			},
-			superclasses() {
-				return _superclasses;
-			},
-			body() {
-				return _body;
-			},
-			$with: {
-				name: (value: T.Identifier) => buildClassDefinition({ ...config, name: value }),
-				typeParameters: (value?: T.TypeParameter) => buildClassDefinition({ ...config, typeParameters: value }),
-				superclasses: (value?: T.ArgumentList) => buildClassDefinition({ ...config, superclasses: value }),
-				body: (value: T.SimpleStatements | T.Block | T.Newline) => buildClassDefinition({ ...config, body: value })
+			{
+				name: () => _name,
+				typeParameters: () => _type_parameters,
+				superclasses: () => _superclasses,
+				body: () => _body
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1101,23 +1148,23 @@ export function buildClassPattern(config: T.ClassPattern.Config) {
 	const _dotted_name = config.dottedName;
 	const _arguments = config.arguments;
 	return withMethods(
-		{
-			$type: TSKindId.ClassPattern as const,
-			$source: 2 as const,
-			$named: true as const,
-			_dotted_name,
-			_arguments,
-			dottedName() {
-				return _dotted_name;
+		withAccessors(
+			{
+				$type: TSKindId.ClassPattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_dotted_name,
+				_arguments,
+				$with: {
+					dottedName: (value: T.DottedName) => buildClassPattern({ ...config, dottedName: value }),
+					arguments: (value?: T.ListPatternGroup1) => buildClassPattern({ ...config, arguments: value })
+				}
 			},
-			arguments() {
-				return _arguments;
-			},
-			$with: {
-				dottedName: (value: T.DottedName) => buildClassPattern({ ...config, dottedName: value }),
-				arguments: (value?: T.ListPatternGroup1) => buildClassPattern({ ...config, arguments: value })
+			{
+				dottedName: () => _dotted_name,
+				arguments: () => _arguments
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1140,24 +1187,24 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config) {
 	const _left = config.left;
 	const _comparators = config.comparators ?? [];
 	return withMethods(
-		{
-			$type: TSKindId.ComparisonOperator as const,
-			$source: 2 as const,
-			$named: true as const,
-			_left,
-			_comparators,
-			left() {
-				return _left;
+		withAccessors(
+			{
+				$type: TSKindId.ComparisonOperator as const,
+				$source: 2 as const,
+				$named: true as const,
+				_left,
+				_comparators,
+				$with: {
+					left: (value: T.PrimaryExpression) => buildComparisonOperator({ ...config, left: value }),
+					comparators: (...values: NonEmptyArray<T.ComparisonOperatorComparator>) =>
+						buildComparisonOperator({ ...config, comparators: values })
+				}
 			},
-			comparators() {
-				return _comparators;
-			},
-			$with: {
-				left: (value: T.PrimaryExpression) => buildComparisonOperator({ ...config, left: value }),
-				comparators: (...values: NonEmptyArray<T.ComparisonOperatorComparator>) =>
-					buildComparisonOperator({ ...config, comparators: values })
+			{
+				left: () => _left,
+				comparators: () => _comparators
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1171,35 +1218,31 @@ export function buildComplexPattern(config: T.ComplexPattern.Config) {
 	]);
 	const _content = config.content;
 	return withMethods(
-		{
-			$type: TSKindId.ComplexPattern as const,
-			$source: 2 as const,
-			$named: true as const,
-			_real,
-			_imaginary,
-			_operator,
-			_content,
-			real() {
-				return _real;
+		withAccessors(
+			{
+				$type: TSKindId.ComplexPattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_real,
+				_imaginary,
+				_operator,
+				_content,
+				$with: {
+					real: (value?: NonNullable<Parameters<typeof buildComplexPattern>[0]>['real']) =>
+						buildComplexPattern({ ...config, real: value }),
+					imaginary: (value: T.Integer | T.Float) => buildComplexPattern({ ...config, imaginary: value }),
+					operator: (value: NonNullable<Parameters<typeof buildComplexPattern>[0]>['operator']) =>
+						buildComplexPattern({ ...config, operator: value }),
+					content: (value: T.Integer | T.Float) => buildComplexPattern({ ...config, content: value })
+				}
 			},
-			imaginary() {
-				return _imaginary;
-			},
-			operator() {
-				return _operator;
-			},
-			content() {
-				return _content;
-			},
-			$with: {
-				real: (value?: NonNullable<Parameters<typeof buildComplexPattern>[0]>['real']) =>
-					buildComplexPattern({ ...config, real: value }),
-				imaginary: (value: T.Integer | T.Float) => buildComplexPattern({ ...config, imaginary: value }),
-				operator: (value: NonNullable<Parameters<typeof buildComplexPattern>[0]>['operator']) =>
-					buildComplexPattern({ ...config, operator: value }),
-				content: (value: T.Integer | T.Float) => buildComplexPattern({ ...config, content: value })
+			{
+				real: () => _real,
+				imaginary: () => _imaginary,
+				operator: () => _operator,
+				content: () => _content
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1208,16 +1251,18 @@ export function buildConcatenatedString(...children: T.String[]) {
 	_assertNonEmpty(children, 'concatenated_string.children');
 	const _string = children;
 	return withMethods(
-		{
-			$type: TSKindId.ConcatenatedString as const,
-			$source: 2 as const,
-			$named: true as const,
-			_string,
-			strings() {
-				return _string;
+		withAccessors(
+			{
+				$type: TSKindId.ConcatenatedString as const,
+				$source: 2 as const,
+				$named: true as const,
+				_string,
+				$with: { $children: (...vs: T.String[]) => buildConcatenatedString(...vs) }
 			},
-			$with: { $children: (...vs: T.String[]) => buildConcatenatedString(...vs) }
-		},
+			{
+				strings: () => _string
+			}
+		),
 		methodsEngine
 	);
 }
@@ -1227,28 +1272,26 @@ export function buildConditionalExpression(config: T.ConditionalExpression.Confi
 	const _condition = config.condition;
 	const _alternative = config.alternative;
 	return withMethods(
-		{
-			$type: TSKindId.ConditionalExpression as const,
-			$source: 2 as const,
-			$named: true as const,
-			_body,
-			_condition,
-			_alternative,
-			body() {
-				return _body;
+		withAccessors(
+			{
+				$type: TSKindId.ConditionalExpression as const,
+				$source: 2 as const,
+				$named: true as const,
+				_body,
+				_condition,
+				_alternative,
+				$with: {
+					body: (value: T.Expression) => buildConditionalExpression({ ...config, body: value }),
+					condition: (value: T.Expression) => buildConditionalExpression({ ...config, condition: value }),
+					alternative: (value: T.Expression) => buildConditionalExpression({ ...config, alternative: value })
+				}
 			},
-			condition() {
-				return _condition;
-			},
-			alternative() {
-				return _alternative;
-			},
-			$with: {
-				body: (value: T.Expression) => buildConditionalExpression({ ...config, body: value }),
-				condition: (value: T.Expression) => buildConditionalExpression({ ...config, condition: value }),
-				alternative: (value: T.Expression) => buildConditionalExpression({ ...config, alternative: value })
+			{
+				body: () => _body,
+				condition: () => _condition,
+				alternative: () => _alternative
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1257,23 +1300,23 @@ export function buildConstrainedType(config: T.ConstrainedType.Config) {
 	const _base_type = config.baseType;
 	const _constraint = config.constraint;
 	return withMethods(
-		{
-			$type: TSKindId.ConstrainedType as const,
-			$source: 2 as const,
-			$named: true as const,
-			_base_type,
-			_constraint,
-			baseType() {
-				return _base_type;
+		withAccessors(
+			{
+				$type: TSKindId.ConstrainedType as const,
+				$source: 2 as const,
+				$named: true as const,
+				_base_type,
+				_constraint,
+				$with: {
+					baseType: (value: T.Type) => buildConstrainedType({ ...config, baseType: value }),
+					constraint: (value: T.Type) => buildConstrainedType({ ...config, constraint: value })
+				}
 			},
-			constraint() {
-				return _constraint;
-			},
-			$with: {
-				baseType: (value: T.Type) => buildConstrainedType({ ...config, baseType: value }),
-				constraint: (value: T.Type) => buildConstrainedType({ ...config, constraint: value })
+			{
+				baseType: () => _base_type,
+				constraint: () => _constraint
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1294,25 +1337,25 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config) {
 	const _decorator = config.decorator ?? [];
 	const _definition = config.definition;
 	return withMethods(
-		{
-			$type: TSKindId.DecoratedDefinition as const,
-			$source: 2 as const,
-			$named: true as const,
-			_decorator,
-			_definition,
-			decorators() {
-				return _decorator;
+		withAccessors(
+			{
+				$type: TSKindId.DecoratedDefinition as const,
+				$source: 2 as const,
+				$named: true as const,
+				_decorator,
+				_definition,
+				$with: {
+					decorators: (...values: NonEmptyArray<T.Decorator>) =>
+						buildDecoratedDefinition({ ...config, decorator: values }),
+					definition: (value: T.ClassDefinition | T.FunctionDefinition) =>
+						buildDecoratedDefinition({ ...config, definition: value })
+				}
 			},
-			definition() {
-				return _definition;
-			},
-			$with: {
-				decorators: (...values: NonEmptyArray<T.Decorator>) =>
-					buildDecoratedDefinition({ ...config, decorator: values }),
-				definition: (value: T.ClassDefinition | T.FunctionDefinition) =>
-					buildDecoratedDefinition({ ...config, definition: value })
+			{
+				decorators: () => _decorator,
+				definition: () => _definition
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1320,18 +1363,20 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config) {
 export function buildDecorator(expression: T.Decorator.Config['expression']) {
 	const _expression = expression;
 	return withMethods(
-		{
-			$type: TSKindId.Decorator as const,
-			$source: 2 as const,
-			$named: true as const,
-			_expression,
-			expression() {
-				return _expression;
+		withAccessors(
+			{
+				$type: TSKindId.Decorator as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expression,
+				$with: {
+					expression: (value: T.Decorator.Config['expression']) => buildDecorator(value)
+				}
 			},
-			$with: {
-				expression: (value: T.Decorator.Config['expression']) => buildDecorator(value)
+			{
+				expression: () => _expression
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1340,23 +1385,23 @@ export function buildDefaultParameter(config: T.DefaultParameter.Config) {
 	const _name = config.name;
 	const _value = config.value;
 	return withMethods(
-		{
-			$type: TSKindId.DefaultParameter as const,
-			$source: 2 as const,
-			$named: true as const,
-			_name,
-			_value,
-			name() {
-				return _name;
+		withAccessors(
+			{
+				$type: TSKindId.DefaultParameter as const,
+				$source: 2 as const,
+				$named: true as const,
+				_name,
+				_value,
+				$with: {
+					name: (value: T.Identifier | T.TuplePattern) => buildDefaultParameter({ ...config, name: value }),
+					value: (value: T.Expression) => buildDefaultParameter({ ...config, value: value })
+				}
 			},
-			value() {
-				return _value;
-			},
-			$with: {
-				name: (value: T.Identifier | T.TuplePattern) => buildDefaultParameter({ ...config, name: value }),
-				value: (value: T.Expression) => buildDefaultParameter({ ...config, value: value })
+			{
+				name: () => _name,
+				value: () => _value
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1364,16 +1409,18 @@ export function buildDefaultParameter(config: T.DefaultParameter.Config) {
 export function buildDeleteStatement(child: T.Expressions) {
 	const _expressions = child;
 	return withMethods(
-		{
-			$type: TSKindId.DeleteStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			_expressions,
-			expressions() {
-				return _expressions;
+		withAccessors(
+			{
+				$type: TSKindId.DeleteStatement as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expressions,
+				$with: { $child: (v: T.Expressions) => buildDeleteStatement(v) }
 			},
-			$with: { $child: (v: T.Expressions) => buildDeleteStatement(v) }
-		},
+			{
+				expressions: () => _expressions
+			}
+		),
 		methodsEngine
 	);
 }
@@ -1381,16 +1428,18 @@ export function buildDeleteStatement(child: T.Expressions) {
 export function buildDictPattern(child?: T.DictPatternGroup1) {
 	const _dict_pattern_group1 = child;
 	return withMethods(
-		{
-			$type: TSKindId.DictPattern as const,
-			$source: 2 as const,
-			$named: true as const,
-			_dict_pattern_group1,
-			dictPatternGroup1() {
-				return _dict_pattern_group1;
+		withAccessors(
+			{
+				$type: TSKindId.DictPattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_dict_pattern_group1,
+				$with: { $child: (v: T.DictPatternGroup1) => buildDictPattern(v) }
 			},
-			$with: { $child: (v: T.DictPatternGroup1) => buildDictPattern(v) }
-		},
+			{
+				dictPatternGroup1: () => _dict_pattern_group1
+			}
+		),
 		methodsEngine
 	);
 }
@@ -1398,18 +1447,20 @@ export function buildDictPattern(child?: T.DictPatternGroup1) {
 export function buildDictionary(entries?: T.Dictionary.Config['entries']) {
 	const _entries = entries;
 	return withMethods(
-		{
-			$type: TSKindId.Dictionary as const,
-			$source: 2 as const,
-			$named: true as const,
-			_entries,
-			entries() {
-				return _entries;
+		withAccessors(
+			{
+				$type: TSKindId.Dictionary as const,
+				$source: 2 as const,
+				$named: true as const,
+				_entries,
+				$with: {
+					entries: (value?: T.Dictionary.Config['entries']) => buildDictionary(value)
+				}
 			},
-			$with: {
-				entries: (value?: T.Dictionary.Config['entries']) => buildDictionary(value)
+			{
+				entries: () => _entries
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1418,24 +1469,24 @@ export function buildDictionaryComprehension(config: T.DictionaryComprehension.C
 	const _body = config.body;
 	const _comprehension_clauses = config.comprehensionClauses;
 	return withMethods(
-		{
-			$type: TSKindId.DictionaryComprehension as const,
-			$source: 2 as const,
-			$named: true as const,
-			_body,
-			_comprehension_clauses,
-			body() {
-				return _body;
+		withAccessors(
+			{
+				$type: TSKindId.DictionaryComprehension as const,
+				$source: 2 as const,
+				$named: true as const,
+				_body,
+				_comprehension_clauses,
+				$with: {
+					body: (value: T.Pair) => buildDictionaryComprehension({ ...config, body: value }),
+					comprehensionClauses: (value: T.ComprehensionClauses) =>
+						buildDictionaryComprehension({ ...config, comprehensionClauses: value })
+				}
 			},
-			comprehensionClauses() {
-				return _comprehension_clauses;
-			},
-			$with: {
-				body: (value: T.Pair) => buildDictionaryComprehension({ ...config, body: value }),
-				comprehensionClauses: (value: T.ComprehensionClauses) =>
-					buildDictionaryComprehension({ ...config, comprehensionClauses: value })
+			{
+				body: () => _body,
+				comprehensionClauses: () => _comprehension_clauses
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1443,18 +1494,20 @@ export function buildDictionaryComprehension(config: T.DictionaryComprehension.C
 export function buildDictionarySplat(expression: T.DictionarySplat.Config['expression']) {
 	const _expression = expression;
 	return withMethods(
-		{
-			$type: TSKindId.DictionarySplat as const,
-			$source: 2 as const,
-			$named: true as const,
-			_expression,
-			expression() {
-				return _expression;
+		withAccessors(
+			{
+				$type: TSKindId.DictionarySplat as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expression,
+				$with: {
+					expression: (value: T.DictionarySplat.Config['expression']) => buildDictionarySplat(value)
+				}
 			},
-			$with: {
-				expression: (value: T.DictionarySplat.Config['expression']) => buildDictionarySplat(value)
+			{
+				expression: () => _expression
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1462,16 +1515,18 @@ export function buildDictionarySplat(expression: T.DictionarySplat.Config['expre
 export function buildDictionarySplatPattern(child: T.Identifier | T.Subscript | T.Attribute) {
 	const _content = child;
 	return withMethods(
-		{
-			$type: TSKindId.DictionarySplatPattern as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId.DictionarySplatPattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: { $child: (v: T.Identifier | T.Subscript | T.Attribute) => buildDictionarySplatPattern(v) }
 			},
-			$with: { $child: (v: T.Identifier | T.Subscript | T.Attribute) => buildDictionarySplatPattern(v) }
-		},
+			{
+				content: () => _content
+			}
+		),
 		methodsEngine
 	);
 }
@@ -1480,16 +1535,18 @@ export function buildDottedName(...children: T.Identifier[]) {
 	_assertNonEmpty(children, 'dotted_name.children');
 	const _identifier = children;
 	return withMethods(
-		{
-			$type: TSKindId.DottedName as const,
-			$source: 2 as const,
-			$named: true as const,
-			_identifier,
-			identifiers() {
-				return _identifier;
+		withAccessors(
+			{
+				$type: TSKindId.DottedName as const,
+				$source: 2 as const,
+				$named: true as const,
+				_identifier,
+				$with: { $children: (...vs: T.Identifier[]) => buildDottedName(...vs) }
 			},
-			$with: { $children: (...vs: T.Identifier[]) => buildDottedName(...vs) }
-		},
+			{
+				identifiers: () => _identifier
+			}
+		),
 		methodsEngine
 	);
 }
@@ -1498,24 +1555,24 @@ export function buildElifClause(config: T.ElifClause.Config) {
 	const _condition = config.condition;
 	const _consequence = config.consequence;
 	return withMethods(
-		{
-			$type: TSKindId.ElifClause as const,
-			$source: 2 as const,
-			$named: true as const,
-			_condition,
-			_consequence,
-			condition() {
-				return _condition;
+		withAccessors(
+			{
+				$type: TSKindId.ElifClause as const,
+				$source: 2 as const,
+				$named: true as const,
+				_condition,
+				_consequence,
+				$with: {
+					condition: (value: T.Expression) => buildElifClause({ ...config, condition: value }),
+					consequence: (value: T.SimpleStatements | T.Block | T.Newline) =>
+						buildElifClause({ ...config, consequence: value })
+				}
 			},
-			consequence() {
-				return _consequence;
-			},
-			$with: {
-				condition: (value: T.Expression) => buildElifClause({ ...config, condition: value }),
-				consequence: (value: T.SimpleStatements | T.Block | T.Newline) =>
-					buildElifClause({ ...config, consequence: value })
+			{
+				condition: () => _condition,
+				consequence: () => _consequence
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1523,18 +1580,20 @@ export function buildElifClause(config: T.ElifClause.Config) {
 export function buildElseClause(body: T.ElseClause.Config['body']) {
 	const _body = body;
 	return withMethods(
-		{
-			$type: TSKindId.ElseClause as const,
-			$source: 2 as const,
-			$named: true as const,
-			_body,
-			body() {
-				return _body;
+		withAccessors(
+			{
+				$type: TSKindId.ElseClause as const,
+				$source: 2 as const,
+				$named: true as const,
+				_body,
+				$with: {
+					body: (value: T.ElseClause.Config['body']) => buildElseClause(value)
+				}
 			},
-			$with: {
-				body: (value: T.ElseClause.Config['body']) => buildElseClause(value)
+			{
+				body: () => _body
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1559,33 +1618,29 @@ export function buildExceptClause(config: Partial<T.ExceptClause.Config> = {}) {
 	const _block = config.block;
 	const _newline = config.newline;
 	return withMethods(
-		{
-			$type: TSKindId.ExceptClause as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			_simple_statements,
-			_block,
-			_newline,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId.ExceptClause as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				_simple_statements,
+				_block,
+				_newline,
+				$with: {
+					content: (value?: T.ExceptClauseAs | T.ExceptClauseList) => buildExceptClause({ ...config, content: value }),
+					simpleStatements: (value?: T.SimpleStatements) => buildExceptClause({ ...config, simpleStatements: value }),
+					block: (value?: T.Block) => buildExceptClause({ ...config, block: value }),
+					newline: (value?: T.Newline) => buildExceptClause({ ...config, newline: value })
+				}
 			},
-			simpleStatements() {
-				return _simple_statements;
-			},
-			block() {
-				return _block;
-			},
-			newline() {
-				return _newline;
-			},
-			$with: {
-				content: (value?: T.ExceptClauseAs | T.ExceptClauseList) => buildExceptClause({ ...config, content: value }),
-				simpleStatements: (value?: T.SimpleStatements) => buildExceptClause({ ...config, simpleStatements: value }),
-				block: (value?: T.Block) => buildExceptClause({ ...config, block: value }),
-				newline: (value?: T.Newline) => buildExceptClause({ ...config, newline: value })
+			{
+				content: () => _content,
+				simpleStatements: () => _simple_statements,
+				block: () => _block,
+				newline: () => _newline
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1594,23 +1649,23 @@ export function buildExecStatement(config: T.ExecStatement.Config) {
 	const _code = config.code;
 	const _in_clause = config.inClause ?? [];
 	return withMethods(
-		{
-			$type: TSKindId.ExecStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			_code,
-			_in_clause,
-			code() {
-				return _code;
+		withAccessors(
+			{
+				$type: TSKindId.ExecStatement as const,
+				$source: 2 as const,
+				$named: true as const,
+				_code,
+				_in_clause,
+				$with: {
+					code: (value: T.String | T.Identifier) => buildExecStatement({ ...config, code: value }),
+					inClauses: (...values: T.Expression[]) => buildExecStatement({ ...config, inClause: values })
+				}
 			},
-			inClauses() {
-				return _in_clause;
-			},
-			$with: {
-				code: (value: T.String | T.Identifier) => buildExecStatement({ ...config, code: value }),
-				inClauses: (...values: T.Expression[]) => buildExecStatement({ ...config, inClause: values })
+			{
+				code: () => _code,
+				inClauses: () => _in_clause
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1619,16 +1674,18 @@ export function buildExpressionList(...children: T.Expression[]) {
 	_assertNonEmpty(children, 'expression_list.children');
 	const _expression = children;
 	return withMethods(
-		{
-			$type: TSKindId.ExpressionList as const,
-			$source: 2 as const,
-			$named: true as const,
-			_expression,
-			expressions() {
-				return _expression;
+		withAccessors(
+			{
+				$type: TSKindId.ExpressionList as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expression,
+				$with: { $children: (...vs: T.Expression[]) => buildExpressionList(...vs) }
 			},
-			$with: { $children: (...vs: T.Expression[]) => buildExpressionList(...vs) }
-		},
+			{
+				expressions: () => _expression
+			}
+		),
 		methodsEngine
 	);
 }
@@ -1638,19 +1695,21 @@ export function buildExpressionStatement(
 ) {
 	const _content = child;
 	return withMethods(
-		{
-			$type: TSKindId.ExpressionStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId.ExpressionStatement as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					$child: (v: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield) =>
+						buildExpressionStatement(v)
+				}
 			},
-			$with: {
-				$child: (v: T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield) =>
-					buildExpressionStatement(v)
+			{
+				content: () => _content
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1670,18 +1729,20 @@ export function buildFalse() {
 export function buildFinallyClause(block: T.FinallyClause.Config['block']) {
 	const _block = block;
 	return withMethods(
-		{
-			$type: TSKindId.FinallyClause as const,
-			$source: 2 as const,
-			$named: true as const,
-			_block,
-			block() {
-				return _block;
+		withAccessors(
+			{
+				$type: TSKindId.FinallyClause as const,
+				$source: 2 as const,
+				$named: true as const,
+				_block,
+				$with: {
+					block: (value: T.FinallyClause.Config['block']) => buildFinallyClause(value)
+				}
 			},
-			$with: {
-				block: (value: T.FinallyClause.Config['block']) => buildFinallyClause(value)
+			{
+				block: () => _block
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1705,30 +1766,28 @@ export function buildForInClause(config: T.ForInClause.Config) {
 	const _left = config.left;
 	const _right = config.right ?? [];
 	return withMethods(
-		{
-			$type: TSKindId.ForInClause as const,
-			$source: 2 as const,
-			$named: true as const,
-			_async_marker,
-			_left,
-			_right,
-			asyncMarker() {
-				return _async_marker;
+		withAccessors(
+			{
+				$type: TSKindId.ForInClause as const,
+				$source: 2 as const,
+				$named: true as const,
+				_async_marker,
+				_left,
+				_right,
+				$with: {
+					asyncMarker: (value?: NonNullable<Parameters<typeof buildForInClause>[0]>['asyncMarker']) =>
+						buildForInClause({ ...config, asyncMarker: value }),
+					left: (value: T.LeftHandSide) => buildForInClause({ ...config, left: value }),
+					rights: (...values: NonEmptyArray<T.ExpressionWithinForInClause>) =>
+						buildForInClause({ ...config, right: values })
+				}
 			},
-			left() {
-				return _left;
-			},
-			rights() {
-				return _right;
-			},
-			$with: {
-				asyncMarker: (value?: NonNullable<Parameters<typeof buildForInClause>[0]>['asyncMarker']) =>
-					buildForInClause({ ...config, asyncMarker: value }),
-				left: (value: T.LeftHandSide) => buildForInClause({ ...config, left: value }),
-				rights: (...values: NonEmptyArray<T.ExpressionWithinForInClause>) =>
-					buildForInClause({ ...config, right: values })
+			{
+				asyncMarker: () => _async_marker,
+				left: () => _left,
+				rights: () => _right
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1740,39 +1799,33 @@ export function buildForStatement(config: T.ForStatement.Config) {
 	const _body = config.body;
 	const _alternative = config.alternative;
 	return withMethods(
-		{
-			$type: TSKindId.ForStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			_async_marker,
-			_left,
-			_right,
-			_body,
-			_alternative,
-			asyncMarker() {
-				return _async_marker;
+		withAccessors(
+			{
+				$type: TSKindId.ForStatement as const,
+				$source: 2 as const,
+				$named: true as const,
+				_async_marker,
+				_left,
+				_right,
+				_body,
+				_alternative,
+				$with: {
+					asyncMarker: (value?: NonNullable<Parameters<typeof buildForStatement>[0]>['asyncMarker']) =>
+						buildForStatement({ ...config, asyncMarker: value }),
+					left: (value: T.LeftHandSide) => buildForStatement({ ...config, left: value }),
+					right: (value: T.Expressions) => buildForStatement({ ...config, right: value }),
+					body: (value: T.SimpleStatements | T.Block | T.Newline) => buildForStatement({ ...config, body: value }),
+					alternative: (value?: T.ElseClause) => buildForStatement({ ...config, alternative: value })
+				}
 			},
-			left() {
-				return _left;
-			},
-			right() {
-				return _right;
-			},
-			body() {
-				return _body;
-			},
-			alternative() {
-				return _alternative;
-			},
-			$with: {
-				asyncMarker: (value?: NonNullable<Parameters<typeof buildForStatement>[0]>['asyncMarker']) =>
-					buildForStatement({ ...config, asyncMarker: value }),
-				left: (value: T.LeftHandSide) => buildForStatement({ ...config, left: value }),
-				right: (value: T.Expressions) => buildForStatement({ ...config, right: value }),
-				body: (value: T.SimpleStatements | T.Block | T.Newline) => buildForStatement({ ...config, body: value }),
-				alternative: (value?: T.ElseClause) => buildForStatement({ ...config, alternative: value })
+			{
+				asyncMarker: () => _async_marker,
+				left: () => _left,
+				right: () => _right,
+				body: () => _body,
+				alternative: () => _alternative
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1780,16 +1833,18 @@ export function buildForStatement(config: T.ForStatement.Config) {
 export function buildFormatSpecifier(...children: T.Interpolation[]) {
 	const _content = children;
 	return withMethods(
-		{
-			$type: TSKindId.FormatSpecifier as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			contents() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId.FormatSpecifier as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: { $children: (...vs: T.Interpolation[]) => buildFormatSpecifier(...vs) }
 			},
-			$with: { $children: (...vs: T.Interpolation[]) => buildFormatSpecifier(...vs) }
-		},
+			{
+				contents: () => _content
+			}
+		),
 		methodsEngine
 	);
 }
@@ -1802,44 +1857,36 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config) {
 	const _return_type = config.returnType;
 	const _body = config.body;
 	return withMethods(
-		{
-			$type: TSKindId.FunctionDefinition as const,
-			$source: 2 as const,
-			$named: true as const,
-			_async_marker,
-			_name,
-			_type_parameters,
-			_parameters,
-			_return_type,
-			_body,
-			asyncMarker() {
-				return _async_marker;
+		withAccessors(
+			{
+				$type: TSKindId.FunctionDefinition as const,
+				$source: 2 as const,
+				$named: true as const,
+				_async_marker,
+				_name,
+				_type_parameters,
+				_parameters,
+				_return_type,
+				_body,
+				$with: {
+					asyncMarker: (value?: NonNullable<Parameters<typeof buildFunctionDefinition>[0]>['asyncMarker']) =>
+						buildFunctionDefinition({ ...config, asyncMarker: value }),
+					name: (value: T.Identifier) => buildFunctionDefinition({ ...config, name: value }),
+					typeParameters: (value?: T.TypeParameter) => buildFunctionDefinition({ ...config, typeParameters: value }),
+					parameters: (value: T.Parameters) => buildFunctionDefinition({ ...config, parameters: value }),
+					returnType: (value?: T.Type) => buildFunctionDefinition({ ...config, returnType: value }),
+					body: (value: T.SimpleStatements | T.Block | T.Newline) => buildFunctionDefinition({ ...config, body: value })
+				}
 			},
-			name() {
-				return _name;
-			},
-			typeParameters() {
-				return _type_parameters;
-			},
-			parameters() {
-				return _parameters;
-			},
-			returnType() {
-				return _return_type;
-			},
-			body() {
-				return _body;
-			},
-			$with: {
-				asyncMarker: (value?: NonNullable<Parameters<typeof buildFunctionDefinition>[0]>['asyncMarker']) =>
-					buildFunctionDefinition({ ...config, asyncMarker: value }),
-				name: (value: T.Identifier) => buildFunctionDefinition({ ...config, name: value }),
-				typeParameters: (value?: T.TypeParameter) => buildFunctionDefinition({ ...config, typeParameters: value }),
-				parameters: (value: T.Parameters) => buildFunctionDefinition({ ...config, parameters: value }),
-				returnType: (value?: T.Type) => buildFunctionDefinition({ ...config, returnType: value }),
-				body: (value: T.SimpleStatements | T.Block | T.Newline) => buildFunctionDefinition({ ...config, body: value })
+			{
+				asyncMarker: () => _async_marker,
+				name: () => _name,
+				typeParameters: () => _type_parameters,
+				parameters: () => _parameters,
+				returnType: () => _return_type,
+				body: () => _body
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1847,19 +1894,21 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config) {
 export function buildFutureImportStatement(config: T.FutureImportStatement.Config) {
 	const _name = config.name ?? [];
 	return withMethods(
-		{
-			$type: TSKindId.FutureImportStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			_name,
-			names() {
-				return _name;
+		withAccessors(
+			{
+				$type: TSKindId.FutureImportStatement as const,
+				$source: 2 as const,
+				$named: true as const,
+				_name,
+				$with: {
+					names: (...values: NonEmptyArray<T.DottedName | T.AliasedImport>) =>
+						buildFutureImportStatement({ ...config, name: values })
+				}
 			},
-			$with: {
-				names: (...values: NonEmptyArray<T.DottedName | T.AliasedImport>) =>
-					buildFutureImportStatement({ ...config, name: values })
+			{
+				names: () => _name
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1868,24 +1917,24 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config) {
 	const _body = config.body;
 	const _comprehension_clauses = config.comprehensionClauses;
 	return withMethods(
-		{
-			$type: TSKindId.GeneratorExpression as const,
-			$source: 2 as const,
-			$named: true as const,
-			_body,
-			_comprehension_clauses,
-			body() {
-				return _body;
+		withAccessors(
+			{
+				$type: TSKindId.GeneratorExpression as const,
+				$source: 2 as const,
+				$named: true as const,
+				_body,
+				_comprehension_clauses,
+				$with: {
+					body: (value: T.Expression) => buildGeneratorExpression({ ...config, body: value }),
+					comprehensionClauses: (value: T.ComprehensionClauses) =>
+						buildGeneratorExpression({ ...config, comprehensionClauses: value })
+				}
 			},
-			comprehensionClauses() {
-				return _comprehension_clauses;
-			},
-			$with: {
-				body: (value: T.Expression) => buildGeneratorExpression({ ...config, body: value }),
-				comprehensionClauses: (value: T.ComprehensionClauses) =>
-					buildGeneratorExpression({ ...config, comprehensionClauses: value })
+			{
+				body: () => _body,
+				comprehensionClauses: () => _comprehension_clauses
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1894,23 +1943,23 @@ export function buildGenericType(config: T.GenericType.Config) {
 	const _identifier = config.identifier;
 	const _type_parameter = config.typeParameter;
 	return withMethods(
-		{
-			$type: TSKindId.GenericType as const,
-			$source: 2 as const,
-			$named: true as const,
-			_identifier,
-			_type_parameter,
-			identifier() {
-				return _identifier;
+		withAccessors(
+			{
+				$type: TSKindId.GenericType as const,
+				$source: 2 as const,
+				$named: true as const,
+				_identifier,
+				_type_parameter,
+				$with: {
+					identifier: (value: T.Identifier) => buildGenericType({ ...config, identifier: value }),
+					typeParameter: (value: T.TypeParameter) => buildGenericType({ ...config, typeParameter: value })
+				}
 			},
-			typeParameter() {
-				return _type_parameter;
-			},
-			$with: {
-				identifier: (value: T.Identifier) => buildGenericType({ ...config, identifier: value }),
-				typeParameter: (value: T.TypeParameter) => buildGenericType({ ...config, typeParameter: value })
+			{
+				identifier: () => _identifier,
+				typeParameter: () => _type_parameter
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1919,16 +1968,18 @@ export function buildGlobalStatement(...children: T.Identifier[]) {
 	_assertNonEmpty(children, 'global_statement.children');
 	const _identifier = children;
 	return withMethods(
-		{
-			$type: TSKindId.GlobalStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			_identifier,
-			identifiers() {
-				return _identifier;
+		withAccessors(
+			{
+				$type: TSKindId.GlobalStatement as const,
+				$source: 2 as const,
+				$named: true as const,
+				_identifier,
+				$with: { $children: (...vs: T.Identifier[]) => buildGlobalStatement(...vs) }
 			},
-			$with: { $children: (...vs: T.Identifier[]) => buildGlobalStatement(...vs) }
-		},
+			{
+				identifiers: () => _identifier
+			}
+		),
 		methodsEngine
 	);
 }
@@ -1952,18 +2003,20 @@ export function buildIdentifier(text: string) {
 export function buildIfClause(expression: T.IfClause.Config['expression']) {
 	const _expression = expression;
 	return withMethods(
-		{
-			$type: TSKindId.IfClause as const,
-			$source: 2 as const,
-			$named: true as const,
-			_expression,
-			expression() {
-				return _expression;
+		withAccessors(
+			{
+				$type: TSKindId.IfClause as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expression,
+				$with: {
+					expression: (value: T.IfClause.Config['expression']) => buildIfClause(value)
+				}
 			},
-			$with: {
-				expression: (value: T.IfClause.Config['expression']) => buildIfClause(value)
+			{
+				expression: () => _expression
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -1973,30 +2026,28 @@ export function buildIfStatement(config: T.IfStatement.Config) {
 	const _consequence = config.consequence;
 	const _alternative = config.alternative ?? [];
 	return withMethods(
-		{
-			$type: TSKindId.IfStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			_condition,
-			_consequence,
-			_alternative,
-			condition() {
-				return _condition;
+		withAccessors(
+			{
+				$type: TSKindId.IfStatement as const,
+				$source: 2 as const,
+				$named: true as const,
+				_condition,
+				_consequence,
+				_alternative,
+				$with: {
+					condition: (value: T.Expression) => buildIfStatement({ ...config, condition: value }),
+					consequence: (value: T.SimpleStatements | T.Block | T.Newline) =>
+						buildIfStatement({ ...config, consequence: value }),
+					alternatives: (...values: (T.ElifClause | T.ElseClause)[]) =>
+						buildIfStatement({ ...config, alternative: values })
+				}
 			},
-			consequence() {
-				return _consequence;
-			},
-			alternatives() {
-				return _alternative;
-			},
-			$with: {
-				condition: (value: T.Expression) => buildIfStatement({ ...config, condition: value }),
-				consequence: (value: T.SimpleStatements | T.Block | T.Newline) =>
-					buildIfStatement({ ...config, consequence: value }),
-				alternatives: (...values: (T.ElifClause | T.ElseClause)[]) =>
-					buildIfStatement({ ...config, alternative: values })
+			{
+				condition: () => _condition,
+				consequence: () => _consequence,
+				alternatives: () => _alternative
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2005,25 +2056,25 @@ export function buildImportFromStatement(config: T.ImportFromStatement.Config) {
 	const _module_name = config.moduleName;
 	const _wildcard_import = config.wildcardImport ?? [];
 	return withMethods(
-		{
-			$type: TSKindId.ImportFromStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			_module_name,
-			_wildcard_import,
-			moduleName() {
-				return _module_name;
+		withAccessors(
+			{
+				$type: TSKindId.ImportFromStatement as const,
+				$source: 2 as const,
+				$named: true as const,
+				_module_name,
+				_wildcard_import,
+				$with: {
+					moduleName: (value: T.RelativeImport | T.DottedName) =>
+						buildImportFromStatement({ ...config, moduleName: value }),
+					wildcardImports: (...values: NonEmptyArray<T.WildcardImport | T.DottedName | T.AliasedImport>) =>
+						buildImportFromStatement({ ...config, wildcardImport: values })
+				}
 			},
-			wildcardImports() {
-				return _wildcard_import;
-			},
-			$with: {
-				moduleName: (value: T.RelativeImport | T.DottedName) =>
-					buildImportFromStatement({ ...config, moduleName: value }),
-				wildcardImports: (...values: NonEmptyArray<T.WildcardImport | T.DottedName | T.AliasedImport>) =>
-					buildImportFromStatement({ ...config, wildcardImport: values })
+			{
+				moduleName: () => _module_name,
+				wildcardImports: () => _wildcard_import
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2045,19 +2096,21 @@ export function buildImportPrefix(text: string) {
 export function buildImportStatement(config: T.ImportStatement.Config) {
 	const _name = config.name ?? [];
 	return withMethods(
-		{
-			$type: TSKindId.ImportStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			_name,
-			names() {
-				return _name;
+		withAccessors(
+			{
+				$type: TSKindId.ImportStatement as const,
+				$source: 2 as const,
+				$named: true as const,
+				_name,
+				$with: {
+					names: (...values: NonEmptyArray<T.DottedName | T.AliasedImport>) =>
+						buildImportStatement({ ...config, name: values })
+				}
 			},
-			$with: {
-				names: (...values: NonEmptyArray<T.DottedName | T.AliasedImport>) =>
-					buildImportStatement({ ...config, name: values })
+			{
+				names: () => _name
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2081,28 +2134,26 @@ export function buildInterpolation(config: T.Interpolation.Config) {
 	const _type_conversion = config.typeConversion;
 	const _format_specifier = config.formatSpecifier;
 	return withMethods(
-		{
-			$type: TSKindId.Interpolation as const,
-			$source: 2 as const,
-			$named: true as const,
-			_expression,
-			_type_conversion,
-			_format_specifier,
-			expression() {
-				return _expression;
+		withAccessors(
+			{
+				$type: TSKindId.Interpolation as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expression,
+				_type_conversion,
+				_format_specifier,
+				$with: {
+					expression: (value: T.FExpression) => buildInterpolation({ ...config, expression: value }),
+					typeConversion: (value?: T.TypeConversion) => buildInterpolation({ ...config, typeConversion: value }),
+					formatSpecifier: (value?: T.FormatSpecifier) => buildInterpolation({ ...config, formatSpecifier: value })
+				}
 			},
-			typeConversion() {
-				return _type_conversion;
-			},
-			formatSpecifier() {
-				return _format_specifier;
-			},
-			$with: {
-				expression: (value: T.FExpression) => buildInterpolation({ ...config, expression: value }),
-				typeConversion: (value?: T.TypeConversion) => buildInterpolation({ ...config, typeConversion: value }),
-				formatSpecifier: (value?: T.FormatSpecifier) => buildInterpolation({ ...config, formatSpecifier: value })
+			{
+				expression: () => _expression,
+				typeConversion: () => _type_conversion,
+				formatSpecifier: () => _format_specifier
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2111,23 +2162,23 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config) {
 	const _name = config.name;
 	const _value = config.value;
 	return withMethods(
-		{
-			$type: TSKindId.KeywordArgument as const,
-			$source: 2 as const,
-			$named: true as const,
-			_name,
-			_value,
-			name() {
-				return _name;
+		withAccessors(
+			{
+				$type: TSKindId.KeywordArgument as const,
+				$source: 2 as const,
+				$named: true as const,
+				_name,
+				_value,
+				$with: {
+					name: (value: T.Identifier) => buildKeywordArgument({ ...config, name: value }),
+					value: (value: T.Expression) => buildKeywordArgument({ ...config, value: value })
+				}
 			},
-			value() {
-				return _value;
-			},
-			$with: {
-				name: (value: T.Identifier) => buildKeywordArgument({ ...config, name: value }),
-				value: (value: T.Expression) => buildKeywordArgument({ ...config, value: value })
+			{
+				name: () => _name,
+				value: () => _value
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2136,23 +2187,23 @@ export function buildKeywordPattern(config: T.KeywordPattern.Config) {
 	const _identifier = config.identifier;
 	const _simple_pattern = config.simplePattern;
 	return withMethods(
-		{
-			$type: TSKindId.KeywordPattern as const,
-			$source: 2 as const,
-			$named: true as const,
-			_identifier,
-			_simple_pattern,
-			identifier() {
-				return _identifier;
+		withAccessors(
+			{
+				$type: TSKindId.KeywordPattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_identifier,
+				_simple_pattern,
+				$with: {
+					identifier: (value: T.Identifier) => buildKeywordPattern({ ...config, identifier: value }),
+					simplePattern: (value: T.SimplePattern) => buildKeywordPattern({ ...config, simplePattern: value })
+				}
 			},
-			simplePattern() {
-				return _simple_pattern;
-			},
-			$with: {
-				identifier: (value: T.Identifier) => buildKeywordPattern({ ...config, identifier: value }),
-				simplePattern: (value: T.SimplePattern) => buildKeywordPattern({ ...config, simplePattern: value })
+			{
+				identifier: () => _identifier,
+				simplePattern: () => _simple_pattern
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2161,23 +2212,23 @@ export function buildLambda(config: T.Lambda.Config) {
 	const _parameters = config.parameters;
 	const _body = config.body;
 	return withMethods(
-		{
-			$type: TSKindId.Lambda as const,
-			$source: 2 as const,
-			$named: true as const,
-			_parameters,
-			_body,
-			parameters() {
-				return _parameters;
+		withAccessors(
+			{
+				$type: TSKindId.Lambda as const,
+				$source: 2 as const,
+				$named: true as const,
+				_parameters,
+				_body,
+				$with: {
+					parameters: (value?: T.LambdaParameters) => buildLambda({ ...config, parameters: value }),
+					body: (value: T.Expression) => buildLambda({ ...config, body: value })
+				}
 			},
-			body() {
-				return _body;
-			},
-			$with: {
-				parameters: (value?: T.LambdaParameters) => buildLambda({ ...config, parameters: value }),
-				body: (value: T.Expression) => buildLambda({ ...config, body: value })
+			{
+				parameters: () => _parameters,
+				body: () => _body
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2185,16 +2236,18 @@ export function buildLambda(config: T.Lambda.Config) {
 export function buildLambdaParameters(child: T._Parameters) {
 	const _parameters = child;
 	return withMethods(
-		{
-			$type: TSKindId.LambdaParameters as const,
-			$source: 2 as const,
-			$named: true as const,
-			_parameters,
-			parameters() {
-				return _parameters;
+		withAccessors(
+			{
+				$type: TSKindId.LambdaParameters as const,
+				$source: 2 as const,
+				$named: true as const,
+				_parameters,
+				$with: { $child: (v: T._Parameters) => buildLambdaParameters(v) }
 			},
-			$with: { $child: (v: T._Parameters) => buildLambdaParameters(v) }
-		},
+			{
+				parameters: () => _parameters
+			}
+		),
 		methodsEngine
 	);
 }
@@ -2203,23 +2256,23 @@ export function buildLambdaWithinForInClause(config: T.LambdaWithinForInClause.C
 	const _parameters = config.parameters;
 	const _body = config.body;
 	return withMethods(
-		{
-			$type: TSKindId.LambdaWithinForInClause as const,
-			$source: 2 as const,
-			$named: true as const,
-			_parameters,
-			_body,
-			parameters() {
-				return _parameters;
+		withAccessors(
+			{
+				$type: TSKindId.LambdaWithinForInClause as const,
+				$source: 2 as const,
+				$named: true as const,
+				_parameters,
+				_body,
+				$with: {
+					parameters: (value?: T.LambdaParameters) => buildLambdaWithinForInClause({ ...config, parameters: value }),
+					body: (value: T.ExpressionWithinForInClause) => buildLambdaWithinForInClause({ ...config, body: value })
+				}
 			},
-			body() {
-				return _body;
-			},
-			$with: {
-				parameters: (value?: T.LambdaParameters) => buildLambdaWithinForInClause({ ...config, parameters: value }),
-				body: (value: T.ExpressionWithinForInClause) => buildLambdaWithinForInClause({ ...config, body: value })
+			{
+				parameters: () => _parameters,
+				body: () => _body
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2241,16 +2294,18 @@ export function buildLineContinuation(text: string) {
 export function buildList(child?: T.ElementList) {
 	const _element_list = child;
 	return withMethods(
-		{
-			$type: TSKindId.List as const,
-			$source: 2 as const,
-			$named: true as const,
-			_element_list,
-			elementList() {
-				return _element_list;
+		withAccessors(
+			{
+				$type: TSKindId.List as const,
+				$source: 2 as const,
+				$named: true as const,
+				_element_list,
+				$with: { $child: (v: T.ElementList) => buildList(v) }
 			},
-			$with: { $child: (v: T.ElementList) => buildList(v) }
-		},
+			{
+				elementList: () => _element_list
+			}
+		),
 		methodsEngine
 	);
 }
@@ -2259,24 +2314,24 @@ export function buildListComprehension(config: T.ListComprehension.Config) {
 	const _body = config.body;
 	const _comprehension_clauses = config.comprehensionClauses;
 	return withMethods(
-		{
-			$type: TSKindId.ListComprehension as const,
-			$source: 2 as const,
-			$named: true as const,
-			_body,
-			_comprehension_clauses,
-			body() {
-				return _body;
+		withAccessors(
+			{
+				$type: TSKindId.ListComprehension as const,
+				$source: 2 as const,
+				$named: true as const,
+				_body,
+				_comprehension_clauses,
+				$with: {
+					body: (value: T.Expression) => buildListComprehension({ ...config, body: value }),
+					comprehensionClauses: (value: T.ComprehensionClauses) =>
+						buildListComprehension({ ...config, comprehensionClauses: value })
+				}
 			},
-			comprehensionClauses() {
-				return _comprehension_clauses;
-			},
-			$with: {
-				body: (value: T.Expression) => buildListComprehension({ ...config, body: value }),
-				comprehensionClauses: (value: T.ComprehensionClauses) =>
-					buildListComprehension({ ...config, comprehensionClauses: value })
+			{
+				body: () => _body,
+				comprehensionClauses: () => _comprehension_clauses
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2284,16 +2339,18 @@ export function buildListComprehension(config: T.ListComprehension.Config) {
 export function buildListPattern(child?: T.PatternGroup) {
 	const _pattern_group = child;
 	return withMethods(
-		{
-			$type: TSKindId.ListPattern as const,
-			$source: 2 as const,
-			$named: true as const,
-			_pattern_group,
-			patternGroup() {
-				return _pattern_group;
+		withAccessors(
+			{
+				$type: TSKindId.ListPattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_pattern_group,
+				$with: { $child: (v: T.PatternGroup) => buildListPattern(v) }
 			},
-			$with: { $child: (v: T.PatternGroup) => buildListPattern(v) }
-		},
+			{
+				patternGroup: () => _pattern_group
+			}
+		),
 		methodsEngine
 	);
 }
@@ -2301,18 +2358,20 @@ export function buildListPattern(child?: T.PatternGroup) {
 export function buildListSplat(expression: T.ListSplat.Config['expression']) {
 	const _expression = expression;
 	return withMethods(
-		{
-			$type: TSKindId.ListSplat as const,
-			$source: 2 as const,
-			$named: true as const,
-			_expression,
-			expression() {
-				return _expression;
+		withAccessors(
+			{
+				$type: TSKindId.ListSplat as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expression,
+				$with: {
+					expression: (value: T.ListSplat.Config['expression']) => buildListSplat(value)
+				}
 			},
-			$with: {
-				expression: (value: T.ListSplat.Config['expression']) => buildListSplat(value)
+			{
+				expression: () => _expression
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2320,16 +2379,18 @@ export function buildListSplat(expression: T.ListSplat.Config['expression']) {
 export function buildListSplatPattern(child: T.Identifier | T.Subscript | T.Attribute) {
 	const _content = child;
 	return withMethods(
-		{
-			$type: TSKindId.ListSplatPattern as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId.ListSplatPattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: { $child: (v: T.Identifier | T.Subscript | T.Attribute) => buildListSplatPattern(v) }
 			},
-			$with: { $child: (v: T.Identifier | T.Subscript | T.Attribute) => buildListSplatPattern(v) }
-		},
+			{
+				content: () => _content
+			}
+		),
 		methodsEngine
 	);
 }
@@ -2338,23 +2399,23 @@ export function buildMatchStatement(config: T.MatchStatement.Config) {
 	const _subject = config.subject ?? [];
 	const _body = config.body;
 	return withMethods(
-		{
-			$type: TSKindId.MatchStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			_subject,
-			_body,
-			subjects() {
-				return _subject;
+		withAccessors(
+			{
+				$type: TSKindId.MatchStatement as const,
+				$source: 2 as const,
+				$named: true as const,
+				_subject,
+				_body,
+				$with: {
+					subjects: (...values: NonEmptyArray<T.Expression>) => buildMatchStatement({ ...config, subject: values }),
+					body: (value: T.MatchBlock) => buildMatchStatement({ ...config, body: value })
+				}
 			},
-			body() {
-				return _body;
-			},
-			$with: {
-				subjects: (...values: NonEmptyArray<T.Expression>) => buildMatchStatement({ ...config, subject: values }),
-				body: (value: T.MatchBlock) => buildMatchStatement({ ...config, body: value })
+			{
+				subjects: () => _subject,
+				body: () => _body
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2363,23 +2424,23 @@ export function buildMemberType(config: T.MemberType.Config) {
 	const _base_type = config.baseType;
 	const _identifier = config.identifier;
 	return withMethods(
-		{
-			$type: TSKindId.MemberType as const,
-			$source: 2 as const,
-			$named: true as const,
-			_base_type,
-			_identifier,
-			baseType() {
-				return _base_type;
+		withAccessors(
+			{
+				$type: TSKindId.MemberType as const,
+				$source: 2 as const,
+				$named: true as const,
+				_base_type,
+				_identifier,
+				$with: {
+					baseType: (value: T.Type) => buildMemberType({ ...config, baseType: value }),
+					identifier: (value: T.Identifier) => buildMemberType({ ...config, identifier: value })
+				}
 			},
-			identifier() {
-				return _identifier;
-			},
-			$with: {
-				baseType: (value: T.Type) => buildMemberType({ ...config, baseType: value }),
-				identifier: (value: T.Identifier) => buildMemberType({ ...config, identifier: value })
+			{
+				baseType: () => _base_type,
+				identifier: () => _identifier
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2387,16 +2448,18 @@ export function buildMemberType(config: T.MemberType.Config) {
 export function buildModule(...children: T.Statement[]) {
 	const _statement = children;
 	return withMethods(
-		{
-			$type: TSKindId.Module as const,
-			$source: 2 as const,
-			$named: true as const,
-			_statement,
-			statements() {
-				return _statement;
+		withAccessors(
+			{
+				$type: TSKindId.Module as const,
+				$source: 2 as const,
+				$named: true as const,
+				_statement,
+				$with: { $children: (...vs: T.Statement[]) => buildModule(...vs) }
 			},
-			$with: { $children: (...vs: T.Statement[]) => buildModule(...vs) }
-		},
+			{
+				statements: () => _statement
+			}
+		),
 		methodsEngine
 	);
 }
@@ -2405,23 +2468,23 @@ export function buildNamedExpression(config: T.NamedExpression.Config) {
 	const _name = config.name;
 	const _value = config.value;
 	return withMethods(
-		{
-			$type: TSKindId.NamedExpression as const,
-			$source: 2 as const,
-			$named: true as const,
-			_name,
-			_value,
-			name() {
-				return _name;
+		withAccessors(
+			{
+				$type: TSKindId.NamedExpression as const,
+				$source: 2 as const,
+				$named: true as const,
+				_name,
+				_value,
+				$with: {
+					name: (value: T.NamedExpressionLhs) => buildNamedExpression({ ...config, name: value }),
+					value: (value: T.Expression) => buildNamedExpression({ ...config, value: value })
+				}
 			},
-			value() {
-				return _value;
-			},
-			$with: {
-				name: (value: T.NamedExpressionLhs) => buildNamedExpression({ ...config, name: value }),
-				value: (value: T.Expression) => buildNamedExpression({ ...config, value: value })
+			{
+				name: () => _name,
+				value: () => _value
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2442,16 +2505,18 @@ export function buildNonlocalStatement(...children: T.Identifier[]) {
 	_assertNonEmpty(children, 'nonlocal_statement.children');
 	const _identifier = children;
 	return withMethods(
-		{
-			$type: TSKindId.NonlocalStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			_identifier,
-			identifiers() {
-				return _identifier;
+		withAccessors(
+			{
+				$type: TSKindId.NonlocalStatement as const,
+				$source: 2 as const,
+				$named: true as const,
+				_identifier,
+				$with: { $children: (...vs: T.Identifier[]) => buildNonlocalStatement(...vs) }
 			},
-			$with: { $children: (...vs: T.Identifier[]) => buildNonlocalStatement(...vs) }
-		},
+			{
+				identifiers: () => _identifier
+			}
+		),
 		methodsEngine
 	);
 }
@@ -2459,18 +2524,20 @@ export function buildNonlocalStatement(...children: T.Identifier[]) {
 export function buildNotOperator(argument: T.NotOperator.Config['argument']) {
 	const _argument = argument;
 	return withMethods(
-		{
-			$type: TSKindId.NotOperator as const,
-			$source: 2 as const,
-			$named: true as const,
-			_argument,
-			argument() {
-				return _argument;
+		withAccessors(
+			{
+				$type: TSKindId.NotOperator as const,
+				$source: 2 as const,
+				$named: true as const,
+				_argument,
+				$with: {
+					argument: (value: T.NotOperator.Config['argument']) => buildNotOperator(value)
+				}
 			},
-			$with: {
-				argument: (value: T.NotOperator.Config['argument']) => buildNotOperator(value)
+			{
+				argument: () => _argument
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2479,23 +2546,23 @@ export function buildPair(config: T.Pair.Config) {
 	const _key = config.key;
 	const _value = config.value;
 	return withMethods(
-		{
-			$type: TSKindId.Pair as const,
-			$source: 2 as const,
-			$named: true as const,
-			_key,
-			_value,
-			key() {
-				return _key;
+		withAccessors(
+			{
+				$type: TSKindId.Pair as const,
+				$source: 2 as const,
+				$named: true as const,
+				_key,
+				_value,
+				$with: {
+					key: (value: T.Expression) => buildPair({ ...config, key: value }),
+					value: (value: T.Expression) => buildPair({ ...config, value: value })
+				}
 			},
-			value() {
-				return _value;
-			},
-			$with: {
-				key: (value: T.Expression) => buildPair({ ...config, key: value }),
-				value: (value: T.Expression) => buildPair({ ...config, value: value })
+			{
+				key: () => _key,
+				value: () => _value
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2503,16 +2570,18 @@ export function buildPair(config: T.Pair.Config) {
 export function buildParameters(child?: T.ParameterList) {
 	const _parameter_list = child;
 	return withMethods(
-		{
-			$type: TSKindId.Parameters as const,
-			$source: 2 as const,
-			$named: true as const,
-			_parameter_list,
-			parameterList() {
-				return _parameter_list;
+		withAccessors(
+			{
+				$type: TSKindId.Parameters as const,
+				$source: 2 as const,
+				$named: true as const,
+				_parameter_list,
+				$with: { $child: (v: T.ParameterList) => buildParameters(v) }
 			},
-			$with: { $child: (v: T.ParameterList) => buildParameters(v) }
-		},
+			{
+				parameterList: () => _parameter_list
+			}
+		),
 		methodsEngine
 	);
 }
@@ -2520,18 +2589,21 @@ export function buildParameters(child?: T.ParameterList) {
 export function buildParenthesizedExpression(child: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat) {
 	const _content = child;
 	return withMethods(
-		{
-			$type: TSKindId.ParenthesizedExpression as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId.ParenthesizedExpression as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					$child: (v: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat) =>
+						buildParenthesizedExpression(v)
+				}
 			},
-			$with: {
-				$child: (v: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat) => buildParenthesizedExpression(v)
+			{
+				content: () => _content
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2539,16 +2611,18 @@ export function buildParenthesizedExpression(child: T.Expression | T.Yield | T.P
 export function buildParenthesizedListSplat(child: T.ParenthesizedListSplat | T.ListSplat) {
 	const _content = child;
 	return withMethods(
-		{
-			$type: TSKindId.ParenthesizedListSplat as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId.ParenthesizedListSplat as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: { $child: (v: T.ParenthesizedListSplat | T.ListSplat) => buildParenthesizedListSplat(v) }
 			},
-			$with: { $child: (v: T.ParenthesizedListSplat | T.ListSplat) => buildParenthesizedListSplat(v) }
-		},
+			{
+				content: () => _content
+			}
+		),
 		methodsEngine
 	);
 }
@@ -2569,16 +2643,18 @@ export function buildPatternList(...children: T.Pattern[]) {
 	_assertNonEmpty(children, 'pattern_list.children');
 	const _pattern = children;
 	return withMethods(
-		{
-			$type: TSKindId.PatternList as const,
-			$source: 2 as const,
-			$named: true as const,
-			_pattern,
-			patterns() {
-				return _pattern;
+		withAccessors(
+			{
+				$type: TSKindId.PatternList as const,
+				$source: 2 as const,
+				$named: true as const,
+				_pattern,
+				$with: { $children: (...vs: T.Pattern[]) => buildPatternList(...vs) }
 			},
-			$with: { $children: (...vs: T.Pattern[]) => buildPatternList(...vs) }
-		},
+			{
+				patterns: () => _pattern
+			}
+		),
 		methodsEngine
 	);
 }
@@ -2587,23 +2663,23 @@ export function buildPrintStatement(config: Partial<T.PrintStatement.Config> = {
 	const _argument = config.argument ?? [];
 	const _chevron = config.chevron;
 	return withMethods(
-		{
-			$type: TSKindId.PrintStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			_argument,
-			_chevron,
-			arguments() {
-				return _argument;
+		withAccessors(
+			{
+				$type: TSKindId.PrintStatement as const,
+				$source: 2 as const,
+				$named: true as const,
+				_argument,
+				_chevron,
+				$with: {
+					arguments: (...values: T.Expression[]) => buildPrintStatement({ ...config, argument: values }),
+					chevron: (value?: T.Chevron) => buildPrintStatement({ ...config, chevron: value })
+				}
 			},
-			chevron() {
-				return _chevron;
-			},
-			$with: {
-				arguments: (...values: T.Expression[]) => buildPrintStatement({ ...config, argument: values }),
-				chevron: (value?: T.Chevron) => buildPrintStatement({ ...config, chevron: value })
+			{
+				arguments: () => _argument,
+				chevron: () => _chevron
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2612,23 +2688,23 @@ export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {
 	const _expressions = config.expressions;
 	const _cause = config.cause;
 	return withMethods(
-		{
-			$type: TSKindId.RaiseStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			_expressions,
-			_cause,
-			expressions() {
-				return _expressions;
+		withAccessors(
+			{
+				$type: TSKindId.RaiseStatement as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expressions,
+				_cause,
+				$with: {
+					expressions: (value?: T.Expressions) => buildRaiseStatement({ ...config, expressions: value }),
+					cause: (value?: T.Expression) => buildRaiseStatement({ ...config, cause: value })
+				}
 			},
-			cause() {
-				return _cause;
-			},
-			$with: {
-				expressions: (value?: T.Expressions) => buildRaiseStatement({ ...config, expressions: value }),
-				cause: (value?: T.Expression) => buildRaiseStatement({ ...config, cause: value })
+			{
+				expressions: () => _expressions,
+				cause: () => _cause
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2637,23 +2713,23 @@ export function buildRelativeImport(config: T.RelativeImport.Config) {
 	const _import_prefix = config.importPrefix;
 	const _dotted_name = config.dottedName;
 	return withMethods(
-		{
-			$type: TSKindId.RelativeImport as const,
-			$source: 2 as const,
-			$named: true as const,
-			_import_prefix,
-			_dotted_name,
-			importPrefix() {
-				return _import_prefix;
+		withAccessors(
+			{
+				$type: TSKindId.RelativeImport as const,
+				$source: 2 as const,
+				$named: true as const,
+				_import_prefix,
+				_dotted_name,
+				$with: {
+					importPrefix: (value: T.ImportPrefix) => buildRelativeImport({ ...config, importPrefix: value }),
+					dottedName: (value?: T.DottedName) => buildRelativeImport({ ...config, dottedName: value })
+				}
 			},
-			dottedName() {
-				return _dotted_name;
-			},
-			$with: {
-				importPrefix: (value: T.ImportPrefix) => buildRelativeImport({ ...config, importPrefix: value }),
-				dottedName: (value?: T.DottedName) => buildRelativeImport({ ...config, dottedName: value })
+			{
+				importPrefix: () => _import_prefix,
+				dottedName: () => _dotted_name
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2661,16 +2737,18 @@ export function buildRelativeImport(config: T.RelativeImport.Config) {
 export function buildReturnStatement(child?: T.Expressions) {
 	const _expressions = child;
 	return withMethods(
-		{
-			$type: TSKindId.ReturnStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			_expressions,
-			expressions() {
-				return _expressions;
+		withAccessors(
+			{
+				$type: TSKindId.ReturnStatement as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expressions,
+				$with: { $child: (v: T.Expressions) => buildReturnStatement(v) }
 			},
-			$with: { $child: (v: T.Expressions) => buildReturnStatement(v) }
-		},
+			{
+				expressions: () => _expressions
+			}
+		),
 		methodsEngine
 	);
 }
@@ -2678,16 +2756,18 @@ export function buildReturnStatement(child?: T.Expressions) {
 export function buildSet(child: T.CollectionElements) {
 	const _collection_elements = child;
 	return withMethods(
-		{
-			$type: TSKindId.Set as const,
-			$source: 2 as const,
-			$named: true as const,
-			_collection_elements,
-			collectionElements() {
-				return _collection_elements;
+		withAccessors(
+			{
+				$type: TSKindId.Set as const,
+				$source: 2 as const,
+				$named: true as const,
+				_collection_elements,
+				$with: { $child: (v: T.CollectionElements) => buildSet(v) }
 			},
-			$with: { $child: (v: T.CollectionElements) => buildSet(v) }
-		},
+			{
+				collectionElements: () => _collection_elements
+			}
+		),
 		methodsEngine
 	);
 }
@@ -2696,24 +2776,24 @@ export function buildSetComprehension(config: T.SetComprehension.Config) {
 	const _body = config.body;
 	const _comprehension_clauses = config.comprehensionClauses;
 	return withMethods(
-		{
-			$type: TSKindId.SetComprehension as const,
-			$source: 2 as const,
-			$named: true as const,
-			_body,
-			_comprehension_clauses,
-			body() {
-				return _body;
+		withAccessors(
+			{
+				$type: TSKindId.SetComprehension as const,
+				$source: 2 as const,
+				$named: true as const,
+				_body,
+				_comprehension_clauses,
+				$with: {
+					body: (value: T.Expression) => buildSetComprehension({ ...config, body: value }),
+					comprehensionClauses: (value: T.ComprehensionClauses) =>
+						buildSetComprehension({ ...config, comprehensionClauses: value })
+				}
 			},
-			comprehensionClauses() {
-				return _comprehension_clauses;
-			},
-			$with: {
-				body: (value: T.Expression) => buildSetComprehension({ ...config, body: value }),
-				comprehensionClauses: (value: T.ComprehensionClauses) =>
-					buildSetComprehension({ ...config, comprehensionClauses: value })
+			{
+				body: () => _body,
+				comprehensionClauses: () => _comprehension_clauses
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2723,28 +2803,26 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}) {
 	const _stop = config.stop;
 	const _step = config.step;
 	return withMethods(
-		{
-			$type: TSKindId.Slice as const,
-			$source: 2 as const,
-			$named: true as const,
-			_start,
-			_stop,
-			_step,
-			start() {
-				return _start;
+		withAccessors(
+			{
+				$type: TSKindId.Slice as const,
+				$source: 2 as const,
+				$named: true as const,
+				_start,
+				_stop,
+				_step,
+				$with: {
+					start: (value?: T.Expression) => buildSlice({ ...config, start: value }),
+					stop: (value?: T.Expression) => buildSlice({ ...config, stop: value }),
+					step: (value?: T.SliceGroup1) => buildSlice({ ...config, step: value })
+				}
 			},
-			stop() {
-				return _stop;
-			},
-			step() {
-				return _step;
-			},
-			$with: {
-				start: (value?: T.Expression) => buildSlice({ ...config, start: value }),
-				stop: (value?: T.Expression) => buildSlice({ ...config, stop: value }),
-				step: (value?: T.SliceGroup1) => buildSlice({ ...config, step: value })
+			{
+				start: () => _start,
+				stop: () => _stop,
+				step: () => _step
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2756,24 +2834,24 @@ export function buildSplatPattern(config: T.SplatPattern.Config) {
 	]);
 	const _identifier = config.identifier;
 	return withMethods(
-		{
-			$type: TSKindId.SplatPattern as const,
-			$source: 2 as const,
-			$named: true as const,
-			_operator,
-			_identifier,
-			operator() {
-				return _operator;
+		withAccessors(
+			{
+				$type: TSKindId.SplatPattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_operator,
+				_identifier,
+				$with: {
+					operator: (value: NonNullable<Parameters<typeof buildSplatPattern>[0]>['operator']) =>
+						buildSplatPattern({ ...config, operator: value }),
+					identifier: (value: T.Identifier | '_') => buildSplatPattern({ ...config, identifier: value })
+				}
 			},
-			identifier() {
-				return _identifier;
-			},
-			$with: {
-				operator: (value: NonNullable<Parameters<typeof buildSplatPattern>[0]>['operator']) =>
-					buildSplatPattern({ ...config, operator: value }),
-				identifier: (value: T.Identifier | '_') => buildSplatPattern({ ...config, identifier: value })
+			{
+				operator: () => _operator,
+				identifier: () => _identifier
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2781,18 +2859,20 @@ export function buildSplatPattern(config: T.SplatPattern.Config) {
 export function buildSplatType(identifier: T.SplatType.Config['identifier']) {
 	const _identifier = identifier;
 	return withMethods(
-		{
-			$type: TSKindId.SplatType as const,
-			$source: 2 as const,
-			$named: true as const,
-			_identifier,
-			identifier() {
-				return _identifier;
+		withAccessors(
+			{
+				$type: TSKindId.SplatType as const,
+				$source: 2 as const,
+				$named: true as const,
+				_identifier,
+				$with: {
+					identifier: (value: T.SplatType.Config['identifier']) => buildSplatType(value)
+				}
 			},
-			$with: {
-				identifier: (value: T.SplatType.Config['identifier']) => buildSplatType(value)
+			{
+				identifier: () => _identifier
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2802,28 +2882,26 @@ export function buildString(config: T.String.Config) {
 	const _content = config.content ?? [];
 	const _string_end = config.stringEnd;
 	return withMethods(
-		{
-			$type: TSKindId.String as const,
-			$source: 2 as const,
-			$named: true as const,
-			_string_start,
-			_content,
-			_string_end,
-			stringStart() {
-				return _string_start;
+		withAccessors(
+			{
+				$type: TSKindId.String as const,
+				$source: 2 as const,
+				$named: true as const,
+				_string_start,
+				_content,
+				_string_end,
+				$with: {
+					stringStart: (value: T.StringStart) => buildString({ ...config, stringStart: value }),
+					contents: (...values: (T.Interpolation | T.StringContent)[]) => buildString({ ...config, content: values }),
+					stringEnd: (value: T.StringEnd) => buildString({ ...config, stringEnd: value })
+				}
 			},
-			contents() {
-				return _content;
-			},
-			stringEnd() {
-				return _string_end;
-			},
-			$with: {
-				stringStart: (value: T.StringStart) => buildString({ ...config, stringStart: value }),
-				contents: (...values: (T.Interpolation | T.StringContent)[]) => buildString({ ...config, content: values }),
-				stringEnd: (value: T.StringEnd) => buildString({ ...config, stringEnd: value })
+			{
+				stringStart: () => _string_start,
+				contents: () => _content,
+				stringEnd: () => _string_end
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2833,19 +2911,21 @@ export function buildStringContent(
 ) {
 	const _content = children;
 	return withMethods(
-		{
-			$type: TSKindId.StringContent as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			contents() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId.StringContent as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					$children: (...vs: (T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent)[]) =>
+						buildStringContent(...vs)
+				}
 			},
-			$with: {
-				$children: (...vs: (T.EscapeInterpolation | T.EscapeSequence | '\\' | T._StringContent)[]) =>
-					buildStringContent(...vs)
+			{
+				contents: () => _content
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2854,24 +2934,24 @@ export function buildSubscript(config: T.Subscript.Config) {
 	const _value = config.value;
 	const _subscript = config.subscript ?? [];
 	return withMethods(
-		{
-			$type: TSKindId.Subscript as const,
-			$source: 2 as const,
-			$named: true as const,
-			_value,
-			_subscript,
-			value() {
-				return _value;
+		withAccessors(
+			{
+				$type: TSKindId.Subscript as const,
+				$source: 2 as const,
+				$named: true as const,
+				_value,
+				_subscript,
+				$with: {
+					value: (value: T.PrimaryExpression) => buildSubscript({ ...config, value: value }),
+					subscripts: (...values: NonEmptyArray<T.Expression | T.Slice>) =>
+						buildSubscript({ ...config, subscript: values })
+				}
 			},
-			subscripts() {
-				return _subscript;
-			},
-			$with: {
-				value: (value: T.PrimaryExpression) => buildSubscript({ ...config, value: value }),
-				subscripts: (...values: NonEmptyArray<T.Expression | T.Slice>) =>
-					buildSubscript({ ...config, subscript: values })
+			{
+				value: () => _value,
+				subscripts: () => _subscript
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2894,33 +2974,29 @@ export function buildTryStatement(config: T.TryStatement.Config) {
 	const _else_clause = config.elseClause;
 	const _finally_clause = config.finallyClause;
 	return withMethods(
-		{
-			$type: TSKindId.TryStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			_body,
-			_except_clauses,
-			_else_clause,
-			_finally_clause,
-			body() {
-				return _body;
+		withAccessors(
+			{
+				$type: TSKindId.TryStatement as const,
+				$source: 2 as const,
+				$named: true as const,
+				_body,
+				_except_clauses,
+				_else_clause,
+				_finally_clause,
+				$with: {
+					body: (value: T.SimpleStatements | T.Block | T.Newline) => buildTryStatement({ ...config, body: value }),
+					exceptClauses: (...values: T.ExceptClause[]) => buildTryStatement({ ...config, exceptClauses: values }),
+					elseClause: (value?: T.ElseClause) => buildTryStatement({ ...config, elseClause: value }),
+					finallyClause: (value?: T.FinallyClause) => buildTryStatement({ ...config, finallyClause: value })
+				}
 			},
-			exceptClauses() {
-				return _except_clauses;
-			},
-			elseClause() {
-				return _else_clause;
-			},
-			finallyClause() {
-				return _finally_clause;
-			},
-			$with: {
-				body: (value: T.SimpleStatements | T.Block | T.Newline) => buildTryStatement({ ...config, body: value }),
-				exceptClauses: (...values: T.ExceptClause[]) => buildTryStatement({ ...config, exceptClauses: values }),
-				elseClause: (value?: T.ElseClause) => buildTryStatement({ ...config, elseClause: value }),
-				finallyClause: (value?: T.FinallyClause) => buildTryStatement({ ...config, finallyClause: value })
+			{
+				body: () => _body,
+				exceptClauses: () => _except_clauses,
+				elseClause: () => _else_clause,
+				finallyClause: () => _finally_clause
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -2928,16 +3004,18 @@ export function buildTryStatement(config: T.TryStatement.Config) {
 export function buildTuple(child?: T.ElementList) {
 	const _element_list = child;
 	return withMethods(
-		{
-			$type: TSKindId.Tuple as const,
-			$source: 2 as const,
-			$named: true as const,
-			_element_list,
-			elementList() {
-				return _element_list;
+		withAccessors(
+			{
+				$type: TSKindId.Tuple as const,
+				$source: 2 as const,
+				$named: true as const,
+				_element_list,
+				$with: { $child: (v: T.ElementList) => buildTuple(v) }
 			},
-			$with: { $child: (v: T.ElementList) => buildTuple(v) }
-		},
+			{
+				elementList: () => _element_list
+			}
+		),
 		methodsEngine
 	);
 }
@@ -2945,16 +3023,18 @@ export function buildTuple(child?: T.ElementList) {
 export function buildTuplePattern(child?: T.PatternGroup) {
 	const _pattern_group = child;
 	return withMethods(
-		{
-			$type: TSKindId.TuplePattern as const,
-			$source: 2 as const,
-			$named: true as const,
-			_pattern_group,
-			patternGroup() {
-				return _pattern_group;
+		withAccessors(
+			{
+				$type: TSKindId.TuplePattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_pattern_group,
+				$with: { $child: (v: T.PatternGroup) => buildTuplePattern(v) }
 			},
-			$with: { $child: (v: T.PatternGroup) => buildTuplePattern(v) }
-		},
+			{
+				patternGroup: () => _pattern_group
+			}
+		),
 		methodsEngine
 	);
 }
@@ -2964,49 +3044,49 @@ export function buildType(
 ) {
 	const _content = child;
 	return withMethods(
-		{
-			$type: TSKindId.Type as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId.Type as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: {
+					$child: (v: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType) =>
+						buildType(v)
+				}
 			},
-			$with: {
-				$child: (v: T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType) =>
-					buildType(v)
+			{
+				content: () => _content
 			}
-		},
+		),
 		methodsEngine
 	);
 }
 
 export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config) {
-	const _type = coerceKindEnumStorage('type' as const, [['type', TSKindId.Type] as const]);
+	const _type = coerceKindEnumStorage('type' as const, [['type', TSKindId.AnonType] as const]);
 	const _left = config.left;
 	const _right = config.right;
 	return withMethods(
-		{
-			$type: TSKindId.TypeAliasStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			_type,
-			_left,
-			_right,
-			type() {
-				return _type;
+		withAccessors(
+			{
+				$type: TSKindId.TypeAliasStatement as const,
+				$source: 2 as const,
+				$named: true as const,
+				_type,
+				_left,
+				_right,
+				$with: {
+					left: (value: T.Type) => buildTypeAliasStatement({ ...config, left: value }),
+					right: (value: T.Type) => buildTypeAliasStatement({ ...config, right: value })
+				}
 			},
-			left() {
-				return _left;
-			},
-			right() {
-				return _right;
-			},
-			$with: {
-				left: (value: T.Type) => buildTypeAliasStatement({ ...config, left: value }),
-				right: (value: T.Type) => buildTypeAliasStatement({ ...config, right: value })
+			{
+				type: () => _type,
+				left: () => _left,
+				right: () => _right
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -3031,16 +3111,18 @@ export function buildTypeParameter(...children: T.Type[]) {
 	_assertNonEmpty(children, 'type_parameter.children');
 	const _type = children;
 	return withMethods(
-		{
-			$type: TSKindId.TypeParameter as const,
-			$source: 2 as const,
-			$named: true as const,
-			_type,
-			types() {
-				return _type;
+		withAccessors(
+			{
+				$type: TSKindId.TypeParameter as const,
+				$source: 2 as const,
+				$named: true as const,
+				_type,
+				$with: { $children: (...vs: T.Type[]) => buildTypeParameter(...vs) }
 			},
-			$with: { $children: (...vs: T.Type[]) => buildTypeParameter(...vs) }
-		},
+			{
+				types: () => _type
+			}
+		),
 		methodsEngine
 	);
 }
@@ -3050,28 +3132,26 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 	const _type = config.type;
 	const _value = config.value;
 	return withMethods(
-		{
-			$type: TSKindId.TypedDefaultParameter as const,
-			$source: 2 as const,
-			$named: true as const,
-			_name,
-			_type,
-			_value,
-			name() {
-				return _name;
+		withAccessors(
+			{
+				$type: TSKindId.TypedDefaultParameter as const,
+				$source: 2 as const,
+				$named: true as const,
+				_name,
+				_type,
+				_value,
+				$with: {
+					name: (value: T.Identifier) => buildTypedDefaultParameter({ ...config, name: value }),
+					type: (value: T.Type) => buildTypedDefaultParameter({ ...config, type: value }),
+					value: (value: T.Expression) => buildTypedDefaultParameter({ ...config, value: value })
+				}
 			},
-			type() {
-				return _type;
-			},
-			value() {
-				return _value;
-			},
-			$with: {
-				name: (value: T.Identifier) => buildTypedDefaultParameter({ ...config, name: value }),
-				type: (value: T.Type) => buildTypedDefaultParameter({ ...config, type: value }),
-				value: (value: T.Expression) => buildTypedDefaultParameter({ ...config, value: value })
+			{
+				name: () => _name,
+				type: () => _type,
+				value: () => _value
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -3080,24 +3160,24 @@ export function buildTypedParameter(config: T.TypedParameter.Config) {
 	const _content = config.content;
 	const _type = config.type;
 	return withMethods(
-		{
-			$type: TSKindId.TypedParameter as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			_type,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId.TypedParameter as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				_type,
+				$with: {
+					content: (value: T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern) =>
+						buildTypedParameter({ ...config, content: value }),
+					type: (value: T.Type) => buildTypedParameter({ ...config, type: value })
+				}
 			},
-			type() {
-				return _type;
-			},
-			$with: {
-				content: (value: T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern) =>
-					buildTypedParameter({ ...config, content: value }),
-				type: (value: T.Type) => buildTypedParameter({ ...config, type: value })
+			{
+				content: () => _content,
+				type: () => _type
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -3110,24 +3190,24 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config) {
 	]);
 	const _argument = config.argument;
 	return withMethods(
-		{
-			$type: TSKindId.UnaryOperator as const,
-			$source: 2 as const,
-			$named: true as const,
-			_operator,
-			_argument,
-			operator() {
-				return _operator;
+		withAccessors(
+			{
+				$type: TSKindId.UnaryOperator as const,
+				$source: 2 as const,
+				$named: true as const,
+				_operator,
+				_argument,
+				$with: {
+					operator: (value: NonNullable<Parameters<typeof buildUnaryOperator>[0]>['operator']) =>
+						buildUnaryOperator({ ...config, operator: value }),
+					argument: (value: T.PrimaryExpression) => buildUnaryOperator({ ...config, argument: value })
+				}
 			},
-			argument() {
-				return _argument;
-			},
-			$with: {
-				operator: (value: NonNullable<Parameters<typeof buildUnaryOperator>[0]>['operator']) =>
-					buildUnaryOperator({ ...config, operator: value }),
-				argument: (value: T.PrimaryExpression) => buildUnaryOperator({ ...config, argument: value })
+			{
+				operator: () => _operator,
+				argument: () => _argument
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -3136,16 +3216,18 @@ export function buildUnionPattern(...children: T.SimplePattern[]) {
 	_assertNonEmpty(children, 'union_pattern.children');
 	const _simple_pattern = children;
 	return withMethods(
-		{
-			$type: TSKindId.UnionPattern as const,
-			$source: 2 as const,
-			$named: true as const,
-			_simple_pattern,
-			simplePatterns() {
-				return _simple_pattern;
+		withAccessors(
+			{
+				$type: TSKindId.UnionPattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_simple_pattern,
+				$with: { $children: (...vs: T.SimplePattern[]) => buildUnionPattern(...vs) }
 			},
-			$with: { $children: (...vs: T.SimplePattern[]) => buildUnionPattern(...vs) }
-		},
+			{
+				simplePatterns: () => _simple_pattern
+			}
+		),
 		methodsEngine
 	);
 }
@@ -3154,23 +3236,23 @@ export function buildUnionType(config: T.UnionType.Config) {
 	const _left = config.left;
 	const _right = config.right;
 	return withMethods(
-		{
-			$type: TSKindId.UnionType as const,
-			$source: 2 as const,
-			$named: true as const,
-			_left,
-			_right,
-			left() {
-				return _left;
+		withAccessors(
+			{
+				$type: TSKindId.UnionType as const,
+				$source: 2 as const,
+				$named: true as const,
+				_left,
+				_right,
+				$with: {
+					left: (value: T.Type) => buildUnionType({ ...config, left: value }),
+					right: (value: T.Type) => buildUnionType({ ...config, right: value })
+				}
 			},
-			right() {
-				return _right;
-			},
-			$with: {
-				left: (value: T.Type) => buildUnionType({ ...config, left: value }),
-				right: (value: T.Type) => buildUnionType({ ...config, right: value })
+			{
+				left: () => _left,
+				right: () => _right
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -3180,28 +3262,26 @@ export function buildWhileStatement(config: T.WhileStatement.Config) {
 	const _body = config.body;
 	const _alternative = config.alternative;
 	return withMethods(
-		{
-			$type: TSKindId.WhileStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			_condition,
-			_body,
-			_alternative,
-			condition() {
-				return _condition;
+		withAccessors(
+			{
+				$type: TSKindId.WhileStatement as const,
+				$source: 2 as const,
+				$named: true as const,
+				_condition,
+				_body,
+				_alternative,
+				$with: {
+					condition: (value: T.Expression) => buildWhileStatement({ ...config, condition: value }),
+					body: (value: T.SimpleStatements | T.Block | T.Newline) => buildWhileStatement({ ...config, body: value }),
+					alternative: (value?: T.ElseClause) => buildWhileStatement({ ...config, alternative: value })
+				}
 			},
-			body() {
-				return _body;
-			},
-			alternative() {
-				return _alternative;
-			},
-			$with: {
-				condition: (value: T.Expression) => buildWhileStatement({ ...config, condition: value }),
-				body: (value: T.SimpleStatements | T.Block | T.Newline) => buildWhileStatement({ ...config, body: value }),
-				alternative: (value?: T.ElseClause) => buildWhileStatement({ ...config, alternative: value })
+			{
+				condition: () => _condition,
+				body: () => _body,
+				alternative: () => _alternative
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -3209,16 +3289,18 @@ export function buildWhileStatement(config: T.WhileStatement.Config) {
 export function buildWithClause(child: T.WithClauseBare | T.WithClauseParen) {
 	const _content = child;
 	return withMethods(
-		{
-			$type: TSKindId.WithClause as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId.WithClause as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: { $child: (v: T.WithClauseBare | T.WithClauseParen) => buildWithClause(v) }
 			},
-			$with: { $child: (v: T.WithClauseBare | T.WithClauseParen) => buildWithClause(v) }
-		},
+			{
+				content: () => _content
+			}
+		),
 		methodsEngine
 	);
 }
@@ -3226,18 +3308,20 @@ export function buildWithClause(child: T.WithClauseBare | T.WithClauseParen) {
 export function buildWithItem(value: T.WithItem.Config['value']) {
 	const _value = value;
 	return withMethods(
-		{
-			$type: TSKindId.WithItem as const,
-			$source: 2 as const,
-			$named: true as const,
-			_value,
-			value() {
-				return _value;
+		withAccessors(
+			{
+				$type: TSKindId.WithItem as const,
+				$source: 2 as const,
+				$named: true as const,
+				_value,
+				$with: {
+					value: (value: T.WithItem.Config['value']) => buildWithItem(value)
+				}
 			},
-			$with: {
-				value: (value: T.WithItem.Config['value']) => buildWithItem(value)
+			{
+				value: () => _value
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -3247,29 +3331,27 @@ export function buildWithStatement(config: T.WithStatement.Config) {
 	const _with_clause = config.withClause;
 	const _body = config.body;
 	return withMethods(
-		{
-			$type: TSKindId.WithStatement as const,
-			$source: 2 as const,
-			$named: true as const,
-			_async_marker,
-			_with_clause,
-			_body,
-			asyncMarker() {
-				return _async_marker;
+		withAccessors(
+			{
+				$type: TSKindId.WithStatement as const,
+				$source: 2 as const,
+				$named: true as const,
+				_async_marker,
+				_with_clause,
+				_body,
+				$with: {
+					asyncMarker: (value?: NonNullable<Parameters<typeof buildWithStatement>[0]>['asyncMarker']) =>
+						buildWithStatement({ ...config, asyncMarker: value }),
+					withClause: (value: T.WithClause) => buildWithStatement({ ...config, withClause: value }),
+					body: (value: T.SimpleStatements | T.Block | T.Newline) => buildWithStatement({ ...config, body: value })
+				}
 			},
-			withClause() {
-				return _with_clause;
-			},
-			body() {
-				return _body;
-			},
-			$with: {
-				asyncMarker: (value?: NonNullable<Parameters<typeof buildWithStatement>[0]>['asyncMarker']) =>
-					buildWithStatement({ ...config, asyncMarker: value }),
-				withClause: (value: T.WithClause) => buildWithStatement({ ...config, withClause: value }),
-				body: (value: T.SimpleStatements | T.Block | T.Newline) => buildWithStatement({ ...config, body: value })
+			{
+				asyncMarker: () => _async_marker,
+				withClause: () => _with_clause,
+				body: () => _body
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -3277,39 +3359,43 @@ export function buildWithStatement(config: T.WithStatement.Config) {
 export function buildYield(child?: T.Expression | T.Expressions) {
 	const _content = child;
 	return withMethods(
-		{
-			$type: TSKindId.Yield as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId.Yield as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: { $child: (v: T.Expression | T.Expressions) => buildYield(v) }
 			},
-			$with: { $child: (v: T.Expression | T.Expressions) => buildYield(v) }
-		},
+			{
+				content: () => _content
+			}
+		),
 		methodsEngine
 	);
 }
 
 export function buildListPatternGroup1(elements: NonEmptyArray<T.CasePattern>, options: { trailing?: boolean } = {}) {
 	_assertNonEmpty(elements, 'list_pattern_group1.elements');
-	const _content = elements;
+	const _case_pattern = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
-		{
-			$type: TSKindId._ListPatternGroup1 as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			_trailing_sep,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId._ListPatternGroup1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_case_pattern,
+				_trailing_sep,
+				$with: {
+					$children: (...vs: NonEmptyArray<T.CasePattern>) => buildListPatternGroup1(vs, options),
+					trailing: (v: boolean) => buildListPatternGroup1(elements, { ...options, trailing: v })
+				}
 			},
-			$with: {
-				$children: (...vs: NonEmptyArray<T.CasePattern>) => buildListPatternGroup1(vs, options),
-				trailing: (v: boolean) => buildListPatternGroup1(elements, { ...options, trailing: v })
+			{
+				casePatterns: () => _case_pattern
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -3324,24 +3410,26 @@ export function buildArgumentListGroup1(
 	const _content = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
-		{
-			$type: TSKindId._ArgumentListGroup1 as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			_trailing_sep,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId._ArgumentListGroup1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				_trailing_sep,
+				$with: {
+					$children: (
+						...vs: NonEmptyArray<
+							T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
+						>
+					) => buildArgumentListGroup1(vs, options),
+					trailing: (v: boolean) => buildArgumentListGroup1(elements, { ...options, trailing: v })
+				}
 			},
-			$with: {
-				$children: (
-					...vs: NonEmptyArray<
-						T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument
-					>
-				) => buildArgumentListGroup1(vs, options),
-				trailing: (v: boolean) => buildArgumentListGroup1(elements, { ...options, trailing: v })
+			{
+				contents: () => _content
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -3352,33 +3440,29 @@ export function buildDictPatternGroup1(config: T.DictPatternGroup1.Config) {
 	const _value = config.value ?? [];
 	const _splat_pattern = config.splatPattern ?? [];
 	return withMethods(
-		{
-			$type: TSKindId._DictPatternGroup1 as const,
-			$source: 2 as const,
-			$named: true as const,
-			_dict_pattern_kv,
-			_key,
-			_value,
-			_splat_pattern,
-			dictPatternKv() {
-				return _dict_pattern_kv;
+		withAccessors(
+			{
+				$type: TSKindId._DictPatternGroup1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_dict_pattern_kv,
+				_key,
+				_value,
+				_splat_pattern,
+				$with: {
+					dictPatternKv: (value: T.DictPatternKv) => buildDictPatternGroup1({ ...config, dictPatternKv: value }),
+					keys: (...values: T.SimplePattern[]) => buildDictPatternGroup1({ ...config, key: values }),
+					values: (...values: T.CasePattern[]) => buildDictPatternGroup1({ ...config, value: values }),
+					splatPatterns: (...values: T.SplatPattern[]) => buildDictPatternGroup1({ ...config, splatPattern: values })
+				}
 			},
-			keys() {
-				return _key;
-			},
-			values() {
-				return _value;
-			},
-			splatPatterns() {
-				return _splat_pattern;
-			},
-			$with: {
-				dictPatternKv: (value: T.DictPatternKv) => buildDictPatternGroup1({ ...config, dictPatternKv: value }),
-				keys: (...values: T.SimplePattern[]) => buildDictPatternGroup1({ ...config, key: values }),
-				values: (...values: T.CasePattern[]) => buildDictPatternGroup1({ ...config, value: values }),
-				splatPatterns: (...values: T.SplatPattern[]) => buildDictPatternGroup1({ ...config, splatPattern: values })
+			{
+				dictPatternKv: () => _dict_pattern_kv,
+				keys: () => _key,
+				values: () => _value,
+				splatPatterns: () => _splat_pattern
 			}
-		},
+		),
 		methodsEngine
 	);
 }
@@ -3391,20 +3475,101 @@ export function buildDictionaryGroup1(
 	const _content = elements;
 	const _trailing_sep = options.trailing ?? false;
 	return withMethods(
-		{
-			$type: TSKindId._DictionaryGroup1 as const,
-			$source: 2 as const,
-			$named: true as const,
-			_content,
-			_trailing_sep,
-			content() {
-				return _content;
+		withAccessors(
+			{
+				$type: TSKindId._DictionaryGroup1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				_trailing_sep,
+				$with: {
+					$children: (...vs: NonEmptyArray<T.Pair | T.DictionarySplat>) => buildDictionaryGroup1(vs, options),
+					trailing: (v: boolean) => buildDictionaryGroup1(elements, { ...options, trailing: v })
+				}
 			},
-			$with: {
-				$children: (...vs: NonEmptyArray<T.Pair | T.DictionarySplat>) => buildDictionaryGroup1(vs, options),
-				trailing: (v: boolean) => buildDictionaryGroup1(elements, { ...options, trailing: v })
+			{
+				contents: () => _content
 			}
-		},
+		),
+		methodsEngine
+	);
+}
+
+export function buildElementList(
+	elements: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>,
+	options: { trailing?: boolean } = {}
+) {
+	_assertNonEmpty(elements, 'element_list.elements');
+	const _content = elements;
+	const _trailing_sep = options.trailing ?? false;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CollectionElements as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				_trailing_sep,
+				$with: {
+					$children: (...vs: NonEmptyArray<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>) =>
+						buildElementList(vs, options),
+					trailing: (v: boolean) => buildElementList(elements, { ...options, trailing: v })
+				}
+			},
+			{
+				contents: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildPatternGroup(elements: NonEmptyArray<T.Pattern>, options: { trailing?: boolean } = {}) {
+	_assertNonEmpty(elements, 'pattern_group.elements');
+	const _pattern = elements;
+	const _trailing_sep = options.trailing ?? false;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.Patterns as const,
+				$source: 2 as const,
+				$named: true as const,
+				_pattern,
+				_trailing_sep,
+				$with: {
+					$children: (...vs: NonEmptyArray<T.Pattern>) => buildPatternGroup(vs, options),
+					trailing: (v: boolean) => buildPatternGroup(elements, { ...options, trailing: v })
+				}
+			},
+			{
+				patterns: () => _pattern
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildParameterList(elements: NonEmptyArray<T.Parameter>, options: { trailing?: boolean } = {}) {
+	_assertNonEmpty(elements, 'parameter_list.elements');
+	const _parameter = elements;
+	const _trailing_sep = options.trailing ?? false;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId._Parameters as const,
+				$source: 2 as const,
+				$named: true as const,
+				_parameter,
+				_trailing_sep,
+				$with: {
+					$children: (...vs: NonEmptyArray<T.Parameter>) => buildParameterList(vs, options),
+					trailing: (v: boolean) => buildParameterList(elements, { ...options, trailing: v })
+				}
+			},
+			{
+				parameters: () => _parameter
+			}
+		),
 		methodsEngine
 	);
 }
@@ -3412,16 +3577,18 @@ export function buildDictionaryGroup1(
 export function buildSliceGroup1(child?: T.Expression) {
 	const _expression = child;
 	return withMethods(
-		{
-			$type: TSKindId._SliceGroup1 as const,
-			$source: 2 as const,
-			$named: true as const,
-			_expression,
-			expression() {
-				return _expression;
+		withAccessors(
+			{
+				$type: TSKindId._SliceGroup1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_expression,
+				$with: { $child: (v: T.Expression) => buildSliceGroup1(v) }
 			},
-			$with: { $child: (v: T.Expression) => buildSliceGroup1(v) }
-		},
+			{
+				expression: () => _expression
+			}
+		),
 		methodsEngine
 	);
 }
@@ -3597,7 +3764,6 @@ export type FluentKindMap = {
 	_import_list: T.ImportList;
 	_is_not: T.IsNot;
 	_key_value_pattern: T.KeyValuePattern;
-	_list_pattern: FluentNode<'_list_pattern', T._ListPattern.Config>;
 	_list_pattern_group1: FluentNode<'_list_pattern_group1', T._ListPatternGroup1.Config>;
 	_match_block: FluentNode<'_match_block', T.MatchBlock.Config>;
 	_match_block_block: T.MatchBlockBlock;
@@ -3607,7 +3773,6 @@ export type FluentKindMap = {
 	_simple_pattern_negative: FluentNode<'_simple_pattern_negative', T.SimplePatternNegative.Config>;
 	_simple_statements: FluentNode<'_simple_statements', T.SimpleStatements.Config>;
 	_slice_group1: FluentNode<'_slice_group1', T._SliceGroup1.Config>;
-	_tuple_pattern: FluentNode<'_tuple_pattern', T._TuplePattern.Config>;
 	_with_clause_bare: FluentNode<'_with_clause_bare', T.WithClauseBare.Config>;
 	_with_clause_paren: FluentNode<'_with_clause_paren', T.WithClauseParen.Config>;
 	aliased_import: FluentNode<'aliased_import', T.AliasedImport.Config>;
@@ -3624,7 +3789,9 @@ export type FluentKindMap = {
 	break_statement: T.BreakStatement;
 	call: FluentNode<'call', T.Call.Config>;
 	case_clause: FluentNode<'case_clause', T.CaseClause.Config>;
+	case_list_pattern: FluentNode<'case_list_pattern', T.CaseListPattern.Config>;
 	case_pattern: FluentNode<'case_pattern', T.CasePattern.Config>;
+	case_tuple_pattern: FluentNode<'case_tuple_pattern', T.CaseTuplePattern.Config>;
 	chevron: FluentNode<'chevron', T.Chevron.Config>;
 	class_definition: FluentNode<'class_definition', T.ClassDefinition.Config>;
 	class_pattern: FluentNode<'class_pattern', T.ClassPattern.Config>;
@@ -3729,6 +3896,9 @@ export type FluentKindMap = {
 	argument_list_group1: FluentNode<'argument_list_group1', T.ArgumentListGroup1.Config>;
 	dict_pattern_group1: FluentNode<'dict_pattern_group1', T.DictPatternGroup1.Config>;
 	dictionary_group1: FluentNode<'dictionary_group1', T.DictionaryGroup1.Config>;
+	element_list: FluentNode<'element_list', T.ElementList.Config>;
+	pattern_group: FluentNode<'pattern_group', T.PatternGroup.Config>;
+	parameter_list: FluentNode<'parameter_list', T.ParameterList.Config>;
 	slice_group1: FluentNode<'slice_group1', T.SliceGroup1.Config>;
 	_newline: T.Newline;
 	_indent: T.Indent;
@@ -3760,7 +3930,6 @@ export const _factoryMap = {
 	_import_list: buildImportList,
 	_is_not: buildIsNot,
 	_key_value_pattern: buildKeyValuePattern,
-	_list_pattern: build_ListPattern,
 	_list_pattern_group1: build_ListPatternGroup1,
 	_match_block: buildMatchBlock,
 	_match_block_block: buildMatchBlockBlock,
@@ -3770,7 +3939,6 @@ export const _factoryMap = {
 	_simple_pattern_negative: buildSimplePatternNegative,
 	_simple_statements: buildSimpleStatements,
 	_slice_group1: build_SliceGroup1,
-	_tuple_pattern: build_TuplePattern,
 	_with_clause_bare: buildWithClauseBare,
 	_with_clause_paren: buildWithClauseParen,
 	aliased_import: buildAliasedImport,
@@ -3787,7 +3955,9 @@ export const _factoryMap = {
 	break_statement: buildBreakStatement,
 	call: buildCall,
 	case_clause: buildCaseClause,
+	case_list_pattern: buildCaseListPattern,
 	case_pattern: buildCasePattern,
+	case_tuple_pattern: buildCaseTuplePattern,
 	chevron: buildChevron,
 	class_definition: buildClassDefinition,
 	class_pattern: buildClassPattern,
@@ -3892,6 +4062,9 @@ export const _factoryMap = {
 	argument_list_group1: buildArgumentListGroup1,
 	dict_pattern_group1: buildDictPatternGroup1,
 	dictionary_group1: buildDictionaryGroup1,
+	element_list: buildElementList,
+	pattern_group: buildPatternGroup,
+	parameter_list: buildParameterList,
 	slice_group1: buildSliceGroup1,
 	_newline: buildNewline,
 	_indent: buildIndent,

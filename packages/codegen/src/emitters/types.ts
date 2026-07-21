@@ -23,6 +23,7 @@ import {
 	kindDiscriminantExpr,
 	kindIdMemberName,
 	findKindEntry,
+	findKindEntryForLiteral,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 export {
@@ -667,7 +668,13 @@ function enumMemberDiscriminant(node: AssembledEnum, kindEntries: readonly KindE
 	if (!kindEntries) return JSON.stringify(node.kind);
 	const members: string[] = [];
 	for (const value of node.values) {
-		const entry = findKindEntry(kindEntries, value);
+		// PR-K3a: member texts resolve through the node's construction-time
+		// literal-chain record (anon-scoped first, #129) — the emitter
+		// catalog is consulted only to map the resolved catalog KIND to its
+		// TSKindId member name (exact-key hit). The direct name-chain
+		// fallback covers nodes constructed without a catalog (fixtures).
+		const rec = node.resolvedByText.get(value);
+		const entry = rec !== undefined ? findKindEntry(kindEntries, rec.kind) : findKindEntry(kindEntries, value);
 		if (entry) {
 			members.push(`TSKindId.${entry.member}`);
 		}
@@ -1195,13 +1202,21 @@ function enumStorageDiscriminantExpr(
 		if (entry) members.add(`TSKindId.${entry.member}`);
 		const node = nodeMap.nodes.get(enumKind);
 		if (!(node instanceof AssembledEnum)) continue;
+		// Enum member values and storageInfo.texts are LITERAL TOKEN TEXTS —
+		// the node's construction-time literal-chain record is authoritative
+		// (anon token wins a same-spelled named rule, #129; PR-K3a); the
+		// emitter catalog only maps resolved kind → TSKindId member. Chain
+		// fallback covers catalog-less construction (fixtures). Must stay
+		// consistent with factories.ts's kindEnumTextMapExpr or the declared
+		// Config type and the runtime stamp diverge.
 		for (const value of node.values) {
-			const valueEntry = findKindEntry(kindEntries, value);
+			const rec = node.resolvedByText.get(value);
+			const valueEntry = rec !== undefined ? findKindEntry(kindEntries, rec.kind) : findKindEntryForLiteral(kindEntries, value);
 			if (valueEntry) members.add(`TSKindId.${valueEntry.member}`);
 		}
 	}
 	for (const text of storageInfo.texts) {
-		const entry = findKindEntry(kindEntries, text);
+		const entry = findKindEntryForLiteral(kindEntries, text);
 		if (entry) members.add(`TSKindId.${entry.member}`);
 	}
 	return members.size === 0 ? 'number' : [...members].join(' | ');

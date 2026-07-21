@@ -472,7 +472,59 @@ export default grammar(
 				// but doesn't need to: `list`/`tuple`'s optional-wrapped references
 				// mint the kind; this site just resolves through the same alias.
 				set: ($) => seq('{', alias($._collection_elements, $.element_list), '}'),
-				tuple: ($) => seq('(', optional(alias($._collection_elements, $.element_list)), ')')
+				tuple: ($) => seq('(', optional(alias($._collection_elements, $.element_list)), ')'),
+
+				// Case-context tuple/list pattern split (KNOWN_ISSUES "two-rules-one-
+				// parse-kind"): base arms 3/4 are `alias($._list_pattern, $.list_pattern)`
+				// / `alias($._tuple_pattern, $.tuple_pattern)` — match-statement case
+				// patterns parse to the SAME kinds as the assignment-context rules,
+				// whose templates only know the assignment shape (Track B's
+				// `pattern_group` slot), so `case (a, b):` rendered as `()` and
+				// `case [a, b]:` as `[]` (probe-confirmed; the list twin just had no
+				// corpus coverage). Give each case-context source rule its own
+				// visible kind so each rule owns its parse kind and template.
+				//
+				// `case_tuple_pattern`/`case_list_pattern` are REAL visible rules
+				// (bodies = the hidden rules verbatim), referenced directly — NOT
+				// `alias($._x, ...)`: the content-alias mint only fires for
+				// optional-in-seq reference sites (Track B's shape), so an aliased
+				// choice arm never enters the NodeMap and the kind is unrenderable.
+				// `_tuple_pattern`/`_list_pattern` go unused and drop out of the
+				// parser. The names are deliberately NON-natural: the natural
+				// stripped names are taken by the assignment-context kinds, and
+				// would trip the mintContentAliasKinds self-ref bug anyway
+				// (KNOWN_ISSUES).
+				//
+				// The full `_simple_pattern` reconstruction (base body verbatim except
+				// arms 3/4) is deliberate: a numeric-key transform would flat-broadcast
+				// across the choice. Arm ORDER must stay identical — the polymorphs
+				// entry `_simple_pattern: { '11': 'negative' }` composes on top of
+				// this body and addresses the negative-literal arm by index.
+				case_tuple_pattern: ($) =>
+					seq('(', optional(seq($.case_pattern, repeat(seq(',', $.case_pattern)), optional(','))), ')'),
+				case_list_pattern: ($) =>
+					seq('[', optional(seq($.case_pattern, repeat(seq(',', $.case_pattern)), optional(','))), ']'),
+				_simple_pattern: ($) =>
+					prec(
+						1,
+						choice(
+							$.class_pattern,
+							$.splat_pattern,
+							$.union_pattern,
+							$.case_list_pattern,
+							$.case_tuple_pattern,
+							$.dict_pattern,
+							$.string,
+							$.concatenated_string,
+							$.true,
+							$.false,
+							$.none,
+							seq(optional('-'), choice($.integer, $.float)),
+							$.complex_pattern,
+							$.dotted_name,
+							'_'
+						)
+					)
 			}
 		},
 		enrichedBase

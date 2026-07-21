@@ -15,6 +15,7 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import { findEntryForKindName, findEntryForLiteralText } from '../compiler/generated-metadata.ts';
 
 function toPascal(kind: string): string {
 	return kind
@@ -134,25 +135,44 @@ export function collectKindEntries(
  * @returns The matching entry, or `undefined` if the kind has no parser symbol.
  */
 export function findKindEntry(kindEntries: readonly KindEnumEntry[], kind: string): KindEnumEntry | undefined {
-	// 1. Exact catalog key match (the canonical case).
-	// 2. Hidden-source fallback: visible variant-child kinds (e.g.
-	//    `closure_expression_expr`) are emitted by sittir from hidden alias
-	//    sources (`_closure_expression_expr`). The catalog keys are the
-	//    hidden form (from `sym__closure_expression_expr` → strip `sym_` →
-	//    `_closure_expression_expr`). Try the underscore-prefixed form so
-	//    the join succeeds for Pattern B kinds.
-	// 3. Anon-symbol literal-value match: resolve punctuation/operator literals
-	//    like `'+'` to their parser symbol (`anon_sym_PLUS` → catalog key `plus`,
-	//    symbolName `"+"`). ONLY matches when the catalog row is an anonymous
-	//    token (`anon === true`) — NOT a general symbolName match, which caused
-	//    the `_as_pattern` shadowing bug (hidden `_as_pattern` symbolName
-	//    `"as_pattern"` shadowed the real `as_pattern` entry).
-	return (
-		kindEntries.find((e) => e.kind === kind) ??
-		kindEntries.find((e) => e.kind === `_${kind}`) ??
-		kindEntries.find((e) => e.anon === true && e.symbolName === kind) ??
-		undefined
-	);
+	// Delegates to THE shared kind-name chain (PR-K1 — see KindEntryLike in
+	// compiler/generated-metadata.ts for the full step documentation,
+	// including why step 3 is anon-scoped: the `_as_pattern` shadowing bug).
+	// Behavior delta vs this module's historical inline chain: a step 4
+	// (named-symbolName fallback for hidden compound tokens like `_is_not` ←
+	// `"is not"`) is now present, reachable only when steps 1-3 all miss —
+	// previously such lookups returned undefined here while the
+	// compiler-side chain resolved them.
+	return findEntryForKindName(kindEntries, kind);
+}
+
+/**
+ * Resolve a LITERAL TOKEN TEXT (a `STRING` rule's value — e.g. `'type'`,
+ * `'+'`) to its catalog entry. The anon-scoped symbolName match runs FIRST:
+ * the caller holds a literal, so the anonymous token (`anon_sym_*`,
+ * tree-sitter `named: false`) is the correct identity even when a NAMED
+ * rule shares the same spelling (#129: python's `'type'` keyword literal
+ * was resolved through {@link findKindEntry}, whose exact-catalog-key step
+ * matched the `type` RULE first — the factory then stamped the rule's kind
+ * id where the transport expects the anon token's, failing every
+ * `ir.typeAliasStatement` render with "Missing field `_content`").
+ *
+ * Falls back to {@link findKindEntry} for literals with no anonymous twin —
+ * tree-sitter compiles some keyword literals to named terminal symbols
+ * (rust's `'crate'`/`'self'`), and those stamps were already correct via
+ * the named match.
+ *
+ * Deliberately a SEPARATE function: the anon-first ordering is only sound
+ * when the caller is known to hold literal text. Reordering
+ * {@link findKindEntry} itself would reintroduce the `_as_pattern`
+ * shadowing bug its step-3 comment records.
+ */
+export function findKindEntryForLiteral(
+	kindEntries: readonly KindEnumEntry[],
+	literalText: string
+): KindEnumEntry | undefined {
+	// Delegates to THE shared literal-text chain (PR-K1).
+	return findEntryForLiteralText(kindEntries, literalText);
 }
 
 /**
@@ -203,6 +223,41 @@ export function kindDiscriminantExpr(kind: string, nodeMap: NodeMap, kindEntries
 			`kindDiscriminantExpr: kind '${kind}' has no parser symbol (TSGrammar-only). ` +
 				`Tree-sitter inlined this rule during parser compilation; it can never carry a runtime $type. ` +
 				`Either remove the codegen surface that references it, or add a synthetic parser-symbol entry to the catalog.`
+		);
+	}
+	return `TSKindId.${entry.member}`;
+}
+
+/**
+ * {@link kindDiscriminantExpr} for call sites holding a LITERAL TOKEN TEXT
+ * (a `STRING` rule's value) rather than a kind/rule name — resolves via
+ * {@link findKindEntryForLiteral} so the anonymous token wins over a
+ * same-spelled named rule (#129). The grammar's own rule-type
+ * discrimination (STRING vs SYMBOL) decides which of the two functions a
+ * call site uses; this must never be called with a rule name.
+ */
+/**
+ * {@link kindDiscriminantExpr} for call sites holding a mint-time PARSER ID
+ * stamp (`NodeRef.resolvedKindId`, PR-K3a). The id is the collision-free
+ * identity — a link-minted `resolvedKind` NAME can collide with a rule name
+ * (`'type'` the keyword vs `type` the rule), but the stamped id cannot
+ * (0 intra-catalog id collisions, all grammars). Returns undefined when the
+ * id has no catalog row (emitter catalog narrower than the mint's).
+ */
+export function kindDiscriminantExprForId(id: number, kindEntries: readonly KindEnumEntry[]): string | undefined {
+	const entry = kindEntries.find((e) => e.id === id);
+	return entry === undefined ? undefined : `TSKindId.${entry.member}`;
+}
+
+export function kindDiscriminantExprForLiteral(
+	literalText: string,
+	kindEntries: readonly KindEnumEntry[]
+): string {
+	const entry = findKindEntryForLiteral(kindEntries, literalText);
+	if (!entry) {
+		throw new Error(
+			`kindDiscriminantExprForLiteral: literal '${literalText}' has no parser symbol (TSGrammar-only). ` +
+				`See kindDiscriminantExpr for the loud-error rationale.`
 		);
 	}
 	return `TSKindId.${entry.member}`;

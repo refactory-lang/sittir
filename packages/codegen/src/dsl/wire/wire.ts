@@ -123,6 +123,9 @@ export interface WireContext {
 	/** Per-kind, per-diagnostic-code exceptions from `expectDiagnostics:`.
 	 *  See `WireConfig.expectDiagnostics` for the full description. */
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
+	/** Per-kind known-failing generated-test declarations from
+	 *  `expectTestFailures:`. See `WireConfig.expectTestFailures`. */
+	readonly expectTestFailures?: Partial<Record<string, string>>;
 	/** Name of the rule currently being evaluated, for variant()'s
 	 *  auto-prefix behavior (`variant('eq')` under `assignment` →
 	 *  `_assignment_eq`). Set by the rule-fn wrapper. */
@@ -489,6 +492,21 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 	 *   expectDiagnostics: { 'content-collision': ['_object_type_group1'] }
 	 */
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
+	/**
+	 * Per-kind known-failing declarations for the generated `nodes.test.ts`
+	 * suite (`emitters/test.ts`). Each entry maps a kind name to a short
+	 * reason string — REQUIRED to reference the tracking issue (e.g.
+	 * `'#130 — factory returns wrong $type'`). Listed kinds are emitted as
+	 * `describe.skip` with the reason inline, so `pnpm test` stays green
+	 * without masking new regressions in other kinds. Remove the entry when
+	 * the underlying defect is fixed; the next regen re-enables the tests.
+	 * Use ONLY for tracked, documented defects — not to silence a failure
+	 * you haven't investigated.
+	 *
+	 * @example
+	 *   expectTestFailures: { mod_item: '#128 — lenient from-coercion wraps alternate branch' }
+	 */
+	readonly expectTestFailures?: Partial<Record<string, string>>;
 };
 
 export interface WiredOpts {
@@ -599,6 +617,7 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		polymorphsConfig: cfg.polymorphs,
 		renderAs: cfg.renderAs,
 		expectDiagnostics: cfg.expectDiagnostics,
+		expectTestFailures: cfg.expectTestFailures,
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
 	};

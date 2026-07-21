@@ -47,6 +47,7 @@ Keep separators inside the guarded conditional.
 - If variant/conflict work changes parser shape, rerun the full transpile/generate/compile-parser/emit chain so `.sittir` artifacts and emitted TS stay aligned.
 - `enrich()` only changes the TS/codegen surface; it does not change the parser surface emitted from tree-sitter rule callbacks.
 - When a promoted keyword/token field causes LR conflicts, add a synthesized `_kw_<name>` rule to `inline:` instead of compensating with precedence/conflict noise.
+- When promoting a hidden rule via a reference-site alias (`alias($._hidden, $.visible)`), alias the BARE symbol directly inside `optional(...)` — never wrap it in `field()`. `mintContentAliasKinds` (`link.ts`) only mints when the alias is the IMMEDIATE content of `optional(...)`/`CHOICE[x, BLANK]`; a `field()` wrapper silently prevents the mint entirely (no error at regen — the kind just never appears in `node-model.json5`). Also pick a NON-natural visible name (not the underscore-stripped name of the hidden rule): a self-matching name triggers a classification bug that leaves the kind as a circular self-referencing `branch` instead of `separatedList`. See `packages/python/overrides.ts`'s Track B comment block for a worked example (`pattern_group`, `element_list`).
 
 ## Reporting expectations
 

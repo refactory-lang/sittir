@@ -33,6 +33,51 @@
   },
   {
     "scope": "grammar",
+    "code": "union-slot-mixed-row",
+    "severity": "warning",
+    "grammar": "python",
+    "ownerKind": "_dict_pattern_group1",
+    "message": "[collect-slots] kind '_dict_pattern_group1': choice rule:_dict_pattern_group1:members.0/members.1/content/members.1 is a REPEATED (order-lossy) mixed row — structured named arm(s) [seq[2](_simple_pattern case_pattern)] alongside union arm(s) [splat_pattern]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "canProceed": true
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-nondegenerate-arm",
+    "severity": "warning",
+    "grammar": "python",
+    "ownerKind": "_suite",
+    "message": "[collect-slots] kind '_suite': choice rule:_suite:root has unnamed-nonterminal arm(s) [simple_statements, newline] but cannot union-route — offending arm(s): structured seq[2](indent block). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
+    "canProceed": true
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-nondegenerate-arm",
+    "severity": "warning",
+    "grammar": "python",
+    "ownerKind": "future_import_statement",
+    "message": "[collect-slots] kind 'future_import_statement': choice rule:future_import_statement:root has unnamed-nonterminal arm(s) [_import_list] but cannot union-route — offending arm(s): structured seq[3](\"(\" _import_list \")\"). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
+    "canProceed": true
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-nondegenerate-arm",
+    "severity": "warning",
+    "grammar": "python",
+    "ownerKind": "yield",
+    "message": "[collect-slots] kind 'yield': choice rule:yield:root has unnamed-nonterminal arm(s) [_expressions] but cannot union-route — offending arm(s): structured seq[2](\"from\" expression). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
+    "canProceed": true
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-mixed-row",
+    "severity": "warning",
+    "grammar": "python",
+    "ownerKind": "dict_pattern_group1",
+    "message": "[collect-slots] kind 'dict_pattern_group1': choice rule:_dict_pattern_group1:members.0/members.1/content/members.1 is a REPEATED (order-lossy) mixed row — structured named arm(s) [seq[2](_simple_pattern case_pattern)] alongside union arm(s) [splat_pattern]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "canProceed": true
+  },
+  {
+    "scope": "grammar",
     "code": "typename-collision",
     "severity": "info",
     "grammar": "python",

@@ -411,14 +411,14 @@ var PREC_VARIANT_MAP = {
 function reconstructPrec(rule, newContent) {
   const t = rule.type;
   const value = rule.value ?? 0;
-  const prec = nativeRequired("prec");
+  const prec2 = nativeRequired("prec");
   const variant2 = PREC_VARIANT_MAP[t];
   if (variant2) {
-    const fn = prec[variant2];
+    const fn = prec2[variant2];
     if (typeof fn !== "function") throw new Error(`transform: native prec.${variant2} not available`);
     return fn(value, newContent);
   }
-  return prec(value, newContent);
+  return prec2(value, newContent);
 }
 function wrapInPrecStack(content, precStack, reconstructPrec2) {
   if (!precStack?.length) return content;
@@ -749,22 +749,28 @@ function detectRepeatSeparator(resolved) {
 }
 
 // packages/codegen/src/types/parsekind-collisions.ts
+function kindKey(id, name) {
+  return id !== void 0 ? `#${id}` : `n:${name}`;
+}
 function diagnoseParseKindCollisions(input) {
   const byParseKind = /* @__PURE__ */ new Map();
   for (const value of input.values) {
     if (value.parseKind === void 0 || value.storageKind === void 0) continue;
-    const bucket = byParseKind.get(value.parseKind) ?? [];
+    const key = kindKey(value.parseKindId, value.parseKind);
+    const bucket = byParseKind.get(key) ?? [];
     bucket.push(value);
-    byParseKind.set(value.parseKind, bucket);
+    byParseKind.set(key, bucket);
   }
   const mergedByParseKind = /* @__PURE__ */ new Map();
   const diagnostics = [];
-  for (const [parseKind, bucket] of byParseKind) {
+  for (const [parseKey, bucket] of byParseKind) {
+    const parseKind = bucket[0].parseKind;
     const storageKinds = distinct(bucket.map((value) => value.storageKind));
-    if (storageKinds.length <= 1) continue;
+    const storageIdentities = distinct(bucket.map((value) => kindKey(value.storageKindId, value.storageKind)));
+    if (storageIdentities.length <= 1) continue;
     const signatures = distinct(bucket.map((value) => value.structuralSignature));
     if (signatures.length === 1) {
-      mergedByParseKind.set(parseKind, pickRepresentative(bucket, parseKind));
+      mergedByParseKind.set(parseKey, pickRepresentative(bucket, parseKind));
       continue;
     }
     diagnostics.push({
@@ -783,22 +789,22 @@ function diagnoseParseKindCollisions(input) {
   if (mergedByParseKind.size === 0) {
     return { values: input.values.map((value) => value.original), diagnostics };
   }
-  const emittedParseKinds = /* @__PURE__ */ new Set();
+  const emittedParseKeys = /* @__PURE__ */ new Set();
   const values = [];
   for (const value of input.values) {
-    const parseKind = value.parseKind;
-    if (parseKind === void 0) {
+    if (value.parseKind === void 0) {
       values.push(value.original);
       continue;
     }
-    const merged = mergedByParseKind.get(parseKind);
+    const parseKey = kindKey(value.parseKindId, value.parseKind);
+    const merged = mergedByParseKind.get(parseKey);
     if (!merged) {
       values.push(value.original);
       continue;
     }
-    if (emittedParseKinds.has(parseKind)) continue;
+    if (emittedParseKeys.has(parseKey)) continue;
     values.push(merged.original);
-    emittedParseKinds.add(parseKind);
+    emittedParseKeys.add(parseKey);
   }
   return { values, diagnostics };
 }
@@ -2175,6 +2181,7 @@ function wire(config, base2) {
     polymorphsConfig: cfg.polymorphs,
     renderAs: cfg.renderAs,
     expectDiagnostics: cfg.expectDiagnostics,
+    expectTestFailures: cfg.expectTestFailures,
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
@@ -3548,7 +3555,55 @@ var overrides_default = grammar(
         // but doesn't need to: `list`/`tuple`'s optional-wrapped references
         // mint the kind; this site just resolves through the same alias.
         set: ($) => seq("{", alias($._collection_elements, $.element_list), "}"),
-        tuple: ($) => seq("(", optional(alias($._collection_elements, $.element_list)), ")")
+        tuple: ($) => seq("(", optional(alias($._collection_elements, $.element_list)), ")"),
+        // Case-context tuple/list pattern split (KNOWN_ISSUES "two-rules-one-
+        // parse-kind"): base arms 3/4 are `alias($._list_pattern, $.list_pattern)`
+        // / `alias($._tuple_pattern, $.tuple_pattern)` — match-statement case
+        // patterns parse to the SAME kinds as the assignment-context rules,
+        // whose templates only know the assignment shape (Track B's
+        // `pattern_group` slot), so `case (a, b):` rendered as `()` and
+        // `case [a, b]:` as `[]` (probe-confirmed; the list twin just had no
+        // corpus coverage). Give each case-context source rule its own
+        // visible kind so each rule owns its parse kind and template.
+        //
+        // `case_tuple_pattern`/`case_list_pattern` are REAL visible rules
+        // (bodies = the hidden rules verbatim), referenced directly — NOT
+        // `alias($._x, ...)`: the content-alias mint only fires for
+        // optional-in-seq reference sites (Track B's shape), so an aliased
+        // choice arm never enters the NodeMap and the kind is unrenderable.
+        // `_tuple_pattern`/`_list_pattern` go unused and drop out of the
+        // parser. The names are deliberately NON-natural: the natural
+        // stripped names are taken by the assignment-context kinds, and
+        // would trip the mintContentAliasKinds self-ref bug anyway
+        // (KNOWN_ISSUES).
+        //
+        // The full `_simple_pattern` reconstruction (base body verbatim except
+        // arms 3/4) is deliberate: a numeric-key transform would flat-broadcast
+        // across the choice. Arm ORDER must stay identical — the polymorphs
+        // entry `_simple_pattern: { '11': 'negative' }` composes on top of
+        // this body and addresses the negative-literal arm by index.
+        case_tuple_pattern: ($) => seq("(", optional(seq($.case_pattern, repeat(seq(",", $.case_pattern)), optional(","))), ")"),
+        case_list_pattern: ($) => seq("[", optional(seq($.case_pattern, repeat(seq(",", $.case_pattern)), optional(","))), "]"),
+        _simple_pattern: ($) => prec(
+          1,
+          choice(
+            $.class_pattern,
+            $.splat_pattern,
+            $.union_pattern,
+            $.case_list_pattern,
+            $.case_tuple_pattern,
+            $.dict_pattern,
+            $.string,
+            $.concatenated_string,
+            $.true,
+            $.false,
+            $.none,
+            seq(optional("-"), choice($.integer, $.float)),
+            $.complex_pattern,
+            $.dotted_name,
+            "_"
+          )
+        )
       }
     },
     enrichedBase

@@ -76,7 +76,12 @@ function enumMemberTypeTestDiscriminant(
 	if (!kindEntries) return `'${node.kind}'`;
 	const members: string[] = [];
 	for (const value of node.values) {
-		const entry = findKindEntry(kindEntries, value);
+		// PR-K3a: construction-time literal-chain record first (anon-scoped,
+		// #129), exactly as types.ts's enumMemberDiscriminant — the two
+		// surfaces must derive the same union. Name-chain fallback covers
+		// catalog-less construction (fixtures).
+		const rec = node.resolvedByText.get(value);
+		const entry = rec !== undefined ? findKindEntry(kindEntries, rec.kind) : findKindEntry(kindEntries, value);
 		if (entry) {
 			members.push(`TSKindId.${entry.member}`);
 		}

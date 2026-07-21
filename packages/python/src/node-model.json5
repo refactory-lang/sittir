@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 262,
+  "nodeCount": 264,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -567,12 +567,30 @@
         "nonEmpty": false
       }
     },
+    "case_list_pattern": {
+      "case_pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
     "case_pattern": {
       "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "case_tuple_pattern": {
+      "case_pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
         "nonEmpty": false
       }
     },
@@ -3420,9 +3438,9 @@
       "irKey": "simplePattern",
       "hidden": true,
       "subtypes": [
-        "_list_pattern",
         "_simple_pattern_negative",
-        "_tuple_pattern",
+        "case_list_pattern",
+        "case_tuple_pattern",
         "class_pattern",
         "complex_pattern",
         "concatenated_string",
@@ -4846,6 +4864,44 @@
       ]
     },
     {
+      "kind": "case_list_pattern",
+      "modelType": "branch",
+      "typeName": "CaseListPattern",
+      "factoryName": "caseListPattern",
+      "irKey": "caseListPattern",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "case_pattern",
+          "propertyName": "casePatterns",
+          "paramName": "casePatterns",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "case_pattern",
+              "parseKind": "case_pattern",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "case_pattern"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "spread",
+      "factoryFields": [
+        "case_pattern"
+      ]
+    },
+    {
       "kind": "case_pattern",
       "modelType": "branch",
       "typeName": "CasePattern",
@@ -4897,6 +4953,44 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ]
+    },
+    {
+      "kind": "case_tuple_pattern",
+      "modelType": "branch",
+      "typeName": "CaseTuplePattern",
+      "factoryName": "caseTuplePattern",
+      "irKey": "caseTuplePattern",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "case_pattern",
+          "propertyName": "casePatterns",
+          "paramName": "casePatterns",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "case_pattern",
+              "parseKind": "case_pattern",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "case_pattern"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "spread",
+      "factoryFields": [
+        "case_pattern"
       ]
     },
     {
@@ -10503,7 +10597,7 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "type",
-              "parseKind": "type"
+              "parseKind": "anon_type"
             }
           ],
           "projection": {

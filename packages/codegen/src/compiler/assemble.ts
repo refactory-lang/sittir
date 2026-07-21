@@ -60,6 +60,7 @@ import {
 	hasAnyChild,
 	nameNode,
 	isNodeRef,
+	storageKindOfRef,
 	isUnresolvedRef,
 	allSlotsOf,
 	resetParseKindCollisionDiagnostics,
@@ -450,7 +451,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			for (const slot of allSlotsOf(n)) {
 				for (const v of slot.values) {
 					if (!isNodeRef(v)) continue;
-					const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+					const name = storageKindOfRef(v.node);
 					if (name.startsWith('_')) aliasSourceKinds.add(name);
 				}
 			}
@@ -1089,7 +1090,7 @@ function resolveHiddenRuleContent(rule: RenderRule, seen: Set<string>, ctx: Asse
  * BEFORE the in-memory consumers (factories, types, render, etc.) read
  * slot graphs. Once hydrated, `slot.values[*].node` carries the full
  * `AssembledNode` reference — the consumer-side
- * `isUnresolvedRef(v.node) ? v.node.name : v.node.kind` ternary becomes
+ * `storageKindOfRef(v.node)` ternary becomes
  * unnecessary; emitters can read `v.node.kind` (or `.modelType`) directly.
  *
  * THROWS on any reference that points to a kind absent from `nodes` —
@@ -1129,18 +1130,13 @@ function hydrateSlots(
 				(v as { node: AssembledNode | UnresolvedRef }).node = target;
 				continue;
 			}
-			// Canonical-hidden architecture: alias-target names like
-			// `as_pattern_target` are the VISIBLE names; the assembled node
-			// map registers the hidden source `_as_pattern_target`. When the
-			// visible name isn't found, retry with `_<name>` — that's the
-			// canonical form per the alias-target → hidden-source convention.
-			if (!targetName.startsWith('_')) {
-				const hiddenSource = nodes.get(`_${targetName}`);
-				if (hiddenSource) {
-					(v as { node: AssembledNode | UnresolvedRef }).node = hiddenSource;
-					continue;
-				}
-			}
+			// PR-K3f: the historical `_<name>` retry (visible alias-target name →
+			// hidden MODEL node) was probed across all three grammars and fired
+			// ZERO times — the mint now resolves canonical names, so every
+			// hydratable ref hits the primary lookup above. Retired per the
+			// KindId-NodeRefs spec §2.3 retire-list. A future grammar that
+			// reintroduces visible→hidden refs surfaces below as the loud
+			// unresolved-slot-reference diagnostic, not a silent rewire.
 			// Three legitimate categories where the target ISN'T in the
 			// assembled NodeMap and we leave the `UnresolvedRef` in place:
 			//

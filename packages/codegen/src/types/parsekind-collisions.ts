@@ -22,6 +22,21 @@ export interface ParseKindCollisionValue<T> {
 	readonly original: T;
 	readonly parseKind?: string;
 	readonly storageKind?: string;
+	/**
+	 * Mint-time parser id of `parseKind` (PR-K3e). When present, bucket
+	 * identity is the id, not the name — same-spelled parse kinds with
+	 * different parser symbols (#129 class) land in different buckets.
+	 * Absent for id-less pipelines (enrich runs pre-parser).
+	 */
+	readonly parseKindId?: number;
+	/**
+	 * Mint-time parser id of `storageKind` (PR-K3e). When present,
+	 * storage-kind distinctness is decided by id: same-id values are the
+	 * same runtime identity even under different names (hidden/visible
+	 * twins), and differing ids still fall through to the structural
+	 * signature for the merge-or-diagnose decision.
+	 */
+	readonly storageKindId?: number;
 	readonly structuralSignature: string;
 	readonly preferRepresentative?: boolean;
 }
@@ -37,24 +52,40 @@ export interface ParseKindCollisionResolution<T> {
 	readonly diagnostics: readonly ParseKindCollisionDiagnostic[];
 }
 
+/**
+ * Bucket / distinctness key for a kind: the stamped parser id when the
+ * value carries one (collision-free identity), the name otherwise. The
+ * two key spaces are prefixed so a numeric id can never be spelled by a
+ * kind name.
+ */
+function kindKey(id: number | undefined, name: string): string {
+	return id !== undefined ? `#${id}` : `n:${name}`;
+}
+
 export function diagnoseParseKindCollisions<T>(input: ParseKindCollisionInput<T>): ParseKindCollisionResolution<T> {
 	const byParseKind = new Map<string, ParseKindCollisionValue<T>[]>();
 	for (const value of input.values) {
 		if (value.parseKind === undefined || value.storageKind === undefined) continue;
-		const bucket = byParseKind.get(value.parseKind) ?? [];
+		const key = kindKey(value.parseKindId, value.parseKind);
+		const bucket = byParseKind.get(key) ?? [];
 		bucket.push(value);
-		byParseKind.set(value.parseKind, bucket);
+		byParseKind.set(key, bucket);
 	}
 
 	const mergedByParseKind = new Map<string, ParseKindCollisionValue<T>>();
 	const diagnostics: ParseKindCollisionDiagnostic[] = [];
 
-	for (const [parseKind, bucket] of byParseKind) {
+	for (const [parseKey, bucket] of byParseKind) {
+		const parseKind = bucket[0]!.parseKind!;
 		const storageKinds = distinct(bucket.map((value) => value.storageKind!));
-		if (storageKinds.length <= 1) continue;
+		// Distinctness by stamped id where available: same-id values are the
+		// same runtime identity even under different names (hidden/visible
+		// twins); the name is only the fallback key for id-less values.
+		const storageIdentities = distinct(bucket.map((value) => kindKey(value.storageKindId, value.storageKind!)));
+		if (storageIdentities.length <= 1) continue;
 		const signatures = distinct(bucket.map((value) => value.structuralSignature));
 		if (signatures.length === 1) {
-			mergedByParseKind.set(parseKind, pickRepresentative(bucket, parseKind));
+			mergedByParseKind.set(parseKey, pickRepresentative(bucket, parseKind));
 			continue;
 		}
 		diagnostics.push({
@@ -81,22 +112,22 @@ export function diagnoseParseKindCollisions<T>(input: ParseKindCollisionInput<T>
 		return { values: input.values.map((value) => value.original), diagnostics };
 	}
 
-	const emittedParseKinds = new Set<string>();
+	const emittedParseKeys = new Set<string>();
 	const values: T[] = [];
 	for (const value of input.values) {
-		const parseKind = value.parseKind;
-		if (parseKind === undefined) {
+		if (value.parseKind === undefined) {
 			values.push(value.original);
 			continue;
 		}
-		const merged = mergedByParseKind.get(parseKind);
+		const parseKey = kindKey(value.parseKindId, value.parseKind);
+		const merged = mergedByParseKind.get(parseKey);
 		if (!merged) {
 			values.push(value.original);
 			continue;
 		}
-		if (emittedParseKinds.has(parseKind)) continue;
+		if (emittedParseKeys.has(parseKey)) continue;
 		values.push(merged.original);
-		emittedParseKinds.add(parseKind);
+		emittedParseKeys.add(parseKey);
 	}
 
 	return { values, diagnostics };

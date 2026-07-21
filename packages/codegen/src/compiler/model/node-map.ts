@@ -73,9 +73,9 @@ import { isSeq, isField, literalTextOf, isEnumChoiceRule, isLinkSymbol } from '.
 import { isStringType } from '../../types/runtime-shapes.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
-import { findGeneratedKindEntry } from '../generated-metadata.ts';
+import { findEntryForKindName, findEntryForLiteralText } from '../generated-metadata.ts';
 import { tokenToName } from '../normalize.ts';
-import { collectSlots } from '../collect-slots.ts';
+import { collectSlots, drainSynthesizedUnionChoiceIds, setUnionSlotRouting } from '../collect-slots.ts';
 import { assertNever } from '../../polymorph-variant.ts';
 import { opaqueFacts, type OpaqueFacts } from '../opaque-facts.ts';
 import { deleteWrapper } from '../wrapper-deletion.ts';
@@ -359,6 +359,13 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	// Node-reference target. Present for true references; absent for inline
 	// literals (which carry `value` instead). Mutually exclusive with `value`.
 	readonly node?: T | UnresolvedRef;
+	// Parser kind id of the storage/render kind (`node`'s name), stamped at
+	// mint through the shared name chain (KindId-NodeRefs design §2.1/PR-K2).
+	// Absent for id-less targets by design: enrich-synthesized markers,
+	// IR-only enum kinds, tree-sitter-erased hidden supertypes. Ids are
+	// stamped FACTS, never identity — node identity stays the name, and
+	// serialization (node-model.json5) never carries ids.
+	readonly storageKindId?: number;
 	// Inline string literal text (e.g. `'const'`, `'pub'`, an enum member /
 	// pattern-matched anonymous token). Mutually exclusive with `node`.
 	readonly value?: string;
@@ -367,11 +374,27 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	// literals (regex patterns / residual). Carried for transport/typing;
 	// render still emits from `value`.
 	readonly resolvedKind?: string;
+	// Parser kind id alongside `resolvedKind`, resolved through the LITERAL
+	// (anon-scoped) chain at mint — the anon token wins over a same-spelled
+	// NAMED rule (#129 class). Same stamped-fact semantics as
+	// `storageKindId`.
+	readonly resolvedKindId?: number;
 	// Parse-as kind ref (§7.3 / §4g, PR-A front-load): the CST kind this value
 	// surfaces under — the alias TARGET when aliased (`rule.name`), else the
 	// own kind. Differs from `node` (render/source = `aliasedFrom ?? rule.name`)
 	// only for aliased/variant values. `storageName`/`parseNames` project this.
 	readonly parseKind?: UnresolvedRef;
+	// Parser kind id of the wire `$type` (`parseKind`'s name). Same stamped-
+	// fact semantics as `storageKindId`.
+	readonly parseKindId?: number;
+	// Field-label routing key (union-slot design §5, PR 1.5): set when this
+	// value came from a DEGENERATE fielded arm of a union-routed choice
+	// (`partitionChoiceArms`'s `degenerateNamedArms`) — tree-sitter labels
+	// this child by FIELD NAME, not by kind, so `parseKind` alone would route
+	// it wrong. Absent for plain union-member (by-kind) values. `parseNames`
+	// projects `parseName ?? parseKind?.name` per value, so the union slot's
+	// routing keys become `fieldLabels ∪ kinds`.
+	readonly parseName?: string;
 	readonly multiplicity: Multiplicity;
 	readonly separator?: string;
 	readonly trailing?: boolean;
@@ -955,7 +978,43 @@ function _deriveSlotsInternal(rule: Rule<'link'>, ctx?: DeriveCtx): AssembledNon
 		// slots that appear in multiple positions (e.g. python `if_statement`'s
 		// `alternative` in both a repeat and an optional) are still folded into one
 		// AssembledNonterminal by `mergeSlotsByName`.
-		return mergeSlotsByName(collectSlots(canonical, ctx?.kindName ?? currentAuditKind, ctx?.kindEntries));
+		const kindName = ctx?.kindName ?? currentAuditKind;
+		let slots = mergeSlotsByName(collectSlots(canonical, kindName, ctx?.kindEntries));
+		// Gate (a) of the union-slot design (2026-07-21): a synthesized union
+		// slot's projected storageName (usually 'content', or the single member
+		// kind) must be unclaimed by every sibling slot of the rule. This is the
+		// only place with whole-rule visibility, so the check runs here: an
+		// optimistic collection above, then — on collision — one pessimistic
+		// rerun with routing disabled (status quo distribution) + a diagnostic.
+		// Two qualifying choices in one rule collide with each other and both
+		// fall back, which subsumes the "only one choice per rule" discipline.
+		const unionChoiceIds = drainSynthesizedUnionChoiceIds();
+		if (unionChoiceIds.size > 0) {
+			const isUnionSlot = (s: AssembledNonterminal): boolean =>
+				s.sourceRuleIds.some((id) => unionChoiceIds.has(id));
+			const colliding = slots.filter(
+				(s) => isUnionSlot(s) && slots.some((other) => other !== s && other.storageName === s.storageName)
+			);
+			if (colliding.length > 0) {
+				recordAssembleWarning({
+					code: 'union-slot-content-collision',
+					ownerKind: kindName,
+					message:
+						`[derive-slots] kind '${kindName ?? '(unknown)'}': union slot name(s) ` +
+						`[${[...new Set(colliding.map((s) => s.storageName))].join(', ')}] already claimed by a sibling ` +
+						`slot — union routing disabled for this rule (status-quo distribution). Free the name via ` +
+						`field() naming in overrides (named slots bypass the claim).`
+				});
+				const prev = setUnionSlotRouting(false);
+				try {
+					slots = mergeSlotsByName(collectSlots(canonical, kindName, ctx?.kindEntries));
+				} finally {
+					setUnionSlotRouting(prev);
+					drainSynthesizedUnionChoiceIds();
+				}
+			}
+		}
+		return slots;
 	} finally {
 		setAuditKindContext(prevAuditKind);
 	}
@@ -1035,6 +1094,19 @@ export interface DeriveCtx {
 	readonly simplifiedRules?: Record<string, SimplifiedRule>;
 	/** Assembled node table — resolves UnresolvedRef in the parameterless cascade. */
 	readonly nodes?: ReadonlyMap<string, AssembledNodeBase<Rule<'link'>>>;
+	/**
+	 * Union-slot design §5 (PR 1.5): when deriving values for the SANCTIONED
+	 * union-routing choice only (`collect-slots.ts` restricts a choice's
+	 * members to its `unionArms ∪ degenerateNamedArms` and calls `buildSlot`
+	 * with `sanctionedUnion = true`), stamp each degenerate arm's OWN
+	 * `fieldName` onto its derived values as `parseName`. Scoped to this ctx
+	 * flag (rather than firing on any fieldName-carrying CHOICE member) so the
+	 * pre-existing shared-arm-fieldName choice (operator enums — `buildSlot`
+	 * called on the WHOLE original choice, `sanctionedUnion` false) keeps
+	 * deriving `parseNames` from kinds only; only the restricted union-slot
+	 * choice's arms are eligible for label-routing.
+	 */
+	readonly stampArmFieldNamesAsParseName?: boolean;
 }
 
 /** {@link DeriveCtx} with the owning kind bound — per-kind record builders. */
@@ -1048,9 +1120,18 @@ export function buildParseKindRuleSignatures<T extends Rule<'link'>>(
 	return Object.fromEntries(Object.entries(rules).map(([kind, rule]) => [kind, canonicalRuleSignature(rule)]));
 }
 
+/**
+ * Storage/render kind name of a ref target — THE single derivation of the
+ * `UnresolvedRef.name` vs `AssembledNode.kind` fork (PR-K3e; the ~20
+ * inline ternary copies across emitters/compiler consolidated here).
+ */
+export function storageKindOfRef(node: AssembledNode | UnresolvedRef): string {
+	return isUnresolvedRef(node) ? node.name : node.kind;
+}
+
 export function storageKindOfValue(value: NodeOrTerminal): string | undefined {
 	if (isNodeRef(value)) {
-		return isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
+		return storageKindOfRef(value.node);
 	}
 	return value.resolvedKind ?? value.value;
 }
@@ -1070,6 +1151,11 @@ function resolveParseKindCollisionsInSlot(slot: AssembledNonterminal, ctx: Kinde
 			original: value,
 			parseKind: value.parseKind?.name,
 			storageKind,
+			// PR-K3e: mint stamps as collision-free identities — terminals carry
+			// theirs on resolvedKindId (the literal-chain stamp), node refs on
+			// storageKindId. Absent stamps fall back to name keying in the core.
+			parseKindId: value.parseKindId,
+			storageKindId: isNodeRef(value) ? value.storageKindId : value.resolvedKindId,
 			structuralSignature: structuralSignatureOfValue(value, ctx, storageKind),
 			preferRepresentative: storageKind !== undefined && storageKind === value.parseKind?.name
 		};
@@ -1265,11 +1351,19 @@ export function deriveValuesForRule(
 			// only writer — so `literal !== undefined` alone is the exact same
 			// condition, structurally, not an inference.
 			if (rule.literal !== undefined) {
+				// The value is the literal text, so its id resolves through the
+				// LITERAL chain (anon token wins a same-spelled NAMED rule);
+				// `resolvedKind`/`parseKind` keep the link-minted alias-target
+				// NAME (`rule.name`) as before — ids are stamped facts, not a
+				// re-derivation of the name (KindId-NodeRefs §2.1).
+				const entry = findEntryForLiteralText(ctx?.kindEntries ?? [], rule.literal);
 				return [
 					{
 						value: rule.literal,
 						resolvedKind: rule.name,
+						resolvedKindId: entry?.id,
 						parseKind: { kind: 'unresolved-ref', name: rule.name },
+						parseKindId: entry?.id,
 						multiplicity
 					}
 				];
@@ -1278,13 +1372,18 @@ export function deriveValuesForRule(
 			// symbol came from an alias). Only source kinds exist in
 			// rules post-synthesis-removal.
 			const refName = rule.aliasedFrom ?? rule.name;
+			const storageEntry = findEntryForKindName(ctx?.kindEntries ?? [], refName);
+			const parseEntry =
+				refName === rule.name ? storageEntry : findEntryForKindName(ctx?.kindEntries ?? [], rule.name);
 			return [
 				{
 					node: { kind: 'unresolved-ref', name: refName },
+					storageKindId: storageEntry?.id,
 					// parse-as kind = the alias TARGET (`rule.name`); `node` is the
 					// render/source (`refName`). For `_suite`: node=_simple_statements,
 					// parseKind=block (the CST kind). §7.3 / §4g.
 					parseKind: { kind: 'unresolved-ref', name: rule.name },
+					parseKindId: parseEntry?.id,
 					multiplicity: relaxForOptionalBody(refName, multiplicity)
 				}
 			];
@@ -1292,11 +1391,16 @@ export function deriveValuesForRule(
 		case SUPERTYPE:
 			// Supertype refs expand to their subtype list — each subtype is a
 			// valid concrete kind the slot can hold.
-			return rule.subtypes.map((name) => ({
-				node: { kind: 'unresolved-ref' as const, name },
-				parseKind: { kind: 'unresolved-ref' as const, name },
-				multiplicity: relaxForOptionalBody(name, multiplicity)
-			}));
+			return rule.subtypes.map((name) => {
+				const id = findEntryForKindName(ctx?.kindEntries ?? [], name)?.id;
+				return {
+					node: { kind: 'unresolved-ref' as const, name },
+					storageKindId: id,
+					parseKind: { kind: 'unresolved-ref' as const, name },
+					parseKindId: id,
+					multiplicity: relaxForOptionalBody(name, multiplicity)
+				};
+			});
 		case STRING:
 		// A `pattern` is a NONTERMINAL slot (classifyByType), but its VALUE is the
 		// anonymous-token text it matches — a terminal value, like a `string` or an
@@ -1304,12 +1408,15 @@ export function deriveValuesForRule(
 		// pattern slot had no values and was elided (e.g. token_repetition's
 		// separator pattern never became a slot).
 		case PATTERN: {
-			const rk = findGeneratedKindEntry(ctx?.kindEntries ?? [], rule.value)?.kind;
+			const entry = findEntryForLiteralText(ctx?.kindEntries ?? [], rule.value);
+			const rk = entry?.kind;
 			return [
 				{
 					value: rule.value,
 					resolvedKind: rk,
+					resolvedKindId: entry?.id,
 					parseKind: rk !== undefined ? { kind: 'unresolved-ref', name: rk } : undefined,
+					parseKindId: entry?.id,
 					multiplicity
 				}
 			];
@@ -1320,11 +1427,14 @@ export function deriveValuesForRule(
 			if (isEnumChoiceRule(rule)) {
 				return rule.members.map((m) => {
 					const text = literalTextOf(m) ?? '';
-					const rk = text ? findGeneratedKindEntry(ctx?.kindEntries ?? [], text)?.kind : undefined;
+					const entry = text ? findEntryForLiteralText(ctx?.kindEntries ?? [], text) : undefined;
+					const rk = entry?.kind;
 					return {
 						value: text,
 						resolvedKind: rk,
+						resolvedKindId: entry?.id,
 						parseKind: rk !== undefined ? { kind: 'unresolved-ref' as const, name: rk } : undefined,
+						parseKindId: entry?.id,
 						multiplicity
 					};
 				});
@@ -1348,7 +1458,22 @@ export function deriveValuesForRule(
 					: multiplicity;
 			// Each arm is independent — union all entries. Arms may differ in
 			// their own multiplicity if they wrap repeat/optional differently.
-			return nonBlank.flatMap((m) => deriveValuesForRule(m, ctx, armMult));
+			if (!ctx?.stampArmFieldNamesAsParseName) {
+				return nonBlank.flatMap((m) => deriveValuesForRule(m, ctx, armMult));
+			}
+			// Union-slot design §5 (PR 1.5): this CHOICE is the SANCTIONED
+			// union-routing restriction (collect-slots.ts builds it from
+			// `unionArms ∪ degenerateNamedArms` only) — a member carrying its
+			// OWN `fieldName` directly (post-wrapper-deletion push-down; a
+			// degenerate fielded arm, not a genuine FIELD wrapper) is routed by
+			// FIELD LABEL at read time, not by kind. Stamp `parseName` so
+			// `projectSlotNaming`'s parseNames union in the label alongside the
+			// plain union arms' kinds.
+			return nonBlank.flatMap((m) => {
+				const values = deriveValuesForRule(m, ctx, armMult);
+				const fieldName = (m as { fieldName?: string }).fieldName;
+				return fieldName === undefined ? values : values.map((v) => ({ ...v, parseName: fieldName }));
+			});
 		}
 		case OPTIONAL: {
 			// `optional(repeat1(X, sep))` survives evaluate when the
@@ -1414,10 +1539,15 @@ export function dedupeValues(values: NodeOrTerminal[]): NodeOrTerminal[] {
 	const result: NodeOrTerminal[] = [];
 	for (const v of values) {
 		const parseKind = v.parseKind?.name ?? '';
-		const nodeName = isNodeRef(v) ? (isUnresolvedRef(v.node) ? v.node.name : v.node.kind) : undefined;
+		const nodeName = isNodeRef(v) ? (storageKindOfRef(v.node)) : undefined;
+		// `parseName` (union-slot design §5, PR 1.5) is a SEPARATE routing key
+		// from `parseKind` — two degenerate arms of the same kind but different
+		// field labels are distinct entries (tree-sitter routes them by field,
+		// not by kind), so it must ride in the dedup key too. Always `''` for
+		// every pre-PR-1.5 value, so existing dedup behavior is unchanged.
 		const key = isNodeRef(v)
-			? `node-ref:${nodeName ?? '?'}:${parseKind}:${v.multiplicity}`
-			: `terminal:${v.value ?? ''}:${parseKind}:${v.multiplicity}`;
+			? `node-ref:${nodeName ?? '?'}:${parseKind}:${v.multiplicity}:${v.parseName ?? ''}`
+			: `terminal:${v.value ?? ''}:${parseKind}:${v.multiplicity}:${v.parseName ?? ''}`;
 		if (!seen.has(key)) {
 			seen.add(key);
 			result.push(v);
@@ -1881,11 +2011,30 @@ export function kindsOf(slot: AssembledNonterminal): readonly string[] {
 	const out: string[] = [];
 	for (const v of slot.values) {
 		if (!isNodeRef(v)) continue;
-		const name = isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : (v.node as AssembledNode).kind;
+		const name = storageKindOfRef(v.node);
 		if (!seen.has(name)) {
 			seen.add(name);
 			out.push(name);
 		}
+	}
+	return out;
+}
+
+/**
+ * Id-carrying companion to {@link kindsOf} (PR-K3e): distinct storage kind
+ * name → mint-stamped `storageKindId` for the slot's node-ref values.
+ * First-wins per name (mirrors `kindsOf`'s dedupe); names whose values
+ * carry no stamp are ABSENT — the name remains the identity, ids are
+ * stamped facts consumers may use for equality where present.
+ */
+export function storageKindIdByNameOf(slot: {
+	values: readonly NodeOrTerminal[];
+}): ReadonlyMap<string, number> {
+	const out = new Map<string, number>();
+	for (const v of slot.values) {
+		if (!isNodeRef(v) || v.storageKindId === undefined) continue;
+		const name = storageKindOfRef(v.node);
+		if (!out.has(name)) out.set(name, v.storageKindId);
 	}
 	return out;
 }
@@ -1910,6 +2059,50 @@ export function valueParseKindsOf(slot: { values: readonly NodeOrTerminal[] }): 
 }
 
 /**
+ * Per-value routing-name projection for an UNNAMED slot (union-slot design
+ * §5, PR 1.5): prefers the field-label routing key (`parseName`, stamped
+ * only on a union slot's degenerate arms — {@link DeriveCtx.stampArmFieldNamesAsParseName})
+ * over the plain CST kind (`parseKind.name`). The union slot's routing keys
+ * become `fieldLabels ∪ kinds` — for every other slot (no value carries
+ * `parseName`) this is identical to {@link valueParseKindsOf}.
+ */
+function valueParseNamesOf(slot: { values: readonly NodeOrTerminal[] }): readonly string[] {
+	const seen = new Set<string>();
+	const out: string[] = [];
+	for (const value of slot.values) {
+		const name = value.parseName ?? value.parseKind?.name;
+		if (name === undefined || seen.has(name)) continue;
+		seen.add(name);
+		out.push(name);
+	}
+	return out;
+}
+
+/**
+ * Distinct per-value field-LABEL routing keys from a slot's `values[]`
+ * (union-slot design §5, PR 1.5) — the subset of `parseNames` that came from
+ * a degenerate arm's `parseName`, not from a plain CST `parseKind`. For a
+ * label-routed value, `storageName != parseName` by construction (the wire
+ * key IS the tree-sitter field name, e.g. `_declaration`) — a supertype
+ * expansion of the label (treating it as a kind to expand, e.g. `declaration`
+ * as the supertype) would replace the literal wire key with its subtype
+ * kinds and never match. Consumers that expand `parseNames` through the
+ * supertype tree (`wrap.ts`'s `collectConcreteStorageKeys`) must union these
+ * back in UNEXPANDED, as literal keys. Empty for every non-PR-1.5 slot.
+ */
+export function valueParseLabelsOf(slot: { values: readonly NodeOrTerminal[] }): readonly string[] {
+	const seen = new Set<string>();
+	const out: string[] = [];
+	for (const value of slot.values) {
+		const name = value.parseName;
+		if (name === undefined || seen.has(name)) continue;
+		seen.add(name);
+		out.push(name);
+	}
+	return out;
+}
+
+/**
  * Derive the alias-target -> canonical-source map for a slot from per-value
  * `parseKind` metadata.
  */
@@ -1920,9 +2113,41 @@ export function aliasTargetToSourceMapOf(slot: {
 	for (const value of slot.values) {
 		if (!isNodeRef(value)) continue;
 		const parseKind = value.parseKind?.name;
-		const sourceKind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
+		const sourceKind = storageKindOfRef(value.node);
 		if (parseKind === undefined || parseKind === sourceKind) continue;
 		out[parseKind] = sourceKind;
+	}
+	return out;
+}
+
+/**
+ * Per-storage-kind accepted wire ids for a slot, from the mint stamps
+ * (KindId-NodeRefs §2.3 / PR-K3c): for each node-ref value, the union of
+ * `storageKindId` (the modeled storage kind) and `parseKindId` (the wire
+ * `$type` tree-sitter actually stamps — the alias TARGET at aliased
+ * reference sites). For value-backed kinds this subsumes both name-keyed
+ * redirects (`nodeMap.aliasedHiddenKinds` + `aliasTargetToSourceMapOf`
+ * pairs) — per-slot, since alias facts are per-reference-site. Kinds whose
+ * values carry no ids (enrich-synthesized markers, IR-only enum kinds,
+ * erased hidden supertypes, hand-built test values) are ABSENT from the
+ * map — callers keep the name-based fallback for those.
+ */
+export function acceptedIdPairsByKindOf(slot: {
+	values: readonly NodeOrTerminal[];
+}): ReadonlyMap<string, readonly number[]> {
+	const out = new Map<string, number[]>();
+	for (const value of slot.values) {
+		if (!isNodeRef(value)) continue;
+		const kind = storageKindOfRef(value.node);
+		for (const id of [value.storageKindId, value.parseKindId]) {
+			if (id === undefined) continue;
+			const ids = out.get(kind);
+			if (ids === undefined) {
+				out.set(kind, [id]);
+			} else if (!ids.includes(id)) {
+				ids.push(id);
+			}
+		}
 	}
 	return out;
 }
@@ -1954,7 +2179,7 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 	// slot routes by its field name (`childByFieldName('body')`) — so the field
 	// name IS the parse name. An UNNAMED slot routes by child kind — so the parse
 	// names are the distinct value parse-as (CST / alias-target) kinds.
-	const parseNames = slot.fieldName !== undefined ? [slot.fieldName] : valueParseKindsOf(slot);
+	const parseNames = slot.fieldName !== undefined ? [slot.fieldName] : valueParseNamesOf(slot);
 	// storageName derives from the STORAGE / render-source kind (`value.node` —
 	// how the value is stored and keyed via `drillAs`), NOT `parseKind`. The two
 	// projections are parallel and must NOT cross: storageKind→storageName,
@@ -1964,14 +2189,7 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 	// `{_simple_statements, block, _newline}` (all `parseKind=block`) — falls back
 	// to the generic `content` (the parseName `block` is NOT its storage name).
 	// Storage kinds from node-ref values (the render-source kind via `value.node`).
-	const nodeRefStorageKinds = [
-		...new Set(
-			slot.values.filter(isNodeRef).map((v) => {
-				const node = v.node;
-				return isUnresolvedRef(node) ? node.name : node.kind;
-			})
-		)
-	];
+	const nodeRefStorageKinds = [...new Set(slot.values.filter(isNodeRef).map((v) => storageKindOfRef(v.node)))];
 	// PR-P Task 3 step 3: when a slot is PURELY inline literals (no node-refs),
 	// its storage kind is the literal's resolved catalog kind — so a slot holding
 	// a single resolved literal is named after that kind instead of the generic
@@ -2735,7 +2953,7 @@ export class AssembledKeyword extends AssembledLeaf<StringRule<'link'>> {
 		}
 	) {
 		super(kind, rule, opts);
-		this.resolvedKind = findGeneratedKindEntry(opts?.kindEntries ?? [], rule.value)?.kind;
+		this.resolvedKind = findEntryForLiteralText(opts?.kindEntries ?? [], rule.value)?.kind;
 	}
 
 	/** The literal text this keyword produces (read from the StringRule<'link'>). */
@@ -2778,7 +2996,7 @@ export class AssembledToken extends AssembledLeaf<StringRule<'link'> | TokenRule
 	) {
 		super(kind, rule, { hidden: true });
 		this.resolvedKind =
-			rule.type === STRING ? findGeneratedKindEntry(opts?.kindEntries ?? [], rule.value)?.kind : undefined;
+			rule.type === STRING ? findEntryForLiteralText(opts?.kindEntries ?? [], rule.value)?.kind : undefined;
 	}
 	// No emitFactory — tokens are always hidden, no factoryName.
 
@@ -2862,6 +3080,16 @@ export class AssembledToken extends AssembledLeaf<StringRule<'link'> | TokenRule
 export class AssembledEnum extends AssembledLeaf<ChoiceRule<'link'>> {
 	readonly modelType = 'enum' as const;
 	readonly resolvedKinds: readonly string[];
+	/**
+	 * Per-member-TEXT catalog resolution, derived ONCE at construction
+	 * through the literal chain (PR-K3a). Key = member text; value = the
+	 * resolved catalog kind + parser id. First-wins on duplicate texts
+	 * (mirrors the `values` getter's Set dedupe). Emitters read this
+	 * instead of re-running `findKindEntryForLiteral` per site — the same
+	 * stamped-fact discipline as `NodeRef.resolvedKindId` (spec §2.3),
+	 * carried node-level because enum members are not NodeRefs.
+	 */
+	readonly resolvedByText: ReadonlyMap<string, { readonly kind: string; readonly id: number }>;
 
 	constructor(
 		kind: string,
@@ -2874,13 +3102,21 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule<'link'>> {
 	) {
 		super(kind, rule, opts);
 		// PR-P: members are StringRule<'link'> (pre-link) or LINK-SYMBOL (post-link);
-		// use literalTextOf for both forms.
-		this.resolvedKinds = rule.members
-			.map((member) => {
-				const text = literalTextOf(member);
-				return text !== undefined ? findGeneratedKindEntry(opts?.kindEntries ?? [], text)?.kind : undefined;
-			})
-			.filter((member): member is string => member !== undefined);
+		// use literalTextOf for both forms. ONE literal-chain pass feeds both
+		// the legacy resolvedKinds list (duplicates preserved) and the
+		// per-text map.
+		const resolved: string[] = [];
+		const byText = new Map<string, { kind: string; id: number }>();
+		for (const member of rule.members) {
+			const text = literalTextOf(member);
+			if (text === undefined) continue;
+			const entry = findEntryForLiteralText(opts?.kindEntries ?? [], text);
+			if (entry === undefined) continue;
+			resolved.push(entry.kind);
+			if (!byText.has(text)) byText.set(text, { kind: entry.kind, id: entry.id });
+		}
+		this.resolvedKinds = resolved;
+		this.resolvedByText = byText;
 		if (this.values.length < 2) {
 			throw new Error(
 				`AssembledEnum '${kind}' must have at least two members; normalize single-literal sets upstream to StringRule<'link'>`

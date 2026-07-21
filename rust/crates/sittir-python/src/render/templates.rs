@@ -295,9 +295,21 @@ pub struct CaseClauseTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "case_list_pattern.jinja", escape = "none")]
+pub struct CaseListPatternTemplate<'a> {
+    pub case_pattern: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "case_pattern.jinja", escape = "none")]
 pub struct CasePatternTemplate<'a> {
     pub content: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "case_tuple_pattern.jinja", escape = "none")]
+pub struct CaseTuplePatternTemplate<'a> {
+    pub case_pattern: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

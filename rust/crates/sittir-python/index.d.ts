@@ -274,6 +274,17 @@ export interface CaseClauseTransport {
   _case_pattern: Array<CasePatternTransport>
 }
 
+export interface CaseListPatternTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _case_pattern?: Array<CasePatternTransport>
+}
+
 export interface CasePatternTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -283,6 +294,17 @@ export interface CasePatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _content: Box<CasePatternContentTransportSlot>
+}
+
+export interface CaseTuplePatternTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _case_pattern?: Array<CasePatternTransport>
 }
 
 export interface ChevronTransport {

@@ -724,6 +724,11 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		// use structural rendering (macro token content is
 		// author-declared-verbatim, mixes named and anon tokens).
 		delim_token_tree: (r) => `fn _f() { mac! ${r} }`,
+		// Post-alias-catalog-split (PR #165), the same content reads as
+		// `token_tree` — the `delim_token_tree` key above stopped matching
+		// and this kind's probing/fixtures silently vanished (19→0, see
+		// docs/KNOWN_ISSUES.md). Same wrapper body restores coverage.
+		token_tree: (r) => `fn _f() { mac! ${r} }`,
 		// visibility_modifier is a declaration-position prefix — has no
 		// supertype it fits under. Only fires when variant() adoption
 		// has been applied (see `wrapForReparse` — wrappers whose kind

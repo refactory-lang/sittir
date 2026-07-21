@@ -1636,6 +1636,48 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 	return undefined;
 }
 
+/**
+ * Scan an emitted arm body for `emitChoice`'s union-routed path — the body is
+ * the single authority on what the arm references (name- or id-based
+ * partitioning of the render-tree arm is unreliable across choice rebuilds).
+ *
+ * `key` — the arm's discriminating slot: the first `{{ name }}` reference at
+ * if-nesting depth 0 (an ungated reference is REQUIRED within the arm, so its
+ * presence discriminates it — e.g. arrow_function's signature arm gates on
+ * `parameters`, never on its leading OPTIONAL `type_parameters` block), else
+ * the first gated reference.
+ *
+ * `needsGate` — whether the body has ANY depth-0 reference or literal text.
+ * A body that is entirely self-gated blocks (e.g. range_pattern's
+ * `{% if left %}…{% endif %}{% if content %}…{% endif %}` arm) must NOT get
+ * an outer gate: nothing in it can leak, and wrapping it on one of its
+ * optional refs would suppress the other forms.
+ */
+function scanArmBody(body: string): { key: string | undefined; needsGate: boolean } {
+	const tagRe = /\{\{-?\s*([A-Za-z_]\w*)[^}]*\}\}|\{%-?\s*(if|endif)\b[^%]*?%\}/g;
+	let depth = 0;
+	let last = 0;
+	let depth0Ref: string | undefined;
+	let firstGated: string | undefined;
+	let depth0Payload = false;
+	for (let m = tagRe.exec(body); m !== null; m = tagRe.exec(body)) {
+		if (depth === 0 && body.slice(last, m.index).trim() !== '') depth0Payload = true;
+		last = m.index + m[0].length;
+		if (m[2] === 'if') depth++;
+		else if (m[2] === 'endif') depth--;
+		else if (m[1] !== undefined) {
+			if (depth === 0) {
+				depth0Ref ??= m[1];
+				depth0Payload = true;
+			} else {
+				firstGated ??= m[1];
+			}
+		}
+	}
+	if (depth === 0 && body.slice(last).trim() !== '') depth0Payload = true;
+	return { key: depth0Ref ?? firstGated, needsGate: depth0Payload };
+}
+
 // emitOptional and emitRepeat were deleted in PR2 Task 3.B3.
 // Those wrapper types no longer appear in RenderRule; their slot facts are
 // now leaf attributes on the inner rule, consumed by emitSymbol directly.
@@ -1650,6 +1692,65 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 	// per-site name re-derivation.
 	const slot = lookupSlot(rule, ctx);
 	if (slot) {
+		// Union-slot routing (2026-07-21 design §2, PR 1): a fieldless
+		// structural choice that routed its unnamed-nonterminal arms into ONE
+		// union slot resolves here BY THE CHOICE's rule id. The MODEL made the
+		// routing decision at slot-derivation time — do NOT re-run the gates
+		// on this rule object: the render tree's choice can be a DIFFERENT
+		// rebuild sharing the same id (fanOutSeqChoices/factorChoiceBranches),
+		// whose arms partition differently (observed: python
+		// dict_pattern_group1's render variant carries a fieldless seq arm).
+		// The union-backed condition is structural: the slot was built FROM
+		// this choice (unnamed + sourceRuleIds carries the choice id).
+		//
+		// Mixed row (named arms + union arms): the union slot is only PART of
+		// the choice's surface. Emit every non-union arm as a presence-gated
+		// block (gated on the arm's own discriminating slot, so its ambient
+		// literals cannot leak when the parse took another arm), then the
+		// union reference (self-gated by emitSlotReference when optional).
+		// Arms are deduped BY GATE KEY — rebuild variants of one arm project
+		// onto the same slots and must reference them once (the phi2 lesson:
+		// never emit one block per arm for arms sharing slots); the longest
+		// body wins (it carries the fullest literal shape, e.g. the seq[3]
+		// `key ":" value` variant over the seq[2] rebuild).
+		const choiceRuleId = (rule as { id?: string }).id;
+		const unionBacked =
+			(rule as { fieldName?: string }).fieldName === undefined &&
+			slot.isUnnamed &&
+			choiceRuleId !== undefined &&
+			slot.sourceRuleIds.includes(choiceRuleId);
+		if (unionBacked) {
+			const unionName = (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase();
+			const blockByKey = new Map<string, string>();
+			for (const arm of rule.members) {
+				// The arm's EMITTED BODY is the authority on what it references —
+				// structural partitioning is unreliable here because the render
+				// tree's choice can be a different rebuild than the derive
+				// tree's (arms appear as bare hidden symbols whose slots only
+				// materialize through inline-splicing, e.g. python
+				// dict_pattern_group1's `_key_value_pattern` kv arm). The
+				// body's FIRST slot reference is the arm's discriminating
+				// presence key, validated against the owning node's slots
+				// (never gate on a name absent from the transport struct — an
+				// Askama compile error):
+				//  - no reference → nothing gateable (pure-literal arm) → skip;
+				//  - reference IS the union slot → the arm is union-covered
+				//    (e.g. ts rest_pattern's member_expression arm) — emitting
+				//    a block would double-render it → skip.
+				// Arms are deduped BY KEY — rebuild variants of one arm project
+				// onto the same slots and must reference them once (the phi2
+				// lesson: never one block per arm for arms sharing slots); the
+				// longest body wins (fullest literal shape).
+				const body = emitRule(arm as RenderRule, ctx);
+				if (!body) continue;
+				const { key, needsGate } = scanArmBody(body);
+				if (key === undefined || key === unionName || ctx.ownerSlots?.[key] === undefined) continue;
+				const block = needsGate ? `{% if ${key} | isPresent %}${body}{% endif %}` : body;
+				const prev = blockByKey.get(key);
+				if (prev === undefined || block.length > prev.length) blockByKey.set(key, block);
+			}
+			return [...blockByKey.values()].join('') + emitSlotReference(rule, slot);
+		}
 		return emitSlotReference(rule, slot);
 	}
 	// No back-pointer slot but a deleteWrapper-stamped fieldName (a `field()`
@@ -1728,13 +1829,14 @@ function assertSlotPreservation(node: AssembledNode, body: string): void {
 		// Skip terminal-only slots — values are all literals (no node-refs).
 		// The template emits their literal text, not a slot-name reference.
 		if (kindsOf(slot).length === 0) continue;
-		// Skip unnamed slots — those are derived from child structure / dominant
-		// kind names rather than declared grammar fields
-		// (no `field()` wrapper), such as `_semicolon` rendered as `;` literal,
-		// or alternative choice arms from hidden-helper inlining. The emitter
-		// correctly handles these via symbol inlining or literal emission rather
-		// than named slot references. Checking them would produce false positives.
-		if (slot.isUnnamed) continue;
+		// Unnamed slots ARE checked (union-slot design PR 1, tightening the
+		// KNOWN_ISSUES fallback-B gate hole): a REQUIRED positional slot whose
+		// name and kinds never appear in the body is a dropped choice arm, and
+		// must fail loudly at emit. The former blanket `isUnnamed` skip cited
+		// `_semicolon`-style literal slots (terminal-only → still skipped
+		// above), and hidden-helper choice arms (cross-arm relaxed to optional
+		// → still skipped below); both documented false-positive classes
+		// remain covered by the structural skips.
 		// (debt PR-P1, item 4) REMOVED a former provenance-reading skip here:
 		// `(slot.source as string) === 'link' || 'group-lift'`. Per the
 		// doctrine, a compiler decision may not key on rule/slot provenance —
@@ -1776,6 +1878,15 @@ function assertSlotPreservation(node: AssembledNode, body: string): void {
 		// delegates rendering entirely to its inner named slot.
 		const slotKinds = kindsOf(slot);
 		if (slotKinds.length > 0 && slotKinds.every((k) => new RegExp(`\\b${escapeRegex(k)}\\b`).test(body))) continue;
+		// Skip unnamed slots whose every referenced kind is HIDDEN (leading
+		// underscore): hidden refs are inline-expanded per the per-ref inline
+		// convention (inline = hidden && !aliased), so the body contains their
+		// EXPANSION, never their name — a textual check cannot see them (e.g.
+		// python dictionary_comprehension's `_comprehension_clauses` slot,
+		// rendered as `{{ for_in_clause }} {{ content | join(" ") }}`). Named
+		// slots never take this path — a fielded ref emits by field name even
+		// when hidden.
+		if (slot.isUnnamed && slotKinds.length > 0 && slotKinds.every((k) => k.startsWith('_'))) continue;
 		// Use storageName (raw snake_case grammar field name) — this is what
 		// the emitter writes into templates, matching `rule.fieldName.toLowerCase()`.
 		const name = slot.storageName;

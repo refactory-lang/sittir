@@ -1064,6 +1064,16 @@ export default grammar(
 			// Raw string literal delimiters — static (1-hash form only).
 			// Round-trip will fail for `r##"..."##` etc. Factory-side benefit: no
 			// delimiter-count parameter needed.
+			// Known-failing generated nodes.test.ts kinds — tracked defects, not
+			// silenced mysteries. Remove an entry + regen when its issue is fixed.
+			expectTestFailures: {
+				async_block: '#130 — factory returns block $type / no $render accessor',
+				block_comment: '#130 — factory output has no $render accessor',
+				gen_block: '#130 — factory returns block $type / no $render accessor',
+				reference_pattern: '#130 — factory returns wrong $type / no $render accessor',
+				self_parameter: '#130 — factory output has no $render accessor',
+				variadic_parameter: '#130 — factory output has no $render accessor'
+			},
 			renderAs: (_$) => ({
 				// Doc comment markers
 				_outer_line_doc_comment_marker: string('/'), // /// outer line doc

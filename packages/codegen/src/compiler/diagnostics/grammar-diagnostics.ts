@@ -140,12 +140,16 @@ export function collectGrammarDiagnostics(input: {
 	);
 	const assembleWarningMapped = (input.assembleWarnings ?? []).map((warning) => {
 		const mapped = fromAssembleWarning(input.grammar, warning);
-		// storagename-collision is the ONLY assemble-warning code PR-L blocks on.
+		// Only specific assemble-warning codes block: storagename-collision (PR-L)
+		// and nonterminal-separator-unstamped (a zero-instance guard — any firing
+		// means a nonterminal separator reached the slot-value stamp path, which
+		// would silently render as a hardcoded space; see collect-slots.ts).
 		// typename-collision (the only other code sharing fromAssembleWarning)
 		// stays exactly as fromAssembleWarning already maps it (still has live,
 		// accepted, non-blocking instances) — do not touch fromAssembleWarning
 		// itself, which would flip it as a side effect.
-		if (warning.code !== 'storagename-collision') return mapped;
+		if (warning.code !== 'storagename-collision' && warning.code !== 'nonterminal-separator-unstamped')
+			return mapped;
 		if (isExpectedDiagnostic(input.expectDiagnostics, warning.code, warning.ownerKind)) return mapped;
 		return { ...mapped, canProceed: false };
 	});

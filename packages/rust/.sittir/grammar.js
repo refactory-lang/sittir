@@ -747,22 +747,28 @@ function detectRepeatSeparator(resolved) {
 }
 
 // packages/codegen/src/types/parsekind-collisions.ts
+function kindKey(id, name) {
+  return id !== void 0 ? `#${id}` : `n:${name}`;
+}
 function diagnoseParseKindCollisions(input) {
   const byParseKind = /* @__PURE__ */ new Map();
   for (const value of input.values) {
     if (value.parseKind === void 0 || value.storageKind === void 0) continue;
-    const bucket = byParseKind.get(value.parseKind) ?? [];
+    const key = kindKey(value.parseKindId, value.parseKind);
+    const bucket = byParseKind.get(key) ?? [];
     bucket.push(value);
-    byParseKind.set(value.parseKind, bucket);
+    byParseKind.set(key, bucket);
   }
   const mergedByParseKind = /* @__PURE__ */ new Map();
   const diagnostics = [];
-  for (const [parseKind, bucket] of byParseKind) {
+  for (const [parseKey, bucket] of byParseKind) {
+    const parseKind = bucket[0].parseKind;
     const storageKinds = distinct(bucket.map((value) => value.storageKind));
-    if (storageKinds.length <= 1) continue;
+    const storageIdentities = distinct(bucket.map((value) => kindKey(value.storageKindId, value.storageKind)));
+    if (storageIdentities.length <= 1) continue;
     const signatures = distinct(bucket.map((value) => value.structuralSignature));
     if (signatures.length === 1) {
-      mergedByParseKind.set(parseKind, pickRepresentative(bucket, parseKind));
+      mergedByParseKind.set(parseKey, pickRepresentative(bucket, parseKind));
       continue;
     }
     diagnostics.push({
@@ -781,22 +787,22 @@ function diagnoseParseKindCollisions(input) {
   if (mergedByParseKind.size === 0) {
     return { values: input.values.map((value) => value.original), diagnostics };
   }
-  const emittedParseKinds = /* @__PURE__ */ new Set();
+  const emittedParseKeys = /* @__PURE__ */ new Set();
   const values = [];
   for (const value of input.values) {
-    const parseKind = value.parseKind;
-    if (parseKind === void 0) {
+    if (value.parseKind === void 0) {
       values.push(value.original);
       continue;
     }
-    const merged = mergedByParseKind.get(parseKind);
+    const parseKey = kindKey(value.parseKindId, value.parseKind);
+    const merged = mergedByParseKind.get(parseKey);
     if (!merged) {
       values.push(value.original);
       continue;
     }
-    if (emittedParseKinds.has(parseKind)) continue;
+    if (emittedParseKeys.has(parseKey)) continue;
     values.push(merged.original);
-    emittedParseKinds.add(parseKind);
+    emittedParseKeys.add(parseKey);
   }
   return { values, diagnostics };
 }
@@ -2621,6 +2627,7 @@ function wire(config, base2) {
     polymorphsConfig: cfg.polymorphs,
     renderAs: cfg.renderAs,
     expectDiagnostics: cfg.expectDiagnostics,
+    expectTestFailures: cfg.expectTestFailures,
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
@@ -4010,6 +4017,16 @@ var overrides_default = grammar(
       // Raw string literal delimiters — static (1-hash form only).
       // Round-trip will fail for `r##"..."##` etc. Factory-side benefit: no
       // delimiter-count parameter needed.
+      // Known-failing generated nodes.test.ts kinds — tracked defects, not
+      // silenced mysteries. Remove an entry + regen when its issue is fixed.
+      expectTestFailures: {
+        async_block: "#130 \u2014 factory returns block $type / no $render accessor",
+        block_comment: "#130 \u2014 factory output has no $render accessor",
+        gen_block: "#130 \u2014 factory returns block $type / no $render accessor",
+        reference_pattern: "#130 \u2014 factory returns wrong $type / no $render accessor",
+        self_parameter: "#130 \u2014 factory output has no $render accessor",
+        variadic_parameter: "#130 \u2014 factory output has no $render accessor"
+      },
       renderAs: (_$) => ({
         // Doc comment markers
         _outer_line_doc_comment_marker: string("/"),

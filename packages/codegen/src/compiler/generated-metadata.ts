@@ -114,23 +114,71 @@ export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefine
 		}));
 }
 
+/**
+ * Minimal structural shape shared by every catalog-entry type that the kind
+ * resolution chain operates on (`GeneratedKindEntry` here, `KindEnumEntry`
+ * in emitters/kind-discriminant.ts). PR-K1 (KindId-NodeRefs design,
+ * docs/superpowers/specs/2026-07-20-kindid-noderefs-design.md §2.2): there
+ * is exactly ONE resolution chain pair in the codebase — the two modules
+ * previously carried parallel chains whose step-3 scopes disagreed, and
+ * every divergence between them was a latent bug of the #129 class.
+ */
+export interface KindEntryLike {
+	readonly kind: string;
+	readonly symbolName?: string;
+	readonly anon?: boolean;
+}
+
+/**
+ * THE kind-name resolution chain — for callers holding a KIND / RULE NAME
+ * (never a bare literal token text; those go through
+ * {@link findEntryForLiteralText}).
+ *
+ * 1. Exact catalog key (the canonical case).
+ * 2. `_`-prefixed key — visible variant-child kinds emitted from hidden
+ *    alias sources (`closure_expression_expr` → `_closure_expression_expr`).
+ * 3. ANON-scoped symbolName — anonymous tokens whose display string differs
+ *    from their key (`anon_sym_PLUS` → key `plus`, symbolName `"+"`).
+ *    Anon-scoping is load-bearing: a general symbolName match at this
+ *    position caused the `_as_pattern` shadowing bug (hidden `_as_pattern`
+ *    symbolName `"as_pattern"` shadowing the real `as_pattern` entry).
+ * 4. Named symbolName — hidden NAMED compound tokens whose display string
+ *    is not a valid key spelling (`sym__is_not` → key `_is_not`, symbolName
+ *    `"is not"`). Ordered AFTER the anon step so an anon twin always wins
+ *    for texts both could match; reachable only when steps 1-3 all miss.
+ */
+export function findEntryForKindName<T extends KindEntryLike>(entries: readonly T[], name: string): T | undefined {
+	return (
+		entries.find((entry) => entry.kind === name) ??
+		entries.find((entry) => entry.kind === `_${name}`) ??
+		entries.find((entry) => entry.anon === true && entry.symbolName === name) ??
+		entries.find((entry) => entry.anon !== true && entry.symbolName === name) ??
+		undefined
+	);
+}
+
+/**
+ * THE literal-text resolution chain — for callers holding a LITERAL TOKEN
+ * TEXT (a `STRING` rule's value / enum member text). The anon-scoped
+ * symbolName match runs FIRST: the caller holds a literal, so the anonymous
+ * token is the correct identity even when a NAMED rule shares the spelling
+ * (#129: python's `'type'` keyword vs the `type` rule). Falls back to the
+ * full name chain for literals with no anon twin — named terminal keywords
+ * (rust `'crate'`/`'self'`) and hidden named compound tokens (`'is not'`).
+ */
+export function findEntryForLiteralText<T extends KindEntryLike>(entries: readonly T[], text: string): T | undefined {
+	return entries.find((entry) => entry.anon === true && entry.symbolName === text) ?? findEntryForKindName(entries, text);
+}
+
 export function findGeneratedKindEntry(
 	entries: readonly GeneratedKindEntry[],
 	kind: string
 ): GeneratedKindEntry | undefined {
-	return (
-		entries.find((entry) => entry.kind === kind) ??
-		entries.find((entry) => entry.kind === `_${kind}`) ??
-		// Match by parser display name (`symbolName`). This covers anonymous
-		// tokens whose display string differs from their lowercased key
-		// (`anon_sym_PLUS` → kind `plus`, symbolName `+`) AND hidden NAMED
-		// compound tokens (`sym__is_not` → kind `_is_not`, symbolName `is not`).
-		// `symbolName` is only populated when it differs from `kind`
-		// (collectGeneratedKindEntries), so this stays targeted at the literal
-		// display-string lookups and never shadows a plain named kind.
-		entries.find((entry) => entry.symbolName === kind) ??
-		undefined
-	);
+	// Delegates to the shared chain (PR-K1). Behavior delta vs the historical
+	// inline chain: the symbolName tail is now anon-first (steps 3/4 split) —
+	// previously one merged find() where entry ORDER decided anon-vs-named
+	// symbolName ties.
+	return findEntryForKindName(entries, kind);
 }
 
 function collectKindIds(language: TreeSitterLanguageMetadata): Map<string, number> {

@@ -21,13 +21,13 @@ import {
 	AssembledSupertype,
 	isNodeRef,
 	isTerminalValue,
-	isUnresolvedRef,
 	isRequired,
 	isMultiple,
 	isNonEmpty,
 	deriveSlotCardinality,
 	deriveChildrenCardinality,
-	allSlotsOf
+	allSlotsOf,
+	storageKindOfRef
 } from '../compiler/model/node-map.ts';
 
 /**
@@ -45,6 +45,26 @@ export function isSlotBearingCompound(
 	node: AssembledNode
 ): node is AssembledBranch | AssembledGroup | AssembledSeparatedList {
 	return node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList';
+}
+
+/**
+ * A separatedList's single-field-storage canonical slot — the `node.fields`
+ * entry whose storage key wrap.ts/render-module.ts's transport-struct
+ * emission actually use for the "whole element union" bucket (Bug B fix,
+ * wrap.ts's `emitSeparatedListWrap`). Prefers the `arity === 'many'` field
+ * (the real repeated-content slot) and falls back to the first field for
+ * kinds with no such slot.
+ *
+ * SHARED across wrap.ts, factories.ts, from.ts, and test.ts so all four
+ * emitters agree on the same canonical storage key a separatedList's
+ * elements are read from / written to on the wire — see wrap.ts's
+ * `emitSeparatedListWrap` doc comment ("Bug B fix") for the full rationale.
+ * Multi-field kinds (`node.fields.length > 1`) must NOT use this helper for
+ * storage — they route each field through `emitFieldStorageLines`/
+ * `emitFieldAccessorLines` instead (see callers).
+ */
+export function canonicalSeparatedListField(node: AssembledSeparatedList): AssembledNonterminal {
+	return node.fields.find((f) => f.arity === 'many') ?? node.fields[0]!;
 }
 import type { KindEnumEntry } from './kind-discriminant.ts';
 import { hasCatalogEntry } from './kind-discriminant.ts';
@@ -84,7 +104,7 @@ export function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 		for (const slot of allSlotsOf(n)) {
 			for (const v of slot.values) {
 				if (!isNodeRef(v)) continue;
-				const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+				const name = storageKindOfRef(v.node);
 				if (name.startsWith('_')) out.add(name);
 			}
 		}
@@ -139,7 +159,7 @@ export function slotKindNames(slot: { values: readonly NodeOrTerminal[] }): stri
 	const out: string[] = [];
 	for (const v of slot.values) {
 		if (!isNodeRef(v)) continue;
-		const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+		const name = storageKindOfRef(v.node);
 		out.push(name);
 	}
 	return out;
@@ -222,7 +242,7 @@ export function resolveEffectiveLiteral(field: AssembledNonterminal, nodeMap: No
 	//   - AssembledKeyword (literal keyword rule)
 	//   - AssembledToken with a single string body
 	if (isNodeRef(v)) {
-		const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+		const kindName = storageKindOfRef(v.node);
 		if (kindName.startsWith('_')) {
 			const ref = nodeMap.nodes.get(kindName);
 			if (ref instanceof AssembledKeyword) return ref.text;
@@ -363,7 +383,7 @@ export function stampExpressionFor(
 	// NodeData-returning factory-call expression for both contexts;
 	// only terminals differentiate.
 	if (isNodeRef(v)) {
-		const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+		const kindName = storageKindOfRef(v.node);
 		const ref = nodeMap.nodes.get(kindName);
 		if (ref?.parameterless) {
 			return context === 'child' ? ref.stampChildExpression : ref.stampExpression;
@@ -405,7 +425,10 @@ export function stampExpressionFor(
  */
 export type TypeComponent =
 	| { kind: 'nodeKind'; value: string; rawKind: string }
-	| { kind: 'literal'; value: string }
+	// `resolvedKindId` is the PR-K2 mint stamp carried off the terminal
+	// value (PR-K3a) — absent for hidden-keyword pre-inlined literals,
+	// whose ref ids describe the HIDDEN kind, not the literal's anon token.
+	| { kind: 'literal'; value: string; resolvedKindId?: number }
 	| { kind: 'missing'; value: string; rawKind: string };
 
 /**
@@ -429,11 +452,11 @@ export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMa
 	const out: TypeComponent[] = [];
 	for (const v of field.values) {
 		if (isTerminalValue(v)) {
-			out.push({ kind: 'literal', value: v.value });
+			out.push({ kind: 'literal', value: v.value, resolvedKindId: v.resolvedKindId });
 			continue;
 		}
 		if (!isNodeRef(v)) continue;
-		const t = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+		const t = storageKindOfRef(v.node);
 		const lit = resolveHiddenKeywordLiteral(t, nodeMap);
 		if (lit !== undefined) {
 			out.push({ kind: 'literal', value: lit });
@@ -498,7 +521,7 @@ export function childTypeComponents(child: AssembledNonterminal, nodeMap: NodeMa
 function resolveEntryLiteral(entry: NodeOrTerminal, nodeMap: NodeMap): string | undefined {
 	if (isTerminalValue(entry)) return entry.value;
 	if (!isNodeRef(entry)) return undefined;
-	const kindName = isUnresolvedRef(entry.node) ? entry.node.name : entry.node.kind;
+	const kindName = storageKindOfRef(entry.node);
 	// Hidden `_kw_*` / hidden single-string token — uses the existing helper.
 	const lit = resolveHiddenKeywordLiteral(kindName, nodeMap);
 	if (lit !== undefined) return lit;
@@ -636,7 +659,7 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 	const seenTexts = new Set<string>();
 	for (const value of field.values) {
 		if (isNodeRef(value)) {
-			const resolvedKind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
+			const resolvedKind = storageKindOfRef(value.node);
 			const node = nodeMap.nodes.get(resolvedKind);
 			if (node instanceof AssembledEnum) {
 				if (node.values.length <= 1 || node.resolvedKinds.length === 0) {
