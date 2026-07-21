@@ -73,7 +73,7 @@ import { isSeq, isField, literalTextOf, isEnumChoiceRule, isLinkSymbol } from '.
 import { isStringType } from '../../types/runtime-shapes.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
-import { findEntryForLiteralText } from '../generated-metadata.ts';
+import { findEntryForKindName, findEntryForLiteralText } from '../generated-metadata.ts';
 import { tokenToName } from '../normalize.ts';
 import { collectSlots } from '../collect-slots.ts';
 import { assertNever } from '../../polymorph-variant.ts';
@@ -359,6 +359,13 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	// Node-reference target. Present for true references; absent for inline
 	// literals (which carry `value` instead). Mutually exclusive with `value`.
 	readonly node?: T | UnresolvedRef;
+	// Parser kind id of the storage/render kind (`node`'s name), stamped at
+	// mint through the shared name chain (KindId-NodeRefs design §2.1/PR-K2).
+	// Absent for id-less targets by design: enrich-synthesized markers,
+	// IR-only enum kinds, tree-sitter-erased hidden supertypes. Ids are
+	// stamped FACTS, never identity — node identity stays the name, and
+	// serialization (node-model.json5) never carries ids.
+	readonly storageKindId?: number;
 	// Inline string literal text (e.g. `'const'`, `'pub'`, an enum member /
 	// pattern-matched anonymous token). Mutually exclusive with `node`.
 	readonly value?: string;
@@ -367,11 +374,19 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	// literals (regex patterns / residual). Carried for transport/typing;
 	// render still emits from `value`.
 	readonly resolvedKind?: string;
+	// Parser kind id alongside `resolvedKind`, resolved through the LITERAL
+	// (anon-scoped) chain at mint — the anon token wins over a same-spelled
+	// NAMED rule (#129 class). Same stamped-fact semantics as
+	// `storageKindId`.
+	readonly resolvedKindId?: number;
 	// Parse-as kind ref (§7.3 / §4g, PR-A front-load): the CST kind this value
 	// surfaces under — the alias TARGET when aliased (`rule.name`), else the
 	// own kind. Differs from `node` (render/source = `aliasedFrom ?? rule.name`)
 	// only for aliased/variant values. `storageName`/`parseNames` project this.
 	readonly parseKind?: UnresolvedRef;
+	// Parser kind id of the wire `$type` (`parseKind`'s name). Same stamped-
+	// fact semantics as `storageKindId`.
+	readonly parseKindId?: number;
 	readonly multiplicity: Multiplicity;
 	readonly separator?: string;
 	readonly trailing?: boolean;
@@ -1265,11 +1280,19 @@ export function deriveValuesForRule(
 			// only writer — so `literal !== undefined` alone is the exact same
 			// condition, structurally, not an inference.
 			if (rule.literal !== undefined) {
+				// The value is the literal text, so its id resolves through the
+				// LITERAL chain (anon token wins a same-spelled NAMED rule);
+				// `resolvedKind`/`parseKind` keep the link-minted alias-target
+				// NAME (`rule.name`) as before — ids are stamped facts, not a
+				// re-derivation of the name (KindId-NodeRefs §2.1).
+				const entry = findEntryForLiteralText(ctx?.kindEntries ?? [], rule.literal);
 				return [
 					{
 						value: rule.literal,
 						resolvedKind: rule.name,
+						resolvedKindId: entry?.id,
 						parseKind: { kind: 'unresolved-ref', name: rule.name },
+						parseKindId: entry?.id,
 						multiplicity
 					}
 				];
@@ -1278,13 +1301,18 @@ export function deriveValuesForRule(
 			// symbol came from an alias). Only source kinds exist in
 			// rules post-synthesis-removal.
 			const refName = rule.aliasedFrom ?? rule.name;
+			const storageEntry = findEntryForKindName(ctx?.kindEntries ?? [], refName);
+			const parseEntry =
+				refName === rule.name ? storageEntry : findEntryForKindName(ctx?.kindEntries ?? [], rule.name);
 			return [
 				{
 					node: { kind: 'unresolved-ref', name: refName },
+					storageKindId: storageEntry?.id,
 					// parse-as kind = the alias TARGET (`rule.name`); `node` is the
 					// render/source (`refName`). For `_suite`: node=_simple_statements,
 					// parseKind=block (the CST kind). §7.3 / §4g.
 					parseKind: { kind: 'unresolved-ref', name: rule.name },
+					parseKindId: parseEntry?.id,
 					multiplicity: relaxForOptionalBody(refName, multiplicity)
 				}
 			];
@@ -1292,11 +1320,16 @@ export function deriveValuesForRule(
 		case SUPERTYPE:
 			// Supertype refs expand to their subtype list — each subtype is a
 			// valid concrete kind the slot can hold.
-			return rule.subtypes.map((name) => ({
-				node: { kind: 'unresolved-ref' as const, name },
-				parseKind: { kind: 'unresolved-ref' as const, name },
-				multiplicity: relaxForOptionalBody(name, multiplicity)
-			}));
+			return rule.subtypes.map((name) => {
+				const id = findEntryForKindName(ctx?.kindEntries ?? [], name)?.id;
+				return {
+					node: { kind: 'unresolved-ref' as const, name },
+					storageKindId: id,
+					parseKind: { kind: 'unresolved-ref' as const, name },
+					parseKindId: id,
+					multiplicity: relaxForOptionalBody(name, multiplicity)
+				};
+			});
 		case STRING:
 		// A `pattern` is a NONTERMINAL slot (classifyByType), but its VALUE is the
 		// anonymous-token text it matches — a terminal value, like a `string` or an
@@ -1304,12 +1337,15 @@ export function deriveValuesForRule(
 		// pattern slot had no values and was elided (e.g. token_repetition's
 		// separator pattern never became a slot).
 		case PATTERN: {
-			const rk = findEntryForLiteralText(ctx?.kindEntries ?? [], rule.value)?.kind;
+			const entry = findEntryForLiteralText(ctx?.kindEntries ?? [], rule.value);
+			const rk = entry?.kind;
 			return [
 				{
 					value: rule.value,
 					resolvedKind: rk,
+					resolvedKindId: entry?.id,
 					parseKind: rk !== undefined ? { kind: 'unresolved-ref', name: rk } : undefined,
+					parseKindId: entry?.id,
 					multiplicity
 				}
 			];
@@ -1320,11 +1356,14 @@ export function deriveValuesForRule(
 			if (isEnumChoiceRule(rule)) {
 				return rule.members.map((m) => {
 					const text = literalTextOf(m) ?? '';
-					const rk = text ? findEntryForLiteralText(ctx?.kindEntries ?? [], text)?.kind : undefined;
+					const entry = text ? findEntryForLiteralText(ctx?.kindEntries ?? [], text) : undefined;
+					const rk = entry?.kind;
 					return {
 						value: text,
 						resolvedKind: rk,
+						resolvedKindId: entry?.id,
 						parseKind: rk !== undefined ? { kind: 'unresolved-ref' as const, name: rk } : undefined,
+						parseKindId: entry?.id,
 						multiplicity
 					};
 				});
