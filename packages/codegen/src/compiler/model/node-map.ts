@@ -73,7 +73,7 @@ import { isSeq, isField, literalTextOf, isEnumChoiceRule, isLinkSymbol } from '.
 import { isStringType } from '../../types/runtime-shapes.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
-import { findGeneratedKindEntry } from '../generated-metadata.ts';
+import { findEntryForLiteralText } from '../generated-metadata.ts';
 import { tokenToName } from '../normalize.ts';
 import { collectSlots } from '../collect-slots.ts';
 import { assertNever } from '../../polymorph-variant.ts';
@@ -1304,7 +1304,7 @@ export function deriveValuesForRule(
 		// pattern slot had no values and was elided (e.g. token_repetition's
 		// separator pattern never became a slot).
 		case PATTERN: {
-			const rk = findGeneratedKindEntry(ctx?.kindEntries ?? [], rule.value)?.kind;
+			const rk = findEntryForLiteralText(ctx?.kindEntries ?? [], rule.value)?.kind;
 			return [
 				{
 					value: rule.value,
@@ -1320,7 +1320,7 @@ export function deriveValuesForRule(
 			if (isEnumChoiceRule(rule)) {
 				return rule.members.map((m) => {
 					const text = literalTextOf(m) ?? '';
-					const rk = text ? findGeneratedKindEntry(ctx?.kindEntries ?? [], text)?.kind : undefined;
+					const rk = text ? findEntryForLiteralText(ctx?.kindEntries ?? [], text)?.kind : undefined;
 					return {
 						value: text,
 						resolvedKind: rk,
@@ -2735,7 +2735,7 @@ export class AssembledKeyword extends AssembledLeaf<StringRule<'link'>> {
 		}
 	) {
 		super(kind, rule, opts);
-		this.resolvedKind = findGeneratedKindEntry(opts?.kindEntries ?? [], rule.value)?.kind;
+		this.resolvedKind = findEntryForLiteralText(opts?.kindEntries ?? [], rule.value)?.kind;
 	}
 
 	/** The literal text this keyword produces (read from the StringRule<'link'>). */
@@ -2778,7 +2778,7 @@ export class AssembledToken extends AssembledLeaf<StringRule<'link'> | TokenRule
 	) {
 		super(kind, rule, { hidden: true });
 		this.resolvedKind =
-			rule.type === STRING ? findGeneratedKindEntry(opts?.kindEntries ?? [], rule.value)?.kind : undefined;
+			rule.type === STRING ? findEntryForLiteralText(opts?.kindEntries ?? [], rule.value)?.kind : undefined;
 	}
 	// No emitFactory — tokens are always hidden, no factoryName.
 
@@ -2878,7 +2878,7 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule<'link'>> {
 		this.resolvedKinds = rule.members
 			.map((member) => {
 				const text = literalTextOf(member);
-				return text !== undefined ? findGeneratedKindEntry(opts?.kindEntries ?? [], text)?.kind : undefined;
+				return text !== undefined ? findEntryForLiteralText(opts?.kindEntries ?? [], text)?.kind : undefined;
 			})
 			.filter((member): member is string => member !== undefined);
 		if (this.values.length < 2) {

@@ -3051,7 +3051,7 @@ export interface TypeAliasStatement {
 	readonly _left: Type;
 	readonly _right: Type;
 	readonly __inputHints__?: {
-		readonly type: AutoStamp<KindEnum<'type', TSKindId.Type | TSKindId.AnonType>>;
+		readonly type: AutoStamp<KindEnum<'type', TSKindId.AnonType>>;
 	};
 	type(): AutoStamp<number>;
 	left(): Type;

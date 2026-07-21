@@ -10503,7 +10503,7 @@
               "kind": "terminal",
               "multiplicity": "single",
               "value": "type",
-              "parseKind": "type"
+              "parseKind": "anon_type"
             }
           ],
           "projection": {

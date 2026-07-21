@@ -4282,7 +4282,7 @@ export interface ExportSpecifier {
 	readonly _name: ModuleExportName;
 	readonly _alias?: ModuleExportName;
 	readonly __inputHints__?: {
-		readonly export_kind?: KindEnum<'type' | 'typeof', TSKindId.Type | TSKindId.Typeof | TSKindId.AnonType>;
+		readonly export_kind?: KindEnum<'type' | 'typeof', TSKindId.AnonType | TSKindId.Typeof>;
 	};
 	exportKind(): number | undefined;
 	name(): ModuleExportName;
@@ -4552,7 +4552,7 @@ export interface ImportSpecifier {
 	readonly _import_kind?: number;
 	readonly _content: ImportIdentifier | ImportSpecifierAs;
 	readonly __inputHints__?: {
-		readonly import_kind?: KindEnum<'type' | 'typeof', TSKindId.Type | TSKindId.Typeof | TSKindId.AnonType>;
+		readonly import_kind?: KindEnum<'type' | 'typeof', TSKindId.AnonType | TSKindId.Typeof>;
 	};
 	importKind(): number | undefined;
 	content(): ImportIdentifier | ImportSpecifierAs;

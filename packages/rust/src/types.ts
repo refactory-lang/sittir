@@ -4834,12 +4834,12 @@ export interface TokenBindingPattern {
 			| 'tt'
 			| 'ty'
 			| 'vis',
-			| TSKindId.Block
+			| TSKindId.AnonBlock
 			| TSKindId.Expr
 			| TSKindId.Expr2021
 			| TSKindId.Ident
 			| TSKindId.Item
-			| TSKindId.Lifetime
+			| TSKindId.AnonLifetime
 			| TSKindId.Literal
 			| TSKindId.Meta
 			| TSKindId.Pat
@@ -4849,8 +4849,6 @@ export interface TokenBindingPattern {
 			| TSKindId.Tt
 			| TSKindId.Ty
 			| TSKindId.Vis
-			| TSKindId.AnonBlock
-			| TSKindId.AnonLifetime
 		>;
 	};
 	name(): Metavariable;

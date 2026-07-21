@@ -6724,7 +6724,7 @@ export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHan
 			$type: TSKindId.TypeAliasStatement as const,
 			_type: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._type ?? readTerminalFromOther(data, [TSKindId.Type]),
+					data._type ?? readTerminalFromOther(data, [TSKindId.AnonType]),
 					'type',
 					true,
 					data.$type,
