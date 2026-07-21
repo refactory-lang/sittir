@@ -425,7 +425,10 @@ export function stampExpressionFor(
  */
 export type TypeComponent =
 	| { kind: 'nodeKind'; value: string; rawKind: string }
-	| { kind: 'literal'; value: string }
+	// `resolvedKindId` is the PR-K2 mint stamp carried off the terminal
+	// value (PR-K3a) — absent for hidden-keyword pre-inlined literals,
+	// whose ref ids describe the HIDDEN kind, not the literal's anon token.
+	| { kind: 'literal'; value: string; resolvedKindId?: number }
 	| { kind: 'missing'; value: string; rawKind: string };
 
 /**
@@ -449,7 +452,7 @@ export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMa
 	const out: TypeComponent[] = [];
 	for (const v of field.values) {
 		if (isTerminalValue(v)) {
-			out.push({ kind: 'literal', value: v.value });
+			out.push({ kind: 'literal', value: v.value, resolvedKindId: v.resolvedKindId });
 			continue;
 		}
 		if (!isNodeRef(v)) continue;

@@ -33,6 +33,7 @@ import {
 	isMultiple,
 	isRequired,
 	isNodeRef,
+	isTerminalValue,
 	isUnresolvedRef,
 	kindsOf,
 	structuralFieldsOf,
@@ -2744,11 +2745,15 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 		const slotKinds = kindsOf(field);
 		const literalSet = new Set<string>();
 		const literals: TransportLiteral[] = [];
-		for (const text of slotLiteralValues(field)) {
+		// Iterate the terminal values directly (not slotLiteralValues) so the
+		// mint-time resolvedKindId stamp rides along (PR-K3a).
+		for (const v of field.values) {
+			if (!isTerminalValue(v)) continue;
+			const text = v.value;
 			const key = `${text}\0${text}`;
 			if (literalSet.has(key)) continue;
 			literalSet.add(key);
-			literals.push({ kind: text, text });
+			literals.push({ kind: text, text, resolvedKindId: v.resolvedKindId });
 		}
 		// Mixed-content override: a slot with named kinds AND anonymous literal
 		// content is heterogeneous regardless of classifier.
@@ -2874,16 +2879,15 @@ function emitPerSlotChildEnum(
 			}
 		}
 		for (const literal of entry.literals) {
-			// Literal-first resolution (#129): literal.kind carries the literal
-			// TEXT here (see the `consider` collection above), so the map's
-			// catalog-kind-first keying can shadow it with a same-spelled
-			// NAMED rule. Resolve through the anon-scoped lookup when the
-			// catalog is available; the map stays only as the no-catalog
-			// fallback.
+			// PR-K3a: the mint stamp (resolvedKindId, minted through the same
+			// literal-first chain — #129) is authoritative when present. The
+			// emit-time chain remains only for stamp-less literals (kind-
+			// derived keyword/token texts) and the no-catalog fallback.
 			const id =
-				kindEntries !== undefined
+				literal.resolvedKindId ??
+				(kindEntries !== undefined
 					? (findKindEntryForLiteral(kindEntries, literal.text) ?? findKindEntry(kindEntries, literal.kind))?.id
-					: kindIdByKind.get(literal.kind);
+					: kindIdByKind.get(literal.kind));
 			const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 			if (id === undefined || variant === undefined || emittedIds.has(id)) continue;
 			emittedIds.add(id);
@@ -3104,7 +3108,11 @@ function renderAnyTransportWithNapiFromValue(
 	// the anon-scoped lookup, falling back to the catalog-key form for
 	// literals keyed by parser-symbol name.
 	for (const [index, literal] of literals.entries()) {
-		const id = (findKindEntryForLiteral(kindEntries, literal.text) ?? findKindEntry(kindEntries, literal.kind))?.id;
+		// PR-K3a: mint stamp first; emit-time chain only for stamp-less
+		// (kind-derived) literals.
+		const id =
+			literal.resolvedKindId ??
+			(findKindEntryForLiteral(kindEntries, literal.text) ?? findKindEntry(kindEntries, literal.kind))?.id;
 		if (id === undefined) continue;
 		if (emittedNodeIds.has(id)) continue; // T016: skip duplicate KindId
 		emittedNodeIds.add(id);
@@ -4381,9 +4389,11 @@ function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: rea
 			// inputs; see transport_value_type).
 			const kindIdMatchArms = (indent: string): void => {
 				for (const v of values) {
-					// `values` are LITERAL member texts — anon-scoped lookup
-					// first so a same-spelled named rule can't shadow (#129).
-					const entry = findKindEntryForLiteral(kindEntries, v);
+					// `values` are LITERAL member texts — read the node's
+					// construction-time literal-chain resolution (PR-K3a;
+					// anon-scoped first so a same-spelled named rule can't
+					// shadow, #129).
+					const entry = node.resolvedByText.get(v);
 					const variant = literalToVariantName(v);
 					if (entry !== undefined) {
 						lines.push(`${indent}${entry.id} => return Ok(Self::${variant}), // ${JSON.stringify(v)}`);

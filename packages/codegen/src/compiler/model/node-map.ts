@@ -2901,6 +2901,16 @@ export class AssembledToken extends AssembledLeaf<StringRule<'link'> | TokenRule
 export class AssembledEnum extends AssembledLeaf<ChoiceRule<'link'>> {
 	readonly modelType = 'enum' as const;
 	readonly resolvedKinds: readonly string[];
+	/**
+	 * Per-member-TEXT catalog resolution, derived ONCE at construction
+	 * through the literal chain (PR-K3a). Key = member text; value = the
+	 * resolved catalog kind + parser id. First-wins on duplicate texts
+	 * (mirrors the `values` getter's Set dedupe). Emitters read this
+	 * instead of re-running `findKindEntryForLiteral` per site — the same
+	 * stamped-fact discipline as `NodeRef.resolvedKindId` (spec §2.3),
+	 * carried node-level because enum members are not NodeRefs.
+	 */
+	readonly resolvedByText: ReadonlyMap<string, { readonly kind: string; readonly id: number }>;
 
 	constructor(
 		kind: string,
@@ -2913,13 +2923,21 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule<'link'>> {
 	) {
 		super(kind, rule, opts);
 		// PR-P: members are StringRule<'link'> (pre-link) or LINK-SYMBOL (post-link);
-		// use literalTextOf for both forms.
-		this.resolvedKinds = rule.members
-			.map((member) => {
-				const text = literalTextOf(member);
-				return text !== undefined ? findEntryForLiteralText(opts?.kindEntries ?? [], text)?.kind : undefined;
-			})
-			.filter((member): member is string => member !== undefined);
+		// use literalTextOf for both forms. ONE literal-chain pass feeds both
+		// the legacy resolvedKinds list (duplicates preserved) and the
+		// per-text map.
+		const resolved: string[] = [];
+		const byText = new Map<string, { kind: string; id: number }>();
+		for (const member of rule.members) {
+			const text = literalTextOf(member);
+			if (text === undefined) continue;
+			const entry = findEntryForLiteralText(opts?.kindEntries ?? [], text);
+			if (entry === undefined) continue;
+			resolved.push(entry.kind);
+			if (!byText.has(text)) byText.set(text, { kind: entry.kind, id: entry.id });
+		}
+		this.resolvedKinds = resolved;
+		this.resolvedByText = byText;
 		if (this.values.length < 2) {
 			throw new Error(
 				`AssembledEnum '${kind}' must have at least two members; normalize single-literal sets upstream to StringRule<'link'>`

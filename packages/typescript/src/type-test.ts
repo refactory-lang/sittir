@@ -815,7 +815,7 @@ export type _Type_AugmentedAssignmentExpressionOperator = _TypeAssert<
 	>
 >;
 export type _Type_ExportSpecifierExportKind = _TypeAssert<
-	_TypeExtends<ExportSpecifierExportKind['$type'], TSKindId.Type | TSKindId.Typeof>
+	_TypeExtends<ExportSpecifierExportKind['$type'], TSKindId.AnonType | TSKindId.Typeof>
 >;
 export type _Type_ImportAttributeObject = _TypeAssert<
 	_TypeExtends<ImportAttributeObject['$type'], TSKindId.With | TSKindId.Assert>
@@ -863,15 +863,15 @@ export type _Type_PredefinedType = _TypeAssert<
 	_TypeExtends<
 		PredefinedType['$type'],
 		| TSKindId.Any
-		| TSKindId.Number
+		| TSKindId.AnonNumber
 		| TSKindId.Boolean
-		| TSKindId.String
+		| TSKindId.AnonString
 		| TSKindId.Symbol
 		| TSKindId.Unique
 		| TSKindId.Void
 		| TSKindId.Unknown
 		| TSKindId.Never
-		| TSKindId.Object
+		| TSKindId.AnonObject
 	>
 >;
 export type _Type_PrivatePropertyIdentifier = _TypeAssert<

@@ -236,6 +236,19 @@ export function kindDiscriminantExpr(kind: string, nodeMap: NodeMap, kindEntries
  * discrimination (STRING vs SYMBOL) decides which of the two functions a
  * call site uses; this must never be called with a rule name.
  */
+/**
+ * {@link kindDiscriminantExpr} for call sites holding a mint-time PARSER ID
+ * stamp (`NodeRef.resolvedKindId`, PR-K3a). The id is the collision-free
+ * identity — a link-minted `resolvedKind` NAME can collide with a rule name
+ * (`'type'` the keyword vs `type` the rule), but the stamped id cannot
+ * (0 intra-catalog id collisions, all grammars). Returns undefined when the
+ * id has no catalog row (emitter catalog narrower than the mint's).
+ */
+export function kindDiscriminantExprForId(id: number, kindEntries: readonly KindEnumEntry[]): string | undefined {
+	const entry = kindEntries.find((e) => e.id === id);
+	return entry === undefined ? undefined : `TSKindId.${entry.member}`;
+}
+
 export function kindDiscriminantExprForLiteral(
 	literalText: string,
 	kindEntries: readonly KindEnumEntry[]

@@ -5529,7 +5529,7 @@ export type AugmentedAssignmentExpressionOperator = Terminal<
 	| TSKindId.QmarkQmarkEq,
 	'+=' | '-=' | '*=' | '/=' | '%=' | '^=' | '&=' | '|=' | '>>=' | '>>>=' | '<<=' | '**=' | '&&=' | '||=' | '??='
 >;
-export type ExportSpecifierExportKind = Terminal<TSKindId.Type | TSKindId.Typeof, 'type' | 'typeof'>;
+export type ExportSpecifierExportKind = Terminal<TSKindId.AnonType | TSKindId.Typeof, 'type' | 'typeof'>;
 export type ImportAttributeObject = Terminal<TSKindId.With | TSKindId.Assert, 'with' | 'assert'>;
 export type Kind = Terminal<TSKindId.Let | TSKindId.Const, 'let' | 'const'>;
 export type ObjectTypeClosing = Terminal<TSKindId.Rbrace | TSKindId.PipeRbrace, '}' | '|}'>;
@@ -5561,15 +5561,15 @@ export type Number = Terminal<TSKindId.Number, string>;
 export type OverrideModifier = Terminal<TSKindId.OverrideModifier, 'override'>;
 export type PredefinedType = Terminal<
 	| TSKindId.Any
-	| TSKindId.Number
+	| TSKindId.AnonNumber
 	| TSKindId.Boolean
-	| TSKindId.String
+	| TSKindId.AnonString
 	| TSKindId.Symbol
 	| TSKindId.Unique
 	| TSKindId.Void
 	| TSKindId.Unknown
 	| TSKindId.Never
-	| TSKindId.Object,
+	| TSKindId.AnonObject,
 	'any' | 'number' | 'boolean' | 'string' | 'symbol' | 'unique symbol' | 'void' | 'unknown' | 'never' | 'object'
 >;
 export type PrivatePropertyIdentifier = Terminal<TSKindId.PrivatePropertyIdentifier, string>;

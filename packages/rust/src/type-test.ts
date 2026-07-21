@@ -825,12 +825,12 @@ export type _Type_ReservedIdentifier = _TypeAssert<
 export type _Type_TokenBindingPatternType = _TypeAssert<
 	_TypeExtends<
 		TokenBindingPatternType['$type'],
-		| TSKindId.Block
+		| TSKindId.AnonBlock
 		| TSKindId.Expr
 		| TSKindId.Expr2021
 		| TSKindId.Ident
 		| TSKindId.Item
-		| TSKindId.Lifetime
+		| TSKindId.AnonLifetime
 		| TSKindId.Literal
 		| TSKindId.Meta
 		| TSKindId.Pat
@@ -902,12 +902,12 @@ export type _Type_EscapeSequence = _TypeAssert<_TypeExtends<EscapeSequence['$typ
 export type _Type_FragmentSpecifier = _TypeAssert<
 	_TypeExtends<
 		FragmentSpecifier['$type'],
-		| TSKindId.Block
+		| TSKindId.AnonBlock
 		| TSKindId.Expr
 		| TSKindId.Expr2021
 		| TSKindId.Ident
 		| TSKindId.Item
-		| TSKindId.Lifetime
+		| TSKindId.AnonLifetime
 		| TSKindId.Literal
 		| TSKindId.Meta
 		| TSKindId.Pat

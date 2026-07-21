@@ -7,6 +7,11 @@ import { fieldTypeComponents, resolveHiddenKeywordLiteral } from './shared.ts';
 export interface TransportLiteral {
 	readonly kind: string;
 	readonly text: string;
+	// PR-K3a: the mint-time literal-chain id (NodeRef.resolvedKindId)
+	// carried through from the terminal value. Absent for kind-derived
+	// literals (keyword/token model nodes) and hidden-keyword inlines —
+	// those fall back to emit-time chain resolution.
+	readonly resolvedKindId?: number;
 }
 
 export interface TransportProjection {
@@ -94,7 +99,12 @@ function fieldTransportLiterals(
 ): Array<{ literal: TransportLiteral; fromKind: boolean }> {
 	return fieldTypeComponents(field, nodeMap).flatMap((component): Array<{ literal: TransportLiteral; fromKind: boolean }> => {
 		if (component.kind === 'literal') {
-			return [{ literal: { kind: component.value, text: component.value }, fromKind: false }];
+			return [
+				{
+					literal: { kind: component.value, text: component.value, resolvedKindId: component.resolvedKindId },
+					fromKind: false
+				}
+			];
 		}
 		const literal = terminalTransportLiteralForKind(component.rawKind, nodeMap);
 		return literal === undefined ? [] : [{ literal, fromKind: true }];

@@ -106,7 +106,14 @@ information, not noise.
 
 ## Status
 
-- [ ] K3a — value-in-hand literal re-resolutions
+- [x] K3a — value-in-hand literal re-resolutions (4 found fixes: rust
+      `Block`/`Lifetime`→`AnonBlock`/`AnonLifetime`, ts `Type`/`Number`/
+      `String`/`Object`→`Anon*` in types/type-test enum discriminants — the
+      old `enumMemberDiscriminant` NAME-chained member texts. Triage also
+      caught one self-inflicted regression before commit: resolving terminal
+      values via the `resolvedKind` NAME flipped import_statement's `'type'`
+      to the named rule's id — names collide, ids don't; hence
+      `kindDiscriminantExprForId`.)
 - [ ] K3b — buildKindIdByKind consumer shrink
 - [ ] K3c — acceptedTransportKinds dual-id supply
 - [ ] K3d — kindIdFromName baking

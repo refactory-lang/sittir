@@ -13,6 +13,7 @@ import {
 	collectKindEntries,
 	collectCatalogKinds,
 	kindDiscriminantExpr,
+	kindDiscriminantExprForId,
 	kindDiscriminantExprForLiteral,
 	findKindEntryForLiteral,
 	hasCatalogEntry,
@@ -635,18 +636,37 @@ export function kindEnumTextMapExpr(
 			const resolved = nodeMap.nodes.get(kind);
 			if (!resolved || resolved.modelType !== 'enum') continue;
 			for (const text of resolved.values) {
+				// PR-K3a: the enum node's construction-time literal-chain
+				// record is authoritative; its resolved KIND is an exact
+				// catalog key, so kindDiscriminantExpr maps it straight to
+				// the TSKindId member. The old chain remains only for
+				// catalog-less construction (fixtures).
+				const rec = resolved.resolvedByText.get(text);
 				const discriminant =
-					findKindEntryForLiteral(kindEntries, text) !== undefined
-						? kindDiscriminantExprForLiteral(text, kindEntries)
-						: hasCatalogEntry(kindEntries, resolved.kind)
-							? kindDiscriminantExpr(resolved.kind, nodeMap, kindEntries)
-							: `kindIdFromName(${JSON.stringify(resolved.kind)})`;
+					rec !== undefined
+						? kindDiscriminantExpr(rec.kind, nodeMap, kindEntries)
+						: findKindEntryForLiteral(kindEntries, text) !== undefined
+							? kindDiscriminantExprForLiteral(text, kindEntries)
+							: hasCatalogEntry(kindEntries, resolved.kind)
+								? kindDiscriminantExpr(resolved.kind, nodeMap, kindEntries)
+								: `kindIdFromName(${JSON.stringify(resolved.kind)})`;
 				byText.push([text, discriminant]);
 			}
 			continue;
 		}
-		if (!isTerminalValue(value) || findKindEntryForLiteral(kindEntries, value.value) === undefined) continue;
-		byText.push([value.value, kindDiscriminantExprForLiteral(value.value, kindEntries)]);
+		if (!isTerminalValue(value)) continue;
+		// PR-K3a: the mint ID stamp (resolvedKindId, minted through the
+		// literal chain) is authoritative when present — the resolvedKind
+		// NAME is not a resolution key (a link-minted name can collide with
+		// a rule name; the id cannot). Chain fallback for stamp-less values
+		// (fixtures); genuinely kindless literals skip.
+		const discriminant =
+			(value.resolvedKindId !== undefined ? kindDiscriminantExprForId(value.resolvedKindId, kindEntries) : undefined) ??
+			(findKindEntryForLiteral(kindEntries, value.value) !== undefined
+				? kindDiscriminantExprForLiteral(value.value, kindEntries)
+				: undefined);
+		if (discriminant === undefined) continue;
+		byText.push([value.value, discriminant]);
 	}
 	return `[${byText.map(([text, discriminant]) => `[${JSON.stringify(text)}, ${discriminant}] as const`).join(', ')}]`;
 }
