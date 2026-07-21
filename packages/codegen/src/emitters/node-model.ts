@@ -39,7 +39,8 @@ import {
 	isMultiple,
 	isNonEmpty,
 	kindsOf,
-	valueParseKindsOf
+	valueParseKindsOf,
+	storageKindOfRef
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
@@ -393,7 +394,7 @@ function serializeField(field: AssembledNonterminal): SerializedField {
 
 function serializeValue(v: NodeOrTerminal): SerializedValue {
 	if (isNodeRef(v)) {
-		const name = isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : v.node.kind;
+		const name = storageKindOfRef(v.node);
 		const out: SerializedValue = {
 			kind: 'node-ref',
 			multiplicity: v.multiplicity,

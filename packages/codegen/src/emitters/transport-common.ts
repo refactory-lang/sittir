@@ -5,7 +5,7 @@ import type {
 	AssembledSupertype,
 	UnresolvedRef
 } from '../compiler/model/node-map.ts';
-import { isNodeRef, isUnresolvedRef } from '../compiler/model/node-map.ts';
+import { isNodeRef, storageKindOfRef } from '../compiler/model/node-map.ts';
 
 /**
  * Classification of a transport slot by its type width.
@@ -186,7 +186,7 @@ export function deriveChildrenKinds(
 	const kinds = new Set<string>();
 	for (const v of child.values) {
 		if (!isNodeRef(v)) continue;
-		const kind = isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : (v.node as AssembledNode).kind;
+		const kind = storageKindOfRef(v.node);
 		for (const expanded of expandWrapRuntimeKinds(kind, nodeMap, seen)) kinds.add(expanded);
 	}
 	return [...kinds];

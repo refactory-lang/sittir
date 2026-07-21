@@ -60,6 +60,7 @@ import {
 	hasAnyChild,
 	nameNode,
 	isNodeRef,
+	storageKindOfRef,
 	isUnresolvedRef,
 	allSlotsOf,
 	resetParseKindCollisionDiagnostics,
@@ -450,7 +451,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			for (const slot of allSlotsOf(n)) {
 				for (const v of slot.values) {
 					if (!isNodeRef(v)) continue;
-					const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+					const name = storageKindOfRef(v.node);
 					if (name.startsWith('_')) aliasSourceKinds.add(name);
 				}
 			}
@@ -1089,7 +1090,7 @@ function resolveHiddenRuleContent(rule: RenderRule, seen: Set<string>, ctx: Asse
  * BEFORE the in-memory consumers (factories, types, render, etc.) read
  * slot graphs. Once hydrated, `slot.values[*].node` carries the full
  * `AssembledNode` reference — the consumer-side
- * `isUnresolvedRef(v.node) ? v.node.name : v.node.kind` ternary becomes
+ * `storageKindOfRef(v.node)` ternary becomes
  * unnecessary; emitters can read `v.node.kind` (or `.modelType`) directly.
  *
  * THROWS on any reference that points to a kind absent from `nodes` —

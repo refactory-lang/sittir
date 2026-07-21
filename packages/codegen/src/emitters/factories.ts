@@ -25,7 +25,7 @@ import {
 	type AssembledSeparatedList,
 	AssembledGroup
 } from '../compiler/model/node-map.ts';
-import { isNodeRef, isTerminalValue, isUnresolvedRef, allSlotsOf } from '../compiler/model/node-map.ts';
+import { isNodeRef, isTerminalValue, allSlotsOf, storageKindOfRef } from '../compiler/model/node-map.ts';
 import {
 	stampExpressionFor,
 	isRequired,
@@ -632,7 +632,7 @@ export function kindEnumTextMapExpr(
 	// the transport dispatched to TypeTransport → "Missing field `_content`").
 	for (const value of f.values) {
 		if (isNodeRef(value)) {
-			const kind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
+			const kind = storageKindOfRef(value.node);
 			const resolved = nodeMap.nodes.get(kind);
 			if (!resolved || resolved.modelType !== 'enum') continue;
 			for (const text of resolved.values) {

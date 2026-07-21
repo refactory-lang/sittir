@@ -41,7 +41,7 @@ import {
 } from './shared.ts';
 import { fieldElementType, childElementType, kindEnumTextMapExpr } from './factories.ts';
 import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
-import { isNodeRef, isTerminalValue, isUnresolvedRef } from '../compiler/model/node-map.ts';
+import { isNodeRef, isTerminalValue, storageKindIdByNameOf, storageKindOfRef } from '../compiler/model/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/model/node-map.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
@@ -1030,7 +1030,11 @@ function resolveFieldFromTypedInput(
  * @param nodeMap - The assembled node map (used to look up supertype subtypes).
  * @returns Deduplicated list of concrete kind strings.
  */
-function expandAndDedupeContentTypes(contentTypes: readonly string[], nodeMap: NodeMap): string[] {
+function expandAndDedupeContentTypes(
+	contentTypes: readonly string[],
+	nodeMap: NodeMap,
+	idByKind?: ReadonlyMap<string, number>
+): string[] {
 	const seen = new Set<string>();
 	const expanded: string[] = [];
 	const visit = (kind: string): void => {
@@ -1039,8 +1043,13 @@ function expandAndDedupeContentTypes(contentTypes: readonly string[], nodeMap: N
 			for (const subtype of node.subtypes) visit(subtype);
 			return;
 		}
-		if (seen.has(kind)) return;
-		seen.add(kind);
+		// PR-K3e: dedupe by the mint-stamped id where the slot's values carry
+		// one — same-id kinds are one runtime identity even under different
+		// names. Name key for stamp-less kinds (incl. supertype expansions).
+		const id = idByKind?.get(kind);
+		const key = id !== undefined ? `#${id}` : `n:${kind}`;
+		if (seen.has(key)) return;
+		seen.add(key);
 		expanded.push(kind);
 	};
 	for (const t of contentTypes) visit(t);
@@ -1170,7 +1179,7 @@ function altKindDiscriminants(
 ): string[] {
 	return tokenKinds.map((t) => {
 		const stampedId = values.find(
-			(v) => isNodeRef(v) && (isUnresolvedRef(v.node) ? v.node.name : v.node.kind) === t && v.storageKindId !== undefined
+			(v) => isNodeRef(v) && (storageKindOfRef(v.node)) === t && v.storageKindId !== undefined
 		)?.storageKindId;
 		const stamped =
 			stampedId !== undefined && kindEntries !== undefined
@@ -1247,7 +1256,7 @@ function resolveFieldCall(
 
 	const storageInfo = 'name' in field ? resolveFieldStorageInfo(field as AssembledNonterminal, nodeMap) : undefined;
 
-	const expanded = expandAndDedupeContentTypes(slotKindNames(field), nodeMap);
+	const expanded = expandAndDedupeContentTypes(slotKindNames(field), nodeMap, storageKindIdByNameOf(field));
 	const { leafKinds, branchKinds, tokenKinds } = classifyKindsForResolver(expanded, nodeMap);
 
 	// Pass an explicit element type when we have one — `resolveFieldCall` is

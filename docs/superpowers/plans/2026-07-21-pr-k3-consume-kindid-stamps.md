@@ -153,7 +153,27 @@ information, not noise.
       catalog-less kinds — no id exists to bake). A/B: from.ts-only diffs,
       all three grammars, every hunk a faithful name→id representation
       change; floors + fromPass unchanged.)
-- [ ] K3e — simplify-class projections (may split to own PR)
+- [x] K3e — simplify-class projections (landed as one commit on the
+      kindid-k3 line, three parts:
+      1. `diagnoseParseKindCollisions` keys buckets and storage-kind
+         distinctness by stamped id where present (`kindKey` — `#id` /
+         `n:name` spaces); same-id values are one runtime identity even
+         under different names; differing ids still fall through to the
+         structural signature so twin-merge semantics survive; the enrich
+         caller (id-less, pre-parser) is untouched by construction.
+      2. `expandAndDedupeContentTypes` dedupes by stamped id via the new
+         `storageKindIdByNameOf` slot projection (id-carrying companion to
+         `kindsOf`).
+      3. The `isUnresolvedRef ? .name : .kind` fork consolidated to ONE
+         derivation — new `storageKindOfRef` (node-map.ts); ~20 inline
+         ternary copies (incl. 3 cast forms) across
+         emitters/compiler swept; `kindsOf`/`valueParseKindsOf`/
+         `aliasTargetToSourceMapOf`/`slotKindNames` now delegate to it.
+      A/B: all language surfaces byte-identical ×3 (only the enrich bundle
+      `.sittir/grammar.js` carries the inlined collision-module source
+      change + manifest hashes); floors 123/117/103/108 hold. Remaining
+      consumer migration to id equality proceeds incrementally as sites
+      are touched — the projections now exist for it.)
 - [x] K3f — hydrate retry (diagnosed, then RETIRED. Probe: env-gated stderr
       line at the retry site + an ENTER probe proving `hydrateSlotRefs` runs
       (262 nodes, python) — the `_<name>` retry fired ZERO times across all

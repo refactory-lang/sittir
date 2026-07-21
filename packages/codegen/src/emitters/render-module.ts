@@ -34,13 +34,13 @@ import {
 	isRequired,
 	isNodeRef,
 	isTerminalValue,
-	isUnresolvedRef,
 	kindsOf,
 	structuralFieldsOf,
 	allFormFieldsOf,
 	allSlotsOf,
 	aliasTargetToSourceMapOf,
-	acceptedIdPairsByKindOf
+	acceptedIdPairsByKindOf,
+	storageKindOfRef
 } from '../compiler/model/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import type { TemplateFile } from './template-hash.ts';
@@ -3346,7 +3346,7 @@ function leafBooleanPresenceLiteral(node: AssembledNode, nodeMap: NodeMap): stri
 			if (keywordPresenceValue(field, nodeMap) !== literal) continue;
 			if (
 				field.values.some(
-					(value) => isNodeRef(value) && (isUnresolvedRef(value.node) ? value.node.name : value.node.kind) === node.kind
+					(value) => isNodeRef(value) && (storageKindOfRef(value.node)) === node.kind
 				)
 			) {
 				return literal;

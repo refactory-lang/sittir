@@ -1063,9 +1063,18 @@ export function buildParseKindRuleSignatures<T extends Rule<'link'>>(
 	return Object.fromEntries(Object.entries(rules).map(([kind, rule]) => [kind, canonicalRuleSignature(rule)]));
 }
 
+/**
+ * Storage/render kind name of a ref target — THE single derivation of the
+ * `UnresolvedRef.name` vs `AssembledNode.kind` fork (PR-K3e; the ~20
+ * inline ternary copies across emitters/compiler consolidated here).
+ */
+export function storageKindOfRef(node: AssembledNode | UnresolvedRef): string {
+	return isUnresolvedRef(node) ? node.name : node.kind;
+}
+
 export function storageKindOfValue(value: NodeOrTerminal): string | undefined {
 	if (isNodeRef(value)) {
-		return isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
+		return storageKindOfRef(value.node);
 	}
 	return value.resolvedKind ?? value.value;
 }
@@ -1085,6 +1094,11 @@ function resolveParseKindCollisionsInSlot(slot: AssembledNonterminal, ctx: Kinde
 			original: value,
 			parseKind: value.parseKind?.name,
 			storageKind,
+			// PR-K3e: mint stamps as collision-free identities — terminals carry
+			// theirs on resolvedKindId (the literal-chain stamp), node refs on
+			// storageKindId. Absent stamps fall back to name keying in the core.
+			parseKindId: value.parseKindId,
+			storageKindId: isNodeRef(value) ? value.storageKindId : value.resolvedKindId,
 			structuralSignature: structuralSignatureOfValue(value, ctx, storageKind),
 			preferRepresentative: storageKind !== undefined && storageKind === value.parseKind?.name
 		};
@@ -1453,7 +1467,7 @@ export function dedupeValues(values: NodeOrTerminal[]): NodeOrTerminal[] {
 	const result: NodeOrTerminal[] = [];
 	for (const v of values) {
 		const parseKind = v.parseKind?.name ?? '';
-		const nodeName = isNodeRef(v) ? (isUnresolvedRef(v.node) ? v.node.name : v.node.kind) : undefined;
+		const nodeName = isNodeRef(v) ? (storageKindOfRef(v.node)) : undefined;
 		const key = isNodeRef(v)
 			? `node-ref:${nodeName ?? '?'}:${parseKind}:${v.multiplicity}`
 			: `terminal:${v.value ?? ''}:${parseKind}:${v.multiplicity}`;
@@ -1920,11 +1934,30 @@ export function kindsOf(slot: AssembledNonterminal): readonly string[] {
 	const out: string[] = [];
 	for (const v of slot.values) {
 		if (!isNodeRef(v)) continue;
-		const name = isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : (v.node as AssembledNode).kind;
+		const name = storageKindOfRef(v.node);
 		if (!seen.has(name)) {
 			seen.add(name);
 			out.push(name);
 		}
+	}
+	return out;
+}
+
+/**
+ * Id-carrying companion to {@link kindsOf} (PR-K3e): distinct storage kind
+ * name → mint-stamped `storageKindId` for the slot's node-ref values.
+ * First-wins per name (mirrors `kindsOf`'s dedupe); names whose values
+ * carry no stamp are ABSENT — the name remains the identity, ids are
+ * stamped facts consumers may use for equality where present.
+ */
+export function storageKindIdByNameOf(slot: {
+	values: readonly NodeOrTerminal[];
+}): ReadonlyMap<string, number> {
+	const out = new Map<string, number>();
+	for (const v of slot.values) {
+		if (!isNodeRef(v) || v.storageKindId === undefined) continue;
+		const name = storageKindOfRef(v.node);
+		if (!out.has(name)) out.set(name, v.storageKindId);
 	}
 	return out;
 }
@@ -1959,7 +1992,7 @@ export function aliasTargetToSourceMapOf(slot: {
 	for (const value of slot.values) {
 		if (!isNodeRef(value)) continue;
 		const parseKind = value.parseKind?.name;
-		const sourceKind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
+		const sourceKind = storageKindOfRef(value.node);
 		if (parseKind === undefined || parseKind === sourceKind) continue;
 		out[parseKind] = sourceKind;
 	}
@@ -1984,7 +2017,7 @@ export function acceptedIdPairsByKindOf(slot: {
 	const out = new Map<string, number[]>();
 	for (const value of slot.values) {
 		if (!isNodeRef(value)) continue;
-		const kind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
+		const kind = storageKindOfRef(value.node);
 		for (const id of [value.storageKindId, value.parseKindId]) {
 			if (id === undefined) continue;
 			const ids = out.get(kind);
@@ -2035,14 +2068,7 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 	// `{_simple_statements, block, _newline}` (all `parseKind=block`) — falls back
 	// to the generic `content` (the parseName `block` is NOT its storage name).
 	// Storage kinds from node-ref values (the render-source kind via `value.node`).
-	const nodeRefStorageKinds = [
-		...new Set(
-			slot.values.filter(isNodeRef).map((v) => {
-				const node = v.node;
-				return isUnresolvedRef(node) ? node.name : node.kind;
-			})
-		)
-	];
+	const nodeRefStorageKinds = [...new Set(slot.values.filter(isNodeRef).map((v) => storageKindOfRef(v.node)))];
 	// PR-P Task 3 step 3: when a slot is PURELY inline literals (no node-refs),
 	// its storage kind is the literal's resolved catalog kind — so a slot holding
 	// a single resolved literal is named after that kind instead of the generic

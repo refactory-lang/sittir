@@ -21,13 +21,13 @@ import {
 	AssembledSupertype,
 	isNodeRef,
 	isTerminalValue,
-	isUnresolvedRef,
 	isRequired,
 	isMultiple,
 	isNonEmpty,
 	deriveSlotCardinality,
 	deriveChildrenCardinality,
-	allSlotsOf
+	allSlotsOf,
+	storageKindOfRef
 } from '../compiler/model/node-map.ts';
 
 /**
@@ -104,7 +104,7 @@ export function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 		for (const slot of allSlotsOf(n)) {
 			for (const v of slot.values) {
 				if (!isNodeRef(v)) continue;
-				const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+				const name = storageKindOfRef(v.node);
 				if (name.startsWith('_')) out.add(name);
 			}
 		}
@@ -159,7 +159,7 @@ export function slotKindNames(slot: { values: readonly NodeOrTerminal[] }): stri
 	const out: string[] = [];
 	for (const v of slot.values) {
 		if (!isNodeRef(v)) continue;
-		const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+		const name = storageKindOfRef(v.node);
 		out.push(name);
 	}
 	return out;
@@ -242,7 +242,7 @@ export function resolveEffectiveLiteral(field: AssembledNonterminal, nodeMap: No
 	//   - AssembledKeyword (literal keyword rule)
 	//   - AssembledToken with a single string body
 	if (isNodeRef(v)) {
-		const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+		const kindName = storageKindOfRef(v.node);
 		if (kindName.startsWith('_')) {
 			const ref = nodeMap.nodes.get(kindName);
 			if (ref instanceof AssembledKeyword) return ref.text;
@@ -383,7 +383,7 @@ export function stampExpressionFor(
 	// NodeData-returning factory-call expression for both contexts;
 	// only terminals differentiate.
 	if (isNodeRef(v)) {
-		const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+		const kindName = storageKindOfRef(v.node);
 		const ref = nodeMap.nodes.get(kindName);
 		if (ref?.parameterless) {
 			return context === 'child' ? ref.stampChildExpression : ref.stampExpression;
@@ -456,7 +456,7 @@ export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMa
 			continue;
 		}
 		if (!isNodeRef(v)) continue;
-		const t = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+		const t = storageKindOfRef(v.node);
 		const lit = resolveHiddenKeywordLiteral(t, nodeMap);
 		if (lit !== undefined) {
 			out.push({ kind: 'literal', value: lit });
@@ -521,7 +521,7 @@ export function childTypeComponents(child: AssembledNonterminal, nodeMap: NodeMa
 function resolveEntryLiteral(entry: NodeOrTerminal, nodeMap: NodeMap): string | undefined {
 	if (isTerminalValue(entry)) return entry.value;
 	if (!isNodeRef(entry)) return undefined;
-	const kindName = isUnresolvedRef(entry.node) ? entry.node.name : entry.node.kind;
+	const kindName = storageKindOfRef(entry.node);
 	// Hidden `_kw_*` / hidden single-string token — uses the existing helper.
 	const lit = resolveHiddenKeywordLiteral(kindName, nodeMap);
 	if (lit !== undefined) return lit;
@@ -659,7 +659,7 @@ function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap)
 	const seenTexts = new Set<string>();
 	for (const value of field.values) {
 		if (isNodeRef(value)) {
-			const resolvedKind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
+			const resolvedKind = storageKindOfRef(value.node);
 			const node = nodeMap.nodes.get(resolvedKind);
 			if (node instanceof AssembledEnum) {
 				if (node.values.length <= 1 || node.resolvedKinds.length === 0) {
