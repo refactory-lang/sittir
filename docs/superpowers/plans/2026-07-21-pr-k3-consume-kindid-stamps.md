@@ -139,6 +139,19 @@ information, not noise.
       `fieldAliasMap` consumers of `aliasTargetToSourceMapOf` stay name→name
       by design: they feed the runtime READ side / validator metadata, which
       key by CST type strings, not ids. Floors 123/117/103/108 hold.)
-- [ ] K3d — kindIdFromName baking
+- [x] K3d — kindIdFromName baking (generated from.ts is now free of runtime
+      `kindIdFromName` calls — only the import remains, for the
+      `kindEnumTextMapExpr` catalog-less fallback. Two emit sites baked:
+      the direct-factory passthrough guard (`emitBranchFrom`) now reuses
+      `containerTypeCheck` — `kindIdFromName('<kind>')` → `TSKindId.<Member>`
+      at every coerceTo* guard (~30 sites/grammar); the `_resolveOneBranch`
+      `altKinds` arrays carry baked discriminants via new
+      `altKindDiscriminants` (slot-value `storageKindId` stamp first, name
+      chain fallback), and the generated helper compares ids directly.
+      client-utils sites untouched (runtime-parameter surface — keep-list);
+      factories.ts kindEnumTextMapExpr fallback untouched (only reached for
+      catalog-less kinds — no id exists to bake). A/B: from.ts-only diffs,
+      all three grammars, every hunk a faithful name→id representation
+      change; floors + fromPass unchanged.)
 - [ ] K3e — simplify-class projections (may split to own PR)
 - [ ] K3f — hydrate retry (open question — diagnose before changing)

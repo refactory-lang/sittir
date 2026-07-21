@@ -456,12 +456,12 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 	}
 }
 
-function _resolveOneBranch<T>(v: _FromFieldInput, kind: string, altKinds?: readonly string[]): T {
+function _resolveOneBranch<T>(v: _FromFieldInput, kind: string, altKinds?: readonly (string | number)[]): T {
 	if (v === undefined || v === null) return v as T;
 	if (isNodeData(v)) {
 		const wrapId = _wrapKindIds[kind];
 		if (wrapId !== undefined && v.$type !== wrapId) {
-			if (altKinds !== undefined && altKinds.some((k) => kindIdFromName(k) === v.$type)) return v as T;
+			if (altKinds !== undefined && altKinds.some((k) => k === v.$type)) return v as T;
 			return _wrapWithChildren(kind, [v]) as T;
 		}
 		return v as T;
@@ -503,7 +503,11 @@ function _resolveManyLeaf<T>(v: _FromFieldInput, kind: string): readonly T[] {
 	return arr.map((e) => _resolveOneLeaf<T>(e, kind));
 }
 
-function _resolveManyBranch<T>(v: _FromFieldInput, kind: string, altKinds?: readonly string[]): readonly T[] {
+function _resolveManyBranch<T>(
+	v: _FromFieldInput,
+	kind: string,
+	altKinds?: readonly (string | number)[]
+): readonly T[] {
 	if (v === undefined || v === null) return [];
 	const arr: readonly _FromFieldInput[] = Array.isArray(v) ? v : [v];
 	return arr.map((e) => _resolveOneBranch<T>(e, kind, altKinds));
@@ -972,7 +976,7 @@ export function coerceToAccessibilityModifier(
 export function coerceToAddingTypeAnnotation(
 	input: T.AddingTypeAnnotation.Loose
 ): ReturnType<typeof F.buildAddingTypeAnnotation> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('adding_type_annotation'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.AddingTypeAnnotation)
 		return input as unknown as ReturnType<typeof F.buildAddingTypeAnnotation>;
 	return F.buildAddingTypeAnnotation(
 		_requireField(
@@ -1020,7 +1024,7 @@ export function coerceToArrayPattern(input?: T.ArrayPattern.Loose): ReturnType<t
 }
 
 export function coerceToArrayType(input: T.ArrayType.Loose): ReturnType<typeof F.buildArrayType> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('array_type'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ArrayType)
 		return input as unknown as ReturnType<typeof F.buildArrayType>;
 	return F.buildArrayType(
 		_requireField(
@@ -1082,7 +1086,7 @@ export function coerceToAsserts(
 export function coerceToAssertsAnnotation(
 	input: T.AssertsAnnotation.Loose
 ): ReturnType<typeof F.buildAssertsAnnotation> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('asserts_annotation'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.AssertsAnnotation)
 		return input as unknown as ReturnType<typeof F.buildAssertsAnnotation>;
 	return F.buildAssertsAnnotation(
 		_requireField(
@@ -1179,7 +1183,7 @@ export function coerceToAugmentedAssignmentExpression(
 }
 
 export function coerceToAwaitExpression(input: T.AwaitExpression.Loose): ReturnType<typeof F.buildAwaitExpression> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('await_expression'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.AwaitExpression)
 		return input as unknown as ReturnType<typeof F.buildAwaitExpression>;
 	return F.buildAwaitExpression(
 		_requireField(
@@ -1358,7 +1362,7 @@ export function coerceToClassHeritage(
 }
 
 export function coerceToClassStaticBlock(input: T.ClassStaticBlock.Loose): ReturnType<typeof F.buildClassStaticBlock> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('class_static_block'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ClassStaticBlock)
 		return input as unknown as ReturnType<typeof F.buildClassStaticBlock>;
 	return F.buildClassStaticBlock(
 		_requireField(
@@ -1380,7 +1384,7 @@ export function coerceToComment(input: string | T.Comment): ReturnType<typeof F.
 export function coerceToComputedPropertyName(
 	input: T.ComputedPropertyName.Loose
 ): ReturnType<typeof F.buildComputedPropertyName> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('computed_property_name'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ComputedPropertyName)
 		return input as unknown as ReturnType<typeof F.buildComputedPropertyName>;
 	return F.buildComputedPropertyName(
 		_requireField(
@@ -1459,11 +1463,7 @@ export function coerceToContinueStatement(
 export function coerceToDebuggerStatement(
 	input?: T.DebuggerStatement.Loose
 ): ReturnType<typeof F.buildDebuggerStatement> {
-	if (
-		input !== undefined &&
-		isNodeData(input) &&
-		(input.$type as string | number) === kindIdFromName('debugger_statement')
-	)
+	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.DebuggerStatement)
 		return input as unknown as ReturnType<typeof F.buildDebuggerStatement>;
 	return F.buildDebuggerStatement(
 		_resolveOneLeaf<T.Semicolon>(
@@ -1537,7 +1537,7 @@ export function coerceToDecoratorParenthesizedExpression(
 }
 
 export function coerceToDefaultType(input: T.DefaultType.Loose): ReturnType<typeof F.buildDefaultType> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('default_type'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.DefaultType)
 		return input as unknown as ReturnType<typeof F.buildDefaultType>;
 	return F.buildDefaultType(
 		_requireField(
@@ -1566,7 +1566,7 @@ export function coerceToDoStatement(input: T.DoStatement.Loose): ReturnType<type
 }
 
 export function coerceToElseClause(input: T.ElseClause.Loose): ReturnType<typeof F.buildElseClause> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('else_clause'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ElseClause)
 		return input as unknown as ReturnType<typeof F.buildElseClause>;
 	return F.buildElseClause(
 		_requireField(
@@ -1704,7 +1704,7 @@ export function coerceToFalse(input?: T.False): ReturnType<typeof F.buildFalse> 
 }
 
 export function coerceToFinallyClause(input: T.FinallyClause.Loose): ReturnType<typeof F.buildFinallyClause> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('finally_clause'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.FinallyClause)
 		return input as unknown as ReturnType<typeof F.buildFinallyClause>;
 	return F.buildFinallyClause(
 		_requireField(
@@ -1719,7 +1719,7 @@ export function coerceToFinallyClause(input: T.FinallyClause.Loose): ReturnType<
 }
 
 export function coerceToFlowMaybeType(input: T.FlowMaybeType.Loose): ReturnType<typeof F.buildFlowMaybeType> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('flow_maybe_type'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.FlowMaybeType)
 		return input as unknown as ReturnType<typeof F.buildFlowMaybeType>;
 	return F.buildFlowMaybeType(
 		_requireField(
@@ -1966,7 +1966,7 @@ export function coerceToImportAlias(input: T.ImportAlias.Loose): ReturnType<type
 }
 
 export function coerceToImportAttribute(input: T.ImportAttribute.Loose): ReturnType<typeof F.buildImportAttribute> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('import_attribute'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ImportAttribute)
 		return input as unknown as ReturnType<typeof F.buildImportAttribute>;
 	return F.buildImportAttribute(
 		_requireField(
@@ -2063,7 +2063,7 @@ export function coerceToIndexSignature(input: T.IndexSignature.Loose): ReturnTyp
 }
 
 export function coerceToIndexTypeQuery(input: T.IndexTypeQuery.Loose): ReturnType<typeof F.buildIndexTypeQuery> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('index_type_query'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.IndexTypeQuery)
 		return input as unknown as ReturnType<typeof F.buildIndexTypeQuery>;
 	return F.buildIndexTypeQuery(
 		_requireField(
@@ -2322,7 +2322,7 @@ export function coerceToNamespaceExport(
 }
 
 export function coerceToNamespaceImport(input: T.NamespaceImport.Loose): ReturnType<typeof F.buildNamespaceImport> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('namespace_import'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NamespaceImport)
 		return input as unknown as ReturnType<typeof F.buildNamespaceImport>;
 	return F.buildNamespaceImport(
 		_requireField(
@@ -2384,7 +2384,7 @@ export function coerceToNewExpression(input: T.NewExpression.Loose): ReturnType<
 export function coerceToNonNullExpression(
 	input: T.NonNullExpression.Loose
 ): ReturnType<typeof F.buildNonNullExpression> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('non_null_expression'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.NonNullExpression)
 		return input as unknown as ReturnType<typeof F.buildNonNullExpression>;
 	return F.buildNonNullExpression(
 		_requireField(
@@ -2510,7 +2510,7 @@ export function coerceToObjectTypeContent(
 export function coerceToOmittingTypeAnnotation(
 	input: T.OmittingTypeAnnotation.Loose
 ): ReturnType<typeof F.buildOmittingTypeAnnotation> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('omitting_type_annotation'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.OmittingTypeAnnotation)
 		return input as unknown as ReturnType<typeof F.buildOmittingTypeAnnotation>;
 	return F.buildOmittingTypeAnnotation(
 		_requireField(
@@ -2528,7 +2528,7 @@ export function coerceToOmittingTypeAnnotation(
 export function coerceToOptingTypeAnnotation(
 	input: T.OptingTypeAnnotation.Loose
 ): ReturnType<typeof F.buildOptingTypeAnnotation> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('opting_type_annotation'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.OptingTypeAnnotation)
 		return input as unknown as ReturnType<typeof F.buildOptingTypeAnnotation>;
 	return F.buildOptingTypeAnnotation(
 		_requireField(
@@ -2580,7 +2580,7 @@ export function coerceToOptionalTupleParameter(
 }
 
 export function coerceToOptionalType(input: T.OptionalType.Loose): ReturnType<typeof F.buildOptionalType> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('optional_type'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.OptionalType)
 		return input as unknown as ReturnType<typeof F.buildOptionalType>;
 	return F.buildOptionalType(
 		_requireField(
@@ -2642,7 +2642,7 @@ export function coerceToParenthesizedExpression(
 export function coerceToParenthesizedType(
 	input: T.ParenthesizedType.Loose
 ): ReturnType<typeof F.buildParenthesizedType> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('parenthesized_type'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ParenthesizedType)
 		return input as unknown as ReturnType<typeof F.buildParenthesizedType>;
 	return F.buildParenthesizedType(
 		_requireField(
@@ -2737,7 +2737,7 @@ export function coerceToPublicFieldDefinition(
 }
 
 export function coerceToReadonlyType(input: T.ReadonlyType.Loose): ReturnType<typeof F.buildReadonlyType> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('readonly_type'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ReadonlyType)
 		return input as unknown as ReturnType<typeof F.buildReadonlyType>;
 	return F.buildReadonlyType(
 		_requireField(
@@ -2813,7 +2813,7 @@ export function coerceToRestPattern(
 }
 
 export function coerceToRestType(input: T.RestType.Loose): ReturnType<typeof F.buildRestType> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('rest_type'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.RestType)
 		return input as unknown as ReturnType<typeof F.buildRestType>;
 	return F.buildRestType(
 		_requireField(
@@ -2867,7 +2867,7 @@ export function coerceToSequenceExpression(
 }
 
 export function coerceToSpreadElement(input: T.SpreadElement.Loose): ReturnType<typeof F.buildSpreadElement> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('spread_element'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.SpreadElement)
 		return input as unknown as ReturnType<typeof F.buildSpreadElement>;
 	return F.buildSpreadElement(
 		_requireField(
@@ -3084,7 +3084,7 @@ export function coerceToTypeAliasDeclaration(
 }
 
 export function coerceToTypeAnnotation(input: T.TypeAnnotation.Loose): ReturnType<typeof F.buildTypeAnnotation> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('type_annotation'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.TypeAnnotation)
 		return input as unknown as ReturnType<typeof F.buildTypeAnnotation>;
 	return F.buildTypeAnnotation(
 		_requireField(
@@ -3156,7 +3156,7 @@ export function coerceToTypePredicate(input: T.TypePredicate.Loose): ReturnType<
 export function coerceToTypePredicateAnnotation(
 	input: T.TypePredicateAnnotation.Loose
 ): ReturnType<typeof F.buildTypePredicateAnnotation> {
-	if (isNodeData(input) && (input.$type as string | number) === kindIdFromName('type_predicate_annotation'))
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.TypePredicateAnnotation)
 		return input as unknown as ReturnType<typeof F.buildTypePredicateAnnotation>;
 	return F.buildTypePredicateAnnotation(
 		_requireField(
@@ -3307,11 +3307,7 @@ export function coerceToWithStatement(input: T.WithStatement.Loose): ReturnType<
 }
 
 export function coerceToYieldExpression(input?: T.YieldExpression.Loose): ReturnType<typeof F.buildYieldExpression> {
-	if (
-		input !== undefined &&
-		isNodeData(input) &&
-		(input.$type as string | number) === kindIdFromName('yield_expression')
-	)
+	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.YieldExpression)
 		return input as unknown as ReturnType<typeof F.buildYieldExpression>;
 	return F.buildYieldExpression(
 		_resolveOne<T.Expression>(
