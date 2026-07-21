@@ -162,37 +162,37 @@ export function choice(...members: Input[]): Rule<'evaluate'> {
 }
 
 /**
- * Collapse an all-field choice into a factored field or a choice-of-variants.
+ * Collapse an all-field choice into a factored field, or leave it as a
+ * plain choice of (heterogeneously-named) fields.
  *
  * @param fieldMembers - All members of the choice, already confirmed to be FieldRule<'evaluate'>.
- * @returns A factored `FieldRule<'evaluate'>`, a `choice` of variants, or a raw `choice` when
- *   any branch wraps an alias.
+ * @returns A factored `FieldRule<'evaluate'>` when every branch shares one field
+ *   name, otherwise a raw `choice` of the original `field()` members.
  * @remarks
- * Two sub-cases:
+ * All branches wrap the SAME field name — factor the field outward to
+ * `field('x', choice(A, B))`. The choice content may itself simplify to an
+ * enum when all inners are strings.
  *
- * 1. All branches wrap the SAME field name — factor the field outward to
- *    `field('x', choice(A, B))`. The choice content may itself simplify
- *    to an enum when all inners are strings.
- *
- * 2. All branches have DIFFERENT field names — retype each field node as
- *    a variant node. `FieldRule<'evaluate'>` and `VariantRule` share the same shape
- *    (`name` + `content`), so the rewrite is purely a discriminator
- *    change. This is the encoding overrides.ts uses for polymorphs:
- *    `choice(field('body', seq(...)), field('semi', seq(...)))` becomes
- *    `choice(variant('body', seq(...)), variant('semi', seq(...)))`.
- *    Link's `promotePolymorph` pass recognises that shape at the top
- *    level and wraps the whole rule in a `PolymorphRule`.
- *
- * Mixed branches (some fields, some not) fall through to the raw
- * choice — no clean single interpretation.
+ * Otherwise (different field names, or any branch wraps an alias — see
+ * below), the choice passes through as-is: `choice(field('body', seq(...)),
+ * field('semi', seq(...)))` stays exactly that. PR 2 (2026-07-21 union-slot
+ * design) retired the prior VARIANT-retype encoding here (`FieldRule<'evaluate'>`
+ * / `VariantRule` share the same `name`+`content` shape, so the retype was a
+ * pure discriminator change) — that existed only for Link's now-deleted
+ * `promotePolymorph` pass to recognize the shape and wrap the rule in a
+ * `PolymorphRule`; `PolymorphRule`/`AssembledPolymorph` are fully gone from
+ * the pipeline, so the fields now stay FIELD-typed and route into named
+ * slots via PR 1's per-arm union-slot routing (`carriesNamedField`), same as
+ * any other heterogeneous fielded choice.
  *
  * @remarks
- * Skip variant retyping when any branch wraps an alias directly.
- * Aliases are structural rename markers; downstream passes (Link,
- * assemble) depend on the alias appearing inside a plain choice to route
- * the synthetic kind into the NodeMap. Tagging as a variant shifts
- * classification and leaves the alias target unregistered (observed on
- * rust `_line_doc_comment_marker` / `_block_doc_comment_marker`).
+ * Any branch wrapping an alias directly takes this same passthrough (checked
+ * first, before the same-name factoring). Aliases are structural rename
+ * markers; downstream passes (Link, assemble) depend on the alias appearing
+ * inside a plain choice to route the synthetic kind into the NodeMap —
+ * factoring or retyping shifts classification and leaves the alias target
+ * unregistered (observed on rust `_line_doc_comment_marker` /
+ * `_block_doc_comment_marker`).
  */
 function collapseAllFieldChoiceMembers(fieldMembers: FieldRule<'evaluate'>[]): Rule<'evaluate'> {
 	const anyAlias = fieldMembers.some((f) => f.content.type === ALIAS);
@@ -211,16 +211,17 @@ function collapseAllFieldChoiceMembers(fieldMembers: FieldRule<'evaluate'>[]): R
 			metadata: makeRuleMetadata({ fieldSource: 'grammar' })
 		};
 	}
-	// Heterogeneous names → retype each field node as a variant node.
-	// Same `name`, same `content`, only the discriminator changes.
-	// Downstream (Link's `promotePolymorph`, walker, assemble) consumes
-	// variants as polymorph-form markers when they appear at the top level.
-	const retyped: Rule<'evaluate'>[] = fieldMembers.map((f) => ({
-		type: VARIANT,
-		name: f.name,
-		content: f.content
-	}));
-	return { type: CHOICE, members: retyped };
+	// Heterogeneous names — PR 2 (2026-07-21 union-slot design): no longer
+	// retype to VARIANT. The VARIANT retype existed solely so Link's
+	// (now-deleted) promotePolymorph pass could recognize a top-level
+	// choice-of-differently-named-fields as a polymorph-form marker —
+	// PolymorphRule/AssembledPolymorph are fully gone from the pipeline
+	// (assemble.ts: "no 'polymorph' classification exists in assemble's
+	// dispatch anymore"), so that reclassification is dead. The fields stay
+	// FIELD-typed; PR 1's per-arm union-slot routing (carriesNamedField)
+	// naturally distributes them into named slots, same as any other
+	// heterogeneous fielded choice.
+	return { type: CHOICE, members: fieldMembers };
 }
 
 /**
