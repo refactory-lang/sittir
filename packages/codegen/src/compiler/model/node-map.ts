@@ -75,7 +75,7 @@ import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
 import { findEntryForKindName, findEntryForLiteralText } from '../generated-metadata.ts';
 import { tokenToName } from '../normalize.ts';
-import { collectSlots } from '../collect-slots.ts';
+import { collectSlots, drainSynthesizedUnionChoiceIds, setUnionSlotRouting } from '../collect-slots.ts';
 import { assertNever } from '../../polymorph-variant.ts';
 import { opaqueFacts, type OpaqueFacts } from '../opaque-facts.ts';
 import { deleteWrapper } from '../wrapper-deletion.ts';
@@ -970,7 +970,43 @@ function _deriveSlotsInternal(rule: Rule<'link'>, ctx?: DeriveCtx): AssembledNon
 		// slots that appear in multiple positions (e.g. python `if_statement`'s
 		// `alternative` in both a repeat and an optional) are still folded into one
 		// AssembledNonterminal by `mergeSlotsByName`.
-		return mergeSlotsByName(collectSlots(canonical, ctx?.kindName ?? currentAuditKind, ctx?.kindEntries));
+		const kindName = ctx?.kindName ?? currentAuditKind;
+		let slots = mergeSlotsByName(collectSlots(canonical, kindName, ctx?.kindEntries));
+		// Gate (a) of the union-slot design (2026-07-21): a synthesized union
+		// slot's projected storageName (usually 'content', or the single member
+		// kind) must be unclaimed by every sibling slot of the rule. This is the
+		// only place with whole-rule visibility, so the check runs here: an
+		// optimistic collection above, then — on collision — one pessimistic
+		// rerun with routing disabled (status quo distribution) + a diagnostic.
+		// Two qualifying choices in one rule collide with each other and both
+		// fall back, which subsumes the "only one choice per rule" discipline.
+		const unionChoiceIds = drainSynthesizedUnionChoiceIds();
+		if (unionChoiceIds.size > 0) {
+			const isUnionSlot = (s: AssembledNonterminal): boolean =>
+				s.sourceRuleIds.some((id) => unionChoiceIds.has(id));
+			const colliding = slots.filter(
+				(s) => isUnionSlot(s) && slots.some((other) => other !== s && other.storageName === s.storageName)
+			);
+			if (colliding.length > 0) {
+				recordAssembleWarning({
+					code: 'union-slot-content-collision',
+					ownerKind: kindName,
+					message:
+						`[derive-slots] kind '${kindName ?? '(unknown)'}': union slot name(s) ` +
+						`[${[...new Set(colliding.map((s) => s.storageName))].join(', ')}] already claimed by a sibling ` +
+						`slot — union routing disabled for this rule (status-quo distribution). Free the name via ` +
+						`field() naming in overrides (named slots bypass the claim).`
+				});
+				const prev = setUnionSlotRouting(false);
+				try {
+					slots = mergeSlotsByName(collectSlots(canonical, kindName, ctx?.kindEntries));
+				} finally {
+					setUnionSlotRouting(prev);
+					drainSynthesizedUnionChoiceIds();
+				}
+			}
+		}
+		return slots;
 	} finally {
 		setAuditKindContext(prevAuditKind);
 	}
