@@ -1129,18 +1129,13 @@ function hydrateSlots(
 				(v as { node: AssembledNode | UnresolvedRef }).node = target;
 				continue;
 			}
-			// Canonical-hidden architecture: alias-target names like
-			// `as_pattern_target` are the VISIBLE names; the assembled node
-			// map registers the hidden source `_as_pattern_target`. When the
-			// visible name isn't found, retry with `_<name>` — that's the
-			// canonical form per the alias-target → hidden-source convention.
-			if (!targetName.startsWith('_')) {
-				const hiddenSource = nodes.get(`_${targetName}`);
-				if (hiddenSource) {
-					(v as { node: AssembledNode | UnresolvedRef }).node = hiddenSource;
-					continue;
-				}
-			}
+			// PR-K3f: the historical `_<name>` retry (visible alias-target name →
+			// hidden MODEL node) was probed across all three grammars and fired
+			// ZERO times — the mint now resolves canonical names, so every
+			// hydratable ref hits the primary lookup above. Retired per the
+			// KindId-NodeRefs spec §2.3 retire-list. A future grammar that
+			// reintroduces visible→hidden refs surfaces below as the loud
+			// unresolved-slot-reference diagnostic, not a silent rewire.
 			// Three legitimate categories where the target ISN'T in the
 			// assembled NodeMap and we leave the `UnresolvedRef` in place:
 			//

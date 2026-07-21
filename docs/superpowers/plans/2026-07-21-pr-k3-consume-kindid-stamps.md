@@ -154,4 +154,12 @@ information, not noise.
       all three grammars, every hunk a faithful name→id representation
       change; floors + fromPass unchanged.)
 - [ ] K3e — simplify-class projections (may split to own PR)
-- [ ] K3f — hydrate retry (open question — diagnose before changing)
+- [x] K3f — hydrate retry (diagnosed, then RETIRED. Probe: env-gated stderr
+      line at the retry site + an ENTER probe proving `hydrateSlotRefs` runs
+      (262 nodes, python) — the `_<name>` retry fired ZERO times across all
+      three grammars; the mint resolves canonical names, so every hydratable
+      ref hits the primary lookup. Neither open-question option was needed —
+      the retry is dead on the live corpus, deleted per spec §2.3 retire-list.
+      A future visible→hidden ref surfaces as the existing loud
+      unresolved-slot-reference diagnostic instead of a silent rewire. A/B
+      byte-identical ×3; floors hold.)
