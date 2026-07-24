@@ -436,6 +436,9 @@ export async function validateReadRenderParse(
 			const tree1 = parser.parse(entry.source) as TSTree;
 			if (tree1.rootNode.hasError) {
 				skip++;
+				if (process.env.SITTIR_VALIDATOR_ENTRY_LOG) {
+					console.log(`ENTRY\t${recursive ? 'deep' : 'shallow'}\t${entry.name}\tskip-parse-error\tast-fail`);
+				}
 				continue; // Corpus entries with parse errors (intentional error tests)
 			}
 
@@ -466,6 +469,9 @@ export async function validateReadRenderParse(
 
 			if (testableKinds.length === 0) {
 				skip++;
+				if (process.env.SITTIR_VALIDATOR_ENTRY_LOG) {
+					console.log(`ENTRY\t${recursive ? 'deep' : 'shallow'}\t${entry.name}\tskip-no-testable\tast-fail`);
+				}
 				continue;
 			}
 
@@ -552,6 +558,10 @@ export async function validateReadRenderParse(
 					}
 					try {
 						const rendered = render(data);
+						if (process.env['SITTIR_VALIDATOR_DUMP_RENDER'] && entry.name === process.env['SITTIR_VALIDATOR_DUMP_RENDER']) {
+							writeSync(2, `[dump-render] mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)} data=${JSON.stringify(data)}\n`);
+							writeSync(2, `[dump-render] mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)} rendered=${JSON.stringify(rendered)}\n`);
+						}
 
 						// Wrap for reparse using supertype context
 						const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, {
@@ -566,6 +576,9 @@ export async function validateReadRenderParse(
 
 						// Re-parse
 						const tree2 = parser.parse(wrapped.text) as TSTree;
+						if (process.env['SITTIR_VALIDATOR_DUMP_RENDER'] && entry.name === process.env['SITTIR_VALIDATOR_DUMP_RENDER']) {
+							writeSync(2, `[dump-reparse] mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)} hasError=${tree2.rootNode.hasError} wrappedText=${JSON.stringify(wrapped.text)} sexp=${JSON.stringify(tree2.rootNode.toString().slice(0,300))}\n`);
+						}
 						if (tree2.rootNode.hasError) {
 							const failure = {
 								name: `${entry.name} [${renderedKind}]`,
@@ -705,6 +718,10 @@ export async function validateReadRenderParse(
 				// counts when EVERY candidate node that round-tripped
 				// also matched structurally — surfacing partial AST
 				// regressions even when entry-pass survives.
+				if (process.env.SITTIR_VALIDATOR_KIND_LOG) {
+					const outcome = kindHadCandidate ? (kindOk ? 'pass' : 'fail') : kindErrors.length > 0 ? 'fail' : 'neutral';
+					console.log(`KIND\t${recursive ? 'deep' : 'shallow'}\t${entry.name}\t${kind}\t${outcome}`);
+				}
 				if (!kindHadCandidate) {
 					// `kindHadCandidate` only flips on a full round-trip SUCCESS,
 					// so a kind where every candidate genuinely ATTEMPTED and
@@ -722,7 +739,10 @@ export async function validateReadRenderParse(
 						entryHadAnyCandidate = true;
 						entryOk = false;
 						entryAstMatch = false;
-						break;
+						// KIND_LOG mode: keep walking remaining kinds for full
+						// per-kind coverage — entry scoring is already latched.
+						if (!process.env.SITTIR_VALIDATOR_KIND_LOG) break;
+						continue;
 					}
 					continue; // every candidate neutrally skipped — neutral on this kind
 				}
@@ -731,7 +751,7 @@ export async function validateReadRenderParse(
 					if (kindErrors.length > 0) errors.push(kindErrors[0]!);
 					entryOk = false;
 					entryAstMatch = false;
-					break;
+					if (!process.env.SITTIR_VALIDATOR_KIND_LOG) break;
 				}
 				if (!kindAstMatch) {
 					if (kindAstMismatches.length > 0) astMismatches.push(kindAstMismatches[0]!);
@@ -748,6 +768,11 @@ export async function validateReadRenderParse(
 			} else {
 				if (entryOk) pass++;
 				if (entryAstMatch) astMatchPass++;
+			}
+			if (process.env.SITTIR_VALIDATOR_ENTRY_LOG) {
+				const outcome = !entryHadAnyCandidate ? 'skip' : entryOk ? 'pass' : 'fail';
+				const ast = entryHadAnyCandidate && entryAstMatch ? 'ast-pass' : 'ast-fail';
+				console.log(`ENTRY\t${recursive ? 'deep' : 'shallow'}\t${entry.name}\t${outcome}\t${ast}`);
 			}
 		} catch (e) {
 			errors.push({

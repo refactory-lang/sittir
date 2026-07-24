@@ -1195,7 +1195,10 @@ function resolveWrappedStorageValue(node: WrappedNodeData, storageKey: string): 
 		if (typeof accessor === 'function' && accessor.length === 0) {
 			try {
 				return (accessor as () => unknown).call(node);
-			} catch {
+			} catch (e) {
+				if (process.env['SITTIR_VALIDATOR_DUMP_ACCESSOR_THROW']) {
+					process.stderr.write(`[accessor-throw] key=${storageKey} accessor=${accessorName} type=${(node as any).$type} err=${(e as Error).message}\n`);
+				}
 				return node[storageKey];
 			}
 		}
