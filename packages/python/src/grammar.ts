@@ -315,6 +315,7 @@ export type PythonGrammar = {
 			types: [
 				{ type: '_compound_statement'; named: true },
 				{ type: 'match_block_block'; named: true },
+				{ type: 'newline'; named: true },
 				{ type: 'statement_group1'; named: true }
 			];
 		};
@@ -533,7 +534,10 @@ export type PythonGrammar = {
 	readonly decorator: {
 		type: 'decorator';
 		named: true;
-		fields: { expression: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] } };
+		fields: {
+			expression: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
+			newline: { multiple: false; required: true; types: [{ type: 'newline'; named: true }] };
+		};
 	};
 	readonly default_parameter: {
 		type: 'default_parameter';
@@ -1320,7 +1324,11 @@ export type PythonGrammar = {
 		type: 'simple_statements';
 		named: true;
 		fields: {};
-		children: { multiple: true; required: true; types: [{ type: '_simple_statement'; named: true }] };
+		children: {
+			multiple: true;
+			required: true;
+			types: [{ type: '_simple_statement'; named: true }, { type: 'newline'; named: true }];
+		};
 	};
 	readonly slice: {
 		type: 'slice';
@@ -1364,7 +1372,11 @@ export type PythonGrammar = {
 		type: 'statement_group1';
 		named: true;
 		fields: {};
-		children: { multiple: true; required: true; types: [{ type: '_simple_statement'; named: true }] };
+		children: {
+			multiple: true;
+			required: true;
+			types: [{ type: '_simple_statement'; named: true }, { type: 'newline'; named: true }];
+		};
 	};
 	readonly string: {
 		type: 'string';

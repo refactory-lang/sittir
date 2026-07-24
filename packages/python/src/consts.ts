@@ -144,7 +144,6 @@ export const LEAF_KINDS = [
 	'_dedent',
 	'_indent',
 	'_is_not',
-	'_newline',
 	'_not_in',
 	'_splat_pattern_operator',
 	'_string_content',
@@ -212,6 +211,7 @@ export const KEYWORDS = [
 	'_',
 	'__future__',
 	'_async_marker',
+	'_newline',
 	'_not_escape_sequence',
 	'amp',
 	'and',
@@ -1633,12 +1633,15 @@ export const FIELD_MAP: Record<
 	_expression_list_group1: [{ name: 'expressions', required: true, multiple: true }],
 	_expression_statement_tuple: [{ name: 'expressions', required: true, multiple: true }],
 	_list_pattern_group1: [{ name: 'casePatterns', required: true, multiple: true }],
-	_match_block: [{ name: 'matchBlockBlock', required: true, multiple: false }],
+	_match_block: [{ name: 'content', required: true, multiple: false }],
 	_parameters: [{ name: 'parameters', required: true, multiple: true }],
 	_pattern_list_group1: [{ name: 'patterns', required: true, multiple: true }],
 	_patterns: [{ name: 'patterns', required: true, multiple: true }],
 	_simple_pattern_negative: [{ name: 'content', required: true, multiple: false }],
-	_simple_statements: [{ name: 'simpleStatements', required: true, multiple: true }],
+	_simple_statements: [
+		{ name: 'simpleStatements', required: true, multiple: true },
+		{ name: 'newline', required: true, multiple: false }
+	],
 	_slice_group1: [{ name: 'expression', required: false, multiple: false }],
 	_suite: [
 		{ name: 'simpleStatements', required: false, multiple: false },
@@ -1729,7 +1732,10 @@ export const FIELD_MAP: Record<
 		{ name: 'decorators', required: true, multiple: true },
 		{ name: 'definition', required: true, multiple: false }
 	],
-	decorator: [{ name: 'expression', required: true, multiple: false }],
+	decorator: [
+		{ name: 'expression', required: true, multiple: false },
+		{ name: 'newline', required: true, multiple: false }
+	],
 	default_parameter: [
 		{ name: 'name', required: true, multiple: false },
 		{ name: 'value', required: true, multiple: false }

@@ -454,7 +454,6 @@ const _kindIdByKind = new Map<string, number>([
 	['none', TSKindId.None],
 	['comment', TSKindId.Comment],
 	['line_continuation', TSKindId.LineContinuation],
-	['_newline', TSKindId.Newline],
 	['_indent', TSKindId.Indent],
 	['_dedent', TSKindId.Dedent],
 	['string_start', TSKindId.StringStart],

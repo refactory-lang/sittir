@@ -246,7 +246,6 @@ export const enum SyntaxKind {
 	PassStatement = 'pass_statement',
 	True = 'true',
 	TypeConversion = 'type_conversion',
-	Newline = '_newline',
 	Indent = '_indent',
 	Dedent = '_dedent',
 	StringStart = 'string_start',
@@ -695,7 +694,6 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[99, 'gt'],
 	[100, 'lt_gt'],
 	[101, '_newline'],
-	[296, '_newline'],
 	[102, '_indent'],
 	[103, '_dedent'],
 	[104, 'string_start'],
@@ -705,7 +703,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[108, 'module'],
 	[109, '_statement'],
 	[110, '_simple_statements'],
-	[297, '_simple_statements'],
+	[296, '_simple_statements'],
 	[111, 'import_statement'],
 	[112, 'import_prefix'],
 	[113, 'relative_import'],
@@ -996,7 +994,6 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[99, 'gt'],
 	[100, 'lt_gt'],
 	[101, 'newline'],
-	[296, 'newline'],
 	[102, '_indent'],
 	[103, '_dedent'],
 	[104, 'string_start'],
@@ -1006,7 +1003,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[108, 'module'],
 	[109, '_statement'],
 	[110, 'simple_statements'],
-	[297, 'simple_statements'],
+	[296, 'simple_statements'],
 	[111, 'import_statement'],
 	[112, 'import_prefix'],
 	[113, 'relative_import'],
@@ -2270,8 +2267,8 @@ export interface ListPatternGroup1 {
 
 export interface MatchBlock {
 	readonly $type: TSKindId.MatchBlock;
-	readonly _match_block_block: MatchBlockBlock;
-	matchBlockBlock(): MatchBlockBlock;
+	readonly _content: MatchBlockBlock | '\n';
+	content(): MatchBlockBlock | '\n';
 }
 
 export interface MatchBlockBlock {
@@ -2327,7 +2324,9 @@ export interface SimplePatternNegative {
 export interface SimpleStatements {
 	readonly $type: TSKindId.SimpleStatements;
 	readonly _simple_statement: NonEmptyArray<SimpleStatement>;
+	readonly _newline: AutoStamp<'\n'>;
 	simpleStatements(): NonEmptyArray<SimpleStatement>;
+	newline(): AutoStamp<'\n'>;
 }
 
 export interface SliceGroup1 {
@@ -2340,10 +2339,13 @@ export interface Suite {
 	readonly $type: '_suite';
 	readonly _simple_statements?: SimpleStatements;
 	readonly _block?: Block;
-	readonly _newline?: Newline;
+	readonly _newline?: boolean;
+	readonly __inputHints__?: {
+		readonly newline?: BooleanKeyword<'\n'>;
+	};
 	simpleStatements(): SimpleStatements | undefined;
 	block(): Block | undefined;
-	newline(): Newline | undefined;
+	newline(): boolean | undefined;
 }
 
 export interface WithClauseBare {
@@ -2495,10 +2497,10 @@ export interface CaseClause {
 	readonly $type: TSKindId.CaseClause;
 	readonly _case_pattern: NonEmptyArray<CasePattern>;
 	readonly _guard?: IfClause;
-	readonly _consequence: SimpleStatements | Block | Newline;
+	readonly _consequence: SimpleStatements | Block | '\n';
 	casePatterns(): NonEmptyArray<CasePattern>;
 	guard(): IfClause | undefined;
-	consequence(): SimpleStatements | Block | Newline;
+	consequence(): SimpleStatements | Block | '\n';
 }
 
 export interface CaseListPattern {
@@ -2530,11 +2532,11 @@ export interface ClassDefinition {
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameter;
 	readonly _superclasses?: ArgumentList;
-	readonly _body: SimpleStatements | Block | Newline;
+	readonly _body: SimpleStatements | Block | '\n';
 	name(): Identifier;
 	typeParameters(): TypeParameter | undefined;
 	superclasses(): ArgumentList | undefined;
-	body(): SimpleStatements | Block | Newline;
+	body(): SimpleStatements | Block | '\n';
 }
 
 export interface ClassPattern {
@@ -2604,7 +2606,9 @@ export interface DecoratedDefinition {
 export interface Decorator {
 	readonly $type: TSKindId.Decorator;
 	readonly _expression: Expression;
+	readonly _newline: AutoStamp<'\n'>;
 	expression(): Expression;
+	newline(): AutoStamp<'\n'>;
 }
 
 export interface DefaultParameter {
@@ -2662,15 +2666,15 @@ export interface DottedName {
 export interface ElifClause {
 	readonly $type: TSKindId.ElifClause;
 	readonly _condition: Expression;
-	readonly _consequence: SimpleStatements | Block | Newline;
+	readonly _consequence: SimpleStatements | Block | '\n';
 	condition(): Expression;
-	consequence(): SimpleStatements | Block | Newline;
+	consequence(): SimpleStatements | Block | '\n';
 }
 
 export interface ElseClause {
 	readonly $type: TSKindId.ElseClause;
-	readonly _body: SimpleStatements | Block | Newline;
-	body(): SimpleStatements | Block | Newline;
+	readonly _body: SimpleStatements | Block | '\n';
+	body(): SimpleStatements | Block | '\n';
 }
 
 export interface ExceptClause {
@@ -2678,11 +2682,14 @@ export interface ExceptClause {
 	readonly _except_clause_group1?: ExceptClauseGroup1;
 	readonly _simple_statements?: SimpleStatements;
 	readonly _block?: Block;
-	readonly _newline?: Newline;
+	readonly _newline?: boolean;
+	readonly __inputHints__?: {
+		readonly newline?: BooleanKeyword<'\n'>;
+	};
 	exceptClauseGroup1(): ExceptClauseGroup1 | undefined;
 	simpleStatements(): SimpleStatements | undefined;
 	block(): Block | undefined;
-	newline(): Newline | undefined;
+	newline(): boolean | undefined;
 }
 
 export interface ExecStatement {
@@ -2709,8 +2716,8 @@ export interface ExpressionStatement {
 
 export interface FinallyClause {
 	readonly $type: TSKindId.FinallyClause;
-	readonly _block: SimpleStatements | Block | Newline;
-	block(): SimpleStatements | Block | Newline;
+	readonly _block: SimpleStatements | Block | '\n';
+	block(): SimpleStatements | Block | '\n';
 }
 
 export interface ForInClause {
@@ -2731,7 +2738,7 @@ export interface ForStatement {
 	readonly _async_marker?: boolean;
 	readonly _left: LeftHandSide;
 	readonly _right: Expressions;
-	readonly _body: SimpleStatements | Block | Newline;
+	readonly _body: SimpleStatements | Block | '\n';
 	readonly _alternative?: ElseClause;
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
@@ -2739,7 +2746,7 @@ export interface ForStatement {
 	asyncMarker(): boolean | undefined;
 	left(): LeftHandSide;
 	right(): Expressions;
-	body(): SimpleStatements | Block | Newline;
+	body(): SimpleStatements | Block | '\n';
 	alternative(): ElseClause | undefined;
 }
 
@@ -2756,7 +2763,7 @@ export interface FunctionDefinition {
 	readonly _type_parameters?: TypeParameter;
 	readonly _parameters: Parameters;
 	readonly _return_type?: Type;
-	readonly _body: SimpleStatements | Block | Newline;
+	readonly _body: SimpleStatements | Block | '\n';
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
 	};
@@ -2765,7 +2772,7 @@ export interface FunctionDefinition {
 	typeParameters(): TypeParameter | undefined;
 	parameters(): Parameters;
 	returnType(): Type | undefined;
-	body(): SimpleStatements | Block | Newline;
+	body(): SimpleStatements | Block | '\n';
 }
 
 export interface FutureImportStatement {
@@ -2807,10 +2814,10 @@ export interface IfClause {
 export interface IfStatement {
 	readonly $type: TSKindId.IfStatement;
 	readonly _condition: Expression;
-	readonly _consequence: SimpleStatements | Block | Newline;
+	readonly _consequence: SimpleStatements | Block | '\n';
 	readonly _alternative?: readonly (ElifClause | ElseClause)[];
 	condition(): Expression;
-	consequence(): SimpleStatements | Block | Newline;
+	consequence(): SimpleStatements | Block | '\n';
 	alternatives(): readonly (ElifClause | ElseClause)[];
 }
 
@@ -3085,11 +3092,11 @@ export interface Subscript {
 
 export interface TryStatement {
 	readonly $type: TSKindId.TryStatement;
-	readonly _body: SimpleStatements | Block | Newline;
+	readonly _body: SimpleStatements | Block | '\n';
 	readonly _except_clauses?: readonly ExceptClause[];
 	readonly _else_clause?: ElseClause;
 	readonly _finally_clause?: FinallyClause;
-	body(): SimpleStatements | Block | Newline;
+	body(): SimpleStatements | Block | '\n';
 	exceptClauses(): readonly ExceptClause[];
 	elseClause(): ElseClause | undefined;
 	finallyClause(): FinallyClause | undefined;
@@ -3178,10 +3185,10 @@ export interface UnionType {
 export interface WhileStatement {
 	readonly $type: TSKindId.WhileStatement;
 	readonly _condition: Expression;
-	readonly _body: SimpleStatements | Block | Newline;
+	readonly _body: SimpleStatements | Block | '\n';
 	readonly _alternative?: ElseClause;
 	condition(): Expression;
-	body(): SimpleStatements | Block | Newline;
+	body(): SimpleStatements | Block | '\n';
 	alternative(): ElseClause | undefined;
 }
 
@@ -3201,13 +3208,13 @@ export interface WithStatement {
 	readonly $type: TSKindId.WithStatement;
 	readonly _async_marker?: boolean;
 	readonly _with_clause: WithClause;
-	readonly _body: SimpleStatements | Block | Newline;
+	readonly _body: SimpleStatements | Block | '\n';
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
 	};
 	asyncMarker(): boolean | undefined;
 	withClause(): WithClause;
-	body(): SimpleStatements | Block | Newline;
+	body(): SimpleStatements | Block | '\n';
 }
 
 export interface Yield {
@@ -3252,7 +3259,6 @@ export type None = Terminal<TSKindId.None, 'None'>;
 export type PassStatement = Terminal<TSKindId.PassStatement, 'pass'>;
 export type True = Terminal<TSKindId.True, 'True'>;
 export type TypeConversion = Terminal<TSKindId.TypeConversion, string>;
-export type Newline = Terminal<TSKindId.Newline, string>;
 export type Indent = Terminal<TSKindId.Indent, string>;
 export type Dedent = Terminal<TSKindId.Dedent, string>;
 export type StringStart = Terminal<TSKindId.StringStart, string>;
@@ -3519,9 +3525,6 @@ export interface TrueTree extends AnyTreeNode {
 	readonly type: 'true';
 }
 export interface TypeConversionTree extends TreeNode<'type_conversion'> {}
-export interface NewlineTree extends AnyTreeNode {
-	readonly type: '_newline';
-}
 export interface IndentTree extends AnyTreeNode {
 	readonly type: '_indent';
 }
@@ -4224,7 +4227,6 @@ export interface KindMap {
 	pass_statement: PassStatement;
 	true: True;
 	type_conversion: TypeConversion;
-	_newline: Newline;
 	_indent: Indent;
 	_dedent: Dedent;
 	string_start: StringStart;

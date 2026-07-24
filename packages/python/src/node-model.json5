@@ -114,8 +114,12 @@
       "except_clause_as": "_except_clause_as",
       "except_clause_list": "_except_clause_list"
     },
-    "_match_block.match_block_block": {
-      "match_block_block": "_match_block_block"
+    "_match_block.content": {
+      "match_block_block": "_match_block_block",
+      "newline": "_newline"
+    },
+    "_simple_statements.newline": {
+      "newline": "_newline"
     },
     "_suite.simple_statements": {
       "simple_statements": "_simple_statements"
@@ -151,6 +155,9 @@
     },
     "comparison_operator.comparators": {
       "comparison_operator_comparator": "_comparison_operator_comparator"
+    },
+    "decorator.newline": {
+      "newline": "_newline"
     },
     "dict_pattern.dict_pattern_group2": {
       "dict_pattern_group2": "_dict_pattern_group2"
@@ -472,7 +479,7 @@
       }
     },
     "_match_block": {
-      "match_block_block": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -548,6 +555,13 @@
         "required": true,
         "multiple": true,
         "nonEmpty": true
+      },
+      "newline": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "_slice_group1": {
@@ -979,6 +993,13 @@
     },
     "decorator": {
       "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "newline": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3368,9 +3389,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "match_block_block",
-          "propertyName": "matchBlockBlock",
-          "paramName": "matchBlockBlock",
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3381,12 +3402,20 @@
               "name": "_match_block_block",
               "parseKind": "match_block_block",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_newline",
+              "parseKind": "newline",
+              "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_match_block_block"
+              "_match_block_block",
+              "_newline"
             ]
           }
         }
@@ -3394,7 +3423,7 @@
       "children": [],
       "factoryShape": "direct",
       "factoryFields": [
-        "match_block_block"
+        "content"
       ]
     },
     {
@@ -3449,12 +3478,13 @@
     },
     {
       "kind": "_newline",
-      "modelType": "pattern",
+      "modelType": "token",
       "typeName": "Newline",
-      "factoryName": "newline",
       "irKey": "newline",
-      "hidden": false,
-      "factoryShape": "text"
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\" as const",
+      "text": "\n"
     },
     {
       "kind": "_not_escape_sequence",
@@ -3792,6 +3822,29 @@
             "typeName": "",
             "kinds": [
               "_simple_statement"
+            ]
+          }
+        },
+        {
+          "name": "newline",
+          "propertyName": "newline",
+          "paramName": "newline",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_newline",
+              "parseKind": "newline",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_newline"
             ]
           }
         }
@@ -5935,6 +5988,29 @@
               "expression"
             ]
           }
+        },
+        {
+          "name": "newline",
+          "propertyName": "newline",
+          "paramName": "newline",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_newline",
+              "parseKind": "newline",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_newline"
+            ]
+          }
         }
       ],
       "children": [],
@@ -6638,8 +6714,7 @@
       "factoryFields": [
         "except_clause_group1",
         "simple_statements",
-        "block",
-        "newline"
+        "block"
       ]
     },
     {

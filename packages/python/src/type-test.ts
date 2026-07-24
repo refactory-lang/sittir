@@ -202,8 +202,6 @@ import type {
 	ModuleTree,
 	NamedExpression,
 	NamedExpressionTree,
-	Newline,
-	NewlineTree,
 	None,
 	NoneTree,
 	NonlocalStatement,
@@ -537,7 +535,6 @@ export type _Type_None = _TypeAssert<_TypeExtends<None['$type'], TSKindId.None>>
 export type _Type_PassStatement = _TypeAssert<_TypeExtends<PassStatement['$type'], TSKindId.PassStatement>>;
 export type _Type_True = _TypeAssert<_TypeExtends<True['$type'], TSKindId.True>>;
 export type _Type_TypeConversion = _TypeAssert<_TypeExtends<TypeConversion['$type'], TSKindId.TypeConversion>>;
-export type _Type_Newline = _TypeAssert<_TypeExtends<Newline['$type'], TSKindId.Newline>>;
 export type _Type_Indent = _TypeAssert<_TypeExtends<Indent['$type'], TSKindId.Indent>>;
 export type _Type_Dedent = _TypeAssert<_TypeExtends<Dedent['$type'], TSKindId.Dedent>>;
 export type _Type_StringStart = _TypeAssert<_TypeExtends<StringStart['$type'], TSKindId.StringStart>>;
@@ -747,7 +744,6 @@ export type _Tree_None = _TypeAssert<_TypeExtends<NoneTree['type'], 'none'>>;
 export type _Tree_PassStatement = _TypeAssert<_TypeExtends<PassStatementTree['type'], 'pass_statement'>>;
 export type _Tree_True = _TypeAssert<_TypeExtends<TrueTree['type'], 'true'>>;
 export type _Tree_TypeConversion = _TypeAssert<_TypeExtends<TypeConversionTree['type'], 'type_conversion'>>;
-export type _Tree_Newline = _TypeAssert<_TypeExtends<NewlineTree['type'], '_newline'>>;
 export type _Tree_Indent = _TypeAssert<_TypeExtends<IndentTree['type'], '_indent'>>;
 export type _Tree_Dedent = _TypeAssert<_TypeExtends<DedentTree['type'], '_dedent'>>;
 export type _Tree_StringStart = _TypeAssert<_TypeExtends<StringStartTree['type'], 'string_start'>>;

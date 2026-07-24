@@ -842,6 +842,10 @@
           "named": true
         },
         {
+          "type": "newline",
+          "named": true
+        },
+        {
           "type": "statement_group1",
           "named": true
         }
@@ -1455,6 +1459,16 @@
         "types": [
           {
             "type": "expression",
+            "named": true
+          }
+        ]
+      },
+      "newline": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "newline",
             "named": true
           }
         ]
@@ -3402,6 +3416,10 @@
         {
           "type": "_simple_statement",
           "named": true
+        },
+        {
+          "type": "newline",
+          "named": true
         }
       ]
     }
@@ -3525,6 +3543,10 @@
       "types": [
         {
           "type": "_simple_statement",
+          "named": true
+        },
+        {
+          "type": "newline",
           "named": true
         }
       ]

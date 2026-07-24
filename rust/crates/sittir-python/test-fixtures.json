@@ -16,6 +16,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 18
@@ -82,7 +83,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "ψ1 =β_γ + Ψ_5",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (assignment left: (identifier) (assignment_eq right: (binary_operator left: (identifier) right: (identifier)))))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (assignment left: (identifier) (assignment_eq right: (binary_operator left: (identifier) right: (identifier))))) (newline)))",
     "wrappedText": "ψ1 =β_γ + Ψ_5",
     "wrappedOffset": 0
   },
@@ -408,6 +409,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 4
@@ -458,6 +460,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 5,
             "end": 10
@@ -511,6 +514,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 11,
             "end": 22
@@ -576,6 +580,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 23,
             "end": 28
@@ -646,7 +651,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "a[:] \n b[5:] \n b[5:6,...] \n c[: :]",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (subscript value: (identifier) subscript: (slice)))) (statement_group1 (expression_statement (subscript value: (identifier) subscript: (slice start: (integer))))) (statement_group1 (expression_statement (subscript value: (identifier) subscript: (slice start: (integer) stop: (integer)) subscript: (ellipsis)))) (statement_group1 (expression_statement (subscript value: (identifier) subscript: (slice step: (slice_group1))))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (subscript value: (identifier) subscript: (slice))) (newline)) (statement_group1 (expression_statement (subscript value: (identifier) subscript: (slice start: (integer)))) (newline)) (statement_group1 (expression_statement (subscript value: (identifier) subscript: (slice start: (integer) stop: (integer)) subscript: (ellipsis))) (newline)) (statement_group1 (expression_statement (subscript value: (identifier) subscript: (slice step: (slice_group1)))) (newline)))",
     "wrappedText": "a[:] \n b[5:] \n b[5:6,...] \n c[: :]",
     "wrappedOffset": 0
   },
@@ -1121,6 +1126,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 5
@@ -1179,7 +1185,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "a.b.c",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (attribute object: (attribute object: (identifier) attribute: (identifier)) attribute: (identifier)))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (attribute object: (attribute object: (identifier) attribute: (identifier)) attribute: (identifier))) (newline)))",
     "wrappedText": "a.b.c",
     "wrappedOffset": 0
   },
@@ -3827,6 +3833,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 122
@@ -3976,6 +3983,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 123,
             "end": 165
@@ -4058,7 +4066,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "exec (\" \\\" \\\" \",{ \" __builtins__ \":None },safe_dict) \n exec (\"\"\" exec _code_ in _globs_, _locs_ \"\"\")",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence)) string_end: (string_end)) (dictionary entries: (dictionary_group1 (pair key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (none)))) (identifier)))))) (statement_group1 (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (string string_start: (string_start) content: (string_content) string_end: (string_end))))))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence)) string_end: (string_end)) (dictionary entries: (dictionary_group1 (pair key: (string string_start: (string_start) content: (string_content) string_end: (string_end)) value: (none)))) (identifier))))) (newline)) (statement_group1 (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (string string_start: (string_start) content: (string_content) string_end: (string_end)))))) (newline)))",
     "wrappedText": "exec (\" \\\" \\\" \",{ \" __builtins__ \":None },safe_dict) \n exec (\"\"\" exec _code_ in _globs_, _locs_ \"\"\")",
     "wrappedOffset": 0
   },
@@ -5684,6 +5692,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 22
@@ -5767,6 +5776,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 23,
             "end": 29
@@ -5802,6 +5812,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 30,
             "end": 32
@@ -5836,6 +5847,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 33,
             "end": 35
@@ -5870,6 +5882,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 36,
             "end": 38
@@ -5911,7 +5924,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "a + b * c ** d - e / 5 \n a // 2 \n - 5 \n + x \n ~ x",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (binary_operator left: (binary_operator left: (identifier) right: (binary_operator left: (identifier) right: (binary_operator left: (identifier) right: (identifier)))) right: (binary_operator left: (identifier) right: (integer))))) (statement_group1 (expression_statement (binary_operator left: (identifier) right: (integer)))) (statement_group1 (expression_statement (unary_operator argument: (integer)))) (statement_group1 (expression_statement (unary_operator argument: (identifier)))) (statement_group1 (expression_statement (unary_operator argument: (identifier)))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (binary_operator left: (binary_operator left: (identifier) right: (binary_operator left: (identifier) right: (binary_operator left: (identifier) right: (identifier)))) right: (binary_operator left: (identifier) right: (integer)))) (newline)) (statement_group1 (expression_statement (binary_operator left: (identifier) right: (integer))) (newline)) (statement_group1 (expression_statement (unary_operator argument: (integer))) (newline)) (statement_group1 (expression_statement (unary_operator argument: (identifier))) (newline)) (statement_group1 (expression_statement (unary_operator argument: (identifier))) (newline)))",
     "wrappedText": "a + b * c ** d - e / 5 \n a // 2 \n - 5 \n + x \n ~ x",
     "wrappedOffset": 0
   },
@@ -6514,6 +6527,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 5
@@ -6549,6 +6563,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 6,
             "end": 11
@@ -6584,6 +6599,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 12,
             "end": 16
@@ -6619,6 +6635,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 17,
             "end": 21
@@ -6654,6 +6671,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 23,
             "end": 27
@@ -6689,6 +6707,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 28,
             "end": 32
@@ -6731,7 +6750,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": ".1 - .0 \n .1 + .0 \n .1 - 0 \n .1 + 0 \n 1 - .0 \n 1 + .0",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (binary_operator left: (float) right: (float)))) (statement_group1 (expression_statement (binary_operator left: (float) right: (float)))) (statement_group1 (expression_statement (binary_operator left: (float) right: (integer)))) (statement_group1 (expression_statement (binary_operator left: (float) right: (integer)))) (statement_group1 (expression_statement (binary_operator left: (integer) right: (float)))) (statement_group1 (expression_statement (binary_operator left: (integer) right: (float)))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (binary_operator left: (float) right: (float))) (newline)) (statement_group1 (expression_statement (binary_operator left: (float) right: (float))) (newline)) (statement_group1 (expression_statement (binary_operator left: (float) right: (integer))) (newline)) (statement_group1 (expression_statement (binary_operator left: (float) right: (integer))) (newline)) (statement_group1 (expression_statement (binary_operator left: (integer) right: (float))) (newline)) (statement_group1 (expression_statement (binary_operator left: (integer) right: (float))) (newline)))",
     "wrappedText": ".1 - .0 \n .1 + .0 \n .1 - 0 \n .1 + 0 \n 1 - .0 \n 1 + .0",
     "wrappedOffset": 0
   },
@@ -7160,6 +7179,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 7
@@ -7207,6 +7227,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 8,
             "end": 13
@@ -7260,7 +7281,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "2 ** 2 ** 3 \n - 2 ** 2",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (binary_operator left: (integer) right: (binary_operator left: (integer) right: (integer))))) (statement_group1 (expression_statement (unary_operator argument: (binary_operator left: (integer) right: (integer))))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (binary_operator left: (integer) right: (binary_operator left: (integer) right: (integer)))) (newline)) (statement_group1 (expression_statement (unary_operator argument: (binary_operator left: (integer) right: (integer)))) (newline)))",
     "wrappedText": "2 ** 2 ** 3 \n - 2 ** 2",
     "wrappedOffset": 0
   },
@@ -7521,6 +7542,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 18
@@ -7641,7 +7663,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "a () + b[c] * c.d.e",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (binary_operator left: (call function: (identifier) arguments: (argument_list)) right: (binary_operator left: (subscript value: (identifier) subscript: (identifier)) right: (attribute object: (attribute object: (identifier) attribute: (identifier)) attribute: (identifier)))))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (binary_operator left: (call function: (identifier) arguments: (argument_list)) right: (binary_operator left: (subscript value: (identifier) subscript: (identifier)) right: (attribute object: (attribute object: (identifier) attribute: (identifier)) attribute: (identifier))))) (newline)))",
     "wrappedText": "a () + b[c] * c.d.e",
     "wrappedOffset": 0
   },
@@ -8135,6 +8157,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 23
@@ -8225,7 +8248,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "a << b | c >> d & e ^ f",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (binary_operator left: (binary_operator left: (identifier) right: (identifier)) right: (binary_operator left: (binary_operator left: (identifier) right: (identifier)) right: (binary_operator left: (identifier) right: (identifier)))))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (binary_operator left: (binary_operator left: (identifier) right: (identifier)) right: (binary_operator left: (binary_operator left: (identifier) right: (identifier)) right: (binary_operator left: (identifier) right: (identifier))))) (newline)))",
     "wrappedText": "a << b | c >> d & e ^ f",
     "wrappedOffset": 0
   },
@@ -8550,6 +8573,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 12
@@ -8597,6 +8621,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 13,
             "end": 18
@@ -8633,6 +8658,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 19,
             "end": 35
@@ -8693,6 +8719,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 36,
             "end": 53
@@ -8760,7 +8787,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "a or b and c \n not d \n not a and b or c \n a and not b and c",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (boolean_operator left: (identifier) right: (boolean_operator left: (identifier) right: (identifier))))) (statement_group1 (expression_statement (not_operator argument: (identifier)))) (statement_group1 (expression_statement (boolean_operator left: (boolean_operator left: (not_operator argument: (identifier)) right: (identifier)) right: (identifier)))) (statement_group1 (expression_statement (boolean_operator left: (boolean_operator left: (identifier) right: (not_operator argument: (identifier))) right: (identifier)))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (boolean_operator left: (identifier) right: (boolean_operator left: (identifier) right: (identifier)))) (newline)) (statement_group1 (expression_statement (not_operator argument: (identifier))) (newline)) (statement_group1 (expression_statement (boolean_operator left: (boolean_operator left: (not_operator argument: (identifier)) right: (identifier)) right: (identifier))) (newline)) (statement_group1 (expression_statement (boolean_operator left: (boolean_operator left: (identifier) right: (not_operator argument: (identifier))) right: (identifier))) (newline)))",
     "wrappedText": "a or b and c \n not d \n not a and b or c \n a and not b and c",
     "wrappedOffset": 0
   },
@@ -9352,6 +9379,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 28
@@ -9465,7 +9493,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "tail_leaves :List [Leaf]=[]",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (assignment left: (identifier) (assignment_typed type: (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier))))) right: (list))))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (assignment left: (identifier) (assignment_typed type: (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier))))) right: (list)))) (newline)))",
     "wrappedText": "tail_leaves :List [Leaf]=[]",
     "wrappedOffset": 0
   },
@@ -9814,6 +9842,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 6
@@ -9849,6 +9878,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 7,
             "end": 14
@@ -9884,6 +9914,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 15,
             "end": 22
@@ -9919,6 +9950,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 23,
             "end": 29
@@ -9954,6 +9986,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 30,
             "end": 36
@@ -9989,6 +10022,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 37,
             "end": 43
@@ -10024,6 +10058,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 44,
             "end": 50
@@ -10059,6 +10094,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 51,
             "end": 59
@@ -10094,6 +10130,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 60,
             "end": 66
@@ -10129,6 +10166,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 67,
             "end": 73
@@ -10164,6 +10202,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 74,
             "end": 81
@@ -10199,6 +10238,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 82,
             "end": 88
@@ -10234,6 +10274,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 89,
             "end": 96
@@ -10276,7 +10317,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "a += 1 \n b >>= 2 \n c //= 1 \n d @= e \n f -= 2 \n g %= 2 \n h /= 5 \n i *= 2.2 \n j &= 1 \n k ^= 0 \n l <<= 2 \n m |= k \n n **= 3",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer)))) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer)))) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer)))) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (identifier)))) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer)))) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer)))) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer)))) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (float)))) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer)))) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer)))) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer)))) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (identifier)))) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer)))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer))) (newline)) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer))) (newline)) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer))) (newline)) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (identifier))) (newline)) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer))) (newline)) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer))) (newline)) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer))) (newline)) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (float))) (newline)) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer))) (newline)) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer))) (newline)) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer))) (newline)) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (identifier))) (newline)) (statement_group1 (expression_statement (augmented_assignment left: (identifier) right: (integer))) (newline)))",
     "wrappedText": "a += 1 \n b >>= 2 \n c //= 1 \n d @= e \n f -= 2 \n g %= 2 \n h /= 5 \n i *= 2.2 \n j &= 1 \n k ^= 0 \n l <<= 2 \n m |= k \n n **= 3",
     "wrappedOffset": 0
   },
@@ -13755,6 +13796,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 17
@@ -13818,6 +13860,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 18,
             "end": 41
@@ -13878,6 +13921,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 42,
             "end": 66
@@ -13968,7 +14012,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "a =b if c else d \n something () if a else d \n slice (1,1,1) if a else d",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (assignment left: (identifier) (assignment_eq right: (conditional_expression body: (identifier) condition: (identifier) alternative: (identifier)))))) (statement_group1 (expression_statement (conditional_expression body: (call function: (identifier) arguments: (argument_list)) condition: (identifier) alternative: (identifier)))) (statement_group1 (expression_statement (conditional_expression body: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (integer) (integer) (integer)))) condition: (identifier) alternative: (identifier)))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (assignment left: (identifier) (assignment_eq right: (conditional_expression body: (identifier) condition: (identifier) alternative: (identifier))))) (newline)) (statement_group1 (expression_statement (conditional_expression body: (call function: (identifier) arguments: (argument_list)) condition: (identifier) alternative: (identifier))) (newline)) (statement_group1 (expression_statement (conditional_expression body: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (integer) (integer) (integer)))) condition: (identifier) alternative: (identifier))) (newline)))",
     "wrappedText": "a =b if c else d \n something () if a else d \n slice (1,1,1) if a else d",
     "wrappedOffset": 0
   },
@@ -14807,6 +14851,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 17
@@ -14881,7 +14926,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "match (r1,r2,r3)",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (identifier) (identifier) (identifier)))))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (identifier) (identifier) (identifier))))) (newline)))",
     "wrappedText": "match (r1,r2,r3)",
     "wrappedOffset": 0
   },
@@ -15084,6 +15129,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 11
@@ -15212,6 +15258,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 12,
             "end": 30
@@ -15315,7 +15362,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "a :A [T]|B \n y :type [int]=int",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (assignment left: (identifier) (assignment_type type: (type (union_type left: (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier))))) right: (type (identifier)))))))) (statement_group1 (expression_statement (assignment left: (identifier) (assignment_typed type: (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier))))) right: (identifier))))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (assignment left: (identifier) (assignment_type type: (type (union_type left: (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier))))) right: (type (identifier))))))) (newline)) (statement_group1 (expression_statement (assignment left: (identifier) (assignment_typed type: (type (generic_type identifier: (identifier) type_parameter: (type_parameter (type (identifier))))) right: (identifier)))) (newline)))",
     "wrappedText": "a :A [T]|B \n y :type [int]=int",
     "wrappedOffset": 0
   },
@@ -16087,6 +16134,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 2
@@ -16121,6 +16169,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 3,
             "end": 9
@@ -16144,6 +16193,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 10,
             "end": 16
@@ -16167,6 +16217,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 17,
             "end": 19
@@ -16190,6 +16241,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 20,
             "end": 23
@@ -16224,6 +16276,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 24,
             "end": 29
@@ -16247,6 +16300,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 30,
             "end": 35
@@ -16270,6 +16324,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 36,
             "end": 41
@@ -16293,6 +16348,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 42,
             "end": 47
@@ -16316,6 +16372,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 48,
             "end": 51
@@ -16339,6 +16396,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 52,
             "end": 57
@@ -16362,6 +16420,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 58,
             "end": 63
@@ -16385,6 +16444,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 64,
             "end": 66
@@ -16415,7 +16475,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "- 1 \n 0xDEAD \n 0XDEAD \n 1j \n - 1j \n 0o123 \n 0O123 \n 0b001 \n 0B001 \n 1_1 \n 0B1_1 \n 0O1_1 \n 0L",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (unary_operator argument: (integer)))) (statement_group1 (expression_statement (integer))) (statement_group1 (expression_statement (integer))) (statement_group1 (expression_statement (integer))) (statement_group1 (expression_statement (unary_operator argument: (integer)))) (statement_group1 (expression_statement (integer))) (statement_group1 (expression_statement (integer))) (statement_group1 (expression_statement (integer))) (statement_group1 (expression_statement (integer))) (statement_group1 (expression_statement (integer))) (statement_group1 (expression_statement (integer))) (statement_group1 (expression_statement (integer))) (statement_group1 (expression_statement (integer))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (unary_operator argument: (integer))) (newline)) (statement_group1 (expression_statement (integer)) (newline)) (statement_group1 (expression_statement (integer)) (newline)) (statement_group1 (expression_statement (integer)) (newline)) (statement_group1 (expression_statement (unary_operator argument: (integer))) (newline)) (statement_group1 (expression_statement (integer)) (newline)) (statement_group1 (expression_statement (integer)) (newline)) (statement_group1 (expression_statement (integer)) (newline)) (statement_group1 (expression_statement (integer)) (newline)) (statement_group1 (expression_statement (integer)) (newline)) (statement_group1 (expression_statement (integer)) (newline)) (statement_group1 (expression_statement (integer)) (newline)) (statement_group1 (expression_statement (integer)) (newline)))",
     "wrappedText": "- 1 \n 0xDEAD \n 0XDEAD \n 1j \n - 1j \n 0o123 \n 0O123 \n 0b001 \n 0B001 \n 1_1 \n 0B1_1 \n 0O1_1 \n 0L",
     "wrappedOffset": 0
   },
@@ -16865,6 +16925,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 5
@@ -16899,6 +16960,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 6,
             "end": 11
@@ -16933,6 +16995,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 12,
             "end": 20
@@ -16956,6 +17019,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 21,
             "end": 29
@@ -16979,6 +17043,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 30,
             "end": 37
@@ -17002,6 +17067,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 38,
             "end": 42
@@ -17025,6 +17091,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 43,
             "end": 50
@@ -17048,6 +17115,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 51,
             "end": 57
@@ -17078,7 +17146,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "- .6_6 \n + .1_1 \n 123.4123 \n 123.123J \n 1_1.3_1 \n 1_1. \n 1e+3_4j \n .3e1_4",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (unary_operator argument: (float)))) (statement_group1 (expression_statement (unary_operator argument: (float)))) (statement_group1 (expression_statement (float))) (statement_group1 (expression_statement (float))) (statement_group1 (expression_statement (float))) (statement_group1 (expression_statement (float))) (statement_group1 (expression_statement (float))) (statement_group1 (expression_statement (float))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (unary_operator argument: (float))) (newline)) (statement_group1 (expression_statement (unary_operator argument: (float))) (newline)) (statement_group1 (expression_statement (float)) (newline)) (statement_group1 (expression_statement (float)) (newline)) (statement_group1 (expression_statement (float)) (newline)) (statement_group1 (expression_statement (float)) (newline)) (statement_group1 (expression_statement (float)) (newline)) (statement_group1 (expression_statement (float)) (newline)))",
     "wrappedText": "- .6_6 \n + .1_1 \n 123.4123 \n 123.123J \n 1_1.3_1 \n 1_1. \n 1e+3_4j \n .3e1_4",
     "wrappedOffset": 0
   },
@@ -17393,6 +17461,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 5
@@ -17416,6 +17485,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 6,
             "end": 10
@@ -17439,6 +17509,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 11,
             "end": 15
@@ -17462,6 +17533,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 16,
             "end": 22
@@ -17485,6 +17557,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 23,
             "end": 28
@@ -17508,6 +17581,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 29,
             "end": 34
@@ -17549,7 +17623,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "1e322 \n 1e-3 \n 1e+3 \n 1.8e10 \n 1.e10 \n - 1e10",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (float))) (statement_group1 (expression_statement (float))) (statement_group1 (expression_statement (float))) (statement_group1 (expression_statement (float))) (statement_group1 (expression_statement (float))) (statement_group1 (expression_statement (unary_operator argument: (float)))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (float)) (newline)) (statement_group1 (expression_statement (float)) (newline)) (statement_group1 (expression_statement (float)) (newline)) (statement_group1 (expression_statement (float)) (newline)) (statement_group1 (expression_statement (float)) (newline)) (statement_group1 (expression_statement (unary_operator argument: (float))) (newline)))",
     "wrappedText": "1e322 \n 1e-3 \n 1e+3 \n 1.8e10 \n 1.e10 \n - 1e10",
     "wrappedOffset": 0
   },
@@ -17771,6 +17845,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 8
@@ -17808,6 +17883,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 9,
             "end": 15
@@ -17845,6 +17921,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 16,
             "end": 23
@@ -17882,6 +17959,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 24,
             "end": 30
@@ -17919,6 +17997,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 31,
             "end": 37
@@ -17956,6 +18035,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 38,
             "end": 41
@@ -17993,6 +18073,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 42,
             "end": 46
@@ -18042,6 +18123,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 47,
             "end": 50
@@ -18079,6 +18161,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 51,
             "end": 71
@@ -18128,6 +18211,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 72,
             "end": 107
@@ -18178,6 +18262,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 108,
             "end": 143
@@ -18240,6 +18325,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 144,
             "end": 175
@@ -18387,6 +18473,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 176,
             "end": 209
@@ -18443,7 +18530,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\" I'm ok \" \n ' \"ok\" ' \n UR' bye ' \n b' sup ' \n B\" sup \" \n ` 1 ` \n \" \\\\ \" \n \" / \" \n \" \\\n \" \n b\" \\x12 \\x13 \" \n \" \\xab \\1 \\12 \\123 \\' \\\" \\a \\b \\f \\r \\n \\t \\v \\\\ \" \n \" \\ \\ \\ \\ \\ \\ \\ \\ \\ \" \n f' \\N{GREEK CAPITAL LETTER DELTA} '",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end)))) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end)))) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end)))) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end)))) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end)))) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end)))) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content (escape_sequence)) string_end: (string_end)))) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end)))) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content (escape_sequence)) string_end: (string_end)))) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence)) string_end: (string_end)))) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence)) string_end: (string_end)))) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content (string_content_group1) (string_content_group1) (string_content_group1) (string_content_group1) (string_content_group1) (string_content_group1) (string_content_group1) (string_content_group1) (string_content_group1)) string_end: (string_end)))) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content (escape_sequence)) string_end: (string_end)))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content (escape_sequence)) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content (escape_sequence)) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence)) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence)) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content (string_content_group1) (string_content_group1) (string_content_group1) (string_content_group1) (string_content_group1) (string_content_group1) (string_content_group1) (string_content_group1) (string_content_group1)) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content (escape_sequence)) string_end: (string_end))) (newline)))",
     "wrappedText": "\" I'm ok \" \n ' \"ok\" ' \n UR' bye ' \n b' sup ' \n B\" sup \" \n ` 1 ` \n \" \\\\ \" \n \" / \" \n \" \\\n \" \n b\" \\x12 \\x13 \" \n \" \\xab \\1 \\12 \\123 \\' \\\" \\a \\b \\f \\r \\n \\t \\v \\\\ \" \n \" \\ \\ \\ \\ \\ \\ \\ \\ \\ \" \n f' \\N{GREEK CAPITAL LETTER DELTA} '",
     "wrappedOffset": 0
   },
@@ -20176,6 +20263,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 85
@@ -20299,7 +20387,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "re.compile (r\" (\\n|\\A)#include\\s*['\\\"] \" r\" (?P<name>[\\w\\d./\\\\]+[.]src)['\\\"] \")",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_group1 (concatenated_string (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))))))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_group1 (concatenated_string (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end))))))) (newline)))",
     "wrappedText": "re.compile (r\" (\\n|\\A)#include\\s*['\\\"] \" r\" (?P<name>[\\w\\d./\\\\]+[.]src)['\\\"] \")",
     "wrappedOffset": 0
   },
@@ -21474,6 +21562,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 18
@@ -21532,7 +21621,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\" \\x12 \\123 \\u1234 \"",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence) (escape_sequence)) string_end: (string_end)))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence) (escape_sequence)) string_end: (string_end))) (newline)))",
     "wrappedText": "\" \\x12 \\123 \\u1234 \"",
     "wrappedOffset": 0
   },
@@ -21653,6 +21742,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 4
@@ -21676,6 +21766,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 5,
             "end": 10
@@ -21699,6 +21790,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 11,
             "end": 15
@@ -21729,7 +21821,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "True \n False \n None",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (true))) (statement_group1 (expression_statement (false))) (statement_group1 (expression_statement (none))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (true)) (newline)) (statement_group1 (expression_statement (false)) (newline)) (statement_group1 (expression_statement (none)) (newline)))",
     "wrappedText": "True \n False \n None",
     "wrappedOffset": 0
   },
@@ -21831,6 +21923,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 19
@@ -21917,7 +22010,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\" one \" \" two \" \" three \"",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (concatenated_string (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end))))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (concatenated_string (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))) (newline)))",
     "wrappedText": "\" one \" \" two \" \" three \"",
     "wrappedOffset": 0
   },
@@ -22187,6 +22280,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 62
@@ -22224,6 +22318,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 64,
             "end": 115
@@ -22261,6 +22356,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 117,
             "end": 168
@@ -22298,6 +22394,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 170,
             "end": 232
@@ -22335,6 +22432,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 234,
             "end": 285
@@ -22372,6 +22470,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 287,
             "end": 338
@@ -22409,6 +22508,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 340,
             "end": 429
@@ -22470,7 +22570,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "\"\"\" \nA double quote hello,\nwithout double or single quotes.\n \"\"\" \n \"\"\" \nA double quote \"hello\",\nwith double quotes.\n \"\"\" \n \"\"\" \nA double quote 'hello',\nwith single quotes.\n \"\"\" \n ''' \nA single quote hello,\nwithout double or single quotes.\n ''' \n ''' \nA single quote 'hello',\nwith single quotes.\n ''' \n ''' \nA single quote \"hello\",\nwith double quotes.\n ''' \n \"\"\" \\n \\\n \\n \\\n \\n \\\n \"\"\"",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end)))) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end)))) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end)))) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end)))) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end)))) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end)))) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence)) string_end: (string_end)))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content) string_end: (string_end))) (newline)) (statement_group1 (expression_statement (string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence)) string_end: (string_end))) (newline)))",
     "wrappedText": "\"\"\" \nA double quote hello,\nwithout double or single quotes.\n \"\"\" \n \"\"\" \nA double quote \"hello\",\nwith double quotes.\n \"\"\" \n \"\"\" \nA double quote 'hello',\nwith single quotes.\n \"\"\" \n ''' \nA single quote hello,\nwithout double or single quotes.\n ''' \n ''' \nA single quote 'hello',\nwith single quotes.\n ''' \n ''' \nA single quote \"hello\",\nwith double quotes.\n ''' \n \"\"\" \\n \\\n \\n \\\n \\n \\\n \"\"\"",
     "wrappedOffset": 0
   },
@@ -23513,6 +23613,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 12
@@ -23595,6 +23696,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 13,
             "end": 15
@@ -23628,6 +23730,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 16,
             "end": 22
@@ -23701,6 +23804,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 23,
             "end": 28
@@ -23764,6 +23868,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 29,
             "end": 36
@@ -23841,6 +23946,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 37,
             "end": 47
@@ -23935,6 +24041,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 48,
             "end": 55
@@ -24026,7 +24133,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "{ a:1,b:2 } \n {} \n { **{} } \n { **a } \n { **a.b } \n { **a[b].c } \n { **a () }",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (dictionary entries: (dictionary_group1 (pair key: (identifier) value: (integer)) (pair key: (identifier) value: (integer)))))) (statement_group1 (expression_statement (dictionary))) (statement_group1 (expression_statement (dictionary entries: (dictionary_group1 (dictionary_splat expression: (dictionary)))))) (statement_group1 (expression_statement (dictionary entries: (dictionary_group1 (dictionary_splat expression: (identifier)))))) (statement_group1 (expression_statement (dictionary entries: (dictionary_group1 (dictionary_splat expression: (attribute object: (identifier) attribute: (identifier))))))) (statement_group1 (expression_statement (dictionary entries: (dictionary_group1 (dictionary_splat expression: (attribute object: (subscript value: (identifier) subscript: (identifier)) attribute: (identifier))))))) (statement_group1 (expression_statement (dictionary entries: (dictionary_group1 (dictionary_splat expression: (call function: (identifier) arguments: (argument_list))))))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (dictionary entries: (dictionary_group1 (pair key: (identifier) value: (integer)) (pair key: (identifier) value: (integer))))) (newline)) (statement_group1 (expression_statement (dictionary)) (newline)) (statement_group1 (expression_statement (dictionary entries: (dictionary_group1 (dictionary_splat expression: (dictionary))))) (newline)) (statement_group1 (expression_statement (dictionary entries: (dictionary_group1 (dictionary_splat expression: (identifier))))) (newline)) (statement_group1 (expression_statement (dictionary entries: (dictionary_group1 (dictionary_splat expression: (attribute object: (identifier) attribute: (identifier)))))) (newline)) (statement_group1 (expression_statement (dictionary entries: (dictionary_group1 (dictionary_splat expression: (attribute object: (subscript value: (identifier) subscript: (identifier)) attribute: (identifier)))))) (newline)) (statement_group1 (expression_statement (dictionary entries: (dictionary_group1 (dictionary_splat expression: (call function: (identifier) arguments: (argument_list)))))) (newline)))",
     "wrappedText": "{ a:1,b:2 } \n {} \n { **{} } \n { **a } \n { **a.b } \n { **a[b].c } \n { **a () }",
     "wrappedOffset": 0
   },
@@ -25314,6 +25421,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 31
@@ -25434,7 +25542,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "field =call (match=r\" .*\\.txt$ \")",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (assignment left: (identifier) (assignment_eq right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (keyword_argument name: (identifier) value: (string string_start: (string_start) content: (string_content) string_end: (string_end)))))))))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (assignment left: (identifier) (assignment_eq right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (keyword_argument name: (identifier) value: (string string_start: (string_start) content: (string_content) string_end: (string_end))))))))) (newline)))",
     "wrappedText": "field =call (match=r\" .*\\.txt$ \")",
     "wrappedOffset": 0
   },
@@ -25865,6 +25973,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 33
@@ -25975,7 +26084,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "field =match (match=match,match)",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (assignment left: (identifier) (assignment_eq right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (keyword_argument name: (identifier) value: (identifier)) (identifier)))))))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (assignment left: (identifier) (assignment_eq right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (keyword_argument name: (identifier) value: (identifier)) (identifier))))))) (newline)))",
     "wrappedText": "field =match (match=match,match)",
     "wrappedOffset": 0
   },
@@ -26751,6 +26860,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 11
@@ -26805,6 +26915,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 12,
             "end": 27
@@ -26863,6 +26974,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 28,
             "end": 40
@@ -26916,7 +27028,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "import a,b \n import b.c as d \n import a.b.c",
-    "expectedReparseTree": "(module (statement_group1 (import_statement name: (dotted_name (identifier)) name: (dotted_name (identifier)))) (statement_group1 (import_statement name: (aliased_import name: (dotted_name (identifier) (identifier)) alias: (identifier)))) (statement_group1 (import_statement name: (dotted_name (identifier) (identifier) (identifier)))))",
+    "expectedReparseTree": "(module (statement_group1 (import_statement name: (dotted_name (identifier)) name: (dotted_name (identifier))) (newline)) (statement_group1 (import_statement name: (aliased_import name: (dotted_name (identifier) (identifier)) alias: (identifier))) (newline)) (statement_group1 (import_statement name: (dotted_name (identifier) (identifier) (identifier))) (newline)))",
     "wrappedText": "import a,b \n import b.c as d \n import a.b.c",
     "wrappedOffset": 0
   },
@@ -27063,6 +27175,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 8
@@ -27091,6 +27204,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 9,
             "end": 20
@@ -27128,7 +27242,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "assert a \n assert b,c",
-    "expectedReparseTree": "(module (statement_group1 (assert_statement (identifier))) (statement_group1 (assert_statement (identifier) (identifier))))",
+    "expectedReparseTree": "(module (statement_group1 (assert_statement (identifier)) (newline)) (statement_group1 (assert_statement (identifier) (identifier)) (newline)))",
     "wrappedText": "assert a \n assert b,c",
     "wrappedOffset": 0
   },
@@ -27149,6 +27263,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 1
@@ -27172,6 +27287,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 2,
             "end": 7
@@ -27207,6 +27323,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 8,
             "end": 15
@@ -27249,6 +27366,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 16,
             "end": 24
@@ -27299,7 +27417,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "a \n b + c \n 1,2,3 \n 1,2,3,",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (identifier))) (statement_group1 (expression_statement (binary_operator left: (identifier) right: (identifier)))) (statement_group1 (expression_statement (expression_statement_tuple (integer) (integer) (integer)))) (statement_group1 (expression_statement (expression_statement_tuple (integer) (integer) (integer)))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (identifier)) (newline)) (statement_group1 (expression_statement (binary_operator left: (identifier) right: (identifier))) (newline)) (statement_group1 (expression_statement (expression_statement_tuple (integer) (integer) (integer))) (newline)) (statement_group1 (expression_statement (expression_statement_tuple (integer) (integer) (integer))) (newline)))",
     "wrappedText": "a \n b + c \n 1,2,3 \n 1,2,3,",
     "wrappedOffset": 0
   },
@@ -29144,6 +29262,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 5
@@ -29167,6 +29286,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 6,
             "end": 30
@@ -29245,6 +29365,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 31,
             "end": 62
@@ -29332,7 +29453,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "raise \n raise RuntimeError (' NO ') \n raise RunTimeError (' NO ') from e",
-    "expectedReparseTree": "(module (statement_group1 (raise_statement)) (statement_group1 (raise_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (string string_start: (string_start) content: (string_content) string_end: (string_end))))))) (statement_group1 (raise_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (string string_start: (string_start) content: (string_content) string_end: (string_end))))) cause: (identifier))))",
+    "expectedReparseTree": "(module (statement_group1 (raise_statement) (newline)) (statement_group1 (raise_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (string string_start: (string_start) content: (string_content) string_end: (string_end)))))) (newline)) (statement_group1 (raise_statement (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (string string_start: (string_start) content: (string_content) string_end: (string_end))))) cause: (identifier)) (newline)))",
     "wrappedText": "raise \n raise RuntimeError (' NO ') \n raise RunTimeError (' NO ') from e",
     "wrappedOffset": 0
   },
@@ -29777,6 +29898,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 8
@@ -29805,6 +29927,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 9,
             "end": 20
@@ -29842,7 +29965,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "global a \n global a,b",
-    "expectedReparseTree": "(module (statement_group1 (global_statement (identifier))) (statement_group1 (global_statement (identifier) (identifier))))",
+    "expectedReparseTree": "(module (statement_group1 (global_statement (identifier)) (newline)) (statement_group1 (global_statement (identifier) (identifier)) (newline)))",
     "wrappedText": "global a \n global a,b",
     "wrappedOffset": 0
   },
@@ -29863,6 +29986,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 10
@@ -29904,6 +30028,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 11,
             "end": 30
@@ -29947,6 +30072,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 31,
             "end": 50
@@ -29991,6 +30117,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 51,
             "end": 65
@@ -30052,6 +30179,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 66,
             "end": 81
@@ -30098,7 +30226,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "exec ' 1+1 ' \n exec ' x+=1 ' in None \n exec ' x+=1 ' in a,b \n func =\" print \" \n exec func in {}",
-    "expectedReparseTree": "(module (statement_group1 (exec_statement code: (string string_start: (string_start) content: (string_content) string_end: (string_end)))) (statement_group1 (exec_statement code: (string string_start: (string_start) content: (string_content) string_end: (string_end)) in_clause: (none))) (statement_group1 (exec_statement code: (string string_start: (string_start) content: (string_content) string_end: (string_end)) in_clause: (identifier) in_clause: (identifier))) (statement_group1 (expression_statement (assignment left: (identifier) (assignment_eq right: (string string_start: (string_start) content: (string_content) string_end: (string_end)))))) (statement_group1 (exec_statement code: (identifier) in_clause: (dictionary))))",
+    "expectedReparseTree": "(module (statement_group1 (exec_statement code: (string string_start: (string_start) content: (string_content) string_end: (string_end))) (newline)) (statement_group1 (exec_statement code: (string string_start: (string_start) content: (string_content) string_end: (string_end)) in_clause: (none)) (newline)) (statement_group1 (exec_statement code: (string string_start: (string_start) content: (string_content) string_end: (string_end)) in_clause: (identifier) in_clause: (identifier)) (newline)) (statement_group1 (expression_statement (assignment left: (identifier) (assignment_eq right: (string string_start: (string_start) content: (string_content) string_end: (string_end))))) (newline)) (statement_group1 (exec_statement code: (identifier) in_clause: (dictionary)) (newline)))",
     "wrappedText": "exec ' 1+1 ' \n exec ' x+=1 ' in None \n exec ' x+=1 ' in a,b \n func =\" print \" \n exec func in {}",
     "wrappedOffset": 0
   },
@@ -30869,6 +30997,7 @@
           "$type": 110,
           "$source": 0,
           "$named": true,
+          "_newline": 101,
           "$span": {
             "start": 0,
             "end": 23
@@ -31016,7 +31145,7 @@
     "pattern": "module",
     "edits": [],
     "expectedSourceOut": "len (\" a \") or len (\" aa \")",
-    "expectedReparseTree": "(module (statement_group1 (expression_statement (boolean_operator left: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (string string_start: (string_start) content: (string_content) string_end: (string_end))))) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (string string_start: (string_start) content: (string_content) string_end: (string_end)))))))))",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (boolean_operator left: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (string string_start: (string_start) content: (string_content) string_end: (string_end))))) right: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (string string_start: (string_start) content: (string_content) string_end: (string_end))))))) (newline)))",
     "wrappedText": "len (\" a \") or len (\" aa \")",
     "wrappedOffset": 0
   },

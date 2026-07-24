@@ -214,7 +214,7 @@ pub struct MatchBlockBlockTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_match_block.jinja", escape = "none")]
 pub struct MatchBlockTemplate<'a> {
-    pub match_block_block: SingleNonterminalView<'a>,
+    pub content: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -257,6 +257,7 @@ pub struct SimplePatternNegativeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_simple_statements.jinja", escape = "none")]
 pub struct SimpleStatementsTemplate<'a> {
+    pub newline: SingleNonterminalView<'a>,
     pub simple_statement: ListNonterminalView<'a>,
 }
 
@@ -457,6 +458,7 @@ pub struct DecoratedDefinitionTemplate<'a> {
 #[template(path = "decorator.jinja", escape = "none")]
 pub struct DecoratorTemplate<'a> {
     pub expression: SingleNonterminalView<'a>,
+    pub newline: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

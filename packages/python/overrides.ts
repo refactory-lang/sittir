@@ -72,6 +72,16 @@ export default grammar(
 			// dissolves exactly as the base grammar resolves it (no extra conflict
 			// needed — the `as` is inline in `_except_clause_as` at parse time).
 			inline: ($, previous) => [...(previous ?? []), $._except_clause_as_optional1],
+			// _newline is python's statement-terminator EXTERNAL (the scanner
+			// consumes the newline character and drives indent tracking).
+			// visibleExternals materializes it as a real `newline` CST node —
+			// aliases don't touch the LR tables, so the parser behavior is
+			// identical — and renders emit a real '\n' terminator that
+			// re-parses to the SAME node type (round-trip-stable): the ts
+			// automatic_semicolon pattern applied to newline-as-syntax.
+			visibleExternals: (_$) => ({
+				_newline: string('\n')
+			}),
 			polymorphs: {
 				assignment: { '1/0': 'eq', '1/1': 'type', '1/2': 'typed' },
 

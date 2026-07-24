@@ -492,19 +492,19 @@ export function buildListPatternGroup1(elements: NonEmptyArray<T.CasePattern>, o
 	);
 }
 
-export function buildMatchBlock(child: T.MatchBlockBlock) {
-	const _match_block_block = child;
+export function buildMatchBlock(child: T.MatchBlockBlock | '\n') {
+	const _content = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.MatchBlock as const,
 				$source: 2 as const,
 				$named: true as const,
-				_match_block_block,
-				$with: { $child: (v: T.MatchBlockBlock) => buildMatchBlock(v) }
+				_content,
+				$with: { $child: (v: T.MatchBlockBlock | '\n') => buildMatchBlock(v) }
 			},
 			{
-				matchBlockBlock: () => _match_block_block
+				content: () => _content
 			}
 		),
 		methodsEngine
@@ -640,7 +640,7 @@ export function buildSimplePatternNegative(child: T.Integer | T.Float) {
 	);
 }
 
-export function buildSimpleStatements(...children: T.SimpleStatement[]) {
+export function buildSimpleStatements(...children: (T.SimpleStatement | '\n')[]) {
 	_assertNonEmpty(children, '_simple_statements.children');
 	const _simple_statement = children;
 	return withMethods(
@@ -650,7 +650,7 @@ export function buildSimpleStatements(...children: T.SimpleStatement[]) {
 				$source: 2 as const,
 				$named: true as const,
 				_simple_statement,
-				$with: { $children: (...vs: T.SimpleStatement[]) => buildSimpleStatements(...vs) }
+				$with: { $children: (...vs: (T.SimpleStatement | '\n')[]) => buildSimpleStatements(...vs) }
 			},
 			{
 				simpleStatements: () => _simple_statement
@@ -1081,7 +1081,7 @@ export function buildCaseClause(config: T.CaseClause.Config) {
 					casePatterns: (...values: NonEmptyArray<T.CasePattern>) =>
 						buildCaseClause({ ...config, casePattern: values }),
 					guard: (value?: T.IfClause) => buildCaseClause({ ...config, guard: value }),
-					consequence: (value: T.SimpleStatements | T.Block | T.Newline) =>
+					consequence: (value: T.SimpleStatements | T.Block | '\n') =>
 						buildCaseClause({ ...config, consequence: value })
 				}
 			},
@@ -1192,7 +1192,7 @@ export function buildClassDefinition(config: T.ClassDefinition.Config) {
 					name: (value: T.Identifier) => buildClassDefinition({ ...config, name: value }),
 					typeParameters: (value?: T.TypeParameter) => buildClassDefinition({ ...config, typeParameters: value }),
 					superclasses: (value?: T.ArgumentList) => buildClassDefinition({ ...config, superclasses: value }),
-					body: (value: T.SimpleStatements | T.Block | T.Newline) => buildClassDefinition({ ...config, body: value })
+					body: (value: T.SimpleStatements | T.Block | '\n') => buildClassDefinition({ ...config, body: value })
 				}
 			},
 			{
@@ -1424,6 +1424,7 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config) {
 
 export function buildDecorator(expression: T.Decorator.Config['expression']) {
 	const _expression = expression;
+	const _newline = '\n' as const;
 	return withMethods(
 		withAccessors(
 			{
@@ -1431,12 +1432,14 @@ export function buildDecorator(expression: T.Decorator.Config['expression']) {
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
+				_newline,
 				$with: {
 					expression: (value: T.Decorator.Config['expression']) => buildDecorator(value)
 				}
 			},
 			{
-				expression: () => _expression
+				expression: () => _expression,
+				newline: () => _newline
 			}
 		),
 		methodsEngine
@@ -1626,7 +1629,7 @@ export function buildElifClause(config: T.ElifClause.Config) {
 				_consequence,
 				$with: {
 					condition: (value: T.Expression) => buildElifClause({ ...config, condition: value }),
-					consequence: (value: T.SimpleStatements | T.Block | T.Newline) =>
+					consequence: (value: T.SimpleStatements | T.Block | '\n') =>
 						buildElifClause({ ...config, consequence: value })
 				}
 			},
@@ -1678,7 +1681,7 @@ export function buildExceptClause(config: Partial<T.ExceptClause.Config> = {}) {
 	const _except_clause_group1 = config.exceptClauseGroup1;
 	const _simple_statements = config.simpleStatements;
 	const _block = config.block;
-	const _newline = config.newline;
+	const _newline = coerceBooleanKeywordStorage(config.newline);
 	return withMethods(
 		withAccessors(
 			{
@@ -1694,7 +1697,8 @@ export function buildExceptClause(config: Partial<T.ExceptClause.Config> = {}) {
 						buildExceptClause({ ...config, exceptClauseGroup1: value }),
 					simpleStatements: (value?: T.SimpleStatements) => buildExceptClause({ ...config, simpleStatements: value }),
 					block: (value?: T.Block) => buildExceptClause({ ...config, block: value }),
-					newline: (value?: T.Newline) => buildExceptClause({ ...config, newline: value })
+					newline: (value?: NonNullable<Parameters<typeof buildExceptClause>[0]>['newline']) =>
+						buildExceptClause({ ...config, newline: value })
 				}
 			},
 			{
@@ -1883,7 +1887,7 @@ export function buildForStatement(config: T.ForStatement.Config) {
 						buildForStatement({ ...config, asyncMarker: value }),
 					left: (value: T.LeftHandSide) => buildForStatement({ ...config, left: value }),
 					right: (value: T.Expressions) => buildForStatement({ ...config, right: value }),
-					body: (value: T.SimpleStatements | T.Block | T.Newline) => buildForStatement({ ...config, body: value }),
+					body: (value: T.SimpleStatements | T.Block | '\n') => buildForStatement({ ...config, body: value }),
 					alternative: (value?: T.ElseClause) => buildForStatement({ ...config, alternative: value })
 				}
 			},
@@ -1944,7 +1948,7 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config) {
 					typeParameters: (value?: T.TypeParameter) => buildFunctionDefinition({ ...config, typeParameters: value }),
 					parameters: (value: T.Parameters) => buildFunctionDefinition({ ...config, parameters: value }),
 					returnType: (value?: T.Type) => buildFunctionDefinition({ ...config, returnType: value }),
-					body: (value: T.SimpleStatements | T.Block | T.Newline) => buildFunctionDefinition({ ...config, body: value })
+					body: (value: T.SimpleStatements | T.Block | '\n') => buildFunctionDefinition({ ...config, body: value })
 				}
 			},
 			{
@@ -2109,7 +2113,7 @@ export function buildIfStatement(config: T.IfStatement.Config) {
 				_alternative,
 				$with: {
 					condition: (value: T.Expression) => buildIfStatement({ ...config, condition: value }),
-					consequence: (value: T.SimpleStatements | T.Block | T.Newline) =>
+					consequence: (value: T.SimpleStatements | T.Block | '\n') =>
 						buildIfStatement({ ...config, consequence: value }),
 					alternatives: (...values: (T.ElifClause | T.ElseClause)[]) =>
 						buildIfStatement({ ...config, alternative: values })
@@ -3058,7 +3062,7 @@ export function buildTryStatement(config: T.TryStatement.Config) {
 				_else_clause,
 				_finally_clause,
 				$with: {
-					body: (value: T.SimpleStatements | T.Block | T.Newline) => buildTryStatement({ ...config, body: value }),
+					body: (value: T.SimpleStatements | T.Block | '\n') => buildTryStatement({ ...config, body: value }),
 					exceptClauses: (...values: T.ExceptClause[]) => buildTryStatement({ ...config, exceptClauses: values }),
 					elseClause: (value?: T.ElseClause) => buildTryStatement({ ...config, elseClause: value }),
 					finallyClause: (value?: T.FinallyClause) => buildTryStatement({ ...config, finallyClause: value })
@@ -3346,7 +3350,7 @@ export function buildWhileStatement(config: T.WhileStatement.Config) {
 				_alternative,
 				$with: {
 					condition: (value: T.Expression) => buildWhileStatement({ ...config, condition: value }),
-					body: (value: T.SimpleStatements | T.Block | T.Newline) => buildWhileStatement({ ...config, body: value }),
+					body: (value: T.SimpleStatements | T.Block | '\n') => buildWhileStatement({ ...config, body: value }),
 					alternative: (value?: T.ElseClause) => buildWhileStatement({ ...config, alternative: value })
 				}
 			},
@@ -3417,7 +3421,7 @@ export function buildWithStatement(config: T.WithStatement.Config) {
 					asyncMarker: (value?: NonNullable<Parameters<typeof buildWithStatement>[0]>['asyncMarker']) =>
 						buildWithStatement({ ...config, asyncMarker: value }),
 					withClause: (value: T.WithClause) => buildWithStatement({ ...config, withClause: value }),
-					body: (value: T.SimpleStatements | T.Block | T.Newline) => buildWithStatement({ ...config, body: value })
+					body: (value: T.SimpleStatements | T.Block | '\n') => buildWithStatement({ ...config, body: value })
 				}
 			},
 			{
@@ -3445,20 +3449,6 @@ export function buildYield(child?: T.Expression | T.Expressions) {
 				content: () => _content
 			}
 		),
-		methodsEngine
-	);
-}
-
-export function buildNewline(text: string) {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_newline: text must be non-empty`);
-	return withMethods(
-		{
-			$type: TSKindId.Newline as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
 		methodsEngine
 	);
 }
@@ -3751,7 +3741,6 @@ export type FluentKindMap = {
 	with_item: FluentNode<'with_item', T.WithItem.Config>;
 	with_statement: FluentNode<'with_statement', T.WithStatement.Config>;
 	yield: FluentNode<'yield', T.Yield.Config>;
-	_newline: T.Newline;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
 	string_start: T.StringStart;
@@ -3912,7 +3901,6 @@ export const _factoryMap = {
 	with_item: buildWithItem,
 	with_statement: buildWithStatement,
 	yield: buildYield,
-	_newline: buildNewline,
 	_indent: buildIndent,
 	_dedent: buildDedent,
 	string_start: buildStringStart,

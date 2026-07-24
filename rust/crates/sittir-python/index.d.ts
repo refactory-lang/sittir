@@ -450,6 +450,7 @@ export interface DecoratorTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _expression: ExpressionTransport
+  _newline: NewlineTransport
 }
 
 export interface DefaultParameterTransport {
@@ -1075,8 +1076,7 @@ export interface MatchBlockTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _match_block_block: MatchBlockBlockTransport
-  _alternative?: Array<CaseClauseTransport>
+  _content: MatchBlockContentTransportSlot
 }
 
 export interface MatchStatementTransport {
@@ -1364,6 +1364,7 @@ export interface SimpleStatementsTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _simple_statement: Array<SimpleStatementTransport>
+  _newline: NewlineTransport
 }
 
 export interface SliceGroup1Transport {
