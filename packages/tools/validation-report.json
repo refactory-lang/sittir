@@ -439,38 +439,8 @@
     "grammar": "rust",
     "backend": "native",
     "stage": "read-render-parse",
-    "location": "Async function [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Async closure [closure_expression]",
-    "message": "kind not found at rendered offset 18"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Async move async move closure [closure_expression]",
-    "message": "kind not found at rendered offset 18"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
     "location": "Function declarations [source_file]",
-    "message": "re-parse error: \" fn main () {  }  fn add (x:i32,y:i32)->i32 { return x + y; }  fn takes_slice (s\""
+    "message": "re-parse error [ERROR in tuple_expression at \"1\"]: \"fn main () {  }  fn add (x:i32,y:i32)->i32 { return x + y; }  fn takes_slice (sl\""
   },
   {
     "source": "validator",
@@ -479,68 +449,8 @@
     "grammar": "rust",
     "backend": "native",
     "stage": "read-render-parse",
-    "location": "Const function declarations [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Functions with abstract return types [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Impl with lifetimes first [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Functions with precise capture syntax [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Functions with empty precise capture syntax [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Diverging functions [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Extern function declarations [source_file]",
-    "message": "kind not found at rendered offset 0"
+    "location": "Extern function declarations [line_comment]",
+    "message": "render: Missing field `_content`"
   },
   {
     "source": "validator",
@@ -550,7 +460,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Structs [source_file]",
-    "message": "re-parse error: \"struct Proton ; struct Electron {} struct Person {  pub name:String, pub age:u32\""
+    "message": "re-parse error [ERROR in attribute_item at \"=\"]: \"struct Proton ; struct Electron {} struct Person {  pub name:String, pub age:u32\""
   },
   {
     "source": "validator",
@@ -560,7 +470,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Generic structs [source_file]",
-    "message": "re-parse error: \"struct A < B> {} struct C < 'a, 'b> {} struct C < 'a> {} struct D < const SIZE:u\""
+    "message": "re-parse error [ERROR in attribute_item at \"=\"]: \"struct A < B> {} struct C < 'a, 'b> {} struct C < 'a> {} struct D < const SIZE:u\""
   },
   {
     "source": "validator",
@@ -570,47 +480,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Enums [source_file]",
-    "message": "re-parse error: \"pub enum Option < T> {  None, Some ( T), } pub enum Node < T :Item> {  Internal \""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Functions with mutable parameters [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Functions with destructured parameters [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Functions with custom types for self [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Constant items [trait_item]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [ERROR in attribute_item at \"=\"]: \"pub enum Option < T> {  None, Some ( T), } pub enum Node < T :Item> {  Internal \""
   },
   {
     "source": "validator",
@@ -630,17 +500,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Static 'ref' items using lazy_static [source_file]",
-    "message": "re-parse error: \"static ref ref ONE:usize=0 ;\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Empty statements [source_file]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [ERROR in static_item at \"ONE\"]: \"static ref ref ONE:usize=0 ;\""
   },
   {
     "source": "validator",
@@ -650,7 +510,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Attributes [source_file]",
-    "message": "re-parse error: \"#[test =]  fn test_foo () {  } #[derive =] struct Baz ; #[derive =] struct Foo ;\""
+    "message": "re-parse error [ERROR in attribute_item at \"=\"]: \"#[test =]  fn test_foo () {  } #[derive =] struct Baz ; #[derive =] struct Foo ;\""
   },
   {
     "source": "validator",
@@ -660,7 +520,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Inner attributes [source_file]",
-    "message": "re-parse error: \"mod macos_only { #![cfg =] } match ty {  }\""
+    "message": "re-parse error [ERROR in inner_attribute_item at \"=\"]: \"mod macos_only { #![cfg =] } match ty {  }\""
   },
   {
     "source": "validator",
@@ -670,7 +530,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Key-Value Attribute Expressions [source_file]",
-    "message": "re-parse error: \"#[doc =]  fn foo () {  } #[namespace =]  fn baz () {  }\""
+    "message": "re-parse error [ERROR in attribute_item at \"=\"]: \"#[doc =]  fn foo () {  } #[namespace =]  fn baz () {  }\""
   },
   {
     "source": "validator",
@@ -680,7 +540,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Attribute macros [source_file]",
-    "message": "re-parse error: \"foo (#[attr =] x, y); foo (#[bar =] x);\""
+    "message": "re-parse error [ERROR in attribute_item at \"=\"]: \"foo (#[attr =] x, y); foo (#[bar =] x);\""
   },
   {
     "source": "validator",
@@ -690,7 +550,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Derive macro helper attributes [source_file]",
-    "message": "re-parse error: \"use thiserror::Error; #[derive =] pub enum Error { #[error =] WrongCase ( String\""
+    "message": "re-parse error [ERROR in attribute_item at \"=\"]: \"use thiserror::Error; #[derive =] pub enum Error { #[error =] WrongCase ( String\""
   },
   {
     "source": "validator",
@@ -700,7 +560,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Attributes and Expressions [source_file]",
-    "message": "re-parse error: \" fn foo () { bar ( x,#[cfg =] y); let z =[#[hello =]  2, 7, 8]; let t =(#[hello \""
+    "message": "re-parse error [ERROR in attribute_item at \"=\"]: \"fn foo () { bar ( x,#[cfg =] y); let z =[#[hello =]  2, 7, 8]; let t =(#[hello =\""
   },
   {
     "source": "validator",
@@ -709,88 +569,8 @@
     "grammar": "rust",
     "backend": "native",
     "stage": "read-render-parse",
-    "location": "Inherent Impls [function_item]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Trait impls [function_item]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Impls with default functions [function_item]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Trait declarations [function_signature_item]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Trait declarations with optional type parameters [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Unsized types in trait bounds [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Macro invocations inside trait declarations [function_signature_item]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Generic Associated Types [function_item]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Higher-ranked types [source_file]",
-    "message": "kind not found at rendered offset 0"
+    "location": "Impls with default functions [line_comment]",
+    "message": "render: Missing field `_content`"
   },
   {
     "source": "validator",
@@ -801,16 +581,6 @@
     "stage": "read-render-parse",
     "location": "Visibility modifiers [source_file]",
     "message": "render: VisibilityModifierGroup1ContentTransportSlot: expected u16 kind_id, string, or object with $type on "
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Function parameter names that match built-in type names [source_file]",
-    "message": "kind not found at rendered offset 0"
   },
   {
     "source": "validator",
@@ -839,36 +609,6 @@
     "grammar": "rust",
     "backend": "native",
     "stage": "read-render-parse",
-    "location": "Array Constraint in Where Clause [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Identifiers [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Raw identifiers [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
     "location": "Range expressions [source_file]",
     "message": "render: Missing field `_content` on ExpressionStatementWithSemiTransport._expression on ExpressionStatementT"
   },
@@ -880,7 +620,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Array expressions [source_file]",
-    "message": "re-parse error: \"[]; [  1, 2, 3]; [  \"a\", \"b\", \"c\"]; [ 0;128]; [#[cfg =]  \"foo\",#[cfg =] \"bar\",];\""
+    "message": "re-parse error [ERROR in attribute_item at \"=\"]: \"[]; [  1, 2, 3]; [  \"a\", \"b\", \"c\"]; [ 0;128]; [#[cfg =]  \"foo\",#[cfg =] \"bar\",];\""
   },
   {
     "source": "validator",
@@ -890,17 +630,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Tuple expressions [source_file]",
-    "message": "re-parse error: \"(); ( 0,0 0); let (x,y,z) =( 1,2,3,1,2,3 1,2,3);\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "If expressions [source_file]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [ERROR in tuple_expression at \"0\"]: \"(); ( 0,0 0); let (x,y,z) =( 1,2,3,1,2,3 1,2,3);\""
   },
   {
     "source": "validator",
@@ -939,38 +669,8 @@
     "grammar": "rust",
     "backend": "native",
     "stage": "read-render-parse",
-    "location": "Closures [closure_expression]",
-    "message": "kind not found at rendered offset 18"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Closures with typed parameteres [closure_expression]",
-    "message": "kind not found at rendered offset 18"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Generators [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
     "location": "Raw string literals [source_file]",
-    "message": "re-parse error: \"r#\"abc\"#; r#\"ok\"#; r#\"foo #\"# bar\"#; r#\"foo ##\"## bar\"#; r#\"foo ##### bar\"#;\""
+    "message": "re-parse error [ERROR in expression_statement_with_semi at \"bar\"#\"]: \"r#\"abc\"#; r#\"ok\"#; r#\"foo #\"# bar\"#; r#\"foo ##\"## bar\"#; r#\"foo ##### bar\"#;\""
   },
   {
     "source": "validator",
@@ -990,7 +690,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Macro definition [source_file]",
-    "message": "re-parse error: \"macro_rules!say_hello { ()=>(()) ()=>(()) } macro_rules!four { ()=>{  } ()=>{  }\""
+    "message": "re-parse error [MISSING \";\" in macro_definition_brace]: \"macro_rules!say_hello { ()=>(()) ()=>(()) } macro_rules!four { ()=>{  } ()=>{  }\""
   },
   {
     "source": "validator",
@@ -1000,7 +700,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Struct patterns [source_file]",
-    "message": "re-parse error: \"match x {  Person{  name, age } if age < 5=>( \"toddler\",name,\"toddler\",name \"tod\""
+    "message": "re-parse error [MISSING \",\" in tuple_expression]: \"match x {  Person{  name, age } if age < 5=>( \"toddler\",name,\"toddler\",name \"tod\""
   },
   {
     "source": "validator",
@@ -1010,27 +710,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Captured patterns [source_file]",
-    "message": "re-parse error: \"match x {  a@A(_)|b@B(..)=>a,  a@1 ... 5=>a,  Some(1 ... 5)=>a,  a@b ... c=>a,  \""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Or patterns [closure_expression]",
-    "message": "kind not found at rendered offset 18"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Inline const or Const blocks as pattern [source_file]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [ERROR in range_pattern_left_with_right at \">a, ..\"]: \"match x {  a@A(_)|b@B(..)=>a,  a@1 ... 5=>a,  Some(1 ... 5)=>a,  a@b ... c=>a,  \""
   },
   {
     "source": "validator",
@@ -1050,7 +730,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Function types [source_file]",
-    "message": "re-parse error: \" fn high_order1 (value:i32,f:(i32))->i32 {  }  fn high_order2 (value:i32,f:(i32)\""
+    "message": "re-parse error [ERROR in parameter at \"(i32)->\"]: \"fn high_order1 (value:i32,f:(i32))->i32 {  }  fn high_order2 (value:i32,f:(i32)-\""
   },
   {
     "source": "validator",
@@ -1161,6 +841,56 @@
     "stage": "read-render-parse-ast-mismatch",
     "location": "Ignored patterns (tuple_pattern)",
     "message": "tuple_pattern[1].tuple_pattern_group1[0].identifier: type identifier ≠ remaining_field_pattern"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "rust",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Inline const or Const blocks as pattern (source_file)",
+    "message": "source_file[0].function_item[3].block[2].expression_statement[0].match_expression[2].match_block[1].match_arm[2].match_arm_with_comma[0].macro_invocation[2].tok"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "rust",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Inline const or Const blocks as pattern (function_item)",
+    "message": "function_item[3].block[2].expression_statement[0].match_expression[2].match_block[1].match_arm[2].match_arm_with_comma[0].macro_invocation[2].token_tree[0].deli"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "rust",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Inline const or Const blocks as pattern (match_expression)",
+    "message": "match_expression[2].match_block[1].match_arm[2].match_arm_with_comma[0].macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pa"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "rust",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Inline const or Const blocks as pattern (macro_invocation)",
+    "message": "macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\",\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "rust",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Inline const or Const blocks as pattern (token_tree)",
+    "message": "token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\",\")\"]"
   },
   {
     "source": "validator",
@@ -1189,38 +919,8 @@
     "grammar": "rust",
     "backend": "native",
     "stage": "read-render-parse-shallow",
-    "location": "Async function [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Async closure [closure_expression]",
-    "message": "kind not found at rendered offset 18"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Async move async move closure [closure_expression]",
-    "message": "kind not found at rendered offset 18"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
     "location": "Function declarations [source_file]",
-    "message": "re-parse error: \" fn main () {  }  fn add (x:i32,y:i32)->i32 { return x + y; }  fn takes_slice (s\""
+    "message": "re-parse error [ERROR in tuple_expression at \"1\"]: \"fn main () {  }  fn add (x:i32,y:i32)->i32 { return x + y; }  fn takes_slice (sl\""
   },
   {
     "source": "validator",
@@ -1229,68 +929,8 @@
     "grammar": "rust",
     "backend": "native",
     "stage": "read-render-parse-shallow",
-    "location": "Const function declarations [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Functions with abstract return types [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Impl with lifetimes first [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Functions with precise capture syntax [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Functions with empty precise capture syntax [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Diverging functions [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Extern function declarations [source_file]",
-    "message": "kind not found at rendered offset 0"
+    "location": "Extern function declarations [line_comment]",
+    "message": "render: Missing field `_content`"
   },
   {
     "source": "validator",
@@ -1300,7 +940,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Structs [source_file]",
-    "message": "re-parse error: \"struct Proton ; struct Electron {} struct Person {  pub name:String, pub age:u32\""
+    "message": "re-parse error [ERROR in attribute_item at \"=\"]: \"struct Proton ; struct Electron {} struct Person {  pub name:String, pub age:u32\""
   },
   {
     "source": "validator",
@@ -1310,7 +950,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Generic structs [source_file]",
-    "message": "re-parse error: \"struct A < B> {} struct C < 'a, 'b> {} struct C < 'a> {} struct D < const SIZE:u\""
+    "message": "re-parse error [ERROR in attribute_item at \"=\"]: \"struct A < B> {} struct C < 'a, 'b> {} struct C < 'a> {} struct D < const SIZE:u\""
   },
   {
     "source": "validator",
@@ -1320,47 +960,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Enums [source_file]",
-    "message": "re-parse error: \"pub enum Option < T> {  None, Some ( T), } pub enum Node < T :Item> {  Internal \""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Functions with mutable parameters [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Functions with destructured parameters [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Functions with custom types for self [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Constant items [trait_item]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [ERROR in attribute_item at \"=\"]: \"pub enum Option < T> {  None, Some ( T), } pub enum Node < T :Item> {  Internal \""
   },
   {
     "source": "validator",
@@ -1380,17 +980,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Static 'ref' items using lazy_static [source_file]",
-    "message": "re-parse error: \"static ref ref ONE:usize=0 ;\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Empty statements [source_file]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [ERROR in static_item at \"ONE\"]: \"static ref ref ONE:usize=0 ;\""
   },
   {
     "source": "validator",
@@ -1400,7 +990,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Attributes [source_file]",
-    "message": "re-parse error: \"#[test =]  fn test_foo () {  } #[derive =] struct Baz ; #[derive =] struct Foo ;\""
+    "message": "re-parse error [ERROR in attribute_item at \"=\"]: \"#[test =]  fn test_foo () {  } #[derive =] struct Baz ; #[derive =] struct Foo ;\""
   },
   {
     "source": "validator",
@@ -1410,7 +1000,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Inner attributes [source_file]",
-    "message": "re-parse error: \"mod macos_only { #![cfg =] } match ty {  }\""
+    "message": "re-parse error [ERROR in inner_attribute_item at \"=\"]: \"mod macos_only { #![cfg =] } match ty {  }\""
   },
   {
     "source": "validator",
@@ -1420,7 +1010,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Key-Value Attribute Expressions [source_file]",
-    "message": "re-parse error: \"#[doc =]  fn foo () {  } #[namespace =]  fn baz () {  }\""
+    "message": "re-parse error [ERROR in attribute_item at \"=\"]: \"#[doc =]  fn foo () {  } #[namespace =]  fn baz () {  }\""
   },
   {
     "source": "validator",
@@ -1430,7 +1020,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Attribute macros [source_file]",
-    "message": "re-parse error: \"foo (#[attr =] x, y); foo (#[bar =] x);\""
+    "message": "re-parse error [ERROR in attribute_item at \"=\"]: \"foo (#[attr =] x, y); foo (#[bar =] x);\""
   },
   {
     "source": "validator",
@@ -1440,7 +1030,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Derive macro helper attributes [source_file]",
-    "message": "re-parse error: \"use thiserror::Error; #[derive =] pub enum Error { #[error =] WrongCase ( String\""
+    "message": "re-parse error [ERROR in attribute_item at \"=\"]: \"use thiserror::Error; #[derive =] pub enum Error { #[error =] WrongCase ( String\""
   },
   {
     "source": "validator",
@@ -1450,7 +1040,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Attributes and Expressions [source_file]",
-    "message": "re-parse error: \" fn foo () { bar ( x,#[cfg =] y); let z =[#[hello =]  2, 7, 8]; let t =(#[hello \""
+    "message": "re-parse error [ERROR in attribute_item at \"=\"]: \"fn foo () { bar ( x,#[cfg =] y); let z =[#[hello =]  2, 7, 8]; let t =(#[hello =\""
   },
   {
     "source": "validator",
@@ -1459,88 +1049,8 @@
     "grammar": "rust",
     "backend": "native",
     "stage": "read-render-parse-shallow",
-    "location": "Inherent Impls [function_item]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Trait impls [function_item]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Impls with default functions [function_item]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Trait declarations [function_signature_item]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Trait declarations with optional type parameters [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Unsized types in trait bounds [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Macro invocations inside trait declarations [function_signature_item]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Generic Associated Types [function_item]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Higher-ranked types [source_file]",
-    "message": "kind not found at rendered offset 0"
+    "location": "Impls with default functions [line_comment]",
+    "message": "render: Missing field `_content`"
   },
   {
     "source": "validator",
@@ -1551,16 +1061,6 @@
     "stage": "read-render-parse-shallow",
     "location": "Visibility modifiers [source_file]",
     "message": "render: VisibilityModifierGroup1ContentTransportSlot: expected u16 kind_id, string, or object with $type on "
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Function parameter names that match built-in type names [source_file]",
-    "message": "kind not found at rendered offset 0"
   },
   {
     "source": "validator",
@@ -1589,36 +1089,6 @@
     "grammar": "rust",
     "backend": "native",
     "stage": "read-render-parse-shallow",
-    "location": "Array Constraint in Where Clause [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Identifiers [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Raw identifiers [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
     "location": "Range expressions [source_file]",
     "message": "render: Missing field `_content` on ExpressionStatementWithSemiTransport._expression on ExpressionStatementT"
   },
@@ -1630,7 +1100,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Array expressions [source_file]",
-    "message": "re-parse error: \"[]; [  1, 2, 3]; [  \"a\", \"b\", \"c\"]; [ 0;128]; [#[cfg =]  \"foo\",#[cfg =] \"bar\",];\""
+    "message": "re-parse error [ERROR in attribute_item at \"=\"]: \"[]; [  1, 2, 3]; [  \"a\", \"b\", \"c\"]; [ 0;128]; [#[cfg =]  \"foo\",#[cfg =] \"bar\",];\""
   },
   {
     "source": "validator",
@@ -1640,17 +1110,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Tuple expressions [source_file]",
-    "message": "re-parse error: \"(); ( 0,0 0); let (x,y,z) =( 1,2,3,1,2,3 1,2,3);\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "If expressions [source_file]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [ERROR in tuple_expression at \"0\"]: \"(); ( 0,0 0); let (x,y,z) =( 1,2,3,1,2,3 1,2,3);\""
   },
   {
     "source": "validator",
@@ -1689,38 +1149,8 @@
     "grammar": "rust",
     "backend": "native",
     "stage": "read-render-parse-shallow",
-    "location": "Closures [closure_expression]",
-    "message": "kind not found at rendered offset 18"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Closures with typed parameteres [closure_expression]",
-    "message": "kind not found at rendered offset 18"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Generators [source_file]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
     "location": "Raw string literals [source_file]",
-    "message": "re-parse error: \"r#\"abc\"#; r#\"ok\"#; r#\"foo #\"# bar\"#; r#\"foo ##\"## bar\"#; r#\"foo ##### bar\"#;\""
+    "message": "re-parse error [ERROR in expression_statement_with_semi at \"bar\"#\"]: \"r#\"abc\"#; r#\"ok\"#; r#\"foo #\"# bar\"#; r#\"foo ##\"## bar\"#; r#\"foo ##### bar\"#;\""
   },
   {
     "source": "validator",
@@ -1740,7 +1170,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Macro definition [source_file]",
-    "message": "re-parse error: \"macro_rules!say_hello { ()=>(()) ()=>(()) } macro_rules!four { ()=>{  } ()=>{  }\""
+    "message": "re-parse error [MISSING \";\" in macro_definition_brace]: \"macro_rules!say_hello { ()=>(()) ()=>(()) } macro_rules!four { ()=>{  } ()=>{  }\""
   },
   {
     "source": "validator",
@@ -1750,7 +1180,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Struct patterns [source_file]",
-    "message": "re-parse error: \"match x {  Person{  name, age } if age < 5=>( \"toddler\",name,\"toddler\",name \"tod\""
+    "message": "re-parse error [MISSING \",\" in tuple_expression]: \"match x {  Person{  name, age } if age < 5=>( \"toddler\",name,\"toddler\",name \"tod\""
   },
   {
     "source": "validator",
@@ -1760,27 +1190,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Captured patterns [source_file]",
-    "message": "re-parse error: \"match x {  a@A(_)|b@B(..)=>a,  a@1 ... 5=>a,  Some(1 ... 5)=>a,  a@b ... c=>a,  \""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Or patterns [closure_expression]",
-    "message": "kind not found at rendered offset 18"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Inline const or Const blocks as pattern [source_file]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [ERROR in range_pattern_left_with_right at \">a, ..\"]: \"match x {  a@A(_)|b@B(..)=>a,  a@1 ... 5=>a,  Some(1 ... 5)=>a,  a@b ... c=>a,  \""
   },
   {
     "source": "validator",
@@ -1800,7 +1210,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Function types [source_file]",
-    "message": "re-parse error: \" fn high_order1 (value:i32,f:(i32))->i32 {  }  fn high_order2 (value:i32,f:(i32)\""
+    "message": "re-parse error [ERROR in parameter at \"(i32)->\"]: \"fn high_order1 (value:i32,f:(i32))->i32 {  }  fn high_order2 (value:i32,f:(i32)-\""
   },
   {
     "source": "validator",
@@ -1911,6 +1321,56 @@
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Ignored patterns (tuple_pattern)",
     "message": "tuple_pattern[1].tuple_pattern_group1[0].identifier: type identifier ≠ remaining_field_pattern"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "rust",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Inline const or Const blocks as pattern (source_file)",
+    "message": "source_file[0].function_item[3].block[2].expression_statement[0].match_expression[2].match_block[1].match_arm[2].match_arm_with_comma[0].macro_invocation[2].tok"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "rust",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Inline const or Const blocks as pattern (function_item)",
+    "message": "function_item[3].block[2].expression_statement[0].match_expression[2].match_block[1].match_arm[2].match_arm_with_comma[0].macro_invocation[2].token_tree[0].deli"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "rust",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Inline const or Const blocks as pattern (match_expression)",
+    "message": "match_expression[2].match_block[1].match_arm[2].match_arm_with_comma[0].macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pa"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "rust",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Inline const or Const blocks as pattern (macro_invocation)",
+    "message": "macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\",\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "rust",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Inline const or Const blocks as pattern (token_tree)",
+    "message": "token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\",\")\"]"
   },
   {
     "source": "validator",
@@ -3050,27 +2510,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Flow-style ambient class declarations with commas [program]",
-    "message": "re-parse error: \"declare interface IFoo {  bar() :number, baz() :IBaz, } declare  class Foo {   b\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Flow module.exports declarations [property_signature]",
-    "message": "kind not found at rendered offset 15"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Ambient exports [program]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [MISSING \",\" in class_body_member]: \"declare interface IFoo {  bar() :number, baz() :IBaz, } declare  class Foo {   b\""
   },
   {
     "source": "validator",
@@ -3090,17 +2530,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Export assignments [program]",
-    "message": "re-parse error: \"export=Linter export={  }\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Export import aliases [export_statement]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [MISSING \"?.\" in optional_chain]: \"export=Linter export={  }\""
   },
   {
     "source": "validator",
@@ -3120,7 +2550,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Ambient module declarations [program]",
-    "message": "re-parse error: \"module Promise { var on :{ }  export function resolve <R> ( value?:Thenable <R>)\""
+    "message": "re-parse error [MISSING \";\" in variable_declaration]: \"module Promise { var on :{ }  export function resolve <R> ( value?:Thenable <R>)\""
   },
   {
     "source": "validator",
@@ -3140,17 +2570,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Type casts [program]",
-    "message": "re-parse error: \"foo as any as Array <number> bar satisfies number[] \"foobar\" as const\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Ambient export function declarations [program]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [ERROR in satisfies_expression at \"bar\"]: \"foo as any as Array <number> bar satisfies number[] \"foobar\" as const\""
   },
   {
     "source": "validator",
@@ -3160,37 +2580,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Ambient type alias declarations in namespaces [program]",
-    "message": "re-parse error: \"declare namespace moment { type formatFunction=()=>string ;  export var x :strin\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Export interfaces in namespaces [export_statement]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Method declarations with keywords as names [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Classes with method signatures [program]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [MISSING \";\" in function_signature]: \"declare namespace moment { type formatFunction=()=>string ;  export var x :strin\""
   },
   {
     "source": "validator",
@@ -3229,48 +2619,8 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "read-render-parse",
-    "location": "Classes with methods with and without trailing semicolons on one line [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Classes with static blocks [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
     "location": "Abstract classes [program]",
     "message": "render: Missing field `_name` on ClassBodyMemberTransport._content on ClassBodyTransport._content on Abstrac"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Decorator with parenthesized expression [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Index type queries [program]",
-    "message": "kind not found at rendered offset 0"
   },
   {
     "source": "validator",
@@ -3289,58 +2639,8 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "read-render-parse",
-    "location": "Top-level exports [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Classes with generic parameters [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Classes with extensions [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Semicolon is not automatically inserted for method definitions with a body [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Override modifier [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
     "location": "As expressions [program]",
-    "message": "re-parse error: \"h as `hello` T as { }&{ [t:T]:T } T as { }&{ [t:T]:T }&{ [g:G]:G }\""
+    "message": "re-parse error [ERROR in as_expression at \"T\"]: \"h as `hello` T as { }&{ [t:T]:T } T as { }&{ [t:T]:T }&{ [g:G]:G }\""
   },
   {
     "source": "validator",
@@ -3350,7 +2650,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Satisfies expressions [program]",
-    "message": "re-parse error: \"h satisfies `hello` T satisfies { }&{ [t:T]:T } T satisfies { }&{ [t:T]:T }&{ [g\""
+    "message": "re-parse error [ERROR in satisfies_expression at \"T\"]: \"h satisfies `hello` T satisfies { }&{ [t:T]:T } T satisfies { }&{ [t:T]:T }&{ [g\""
   },
   {
     "source": "validator",
@@ -3359,18 +2659,8 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "read-render-parse",
-    "location": "Typeof expressions [class]",
+    "location": "Assignment to non-null LHS [assignment_expression]",
     "message": "kind not found at rendered offset 8"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Assignment to non-null LHS [program]",
-    "message": "kind not found at rendered offset 0"
   },
   {
     "source": "validator",
@@ -3390,27 +2680,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Arrow functions and generators with call signatures [program]",
-    "message": "re-parse error: \"<A> ( amount, interestRate, duration) :number=>2 function*foo <A> ( amount, inte\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Super [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Function signature [program]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [ERROR in arrow_function at \"2 function*foo <A> (\"]: \"<A> ( amount, interestRate, duration) :number=>2 function*foo <A> ( amount, inte\""
   },
   {
     "source": "validator",
@@ -3420,7 +2690,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Ambiguity between function signature and function declaration [program]",
-    "message": "re-parse error: \"function foo() {  } function foo( bar) function foo( bar) :baz function foo( bar\""
+    "message": "re-parse error [MISSING \";\" in function_signature]: \"function foo() {  } function foo( bar) function foo( bar) :baz function foo( bar\""
   },
   {
     "source": "validator",
@@ -3430,17 +2700,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Ambiguity between function signature and function declaration: comments and newlines [program]",
-    "message": "re-parse error: \"function foo() foo () ; function bar() {  } function foo() :number\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Parenthesized types [property_signature]",
-    "message": "kind not found at rendered offset 15"
+    "message": "re-parse error [MISSING \";\" in function_signature]: \"function foo() foo () ; function bar() {  } function foo() :number\""
   },
   {
     "source": "validator",
@@ -3450,17 +2710,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Object types [program]",
-    "message": "re-parse error: \"let person :{  name :string, age :number } ; let thing :{ [type:string]:string }\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Object types with call signatures [required_parameter]",
-    "message": "kind not found at rendered offset 12"
+    "message": "re-parse error [MISSING \";\" in type_alias_declaration]: \"let person :{  name :string, age :number } ; let thing :{ [type:string]:string }\""
   },
   {
     "source": "validator",
@@ -3470,7 +2720,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Automatic semicolon disabled before return type [program]",
-    "message": "re-parse error: \"function f() :any { 'a' ; 'b' ; } function f() :any { 'a' 'b' }\""
+    "message": "re-parse error [ERROR in statement_block at \"'a'\"]: \"function f() :any { 'a' ; 'b' ; } function f() :any { 'a' 'b' }\""
   },
   {
     "source": "validator",
@@ -3489,28 +2739,8 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "read-render-parse",
-    "location": "Functions with destructured parameters [required_parameter]",
-    "message": "kind not found at rendered offset 12"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Constructor types [required_parameter]",
-    "message": "kind not found at rendered offset 12"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
     "location": "Flow Maybe Types [program]",
-    "message": "re-parse error: \"const editor :?CodeEditor const miscArray :?T[]\""
+    "message": "re-parse error [MISSING \";\" in lexical_declaration]: \"const editor :?CodeEditor const miscArray :?T[]\""
   },
   {
     "source": "validator",
@@ -3520,17 +2750,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Type-only Export [program]",
-    "message": "re-parse error: \"export type { UserType } export type { UserType } from \"./User.js\" export type {\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Flow Export Types [program]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [MISSING \";\" in export_statement_type_export]: \"export type { UserType } export type { UserType } from \"./User.js\" export type {\""
   },
   {
     "source": "validator",
@@ -3540,7 +2760,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Type alias declarations [program]",
-    "message": "re-parse error: \"type FileMergeData={  document :Doc, headDocument :Doc, baseDocument :Doc, confl\""
+    "message": "re-parse error [MISSING \";\" in type_alias_declaration]: \"type FileMergeData={  document :Doc, headDocument :Doc, baseDocument :Doc, confl\""
   },
   {
     "source": "validator",
@@ -3559,38 +2779,8 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "read-render-parse",
-    "location": "Generic types [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Flow exact object types [property_signature]",
-    "message": "kind not found at rendered offset 15"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
     "location": "Literal types [program]",
-    "message": "re-parse error: \"let x :2 let x :2|- 3|+ 4 let x :\"string\" let x :false\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "predefined types as identifiers [required_parameter]",
-    "message": "kind not found at rendered offset 12"
+    "message": "re-parse error [MISSING \";\" in lexical_declaration]: \"let x :2 let x :2|- 3|+ 4 let x :\"string\" let x :false\""
   },
   {
     "source": "validator",
@@ -3610,17 +2800,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Lookup types [program]",
-    "message": "re-parse error: \"type K1=Foo[bar] type K1=Foo['bar'|'baz']\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Mapped types [program]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [MISSING \";\" in type_alias_declaration]: \"type K1=Foo[bar] type K1=Foo['bar'|'baz']\""
   },
   {
     "source": "validator",
@@ -3630,7 +2810,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Assertion functions checking a value [program]",
-    "message": "re-parse error: \"function f( x :any) asserts x asserts x {  }\""
+    "message": "re-parse error [ERROR in function_declaration at \"asserts x asserts x\"]: \"function f( x :any) asserts x asserts x {  }\""
   },
   {
     "source": "validator",
@@ -3640,17 +2820,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Assertion functions checking a type [program]",
-    "message": "re-parse error: \"function f( x :any) asserts x is number asserts x is number {  }  class Foo <T> \""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Type of an assertion function [required_parameter]",
-    "message": "kind not found at rendered offset 12"
+    "message": "re-parse error [ERROR in function_declaration at \"asserts x is number \"]: \"function f( x :any) asserts x is number asserts x is number {  }  class Foo <T> \""
   },
   {
     "source": "validator",
@@ -3660,7 +2830,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Type predicate and predefined types [program]",
-    "message": "re-parse error: \"function isFish( pet :Fish) pet is Fish pet is Fish {  } function isFish( object\""
+    "message": "re-parse error [ERROR in function_declaration at \"pet is Fish pet is F\"]: \"function isFish( pet :Fish) pet is Fish pet is Fish {  } function isFish( object\""
   },
   {
     "source": "validator",
@@ -3670,7 +2840,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Read-only arrays [program]",
-    "message": "re-parse error: \"type t=a[] type t=readonly a[] type t=readonly a[][] type t=(readonly a[])[] typ\""
+    "message": "re-parse error [MISSING \";\" in type_alias_declaration]: \"type t=a[] type t=readonly a[] type t=readonly a[][] type t=(readonly a[])[] typ\""
   },
   {
     "source": "validator",
@@ -3690,7 +2860,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Conditional types [program]",
-    "message": "re-parse error: \"type T=X extends Y?Z:Y type T=X extends ?Y??X:Y type F <T,X,Y>=(( t :T)=>X exten\""
+    "message": "re-parse error [MISSING \";\" in type_alias_declaration]: \"type T=X extends Y?Z:Y type T=X extends ?Y??X:Y type F <T,X,Y>=(( t :T)=>X exten\""
   },
   {
     "source": "validator",
@@ -3700,7 +2870,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Template literal types [program]",
-    "message": "re-parse error: \"type A <B,C>=`${ B } ${ C }` ; type A=`${ B[0] } ${ C } ${ D <U,D> } -foo- -bar-\""
+    "message": "re-parse error [MISSING \";\" in type_alias_declaration]: \"type A <B,C>=`${ B } ${ C }` ; type A=`${ B[0] } ${ C } ${ D <U,D> } -foo- -bar-\""
   },
   {
     "source": "validator",
@@ -3760,7 +2930,77 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Import assert [program]",
-    "message": "re-parse error: \"import something from 'foo.css' { type:'css' } { type:'css' }\""
+    "message": "re-parse error [MISSING \";\" in import_statement]: \"import something from 'foo.css' { type:'css' } { type:'css' }\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Ambient exports (program)",
+    "message": "program[2].export_statement[0].export_statement_default[0].export_statement_default_decl_arm[1].function_signature: childCount 5 ≠ 4 [\"async\",\"function\",identif"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Ambient exports (function_signature)",
+    "message": "function_signature: childCount 5 ≠ 4 [\"async\",\"function\",identifier,formal_parameters,type_annotation] vs [\"function\",identifier,formal_parameters,type_annotati"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Ambient export function declarations (program)",
+    "message": "program[0].export_statement[0].export_statement_default[0].export_statement_default_decl_arm[1].interface_declaration[2].interface_body[1].object_type_content[0"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Ambient export function declarations (export_statement)",
+    "message": "export_statement[0].export_statement_default[0].export_statement_default_decl_arm[1].interface_declaration[2].interface_body[1].object_type_content[0].export_st"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Ambient export function declarations (interface_declaration)",
+    "message": "interface_declaration[2].interface_body[1].object_type_content[0].export_statement[0].export_statement_default[0].export_statement_default_decl_arm[1].function_"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Ambient export function declarations (object_type)",
+    "message": "interface_body[1].object_type_content[0].export_statement[0].export_statement_default[0].export_statement_default_decl_arm[1].function_signature: childCount 6 ≠"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Ambient export function declarations (function_signature)",
+    "message": "function_signature: childCount 6 ≠ 5 [\"function\",identifier,type_parameters,formal_parameters,type_annotation,\";\"] vs [\"function\",identifier,type_parameters,for"
   },
   {
     "source": "validator",
@@ -3771,6 +3011,206 @@
     "stage": "read-render-parse-ast-mismatch",
     "location": "Namespaces as internal modules (program)",
     "message": "program[0].expression_statement: type expression_statement ≠ internal_module"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Method declarations with keywords as names (program)",
+    "message": "program[0].class_declaration[2].class_body[1].class_body_method: childCount 2 ≠ 1 [method_definition,\";\"] vs [method_definition]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Method declarations with keywords as names (class_declaration)",
+    "message": "class_declaration[2].class_body[1].class_body_method: childCount 2 ≠ 1 [method_definition,\";\"] vs [method_definition]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Method declarations with keywords as names (class_body)",
+    "message": "class_body[1].class_body_method: childCount 2 ≠ 1 [method_definition,\";\"] vs [method_definition]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Classes with method signatures (program)",
+    "message": "program[0].class_declaration[2].class_body[1].class_body_member[0].method_signature: childCount 6 ≠ 5 [accessibility_modifier,\"async\",property_identifier,type_p"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Classes with method signatures (class_declaration)",
+    "message": "class_declaration[2].class_body[1].class_body_member[0].method_signature: childCount 6 ≠ 5 [accessibility_modifier,\"async\",property_identifier,type_parameters,f"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Classes with method signatures (class_body)",
+    "message": "class_body[1].class_body_member[0].method_signature: childCount 6 ≠ 5 [accessibility_modifier,\"async\",property_identifier,type_parameters,formal_parameters,type"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Classes with methods with and without trailing semicolons on one line (program)",
+    "message": "program[0].class_declaration[4].class_body[2].class_body_method: childCount 2 ≠ 1 [method_definition,\";\"] vs [method_definition]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Classes with methods with and without trailing semicolons on one line (class_declaration)",
+    "message": "class_declaration[4].class_body[2].class_body_method: childCount 2 ≠ 1 [method_definition,\";\"] vs [method_definition]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Classes with methods with and without trailing semicolons on one line (class_body)",
+    "message": "class_body[2].class_body_method: childCount 2 ≠ 1 [method_definition,\";\"] vs [method_definition]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Decorator with parenthesized expression (parenthesized_expression)",
+    "message": "parenthesized_expression[1].member_expression: type member_expression ≠ parenthesized_expression_typed"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Decorator with parenthesized expression (member_expression)",
+    "message": "member_expression[0].identifier: type identifier ≠ super"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Index type queries (program)",
+    "message": "program[0].export_statement[0].export_statement_default[0].export_statement_default_decl_arm[1].type_alias_declaration[3].index_type_query[1].generic_type[1].ty"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Index type queries (export_statement)",
+    "message": "export_statement[0].export_statement_default[0].export_statement_default_decl_arm[1].type_alias_declaration[3].index_type_query[1].generic_type[1].type_argument"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Index type queries (type_alias_declaration)",
+    "message": "type_alias_declaration[3].index_type_query[1].generic_type[1].type_arguments[1].type_identifier: type type_identifier ≠ literal_type"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Index type queries (index_type_query)",
+    "message": "index_type_query[1].generic_type[1].type_arguments[1].type_identifier: type type_identifier ≠ literal_type"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Index type queries (generic_type)",
+    "message": "generic_type[1].type_arguments[1].type_identifier: type type_identifier ≠ literal_type"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Classes with generic parameters (program)",
+    "message": "program[0].class_declaration[2].type_parameters: childCount 6 ≠ 5 [\"<\",type_parameter,\",\",type_parameter,\",\",\">\"] vs [\"<\",type_parameter,\",\",type_parameter,\">\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Classes with generic parameters (class_declaration)",
+    "message": "class_declaration[2].type_parameters: childCount 6 ≠ 5 [\"<\",type_parameter,\",\",type_parameter,\",\",\">\"] vs [\"<\",type_parameter,\",\",type_parameter,\">\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Classes with generic parameters (type_parameters)",
+    "message": "type_parameters: childCount 6 ≠ 5 [\"<\",type_parameter,\",\",type_parameter,\",\",\">\"] vs [\"<\",type_parameter,\",\",type_parameter,\">\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Classes with extensions (program)",
+    "message": "program[2].class_declaration[2].class_heritage[0].class_heritage_extends_clause[0].extends_clause: childCount 3 ≠ 2 [\"extends\",call_expression,type_arguments] v"
   },
   {
     "source": "validator",
@@ -3809,6 +3249,16 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "read-render-parse-ast-mismatch",
+    "location": "Assignment to non-null LHS (program)",
+    "message": "program[0].expression_statement[0].assignment_expression: type assignment_expression ≠ binary_expression"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
     "location": "Index signatures (program)",
     "message": "program[0].type_alias_declaration[3].object_type[1].object_type_content[2].index_signature: childCount 5 ≠ 4 [\"readonly\",\"[\",index_signature_colon,\"]\",type_anno"
   },
@@ -3831,6 +3281,36 @@
     "stage": "read-render-parse-ast-mismatch",
     "location": "Index signatures (object_type)",
     "message": "object_type[1].object_type_content[2].index_signature: childCount 5 ≠ 4 [\"readonly\",\"[\",index_signature_colon,\"]\",type_annotation] vs [\"[\",index_signature_colon"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Generic types (program)",
+    "message": "program[0].class_declaration[2].type_parameters: childCount 6 ≠ 5 [\"<\",type_parameter,\",\",type_parameter,\",\",\">\"] vs [\"<\",type_parameter,\",\",type_parameter,\">\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Generic types (class_declaration)",
+    "message": "class_declaration[2].type_parameters: childCount 6 ≠ 5 [\"<\",type_parameter,\",\",type_parameter,\",\",\">\"] vs [\"<\",type_parameter,\",\",type_parameter,\">\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Generic types (type_parameters)",
+    "message": "type_parameters: childCount 6 ≠ 5 [\"<\",type_parameter,\",\",type_parameter,\",\",\">\"] vs [\"<\",type_parameter,\",\",type_parameter,\">\"]"
   },
   {
     "source": "validator",
@@ -3890,27 +3370,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Flow-style ambient class declarations with commas [program]",
-    "message": "re-parse error: \"declare interface IFoo {  bar() :number, baz() :IBaz, } declare  class Foo {   b\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Flow module.exports declarations [property_signature]",
-    "message": "kind not found at rendered offset 15"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Ambient exports [program]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [MISSING \",\" in class_body_member]: \"declare interface IFoo {  bar() :number, baz() :IBaz, } declare  class Foo {   b\""
   },
   {
     "source": "validator",
@@ -3930,17 +3390,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Export assignments [program]",
-    "message": "re-parse error: \"export=Linter export={  }\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Export import aliases [export_statement]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [MISSING \"?.\" in optional_chain]: \"export=Linter export={  }\""
   },
   {
     "source": "validator",
@@ -3960,7 +3410,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Ambient module declarations [program]",
-    "message": "re-parse error: \"module Promise { var on :{ }  export function resolve <R> ( value?:Thenable <R>)\""
+    "message": "re-parse error [MISSING \";\" in variable_declaration]: \"module Promise { var on :{ }  export function resolve <R> ( value?:Thenable <R>)\""
   },
   {
     "source": "validator",
@@ -3980,17 +3430,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Type casts [program]",
-    "message": "re-parse error: \"foo as any as Array <number> bar satisfies number[] \"foobar\" as const\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Ambient export function declarations [program]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [ERROR in satisfies_expression at \"bar\"]: \"foo as any as Array <number> bar satisfies number[] \"foobar\" as const\""
   },
   {
     "source": "validator",
@@ -4000,37 +3440,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Ambient type alias declarations in namespaces [program]",
-    "message": "re-parse error: \"declare namespace moment { type formatFunction=()=>string ;  export var x :strin\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Export interfaces in namespaces [export_statement]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Method declarations with keywords as names [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Classes with method signatures [program]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [MISSING \";\" in function_signature]: \"declare namespace moment { type formatFunction=()=>string ;  export var x :strin\""
   },
   {
     "source": "validator",
@@ -4069,48 +3479,8 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "read-render-parse-shallow",
-    "location": "Classes with methods with and without trailing semicolons on one line [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Classes with static blocks [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
     "location": "Abstract classes [program]",
     "message": "render: Missing field `_name` on ClassBodyMemberTransport._content on ClassBodyTransport._content on Abstrac"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Decorator with parenthesized expression [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Index type queries [program]",
-    "message": "kind not found at rendered offset 0"
   },
   {
     "source": "validator",
@@ -4129,58 +3499,8 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "read-render-parse-shallow",
-    "location": "Top-level exports [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Classes with generic parameters [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Classes with extensions [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Semicolon is not automatically inserted for method definitions with a body [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Override modifier [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
     "location": "As expressions [program]",
-    "message": "re-parse error: \"h as `hello` T as { }&{ [t:T]:T } T as { }&{ [t:T]:T }&{ [g:G]:G }\""
+    "message": "re-parse error [ERROR in as_expression at \"T\"]: \"h as `hello` T as { }&{ [t:T]:T } T as { }&{ [t:T]:T }&{ [g:G]:G }\""
   },
   {
     "source": "validator",
@@ -4190,7 +3510,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Satisfies expressions [program]",
-    "message": "re-parse error: \"h satisfies `hello` T satisfies { }&{ [t:T]:T } T satisfies { }&{ [t:T]:T }&{ [g\""
+    "message": "re-parse error [ERROR in satisfies_expression at \"T\"]: \"h satisfies `hello` T satisfies { }&{ [t:T]:T } T satisfies { }&{ [t:T]:T }&{ [g\""
   },
   {
     "source": "validator",
@@ -4199,18 +3519,8 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "read-render-parse-shallow",
-    "location": "Typeof expressions [class]",
+    "location": "Assignment to non-null LHS [assignment_expression]",
     "message": "kind not found at rendered offset 8"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Assignment to non-null LHS [program]",
-    "message": "kind not found at rendered offset 0"
   },
   {
     "source": "validator",
@@ -4230,27 +3540,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Arrow functions and generators with call signatures [program]",
-    "message": "re-parse error: \"<A> ( amount, interestRate, duration) :number=>2 function*foo <A> ( amount, inte\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Super [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Function signature [program]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [ERROR in arrow_function at \"2 function*foo <A> (\"]: \"<A> ( amount, interestRate, duration) :number=>2 function*foo <A> ( amount, inte\""
   },
   {
     "source": "validator",
@@ -4260,7 +3550,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Ambiguity between function signature and function declaration [program]",
-    "message": "re-parse error: \"function foo() {  } function foo( bar) function foo( bar) :baz function foo( bar\""
+    "message": "re-parse error [MISSING \";\" in function_signature]: \"function foo() {  } function foo( bar) function foo( bar) :baz function foo( bar\""
   },
   {
     "source": "validator",
@@ -4270,17 +3560,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Ambiguity between function signature and function declaration: comments and newlines [program]",
-    "message": "re-parse error: \"function foo() foo () ; function bar() {  } function foo() :number\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Parenthesized types [property_signature]",
-    "message": "kind not found at rendered offset 15"
+    "message": "re-parse error [MISSING \";\" in function_signature]: \"function foo() foo () ; function bar() {  } function foo() :number\""
   },
   {
     "source": "validator",
@@ -4290,17 +3570,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Object types [program]",
-    "message": "re-parse error: \"let person :{  name :string, age :number } ; let thing :{ [type:string]:string }\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Object types with call signatures [required_parameter]",
-    "message": "kind not found at rendered offset 12"
+    "message": "re-parse error [MISSING \";\" in type_alias_declaration]: \"let person :{  name :string, age :number } ; let thing :{ [type:string]:string }\""
   },
   {
     "source": "validator",
@@ -4310,7 +3580,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Automatic semicolon disabled before return type [program]",
-    "message": "re-parse error: \"function f() :any { 'a' ; 'b' ; } function f() :any { 'a' 'b' }\""
+    "message": "re-parse error [ERROR in statement_block at \"'a'\"]: \"function f() :any { 'a' ; 'b' ; } function f() :any { 'a' 'b' }\""
   },
   {
     "source": "validator",
@@ -4329,28 +3599,8 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "read-render-parse-shallow",
-    "location": "Functions with destructured parameters [required_parameter]",
-    "message": "kind not found at rendered offset 12"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Constructor types [required_parameter]",
-    "message": "kind not found at rendered offset 12"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
     "location": "Flow Maybe Types [program]",
-    "message": "re-parse error: \"const editor :?CodeEditor const miscArray :?T[]\""
+    "message": "re-parse error [MISSING \";\" in lexical_declaration]: \"const editor :?CodeEditor const miscArray :?T[]\""
   },
   {
     "source": "validator",
@@ -4360,17 +3610,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Type-only Export [program]",
-    "message": "re-parse error: \"export type { UserType } export type { UserType } from \"./User.js\" export type {\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Flow Export Types [program]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [MISSING \";\" in export_statement_type_export]: \"export type { UserType } export type { UserType } from \"./User.js\" export type {\""
   },
   {
     "source": "validator",
@@ -4380,7 +3620,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Type alias declarations [program]",
-    "message": "re-parse error: \"type FileMergeData={  document :Doc, headDocument :Doc, baseDocument :Doc, confl\""
+    "message": "re-parse error [MISSING \";\" in type_alias_declaration]: \"type FileMergeData={  document :Doc, headDocument :Doc, baseDocument :Doc, confl\""
   },
   {
     "source": "validator",
@@ -4399,38 +3639,8 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "read-render-parse-shallow",
-    "location": "Generic types [program]",
-    "message": "kind not found at rendered offset 0"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Flow exact object types [property_signature]",
-    "message": "kind not found at rendered offset 15"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
     "location": "Literal types [program]",
-    "message": "re-parse error: \"let x :2 let x :2|- 3|+ 4 let x :\"string\" let x :false\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "predefined types as identifiers [required_parameter]",
-    "message": "kind not found at rendered offset 12"
+    "message": "re-parse error [MISSING \";\" in lexical_declaration]: \"let x :2 let x :2|- 3|+ 4 let x :\"string\" let x :false\""
   },
   {
     "source": "validator",
@@ -4450,17 +3660,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Lookup types [program]",
-    "message": "re-parse error: \"type K1=Foo[bar] type K1=Foo['bar'|'baz']\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Mapped types [program]",
-    "message": "kind not found at rendered offset 0"
+    "message": "re-parse error [MISSING \";\" in type_alias_declaration]: \"type K1=Foo[bar] type K1=Foo['bar'|'baz']\""
   },
   {
     "source": "validator",
@@ -4470,7 +3670,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Assertion functions checking a value [program]",
-    "message": "re-parse error: \"function f( x :any) asserts x asserts x {  }\""
+    "message": "re-parse error [ERROR in function_declaration at \"asserts x asserts x\"]: \"function f( x :any) asserts x asserts x {  }\""
   },
   {
     "source": "validator",
@@ -4480,17 +3680,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Assertion functions checking a type [program]",
-    "message": "re-parse error: \"function f( x :any) asserts x is number asserts x is number {  }  class Foo <T> \""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Type of an assertion function [required_parameter]",
-    "message": "kind not found at rendered offset 12"
+    "message": "re-parse error [ERROR in function_declaration at \"asserts x is number \"]: \"function f( x :any) asserts x is number asserts x is number {  }  class Foo <T> \""
   },
   {
     "source": "validator",
@@ -4500,7 +3690,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Type predicate and predefined types [program]",
-    "message": "re-parse error: \"function isFish( pet :Fish) pet is Fish pet is Fish {  } function isFish( object\""
+    "message": "re-parse error [ERROR in function_declaration at \"pet is Fish pet is F\"]: \"function isFish( pet :Fish) pet is Fish pet is Fish {  } function isFish( object\""
   },
   {
     "source": "validator",
@@ -4510,7 +3700,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Read-only arrays [program]",
-    "message": "re-parse error: \"type t=a[] type t=readonly a[] type t=readonly a[][] type t=(readonly a[])[] typ\""
+    "message": "re-parse error [MISSING \";\" in type_alias_declaration]: \"type t=a[] type t=readonly a[] type t=readonly a[][] type t=(readonly a[])[] typ\""
   },
   {
     "source": "validator",
@@ -4530,7 +3720,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Conditional types [program]",
-    "message": "re-parse error: \"type T=X extends Y?Z:Y type T=X extends ?Y??X:Y type F <T,X,Y>=(( t :T)=>X exten\""
+    "message": "re-parse error [MISSING \";\" in type_alias_declaration]: \"type T=X extends Y?Z:Y type T=X extends ?Y??X:Y type F <T,X,Y>=(( t :T)=>X exten\""
   },
   {
     "source": "validator",
@@ -4540,7 +3730,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Template literal types [program]",
-    "message": "re-parse error: \"type A <B,C>=`${ B } ${ C }` ; type A=`${ B[0] } ${ C } ${ D <U,D> } -foo- -bar-\""
+    "message": "re-parse error [MISSING \";\" in type_alias_declaration]: \"type A <B,C>=`${ B } ${ C }` ; type A=`${ B[0] } ${ C } ${ D <U,D> } -foo- -bar-\""
   },
   {
     "source": "validator",
@@ -4600,7 +3790,77 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Import assert [program]",
-    "message": "re-parse error: \"import something from 'foo.css' { type:'css' } { type:'css' }\""
+    "message": "re-parse error [MISSING \";\" in import_statement]: \"import something from 'foo.css' { type:'css' } { type:'css' }\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Ambient exports (program)",
+    "message": "program[2].export_statement[0].export_statement_default[0].export_statement_default_decl_arm[1].function_signature: childCount 5 ≠ 4 [\"async\",\"function\",identif"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Ambient exports (function_signature)",
+    "message": "function_signature: childCount 5 ≠ 4 [\"async\",\"function\",identifier,formal_parameters,type_annotation] vs [\"function\",identifier,formal_parameters,type_annotati"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Ambient export function declarations (program)",
+    "message": "program[0].export_statement[0].export_statement_default[0].export_statement_default_decl_arm[1].interface_declaration[2].interface_body[1].object_type_content[0"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Ambient export function declarations (export_statement)",
+    "message": "export_statement[0].export_statement_default[0].export_statement_default_decl_arm[1].interface_declaration[2].interface_body[1].object_type_content[0].export_st"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Ambient export function declarations (interface_declaration)",
+    "message": "interface_declaration[2].interface_body[1].object_type_content[0].export_statement[0].export_statement_default[0].export_statement_default_decl_arm[1].function_"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Ambient export function declarations (object_type)",
+    "message": "interface_body[1].object_type_content[0].export_statement[0].export_statement_default[0].export_statement_default_decl_arm[1].function_signature: childCount 6 ≠"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Ambient export function declarations (function_signature)",
+    "message": "function_signature: childCount 6 ≠ 5 [\"function\",identifier,type_parameters,formal_parameters,type_annotation,\";\"] vs [\"function\",identifier,type_parameters,for"
   },
   {
     "source": "validator",
@@ -4611,6 +3871,206 @@
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Namespaces as internal modules (program)",
     "message": "program[0].expression_statement: type expression_statement ≠ internal_module"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Method declarations with keywords as names (program)",
+    "message": "program[0].class_declaration[2].class_body[1].class_body_method: childCount 2 ≠ 1 [method_definition,\";\"] vs [method_definition]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Method declarations with keywords as names (class_declaration)",
+    "message": "class_declaration[2].class_body[1].class_body_method: childCount 2 ≠ 1 [method_definition,\";\"] vs [method_definition]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Method declarations with keywords as names (class_body)",
+    "message": "class_body[1].class_body_method: childCount 2 ≠ 1 [method_definition,\";\"] vs [method_definition]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Classes with method signatures (program)",
+    "message": "program[0].class_declaration[2].class_body[1].class_body_member[0].method_signature: childCount 6 ≠ 5 [accessibility_modifier,\"async\",property_identifier,type_p"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Classes with method signatures (class_declaration)",
+    "message": "class_declaration[2].class_body[1].class_body_member[0].method_signature: childCount 6 ≠ 5 [accessibility_modifier,\"async\",property_identifier,type_parameters,f"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Classes with method signatures (class_body)",
+    "message": "class_body[1].class_body_member[0].method_signature: childCount 6 ≠ 5 [accessibility_modifier,\"async\",property_identifier,type_parameters,formal_parameters,type"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Classes with methods with and without trailing semicolons on one line (program)",
+    "message": "program[0].class_declaration[4].class_body[2].class_body_method: childCount 2 ≠ 1 [method_definition,\";\"] vs [method_definition]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Classes with methods with and without trailing semicolons on one line (class_declaration)",
+    "message": "class_declaration[4].class_body[2].class_body_method: childCount 2 ≠ 1 [method_definition,\";\"] vs [method_definition]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Classes with methods with and without trailing semicolons on one line (class_body)",
+    "message": "class_body[2].class_body_method: childCount 2 ≠ 1 [method_definition,\";\"] vs [method_definition]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Decorator with parenthesized expression (parenthesized_expression)",
+    "message": "parenthesized_expression[1].member_expression: type member_expression ≠ parenthesized_expression_typed"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Decorator with parenthesized expression (member_expression)",
+    "message": "member_expression[0].identifier: type identifier ≠ super"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Index type queries (program)",
+    "message": "program[0].export_statement[0].export_statement_default[0].export_statement_default_decl_arm[1].type_alias_declaration[3].index_type_query[1].generic_type[1].ty"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Index type queries (export_statement)",
+    "message": "export_statement[0].export_statement_default[0].export_statement_default_decl_arm[1].type_alias_declaration[3].index_type_query[1].generic_type[1].type_argument"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Index type queries (type_alias_declaration)",
+    "message": "type_alias_declaration[3].index_type_query[1].generic_type[1].type_arguments[1].type_identifier: type type_identifier ≠ literal_type"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Index type queries (index_type_query)",
+    "message": "index_type_query[1].generic_type[1].type_arguments[1].type_identifier: type type_identifier ≠ literal_type"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Index type queries (generic_type)",
+    "message": "generic_type[1].type_arguments[1].type_identifier: type type_identifier ≠ literal_type"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Classes with generic parameters (program)",
+    "message": "program[0].class_declaration[2].type_parameters: childCount 6 ≠ 5 [\"<\",type_parameter,\",\",type_parameter,\",\",\">\"] vs [\"<\",type_parameter,\",\",type_parameter,\">\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Classes with generic parameters (class_declaration)",
+    "message": "class_declaration[2].type_parameters: childCount 6 ≠ 5 [\"<\",type_parameter,\",\",type_parameter,\",\",\">\"] vs [\"<\",type_parameter,\",\",type_parameter,\">\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Classes with generic parameters (type_parameters)",
+    "message": "type_parameters: childCount 6 ≠ 5 [\"<\",type_parameter,\",\",type_parameter,\",\",\">\"] vs [\"<\",type_parameter,\",\",type_parameter,\">\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Classes with extensions (program)",
+    "message": "program[2].class_declaration[2].class_heritage[0].class_heritage_extends_clause[0].extends_clause: childCount 3 ≠ 2 [\"extends\",call_expression,type_arguments] v"
   },
   {
     "source": "validator",
@@ -4649,6 +4109,16 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Assignment to non-null LHS (program)",
+    "message": "program[0].expression_statement[0].assignment_expression: type assignment_expression ≠ binary_expression"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Index signatures (program)",
     "message": "program[0].type_alias_declaration[3].object_type[1].object_type_content[2].index_signature: childCount 5 ≠ 4 [\"readonly\",\"[\",index_signature_colon,\"]\",type_anno"
   },
@@ -4671,6 +4141,36 @@
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Index signatures (object_type)",
     "message": "object_type[1].object_type_content[2].index_signature: childCount 5 ≠ 4 [\"readonly\",\"[\",index_signature_colon,\"]\",type_annotation] vs [\"[\",index_signature_colon"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Generic types (program)",
+    "message": "program[0].class_declaration[2].type_parameters: childCount 6 ≠ 5 [\"<\",type_parameter,\",\",type_parameter,\",\",\">\"] vs [\"<\",type_parameter,\",\",type_parameter,\">\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Generic types (class_declaration)",
+    "message": "class_declaration[2].type_parameters: childCount 6 ≠ 5 [\"<\",type_parameter,\",\",type_parameter,\",\",\">\"] vs [\"<\",type_parameter,\",\",type_parameter,\">\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "typescript",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Generic types (type_parameters)",
+    "message": "type_parameters: childCount 6 ≠ 5 [\"<\",type_parameter,\",\",type_parameter,\",\",\">\"] vs [\"<\",type_parameter,\",\",type_parameter,\">\"]"
   },
   {
     "source": "validator",
@@ -6300,7 +5800,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Comparison operators [module]",
-    "message": "re-parse error: \"a < b <= c == d >= e > f \n not a == b or c == d \n a  b \n a  b \n a is b and c != \""
+    "message": "re-parse error [ERROR in module at \"a\"]: \"a < b <= c == d >= e > f \n not a == b or c == d \n a  b \n a  b \n a is b and c != \""
   },
   {
     "source": "validator",
@@ -6350,7 +5850,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Default Tuple Arguments [module]",
-    "message": "re-parse error: \"def comp_args ():return a b, \n \n\""
+    "message": "re-parse error [ERROR in return_statement at \"a\"]: \"def comp_args ():return a b,\""
   },
   {
     "source": "validator",
@@ -6370,7 +5870,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Splat Inside of Expression List [module]",
-    "message": "re-parse error: \"a c, =[] 3, \n w x,y,z, =0 *a,c, \n\""
+    "message": "re-parse error [ERROR in module at \"a\"]: \"a c, =[] 3, \n w x,y,z, =0 *a,c,\""
   },
   {
     "source": "validator",
@@ -6440,7 +5940,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Matching specific values [module]",
-    "message": "re-parse error: \"match command.split ():case [\" quit \"]:print (\" Goodbye! \") \n\nquit_game () \n \n\nc\""
+    "message": "re-parse error [unlocated]: \"match command.split ():case [\" quit \"]:print (\" Goodbye! \") \n\nquit_game () \n \n\nc\""
   },
   {
     "source": "validator",
@@ -6450,7 +5950,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Matching multiple values [module]",
-    "message": "re-parse error: \"match command.split ():case [\" drop \",* objects]:for obj in objects:character.dr\""
+    "message": "re-parse error [ERROR in assignment_type at \"for\"]: \"match command.split ():case [\" drop \",* objects]:for obj in objects:character.dr\""
   },
   {
     "source": "validator",
@@ -6470,7 +5970,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Or patterns [module]",
-    "message": "re-parse error: \"match command.split ():case [\" north \"]|[\" go \",\" north \"]:current_room =current\""
+    "message": "re-parse error [ERROR in module at \"case [\" north \"]|[\" \"]: \"match command.split ():case [\" north \"]|[\" go \",\" north \"]:current_room =current\""
   },
   {
     "source": "validator",
@@ -6490,7 +5990,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Actually not match [module]",
-    "message": "re-parse error: \"match =2 \n match a, =2 3, \n match :int=secret \n x match, =2 \" hey, what's up? \" \""
+    "message": "re-parse error [ERROR in match_statement at \"=2\"]: \"match =2 \n match a, =2 3, \n match :int=secret \n x match, =2 \" hey, what's up? \" \""
   },
   {
     "source": "validator",
@@ -6500,7 +6000,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "If guards [module]",
-    "message": "re-parse error: \"match 0:case 0 if False:x =False \n \n\ncase 0 if True:x =True \n \n \n\""
+    "message": "re-parse error [ERROR in assignment at \"0:case 0 if False:x\"]: \"match 0:case 0 if False:x =False \n \n\ncase 0 if True:x =True\""
   },
   {
     "source": "validator",
@@ -6520,7 +6020,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Comma separated cases [module]",
-    "message": "re-parse error: \"match ():case 0,1:x =0 \n \n\ncase 0,* x:x =0 \n \n \n\""
+    "message": "re-parse error [ERROR in assignment at \"():case 0,1:x\"]: \"match ():case 0,1:x =0 \n \n\ncase 0,* x:x =0\""
   },
   {
     "source": "validator",
@@ -6530,7 +6030,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Case terminating in comma [module]",
-    "message": "re-parse error: \"match x:case * x:y =0 \n \n \n\""
+    "message": "re-parse error [ERROR in assignment at \"x:case * x:y\"]: \"match x:case * x:y =0\""
   },
   {
     "source": "validator",
@@ -6540,7 +6040,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Multiple match patterns [module]",
-    "message": "re-parse error: \"match ...,...:case a,b:return locals () \n \n \n\""
+    "message": "re-parse error [ERROR in match_statement at \":case a\"]: \"match ...,...:case a,b:return locals ()\""
   },
   {
     "source": "validator",
@@ -6550,7 +6050,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Match match, case case [module]",
-    "message": "re-parse error: \"match =case =0 \n match match:case case:x =0 \n \n \n\""
+    "message": "re-parse error [ERROR in assignment at \"match:case case:x\"]: \"match =case =0 \n match match:case case:x =0\""
   },
   {
     "source": "validator",
@@ -6560,7 +6060,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Matching objects [module]",
-    "message": "re-parse error: \"match event.get ():case Click(position=(x,y)):handle_click_at (x,y) \n \n\ncase Key\""
+    "message": "re-parse error [ERROR in call at \"event.get ():case Cl\"]: \"match event.get ():case Click(position=(x,y)):handle_click_at (x,y) \n \n\ncase Key\""
   },
   {
     "source": "validator",
@@ -6570,7 +6070,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Positional arguments [module]",
-    "message": "re-parse error: \"match event.get ():case Click((x,y)):handle_click_at (x,y) \n \n \n\""
+    "message": "re-parse error [ERROR in call at \"event.get ():case Cl\"]: \"match event.get ():case Click((x,y)):handle_click_at (x,y)\""
   },
   {
     "source": "validator",
@@ -6580,7 +6080,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Constants and enums [module]",
-    "message": "re-parse error: \"match event.get ():case Click((x,y),button=Button.LEFT):handle_click_at (x,y) \n \""
+    "message": "re-parse error [ERROR in call at \"event.get ():case Cl\"]: \"match event.get ():case Click((x,y),button=Button.LEFT):handle_click_at (x,y) \n \""
   },
   {
     "source": "validator",
@@ -6610,7 +6110,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Complex case patterns on classes [module]",
-    "message": "re-parse error: \"match x:case Something():foo1 () \n \n\ncase Something.Else():foo2 () \n \n\ncase Poin\""
+    "message": "re-parse error [ERROR in call at \"x:case Something():f\"]: \"match x:case Something():foo1 () \n \n\ncase Something.Else():foo2 () \n \n\ncase Poin\""
   },
   {
     "source": "validator",
@@ -6630,7 +6130,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Maybe sequence pattern right hand side precedence validation [module]",
-    "message": "re-parse error: \"match x:case a1,* a2,a3:pass \n \n \n\""
+    "message": "re-parse error [ERROR in match_statement at \"x:case\"]: \"match x:case a1,* a2,a3:pass\""
   },
   {
     "source": "validator",
@@ -6650,7 +6150,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Future import statements [module]",
-    "message": "re-parse error: \"from __future__ import  \n from __future__ import  \n from __future__ import  \n\""
+    "message": "re-parse error [ERROR in module at \"from __future__ impo\"]: \"from __future__ import  \n from __future__ import  \n from __future__ import\""
   },
   {
     "source": "validator",
@@ -6680,7 +6180,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Delete statements [module]",
-    "message": "re-parse error: \"del a[1] b[2] \n\""
+    "message": "re-parse error [ERROR in subscript at \"b\"]: \"del a[1] b[2]\""
   },
   {
     "source": "validator",
@@ -6690,7 +6190,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Return statements [module]",
-    "message": "re-parse error: \"return \n return a + b c, \n return not b \n\""
+    "message": "re-parse error [ERROR in expression_list at \"c\"]: \"return \n return a + b c, \n return not b\""
   },
   {
     "source": "validator",
@@ -6700,7 +6200,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Nested if statements [module]",
-    "message": "re-parse error: \"if a:if b:c \n \n else:if e:f \n \n   \n  \n   g \n\""
+    "message": "re-parse error [ERROR in if_statement at \"if\"]: \"if a:if b:c \n \n else:if e:f \n \n   \n  \n   g\""
   },
   {
     "source": "validator",
@@ -6720,7 +6220,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Try statements [module]",
-    "message": "re-parse error: \"try:a \n \n except: except: except: except: try:a \n \n except: else:e \n \n finally:f\""
+    "message": "re-parse error [MISSING \"newline\" in except_clause]: \"try:a \n \n except: except: except: except: try:a \n \n except: else:e \n \n finally:f\""
   },
   {
     "source": "validator",
@@ -6750,7 +6250,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Class definitions [module]",
-    "message": "re-parse error: \"class A:def b ():return c \n \n \n class B ():pass \n \n class B (method1):def method\""
+    "message": "re-parse error [MISSING \"newline\" in class_definition]: \"class A:def b ():return c \n \n \n class B ():pass \n \n class B (method1):def method\""
   },
   {
     "source": "validator",
@@ -6760,7 +6260,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Class definitions with superclasses [module]",
-    "message": "re-parse error: \"class A (B,C):def d ():e \n \n \n\""
+    "message": "re-parse error [MISSING \"newline\" in class_definition]: \"class A (B,C):def d ():e\""
   },
   {
     "source": "validator",
@@ -6770,7 +6270,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Decorated definitions [module]",
-    "message": "re-parse error: \"@a.b \n class C:@d (1) \n @e[2].f.g \n def f ():g \n \n\n@f () \n def f ():g \n \n \n @but\""
+    "message": "re-parse error [ERROR in class_definition at \"@\"]: \"@a.b \n class C:@d (1) \n @e[2].f.g \n def f ():g \n \n\n@f () \n def f ():g \n \n \n @but\""
   },
   {
     "source": "validator",
@@ -6790,7 +6290,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Comments at the ends of indented blocks [module]",
-    "message": "re-parse error: \"if a:b \n \n   if c:d \n \n   def a ():if b:b \n \n  \nb \n \n\""
+    "message": "re-parse error [ERROR in function_definition at \"if\"]: \"if a:b \n \n   if c:d \n \n   def a ():if b:b \n \n  \nb\""
   },
   {
     "source": "validator",
@@ -6810,7 +6310,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Type Alias Statements [module]",
-    "message": "re-parse error: \"type Point=tuple [float,float] \n type Point [T]=tuple [T,T] \n type IntFunc [P P]\""
+    "message": "re-parse error [ERROR in type_parameter at \"P\"]: \"type Point=tuple [float,float] \n type Point [T]=tuple [T,T] \n type IntFunc [P P]\""
   },
   {
     "source": "validator",
@@ -6820,7 +6320,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Generic Function Definitions [module]",
-    "message": "re-parse error: \"def more_generic [T,Ts Ts,P P] ():type TA [T2,Ts2 Ts2,P2 P2]=tuple [Callable [P,\""
+    "message": "re-parse error [ERROR in type_parameter at \"Ts\"]: \"def more_generic [T,Ts Ts,P P] ():type TA [T2,Ts2 Ts2,P2 P2]=tuple [Callable [P,\""
   },
   {
     "source": "validator",
@@ -7400,7 +6900,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Comparison operators [module]",
-    "message": "re-parse error: \"a < b <= c == d >= e > f \n not a == b or c == d \n a  b \n a  b \n a is b and c != \""
+    "message": "re-parse error [ERROR in module at \"a\"]: \"a < b <= c == d >= e > f \n not a == b or c == d \n a  b \n a  b \n a is b and c != \""
   },
   {
     "source": "validator",
@@ -7450,7 +6950,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Default Tuple Arguments [module]",
-    "message": "re-parse error: \"def comp_args ():return a b, \n \n\""
+    "message": "re-parse error [ERROR in return_statement at \"a\"]: \"def comp_args ():return a b,\""
   },
   {
     "source": "validator",
@@ -7470,7 +6970,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Splat Inside of Expression List [module]",
-    "message": "re-parse error: \"a c, =[] 3, \n w x,y,z, =0 *a,c, \n\""
+    "message": "re-parse error [ERROR in module at \"a\"]: \"a c, =[] 3, \n w x,y,z, =0 *a,c,\""
   },
   {
     "source": "validator",
@@ -7540,7 +7040,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Matching specific values [module]",
-    "message": "re-parse error: \"match command.split ():case [\" quit \"]:print (\" Goodbye! \") \n\nquit_game () \n \n\nc\""
+    "message": "re-parse error [unlocated]: \"match command.split ():case [\" quit \"]:print (\" Goodbye! \") \n\nquit_game () \n \n\nc\""
   },
   {
     "source": "validator",
@@ -7550,7 +7050,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Matching multiple values [module]",
-    "message": "re-parse error: \"match command.split ():case [\" drop \",* objects]:for obj in objects:character.dr\""
+    "message": "re-parse error [ERROR in assignment_type at \"for\"]: \"match command.split ():case [\" drop \",* objects]:for obj in objects:character.dr\""
   },
   {
     "source": "validator",
@@ -7570,7 +7070,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Or patterns [module]",
-    "message": "re-parse error: \"match command.split ():case [\" north \"]|[\" go \",\" north \"]:current_room =current\""
+    "message": "re-parse error [ERROR in module at \"case [\" north \"]|[\" \"]: \"match command.split ():case [\" north \"]|[\" go \",\" north \"]:current_room =current\""
   },
   {
     "source": "validator",
@@ -7590,7 +7090,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Actually not match [module]",
-    "message": "re-parse error: \"match =2 \n match a, =2 3, \n match :int=secret \n x match, =2 \" hey, what's up? \" \""
+    "message": "re-parse error [ERROR in match_statement at \"=2\"]: \"match =2 \n match a, =2 3, \n match :int=secret \n x match, =2 \" hey, what's up? \" \""
   },
   {
     "source": "validator",
@@ -7600,7 +7100,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "If guards [module]",
-    "message": "re-parse error: \"match 0:case 0 if False:x =False \n \n\ncase 0 if True:x =True \n \n \n\""
+    "message": "re-parse error [ERROR in assignment at \"0:case 0 if False:x\"]: \"match 0:case 0 if False:x =False \n \n\ncase 0 if True:x =True\""
   },
   {
     "source": "validator",
@@ -7620,7 +7120,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Comma separated cases [module]",
-    "message": "re-parse error: \"match ():case 0,1:x =0 \n \n\ncase 0,* x:x =0 \n \n \n\""
+    "message": "re-parse error [ERROR in assignment at \"():case 0,1:x\"]: \"match ():case 0,1:x =0 \n \n\ncase 0,* x:x =0\""
   },
   {
     "source": "validator",
@@ -7630,7 +7130,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Case terminating in comma [module]",
-    "message": "re-parse error: \"match x:case * x:y =0 \n \n \n\""
+    "message": "re-parse error [ERROR in assignment at \"x:case * x:y\"]: \"match x:case * x:y =0\""
   },
   {
     "source": "validator",
@@ -7640,7 +7140,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Multiple match patterns [module]",
-    "message": "re-parse error: \"match ...,...:case a,b:return locals () \n \n \n\""
+    "message": "re-parse error [ERROR in match_statement at \":case a\"]: \"match ...,...:case a,b:return locals ()\""
   },
   {
     "source": "validator",
@@ -7650,7 +7150,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Match match, case case [module]",
-    "message": "re-parse error: \"match =case =0 \n match match:case case:x =0 \n \n \n\""
+    "message": "re-parse error [ERROR in assignment at \"match:case case:x\"]: \"match =case =0 \n match match:case case:x =0\""
   },
   {
     "source": "validator",
@@ -7660,7 +7160,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Matching objects [module]",
-    "message": "re-parse error: \"match event.get ():case Click(position=(x,y)):handle_click_at (x,y) \n \n\ncase Key\""
+    "message": "re-parse error [ERROR in call at \"event.get ():case Cl\"]: \"match event.get ():case Click(position=(x,y)):handle_click_at (x,y) \n \n\ncase Key\""
   },
   {
     "source": "validator",
@@ -7670,7 +7170,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Positional arguments [module]",
-    "message": "re-parse error: \"match event.get ():case Click((x,y)):handle_click_at (x,y) \n \n \n\""
+    "message": "re-parse error [ERROR in call at \"event.get ():case Cl\"]: \"match event.get ():case Click((x,y)):handle_click_at (x,y)\""
   },
   {
     "source": "validator",
@@ -7680,7 +7180,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Constants and enums [module]",
-    "message": "re-parse error: \"match event.get ():case Click((x,y),button=Button.LEFT):handle_click_at (x,y) \n \""
+    "message": "re-parse error [ERROR in call at \"event.get ():case Cl\"]: \"match event.get ():case Click((x,y),button=Button.LEFT):handle_click_at (x,y) \n \""
   },
   {
     "source": "validator",
@@ -7710,7 +7210,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Complex case patterns on classes [module]",
-    "message": "re-parse error: \"match x:case Something():foo1 () \n \n\ncase Something.Else():foo2 () \n \n\ncase Poin\""
+    "message": "re-parse error [ERROR in call at \"x:case Something():f\"]: \"match x:case Something():foo1 () \n \n\ncase Something.Else():foo2 () \n \n\ncase Poin\""
   },
   {
     "source": "validator",
@@ -7730,7 +7230,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Maybe sequence pattern right hand side precedence validation [module]",
-    "message": "re-parse error: \"match x:case a1,* a2,a3:pass \n \n \n\""
+    "message": "re-parse error [ERROR in match_statement at \"x:case\"]: \"match x:case a1,* a2,a3:pass\""
   },
   {
     "source": "validator",
@@ -7750,7 +7250,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Future import statements [module]",
-    "message": "re-parse error: \"from __future__ import  \n from __future__ import  \n from __future__ import  \n\""
+    "message": "re-parse error [ERROR in module at \"from __future__ impo\"]: \"from __future__ import  \n from __future__ import  \n from __future__ import\""
   },
   {
     "source": "validator",
@@ -7780,7 +7280,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Delete statements [module]",
-    "message": "re-parse error: \"del a[1] b[2] \n\""
+    "message": "re-parse error [ERROR in subscript at \"b\"]: \"del a[1] b[2]\""
   },
   {
     "source": "validator",
@@ -7790,7 +7290,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Return statements [module]",
-    "message": "re-parse error: \"return \n return a + b c, \n return not b \n\""
+    "message": "re-parse error [ERROR in expression_list at \"c\"]: \"return \n return a + b c, \n return not b\""
   },
   {
     "source": "validator",
@@ -7800,7 +7300,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Nested if statements [module]",
-    "message": "re-parse error: \"if a:if b:c \n \n else:if e:f \n \n   \n  \n   g \n\""
+    "message": "re-parse error [ERROR in if_statement at \"if\"]: \"if a:if b:c \n \n else:if e:f \n \n   \n  \n   g\""
   },
   {
     "source": "validator",
@@ -7820,7 +7320,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Try statements [module]",
-    "message": "re-parse error: \"try:a \n \n except: except: except: except: try:a \n \n except: else:e \n \n finally:f\""
+    "message": "re-parse error [MISSING \"newline\" in except_clause]: \"try:a \n \n except: except: except: except: try:a \n \n except: else:e \n \n finally:f\""
   },
   {
     "source": "validator",
@@ -7850,7 +7350,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Class definitions [module]",
-    "message": "re-parse error: \"class A:def b ():return c \n \n \n class B ():pass \n \n class B (method1):def method\""
+    "message": "re-parse error [MISSING \"newline\" in class_definition]: \"class A:def b ():return c \n \n \n class B ():pass \n \n class B (method1):def method\""
   },
   {
     "source": "validator",
@@ -7860,7 +7360,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Class definitions with superclasses [module]",
-    "message": "re-parse error: \"class A (B,C):def d ():e \n \n \n\""
+    "message": "re-parse error [MISSING \"newline\" in class_definition]: \"class A (B,C):def d ():e\""
   },
   {
     "source": "validator",
@@ -7870,7 +7370,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Decorated definitions [module]",
-    "message": "re-parse error: \"@a.b \n class C:@d (1) \n @e[2].f.g \n def f ():g \n \n\n@f () \n def f ():g \n \n \n @but\""
+    "message": "re-parse error [ERROR in class_definition at \"@\"]: \"@a.b \n class C:@d (1) \n @e[2].f.g \n def f ():g \n \n\n@f () \n def f ():g \n \n \n @but\""
   },
   {
     "source": "validator",
@@ -7890,7 +7390,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Comments at the ends of indented blocks [module]",
-    "message": "re-parse error: \"if a:b \n \n   if c:d \n \n   def a ():if b:b \n \n  \nb \n \n\""
+    "message": "re-parse error [ERROR in function_definition at \"if\"]: \"if a:b \n \n   if c:d \n \n   def a ():if b:b \n \n  \nb\""
   },
   {
     "source": "validator",
@@ -7910,7 +7410,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Type Alias Statements [module]",
-    "message": "re-parse error: \"type Point=tuple [float,float] \n type Point [T]=tuple [T,T] \n type IntFunc [P P]\""
+    "message": "re-parse error [ERROR in type_parameter at \"P\"]: \"type Point=tuple [float,float] \n type Point [T]=tuple [T,T] \n type IntFunc [P P]\""
   },
   {
     "source": "validator",
@@ -7920,7 +7420,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Generic Function Definitions [module]",
-    "message": "re-parse error: \"def more_generic [T,Ts Ts,P P] ():type TA [T2,Ts2 Ts2,P2 P2]=tuple [Callable [P,\""
+    "message": "re-parse error [ERROR in type_parameter at \"Ts\"]: \"def more_generic [T,Ts Ts,P P] ():type TA [T2,Ts2 Ts2,P2 P2]=tuple [Callable [P,\""
   },
   {
     "source": "validator",

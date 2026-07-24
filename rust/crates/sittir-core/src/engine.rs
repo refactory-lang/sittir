@@ -311,6 +311,14 @@ pub fn apply_render_format(
     engine_format: Option<&FormatRecord>,
     tree_format: Option<&FormatRecord>,
 ) -> String {
+    // Generated templates with optional leading slots emit unconditional
+    // separator whitespace (`{% if vis %}...{% endif %} fn` renders " fn"
+    // when the modifier is absent). Inside a parent render that noise is
+    // governed by the parent's own separators, but at this top-level
+    // boundary it shifts the first token off byte 0 and breaks re-parse
+    // anchoring. Trim at the one finisher every top-level render passes
+    // through; nested child renders never reach this function.
+    let canonical = canonical.trim().to_string();
     let effective_format = resolve_render_format_from_source(source, engine_format, tree_format);
     match effective_format {
         Some(format) => apply_format(&canonical, format),
