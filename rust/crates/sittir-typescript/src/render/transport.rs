@@ -54171,6 +54171,10 @@ fn render_binary_expression(node: &BinaryExpressionTransport, dest: &mut dyn ::s
         }
     }
     let template = BinaryExpressionTemplate {
+        binary_expression_group1: match &node.binary_expression_group1 {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
         left: match &node.left {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -55126,6 +55130,10 @@ fn render_jsx_opening_element(node: &JsxOpeningElementTransport, dest: &mut dyn 
             leading: false,
             trailing: false,
         },
+        jsx_start_opening_element_group1: match &node.jsx_start_opening_element_group1 {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
         name: match &node.name {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -55150,6 +55158,10 @@ fn render_jsx_self_closing_element(node: &JsxSelfClosingElementTransport, dest: 
             separator: "",
             leading: false,
             trailing: false,
+        },
+        jsx_start_opening_element_group1: match &node.jsx_start_opening_element_group1 {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
         name: match &node.name {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -55678,6 +55690,14 @@ fn render_public_field_definition(node: &PublicFieldDefinitionTransport, dest: &
         },
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         optionality_marker: match &node.optionality_marker {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+        public_field_definition_abstract_first: match &node.public_field_definition_abstract_first {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+        public_field_definition_readonly_first: match &node.public_field_definition_readonly_first {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },

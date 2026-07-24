@@ -313,6 +313,25 @@ export function buildExceptClauseAs(config: T.ExceptClauseAs.Config) {
 	);
 }
 
+export function buildExceptClauseGroup1(child: T.ExceptClauseAs | T.ExceptClauseList) {
+	const _content = child;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ExceptClauseGroup1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: { $child: (v: T.ExceptClauseAs | T.ExceptClauseList) => buildExceptClauseGroup1(v) }
+			},
+			{
+				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildExceptClauseList(config: T.ExceptClauseList.Config) {
 	const _value = config.value ?? [];
 	return withMethods(
@@ -1656,7 +1675,7 @@ export function buildEscapeSequence(text: string) {
 }
 
 export function buildExceptClause(config: Partial<T.ExceptClause.Config> = {}) {
-	const _content = config.content;
+	const _except_clause_group1 = config.exceptClauseGroup1;
 	const _simple_statements = config.simpleStatements;
 	const _block = config.block;
 	const _newline = config.newline;
@@ -1666,19 +1685,20 @@ export function buildExceptClause(config: Partial<T.ExceptClause.Config> = {}) {
 				$type: TSKindId.ExceptClause as const,
 				$source: 2 as const,
 				$named: true as const,
-				_content,
+				_except_clause_group1,
 				_simple_statements,
 				_block,
 				_newline,
 				$with: {
-					content: (value?: T.ExceptClauseAs | T.ExceptClauseList) => buildExceptClause({ ...config, content: value }),
+					exceptClauseGroup1: (value?: T.ExceptClauseGroup1) =>
+						buildExceptClause({ ...config, exceptClauseGroup1: value }),
 					simpleStatements: (value?: T.SimpleStatements) => buildExceptClause({ ...config, simpleStatements: value }),
 					block: (value?: T.Block) => buildExceptClause({ ...config, block: value }),
 					newline: (value?: T.Newline) => buildExceptClause({ ...config, newline: value })
 				}
 			},
 			{
-				content: () => _content,
+				exceptClauseGroup1: () => _except_clause_group1,
 				simpleStatements: () => _simple_statements,
 				block: () => _block,
 				newline: () => _newline
@@ -3595,6 +3615,7 @@ export type FluentKindMap = {
 	_dict_pattern_group2: FluentNode<'_dict_pattern_group2', T.DictPatternGroup2.Config>;
 	_dictionary_group1: FluentNode<'_dictionary_group1', T.DictionaryGroup1.Config>;
 	_except_clause_as: T.ExceptClauseAs;
+	_except_clause_group1: FluentNode<'_except_clause_group1', T.ExceptClauseGroup1.Config>;
 	_except_clause_list: FluentNode<'_except_clause_list', T.ExceptClauseList.Config>;
 	_expression_list_group1: FluentNode<'_expression_list_group1', T.ExpressionListGroup1.Config>;
 	_expression_statement_tuple: FluentNode<'_expression_statement_tuple', T.ExpressionStatementTuple.Config>;
@@ -3755,6 +3776,7 @@ export const _factoryMap = {
 	_dict_pattern_group2: buildDictPatternGroup2,
 	_dictionary_group1: buildDictionaryGroup1,
 	_except_clause_as: buildExceptClauseAs,
+	_except_clause_group1: buildExceptClauseGroup1,
 	_except_clause_list: buildExceptClauseList,
 	_expression_list_group1: buildExpressionListGroup1,
 	_expression_statement_tuple: buildExpressionStatementTuple,

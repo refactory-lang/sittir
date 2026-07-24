@@ -1520,6 +1520,41 @@ export function wrapArrayExpressionSemi(data: T.ArrayExpressionSemi, tree: TreeH
 	return _node;
 }
 
+export function wrapAttributeGroup1(data: T.AttributeGroup1, tree: TreeHandle) {
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.AttributeGroup1 as const,
+			_value: normalizeSingularWrapSlot(data._value, 'value', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'value',
+				span: (data as _NodeData).$span
+			}),
+			_arguments: normalizeSingularWrapSlot(data._arguments, 'arguments', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'arguments',
+				span: (data as _NodeData).$span
+			}),
+
+			value() {
+				return drillIn<T.Expression | undefined>(this._value, tree);
+			},
+			arguments() {
+				return drillAs<T.DelimTokenTree | undefined>(this._arguments, tree, 'token_tree', 'delim_token_tree');
+			},
+			$with: {
+				value: (v: NonNullable<T.AttributeGroup1['_value']>) => wrapAttributeGroup1({ ...data, _value: v }, tree),
+				arguments: (v: NonNullable<T.AttributeGroup1['_arguments']>) =>
+					wrapAttributeGroup1({ ...data, _arguments: v }, tree)
+			}
+		},
+		methodsEngine
+	);
+	return _node;
+}
+
 export function wrapAttributedArgument(
 	data: T.AttributedArgument & {
 		readonly _unary_expression?: T.Expression;
@@ -1967,6 +2002,54 @@ export function wrapAttributedTypeParameter(
 					wrapAttributedTypeParameter({ ...data, _attribute_item: v }, tree),
 				content: (v: NonNullable<T.AttributedTypeParameter['_content']>) =>
 					wrapAttributedTypeParameter({ ...data, _content: v }, tree)
+			}
+		},
+		methodsEngine
+	);
+	return _node;
+}
+
+export function wrapBlockCommentGroup1(data: T.BlockCommentGroup1, tree: TreeHandle) {
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.BlockCommentGroup1 as const,
+			_outer: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._outer, 'outer', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'outer',
+					span: (data as _NodeData).$span
+				})
+			),
+			_inner: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._inner, 'inner', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'inner',
+					span: (data as _NodeData).$span
+				})
+			),
+			_doc: normalizeSingularWrapSlot(data._doc, 'doc', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'doc',
+				span: (data as _NodeData).$span
+			}),
+
+			outer() {
+				return this._outer;
+			},
+			inner() {
+				return this._inner;
+			},
+			doc() {
+				return drillAs<T.BlockCommentContent | undefined>(this._doc, tree, 'doc_comment', '_block_comment_content');
+			},
+			$with: {
+				outer: (v: NonNullable<T.BlockCommentGroup1['_outer']>) => wrapBlockCommentGroup1({ ...data, _outer: v }, tree),
+				inner: (v: NonNullable<T.BlockCommentGroup1['_inner']>) => wrapBlockCommentGroup1({ ...data, _inner: v }, tree),
+				doc: (v: NonNullable<T.BlockCommentGroup1['_doc']>) => wrapBlockCommentGroup1({ ...data, _doc: v }, tree)
 			}
 		},
 		methodsEngine
@@ -5701,32 +5784,28 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle) {
 				slotName: 'path',
 				span: (data as _NodeData).$span
 			}),
-			_value: normalizeSingularWrapSlot(data._value, 'value', false, data.$type, {
+			_attribute_group1: normalizeSingularWrapSlot(data._attribute_group1, 'attribute_group1', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'value',
-				span: (data as _NodeData).$span
-			}),
-			_arguments: normalizeSingularWrapSlot(data._arguments, 'arguments', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'arguments',
+				slotName: 'attribute_group1',
 				span: (data as _NodeData).$span
 			}),
 
 			path() {
 				return drillIn<T.Path>(this._path, tree);
 			},
-			value() {
-				return drillIn<T.Expression | undefined>(this._value, tree);
-			},
-			arguments() {
-				return drillAs<T.DelimTokenTree | undefined>(this._arguments, tree, 'token_tree', 'delim_token_tree');
+			attributeGroup1() {
+				return drillAs<T.AttributeGroup1 | undefined>(
+					this._attribute_group1,
+					tree,
+					'attribute_group1',
+					'_attribute_group1'
+				);
 			},
 			$with: {
 				path: (v: NonNullable<T.Attribute['_path']>) => wrapAttribute({ ...data, _path: v }, tree),
-				value: (v: NonNullable<T.Attribute['_value']>) => wrapAttribute({ ...data, _value: v }, tree),
-				arguments: (v: NonNullable<T.Attribute['_arguments']>) => wrapAttribute({ ...data, _arguments: v }, tree)
+				attributeGroup1: (v: NonNullable<T.Attribute['_attribute_group1']>) =>
+					wrapAttribute({ ...data, _attribute_group1: v }, tree)
 			}
 		},
 		methodsEngine
@@ -6022,42 +6101,25 @@ export function wrapBlockComment(data: T.BlockComment, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.BlockComment as const,
-			_outer: coerceBooleanKeywordStorage(
-				normalizeSingularWrapSlot(data._outer, 'outer', false, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'outer',
-					span: (data as _NodeData).$span
-				})
+			_block_comment_group1: normalizeSingularWrapSlot(
+				data._block_comment_group1,
+				'block_comment_group1',
+				false,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'block_comment_group1', span: (data as _NodeData).$span }
 			),
-			_inner: coerceBooleanKeywordStorage(
-				normalizeSingularWrapSlot(data._inner, 'inner', false, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'inner',
-					span: (data as _NodeData).$span
-				})
-			),
-			_doc: normalizeSingularWrapSlot(data._doc, 'doc', false, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'doc',
-				span: (data as _NodeData).$span
-			}),
 
-			outer() {
-				return this._outer;
-			},
-			inner() {
-				return this._inner;
-			},
-			doc() {
-				return drillAs<T.BlockCommentContent | undefined>(this._doc, tree, 'doc_comment', '_block_comment_content');
+			blockCommentGroup1() {
+				return drillAs<T.BlockCommentGroup1 | undefined>(
+					this._block_comment_group1,
+					tree,
+					'block_comment_group1',
+					'_block_comment_group1'
+				);
 			},
 			$with: {
-				outer: (v: NonNullable<T.BlockComment['_outer']>) => wrapBlockComment({ ...data, _outer: v }, tree),
-				inner: (v: NonNullable<T.BlockComment['_inner']>) => wrapBlockComment({ ...data, _inner: v }, tree),
-				doc: (v: NonNullable<T.BlockComment['_doc']>) => wrapBlockComment({ ...data, _doc: v }, tree)
+				blockCommentGroup1: (v: NonNullable<T.BlockComment['_block_comment_group1']>) =>
+					wrapBlockComment({ ...data, _block_comment_group1: v }, tree)
 			}
 		},
 		methodsEngine
@@ -12146,6 +12208,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_array_expression_group1: (d, t) => wrapArrayExpressionGroup1(d as unknown as T.ArrayExpressionGroup1, t),
 	_array_expression_list: (d, t) => wrapArrayExpressionList(d as unknown as T.ArrayExpressionList, t),
 	_array_expression_semi: (d, t) => wrapArrayExpressionSemi(d as unknown as T.ArrayExpressionSemi, t),
+	_attribute_group1: (d, t) => wrapAttributeGroup1(d as unknown as T.AttributeGroup1, t),
 	_attributed_argument: (d, t) => wrapAttributedArgument(d as unknown as T.AttributedArgument, t),
 	_attributed_enum_variant: (d, t) => wrapAttributedEnumVariant(d as unknown as T.AttributedEnumVariant, t),
 	_attributed_field_declaration: (d, t) =>
@@ -12153,6 +12216,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_attributed_ordered_field: (d, t) => wrapAttributedOrderedField(d as unknown as T.AttributedOrderedField, t),
 	_attributed_parameter: (d, t) => wrapAttributedParameter(d as unknown as T.AttributedParameter, t),
 	_attributed_type_parameter: (d, t) => wrapAttributedTypeParameter(d as unknown as T.AttributedTypeParameter, t),
+	_block_comment_group1: (d, t) => wrapBlockCommentGroup1(d as unknown as T.BlockCommentGroup1, t),
 	_closure_expression_block: (d, t) => wrapClosureExpressionBlock(d as unknown as T.ClosureExpressionBlock, t),
 	_closure_expression_expr: (d, t) => wrapClosureExpressionExpr(d as unknown as T.ClosureExpressionExpr, t),
 	_condition: (d, t) => wrapCondition(d as unknown as T.Condition, t),
@@ -12401,12 +12465,14 @@ const _aliasTargetToSource: Record<string, string> = {
 	array_expression_group1: '_array_expression_group1',
 	array_expression_list: '_array_expression_list',
 	array_expression_semi: '_array_expression_semi',
+	attribute_group1: '_attribute_group1',
 	attributed_argument: '_attributed_argument',
 	attributed_enum_variant: '_attributed_enum_variant',
 	attributed_field_declaration: '_attributed_field_declaration',
 	attributed_ordered_field: '_attributed_ordered_field',
 	attributed_parameter: '_attributed_parameter',
 	attributed_type_parameter: '_attributed_type_parameter',
+	block_comment_group1: '_block_comment_group1',
 	closure_expression_block: '_closure_expression_block',
 	closure_expression_expr: '_closure_expression_expr',
 	compound_assignment_expr_operator: '_compound_assignment_expr_operator',

@@ -130,6 +130,31 @@ export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config) {
 	);
 }
 
+export function buildAttributeGroup1(config: Partial<T.AttributeGroup1.Config> = {}) {
+	const _value = config.value;
+	const _arguments = config.arguments;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.AttributeGroup1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_value,
+				_arguments,
+				$with: {
+					value: (value?: T.Expression) => buildAttributeGroup1({ ...config, value: value }),
+					arguments: (value?: T.DelimTokenTree) => buildAttributeGroup1({ ...config, arguments: value })
+				}
+			},
+			{
+				value: () => _value,
+				arguments: () => _arguments
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildAttributedArgument(config: T.AttributedArgument.Config) {
 	const _attribute_item = config.attributeItem ?? [];
 	const _expression = config.expression;
@@ -287,6 +312,37 @@ export function buildAttributedTypeParameter(config: T.AttributedTypeParameter.C
 			{
 				attributeItems: () => _attribute_item,
 				content: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildBlockCommentGroup1(config: Partial<T.BlockCommentGroup1.Config> = {}) {
+	const _outer = coerceBooleanKeywordStorage(config.outer);
+	const _inner = coerceBooleanKeywordStorage(config.inner);
+	const _doc = config.doc;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.BlockCommentGroup1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_outer,
+				_inner,
+				_doc,
+				$with: {
+					outer: (value?: NonNullable<Parameters<typeof buildBlockCommentGroup1>[0]>['outer']) =>
+						buildBlockCommentGroup1({ ...config, outer: value }),
+					inner: (value?: NonNullable<Parameters<typeof buildBlockCommentGroup1>[0]>['inner']) =>
+						buildBlockCommentGroup1({ ...config, inner: value }),
+					doc: (value?: T.BlockCommentContent) => buildBlockCommentGroup1({ ...config, doc: value })
+				}
+			},
+			{
+				outer: () => _outer,
+				inner: () => _inner,
+				doc: () => _doc
 			}
 		),
 		methodsEngine
@@ -1788,8 +1844,7 @@ export function buildAsyncBlock(config: T.AsyncBlock.Config) {
 
 export function buildAttribute(config: T.Attribute.Config) {
 	const _path = config.path;
-	const _value = config.value;
-	const _arguments = config.arguments;
+	const _attribute_group1 = config.attributeGroup1;
 	return withMethods(
 		withAccessors(
 			{
@@ -1797,18 +1852,15 @@ export function buildAttribute(config: T.Attribute.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_path,
-				_value,
-				_arguments,
+				_attribute_group1,
 				$with: {
 					path: (value: T.Path) => buildAttribute({ ...config, path: value }),
-					value: (value?: T.Expression) => buildAttribute({ ...config, value: value }),
-					arguments: (value?: T.DelimTokenTree) => buildAttribute({ ...config, arguments: value })
+					attributeGroup1: (value?: T.AttributeGroup1) => buildAttribute({ ...config, attributeGroup1: value })
 				}
 			},
 			{
 				path: () => _path,
-				value: () => _value,
-				arguments: () => _arguments
+				attributeGroup1: () => _attribute_group1
 			}
 		),
 		methodsEngine
@@ -1956,31 +2008,19 @@ export function buildBlock(config: Partial<T.Block.Config> = {}) {
 	);
 }
 
-export function buildBlockComment(config: Partial<T.BlockComment.Config> = {}) {
-	const _outer = coerceBooleanKeywordStorage(config.outer);
-	const _inner = coerceBooleanKeywordStorage(config.inner);
-	const _doc = config.doc;
+export function buildBlockComment(child?: T.BlockCommentGroup1) {
+	const _block_comment_group1 = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.BlockComment as const,
 				$source: 2 as const,
 				$named: true as const,
-				_outer,
-				_inner,
-				_doc,
-				$with: {
-					outer: (value?: NonNullable<Parameters<typeof buildBlockComment>[0]>['outer']) =>
-						buildBlockComment({ ...config, outer: value }),
-					inner: (value?: NonNullable<Parameters<typeof buildBlockComment>[0]>['inner']) =>
-						buildBlockComment({ ...config, inner: value }),
-					doc: (value?: T.BlockCommentContent) => buildBlockComment({ ...config, doc: value })
-				}
+				_block_comment_group1,
+				$with: { $child: (v: T.BlockCommentGroup1) => buildBlockComment(v) }
 			},
 			{
-				outer: () => _outer,
-				inner: () => _inner,
-				doc: () => _doc
+				blockCommentGroup1: () => _block_comment_group1
 			}
 		),
 		methodsEngine
@@ -5608,12 +5648,14 @@ export type FluentKindMap = {
 	_array_expression_group1: T.ArrayExpressionGroup1;
 	_array_expression_list: T.ArrayExpressionList;
 	_array_expression_semi: T.ArrayExpressionSemi;
+	_attribute_group1: FluentNode<'_attribute_group1', T.AttributeGroup1.Config>;
 	_attributed_argument: FluentNode<'_attributed_argument', T.AttributedArgument.Config>;
 	_attributed_enum_variant: FluentNode<'_attributed_enum_variant', T.AttributedEnumVariant.Config>;
 	_attributed_field_declaration: FluentNode<'_attributed_field_declaration', T.AttributedFieldDeclaration.Config>;
 	_attributed_ordered_field: T.AttributedOrderedField;
 	_attributed_parameter: FluentNode<'_attributed_parameter', T.AttributedParameter.Config>;
 	_attributed_type_parameter: FluentNode<'_attributed_type_parameter', T.AttributedTypeParameter.Config>;
+	_block_comment_group1: T.BlockCommentGroup1;
 	_closure_expression_block: T.ClosureExpressionBlock;
 	_closure_expression_expr: FluentNode<'_closure_expression_expr', T.ClosureExpressionExpr.Config>;
 	_delim_token_tree_brace: FluentNode<'_delim_token_tree_brace', T.DelimTokenTreeBrace.Config>;
@@ -5843,12 +5885,14 @@ export const _factoryMap = {
 	_array_expression_group1: buildArrayExpressionGroup1,
 	_array_expression_list: buildArrayExpressionList,
 	_array_expression_semi: buildArrayExpressionSemi,
+	_attribute_group1: buildAttributeGroup1,
 	_attributed_argument: buildAttributedArgument,
 	_attributed_enum_variant: buildAttributedEnumVariant,
 	_attributed_field_declaration: buildAttributedFieldDeclaration,
 	_attributed_ordered_field: buildAttributedOrderedField,
 	_attributed_parameter: buildAttributedParameter,
 	_attributed_type_parameter: buildAttributedTypeParameter,
+	_block_comment_group1: buildBlockCommentGroup1,
 	_closure_expression_block: buildClosureExpressionBlock,
 	_closure_expression_expr: buildClosureExpressionExpr,
 	_delim_token_tree_brace: buildDelimTokenTreeBrace,

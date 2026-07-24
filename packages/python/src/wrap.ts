@@ -1575,6 +1575,38 @@ export function wrapExceptClauseAs(data: T.ExceptClauseAs, tree: TreeHandle) {
 	return _node;
 }
 
+export function wrapExceptClauseGroup1(
+	data: T.ExceptClauseGroup1 & {
+		readonly _except_clause_as?: T.ExceptClauseAs | T.ExceptClauseList;
+		readonly _except_clause_list?: T.ExceptClauseAs | T.ExceptClauseList;
+	},
+	tree: TreeHandle
+) {
+	const _node = withMethods(
+		{
+			..._omitWrapKeys(data, ['_except_clause_as', '_except_clause_list']),
+			$type: TSKindId.ExceptClauseGroup1 as const,
+			_content: normalizeSingularWrapSlot(
+				data._content ?? data._except_clause_as ?? data._except_clause_list,
+				'content',
+				true,
+				data.$type,
+				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+			),
+
+			content() {
+				return drillIn<T.ExceptClauseAs | T.ExceptClauseList>(this._content, tree);
+			},
+			$with: {
+				content: (v: NonNullable<T.ExceptClauseGroup1['_content']>) =>
+					wrapExceptClauseGroup1({ ...data, _content: v }, tree)
+			}
+		},
+		methodsEngine
+	);
+	return _node;
+}
+
 export function wrapExceptClauseList(data: T.ExceptClauseList, tree: TreeHandle) {
 	const _node = withMethods(
 		{
@@ -4321,23 +4353,17 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapExceptClause(
-	data: T.ExceptClause & {
-		readonly _except_clause_as?: T.ExceptClauseAs | T.ExceptClauseList;
-		readonly _except_clause_list?: T.ExceptClauseAs | T.ExceptClauseList;
-	},
-	tree: TreeHandle
-) {
+export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_except_clause_as', '_except_clause_list']),
+			...data,
 			$type: TSKindId.ExceptClause as const,
-			_content: normalizeSingularWrapSlot(
-				data._content ?? data._except_clause_as ?? data._except_clause_list,
-				'content',
+			_except_clause_group1: normalizeSingularWrapSlot(
+				data._except_clause_group1,
+				'except_clause_group1',
 				false,
 				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
+				{ tree, nodeType: data.$type, slotName: 'except_clause_group1', span: (data as _NodeData).$span }
 			),
 			_simple_statements: normalizeSingularWrapSlot(data._simple_statements, 'simple_statements', false, data.$type, {
 				tree,
@@ -4358,8 +4384,13 @@ export function wrapExceptClause(
 				span: (data as _NodeData).$span
 			}),
 
-			content() {
-				return drillIn<T.ExceptClauseAs | T.ExceptClauseList | undefined>(this._content, tree);
+			exceptClauseGroup1() {
+				return drillAs<T.ExceptClauseGroup1 | undefined>(
+					this._except_clause_group1,
+					tree,
+					'except_clause_group1',
+					'_except_clause_group1'
+				);
 			},
 			simpleStatements() {
 				return drillAs<T.SimpleStatements | undefined>(
@@ -4376,7 +4407,8 @@ export function wrapExceptClause(
 				return drillAs<T.Newline | undefined>(this._newline, tree, 'newline', '_newline');
 			},
 			$with: {
-				content: (v: NonNullable<T.ExceptClause['_content']>) => wrapExceptClause({ ...data, _content: v }, tree),
+				exceptClauseGroup1: (v: NonNullable<T.ExceptClause['_except_clause_group1']>) =>
+					wrapExceptClause({ ...data, _except_clause_group1: v }, tree),
 				simpleStatements: (v: NonNullable<T.ExceptClause['_simple_statements']>) =>
 					wrapExceptClause({ ...data, _simple_statements: v }, tree),
 				block: (v: NonNullable<T.ExceptClause['_block']>) => wrapExceptClause({ ...data, _block: v }, tree),
@@ -8211,6 +8243,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_dict_pattern_kv: (d, t) => wrapDictPatternKv(d as unknown as T.DictPatternKv, t),
 	_dictionary_group1: (d, t) => wrapDictionaryGroup1(d as unknown as T.DictionaryGroup1, t),
 	_except_clause_as: (d, t) => wrapExceptClauseAs(d as unknown as T.ExceptClauseAs, t),
+	_except_clause_group1: (d, t) => wrapExceptClauseGroup1(d as unknown as T.ExceptClauseGroup1, t),
 	_except_clause_list: (d, t) => wrapExceptClauseList(d as unknown as T.ExceptClauseList, t),
 	_expression_list_group1: (d, t) => wrapExpressionListGroup1(d as unknown as T.ExpressionListGroup1, t),
 	_expression_statement_tuple: (d, t) => wrapExpressionStatementTuple(d as unknown as T.ExpressionStatementTuple, t),
@@ -8389,6 +8422,7 @@ const _aliasTargetToSource: Record<string, string> = {
 	dict_pattern_kv: '_dict_pattern_kv',
 	dictionary_group1: '_dictionary_group1',
 	except_clause_as: '_except_clause_as',
+	except_clause_group1: '_except_clause_group1',
 	except_clause_list: '_except_clause_list',
 	expression_list_group1: '_expression_list_group1',
 	expression_statement_tuple: '_expression_statement_tuple',

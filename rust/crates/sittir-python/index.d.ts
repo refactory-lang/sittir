@@ -616,6 +616,17 @@ export interface ExceptClauseAsTransport {
   _alias?: ExpressionTransport
 }
 
+export interface ExceptClauseGroup1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _content: ExceptClauseGroup1ContentTransportSlot
+}
+
 export interface ExceptClauseListTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -635,7 +646,7 @@ export interface ExceptClauseTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _content?: ExceptClauseContentTransportSlot
+  _except_clause_group1?: ExceptClauseGroup1Transport
   _simple_statements?: SimpleStatementsTransport
   _block?: BlockTransport
   _newline?: NewlineTransport

@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 367,
+  "nodeCount": 369,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -40,6 +40,12 @@
       "childKind": {
         "array_expression_semi": "semi",
         "array_expression_list": "list"
+      }
+    },
+    "block_comment": {
+      "definedBy": "override",
+      "childKind": {
+        "block_comment_group1": "group1"
       }
     },
     "closure_expression": {
@@ -195,6 +201,18 @@
     "_array_expression_semi.array_expression_group1": {
       "array_expression_group1": "_array_expression_group1"
     },
+    "_attribute_group1.arguments": {
+      "token_tree": "delim_token_tree"
+    },
+    "_block_comment_group1.outer": {
+      "outer_doc_comment_marker": "_outer_block_doc_comment_marker"
+    },
+    "_block_comment_group1.inner": {
+      "inner_doc_comment_marker": "_inner_block_doc_comment_marker"
+    },
+    "_block_comment_group1.doc": {
+      "doc_comment": "_block_comment_content"
+    },
     "_enum_variant_list_group1.attributed_enum_variant": {
       "attributed_enum_variant": "_attributed_enum_variant"
     },
@@ -254,17 +272,11 @@
     "associated_type.name": {
       "type_identifier": "identifier"
     },
-    "attribute.arguments": {
-      "token_tree": "delim_token_tree"
+    "attribute.attribute_group1": {
+      "attribute_group1": "_attribute_group1"
     },
-    "block_comment.outer": {
-      "outer_doc_comment_marker": "_outer_block_doc_comment_marker"
-    },
-    "block_comment.inner": {
-      "inner_doc_comment_marker": "_inner_block_doc_comment_marker"
-    },
-    "block_comment.doc": {
-      "doc_comment": "_block_comment_content"
+    "block_comment.block_comment_group1": {
+      "block_comment_group1": "_block_comment_group1"
     },
     "closure_expression.content": {
       "closure_expression_block": "_closure_expression_block",
@@ -531,6 +543,22 @@
         "nonEmpty": false
       }
     },
+    "_attribute_group1": {
+      "value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "arguments": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
     "_attributed_argument": {
       "attribute_item": {
         "unnamed": false,
@@ -630,6 +658,29 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_block_comment_group1": {
+      "outer": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "inner": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "doc": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1323,14 +1374,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "arguments": {
+      "attribute_group1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1412,21 +1456,7 @@
       }
     },
     "block_comment": {
-      "outer": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "inner": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "doc": {
+      "block_comment_group1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -4243,6 +4273,68 @@
       "children": []
     },
     {
+      "kind": "_attribute_group1",
+      "modelType": "branch",
+      "typeName": "AttributeGroup1",
+      "factoryName": "attributeGroup1",
+      "irKey": "attributeGroup1",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "value",
+          "propertyName": "value",
+          "paramName": "value",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_expression",
+              "parseKind": "_expression",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_expression"
+            ]
+          }
+        },
+        {
+          "name": "arguments",
+          "propertyName": "arguments",
+          "paramName": "arguments_",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "delim_token_tree",
+              "parseKind": "token_tree",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "delim_token_tree"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "value",
+        "arguments"
+      ]
+    },
+    {
       "kind": "_attributed_argument",
       "modelType": "branch",
       "typeName": "AttributedArgument",
@@ -4691,6 +4783,91 @@
       "factoryFields": [
         "attribute_item",
         "content"
+      ]
+    },
+    {
+      "kind": "_block_comment_group1",
+      "modelType": "group",
+      "typeName": "BlockCommentGroup1",
+      "factoryName": "_blockCommentGroup1",
+      "irKey": "blockCommentGroup1",
+      "hidden": false,
+      "name": "_block_comment_group1",
+      "fields": [
+        {
+          "name": "outer",
+          "propertyName": "outer",
+          "paramName": "outer",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_outer_block_doc_comment_marker",
+              "parseKind": "outer_doc_comment_marker",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_outer_block_doc_comment_marker"
+            ]
+          }
+        },
+        {
+          "name": "inner",
+          "propertyName": "inner",
+          "paramName": "inner",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_inner_block_doc_comment_marker",
+              "parseKind": "inner_doc_comment_marker",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_inner_block_doc_comment_marker"
+            ]
+          }
+        },
+        {
+          "name": "doc",
+          "propertyName": "doc",
+          "paramName": "doc",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_block_comment_content",
+              "parseKind": "doc_comment",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_block_comment_content"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "doc"
       ]
     },
     {
@@ -8937,9 +9114,9 @@
           }
         },
         {
-          "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
+          "name": "attribute_group1",
+          "propertyName": "attributeGroup1",
+          "paramName": "attributeGroup1",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -8947,38 +9124,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_expression",
-              "parseKind": "_expression",
+              "name": "_attribute_group1",
+              "parseKind": "attribute_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_expression"
-            ]
-          }
-        },
-        {
-          "name": "arguments",
-          "propertyName": "arguments",
-          "paramName": "arguments_",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "delim_token_tree",
-              "parseKind": "token_tree",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "delim_token_tree"
+              "_attribute_group1"
             ]
           }
         }
@@ -8987,8 +9141,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "path",
-        "value",
-        "arguments"
+        "attribute_group1"
       ]
     },
     {
@@ -9396,9 +9549,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "outer",
-          "propertyName": "outer",
-          "paramName": "outer",
+          "name": "block_comment_group1",
+          "propertyName": "blockCommentGroup1",
+          "paramName": "blockCommentGroup1",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -9406,61 +9559,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_outer_block_doc_comment_marker",
-              "parseKind": "outer_doc_comment_marker",
+              "name": "_block_comment_group1",
+              "parseKind": "block_comment_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_outer_block_doc_comment_marker"
-            ]
-          }
-        },
-        {
-          "name": "inner",
-          "propertyName": "inner",
-          "paramName": "inner",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_inner_block_doc_comment_marker",
-              "parseKind": "inner_doc_comment_marker",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_inner_block_doc_comment_marker"
-            ]
-          }
-        },
-        {
-          "name": "doc",
-          "propertyName": "doc",
-          "paramName": "doc",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_block_comment_content",
-              "parseKind": "doc_comment",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_block_comment_content"
+              "_block_comment_group1"
             ]
           }
         }
@@ -9468,7 +9575,7 @@
       "children": [],
       "factoryShape": "direct",
       "factoryFields": [
-        "doc"
+        "block_comment_group1"
       ]
     },
     {

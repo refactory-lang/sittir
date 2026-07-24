@@ -108,6 +108,8 @@ import type {
 	EscapeSequenceTree,
 	Except,
 	ExceptClause,
+	ExceptClauseGroup1,
+	ExceptClauseGroup1Tree,
 	ExceptClauseList,
 	ExceptClauseListTree,
 	ExceptClauseTree,
@@ -331,6 +333,9 @@ export type _Type_ComprehensionClauses = _TypeAssert<
 >;
 export type _Type_DictPatternGroup2 = _TypeAssert<_TypeExtends<DictPatternGroup2['$type'], TSKindId.DictPatternGroup2>>;
 export type _Type_DictionaryGroup1 = _TypeAssert<_TypeExtends<DictionaryGroup1['$type'], TSKindId.DictionaryGroup1>>;
+export type _Type_ExceptClauseGroup1 = _TypeAssert<
+	_TypeExtends<ExceptClauseGroup1['$type'], TSKindId.ExceptClauseGroup1>
+>;
 export type _Type_ExceptClauseList = _TypeAssert<_TypeExtends<ExceptClauseList['$type'], TSKindId.ExceptClauseList>>;
 export type _Type_ExpressionListGroup1 = _TypeAssert<
 	_TypeExtends<ExpressionListGroup1['$type'], TSKindId.ExpressionListGroup1>
@@ -559,6 +564,9 @@ export type _Tree_ComprehensionClauses = _TypeAssert<
 >;
 export type _Tree_DictPatternGroup2 = _TypeAssert<_TypeExtends<DictPatternGroup2Tree['type'], '_dict_pattern_group2'>>;
 export type _Tree_DictionaryGroup1 = _TypeAssert<_TypeExtends<DictionaryGroup1Tree['type'], '_dictionary_group1'>>;
+export type _Tree_ExceptClauseGroup1 = _TypeAssert<
+	_TypeExtends<ExceptClauseGroup1Tree['type'], '_except_clause_group1'>
+>;
 export type _Tree_ExceptClauseList = _TypeAssert<_TypeExtends<ExceptClauseListTree['type'], '_except_clause_list'>>;
 export type _Tree_ExpressionListGroup1 = _TypeAssert<
 	_TypeExtends<ExpressionListGroup1Tree['type'], '_expression_list_group1'>

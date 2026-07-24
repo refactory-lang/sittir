@@ -276,6 +276,18 @@ export interface AttributedTypeParameterTransport {
   _content: AttributedTypeParameterContentTransportSlot
 }
 
+export interface AttributeGroup1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _value?: ExpressionTransport
+  _arguments?: DelimTokenTreeTransport
+}
+
 export interface AttributeItemTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -296,6 +308,7 @@ export interface AttributeTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _path: PathTransport
+  _attribute_group1?: AttributeGroup1Transport
   _value?: ExpressionTransport
   _arguments?: DelimTokenTreeTransport
 }
@@ -335,6 +348,19 @@ export interface BinaryExpressionTransport {
   _right: Box<ExpressionTransport>
 }
 
+export interface BlockCommentGroup1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _outer?: OuterBlockDocCommentMarkerTransport
+  _inner?: InnerBlockDocCommentMarkerTransport
+  _doc?: Box<AnyTransport>
+}
+
 export interface BlockCommentTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -343,6 +369,7 @@ export interface BlockCommentTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _block_comment_group1?: BlockCommentGroup1Transport
   _outer?: OuterBlockDocCommentMarkerTransport
   _inner?: InnerBlockDocCommentMarkerTransport
   _doc?: Box<AnyTransport>

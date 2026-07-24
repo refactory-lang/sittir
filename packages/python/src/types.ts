@@ -99,6 +99,7 @@ export const enum SyntaxKind {
 	DictionaryGroup1 = '_dictionary_group1',
 	ExceptClauseAs = '_except_clause_as',
 	ExceptClauseAsOptional1 = '_except_clause_as_optional1',
+	ExceptClauseGroup1 = '_except_clause_group1',
 	ExceptClauseList = '_except_clause_list',
 	ExpressionListGroup1 = '_expression_list_group1',
 	ExpressionStatementTuple = '_expression_statement_tuple',
@@ -532,7 +533,7 @@ export const enum TSKindId {
 	Await = 235,
 	PositionalSeparator = 236,
 	KeywordSeparator = 237,
-	_ExceptClauseGroup1 = 238,
+	ExceptClauseGroup1 = 238,
 	ArgumentListGroup1 = 239,
 	ExpressionListGroup1 = 240,
 	ListPatternGroup1 = 241,
@@ -1670,7 +1671,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'keyword_separator':
 			return TSKindId.KeywordSeparator;
 		case '_except_clause_group1':
-			return TSKindId._ExceptClauseGroup1;
+			return TSKindId.ExceptClauseGroup1;
 		case '_argument_list_group1':
 			return TSKindId.ArgumentListGroup1;
 		case '_expression_list_group1':
@@ -1900,7 +1901,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'string_content_group1':
 			return TSKindId.NotEscapeSequence;
 		case 'except_clause_group1':
-			return TSKindId._ExceptClauseGroup1;
+			return TSKindId.ExceptClauseGroup1;
 		case 'argument_list_group1':
 			return TSKindId.ArgumentListGroup1;
 		case 'expression_list_group1':
@@ -2215,6 +2216,12 @@ export interface ExceptClauseAsOptional1 {
 	readonly $type: '_except_clause_as_optional1';
 	readonly _alias: Expression;
 	alias(): Expression;
+}
+
+export interface ExceptClauseGroup1 {
+	readonly $type: TSKindId.ExceptClauseGroup1;
+	readonly _content: ExceptClauseAs | ExceptClauseList;
+	content(): ExceptClauseAs | ExceptClauseList;
 }
 
 export interface ExceptClauseList {
@@ -2668,11 +2675,11 @@ export interface ElseClause {
 
 export interface ExceptClause {
 	readonly $type: TSKindId.ExceptClause;
-	readonly _content?: ExceptClauseAs | ExceptClauseList;
+	readonly _except_clause_group1?: ExceptClauseGroup1;
 	readonly _simple_statements?: SimpleStatements;
 	readonly _block?: Block;
 	readonly _newline?: Newline;
-	content(): ExceptClauseAs | ExceptClauseList | undefined;
+	exceptClauseGroup1(): ExceptClauseGroup1 | undefined;
 	simpleStatements(): SimpleStatements | undefined;
 	block(): Block | undefined;
 	newline(): Newline | undefined;
@@ -3293,6 +3300,9 @@ export interface ExceptClauseAsTree extends AnyTreeNode {
 }
 export interface ExceptClauseAsOptional1Tree extends AnyTreeNode {
 	readonly type: '_except_clause_as_optional1';
+}
+export interface ExceptClauseGroup1Tree extends AnyTreeNode {
+	readonly type: '_except_clause_group1';
 }
 export interface ExceptClauseListTree extends AnyTreeNode {
 	readonly type: '_except_clause_list';
@@ -3928,6 +3938,7 @@ export type PythonNode =
 	| DictionaryGroup1
 	| ExceptClauseAs
 	| ExceptClauseAsOptional1
+	| ExceptClauseGroup1
 	| ExceptClauseList
 	| ExpressionListGroup1
 	| ExpressionStatementTuple
@@ -4067,6 +4078,7 @@ export interface KindMap {
 	_dictionary_group1: DictionaryGroup1;
 	_except_clause_as: ExceptClauseAs;
 	_except_clause_as_optional1: ExceptClauseAsOptional1;
+	_except_clause_group1: ExceptClauseGroup1;
 	_except_clause_list: ExceptClauseList;
 	_expression_list_group1: ExpressionListGroup1;
 	_expression_statement_tuple: ExpressionStatementTuple;
@@ -4253,6 +4265,7 @@ export interface ExceptClauseAsOptional1Ns extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
+export interface ExceptClauseGroup1Ns extends NodeNs<ExceptClauseGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExceptClauseListNs extends NodeNs<ExceptClauseList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExpressionListGroup1Ns extends NodeNs<
 	ExpressionListGroup1,
@@ -4492,6 +4505,7 @@ export interface NamespaceMap {
 	_dictionary_group1: DictionaryGroup1Ns;
 	_except_clause_as: ExceptClauseAsNs;
 	_except_clause_as_optional1: ExceptClauseAsOptional1Ns;
+	_except_clause_group1: ExceptClauseGroup1Ns;
 	_except_clause_list: ExceptClauseListNs;
 	_expression_list_group1: ExpressionListGroup1Ns;
 	_expression_statement_tuple: ExpressionStatementTupleNs;
@@ -4709,6 +4723,13 @@ export namespace ExceptClauseAsOptional1 {
 	export type Loose = LooseFor<'_except_clause_as_optional1'>;
 	export type Tree = TreeFor<'_except_clause_as_optional1'>;
 	export type Kind = '_except_clause_as_optional1';
+}
+export namespace ExceptClauseGroup1 {
+	export type Config = ConfigFor<'_except_clause_group1'>;
+	export type Fluent = FluentFor<'_except_clause_group1'>;
+	export type Loose = LooseFor<'_except_clause_group1'>;
+	export type Tree = TreeFor<'_except_clause_group1'>;
+	export type Kind = '_except_clause_group1';
 }
 export namespace ExceptClauseList {
 	export type Config = ConfigFor<'_except_clause_list'>;

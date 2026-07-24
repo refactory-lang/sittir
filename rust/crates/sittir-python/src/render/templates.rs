@@ -163,6 +163,12 @@ pub struct ExceptClauseAsTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_except_clause_group1.jinja", escape = "none")]
+pub struct ExceptClauseGroup1Template<'a> {
+    pub content: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_except_clause_list.jinja", escape = "none")]
 pub struct ExceptClauseListTemplate<'a> {
     pub value: ListNonterminalView<'a>,
@@ -521,7 +527,7 @@ pub struct ElseClauseTemplate<'a> {
 #[template(path = "except_clause.jinja", escape = "none")]
 pub struct ExceptClauseTemplate<'a> {
     pub body: SingleNonterminalView<'a>,
-    pub content: OptionalNonterminalView<'a>,
+    pub except_clause_group1: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

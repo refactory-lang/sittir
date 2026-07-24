@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 256,
+  "nodeCount": 257,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -53,13 +53,6 @@
       "definedBy": "override",
       "childKind": {
         "case_pattern_group1": "group1"
-      }
-    },
-    "except_clause": {
-      "definedBy": "override",
-      "childKind": {
-        "except_clause_as": "as",
-        "except_clause_list": "list"
       }
     },
     "expression_list": {
@@ -117,6 +110,10 @@
     "_dict_pattern_group2.content": {
       "dict_pattern_group1": "_key_value_pattern"
     },
+    "_except_clause_group1.content": {
+      "except_clause_as": "_except_clause_as",
+      "except_clause_list": "_except_clause_list"
+    },
     "_match_block.match_block_block": {
       "match_block_block": "_match_block_block"
     },
@@ -169,9 +166,8 @@
       "simple_statements": "_simple_statements",
       "newline": "_newline"
     },
-    "except_clause.content": {
-      "except_clause_as": "_except_clause_as",
-      "except_clause_list": "_except_clause_list"
+    "except_clause.except_clause_group1": {
+      "except_clause_group1": "_except_clause_group1"
     },
     "except_clause.simple_statements": {
       "simple_statements": "_simple_statements"
@@ -401,6 +397,15 @@
         "unnamed": false,
         "slotCount": 1,
         "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_except_clause_group1": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1093,7 +1098,7 @@
       }
     },
     "except_clause": {
-      "content": {
+      "except_clause_group1": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -3014,6 +3019,52 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "_except_clause_group1",
+      "modelType": "branch",
+      "typeName": "ExceptClauseGroup1",
+      "factoryName": "exceptClauseGroup1",
+      "irKey": "exceptClauseGroup1",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_except_clause_as",
+              "parseKind": "except_clause_as",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_except_clause_list",
+              "parseKind": "except_clause_list",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_except_clause_as",
+              "_except_clause_list"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "content"
+      ]
     },
     {
       "kind": "_except_clause_list",
@@ -6490,9 +6541,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "name": "except_clause_group1",
+          "propertyName": "exceptClauseGroup1",
+          "paramName": "exceptClauseGroup1",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -6500,23 +6551,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_except_clause_as",
-              "parseKind": "except_clause_as",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_except_clause_list",
-              "parseKind": "except_clause_list",
+              "name": "_except_clause_group1",
+              "parseKind": "except_clause_group1",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_except_clause_as",
-              "_except_clause_list"
+              "_except_clause_group1"
             ]
           }
         },
@@ -6593,7 +6636,7 @@
       "children": [],
       "factoryShape": "config",
       "factoryFields": [
-        "content",
+        "except_clause_group1",
         "simple_statements",
         "block",
         "newline"

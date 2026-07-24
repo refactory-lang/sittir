@@ -345,6 +345,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_where_clause_group1: TSKindId.WhereClauseGroup1,
 	arguments: TSKindId.Arguments,
 	array_expression: TSKindId.ArrayExpression,
+	block_comment: TSKindId.BlockComment,
 	bracketed_type: TSKindId.BracketedType,
 	declaration_list: TSKindId.DeclarationList,
 	delim_token_tree: TSKindId.DelimTokenTree,
@@ -438,6 +439,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildArguments(children[0] as Parameters<typeof F.buildArguments>[0]);
 		case 'array_expression':
 			return F.buildArrayExpression(children[0] as Parameters<typeof F.buildArrayExpression>[0]);
+		case 'block_comment':
+			return F.buildBlockComment(children[0] as Parameters<typeof F.buildBlockComment>[0]);
 		case 'bracketed_type':
 			return F.buildBracketedType(children[0] as Parameters<typeof F.buildBracketedType>[0]);
 		case 'declaration_list':
@@ -1007,8 +1010,7 @@ export function coerceToAttribute(input: T.Attribute.Loose): ReturnType<typeof F
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildAttribute>;
 	return F.buildAttribute({
 		path: _requireField('attribute', 'path', _resolveOne<T.Path>(input.path, _K6, _K7)),
-		value: _resolveOne<T.Expression>(input.value, _K4, _K5),
-		arguments: _resolveOneBranch<T.DelimTokenTree>(input.arguments, 'delim_token_tree')
+		attributeGroup1: _resolveOneBranch<T.AttributeGroup1>(input.attributeGroup1, '_attribute_group1')
 	});
 }
 
@@ -1130,13 +1132,15 @@ export function coerceToBlock(input?: T.Block.Loose): ReturnType<typeof F.buildB
 	});
 }
 
-export function coerceToBlockComment(input?: T.BlockComment.Loose): ReturnType<typeof F.buildBlockComment> {
-	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildBlockComment>;
-	return F.buildBlockComment({
-		outer: _resolveBooleanKeyword(input?.outer),
-		inner: _resolveBooleanKeyword(input?.inner),
-		doc: _resolveOneBranch<T.BlockCommentContent>(input?.doc, '_block_comment_content')
-	});
+export function coerceToBlockComment(
+	input?: T.BlockCommentGroup1 | T.BlockComment
+): ReturnType<typeof F.buildBlockComment> {
+	if (isNodeData(input) && input.$type === TSKindId.BlockComment) {
+		const data = input;
+		const child = (data as unknown as { _block_comment_group1?: unknown })._block_comment_group1;
+		return F.buildBlockComment(child as Parameters<typeof F.buildBlockComment>[0]);
+	}
+	return F.buildBlockComment(input as Parameters<typeof F.buildBlockComment>[0]);
 }
 
 export function coerceToBooleanLiteral(input: string | T.BooleanLiteral): ReturnType<typeof F.buildBooleanLiteral> {

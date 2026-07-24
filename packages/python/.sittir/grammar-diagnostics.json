@@ -72,22 +72,6 @@
     "code": "typename-collision",
     "severity": "info",
     "grammar": "python",
-    "ownerKind": "_parameters",
-    "message": "[assemble] typeName collision: kind '_parameters' renamed 'Parameters' → '_Parameters' (visible sibling(s): 'parameters')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Parameters",
-      "newType": "_Parameters",
-      "visibleKinds": [
-        "parameters"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "python",
     "ownerKind": "ellipsis",
     "message": "[assemble] typeName collision between visible kinds: 'ellipsis' renamed 'Ellipsis' → 'Ellipsis2' (siblings: '...')",
     "canProceed": true,

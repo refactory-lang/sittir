@@ -3,6 +3,7 @@
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
 	'_arguments_group1',
+	'_attribute_group1',
 	'_attributed_argument',
 	'_attributed_enum_variant',
 	'_attributed_field_declaration',
@@ -2391,6 +2392,10 @@ export const FIELD_MAP: Record<
 	}>
 > = {
 	_arguments_group1: [{ name: 'attributedArguments', required: true, multiple: true }],
+	_attribute_group1: [
+		{ name: 'value', required: false, multiple: false },
+		{ name: 'arguments', required: false, multiple: false }
+	],
 	_attributed_argument: [
 		{ name: 'attributeItems', required: false, multiple: true },
 		{ name: 'expression', required: true, multiple: false }
@@ -2476,8 +2481,7 @@ export const FIELD_MAP: Record<
 	],
 	attribute: [
 		{ name: 'path', required: true, multiple: false },
-		{ name: 'value', required: false, multiple: false },
-		{ name: 'arguments', required: false, multiple: false }
+		{ name: 'attributeGroup1', required: false, multiple: false }
 	],
 	attribute_item: [{ name: 'attribute', required: true, multiple: false }],
 	await_expression: [{ name: 'expression', required: true, multiple: false }],
@@ -2492,11 +2496,7 @@ export const FIELD_MAP: Record<
 		{ name: 'statements', required: false, multiple: true },
 		{ name: 'trailingExpression', required: false, multiple: false }
 	],
-	block_comment: [
-		{ name: 'outer', required: false, multiple: false },
-		{ name: 'inner', required: false, multiple: false },
-		{ name: 'doc', required: false, multiple: false }
-	],
+	block_comment: [{ name: 'blockCommentGroup1', required: false, multiple: false }],
 	bounded_type: [
 		{ name: 'left', required: true, multiple: false },
 		{ name: 'right', required: true, multiple: false }

@@ -207,15 +207,6 @@ describe.skip('block_comment', () => {
 		expect(node.$type).toBe(TSKindId.BlockComment);
 		expect(node.$source).toBe(2);
 	});
-	it('render produces non-empty string', () => {
-		const node = ir.blockComment({
-			$type: TSKindId._BlockCommentContent,
-			$text: 'test',
-			$source: 2,
-			$named: true
-		} as any);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
 });
 
 describe('boolean_literal', () => {

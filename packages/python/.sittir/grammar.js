@@ -2000,6 +2000,38 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
     if (newContent === content) return rule;
     return { ...rule, content: newContent };
   }
+  if (isOptionalType(rule.type)) {
+    const content = rule.content;
+    if (!content) return rule;
+    const recursed = applyClauseHoist(
+      parentKind,
+      content,
+      rulesBag,
+      clauseGroupRules,
+      dedupeMap,
+      counter,
+      groupDedupeMap,
+      visibleGroupHiddenNames,
+      clauseGroupOwners,
+      ambientPrec
+    );
+    const promoted = mintStructuredChoiceArm(
+      recursed,
+      parentKind,
+      rulesBag,
+      clauseGroupRules,
+      counter,
+      groupDedupeMap,
+      visibleGroupHiddenNames,
+      clauseGroupOwners,
+      // Single-arm position: no sibling arms, so no leading-name collisions.
+      /* @__PURE__ */ new Set(),
+      ambientPrec
+    );
+    const final = promoted ?? recursed;
+    if (final === content) return rule;
+    return { ...rule, content: final };
+  }
   return rule;
 }
 function clusterSignatures(values) {

@@ -118,6 +118,13 @@ pub struct ArrayExpressionSemiTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_attribute_group1.jinja", escape = "none")]
+pub struct AttributeGroup1Template<'a> {
+    pub arguments: OptionalNonterminalView<'a>,
+    pub value: OptionalNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_attributed_argument.jinja", escape = "none")]
 pub struct AttributedArgumentTemplate<'a> {
     pub attribute_item: ListNonterminalView<'a>,
@@ -158,6 +165,14 @@ pub struct AttributedParameterTemplate<'a> {
 pub struct AttributedTypeParameterTemplate<'a> {
     pub attribute_item: ListNonterminalView<'a>,
     pub content: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_block_comment_group1.jinja", escape = "none")]
+pub struct BlockCommentGroup1Template<'a> {
+    pub doc: OptionalNonterminalView<'a>,
+    pub inner: OptionalNonterminalView<'a>,
+    pub outer: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -535,9 +550,8 @@ pub struct AttributeItemTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "attribute.jinja", escape = "none")]
 pub struct AttributeTemplate<'a> {
-    pub arguments: OptionalNonterminalView<'a>,
+    pub attribute_group1: OptionalNonterminalView<'a>,
     pub path: SingleNonterminalView<'a>,
-    pub value: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -563,9 +577,7 @@ pub struct BinaryExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "block_comment.jinja", escape = "none")]
 pub struct BlockCommentTemplate<'a> {
-    pub doc: OptionalNonterminalView<'a>,
-    pub inner: OptionalNonterminalView<'a>,
-    pub outer: OptionalNonterminalView<'a>,
+    pub block_comment_group1: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

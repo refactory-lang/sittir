@@ -19,6 +19,8 @@ import type {
 	AsyncBlock,
 	AsyncBlockTree,
 	Attribute,
+	AttributeGroup1,
+	AttributeGroup1Tree,
 	AttributeItem,
 	AttributeItemTree,
 	AttributeTree,
@@ -436,6 +438,7 @@ type _TypeAssert<T extends true> = T;
 
 // --- Concrete interface `$type` discriminant ---
 export type _Type_ArgumentsGroup1 = _TypeAssert<_TypeExtends<ArgumentsGroup1['$type'], TSKindId.ArgumentsGroup1>>;
+export type _Type_AttributeGroup1 = _TypeAssert<_TypeExtends<AttributeGroup1['$type'], TSKindId.AttributeGroup1>>;
 export type _Type_AttributedArgument = _TypeAssert<
 	_TypeExtends<AttributedArgument['$type'], TSKindId.AttributedArgument>
 >;
@@ -892,6 +895,7 @@ export type _Type_ErrorSentinel = _TypeAssert<_TypeExtends<ErrorSentinel['$type'
 
 // --- TreeNode types have correct `type` ---
 export type _Tree_ArgumentsGroup1 = _TypeAssert<_TypeExtends<ArgumentsGroup1Tree['type'], '_arguments_group1'>>;
+export type _Tree_AttributeGroup1 = _TypeAssert<_TypeExtends<AttributeGroup1Tree['type'], '_attribute_group1'>>;
 export type _Tree_AttributedArgument = _TypeAssert<
 	_TypeExtends<AttributedArgumentTree['type'], '_attributed_argument'>
 >;

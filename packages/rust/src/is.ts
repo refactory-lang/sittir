@@ -28,6 +28,7 @@ import type {
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
 	ArgumentsGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArgumentsGroup1 };
+	AttributeGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributeGroup1 };
 	AttributedArgument<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.AttributedArgument };
@@ -341,6 +342,7 @@ export interface IsGuards {
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
 	ArgumentsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArgumentsGroup1 };
+	AttributeGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributeGroup1 };
 	AttributedArgument(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedArgument };
 	AttributedEnumVariant(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedEnumVariant };
 	AttributedFieldDeclaration(v: {
@@ -822,6 +824,7 @@ const _kindIdByKind = new Map<string, number>([
 	['boolean_literal', TSKindId.BooleanLiteral],
 	['line_comment', TSKindId.LineComment],
 	['block_comment', TSKindId.BlockComment],
+	['_attribute_group1', TSKindId.AttributeGroup1],
 	['_enum_variant_list_group1', TSKindId.EnumVariantListGroup1],
 	['_field_declaration_list_group1', TSKindId.FieldDeclarationListGroup1],
 	['_ordered_field_declaration_list_group1', TSKindId.OrderedFieldDeclarationListGroup1],
@@ -837,6 +840,7 @@ const _kindIdByKind = new Map<string, number>([
 	['_slice_pattern_group1', TSKindId.SlicePatternGroup1],
 	['_struct_pattern_group1', TSKindId.StructPatternGroup1],
 	['_range_pattern_group2', TSKindId.RangePatternGroup2],
+	['_block_comment_group1', TSKindId.BlockCommentGroup1],
 	['_token_tree_punctuation', TSKindId.TokenTreePunctuation],
 	['_use_wildcard_clause', TSKindId.UseWildcardClause],
 	['_wildcard_pattern', TSKindId.WildcardPattern],
@@ -892,6 +896,7 @@ const _kindIdByKind = new Map<string, number>([
 
 export const is = {
 	ArgumentsGroup1: _g(TSKindId.ArgumentsGroup1),
+	AttributeGroup1: _g(TSKindId.AttributeGroup1),
 	AttributedArgument: _g(TSKindId.AttributedArgument),
 	AttributedEnumVariant: _g(TSKindId.AttributedEnumVariant),
 	AttributedFieldDeclaration: _g(TSKindId.AttributedFieldDeclaration),
@@ -1115,6 +1120,7 @@ function _makeAssertKind(guard: _AnyGuard) {
 
 export const assert = {
 	ArgumentsGroup1: _makeAssert('ArgumentsGroup1', is.ArgumentsGroup1 as _AnyGuard),
+	AttributeGroup1: _makeAssert('AttributeGroup1', is.AttributeGroup1 as _AnyGuard),
 	AttributedArgument: _makeAssert('AttributedArgument', is.AttributedArgument as _AnyGuard),
 	AttributedEnumVariant: _makeAssert('AttributedEnumVariant', is.AttributedEnumVariant as _AnyGuard),
 	AttributedFieldDeclaration: _makeAssert('AttributedFieldDeclaration', is.AttributedFieldDeclaration as _AnyGuard),

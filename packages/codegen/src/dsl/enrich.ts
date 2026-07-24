@@ -1815,6 +1815,53 @@ function applyClauseHoist(
 		return { ...rule, content: newContent } as Rule;
 	}
 
+	// Bare OPTIONAL whose content is NOT a seq (those were peeled above).
+	// Sittir's runtime keeps `optional(x)` as `{ type: OPTIONAL, content: x }`
+	// while the tree-sitter CLI runtime desugars the SAME source to
+	// `CHOICE[x, BLANK]` — whose non-BLANK arm the CHOICE branch above offers
+	// to `mintStructuredChoiceArm`. Without this mirror branch the OPTIONAL
+	// form falls through untouched and the two runtimes hoist DIFFERENT
+	// grammars: the parser mints `_<parent>_group<N>` for e.g. rust
+	// `attribute`'s `optional(choice(seq('=', value), arguments))` while the
+	// IR never registers the kind — the wrapped tree then carries a group
+	// node the model can't drill (rendered `#[doc =]`, value dropped).
+	// Structure-only mirror: recurse into the content, then offer it to the
+	// arm mint exactly as the desugared form would. Under the CLI runtime
+	// this branch is unreachable (OPTIONAL never occurs), so the parser
+	// grammar is unchanged by construction.
+	if (isOptionalType(rule.type)) {
+		const content = (rule as unknown as { content?: Rule }).content;
+		if (!content) return rule;
+		const recursed = applyClauseHoist(
+			parentKind,
+			content,
+			rulesBag,
+			clauseGroupRules,
+			dedupeMap,
+			counter,
+			groupDedupeMap,
+			visibleGroupHiddenNames,
+			clauseGroupOwners,
+			ambientPrec
+		);
+		const promoted = mintStructuredChoiceArm(
+			recursed,
+			parentKind,
+			rulesBag,
+			clauseGroupRules,
+			counter,
+			groupDedupeMap,
+			visibleGroupHiddenNames,
+			clauseGroupOwners,
+			// Single-arm position: no sibling arms, so no leading-name collisions.
+			new Set(),
+			ambientPrec
+		);
+		const final = promoted ?? recursed;
+		if (final === content) return rule;
+		return { ...rule, content: final } as Rule;
+	}
+
 	return rule;
 }
 

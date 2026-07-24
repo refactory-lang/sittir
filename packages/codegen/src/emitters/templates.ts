@@ -1782,6 +1782,35 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 		// Emit ALL arms — concatenated conditionals, only one fires at runtime.
 		return rule.members.map((m) => emitRule(m, ctx)).join('');
 	}
+	// Unregistered choice whose EVERY non-empty arm carries its own
+	// discriminating slot (validated against the owner's transport struct):
+	// arms are mutually exclusive at runtime, so emit ALL of them as
+	// presence-gated blocks — same mechanism as the union-backed mixed-row
+	// path above, just with no union reference appended. First-arm semantics
+	// here silently dropped every later arm (e.g. rust `_attribute_group1` =
+	// choice(seq('=', value), arguments): the `arguments` arm vanished and
+	// the seq arm's bare `=` leaked into argument-form renders).
+	{
+		const blockByKey = new Map<string, string>();
+		let ungateableArm = false;
+		for (const arm of rule.members) {
+			const body = emitRule(arm as RenderRule, ctx);
+			if (!body) continue;
+			const { key, needsGate } = scanArmBody(body);
+			if (key === undefined || ctx.ownerSlots?.[key] === undefined) {
+				// A non-empty arm with nothing valid to gate on — emitting only
+				// the gated arms would drop it. Fall back to first-arm below.
+				ungateableArm = true;
+				break;
+			}
+			const block = needsGate ? `{% if ${key} | isPresent %}${body}{% endif %}` : body;
+			const prev = blockByKey.get(key);
+			if (prev === undefined || block.length > prev.length) blockByKey.set(key, block);
+		}
+		if (!ungateableArm && blockByKey.size >= 2) {
+			return [...blockByKey.values()].join('');
+		}
+	}
 	// Pure-literal or unregistered choice — emit the first non-empty arm's text.
 	for (const member of rule.members) {
 		const text = emitRule(member, ctx);

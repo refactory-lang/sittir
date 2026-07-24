@@ -8,6 +8,7 @@ export const NODE_KINDS = [
 	'_comprehension_clauses',
 	'_dict_pattern_group2',
 	'_dictionary_group1',
+	'_except_clause_group1',
 	'_except_clause_list',
 	'_expression_list_group1',
 	'_expression_statement_tuple',
@@ -1627,6 +1628,7 @@ export const FIELD_MAP: Record<
 		{ name: 'contents', required: false, multiple: true }
 	],
 	_dictionary_group1: [{ name: 'contents', required: false, multiple: true }],
+	_except_clause_group1: [{ name: 'content', required: true, multiple: false }],
 	_except_clause_list: [{ name: 'values', required: true, multiple: true }],
 	_expression_list_group1: [{ name: 'expressions', required: true, multiple: true }],
 	_expression_statement_tuple: [{ name: 'expressions', required: true, multiple: true }],
@@ -1748,7 +1750,7 @@ export const FIELD_MAP: Record<
 	],
 	else_clause: [{ name: 'body', required: true, multiple: false }],
 	except_clause: [
-		{ name: 'content', required: false, multiple: false },
+		{ name: 'exceptClauseGroup1', required: false, multiple: false },
 		{ name: 'simpleStatements', required: false, multiple: false },
 		{ name: 'block', required: false, multiple: false },
 		{ name: 'newline', required: false, multiple: false }

@@ -181,12 +181,14 @@ export const enum SyntaxKind {
 	ArrayExpressionList = '_array_expression_list',
 	ArrayExpressionSemi = '_array_expression_semi',
 	ArrayTypeOptional1 = '_array_type_optional1',
+	AttributeGroup1 = '_attribute_group1',
 	AttributedArgument = '_attributed_argument',
 	AttributedEnumVariant = '_attributed_enum_variant',
 	AttributedFieldDeclaration = '_attributed_field_declaration',
 	AttributedOrderedField = '_attributed_ordered_field',
 	AttributedParameter = '_attributed_parameter',
 	AttributedTypeParameter = '_attributed_type_parameter',
+	BlockCommentGroup1 = '_block_comment_group1',
 	BlockOptional1 = '_block_optional1',
 	ClosureExpressionBlock = '_closure_expression_block',
 	ClosureExpressionExpr = '_closure_expression_expr',
@@ -790,7 +792,7 @@ export const enum TSKindId {
 	OuterLineDocCommentMarker = 318,
 	BlockComment = 319,
 	_BlockDocCommentMarker = 320,
-	_AttributeGroup1 = 321,
+	AttributeGroup1 = 321,
 	EnumVariantListGroup1 = 322,
 	FieldDeclarationListGroup1 = 323,
 	OrderedFieldDeclarationListGroup1 = 324,
@@ -806,7 +808,7 @@ export const enum TSKindId {
 	SlicePatternGroup1 = 334,
 	StructPatternGroup1 = 335,
 	RangePatternGroup2 = 336,
-	_BlockCommentGroup1 = 337,
+	BlockCommentGroup1 = 337,
 	TokenTreePunctuation = 338,
 	UseWildcardClause = 339,
 	WildcardPattern = 340,
@@ -2402,7 +2404,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case '_block_doc_comment_marker':
 			return TSKindId._BlockDocCommentMarker;
 		case '_attribute_group1':
-			return TSKindId._AttributeGroup1;
+			return TSKindId.AttributeGroup1;
 		case '_enum_variant_list_group1':
 			return TSKindId.EnumVariantListGroup1;
 		case '_field_declaration_list_group1':
@@ -2434,7 +2436,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case '_range_pattern_group2':
 			return TSKindId.RangePatternGroup2;
 		case '_block_comment_group1':
-			return TSKindId._BlockCommentGroup1;
+			return TSKindId.BlockCommentGroup1;
 		case '_token_tree_punctuation':
 			return TSKindId.TokenTreePunctuation;
 		case '_use_wildcard_clause':
@@ -2740,7 +2742,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'let_chain':
 			return TSKindId.LetChain;
 		case 'attribute_group1':
-			return TSKindId._AttributeGroup1;
+			return TSKindId.AttributeGroup1;
 		case 'enum_variant_list_group1':
 			return TSKindId.EnumVariantListGroup1;
 		case 'field_declaration_list_group1':
@@ -2772,7 +2774,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'range_pattern_group2':
 			return TSKindId.RangePatternGroup2;
 		case 'block_comment_group1':
-			return TSKindId._BlockCommentGroup1;
+			return TSKindId.BlockCommentGroup1;
 		case 'token_tree_punctuation':
 			return TSKindId.TokenTreePunctuation;
 		case 'wildcard_pattern':
@@ -3334,6 +3336,14 @@ export interface ArrayTypeOptional1 {
 	length(): Expression;
 }
 
+export interface AttributeGroup1 {
+	readonly $type: TSKindId.AttributeGroup1;
+	readonly _value?: Expression;
+	readonly _arguments?: DelimTokenTree;
+	value(): Expression | undefined;
+	arguments(): DelimTokenTree | undefined;
+}
+
 export interface AttributedArgument {
 	readonly $type: TSKindId.AttributedArgument;
 	readonly _attribute_item?: readonly AttributeItem[];
@@ -3382,6 +3392,20 @@ export interface AttributedTypeParameter {
 	readonly _content: Metavariable | TypeParameter | LifetimeParameter | ConstParameter;
 	attributeItems(): readonly AttributeItem[];
 	content(): Metavariable | TypeParameter | LifetimeParameter | ConstParameter;
+}
+
+export interface BlockCommentGroup1 {
+	readonly $type: TSKindId.BlockCommentGroup1;
+	readonly _outer?: boolean;
+	readonly _inner?: boolean;
+	readonly _doc?: BlockCommentContent;
+	readonly __inputHints__?: {
+		readonly outer?: BooleanKeyword<'*'>;
+		readonly inner?: BooleanKeyword<'!'>;
+	};
+	outer(): boolean | undefined;
+	inner(): boolean | undefined;
+	doc(): BlockCommentContent | undefined;
 }
 
 export interface BlockOptional1 {
@@ -3883,11 +3907,9 @@ export interface AsyncBlock {
 export interface Attribute {
 	readonly $type: TSKindId.Attribute;
 	readonly _path: Path;
-	readonly _value?: Expression;
-	readonly _arguments?: DelimTokenTree;
+	readonly _attribute_group1?: AttributeGroup1;
 	path(): Path;
-	value(): Expression | undefined;
-	arguments(): DelimTokenTree | undefined;
+	attributeGroup1(): AttributeGroup1 | undefined;
 }
 
 export interface AttributeItem {
@@ -3953,16 +3975,8 @@ export interface Block {
 
 export interface BlockComment {
 	readonly $type: TSKindId.BlockComment;
-	readonly _outer?: boolean;
-	readonly _inner?: boolean;
-	readonly _doc?: BlockCommentContent;
-	readonly __inputHints__?: {
-		readonly outer?: BooleanKeyword<'*'>;
-		readonly inner?: BooleanKeyword<'!'>;
-	};
-	outer(): boolean | undefined;
-	inner(): boolean | undefined;
-	doc(): BlockCommentContent | undefined;
+	readonly _block_comment_group1?: BlockCommentGroup1;
+	blockCommentGroup1(): BlockCommentGroup1 | undefined;
 }
 
 export interface BoundedType {
@@ -5422,6 +5436,9 @@ export interface ArrayExpressionSemiTree extends AnyTreeNode {
 export interface ArrayTypeOptional1Tree extends AnyTreeNode {
 	readonly type: '_array_type_optional1';
 }
+export interface AttributeGroup1Tree extends AnyTreeNode {
+	readonly type: '_attribute_group1';
+}
 export interface AttributedArgumentTree extends AnyTreeNode {
 	readonly type: '_attributed_argument';
 }
@@ -5439,6 +5456,9 @@ export interface AttributedParameterTree extends AnyTreeNode {
 }
 export interface AttributedTypeParameterTree extends AnyTreeNode {
 	readonly type: '_attributed_type_parameter';
+}
+export interface BlockCommentGroup1Tree extends AnyTreeNode {
+	readonly type: '_block_comment_group1';
 }
 export interface BlockOptional1Tree extends AnyTreeNode {
 	readonly type: '_block_optional1';
@@ -6710,12 +6730,14 @@ export type RustNode =
 	| ArrayExpressionList
 	| ArrayExpressionSemi
 	| ArrayTypeOptional1
+	| AttributeGroup1
 	| AttributedArgument
 	| AttributedEnumVariant
 	| AttributedFieldDeclaration
 	| AttributedOrderedField
 	| AttributedParameter
 	| AttributedTypeParameter
+	| BlockCommentGroup1
 	| BlockOptional1
 	| ClosureExpressionBlock
 	| ClosureExpressionExpr
@@ -6927,12 +6949,14 @@ export interface KindMap {
 	_array_expression_list: ArrayExpressionList;
 	_array_expression_semi: ArrayExpressionSemi;
 	_array_type_optional1: ArrayTypeOptional1;
+	_attribute_group1: AttributeGroup1;
 	_attributed_argument: AttributedArgument;
 	_attributed_enum_variant: AttributedEnumVariant;
 	_attributed_field_declaration: AttributedFieldDeclaration;
 	_attributed_ordered_field: AttributedOrderedField;
 	_attributed_parameter: AttributedParameter;
 	_attributed_type_parameter: AttributedTypeParameter;
+	_block_comment_group1: BlockCommentGroup1;
 	_block_optional1: BlockOptional1;
 	_closure_expression_block: ClosureExpressionBlock;
 	_closure_expression_expr: ClosureExpressionExpr;
@@ -7199,6 +7223,7 @@ export interface ArrayExpressionSemiNs extends NodeNs<
 	NamespaceMap
 > {}
 export interface ArrayTypeOptional1Ns extends NodeNs<ArrayTypeOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AttributeGroup1Ns extends NodeNs<AttributeGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AttributedArgumentNs extends NodeNs<AttributedArgument, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AttributedEnumVariantNs extends NodeNs<
 	AttributedEnumVariant,
@@ -7230,6 +7255,7 @@ export interface AttributedTypeParameterNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
+export interface BlockCommentGroup1Ns extends NodeNs<BlockCommentGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface BlockOptional1Ns extends NodeNs<BlockOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ClosureExpressionBlockNs extends NodeNs<
 	ClosureExpressionBlock,
@@ -7716,12 +7742,14 @@ export interface NamespaceMap {
 	_array_expression_list: ArrayExpressionListNs;
 	_array_expression_semi: ArrayExpressionSemiNs;
 	_array_type_optional1: ArrayTypeOptional1Ns;
+	_attribute_group1: AttributeGroup1Ns;
 	_attributed_argument: AttributedArgumentNs;
 	_attributed_enum_variant: AttributedEnumVariantNs;
 	_attributed_field_declaration: AttributedFieldDeclarationNs;
 	_attributed_ordered_field: AttributedOrderedFieldNs;
 	_attributed_parameter: AttributedParameterNs;
 	_attributed_type_parameter: AttributedTypeParameterNs;
+	_block_comment_group1: BlockCommentGroup1Ns;
 	_block_optional1: BlockOptional1Ns;
 	_closure_expression_block: ClosureExpressionBlockNs;
 	_closure_expression_expr: ClosureExpressionExprNs;
@@ -7976,6 +8004,13 @@ export namespace ArrayTypeOptional1 {
 	export type Tree = TreeFor<'_array_type_optional1'>;
 	export type Kind = '_array_type_optional1';
 }
+export namespace AttributeGroup1 {
+	export type Config = ConfigFor<'_attribute_group1'>;
+	export type Fluent = FluentFor<'_attribute_group1'>;
+	export type Loose = LooseFor<'_attribute_group1'>;
+	export type Tree = TreeFor<'_attribute_group1'>;
+	export type Kind = '_attribute_group1';
+}
 export namespace AttributedArgument {
 	export type Config = ConfigFor<'_attributed_argument'>;
 	export type Fluent = FluentFor<'_attributed_argument'>;
@@ -8017,6 +8052,13 @@ export namespace AttributedTypeParameter {
 	export type Loose = LooseFor<'_attributed_type_parameter'>;
 	export type Tree = TreeFor<'_attributed_type_parameter'>;
 	export type Kind = '_attributed_type_parameter';
+}
+export namespace BlockCommentGroup1 {
+	export type Config = ConfigFor<'_block_comment_group1'>;
+	export type Fluent = FluentFor<'_block_comment_group1'>;
+	export type Loose = LooseFor<'_block_comment_group1'>;
+	export type Tree = TreeFor<'_block_comment_group1'>;
+	export type Kind = '_block_comment_group1';
 }
 export namespace BlockOptional1 {
 	export type Config = ConfigFor<'_block_optional1'>;

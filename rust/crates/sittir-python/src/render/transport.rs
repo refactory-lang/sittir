@@ -38,6 +38,7 @@ pub enum AnyTransport {
     DictionaryGroup1(DictionaryGroup1Transport),
     ExceptClauseAs(ExceptClauseAsTransport),
     ExceptClauseAsOptional1(ExceptClauseAsOptional1Transport),
+    ExceptClauseGroup1(ExceptClauseGroup1Transport),
     ExceptClauseList(ExceptClauseListTransport),
     ExpressionListGroup1(ExpressionListGroup1Transport),
     ExpressionStatementTuple(ExpressionStatementTupleTransport),
@@ -357,6 +358,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: _except_clause_as (_EXCEPT_CLAUSE_AS)
                 246 => Ok(AnyTransport::ExceptClauseAs(
                     ExceptClauseAsTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _except_clause_group1 (_EXCEPT_CLAUSE_GROUP1)
+                238 => Ok(AnyTransport::ExceptClauseGroup1(
+                    ExceptClauseGroup1Transport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _except_clause_list (_EXCEPT_CLAUSE_LIST)
                 258 => Ok(AnyTransport::ExceptClauseList(
@@ -6004,6 +6009,103 @@ impl RenderableTransport for DictionaryGroup1ContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum ExceptClauseGroup1ContentTransportSlot {
+    ExceptClauseAs(ExceptClauseAsTransport),
+    ExceptClauseList(ExceptClauseListTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseGroup1ContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    246 => Ok(Self::ExceptClauseAs(
+                        ExceptClauseAsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    258 => Ok(Self::ExceptClauseList(
+                        ExceptClauseListTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ExceptClauseGroup1ContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ExceptClauseGroup1ContentTransportSlot")
+                )?;
+                match kind_id {
+                    246 => Ok(Self::ExceptClauseAs(
+                        ExceptClauseAsTransport::from_napi_value(env, napi_val)?
+                    )),
+                    258 => Ok(Self::ExceptClauseList(
+                        ExceptClauseListTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ExceptClauseGroup1ContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ExceptClauseGroup1ContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ExceptClauseGroup1ContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ExceptClauseGroup1ContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseGroup1ContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ExceptClauseGroup1ContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseGroup1ContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ExceptClauseGroup1ContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn except_clause_group1_content_transport_slot_to_any(t: ExceptClauseGroup1ContentTransportSlot) -> AnyTransport {
+    match t {
+        ExceptClauseGroup1ContentTransportSlot::ExceptClauseAs(inner) => AnyTransport::ExceptClauseAs(inner),
+        ExceptClauseGroup1ContentTransportSlot::ExceptClauseList(inner) => AnyTransport::ExceptClauseList(inner),
+    }
+}
+
+impl RenderableTransport for ExceptClauseGroup1ContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ExceptClauseGroup1ContentTransportSlot::ExceptClauseAs(inner) => render_except_clause_as(inner, dest),
+            ExceptClauseGroup1ContentTransportSlot::ExceptClauseList(inner) => render_except_clause_list(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum ImportListNameTransportSlot {
     DottedName(DottedNameTransport),
     AliasedImport(AliasedImportTransport),
@@ -7684,103 +7786,6 @@ impl RenderableTransport for ElseClauseBodyTransportSlot {
             ElseClauseBodyTransportSlot::Block(inner) => render_block(inner, dest),
             ElseClauseBodyTransportSlot::Newline(inner) => render_newline(inner, dest),
             ElseClauseBodyTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum ExceptClauseContentTransportSlot {
-    ExceptClauseAs(ExceptClauseAsTransport),
-    ExceptClauseList(ExceptClauseListTransport),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseContentTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    246 => Ok(Self::ExceptClauseAs(
-                        ExceptClauseAsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    258 => Ok(Self::ExceptClauseList(
-                        ExceptClauseListTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExceptClauseContentTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ExceptClauseContentTransportSlot")
-                )?;
-                match kind_id {
-                    246 => Ok(Self::ExceptClauseAs(
-                        ExceptClauseAsTransport::from_napi_value(env, napi_val)?
-                    )),
-                    258 => Ok(Self::ExceptClauseList(
-                        ExceptClauseListTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExceptClauseContentTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("ExceptClauseContentTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExceptClauseContentTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExceptClauseContentTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseContentTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ExceptClauseContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseContentTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExceptClauseContentTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn except_clause_content_transport_slot_to_any(t: ExceptClauseContentTransportSlot) -> AnyTransport {
-    match t {
-        ExceptClauseContentTransportSlot::ExceptClauseAs(inner) => AnyTransport::ExceptClauseAs(inner),
-        ExceptClauseContentTransportSlot::ExceptClauseList(inner) => AnyTransport::ExceptClauseList(inner),
-    }
-}
-
-impl RenderableTransport for ExceptClauseContentTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            ExceptClauseContentTransportSlot::ExceptClauseAs(inner) => render_except_clause_as(inner, dest),
-            ExceptClauseContentTransportSlot::ExceptClauseList(inner) => render_except_clause_list(inner, dest),
         }
     }
 }
@@ -13529,6 +13534,56 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseAsOptional1Transpo
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
+pub struct ExceptClauseGroup1Transport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
+    pub content: ExceptClauseGroup1ContentTransportSlot,
+}
+
+impl RenderableTransport for ExceptClauseGroup1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_except_clause_group1(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExceptClauseGroup1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ExceptClauseGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExceptClauseGroup1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ExceptClauseGroup1Transport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
 pub struct ExceptClauseListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
@@ -17468,8 +17523,8 @@ pub struct ExceptClauseTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
-    pub content: Option<ExceptClauseContentTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_except_clause_group1"))]
+    pub except_clause_group1: Option<ExceptClauseGroup1Transport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_simple_statements"))]
     pub simple_statements: Option<SimpleStatementsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_block"))]
@@ -30506,6 +30561,13 @@ fn render_except_clause_as_optional1(node: &ExceptClauseAsOptional1Transport, de
     Ok(())
 }
 
+fn render_except_clause_group1(node: &ExceptClauseGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let template = ExceptClauseGroup1Template {
+        content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
+    };
+    template.render_into(dest)
+}
+
 fn render_except_clause_list(node: &ExceptClauseListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     if node.value.is_empty() {
         if let Some(text) = node.transport_text.as_deref() {
@@ -31316,14 +31378,14 @@ fn render_escape_sequence(t: &EscapeSequenceTransport, dest: &mut dyn ::std::fmt
 }
 
 fn render_except_clause(node: &ExceptClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.content.is_none() && node.simple_statements.is_none() && node.block.is_none() && node.newline.is_none() {
+    if node.except_clause_group1.is_none() && node.simple_statements.is_none() && node.block.is_none() && node.newline.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
     let template = ExceptClauseTemplate {
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
-        content: match &node.content {
+        except_clause_group1: match &node.except_clause_group1 {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
@@ -32768,6 +32830,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::DictionaryGroup1(t) => render_dictionary_group1(t, dest),
             AnyTransport::ExceptClauseAs(t) => render_except_clause_as(t, dest),
             AnyTransport::ExceptClauseAsOptional1(t) => render_except_clause_as_optional1(t, dest),
+            AnyTransport::ExceptClauseGroup1(t) => render_except_clause_group1(t, dest),
             AnyTransport::ExceptClauseList(t) => render_except_clause_list(t, dest),
             AnyTransport::ExpressionListGroup1(t) => render_expression_list_group1(t, dest),
             AnyTransport::ExpressionStatementTuple(t) => render_expression_statement_tuple(t, dest),
@@ -33048,6 +33111,7 @@ impl AnyTransport {
             Self::DictionaryGroup1(t) => t.transport_named,
             Self::ExceptClauseAs(t) => t.transport_named,
             Self::ExceptClauseAsOptional1(t) => t.transport_named,
+            Self::ExceptClauseGroup1(t) => t.transport_named,
             Self::ExceptClauseList(t) => t.transport_named,
             Self::ExpressionListGroup1(t) => t.transport_named,
             Self::ExpressionStatementTuple(t) => t.transport_named,

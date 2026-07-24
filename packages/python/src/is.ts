@@ -39,6 +39,9 @@ export interface IsGuards {
 		v: T
 	): v is T & { readonly $type: TSKindId.DictPatternGroup2 };
 	DictionaryGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DictionaryGroup1 };
+	ExceptClauseGroup1<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.ExceptClauseGroup1 };
 	ExceptClauseList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExceptClauseList };
 	ExpressionListGroup1<T extends { readonly $type: number }>(
 		v: T
@@ -229,6 +232,7 @@ export interface AssertGuards {
 	ComprehensionClauses(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ComprehensionClauses };
 	DictPatternGroup2(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DictPatternGroup2 };
 	DictionaryGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DictionaryGroup1 };
+	ExceptClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExceptClauseGroup1 };
 	ExceptClauseList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExceptClauseList };
 	ExpressionListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExpressionListGroup1 };
 	ExpressionStatementTuple(v: {
@@ -573,6 +577,7 @@ const _kindIdByKind = new Map<string, number>([
 	['interpolation', TSKindId.Interpolation],
 	['format_specifier', TSKindId.FormatSpecifier],
 	['await', TSKindId.Await],
+	['_except_clause_group1', TSKindId.ExceptClauseGroup1],
 	['_argument_list_group1', TSKindId.ArgumentListGroup1],
 	['_expression_list_group1', TSKindId.ExpressionListGroup1],
 	['_list_pattern_group1', TSKindId.ListPatternGroup1],
@@ -602,6 +607,7 @@ export const is = {
 	ComprehensionClauses: _g(TSKindId.ComprehensionClauses),
 	DictPatternGroup2: _g(TSKindId.DictPatternGroup2),
 	DictionaryGroup1: _g(TSKindId.DictionaryGroup1),
+	ExceptClauseGroup1: _g(TSKindId.ExceptClauseGroup1),
 	ExceptClauseList: _g(TSKindId.ExceptClauseList),
 	ExpressionListGroup1: _g(TSKindId.ExpressionListGroup1),
 	ExpressionStatementTuple: _g(TSKindId.ExpressionStatementTuple),
@@ -768,6 +774,7 @@ export const assert = {
 	ComprehensionClauses: _makeAssert('ComprehensionClauses', is.ComprehensionClauses as _AnyGuard),
 	DictPatternGroup2: _makeAssert('DictPatternGroup2', is.DictPatternGroup2 as _AnyGuard),
 	DictionaryGroup1: _makeAssert('DictionaryGroup1', is.DictionaryGroup1 as _AnyGuard),
+	ExceptClauseGroup1: _makeAssert('ExceptClauseGroup1', is.ExceptClauseGroup1 as _AnyGuard),
 	ExceptClauseList: _makeAssert('ExceptClauseList', is.ExceptClauseList as _AnyGuard),
 	ExpressionListGroup1: _makeAssert('ExpressionListGroup1', is.ExpressionListGroup1 as _AnyGuard),
 	ExpressionStatementTuple: _makeAssert('ExpressionStatementTuple', is.ExpressionStatementTuple as _AnyGuard),

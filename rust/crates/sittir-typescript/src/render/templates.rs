@@ -602,6 +602,7 @@ pub struct AwaitExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "binary_expression.jinja", escape = "none")]
 pub struct BinaryExpressionTemplate<'a> {
+    pub binary_expression_group1: OptionalNonterminalView<'a>,
     pub left: OptionalNonterminalView<'a>,
     pub operator: OptionalNonterminalView<'a>,
     pub right: OptionalNonterminalView<'a>,
@@ -1097,6 +1098,7 @@ pub struct JsxNamespaceNameTemplate<'a> {
 #[template(path = "jsx_opening_element.jinja", escape = "none")]
 pub struct JsxOpeningElementTemplate<'a> {
     pub attribute: ListNonterminalView<'a>,
+    pub jsx_start_opening_element_group1: OptionalNonterminalView<'a>,
     pub name: OptionalNonterminalView<'a>,
 }
 
@@ -1104,6 +1106,7 @@ pub struct JsxOpeningElementTemplate<'a> {
 #[template(path = "jsx_self_closing_element.jinja", escape = "none")]
 pub struct JsxSelfClosingElementTemplate<'a> {
     pub attribute: ListNonterminalView<'a>,
+    pub jsx_start_opening_element_group1: OptionalNonterminalView<'a>,
     pub name: OptionalNonterminalView<'a>,
 }
 
@@ -1365,6 +1368,8 @@ pub struct PublicFieldDefinitionTemplate<'a> {
     pub decorator: ListNonterminalView<'a>,
     pub name: SingleNonterminalView<'a>,
     pub optionality_marker: OptionalNonterminalView<'a>,
+    pub public_field_definition_abstract_first: OptionalNonterminalView<'a>,
+    pub public_field_definition_readonly_first: OptionalNonterminalView<'a>,
     pub public_field_definition_static_mods: OptionalNonterminalView<'a>,
     pub type_: OptionalNonterminalView<'a>,
     pub value: OptionalNonterminalView<'a>,
