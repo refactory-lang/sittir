@@ -286,24 +286,44 @@ into the union by FIELD LABEL — no mint, no grammar/parser change:
 
 ### PR 2 — retype deletion + VariantRule cut
 
-1. Census the retype's reach: every all-field heterogeneous choice per grammar
-   (the kinds whose surface flips from one `'content'` slot to N named slots
-   when the laundering stops). Per kind, decide: accepted named-slot surface
-   (author's fields stand) or `variant()` migration in overrides (author meant
-   a union — say so in union vocabulary). Land the override migrations FIRST
-   so the surface flip is opt-in per kind.
-2. Delete `collapseAllFieldChoiceMembers`' VARIANT retype (heterogeneous
-   all-field choices stay plain `CHOICE` of `FIELD`s; simplify pushes
-   `fieldName` to leaf attrs as usual; PR 1's per-arm routing takes over).
-   **NOT byte-identical**: A/B diffs must match the step-1 census exactly —
-   any diff outside it is an unknown second effect of the retype (stop and
-   record it here).
-3. Cut `VariantRule` from the `Rule` union + `VARIANT` const + `isVariant` +
-   the passthrough arms (todo-debt Track 2 worklist; ~24 files — evaluate,
-   normalize, simplify, wrapper-deletion, collect-slots, assemble, link,
-   templates, suggested, node-model, rule-catalog + tests). `suggested.ts`'
-   variant-label naming priority re-points at arm `fieldName` (better fact,
-   same information). This step IS byte-identical (passthroughs only).
+**Landed 2026-07-21, much narrower than originally planned.** The original
+3-step plan below assumed the VARIANT retype's downstream consumer
+(Link's `promotePolymorph`, wrapping the rule in a `PolymorphRule`) was
+still live, so deleting the retype would flip real kinds' surfaces
+(named-slot vs union) and need a per-kind census + migration decision
+first. Investigation at implementation time found `PolymorphRule` /
+`AssembledPolymorph` are **already fully deleted** from the pipeline
+(`assemble.ts`: "no 'polymorph' classification exists in assemble's
+dispatch anymore") — the retype's sole justification was stale. Every
+other `case VARIANT:` site already treats it as a transparent wrapper
+identical to `GROUP`/`TOKEN`/`OPTIONAL` (passthrough, not reclassification).
+So the actual fix was one line: `collapseAllFieldChoiceMembers`'s
+heterogeneous branch now returns `{ type: CHOICE, members: fieldMembers }`
+(the same shape the `anyAlias` branch above it already returns) instead of
+retyping to `VARIANT` — fields stay `FIELD`-typed, `applyWrapperDeletion`
+stamps their `fieldName` as usual, and PR 1's `carriesNamedField` naturally
+routes them into named slots. **Verified byte-identical** across all three
+grammars (rust/typescript/python) — zero live occurrences of the raw
+`choice(field(a,...), field(b,...))` shape currently reach this function in
+any grammar's overrides.ts (real polymorph-style choices are all authored
+via `variant()`, which mints aliases, not this raw-field encoding) — so no
+census or per-kind migration was needed. `VARIANT` stops being minted
+anywhere; every `case VARIANT:` passthrough arm across the codebase is now
+dead code (harmless — it simply never fires) rather than something that
+needed active reclassification-removal. Cutting the arms + the `Rule`-union
+member entirely is a separate, non-urgent cleanup (todo-debt Track 2), not
+required for this design's correctness.
+
+Original 3-step plan (superseded by the above, kept for history):
+
+1. ~~Census the retype's reach: every all-field heterogeneous choice per
+   grammar... decide: accepted named-slot surface or `variant()`
+   migration...~~ Not needed — zero live occurrences.
+2. ~~Delete the VARIANT retype... NOT byte-identical...~~ Was in fact
+   byte-identical on all three grammars.
+3. Cut `VariantRule` from the `Rule` union + `VARIANT` const + the
+   passthrough arms (todo-debt Track 2 worklist; ~24 files) remains
+   available as future cleanup, now that nothing mints VARIANT anymore.
 4. Gates: tsgo clean, A/B triaged against the census (step 2) then
    byte-identical (step 3), `validate:native` hold-or-improve, full suite.
 

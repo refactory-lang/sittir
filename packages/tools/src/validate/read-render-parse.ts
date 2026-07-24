@@ -472,6 +472,14 @@ export async function validateReadRenderParse(
 			// Test round-trip for each testable kind found
 			let entryOk = true;
 			let entryAstMatch = true;
+			// Tracks whether ANY kind in this entry ever reached a genuine
+			// round-trip attempt (kindHadCandidate=true below) — as opposed to
+			// every candidate silently `continue`-ing via a neutral skip
+			// (no supertype context, empty render). Without this, an entry
+			// where EVERY kind's candidates are all neutrally skipped falls
+			// through with entryOk/entryAstMatch still at their initial `true`,
+			// counting as a pass despite testing nothing at all.
+			let entryHadAnyCandidate = false;
 			for (const kind of testableKinds) {
 				if (shouldStop) break;
 
@@ -689,6 +697,7 @@ export async function validateReadRenderParse(
 				// also matched structurally — surfacing partial AST
 				// regressions even when entry-pass survives.
 				if (!kindHadCandidate) continue; // every candidate skipped — neutral on this kind
+				entryHadAnyCandidate = true;
 				if (!kindOk) {
 					if (kindErrors.length > 0) errors.push(kindErrors[0]!);
 					entryOk = false;
@@ -701,8 +710,16 @@ export async function validateReadRenderParse(
 				}
 			}
 
-			if (entryOk) pass++;
-			if (entryAstMatch) astMatchPass++;
+			// An entry whose every kind was neutrally skipped (no genuine
+			// round-trip attempt ever succeeded past the read step) has tested
+			// nothing — score it like the testableKinds.length===0 case above
+			// (skip), not a silent pass. See entryHadAnyCandidate's doc comment.
+			if (!entryHadAnyCandidate) {
+				skip++;
+			} else {
+				if (entryOk) pass++;
+				if (entryAstMatch) astMatchPass++;
+			}
 		} catch (e) {
 			errors.push({
 				name: entry.name,
