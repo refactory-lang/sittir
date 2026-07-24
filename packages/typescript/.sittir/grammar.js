@@ -2382,6 +2382,7 @@ function wire(config, base2) {
     groups: cfg.groups,
     polymorphsConfig: cfg.polymorphs,
     renderAs: cfg.renderAs,
+    visibleExternals: cfg.visibleExternals,
     expectDiagnostics: cfg.expectDiagnostics,
     expectTestFailures: cfg.expectTestFailures,
     currentRuleKind: null,
@@ -2394,7 +2395,7 @@ function wire(config, base2) {
   composeOrSynthesizePolymorphParents(outRules, polymorphs, context);
   injectHiddenRulePlaceholders(outRules, polymorphs, context);
   injectTransformHiddenRulePlaceholders(outRules, transforms, context);
-  if (baseArg && cfg.groups && hasBodyPatternGroups(cfg.groups)) {
+  if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.visibleExternals)) {
     const baseRules = baseArg.grammar?.rules ?? baseArg.rules ?? {};
     for (const baseName of Object.keys(baseRules)) {
       if (baseName in outRules) continue;
@@ -2403,6 +2404,7 @@ function wire(config, base2) {
   }
   wrapAllRuleFns(outRules, context);
   applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
+  applyWireVisibleExternalsRewrite(outRules, cfg.visibleExternals);
   if (baseArg) {
     for (const name of getEnrichClauseGroups(base2)) {
       context.syntheticInline.add(name);
@@ -2717,6 +2719,66 @@ function buildPatternReplacingFn(fn, candidates) {
     const result = fn($, previous);
     return replaceInBodyRt(result, candidates);
   };
+}
+function withStringGlobalShim(fn) {
+  const g = globalThis;
+  const hadString = "string" in g;
+  const previous = g.string;
+  if (!hadString) {
+    g.string = (value) => ({ type: "STRING", value });
+  }
+  try {
+    return fn();
+  } finally {
+    if (!hadString) delete g.string;
+    else g.string = previous;
+  }
+}
+function rewriteVisibleExternalRefsRt(rule, hiddenToVisible) {
+  if (!rule || typeof rule !== "object") return rule;
+  const r = rule;
+  const t = r.type;
+  if (t === "SYMBOL") {
+    const visibleName = hiddenToVisible.get(r.name ?? "");
+    if (visibleName === void 0) return rule;
+    return { type: "ALIAS", content: rule, named: true, value: visibleName };
+  }
+  if (t === "SEQ" || t === "CHOICE") {
+    const members = r.members;
+    if (!Array.isArray(members)) return rule;
+    let changed = false;
+    const newMembers = members.map((m) => {
+      const replaced = rewriteVisibleExternalRefsRt(m, hiddenToVisible);
+      if (replaced !== m) changed = true;
+      return replaced;
+    });
+    return changed ? { ...r, members: newMembers } : rule;
+  }
+  if (t === "OPTIONAL" || t === "REPEAT" || t === "REPEAT1" || t === "FIELD" || t === "PREC" || t === "PREC_LEFT" || t === "PREC_RIGHT" || t === "PREC_DYNAMIC" || t === "TOKEN" || t === "ALIAS") {
+    const newContent = rewriteVisibleExternalRefsRt(r.content, hiddenToVisible);
+    return newContent !== r.content ? { ...r, content: newContent } : rule;
+  }
+  return rule;
+}
+function buildVisibleExternalsRewritingFn(fn, hiddenToVisible) {
+  return function visibleExternalsRewritingRuleFn($, previous) {
+    const result = fn($, previous);
+    return rewriteVisibleExternalRefsRt(result, hiddenToVisible);
+  };
+}
+function applyWireVisibleExternalsRewrite(rules, config) {
+  if (!config) return;
+  const $ = makeSimpleDollarProxy();
+  const entries = withStringGlobalShim(() => config($));
+  if (!entries) return;
+  const hiddenToVisible = /* @__PURE__ */ new Map();
+  for (const hiddenName of Object.keys(entries)) {
+    hiddenToVisible.set(hiddenName, hiddenName.replace(/^_+/, ""));
+  }
+  if (hiddenToVisible.size === 0) return;
+  for (const [name, fn] of Object.entries(rules)) {
+    rules[name] = buildVisibleExternalsRewritingFn(fn, hiddenToVisible);
+  }
 }
 function applyWirePatternReplacement(rules, authoredRuleNames, groups, context) {
   const candidates = [];
@@ -4191,6 +4253,19 @@ var overrides_default = grammar(
         enum_declaration: {
           "0/0": field("const_marker")
         },
+        // function_signature: seq(optional('async'), 'function',
+        //   field('name', ...), _call_signature,
+        //   choice(_semicolon, alias(_function_signature_automatic_semicolon, ...)))
+        // pos 4 is the UNNAMED terminator choice. visibleExternals makes
+        // the ASI arm a real kind-keyed node, but the explicit-';' arm is
+        // an anonymous token that lands in $other where the derived
+        // singular slot can't reach it ("singular slot 'content' ...
+        // got undefined"). Field it like type_alias_declaration's
+        // grammar-authored `semicolon:` field — both arms then arrive
+        // field-keyed and the terminator classifies as the same enum.
+        function_signature: {
+          4: field("semicolon")
+        },
         // assignment_expression: prec.right('assign', seq(
         //   optional('using'),  // pos 0  →  '0/0'  (using_marker)
         //   field('left', ...), '=', field('right', ...)))
@@ -4347,21 +4422,21 @@ var overrides_default = grammar(
       // Sittir-side rule bodies for external scanner symbols. The grammar's
       // external scanner triggers ASI (Automatic Semicolon Insertion) by
       // producing `_automatic_semicolon` and `_function_signature_automatic_semicolon`
-      // as zero-width terminator tokens. Tree-sitter sees them as required
-      // (they're SEQ-positional, not optional-wrapped) — but at runtime
-      // they can match invisibly. Mapping them to `blank()` makes sittir's
-      // IR resolve `_semicolon = choice(_automatic_semicolon, ';')` to
-      // `choice(blank(), ';')`, which the stamp pass auto-collapses to
-      // `optional(';')`. The slot-model look-through in node-map.ts then
-      // propagates that optionality up to any SYMBOL ref pointing at
-      // `_semicolon`, so wrapped fields like `field('semicolon', _semicolon)`
-      // no longer assert required-singular at wrap time on ASI-terminated
-      // corpus entries. The grammar that reaches tree-sitter still has
-      // the externals intact; only sittir's slot/render/factory pipeline
-      // sees the blank body.
-      renderAs: (_$) => ({
-        _automatic_semicolon: blank(),
-        _function_signature_automatic_semicolon: blank()
+      // as zero-width terminator tokens. Every `SYMBOL` reference to
+      // either name gets wrapped in a named visible alias
+      // (`alias($._automatic_semicolon, $.automatic_semicolon)`, etc.)
+      // under both runtimes, so tree-sitter materializes a real CST node
+      // for the ASI marker instead of it vanishing invisibly into its
+      // referencing rule (proven via a scratch parser: aliasing a
+      // zero-width external to a named node yields a
+      // `[0,15]-[0,15]`-spanning CST node at every insertion point, with
+      // no change to the LR tables). `string('\n')` (not `';'`) is the
+      // round-trip-stable render — it re-parses to the SAME
+      // automatic_semicolon node, whereas `';'` would flip the node type
+      // on re-parse.
+      visibleExternals: (_$) => ({
+        _automatic_semicolon: string("\n"),
+        _function_signature_automatic_semicolon: string("\n")
       }),
       // Known-failing generated nodes.test.ts kinds — tracked defects, not
       // silenced mysteries. Remove an entry + regen when its issue is fixed.

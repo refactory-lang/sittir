@@ -56,6 +56,7 @@ export type LeafStringMap = {
 	_override_modifier: 'override';
 	_public_field_definition_optionality_marker: '?' | '!';
 	_readonly_marker: 'readonly';
+	_semicolon: '\n' | ';';
 	_static_marker: 'static';
 	_unary_expression_operator: '!' | '~' | '-' | '+' | 'typeof' | 'void' | 'delete';
 	accessibility_modifier: 'public' | 'private' | 'protected';
@@ -624,12 +625,12 @@ export const enum TSKindId {
 	Squote = 156,
 	PlusPlus = 157,
 	DashDash = 158,
-	_AutomaticSemicolon = 159,
+	AutomaticSemicolon = 159,
 	TemplateChars = 160,
 	TernaryQmark = 161,
 	HtmlComment = 162,
 	JsxText = 163,
-	_FunctionSignatureAutomaticSemicolon = 164,
+	FunctionSignatureAutomaticSemicolon = 164,
 	ErrorRecovery = 165,
 	Program = 166,
 	ExportStatement = 167,
@@ -1503,12 +1504,12 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[156, 'squote'],
 	[157, 'plus_plus'],
 	[158, 'dash_dash'],
-	[159, '_automatic_semicolon'],
+	[159, 'automatic_semicolon'],
 	[160, 'string_fragment'],
 	[161, '?'],
 	[162, 'html_comment'],
 	[163, 'jsx_text'],
-	[164, '_function_signature_automatic_semicolon'],
+	[164, 'function_signature_automatic_semicolon'],
 	[165, '__error_recovery'],
 	[166, 'program'],
 	[167, 'export_statement'],
@@ -2102,7 +2103,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'dash_dash':
 			return TSKindId.DashDash;
 		case '_automatic_semicolon':
-			return TSKindId._AutomaticSemicolon;
+			return TSKindId.AutomaticSemicolon;
 		case '_template_chars':
 			return TSKindId.TemplateChars;
 		case '_ternary_qmark':
@@ -2112,7 +2113,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'jsx_text':
 			return TSKindId.JsxText;
 		case '_function_signature_automatic_semicolon':
-			return TSKindId._FunctionSignatureAutomaticSemicolon;
+			return TSKindId.FunctionSignatureAutomaticSemicolon;
 		case '__error_recovery':
 			return TSKindId.ErrorRecovery;
 		case 'program':
@@ -2793,8 +2794,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PlusPlus;
 		case '--':
 			return TSKindId.DashDash;
+		case 'automatic_semicolon':
+			return TSKindId.AutomaticSemicolon;
 		case 'string_fragment':
 			return TSKindId.TemplateChars;
+		case 'function_signature_automatic_semicolon':
+			return TSKindId.FunctionSignatureAutomaticSemicolon;
 		case 'export_clause_group1':
 			return TSKindId.ExportClauseGroup1;
 		case 'import_statement_group1':
@@ -3176,10 +3181,13 @@ export interface AmbientDeclarationModule {
 	readonly $type: TSKindId.AmbientDeclarationModule;
 	readonly _name: Identifier;
 	readonly _type: Type;
-	readonly _semicolon?: Semicolon;
+	readonly _semicolon?: number;
+	readonly __inputHints__?: {
+		readonly semicolon?: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
 	name(): Identifier;
 	type(): Type;
-	semicolon(): Semicolon | undefined;
+	semicolon(): number | undefined;
 }
 
 export interface ArrowFunctionUCallSignature {
@@ -3260,25 +3268,33 @@ export interface CatchClauseGroup1 {
 export interface ClassBodyMember {
 	readonly $type: TSKindId.ClassBodyMember;
 	readonly _content: AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
-	readonly _terminator?: Semicolon | ',';
+	readonly _terminator: number;
+	readonly __inputHints__?: {
+		readonly terminator: KindEnum<'\n' | ';' | ',', TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma2>;
+	};
 	content(): AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
-	terminator(): Semicolon | ',' | undefined;
+	terminator(): number;
 }
 
 export interface ClassBodyMethod {
 	readonly $type: TSKindId.ClassBodyMethod;
 	readonly _decorator?: readonly Decorator[];
 	readonly _method_definition: MethodDefinition;
-	readonly _semicolon?: Semicolon;
+	readonly _semicolon?: number;
+	readonly __inputHints__?: {
+		readonly semicolon?: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
 	decorators(): readonly Decorator[];
 	methodDefinition(): MethodDefinition;
-	semicolon(): Semicolon | undefined;
+	semicolon(): number | undefined;
 }
 
 export interface ClassBodyMethodSig {
 	readonly $type: TSKindId.ClassBodyMethodSig;
 	readonly _method_signature: MethodSignature;
+	readonly _function_signature_automatic_semicolon: '\n' | ',';
 	methodSignature(): MethodSignature;
+	functionSignatureAutomaticSemicolon(): '\n' | ',';
 }
 
 export interface ClassHeritageExtendsClause {
@@ -3342,13 +3358,16 @@ export interface ExportStatementDefaultFromArm {
 		| ExportStatementDefaultNsFrom
 		| ExportStatementDefaultClauseFrom
 		| ExportClause;
-	readonly _semicolon?: Semicolon;
+	readonly _semicolon: number;
+	readonly __inputHints__?: {
+		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
 	content():
 		| ExportStatementDefaultStarFrom
 		| ExportStatementDefaultNsFrom
 		| ExportStatementDefaultClauseFrom
 		| ExportClause;
-	semicolon(): Semicolon | undefined;
+	semicolon(): number;
 }
 
 export interface ExportStatementDefaultNsFrom {
@@ -3368,35 +3387,47 @@ export interface ExportStatementDefaultStarFrom {
 export interface ExportStatementDefaultValue {
 	readonly $type: TSKindId.ExportStatementDefaultValue;
 	readonly _value: Expression;
-	readonly _semicolon?: Semicolon;
+	readonly _semicolon: number;
+	readonly __inputHints__?: {
+		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
 	value(): Expression;
-	semicolon(): Semicolon | undefined;
+	semicolon(): number;
 }
 
 export interface ExportStatementEqualsExport {
 	readonly $type: TSKindId.ExportStatementEqualsExport;
 	readonly _expression: Expression;
-	readonly _semicolon?: Semicolon;
+	readonly _semicolon: number;
+	readonly __inputHints__?: {
+		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
 	expression(): Expression;
-	semicolon(): Semicolon | undefined;
+	semicolon(): number;
 }
 
 export interface ExportStatementNamespaceExport {
 	readonly $type: TSKindId.ExportStatementNamespaceExport;
 	readonly _identifier: Identifier;
-	readonly _semicolon?: Semicolon;
+	readonly _semicolon: number;
+	readonly __inputHints__?: {
+		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
 	identifier(): Identifier;
-	semicolon(): Semicolon | undefined;
+	semicolon(): number;
 }
 
 export interface ExportStatementTypeExport {
 	readonly $type: TSKindId.ExportStatementTypeExport;
 	readonly _export_clause: ExportClause;
 	readonly _source?: String;
-	readonly _semicolon?: Semicolon;
+	readonly _semicolon: number;
+	readonly __inputHints__?: {
+		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
 	exportClause(): ExportClause;
 	source(): String | undefined;
-	semicolon(): Semicolon | undefined;
+	semicolon(): number;
 }
 
 export interface ExtendsClauseSingle {
@@ -3424,11 +3455,14 @@ export interface ForHeaderLetConstKind {
 	readonly $type: TSKindId.ForHeaderLetConstKind;
 	readonly _kind: number;
 	readonly _left: Identifier | DestructuringPattern;
+	readonly _automatic_semicolon?: boolean;
 	readonly __inputHints__?: {
 		readonly kind: KindEnum<'let' | 'const', TSKindId.Let | TSKindId.Const>;
+		readonly automatic_semicolon?: BooleanKeyword<'\n'>;
 	};
 	kind(): number;
 	left(): Identifier | DestructuringPattern;
+	automaticSemicolon(): boolean | undefined;
 }
 
 export interface ForHeaderLhs {
@@ -4063,9 +4097,12 @@ export interface BinaryExpression {
 export interface BreakStatement {
 	readonly $type: TSKindId.BreakStatement;
 	readonly _label?: Identifier;
-	readonly _semicolon?: Semicolon;
+	readonly _semicolon: number;
+	readonly __inputHints__?: {
+		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
 	label(): Identifier | undefined;
-	semicolon(): Semicolon | undefined;
+	semicolon(): number;
 }
 
 export interface CallExpression {
@@ -4119,11 +4156,16 @@ export interface ClassDeclaration {
 	readonly _type_parameters?: TypeParameters;
 	readonly _class_heritage?: ClassHeritage;
 	readonly _body: ClassBody;
+	readonly _automatic_semicolon?: boolean;
+	readonly __inputHints__?: {
+		readonly automatic_semicolon?: BooleanKeyword<'\n'>;
+	};
 	decorators(): readonly Decorator[];
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
 	classHeritage(): ClassHeritage | undefined;
 	body(): ClassBody;
+	automaticSemicolon(): boolean | undefined;
 }
 
 export interface ClassHeritage {
@@ -4134,7 +4176,12 @@ export interface ClassHeritage {
 
 export interface ClassStaticBlock {
 	readonly $type: TSKindId.ClassStaticBlock;
+	readonly _automatic_semicolon?: boolean;
 	readonly _body: StatementBlock;
+	readonly __inputHints__?: {
+		readonly automatic_semicolon?: BooleanKeyword<'\n'>;
+	};
+	automaticSemicolon(): boolean | undefined;
 	body(): StatementBlock;
 }
 
@@ -4200,15 +4247,21 @@ export interface ConstructorType {
 export interface ContinueStatement {
 	readonly $type: TSKindId.ContinueStatement;
 	readonly _label?: Identifier;
-	readonly _semicolon?: Semicolon;
+	readonly _semicolon: number;
+	readonly __inputHints__?: {
+		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
 	label(): Identifier | undefined;
-	semicolon(): Semicolon | undefined;
+	semicolon(): number;
 }
 
 export interface DebuggerStatement {
 	readonly $type: TSKindId.DebuggerStatement;
-	readonly _semicolon?: Semicolon;
-	semicolon(): Semicolon | undefined;
+	readonly _semicolon: number;
+	readonly __inputHints__?: {
+		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
+	semicolon(): number;
 }
 
 export interface Decorator {
@@ -4255,10 +4308,13 @@ export interface DoStatement {
 	readonly $type: TSKindId.DoStatement;
 	readonly _body: Statement;
 	readonly _condition: ParenthesizedExpression;
-	readonly _semicolon?: Semicolon;
+	readonly _semicolon?: number;
+	readonly __inputHints__?: {
+		readonly semicolon?: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
 	body(): Statement;
 	condition(): ParenthesizedExpression;
-	semicolon(): Semicolon | undefined;
+	semicolon(): number | undefined;
 }
 
 export interface ElseClause {
@@ -4330,9 +4386,12 @@ export interface ExportStatement {
 export interface ExpressionStatement {
 	readonly $type: TSKindId.ExpressionStatement;
 	readonly _expressions: Expressions;
-	readonly _semicolon?: Semicolon;
+	readonly _semicolon: number;
+	readonly __inputHints__?: {
+		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
 	expressions(): Expressions;
-	semicolon(): Semicolon | undefined;
+	semicolon(): number;
 }
 
 export interface ExtendsClause {
@@ -4420,8 +4479,10 @@ export interface FunctionDeclaration {
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
 	readonly _body: StatementBlock;
+	readonly _automatic_semicolon?: boolean;
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
+		readonly automatic_semicolon?: BooleanKeyword<'\n'>;
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
@@ -4429,6 +4490,7 @@ export interface FunctionDeclaration {
 	parameters(): FormalParameters;
 	returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
 	body(): StatementBlock;
+	automaticSemicolon(): boolean | undefined;
 }
 
 export interface FunctionExpression {
@@ -4457,7 +4519,7 @@ export interface FunctionSignature {
 	readonly _type_parameters?: TypeParameters;
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
-	readonly _semicolon?: Semicolon;
+	readonly _semicolon: Semicolon | '\n';
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
 	};
@@ -4466,7 +4528,7 @@ export interface FunctionSignature {
 	typeParameters(): TypeParameters | undefined;
 	parameters(): FormalParameters;
 	returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
-	semicolon(): Semicolon | undefined;
+	semicolon(): Semicolon | '\n';
 }
 
 export interface FunctionType {
@@ -4506,8 +4568,10 @@ export interface GeneratorFunctionDeclaration {
 	readonly _parameters: FormalParameters;
 	readonly _return_type?: TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation;
 	readonly _body: StatementBlock;
+	readonly _automatic_semicolon?: boolean;
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
+		readonly automatic_semicolon?: BooleanKeyword<'\n'>;
 	};
 	asyncMarker(): boolean | undefined;
 	name(): Identifier;
@@ -4515,6 +4579,7 @@ export interface GeneratorFunctionDeclaration {
 	parameters(): FormalParameters;
 	returnType(): TypeAnnotation | AssertsAnnotation | TypePredicateAnnotation | undefined;
 	body(): StatementBlock;
+	automaticSemicolon(): boolean | undefined;
 }
 
 export interface GenericType {
@@ -4545,10 +4610,13 @@ export interface ImportAlias {
 	readonly $type: TSKindId.ImportAlias;
 	readonly _name: Identifier;
 	readonly _value: Identifier | NestedIdentifier;
-	readonly _semicolon?: Semicolon;
+	readonly _semicolon: number;
+	readonly __inputHints__?: {
+		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
 	name(): Identifier;
 	value(): Identifier | NestedIdentifier;
-	semicolon(): Semicolon | undefined;
+	semicolon(): number;
 }
 
 export interface ImportAttribute {
@@ -4587,14 +4655,15 @@ export interface ImportStatement {
 	readonly _import_clause?: number;
 	readonly _from_clause: ImportStatementGroup1 | ImportRequireClause | String;
 	readonly _import_attribute?: ImportAttribute;
-	readonly _semicolon?: Semicolon;
+	readonly _semicolon: number;
 	readonly __inputHints__?: {
-		readonly import_clause?: KindEnum<'type' | 'typeof', TSKindId.Type | TSKindId.Typeof | TSKindId.AnonType>;
+		readonly import_clause?: KindEnum<'type' | 'typeof', TSKindId.AnonType | TSKindId.Typeof>;
+		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
 	importClause(): number | undefined;
 	fromClause(): ImportStatementGroup1 | ImportRequireClause | String;
 	importAttribute(): ImportAttribute | undefined;
-	semicolon(): Semicolon | undefined;
+	semicolon(): number;
 }
 
 export interface IndexSignature {
@@ -4730,13 +4799,14 @@ export interface LexicalDeclaration {
 	readonly $type: TSKindId.LexicalDeclaration;
 	readonly _kind: number;
 	readonly _declarators: NonEmptyArray<VariableDeclarator>;
-	readonly _semicolon?: Semicolon;
+	readonly _semicolon: number;
 	readonly __inputHints__?: {
 		readonly kind: KindEnum<'let' | 'const', TSKindId.Let | TSKindId.Const>;
+		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
 	kind(): number;
 	declarators(): NonEmptyArray<VariableDeclarator>;
-	semicolon(): Semicolon | undefined;
+	semicolon(): number;
 }
 
 export interface LiteralType {
@@ -5186,9 +5256,12 @@ export interface RestType {
 export interface ReturnStatement {
 	readonly $type: TSKindId.ReturnStatement;
 	readonly _expressions?: Expressions;
-	readonly _semicolon?: Semicolon;
+	readonly _semicolon: number;
+	readonly __inputHints__?: {
+		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
 	expressions(): Expressions | undefined;
-	semicolon(): Semicolon | undefined;
+	semicolon(): number;
 }
 
 export interface SatisfiesExpression {
@@ -5214,7 +5287,12 @@ export interface SpreadElement {
 export interface StatementBlock {
 	readonly $type: TSKindId.StatementBlock;
 	readonly _statements?: readonly Statement[];
+	readonly _automatic_semicolon?: boolean;
+	readonly __inputHints__?: {
+		readonly automatic_semicolon?: BooleanKeyword<'\n'>;
+	};
 	statements(): readonly Statement[];
+	automaticSemicolon(): boolean | undefined;
 }
 
 export interface String {
@@ -5301,9 +5379,12 @@ export interface TernaryExpression {
 export interface ThrowStatement {
 	readonly $type: TSKindId.ThrowStatement;
 	readonly _expressions: Expressions;
-	readonly _semicolon?: Semicolon;
+	readonly _semicolon: number;
+	readonly __inputHints__?: {
+		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
 	expressions(): Expressions;
-	semicolon(): Semicolon | undefined;
+	semicolon(): number;
 }
 
 export interface TryStatement {
@@ -5335,11 +5416,14 @@ export interface TypeAliasDeclaration {
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameters;
 	readonly _value: Type;
-	readonly _semicolon?: Semicolon;
+	readonly _semicolon: number;
+	readonly __inputHints__?: {
+		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
 	name(): Identifier;
 	typeParameters(): TypeParameters | undefined;
 	value(): Type;
-	semicolon(): Semicolon | undefined;
+	semicolon(): number;
 }
 
 export interface TypeAnnotation {
@@ -5446,9 +5530,12 @@ export interface UpdateExpression {
 export interface VariableDeclaration {
 	readonly $type: TSKindId.VariableDeclaration;
 	readonly _declarators: NonEmptyArray<VariableDeclarator>;
-	readonly _semicolon?: Semicolon;
+	readonly _semicolon: number;
+	readonly __inputHints__?: {
+		readonly semicolon: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
+	};
 	declarators(): NonEmptyArray<VariableDeclarator>;
-	semicolon(): Semicolon | undefined;
+	semicolon(): number;
 }
 
 export interface VariableDeclarator {
@@ -5515,7 +5602,7 @@ export type ObjectTypeOpening = Terminal<TSKindId.Lbrace | TSKindId.LbracePipe, 
 export type Operator = Terminal<TSKindId.PlusPlus | TSKindId.DashDash, '++' | '--'>;
 export type PublicFieldDefinitionOptionalityMarker = Terminal<TSKindId.Qmark | TSKindId.Bang, '?' | '!'>;
 export type ReservedIdentifier = Terminal<TSKindId.ReservedIdentifier, string>;
-export type Semicolon = Terminal<'_semicolon', string>;
+export type Semicolon = Terminal<TSKindId.AutomaticSemicolon | TSKindId.Semi, '\n' | ';'>;
 export type TypeIdentifier = Terminal<TSKindId.TypeIdentifier, string>;
 export type UnaryExpressionOperator = Terminal<
 	TSKindId.Bang | TSKindId.Tilde | TSKindId.Dash | TSKindId.Plus | TSKindId.Typeof | TSKindId.Void | TSKindId.Delete,

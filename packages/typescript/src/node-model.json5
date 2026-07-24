@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 422,
+  "nodeCount": 424,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -102,6 +102,12 @@
         "export_statement_namespace_export": "namespace_export"
       }
     },
+    "function_signature": {
+      "definedBy": "override",
+      "childKind": {
+        "function_signature_automatic_semicolon": "automatic_semicolon"
+      }
+    },
     "import_clause": {
       "definedBy": "override",
       "childKind": {
@@ -181,6 +187,9 @@
     "_arrow_function_parameter.parameter": {
       "reserved_identifier": "_reserved_identifier"
     },
+    "_class_body_method_sig.function_signature_automatic_semicolon": {
+      "function_signature_automatic_semicolon": "_function_signature_automatic_semicolon"
+    },
     "_export_statement_default.content": {
       "export_statement_default_from_arm": "_export_statement_default_from_arm",
       "export_statement_default_decl_arm": "_export_statement_default_decl_arm"
@@ -200,6 +209,9 @@
       "for_header_lhs": "_for_header_lhs",
       "for_header_var_kind": "_for_header_var_kind",
       "for_header_let_const_kind": "_for_header_let_const_kind"
+    },
+    "_for_header_let_const_kind.automatic_semicolon": {
+      "automatic_semicolon": "_automatic_semicolon"
     },
     "_for_header_lhs.left": {
       "for_header_group1": "_lhs_expression"
@@ -292,8 +304,14 @@
     "class_declaration.name": {
       "type_identifier": "identifier"
     },
+    "class_declaration.automatic_semicolon": {
+      "automatic_semicolon": "_automatic_semicolon"
+    },
     "class_heritage.content": {
       "class_heritage_extends_clause": "_class_heritage_extends_clause"
+    },
+    "class_static_block.automatic_semicolon": {
+      "automatic_semicolon": "_automatic_semicolon"
     },
     "continue_statement.label": {
       "statement_identifier": "identifier"
@@ -338,6 +356,15 @@
     },
     "formal_parameters.formal_parameters_group1": {
       "formal_parameters_group1": "_formal_parameters_group1"
+    },
+    "function_declaration.automatic_semicolon": {
+      "automatic_semicolon": "_automatic_semicolon"
+    },
+    "function_signature.semicolon": {
+      "function_signature_automatic_semicolon": "_function_signature_automatic_semicolon"
+    },
+    "generator_function_declaration.automatic_semicolon": {
+      "automatic_semicolon": "_automatic_semicolon"
     },
     "generic_type.name": {
       "type_identifier": "identifier"
@@ -423,6 +450,9 @@
     },
     "public_field_definition.public_field_definition_readonly_first": {
       "public_field_definition_readonly_first": "_public_field_definition_readonly_first"
+    },
+    "statement_block.automatic_semicolon": {
+      "automatic_semicolon": "_automatic_semicolon"
     },
     "string.content": {
       "string_double": "_string_double",
@@ -635,7 +665,7 @@
       "terminator": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -665,6 +695,13 @@
     },
     "_class_body_method_sig": {
       "method_signature": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "function_signature_automatic_semicolon": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -767,7 +804,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -808,7 +845,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -824,7 +861,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -840,7 +877,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -863,7 +900,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -880,6 +917,13 @@
         "unnamed": false,
         "slotCount": 1,
         "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "automatic_semicolon": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1663,7 +1707,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1797,6 +1841,13 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false
+      },
+      "automatic_semicolon": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "class_heritage": {
@@ -1809,6 +1860,13 @@
       }
     },
     "class_static_block": {
+      "automatic_semicolon": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
       "body": {
         "unnamed": false,
         "slotCount": 1,
@@ -1943,7 +2001,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -1952,7 +2010,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2155,7 +2213,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2351,6 +2409,13 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false
+      },
+      "automatic_semicolon": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "function_expression": {
@@ -2436,7 +2501,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2550,6 +2615,13 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false
+      },
+      "automatic_semicolon": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "generic_type": {
@@ -2618,7 +2690,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2698,7 +2770,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2982,7 +3054,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -3793,7 +3865,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -3838,6 +3910,13 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
+        "nonEmpty": false
+      },
+      "automatic_semicolon": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -3993,7 +4072,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -4071,7 +4150,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -4235,7 +4314,7 @@
       "semicolon": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -5059,6 +5138,16 @@
       "factoryShape": "text"
     },
     {
+      "kind": "_automatic_semicolon",
+      "modelType": "token",
+      "typeName": "AutomaticSemicolon",
+      "irKey": "automaticSemicolon",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\" as const",
+      "text": "\n"
+    },
+    {
       "kind": "_binary_expression_group1",
       "modelType": "group",
       "typeName": "BinaryExpressionGroup1",
@@ -5630,13 +5719,13 @@
           "name": "terminator",
           "propertyName": "terminator",
           "paramName": "terminator",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "parseKind": "_semicolon",
               "unresolved": true
@@ -5778,6 +5867,35 @@
             "typeName": "",
             "kinds": [
               "method_signature"
+            ]
+          }
+        },
+        {
+          "name": "function_signature_automatic_semicolon",
+          "propertyName": "functionSignatureAutomaticSemicolon",
+          "paramName": "functionSignatureAutomaticSemicolon",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_function_signature_automatic_semicolon",
+              "parseKind": "function_signature_automatic_semicolon",
+              "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ",",
+              "parseKind": "comma"
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_function_signature_automatic_semicolon"
             ]
           }
         }
@@ -6269,13 +6387,13 @@
           "name": "semicolon",
           "propertyName": "semicolon",
           "paramName": "semicolon",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "parseKind": "_semicolon",
               "unresolved": true
@@ -6432,13 +6550,13 @@
           "name": "semicolon",
           "propertyName": "semicolon",
           "paramName": "semicolon",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "parseKind": "_semicolon",
               "unresolved": true
@@ -6494,13 +6612,13 @@
           "name": "semicolon",
           "propertyName": "semicolon",
           "paramName": "semicolon",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "parseKind": "_semicolon",
               "unresolved": true
@@ -6556,13 +6674,13 @@
           "name": "semicolon",
           "propertyName": "semicolon",
           "paramName": "semicolon",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "parseKind": "_semicolon",
               "unresolved": true
@@ -6641,13 +6759,13 @@
           "name": "semicolon",
           "propertyName": "semicolon",
           "paramName": "semicolon",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "parseKind": "_semicolon",
               "unresolved": true
@@ -6897,6 +7015,29 @@
               "_destructuring_pattern"
             ]
           }
+        },
+        {
+          "name": "automatic_semicolon",
+          "propertyName": "automaticSemicolon",
+          "paramName": "automaticSemicolon",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_automatic_semicolon"
+            ]
+          }
         }
       ],
       "children": [],
@@ -7104,6 +7245,16 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "_function_signature_automatic_semicolon",
+      "modelType": "token",
+      "typeName": "FunctionSignatureAutomaticSemicolon",
+      "irKey": "functionSignatureAutomaticSemicolon",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\n\" as const",
+      "text": "\n"
     },
     {
       "kind": "_identifier",
@@ -8799,12 +8950,15 @@
     },
     {
       "kind": "_semicolon",
-      "modelType": "pattern",
+      "modelType": "enum",
       "typeName": "Semicolon",
       "factoryName": "semicolon",
       "irKey": "semicolon",
       "hidden": false,
-      "text": ";",
+      "values": [
+        "\n",
+        ";"
+      ],
       "factoryShape": "text"
     },
     {
@@ -11491,13 +11645,13 @@
           "name": "semicolon",
           "propertyName": "semicolon",
           "paramName": "semicolon",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "parseKind": "_semicolon",
               "unresolved": true
@@ -12092,6 +12246,29 @@
               "class_body"
             ]
           }
+        },
+        {
+          "name": "automatic_semicolon",
+          "propertyName": "automaticSemicolon",
+          "paramName": "automaticSemicolon",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_automatic_semicolon"
+            ]
+          }
         }
       ],
       "children": [],
@@ -12158,6 +12335,29 @@
       "irKey": "classStaticBlock",
       "hidden": false,
       "fields": [
+        {
+          "name": "automatic_semicolon",
+          "propertyName": "automaticSemicolon",
+          "paramName": "automaticSemicolon",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_automatic_semicolon"
+            ]
+          }
+        },
         {
           "name": "body",
           "propertyName": "body",
@@ -12695,13 +12895,13 @@
           "name": "semicolon",
           "propertyName": "semicolon",
           "paramName": "semicolon",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "parseKind": "_semicolon",
               "unresolved": true
@@ -12755,13 +12955,13 @@
           "name": "semicolon",
           "propertyName": "semicolon",
           "paramName": "semicolon",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "parseKind": "_semicolon",
               "unresolved": true
@@ -13791,13 +13991,13 @@
           "name": "semicolon",
           "propertyName": "semicolon",
           "paramName": "semicolon",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "parseKind": "_semicolon",
               "unresolved": true
@@ -14671,6 +14871,29 @@
               "statement_block"
             ]
           }
+        },
+        {
+          "name": "automatic_semicolon",
+          "propertyName": "automaticSemicolon",
+          "paramName": "automaticSemicolon",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_automatic_semicolon"
+            ]
+          }
         }
       ],
       "children": [],
@@ -14999,22 +15222,30 @@
           "name": "semicolon",
           "propertyName": "semicolon",
           "paramName": "semicolon",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "parseKind": "_semicolon",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_function_signature_automatic_semicolon",
+              "parseKind": "function_signature_automatic_semicolon",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_semicolon"
+              "_semicolon",
+              "_function_signature_automatic_semicolon"
             ]
           }
         }
@@ -15465,6 +15696,29 @@
               "statement_block"
             ]
           }
+        },
+        {
+          "name": "automatic_semicolon",
+          "propertyName": "automaticSemicolon",
+          "paramName": "automaticSemicolon",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_automatic_semicolon"
+            ]
+          }
         }
       ],
       "children": [],
@@ -15860,13 +16114,13 @@
           "name": "semicolon",
           "propertyName": "semicolon",
           "paramName": "semicolon",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "parseKind": "_semicolon",
               "unresolved": true
@@ -16140,7 +16394,7 @@
               "kind": "terminal",
               "multiplicity": "optional",
               "value": "type",
-              "parseKind": "type"
+              "parseKind": "anon_type"
             },
             {
               "kind": "terminal",
@@ -16220,13 +16474,13 @@
           "name": "semicolon",
           "propertyName": "semicolon",
           "paramName": "semicolon",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "parseKind": "_semicolon",
               "unresolved": true
@@ -17477,13 +17731,13 @@
           "name": "semicolon",
           "propertyName": "semicolon",
           "paramName": "semicolon",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "parseKind": "_semicolon",
               "unresolved": true
@@ -21065,13 +21319,13 @@
           "name": "semicolon",
           "propertyName": "semicolon",
           "paramName": "semicolon",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "parseKind": "_semicolon",
               "unresolved": true
@@ -21328,6 +21582,29 @@
             "typeName": "",
             "kinds": [
               "statement"
+            ]
+          }
+        },
+        {
+          "name": "automatic_semicolon",
+          "propertyName": "automaticSemicolon",
+          "paramName": "automaticSemicolon",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_automatic_semicolon",
+              "parseKind": "automatic_semicolon",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_automatic_semicolon"
             ]
           }
         }
@@ -22047,13 +22324,13 @@
           "name": "semicolon",
           "propertyName": "semicolon",
           "paramName": "semicolon",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "parseKind": "_semicolon",
               "unresolved": true
@@ -22388,13 +22665,13 @@
           "name": "semicolon",
           "propertyName": "semicolon",
           "paramName": "semicolon",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "parseKind": "_semicolon",
               "unresolved": true
@@ -23194,13 +23471,13 @@
           "name": "semicolon",
           "propertyName": "semicolon",
           "paramName": "semicolon",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_semicolon",
               "parseKind": "_semicolon",
               "unresolved": true

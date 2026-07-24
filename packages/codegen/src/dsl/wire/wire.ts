@@ -69,6 +69,36 @@ import type { FastKeys, TransformPatchMap } from '../../grammar-shapes/path-type
 export type RenderAsConfig = ($: Record<string, unknown>) => Record<string, unknown>;
 
 // ---------------------------------------------------------------------------
+// VisibleExternalsConfig — materialize hidden external-scanner symbols as
+// named CST-visible aliases
+// ---------------------------------------------------------------------------
+
+/**
+ * A function taking the grammar's `$` proxy and returning a record from
+ * hidden (`_`-prefixed) external-scanner-symbol-name to a sittir DSL rule
+ * body — the SAME value shape `renderAs:` accepts (`string(lit)`, `blank()`,
+ * etc.).
+ *
+ * Unlike `renderAs:` (which inlines its literal at every reference site,
+ * producing no CST node), `visibleExternals:` wraps EVERY `SYMBOL`
+ * reference to a configured hidden name in a named visible alias
+ * (`alias($._x, $.x)`, visible name = hidden name minus leading
+ * underscores) under BOTH runtimes (tree-sitter CLI executing the bundled
+ * grammar.js, and sittir's evaluate pipeline). Tree-sitter then compiles a
+ * real parser kind for the visible name — a zero-width external token
+ * (e.g. TypeScript's ASI `_automatic_semicolon`) materializes as an actual
+ * CST node instead of vanishing into its referencing rule. The visible
+ * kind's rule body (this config's value) becomes its sittir-side render
+ * text — see `link.ts`'s `visibleExternals` registration.
+ *
+ * @example
+ *   visibleExternals: ($) => ({
+ *     _automatic_semicolon: string('\n'),
+ *   })
+ */
+export type VisibleExternalsConfig = ($: Record<string, unknown>) => Record<string, unknown>;
+
+// ---------------------------------------------------------------------------
 // WireContext + module-level current pointer
 // ---------------------------------------------------------------------------
 
@@ -129,6 +159,9 @@ export interface WireContext {
 	 *  is stripped (the external scanner still produces the symbol).
 	 *  See: renderAs mechanism. */
 	readonly renderAs?: RenderAsConfig;
+	/** Hidden-external → sittir-side render body map from `visibleExternals:`.
+	 *  See {@link VisibleExternalsConfig} for the full mechanism. */
+	readonly visibleExternals?: VisibleExternalsConfig;
 	/** Per-kind, per-diagnostic-code exceptions from `expectDiagnostics:`.
 	 *  See `WireConfig.expectDiagnostics` for the full description. */
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
@@ -491,6 +524,16 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 	 */
 	readonly renderAs?: RenderAsConfig;
 	/**
+	 * Hidden-external → sittir-side render body map. See
+	 * {@link VisibleExternalsConfig} for the full mechanism.
+	 *
+	 * @example
+	 *   visibleExternals: ($) => ({
+	 *     _automatic_semicolon: string('\n'),
+	 *   })
+	 */
+	readonly visibleExternals?: VisibleExternalsConfig;
+	/**
 	 * Per-kind, per-diagnostic-code exceptions — declares that a specific
 	 * grammar diagnostic (e.g. `'content-collision'`, `'storagename-collision'`)
 	 * is EXPECTED and should stay non-blocking for the listed kind names,
@@ -627,6 +670,7 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		groups: cfg.groups,
 		polymorphsConfig: cfg.polymorphs,
 		renderAs: cfg.renderAs,
+		visibleExternals: cfg.visibleExternals,
 		expectDiagnostics: cfg.expectDiagnostics,
 		expectTestFailures: cfg.expectTestFailures,
 		currentRuleKind: null,
@@ -670,7 +714,14 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 	// `previous` unchanged but then `applyWirePatternReplacement` wraps the
 	// passthrough so the body undergoes pattern replacement. Without this,
 	// unoverridden base rules bypass replacement entirely.
-	if (baseArg && cfg.groups && hasBodyPatternGroups(cfg.groups)) {
+	// visibleExternals needs the SAME passthrough treatment as body-pattern
+	// groups: its SYMBOL→ALIAS rewrite (applyWireVisibleExternalsRewrite,
+	// below) only reaches rule fns present in `outRules` — an unoverridden
+	// base rule with no entry here never gets wrapped, so a `$._x` reference
+	// buried in an un-overridden base rule would silently escape the
+	// rewrite (the exact phantom-kind divergence class this file guards
+	// against elsewhere).
+	if (baseArg && ((cfg.groups && hasBodyPatternGroups(cfg.groups)) || cfg.visibleExternals)) {
 		const baseRules = (baseArg.grammar?.rules ?? baseArg.rules ?? {}) as Record<string, RuleFn>;
 		for (const baseName of Object.keys(baseRules)) {
 			if (baseName in outRules) continue;
@@ -683,6 +734,10 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 	// evaluated. This is the tree-sitter-runtime path; evaluate.ts has its
 	// own post-evaluation pass for the sittir-pipeline path.
 	applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
+	// visibleExternals: SYMBOL→ALIAS rewrite (tree-sitter-CLI-runtime path).
+	// evaluate.ts's applyVisibleExternalsRewrite is the sittir-pipeline twin
+	// — both MUST produce structurally identical output.
+	applyWireVisibleExternalsRewrite(outRules, cfg.visibleExternals);
 
 	// Drain enrich-hoisted clause-group names into syntheticInline so they
 	// appear in the grammar's inline: list. Enrich injects _<parent>_optionalN
@@ -1456,6 +1511,116 @@ function buildPatternReplacingFn(fn: RuleFn, candidates: readonly WirePatternCan
 		const result = fn($, previous);
 		return replaceInBodyRt(result, candidates);
 	};
+}
+
+// ---------------------------------------------------------------------------
+// visibleExternals — SYMBOL→ALIAS rewrite (tree-sitter-CLI-runtime path)
+// ---------------------------------------------------------------------------
+
+/**
+ * Temporarily inject a `string()` DSL global matching evaluate.ts's own
+ * `string(value) => {type:'STRING', value}` shape, for the duration of `fn`.
+ *
+ * Tree-sitter's own CLI runtime provides `blank`/`alias`/`sym`/`seq`/etc. as
+ * globals (see `tree-sitter-cli`'s `dsl.d.ts`) but NOT `string` — that's a
+ * sittir-only extension `evaluate.ts`'s `saveAndInjectDslGlobals` injects for
+ * the sittir-pipeline path only. `visibleExternals:` config bodies are
+ * evaluated from BOTH runtimes (this file needs the hidden-name KEYS to
+ * build the SYMBOL→ALIAS rewrite map), and the config's prescribed value
+ * shape (`string(lit)`, matching `renderAs:`) calls `string(...)` — under
+ * the tree-sitter-CLI runtime that would throw `ReferenceError: string is
+ * not defined` with no shim. Injected only when absent so sittir's own
+ * evaluate.ts-provided `string` (identical shape) is never shadowed.
+ */
+function withStringGlobalShim<T>(fn: () => T): T {
+	const g = globalThis as Record<string, unknown>;
+	const hadString = 'string' in g;
+	const previous = g.string;
+	if (!hadString) {
+		g.string = (value: string) => ({ type: 'STRING', value });
+	}
+	try {
+		return fn();
+	} finally {
+		if (!hadString) delete g.string;
+		else g.string = previous;
+	}
+}
+
+/**
+ * Recursively rewrite every `{type:'SYMBOL', name}` reference whose `name`
+ * is a `visibleExternals:` key into `{type:'ALIAS', content:<the symbol>,
+ * named:true, value:<visible name>}` — see `VisibleExternalsConfig`'s doc
+ * comment for the full mechanism. Runs on the tree-sitter-CLI runtime path;
+ * `evaluate.ts`'s `applyVisibleExternalsRewrite` is the sittir-pipeline
+ * counterpart and MUST produce structurally identical output.
+ */
+function rewriteVisibleExternalRefsRt(rule: unknown, hiddenToVisible: ReadonlyMap<string, string>): unknown {
+	if (!rule || typeof rule !== 'object') return rule;
+	const r = rule as { type: string; members?: unknown[]; content?: unknown; name?: string };
+	const t = r.type;
+	if (t === 'SYMBOL') {
+		const visibleName = hiddenToVisible.get(r.name ?? '');
+		if (visibleName === undefined) return rule;
+		return { type: 'ALIAS', content: rule, named: true, value: visibleName };
+	}
+	if (t === 'SEQ' || t === 'CHOICE') {
+		const members = r.members;
+		if (!Array.isArray(members)) return rule;
+		let changed = false;
+		const newMembers = members.map((m) => {
+			const replaced = rewriteVisibleExternalRefsRt(m, hiddenToVisible);
+			if (replaced !== m) changed = true;
+			return replaced;
+		});
+		return changed ? { ...r, members: newMembers } : rule;
+	}
+	if (
+		t === 'OPTIONAL' ||
+		t === 'REPEAT' ||
+		t === 'REPEAT1' ||
+		t === 'FIELD' ||
+		t === 'PREC' ||
+		t === 'PREC_LEFT' ||
+		t === 'PREC_RIGHT' ||
+		t === 'PREC_DYNAMIC' ||
+		t === 'TOKEN' ||
+		t === 'ALIAS'
+	) {
+		const newContent = rewriteVisibleExternalRefsRt(r.content, hiddenToVisible);
+		return newContent !== r.content ? { ...r, content: newContent } : rule;
+	}
+	return rule;
+}
+
+/** Wrap a rule fn so its return value has visibleExternals refs rewritten. */
+function buildVisibleExternalsRewritingFn(fn: RuleFn, hiddenToVisible: ReadonlyMap<string, string>): RuleFn {
+	return function visibleExternalsRewritingRuleFn($, previous) {
+		const result = fn($, previous);
+		return rewriteVisibleExternalRefsRt(result, hiddenToVisible);
+	};
+}
+
+/**
+ * Evaluate `visibleExternals:` (if configured) to learn its hidden-name
+ * keys, then wrap EVERY rule fn (authored + injected passthroughs) so
+ * their returned bodies have matching SYMBOL refs rewritten into named
+ * visible aliases. Counterpart to `evaluate.ts`'s
+ * `applyVisibleExternalsRewrite` (the sittir-pipeline path).
+ */
+function applyWireVisibleExternalsRewrite(rules: Record<string, RuleFn>, config: VisibleExternalsConfig | undefined): void {
+	if (!config) return;
+	const $ = makeSimpleDollarProxy();
+	const entries = withStringGlobalShim(() => config($ as unknown as Record<string, unknown>));
+	if (!entries) return;
+	const hiddenToVisible = new Map<string, string>();
+	for (const hiddenName of Object.keys(entries)) {
+		hiddenToVisible.set(hiddenName, hiddenName.replace(/^_+/, ''));
+	}
+	if (hiddenToVisible.size === 0) return;
+	for (const [name, fn] of Object.entries(rules)) {
+		rules[name] = buildVisibleExternalsRewritingFn(fn, hiddenToVisible);
+	}
 }
 
 /**

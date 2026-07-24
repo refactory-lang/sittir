@@ -901,6 +901,20 @@ export default grammar(
 					'0/0': field('const_marker')
 				},
 
+				// function_signature: seq(optional('async'), 'function',
+				//   field('name', ...), _call_signature,
+				//   choice(_semicolon, alias(_function_signature_automatic_semicolon, ...)))
+				// pos 4 is the UNNAMED terminator choice. visibleExternals makes
+				// the ASI arm a real kind-keyed node, but the explicit-';' arm is
+				// an anonymous token that lands in $other where the derived
+				// singular slot can't reach it ("singular slot 'content' ...
+				// got undefined"). Field it like type_alias_declaration's
+				// grammar-authored `semicolon:` field — both arms then arrive
+				// field-keyed and the terminator classifies as the same enum.
+				function_signature: {
+					4: field('semicolon')
+				},
+
 				// assignment_expression: prec.right('assign', seq(
 				//   optional('using'),  // pos 0  →  '0/0'  (using_marker)
 				//   field('left', ...), '=', field('right', ...)))
@@ -1066,21 +1080,21 @@ export default grammar(
 			// Sittir-side rule bodies for external scanner symbols. The grammar's
 			// external scanner triggers ASI (Automatic Semicolon Insertion) by
 			// producing `_automatic_semicolon` and `_function_signature_automatic_semicolon`
-			// as zero-width terminator tokens. Tree-sitter sees them as required
-			// (they're SEQ-positional, not optional-wrapped) — but at runtime
-			// they can match invisibly. Mapping them to `blank()` makes sittir's
-			// IR resolve `_semicolon = choice(_automatic_semicolon, ';')` to
-			// `choice(blank(), ';')`, which the stamp pass auto-collapses to
-			// `optional(';')`. The slot-model look-through in node-map.ts then
-			// propagates that optionality up to any SYMBOL ref pointing at
-			// `_semicolon`, so wrapped fields like `field('semicolon', _semicolon)`
-			// no longer assert required-singular at wrap time on ASI-terminated
-			// corpus entries. The grammar that reaches tree-sitter still has
-			// the externals intact; only sittir's slot/render/factory pipeline
-			// sees the blank body.
-			renderAs: (_$) => ({
-				_automatic_semicolon: blank(),
-				_function_signature_automatic_semicolon: blank()
+			// as zero-width terminator tokens. Every `SYMBOL` reference to
+			// either name gets wrapped in a named visible alias
+			// (`alias($._automatic_semicolon, $.automatic_semicolon)`, etc.)
+			// under both runtimes, so tree-sitter materializes a real CST node
+			// for the ASI marker instead of it vanishing invisibly into its
+			// referencing rule (proven via a scratch parser: aliasing a
+			// zero-width external to a named node yields a
+			// `[0,15]-[0,15]`-spanning CST node at every insertion point, with
+			// no change to the LR tables). `string('\n')` (not `';'`) is the
+			// round-trip-stable render — it re-parses to the SAME
+			// automatic_semicolon node, whereas `';'` would flip the node type
+			// on re-parse.
+			visibleExternals: (_$) => ({
+				_automatic_semicolon: string('\n'),
+				_function_signature_automatic_semicolon: string('\n')
 			}),
 			// Known-failing generated nodes.test.ts kinds — tracked defects, not
 			// silenced mysteries. Remove an entry + regen when its issue is fixed.

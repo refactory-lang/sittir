@@ -626,7 +626,16 @@ fn scalar_leaf_value(node: &NodeData) -> Option<FieldScalar<'_>> {
         return None;
     }
     if node.named {
-        return node.text.as_deref().map(FieldScalar::Text);
+        return match node.text.as_deref() {
+            // Zero-width named leaf (a visible external scanner token, e.g.
+            // ts's `automatic_semicolon` ASI marker): "" is indistinguishable
+            // from ABSENT for every downstream presence check, so the slot
+            // silently vanished. The leaf's identity is its kind — collapse
+            // to the kind id exactly like anonymous tokens; the id-first
+            // transport dispatch routes it to the kind's render template.
+            Some("") => Some(FieldScalar::KindId(node.type_)),
+            other => other.map(FieldScalar::Text),
+        };
     }
     Some(FieldScalar::KindId(node.type_))
 }

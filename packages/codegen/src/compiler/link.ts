@@ -324,6 +324,17 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		Object.assign(rules, stamped);
 	}
 
+	// visibleExternals: nothing to register here. evaluate's
+	// drainVisibleExternalsMetadata already injected each body into the
+	// rules map under the HIDDEN name (the storage identity, mirroring
+	// drainRenderAsMetadata), replacing the external's empty-pattern
+	// placeholder; the SYMBOL→ALIAS reference rewrites carry the visible
+	// parse identity. Registering under the VISIBLE name here instead
+	// creates a second node colliding on the same typeName — the transport
+	// struct then emits from the empty placeholder (no render text).
+	// Deliberately excluded from `renderAs` so `stampStaticRenderAs`
+	// never inlines these bodies into referencing rules.
+
 	// Group lift pass — run BEFORE classifyAndLogHiddenRules so path
 	// resolution addresses the raw resolved seq/choice bodies before
 	// classifyHiddenSeqRule wraps them in GroupRule<'link'> nodes. Also runs
@@ -1657,9 +1668,42 @@ function classifyHiddenChoiceRule(
 	rules: Record<string, Rule<'link'>>
 ): ClassifyResult {
 	const { supertypes, hiddenChoicesWithNamedAliasMembers } = ctx;
-	if (rule.members.every((m): m is StringRule<'link'> => m.type === STRING)) {
+	// Enum admission. Two terminal-valued member shapes qualify:
+	//   - bare STRING literals (the original all-STRING enum), and
+	//   - post-resolve SYMBOLs carrying `aliasedFrom` whose STORAGE rule body
+	//     is a bare STRING — the kind's whole realization is one fixed render
+	//     text (visibleExternals: `_semicolon`'s `automatic_semicolon` arm,
+	//     storage `_automatic_semicolon := '\n'`). Convert those to the
+	//     literal-carrying SYMBOL shape (`canonicalizeRuleLiterals`' vehicle —
+	//     this is deliberately its second writer; `literalTextOf`/
+	//     `isEnumChoiceRule` serve the shape uniformly downstream) so the
+	//     choice classifies as an ENUM of {literal → kind} members instead of
+	//     a supertype whose member set can never project a type union.
+	const enumMembers = rule.members.map((m): StringRule<'link'> | SymbolRule<'link'> | undefined => {
+		if (m.type === STRING) return m;
+		if (m.type === SYMBOL) {
+			const sym = m as SymbolRule<'link'>;
+			if (sym.literal !== undefined) return sym;
+			const storageName = sym.aliasedFrom;
+			if (storageName !== undefined) {
+				const storageBody = rules[storageName];
+				if (storageBody !== undefined && storageBody.type === STRING) {
+					return { ...sym, literal: (storageBody as StringRule<'link'>).value };
+				}
+			}
+		}
+		return undefined;
+	});
+	if (enumMembers.every((m): m is StringRule<'link'> | SymbolRule<'link'> => m !== undefined)) {
+		const allStrings = enumMembers.every((m): m is StringRule<'link'> => m.type === STRING);
 		return {
-			rule: normalizeEnumMembers(rule.members, { classifiedBy: 'link' }),
+			rule: allStrings
+				? normalizeEnumMembers(enumMembers as StringRule<'link'>[], { classifiedBy: 'link' })
+				: ({
+						type: CHOICE,
+						members: enumMembers,
+						metadata: makeRuleMetadata({ classifiedBy: 'link' })
+					} as ChoiceRule<'link'>),
 			classification: 'enum',
 			classifiedBy: 'link'
 		};

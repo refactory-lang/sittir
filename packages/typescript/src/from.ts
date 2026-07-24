@@ -1218,11 +1218,18 @@ export function coerceToBinaryExpression(input?: T.BinaryExpression.Loose): Retu
 	});
 }
 
-export function coerceToBreakStatement(input?: T.BreakStatement.Loose): ReturnType<typeof F.buildBreakStatement> {
-	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildBreakStatement>;
+export function coerceToBreakStatement(input: T.BreakStatement.Loose): ReturnType<typeof F.buildBreakStatement> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildBreakStatement>;
 	return F.buildBreakStatement({
-		label: _resolveOneLeaf<T.Identifier>(input?.label, 'identifier'),
-		semicolon: _resolveOneLeaf<T.Semicolon>(input?.semicolon, '_semicolon')
+		label: _resolveOneLeaf<T.Identifier>(input.label, 'identifier'),
+		semicolon: _requireField(
+			'break_statement',
+			'semicolon',
+			coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon'), [
+				['\n', TSKindId.AutomaticSemicolon] as const,
+				[';', TSKindId.Semi] as const
+			])
+		)
 	});
 }
 
@@ -1292,7 +1299,8 @@ export function coerceToClassDeclaration(input: T.ClassDeclaration.Loose): Retur
 		name: _requireField('class_declaration', 'name', _resolveOneLeaf<T.Identifier>(input.name, 'identifier')),
 		typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, 'type_parameters'),
 		classHeritage: _resolveOneBranch<T.ClassHeritage>(input.classHeritage, 'class_heritage'),
-		body: _resolveOneBranch<T.ClassBody>(input.body, 'class_body') ?? F.buildClassBody()
+		body: _resolveOneBranch<T.ClassBody>(input.body, 'class_body') ?? F.buildClassBody(),
+		automaticSemicolon: _resolveBooleanKeyword(input.automaticSemicolon)
 	});
 }
 
@@ -1308,18 +1316,11 @@ export function coerceToClassHeritage(
 }
 
 export function coerceToClassStaticBlock(input: T.ClassStaticBlock.Loose): ReturnType<typeof F.buildClassStaticBlock> {
-	if (isNodeData(input) && (input.$type as string | number) === TSKindId.ClassStaticBlock)
-		return input as unknown as ReturnType<typeof F.buildClassStaticBlock>;
-	return F.buildClassStaticBlock(
-		_requireField(
-			'class_static_block',
-			'body',
-			_resolveOneBranch<T.StatementBlock>(
-				input !== null && typeof input === 'object' && !isNodeData(input) && 'body' in input ? input.body : input,
-				'statement_block'
-			)
-		)
-	);
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildClassStaticBlock>;
+	return F.buildClassStaticBlock({
+		automaticSemicolon: _resolveBooleanKeyword(input.automaticSemicolon),
+		body: _resolveOneBranch<T.StatementBlock>(input.body, 'statement_block') ?? F.buildStatementBlock()
+	});
 }
 
 export function coerceToComment(input: string | T.Comment): ReturnType<typeof F.buildComment> {
@@ -1397,26 +1398,40 @@ export function coerceToConstructorType(input: T.ConstructorType.Loose): ReturnT
 }
 
 export function coerceToContinueStatement(
-	input?: T.ContinueStatement.Loose
+	input: T.ContinueStatement.Loose
 ): ReturnType<typeof F.buildContinueStatement> {
-	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildContinueStatement>;
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildContinueStatement>;
 	return F.buildContinueStatement({
-		label: _resolveOneLeaf<T.Identifier>(input?.label, 'identifier'),
-		semicolon: _resolveOneLeaf<T.Semicolon>(input?.semicolon, '_semicolon')
+		label: _resolveOneLeaf<T.Identifier>(input.label, 'identifier'),
+		semicolon: _requireField(
+			'continue_statement',
+			'semicolon',
+			coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon'), [
+				['\n', TSKindId.AutomaticSemicolon] as const,
+				[';', TSKindId.Semi] as const
+			])
+		)
 	});
 }
 
 export function coerceToDebuggerStatement(
-	input?: T.DebuggerStatement.Loose
+	input: T.DebuggerStatement.Loose
 ): ReturnType<typeof F.buildDebuggerStatement> {
-	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.DebuggerStatement)
+	if (isNodeData(input) && (input.$type as string | number) === TSKindId.DebuggerStatement)
 		return input as unknown as ReturnType<typeof F.buildDebuggerStatement>;
 	return F.buildDebuggerStatement(
-		_resolveOneLeaf<T.Semicolon>(
-			input !== null && typeof input === 'object' && !isNodeData(input) && 'semicolon' in input
-				? input.semicolon
-				: input,
-			'_semicolon'
+		_requireField(
+			'debugger_statement',
+			'semicolon',
+			coerceKindEnumStorage(
+				_resolveOneLeaf<T.Semicolon>(
+					input !== null && typeof input === 'object' && !isNodeData(input) && 'semicolon' in input
+						? input.semicolon
+						: input,
+					'_semicolon'
+				),
+				[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
+			)
 		)
 	);
 }
@@ -1507,7 +1522,10 @@ export function coerceToDoStatement(input: T.DoStatement.Loose): ReturnType<type
 			'condition',
 			_resolveOneBranch<T.ParenthesizedExpression>(input.condition, 'parenthesized_expression')
 		),
-		semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon')
+		semicolon: coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon'), [
+			['\n', TSKindId.AutomaticSemicolon] as const,
+			[';', TSKindId.Semi] as const
+		])
 	});
 }
 
@@ -1615,7 +1633,14 @@ export function coerceToExpressionStatement(
 			'expressions',
 			_resolveOne<T.Expressions>(input.expressions, _K6, _K18)
 		),
-		semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon')
+		semicolon: _requireField(
+			'expression_statement',
+			'semicolon',
+			coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon'), [
+				['\n', TSKindId.AutomaticSemicolon] as const,
+				[';', TSKindId.Semi] as const
+			])
+		)
 	});
 }
 
@@ -1748,7 +1773,8 @@ export function coerceToFunctionDeclaration(
 			_K2,
 			_K3
 		),
-		body: _resolveOneBranch<T.StatementBlock>(input.body, 'statement_block') ?? F.buildStatementBlock()
+		body: _resolveOneBranch<T.StatementBlock>(input.body, 'statement_block') ?? F.buildStatementBlock(),
+		automaticSemicolon: _resolveBooleanKeyword(input.automaticSemicolon)
 	});
 }
 
@@ -1786,7 +1812,11 @@ export function coerceToFunctionSignature(
 			_K2,
 			_K3
 		),
-		semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon')
+		semicolon: _requireField(
+			'function_signature',
+			'semicolon',
+			_resolveOneLeaf<T.Semicolon | '\n'>(input.semicolon, '_semicolon')
+		)
 	});
 }
 
@@ -1842,7 +1872,8 @@ export function coerceToGeneratorFunctionDeclaration(
 			_K2,
 			_K3
 		),
-		body: _resolveOneBranch<T.StatementBlock>(input.body, 'statement_block') ?? F.buildStatementBlock()
+		body: _resolveOneBranch<T.StatementBlock>(input.body, 'statement_block') ?? F.buildStatementBlock(),
+		automaticSemicolon: _resolveBooleanKeyword(input.automaticSemicolon)
 	});
 }
 
@@ -1907,7 +1938,14 @@ export function coerceToImportAlias(input: T.ImportAlias.Loose): ReturnType<type
 			'value',
 			_resolveOne<T.Identifier | T.NestedIdentifier>(input.value, _super_import_identifier, _K24)
 		),
-		semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon')
+		semicolon: _requireField(
+			'import_alias',
+			'semicolon',
+			coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon'), [
+				['\n', TSKindId.AutomaticSemicolon] as const,
+				[';', TSKindId.Semi] as const
+			])
+		)
 	});
 }
 
@@ -1980,7 +2018,14 @@ export function coerceToImportStatement(input: T.ImportStatement.Loose): ReturnT
 			_resolveOne<T.ImportStatementGroup1 | T.ImportRequireClause | T.String>(input.fromClause, _K2, _K28)
 		),
 		importAttribute: _resolveOneBranch<T.ImportAttribute>(input.importAttribute, 'import_attribute'),
-		semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon')
+		semicolon: _requireField(
+			'import_statement',
+			'semicolon',
+			coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon'), [
+				['\n', TSKindId.AutomaticSemicolon] as const,
+				[';', TSKindId.Semi] as const
+			])
+		)
 	});
 }
 
@@ -2112,7 +2157,14 @@ export function coerceToLexicalDeclaration(
 			])
 		),
 		declarators: _ne_declarators,
-		semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon')
+		semicolon: _requireField(
+			'lexical_declaration',
+			'semicolon',
+			coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon'), [
+				['\n', TSKindId.AutomaticSemicolon] as const,
+				[';', TSKindId.Semi] as const
+			])
+		)
 	});
 }
 
@@ -2773,11 +2825,18 @@ export function coerceToRestType(input: T.RestType.Loose): ReturnType<typeof F.b
 	);
 }
 
-export function coerceToReturnStatement(input?: T.ReturnStatement.Loose): ReturnType<typeof F.buildReturnStatement> {
-	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildReturnStatement>;
+export function coerceToReturnStatement(input: T.ReturnStatement.Loose): ReturnType<typeof F.buildReturnStatement> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildReturnStatement>;
 	return F.buildReturnStatement({
-		expressions: _resolveOne<T.Expressions>(input?.expressions, _K6, _K18),
-		semicolon: _resolveOneLeaf<T.Semicolon>(input?.semicolon, '_semicolon')
+		expressions: _resolveOne<T.Expressions>(input.expressions, _K6, _K18),
+		semicolon: _requireField(
+			'return_statement',
+			'semicolon',
+			coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon'), [
+				['\n', TSKindId.AutomaticSemicolon] as const,
+				[';', TSKindId.Semi] as const
+			])
+		)
 	});
 }
 
@@ -2832,7 +2891,8 @@ export function coerceToSpreadElement(input: T.SpreadElement.Loose): ReturnType<
 export function coerceToStatementBlock(input?: T.StatementBlock.Loose): ReturnType<typeof F.buildStatementBlock> {
 	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildStatementBlock>;
 	return F.buildStatementBlock({
-		statements: _resolveMany<T.Statement>(input?.statements, _K2, _K16)
+		statements: _resolveMany<T.Statement>(input?.statements, _K2, _K16),
+		automaticSemicolon: _resolveBooleanKeyword(input?.automaticSemicolon)
 	});
 }
 
@@ -2977,7 +3037,14 @@ export function coerceToThrowStatement(input: T.ThrowStatement.Loose): ReturnTyp
 			'expressions',
 			_resolveOne<T.Expressions>(input.expressions, _K6, _K18)
 		),
-		semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon')
+		semicolon: _requireField(
+			'throw_statement',
+			'semicolon',
+			coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon'), [
+				['\n', TSKindId.AutomaticSemicolon] as const,
+				[';', TSKindId.Semi] as const
+			])
+		)
 	});
 }
 
@@ -3024,7 +3091,14 @@ export function coerceToTypeAliasDeclaration(
 		name: _requireField('type_alias_declaration', 'name', _resolveOneLeaf<T.Identifier>(input.name, 'identifier')),
 		typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, 'type_parameters'),
 		value: _requireField('type_alias_declaration', 'value', _resolveOne<T.Type>(input.value, _K4, _K5)),
-		semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon')
+		semicolon: _requireField(
+			'type_alias_declaration',
+			'semicolon',
+			coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon'), [
+				['\n', TSKindId.AutomaticSemicolon] as const,
+				[';', TSKindId.Semi] as const
+			])
+		)
 	});
 }
 
@@ -3204,7 +3278,14 @@ export function coerceToVariableDeclaration(
 	_assertNonEmpty(_ne_declarators, 'variable_declaration.declarators');
 	return F.buildVariableDeclaration({
 		declarators: _ne_declarators,
-		semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon')
+		semicolon: _requireField(
+			'variable_declaration',
+			'semicolon',
+			coerceKindEnumStorage(_resolveOneLeaf<T.Semicolon>(input.semicolon, '_semicolon'), [
+				['\n', TSKindId.AutomaticSemicolon] as const,
+				[';', TSKindId.Semi] as const
+			])
+		)
 	});
 }
 

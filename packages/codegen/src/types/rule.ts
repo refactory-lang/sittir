@@ -488,7 +488,15 @@ export type EnumRule<T extends PhaseName = 'normalize'> = ChoiceRule<T>;
 export function isEnumChoiceRule<R extends AnyRule>(
 	rule: R
 ): rule is Extract<R, { type: typeof CHOICE }> & { readonly __enumShaped?: never } {
-	return rule.type === CHOICE && rule.members.length >= 2 && rule.members.every((m) => m.type === STRING);
+	return (
+		rule.type === CHOICE &&
+		rule.members.length >= 2 &&
+		// STRING members and literal-carrying link SYMBOLs (`isLinkSymbol`,
+		// canonicalized operators AND aliased fixed-text externals like
+		// `automatic_semicolon`) are both terminal-valued — `literalTextOf`
+		// serves both shapes uniformly downstream.
+		rule.members.every((m) => m.type === STRING || (m.type === SYMBOL && m.literal !== undefined))
+	);
 }
 
 /**

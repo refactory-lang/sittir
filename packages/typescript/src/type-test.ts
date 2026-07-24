@@ -824,7 +824,9 @@ export type _Type_PublicFieldDefinitionOptionalityMarker = _TypeAssert<
 export type _Type_ReservedIdentifier = _TypeAssert<
 	_TypeExtends<ReservedIdentifier['$type'], TSKindId.ReservedIdentifier>
 >;
-export type _Type_Semicolon = _TypeAssert<_TypeExtends<Semicolon['$type'], '_semicolon'>>;
+export type _Type_Semicolon = _TypeAssert<
+	_TypeExtends<Semicolon['$type'], TSKindId.AutomaticSemicolon | TSKindId.Semi>
+>;
 export type _Type_TypeIdentifier = _TypeAssert<_TypeExtends<TypeIdentifier['$type'], TSKindId.TypeIdentifier>>;
 export type _Type_UnaryExpressionOperator = _TypeAssert<
 	_TypeExtends<

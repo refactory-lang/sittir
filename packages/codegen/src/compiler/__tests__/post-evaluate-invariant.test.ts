@@ -127,6 +127,9 @@ describe('post-evaluate invariant', () => {
 				'groups',
 				'polymorphsConfig',
 				'renderAs',
+				// visibleExternals: — externals auto-aliased visible with a
+				// fixed render body (drainVisibleExternalsMetadata).
+				'visibleExternals',
 				// Per-kind diagnostic exceptions from overrides.ts `expectDiagnostics:` —
 				// read by collectGrammarDiagnostics (grammar-diagnostics.ts).
 				'expectDiagnostics',

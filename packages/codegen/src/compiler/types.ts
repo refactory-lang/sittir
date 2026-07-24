@@ -213,6 +213,21 @@ export interface RawGrammar {
 	 */
 	readonly renderAs?: Record<string, Rule<'evaluate'>>;
 	/**
+	 * Hidden-external → sittir-side render body map. Populated by
+	 * `visibleExternals:` in the override layer. Unlike `renderAs`, these
+	 * bodies are NOT inlined at reference sites — every `SYMBOL` reference
+	 * to a configured hidden name is instead wrapped in a named visible
+	 * alias (both at wire-evaluation and sittir-evaluation time), so the
+	 * external scanner symbol materializes as a real CST-visible kind.
+	 * `link.ts` registers each body under the alias's VISIBLE name (hidden
+	 * name minus leading underscores) as a real top-level IR rule.
+	 *
+	 * Record keys are the HIDDEN external symbol names (e.g.
+	 * `_automatic_semicolon`); values are the sittir-side Rule bodies
+	 * (e.g. `{ type: 'STRING', value: '\n' }`).
+	 */
+	readonly visibleExternals?: Record<string, Rule<'evaluate'>>;
+	/**
 	 * Per-kind, per-diagnostic-code exceptions from `expectDiagnostics:` in
 	 * the override layer — the grammar author's own declaration that a
 	 * specific diagnostic code is EXPECTED (and accepted as non-blocking)

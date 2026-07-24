@@ -36,6 +36,7 @@ pub enum AnyTransport {
     AssertsAnnotationAsserts(AssertsAnnotationAssertsTransport),
     AsyncMarker(AsyncMarkerTransport),
     AugmentedAssignmentExpressionOperator(AugmentedAssignmentExpressionOperatorEnum),
+    AutomaticSemicolon(AutomaticSemicolonTransport),
     BinaryExpressionGroup1(BinaryExpressionGroup1Transport),
     CallExpressionCall(CallExpressionCallTransport),
     CallExpressionMember(CallExpressionMemberTransport),
@@ -69,6 +70,7 @@ pub enum AnyTransport {
     ForHeaderVarKind(ForHeaderVarKindTransport),
     FormalParametersGroup1(FormalParametersGroup1Transport),
     FromClause(FromClauseTransport),
+    FunctionSignatureAutomaticSemicolon(FunctionSignatureAutomaticSemicolonTransport),
     ImportAttributeObject(ImportAttributeObjectEnum),
     ImportClauseDefaultImport(ImportClauseDefaultImportTransport),
     ImportClauseGroup1(ImportClauseGroup1Transport),
@@ -105,7 +107,7 @@ pub enum AnyTransport {
     PublicFieldDefinitionStaticMods(PublicFieldDefinitionStaticModsTransport),
     ReadonlyMarker(ReadonlyMarkerTransport),
     ReservedIdentifier(ReservedIdentifierTransport),
-    Semicolon(SemicolonTransport),
+    Semicolon(SemicolonEnum),
     StaticMarker(StaticMarkerTransport),
     StringDouble(StringDoubleTransport),
     StringSingle(StringSingleTransport),
@@ -420,49 +422,50 @@ pub enum AnyTransport {
     Yield(YieldTransport),
     Literal0_69_6e,
     Literal1_2c,
-    Literal2_76_61_72,
-    Literal3_2d,
-    Literal4_2b,
-    Literal5_72_65_61_64_6f_6e_6c_79,
-    Literal6_61_62_73_74_72_61_63_74,
-    Literal7_64_65_63_6c_61_72_65,
-    Literal8_73_74_61_74_69_63,
-    Literal9_2e,
-    Literal10_3f_2e,
-    Literal11_6f_76_65_72_72_69_64_65,
-    Literal12_3f,
-    Literal13_61_73_79_6e_63,
-    Literal14_63_6f_6e_73_74,
-    Literal15_3a,
-    Literal16_75_73_69_6e_67,
-    Literal17_26_26,
-    Literal18_7c_7c,
-    Literal19_3e_3e,
-    Literal20_3e_3e_3e,
-    Literal21_3c_3c,
-    Literal22_26,
-    Literal23_5e,
-    Literal24_7c,
-    Literal25_2a,
-    Literal26_2f,
-    Literal27_25,
-    Literal28_2a_2a,
-    Literal29_3c,
-    Literal30_3c_3d,
-    Literal31_3d_3d,
-    Literal32_3d_3d_3d,
-    Literal33_21_3d,
-    Literal34_21_3d_3d,
-    Literal35_3e_3d,
-    Literal36_3e,
-    Literal37_3f_3f,
-    Literal38_69_6e_73_74_61_6e_63_65_6f_66,
-    Literal39_3b,
-    Literal40_65_78_74_65_6e_64_73,
-    Literal41_61_77_61_69_74,
-    Literal42_74_79_70_65,
-    Literal43_74_79_70_65_6f_66,
-    Literal44_61_63_63_65_73_73_6f_72,
+    Literal2_0a,
+    Literal3_76_61_72,
+    Literal4_2d,
+    Literal5_2b,
+    Literal6_72_65_61_64_6f_6e_6c_79,
+    Literal7_61_62_73_74_72_61_63_74,
+    Literal8_64_65_63_6c_61_72_65,
+    Literal9_73_74_61_74_69_63,
+    Literal10_2e,
+    Literal11_3f_2e,
+    Literal12_6f_76_65_72_72_69_64_65,
+    Literal13_3f,
+    Literal14_61_73_79_6e_63,
+    Literal15_63_6f_6e_73_74,
+    Literal16_3a,
+    Literal17_75_73_69_6e_67,
+    Literal18_26_26,
+    Literal19_7c_7c,
+    Literal20_3e_3e,
+    Literal21_3e_3e_3e,
+    Literal22_3c_3c,
+    Literal23_26,
+    Literal24_5e,
+    Literal25_7c,
+    Literal26_2a,
+    Literal27_2f,
+    Literal28_25,
+    Literal29_2a_2a,
+    Literal30_3c,
+    Literal31_3c_3d,
+    Literal32_3d_3d,
+    Literal33_3d_3d_3d,
+    Literal34_21_3d,
+    Literal35_21_3d_3d,
+    Literal36_3e_3d,
+    Literal37_3e,
+    Literal38_3f_3f,
+    Literal39_69_6e_73_74_61_6e_63_65_6f_66,
+    Literal40_3b,
+    Literal41_65_78_74_65_6e_64_73,
+    Literal42_61_77_61_69_74,
+    Literal43_74_79_70_65,
+    Literal44_74_79_70_65_6f_66,
+    Literal45_61_63_63_65_73_73_6f_72,
     Verbatim(VerbatimTransport),
 }
 
@@ -496,6 +499,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: _arrow_function_parameter (_ARROW_FUNCTION_PARAMETER)
                 368 => Ok(AnyTransport::ArrowFunctionParameter(
                     ArrowFunctionParameterTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _automatic_semicolon (_AUTOMATIC_SEMICOLON)
+                159 => Ok(AnyTransport::AutomaticSemicolon(
+                    AutomaticSemicolonTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _call_expression_call (_CALL_EXPRESSION_CALL)
                 391 => Ok(AnyTransport::CallExpressionCall(
@@ -612,6 +619,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 // kind: _from_clause (_FROM_CLAUSE)
                 176 => Ok(AnyTransport::FromClause(
                     FromClauseTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: _function_signature_automatic_semicolon (_FUNCTION_SIGNATURE_AUTOMATIC_SEMICOLON)
+                164 => Ok(AnyTransport::FunctionSignatureAutomaticSemicolon(
+                    FunctionSignatureAutomaticSemicolonTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _import_clause_default_import (_IMPORT_CLAUSE_DEFAULT_IMPORT)
                 371 => Ok(AnyTransport::ImportClauseDefaultImport(
@@ -1842,7 +1853,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     YieldTransport::from_napi_value(env, napi_val)?
                 )),
                 // literal kind: type → "type"
-                7 => Ok(AnyTransport::Literal42_74_79_70_65),
+                7 => Ok(AnyTransport::Literal43_74_79_70_65),
                 other => Err(::napi::Error::from_reason(format!(
                     "unknown kind id {other} in AnyTransport"
                 ))),
@@ -5753,6 +5764,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                         if let Ok(value) = ImportStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ImportStatement(value));
                         }
+                        if let Ok(value) = DebuggerStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::DebuggerStatement(value));
+                        }
                         if let Ok(value) = ExpressionStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ExpressionStatement(value));
                         }
@@ -5780,6 +5794,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                         if let Ok(value) = WithStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::WithStatement(value));
                         }
+                        if let Ok(value) = BreakStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::BreakStatement(value));
+                        }
+                        if let Ok(value) = ContinueStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ContinueStatement(value));
+                        }
+                        if let Ok(value) = ReturnStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReturnStatement(value));
+                        }
                         if let Ok(value) = ThrowStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ThrowStatement(value));
                         }
@@ -5789,23 +5812,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                         if let Ok(value) = LabeledStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::LabeledStatement(value));
                         }
-                        if let Ok(value) = DebuggerStatementTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::DebuggerStatement(value));
-                        }
                         if let Ok(value) = DeclarationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Declaration(value));
                         }
                         if let Ok(value) = StatementBlockTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::StatementBlock(value));
-                        }
-                        if let Ok(value) = BreakStatementTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::BreakStatement(value));
-                        }
-                        if let Ok(value) = ContinueStatementTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ContinueStatement(value));
-                        }
-                        if let Ok(value) = ReturnStatementTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ReturnStatement(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in StatementTransport"))
                     },
@@ -5929,6 +5940,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                         if let Ok(value) = ImportStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ImportStatement(value));
                         }
+                        if let Ok(value) = DebuggerStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::DebuggerStatement(value));
+                        }
                         if let Ok(value) = ExpressionStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ExpressionStatement(value));
                         }
@@ -5956,6 +5970,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                         if let Ok(value) = WithStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::WithStatement(value));
                         }
+                        if let Ok(value) = BreakStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::BreakStatement(value));
+                        }
+                        if let Ok(value) = ContinueStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ContinueStatement(value));
+                        }
+                        if let Ok(value) = ReturnStatementTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReturnStatement(value));
+                        }
                         if let Ok(value) = ThrowStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ThrowStatement(value));
                         }
@@ -5965,23 +5988,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                         if let Ok(value) = LabeledStatementTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::LabeledStatement(value));
                         }
-                        if let Ok(value) = DebuggerStatementTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::DebuggerStatement(value));
-                        }
                         if let Ok(value) = DeclarationTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Declaration(value));
                         }
                         if let Ok(value) = StatementBlockTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::StatementBlock(value));
-                        }
-                        if let Ok(value) = BreakStatementTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::BreakStatement(value));
-                        }
-                        if let Ok(value) = ContinueStatementTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ContinueStatement(value));
-                        }
-                        if let Ok(value) = ReturnStatementTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::ReturnStatement(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in StatementTransport"))
                     },
@@ -8168,9 +8179,8 @@ impl RenderableTransport for CatchClauseGroup1ParameterTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum ClassBodyMemberTerminatorTransportSlot {
-    Semicolon(SemicolonTransport),
+    Semicolon(SemicolonEnum),
     Literal1_2c,
-    Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -8182,8 +8192,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMemberTerminatorTranspo
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    159 => Ok(Self::Semicolon(
+                        SemicolonEnum::from_napi_value(env, napi_val)?
+                    )),
                     23 => Ok(Self::Semicolon(
-                        SemicolonTransport::from_napi_value(env, napi_val)?
+                        SemicolonEnum::from_napi_value(env, napi_val)?
                     )),
                     14 => Ok(Self::Literal1_2c),
                     other => Err(::napi::Error::from_reason(format!(
@@ -8191,18 +8204,17 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMemberTerminatorTranspo
                     ))),
                 }
             }
-            ::napi::ValueType::String => {
-                let text = String::from_napi_value(env, napi_val)?;
-                Ok(Self::Verbatim(VerbatimTransport { text }))
-            }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
                     ::napi::Error::from_reason("$type property missing in ClassBodyMemberTerminatorTransportSlot")
                 )?;
                 match kind_id {
+                    159 => Ok(Self::Semicolon(
+                        SemicolonEnum::from_napi_value(env, napi_val)?
+                    )),
                     23 => Ok(Self::Semicolon(
-                        SemicolonTransport::from_napi_value(env, napi_val)?
+                        SemicolonEnum::from_napi_value(env, napi_val)?
                     )),
                     14 => Ok(Self::Literal1_2c),
                     other => Err(::napi::Error::from_reason(format!(
@@ -8249,7 +8261,6 @@ fn class_body_member_terminator_transport_slot_to_any(t: ClassBodyMemberTerminat
     match t {
         ClassBodyMemberTerminatorTransportSlot::Semicolon(inner) => AnyTransport::Semicolon(inner),
         ClassBodyMemberTerminatorTransportSlot::Literal1_2c => AnyTransport::Literal1_2c,
-        ClassBodyMemberTerminatorTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -8261,7 +8272,6 @@ impl RenderableTransport for ClassBodyMemberTerminatorTransportSlot {
         match self {
             ClassBodyMemberTerminatorTransportSlot::Semicolon(inner) => render_semicolon(inner, dest),
             ClassBodyMemberTerminatorTransportSlot::Literal1_2c => dest.write_str(",").map_err(::askama::Error::from),
-            ClassBodyMemberTerminatorTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -8377,6 +8387,99 @@ impl RenderableTransport for ClassBodyMemberContentTransportSlot {
             ClassBodyMemberContentTransportSlot::IndexSignature(inner) => render_index_signature(inner, dest),
             ClassBodyMemberContentTransportSlot::MethodSignature(inner) => render_method_signature(inner, dest),
             ClassBodyMemberContentTransportSlot::PublicFieldDefinition(inner) => render_public_field_definition(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot {
+    FunctionSignatureAutomaticSemicolon(FunctionSignatureAutomaticSemicolonTransport),
+    Literal1_2c,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    164 => Ok(Self::FunctionSignatureAutomaticSemicolon(
+                        FunctionSignatureAutomaticSemicolonTransport::from_napi_value(env, napi_val)?
+                    )),
+                    14 => Ok(Self::Literal1_2c),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot")
+                )?;
+                match kind_id {
+                    164 => Ok(Self::FunctionSignatureAutomaticSemicolon(
+                        FunctionSignatureAutomaticSemicolonTransport::from_napi_value(env, napi_val)?
+                    )),
+                    14 => Ok(Self::Literal1_2c),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn class_body_method_sig_function_signature_automatic_semicolon_transport_slot_to_any(t: ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot) -> AnyTransport {
+    match t {
+        ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot::FunctionSignatureAutomaticSemicolon(inner) => AnyTransport::FunctionSignatureAutomaticSemicolon(inner),
+        ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot::Literal1_2c => AnyTransport::Literal1_2c,
+    }
+}
+
+impl RenderableTransport for ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot::FunctionSignatureAutomaticSemicolon(inner) => render_function_signature_automatic_semicolon(inner, dest),
+            ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot::Literal1_2c => dest.write_str(",").map_err(::askama::Error::from),
         }
     }
 }
@@ -13964,7 +14067,7 @@ pub enum AsExpressionTypeAnnotationTransportSlot {
     InferType(InferTypeTransport),
     TypeQueryMemberExpressionInTypeAnnotation(TypeQueryMemberExpressionInTypeAnnotationTransport),
     TypeQueryCallExpressionInTypeAnnotation(TypeQueryCallExpressionInTypeAnnotationTransport),
-    Literal14_63_6f_6e_73_74,
+    Literal15_63_6f_6e_73_74,
     Verbatim(VerbatimTransport),
 }
 
@@ -14082,7 +14185,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsExpressionTypeAnnotationTransp
                     305 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    16 => Ok(Self::Literal14_63_6f_6e_73_74),
+                    16 => Ok(Self::Literal15_63_6f_6e_73_74),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AsExpressionTypeAnnotationTransportSlot",
                     ))),
@@ -14203,7 +14306,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsExpressionTypeAnnotationTransp
                     305 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    16 => Ok(Self::Literal14_63_6f_6e_73_74),
+                    16 => Ok(Self::Literal15_63_6f_6e_73_74),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AsExpressionTypeAnnotationTransportSlot",
                     ))),
@@ -14271,7 +14374,7 @@ fn as_expression_type_annotation_transport_slot_to_any(t: AsExpressionTypeAnnota
         AsExpressionTypeAnnotationTransportSlot::InferType(inner) => AnyTransport::InferType(inner),
         AsExpressionTypeAnnotationTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => AnyTransport::TypeQueryMemberExpressionInTypeAnnotation(inner),
         AsExpressionTypeAnnotationTransportSlot::TypeQueryCallExpressionInTypeAnnotation(inner) => AnyTransport::TypeQueryCallExpressionInTypeAnnotation(inner),
-        AsExpressionTypeAnnotationTransportSlot::Literal14_63_6f_6e_73_74 => AnyTransport::Literal14_63_6f_6e_73_74,
+        AsExpressionTypeAnnotationTransportSlot::Literal15_63_6f_6e_73_74 => AnyTransport::Literal15_63_6f_6e_73_74,
         AsExpressionTypeAnnotationTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -14307,7 +14410,7 @@ impl RenderableTransport for AsExpressionTypeAnnotationTransportSlot {
             AsExpressionTypeAnnotationTransportSlot::InferType(inner) => render_infer_type(inner, dest),
             AsExpressionTypeAnnotationTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => render_type_query_member_expression_in_type_annotation(inner, dest),
             AsExpressionTypeAnnotationTransportSlot::TypeQueryCallExpressionInTypeAnnotation(inner) => render_type_query_call_expression_in_type_annotation(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::Literal14_63_6f_6e_73_74 => dest.write_str("const").map_err(::askama::Error::from),
+            AsExpressionTypeAnnotationTransportSlot::Literal15_63_6f_6e_73_74 => dest.write_str("const").map_err(::askama::Error::from),
             AsExpressionTypeAnnotationTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -14978,7 +15081,7 @@ pub enum ClassBodyContentTransportSlot {
     ClassBodyMethodSig(ClassBodyMethodSigTransport),
     ClassStaticBlock(ClassStaticBlockTransport),
     ClassBodyMember(ClassBodyMemberTransport),
-    Literal39_3b,
+    Literal40_3b,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -15002,7 +15105,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyContentTransportSlot {
                     383 => Ok(Self::ClassBodyMember(
                         ClassBodyMemberTransport::from_napi_value(env, napi_val)?
                     )),
-                    23 => Ok(Self::Literal39_3b),
+                    23 => Ok(Self::Literal40_3b),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ClassBodyContentTransportSlot",
                     ))),
@@ -15026,7 +15129,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyContentTransportSlot {
                     383 => Ok(Self::ClassBodyMember(
                         ClassBodyMemberTransport::from_napi_value(env, napi_val)?
                     )),
-                    23 => Ok(Self::Literal39_3b),
+                    23 => Ok(Self::Literal40_3b),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ClassBodyContentTransportSlot",
                     ))),
@@ -15073,7 +15176,7 @@ fn class_body_content_transport_slot_to_any(t: ClassBodyContentTransportSlot) ->
         ClassBodyContentTransportSlot::ClassBodyMethodSig(inner) => AnyTransport::ClassBodyMethodSig(inner),
         ClassBodyContentTransportSlot::ClassStaticBlock(inner) => AnyTransport::ClassStaticBlock(inner),
         ClassBodyContentTransportSlot::ClassBodyMember(inner) => AnyTransport::ClassBodyMember(inner),
-        ClassBodyContentTransportSlot::Literal39_3b => AnyTransport::Literal39_3b,
+        ClassBodyContentTransportSlot::Literal40_3b => AnyTransport::Literal40_3b,
     }
 }
 
@@ -15087,7 +15190,7 @@ impl RenderableTransport for ClassBodyContentTransportSlot {
             ClassBodyContentTransportSlot::ClassBodyMethodSig(inner) => render_class_body_method_sig(inner, dest),
             ClassBodyContentTransportSlot::ClassStaticBlock(inner) => render_class_static_block(inner, dest),
             ClassBodyContentTransportSlot::ClassBodyMember(inner) => render_class_body_member(inner, dest),
-            ClassBodyContentTransportSlot::Literal39_3b => dest.write_str(";").map_err(::askama::Error::from),
+            ClassBodyContentTransportSlot::Literal40_3b => dest.write_str(";").map_err(::askama::Error::from),
         }
     }
 }
@@ -16057,7 +16160,7 @@ pub enum ForStatementInitializerTransportSlot {
     NewExpression(NewExpressionTransport),
     YieldExpression(YieldExpressionTransport),
     SequenceExpression(SequenceExpressionTransport),
-    Literal39_3b,
+    Literal40_3b,
     Verbatim(VerbatimTransport),
 }
 
@@ -16193,7 +16296,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementInitializerTransport
                     247 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    23 => Ok(Self::Literal39_3b),
+                    23 => Ok(Self::Literal40_3b),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForStatementInitializerTransportSlot",
                     ))),
@@ -16332,7 +16435,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementInitializerTransport
                     247 => Ok(Self::SequenceExpression(
                         SequenceExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    23 => Ok(Self::Literal39_3b),
+                    23 => Ok(Self::Literal40_3b),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForStatementInitializerTransportSlot",
                     ))),
@@ -16416,7 +16519,7 @@ fn for_statement_initializer_transport_slot_to_any(t: ForStatementInitializerTra
         ForStatementInitializerTransportSlot::NewExpression(inner) => AnyTransport::NewExpression(inner),
         ForStatementInitializerTransportSlot::YieldExpression(inner) => AnyTransport::YieldExpression(inner),
         ForStatementInitializerTransportSlot::SequenceExpression(inner) => AnyTransport::SequenceExpression(inner),
-        ForStatementInitializerTransportSlot::Literal39_3b => AnyTransport::Literal39_3b,
+        ForStatementInitializerTransportSlot::Literal40_3b => AnyTransport::Literal40_3b,
         ForStatementInitializerTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -16468,7 +16571,7 @@ impl RenderableTransport for ForStatementInitializerTransportSlot {
             ForStatementInitializerTransportSlot::NewExpression(inner) => render_new_expression(inner, dest),
             ForStatementInitializerTransportSlot::YieldExpression(inner) => render_yield_expression(inner, dest),
             ForStatementInitializerTransportSlot::SequenceExpression(inner) => render_sequence_expression(inner, dest),
-            ForStatementInitializerTransportSlot::Literal39_3b => dest.write_str(";").map_err(::askama::Error::from),
+            ForStatementInitializerTransportSlot::Literal40_3b => dest.write_str(";").map_err(::askama::Error::from),
             ForStatementInitializerTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -17234,6 +17337,109 @@ impl RenderableTransport for FunctionSignatureReturnTypeTransportSlot {
             FunctionSignatureReturnTypeTransportSlot::TypeAnnotation(inner) => render_type_annotation(inner, dest),
             FunctionSignatureReturnTypeTransportSlot::AssertsAnnotation(inner) => render_asserts_annotation(inner, dest),
             FunctionSignatureReturnTypeTransportSlot::TypePredicateAnnotation(inner) => render_type_predicate_annotation(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum FunctionSignatureSemicolonTransportSlot {
+    Semicolon(SemicolonEnum),
+    FunctionSignatureAutomaticSemicolon(FunctionSignatureAutomaticSemicolonTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureSemicolonTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    159 => Ok(Self::Semicolon(
+                        SemicolonEnum::from_napi_value(env, napi_val)?
+                    )),
+                    23 => Ok(Self::Semicolon(
+                        SemicolonEnum::from_napi_value(env, napi_val)?
+                    )),
+                    164 => Ok(Self::FunctionSignatureAutomaticSemicolon(
+                        FunctionSignatureAutomaticSemicolonTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in FunctionSignatureSemicolonTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in FunctionSignatureSemicolonTransportSlot")
+                )?;
+                match kind_id {
+                    159 => Ok(Self::Semicolon(
+                        SemicolonEnum::from_napi_value(env, napi_val)?
+                    )),
+                    23 => Ok(Self::Semicolon(
+                        SemicolonEnum::from_napi_value(env, napi_val)?
+                    )),
+                    164 => Ok(Self::FunctionSignatureAutomaticSemicolon(
+                        FunctionSignatureAutomaticSemicolonTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in FunctionSignatureSemicolonTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("FunctionSignatureSemicolonTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for FunctionSignatureSemicolonTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("FunctionSignatureSemicolonTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FunctionSignatureSemicolonTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        FunctionSignatureSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionSignatureSemicolonTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        FunctionSignatureSemicolonTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn function_signature_semicolon_transport_slot_to_any(t: FunctionSignatureSemicolonTransportSlot) -> AnyTransport {
+    match t {
+        FunctionSignatureSemicolonTransportSlot::Semicolon(inner) => AnyTransport::Semicolon(inner),
+        FunctionSignatureSemicolonTransportSlot::FunctionSignatureAutomaticSemicolon(inner) => AnyTransport::FunctionSignatureAutomaticSemicolon(inner),
+    }
+}
+
+impl RenderableTransport for FunctionSignatureSemicolonTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            FunctionSignatureSemicolonTransportSlot::Semicolon(inner) => render_semicolon(inner, dest),
+            FunctionSignatureSemicolonTransportSlot::FunctionSignatureAutomaticSemicolon(inner) => render_function_signature_automatic_semicolon(inner, dest),
         }
     }
 }
@@ -24463,7 +24669,7 @@ pub struct AmbientDeclarationModuleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type"))]
     pub type_: TypeTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: Option<SemicolonEnum>,
 }
 
 impl RenderableTransport for AmbientDeclarationModuleTransport {
@@ -25029,6 +25235,144 @@ impl RenderableTransport for AugmentedAssignmentExpressionOperatorEnum {
     }
 }
 
+#[derive(Debug, Clone)]
+pub struct AutomaticSemicolonTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for AutomaticSemicolonTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for AutomaticSemicolonTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "\n".to_string(),
+            ::napi::ValueType::Boolean => {
+                if !bool::from_napi_value(env, napi_val)? {
+                    return Err(::napi::Error::from_reason("AutomaticSemicolonTransport received false; omit the field instead of sending false"));
+                }
+                "\n".to_string()
+            }
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                obj.get("$text")?.unwrap_or_else(|| "\n".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for AutomaticSemicolonTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                return Ok(Self {
+                    transport_source: None,
+                    transport_named: Some(false),
+                    transport_span: None,
+                    transport_node_handle: None,
+                    transport_child_index: None,
+                    transport_trivia_data: None,
+                    text,
+                });
+            }
+            ::napi::ValueType::Boolean => {
+                if !bool::from_napi_value(env, napi_val)? {
+                    return Err(::napi::Error::from_reason("AutomaticSemicolonTransport received false; omit the field instead of sending false"));
+                }
+                return Ok(Self {
+                    transport_source: None,
+                    transport_named: Some(false),
+                    transport_span: None,
+                    transport_node_handle: None,
+                    transport_child_index: None,
+                    transport_trivia_data: None,
+                    text: "\n".to_string(),
+                });
+            }
+            _ => {}
+        }
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "\n".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AutomaticSemicolonTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AutomaticSemicolonTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        AutomaticSemicolonTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AutomaticSemicolonTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        AutomaticSemicolonTransport::to_napi_value(env, *val)
+    }
+}
+
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
 pub struct BinaryExpressionGroup1Transport {
@@ -25367,7 +25711,7 @@ pub struct ClassBodyMemberTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
-    pub terminator: Option<ClassBodyMemberTerminatorTransportSlot>,
+    pub terminator: ClassBodyMemberTerminatorTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ClassBodyMemberContentTransportSlot,
 }
@@ -25423,7 +25767,7 @@ pub struct ClassBodyMethodTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_definition"))]
     pub method_definition: MethodDefinitionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: Option<SemicolonEnum>,
 }
 
 impl RenderableTransport for ClassBodyMethodTransport {
@@ -25474,6 +25818,8 @@ pub struct ClassBodyMethodSigTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_signature"))]
     pub method_signature: MethodSignatureTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_signature_automatic_semicolon"))]
+    pub function_signature_automatic_semicolon: ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot,
 }
 
 impl RenderableTransport for ClassBodyMethodSigTransport {
@@ -26156,7 +26502,7 @@ pub struct ExportStatementDefaultFromArmTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ExportStatementDefaultFromArmContentTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: SemicolonEnum,
 }
 
 impl RenderableTransport for ExportStatementDefaultFromArmTransport {
@@ -26310,7 +26656,7 @@ pub struct ExportStatementDefaultValueTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: SemicolonEnum,
 }
 
 impl RenderableTransport for ExportStatementDefaultValueTransport {
@@ -26362,7 +26708,7 @@ pub struct ExportStatementEqualsExportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: SemicolonEnum,
 }
 
 impl RenderableTransport for ExportStatementEqualsExportTransport {
@@ -26414,7 +26760,7 @@ pub struct ExportStatementNamespaceExportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
     pub identifier: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: SemicolonEnum,
 }
 
 impl RenderableTransport for ExportStatementNamespaceExportTransport {
@@ -26468,7 +26814,7 @@ pub struct ExportStatementTypeExportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
     pub export_clause: ExportClauseTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: SemicolonEnum,
 }
 
 impl RenderableTransport for ExportStatementTypeExportTransport {
@@ -26627,6 +26973,8 @@ pub struct ForHeaderLetConstKindTransport {
     pub kind: KindEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: ForHeaderLetConstKindLeftTransportSlot,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
+    pub automatic_semicolon: Option<AutomaticSemicolonTransport>,
 }
 
 impl RenderableTransport for ForHeaderLetConstKindTransport {
@@ -26861,6 +27209,109 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FromClauseTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         FromClauseTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct FunctionSignatureAutomaticSemicolonTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for FunctionSignatureAutomaticSemicolonTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureAutomaticSemicolonTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "\n".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                obj.get("$text")?.unwrap_or_else(|| "\n".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureAutomaticSemicolonTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "\n".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for FunctionSignatureAutomaticSemicolonTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FunctionSignatureAutomaticSemicolonTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        FunctionSignatureAutomaticSemicolonTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionSignatureAutomaticSemicolonTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        FunctionSignatureAutomaticSemicolonTransport::to_napi_value(env, *val)
     }
 }
 
@@ -29421,106 +29872,88 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ReservedIdentifierTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct SemicolonTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SemicolonEnum {
+    V0a,
+    Semi,
 }
 
-impl RenderableTransport for SemicolonTransport {
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for SemicolonEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+                    match kind_id {
+                        159 => return Ok(Self::V0a), // "\n"
+                        23 => return Ok(Self::Semi), // ";"
+                        _ => {}
+                    }
+                }
+            }
+            ::napi::ValueType::String => {
+                match String::from_napi_value(env, napi_val)?.as_str() {
+                    "\n" => return Ok(Self::V0a),
+                    ";" => return Ok(Self::Semi),
+                    _ => {}
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                if let Some(kind_id) = obj.get::<u16>("$type")? {
+                    match kind_id {
+                        159 => return Ok(Self::V0a), // "\n"
+                        23 => return Ok(Self::Semi), // ";"
+                        _ => {}
+                    }
+                }
+                if let Some(text) = obj.get::<String>("$text")? {
+                    match text.as_str() {
+                        "\n" => return Ok(Self::V0a),
+                        ";" => return Ok(Self::Semi),
+                        _ => {}
+                    }
+                }
+                if obj.get::<::napi::bindgen_prelude::Object>("_\n")?.is_some() { return Ok(Self::V0a); }
+                if obj.get::<::napi::bindgen_prelude::Object>("_;")?.is_some() { return Ok(Self::Semi); }
+            }
+            _ => {}
+        }
+        Err(::napi::Error::from_reason("unknown enum payload for SemicolonEnum"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SemicolonEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("SemicolonEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for SemicolonEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::V0a => "\n",
+            Self::Semi => ";",
+        })
+    }
+}
+
+impl RenderableTransport for SemicolonEnum {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for SemicolonTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => ";".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                obj.get("$text")?.unwrap_or_else(|| ";".to_string())
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for SemicolonTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| ";".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SemicolonTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<SemicolonTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        SemicolonTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<SemicolonTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        SemicolonTransport::to_napi_value(env, *val)
+        dest.write_str(match self {
+            Self::V0a => "\n",
+            Self::Semi => ";",
+        }).map_err(::askama::Error::from)
     }
 }
 
@@ -31571,7 +32004,7 @@ pub struct BreakStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
     pub label: Option<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: SemicolonEnum,
 }
 
 impl RenderableTransport for BreakStatementTransport {
@@ -31898,6 +32331,8 @@ pub struct ClassDeclarationTransport {
     pub class_heritage: Option<ClassHeritageTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: ClassBodyTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
+    pub automatic_semicolon: Option<AutomaticSemicolonTransport>,
 }
 
 impl RenderableTransport for ClassDeclarationTransport {
@@ -31998,6 +32433,8 @@ pub struct ClassStaticBlockTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: StatementBlockTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
+    pub automatic_semicolon: Option<AutomaticSemicolonTransport>,
 }
 
 impl RenderableTransport for ClassStaticBlockTransport {
@@ -32420,7 +32857,7 @@ pub struct ContinueStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_label"))]
     pub label: Option<IdentifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: SemicolonEnum,
 }
 
 impl RenderableTransport for ContinueStatementTransport {
@@ -32470,7 +32907,7 @@ pub struct DebuggerStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: SemicolonEnum,
 }
 
 impl RenderableTransport for DebuggerStatementTransport {
@@ -32780,7 +33217,7 @@ pub struct DoStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_condition"))]
     pub condition: ParenthesizedExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: Option<SemicolonEnum>,
 }
 
 impl RenderableTransport for DoStatementTransport {
@@ -33497,7 +33934,7 @@ pub struct ExpressionStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: SemicolonEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
     pub expressions: ExpressionsTransport,
 }
@@ -34085,6 +34522,8 @@ pub struct FunctionDeclarationTransport {
     pub return_type: Option<FunctionDeclarationReturnTypeTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: StatementBlockTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
+    pub automatic_semicolon: Option<AutomaticSemicolonTransport>,
 }
 
 impl RenderableTransport for FunctionDeclarationTransport {
@@ -34204,7 +34643,7 @@ pub struct FunctionSignatureTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_return_type"))]
     pub return_type: Option<FunctionSignatureReturnTypeTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: FunctionSignatureSemicolonTransportSlot,
 }
 
 impl RenderableTransport for FunctionSignatureTransport {
@@ -34379,6 +34818,8 @@ pub struct GeneratorFunctionDeclarationTransport {
     pub return_type: Option<GeneratorFunctionDeclarationReturnTypeTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
     pub body: StatementBlockTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
+    pub automatic_semicolon: Option<AutomaticSemicolonTransport>,
 }
 
 impl RenderableTransport for GeneratorFunctionDeclarationTransport {
@@ -34994,7 +35435,7 @@ pub struct ImportAliasTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ImportAliasValueTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: SemicolonEnum,
 }
 
 impl RenderableTransport for ImportAliasTransport {
@@ -35254,7 +35695,7 @@ pub struct ImportStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_attribute"))]
     pub import_attribute: Option<ImportAttributeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: SemicolonEnum,
 }
 
 impl RenderableTransport for ImportStatementTransport {
@@ -36199,7 +36640,7 @@ pub struct LexicalDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators"))]
     pub declarators: Vec<VariableDeclaratorTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: SemicolonEnum,
 }
 
 impl RenderableTransport for LexicalDeclarationTransport {
@@ -39037,7 +39478,7 @@ pub struct ReturnStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: SemicolonEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
     pub expressions: Option<ExpressionsTransport>,
 }
@@ -39242,6 +39683,8 @@ pub struct StatementBlockTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_statements"))]
     pub statements: Option<Vec<StatementTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_automatic_semicolon"))]
+    pub automatic_semicolon: Option<AutomaticSemicolonTransport>,
 }
 
 impl RenderableTransport for StatementBlockTransport {
@@ -40059,7 +40502,7 @@ pub struct ThrowStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: SemicolonEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expressions"))]
     pub expressions: ExpressionsTransport,
 }
@@ -40376,7 +40819,7 @@ pub struct TypeAliasDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: TypeTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: SemicolonEnum,
 }
 
 impl RenderableTransport for TypeAliasDeclarationTransport {
@@ -41499,7 +41942,7 @@ pub struct VariableDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declarators"))]
     pub declarators: Vec<VariableDeclaratorTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
-    pub semicolon: Option<SemicolonTransport>,
+    pub semicolon: SemicolonEnum,
 }
 
 impl RenderableTransport for VariableDeclarationTransport {
@@ -53170,6 +53613,10 @@ fn render_augmented_assignment_expression_operator(t: &AugmentedAssignmentExpres
     dest.write_str(&t.to_string()).map_err(::askama::Error::from)
 }
 
+fn render_automatic_semicolon(t: &AutomaticSemicolonTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
 fn render_binary_expression_group1(node: &BinaryExpressionGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = BinaryExpressionGroup1Template {
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
@@ -53236,10 +53683,7 @@ fn render_catch_clause_group1(node: &CatchClauseGroup1Transport, dest: &mut dyn 
 fn render_class_body_member(node: &ClassBodyMemberTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ClassBodyMemberTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
-        terminator: match &node.terminator {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        terminator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.terminator)),
     };
     template.render_into(dest)
 }
@@ -53250,6 +53694,7 @@ fn render_class_body_method(node: &ClassBodyMethodTransport, dest: &mut dyn ::st
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ClassBodyMethodTemplate {
+        automatic_semicolon: OptionalNonterminalView::Missing,
         decorator: ListNonterminalView {
             items: decorator_buf.as_slice(),
             separator: "",
@@ -53263,6 +53708,7 @@ fn render_class_body_method(node: &ClassBodyMethodTransport, dest: &mut dyn ::st
 
 fn render_class_body_method_sig(node: &ClassBodyMethodSigTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ClassBodyMethodSigTemplate {
+        function_signature_automatic_semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.function_signature_automatic_semicolon)),
         method_signature: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.method_signature)),
     };
     template.render_into(dest)
@@ -53443,6 +53889,10 @@ fn render_for_header(node: &ForHeaderTransport, dest: &mut dyn ::std::fmt::Write
 
 fn render_for_header_let_const_kind(node: &ForHeaderLetConstKindTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ForHeaderLetConstKindTemplate {
+        automatic_semicolon: match &node.automatic_semicolon {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
         kind: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.kind)),
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
     };
@@ -53491,6 +53941,10 @@ fn render_formal_parameters_group1(node: &FormalParametersGroup1Transport, dest:
 fn render_from_clause(node: &FromClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     render_string(&node.source, dest)?;
     Ok(())
+}
+
+fn render_function_signature_automatic_semicolon(t: &FunctionSignatureAutomaticSemicolonTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
 fn render_import_attribute_object(t: &ImportAttributeObjectEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -53781,8 +54235,8 @@ fn render_reserved_identifier(t: &ReservedIdentifierTransport, dest: &mut dyn ::
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_semicolon(t: &SemicolonTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
+fn render_semicolon(t: &SemicolonEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.to_string()).map_err(::askama::Error::from)
 }
 
 fn render_static_marker(t: &StaticMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -54192,20 +54646,12 @@ fn render_binary_expression(node: &BinaryExpressionTransport, dest: &mut dyn ::s
 }
 
 fn render_break_statement(node: &BreakStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.label.is_none() && node.semicolon.is_none() {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
     let template = BreakStatementTemplate {
         label: match &node.label {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        semicolon: match &node.semicolon {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
     };
     template.render_into(dest)
 }
@@ -54299,7 +54745,10 @@ fn render_class_declaration(node: &ClassDeclarationTransport, dest: &mut dyn ::s
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ClassDeclarationTemplate {
-        automatic_semicolon: OptionalNonterminalView::Missing,
+        automatic_semicolon: match &node.automatic_semicolon {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         class_heritage: match &node.class_heritage {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -54329,6 +54778,10 @@ fn render_class_heritage(node: &ClassHeritageTransport, dest: &mut dyn ::std::fm
 
 fn render_class_static_block(node: &ClassStaticBlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ClassStaticBlockTemplate {
+        automatic_semicolon: match &node.automatic_semicolon {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
     };
     template.render_into(dest)
@@ -54399,35 +54852,19 @@ fn render_constructor_type(node: &ConstructorTypeTransport, dest: &mut dyn ::std
 }
 
 fn render_continue_statement(node: &ContinueStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.label.is_none() && node.semicolon.is_none() {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
     let template = ContinueStatementTemplate {
         label: match &node.label {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        semicolon: match &node.semicolon {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
     };
     template.render_into(dest)
 }
 
 fn render_debugger_statement(node: &DebuggerStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.semicolon.is_none() {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
     let template = DebuggerStatementTemplate {
-        semicolon: match &node.semicolon {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
     };
     template.render_into(dest)
 }
@@ -54579,10 +55016,7 @@ fn render_export_statement(node: &ExportStatementTransport, dest: &mut dyn ::std
 fn render_expression_statement(node: &ExpressionStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExpressionStatementTemplate {
         expressions: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expressions)),
-        semicolon: match &node.semicolon {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
     };
     template.render_into(dest)
 }
@@ -54729,6 +55163,10 @@ fn render_function_declaration(node: &FunctionDeclarationTransport, dest: &mut d
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
+        automatic_semicolon: match &node.automatic_semicolon {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters)),
@@ -54780,6 +55218,7 @@ fn render_function_signature(node: &FunctionSignatureTransport, dest: &mut dyn :
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
+        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
         type_parameters: match &node.type_parameters {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -54827,6 +55266,10 @@ fn render_generator_function(node: &GeneratorFunctionTransport, dest: &mut dyn :
 fn render_generator_function_declaration(node: &GeneratorFunctionDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = GeneratorFunctionDeclarationTemplate {
         async_marker: match &node.async_marker {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+        automatic_semicolon: match &node.automatic_semicolon {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
@@ -54904,10 +55347,7 @@ fn render_import(t: &ImportTransport, dest: &mut dyn ::std::fmt::Write) -> Resul
 fn render_import_alias(node: &ImportAliasTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ImportAliasTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        semicolon: match &node.semicolon {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
         value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
     template.render_into(dest)
@@ -54957,10 +55397,7 @@ fn render_import_statement(node: &ImportStatementTransport, dest: &mut dyn ::std
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
             None => OptionalNonterminalView::Missing,
         },
-        semicolon: match &node.semicolon {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
     };
     template.render_into(dest)
 }
@@ -55191,10 +55628,7 @@ fn render_lexical_declaration(node: &LexicalDeclarationTransport, dest: &mut dyn
             trailing: false,
         },
         kind: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.kind)),
-        semicolon: match &node.semicolon {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
     };
     template.render_into(dest)
 }
@@ -55799,20 +56233,12 @@ fn render_rest_type(node: &RestTypeTransport, dest: &mut dyn ::std::fmt::Write) 
 }
 
 fn render_return_statement(node: &ReturnStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.semicolon.is_none() && node.expressions.is_none() {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
     let template = ReturnStatementTemplate {
         expressions: match &node.expressions {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        semicolon: match &node.semicolon {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
     };
     template.render_into(dest)
 }
@@ -55853,7 +56279,7 @@ fn render_spread_element(node: &SpreadElementTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_statement_block(node: &StatementBlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.statements.as_deref().is_none_or(<[_]>::is_empty) {
+    if node.statements.as_deref().is_none_or(<[_]>::is_empty) && node.automatic_semicolon.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
@@ -55863,7 +56289,10 @@ fn render_statement_block(node: &StatementBlockTransport, dest: &mut dyn ::std::
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = StatementBlockTemplate {
-        automatic_semicolon: OptionalNonterminalView::Missing,
+        automatic_semicolon: match &node.automatic_semicolon {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
         statements: ListNonterminalView {
             items: statements_buf.as_slice(),
             separator: "",
@@ -56036,10 +56465,7 @@ fn render_this(t: &ThisTransport, dest: &mut dyn ::std::fmt::Write) -> Result<()
 fn render_throw_statement(node: &ThrowStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ThrowStatementTemplate {
         expressions: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expressions)),
-        semicolon: match &node.semicolon {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
     };
     template.render_into(dest)
 }
@@ -56089,10 +56515,7 @@ fn render_tuple_type(node: &TupleTypeTransport, dest: &mut dyn ::std::fmt::Write
 fn render_type_alias_declaration(node: &TypeAliasDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = TypeAliasDeclarationTemplate {
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        semicolon: match &node.semicolon {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
         type_parameters: match &node.type_parameters {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
@@ -56245,11 +56668,6 @@ fn render_update_expression(node: &UpdateExpressionTransport, dest: &mut dyn ::s
 }
 
 fn render_variable_declaration(node: &VariableDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.declarators.is_empty() && node.semicolon.is_none() {
-        if let Some(text) = node.transport_text.as_deref() {
-            return dest.write_str(text).map_err(::askama::Error::from);
-        }
-    }
     let declarators_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.declarators.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -56260,10 +56678,7 @@ fn render_variable_declaration(node: &VariableDeclarationTransport, dest: &mut d
             leading: false,
             trailing: false,
         },
-        semicolon: match &node.semicolon {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
+        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
     };
     template.render_into(dest)
 }
@@ -57054,6 +57469,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::AssertsAnnotationAsserts(t) => t.render_into(dest),
             AnyTransport::AsyncMarker(t) => t.render_into(dest),
             AnyTransport::AugmentedAssignmentExpressionOperator(t) => t.render_into(dest),
+            AnyTransport::AutomaticSemicolon(t) => t.render_into(dest),
             AnyTransport::BinaryExpressionGroup1(t) => render_binary_expression_group1(t, dest),
             AnyTransport::CallExpressionCall(t) => render_call_expression_call(t, dest),
             AnyTransport::CallExpressionMember(t) => render_call_expression_member(t, dest),
@@ -57087,6 +57503,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::ForHeaderVarKind(t) => render_for_header_var_kind(t, dest),
             AnyTransport::FormalParametersGroup1(t) => render_formal_parameters_group1(t, dest),
             AnyTransport::FromClause(t) => render_from_clause(t, dest),
+            AnyTransport::FunctionSignatureAutomaticSemicolon(t) => t.render_into(dest),
             AnyTransport::ImportAttributeObject(t) => t.render_into(dest),
             AnyTransport::ImportClauseDefaultImport(t) => render_import_clause_default_import(t, dest),
             AnyTransport::ImportClauseGroup1(t) => render_import_clause_group1(t, dest),
@@ -57438,49 +57855,50 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Yield(t) => t.render_into(dest),
             AnyTransport::Literal0_69_6e => dest.write_str("in").map_err(::askama::Error::from),
             AnyTransport::Literal1_2c => dest.write_str(",").map_err(::askama::Error::from),
-            AnyTransport::Literal2_76_61_72 => dest.write_str("var").map_err(::askama::Error::from),
-            AnyTransport::Literal3_2d => dest.write_str("-").map_err(::askama::Error::from),
-            AnyTransport::Literal4_2b => dest.write_str("+").map_err(::askama::Error::from),
-            AnyTransport::Literal5_72_65_61_64_6f_6e_6c_79 => dest.write_str("readonly").map_err(::askama::Error::from),
-            AnyTransport::Literal6_61_62_73_74_72_61_63_74 => dest.write_str("abstract").map_err(::askama::Error::from),
-            AnyTransport::Literal7_64_65_63_6c_61_72_65 => dest.write_str("declare").map_err(::askama::Error::from),
-            AnyTransport::Literal8_73_74_61_74_69_63 => dest.write_str("static").map_err(::askama::Error::from),
-            AnyTransport::Literal9_2e => dest.write_str(".").map_err(::askama::Error::from),
-            AnyTransport::Literal10_3f_2e => dest.write_str("?.").map_err(::askama::Error::from),
-            AnyTransport::Literal11_6f_76_65_72_72_69_64_65 => dest.write_str("override").map_err(::askama::Error::from),
-            AnyTransport::Literal12_3f => dest.write_str("?").map_err(::askama::Error::from),
-            AnyTransport::Literal13_61_73_79_6e_63 => dest.write_str("async").map_err(::askama::Error::from),
-            AnyTransport::Literal14_63_6f_6e_73_74 => dest.write_str("const").map_err(::askama::Error::from),
-            AnyTransport::Literal15_3a => dest.write_str(":").map_err(::askama::Error::from),
-            AnyTransport::Literal16_75_73_69_6e_67 => dest.write_str("using").map_err(::askama::Error::from),
-            AnyTransport::Literal17_26_26 => dest.write_str("&&").map_err(::askama::Error::from),
-            AnyTransport::Literal18_7c_7c => dest.write_str("||").map_err(::askama::Error::from),
-            AnyTransport::Literal19_3e_3e => dest.write_str(">>").map_err(::askama::Error::from),
-            AnyTransport::Literal20_3e_3e_3e => dest.write_str(">>>").map_err(::askama::Error::from),
-            AnyTransport::Literal21_3c_3c => dest.write_str("<<").map_err(::askama::Error::from),
-            AnyTransport::Literal22_26 => dest.write_str("&").map_err(::askama::Error::from),
-            AnyTransport::Literal23_5e => dest.write_str("^").map_err(::askama::Error::from),
-            AnyTransport::Literal24_7c => dest.write_str("|").map_err(::askama::Error::from),
-            AnyTransport::Literal25_2a => dest.write_str("*").map_err(::askama::Error::from),
-            AnyTransport::Literal26_2f => dest.write_str("/").map_err(::askama::Error::from),
-            AnyTransport::Literal27_25 => dest.write_str("%").map_err(::askama::Error::from),
-            AnyTransport::Literal28_2a_2a => dest.write_str("**").map_err(::askama::Error::from),
-            AnyTransport::Literal29_3c => dest.write_str("<").map_err(::askama::Error::from),
-            AnyTransport::Literal30_3c_3d => dest.write_str("<=").map_err(::askama::Error::from),
-            AnyTransport::Literal31_3d_3d => dest.write_str("==").map_err(::askama::Error::from),
-            AnyTransport::Literal32_3d_3d_3d => dest.write_str("===").map_err(::askama::Error::from),
-            AnyTransport::Literal33_21_3d => dest.write_str("!=").map_err(::askama::Error::from),
-            AnyTransport::Literal34_21_3d_3d => dest.write_str("!==").map_err(::askama::Error::from),
-            AnyTransport::Literal35_3e_3d => dest.write_str(">=").map_err(::askama::Error::from),
-            AnyTransport::Literal36_3e => dest.write_str(">").map_err(::askama::Error::from),
-            AnyTransport::Literal37_3f_3f => dest.write_str("??").map_err(::askama::Error::from),
-            AnyTransport::Literal38_69_6e_73_74_61_6e_63_65_6f_66 => dest.write_str("instanceof").map_err(::askama::Error::from),
-            AnyTransport::Literal39_3b => dest.write_str(";").map_err(::askama::Error::from),
-            AnyTransport::Literal40_65_78_74_65_6e_64_73 => dest.write_str("extends").map_err(::askama::Error::from),
-            AnyTransport::Literal41_61_77_61_69_74 => dest.write_str("await").map_err(::askama::Error::from),
-            AnyTransport::Literal42_74_79_70_65 => dest.write_str("type").map_err(::askama::Error::from),
-            AnyTransport::Literal43_74_79_70_65_6f_66 => dest.write_str("typeof").map_err(::askama::Error::from),
-            AnyTransport::Literal44_61_63_63_65_73_73_6f_72 => dest.write_str("accessor").map_err(::askama::Error::from),
+            AnyTransport::Literal2_0a => dest.write_str("\n").map_err(::askama::Error::from),
+            AnyTransport::Literal3_76_61_72 => dest.write_str("var").map_err(::askama::Error::from),
+            AnyTransport::Literal4_2d => dest.write_str("-").map_err(::askama::Error::from),
+            AnyTransport::Literal5_2b => dest.write_str("+").map_err(::askama::Error::from),
+            AnyTransport::Literal6_72_65_61_64_6f_6e_6c_79 => dest.write_str("readonly").map_err(::askama::Error::from),
+            AnyTransport::Literal7_61_62_73_74_72_61_63_74 => dest.write_str("abstract").map_err(::askama::Error::from),
+            AnyTransport::Literal8_64_65_63_6c_61_72_65 => dest.write_str("declare").map_err(::askama::Error::from),
+            AnyTransport::Literal9_73_74_61_74_69_63 => dest.write_str("static").map_err(::askama::Error::from),
+            AnyTransport::Literal10_2e => dest.write_str(".").map_err(::askama::Error::from),
+            AnyTransport::Literal11_3f_2e => dest.write_str("?.").map_err(::askama::Error::from),
+            AnyTransport::Literal12_6f_76_65_72_72_69_64_65 => dest.write_str("override").map_err(::askama::Error::from),
+            AnyTransport::Literal13_3f => dest.write_str("?").map_err(::askama::Error::from),
+            AnyTransport::Literal14_61_73_79_6e_63 => dest.write_str("async").map_err(::askama::Error::from),
+            AnyTransport::Literal15_63_6f_6e_73_74 => dest.write_str("const").map_err(::askama::Error::from),
+            AnyTransport::Literal16_3a => dest.write_str(":").map_err(::askama::Error::from),
+            AnyTransport::Literal17_75_73_69_6e_67 => dest.write_str("using").map_err(::askama::Error::from),
+            AnyTransport::Literal18_26_26 => dest.write_str("&&").map_err(::askama::Error::from),
+            AnyTransport::Literal19_7c_7c => dest.write_str("||").map_err(::askama::Error::from),
+            AnyTransport::Literal20_3e_3e => dest.write_str(">>").map_err(::askama::Error::from),
+            AnyTransport::Literal21_3e_3e_3e => dest.write_str(">>>").map_err(::askama::Error::from),
+            AnyTransport::Literal22_3c_3c => dest.write_str("<<").map_err(::askama::Error::from),
+            AnyTransport::Literal23_26 => dest.write_str("&").map_err(::askama::Error::from),
+            AnyTransport::Literal24_5e => dest.write_str("^").map_err(::askama::Error::from),
+            AnyTransport::Literal25_7c => dest.write_str("|").map_err(::askama::Error::from),
+            AnyTransport::Literal26_2a => dest.write_str("*").map_err(::askama::Error::from),
+            AnyTransport::Literal27_2f => dest.write_str("/").map_err(::askama::Error::from),
+            AnyTransport::Literal28_25 => dest.write_str("%").map_err(::askama::Error::from),
+            AnyTransport::Literal29_2a_2a => dest.write_str("**").map_err(::askama::Error::from),
+            AnyTransport::Literal30_3c => dest.write_str("<").map_err(::askama::Error::from),
+            AnyTransport::Literal31_3c_3d => dest.write_str("<=").map_err(::askama::Error::from),
+            AnyTransport::Literal32_3d_3d => dest.write_str("==").map_err(::askama::Error::from),
+            AnyTransport::Literal33_3d_3d_3d => dest.write_str("===").map_err(::askama::Error::from),
+            AnyTransport::Literal34_21_3d => dest.write_str("!=").map_err(::askama::Error::from),
+            AnyTransport::Literal35_21_3d_3d => dest.write_str("!==").map_err(::askama::Error::from),
+            AnyTransport::Literal36_3e_3d => dest.write_str(">=").map_err(::askama::Error::from),
+            AnyTransport::Literal37_3e => dest.write_str(">").map_err(::askama::Error::from),
+            AnyTransport::Literal38_3f_3f => dest.write_str("??").map_err(::askama::Error::from),
+            AnyTransport::Literal39_69_6e_73_74_61_6e_63_65_6f_66 => dest.write_str("instanceof").map_err(::askama::Error::from),
+            AnyTransport::Literal40_3b => dest.write_str(";").map_err(::askama::Error::from),
+            AnyTransport::Literal41_65_78_74_65_6e_64_73 => dest.write_str("extends").map_err(::askama::Error::from),
+            AnyTransport::Literal42_61_77_61_69_74 => dest.write_str("await").map_err(::askama::Error::from),
+            AnyTransport::Literal43_74_79_70_65 => dest.write_str("type").map_err(::askama::Error::from),
+            AnyTransport::Literal44_74_79_70_65_6f_66 => dest.write_str("typeof").map_err(::askama::Error::from),
+            AnyTransport::Literal45_61_63_63_65_73_73_6f_72 => dest.write_str("accessor").map_err(::askama::Error::from),
             AnyTransport::Verbatim(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
         }
     }
@@ -57498,6 +57916,7 @@ impl AnyTransport {
             Self::ArrowFunctionParameter(t) => t.transport_named,
             Self::AssertsAnnotationAsserts(t) => t.transport_named,
             Self::AsyncMarker(t) => t.transport_named,
+            Self::AutomaticSemicolon(t) => t.transport_named,
             Self::BinaryExpressionGroup1(t) => t.transport_named,
             Self::CallExpressionCall(t) => t.transport_named,
             Self::CallExpressionMember(t) => t.transport_named,
@@ -57530,6 +57949,7 @@ impl AnyTransport {
             Self::ForHeaderVarKind(t) => t.transport_named,
             Self::FormalParametersGroup1(t) => t.transport_named,
             Self::FromClause(t) => t.transport_named,
+            Self::FunctionSignatureAutomaticSemicolon(t) => t.transport_named,
             Self::ImportClauseDefaultImport(t) => t.transport_named,
             Self::ImportClauseGroup1(t) => t.transport_named,
             Self::ImportSpecifierAs(t) => t.transport_named,
@@ -57560,7 +57980,6 @@ impl AnyTransport {
             Self::PublicFieldDefinitionStaticMods(t) => t.transport_named,
             Self::ReadonlyMarker(t) => t.transport_named,
             Self::ReservedIdentifier(t) => t.transport_named,
-            Self::Semicolon(t) => t.transport_named,
             Self::StaticMarker(t) => t.transport_named,
             Self::StringDouble(t) => t.transport_named,
             Self::StringSingle(t) => t.transport_named,

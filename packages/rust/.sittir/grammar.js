@@ -2845,6 +2845,7 @@ function wire(config, base2) {
     groups: cfg.groups,
     polymorphsConfig: cfg.polymorphs,
     renderAs: cfg.renderAs,
+    visibleExternals: cfg.visibleExternals,
     expectDiagnostics: cfg.expectDiagnostics,
     expectTestFailures: cfg.expectTestFailures,
     currentRuleKind: null,
@@ -2857,7 +2858,7 @@ function wire(config, base2) {
   composeOrSynthesizePolymorphParents(outRules, polymorphs, context);
   injectHiddenRulePlaceholders(outRules, polymorphs, context);
   injectTransformHiddenRulePlaceholders(outRules, transforms, context);
-  if (baseArg && cfg.groups && hasBodyPatternGroups(cfg.groups)) {
+  if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.visibleExternals)) {
     const baseRules = baseArg.grammar?.rules ?? baseArg.rules ?? {};
     for (const baseName of Object.keys(baseRules)) {
       if (baseName in outRules) continue;
@@ -2866,6 +2867,7 @@ function wire(config, base2) {
   }
   wrapAllRuleFns(outRules, context);
   applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
+  applyWireVisibleExternalsRewrite(outRules, cfg.visibleExternals);
   if (baseArg) {
     for (const name of getEnrichClauseGroups(base2)) {
       context.syntheticInline.add(name);
@@ -3180,6 +3182,66 @@ function buildPatternReplacingFn(fn, candidates) {
     const result = fn($, previous);
     return replaceInBodyRt(result, candidates);
   };
+}
+function withStringGlobalShim(fn) {
+  const g = globalThis;
+  const hadString = "string" in g;
+  const previous = g.string;
+  if (!hadString) {
+    g.string = (value) => ({ type: "STRING", value });
+  }
+  try {
+    return fn();
+  } finally {
+    if (!hadString) delete g.string;
+    else g.string = previous;
+  }
+}
+function rewriteVisibleExternalRefsRt(rule, hiddenToVisible) {
+  if (!rule || typeof rule !== "object") return rule;
+  const r = rule;
+  const t = r.type;
+  if (t === "SYMBOL") {
+    const visibleName = hiddenToVisible.get(r.name ?? "");
+    if (visibleName === void 0) return rule;
+    return { type: "ALIAS", content: rule, named: true, value: visibleName };
+  }
+  if (t === "SEQ" || t === "CHOICE") {
+    const members = r.members;
+    if (!Array.isArray(members)) return rule;
+    let changed = false;
+    const newMembers = members.map((m) => {
+      const replaced = rewriteVisibleExternalRefsRt(m, hiddenToVisible);
+      if (replaced !== m) changed = true;
+      return replaced;
+    });
+    return changed ? { ...r, members: newMembers } : rule;
+  }
+  if (t === "OPTIONAL" || t === "REPEAT" || t === "REPEAT1" || t === "FIELD" || t === "PREC" || t === "PREC_LEFT" || t === "PREC_RIGHT" || t === "PREC_DYNAMIC" || t === "TOKEN" || t === "ALIAS") {
+    const newContent = rewriteVisibleExternalRefsRt(r.content, hiddenToVisible);
+    return newContent !== r.content ? { ...r, content: newContent } : rule;
+  }
+  return rule;
+}
+function buildVisibleExternalsRewritingFn(fn, hiddenToVisible) {
+  return function visibleExternalsRewritingRuleFn($, previous) {
+    const result = fn($, previous);
+    return rewriteVisibleExternalRefsRt(result, hiddenToVisible);
+  };
+}
+function applyWireVisibleExternalsRewrite(rules, config) {
+  if (!config) return;
+  const $ = makeSimpleDollarProxy();
+  const entries = withStringGlobalShim(() => config($));
+  if (!entries) return;
+  const hiddenToVisible = /* @__PURE__ */ new Map();
+  for (const hiddenName of Object.keys(entries)) {
+    hiddenToVisible.set(hiddenName, hiddenName.replace(/^_+/, ""));
+  }
+  if (hiddenToVisible.size === 0) return;
+  for (const [name, fn] of Object.entries(rules)) {
+    rules[name] = buildVisibleExternalsRewritingFn(fn, hiddenToVisible);
+  }
 }
 function applyWirePatternReplacement(rules, authoredRuleNames, groups, context) {
   const candidates = [];

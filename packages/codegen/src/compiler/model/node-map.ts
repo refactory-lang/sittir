@@ -1439,8 +1439,17 @@ export function deriveValuesForRule(
 			if (isEnumChoiceRule(rule)) {
 				return rule.members.map((m) => {
 					const text = literalTextOf(m) ?? '';
-					const entry = text ? findEntryForLiteralText(ctx?.kindEntries ?? [], text) : undefined;
-					const rk = entry?.kind;
+					// Literal-first chain (#129); for literal-carrying SYMBOL
+					// members whose text has no anon-token catalog row (an
+					// aliased fixed-text external — `automatic_semicolon`'s
+					// '\n' render text is not a parse literal), fall back to
+					// the member's own KIND entry: the parser emits the kind,
+					// so its id is the wire tag the enum must accept.
+					const symName = isLinkSymbol(m) ? m.name : undefined;
+					const entry =
+						(text ? findEntryForLiteralText(ctx?.kindEntries ?? [], text) : undefined) ??
+						(symName !== undefined ? findEntryForKindName(ctx?.kindEntries ?? [], symName) : undefined);
+					const rk = entry?.kind ?? symName;
 					return {
 						value: text,
 						resolvedKind: rk,
@@ -3122,7 +3131,14 @@ export class AssembledEnum extends AssembledLeaf<ChoiceRule<'link'>> {
 		for (const member of rule.members) {
 			const text = literalTextOf(member);
 			if (text === undefined) continue;
-			const entry = findEntryForLiteralText(opts?.kindEntries ?? [], text);
+			// Literal-first chain (#129); literal-carrying SYMBOL members whose
+			// text is a RENDER literal with no anon-token row (aliased fixed-
+			// text externals — `automatic_semicolon`'s '\n') resolve through
+			// their own KIND entry instead: the parser emits the kind, so its
+			// id is the wire tag the enum dispatches on.
+			const entry =
+				findEntryForLiteralText(opts?.kindEntries ?? [], text) ??
+				(isLinkSymbol(member) ? findEntryForKindName(opts?.kindEntries ?? [], member.name) : undefined);
 			if (entry === undefined) continue;
 			resolved.push(entry.kind);
 			if (!byText.has(text)) byText.set(text, { kind: entry.kind, id: entry.id });

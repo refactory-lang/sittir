@@ -716,6 +716,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	// The DSL globals (string, etc.) are still injected at this point —
 	// evaluate()'s try block is still active.
 	const renderAs = drainRenderAsMetadata(opts, ctx);
+	const visibleExternals = drainVisibleExternalsMetadata(opts, ctx);
 
 	// Rules map mirrors tree-sitter's view: no synthesized top-level
 	// entry for alias TARGETS. The source (`_X`) is the canonical
@@ -751,6 +752,7 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		groups,
 		polymorphsConfig,
 		renderAs,
+		visibleExternals,
 		expectDiagnostics,
 		expectTestFailures,
 		orphanedSyntheticGroups
@@ -1683,6 +1685,52 @@ function drainRenderAsMetadata(opts: GrammarOptions, ctx: EvaluateCtx): Record<s
 }
 
 /**
+ * Evaluate the `visibleExternals:` fn from the wire context and return the
+ * hidden-name → sittir-side render body map, for `RawGrammar.visibleExternals`.
+ *
+ * @remarks
+ * Like `drainRenderAsMetadata`, this injects each body into `rules` under
+ * the HIDDEN name (the storage identity), replacing the external scanner's
+ * empty-pattern placeholder. The visible name is parse identity only,
+ * carried by the ALIAS wrap on references — the SYMBOL→ALIAS
+ * rewrite's alias target resolves to, and per `resolveRule`'s ALIAS case,
+ * whether a name gets its own independent top-level IR kind is decided
+ * solely by whether it's a `rules` bag key at all.
+ *
+ * @returns A Record<string, Rule<'evaluate'>> for `RawGrammar.visibleExternals`,
+ * or `undefined` when no `visibleExternals:` was declared.
+ */
+function drainVisibleExternalsMetadata(
+	opts: GrammarOptions,
+	ctx: EvaluateCtx
+): Record<string, Rule<'evaluate'>> | undefined {
+	const { rules, refs, provenanceByKind } = ctx;
+	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+	if (!wireCtx || !wireCtx.visibleExternals) return undefined;
+
+	const $ = createProxy('_visibleExternals_', refs);
+	const rawEntries = wireCtx.visibleExternals($ as unknown as Record<string, unknown>);
+	if (!rawEntries || Object.keys(rawEntries).length === 0) return undefined;
+
+	const result: Record<string, Rule<'evaluate'>> = {};
+	for (const [name, rawBody] of Object.entries(rawEntries)) {
+		const rule = normalize(rawBody as Input);
+		result[name] = rule;
+		// Mirror drainRenderAsMetadata: inject the body into the rules map
+		// under the HIDDEN name, replacing the external's empty-pattern
+		// placeholder. The hidden name is the STORAGE identity (aliasedFrom
+		// doctrine) — registering under the visible name instead creates a
+		// SECOND node colliding on the same typeName, and the transport
+		// struct gets emitted from the empty placeholder (no render text).
+		// The visible name stays parse-identity-only, carried by the ALIAS
+		// wrap on references; the whole mint modeling path handles the rest.
+		rules[name] = rule;
+		provenanceByKind.set(name, 'evaluate-synthesized');
+	}
+	return result;
+}
+
+/**
  * Merge enrich-generated override callbacks from the base grammar's
  * `__enrichOverrides__` side-channel into `opts.rules`.
  *
@@ -1790,6 +1838,7 @@ function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>
 			}
 		}
 		applyPatternReplacement(rules, ctx, wireCtx);
+		applyVisibleExternalsRewrite(rules, { evaluateCtx: ctx, wireCtx });
 		prunePlaceholderOrphans(rules, wireCtx);
 	}
 }
@@ -2181,6 +2230,114 @@ function patternRulesEqual(a: Rule<'evaluate'>, b: Rule<'evaluate'>): boolean {
 		}
 		default:
 			return false;
+	}
+}
+
+// ---------------------------------------------------------------------------
+// visibleExternals — SYMBOL→ALIAS rewrite (sittir-pipeline path)
+// ---------------------------------------------------------------------------
+
+/**
+ * Recursively rewrite every `SymbolRule<'evaluate'>` whose `name` is a
+ * `visibleExternals:` key into a named `AliasRule<'evaluate'>` wrapping that
+ * symbol. Sittir-pipeline counterpart of `wire.ts`'s
+ * `rewriteVisibleExternalRefsRt` — both MUST produce structurally identical
+ * output (see `VisibleExternalsConfig`'s doc comment).
+ */
+interface VisibleExternalsRewriteCtx {
+	/** hidden external name → visible (underscore-trimmed) alias name. */
+	readonly hiddenToVisible: ReadonlyMap<string, string>;
+}
+
+function rewriteVisibleExternalRefs(rule: Rule<'evaluate'>, ctx: VisibleExternalsRewriteCtx): Rule<'evaluate'> {
+	const { hiddenToVisible } = ctx;
+	if (rule.type === SYMBOL) {
+		const visibleName = hiddenToVisible.get((rule as SymbolRule<'evaluate'>).name);
+		if (visibleName === undefined) return rule;
+		return { type: ALIAS, content: rule, named: true, value: visibleName } satisfies AliasRule<'evaluate'>;
+	}
+	switch (rule.type) {
+		case SEQ: {
+			const r = rule as SeqRule<'evaluate'>;
+			const members = rewriteVisibleExternalRefsInArray(r.members, ctx);
+			return members === r.members ? rule : ({ ...r, members } as Rule<'evaluate'>);
+		}
+		case CHOICE: {
+			const r = rule as ChoiceRule<'evaluate'>;
+			const members = rewriteVisibleExternalRefsInArray(r.members, ctx);
+			return members === r.members ? rule : ({ ...r, members } as Rule<'evaluate'>);
+		}
+		case OPTIONAL: {
+			const r = rule as OptionalRule<'evaluate'>;
+			const content = rewriteVisibleExternalRefs(r.content, ctx);
+			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
+		}
+		case REPEAT: {
+			const r = rule as RepeatRule<'evaluate'>;
+			const content = rewriteVisibleExternalRefs(r.content, ctx);
+			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
+		}
+		case REPEAT1: {
+			const r = rule as Repeat1Rule<'evaluate'>;
+			const content = rewriteVisibleExternalRefs(r.content, ctx);
+			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
+		}
+		case FIELD: {
+			const r = rule as FieldRule<'evaluate'>;
+			const content = rewriteVisibleExternalRefs(r.content, ctx);
+			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
+		}
+		default:
+			return rule;
+	}
+}
+
+/**
+ * Map `rewriteVisibleExternalRefs` over an array, returning the original
+ * array when no element changed (cheap reference-equality check for the
+ * parent node).
+ */
+function rewriteVisibleExternalRefsInArray(
+	members: Rule<'evaluate'>[],
+	ctx: VisibleExternalsRewriteCtx
+): Rule<'evaluate'>[] {
+	let changed = false;
+	const out: Rule<'evaluate'>[] = members.map((m) => {
+		const r = rewriteVisibleExternalRefs(m, ctx);
+		if (r !== m) changed = true;
+		return r;
+	});
+	return changed ? out : members;
+}
+
+/**
+ * Evaluate the `visibleExternals:` fn from the wire context (if configured)
+ * and rewrite every matching SYMBOL reference across ALL rules — authored
+ * AND unoverridden base rules alike, since `rules` already holds every base
+ * rule's evaluated body as plain data by this point (unlike wire.ts's
+ * lazy-fn-per-rule tree-sitter-CLI model, sittir's evaluate pipeline has no
+ * "unreached" base rule bodies to separately inject a passthrough for).
+ */
+interface ApplyVisibleExternalsCtx {
+	readonly evaluateCtx: EvaluateCtx;
+	readonly wireCtx: WireContext;
+}
+
+function applyVisibleExternalsRewrite(rules: Record<string, Rule<'evaluate'>>, ctx: ApplyVisibleExternalsCtx): void {
+	const { evaluateCtx, wireCtx } = ctx;
+	if (!wireCtx.visibleExternals) return;
+	const $ = createProxy('_visibleExternals_', evaluateCtx.refs);
+	const rawEntries = wireCtx.visibleExternals($ as unknown as Record<string, unknown>);
+	if (!rawEntries) return;
+	const hiddenToVisible = new Map<string, string>();
+	for (const hiddenName of Object.keys(rawEntries)) {
+		hiddenToVisible.set(hiddenName, hiddenName.replace(/^_+/, ''));
+	}
+	if (hiddenToVisible.size === 0) return;
+	const rewriteCtx: VisibleExternalsRewriteCtx = { hiddenToVisible };
+	for (const [name, body] of Object.entries(rules)) {
+		const rewritten = rewriteVisibleExternalRefs(body, rewriteCtx);
+		if (rewritten !== body) rules[name] = rewritten;
 	}
 }
 
