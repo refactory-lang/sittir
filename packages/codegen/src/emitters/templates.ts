@@ -1255,10 +1255,18 @@ function selectJoinFilter(
 }
 
 /**
- * Default join separator: a single space between elements when the
- * grammar didn't capture an explicit separator literal.
+ * Default join separator when the grammar didn't capture an explicit
+ * separator literal. SpacingWriter first consumer (2026-07-24 spec):
+ * empty — the render-time writer inserts a space exactly where a
+ * word-class char would collide with a word-class char, so unseparated
+ * lists no longer need a simulated style space. This is what lets a
+ * statement list whose items self-terminate (';', visible `newline` /
+ * `automatic_semicolon` nodes rendering '\n') join without planting
+ * line-leading whitespace after the terminator — a python indentation
+ * error under the old ' ' default. Grammar-captured separators
+ * (ruleSep / per-value separators) are real tokens and unaffected.
  */
-const DEFAULT_JOIN_SEPARATOR = ' ';
+const DEFAULT_JOIN_SEPARATOR = '';
 
 /**
  * Emit Jinja for a list-shaped slot: `{{ name | join("…") }}` (or one
