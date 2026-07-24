@@ -375,184 +375,11 @@ export function emitGroupTemplate(node: AssembledGroup, ctx: EmitCtx): string {
 /** Full Jinja conditional: `{% if ... %}...{% endif %}` (incl. whitespace-strip variants). */
 const JINJA_COND_FULL_RE = /^(\{%-? if [^%]+-?%\})([\s\S]*)(\{%-? endif -?%\})$/;
 
-/**
- * Boundary classification at one edge of a rule subtree.
- *
- *  - `{ kind: 'literal', text }` — concrete string literal text (`let`, `:`,
- *    `=>`, …). Used by the word-regex check to test whether the boundary
- *    extends into a single lexeme.
- *  - `{ kind: 'slot' }` — boundary resolves to a Jinja `{{ name }}` slot whose
- *    runtime value is unknown but typically word-like (identifier, literal
- *    body, kind-named nested rendering). Treated as word-like by the
- *    boundary check.
- *  - `{ kind: 'unknown' }` — boundary is opaque (pattern, supertype with no
- *    literal anchor, etc.). Triggers the conservative space fallback.
- */
-type BoundaryEnd =
-	| { readonly kind: 'literal'; readonly text: string }
-	| { readonly kind: 'slot' }
-	| { readonly kind: 'unknown' };
-
 const SLOT_END: BoundaryEnd = { kind: 'slot' };
 const UNKNOWN_END: BoundaryEnd = { kind: 'unknown' };
 
 function literalEnd(text: string): BoundaryEnd {
 	return { kind: 'literal', text };
-}
-
-/**
- * Walk a RenderRule subtree rightward to classify the rightmost boundary.
- * Returns:
- *   - `literal(text)` when a concrete string literal anchors the right edge.
- *   - `slot` when the right edge is a slot-emitting symbol or field (the slot
- *     renders to user content, treated as word-like at the boundary).
- *   - `unknown` when nothing about the boundary can be determined (patterns,
- *     etc.) — caller falls back to inserting a space.
- *
- * Does NOT follow symbol refs into other kinds (conservative — that would
- * require cross-rule resolution and cycle handling).
- */
-function rightmostBoundary(rule: RenderRule): BoundaryEnd {
-	// §D-2a spacing stopgap: a `seq` with the declared `splicedBody` flag was
-	// an opaque `symbol(_x)` ref before the normalize inline hoist spliced it
-	// in (`compiler/normalize.ts`'s `materializeInlinedBody` — see
-	// `RuleBase.splicedBody`'s doc comment). At its OUTER boundaries it must
-	// keep spacing like the opaque unit it replaced (`for await (`, not
-	// `for await(`) — so report it as slot-like (word-like) rather than
-	// walking into its first/last literal. (Strategic render-time spacing
-	// supersedes this — see the deferred follow-up in the plan.)
-	if (rule.type === SEQ && rule.splicedBody === true) return SLOT_END;
-	switch (rule.type) {
-		case STRING:
-			// Named field-wrapped string — it becomes a slot, not a literal.
-			if ((rule as { fieldName?: string }).fieldName !== undefined) return SLOT_END;
-			return literalEnd(rule.value);
-		case SEQ: {
-			for (let i = rule.members.length - 1; i >= 0; i--) {
-				const end = rightmostBoundary(rule.members[i]!);
-				if (end.kind !== 'unknown') return end;
-			}
-			return UNKNOWN_END;
-		}
-		case CHOICE: {
-			// All arms must agree; conservative on disagreement.
-			let acc: BoundaryEnd | undefined;
-			for (const m of rule.members) {
-				const end = rightmostBoundary(m);
-				if (end.kind === 'unknown') return UNKNOWN_END;
-				if (acc === undefined) acc = end;
-				else if (acc.kind !== end.kind) return UNKNOWN_END;
-				else if (acc.kind === 'literal' && end.kind === 'literal' && acc.text !== end.text) {
-					return UNKNOWN_END;
-				}
-			}
-			return acc ?? UNKNOWN_END;
-		}
-		case VARIANT:
-		case GROUP:
-			return rightmostBoundary(rule.content);
-		// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE/default.
-		case SYMBOL:
-			// Symbol refs become slot emissions in the template — word-like at boundary.
-			return SLOT_END;
-		case PATTERN:
-		case SUPERTYPE:
-		case INDENT:
-		case DEDENT:
-		case NEWLINE:
-		default:
-			return UNKNOWN_END;
-	}
-}
-
-/**
- * Walk a RenderRule subtree leftward to classify the leftmost boundary.
- * Symmetric to {@link rightmostBoundary}.
- */
-function leftmostBoundary(rule: RenderRule): BoundaryEnd {
-	// §D-2a spacing stopgap (symmetric to rightmostBoundary): a spliced-body
-	// seq (declared `splicedBody` flag) keeps opaque-symbol spacing at its
-	// outer boundaries.
-	if (rule.type === SEQ && rule.splicedBody === true) return SLOT_END;
-	switch (rule.type) {
-		case STRING:
-			if ((rule as { fieldName?: string }).fieldName !== undefined) return SLOT_END;
-			return literalEnd(rule.value);
-		case SEQ: {
-			for (let i = 0; i < rule.members.length; i++) {
-				const end = leftmostBoundary(rule.members[i]!);
-				if (end.kind !== 'unknown') return end;
-			}
-			return UNKNOWN_END;
-		}
-		case CHOICE: {
-			let acc: BoundaryEnd | undefined;
-			for (const m of rule.members) {
-				const end = leftmostBoundary(m);
-				if (end.kind === 'unknown') return UNKNOWN_END;
-				if (acc === undefined) acc = end;
-				else if (acc.kind !== end.kind) return UNKNOWN_END;
-				else if (acc.kind === 'literal' && end.kind === 'literal' && acc.text !== end.text) {
-					return UNKNOWN_END;
-				}
-			}
-			return acc ?? UNKNOWN_END;
-		}
-		case VARIANT:
-		case GROUP:
-			return leftmostBoundary(rule.content);
-		// PR-P: ENUM case removed — enum-shaped ChoiceRules fall through to CHOICE/default.
-		case SYMBOL:
-			return SLOT_END;
-		case PATTERN:
-		case SUPERTYPE:
-		case INDENT:
-		case DEDENT:
-		case NEWLINE:
-		default:
-			return UNKNOWN_END;
-	}
-}
-
-/**
- * Return true if the leftmost terminal in the rule subtree is a
- * `token.immediate(...)` wrapper — meaning tree-sitter requires it to
- * immediately follow the preceding token with no whitespace.
- */
-function isLeftmostTerminalImmediate(rule: RenderRule): boolean {
-	switch (rule.type) {
-		// NOTE (phase-visibility-tightening finding, see project_preserve_token_wrappers;
-		// wording corrected per PR-136 review): `applyWrapperDeletion`'s TOKEN
-		// case PRESERVES the node (`{...rule, content}` — `immediate` included,
-		// NOT lost), so TokenRule→never under `RenderRule` is a type-level
-		// assertion backed only by the EMPIRICAL fact that no top-level
-		// token(...) rule survives into normalizedRules on any current grammar
-		// (0 hits ×3). The former `case TOKEN: return rule.immediate` arm was
-		// deleted on that basis; if a surviving TOKEN ever appears, the type
-		// lies and this walker silently loses its `immediate` signal — that
-		// reconciliation (either wrapper-deletion stamps an `immediate` leaf
-		// attribute, or Rule<'normalize'> admits TokenRule) is the
-		// preserve-token-wrappers debt, out of scope for this type-only pass.
-		case SEQ: {
-			for (const m of rule.members) {
-				// Only recurse into the first non-empty member.
-				const result = isLeftmostTerminalImmediate(m);
-				// A string member is not immediate (it's a bare literal, not token.immediate)
-				if (m.type === STRING || m.type === PATTERN) return false;
-				return result;
-			}
-			return false;
-		}
-		case CHOICE: {
-			// Immediate only if ALL arms are immediate.
-			return rule.members.length > 0 && rule.members.every((m) => isLeftmostTerminalImmediate(m));
-		}
-		case VARIANT:
-		case GROUP:
-			return isLeftmostTerminalImmediate(rule.content);
-		default:
-			return false;
-	}
 }
 
 /**
@@ -563,39 +390,6 @@ function isLeftmostTerminalImmediate(rule: RenderRule): boolean {
  * (matches `\w`, `[a-zA-Z_]`, identifier-shaped patterns).
  */
 const SLOT_WORDLIKE_CHAR = 'a';
-
-function probeChar(end: BoundaryEnd, side: 'left' | 'right'): string | undefined {
-	if (end.kind === 'literal') {
-		return side === 'right' ? end.text[end.text.length - 1] : end.text[0];
-	}
-	if (end.kind === 'slot') return SLOT_WORDLIKE_CHAR;
-	return undefined;
-}
-
-/**
- * Extract the first non-Jinja-tag character from a template fragment, used
- * to probe the inner-present leftmost char of a conditional body. The body
- * lies between `{%- if ... %}` and `{%- endif %}` (with optional whitespace-
- * strip markers). Returns `undefined` if the body is empty / all tags / all
- * slots.
- *
- * For slot-only bodies (`{{ name }}`), returns the word-like stand-in
- * character so the wordMatcher boundary check still fires when the slot
- * sits next to an identifier-shaped literal.
- */
-function firstBoundaryCharOfCondBody(condText: string): string | undefined {
-	const m = condText.match(JINJA_COND_FULL_RE);
-	if (!m) return undefined;
-	const body = m[2] ?? '';
-	return firstBoundaryCharOfFragment(body);
-}
-
-function lastBoundaryCharOfCondBody(condText: string): string | undefined {
-	const m = condText.match(JINJA_COND_FULL_RE);
-	if (!m) return undefined;
-	const body = m[2] ?? '';
-	return lastBoundaryCharOfFragment(body);
-}
 
 /**
  * Extract the leftmost meaningful character from a template fragment:
@@ -622,80 +416,6 @@ function lastBoundaryCharOfFragment(fragment: string): string | undefined {
 	if (trimmed.endsWith('}}')) return SLOT_WORDLIKE_CHAR;
 	if (trimmed.endsWith('%}')) return undefined;
 	return trimmed[trimmed.length - 1];
-}
-
-/**
- * Core word-boundary check: do `leftChar` and `rightChar` form a single
- * lexeme under `wordMatcher`? Returns true when the regex extends past
- * the boundary (covering both chars) — meaning a separator is required.
- *
- * Examples (wordMatcher = identifier regex):
- *   `t` + `a` → `ta` matches both → space ✓
- *   `:` + `a` → match starts at `:` → no match → no space ✓
- *   `n` + `(` → match `n` only     → no space ✓
- *   `b` + `f` → `bf` matches both  → space ✓
- */
-function charsRequireSpace(leftChar: string, rightChar: string, wordMatcher: RegExp): boolean {
-	if (leftChar === '' || rightChar === '') return false;
-	const combined = leftChar + rightChar;
-	try {
-		const src = wordMatcher.source.replace(/\$$/, '');
-		const flags = wordMatcher.flags.replace(/[gm]/g, '');
-		const anchoredRe = new RegExp(`^(?:${src})`, flags);
-		const m = combined.match(anchoredRe);
-		return !!(m && m[0] !== undefined && m[0].length > 1);
-	} catch {
-		return true;
-	}
-}
-
-/**
- * Decide if a space is needed between two adjacent seq-member RenderRule nodes,
- * given their emitted text fragments.
- *
- * Algorithm (Bug 6):
- * 1. Authoritative no-space: if right's leftmost terminal is `token.immediate`,
- *    return false (no space).
- * 2. Boundary classification: find rightmost-end of left and leftmost-end of
- *    right via rule-tree walks (concrete literal / slot / unknown).
- *    When a side is a conditional `{% if %}body{% endif %}`, use the body's
- *    actual first/last char so the inner-present boundary reflects what
- *    really sits adjacent when the conditional fires — not the symbol's
- *    abstract slot category.
- * 3. Word-regex extension check via {@link charsRequireSpace}.
- * 4. Conservative fallback: unknown side → return true (round-trip safe).
- */
-function needsSeqSpace(
-	left: RenderRule,
-	right: RenderRule,
-	wordMatcher: RegExp,
-	leftText?: string,
-	rightText?: string
-): boolean {
-	if (isLeftmostTerminalImmediate(right)) return false;
-
-	// Derive boundary chars. When the emitted text is a conditional, the body's
-	// real first/last char is the inner-present boundary; otherwise consult
-	// the rule walker.
-	let leftChar: string | undefined;
-	if (leftText !== undefined && JINJA_COND_FULL_RE.test(leftText)) {
-		leftChar = lastBoundaryCharOfCondBody(leftText);
-	} else {
-		const leftEnd = rightmostBoundary(left);
-		if (leftEnd.kind === 'unknown') return true;
-		leftChar = probeChar(leftEnd, 'right');
-	}
-	let rightChar: string | undefined;
-	if (rightText !== undefined && JINJA_COND_FULL_RE.test(rightText)) {
-		rightChar = firstBoundaryCharOfCondBody(rightText);
-	} else {
-		const rightEnd = leftmostBoundary(right);
-		if (rightEnd.kind === 'unknown') return true;
-		rightChar = probeChar(rightEnd, 'left');
-	}
-
-	if (leftChar === undefined || rightChar === undefined) return true;
-	return charsRequireSpace(leftChar, rightChar, wordMatcher);
 }
 
 /**
@@ -751,54 +471,6 @@ function isTopLevelMultiConditional(cond: string): boolean {
 		}
 	}
 	return false;
-}
-
-/**
- * Absorb a leading space INTO a Jinja conditional body so the space only
- * renders when the conditional fires. Converts
- * `{% if x | isPresent %}body{% endif %}` →
- * `{% if x | isPresent %} body{% endif %}`.
- *
- * For top-level multi-conditional strings (synthetic exclusive choices from
- * `buildBranchRenderRuleFromForms`), each arm is a top-level segment:
- * `{% if A %}body_A{% endif %}{% if B %}body_B{% endif %}`. Each segment's
- * opening `{% if %}` needs a space absorbed so that whichever arm fires, the
- * preceding prefix gets a space.
- *
- * Uses `isTopLevelMultiConditional` to distinguish top-level multi-conditionals
- * from nested conditionals (where inner `{% if %}` tags must NOT get spaces).
- *
- * Falls back to unconditional space prepend if no tag matches.
- */
-function absorbLeadingSpaceIntoConditional(cond: string): string {
-	if (isTopLevelMultiConditional(cond)) {
-		// Insert space after each TOP-LEVEL `{% if %}` opening tag, using
-		// string-scan with depth tracking to identify the correct positions.
-		return _insertAfterTopLevelIfTags(cond, ' ');
-	}
-	return cond.replace(/^(\{%-? if [^%]+-?%\})/, '$1 ');
-}
-
-/**
- * Absorb a trailing space INTO a Jinja conditional body so the space only
- * renders when the conditional fires. Converts
- * `{% if x | isPresent %}body{% endif %}` →
- * `{% if x | isPresent %}body {% endif %}`.
- *
- * For top-level multi-conditional strings (exclusive-arms synthetic choices,
- * produced by `buildBranchRenderRuleFromForms`), absorbs trailing space into
- * EVERY TOP-LEVEL `{% endif %}` tag so that whichever arm fires, the following
- * suffix gets a space:
- * `{% if A %}{{ a }}{% endif %}{% if B %}{{ b }}{% endif %}` →
- * `{% if A %}{{ a }} {% endif %}{% if B %}{{ b }} {% endif %}`.
- *
- * Single-conditional strings use `$` anchor (original behaviour).
- */
-function absorbTrailingSpaceIntoConditional(cond: string): string {
-	if (isTopLevelMultiConditional(cond)) {
-		return _insertBeforeTopLevelEndifTags(cond, ' ');
-	}
-	return cond.replace(/(\{%-? endif -?%\})$/, ' $1');
 }
 
 /**
@@ -907,106 +579,36 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 		// PR-P: ENUM handled as CHOICE below via isEnumChoiceRule guard.
 
 		case SEQ: {
-			// Bug 6 fix (replaces Bug 1): insert spaces between consecutive seq
-			// members that would merge into a single lexeme at render time. Uses
-			// rule-tree literal walks + grammar wordMatcher to detect word
-			// boundaries — grammar-derived rather than ad-hoc character classes.
-			//
-			// Emit each member, retaining a parallel [rule, emission] pair so the
-			// boundary check can walk the original RenderRule subtrees for literal text,
-			// while the output array holds the (possibly space-absorbed) strings.
-			//
-			// Absorb-into-conditional refinement (Bug 6 follow-up): when a
-			// conditional sits between two literals, the inner-present space
-			// (between conditional content and its outer neighbour) and the
-			// outer-absent space (between the conditional's two non-conditional
-			// neighbours, when the conditional is absent at runtime) are
-			// INDEPENDENT decisions. To avoid double-emitting the outer-absent
-			// space, we anchor it to the AFTER-conditional boundary only:
-			//
-			//   for `A {% if c %}…{% endif %} B`:
-			//     - boundary (A, cond): inner-present check decides absorb-leading
-			//     - boundary (cond, B): inner-present check decides absorb-trailing
-			//       AND outer-absent check (A vs B) decides literal space between
-			//       `{% endif %}` and B
-			//
-			// This produces master's canonical pattern:
-			//   `A{% if c %} … {% endif %} B`  (inner-leading absorbed + outer
-			//                                     space after endif)
-			const emitted: Array<{ rule: RenderRule; text: string }> = [];
+			// SpacingWriter follow-on (2026-07-24 spec): seq members concatenate
+			// with NO compile-time boundary spaces — the render-time
+			// SpacingWriter inserts a space exactly where a word-class char
+			// would collide with a word-class char across write seams. This
+			// replaces the former four-case conditional-boundary matrix (with
+			// its absorb-into-conditional helpers and the emitted[i-2]
+			// outer-absent lookback): a boundary space's presence depends on
+			// whether optional neighbours render — runtime information the
+			// matrix could only simulate, and the writer simply observes.
+			const parts: string[] = [];
 			for (const m of rule.members) {
 				const text = emitRule(m, ctx);
-				if (text !== '') emitted.push({ rule: m, text });
+				if (text !== '') parts.push(text);
 			}
-			if (emitted.length === 0) return '';
-			const out: string[] = [emitted[0]!.text];
-			for (let i = 1; i < emitted.length; i++) {
-				const prevRule = emitted[i - 1]!.rule;
-				const currRule = emitted[i]!.rule;
-				const currText = emitted[i]!.text;
-				const prevText = out[out.length - 1]!;
-				const currIsCond = JINJA_COND_FULL_RE.test(currText);
-				const prevIsCond = JINJA_COND_FULL_RE.test(prevText);
-
-				// Inner-present check: the boundary as written between prev and curr
-				// when any conditional fires. Pass texts so conditional bodies
-				// contribute their real first/last chars instead of being treated
-				// as opaque slot emissions.
-				const needsInnerSpace = needsSeqSpace(
-					prevRule,
-					currRule,
-					ctx.wordMatcher,
-					prevIsCond ? prevText : undefined,
-					currIsCond ? currText : undefined
-				);
-
-				if (prevIsCond && !currIsCond) {
-					// AFTER-conditional boundary: own the outer-absent space for prev.
-					// If prev is absent at runtime, emitted[i-2] meets currRule. Use
-					// rule-only check (no text) since the absent case has no
-					// conditional body to consult.
-					const beforePrev = emitted[i - 2]?.rule;
-					const needsOuterSpace = beforePrev !== undefined && needsSeqSpace(beforePrev, currRule, ctx.wordMatcher);
-
-					if (needsOuterSpace) {
-						// Outer space handles BOTH the absent case (prev=empty,
-						// beforePrev meets curr) AND the present case (prev's content
-						// followed by space then curr). No need to also absorb-trailing.
-						out.push(' ');
-					} else if (needsInnerSpace) {
-						// No outer space — must absorb-trailing so the inner-present
-						// boundary still has a separator when prev fires.
-						out[out.length - 1] = absorbTrailingSpaceIntoConditional(prevText);
-					}
-					out.push(currText);
-				} else if (!prevIsCond && currIsCond) {
-					// BEFORE-conditional boundary: handle inner-present absorb-leading
-					// only. The outer-absent space (prev vs whatever comes after curr)
-					// is owned by the AFTER-conditional boundary at the next iteration.
-					if (needsInnerSpace) {
-						out.push(absorbLeadingSpaceIntoConditional(currText));
-					} else {
-						out.push(currText);
-					}
-				} else if (prevIsCond && currIsCond) {
-					// Both conditionals: absorb-leading into curr to handle the
-					// inner-present boundary where both fire. This matches master's
-					// pattern (no inter-conditional space; leading absorption on each
-					// conditional handles its own internal needs).
-					if (needsInnerSpace) {
-						out.push(absorbLeadingSpaceIntoConditional(currText));
-					} else {
-						out.push(currText);
-					}
-				} else {
-					// Neither is a conditional — simple literal boundary.
-					if (needsInnerSpace) {
-						out.push(' ');
-					}
-					out.push(currText);
-				}
+			if (parts.length === 0) return '';
+			// Static-static seams only (spec v2 note: "space baked into the
+			// literal"): askama compiles adjacent template literals into ONE
+			// write, so the render-time writer never sees a seam between two
+			// static words ('abstract' + 'class' glued to 'abstractclass').
+			// Apply the writer's exact invariant to the statically-known seam
+			// chars. Template syntax chars ('{' of '{%'/'{{') are not
+			// word-class, so conditional/slot boundaries fall through to the
+			// runtime writer untouched.
+			let seqBody = parts[0]!;
+			for (let i = 1; i < parts.length; i++) {
+				const l = seqBody[seqBody.length - 1]!;
+				const r = parts[i]![0]!;
+				if (isStaticWordChar(l) && isStaticWordChar(r)) seqBody += ' ';
+				seqBody += parts[i]!;
 			}
-			const seqBody = out.join('');
 			// §D-2a seq-unit multiplicity (normalize inline hoist): a `seq` that
 			// carries its OWN `multiplicity` is an inlined group body whose
 			// optionality belongs to the sequence as a UNIT — its literals (`=`,
@@ -1267,6 +869,17 @@ function selectJoinFilter(
  * (ruleSep / per-value separators) are real tokens and unaffected.
  */
 const DEFAULT_JOIN_SEPARATOR = '';
+
+/**
+ * Word-class test for STATIC template text chars, mirroring
+ * sittir-core's SpacingWriter default identifier class ([A-Za-z0-9_] +
+ * Unicode alphanumerics). Used only for compile-time static-static seam
+ * spaces in seq emission; every dynamic seam belongs to the runtime
+ * writer.
+ */
+function isStaticWordChar(c: string): boolean {
+	return /[A-Za-z0-9_]/.test(c) || (c.charCodeAt(0) > 127 && /[\p{L}\p{N}]/u.test(c));
+}
 
 /**
  * Emit Jinja for a list-shaped slot: `{{ name | join("…") }}` (or one

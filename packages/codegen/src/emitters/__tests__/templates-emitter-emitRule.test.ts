@@ -231,7 +231,9 @@ describe('emitRule — symbol with fieldName attribute (RenderRule field path)',
 				nodes: new Map()
 			} as unknown as EmitCtx['nodeMap']
 		});
-		expect(emitRule(rule, ctx)).toBe('{{ args | join(" ") }}');
+		// SpacingWriter first consumer: the default list separator is empty —
+		// the render-time writer supplies word-word seam spaces.
+		expect(emitRule(rule, ctx)).toBe('{{ args | join("") }}');
 	});
 
 	it('uses the separator attribute when emitting a list slot', () => {
@@ -381,7 +383,8 @@ describe('emitRule — symbol with multiplicity array (RenderRule repeat path)',
 			} as unknown as EmitCtx['nodeMap']
 		});
 		// isMultiple(slot) is false (values=[]), multiplicity=array → list form
-		expect(emitRule(rule, ctx)).toBe('{{ item | join(" ") }}');
+		// SpacingWriter first consumer: default separator is empty (see above).
+		expect(emitRule(rule, ctx)).toBe('{{ item | join("") }}');
 	});
 
 	it('honours the separator attribute when emitting a list slot', () => {

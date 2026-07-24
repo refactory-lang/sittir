@@ -185,7 +185,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Comparison operators [module]",
-    "message": "re-parse error [ERROR in module at \"a\"]: \"a < b<= c== d>= e> f \nnot a == b or c == d \na  b \na  b \na is b and c != d \na <> \""
+    "message": "re-parse error [ERROR in module at \"a\"]: \"a<b<=c==d>=e>f\nnot a==b or c==d\na b\na b\na is b and c!=d\na<>b\""
   },
   {
     "source": "validator",
@@ -235,7 +235,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Default Tuple Arguments [module]",
-    "message": "re-parse error [ERROR in return_statement at \"a\"]: \"def comp_args ():return a b,\""
+    "message": "re-parse error [ERROR in return_statement at \"a\"]: \"def comp_args():return a b,\""
   },
   {
     "source": "validator",
@@ -255,7 +255,17 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Splat Inside of Expression List [module]",
-    "message": "re-parse error [ERROR in module at \"a\"]: \"a c, =[] 3, \nw x,y,z, =0 *a,c,\""
+    "message": "re-parse error [ERROR in module at \"a\"]: \"a c,=[]3,\nw x,y,z,=0*a,c,\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse",
+    "location": "Strings [module]",
+    "message": "re-parse error [ERROR in module at \"\"\\\\\\\\\\\\\\\\\\\" f'\\N{GRE\"]: \"\"I'm ok\"\n'\"ok\"'\nUR'bye'\nb'sup'\nB\"sup\"\n`1`\n\"\\\\\"\n\"/\"\n\"\\\n\"\nb\"\\x12\\x13\"\n\"\\xab\\1\\12\\1\""
   },
   {
     "source": "validator",
@@ -325,7 +335,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Matching specific values [module]",
-    "message": "re-parse error [MISSING \"newline\" in block]: \"match command.split ():case [\" quit \"]:print (\" Goodbye! \") \n\nquit_game () \n \n\nc\""
+    "message": "re-parse error [MISSING \"newline\" in block]: \"match command.split():case[\"quit\"]:print(\"Goodbye!\")\n\nquit_game()\n\n\ncase[\"look\"]\""
   },
   {
     "source": "validator",
@@ -335,7 +345,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Matching multiple values [module]",
-    "message": "re-parse error [MISSING \"newline\" in block]: \"match command.split ():case [\" drop \",* objects]:for obj in objects:character.dr\""
+    "message": "re-parse error [MISSING \"newline\" in block]: \"match command.split():case[\"drop\",*objects]:for obj in objects:character.drop(ob\""
   },
   {
     "source": "validator",
@@ -355,7 +365,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Or patterns [module]",
-    "message": "re-parse error [MISSING \"newline\" in block]: \"match command.split ():case [\" north \"]|[\" go \",\" north \"]:current_room =current\""
+    "message": "re-parse error [MISSING \"newline\" in block]: \"match command.split():case[\"north\"]|[\"go\",\"north\"]:current_room=current_room.nei\""
   },
   {
     "source": "validator",
@@ -375,7 +385,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Actually not match [module]",
-    "message": "re-parse error [ERROR in match_statement at \"=2\"]: \"match =2 \nmatch a, =2 3, \nmatch :int=secret \nx match, =2 \" hey, what's up? \" \n*m\""
+    "message": "re-parse error [ERROR in match_statement at \"=2\"]: \"match=2\nmatch a,=2 3,\nmatch:int=secret\nx match,=2\"hey, what's up?\"\n*match last,=\""
   },
   {
     "source": "validator",
@@ -385,7 +395,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "If guards [module]",
-    "message": "re-parse error [ERROR in assignment at \"0:case 0 if False:x\"]: \"match 0:case 0 if False:x =False \n \n\ncase 0 if True:x =True\""
+    "message": "re-parse error [ERROR in assignment at \"0:case 0 if False:x\"]: \"match 0:case 0 if False:x=False\n\n\ncase 0 if True:x=True\""
   },
   {
     "source": "validator",
@@ -405,7 +415,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Comma separated cases [module]",
-    "message": "re-parse error [ERROR in assignment at \"():case 0,1:x\"]: \"match ():case 0,1:x =0 \n \n\ncase 0,* x:x =0\""
+    "message": "re-parse error [ERROR in assignment at \"():case 0,1:x\"]: \"match():case 0,1:x=0\n\n\ncase 0,*x:x=0\""
   },
   {
     "source": "validator",
@@ -415,7 +425,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Case terminating in comma [module]",
-    "message": "re-parse error [ERROR in assignment at \"x:case * x:y\"]: \"match x:case * x:y =0\""
+    "message": "re-parse error [ERROR in assignment at \"x:case*x:y\"]: \"match x:case*x:y=0\""
   },
   {
     "source": "validator",
@@ -425,7 +435,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Multiple match patterns [module]",
-    "message": "re-parse error [ERROR in match_statement at \":case a\"]: \"match ...,...:case a,b:return locals ()\""
+    "message": "re-parse error [ERROR in match_statement at \":case a\"]: \"match...,...:case a,b:return locals()\""
   },
   {
     "source": "validator",
@@ -435,7 +445,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Match match, case case [module]",
-    "message": "re-parse error [ERROR in assignment at \"match:case case:x\"]: \"match =case =0 \nmatch match:case case:x =0\""
+    "message": "re-parse error [ERROR in assignment at \"match:case case:x\"]: \"match=case=0\nmatch match:case case:x=0\""
   },
   {
     "source": "validator",
@@ -445,7 +455,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Matching objects [module]",
-    "message": "re-parse error [ERROR in call at \"event.get ():case Cl\"]: \"match event.get ():case Click(position=(x,y)):handle_click_at (x,y) \n \n\ncase Key\""
+    "message": "re-parse error [ERROR in call at \"event.get():case Cli\"]: \"match event.get():case Click(position=(x,y)):handle_click_at(x,y)\n\n\ncase KeyPres\""
   },
   {
     "source": "validator",
@@ -455,7 +465,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Positional arguments [module]",
-    "message": "re-parse error [ERROR in call at \"event.get ():case Cl\"]: \"match event.get ():case Click((x,y)):handle_click_at (x,y)\""
+    "message": "re-parse error [ERROR in call at \"event.get():case Cli\"]: \"match event.get():case Click((x,y)):handle_click_at(x,y)\""
   },
   {
     "source": "validator",
@@ -465,7 +475,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Constants and enums [module]",
-    "message": "re-parse error [ERROR in call at \"event.get ():case Cl\"]: \"match event.get ():case Click((x,y),button=Button.LEFT):handle_click_at (x,y) \n \""
+    "message": "re-parse error [ERROR in call at \"event.get():case Cli\"]: \"match event.get():case Click((x,y),button=Button.LEFT):handle_click_at(x,y)\n\n\nca\""
   },
   {
     "source": "validator",
@@ -495,7 +505,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Complex case patterns on classes [module]",
-    "message": "re-parse error [ERROR in call at \"x:case Something():f\"]: \"match x:case Something():foo1 () \n \n\ncase Something.Else():foo2 () \n \n\ncase Poin\""
+    "message": "re-parse error [ERROR in call at \"x:case Something():f\"]: \"match x:case Something():foo1()\n\n\ncase Something.Else():foo2()\n\n\ncase Point2D(0,\""
   },
   {
     "source": "validator",
@@ -515,7 +525,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Maybe sequence pattern right hand side precedence validation [module]",
-    "message": "re-parse error [ERROR in match_statement at \"x:case\"]: \"match x:case a1,* a2,a3:pass\""
+    "message": "re-parse error [ERROR in match_statement at \"x:case\"]: \"match x:case a1,*a2,a3:pass\""
   },
   {
     "source": "validator",
@@ -535,7 +545,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Future import statements [module]",
-    "message": "re-parse error [ERROR in module at \"from __future__ impo\"]: \"from __future__ import  \nfrom __future__ import  \nfrom __future__ import\""
+    "message": "re-parse error [ERROR in module at \"from __future__ impo\"]: \"from __future__ import\nfrom __future__ import\nfrom __future__ import\""
   },
   {
     "source": "validator",
@@ -565,7 +575,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Delete statements [module]",
-    "message": "re-parse error [ERROR in subscript at \"b\"]: \"del a[1] b[2]\""
+    "message": "re-parse error [ERROR in subscript at \"b\"]: \"del a[1]b[2]\""
   },
   {
     "source": "validator",
@@ -575,7 +585,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Return statements [module]",
-    "message": "re-parse error [ERROR in expression_list at \"c\"]: \"return \nreturn a + b c, \nreturn not b\""
+    "message": "re-parse error [ERROR in expression_list at \"c\"]: \"return\nreturn a+b c,\nreturn not b\""
   },
   {
     "source": "validator",
@@ -585,7 +595,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Nested if statements [module]",
-    "message": "re-parse error [ERROR in if_statement at \"if\"]: \"if a:if b:c \n \n else:if e:f \n \n   \n  \n  g\""
+    "message": "re-parse error [ERROR in if_statement at \"if\"]: \"if a:if b:c\n\nelse:if e:f\n\n\n\ng\""
   },
   {
     "source": "validator",
@@ -605,7 +615,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Try statements [module]",
-    "message": "re-parse error [MISSING \"newline\" in except_clause]: \"try:a \n \n except b:except d as e:except g,h:except:try:a \n \n except b: else:e \n \""
+    "message": "re-parse error [MISSING \"newline\" in except_clause]: \"try:a\n\nexcept b:except d as e:except g,h:except:try:a\n\nexcept b:else:e\n\nfinally:\""
   },
   {
     "source": "validator",
@@ -635,7 +645,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Class definitions [module]",
-    "message": "re-parse error [MISSING \"newline\" in class_definition]: \"class A:def b ():return c \n \n \nclass B ():pass \n \nclass B (method1):def method1 \""
+    "message": "re-parse error [MISSING \"newline\" in class_definition]: \"class A:def b():return c\n\n\nclass B():pass\n\nclass B(method1):def method1():return\""
   },
   {
     "source": "validator",
@@ -645,7 +655,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Class definitions with superclasses [module]",
-    "message": "re-parse error [MISSING \"newline\" in class_definition]: \"class A (B,C):def d ():e\""
+    "message": "re-parse error [MISSING \"newline\" in class_definition]: \"class A(B,C):def d():e\""
   },
   {
     "source": "validator",
@@ -655,7 +665,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Decorated definitions [module]",
-    "message": "re-parse error [ERROR in class_definition at \"@\"]: \"@a.b \n class C:@d (1) \n@e[2].f.g \n def f ():g \n \n\n@f () \n def f ():g \n \n \n@butto\""
+    "message": "re-parse error [ERROR in class_definition at \"@\"]: \"@a.b\nclass C:@d(1)\n@e[2].f.g\ndef f():g\n\n\n@f()\ndef f():g\n\n\n@buttons[0].clicked.co\""
   },
   {
     "source": "validator",
@@ -675,7 +685,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Comments at the ends of indented blocks [module]",
-    "message": "re-parse error [ERROR in function_definition at \"if\"]: \"if a:b \n \n  if c:d \n \n  def a ():if b:b \n \n  \nb\""
+    "message": "re-parse error [ERROR in function_definition at \"if\"]: \"if a:b\n\nif c:d\n\ndef a():if b:b\n\n\nb\""
   },
   {
     "source": "validator",
@@ -695,7 +705,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Type Alias Statements [module]",
-    "message": "re-parse error [ERROR in type_parameter at \"P\"]: \"type Point=tuple [float,float] \ntype Point [T]=tuple [T,T] \ntype IntFunc [P P]=C\""
+    "message": "re-parse error [ERROR in type_parameter at \"P\"]: \"type Point=tuple[float,float]\ntype Point[T]=tuple[T,T]\ntype IntFunc[P P]=Callabl\""
   },
   {
     "source": "validator",
@@ -705,7 +715,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Generic Function Definitions [module]",
-    "message": "re-parse error [ERROR in type_parameter at \"Ts\"]: \"def more_generic [T,Ts Ts,P P] ():type TA [T2,Ts2 Ts2,P2 P2]=tuple [Callable [P,\""
+    "message": "re-parse error [ERROR in type_parameter at \"Ts\"]: \"def more_generic[T,Ts Ts,P P]():type TA[T2,Ts2 Ts2,P2 P2]=tuple[Callable[P,tuple\""
   },
   {
     "source": "validator",
@@ -944,58 +954,8 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse-ast-mismatch",
-    "location": "Strings (module)",
-    "message": "module[11].statement_group1[0].expression_statement[0].string[1].string_content: childCount 9 ≠ 5 [string_content_group1,string_content_group1,string_content_gr"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Raw strings (module)",
-    "message": "module[4].statement_group1[0].expression_statement[0].string: childCount 4 ≠ 5 [string_start,string_content,interpolation,string_end] vs [string_start,string_co"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
     "location": "Format strings with format specifiers (module)",
-    "message": "module[0].statement_group1[0].expression_statement[0].string: childCount 6 ≠ 7 [string_start,string_content,interpolation,string_content,interpolation,string_en"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Format strings with format specifiers (expression_statement)",
-    "message": "expression_statement[0].string: childCount 6 ≠ 7 [string_start,string_content,interpolation,string_content,interpolation,string_end] vs [string_start,string_con"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Format strings with format specifiers (string)",
-    "message": "string: childCount 6 ≠ 7 [string_start,string_content,interpolation,string_content,interpolation,string_end] vs [string_start,string_content,interpolation,strin"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Template Strings (module)",
-    "message": "module[1].statement_group1[0].expression_statement[0].string: childCount 6 ≠ 7 [string_start,string_content,interpolation,string_content,interpolation,string_en"
+    "message": "module[3].statement_group1[0].expression_statement[0].string[1].interpolation: childCount 4 ≠ 3 [\"{\",identifier,\"=\",\"}\"] vs [\"{\",identifier,\"}\"]"
   },
   {
     "source": "validator",
@@ -1295,7 +1255,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Comparison operators [module]",
-    "message": "re-parse error [ERROR in module at \"a\"]: \"a < b<= c== d>= e> f \nnot a == b or c == d \na  b \na  b \na is b and c != d \na <> \""
+    "message": "re-parse error [ERROR in module at \"a\"]: \"a<b<=c==d>=e>f\nnot a==b or c==d\na b\na b\na is b and c!=d\na<>b\""
   },
   {
     "source": "validator",
@@ -1345,7 +1305,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Default Tuple Arguments [module]",
-    "message": "re-parse error [ERROR in return_statement at \"a\"]: \"def comp_args ():return a b,\""
+    "message": "re-parse error [ERROR in return_statement at \"a\"]: \"def comp_args():return a b,\""
   },
   {
     "source": "validator",
@@ -1365,7 +1325,17 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Splat Inside of Expression List [module]",
-    "message": "re-parse error [ERROR in module at \"a\"]: \"a c, =[] 3, \nw x,y,z, =0 *a,c,\""
+    "message": "re-parse error [ERROR in module at \"a\"]: \"a c,=[]3,\nw x,y,z,=0*a,c,\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-shallow",
+    "location": "Strings [module]",
+    "message": "re-parse error [ERROR in module at \"\"\\\\\\\\\\\\\\\\\\\" f'\\N{GRE\"]: \"\"I'm ok\"\n'\"ok\"'\nUR'bye'\nb'sup'\nB\"sup\"\n`1`\n\"\\\\\"\n\"/\"\n\"\\\n\"\nb\"\\x12\\x13\"\n\"\\xab\\1\\12\\1\""
   },
   {
     "source": "validator",
@@ -1435,7 +1405,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Matching specific values [module]",
-    "message": "re-parse error [MISSING \"newline\" in block]: \"match command.split ():case [\" quit \"]:print (\" Goodbye! \") \n\nquit_game () \n \n\nc\""
+    "message": "re-parse error [MISSING \"newline\" in block]: \"match command.split():case[\"quit\"]:print(\"Goodbye!\")\n\nquit_game()\n\n\ncase[\"look\"]\""
   },
   {
     "source": "validator",
@@ -1445,7 +1415,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Matching multiple values [module]",
-    "message": "re-parse error [MISSING \"newline\" in block]: \"match command.split ():case [\" drop \",* objects]:for obj in objects:character.dr\""
+    "message": "re-parse error [MISSING \"newline\" in block]: \"match command.split():case[\"drop\",*objects]:for obj in objects:character.drop(ob\""
   },
   {
     "source": "validator",
@@ -1465,7 +1435,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Or patterns [module]",
-    "message": "re-parse error [MISSING \"newline\" in block]: \"match command.split ():case [\" north \"]|[\" go \",\" north \"]:current_room =current\""
+    "message": "re-parse error [MISSING \"newline\" in block]: \"match command.split():case[\"north\"]|[\"go\",\"north\"]:current_room=current_room.nei\""
   },
   {
     "source": "validator",
@@ -1485,7 +1455,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Actually not match [module]",
-    "message": "re-parse error [ERROR in match_statement at \"=2\"]: \"match =2 \nmatch a, =2 3, \nmatch :int=secret \nx match, =2 \" hey, what's up? \" \n*m\""
+    "message": "re-parse error [ERROR in match_statement at \"=2\"]: \"match=2\nmatch a,=2 3,\nmatch:int=secret\nx match,=2\"hey, what's up?\"\n*match last,=\""
   },
   {
     "source": "validator",
@@ -1495,7 +1465,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "If guards [module]",
-    "message": "re-parse error [ERROR in assignment at \"0:case 0 if False:x\"]: \"match 0:case 0 if False:x =False \n \n\ncase 0 if True:x =True\""
+    "message": "re-parse error [ERROR in assignment at \"0:case 0 if False:x\"]: \"match 0:case 0 if False:x=False\n\n\ncase 0 if True:x=True\""
   },
   {
     "source": "validator",
@@ -1515,7 +1485,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Comma separated cases [module]",
-    "message": "re-parse error [ERROR in assignment at \"():case 0,1:x\"]: \"match ():case 0,1:x =0 \n \n\ncase 0,* x:x =0\""
+    "message": "re-parse error [ERROR in assignment at \"():case 0,1:x\"]: \"match():case 0,1:x=0\n\n\ncase 0,*x:x=0\""
   },
   {
     "source": "validator",
@@ -1525,7 +1495,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Case terminating in comma [module]",
-    "message": "re-parse error [ERROR in assignment at \"x:case * x:y\"]: \"match x:case * x:y =0\""
+    "message": "re-parse error [ERROR in assignment at \"x:case*x:y\"]: \"match x:case*x:y=0\""
   },
   {
     "source": "validator",
@@ -1535,7 +1505,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Multiple match patterns [module]",
-    "message": "re-parse error [ERROR in match_statement at \":case a\"]: \"match ...,...:case a,b:return locals ()\""
+    "message": "re-parse error [ERROR in match_statement at \":case a\"]: \"match...,...:case a,b:return locals()\""
   },
   {
     "source": "validator",
@@ -1545,7 +1515,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Match match, case case [module]",
-    "message": "re-parse error [ERROR in assignment at \"match:case case:x\"]: \"match =case =0 \nmatch match:case case:x =0\""
+    "message": "re-parse error [ERROR in assignment at \"match:case case:x\"]: \"match=case=0\nmatch match:case case:x=0\""
   },
   {
     "source": "validator",
@@ -1555,7 +1525,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Matching objects [module]",
-    "message": "re-parse error [ERROR in call at \"event.get ():case Cl\"]: \"match event.get ():case Click(position=(x,y)):handle_click_at (x,y) \n \n\ncase Key\""
+    "message": "re-parse error [ERROR in call at \"event.get():case Cli\"]: \"match event.get():case Click(position=(x,y)):handle_click_at(x,y)\n\n\ncase KeyPres\""
   },
   {
     "source": "validator",
@@ -1565,7 +1535,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Positional arguments [module]",
-    "message": "re-parse error [ERROR in call at \"event.get ():case Cl\"]: \"match event.get ():case Click((x,y)):handle_click_at (x,y)\""
+    "message": "re-parse error [ERROR in call at \"event.get():case Cli\"]: \"match event.get():case Click((x,y)):handle_click_at(x,y)\""
   },
   {
     "source": "validator",
@@ -1575,7 +1545,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Constants and enums [module]",
-    "message": "re-parse error [ERROR in call at \"event.get ():case Cl\"]: \"match event.get ():case Click((x,y),button=Button.LEFT):handle_click_at (x,y) \n \""
+    "message": "re-parse error [ERROR in call at \"event.get():case Cli\"]: \"match event.get():case Click((x,y),button=Button.LEFT):handle_click_at(x,y)\n\n\nca\""
   },
   {
     "source": "validator",
@@ -1605,7 +1575,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Complex case patterns on classes [module]",
-    "message": "re-parse error [ERROR in call at \"x:case Something():f\"]: \"match x:case Something():foo1 () \n \n\ncase Something.Else():foo2 () \n \n\ncase Poin\""
+    "message": "re-parse error [ERROR in call at \"x:case Something():f\"]: \"match x:case Something():foo1()\n\n\ncase Something.Else():foo2()\n\n\ncase Point2D(0,\""
   },
   {
     "source": "validator",
@@ -1625,7 +1595,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Maybe sequence pattern right hand side precedence validation [module]",
-    "message": "re-parse error [ERROR in match_statement at \"x:case\"]: \"match x:case a1,* a2,a3:pass\""
+    "message": "re-parse error [ERROR in match_statement at \"x:case\"]: \"match x:case a1,*a2,a3:pass\""
   },
   {
     "source": "validator",
@@ -1645,7 +1615,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Future import statements [module]",
-    "message": "re-parse error [ERROR in module at \"from __future__ impo\"]: \"from __future__ import  \nfrom __future__ import  \nfrom __future__ import\""
+    "message": "re-parse error [ERROR in module at \"from __future__ impo\"]: \"from __future__ import\nfrom __future__ import\nfrom __future__ import\""
   },
   {
     "source": "validator",
@@ -1675,7 +1645,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Delete statements [module]",
-    "message": "re-parse error [ERROR in subscript at \"b\"]: \"del a[1] b[2]\""
+    "message": "re-parse error [ERROR in subscript at \"b\"]: \"del a[1]b[2]\""
   },
   {
     "source": "validator",
@@ -1685,7 +1655,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Return statements [module]",
-    "message": "re-parse error [ERROR in expression_list at \"c\"]: \"return \nreturn a + b c, \nreturn not b\""
+    "message": "re-parse error [ERROR in expression_list at \"c\"]: \"return\nreturn a+b c,\nreturn not b\""
   },
   {
     "source": "validator",
@@ -1695,7 +1665,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Nested if statements [module]",
-    "message": "re-parse error [ERROR in if_statement at \"if\"]: \"if a:if b:c \n \n else:if e:f \n \n   \n  \n  g\""
+    "message": "re-parse error [ERROR in if_statement at \"if\"]: \"if a:if b:c\n\nelse:if e:f\n\n\n\ng\""
   },
   {
     "source": "validator",
@@ -1715,7 +1685,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Try statements [module]",
-    "message": "re-parse error [MISSING \"newline\" in except_clause]: \"try:a \n \n except b:except d as e:except g,h:except:try:a \n \n except b: else:e \n \""
+    "message": "re-parse error [MISSING \"newline\" in except_clause]: \"try:a\n\nexcept b:except d as e:except g,h:except:try:a\n\nexcept b:else:e\n\nfinally:\""
   },
   {
     "source": "validator",
@@ -1745,7 +1715,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Class definitions [module]",
-    "message": "re-parse error [MISSING \"newline\" in class_definition]: \"class A:def b ():return c \n \n \nclass B ():pass \n \nclass B (method1):def method1 \""
+    "message": "re-parse error [MISSING \"newline\" in class_definition]: \"class A:def b():return c\n\n\nclass B():pass\n\nclass B(method1):def method1():return\""
   },
   {
     "source": "validator",
@@ -1755,7 +1725,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Class definitions with superclasses [module]",
-    "message": "re-parse error [MISSING \"newline\" in class_definition]: \"class A (B,C):def d ():e\""
+    "message": "re-parse error [MISSING \"newline\" in class_definition]: \"class A(B,C):def d():e\""
   },
   {
     "source": "validator",
@@ -1765,7 +1735,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Decorated definitions [module]",
-    "message": "re-parse error [ERROR in class_definition at \"@\"]: \"@a.b \n class C:@d (1) \n@e[2].f.g \n def f ():g \n \n\n@f () \n def f ():g \n \n \n@butto\""
+    "message": "re-parse error [ERROR in class_definition at \"@\"]: \"@a.b\nclass C:@d(1)\n@e[2].f.g\ndef f():g\n\n\n@f()\ndef f():g\n\n\n@buttons[0].clicked.co\""
   },
   {
     "source": "validator",
@@ -1785,7 +1755,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Comments at the ends of indented blocks [module]",
-    "message": "re-parse error [ERROR in function_definition at \"if\"]: \"if a:b \n \n  if c:d \n \n  def a ():if b:b \n \n  \nb\""
+    "message": "re-parse error [ERROR in function_definition at \"if\"]: \"if a:b\n\nif c:d\n\ndef a():if b:b\n\n\nb\""
   },
   {
     "source": "validator",
@@ -1805,7 +1775,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Type Alias Statements [module]",
-    "message": "re-parse error [ERROR in type_parameter at \"P\"]: \"type Point=tuple [float,float] \ntype Point [T]=tuple [T,T] \ntype IntFunc [P P]=C\""
+    "message": "re-parse error [ERROR in type_parameter at \"P\"]: \"type Point=tuple[float,float]\ntype Point[T]=tuple[T,T]\ntype IntFunc[P P]=Callabl\""
   },
   {
     "source": "validator",
@@ -1815,7 +1785,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Generic Function Definitions [module]",
-    "message": "re-parse error [ERROR in type_parameter at \"Ts\"]: \"def more_generic [T,Ts Ts,P P] ():type TA [T2,Ts2 Ts2,P2 P2]=tuple [Callable [P,\""
+    "message": "re-parse error [ERROR in type_parameter at \"Ts\"]: \"def more_generic[T,Ts Ts,P P]():type TA[T2,Ts2 Ts2,P2 P2]=tuple[Callable[P,tuple\""
   },
   {
     "source": "validator",
@@ -2054,58 +2024,8 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Strings (module)",
-    "message": "module[11].statement_group1[0].expression_statement[0].string[1].string_content: childCount 9 ≠ 5 [string_content_group1,string_content_group1,string_content_gr"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Raw strings (module)",
-    "message": "module[4].statement_group1[0].expression_statement[0].string: childCount 4 ≠ 5 [string_start,string_content,interpolation,string_end] vs [string_start,string_co"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Format strings with format specifiers (module)",
-    "message": "module[0].statement_group1[0].expression_statement[0].string: childCount 6 ≠ 7 [string_start,string_content,interpolation,string_content,interpolation,string_en"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Format strings with format specifiers (expression_statement)",
-    "message": "expression_statement[0].string: childCount 6 ≠ 7 [string_start,string_content,interpolation,string_content,interpolation,string_end] vs [string_start,string_con"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Format strings with format specifiers (string)",
-    "message": "string: childCount 6 ≠ 7 [string_start,string_content,interpolation,string_content,interpolation,string_end] vs [string_start,string_content,interpolation,strin"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Template Strings (module)",
-    "message": "module[1].statement_group1[0].expression_statement[0].string: childCount 6 ≠ 7 [string_start,string_content,interpolation,string_content,interpolation,string_en"
+    "message": "module[3].statement_group1[0].expression_statement[0].string[1].interpolation: childCount 4 ≠ 3 [\"{\",identifier,\"=\",\"}\"] vs [\"{\",identifier,\"}\"]"
   },
   {
     "source": "validator",
@@ -2385,7 +2305,27 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Identifiers with Greek letters (assignment)",
-    "message": "kind not found in re-parse (rendered: \"ψ1 \")"
+    "message": "kind not found in re-parse (rendered: \"ψ1\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Await expressions (await)",
+    "message": "kind not found in re-parse (rendered: \"awaiti(j, 5)\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Await expressions (function_definition)",
+    "message": "re-parse error: \"defregion_exists(region: str)->bool:return region in await a\""
   },
   {
     "source": "validator",
@@ -2414,6 +2354,16 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse",
+    "location": "Print used as a parameter (function_definition)",
+    "message": "re-parse error: \"defa(print):b\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
     "location": "Print used as a parameter (list_splat_pattern)",
     "message": "re-parse error: \"*\""
   },
@@ -2425,7 +2375,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Async / await used as identifiers (assignment)",
-    "message": "kind not found in re-parse (rendered: \"async \")"
+    "message": "kind not found in re-parse (rendered: \"async\")"
   },
   {
     "source": "validator",
@@ -2444,8 +2394,38 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse",
+    "location": "Boolean operators (not_operator)",
+    "message": "kind not found in re-parse (rendered: \"notd\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Comparison operators (boolean_operator)",
+    "message": "kind not found in re-parse (rendered: \"not a == borc == d\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Comparison operators (not_operator)",
+    "message": "kind not found in re-parse (rendered: \"nota == b\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
     "location": "Assignments (assignment)",
-    "message": "kind not found in re-parse (rendered: \"a \")"
+    "message": "kind not found in re-parse (rendered: \"a\")"
   },
   {
     "source": "validator",
@@ -2465,7 +2445,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Assignments with type annotations (assignment)",
-    "message": "kind not found in re-parse (rendered: \"tail_leaves \")"
+    "message": "kind not found in re-parse (rendered: \"tail_leaves\")"
   },
   {
     "source": "validator",
@@ -2485,7 +2465,27 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Named expressions (assignment)",
-    "message": "kind not found in re-parse (rendered: \"y0 \")"
+    "message": "kind not found in re-parse (rendered: \"y0\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Named expressions (function_definition)",
+    "message": "re-parse error: \"deffoo(answer=(p := 42)):return answer;\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Yield expressions (function_definition)",
+    "message": "re-parse error: \"defexample():yield\n  yield 1\n  x = yield 2\n  yield from a\n  \""
   },
   {
     "source": "validator",
@@ -2495,7 +2495,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Yield expressions (assignment)",
-    "message": "kind not found in re-parse (rendered: \"x \")"
+    "message": "kind not found in re-parse (rendered: \"x\")"
   },
   {
     "source": "validator",
@@ -2515,7 +2515,17 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Yield expressions (generator_expression)",
-    "message": "kind not found in re-parse (rendered: \"(x  )\")"
+    "message": "kind not found in re-parse (rendered: \"(x)\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "lambdas (lambda)",
+    "message": "kind not found in re-parse (rendered: \"lambdab, c:d(\"e\" % f)\")"
   },
   {
     "source": "validator",
@@ -2554,6 +2564,16 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse",
+    "location": "Default Tuple Arguments (function_definition)",
+    "message": "re-parse error: \"defcomp_args((a, b)=(3, 4)):return a, b\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
     "location": "Default Tuple Arguments (tuple_pattern)",
     "message": "kind not found in re-parse (rendered: \"()\")"
   },
@@ -2565,7 +2585,27 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Conditional if expressions (assignment)",
-    "message": "kind not found in re-parse (rendered: \"a \")"
+    "message": "kind not found in re-parse (rendered: \"a\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Conditional if expressions (conditional_expression)",
+    "message": "kind not found in re-parse (rendered: \"bifcelsed\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Async context managers and iterators (as_pattern)",
+    "message": "kind not found in re-parse (rendered: \"aasb\")"
   },
   {
     "source": "validator",
@@ -2575,7 +2615,17 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Async context managers and iterators (list_comprehension)",
-    "message": "kind not found in re-parse (rendered: \"[e  ]\")"
+    "message": "kind not found in re-parse (rendered: \"[e]\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Arbitrary indentation between brackets (function_definition)",
+    "message": "re-parse error: \"defa():b(\n1,\n2\n    )\n\n    c = [\n3\n    ]\""
   },
   {
     "source": "validator",
@@ -2585,7 +2635,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Arbitrary indentation between brackets (assignment)",
-    "message": "kind not found in re-parse (rendered: \"c \")"
+    "message": "kind not found in re-parse (rendered: \"c\")"
   },
   {
     "source": "validator",
@@ -2595,7 +2645,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Splat Inside of Expression List (assignment)",
-    "message": "kind not found in re-parse (rendered: \"a,c \")"
+    "message": "kind not found in re-parse (rendered: \"a,c\")"
   },
   {
     "source": "validator",
@@ -2615,7 +2665,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Type expressions (assignment)",
-    "message": "kind not found in re-parse (rendered: \"a \")"
+    "message": "kind not found in re-parse (rendered: \"a\")"
   },
   {
     "source": "validator",
@@ -2626,6 +2676,26 @@
     "stage": "factory-render-parse",
     "location": "Format strings (list_splat_pattern)",
     "message": "re-parse error: \"*\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Format strings (function_definition)",
+    "message": "re-parse error: \"deffunction():return f\"\"\"\n{\"string1\" if True else\n \"string2\"\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Format strings (conditional_expression)",
+    "message": "re-parse error: \"\"string1\"ifTrueelse\"string2\"\""
   },
   {
     "source": "validator",
@@ -2645,7 +2715,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "List comprehensions (list_comprehension)",
-    "message": "kind not found in re-parse (rendered: \"[a + b  ]\")"
+    "message": "kind not found in re-parse (rendered: \"[a + b]\")"
   },
   {
     "source": "validator",
@@ -2665,7 +2735,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Dictionary comprehensions (dictionary_comprehension)",
-    "message": "kind not found in re-parse (rendered: \"{ a: b   }\")"
+    "message": "kind not found in re-parse (rendered: \"{ a: b }\")"
   },
   {
     "source": "validator",
@@ -2685,7 +2755,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Set comprehensions (set_comprehension)",
-    "message": "kind not found in re-parse (rendered: \"{ a[b][c]   }\")"
+    "message": "kind not found in re-parse (rendered: \"{ a[b][c] }\")"
   },
   {
     "source": "validator",
@@ -2695,7 +2765,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Generator expression (generator_expression)",
-    "message": "kind not found in re-parse (rendered: \"(a[b][c]  )\")"
+    "message": "kind not found in re-parse (rendered: \"(a[b][c])\")"
   },
   {
     "source": "validator",
@@ -2705,7 +2775,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Matching specific values (assignment)",
-    "message": "kind not found in re-parse (rendered: \"current_room \")"
+    "message": "kind not found in re-parse (rendered: \"current_room\")"
   },
   {
     "source": "validator",
@@ -2715,7 +2785,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Or patterns (assignment)",
-    "message": "kind not found in re-parse (rendered: \"current_room \")"
+    "message": "kind not found in re-parse (rendered: \"current_room\")"
   },
   {
     "source": "validator",
@@ -2725,7 +2795,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "As patterns (as_pattern)",
-    "message": "re-parse error: \" as \""
+    "message": "re-parse error: \"as\""
   },
   {
     "source": "validator",
@@ -2735,7 +2805,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "As patterns (assignment)",
-    "message": "kind not found in re-parse (rendered: \"current_room \")"
+    "message": "kind not found in re-parse (rendered: \"current_room\")"
   },
   {
     "source": "validator",
@@ -2745,7 +2815,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Actually not match (assignment)",
-    "message": "kind not found in re-parse (rendered: \"match \")"
+    "message": "kind not found in re-parse (rendered: \"match\")"
   },
   {
     "source": "validator",
@@ -2764,8 +2834,18 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse",
+    "location": "Actually not match (function_definition)",
+    "message": "re-parse error: \"deffoo(**match):pass\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
     "location": "Match is match but not pattern matching (assignment)",
-    "message": "kind not found in re-parse (rendered: \"a \")"
+    "message": "kind not found in re-parse (rendered: \"a\")"
   },
   {
     "source": "validator",
@@ -2775,7 +2855,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Match kwargs (assignment)",
-    "message": "kind not found in re-parse (rendered: \"field \")"
+    "message": "kind not found in re-parse (rendered: \"field\")"
   },
   {
     "source": "validator",
@@ -2785,7 +2865,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Match kwargs 2 (assignment)",
-    "message": "kind not found in re-parse (rendered: \"field \")"
+    "message": "kind not found in re-parse (rendered: \"field\")"
   },
   {
     "source": "validator",
@@ -2795,7 +2875,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Case used as identifier (assignment)",
-    "message": "kind not found in re-parse (rendered: \"a \")"
+    "message": "kind not found in re-parse (rendered: \"a\")"
   },
   {
     "source": "validator",
@@ -2805,7 +2885,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "If guards (assignment)",
-    "message": "kind not found in re-parse (rendered: \"x \")"
+    "message": "kind not found in re-parse (rendered: \"x\")"
   },
   {
     "source": "validator",
@@ -2815,7 +2895,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Comma separated cases (assignment)",
-    "message": "kind not found in re-parse (rendered: \"x \")"
+    "message": "kind not found in re-parse (rendered: \"x\")"
   },
   {
     "source": "validator",
@@ -2825,7 +2905,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Case terminating in comma (assignment)",
-    "message": "kind not found in re-parse (rendered: \"y \")"
+    "message": "kind not found in re-parse (rendered: \"y\")"
   },
   {
     "source": "validator",
@@ -2835,7 +2915,7 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Match match, case case (assignment)",
-    "message": "kind not found in re-parse (rendered: \"match \")"
+    "message": "kind not found in re-parse (rendered: \"match\")"
   },
   {
     "source": "validator",
@@ -2845,7 +2925,57 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Complex case patterns on complex numbers (as_pattern)",
-    "message": "re-parse error: \" as \""
+    "message": "re-parse error: \"as\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Print statements (boolean_operator)",
+    "message": "re-parse error: \"0or1\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Print statements (not_operator)",
+    "message": "kind not found in re-parse (rendered: \"notTrue\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Return statements (not_operator)",
+    "message": "kind not found in re-parse (rendered: \"notb\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "With statements (as_pattern)",
+    "message": "kind not found in re-parse (rendered: \"aasb\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Async Function definitions (function_definition)",
+    "message": "re-parse error: \"defa():b\""
   },
   {
     "source": "validator",
@@ -2856,6 +2986,16 @@
     "stage": "factory-render-parse",
     "location": "Async Function definitions (list_splat_pattern)",
     "message": "re-parse error: \"*\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Function definitions (function_definition)",
+    "message": "re-parse error: \"defe((a,b)):return (a,b)\""
   },
   {
     "source": "validator",
@@ -2894,8 +3034,48 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse",
+    "location": "Empty blocks (function_definition)",
+    "message": "re-parse error: \"defa(b, c):newline\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Class definitions (function_definition)",
+    "message": "re-parse error: \"defb(self):return c\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Class definitions with superclasses (function_definition)",
+    "message": "re-parse error: \"defd():e\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Decorated definitions (function_definition)",
+    "message": "re-parse error: \"deff():g\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
     "location": "Comments at the ends of indented blocks (function_definition)",
-    "message": "re-parse error: \"def a ():if b:\n        b # comment\n    b # comment\""
+    "message": "re-parse error: \"defa():if b:\n        b # comment\n    b # comment\""
   },
   {
     "source": "validator",
@@ -2905,7 +3085,27 @@
     "backend": "native",
     "stage": "factory-render-parse",
     "location": "Exec statements (assignment)",
-    "message": "kind not found in re-parse (rendered: \"func \")"
+    "message": "kind not found in re-parse (rendered: \"func\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Extra newlines (function_definition)",
+    "message": "re-parse error: \"defd():e()\""
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Escaped newline (boolean_operator)",
+    "message": "re-parse error: \"len(\"a\")orlen(\"aa\")\""
   },
   {
     "source": "validator",
@@ -2924,18 +3124,18 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse",
-    "location": "Generic Function Definitions (splat_type)",
-    "message": "factory threw: nodeToConfig: singular slot \"identifier\" received 2 values"
+    "location": "Generic Function Definitions (function_definition)",
+    "message": "re-parse error: \"defmore_generic[T, *Ts, **P]():type TA[T2, *Ts2, **P2] = tup\""
   },
   {
     "source": "validator",
     "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
+    "code": "factory-render-parse-error",
     "grammar": "python",
     "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Await expressions (function_definition)",
-    "message": "function_definition: childCount 8 ≠ 7 [\"async\",\"def\",identifier,parameters,\"->\",type,\":\",block] vs [\"def\",identifier,parameters,\"->\",type,\":\",simple_statements]"
+    "stage": "factory-render-parse",
+    "location": "Generic Function Definitions (splat_type)",
+    "message": "factory threw: nodeToConfig: singular slot \"identifier\" received 2 values"
   },
   {
     "source": "validator",
@@ -2964,16 +3164,6 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
-    "location": "Print used as a parameter (function_definition)",
-    "message": "function_definition[4].block: type block ≠ simple_statements"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
     "location": "Print used as a parameter (parameters)",
     "message": "parameters: childCount 3 ≠ 2 [\"(\",parameter_list,\")\"] vs [\"(\",\")\"]"
   },
@@ -2984,8 +3174,8 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
-    "location": "Named expressions (function_definition)",
-    "message": "function_definition[4].block: type block ≠ simple_statements"
+    "location": "Boolean operators (boolean_operator)",
+    "message": "boolean_operator[1]: anon \"or\" ≠ \"and\""
   },
   {
     "source": "validator",
@@ -2996,16 +3186,6 @@
     "stage": "factory-render-parse-ast-mismatch",
     "location": "Named expressions (parameters)",
     "message": "parameters: childCount 3 ≠ 2 [\"(\",parameter_list,\")\"] vs [\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Yield expressions (function_definition)",
-    "message": "function_definition[4].block: type block ≠ simple_statements"
   },
   {
     "source": "validator",
@@ -3044,16 +3224,6 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
-    "location": "Default Tuple Arguments (function_definition)",
-    "message": "function_definition[4].block: type block ≠ simple_statements"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
     "location": "Default Tuple Arguments (parameters)",
     "message": "parameters: childCount 3 ≠ 2 [\"(\",parameter_list,\")\"] vs [\"(\",\")\"]"
   },
@@ -3074,16 +3244,6 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
-    "location": "Arbitrary indentation between brackets (function_definition)",
-    "message": "function_definition[4].block: type block ≠ simple_statements"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
     "location": "Arbitrary indentation between brackets (list)",
     "message": "list: childCount 3 ≠ 2 [\"[\",element_list,\"]\"] vs [\"[\",\"]\"]"
   },
@@ -3096,26 +3256,6 @@
     "stage": "factory-render-parse-ast-mismatch",
     "location": "Splat Inside of Expression List (list)",
     "message": "list: childCount 3 ≠ 2 [\"[\",element_list,\"]\"] vs [\"[\",\"]\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Format strings (function_definition)",
-    "message": "function_definition[4].block: type block ≠ simple_statements"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Format strings with format specifiers (string)",
-    "message": "string: childCount 6 ≠ 7 [string_start,string_content,interpolation,string_content,interpolation,string_end] vs [string_start,string_content,interpolation,strin"
   },
   {
     "source": "validator",
@@ -3234,26 +3374,6 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
-    "location": "Async Function definitions (function_definition)",
-    "message": "function_definition: childCount 6 ≠ 5 [\"async\",\"def\",identifier,parameters,\":\",block] vs [\"def\",identifier,parameters,\":\",simple_statements]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Function definitions (function_definition)",
-    "message": "function_definition[4].block: type block ≠ simple_statements"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
     "location": "Function definitions (parameters)",
     "message": "parameters: childCount 3 ≠ 2 [\"(\",parameter_list,\")\"] vs [\"(\",\")\"]"
   },
@@ -3274,28 +3394,8 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
-    "location": "Empty blocks (function_definition)",
-    "message": "function_definition[4].newline: type newline ≠ simple_statements"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
     "location": "Empty blocks (parameters)",
     "message": "parameters: childCount 3 ≠ 2 [\"(\",parameter_list,\")\"] vs [\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Class definitions (function_definition)",
-    "message": "function_definition[4].block: type block ≠ simple_statements"
   },
   {
     "source": "validator",
@@ -3314,58 +3414,8 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
-    "location": "Class definitions with superclasses (function_definition)",
-    "message": "function_definition[4].block: type block ≠ simple_statements"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Decorated definitions (function_definition)",
-    "message": "function_definition[4].block: type block ≠ simple_statements"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Extra newlines (function_definition)",
-    "message": "function_definition[4].block: type block ≠ simple_statements"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Escaped newline (boolean_operator)",
-    "message": "boolean_operator: childCount 4 ≠ 3 [call,line_continuation,\"or\",call] vs [call,\"or\",call]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
     "location": "Type Alias Statements (tuple)",
     "message": "tuple: childCount 3 ≠ 2 [\"(\",element_list,\")\"] vs [\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse-ast-mismatch",
-    "location": "Generic Function Definitions (function_definition)",
-    "message": "function_definition[5].block: type block ≠ simple_statements"
   },
   {
     "source": "validator",
@@ -3375,7 +3425,7 @@
     "backend": "native",
     "stage": "coverage",
     "location": "future_import_statement",
-    "message": "field 'name' declared but not referenced in any template: \"from __future__ import $FUTURE_IMPORT_STATEMENT_GROUP1\""
+    "message": "field 'name' declared but not referenced in any template: \"from __future__ import$FUTURE_IMPORT_STATEMENT_GROUP1\""
   },
   {
     "source": "validator",
@@ -3385,7 +3435,7 @@
     "backend": "native",
     "stage": "coverage",
     "location": "import_from_statement",
-    "message": "field 'name' declared but not referenced in any template: \"from $MODULE_NAME import $$$WILDCARD_IMPORT\""
+    "message": "field 'name' declared but not referenced in any template: \"from$MODULE_NAMEimport$$$WILDCARD_IMPORT\""
   },
   {
     "source": "validator",
