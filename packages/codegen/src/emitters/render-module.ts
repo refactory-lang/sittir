@@ -1076,7 +1076,16 @@ function renderTypedDispatch(
 	// that need an owned String (e.g. render_transport, parity tests).
 	lines.push(`pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::askama::Error> {`);
 	lines.push(`    let mut s = String::new();`);
-	lines.push(`    transport.render_into(&mut s)?;`);
+	lines.push(`    // SpacingWriter (2026-07-24 spec): root-level wrap — inserts a space`);
+	lines.push(`    // only where a word-class char would collide with a word-class char`);
+	lines.push(`    // across write seams. Inert while templates carry their own spaces;`);
+	lines.push(`    // supplies lexically-required spaces once separators/conditional`);
+	lines.push(`    // spaces migrate out of templates. Wrap ONCE here — never per level.`);
+	lines.push(`    let mut w = ::sittir_core::spacing::SpacingWriter::new(`);
+	lines.push(`        &mut s,`);
+	lines.push(`        ::sittir_core::spacing::WordMatcher::default_ident(),`);
+	lines.push(`    );`);
+	lines.push(`    transport.render_into(&mut w)?;`);
 	lines.push(`    Ok(s)`);
 	lines.push(`}`);
 	lines.push('');

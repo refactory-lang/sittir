@@ -17,6 +17,7 @@ pub mod filters;
 pub mod format;
 pub mod macros;
 pub mod read_node;
+pub mod spacing;
 pub mod splice;
 pub mod types;
 

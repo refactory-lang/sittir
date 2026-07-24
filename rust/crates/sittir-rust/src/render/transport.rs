@@ -50776,7 +50776,16 @@ fn render_use_clause(t: &UseClauseTransport, dest: &mut dyn ::std::fmt::Write) -
 
 pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::askama::Error> {
     let mut s = String::new();
-    transport.render_into(&mut s)?;
+    // SpacingWriter (2026-07-24 spec): root-level wrap — inserts a space
+    // only where a word-class char would collide with a word-class char
+    // across write seams. Inert while templates carry their own spaces;
+    // supplies lexically-required spaces once separators/conditional
+    // spaces migrate out of templates. Wrap ONCE here — never per level.
+    let mut w = ::sittir_core::spacing::SpacingWriter::new(
+        &mut s,
+        ::sittir_core::spacing::WordMatcher::default_ident(),
+    );
+    transport.render_into(&mut w)?;
     Ok(s)
 }
 
