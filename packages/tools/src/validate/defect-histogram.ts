@@ -18,9 +18,21 @@ export interface DefectHistogramOptions {
  */
 export function defectSignature(kind: string, message: string): string {
 	const msg = message.replace(/^render:\s*/, '').replace(/\s+/g, ' ').trim();
-	if (msg.startsWith('re-parse error')) return `re-parse error @ ${kind}`;
+	if (msg.startsWith('re-parse error')) {
+		// Cause marker from firstParseDefect (read-render-parse) — the broken
+		// construct in the re-parsed tree. Bucketing by entry kind instead
+		// would just measure blast radius (root kinds absorb every nested
+		// defect); only fall back to it when no defect was located.
+		const cause = /^re-parse error \[(.+?)\]/.exec(msg)?.[1];
+		return cause !== undefined && cause !== 'unlocated' ? `re-parse: ${cause}` : `re-parse error @ ${kind}`;
+	}
 	if (msg.startsWith('kind not found in re-parse')) return `kind not found in re-parse @ ${kind}`;
-	if (msg.startsWith('kind not found at rendered offset')) return `kind not found at rendered offset @ ${kind}`;
+	if (msg.startsWith('kind not found at rendered offset')) {
+		// Leading-whitespace renders shift the first token off the expected
+		// offset — one render mechanism regardless of which kind reports it.
+		if (msg.includes('[leading-whitespace render]')) return 'leading-whitespace render';
+		return `kind not found at rendered offset @ ${kind}`;
+	}
 	const frames = msg.split(' on ');
 	return frames.length >= 2 ? `${frames[0]} on ${frames[1]}` : frames[0]!;
 }

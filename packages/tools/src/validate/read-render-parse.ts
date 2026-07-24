@@ -120,6 +120,31 @@ function findNodeBySpanOfKind(node: TSNode, startIndex: number, endIndex: number
 	return null;
 }
 
+/**
+ * Locate the first parse defect (MISSING or ERROR node) in a re-parsed
+ * tree and describe it as a cause signature: the broken construct, not
+ * the entry that happened to contain it. Root-kind entries (source_file/
+ * program/module) fail whenever ANY nested render is off, so bucketing
+ * re-parse failures by entry kind measures blast radius, not defects —
+ * this pins the actual divergence point instead.
+ */
+function firstParseDefect(node: TSNode): string | null {
+	if (node.isMissing) {
+		return `MISSING "${node.type}" in ${node.parent?.type ?? 'root'}`;
+	}
+	if (node.isError) {
+		const tokenHead = node.text.replace(/\s+/g, ' ').slice(0, 20);
+		return `ERROR in ${node.parent?.type ?? 'root'} at "${tokenHead}"`;
+	}
+	for (let i = 0; i < node.childCount; i++) {
+		const c = node.child(i);
+		if (!c || !c.hasError) continue;
+		const hit = firstParseDefect(c);
+		if (hit) return hit;
+	}
+	return null;
+}
+
 function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
 	if (node.type === kind && node.startIndex === offset) return node;
 	for (let i = 0; i < node.childCount; i++) {
@@ -582,7 +607,7 @@ export async function validateReadRenderParse(
 						if (tree2.rootNode.hasError) {
 							const failure = {
 								name: `${entry.name} [${renderedKind}]`,
-								message: `re-parse error: "${rendered.slice(0, 80)}"`,
+								message: `re-parse error [${firstParseDefect(tree2.rootNode) ?? 'unlocated'}]: "${rendered.slice(0, 80)}"`,
 								input: inputSource,
 								rendered
 							};
@@ -617,7 +642,7 @@ export async function validateReadRenderParse(
 						if (!node2) {
 							const failure = {
 								name: `${entry.name} [${renderedKind}]`,
-								message: `kind not found at rendered offset ${wrapped.offset}`,
+								message: `kind not found at rendered offset ${wrapped.offset}${/^\s/.test(rendered) ? ' [leading-whitespace render]' : ''}`,
 								input: inputSource,
 								rendered
 							};
