@@ -59,7 +59,7 @@ import type {
 } from '../compiler/model/node-map.ts';
 import type { Rule, RuleBase, RenderRule, Multiplicity } from '../types/rule.ts';
 import type { CodegenEmitter } from './emitter.ts';
-import { classifyTemplateEmission } from './shared.ts';
+import { classifyTemplateEmission, wordCharAsciiTable } from './shared.ts';
 
 export interface EmitTemplatesConfig {
 	grammar: string;
@@ -74,6 +74,11 @@ export interface EmittedTemplates {
 export interface EmitCtx {
 	readonly nodeMap: NodeMap;
 	readonly wordMatcher: RegExp;
+	/** Grammar-faithful word-class test for a single char (ASCII table from
+	 *  wordCharAsciiTable + Unicode-alphanumeric fallback). Used for
+	 *  compile-time STATIC-STATIC seam spaces; dynamic seams belong to the
+	 *  runtime SpacingWriter with the same class. */
+	readonly isWordChar: (c: string) => boolean;
 	readonly externals: readonly string[];
 	/**
 	 * PR-137: `normalizedRules` (wrapper-deleted `RenderRule` view), not
@@ -210,6 +215,11 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		this.#ctx = {
 			nodeMap: config.nodeMap,
 			wordMatcher: this.#wordMatcher,
+			isWordChar: (() => {
+				const table = wordCharAsciiTable(this.#wordMatcher);
+				return (c: string) =>
+					c.charCodeAt(0) < 128 ? table[c.charCodeAt(0)]! : /[\p{L}\p{N}]/u.test(c);
+			})(),
 			externals: [...(config.nodeMap.externals ?? [])],
 			rules: config.nodeMap.normalizedRules ?? {},
 			visitingHelpers: new Set<string>()
@@ -606,7 +616,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			for (let i = 1; i < parts.length; i++) {
 				const l = seqBody[seqBody.length - 1]!;
 				const r = parts[i]![0]!;
-				if (isStaticWordChar(l) && isStaticWordChar(r)) seqBody += ' ';
+				if (ctx.isWordChar(l) && ctx.isWordChar(r)) seqBody += ' ';
 				seqBody += parts[i]!;
 			}
 			// §D-2a seq-unit multiplicity (normalize inline hoist): a `seq` that
@@ -869,17 +879,6 @@ function selectJoinFilter(
  * (ruleSep / per-value separators) are real tokens and unaffected.
  */
 const DEFAULT_JOIN_SEPARATOR = '';
-
-/**
- * Word-class test for STATIC template text chars, mirroring
- * sittir-core's SpacingWriter default identifier class ([A-Za-z0-9_] +
- * Unicode alphanumerics). Used only for compile-time static-static seam
- * spaces in seq emission; every dynamic seam belongs to the runtime
- * writer.
- */
-function isStaticWordChar(c: string): boolean {
-	return /[A-Za-z0-9_]/.test(c) || (c.charCodeAt(0) > 127 && /[\p{L}\p{N}]/u.test(c));
-}
 
 /**
  * Emit Jinja for a list-shaped slot: `{{ name | join("…") }}` (or one

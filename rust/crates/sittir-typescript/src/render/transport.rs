@@ -57444,17 +57444,19 @@ fn render_type(t: &TypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<()
     }
 }
 
+/// Word-class table derived from this grammar's Link-pinned word pattern.
+static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core::spacing::WordMatcher::new(
+    [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, true, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, true],
+    char::is_alphanumeric,
+);
+
 pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::askama::Error> {
     let mut s = String::new();
     // SpacingWriter (2026-07-24 spec): root-level wrap — inserts a space
     // only where a word-class char would collide with a word-class char
-    // across write seams. Inert while templates carry their own spaces;
-    // supplies lexically-required spaces once separators/conditional
-    // spaces migrate out of templates. Wrap ONCE here — never per level.
-    let mut w = ::sittir_core::spacing::SpacingWriter::new(
-        &mut s,
-        ::sittir_core::spacing::WordMatcher::default_ident(),
-    );
+    // across write seams, per this grammar's own word class. Wrap ONCE
+    // here — never per level.
+    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER);
     transport.render_into(&mut w)?;
     Ok(s)
 }

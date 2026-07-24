@@ -49,6 +49,7 @@ function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {
 			nodes: new Map()
 		} as unknown as EmitCtx['nodeMap'],
 		wordMatcher: /^\w+$/,
+		isWordChar: (c: string) => /\w/.test(c),
 		externals: [],
 		rules: {},
 		visitingHelpers: new Set<string>(),

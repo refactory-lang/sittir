@@ -1241,3 +1241,36 @@ export function classifyTemplateEmission(node: AssembledNode): TemplateEmission 
 	}
 	return 'emit';
 }
+
+/**
+ * Derive a 128-entry ASCII word-class table from the grammar's Link-pinned
+ * `wordMatcher` regex (SpacingWriter spec: "the Link-pinned wordMatcher
+ * already carried on LinkedGrammar — no new configuration").
+ *
+ * Per-char classification uses the PAIR test rather than a single-char
+ * match: a char is word-class iff it would EXTEND a word match ('a'+c
+ * matches longer than 'a') or START one that the next word char joins
+ * (c+'a' matches longer than c). This is grammar-faithful where a naive
+ * single-char test fails — digits are word-INTERIOR for identifier-shaped
+ * word patterns without being valid word STARTS.
+ */
+export function wordCharAsciiTable(wordMatcher: RegExp): boolean[] {
+	const src = wordMatcher.source.replace(/\$$/, '');
+	const flags = wordMatcher.flags.replace(/[gm]/g, '');
+	let anchored: RegExp;
+	try {
+		anchored = new RegExp(`^(?:${src})`, flags);
+	} catch {
+		anchored = /^\w/;
+	}
+	const joins = (pair: string): boolean => {
+		const m = pair.match(anchored);
+		return !!(m && m[0] !== undefined && m[0].length > 1);
+	};
+	const table: boolean[] = new Array(128).fill(false);
+	for (let i = 0; i < 128; i++) {
+		const c = String.fromCharCode(i);
+		table[i] = joins(`a${c}`) || joins(`${c}a`);
+	}
+	return table;
+}

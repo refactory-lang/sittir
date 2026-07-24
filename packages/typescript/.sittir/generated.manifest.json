@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "08fa60c01f2273d58da8ed2d9133c359cd5e81f0a5feb9a697f5e489d078da1f",
+  "source_hash": "ce46ddc39ac1f88f83ba7e761ab556dc06cc3b4530392daa7be3d9c5b5f106c9",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "09baa01ccb9310e88595fe631d2bc0bc406a27dbe1f3588badb3ec0bd580128c",
     "packages/typescript/.sittir/grammar.js": "a70e708fa07bb9d0bf9a9da7c6da68ce3fa2284534b5e83c73e3f1b97d91336c",
@@ -258,7 +258,7 @@
     "rust/crates/sittir-typescript/src/render/kind_ids.rs": "90902551875b7de61f7c558f4d73e1b6a893a583191cf984a43de49aea47b73c",
     "rust/crates/sittir-typescript/src/render/mod.rs": "ee577d3e10ea18183185dec43032fdc42346bcd3346bfd97a4bdc7334373dc40",
     "rust/crates/sittir-typescript/src/render/templates.rs": "afd60dcb3167ec8ccb2a4e85f01e1f65b10982deb459a7961e4bbdc535416190",
-    "rust/crates/sittir-typescript/src/render/transport.rs": "ac88fb9fd17dd8fba22bc86c91b0a980a70005313afea9de7027d780e638f52a",
+    "rust/crates/sittir-typescript/src/render/transport.rs": "b3ae4655036f48b4dec03942123a450fdef55dac2e5b4c2e411729e6836b9213",
     "rust/crates/sittir-typescript/templates/_ambient_declaration_global.jinja": "9c78483e215a5b1f64449a4d4a6680a4c3500d608c93f5877eed3c96d09a8621",
     "rust/crates/sittir-typescript/templates/_ambient_declaration_module.jinja": "68bb8191cb8e07236d9edbbb294a50f70fd82b0f069ab427cdbe231742559914",
     "rust/crates/sittir-typescript/templates/_arrow_function__call_signature.jinja": "f4964f58d0d6e1bd824c393398f9a65b1550399e1d786e85977a6e922ef60c55",

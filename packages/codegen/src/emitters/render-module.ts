@@ -60,7 +60,8 @@ import {
 	isSlotBearingCompound,
 	classifyBranchSlots,
 	classifyPrimitiveField,
-	type PrimitiveFieldStorage
+	type PrimitiveFieldStorage,
+	wordCharAsciiTable
 } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
@@ -1074,17 +1075,26 @@ function renderTypedDispatch(
 	// dispatches branch nodes through their Askama template fns. This
 	// function is retained as the `pub fn -> String` entry point for callers
 	// that need an owned String (e.g. render_transport, parity tests).
+	// Per-grammar word class, derived at emit time from the Link-pinned
+	// wordMatcher (SpacingWriter spec: no new configuration). ASCII table
+	// via the pair test in wordCharAsciiTable; >=0x80 falls back to
+	// Unicode alphanumerics.
+	const wordTable = wordCharAsciiTable(nodeMap.wordMatcher ?? /\w/);
+	lines.push(`/// Word-class table derived from this grammar's Link-pinned word pattern.`);
+	lines.push(
+		`static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core::spacing::WordMatcher::new(`
+	);
+	lines.push(`    [${wordTable.map((b) => (b ? 'true' : 'false')).join(', ')}],`);
+	lines.push(`    char::is_alphanumeric,`);
+	lines.push(`);`);
+	lines.push('');
 	lines.push(`pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::askama::Error> {`);
 	lines.push(`    let mut s = String::new();`);
 	lines.push(`    // SpacingWriter (2026-07-24 spec): root-level wrap — inserts a space`);
 	lines.push(`    // only where a word-class char would collide with a word-class char`);
-	lines.push(`    // across write seams. Inert while templates carry their own spaces;`);
-	lines.push(`    // supplies lexically-required spaces once separators/conditional`);
-	lines.push(`    // spaces migrate out of templates. Wrap ONCE here — never per level.`);
-	lines.push(`    let mut w = ::sittir_core::spacing::SpacingWriter::new(`);
-	lines.push(`        &mut s,`);
-	lines.push(`        ::sittir_core::spacing::WordMatcher::default_ident(),`);
-	lines.push(`    );`);
+	lines.push(`    // across write seams, per this grammar's own word class. Wrap ONCE`);
+	lines.push(`    // here — never per level.`);
+	lines.push(`    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER);`);
 	lines.push(`    transport.render_into(&mut w)?;`);
 	lines.push(`    Ok(s)`);
 	lines.push(`}`);
