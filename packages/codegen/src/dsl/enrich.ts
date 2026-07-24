@@ -1674,6 +1674,60 @@ function applyClauseHoist(
 		}
 	}
 
+	// Optional position with a NON-seq body (optional(seq) was peeled above).
+	// `peelOptional` normalizes both runtime spellings — sittir's
+	// `{ type: OPTIONAL, content }` and the tree-sitter CLI's desugared
+	// `CHOICE[content, BLANK]` — into ONE hoist path. Before this branch the
+	// desugared form reached the mint via the generic CHOICE arm walk while
+	// the OPTIONAL form fell through untouched, so the two runtimes hoisted
+	// DIFFERENT grammars: the parser minted `_<parent>_group<N>` for e.g.
+	// rust `attribute`'s `optional(choice(seq('=', value), arguments))`
+	// while the IR never registered the kind — the wrapped tree then carried
+	// a group node the model couldn't drill (rendered `#[doc =]`, value
+	// dropped). Recurse into the content, then offer it to the arm mint
+	// exactly as a `CHOICE[content, BLANK]` non-BLANK arm.
+	{
+		const opt = peelOptional(rule);
+		if (opt.isOptional) {
+			const recursed = applyClauseHoist(
+				parentKind,
+				opt.inner,
+				rulesBag,
+				clauseGroupRules,
+				dedupeMap,
+				counter,
+				groupDedupeMap,
+				visibleGroupHiddenNames,
+				clauseGroupOwners,
+				ambientPrec
+			);
+			const promoted = mintStructuredChoiceArm(
+				recursed,
+				parentKind,
+				rulesBag,
+				clauseGroupRules,
+				counter,
+				groupDedupeMap,
+				visibleGroupHiddenNames,
+				clauseGroupOwners,
+				// Single non-BLANK arm: no siblings, no leading-name collisions.
+				new Set(),
+				ambientPrec
+			);
+			const final = promoted ?? recursed;
+			if (final === opt.inner) return rule;
+			if (isOptionalType(rule.type)) {
+				return { ...rule, content: final } as Rule;
+			}
+			// CHOICE[content, BLANK] spelling — swap the non-BLANK member.
+			const members = (rule as unknown as { members: Rule[] }).members;
+			const idx = members.findIndex((m) => (m as { type: string }).type !== 'BLANK');
+			const newMembers = members.slice();
+			newMembers[idx] = final;
+			return { ...rule, members: newMembers } as Rule;
+		}
+	}
+
 	// Descend into seq members.
 	if (isSeqType(rule.type)) {
 		const rawMembers = (rule as unknown as { members?: Rule[] }).members;
@@ -1813,53 +1867,6 @@ function applyClauseHoist(
 		);
 		if (newContent === content) return rule;
 		return { ...rule, content: newContent } as Rule;
-	}
-
-	// Bare OPTIONAL whose content is NOT a seq (those were peeled above).
-	// Sittir's runtime keeps `optional(x)` as `{ type: OPTIONAL, content: x }`
-	// while the tree-sitter CLI runtime desugars the SAME source to
-	// `CHOICE[x, BLANK]` — whose non-BLANK arm the CHOICE branch above offers
-	// to `mintStructuredChoiceArm`. Without this mirror branch the OPTIONAL
-	// form falls through untouched and the two runtimes hoist DIFFERENT
-	// grammars: the parser mints `_<parent>_group<N>` for e.g. rust
-	// `attribute`'s `optional(choice(seq('=', value), arguments))` while the
-	// IR never registers the kind — the wrapped tree then carries a group
-	// node the model can't drill (rendered `#[doc =]`, value dropped).
-	// Structure-only mirror: recurse into the content, then offer it to the
-	// arm mint exactly as the desugared form would. Under the CLI runtime
-	// this branch is unreachable (OPTIONAL never occurs), so the parser
-	// grammar is unchanged by construction.
-	if (isOptionalType(rule.type)) {
-		const content = (rule as unknown as { content?: Rule }).content;
-		if (!content) return rule;
-		const recursed = applyClauseHoist(
-			parentKind,
-			content,
-			rulesBag,
-			clauseGroupRules,
-			dedupeMap,
-			counter,
-			groupDedupeMap,
-			visibleGroupHiddenNames,
-			clauseGroupOwners,
-			ambientPrec
-		);
-		const promoted = mintStructuredChoiceArm(
-			recursed,
-			parentKind,
-			rulesBag,
-			clauseGroupRules,
-			counter,
-			groupDedupeMap,
-			visibleGroupHiddenNames,
-			clauseGroupOwners,
-			// Single-arm position: no sibling arms, so no leading-name collisions.
-			new Set(),
-			ambientPrec
-		);
-		const final = promoted ?? recursed;
-		if (final === content) return rule;
-		return { ...rule, content: final } as Rule;
 	}
 
 	return rule;

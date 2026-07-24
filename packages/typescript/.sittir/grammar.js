@@ -1889,6 +1889,46 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       }
     }
   }
+  {
+    const opt = peelOptional(rule);
+    if (opt.isOptional) {
+      const recursed = applyClauseHoist(
+        parentKind,
+        opt.inner,
+        rulesBag,
+        clauseGroupRules,
+        dedupeMap,
+        counter,
+        groupDedupeMap,
+        visibleGroupHiddenNames,
+        clauseGroupOwners,
+        ambientPrec
+      );
+      const promoted = mintStructuredChoiceArm(
+        recursed,
+        parentKind,
+        rulesBag,
+        clauseGroupRules,
+        counter,
+        groupDedupeMap,
+        visibleGroupHiddenNames,
+        clauseGroupOwners,
+        // Single non-BLANK arm: no siblings, no leading-name collisions.
+        /* @__PURE__ */ new Set(),
+        ambientPrec
+      );
+      const final = promoted ?? recursed;
+      if (final === opt.inner) return rule;
+      if (isOptionalType(rule.type)) {
+        return { ...rule, content: final };
+      }
+      const members = rule.members;
+      const idx = members.findIndex((m) => m.type !== "BLANK");
+      const newMembers = members.slice();
+      newMembers[idx] = final;
+      return { ...rule, members: newMembers };
+    }
+  }
   if (isSeqType(rule.type)) {
     const rawMembers = rule.members;
     if (!Array.isArray(rawMembers)) return rule;
@@ -1993,38 +2033,6 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
     );
     if (newContent === content) return rule;
     return { ...rule, content: newContent };
-  }
-  if (isOptionalType(rule.type)) {
-    const content = rule.content;
-    if (!content) return rule;
-    const recursed = applyClauseHoist(
-      parentKind,
-      content,
-      rulesBag,
-      clauseGroupRules,
-      dedupeMap,
-      counter,
-      groupDedupeMap,
-      visibleGroupHiddenNames,
-      clauseGroupOwners,
-      ambientPrec
-    );
-    const promoted = mintStructuredChoiceArm(
-      recursed,
-      parentKind,
-      rulesBag,
-      clauseGroupRules,
-      counter,
-      groupDedupeMap,
-      visibleGroupHiddenNames,
-      clauseGroupOwners,
-      // Single-arm position: no sibling arms, so no leading-name collisions.
-      /* @__PURE__ */ new Set(),
-      ambientPrec
-    );
-    const final = promoted ?? recursed;
-    if (final === content) return rule;
-    return { ...rule, content: final };
   }
   return rule;
 }
