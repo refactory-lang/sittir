@@ -280,6 +280,30 @@ export const RUST_KEYWORDS = new Set([
  */
 const RESERVED_SUPERTYPE_ENUM_NAMES = new Set(['LiteralTransport']);
 
+/**
+ * Sittir-infra transport type names `rustTransportStructName` must never
+ * collide with — `renderTransportSupport` emits exactly one of each,
+ * unconditionally, as global dispatch/support machinery (the `AnyTransport`
+ * kind_id-dispatch enum, `VerbatimTransport`/`ProtectedTransport`'s bare-text
+ * carriers, `LiteralTransport`). A grammar-authored kind whose PascalCase
+ * `typeName` happens to match one of these (confirmed concretely: TypeScript's
+ * `any` keyword type-names to `Any`, so its per-kind struct would otherwise
+ * also be named `AnyTransport`) produces two Rust items with the identical
+ * name in the same module — a hard `E0428`/`E0119` compile error, not a
+ * cosmetic naming quirk. This was a documented, anticipated risk left
+ * unresolved by the original typed-transport-fields plan (its "Open
+ * questions" #1 covered the analogous supertype-enum case, resolved there via
+ * `RESERVED_SUPERTYPE_ENUM_NAMES`'s skip-and-fall-back strategy — skipping
+ * isn't available here since a kind's own per-kind struct can't just be
+ * omitted without losing its data).
+ */
+const RESERVED_TRANSPORT_STRUCT_NAMES = new Set([
+	'AnyTransport',
+	'VerbatimTransport',
+	'ProtectedTransport',
+	'LiteralTransport'
+]);
+
 function isReservedSupertypeTransportNode(node: AssembledNode): node is AssembledSupertype {
 	return (
 		node.modelType === 'supertype' && RESERVED_SUPERTYPE_ENUM_NAMES.has(`${rustTypeIdent(node.typeName)}Transport`)
@@ -294,6 +318,10 @@ interface EffectiveSupertypeTransportSubtype {
 interface EffectiveSupertypeTransportShape {
 	readonly subtypes: readonly EffectiveSupertypeTransportSubtype[];
 	readonly suppressedKinds: readonly string[];
+	/** Storage→parse pairs merged from every walked supertype (the owner AND
+	 * flattened reserved sub-supertypes) — see `SupertypeRule.subtypeParseNames`.
+	 * Keyed by `subtypes[].subKind`; first-stamped pair wins on collision. */
+	readonly parseNames: ReadonlyMap<string, string>;
 }
 
 function collectEffectiveSupertypeTransportShape(
@@ -305,11 +333,13 @@ function collectEffectiveSupertypeTransportShape(
 		readonly emittedKinds: Set<string>;
 		readonly suppressedKinds: Set<string>;
 		readonly subtypes: EffectiveSupertypeTransportSubtype[];
+		readonly parseNames: Map<string, string>;
 	} = {
 		variantKindByName: new Map(),
 		emittedKinds: new Set(),
 		suppressedKinds: new Set(),
-		subtypes: []
+		subtypes: [],
+		parseNames: new Map()
 	}
 ): EffectiveSupertypeTransportShape {
 	const appendSubtype = (subKind: string, subNode: AssembledNode): void => {
@@ -329,10 +359,14 @@ function collectEffectiveSupertypeTransportShape(
 	if (seen.has(supertypeNode.kind)) {
 		return {
 			subtypes: state.subtypes,
-			suppressedKinds: [...state.suppressedKinds]
+			suppressedKinds: [...state.suppressedKinds],
+			parseNames: state.parseNames
 		};
 	}
 	seen.add(supertypeNode.kind);
+	for (const [storage, parse] of Object.entries(supertypeNode.subtypeParseNames ?? {})) {
+		if (!state.parseNames.has(storage)) state.parseNames.set(storage, parse);
+	}
 	for (const subKind of supertypeNode.subtypes) {
 		const subNode = nodeMap.nodes.get(subKind);
 		if (subNode === undefined) continue;
@@ -345,7 +379,8 @@ function collectEffectiveSupertypeTransportShape(
 	}
 	return {
 		subtypes: state.subtypes,
-		suppressedKinds: [...state.suppressedKinds]
+		suppressedKinds: [...state.suppressedKinds],
+		parseNames: state.parseNames
 	};
 }
 
@@ -1867,6 +1902,28 @@ function renderTransportSupport(
 	// fields that reference the enum types can resolve them at compile time.
 	const usedSupertypeNames = collectUsedSupertypeNames(nodes, nodeMap);
 	const kidByKind = kindEntries ? buildKindIdByKind(kindEntries) : undefined;
+	// Cross-supertype self-alias ids: a mint arm (`alias($._hidden_supertype,
+	// $.visible)`) records its storage→parse pair on the REFERENCING
+	// supertype's `subtypeParseNames`, but the id must also be accepted by the
+	// STORAGE supertype's OWN enum — a delegated decode
+	// (`ExpressionTransport` 432-arm → `ExpressionExceptRangeTransport`) hands
+	// the same napi value down, so the inner enum sees the alias id too.
+	// Collect globally (the pair never lives on the storage supertype itself).
+	const selfAliasIdsBySupertype = new Map<string, number[]>();
+	if (kindEntries !== undefined) {
+		for (const [, node] of nodeMap.nodes) {
+			if (node.modelType !== 'supertype') continue;
+			for (const [storage, parse] of Object.entries((node as AssembledSupertype).subtypeParseNames ?? {})) {
+				if (nodeMap.nodes.get(storage)?.modelType !== 'supertype') continue;
+				const parseEntry = findKindEntry(kindEntries, parse);
+				const parseId = parseEntry?.parseId ?? parseEntry?.id;
+				if (parseId === undefined) continue;
+				const ids = selfAliasIdsBySupertype.get(storage);
+				if (ids === undefined) selfAliasIdsBySupertype.set(storage, [parseId]);
+				else if (!ids.includes(parseId)) ids.push(parseId);
+			}
+		}
+	}
 	const supertypeEnumLines: string[] = [];
 	for (const [, node] of nodeMap.nodes) {
 		if (node.modelType !== 'supertype') continue;
@@ -1875,7 +1932,15 @@ function renderTransportSupport(
 		// (e.g. `_literal` → `LiteralTransport` is in RESERVED_SUPERTYPE_ENUM_NAMES).
 		const enumName = `${rustTypeIdent(node.typeName)}Transport`;
 		if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) continue;
-		supertypeEnumLines.push(...emitSupertypeTransportEnum(node as AssembledSupertype, kidByKind, nodeMap));
+		supertypeEnumLines.push(
+			...emitSupertypeTransportEnum(
+				node as AssembledSupertype,
+				kidByKind,
+				nodeMap,
+				kindEntries,
+				selfAliasIdsBySupertype.get(node.kind)
+			)
+		);
 	}
 
 	// Collect per-slot children enums (heterogeneous children slots where no
@@ -2360,14 +2425,69 @@ function emitTransportEnumFromNapiValueBody(
 	return lines;
 }
 
+/**
+ * Emit one `match` arm that unwraps an alias-mint wrapper node and
+ * re-dispatches `Self::from_napi_value` on its single kind-keyed child.
+ *
+ * A mint arm (`alias($._hidden_rule, $.visible_name)`) makes an otherwise-
+ * inlined hidden rule VISIBLE at one specific reference site, so runtime
+ * nodes arrive under the alias occurrence's own id (`alias_sym_*`) rather
+ * than any of the concrete kinds the hidden rule resolves to. The
+ * grammar-agnostic reader stores such a node's single unlabeled child under
+ * a kind-keyed slot (`{ $type: <aliasId>, _<childKind>: <child> }` —
+ * read_node.rs kind-named-slot routing), so no variant struct can decode the
+ * wrapper directly (decode trials would probe the wrong object). This arm
+ * unwraps the kind-keyed slot and re-dispatches `Self` on the concrete
+ * child, which carries its own `$type`.
+ *
+ * Shared by `emitSupertypeTransportEnum` (cross-supertype self-alias ids)
+ * and `emitPerSlotChildEnum` (per-slot alias-canonicalized wrapper ids,
+ * e.g. python's `_case_pattern_group1` / id 293) — same wrapper shape,
+ * same unwrap, only the enclosing enum's name and error text differ.
+ *
+ * @param aliasId - the wrapper's own kind_id (the alias occurrence's `alias_sym_*`).
+ * @param enumName - the enclosing enum's Rust name (for the error message only).
+ * @param errorLabel - short label distinguishing the caller's alias-id class
+ *   in the error text (e.g. `'self-alias'`, `'alias-wrapper'`).
+ */
+function emitAliasUnwrapRecurseArm(aliasId: number, enumName: string, errorLabel: string): string[] {
+	const arms: string[] = [];
+	arms.push(`                ${aliasId} => {`);
+	arms.push(`                    if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {`);
+	arms.push(`                        if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {`);
+	arms.push(`                            for key in keys {`);
+	arms.push(`                                if !key.starts_with('_') {`);
+	arms.push(`                                    continue;`);
+	arms.push(`                                }`);
+	arms.push(
+		`                                if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {`
+	);
+	arms.push(`                                    return Self::from_napi_value(env, ::napi::JsValue::raw(&child));`);
+	arms.push(`                                }`);
+	arms.push(`                            }`);
+	arms.push(`                        }`);
+	arms.push(`                    }`);
+	arms.push(`                    Err(::napi::Error::from_reason(${JSON.stringify(
+		`${errorLabel} kind id ${aliasId} in ${enumName}: no kind-keyed child slot to unwrap`
+	)}))`);
+	arms.push(`                },`);
+	return arms;
+}
+
 function emitSupertypeTransportEnum(
 	supertypeNode: AssembledSupertype,
 	kindIdByKind: ReadonlyMap<string, number> | undefined,
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	kindEntries?: readonly KindEnumEntry[],
+	selfAliasIds?: readonly number[]
 ): string[] {
 	const enumName = `${rustTypeIdent(supertypeNode.typeName)}Transport`;
 	const lines: string[] = [];
-	const { subtypes: validSubtypes, suppressedKinds } = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
+	const {
+		subtypes: validSubtypes,
+		suppressedKinds,
+		parseNames
+	} = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
 	const ownerKind = supertypeNode.kind;
 
 	// SCC-driven Box rule. Box only when the variant kind and the
@@ -2380,7 +2500,23 @@ function emitSupertypeTransportEnum(
 	// Does this supertype admit any AssembledPattern variant? Pattern variants
 	// share verbatim-text render semantics; bare-string inputs are wrapped as
 	// Verbatim. See VerbatimTransport docstring for rationale.
-	const admitsVerbatim = validSubtypes.some(({ subNode }) => subNode.modelType === 'pattern');
+	//
+	// Checked over the FULLY recursively-flattened subtype set (via
+	// `collectConcreteTransportKinds`), not `validSubtypes` —
+	// `collectEffectiveSupertypeTransportShape` boxes a non-reserved NESTED
+	// supertype subtype as-is (its own dedicated transport enum) rather than
+	// flattening it, so a pattern-modelType leaf buried inside that boxed
+	// subtype is invisible to a shallow check. The transport layer still
+	// sends that leaf as bare text (the universal leaf-collapse convention),
+	// so this enum needs the Verbatim branch regardless of nesting depth.
+	// Confirmed concretely: python's `_left_hand_side` (subtypes `[pattern,
+	// pattern_list]`) missed this because `pattern` itself is `modelType:
+	// 'supertype'`, not `'pattern'` — the leaf that actually renders as
+	// verbatim text (`identifier`) is one level deeper, inside its own
+	// `PatternTransport`.
+	const admitsVerbatim = supertypeNode.subtypes.some((subKind) =>
+		collectConcreteTransportKinds(subKind, nodeMap).some((k) => nodeMap.nodes.get(k)?.modelType === 'pattern')
+	);
 
 	const emitDecodeTrials = (leafOnly = false, indent = '                '): string[] => {
 		// Self-alias / reserved-supertype kind_id: parser sent the supertype's
@@ -2457,6 +2593,22 @@ function emitSupertypeTransportEnum(
 				arms.push(`                },`);
 				emittedIds.add(id);
 			}
+			// Parse-aliases of THIS supertype itself: a mint arm
+			// (`alias($._expression_except_range, $.expression_group1)`) makes
+			// the hidden supertype VISIBLE at that position, so runtime nodes
+			// arrive under the alias occurrence's own id (`alias_sym_*`). The
+			// grammar-agnostic reader stores such a node's single unlabeled
+			// child under a kind-keyed slot (`{ $type: <aliasId>,
+			// _<childKind>: <child> }` — read_node.rs kind-named-slot routing),
+			// so no variant struct can decode the wrapper directly (decode
+			// trials would probe the wrong object). Unwrap the kind-keyed slot
+			// and re-dispatch Self on the concrete child, which carries its own
+			// `$type`.
+			for (const aliasId of selfAliasIds ?? []) {
+				if (emittedIds.has(aliasId)) continue;
+				emittedIds.add(aliasId);
+				arms.push(...emitAliasUnwrapRecurseArm(aliasId, enumName, 'self-alias'));
+			}
 			for (const { subKind, subNode } of validSubtypes) {
 				const variant = rustTypeIdent(subNode.typeName);
 				const typeName = rustTransportStructName(subNode);
@@ -2466,6 +2618,17 @@ function emitSupertypeTransportEnum(
 				const acceptedIds = [...acceptedKinds]
 					.map((k) => kindIdByKind.get(k))
 					.filter((id): id is number => id !== undefined);
+				// Aliased arm: also accept the parse name's id — the alias
+				// occurrence's own runtime symbol (`alias_sym_*`), the id
+				// tree-sitter actually emits at that arm's position. Resolved
+				// through THE kind-name chain (its `_`-prefix step is what maps
+				// a mint's visible name to its `alias_sym_*` catalog row).
+				const parseName = parseNames.get(subKind);
+				if (parseName !== undefined && kindEntries !== undefined) {
+					const parseEntry = findKindEntry(kindEntries, parseName);
+					const parseId = parseEntry?.parseId ?? parseEntry?.id;
+					if (parseId !== undefined) acceptedIds.push(parseId);
+				}
 				if (subNode instanceof AssembledEnum) {
 					acceptedIds.push(...enumMemberAcceptedIds(subNode));
 				}
@@ -2603,7 +2766,13 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 	const { subtypes: validSubtypes } = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
 	const ownerKind = supertypeNode.kind;
 
-	const admitsVerbatim = validSubtypes.some(({ subNode }) => subNode.modelType === 'pattern');
+	// See the matching comment in `emitSupertypeTransportEnum` — checked over
+	// the fully recursively-flattened subtype set, not the shallow
+	// `validSubtypes`, so a pattern-modelType leaf nested inside a boxed
+	// subtype supertype is still detected.
+	const admitsVerbatim = supertypeNode.subtypes.some((subKind) =>
+		collectConcreteTransportKinds(subKind, nodeMap).some((k) => nodeMap.nodes.get(k)?.modelType === 'pattern')
+	);
 
 	lines.push(`fn ${fnName}(t: &${enumName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	lines.push(`    match t {`);
@@ -2847,7 +3016,23 @@ function emitPerSlotChildEnum(
 	// and any pattern variant would render their text identically — Verbatim
 	// is the explicit "untyped text" carrier that avoids the ambiguity of
 	// picking among interchangeable pattern variants.
-	const admitsVerbatim = validKinds.some(({ node }) => node.modelType === 'pattern');
+	//
+	// Checked over the FULLY recursively-flattened kind set (via
+	// `collectConcreteTransportKinds`), not `validKinds` — `validKinds` stops
+	// at a nested supertype that has its own dedicated transport enum (e.g.
+	// `pattern` → boxed as `Pattern(PatternTransport)`, never expanded down to
+	// `identifier`), so checking it directly misses a pattern-modelType leaf
+	// buried inside that boxed supertype. The transport layer still sends
+	// that leaf as bare text (the same universal leaf-collapse convention),
+	// so the enclosing enum needs the Verbatim branch regardless of nesting
+	// depth. Confirmed concretely: python's `LeftHandSideTransport`
+	// (`assignment.left`, kinds `[pattern, pattern_list]`) missed this
+	// because `pattern` itself is `modelType: 'supertype'`, not `'pattern'` —
+	// the leaf that actually renders as verbatim text (`identifier`) is one
+	// level deeper, inside `PatternTransport`.
+	const admitsVerbatim = entry.kinds.some((kind) =>
+		collectConcreteTransportKinds(kind, nodeMap).some((k) => nodeMap.nodes.get(k)?.modelType === 'pattern')
+	);
 
 	// Spec 024 cleanup-§E1: named-slot enums are load-bearing alongside unnamed
 	// `$children` enums — `rustTransportSlotType` returns the per-slot enum name
@@ -2898,6 +3083,16 @@ function emitPerSlotChildEnum(
 			if (node instanceof AssembledEnum) {
 				acceptedIds.push(...enumMemberAcceptedIds(node));
 			}
+			// A pattern whose sole realization is a fixed literal (e.g.
+			// `_semicolon` = `choice($._automatic_semicolon, ';')` → `';'`)
+			// has no catalog row under its own hidden name, so neither the
+			// mint stamp nor the name-derived chain above resolves an id for
+			// it. Resolve through the same literal-first chain already used
+			// for `entry.literals` below (~3106-3110).
+			if (node.modelType === 'pattern' && node.fixedLiteralText !== undefined && kindEntries !== undefined) {
+				const literalId = findKindEntryForLiteral(kindEntries, node.fixedLiteralText)?.id;
+				if (literalId !== undefined) acceptedIds.push(literalId);
+			}
 			const boxed = isBoxed(kind, node);
 			for (const id of acceptedIds) {
 				if (emittedIds.has(id)) continue;
@@ -2927,6 +3122,30 @@ function emitPerSlotChildEnum(
 			if (id === undefined || variant === undefined || emittedIds.has(id)) continue;
 			emittedIds.add(id);
 			kindIdArms.push(`                ${id} => Ok(Self::${variant}),`);
+		}
+		// Alias-canonicalized wrapper ids (narrow scope): one of this slot's
+		// raw storage kinds (`entry.kinds`, pre-expansion) is a hidden
+		// supertype that got flattened into `validKinds` above (per
+		// `expandConcreteTransportKinds` — every supertype-modelType kind has
+		// `concreteTransportTypeName === null`, so it's never its own
+		// variant). When a value at this reference site was ALSO wrapped by
+		// an enrich-minted `alias($._hidden_supertype, $.visible_name)` (the
+		// `parseAliases` fact — `aliasTargetToSourceMapOf`, node-map.ts), the
+		// alias occurrence's own wire id (e.g. python's
+		// `_case_pattern_group1` / id 293, wrapping a matched
+		// `union_pattern`) has no variant to land on directly — it must
+		// unwrap its single kind-keyed child and re-dispatch, same as a
+		// supertype's cross-supertype self-alias id. Scoped tightly to
+		// exactly this shape (flattened-supertype storage target already
+		// covered by this same enum); NOT a general alias-name fallback.
+		for (const [parseName, storageKind] of Object.entries(entry.parseAliases)) {
+			if (!entry.kinds.includes(storageKind)) continue;
+			if (nodeMap.nodes.get(storageKind)?.modelType !== 'supertype') continue;
+			const parseEntry = kindEntries !== undefined ? findKindEntry(kindEntries, parseName) : undefined;
+			const aliasId = parseEntry?.parseId ?? parseEntry?.id ?? kindIdByKind.get(parseName);
+			if (aliasId === undefined || emittedIds.has(aliasId)) continue;
+			emittedIds.add(aliasId);
+			kindIdArms.push(...emitAliasUnwrapRecurseArm(aliasId, enumName, 'alias-wrapper'));
 		}
 		kindIdArms.push(`                other => Err(::napi::Error::from_reason(format!(`);
 		kindIdArms.push(`                    "unknown kind id {other} in ${enumName}",`);
@@ -4080,7 +4299,8 @@ function rustTransportStructName(node: AssembledNode): string {
 	if (node instanceof AssembledEnum) {
 		return enumTypeName(node);
 	}
-	return `${rustTypeIdent(node.typeName)}Transport`;
+	const name = `${rustTypeIdent(node.typeName)}Transport`;
+	return RESERVED_TRANSPORT_STRUCT_NAMES.has(name) ? `${rustTypeIdent(node.typeName)}KindTransport` : name;
 }
 
 function rustTransportVariantName(node: AssembledNode): string {

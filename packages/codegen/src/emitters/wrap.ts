@@ -37,7 +37,8 @@ import {
 	classifyChildFactorySurface,
 	classifyWrapEmission,
 	warnSkippedParserSymbol,
-	canonicalSeparatedListField
+	canonicalSeparatedListField,
+	kindEnumTextIdPairs
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType } from './factories.ts';
 import { deriveChildrenKinds } from './transport-common.ts';
@@ -279,6 +280,13 @@ interface ResolveSlotDrillConfig {
 	 */
 	readonly reclaimKindIdsExpr?: string;
 	/**
+	 * Stamped text→member-kindId pairs for a kindEnum slot (see
+	 * `kindEnumTextIdPairs`, shared.ts). Baked into `projectKindEnumStorage`'s
+	 * call so wrapper-materialized enum reads project to NUMERIC member ids on
+	 * the wire (id-first contract) instead of raw text.
+	 */
+	readonly kindEnumTextIdPairs?: readonly (readonly [string, number])[];
+	/**
 	 * Emit `normalizeRepeatedWrapSlot<unknown>`/`normalizeSingularWrapSlot<unknown>`
 	 * with an EXPLICIT type argument instead of leaving `T` to be inferred from
 	 * `reclaimedStoreExpr`. For a multi-field `AssembledSeparatedList`
@@ -343,8 +351,19 @@ function resolveSlotDrillExprs(
 		};
 	}
 	if (storageInfo?.kind === 'kindEnum') {
+		// Id-first wire contract: bake the slot's STAMPED text→member-id map
+		// into the call so a wrapper-materialized enum (`{ $type: <wrapper id>,
+		// $text: "private" }`) projects to the member's numeric kind id — the
+		// same stamped ids the render-side enum arms accept — instead of raw
+		// text. Text survives only as the fallback for unstamped members.
+		const textIdMapExpr =
+			config.kindEnumTextIdPairs && config.kindEnumTextIdPairs.length > 0
+				? `{ ${config.kindEnumTextIdPairs.map(([text, id]) => `${JSON.stringify(text)}: ${id}`).join(', ')} }`
+				: undefined;
 		return {
-			storeExpr: `projectKindEnumStorage(${normalizedStoreExpr})`,
+			storeExpr: textIdMapExpr
+				? `projectKindEnumStorage(${normalizedStoreExpr}, ${textIdMapExpr})`
+				: `projectKindEnumStorage(${normalizedStoreExpr})`,
 			accessorBody: `return this.${slot.storageKey}`
 		};
 	}
@@ -463,6 +482,27 @@ function collectConcreteStorageKeys(slot: AssembledNonterminal, nodeMap: NodeMap
 		return undefined;
 	}
 	return storageKeys;
+}
+
+/**
+ * Consumed candidate keys: concrete kind-keyed wire keys any field's
+ * `??`-chain reads (`collectConcreteStorageKeys`) that are NOT some field's
+ * own canonical `storageKey`. Shared by `emitFieldCarryingWrap` (its
+ * `fields` param) and `emitSeparatedListWrap` (its `node.fields` — same
+ * Task-2 `_slots` source, single- or multi-field) so both spread bases omit
+ * the SAME raw un-dispatched shadow stubs instead of drifting apart — see
+ * `_omitWrapKeys`'s doc comment for the masking bug this prevents.
+ */
+function computeConsumedCandidateKeys(
+	fields: readonly AssembledNonterminal[],
+	nodeMap: NodeMap
+): readonly string[] {
+	const canonicalStorageKeys = new Set(fields.map((f) => f.storageKey));
+	return [
+		...new Set(
+			fields.flatMap((f) => (collectConcreteStorageKeys(f, nodeMap) ?? []).filter((k) => !canonicalStorageKeys.has(k)))
+		)
+	].sort();
 }
 
 /**
@@ -655,7 +695,12 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 	const paramType = buildWrapParamType(node.typeName, new Map(), `T.${node.typeName} | readonly T.${node.typeName}[]`);
 	return [
 		`export function ${fn}(data: ${paramType}, tree: TreeHandle) {`,
-		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(_filterWrapChildrenByKind(data.$other, ${JSON.stringify(allowedKinds)}), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);`,
+		// A VISIBLE occurrence of this supertype (enrich-minted alias node)
+		// carries its member child under a kind-keyed `_<childKind>` property
+		// (reader kind-named slots) — probe those first; `$other` covers the
+		// legacy bucketed shape.
+		`  const kindKeyed = _firstKindKeyedWrapChild(data, ${JSON.stringify(allowedKinds)}) as T.${node.typeName} | readonly T.${node.typeName}[] | undefined;`,
+		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(kindKeyed ?? _filterWrapChildrenByKind(data.$other, ${JSON.stringify(allowedKinds)}), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);`,
 		`}`
 	].join('\n');
 }
@@ -941,7 +986,18 @@ function emitSeparatedListWrap(
 	});
 	lines.push(`  const _content = ${storeExpr};`);
 	lines.push('  return withMethods({');
-	lines.push('    ...data,');
+	// Same consumed-key omission as `emitFieldCarryingWrap` (shared via
+	// `computeConsumedCandidateKeys`) — a raw kind-keyed wire stub any real
+	// field's `??`-chain consumed (single-field: `canonical`/`_content`'s own
+	// source keys; multi-field: each of `node.fields`) must not survive on
+	// the spread base, or it wins the validator's deep-walk dedupe over the
+	// canonical `_<name>` key it was folded into (see `_omitWrapKeys`).
+	const consumedCandidateKeys = computeConsumedCandidateKeys(node.fields, nodeMap);
+	if (consumedCandidateKeys.length > 0) {
+		lines.push(`    ..._omitWrapKeys(data, ${JSON.stringify(consumedCandidateKeys)}),`);
+	} else {
+		lines.push('    ...data,');
+	}
 	if (kindEntries) {
 		const entry = kindEntries.find((e) => e.kind === node.kind);
 		if (entry) {
@@ -973,7 +1029,15 @@ function emitSeparatedListWrap(
 	if (node.fields.length > 1) {
 		emitFieldAccessorLines(node.fields, 'data', lines, kindEntries, nodeMap);
 	} else {
-		lines.push(`    ${canonical.name}() { ${accessorBody}; },`);
+		// Match `emitFieldAccessorLines`' convention (`f.propertyName`, camelCase):
+		// `canonical.name` is the raw storage-level slot name (snake_case for
+		// kind-derived slots, e.g. `attributed_parameter`). An accessor emitted
+		// under that raw name is invisible to consumers that derive the
+		// expected accessor name via camelCase projection (e.g. the validator's
+		// `accessorCandidatesForStorageKey`), which then silently falls back to
+		// the raw, undrilled `_<kind>` storage value instead of calling this
+		// method — a materialization gap for separatedList content accessors.
+		lines.push(`    ${canonical.propertyName}() { ${accessorBody}; },`);
 	}
 	lines.push('    $with: {},');
 	lines.push('  }, methodsEngine);');
@@ -1092,7 +1156,9 @@ function emitFieldStorageLines(
 			storageInfo,
 			allowedKinds,
 			candidateStorageKeys,
-			reclaimKindIdsExpr
+			reclaimKindIdsExpr,
+			kindEnumTextIdPairs:
+				storageInfo.kind === 'kindEnum' ? kindEnumTextIdPairs(f, nodeMap, kindEntries) : undefined
 		});
 		lines.push(`    ${f.storageKey}: ${storeExpr},`);
 	}
@@ -1166,7 +1232,18 @@ function emitFieldCarryingWrap(
 	} else {
 		lines.push('  return withMethods({');
 	}
-	lines.push('    ...data,');
+	// Consumed candidate keys: concrete kind-keyed wire keys any field's
+	// `??`-chain reads (collectConcreteStorageKeys) that are NOT some field's
+	// own canonical storageKey. Omit them from the spread base so the wrapped
+	// object carries exactly ONE copy of each child — the canonical `_<name>`
+	// assignment below — never a raw un-dispatched shadow stub (see
+	// `_omitWrapKeys`' doc comment).
+	const consumedCandidateKeys = computeConsumedCandidateKeys(fields, nodeMap);
+	if (consumedCandidateKeys.length > 0) {
+		lines.push(`    ..._omitWrapKeys(data, ${JSON.stringify(consumedCandidateKeys)}),`);
+	} else {
+		lines.push('    ...data,');
+	}
 	// Override $type with the numeric TSKindId.X discriminant when kindEntries is present.
 	if (kindEntries) {
 		const entry = kindEntries.find((e) => e.kind === node.kind);
@@ -1418,6 +1495,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesConcatInSourceOrder = /\b_concatInSourceOrder\b/.test(bodySource);
 		// `_concatInSourceOrder` calls `_toArr`, so emit `_toArr` whenever either is used.
 		const usesToArr = /\b_toArr\b/.test(bodySource) || usesConcatInSourceOrder;
+		const usesOmitWrapKeys = /\b_omitWrapKeys\b/.test(bodySource);
 		const supertypeMembers = buildSupertypeMembersMap(this.#nodeMap);
 		const utilsImports = [
 			'withMethods',
@@ -1435,12 +1513,36 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'// Import _NodeData (== AnyNodeData) from @sittir/types',
 			'// instead of re-declaring locally. Single source of truth.',
 			"import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';",
-			...(this.#kindEntries ? ["import { TSKindId, KIND_NAMES } from './types.js';"] : []),
+			...(this.#kindEntries ? ["import { TSKindId, KIND_NAMES, kindIdFromName } from './types.js';"] : []),
 			"import type * as T from './types.js';",
 			...(this.#typeImportLine ? [this.#typeImportLine] : []),
 			`import { ${utilsImports.join(', ')} } from './utils.js';`,
 			"import * as _factories from './factories.js';",
 			'',
+			...(usesOmitWrapKeys
+				? [
+						'// Drop CONSUMED raw candidate storage keys from the spread base. A',
+						'// field whose `??`-chain reads concrete kind-keyed wire keys',
+						'// (`_binary_expression`, …) copies the winner into its canonical',
+						'// `_<name>` key — leaving the raw stub on the object gives generic',
+						'// key-walkers (the validator deep walk dedupes candidates by node',
+						'// coords) a never-wrap-dispatched shadow copy that can win by',
+						'// Object.keys insertion order and mask the canonical one (the',
+						'// deep-read Missing-field class). Copy-on-first-delete keeps the',
+						'// no-candidate fast path allocation-free.',
+						'function _omitWrapKeys<T extends object>(data: T, keys: readonly string[]): T {',
+						'  let out: T = data;',
+						'  for (const key of keys) {',
+						'    if (key in out) {',
+						'      if (out === data) out = { ...data };',
+						'      delete (out as Record<string, unknown>)[key];',
+						'    }',
+						'  }',
+						'  return out;',
+						'}',
+						''
+					]
+				: []),
 			...(usesNormalizeSingular || usesNormalizeRepeated
 				? [
 						'const WRAP_WARNING_MODE = typeof process !== "undefined" && process.env?.SITTIR_WRAP_WARNING_MODE === "1";',
@@ -1626,8 +1728,10 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'        ? KIND_NAMES.get(e.$type as never) ?? String(e.$type)',
 						'        : (e.$type as unknown as string);',
 						'      const hiddenCurrentType = currentType.startsWith("_") ? currentType.slice(1) : undefined;',
+						'      let resolvedToId: number | undefined;',
+						'      try { resolvedToId = kindIdFromName(toType) as unknown as number; } catch { resolvedToId = undefined; }',
 						'      const next = currentType === fromType || hiddenCurrentType === fromType',
-						'        ? ({ ...e, $type: toType as unknown as number } as _NodeData)',
+						'        ? ({ ...e, $type: (resolvedToId ?? toType) as unknown as number } as _NodeData)',
 						'        : e;',
 						'      return next as unknown as T;',
 						'    }',
@@ -1648,10 +1752,29 @@ export class WrapEmitter implements CodegenEmitter<string> {
 				: []),
 			...(usesProjectKindEnum
 				? [
-						'function projectKindEnumStorage<T>(value: T): T {',
+						'function projectKindEnumStorage<T>(value: T, textIds?: Readonly<Record<string, number>>): T {',
 						'  if (!value) return value;',
-						'  if (Array.isArray(value)) return value.map(entry => projectKindEnumStorage(entry)) as unknown as T;',
+						'  if (Array.isArray(value)) return value.map(entry => projectKindEnumStorage(entry, textIds)) as unknown as T;',
 						'  const entry = value as unknown as _NodeData;',
+						// A reference site can materialize the enum choice as its OWN
+						// wrapper node (a dedicated kind_id distinct from any member
+						// literal's id, carrying which member matched only in `$text`
+						// — e.g. TS `method_definition._accessibility_modifier` reads
+						// `{ $type: <wrapper kind>, $text: "private" }`, not the bare
+						// `private` keyword's own id). `$type` alone can't disambiguate
+						// that case. Id-first contract: resolve the text through the
+						// slot's STAMPED text→member-id map (baked at codegen time) so
+						// the wire carries the same numeric ids the render-side enum
+						// arms accept; raw text survives only as the fallback for
+						// members with no stamped id (mixed literal/external members —
+						// the render-side string branch still accepts those). The bare
+						// `$type` id passes through for the direct, already-flattened
+						// keyword-literal case.',
+						'  if (typeof entry.$text === "string") {',
+						'    const mappedId = textIds?.[entry.$text];',
+						'    if (typeof mappedId === "number") return mappedId as unknown as T;',
+						'    return entry.$text as unknown as T;',
+						'  }',
 						'  return typeof entry.$type === "number" ? (entry.$type as T) : value;',
 						'}'
 					]
@@ -1775,6 +1898,23 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'    if (allowedStripped === kind || (canonical !== undefined && allowedStripped === canonical) || (stripped !== undefined && allowedStripped === stripped)) return true;',
 						'  }',
 						'  return false;',
+						'}',
+						'',
+						'// Kind-keyed child probe: the grammar-agnostic reader stores an',
+						'// unlabeled named child under `_<childKind>` (read_node.rs kind-named',
+						'// slots). A VISIBLE supertype occurrence (an enrich-minted alias like',
+						"// `alias($._expression_except_range, $.expression_group1)`) therefore",
+						'// carries its single member child as a kind-keyed property, NOT in',
+						'// `$other` — probe those keys before falling back to the `$other` scan.',
+						'function _firstKindKeyedWrapChild(data: object, allowedKinds: readonly string[]): unknown {',
+						'  for (const key of Object.keys(data)) {',
+						'    if (key.charCodeAt(0) !== 95 /* `_` */) continue;',
+						'    const stripped = key.slice(1);',
+						'    if (!_matchesAllowedWrapKind(stripped, allowedKinds) && !_matchesAllowedWrapKind(key, allowedKinds)) continue;',
+						'    const value = (data as Record<string, unknown>)[key];',
+						'    if (value !== undefined) return value;',
+						'  }',
+						'  return undefined;',
 						'}',
 						'',
 						'function _filterWrapChildrenByKind<T>(value: T | readonly T[] | undefined, allowedKinds: readonly string[]): T | readonly T[] | undefined {',
@@ -1921,7 +2061,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			lines.push('      : (data.$type as unknown as string);');
 			lines.push('    const hiddenCurrentType = currentType.startsWith("_") ? currentType.slice(1) : undefined;');
 			lines.push('    if (currentType === asType.from || hiddenCurrentType === asType.from) {');
-			lines.push('      data = { ...data, $type: asType.to as unknown as number };');
+			lines.push('      let resolvedAsTypeId: number | undefined;');
+			lines.push('      try { resolvedAsTypeId = kindIdFromName(asType.to) as unknown as number; } catch { resolvedAsTypeId = undefined; }');
+			lines.push('      data = { ...data, $type: (resolvedAsTypeId ?? asType.to) as unknown as number };');
 			lines.push('    }');
 			lines.push('  }');
 		} else {

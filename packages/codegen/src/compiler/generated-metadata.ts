@@ -23,7 +23,19 @@ import type * as TS from 'web-tree-sitter';
  * surfaces at runtime.
  */
 export interface GeneratedIdEntry {
+	/** STORAGE kind id — the rule's own truth, independent of aliasing. */
 	readonly id?: number;
+	/**
+	 * PARSE kind id — the id a node actually carries at runtime when this
+	 * kind is produced through an alias occurrence whose display name isn't
+	 * covered by `id`'s own symbol (e.g. `_newline`'s storage id 101 vs its
+	 * `alias($._newline, $.newline)` occurrence's own id 294). Render/read
+	 * dispatch match arms MUST key on this when present — it's what
+	 * tree-sitter emits — falling back to `id` when there's no separate
+	 * alias occurrence. Absent for the common case where a kind's storage
+	 * id and its parse-time id are the same thing.
+	 */
+	readonly parseId?: number;
 	/** Parser-origin metadata; absent iff the kind has no parser symbol. */
 	readonly parser?: KindParserMetadata;
 }
@@ -41,6 +53,8 @@ export interface GeneratedIdTables {
 export interface GeneratedKindEntry {
 	readonly kind: string;
 	readonly id: number;
+	/** See `GeneratedIdEntry.parseId` — the id to key render/read dispatch on, when it differs from `id`. */
+	readonly parseId?: number;
 	readonly symbolName?: string;
 	readonly anon?: boolean;
 }
@@ -106,6 +120,7 @@ export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefine
 		.map(([kind, entry]) => ({
 			kind,
 			id: entry.id!,
+			parseId: entry.parseId,
 			symbolName:
 				entry.parser?.symbolName !== undefined && entry.parser.symbolName !== kind
 					? entry.parser.symbolName
@@ -347,18 +362,36 @@ function joinIdNames(
 			continue;
 		}
 		if (!shouldReplaceSymbol(existing.parser.cSymbol, entry.cName)) {
-			// The dropped entry can still be the one carrying the real
-			// display name for this kind — e.g. `_newline`'s `sym__newline`
-			// (kept as `existing`) and `alias_sym_newline` (dropped here)
-			// both join to key `_newline`, but only the alias row's
-			// `names` lookup resolves to the visible name `"newline"`.
-			// Without this, the alias's display name is lost entirely:
-			// `kindIdFromName('newline')` throws at runtime even though
-			// the kind IS cataloged (under its hidden name), which
-			// readNode's resolveKindId silently converts into a `0`
-			// sentinel `$type` instead of surfacing the real error.
+			// `_newline`'s `sym__newline` (kept as `existing`, id 101,
+			// `ts_symbol_names` label `"_newline"`) and `alias_sym_newline`
+			// (this `entry`, id 294, label `"newline"`) both join to key
+			// `_newline` — same underlying rule, but the alias occurrence is
+			// the ONLY thing that ever displays under the visible name
+			// `"newline"` (no plain `sym_newline` exists in this grammar).
+			//
+			// A node parsed at THIS alias's grammar position always carries
+			// the alias's OWN numeric id at runtime (294), never the hidden
+			// rule's id (101) — aliasing creates a genuinely distinct parser
+			// symbol, not just a cosmetic rename. So when an alias introduces
+			// a display name not already covered by `existing`, the alias's
+			// id — not the hidden rule's — is what `$type` dispatch must key
+			// on for that name. (Cascade: prefer a real `sym_<name>` under
+			// that exact visible name if one exists elsewhere in the
+			// catalog — `shouldReplaceSymbol`/the anon-swap branch above
+			// already handle that case before we ever get here — falling
+			// back to the alias's id only when nothing else claims the name.)
 			if (parser.alias && parser.symbolName !== undefined && parser.symbolName !== existing.parser.symbolName) {
-				result.set(key, { id: existing.id, parser: { ...existing.parser, symbolName: parser.symbolName } });
+				// `id` stays the STORAGE kind id (101, the rule's own truth —
+				// `_newline` as a rule, regardless of how/whether it's ever
+				// aliased). `parseId` is the separate PARSE/dispatch id: what
+				// a node actually carries at runtime when produced through
+				// THIS alias (294) — the id every render-dispatch match arm
+				// must key on, since that's what tree-sitter really emits.
+				result.set(key, {
+					id: existing.id,
+					parseId: entry.id,
+					parser: { ...existing.parser, symbolName: parser.symbolName }
+				});
 			}
 			continue;
 		}

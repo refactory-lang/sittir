@@ -682,7 +682,12 @@ function resolveSupertypeSubtypes(rule: Rule<'link'>, ctx: AssembleCtx): string[
 	} else {
 		subtypes = [];
 	}
-	return resolveHiddenSubtypes(subtypes, ctx, rule.type === SUPERTYPE ? rule.name : undefined);
+	return resolveHiddenSubtypes(
+		subtypes,
+		ctx,
+		rule.type === SUPERTYPE ? rule.name : undefined,
+		rule.type === SUPERTYPE ? rule.subtypeParseNames : undefined
+	);
 }
 
 /**
@@ -789,7 +794,12 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
  *   `rules[name]` uniformly instead of `topLevelAliasBodies.get(name) ??
  *   rules[name]`.
  */
-function resolveHiddenSubtypes(names: readonly string[], ctx: AssembleCtx, ownerName?: string): string[] {
+function resolveHiddenSubtypes(
+	names: readonly string[],
+	ctx: AssembleCtx,
+	ownerName?: string,
+	subtypeParseNames?: Readonly<Record<string, string>>
+): string[] {
 	const { normalizedRules: rules, topLevelAliasBodies } = ctx;
 	// Post-synthesis-removal: the rules map is keyed by SOURCE kinds
 	// only (hidden `_X`). Subtype names surface as source kinds; we
@@ -808,6 +818,26 @@ function resolveHiddenSubtypes(names: readonly string[], ctx: AssembleCtx, owner
 		}
 		const rule = rules[name];
 		if (!rule) {
+			out.push(name);
+			return;
+		}
+		// Declared parse-alias fact: this hidden arm MATERIALIZES as its own
+		// node at this supertype site (SupertypeRule.subtypeParseNames, stamped
+		// by classifyHiddenChoiceRule — types/rule.ts's doc comment on the
+		// field). When the arm's own rule isn't ITSELF a nested SUPERTYPE, it's
+		// a dedicated leaf/branch content kind (e.g. `_lhs_expression`, backed
+		// by its own LhsExpressionTransport) that must survive as-is rather
+		// than being flattened to its leaf members by resolveHiddenRuleContent
+		// below. Nested-supertype arms (e.g. rust's `_non_delim_token` stamping
+		// `_non_special_token`, itself a further SUPERTYPE with its own
+		// subtypes) fall through unchanged to the existing
+		// SUPERTYPE/topLevelAliasBodies branch below, which already pushes the
+		// bare name AND flattens its members — untouched, per binding decision.
+		if (
+			rule.type !== SUPERTYPE &&
+			subtypeParseNames &&
+			Object.prototype.hasOwnProperty.call(subtypeParseNames, name)
+		) {
 			out.push(name);
 			return;
 		}

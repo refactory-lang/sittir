@@ -27,7 +27,7 @@ import type {
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
-	ArgumentsGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ArgumentsGroup1 };
+	ArgumentsGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArgumentsGroup1 };
 	AttributedArgument<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.AttributedArgument };
@@ -57,16 +57,16 @@ export interface IsGuards {
 	): v is T & { readonly $type: TSKindId.DelimTokenTreeParen };
 	EnumVariantListGroup1<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId._EnumVariantListGroup1 };
+	): v is T & { readonly $type: TSKindId.EnumVariantListGroup1 };
 	ExpressionStatementWithSemi<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ExpressionStatementWithSemi };
 	FieldDeclarationListGroup1<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId._FieldDeclarationListGroup1 };
+	): v is T & { readonly $type: TSKindId.FieldDeclarationListGroup1 };
 	FieldInitializerListGroup1<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId._FieldInitializerListGroup1 };
+	): v is T & { readonly $type: TSKindId.FieldInitializerListGroup1 };
 	FunctionTypeFnForm<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.FunctionTypeFnForm };
@@ -86,17 +86,17 @@ export interface IsGuards {
 	): v is T & { readonly $type: TSKindId.MacroDefinitionParen };
 	OrderedFieldDeclarationListGroup1<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId._OrderedFieldDeclarationListGroup1 };
-	ParametersGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._ParametersGroup1 };
+	): v is T & { readonly $type: TSKindId.OrderedFieldDeclarationListGroup1 };
+	ParametersGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ParametersGroup1 };
 	ReferenceExpressionRawMut<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ReferenceExpressionRawMut };
 	SlicePatternGroup1<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId._SlicePatternGroup1 };
+	): v is T & { readonly $type: TSKindId.SlicePatternGroup1 };
 	StructPatternGroup1<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId._StructPatternGroup1 };
+	): v is T & { readonly $type: TSKindId.StructPatternGroup1 };
 	TokenTreeBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreeBrace };
 	TokenTreeBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreeBracket };
 	TokenTreeParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreeParen };
@@ -111,16 +111,16 @@ export interface IsGuards {
 	): v is T & { readonly $type: TSKindId.TokenTreePatternParen };
 	TuplePatternGroup1<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId._TuplePatternGroup1 };
+	): v is T & { readonly $type: TSKindId.TuplePatternGroup1 };
 	TypeArgument<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeArgument };
-	UseBoundsGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._UseBoundsGroup1 };
-	UseListGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._UseListGroup1 };
+	UseBoundsGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseBoundsGroup1 };
+	UseListGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseListGroup1 };
 	VisibilityModifierGroup1<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId._VisibilityModifierGroup1 };
+	): v is T & { readonly $type: TSKindId.VisibilityModifierGroup1 };
 	WhereClauseGroup1<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId._WhereClauseGroup1 };
+	): v is T & { readonly $type: TSKindId.WhereClauseGroup1 };
 	abstractType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractType };
 	arguments<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Arguments };
 	arrayExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArrayExpression };
@@ -340,7 +340,7 @@ export interface IsGuards {
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
-	ArgumentsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ArgumentsGroup1 };
+	ArgumentsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArgumentsGroup1 };
 	AttributedArgument(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedArgument };
 	AttributedEnumVariant(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedEnumVariant };
 	AttributedFieldDeclaration(v: {
@@ -354,18 +354,16 @@ export interface AssertGuards {
 	DelimTokenTreeBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTreeBrace };
 	DelimTokenTreeBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTreeBracket };
 	DelimTokenTreeParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTreeParen };
-	EnumVariantListGroup1(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId._EnumVariantListGroup1 };
+	EnumVariantListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.EnumVariantListGroup1 };
 	ExpressionStatementWithSemi(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ExpressionStatementWithSemi };
 	FieldDeclarationListGroup1(v: {
 		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId._FieldDeclarationListGroup1 };
+	}): asserts v is { readonly $type: TSKindId.FieldDeclarationListGroup1 };
 	FieldInitializerListGroup1(v: {
 		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId._FieldInitializerListGroup1 };
+	}): asserts v is { readonly $type: TSKindId.FieldInitializerListGroup1 };
 	FunctionTypeFnForm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionTypeFnForm };
 	FunctionTypeTraitForm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionTypeTraitForm };
 	ImplItemBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImplItemBody };
@@ -377,13 +375,13 @@ export interface AssertGuards {
 	MacroDefinitionParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroDefinitionParen };
 	OrderedFieldDeclarationListGroup1(v: {
 		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId._OrderedFieldDeclarationListGroup1 };
-	ParametersGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ParametersGroup1 };
+	}): asserts v is { readonly $type: TSKindId.OrderedFieldDeclarationListGroup1 };
+	ParametersGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ParametersGroup1 };
 	ReferenceExpressionRawMut(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ReferenceExpressionRawMut };
-	SlicePatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._SlicePatternGroup1 };
-	StructPatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._StructPatternGroup1 };
+	SlicePatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SlicePatternGroup1 };
+	StructPatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StructPatternGroup1 };
 	TokenTreeBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreeBrace };
 	TokenTreeBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreeBracket };
 	TokenTreeParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreeParen };
@@ -392,14 +390,14 @@ export interface AssertGuards {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.TokenTreePatternBracket };
 	TokenTreePatternParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreePatternParen };
-	TuplePatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TuplePatternGroup1 };
+	TuplePatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TuplePatternGroup1 };
 	TypeArgument(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeArgument };
-	UseBoundsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._UseBoundsGroup1 };
-	UseListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._UseListGroup1 };
+	UseBoundsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseBoundsGroup1 };
+	UseListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseListGroup1 };
 	VisibilityModifierGroup1(v: {
 		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId._VisibilityModifierGroup1 };
-	WhereClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._WhereClauseGroup1 };
+	}): asserts v is { readonly $type: TSKindId.VisibilityModifierGroup1 };
+	WhereClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WhereClauseGroup1 };
 	abstractType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractType };
 	arguments(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Arguments };
 	arrayExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrayExpression };
@@ -586,43 +584,43 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boole
 }
 
 const _supertype_condition_ids = new Set<number>([
-	247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 125, 313, 122, 151, 1, 135, 243, 225, 287, 288, 258, 260,
-	239, 261, 284, 285, 286, 138, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280, 246, 268, 269
+	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 125, 314, 122, 151, 1, 135, 244, 226, 288, 289, 259, 261,
+	240, 262, 285, 286, 287, 138, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281, 247, 269, 270
 ]);
 const _supertype_declarationStatement_ids = new Set<number>([
-	185, 239, 161, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186
+	186, 240, 161, 171, 172, 174, 175, 177, 178, 179, 188, 189, 190, 194, 195, 196, 204, 205, 185, 187
 ]);
-const _supertype_delimTokens_ids = new Set<number>([311, 312, 125, 313, 122, 151, 1, 90, 135, 136, 137, 240]);
+const _supertype_delimTokens_ids = new Set<number>([312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137, 241]);
 const _supertype_expression_ids = new Set<number>([
-	247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 125, 313, 122, 151, 1, 135, 243, 225, 287, 288, 258, 260,
-	239, 261, 284, 285, 286, 138, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280, 246
+	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 125, 314, 122, 151, 1, 135, 244, 226, 288, 289, 259, 261,
+	240, 262, 285, 286, 287, 138, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281, 247
 ]);
 const _supertype_expressionEndingWithBlock_ids = new Set<number>([
-	289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280
+	290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281
 ]);
 const _supertype_expressionExceptRange_ids = new Set<number>([
-	247, 249, 248, 250, 251, 252, 253, 256, 254, 255, 311, 312, 125, 313, 122, 151, 1, 135, 243, 225, 287, 288, 258, 260,
-	239, 261, 284, 285, 286, 138, 281, 259, 262, 289, 290, 291, 292, 293, 267, 272, 277, 278, 279, 280
+	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 125, 314, 122, 151, 1, 135, 244, 226, 288, 289, 259, 261,
+	240, 262, 285, 286, 287, 138, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281
 ]);
-const _supertype_literal_ids = new Set<number>([311, 312, 125, 313, 122, 151]);
-const _supertype_literalPattern_ids = new Set<number>([311, 312, 125, 313, 122, 151, 310]);
-const _supertype_nonDelimToken_ids = new Set<number>([311, 312, 125, 313, 122, 151, 1, 90, 135, 136, 137]);
-const _supertype_nonSpecialToken_ids = new Set<number>([311, 312, 125, 313, 122, 151, 1, 90, 135, 136, 137, 333]);
-const _supertype_path_ids = new Set<number>([135, 1, 138, 136, 137, 243]);
+const _supertype_literal_ids = new Set<number>([312, 313, 125, 314, 122, 151]);
+const _supertype_literalPattern_ids = new Set<number>([312, 313, 125, 314, 122, 151, 311]);
+const _supertype_nonDelimToken_ids = new Set<number>([312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137]);
+const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137, 338]);
+const _supertype_path_ids = new Set<number>([135, 1, 138, 136, 137, 244]);
 const _supertype_pattern_ids = new Set<number>([
-	311, 312, 125, 313, 122, 151, 310, 1, 243, 295, 296, 298, 299, 304, 297, 305, 306, 302, 303, 307, 280, 239, 335
+	312, 313, 125, 314, 122, 151, 311, 1, 244, 296, 297, 299, 300, 305, 298, 306, 307, 303, 304, 308, 281, 240, 340
 ]);
 const _supertype_statement_ids = new Set<number>([
-	160, 185, 239, 161, 170, 171, 173, 174, 176, 177, 178, 187, 188, 189, 193, 194, 195, 203, 204, 184, 186
+	160, 186, 240, 161, 171, 172, 174, 175, 177, 178, 179, 188, 189, 190, 194, 195, 196, 204, 205, 185, 187
 ]);
 const _supertype_tokenPattern_ids = new Set<number>([
-	164, 166, 165, 138, 311, 312, 125, 313, 122, 151, 1, 90, 135, 136, 137
+	164, 166, 165, 138, 312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137
 ]);
-const _supertype_tokens_ids = new Set<number>([168, 169, 138, 311, 312, 125, 313, 122, 151, 1, 90, 135, 136, 137]);
+const _supertype_tokens_ids = new Set<number>([168, 169, 138, 312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137]);
 const _supertype_type_ids = new Set<number>([
-	235, 232, 138, 233, 226, 245, 223, 224, 220, 222, 423, 239, 236, 228, 198
+	236, 233, 138, 234, 227, 246, 224, 225, 221, 223, 427, 240, 237, 229, 199
 ]);
-const _supertype_useClause_ids = new Set<number>([135, 1, 138, 136, 137, 243, 208, 207, 206, 209]);
+const _supertype_useClause_ids = new Set<number>([135, 1, 138, 136, 137, 244, 209, 208, 207, 210]);
 
 const _kindIdByKind = new Map<string, number>([
 	['identifier', TSKindId.Identifier],
@@ -674,7 +672,9 @@ const _kindIdByKind = new Map<string, number>([
 	['move', TSKindId.Move],
 	['_line_comment_content', TSKindId.LineCommentContent],
 	['string_content', TSKindId.StringContent],
+	['_raw_string_literal_start', TSKindId.RawStringLiteralStart],
 	['raw_string_literal_content', TSKindId.RawStringLiteralContent],
+	['_raw_string_literal_end', TSKindId.RawStringLiteralEnd],
 	['float_literal', TSKindId.FloatLiteral],
 	['_line_doc_content', TSKindId.LineDocContent],
 	['_error_sentinel', TSKindId.ErrorSentinel],
@@ -822,25 +822,26 @@ const _kindIdByKind = new Map<string, number>([
 	['boolean_literal', TSKindId.BooleanLiteral],
 	['line_comment', TSKindId.LineComment],
 	['block_comment', TSKindId.BlockComment],
-	['_enum_variant_list_group1', TSKindId._EnumVariantListGroup1],
-	['_field_declaration_list_group1', TSKindId._FieldDeclarationListGroup1],
-	['_ordered_field_declaration_list_group1', TSKindId._OrderedFieldDeclarationListGroup1],
-	['_where_clause_group1', TSKindId._WhereClauseGroup1],
-	['_use_list_group1', TSKindId._UseListGroup1],
-	['_parameters_group1', TSKindId._ParametersGroup1],
-	['_visibility_modifier_group1', TSKindId._VisibilityModifierGroup1],
-	['_use_bounds_group1', TSKindId._UseBoundsGroup1],
-	['_arguments_group1', TSKindId._ArgumentsGroup1],
-	['_field_initializer_list_group1', TSKindId._FieldInitializerListGroup1],
-	['_tuple_pattern_group1', TSKindId._TuplePatternGroup1],
-	['_slice_pattern_group1', TSKindId._SlicePatternGroup1],
-	['_struct_pattern_group1', TSKindId._StructPatternGroup1],
+	['_enum_variant_list_group1', TSKindId.EnumVariantListGroup1],
+	['_field_declaration_list_group1', TSKindId.FieldDeclarationListGroup1],
+	['_ordered_field_declaration_list_group1', TSKindId.OrderedFieldDeclarationListGroup1],
+	['_where_clause_group1', TSKindId.WhereClauseGroup1],
+	['_use_list_group1', TSKindId.UseListGroup1],
+	['_parameters_group1', TSKindId.ParametersGroup1],
+	['_visibility_modifier_group1', TSKindId.VisibilityModifierGroup1],
+	['_use_bounds_group1', TSKindId.UseBoundsGroup1],
+	['_arguments_group1', TSKindId.ArgumentsGroup1],
+	['_array_expression_group1', TSKindId.ArrayExpressionGroup1],
+	['_field_initializer_list_group1', TSKindId.FieldInitializerListGroup1],
+	['_tuple_pattern_group1', TSKindId.TuplePatternGroup1],
+	['_slice_pattern_group1', TSKindId.SlicePatternGroup1],
+	['_struct_pattern_group1', TSKindId.StructPatternGroup1],
+	['_range_pattern_group2', TSKindId.RangePatternGroup2],
 	['_token_tree_punctuation', TSKindId.TokenTreePunctuation],
 	['_use_wildcard_clause', TSKindId.UseWildcardClause],
 	['_wildcard_pattern', TSKindId.WildcardPattern],
 	['_reference_expression_raw_const', TSKindId.ReferenceExpressionRawConst],
 	['_reference_expression_raw_mut', TSKindId.ReferenceExpressionRawMut],
-	['_impl_item_unsafe_marker', TSKindId.ImplItemUnsafeMarker],
 	['_impl_item_body', TSKindId.ImplItemBody],
 	['_impl_item_positive_clause', TSKindId.ImplItemPositiveClause],
 	['_impl_item_negative_clause', TSKindId.ImplItemNegativeClause],
@@ -864,7 +865,6 @@ const _kindIdByKind = new Map<string, number>([
 	['_struct_item_brace', TSKindId.StructItemBrace],
 	['_struct_item_tuple', TSKindId.StructItemTuple],
 	['_visibility_modifier_pub', TSKindId.VisibilityModifierPub],
-	['_visibility_modifier_in_path', TSKindId.VisibilityModifierInPath],
 	['_pointer_type_const', TSKindId.PointerTypeConst],
 	['_expression_statement_with_semi', TSKindId.ExpressionStatementWithSemi],
 	['_match_arm_with_comma', TSKindId.MatchArmWithComma],
@@ -886,13 +886,12 @@ const _kindIdByKind = new Map<string, number>([
 	['_attributed_argument', TSKindId.AttributedArgument],
 	['_attributed_ordered_field', TSKindId.AttributedOrderedField],
 	['_type_argument', TSKindId.TypeArgument],
-	['_match_block_arms', TSKindId.MatchBlockArms],
 	['_field_identifier', TSKindId.FieldIdentifier],
 	['_type_identifier', TSKindId.TypeIdentifier]
 ]);
 
 export const is = {
-	ArgumentsGroup1: _g(TSKindId._ArgumentsGroup1),
+	ArgumentsGroup1: _g(TSKindId.ArgumentsGroup1),
 	AttributedArgument: _g(TSKindId.AttributedArgument),
 	AttributedEnumVariant: _g(TSKindId.AttributedEnumVariant),
 	AttributedFieldDeclaration: _g(TSKindId.AttributedFieldDeclaration),
@@ -902,10 +901,10 @@ export const is = {
 	DelimTokenTreeBrace: _g(TSKindId.DelimTokenTreeBrace),
 	DelimTokenTreeBracket: _g(TSKindId.DelimTokenTreeBracket),
 	DelimTokenTreeParen: _g(TSKindId.DelimTokenTreeParen),
-	EnumVariantListGroup1: _g(TSKindId._EnumVariantListGroup1),
+	EnumVariantListGroup1: _g(TSKindId.EnumVariantListGroup1),
 	ExpressionStatementWithSemi: _g(TSKindId.ExpressionStatementWithSemi),
-	FieldDeclarationListGroup1: _g(TSKindId._FieldDeclarationListGroup1),
-	FieldInitializerListGroup1: _g(TSKindId._FieldInitializerListGroup1),
+	FieldDeclarationListGroup1: _g(TSKindId.FieldDeclarationListGroup1),
+	FieldInitializerListGroup1: _g(TSKindId.FieldInitializerListGroup1),
 	FunctionTypeFnForm: _g(TSKindId.FunctionTypeFnForm),
 	FunctionTypeTraitForm: _g(TSKindId.FunctionTypeTraitForm),
 	ImplItemBody: _g(TSKindId.ImplItemBody),
@@ -913,23 +912,23 @@ export const is = {
 	MacroDefinitionBrace: _g(TSKindId.MacroDefinitionBrace),
 	MacroDefinitionBracket: _g(TSKindId.MacroDefinitionBracket),
 	MacroDefinitionParen: _g(TSKindId.MacroDefinitionParen),
-	OrderedFieldDeclarationListGroup1: _g(TSKindId._OrderedFieldDeclarationListGroup1),
-	ParametersGroup1: _g(TSKindId._ParametersGroup1),
+	OrderedFieldDeclarationListGroup1: _g(TSKindId.OrderedFieldDeclarationListGroup1),
+	ParametersGroup1: _g(TSKindId.ParametersGroup1),
 	ReferenceExpressionRawMut: _g(TSKindId.ReferenceExpressionRawMut),
-	SlicePatternGroup1: _g(TSKindId._SlicePatternGroup1),
-	StructPatternGroup1: _g(TSKindId._StructPatternGroup1),
+	SlicePatternGroup1: _g(TSKindId.SlicePatternGroup1),
+	StructPatternGroup1: _g(TSKindId.StructPatternGroup1),
 	TokenTreeBrace: _g(TSKindId.TokenTreeBrace),
 	TokenTreeBracket: _g(TSKindId.TokenTreeBracket),
 	TokenTreeParen: _g(TSKindId.TokenTreeParen),
 	TokenTreePatternBrace: _g(TSKindId.TokenTreePatternBrace),
 	TokenTreePatternBracket: _g(TSKindId.TokenTreePatternBracket),
 	TokenTreePatternParen: _g(TSKindId.TokenTreePatternParen),
-	TuplePatternGroup1: _g(TSKindId._TuplePatternGroup1),
+	TuplePatternGroup1: _g(TSKindId.TuplePatternGroup1),
 	TypeArgument: _g(TSKindId.TypeArgument),
-	UseBoundsGroup1: _g(TSKindId._UseBoundsGroup1),
-	UseListGroup1: _g(TSKindId._UseListGroup1),
-	VisibilityModifierGroup1: _g(TSKindId._VisibilityModifierGroup1),
-	WhereClauseGroup1: _g(TSKindId._WhereClauseGroup1),
+	UseBoundsGroup1: _g(TSKindId.UseBoundsGroup1),
+	UseListGroup1: _g(TSKindId.UseListGroup1),
+	VisibilityModifierGroup1: _g(TSKindId.VisibilityModifierGroup1),
+	WhereClauseGroup1: _g(TSKindId.WhereClauseGroup1),
 	abstractType: _g(TSKindId.AbstractType),
 	arguments: _g(TSKindId.Arguments),
 	arrayExpression: _g(TSKindId.ArrayExpression),

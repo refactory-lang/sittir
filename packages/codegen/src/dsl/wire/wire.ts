@@ -40,7 +40,7 @@ import { transform as transformFn } from '../transform/transform.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isVariantPlaceholder } from '../primitives/variant.ts';
-import { getEnrichClauseGroups, getEnrichClauseGroupOwners } from '../enrich.ts';
+import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources } from '../enrich.ts';
 // Phase-2: tuple-precise base-grammar constraint + per-rule transform path keys.
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { FastKeys, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
@@ -83,6 +83,15 @@ export interface WireContext {
 	/** Hidden `_kw_*` helper names that should be appended to the
 	 *  grammar's inline list after rule evaluation deposits their body. */
 	readonly syntheticInline: Set<string>;
+	/** Hidden source names behind enrich visible-group mints
+	 *  (`alias($._src, $.visible)`) that must be FILTERED OUT of the
+	 *  grammar's final `inline:` list. Tree-sitter erases inlined rules
+	 *  before table construction, vaporizing the alias — and the minted
+	 *  kind's entire parser identity — while the IR still models the kind
+	 *  (the phantom-kind divergence). Populated from
+	 *  `getEnrichVisibleGroupSources(base)`; applied by the wired inline
+	 *  callback. */
+	readonly inlineRemovals: Set<string>;
 	/** Enrich-synthesized clause-hoist names (both inline-safe and
 	 *  visible-aliased categories — see `getEnrichClauseGroupOwners`) whose
 	 *  recorded owning parent is redeclared in THIS grammar's own
@@ -237,6 +246,7 @@ export function withWireContext<T>(
 	const ctx: WireContext = {
 		deposits: new Map(),
 		syntheticInline: new Set(),
+		inlineRemovals: new Set(),
 		orphanedSyntheticGroups: new Set(),
 		conflictGroups: [],
 		refineForms: new Map(),
@@ -610,6 +620,7 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 	const context: WireContext = {
 		deposits: new Map(),
 		syntheticInline: new Set(),
+		inlineRemovals: new Set(),
 		orphanedSyntheticGroups: new Set(),
 		conflictGroups: [],
 		refineForms: new Map(),
@@ -691,6 +702,11 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		for (const name of getEnrichClauseGroups(base)) {
 			context.syntheticInline.add(name);
 		}
+		// Visible-group mint SOURCES must not be inlined away — see
+		// `WireContext.inlineRemovals` / `getEnrichVisibleGroupSources`.
+		for (const name of getEnrichVisibleGroupSources(base)) {
+			context.inlineRemovals.add(name);
+		}
 		// A synthesized clause-hoist name (recorded owner = the parent kind
 		// enrich() hoisted it FROM) is orphaned once THIS grammar's own
 		// `rules:` config redeclares that owner — the override text could
@@ -698,9 +714,48 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		// minted it from the base grammar's pre-override shape, so replacing
 		// the owner's body necessarily drops the only reference. See
 		// `WireContext.orphanedSyntheticGroups`.
+		// PR 3 (2026-07-21 union-slot design): a visible-aliased clause-hoist
+		// mint (the inline-UNSAFE category — excluded from `syntheticInline`
+		// above precisely because we WANT it to stay a distinguishable kind,
+		// not get inlined away) can share a structural prefix with its own
+		// owning parent rule (e.g. python's `expression_statement`, whose
+		// arm 0 is `$.expression` and whose newly-hoisted arm 1
+		// `_expression_statement_group1` also starts with `commaSep1($.expression)`
+		// — both begin `expression • …`, an unresolved tree-sitter LR
+		// conflict without an explicit GLR fork). Proactively register a
+		// conflict between the owner and every such mint, mirroring the
+		// hand-authored `conflicts: [$.expression_statement,
+		// $._expression_statement_tuple]` pattern this codebase already used
+		// for the pre-existing variant()-only mint path — but automatic, so
+		// it covers every clause-hoist visible-group mint (this widened
+		// bare-choice-arm gate included) without per-grammar hand-maintenance.
+		// Harmless when the two rules don't actually conflict in a given
+		// grammar: tree-sitter's `conflicts:` only enables a GLR fork; it
+		// doesn't change accepted language and costs a little parse-table
+		// size, not correctness, when unused.
+		const inlineSafeNames = getEnrichClauseGroups(base);
 		for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base)) {
 			if (context.authoredRuleNames.has(ownerKind)) {
 				context.orphanedSyntheticGroups.add(syntheticName);
+			}
+			if (!inlineSafeNames.has(syntheticName) && ownerKind !== syntheticName) {
+				const pairKey = [ownerKind, syntheticName].join('\u0000');
+				if (!context.conflictGroups.some((g) => g.join('\u0000') === pairKey)) {
+					context.conflictGroups.push([ownerKind, syntheticName]);
+				}
+				// A minted group's own body can ALSO self-conflict — e.g. a
+				// shared comma/element shape recurring across sibling rules
+				// (python's `_expression_list_group1` vs `assert_statement`'s
+				// own `commaSep1` repeat) confuses tree-sitter's LALR merge
+				// independent of the owner pairing above. A single-rule
+				// `conflicts` entry is tree-sitter's own documented way to
+                // request a GLR self-fork for a rule (see its own error
+                // resolution list: "Add a conflict for these rules:
+                // `<rule>`" with just the one name).
+				const selfKey = [syntheticName].join('\u0000');
+				if (!context.conflictGroups.some((g) => g.join('\u0000') === selfKey)) {
+					context.conflictGroups.push([syntheticName]);
+				}
 			}
 		}
 		// Re-run body-pattern replacement so any `groups:` body-pattern can match
@@ -1082,12 +1137,30 @@ function buildWiredConflictsFn(userConflicts: ConflictsFn | undefined, context: 
  */
 function buildWiredInlineFn(userInline: DollarFn<unknown[]> | undefined, context: WireContext): DollarFn<unknown[]> {
 	return function wiredInline(this: unknown, $: unknown, previous?: unknown[]): unknown[] {
-		const base = userInline ? userInline.call(this, $, previous) : (previous ?? []);
+		let base = userInline ? userInline.call(this, $, previous) : (previous ?? []);
+		// Filter OUT visible-group mint sources (see WireContext.inlineRemovals):
+		// leaving `_src` in `inline:` makes tree-sitter erase the rule before
+		// table construction, vaporizing `alias($._src, $.visible)` — and with
+		// it the minted kind's entire parser identity — while the IR still
+		// models the kind. Un-inlining keeps the mint real on both sides.
+		if (context.inlineRemovals.size > 0) {
+			base = (base as unknown[]).filter((entry) => {
+				const symbol = entry as { type?: string; name?: string } | null;
+				return !(
+					symbol &&
+					typeof symbol === 'object' &&
+					symbol.type === 'SYMBOL' &&
+					typeof symbol.name === 'string' &&
+					context.inlineRemovals.has(symbol.name)
+				);
+			});
+		}
 		if (context.syntheticInline.size === 0) return base as unknown[];
 		const existingNames = collectInlineNames(base as unknown[]);
 		const appended: unknown[] = [];
 		for (const name of context.syntheticInline) {
 			if (existingNames.has(name)) continue;
+			if (context.inlineRemovals.has(name)) continue;
 			appended.push(nativeInlineRef($, name));
 		}
 		return appended.length === 0 ? (base as unknown[]) : [...(base as unknown[]), ...appended];

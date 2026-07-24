@@ -639,7 +639,7 @@ describe('field_initializer_list', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.fieldInitializerList({
-			$type: TSKindId._FieldInitializerListGroup1,
+			$type: TSKindId.FieldInitializerListGroup1,
 			$text: 'test',
 			$source: 2,
 			$named: true
@@ -1389,9 +1389,43 @@ describe('match_arm', () => {
 
 describe('match_block', () => {
 	it('factory produces correct type', () => {
-		const node = ir.matchBlock();
+		const node = ir.matchBlock({
+			lastArm: {
+				$type: TSKindId.LastMatchArm,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_pattern: {
+					$type: TSKindId.MatchPattern,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_pattern: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
+				} as any,
+				_value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
+			} as any
+		});
 		expect(node.$type).toBe(TSKindId.MatchBlock);
 		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.matchBlock({
+			lastArm: {
+				$type: TSKindId.LastMatchArm,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_pattern: {
+					$type: TSKindId.MatchPattern,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_pattern: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
+				} as any,
+				_value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
+			} as any
+		});
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -1399,7 +1433,26 @@ describe('match_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.matchExpression({
 			value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any,
-			body: { $type: TSKindId.MatchBlock, $text: 'test', $source: 2, $named: true } as any
+			body: {
+				$type: TSKindId.MatchBlock,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_last_arm: {
+					$type: TSKindId.LastMatchArm,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_pattern: {
+						$type: TSKindId.MatchPattern,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_pattern: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
+					} as any,
+					_value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.MatchExpression);
 		expect(node.$source).toBe(2);
@@ -1407,7 +1460,26 @@ describe('match_expression', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.matchExpression({
 			value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any,
-			body: { $type: TSKindId.MatchBlock, $text: 'test', $source: 2, $named: true } as any
+			body: {
+				$type: TSKindId.MatchBlock,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_last_arm: {
+					$type: TSKindId.LastMatchArm,
+					$text: 'test',
+					$source: 2,
+					$named: true,
+					_pattern: {
+						$type: TSKindId.MatchPattern,
+						$text: 'test',
+						$source: 2,
+						$named: true,
+						_pattern: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
+					} as any,
+					_value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
+				} as any
+			} as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -1505,7 +1577,7 @@ describe('ordered_field_declaration_list', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.orderedFieldDeclarationList({
-			$type: TSKindId._OrderedFieldDeclarationListGroup1,
+			$type: TSKindId.OrderedFieldDeclarationListGroup1,
 			$text: 'test',
 			$source: 2,
 			$named: true,
@@ -1617,13 +1689,9 @@ describe('range_expression', () => {
 
 describe('range_pattern', () => {
 	it('factory produces correct type', () => {
-		const node = ir.rangePattern({});
+		const node = ir.rangePattern({ type: '_range_pattern_group2' } as never);
 		expect(node.$type).toBe(TSKindId.RangePattern);
 		expect(node.$source).toBe(2);
-	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.rangePattern({});
-		expect(() => node.$render!()).not.toThrow();
 	});
 });
 
@@ -2077,7 +2145,7 @@ describe('tuple_pattern', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.tuplePattern({
-			$type: TSKindId._TuplePatternGroup1,
+			$type: TSKindId.TuplePatternGroup1,
 			$text: 'test',
 			$source: 2,
 			$named: true
@@ -2295,7 +2363,7 @@ describe('use_bounds', () => {
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.useBounds({ $type: TSKindId._UseBoundsGroup1, $text: 'test', $source: 2, $named: true } as any);
+		const node = ir.useBounds({ $type: TSKindId.UseBoundsGroup1, $text: 'test', $source: 2, $named: true } as any);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -2418,354 +2486,6 @@ describe('yield_expression', () => {
 		const node = ir.yieldExpression();
 		expect(node.$type).toBe(TSKindId.YieldExpression);
 		expect(node.$source).toBe(2);
-	});
-});
-
-describe('arguments_group1', () => {
-	it('factory produces correct type', () => {
-		const node = ir.argumentsGroup1(
-			...[
-				{
-					$type: TSKindId.AttributedArgument,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_expression: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
-				} as any
-			]
-		);
-		expect(node.$type).toBe(TSKindId._ArgumentsGroup1);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.argumentsGroup1(
-			...[
-				{
-					$type: TSKindId.AttributedArgument,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_expression: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
-				} as any
-			]
-		);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('visibility_modifier_group1', () => {
-	it('factory produces correct type', () => {
-		const node = ir.visibilityModifierGroup1({ type: 'self' } as never);
-		expect(node.$type).toBe(TSKindId._VisibilityModifierGroup1);
-		expect(node.$source).toBe(2);
-	});
-});
-
-describe('enum_variant_list_group1', () => {
-	it('factory produces correct type', () => {
-		const node = ir.enumVariantListGroup1(
-			...[
-				{
-					$type: TSKindId.AttributedEnumVariant,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_enum_variant: {
-						$type: TSKindId.EnumVariant,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-					} as any
-				} as any
-			]
-		);
-		expect(node.$type).toBe(TSKindId._EnumVariantListGroup1);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.enumVariantListGroup1(
-			...[
-				{
-					$type: TSKindId.AttributedEnumVariant,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_enum_variant: {
-						$type: TSKindId.EnumVariant,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-					} as any
-				} as any
-			]
-		);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('field_declaration_list_group1', () => {
-	it('factory produces correct type', () => {
-		const node = ir.fieldDeclarationListGroup1(
-			...[
-				{
-					$type: TSKindId.AttributedFieldDeclaration,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_field_declaration: {
-						$type: TSKindId.FieldDeclaration,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-						_type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
-					} as any
-				} as any
-			]
-		);
-		expect(node.$type).toBe(TSKindId._FieldDeclarationListGroup1);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.fieldDeclarationListGroup1(
-			...[
-				{
-					$type: TSKindId.AttributedFieldDeclaration,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_field_declaration: {
-						$type: TSKindId.FieldDeclaration,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-						_type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
-					} as any
-				} as any
-			]
-		);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('field_initializer_list_group1', () => {
-	it('factory produces correct type', () => {
-		const node = ir.fieldInitializerListGroup1(
-			...[
-				{
-					$type: TSKindId.ShorthandFieldInitializer,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-				} as any
-			]
-		);
-		expect(node.$type).toBe(TSKindId._FieldInitializerListGroup1);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.fieldInitializerListGroup1(
-			...[
-				{
-					$type: TSKindId.ShorthandFieldInitializer,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-				} as any
-			]
-		);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('ordered_field_declaration_list_group1', () => {
-	it('factory produces correct type', () => {
-		const node = ir.orderedFieldDeclarationListGroup1(
-			...[
-				{
-					$type: TSKindId.AttributedOrderedField,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
-				} as any
-			]
-		);
-		expect(node.$type).toBe(TSKindId._OrderedFieldDeclarationListGroup1);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.orderedFieldDeclarationListGroup1(
-			...[
-				{
-					$type: TSKindId.AttributedOrderedField,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_type: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
-				} as any
-			]
-		);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('parameters_group1', () => {
-	it('factory produces correct type', () => {
-		const node = ir.parametersGroup1(
-			...[
-				{
-					$type: TSKindId.AttributedParameter,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_content: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
-				} as any
-			]
-		);
-		expect(node.$type).toBe(TSKindId._ParametersGroup1);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.parametersGroup1(
-			...[
-				{
-					$type: TSKindId.AttributedParameter,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_content: { $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any
-				} as any
-			]
-		);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('slice_pattern_group1', () => {
-	it('factory produces correct type', () => {
-		const node = ir.slicePatternGroup1(
-			...[{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
-		);
-		expect(node.$type).toBe(TSKindId._SlicePatternGroup1);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.slicePatternGroup1(
-			...[{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
-		);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('struct_pattern_group1', () => {
-	it('factory produces correct type', () => {
-		const node = ir.structPatternGroup1(
-			...[{ $type: TSKindId.RemainingFieldPattern, $text: '..', $source: 2, $named: true } as any]
-		);
-		expect(node.$type).toBe(TSKindId._StructPatternGroup1);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.structPatternGroup1(
-			...[{ $type: TSKindId.RemainingFieldPattern, $text: '..', $source: 2, $named: true } as any]
-		);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('tuple_pattern_group1', () => {
-	it('factory produces correct type', () => {
-		const node = ir.tuplePatternGroup1(
-			...[{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
-		);
-		expect(node.$type).toBe(TSKindId._TuplePatternGroup1);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.tuplePatternGroup1(
-			...[{ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any]
-		);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('use_bounds_group1', () => {
-	it('factory produces correct type', () => {
-		const node = ir.useBoundsGroup1(
-			...[{ $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any]
-		);
-		expect(node.$type).toBe(TSKindId._UseBoundsGroup1);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.useBoundsGroup1(
-			...[{ $type: TSKindId.TypeIdentifier, $text: 'test', $source: 2, $named: true } as any]
-		);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('use_list_group1', () => {
-	it('factory produces correct type', () => {
-		const node = ir.useListGroup1(...[{ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any]);
-		expect(node.$type).toBe(TSKindId._UseListGroup1);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.useListGroup1(...[{ $type: TSKindId.Self, $text: 'self', $source: 2, $named: true } as any]);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('where_clause_group1', () => {
-	it('factory produces correct type', () => {
-		const node = ir.whereClauseGroup1(
-			...[
-				{
-					$type: TSKindId.WherePredicate,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					_bounds: {
-						$type: TSKindId.TraitBounds,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_bounds: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
-					} as any
-				} as any
-			]
-		);
-		expect(node.$type).toBe(TSKindId._WhereClauseGroup1);
-		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.whereClauseGroup1(
-			...[
-				{
-					$type: TSKindId.WherePredicate,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_left: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-					_bounds: {
-						$type: TSKindId.TraitBounds,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_bounds: [{ $type: TSKindId.Metavariable, $text: 'test', $source: 2, $named: true } as any]
-					} as any
-				} as any
-			]
-		);
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 

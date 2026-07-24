@@ -83,8 +83,8 @@ import type {
 	DeleteStatement,
 	DeleteStatementTree,
 	DictPattern,
-	DictPatternGroup1,
-	DictPatternGroup1Tree,
+	DictPatternGroup2,
+	DictPatternGroup2Tree,
 	DictPatternTree,
 	Dictionary,
 	DictionaryComprehension,
@@ -98,8 +98,6 @@ import type {
 	DictionaryTree,
 	DottedName,
 	DottedNameTree,
-	ElementList,
-	ElementListTree,
 	ElifClause,
 	ElifClauseTree,
 	ElseClause,
@@ -117,6 +115,8 @@ import type {
 	ExecStatement,
 	ExecStatementTree,
 	ExpressionList,
+	ExpressionListGroup1,
+	ExpressionListGroup1Tree,
 	ExpressionListTree,
 	ExpressionStatement,
 	ExpressionStatementTree,
@@ -212,8 +212,6 @@ import type {
 	NotOperatorTree,
 	Pair,
 	PairTree,
-	ParameterList,
-	ParameterListTree,
 	Parameters,
 	ParametersTree,
 	ParenthesizedExpression,
@@ -222,9 +220,9 @@ import type {
 	ParenthesizedListSplatTree,
 	PassStatement,
 	PassStatementTree,
-	PatternGroup,
-	PatternGroupTree,
 	PatternList,
+	PatternListGroup1,
+	PatternListGroup1Tree,
 	PatternListTree,
 	Patterns,
 	PatternsTree,
@@ -308,26 +306,12 @@ import type {
 	WithStatementTree,
 	Yield,
 	YieldTree,
-	_ArgumentListGroup1,
-	_ArgumentListGroup1Tree,
 	_AsPattern,
 	_AsPatternTree,
-	_DictPatternGroup1,
-	_DictPatternGroup1Tree,
-	_DictionaryGroup1,
-	_DictionaryGroup1Tree,
-	_ListPattern,
-	_ListPatternGroup1,
-	_ListPatternGroup1Tree,
-	_ListPatternTree,
 	_Parameters,
 	_ParametersTree,
-	_SliceGroup1,
-	_SliceGroup1Tree,
 	_StringContent,
-	_StringContentTree,
-	_TuplePattern,
-	_TuplePatternTree
+	_StringContentTree
 } from './types.js';
 import { TSKindId } from './types.js';
 
@@ -335,8 +319,8 @@ type _TypeExtends<A, B> = A extends B ? true : false;
 type _TypeAssert<T extends true> = T;
 
 // --- Concrete interface `$type` discriminant ---
-export type _Type__ArgumentListGroup1 = _TypeAssert<
-	_TypeExtends<_ArgumentListGroup1['$type'], TSKindId._ArgumentListGroup1>
+export type _Type_ArgumentListGroup1 = _TypeAssert<
+	_TypeExtends<ArgumentListGroup1['$type'], TSKindId.ArgumentListGroup1>
 >;
 export type _Type__AsPattern = _TypeAssert<_TypeExtends<_AsPattern['$type'], TSKindId._AsPattern>>;
 export type _Type_CollectionElements = _TypeAssert<
@@ -345,28 +329,26 @@ export type _Type_CollectionElements = _TypeAssert<
 export type _Type_ComprehensionClauses = _TypeAssert<
 	_TypeExtends<ComprehensionClauses['$type'], TSKindId.ComprehensionClauses>
 >;
-export type _Type__DictPatternGroup1 = _TypeAssert<
-	_TypeExtends<_DictPatternGroup1['$type'], TSKindId._DictPatternGroup1>
->;
-export type _Type__DictionaryGroup1 = _TypeAssert<_TypeExtends<_DictionaryGroup1['$type'], TSKindId._DictionaryGroup1>>;
+export type _Type_DictPatternGroup2 = _TypeAssert<_TypeExtends<DictPatternGroup2['$type'], TSKindId.DictPatternGroup2>>;
+export type _Type_DictionaryGroup1 = _TypeAssert<_TypeExtends<DictionaryGroup1['$type'], TSKindId.DictionaryGroup1>>;
 export type _Type_ExceptClauseList = _TypeAssert<_TypeExtends<ExceptClauseList['$type'], TSKindId.ExceptClauseList>>;
+export type _Type_ExpressionListGroup1 = _TypeAssert<
+	_TypeExtends<ExpressionListGroup1['$type'], TSKindId.ExpressionListGroup1>
+>;
 export type _Type_ExpressionStatementTuple = _TypeAssert<
 	_TypeExtends<ExpressionStatementTuple['$type'], TSKindId.ExpressionStatementTuple>
 >;
-export type _Type__ListPattern = _TypeAssert<_TypeExtends<_ListPattern['$type'], '_list_pattern'>>;
-export type _Type__ListPatternGroup1 = _TypeAssert<
-	_TypeExtends<_ListPatternGroup1['$type'], TSKindId._ListPatternGroup1>
->;
+export type _Type_ListPatternGroup1 = _TypeAssert<_TypeExtends<ListPatternGroup1['$type'], TSKindId.ListPatternGroup1>>;
 export type _Type_MatchBlock = _TypeAssert<_TypeExtends<MatchBlock['$type'], TSKindId.MatchBlock>>;
 export type _Type__Parameters = _TypeAssert<_TypeExtends<_Parameters['$type'], TSKindId._Parameters>>;
+export type _Type_PatternListGroup1 = _TypeAssert<_TypeExtends<PatternListGroup1['$type'], TSKindId.PatternListGroup1>>;
 export type _Type_Patterns = _TypeAssert<_TypeExtends<Patterns['$type'], TSKindId.Patterns>>;
 export type _Type_SimplePatternNegative = _TypeAssert<
 	_TypeExtends<SimplePatternNegative['$type'], TSKindId.SimplePatternNegative>
 >;
 export type _Type_SimpleStatements = _TypeAssert<_TypeExtends<SimpleStatements['$type'], TSKindId.SimpleStatements>>;
-export type _Type__SliceGroup1 = _TypeAssert<_TypeExtends<_SliceGroup1['$type'], TSKindId._SliceGroup1>>;
+export type _Type_SliceGroup1 = _TypeAssert<_TypeExtends<SliceGroup1['$type'], TSKindId.SliceGroup1>>;
 export type _Type_Suite = _TypeAssert<_TypeExtends<Suite['$type'], '_suite'>>;
-export type _Type__TuplePattern = _TypeAssert<_TypeExtends<_TuplePattern['$type'], '_tuple_pattern'>>;
 export type _Type_WithClauseBare = _TypeAssert<_TypeExtends<WithClauseBare['$type'], TSKindId.WithClauseBare>>;
 export type _Type_WithClauseParen = _TypeAssert<_TypeExtends<WithClauseParen['$type'], TSKindId.WithClauseParen>>;
 export type _Type_AliasedImport = _TypeAssert<_TypeExtends<AliasedImport['$type'], TSKindId.AliasedImport>>;
@@ -507,14 +489,6 @@ export type _Type_WithClause = _TypeAssert<_TypeExtends<WithClause['$type'], TSK
 export type _Type_WithItem = _TypeAssert<_TypeExtends<WithItem['$type'], TSKindId.WithItem>>;
 export type _Type_WithStatement = _TypeAssert<_TypeExtends<WithStatement['$type'], TSKindId.WithStatement>>;
 export type _Type_Yield = _TypeAssert<_TypeExtends<Yield['$type'], TSKindId.Yield>>;
-export type _Type_ListPatternGroup1 = _TypeAssert<_TypeExtends<ListPatternGroup1['$type'], 'list_pattern_group1'>>;
-export type _Type_ArgumentListGroup1 = _TypeAssert<_TypeExtends<ArgumentListGroup1['$type'], 'argument_list_group1'>>;
-export type _Type_DictPatternGroup1 = _TypeAssert<_TypeExtends<DictPatternGroup1['$type'], 'dict_pattern_group1'>>;
-export type _Type_DictionaryGroup1 = _TypeAssert<_TypeExtends<DictionaryGroup1['$type'], 'dictionary_group1'>>;
-export type _Type_ElementList = _TypeAssert<_TypeExtends<ElementList['$type'], 'element_list'>>;
-export type _Type_PatternGroup = _TypeAssert<_TypeExtends<PatternGroup['$type'], 'pattern_group'>>;
-export type _Type_ParameterList = _TypeAssert<_TypeExtends<ParameterList['$type'], 'parameter_list'>>;
-export type _Type_SliceGroup1 = _TypeAssert<_TypeExtends<SliceGroup1['$type'], 'slice_group1'>>;
 export type _Type_AugmentedAssignmentOperator = _TypeAssert<
 	_TypeExtends<
 		AugmentedAssignmentOperator['$type'],
@@ -573,8 +547,8 @@ export type _Type_CloseBrace = _TypeAssert<_TypeExtends<CloseBrace['$type'], '}'
 export type _Type_Except = _TypeAssert<_TypeExtends<Except['$type'], TSKindId.Except>>;
 
 // --- TreeNode types have correct `type` ---
-export type _Tree__ArgumentListGroup1 = _TypeAssert<
-	_TypeExtends<_ArgumentListGroup1Tree['type'], '_argument_list_group1'>
+export type _Tree_ArgumentListGroup1 = _TypeAssert<
+	_TypeExtends<ArgumentListGroup1Tree['type'], '_argument_list_group1'>
 >;
 export type _Tree__AsPattern = _TypeAssert<_TypeExtends<_AsPatternTree['type'], '_as_pattern'>>;
 export type _Tree_CollectionElements = _TypeAssert<
@@ -583,28 +557,26 @@ export type _Tree_CollectionElements = _TypeAssert<
 export type _Tree_ComprehensionClauses = _TypeAssert<
 	_TypeExtends<ComprehensionClausesTree['type'], '_comprehension_clauses'>
 >;
-export type _Tree__DictPatternGroup1 = _TypeAssert<
-	_TypeExtends<_DictPatternGroup1Tree['type'], '_dict_pattern_group1'>
->;
-export type _Tree__DictionaryGroup1 = _TypeAssert<_TypeExtends<_DictionaryGroup1Tree['type'], '_dictionary_group1'>>;
+export type _Tree_DictPatternGroup2 = _TypeAssert<_TypeExtends<DictPatternGroup2Tree['type'], '_dict_pattern_group2'>>;
+export type _Tree_DictionaryGroup1 = _TypeAssert<_TypeExtends<DictionaryGroup1Tree['type'], '_dictionary_group1'>>;
 export type _Tree_ExceptClauseList = _TypeAssert<_TypeExtends<ExceptClauseListTree['type'], '_except_clause_list'>>;
+export type _Tree_ExpressionListGroup1 = _TypeAssert<
+	_TypeExtends<ExpressionListGroup1Tree['type'], '_expression_list_group1'>
+>;
 export type _Tree_ExpressionStatementTuple = _TypeAssert<
 	_TypeExtends<ExpressionStatementTupleTree['type'], '_expression_statement_tuple'>
 >;
-export type _Tree__ListPattern = _TypeAssert<_TypeExtends<_ListPatternTree['type'], '_list_pattern'>>;
-export type _Tree__ListPatternGroup1 = _TypeAssert<
-	_TypeExtends<_ListPatternGroup1Tree['type'], '_list_pattern_group1'>
->;
+export type _Tree_ListPatternGroup1 = _TypeAssert<_TypeExtends<ListPatternGroup1Tree['type'], '_list_pattern_group1'>>;
 export type _Tree_MatchBlock = _TypeAssert<_TypeExtends<MatchBlockTree['type'], '_match_block'>>;
 export type _Tree__Parameters = _TypeAssert<_TypeExtends<_ParametersTree['type'], '_parameters'>>;
+export type _Tree_PatternListGroup1 = _TypeAssert<_TypeExtends<PatternListGroup1Tree['type'], '_pattern_list_group1'>>;
 export type _Tree_Patterns = _TypeAssert<_TypeExtends<PatternsTree['type'], '_patterns'>>;
 export type _Tree_SimplePatternNegative = _TypeAssert<
 	_TypeExtends<SimplePatternNegativeTree['type'], '_simple_pattern_negative'>
 >;
 export type _Tree_SimpleStatements = _TypeAssert<_TypeExtends<SimpleStatementsTree['type'], '_simple_statements'>>;
-export type _Tree__SliceGroup1 = _TypeAssert<_TypeExtends<_SliceGroup1Tree['type'], '_slice_group1'>>;
+export type _Tree_SliceGroup1 = _TypeAssert<_TypeExtends<SliceGroup1Tree['type'], '_slice_group1'>>;
 export type _Tree_Suite = _TypeAssert<_TypeExtends<SuiteTree['type'], '_suite'>>;
-export type _Tree__TuplePattern = _TypeAssert<_TypeExtends<_TuplePatternTree['type'], '_tuple_pattern'>>;
 export type _Tree_WithClauseBare = _TypeAssert<_TypeExtends<WithClauseBareTree['type'], '_with_clause_bare'>>;
 export type _Tree_WithClauseParen = _TypeAssert<_TypeExtends<WithClauseParenTree['type'], '_with_clause_paren'>>;
 export type _Tree_AliasedImport = _TypeAssert<_TypeExtends<AliasedImportTree['type'], 'aliased_import'>>;
@@ -739,16 +711,6 @@ export type _Tree_WithClause = _TypeAssert<_TypeExtends<WithClauseTree['type'], 
 export type _Tree_WithItem = _TypeAssert<_TypeExtends<WithItemTree['type'], 'with_item'>>;
 export type _Tree_WithStatement = _TypeAssert<_TypeExtends<WithStatementTree['type'], 'with_statement'>>;
 export type _Tree_Yield = _TypeAssert<_TypeExtends<YieldTree['type'], 'yield'>>;
-export type _Tree_ListPatternGroup1 = _TypeAssert<_TypeExtends<ListPatternGroup1Tree['type'], 'list_pattern_group1'>>;
-export type _Tree_ArgumentListGroup1 = _TypeAssert<
-	_TypeExtends<ArgumentListGroup1Tree['type'], 'argument_list_group1'>
->;
-export type _Tree_DictPatternGroup1 = _TypeAssert<_TypeExtends<DictPatternGroup1Tree['type'], 'dict_pattern_group1'>>;
-export type _Tree_DictionaryGroup1 = _TypeAssert<_TypeExtends<DictionaryGroup1Tree['type'], 'dictionary_group1'>>;
-export type _Tree_ElementList = _TypeAssert<_TypeExtends<ElementListTree['type'], 'element_list'>>;
-export type _Tree_PatternGroup = _TypeAssert<_TypeExtends<PatternGroupTree['type'], 'pattern_group'>>;
-export type _Tree_ParameterList = _TypeAssert<_TypeExtends<ParameterListTree['type'], 'parameter_list'>>;
-export type _Tree_SliceGroup1 = _TypeAssert<_TypeExtends<SliceGroup1Tree['type'], 'slice_group1'>>;
 export type _Tree_AugmentedAssignmentOperator = _TypeAssert<
 	_TypeExtends<AugmentedAssignmentOperatorTree['type'], '_augmented_assignment_operator'>
 >;

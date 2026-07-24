@@ -58,7 +58,13 @@ export default grammar(
 				[$._except_clause_as, $._except_clause_list],
 				// The `as` form (`except E as e:`) overlaps with `as_pattern`
 				// (`E as e`) after the shared `expression 'as'` prefix — fork.
-				[$.as_pattern, $._except_clause_as]
+				[$.as_pattern, $._except_clause_as],
+				// PR 3 un-inlining: `_expressions` (a minted visible-group arm
+				// source, filtered out of `inline:` so its mint survives to the
+				// parser) and `expression_list` share the `expression • ,`
+				// prefix that inlining previously let the LR table merge — the
+				// fork tree-sitter itself suggests for the yield/tuple overlap.
+				[$._expressions, $.expression_list]
 			],
 			// EXPERIMENT (see `_except_clause_as` in `rules`). The real fix is enrich
 			// auto-hoisting inline-safe groups nested inside variant arms — FOLLOWUP.

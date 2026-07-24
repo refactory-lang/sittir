@@ -40,12 +40,23 @@ export default grammar(
 			// variant() adoption.
 			conflicts: ($, previous) => [
 				...(previous ?? []),
+				// PR 3 (2026-07-21 union-slot design): object's and
+				// object_pattern's widened choice-arm mints both route
+				// through _reserved_identifier (shorthand-property position,
+				// e.g. `{let}`) — a cross-rule collision the leading-symbol
+				// check (dsl/enrich.ts's armLeadingSymbolName, per-choice
+				// only) can't see, same class as this session's other
+				// reserved-identifier cross-rule collisions.
 				// parenthesized_expression split: `( expression )` vs
 				// `( sequence_expression )` share the expression prefix. The
 				// typed variant's hidden rule (`_parenthesized_expression_typed`)
 				// competes with `sequence_expression` when the parser sees
 				// `( expression •`. GLR resolves based on what follows.
 				[$.sequence_expression, $._parenthesized_expression_typed],
+				// PR 3 (2026-07-21 union-slot design): same class — the widened
+				// mint's own `_parenthesized_expression_group1` shares the
+				// `expression` prefix with sequence_expression too.
+				[$.sequence_expression, $._parenthesized_expression_group1],
 				// Also exposes a latent `async` ambiguity — before the split,
 				// tree-sitter resolved `async (` via state shared between the
 				// typed parenthesized expression and arrow_function's call
@@ -128,6 +139,60 @@ export default grammar(
 				// compete with `await_expression` individually — GLR is the
 				// only resolver. Declare the conflict groups explicitly.
 				[$.await_expression, $._update_expression_postfix],
+				// PR 3 (2026-07-21 union-slot design): same class — the widened
+				// mint's own `_update_expression_group1` inherits the same
+				// prec-0-vs-await_expression ambiguity.
+				[$.await_expression, $._update_expression_group1],
+				[$.arrow_function, $._update_expression_group1],
+				[$._variable_declarator_group1, $._for_header_group2],
+				[$.primary_expression, $._for_header_group2],
+				// PR 3 (2026-07-21 union-slot design): repointing
+				// `_export_statement_default`'s nested `from_arm` alias onto its
+				// fully-split polymorph home (transform.ts's ALIAS-rename deposit
+				// fix) shifted rule registration order enough to expose this
+				// `for (let x` shared-prefix ambiguity between
+				// `_variable_declarator_group1` and `_for_header_let_const_kind` —
+				// tree-sitter's own suggested resolution #4.
+				[$._variable_declarator_group1, $._for_header_let_const_kind],
+				[$._class_body_group1, $._class_body_group2],
+				// (Removed: `[$.computed_property_name, $._array_group1]` — the
+				// `_array_group1` mint no longer exists under the
+				// `isSupertypeLike` structural mint decline.)
+				// `import.meta` arm mint vs the `import` rule share the `import`
+				// keyword prefix — tree-sitter's own suggested resolution #4,
+				// replacing the retired inline-dissolution workaround.
+				[$.import, $._meta_property_group2],
+				// `new.target` twin of the pair above: the mint shares the `new`
+				// keyword prefix with primary_expression's new_expression arm.
+				[$.primary_expression, $._meta_property_group1],
+				// `export = <lhs>` arm vs a bare lhs expression statement share
+				// the expression prefix once the export-statement mints are no
+				// longer inline-dissolved — tree-sitter suggestion #4.
+				[$._lhs_expression, $._export_statement_equals_export],
+				// Cascade of the same un-dissolution: `{ x` may open an object
+				// assignment pattern or a bare lhs — tree-sitter suggestion #4,
+				// plus the 3-way superset with the `export =` arm it suggested
+				// on the following iteration.
+				[$.object_assignment_pattern, $._lhs_expression],
+				[$.object_assignment_pattern, $._lhs_expression, $._export_statement_equals_export],
+				[$.primary_expression, $._lhs_expression],
+				[$._lhs_expression, $.primary_type],
+				[$._lhs_expression, $.literal_type],
+				[$._lhs_expression, $.readonly_type],
+				[$._lhs_expression, $.predefined_type],
+				// Post-un-dissolution cascade, arrow-function family: the
+				// `_call_signature` polymorph helper vs function_type share the
+				// `( params )` prefix in type position — suggestion #4.
+				[$.function_type, $._arrow_function__call_signature],
+				[$.primary_expression, $._lhs_expression, $.primary_type],
+				[$.primary_expression, $._lhs_expression, $.literal_type],
+				[$.primary_expression, $._lhs_expression, $.predefined_type],
+				[$.constructor_type, $._arrow_function__call_signature],
+				// The `_lhs_expression` cascade walks the whole type family one
+				// pairwise suggestion at a time (primary_type → literal_type →
+				// readonly_type → …) — declare GLR on the union itself as well,
+				// the same singleton pattern as `[$.class]`/`[$.string]` above.
+				[$._lhs_expression],
 				[$.await_expression, $._update_expression_prefix],
 				[$.arrow_function, $._update_expression_postfix],
 				[$.arrow_function, $._update_expression_prefix],
@@ -184,6 +249,32 @@ export default grammar(
 			// `conflicts:` entries which preserve the exact pre-inline shape.
 			inline: ($, previous) => [
 				...(previous ?? []),
+				// PR 3 mint-workaround inline block. Names whose mints were
+				// retired by the `isSupertypeLike` structural decline are now
+				// DEAD entries — tree-sitter warns 'inline rule not defined'
+				// (non-fatal) and they are kept only until the next overrides
+				// sweep. The SURVIVING structured mints here are load-bearing:
+				// un-inlining them re-opens the non-convergent
+				// `_lhs_expression`/reserved-identifier conflict cascade.
+				$._object_group1,
+				$._object_pattern_group1,
+				$._reserved_identifier_group1,
+				$._primary_expression_group1,
+				$._meta_property_group1,
+				$._meta_property_group2,
+				$._lhs_expression_group1,
+				$._method_definition_group1,
+				$._public_field_definition_group2,
+				$._public_field_definition_group3,
+				$._public_field_definition_group4,
+				$._export_statement_group1,
+				$._export_statement_group2,
+				$._export_statement_group3,
+				$._export_statement_group4,
+				$._export_statement_group5,
+				$._export_statement_group6,
+				$._export_statement_group7,
+				$._export_statement_group8,
 				$._public_field_definition_declare_first,
 				$._public_field_definition_access_first,
 				$._public_field_definition_static_mods,
@@ -211,41 +302,62 @@ export default grammar(
 					'1/2': 'module'
 				},
 
-				// _export_statement_default — synthesized by
-				// `export_statement: { 0: variant('default') }` transform. Body
-				// is a two-arm heterogeneous choice:
-				//   arm 0: `seq('export', choice(4 from-clause shapes), _semicolon)`
-				//   arm 1: `seq(repeat(field('decorator',…)), 'export',
-				//             choice(field('declaration',…), seq('default', …)))`
-				// Top-level split.
-				_export_statement_default: { 0: 'from_arm', 1: 'decl_arm' },
-
-				// _export_statement_default_from_arm body:
-				//   `seq('export', choice(4 from-clause shapes), _semicolon)`
-				// Inner choice at path 1 has 3 seqs + 1 bare symbol — split the
-				// 3 seqs so the remaining choice is all symbol-like.
-				_export_statement_default_from_arm: {
-					'1/0': 'star_from', // seq('*', _from_clause)
-					'1/1': 'ns_from', // seq(namespace_export, _from_clause)
-					'1/2': 'clause_from' // seq(export_clause, _from_clause)
-				},
-
-				// _export_statement_default_decl_arm body:
-				//   `seq(repeat(field('decorator',…)), 'export', choice(
+				// PR 3 (2026-07-21 union-slot design): `_export_statement_default`
+				// used to be split via 3 SEPARATE, CASCADED polymorphs entries
+				// (itself, then `_export_statement_default_from_arm`, then
+				// `_export_statement_default_decl_arm`/`..._default_kw`) — each a
+				// distinct resolvePatch call materializing its own name. Enrich's
+				// widened clause-hoist mint gate raw-mints EVERY one of those
+				// intermediate positions (from the RAW base grammar, before any
+				// override runs) under its own `_export_statement_group<N>` name;
+				// once a NESTED cascade level's config replaces that raw mint's
+				// alias content with the properly-split polymorph body (transform.ts's
+				// ALIAS-rename deposit + repoint), the ORIGINAL raw mint becomes a
+				// provably-unreachable orphan that still reaches codegen (nothing
+				// prunes `rules` map entries by reachability — see
+				// docs/KNOWN_ISSUES.md's "Assemble-time grammar diagnostics scan
+				// every `rules` map entry..." entry) and can trip real bugs
+				// downstream (confirmed: a duplicate `AnyTransport` impl, a hard
+				// `cargo build` failure, from `_export_statement_default_from_arm`'s
+				// nested raw mint). Folding the ENTIRE `_export_statement_default`
+				// cascade into ONE polymorphs entry with deep, multi-level string
+				// paths — same idiom `class_body`'s
+				// `'1/0/0'`/`'1/0/1'`/`'1/0/3'` entry above already uses — means
+				// `_export_statement_default` is fully materialized in ONE
+				// resolvePatch call, so wire()'s existing orphan-detection
+				// (`getEnrichClauseGroupOwners`/`context.authoredRuleNames`) marks
+				// its raw enrich mint as orphaned in that ONE pass, instead of
+				// leaving a nested raw mint behind for a LATER, separate
+				// resolvePatch call to orphan. Produces the exact same final kind
+				// names as the 3 cascaded entries did (verified against
+				// `conflicts:`'s existing `$._export_statement_default_from_arm` /
+				// `..._decl_arm` references above, which still resolve to these
+				// names).
+				//
+				// Body (unchanged from the 3-entry cascade this replaces):
+				//   `choice(
+				//     seq('export', choice(         // path 0 — from_arm
+				//       seq('*', _from_clause),                    // 0/1/0 — star_from
+				//       seq(namespace_export, _from_clause),       // 0/1/1 — ns_from
+				//       seq(export_clause, _from_clause),          // 0/1/2 — clause_from
+				//       export_clause,                             // 0/1/3 — left unlabeled
+				//     ), _semicolon),
+				//     seq(repeat(field('decorator',…)), 'export', choice(  // path 1 — decl_arm
 				//       field('declaration', declaration),
-				//       seq('default', choice(
-				//           field('declaration', declaration),
-				//           seq(field('value', expression), _semicolon),
+				//       seq('default', choice(                     // 1/2/1 — default_kw
+				//         field('declaration', declaration),
+				//         seq(field('value', expression), _semicolon),  // 1/2/1/1/1 — value
 				//       )),
-				//   ))`
-				// Split outer and nested default-arm choices at every unique
-				// heterogeneous path — multi-level adoption hits the leaves
-				// directly rather than cascading through intermediate kinds.
-				_export_statement_default_decl_arm: {
-					'2/1': 'default_kw' // seq('default', …)
-				},
-				_export_statement_default_decl_arm_default_kw: {
-					'1/1': 'value' // seq(field('value', expression), _semicolon)
+				//     )),
+				//   )`
+				_export_statement_default: {
+					0: 'from_arm',
+					'0/1/0': 'star_from',
+					'0/1/1': 'ns_from',
+					'0/1/2': 'clause_from',
+					1: 'decl_arm',
+					'1/2/1': 'default_kw',
+					'1/2/1/1/1': 'value'
 				},
 
 				// class_body body: `seq('{', repeat(choice(5 arms)), '}')`.
@@ -978,6 +1090,22 @@ export default grammar(
 				object_type_content: '#170 (#172-adjacent) — Missing field _content through export-arm transport',
 				string: '#170 — StringContentTransportSlot rejects stub ($type property missing)',
 				enum_body_group1: '#170 — multi-field separatedList (name/enum_assignment); emitSeparatedListFactory only fixes the single-field-storage case, needs a real per-field partition of the flat elements array'
+			},
+			// PR 3 (2026-07-21 union-slot design): `_export_statement_group2` is an
+			// orphaned duplicate — enrich's raw clause-hoist mint of
+			// `_export_statement_default`'s `from_arm` position, superseded once
+			// the nested `polymorphs:` config below (`_export_statement_default`
+			// → `_export_statement_default_from_arm`) properly splits the SAME
+			// content under its own name (transform.ts's ALIAS-rename deposit now
+			// repoints the live alias there). `_export_statement_group2` is
+			// provably unreachable from `export_statement` but assemble's
+			// diagnostics still scan it like live structure — see
+			// docs/KNOWN_ISSUES.md's "Assemble-time grammar diagnostics scan
+			// every `rules` map entry, including ones unreachable from any
+			// top-level kind" for the principled (reachability-based) fix,
+			// tracked there rather than implemented here.
+			expectDiagnostics: {
+				'storagename-collision': ['_export_statement_group2']
 			},
 			rules: {
 				// parenthesized_expression: held. Base is plain `seq('(',

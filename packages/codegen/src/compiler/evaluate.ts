@@ -808,45 +808,28 @@ function synthesizeInlineAliasSources(rules: Record<string, Rule<'evaluate'>>, c
 	const externalSet = new Set(ctx.externals);
 	const ruleEntries = Object.entries(rules);
 	for (const [name, rule] of ruleEntries) {
-		// Top-level rule bodies have no wrapping optional/choice parent.
-		rules[name] = rewriteInlineAliases(rule, ctx, externalSet, false);
+		rules[name] = rewriteInlineAliases(rule, ctx, externalSet);
 	}
 }
 
 function rewriteInlineAliases(
 	rule: Rule<'evaluate'>,
 	ctx: EvaluateCtx,
-	externals: ReadonlySet<string>,
-	parentIsOptionalSeq: boolean
+	externals: ReadonlySet<string>
 ): Rule<'evaluate'> {
 	const { rules, provenanceByKind } = ctx;
-	const recurse = (r: Rule<'evaluate'>): Rule<'evaluate'> => rewriteInlineAliases(r, ctx, externals, false);
-	// Distinct single-param helper (Principle #14 getter-candidate shape) for
-	// the two positions whose immediate child qualifies as a clause-hoist
-	// mint site's parent (`optional(...)`'s content, and a 2-member
-	// `CHOICE[x, BLANK]`'s members) — see `isClauseHoistVisibleGroupAlias`.
-	const recurseInOptionalSeq = (r: Rule<'evaluate'>): Rule<'evaluate'> => rewriteInlineAliases(r, ctx, externals, true);
+	const recurse = (r: Rule<'evaluate'>): Rule<'evaluate'> => rewriteInlineAliases(r, ctx, externals);
 	switch (rule.type) {
 		case ALIAS:
 			if (rule.named && rule.value) {
-				// Enrich content-aliases (clause-hoist visible-group mints — see
-				// `isClauseHoistVisibleGroupAlias`) own their minting in link.ts
-				// (`mintContentAliasKinds`). They must NOT be rewritten here into
-				// `_${target}` hidden symbols: doing so makes link's mint guards
-				// (`content.type !== 'symbol'`) dead, the kind lands as a `branch`
-				// under the `_`-name, and the parent slot mis-derives optional-scalar
-				// while the underlying rule is a `repeat1` (array) → wrap returns null
-				// → empty render. Leave the content as the literal seq so link mints
-				// the kind under the non-`_` parser name (`<parent>_group<N>`).
-				if (
-					isClauseHoistVisibleGroupAlias(rule as AliasRule<'evaluate'>, {
-						rules,
-						inlineNames: ctx.sinks.inline,
-						parentIsOptionalSeq
-					})
-				) {
-					return { ...rule, content: recurse(rule.content) };
-				}
+				// Clause-hoist / visible-group mint aliases (enrich registers
+				// their hidden `_<name>` body in the rules bag before this
+				// runs) take the `isBareSymbolToKnownSource` path below — no
+				// synthesis, alias preserved — and later resolve through
+				// link's uniform `aliasedFrom` provenance routing. The former
+				// `isClauseHoistVisibleGroupAlias` early-return here was
+				// behaviorally identical for that population and is retired
+				// along with link's mint machinery.
 				const inner = rule.content;
 				// Treat both declared rules AND external scanner tokens as
 				// "existing" sources — externals already carry parser-assigned
@@ -879,20 +862,15 @@ function rewriteInlineAliases(
 			return { ...rule, content: recurse(rule.content) };
 		case SEQ:
 			return { ...rule, members: rule.members.map((m) => recurse(m)) } as Rule<'evaluate'>;
-		case CHOICE: {
-			// A 2-member CHOICE[x, BLANK] is the desugared `optional(x)` form —
-			// its non-blank member's immediate-child alias qualifies exactly
-			// like `optional(...)`'s content does (isOptionalOrBlankChoice).
-			const isBlankChoice = isOptionalOrBlankChoice(rule);
-			const recurseMember = isBlankChoice ? recurseInOptionalSeq : recurse;
-			return { ...rule, members: rule.members.map((m) => recurseMember(m)) } as Rule<'evaluate'>;
-		}
-		case OPTIONAL:
-			// `optional(...)`'s content is one of peelOptionalSeq's two
-			// recognized parent shapes — its immediate-child alias qualifies.
+		case CHOICE:
 			return {
 				...rule,
-				content: recurseInOptionalSeq((rule as { content: Rule<'evaluate'> }).content)
+				members: rule.members.map((m) => recurse(m))
+			} as Rule<'evaluate'>;
+		case OPTIONAL:
+			return {
+				...rule,
+				content: recurse((rule as { content: Rule<'evaluate'> }).content)
 			} as Rule<'evaluate'>;
 		case REPEAT:
 		case REPEAT1:
@@ -2026,85 +2004,6 @@ export function isComplexBody(rule: Rule<'evaluate'>): boolean {
 }
 
 /**
- * Structural test for "this named alias is a clause-hoist visible-group
- * mint site" (debt PR-0c / doctrine decision 4): the tree-sitter-visible
- * facts that used to be proxied by `metadata.source === 'enrich'` on the
- * alias node.
- *
- * `applyClauseHoist`'s `peelOptionalSeq` only ever wraps its synthesized
- * alias directly inside `optional(...)` or a 2-member `CHOICE[x, BLANK]`
- * (the desugared optional form) — never inside a `repeat`/`repeat1`
- * (that shape belongs to wire's `groups:` body-pattern replacement, which
- * resolves through the ordinary `aliasedFrom` fallback instead) and never
- * as a bare multi-arm dispatch `choice` member (an enum/variant arm, not a
- * hoisted clause). Combined with:
- *   - the alias VALUE having no independent rule body elsewhere in `rules`
- *     (a real authored/relabeled kind always does — the alias target name
- *     has no rule definition of its own is exactly the fact tree-sitter's
- *     own grammar compiler keys on to decide there's no existing symbol to
- *     reuse),
- *   - the alias CONTENT being a symbol ref to a `_`-prefixed hidden rule
- *     (not a visible rule being relabeled, e.g. `alias($.identifier,
- *     $.statement_identifier)` — an authored relabel of a real rule), and
- *   - that hidden rule NOT being tree-sitter-inlined away (`inline:` —
- *     inlined helpers never get their own parsed node, so there is nothing
- *     to mint; that's the polymorph-variant-hoist shape, a different
- *     producer),
- * these conditions select EXACTLY the same population the enrich tag used
- * to mark, verified across all 3 real grammars (rust/typescript/python) —
- * see debt PR-0c probe notes.
- *
- * @param rule - Candidate `alias(...)` node (pre-link/pre-resolveRule form).
- * @param ctx - Minimal ctx-shaped bag (§7.7 Principle #14): `rules` to check
- *   alias-value/hidden-body existence against (evaluate: the live, growing
- *   map; link: `raw.rules`), `inlineNames` for the grammar's `inline:` list
- *   (evaluate: the live `sinks.inline` array; link: `raw.inline`), and
- *   `parentIsOptionalSeq` — true when `rule`'s immediate parent is
- *   `optional(...)` or a 2-member `CHOICE[x, BLANK]` — callers determine
- *   this from their own walk (the shape `peelOptionalSeq` recognizes).
- */
-export interface ClauseHoistMintCtx {
-	readonly rules: Record<string, AnyRule>;
-	readonly inlineNames: readonly string[] | undefined;
-	readonly parentIsOptionalSeq: boolean;
-}
-
-export function isClauseHoistVisibleGroupAlias(
-	rule: AliasRule<'evaluate'> | AliasRule<'link'>,
-	ctx: ClauseHoistMintCtx
-): boolean {
-	if (!ctx.parentIsOptionalSeq) return false;
-	if (!rule.named || typeof rule.value !== 'string' || rule.value.length === 0) return false;
-	if (ctx.rules[rule.value] !== undefined) return false;
-	const content = rule.content;
-	if (content.type !== SYMBOL || !content.name.startsWith('_')) return false;
-	if (ctx.inlineNames?.includes(content.name)) return false;
-	return true;
-}
-
-/**
- * True when `rule` is `optional(...)` or a 2-member `CHOICE[x, BLANK]` — the
- * two shapes `applyClauseHoist`'s `peelOptionalSeq` recognizes. Shared by
- * {@link isClauseHoistVisibleGroupAlias} callers to classify a candidate
- * alias's immediate parent during their own tree walk.
- */
-export function isOptionalOrBlankChoice(rule: AnyRule | undefined): boolean {
-	if (!rule) return false;
-	if (rule.type === OPTIONAL) return true;
-	if (rule.type === CHOICE) {
-		// `members` is loosely typed here (not `AnyRule[]`): a raw evaluated
-		// CHOICE member can be tree-sitter's `BLANK` leaf, which has no
-		// counterpart in sittir's `AnyRule` union (§0 of the SSOT research doc
-		// — BLANK does not exist IR-side). Compare the raw `type` string
-		// directly rather than importing `runtime-shapes.ts`'s `isBlankType`
-		// (its header forbids import from `compiler/`).
-		const members = (rule as { members?: readonly { type?: string }[] }).members;
-		return Array.isArray(members) && members.length === 2 && members.some((m) => m?.type === 'BLANK');
-	}
-	return false;
-}
-
-/**
  * Derive the set of hidden (`_`-prefixed) kinds that:
  *   1. Appear as the source of a NAMED ALIAS — either in pre-link form
  *      (`alias(symbol(_X), $visible)`) or post-link form
@@ -2647,6 +2546,47 @@ export interface BuildRuleCatalogCtx {
 	readonly provenanceByKind?: ReadonlyMap<string, RuleProvenance>;
 }
 
+/**
+ * The set of rule names transitively reachable from any VISIBLE (non-`_`)
+ * rule — visible kinds are treated as roots unconditionally (they are, by
+ * construction, the grammar's directly-nameable surface), then every SYMBOL
+ * reference reached by walking their bodies (via `RuleWalker.foldDeep`,
+ * which descends through SEQ/CHOICE/FIELD/ALIAS/... children AND through
+ * SYMBOL refs themselves) is added too. A HIDDEN rule name absent from this
+ * set can never be produced by any live grammar production — nothing
+ * visible, directly or transitively, refers to it.
+ *
+ * Used to gate `buildRuleCatalog`'s catalog-identity assignment (see
+ * below): a cascaded/nested `polymorphs:` split can leave an enrich raw
+ * clause-hoist mint behind as exactly this kind of orphan once a later
+ * split repoints the live alias elsewhere (its content symbol name simply
+ * stops appearing in anything reachable) — confirmed concretely for
+ * typescript's `_export_statement_group2`/`_export_statement_group5`, see
+ * docs/KNOWN_ISSUES.md's "Assemble-time grammar diagnostics scan every
+ * `rules` map entry..." entry. This does NOT touch the raw `rules` map
+ * (tree-sitter's own `grammar()` call still sees every declared rule name,
+ * so nothing about the compiled parser changes) — it only decides which
+ * kinds sittir's OWN downstream modeling (assemble/derive/emit) treats as
+ * real, materializable grammar structure.
+ */
+function computeReachableRuleNames(rules: Record<string, Rule<'evaluate'>>): Set<string> {
+	const walker = new RuleWalker<Rule<'evaluate'>>(rules);
+	const reachable = new Set<string>();
+	for (const name of Object.keys(rules)) {
+		if (!name.startsWith('_')) reachable.add(name);
+	}
+	for (const name of Object.keys(rules)) {
+		if (name.startsWith('_')) continue;
+		const rule = rules[name];
+		if (!rule) continue;
+		walker.foldDeep<null>(rule, null, (acc, r) => {
+			if (r.type === SYMBOL) reachable.add((r as unknown as { name: string }).name);
+			return acc;
+		});
+	}
+	return reachable;
+}
+
 export function buildRuleCatalog(
 	rules: Record<string, Rule<'evaluate'>>,
 	ctx: BuildRuleCatalogCtx = {}
@@ -2656,10 +2596,22 @@ export function buildRuleCatalog(
 	const rootsByKind = new Map<string, RuleId>();
 	const classificationById = new Map<RuleId, RuleClassification>();
 	const identifiedRules: Record<string, Rule<'evaluate'>> = {};
+	const reachable = computeReachableRuleNames(rules);
 
 	for (const ownerKind of Object.keys(rules).sort()) {
 		const rule = rules[ownerKind];
 		if (!rule) continue;
+		// A hidden, unreachable rule is OMITTED from `identifiedRules` (not
+		// merely un-identified) — downstream consumers of `.rules`
+		// (link/assemble) iterate `Object.entries`/keys of the map they
+		// receive, not `ruleCatalog.rootsByKind`, so a pass-through-but-
+		// unidentified entry would still reach template/factory emission as
+		// if it were live grammar structure. See `computeReachableRuleNames`
+		// above. The RAW `rules` map this function was CALLED with (and
+		// hence tree-sitter's own `grammar()`/compiled parser) is untouched —
+		// this only prunes sittir's OWN downstream (assemble/derive/emit)
+		// view.
+		if (ownerKind.startsWith('_') && !reachable.has(ownerKind)) continue;
 		const provenance = provenanceByKind.get(ownerKind) ?? 'grammar-authored';
 		const result = identifyRule({
 			rule,

@@ -105,9 +105,25 @@ pub struct AmbientDeclarationModuleTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_arrow_function__call_signature.jinja", escape = "none")]
+pub struct ArrowFunctionUCallSignatureTemplate<'a> {
+    pub parameters: SingleNonterminalView<'a>,
+    pub return_type: OptionalNonterminalView<'a>,
+    pub type_parameters: OptionalNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_arrow_function_parameter.jinja", escape = "none")]
 pub struct ArrowFunctionParameterTemplate<'a> {
     pub parameter: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_binary_expression_group1.jinja", escape = "none")]
+pub struct BinaryExpressionGroup1Template<'a> {
+    pub left: SingleNonterminalView<'a>,
+    pub operator: SingleNonterminalView<'a>,
+    pub right: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -131,6 +147,13 @@ pub struct CallExpressionMemberTemplate<'a> {
 pub struct CallExpressionTemplateCallTemplate<'a> {
     pub arguments: SingleNonterminalView<'a>,
     pub function: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_catch_clause_group1.jinja", escape = "none")]
+pub struct CatchClauseGroup1Template<'a> {
+    pub parameter: SingleNonterminalView<'a>,
+    pub type_: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -161,15 +184,22 @@ pub struct ClassHeritageExtendsClauseTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_export_statement_default_decl_arm_default_kw_value.jinja", escape = "none")]
-pub struct ExportStatementDefaultDeclArmDefaultKwValueTemplate<'a> {
-    pub value: SingleNonterminalView<'a>,
+#[template(path = "_enum_body_group1.jinja", escape = "none")]
+pub struct EnumBodyGroup1Template<'a> {
+    pub content: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_export_statement_default_decl_arm_default_kw.jinja", escape = "none")]
-pub struct ExportStatementDefaultDeclArmDefaultKwTemplate<'a> {
-    pub content: SingleNonterminalView<'a>,
+#[template(path = "_export_clause_group1.jinja", escape = "none")]
+pub struct ExportClauseGroup1Template<'a> {
+    pub export_specifier: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_export_statement_default_clause_from.jinja", escape = "none")]
+pub struct ExportStatementDefaultClauseFromTemplate<'a> {
+    pub export_clause: SingleNonterminalView<'a>,
+    pub source: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -180,29 +210,34 @@ pub struct ExportStatementDefaultDeclArmTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_export_statement_default_from_arm_clause_from.jinja", escape = "none")]
-pub struct ExportStatementDefaultFromArmClauseFromTemplate<'a> {
-    pub export_clause: SingleNonterminalView<'a>,
-    pub source: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_export_statement_default_from_arm_ns_from.jinja", escape = "none")]
-pub struct ExportStatementDefaultFromArmNsFromTemplate<'a> {
-    pub namespace_export: SingleNonterminalView<'a>,
-    pub source: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_export_statement_default_from_arm_star_from.jinja", escape = "none")]
-pub struct ExportStatementDefaultFromArmStarFromTemplate<'a> {
-    pub source: SingleNonterminalView<'a>,
+#[template(path = "_export_statement_default_default_kw.jinja", escape = "none")]
+pub struct ExportStatementDefaultDefaultKwTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_export_statement_default_from_arm.jinja", escape = "none")]
 pub struct ExportStatementDefaultFromArmTemplate<'a> {
     pub content: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_export_statement_default_ns_from.jinja", escape = "none")]
+pub struct ExportStatementDefaultNsFromTemplate<'a> {
+    pub namespace_export: SingleNonterminalView<'a>,
+    pub source: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_export_statement_default_star_from.jinja", escape = "none")]
+pub struct ExportStatementDefaultStarFromTemplate<'a> {
+    pub source: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_export_statement_default_value.jinja", escape = "none")]
+pub struct ExportStatementDefaultValueTemplate<'a> {
+    pub value: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -252,10 +287,22 @@ pub struct ForHeaderVarKindTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_formal_parameters_group1.jinja", escape = "none")]
+pub struct FormalParametersGroup1Template<'a> {
+    pub formal_parameter: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_import_clause_default_import.jinja", escape = "none")]
 pub struct ImportClauseDefaultImportTemplate<'a> {
     pub import_clause_group1: OptionalNonterminalView<'a>,
     pub import_identifier: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_import_clause_group1.jinja", escape = "none")]
+pub struct ImportClauseGroup1Template<'a> {
+    pub content: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -266,6 +313,13 @@ pub struct ImportSpecifierAsTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_import_statement_group1.jinja", escape = "none")]
+pub struct ImportStatementGroup1Template<'a> {
+    pub import_clause: SingleNonterminalView<'a>,
+    pub source: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_index_signature_colon.jinja", escape = "none")]
 pub struct IndexSignatureColonTemplate<'a> {
     pub index_type: SingleNonterminalView<'a>,
@@ -273,11 +327,22 @@ pub struct IndexSignatureColonTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_jsx_opening_element_content.jinja", escape = "none")]
-pub struct JsxOpeningElementContentTemplate<'a> {
-    pub attribute: ListNonterminalView<'a>,
+#[template(path = "_jsx_start_opening_element_group1.jinja", escape = "none")]
+pub struct JsxStartOpeningElementGroup1Template<'a> {
     pub name: SingleNonterminalView<'a>,
     pub type_arguments: OptionalNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_lhs_expression.jinja", escape = "none")]
+pub struct LhsExpressionTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_named_imports_group1.jinja", escape = "none")]
+pub struct NamedImportsGroup1Template<'a> {
+    pub import_specifier: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -342,6 +407,12 @@ pub struct StringSingleTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_tuple_type_group1.jinja", escape = "none")]
+pub struct TupleTypeGroup1Template<'a> {
+    pub tuple_type_member: ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_type_query_call_expression_in_type_annotation.jinja", escape = "none")]
 pub struct TypeQueryCallExpressionInTypeAnnotationTemplate<'a> {
     pub arguments: SingleNonterminalView<'a>,
@@ -396,6 +467,21 @@ pub struct UpdateExpressionPostfixTemplate<'a> {
 pub struct UpdateExpressionPrefixTemplate<'a> {
     pub argument: SingleNonterminalView<'a>,
     pub operator: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_variable_declarator_group1.jinja", escape = "none")]
+pub struct VariableDeclaratorGroup1Template<'a> {
+    pub name: SingleNonterminalView<'a>,
+    pub type_: OptionalNonterminalView<'a>,
+    pub value: OptionalNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_variable_declarator_group2.jinja", escape = "none")]
+pub struct VariableDeclaratorGroup2Template<'a> {
+    pub name: SingleNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -460,12 +546,9 @@ pub struct ArrayTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "arrow_function.jinja", escape = "none")]
 pub struct ArrowFunctionTemplate<'a> {
-    pub arrow_function_parameter: OptionalNonterminalView<'a>,
     pub async_marker: OptionalNonterminalView<'a>,
     pub body: SingleNonterminalView<'a>,
-    pub parameters: OptionalNonterminalView<'a>,
-    pub return_type: OptionalNonterminalView<'a>,
-    pub type_parameters: OptionalNonterminalView<'a>,
+    pub content: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -519,9 +602,9 @@ pub struct AwaitExpressionTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "binary_expression.jinja", escape = "none")]
 pub struct BinaryExpressionTemplate<'a> {
-    pub left: SingleNonterminalView<'a>,
-    pub operator: SingleNonterminalView<'a>,
-    pub right: SingleNonterminalView<'a>,
+    pub left: OptionalNonterminalView<'a>,
+    pub operator: OptionalNonterminalView<'a>,
+    pub right: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -543,13 +626,6 @@ pub struct CallSignatureTemplate<'a> {
     pub parameters: SingleNonterminalView<'a>,
     pub return_type: OptionalNonterminalView<'a>,
     pub type_parameters: OptionalNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "catch_clause_group1.jinja", escape = "none")]
-pub struct CatchClauseGroup1Template<'a> {
-    pub parameter: SingleNonterminalView<'a>,
-    pub type_: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -706,12 +782,6 @@ pub struct EnumAssignmentTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "enum_body_group1.jinja", escape = "none")]
-pub struct EnumBodyGroup1Template<'a> {
-    pub content: ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "enum_body.jinja", escape = "none")]
 pub struct EnumBodyTemplate<'a> {
     pub enum_body_group1: OptionalNonterminalView<'a>,
@@ -723,12 +793,6 @@ pub struct EnumDeclarationTemplate<'a> {
     pub body: SingleNonterminalView<'a>,
     pub const_marker: OptionalNonterminalView<'a>,
     pub name: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "export_clause_group1.jinja", escape = "none")]
-pub struct ExportClauseGroup1Template<'a> {
-    pub export_specifier: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -809,12 +873,6 @@ pub struct ForStatementTemplate<'a> {
     pub condition: SingleNonterminalView<'a>,
     pub increment: OptionalNonterminalView<'a>,
     pub initializer: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "formal_parameters_group1.jinja", escape = "none")]
-pub struct FormalParametersGroup1Template<'a> {
-    pub formal_parameter: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -918,12 +976,6 @@ pub struct ImportAliasTemplate<'a> {
 #[template(path = "import_attribute.jinja", escape = "none")]
 pub struct ImportAttributeTemplate<'a> {
     pub object: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "import_clause_group1.jinja", escape = "none")]
-pub struct ImportClauseGroup1Template<'a> {
-    pub content: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1044,13 +1096,15 @@ pub struct JsxNamespaceNameTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "jsx_opening_element.jinja", escape = "none")]
 pub struct JsxOpeningElementTemplate<'a> {
-    pub jsx_opening_element_content: OptionalNonterminalView<'a>,
+    pub attribute: ListNonterminalView<'a>,
+    pub name: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "jsx_self_closing_element.jinja", escape = "none")]
 pub struct JsxSelfClosingElementTemplate<'a> {
-    pub jsx_opening_element_content: OptionalNonterminalView<'a>,
+    pub attribute: ListNonterminalView<'a>,
+    pub name: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1098,6 +1152,12 @@ pub struct MemberExpressionTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "meta_property.jinja", escape = "none")]
+pub struct MetaPropertyTemplate<'a> {
+    pub content: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "method_definition.jinja", escape = "none")]
 pub struct MethodDefinitionTemplate<'a> {
     pub accessibility_modifier: OptionalNonterminalView<'a>,
@@ -1135,12 +1195,6 @@ pub struct MethodSignatureTemplate<'a> {
 pub struct ModuleTemplate<'a> {
     pub body: OptionalNonterminalView<'a>,
     pub name: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "named_imports_group1.jinja", escape = "none")]
-pub struct NamedImportsGroup1Template<'a> {
-    pub import_specifier: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -1482,12 +1536,6 @@ pub struct TupleParameterTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "tuple_type_group1.jinja", escape = "none")]
-pub struct TupleTypeGroup1Template<'a> {
-    pub tuple_type_member: ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "tuple_type.jinja", escape = "none")]
 pub struct TupleTypeTemplate<'a> {
     pub tuple_type_group1: OptionalNonterminalView<'a>,
@@ -1585,9 +1633,7 @@ pub struct VariableDeclarationTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "variable_declarator.jinja", escape = "none")]
 pub struct VariableDeclaratorTemplate<'a> {
-    pub name: SingleNonterminalView<'a>,
-    pub type_: OptionalNonterminalView<'a>,
-    pub value: OptionalNonterminalView<'a>,
+    pub content: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

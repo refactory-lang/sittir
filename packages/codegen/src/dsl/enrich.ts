@@ -84,7 +84,7 @@ import {
 	type ParseKindCollisionValue
 } from '../types/parsekind-collisions.ts';
 import { setGroupLiftRuleMap } from './transform/transform-path.ts';
-import { ruleMatchesEmpty, isInlineSafe } from './group-classify.ts';
+import { ruleMatchesEmpty, isInlineSafe, isSupertypeLike } from './group-classify.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 
 // Shape of the tree-sitter grammar result that our grammarFn produces.
@@ -203,6 +203,24 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 				)
 			: rule!;
 	}
+	// Base-grammar un-aliasing also needs to reach clause-hoist-minted group
+	// rules, not just the original rulesBag entries above. `applyEnrichPasses`
+	// only calls `applyUnaliasDistinct` on EACH RULE'S OWN body — but the
+	// widened clause-hoist mint gate can hoist a `choice(…, alias($._reserved_identifier,
+	// $.identifier), …)`-shaped position OUT of a rule that pass would otherwise
+	// have un-aliased, into a brand-new `clauseGroupRules` entry the per-name
+	// loop above never independently visits (it iterates `rulesBag`, not
+	// `clauseGroupRules`). Run the same pass over every minted group once the
+	// main loop has fully settled, so it sees every mint from every rule.
+	for (const groupName of Object.keys(clauseGroupRules)) {
+		const groupBody = clauseGroupRules[groupName];
+		if (!groupBody) continue;
+		const groupUnaliasResult = applyUnaliasDistinct(groupName, groupBody, rulesBag, kwRules, clauseGroupRules);
+		clauseGroupRules[groupName] = groupUnaliasResult.rule;
+		for (const diagnostic of groupUnaliasResult.diagnostics) {
+			recordUnaliasDiagnostic(unaliasSink, diagnostic);
+		}
+	}
 	// Inject `_kw_<name>` hidden rules — user rules NEVER shadow them
 	// (they start with `_kw_`, a reserved prefix).
 	// Inject clause-group rules — user rules NEVER shadow them either
@@ -265,6 +283,22 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 			configurable: true
 		});
 	}
+	// Attach the hidden SOURCE names behind every visible-group mint (both the
+	// promote-existing and synthesize-new categories). Wire reads this to
+	// FILTER these names out of the grammar's final `inline:` list: a mint
+	// `alias($._src, $.visible)` only survives to the parser if `_src` is a
+	// real (non-inlined) rule — tree-sitter's inline processing erases inlined
+	// rules before table construction, taking the alias (and the minted kind's
+	// entire parser identity) with it, while the IR still models the kind —
+	// the "VAPORIZED" phantom divergence. See getEnrichVisibleGroupSources.
+	if (visibleGroupHiddenNames.size > 0) {
+		Object.defineProperty(result, ENRICH_VISIBLE_GROUP_SOURCES_KEY, {
+			value: visibleGroupHiddenNames,
+			enumerable: false,
+			writable: false,
+			configurable: true
+		});
+	}
 	return result as unknown as EnrichedGrammar<B>;
 }
 
@@ -310,6 +344,29 @@ export function getEnrichClauseGroupOwners(grammar: unknown): ReadonlyMap<string
 	const owners = (grammar as Record<string, unknown>)[ENRICH_CLAUSE_GROUP_OWNERS_KEY];
 	if (owners instanceof Map) return owners as ReadonlyMap<string, string>;
 	return new Map();
+}
+
+/**
+ * Well-known non-enumerable key attached by `enrich()`: the hidden SOURCE
+ * rule names behind every visible-group mint (`alias($._src, $.visible)`) —
+ * both the promote-existing-hidden-rule and synthesize-new-body categories.
+ */
+export const ENRICH_VISIBLE_GROUP_SOURCES_KEY = '__enrichedVisibleGroupSources__' as const;
+
+/**
+ * Extract the hidden source names behind visible-group mints from an
+ * enriched grammar result. Wire filters these OUT of the grammar's final
+ * `inline:` list before it reaches tree-sitter: an inlined source rule is
+ * erased during tree-sitter's inline processing, which vaporizes the alias
+ * (and the minted kind's parser identity) while sittir's IR still models
+ * the kind — the phantom-kind divergence. Un-inlining the source keeps the
+ * mint real on both sides.
+ */
+export function getEnrichVisibleGroupSources(grammar: unknown): ReadonlySet<string> {
+	if (!grammar || typeof grammar !== 'object') return new Set();
+	const names = (grammar as Record<string, unknown>)[ENRICH_VISIBLE_GROUP_SOURCES_KEY];
+	if (names instanceof Set) return names as ReadonlySet<string>;
+	return new Set();
 }
 
 function applyEnrichPasses(
@@ -363,7 +420,7 @@ function applyEnrichPasses(
 	// `for <type_parameters>`), leaving those for detectClause. One pass: once a
 	// seq is hoisted its replacement is `optional(SYMBOL)`, which won't re-trigger.
 	// Per-parent counter is local; dedupeMap + clauseGroupRules are shared across rules.
-	const clauseHoistCounter = { opt: 0, grp: 0 };
+	const clauseHoistCounter: ClauseHoistCounter = { opt: 0, grp: 0, supertypeNames };
 	r = applyClauseHoist(
 		ruleName,
 		r,
@@ -1256,6 +1313,16 @@ interface ClauseHoistCounter {
 	// is disabled this chunk so there is no cross-pass numbering to keep in
 	// sync for the visible groups.
 	grp: number;
+	// DECLARED supertype names (grammar's `supertypes:` array, base +
+	// overrides — never structurally inferred). mintStructuredChoiceArm
+	// declines symbol arms referencing these: a declared supertype is
+	// already a dispatchable union (subtype expansion IS its identity);
+	// wrapping it in a mint alias adds a CST wrapper node to every tree it
+	// appears in and severs its wrap-time concrete-kind expansion (which
+	// keys on `modelType === 'supertype'`). Carried on this per-rule ctx
+	// bag (§7.7 Principle #14) because it already travels through every
+	// applyClauseHoist recursion into the mint site.
+	readonly supertypeNames?: ReadonlySet<string>;
 }
 
 /**
@@ -1468,7 +1535,19 @@ function applyClauseHoist(
 	counter: ClauseHoistCounter,
 	groupDedupeMap: Record<string, string>,
 	visibleGroupHiddenNames: Set<string>,
-	clauseGroupOwners: Map<string, string>
+	clauseGroupOwners: Map<string, string>,
+	// PR 3 (2026-07-21 union-slot design): the innermost PREC wrapper (if
+	// any) currently enclosing `rule` in the traversal — e.g. rust's
+	// `or_pattern: $ => prec.left(-2, choice(...))` deliberately
+	// deprioritizes its WHOLE choice relative to sibling pattern rules.
+	// Extracting one arm into its own hidden rule (mintStructuredChoiceArm)
+	// strips that precedence from the extracted piece (the outer prec
+	// still wraps the CHOICE containing the alias reference, but the
+	// newly-registered hidden rule's OWN definition has none) — a genuine
+	// new tree-sitter LR ambiguity, not a naming collision. Threaded
+	// through every recursive call so a mint under a prec wrapper can
+	// re-apply the SAME wrapper to its own registered body.
+	ambientPrec?: Rule
 ): Rule {
 	// Check if this node is an optional(seq) or CHOICE[seq,BLANK] pattern.
 	const peeled = peelOptionalSeq(rule);
@@ -1483,7 +1562,8 @@ function applyClauseHoist(
 			counter,
 			groupDedupeMap,
 			visibleGroupHiddenNames,
-			clauseGroupOwners
+			clauseGroupOwners,
+			ambientPrec
 		);
 
 		if (ruleMatchesEmpty(recursedSeqBody)) {
@@ -1503,7 +1583,7 @@ function applyClauseHoist(
 				newMembers[peeled.seqIdx] = recursedSeqBody;
 				return { ...rule, members: newMembers } as Rule;
 			}
-		} else if (isInlineSafe(recursedSeqBody)) {
+		} else if (isInlineSafe(recursedSeqBody, rulesBag)) {
 			// Inline-safe: exactly one field/symbol slot after dropping literals.
 			// Hoist into a hidden _<parent>_optionalN rule (today's clause path).
 			// clauseHoistSynthName increments the counter internally.
@@ -1552,7 +1632,8 @@ function applyClauseHoist(
 				groupDedupeMap,
 				counter,
 				rulesBag,
-				clauseGroupRules
+				clauseGroupRules,
+				ambientPrec
 			);
 			if (names !== null) {
 				// Pass 2 tag: this hidden rule backs a VISIBLE alias → keep it OUT of
@@ -1613,7 +1694,8 @@ function applyClauseHoist(
 				counter,
 				groupDedupeMap,
 				visibleGroupHiddenNames,
-				clauseGroupOwners
+				clauseGroupOwners,
+				ambientPrec
 			);
 			if (out !== m) changed = true;
 			return out;
@@ -1626,6 +1708,23 @@ function applyClauseHoist(
 	if (isChoiceType(rule.type)) {
 		const members = (rule as unknown as { members?: Rule[] }).members;
 		if (!Array.isArray(members)) return rule;
+		// PR 3 (2026-07-21 union-slot design): leading-symbol collisions
+		// across THIS choice's arms — any leading name shared by 2+ arms
+		// (see armStartsWithSymbol's doc comment for the two exemplars
+		// this catches). Arms whose leading symbol collides don't get
+		// minted; whichever OTHER mechanism already resolves that
+		// ambiguity (a sibling bare-symbol arm rendering the extension
+		// arm's mint redundant, or this grammar's own polymorphs/variant()
+		// config) keeps doing so, unimpeded.
+		const leadingNameCounts = new Map<string, number>();
+		for (const m of members) {
+			const name = armLeadingSymbolName(m, rulesBag);
+			if (name !== undefined) leadingNameCounts.set(name, (leadingNameCounts.get(name) ?? 0) + 1);
+		}
+		const collidingLeadingNames = new Set<string>();
+		for (const [name, count] of leadingNameCounts) {
+			if (count >= 2) collidingLeadingNames.add(name);
+		}
 		let changed = false;
 		const newMembers = members.map((m) => {
 			const out = applyClauseHoist(
@@ -1637,10 +1736,34 @@ function applyClauseHoist(
 				counter,
 				groupDedupeMap,
 				visibleGroupHiddenNames,
-				clauseGroupOwners
+				clauseGroupOwners,
+				ambientPrec
 			);
-			if (out !== m) changed = true;
-			return out;
+			// PR 3 (2026-07-21 union-slot design): a bare choice-arm position
+			// (unnamed, no field wrapper — the gate (c) field-named-mixed-row
+			// case is a separate, not-yet-implemented follow-up) that is
+			// STRUCTURED (multi-slot, or a symbol ref to a hidden rule whose
+			// own body is multi-slot) has no kind identity to serve as a
+			// distinguishable union member — an inline symbol/anonymous seq
+			// produces no CST node of its own. Mint (or promote an existing
+			// hidden rule to) a visible alias, same mechanism as the
+			// inline-unsafe optional(seq) path above, just without the
+			// optional wrapper: the arm position is replaced directly.
+			const promoted = mintStructuredChoiceArm(
+				out,
+				parentKind,
+				rulesBag,
+				clauseGroupRules,
+				counter,
+				groupDedupeMap,
+				visibleGroupHiddenNames,
+				clauseGroupOwners,
+				collidingLeadingNames,
+				ambientPrec
+			);
+			const final = promoted ?? out;
+			if (final !== m) changed = true;
+			return final;
 		});
 		return changed ? ({ ...rule, members: newMembers } as Rule) : rule;
 	}
@@ -1649,6 +1772,13 @@ function applyClauseHoist(
 	if (isRepeatType(rule.type) || isPrecWrapper(rule as { type: string })) {
 		const content = (rule as unknown as { content?: Rule }).content;
 		if (!content) return rule;
+		// PR 3 (2026-07-21 union-slot design): entering a PREC wrapper
+		// updates the ambient prec context for everything beneath it — a
+		// mint under here should carry THIS wrapper's precedence, not an
+		// outer one (innermost wins, matching how prec actually scopes).
+		// `rule` itself is reused as the wrapper shape; its own `content`
+		// gets swapped out wherever it's applied later.
+		const innerAmbientPrec = isPrecWrapper(rule as { type: string }) ? rule : ambientPrec;
 		const newContent = applyClauseHoist(
 			parentKind,
 			content,
@@ -1658,7 +1788,8 @@ function applyClauseHoist(
 			counter,
 			groupDedupeMap,
 			visibleGroupHiddenNames,
-			clauseGroupOwners
+			clauseGroupOwners,
+			innerAmbientPrec
 		);
 		if (newContent === content) return rule;
 		return { ...rule, content: newContent } as Rule;
@@ -1677,7 +1808,8 @@ function applyClauseHoist(
 			counter,
 			groupDedupeMap,
 			visibleGroupHiddenNames,
-			clauseGroupOwners
+			clauseGroupOwners,
+			ambientPrec
 		);
 		if (newContent === content) return rule;
 		return { ...rule, content: newContent } as Rule;
@@ -2169,13 +2301,23 @@ function visibleGroupSynthName(
 	groupDedupeMap: Record<string, string>,
 	counter: ClauseHoistCounter,
 	rulesBag: Record<string, Rule>,
-	clauseGroupRules: Record<string, Rule>
+	clauseGroupRules: Record<string, Rule>,
+	// PR 3 (2026-07-21 union-slot design): the PREC wrapper (if any)
+	// enclosing the CHOICE this content was extracted from — see
+	// `applyClauseHoist`'s `ambientPrec` doc comment. Applied to the
+	// registered hidden rule's OWN body so extracting an arm out of a
+	// deliberately low/high-precedence choice (e.g. rust's
+	// `or_pattern: $ => prec.left(-2, choice(...))`) doesn't strip that
+	// precedence from the extracted piece and create a NEW ambiguity that
+	// didn't exist in the un-extracted grammar.
+	ambientPrec?: Rule
 ): { visibleName: string; hiddenName: string } | null {
 	const key = canonicalStringifyClause(content);
+	const registeredBody = ambientPrec ? ({ ...ambientPrec, content } as Rule) : content;
 	const existing = groupDedupeMap[key];
 	if (existing !== undefined) {
 		const hiddenName = `_${existing}`;
-		if (!(hiddenName in clauseGroupRules)) clauseGroupRules[hiddenName] = content;
+		if (!(hiddenName in clauseGroupRules)) clauseGroupRules[hiddenName] = registeredBody;
 		return { visibleName: existing, hiddenName };
 	}
 	counter.grp += 1;
@@ -2190,8 +2332,249 @@ function visibleGroupSynthName(
 	groupDedupeMap[key] = visibleName;
 	// Pass 1 — uniform hidden creation: register the seq body as a HIDDEN rule
 	// (`_<parent>_group<N>`) so tree-sitter sees a single named symbol to alias.
-	clauseGroupRules[hiddenName] = content;
+	clauseGroupRules[hiddenName] = registeredBody;
 	return { visibleName, hiddenName };
+}
+
+/**
+ * PR 3 (2026-07-21 union-slot design): promote an EXISTING hidden rule to a
+ * visible group alias without duplicating its body ("mint = promote, not
+ * synthesize" — the arm is already a bare `symbol(existingHiddenName)` ref;
+ * the hidden rule just needs a friendly visible name). Dedupe key is the
+ * hidden name itself (the rule IS the identity here, unlike
+ * `visibleGroupSynthName`'s anonymous-body dedupe by content stringify).
+ * Shares the SAME per-parent `grp` counter as `visibleGroupSynthName`, so
+ * every choice-arm mint for a given parent gets a unique `_<parent>_group<N>`
+ * name in traversal order, regardless of which of the two mint paths minted
+ * it.
+ */
+function promoteExistingHiddenRuleName(
+	existingHiddenName: string,
+	parentKind: string,
+	groupDedupeMap: Record<string, string>,
+	counter: ClauseHoistCounter,
+	rulesBag: Record<string, Rule>
+): { visibleName: string } | null {
+	const existing = groupDedupeMap[existingHiddenName];
+	if (existing !== undefined) return { visibleName: existing };
+	counter.grp += 1;
+	const visibleName = `${parentKind.replace(/^_+/, '')}_group${counter.grp}`;
+	if (visibleName in rulesBag) {
+		process.stderr.write(
+			`enrich: visible-group promotion skipped for '${parentKind}' — rule '${visibleName}' already exists in base.grammar.rules\n`
+		);
+		return null;
+	}
+	groupDedupeMap[existingHiddenName] = visibleName;
+	return { visibleName };
+}
+
+/**
+ * PR 3 (2026-07-21 union-slot design): classify a bare choice-arm position
+ * (unnamed — no field wrapper) and, if it is STRUCTURED (multi-slot, or a
+ * symbol ref to a hidden rule whose own body is multi-slot), mint it a kind
+ * identity so it can join the union-slot routing (`collect-slots.ts`'s
+ * `partitionChoiceArms`) as a distinguishable member. Returns `null` when no
+ * mint is needed (the arm is already a fine union member as-is — a plain
+ * reference, or a single-slot body that collapses cleanly) or when minting
+ * collided with an existing rule name (caller keeps the arm unchanged,
+ * matching every other collision-guard in this file — no partial synthesis).
+ *
+ * Two cases, per the design's "mint = promote, not synthesize" distinction:
+ *   - The arm is a bare `symbol(name)` ref to an EXISTING hidden rule whose
+ *     body is structured — promote that rule directly (no body copy):
+ *     `alias($.<existingHiddenName>, $.<freshVisibleName>)`. Exemplar:
+ *     python's `dict_pattern` — the comma-separated list's REPEATED-TAIL
+ *     occurrence of `choice($._key_value_pattern, $.splat_pattern)` still
+ *     references the hidden `_key_value_pattern` unpromoted (the author's
+ *     `dict_pattern: {'1/0/0/0': 'kv'}` override only reached the HEAD
+ *     occurrence of the same choice).
+ *   - The arm is itself an anonymous structured `seq`/`choice` (no separate
+ *     rule name) — synthesize a fresh hidden rule from the arm's own body,
+ *     same as the inline-unsafe `optional(seq)` path (`visibleGroupSynthName`).
+ *
+ * Deliberately NOT handled here (gate (c), a separate follow-up): a
+ * FIELD-NAMED arm sitting alongside union arms in the same choice (a mixed
+ * row) — this pass only mints for unnamed arms.
+ */
+/**
+ * PR 3 (2026-07-21 union-slot design) — narrowing guard: true when `arm`'s
+ * LEFTMOST reachable position (descending through SEQ's first member,
+ * every CHOICE member, and single-content wrappers — the same shape a
+ * parser's FIRST-set walk would follow) references one of `siblingNames`.
+ * Guards against minting a choice arm that is structurally a RECURSIVE
+ * extension of a SIBLING arm in the same choice rather than an
+ * independent alternative — e.g. python's `expression_statement`:
+ * arm 0 is the bare `$.expression`; arm 1 is `seq(commaSep1($.expression),
+ * optional(','))`, which itself STARTS with `$.expression`. Minting arm 1
+ * into its own hidden rule creates a second grammar production sharing
+ * arm 0's leading symbol — an unresolvable tree-sitter LR conflict, not a
+ * cosmetic one (confirmed: no `conflicts:` declaration or rename
+ * resolves it, since it's a genuine shared-prefix ambiguity between two
+ * live productions). Skipping the mint here leaves the arm exactly as
+ * enrich found it — whatever OTHER mechanism (variant()/polymorphs in
+ * this grammar's own overrides.ts, same as before PR 3) already handles
+ * it keeps doing so, unimpeded.
+ */
+function armLeadingSymbolName(
+	rule: Rule,
+	rulesBag: Record<string, Rule>,
+	seen: Set<Rule> = new Set()
+): string | undefined {
+	if (seen.has(rule)) return undefined;
+	seen.add(rule);
+	const t = (rule as { type?: string }).type;
+	if (typeof t !== 'string') return undefined;
+	if (isSymbolType(t)) {
+		const name = (rule as { name?: string }).name;
+		if (typeof name !== 'string') return undefined;
+		const hidden = (rule as { hidden?: boolean }).hidden;
+		// A VISIBLE symbol is its own meaningful boundary for LR
+		// prefix-collision purposes — stop here. A HIDDEN symbol is
+		// invisible to the parser's distinguishable-item boundary, so its
+		// OWN leading symbol (descend into its body) is what matters.
+		if (!hidden) return name;
+		const body = rulesBag[name];
+		return body ? (armLeadingSymbolName(body, rulesBag, seen) ?? name) : name;
+	}
+	if (isSeqType(t)) {
+		const members = (rule as unknown as { members?: Rule[] }).members;
+		const first = Array.isArray(members) ? members[0] : undefined;
+		return first ? armLeadingSymbolName(first, rulesBag, seen) : undefined;
+	}
+	if (isChoiceType(t)) {
+		// A nested choice's own leading symbol is ambiguous (varies per
+		// branch) — conservatively report none rather than pick one arm.
+		return undefined;
+	}
+	// Single-content wrappers (optional/field/repeat/prec/token/...) — the
+	// leftmost path travels through their one child, same convention as
+	// this file's other structural walks (e.g. `countBodyAnchors`-style
+	// content fallback in dsl/transform/transform.ts).
+	const content = (rule as { content?: Rule }).content;
+	return content ? armLeadingSymbolName(content, rulesBag, seen) : undefined;
+}
+
+/**
+ * PR 3 (2026-07-21 union-slot design) — narrowing guard: true when `arm`'s
+ * leading symbol (armLeadingSymbolName) is shared by another arm in the
+ * same choice (per `collidingLeadingNames`, precomputed once per choice —
+ * see the CHOICE branch of applyClauseHoist). Guards against minting a
+ * choice arm that structurally shares its PREFIX with a sibling arm —
+ * two exemplars, both python: `expression_statement`'s bare `$.expression`
+ * arm vs. its `seq(commaSep1($.expression), optional(','))` arm (both
+ * lead with `expression`); `except_clause`'s "as" vs. "list" arms (both
+ * lead with `field('value', expr)`'s `expression` reference). Minting
+ * either half of such a pair creates a second grammar production sharing
+ * the other's leading symbol — an unresolvable tree-sitter LR conflict
+ * (confirmed: no `conflicts:` declaration or rename resolves it, since
+ * it's a genuine shared-prefix ambiguity between two live productions).
+ * Skipping the mint leaves BOTH arms exactly as enrich found them —
+ * whatever OTHER mechanism (variant()/polymorphs in this grammar's own
+ * overrides.ts, same as before PR 3) already handles them keeps doing
+ * so, unimpeded.
+ */
+function armStartsWithSymbol(
+	rule: Rule,
+	collidingLeadingNames: ReadonlySet<string>,
+	rulesBag: Record<string, Rule>
+): boolean {
+	if (collidingLeadingNames.size === 0) return false;
+	const name = armLeadingSymbolName(rule, rulesBag);
+	return name !== undefined && collidingLeadingNames.has(name);
+}
+
+function mintStructuredChoiceArm(
+	arm: Rule,
+	parentKind: string,
+	rulesBag: Record<string, Rule>,
+	clauseGroupRules: Record<string, Rule>,
+	counter: ClauseHoistCounter,
+	groupDedupeMap: Record<string, string>,
+	visibleGroupHiddenNames: Set<string>,
+	clauseGroupOwners: Map<string, string>,
+	collidingLeadingNames: ReadonlySet<string>,
+	ambientPrec?: Rule
+): Rule | null {
+	const t = (arm as { type?: string }).type;
+	if (typeof t !== 'string') return null;
+	if (armStartsWithSymbol(arm, collidingLeadingNames, rulesBag)) return null;
+
+	if (isSymbolType(t)) {
+		const name = (arm as { name?: string }).name;
+		// Hidden-ness by NAME (`_` prefix — tree-sitter's own convention), NOT
+		// the constructor-stamped `hidden` attribute: the stamp exists only
+		// under sittir's runtime. Under tree-sitter's CLI runtime (the bundled
+		// grammar.js executing this same code), `sym()` produces no `hidden`
+		// property, so a stamp-based check silently declines the mint on the
+		// parser side while the IR side mints — the exact phantom-kind
+		// divergence this file's mints kept hitting.
+		if (typeof name !== 'string' || !name.startsWith('_')) return null; // already a real/visible kind — fine as-is
+		// DECLARED supertype arm (grammar `supertypes:` array — a declared
+		// fact, never structural inference): decline. A declared supertype
+		// is already a dispatchable union — its subtype expansion IS its
+		// runtime identity — so a mint adds nothing, while the alias wrapper
+		// it introduces (a) inserts a CST node level into every tree the
+		// supertype appears in, and (b) severs the supertype's wrap-time
+		// concrete-kind expansion (keyed on `modelType === 'supertype'`).
+		// Empirically: minting python's `_compound_statement` arm produced
+		// `statement_group2` wrappers that broke wrap universally (0/115).
+		if (counter.supertypeNames?.has(name)) return null;
+		// Enrich's OWN synthesized helpers (`_<parent>_optional<N>` clause
+		// hoists and prior group mints — every key in `clauseGroupRules`, a
+		// declared set, no inference): decline. These are inline-SAFE by
+		// construction — their whole design is "hidden helper, spliced away
+		// via `inline:`" (syntheticInline). Promoting one as a choice-arm
+		// mint puts it in `visibleGroupHiddenNames`, which the un-inline
+		// sidecar then removes from `inline:` — the exact opposite of the
+		// helper's contract (rust: `_block_optional1` et al vaporized,
+		// fixtures 399→41).
+		if (Object.hasOwn(clauseGroupRules, name)) return null;
+		const body = rulesBag[name];
+		if (!body || ruleMatchesEmpty(body) || isInlineSafe(body, rulesBag)) return null;
+		// STRUCTURALLY supertype-shaped arm (bare choice-of-symbols union,
+		// `isSupertypeLike`): decline, same rationale as the declared gate
+		// above — a dispatch union's subtype expansion IS its runtime
+		// identity, and the mint's alias wrapper both reshapes every tree
+		// the union appears in and severs wrap-time concrete-kind expansion.
+		// Complements (does not replace) the declared gate: covers undeclared
+		// unions like `_expression_ending_with_block`. Shape-only test, so
+		// both runtimes decline identically — the prec-transparency
+		// divergence (sittir minted this arm, the CLI never saw it as a
+		// SYMBOL) cannot recur for this class.
+		if (isSupertypeLike(body)) return null;
+		const promoted = promoteExistingHiddenRuleName(name, parentKind, groupDedupeMap, counter, rulesBag);
+		if (!promoted) return null;
+		visibleGroupHiddenNames.add(name);
+		if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
+		return makeVisibleGroupAlias(arm, promoted.visibleName);
+	}
+
+	if (isSeqType(t) || isChoiceType(t)) {
+		if (ruleMatchesEmpty(arm) || isInlineSafe(arm, rulesBag)) return null;
+		// Same structural-union decline as the SYMBOL branch above: a bare
+		// choice-of-symbols arm IS a dispatch union in place (the spliced
+		// body of a supertype-shaped hidden rule reaches this branch when a
+		// prior pass inlined the ref) — minting it wraps the union. See
+		// `isSupertypeLike`'s doc comment for the two-runtime rationale.
+		if (isSupertypeLike(arm)) return null;
+		const names = visibleGroupSynthName(
+			arm,
+			parentKind,
+			groupDedupeMap,
+			counter,
+			rulesBag,
+			clauseGroupRules,
+			ambientPrec
+		);
+		if (!names) return null;
+		visibleGroupHiddenNames.add(names.hiddenName);
+		if (!clauseGroupOwners.has(names.hiddenName)) clauseGroupOwners.set(names.hiddenName, parentKind);
+		const symbolRef = makeGroupLiftSymbol(arm, names.hiddenName);
+		return makeVisibleGroupAlias(symbolRef, names.visibleName);
+	}
+
+	return null;
 }
 
 /**

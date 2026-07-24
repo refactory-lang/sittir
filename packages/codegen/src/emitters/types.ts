@@ -577,6 +577,14 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[]): vo
 		//    new *reported* errors, because the failure mode is a silent
 		//    `continue` (`nativeCoords === null`), not a thrown error.
 		lines.push(`  [${entry.id}, ${JSON.stringify(entry.kind)}],`);
+		// parseId row: a kind whose only visible identity is an alias
+		// occurrence carries the alias's OWN runtime symbol id (e.g.
+		// `_simple_statements` storage id 110, `alias_sym_simple_statements`
+		// 295) — runtime `$type` arrives as the PARSE id, so it must resolve
+		// to the same canonical catalog key for wrapNode dispatch.
+		if (entry.parseId !== undefined && entry.parseId !== entry.id) {
+			lines.push(`  [${entry.parseId}, ${JSON.stringify(entry.kind)}],`);
+		}
 	}
 	lines.push(']);');
 	lines.push('');
@@ -592,6 +600,12 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[]): vo
 		// punctuation text, e.g. "+", not a kind name).
 		const displayName = entry.symbolName && !entry.anon ? entry.symbolName : entry.kind;
 		lines.push(`  [${entry.id}, ${JSON.stringify(displayName)}],`);
+		// parseId row — same rationale as KIND_NAMES above; the WASM
+		// bridge matches native numeric `$type` (the parse id at aliased
+		// positions) against tree-sitter's display label.
+		if (entry.parseId !== undefined && entry.parseId !== entry.id) {
+			lines.push(`  [${entry.parseId}, ${JSON.stringify(displayName)}],`);
+		}
 	}
 	lines.push(']);');
 	lines.push('');

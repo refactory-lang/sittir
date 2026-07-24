@@ -522,26 +522,6 @@ export const ir = {
 	withItem: _attach(FR.coerceToWithItem, { from: FR.coerceToWithItem, strict: F.buildWithItem }),
 	withStatement: _attach(FR.coerceToWithStatement, { from: FR.coerceToWithStatement, strict: F.buildWithStatement }),
 	yield: _attach(FR.coerceToYield, { from: FR.coerceToYield, strict: F.buildYield }),
-	listPatternGroup1: _attach(FR.coerceToListPatternGroup1, {
-		from: FR.coerceToListPatternGroup1,
-		strict: F.buildListPatternGroup1
-	}),
-	argumentListGroup1: _attach(FR.coerceToArgumentListGroup1, {
-		from: FR.coerceToArgumentListGroup1,
-		strict: F.buildArgumentListGroup1
-	}),
-	dictPatternGroup1: _attach(FR.coerceToDictPatternGroup1, {
-		from: FR.coerceToDictPatternGroup1,
-		strict: F.buildDictPatternGroup1
-	}),
-	dictionaryGroup1: _attach(FR.coerceToDictionaryGroup1, {
-		from: FR.coerceToDictionaryGroup1,
-		strict: F.buildDictionaryGroup1
-	}),
-	elementList: _attach(FR.coerceToElementList, { from: FR.coerceToElementList, strict: F.buildElementList }),
-	patternGroup: _attach(FR.coerceToPatternGroup, { from: FR.coerceToPatternGroup, strict: F.buildPatternGroup }),
-	parameterList: _attach(FR.coerceToParameterList, { from: FR.coerceToParameterList, strict: F.buildParameterList }),
-	sliceGroup1: _attach(FR.coerceToSliceGroup1, { from: FR.coerceToSliceGroup1, strict: F.buildSliceGroup1 }),
 
 	// Keyword factories
 	breakStatement: F.buildBreakStatement,

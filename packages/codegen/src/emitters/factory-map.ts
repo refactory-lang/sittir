@@ -162,6 +162,19 @@ export function expandRuntimeDiscriminatorKinds(discriminatorKinds: readonly str
 			return;
 		}
 		visiting.add(normalized);
+		// Alias-minted arms: `alias($._hidden, $.visible)` ALWAYS materializes
+		// a real node under its PARSE name at the arm's position (tree-sitter
+		// never splices through an aliased symbol), so the runtime child is
+		// keyed by that name — emit it ALONGSIDE the leaf expansion (a slot may
+		// also reference the storage kind at un-aliased positions). The pair is
+		// the DECLARED `aliasedFrom` fact stamped at the link flatten
+		// (`SupertypeRule.subtypeParseNames`) — twin association is keyed on
+		// it, never derived by underscore add/strip.
+		for (const parseName of Object.values(node.subtypeParseNames ?? {})) {
+			if (seen.has(parseName)) continue;
+			seen.add(parseName);
+			expanded.push(parseName);
+		}
 		for (const subtype of node.subtypes) visit(subtype);
 		visiting.delete(normalized);
 	}

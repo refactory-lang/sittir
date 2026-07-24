@@ -108,7 +108,7 @@ function isPlainRepeatType(t: string): boolean {
  * `symbol`, `choice`, `repeat`, `repeat1`, `seq` (nested), or any non-literal
  * non-blank rule. Pure literals (`string`, `token`) and `blank` are dropped.
  */
-function collectSlots(members: unknown[]): unknown[] {
+function collectSlots(members: unknown[], rulesBag?: Record<string, unknown>): unknown[] {
 	const slots: unknown[] = [];
 	for (const m of members) {
 		if (!m || typeof m !== 'object') continue;
@@ -117,6 +117,21 @@ function collectSlots(members: unknown[]): unknown[] {
 
 		// Drop pure literals and blank
 		if (isStringType(t) || typeEq(t, 'TOKEN') || isBlankType(t)) continue;
+
+		// PR 3 (2026-07-21 union-slot design): drop a SYMBOL slot that
+		// resolves to no rule body in `rulesBag` — a structural/external
+		// scanner token (indent/dedent/newline-role and similar), not
+		// content. Without this, e.g. python's `_suite` middle arm
+		// `seq($._indent, $.block)` counts as TWO slots (`_indent`,
+		// `block`) instead of one, wrongly classifying it inline-UNSAFE
+		// and minting a group that fragments `_suite`'s otherwise-uniform
+		// `block` output across its three choice arms. `rulesBag` is
+		// optional (existing test-only call sites pass none) — omitting
+		// it preserves the prior, permissive counting exactly.
+		if (rulesBag && isSymbolType(t)) {
+			const name = typeof r.name === 'string' ? r.name : undefined;
+			if (name !== undefined && !(name in rulesBag)) continue;
+		}
 
 		// Everything else is a slot
 		slots.push(m);
@@ -357,7 +372,7 @@ function seqHasGenuineSeparatorVariability(members: unknown[]): boolean {
  *   `optional(seq)` position, but may also be called with non-seq bodies
  *   (returns false for them).
  */
-export function isInlineSafe(seqBody: unknown): boolean {
+export function isInlineSafe(seqBody: unknown, rulesBag?: Record<string, unknown>): boolean {
 	if (!seqBody || typeof seqBody !== 'object') return false;
 	const r = seqBody as Record<string, unknown>;
 	const t = typeof r.type === 'string' ? r.type : '';
@@ -376,6 +391,19 @@ export function isInlineSafe(seqBody: unknown): boolean {
 	// visible `AssembledSeparatedList` template instead. See
 	// `repeatHasGenuineSeparatorVariability`.
 	if (isRepeatLike(t)) return !repeatHasGenuineSeparatorVariability(seqBody as RuntimeRule);
+
+	// PR 3 (2026-07-21 union-slot design): a bare `alias(content, $.name)`
+	// body is ALSO one flat slot — the alias already gives the position its
+	// OWN kind identity (whatever `.value` names), producing exactly one
+	// CST node regardless of how complex `content` is internally. Minting
+	// a second wrapper kind around it is redundant (and wrong — the
+	// mint's synthesized template doesn't know about the alias's own
+	// relabeling, e.g. rust's `_type` choice arm
+	// `alias($.identifier, $.type_identifier)`: promoting the arm's owning
+	// hidden rule produced a template referencing `type_identifier` while
+	// the derived slot model expected the arm's OWN field name — a
+	// slot-preservation crash, not a naming collision).
+	if (typeEq(t, 'ALIAS')) return true;
 
 	if (!isSeqType(t)) return false;
 
@@ -403,7 +431,7 @@ export function isInlineSafe(seqBody: unknown): boolean {
 	// the visible-promotion path below, same as a multi-slot/bare-choice body.
 	if (seqHasTopLevelRepeat(members)) return !seqHasGenuineSeparatorVariability(members);
 
-	const slots = collectSlots(members);
+	const slots = collectSlots(members, rulesBag);
 
 	// Must have exactly one slot
 	if (slots.length !== 1) return false;
@@ -418,4 +446,59 @@ export function isInlineSafe(seqBody: unknown): boolean {
 	if (typeof coreType !== 'string') return false;
 
 	return isFieldType(coreType) || isSymbolType(coreType);
+}
+
+// ---------------------------------------------------------------------------
+// isSupertypeLike
+// ---------------------------------------------------------------------------
+
+/**
+ * STRUCTURAL supertype test: true iff the rule body is a dispatch union —
+ * a bare `choice` whose every arm reduces (through prec wrappers only) to a
+ * plain symbol ref. Such a rule contributes no structure of its own: at
+ * parse time exactly one arm's node materializes and the hidden rule
+ * splices away, so wrapping it in a mint alias inserts a CST node level
+ * into every position the union appears in AND severs the wrap layer's
+ * concrete-kind expansion (keyed on `modelType === 'supertype'`) — the
+ * failure class that took python to 0/115 when `_compound_statement` was
+ * wrapped.
+ *
+ * Deliberately SHAPE-ONLY (string type tags via runtime-shapes, no
+ * constructor stamps, no name conventions, no provenance registries): the
+ * result must be identical under sittir's runtime and tree-sitter's CLI
+ * runtime, or the two sides mint divergently (the
+ * `_expression_statement_block_ending` phantom: sittir's transparent
+ * `prec()` exposed a bare SYMBOL arm that minted, while the CLI saw
+ * `PREC(SYMBOL)` and never minted — the IR then modeled a kind the parser
+ * never produces).
+ *
+ * Distinct from the DECLARED-supertype gate (`counter.supertypeNames`),
+ * which stays: declaration is authoritative where present; this predicate
+ * covers the undeclared unions (`_expression_ending_with_block`,
+ * `_expression_except_range`, …) that are supertypes in every structural
+ * sense except the grammar's `supertypes:` array.
+ */
+export function isSupertypeLike(body: unknown): boolean {
+	const b = unwrapPrec(body);
+	if (!b || typeof b !== 'object') return false;
+	const t = (b as Record<string, unknown>).type;
+	if (typeof t !== 'string' || !isChoiceType(t)) return false;
+	const members = (b as Record<string, unknown>).members;
+	if (!Array.isArray(members) || members.length === 0) return false;
+	// Member compatibility mirrors link's `classifyHiddenChoiceRule`
+	// supertype test (SYMBOL / named alias / enum-or-string): each such arm
+	// materializes its OWN node (or token) at parse time, so the choice as
+	// a whole stays a pure dispatch point. A named ALIAS arm (e.g.
+	// tree-sitter-rust's aliased `u8|i8|…` primitive enum inside
+	// `_expression_except_range`) is as dispatchable as a bare symbol ref.
+	return members.every((m) => {
+		const core = unwrapPrec(m);
+		if (!core || typeof core !== 'object') return false;
+		const c = core as Record<string, unknown>;
+		const coreType = c.type;
+		if (typeof coreType !== 'string') return false;
+		if (isSymbolType(coreType) || isStringType(coreType)) return true;
+		if (typeEq(coreType, 'ALIAS')) return c.named === true;
+		return false;
+	});
 }

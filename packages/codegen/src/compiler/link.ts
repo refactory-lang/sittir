@@ -42,8 +42,7 @@ import type {
 	SymbolRule,
 	StringRule,
 	RepeatRule,
-	AliasRule,
-	AnyRule
+	AliasRule
 } from '../types/rule.ts';
 import {
 	isSeq,
@@ -78,12 +77,7 @@ import { hasAnyField } from './model/node-map.ts';
 
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
-import {
-	isHiddenKind,
-	deriveComplexAliasTargetHidden,
-	isClauseHoistVisibleGroupAlias,
-	isOptionalOrBlankChoice
-} from './evaluate.ts';
+import { isHiddenKind, deriveComplexAliasTargetHidden } from './evaluate.ts';
 import { polymorphVisibleName } from '../dsl/wire/wire.ts';
 import { deriveStructuralVariantChildren, isAliasMintedRef, prefixNamedSuffix } from './variant-structural.ts';
 import { rulesEqual, detectRepeatSeparator } from '../dsl/list-patterns.ts';
@@ -290,20 +284,19 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		rules[name] = liftSeparators(rules[name]!, linkCtx);
 	}
 
-	// Mint visible kinds from enrich content-aliases. enrich wraps an
-	// inline-unsafe `optional(seq)` / bare `choice` in
-	// `alias(<non-symbol content>, $.<name>)` tagged `metadata.source==='enrich'`.
-	// resolveRule (above) already turned the PARENT reference into a clean
-	// `symbol(<name>)` ref — but the referenced rule body does not exist yet.
-	// Walk the RAW rule bodies (before resolveRule collapsed the alias) and
-	// register `<name> = resolveRule(<content>)` so codegen has the IR rule
-	// (template / type / slots). The kindId itself is real — tree-sitter emits
-	// the alias as a node in parser.c; this pass only supplies the matching IR
-	// entry. SYMBOL aliases keep their `aliasedFrom` provenance (untouched).
-	// §D-2a DIAGNOSTIC-ONLY content-alias provenance (see LinkedGrammar docs).
-	const contentAliasedFrom = new Map<string, string>();
-	const contentAliasedTo = new Map<string, string[]>();
-	mintContentAliasKinds(rules, linkCtx, contentAliasedFrom, contentAliasedTo);
+	// Retired: `mintContentAliasKinds` used to copy a SYMBOL-content alias's
+	// hidden source rule body into a NEW top-level entry under the alias's
+	// target name (`rules[value] = <copy of _<name>'s body>`). Its gate
+	// (the retired `isClauseHoistVisibleGroupAlias`) required SYMBOL content
+	// referencing a real hidden rule — meaning it only ever fired for aliases
+	// that ALSO now flow through `resolveRule`'s `aliasedFrom` provenance
+	// path uniformly (above). Minting a duplicate independent rule for that
+	// case was redundant at best (two disagreeing representations of the
+	// same content at worst — the exact bug this retirement fixes): the
+	// underlying `_<name>` rule stays the single source of truth, referenced
+	// via `aliasedFrom`, and gets promoted to user-facing visibility by the
+	// existing `aliasSourceKinds` mechanism (assemble.ts) once its slot
+	// reference is hydrated.
 
 	stripResolvedRoleRules(rules);
 	createSyntheticExternalRules(rules, raw.externals);
@@ -442,9 +435,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		topLevelAliasBodies,
 		refineForms: raw.refineForms,
 		parentAliasedKinds,
-		visibleAliasTargets: visibleAliasTargets.size > 0 ? visibleAliasTargets : undefined,
-		contentAliasedFrom: contentAliasedFrom.size > 0 ? contentAliasedFrom : undefined,
-		contentAliasedTo: contentAliasedTo.size > 0 ? contentAliasedTo : undefined
+		visibleAliasTargets: visibleAliasTargets.size > 0 ? visibleAliasTargets : undefined
 	};
 }
 
@@ -781,137 +772,6 @@ function collectAliasedByParents(rawRules: Record<string, Rule<'evaluate'>>): {
 	// view (post-PR-S cast), same pattern as collectAliasedHiddenKinds above.
 	for (const rule of Object.values(rawRules)) walk(rule as Rule<'link'>);
 	return { parentAliasedKinds, visibleAliasTargets };
-}
-
-/**
- * Mint visible IR kinds from clause-hoist visible-group aliases.
- *
- * `applyClauseHoist`'s `peelOptionalSeq` surfaces an inline-unsafe
- * `optional(seq)` / bare `choice` as a visible CST node by wrapping a SYMBOL
- * ref to its hoisted hidden body in `alias(symbol(_<name>), $.<name>)`.
- * tree-sitter assigns `<name>` a real kindId in `parser.c` (the alias lives
- * in the grammar) — so the kind is a real CST kind. This pass supplies the
- * matching IR rule entry: it registers `rules[<name>] = resolveRule(<hidden
- * body>)` so codegen emits the kind's template, type, and slots.
- *
- * The population is identified STRUCTURALLY (debt PR-0c / doctrine decision
- * 4), not via a provenance tag: `isClauseHoistVisibleGroupAlias` requires
- * (a) the alias's immediate parent is `optional(...)` or a 2-member
- * `CHOICE[x, BLANK]` — the exact shape `peelOptionalSeq` recognizes; (b) the
- * alias VALUE has no independent rule body elsewhere in `rules` — the target
- * name has no rule definition of its own, exactly the fact tree-sitter's own
- * grammar compiler keys on; (c) the alias CONTENT is a symbol ref to a
- * `_`-prefixed hidden rule (not a visible rule being relabeled — an authored
- * relabel like `alias($.identifier, $.statement_identifier)` keeps its
- * `aliasedFrom` provenance via `resolveNamedAliasWithProvenance` and is NOT
- * minted here); (d) that hidden rule is not in the grammar's `inline:` list
- * (an inlined helper is a polymorph-variant-hoist byproduct with no CST node
- * of its own — a different producer). These four conditions select EXACTLY
- * the same population the retired `metadata.source === 'enrich'` tag did,
- * verified across all 3 real grammars. An existing rule of the same name is
- * left byte-unchanged (no clobber).
- *
- * Runs after the `resolveRule` loop (which already turned the PARENT alias
- * reference into a clean `symbol(<name>)` ref) and before
- * `classifyAndLogHiddenRules` / assemble, so the minted kind classifies and
- * assembles via the normal path.
- *
- * @param rawRules - The EVALUATED (pre-resolveRule) rules — alias nodes present.
- * @param rules - The mutable resolved rules map; minted bodies are added here.
- */
-function mintContentAliasKinds(
-	rules: Record<string, Rule<'link'>>,
-	ctx: LinkCtx,
-	/**
-	 * DIAGNOSTIC-ONLY accumulators (§D-2a). When a visible twin `<name>` is
-	 * minted from a hidden symbol body `_<name>`, record `<name> → _<name>` in
-	 * `contentAliasedFrom` and the inverse in `contentAliasedTo`. Consumed ONLY
-	 * by the §D-2c non-injective fan-in check; nothing in the fold path reads
-	 * them. Empty on every grammar today.
-	 */
-	contentAliasedFrom?: Map<string, string>,
-	contentAliasedTo?: Map<string, string[]>
-): void {
-	function walk(rule: Rule<'link'>, ownerName: string, parentIsOptionalSeq: boolean): void {
-		if (rule.type === ALIAS) {
-			const value = (rule as { value?: string }).value;
-			const content = (rule as { content?: Rule<'link'> }).content;
-			// Structural mint condition (debt PR-0c / doctrine decision 4) —
-			// replaces the former `metadata.source === 'enrich'` tag read. See
-			// `isClauseHoistVisibleGroupAlias`'s doc comment for the full
-			// rationale and the probe verifying this selects the identical
-			// population across all 3 real grammars.
-			if (
-				isClauseHoistVisibleGroupAlias(rule as unknown as AliasRule<'link'>, {
-					rules: ctx.rules,
-					inlineNames: ctx.inline,
-					parentIsOptionalSeq
-				}) &&
-				typeof value === 'string' &&
-				value.length > 0 &&
-				content
-			) {
-				if (!(value in rules)) {
-					// Resolve THROUGH a symbol-form alias content: the clause-hoist
-					// visible group is `alias($._<name>, $.<name>)` whose content is a
-					// SYMBOL ref to the hidden `_<name>` rule. Register the kind from
-					// the hidden rule's BODY (not the bare symbol ref), so the minted
-					// kind carries the group's real slots/template.
-					let body: Rule<'link'> = content;
-					if (content.type === SYMBOL) {
-						const hiddenBody = (content as SymbolRule<'link'>).name;
-						// S3 raw-vs-accumulator: RAW view (`ctx.rules` / `ctx.grammar.rules`) —
-						// `body` is fed to `resolveRule` fresh below, so the UNRESOLVED
-						// hidden body is what's wanted here, not whatever the accumulator's
-						// entry (if any) already resolved to.
-						const target = ctx.rules[hiddenBody];
-						// ctx.rules is Rule<'evaluate'> (RAW view, deliberately —
-						// see comment above); `body` is fed to resolveRule fresh
-						// below, which itself accepts the evaluate→link transition —
-						// widen the phase view (post-PR-S cast).
-						if (target) body = target as Rule<'link'>;
-						// DIAGNOSTIC-ONLY provenance: visible twin → hidden body kind.
-						if (contentAliasedFrom) contentAliasedFrom.set(value, hiddenBody);
-						if (contentAliasedTo) {
-							const arr = contentAliasedTo.get(hiddenBody);
-							if (arr) arr.push(value);
-							else contentAliasedTo.set(hiddenBody, [value]);
-						}
-					}
-					// Lift separated-list shapes in the minted body. This site runs
-					// AFTER the main per-rule lift loop, so a minted twin whose body
-					// is `seq(item, repeat(seq(sep, item)))` would otherwise keep the
-					// raw shape and lose the separator/trailing metadata #62 centralizes.
-					rules[value] = liftSeparators(resolveRule(body, ctx, value), ctx);
-				}
-			}
-			if (content) walk(content, ownerName, false);
-			return;
-		}
-		if (rule.type === OPTIONAL && 'content' in rule) {
-			const content = (rule as { content?: Rule<'link'> }).content;
-			if (content) walk(content, ownerName, true);
-			return;
-		}
-		if (rule.type === CHOICE && 'members' in rule && Array.isArray((rule as ChoiceRule<'link'>).members)) {
-			// A 2-member CHOICE[x, BLANK] is the desugared `optional(x)` form —
-			// its members' immediate-child alias qualifies exactly like
-			// `optional(...)`'s content does.
-			const isBlankChoice = isOptionalOrBlankChoice(rule as unknown as AnyRule);
-			for (const m of (rule as ChoiceRule<'link'>).members) walk(m, ownerName, isBlankChoice);
-			return;
-		}
-		if ('members' in rule && Array.isArray((rule as ChoiceRule<'link'> | SeqRule<'link'>).members)) {
-			for (const m of (rule as ChoiceRule<'link'> | SeqRule<'link'>).members) walk(m, ownerName, false);
-		}
-		if ('content' in rule && (rule as { content?: Rule<'link'> }).content) {
-			walk((rule as { content: Rule<'link'> }).content, ownerName, false);
-		}
-	}
-	// ctx.rules is Rule<'evaluate'> (RAW view); walk only inspects
-	// OPTIONAL/CHOICE/SEQ/content shapes present in both phases — widen
-	// the phase view (post-PR-S cast).
-	for (const [name, rule] of Object.entries(ctx.rules)) walk(rule as Rule<'link'>, name, false);
 }
 
 function collectTopLevelAliasBodies(
@@ -1509,7 +1369,7 @@ export function tokenToName(token: string): string {
 // resolveRule — recursive resolution of all reference types
 // ---------------------------------------------------------------------------
 
-function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string, parentIsOptionalSeq = false): Rule<'link'> {
+function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rule<'link'> {
 	switch (rule.type) {
 		case SEQ:
 			return {
@@ -1518,19 +1378,14 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string, pare
 			};
 
 		case CHOICE: {
-			// A 2-member CHOICE[x, BLANK] is the desugared `optional(x)` form —
-			// its immediate-child alias qualifies as a clause-hoist mint site
-			// exactly like `optional(...)`'s content does. See
-			// `isClauseHoistVisibleGroupAlias` / `isOptionalOrBlankChoice`.
-			const isBlankChoice = isOptionalOrBlankChoice(rule as unknown as AnyRule);
 			return {
 				...rule,
-				members: rule.members.map((m) => resolveRule(m, ctx, currentName, isBlankChoice))
+				members: rule.members.map((m) => resolveRule(m, ctx, currentName))
 			};
 		}
 
 		case OPTIONAL: {
-			const content = resolveRule(rule.content, ctx, currentName, true);
+			const content = resolveRule(rule.content, ctx, currentName);
 			return { ...rule, content };
 		}
 
@@ -1554,31 +1409,30 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string, pare
 			return resolveRule(rule.content, ctx, currentName);
 
 		case ALIAS: {
-			// Clause-hoist visible-group mint site (`alias(symbol(_<name>),
-			// $.<name>)`, structurally identified by `isClauseHoistVisibleGroupAlias`
-			// — see debt PR-0c / doctrine decision 4): the PARENT must reference
-			// the minted kind by a clean SYMBOL ref so codegen emits the visible
-			// group via its own AssembledGroup template. `mintContentAliasKinds`
-			// registers the body under `<name>`. Fire for BOTH declared (`parens`)
-			// and default (`_enum_body_group1`) names — the default name is
-			// `_`-prefixed, so we must NOT route it through the generic
-			// `!startsWith('_')` branch (which would inline the content instead
-			// of referencing the kind).
-			if (
-				isClauseHoistVisibleGroupAlias(rule as unknown as AliasRule<'link'>, {
-					rules: ctx.rules,
-					inlineNames: ctx.inline,
-					parentIsOptionalSeq
-				})
-			) {
-				// The content is now a SYMBOL ref to the hidden `_<name>` rule
-				// (`alias($._<name>, $.<name>)`). The PARENT must reference the
-				// minted VISIBLE kind by a clean `symbol(<name>)` ref;
-				// `mintContentAliasKinds` registers the body. (Symbol content
-				// that does NOT satisfy the structural mint condition is an
-				// authored relabel, handled below via `aliasedFrom`.)
-				return { type: SYMBOL, name: rule.value, inline: false } as Rule<'link'>;
-			}
+			// Every named alias routes uniformly through provenance
+			// (`aliasedFrom`), whether its content is a clause-hoist/
+			// visible-group mint's freshly-synthesized `_<name>` rule or an
+			// authored relabel of a pre-existing rule (PR3's
+			// `applyUnaliasDistinct` retarget, e.g. `_simple_statements` →
+			// `simple_statements`). Both are `alias(symbol(_<name>), $<value>)`
+			// with no independent rule under `<value>` — structurally
+			// indistinguishable — and the OLD special-case here
+			// (`isClauseHoistVisibleGroupAlias`, retired) tried to tell them
+			// apart by checking only whether `<value>` had a rule body,
+			// which can't actually distinguish "content is itself a fresh
+			// mint" from "content is a real pre-existing rule being
+			// relabeled" — both produce that same signature.
+			//
+			// It doesn't need to: whether `content.name`'s rule gets its own
+			// independent top-level `AssembledNode` is decided separately, by
+			// whether it's a `rules` bag key at all — completely unaffected
+			// by whether THIS reference to it carries `aliasedFrom`.
+			// `aliasedFrom` only says "this specific occurrence displays
+			// under a different name than its underlying rule's own name" —
+			// render/read dispatch already resolves the correct numeric id
+			// via the alias occurrence's own `alias_sym_<value>` symbol
+			// (parseKindId), independent of whether the source rule survives
+			// as its own addressable parser symbol.
 			if (rule.named && rule.value && !rule.value.startsWith('_')) {
 				return resolveNamedAliasWithProvenance(rule.content, ctx, rule.value);
 			}
@@ -1824,7 +1678,7 @@ function classifyHiddenChoiceRule(
 		m.type === SYMBOL || isEnumChoiceRule(m) || m.type === STRING;
 	const allCompatible = rule.members.every(supertypeCompatible);
 	if (allCompatible || supertypes.has(name)) {
-		const subtypes = collectSubtypeNames(rule, ctx);
+		const { names: subtypes, parseNames: subtypeParseNames } = collectSubtypeNames(rule, ctx);
 		// Only promote if we actually resolved subtype names. An empty
 		// subtypes list means the choice members aren't symbols and we
 		// can't project a union — fall through to leave-as-is.
@@ -1880,6 +1734,10 @@ function classifyHiddenChoiceRule(
 					type: SUPERTYPE,
 					name,
 					subtypes,
+					// Storage→parse pairs for aliased arms, stamped at the moment
+					// the flatten erases them (same pattern as `variantArms`
+					// below) — see `collectSubtypeNames`' doc comment.
+					...(Object.keys(subtypeParseNames).length > 0 ? { subtypeParseNames } : {}),
 					...(variantArms.length > 0 ? { variantArms } : {})
 				} satisfies SupertypeRule<'link'>,
 				classification: 'supertype',
@@ -1920,26 +1778,61 @@ function classifyHiddenSeqRule(name: string, rule: SeqRule<'link'>): Rule<'link'
 /**
  * Extract concrete kind names from a choice for supertype subtypes.
  * Handles bare `symbol` members directly and `alias(_, $.foo)`
- * members by emitting the alias's target name (the synthetic kind
- * tree-sitter produces for aliased nodes). `seq` members are walked
- * for the rare hybrid case where a supertype branch wraps a single
- * symbol in a seq.
+ * members by emitting the alias's SOURCE name (the storage kind whose
+ * rule body models the arm). `seq` members are walked for the rare
+ * hybrid case where a supertype branch wraps a single symbol in a seq.
+ *
+ * Aliased arms additionally record their storage→parse name pair in
+ * `parseNames`: the subtype identity stays the STORAGE name (`aliasedFrom`,
+ * the kind whose rule body/slots/template model the arm — and the name
+ * `variantArms` / assemble's node map key on), while the PARSE name is the
+ * visible label tree-sitter actually emits at that position
+ * (`alias($._expression_except_range, $.expression_group1)` → storage
+ * `_expression_except_range`, parse `expression_group1`). The parse name
+ * carries its own runtime symbol id (`alias_sym_expression_group1`) —
+ * dropping it here (the old behavior) orphaned enrich-minted arms: the
+ * supertype's dispatch arms only ever accepted the storage id, so every
+ * runtime node arriving with the alias occurrence's id was "unknown kind
+ * id" to the transport enum. Consumed by `classifyHiddenChoiceRule`, which
+ * stamps the pairs on `SupertypeRule.subtypeParseNames` at the flatten —
+ * the same stamp-at-destruction-site pattern as `variantArms`.
  *
  * @param rule - The rule subtree to walk for subtype names.
  * @param ctx - Link phase context; `ctx.wordMatcher` decides whether a bare
  *   string-literal member lexes as a word (keyword) vs punctuation.
  */
-function collectSubtypeNames(rule: Rule<'link'>, ctx: LinkCtx): string[] {
+function collectSubtypeNames(
+	rule: Rule<'link'>,
+	ctx: LinkCtx
+): { names: string[]; parseNames: Record<string, string> } {
 	const names: string[] = [];
+	const parseNames: Record<string, string> = {};
 	const visit = (current: Rule<'link'>): void => {
 		switch (current.type) {
 			case SYMBOL:
+				// `aliasedFrom` = the alias SOURCE (storage kind), `name` = the
+				// alias target (parse kind) — see `resolveNamedAliasWithProvenance`.
 				names.push(current.aliasedFrom ?? current.name);
+				if (current.aliasedFrom !== undefined && current.aliasedFrom !== current.name) {
+					parseNames[current.aliasedFrom] ??= current.name;
+				}
 				return;
 			case ALIAS:
+				// Effectively unreachable today — resolveRule collapses raw
+				// alias arms to SYMBOL+aliasedFrom first (see the matching note
+				// on `classifyHiddenChoiceRule`'s variantArms computation) —
+				// but mirror the SYMBOL branch's storage/parse handling so an
+				// unresolved ALIAS arriving here behaves identically.
 				if (!current.named) return;
 				if (current.content.type === SYMBOL) {
 					names.push(current.content.name);
+					if (
+						typeof current.value === 'string' &&
+						current.value.length > 0 &&
+						current.value !== current.content.name
+					) {
+						parseNames[current.content.name] ??= current.value;
+					}
 				} else {
 					visit(current.content);
 				}
@@ -1973,7 +1866,7 @@ function collectSubtypeNames(rule: Rule<'link'>, ctx: LinkCtx): string[] {
 		}
 	};
 	visit(rule);
-	return names;
+	return { names, parseNames };
 }
 
 // ---------------------------------------------------------------------------
@@ -2686,13 +2579,37 @@ export interface ValidateGroupsArgs {
  * warns on E6. See spec §"Error handling" for the full taxonomy.
  */
 
+/**
+ * PR 3 (2026-07-21 union-slot design): `groups:`/`conflicts:`-style config
+ * addresses a hidden rule by the EXACT name `variant()`/`polymorphs` would
+ * normally register it under (`polymorphHiddenName`, e.g.
+ * `_visibility_modifier_pub`). When enrich's widened choice-arm mint
+ * already claimed that arm before `resolvePatch` ran, the rename there is
+ * LABEL-ONLY (re-keying the underlying rule was ruled out as unsafe: base-
+ * grammar rules can't be deleted). By the time `link()` reaches
+ * `applyGroupOverrides`, though, `resolveRule`'s ALIAS case and
+ * `mintContentAliasKinds` have ALREADY resolved that alias away and
+ * registered the body under its VISIBLE name (`kind` minus its leading
+ * `_`) — confirmed via probe: `rules['visibility_modifier_pub']` exists
+ * with the correct body, `rules['_visibility_modifier_pub']` does not.
+ * So the fallback here is a direct visible-name lookup, not an alias
+ * search — the alias is long gone by this phase.
+ */
+function resolveGroupsConfigKey(kind: string, rules: Record<string, Rule<'link'>>): string | undefined {
+	if (kind in rules) return kind;
+	if (!kind.startsWith('_')) return undefined;
+	const visibleName = kind.slice(1);
+	return visibleName in rules ? visibleName : undefined;
+}
+
 export function validateGroupsConfig(args: ValidateGroupsArgs): void {
 	const { groups, polymorphs, rules, warn } = args;
 	const emitWarn = warn ?? ((msg: string) => console.warn(`[groups] ${msg}`));
 
 	for (const [kind, lifts] of Object.entries(groups)) {
 		if (!lifts) continue;
-		const root = rules[kind];
+		const resolvedKey = resolveGroupsConfigKey(kind, rules);
+		const root = resolvedKey !== undefined ? rules[resolvedKey] : undefined;
 		if (!root) {
 			throw new Error(`groups['${kind}']: kind not in rule map`);
 		}
@@ -2819,8 +2736,15 @@ export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOv
 
 	for (const [kind, lifts] of Object.entries(args.groups)) {
 		if (!lifts || Object.keys(lifts).length === 0) continue;
+		// `kind` may be variant()/polymorphs' INTENDED hidden name rather
+		// than the name the rule is actually registered under — see
+		// `resolveGroupsConfigKey`'s doc comment. `deriveSynthesizedName`
+		// below still uses the ORIGINAL `kind` (the naming convention
+		// callers/templates expect), only the rules-map read/write target
+		// resolves to wherever the body actually lives.
+		const resolvedKey = resolveGroupsConfigKey(kind, newRules) ?? kind;
 		const sortedPaths = Object.keys(lifts).sort((a, b) => b.length - a.length); // deep first
-		let parentBody = clone(newRules[kind]!);
+		let parentBody = clone(newRules[resolvedKey]!);
 
 		for (const path of sortedPaths) {
 			const discriminator = lifts[path]!;
@@ -2838,7 +2762,7 @@ export function applyGroupOverrides(args: ApplyGroupOverridesArgs): ApplyGroupOv
 			synthesizedKinds.push(synName);
 		}
 
-		newRules[kind] = parentBody;
+		newRules[resolvedKey] = parentBody;
 	}
 
 	return { rules: newRules, synthesizedKinds };

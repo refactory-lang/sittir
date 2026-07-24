@@ -518,6 +518,23 @@ export type SupertypeRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof SUPERTYPE;
 	readonly name: string;
 	readonly subtypes: string[];
+
+	/**
+	 * Storage→parse name pairs for the aliased arms of the flattened CHOICE,
+	 * stamped by `classifyHiddenChoiceRule` (compiler/link.ts) at the moment
+	 * the flatten erases them — the same declared-fact pattern as
+	 * `RuleBase.variantArms`. Keys are `subtypes` entries (the STORAGE kind —
+	 * `SymbolRule.aliasedFrom`, the rule whose body/slots/template model the
+	 * arm); values are the PARSE names (the visible label tree-sitter emits at
+	 * that arm's position, carrying its own `alias_sym_*` runtime symbol id).
+	 * Consumed by node-map's supertype value derivation (`parseKindId` stamps)
+	 * and the supertype transport-enum emitter (accepted dispatch ids) so
+	 * runtime nodes arriving under the alias occurrence's id — enrich-minted
+	 * arms like `alias($._expression_except_range, $.expression_group1)` —
+	 * route to the storage kind's variant instead of failing as unknown.
+	 * Absent when no arm is aliased (the common case).
+	 */
+	readonly subtypeParseNames?: Readonly<Record<string, string>>;
 };
 
 export type GroupRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {

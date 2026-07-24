@@ -187,19 +187,6 @@ export const expression = {
 } as const;
 
 export const pattern = {
-	member: _attach(FR.coerceToMemberExpression, { from: FR.coerceToMemberExpression, strict: F.buildMemberExpression }),
-	subscript: _attach(FR.coerceToSubscriptExpression, {
-		from: FR.coerceToSubscriptExpression,
-		strict: F.buildSubscriptExpression
-	}),
-	undefined: F.buildUndefined,
-	identifier: F.buildIdentifier,
-	object: _attach(FR.coerceToObjectPattern, { from: FR.coerceToObjectPattern, strict: F.buildObjectPattern }),
-	array: _attach(FR.coerceToArrayPattern, { from: FR.coerceToArrayPattern, strict: F.buildArrayPattern }),
-	nonNull: _attach(FR.coerceToNonNullExpression, {
-		from: FR.coerceToNonNullExpression,
-		strict: F.buildNonNullExpression
-	}),
 	rest: _attach(FR.coerceToRestPattern, { from: FR.coerceToRestPattern, strict: F.buildRestPattern })
 } as const;
 
@@ -236,7 +223,7 @@ export const primaryExpression = {
 		strict: F.buildGeneratorFunction
 	}),
 	class: _attach(FR.coerceToClass, { from: FR.coerceToClass, strict: F.buildClass }),
-	meta: F.buildMetaProperty,
+	meta: _attach(FR.coerceToMetaProperty, { from: FR.coerceToMetaProperty, strict: F.buildMetaProperty }),
 	call: _attach(FR.coerceToCallExpression, { from: FR.coerceToCallExpression, strict: F.buildCallExpression }),
 	nonNull: _attach(FR.coerceToNonNullExpression, {
 		from: FR.coerceToNonNullExpression,
@@ -599,6 +586,7 @@ export const ir = {
 		from: FR.coerceToMemberExpression,
 		strict: F.buildMemberExpression
 	}),
+	metaProperty: _attach(FR.coerceToMetaProperty, { from: FR.coerceToMetaProperty, strict: F.buildMetaProperty }),
 	methodDefinition: _attach(FR.coerceToMethodDefinition, {
 		from: FR.coerceToMethodDefinition,
 		strict: F.buildMethodDefinition
@@ -793,34 +781,6 @@ export const ir = {
 		from: FR.coerceToYieldExpression,
 		strict: F.buildYieldExpression
 	}),
-	importClauseGroup1: _attach(FR.coerceToImportClauseGroup1, {
-		from: FR.coerceToImportClauseGroup1,
-		strict: F.buildImportClauseGroup1
-	}),
-	catchClauseGroup1: _attach(FR.coerceToCatchClauseGroup1, {
-		from: FR.coerceToCatchClauseGroup1,
-		strict: F.buildCatchClauseGroup1
-	}),
-	enumBodyGroup1: _attach(FR.coerceToEnumBodyGroup1, {
-		from: FR.coerceToEnumBodyGroup1,
-		strict: F.buildEnumBodyGroup1
-	}),
-	exportClauseGroup1: _attach(FR.coerceToExportClauseGroup1, {
-		from: FR.coerceToExportClauseGroup1,
-		strict: F.buildExportClauseGroup1
-	}),
-	formalParametersGroup1: _attach(FR.coerceToFormalParametersGroup1, {
-		from: FR.coerceToFormalParametersGroup1,
-		strict: F.buildFormalParametersGroup1
-	}),
-	namedImportsGroup1: _attach(FR.coerceToNamedImportsGroup1, {
-		from: FR.coerceToNamedImportsGroup1,
-		strict: F.buildNamedImportsGroup1
-	}),
-	tupleTypeGroup1: _attach(FR.coerceToTupleTypeGroup1, {
-		from: FR.coerceToTupleTypeGroup1,
-		strict: F.buildTupleTypeGroup1
-	}),
 
 	// Keyword factories
 	false: F.buildFalse,
@@ -838,7 +798,6 @@ export const ir = {
 	escapeSequence: F.buildEscapeSequence,
 	hashBangLine: F.buildHashBangLine,
 	identifier2: F.buildIdentifier,
-	metaProperty: F.buildMetaProperty,
 	number: F.buildNumber,
 	predefinedType: F.buildPredefinedType,
 	privatePropertyIdentifier: F.buildPrivatePropertyIdentifier,
@@ -932,7 +891,7 @@ export const ir = {
 	literal: _attach(FR.coerceToLiteralType, { from: FR.coerceToLiteralType, strict: F.buildLiteralType }),
 	lookup: _attach(FR.coerceToLookupType, { from: FR.coerceToLookupType, strict: F.buildLookupType }),
 	member: _attach(FR.coerceToMemberExpression, { from: FR.coerceToMemberExpression, strict: F.buildMemberExpression }),
-	meta: F.buildMetaProperty,
+	meta: _attach(FR.coerceToMetaProperty, { from: FR.coerceToMetaProperty, strict: F.buildMetaProperty }),
 	nested: _attach(FR.coerceToNestedIdentifier, { from: FR.coerceToNestedIdentifier, strict: F.buildNestedIdentifier }),
 	nestedType: _attach(FR.coerceToNestedTypeIdentifier, {
 		from: FR.coerceToNestedTypeIdentifier,

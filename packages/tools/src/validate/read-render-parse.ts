@@ -472,6 +472,14 @@ export async function validateReadRenderParse(
 			// Test round-trip for each testable kind found
 			let entryOk = true;
 			let entryAstMatch = true;
+			// Tracks whether ANY kind in this entry ever reached a genuine
+			// round-trip attempt (kindHadCandidate=true below) — as opposed to
+			// every candidate silently `continue`-ing via a neutral skip
+			// (no supertype context, empty render). Without this, an entry
+			// where EVERY kind's candidates are all neutrally skipped falls
+			// through with entryOk/entryAstMatch still at their initial `true`,
+			// counting as a pass despite testing nothing at all.
+			let entryHadAnyCandidate = false;
 			for (const kind of testableKinds) {
 				if (shouldStop) break;
 
@@ -509,9 +517,18 @@ export async function validateReadRenderParse(
 					// no native coords.
 					let data: AnyNodeData;
 					try {
+						// `$childIndex` is undefined for a candidate that IS the tree
+						// root (nothing above it to index into) — defaulting it to 0
+						// would make `handle.read(handle, 0)` drill into the root's
+						// FIRST CHILD, silently round-tripping the wrong node (the
+						// child mislabeled as the parent). Root candidates take the
+						// deep-materialization path instead of guessing an index.
 						data =
-							recursive !== true && cand.node.$nodeHandle != null && handle.read
-								? (handle.read(cand.node.$nodeHandle, cand.node.$childIndex ?? 0) as unknown as AnyNodeData)
+							recursive !== true &&
+							cand.node.$nodeHandle != null &&
+							cand.node.$childIndex != null &&
+							handle.read
+								? (handle.read(cand.node.$nodeHandle, cand.node.$childIndex) as unknown as AnyNodeData)
 								: (stripStructuralNodeText(materializeWrappedNodeData(cand.node)) as AnyNodeData);
 					} catch (e) {
 						kindErrors.push({
@@ -688,7 +705,28 @@ export async function validateReadRenderParse(
 				// counts when EVERY candidate node that round-tripped
 				// also matched structurally — surfacing partial AST
 				// regressions even when entry-pass survives.
-				if (!kindHadCandidate) continue; // every candidate skipped — neutral on this kind
+				if (!kindHadCandidate) {
+					// `kindHadCandidate` only flips on a full round-trip SUCCESS,
+					// so a kind where every candidate genuinely ATTEMPTED and
+					// FAILED (read threw / re-parse error / kind not found — the
+					// paths that push kindErrors) lands here exactly like a kind
+					// whose candidates were all neutrally skipped (no supertype,
+					// empty render — paths that push nothing). Distinguish by the
+					// collected errors: real failures must be REPORTED and score
+					// the entry as a failure — silently `continue`-ing here made
+					// 100%-failing kinds invisible to diff-failures entirely (no
+					// error line, no fail count), which masked a whole regression
+					// class from the standard tooling.
+					if (kindErrors.length > 0) {
+						errors.push(kindErrors[0]!);
+						entryHadAnyCandidate = true;
+						entryOk = false;
+						entryAstMatch = false;
+						break;
+					}
+					continue; // every candidate neutrally skipped — neutral on this kind
+				}
+				entryHadAnyCandidate = true;
 				if (!kindOk) {
 					if (kindErrors.length > 0) errors.push(kindErrors[0]!);
 					entryOk = false;
@@ -701,8 +739,16 @@ export async function validateReadRenderParse(
 				}
 			}
 
-			if (entryOk) pass++;
-			if (entryAstMatch) astMatchPass++;
+			// An entry whose every kind was neutrally skipped (no genuine
+			// round-trip attempt ever succeeded past the read step) has tested
+			// nothing — score it like the testableKinds.length===0 case above
+			// (skip), not a silent pass. See entryHadAnyCandidate's doc comment.
+			if (!entryHadAnyCandidate) {
+				skip++;
+			} else {
+				if (entryOk) pass++;
+				if (entryAstMatch) astMatchPass++;
+			}
 		} catch (e) {
 			errors.push({
 				name: entry.name,

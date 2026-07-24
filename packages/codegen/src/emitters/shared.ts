@@ -131,6 +131,27 @@ export function collectAliasTargetToSourceMap(nodeMap: NodeMap): Map<string, str
 		if (nodeMap.nodes.has(visible)) continue;
 		out.set(visible, kind);
 	}
+	// RENAMED alias pairs: an enrich-minted arm (`alias($._expression_except_range,
+	// $.expression_group1)`) shares no base name with its storage kind, so the
+	// stripped-name derivation above can never find it — parser output arrives
+	// under the mint's own kind (`alias_sym_expression_group1`) and, without a
+	// remap, `wrapNode` falls through to "unknown kind — return as-is",
+	// leaving the wrapper unmaterialized (the silent-stub class). The link
+	// flatten stamped each pair on the REFERENCING supertype
+	// (`SupertypeRule.subtypeParseNames` — see types/rule.ts); register both
+	// the parse name and its catalog-key spelling (`_`-prefixed — the key
+	// `KIND_NAMES` yields for the `alias_sym_*` row) against the storage kind.
+	for (const [, node] of nodeMap.nodes) {
+		if (node.modelType !== 'supertype') continue;
+		for (const [storage, parse] of Object.entries((node as AssembledSupertype).subtypeParseNames ?? {})) {
+			if (!nodeMap.nodes.has(storage)) continue;
+			// A parse name that IS a real independent kind is not a remap —
+			// leave its own wrap dispatch in charge.
+			if (!nodeMap.nodes.has(parse) && !out.has(parse)) out.set(parse, storage);
+			const catalogKey = `_${parse}`;
+			if (!nodeMap.nodes.has(catalogKey) && !out.has(catalogKey)) out.set(catalogKey, storage);
+		}
+	}
 	return out;
 }
 
@@ -723,6 +744,46 @@ export function computeFieldStorageInfo(nodeMap: NodeMap): void {
 			slot.storageInfo = classifyFieldStorageInfo(slot, nodeMap);
 		}
 	}
+}
+
+/**
+ * Stamped text→member-kindId pairs for a kindEnum slot — the compile-time
+ * fact the wrap projection uses to put NUMERIC member ids on the wire when a
+ * reference site materializes the enum as its own wrapper node (`{ $type:
+ * <wrapper id>, $text: "private" }`). Ids come from the construction-time
+ * stamps only (`AssembledEnum.resolvedByText`, `TerminalValue.resolvedKindId`,
+ * keyword/token catalog rows) — never a runtime text chase; a member with no
+ * stamped id is simply absent (the projection falls back to text for it, and
+ * the render-side enum's string branch still accepts that).
+ */
+export function kindEnumTextIdPairs(
+	field: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly { kind: string; id: number; symbolName?: string; anon?: boolean }[] | undefined
+): readonly (readonly [string, number])[] {
+	const out: (readonly [string, number])[] = [];
+	const seen = new Set<string>();
+	const push = (text: string, id: number | undefined): void => {
+		if (id === undefined || seen.has(text)) return;
+		seen.add(text);
+		out.push([text, id]);
+	};
+	for (const value of field.values) {
+		if (isNodeRef(value)) {
+			const node = nodeMap.nodes.get(storageKindOfRef(value.node));
+			if (node instanceof AssembledEnum) {
+				for (const [text, entry] of node.resolvedByText) push(text, entry.id);
+				continue;
+			}
+			if ((node instanceof AssembledKeyword || node instanceof AssembledToken) && node.text !== undefined) {
+				const entry = kindEntries?.find((e) => e.kind === node.resolvedKind);
+				push(node.text, entry?.id);
+			}
+			continue;
+		}
+		if (isTerminalValue(value)) push(value.value, value.resolvedKindId);
+	}
+	return out;
 }
 
 /**

@@ -1363,7 +1363,7 @@ export function deriveValuesForRule(
 						resolvedKind: rule.name,
 						resolvedKindId: entry?.id,
 						parseKind: { kind: 'unresolved-ref', name: rule.name },
-						parseKindId: entry?.id,
+						parseKindId: entry?.parseId ?? entry?.id,
 						multiplicity
 					}
 				];
@@ -1382,8 +1382,12 @@ export function deriveValuesForRule(
 					// parse-as kind = the alias TARGET (`rule.name`); `node` is the
 					// render/source (`refName`). For `_suite`: node=_simple_statements,
 					// parseKind=block (the CST kind). §7.3 / §4g.
+					// `parseEntry.parseId` (falling back to `.id`) — an alias
+					// occurrence carries its OWN distinct runtime symbol id,
+					// separate from the source rule's storage id; dispatch must
+					// key on that, not the storage identity.
 					parseKind: { kind: 'unresolved-ref', name: rule.name },
-					parseKindId: parseEntry?.id,
+					parseKindId: parseEntry?.parseId ?? parseEntry?.id,
 					multiplicity: relaxForOptionalBody(refName, multiplicity)
 				}
 			];
@@ -1392,12 +1396,20 @@ export function deriveValuesForRule(
 			// Supertype refs expand to their subtype list — each subtype is a
 			// valid concrete kind the slot can hold.
 			return rule.subtypes.map((name) => {
-				const id = findEntryForKindName(ctx?.kindEntries ?? [], name)?.id;
+				const entry = findEntryForKindName(ctx?.kindEntries ?? [], name);
+				// Aliased arm: the flatten stamped the parse name the arm
+				// displays under (`subtypeParseNames`); its catalog row carries
+				// the alias occurrence's own runtime id, which is what dispatch
+				// must key on — mirrors the SYMBOL case's aliasedFrom/name pair
+				// above.
+				const parseName = rule.subtypeParseNames?.[name];
+				const parseEntry =
+					parseName === undefined ? entry : findEntryForKindName(ctx?.kindEntries ?? [], parseName);
 				return {
 					node: { kind: 'unresolved-ref' as const, name },
-					storageKindId: id,
-					parseKind: { kind: 'unresolved-ref' as const, name },
-					parseKindId: id,
+					storageKindId: entry?.id,
+					parseKind: { kind: 'unresolved-ref' as const, name: parseName ?? name },
+					parseKindId: parseEntry?.parseId ?? parseEntry?.id ?? entry?.parseId ?? entry?.id,
 					multiplicity: relaxForOptionalBody(name, multiplicity)
 				};
 			});
@@ -1416,7 +1428,7 @@ export function deriveValuesForRule(
 					resolvedKind: rk,
 					resolvedKindId: entry?.id,
 					parseKind: rk !== undefined ? { kind: 'unresolved-ref', name: rk } : undefined,
-					parseKindId: entry?.id,
+					parseKindId: entry?.parseId ?? entry?.id,
 					multiplicity
 				}
 			];
@@ -1434,7 +1446,7 @@ export function deriveValuesForRule(
 						resolvedKind: rk,
 						resolvedKindId: entry?.id,
 						parseKind: rk !== undefined ? { kind: 'unresolved-ref' as const, name: rk } : undefined,
-						parseKindId: entry?.id,
+						parseKindId: entry?.parseId ?? entry?.id,
 						multiplicity
 					};
 				});
@@ -3146,6 +3158,14 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule<'link'> 
 	/** Resolved concrete kind names in this supertype union. */
 	get subtypes(): string[] {
 		return this.#subtypes;
+	}
+
+	/** Storage→parse name pairs for aliased subtype arms — see
+	 * `SupertypeRule.subtypeParseNames` (types/rule.ts). Keys are storage
+	 * kind names as they appear in `subtypes`; only present when the link
+	 * flatten saw aliased arms. */
+	get subtypeParseNames(): Readonly<Record<string, string>> | undefined {
+		return this.rule.type === SUPERTYPE ? this.rule.subtypeParseNames : undefined;
 	}
 }
 

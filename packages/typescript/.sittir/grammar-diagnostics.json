@@ -33,6 +33,15 @@
   },
   {
     "scope": "grammar",
+    "code": "union-slot-mixed-row",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "__jsx_start_opening_element_optional1",
+    "message": "[collect-slots] kind '__jsx_start_opening_element_optional1': choice rule:__jsx_start_opening_element_optional1:root is a singular mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [jsx_start_opening_element_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "canProceed": true
+  },
+  {
+    "scope": "grammar",
     "code": "union-slot-routed",
     "severity": "warning",
     "grammar": "typescript",
@@ -46,7 +55,7 @@
     "severity": "warning",
     "grammar": "typescript",
     "ownerKind": "_export_statement_default_decl_arm",
-    "message": "[collect-slots] kind '_export_statement_default_decl_arm': choice rule:_export_statement_default_decl_arm:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_decl_arm_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
+    "message": "[collect-slots] kind '_export_statement_default_decl_arm': choice rule:_export_statement_default_decl_arm:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_default_kw] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
     "canProceed": true
   },
   {
@@ -54,8 +63,8 @@
     "code": "union-slot-routed",
     "severity": "warning",
     "grammar": "typescript",
-    "ownerKind": "_export_statement_default_decl_arm_default_kw",
-    "message": "[collect-slots] kind '_export_statement_default_decl_arm_default_kw': choice rule:_export_statement_default_decl_arm_default_kw:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_decl_arm_default_kw_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
+    "ownerKind": "_export_statement_default_default_kw",
+    "message": "[collect-slots] kind '_export_statement_default_default_kw': choice rule:_export_statement_default_default_kw:root routes 1 unnamed-nonterminal arm(s) [export_statement_default_value] into one union slot alongside 1 label-routed arm(s) [field(declaration):declaration] (PR 1.5)",
     "canProceed": true
   },
   {
@@ -63,8 +72,17 @@
     "code": "union-slot-mixed-row",
     "severity": "warning",
     "grammar": "typescript",
-    "ownerKind": "arrow_function",
-    "message": "[collect-slots] kind 'arrow_function': choice rule:arrow_function:root is a singular mixed row — structured named arm(s) [seq[3](type_parameters formal_parameters choice)] alongside union arm(s) [arrow_function_parameter]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "ownerKind": "_jsx_start_opening_element",
+    "message": "[collect-slots] kind '_jsx_start_opening_element': choice rule:__jsx_start_opening_element_optional1:root is a singular mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [jsx_start_opening_element_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "canProceed": true
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-mixed-row",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "binary_expression",
+    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression \"&&\" expression), seq[3](expression \"||\" expression), seq[3](expression \">>\" expression), seq[3](expression \">>>\" expression), seq[3](expression \"<<\" expression), seq[3](expression \"&\" expression), seq[3](expression \"^\" expression), seq[3](expression \"|\" expression), seq[3](expression \"+\" expression), seq[3](expression \"-\" expression), seq[3](expression \"*\" expression), seq[3](expression \"/\" expression), seq[3](expression \"%\" expression), seq[3](expression \"**\" expression), seq[3](expression \"<\" expression), seq[3](expression \"<=\" expression), seq[3](expression \"==\" expression), seq[3](expression \"===\" expression), seq[3](expression \"!=\" expression), seq[3](expression \"!==\" expression), seq[3](expression \">=\" expression), seq[3](expression \">\" expression), seq[3](expression \"??\" expression), seq[3](expression \"instanceof\" expression)] alongside union arm(s) [binary_expression_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
     "canProceed": true
   },
   {
@@ -74,15 +92,6 @@
     "grammar": "typescript",
     "ownerKind": "public_field_definition",
     "message": "[collect-slots] kind 'public_field_definition': fieldless structural choice qualifies for union routing but carries no rule id (rebuilt without id preservation) — union slot would be unaddressable at emit; keeping distribution. Fix the rebuild site to preserve ids.",
-    "canProceed": true
-  },
-  {
-    "scope": "grammar",
-    "code": "union-slot-routed",
-    "severity": "warning",
-    "grammar": "typescript",
-    "ownerKind": "enum_body_group1",
-    "message": "[collect-slots] kind 'enum_body_group1': choice rule:_enum_body_group1:members.0/members.1/content/members.1 routes 1 unnamed-nonterminal arm(s) [enum_assignment] into one union slot alongside 1 label-routed arm(s) [field(name):_property_name] (PR 1.5)",
     "canProceed": true
   },
   {
@@ -122,70 +131,6 @@
     "code": "typename-collision",
     "severity": "info",
     "grammar": "typescript",
-    "ownerKind": "_catch_clause_group1",
-    "message": "[assemble] typeName collision: kind '_catch_clause_group1' renamed 'CatchClauseGroup1' → '_CatchClauseGroup1' (visible sibling(s): 'catch_clause_group1')",
-    "canProceed": true,
-    "details": {
-      "typeName": "CatchClauseGroup1",
-      "newType": "_CatchClauseGroup1",
-      "visibleKinds": [
-        "catch_clause_group1"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_enum_body_group1",
-    "message": "[assemble] typeName collision: kind '_enum_body_group1' renamed 'EnumBodyGroup1' → '_EnumBodyGroup1' (visible sibling(s): 'enum_body_group1')",
-    "canProceed": true,
-    "details": {
-      "typeName": "EnumBodyGroup1",
-      "newType": "_EnumBodyGroup1",
-      "visibleKinds": [
-        "enum_body_group1"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_export_clause_group1",
-    "message": "[assemble] typeName collision: kind '_export_clause_group1' renamed 'ExportClauseGroup1' → '_ExportClauseGroup1' (visible sibling(s): 'export_clause_group1')",
-    "canProceed": true,
-    "details": {
-      "typeName": "ExportClauseGroup1",
-      "newType": "_ExportClauseGroup1",
-      "visibleKinds": [
-        "export_clause_group1"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_formal_parameters_group1",
-    "message": "[assemble] typeName collision: kind '_formal_parameters_group1' renamed 'FormalParametersGroup1' → '_FormalParametersGroup1' (visible sibling(s): 'formal_parameters_group1')",
-    "canProceed": true,
-    "details": {
-      "typeName": "FormalParametersGroup1",
-      "newType": "_FormalParametersGroup1",
-      "visibleKinds": [
-        "formal_parameters_group1"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
     "ownerKind": "_identifier",
     "message": "[assemble] typeName collision: kind '_identifier' renamed 'Identifier' → '_Identifier' (visible sibling(s): 'identifier')",
     "canProceed": true,
@@ -194,22 +139,6 @@
       "newType": "_Identifier",
       "visibleKinds": [
         "identifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_import_clause_group1",
-    "message": "[assemble] typeName collision: kind '_import_clause_group1' renamed 'ImportClauseGroup1' → '_ImportClauseGroup1' (visible sibling(s): 'import_clause_group1')",
-    "canProceed": true,
-    "details": {
-      "typeName": "ImportClauseGroup1",
-      "newType": "_ImportClauseGroup1",
-      "visibleKinds": [
-        "import_clause_group1"
       ]
     }
   },
@@ -282,22 +211,6 @@
     "code": "typename-collision",
     "severity": "info",
     "grammar": "typescript",
-    "ownerKind": "_named_imports_group1",
-    "message": "[assemble] typeName collision: kind '_named_imports_group1' renamed 'NamedImportsGroup1' → '_NamedImportsGroup1' (visible sibling(s): 'named_imports_group1')",
-    "canProceed": true,
-    "details": {
-      "typeName": "NamedImportsGroup1",
-      "newType": "_NamedImportsGroup1",
-      "visibleKinds": [
-        "named_imports_group1"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
     "ownerKind": "_number",
     "message": "[assemble] typeName collision: kind '_number' renamed 'Number' → '_Number' (visible sibling(s): 'number')",
     "canProceed": true,
@@ -322,22 +235,6 @@
       "newType": "_OverrideModifier",
       "visibleKinds": [
         "override_modifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_tuple_type_group1",
-    "message": "[assemble] typeName collision: kind '_tuple_type_group1' renamed 'TupleTypeGroup1' → '_TupleTypeGroup1' (visible sibling(s): 'tuple_type_group1')",
-    "canProceed": true,
-    "details": {
-      "typeName": "TupleTypeGroup1",
-      "newType": "_TupleTypeGroup1",
-      "visibleKinds": [
-        "tuple_type_group1"
       ]
     }
   },
@@ -418,24 +315,6 @@
     "code": "parsekind-noninjective",
     "severity": "info",
     "grammar": "typescript",
-    "ownerKind": "index_signature",
-    "slotName": "name",
-    "message": "Slot 'name' of kind 'index_signature' collapses [identifier, _reserved_identifier] onto parse kind 'identifier'.",
-    "proposal": "Slot 'name' of kind 'index_signature' collapses distinct storage kinds [identifier, _reserved_identifier] onto parse kind 'identifier'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "identifier",
-      "storageKinds": [
-        "identifier",
-        "_reserved_identifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "grammar": "typescript",
     "ownerKind": "string",
     "slotName": "string_fragment",
     "message": "Slot 'string_fragment' of kind 'string' collapses [unescaped_double_string_fragment, unescaped_single_string_fragment] onto parse kind 'string_fragment'.",
@@ -464,6 +343,24 @@
       "storageKinds": [
         "identifier",
         "predefined_type"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "grammar": "typescript",
+    "ownerKind": "_index_signature_group1",
+    "slotName": "name",
+    "message": "Slot 'name' of kind '_index_signature_group1' collapses [identifier, _reserved_identifier] onto parse kind 'identifier'.",
+    "proposal": "Slot 'name' of kind '_index_signature_group1' collapses distinct storage kinds [identifier, _reserved_identifier] onto parse kind 'identifier'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "identifier",
+      "storageKinds": [
+        "identifier",
+        "_reserved_identifier"
       ]
     }
   }

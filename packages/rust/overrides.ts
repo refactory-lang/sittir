@@ -88,6 +88,29 @@ export default grammar(
 				// expose a shared-prefix conflict with other expression
 				// contexts when the parser sees `… => if_expr (`.
 				[$._expression_except_range, $._match_arm_block_ending],
+				// PR 3 un-inlining: `_path` (a minted visible-group arm source,
+				// filtered out of `inline:` so its mint survives to the parser)
+				// re-exposes the `for identifier • ::` prefix ambiguity with
+				// generic_pattern / generic_type_with_turbofish that inlining
+				// previously let the LR table merge — the fork tree-sitter
+				// itself suggests.
+				[$.generic_type_with_turbofish, $.generic_pattern, $._path],
+				// (Removed: `[$._scoped_identifier_group1, $._scoped_type_identifier_group1]`
+				// and `[$.scoped_use_list, $._scoped_identifier_group1, $._use_wildcard_clause]`
+				// — their mint sources are gone under the `isSupertypeLike`
+				// structural mint decline; the names no longer exist.)
+				// Pair-only state of the turbofish trio above (`impl identifier
+				// • ::` — no generic_pattern in scope there).
+				[$.generic_type_with_turbofish, $._path],
+				// `struct X ( crate • :: …` — `pub(crate)`-style visibility vs a
+				// crate-rooted path in tuple-struct field position.
+				[$.visibility_modifier, $._path],
+				// PR 3 (2026-07-21 union-slot design): closure_expression's
+				// widened choice-arm mint (`_closure_expression_group1`) shares
+				// the `closure_parameters block • ';'` prefix with
+				// `_expression_except_range` — same class as the match_arm
+				// conflict just above.
+				[$._expression_except_range, $._closure_expression_group1],
 				// visibility_modifier variant extraction: `pub(crate)` vs
 				// `crate::foo` share the `crate` prefix.
 				[$.scoped_identifier, $.scoped_type_identifier, $._visibility_modifier_crate],
@@ -104,7 +127,7 @@ export default grammar(
 				// array_expression's list-arm where elements share the same structural
 				// unit as call arguments. The conflict declaration allows tree-sitter's
 				// GLR mechanism to disambiguate at parse time.
-				[$._attributed_argument]
+				[$._attributed_argument],
 				// NOTE: two conflicts were added here for an earlier shape of the
 				// _token_tree_punctuation fix ([$._non_delim_token, ...] and
 				// [$._token_pattern, ...], both resolving a nested-repeat ambiguity
@@ -114,6 +137,32 @@ export default grammar(
 				// no inner repeat, so the ambiguity these existed to resolve no
 				// longer arises.
 			],
+			// PR 3 (2026-07-21 union-slot design): `scoped_identifier`'s widened
+			// choice-arm mint (`_scoped_identifier_group1`) and
+			// `scoped_type_identifier`'s corresponding
+			// `_scoped_type_identifier_in_expression_position_group1` mint land
+			// in Rust's `identifier '::' ...` position — one of the grammar's
+			// most heavily hand-tuned ambiguities (turbofish generics vs.
+			// scoped path vs. generic pattern vs. tree-sitter's OWN internal
+			// `_scoped_type_identifier_group1` auto-naming for an anonymous
+			// hidden rule extracted from `scoped_type_identifier`'s own body).
+			// Adding pairwise/grouped `conflicts` entries for this cluster
+			// didn't converge — each lookahead context (bare, 'for', 'impl',
+			// generic_pattern-adjacent) needed a DIFFERENT rule combination,
+			// suggesting the ambiguity isn't a fixed closed set. Inlining the
+			// two mints we control instead dissolves their own LR states
+			// entirely (same technique already used above for
+			// `_except_clause_as_optional1`) — the alias at each reference
+			// site still produces its own labeled CST node (inlining
+			// substitutes the RULE's production at its call site; it doesn't
+			// touch the alias wrapping that call site), so union-slot routing
+			// is unaffected while the extra ambiguous state disappears.
+			// (Removed the PR 3 `inline:` additions for `_scoped_identifier_group1` /
+			// `_scoped_type_identifier_in_expression_position_group1` /
+			// `_scoped_type_identifier_group1` — those mints no longer exist under
+			// the `isSupertypeLike` structural mint decline, so there is nothing
+			// to dissolve; the surrounding rationale comment above is retained for
+			// history.)
 			polymorphs: {
 				array_expression: { '2/0': 'semi', '2/1': 'list' },
 				closure_expression: { '4/0': 'block', '4/1': 'expr' },

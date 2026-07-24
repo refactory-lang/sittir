@@ -4,9 +4,9 @@
     "code": "seq-with-nested-seq",
     "severity": "error",
     "grammar": "python",
-    "ownerKind": "_dict_pattern_group1",
-    "ruleId": "rule:_dict_pattern_group1:root",
-    "message": "Kind '_dict_pattern_group1' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
+    "ownerKind": "_dict_pattern_group2",
+    "ruleId": "rule:_dict_pattern_group2:root",
+    "message": "Kind '_dict_pattern_group2' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
     "proposal": "Introduce a visible group or normalize the nested seq earlier.",
     "canProceed": true,
     "details": {
@@ -14,31 +14,6 @@
       "ruleType": "SEQ",
       "context": "fields"
     }
-  },
-  {
-    "scope": "grammar",
-    "code": "seq-with-nested-seq",
-    "severity": "error",
-    "grammar": "python",
-    "ownerKind": "dict_pattern_group1",
-    "ruleId": "rule:_dict_pattern_group1:root",
-    "message": "Kind 'dict_pattern_group1' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
-    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
-    "canProceed": true,
-    "details": {
-      "rawShape": "seq-with-nested-seq",
-      "ruleType": "SEQ",
-      "context": "fields"
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "union-slot-mixed-row",
-    "severity": "warning",
-    "grammar": "python",
-    "ownerKind": "_dict_pattern_group1",
-    "message": "[collect-slots] kind '_dict_pattern_group1': choice rule:_dict_pattern_group1:members.0/members.1/content/members.1 is a REPEATED (order-lossy) mixed row — structured named arm(s) [seq[2](_simple_pattern case_pattern)] alongside union arm(s) [splat_pattern]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
-    "canProceed": true
   },
   {
     "scope": "grammar",
@@ -51,11 +26,20 @@
   },
   {
     "scope": "grammar",
+    "code": "union-slot-mixed-row",
+    "severity": "warning",
+    "grammar": "python",
+    "ownerKind": "future_import_statement",
+    "message": "[collect-slots] kind 'future_import_statement': choice rule:future_import_statement:root is a REPEATED (order-lossy) mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [future_import_statement_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "canProceed": true
+  },
+  {
+    "scope": "grammar",
     "code": "union-slot-nondegenerate-arm",
     "severity": "warning",
     "grammar": "python",
     "ownerKind": "future_import_statement",
-    "message": "[collect-slots] kind 'future_import_statement': choice rule:future_import_statement:root has unnamed-nonterminal arm(s) [_import_list] but cannot union-route — offending arm(s): structured seq[3](\"(\" _import_list \")\"). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
+    "message": "[collect-slots] kind 'future_import_statement': choice rule:future_import_statement:root has unnamed-nonterminal arm(s) [future_import_statement_group1] but cannot union-route — offending arm(s): structured seq[3](\"(\" _import_list \")\"). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
     "canProceed": true
   },
   {
@@ -66,31 +50,6 @@
     "ownerKind": "yield",
     "message": "[collect-slots] kind 'yield': choice rule:yield:root has unnamed-nonterminal arm(s) [_expressions] but cannot union-route — offending arm(s): structured seq[2](\"from\" expression). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
     "canProceed": true
-  },
-  {
-    "scope": "grammar",
-    "code": "union-slot-mixed-row",
-    "severity": "warning",
-    "grammar": "python",
-    "ownerKind": "dict_pattern_group1",
-    "message": "[collect-slots] kind 'dict_pattern_group1': choice rule:_dict_pattern_group1:members.0/members.1/content/members.1 is a REPEATED (order-lossy) mixed row — structured named arm(s) [seq[2](_simple_pattern case_pattern)] alongside union arm(s) [splat_pattern]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
-    "canProceed": true
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "_argument_list_group1",
-    "message": "[assemble] typeName collision: kind '_argument_list_group1' renamed 'ArgumentListGroup1' → '_ArgumentListGroup1' (visible sibling(s): 'argument_list_group1')",
-    "canProceed": true,
-    "details": {
-      "typeName": "ArgumentListGroup1",
-      "newType": "_ArgumentListGroup1",
-      "visibleKinds": [
-        "argument_list_group1"
-      ]
-    }
   },
   {
     "scope": "grammar",
@@ -113,70 +72,6 @@
     "code": "typename-collision",
     "severity": "info",
     "grammar": "python",
-    "ownerKind": "_dict_pattern_group1",
-    "message": "[assemble] typeName collision: kind '_dict_pattern_group1' renamed 'DictPatternGroup1' → '_DictPatternGroup1' (visible sibling(s): 'dict_pattern_group1')",
-    "canProceed": true,
-    "details": {
-      "typeName": "DictPatternGroup1",
-      "newType": "_DictPatternGroup1",
-      "visibleKinds": [
-        "dict_pattern_group1"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "_dictionary_group1",
-    "message": "[assemble] typeName collision: kind '_dictionary_group1' renamed 'DictionaryGroup1' → '_DictionaryGroup1' (visible sibling(s): 'dictionary_group1')",
-    "canProceed": true,
-    "details": {
-      "typeName": "DictionaryGroup1",
-      "newType": "_DictionaryGroup1",
-      "visibleKinds": [
-        "dictionary_group1"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "_list_pattern",
-    "message": "[assemble] typeName collision: kind '_list_pattern' renamed 'ListPattern' → '_ListPattern' (visible sibling(s): 'list_pattern')",
-    "canProceed": true,
-    "details": {
-      "typeName": "ListPattern",
-      "newType": "_ListPattern",
-      "visibleKinds": [
-        "list_pattern"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "_list_pattern_group1",
-    "message": "[assemble] typeName collision: kind '_list_pattern_group1' renamed 'ListPatternGroup1' → '_ListPatternGroup1' (visible sibling(s): 'list_pattern_group1')",
-    "canProceed": true,
-    "details": {
-      "typeName": "ListPatternGroup1",
-      "newType": "_ListPatternGroup1",
-      "visibleKinds": [
-        "list_pattern_group1"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "python",
     "ownerKind": "_parameters",
     "message": "[assemble] typeName collision: kind '_parameters' renamed 'Parameters' → '_Parameters' (visible sibling(s): 'parameters')",
     "canProceed": true,
@@ -185,38 +80,6 @@
       "newType": "_Parameters",
       "visibleKinds": [
         "parameters"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "_slice_group1",
-    "message": "[assemble] typeName collision: kind '_slice_group1' renamed 'SliceGroup1' → '_SliceGroup1' (visible sibling(s): 'slice_group1')",
-    "canProceed": true,
-    "details": {
-      "typeName": "SliceGroup1",
-      "newType": "_SliceGroup1",
-      "visibleKinds": [
-        "slice_group1"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "_tuple_pattern",
-    "message": "[assemble] typeName collision: kind '_tuple_pattern' renamed 'TuplePattern' → '_TuplePattern' (visible sibling(s): 'tuple_pattern')",
-    "canProceed": true,
-    "details": {
-      "typeName": "TuplePattern",
-      "newType": "_TuplePattern",
-      "visibleKinds": [
-        "tuple_pattern"
       ]
     }
   },

@@ -15,8 +15,16 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "_simple_statements"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_simple_statements"
+          },
+          "named": true,
+          "value": "statement_group1",
+          "metadata": {
+            "author": "enrich"
+          }
         },
         {
           "type": "SYMBOL",
@@ -213,8 +221,16 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_import_list"
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_import_list"
+              },
+              "named": true,
+              "value": "future_import_statement_group1",
+              "metadata": {
+                "author": "enrich"
+              }
             },
             {
               "type": "SEQ",
@@ -276,8 +292,16 @@
                 "name": "wildcard_import"
               },
               {
-                "type": "SYMBOL",
-                "name": "_import_list"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_import_list"
+                },
+                "named": true,
+                "value": "future_import_statement_group1",
+                "metadata": {
+                  "author": "enrich"
+                }
               },
               {
                 "type": "SEQ",
@@ -1274,27 +1298,20 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_except_clause_as"
-                  },
-                  "named": true,
-                  "value": "except_clause_as"
-                },
-                {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "_except_clause_list"
-                  },
-                  "named": true,
-                  "value": "except_clause_list"
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_except_clause_group1",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
                 }
-              ]
+              },
+              "named": true,
+              "value": "except_clause_group1",
+              "metadata": {
+                "author": "enrich"
+              }
             },
             {
               "type": "BLANK"
@@ -1386,19 +1403,33 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_with_clause_bare"
+            "name": "_with_clause_bare",
+            "metadata": {
+              "author": "enrich",
+              "symbolSource": "group-lift"
+            }
           },
           "named": true,
-          "value": "with_clause_bare"
+          "value": "with_clause_bare",
+          "metadata": {
+            "author": "enrich"
+          }
         },
         {
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_with_clause_paren"
+            "name": "_with_clause_paren",
+            "metadata": {
+              "author": "enrich",
+              "symbolSource": "group-lift"
+            }
           },
           "named": true,
-          "value": "with_clause_paren"
+          "value": "with_clause_paren",
+          "metadata": {
+            "author": "enrich"
+          }
         }
       ]
     },
@@ -2056,37 +2087,20 @@
                 "value": ","
               },
               {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "REPEAT1",
-                    "content": {
-                      "type": "SEQ",
-                      "members": [
-                        {
-                          "type": "STRING",
-                          "value": ","
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "expression"
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "STRING",
-                        "value": ","
-                      },
-                      {
-                        "type": "BLANK"
-                      }
-                    ]
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_expression_list_group1",
+                  "metadata": {
+                    "author": "enrich",
+                    "symbolSource": "group-lift"
                   }
-                ]
+                },
+                "named": true,
+                "value": "expression_list_group1",
+                "metadata": {
+                  "author": "enrich"
+                }
               }
             ]
           }
@@ -2142,8 +2156,16 @@
             "name": "keyword_pattern"
           },
           {
-            "type": "SYMBOL",
-            "name": "_simple_pattern"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_simple_pattern"
+            },
+            "named": true,
+            "value": "case_pattern_group1",
+            "metadata": {
+              "author": "enrich"
+            }
           }
         ]
       }
@@ -2360,14 +2382,14 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_dict_pattern_group1",
+                "name": "_dict_pattern_group2",
                 "metadata": {
                   "author": "enrich",
                   "symbolSource": "group-lift"
                 }
               },
               "named": true,
-              "value": "dict_pattern_group1",
+              "value": "dict_pattern_group2",
               "metadata": {
                 "author": "enrich"
               }
@@ -3921,10 +3943,17 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_assignment_typed"
+                "name": "_assignment_typed",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
               },
               "named": true,
-              "value": "assignment_typed"
+              "value": "assignment_typed",
+              "metadata": {
+                "author": "enrich"
+              }
             }
           ]
         }
@@ -4040,37 +4069,20 @@
               "value": ","
             },
             {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "REPEAT1",
-                  "content": {
-                    "type": "SEQ",
-                    "members": [
-                      {
-                        "type": "STRING",
-                        "value": ","
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "pattern"
-                      }
-                    ]
-                  }
-                },
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "STRING",
-                      "value": ","
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_pattern_list_group1",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
                 }
-              ]
+              },
+              "named": true,
+              "value": "pattern_list_group1",
+              "metadata": {
+                "author": "enrich"
+              }
             }
           ]
         }
@@ -5292,8 +5304,16 @@
               "name": "escape_sequence"
             },
             {
-              "type": "SYMBOL",
-              "name": "_not_escape_sequence"
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_not_escape_sequence"
+              },
+              "named": true,
+              "value": "string_content_group1",
+              "metadata": {
+                "author": "enrich"
+              }
             },
             {
               "type": "SYMBOL",
@@ -5989,6 +6009,121 @@
       "type": "SYMBOL",
       "name": "_except_clause_as_optional1"
     },
+    "_except_clause_group1": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_except_clause_as"
+          },
+          "named": true,
+          "value": "except_clause_as"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_except_clause_list"
+          },
+          "named": true,
+          "value": "except_clause_list"
+        }
+      ]
+    },
+    "_with_clause_group1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "with_item"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "with_item"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": ","
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "_with_clause_group2": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "with_item"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "with_item"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": ","
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
     "_function_definition_optional1": {
       "type": "SEQ",
       "members": [
@@ -6129,6 +6264,77 @@
         }
       ]
     },
+    "_expression_list_group1": {
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ","
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                }
+              ]
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "_simple_pattern_group1": {
+      "type": "PREC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "-"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "integer"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "float"
+              }
+            ]
+          }
+        ]
+      }
+    },
     "_list_pattern_group1": {
       "type": "SEQ",
       "members": [
@@ -6171,7 +6377,7 @@
         }
       ]
     },
-    "_dict_pattern_group1": {
+    "_dict_pattern_group2": {
       "type": "SEQ",
       "members": [
         {
@@ -6199,8 +6405,16 @@
                     "type": "CHOICE",
                     "members": [
                       {
-                        "type": "SYMBOL",
-                        "name": "_key_value_pattern"
+                        "type": "ALIAS",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_key_value_pattern"
+                        },
+                        "named": true,
+                        "value": "dict_pattern_group1",
+                        "metadata": {
+                          "author": "enrich"
+                        }
                       },
                       {
                         "type": "SYMBOL",
@@ -6212,6 +6426,68 @@
               }
             }
           ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": ","
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "_assignment_group1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "SYMBOL",
+            "name": "type"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "right",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_right_hand_side"
+          }
+        }
+      ]
+    },
+    "_pattern_list_group1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "SYMBOL",
+                "name": "pattern"
+              }
+            ]
+          }
         },
         {
           "type": "CHOICE",
@@ -6692,8 +6968,16 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "_key_value_pattern"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_key_value_pattern"
+          },
+          "named": true,
+          "value": "dict_pattern_group1",
+          "metadata": {
+            "author": "enrich"
+          }
         },
         {
           "type": "SYMBOL",
@@ -6991,6 +7275,150 @@
     [
       "as_pattern",
       "_except_clause_as"
+    ],
+    [
+      "_expressions",
+      "expression_list"
+    ],
+    [
+      "_statement",
+      "_simple_statements"
+    ],
+    [
+      "_simple_statements"
+    ],
+    [
+      "future_import_statement",
+      "_import_list"
+    ],
+    [
+      "_import_list"
+    ],
+    [
+      "except_clause",
+      "_except_clause_group1"
+    ],
+    [
+      "_except_clause_group1"
+    ],
+    [
+      "with_clause",
+      "_with_clause_group1"
+    ],
+    [
+      "_with_clause_group1"
+    ],
+    [
+      "with_clause",
+      "_with_clause_group2"
+    ],
+    [
+      "_with_clause_group2"
+    ],
+    [
+      "parameters",
+      "_parameters"
+    ],
+    [
+      "_parameters"
+    ],
+    [
+      "argument_list",
+      "_argument_list_group1"
+    ],
+    [
+      "_argument_list_group1"
+    ],
+    [
+      "expression_list",
+      "_expression_list_group1"
+    ],
+    [
+      "_expression_list_group1"
+    ],
+    [
+      "case_pattern",
+      "_simple_pattern"
+    ],
+    [
+      "_simple_pattern"
+    ],
+    [
+      "_simple_pattern",
+      "_simple_pattern_group1"
+    ],
+    [
+      "_simple_pattern_group1"
+    ],
+    [
+      "_list_pattern",
+      "_list_pattern_group1"
+    ],
+    [
+      "_list_pattern_group1"
+    ],
+    [
+      "dict_pattern",
+      "_key_value_pattern"
+    ],
+    [
+      "_key_value_pattern"
+    ],
+    [
+      "dict_pattern",
+      "_dict_pattern_group2"
+    ],
+    [
+      "_dict_pattern_group2"
+    ],
+    [
+      "tuple_pattern",
+      "_patterns"
+    ],
+    [
+      "_patterns"
+    ],
+    [
+      "assignment",
+      "_assignment_group1"
+    ],
+    [
+      "_assignment_group1"
+    ],
+    [
+      "pattern_list",
+      "_pattern_list_group1"
+    ],
+    [
+      "_pattern_list_group1"
+    ],
+    [
+      "slice",
+      "_slice_group1"
+    ],
+    [
+      "_slice_group1"
+    ],
+    [
+      "list",
+      "_collection_elements"
+    ],
+    [
+      "_collection_elements"
+    ],
+    [
+      "dictionary",
+      "_dictionary_group1"
+    ],
+    [
+      "_dictionary_group1"
+    ],
+    [
+      "string_content",
+      "_not_escape_sequence"
+    ],
+    [
+      "_not_escape_sequence"
     ]
   ],
   "precedences": [],

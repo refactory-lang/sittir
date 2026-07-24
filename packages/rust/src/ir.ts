@@ -918,55 +918,6 @@ export const ir = {
 		from: FR.coerceToYieldExpression,
 		strict: F.buildYieldExpression
 	}),
-	argumentsGroup1: _attach(FR.coerceToArgumentsGroup1, {
-		from: FR.coerceToArgumentsGroup1,
-		strict: F.buildArgumentsGroup1
-	}),
-	visibilityModifierGroup1: _attach(FR.coerceToVisibilityModifierGroup1, {
-		from: FR.coerceToVisibilityModifierGroup1,
-		strict: F.buildVisibilityModifierGroup1
-	}),
-	enumVariantListGroup1: _attach(FR.coerceToEnumVariantListGroup1, {
-		from: FR.coerceToEnumVariantListGroup1,
-		strict: F.buildEnumVariantListGroup1
-	}),
-	fieldDeclarationListGroup1: _attach(FR.coerceToFieldDeclarationListGroup1, {
-		from: FR.coerceToFieldDeclarationListGroup1,
-		strict: F.buildFieldDeclarationListGroup1
-	}),
-	fieldInitializerListGroup1: _attach(FR.coerceToFieldInitializerListGroup1, {
-		from: FR.coerceToFieldInitializerListGroup1,
-		strict: F.buildFieldInitializerListGroup1
-	}),
-	orderedFieldDeclarationListGroup1: _attach(FR.coerceToOrderedFieldDeclarationListGroup1, {
-		from: FR.coerceToOrderedFieldDeclarationListGroup1,
-		strict: F.buildOrderedFieldDeclarationListGroup1
-	}),
-	parametersGroup1: _attach(FR.coerceToParametersGroup1, {
-		from: FR.coerceToParametersGroup1,
-		strict: F.buildParametersGroup1
-	}),
-	slicePatternGroup1: _attach(FR.coerceToSlicePatternGroup1, {
-		from: FR.coerceToSlicePatternGroup1,
-		strict: F.buildSlicePatternGroup1
-	}),
-	structPatternGroup1: _attach(FR.coerceToStructPatternGroup1, {
-		from: FR.coerceToStructPatternGroup1,
-		strict: F.buildStructPatternGroup1
-	}),
-	tuplePatternGroup1: _attach(FR.coerceToTuplePatternGroup1, {
-		from: FR.coerceToTuplePatternGroup1,
-		strict: F.buildTuplePatternGroup1
-	}),
-	useBoundsGroup1: _attach(FR.coerceToUseBoundsGroup1, {
-		from: FR.coerceToUseBoundsGroup1,
-		strict: F.buildUseBoundsGroup1
-	}),
-	useListGroup1: _attach(FR.coerceToUseListGroup1, { from: FR.coerceToUseListGroup1, strict: F.buildUseListGroup1 }),
-	whereClauseGroup1: _attach(FR.coerceToWhereClauseGroup1, {
-		from: FR.coerceToWhereClauseGroup1,
-		strict: F.buildWhereClauseGroup1
-	}),
 
 	// Keyword factories
 	crate: F.buildCrate,

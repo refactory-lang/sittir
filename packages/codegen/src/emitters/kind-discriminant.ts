@@ -30,6 +30,14 @@ export interface KindEnumEntry {
 	readonly member: string;
 	readonly id: number;
 	/**
+	 * The alias occurrence's own runtime symbol id, when this kind's ONLY
+	 * visible identity comes from an `alias_sym_*` occurrence distinct from
+	 * its plain `sym_*` storage id (see `GeneratedIdEntry.parseId`). Runtime
+	 * `$type` dispatch tables must also map THIS id to the kind — it's what
+	 * tree-sitter actually emits at the aliased position.
+	 */
+	readonly parseId?: number;
+	/**
 	 * Symbol name from `ts_symbol_names[]`, when distinct from `kind`.
 	 * Anonymous tokens (`anon_sym_PLUS`) carry the literal text (`"+"`)
 	 * here while `kind` is the parser symbol name (`"PLUS"`). Used to
@@ -112,7 +120,7 @@ export function collectKindEntries(
 		const symbolName =
 			row.parser?.symbolName !== undefined && row.parser.symbolName !== kind ? row.parser.symbolName : undefined;
 		const anon = row.parser?.anon ?? false;
-		entries.push({ kind, member, id: row.id, symbolName, anon: anon || undefined });
+		entries.push({ kind, member, id: row.id, parseId: row.parseId, symbolName, anon: anon || undefined });
 	}
 	entries.sort((a, b) => a.id - b.id || a.kind.localeCompare(b.kind));
 	return entries;
@@ -281,6 +289,8 @@ function toIdMap(ids: GeneratedIdTables['kindIds']): Map<string, number> {
 
 interface CatalogRow {
 	readonly id?: number;
+	/** See `GeneratedIdEntry.parseId` — the alias occurrence's own runtime id, when distinct from `id`. */
+	readonly parseId?: number;
 	readonly parser?: {
 		readonly cSymbol: string;
 		readonly parserName: string;

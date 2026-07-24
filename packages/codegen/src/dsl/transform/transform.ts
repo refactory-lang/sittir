@@ -27,7 +27,8 @@ import {
 	reconstructWrapper,
 	reconstructPrec,
 	reconstructContainer,
-	wrapInPrecStack
+	wrapInPrecStack,
+	getGroupLiftRuleBody
 } from './transform-path.ts';
 import { isFieldPlaceholder, maybeKeywordSymbol } from '../primitives/field.ts';
 import type { FieldPlaceholder } from '../primitives/field.ts';
@@ -682,6 +683,63 @@ function resolvePatch(
 		if (!parentKind) {
 			throw new Error(`variant('${patch.name}'): no current rule kind — variant() must be used inside a rule callback`);
 		}
+		const visibleName = polymorphVisibleName(parentKind, patch.name);
+		// PR 3 (2026-07-21 union-slot design): the arm may already be an
+		// enrich-minted visible-group alias (`mintStructuredChoiceArm` /
+		// `applyClauseHoist`, widened to fire at bare choice-arm positions —
+		// see dsl/enrich.ts) by the time variant() sees it. Its target is,
+		// by construction of that mint gate, already a materializing named
+		// kind — checked here BEFORE `variantBranchIsUnmaterializable`
+		// below, which can't see through a SYMBOL content to the hidden
+		// rule's own body and would misjudge an alias-wrapped symbol ref as
+		// a unit production. variant() just RENAMES the alias to the
+		// friendlier `<parent>_<suffix>` identity instead of wrapping a
+		// second hidden rule around the same content ("mint = promote, not
+		// synthesize" — matches enrich's own convention, avoids a double mint).
+		if ((originalMember as { type?: string }).type === 'ALIAS') {
+			// Label-only rename: we can't safely delete a rule from the base
+			// grammar's rules map (tree-sitter tolerates dead/unreferenced
+			// entries, but relocating-then-deleting risks stranding OTHER
+			// consumers keyed by the old name — e.g. enrich's own
+			// getEnrichClauseGroupOwners snapshot, taken before this rename
+			// runs). Just relabel the outer alias's visible identity to what
+			// variant()/polymorphs intends; the underlying enrich-minted
+			// hidden rule keeps its own name. Double-mint collisions this
+			// could otherwise cause are prevented upstream now — enrich's
+			// mintStructuredChoiceArm skips minting for a choice arm that
+			// structurally recurses through a bare-symbol sibling arm (see
+			// armStartsWithSymbol in dsl/enrich.ts) — so this rename only
+			// ever relabels a mint that has no competing identity to collide
+			// with.
+			const content = (originalMember as { content?: unknown }).content as
+				| { type?: string; name?: string }
+				| undefined;
+			if (content?.type === 'SYMBOL' && typeof content.name === 'string') {
+				const body = getGroupLiftRuleBody(content.name);
+				if (body !== undefined) {
+					// Deposit under the NESTED polymorph's own hidden name (not the
+					// original enrich group-lift name) and repoint the alias's
+					// `content` there too — a nested `polymorphs:` config keyed on
+					// this exact deposit name (e.g. typescript's cascaded
+					// `_export_statement_default_from_arm: {...}`) further splits the
+					// deposited body IN PLACE under that name. Leaving `content`
+					// pointing at the original group-lift symbol would strand this
+					// alias on the pre-split raw mint while the real, fully-split
+					// content lives — unreferenced by this alias — under the deposit
+					// name (confirmed: `_export_statement_group2` vs. the properly
+					// split `_export_statement_default_from_arm`, PR 3 storagename-
+					// collision root cause).
+					const depositName = polymorphHiddenName(parentKind, patch.name);
+					wireRegisterSyntheticRule(depositName, body);
+					return {
+						...(originalMember as object),
+						content: { ...content, name: depositName },
+						value: visibleName
+					} as unknown as RuntimeRule;
+				}
+			}
+			return { ...(originalMember as object), value: visibleName } as unknown as RuntimeRule;
+		}
 		// A transparent unit-production branch (single named symbol via
 		// fields/prec, no anonymous token) cannot become a CST node:
 		// tree-sitter inlines it and bubbles the inner field up to the
@@ -699,7 +757,6 @@ function resolvePatch(
 				metadata: makeRuleMetadata({ fieldSource: 'override' })
 			} as unknown as RuntimeRule;
 		}
-		const visibleName = polymorphVisibleName(parentKind, patch.name);
 		const hiddenName = polymorphHiddenName(parentKind, patch.name);
 		return registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack));
 	}

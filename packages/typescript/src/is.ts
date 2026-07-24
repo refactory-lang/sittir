@@ -47,22 +47,22 @@ export interface IsGuards {
 	): v is T & { readonly $type: TSKindId.ClassHeritageExtendsClause };
 	ExportClauseGroup1<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId._ExportClauseGroup1 };
+	): v is T & { readonly $type: TSKindId.ExportClauseGroup1 };
 	ExportStatementDefault<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ExportStatementDefault };
+	ExportStatementDefaultClauseFrom<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.ExportStatementDefaultClauseFrom };
 	ExportStatementDefaultFromArm<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArm };
-	ExportStatementDefaultFromArmClauseFrom<T extends { readonly $type: number }>(
+	ExportStatementDefaultNsFrom<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArmClauseFrom };
-	ExportStatementDefaultFromArmNsFrom<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.ExportStatementDefaultNsFrom };
+	ExportStatementDefaultStarFrom<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArmNsFrom };
-	ExportStatementDefaultFromArmStarFrom<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ExportStatementDefaultFromArmStarFrom };
+	): v is T & { readonly $type: TSKindId.ExportStatementDefaultStarFrom };
 	ExportStatementEqualsExport<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ExportStatementEqualsExport };
@@ -75,22 +75,26 @@ export interface IsGuards {
 	ForHeaderLhs<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForHeaderLhs };
 	FormalParametersGroup1<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId._FormalParametersGroup1 };
+	): v is T & { readonly $type: TSKindId.FormalParametersGroup1 };
 	ImportClauseDefaultImport<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ImportClauseDefaultImport };
 	ImportClauseGroup1<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId._ImportClauseGroup1 };
+	): v is T & { readonly $type: TSKindId.ImportClauseGroup1 };
+	ImportStatementGroup1<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.ImportStatementGroup1 };
+	LhsExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LhsExpression };
 	NamedImportsGroup1<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId._NamedImportsGroup1 };
+	): v is T & { readonly $type: TSKindId.NamedImportsGroup1 };
 	PublicFieldDefinitionDeclareFirst<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
 	StringDouble<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StringDouble };
 	StringSingle<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StringSingle };
-	TupleTypeGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId._TupleTypeGroup1 };
+	TupleTypeGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TupleTypeGroup1 };
 	abstractClassDeclaration<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.AbstractClassDeclaration };
@@ -225,6 +229,7 @@ export interface IsGuards {
 	lookupType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LookupType };
 	mappedTypeClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MappedTypeClause };
 	memberExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MemberExpression };
+	metaProperty<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MetaProperty };
 	methodDefinition<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MethodDefinition };
 	methodSignature<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MethodSignature };
 	module<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Module };
@@ -378,22 +383,22 @@ export interface AssertGuards {
 	ClassHeritageExtendsClause(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ClassHeritageExtendsClause };
-	ExportClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ExportClauseGroup1 };
+	ExportClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExportClauseGroup1 };
 	ExportStatementDefault(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ExportStatementDefault };
+	ExportStatementDefaultClauseFrom(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.ExportStatementDefaultClauseFrom };
 	ExportStatementDefaultFromArm(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArm };
-	ExportStatementDefaultFromArmClauseFrom(v: {
+	ExportStatementDefaultNsFrom(v: {
 		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArmClauseFrom };
-	ExportStatementDefaultFromArmNsFrom(v: {
+	}): asserts v is { readonly $type: TSKindId.ExportStatementDefaultNsFrom };
+	ExportStatementDefaultStarFrom(v: {
 		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArmNsFrom };
-	ExportStatementDefaultFromArmStarFrom(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.ExportStatementDefaultFromArmStarFrom };
+	}): asserts v is { readonly $type: TSKindId.ExportStatementDefaultStarFrom };
 	ExportStatementEqualsExport(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ExportStatementEqualsExport };
@@ -406,18 +411,20 @@ export interface AssertGuards {
 	ForHeaderLhs(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForHeaderLhs };
 	FormalParametersGroup1(v: {
 		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId._FormalParametersGroup1 };
+	}): asserts v is { readonly $type: TSKindId.FormalParametersGroup1 };
 	ImportClauseDefaultImport(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ImportClauseDefaultImport };
-	ImportClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._ImportClauseGroup1 };
-	NamedImportsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._NamedImportsGroup1 };
+	ImportClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportClauseGroup1 };
+	ImportStatementGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImportStatementGroup1 };
+	LhsExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LhsExpression };
+	NamedImportsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NamedImportsGroup1 };
 	PublicFieldDefinitionDeclareFirst(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
 	StringDouble(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StringDouble };
 	StringSingle(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StringSingle };
-	TupleTypeGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId._TupleTypeGroup1 };
+	TupleTypeGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleTypeGroup1 };
 	abstractClassDeclaration(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.AbstractClassDeclaration };
@@ -516,6 +523,7 @@ export interface AssertGuards {
 	lookupType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LookupType };
 	mappedTypeClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MappedTypeClause };
 	memberExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MemberExpression };
+	metaProperty(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MetaProperty };
 	methodDefinition(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MethodDefinition };
 	methodSignature(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MethodSignature };
 	module(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Module };
@@ -635,38 +643,38 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boole
 }
 
 const _supertype_destructuringPattern_ids = new Set<number>([214, 218]);
-const _supertype_expressions_ids = new Set<number>([246]);
-const _supertype_formalParameter_ids = new Set<number>([296, 297]);
-const _supertype_identifier_ids = new Set<number>([112, 1]);
+const _supertype_expressions_ids = new Set<number>([247]);
+const _supertype_formalParameter_ids = new Set<number>([297, 298]);
+const _supertype_identifier_ids = new Set<number>([110, 1]);
 const _supertype_importIdentifier_ids = new Set<number>([1]);
 const _supertype_jsxAttributeName_ids = new Set<number>([1]);
 const _supertype_jsxChild_ids = new Set<number>([163]);
 const _supertype_jsxElementName_ids = new Set<number>([1, 219]);
 const _supertype_jsxIdentifier_ids = new Set<number>([1]);
-const _supertype_moduleExportName_ids = new Set<number>([1, 247]);
-const _supertype_propertyIdentifier_ids = new Set<number>([1, 424]);
-const _supertype_propertyName_ids = new Set<number>([1, 104, 247, 103, 265]);
-const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 424]);
-const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 424]);
-const _supertype_statementIdentifier_ids = new Set<number>([1, 424]);
-const _supertype_tupleTypeMember_ids = new Set<number>([308, 309, 310, 311]);
+const _supertype_moduleExportName_ids = new Set<number>([1, 248]);
+const _supertype_propertyIdentifier_ids = new Set<number>([1, 431]);
+const _supertype_propertyName_ids = new Set<number>([1, 104, 248, 103, 266]);
+const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 431]);
+const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 431]);
+const _supertype_statementIdentifier_ids = new Set<number>([1, 431]);
+const _supertype_tupleTypeMember_ids = new Set<number>([309, 310, 311, 312]);
 const _supertype_declaration_ids = new Set<number>([
-	224, 226, 221, 184, 183, 271, 282, 283, 284, 293, 290, 288, 286, 281
+	224, 226, 221, 184, 183, 272, 283, 284, 285, 294, 291, 289, 287, 282
 ]);
 const _supertype_expression_ids = new Set<number>([
-	274, 275, 276, 284, 273, 236, 238, 233, 244, 243, 242, 245, 232, 212
+	275, 276, 277, 285, 274, 237, 239, 233, 245, 244, 243, 246, 232, 212
 ]);
-const _supertype_pattern_ids = new Set<number>([234, 235, 112, 1, 214, 218, 268, 260]);
+const _supertype_pattern_ids = new Set<number>([236, 261]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	235, 234, 209, 112, 1, 424, 107, 108, 103, 247, 248, 250, 109, 110, 111, 213, 217, 223, 227, 225, 220, 251, 231, 268
+	235, 234, 209, 110, 1, 431, 105, 106, 103, 248, 249, 251, 107, 108, 109, 213, 217, 223, 227, 225, 220, 252, 231, 269
 ]);
 const _supertype_primaryType_ids = new Set<number>([
-	334, 335, 429, 287, 319, 337, 346, 347, 333, 326, 327, 107, 330, 328, 318, 316, 350, 349
+	335, 336, 436, 288, 320, 338, 347, 348, 334, 327, 328, 105, 331, 329, 319, 317, 351, 350
 ]);
 const _supertype_statement_ids = new Set<number>([
 	167, 174, 199, 182, 186, 188, 189, 190, 191, 193, 194, 195, 196, 197, 198, 200, 201, 203
 ]);
-const _supertype_type_ids = new Set<number>([351, 348, 313, 317, 303, 304]);
+const _supertype_type_ids = new Set<number>([352, 349, 314, 318, 304, 305]);
 
 const _kindIdByKind = new Map<string, number>([
 	['identifier', TSKindId.Identifier],
@@ -800,6 +808,7 @@ const _kindIdByKind = new Map<string, number>([
 	['await_expression', TSKindId.AwaitExpression],
 	['member_expression', TSKindId.MemberExpression],
 	['subscript_expression', TSKindId.SubscriptExpression],
+	['_lhs_expression', TSKindId.LhsExpression],
 	['assignment_expression', TSKindId.AssignmentExpression],
 	['augmented_assignment_expression', TSKindId.AugmentedAssignmentExpression],
 	['_initializer', TSKindId.Initializer],
@@ -907,29 +916,34 @@ const _kindIdByKind = new Map<string, number>([
 	['union_type', TSKindId.UnionType],
 	['intersection_type', TSKindId.IntersectionType],
 	['function_type', TSKindId.FunctionType],
-	['_export_clause_group1', TSKindId._ExportClauseGroup1],
-	['_import_clause_group1', TSKindId._ImportClauseGroup1],
-	['_named_imports_group1', TSKindId._NamedImportsGroup1],
-	['_catch_clause_group1', TSKindId._CatchClauseGroup1],
-	['_formal_parameters_group1', TSKindId._FormalParametersGroup1],
-	['_enum_body_group1', TSKindId._EnumBodyGroup1],
-	['_tuple_type_group1', TSKindId._TupleTypeGroup1],
+	['_export_clause_group1', TSKindId.ExportClauseGroup1],
+	['_import_statement_group1', TSKindId.ImportStatementGroup1],
+	['_import_clause_group1', TSKindId.ImportClauseGroup1],
+	['_named_imports_group1', TSKindId.NamedImportsGroup1],
+	['_variable_declarator_group1', TSKindId.VariableDeclaratorGroup1],
+	['_catch_clause_group1', TSKindId.CatchClauseGroup1],
+	['_meta_property_group1', TSKindId.MetaPropertyGroup1],
+	['_meta_property_group2', TSKindId.MetaPropertyGroup2],
+	['_formal_parameters_group1', TSKindId.FormalParametersGroup1],
+	['_enum_body_group1', TSKindId.EnumBodyGroup1],
+	['_tuple_type_group1', TSKindId.TupleTypeGroup1],
 	['_ambient_declaration_global', TSKindId.AmbientDeclarationGlobal],
 	['_ambient_declaration_module', TSKindId.AmbientDeclarationModule],
 	['object_type_content', TSKindId.ObjectTypeContent],
 	['_export_statement_default', TSKindId.ExportStatementDefault],
-	['_export_statement_default_from_arm', TSKindId.ExportStatementDefaultFromArm],
-	['_export_statement_default_decl_arm', TSKindId.ExportStatementDefaultDeclArm],
-	['_export_statement_default_decl_arm_default_kw', TSKindId.ExportStatementDefaultDeclArmDefaultKw],
 	['_arrow_function_parameter', TSKindId.ArrowFunctionParameter],
+	['_arrow_function__call_signature', TSKindId.ArrowFunctionUCallSignature],
 	['_class_heritage_extends_clause', TSKindId.ClassHeritageExtendsClause],
 	['_import_clause_default_import', TSKindId.ImportClauseDefaultImport],
 	['_import_specifier_as', TSKindId.ImportSpecifierAs],
 	['_index_signature_colon', TSKindId.IndexSignatureColon],
-	['_export_statement_default_from_arm_star_from', TSKindId.ExportStatementDefaultFromArmStarFrom],
-	['_export_statement_default_from_arm_ns_from', TSKindId.ExportStatementDefaultFromArmNsFrom],
-	['_export_statement_default_from_arm_clause_from', TSKindId.ExportStatementDefaultFromArmClauseFrom],
-	['_export_statement_default_decl_arm_default_kw_value', TSKindId.ExportStatementDefaultDeclArmDefaultKwValue],
+	['_export_statement_default_from_arm', TSKindId.ExportStatementDefaultFromArm],
+	['_export_statement_default_decl_arm', TSKindId.ExportStatementDefaultDeclArm],
+	['_export_statement_default_star_from', TSKindId.ExportStatementDefaultStarFrom],
+	['_export_statement_default_ns_from', TSKindId.ExportStatementDefaultNsFrom],
+	['_export_statement_default_clause_from', TSKindId.ExportStatementDefaultClauseFrom],
+	['_export_statement_default_default_kw', TSKindId.ExportStatementDefaultDefaultKw],
+	['_export_statement_default_value', TSKindId.ExportStatementDefaultValue],
 	['_class_body_method', TSKindId.ClassBodyMethod],
 	['_class_body_method_sig', TSKindId.ClassBodyMethodSig],
 	['_class_body_member', TSKindId.ClassBodyMember],
@@ -960,24 +974,26 @@ export const is = {
 	ArrowFunctionParameter: _g(TSKindId.ArrowFunctionParameter),
 	ClassBodyMethodSig: _g(TSKindId.ClassBodyMethodSig),
 	ClassHeritageExtendsClause: _g(TSKindId.ClassHeritageExtendsClause),
-	ExportClauseGroup1: _g(TSKindId._ExportClauseGroup1),
+	ExportClauseGroup1: _g(TSKindId.ExportClauseGroup1),
 	ExportStatementDefault: _g(TSKindId.ExportStatementDefault),
+	ExportStatementDefaultClauseFrom: _g(TSKindId.ExportStatementDefaultClauseFrom),
 	ExportStatementDefaultFromArm: _g(TSKindId.ExportStatementDefaultFromArm),
-	ExportStatementDefaultFromArmClauseFrom: _g(TSKindId.ExportStatementDefaultFromArmClauseFrom),
-	ExportStatementDefaultFromArmNsFrom: _g(TSKindId.ExportStatementDefaultFromArmNsFrom),
-	ExportStatementDefaultFromArmStarFrom: _g(TSKindId.ExportStatementDefaultFromArmStarFrom),
+	ExportStatementDefaultNsFrom: _g(TSKindId.ExportStatementDefaultNsFrom),
+	ExportStatementDefaultStarFrom: _g(TSKindId.ExportStatementDefaultStarFrom),
 	ExportStatementEqualsExport: _g(TSKindId.ExportStatementEqualsExport),
 	ExportStatementNamespaceExport: _g(TSKindId.ExportStatementNamespaceExport),
 	ExportStatementTypeExport: _g(TSKindId.ExportStatementTypeExport),
 	ForHeaderLhs: _g(TSKindId.ForHeaderLhs),
-	FormalParametersGroup1: _g(TSKindId._FormalParametersGroup1),
+	FormalParametersGroup1: _g(TSKindId.FormalParametersGroup1),
 	ImportClauseDefaultImport: _g(TSKindId.ImportClauseDefaultImport),
-	ImportClauseGroup1: _g(TSKindId._ImportClauseGroup1),
-	NamedImportsGroup1: _g(TSKindId._NamedImportsGroup1),
+	ImportClauseGroup1: _g(TSKindId.ImportClauseGroup1),
+	ImportStatementGroup1: _g(TSKindId.ImportStatementGroup1),
+	LhsExpression: _g(TSKindId.LhsExpression),
+	NamedImportsGroup1: _g(TSKindId.NamedImportsGroup1),
 	PublicFieldDefinitionDeclareFirst: _g(TSKindId.PublicFieldDefinitionDeclareFirst),
 	StringDouble: _g(TSKindId.StringDouble),
 	StringSingle: _g(TSKindId.StringSingle),
-	TupleTypeGroup1: _g(TSKindId._TupleTypeGroup1),
+	TupleTypeGroup1: _g(TSKindId.TupleTypeGroup1),
 	abstractClassDeclaration: _g(TSKindId.AbstractClassDeclaration),
 	abstractMethodSignature: _g(TSKindId.AbstractMethodSignature),
 	addingTypeAnnotation: _g(TSKindId.AddingTypeAnnotation),
@@ -1060,6 +1076,7 @@ export const is = {
 	lookupType: _g(TSKindId.LookupType),
 	mappedTypeClause: _g(TSKindId.MappedTypeClause),
 	memberExpression: _g(TSKindId.MemberExpression),
+	metaProperty: _g(TSKindId.MetaProperty),
 	methodDefinition: _g(TSKindId.MethodDefinition),
 	methodSignature: _g(TSKindId.MethodSignature),
 	module: _g(TSKindId.Module),
@@ -1189,21 +1206,21 @@ export const assert = {
 	ClassHeritageExtendsClause: _makeAssert('ClassHeritageExtendsClause', is.ClassHeritageExtendsClause as _AnyGuard),
 	ExportClauseGroup1: _makeAssert('ExportClauseGroup1', is.ExportClauseGroup1 as _AnyGuard),
 	ExportStatementDefault: _makeAssert('ExportStatementDefault', is.ExportStatementDefault as _AnyGuard),
+	ExportStatementDefaultClauseFrom: _makeAssert(
+		'ExportStatementDefaultClauseFrom',
+		is.ExportStatementDefaultClauseFrom as _AnyGuard
+	),
 	ExportStatementDefaultFromArm: _makeAssert(
 		'ExportStatementDefaultFromArm',
 		is.ExportStatementDefaultFromArm as _AnyGuard
 	),
-	ExportStatementDefaultFromArmClauseFrom: _makeAssert(
-		'ExportStatementDefaultFromArmClauseFrom',
-		is.ExportStatementDefaultFromArmClauseFrom as _AnyGuard
+	ExportStatementDefaultNsFrom: _makeAssert(
+		'ExportStatementDefaultNsFrom',
+		is.ExportStatementDefaultNsFrom as _AnyGuard
 	),
-	ExportStatementDefaultFromArmNsFrom: _makeAssert(
-		'ExportStatementDefaultFromArmNsFrom',
-		is.ExportStatementDefaultFromArmNsFrom as _AnyGuard
-	),
-	ExportStatementDefaultFromArmStarFrom: _makeAssert(
-		'ExportStatementDefaultFromArmStarFrom',
-		is.ExportStatementDefaultFromArmStarFrom as _AnyGuard
+	ExportStatementDefaultStarFrom: _makeAssert(
+		'ExportStatementDefaultStarFrom',
+		is.ExportStatementDefaultStarFrom as _AnyGuard
 	),
 	ExportStatementEqualsExport: _makeAssert('ExportStatementEqualsExport', is.ExportStatementEqualsExport as _AnyGuard),
 	ExportStatementNamespaceExport: _makeAssert(
@@ -1215,6 +1232,8 @@ export const assert = {
 	FormalParametersGroup1: _makeAssert('FormalParametersGroup1', is.FormalParametersGroup1 as _AnyGuard),
 	ImportClauseDefaultImport: _makeAssert('ImportClauseDefaultImport', is.ImportClauseDefaultImport as _AnyGuard),
 	ImportClauseGroup1: _makeAssert('ImportClauseGroup1', is.ImportClauseGroup1 as _AnyGuard),
+	ImportStatementGroup1: _makeAssert('ImportStatementGroup1', is.ImportStatementGroup1 as _AnyGuard),
+	LhsExpression: _makeAssert('LhsExpression', is.LhsExpression as _AnyGuard),
 	NamedImportsGroup1: _makeAssert('NamedImportsGroup1', is.NamedImportsGroup1 as _AnyGuard),
 	PublicFieldDefinitionDeclareFirst: _makeAssert(
 		'PublicFieldDefinitionDeclareFirst',
@@ -1314,6 +1333,7 @@ export const assert = {
 	lookupType: _makeAssert('lookupType', is.lookupType as _AnyGuard),
 	mappedTypeClause: _makeAssert('mappedTypeClause', is.mappedTypeClause as _AnyGuard),
 	memberExpression: _makeAssert('memberExpression', is.memberExpression as _AnyGuard),
+	metaProperty: _makeAssert('metaProperty', is.metaProperty as _AnyGuard),
 	methodDefinition: _makeAssert('methodDefinition', is.methodDefinition as _AnyGuard),
 	methodSignature: _makeAssert('methodSignature', is.methodSignature as _AnyGuard),
 	module: _makeAssert('module', is.module as _AnyGuard),

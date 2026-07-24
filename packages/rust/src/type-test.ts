@@ -265,6 +265,10 @@ import type {
 	RawStringLiteral,
 	RawStringLiteralContent,
 	RawStringLiteralContentTree,
+	RawStringLiteralEnd,
+	RawStringLiteralEndTree,
+	RawStringLiteralStart,
+	RawStringLiteralStartTree,
 	RawStringLiteralTree,
 	RefPattern,
 	RefPatternTree,
@@ -407,8 +411,6 @@ import type {
 	UseListGroup1Tree,
 	UseListTree,
 	UseWildcard,
-	UseWildcardGroup1,
-	UseWildcardGroup1Tree,
 	UseWildcardTree,
 	VariadicParameter,
 	VariadicParameterTree,
@@ -425,33 +427,7 @@ import type {
 	WhileExpression,
 	WhileExpressionTree,
 	YieldExpression,
-	YieldExpressionTree,
-	_ArgumentsGroup1,
-	_ArgumentsGroup1Tree,
-	_EnumVariantListGroup1,
-	_EnumVariantListGroup1Tree,
-	_FieldDeclarationListGroup1,
-	_FieldDeclarationListGroup1Tree,
-	_FieldInitializerListGroup1,
-	_FieldInitializerListGroup1Tree,
-	_OrderedFieldDeclarationListGroup1,
-	_OrderedFieldDeclarationListGroup1Tree,
-	_ParametersGroup1,
-	_ParametersGroup1Tree,
-	_SlicePatternGroup1,
-	_SlicePatternGroup1Tree,
-	_StructPatternGroup1,
-	_StructPatternGroup1Tree,
-	_TuplePatternGroup1,
-	_TuplePatternGroup1Tree,
-	_UseBoundsGroup1,
-	_UseBoundsGroup1Tree,
-	_UseListGroup1,
-	_UseListGroup1Tree,
-	_VisibilityModifierGroup1,
-	_VisibilityModifierGroup1Tree,
-	_WhereClauseGroup1,
-	_WhereClauseGroup1Tree
+	YieldExpressionTree
 } from './types.js';
 import { TSKindId } from './types.js';
 
@@ -459,7 +435,7 @@ type _TypeExtends<A, B> = A extends B ? true : false;
 type _TypeAssert<T extends true> = T;
 
 // --- Concrete interface `$type` discriminant ---
-export type _Type__ArgumentsGroup1 = _TypeAssert<_TypeExtends<_ArgumentsGroup1['$type'], TSKindId._ArgumentsGroup1>>;
+export type _Type_ArgumentsGroup1 = _TypeAssert<_TypeExtends<ArgumentsGroup1['$type'], TSKindId.ArgumentsGroup1>>;
 export type _Type_AttributedArgument = _TypeAssert<
 	_TypeExtends<AttributedArgument['$type'], TSKindId.AttributedArgument>
 >;
@@ -487,17 +463,17 @@ export type _Type_DelimTokenTreeBracket = _TypeAssert<
 export type _Type_DelimTokenTreeParen = _TypeAssert<
 	_TypeExtends<DelimTokenTreeParen['$type'], TSKindId.DelimTokenTreeParen>
 >;
-export type _Type__EnumVariantListGroup1 = _TypeAssert<
-	_TypeExtends<_EnumVariantListGroup1['$type'], TSKindId._EnumVariantListGroup1>
+export type _Type_EnumVariantListGroup1 = _TypeAssert<
+	_TypeExtends<EnumVariantListGroup1['$type'], TSKindId.EnumVariantListGroup1>
 >;
 export type _Type_ExpressionStatementWithSemi = _TypeAssert<
 	_TypeExtends<ExpressionStatementWithSemi['$type'], TSKindId.ExpressionStatementWithSemi>
 >;
-export type _Type__FieldDeclarationListGroup1 = _TypeAssert<
-	_TypeExtends<_FieldDeclarationListGroup1['$type'], TSKindId._FieldDeclarationListGroup1>
+export type _Type_FieldDeclarationListGroup1 = _TypeAssert<
+	_TypeExtends<FieldDeclarationListGroup1['$type'], TSKindId.FieldDeclarationListGroup1>
 >;
-export type _Type__FieldInitializerListGroup1 = _TypeAssert<
-	_TypeExtends<_FieldInitializerListGroup1['$type'], TSKindId._FieldInitializerListGroup1>
+export type _Type_FieldInitializerListGroup1 = _TypeAssert<
+	_TypeExtends<FieldInitializerListGroup1['$type'], TSKindId.FieldInitializerListGroup1>
 >;
 export type _Type_FunctionTypeFnForm = _TypeAssert<
 	_TypeExtends<FunctionTypeFnForm['$type'], TSKindId.FunctionTypeFnForm>
@@ -517,18 +493,18 @@ export type _Type_MacroDefinitionBracket = _TypeAssert<
 export type _Type_MacroDefinitionParen = _TypeAssert<
 	_TypeExtends<MacroDefinitionParen['$type'], TSKindId.MacroDefinitionParen>
 >;
-export type _Type__OrderedFieldDeclarationListGroup1 = _TypeAssert<
-	_TypeExtends<_OrderedFieldDeclarationListGroup1['$type'], TSKindId._OrderedFieldDeclarationListGroup1>
+export type _Type_OrderedFieldDeclarationListGroup1 = _TypeAssert<
+	_TypeExtends<OrderedFieldDeclarationListGroup1['$type'], TSKindId.OrderedFieldDeclarationListGroup1>
 >;
-export type _Type__ParametersGroup1 = _TypeAssert<_TypeExtends<_ParametersGroup1['$type'], TSKindId._ParametersGroup1>>;
+export type _Type_ParametersGroup1 = _TypeAssert<_TypeExtends<ParametersGroup1['$type'], TSKindId.ParametersGroup1>>;
 export type _Type_ReferenceExpressionRawMut = _TypeAssert<
 	_TypeExtends<ReferenceExpressionRawMut['$type'], TSKindId.ReferenceExpressionRawMut>
 >;
-export type _Type__SlicePatternGroup1 = _TypeAssert<
-	_TypeExtends<_SlicePatternGroup1['$type'], TSKindId._SlicePatternGroup1>
+export type _Type_SlicePatternGroup1 = _TypeAssert<
+	_TypeExtends<SlicePatternGroup1['$type'], TSKindId.SlicePatternGroup1>
 >;
-export type _Type__StructPatternGroup1 = _TypeAssert<
-	_TypeExtends<_StructPatternGroup1['$type'], TSKindId._StructPatternGroup1>
+export type _Type_StructPatternGroup1 = _TypeAssert<
+	_TypeExtends<StructPatternGroup1['$type'], TSKindId.StructPatternGroup1>
 >;
 export type _Type_TokenTreeBrace = _TypeAssert<_TypeExtends<TokenTreeBrace['$type'], TSKindId.TokenTreeBrace>>;
 export type _Type_TokenTreeBracket = _TypeAssert<_TypeExtends<TokenTreeBracket['$type'], TSKindId.TokenTreeBracket>>;
@@ -542,19 +518,16 @@ export type _Type_TokenTreePatternBracket = _TypeAssert<
 export type _Type_TokenTreePatternParen = _TypeAssert<
 	_TypeExtends<TokenTreePatternParen['$type'], TSKindId.TokenTreePatternParen>
 >;
-export type _Type__TuplePatternGroup1 = _TypeAssert<
-	_TypeExtends<_TuplePatternGroup1['$type'], TSKindId._TuplePatternGroup1>
+export type _Type_TuplePatternGroup1 = _TypeAssert<
+	_TypeExtends<TuplePatternGroup1['$type'], TSKindId.TuplePatternGroup1>
 >;
 export type _Type_TypeArgument = _TypeAssert<_TypeExtends<TypeArgument['$type'], TSKindId.TypeArgument>>;
-export type _Type__UseBoundsGroup1 = _TypeAssert<_TypeExtends<_UseBoundsGroup1['$type'], TSKindId._UseBoundsGroup1>>;
-export type _Type__UseListGroup1 = _TypeAssert<_TypeExtends<_UseListGroup1['$type'], TSKindId._UseListGroup1>>;
-export type _Type_UseWildcardGroup1 = _TypeAssert<_TypeExtends<UseWildcardGroup1['$type'], '_use_wildcard_group1'>>;
-export type _Type__VisibilityModifierGroup1 = _TypeAssert<
-	_TypeExtends<_VisibilityModifierGroup1['$type'], TSKindId._VisibilityModifierGroup1>
+export type _Type_UseBoundsGroup1 = _TypeAssert<_TypeExtends<UseBoundsGroup1['$type'], TSKindId.UseBoundsGroup1>>;
+export type _Type_UseListGroup1 = _TypeAssert<_TypeExtends<UseListGroup1['$type'], TSKindId.UseListGroup1>>;
+export type _Type_VisibilityModifierGroup1 = _TypeAssert<
+	_TypeExtends<VisibilityModifierGroup1['$type'], TSKindId.VisibilityModifierGroup1>
 >;
-export type _Type__WhereClauseGroup1 = _TypeAssert<
-	_TypeExtends<_WhereClauseGroup1['$type'], TSKindId._WhereClauseGroup1>
->;
+export type _Type_WhereClauseGroup1 = _TypeAssert<_TypeExtends<WhereClauseGroup1['$type'], TSKindId.WhereClauseGroup1>>;
 export type _Type_AbstractType = _TypeAssert<_TypeExtends<AbstractType['$type'], TSKindId.AbstractType>>;
 export type _Type_Arguments = _TypeAssert<_TypeExtends<Arguments['$type'], TSKindId.Arguments>>;
 export type _Type_ArrayExpression = _TypeAssert<_TypeExtends<ArrayExpression['$type'], TSKindId.ArrayExpression>>;
@@ -741,31 +714,6 @@ export type _Type_WhereClause = _TypeAssert<_TypeExtends<WhereClause['$type'], T
 export type _Type_WherePredicate = _TypeAssert<_TypeExtends<WherePredicate['$type'], TSKindId.WherePredicate>>;
 export type _Type_WhileExpression = _TypeAssert<_TypeExtends<WhileExpression['$type'], TSKindId.WhileExpression>>;
 export type _Type_YieldExpression = _TypeAssert<_TypeExtends<YieldExpression['$type'], TSKindId.YieldExpression>>;
-export type _Type_ArgumentsGroup1 = _TypeAssert<_TypeExtends<ArgumentsGroup1['$type'], 'arguments_group1'>>;
-export type _Type_VisibilityModifierGroup1 = _TypeAssert<
-	_TypeExtends<VisibilityModifierGroup1['$type'], 'visibility_modifier_group1'>
->;
-export type _Type_EnumVariantListGroup1 = _TypeAssert<
-	_TypeExtends<EnumVariantListGroup1['$type'], 'enum_variant_list_group1'>
->;
-export type _Type_FieldDeclarationListGroup1 = _TypeAssert<
-	_TypeExtends<FieldDeclarationListGroup1['$type'], 'field_declaration_list_group1'>
->;
-export type _Type_FieldInitializerListGroup1 = _TypeAssert<
-	_TypeExtends<FieldInitializerListGroup1['$type'], 'field_initializer_list_group1'>
->;
-export type _Type_OrderedFieldDeclarationListGroup1 = _TypeAssert<
-	_TypeExtends<OrderedFieldDeclarationListGroup1['$type'], 'ordered_field_declaration_list_group1'>
->;
-export type _Type_ParametersGroup1 = _TypeAssert<_TypeExtends<ParametersGroup1['$type'], 'parameters_group1'>>;
-export type _Type_SlicePatternGroup1 = _TypeAssert<_TypeExtends<SlicePatternGroup1['$type'], 'slice_pattern_group1'>>;
-export type _Type_StructPatternGroup1 = _TypeAssert<
-	_TypeExtends<StructPatternGroup1['$type'], 'struct_pattern_group1'>
->;
-export type _Type_TuplePatternGroup1 = _TypeAssert<_TypeExtends<TuplePatternGroup1['$type'], 'tuple_pattern_group1'>>;
-export type _Type_UseBoundsGroup1 = _TypeAssert<_TypeExtends<UseBoundsGroup1['$type'], 'use_bounds_group1'>>;
-export type _Type_UseListGroup1 = _TypeAssert<_TypeExtends<UseListGroup1['$type'], 'use_list_group1'>>;
-export type _Type_WhereClauseGroup1 = _TypeAssert<_TypeExtends<WhereClauseGroup1['$type'], 'where_clause_group1'>>;
 export type _Type_RangeExpressionBinaryOperator = _TypeAssert<
 	_TypeExtends<RangeExpressionBinaryOperator['$type'], TSKindId.DotDot | TSKindId.DotDotDot | TSKindId.DotDotEq>
 >;
@@ -929,15 +877,21 @@ export type _Type_Super = _TypeAssert<_TypeExtends<Super['$type'], TSKindId.Supe
 export type _Type_UnitExpression = _TypeAssert<_TypeExtends<UnitExpression['$type'], TSKindId.UnitExpression>>;
 export type _Type_UnitType = _TypeAssert<_TypeExtends<UnitType['$type'], TSKindId.UnitType>>;
 export type _Type_StringContent = _TypeAssert<_TypeExtends<StringContent['$type'], TSKindId.StringContent>>;
+export type _Type_RawStringLiteralStart = _TypeAssert<
+	_TypeExtends<RawStringLiteralStart['$type'], TSKindId.RawStringLiteralStart>
+>;
 export type _Type_RawStringLiteralContent = _TypeAssert<
 	_TypeExtends<RawStringLiteralContent['$type'], TSKindId.RawStringLiteralContent>
+>;
+export type _Type_RawStringLiteralEnd = _TypeAssert<
+	_TypeExtends<RawStringLiteralEnd['$type'], TSKindId.RawStringLiteralEnd>
 >;
 export type _Type_FloatLiteral = _TypeAssert<_TypeExtends<FloatLiteral['$type'], TSKindId.FloatLiteral>>;
 export type _Type_LineDocContent = _TypeAssert<_TypeExtends<LineDocContent['$type'], TSKindId.LineDocContent>>;
 export type _Type_ErrorSentinel = _TypeAssert<_TypeExtends<ErrorSentinel['$type'], TSKindId.ErrorSentinel>>;
 
 // --- TreeNode types have correct `type` ---
-export type _Tree__ArgumentsGroup1 = _TypeAssert<_TypeExtends<_ArgumentsGroup1Tree['type'], '_arguments_group1'>>;
+export type _Tree_ArgumentsGroup1 = _TypeAssert<_TypeExtends<ArgumentsGroup1Tree['type'], '_arguments_group1'>>;
 export type _Tree_AttributedArgument = _TypeAssert<
 	_TypeExtends<AttributedArgumentTree['type'], '_attributed_argument'>
 >;
@@ -965,17 +919,17 @@ export type _Tree_DelimTokenTreeBracket = _TypeAssert<
 export type _Tree_DelimTokenTreeParen = _TypeAssert<
 	_TypeExtends<DelimTokenTreeParenTree['type'], '_delim_token_tree_paren'>
 >;
-export type _Tree__EnumVariantListGroup1 = _TypeAssert<
-	_TypeExtends<_EnumVariantListGroup1Tree['type'], '_enum_variant_list_group1'>
+export type _Tree_EnumVariantListGroup1 = _TypeAssert<
+	_TypeExtends<EnumVariantListGroup1Tree['type'], '_enum_variant_list_group1'>
 >;
 export type _Tree_ExpressionStatementWithSemi = _TypeAssert<
 	_TypeExtends<ExpressionStatementWithSemiTree['type'], '_expression_statement_with_semi'>
 >;
-export type _Tree__FieldDeclarationListGroup1 = _TypeAssert<
-	_TypeExtends<_FieldDeclarationListGroup1Tree['type'], '_field_declaration_list_group1'>
+export type _Tree_FieldDeclarationListGroup1 = _TypeAssert<
+	_TypeExtends<FieldDeclarationListGroup1Tree['type'], '_field_declaration_list_group1'>
 >;
-export type _Tree__FieldInitializerListGroup1 = _TypeAssert<
-	_TypeExtends<_FieldInitializerListGroup1Tree['type'], '_field_initializer_list_group1'>
+export type _Tree_FieldInitializerListGroup1 = _TypeAssert<
+	_TypeExtends<FieldInitializerListGroup1Tree['type'], '_field_initializer_list_group1'>
 >;
 export type _Tree_FunctionTypeFnForm = _TypeAssert<
 	_TypeExtends<FunctionTypeFnFormTree['type'], '_function_type_fn_form'>
@@ -995,18 +949,18 @@ export type _Tree_MacroDefinitionBracket = _TypeAssert<
 export type _Tree_MacroDefinitionParen = _TypeAssert<
 	_TypeExtends<MacroDefinitionParenTree['type'], '_macro_definition_paren'>
 >;
-export type _Tree__OrderedFieldDeclarationListGroup1 = _TypeAssert<
-	_TypeExtends<_OrderedFieldDeclarationListGroup1Tree['type'], '_ordered_field_declaration_list_group1'>
+export type _Tree_OrderedFieldDeclarationListGroup1 = _TypeAssert<
+	_TypeExtends<OrderedFieldDeclarationListGroup1Tree['type'], '_ordered_field_declaration_list_group1'>
 >;
-export type _Tree__ParametersGroup1 = _TypeAssert<_TypeExtends<_ParametersGroup1Tree['type'], '_parameters_group1'>>;
+export type _Tree_ParametersGroup1 = _TypeAssert<_TypeExtends<ParametersGroup1Tree['type'], '_parameters_group1'>>;
 export type _Tree_ReferenceExpressionRawMut = _TypeAssert<
 	_TypeExtends<ReferenceExpressionRawMutTree['type'], '_reference_expression_raw_mut'>
 >;
-export type _Tree__SlicePatternGroup1 = _TypeAssert<
-	_TypeExtends<_SlicePatternGroup1Tree['type'], '_slice_pattern_group1'>
+export type _Tree_SlicePatternGroup1 = _TypeAssert<
+	_TypeExtends<SlicePatternGroup1Tree['type'], '_slice_pattern_group1'>
 >;
-export type _Tree__StructPatternGroup1 = _TypeAssert<
-	_TypeExtends<_StructPatternGroup1Tree['type'], '_struct_pattern_group1'>
+export type _Tree_StructPatternGroup1 = _TypeAssert<
+	_TypeExtends<StructPatternGroup1Tree['type'], '_struct_pattern_group1'>
 >;
 export type _Tree_TokenTreeBrace = _TypeAssert<_TypeExtends<TokenTreeBraceTree['type'], '_token_tree_brace'>>;
 export type _Tree_TokenTreeBracket = _TypeAssert<_TypeExtends<TokenTreeBracketTree['type'], '_token_tree_bracket'>>;
@@ -1020,19 +974,16 @@ export type _Tree_TokenTreePatternBracket = _TypeAssert<
 export type _Tree_TokenTreePatternParen = _TypeAssert<
 	_TypeExtends<TokenTreePatternParenTree['type'], '_token_tree_pattern_paren'>
 >;
-export type _Tree__TuplePatternGroup1 = _TypeAssert<
-	_TypeExtends<_TuplePatternGroup1Tree['type'], '_tuple_pattern_group1'>
+export type _Tree_TuplePatternGroup1 = _TypeAssert<
+	_TypeExtends<TuplePatternGroup1Tree['type'], '_tuple_pattern_group1'>
 >;
 export type _Tree_TypeArgument = _TypeAssert<_TypeExtends<TypeArgumentTree['type'], '_type_argument'>>;
-export type _Tree__UseBoundsGroup1 = _TypeAssert<_TypeExtends<_UseBoundsGroup1Tree['type'], '_use_bounds_group1'>>;
-export type _Tree__UseListGroup1 = _TypeAssert<_TypeExtends<_UseListGroup1Tree['type'], '_use_list_group1'>>;
-export type _Tree_UseWildcardGroup1 = _TypeAssert<_TypeExtends<UseWildcardGroup1Tree['type'], '_use_wildcard_group1'>>;
-export type _Tree__VisibilityModifierGroup1 = _TypeAssert<
-	_TypeExtends<_VisibilityModifierGroup1Tree['type'], '_visibility_modifier_group1'>
+export type _Tree_UseBoundsGroup1 = _TypeAssert<_TypeExtends<UseBoundsGroup1Tree['type'], '_use_bounds_group1'>>;
+export type _Tree_UseListGroup1 = _TypeAssert<_TypeExtends<UseListGroup1Tree['type'], '_use_list_group1'>>;
+export type _Tree_VisibilityModifierGroup1 = _TypeAssert<
+	_TypeExtends<VisibilityModifierGroup1Tree['type'], '_visibility_modifier_group1'>
 >;
-export type _Tree__WhereClauseGroup1 = _TypeAssert<
-	_TypeExtends<_WhereClauseGroup1Tree['type'], '_where_clause_group1'>
->;
+export type _Tree_WhereClauseGroup1 = _TypeAssert<_TypeExtends<WhereClauseGroup1Tree['type'], '_where_clause_group1'>>;
 export type _Tree_AbstractType = _TypeAssert<_TypeExtends<AbstractTypeTree['type'], 'abstract_type'>>;
 export type _Tree_Arguments = _TypeAssert<_TypeExtends<ArgumentsTree['type'], 'arguments'>>;
 export type _Tree_ArrayExpression = _TypeAssert<_TypeExtends<ArrayExpressionTree['type'], 'array_expression'>>;
@@ -1215,35 +1166,6 @@ export type _Tree_WhereClause = _TypeAssert<_TypeExtends<WhereClauseTree['type']
 export type _Tree_WherePredicate = _TypeAssert<_TypeExtends<WherePredicateTree['type'], 'where_predicate'>>;
 export type _Tree_WhileExpression = _TypeAssert<_TypeExtends<WhileExpressionTree['type'], 'while_expression'>>;
 export type _Tree_YieldExpression = _TypeAssert<_TypeExtends<YieldExpressionTree['type'], 'yield_expression'>>;
-export type _Tree_ArgumentsGroup1 = _TypeAssert<_TypeExtends<ArgumentsGroup1Tree['type'], 'arguments_group1'>>;
-export type _Tree_VisibilityModifierGroup1 = _TypeAssert<
-	_TypeExtends<VisibilityModifierGroup1Tree['type'], 'visibility_modifier_group1'>
->;
-export type _Tree_EnumVariantListGroup1 = _TypeAssert<
-	_TypeExtends<EnumVariantListGroup1Tree['type'], 'enum_variant_list_group1'>
->;
-export type _Tree_FieldDeclarationListGroup1 = _TypeAssert<
-	_TypeExtends<FieldDeclarationListGroup1Tree['type'], 'field_declaration_list_group1'>
->;
-export type _Tree_FieldInitializerListGroup1 = _TypeAssert<
-	_TypeExtends<FieldInitializerListGroup1Tree['type'], 'field_initializer_list_group1'>
->;
-export type _Tree_OrderedFieldDeclarationListGroup1 = _TypeAssert<
-	_TypeExtends<OrderedFieldDeclarationListGroup1Tree['type'], 'ordered_field_declaration_list_group1'>
->;
-export type _Tree_ParametersGroup1 = _TypeAssert<_TypeExtends<ParametersGroup1Tree['type'], 'parameters_group1'>>;
-export type _Tree_SlicePatternGroup1 = _TypeAssert<
-	_TypeExtends<SlicePatternGroup1Tree['type'], 'slice_pattern_group1'>
->;
-export type _Tree_StructPatternGroup1 = _TypeAssert<
-	_TypeExtends<StructPatternGroup1Tree['type'], 'struct_pattern_group1'>
->;
-export type _Tree_TuplePatternGroup1 = _TypeAssert<
-	_TypeExtends<TuplePatternGroup1Tree['type'], 'tuple_pattern_group1'>
->;
-export type _Tree_UseBoundsGroup1 = _TypeAssert<_TypeExtends<UseBoundsGroup1Tree['type'], 'use_bounds_group1'>>;
-export type _Tree_UseListGroup1 = _TypeAssert<_TypeExtends<UseListGroup1Tree['type'], 'use_list_group1'>>;
-export type _Tree_WhereClauseGroup1 = _TypeAssert<_TypeExtends<WhereClauseGroup1Tree['type'], 'where_clause_group1'>>;
 export type _Tree_RangeExpressionBinaryOperator = _TypeAssert<
 	_TypeExtends<RangeExpressionBinaryOperatorTree['type'], '__range_expression_binary_operator'>
 >;
@@ -1290,8 +1212,14 @@ export type _Tree_Super = _TypeAssert<_TypeExtends<SuperTree['type'], 'super'>>;
 export type _Tree_UnitExpression = _TypeAssert<_TypeExtends<UnitExpressionTree['type'], 'unit_expression'>>;
 export type _Tree_UnitType = _TypeAssert<_TypeExtends<UnitTypeTree['type'], 'unit_type'>>;
 export type _Tree_StringContent = _TypeAssert<_TypeExtends<StringContentTree['type'], 'string_content'>>;
+export type _Tree_RawStringLiteralStart = _TypeAssert<
+	_TypeExtends<RawStringLiteralStartTree['type'], '_raw_string_literal_start'>
+>;
 export type _Tree_RawStringLiteralContent = _TypeAssert<
 	_TypeExtends<RawStringLiteralContentTree['type'], 'raw_string_literal_content'>
+>;
+export type _Tree_RawStringLiteralEnd = _TypeAssert<
+	_TypeExtends<RawStringLiteralEndTree['type'], '_raw_string_literal_end'>
 >;
 export type _Tree_FloatLiteral = _TypeAssert<_TypeExtends<FloatLiteralTree['type'], 'float_literal'>>;
 export type _Tree_LineDocContent = _TypeAssert<_TypeExtends<LineDocContentTree['type'], '_line_doc_content'>>;

@@ -342,6 +342,24 @@ export function setGroupLiftRuleMap(map: GroupLiftRuleMap | undefined): void {
 }
 
 /**
+ * PR 3 (2026-07-21 union-slot design): read a group-lift rule's body by
+ * name, for the transform.ts variant()/polymorphs rename path — when an
+ * arm enrich already clause-hoisted into `_<parent>_group<N>` is ALSO
+ * targeted by this grammar's own polymorphs/variant() config, the rename
+ * needs to ADDITIONALLY deposit that same body under the name variant()
+ * intends (`polymorphHiddenName`, e.g. `_export_statement_default`) — not
+ * to replace the enrich-minted name (re-keying was ruled out: base-
+ * grammar rules can't be deleted, and other consumers snapshot the
+ * enrich-assigned name before the rename runs), purely additive, so a
+ * NESTED/cascaded polymorphs entry keyed on the intended name (e.g.
+ * typescript's `_export_statement_default: {0:'from_arm', 1:'decl_arm'}`)
+ * finds real content instead of `undefined`.
+ */
+export function getGroupLiftRuleBody(name: string): RuntimeRule | undefined {
+	return groupLiftRuleMap?.get(name);
+}
+
+/**
  * Travel through an enrich group-lift symbol by LOOKING UP its referenced rule
  * body (not by descending into carried content). Descends into the resolved
  * body without consuming a path segment, patches it, and writes the patched

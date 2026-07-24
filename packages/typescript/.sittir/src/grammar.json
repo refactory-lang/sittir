@@ -53,37 +53,65 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_export_statement_default"
+            "name": "_export_statement_default",
+            "metadata": {
+              "author": "enrich",
+              "symbolSource": "group-lift"
+            }
           },
           "named": true,
-          "value": "export_statement_default"
+          "value": "export_statement_default",
+          "metadata": {
+            "author": "enrich"
+          }
         },
         {
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_export_statement_type_export"
+            "name": "_export_statement_type_export",
+            "metadata": {
+              "author": "enrich",
+              "symbolSource": "group-lift"
+            }
           },
           "named": true,
-          "value": "export_statement_type_export"
+          "value": "export_statement_type_export",
+          "metadata": {
+            "author": "enrich"
+          }
         },
         {
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_export_statement_equals_export"
+            "name": "_export_statement_equals_export",
+            "metadata": {
+              "author": "enrich",
+              "symbolSource": "group-lift"
+            }
           },
           "named": true,
-          "value": "export_statement_equals_export"
+          "value": "export_statement_equals_export",
+          "metadata": {
+            "author": "enrich"
+          }
         },
         {
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_export_statement_namespace_export"
+            "name": "_export_statement_namespace_export",
+            "metadata": {
+              "author": "enrich",
+              "symbolSource": "group-lift"
+            }
           },
           "named": true,
-          "value": "export_statement_namespace_export"
+          "value": "export_statement_namespace_export",
+          "metadata": {
+            "author": "enrich"
+          }
         }
       ]
     },
@@ -335,17 +363,20 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "import_clause"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "_from_clause"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_import_statement_group1",
+                  "metadata": {
+                    "author": "enrich",
+                    "symbolSource": "group-lift"
                   }
-                ]
+                },
+                "named": true,
+                "value": "import_statement_group1",
+                "metadata": {
+                  "author": "enrich"
+                }
               },
               {
                 "type": "SYMBOL",
@@ -418,10 +449,17 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_import_clause_default_import"
+            "name": "_import_clause_default_import",
+            "metadata": {
+              "author": "enrich",
+              "symbolSource": "group-lift"
+            }
           },
           "named": true,
-          "value": "import_clause_default_import"
+          "value": "import_clause_default_import",
+          "metadata": {
+            "author": "enrich"
+          }
         }
       ]
     },
@@ -548,10 +586,17 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_import_specifier_as"
+                "name": "_import_specifier_as",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
               },
               "named": true,
-              "value": "import_specifier_as"
+              "value": "import_specifier_as",
+              "metadata": {
+                "author": "enrich"
+              }
             }
           ]
         }
@@ -819,54 +864,20 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "name",
-              "content": {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "identifier"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "_destructuring_pattern"
-                  }
-                ]
-              }
-            },
-            {
-              "type": "FIELD",
-              "name": "type",
-              "content": {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "type_annotation"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              }
-            },
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "_initializer"
-                },
-                {
-                  "type": "BLANK"
-                }
-              ]
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_variable_declarator_group1",
+            "metadata": {
+              "author": "enrich",
+              "symbolSource": "group-lift"
             }
-          ]
+          },
+          "named": true,
+          "value": "variable_declarator_group1",
+          "metadata": {
+            "author": "enrich"
+          }
         },
         {
           "type": "PREC",
@@ -1209,19 +1220,33 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_for_header_var_kind"
+                "name": "_for_header_var_kind",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
               },
               "named": true,
-              "value": "for_header_var_kind"
+              "value": "for_header_var_kind",
+              "metadata": {
+                "author": "enrich"
+              }
             },
             {
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_for_header_let_const_kind"
+                "name": "_for_header_let_const_kind",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
               },
               "named": true,
-              "value": "for_header_let_const_kind"
+              "value": "for_header_let_const_kind",
+              "metadata": {
+                "author": "enrich"
+              }
             }
           ]
         },
@@ -1776,10 +1801,17 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_parenthesized_expression_typed"
+                "name": "_parenthesized_expression_typed",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
               },
               "named": true,
-              "value": "parenthesized_expression_typed"
+              "value": "parenthesized_expression_typed",
+              "metadata": {
+                "author": "enrich"
+              }
             },
             {
               "type": "SYMBOL",
@@ -3187,10 +3219,17 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_class_heritage_extends_clause"
+            "name": "_class_heritage_extends_clause",
+            "metadata": {
+              "author": "enrich",
+              "symbolSource": "group-lift"
+            }
           },
           "named": true,
-          "value": "class_heritage_extends_clause"
+          "value": "class_heritage_extends_clause",
+          "metadata": {
+            "author": "enrich"
+          }
         },
         {
           "type": "SYMBOL",
@@ -3485,10 +3524,15 @@
               "value": "arrow_function_parameter"
             },
             {
-              "type": "SYMBOL",
-              "name": "_call_signature",
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_arrow_function__call_signature"
+              },
+              "named": true,
+              "value": "arrow_function__call_signature",
               "metadata": {
-                "fieldSource": "override"
+                "author": "enrich"
               }
             }
           ]
@@ -3902,8 +3946,16 @@
                   "name": "parenthesized_expression"
                 },
                 {
-                  "type": "SYMBOL",
-                  "name": "_lhs_expression"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_lhs_expression"
+                  },
+                  "named": true,
+                  "value": "for_header_group1",
+                  "metadata": {
+                    "author": "enrich"
+                  }
                 }
               ]
             }
@@ -5055,19 +5107,33 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_update_expression_postfix"
+              "name": "_update_expression_postfix",
+              "metadata": {
+                "author": "enrich",
+                "symbolSource": "group-lift"
+              }
             },
             "named": true,
-            "value": "update_expression_postfix"
+            "value": "update_expression_postfix",
+            "metadata": {
+              "author": "enrich"
+            }
           },
           {
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_update_expression_prefix"
+              "name": "_update_expression_prefix",
+              "metadata": {
+                "author": "enrich",
+                "symbolSource": "group-lift"
+              }
             },
             "named": true,
-            "value": "update_expression_prefix"
+            "value": "update_expression_prefix",
+            "metadata": {
+              "author": "enrich"
+            }
           }
         ]
       }
@@ -5944,38 +6010,36 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "new"
-            },
-            {
-              "type": "STRING",
-              "value": "."
-            },
-            {
-              "type": "STRING",
-              "value": "target"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_meta_property_group1",
+            "metadata": {
+              "author": "enrich",
+              "symbolSource": "group-lift"
             }
-          ]
+          },
+          "named": true,
+          "value": "meta_property_group1",
+          "metadata": {
+            "author": "enrich"
+          }
         },
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "import"
-            },
-            {
-              "type": "STRING",
-              "value": "."
-            },
-            {
-              "type": "STRING",
-              "value": "meta"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_meta_property_group2",
+            "metadata": {
+              "author": "enrich",
+              "symbolSource": "group-lift"
             }
-          ]
+          },
+          "named": true,
+          "value": "meta_property_group2",
+          "metadata": {
+            "author": "enrich"
+          }
         }
       ]
     },
@@ -6263,10 +6327,17 @@
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_class_body_method_sig"
+                  "name": "_class_body_method_sig",
+                  "metadata": {
+                    "author": "enrich",
+                    "symbolSource": "group-lift"
+                  }
                 },
                 "named": true,
-                "value": "class_body_method_sig"
+                "value": "class_body_method_sig",
+                "metadata": {
+                  "author": "enrich"
+                }
               },
               {
                 "type": "SYMBOL",
@@ -6276,10 +6347,17 @@
                 "type": "ALIAS",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_class_body_member"
+                  "name": "_class_body_member",
+                  "metadata": {
+                    "author": "enrich",
+                    "symbolSource": "group-lift"
+                  }
                 },
                 "named": true,
-                "value": "class_body_member"
+                "value": "class_body_member",
+                "metadata": {
+                  "author": "enrich"
+                }
               },
               {
                 "type": "STRING",
@@ -6415,8 +6493,16 @@
         "type": "CHOICE",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "_lhs_expression"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_lhs_expression"
+            },
+            "named": true,
+            "value": "for_header_group1",
+            "metadata": {
+              "author": "enrich"
+            }
           },
           {
             "type": "SYMBOL",
@@ -6885,19 +6971,33 @@
                     "type": "ALIAS",
                     "content": {
                       "type": "SYMBOL",
-                      "name": "_public_field_definition_declare_first"
+                      "name": "_public_field_definition_declare_first",
+                      "metadata": {
+                        "author": "enrich",
+                        "symbolSource": "group-lift"
+                      }
                     },
                     "named": true,
-                    "value": "public_field_definition_declare_first"
+                    "value": "public_field_definition_declare_first",
+                    "metadata": {
+                      "author": "enrich"
+                    }
                   },
                   {
                     "type": "ALIAS",
                     "content": {
                       "type": "SYMBOL",
-                      "name": "_public_field_definition_access_first"
+                      "name": "_public_field_definition_access_first",
+                      "metadata": {
+                        "author": "enrich",
+                        "symbolSource": "group-lift"
+                      }
                     },
                     "named": true,
-                    "value": "public_field_definition_access_first"
+                    "value": "public_field_definition_access_first",
+                    "metadata": {
+                      "author": "enrich"
+                    }
                   }
                 ]
               },
@@ -7767,10 +7867,17 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_ambient_declaration_module"
+                "name": "_ambient_declaration_module",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
               },
               "named": true,
-              "value": "ambient_declaration_module"
+              "value": "ambient_declaration_module",
+              "metadata": {
+                "author": "enrich"
+              }
             }
           ]
         }
@@ -10396,10 +10503,17 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_index_signature_colon"
+                "name": "_index_signature_colon",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
               },
               "named": true,
-              "value": "index_signature_colon"
+              "value": "index_signature_colon",
+              "metadata": {
+                "author": "enrich"
+              }
             },
             {
               "type": "SYMBOL",
@@ -10675,6 +10789,279 @@
       "named": true,
       "value": "type_identifier"
     },
+    "_export_statement_group1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "namespace_export"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_from_clause"
+        }
+      ]
+    },
+    "_export_statement_group2": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "export"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_export_statement_default_star_from"
+              },
+              "named": true,
+              "value": "export_statement_default_star_from"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_export_statement_default_ns_from",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
+              },
+              "named": true,
+              "value": "export_statement_default_ns_from",
+              "metadata": {
+                "author": "enrich"
+              }
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_export_statement_default_clause_from"
+              },
+              "named": true,
+              "value": "export_statement_default_clause_from"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "export_clause"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_semicolon"
+        }
+      ]
+    },
+    "_export_statement_group3": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "expression"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_semicolon"
+        }
+      ]
+    },
+    "_export_statement_group4": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "default"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "declaration",
+              "content": {
+                "type": "SYMBOL",
+                "name": "declaration"
+              }
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_export_statement_default_value",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
+              },
+              "named": true,
+              "value": "export_statement_default_value",
+              "metadata": {
+                "author": "enrich"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "_export_statement_group5": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_export_statement_group2",
+            "metadata": {
+              "author": "enrich",
+              "symbolSource": "group-lift"
+            }
+          },
+          "named": true,
+          "value": "export_statement_group2",
+          "metadata": {
+            "author": "enrich"
+          }
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "FIELD",
+                "name": "decorator",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "decorator"
+                }
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "export"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "FIELD",
+                  "name": "declaration",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "declaration"
+                  }
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_export_statement_group4",
+                    "metadata": {
+                      "author": "enrich",
+                      "symbolSource": "group-lift"
+                    }
+                  },
+                  "named": true,
+                  "value": "export_statement_group4",
+                  "metadata": {
+                    "author": "enrich"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "_export_statement_group6": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "export"
+        },
+        {
+          "type": "STRING",
+          "value": "type"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "export_clause"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_from_clause"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_semicolon"
+        }
+      ]
+    },
+    "_export_statement_group7": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "export"
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "SYMBOL",
+          "name": "expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_semicolon"
+        }
+      ]
+    },
+    "_export_statement_group8": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "export"
+        },
+        {
+          "type": "STRING",
+          "value": "as"
+        },
+        {
+          "type": "STRING",
+          "value": "namespace"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_semicolon"
+        }
+      ]
+    },
     "_export_clause_group1": {
       "type": "SEQ",
       "members": [
@@ -10729,6 +11116,19 @@
         }
       ]
     },
+    "_import_statement_group1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "import_clause"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_from_clause"
+        }
+      ]
+    },
     "_import_clause_group1": {
       "type": "SEQ",
       "members": [
@@ -10746,6 +11146,39 @@
             {
               "type": "SYMBOL",
               "name": "named_imports"
+            }
+          ]
+        }
+      ]
+    },
+    "_import_clause_group2": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_import_identifier"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_import_clause_group1",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
+              },
+              "named": true,
+              "value": "import_clause_group1",
+              "metadata": {
+                "author": "enrich"
+              }
+            },
+            {
+              "type": "BLANK"
             }
           ]
         }
@@ -10780,6 +11213,188 @@
             {
               "type": "STRING",
               "value": ","
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "_import_specifier_group1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_module_export_name"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "STRING",
+                  "value": "type"
+                },
+                "named": true,
+                "value": "identifier"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "as"
+        },
+        {
+          "type": "FIELD",
+          "name": "alias",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_import_identifier"
+          }
+        }
+      ]
+    },
+    "_variable_declarator_group1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_destructuring_pattern"
+              }
+            ]
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "type_annotation"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_initializer"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "_for_header_group2": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "kind",
+          "content": {
+            "type": "STRING",
+            "value": "var"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "left",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_destructuring_pattern"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_initializer"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "_for_header_group3": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "kind",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "let"
+              },
+              {
+                "type": "STRING",
+                "value": "const"
+              }
+            ]
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "left",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_destructuring_pattern"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_automatic_semicolon"
             },
             {
               "type": "BLANK"
@@ -10834,6 +11449,31 @@
         }
       ]
     },
+    "_parenthesized_expression_group1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "expression"
+        },
+        {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "type_annotation"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        }
+      ]
+    },
     "_jsx_attribute_optional1": {
       "type": "SEQ",
       "members": [
@@ -10844,6 +11484,197 @@
         {
           "type": "SYMBOL",
           "name": "_jsx_attribute_value"
+        }
+      ]
+    },
+    "_class_heritage_group1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "extends_clause"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "implements_clause"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "_update_expression_group1": {
+      "type": "PREC_LEFT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "argument",
+            "content": {
+              "type": "SYMBOL",
+              "name": "expression"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "operator",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "++"
+                },
+                {
+                  "type": "STRING",
+                  "value": "--"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "_update_expression_group2": {
+      "type": "PREC_LEFT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "operator",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "++"
+                },
+                {
+                  "type": "STRING",
+                  "value": "--"
+                }
+              ]
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "argument",
+            "content": {
+              "type": "SYMBOL",
+              "name": "expression"
+            }
+          }
+        ]
+      }
+    },
+    "_meta_property_group1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "new"
+        },
+        {
+          "type": "STRING",
+          "value": "."
+        },
+        {
+          "type": "STRING",
+          "value": "target"
+        }
+      ]
+    },
+    "_meta_property_group2": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "import"
+        },
+        {
+          "type": "STRING",
+          "value": "."
+        },
+        {
+          "type": "STRING",
+          "value": "meta"
+        }
+      ]
+    },
+    "_class_body_group1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "method_signature"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_function_signature_automatic_semicolon"
+            },
+            {
+              "type": "STRING",
+              "value": ","
+            }
+          ]
+        }
+      ]
+    },
+    "_class_body_group2": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "abstract_method_signature"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "index_signature"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "method_signature"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "public_field_definition"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "terminator",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_semicolon"
+              },
+              {
+                "type": "STRING",
+                "value": ","
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -10889,14 +11720,178 @@
         }
       ]
     },
+    "_public_field_definition_group1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "declare"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "accessibility_modifier"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "_public_field_definition_group2": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "accessibility_modifier"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "declare"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "_jsx_start_opening_element_group1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "nested_identifier"
+                },
+                "named": true,
+                "value": "member_expression"
+              }
+            ]
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "type_arguments",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "type_arguments"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        }
+      ]
+    },
     "__jsx_start_opening_element_optional1": {
-      "type": "ALIAS",
-      "content": {
-        "type": "SYMBOL",
-        "name": "_jsx_opening_element_content"
-      },
-      "named": true,
-      "value": "jsx_opening_element_content"
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "name",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_jsx_identifier"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "jsx_namespace_name"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_jsx_start_opening_element_group1",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
+              },
+              "named": true,
+              "value": "jsx_start_opening_element_group1",
+              "metadata": {
+                "author": "enrich"
+              }
+            }
+          ]
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "attribute",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_jsx_attribute"
+            }
+          }
+        }
+      ]
+    },
+    "_ambient_declaration_group1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "module"
+        },
+        {
+          "type": "STRING",
+          "value": "."
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          "named": true,
+          "value": "property_identifier"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "type"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_semicolon"
+        }
+      ]
     },
     "_enum_body_group1": {
       "type": "SEQ",
@@ -11168,6 +12163,45 @@
         }
       ]
     },
+    "_index_signature_group1": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_reserved_identifier"
+                },
+                "named": true,
+                "value": "reserved_identifier"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "index_type",
+          "content": {
+            "type": "SYMBOL",
+            "name": "type"
+          }
+        }
+      ]
+    },
     "_tuple_type_group1": {
       "type": "SEQ",
       "members": [
@@ -11430,10 +12464,17 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_export_statement_default_from_arm"
+            "name": "_export_statement_default_from_arm",
+            "metadata": {
+              "author": "enrich",
+              "symbolSource": "group-lift"
+            }
           },
           "named": true,
-          "value": "export_statement_default_from_arm"
+          "value": "export_statement_default_from_arm",
+          "metadata": {
+            "author": "enrich"
+          }
         },
         {
           "type": "ALIAS",
@@ -11443,128 +12484,6 @@
           },
           "named": true,
           "value": "export_statement_default_decl_arm"
-        }
-      ]
-    },
-    "_export_statement_default_from_arm": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "export"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_export_statement_default_from_arm_star_from"
-              },
-              "named": true,
-              "value": "export_statement_default_from_arm_star_from"
-            },
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_export_statement_default_from_arm_ns_from"
-              },
-              "named": true,
-              "value": "export_statement_default_from_arm_ns_from"
-            },
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_export_statement_default_from_arm_clause_from"
-              },
-              "named": true,
-              "value": "export_statement_default_from_arm_clause_from"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "export_clause"
-            }
-          ]
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_semicolon"
-        }
-      ]
-    },
-    "_export_statement_default_decl_arm": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "FIELD",
-            "name": "decorator",
-            "content": {
-              "type": "SYMBOL",
-              "name": "decorator"
-            }
-          }
-        },
-        {
-          "type": "STRING",
-          "value": "export"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "declaration",
-              "content": {
-                "type": "SYMBOL",
-                "name": "declaration"
-              }
-            },
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_export_statement_default_decl_arm_default_kw"
-              },
-              "named": true,
-              "value": "export_statement_default_decl_arm_default_kw"
-            }
-          ]
-        }
-      ]
-    },
-    "_export_statement_default_decl_arm_default_kw": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "default"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "declaration",
-              "content": {
-                "type": "SYMBOL",
-                "name": "declaration"
-              }
-            },
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_export_statement_default_decl_arm_default_kw_value"
-              },
-              "named": true,
-              "value": "export_statement_default_decl_arm_default_kw_value"
-            }
-          ]
         }
       ]
     },
@@ -11591,7 +12510,62 @@
       }
     },
     "_arrow_function__call_signature": {
-      "type": "BLANK"
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "type_parameters",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "type_parameters"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "parameters",
+          "content": {
+            "type": "SYMBOL",
+            "name": "formal_parameters"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "return_type",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "type_annotation"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "asserts_annotation"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "type_predicate_annotation"
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        }
+      ]
     },
     "_class_heritage_extends_clause": {
       "type": "SEQ",
@@ -11743,7 +12717,112 @@
     "_ambient_declaration_declaration": {
       "type": "BLANK"
     },
-    "_export_statement_default_from_arm_star_from": {
+    "_export_statement_default_from_arm": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "export"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_export_statement_default_star_from"
+              },
+              "named": true,
+              "value": "export_statement_default_star_from"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_export_statement_default_ns_from",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
+              },
+              "named": true,
+              "value": "export_statement_default_ns_from",
+              "metadata": {
+                "author": "enrich"
+              }
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_export_statement_default_clause_from"
+              },
+              "named": true,
+              "value": "export_statement_default_clause_from"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "export_clause"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_semicolon"
+        }
+      ]
+    },
+    "_export_statement_default_decl_arm": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "decorator",
+            "content": {
+              "type": "SYMBOL",
+              "name": "decorator"
+            }
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "export"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "declaration",
+              "content": {
+                "type": "SYMBOL",
+                "name": "declaration"
+              }
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_export_statement_default_default_kw",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
+              },
+              "named": true,
+              "value": "export_statement_default_default_kw",
+              "metadata": {
+                "author": "enrich"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "_export_statement_default_star_from": {
       "type": "SEQ",
       "members": [
         {
@@ -11756,7 +12835,7 @@
         }
       ]
     },
-    "_export_statement_default_from_arm_ns_from": {
+    "_export_statement_default_ns_from": {
       "type": "SEQ",
       "members": [
         {
@@ -11769,7 +12848,7 @@
         }
       ]
     },
-    "_export_statement_default_from_arm_clause_from": {
+    "_export_statement_default_clause_from": {
       "type": "SEQ",
       "members": [
         {
@@ -11782,7 +12861,45 @@
         }
       ]
     },
-    "_export_statement_default_decl_arm_default_kw_value": {
+    "_export_statement_default_default_kw": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "default"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "declaration",
+              "content": {
+                "type": "SYMBOL",
+                "name": "declaration"
+              }
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_export_statement_default_value",
+                "metadata": {
+                  "author": "enrich",
+                  "symbolSource": "group-lift"
+                }
+              },
+              "named": true,
+              "value": "export_statement_default_value",
+              "metadata": {
+                "author": "enrich"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "_export_statement_default_value": {
       "type": "SEQ",
       "members": [
         {
@@ -11906,8 +13023,16 @@
         "type": "CHOICE",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "_lhs_expression"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_lhs_expression"
+            },
+            "named": true,
+            "value": "for_header_group1",
+            "metadata": {
+              "author": "enrich"
+            }
           },
           {
             "type": "SYMBOL",
@@ -12945,6 +14070,10 @@
       "_parenthesized_expression_typed"
     ],
     [
+      "sequence_expression",
+      "_parenthesized_expression_group1"
+    ],
+    [
       "primary_expression",
       "arrow_function"
     ],
@@ -13196,6 +14325,97 @@
     ],
     [
       "await_expression",
+      "_update_expression_group1"
+    ],
+    [
+      "arrow_function",
+      "_update_expression_group1"
+    ],
+    [
+      "_variable_declarator_group1",
+      "_for_header_group2"
+    ],
+    [
+      "primary_expression",
+      "_for_header_group2"
+    ],
+    [
+      "_variable_declarator_group1",
+      "_for_header_let_const_kind"
+    ],
+    [
+      "_class_body_group1",
+      "_class_body_group2"
+    ],
+    [
+      "import",
+      "_meta_property_group2"
+    ],
+    [
+      "primary_expression",
+      "_meta_property_group1"
+    ],
+    [
+      "_lhs_expression",
+      "_export_statement_equals_export"
+    ],
+    [
+      "object_assignment_pattern",
+      "_lhs_expression"
+    ],
+    [
+      "object_assignment_pattern",
+      "_lhs_expression",
+      "_export_statement_equals_export"
+    ],
+    [
+      "primary_expression",
+      "_lhs_expression"
+    ],
+    [
+      "_lhs_expression",
+      "primary_type"
+    ],
+    [
+      "_lhs_expression",
+      "literal_type"
+    ],
+    [
+      "_lhs_expression",
+      "readonly_type"
+    ],
+    [
+      "_lhs_expression",
+      "predefined_type"
+    ],
+    [
+      "function_type",
+      "_arrow_function__call_signature"
+    ],
+    [
+      "primary_expression",
+      "_lhs_expression",
+      "primary_type"
+    ],
+    [
+      "primary_expression",
+      "_lhs_expression",
+      "literal_type"
+    ],
+    [
+      "primary_expression",
+      "_lhs_expression",
+      "predefined_type"
+    ],
+    [
+      "constructor_type",
+      "_arrow_function__call_signature"
+    ],
+    [
+      "_lhs_expression"
+    ],
+    [
+      "await_expression",
       "_update_expression_prefix"
     ],
     [
@@ -13245,6 +14465,265 @@
     [
       "variable_declarator",
       "_for_header_let_const_kind"
+    ],
+    [
+      "export_statement",
+      "_export_statement_group1"
+    ],
+    [
+      "_export_statement_group1"
+    ],
+    [
+      "export_statement",
+      "_export_statement_group2"
+    ],
+    [
+      "_export_statement_group2"
+    ],
+    [
+      "export_statement",
+      "_export_statement_group3"
+    ],
+    [
+      "_export_statement_group3"
+    ],
+    [
+      "export_statement",
+      "_export_statement_group4"
+    ],
+    [
+      "_export_statement_group4"
+    ],
+    [
+      "export_statement",
+      "_export_statement_group5"
+    ],
+    [
+      "_export_statement_group5"
+    ],
+    [
+      "export_statement",
+      "_export_statement_group6"
+    ],
+    [
+      "_export_statement_group6"
+    ],
+    [
+      "export_statement",
+      "_export_statement_group7"
+    ],
+    [
+      "_export_statement_group7"
+    ],
+    [
+      "export_statement",
+      "_export_statement_group8"
+    ],
+    [
+      "_export_statement_group8"
+    ],
+    [
+      "export_clause",
+      "_export_clause_group1"
+    ],
+    [
+      "_export_clause_group1"
+    ],
+    [
+      "import_statement",
+      "_import_statement_group1"
+    ],
+    [
+      "_import_statement_group1"
+    ],
+    [
+      "import_clause",
+      "_import_clause_group1"
+    ],
+    [
+      "_import_clause_group1"
+    ],
+    [
+      "import_clause",
+      "_import_clause_group2"
+    ],
+    [
+      "_import_clause_group2"
+    ],
+    [
+      "named_imports",
+      "_named_imports_group1"
+    ],
+    [
+      "_named_imports_group1"
+    ],
+    [
+      "import_specifier",
+      "_import_specifier_group1"
+    ],
+    [
+      "_import_specifier_group1"
+    ],
+    [
+      "variable_declarator",
+      "_variable_declarator_group1"
+    ],
+    [
+      "_variable_declarator_group1"
+    ],
+    [
+      "_for_header",
+      "_lhs_expression"
+    ],
+    [
+      "_lhs_expression"
+    ],
+    [
+      "_for_header",
+      "_for_header_group2"
+    ],
+    [
+      "_for_header_group2"
+    ],
+    [
+      "_for_header",
+      "_for_header_group3"
+    ],
+    [
+      "_for_header_group3"
+    ],
+    [
+      "catch_clause",
+      "_catch_clause_group1"
+    ],
+    [
+      "_catch_clause_group1"
+    ],
+    [
+      "parenthesized_expression",
+      "_parenthesized_expression_group1"
+    ],
+    [
+      "_parenthesized_expression_group1"
+    ],
+    [
+      "class_heritage",
+      "_class_heritage_group1"
+    ],
+    [
+      "_class_heritage_group1"
+    ],
+    [
+      "arrow_function",
+      "_call_signature"
+    ],
+    [
+      "_call_signature"
+    ],
+    [
+      "update_expression",
+      "_update_expression_group1"
+    ],
+    [
+      "_update_expression_group1"
+    ],
+    [
+      "update_expression",
+      "_update_expression_group2"
+    ],
+    [
+      "_update_expression_group2"
+    ],
+    [
+      "meta_property",
+      "_meta_property_group1"
+    ],
+    [
+      "_meta_property_group1"
+    ],
+    [
+      "meta_property",
+      "_meta_property_group2"
+    ],
+    [
+      "_meta_property_group2"
+    ],
+    [
+      "class_body",
+      "_class_body_group1"
+    ],
+    [
+      "_class_body_group1"
+    ],
+    [
+      "class_body",
+      "_class_body_group2"
+    ],
+    [
+      "_class_body_group2"
+    ],
+    [
+      "formal_parameters",
+      "_formal_parameters_group1"
+    ],
+    [
+      "_formal_parameters_group1"
+    ],
+    [
+      "public_field_definition",
+      "_public_field_definition_group1"
+    ],
+    [
+      "_public_field_definition_group1"
+    ],
+    [
+      "public_field_definition",
+      "_public_field_definition_group2"
+    ],
+    [
+      "_public_field_definition_group2"
+    ],
+    [
+      "_jsx_start_opening_element",
+      "_jsx_start_opening_element_group1"
+    ],
+    [
+      "_jsx_start_opening_element_group1"
+    ],
+    [
+      "ambient_declaration",
+      "_ambient_declaration_group1"
+    ],
+    [
+      "_ambient_declaration_group1"
+    ],
+    [
+      "enum_body",
+      "_enum_body_group1"
+    ],
+    [
+      "_enum_body_group1"
+    ],
+    [
+      "object_type",
+      "_object_type_group1"
+    ],
+    [
+      "_object_type_group1"
+    ],
+    [
+      "index_signature",
+      "_index_signature_group1"
+    ],
+    [
+      "_index_signature_group1"
+    ],
+    [
+      "tuple_type",
+      "_tuple_type_group1"
+    ],
+    [
+      "_tuple_type_group1"
     ]
   ],
   "precedences": [
@@ -13899,7 +15378,6 @@
     "_jsx_attribute_name",
     "_jsx_attribute_value",
     "_jsx_identifier",
-    "_lhs_expression",
     "_type_identifier",
     "_jsx_start_opening_element",
     "_public_field_definition_declare_first",
