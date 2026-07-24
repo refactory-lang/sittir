@@ -28907,7 +28907,7 @@ pub struct PublicFieldDefinitionAccessFirstTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_declare_marker"))]
-    pub declare_marker: Option<Box<AnyTransport>>,
+    pub declare_marker: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessibility_modifier"))]
     pub accessibility_modifier: AccessibilityModifierEnum,
 }
@@ -31303,7 +31303,7 @@ pub struct AssignmentExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_using_marker"))]
-    pub using_marker: Option<Box<AnyTransport>>,
+    pub using_marker: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: Box<AssignmentExpressionLeftTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
@@ -33910,7 +33910,7 @@ pub struct ForInStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_await_marker"))]
-    pub await_marker: Option<Box<AnyTransport>>,
+    pub await_marker: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: ForHeaderOperatorEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
@@ -38501,7 +38501,7 @@ pub struct PublicFieldDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_visibility_prefix"))]
     pub visibility_prefix: Option<PublicFieldDefinitionVisibilityPrefixTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_accessor_marker"))]
-    pub accessor_marker: Option<Box<AnyTransport>>,
+    pub accessor_marker: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: PropertyNameTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_optionality_marker"))]
@@ -53719,9 +53719,10 @@ fn render_public_field_definition_abstract_first(node: &PublicFieldDefinitionAbs
 fn render_public_field_definition_access_first(node: &PublicFieldDefinitionAccessFirstTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = PublicFieldDefinitionAccessFirstTemplate {
         accessibility_modifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.accessibility_modifier)),
-        declare_marker: match &node.declare_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
+        declare_marker: if node.declare_marker.unwrap_or(false) {
+            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("declare"))
+        } else {
+            OptionalNonterminalView::Missing
         },
     };
     template.render_into(dest)
@@ -54130,9 +54131,10 @@ fn render_assignment_expression(node: &AssignmentExpressionTransport, dest: &mut
     let template = AssignmentExpressionTemplate {
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
         right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
-        using_marker: match &node.using_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
+        using_marker: if node.using_marker.unwrap_or(false) {
+            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("using"))
+        } else {
+            OptionalNonterminalView::Missing
         },
     };
     template.render_into(dest)
@@ -54676,9 +54678,10 @@ fn render_flow_maybe_type(node: &FlowMaybeTypeTransport, dest: &mut dyn ::std::f
 
 fn render_for_in_statement(node: &ForInStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ForInStatementTemplate {
-        await_marker: match &node.await_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
+        await_marker: if node.await_marker.unwrap_or(false) {
+            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("await"))
+        } else {
+            OptionalNonterminalView::Missing
         },
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
@@ -55662,9 +55665,10 @@ fn render_public_field_definition(node: &PublicFieldDefinitionTransport, dest: &
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = PublicFieldDefinitionTemplate {
-        accessor_marker: match &node.accessor_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
+        accessor_marker: if node.accessor_marker.unwrap_or(false) {
+            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("accessor"))
+        } else {
+            OptionalNonterminalView::Missing
         },
         decorator: ListNonterminalView {
             items: decorator_buf.as_slice(),

@@ -1478,8 +1478,12 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			bodyLines.push('');
 		}
 		const bodySource = bodyLines.join('\n');
-		const usesDrillIn = /\bdrillIn\b/.test(bodySource);
-		const usesDrillInAll = /\bdrillInAll\b/.test(bodySource);
+		// `wrapNode`'s unknown-kind fallback (below) always calls
+		// `_drillUnknownKindChildren`, which unconditionally uses both — so
+		// these must be `true` regardless of what `bodySource` (the per-kind
+		// wrap functions) itself references.
+		const usesDrillIn = true;
+		const usesDrillInAll = true;
 		const usesDrillAs = /\bdrillAs\b/.test(bodySource);
 		const usesDrillAsAll = /\bdrillAsAll\b/.test(bodySource);
 		const usesProjectKindEnum = /\bprojectKindEnumStorage\b/.test(bodySource);
@@ -1985,6 +1989,39 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push('};');
 		lines.push('');
 
+		// Kinds absent from the NodeMap entirely (no `_wrapTable` entry — e.g.
+		// python's `case_pattern_group1`, a hidden alias-mint wrapper the
+		// grammar produces but our model doesn't represent) have no dedicated
+		// wrap function to drill into their own kind-named-slot children.
+		// `read_node.rs`'s one-level read (`read_children` / `read_child_stub`)
+		// leaves an unlabeled named child with sub-structure as a shallow stub
+		// (`$nodeHandle`/`$childIndex`, no fields of its own) — normally a
+		// generated wrap function's `drillIn` call materializes it fully via
+		// `readTreeNode`. With no such function for the PARENT kind, nothing
+		// ever calls `drillIn` on the stub, so it reaches the native
+		// transport deserializer still shallow — and the child's OWN
+		// transport struct then fails, missing every one of its real fields
+		// (confirmed via `tool probe-kind`: python's `case_pattern` → `content`
+		// → `_dotted_name` arrives as `{$type, $text, $span, ...}` only, no
+		// `_identifier`, because `case_pattern_group1` triggers exactly this
+		// fallback). Drill in every `_`-prefixed property here — mirrors
+		// `_firstKindKeyedWrapChild`'s kind-named-slot convention above, just
+		// applied unconditionally instead of gated to one matching kind.
+		lines.push('function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {');
+		lines.push('  const out: Record<string, unknown> = { ...(data as unknown as Record<string, unknown>) };');
+		lines.push('  for (const key of Object.keys(out)) {');
+		lines.push('    if (key.charCodeAt(0) !== 95 /* `_` */) continue;');
+		lines.push('    const value = out[key];');
+		lines.push('    if (Array.isArray(value)) {');
+		lines.push('      out[key] = drillInAll(value, tree);');
+		lines.push('    } else if (value != null) {');
+		lines.push('      out[key] = drillIn(value, tree);');
+		lines.push('    }');
+		lines.push('  }');
+		lines.push('  return out as unknown as _NodeData;');
+		lines.push('}');
+		lines.push('');
+
 		// Public entry points
 		lines.push('/** Wrap a NodeData into its lazy read-only view. */');
 		lines.push('export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {');
@@ -2008,7 +2045,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push('    data = { ...data, $type: canonical as unknown as number };');
 		lines.push('  }');
 		lines.push('  const fn = _wrapTable[canonical ?? rawType];');
-		lines.push('  if (!fn) return data; // unknown kind — return as-is');
+		lines.push(
+			'  if (!fn) return _drillUnknownKindChildren(data, tree); // unknown kind — still drill in its kind-named-slot children'
+		);
 		lines.push('  return fn(data, tree);');
 		lines.push('}');
 		lines.push('');

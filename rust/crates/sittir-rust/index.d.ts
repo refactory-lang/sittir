@@ -473,8 +473,8 @@ export interface ClosureExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _static_marker?: Box<AnyTransport>
-  _async_marker?: Box<AnyTransport>
+  _static_marker?: boolean
+  _async_marker?: boolean
   _move_marker?: MoveMarkerTransport
   _parameters: ClosureParametersTransport
   _content: Box<ClosureExpressionContentTransportSlot>
@@ -761,7 +761,7 @@ export interface ExternCrateDeclarationTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _visibility_modifier?: VisibilityModifierTransport
-  _crate: Box<AnyTransport>
+  _crate: string
   _name: IdentifierTransport
   _alias?: IdentifierTransport
 }
@@ -881,7 +881,7 @@ export interface FieldPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _ref_marker?: Box<AnyTransport>
+  _ref_marker?: boolean
   _mutable_specifier?: _MutableSpecifierTransport
   _content: FieldPatternContentTransportSlot
 }
@@ -1881,10 +1881,10 @@ export interface SelfParameterTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _reference?: Box<AnyTransport>
+  _reference?: boolean
   _lifetime?: LifetimeTransport
   _mutable_specifier?: _MutableSpecifierTransport
-  _self: Box<AnyTransport>
+  _self: string
 }
 
 export interface ShorthandFieldInitializerTransport {
@@ -2054,7 +2054,7 @@ export interface TokenRepetitionPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _separator?: Box<AnyTransport>
+  _separator?: boolean
   _operator: OperatorEnum
   _token_pattern?: Array<TokenPatternTransport>
 }
@@ -2067,7 +2067,7 @@ export interface TokenRepetitionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _separator?: Box<AnyTransport>
+  _separator?: boolean
   _operator: OperatorEnum
   _tokens?: Array<TokensTransport>
 }

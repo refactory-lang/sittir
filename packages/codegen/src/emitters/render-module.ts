@@ -54,7 +54,14 @@ import {
 	classifySlot,
 	type SlotClass
 } from './transport-common.ts';
-import { keywordPresenceValue, slotLiteralValues, isSlotBearingCompound } from './shared.ts';
+import {
+	keywordPresenceValue,
+	slotLiteralValues,
+	isSlotBearingCompound,
+	classifyBranchSlots,
+	classifyPrimitiveField,
+	type PrimitiveFieldStorage
+} from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
 	collectKindEntries,
@@ -1487,6 +1494,20 @@ function buildTypedTemplateBody(
 	const sepLiteral = JSON.stringify(separator);
 	const R = RENDERABLE_PREFIX;
 
+	// `'boolean'`/`'verbatim'`-classified fields (see `classifyPrimitiveField`
+	// docstring) get a `bool`/`String` transport struct field
+	// (`renderTransportField`), not a per-slot enum or `AnyTransport`.
+	// Precompute once so both the `$text` fast-path "checkable" predicate
+	// below and the main template-struct loop agree with what the struct
+	// actually declares.
+	const primitiveByName = new Map<string, PrimitiveFieldStorage>();
+	if (nodeMap !== undefined && slotModel !== undefined) {
+		for (const f of [...slotModel.named, ...slotModel.unnamed]) {
+			const cls = classifyPrimitiveField(f, nodeMap);
+			if (cls !== undefined) primitiveByName.set(f.name, cls);
+		}
+	}
+
 	// `$text` fast-path — match JS render's `nodeHasStructure` short-circuit.
 	// Shallow validator reads only `$type` + `$text` for nested nodes. With
 	// per-slot Option<...> fields, those nodes deserialize successfully (no
@@ -1502,6 +1523,10 @@ function buildTypedTemplateBody(
 		const allSlots = [...slotModel.named, ...slotModel.unnamed];
 		const allCheckable = allSlots.every((slot) => {
 			if (isMultiple(slot)) return true; // Vec<T> or Option<Vec<T>> — both checkable.
+			// `Option<bool>` (boolean-collapsed terminal-only field) is checkable
+			// via `unwrap_or(false)` negation, same presence semantics as
+			// `Option<T>::is_none()`.
+			if (primitiveByName.get(slot.name)?.kind === 'boolean') return true;
 			return !isRequired(slot); // Option<T> is checkable; required T is not.
 		});
 		if (allCheckable && allSlots.length > 0) {
@@ -1511,7 +1536,10 @@ function buildTypedTemplateBody(
 				if (seenStorage.has(slot.storageName)) continue;
 				seenStorage.add(slot.storageName);
 				const rIdent = rustFieldIdent(slot.storageName);
-				if (isMultiple(slot) && isRequired(slot)) {
+				if (primitiveByName.get(slot.name)?.kind === 'boolean') {
+					// `Option<bool>` field — `None` and `Some(false)` both mean absent.
+					checks.push(`!node.${rIdent}.unwrap_or(false)`);
+				} else if (isMultiple(slot) && isRequired(slot)) {
 					// Vec<T> — empty when length 0.
 					checks.push(`node.${rIdent}.is_empty()`);
 				} else if (isMultiple(slot)) {
@@ -1588,6 +1616,33 @@ function buildTypedTemplateBody(
 	for (const f of struct.fields) {
 		const rIdent = rustFieldIdent(f.storageName);
 		const templateIdent = rustFieldIdent(f.name);
+		const primitive = primitiveByName.get(f.name);
+		if (primitive?.kind === 'boolean') {
+			// `Option<bool>` field — presence (`Some(true)`; `None`/`Some(false)`
+			// both mean absent) gates the fixed literal text (the same text
+			// `keywordPresenceValue` stamped on the struct-field decision in
+			// `renderTransportField`). No transport dispatch needed.
+			lines.push(`        ${templateIdent}: if node.${rIdent}.unwrap_or(false) {`);
+			lines.push(`            OptionalNonterminalView::Present(${R}Renderable::Text(${JSON.stringify(primitive.text)}))`);
+			lines.push(`        } else {`);
+			lines.push(`            OptionalNonterminalView::Missing`);
+			lines.push(`        },`);
+			continue;
+		}
+		if (primitive?.kind === 'verbatim') {
+			// `String`/`Option<String>` field — wrap sends the raw literal
+			// text (no kind_id), never a presence bool — mirrors `f.required`
+			// exactly like any other Option<T>/T field.
+			if (f.required) {
+				lines.push(`        ${templateIdent}: SingleNonterminalView(${R}Renderable::Text(&node.${rIdent})),`);
+			} else {
+				lines.push(`        ${templateIdent}: match &node.${rIdent} {`);
+				lines.push(`            Some(v) => OptionalNonterminalView::Present(${R}Renderable::Text(v)),`);
+				lines.push(`            None => OptionalNonterminalView::Missing,`);
+				lines.push(`        },`);
+			}
+			continue;
+		}
 		const kinds = fieldKindsByName.get(f.name) ?? [];
 		const cls = classifyField(f.name, kinds);
 		const isBoxed = cls.tag === 'heterogeneous' && cls.useBox !== false;
@@ -2497,26 +2552,8 @@ function emitSupertypeTransportEnum(
 	const isBoxed = (subKind: string, subNode: AssembledNode): boolean =>
 		boxedInEnum(subKind, ownerKind, subNode, nodeMap);
 
-	// Does this supertype admit any AssembledPattern variant? Pattern variants
-	// share verbatim-text render semantics; bare-string inputs are wrapped as
-	// Verbatim. See VerbatimTransport docstring for rationale.
-	//
-	// Checked over the FULLY recursively-flattened subtype set (via
-	// `collectConcreteTransportKinds`), not `validSubtypes` —
-	// `collectEffectiveSupertypeTransportShape` boxes a non-reserved NESTED
-	// supertype subtype as-is (its own dedicated transport enum) rather than
-	// flattening it, so a pattern-modelType leaf buried inside that boxed
-	// subtype is invisible to a shallow check. The transport layer still
-	// sends that leaf as bare text (the universal leaf-collapse convention),
-	// so this enum needs the Verbatim branch regardless of nesting depth.
-	// Confirmed concretely: python's `_left_hand_side` (subtypes `[pattern,
-	// pattern_list]`) missed this because `pattern` itself is `modelType:
-	// 'supertype'`, not `'pattern'` — the leaf that actually renders as
-	// verbatim text (`identifier`) is one level deeper, inside its own
-	// `PatternTransport`.
-	const admitsVerbatim = supertypeNode.subtypes.some((subKind) =>
-		collectConcreteTransportKinds(subKind, nodeMap).some((k) => nodeMap.nodes.get(k)?.modelType === 'pattern')
-	);
+	// See `admitsVerbatimCollapse` docstring for the full rationale.
+	const admitsVerbatim = admitsVerbatimCollapse(supertypeNode.subtypes, nodeMap);
 
 	const emitDecodeTrials = (leafOnly = false, indent = '                '): string[] => {
 		// Self-alias / reserved-supertype kind_id: parser sent the supertype's
@@ -2766,13 +2803,8 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 	const { subtypes: validSubtypes } = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
 	const ownerKind = supertypeNode.kind;
 
-	// See the matching comment in `emitSupertypeTransportEnum` — checked over
-	// the fully recursively-flattened subtype set, not the shallow
-	// `validSubtypes`, so a pattern-modelType leaf nested inside a boxed
-	// subtype supertype is still detected.
-	const admitsVerbatim = supertypeNode.subtypes.some((subKind) =>
-		collectConcreteTransportKinds(subKind, nodeMap).some((k) => nodeMap.nodes.get(k)?.modelType === 'pattern')
-	);
+	// See `admitsVerbatimCollapse` docstring for the full rationale.
+	const admitsVerbatim = admitsVerbatimCollapse(supertypeNode.subtypes, nodeMap);
 
 	lines.push(`fn ${fnName}(t: &${enumName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	lines.push(`    match t {`);
@@ -2807,6 +2839,57 @@ function collectConcreteTransportKinds(kind: string, nodeMap: NodeMap, seen: Set
 		}
 	}
 	return [...concreteKinds];
+}
+
+/**
+ * Whether a transport enum spanning `kinds` (supertype subtypes, or a
+ * per-slot enum's candidate child kinds) must admit bare-string input via a
+ * `Verbatim(VerbatimTransport)` variant.
+ *
+ * Two ways a candidate kind can surface as bare text at read time:
+ *
+ * 1. It (or a supertype subtype reachable from it) IS a `pattern`-modelType
+ *    leaf (`identifier`, `integer_literal`, etc.) — these always render
+ *    their raw `text` verbatim, so the transport layer sends them as bare
+ *    strings rather than tagged objects.
+ * 2. It's a concrete branch/group kind whose ONLY user-facing field is a
+ *    repeated choice (`classifyBranchSlots` singleSlot/multiple) that
+ *    includes a GRAMMAR-HIDDEN (leading-underscore) `pattern`-modelType
+ *    alternative. Tree-sitter elides hidden rules entirely rather than
+ *    nesting them as child nodes, so when the repeat is satisfied purely by
+ *    that hidden leaf (typically an external-scanner symbol), the enclosing
+ *    node ends up with zero named children in the real parse — the read
+ *    side then has nothing to represent but the node's raw text. The
+ *    alternative must be hidden, not merely `pattern`-modelType: a VISIBLE
+ *    pattern alternative (e.g. `identifier` in `dotted_name`) still produces
+ *    its own real child node, so the enclosing node never collapses.
+ *    Concretely: python's `string_content` is `repeat1(choice(
+ *    escape_interpolation | escape_sequence | string_content_group1 |
+ *    _string_content))`; a plain string body matches purely via the hidden
+ *    external-scanner `_string_content` (modelType `pattern`) and reads as
+ *    bare text, so `StringContentTransportSlot` (string's `content` field,
+ *    kinds `[interpolation, string_content]`) must admit `Verbatim` even
+ *    though `string_content` itself is `modelType: 'branch'`.
+ *
+ * Checked over the fully recursively-flattened kind set (via
+ * `collectConcreteTransportKinds`), not a shallow membership test — see the
+ * call sites for concrete "missed it" cases confirmed in this codebase.
+ */
+function admitsVerbatimCollapse(kinds: readonly string[], nodeMap: NodeMap): boolean {
+	const isHiddenPatternLeaf = (candidateKind: string): boolean =>
+		candidateKind.startsWith('_') && nodeMap.nodes.get(candidateKind)?.modelType === 'pattern';
+	const kindCollapses = (kind: string): boolean => {
+		const node = nodeMap.nodes.get(kind);
+		if (node === undefined) return false;
+		if (node.modelType === 'pattern') return true;
+		if (node.modelType !== 'branch' && node.modelType !== 'group') return false;
+		const slotClass = classifyBranchSlots(node, nodeMap);
+		if (slotClass.tag !== 'singleSlot' || slotClass.arity !== 'multiple') return false;
+		return slotClass.slot.values.some(
+			(value) => isNodeRef(value) && isHiddenPatternLeaf(storageKindOfRef(value.node))
+		);
+	};
+	return kinds.some((kind) => collectConcreteTransportKinds(kind, nodeMap).some(kindCollapses));
 }
 
 function expandConcreteTransportKinds(
@@ -3009,30 +3092,8 @@ function emitPerSlotChildEnum(
 	const isBoxed = (variantKind: string, variantNode: AssembledNode): boolean =>
 		boxedInEnum(variantKind, ownerKind, variantNode, nodeMap);
 
-	// AssembledPattern variants — the kinds whose render template emits the
-	// `text` field verbatim (`identifier`, `integer_literal`, etc.). When at
-	// least one is present in this enum, we admit bare-string inputs via the
-	// `Verbatim(VerbatimTransport)` variant. Bare strings carry no kind tag,
-	// and any pattern variant would render their text identically — Verbatim
-	// is the explicit "untyped text" carrier that avoids the ambiguity of
-	// picking among interchangeable pattern variants.
-	//
-	// Checked over the FULLY recursively-flattened kind set (via
-	// `collectConcreteTransportKinds`), not `validKinds` — `validKinds` stops
-	// at a nested supertype that has its own dedicated transport enum (e.g.
-	// `pattern` → boxed as `Pattern(PatternTransport)`, never expanded down to
-	// `identifier`), so checking it directly misses a pattern-modelType leaf
-	// buried inside that boxed supertype. The transport layer still sends
-	// that leaf as bare text (the same universal leaf-collapse convention),
-	// so the enclosing enum needs the Verbatim branch regardless of nesting
-	// depth. Confirmed concretely: python's `LeftHandSideTransport`
-	// (`assignment.left`, kinds `[pattern, pattern_list]`) missed this
-	// because `pattern` itself is `modelType: 'supertype'`, not `'pattern'` —
-	// the leaf that actually renders as verbatim text (`identifier`) is one
-	// level deeper, inside `PatternTransport`.
-	const admitsVerbatim = entry.kinds.some((kind) =>
-		collectConcreteTransportKinds(kind, nodeMap).some((k) => nodeMap.nodes.get(k)?.modelType === 'pattern')
-	);
+	// See `admitsVerbatimCollapse` docstring for the full rationale.
+	const admitsVerbatim = admitsVerbatimCollapse(entry.kinds, nodeMap);
 
 	// Spec 024 cleanup-§E1: named-slot enums are load-bearing alongside unnamed
 	// `$children` enums — `rustTransportSlotType` returns the per-slot enum name
@@ -4071,11 +4132,33 @@ function renderTransportField(
 	// napi structs to read the same storage keys directly. Symmetric for named
 	// and unnamed slots (cleanup-rules §E1).
 	lines.push(`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(`_${field.storageName}`)}))]`);
+	// `'boolean'`/`'verbatim'`-classified fields (see `classifyPrimitiveField`
+	// docstring) bypass `rustTransportSlotType` entirely and get a primitive
+	// Rust type instead — wrap sends a presence bool or bare text for these,
+	// never the kind_id/object shape `rustTransportSlotType`'s per-slot-enum
+	// / `AnyTransport` machinery expects.
+	const required = forceOptional ? false : isRequired(field);
+	const primitive = classifyPrimitiveField(field, nodeMap);
+	const primitiveType =
+		primitive?.kind === 'boolean'
+			? // `Option<bool>`, NOT bare `bool`: wrap OMITS the wire key entirely
+				// when absent/false (confirmed via `tool probe-kind`) rather than
+				// sending an explicit `false`. `#[napi(object)]` derive requires a
+				// non-Option field's key to always be present, so a bare `bool`
+				// throws "Missing field" on every absent instance — the common
+				// case for an optional keyword modifier. Render-side glue treats
+				// `None` the same as `Some(false)` (`unwrap_or(false)`).
+				'Option<bool>'
+			: primitive?.kind === 'verbatim'
+				? required
+					? 'String'
+					: 'Option<String>'
+				: undefined;
 	lines.push(
-		`    pub ${rustName}: ${rustTransportSlotType(
+		`    pub ${rustName}: ${primitiveType ?? rustTransportSlotType(
 			kindsOf(field),
 			nodeMap,
-			{ required: forceOptional ? false : isRequired(field), multiple: isMultiple(field) },
+			{ required, multiple: isMultiple(field) },
 			parentKind,
 			typeName,
 			field.name,

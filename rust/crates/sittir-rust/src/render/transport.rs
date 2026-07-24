@@ -29896,9 +29896,9 @@ pub struct ClosureExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_static_marker"))]
-    pub static_marker: Option<Box<AnyTransport>>,
+    pub static_marker: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
-    pub async_marker: Option<Box<AnyTransport>>,
+    pub async_marker: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_move_marker"))]
     pub move_marker: Option<MoveMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_parameters"))]
@@ -31041,7 +31041,7 @@ pub struct ExternCrateDeclarationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_visibility_modifier"))]
     pub visibility_modifier: Option<VisibilityModifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_crate"))]
-    pub crate_: Box<AnyTransport>,
+    pub crate_: String,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_alias"))]
@@ -31405,7 +31405,7 @@ pub struct FieldPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_ref_marker"))]
-    pub ref_marker: Option<Box<AnyTransport>>,
+    pub ref_marker: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable_specifier"))]
     pub mutable_specifier: Option<_MutableSpecifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
@@ -35253,13 +35253,13 @@ pub struct SelfParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_reference"))]
-    pub reference: Option<Box<AnyTransport>>,
+    pub reference: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_lifetime"))]
     pub lifetime: Option<LifetimeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_mutable_specifier"))]
     pub mutable_specifier: Option<_MutableSpecifierTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_self"))]
-    pub self_: Box<AnyTransport>,
+    pub self_: String,
 }
 
 impl RenderableTransport for SelfParameterTransport {
@@ -35987,7 +35987,7 @@ pub struct TokenRepetitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_separator"))]
-    pub separator: Option<Box<AnyTransport>>,
+    pub separator: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: OperatorEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tokens"))]
@@ -36041,7 +36041,7 @@ pub struct TokenRepetitionPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_separator"))]
-    pub separator: Option<Box<AnyTransport>>,
+    pub separator: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
     pub operator: OperatorEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_token_pattern"))]
@@ -48178,9 +48178,10 @@ fn render_char_literal(t: &CharLiteralTransport, dest: &mut dyn ::std::fmt::Writ
 
 fn render_closure_expression(node: &ClosureExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ClosureExpressionTemplate {
-        async_marker: match &node.async_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
+        async_marker: if node.async_marker.unwrap_or(false) {
+            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("async"))
+        } else {
+            OptionalNonterminalView::Missing
         },
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
         move_marker: match &node.move_marker {
@@ -48188,9 +48189,10 @@ fn render_closure_expression(node: &ClosureExpressionTransport, dest: &mut dyn :
             None => OptionalNonterminalView::Missing,
         },
         parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters)),
-        static_marker: match &node.static_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
+        static_marker: if node.static_marker.unwrap_or(false) {
+            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("static"))
+        } else {
+            OptionalNonterminalView::Missing
         },
     };
     template.render_into(dest)
@@ -48404,7 +48406,7 @@ fn render_extern_crate_declaration(node: &ExternCrateDeclarationTransport, dest:
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        crate_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.crate_.as_ref())),
+        crate_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(&node.crate_)),
         name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         visibility_modifier: match &node.visibility_modifier {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
@@ -48504,9 +48506,10 @@ fn render_field_pattern(node: &FieldPatternTransport, dest: &mut dyn ::std::fmt:
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        ref_marker: match &node.ref_marker {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
+        ref_marker: if node.ref_marker.unwrap_or(false) {
+            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("ref"))
+        } else {
+            OptionalNonterminalView::Missing
         },
     };
     template.render_into(dest)
@@ -49198,11 +49201,12 @@ fn render_self_parameter(node: &SelfParameterTransport, dest: &mut dyn ::std::fm
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
-        reference: match &node.reference {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
+        reference: if node.reference.unwrap_or(false) {
+            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("&"))
+        } else {
+            OptionalNonterminalView::Missing
         },
-        self_: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.self_.as_ref())),
+        self_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(&node.self_)),
     };
     template.render_into(dest)
 }
@@ -49363,9 +49367,10 @@ fn render_token_repetition(node: &TokenRepetitionTransport, dest: &mut dyn ::std
         .collect();
     let template = TokenRepetitionTemplate {
         operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
-        separator: match &node.separator {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
+        separator: if node.separator.unwrap_or(false) {
+            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("[^+*?]+"))
+        } else {
+            OptionalNonterminalView::Missing
         },
         tokens: ListNonterminalView {
             items: tokens_buf.as_slice(),
@@ -49384,9 +49389,10 @@ fn render_token_repetition_pattern(node: &TokenRepetitionPatternTransport, dest:
         .collect();
     let template = TokenRepetitionPatternTemplate {
         operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
-        separator: match &node.separator {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
+        separator: if node.separator.unwrap_or(false) {
+            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("[^+*?]+"))
+        } else {
+            OptionalNonterminalView::Missing
         },
         token_pattern: ListNonterminalView {
             items: token_pattern_buf.as_slice(),

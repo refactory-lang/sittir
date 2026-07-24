@@ -654,6 +654,93 @@ export function keywordPresenceIsNonEmptyRepeat(field: AssembledNonterminal): bo
 	return field.values.every((v) => v.multiplicity === 'nonEmptyArray');
 }
 
+/** Rust struct-field storage for a `classifyPrimitiveField` verdict. */
+export type PrimitiveFieldStorage = { kind: 'boolean'; text: string } | { kind: 'verbatim' };
+
+/**
+ * Classifies a slot whose ENTIRE value set is bare anonymous-literal
+ * terminals (no node-ref at all — e.g. rust `self_parameter.self` is a bare
+ * `field('self', 'self')` literal, not a reference to a keyword KIND) that
+ * the Rust transport struct should type as a primitive (`bool` / `String`)
+ * instead of routing through `rustTransportSlotType`'s node-ref-based
+ * per-slot-enum / `AnyTransport` classification.
+ *
+ * `kindsOf()`-based slot classification (used to type the transport struct
+ * field) intentionally skips `TerminalValue` entries, so a terminal-only
+ * field is left with an empty kind set and no distinguishing content —
+ * falling back to `AnyTransport`, which accepts neither wrap's collapsed
+ * `bool` nor its bare verbatim string.
+ *
+ * Node-ref fields (to a keyword/token/pattern/branch/supertype KIND) are
+ * deliberately EXCLUDED (gated out before consulting storage info at all):
+ * a node-ref to a keyword/token/pattern kind already works today, because
+ * that kind's OWN leaf transport struct has a manual `FromNapiValue`
+ * accepting bare strings/booleans (see `renderLeafTransportNapiImpls`) —
+ * e.g. rust `closure_expression.move_marker`, a node-ref to `_move_marker`.
+ * A node-ref to an ordinary branch/supertype kind (e.g. `call_expression.
+ * callee` → `_expression`) is a completely normal structural child —
+ * `resolveFieldStorageInfo`'s `'verbatim'` result for THAT case means
+ * "not a bounded keyword-literal set", not "wrap sends bare text"; treating
+ * it as a primitive would be wrong (confirmed: an earlier version of this
+ * function gated on `resolveFieldStorageInfo` alone and wrongly collapsed
+ * ordinary structural fields to `String`).
+ *
+ * Within the terminal-only gate, `resolveFieldStorageInfo` (the SAME
+ * slot-storage classification `wrap.ts` already uses) distinguishes what
+ * wrap actually puts on the wire:
+ *
+ * - `'boolean'` — wrap collapses this to a JS `true`/absent boolean
+ *   (rust `self_parameter.reference` → `&`, `closure_expression.async_marker`
+ *   → `async`). The Rust field should be a plain `bool` carrying presence,
+ *   with `text` the fixed literal to write when present.
+ * - `'verbatim'` — the literal has no stamped catalog kind_id at all. Wrap
+ *   sends the literal's raw text on the wire; the Rust field should be a
+ *   plain `String`/`Option<String>` (mirroring the slot's own
+ *   required/optional — NOT collapsed, unlike `'boolean'`) carrying it
+ *   through.
+ * - `'kindEnum'` — has a stamped catalog kind_id, but that alone does NOT
+ *   mean wrap sends the numeric id: confirmed empirically (`tool
+ *   probe-kind`), rust `self_parameter.self` and `extern_crate_declaration.
+ *   crate` are ALSO `'kindEnum'` (each resolves to its own single keyword
+ *   kind, `self`/`crate`) yet wrap sends raw TEXT (`"self"`/`"crate"`) —
+ *   while `visibility_modifier_pub._pub` and `binary_expression.operator`
+ *   are ALSO `'kindEnum'` and wrap sends the numeric kind_id. The
+ *   discriminator is whether the resolved kind is VISIBLE in our model
+ *   (`hidden === false` — has its own factory, e.g. `self`/`crate`: a user
+ *   can construct one directly, so wrap treats it as a genuine leaf node
+ *   and forwards its text) vs a pure hidden/anonymous marker (`hidden ===
+ *   true`, e.g. `pub`, the `&&`/`+`/... operator tokens: no dedicated
+ *   factory, so wrap forwards only the bare kind_id). Only the VISIBLE case
+ *   gets `'verbatim'` treatment here; the hidden case is left alone —
+ *   `AnyTransport`'s existing kind_id branch already resolves it correctly,
+ *   and redirecting it to `String` breaks it (converting a raw napi Number
+ *   into a Rust `String` fails).
+ * - `'bitflag'` — also NOT covered; a separate concern with no observed
+ *   regression.
+ *
+ * Multiple/array-multiplicity slots are also excluded (`undefined`) — no
+ * observed case needs a `Vec<String>` carrier yet; safer to fall through to
+ * the existing path than introduce untested Vec-of-primitive handling.
+ */
+export function classifyPrimitiveField(
+	field: AssembledNonterminal,
+	nodeMap: NodeMap
+): PrimitiveFieldStorage | undefined {
+	if (isMultiple(field)) return undefined;
+	if (field.values.length === 0) return undefined;
+	if (!field.values.every((v) => isTerminalValue(v))) return undefined;
+	const info = resolveFieldStorageInfo(field, nodeMap);
+	if (info.kind === 'boolean') {
+		const text = info.texts[0];
+		return text !== undefined ? { kind: 'boolean', text } : undefined;
+	}
+	if (info.kind === 'verbatim') return { kind: 'verbatim' };
+	if (info.kind === 'kindEnum' && info.enumKinds.every((k) => nodeMap.nodes.get(k)?.hidden === false)) {
+		return { kind: 'verbatim' };
+	}
+	return undefined; // hidden kindEnum / bitflag — existing per-slot/AnyTransport path already handles these correctly.
+}
+
 function classifyFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap): FieldStorageInfo {
 	const keywordKind = keywordPresenceKind(field, nodeMap);
 	if (keywordKind === 'boolean') {

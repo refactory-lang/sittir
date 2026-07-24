@@ -10513,6 +10513,7 @@ impl RenderableTransport for SplatTypeIdentifierTransportSlot {
 pub enum StringContentTransportSlot {
     Interpolation(InterpolationTransport),
     StringContent(StringContentTransport),
+    Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -10534,6 +10535,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentTransportSlot {
                         "unknown kind id {other} in StringContentTransportSlot",
                     ))),
                 }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
@@ -10591,6 +10596,7 @@ fn string_content_transport_slot_to_any(t: StringContentTransportSlot) -> AnyTra
     match t {
         StringContentTransportSlot::Interpolation(inner) => AnyTransport::Interpolation(inner),
         StringContentTransportSlot::StringContent(inner) => AnyTransport::StringContent(inner),
+        StringContentTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
@@ -10602,6 +10608,7 @@ impl RenderableTransport for StringContentTransportSlot {
         match self {
             StringContentTransportSlot::Interpolation(inner) => render_interpolation(inner, dest),
             StringContentTransportSlot::StringContent(inner) => render_string_content(inner, dest),
+            StringContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -16335,7 +16342,7 @@ pub struct ComplexPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_real"))]
-    pub real: Option<Box<AnyTransport>>,
+    pub real: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_imaginary"))]
     pub imaginary: ComplexPatternImaginaryTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
@@ -31119,9 +31126,10 @@ fn render_complex_pattern(node: &ComplexPatternTransport, dest: &mut dyn ::std::
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
         imaginary: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.imaginary)),
         operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
-        real: match &node.real {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => OptionalNonterminalView::Missing,
+        real: if node.real.unwrap_or(false) {
+            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("-"))
+        } else {
+            OptionalNonterminalView::Missing
         },
     };
     template.render_into(dest)

@@ -250,7 +250,7 @@ export interface AssignmentExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _using_marker?: Box<AnyTransport>
+  _using_marker?: boolean
   _left: Box<AssignmentExpressionLeftTransportSlot>
   _right: Box<ExpressionTransport>
 }
@@ -1091,7 +1091,7 @@ export interface ForInStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _await_marker?: Box<AnyTransport>
+  _await_marker?: boolean
   _operator: ForHeaderOperatorEnum
   _right: ExpressionsTransport
   _body: Box<StatementTransport>
@@ -2188,7 +2188,7 @@ export interface PublicFieldDefinitionAccessFirstTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _declare_marker?: Box<AnyTransport>
+  _declare_marker?: boolean
   _accessibility_modifier: AccessibilityModifierEnum
 }
 
@@ -2238,7 +2238,7 @@ export interface PublicFieldDefinitionTransport {
   '$triviaData'?: TransportTrivia
   _decorator?: Array<DecoratorTransport>
   _visibility_prefix?: PublicFieldDefinitionVisibilityPrefixTransportSlot
-  _accessor_marker?: Box<AnyTransport>
+  _accessor_marker?: boolean
   _name: PropertyNameTransport
   _optionality_marker?: PublicFieldDefinitionOptionalityMarkerEnum
   _type?: TypeAnnotationTransport

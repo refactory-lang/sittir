@@ -376,7 +376,7 @@ export interface ComplexPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _real?: Box<AnyTransport>
+  _real?: boolean
   _imaginary: ComplexPatternImaginaryTransportSlot
   _operator: ComplexPatternOperatorEnum
   _content: ComplexPatternContentTransportSlot

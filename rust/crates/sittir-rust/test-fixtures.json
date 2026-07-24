@@ -1496,6 +1496,380 @@
       "$named": true,
       "_statements": [
         {
+          "$type": 204,
+          "$source": 0,
+          "$named": true,
+          "_pattern": {
+            "$type": 340,
+            "$source": 0,
+            "$named": true,
+            "$text": "_",
+            "$span": {
+              "start": 4,
+              "end": 5
+            },
+            "$nodeHandle": 8
+          },
+          "_value": {
+            "$type": 282,
+            "$source": 0,
+            "$named": true,
+            "_async_marker": true,
+            "_parameters": {
+              "$type": 283,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 14,
+                "end": 16
+              },
+              "$nodeHandle": 10,
+              "_parameters": []
+            },
+            "$span": {
+              "start": 8,
+              "end": 19
+            },
+            "$nodeHandle": 9,
+            "_content": {
+              "$type": 351,
+              "$source": 0,
+              "$named": true,
+              "_body": {
+                "$type": 262,
+                "$source": 0,
+                "$named": true,
+                "$text": "()",
+                "$span": {
+                  "start": 17,
+                  "end": 19
+                },
+                "$nodeHandle": 12
+              },
+              "$span": {
+                "start": 17,
+                "end": 19
+              },
+              "$nodeHandle": 11
+            }
+          },
+          "$other": [
+            59,
+            81,
+            2
+          ],
+          "$span": {
+            "start": 0,
+            "end": 20
+          },
+          "$nodeHandle": 7
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 20
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "let _ = async || ();"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "let _ = async || ();",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "let _ = async || ();",
+    "expectedReparseTree": "(source_file statements: (let_declaration pattern: (wildcard_pattern) value: (closure_expression parameters: (closure_parameters) (closure_expression_expr body: (unit_expression)))))",
+    "wrappedText": "let _ = async || ();",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 204,
+      "$source": 0,
+      "$named": true,
+      "_pattern": {
+        "$type": 340,
+        "$source": 0,
+        "$named": true,
+        "$text": "_",
+        "$span": {
+          "start": 4,
+          "end": 5
+        },
+        "$nodeHandle": 13
+      },
+      "_value": {
+        "$type": 282,
+        "$source": 0,
+        "$named": true,
+        "_async_marker": true,
+        "_parameters": {
+          "$type": 283,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 14,
+            "end": 16
+          },
+          "$nodeHandle": 15,
+          "_parameters": []
+        },
+        "$span": {
+          "start": 8,
+          "end": 19
+        },
+        "$nodeHandle": 14,
+        "_content": {
+          "$type": 351,
+          "$source": 0,
+          "$named": true,
+          "_body": {
+            "$type": 262,
+            "$source": 0,
+            "$named": true,
+            "$text": "()",
+            "$span": {
+              "start": 17,
+              "end": 19
+            },
+            "$nodeHandle": 17
+          },
+          "$span": {
+            "start": 17,
+            "end": 19
+          },
+          "$nodeHandle": 16
+        }
+      },
+      "$other": [
+        59,
+        81,
+        2
+      ],
+      "$span": {
+        "start": 0,
+        "end": 20
+      },
+      "$nodeHandle": 1
+    },
+    "expectedOutput": "let _ = async || ();"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "let _ = async || ();",
+    "pattern": "let_declaration",
+    "edits": [],
+    "expectedSourceOut": "let _ = async || ();",
+    "expectedReparseTree": "(let_declaration pattern: (wildcard_pattern) value: (closure_expression parameters: (closure_parameters) (closure_expression_expr body: (unit_expression))))",
+    "wrappedText": "let _ = async || ();",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 204,
+          "$source": 0,
+          "$named": true,
+          "_pattern": "a",
+          "_value": {
+            "$type": 282,
+            "$source": 0,
+            "$named": true,
+            "_async_marker": true,
+            "_move_marker": true,
+            "_parameters": {
+              "$type": 283,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 19,
+                "end": 21
+              },
+              "$nodeHandle": 9,
+              "_parameters": []
+            },
+            "$span": {
+              "start": 8,
+              "end": 35
+            },
+            "$nodeHandle": 8,
+            "_content": {
+              "$type": 351,
+              "$source": 0,
+              "$named": true,
+              "_body": {
+                "$type": 291,
+                "$source": 0,
+                "$named": true,
+                "_move_marker": true,
+                "_block": {
+                  "$type": 294,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 33,
+                    "end": 35
+                  },
+                  "$nodeHandle": 12,
+                  "_statement": []
+                },
+                "$other": [
+                  47
+                ],
+                "$span": {
+                  "start": 22,
+                  "end": 35
+                },
+                "$nodeHandle": 11
+              },
+              "$span": {
+                "start": 22,
+                "end": 35
+              },
+              "$nodeHandle": 10
+            }
+          },
+          "$other": [
+            59,
+            81,
+            2
+          ],
+          "$span": {
+            "start": 0,
+            "end": 36
+          },
+          "$nodeHandle": 7
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 36
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "let a = async move || async move {  };"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "let a = async move || async move {};",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "let a = async move || async move {  };",
+    "expectedReparseTree": "(source_file statements: (let_declaration pattern: (identifier) value: (closure_expression parameters: (closure_parameters) (closure_expression_expr body: (async_block block: (block))))))",
+    "wrappedText": "let a = async move || async move {  };",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 204,
+      "$source": 0,
+      "$named": true,
+      "_pattern": "a",
+      "_value": {
+        "$type": 282,
+        "$source": 0,
+        "$named": true,
+        "_async_marker": true,
+        "_move_marker": true,
+        "_parameters": {
+          "$type": 283,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 19,
+            "end": 21
+          },
+          "$nodeHandle": 14,
+          "_parameters": []
+        },
+        "$span": {
+          "start": 8,
+          "end": 35
+        },
+        "$nodeHandle": 13,
+        "_content": {
+          "$type": 351,
+          "$source": 0,
+          "$named": true,
+          "_body": {
+            "$type": 291,
+            "$source": 0,
+            "$named": true,
+            "_move_marker": true,
+            "_block": {
+              "$type": 294,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 33,
+                "end": 35
+              },
+              "$nodeHandle": 17,
+              "_statement": []
+            },
+            "$other": [
+              47
+            ],
+            "$span": {
+              "start": 22,
+              "end": 35
+            },
+            "$nodeHandle": 16
+          },
+          "$span": {
+            "start": 22,
+            "end": 35
+          },
+          "$nodeHandle": 15
+        }
+      },
+      "$other": [
+        59,
+        81,
+        2
+      ],
+      "$span": {
+        "start": 0,
+        "end": 36
+      },
+      "$nodeHandle": 1
+    },
+    "expectedOutput": "let a = async move || async move {  };"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "let a = async move || async move {};",
+    "pattern": "let_declaration",
+    "edits": [],
+    "expectedSourceOut": "let a = async move || async move {  };",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (closure_expression parameters: (closure_parameters) (closure_expression_expr body: (async_block block: (block)))))",
+    "wrappedText": "let a = async move || async move {  };",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
           "$type": 160,
           "$source": 0,
           "$named": true,
@@ -2893,6 +3267,261 @@
           "end": 92
         },
         "$nodeHandle": 45
+      }
+    },
+    "expectedOutput": "pub"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub",
+    "pattern": "visibility_modifier",
+    "edits": [],
+    "expectedSourceOut": "pub",
+    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub))",
+    "wrappedText": "pub fn _f() {}",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 185,
+          "$source": 0,
+          "$named": true,
+          "_crate": "crate",
+          "_name": "std",
+          "$other": [
+            80,
+            2
+          ],
+          "$span": {
+            "start": 0,
+            "end": 17
+          },
+          "$nodeHandle": 6
+        },
+        {
+          "$type": 185,
+          "$source": 0,
+          "$named": true,
+          "_crate": "crate",
+          "_name": "std",
+          "_alias": "ruststd",
+          "$other": [
+            80,
+            46,
+            2
+          ],
+          "$span": {
+            "start": 18,
+            "end": 46
+          },
+          "$nodeHandle": 7
+        },
+        {
+          "$type": 185,
+          "$source": 0,
+          "$named": true,
+          "_visibility_modifier": {
+            "$type": 216,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 47,
+              "end": 50
+            },
+            "$nodeHandle": 9,
+            "_content": {
+              "$type": 370,
+              "$source": 0,
+              "$named": true,
+              "_pub": 63,
+              "$span": {
+                "start": 47,
+                "end": 50
+              },
+              "$nodeHandle": 10
+            }
+          },
+          "_crate": "crate",
+          "_name": "futures",
+          "$other": [
+            80,
+            2
+          ],
+          "$span": {
+            "start": 47,
+            "end": 72
+          },
+          "$nodeHandle": 8
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 72
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "extern crate std; extern crate std as ruststd ; pub extern crate futures;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "extern crate std;\nextern crate std as ruststd;\npub extern crate futures;",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "extern crate std; extern crate std as ruststd ; pub extern crate futures;",
+    "expectedReparseTree": "(source_file statements: (extern_crate_declaration crate: (crate) name: (identifier)) statements: (extern_crate_declaration crate: (crate) name: (identifier) alias: (identifier)) statements: (extern_crate_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) crate: (crate) name: (identifier)))",
+    "wrappedText": "extern crate std; extern crate std as ruststd ; pub extern crate futures;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 185,
+      "$source": 0,
+      "$named": true,
+      "_crate": "crate",
+      "_name": "std",
+      "$other": [
+        80,
+        2
+      ],
+      "$span": {
+        "start": 0,
+        "end": 17
+      },
+      "$nodeHandle": 1
+    },
+    "expectedOutput": "extern crate std;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "extern crate std;",
+    "pattern": "extern_crate_declaration",
+    "edits": [],
+    "expectedSourceOut": "extern crate std;",
+    "expectedReparseTree": "(extern_crate_declaration crate: (crate) name: (identifier))",
+    "wrappedText": "extern crate std;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 185,
+      "$source": 0,
+      "$named": true,
+      "_crate": "crate",
+      "_name": "std",
+      "_alias": "ruststd",
+      "$other": [
+        80,
+        46,
+        2
+      ],
+      "$span": {
+        "start": 18,
+        "end": 46
+      },
+      "$nodeHandle": 2
+    },
+    "expectedOutput": "extern crate std as ruststd ;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "extern crate std as ruststd;",
+    "pattern": "extern_crate_declaration",
+    "edits": [],
+    "expectedSourceOut": "extern crate std as ruststd ;",
+    "expectedReparseTree": "(extern_crate_declaration crate: (crate) name: (identifier) alias: (identifier))",
+    "wrappedText": "extern crate std as ruststd ;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 185,
+      "$source": 0,
+      "$named": true,
+      "_visibility_modifier": {
+        "$type": 216,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 47,
+          "end": 50
+        },
+        "$nodeHandle": 11,
+        "_content": {
+          "$type": 370,
+          "$source": 0,
+          "$named": true,
+          "_pub": 63,
+          "$span": {
+            "start": 47,
+            "end": 50
+          },
+          "$nodeHandle": 12
+        }
+      },
+      "_crate": "crate",
+      "_name": "futures",
+      "$other": [
+        80,
+        2
+      ],
+      "$span": {
+        "start": 47,
+        "end": 72
+      },
+      "$nodeHandle": 3
+    },
+    "expectedOutput": "pub extern crate futures;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub extern crate futures;",
+    "pattern": "extern_crate_declaration",
+    "edits": [],
+    "expectedSourceOut": "pub extern crate futures;",
+    "expectedReparseTree": "(extern_crate_declaration visibility_modifier: (visibility_modifier (visibility_modifier_pub)) crate: (crate) name: (identifier))",
+    "wrappedText": "pub extern crate futures;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 216,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 47,
+        "end": 50
+      },
+      "$nodeHandle": 4,
+      "_content": {
+        "$type": 370,
+        "$source": 0,
+        "$named": true,
+        "_pub": 63,
+        "$span": {
+          "start": 47,
+          "end": 50
+        },
+        "$nodeHandle": 13
       }
     },
     "expectedOutput": "pub"
@@ -7510,6 +8139,1656 @@
       "$named": true,
       "_statements": [
         {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_visibility_modifier": {
+            "$type": 216,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 0,
+              "end": 3
+            },
+            "$nodeHandle": 34,
+            "_content": {
+              "$type": 370,
+              "$source": 0,
+              "$named": true,
+              "_pub": 63,
+              "$span": {
+                "start": 0,
+                "end": 3
+              },
+              "$nodeHandle": 35
+            }
+          },
+          "_name": "splice",
+          "_type_parameters": {
+            "$type": 200,
+            "$source": 0,
+            "$named": true,
+            "_attributed_type_parameter": [
+              {
+                "$type": 390,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 14,
+                  "end": 27
+                },
+                "$nodeHandle": 37,
+                "_attribute_item": [],
+                "_content": {
+                  "$type": 202,
+                  "$source": 0,
+                  "$named": true,
+                  "_name": "T",
+                  "_bounds": {
+                    "$type": 197,
+                    "$source": 0,
+                    "$named": true,
+                    "_bounds": [
+                      {
+                        "$type": 227,
+                        "$source": 0,
+                        "$named": true,
+                        "_type": "Into",
+                        "_type_arguments": {
+                          "$type": 231,
+                          "$source": 0,
+                          "$named": true,
+                          "_type_argument": [
+                            {
+                              "$type": 393,
+                              "$source": 0,
+                              "$named": true,
+                              "$span": {
+                                "start": 22,
+                                "end": 26
+                              },
+                              "$nodeHandle": 42,
+                              "_content": "Text"
+                            }
+                          ],
+                          "$other": [
+                            82,
+                            84
+                          ],
+                          "$span": {
+                            "start": 21,
+                            "end": 27
+                          },
+                          "$nodeHandle": 41
+                        },
+                        "$span": {
+                          "start": 17,
+                          "end": 27
+                        },
+                        "$nodeHandle": 40
+                      }
+                    ],
+                    "$other": [
+                      5
+                    ],
+                    "$span": {
+                      "start": 15,
+                      "end": 27
+                    },
+                    "$nodeHandle": 39
+                  },
+                  "$span": {
+                    "start": 14,
+                    "end": 27
+                  },
+                  "$nodeHandle": 38
+                }
+              }
+            ],
+            "$other": [
+              82,
+              84
+            ],
+            "$span": {
+              "start": 13,
+              "end": 28
+            },
+            "$nodeHandle": 36
+          },
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "_parameters_group1": {
+              "$type": 327,
+              "$source": 0,
+              "$named": true,
+              "_attributed_parameter": [
+                {
+                  "$type": 389,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 29,
+                    "end": 38
+                  },
+                  "$nodeHandle": 45,
+                  "_content": {
+                    "$type": 212,
+                    "$source": 0,
+                    "$named": true,
+                    "_reference": true,
+                    "_mutable_specifier": true,
+                    "_self": "self",
+                    "$span": {
+                      "start": 29,
+                      "end": 38
+                    },
+                    "$nodeHandle": 48
+                  }
+                },
+                {
+                  "$type": 389,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 40,
+                    "end": 63
+                  },
+                  "$nodeHandle": 46,
+                  "_content": {
+                    "$type": 214,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": "old_range",
+                    "_type": {
+                      "$type": 227,
+                      "$source": 0,
+                      "$named": true,
+                      "_type": "Range",
+                      "_type_arguments": {
+                        "$type": 231,
+                        "$source": 0,
+                        "$named": true,
+                        "_type_argument": [
+                          {
+                            "$type": 393,
+                            "$source": 0,
+                            "$named": true,
+                            "$span": {
+                              "start": 57,
+                              "end": 62
+                            },
+                            "$nodeHandle": 52,
+                            "_content": "usize"
+                          }
+                        ],
+                        "$other": [
+                          82,
+                          84
+                        ],
+                        "$span": {
+                          "start": 56,
+                          "end": 63
+                        },
+                        "$nodeHandle": 51
+                      },
+                      "$span": {
+                        "start": 51,
+                        "end": 63
+                      },
+                      "$nodeHandle": 50
+                    },
+                    "$other": [
+                      5
+                    ],
+                    "$span": {
+                      "start": 40,
+                      "end": 63
+                    },
+                    "$nodeHandle": 49
+                  }
+                },
+                {
+                  "$type": 389,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 65,
+                    "end": 76
+                  },
+                  "$nodeHandle": 47,
+                  "_content": {
+                    "$type": 214,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": "new_text",
+                    "_type": "T",
+                    "$other": [
+                      5
+                    ],
+                    "$span": {
+                      "start": 65,
+                      "end": 76
+                    },
+                    "$nodeHandle": 53
+                  }
+                }
+              ],
+              "$other": [
+                83,
+                83
+              ],
+              "$span": {
+                "start": 29,
+                "end": 76
+              },
+              "$nodeHandle": 44,
+              "_trailing_sep": false
+            },
+            "$other": [
+              7,
+              8
+            ],
+            "$span": {
+              "start": 28,
+              "end": 77
+            },
+            "$nodeHandle": 43
+          },
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 78,
+              "end": 81
+            },
+            "$nodeHandle": 54,
+            "_statement": []
+          },
+          "$other": [
+            54
+          ],
+          "$span": {
+            "start": 0,
+            "end": 81
+          },
+          "$nodeHandle": 32
+        },
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_visibility_modifier": {
+            "$type": 216,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 82,
+              "end": 85
+            },
+            "$nodeHandle": 55,
+            "_content": {
+              "$type": 370,
+              "$source": 0,
+              "$named": true,
+              "_pub": 63,
+              "$span": {
+                "start": 82,
+                "end": 85
+              },
+              "$nodeHandle": 56
+            }
+          },
+          "_name": "uninit_array",
+          "_type_parameters": {
+            "$type": 200,
+            "$source": 0,
+            "$named": true,
+            "_attributed_type_parameter": [
+              {
+                "$type": 390,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 102,
+                  "end": 118
+                },
+                "$nodeHandle": 58,
+                "_attribute_item": [],
+                "_content": {
+                  "$type": 201,
+                  "$source": 0,
+                  "$named": true,
+                  "_name": "LEN",
+                  "_type": "usize",
+                  "$other": [
+                    50,
+                    5
+                  ],
+                  "$span": {
+                    "start": 102,
+                    "end": 118
+                  },
+                  "$nodeHandle": 59
+                }
+              }
+            ],
+            "$other": [
+              82,
+              84
+            ],
+            "$span": {
+              "start": 101,
+              "end": 119
+            },
+            "$nodeHandle": 57
+          },
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "$text": "()",
+            "$span": {
+              "start": 119,
+              "end": 121
+            },
+            "$nodeHandle": 60
+          },
+          "_return_type": {
+            "$type": 221,
+            "$source": 0,
+            "$named": true,
+            "_element": "Self",
+            "_length": "LEN",
+            "$other": [
+              75,
+              2,
+              76
+            ],
+            "$span": {
+              "start": 125,
+              "end": 136
+            },
+            "$nodeHandle": 61
+          },
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 137,
+              "end": 139
+            },
+            "$nodeHandle": 62,
+            "_statement": []
+          },
+          "$other": [
+            54,
+            139
+          ],
+          "$span": {
+            "start": 82,
+            "end": 139
+          },
+          "$nodeHandle": 33
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 139
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "pub fn splice < T :Into <Text>> (& mut self,old_range:Range <usize>,new_text:T) {  } pub fn uninit_array < const LEN:usize> ()->[Self;LEN ] {  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub fn splice<T: Into<Text>>(&mut self, old_range: Range<usize>, new_text: T) {\n}\npub fn uninit_array<const LEN: usize>() -> [Self; LEN] {}",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "pub fn splice < T :Into <Text>> (& mut self,old_range:Range <usize>,new_text:T) {  } pub fn uninit_array < const LEN:usize> ()->[Self;LEN ] {  }",
+    "expectedReparseTree": "(source_file statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))))))) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter mutable_specifier: (mutable_specifier) self: (self))) (attributed_parameter (parameter pattern: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (primitive_type)))))) (attributed_parameter (parameter pattern: (identifier) type: (type_identifier))))) body: (block)) statements: (function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (const_parameter name: (identifier) type: (primitive_type)))) parameters: (parameters) return_type: (array_type element: (type_identifier) length: (identifier)) body: (block)))",
+    "wrappedText": "pub fn splice < T :Into <Text>> (& mut self,old_range:Range <usize>,new_text:T) {  } pub fn uninit_array < const LEN:usize> ()->[Self;LEN ] {  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 189,
+      "$source": 0,
+      "$named": true,
+      "_visibility_modifier": {
+        "$type": 216,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 0,
+          "end": 3
+        },
+        "$nodeHandle": 63,
+        "_content": {
+          "$type": 370,
+          "$source": 0,
+          "$named": true,
+          "_pub": 63,
+          "$span": {
+            "start": 0,
+            "end": 3
+          },
+          "$nodeHandle": 64
+        }
+      },
+      "_name": "splice",
+      "_type_parameters": {
+        "$type": 200,
+        "$source": 0,
+        "$named": true,
+        "_attributed_type_parameter": [
+          {
+            "$type": 390,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 14,
+              "end": 27
+            },
+            "$nodeHandle": 66,
+            "_attribute_item": [],
+            "_content": {
+              "$type": 202,
+              "$source": 0,
+              "$named": true,
+              "_name": "T",
+              "_bounds": {
+                "$type": 197,
+                "$source": 0,
+                "$named": true,
+                "_bounds": [
+                  {
+                    "$type": 227,
+                    "$source": 0,
+                    "$named": true,
+                    "_type": "Into",
+                    "_type_arguments": {
+                      "$type": 231,
+                      "$source": 0,
+                      "$named": true,
+                      "_type_argument": [
+                        {
+                          "$type": 393,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 22,
+                            "end": 26
+                          },
+                          "$nodeHandle": 71,
+                          "_content": "Text"
+                        }
+                      ],
+                      "$other": [
+                        82,
+                        84
+                      ],
+                      "$span": {
+                        "start": 21,
+                        "end": 27
+                      },
+                      "$nodeHandle": 70
+                    },
+                    "$span": {
+                      "start": 17,
+                      "end": 27
+                    },
+                    "$nodeHandle": 69
+                  }
+                ],
+                "$other": [
+                  5
+                ],
+                "$span": {
+                  "start": 15,
+                  "end": 27
+                },
+                "$nodeHandle": 68
+              },
+              "$span": {
+                "start": 14,
+                "end": 27
+              },
+              "$nodeHandle": 67
+            }
+          }
+        ],
+        "$other": [
+          82,
+          84
+        ],
+        "$span": {
+          "start": 13,
+          "end": 28
+        },
+        "$nodeHandle": 65
+      },
+      "_parameters": {
+        "$type": 211,
+        "$source": 0,
+        "$named": true,
+        "_parameters_group1": {
+          "$type": 327,
+          "$source": 0,
+          "$named": true,
+          "_attributed_parameter": [
+            {
+              "$type": 389,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 29,
+                "end": 38
+              },
+              "$nodeHandle": 74,
+              "_content": {
+                "$type": 212,
+                "$source": 0,
+                "$named": true,
+                "_reference": true,
+                "_mutable_specifier": true,
+                "_self": "self",
+                "$span": {
+                  "start": 29,
+                  "end": 38
+                },
+                "$nodeHandle": 77
+              }
+            },
+            {
+              "$type": 389,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 40,
+                "end": 63
+              },
+              "$nodeHandle": 75,
+              "_content": {
+                "$type": 214,
+                "$source": 0,
+                "$named": true,
+                "_pattern": "old_range",
+                "_type": {
+                  "$type": 227,
+                  "$source": 0,
+                  "$named": true,
+                  "_type": "Range",
+                  "_type_arguments": {
+                    "$type": 231,
+                    "$source": 0,
+                    "$named": true,
+                    "_type_argument": [
+                      {
+                        "$type": 393,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 57,
+                          "end": 62
+                        },
+                        "$nodeHandle": 81,
+                        "_content": "usize"
+                      }
+                    ],
+                    "$other": [
+                      82,
+                      84
+                    ],
+                    "$span": {
+                      "start": 56,
+                      "end": 63
+                    },
+                    "$nodeHandle": 80
+                  },
+                  "$span": {
+                    "start": 51,
+                    "end": 63
+                  },
+                  "$nodeHandle": 79
+                },
+                "$other": [
+                  5
+                ],
+                "$span": {
+                  "start": 40,
+                  "end": 63
+                },
+                "$nodeHandle": 78
+              }
+            },
+            {
+              "$type": 389,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 65,
+                "end": 76
+              },
+              "$nodeHandle": 76,
+              "_content": {
+                "$type": 214,
+                "$source": 0,
+                "$named": true,
+                "_pattern": "new_text",
+                "_type": "T",
+                "$other": [
+                  5
+                ],
+                "$span": {
+                  "start": 65,
+                  "end": 76
+                },
+                "$nodeHandle": 82
+              }
+            }
+          ],
+          "$other": [
+            83,
+            83
+          ],
+          "$span": {
+            "start": 29,
+            "end": 76
+          },
+          "$nodeHandle": 73,
+          "_trailing_sep": false
+        },
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 28,
+          "end": 77
+        },
+        "$nodeHandle": 72
+      },
+      "_body": {
+        "$type": 294,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 78,
+          "end": 81
+        },
+        "$nodeHandle": 83,
+        "_statement": []
+      },
+      "$other": [
+        54
+      ],
+      "$span": {
+        "start": 0,
+        "end": 81
+      },
+      "$nodeHandle": 1
+    },
+    "expectedOutput": "pub fn splice < T :Into <Text>> (& mut self,old_range:Range <usize>,new_text:T) {  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub fn splice<T: Into<Text>>(&mut self, old_range: Range<usize>, new_text: T) {\n}",
+    "pattern": "function_item",
+    "edits": [],
+    "expectedSourceOut": "pub fn splice < T :Into <Text>> (& mut self,old_range:Range <usize>,new_text:T) {  }",
+    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier)))))))) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter mutable_specifier: (mutable_specifier) self: (self))) (attributed_parameter (parameter pattern: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (primitive_type)))))) (attributed_parameter (parameter pattern: (identifier) type: (type_identifier))))) body: (block))",
+    "wrappedText": "pub fn splice < T :Into <Text>> (& mut self,old_range:Range <usize>,new_text:T) {  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 189,
+      "$source": 0,
+      "$named": true,
+      "_visibility_modifier": {
+        "$type": 216,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 82,
+          "end": 85
+        },
+        "$nodeHandle": 84,
+        "_content": {
+          "$type": 370,
+          "$source": 0,
+          "$named": true,
+          "_pub": 63,
+          "$span": {
+            "start": 82,
+            "end": 85
+          },
+          "$nodeHandle": 85
+        }
+      },
+      "_name": "uninit_array",
+      "_type_parameters": {
+        "$type": 200,
+        "$source": 0,
+        "$named": true,
+        "_attributed_type_parameter": [
+          {
+            "$type": 390,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 102,
+              "end": 118
+            },
+            "$nodeHandle": 87,
+            "_attribute_item": [],
+            "_content": {
+              "$type": 201,
+              "$source": 0,
+              "$named": true,
+              "_name": "LEN",
+              "_type": "usize",
+              "$other": [
+                50,
+                5
+              ],
+              "$span": {
+                "start": 102,
+                "end": 118
+              },
+              "$nodeHandle": 88
+            }
+          }
+        ],
+        "$other": [
+          82,
+          84
+        ],
+        "$span": {
+          "start": 101,
+          "end": 119
+        },
+        "$nodeHandle": 86
+      },
+      "_parameters": {
+        "$type": 211,
+        "$source": 0,
+        "$named": true,
+        "$text": "()",
+        "$span": {
+          "start": 119,
+          "end": 121
+        },
+        "$nodeHandle": 89
+      },
+      "_return_type": {
+        "$type": 221,
+        "$source": 0,
+        "$named": true,
+        "_element": "Self",
+        "_length": "LEN",
+        "$other": [
+          75,
+          2,
+          76
+        ],
+        "$span": {
+          "start": 125,
+          "end": 136
+        },
+        "$nodeHandle": 90
+      },
+      "_body": {
+        "$type": 294,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 137,
+          "end": 139
+        },
+        "$nodeHandle": 91,
+        "_statement": []
+      },
+      "$other": [
+        54,
+        139
+      ],
+      "$span": {
+        "start": 82,
+        "end": 139
+      },
+      "$nodeHandle": 2
+    },
+    "expectedOutput": "pub fn uninit_array < const LEN:usize> ()->[Self;LEN ] {  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub fn uninit_array<const LEN: usize>() -> [Self; LEN] {}",
+    "pattern": "function_item",
+    "edits": [],
+    "expectedSourceOut": "pub fn uninit_array < const LEN:usize> ()->[Self;LEN ] {  }",
+    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (identifier) type_parameters: (type_parameters (attributed_type_parameter (const_parameter name: (identifier) type: (primitive_type)))) parameters: (parameters) return_type: (array_type element: (type_identifier) length: (identifier)) body: (block))",
+    "wrappedText": "pub fn uninit_array < const LEN:usize> ()->[Self;LEN ] {  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 216,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 0,
+        "end": 3
+      },
+      "$nodeHandle": 3,
+      "_content": {
+        "$type": 370,
+        "$source": 0,
+        "$named": true,
+        "_pub": 63,
+        "$span": {
+          "start": 0,
+          "end": 3
+        },
+        "$nodeHandle": 92
+      }
+    },
+    "expectedOutput": "pub"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub",
+    "pattern": "visibility_modifier",
+    "edits": [],
+    "expectedSourceOut": "pub",
+    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub))",
+    "wrappedText": "pub fn _f() {}",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 216,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 82,
+        "end": 85
+      },
+      "$nodeHandle": 24,
+      "_content": {
+        "$type": 370,
+        "$source": 0,
+        "$named": true,
+        "_pub": 63,
+        "$span": {
+          "start": 82,
+          "end": 85
+        },
+        "$nodeHandle": 93
+      }
+    },
+    "expectedOutput": "pub"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub",
+    "pattern": "visibility_modifier",
+    "edits": [],
+    "expectedSourceOut": "pub",
+    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub))",
+    "wrappedText": "pub fn _f() {}",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 200,
+      "$source": 0,
+      "$named": true,
+      "_attributed_type_parameter": [
+        {
+          "$type": 390,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 14,
+            "end": 27
+          },
+          "$nodeHandle": 94,
+          "_attribute_item": [],
+          "_content": {
+            "$type": 202,
+            "$source": 0,
+            "$named": true,
+            "_name": "T",
+            "_bounds": {
+              "$type": 197,
+              "$source": 0,
+              "$named": true,
+              "_bounds": [
+                {
+                  "$type": 227,
+                  "$source": 0,
+                  "$named": true,
+                  "_type": "Into",
+                  "_type_arguments": {
+                    "$type": 231,
+                    "$source": 0,
+                    "$named": true,
+                    "_type_argument": [
+                      {
+                        "$type": 393,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 22,
+                          "end": 26
+                        },
+                        "$nodeHandle": 99,
+                        "_content": "Text"
+                      }
+                    ],
+                    "$other": [
+                      82,
+                      84
+                    ],
+                    "$span": {
+                      "start": 21,
+                      "end": 27
+                    },
+                    "$nodeHandle": 98
+                  },
+                  "$span": {
+                    "start": 17,
+                    "end": 27
+                  },
+                  "$nodeHandle": 97
+                }
+              ],
+              "$other": [
+                5
+              ],
+              "$span": {
+                "start": 15,
+                "end": 27
+              },
+              "$nodeHandle": 96
+            },
+            "$span": {
+              "start": 14,
+              "end": 27
+            },
+            "$nodeHandle": 95
+          }
+        }
+      ],
+      "$other": [
+        82,
+        84
+      ],
+      "$span": {
+        "start": 13,
+        "end": 28
+      },
+      "$nodeHandle": 5
+    },
+    "expectedOutput": "< T :Into <Text>>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "<T: Into<Text>>",
+    "pattern": "type_parameters",
+    "edits": [],
+    "expectedSourceOut": "< T :Into <Text>>",
+    "expectedReparseTree": "(type_parameters (attributed_type_parameter (type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier))))))))",
+    "wrappedText": "fn _f< T :Into <Text>>() {}",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 200,
+      "$source": 0,
+      "$named": true,
+      "_attributed_type_parameter": [
+        {
+          "$type": 390,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 102,
+            "end": 118
+          },
+          "$nodeHandle": 100,
+          "_attribute_item": [],
+          "_content": {
+            "$type": 201,
+            "$source": 0,
+            "$named": true,
+            "_name": "LEN",
+            "_type": "usize",
+            "$other": [
+              50,
+              5
+            ],
+            "$span": {
+              "start": 102,
+              "end": 118
+            },
+            "$nodeHandle": 101
+          }
+        }
+      ],
+      "$other": [
+        82,
+        84
+      ],
+      "$span": {
+        "start": 101,
+        "end": 119
+      },
+      "$nodeHandle": 26
+    },
+    "expectedOutput": "< const LEN:usize>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "<const LEN: usize>",
+    "pattern": "type_parameters",
+    "edits": [],
+    "expectedSourceOut": "< const LEN:usize>",
+    "expectedReparseTree": "(type_parameters (attributed_type_parameter (const_parameter name: (identifier) type: (primitive_type))))",
+    "wrappedText": "fn _f< const LEN:usize>() {}",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 202,
+      "$source": 0,
+      "$named": true,
+      "_name": "T",
+      "_bounds": {
+        "$type": 197,
+        "$source": 0,
+        "$named": true,
+        "_bounds": [
+          {
+            "$type": 227,
+            "$source": 0,
+            "$named": true,
+            "_type": "Into",
+            "_type_arguments": {
+              "$type": 231,
+              "$source": 0,
+              "$named": true,
+              "_type_argument": [
+                {
+                  "$type": 393,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 22,
+                    "end": 26
+                  },
+                  "$nodeHandle": 105,
+                  "_content": "Text"
+                }
+              ],
+              "$other": [
+                82,
+                84
+              ],
+              "$span": {
+                "start": 21,
+                "end": 27
+              },
+              "$nodeHandle": 104
+            },
+            "$span": {
+              "start": 17,
+              "end": 27
+            },
+            "$nodeHandle": 103
+          }
+        ],
+        "$other": [
+          5
+        ],
+        "$span": {
+          "start": 15,
+          "end": 27
+        },
+        "$nodeHandle": 102
+      },
+      "$span": {
+        "start": 14,
+        "end": 27
+      },
+      "$nodeHandle": 7
+    },
+    "expectedOutput": "T :Into <Text>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "T: Into<Text>",
+    "pattern": "type_parameter",
+    "edits": [],
+    "expectedSourceOut": "T :Into <Text>",
+    "expectedReparseTree": "(type_parameter name: (type_identifier) bounds: (trait_bounds bounds: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier))))))",
+    "wrappedText": "fn _f<T :Into <Text>>() {}",
+    "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 227,
+      "$source": 0,
+      "$named": true,
+      "_type": "Into",
+      "_type_arguments": {
+        "$type": 231,
+        "$source": 0,
+        "$named": true,
+        "_type_argument": [
+          {
+            "$type": 393,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 22,
+              "end": 26
+            },
+            "$nodeHandle": 110,
+            "_content": "Text"
+          }
+        ],
+        "$other": [
+          82,
+          84
+        ],
+        "$span": {
+          "start": 21,
+          "end": 27
+        },
+        "$nodeHandle": 109
+      },
+      "$span": {
+        "start": 17,
+        "end": 27
+      },
+      "$nodeHandle": 9
+    },
+    "expectedOutput": "Into <Text>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "Into<Text>",
+    "pattern": "generic_type",
+    "edits": [],
+    "expectedSourceOut": "Into <Text>",
+    "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier))))",
+    "wrappedText": "type _X = Into <Text>;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 227,
+      "$source": 0,
+      "$named": true,
+      "_type": "Range",
+      "_type_arguments": {
+        "$type": 231,
+        "$source": 0,
+        "$named": true,
+        "_type_argument": [
+          {
+            "$type": 393,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 57,
+              "end": 62
+            },
+            "$nodeHandle": 112,
+            "_content": "usize"
+          }
+        ],
+        "$other": [
+          82,
+          84
+        ],
+        "$span": {
+          "start": 56,
+          "end": 63
+        },
+        "$nodeHandle": 111
+      },
+      "$span": {
+        "start": 51,
+        "end": 63
+      },
+      "$nodeHandle": 19
+    },
+    "expectedOutput": "Range <usize>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "Range<usize>",
+    "pattern": "generic_type",
+    "edits": [],
+    "expectedSourceOut": "Range <usize>",
+    "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (primitive_type))))",
+    "wrappedText": "type _X = Range <usize>;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "_parameters_group1": {
+        "$type": 327,
+        "$source": 0,
+        "$named": true,
+        "_attributed_parameter": [
+          {
+            "$type": 389,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 29,
+              "end": 38
+            },
+            "$nodeHandle": 116,
+            "_content": {
+              "$type": 212,
+              "$source": 0,
+              "$named": true,
+              "_reference": true,
+              "_mutable_specifier": true,
+              "_self": "self",
+              "$span": {
+                "start": 29,
+                "end": 38
+              },
+              "$nodeHandle": 119
+            }
+          },
+          {
+            "$type": 389,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 40,
+              "end": 63
+            },
+            "$nodeHandle": 117,
+            "_content": {
+              "$type": 214,
+              "$source": 0,
+              "$named": true,
+              "_pattern": "old_range",
+              "_type": {
+                "$type": 227,
+                "$source": 0,
+                "$named": true,
+                "_type": "Range",
+                "_type_arguments": {
+                  "$type": 231,
+                  "$source": 0,
+                  "$named": true,
+                  "_type_argument": [
+                    {
+                      "$type": 393,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 57,
+                        "end": 62
+                      },
+                      "$nodeHandle": 123,
+                      "_content": "usize"
+                    }
+                  ],
+                  "$other": [
+                    82,
+                    84
+                  ],
+                  "$span": {
+                    "start": 56,
+                    "end": 63
+                  },
+                  "$nodeHandle": 122
+                },
+                "$span": {
+                  "start": 51,
+                  "end": 63
+                },
+                "$nodeHandle": 121
+              },
+              "$other": [
+                5
+              ],
+              "$span": {
+                "start": 40,
+                "end": 63
+              },
+              "$nodeHandle": 120
+            }
+          },
+          {
+            "$type": 389,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 65,
+              "end": 76
+            },
+            "$nodeHandle": 118,
+            "_content": {
+              "$type": 214,
+              "$source": 0,
+              "$named": true,
+              "_pattern": "new_text",
+              "_type": "T",
+              "$other": [
+                5
+              ],
+              "$span": {
+                "start": 65,
+                "end": 76
+              },
+              "$nodeHandle": 124
+            }
+          }
+        ],
+        "$other": [
+          83,
+          83
+        ],
+        "$span": {
+          "start": 29,
+          "end": 76
+        },
+        "$nodeHandle": 115,
+        "_trailing_sep": false
+      },
+      "$other": [
+        7,
+        8
+      ],
+      "$span": {
+        "start": 28,
+        "end": 77
+      },
+      "$nodeHandle": 12
+    },
+    "expectedOutput": "(& mut self,old_range:Range <usize>,new_text:T)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(&mut self, old_range: Range<usize>, new_text: T)",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "(& mut self,old_range:Range <usize>,new_text:T)",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (self_parameter mutable_specifier: (mutable_specifier) self: (self))) (attributed_parameter (parameter pattern: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (primitive_type)))))) (attributed_parameter (parameter pattern: (identifier) type: (type_identifier)))))",
+    "wrappedText": "fn _f(& mut self,old_range:Range <usize>,new_text:T) {}",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 119,
+        "end": 121
+      },
+      "$nodeHandle": 29
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "()",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(parameters)",
+    "wrappedText": "fn _f() {}",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 214,
+      "$source": 0,
+      "$named": true,
+      "_pattern": "old_range",
+      "_type": {
+        "$type": 227,
+        "$source": 0,
+        "$named": true,
+        "_type": "Range",
+        "_type_arguments": {
+          "$type": 231,
+          "$source": 0,
+          "$named": true,
+          "_type_argument": [
+            {
+              "$type": 393,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 57,
+                "end": 62
+              },
+              "$nodeHandle": 127,
+              "_content": "usize"
+            }
+          ],
+          "$other": [
+            82,
+            84
+          ],
+          "$span": {
+            "start": 56,
+            "end": 63
+          },
+          "$nodeHandle": 126
+        },
+        "$span": {
+          "start": 51,
+          "end": 63
+        },
+        "$nodeHandle": 125
+      },
+      "$other": [
+        5
+      ],
+      "$span": {
+        "start": 40,
+        "end": 63
+      },
+      "$nodeHandle": 18
+    },
+    "expectedOutput": "old_range:Range <usize>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "old_range: Range<usize>",
+    "pattern": "parameter",
+    "edits": [],
+    "expectedSourceOut": "old_range:Range <usize>",
+    "expectedReparseTree": "(parameter pattern: (identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (primitive_type)))))",
+    "wrappedText": "fn _f(old_range:Range <usize>) {}",
+    "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 214,
+      "$source": 0,
+      "$named": true,
+      "_pattern": "new_text",
+      "_type": "T",
+      "$other": [
+        5
+      ],
+      "$span": {
+        "start": 65,
+        "end": 76
+      },
+      "$nodeHandle": 22
+    },
+    "expectedOutput": "new_text:T"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "new_text: T",
+    "pattern": "parameter",
+    "edits": [],
+    "expectedSourceOut": "new_text:T",
+    "expectedReparseTree": "(parameter pattern: (identifier) type: (type_identifier))",
+    "wrappedText": "fn _f(new_text:T) {}",
+    "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 294,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 78,
+        "end": 81
+      },
+      "$nodeHandle": 23,
+      "_statement": []
+    },
+    "expectedOutput": "{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{\n}",
+    "pattern": "block",
+    "edits": [],
+    "expectedSourceOut": "{  }",
+    "expectedReparseTree": "(block)",
+    "wrappedText": "fn _f() { let _ = {  }; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 294,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 137,
+        "end": 139
+      },
+      "$nodeHandle": 31,
+      "_statement": []
+    },
+    "expectedOutput": "{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{}",
+    "pattern": "block",
+    "edits": [],
+    "expectedSourceOut": "{  }",
+    "expectedReparseTree": "(block)",
+    "wrappedText": "fn _f() { let _ = {  }; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 221,
+      "$source": 0,
+      "$named": true,
+      "_element": "Self",
+      "_length": "LEN",
+      "$other": [
+        75,
+        2,
+        76
+      ],
+      "$span": {
+        "start": 125,
+        "end": 136
+      },
+      "$nodeHandle": 30
+    },
+    "expectedOutput": "[Self;LEN ]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "[Self; LEN]",
+    "pattern": "array_type",
+    "edits": [],
+    "expectedSourceOut": "[Self;LEN ]",
+    "expectedReparseTree": "(array_type element: (type_identifier) length: (identifier))",
+    "wrappedText": "type _X = [Self;LEN ];",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
           "$type": 186,
           "$source": 0,
           "$named": true,
@@ -9474,6 +11753,2115 @@
     "expectedSourceOut": "Box <T>",
     "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier))))",
     "wrappedText": "type _X = Box <T>;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 194,
+          "$source": 0,
+          "$named": true,
+          "_type": "Person",
+          "$other": [
+            58
+          ],
+          "$span": {
+            "start": 0,
+            "end": 143
+          },
+          "$nodeHandle": 38,
+          "_content": {
+            "$type": 344,
+            "$source": 0,
+            "$named": true,
+            "_declaration_list": {
+              "$type": 176,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                78,
+                79
+              ],
+              "$span": {
+                "start": 12,
+                "end": 143
+              },
+              "$nodeHandle": 41,
+              "_declaration_statement": [
+                {
+                  "$type": 186,
+                  "$source": 0,
+                  "$named": true,
+                  "_name": "leg_count",
+                  "_type": "u32",
+                  "_value": "2",
+                  "$other": [
+                    50,
+                    5,
+                    81,
+                    2
+                  ],
+                  "$span": {
+                    "start": 16,
+                    "end": 42
+                  },
+                  "$nodeHandle": 42
+                },
+                {
+                  "$type": 189,
+                  "$source": 0,
+                  "$named": true,
+                  "_name": "walk",
+                  "_parameters": {
+                    "$type": 211,
+                    "$source": 0,
+                    "$named": true,
+                    "_parameters_group1": {
+                      "$type": 327,
+                      "$source": 0,
+                      "$named": true,
+                      "_attributed_parameter": [
+                        {
+                          "$type": 389,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 54,
+                            "end": 58
+                          },
+                          "$nodeHandle": 49,
+                          "_content": {
+                            "$type": 212,
+                            "$source": 0,
+                            "$named": true,
+                            "_self": "self",
+                            "$span": {
+                              "start": 54,
+                              "end": 58
+                            },
+                            "$nodeHandle": 50
+                          }
+                        }
+                      ],
+                      "$span": {
+                        "start": 54,
+                        "end": 58
+                      },
+                      "$nodeHandle": 48,
+                      "_trailing_sep": false
+                    },
+                    "$other": [
+                      7,
+                      8
+                    ],
+                    "$span": {
+                      "start": 53,
+                      "end": 59
+                    },
+                    "$nodeHandle": 47
+                  },
+                  "_body": {
+                    "$type": 294,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 60,
+                      "end": 62
+                    },
+                    "$nodeHandle": 51,
+                    "_statement": []
+                  },
+                  "$other": [
+                    54
+                  ],
+                  "$span": {
+                    "start": 46,
+                    "end": 62
+                  },
+                  "$nodeHandle": 43
+                },
+                {
+                  "$type": 189,
+                  "$source": 0,
+                  "$named": true,
+                  "_name": "walk_mut",
+                  "_parameters": {
+                    "$type": 211,
+                    "$source": 0,
+                    "$named": true,
+                    "_parameters_group1": {
+                      "$type": 327,
+                      "$source": 0,
+                      "$named": true,
+                      "_attributed_parameter": [
+                        {
+                          "$type": 389,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 77,
+                            "end": 85
+                          },
+                          "$nodeHandle": 54,
+                          "_content": {
+                            "$type": 212,
+                            "$source": 0,
+                            "$named": true,
+                            "_mutable_specifier": true,
+                            "_self": "self",
+                            "$span": {
+                              "start": 77,
+                              "end": 85
+                            },
+                            "$nodeHandle": 55
+                          }
+                        }
+                      ],
+                      "$span": {
+                        "start": 77,
+                        "end": 85
+                      },
+                      "$nodeHandle": 53,
+                      "_trailing_sep": false
+                    },
+                    "$other": [
+                      7,
+                      8
+                    ],
+                    "$span": {
+                      "start": 76,
+                      "end": 86
+                    },
+                    "$nodeHandle": 52
+                  },
+                  "_body": {
+                    "$type": 294,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 87,
+                      "end": 89
+                    },
+                    "$nodeHandle": 56,
+                    "_statement": []
+                  },
+                  "$other": [
+                    54
+                  ],
+                  "$span": {
+                    "start": 65,
+                    "end": 89
+                  },
+                  "$nodeHandle": 44
+                },
+                {
+                  "$type": 189,
+                  "$source": 0,
+                  "$named": true,
+                  "_name": "talk",
+                  "_parameters": {
+                    "$type": 211,
+                    "$source": 0,
+                    "$named": true,
+                    "_parameters_group1": {
+                      "$type": 327,
+                      "$source": 0,
+                      "$named": true,
+                      "_attributed_parameter": [
+                        {
+                          "$type": 389,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 100,
+                            "end": 106
+                          },
+                          "$nodeHandle": 59,
+                          "_content": {
+                            "$type": 212,
+                            "$source": 0,
+                            "$named": true,
+                            "_reference": true,
+                            "_self": "self",
+                            "$span": {
+                              "start": 100,
+                              "end": 106
+                            },
+                            "$nodeHandle": 60
+                          }
+                        }
+                      ],
+                      "$span": {
+                        "start": 100,
+                        "end": 106
+                      },
+                      "$nodeHandle": 58,
+                      "_trailing_sep": false
+                    },
+                    "$other": [
+                      7,
+                      8
+                    ],
+                    "$span": {
+                      "start": 99,
+                      "end": 107
+                    },
+                    "$nodeHandle": 57
+                  },
+                  "_body": {
+                    "$type": 294,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 108,
+                      "end": 110
+                    },
+                    "$nodeHandle": 61,
+                    "_statement": []
+                  },
+                  "$other": [
+                    54
+                  ],
+                  "$span": {
+                    "start": 92,
+                    "end": 110
+                  },
+                  "$nodeHandle": 45
+                },
+                {
+                  "$type": 189,
+                  "$source": 0,
+                  "$named": true,
+                  "_name": "talk_mut",
+                  "_parameters": {
+                    "$type": 211,
+                    "$source": 0,
+                    "$named": true,
+                    "_parameters_group1": {
+                      "$type": 327,
+                      "$source": 0,
+                      "$named": true,
+                      "_attributed_parameter": [
+                        {
+                          "$type": 389,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 125,
+                            "end": 137
+                          },
+                          "$nodeHandle": 64,
+                          "_content": {
+                            "$type": 212,
+                            "$source": 0,
+                            "$named": true,
+                            "_reference": true,
+                            "_lifetime": {
+                              "$type": 220,
+                              "$source": 0,
+                              "$named": true,
+                              "_identifier": "a",
+                              "$other": [
+                                45
+                              ],
+                              "$span": {
+                                "start": 126,
+                                "end": 128
+                              },
+                              "$nodeHandle": 66
+                            },
+                            "_mutable_specifier": true,
+                            "_self": "self",
+                            "$span": {
+                              "start": 125,
+                              "end": 137
+                            },
+                            "$nodeHandle": 65
+                          }
+                        }
+                      ],
+                      "$span": {
+                        "start": 125,
+                        "end": 137
+                      },
+                      "$nodeHandle": 63,
+                      "_trailing_sep": false
+                    },
+                    "$other": [
+                      7,
+                      8
+                    ],
+                    "$span": {
+                      "start": 124,
+                      "end": 138
+                    },
+                    "$nodeHandle": 62
+                  },
+                  "_body": {
+                    "$type": 294,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 139,
+                      "end": 141
+                    },
+                    "$nodeHandle": 67,
+                    "_statement": []
+                  },
+                  "$other": [
+                    54
+                  ],
+                  "$span": {
+                    "start": 113,
+                    "end": 141
+                  },
+                  "$nodeHandle": 46
+                }
+              ]
+            },
+            "$span": {
+              "start": 12,
+              "end": 143
+            },
+            "$nodeHandle": 40
+          }
+        },
+        {
+          "$type": 194,
+          "$source": 0,
+          "$named": true,
+          "_type": {
+            "$type": 227,
+            "$source": 0,
+            "$named": true,
+            "_type": "Machine",
+            "_type_arguments": {
+              "$type": 231,
+              "$source": 0,
+              "$named": true,
+              "_type_argument": [
+                {
+                  "$type": 393,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 158,
+                    "end": 171
+                  },
+                  "$nodeHandle": 70,
+                  "_content": {
+                    "$type": 294,
+                    "$source": 0,
+                    "$named": true,
+                    "_trailing_expression": {
+                      "$type": 244,
+                      "$source": 0,
+                      "$named": true,
+                      "_path": "State",
+                      "_name": "Init",
+                      "$other": [
+                        85
+                      ],
+                      "$span": {
+                        "start": 159,
+                        "end": 170
+                      },
+                      "$nodeHandle": 72
+                    },
+                    "$other": [
+                      78,
+                      79
+                    ],
+                    "$span": {
+                      "start": 158,
+                      "end": 171
+                    },
+                    "$nodeHandle": 71,
+                    "_statement": []
+                  }
+                }
+              ],
+              "$other": [
+                82,
+                84
+              ],
+              "$span": {
+                "start": 157,
+                "end": 172
+              },
+              "$nodeHandle": 69
+            },
+            "$span": {
+              "start": 150,
+              "end": 172
+            },
+            "$nodeHandle": 68
+          },
+          "$other": [
+            58
+          ],
+          "$span": {
+            "start": 145,
+            "end": 175
+          },
+          "$nodeHandle": 39,
+          "_content": {
+            "$type": 344,
+            "$source": 0,
+            "$named": true,
+            "_declaration_list": {
+              "$type": 176,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 173,
+                "end": 175
+              },
+              "$nodeHandle": 74,
+              "_declaration_statement": []
+            },
+            "$span": {
+              "start": 173,
+              "end": 175
+            },
+            "$nodeHandle": 73
+          }
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 175
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "impl Person { const leg_count:u32=2 ;  fn walk ( self) {  }  fn walk_mut ( mut self) {  }  fn talk (& self) {  }  fn talk_mut (& 'a mut self) {  } } impl Machine <{  State::Init }> {  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "impl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(& self) {}\n  fn talk_mut(&'a mut self) {}\n}\n\nimpl Machine<{State::Init}> {}",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "impl Person { const leg_count:u32=2 ;  fn walk ( self) {  }  fn walk_mut ( mut self) {  }  fn talk (& self) {  }  fn talk_mut (& 'a mut self) {  } } impl Machine <{  State::Init }> {  }",
+    "expectedReparseTree": "(source_file statements: (impl_item type: (type_identifier) (impl_item_body (declaration_list (const_item name: (identifier) type: (primitive_type) value: (integer_literal)) (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))))) body: (block)) (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter mutable_specifier: (mutable_specifier) self: (self))))) body: (block)) (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))))) body: (block)) (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter lifetime: (lifetime identifier: (identifier)) mutable_specifier: (mutable_specifier) self: (self))))) body: (block))))) statements: (impl_item type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier)))))) (impl_item_body (declaration_list))))",
+    "wrappedText": "impl Person { const leg_count:u32=2 ;  fn walk ( self) {  }  fn walk_mut ( mut self) {  }  fn talk (& self) {  }  fn talk_mut (& 'a mut self) {  } } impl Machine <{  State::Init }> {  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 194,
+      "$source": 0,
+      "$named": true,
+      "_type": "Person",
+      "$other": [
+        58
+      ],
+      "$span": {
+        "start": 0,
+        "end": 143
+      },
+      "$nodeHandle": 1,
+      "_content": {
+        "$type": 344,
+        "$source": 0,
+        "$named": true,
+        "_declaration_list": {
+          "$type": 176,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            78,
+            79
+          ],
+          "$span": {
+            "start": 12,
+            "end": 143
+          },
+          "$nodeHandle": 76,
+          "_declaration_statement": [
+            {
+              "$type": 186,
+              "$source": 0,
+              "$named": true,
+              "_name": "leg_count",
+              "_type": "u32",
+              "_value": "2",
+              "$other": [
+                50,
+                5,
+                81,
+                2
+              ],
+              "$span": {
+                "start": 16,
+                "end": 42
+              },
+              "$nodeHandle": 77
+            },
+            {
+              "$type": 189,
+              "$source": 0,
+              "$named": true,
+              "_name": "walk",
+              "_parameters": {
+                "$type": 211,
+                "$source": 0,
+                "$named": true,
+                "_parameters_group1": {
+                  "$type": 327,
+                  "$source": 0,
+                  "$named": true,
+                  "_attributed_parameter": [
+                    {
+                      "$type": 389,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 54,
+                        "end": 58
+                      },
+                      "$nodeHandle": 84,
+                      "_content": {
+                        "$type": 212,
+                        "$source": 0,
+                        "$named": true,
+                        "_self": "self",
+                        "$span": {
+                          "start": 54,
+                          "end": 58
+                        },
+                        "$nodeHandle": 85
+                      }
+                    }
+                  ],
+                  "$span": {
+                    "start": 54,
+                    "end": 58
+                  },
+                  "$nodeHandle": 83,
+                  "_trailing_sep": false
+                },
+                "$other": [
+                  7,
+                  8
+                ],
+                "$span": {
+                  "start": 53,
+                  "end": 59
+                },
+                "$nodeHandle": 82
+              },
+              "_body": {
+                "$type": 294,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 60,
+                  "end": 62
+                },
+                "$nodeHandle": 86,
+                "_statement": []
+              },
+              "$other": [
+                54
+              ],
+              "$span": {
+                "start": 46,
+                "end": 62
+              },
+              "$nodeHandle": 78
+            },
+            {
+              "$type": 189,
+              "$source": 0,
+              "$named": true,
+              "_name": "walk_mut",
+              "_parameters": {
+                "$type": 211,
+                "$source": 0,
+                "$named": true,
+                "_parameters_group1": {
+                  "$type": 327,
+                  "$source": 0,
+                  "$named": true,
+                  "_attributed_parameter": [
+                    {
+                      "$type": 389,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 77,
+                        "end": 85
+                      },
+                      "$nodeHandle": 89,
+                      "_content": {
+                        "$type": 212,
+                        "$source": 0,
+                        "$named": true,
+                        "_mutable_specifier": true,
+                        "_self": "self",
+                        "$span": {
+                          "start": 77,
+                          "end": 85
+                        },
+                        "$nodeHandle": 90
+                      }
+                    }
+                  ],
+                  "$span": {
+                    "start": 77,
+                    "end": 85
+                  },
+                  "$nodeHandle": 88,
+                  "_trailing_sep": false
+                },
+                "$other": [
+                  7,
+                  8
+                ],
+                "$span": {
+                  "start": 76,
+                  "end": 86
+                },
+                "$nodeHandle": 87
+              },
+              "_body": {
+                "$type": 294,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 87,
+                  "end": 89
+                },
+                "$nodeHandle": 91,
+                "_statement": []
+              },
+              "$other": [
+                54
+              ],
+              "$span": {
+                "start": 65,
+                "end": 89
+              },
+              "$nodeHandle": 79
+            },
+            {
+              "$type": 189,
+              "$source": 0,
+              "$named": true,
+              "_name": "talk",
+              "_parameters": {
+                "$type": 211,
+                "$source": 0,
+                "$named": true,
+                "_parameters_group1": {
+                  "$type": 327,
+                  "$source": 0,
+                  "$named": true,
+                  "_attributed_parameter": [
+                    {
+                      "$type": 389,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 100,
+                        "end": 106
+                      },
+                      "$nodeHandle": 94,
+                      "_content": {
+                        "$type": 212,
+                        "$source": 0,
+                        "$named": true,
+                        "_reference": true,
+                        "_self": "self",
+                        "$span": {
+                          "start": 100,
+                          "end": 106
+                        },
+                        "$nodeHandle": 95
+                      }
+                    }
+                  ],
+                  "$span": {
+                    "start": 100,
+                    "end": 106
+                  },
+                  "$nodeHandle": 93,
+                  "_trailing_sep": false
+                },
+                "$other": [
+                  7,
+                  8
+                ],
+                "$span": {
+                  "start": 99,
+                  "end": 107
+                },
+                "$nodeHandle": 92
+              },
+              "_body": {
+                "$type": 294,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 108,
+                  "end": 110
+                },
+                "$nodeHandle": 96,
+                "_statement": []
+              },
+              "$other": [
+                54
+              ],
+              "$span": {
+                "start": 92,
+                "end": 110
+              },
+              "$nodeHandle": 80
+            },
+            {
+              "$type": 189,
+              "$source": 0,
+              "$named": true,
+              "_name": "talk_mut",
+              "_parameters": {
+                "$type": 211,
+                "$source": 0,
+                "$named": true,
+                "_parameters_group1": {
+                  "$type": 327,
+                  "$source": 0,
+                  "$named": true,
+                  "_attributed_parameter": [
+                    {
+                      "$type": 389,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 125,
+                        "end": 137
+                      },
+                      "$nodeHandle": 99,
+                      "_content": {
+                        "$type": 212,
+                        "$source": 0,
+                        "$named": true,
+                        "_reference": true,
+                        "_lifetime": {
+                          "$type": 220,
+                          "$source": 0,
+                          "$named": true,
+                          "_identifier": "a",
+                          "$other": [
+                            45
+                          ],
+                          "$span": {
+                            "start": 126,
+                            "end": 128
+                          },
+                          "$nodeHandle": 101
+                        },
+                        "_mutable_specifier": true,
+                        "_self": "self",
+                        "$span": {
+                          "start": 125,
+                          "end": 137
+                        },
+                        "$nodeHandle": 100
+                      }
+                    }
+                  ],
+                  "$span": {
+                    "start": 125,
+                    "end": 137
+                  },
+                  "$nodeHandle": 98,
+                  "_trailing_sep": false
+                },
+                "$other": [
+                  7,
+                  8
+                ],
+                "$span": {
+                  "start": 124,
+                  "end": 138
+                },
+                "$nodeHandle": 97
+              },
+              "_body": {
+                "$type": 294,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 139,
+                  "end": 141
+                },
+                "$nodeHandle": 102,
+                "_statement": []
+              },
+              "$other": [
+                54
+              ],
+              "$span": {
+                "start": 113,
+                "end": 141
+              },
+              "$nodeHandle": 81
+            }
+          ]
+        },
+        "$span": {
+          "start": 12,
+          "end": 143
+        },
+        "$nodeHandle": 75
+      }
+    },
+    "expectedOutput": "impl Person { const leg_count:u32=2 ;  fn walk ( self) {  }  fn walk_mut ( mut self) {  }  fn talk (& self) {  }  fn talk_mut (& 'a mut self) {  } }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "impl Person {\n  const leg_count : u32 = 2;\n\n  fn walk(self) {}\n  fn walk_mut(mut self) {}\n  fn talk(& self) {}\n  fn talk_mut(&'a mut self) {}\n}",
+    "pattern": "impl_item",
+    "edits": [],
+    "expectedSourceOut": "impl Person { const leg_count:u32=2 ;  fn walk ( self) {  }  fn walk_mut ( mut self) {  }  fn talk (& self) {  }  fn talk_mut (& 'a mut self) {  } }",
+    "expectedReparseTree": "(impl_item type: (type_identifier) (impl_item_body (declaration_list (const_item name: (identifier) type: (primitive_type) value: (integer_literal)) (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))))) body: (block)) (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter mutable_specifier: (mutable_specifier) self: (self))))) body: (block)) (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))))) body: (block)) (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter lifetime: (lifetime identifier: (identifier)) mutable_specifier: (mutable_specifier) self: (self))))) body: (block)))))",
+    "wrappedText": "impl Person { const leg_count:u32=2 ;  fn walk ( self) {  }  fn walk_mut ( mut self) {  }  fn talk (& self) {  }  fn talk_mut (& 'a mut self) {  } }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 194,
+      "$source": 0,
+      "$named": true,
+      "_type": {
+        "$type": 227,
+        "$source": 0,
+        "$named": true,
+        "_type": "Machine",
+        "_type_arguments": {
+          "$type": 231,
+          "$source": 0,
+          "$named": true,
+          "_type_argument": [
+            {
+              "$type": 393,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 158,
+                "end": 171
+              },
+              "$nodeHandle": 105,
+              "_content": {
+                "$type": 294,
+                "$source": 0,
+                "$named": true,
+                "_trailing_expression": {
+                  "$type": 244,
+                  "$source": 0,
+                  "$named": true,
+                  "_path": "State",
+                  "_name": "Init",
+                  "$other": [
+                    85
+                  ],
+                  "$span": {
+                    "start": 159,
+                    "end": 170
+                  },
+                  "$nodeHandle": 107
+                },
+                "$other": [
+                  78,
+                  79
+                ],
+                "$span": {
+                  "start": 158,
+                  "end": 171
+                },
+                "$nodeHandle": 106,
+                "_statement": []
+              }
+            }
+          ],
+          "$other": [
+            82,
+            84
+          ],
+          "$span": {
+            "start": 157,
+            "end": 172
+          },
+          "$nodeHandle": 104
+        },
+        "$span": {
+          "start": 150,
+          "end": 172
+        },
+        "$nodeHandle": 103
+      },
+      "$other": [
+        58
+      ],
+      "$span": {
+        "start": 145,
+        "end": 175
+      },
+      "$nodeHandle": 2,
+      "_content": {
+        "$type": 344,
+        "$source": 0,
+        "$named": true,
+        "_declaration_list": {
+          "$type": 176,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 173,
+            "end": 175
+          },
+          "$nodeHandle": 109,
+          "_declaration_statement": []
+        },
+        "$span": {
+          "start": 173,
+          "end": 175
+        },
+        "$nodeHandle": 108
+      }
+    },
+    "expectedOutput": "impl Machine <{  State::Init }> {  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "impl Machine<{State::Init}> {}",
+    "pattern": "impl_item",
+    "edits": [],
+    "expectedSourceOut": "impl Machine <{  State::Init }> {  }",
+    "expectedReparseTree": "(impl_item type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier)))))) (impl_item_body (declaration_list)))",
+    "wrappedText": "impl Machine <{  State::Init }> {  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 186,
+      "$source": 0,
+      "$named": true,
+      "_name": "leg_count",
+      "_type": "u32",
+      "_value": "2",
+      "$other": [
+        50,
+        5,
+        81,
+        2
+      ],
+      "$span": {
+        "start": 16,
+        "end": 42
+      },
+      "$nodeHandle": 5
+    },
+    "expectedOutput": "const leg_count:u32=2 ;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "const leg_count : u32 = 2;",
+    "pattern": "const_item",
+    "edits": [],
+    "expectedSourceOut": "const leg_count:u32=2 ;",
+    "expectedReparseTree": "(const_item name: (identifier) type: (primitive_type) value: (integer_literal))",
+    "wrappedText": "const leg_count:u32=2 ;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 194,
+          "$source": 0,
+          "$named": true,
+          "_type_parameters": {
+            "$type": 200,
+            "$source": 0,
+            "$named": true,
+            "_attributed_type_parameter": [
+              {
+                "$type": 390,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 5,
+                  "end": 7
+                },
+                "$nodeHandle": 33,
+                "_attribute_item": [],
+                "_content": {
+                  "$type": 203,
+                  "$source": 0,
+                  "$named": true,
+                  "_name": {
+                    "$type": 220,
+                    "$source": 0,
+                    "$named": true,
+                    "_identifier": "a",
+                    "$other": [
+                      45
+                    ],
+                    "$span": {
+                      "start": 5,
+                      "end": 7
+                    },
+                    "$nodeHandle": 35
+                  },
+                  "$span": {
+                    "start": 5,
+                    "end": 7
+                  },
+                  "$nodeHandle": 34
+                }
+              }
+            ],
+            "$other": [
+              82,
+              84
+            ],
+            "$span": {
+              "start": 4,
+              "end": 8
+            },
+            "$nodeHandle": 32
+          },
+          "_trait_clause": {
+            "$type": 346,
+            "$source": 0,
+            "$named": true,
+            "_trait": {
+              "$type": 246,
+              "$source": 0,
+              "$named": true,
+              "_path": "iter",
+              "_name": "Iterator",
+              "$other": [
+                85
+              ],
+              "$span": {
+                "start": 9,
+                "end": 23
+              },
+              "$nodeHandle": 37
+            },
+            "$other": [
+              55
+            ],
+            "$span": {
+              "start": 9,
+              "end": 27
+            },
+            "$nodeHandle": 36
+          },
+          "_type": {
+            "$type": 227,
+            "$source": 0,
+            "$named": true,
+            "_type": {
+              "$type": 246,
+              "$source": 0,
+              "$named": true,
+              "_path": "Self",
+              "_name": "Iter",
+              "$other": [
+                85
+              ],
+              "$span": {
+                "start": 28,
+                "end": 38
+              },
+              "$nodeHandle": 39
+            },
+            "_type_arguments": {
+              "$type": 231,
+              "$source": 0,
+              "$named": true,
+              "_type_argument": [
+                {
+                  "$type": 393,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 39,
+                    "end": 41
+                  },
+                  "$nodeHandle": 41,
+                  "_content": {
+                    "$type": 220,
+                    "$source": 0,
+                    "$named": true,
+                    "_identifier": "a",
+                    "$other": [
+                      45
+                    ],
+                    "$span": {
+                      "start": 39,
+                      "end": 41
+                    },
+                    "$nodeHandle": 42
+                  }
+                }
+              ],
+              "$other": [
+                82,
+                84
+              ],
+              "$span": {
+                "start": 38,
+                "end": 42
+              },
+              "$nodeHandle": 40
+            },
+            "$span": {
+              "start": 28,
+              "end": 42
+            },
+            "$nodeHandle": 38
+          },
+          "$other": [
+            58
+          ],
+          "$span": {
+            "start": 0,
+            "end": 46
+          },
+          "$nodeHandle": 30,
+          "_content": {
+            "$type": 344,
+            "$source": 0,
+            "$named": true,
+            "_declaration_list": {
+              "$type": 176,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 43,
+                "end": 46
+              },
+              "$nodeHandle": 44,
+              "_declaration_statement": []
+            },
+            "$span": {
+              "start": 43,
+              "end": 46
+            },
+            "$nodeHandle": 43
+          }
+        },
+        {
+          "$type": 194,
+          "$source": 0,
+          "$named": true,
+          "_trait_clause": {
+            "$type": 346,
+            "$source": 0,
+            "$named": true,
+            "_trait": {
+              "$type": 227,
+              "$source": 0,
+              "$named": true,
+              "_type": "ConvertTo",
+              "_type_arguments": {
+                "$type": 231,
+                "$source": 0,
+                "$named": true,
+                "_type_argument": [
+                  {
+                    "$type": 393,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 63,
+                      "end": 66
+                    },
+                    "$nodeHandle": 48,
+                    "_content": "i64"
+                  }
+                ],
+                "$other": [
+                  82,
+                  84
+                ],
+                "$span": {
+                  "start": 62,
+                  "end": 67
+                },
+                "$nodeHandle": 47
+              },
+              "$span": {
+                "start": 53,
+                "end": 67
+              },
+              "$nodeHandle": 46
+            },
+            "$other": [
+              55
+            ],
+            "$span": {
+              "start": 53,
+              "end": 71
+            },
+            "$nodeHandle": 45
+          },
+          "_type": "i32",
+          "$other": [
+            58
+          ],
+          "$span": {
+            "start": 48,
+            "end": 125
+          },
+          "$nodeHandle": 31,
+          "_content": {
+            "$type": 344,
+            "$source": 0,
+            "$named": true,
+            "_declaration_list": {
+              "$type": 176,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                78,
+                79
+              ],
+              "$span": {
+                "start": 76,
+                "end": 125
+              },
+              "$nodeHandle": 50,
+              "_declaration_statement": [
+                {
+                  "$type": 189,
+                  "$source": 0,
+                  "$named": true,
+                  "_name": "convert",
+                  "_parameters": {
+                    "$type": 211,
+                    "$source": 0,
+                    "$named": true,
+                    "_parameters_group1": {
+                      "$type": 327,
+                      "$source": 0,
+                      "$named": true,
+                      "_attributed_parameter": [
+                        {
+                          "$type": 389,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 93,
+                            "end": 98
+                          },
+                          "$nodeHandle": 54,
+                          "_content": {
+                            "$type": 212,
+                            "$source": 0,
+                            "$named": true,
+                            "_reference": true,
+                            "_self": "self",
+                            "$span": {
+                              "start": 93,
+                              "end": 98
+                            },
+                            "$nodeHandle": 55
+                          }
+                        }
+                      ],
+                      "$span": {
+                        "start": 93,
+                        "end": 98
+                      },
+                      "$nodeHandle": 53,
+                      "_trailing_sep": false
+                    },
+                    "$other": [
+                      7,
+                      8
+                    ],
+                    "$span": {
+                      "start": 92,
+                      "end": 99
+                    },
+                    "$nodeHandle": 52
+                  },
+                  "_return_type": "i64",
+                  "_body": {
+                    "$type": 294,
+                    "$source": 0,
+                    "$named": true,
+                    "_trailing_expression": {
+                      "$type": 254,
+                      "$source": 0,
+                      "$named": true,
+                      "_value": {
+                        "$type": 248,
+                        "$source": 0,
+                        "$named": true,
+                        "_operator": 11,
+                        "_operand": "self",
+                        "$span": {
+                          "start": 109,
+                          "end": 114
+                        },
+                        "$nodeHandle": 58
+                      },
+                      "_type": "i64",
+                      "$other": [
+                        46
+                      ],
+                      "$span": {
+                        "start": 109,
+                        "end": 121
+                      },
+                      "$nodeHandle": 57
+                    },
+                    "$other": [
+                      78,
+                      79
+                    ],
+                    "$span": {
+                      "start": 107,
+                      "end": 123
+                    },
+                    "$nodeHandle": 56,
+                    "_statement": []
+                  },
+                  "$other": [
+                    54,
+                    139
+                  ],
+                  "$span": {
+                    "start": 82,
+                    "end": 123
+                  },
+                  "$nodeHandle": 51
+                }
+              ]
+            },
+            "$span": {
+              "start": 76,
+              "end": 125
+            },
+            "$nodeHandle": 49
+          }
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 125
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "impl < 'a> iter::Iterator for Self::Iter <'a> {  } impl ConvertTo <i64> for i32 {  fn convert (& self)->i64 {  * self as i64 } }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "impl<'a> iter::Iterator for Self::Iter<'a> {\n}\n\nimpl ConvertTo<i64> for i32 {\n    fn convert(&self) -> i64 { *self as i64 }\n}",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "impl < 'a> iter::Iterator for Self::Iter <'a> {  } impl ConvertTo <i64> for i32 {  fn convert (& self)->i64 {  * self as i64 } }",
+    "expectedReparseTree": "(source_file statements: (impl_item type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) trait_clause: (impl_item_positive_clause trait: (scoped_type_identifier path: (identifier) name: (type_identifier))) type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))))) (impl_item_body (declaration_list))) statements: (impl_item trait_clause: (impl_item_positive_clause trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (primitive_type))))) type: (primitive_type) (impl_item_body (declaration_list (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))))) return_type: (primitive_type) body: (block trailing_expression: (type_cast_expression value: (unary_expression operand: (self)) type: (primitive_type))))))))",
+    "wrappedText": "impl < 'a> iter::Iterator for Self::Iter <'a> {  } impl ConvertTo <i64> for i32 {  fn convert (& self)->i64 {  * self as i64 } }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 194,
+      "$source": 0,
+      "$named": true,
+      "_type_parameters": {
+        "$type": 200,
+        "$source": 0,
+        "$named": true,
+        "_attributed_type_parameter": [
+          {
+            "$type": 390,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 5,
+              "end": 7
+            },
+            "$nodeHandle": 60,
+            "_attribute_item": [],
+            "_content": {
+              "$type": 203,
+              "$source": 0,
+              "$named": true,
+              "_name": {
+                "$type": 220,
+                "$source": 0,
+                "$named": true,
+                "_identifier": "a",
+                "$other": [
+                  45
+                ],
+                "$span": {
+                  "start": 5,
+                  "end": 7
+                },
+                "$nodeHandle": 62
+              },
+              "$span": {
+                "start": 5,
+                "end": 7
+              },
+              "$nodeHandle": 61
+            }
+          }
+        ],
+        "$other": [
+          82,
+          84
+        ],
+        "$span": {
+          "start": 4,
+          "end": 8
+        },
+        "$nodeHandle": 59
+      },
+      "_trait_clause": {
+        "$type": 346,
+        "$source": 0,
+        "$named": true,
+        "_trait": {
+          "$type": 246,
+          "$source": 0,
+          "$named": true,
+          "_path": "iter",
+          "_name": "Iterator",
+          "$other": [
+            85
+          ],
+          "$span": {
+            "start": 9,
+            "end": 23
+          },
+          "$nodeHandle": 64
+        },
+        "$other": [
+          55
+        ],
+        "$span": {
+          "start": 9,
+          "end": 27
+        },
+        "$nodeHandle": 63
+      },
+      "_type": {
+        "$type": 227,
+        "$source": 0,
+        "$named": true,
+        "_type": {
+          "$type": 246,
+          "$source": 0,
+          "$named": true,
+          "_path": "Self",
+          "_name": "Iter",
+          "$other": [
+            85
+          ],
+          "$span": {
+            "start": 28,
+            "end": 38
+          },
+          "$nodeHandle": 66
+        },
+        "_type_arguments": {
+          "$type": 231,
+          "$source": 0,
+          "$named": true,
+          "_type_argument": [
+            {
+              "$type": 393,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 39,
+                "end": 41
+              },
+              "$nodeHandle": 68,
+              "_content": {
+                "$type": 220,
+                "$source": 0,
+                "$named": true,
+                "_identifier": "a",
+                "$other": [
+                  45
+                ],
+                "$span": {
+                  "start": 39,
+                  "end": 41
+                },
+                "$nodeHandle": 69
+              }
+            }
+          ],
+          "$other": [
+            82,
+            84
+          ],
+          "$span": {
+            "start": 38,
+            "end": 42
+          },
+          "$nodeHandle": 67
+        },
+        "$span": {
+          "start": 28,
+          "end": 42
+        },
+        "$nodeHandle": 65
+      },
+      "$other": [
+        58
+      ],
+      "$span": {
+        "start": 0,
+        "end": 46
+      },
+      "$nodeHandle": 1,
+      "_content": {
+        "$type": 344,
+        "$source": 0,
+        "$named": true,
+        "_declaration_list": {
+          "$type": 176,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 43,
+            "end": 46
+          },
+          "$nodeHandle": 71,
+          "_declaration_statement": []
+        },
+        "$span": {
+          "start": 43,
+          "end": 46
+        },
+        "$nodeHandle": 70
+      }
+    },
+    "expectedOutput": "impl < 'a> iter::Iterator for Self::Iter <'a> {  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "impl<'a> iter::Iterator for Self::Iter<'a> {\n}",
+    "pattern": "impl_item",
+    "edits": [],
+    "expectedSourceOut": "impl < 'a> iter::Iterator for Self::Iter <'a> {  }",
+    "expectedReparseTree": "(impl_item type_parameters: (type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier))))) trait_clause: (impl_item_positive_clause trait: (scoped_type_identifier path: (identifier) name: (type_identifier))) type: (generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))))) (impl_item_body (declaration_list)))",
+    "wrappedText": "impl < 'a> iter::Iterator for Self::Iter <'a> {  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 194,
+      "$source": 0,
+      "$named": true,
+      "_trait_clause": {
+        "$type": 346,
+        "$source": 0,
+        "$named": true,
+        "_trait": {
+          "$type": 227,
+          "$source": 0,
+          "$named": true,
+          "_type": "ConvertTo",
+          "_type_arguments": {
+            "$type": 231,
+            "$source": 0,
+            "$named": true,
+            "_type_argument": [
+              {
+                "$type": 393,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 63,
+                  "end": 66
+                },
+                "$nodeHandle": 75,
+                "_content": "i64"
+              }
+            ],
+            "$other": [
+              82,
+              84
+            ],
+            "$span": {
+              "start": 62,
+              "end": 67
+            },
+            "$nodeHandle": 74
+          },
+          "$span": {
+            "start": 53,
+            "end": 67
+          },
+          "$nodeHandle": 73
+        },
+        "$other": [
+          55
+        ],
+        "$span": {
+          "start": 53,
+          "end": 71
+        },
+        "$nodeHandle": 72
+      },
+      "_type": "i32",
+      "$other": [
+        58
+      ],
+      "$span": {
+        "start": 48,
+        "end": 125
+      },
+      "$nodeHandle": 2,
+      "_content": {
+        "$type": 344,
+        "$source": 0,
+        "$named": true,
+        "_declaration_list": {
+          "$type": 176,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            78,
+            79
+          ],
+          "$span": {
+            "start": 76,
+            "end": 125
+          },
+          "$nodeHandle": 77,
+          "_declaration_statement": [
+            {
+              "$type": 189,
+              "$source": 0,
+              "$named": true,
+              "_name": "convert",
+              "_parameters": {
+                "$type": 211,
+                "$source": 0,
+                "$named": true,
+                "_parameters_group1": {
+                  "$type": 327,
+                  "$source": 0,
+                  "$named": true,
+                  "_attributed_parameter": [
+                    {
+                      "$type": 389,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 93,
+                        "end": 98
+                      },
+                      "$nodeHandle": 81,
+                      "_content": {
+                        "$type": 212,
+                        "$source": 0,
+                        "$named": true,
+                        "_reference": true,
+                        "_self": "self",
+                        "$span": {
+                          "start": 93,
+                          "end": 98
+                        },
+                        "$nodeHandle": 82
+                      }
+                    }
+                  ],
+                  "$span": {
+                    "start": 93,
+                    "end": 98
+                  },
+                  "$nodeHandle": 80,
+                  "_trailing_sep": false
+                },
+                "$other": [
+                  7,
+                  8
+                ],
+                "$span": {
+                  "start": 92,
+                  "end": 99
+                },
+                "$nodeHandle": 79
+              },
+              "_return_type": "i64",
+              "_body": {
+                "$type": 294,
+                "$source": 0,
+                "$named": true,
+                "_trailing_expression": {
+                  "$type": 254,
+                  "$source": 0,
+                  "$named": true,
+                  "_value": {
+                    "$type": 248,
+                    "$source": 0,
+                    "$named": true,
+                    "_operator": 11,
+                    "_operand": "self",
+                    "$span": {
+                      "start": 109,
+                      "end": 114
+                    },
+                    "$nodeHandle": 85
+                  },
+                  "_type": "i64",
+                  "$other": [
+                    46
+                  ],
+                  "$span": {
+                    "start": 109,
+                    "end": 121
+                  },
+                  "$nodeHandle": 84
+                },
+                "$other": [
+                  78,
+                  79
+                ],
+                "$span": {
+                  "start": 107,
+                  "end": 123
+                },
+                "$nodeHandle": 83,
+                "_statement": []
+              },
+              "$other": [
+                54,
+                139
+              ],
+              "$span": {
+                "start": 82,
+                "end": 123
+              },
+              "$nodeHandle": 78
+            }
+          ]
+        },
+        "$span": {
+          "start": 76,
+          "end": 125
+        },
+        "$nodeHandle": 76
+      }
+    },
+    "expectedOutput": "impl ConvertTo <i64> for i32 {  fn convert (& self)->i64 {  * self as i64 } }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "impl ConvertTo<i64> for i32 {\n    fn convert(&self) -> i64 { *self as i64 }\n}",
+    "pattern": "impl_item",
+    "edits": [],
+    "expectedSourceOut": "impl ConvertTo <i64> for i32 {  fn convert (& self)->i64 {  * self as i64 } }",
+    "expectedReparseTree": "(impl_item trait_clause: (impl_item_positive_clause trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (primitive_type))))) type: (primitive_type) (impl_item_body (declaration_list (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))))) return_type: (primitive_type) body: (block trailing_expression: (type_cast_expression value: (unary_expression operand: (self)) type: (primitive_type)))))))",
+    "wrappedText": "impl ConvertTo <i64> for i32 {  fn convert (& self)->i64 {  * self as i64 } }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 200,
+      "$source": 0,
+      "$named": true,
+      "_attributed_type_parameter": [
+        {
+          "$type": 390,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 5,
+            "end": 7
+          },
+          "$nodeHandle": 86,
+          "_attribute_item": [],
+          "_content": {
+            "$type": 203,
+            "$source": 0,
+            "$named": true,
+            "_name": {
+              "$type": 220,
+              "$source": 0,
+              "$named": true,
+              "_identifier": "a",
+              "$other": [
+                45
+              ],
+              "$span": {
+                "start": 5,
+                "end": 7
+              },
+              "$nodeHandle": 88
+            },
+            "$span": {
+              "start": 5,
+              "end": 7
+            },
+            "$nodeHandle": 87
+          }
+        }
+      ],
+      "$other": [
+        82,
+        84
+      ],
+      "$span": {
+        "start": 4,
+        "end": 8
+      },
+      "$nodeHandle": 3
+    },
+    "expectedOutput": "< 'a>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "<'a>",
+    "pattern": "type_parameters",
+    "edits": [],
+    "expectedSourceOut": "< 'a>",
+    "expectedReparseTree": "(type_parameters (attributed_type_parameter (lifetime_parameter name: (lifetime identifier: (identifier)))))",
+    "wrappedText": "fn _f< 'a>() {}",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 246,
+      "$source": 0,
+      "$named": true,
+      "_path": "iter",
+      "_name": "Iterator",
+      "$other": [
+        85
+      ],
+      "$span": {
+        "start": 9,
+        "end": 23
+      },
+      "$nodeHandle": 8
+    },
+    "expectedOutput": "iter::Iterator"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "iter::Iterator",
+    "pattern": "scoped_type_identifier",
+    "edits": [],
+    "expectedSourceOut": "iter::Iterator",
+    "expectedReparseTree": "(scoped_type_identifier path: (identifier) name: (type_identifier))",
+    "wrappedText": "type _X = iter::Iterator;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 246,
+      "$source": 0,
+      "$named": true,
+      "_path": "Self",
+      "_name": "Iter",
+      "$other": [
+        85
+      ],
+      "$span": {
+        "start": 28,
+        "end": 38
+      },
+      "$nodeHandle": 10
+    },
+    "expectedOutput": "Self::Iter"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "Self::Iter",
+    "pattern": "scoped_type_identifier",
+    "edits": [],
+    "expectedSourceOut": "Self::Iter",
+    "expectedReparseTree": "(scoped_type_identifier path: (identifier) name: (type_identifier))",
+    "wrappedText": "type _X = Self::Iter;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 227,
+      "$source": 0,
+      "$named": true,
+      "_type": {
+        "$type": 246,
+        "$source": 0,
+        "$named": true,
+        "_path": "Self",
+        "_name": "Iter",
+        "$other": [
+          85
+        ],
+        "$span": {
+          "start": 28,
+          "end": 38
+        },
+        "$nodeHandle": 90
+      },
+      "_type_arguments": {
+        "$type": 231,
+        "$source": 0,
+        "$named": true,
+        "_type_argument": [
+          {
+            "$type": 393,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 39,
+              "end": 41
+            },
+            "$nodeHandle": 92,
+            "_content": {
+              "$type": 220,
+              "$source": 0,
+              "$named": true,
+              "_identifier": "a",
+              "$other": [
+                45
+              ],
+              "$span": {
+                "start": 39,
+                "end": 41
+              },
+              "$nodeHandle": 93
+            }
+          }
+        ],
+        "$other": [
+          82,
+          84
+        ],
+        "$span": {
+          "start": 38,
+          "end": 42
+        },
+        "$nodeHandle": 91
+      },
+      "$span": {
+        "start": 28,
+        "end": 42
+      },
+      "$nodeHandle": 9
+    },
+    "expectedOutput": "Self::Iter <'a>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "Self::Iter<'a>",
+    "pattern": "generic_type",
+    "edits": [],
+    "expectedSourceOut": "Self::Iter <'a>",
+    "expectedReparseTree": "(generic_type type: (scoped_type_identifier path: (identifier) name: (type_identifier)) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier)))))",
+    "wrappedText": "type _X = Self::Iter <'a>;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 227,
+      "$source": 0,
+      "$named": true,
+      "_type": "ConvertTo",
+      "_type_arguments": {
+        "$type": 231,
+        "$source": 0,
+        "$named": true,
+        "_type_argument": [
+          {
+            "$type": 393,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 63,
+              "end": 66
+            },
+            "$nodeHandle": 95,
+            "_content": "i64"
+          }
+        ],
+        "$other": [
+          82,
+          84
+        ],
+        "$span": {
+          "start": 62,
+          "end": 67
+        },
+        "$nodeHandle": 94
+      },
+      "$span": {
+        "start": 53,
+        "end": 67
+      },
+      "$nodeHandle": 17
+    },
+    "expectedOutput": "ConvertTo <i64>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "ConvertTo<i64>",
+    "pattern": "generic_type",
+    "edits": [],
+    "expectedSourceOut": "ConvertTo <i64>",
+    "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (primitive_type))))",
+    "wrappedText": "type _X = ConvertTo <i64>;",
     "wrappedOffset": 10
   },
   {
@@ -11900,6 +16288,537 @@
       "$named": true,
       "_statements": [
         {
+          "$type": 195,
+          "$source": 0,
+          "$named": true,
+          "_visibility_modifier": {
+            "$type": 216,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 0,
+              "end": 3
+            },
+            "$nodeHandle": 17,
+            "_content": {
+              "$type": 370,
+              "$source": 0,
+              "$named": true,
+              "_pub": 63,
+              "$span": {
+                "start": 0,
+                "end": 3
+              },
+              "$nodeHandle": 18
+            }
+          },
+          "_name": "Item",
+          "_bounds": {
+            "$type": 197,
+            "$source": 0,
+            "$named": true,
+            "_bounds": [
+              {
+                "$type": 427,
+                "$source": 0,
+                "$named": true,
+                "$text": "Clone",
+                "$span": {
+                  "start": 16,
+                  "end": 21
+                }
+              },
+              {
+                "$type": 427,
+                "$source": 0,
+                "$named": true,
+                "$text": "Eq",
+                "$span": {
+                  "start": 24,
+                  "end": 26
+                }
+              },
+              {
+                "$type": 246,
+                "$source": 0,
+                "$named": true,
+                "_path": "fmt",
+                "_name": "Debug",
+                "$other": [
+                  85
+                ],
+                "$span": {
+                  "start": 29,
+                  "end": 39
+                },
+                "$nodeHandle": 20
+              }
+            ],
+            "$other": [
+              5
+            ],
+            "$span": {
+              "start": 14,
+              "end": 39
+            },
+            "$nodeHandle": 19
+          },
+          "_body": {
+            "$type": 176,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              78,
+              79
+            ],
+            "$span": {
+              "start": 40,
+              "end": 85
+            },
+            "$nodeHandle": 21,
+            "_declaration_statement": [
+              {
+                "$type": 190,
+                "$source": 0,
+                "$named": true,
+                "_name": "summarize",
+                "_parameters": {
+                  "$type": 211,
+                  "$source": 0,
+                  "$named": true,
+                  "_parameters_group1": {
+                    "$type": 327,
+                    "$source": 0,
+                    "$named": true,
+                    "_attributed_parameter": [
+                      {
+                        "$type": 389,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 59,
+                          "end": 64
+                        },
+                        "$nodeHandle": 25,
+                        "_content": {
+                          "$type": 212,
+                          "$source": 0,
+                          "$named": true,
+                          "_reference": true,
+                          "_self": "self",
+                          "$span": {
+                            "start": 59,
+                            "end": 64
+                          },
+                          "$nodeHandle": 26
+                        }
+                      }
+                    ],
+                    "$span": {
+                      "start": 59,
+                      "end": 64
+                    },
+                    "$nodeHandle": 24,
+                    "_trailing_sep": false
+                  },
+                  "$other": [
+                    7,
+                    8
+                  ],
+                  "$span": {
+                    "start": 58,
+                    "end": 65
+                  },
+                  "$nodeHandle": 23
+                },
+                "_return_type": {
+                  "$type": 246,
+                  "$source": 0,
+                  "$named": true,
+                  "_path": "Self",
+                  "_name": "Summary",
+                  "$other": [
+                    85
+                  ],
+                  "$span": {
+                    "start": 69,
+                    "end": 82
+                  },
+                  "$nodeHandle": 27
+                },
+                "$other": [
+                  54,
+                  139,
+                  2
+                ],
+                "$span": {
+                  "start": 46,
+                  "end": 83
+                },
+                "$nodeHandle": 22
+              }
+            ]
+          },
+          "$other": [
+            67
+          ],
+          "$span": {
+            "start": 0,
+            "end": 85
+          },
+          "$nodeHandle": 15
+        },
+        {
+          "$type": 195,
+          "$source": 0,
+          "$named": true,
+          "_unsafe_marker": true,
+          "_name": "Foo",
+          "_body": {
+            "$type": 176,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 104,
+              "end": 107
+            },
+            "$nodeHandle": 28,
+            "_declaration_statement": []
+          },
+          "$other": [
+            67
+          ],
+          "$span": {
+            "start": 87,
+            "end": 107
+          },
+          "$nodeHandle": 16
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 107
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "pub trait Item :Clone+Eq+fmt::Debug {  fn summarize (& self)->Self::Summary; }  unsafe trait Foo {  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub trait Item: Clone + Eq + fmt::Debug {\n    fn summarize(&self) -> Self::Summary;\n}\n\nunsafe trait Foo { }",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "pub trait Item :Clone+Eq+fmt::Debug {  fn summarize (& self)->Self::Summary; }  unsafe trait Foo {  }",
+    "expectedReparseTree": "(source_file statements: (trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier) bounds: (scoped_type_identifier path: (identifier) name: (type_identifier))) body: (declaration_list (function_signature_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))))) return_type: (scoped_type_identifier path: (identifier) name: (type_identifier))))) statements: (trait_item name: (type_identifier) body: (declaration_list)))",
+    "wrappedText": "pub trait Item :Clone+Eq+fmt::Debug {  fn summarize (& self)->Self::Summary; }  unsafe trait Foo {  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 195,
+      "$source": 0,
+      "$named": true,
+      "_visibility_modifier": {
+        "$type": 216,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 0,
+          "end": 3
+        },
+        "$nodeHandle": 29,
+        "_content": {
+          "$type": 370,
+          "$source": 0,
+          "$named": true,
+          "_pub": 63,
+          "$span": {
+            "start": 0,
+            "end": 3
+          },
+          "$nodeHandle": 30
+        }
+      },
+      "_name": "Item",
+      "_bounds": {
+        "$type": 197,
+        "$source": 0,
+        "$named": true,
+        "_bounds": [
+          {
+            "$type": 427,
+            "$source": 0,
+            "$named": true,
+            "$text": "Clone",
+            "$span": {
+              "start": 16,
+              "end": 21
+            }
+          },
+          {
+            "$type": 427,
+            "$source": 0,
+            "$named": true,
+            "$text": "Eq",
+            "$span": {
+              "start": 24,
+              "end": 26
+            }
+          },
+          {
+            "$type": 246,
+            "$source": 0,
+            "$named": true,
+            "_path": "fmt",
+            "_name": "Debug",
+            "$other": [
+              85
+            ],
+            "$span": {
+              "start": 29,
+              "end": 39
+            },
+            "$nodeHandle": 32
+          }
+        ],
+        "$other": [
+          5
+        ],
+        "$span": {
+          "start": 14,
+          "end": 39
+        },
+        "$nodeHandle": 31
+      },
+      "_body": {
+        "$type": 176,
+        "$source": 0,
+        "$named": true,
+        "$other": [
+          78,
+          79
+        ],
+        "$span": {
+          "start": 40,
+          "end": 85
+        },
+        "$nodeHandle": 33,
+        "_declaration_statement": [
+          {
+            "$type": 190,
+            "$source": 0,
+            "$named": true,
+            "_name": "summarize",
+            "_parameters": {
+              "$type": 211,
+              "$source": 0,
+              "$named": true,
+              "_parameters_group1": {
+                "$type": 327,
+                "$source": 0,
+                "$named": true,
+                "_attributed_parameter": [
+                  {
+                    "$type": 389,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 59,
+                      "end": 64
+                    },
+                    "$nodeHandle": 37,
+                    "_content": {
+                      "$type": 212,
+                      "$source": 0,
+                      "$named": true,
+                      "_reference": true,
+                      "_self": "self",
+                      "$span": {
+                        "start": 59,
+                        "end": 64
+                      },
+                      "$nodeHandle": 38
+                    }
+                  }
+                ],
+                "$span": {
+                  "start": 59,
+                  "end": 64
+                },
+                "$nodeHandle": 36,
+                "_trailing_sep": false
+              },
+              "$other": [
+                7,
+                8
+              ],
+              "$span": {
+                "start": 58,
+                "end": 65
+              },
+              "$nodeHandle": 35
+            },
+            "_return_type": {
+              "$type": 246,
+              "$source": 0,
+              "$named": true,
+              "_path": "Self",
+              "_name": "Summary",
+              "$other": [
+                85
+              ],
+              "$span": {
+                "start": 69,
+                "end": 82
+              },
+              "$nodeHandle": 39
+            },
+            "$other": [
+              54,
+              139,
+              2
+            ],
+            "$span": {
+              "start": 46,
+              "end": 83
+            },
+            "$nodeHandle": 34
+          }
+        ]
+      },
+      "$other": [
+        67
+      ],
+      "$span": {
+        "start": 0,
+        "end": 85
+      },
+      "$nodeHandle": 1
+    },
+    "expectedOutput": "pub trait Item :Clone+Eq+fmt::Debug {  fn summarize (& self)->Self::Summary; }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub trait Item: Clone + Eq + fmt::Debug {\n    fn summarize(&self) -> Self::Summary;\n}",
+    "pattern": "trait_item",
+    "edits": [],
+    "expectedSourceOut": "pub trait Item :Clone+Eq+fmt::Debug {  fn summarize (& self)->Self::Summary; }",
+    "expectedReparseTree": "(trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier) bounds: (scoped_type_identifier path: (identifier) name: (type_identifier))) body: (declaration_list (function_signature_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))))) return_type: (scoped_type_identifier path: (identifier) name: (type_identifier)))))",
+    "wrappedText": "pub trait Item :Clone+Eq+fmt::Debug {  fn summarize (& self)->Self::Summary; }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 216,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 0,
+        "end": 3
+      },
+      "$nodeHandle": 3,
+      "_content": {
+        "$type": 370,
+        "$source": 0,
+        "$named": true,
+        "_pub": 63,
+        "$span": {
+          "start": 0,
+          "end": 3
+        },
+        "$nodeHandle": 41
+      }
+    },
+    "expectedOutput": "pub"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub",
+    "pattern": "visibility_modifier",
+    "edits": [],
+    "expectedSourceOut": "pub",
+    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub))",
+    "wrappedText": "pub fn _f() {}",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 246,
+      "$source": 0,
+      "$named": true,
+      "_path": "fmt",
+      "_name": "Debug",
+      "$other": [
+        85
+      ],
+      "$span": {
+        "start": 29,
+        "end": 39
+      },
+      "$nodeHandle": 6
+    },
+    "expectedOutput": "fmt::Debug"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "fmt::Debug",
+    "pattern": "scoped_type_identifier",
+    "edits": [],
+    "expectedSourceOut": "fmt::Debug",
+    "expectedReparseTree": "(scoped_type_identifier path: (identifier) name: (type_identifier))",
+    "wrappedText": "type _X = fmt::Debug;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 246,
+      "$source": 0,
+      "$named": true,
+      "_path": "Self",
+      "_name": "Summary",
+      "$other": [
+        85
+      ],
+      "$span": {
+        "start": 69,
+        "end": 82
+      },
+      "$nodeHandle": 13
+    },
+    "expectedOutput": "Self::Summary"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "Self::Summary",
+    "pattern": "scoped_type_identifier",
+    "edits": [],
+    "expectedSourceOut": "Self::Summary",
+    "expectedReparseTree": "(scoped_type_identifier path: (identifier) name: (type_identifier))",
+    "wrappedText": "type _X = Self::Summary;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
           "$type": 194,
           "$source": 0,
           "$named": true,
@@ -12535,6 +17454,511 @@
     "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (type_identifier) (trait_bounds bounds: (type_identifier)))))",
     "wrappedText": "type _X = AstDeref <Target :HasNodeId>;",
     "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 195,
+          "$source": 0,
+          "$named": true,
+          "_visibility_modifier": {
+            "$type": 216,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 0,
+              "end": 3
+            },
+            "$nodeHandle": 15,
+            "_content": {
+              "$type": 370,
+              "$source": 0,
+              "$named": true,
+              "_pub": 63,
+              "$span": {
+                "start": 0,
+                "end": 3
+              },
+              "$nodeHandle": 16
+            }
+          },
+          "_name": "A",
+          "_bounds": {
+            "$type": 197,
+            "$source": 0,
+            "$named": true,
+            "_bounds": [
+              "B",
+              "C",
+              "D"
+            ],
+            "$other": [
+              5
+            ],
+            "$span": {
+              "start": 11,
+              "end": 22
+            },
+            "$nodeHandle": 17
+          },
+          "_body": {
+            "$type": 176,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              78,
+              79
+            ],
+            "$span": {
+              "start": 23,
+              "end": 63
+            },
+            "$nodeHandle": 18,
+            "_declaration_statement": [
+              {
+                "$type": 240,
+                "$source": 0,
+                "$named": true,
+                "_macro": "private_decl",
+                "_token_tree": {
+                  "$type": 241,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 42,
+                    "end": 44
+                  },
+                  "$nodeHandle": 21,
+                  "_content": {
+                    "$type": 386,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 42,
+                      "end": 44
+                    },
+                    "$nodeHandle": 22,
+                    "_delim_tokens": []
+                  }
+                },
+                "$other": [
+                  77
+                ],
+                "$span": {
+                  "start": 29,
+                  "end": 44
+                },
+                "$nodeHandle": 19
+              },
+              {
+                "$type": 190,
+                "$source": 0,
+                "$named": true,
+                "_name": "f",
+                "_parameters": {
+                  "$type": 211,
+                  "$source": 0,
+                  "$named": true,
+                  "_parameters_group1": {
+                    "$type": 327,
+                    "$source": 0,
+                    "$named": true,
+                    "_attributed_parameter": [
+                      {
+                        "$type": 389,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 54,
+                          "end": 59
+                        },
+                        "$nodeHandle": 25,
+                        "_content": {
+                          "$type": 212,
+                          "$source": 0,
+                          "$named": true,
+                          "_reference": true,
+                          "_self": "self",
+                          "$span": {
+                            "start": 54,
+                            "end": 59
+                          },
+                          "$nodeHandle": 26
+                        }
+                      }
+                    ],
+                    "$span": {
+                      "start": 54,
+                      "end": 59
+                    },
+                    "$nodeHandle": 24,
+                    "_trailing_sep": false
+                  },
+                  "$other": [
+                    7,
+                    8
+                  ],
+                  "$span": {
+                    "start": 53,
+                    "end": 60
+                  },
+                  "$nodeHandle": 23
+                },
+                "$other": [
+                  54,
+                  2
+                ],
+                "$span": {
+                  "start": 49,
+                  "end": 61
+                },
+                "$nodeHandle": 20
+              }
+            ]
+          },
+          "$other": [
+            67
+          ],
+          "$span": {
+            "start": 0,
+            "end": 63
+          },
+          "$nodeHandle": 14
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 63
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "pub trait A :B+C+D { private_decl!{  }  fn f (& self); }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub trait A: B + C + D {\n    private_decl!{}\n    fn f(&self);\n}",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "pub trait A :B+C+D { private_decl!{  }  fn f (& self); }",
+    "expectedReparseTree": "(source_file statements: (trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier) bounds: (type_identifier)) body: (declaration_list (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_brace))) (function_signature_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self)))))))))",
+    "wrappedText": "pub trait A :B+C+D { private_decl!{  }  fn f (& self); }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 195,
+      "$source": 0,
+      "$named": true,
+      "_visibility_modifier": {
+        "$type": 216,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 0,
+          "end": 3
+        },
+        "$nodeHandle": 27,
+        "_content": {
+          "$type": 370,
+          "$source": 0,
+          "$named": true,
+          "_pub": 63,
+          "$span": {
+            "start": 0,
+            "end": 3
+          },
+          "$nodeHandle": 28
+        }
+      },
+      "_name": "A",
+      "_bounds": {
+        "$type": 197,
+        "$source": 0,
+        "$named": true,
+        "_bounds": [
+          "B",
+          "C",
+          "D"
+        ],
+        "$other": [
+          5
+        ],
+        "$span": {
+          "start": 11,
+          "end": 22
+        },
+        "$nodeHandle": 29
+      },
+      "_body": {
+        "$type": 176,
+        "$source": 0,
+        "$named": true,
+        "$other": [
+          78,
+          79
+        ],
+        "$span": {
+          "start": 23,
+          "end": 63
+        },
+        "$nodeHandle": 30,
+        "_declaration_statement": [
+          {
+            "$type": 240,
+            "$source": 0,
+            "$named": true,
+            "_macro": "private_decl",
+            "_token_tree": {
+              "$type": 241,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 42,
+                "end": 44
+              },
+              "$nodeHandle": 33,
+              "_content": {
+                "$type": 386,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 42,
+                  "end": 44
+                },
+                "$nodeHandle": 34,
+                "_delim_tokens": []
+              }
+            },
+            "$other": [
+              77
+            ],
+            "$span": {
+              "start": 29,
+              "end": 44
+            },
+            "$nodeHandle": 31
+          },
+          {
+            "$type": 190,
+            "$source": 0,
+            "$named": true,
+            "_name": "f",
+            "_parameters": {
+              "$type": 211,
+              "$source": 0,
+              "$named": true,
+              "_parameters_group1": {
+                "$type": 327,
+                "$source": 0,
+                "$named": true,
+                "_attributed_parameter": [
+                  {
+                    "$type": 389,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 54,
+                      "end": 59
+                    },
+                    "$nodeHandle": 37,
+                    "_content": {
+                      "$type": 212,
+                      "$source": 0,
+                      "$named": true,
+                      "_reference": true,
+                      "_self": "self",
+                      "$span": {
+                        "start": 54,
+                        "end": 59
+                      },
+                      "$nodeHandle": 38
+                    }
+                  }
+                ],
+                "$span": {
+                  "start": 54,
+                  "end": 59
+                },
+                "$nodeHandle": 36,
+                "_trailing_sep": false
+              },
+              "$other": [
+                7,
+                8
+              ],
+              "$span": {
+                "start": 53,
+                "end": 60
+              },
+              "$nodeHandle": 35
+            },
+            "$other": [
+              54,
+              2
+            ],
+            "$span": {
+              "start": 49,
+              "end": 61
+            },
+            "$nodeHandle": 32
+          }
+        ]
+      },
+      "$other": [
+        67
+      ],
+      "$span": {
+        "start": 0,
+        "end": 63
+      },
+      "$nodeHandle": 1
+    },
+    "expectedOutput": "pub trait A :B+C+D { private_decl!{  }  fn f (& self); }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub trait A: B + C + D {\n    private_decl!{}\n    fn f(&self);\n}",
+    "pattern": "trait_item",
+    "edits": [],
+    "expectedSourceOut": "pub trait A :B+C+D { private_decl!{  }  fn f (& self); }",
+    "expectedReparseTree": "(trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) bounds: (trait_bounds bounds: (type_identifier) bounds: (type_identifier) bounds: (type_identifier)) body: (declaration_list (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_brace))) (function_signature_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (self_parameter self: (self))))))))",
+    "wrappedText": "pub trait A :B+C+D { private_decl!{  }  fn f (& self); }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 216,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 0,
+        "end": 3
+      },
+      "$nodeHandle": 2,
+      "_content": {
+        "$type": 370,
+        "$source": 0,
+        "$named": true,
+        "_pub": 63,
+        "$span": {
+          "start": 0,
+          "end": 3
+        },
+        "$nodeHandle": 39
+      }
+    },
+    "expectedOutput": "pub"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "pub",
+    "pattern": "visibility_modifier",
+    "edits": [],
+    "expectedSourceOut": "pub",
+    "expectedReparseTree": "(visibility_modifier (visibility_modifier_pub))",
+    "wrappedText": "pub fn _f() {}",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 240,
+      "$source": 0,
+      "$named": true,
+      "_macro": "private_decl",
+      "_token_tree": {
+        "$type": 241,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 42,
+          "end": 44
+        },
+        "$nodeHandle": 48,
+        "_content": {
+          "$type": 386,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 42,
+            "end": 44
+          },
+          "$nodeHandle": 49,
+          "_delim_tokens": []
+        }
+      },
+      "$other": [
+        77
+      ],
+      "$span": {
+        "start": 29,
+        "end": 44
+      },
+      "$nodeHandle": 6
+    },
+    "expectedOutput": "private_decl!{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "private_decl!{}",
+    "pattern": "macro_invocation",
+    "edits": [],
+    "expectedSourceOut": "private_decl!{  }",
+    "expectedReparseTree": "(macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_brace)))",
+    "wrappedText": "fn _f() { let _ = private_decl!{  }; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 241,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 42,
+        "end": 44
+      },
+      "$nodeHandle": 8,
+      "_content": {
+        "$type": 386,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 42,
+          "end": 44
+        },
+        "$nodeHandle": 50,
+        "_delim_tokens": []
+      }
+    },
+    "expectedOutput": "{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{}",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "{  }",
+    "expectedReparseTree": "(token_tree (delim_token_tree_brace))",
+    "wrappedText": "fn _f() { mac! {  } }",
+    "wrappedOffset": 15
   },
   {
     "kind": "render",

@@ -12740,6 +12740,20 @@ const _aliasTargetToSource: Record<string, string> = {
 	variable_declarator_group2: '_variable_declarator_group2'
 };
 
+function _drillUnknownKindChildren(data: _NodeData, tree: TreeHandle): _NodeData {
+	const out: Record<string, unknown> = { ...(data as unknown as Record<string, unknown>) };
+	for (const key of Object.keys(out)) {
+		if (key.charCodeAt(0) !== 95 /* `_` */) continue;
+		const value = out[key];
+		if (Array.isArray(value)) {
+			out[key] = drillInAll(value, tree);
+		} else if (value != null) {
+			out[key] = drillIn(value, tree);
+		}
+	}
+	return out as unknown as _NodeData;
+}
+
 /** Wrap a NodeData into its lazy read-only view. */
 export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 	// The native path now returns numeric $type
@@ -12759,7 +12773,7 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
 		data = { ...data, $type: canonical as unknown as number };
 	}
 	const fn = _wrapTable[canonical ?? rawType];
-	if (!fn) return data; // unknown kind — return as-is
+	if (!fn) return _drillUnknownKindChildren(data, tree); // unknown kind — still drill in its kind-named-slot children
 	return fn(data, tree);
 }
 
