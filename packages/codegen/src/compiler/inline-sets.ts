@@ -48,6 +48,73 @@ export function loadGrammarJsonInlineList(grammar: string): readonly string[] | 
 }
 
 /**
+ * A single grammar.json rule node — recursive, JSON-shaped (not sittir's own
+ * `Rule<Phase>` IR). Only the fields this module's walk reads are typed.
+ */
+interface GrammarJsonNode {
+	readonly type: string;
+	readonly name?: string;
+	readonly value?: unknown;
+	readonly named?: boolean;
+	readonly content?: GrammarJsonNode;
+	readonly members?: readonly GrammarJsonNode[];
+}
+
+/**
+ * Read back the REAL hidden-symbol → visible-alias-name mapping tree-sitter
+ * actually compiled, from grammar.json's rule bodies.
+ *
+ * Needed because enrich's clause-hoist/choice-arm promotion
+ * (`promoteExistingHiddenRuleName`, dsl/enrich.ts) runs TWICE per grammar —
+ * once building the wire config tree-sitter's native `grammar()` call
+ * compiles, once inside sittir's own evaluate() pipeline — each with its own
+ * fresh, order-dependent dedup state ("whichever parent asks first wins the
+ * name"). When one hidden rule is referenced from multiple parents (rust's
+ * `_non_special_token`, referenced from `_tokens`/`_non_delim_token`/
+ * `_token_pattern`), the two runs can settle on DIFFERENT winning names for
+ * the identical shared target. Only the wire-config run's name is real —
+ * it's what tree-sitter actually compiled into the parser — so this reads
+ * it back from grammar.json rather than trusting sittir's own guess
+ * (`SupertypeRule.subtypeParseNames`, computed by the OTHER run).
+ *
+ * @returns Map of hidden symbol name (`_foo`) → its real compiled alias
+ *   name, or an empty map if grammar.json is absent/unreadable. A hidden
+ *   name aliased to different names at different reference sites (not
+ *   observed in practice — tree-sitter dedupes identical anonymous content
+ *   to one shared alias) keeps whichever alias is encountered first.
+ */
+export function loadGrammarJsonAliasMap(grammar: string): ReadonlyMap<string, string> {
+	const grammarJsonPath = join(process.cwd(), 'packages', grammar, '.sittir', 'src', 'grammar.json');
+	const out = new Map<string, string>();
+	if (!existsSync(grammarJsonPath)) return out;
+	let parsed: { rules?: Record<string, GrammarJsonNode> };
+	try {
+		parsed = JSON.parse(readFileSync(grammarJsonPath, 'utf8')) as typeof parsed;
+	} catch {
+		return out;
+	}
+	const walk = (node: GrammarJsonNode | undefined): void => {
+		if (!node) return;
+		if (
+			node.type === 'ALIAS' &&
+			node.named === true &&
+			typeof node.value === 'string' &&
+			node.content?.type === 'SYMBOL' &&
+			typeof node.content.name === 'string'
+		) {
+			const hiddenName = node.content.name;
+			if (!out.has(hiddenName)) out.set(hiddenName, node.value);
+		}
+		walk(node.content);
+		if (Array.isArray(node.members)) {
+			for (const m of node.members) walk(m);
+		}
+	};
+	for (const rule of Object.values(parsed.rules ?? {})) walk(rule);
+	return out;
+}
+
+/**
  * Inline-DECISION set for the simplify pass: which grammar.inline kinds
  * inlineRefs should substitute. The gate is "in grammar.inline AND modelType
  * is NOT a supertype / keyword / token / pattern / enum". Supertypes are typed

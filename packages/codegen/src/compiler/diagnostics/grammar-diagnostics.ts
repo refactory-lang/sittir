@@ -4,7 +4,12 @@ import { assemble, AssembleCtx, type AssembledNodeMap } from '../assemble.ts';
 import { link } from '../link.ts';
 import { normalizeGrammar, NormalizeCtx } from '../normalize.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
-import { loadGrammarJsonInlineList, buildInlinableKinds, buildPolymorphsConfigSkip } from '../inline-sets.ts';
+import {
+	loadGrammarJsonInlineList,
+	loadGrammarJsonAliasMap,
+	buildInlinableKinds,
+	buildPolymorphsConfigSkip
+} from '../inline-sets.ts';
 import type { ParseKindCollisionDiagnostic } from '../../types/parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './derive-shapes.ts';
 import type { AssembleWarning } from '../model/node-map.ts';
@@ -216,7 +221,9 @@ export function collectGrammarDiagnosticsForGrammar(input: { rawGrammar: RawGram
 			diagnostics: new DiagnosticSink()
 		})
 	);
-	const nodeMap = assemble(AssembleCtx.from(normalized));
+	const nodeMap = assemble(
+		AssembleCtx.from(normalized, undefined, undefined, loadGrammarJsonAliasMap(input.rawGrammar.name))
+	);
 	// drain slot-grouping diagnostics populated during the normalizeGrammar() pass
 	const slotGroupingDiagnostics = drainSlotGroupingDiagnostics();
 	// §D-2c content-alias injectivity — sole consumer of the diagnostic-only

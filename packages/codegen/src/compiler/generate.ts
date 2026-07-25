@@ -26,7 +26,12 @@ import { computeFieldStorageInfo, computeSlotClasses } from '../emitters/shared.
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 import { extractGrammarRoles } from '../scm/extract-roles.ts';
 import { drainSlotGroupingDiagnostics } from './simplify.ts';
-import { loadGrammarJsonInlineList, buildInlinableKinds, buildPolymorphsConfigSkip } from './inline-sets.ts';
+import {
+	loadGrammarJsonInlineList,
+	loadGrammarJsonAliasMap,
+	buildInlinableKinds,
+	buildPolymorphsConfigSkip
+} from './inline-sets.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
 import { assertEmittable } from './emit-gate.ts';
 import { formatCompilerDiagnostics } from './diagnostics/grammar-diagnostics.ts';
@@ -232,7 +237,12 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 	// Phase 4: Assemble — caller-owned ctx (R12): built from `normalized` via
 	// the canonical factory, threading the pipeline's live DiagnosticSink.
-	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables, diagnostics));
+	// `grammarJsonAliasMap` corrects nested-supertype-arm naming divergence
+	// between enrich's two per-grammar evaluations — see AssembleCtx's doc
+	// comment on the field and inline-sets.ts's loadGrammarJsonAliasMap.
+	const nodeMap = assemble(
+		AssembleCtx.from(normalized, generatedIdTables, diagnostics, loadGrammarJsonAliasMap(cfg.grammar))
+	);
 	traceAssembleNodes('assemble', nodeMap.nodes);
 
 	// Assemble→Project gate (PR-G). Inert until PR-L: nothing emits `fail`, so

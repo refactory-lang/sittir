@@ -170,6 +170,28 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 	readonly kindEntries?: readonly GeneratedKindEntry[];
 	readonly generatedIdTables?: GeneratedIdTables;
 	readonly topLevelAliasBodies: ReadonlyMap<string, Rule<'link'>>;
+	/**
+	 * Hidden symbol name → its REAL compiled alias name, read back from the
+	 * compiled `grammar.json` (see `loadGrammarJsonAliasMap`, inline-sets.ts).
+	 *
+	 * Needed because enrich's clause-hoist/choice-arm promotion
+	 * (`promoteExistingHiddenRuleName`, enrich.ts) is evaluated TWICE per
+	 * grammar — once building the wire config tree-sitter's native
+	 * `grammar()` call compiles, once inside sittir's own evaluate()
+	 * pipeline — each with its OWN fresh `groupDedupeMap`/counter state.
+	 * The promotion is order-dependent ("whichever parent asks first wins
+	 * the name"), so when a single hidden rule is referenced from multiple
+	 * parents (e.g. rust's `_non_special_token`, referenced from `_tokens`,
+	 * `_non_delim_token`, AND `_token_pattern`), the two invocations can —
+	 * and in this exact case do — settle on DIFFERENT winning names
+	 * ("token_pattern_group1" vs "non_delim_token_group1") depending on
+	 * which parent each invocation happens to visit first. Only the
+	 * wire-config invocation's name is real (it's what tree-sitter actually
+	 * compiled); sittir's own `subtypeParseNames` guess can be wrong. This
+	 * map lets `resolveHiddenSubtypes` correct for that divergence rather
+	 * than trusting the guess.
+	 */
+	readonly grammarJsonAliasMap: ReadonlyMap<string, string>;
 	private readonly _nodes: Map<string, AssembledNode>;
 
 	constructor(
@@ -177,6 +199,7 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 			generatedIdTables?: GeneratedIdTables;
 			kindEntries?: readonly GeneratedKindEntry[];
 			topLevelAliasBodies?: ReadonlyMap<string, Rule<'link'>>;
+			grammarJsonAliasMap?: ReadonlyMap<string, string>;
 			nodes?: Map<string, AssembledNode>;
 		}
 	) {
@@ -184,6 +207,7 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 		this.kindEntries = init.kindEntries;
 		this.generatedIdTables = init.generatedIdTables;
 		this.topLevelAliasBodies = init.topLevelAliasBodies ?? new Map();
+		this.grammarJsonAliasMap = init.grammarJsonAliasMap ?? new Map();
 		this._nodes = init.nodes ?? new Map();
 	}
 
@@ -228,14 +252,16 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 	static from(
 		normalized: SimplifiedGrammar,
 		generatedIdTables?: GeneratedIdTables,
-		diagnostics: DiagnosticSink = new DiagnosticSink()
+		diagnostics: DiagnosticSink = new DiagnosticSink(),
+		grammarJsonAliasMap?: ReadonlyMap<string, string>
 	): AssembleCtx {
 		return new AssembleCtx({
 			grammar: normalized,
 			diagnostics,
 			wordMatcher: (s) => matchesWordShape(s, normalized.wordMatcher),
 			generatedIdTables,
-			topLevelAliasBodies: normalized.topLevelAliasBodies ?? new Map()
+			topLevelAliasBodies: normalized.topLevelAliasBodies ?? new Map(),
+			grammarJsonAliasMap
 		});
 	}
 }
@@ -828,11 +854,7 @@ function resolveHiddenSubtypes(
 		// a dedicated leaf/branch content kind (e.g. `_lhs_expression`, backed
 		// by its own LhsExpressionTransport) that must survive as-is rather
 		// than being flattened to its leaf members by resolveHiddenRuleContent
-		// below. Nested-supertype arms (e.g. rust's `_non_delim_token` stamping
-		// `_non_special_token`, itself a further SUPERTYPE with its own
-		// subtypes) fall through unchanged to the existing
-		// SUPERTYPE/topLevelAliasBodies branch below, which already pushes the
-		// bare name AND flattens its members — untouched, per binding decision.
+		// below.
 		if (
 			rule.type !== SUPERTYPE &&
 			subtypeParseNames &&
@@ -841,6 +863,35 @@ function resolveHiddenSubtypes(
 			out.push(name);
 			return;
 		}
+		// Nested-supertype arms (e.g. rust's `_non_delim_token` stamping
+		// `_non_special_token`, itself a further SUPERTYPE with its own
+		// subtypes) fall through unchanged to the existing
+		// SUPERTYPE/topLevelAliasBodies branch below, which already pushes the
+		// bare name AND flattens its members — untouched, per binding decision.
+		//
+		// KNOWN DIVERGENCE (not yet fixed): `subtypeParseNames`' guessed name
+		// for this position can be WRONG relative to what tree-sitter
+		// actually compiled — enrich's clause-hoist promotion
+		// (`promoteExistingHiddenRuleName`, dsl/enrich.ts) runs twice per
+		// grammar (once building the wire config tree-sitter's native
+		// `grammar()` compiles, once inside sittir's own evaluate()
+		// pipeline), each with independent, order-dependent dedup state
+		// ("whichever parent asks first wins the name"). Confirmed via
+		// rust's `_non_special_token` (referenced from `_tokens` /
+		// `_non_delim_token` / `_token_pattern`): the wire-config run
+		// settles on "token_pattern_group1" (verified in the compiled
+		// grammar.json — see `loadGrammarJsonAliasMap`, inline-sets.ts,
+		// and `AssembleCtx.grammarJsonAliasMap`'s doc comment), while
+		// sittir's own run guesses "non_delim_token_group1" here — a name
+		// with NO corresponding assembled node at all. Substituting the
+		// real name alone isn't sufficient: types.ts's
+		// `emitSupertypeUnionDeclarations` (and presumably wrap's kindId
+		// dispatch) need a REAL node registered under that real name too,
+		// which sittir's own pipeline never mints. Fixing this needs the
+		// real name to also be registered as an alias across
+		// `nodeMap.nodes` / the kindId catalog / wrap's dispatch table —
+		// more than a name substitution here. `grammarJsonAliasMap` is
+		// already threaded onto `AssembleCtx` for that follow-up.
 		if (rule.type === SUPERTYPE || topLevelAliasBodies.has(name)) out.push(name);
 		const resolved = resolveHiddenRuleContent(rule, new Set([name]), ctx);
 		if (resolved.length === 0) {
