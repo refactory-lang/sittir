@@ -55,24 +55,6 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
-    "code": "multi-slot-nested-seq",
-    "grammar": "rust",
-    "backend": "native",
-    "location": "_match_block_optional1",
-    "message": "Kind '_match_block_optional1' has a multi-slot seq with 2 slots in a repeat/optional slot position."
-  },
-  {
-    "source": "grammar",
-    "severity": "warning",
-    "code": "body-pattern-zero-match",
-    "grammar": "rust",
-    "backend": "native",
-    "location": "_match_block_arms",
-    "message": "groups: body-pattern '_match_block_arms' matched no base-grammar position — the visible-group elevation it declares never fired, so its match sites keep their flat (un-elevated) shape."
-  },
-  {
-    "source": "grammar",
     "severity": "info",
     "code": "parsekind-noninjective",
     "grammar": "rust",
@@ -110,15 +92,6 @@
   {
     "source": "grammar",
     "severity": "warning",
-    "code": "union-slot-mixed-row",
-    "grammar": "typescript",
-    "backend": "native",
-    "location": "__jsx_start_opening_element_optional1",
-    "message": "[collect-slots] kind '__jsx_start_opening_element_optional1': choice rule:__jsx_start_opening_element_optional1:root is a singular mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [jsx_start_opening_element_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot."
-  },
-  {
-    "source": "grammar",
-    "severity": "warning",
     "code": "union-slot-routed",
     "grammar": "typescript",
     "backend": "native",
@@ -149,8 +122,8 @@
     "code": "union-slot-mixed-row",
     "grammar": "typescript",
     "backend": "native",
-    "location": "_jsx_start_opening_element",
-    "message": "[collect-slots] kind '_jsx_start_opening_element': choice rule:__jsx_start_opening_element_optional1:root is a singular mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [jsx_start_opening_element_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot."
+    "location": "_jsx_opening_element_content",
+    "message": "[collect-slots] kind '_jsx_opening_element_content': choice rule:_jsx_opening_element_content:root is a singular mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [jsx_start_opening_element_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot."
   },
   {
     "source": "grammar",
@@ -160,24 +133,6 @@
     "backend": "native",
     "location": "binary_expression",
     "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression \"&&\" expression), seq[3](expression \"||\" expression), seq[3](expression \">>\" expression), seq[3](expression \">>>\" expression), seq[3](expression \"<<\" expression), seq[3](expression \"&\" expression), seq[3](expression \"^\" expression), seq[3](expression \"|\" expression), seq[3](expression \"+\" expression), seq[3](expression \"-\" expression), seq[3](expression \"*\" expression), seq[3](expression \"/\" expression), seq[3](expression \"%\" expression), seq[3](expression \"**\" expression), seq[3](expression \"<\" expression), seq[3](expression \"<=\" expression), seq[3](expression \"==\" expression), seq[3](expression \"===\" expression), seq[3](expression \"!=\" expression), seq[3](expression \"!==\" expression), seq[3](expression \">=\" expression), seq[3](expression \">\" expression), seq[3](expression \"??\" expression), seq[3](expression \"instanceof\" expression)] alongside union arm(s) [binary_expression_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot."
-  },
-  {
-    "source": "grammar",
-    "severity": "warning",
-    "code": "union-slot-mixed-row",
-    "grammar": "typescript",
-    "backend": "native",
-    "location": "jsx_opening_element",
-    "message": "[collect-slots] kind 'jsx_opening_element': choice rule:__jsx_start_opening_element_optional1:root is a singular mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [jsx_start_opening_element_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot."
-  },
-  {
-    "source": "grammar",
-    "severity": "warning",
-    "code": "union-slot-mixed-row",
-    "grammar": "typescript",
-    "backend": "native",
-    "location": "jsx_self_closing_element",
-    "message": "[collect-slots] kind 'jsx_self_closing_element': choice rule:__jsx_start_opening_element_optional1:root is a singular mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [jsx_start_opening_element_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot."
   },
   {
     "source": "grammar",
@@ -275,35 +230,8 @@
     "code": "multi-slot-nested-seq",
     "grammar": "typescript",
     "backend": "native",
-    "location": "__jsx_start_opening_element_optional1",
-    "message": "Kind '__jsx_start_opening_element_optional1' has a multi-slot seq with 2 slots in a repeat/optional slot position."
-  },
-  {
-    "source": "grammar",
-    "severity": "warning",
-    "code": "multi-slot-nested-seq",
-    "grammar": "typescript",
-    "backend": "native",
-    "location": "_jsx_start_opening_element",
-    "message": "Kind '_jsx_start_opening_element' has a multi-slot seq with 2 slots in a repeat/optional slot position."
-  },
-  {
-    "source": "grammar",
-    "severity": "warning",
-    "code": "multi-slot-nested-seq",
-    "grammar": "typescript",
-    "backend": "native",
     "location": "_type_identifier",
     "message": "Kind '_type_identifier' has a multi-slot seq with 2 slots in a repeat/optional slot position."
-  },
-  {
-    "source": "grammar",
-    "severity": "warning",
-    "code": "body-pattern-zero-match",
-    "grammar": "typescript",
-    "backend": "native",
-    "location": "_jsx_opening_element_content",
-    "message": "groups: body-pattern '_jsx_opening_element_content' matched no base-grammar position — the visible-group elevation it declares never fired, so its match sites keep their flat (un-elevated) shape."
   },
   {
     "source": "grammar",
@@ -823,7 +751,7 @@
     "backend": "native",
     "stage": "read-render-parse-ast-mismatch",
     "location": "Inner attributes (match_expression)",
-    "message": "match_expression[2].match_block: childCount 3 ≠ 2 [\"{\",last_match_arm,\"}\"] vs [\"{\",\"}\"]"
+    "message": "match_expression[2].match_block[1].match_block_arms[0].last_match_arm: childCount 5 ≠ 4 [inner_attribute_item,match_pattern,\"=>\",call_expression,\",\"] vs [inner_"
   },
   {
     "source": "validator",
@@ -983,7 +911,7 @@
     "backend": "native",
     "stage": "read-render-parse-ast-mismatch",
     "location": "Reference patterns (source_file)",
-    "message": "source_file[0].expression_statement[0].match_expression[2].match_block[3].last_match_arm: childCount 4 ≠ 3 [match_pattern,\"=>\",identifier,\",\"] vs [match_pattern"
+    "message": "source_file[0].expression_statement[0].match_expression[2].match_block[1].match_block_arms[2].last_match_arm: childCount 4 ≠ 3 [match_pattern,\"=>\",identifier,\","
   },
   {
     "source": "validator",
@@ -993,7 +921,7 @@
     "backend": "native",
     "stage": "read-render-parse-ast-mismatch",
     "location": "Reference patterns (match_expression)",
-    "message": "match_expression[2].match_block[3].last_match_arm: childCount 4 ≠ 3 [match_pattern,\"=>\",identifier,\",\"] vs [match_pattern,\"=>\",identifier]"
+    "message": "match_expression[2].match_block[1].match_block_arms[2].last_match_arm: childCount 4 ≠ 3 [match_pattern,\"=>\",identifier,\",\"] vs [match_pattern,\"=>\",identifier]"
   },
   {
     "source": "validator",
@@ -1003,7 +931,7 @@
     "backend": "native",
     "stage": "read-render-parse-ast-mismatch",
     "location": "Ignored patterns (source_file)",
-    "message": "source_file[0].expression_statement[0].match_expression[2].match_block[1].match_arm[0].match_pattern[0].tuple_pattern[1].tuple_pattern_group1[0].identifier: typ"
+    "message": "source_file[0].expression_statement[0].match_expression[2].match_block[1].match_block_arms[0].match_arm[0].match_pattern[0].tuple_pattern[1].tuple_pattern_group"
   },
   {
     "source": "validator",
@@ -1013,7 +941,7 @@
     "backend": "native",
     "stage": "read-render-parse-ast-mismatch",
     "location": "Ignored patterns (match_expression)",
-    "message": "match_expression[2].match_block[1].match_arm[0].match_pattern[0].tuple_pattern[1].tuple_pattern_group1[0].identifier: type identifier ≠ remaining_field_pattern"
+    "message": "match_expression[2].match_block[1].match_block_arms[0].match_arm[0].match_pattern[0].tuple_pattern[1].tuple_pattern_group1[0].identifier: type identifier ≠ rema"
   },
   {
     "source": "validator",
@@ -1033,7 +961,7 @@
     "backend": "native",
     "stage": "read-render-parse-ast-mismatch",
     "location": "Inline const or Const blocks as pattern (source_file)",
-    "message": "source_file[0].function_item[3].block[2].expression_statement[0].match_expression[2].match_block[1].match_arm[2].match_arm_with_comma[0].macro_invocation[2].tok"
+    "message": "source_file[0].function_item[3].block[2].expression_statement[0].match_expression[2].match_block[1].match_block_arms[0].match_arm[2].match_arm_with_comma[0].mac"
   },
   {
     "source": "validator",
@@ -1043,7 +971,7 @@
     "backend": "native",
     "stage": "read-render-parse-ast-mismatch",
     "location": "Inline const or Const blocks as pattern (function_item)",
-    "message": "function_item[3].block[2].expression_statement[0].match_expression[2].match_block[1].match_arm[2].match_arm_with_comma[0].macro_invocation[2].token_tree[0].deli"
+    "message": "function_item[3].block[2].expression_statement[0].match_expression[2].match_block[1].match_block_arms[0].match_arm[2].match_arm_with_comma[0].macro_invocation[2"
   },
   {
     "source": "validator",
@@ -1053,7 +981,7 @@
     "backend": "native",
     "stage": "read-render-parse-ast-mismatch",
     "location": "Inline const or Const blocks as pattern (match_expression)",
-    "message": "match_expression[2].match_block[1].match_arm[2].match_arm_with_comma[0].macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pa"
+    "message": "match_expression[2].match_block[1].match_block_arms[0].match_arm[2].match_arm_with_comma[0].macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount"
   },
   {
     "source": "validator",
@@ -1083,7 +1011,7 @@
     "backend": "native",
     "stage": "read-render-parse-ast-mismatch",
     "location": "Pattern with turbofish (source_file)",
-    "message": "source_file[0].expression_statement[0].match_expression[2].match_block[2].last_match_arm: childCount 4 ≠ 3 [match_pattern,\"=>\",integer_literal,\",\"] vs [match_pa"
+    "message": "source_file[0].expression_statement[0].match_expression[2].match_block[1].match_block_arms[1].last_match_arm: childCount 4 ≠ 3 [match_pattern,\"=>\",integer_liter"
   },
   {
     "source": "validator",
@@ -1093,7 +1021,7 @@
     "backend": "native",
     "stage": "read-render-parse-ast-mismatch",
     "location": "Pattern with turbofish (match_expression)",
-    "message": "match_expression[2].match_block[2].last_match_arm: childCount 4 ≠ 3 [match_pattern,\"=>\",integer_literal,\",\"] vs [match_pattern,\"=>\",integer_literal]"
+    "message": "match_expression[2].match_block[1].match_block_arms[1].last_match_arm: childCount 4 ≠ 3 [match_pattern,\"=>\",integer_literal,\",\"] vs [match_pattern,\"=>\",integer_"
   },
   {
     "source": "validator",
@@ -1423,7 +1351,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Inner attributes (match_expression)",
-    "message": "match_expression[2].match_block: childCount 3 ≠ 2 [\"{\",last_match_arm,\"}\"] vs [\"{\",\"}\"]"
+    "message": "match_expression[2].match_block[1].match_block_arms[0].last_match_arm: childCount 5 ≠ 4 [inner_attribute_item,match_pattern,\"=>\",call_expression,\",\"] vs [inner_"
   },
   {
     "source": "validator",
@@ -1583,7 +1511,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Reference patterns (source_file)",
-    "message": "source_file[0].expression_statement[0].match_expression[2].match_block[3].last_match_arm: childCount 4 ≠ 3 [match_pattern,\"=>\",identifier,\",\"] vs [match_pattern"
+    "message": "source_file[0].expression_statement[0].match_expression[2].match_block[1].match_block_arms[2].last_match_arm: childCount 4 ≠ 3 [match_pattern,\"=>\",identifier,\","
   },
   {
     "source": "validator",
@@ -1593,7 +1521,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Reference patterns (match_expression)",
-    "message": "match_expression[2].match_block[3].last_match_arm: childCount 4 ≠ 3 [match_pattern,\"=>\",identifier,\",\"] vs [match_pattern,\"=>\",identifier]"
+    "message": "match_expression[2].match_block[1].match_block_arms[2].last_match_arm: childCount 4 ≠ 3 [match_pattern,\"=>\",identifier,\",\"] vs [match_pattern,\"=>\",identifier]"
   },
   {
     "source": "validator",
@@ -1603,7 +1531,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Ignored patterns (source_file)",
-    "message": "source_file[0].expression_statement[0].match_expression[2].match_block[1].match_arm[0].match_pattern[0].tuple_pattern[1].tuple_pattern_group1[0].identifier: typ"
+    "message": "source_file[0].expression_statement[0].match_expression[2].match_block[1].match_block_arms[0].match_arm[0].match_pattern[0].tuple_pattern[1].tuple_pattern_group"
   },
   {
     "source": "validator",
@@ -1613,7 +1541,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Ignored patterns (match_expression)",
-    "message": "match_expression[2].match_block[1].match_arm[0].match_pattern[0].tuple_pattern[1].tuple_pattern_group1[0].identifier: type identifier ≠ remaining_field_pattern"
+    "message": "match_expression[2].match_block[1].match_block_arms[0].match_arm[0].match_pattern[0].tuple_pattern[1].tuple_pattern_group1[0].identifier: type identifier ≠ rema"
   },
   {
     "source": "validator",
@@ -1633,7 +1561,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Inline const or Const blocks as pattern (source_file)",
-    "message": "source_file[0].function_item[3].block[2].expression_statement[0].match_expression[2].match_block[1].match_arm[2].match_arm_with_comma[0].macro_invocation[2].tok"
+    "message": "source_file[0].function_item[3].block[2].expression_statement[0].match_expression[2].match_block[1].match_block_arms[0].match_arm[2].match_arm_with_comma[0].mac"
   },
   {
     "source": "validator",
@@ -1643,7 +1571,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Inline const or Const blocks as pattern (function_item)",
-    "message": "function_item[3].block[2].expression_statement[0].match_expression[2].match_block[1].match_arm[2].match_arm_with_comma[0].macro_invocation[2].token_tree[0].deli"
+    "message": "function_item[3].block[2].expression_statement[0].match_expression[2].match_block[1].match_block_arms[0].match_arm[2].match_arm_with_comma[0].macro_invocation[2"
   },
   {
     "source": "validator",
@@ -1653,7 +1581,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Inline const or Const blocks as pattern (match_expression)",
-    "message": "match_expression[2].match_block[1].match_arm[2].match_arm_with_comma[0].macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pa"
+    "message": "match_expression[2].match_block[1].match_block_arms[0].match_arm[2].match_arm_with_comma[0].macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount"
   },
   {
     "source": "validator",
@@ -1683,7 +1611,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Pattern with turbofish (source_file)",
-    "message": "source_file[0].expression_statement[0].match_expression[2].match_block[2].last_match_arm: childCount 4 ≠ 3 [match_pattern,\"=>\",integer_literal,\",\"] vs [match_pa"
+    "message": "source_file[0].expression_statement[0].match_expression[2].match_block[1].match_block_arms[1].last_match_arm: childCount 4 ≠ 3 [match_pattern,\"=>\",integer_liter"
   },
   {
     "source": "validator",
@@ -1693,7 +1621,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Pattern with turbofish (match_expression)",
-    "message": "match_expression[2].match_block[2].last_match_arm: childCount 4 ≠ 3 [match_pattern,\"=>\",integer_literal,\",\"] vs [match_pattern,\"=>\",integer_literal]"
+    "message": "match_expression[2].match_block[1].match_block_arms[1].last_match_arm: childCount 4 ≠ 3 [match_pattern,\"=>\",integer_literal,\",\"] vs [match_pattern,\"=>\",integer_"
   },
   {
     "source": "validator",

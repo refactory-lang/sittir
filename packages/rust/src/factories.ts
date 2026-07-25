@@ -867,6 +867,31 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config) {
 	);
 }
 
+export function buildMatchBlockArms(config: T.MatchBlockArms.Config) {
+	const _match_arm = config.matchArm ?? [];
+	const _last_arm = config.lastArm;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.MatchBlockArms as const,
+				$source: 2 as const,
+				$named: true as const,
+				_match_arm,
+				_last_arm,
+				$with: {
+					matchArms: (...values: T.MatchArm[]) => buildMatchBlockArms({ ...config, matchArm: values }),
+					lastArm: (value: T.LastMatchArm) => buildMatchBlockArms({ ...config, lastArm: value })
+				}
+			},
+			{
+				matchArms: () => _match_arm,
+				lastArm: () => _last_arm
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildOrPatternBinary(config: T.OrPatternBinary.Config) {
 	const _left = config.left;
 	const _right = config.right;
@@ -3686,25 +3711,19 @@ export function buildMatchArm(config: T.MatchArm.Config) {
 	);
 }
 
-export function buildMatchBlock(config: T.MatchBlock.Config) {
-	const _match_arm = config.matchArm ?? [];
-	const _last_arm = config.lastArm;
+export function buildMatchBlock(child?: T.MatchBlockArms) {
+	const _match_block_arms = child;
 	return withMethods(
 		withAccessors(
 			{
 				$type: TSKindId.MatchBlock as const,
 				$source: 2 as const,
 				$named: true as const,
-				_match_arm,
-				_last_arm,
-				$with: {
-					matchArms: (...values: T.MatchArm[]) => buildMatchBlock({ ...config, matchArm: values }),
-					lastArm: (value: T.LastMatchArm) => buildMatchBlock({ ...config, lastArm: value })
-				}
+				_match_block_arms,
+				$with: { $child: (v: T.MatchBlockArms) => buildMatchBlock(v) }
 			},
 			{
-				matchArms: () => _match_arm,
-				lastArm: () => _last_arm
+				matchBlockArms: () => _match_block_arms
 			}
 		),
 		methodsEngine
@@ -5680,6 +5699,7 @@ export type FluentKindMap = {
 	_macro_definition_bracket: FluentNode<'_macro_definition_bracket', T.MacroDefinitionBracket.Config>;
 	_macro_definition_paren: FluentNode<'_macro_definition_paren', T.MacroDefinitionParen.Config>;
 	_match_arm_with_comma: T.MatchArmWithComma;
+	_match_block_arms: T.MatchBlockArms;
 	_or_pattern_binary: T.OrPatternBinary;
 	_or_pattern_prefix: T.OrPatternPrefix;
 	_ordered_field_declaration_list_group1: FluentNode<
@@ -5917,6 +5937,7 @@ export const _factoryMap = {
 	_macro_definition_bracket: buildMacroDefinitionBracket,
 	_macro_definition_paren: buildMacroDefinitionParen,
 	_match_arm_with_comma: buildMatchArmWithComma,
+	_match_block_arms: buildMatchBlockArms,
 	_or_pattern_binary: buildOrPatternBinary,
 	_or_pattern_prefix: buildOrPatternPrefix,
 	_ordered_field_declaration_list_group1: buildOrderedFieldDeclarationListGroup1,

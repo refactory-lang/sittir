@@ -97,29 +97,6 @@
   },
   {
     "scope": "grammar",
-    "code": "multi-slot-nested-seq",
-    "severity": "warning",
-    "grammar": "rust",
-    "ownerKind": "_match_block_optional1",
-    "message": "Kind '_match_block_optional1' has a multi-slot seq with 2 slots in a repeat/optional slot position.",
-    "proposal": "Kind '_match_block_optional1' has a multi-slot seq with 2 slots in a repeat/optional slot position. Propose: register a visible groups: entry so this substructure becomes a single group slot in the parent.",
-    "canProceed": true,
-    "details": {
-      "slotCount": 2
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "body-pattern-zero-match",
-    "severity": "warning",
-    "grammar": "rust",
-    "ownerKind": "_match_block_arms",
-    "message": "groups: body-pattern '_match_block_arms' matched no base-grammar position — the visible-group elevation it declares never fired, so its match sites keep their flat (un-elevated) shape.",
-    "proposal": "The pattern body must remain STRUCTURALLY IDENTICAL to the base-grammar sub-tree it targets. If the base grammar changed (or the entry's body was edited), re-align the body — or delete the entry if the pattern is obsolete.",
-    "canProceed": true
-  },
-  {
-    "scope": "grammar",
     "code": "parsekind-noninjective",
     "severity": "info",
     "grammar": "rust",

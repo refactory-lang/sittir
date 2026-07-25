@@ -1324,7 +1324,13 @@ export type RustGrammar = {
 	readonly match_block: {
 		type: 'match_block';
 		named: true;
-		fields: { last_arm: { multiple: false; required: false; types: [{ type: 'last_match_arm'; named: true }] } };
+		fields: {};
+		children: { multiple: false; required: false; types: [{ type: 'match_block_arms'; named: true }] };
+	};
+	readonly match_block_arms: {
+		type: 'match_block_arms';
+		named: true;
+		fields: { last_arm: { multiple: false; required: true; types: [{ type: 'last_match_arm'; named: true }] } };
 		children: { multiple: true; required: false; types: [{ type: 'match_arm'; named: true }] };
 	};
 	readonly match_expression: {

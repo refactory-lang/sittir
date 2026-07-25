@@ -1591,6 +1591,20 @@ export interface JsxNamespaceNameTransport {
   _name: _JsxIdentifierTransport
 }
 
+export interface JsxOpeningElementContentTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _name?: JsxOpeningElementContentNameTransportSlot
+  _attribute?: Array<_JsxAttributeTransport>
+  _jsx_start_opening_element_group1?: JsxStartOpeningElementGroup1Transport
+  _type_arguments?: TypeArgumentsTransport
+}
+
 export interface JsxOpeningElementTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1599,10 +1613,9 @@ export interface JsxOpeningElementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name?: JsxOpeningElementNameTransportSlot
+  _jsx_opening_element_content?: JsxOpeningElementContentTransport
+  _name?: JsxOpeningElementContentNameTransportSlot
   _attribute?: Array<_JsxAttributeTransport>
-  _jsx_start_opening_element_group1?: JsxStartOpeningElementGroup1Transport
-  _type_arguments?: TypeArgumentsTransport
 }
 
 export interface JsxSelfClosingElementTransport {
@@ -1613,10 +1626,9 @@ export interface JsxSelfClosingElementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name?: JsxSelfClosingElementNameTransportSlot
+  _jsx_opening_element_content?: JsxOpeningElementContentTransport
+  _name?: JsxOpeningElementContentNameTransportSlot
   _attribute?: Array<_JsxAttributeTransport>
-  _jsx_start_opening_element_group1?: JsxStartOpeningElementGroup1Transport
-  _type_arguments?: TypeArgumentsTransport
 }
 
 export interface JsxStartOpeningElementGroup1Transport {
@@ -1631,20 +1643,6 @@ export interface JsxStartOpeningElementGroup1Transport {
   _type_arguments?: TypeArgumentsTransport
 }
 
-export interface JsxStartOpeningElementOptional1Transport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _name?: JsxStartOpeningElementOptional1NameTransportSlot
-  _attribute?: Array<_JsxAttributeTransport>
-  _jsx_start_opening_element_group1?: JsxStartOpeningElementGroup1Transport
-  _type_arguments?: TypeArgumentsTransport
-}
-
 export interface JsxStartOpeningElementTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1653,10 +1651,9 @@ export interface JsxStartOpeningElementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name?: JsxStartOpeningElementNameTransportSlot
+  _jsx_opening_element_content?: JsxOpeningElementContentTransport
+  _name?: JsxOpeningElementContentNameTransportSlot
   _attribute?: Array<_JsxAttributeTransport>
-  _jsx_start_opening_element_group1?: JsxStartOpeningElementGroup1Transport
-  _type_arguments?: TypeArgumentsTransport
 }
 
 export interface JsxStringTransport {

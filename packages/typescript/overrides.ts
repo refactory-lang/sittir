@@ -429,14 +429,17 @@ export default grammar(
 				// parent's optional to a single `jsx_opening_element_content` slot so each
 				// field renders from its own slot. Also fixes _jsx_start_opening_element's
 				// multi-slot-nested-seq diagnostic (it inlines __jsx_start_opening_element_optional1).
+				// The name+type_arguments arm is NOT written out inline: enrich's group
+				// lift has already hoisted it into `_jsx_start_opening_element_group1`
+				// (aliased visible) by the time pattern replacement compares bodies, so
+				// the post-enrich sub-tree this pattern must equal holds that alias ref.
+				// The old inline-seq form silently matched nothing (caught by
+				// `body-pattern-zero-match`).
 				jsx_opening_element_content: ($) =>
 					seq(
 						choice(
 							field('name', choice($._jsx_identifier, $.jsx_namespace_name)),
-							seq(
-								field('name', choice($.identifier, alias($.nested_identifier, $.member_expression))),
-								field('type_arguments', optional($.type_arguments))
-							)
+							alias($._jsx_start_opening_element_group1, $.jsx_start_opening_element_group1)
 						),
 						repeat(field('attribute', $._jsx_attribute))
 					)

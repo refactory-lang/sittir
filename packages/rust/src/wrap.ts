@@ -3484,6 +3484,41 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 	return _node;
 }
 
+export function wrapMatchBlockArms(data: T.MatchBlockArms, tree: TreeHandle) {
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.MatchBlockArms as const,
+			_match_arm: normalizeRepeatedWrapSlot(data._match_arm, false, 'match_arm', {
+				tree,
+				nodeType: data.$type,
+				slotName: 'match_arm',
+				span: (data as _NodeData).$span
+			}),
+			_last_arm: normalizeSingularWrapSlot(data._last_arm, 'last_arm', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'last_arm',
+				span: (data as _NodeData).$span
+			}),
+
+			matchArms() {
+				return drillInAll<T.MatchArm>(this._match_arm as readonly T.MatchArm[] | undefined, tree);
+			},
+			lastArm() {
+				return drillIn<T.LastMatchArm>(this._last_arm, tree);
+			},
+			$with: {
+				matchArms: (...v: NonNullable<T.MatchBlockArms['_match_arm']>[number][]) =>
+					wrapMatchBlockArms({ ...data, _match_arm: v }, tree),
+				lastArm: (v: NonNullable<T.MatchBlockArms['_last_arm']>) => wrapMatchBlockArms({ ...data, _last_arm: v }, tree)
+			}
+		},
+		methodsEngine
+	);
+	return _node;
+}
+
 export function wrapNonDelimToken(
 	data: T.NonDelimToken & { readonly $other?: T.NonDelimToken | readonly T.NonDelimToken[] },
 	tree: TreeHandle
@@ -8983,29 +9018,24 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle) {
 		{
 			...data,
 			$type: TSKindId.MatchBlock as const,
-			_match_arm: normalizeRepeatedWrapSlot(data._match_arm, false, 'match_arm', {
+			_match_block_arms: normalizeSingularWrapSlot(data._match_block_arms, 'match_block_arms', false, data.$type, {
 				tree,
 				nodeType: data.$type,
-				slotName: 'match_arm',
-				span: (data as _NodeData).$span
-			}),
-			_last_arm: normalizeSingularWrapSlot(data._last_arm, 'last_arm', true, data.$type, {
-				tree,
-				nodeType: data.$type,
-				slotName: 'last_arm',
+				slotName: 'match_block_arms',
 				span: (data as _NodeData).$span
 			}),
 
-			matchArms() {
-				return drillInAll<T.MatchArm>(this._match_arm as readonly T.MatchArm[] | undefined, tree);
-			},
-			lastArm() {
-				return drillIn<T.LastMatchArm>(this._last_arm, tree);
+			matchBlockArms() {
+				return drillAs<T.MatchBlockArms | undefined>(
+					this._match_block_arms,
+					tree,
+					'match_block_arms',
+					'_match_block_arms'
+				);
 			},
 			$with: {
-				matchArms: (...v: NonNullable<T.MatchBlock['_match_arm']>[number][]) =>
-					wrapMatchBlock({ ...data, _match_arm: v }, tree),
-				lastArm: (v: NonNullable<T.MatchBlock['_last_arm']>) => wrapMatchBlock({ ...data, _last_arm: v }, tree)
+				matchBlockArms: (v: NonNullable<T.MatchBlock['_match_block_arms']>) =>
+					wrapMatchBlock({ ...data, _match_block_arms: v }, tree)
 			}
 		},
 		methodsEngine
@@ -12255,6 +12285,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_macro_definition_bracket: (d, t) => wrapMacroDefinitionBracket(d as unknown as T.MacroDefinitionBracket, t),
 	_macro_definition_paren: (d, t) => wrapMacroDefinitionParen(d as unknown as T.MacroDefinitionParen, t),
 	_match_arm_with_comma: (d, t) => wrapMatchArmWithComma(d as unknown as T.MatchArmWithComma, t),
+	_match_block_arms: (d, t) => wrapMatchBlockArms(d as unknown as T.MatchBlockArms, t),
 	_non_delim_token: (d, t) => wrapNonDelimToken(d as unknown as T.NonDelimToken, t),
 	_non_special_token: (d, t) => wrapNonSpecialToken(d as unknown as T.NonSpecialToken, t),
 	_or_pattern_binary: (d, t) => wrapOrPatternBinary(d as unknown as T.OrPatternBinary, t),
@@ -12512,6 +12543,7 @@ const _aliasTargetToSource: Record<string, string> = {
 	macro_definition_bracket: '_macro_definition_bracket',
 	macro_definition_paren: '_macro_definition_paren',
 	match_arm_with_comma: '_match_arm_with_comma',
+	match_block_arms: '_match_block_arms',
 	move_marker: '_move_marker',
 	non_delim_token_group1: '_non_special_token',
 	non_special_token: '_non_special_token',

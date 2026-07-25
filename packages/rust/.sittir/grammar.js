@@ -3627,8 +3627,13 @@ var overrides_default = grammar(
         // group collapses the parent optional to one slot so each slot renders independently.
         // The `field('last_arm', ...)` must be included in the body so the pattern matches
         // the post-transform sub-tree (the transforms: entry adds the field wrapper first).
+        // NO alias() around last_match_arm: enrich UN-ALIASES the base's
+        // `alias(last_match_arm, match_arm)` to keep parse-kind dispatch injective
+        // (both arms surfaced as kind `match_arm`), so the post-enrich sub-tree this
+        // pattern must equal holds a plain `$.last_match_arm` ref. The stale alias form
+        // silently matched nothing (caught by `body-pattern-zero-match`).
         // Fixes Copilot PR review comments #1–#3 (template gating + render order).
-        match_block_arms: ($) => seq(repeat($.match_arm), field2("last_arm", alias2($.last_match_arm, $.match_arm)))
+        match_block_arms: ($) => seq(repeat($.match_arm), field2("last_arm", $.last_match_arm))
       },
       transforms: {
         // token_repetition: `$( _tokens* ) <sep>? <op>` —

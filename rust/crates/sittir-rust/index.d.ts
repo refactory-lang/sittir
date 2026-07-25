@@ -1441,7 +1441,7 @@ export interface MatchArmWithCommaTransport {
   _value: ExpressionTransport
 }
 
-export interface MatchBlockOptional1Transport {
+export interface MatchBlockArmsTransport {
   '$source'?: Source
   '$named'?: boolean
   '$text'?: string
@@ -1449,7 +1449,7 @@ export interface MatchBlockOptional1Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _last_arm: LastMatchArmTransport
+  _last_arm: Box<LastMatchArmTransport>
   _match_arm?: Array<MatchArmTransport>
 }
 
@@ -1461,8 +1461,8 @@ export interface MatchBlockTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _last_arm: Box<LastMatchArmTransport>
-  _match_arm?: Array<MatchArmTransport>
+  _match_block_arms?: Box<MatchBlockArmsTransport>
+  _last_arm?: Box<LastMatchArmTransport>
 }
 
 export interface MatchExpressionTransport {

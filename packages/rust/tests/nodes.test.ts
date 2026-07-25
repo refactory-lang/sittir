@@ -1380,43 +1380,9 @@ describe('match_arm', () => {
 
 describe('match_block', () => {
 	it('factory produces correct type', () => {
-		const node = ir.matchBlock({
-			lastArm: {
-				$type: TSKindId.LastMatchArm,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_pattern: {
-					$type: TSKindId.MatchPattern,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_pattern: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
-				} as any,
-				_value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
-			} as any
-		});
+		const node = ir.matchBlock();
 		expect(node.$type).toBe(TSKindId.MatchBlock);
 		expect(node.$source).toBe(2);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.matchBlock({
-			lastArm: {
-				$type: TSKindId.LastMatchArm,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_pattern: {
-					$type: TSKindId.MatchPattern,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_pattern: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
-				} as any,
-				_value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
-			} as any
-		});
-		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 
@@ -1424,26 +1390,7 @@ describe('match_expression', () => {
 	it('factory produces correct type', () => {
 		const node = ir.matchExpression({
 			value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any,
-			body: {
-				$type: TSKindId.MatchBlock,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_last_arm: {
-					$type: TSKindId.LastMatchArm,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_pattern: {
-						$type: TSKindId.MatchPattern,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_pattern: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
-					} as any,
-					_value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
-				} as any
-			} as any
+			body: { $type: TSKindId.MatchBlock, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.MatchExpression);
 		expect(node.$source).toBe(2);
@@ -1451,26 +1398,7 @@ describe('match_expression', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.matchExpression({
 			value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any,
-			body: {
-				$type: TSKindId.MatchBlock,
-				$text: 'test',
-				$source: 2,
-				$named: true,
-				_last_arm: {
-					$type: TSKindId.LastMatchArm,
-					$text: 'test',
-					$source: 2,
-					$named: true,
-					_pattern: {
-						$type: TSKindId.MatchPattern,
-						$text: 'test',
-						$source: 2,
-						$named: true,
-						_pattern: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
-					} as any,
-					_value: { $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any
-				} as any
-			} as any
+			body: { $type: TSKindId.MatchBlock, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});

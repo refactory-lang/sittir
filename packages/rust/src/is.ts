@@ -620,7 +620,7 @@ const _supertype_tokenPattern_ids = new Set<number>([
 ]);
 const _supertype_tokens_ids = new Set<number>([168, 169, 138, 312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137]);
 const _supertype_type_ids = new Set<number>([
-	236, 233, 138, 234, 227, 246, 224, 225, 221, 223, 427, 240, 237, 229, 199
+	236, 233, 138, 234, 227, 246, 224, 225, 221, 223, 428, 240, 237, 229, 199
 ]);
 const _supertype_useClause_ids = new Set<number>([135, 1, 138, 136, 137, 244, 209, 208, 207, 210]);
 
@@ -890,6 +890,7 @@ const _kindIdByKind = new Map<string, number>([
 	['_attributed_argument', TSKindId.AttributedArgument],
 	['_attributed_ordered_field', TSKindId.AttributedOrderedField],
 	['_type_argument', TSKindId.TypeArgument],
+	['_match_block_arms', TSKindId.MatchBlockArms],
 	['_field_identifier', TSKindId.FieldIdentifier],
 	['_type_identifier', TSKindId.TypeIdentifier]
 ]);

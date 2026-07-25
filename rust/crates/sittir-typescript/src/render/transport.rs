@@ -24,7 +24,6 @@ use super::templates::*;
 #[derive(Debug, Clone)]
 pub enum AnyTransport {
     ForHeaderOperator(ForHeaderOperatorEnum),
-    JsxStartOpeningElementOptional1(JsxStartOpeningElementOptional1Transport),
     NumberOperator(NumberOperatorEnum),
     AbstractMarker(AbstractMarkerTransport),
     _AccessibilityModifier(_AccessibilityModifierEnum),
@@ -80,6 +79,7 @@ pub enum AnyTransport {
     IndexSignatureOptional1(IndexSignatureOptional1Transport),
     InferTypeOptional1(InferTypeOptional1Transport),
     Initializer(InitializerTransport),
+    JsxOpeningElementContent(JsxOpeningElementContentTransport),
     JsxStartOpeningElement(JsxStartOpeningElementTransport),
     JsxStartOpeningElementGroup1(JsxStartOpeningElementGroup1Transport),
     JsxString(JsxStringTransport),
@@ -6463,107 +6463,6 @@ impl RenderableTransport for TypeTransport {
 
 
 #[derive(Debug, Clone)]
-pub enum JsxStartOpeningElementOptional1NameTransportSlot {
-    JsxIdentifier(JsxIdentifierTransport),
-    Identifier(IdentifierTransport),
-    JsxNamespaceName(JsxNamespaceNameTransport),
-    Verbatim(VerbatimTransport),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for JsxStartOpeningElementOptional1NameTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in JsxStartOpeningElementOptional1NameTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => {
-                let text = String::from_napi_value(env, napi_val)?;
-                Ok(Self::Verbatim(VerbatimTransport { text }))
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in JsxStartOpeningElementOptional1NameTransportSlot")
-                )?;
-                match kind_id {
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in JsxStartOpeningElementOptional1NameTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("JsxStartOpeningElementOptional1NameTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for JsxStartOpeningElementOptional1NameTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("JsxStartOpeningElementOptional1NameTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<JsxStartOpeningElementOptional1NameTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        JsxStartOpeningElementOptional1NameTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<JsxStartOpeningElementOptional1NameTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        JsxStartOpeningElementOptional1NameTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn jsx_start_opening_element_optional1_name_transport_slot_to_any(t: JsxStartOpeningElementOptional1NameTransportSlot) -> AnyTransport {
-    match t {
-        JsxStartOpeningElementOptional1NameTransportSlot::JsxIdentifier(inner) => AnyTransport::JsxIdentifier(inner),
-        JsxStartOpeningElementOptional1NameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        JsxStartOpeningElementOptional1NameTransportSlot::JsxNamespaceName(inner) => AnyTransport::JsxNamespaceName(inner),
-        JsxStartOpeningElementOptional1NameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
-impl RenderableTransport for JsxStartOpeningElementOptional1NameTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            JsxStartOpeningElementOptional1NameTransportSlot::JsxIdentifier(inner) => render_jsx_identifier(inner, dest),
-            JsxStartOpeningElementOptional1NameTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            JsxStartOpeningElementOptional1NameTransportSlot::JsxNamespaceName(inner) => render_jsx_namespace_name(inner, dest),
-            JsxStartOpeningElementOptional1NameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum ArrowFunctionUCallSignatureReturnTypeTransportSlot {
     TypeAnnotation(TypeAnnotationTransport),
     AssertsAnnotation(AssertsAnnotationTransport),
@@ -10014,7 +9913,7 @@ impl RenderableTransport for IndexSignatureColonNameTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum JsxStartOpeningElementNameTransportSlot {
+pub enum JsxOpeningElementContentNameTransportSlot {
     JsxIdentifier(JsxIdentifierTransport),
     Identifier(IdentifierTransport),
     JsxNamespaceName(JsxNamespaceNameTransport),
@@ -10022,7 +9921,7 @@ pub enum JsxStartOpeningElementNameTransportSlot {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for JsxStartOpeningElementNameTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for JsxOpeningElementContentNameTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -10034,7 +9933,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxStartOpeningElementNameTransp
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in JsxStartOpeningElementNameTransportSlot",
+                        "unknown kind id {other} in JsxOpeningElementContentNameTransportSlot",
                     ))),
                 }
             }
@@ -10045,71 +9944,71 @@ impl ::napi::bindgen_prelude::FromNapiValue for JsxStartOpeningElementNameTransp
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in JsxStartOpeningElementNameTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in JsxOpeningElementContentNameTransportSlot")
                 )?;
                 match kind_id {
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in JsxStartOpeningElementNameTransportSlot",
+                        "unknown kind id {other} in JsxOpeningElementContentNameTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("JsxStartOpeningElementNameTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("JsxOpeningElementContentNameTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for JsxStartOpeningElementNameTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for JsxOpeningElementContentNameTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("JsxStartOpeningElementNameTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("JsxOpeningElementContentNameTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<JsxStartOpeningElementNameTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<JsxOpeningElementContentNameTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        JsxStartOpeningElementNameTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        JsxOpeningElementContentNameTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<JsxStartOpeningElementNameTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<JsxOpeningElementContentNameTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        JsxStartOpeningElementNameTransportSlot::to_napi_value(env, *val)
+        JsxOpeningElementContentNameTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn jsx_start_opening_element_name_transport_slot_to_any(t: JsxStartOpeningElementNameTransportSlot) -> AnyTransport {
+fn jsx_opening_element_content_name_transport_slot_to_any(t: JsxOpeningElementContentNameTransportSlot) -> AnyTransport {
     match t {
-        JsxStartOpeningElementNameTransportSlot::JsxIdentifier(inner) => AnyTransport::JsxIdentifier(inner),
-        JsxStartOpeningElementNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        JsxStartOpeningElementNameTransportSlot::JsxNamespaceName(inner) => AnyTransport::JsxNamespaceName(inner),
-        JsxStartOpeningElementNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        JsxOpeningElementContentNameTransportSlot::JsxIdentifier(inner) => AnyTransport::JsxIdentifier(inner),
+        JsxOpeningElementContentNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        JsxOpeningElementContentNameTransportSlot::JsxNamespaceName(inner) => AnyTransport::JsxNamespaceName(inner),
+        JsxOpeningElementContentNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for JsxStartOpeningElementNameTransportSlot {
+impl RenderableTransport for JsxOpeningElementContentNameTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            JsxStartOpeningElementNameTransportSlot::JsxIdentifier(inner) => render_jsx_identifier(inner, dest),
-            JsxStartOpeningElementNameTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            JsxStartOpeningElementNameTransportSlot::JsxNamespaceName(inner) => render_jsx_namespace_name(inner, dest),
-            JsxStartOpeningElementNameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+            JsxOpeningElementContentNameTransportSlot::JsxIdentifier(inner) => render_jsx_identifier(inner, dest),
+            JsxOpeningElementContentNameTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            JsxOpeningElementContentNameTransportSlot::JsxNamespaceName(inner) => render_jsx_namespace_name(inner, dest),
+            JsxOpeningElementContentNameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
 }
@@ -19450,208 +19349,6 @@ impl RenderableTransport for JsxExpressionExpressionTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum JsxOpeningElementNameTransportSlot {
-    JsxIdentifier(JsxIdentifierTransport),
-    Identifier(IdentifierTransport),
-    JsxNamespaceName(JsxNamespaceNameTransport),
-    Verbatim(VerbatimTransport),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for JsxOpeningElementNameTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in JsxOpeningElementNameTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => {
-                let text = String::from_napi_value(env, napi_val)?;
-                Ok(Self::Verbatim(VerbatimTransport { text }))
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in JsxOpeningElementNameTransportSlot")
-                )?;
-                match kind_id {
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in JsxOpeningElementNameTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("JsxOpeningElementNameTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for JsxOpeningElementNameTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("JsxOpeningElementNameTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<JsxOpeningElementNameTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        JsxOpeningElementNameTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<JsxOpeningElementNameTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        JsxOpeningElementNameTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn jsx_opening_element_name_transport_slot_to_any(t: JsxOpeningElementNameTransportSlot) -> AnyTransport {
-    match t {
-        JsxOpeningElementNameTransportSlot::JsxIdentifier(inner) => AnyTransport::JsxIdentifier(inner),
-        JsxOpeningElementNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        JsxOpeningElementNameTransportSlot::JsxNamespaceName(inner) => AnyTransport::JsxNamespaceName(inner),
-        JsxOpeningElementNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
-impl RenderableTransport for JsxOpeningElementNameTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            JsxOpeningElementNameTransportSlot::JsxIdentifier(inner) => render_jsx_identifier(inner, dest),
-            JsxOpeningElementNameTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            JsxOpeningElementNameTransportSlot::JsxNamespaceName(inner) => render_jsx_namespace_name(inner, dest),
-            JsxOpeningElementNameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum JsxSelfClosingElementNameTransportSlot {
-    JsxIdentifier(JsxIdentifierTransport),
-    Identifier(IdentifierTransport),
-    JsxNamespaceName(JsxNamespaceNameTransport),
-    Verbatim(VerbatimTransport),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for JsxSelfClosingElementNameTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in JsxSelfClosingElementNameTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::String => {
-                let text = String::from_napi_value(env, napi_val)?;
-                Ok(Self::Verbatim(VerbatimTransport { text }))
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in JsxSelfClosingElementNameTransportSlot")
-                )?;
-                match kind_id {
-                    1 => Ok(Self::Identifier(
-                        IdentifierTransport::from_napi_value(env, napi_val)?
-                    )),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in JsxSelfClosingElementNameTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("JsxSelfClosingElementNameTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for JsxSelfClosingElementNameTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("JsxSelfClosingElementNameTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<JsxSelfClosingElementNameTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        JsxSelfClosingElementNameTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<JsxSelfClosingElementNameTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        JsxSelfClosingElementNameTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn jsx_self_closing_element_name_transport_slot_to_any(t: JsxSelfClosingElementNameTransportSlot) -> AnyTransport {
-    match t {
-        JsxSelfClosingElementNameTransportSlot::JsxIdentifier(inner) => AnyTransport::JsxIdentifier(inner),
-        JsxSelfClosingElementNameTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        JsxSelfClosingElementNameTransportSlot::JsxNamespaceName(inner) => AnyTransport::JsxNamespaceName(inner),
-        JsxSelfClosingElementNameTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
-    }
-}
-
-impl RenderableTransport for JsxSelfClosingElementNameTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            JsxSelfClosingElementNameTransportSlot::JsxIdentifier(inner) => render_jsx_identifier(inner, dest),
-            JsxSelfClosingElementNameTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            JsxSelfClosingElementNameTransportSlot::JsxNamespaceName(inner) => render_jsx_namespace_name(inner, dest),
-            JsxSelfClosingElementNameTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum LiteralTypeContentTransportSlot {
     _Number(_NumberTransport),
     Number(NumberTransport),
@@ -24132,62 +23829,6 @@ impl RenderableTransport for ForHeaderOperatorEnum {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct JsxStartOpeningElementOptional1Transport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: Option<JsxStartOpeningElementOptional1NameTransportSlot>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
-    pub attribute: Option<Vec<_JsxAttributeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_start_opening_element_group1"))]
-    pub jsx_start_opening_element_group1: Option<JsxStartOpeningElementGroup1Transport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
-    pub type_arguments: Option<TypeArgumentsTransport>,
-}
-
-impl RenderableTransport for JsxStartOpeningElementOptional1Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_jsx_start_opening_element_optional1(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<JsxStartOpeningElementOptional1Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        JsxStartOpeningElementOptional1Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<JsxStartOpeningElementOptional1Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        JsxStartOpeningElementOptional1Transport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NumberOperatorEnum {
     Minus,
@@ -27810,7 +27451,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<InitializerTransport> {
 
 #[cfg_attr(feature = "napi-bindings", napi(object))]
 #[derive(Debug, Clone)]
-pub struct JsxStartOpeningElementTransport {
+pub struct JsxOpeningElementContentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
     pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
@@ -27826,13 +27467,67 @@ pub struct JsxStartOpeningElementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: Option<JsxStartOpeningElementNameTransportSlot>,
+    pub name: Option<JsxOpeningElementContentNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
     pub attribute: Option<Vec<_JsxAttributeTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_start_opening_element_group1"))]
     pub jsx_start_opening_element_group1: Option<JsxStartOpeningElementGroup1Transport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
     pub type_arguments: Option<TypeArgumentsTransport>,
+}
+
+impl RenderableTransport for JsxOpeningElementContentTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_jsx_opening_element_content(self, dest))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<JsxOpeningElementContentTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        JsxOpeningElementContentTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<JsxOpeningElementContentTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        JsxOpeningElementContentTransport::to_napi_value(env, *val)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct JsxStartOpeningElementTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_opening_element_content"))]
+    pub jsx_opening_element_content: Option<JsxOpeningElementContentTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
+    pub name: Option<JsxOpeningElementContentNameTransportSlot>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
+    pub attribute: Option<Vec<_JsxAttributeTransport>>,
 }
 
 impl RenderableTransport for JsxStartOpeningElementTransport {
@@ -36471,14 +36166,12 @@ pub struct JsxOpeningElementTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_opening_element_content"))]
+    pub jsx_opening_element_content: Option<JsxOpeningElementContentTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: Option<JsxOpeningElementNameTransportSlot>,
+    pub name: Option<JsxOpeningElementContentNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
     pub attribute: Option<Vec<_JsxAttributeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_start_opening_element_group1"))]
-    pub jsx_start_opening_element_group1: Option<JsxStartOpeningElementGroup1Transport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
-    pub type_arguments: Option<TypeArgumentsTransport>,
 }
 
 impl RenderableTransport for JsxOpeningElementTransport {
@@ -36527,14 +36220,12 @@ pub struct JsxSelfClosingElementTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_opening_element_content"))]
+    pub jsx_opening_element_content: Option<JsxOpeningElementContentTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: Option<JsxSelfClosingElementNameTransportSlot>,
+    pub name: Option<JsxOpeningElementContentNameTransportSlot>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_attribute"))]
     pub attribute: Option<Vec<_JsxAttributeTransport>>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_jsx_start_opening_element_group1"))]
-    pub jsx_start_opening_element_group1: Option<JsxStartOpeningElementGroup1Transport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_arguments"))]
-    pub type_arguments: Option<TypeArgumentsTransport>,
 }
 
 impl RenderableTransport for JsxSelfClosingElementTransport {
@@ -53529,21 +53220,6 @@ fn render_for_header_operator(t: &ForHeaderOperatorEnum, dest: &mut dyn ::std::f
     dest.write_str(&t.to_string()).map_err(::askama::Error::from)
 }
 
-fn render_jsx_start_opening_element_optional1(node: &JsxStartOpeningElementOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.name {
-        child.render_into(dest)?;
-    }
-    if let Some(items) = &node.attribute {
-        for child in items.iter() {
-        render__jsx_attribute(child, dest)?;
-        }
-    }
-    if let Some(child) = &node.jsx_start_opening_element_group1 {
-        render_jsx_start_opening_element_group1(child, dest)?;
-    }
-    Ok(())
-}
-
 fn render_number_operator(t: &NumberOperatorEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.to_string()).map_err(::askama::Error::from)
 }
@@ -54010,17 +53686,38 @@ fn render_initializer(node: &InitializerTransport, dest: &mut dyn ::std::fmt::Wr
     Ok(())
 }
 
-fn render_jsx_start_opening_element(node: &JsxStartOpeningElementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if let Some(child) = &node.name {
-        child.render_into(dest)?;
-    }
-    if let Some(items) = &node.attribute {
-        for child in items.iter() {
-        render__jsx_attribute(child, dest)?;
+fn render_jsx_opening_element_content(node: &JsxOpeningElementContentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if node.name.is_none() && node.attribute.as_deref().is_none_or(<[_]>::is_empty) && node.jsx_start_opening_element_group1.is_none() {
+        if let Some(text) = node.transport_text.as_deref() {
+            return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    if let Some(child) = &node.jsx_start_opening_element_group1 {
-        render_jsx_start_opening_element_group1(child, dest)?;
+    let attribute_owned = node.attribute.as_deref().unwrap_or(&[]);
+    let attribute_buf: Vec<::sittir_core::filters::Renderable<'_>> = attribute_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
+    let template = JsxOpeningElementContentTemplate {
+        attribute: ListNonterminalView {
+            items: attribute_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        jsx_start_opening_element_group1: match &node.jsx_start_opening_element_group1 {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+        name: match &node.name {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+    };
+    template.render_into(dest)
+}
+
+fn render_jsx_start_opening_element(node: &JsxStartOpeningElementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    if let Some(child) = &node.jsx_opening_element_content {
+        render_jsx_opening_element_content(child, dest)?;
     }
     Ok(())
 }
@@ -55551,27 +55248,13 @@ fn render_jsx_namespace_name(node: &JsxNamespaceNameTransport, dest: &mut dyn ::
 }
 
 fn render_jsx_opening_element(node: &JsxOpeningElementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.name.is_none() && node.attribute.as_deref().is_none_or(<[_]>::is_empty) && node.jsx_start_opening_element_group1.is_none() {
+    if node.jsx_opening_element_content.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let attribute_owned = node.attribute.as_deref().unwrap_or(&[]);
-    let attribute_buf: Vec<::sittir_core::filters::Renderable<'_>> = attribute_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = JsxOpeningElementTemplate {
-        attribute: ListNonterminalView {
-            items: attribute_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        jsx_start_opening_element_group1: match &node.jsx_start_opening_element_group1 {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        name: match &node.name {
+        jsx_opening_element_content: match &node.jsx_opening_element_content {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
@@ -55580,27 +55263,13 @@ fn render_jsx_opening_element(node: &JsxOpeningElementTransport, dest: &mut dyn 
 }
 
 fn render_jsx_self_closing_element(node: &JsxSelfClosingElementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    if node.name.is_none() && node.attribute.as_deref().is_none_or(<[_]>::is_empty) && node.jsx_start_opening_element_group1.is_none() {
+    if node.jsx_opening_element_content.is_none() {
         if let Some(text) = node.transport_text.as_deref() {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
-    let attribute_owned = node.attribute.as_deref().unwrap_or(&[]);
-    let attribute_buf: Vec<::sittir_core::filters::Renderable<'_>> = attribute_owned.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
-        .collect();
     let template = JsxSelfClosingElementTemplate {
-        attribute: ListNonterminalView {
-            items: attribute_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        jsx_start_opening_element_group1: match &node.jsx_start_opening_element_group1 {
-            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => OptionalNonterminalView::Missing,
-        },
-        name: match &node.name {
+        jsx_opening_element_content: match &node.jsx_opening_element_content {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },
@@ -57468,7 +57137,6 @@ impl RenderableTransport for AnyTransport {
     ) -> Result<(), ::askama::Error> {
         match self {
             AnyTransport::ForHeaderOperator(t) => t.render_into(dest),
-            AnyTransport::JsxStartOpeningElementOptional1(t) => render_jsx_start_opening_element_optional1(t, dest),
             AnyTransport::NumberOperator(t) => t.render_into(dest),
             AnyTransport::AbstractMarker(t) => t.render_into(dest),
             AnyTransport::_AccessibilityModifier(t) => t.render_into(dest),
@@ -57524,6 +57192,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::IndexSignatureOptional1(t) => render_index_signature_optional1(t, dest),
             AnyTransport::InferTypeOptional1(t) => render_infer_type_optional1(t, dest),
             AnyTransport::Initializer(t) => render_initializer(t, dest),
+            AnyTransport::JsxOpeningElementContent(t) => render_jsx_opening_element_content(t, dest),
             AnyTransport::JsxStartOpeningElement(t) => render_jsx_start_opening_element(t, dest),
             AnyTransport::JsxStartOpeningElementGroup1(t) => render_jsx_start_opening_element_group1(t, dest),
             AnyTransport::JsxString(t) => render_jsx_string(t, dest),
@@ -57919,7 +57588,6 @@ impl AnyTransport {
     #[inline]
     pub fn transport_named(&self) -> Option<bool> {
         match self {
-            Self::JsxStartOpeningElementOptional1(t) => t.transport_named,
             Self::AbstractMarker(t) => t.transport_named,
             Self::AmbientDeclarationGlobal(t) => t.transport_named,
             Self::AmbientDeclarationModule(t) => t.transport_named,
@@ -57969,6 +57637,7 @@ impl AnyTransport {
             Self::IndexSignatureOptional1(t) => t.transport_named,
             Self::InferTypeOptional1(t) => t.transport_named,
             Self::Initializer(t) => t.transport_named,
+            Self::JsxOpeningElementContent(t) => t.transport_named,
             Self::JsxStartOpeningElement(t) => t.transport_named,
             Self::JsxStartOpeningElementGroup1(t) => t.transport_named,
             Self::JsxString(t) => t.transport_named,

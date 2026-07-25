@@ -178,9 +178,6 @@
     }
   },
   "fieldAliasMap": {
-    "__jsx_start_opening_element_optional1.jsx_start_opening_element_group1": {
-      "jsx_start_opening_element_group1": "_jsx_start_opening_element_group1"
-    },
     "_ambient_declaration_module.name": {
       "property_identifier": "identifier"
     },
@@ -222,8 +219,11 @@
     "_index_signature_colon.name": {
       "reserved_identifier": "_reserved_identifier"
     },
-    "_jsx_start_opening_element.jsx_start_opening_element_group1": {
+    "_jsx_opening_element_content.jsx_start_opening_element_group1": {
       "jsx_start_opening_element_group1": "_jsx_start_opening_element_group1"
+    },
+    "_jsx_start_opening_element.jsx_opening_element_content": {
+      "jsx_opening_element_content": "_jsx_opening_element_content"
     },
     "_jsx_start_opening_element_group1.name": {
       "member_expression": "nested_identifier"
@@ -390,11 +390,11 @@
     "interface_declaration.body": {
       "interface_body": "object_type"
     },
-    "jsx_opening_element.jsx_start_opening_element_group1": {
-      "jsx_start_opening_element_group1": "_jsx_start_opening_element_group1"
+    "jsx_opening_element.jsx_opening_element_content": {
+      "jsx_opening_element_content": "_jsx_opening_element_content"
     },
-    "jsx_self_closing_element.jsx_start_opening_element_group1": {
-      "jsx_start_opening_element_group1": "_jsx_start_opening_element_group1"
+    "jsx_self_closing_element.jsx_opening_element_content": {
+      "jsx_opening_element_content": "_jsx_opening_element_content"
     },
     "labeled_statement.label": {
       "statement_identifier": "_statement_identifier"
@@ -1039,6 +1039,29 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_jsx_opening_element_content": {
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "jsx_start_opening_element_group1": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "attribute": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
         "nonEmpty": false
       }
     },
@@ -2975,48 +2998,20 @@
       }
     },
     "jsx_opening_element": {
-      "name": {
+      "jsx_opening_element_content": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false
-      },
-      "jsx_start_opening_element_group1": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "attribute": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
         "nonEmpty": false
       }
     },
     "jsx_self_closing_element": {
-      "name": {
+      "jsx_opening_element_content": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": false,
-        "nonEmpty": false
-      },
-      "jsx_start_opening_element_group1": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "attribute": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
         "nonEmpty": false
       }
     },
@@ -4671,95 +4666,6 @@
         "of"
       ],
       "factoryShape": "text"
-    },
-    {
-      "kind": "__jsx_start_opening_element_optional1",
-      "modelType": "group",
-      "typeName": "JsxStartOpeningElementOptional1",
-      "factoryName": "_jsxStartOpeningElementOptional1",
-      "irKey": "jsxStartOpeningElementOptional1",
-      "hidden": false,
-      "name": "__jsx_start_opening_element_optional1",
-      "fields": [
-        {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_jsx_identifier",
-              "parseKind": "_jsx_identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "jsx_namespace_name",
-              "parseKind": "jsx_namespace_name",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_identifier",
-              "jsx_namespace_name"
-            ]
-          }
-        },
-        {
-          "name": "jsx_start_opening_element_group1",
-          "propertyName": "jsxStartOpeningElementGroup1",
-          "paramName": "jsxStartOpeningElementGroup1",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_jsx_start_opening_element_group1",
-              "parseKind": "jsx_start_opening_element_group1",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_start_opening_element_group1"
-            ]
-          }
-        },
-        {
-          "name": "attribute",
-          "propertyName": "attributes",
-          "paramName": "attributes",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_jsx_attribute",
-              "parseKind": "_jsx_attribute",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_attribute"
-            ]
-          }
-        }
-      ],
-      "children": []
     },
     {
       "kind": "__number_operator",
@@ -7801,12 +7707,13 @@
       ]
     },
     {
-      "kind": "_jsx_start_opening_element",
-      "modelType": "branch",
-      "typeName": "JsxStartOpeningElement",
-      "factoryName": "jsxStartOpeningElement",
-      "irKey": "jsxStartOpeningElement",
+      "kind": "_jsx_opening_element_content",
+      "modelType": "group",
+      "typeName": "JsxOpeningElementContent",
+      "factoryName": "_jsxOpeningElementContent",
+      "irKey": "jsxOpeningElementContent",
       "hidden": false,
+      "name": "_jsx_opening_element_content",
       "fields": [
         {
           "name": "name",
@@ -7882,6 +7789,46 @@
             "typeName": "",
             "kinds": [
               "_jsx_attribute"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "name",
+        "jsx_start_opening_element_group1",
+        "attribute"
+      ]
+    },
+    {
+      "kind": "_jsx_start_opening_element",
+      "modelType": "branch",
+      "typeName": "JsxStartOpeningElement",
+      "factoryName": "jsxStartOpeningElement",
+      "irKey": "jsxStartOpeningElement",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "jsx_opening_element_content",
+          "propertyName": "jsxOpeningElementContent",
+          "paramName": "jsxOpeningElementContent",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_jsx_opening_element_content",
+              "parseKind": "jsx_opening_element_content",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_jsx_opening_element_content"
             ]
           }
         }
@@ -17413,9 +17360,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
+          "name": "jsx_opening_element_content",
+          "propertyName": "jsxOpeningElementContent",
+          "paramName": "jsxOpeningElementContent",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -17423,79 +17370,23 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_jsx_identifier",
-              "parseKind": "_jsx_identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "jsx_namespace_name",
-              "parseKind": "jsx_namespace_name",
+              "name": "_jsx_opening_element_content",
+              "parseKind": "jsx_opening_element_content",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_jsx_identifier",
-              "jsx_namespace_name"
-            ]
-          }
-        },
-        {
-          "name": "jsx_start_opening_element_group1",
-          "propertyName": "jsxStartOpeningElementGroup1",
-          "paramName": "jsxStartOpeningElementGroup1",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_jsx_start_opening_element_group1",
-              "parseKind": "jsx_start_opening_element_group1",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_start_opening_element_group1"
-            ]
-          }
-        },
-        {
-          "name": "attribute",
-          "propertyName": "attributes",
-          "paramName": "attributes",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_jsx_attribute",
-              "parseKind": "_jsx_attribute",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_attribute"
+              "_jsx_opening_element_content"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "name",
-        "jsx_start_opening_element_group1",
-        "attribute"
+        "jsx_opening_element_content"
       ]
     },
     {
@@ -17507,9 +17398,9 @@
       "hidden": false,
       "fields": [
         {
-          "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
+          "name": "jsx_opening_element_content",
+          "propertyName": "jsxOpeningElementContent",
+          "paramName": "jsxOpeningElementContent",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -17517,79 +17408,23 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_jsx_identifier",
-              "parseKind": "_jsx_identifier",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "jsx_namespace_name",
-              "parseKind": "jsx_namespace_name",
+              "name": "_jsx_opening_element_content",
+              "parseKind": "jsx_opening_element_content",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_jsx_identifier",
-              "jsx_namespace_name"
-            ]
-          }
-        },
-        {
-          "name": "jsx_start_opening_element_group1",
-          "propertyName": "jsxStartOpeningElementGroup1",
-          "paramName": "jsxStartOpeningElementGroup1",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_jsx_start_opening_element_group1",
-              "parseKind": "jsx_start_opening_element_group1",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_start_opening_element_group1"
-            ]
-          }
-        },
-        {
-          "name": "attribute",
-          "propertyName": "attributes",
-          "paramName": "attributes",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "_jsx_attribute",
-              "parseKind": "_jsx_attribute",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_jsx_attribute"
+              "_jsx_opening_element_content"
             ]
           }
         }
       ],
       "children": [],
-      "factoryShape": "config",
+      "factoryShape": "direct",
       "factoryFields": [
-        "name",
-        "jsx_start_opening_element_group1",
-        "attribute"
+        "jsx_opening_element_content"
       ]
     },
     {

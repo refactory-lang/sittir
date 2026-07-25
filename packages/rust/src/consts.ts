@@ -784,39 +784,40 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
 	_attributed_argument: 391,
 	_attributed_ordered_field: 392,
 	_type_argument: 393,
-	source_file_repeat1: 394,
-	token_repetition_pattern_repeat1: 395,
-	token_repetition_repeat1: 396,
-	declaration_list_repeat1: 397,
-	function_modifiers_repeat1: 398,
-	trait_bounds_repeat1: 399,
-	type_parameters_repeat1: 400,
-	for_lifetimes_repeat1: 401,
-	tuple_type_repeat1: 402,
-	type_arguments_repeat1: 403,
-	tuple_expression_repeat1: 404,
-	tuple_expression_repeat2: 405,
-	match_arm_repeat1: 406,
-	string_literal_repeat1: 407,
-	_enum_variant_list_group1_repeat1: 408,
-	_field_declaration_list_group1_repeat1: 409,
-	_ordered_field_declaration_list_group1_repeat1: 410,
-	_where_clause_group1_repeat1: 411,
-	_use_list_group1_repeat1: 412,
-	_parameters_group1_repeat1: 413,
-	_use_bounds_group1_repeat1: 414,
-	_arguments_group1_repeat1: 415,
-	_field_initializer_list_group1_repeat1: 416,
-	_match_block_optional1_repeat1: 417,
+	_match_block_arms: 394,
+	source_file_repeat1: 395,
+	token_repetition_pattern_repeat1: 396,
+	token_repetition_repeat1: 397,
+	declaration_list_repeat1: 398,
+	function_modifiers_repeat1: 399,
+	trait_bounds_repeat1: 400,
+	type_parameters_repeat1: 401,
+	for_lifetimes_repeat1: 402,
+	tuple_type_repeat1: 403,
+	type_arguments_repeat1: 404,
+	tuple_expression_repeat1: 405,
+	tuple_expression_repeat2: 406,
+	match_arm_repeat1: 407,
+	string_literal_repeat1: 408,
+	_enum_variant_list_group1_repeat1: 409,
+	_field_declaration_list_group1_repeat1: 410,
+	_ordered_field_declaration_list_group1_repeat1: 411,
+	_where_clause_group1_repeat1: 412,
+	_use_list_group1_repeat1: 413,
+	_parameters_group1_repeat1: 414,
+	_use_bounds_group1_repeat1: 415,
+	_arguments_group1_repeat1: 416,
+	_field_initializer_list_group1_repeat1: 417,
 	_closure_parameters_optional1_repeat1: 418,
 	_tuple_pattern_group1_repeat1: 419,
 	_slice_pattern_group1_repeat1: 420,
 	_struct_pattern_group1_repeat1: 421,
 	_macro_definition_paren_repeat1: 422,
 	_delim_token_tree_paren_repeat1: 423,
-	_field_identifier: 424,
-	_shorthand_field_identifier: 426,
-	_type_identifier: 427
+	_match_block_arms_repeat1: 424,
+	_field_identifier: 425,
+	_shorthand_field_identifier: 427,
+	_type_identifier: 428
 } as const satisfies Record<string, number>;
 
 export const TREE_SITTER_KIND_BY_KIND_ID = {
@@ -1213,39 +1214,40 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
 	[391]: '_attributed_argument',
 	[392]: '_attributed_ordered_field',
 	[393]: '_type_argument',
-	[394]: 'source_file_repeat1',
-	[395]: 'token_repetition_pattern_repeat1',
-	[396]: 'token_repetition_repeat1',
-	[397]: 'declaration_list_repeat1',
-	[398]: 'function_modifiers_repeat1',
-	[399]: 'trait_bounds_repeat1',
-	[400]: 'type_parameters_repeat1',
-	[401]: 'for_lifetimes_repeat1',
-	[402]: 'tuple_type_repeat1',
-	[403]: 'type_arguments_repeat1',
-	[404]: 'tuple_expression_repeat1',
-	[405]: 'tuple_expression_repeat2',
-	[406]: 'match_arm_repeat1',
-	[407]: 'string_literal_repeat1',
-	[408]: '_enum_variant_list_group1_repeat1',
-	[409]: '_field_declaration_list_group1_repeat1',
-	[410]: '_ordered_field_declaration_list_group1_repeat1',
-	[411]: '_where_clause_group1_repeat1',
-	[412]: '_use_list_group1_repeat1',
-	[413]: '_parameters_group1_repeat1',
-	[414]: '_use_bounds_group1_repeat1',
-	[415]: '_arguments_group1_repeat1',
-	[416]: '_field_initializer_list_group1_repeat1',
-	[417]: '_match_block_optional1_repeat1',
+	[394]: '_match_block_arms',
+	[395]: 'source_file_repeat1',
+	[396]: 'token_repetition_pattern_repeat1',
+	[397]: 'token_repetition_repeat1',
+	[398]: 'declaration_list_repeat1',
+	[399]: 'function_modifiers_repeat1',
+	[400]: 'trait_bounds_repeat1',
+	[401]: 'type_parameters_repeat1',
+	[402]: 'for_lifetimes_repeat1',
+	[403]: 'tuple_type_repeat1',
+	[404]: 'type_arguments_repeat1',
+	[405]: 'tuple_expression_repeat1',
+	[406]: 'tuple_expression_repeat2',
+	[407]: 'match_arm_repeat1',
+	[408]: 'string_literal_repeat1',
+	[409]: '_enum_variant_list_group1_repeat1',
+	[410]: '_field_declaration_list_group1_repeat1',
+	[411]: '_ordered_field_declaration_list_group1_repeat1',
+	[412]: '_where_clause_group1_repeat1',
+	[413]: '_use_list_group1_repeat1',
+	[414]: '_parameters_group1_repeat1',
+	[415]: '_use_bounds_group1_repeat1',
+	[416]: '_arguments_group1_repeat1',
+	[417]: '_field_initializer_list_group1_repeat1',
 	[418]: '_closure_parameters_optional1_repeat1',
 	[419]: '_tuple_pattern_group1_repeat1',
 	[420]: '_slice_pattern_group1_repeat1',
 	[421]: '_struct_pattern_group1_repeat1',
 	[422]: '_macro_definition_paren_repeat1',
 	[423]: '_delim_token_tree_paren_repeat1',
-	[424]: '_field_identifier',
-	[426]: '_shorthand_field_identifier',
-	[427]: '_type_identifier'
+	[424]: '_match_block_arms_repeat1',
+	[425]: '_field_identifier',
+	[427]: '_shorthand_field_identifier',
+	[428]: '_type_identifier'
 } as const;
 
 export const TREE_SITTER_KIND_ID_JSON = [
@@ -1912,129 +1914,124 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		cName: 'sym__attributed_ordered_field'
 	},
 	{ name: '_type_argument', id: 393, enumName: 'TypeArgument', cName: 'sym__type_argument' },
-	{ name: 'source_file_repeat1', id: 394, enumName: 'AuxSourceFileRepeat1', cName: 'aux_sym_source_file_repeat1' },
+	{ name: '_match_block_arms', id: 394, enumName: 'MatchBlockArms', cName: 'sym__match_block_arms' },
+	{ name: 'source_file_repeat1', id: 395, enumName: 'AuxSourceFileRepeat1', cName: 'aux_sym_source_file_repeat1' },
 	{
 		name: 'token_repetition_pattern_repeat1',
-		id: 395,
+		id: 396,
 		enumName: 'AuxTokenRepetitionPatternRepeat1',
 		cName: 'aux_sym_token_repetition_pattern_repeat1'
 	},
 	{
 		name: 'token_repetition_repeat1',
-		id: 396,
+		id: 397,
 		enumName: 'AuxTokenRepetitionRepeat1',
 		cName: 'aux_sym_token_repetition_repeat1'
 	},
 	{
 		name: 'declaration_list_repeat1',
-		id: 397,
+		id: 398,
 		enumName: 'AuxDeclarationListRepeat1',
 		cName: 'aux_sym_declaration_list_repeat1'
 	},
 	{
 		name: 'function_modifiers_repeat1',
-		id: 398,
+		id: 399,
 		enumName: 'AuxFunctionModifiersRepeat1',
 		cName: 'aux_sym_function_modifiers_repeat1'
 	},
-	{ name: 'trait_bounds_repeat1', id: 399, enumName: 'AuxTraitBoundsRepeat1', cName: 'aux_sym_trait_bounds_repeat1' },
+	{ name: 'trait_bounds_repeat1', id: 400, enumName: 'AuxTraitBoundsRepeat1', cName: 'aux_sym_trait_bounds_repeat1' },
 	{
 		name: 'type_parameters_repeat1',
-		id: 400,
+		id: 401,
 		enumName: 'AuxTypeParametersRepeat1',
 		cName: 'aux_sym_type_parameters_repeat1'
 	},
 	{
 		name: 'for_lifetimes_repeat1',
-		id: 401,
+		id: 402,
 		enumName: 'AuxForLifetimesRepeat1',
 		cName: 'aux_sym_for_lifetimes_repeat1'
 	},
-	{ name: 'tuple_type_repeat1', id: 402, enumName: 'AuxTupleTypeRepeat1', cName: 'aux_sym_tuple_type_repeat1' },
+	{ name: 'tuple_type_repeat1', id: 403, enumName: 'AuxTupleTypeRepeat1', cName: 'aux_sym_tuple_type_repeat1' },
 	{
 		name: 'type_arguments_repeat1',
-		id: 403,
+		id: 404,
 		enumName: 'AuxTypeArgumentsRepeat1',
 		cName: 'aux_sym_type_arguments_repeat1'
 	},
 	{
 		name: 'tuple_expression_repeat1',
-		id: 404,
+		id: 405,
 		enumName: 'AuxTupleExpressionRepeat1',
 		cName: 'aux_sym_tuple_expression_repeat1'
 	},
 	{
 		name: 'tuple_expression_repeat2',
-		id: 405,
+		id: 406,
 		enumName: 'AuxTupleExpressionRepeat2',
 		cName: 'aux_sym_tuple_expression_repeat2'
 	},
-	{ name: 'match_arm_repeat1', id: 406, enumName: 'AuxMatchArmRepeat1', cName: 'aux_sym_match_arm_repeat1' },
+	{ name: 'match_arm_repeat1', id: 407, enumName: 'AuxMatchArmRepeat1', cName: 'aux_sym_match_arm_repeat1' },
 	{
 		name: 'string_literal_repeat1',
-		id: 407,
+		id: 408,
 		enumName: 'AuxStringLiteralRepeat1',
 		cName: 'aux_sym_string_literal_repeat1'
 	},
 	{
 		name: '_enum_variant_list_group1_repeat1',
-		id: 408,
+		id: 409,
 		enumName: 'AuxEnumVariantListGroup1Repeat1',
 		cName: 'aux_sym__enum_variant_list_group1_repeat1'
 	},
 	{
 		name: '_field_declaration_list_group1_repeat1',
-		id: 409,
+		id: 410,
 		enumName: 'AuxFieldDeclarationListGroup1Repeat1',
 		cName: 'aux_sym__field_declaration_list_group1_repeat1'
 	},
 	{
 		name: '_ordered_field_declaration_list_group1_repeat1',
-		id: 410,
+		id: 411,
 		enumName: 'AuxOrderedFieldDeclarationListGroup1Repeat1',
 		cName: 'aux_sym__ordered_field_declaration_list_group1_repeat1'
 	},
 	{
 		name: '_where_clause_group1_repeat1',
-		id: 411,
+		id: 412,
 		enumName: 'AuxWhereClauseGroup1Repeat1',
 		cName: 'aux_sym__where_clause_group1_repeat1'
 	},
 	{
 		name: '_use_list_group1_repeat1',
-		id: 412,
+		id: 413,
 		enumName: 'AuxUseListGroup1Repeat1',
 		cName: 'aux_sym__use_list_group1_repeat1'
 	},
 	{
 		name: '_parameters_group1_repeat1',
-		id: 413,
+		id: 414,
 		enumName: 'AuxParametersGroup1Repeat1',
 		cName: 'aux_sym__parameters_group1_repeat1'
 	},
 	{
 		name: '_use_bounds_group1_repeat1',
-		id: 414,
+		id: 415,
 		enumName: 'AuxUseBoundsGroup1Repeat1',
 		cName: 'aux_sym__use_bounds_group1_repeat1'
 	},
 	{
 		name: '_arguments_group1_repeat1',
-		id: 415,
+		id: 416,
 		enumName: 'AuxArgumentsGroup1Repeat1',
 		cName: 'aux_sym__arguments_group1_repeat1'
 	},
 	{
 		name: '_field_initializer_list_group1_repeat1',
-		id: 416,
+		id: 417,
 		enumName: 'AuxFieldInitializerListGroup1Repeat1',
 		cName: 'aux_sym__field_initializer_list_group1_repeat1'
-	},
-	{
-		name: '_match_block_optional1_repeat1',
-		id: 417,
-		enumName: 'AuxMatchBlockOptional1Repeat1',
-		cName: 'aux_sym__match_block_optional1_repeat1'
 	},
 	{
 		name: '_closure_parameters_optional1_repeat1',
@@ -2072,14 +2069,20 @@ export const TREE_SITTER_KIND_ID_JSON = [
 		enumName: 'AuxDelimTokenTreeParenRepeat1',
 		cName: 'aux_sym__delim_token_tree_paren_repeat1'
 	},
-	{ name: '_field_identifier', id: 424, enumName: 'AliasFieldIdentifier', cName: 'alias_sym_field_identifier' },
+	{
+		name: '_match_block_arms_repeat1',
+		id: 424,
+		enumName: 'AuxMatchBlockArmsRepeat1',
+		cName: 'aux_sym__match_block_arms_repeat1'
+	},
+	{ name: '_field_identifier', id: 425, enumName: 'AliasFieldIdentifier', cName: 'alias_sym_field_identifier' },
 	{
 		name: '_shorthand_field_identifier',
-		id: 426,
+		id: 427,
 		enumName: 'AliasShorthandFieldIdentifier',
 		cName: 'alias_sym_shorthand_field_identifier'
 	},
-	{ name: '_type_identifier', id: 427, enumName: 'AliasTypeIdentifier', cName: 'alias_sym_type_identifier' }
+	{ name: '_type_identifier', id: 428, enumName: 'AliasTypeIdentifier', cName: 'alias_sym_type_identifier' }
 ] as const;
 
 export const enum TSFieldId {
@@ -2714,10 +2717,7 @@ export const FIELD_MAP: Record<
 		{ name: 'pattern', required: true, multiple: false },
 		{ name: 'content', required: true, multiple: false }
 	],
-	match_block: [
-		{ name: 'matchArms', required: false, multiple: true },
-		{ name: 'lastArm', required: true, multiple: false }
-	],
+	match_block: [{ name: 'matchBlockArms', required: false, multiple: false }],
 	match_expression: [
 		{ name: 'value', required: true, multiple: false },
 		{ name: 'body', required: true, multiple: false }

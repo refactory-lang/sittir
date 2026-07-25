@@ -25695,7 +25695,7 @@
             "start": 145,
             "end": 154
           },
-          "$nodeHandle": 201
+          "$nodeHandle": 206
         },
         "_name": "Array",
         "$other": [
@@ -25705,7 +25705,7 @@
           "start": 145,
           "end": 161
         },
-        "$nodeHandle": 200
+        "$nodeHandle": 205
       },
       "_slice_pattern_group1": {
         "$type": 334,
@@ -25715,7 +25715,7 @@
           "start": 162,
           "end": 164
         },
-        "$nodeHandle": 202,
+        "$nodeHandle": 207,
         "_pattern": [
           "ty"
         ],
@@ -25729,7 +25729,7 @@
         "start": 145,
         "end": 165
       },
-      "$nodeHandle": 22
+      "$nodeHandle": 23
     },
     "expectedOutput": "syn::Type::Array(ty)"
   },
@@ -25764,7 +25764,7 @@
           "start": 145,
           "end": 154
         },
-        "$nodeHandle": 203
+        "$nodeHandle": 208
       },
       "_name": "Array",
       "$other": [
@@ -25774,7 +25774,7 @@
         "start": 145,
         "end": 161
       },
-      "$nodeHandle": 23
+      "$nodeHandle": 24
     },
     "expectedOutput": "syn::Type::Array"
   },
@@ -25805,7 +25805,7 @@
         "start": 145,
         "end": 154
       },
-      "$nodeHandle": 24
+      "$nodeHandle": 25
     },
     "expectedOutput": "syn::Type"
   },
@@ -25840,7 +25840,7 @@
           "start": 169,
           "end": 184
         },
-        "$nodeHandle": 204
+        "$nodeHandle": 209
       },
       "_arguments": {
         "$type": 258,
@@ -25859,7 +25859,7 @@
                 "start": 185,
                 "end": 193
               },
-              "$nodeHandle": 207,
+              "$nodeHandle": 212,
               "_attribute_item": [],
               "_expression": {
                 "$type": 250,
@@ -25878,7 +25878,7 @@
                     "start": 186,
                     "end": 193
                   },
-                  "$nodeHandle": 209
+                  "$nodeHandle": 214
                 },
                 "$other": [
                   88
@@ -25887,7 +25887,7 @@
                   "start": 185,
                   "end": 193
                 },
-                "$nodeHandle": 208
+                "$nodeHandle": 213
               }
             }
           ],
@@ -25895,7 +25895,7 @@
             "start": 185,
             "end": 193
           },
-          "$nodeHandle": 206,
+          "$nodeHandle": 211,
           "_trailing_sep": false
         },
         "$other": [
@@ -25906,13 +25906,13 @@
           "start": 184,
           "end": 194
         },
-        "$nodeHandle": 205
+        "$nodeHandle": 210
       },
       "$span": {
         "start": 169,
         "end": 194
       },
-      "$nodeHandle": 26
+      "$nodeHandle": 27
     },
     "expectedOutput": "self.visit_type(&ty.elem)"
   },
@@ -25943,7 +25943,7 @@
         "start": 169,
         "end": 184
       },
-      "$nodeHandle": 27
+      "$nodeHandle": 28
     },
     "expectedOutput": "self.visit_type"
   },
@@ -25974,7 +25974,7 @@
         "start": 186,
         "end": 193
       },
-      "$nodeHandle": 32
+      "$nodeHandle": 33
     },
     "expectedOutput": "ty.elem"
   },
@@ -26009,7 +26009,7 @@
               "start": 185,
               "end": 193
             },
-            "$nodeHandle": 211,
+            "$nodeHandle": 216,
             "_attribute_item": [],
             "_expression": {
               "$type": 250,
@@ -26028,7 +26028,7 @@
                   "start": 186,
                   "end": 193
                 },
-                "$nodeHandle": 213
+                "$nodeHandle": 218
               },
               "$other": [
                 88
@@ -26037,7 +26037,7 @@
                 "start": 185,
                 "end": 193
               },
-              "$nodeHandle": 212
+              "$nodeHandle": 217
             }
           }
         ],
@@ -26045,7 +26045,7 @@
           "start": 185,
           "end": 193
         },
-        "$nodeHandle": 210,
+        "$nodeHandle": 215,
         "_trailing_sep": false
       },
       "$other": [
@@ -26056,7 +26056,7 @@
         "start": 184,
         "end": 194
       },
-      "$nodeHandle": 28
+      "$nodeHandle": 29
     },
     "expectedOutput": "(&ty.elem)"
   },
@@ -26091,7 +26091,7 @@
           "start": 186,
           "end": 193
         },
-        "$nodeHandle": 214
+        "$nodeHandle": 219
       },
       "$other": [
         88
@@ -26100,7 +26100,7 @@
         "start": 185,
         "end": 193
       },
-      "$nodeHandle": 31
+      "$nodeHandle": 32
     },
     "expectedOutput": "&ty.elem"
   },
@@ -32570,7 +32570,7 @@
             "$named": true,
             "_bounds": [
               {
-                "$type": 427,
+                "$type": 428,
                 "$source": 0,
                 "$named": true,
                 "$text": "Clone",
@@ -32580,7 +32580,7 @@
                 }
               },
               {
-                "$type": 427,
+                "$type": 428,
                 "$source": 0,
                 "$named": true,
                 "$text": "Eq",
@@ -32800,7 +32800,7 @@
         "$named": true,
         "_bounds": [
           {
-            "$type": 427,
+            "$type": 428,
             "$source": 0,
             "$named": true,
             "$text": "Clone",
@@ -32810,7 +32810,7 @@
             }
           },
           {
-            "$type": 427,
+            "$type": 428,
             "$source": 0,
             "$named": true,
             "$text": "Eq",
@@ -74089,7 +74089,7 @@
             "start": 0,
             "end": 56
           },
-          "$nodeHandle": 15,
+          "$nodeHandle": 16,
           "_content": {
             "$type": 273,
             "$source": 0,
@@ -74099,9 +74099,97 @@
               "$type": 274,
               "$source": 0,
               "$named": true,
-              "_match_arm": [
-                {
-                  "$type": 275,
+              "_match_block_arms": {
+                "$type": 394,
+                "$source": 0,
+                "$named": true,
+                "_match_arm": [
+                  {
+                    "$type": 275,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": {
+                      "$type": 277,
+                      "$source": 0,
+                      "$named": true,
+                      "_pattern": {
+                        "$type": 299,
+                        "$source": 0,
+                        "$named": true,
+                        "_type": "Some",
+                        "_slice_pattern_group1": {
+                          "$type": 334,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 17,
+                            "end": 18
+                          },
+                          "$nodeHandle": 23,
+                          "_pattern": [
+                            "x"
+                          ],
+                          "_trailing_sep": false
+                        },
+                        "$other": [
+                          7,
+                          8
+                        ],
+                        "$span": {
+                          "start": 12,
+                          "end": 19
+                        },
+                        "$nodeHandle": 22
+                      },
+                      "$span": {
+                        "start": 12,
+                        "end": 19
+                      },
+                      "$nodeHandle": 21
+                    },
+                    "$other": [
+                      4
+                    ],
+                    "$span": {
+                      "start": 12,
+                      "end": 30
+                    },
+                    "$nodeHandle": 20,
+                    "_attributes": [],
+                    "_content": {
+                      "$type": 375,
+                      "$source": 0,
+                      "$named": true,
+                      "_value": {
+                        "$type": 312,
+                        "$source": 0,
+                        "$named": true,
+                        "$other": [
+                          124,
+                          124
+                        ],
+                        "$span": {
+                          "start": 23,
+                          "end": 29
+                        },
+                        "$nodeHandle": 25,
+                        "_content": [
+                          "some"
+                        ]
+                      },
+                      "$other": [
+                        83
+                      ],
+                      "$span": {
+                        "start": 23,
+                        "end": 30
+                      },
+                      "$nodeHandle": 24
+                    }
+                  }
+                ],
+                "_last_arm": {
+                  "$type": 276,
                   "$source": 0,
                   "$named": true,
                   "_pattern": {
@@ -74112,147 +74200,69 @@
                       "$type": 299,
                       "$source": 0,
                       "$named": true,
-                      "_type": "Some",
-                      "_slice_pattern_group1": {
-                        "$type": 334,
+                      "_type": {
+                        "$type": 244,
                         "$source": 0,
                         "$named": true,
-                        "$span": {
-                          "start": 17,
-                          "end": 18
-                        },
-                        "$nodeHandle": 21,
-                        "_pattern": [
-                          "x"
+                        "_path": "std",
+                        "_name": "None",
+                        "$other": [
+                          85
                         ],
-                        "_trailing_sep": false
+                        "$span": {
+                          "start": 33,
+                          "end": 42
+                        },
+                        "$nodeHandle": 29
                       },
                       "$other": [
                         7,
                         8
                       ],
                       "$span": {
-                        "start": 12,
-                        "end": 19
+                        "start": 33,
+                        "end": 44
                       },
-                      "$nodeHandle": 20
+                      "$nodeHandle": 28
                     },
                     "$span": {
-                      "start": 12,
-                      "end": 19
+                      "start": 33,
+                      "end": 44
                     },
-                    "$nodeHandle": 19
+                    "$nodeHandle": 27
+                  },
+                  "_value": {
+                    "$type": 312,
+                    "$source": 0,
+                    "$named": true,
+                    "$other": [
+                      124,
+                      124
+                    ],
+                    "$span": {
+                      "start": 48,
+                      "end": 54
+                    },
+                    "$nodeHandle": 30,
+                    "_content": [
+                      "none"
+                    ]
                   },
                   "$other": [
                     4
                   ],
                   "$span": {
-                    "start": 12,
-                    "end": 30
-                  },
-                  "$nodeHandle": 18,
-                  "_attributes": [],
-                  "_content": {
-                    "$type": 375,
-                    "$source": 0,
-                    "$named": true,
-                    "_value": {
-                      "$type": 312,
-                      "$source": 0,
-                      "$named": true,
-                      "$other": [
-                        124,
-                        124
-                      ],
-                      "$span": {
-                        "start": 23,
-                        "end": 29
-                      },
-                      "$nodeHandle": 23,
-                      "_content": [
-                        "some"
-                      ]
-                    },
-                    "$other": [
-                      83
-                    ],
-                    "$span": {
-                      "start": 23,
-                      "end": 30
-                    },
-                    "$nodeHandle": 22
-                  }
-                }
-              ],
-              "_last_arm": {
-                "$type": 276,
-                "$source": 0,
-                "$named": true,
-                "_pattern": {
-                  "$type": 277,
-                  "$source": 0,
-                  "$named": true,
-                  "_pattern": {
-                    "$type": 299,
-                    "$source": 0,
-                    "$named": true,
-                    "_type": {
-                      "$type": 244,
-                      "$source": 0,
-                      "$named": true,
-                      "_path": "std",
-                      "_name": "None",
-                      "$other": [
-                        85
-                      ],
-                      "$span": {
-                        "start": 33,
-                        "end": 42
-                      },
-                      "$nodeHandle": 27
-                    },
-                    "$other": [
-                      7,
-                      8
-                    ],
-                    "$span": {
-                      "start": 33,
-                      "end": 44
-                    },
-                    "$nodeHandle": 26
-                  },
-                  "$span": {
                     "start": 33,
-                    "end": 44
-                  },
-                  "$nodeHandle": 25
-                },
-                "_value": {
-                  "$type": 312,
-                  "$source": 0,
-                  "$named": true,
-                  "$other": [
-                    124,
-                    124
-                  ],
-                  "$span": {
-                    "start": 48,
                     "end": 54
                   },
-                  "$nodeHandle": 28,
-                  "_content": [
-                    "none"
-                  ]
+                  "$nodeHandle": 26,
+                  "_attributes": []
                 },
-                "$other": [
-                  4
-                ],
                 "$span": {
-                  "start": 33,
+                  "start": 12,
                   "end": 54
                 },
-                "$nodeHandle": 24,
-                "_attributes": []
+                "$nodeHandle": 19
               },
               "$other": [
                 78,
@@ -74262,7 +74272,7 @@
                 "start": 8,
                 "end": 56
               },
-              "$nodeHandle": 17
+              "$nodeHandle": 18
             },
             "$other": [
               61
@@ -74271,7 +74281,7 @@
               "start": 0,
               "end": 56
             },
-            "$nodeHandle": 16
+            "$nodeHandle": 17
           }
         }
       ],
@@ -74290,7 +74300,7 @@
     "pattern": "source_file",
     "edits": [],
     "expectedSourceOut": "match x{ Some(x)=>\"some\",std::None()=>\"none\" }",
-    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier)))) (match_arm_with_comma value: (string_literal (string_content)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)))) value: (string_literal (string_content)))))))",
+    "expectedReparseTree": "(source_file statements: (expression_statement (match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier)))) (match_arm_with_comma value: (string_literal (string_content)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)))) value: (string_literal (string_content))))))))",
     "wrappedText": "match x{ Some(x)=>\"some\",std::None()=>\"none\" }",
     "wrappedOffset": 0
   },
@@ -74306,9 +74316,97 @@
         "$type": 274,
         "$source": 0,
         "$named": true,
-        "_match_arm": [
-          {
-            "$type": 275,
+        "_match_block_arms": {
+          "$type": 394,
+          "$source": 0,
+          "$named": true,
+          "_match_arm": [
+            {
+              "$type": 275,
+              "$source": 0,
+              "$named": true,
+              "_pattern": {
+                "$type": 277,
+                "$source": 0,
+                "$named": true,
+                "_pattern": {
+                  "$type": 299,
+                  "$source": 0,
+                  "$named": true,
+                  "_type": "Some",
+                  "_slice_pattern_group1": {
+                    "$type": 334,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 17,
+                      "end": 18
+                    },
+                    "$nodeHandle": 50,
+                    "_pattern": [
+                      "x"
+                    ],
+                    "_trailing_sep": false
+                  },
+                  "$other": [
+                    7,
+                    8
+                  ],
+                  "$span": {
+                    "start": 12,
+                    "end": 19
+                  },
+                  "$nodeHandle": 49
+                },
+                "$span": {
+                  "start": 12,
+                  "end": 19
+                },
+                "$nodeHandle": 48
+              },
+              "$other": [
+                4
+              ],
+              "$span": {
+                "start": 12,
+                "end": 30
+              },
+              "$nodeHandle": 47,
+              "_attributes": [],
+              "_content": {
+                "$type": 375,
+                "$source": 0,
+                "$named": true,
+                "_value": {
+                  "$type": 312,
+                  "$source": 0,
+                  "$named": true,
+                  "$other": [
+                    124,
+                    124
+                  ],
+                  "$span": {
+                    "start": 23,
+                    "end": 29
+                  },
+                  "$nodeHandle": 52,
+                  "_content": [
+                    "some"
+                  ]
+                },
+                "$other": [
+                  83
+                ],
+                "$span": {
+                  "start": 23,
+                  "end": 30
+                },
+                "$nodeHandle": 51
+              }
+            }
+          ],
+          "_last_arm": {
+            "$type": 276,
             "$source": 0,
             "$named": true,
             "_pattern": {
@@ -74319,147 +74417,69 @@
                 "$type": 299,
                 "$source": 0,
                 "$named": true,
-                "_type": "Some",
-                "_slice_pattern_group1": {
-                  "$type": 334,
+                "_type": {
+                  "$type": 244,
                   "$source": 0,
                   "$named": true,
-                  "$span": {
-                    "start": 17,
-                    "end": 18
-                  },
-                  "$nodeHandle": 46,
-                  "_pattern": [
-                    "x"
+                  "_path": "std",
+                  "_name": "None",
+                  "$other": [
+                    85
                   ],
-                  "_trailing_sep": false
+                  "$span": {
+                    "start": 33,
+                    "end": 42
+                  },
+                  "$nodeHandle": 56
                 },
                 "$other": [
                   7,
                   8
                 ],
                 "$span": {
-                  "start": 12,
-                  "end": 19
+                  "start": 33,
+                  "end": 44
                 },
-                "$nodeHandle": 45
+                "$nodeHandle": 55
               },
               "$span": {
-                "start": 12,
-                "end": 19
+                "start": 33,
+                "end": 44
               },
-              "$nodeHandle": 44
+              "$nodeHandle": 54
+            },
+            "_value": {
+              "$type": 312,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                124,
+                124
+              ],
+              "$span": {
+                "start": 48,
+                "end": 54
+              },
+              "$nodeHandle": 57,
+              "_content": [
+                "none"
+              ]
             },
             "$other": [
               4
             ],
             "$span": {
-              "start": 12,
-              "end": 30
-            },
-            "$nodeHandle": 43,
-            "_attributes": [],
-            "_content": {
-              "$type": 375,
-              "$source": 0,
-              "$named": true,
-              "_value": {
-                "$type": 312,
-                "$source": 0,
-                "$named": true,
-                "$other": [
-                  124,
-                  124
-                ],
-                "$span": {
-                  "start": 23,
-                  "end": 29
-                },
-                "$nodeHandle": 48,
-                "_content": [
-                  "some"
-                ]
-              },
-              "$other": [
-                83
-              ],
-              "$span": {
-                "start": 23,
-                "end": 30
-              },
-              "$nodeHandle": 47
-            }
-          }
-        ],
-        "_last_arm": {
-          "$type": 276,
-          "$source": 0,
-          "$named": true,
-          "_pattern": {
-            "$type": 277,
-            "$source": 0,
-            "$named": true,
-            "_pattern": {
-              "$type": 299,
-              "$source": 0,
-              "$named": true,
-              "_type": {
-                "$type": 244,
-                "$source": 0,
-                "$named": true,
-                "_path": "std",
-                "_name": "None",
-                "$other": [
-                  85
-                ],
-                "$span": {
-                  "start": 33,
-                  "end": 42
-                },
-                "$nodeHandle": 52
-              },
-              "$other": [
-                7,
-                8
-              ],
-              "$span": {
-                "start": 33,
-                "end": 44
-              },
-              "$nodeHandle": 51
-            },
-            "$span": {
               "start": 33,
-              "end": 44
-            },
-            "$nodeHandle": 50
-          },
-          "_value": {
-            "$type": 312,
-            "$source": 0,
-            "$named": true,
-            "$other": [
-              124,
-              124
-            ],
-            "$span": {
-              "start": 48,
               "end": 54
             },
             "$nodeHandle": 53,
-            "_content": [
-              "none"
-            ]
+            "_attributes": []
           },
-          "$other": [
-            4
-          ],
           "$span": {
-            "start": 33,
+            "start": 12,
             "end": 54
           },
-          "$nodeHandle": 49,
-          "_attributes": []
+          "$nodeHandle": 46
         },
         "$other": [
           78,
@@ -74469,7 +74489,7 @@
           "start": 8,
           "end": 56
         },
-        "$nodeHandle": 42
+        "$nodeHandle": 45
       },
       "$other": [
         61
@@ -74489,7 +74509,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match x{ Some(x)=>\"some\",std::None()=>\"none\" }",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier)))) (match_arm_with_comma value: (string_literal (string_content)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)))) value: (string_literal (string_content)))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_block_arms (match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (identifier) (slice_pattern_group1 (identifier)))) (match_arm_with_comma value: (string_literal (string_content)))) last_arm: (last_match_arm pattern: (match_pattern pattern: (tuple_struct_pattern type: (scoped_identifier path: (identifier) name: (identifier)))) value: (string_literal (string_content))))))",
     "wrappedText": "fn _f() { let _ = match x{ Some(x)=>\"some\",std::None()=>\"none\" }; }",
     "wrappedOffset": 18
   },
@@ -74509,7 +74529,7 @@
           "start": 17,
           "end": 18
         },
-        "$nodeHandle": 74,
+        "$nodeHandle": 79,
         "_pattern": [
           "x"
         ],
@@ -74523,7 +74543,7 @@
         "start": 12,
         "end": 19
       },
-      "$nodeHandle": 6
+      "$nodeHandle": 7
     },
     "expectedOutput": "Some(x)"
   },
@@ -74558,7 +74578,7 @@
           "start": 33,
           "end": 42
         },
-        "$nodeHandle": 75
+        "$nodeHandle": 80
       },
       "$other": [
         7,
@@ -74568,7 +74588,7 @@
         "start": 33,
         "end": 44
       },
-      "$nodeHandle": 12
+      "$nodeHandle": 13
     },
     "expectedOutput": "std::None()"
   },
@@ -74598,7 +74618,7 @@
         "start": 23,
         "end": 29
       },
-      "$nodeHandle": 9,
+      "$nodeHandle": 10,
       "_content": [
         "some"
       ]
@@ -74631,7 +74651,7 @@
         "start": 48,
         "end": 54
       },
-      "$nodeHandle": 14,
+      "$nodeHandle": 15,
       "_content": [
         "none"
       ]
@@ -74665,7 +74685,7 @@
         "start": 33,
         "end": 42
       },
-      "$nodeHandle": 13
+      "$nodeHandle": 14
     },
     "expectedOutput": "std::None"
   },
@@ -74696,7 +74716,7 @@
           "start": 14,
           "end": 19
         },
-        "$nodeHandle": 101,
+        "$nodeHandle": 106,
         "_pattern": [
           {
             "$type": 305,
@@ -74710,7 +74730,7 @@
               "start": 14,
               "end": 19
             },
-            "$nodeHandle": 102
+            "$nodeHandle": 107
           }
         ],
         "_trailing_sep": false
@@ -74723,7 +74743,7 @@
         "start": 12,
         "end": 20
       },
-      "$nodeHandle": 7
+      "$nodeHandle": 8
     },
     "expectedOutput": "A(ref x)"
   },
@@ -74753,7 +74773,7 @@
         "start": 14,
         "end": 19
       },
-      "$nodeHandle": 9
+      "$nodeHandle": 10
     },
     "expectedOutput": "ref x"
   },
@@ -74785,7 +74805,7 @@
           "start": 35,
           "end": 40
         },
-        "$nodeHandle": 103
+        "$nodeHandle": 108
       },
       "$other": [
         120
@@ -74794,7 +74814,7 @@
         "start": 31,
         "end": 40
       },
-      "$nodeHandle": 13
+      "$nodeHandle": 14
     },
     "expectedOutput": "ref mut y"
   },
@@ -74825,7 +74845,7 @@
         "start": 24,
         "end": 27
       },
-      "$nodeHandle": 11
+      "$nodeHandle": 12
     },
     "expectedOutput": "x.0"
   },
@@ -74853,7 +74873,7 @@
         "start": 35,
         "end": 40
       },
-      "$nodeHandle": 14
+      "$nodeHandle": 15
     },
     "expectedOutput": "mut y"
   },
@@ -74884,7 +74904,7 @@
         "start": 49,
         "end": 57
       },
-      "$nodeHandle": 18
+      "$nodeHandle": 19
     },
     "expectedOutput": "&mut z"
   },
@@ -74915,7 +74935,7 @@
           "start": 30,
           "end": 32
         },
-        "$nodeHandle": 134,
+        "$nodeHandle": 139,
         "_pattern": [
           {
             "$type": 302,
@@ -74926,7 +74946,7 @@
               "start": 30,
               "end": 32
             },
-            "$nodeHandle": 135
+            "$nodeHandle": 140
           }
         ],
         "_trailing_sep": false
@@ -74939,7 +74959,7 @@
         "start": 28,
         "end": 33
       },
-      "$nodeHandle": 12
+      "$nodeHandle": 13
     },
     "expectedOutput": "B(..)"
   },
@@ -74974,7 +74994,7 @@
           "start": 42,
           "end": 46
         },
-        "$nodeHandle": 143
+        "$nodeHandle": 148
       },
       "_fields": {
         "$type": 335,
@@ -74987,7 +75007,7 @@
           "start": 47,
           "end": 55
         },
-        "$nodeHandle": 144,
+        "$nodeHandle": 149,
         "_content": [
           {
             "$type": 301,
@@ -74997,7 +75017,7 @@
               "start": 47,
               "end": 51
             },
-            "$nodeHandle": 145,
+            "$nodeHandle": 150,
             "_content": {
               "$type": 352,
               "$source": 0,
@@ -75011,7 +75031,7 @@
                 "start": 47,
                 "end": 51
               },
-              "$nodeHandle": 147
+              "$nodeHandle": 152
             }
           },
           {
@@ -75023,7 +75043,7 @@
               "start": 53,
               "end": 55
             },
-            "$nodeHandle": 146
+            "$nodeHandle": 151
           }
         ],
         "_trailing_sep": false
@@ -75036,7 +75056,7 @@
         "start": 42,
         "end": 56
       },
-      "$nodeHandle": 18
+      "$nodeHandle": 19
     },
     "expectedOutput": "D::E{ f:g,.. }"
   },
@@ -75067,7 +75087,7 @@
         "start": 42,
         "end": 46
       },
-      "$nodeHandle": 19
+      "$nodeHandle": 20
     },
     "expectedOutput": "D::E"
   },
@@ -81747,7 +81767,7 @@
               "start": 7,
               "end": 13
             },
-            "$nodeHandle": 153,
+            "$nodeHandle": 159,
             "_content": {
               "$type": 214,
               "$source": 0,
@@ -81761,7 +81781,7 @@
                 "start": 7,
                 "end": 13
               },
-              "$nodeHandle": 154
+              "$nodeHandle": 160
             }
           }
         ],
@@ -81769,7 +81789,7 @@
           "start": 7,
           "end": 13
         },
-        "$nodeHandle": 152,
+        "$nodeHandle": 158,
         "_trailing_sep": false
       },
       "$other": [
@@ -81815,7 +81835,7 @@
               "start": 136,
               "end": 142
             },
-            "$nodeHandle": 156,
+            "$nodeHandle": 162,
             "_content": {
               "$type": 214,
               "$source": 0,
@@ -81829,7 +81849,7 @@
                 "start": 136,
                 "end": 142
               },
-              "$nodeHandle": 157
+              "$nodeHandle": 163
             }
           }
         ],
@@ -81837,7 +81857,7 @@
           "start": 136,
           "end": 142
         },
-        "$nodeHandle": 155,
+        "$nodeHandle": 161,
         "_trailing_sep": false
       },
       "$other": [
@@ -81848,7 +81868,7 @@
         "start": 135,
         "end": 143
       },
-      "$nodeHandle": 27
+      "$nodeHandle": 28
     },
     "expectedOutput": "(x:i32)"
   },
@@ -81910,7 +81930,7 @@
         "start": 136,
         "end": 142
       },
-      "$nodeHandle": 30
+      "$nodeHandle": 31
     },
     "expectedOutput": "x:i32"
   },
@@ -81936,7 +81956,7 @@
         "start": 117,
         "end": 119
       },
-      "$nodeHandle": 26,
+      "$nodeHandle": 27,
       "_statement": []
     },
     "expectedOutput": "{  }"
@@ -81976,7 +81996,7 @@
             "start": 176,
             "end": 181
           },
-          "$nodeHandle": 198
+          "$nodeHandle": 206
         },
         "_arguments": {
           "$type": 258,
@@ -81995,7 +82015,7 @@
                   "start": 182,
                   "end": 183
                 },
-                "$nodeHandle": 201,
+                "$nodeHandle": 209,
                 "_attribute_item": [],
                 "_expression": "3"
               }
@@ -82004,7 +82024,7 @@
               "start": 182,
               "end": 183
             },
-            "$nodeHandle": 200,
+            "$nodeHandle": 208,
             "_trailing_sep": false
           },
           "$other": [
@@ -82015,13 +82035,13 @@
             "start": 181,
             "end": 184
           },
-          "$nodeHandle": 199
+          "$nodeHandle": 207
         },
         "$span": {
           "start": 176,
           "end": 184
         },
-        "$nodeHandle": 197
+        "$nodeHandle": 205
       },
       "$other": [
         78,
@@ -82031,7 +82051,7 @@
         "start": 174,
         "end": 186
       },
-      "$nodeHandle": 38,
+      "$nodeHandle": 40,
       "_statement": []
     },
     "expectedOutput": "{ 3.pow(3) }"
@@ -82058,7 +82078,7 @@
         "start": 228,
         "end": 230
       },
-      "$nodeHandle": 51,
+      "$nodeHandle": 53,
       "_statement": []
     },
     "expectedOutput": "{  }"
@@ -82100,7 +82120,7 @@
             "start": 39,
             "end": 44
           },
-          "$nodeHandle": 203
+          "$nodeHandle": 211
         },
         "_arguments": {
           "$type": 258,
@@ -82119,7 +82139,7 @@
                   "start": 45,
                   "end": 46
                 },
-                "$nodeHandle": 206,
+                "$nodeHandle": 214,
                 "_attribute_item": [],
                 "_expression": "3"
               }
@@ -82128,7 +82148,7 @@
               "start": 45,
               "end": 46
             },
-            "$nodeHandle": 205,
+            "$nodeHandle": 213,
             "_trailing_sep": false
           },
           "$other": [
@@ -82139,13 +82159,13 @@
             "start": 44,
             "end": 47
           },
-          "$nodeHandle": 204
+          "$nodeHandle": 212
         },
         "$span": {
           "start": 39,
           "end": 47
         },
-        "$nodeHandle": 202
+        "$nodeHandle": 210
       },
       "$other": [
         50,
@@ -82192,7 +82212,7 @@
           "start": 39,
           "end": 44
         },
-        "$nodeHandle": 207
+        "$nodeHandle": 215
       },
       "_arguments": {
         "$type": 258,
@@ -82211,7 +82231,7 @@
                 "start": 45,
                 "end": 46
               },
-              "$nodeHandle": 210,
+              "$nodeHandle": 218,
               "_attribute_item": [],
               "_expression": "3"
             }
@@ -82220,7 +82240,7 @@
             "start": 45,
             "end": 46
           },
-          "$nodeHandle": 209,
+          "$nodeHandle": 217,
           "_trailing_sep": false
         },
         "$other": [
@@ -82231,7 +82251,7 @@
           "start": 44,
           "end": 47
         },
-        "$nodeHandle": 208
+        "$nodeHandle": 216
       },
       "$span": {
         "start": 39,
@@ -82272,7 +82292,7 @@
           "start": 176,
           "end": 181
         },
-        "$nodeHandle": 211
+        "$nodeHandle": 219
       },
       "_arguments": {
         "$type": 258,
@@ -82291,7 +82311,7 @@
                 "start": 182,
                 "end": 183
               },
-              "$nodeHandle": 214,
+              "$nodeHandle": 222,
               "_attribute_item": [],
               "_expression": "3"
             }
@@ -82300,7 +82320,7 @@
             "start": 182,
             "end": 183
           },
-          "$nodeHandle": 213,
+          "$nodeHandle": 221,
           "_trailing_sep": false
         },
         "$other": [
@@ -82311,13 +82331,13 @@
           "start": 181,
           "end": 184
         },
-        "$nodeHandle": 212
+        "$nodeHandle": 220
       },
       "$span": {
         "start": 176,
         "end": 184
       },
-      "$nodeHandle": 39
+      "$nodeHandle": 41
     },
     "expectedOutput": "3.pow(3)"
   },
@@ -82379,7 +82399,7 @@
         "start": 176,
         "end": 181
       },
-      "$nodeHandle": 40
+      "$nodeHandle": 42
     },
     "expectedOutput": "3.pow"
   },
@@ -82414,7 +82434,7 @@
               "start": 45,
               "end": 46
             },
-            "$nodeHandle": 216,
+            "$nodeHandle": 224,
             "_attribute_item": [],
             "_expression": "3"
           }
@@ -82423,7 +82443,7 @@
           "start": 45,
           "end": 46
         },
-        "$nodeHandle": 215,
+        "$nodeHandle": 223,
         "_trailing_sep": false
       },
       "$other": [
@@ -82469,7 +82489,7 @@
               "start": 182,
               "end": 183
             },
-            "$nodeHandle": 218,
+            "$nodeHandle": 226,
             "_attribute_item": [],
             "_expression": "3"
           }
@@ -82478,7 +82498,7 @@
           "start": 182,
           "end": 183
         },
-        "$nodeHandle": 217,
+        "$nodeHandle": 225,
         "_trailing_sep": false
       },
       "$other": [
@@ -82489,7 +82509,7 @@
         "start": 181,
         "end": 184
       },
-      "$nodeHandle": 41
+      "$nodeHandle": 43
     },
     "expectedOutput": "(3)"
   },
@@ -82532,7 +82552,7 @@
               "start": 176,
               "end": 181
             },
-            "$nodeHandle": 346
+            "$nodeHandle": 360
           },
           "_arguments": {
             "$type": 258,
@@ -82551,7 +82571,7 @@
                     "start": 182,
                     "end": 183
                   },
-                  "$nodeHandle": 349,
+                  "$nodeHandle": 363,
                   "_attribute_item": [],
                   "_expression": "3"
                 }
@@ -82560,7 +82580,7 @@
                 "start": 182,
                 "end": 183
               },
-              "$nodeHandle": 348,
+              "$nodeHandle": 362,
               "_trailing_sep": false
             },
             "$other": [
@@ -82571,13 +82591,13 @@
               "start": 181,
               "end": 184
             },
-            "$nodeHandle": 347
+            "$nodeHandle": 361
           },
           "$span": {
             "start": 176,
             "end": 184
           },
-          "$nodeHandle": 345
+          "$nodeHandle": 359
         },
         "$other": [
           78,
@@ -82587,7 +82607,7 @@
           "start": 174,
           "end": 186
         },
-        "$nodeHandle": 344,
+        "$nodeHandle": 358,
         "_statement": []
       },
       "$other": [
@@ -82597,7 +82617,7 @@
         "start": 168,
         "end": 186
       },
-      "$nodeHandle": 37
+      "$nodeHandle": 39
     },
     "expectedOutput": "const{ 3.pow(3) }"
   },
@@ -82632,7 +82652,7 @@
               "start": 21,
               "end": 22
             },
-            "$nodeHandle": 65,
+            "$nodeHandle": 70,
             "_content": "T"
           }
         ],
@@ -82644,7 +82664,7 @@
           "start": 20,
           "end": 23
         },
-        "$nodeHandle": 64
+        "$nodeHandle": 69
       },
       "$other": [
         85
@@ -82653,7 +82673,7 @@
         "start": 14,
         "end": 23
       },
-      "$nodeHandle": 6,
+      "$nodeHandle": 7,
       "_content": "None"
     },
     "expectedOutput": "None::<T>"

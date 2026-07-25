@@ -356,6 +356,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	field_pattern: TSKindId.FieldPattern,
 	for_lifetimes: TSKindId.ForLifetimes,
 	line_comment: TSKindId.LineComment,
+	match_block: TSKindId.MatchBlock,
 	or_pattern: TSKindId.OrPattern,
 	parameters: TSKindId.Parameters,
 	range_expression: TSKindId.RangeExpression,
@@ -461,6 +462,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildForLifetimes(...(children as Parameters<typeof F.buildForLifetimes>));
 		case 'line_comment':
 			return F.buildLineComment(children[0] as Parameters<typeof F.buildLineComment>[0]);
+		case 'match_block':
+			return F.buildMatchBlock(children[0] as Parameters<typeof F.buildMatchBlock>[0]);
 		case 'or_pattern':
 			return F.buildOrPattern(children[0] as Parameters<typeof F.buildOrPattern>[0]);
 		case 'parameters':
@@ -1890,19 +1893,20 @@ export function coerceToMatchArm(input: T.MatchArm.Loose): ReturnType<typeof F.b
 	});
 }
 
-export function coerceToMatchBlock(input: T.MatchBlock.Loose): ReturnType<typeof F.buildMatchBlock> {
-	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildMatchBlock>;
-	return F.buildMatchBlock({
-		matchArm: _resolveManyBranch<T.MatchArm>(input.matchArm, 'match_arm'),
-		lastArm: _requireField('match_block', 'lastArm', _resolveOneBranch<T.LastMatchArm>(input.lastArm, 'last_match_arm'))
-	});
+export function coerceToMatchBlock(input?: T.MatchBlockArms | T.MatchBlock): ReturnType<typeof F.buildMatchBlock> {
+	if (isNodeData(input) && input.$type === TSKindId.MatchBlock) {
+		const data = input;
+		const child = (data as unknown as { _match_block_arms?: unknown })._match_block_arms;
+		return F.buildMatchBlock(child as Parameters<typeof F.buildMatchBlock>[0]);
+	}
+	return F.buildMatchBlock(input as Parameters<typeof F.buildMatchBlock>[0]);
 }
 
 export function coerceToMatchExpression(input: T.MatchExpression.Loose): ReturnType<typeof F.buildMatchExpression> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildMatchExpression>;
 	return F.buildMatchExpression({
 		value: _requireField('match_expression', 'value', _resolveOne<T.Expression>(input.value, _K4, _K5)),
-		body: _requireField('match_expression', 'body', _resolveOneBranch<T.MatchBlock>(input.body, 'match_block'))
+		body: _resolveOneBranch<T.MatchBlock>(input.body, 'match_block') ?? F.buildMatchBlock()
 	});
 }
 
