@@ -331,7 +331,8 @@ function _hasSeparatorFlank(
 	content: readonly unknown[],
 	other: unknown,
 	edge: 'leading' | 'trailing',
-	otherFlankOptional: boolean
+	otherFlankOptional: boolean,
+	mandatoryAnons: number
 ): boolean {
 	const containerSpan = container.$span;
 	const anchor = edge === 'leading' ? content[0] : content[content.length - 1];
@@ -346,7 +347,11 @@ function _hasSeparatorFlank(
 		);
 	}
 	const otherCount = Array.isArray(other) ? other.length : 0;
-	const between = Math.max(content.length - 1, 0);
+	// Baseline = between-separators PLUS any structurally-mandatory flank
+	// anons: a mandatory-LEADING list consumes one anon per element (n),
+	// not n-1, so a lone captured separator on a single-element instance
+	// is the leading flank, not an extra trailing one.
+	const between = Math.max(content.length - 1, 0) + mandatoryAnons;
 	return otherCount > between;
 }
 const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
@@ -1462,7 +1467,7 @@ export function wrapExportClauseGroup1(
 			...data,
 			$type: TSKindId.ExportClauseGroup1 as const,
 			_export_specifier: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			exportSpecifiers() {
 				return drillInAll<T.ExportSpecifier>(this._export_specifier as readonly T.ExportSpecifier[] | undefined, tree);
@@ -2320,7 +2325,7 @@ export function wrapFormalParametersGroup1(
 			..._omitWrapKeys(data, ['_optional_parameter', '_required_parameter']),
 			$type: TSKindId.FormalParametersGroup1 as const,
 			_formal_parameter: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			formalParameters() {
 				return drillInAll<T.FormalParameter>(this._formal_parameter as readonly T.FormalParameter[] | undefined, tree);
@@ -2759,7 +2764,7 @@ export function wrapNamedImportsGroup1(
 			...data,
 			$type: TSKindId.NamedImportsGroup1 as const,
 			_import_specifier: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			importSpecifiers() {
 				return drillInAll<T.ImportSpecifier>(this._import_specifier as readonly T.ImportSpecifier[] | undefined, tree);
@@ -3583,7 +3588,7 @@ export function wrapTupleTypeGroup1(
 			]),
 			$type: TSKindId.TupleTypeGroup1 as const,
 			_tuple_type_member: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			tupleTypeMembers() {
 				return drillInAll<T.TupleTypeMember>(this._tuple_type_member as readonly T.TupleTypeMember[] | undefined, tree);
@@ -9286,8 +9291,8 @@ export function wrapObjectTypeContent(
 			$type: TSKindId.ObjectTypeContent as const,
 			_content: _content,
 			_separator_kind: _separatorKindOf(data, [TSKindId.Comma2, TSKindId.Semi]),
-			_leading_sep: _hasSeparatorFlank(data, _content, data.$other, 'leading', true),
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', true),
+			_leading_sep: _hasSeparatorFlank(data, _content, data.$other, 'leading', true, 0),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', true, 0),
 
 			contents() {
 				return drillInAll<

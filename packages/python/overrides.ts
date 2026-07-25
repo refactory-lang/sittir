@@ -225,6 +225,23 @@ export default grammar(
 					1: field('arguments')
 				},
 
+				// expression_list / pattern_list: `seq(member, choice(',',
+				// <enrich-lifted group>))` — the tail position is an UNNAMED
+				// mixed row (anon-literal | named-node). The single-element
+				// `c,` case parses the tail as a bare anonymous ',' token that
+				// lands in $other where the derived slot can't reach it, while
+				// the multi-element case parses the visible group node. Field
+				// the position so tree-sitter keys BOTH arms — the
+				// class_body_member / function_signature precedent; the
+				// id-first transport arms dispatch the anon comma, and the
+				// headless group renders via its captured leading flank.
+				expression_list: {
+					1: field('tail')
+				},
+				pattern_list: {
+					1: field('tail')
+				},
+
 				// class_pattern: 2 field(s)
 				class_pattern: {
 					2: field('arguments') // case_pattern [struct=1]

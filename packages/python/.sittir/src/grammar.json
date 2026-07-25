@@ -2100,29 +2100,36 @@
             "name": "expression"
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": ","
-              },
-              {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_expression_list_group1",
-                  "metadata": {
-                    "author": "enrich",
-                    "symbolSource": "group-lift"
-                  }
+            "type": "FIELD",
+            "name": "tail",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ","
                 },
-                "named": true,
-                "value": "expression_list_group1",
-                "metadata": {
-                  "author": "enrich"
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_expression_list_group1",
+                    "metadata": {
+                      "author": "enrich",
+                      "symbolSource": "group-lift"
+                    }
+                  },
+                  "named": true,
+                  "value": "expression_list_group1",
+                  "metadata": {
+                    "author": "enrich"
+                  }
                 }
-              }
-            ]
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         ]
       }
@@ -4082,29 +4089,36 @@
           "name": "pattern"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "STRING",
-              "value": ","
-            },
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_pattern_list_group1",
-                "metadata": {
-                  "author": "enrich",
-                  "symbolSource": "group-lift"
-                }
+          "type": "FIELD",
+          "name": "tail",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
               },
-              "named": true,
-              "value": "pattern_list_group1",
-              "metadata": {
-                "author": "enrich"
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_pattern_list_group1",
+                  "metadata": {
+                    "author": "enrich",
+                    "symbolSource": "group-lift"
+                  }
+                },
+                "named": true,
+                "value": "pattern_list_group1",
+                "metadata": {
+                  "author": "enrich"
+                }
               }
-            }
-          ]
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -7073,6 +7087,9 @@
       ]
     },
     "_kw_arguments": {
+      "type": "BLANK"
+    },
+    "_kw_tail": {
       "type": "BLANK"
     },
     "_kw_left": {

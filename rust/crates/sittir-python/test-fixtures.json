@@ -9371,6 +9371,1778 @@
       "$named": true,
       "$span": {
         "start": 0,
+        "end": 68
+      },
+      "$nodeHandle": 0,
+      "_statement": [
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 0,
+            "end": 5
+          },
+          "$nodeHandle": 44,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 0,
+                "end": 5
+              },
+              "$nodeHandle": 50,
+              "_content": {
+                "$type": 196,
+                "$source": 0,
+                "$named": true,
+                "_left": "a",
+                "$span": {
+                  "start": 0,
+                  "end": 5
+                },
+                "$nodeHandle": 51,
+                "_content": {
+                  "$type": 249,
+                  "$source": 0,
+                  "$named": true,
+                  "_right": "1",
+                  "$other": [
+                    42
+                  ],
+                  "$span": {
+                    "start": 2,
+                    "end": 5
+                  },
+                  "$nodeHandle": 52
+                }
+              }
+            }
+          ]
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 6,
+            "end": 17
+          },
+          "$nodeHandle": 45,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 6,
+                "end": 17
+              },
+              "$nodeHandle": 53,
+              "_content": {
+                "$type": 196,
+                "$source": 0,
+                "$named": true,
+                "_left": {
+                  "$type": 198,
+                  "$source": 0,
+                  "$named": true,
+                  "_tail": {
+                    "$type": 243,
+                    "$source": 0,
+                    "$named": true,
+                    "$other": [
+                      9
+                    ],
+                    "$span": {
+                      "start": 7,
+                      "end": 10
+                    },
+                    "$nodeHandle": 56,
+                    "_pattern": [
+                      "b"
+                    ],
+                    "_trailing_sep": false
+                  },
+                  "$span": {
+                    "start": 6,
+                    "end": 10
+                  },
+                  "$nodeHandle": 55,
+                  "_pattern": "a"
+                },
+                "$span": {
+                  "start": 6,
+                  "end": 17
+                },
+                "$nodeHandle": 54,
+                "_content": {
+                  "$type": 249,
+                  "$source": 0,
+                  "$named": true,
+                  "_right": {
+                    "$type": 161,
+                    "$source": 0,
+                    "$named": true,
+                    "_tail": {
+                      "$type": 240,
+                      "$source": 0,
+                      "$named": true,
+                      "$other": [
+                        9
+                      ],
+                      "$span": {
+                        "start": 14,
+                        "end": 17
+                      },
+                      "$nodeHandle": 59,
+                      "_expression": [
+                        "2"
+                      ],
+                      "_trailing_sep": false
+                    },
+                    "$span": {
+                      "start": 13,
+                      "end": 17
+                    },
+                    "$nodeHandle": 58,
+                    "_expression": "1"
+                  },
+                  "$other": [
+                    42
+                  ],
+                  "$span": {
+                    "start": 11,
+                    "end": 17
+                  },
+                  "$nodeHandle": 57
+                }
+              }
+            }
+          ]
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 18,
+            "end": 33
+          },
+          "$nodeHandle": 46,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 18,
+                "end": 33
+              },
+              "$nodeHandle": 60,
+              "_content": {
+                "$type": 196,
+                "$source": 0,
+                "$named": true,
+                "_left": {
+                  "$type": 198,
+                  "$source": 0,
+                  "$named": true,
+                  "_tail": {
+                    "$type": 243,
+                    "$source": 0,
+                    "$named": true,
+                    "$other": [
+                      9
+                    ],
+                    "$span": {
+                      "start": 19,
+                      "end": 23
+                    },
+                    "$nodeHandle": 63,
+                    "_pattern": [
+                      {
+                        "$type": 181,
+                        "$source": 0,
+                        "$named": true,
+                        "$other": [
+                          11
+                        ],
+                        "$span": {
+                          "start": 21,
+                          "end": 23
+                        },
+                        "$nodeHandle": 64,
+                        "_content": "c"
+                      }
+                    ],
+                    "_trailing_sep": false
+                  },
+                  "$span": {
+                    "start": 18,
+                    "end": 23
+                  },
+                  "$nodeHandle": 62,
+                  "_pattern": "a"
+                },
+                "$span": {
+                  "start": 18,
+                  "end": 33
+                },
+                "$nodeHandle": 61,
+                "_content": {
+                  "$type": 249,
+                  "$source": 0,
+                  "$named": true,
+                  "_right": {
+                    "$type": 161,
+                    "$source": 0,
+                    "$named": true,
+                    "_tail": {
+                      "$type": 240,
+                      "$source": 0,
+                      "$named": true,
+                      "$other": [
+                        9,
+                        9
+                      ],
+                      "$span": {
+                        "start": 27,
+                        "end": 33
+                      },
+                      "$nodeHandle": 67,
+                      "_expression": [
+                        "2",
+                        "3"
+                      ],
+                      "_trailing_sep": false
+                    },
+                    "$span": {
+                      "start": 26,
+                      "end": 33
+                    },
+                    "$nodeHandle": 66,
+                    "_expression": "1"
+                  },
+                  "$other": [
+                    42
+                  ],
+                  "$span": {
+                    "start": 24,
+                    "end": 33
+                  },
+                  "$nodeHandle": 65
+                }
+              }
+            }
+          ]
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 34,
+            "end": 43
+          },
+          "$nodeHandle": 47,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 34,
+                "end": 43
+              },
+              "$nodeHandle": 68,
+              "_content": {
+                "$type": 196,
+                "$source": 0,
+                "$named": true,
+                "_left": {
+                  "$type": 198,
+                  "$source": 0,
+                  "$named": true,
+                  "_tail": 9,
+                  "$span": {
+                    "start": 34,
+                    "end": 36
+                  },
+                  "$nodeHandle": 70,
+                  "_pattern": "a"
+                },
+                "$span": {
+                  "start": 34,
+                  "end": 43
+                },
+                "$nodeHandle": 69,
+                "_content": {
+                  "$type": 249,
+                  "$source": 0,
+                  "$named": true,
+                  "_right": {
+                    "$type": 161,
+                    "$source": 0,
+                    "$named": true,
+                    "_tail": {
+                      "$type": 240,
+                      "$source": 0,
+                      "$named": true,
+                      "$other": [
+                        9
+                      ],
+                      "$span": {
+                        "start": 40,
+                        "end": 43
+                      },
+                      "$nodeHandle": 73,
+                      "_expression": [
+                        "2"
+                      ],
+                      "_trailing_sep": false
+                    },
+                    "$span": {
+                      "start": 39,
+                      "end": 43
+                    },
+                    "$nodeHandle": 72,
+                    "_expression": "1"
+                  },
+                  "$other": [
+                    42
+                  ],
+                  "$span": {
+                    "start": 37,
+                    "end": 43
+                  },
+                  "$nodeHandle": 71
+                }
+              }
+            }
+          ]
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 44,
+            "end": 56
+          },
+          "$nodeHandle": 48,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 44,
+                "end": 56
+              },
+              "$nodeHandle": 74,
+              "_content": {
+                "$type": 196,
+                "$source": 0,
+                "$named": true,
+                "_left": {
+                  "$type": 202,
+                  "$source": 0,
+                  "$named": true,
+                  "_value": "a",
+                  "_subscript": [
+                    "b"
+                  ],
+                  "$other": [
+                    44,
+                    45
+                  ],
+                  "$span": {
+                    "start": 44,
+                    "end": 48
+                  },
+                  "$nodeHandle": 76
+                },
+                "$span": {
+                  "start": 44,
+                  "end": 56
+                },
+                "$nodeHandle": 75,
+                "_content": {
+                  "$type": 249,
+                  "$source": 0,
+                  "$named": true,
+                  "_right": {
+                    "$type": 196,
+                    "$source": 0,
+                    "$named": true,
+                    "_left": "c",
+                    "$span": {
+                      "start": 51,
+                      "end": 56
+                    },
+                    "$nodeHandle": 78,
+                    "_content": {
+                      "$type": 249,
+                      "$source": 0,
+                      "$named": true,
+                      "_right": "d",
+                      "$other": [
+                        42
+                      ],
+                      "$span": {
+                        "start": 53,
+                        "end": 56
+                      },
+                      "$nodeHandle": 79
+                    }
+                  },
+                  "$other": [
+                    42
+                  ],
+                  "$span": {
+                    "start": 49,
+                    "end": 56
+                  },
+                  "$nodeHandle": 77
+                }
+              }
+            }
+          ]
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 57,
+            "end": 68
+          },
+          "$nodeHandle": 49,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 57,
+                "end": 68
+              },
+              "$nodeHandle": 80,
+              "_content": {
+                "$type": 196,
+                "$source": 0,
+                "$named": true,
+                "_left": {
+                  "$type": 198,
+                  "$source": 0,
+                  "$named": true,
+                  "_tail": {
+                    "$type": 243,
+                    "$source": 0,
+                    "$named": true,
+                    "$other": [
+                      9
+                    ],
+                    "$span": {
+                      "start": 58,
+                      "end": 64
+                    },
+                    "$nodeHandle": 83,
+                    "_pattern": [
+                      {
+                        "$type": 181,
+                        "$source": 0,
+                        "$named": true,
+                        "$other": [
+                          11
+                        ],
+                        "$span": {
+                          "start": 60,
+                          "end": 64
+                        },
+                        "$nodeHandle": 84,
+                        "_content": {
+                          "$type": 201,
+                          "$source": 0,
+                          "$named": true,
+                          "_object": "b",
+                          "_attribute": "c",
+                          "$other": [
+                            4
+                          ],
+                          "$span": {
+                            "start": 61,
+                            "end": 64
+                          },
+                          "$nodeHandle": 85
+                        }
+                      }
+                    ],
+                    "_trailing_sep": false
+                  },
+                  "$span": {
+                    "start": 57,
+                    "end": 64
+                  },
+                  "$nodeHandle": 82,
+                  "_pattern": "a"
+                },
+                "$span": {
+                  "start": 57,
+                  "end": 68
+                },
+                "$nodeHandle": 81,
+                "_content": {
+                  "$type": 249,
+                  "$source": 0,
+                  "$named": true,
+                  "_right": "d",
+                  "$other": [
+                    42
+                  ],
+                  "$span": {
+                    "start": 65,
+                    "end": 68
+                  },
+                  "$nodeHandle": 86
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "expectedOutput": "a=1\na,b=1,2\na,*c=1,2,3\na,=1,2\na[b]=c=d\na,*b.c=d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a = 1\na, b = 1, 2\na, *c = 1, 2, 3\na, = 1, 2\na[b] = c = d\na, *b.c = d",
+    "pattern": "module",
+    "edits": [],
+    "expectedSourceOut": "a=1\na,b=1,2\na,*c=1,2,3\na,=1,2\na[b]=c=d\na,*b.c=d",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (assignment left: (identifier) (assignment_eq right: (integer)))) (newline)) (statement_group1 (expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (integer)))))) (newline)) (statement_group1 (expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (list_splat_pattern (identifier)))) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (integer) (integer)))))) (newline)) (statement_group1 (expression_statement (assignment left: (pattern_list (identifier)) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (integer)))))) (newline)) (statement_group1 (expression_statement (assignment left: (subscript value: (identifier) subscript: (identifier)) (assignment_eq right: (assignment left: (identifier) (assignment_eq right: (identifier)))))) (newline)) (statement_group1 (expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (list_splat_pattern (attribute object: (identifier) attribute: (identifier))))) (assignment_eq right: (identifier)))) (newline)))",
+    "wrappedText": "a=1\na,b=1,2\na,*c=1,2,3\na,=1,2\na[b]=c=d\na,*b.c=d",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 0,
+        "end": 5
+      },
+      "$nodeHandle": 7,
+      "_content": {
+        "$type": 196,
+        "$source": 0,
+        "$named": true,
+        "_left": "a",
+        "$span": {
+          "start": 0,
+          "end": 5
+        },
+        "$nodeHandle": 87,
+        "_content": {
+          "$type": 249,
+          "$source": 0,
+          "$named": true,
+          "_right": "1",
+          "$other": [
+            42
+          ],
+          "$span": {
+            "start": 2,
+            "end": 5
+          },
+          "$nodeHandle": 88
+        }
+      }
+    },
+    "expectedOutput": "a=1"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a = 1",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "a=1",
+    "expectedReparseTree": "(expression_statement (assignment left: (identifier) (assignment_eq right: (integer))))",
+    "wrappedText": "a=1",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 6,
+        "end": 17
+      },
+      "$nodeHandle": 10,
+      "_content": {
+        "$type": 196,
+        "$source": 0,
+        "$named": true,
+        "_left": {
+          "$type": 198,
+          "$source": 0,
+          "$named": true,
+          "_tail": {
+            "$type": 243,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              9
+            ],
+            "$span": {
+              "start": 7,
+              "end": 10
+            },
+            "$nodeHandle": 91,
+            "_pattern": [
+              "b"
+            ],
+            "_trailing_sep": false
+          },
+          "$span": {
+            "start": 6,
+            "end": 10
+          },
+          "$nodeHandle": 90,
+          "_pattern": "a"
+        },
+        "$span": {
+          "start": 6,
+          "end": 17
+        },
+        "$nodeHandle": 89,
+        "_content": {
+          "$type": 249,
+          "$source": 0,
+          "$named": true,
+          "_right": {
+            "$type": 161,
+            "$source": 0,
+            "$named": true,
+            "_tail": {
+              "$type": 240,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                9
+              ],
+              "$span": {
+                "start": 14,
+                "end": 17
+              },
+              "$nodeHandle": 94,
+              "_expression": [
+                "2"
+              ],
+              "_trailing_sep": false
+            },
+            "$span": {
+              "start": 13,
+              "end": 17
+            },
+            "$nodeHandle": 93,
+            "_expression": "1"
+          },
+          "$other": [
+            42
+          ],
+          "$span": {
+            "start": 11,
+            "end": 17
+          },
+          "$nodeHandle": 92
+        }
+      }
+    },
+    "expectedOutput": "a,b=1,2"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a, b = 1, 2",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "a,b=1,2",
+    "expectedReparseTree": "(expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (integer))))))",
+    "wrappedText": "a,b=1,2",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 18,
+        "end": 33
+      },
+      "$nodeHandle": 17,
+      "_content": {
+        "$type": 196,
+        "$source": 0,
+        "$named": true,
+        "_left": {
+          "$type": 198,
+          "$source": 0,
+          "$named": true,
+          "_tail": {
+            "$type": 243,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              9
+            ],
+            "$span": {
+              "start": 19,
+              "end": 23
+            },
+            "$nodeHandle": 97,
+            "_pattern": [
+              {
+                "$type": 181,
+                "$source": 0,
+                "$named": true,
+                "$other": [
+                  11
+                ],
+                "$span": {
+                  "start": 21,
+                  "end": 23
+                },
+                "$nodeHandle": 98,
+                "_content": "c"
+              }
+            ],
+            "_trailing_sep": false
+          },
+          "$span": {
+            "start": 18,
+            "end": 23
+          },
+          "$nodeHandle": 96,
+          "_pattern": "a"
+        },
+        "$span": {
+          "start": 18,
+          "end": 33
+        },
+        "$nodeHandle": 95,
+        "_content": {
+          "$type": 249,
+          "$source": 0,
+          "$named": true,
+          "_right": {
+            "$type": 161,
+            "$source": 0,
+            "$named": true,
+            "_tail": {
+              "$type": 240,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                9,
+                9
+              ],
+              "$span": {
+                "start": 27,
+                "end": 33
+              },
+              "$nodeHandle": 101,
+              "_expression": [
+                "2",
+                "3"
+              ],
+              "_trailing_sep": false
+            },
+            "$span": {
+              "start": 26,
+              "end": 33
+            },
+            "$nodeHandle": 100,
+            "_expression": "1"
+          },
+          "$other": [
+            42
+          ],
+          "$span": {
+            "start": 24,
+            "end": 33
+          },
+          "$nodeHandle": 99
+        }
+      }
+    },
+    "expectedOutput": "a,*c=1,2,3"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a, *c = 1, 2, 3",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "a,*c=1,2,3",
+    "expectedReparseTree": "(expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (list_splat_pattern (identifier)))) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (integer) (integer))))))",
+    "wrappedText": "a,*c=1,2,3",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 34,
+        "end": 43
+      },
+      "$nodeHandle": 25,
+      "_content": {
+        "$type": 196,
+        "$source": 0,
+        "$named": true,
+        "_left": {
+          "$type": 198,
+          "$source": 0,
+          "$named": true,
+          "_tail": 9,
+          "$span": {
+            "start": 34,
+            "end": 36
+          },
+          "$nodeHandle": 103,
+          "_pattern": "a"
+        },
+        "$span": {
+          "start": 34,
+          "end": 43
+        },
+        "$nodeHandle": 102,
+        "_content": {
+          "$type": 249,
+          "$source": 0,
+          "$named": true,
+          "_right": {
+            "$type": 161,
+            "$source": 0,
+            "$named": true,
+            "_tail": {
+              "$type": 240,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                9
+              ],
+              "$span": {
+                "start": 40,
+                "end": 43
+              },
+              "$nodeHandle": 106,
+              "_expression": [
+                "2"
+              ],
+              "_trailing_sep": false
+            },
+            "$span": {
+              "start": 39,
+              "end": 43
+            },
+            "$nodeHandle": 105,
+            "_expression": "1"
+          },
+          "$other": [
+            42
+          ],
+          "$span": {
+            "start": 37,
+            "end": 43
+          },
+          "$nodeHandle": 104
+        }
+      }
+    },
+    "expectedOutput": "a,=1,2"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a, = 1, 2",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "a,=1,2",
+    "expectedReparseTree": "(expression_statement (assignment left: (pattern_list (identifier)) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (integer))))))",
+    "wrappedText": "a,=1,2",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 44,
+        "end": 56
+      },
+      "$nodeHandle": 31,
+      "_content": {
+        "$type": 196,
+        "$source": 0,
+        "$named": true,
+        "_left": {
+          "$type": 202,
+          "$source": 0,
+          "$named": true,
+          "_value": "a",
+          "_subscript": [
+            "b"
+          ],
+          "$other": [
+            44,
+            45
+          ],
+          "$span": {
+            "start": 44,
+            "end": 48
+          },
+          "$nodeHandle": 108
+        },
+        "$span": {
+          "start": 44,
+          "end": 56
+        },
+        "$nodeHandle": 107,
+        "_content": {
+          "$type": 249,
+          "$source": 0,
+          "$named": true,
+          "_right": {
+            "$type": 196,
+            "$source": 0,
+            "$named": true,
+            "_left": "c",
+            "$span": {
+              "start": 51,
+              "end": 56
+            },
+            "$nodeHandle": 110,
+            "_content": {
+              "$type": 249,
+              "$source": 0,
+              "$named": true,
+              "_right": "d",
+              "$other": [
+                42
+              ],
+              "$span": {
+                "start": 53,
+                "end": 56
+              },
+              "$nodeHandle": 111
+            }
+          },
+          "$other": [
+            42
+          ],
+          "$span": {
+            "start": 49,
+            "end": 56
+          },
+          "$nodeHandle": 109
+        }
+      }
+    },
+    "expectedOutput": "a[b]=c=d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a[b] = c = d",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "a[b]=c=d",
+    "expectedReparseTree": "(expression_statement (assignment left: (subscript value: (identifier) subscript: (identifier)) (assignment_eq right: (assignment left: (identifier) (assignment_eq right: (identifier))))))",
+    "wrappedText": "a[b]=c=d",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 57,
+        "end": 68
+      },
+      "$nodeHandle": 37,
+      "_content": {
+        "$type": 196,
+        "$source": 0,
+        "$named": true,
+        "_left": {
+          "$type": 198,
+          "$source": 0,
+          "$named": true,
+          "_tail": {
+            "$type": 243,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              9
+            ],
+            "$span": {
+              "start": 58,
+              "end": 64
+            },
+            "$nodeHandle": 114,
+            "_pattern": [
+              {
+                "$type": 181,
+                "$source": 0,
+                "$named": true,
+                "$other": [
+                  11
+                ],
+                "$span": {
+                  "start": 60,
+                  "end": 64
+                },
+                "$nodeHandle": 115,
+                "_content": {
+                  "$type": 201,
+                  "$source": 0,
+                  "$named": true,
+                  "_object": "b",
+                  "_attribute": "c",
+                  "$other": [
+                    4
+                  ],
+                  "$span": {
+                    "start": 61,
+                    "end": 64
+                  },
+                  "$nodeHandle": 116
+                }
+              }
+            ],
+            "_trailing_sep": false
+          },
+          "$span": {
+            "start": 57,
+            "end": 64
+          },
+          "$nodeHandle": 113,
+          "_pattern": "a"
+        },
+        "$span": {
+          "start": 57,
+          "end": 68
+        },
+        "$nodeHandle": 112,
+        "_content": {
+          "$type": 249,
+          "$source": 0,
+          "$named": true,
+          "_right": "d",
+          "$other": [
+            42
+          ],
+          "$span": {
+            "start": 65,
+            "end": 68
+          },
+          "$nodeHandle": 117
+        }
+      }
+    },
+    "expectedOutput": "a,*b.c=d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a, *b.c = d",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "a,*b.c=d",
+    "expectedReparseTree": "(expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (list_splat_pattern (attribute object: (identifier) attribute: (identifier))))) (assignment_eq right: (identifier))))",
+    "wrappedText": "a,*b.c=d",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 196,
+      "$source": 0,
+      "$named": true,
+      "_left": "a",
+      "$span": {
+        "start": 0,
+        "end": 5
+      },
+      "$nodeHandle": 8,
+      "_content": {
+        "$type": 249,
+        "$source": 0,
+        "$named": true,
+        "_right": "1",
+        "$other": [
+          42
+        ],
+        "$span": {
+          "start": 2,
+          "end": 5
+        },
+        "$nodeHandle": 118
+      }
+    },
+    "expectedOutput": "a=1"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a = 1",
+    "pattern": "assignment",
+    "edits": [],
+    "expectedSourceOut": "a=1",
+    "expectedReparseTree": "(assignment left: (identifier) (assignment_eq right: (integer)))",
+    "wrappedText": "a=1",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 196,
+      "$source": 0,
+      "$named": true,
+      "_left": {
+        "$type": 198,
+        "$source": 0,
+        "$named": true,
+        "_tail": {
+          "$type": 243,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            9
+          ],
+          "$span": {
+            "start": 7,
+            "end": 10
+          },
+          "$nodeHandle": 120,
+          "_pattern": [
+            "b"
+          ],
+          "_trailing_sep": false
+        },
+        "$span": {
+          "start": 6,
+          "end": 10
+        },
+        "$nodeHandle": 119,
+        "_pattern": "a"
+      },
+      "$span": {
+        "start": 6,
+        "end": 17
+      },
+      "$nodeHandle": 11,
+      "_content": {
+        "$type": 249,
+        "$source": 0,
+        "$named": true,
+        "_right": {
+          "$type": 161,
+          "$source": 0,
+          "$named": true,
+          "_tail": {
+            "$type": 240,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              9
+            ],
+            "$span": {
+              "start": 14,
+              "end": 17
+            },
+            "$nodeHandle": 123,
+            "_expression": [
+              "2"
+            ],
+            "_trailing_sep": false
+          },
+          "$span": {
+            "start": 13,
+            "end": 17
+          },
+          "$nodeHandle": 122,
+          "_expression": "1"
+        },
+        "$other": [
+          42
+        ],
+        "$span": {
+          "start": 11,
+          "end": 17
+        },
+        "$nodeHandle": 121
+      }
+    },
+    "expectedOutput": "a,b=1,2"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a, b = 1, 2",
+    "pattern": "assignment",
+    "edits": [],
+    "expectedSourceOut": "a,b=1,2",
+    "expectedReparseTree": "(assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (integer)))))",
+    "wrappedText": "a,b=1,2",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 196,
+      "$source": 0,
+      "$named": true,
+      "_left": {
+        "$type": 198,
+        "$source": 0,
+        "$named": true,
+        "_tail": {
+          "$type": 243,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            9
+          ],
+          "$span": {
+            "start": 19,
+            "end": 23
+          },
+          "$nodeHandle": 125,
+          "_pattern": [
+            {
+              "$type": 181,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                11
+              ],
+              "$span": {
+                "start": 21,
+                "end": 23
+              },
+              "$nodeHandle": 126,
+              "_content": "c"
+            }
+          ],
+          "_trailing_sep": false
+        },
+        "$span": {
+          "start": 18,
+          "end": 23
+        },
+        "$nodeHandle": 124,
+        "_pattern": "a"
+      },
+      "$span": {
+        "start": 18,
+        "end": 33
+      },
+      "$nodeHandle": 18,
+      "_content": {
+        "$type": 249,
+        "$source": 0,
+        "$named": true,
+        "_right": {
+          "$type": 161,
+          "$source": 0,
+          "$named": true,
+          "_tail": {
+            "$type": 240,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              9,
+              9
+            ],
+            "$span": {
+              "start": 27,
+              "end": 33
+            },
+            "$nodeHandle": 129,
+            "_expression": [
+              "2",
+              "3"
+            ],
+            "_trailing_sep": false
+          },
+          "$span": {
+            "start": 26,
+            "end": 33
+          },
+          "$nodeHandle": 128,
+          "_expression": "1"
+        },
+        "$other": [
+          42
+        ],
+        "$span": {
+          "start": 24,
+          "end": 33
+        },
+        "$nodeHandle": 127
+      }
+    },
+    "expectedOutput": "a,*c=1,2,3"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a, *c = 1, 2, 3",
+    "pattern": "assignment",
+    "edits": [],
+    "expectedSourceOut": "a,*c=1,2,3",
+    "expectedReparseTree": "(assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (list_splat_pattern (identifier)))) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (integer) (integer)))))",
+    "wrappedText": "a,*c=1,2,3",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 196,
+      "$source": 0,
+      "$named": true,
+      "_left": {
+        "$type": 198,
+        "$source": 0,
+        "$named": true,
+        "_tail": 9,
+        "$span": {
+          "start": 34,
+          "end": 36
+        },
+        "$nodeHandle": 130,
+        "_pattern": "a"
+      },
+      "$span": {
+        "start": 34,
+        "end": 43
+      },
+      "$nodeHandle": 26,
+      "_content": {
+        "$type": 249,
+        "$source": 0,
+        "$named": true,
+        "_right": {
+          "$type": 161,
+          "$source": 0,
+          "$named": true,
+          "_tail": {
+            "$type": 240,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              9
+            ],
+            "$span": {
+              "start": 40,
+              "end": 43
+            },
+            "$nodeHandle": 133,
+            "_expression": [
+              "2"
+            ],
+            "_trailing_sep": false
+          },
+          "$span": {
+            "start": 39,
+            "end": 43
+          },
+          "$nodeHandle": 132,
+          "_expression": "1"
+        },
+        "$other": [
+          42
+        ],
+        "$span": {
+          "start": 37,
+          "end": 43
+        },
+        "$nodeHandle": 131
+      }
+    },
+    "expectedOutput": "a,=1,2"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a, = 1, 2",
+    "pattern": "assignment",
+    "edits": [],
+    "expectedSourceOut": "a,=1,2",
+    "expectedReparseTree": "(assignment left: (pattern_list (identifier)) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (integer)))))",
+    "wrappedText": "a,=1,2",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 196,
+      "$source": 0,
+      "$named": true,
+      "_left": {
+        "$type": 202,
+        "$source": 0,
+        "$named": true,
+        "_value": "a",
+        "_subscript": [
+          "b"
+        ],
+        "$other": [
+          44,
+          45
+        ],
+        "$span": {
+          "start": 44,
+          "end": 48
+        },
+        "$nodeHandle": 134
+      },
+      "$span": {
+        "start": 44,
+        "end": 56
+      },
+      "$nodeHandle": 32,
+      "_content": {
+        "$type": 249,
+        "$source": 0,
+        "$named": true,
+        "_right": {
+          "$type": 196,
+          "$source": 0,
+          "$named": true,
+          "_left": "c",
+          "$span": {
+            "start": 51,
+            "end": 56
+          },
+          "$nodeHandle": 136,
+          "_content": {
+            "$type": 249,
+            "$source": 0,
+            "$named": true,
+            "_right": "d",
+            "$other": [
+              42
+            ],
+            "$span": {
+              "start": 53,
+              "end": 56
+            },
+            "$nodeHandle": 137
+          }
+        },
+        "$other": [
+          42
+        ],
+        "$span": {
+          "start": 49,
+          "end": 56
+        },
+        "$nodeHandle": 135
+      }
+    },
+    "expectedOutput": "a[b]=c=d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a[b] = c = d",
+    "pattern": "assignment",
+    "edits": [],
+    "expectedSourceOut": "a[b]=c=d",
+    "expectedReparseTree": "(assignment left: (subscript value: (identifier) subscript: (identifier)) (assignment_eq right: (assignment left: (identifier) (assignment_eq right: (identifier)))))",
+    "wrappedText": "a[b]=c=d",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 196,
+      "$source": 0,
+      "$named": true,
+      "_left": "c",
+      "$span": {
+        "start": 51,
+        "end": 56
+      },
+      "$nodeHandle": 35,
+      "_content": {
+        "$type": 249,
+        "$source": 0,
+        "$named": true,
+        "_right": "d",
+        "$other": [
+          42
+        ],
+        "$span": {
+          "start": 53,
+          "end": 56
+        },
+        "$nodeHandle": 138
+      }
+    },
+    "expectedOutput": "c=d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "c = d",
+    "pattern": "assignment",
+    "edits": [],
+    "expectedSourceOut": "c=d",
+    "expectedReparseTree": "(assignment left: (identifier) (assignment_eq right: (identifier)))",
+    "wrappedText": "c=d",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 196,
+      "$source": 0,
+      "$named": true,
+      "_left": {
+        "$type": 198,
+        "$source": 0,
+        "$named": true,
+        "_tail": {
+          "$type": 243,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            9
+          ],
+          "$span": {
+            "start": 58,
+            "end": 64
+          },
+          "$nodeHandle": 140,
+          "_pattern": [
+            {
+              "$type": 181,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                11
+              ],
+              "$span": {
+                "start": 60,
+                "end": 64
+              },
+              "$nodeHandle": 141,
+              "_content": {
+                "$type": 201,
+                "$source": 0,
+                "$named": true,
+                "_object": "b",
+                "_attribute": "c",
+                "$other": [
+                  4
+                ],
+                "$span": {
+                  "start": 61,
+                  "end": 64
+                },
+                "$nodeHandle": 142
+              }
+            }
+          ],
+          "_trailing_sep": false
+        },
+        "$span": {
+          "start": 57,
+          "end": 64
+        },
+        "$nodeHandle": 139,
+        "_pattern": "a"
+      },
+      "$span": {
+        "start": 57,
+        "end": 68
+      },
+      "$nodeHandle": 38,
+      "_content": {
+        "$type": 249,
+        "$source": 0,
+        "$named": true,
+        "_right": "d",
+        "$other": [
+          42
+        ],
+        "$span": {
+          "start": 65,
+          "end": 68
+        },
+        "$nodeHandle": 143
+      }
+    },
+    "expectedOutput": "a,*b.c=d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a, *b.c = d",
+    "pattern": "assignment",
+    "edits": [],
+    "expectedSourceOut": "a,*b.c=d",
+    "expectedReparseTree": "(assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (list_splat_pattern (attribute object: (identifier) attribute: (identifier))))) (assignment_eq right: (identifier)))",
+    "wrappedText": "a,*b.c=d",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 181,
+      "$source": 0,
+      "$named": true,
+      "$other": [
+        11
+      ],
+      "$span": {
+        "start": 21,
+        "end": 23
+      },
+      "$nodeHandle": 21,
+      "_content": "c"
+    },
+    "expectedOutput": "*c"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*c",
+    "pattern": "list_splat_pattern",
+    "edits": [],
+    "expectedSourceOut": "*c",
+    "expectedReparseTree": "(list_splat_pattern (identifier))",
+    "wrappedText": "*c = (1,)",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 202,
+      "$source": 0,
+      "$named": true,
+      "_value": "a",
+      "_subscript": [
+        "b"
+      ],
+      "$other": [
+        44,
+        45
+      ],
+      "$span": {
+        "start": 44,
+        "end": 48
+      },
+      "$nodeHandle": 33
+    },
+    "expectedOutput": "a[b]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a[b]",
+    "pattern": "subscript",
+    "edits": [],
+    "expectedSourceOut": "a[b]",
+    "expectedReparseTree": "(subscript value: (identifier) subscript: (identifier))",
+    "wrappedText": "[a[b]]",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 201,
+      "$source": 0,
+      "$named": true,
+      "_object": "b",
+      "_attribute": "c",
+      "$other": [
+        4
+      ],
+      "$span": {
+        "start": 61,
+        "end": 64
+      },
+      "$nodeHandle": 42
+    },
+    "expectedOutput": "b.c"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "b.c",
+    "pattern": "attribute",
+    "edits": [],
+    "expectedSourceOut": "b.c",
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "[b.c]",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 108,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 0,
         "end": 28
       },
       "$nodeHandle": 0,
@@ -14838,6 +16610,274 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 14,
+        "end": 35
+      },
+      "$nodeHandle": 12,
+      "_content": {
+        "$type": 196,
+        "$source": 0,
+        "$named": true,
+        "_left": {
+          "$type": 198,
+          "$source": 0,
+          "$named": true,
+          "_tail": {
+            "$type": 243,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              9,
+              9,
+              9
+            ],
+            "$span": {
+              "start": 15,
+              "end": 24
+            },
+            "$nodeHandle": 49,
+            "_pattern": [
+              "x",
+              "y",
+              "z"
+            ],
+            "_trailing_sep": false
+          },
+          "$span": {
+            "start": 14,
+            "end": 24
+          },
+          "$nodeHandle": 48,
+          "_pattern": "w"
+        },
+        "$span": {
+          "start": 14,
+          "end": 35
+        },
+        "$nodeHandle": 47,
+        "_content": {
+          "$type": 249,
+          "$source": 0,
+          "$named": true,
+          "_right": {
+            "$type": 161,
+            "$source": 0,
+            "$named": true,
+            "_tail": {
+              "$type": 240,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                9,
+                9
+              ],
+              "$span": {
+                "start": 28,
+                "end": 35
+              },
+              "$nodeHandle": 52,
+              "_expression": [
+                {
+                  "$type": 181,
+                  "$source": 0,
+                  "$named": true,
+                  "$other": [
+                    11
+                  ],
+                  "$span": {
+                    "start": 30,
+                    "end": 32
+                  },
+                  "$nodeHandle": 53,
+                  "_content": "a"
+                },
+                "c"
+              ],
+              "_trailing_sep": false
+            },
+            "$span": {
+              "start": 27,
+              "end": 35
+            },
+            "$nodeHandle": 51,
+            "_expression": "0"
+          },
+          "$other": [
+            42
+          ],
+          "$span": {
+            "start": 25,
+            "end": 35
+          },
+          "$nodeHandle": 50
+        }
+      }
+    },
+    "expectedOutput": "w,x,y,z=0,*a,c"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "w, x, y, z = 0, *a, c",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "w,x,y,z=0,*a,c",
+    "expectedReparseTree": "(expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier) (identifier) (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (list_splat_pattern (identifier)) (identifier))))))",
+    "wrappedText": "w,x,y,z=0,*a,c",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 196,
+      "$source": 0,
+      "$named": true,
+      "_left": {
+        "$type": 198,
+        "$source": 0,
+        "$named": true,
+        "_tail": {
+          "$type": 243,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            9,
+            9,
+            9
+          ],
+          "$span": {
+            "start": 15,
+            "end": 24
+          },
+          "$nodeHandle": 62,
+          "_pattern": [
+            "x",
+            "y",
+            "z"
+          ],
+          "_trailing_sep": false
+        },
+        "$span": {
+          "start": 14,
+          "end": 24
+        },
+        "$nodeHandle": 61,
+        "_pattern": "w"
+      },
+      "$span": {
+        "start": 14,
+        "end": 35
+      },
+      "$nodeHandle": 13,
+      "_content": {
+        "$type": 249,
+        "$source": 0,
+        "$named": true,
+        "_right": {
+          "$type": 161,
+          "$source": 0,
+          "$named": true,
+          "_tail": {
+            "$type": 240,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              9,
+              9
+            ],
+            "$span": {
+              "start": 28,
+              "end": 35
+            },
+            "$nodeHandle": 65,
+            "_expression": [
+              {
+                "$type": 181,
+                "$source": 0,
+                "$named": true,
+                "$other": [
+                  11
+                ],
+                "$span": {
+                  "start": 30,
+                  "end": 32
+                },
+                "$nodeHandle": 66,
+                "_content": "a"
+              },
+              "c"
+            ],
+            "_trailing_sep": false
+          },
+          "$span": {
+            "start": 27,
+            "end": 35
+          },
+          "$nodeHandle": 64,
+          "_expression": "0"
+        },
+        "$other": [
+          42
+        ],
+        "$span": {
+          "start": 25,
+          "end": 35
+        },
+        "$nodeHandle": 63
+      }
+    },
+    "expectedOutput": "w,x,y,z=0,*a,c"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "w, x, y, z = 0, *a, c",
+    "pattern": "assignment",
+    "edits": [],
+    "expectedSourceOut": "w,x,y,z=0,*a,c",
+    "expectedReparseTree": "(assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier) (identifier) (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (list_splat_pattern (identifier)) (identifier)))))",
+    "wrappedText": "w,x,y,z=0,*a,c",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 181,
+      "$source": 0,
+      "$named": true,
+      "$other": [
+        11
+      ],
+      "$span": {
+        "start": 30,
+        "end": 32
+      },
+      "$nodeHandle": 19,
+      "_content": "a"
+    },
+    "expectedOutput": "*a"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*a",
+    "pattern": "list_splat_pattern",
+    "edits": [],
+    "expectedSourceOut": "*a",
+    "expectedReparseTree": "(list_splat_pattern (identifier))",
+    "wrappedText": "*a = (1,)",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 108,
       "$source": 0,
       "$named": true,
@@ -19417,6 +21457,2634 @@
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
     "wrappedText": "_ = r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\"",
     "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 10,
+        "end": 32
+      },
+      "$nodeHandle": 14,
+      "_content": {
+        "$type": 229,
+        "$source": 0,
+        "$named": true,
+        "_string_start": "f\"",
+        "_content": [
+          {
+            "$type": 230,
+            "$source": 0,
+            "$named": true,
+            "$text": "a ",
+            "$span": {
+              "start": 12,
+              "end": 14
+            }
+          },
+          {
+            "$type": 231,
+            "$source": 0,
+            "$named": true,
+            "_expression": {
+              "$type": 204,
+              "$source": 0,
+              "$named": true,
+              "_function": "b",
+              "_arguments": {
+                "$type": 157,
+                "$source": 0,
+                "$named": true,
+                "_arguments": {
+                  "$type": 239,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 17,
+                    "end": 27
+                  },
+                  "$nodeHandle": 165,
+                  "_content": [
+                    {
+                      "$type": 229,
+                      "$source": 0,
+                      "$named": true,
+                      "_string_start": "f'",
+                      "_content": [
+                        {
+                          "$type": 230,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": "c ",
+                          "$span": {
+                            "start": 19,
+                            "end": 21
+                          }
+                        },
+                        {
+                          "$type": 231,
+                          "$source": 0,
+                          "$named": true,
+                          "_expression": "e",
+                          "$other": [
+                            49,
+                            50
+                          ],
+                          "$span": {
+                            "start": 21,
+                            "end": 24
+                          },
+                          "$nodeHandle": 167
+                        },
+                        {
+                          "$type": 230,
+                          "$source": 0,
+                          "$named": true,
+                          "$text": " d",
+                          "$span": {
+                            "start": 24,
+                            "end": 26
+                          }
+                        }
+                      ],
+                      "_string_end": "'",
+                      "$span": {
+                        "start": 17,
+                        "end": 27
+                      },
+                      "$nodeHandle": 166
+                    }
+                  ],
+                  "_trailing_sep": false
+                },
+                "$other": [
+                  7,
+                  8
+                ],
+                "$span": {
+                  "start": 16,
+                  "end": 28
+                },
+                "$nodeHandle": 164
+              },
+              "$span": {
+                "start": 15,
+                "end": 28
+              },
+              "$nodeHandle": 163
+            },
+            "$other": [
+              49,
+              50
+            ],
+            "$span": {
+              "start": 14,
+              "end": 29
+            },
+            "$nodeHandle": 162
+          },
+          {
+            "$type": 230,
+            "$source": 0,
+            "$named": true,
+            "$text": " e",
+            "$span": {
+              "start": 29,
+              "end": 31
+            }
+          }
+        ],
+        "_string_end": "\"",
+        "$span": {
+          "start": 10,
+          "end": 32
+        },
+        "$nodeHandle": 161
+      }
+    },
+    "expectedOutput": "f\"a { b(f'c { e } d') } e\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"a {b(f'c {e} d')} e\"",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "f\"a { b(f'c { e } d') } e\"",
+    "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end)))))) content: (string_content) string_end: (string_end)))",
+    "wrappedText": "f\"a { b(f'c { e } d') } e\"",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 33,
+        "end": 46
+      },
+      "$nodeHandle": 22,
+      "_content": {
+        "$type": 229,
+        "$source": 0,
+        "$named": true,
+        "_string_start": "f\"\"\"",
+        "_content": [
+          {
+            "$type": 230,
+            "$source": 0,
+            "$named": true,
+            "$text": "a\"",
+            "$span": {
+              "start": 37,
+              "end": 39
+            }
+          },
+          {
+            "$type": 231,
+            "$source": 0,
+            "$named": true,
+            "_expression": "b",
+            "$other": [
+              49,
+              50
+            ],
+            "$span": {
+              "start": 39,
+              "end": 42
+            },
+            "$nodeHandle": 169
+          },
+          {
+            "$type": 230,
+            "$source": 0,
+            "$named": true,
+            "$text": "c",
+            "$span": {
+              "start": 42,
+              "end": 43
+            }
+          }
+        ],
+        "_string_end": "\"\"\"",
+        "$span": {
+          "start": 33,
+          "end": 46
+        },
+        "$nodeHandle": 168
+      }
+    },
+    "expectedOutput": "f\"\"\"a\"{ b }c\"\"\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"\"\"a\"{b}c\"\"\"",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "f\"\"\"a\"{ b }c\"\"\"",
+    "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end)))",
+    "wrappedText": "f\"\"\"a\"{ b }c\"\"\"",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 47,
+        "end": 61
+      },
+      "$nodeHandle": 25,
+      "_content": {
+        "$type": 229,
+        "$source": 0,
+        "$named": true,
+        "_string_start": "f\"\"\"",
+        "_content": [
+          {
+            "$type": 230,
+            "$source": 0,
+            "$named": true,
+            "$text": "a\"\"",
+            "$span": {
+              "start": 51,
+              "end": 54
+            }
+          },
+          {
+            "$type": 231,
+            "$source": 0,
+            "$named": true,
+            "_expression": "b",
+            "$other": [
+              49,
+              50
+            ],
+            "$span": {
+              "start": 54,
+              "end": 57
+            },
+            "$nodeHandle": 171
+          },
+          {
+            "$type": 230,
+            "$source": 0,
+            "$named": true,
+            "$text": "c",
+            "$span": {
+              "start": 57,
+              "end": 58
+            }
+          }
+        ],
+        "_string_end": "\"\"\"",
+        "$span": {
+          "start": 47,
+          "end": 61
+        },
+        "$nodeHandle": 170
+      }
+    },
+    "expectedOutput": "f\"\"\"a\"\"{ b }c\"\"\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"\"\"a\"\"{b}c\"\"\"",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "f\"\"\"a\"\"{ b }c\"\"\"",
+    "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end)))",
+    "wrappedText": "f\"\"\"a\"\"{ b }c\"\"\"",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 62,
+        "end": 73
+      },
+      "$nodeHandle": 28,
+      "_content": {
+        "$type": 229,
+        "$source": 0,
+        "$named": true,
+        "_string_start": "f\"",
+        "_content": [
+          {
+            "$type": 230,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 64,
+              "end": 72
+            },
+            "$nodeHandle": 173,
+            "_content": [
+              "{{",
+              "}}"
+            ]
+          }
+        ],
+        "_string_end": "\"",
+        "$span": {
+          "start": 62,
+          "end": 73
+        },
+        "$nodeHandle": 172
+      }
+    },
+    "expectedOutput": "f\"{{}}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"a {{}} e\"",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "f\"{{}}\"",
+    "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end)))",
+    "wrappedText": "f\"{{}}\"",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 74,
+        "end": 84
+      },
+      "$nodeHandle": 31,
+      "_content": {
+        "$type": 229,
+        "$source": 0,
+        "$named": true,
+        "_string_start": "f\"",
+        "_content": [
+          {
+            "$type": 230,
+            "$source": 0,
+            "$named": true,
+            "$text": "a ",
+            "$span": {
+              "start": 76,
+              "end": 78
+            }
+          },
+          {
+            "$type": 231,
+            "$source": 0,
+            "$named": true,
+            "_expression": "b",
+            "$other": [
+              49,
+              50
+            ],
+            "$span": {
+              "start": 78,
+              "end": 81
+            },
+            "$nodeHandle": 175
+          },
+          {
+            "$type": 230,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 81,
+              "end": 83
+            },
+            "$nodeHandle": 176,
+            "_content": [
+              "}}"
+            ]
+          }
+        ],
+        "_string_end": "\"",
+        "$span": {
+          "start": 74,
+          "end": 84
+        },
+        "$nodeHandle": 174
+      }
+    },
+    "expectedOutput": "f\"a { b }}}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"a {b}}}\"",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "f\"a { b }}}\"",
+    "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content (escape_interpolation)) string_end: (string_end)))",
+    "wrappedText": "f\"a { b }}}\"",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 85,
+        "end": 95
+      },
+      "$nodeHandle": 35,
+      "_content": {
+        "$type": 229,
+        "$source": 0,
+        "$named": true,
+        "_string_start": "f\"",
+        "_content": [
+          {
+            "$type": 230,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 87,
+              "end": 91
+            },
+            "$nodeHandle": 178,
+            "_content": [
+              "{{"
+            ]
+          },
+          {
+            "$type": 231,
+            "$source": 0,
+            "$named": true,
+            "_expression": "b",
+            "$other": [
+              49,
+              50
+            ],
+            "$span": {
+              "start": 91,
+              "end": 94
+            },
+            "$nodeHandle": 179
+          }
+        ],
+        "_string_end": "\"",
+        "$span": {
+          "start": 85,
+          "end": 95
+        },
+        "$nodeHandle": 177
+      }
+    },
+    "expectedOutput": "f\"{{{ b }\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"a {{{b}\"",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "f\"{{{ b }\"",
+    "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation)) content: (interpolation expression: (identifier)) string_end: (string_end)))",
+    "wrappedText": "f\"{{{ b }\"",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 96,
+        "end": 106
+      },
+      "$nodeHandle": 39,
+      "_content": {
+        "$type": 229,
+        "$source": 0,
+        "$named": true,
+        "_string_start": "f\"",
+        "_content": [
+          {
+            "$type": 230,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 98,
+              "end": 105
+            },
+            "$nodeHandle": 181,
+            "_content": [
+              "{{",
+              "}}"
+            ]
+          }
+        ],
+        "_string_end": "\"",
+        "$span": {
+          "start": 96,
+          "end": 106
+        },
+        "$nodeHandle": 180
+      }
+    },
+    "expectedOutput": "f\"{{}}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"a {{b}}\"",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "f\"{{}}\"",
+    "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end)))",
+    "wrappedText": "f\"{{}}\"",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 107,
+        "end": 119
+      },
+      "$nodeHandle": 42,
+      "_content": {
+        "$type": 229,
+        "$source": 0,
+        "$named": true,
+        "_string_start": "f\"",
+        "_content": [
+          {
+            "$type": 230,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 109,
+              "end": 113
+            },
+            "$nodeHandle": 183,
+            "_content": [
+              "{{"
+            ]
+          },
+          {
+            "$type": 231,
+            "$source": 0,
+            "$named": true,
+            "_expression": "b",
+            "$other": [
+              49,
+              50
+            ],
+            "$span": {
+              "start": 113,
+              "end": 116
+            },
+            "$nodeHandle": 184
+          },
+          {
+            "$type": 230,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 116,
+              "end": 118
+            },
+            "$nodeHandle": 185,
+            "_content": [
+              "}}"
+            ]
+          }
+        ],
+        "_string_end": "\"",
+        "$span": {
+          "start": 107,
+          "end": 119
+        },
+        "$nodeHandle": 182
+      }
+    },
+    "expectedOutput": "f\"{{{ b }}}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"a {{{b}}}\"",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "f\"{{{ b }}}\"",
+    "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (string_content (escape_interpolation)) content: (interpolation expression: (identifier)) content: (string_content (escape_interpolation)) string_end: (string_end)))",
+    "wrappedText": "f\"{{{ b }}}\"",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 120,
+        "end": 127
+      },
+      "$nodeHandle": 47,
+      "_content": {
+        "$type": 229,
+        "$source": 0,
+        "$named": true,
+        "_string_start": "f\"",
+        "_content": [
+          {
+            "$type": 231,
+            "$source": 0,
+            "$named": true,
+            "_expression": {
+              "$type": 161,
+              "$source": 0,
+              "$named": true,
+              "_tail": 9,
+              "$span": {
+                "start": 123,
+                "end": 125
+              },
+              "$nodeHandle": 188,
+              "_expression": "c"
+            },
+            "$other": [
+              49,
+              50
+            ],
+            "$span": {
+              "start": 122,
+              "end": 126
+            },
+            "$nodeHandle": 187
+          }
+        ],
+        "_string_end": "\"",
+        "$span": {
+          "start": 120,
+          "end": 127
+        },
+        "$nodeHandle": 186
+      }
+    },
+    "expectedOutput": "f\"{ c, }\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"{c,}\"",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "f\"{ c, }\"",
+    "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (interpolation expression: (expression_list (identifier))) string_end: (string_end)))",
+    "wrappedText": "f\"{ c, }\"",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 128,
+        "end": 140
+      },
+      "$nodeHandle": 51,
+      "_content": {
+        "$type": 229,
+        "$source": 0,
+        "$named": true,
+        "_string_start": "f\"",
+        "_content": [
+          {
+            "$type": 231,
+            "$source": 0,
+            "$named": true,
+            "_expression": {
+              "$type": 200,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                78
+              ],
+              "$span": {
+                "start": 131,
+                "end": 138
+              },
+              "$nodeHandle": 191,
+              "_content": "d"
+            },
+            "$other": [
+              49,
+              50
+            ],
+            "$span": {
+              "start": 130,
+              "end": 139
+            },
+            "$nodeHandle": 190
+          }
+        ],
+        "_string_end": "\"",
+        "$span": {
+          "start": 128,
+          "end": 140
+        },
+        "$nodeHandle": 189
+      }
+    },
+    "expectedOutput": "f\"{ yield d }\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"{yield d}\"",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "f\"{ yield d }\"",
+    "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (interpolation expression: (yield (identifier))) string_end: (string_end)))",
+    "wrappedText": "f\"{ yield d }\"",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 141,
+        "end": 149
+      },
+      "$nodeHandle": 55,
+      "_content": {
+        "$type": 229,
+        "$source": 0,
+        "$named": true,
+        "_string_start": "f\"",
+        "_content": [
+          {
+            "$type": 231,
+            "$source": 0,
+            "$named": true,
+            "_expression": {
+              "$type": 161,
+              "$source": 0,
+              "$named": true,
+              "_tail": 9,
+              "$span": {
+                "start": 144,
+                "end": 147
+              },
+              "$nodeHandle": 194,
+              "_expression": {
+                "$type": 181,
+                "$source": 0,
+                "$named": true,
+                "$other": [
+                  11
+                ],
+                "$span": {
+                  "start": 144,
+                  "end": 146
+                },
+                "$nodeHandle": 195,
+                "_content": "a"
+              }
+            },
+            "$other": [
+              49,
+              50
+            ],
+            "$span": {
+              "start": 143,
+              "end": 148
+            },
+            "$nodeHandle": 193
+          }
+        ],
+        "_string_end": "\"",
+        "$span": {
+          "start": 141,
+          "end": 149
+        },
+        "$nodeHandle": 192
+      }
+    },
+    "expectedOutput": "f\"{ *a, }\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"{*a,}\"",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "f\"{ *a, }\"",
+    "expectedReparseTree": "(expression_statement (string string_start: (string_start) content: (interpolation expression: (expression_list (list_splat_pattern (identifier)))) string_end: (string_end)))",
+    "wrappedText": "f\"{ *a, }\"",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 243,
+        "end": 319
+      },
+      "$nodeHandle": 73,
+      "_content": {
+        "$type": 204,
+        "$source": 0,
+        "$named": true,
+        "_function": {
+          "$type": 201,
+          "$source": 0,
+          "$named": true,
+          "_object": "self",
+          "_attribute": "assertEqual",
+          "$other": [
+            4
+          ],
+          "$span": {
+            "start": 243,
+            "end": 259
+          },
+          "$nodeHandle": 197
+        },
+        "_arguments": {
+          "$type": 157,
+          "$source": 0,
+          "$named": true,
+          "_arguments": {
+            "$type": 239,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              9
+            ],
+            "$span": {
+              "start": 260,
+              "end": 318
+            },
+            "$nodeHandle": 199,
+            "_content": [
+              {
+                "$type": 229,
+                "$source": 0,
+                "$named": true,
+                "_string_start": "f'''",
+                "_content": [
+                  {
+                    "$type": 230,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "A complex trick: ",
+                    "$span": {
+                      "start": 264,
+                      "end": 281
+                    }
+                  },
+                  {
+                    "$type": 231,
+                    "$source": 0,
+                    "$named": true,
+                    "_expression": "2",
+                    "_comment": "# two",
+                    "$other": [
+                      49,
+                      50
+                    ],
+                    "$span": {
+                      "start": 281,
+                      "end": 293
+                    },
+                    "$nodeHandle": 202
+                  }
+                ],
+                "_string_end": "'''",
+                "$span": {
+                  "start": 260,
+                  "end": 296
+                },
+                "$nodeHandle": 200
+              },
+              {
+                "$type": 229,
+                "$source": 0,
+                "$named": true,
+                "_string_start": "'",
+                "_content": [
+                  "A complex trick: 2"
+                ],
+                "_string_end": "'",
+                "$span": {
+                  "start": 298,
+                  "end": 318
+                },
+                "$nodeHandle": 201
+              }
+            ],
+            "_trailing_sep": false
+          },
+          "$other": [
+            7,
+            8
+          ],
+          "$span": {
+            "start": 259,
+            "end": 319
+          },
+          "$nodeHandle": 198
+        },
+        "$span": {
+          "start": 243,
+          "end": 319
+        },
+        "$nodeHandle": 196
+      }
+    },
+    "expectedOutput": "self.assertEqual(f'''A complex trick: { 2 }''','A complex trick: 2')"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "self.assertEqual(f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "self.assertEqual(f'''A complex trick: { 2 }''','A complex trick: 2')",
+    "expectedReparseTree": "(expression_statement (call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_group1 (string string_start: (string_start) content: (string_content) content: (interpolation expression: (integer)) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end))))))",
+    "wrappedText": "self.assertEqual(f'''A complex trick: { 2 }''','A complex trick: 2')",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 229,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f\"",
+      "_content": [
+        {
+          "$type": 230,
+          "$source": 0,
+          "$named": true,
+          "$text": "a ",
+          "$span": {
+            "start": 12,
+            "end": 14
+          }
+        },
+        {
+          "$type": 231,
+          "$source": 0,
+          "$named": true,
+          "_expression": {
+            "$type": 204,
+            "$source": 0,
+            "$named": true,
+            "_function": "b",
+            "_arguments": {
+              "$type": 157,
+              "$source": 0,
+              "$named": true,
+              "_arguments": {
+                "$type": 239,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 17,
+                  "end": 27
+                },
+                "$nodeHandle": 206,
+                "_content": [
+                  {
+                    "$type": 229,
+                    "$source": 0,
+                    "$named": true,
+                    "_string_start": "f'",
+                    "_content": [
+                      {
+                        "$type": 230,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "c ",
+                        "$span": {
+                          "start": 19,
+                          "end": 21
+                        }
+                      },
+                      {
+                        "$type": 231,
+                        "$source": 0,
+                        "$named": true,
+                        "_expression": "e",
+                        "$other": [
+                          49,
+                          50
+                        ],
+                        "$span": {
+                          "start": 21,
+                          "end": 24
+                        },
+                        "$nodeHandle": 208
+                      },
+                      {
+                        "$type": 230,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": " d",
+                        "$span": {
+                          "start": 24,
+                          "end": 26
+                        }
+                      }
+                    ],
+                    "_string_end": "'",
+                    "$span": {
+                      "start": 17,
+                      "end": 27
+                    },
+                    "$nodeHandle": 207
+                  }
+                ],
+                "_trailing_sep": false
+              },
+              "$other": [
+                7,
+                8
+              ],
+              "$span": {
+                "start": 16,
+                "end": 28
+              },
+              "$nodeHandle": 205
+            },
+            "$span": {
+              "start": 15,
+              "end": 28
+            },
+            "$nodeHandle": 204
+          },
+          "$other": [
+            49,
+            50
+          ],
+          "$span": {
+            "start": 14,
+            "end": 29
+          },
+          "$nodeHandle": 203
+        },
+        {
+          "$type": 230,
+          "$source": 0,
+          "$named": true,
+          "$text": " e",
+          "$span": {
+            "start": 29,
+            "end": 31
+          }
+        }
+      ],
+      "_string_end": "\"",
+      "$span": {
+        "start": 10,
+        "end": 32
+      },
+      "$nodeHandle": 15
+    },
+    "expectedOutput": "f\"a { b(f'c { e } d') } e\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"a {b(f'c {e} d')} e\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"a { b(f'c { e } d') } e\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end)))))) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = f\"a { b(f'c { e } d') } e\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 229,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f'",
+      "_content": [
+        {
+          "$type": 230,
+          "$source": 0,
+          "$named": true,
+          "$text": "c ",
+          "$span": {
+            "start": 19,
+            "end": 21
+          }
+        },
+        {
+          "$type": 231,
+          "$source": 0,
+          "$named": true,
+          "_expression": "e",
+          "$other": [
+            49,
+            50
+          ],
+          "$span": {
+            "start": 21,
+            "end": 24
+          },
+          "$nodeHandle": 209
+        },
+        {
+          "$type": 230,
+          "$source": 0,
+          "$named": true,
+          "$text": " d",
+          "$span": {
+            "start": 24,
+            "end": 26
+          }
+        }
+      ],
+      "_string_end": "'",
+      "$span": {
+        "start": 17,
+        "end": 27
+      },
+      "$nodeHandle": 20
+    },
+    "expectedOutput": "f'c { e } d'"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f'c {e} d'",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f'c { e } d'",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = f'c { e } d'",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 229,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f\"\"\"",
+      "_content": [
+        {
+          "$type": 230,
+          "$source": 0,
+          "$named": true,
+          "$text": "a\"",
+          "$span": {
+            "start": 37,
+            "end": 39
+          }
+        },
+        {
+          "$type": 231,
+          "$source": 0,
+          "$named": true,
+          "_expression": "b",
+          "$other": [
+            49,
+            50
+          ],
+          "$span": {
+            "start": 39,
+            "end": 42
+          },
+          "$nodeHandle": 210
+        },
+        {
+          "$type": 230,
+          "$source": 0,
+          "$named": true,
+          "$text": "c",
+          "$span": {
+            "start": 42,
+            "end": 43
+          }
+        }
+      ],
+      "_string_end": "\"\"\"",
+      "$span": {
+        "start": 33,
+        "end": 46
+      },
+      "$nodeHandle": 23
+    },
+    "expectedOutput": "f\"\"\"a\"{ b }c\"\"\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"\"\"a\"{b}c\"\"\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"\"\"a\"{ b }c\"\"\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = f\"\"\"a\"{ b }c\"\"\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 229,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f\"\"\"",
+      "_content": [
+        {
+          "$type": 230,
+          "$source": 0,
+          "$named": true,
+          "$text": "a\"\"",
+          "$span": {
+            "start": 51,
+            "end": 54
+          }
+        },
+        {
+          "$type": 231,
+          "$source": 0,
+          "$named": true,
+          "_expression": "b",
+          "$other": [
+            49,
+            50
+          ],
+          "$span": {
+            "start": 54,
+            "end": 57
+          },
+          "$nodeHandle": 211
+        },
+        {
+          "$type": 230,
+          "$source": 0,
+          "$named": true,
+          "$text": "c",
+          "$span": {
+            "start": 57,
+            "end": 58
+          }
+        }
+      ],
+      "_string_end": "\"\"\"",
+      "$span": {
+        "start": 47,
+        "end": 61
+      },
+      "$nodeHandle": 26
+    },
+    "expectedOutput": "f\"\"\"a\"\"{ b }c\"\"\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"\"\"a\"\"{b}c\"\"\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"\"\"a\"\"{ b }c\"\"\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = f\"\"\"a\"\"{ b }c\"\"\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 229,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f\"",
+      "_content": [
+        {
+          "$type": 230,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 64,
+            "end": 72
+          },
+          "$nodeHandle": 212,
+          "_content": [
+            "{{",
+            "}}"
+          ]
+        }
+      ],
+      "_string_end": "\"",
+      "$span": {
+        "start": 62,
+        "end": 73
+      },
+      "$nodeHandle": 29
+    },
+    "expectedOutput": "f\"{{}}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"a {{}} e\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"{{}}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end))",
+    "wrappedText": "_ = f\"{{}}\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 229,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f\"",
+      "_content": [
+        {
+          "$type": 230,
+          "$source": 0,
+          "$named": true,
+          "$text": "a ",
+          "$span": {
+            "start": 76,
+            "end": 78
+          }
+        },
+        {
+          "$type": 231,
+          "$source": 0,
+          "$named": true,
+          "_expression": "b",
+          "$other": [
+            49,
+            50
+          ],
+          "$span": {
+            "start": 78,
+            "end": 81
+          },
+          "$nodeHandle": 213
+        },
+        {
+          "$type": 230,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 81,
+            "end": 83
+          },
+          "$nodeHandle": 214,
+          "_content": [
+            "}}"
+          ]
+        }
+      ],
+      "_string_end": "\"",
+      "$span": {
+        "start": 74,
+        "end": 84
+      },
+      "$nodeHandle": 32
+    },
+    "expectedOutput": "f\"a { b }}}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"a {b}}}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"a { b }}}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content (escape_interpolation)) string_end: (string_end))",
+    "wrappedText": "_ = f\"a { b }}}\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 229,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f\"",
+      "_content": [
+        {
+          "$type": 230,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 87,
+            "end": 91
+          },
+          "$nodeHandle": 215,
+          "_content": [
+            "{{"
+          ]
+        },
+        {
+          "$type": 231,
+          "$source": 0,
+          "$named": true,
+          "_expression": "b",
+          "$other": [
+            49,
+            50
+          ],
+          "$span": {
+            "start": 91,
+            "end": 94
+          },
+          "$nodeHandle": 216
+        }
+      ],
+      "_string_end": "\"",
+      "$span": {
+        "start": 85,
+        "end": 95
+      },
+      "$nodeHandle": 36
+    },
+    "expectedOutput": "f\"{{{ b }\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"a {{{b}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"{{{ b }\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_interpolation)) content: (interpolation expression: (identifier)) string_end: (string_end))",
+    "wrappedText": "_ = f\"{{{ b }\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 229,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f\"",
+      "_content": [
+        {
+          "$type": 230,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 98,
+            "end": 105
+          },
+          "$nodeHandle": 217,
+          "_content": [
+            "{{",
+            "}}"
+          ]
+        }
+      ],
+      "_string_end": "\"",
+      "$span": {
+        "start": 96,
+        "end": 106
+      },
+      "$nodeHandle": 40
+    },
+    "expectedOutput": "f\"{{}}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"a {{b}}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"{{}}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end))",
+    "wrappedText": "_ = f\"{{}}\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 229,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f\"",
+      "_content": [
+        {
+          "$type": 230,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 109,
+            "end": 113
+          },
+          "$nodeHandle": 218,
+          "_content": [
+            "{{"
+          ]
+        },
+        {
+          "$type": 231,
+          "$source": 0,
+          "$named": true,
+          "_expression": "b",
+          "$other": [
+            49,
+            50
+          ],
+          "$span": {
+            "start": 113,
+            "end": 116
+          },
+          "$nodeHandle": 219
+        },
+        {
+          "$type": 230,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 116,
+            "end": 118
+          },
+          "$nodeHandle": 220,
+          "_content": [
+            "}}"
+          ]
+        }
+      ],
+      "_string_end": "\"",
+      "$span": {
+        "start": 107,
+        "end": 119
+      },
+      "$nodeHandle": 43
+    },
+    "expectedOutput": "f\"{{{ b }}}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"a {{{b}}}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"{{{ b }}}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_interpolation)) content: (interpolation expression: (identifier)) content: (string_content (escape_interpolation)) string_end: (string_end))",
+    "wrappedText": "_ = f\"{{{ b }}}\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 229,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f\"",
+      "_content": [
+        {
+          "$type": 231,
+          "$source": 0,
+          "$named": true,
+          "_expression": {
+            "$type": 161,
+            "$source": 0,
+            "$named": true,
+            "_tail": 9,
+            "$span": {
+              "start": 123,
+              "end": 125
+            },
+            "$nodeHandle": 222,
+            "_expression": "c"
+          },
+          "$other": [
+            49,
+            50
+          ],
+          "$span": {
+            "start": 122,
+            "end": 126
+          },
+          "$nodeHandle": 221
+        }
+      ],
+      "_string_end": "\"",
+      "$span": {
+        "start": 120,
+        "end": 127
+      },
+      "$nodeHandle": 48
+    },
+    "expectedOutput": "f\"{ c, }\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"{c,}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"{ c, }\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (expression_list (identifier))) string_end: (string_end))",
+    "wrappedText": "_ = f\"{ c, }\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 229,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f\"",
+      "_content": [
+        {
+          "$type": 231,
+          "$source": 0,
+          "$named": true,
+          "_expression": {
+            "$type": 200,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              78
+            ],
+            "$span": {
+              "start": 131,
+              "end": 138
+            },
+            "$nodeHandle": 224,
+            "_content": "d"
+          },
+          "$other": [
+            49,
+            50
+          ],
+          "$span": {
+            "start": 130,
+            "end": 139
+          },
+          "$nodeHandle": 223
+        }
+      ],
+      "_string_end": "\"",
+      "$span": {
+        "start": 128,
+        "end": 140
+      },
+      "$nodeHandle": 52
+    },
+    "expectedOutput": "f\"{ yield d }\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"{yield d}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"{ yield d }\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (yield (identifier))) string_end: (string_end))",
+    "wrappedText": "_ = f\"{ yield d }\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 229,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f\"",
+      "_content": [
+        {
+          "$type": 231,
+          "$source": 0,
+          "$named": true,
+          "_expression": {
+            "$type": 161,
+            "$source": 0,
+            "$named": true,
+            "_tail": 9,
+            "$span": {
+              "start": 144,
+              "end": 147
+            },
+            "$nodeHandle": 226,
+            "_expression": {
+              "$type": 181,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                11
+              ],
+              "$span": {
+                "start": 144,
+                "end": 146
+              },
+              "$nodeHandle": 227,
+              "_content": "a"
+            }
+          },
+          "$other": [
+            49,
+            50
+          ],
+          "$span": {
+            "start": 143,
+            "end": 148
+          },
+          "$nodeHandle": 225
+        }
+      ],
+      "_string_end": "\"",
+      "$span": {
+        "start": 141,
+        "end": 149
+      },
+      "$nodeHandle": 56
+    },
+    "expectedOutput": "f\"{ *a, }\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"{*a,}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"{ *a, }\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (expression_list (list_splat_pattern (identifier)))) string_end: (string_end))",
+    "wrappedText": "_ = f\"{ *a, }\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 229,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f\"\"\"",
+      "_content": [
+        {
+          "$type": 230,
+          "$source": 0,
+          "$named": true,
+          "$text": "\n",
+          "$span": {
+            "start": 182,
+            "end": 183
+          }
+        },
+        {
+          "$type": 231,
+          "$source": 0,
+          "$named": true,
+          "_expression": {
+            "$type": 227,
+            "$source": 0,
+            "$named": true,
+            "_body": {
+              "$type": 229,
+              "$source": 0,
+              "$named": true,
+              "_string_start": "\"",
+              "_content": [
+                "string1"
+              ],
+              "_string_end": "\"",
+              "$span": {
+                "start": 184,
+                "end": 193
+              },
+              "$nodeHandle": 230
+            },
+            "_condition": "True",
+            "_alternative": {
+              "$type": 229,
+              "$source": 0,
+              "$named": true,
+              "_string_start": "\"",
+              "_content": [
+                "string2"
+              ],
+              "_string_end": "\"",
+              "$span": {
+                "start": 208,
+                "end": 217
+              },
+              "$nodeHandle": 231
+            },
+            "$other": [
+              22,
+              25
+            ],
+            "$span": {
+              "start": 184,
+              "end": 217
+            },
+            "$nodeHandle": 229
+          },
+          "$other": [
+            49,
+            50
+          ],
+          "$span": {
+            "start": 183,
+            "end": 218
+          },
+          "$nodeHandle": 228
+        }
+      ],
+      "_string_end": "\"\"\"",
+      "$span": {
+        "start": 178,
+        "end": 221
+      },
+      "$nodeHandle": 64
+    },
+    "expectedOutput": "f\"\"\"\n{ \"string1\"if True else\"string2\" }\"\"\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"\"\"\n{ \"string1\"if True else\"string2\" }\"\"\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (conditional_expression body: (string string_start: (string_start) content: (string_content) string_end: (string_end)) condition: (true) alternative: (string string_start: (string_start) content: (string_content) string_end: (string_end)))) string_end: (string_end))",
+    "wrappedText": "_ = f\"\"\"\n{ \"string1\"if True else\"string2\" }\"\"\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 229,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "\"",
+      "_content": [
+        "string1"
+      ],
+      "_string_end": "\"",
+      "$span": {
+        "start": 184,
+        "end": 193
+      },
+      "$nodeHandle": 67
+    },
+    "expectedOutput": "\"string1\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "\"string1\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "\"string1\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \"string1\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 229,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "\"",
+      "_content": [
+        "string2"
+      ],
+      "_string_end": "\"",
+      "$span": {
+        "start": 208,
+        "end": 217
+      },
+      "$nodeHandle": 68
+    },
+    "expectedOutput": "\"string2\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "\"string2\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "\"string2\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \"string2\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 229,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "f'''",
+      "_content": [
+        {
+          "$type": 230,
+          "$source": 0,
+          "$named": true,
+          "$text": "A complex trick: ",
+          "$span": {
+            "start": 264,
+            "end": 281
+          }
+        },
+        {
+          "$type": 231,
+          "$source": 0,
+          "$named": true,
+          "_expression": "2",
+          "_comment": "# two",
+          "$other": [
+            49,
+            50
+          ],
+          "$span": {
+            "start": 281,
+            "end": 293
+          },
+          "$nodeHandle": 232
+        }
+      ],
+      "_string_end": "'''",
+      "$span": {
+        "start": 260,
+        "end": 296
+      },
+      "$nodeHandle": 78
+    },
+    "expectedOutput": "f'''A complex trick: { 2 }'''"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f'''A complex trick: {\n2  # two\n}'''",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f'''A complex trick: { 2 }'''",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (integer)) string_end: (string_end))",
+    "wrappedText": "_ = f'''A complex trick: { 2 }'''",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 229,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "'",
+      "_content": [
+        "A complex trick: 2"
+      ],
+      "_string_end": "'",
+      "$span": {
+        "start": 298,
+        "end": 318
+      },
+      "$nodeHandle": 79
+    },
+    "expectedOutput": "'A complex trick: 2'"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "'A complex trick: 2'",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "'A complex trick: 2'",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = 'A complex trick: 2'",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 204,
+      "$source": 0,
+      "$named": true,
+      "_function": "b",
+      "_arguments": {
+        "$type": 157,
+        "$source": 0,
+        "$named": true,
+        "_arguments": {
+          "$type": 239,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 17,
+            "end": 27
+          },
+          "$nodeHandle": 246,
+          "_content": [
+            {
+              "$type": 229,
+              "$source": 0,
+              "$named": true,
+              "_string_start": "f'",
+              "_content": [
+                {
+                  "$type": 230,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "c ",
+                  "$span": {
+                    "start": 19,
+                    "end": 21
+                  }
+                },
+                {
+                  "$type": 231,
+                  "$source": 0,
+                  "$named": true,
+                  "_expression": "e",
+                  "$other": [
+                    49,
+                    50
+                  ],
+                  "$span": {
+                    "start": 21,
+                    "end": 24
+                  },
+                  "$nodeHandle": 248
+                },
+                {
+                  "$type": 230,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": " d",
+                  "$span": {
+                    "start": 24,
+                    "end": 26
+                  }
+                }
+              ],
+              "_string_end": "'",
+              "$span": {
+                "start": 17,
+                "end": 27
+              },
+              "$nodeHandle": 247
+            }
+          ],
+          "_trailing_sep": false
+        },
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 16,
+          "end": 28
+        },
+        "$nodeHandle": 245
+      },
+      "$span": {
+        "start": 15,
+        "end": 28
+      },
+      "$nodeHandle": 17
+    },
+    "expectedOutput": "b(f'c { e } d')"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "b(f'c {e} d')",
+    "pattern": "call",
+    "edits": [],
+    "expectedSourceOut": "b(f'c { e } d')",
+    "expectedReparseTree": "(call function: (identifier) arguments: (argument_list arguments: (argument_list_group1 (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end)))))",
+    "wrappedText": "_ = b(f'c { e } d')",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 204,
+      "$source": 0,
+      "$named": true,
+      "_function": {
+        "$type": 201,
+        "$source": 0,
+        "$named": true,
+        "_object": "self",
+        "_attribute": "assertEqual",
+        "$other": [
+          4
+        ],
+        "$span": {
+          "start": 243,
+          "end": 259
+        },
+        "$nodeHandle": 249
+      },
+      "_arguments": {
+        "$type": 157,
+        "$source": 0,
+        "$named": true,
+        "_arguments": {
+          "$type": 239,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            9
+          ],
+          "$span": {
+            "start": 260,
+            "end": 318
+          },
+          "$nodeHandle": 251,
+          "_content": [
+            {
+              "$type": 229,
+              "$source": 0,
+              "$named": true,
+              "_string_start": "f'''",
+              "_content": [
+                {
+                  "$type": 230,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "A complex trick: ",
+                  "$span": {
+                    "start": 264,
+                    "end": 281
+                  }
+                },
+                {
+                  "$type": 231,
+                  "$source": 0,
+                  "$named": true,
+                  "_expression": "2",
+                  "_comment": "# two",
+                  "$other": [
+                    49,
+                    50
+                  ],
+                  "$span": {
+                    "start": 281,
+                    "end": 293
+                  },
+                  "$nodeHandle": 254
+                }
+              ],
+              "_string_end": "'''",
+              "$span": {
+                "start": 260,
+                "end": 296
+              },
+              "$nodeHandle": 252
+            },
+            {
+              "$type": 229,
+              "$source": 0,
+              "$named": true,
+              "_string_start": "'",
+              "_content": [
+                "A complex trick: 2"
+              ],
+              "_string_end": "'",
+              "$span": {
+                "start": 298,
+                "end": 318
+              },
+              "$nodeHandle": 253
+            }
+          ],
+          "_trailing_sep": false
+        },
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 259,
+          "end": 319
+        },
+        "$nodeHandle": 250
+      },
+      "$span": {
+        "start": 243,
+        "end": 319
+      },
+      "$nodeHandle": 74
+    },
+    "expectedOutput": "self.assertEqual(f'''A complex trick: { 2 }''','A complex trick: 2')"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "self.assertEqual(f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')",
+    "pattern": "call",
+    "edits": [],
+    "expectedSourceOut": "self.assertEqual(f'''A complex trick: { 2 }''','A complex trick: 2')",
+    "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list arguments: (argument_list_group1 (string string_start: (string_start) content: (string_content) content: (interpolation expression: (integer)) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end)))))",
+    "wrappedText": "_ = self.assertEqual(f'''A complex trick: { 2 }''','A complex trick: 2')",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "_arguments": {
+        "$type": 239,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 17,
+          "end": 27
+        },
+        "$nodeHandle": 255,
+        "_content": [
+          {
+            "$type": 229,
+            "$source": 0,
+            "$named": true,
+            "_string_start": "f'",
+            "_content": [
+              {
+                "$type": 230,
+                "$source": 0,
+                "$named": true,
+                "$text": "c ",
+                "$span": {
+                  "start": 19,
+                  "end": 21
+                }
+              },
+              {
+                "$type": 231,
+                "$source": 0,
+                "$named": true,
+                "_expression": "e",
+                "$other": [
+                  49,
+                  50
+                ],
+                "$span": {
+                  "start": 21,
+                  "end": 24
+                },
+                "$nodeHandle": 257
+              },
+              {
+                "$type": 230,
+                "$source": 0,
+                "$named": true,
+                "$text": " d",
+                "$span": {
+                  "start": 24,
+                  "end": 26
+                }
+              }
+            ],
+            "_string_end": "'",
+            "$span": {
+              "start": 17,
+              "end": 27
+            },
+            "$nodeHandle": 256
+          }
+        ],
+        "_trailing_sep": false
+      },
+      "$other": [
+        7,
+        8
+      ],
+      "$span": {
+        "start": 16,
+        "end": 28
+      },
+      "$nodeHandle": 18
+    },
+    "expectedOutput": "(f'c { e } d')"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "(f'c {e} d')",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "(f'c { e } d')",
+    "expectedReparseTree": "(argument_list arguments: (argument_list_group1 (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))))",
+    "wrappedText": "_f(f'c { e } d')",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "_arguments": {
+        "$type": 239,
+        "$source": 0,
+        "$named": true,
+        "$other": [
+          9
+        ],
+        "$span": {
+          "start": 260,
+          "end": 318
+        },
+        "$nodeHandle": 258,
+        "_content": [
+          {
+            "$type": 229,
+            "$source": 0,
+            "$named": true,
+            "_string_start": "f'''",
+            "_content": [
+              {
+                "$type": 230,
+                "$source": 0,
+                "$named": true,
+                "$text": "A complex trick: ",
+                "$span": {
+                  "start": 264,
+                  "end": 281
+                }
+              },
+              {
+                "$type": 231,
+                "$source": 0,
+                "$named": true,
+                "_expression": "2",
+                "_comment": "# two",
+                "$other": [
+                  49,
+                  50
+                ],
+                "$span": {
+                  "start": 281,
+                  "end": 293
+                },
+                "$nodeHandle": 261
+              }
+            ],
+            "_string_end": "'''",
+            "$span": {
+              "start": 260,
+              "end": 296
+            },
+            "$nodeHandle": 259
+          },
+          {
+            "$type": 229,
+            "$source": 0,
+            "$named": true,
+            "_string_start": "'",
+            "_content": [
+              "A complex trick: 2"
+            ],
+            "_string_end": "'",
+            "$span": {
+              "start": 298,
+              "end": 318
+            },
+            "$nodeHandle": 260
+          }
+        ],
+        "_trailing_sep": false
+      },
+      "$other": [
+        7,
+        8
+      ],
+      "$span": {
+        "start": 259,
+        "end": 319
+      },
+      "$nodeHandle": 76
+    },
+    "expectedOutput": "(f'''A complex trick: { 2 }''','A complex trick: 2')"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "(f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')",
+    "pattern": "argument_list",
+    "edits": [],
+    "expectedSourceOut": "(f'''A complex trick: { 2 }''','A complex trick: 2')",
+    "expectedReparseTree": "(argument_list arguments: (argument_list_group1 (string string_start: (string_start) content: (string_content) content: (interpolation expression: (integer)) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end))))",
+    "wrappedText": "_f(f'''A complex trick: { 2 }''','A complex trick: 2')",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 181,
+      "$source": 0,
+      "$named": true,
+      "$other": [
+        11
+      ],
+      "$span": {
+        "start": 144,
+        "end": 146
+      },
+      "$nodeHandle": 59,
+      "_content": "a"
+    },
+    "expectedOutput": "*a"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*a",
+    "pattern": "list_splat_pattern",
+    "edits": [],
+    "expectedSourceOut": "*a",
+    "expectedReparseTree": "(list_splat_pattern (identifier))",
+    "wrappedText": "*a = (1,)",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 146,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 163,
+        "end": 165
+      },
+      "$nodeHandle": 60
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "()",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(parameters)",
+    "wrappedText": "def _f():\n    pass",
+    "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 227,
+      "$source": 0,
+      "$named": true,
+      "_body": {
+        "$type": 229,
+        "$source": 0,
+        "$named": true,
+        "_string_start": "\"",
+        "_content": [
+          "string1"
+        ],
+        "_string_end": "\"",
+        "$span": {
+          "start": 184,
+          "end": 193
+        },
+        "$nodeHandle": 306
+      },
+      "_condition": "True",
+      "_alternative": {
+        "$type": 229,
+        "$source": 0,
+        "$named": true,
+        "_string_start": "\"",
+        "_content": [
+          "string2"
+        ],
+        "_string_end": "\"",
+        "$span": {
+          "start": 208,
+          "end": 217
+        },
+        "$nodeHandle": 307
+      },
+      "$other": [
+        22,
+        25
+      ],
+      "$span": {
+        "start": 184,
+        "end": 217
+      },
+      "$nodeHandle": 66
+    },
+    "expectedOutput": "\"string1\"if True else\"string2\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "\"string1\" if True else\n \"string2\"",
+    "pattern": "conditional_expression",
+    "edits": [],
+    "expectedSourceOut": "\"string1\"if True else\"string2\"",
+    "expectedReparseTree": "(conditional_expression body: (string string_start: (string_start) content: (string_content) string_end: (string_end)) condition: (true) alternative: (string string_start: (string_start) content: (string_content) string_end: (string_end)))",
+    "wrappedText": "_ = \"string1\"if True else\"string2\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 201,
+      "$source": 0,
+      "$named": true,
+      "_object": "self",
+      "_attribute": "assertEqual",
+      "$other": [
+        4
+      ],
+      "$span": {
+        "start": 243,
+        "end": 259
+      },
+      "$nodeHandle": 75
+    },
+    "expectedOutput": "self.assertEqual"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "self.assertEqual",
+    "pattern": "attribute",
+    "edits": [],
+    "expectedSourceOut": "self.assertEqual",
+    "expectedReparseTree": "(attribute object: (identifier) attribute: (identifier))",
+    "wrappedText": "[self.assertEqual]",
+    "wrappedOffset": 1
   },
   {
     "kind": "render",
@@ -25628,6 +30296,730 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 0,
+        "end": 9
+      },
+      "$nodeHandle": 7,
+      "_content": {
+        "$type": 196,
+        "$source": 0,
+        "$named": true,
+        "_left": "match",
+        "$span": {
+          "start": 0,
+          "end": 9
+        },
+        "$nodeHandle": 83,
+        "_content": {
+          "$type": 249,
+          "$source": 0,
+          "$named": true,
+          "_right": "2",
+          "$other": [
+            42
+          ],
+          "$span": {
+            "start": 6,
+            "end": 9
+          },
+          "$nodeHandle": 84
+        }
+      }
+    },
+    "expectedOutput": "match=2"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "match = 2",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "match=2",
+    "expectedReparseTree": "(expression_statement (assignment left: (identifier) (assignment_eq right: (integer))))",
+    "wrappedText": "match=2",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 10,
+        "end": 25
+      },
+      "$nodeHandle": 10,
+      "_content": {
+        "$type": 196,
+        "$source": 0,
+        "$named": true,
+        "_left": {
+          "$type": 198,
+          "$source": 0,
+          "$named": true,
+          "_tail": {
+            "$type": 243,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              9
+            ],
+            "$span": {
+              "start": 15,
+              "end": 18
+            },
+            "$nodeHandle": 87,
+            "_pattern": [
+              "a"
+            ],
+            "_trailing_sep": false
+          },
+          "$span": {
+            "start": 10,
+            "end": 18
+          },
+          "$nodeHandle": 86,
+          "_pattern": "match"
+        },
+        "$span": {
+          "start": 10,
+          "end": 25
+        },
+        "$nodeHandle": 85,
+        "_content": {
+          "$type": 249,
+          "$source": 0,
+          "$named": true,
+          "_right": {
+            "$type": 161,
+            "$source": 0,
+            "$named": true,
+            "_tail": {
+              "$type": 240,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                9
+              ],
+              "$span": {
+                "start": 22,
+                "end": 25
+              },
+              "$nodeHandle": 90,
+              "_expression": [
+                "3"
+              ],
+              "_trailing_sep": false
+            },
+            "$span": {
+              "start": 21,
+              "end": 25
+            },
+            "$nodeHandle": 89,
+            "_expression": "2"
+          },
+          "$other": [
+            42
+          ],
+          "$span": {
+            "start": 19,
+            "end": 25
+          },
+          "$nodeHandle": 88
+        }
+      }
+    },
+    "expectedOutput": "match,a=2,3"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "match, a = 2, 3",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "match,a=2,3",
+    "expectedReparseTree": "(expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (integer))))))",
+    "wrappedText": "match,a=2,3",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 26,
+        "end": 45
+      },
+      "$nodeHandle": 17,
+      "_content": {
+        "$type": 196,
+        "$source": 0,
+        "$named": true,
+        "_left": "match",
+        "$span": {
+          "start": 26,
+          "end": 45
+        },
+        "$nodeHandle": 91,
+        "_content": {
+          "$type": 251,
+          "$source": 0,
+          "$named": true,
+          "_type": {
+            "$type": 206,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 33,
+              "end": 36
+            },
+            "$nodeHandle": 93,
+            "_content": "int"
+          },
+          "_right": "secret",
+          "$other": [
+            23,
+            42
+          ],
+          "$span": {
+            "start": 31,
+            "end": 45
+          },
+          "$nodeHandle": 92
+        }
+      }
+    },
+    "expectedOutput": "match:int=secret"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "match: int = secret",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "match:int=secret",
+    "expectedReparseTree": "(expression_statement (assignment left: (identifier) (assignment_typed type: (type (identifier)) right: (identifier))))",
+    "wrappedText": "match:int=secret",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 46,
+        "end": 77
+      },
+      "$nodeHandle": 21,
+      "_content": {
+        "$type": 196,
+        "$source": 0,
+        "$named": true,
+        "_left": {
+          "$type": 198,
+          "$source": 0,
+          "$named": true,
+          "_tail": {
+            "$type": 243,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              9
+            ],
+            "$span": {
+              "start": 47,
+              "end": 54
+            },
+            "$nodeHandle": 96,
+            "_pattern": [
+              "match"
+            ],
+            "_trailing_sep": false
+          },
+          "$span": {
+            "start": 46,
+            "end": 54
+          },
+          "$nodeHandle": 95,
+          "_pattern": "x"
+        },
+        "$span": {
+          "start": 46,
+          "end": 77
+        },
+        "$nodeHandle": 94,
+        "_content": {
+          "$type": 249,
+          "$source": 0,
+          "$named": true,
+          "_right": {
+            "$type": 161,
+            "$source": 0,
+            "$named": true,
+            "_tail": {
+              "$type": 240,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                9
+              ],
+              "$span": {
+                "start": 58,
+                "end": 77
+              },
+              "$nodeHandle": 99,
+              "_expression": [
+                {
+                  "$type": 229,
+                  "$source": 0,
+                  "$named": true,
+                  "_string_start": "\"",
+                  "_content": [
+                    "hey, what's up?"
+                  ],
+                  "_string_end": "\"",
+                  "$span": {
+                    "start": 60,
+                    "end": 77
+                  },
+                  "$nodeHandle": 100
+                }
+              ],
+              "_trailing_sep": false
+            },
+            "$span": {
+              "start": 57,
+              "end": 77
+            },
+            "$nodeHandle": 98,
+            "_expression": "2"
+          },
+          "$other": [
+            42
+          ],
+          "$span": {
+            "start": 55,
+            "end": 77
+          },
+          "$nodeHandle": 97
+        }
+      }
+    },
+    "expectedOutput": "x,match=2,\"hey, what's up?\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "x, match = 2, \"hey, what's up?\"",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "x,match=2,\"hey, what's up?\"",
+    "expectedReparseTree": "(expression_statement (assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (string string_start: (string_start) content: (string_content) string_end: (string_end)))))))",
+    "wrappedText": "x,match=2,\"hey, what's up?\"",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 196,
+      "$source": 0,
+      "$named": true,
+      "_left": "match",
+      "$span": {
+        "start": 0,
+        "end": 9
+      },
+      "$nodeHandle": 8,
+      "_content": {
+        "$type": 249,
+        "$source": 0,
+        "$named": true,
+        "_right": "2",
+        "$other": [
+          42
+        ],
+        "$span": {
+          "start": 6,
+          "end": 9
+        },
+        "$nodeHandle": 108
+      }
+    },
+    "expectedOutput": "match=2"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "match = 2",
+    "pattern": "assignment",
+    "edits": [],
+    "expectedSourceOut": "match=2",
+    "expectedReparseTree": "(assignment left: (identifier) (assignment_eq right: (integer)))",
+    "wrappedText": "match=2",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 196,
+      "$source": 0,
+      "$named": true,
+      "_left": {
+        "$type": 198,
+        "$source": 0,
+        "$named": true,
+        "_tail": {
+          "$type": 243,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            9
+          ],
+          "$span": {
+            "start": 15,
+            "end": 18
+          },
+          "$nodeHandle": 110,
+          "_pattern": [
+            "a"
+          ],
+          "_trailing_sep": false
+        },
+        "$span": {
+          "start": 10,
+          "end": 18
+        },
+        "$nodeHandle": 109,
+        "_pattern": "match"
+      },
+      "$span": {
+        "start": 10,
+        "end": 25
+      },
+      "$nodeHandle": 11,
+      "_content": {
+        "$type": 249,
+        "$source": 0,
+        "$named": true,
+        "_right": {
+          "$type": 161,
+          "$source": 0,
+          "$named": true,
+          "_tail": {
+            "$type": 240,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              9
+            ],
+            "$span": {
+              "start": 22,
+              "end": 25
+            },
+            "$nodeHandle": 113,
+            "_expression": [
+              "3"
+            ],
+            "_trailing_sep": false
+          },
+          "$span": {
+            "start": 21,
+            "end": 25
+          },
+          "$nodeHandle": 112,
+          "_expression": "2"
+        },
+        "$other": [
+          42
+        ],
+        "$span": {
+          "start": 19,
+          "end": 25
+        },
+        "$nodeHandle": 111
+      }
+    },
+    "expectedOutput": "match,a=2,3"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "match, a = 2, 3",
+    "pattern": "assignment",
+    "edits": [],
+    "expectedSourceOut": "match,a=2,3",
+    "expectedReparseTree": "(assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (integer)))))",
+    "wrappedText": "match,a=2,3",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 196,
+      "$source": 0,
+      "$named": true,
+      "_left": "match",
+      "$span": {
+        "start": 26,
+        "end": 45
+      },
+      "$nodeHandle": 18,
+      "_content": {
+        "$type": 251,
+        "$source": 0,
+        "$named": true,
+        "_type": {
+          "$type": 206,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 33,
+            "end": 36
+          },
+          "$nodeHandle": 115,
+          "_content": "int"
+        },
+        "_right": "secret",
+        "$other": [
+          23,
+          42
+        ],
+        "$span": {
+          "start": 31,
+          "end": 45
+        },
+        "$nodeHandle": 114
+      }
+    },
+    "expectedOutput": "match:int=secret"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "match: int = secret",
+    "pattern": "assignment",
+    "edits": [],
+    "expectedSourceOut": "match:int=secret",
+    "expectedReparseTree": "(assignment left: (identifier) (assignment_typed type: (type (identifier)) right: (identifier)))",
+    "wrappedText": "match:int=secret",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 196,
+      "$source": 0,
+      "$named": true,
+      "_left": {
+        "$type": 198,
+        "$source": 0,
+        "$named": true,
+        "_tail": {
+          "$type": 243,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            9
+          ],
+          "$span": {
+            "start": 47,
+            "end": 54
+          },
+          "$nodeHandle": 117,
+          "_pattern": [
+            "match"
+          ],
+          "_trailing_sep": false
+        },
+        "$span": {
+          "start": 46,
+          "end": 54
+        },
+        "$nodeHandle": 116,
+        "_pattern": "x"
+      },
+      "$span": {
+        "start": 46,
+        "end": 77
+      },
+      "$nodeHandle": 22,
+      "_content": {
+        "$type": 249,
+        "$source": 0,
+        "$named": true,
+        "_right": {
+          "$type": 161,
+          "$source": 0,
+          "$named": true,
+          "_tail": {
+            "$type": 240,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              9
+            ],
+            "$span": {
+              "start": 58,
+              "end": 77
+            },
+            "$nodeHandle": 120,
+            "_expression": [
+              {
+                "$type": 229,
+                "$source": 0,
+                "$named": true,
+                "_string_start": "\"",
+                "_content": [
+                  "hey, what's up?"
+                ],
+                "_string_end": "\"",
+                "$span": {
+                  "start": 60,
+                  "end": 77
+                },
+                "$nodeHandle": 121
+              }
+            ],
+            "_trailing_sep": false
+          },
+          "$span": {
+            "start": 57,
+            "end": 77
+          },
+          "$nodeHandle": 119,
+          "_expression": "2"
+        },
+        "$other": [
+          42
+        ],
+        "$span": {
+          "start": 55,
+          "end": 77
+        },
+        "$nodeHandle": 118
+      }
+    },
+    "expectedOutput": "x,match=2,\"hey, what's up?\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "x, match = 2, \"hey, what's up?\"",
+    "pattern": "assignment",
+    "edits": [],
+    "expectedSourceOut": "x,match=2,\"hey, what's up?\"",
+    "expectedReparseTree": "(assignment left: (pattern_list (identifier) tail: (pattern_list_group1 (identifier))) (assignment_eq right: (expression_list (integer) tail: (expression_list_group1 (string string_start: (string_start) content: (string_content) string_end: (string_end))))))",
+    "wrappedText": "x,match=2,\"hey, what's up?\"",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 206,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 33,
+        "end": 36
+      },
+      "$nodeHandle": 20,
+      "_content": "int"
+    },
+    "expectedOutput": "int"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "int",
+    "pattern": "type",
+    "edits": [],
+    "expectedSourceOut": "int",
+    "expectedReparseTree": "(type (identifier))",
+    "wrappedText": "_: int = None",
+    "wrappedOffset": 3
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 229,
+      "$source": 0,
+      "$named": true,
+      "_string_start": "\"",
+      "_content": [
+        "hey, what's up?"
+      ],
+      "_string_end": "\"",
+      "$span": {
+        "start": 60,
+        "end": 77
+      },
+      "$nodeHandle": 28
+    },
+    "expectedOutput": "\"hey, what's up?\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "\"hey, what's up?\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "\"hey, what's up?\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = \"hey, what's up?\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 181,
+      "$source": 0,
+      "$named": true,
+      "$other": [
+        11
+      ],
+      "$span": {
+        "start": 78,
+        "end": 84
+      },
+      "$nodeHandle": 33,
+      "_content": "match"
+    },
+    "expectedOutput": "*match"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "*match",
+    "pattern": "list_splat_pattern",
+    "edits": [],
+    "expectedSourceOut": "*match",
+    "expectedReparseTree": "(list_splat_pattern (identifier))",
+    "wrappedText": "*match = (1,)",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 108,
       "$source": 0,
       "$named": true,
@@ -27827,6 +33219,407 @@
     "expectedSourceOut": "b+c",
     "expectedReparseTree": "(binary_operator left: (identifier) right: (identifier))",
     "wrappedText": "_ = b+c",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 108,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 0,
+        "end": 14
+      },
+      "$nodeHandle": 0,
+      "_statement": [
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 0,
+            "end": 14
+          },
+          "$nodeHandle": 7,
+          "_simple_statement": [
+            {
+              "$type": 126,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                17
+              ],
+              "$span": {
+                "start": 0,
+                "end": 14
+              },
+              "$nodeHandle": 8,
+              "_expressions": {
+                "$type": 161,
+                "$source": 0,
+                "$named": true,
+                "_tail": {
+                  "$type": 240,
+                  "$source": 0,
+                  "$named": true,
+                  "$other": [
+                    9
+                  ],
+                  "$span": {
+                    "start": 8,
+                    "end": 14
+                  },
+                  "$nodeHandle": 10,
+                  "_expression": [
+                    {
+                      "$type": 202,
+                      "$source": 0,
+                      "$named": true,
+                      "_value": "b",
+                      "_subscript": [
+                        "2"
+                      ],
+                      "$other": [
+                        44,
+                        45
+                      ],
+                      "$span": {
+                        "start": 10,
+                        "end": 14
+                      },
+                      "$nodeHandle": 11
+                    }
+                  ],
+                  "_trailing_sep": false
+                },
+                "$span": {
+                  "start": 4,
+                  "end": 14
+                },
+                "$nodeHandle": 9,
+                "_expression": {
+                  "$type": 202,
+                  "$source": 0,
+                  "$named": true,
+                  "_value": "a",
+                  "_subscript": [
+                    "1"
+                  ],
+                  "$other": [
+                    44,
+                    45
+                  ],
+                  "$span": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "$nodeHandle": 12
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "expectedOutput": "del a[1],b[2]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "del a[1], b[2]",
+    "pattern": "module",
+    "edits": [],
+    "expectedSourceOut": "del a[1],b[2]",
+    "expectedReparseTree": "(module (statement_group1 (delete_statement (expression_list (subscript value: (identifier) subscript: (integer)) tail: (expression_list_group1 (subscript value: (identifier) subscript: (integer))))) (newline)))",
+    "wrappedText": "del a[1],b[2]",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 202,
+      "$source": 0,
+      "$named": true,
+      "_value": "b",
+      "_subscript": [
+        "2"
+      ],
+      "$other": [
+        44,
+        45
+      ],
+      "$span": {
+        "start": 10,
+        "end": 14
+      },
+      "$nodeHandle": 5
+    },
+    "expectedOutput": "b[2]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "b[2]",
+    "pattern": "subscript",
+    "edits": [],
+    "expectedSourceOut": "b[2]",
+    "expectedReparseTree": "(subscript value: (identifier) subscript: (integer))",
+    "wrappedText": "[b[2]]",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 202,
+      "$source": 0,
+      "$named": true,
+      "_value": "a",
+      "_subscript": [
+        "1"
+      ],
+      "$other": [
+        44,
+        45
+      ],
+      "$span": {
+        "start": 4,
+        "end": 8
+      },
+      "$nodeHandle": 6
+    },
+    "expectedOutput": "a[1]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a[1]",
+    "pattern": "subscript",
+    "edits": [],
+    "expectedSourceOut": "a[1]",
+    "expectedReparseTree": "(subscript value: (identifier) subscript: (integer))",
+    "wrappedText": "[a[1]]",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 108,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 0,
+        "end": 35
+      },
+      "$nodeHandle": 0,
+      "_statement": [
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 0,
+            "end": 6
+          },
+          "$nodeHandle": 11,
+          "_simple_statement": [
+            {
+              "$type": 125,
+              "$source": 0,
+              "$named": true,
+              "$text": "return",
+              "$span": {
+                "start": 0,
+                "end": 6
+              },
+              "$nodeHandle": 14
+            }
+          ]
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 7,
+            "end": 22
+          },
+          "$nodeHandle": 12,
+          "_simple_statement": [
+            {
+              "$type": 125,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                16
+              ],
+              "$span": {
+                "start": 7,
+                "end": 22
+              },
+              "$nodeHandle": 15,
+              "_expressions": {
+                "$type": 161,
+                "$source": 0,
+                "$named": true,
+                "_tail": {
+                  "$type": 240,
+                  "$source": 0,
+                  "$named": true,
+                  "$other": [
+                    9
+                  ],
+                  "$span": {
+                    "start": 19,
+                    "end": 22
+                  },
+                  "$nodeHandle": 17,
+                  "_expression": [
+                    "c"
+                  ],
+                  "_trailing_sep": false
+                },
+                "$span": {
+                  "start": 14,
+                  "end": 22
+                },
+                "$nodeHandle": 16,
+                "_expression": {
+                  "$type": 189,
+                  "$source": 0,
+                  "$named": true,
+                  "_left": "a",
+                  "_operator": 51,
+                  "_right": "b",
+                  "$span": {
+                    "start": 14,
+                    "end": 19
+                  },
+                  "$nodeHandle": 18
+                }
+              }
+            }
+          ]
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 23,
+            "end": 35
+          },
+          "$nodeHandle": 13,
+          "_simple_statement": [
+            {
+              "$type": 125,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                16
+              ],
+              "$span": {
+                "start": 23,
+                "end": 35
+              },
+              "$nodeHandle": 19,
+              "_expressions": {
+                "$type": 187,
+                "$source": 0,
+                "$named": true,
+                "_argument": "b",
+                "$other": [
+                  53
+                ],
+                "$span": {
+                  "start": 30,
+                  "end": 35
+                },
+                "$nodeHandle": 20
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "expectedOutput": "return\nreturn a+b,c\nreturn not b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "return\nreturn a + b, c\nreturn not b",
+    "pattern": "module",
+    "edits": [],
+    "expectedSourceOut": "return\nreturn a+b,c\nreturn not b",
+    "expectedReparseTree": "(module (statement_group1 (return_statement) (newline)) (statement_group1 (return_statement (expression_list (binary_operator left: (identifier) right: (identifier)) tail: (expression_list_group1 (identifier)))) (newline)) (statement_group1 (return_statement (not_operator argument: (identifier))) (newline)))",
+    "wrappedText": "return\nreturn a+b,c\nreturn not b",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 189,
+      "$source": 0,
+      "$named": true,
+      "_left": "a",
+      "_operator": 51,
+      "_right": "b",
+      "$span": {
+        "start": 14,
+        "end": 19
+      },
+      "$nodeHandle": 8
+    },
+    "expectedOutput": "a+b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a + b",
+    "pattern": "binary_operator",
+    "edits": [],
+    "expectedSourceOut": "a+b",
+    "expectedReparseTree": "(binary_operator left: (identifier) right: (identifier))",
+    "wrappedText": "_ = a+b",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 187,
+      "$source": 0,
+      "$named": true,
+      "_argument": "b",
+      "$other": [
+        53
+      ],
+      "$span": {
+        "start": 30,
+        "end": 35
+      },
+      "$nodeHandle": 10
+    },
+    "expectedOutput": "not b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "not b",
+    "pattern": "not_operator",
+    "edits": [],
+    "expectedSourceOut": "not b",
+    "expectedReparseTree": "(not_operator argument: (identifier))",
+    "wrappedText": "_ = not b",
     "wrappedOffset": 4
   },
   {

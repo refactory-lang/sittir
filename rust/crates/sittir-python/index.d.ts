@@ -685,8 +685,8 @@ export interface ExpressionListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _tail: ExpressionListTailTransportSlot
   _expression: Box<ExpressionTransport>
-  _expression_list_group1: ExpressionListExpressionListGroup1TransportSlot
 }
 
 export interface ExpressionStatementTransport {
@@ -1225,8 +1225,8 @@ export interface PatternListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _tail: PatternListTailTransportSlot
   _pattern: PatternTransport
-  _pattern_list_group1: PatternListPatternListGroup1TransportSlot
 }
 
 export interface PatternsTransport {

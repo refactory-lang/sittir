@@ -543,7 +543,7 @@ pub struct ExecStatementTemplate<'a> {
 #[template(path = "expression_list.jinja", escape = "none")]
 pub struct ExpressionListTemplate<'a> {
     pub expression: SingleNonterminalView<'a>,
-    pub expression_list_group1: SingleNonterminalView<'a>,
+    pub tail: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -796,7 +796,7 @@ pub struct ParenthesizedListSplatTemplate<'a> {
 #[template(path = "pattern_list.jinja", escape = "none")]
 pub struct PatternListTemplate<'a> {
     pub pattern: SingleNonterminalView<'a>,
-    pub pattern_list_group1: SingleNonterminalView<'a>,
+    pub tail: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

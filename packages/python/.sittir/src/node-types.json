@@ -1996,17 +1996,28 @@
   {
     "type": "expression_list",
     "named": true,
-    "fields": {},
+    "fields": {
+      "tail": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": ",",
+            "named": false
+          },
+          {
+            "type": "expression_list_group1",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
           "type": "expression",
-          "named": true
-        },
-        {
-          "type": "expression_list_group1",
           "named": true
         }
       ]
@@ -3204,17 +3215,28 @@
   {
     "type": "pattern_list",
     "named": true,
-    "fields": {},
+    "fields": {
+      "tail": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": ",",
+            "named": false
+          },
+          {
+            "type": "pattern_list_group1",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
           "type": "pattern",
-          "named": true
-        },
-        {
-          "type": "pattern_list_group1",
           "named": true
         }
       ]

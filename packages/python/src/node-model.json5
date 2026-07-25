@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 257,
+  "nodeCount": 258,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -182,7 +182,7 @@
     "except_clause.newline": {
       "newline": "_newline"
     },
-    "expression_list.expression_list_group1": {
+    "expression_list.tail": {
       "expression_list_group1": "_expression_list_group1"
     },
     "expression_statement.content": {
@@ -234,7 +234,7 @@
     "parenthesized_list_splat.content": {
       "parenthesized_expression": "parenthesized_list_splat"
     },
-    "pattern_list.pattern_list_group1": {
+    "pattern_list.tail": {
       "pattern_list_group1": "_pattern_list_group1"
     },
     "print_statement.content": {
@@ -1172,7 +1172,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "expression_list_group1": {
+      "tail": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1708,7 +1708,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "pattern_list_group1": {
+      "tail": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -3134,7 +3134,7 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
+      "leadingMode": "mandatory",
       "trailingMode": "optional",
       "elementKinds": [
         "expression"
@@ -3529,7 +3529,7 @@
       "hidden": false,
       "nonEmpty": true,
       "hasNonterminalSeparator": false,
-      "leadingMode": "none",
+      "leadingMode": "mandatory",
       "trailingMode": "optional",
       "elementKinds": [
         "pattern"
@@ -5477,6 +5477,16 @@
       ]
     },
     {
+      "kind": "comma",
+      "modelType": "token",
+      "typeName": "Comma2",
+      "irKey": "comma",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\",\" as const",
+      "text": ","
+    },
+    {
       "kind": "comment",
       "modelType": "pattern",
       "typeName": "Comment",
@@ -6847,9 +6857,9 @@
           }
         },
         {
-          "name": "expression_list_group1",
-          "propertyName": "expressionListGroup1",
-          "paramName": "expressionListGroup1",
+          "name": "tail",
+          "propertyName": "tail",
+          "paramName": "tail",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -6880,7 +6890,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "expression",
-        "expression_list_group1"
+        "tail"
       ]
     },
     {
@@ -9435,9 +9445,9 @@
           }
         },
         {
-          "name": "pattern_list_group1",
-          "propertyName": "patternListGroup1",
-          "paramName": "patternListGroup1",
+          "name": "tail",
+          "propertyName": "tail",
+          "paramName": "tail",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -9468,7 +9478,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "pattern",
-        "pattern_list_group1"
+        "tail"
       ]
     },
     {

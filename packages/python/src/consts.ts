@@ -224,6 +224,7 @@ export const KEYWORDS = [
 	'caret',
 	'case',
 	'class',
+	'comma',
 	'continue',
 	'continue_statement',
 	'dash',
@@ -1412,13 +1413,14 @@ export const enum TSFieldId {
 	FieldSubject = 50,
 	FieldSubscript = 51,
 	FieldSuperclasses = 52,
-	FieldType = 53,
-	FieldTypeConversion = 54,
-	FieldTypeParameter = 55,
-	FieldTypeParameters = 56,
-	FieldValue = 57,
-	FieldWildcardImport = 58,
-	FieldWithClause = 59
+	FieldTail = 53,
+	FieldType = 54,
+	FieldTypeConversion = 55,
+	FieldTypeParameter = 56,
+	FieldTypeParameters = 57,
+	FieldValue = 58,
+	FieldWildcardImport = 59,
+	FieldWithClause = 60
 }
 
 export const TREE_SITTER_FIELD_ID_BY_NAME = {
@@ -1474,6 +1476,7 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
 	subject: TSFieldId.FieldSubject,
 	subscript: TSFieldId.FieldSubscript,
 	superclasses: TSFieldId.FieldSuperclasses,
+	tail: TSFieldId.FieldTail,
 	type: TSFieldId.FieldType,
 	type_conversion: TSFieldId.FieldTypeConversion,
 	type_parameter: TSFieldId.FieldTypeParameter,
@@ -1536,6 +1539,7 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
 	[TSFieldId.FieldSubject]: 'subject',
 	[TSFieldId.FieldSubscript]: 'subscript',
 	[TSFieldId.FieldSuperclasses]: 'superclasses',
+	[TSFieldId.FieldTail]: 'tail',
 	[TSFieldId.FieldType]: 'type',
 	[TSFieldId.FieldTypeConversion]: 'type_conversion',
 	[TSFieldId.FieldTypeParameter]: 'type_parameter',
@@ -1598,13 +1602,14 @@ export const TREE_SITTER_FIELD_ID_JSON = [
 	{ name: 'subject', id: 50, enumName: 'FieldSubject', cName: 'field_subject' },
 	{ name: 'subscript', id: 51, enumName: 'FieldSubscript', cName: 'field_subscript' },
 	{ name: 'superclasses', id: 52, enumName: 'FieldSuperclasses', cName: 'field_superclasses' },
-	{ name: 'type', id: 53, enumName: 'FieldType', cName: 'field_type' },
-	{ name: 'type_conversion', id: 54, enumName: 'FieldTypeConversion', cName: 'field_type_conversion' },
-	{ name: 'type_parameter', id: 55, enumName: 'FieldTypeParameter', cName: 'field_type_parameter' },
-	{ name: 'type_parameters', id: 56, enumName: 'FieldTypeParameters', cName: 'field_type_parameters' },
-	{ name: 'value', id: 57, enumName: 'FieldValue', cName: 'field_value' },
-	{ name: 'wildcard_import', id: 58, enumName: 'FieldWildcardImport', cName: 'field_wildcard_import' },
-	{ name: 'with_clause', id: 59, enumName: 'FieldWithClause', cName: 'field_with_clause' }
+	{ name: 'tail', id: 53, enumName: 'FieldTail', cName: 'field_tail' },
+	{ name: 'type', id: 54, enumName: 'FieldType', cName: 'field_type' },
+	{ name: 'type_conversion', id: 55, enumName: 'FieldTypeConversion', cName: 'field_type_conversion' },
+	{ name: 'type_parameter', id: 56, enumName: 'FieldTypeParameter', cName: 'field_type_parameter' },
+	{ name: 'type_parameters', id: 57, enumName: 'FieldTypeParameters', cName: 'field_type_parameters' },
+	{ name: 'value', id: 58, enumName: 'FieldValue', cName: 'field_value' },
+	{ name: 'wildcard_import', id: 59, enumName: 'FieldWildcardImport', cName: 'field_wildcard_import' },
+	{ name: 'with_clause', id: 60, enumName: 'FieldWithClause', cName: 'field_with_clause' }
 ] as const;
 
 /** Per-node-kind field metadata. */
@@ -1767,7 +1772,7 @@ export const FIELD_MAP: Record<
 	],
 	expression_list: [
 		{ name: 'expression', required: true, multiple: false },
-		{ name: 'expressionListGroup1', required: true, multiple: false }
+		{ name: 'tail', required: true, multiple: false }
 	],
 	expression_statement: [{ name: 'content', required: true, multiple: false }],
 	finally_clause: [{ name: 'block', required: true, multiple: false }],
@@ -1871,7 +1876,7 @@ export const FIELD_MAP: Record<
 	parenthesized_list_splat: [{ name: 'content', required: true, multiple: false }],
 	pattern_list: [
 		{ name: 'pattern', required: true, multiple: false },
-		{ name: 'patternListGroup1', required: true, multiple: false }
+		{ name: 'tail', required: true, multiple: false }
 	],
 	print_statement: [{ name: 'content', required: true, multiple: false }],
 	raise_statement: [

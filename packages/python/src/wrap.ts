@@ -324,7 +324,8 @@ function _hasSeparatorFlank(
 	content: readonly unknown[],
 	other: unknown,
 	edge: 'leading' | 'trailing',
-	otherFlankOptional: boolean
+	otherFlankOptional: boolean,
+	mandatoryAnons: number
 ): boolean {
 	const containerSpan = container.$span;
 	const anchor = edge === 'leading' ? content[0] : content[content.length - 1];
@@ -339,7 +340,11 @@ function _hasSeparatorFlank(
 		);
 	}
 	const otherCount = Array.isArray(other) ? other.length : 0;
-	const between = Math.max(content.length - 1, 0);
+	// Baseline = between-separators PLUS any structurally-mandatory flank
+	// anons: a mandatory-LEADING list consumes one anon per element (n),
+	// not n-1, so a lone captured separator on a single-element instance
+	// is the leading flank, not an extra trailing one.
+	const between = Math.max(content.length - 1, 0) + mandatoryAnons;
 	return otherCount > between;
 }
 const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
@@ -968,7 +973,7 @@ export function wrapArgumentListGroup1(
 			]),
 			$type: TSKindId.ArgumentListGroup1 as const,
 			_content: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			contents() {
 				return drillInAll<
@@ -1233,7 +1238,7 @@ export function wrapCollectionElements(
 			]),
 			$type: TSKindId.CollectionElements as const,
 			_content: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			contents() {
 				return drillInAll<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(
@@ -1527,7 +1532,7 @@ export function wrapDictionaryGroup1(
 			..._omitWrapKeys(data, ['_dictionary_splat', '_pair']),
 			$type: TSKindId.DictionaryGroup1 as const,
 			_content: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			contents() {
 				return drillInAll<T.Pair | T.DictionarySplat>(
@@ -1789,7 +1794,7 @@ export function wrapExpressionListGroup1(
 			]),
 			$type: TSKindId.ExpressionListGroup1 as const,
 			_expression: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 1),
 
 			expressions() {
 				return drillInAll<T.Expression>(this._expression as readonly T.Expression[] | undefined, tree);
@@ -1921,7 +1926,7 @@ export function wrapExpressionStatementTuple(
 			]),
 			$type: TSKindId.ExpressionStatementTuple as const,
 			_expression: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			expressions() {
 				return drillInAll<T.Expression>(this._expression as readonly T.Expression[] | undefined, tree);
@@ -2054,7 +2059,7 @@ export function wrapListPatternGroup1(
 			...data,
 			$type: TSKindId.ListPatternGroup1 as const,
 			_case_pattern: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			casePatterns() {
 				return drillInAll<T.CasePattern>(this._case_pattern as readonly T.CasePattern[] | undefined, tree);
@@ -2190,7 +2195,7 @@ export function wrap_Parameters(
 			]),
 			$type: TSKindId._Parameters as const,
 			_parameter: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			parameters() {
 				return drillInAll<T.Parameter>(this._parameter as readonly T.Parameter[] | undefined, tree);
@@ -2244,7 +2249,7 @@ export function wrapPatternListGroup1(
 			]),
 			$type: TSKindId.PatternListGroup1 as const,
 			_pattern: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 1),
 
 			patterns() {
 				return drillInAll<T.Pattern>(this._pattern as readonly T.Pattern[] | undefined, tree);
@@ -2298,7 +2303,7 @@ export function wrapPatterns(
 			]),
 			$type: TSKindId.Patterns as const,
 			_pattern: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			patterns() {
 				return drillInAll<T.Pattern>(this._pattern as readonly T.Pattern[] | undefined, tree);
@@ -2722,7 +2727,7 @@ export function wrapWithClauseBare(
 			...data,
 			$type: TSKindId.WithClauseBare as const,
 			_with_item: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			withItems() {
 				return drillInAll<T.WithItem>(this._with_item as readonly T.WithItem[] | undefined, tree);
@@ -4591,7 +4596,6 @@ export function wrapExpressionList(
 		readonly _conditional_expression?: T.Expression;
 		readonly _named_expression?: T.Expression;
 		readonly _as_pattern?: T.Expression;
-		readonly _comma?: ',' | T.ExpressionListGroup1;
 	},
 	tree: TreeHandle
 ) {
@@ -4604,7 +4608,6 @@ export function wrapExpressionList(
 				'_binary_operator',
 				'_boolean_operator',
 				'_call',
-				'_comma',
 				'_comparison_operator',
 				'_concatenated_string',
 				'_conditional_expression',
@@ -4674,20 +4677,19 @@ export function wrapExpressionList(
 				data.$type,
 				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
 			),
-			_expression_list_group1: normalizeSingularWrapSlot(
-				data._expression_list_group1 ?? data._comma,
-				'expression_list_group1',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'expression_list_group1', span: (data as _NodeData).$span }
-			),
+			_tail: normalizeSingularWrapSlot(data._tail, 'tail', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'tail',
+				span: (data as _NodeData).$span
+			}),
 
 			expression() {
 				return drillIn<T.Expression>(this._expression, tree);
 			},
-			expressionListGroup1() {
+			tail() {
 				return drillAs<',' | T.ExpressionListGroup1>(
-					this._expression_list_group1,
+					this._tail,
 					tree,
 					'expression_list_group1',
 					'_expression_list_group1'
@@ -4696,8 +4698,7 @@ export function wrapExpressionList(
 			$with: {
 				expression: (v: NonNullable<T.ExpressionList['_expression']>) =>
 					wrapExpressionList({ ...data, _expression: v }, tree),
-				expressionListGroup1: (v: NonNullable<T.ExpressionList['_expression_list_group1']>) =>
-					wrapExpressionList({ ...data, _expression_list_group1: v }, tree)
+				tail: (v: NonNullable<T.ExpressionList['_tail']>) => wrapExpressionList({ ...data, _tail: v }, tree)
 			}
 		},
 		methodsEngine
@@ -6451,7 +6452,6 @@ export function wrapPatternList(
 		readonly _list_splat_pattern?: T.Pattern;
 		readonly _tuple_pattern?: T.Pattern;
 		readonly _list_pattern?: T.Pattern;
-		readonly _comma?: ',' | T.PatternListGroup1;
 	},
 	tree: TreeHandle
 ) {
@@ -6459,7 +6459,6 @@ export function wrapPatternList(
 		{
 			..._omitWrapKeys(data, [
 				'_attribute',
-				'_comma',
 				'_identifier',
 				'_keyword_identifier',
 				'_list_pattern',
@@ -6482,29 +6481,22 @@ export function wrapPatternList(
 				data.$type,
 				{ tree, nodeType: data.$type, slotName: 'pattern', span: (data as _NodeData).$span }
 			),
-			_pattern_list_group1: normalizeSingularWrapSlot(
-				data._pattern_list_group1 ?? data._comma,
-				'pattern_list_group1',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'pattern_list_group1', span: (data as _NodeData).$span }
-			),
+			_tail: normalizeSingularWrapSlot(data._tail, 'tail', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'tail',
+				span: (data as _NodeData).$span
+			}),
 
 			pattern() {
 				return drillIn<T.Pattern>(this._pattern, tree);
 			},
-			patternListGroup1() {
-				return drillAs<',' | T.PatternListGroup1>(
-					this._pattern_list_group1,
-					tree,
-					'pattern_list_group1',
-					'_pattern_list_group1'
-				);
+			tail() {
+				return drillAs<',' | T.PatternListGroup1>(this._tail, tree, 'pattern_list_group1', '_pattern_list_group1');
 			},
 			$with: {
 				pattern: (v: NonNullable<T.PatternList['_pattern']>) => wrapPatternList({ ...data, _pattern: v }, tree),
-				patternListGroup1: (v: NonNullable<T.PatternList['_pattern_list_group1']>) =>
-					wrapPatternList({ ...data, _pattern_list_group1: v }, tree)
+				tail: (v: NonNullable<T.PatternList['_tail']>) => wrapPatternList({ ...data, _tail: v }, tree)
 			}
 		},
 		methodsEngine

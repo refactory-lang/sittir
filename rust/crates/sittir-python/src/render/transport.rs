@@ -243,6 +243,7 @@ pub enum AnyTransport {
     Star(StarTransport),
     Exec(ExecTransport),
     In(InTransport),
+    Comma2(Comma2Transport),
     False2(False2Transport),
     Finally(FinallyTransport),
     For(ForTransport),
@@ -7941,13 +7942,13 @@ impl RenderableTransport for ExecStatementCodeTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ExpressionListExpressionListGroup1TransportSlot {
+pub enum ExpressionListTailTransportSlot {
     ExpressionListGroup1(ExpressionListGroup1Transport),
     Literal27_2c,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ExpressionListExpressionListGroup1TransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ExpressionListTailTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -7960,14 +7961,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionListExpressionListGrou
                     )),
                     9 => Ok(Self::Literal27_2c),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExpressionListExpressionListGroup1TransportSlot",
+                        "unknown kind id {other} in ExpressionListTailTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ExpressionListExpressionListGroup1TransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ExpressionListTailTransportSlot")
                 )?;
                 match kind_id {
                     240 => Ok(Self::ExpressionListGroup1(
@@ -7975,60 +7976,60 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionListExpressionListGrou
                     )),
                     9 => Ok(Self::Literal27_2c),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ExpressionListExpressionListGroup1TransportSlot",
+                        "unknown kind id {other} in ExpressionListTailTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ExpressionListExpressionListGroup1TransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("ExpressionListTailTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ExpressionListExpressionListGroup1TransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ExpressionListTailTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ExpressionListExpressionListGroup1TransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ExpressionListTailTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ExpressionListExpressionListGroup1TransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ExpressionListTailTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ExpressionListExpressionListGroup1TransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ExpressionListTailTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ExpressionListExpressionListGroup1TransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ExpressionListTailTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ExpressionListExpressionListGroup1TransportSlot::to_napi_value(env, *val)
+        ExpressionListTailTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn expression_list_expression_list_group1_transport_slot_to_any(t: ExpressionListExpressionListGroup1TransportSlot) -> AnyTransport {
+fn expression_list_tail_transport_slot_to_any(t: ExpressionListTailTransportSlot) -> AnyTransport {
     match t {
-        ExpressionListExpressionListGroup1TransportSlot::ExpressionListGroup1(inner) => AnyTransport::ExpressionListGroup1(inner),
-        ExpressionListExpressionListGroup1TransportSlot::Literal27_2c => AnyTransport::Literal27_2c,
+        ExpressionListTailTransportSlot::ExpressionListGroup1(inner) => AnyTransport::ExpressionListGroup1(inner),
+        ExpressionListTailTransportSlot::Literal27_2c => AnyTransport::Literal27_2c,
     }
 }
 
-impl RenderableTransport for ExpressionListExpressionListGroup1TransportSlot {
+impl RenderableTransport for ExpressionListTailTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ExpressionListExpressionListGroup1TransportSlot::ExpressionListGroup1(inner) => render_expression_list_group1(inner, dest),
-            ExpressionListExpressionListGroup1TransportSlot::Literal27_2c => dest.write_str(",").map_err(::askama::Error::from),
+            ExpressionListTailTransportSlot::ExpressionListGroup1(inner) => render_expression_list_group1(inner, dest),
+            ExpressionListTailTransportSlot::Literal27_2c => dest.write_str(",").map_err(::askama::Error::from),
         }
     }
 }
@@ -10121,13 +10122,13 @@ impl RenderableTransport for ParenthesizedListSplatContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum PatternListPatternListGroup1TransportSlot {
+pub enum PatternListTailTransportSlot {
     PatternListGroup1(PatternListGroup1Transport),
     Literal27_2c,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PatternListPatternListGroup1TransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for PatternListTailTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -10140,14 +10141,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternListPatternListGroup1Tran
                     )),
                     9 => Ok(Self::Literal27_2c),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in PatternListPatternListGroup1TransportSlot",
+                        "unknown kind id {other} in PatternListTailTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in PatternListPatternListGroup1TransportSlot")
+                    ::napi::Error::from_reason("$type property missing in PatternListTailTransportSlot")
                 )?;
                 match kind_id {
                     243 => Ok(Self::PatternListGroup1(
@@ -10155,60 +10156,60 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternListPatternListGroup1Tran
                     )),
                     9 => Ok(Self::Literal27_2c),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in PatternListPatternListGroup1TransportSlot",
+                        "unknown kind id {other} in PatternListTailTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("PatternListPatternListGroup1TransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("PatternListTailTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PatternListPatternListGroup1TransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for PatternListTailTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PatternListPatternListGroup1TransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("PatternListTailTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PatternListPatternListGroup1TransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PatternListTailTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        PatternListPatternListGroup1TransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        PatternListTailTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PatternListPatternListGroup1TransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PatternListTailTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        PatternListPatternListGroup1TransportSlot::to_napi_value(env, *val)
+        PatternListTailTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn pattern_list_pattern_list_group1_transport_slot_to_any(t: PatternListPatternListGroup1TransportSlot) -> AnyTransport {
+fn pattern_list_tail_transport_slot_to_any(t: PatternListTailTransportSlot) -> AnyTransport {
     match t {
-        PatternListPatternListGroup1TransportSlot::PatternListGroup1(inner) => AnyTransport::PatternListGroup1(inner),
-        PatternListPatternListGroup1TransportSlot::Literal27_2c => AnyTransport::Literal27_2c,
+        PatternListTailTransportSlot::PatternListGroup1(inner) => AnyTransport::PatternListGroup1(inner),
+        PatternListTailTransportSlot::Literal27_2c => AnyTransport::Literal27_2c,
     }
 }
 
-impl RenderableTransport for PatternListPatternListGroup1TransportSlot {
+impl RenderableTransport for PatternListTailTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            PatternListPatternListGroup1TransportSlot::PatternListGroup1(inner) => render_pattern_list_group1(inner, dest),
-            PatternListPatternListGroup1TransportSlot::Literal27_2c => dest.write_str(",").map_err(::askama::Error::from),
+            PatternListTailTransportSlot::PatternListGroup1(inner) => render_pattern_list_group1(inner, dest),
+            PatternListTailTransportSlot::Literal27_2c => dest.write_str(",").map_err(::askama::Error::from),
         }
     }
 }
@@ -17726,10 +17727,10 @@ pub struct ExpressionListTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tail"))]
+    pub tail: ExpressionListTailTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression"))]
     pub expression: Box<ExpressionTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_expression_list_group1"))]
-    pub expression_list_group1: ExpressionListExpressionListGroup1TransportSlot,
 }
 
 impl RenderableTransport for ExpressionListTransport {
@@ -20551,10 +20552,10 @@ pub struct PatternListTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_tail"))]
+    pub tail: PatternListTailTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern"))]
     pub pattern: PatternTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_pattern_list_group1"))]
-    pub pattern_list_group1: PatternListPatternListGroup1TransportSlot,
 }
 
 impl RenderableTransport for PatternListTransport {
@@ -28088,6 +28089,109 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<InTransport> {
 }
 
 #[derive(Debug, Clone)]
+pub struct Comma2Transport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for Comma2Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for Comma2Transport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => ",".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                obj.get("$text")?.unwrap_or_else(|| ",".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for Comma2Transport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ",".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Comma2Transport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<Comma2Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        Comma2Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<Comma2Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Comma2Transport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct False2Transport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -30595,7 +30699,7 @@ fn render_expression_list_group1(node: &ExpressionListGroup1Transport, dest: &mu
         expression: ListNonterminalView {
             items: expression_buf.as_slice(),
             separator: ",",
-            leading: false,
+            leading: true,
             trailing: node.trailing_sep.unwrap_or(false),
         },
     };
@@ -30752,7 +30856,7 @@ fn render_pattern_list_group1(node: &PatternListGroup1Transport, dest: &mut dyn 
         pattern: ListNonterminalView {
             items: pattern_buf.as_slice(),
             separator: ",",
-            leading: false,
+            leading: true,
             trailing: node.trailing_sep.unwrap_or(false),
         },
     };
@@ -31408,7 +31512,7 @@ fn render_exec_statement(node: &ExecStatementTransport, dest: &mut dyn ::std::fm
 fn render_expression_list(node: &ExpressionListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExpressionListTemplate {
         expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
-        expression_list_group1: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression_list_group1)),
+        tail: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.tail)),
     };
     template.render_into(dest)
 }
@@ -31903,7 +32007,7 @@ fn render_pass_statement(t: &PassStatementTransport, dest: &mut dyn ::std::fmt::
 fn render_pattern_list(node: &PatternListTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = PatternListTemplate {
         pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern)),
-        pattern_list_group1: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern_list_group1)),
+        tail: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.tail)),
     };
     template.render_into(dest)
 }
@@ -32501,6 +32605,10 @@ fn render_in(t: &InTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
+fn render_comma2(t: &Comma2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
 fn render_false2(t: &False2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -33037,6 +33145,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Star(t) => t.render_into(dest),
             AnyTransport::Exec(t) => t.render_into(dest),
             AnyTransport::In(t) => t.render_into(dest),
+            AnyTransport::Comma2(t) => t.render_into(dest),
             AnyTransport::False2(t) => t.render_into(dest),
             AnyTransport::Finally(t) => t.render_into(dest),
             AnyTransport::For(t) => t.render_into(dest),
@@ -33317,6 +33426,7 @@ impl AnyTransport {
             Self::Star(t) => t.transport_named,
             Self::Exec(t) => t.transport_named,
             Self::In(t) => t.transport_named,
+            Self::Comma2(t) => t.transport_named,
             Self::False2(t) => t.transport_named,
             Self::Finally(t) => t.transport_named,
             Self::For(t) => t.transport_named,

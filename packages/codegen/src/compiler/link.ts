@@ -2375,14 +2375,21 @@ export function liftCommaSep(members: Rule<'link'>[]): Rule<'link'> | null {
 		return rulesEqual(r.content, sep.value);
 	};
 
+	// Head absorption (Cases 1-2): the standalone head element is the
+	// structural proof of BETWEEN-join semantics — each ex-repeat element's
+	// prefix separator becomes a between-separator once the head merges into
+	// the same list. Clear the positional `leading: 'mandatory'` the inner
+	// sep-first repeat lift stamped; only a HEADLESS sep-first repeat (no
+	// absorbable head in its rule, e.g. python `_expression_list_group1`)
+	// keeps it and renders the flank.
 	// Case 1: [x, repeat(sep, x)]
 	if (members.length === 2 && repeatIdx === 1 && matchesElem(members[0]!)) {
-		return { type: REPEAT1, content: elem, separator: sep };
+		return { type: REPEAT1, content: elem, separator: { ...sep, leading: undefined } };
 	}
 	// Case 2: [x, repeat(sep, x), optional(sep)] — genuinely OPTIONAL
 	// trailing (per-instance variability, needs runtime capture).
 	if (members.length === 3 && repeatIdx === 1 && matchesElem(members[0]!) && matchesOptionalSep(members[2]!)) {
-		return { type: REPEAT1, content: elem, separator: { ...sep, trailing: 'optional' } };
+		return { type: REPEAT1, content: elem, separator: { ...sep, leading: undefined, trailing: 'optional' } };
 	}
 	// Case 3: [sep, x, repeat(sep, x)] — a MANDATORY leading separator
 	// (bare, not `optional(...)`-wrapped): always present, no per-instance
@@ -2489,10 +2496,24 @@ export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
 				// that never sees an `optional(sep)`-wrapped shape — that shape
 				// only arises from the seq-of-3-members pattern `liftCommaSep`
 				// handles downstream in link).
+				// Symmetric positional stamp: sep-FIRST (`repeat(seq(SEP, X))`)
+				// means every element is PREFIXED — a mandatory LEADING flank.
+				// This is safe for BOTH list shapes because the joinWith*
+				// filters are capture-driven: a canonical head-first list
+				// captures no leading anon (no separator precedes its first
+				// element) and the filter degrades to a plain between-join,
+				// while a HEADLESS group (head lives outside the group, e.g.
+				// python `_expression_list_group1`) captures its leading ','
+				// and renders `,2,3` — previously these reversed to `2,3,`
+				// because only the trailing flank was ever stamped.
 				return {
 					...rule,
 					content: sep.content,
-					separator: { value: sep.separator, trailing: sep.trailing ? 'mandatory' : undefined }
+					separator: {
+						value: sep.separator,
+						trailing: sep.trailing ? 'mandatory' : undefined,
+						leading: sep.trailing ? undefined : 'mandatory'
+					}
 				};
 			}
 			return { ...rule, content };

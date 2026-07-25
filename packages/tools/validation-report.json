@@ -8951,16 +8951,6 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse",
-    "location": "Assignments [module]",
-    "message": "render: Missing field `_pattern` on AssignmentTransport._left on ExpressionStatementTransport._content on Si"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse",
     "location": "Yield expressions [module]",
     "message": "render: Missing field `_body` on YieldTransport._content on ParenthesizedExpressionTransport._content on Yie"
   },
@@ -8991,8 +8981,8 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse",
-    "location": "Default Tuple Arguments [module]",
-    "message": "re-parse error [ERROR in return_statement at \"a\"]: \"def comp_args():return a b,\""
+    "location": "Default Tuple Arguments [tuple_pattern]",
+    "message": "kind not found at rendered offset 16"
   },
   {
     "source": "validator",
@@ -9011,28 +9001,8 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse",
-    "location": "Splat Inside of Expression List [module]",
-    "message": "re-parse error [ERROR in module at \"a\"]: \"a c,=[]3,\nw x,y,z,=0*a,c,\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse",
     "location": "Strings [module]",
     "message": "re-parse error [ERROR in module at \"\"\\\\\\\\\\\\\\\\\\\" f'\\N{GRE\"]: \"\"I'm ok\"\n'\"ok\"'\nUR'bye'\nb'sup'\nB\"sup\"\n`1`\n\"\\\\\"\n\"/\"\n\"\\\n\"\nb\"\\x12\\x13\"\n\"\\xab\\1\\12\\1\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Format strings [module]",
-    "message": "render: Missing field `_expression` on InterpolationTransport._expression on StringTransport._content on Exp"
   },
   {
     "source": "validator",
@@ -9133,16 +9103,6 @@
     "stage": "read-render-parse",
     "location": "As patterns [module]",
     "message": "render: Missing field `_case_pattern` on CasePatternTransport._content on CaseListPatternTransport._case_pat"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Actually not match [module]",
-    "message": "re-parse error [ERROR in match_statement at \"=2\"]: \"match=2\nmatch a,=2 3,\nmatch:int=secret\nx match,=2\"hey, what's up?\"\n*match last,=\""
   },
   {
     "source": "validator",
@@ -9323,26 +9283,6 @@
     "stage": "read-render-parse",
     "location": "Print statements with redirection [module]",
     "message": "render: Missing field `_content` on SimpleStatementsTransport._simple_statement on ModuleTransport._statemen"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Delete statements [module]",
-    "message": "re-parse error [ERROR in subscript at \"b\"]: \"del a[1]b[2]\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Return statements [module]",
-    "message": "re-parse error [ERROR in expression_list at \"c\"]: \"return\nreturn a+b c,\nreturn not b\""
   },
   {
     "source": "validator",
@@ -9671,6 +9611,36 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse-ast-mismatch",
+    "location": "Default Tuple Arguments (module)",
+    "message": "module[0].function_definition[2].parameters: childCount 3 ≠ 2 [\"(\",parameter_list,\")\"] vs [\"(\",\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Default Tuple Arguments (function_definition)",
+    "message": "function_definition[2].parameters: childCount 3 ≠ 2 [\"(\",parameter_list,\")\"] vs [\"(\",\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Default Tuple Arguments (parameters)",
+    "message": "parameters: childCount 3 ≠ 2 [\"(\",parameter_list,\")\"] vs [\"(\",\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
     "location": "Arbitrary indentation between brackets (module)",
     "message": "module: childCount 1 ≠ 2 [function_definition] vs [function_definition,statement_group1]"
   },
@@ -9703,6 +9673,46 @@
     "stage": "read-render-parse-ast-mismatch",
     "location": "Arbitrary indentation between brackets (list)",
     "message": "list: childCount 3 ≠ 2 [\"[\",element_list,\"]\"] vs [\"[\",\"]\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Splat Inside of Expression List (module)",
+    "message": "module[0].statement_group1[0].expression_statement[0].assignment[1].assignment_eq[1].expression_list[0].list: childCount 3 ≠ 2 [\"[\",element_list,\"]\"] vs [\"[\",\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Splat Inside of Expression List (list)",
+    "message": "list: childCount 3 ≠ 2 [\"[\",element_list,\"]\"] vs [\"[\",\"]\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Format strings (module)",
+    "message": "module[11].function_definition[4].block: type block ≠ simple_statements"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Format strings (function_definition)",
+    "message": "function_definition[4].block: type block ≠ simple_statements"
   },
   {
     "source": "validator",
@@ -9763,6 +9773,46 @@
     "stage": "read-render-parse-ast-mismatch",
     "location": "Simple Tuples (module)",
     "message": "module[1].statement_group1[0].expression_statement[0].tuple: childCount 3 ≠ 2 [\"(\",element_list,\")\"] vs [\"(\",\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Actually not match (module)",
+    "message": "module[4].statement_group1[0].expression_statement[0].assignment[1].assignment_eq[1].list: childCount 3 ≠ 2 [\"[\",element_list,\"]\"] vs [\"[\",\"]\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Actually not match (list)",
+    "message": "list: childCount 3 ≠ 2 [\"[\",element_list,\"]\"] vs [\"[\",\"]\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Actually not match (function_definition)",
+    "message": "function_definition[2].parameters: childCount 3 ≠ 2 [\"(\",parameter_list,\")\"] vs [\"(\",\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Actually not match (parameters)",
+    "message": "parameters: childCount 3 ≠ 2 [\"(\",parameter_list,\")\"] vs [\"(\",\")\"]"
   },
   {
     "source": "validator",
@@ -10021,16 +10071,6 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse-shallow",
-    "location": "Assignments [module]",
-    "message": "render: Missing field `_pattern` on AssignmentTransport._left on ExpressionStatementTransport._content on Si"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
     "location": "Yield expressions [module]",
     "message": "render: Missing field `_body` on YieldTransport._content on ParenthesizedExpressionTransport._content on Yie"
   },
@@ -10061,8 +10101,8 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse-shallow",
-    "location": "Default Tuple Arguments [module]",
-    "message": "re-parse error [ERROR in return_statement at \"a\"]: \"def comp_args():return a b,\""
+    "location": "Default Tuple Arguments [tuple_pattern]",
+    "message": "kind not found at rendered offset 16"
   },
   {
     "source": "validator",
@@ -10081,28 +10121,8 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse-shallow",
-    "location": "Splat Inside of Expression List [module]",
-    "message": "re-parse error [ERROR in module at \"a\"]: \"a c,=[]3,\nw x,y,z,=0*a,c,\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
     "location": "Strings [module]",
     "message": "re-parse error [ERROR in module at \"\"\\\\\\\\\\\\\\\\\\\" f'\\N{GRE\"]: \"\"I'm ok\"\n'\"ok\"'\nUR'bye'\nb'sup'\nB\"sup\"\n`1`\n\"\\\\\"\n\"/\"\n\"\\\n\"\nb\"\\x12\\x13\"\n\"\\xab\\1\\12\\1\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Format strings [module]",
-    "message": "render: Missing field `_expression` on InterpolationTransport._expression on StringTransport._content on Exp"
   },
   {
     "source": "validator",
@@ -10203,16 +10223,6 @@
     "stage": "read-render-parse-shallow",
     "location": "As patterns [module]",
     "message": "render: Missing field `_case_pattern` on CasePatternTransport._content on CaseListPatternTransport._case_pat"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Actually not match [module]",
-    "message": "re-parse error [ERROR in match_statement at \"=2\"]: \"match=2\nmatch a,=2 3,\nmatch:int=secret\nx match,=2\"hey, what's up?\"\n*match last,=\""
   },
   {
     "source": "validator",
@@ -10393,26 +10403,6 @@
     "stage": "read-render-parse-shallow",
     "location": "Print statements with redirection [module]",
     "message": "render: Missing field `_content` on SimpleStatementsTransport._simple_statement on ModuleTransport._statemen"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Delete statements [module]",
-    "message": "re-parse error [ERROR in subscript at \"b\"]: \"del a[1]b[2]\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Return statements [module]",
-    "message": "re-parse error [ERROR in expression_list at \"c\"]: \"return\nreturn a+b c,\nreturn not b\""
   },
   {
     "source": "validator",
@@ -10741,6 +10731,36 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Default Tuple Arguments (module)",
+    "message": "module[0].function_definition[2].parameters: childCount 3 ≠ 2 [\"(\",parameter_list,\")\"] vs [\"(\",\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Default Tuple Arguments (function_definition)",
+    "message": "function_definition[2].parameters: childCount 3 ≠ 2 [\"(\",parameter_list,\")\"] vs [\"(\",\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Default Tuple Arguments (parameters)",
+    "message": "parameters: childCount 3 ≠ 2 [\"(\",parameter_list,\")\"] vs [\"(\",\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Arbitrary indentation between brackets (module)",
     "message": "module: childCount 1 ≠ 2 [function_definition] vs [function_definition,statement_group1]"
   },
@@ -10773,6 +10793,46 @@
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Arbitrary indentation between brackets (list)",
     "message": "list: childCount 3 ≠ 2 [\"[\",element_list,\"]\"] vs [\"[\",\"]\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Splat Inside of Expression List (module)",
+    "message": "module[0].statement_group1[0].expression_statement[0].assignment[1].assignment_eq[1].expression_list[0].list: childCount 3 ≠ 2 [\"[\",element_list,\"]\"] vs [\"[\",\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Splat Inside of Expression List (list)",
+    "message": "list: childCount 3 ≠ 2 [\"[\",element_list,\"]\"] vs [\"[\",\"]\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Format strings (module)",
+    "message": "module[11].function_definition[4].block: type block ≠ simple_statements"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Format strings (function_definition)",
+    "message": "function_definition[4].block: type block ≠ simple_statements"
   },
   {
     "source": "validator",
@@ -10833,6 +10893,46 @@
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Simple Tuples (module)",
     "message": "module[1].statement_group1[0].expression_statement[0].tuple: childCount 3 ≠ 2 [\"(\",element_list,\")\"] vs [\"(\",\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Actually not match (module)",
+    "message": "module[4].statement_group1[0].expression_statement[0].assignment[1].assignment_eq[1].list: childCount 3 ≠ 2 [\"[\",element_list,\"]\"] vs [\"[\",\"]\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Actually not match (list)",
+    "message": "list: childCount 3 ≠ 2 [\"[\",element_list,\"]\"] vs [\"[\",\"]\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Actually not match (function_definition)",
+    "message": "function_definition[2].parameters: childCount 3 ≠ 2 [\"(\",parameter_list,\")\"] vs [\"(\",\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Actually not match (parameters)",
+    "message": "parameters: childCount 3 ≠ 2 [\"(\",parameter_list,\")\"] vs [\"(\",\")\"]"
   },
   {
     "source": "validator",

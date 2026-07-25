@@ -324,7 +324,8 @@ function _hasSeparatorFlank(
 	content: readonly unknown[],
 	other: unknown,
 	edge: 'leading' | 'trailing',
-	otherFlankOptional: boolean
+	otherFlankOptional: boolean,
+	mandatoryAnons: number
 ): boolean {
 	const containerSpan = container.$span;
 	const anchor = edge === 'leading' ? content[0] : content[content.length - 1];
@@ -339,7 +340,11 @@ function _hasSeparatorFlank(
 		);
 	}
 	const otherCount = Array.isArray(other) ? other.length : 0;
-	const between = Math.max(content.length - 1, 0);
+	// Baseline = between-separators PLUS any structurally-mandatory flank
+	// anons: a mandatory-LEADING list consumes one anon per element (n),
+	// not n-1, so a lone captured separator on a single-element instance
+	// is the leading flank, not an extra trailing one.
+	const between = Math.max(content.length - 1, 0) + mandatoryAnons;
 	return otherCount > between;
 }
 const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
@@ -1243,7 +1248,7 @@ export function wrapArgumentsGroup1(
 			...data,
 			$type: TSKindId.ArgumentsGroup1 as const,
 			_attributed_argument: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			attributedArguments() {
 				return drillInAll<T.AttributedArgument>(
@@ -2569,7 +2574,7 @@ export function wrapEnumVariantListGroup1(
 			...data,
 			$type: TSKindId.EnumVariantListGroup1 as const,
 			_attributed_enum_variant: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			attributedEnumVariants() {
 				return drillInAll<T.AttributedEnumVariant>(
@@ -3004,7 +3009,7 @@ export function wrapFieldDeclarationListGroup1(
 			...data,
 			$type: TSKindId.FieldDeclarationListGroup1 as const,
 			_attributed_field_declaration: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			attributedFieldDeclarations() {
 				return drillInAll<T.AttributedFieldDeclaration>(
@@ -3045,7 +3050,7 @@ export function wrapFieldInitializerListGroup1(
 			..._omitWrapKeys(data, ['_base_field_initializer', '_field_initializer', '_shorthand_field_initializer']),
 			$type: TSKindId.FieldInitializerListGroup1 as const,
 			_content: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			contents() {
 				return drillInAll<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>(
@@ -3661,7 +3666,7 @@ export function wrapOrderedFieldDeclarationListGroup1(
 			...data,
 			$type: TSKindId.OrderedFieldDeclarationListGroup1 as const,
 			_attributed_ordered_field: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			attributedOrderedFields() {
 				return drillInAll<T.AttributedOrderedField>(
@@ -3690,7 +3695,7 @@ export function wrapParametersGroup1(
 			...data,
 			$type: TSKindId.ParametersGroup1 as const,
 			_attributed_parameter: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			attributedParameters() {
 				return drillInAll<T.AttributedParameter>(
@@ -4171,7 +4176,7 @@ export function wrapSlicePatternGroup1(
 			]),
 			$type: TSKindId.SlicePatternGroup1 as const,
 			_pattern: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			patterns() {
 				return drillInAll<T.Pattern>(this._pattern as readonly T.Pattern[] | undefined, tree);
@@ -4342,7 +4347,7 @@ export function wrapStructPatternGroup1(
 			..._omitWrapKeys(data, ['_field_pattern', '_remaining_field_pattern']),
 			$type: TSKindId.StructPatternGroup1 as const,
 			_content: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			contents() {
 				return drillInAll<T.FieldPattern | T.RemainingFieldPattern>(
@@ -5043,7 +5048,7 @@ export function wrapTuplePatternGroup1(
 			]),
 			$type: TSKindId.TuplePatternGroup1 as const,
 			_content: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			contents() {
 				return drillInAll<T.Pattern | T.ClosureExpression>(
@@ -5251,7 +5256,7 @@ export function wrapUseBoundsGroup1(
 			..._omitWrapKeys(data, ['_lifetime', '_type_identifier']),
 			$type: TSKindId.UseBoundsGroup1 as const,
 			_content: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			contents() {
 				return drillInAll<T.Lifetime | T.TypeIdentifier>(
@@ -5364,7 +5369,7 @@ export function wrapUseListGroup1(
 			]),
 			$type: TSKindId.UseListGroup1 as const,
 			_use_clause: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			useClauses() {
 				return drillInAll<T.UseClause>(this._use_clause as readonly T.UseClause[] | undefined, tree);
@@ -5495,7 +5500,7 @@ export function wrapWhereClauseGroup1(
 			...data,
 			$type: TSKindId.WhereClauseGroup1 as const,
 			_where_predicate: _content,
-			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false),
+			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			wherePredicates() {
 				return drillInAll<T.WherePredicate>(this._where_predicate as readonly T.WherePredicate[] | undefined, tree);

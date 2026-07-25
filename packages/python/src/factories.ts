@@ -1739,7 +1739,7 @@ export function buildExecStatement(config: T.ExecStatement.Config) {
 
 export function buildExpressionList(config: T.ExpressionList.Config) {
 	const _expression = config.expression;
-	const _expression_list_group1 = config.expressionListGroup1;
+	const _tail = config.tail;
 	return withMethods(
 		withAccessors(
 			{
@@ -1747,16 +1747,15 @@ export function buildExpressionList(config: T.ExpressionList.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
-				_expression_list_group1,
+				_tail,
 				$with: {
 					expression: (value: T.Expression) => buildExpressionList({ ...config, expression: value }),
-					expressionListGroup1: (value: ',' | T.ExpressionListGroup1) =>
-						buildExpressionList({ ...config, expressionListGroup1: value })
+					tail: (value: ',' | T.ExpressionListGroup1) => buildExpressionList({ ...config, tail: value })
 				}
 			},
 			{
 				expression: () => _expression,
-				expressionListGroup1: () => _expression_list_group1
+				tail: () => _tail
 			}
 		),
 		methodsEngine
@@ -2719,7 +2718,7 @@ export function buildPassStatement() {
 
 export function buildPatternList(config: T.PatternList.Config) {
 	const _pattern = config.pattern;
-	const _pattern_list_group1 = config.patternListGroup1;
+	const _tail = config.tail;
 	return withMethods(
 		withAccessors(
 			{
@@ -2727,16 +2726,15 @@ export function buildPatternList(config: T.PatternList.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_pattern,
-				_pattern_list_group1,
+				_tail,
 				$with: {
 					pattern: (value: T.Pattern) => buildPatternList({ ...config, pattern: value }),
-					patternListGroup1: (value: ',' | T.PatternListGroup1) =>
-						buildPatternList({ ...config, patternListGroup1: value })
+					tail: (value: ',' | T.PatternListGroup1) => buildPatternList({ ...config, tail: value })
 				}
 			},
 			{
 				pattern: () => _pattern,
-				patternListGroup1: () => _pattern_list_group1
+				tail: () => _tail
 			}
 		),
 		methodsEngine

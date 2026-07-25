@@ -1018,11 +1018,15 @@ function emitSeparatedListWrap(
 	}
 	const bothFlanksOptional = node.leadingMode === 'optional' && node.trailingMode === 'optional';
 	if (node.leadingMode === 'optional') {
-		lines.push(`    _leading_sep: _hasSeparatorFlank(data, _content, data.$other, "leading", ${bothFlanksOptional}),`);
+		const mandatoryAnons = node.trailingMode === 'mandatory' ? 1 : 0;
+		lines.push(
+			`    _leading_sep: _hasSeparatorFlank(data, _content, data.$other, "leading", ${bothFlanksOptional}, ${mandatoryAnons}),`
+		);
 	}
 	if (node.trailingMode === 'optional') {
+		const mandatoryAnons = node.leadingMode === 'mandatory' ? 1 : 0;
 		lines.push(
-			`    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", ${bothFlanksOptional}),`
+			`    _trailing_sep: _hasSeparatorFlank(data, _content, data.$other, "trailing", ${bothFlanksOptional}, ${mandatoryAnons}),`
 		);
 	}
 	lines.push('');
@@ -1845,7 +1849,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'// kinds currently retain per-element span), so this throws loudly rather',
 						'// than silently returning a wrong-for-one-edge answer if that combination',
 						'// is ever reached.',
-						'function _hasSeparatorFlank(container: { $span?: { start: number; end: number } }, content: readonly unknown[], other: unknown, edge: "leading" | "trailing", otherFlankOptional: boolean): boolean {',
+						'function _hasSeparatorFlank(container: { $span?: { start: number; end: number } }, content: readonly unknown[], other: unknown, edge: "leading" | "trailing", otherFlankOptional: boolean, mandatoryAnons: number): boolean {',
 						'  const containerSpan = container.$span;',
 						'  const anchor = edge === "leading" ? content[0] : content[content.length - 1];',
 						'  const anchorSpan = anchor && typeof anchor === "object" ? (anchor as { $span?: { start: number; end: number } }).$span : undefined;',
@@ -1856,7 +1860,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'    throw new Error(`_hasSeparatorFlank: cannot disambiguate the "${edge}" flank from its opposite for a text-collapsed content element (no per-element $span) when BOTH flank directions are optional on this kind — the $other-count fallback is ambiguous here. This combination has no real-grammar coverage; a genuine order-aware mechanism is needed before this kind can support both-optional-flank capture.`);',
 						'  }',
 						'  const otherCount = Array.isArray(other) ? other.length : 0;',
-						'  const between = Math.max(content.length - 1, 0);',
+						'  // Baseline = between-separators PLUS any structurally-mandatory flank',
+						'  // anons: a mandatory-LEADING list consumes one anon per element (n),',
+						'  // not n-1, so a lone captured separator on a single-element instance',
+						'  // is the leading flank, not an extra trailing one.',
+						'  const between = Math.max(content.length - 1, 0) + mandatoryAnons;',
 						'  return otherCount > between;',
 						'}'
 					]

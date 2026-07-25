@@ -1304,10 +1304,10 @@ export function coerceToExpressionList(input: T.ExpressionList.Loose): ReturnTyp
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildExpressionList>;
 	return F.buildExpressionList({
 		expression: _requireField('expression_list', 'expression', _resolveOne<T.Expression>(input.expression, _K0, _K1)),
-		expressionListGroup1: _requireField(
+		tail: _requireField(
 			'expression_list',
-			'expressionListGroup1',
-			_resolveOneBranch<',' | T.ExpressionListGroup1>(input.expressionListGroup1, '_expression_list_group1')
+			'tail',
+			_resolveOneBranch<',' | T.ExpressionListGroup1>(input.tail, '_expression_list_group1')
 		)
 	});
 }
@@ -1784,10 +1784,10 @@ export function coerceToPatternList(input: T.PatternList.Loose): ReturnType<type
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildPatternList>;
 	return F.buildPatternList({
 		pattern: _requireField('pattern_list', 'pattern', _resolveOne<T.Pattern>(input.pattern, _K2, _K24)),
-		patternListGroup1: _requireField(
+		tail: _requireField(
 			'pattern_list',
-			'patternListGroup1',
-			_resolveOneBranch<',' | T.PatternListGroup1>(input.patternListGroup1, '_pattern_list_group1')
+			'tail',
+			_resolveOneBranch<',' | T.PatternListGroup1>(input.tail, '_pattern_list_group1')
 		)
 	});
 }

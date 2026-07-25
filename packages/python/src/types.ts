@@ -303,7 +303,7 @@ export const enum TSKindId {
 	FutureU = 6,
 	Lparen = 7,
 	Rparen = 8,
-	Comma = 9,
+	Comma2 = 9,
 	As = 10,
 	Star2 = 11,
 	Print = 12,
@@ -1210,7 +1210,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'rparen':
 			return TSKindId.Rparen;
 		case 'comma':
-			return TSKindId.Comma;
+			return TSKindId.Comma2;
 		case 'as':
 			return TSKindId.As;
 		case 'star':
@@ -1792,7 +1792,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case ')':
 			return TSKindId.Rparen;
 		case ',':
-			return TSKindId.Comma;
+			return TSKindId.Comma2;
 		case '*':
 			return TSKindId.Star2;
 		case '>>':
@@ -2703,9 +2703,9 @@ export interface ExecStatement {
 export interface ExpressionList {
 	readonly $type: TSKindId.ExpressionList;
 	readonly _expression: Expression;
-	readonly _expression_list_group1: ',' | ExpressionListGroup1;
+	readonly _tail: ',' | ExpressionListGroup1;
 	expression(): Expression;
-	expressionListGroup1(): ',' | ExpressionListGroup1;
+	tail(): ',' | ExpressionListGroup1;
 }
 
 export interface ExpressionStatement {
@@ -2992,9 +2992,9 @@ export interface ParenthesizedListSplat {
 export interface PatternList {
 	readonly $type: TSKindId.PatternList;
 	readonly _pattern: Pattern;
-	readonly _pattern_list_group1: ',' | PatternListGroup1;
+	readonly _tail: ',' | PatternListGroup1;
 	pattern(): Pattern;
-	patternListGroup1(): ',' | PatternListGroup1;
+	tail(): ',' | PatternListGroup1;
 }
 
 export interface PrintStatement {

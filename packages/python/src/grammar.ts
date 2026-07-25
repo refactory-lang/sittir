@@ -772,12 +772,14 @@ export type PythonGrammar = {
 	readonly expression_list: {
 		type: 'expression_list';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: true;
-			types: [{ type: 'expression'; named: true }, { type: 'expression_list_group1'; named: true }];
+		fields: {
+			tail: {
+				multiple: false;
+				required: true;
+				types: [{ type: ','; named: false }, { type: 'expression_list_group1'; named: true }];
+			};
 		};
+		children: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
 	};
 	readonly expression_list_group1: {
 		type: 'expression_list_group1';
@@ -1246,12 +1248,14 @@ export type PythonGrammar = {
 	readonly pattern_list: {
 		type: 'pattern_list';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: true;
-			types: [{ type: 'pattern'; named: true }, { type: 'pattern_list_group1'; named: true }];
+		fields: {
+			tail: {
+				multiple: false;
+				required: true;
+				types: [{ type: ','; named: false }, { type: 'pattern_list_group1'; named: true }];
+			};
 		};
+		children: { multiple: false; required: true; types: [{ type: 'pattern'; named: true }] };
 	};
 	readonly pattern_list_group1: {
 		type: 'pattern_list_group1';
