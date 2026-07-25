@@ -1261,7 +1261,7 @@ export interface PrintStatementGroup2Transport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _argument: Array<ExpressionTransport>
+  _argument?: Array<ExpressionTransport>
 }
 
 export interface PrintStatementTransport {

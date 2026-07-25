@@ -537,6 +537,49 @@ export default grammar(
 					seq('(', optional(seq($.case_pattern, repeat(seq(',', $.case_pattern)), optional(','))), ')'),
 				case_list_pattern: ($) =>
 					seq('[', optional(seq($.case_pattern, repeat(seq(',', $.case_pattern)), optional(','))), ']'),
+
+				// print_statement: base is a bare `choice(prec(1, seq('print',
+				// chevron, ...)), prec(-3, prec.dynamic(-1, seq('print',
+				// commaSep1(field('argument', expression)), ...))))` — TWO
+				// anonymous seq arms, neither BLANK. Sittir's own IR auto-names
+				// these `_print_statement_group1`/`_print_statement_group2` and
+				// (per the multi-slot/single-slot visible-group rule) models
+				// `content` as a union referencing both — but since neither
+				// arm is authored as its own named rule OR wrapped in
+				// `alias($._x, $.x)`, tree-sitter's native grammar compiler
+				// just flattens both arms' fields (chevron / argument) directly
+				// onto `print_statement` itself. The `_print_statement_group1`/
+				// `_print_statement_group2` node-refs in the IR's `content`
+				// field never resolve against the real parser output —
+				// `hydrateSlots` (assemble.ts) correctly detects this as its
+				// documented "inlined-before-assemble" category and leaves
+				// them `UnresolvedRef`, but nothing downstream falls back to
+				// the flattened fields, so `wrapPrintStatement`'s `_content`
+				// accessor chain (`_content ?? _print_statement_group1 ??
+				// _print_statement_group2`) never finds a value — every
+				// print-statement form throws at wrap time.
+				//
+				// Per the `case_tuple_pattern`/`case_list_pattern` precedent
+				// just above (same file, same root cause class): a CHOICE ARM
+				// position is NOT the `optional(...)`/`CHOICE[x, BLANK]` shape
+				// `mintContentAliasKinds` requires to register a
+				// reference-site alias — an `alias($._x, ...)` here would
+				// never enter the NodeMap. The fix is to declare each arm as
+				// its OWN real, independently-visible rule (natural stripped
+				// names — already what the generated types/wrap model
+				// expects) and reference them directly by symbol, matching
+				// the base grammar's arms verbatim (including precedence).
+				print_statement_group1: ($) =>
+					seq('print', $.chevron, repeat(seq(',', field('argument', $.expression))), optional(',')),
+				print_statement_group2: ($) =>
+					seq(
+						'print',
+						field('argument', $.expression),
+						repeat(seq(',', field('argument', $.expression))),
+						optional(',')
+					),
+				print_statement: ($) =>
+					choice(prec(1, $.print_statement_group1), prec(-3, prec.dynamic(-1, $.print_statement_group2))),
 				_simple_pattern: ($) =>
 					prec(
 						1,

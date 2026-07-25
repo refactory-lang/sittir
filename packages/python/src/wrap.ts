@@ -1343,9 +1343,9 @@ export function wrapComparisonOperatorComparator(
 					'>=': 98,
 					'>': 99,
 					'<>': 100,
-					in: 30,
+					in: 29,
 					'not in': 191,
-					is: 63,
+					is: 62,
 					'is not': 192
 				}
 			),
@@ -3142,19 +3142,19 @@ export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeH
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
 				{
-					'+=': 65,
-					'-=': 66,
-					'*=': 67,
-					'/=': 68,
-					'@=': 69,
-					'//=': 70,
-					'%=': 71,
-					'**=': 72,
-					'>>=': 73,
-					'<<=': 74,
-					'&=': 75,
-					'^=': 76,
-					'|=': 77
+					'+=': 64,
+					'-=': 65,
+					'*=': 66,
+					'/=': 67,
+					'@=': 68,
+					'//=': 69,
+					'%=': 70,
+					'**=': 71,
+					'>>=': 72,
+					'<<=': 73,
+					'&=': 74,
+					'^=': 75,
+					'|=': 76
 				}
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
@@ -3246,19 +3246,19 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle) {
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
 				{
-					'+': 51,
-					'-': 52,
+					'+': 50,
+					'-': 51,
 					'*': 11,
-					'@': 46,
-					'/': 56,
-					'%': 57,
-					'//': 58,
-					'**': 38,
-					'|': 48,
-					'&': 59,
-					'^': 60,
-					'<<': 61,
-					'>>': 13
+					'@': 45,
+					'/': 55,
+					'%': 56,
+					'//': 57,
+					'**': 37,
+					'|': 47,
+					'&': 58,
+					'^': 59,
+					'<<': 60,
+					'>>': 12
 				}
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
@@ -3389,7 +3389,7 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ and: 54, or: 55 }
+				{ and: 53, or: 54 }
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
@@ -3771,7 +3771,7 @@ export function wrapComplexPattern(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '+': 51, '-': 52 }
+				{ '+': 50, '-': 51 }
 			),
 			_content: normalizeSingularWrapSlot(data._content ?? data._integer ?? data._float, 'content', true, data.$type, {
 				tree,
@@ -6607,6 +6607,139 @@ export function wrapPrintStatement(
 	return _node;
 }
 
+export function wrapPrintStatementGroup1(data: T.PrintStatementGroup1, tree: TreeHandle) {
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.PrintStatementGroup1 as const,
+			_chevron: normalizeSingularWrapSlot(data._chevron, 'chevron', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'chevron',
+				span: (data as _NodeData).$span
+			}),
+			_argument: normalizeRepeatedWrapSlot(
+				_filterWrapChildrenByKind(data._argument, [
+					'expression',
+					'comparison_operator',
+					'not_operator',
+					'boolean_operator',
+					'lambda',
+					'primary_expression',
+					'await',
+					'binary_operator',
+					'identifier',
+					'keyword_identifier',
+					'string',
+					'concatenated_string',
+					'integer',
+					'float',
+					'true',
+					'false',
+					'none',
+					'unary_operator',
+					'attribute',
+					'subscript',
+					'call',
+					'list',
+					'list_comprehension',
+					'dictionary',
+					'dictionary_comprehension',
+					'set',
+					'set_comprehension',
+					'tuple',
+					'parenthesized_expression',
+					'generator_expression',
+					'ellipsis',
+					'list_splat_pattern',
+					'conditional_expression',
+					'named_expression',
+					'as_pattern'
+				]),
+				false,
+				'argument',
+				{ tree, nodeType: data.$type, slotName: 'argument', span: (data as _NodeData).$span }
+			),
+
+			chevron() {
+				return drillIn<T.Chevron>(this._chevron, tree);
+			},
+			arguments() {
+				return drillInAll<T.Expression>(this._argument as readonly T.Expression[] | undefined, tree);
+			},
+			$with: {
+				chevron: (v: NonNullable<T.PrintStatementGroup1['_chevron']>) =>
+					wrapPrintStatementGroup1({ ...data, _chevron: v }, tree),
+				arguments: (...v: NonNullable<T.PrintStatementGroup1['_argument']>[number][]) =>
+					wrapPrintStatementGroup1({ ...data, _argument: v }, tree)
+			}
+		},
+		methodsEngine
+	);
+	return _node;
+}
+
+export function wrapPrintStatementGroup2(data: T.PrintStatementGroup2, tree: TreeHandle) {
+	const _node = withMethods(
+		{
+			...data,
+			$type: TSKindId.PrintStatementGroup2 as const,
+			_argument: normalizeRepeatedWrapSlot(
+				_filterWrapChildrenByKind(data._argument, [
+					'expression',
+					'comparison_operator',
+					'not_operator',
+					'boolean_operator',
+					'lambda',
+					'primary_expression',
+					'await',
+					'binary_operator',
+					'identifier',
+					'keyword_identifier',
+					'string',
+					'concatenated_string',
+					'integer',
+					'float',
+					'true',
+					'false',
+					'none',
+					'unary_operator',
+					'attribute',
+					'subscript',
+					'call',
+					'list',
+					'list_comprehension',
+					'dictionary',
+					'dictionary_comprehension',
+					'set',
+					'set_comprehension',
+					'tuple',
+					'parenthesized_expression',
+					'generator_expression',
+					'ellipsis',
+					'list_splat_pattern',
+					'conditional_expression',
+					'named_expression',
+					'as_pattern'
+				]),
+				false,
+				'argument',
+				{ tree, nodeType: data.$type, slotName: 'argument', span: (data as _NodeData).$span }
+			),
+
+			arguments() {
+				return drillInAll<T.Expression>(this._argument as readonly T.Expression[] | undefined, tree);
+			},
+			$with: {
+				arguments: (...v: NonNullable<T.PrintStatementGroup2['_argument']>[number][]) =>
+					wrapPrintStatementGroup2({ ...data, _argument: v }, tree)
+			}
+		},
+		methodsEngine
+	);
+	return _node;
+}
+
 export function wrapRaiseStatement(
 	data: T.RaiseStatement & {
 		readonly _comparison_operator?: T.Expressions;
@@ -7038,7 +7171,7 @@ export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '*': 11, '**': 38 }
+				{ '*': 11, '**': 37 }
 			),
 			_identifier: normalizeSingularWrapSlot(data._identifier, 'identifier', true, data.$type, {
 				tree,
@@ -7654,7 +7787,7 @@ export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHan
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'type', span: (data as _NodeData).$span }
 				),
-				{ type: 80 }
+				{ type: 79 }
 			),
 			_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
 				tree,
@@ -7816,7 +7949,7 @@ export function wrapUnaryOperator(data: T.UnaryOperator, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '+': 51, '-': 52, '~': 62 }
+				{ '+': 50, '-': 51, '~': 61 }
 			),
 			_argument: normalizeSingularWrapSlot(data._argument, 'argument', true, data.$type, {
 				tree,
@@ -8382,6 +8515,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	pattern_list: (d, t) => wrapPatternList(d as unknown as T.PatternList, t),
 	primary_expression: (d, t) => wrapPrimaryExpression(d as unknown as T.PrimaryExpression, t),
 	print_statement: (d, t) => wrapPrintStatement(d as unknown as T.PrintStatement, t),
+	print_statement_group1: (d, t) => wrapPrintStatementGroup1(d as unknown as T.PrintStatementGroup1, t),
+	print_statement_group2: (d, t) => wrapPrintStatementGroup2(d as unknown as T.PrintStatementGroup2, t),
 	raise_statement: (d, t) => wrapRaiseStatement(d as unknown as T.RaiseStatement, t),
 	relative_import: (d, t) => wrapRelativeImport(d as unknown as T.RelativeImport, t),
 	return_statement: (d, t) => wrapReturnStatement(d as unknown as T.ReturnStatement, t),
@@ -8458,8 +8593,6 @@ const _aliasTargetToSource: Record<string, string> = {
 	named_expression_lhs: '_named_expression_lhs',
 	pattern_list_group1: '_pattern_list_group1',
 	patterns: '_patterns',
-	print_statement_group1: '_print_statement_group1',
-	print_statement_group2: '_print_statement_group2',
 	right_hand_side: '_right_hand_side',
 	simple_pattern: '_simple_pattern',
 	simple_pattern_negative: '_simple_pattern_negative',

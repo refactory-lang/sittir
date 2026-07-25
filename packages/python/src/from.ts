@@ -98,6 +98,8 @@ export const _fromMap = {
 	pass_statement: coerceToPassStatement,
 	pattern_list: coerceToPatternList,
 	print_statement: coerceToPrintStatement,
+	print_statement_group1: coerceToPrintStatementGroup1,
+	print_statement_group2: coerceToPrintStatementGroup2,
 	raise_statement: coerceToRaiseStatement,
 	relative_import: coerceToRelativeImport,
 	return_statement: coerceToReturnStatement,
@@ -1801,6 +1803,26 @@ export function coerceToPrintStatement(
 		return F.buildPrintStatement(child as Parameters<typeof F.buildPrintStatement>[0]);
 	}
 	return F.buildPrintStatement(input as Parameters<typeof F.buildPrintStatement>[0]);
+}
+
+export function coerceToPrintStatementGroup1(
+	input: T.PrintStatementGroup1.Loose
+): ReturnType<typeof F.buildPrintStatementGroup1> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildPrintStatementGroup1>;
+	return F.buildPrintStatementGroup1({
+		chevron: _requireField('print_statement_group1', 'chevron', _resolveOneBranch<T.Chevron>(input.chevron, 'chevron')),
+		argument: _resolveMany<T.Expression>(input.argument, _K0, _K1)
+	});
+}
+
+export function coerceToPrintStatementGroup2(
+	input?: T.PrintStatementGroup2.Loose
+): ReturnType<typeof F.buildPrintStatementGroup2> {
+	if (input !== undefined && isNodeData(input))
+		return input as unknown as ReturnType<typeof F.buildPrintStatementGroup2>;
+	return F.buildPrintStatementGroup2({
+		argument: _resolveMany<T.Expression>(input?.argument, _K0, _K1)
+	});
 }
 
 export function coerceToRaiseStatement(input?: T.RaiseStatement.Loose): ReturnType<typeof F.buildRaiseStatement> {

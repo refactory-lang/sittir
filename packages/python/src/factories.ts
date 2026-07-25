@@ -2760,6 +2760,52 @@ export function buildPrintStatement(child: T.PrintStatementGroup1 | T.PrintState
 	);
 }
 
+export function buildPrintStatementGroup1(config: T.PrintStatementGroup1.Config) {
+	const _chevron = config.chevron;
+	const _argument = config.argument ?? [];
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.PrintStatementGroup1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_chevron,
+				_argument,
+				$with: {
+					chevron: (value: T.Chevron) => buildPrintStatementGroup1({ ...config, chevron: value }),
+					arguments: (...values: T.Expression[]) => buildPrintStatementGroup1({ ...config, argument: values })
+				}
+			},
+			{
+				chevron: () => _chevron,
+				arguments: () => _argument
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildPrintStatementGroup2(config: Partial<T.PrintStatementGroup2.Config> = {}) {
+	const _argument = config.argument ?? [];
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.PrintStatementGroup2 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_argument,
+				$with: {
+					arguments: (...values: T.Expression[]) => buildPrintStatementGroup2({ ...config, argument: values })
+				}
+			},
+			{
+				arguments: () => _argument
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {}) {
 	const _expressions = config.expressions;
 	const _cause = config.cause;
@@ -3710,6 +3756,8 @@ export type FluentKindMap = {
 	pass_statement: T.PassStatement;
 	pattern_list: FluentNode<'pattern_list', T.PatternList.Config>;
 	print_statement: FluentNode<'print_statement', T.PrintStatement.Config>;
+	print_statement_group1: FluentNode<'print_statement_group1', T.PrintStatementGroup1.Config>;
+	print_statement_group2: FluentNode<'print_statement_group2', T.PrintStatementGroup2.Config>;
 	raise_statement: FluentNode<'raise_statement', T.RaiseStatement.Config>;
 	relative_import: FluentNode<'relative_import', T.RelativeImport.Config>;
 	return_statement: FluentNode<'return_statement', T.ReturnStatement.Config>;
@@ -3870,6 +3918,8 @@ export const _factoryMap = {
 	pass_statement: buildPassStatement,
 	pattern_list: buildPatternList,
 	print_statement: buildPrintStatement,
+	print_statement_group1: buildPrintStatementGroup1,
+	print_statement_group2: buildPrintStatementGroup2,
 	raise_statement: buildRaiseStatement,
 	relative_import: buildRelativeImport,
 	return_statement: buildReturnStatement,

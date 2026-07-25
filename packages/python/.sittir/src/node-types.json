@@ -3265,6 +3265,25 @@
   {
     "type": "print_statement",
     "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "print_statement_group1",
+          "named": true
+        },
+        {
+          "type": "print_statement_group2",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "print_statement_group1",
+    "named": true,
     "fields": {
       "argument": {
         "multiple": true,
@@ -3279,13 +3298,29 @@
     },
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "chevron",
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "print_statement_group2",
+    "named": true,
+    "fields": {
+      "argument": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {

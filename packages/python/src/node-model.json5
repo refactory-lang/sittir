@@ -79,13 +79,6 @@
         "pattern_list_group1": "group1"
       }
     },
-    "print_statement": {
-      "definedBy": "override",
-      "childKind": {
-        "print_statement_group1": "group1",
-        "print_statement_group2": "group2"
-      }
-    },
     "string_content": {
       "definedBy": "override",
       "childKind": {
@@ -236,10 +229,6 @@
     },
     "pattern_list.tail": {
       "pattern_list_group1": "_pattern_list_group1"
-    },
-    "print_statement.content": {
-      "print_statement_group1": "_print_statement_group1",
-      "print_statement_group2": "_print_statement_group2"
     },
     "set.collection_elements": {
       "element_list": "_collection_elements"
@@ -516,31 +505,6 @@
     },
     "_patterns": {
       "pattern": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
-    "_print_statement_group1": {
-      "chevron": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "argument": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "_print_statement_group2": {
-      "argument": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1722,6 +1686,31 @@
         "slotCount": 1,
         "required": true,
         "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "print_statement_group1": {
+      "chevron": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "argument": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "print_statement_group2": {
+      "argument": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
         "nonEmpty": false
       }
     },
@@ -3551,108 +3540,6 @@
         "pattern"
       ],
       "factoryShape": "spread"
-    },
-    {
-      "kind": "_print_statement_group1",
-      "modelType": "group",
-      "typeName": "PrintStatementGroup1",
-      "factoryName": "_printStatementGroup1",
-      "irKey": "printStatementGroup1",
-      "hidden": false,
-      "name": "_print_statement_group1",
-      "fields": [
-        {
-          "name": "chevron",
-          "propertyName": "chevron",
-          "paramName": "chevron",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "chevron",
-              "parseKind": "chevron",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "chevron"
-            ]
-          }
-        },
-        {
-          "name": "argument",
-          "propertyName": "arguments",
-          "paramName": "arguments_",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "expression",
-              "parseKind": "expression",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "expression"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "factoryFields": [
-        "chevron",
-        "argument"
-      ]
-    },
-    {
-      "kind": "_print_statement_group2",
-      "modelType": "group",
-      "typeName": "PrintStatementGroup2",
-      "factoryName": "_printStatementGroup2",
-      "irKey": "printStatementGroup2",
-      "hidden": false,
-      "name": "_print_statement_group2",
-      "fields": [
-        {
-          "name": "argument",
-          "propertyName": "arguments",
-          "paramName": "arguments_",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "expression",
-              "parseKind": "expression",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "expression"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "factoryFields": [
-        "argument"
-      ]
     },
     {
       "kind": "_raise_statement_optional1",
@@ -9586,14 +9473,14 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_print_statement_group1",
+              "name": "print_statement_group1",
               "parseKind": "print_statement_group1",
               "unresolved": true
             },
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_print_statement_group2",
+              "name": "print_statement_group2",
               "parseKind": "print_statement_group2",
               "unresolved": true
             }
@@ -9601,8 +9488,8 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_print_statement_group1",
-              "_print_statement_group2"
+              "print_statement_group1",
+              "print_statement_group2"
             ]
           }
         }
@@ -9611,6 +9498,106 @@
       "factoryShape": "direct",
       "factoryFields": [
         "content"
+      ]
+    },
+    {
+      "kind": "print_statement_group1",
+      "modelType": "branch",
+      "typeName": "PrintStatementGroup1",
+      "factoryName": "printStatementGroup1",
+      "irKey": "printStatementGroup1",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "chevron",
+          "propertyName": "chevron",
+          "paramName": "chevron",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "chevron",
+              "parseKind": "chevron",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "chevron"
+            ]
+          }
+        },
+        {
+          "name": "argument",
+          "propertyName": "arguments",
+          "paramName": "arguments_",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "chevron",
+        "argument"
+      ]
+    },
+    {
+      "kind": "print_statement_group2",
+      "modelType": "branch",
+      "typeName": "PrintStatementGroup2",
+      "factoryName": "printStatementGroup2",
+      "irKey": "printStatementGroup2",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "argument",
+          "propertyName": "arguments",
+          "paramName": "arguments_",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "expression",
+              "parseKind": "expression",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "expression"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "argument"
       ]
     },
     {

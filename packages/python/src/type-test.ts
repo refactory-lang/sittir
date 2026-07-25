@@ -227,6 +227,10 @@ import type {
 	Patterns,
 	PatternsTree,
 	PrintStatement,
+	PrintStatementGroup1,
+	PrintStatementGroup1Tree,
+	PrintStatementGroup2,
+	PrintStatementGroup2Tree,
 	PrintStatementTree,
 	RaiseStatement,
 	RaiseStatementTree,
@@ -461,6 +465,12 @@ export type _Type_ParenthesizedListSplat = _TypeAssert<
 >;
 export type _Type_PatternList = _TypeAssert<_TypeExtends<PatternList['$type'], TSKindId.PatternList>>;
 export type _Type_PrintStatement = _TypeAssert<_TypeExtends<PrintStatement['$type'], TSKindId.PrintStatement>>;
+export type _Type_PrintStatementGroup1 = _TypeAssert<
+	_TypeExtends<PrintStatementGroup1['$type'], TSKindId.PrintStatementGroup1>
+>;
+export type _Type_PrintStatementGroup2 = _TypeAssert<
+	_TypeExtends<PrintStatementGroup2['$type'], TSKindId.PrintStatementGroup2>
+>;
 export type _Type_RaiseStatement = _TypeAssert<_TypeExtends<RaiseStatement['$type'], TSKindId.RaiseStatement>>;
 export type _Type_RelativeImport = _TypeAssert<_TypeExtends<RelativeImport['$type'], TSKindId.RelativeImport>>;
 export type _Type_ReturnStatement = _TypeAssert<_TypeExtends<ReturnStatement['$type'], TSKindId.ReturnStatement>>;
@@ -685,6 +695,12 @@ export type _Tree_ParenthesizedListSplat = _TypeAssert<
 >;
 export type _Tree_PatternList = _TypeAssert<_TypeExtends<PatternListTree['type'], 'pattern_list'>>;
 export type _Tree_PrintStatement = _TypeAssert<_TypeExtends<PrintStatementTree['type'], 'print_statement'>>;
+export type _Tree_PrintStatementGroup1 = _TypeAssert<
+	_TypeExtends<PrintStatementGroup1Tree['type'], 'print_statement_group1'>
+>;
+export type _Tree_PrintStatementGroup2 = _TypeAssert<
+	_TypeExtends<PrintStatementGroup2Tree['type'], 'print_statement_group2'>
+>;
 export type _Tree_RaiseStatement = _TypeAssert<_TypeExtends<RaiseStatementTree['type'], 'raise_statement'>>;
 export type _Tree_RelativeImport = _TypeAssert<_TypeExtends<RelativeImportTree['type'], 'relative_import'>>;
 export type _Tree_ReturnStatement = _TypeAssert<_TypeExtends<ReturnStatementTree['type'], 'return_statement'>>;

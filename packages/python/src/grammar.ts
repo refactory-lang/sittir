@@ -1267,8 +1267,23 @@ export type PythonGrammar = {
 	readonly print_statement: {
 		type: 'print_statement';
 		named: true;
+		fields: {};
+		children: {
+			multiple: false;
+			required: true;
+			types: [{ type: 'print_statement_group1'; named: true }, { type: 'print_statement_group2'; named: true }];
+		};
+	};
+	readonly print_statement_group1: {
+		type: 'print_statement_group1';
+		named: true;
 		fields: { argument: { multiple: true; required: false; types: [{ type: 'expression'; named: true }] } };
-		children: { multiple: false; required: false; types: [{ type: 'chevron'; named: true }] };
+		children: { multiple: false; required: true; types: [{ type: 'chevron'; named: true }] };
+	};
+	readonly print_statement_group2: {
+		type: 'print_statement_group2';
+		named: true;
+		fields: { argument: { multiple: true; required: true; types: [{ type: 'expression'; named: true }] } };
 	};
 	readonly raise_statement: {
 		type: 'raise_statement';

@@ -945,9 +945,33 @@ describe('pattern_list', () => {
 
 describe('print_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.printStatement({ type: "_print_statement_group1" } as never);
+    const node = ir.printStatement({ type: "print_statement_group1" } as never);
     expect(node.$type).toBe(TSKindId.PrintStatement);
     expect(node.$source).toBe(2);
+  });
+});
+
+describe('print_statement_group1', () => {
+  it('factory produces correct type', () => {
+    const node = ir.printStatementGroup1({ chevron: { $type: TSKindId.Chevron, $text: 'test', $source: 2, $named: true , _expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any } as any });
+    expect(node.$type).toBe(TSKindId.PrintStatementGroup1);
+    expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.printStatementGroup1({ chevron: { $type: TSKindId.Chevron, $text: 'test', $source: 2, $named: true , _expression: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any } as any });
+    expect(node.$render!().length).toBeGreaterThan(0);
+  });
+});
+
+describe('print_statement_group2', () => {
+  it('factory produces correct type', () => {
+    const node = ir.printStatementGroup2({});
+    expect(node.$type).toBe(TSKindId.PrintStatementGroup2);
+    expect(node.$source).toBe(2);
+  });
+  it('render does not throw on minimal config', () => {
+    const node = ir.printStatementGroup2({});
+    expect(() => node.$render!()).not.toThrow();
   });
 });
 

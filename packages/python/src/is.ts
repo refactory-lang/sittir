@@ -175,6 +175,12 @@ export interface IsGuards {
 	): v is T & { readonly $type: TSKindId.ParenthesizedListSplat };
 	patternList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PatternList };
 	printStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PrintStatement };
+	printStatementGroup1<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.PrintStatementGroup1 };
+	printStatementGroup2<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.PrintStatementGroup2 };
 	raiseStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RaiseStatement };
 	relativeImport<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RelativeImport };
 	returnStatement<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ReturnStatement };
@@ -334,6 +340,8 @@ export interface AssertGuards {
 	}): asserts v is { readonly $type: TSKindId.ParenthesizedListSplat };
 	patternList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PatternList };
 	printStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PrintStatement };
+	printStatementGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PrintStatementGroup1 };
+	printStatementGroup2(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PrintStatementGroup2 };
 	raiseStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RaiseStatement };
 	relativeImport(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RelativeImport };
 	returnStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ReturnStatement };
@@ -396,7 +404,7 @@ const _supertype_leftHandSide_ids = new Set<number>([198]);
 const _supertype_namedExpressionLhs_ids = new Set<number>([1]);
 const _supertype_rightHandSide_ids = new Set<number>([161, 196, 197, 198, 200]);
 const _supertype_simplePattern_ids = new Set<number>([
-	171, 170, 166, 248, 247, 167, 229, 228, 88, 89, 90, 257, 172, 162
+	171, 170, 166, 248, 247, 167, 229, 228, 88, 89, 90, 259, 172, 162
 ]);
 const _supertype_simpleStatement_ids = new Set<number>([
 	114, 111, 115, 119, 121, 122, 125, 126, 127, 128, 129, 130, 150, 151, 152, 153
@@ -406,7 +414,7 @@ const _supertype_expression_ids = new Set<number>([193, 187, 188, 194, 227, 123,
 const _supertype_parameter_ids = new Set<number>([1, 205, 179, 180, 181, 177, 182]);
 const _supertype_pattern_ids = new Set<number>([1, 202, 201, 181, 177, 178]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	235, 189, 1, 229, 228, 85, 86, 88, 89, 90, 190, 201, 202, 204, 213, 218, 216, 219, 214, 220, 215, 223, 221, 181
+	235, 189, 1, 229, 228, 84, 85, 88, 89, 90, 190, 201, 202, 204, 213, 218, 216, 219, 214, 220, 215, 223, 221, 181
 ]);
 
 const _kindIdByKind = new Map<string, number>([
@@ -415,7 +423,6 @@ const _kindIdByKind = new Map<string, number>([
 	['from', TSKindId.From],
 	['__future__', TSKindId.FutureU],
 	['as', TSKindId.As],
-	['print', TSKindId.Print],
 	['assert', TSKindId.Assert],
 	['return', TSKindId.Return],
 	['del', TSKindId.Del],
@@ -449,6 +456,7 @@ const _kindIdByKind = new Map<string, number>([
 	['type_conversion', TSKindId.TypeConversion],
 	['integer', TSKindId.Integer],
 	['float', TSKindId.Float],
+	['print', TSKindId.Print],
 	['true', TSKindId.True],
 	['false', TSKindId.False],
 	['none', TSKindId.None],
@@ -587,6 +595,8 @@ const _kindIdByKind = new Map<string, number>([
 	['_except_clause_as', TSKindId.ExceptClauseAs],
 	['case_tuple_pattern', TSKindId.CaseTuplePattern],
 	['case_list_pattern', TSKindId.CaseListPattern],
+	['print_statement_group1', TSKindId.PrintStatementGroup1],
+	['print_statement_group2', TSKindId.PrintStatementGroup2],
 	['_assignment_eq', TSKindId.AssignmentEq],
 	['_assignment_type', TSKindId.AssignmentType],
 	['_assignment_typed', TSKindId.AssignmentTyped],
@@ -696,6 +706,8 @@ export const is = {
 	parenthesizedListSplat: _g(TSKindId.ParenthesizedListSplat),
 	patternList: _g(TSKindId.PatternList),
 	printStatement: _g(TSKindId.PrintStatement),
+	printStatementGroup1: _g(TSKindId.PrintStatementGroup1),
+	printStatementGroup2: _g(TSKindId.PrintStatementGroup2),
 	raiseStatement: _g(TSKindId.RaiseStatement),
 	relativeImport: _g(TSKindId.RelativeImport),
 	returnStatement: _g(TSKindId.ReturnStatement),
@@ -863,6 +875,8 @@ export const assert = {
 	parenthesizedListSplat: _makeAssert('parenthesizedListSplat', is.parenthesizedListSplat as _AnyGuard),
 	patternList: _makeAssert('patternList', is.patternList as _AnyGuard),
 	printStatement: _makeAssert('printStatement', is.printStatement as _AnyGuard),
+	printStatementGroup1: _makeAssert('printStatementGroup1', is.printStatementGroup1 as _AnyGuard),
+	printStatementGroup2: _makeAssert('printStatementGroup2', is.printStatementGroup2 as _AnyGuard),
 	raiseStatement: _makeAssert('raiseStatement', is.raiseStatement as _AnyGuard),
 	relativeImport: _makeAssert('relativeImport', is.relativeImport as _AnyGuard),
 	returnStatement: _makeAssert('returnStatement', is.returnStatement as _AnyGuard),

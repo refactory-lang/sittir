@@ -236,19 +236,6 @@ pub struct PatternsTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "_print_statement_group1.jinja", escape = "none")]
-pub struct PrintStatementGroup1Template<'a> {
-    pub argument: ListNonterminalView<'a>,
-    pub chevron: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
-#[template(path = "_print_statement_group2.jinja", escape = "none")]
-pub struct PrintStatementGroup2Template<'a> {
-    pub argument: ListNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "_simple_pattern_negative.jinja", escape = "none")]
 pub struct SimplePatternNegativeTemplate<'a> {
     pub content: SingleNonterminalView<'a>,
@@ -797,6 +784,19 @@ pub struct ParenthesizedListSplatTemplate<'a> {
 pub struct PatternListTemplate<'a> {
     pub pattern: SingleNonterminalView<'a>,
     pub tail: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "print_statement_group1.jinja", escape = "none")]
+pub struct PrintStatementGroup1Template<'a> {
+    pub argument: ListNonterminalView<'a>,
+    pub chevron: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "print_statement_group2.jinja", escape = "none")]
+pub struct PrintStatementGroup2Template<'a> {
+    pub argument: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

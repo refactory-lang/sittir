@@ -8860,16 +8860,6 @@
     "grammar": "python",
     "backend": "native",
     "stage": "from",
-    "location": "print_statement",
-    "message": "read/wrap throws: singular slot \"content\" on \"print_statement\" requires one value; got undefined — at 3:1 — near \"print async, await\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "from-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "from",
     "location": "generator_expression",
     "message": "read/wrap throws: singular slot \"comprehension_clauses\" on \"generator_expression\" requires one value; got undefined — at 6:26 — near \"(x f"
   },
@@ -8902,26 +8892,6 @@
     "stage": "from",
     "location": "set_comprehension",
     "message": "read/wrap throws: singular slot \"comprehension_clauses\" on \"set_comprehension\" requires one value; got undefined — at 1:1 — near \"{a[b][c]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Print used as an identifier [list_splat]",
-    "message": "kind not found at rendered offset 3"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Async / await used as identifiers [module]",
-    "message": "render: Missing field `_content` on SimpleStatementsTransport._simple_statement on ModuleTransport._statemen"
   },
   {
     "source": "validator",
@@ -9071,7 +9041,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Adding a wild card [module]",
-    "message": "render: alias-wrapper kind id 293 in CasePatternContentTransportSlot: no kind-keyed child slot to unwrap on "
+    "message": "render: alias-wrapper kind id 295 in CasePatternContentTransportSlot: no kind-keyed child slot to unwrap on "
   },
   {
     "source": "validator",
@@ -9191,7 +9161,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Dict mappings [module]",
-    "message": "render: alias-wrapper kind id 293 in CasePatternContentTransportSlot: no kind-keyed child slot to unwrap on "
+    "message": "render: alias-wrapper kind id 295 in CasePatternContentTransportSlot: no kind-keyed child slot to unwrap on "
   },
   {
     "source": "validator",
@@ -9201,7 +9171,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Builtin classes [module]",
-    "message": "render: alias-wrapper kind id 293 in CasePatternContentTransportSlot: no kind-keyed child slot to unwrap on "
+    "message": "render: alias-wrapper kind id 295 in CasePatternContentTransportSlot: no kind-keyed child slot to unwrap on "
   },
   {
     "source": "validator",
@@ -9260,18 +9230,8 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse",
-    "location": "Print statements [module]",
-    "message": "render: Missing field `_content` on SimpleStatementsTransport._simple_statement on ModuleTransport._statemen"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse",
     "location": "Print statements with redirection [module]",
-    "message": "render: Missing field `_content` on SimpleStatementsTransport._simple_statement on ModuleTransport._statemen"
+    "message": "re-parse error [ERROR in chevron at \"a\"]: \"print>>a\nprint>>a\"b\",\"c\"\""
   },
   {
     "source": "validator",
@@ -9282,16 +9242,6 @@
     "stage": "read-render-parse",
     "location": "Nested if statements [module]",
     "message": "re-parse error [ERROR in if_statement at \"if\"]: \"if a:if b:c\n\nelse:if e:f\n\n\n\ng\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "For statements [module]",
-    "message": "render: Missing field `_content` on SimpleStatementsTransport._simple_statement on BlockTransport._statement"
   },
   {
     "source": "validator",
@@ -9312,16 +9262,6 @@
     "stage": "read-render-parse",
     "location": "Function definitions [module]",
     "message": "render: Missing field `_content` on ParenthesizedExpressionTransport._content on ArgumentListGroup1Transport"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Empty blocks [module]",
-    "message": "render: Missing field `_content` on SimpleStatementsTransport._simple_statement on BlockTransport._statement"
   },
   {
     "source": "validator",
@@ -9360,28 +9300,8 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse",
-    "location": "Comments [module]",
-    "message": "render: Missing field `_content` on SimpleStatementsTransport._simple_statement on ModuleTransport._statemen"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse",
     "location": "Comments at the ends of indented blocks [module]",
     "message": "re-parse error [ERROR in function_definition at \"if\"]: \"if a:b\n\nif c:d\n\ndef a():if b:b\n\n\nb\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse",
-    "location": "Newline tokens followed by comments [module]",
-    "message": "render: Missing field `_content` on SimpleStatementsTransport._simple_statement on ModuleTransport._statemen"
   },
   {
     "source": "validator",
@@ -9451,16 +9371,6 @@
     "backend": "native",
     "stage": "read-render-parse-ast-mismatch",
     "location": "Call expressions (module)",
-    "message": "module[2].statement_group1[0].expression_statement[0].call[1].argument_list[1].argument_list_group1[0].identifier: type identifier ≠ keyword_argument"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Print used as an identifier (module)",
     "message": "module[2].statement_group1[0].expression_statement[0].call[1].argument_list[1].argument_list_group1[0].identifier: type identifier ≠ keyword_argument"
   },
   {
@@ -9910,6 +9820,16 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse-ast-mismatch",
+    "location": "Print statements (module)",
+    "message": "module[2].statement_group1[0].print_statement[0].print_statement_group2: childCount 5 ≠ 4 [\"print\",boolean_operator,\",\",boolean_operator,\",\"] vs [\"print\",boolea"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
     "location": "Control-flow statements (module)",
     "message": "module: childCount 1 ≠ 3 [while_statement] vs [while_statement,statement_group1,statement_group1]"
   },
@@ -9950,6 +9870,36 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse-ast-mismatch",
+    "location": "For statements (module)",
+    "message": "module: childCount 2 ≠ 3 [for_statement,for_statement] vs [for_statement,for_statement,for_statement]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "For statements (list)",
+    "message": "list: childCount 3 ≠ 2 [\"[\",element_list,\"]\"] vs [\"[\",\"]\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "For statements (tuple)",
+    "message": "tuple: childCount 3 ≠ 2 [\"(\",element_list,\")\"] vs [\"(\",\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
     "location": "With statements (module)",
     "message": "module[0].with_statement[3].block: type block ≠ simple_statements"
   },
@@ -9972,6 +9922,36 @@
     "stage": "read-render-parse-ast-mismatch",
     "location": "Async Function definitions (function_definition)",
     "message": "function_definition: childCount 6 ≠ 5 [\"async\",\"def\",identifier,parameters,\":\",block] vs [\"def\",identifier,parameters,\":\",simple_statements]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Empty blocks (module)",
+    "message": "module: childCount 2 ≠ 3 [function_definition,if_statement] vs [function_definition,if_statement,while_statement]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Empty blocks (function_definition)",
+    "message": "function_definition[2].parameters: childCount 3 ≠ 2 [\"(\",parameter_list,\")\"] vs [\"(\",\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-ast-mismatch",
+    "location": "Empty blocks (parameters)",
+    "message": "parameters: childCount 3 ≠ 2 [\"(\",parameter_list,\")\"] vs [\"(\",\")\"]"
   },
   {
     "source": "validator",
@@ -10030,26 +10010,6 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse-shallow",
-    "location": "Print used as an identifier [list_splat]",
-    "message": "kind not found at rendered offset 3"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Async / await used as identifiers [module]",
-    "message": "render: Missing field `_content` on SimpleStatementsTransport._simple_statement on ModuleTransport._statemen"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
     "location": "Comparison operators [module]",
     "message": "re-parse error [ERROR in module at \"a\"]: \"a<b<=c==d>=e>f\nnot a==b or c==d\na b\na b\na is b and c!=d\na<>b\""
   },
@@ -10191,7 +10151,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Adding a wild card [module]",
-    "message": "render: alias-wrapper kind id 293 in CasePatternContentTransportSlot: no kind-keyed child slot to unwrap on "
+    "message": "render: alias-wrapper kind id 295 in CasePatternContentTransportSlot: no kind-keyed child slot to unwrap on "
   },
   {
     "source": "validator",
@@ -10311,7 +10271,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Dict mappings [module]",
-    "message": "render: alias-wrapper kind id 293 in CasePatternContentTransportSlot: no kind-keyed child slot to unwrap on "
+    "message": "render: alias-wrapper kind id 295 in CasePatternContentTransportSlot: no kind-keyed child slot to unwrap on "
   },
   {
     "source": "validator",
@@ -10321,7 +10281,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Builtin classes [module]",
-    "message": "render: alias-wrapper kind id 293 in CasePatternContentTransportSlot: no kind-keyed child slot to unwrap on "
+    "message": "render: alias-wrapper kind id 295 in CasePatternContentTransportSlot: no kind-keyed child slot to unwrap on "
   },
   {
     "source": "validator",
@@ -10380,18 +10340,8 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse-shallow",
-    "location": "Print statements [module]",
-    "message": "render: Missing field `_content` on SimpleStatementsTransport._simple_statement on ModuleTransport._statemen"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
     "location": "Print statements with redirection [module]",
-    "message": "render: Missing field `_content` on SimpleStatementsTransport._simple_statement on ModuleTransport._statemen"
+    "message": "re-parse error [ERROR in chevron at \"a\"]: \"print>>a\nprint>>a\"b\",\"c\"\""
   },
   {
     "source": "validator",
@@ -10402,16 +10352,6 @@
     "stage": "read-render-parse-shallow",
     "location": "Nested if statements [module]",
     "message": "re-parse error [ERROR in if_statement at \"if\"]: \"if a:if b:c\n\nelse:if e:f\n\n\n\ng\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "For statements [module]",
-    "message": "render: Missing field `_content` on SimpleStatementsTransport._simple_statement on BlockTransport._statement"
   },
   {
     "source": "validator",
@@ -10432,16 +10372,6 @@
     "stage": "read-render-parse-shallow",
     "location": "Function definitions [module]",
     "message": "render: Missing field `_content` on ParenthesizedExpressionTransport._content on ArgumentListGroup1Transport"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Empty blocks [module]",
-    "message": "render: Missing field `_content` on SimpleStatementsTransport._simple_statement on BlockTransport._statement"
   },
   {
     "source": "validator",
@@ -10480,28 +10410,8 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse-shallow",
-    "location": "Comments [module]",
-    "message": "render: Missing field `_content` on SimpleStatementsTransport._simple_statement on ModuleTransport._statemen"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
     "location": "Comments at the ends of indented blocks [module]",
     "message": "re-parse error [ERROR in function_definition at \"if\"]: \"if a:b\n\nif c:d\n\ndef a():if b:b\n\n\nb\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Newline tokens followed by comments [module]",
-    "message": "render: Missing field `_content` on SimpleStatementsTransport._simple_statement on ModuleTransport._statemen"
   },
   {
     "source": "validator",
@@ -10571,16 +10481,6 @@
     "backend": "native",
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Call expressions (module)",
-    "message": "module[2].statement_group1[0].expression_statement[0].call[1].argument_list[1].argument_list_group1[0].identifier: type identifier ≠ keyword_argument"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Print used as an identifier (module)",
     "message": "module[2].statement_group1[0].expression_statement[0].call[1].argument_list[1].argument_list_group1[0].identifier: type identifier ≠ keyword_argument"
   },
   {
@@ -11030,6 +10930,16 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Print statements (module)",
+    "message": "module[2].statement_group1[0].print_statement[0].print_statement_group2: childCount 5 ≠ 4 [\"print\",boolean_operator,\",\",boolean_operator,\",\"] vs [\"print\",boolea"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Control-flow statements (module)",
     "message": "module: childCount 1 ≠ 3 [while_statement] vs [while_statement,statement_group1,statement_group1]"
   },
@@ -11070,6 +10980,36 @@
     "grammar": "python",
     "backend": "native",
     "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "For statements (module)",
+    "message": "module: childCount 2 ≠ 3 [for_statement,for_statement] vs [for_statement,for_statement,for_statement]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "For statements (list)",
+    "message": "list: childCount 3 ≠ 2 [\"[\",element_list,\"]\"] vs [\"[\",\"]\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "For statements (tuple)",
+    "message": "tuple: childCount 3 ≠ 2 [\"(\",element_list,\")\"] vs [\"(\",\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "With statements (module)",
     "message": "module[0].with_statement[3].block: type block ≠ simple_statements"
   },
@@ -11092,6 +11032,36 @@
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Async Function definitions (function_definition)",
     "message": "function_definition: childCount 6 ≠ 5 [\"async\",\"def\",identifier,parameters,\":\",block] vs [\"def\",identifier,parameters,\":\",simple_statements]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Empty blocks (module)",
+    "message": "module: childCount 2 ≠ 3 [function_definition,if_statement] vs [function_definition,if_statement,while_statement]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Empty blocks (function_definition)",
+    "message": "function_definition[2].parameters: childCount 3 ≠ 2 [\"(\",parameter_list,\")\"] vs [\"(\",\")\"]"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "location": "Empty blocks (parameters)",
+    "message": "parameters: childCount 3 ≠ 2 [\"(\",parameter_list,\")\"] vs [\"(\",\")\"]"
   },
   {
     "source": "validator",
@@ -11172,26 +11142,6 @@
     "stage": "factory-render-parse",
     "location": "Await expressions (function_definition)",
     "message": "re-parse error: \"defregion_exists(region: str)->bool:return region in await a\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse",
-    "location": "Print used as an identifier (list_splat_pattern)",
-    "message": "re-parse error: \"*\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "factory-render-parse-error",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "factory-render-parse",
-    "location": "Print used as an identifier (list_splat)",
-    "message": "kind not found in re-parse (rendered: \"*f\")"
   },
   {
     "source": "validator",
@@ -11620,8 +11570,28 @@
     "grammar": "python",
     "backend": "native",
     "stage": "factory-render-parse",
+    "location": "Matching specific values (parenthesized_expression)",
+    "message": "kind not found in re-parse (rendered: \"()\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
     "location": "Matching specific values (assignment)",
     "message": "kind not found in re-parse (rendered: \"current_room\")"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "factory-render-parse-error",
+    "grammar": "python",
+    "backend": "native",
+    "stage": "factory-render-parse",
+    "location": "Adding a wild card (parenthesized_expression)",
+    "message": "kind not found in re-parse (rendered: \"()\")"
   },
   {
     "source": "validator",
@@ -12282,15 +12252,5 @@
     "stage": "coverage",
     "location": "import_from_statement",
     "message": "field 'name' declared but not referenced in any template: \"from$MODULE_NAMEimport$$$WILDCARD_IMPORT\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "coverage-missing-field",
-    "grammar": "python",
-    "backend": "native",
-    "stage": "coverage",
-    "location": "print_statement",
-    "message": "field 'argument' declared but not referenced in any template: \"$CONTENT\""
   }
 ]

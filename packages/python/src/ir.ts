@@ -471,6 +471,14 @@ export const ir = {
 		from: FR.coerceToPrintStatement,
 		strict: F.buildPrintStatement
 	}),
+	printStatementGroup1: _attach(FR.coerceToPrintStatementGroup1, {
+		from: FR.coerceToPrintStatementGroup1,
+		strict: F.buildPrintStatementGroup1
+	}),
+	printStatementGroup2: _attach(FR.coerceToPrintStatementGroup2, {
+		from: FR.coerceToPrintStatementGroup2,
+		strict: F.buildPrintStatementGroup2
+	}),
 	raiseStatement: _attach(FR.coerceToRaiseStatement, {
 		from: FR.coerceToRaiseStatement,
 		strict: F.buildRaiseStatement
