@@ -448,6 +448,1452 @@
           ],
           "$span": {
             "start": 0,
+            "end": 58
+          },
+          "$nodeHandle": 24,
+          "_content": {
+            "$type": 289,
+            "$source": 0,
+            "$named": true,
+            "_name": "IFoo",
+            "_body": {
+              "$type": 338,
+              "$source": 0,
+              "$named": true,
+              "_opening": 5,
+              "_members": {
+                "$type": 366,
+                "$source": 0,
+                "$named": true,
+                "$other": [
+                  14,
+                  14
+                ],
+                "$span": {
+                  "start": 27,
+                  "end": 56
+                },
+                "$nodeHandle": 28,
+                "_content": [
+                  {
+                    "$type": 270,
+                    "$source": 0,
+                    "$named": true,
+                    "_name": "bar",
+                    "_parameters": {
+                      "$type": 258,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": "()",
+                      "$span": {
+                        "start": 30,
+                        "end": 32
+                      },
+                      "$nodeHandle": 31
+                    },
+                    "_return_type": {
+                      "$type": 303,
+                      "$source": 0,
+                      "$named": true,
+                      "_type": {
+                        "$type": 336,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "number",
+                        "$span": {
+                          "start": 34,
+                          "end": 40
+                        },
+                        "$nodeHandle": 33
+                      },
+                      "$other": [
+                        36
+                      ],
+                      "$span": {
+                        "start": 32,
+                        "end": 40
+                      },
+                      "$nodeHandle": 32
+                    },
+                    "$span": {
+                      "start": 27,
+                      "end": 40
+                    },
+                    "$nodeHandle": 29
+                  },
+                  {
+                    "$type": 270,
+                    "$source": 0,
+                    "$named": true,
+                    "_name": "baz",
+                    "_parameters": {
+                      "$type": 258,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": "()",
+                      "$span": {
+                        "start": 47,
+                        "end": 49
+                      },
+                      "$nodeHandle": 34
+                    },
+                    "_return_type": {
+                      "$type": 303,
+                      "$source": 0,
+                      "$named": true,
+                      "_type": "IBaz",
+                      "$other": [
+                        36
+                      ],
+                      "$span": {
+                        "start": 49,
+                        "end": 55
+                      },
+                      "$nodeHandle": 35
+                    },
+                    "$span": {
+                      "start": 44,
+                      "end": 55
+                    },
+                    "$nodeHandle": 30
+                  }
+                ],
+                "_separator_kind": 14,
+                "_leading_sep": false,
+                "_trailing_sep": true
+              },
+              "_closing": 6,
+              "$span": {
+                "start": 23,
+                "end": 58
+              },
+              "$nodeHandle": 27
+            },
+            "$other": [
+              136
+            ],
+            "$span": {
+              "start": 8,
+              "end": 58
+            },
+            "$nodeHandle": 26
+          }
+        },
+        {
+          "$type": 282,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            115
+          ],
+          "$span": {
+            "start": 60,
+            "end": 112
+          },
+          "$nodeHandle": 25,
+          "_content": {
+            "$type": 221,
+            "$source": 0,
+            "$named": true,
+            "_name": "Foo",
+            "_body": {
+              "$type": 257,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                5,
+                6
+              ],
+              "$span": {
+                "start": 78,
+                "end": 112
+              },
+              "$nodeHandle": 37,
+              "_content": [
+                {
+                  "$type": 383,
+                  "$source": 0,
+                  "$named": true,
+                  "_terminator": 14,
+                  "$span": {
+                    "start": 82,
+                    "end": 96
+                  },
+                  "$nodeHandle": 38,
+                  "_content": {
+                    "$type": 270,
+                    "$source": 0,
+                    "$named": true,
+                    "_name": "bar",
+                    "_parameters": {
+                      "$type": 258,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": "()",
+                      "$span": {
+                        "start": 85,
+                        "end": 87
+                      },
+                      "$nodeHandle": 41
+                    },
+                    "_return_type": {
+                      "$type": 303,
+                      "$source": 0,
+                      "$named": true,
+                      "_type": {
+                        "$type": 336,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "number",
+                        "$span": {
+                          "start": 89,
+                          "end": 95
+                        },
+                        "$nodeHandle": 43
+                      },
+                      "$other": [
+                        36
+                      ],
+                      "$span": {
+                        "start": 87,
+                        "end": 95
+                      },
+                      "$nodeHandle": 42
+                    },
+                    "$span": {
+                      "start": 82,
+                      "end": 95
+                    },
+                    "$nodeHandle": 40
+                  }
+                },
+                {
+                  "$type": 383,
+                  "$source": 0,
+                  "$named": true,
+                  "_terminator": 14,
+                  "$span": {
+                    "start": 99,
+                    "end": 110
+                  },
+                  "$nodeHandle": 39,
+                  "_content": {
+                    "$type": 270,
+                    "$source": 0,
+                    "$named": true,
+                    "_name": "baz",
+                    "_parameters": {
+                      "$type": 258,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": "()",
+                      "$span": {
+                        "start": 102,
+                        "end": 104
+                      },
+                      "$nodeHandle": 45
+                    },
+                    "_return_type": {
+                      "$type": 303,
+                      "$source": 0,
+                      "$named": true,
+                      "_type": "Baz",
+                      "$other": [
+                        36
+                      ],
+                      "$span": {
+                        "start": 104,
+                        "end": 109
+                      },
+                      "$nodeHandle": 46
+                    },
+                    "$span": {
+                      "start": 99,
+                      "end": 109
+                    },
+                    "$nodeHandle": 44
+                  }
+                }
+              ]
+            },
+            "_automatic_semicolon": true,
+            "$other": [
+              46
+            ],
+            "$span": {
+              "start": 68,
+              "end": 112
+            },
+            "$nodeHandle": 36,
+            "_decorator": []
+          }
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 112
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "declare interface IFoo{bar():number,baz():IBaz,}declare class Foo{ bar():number,baz():Baz, }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "declare interface IFoo {\n  bar(): number,\n  baz(): IBaz,\n}\n\ndeclare class Foo {\n  bar(): number,\n  baz(): Baz,\n}",
+    "pattern": "program",
+    "edits": [],
+    "expectedSourceOut": "declare interface IFoo{bar():number,baz():IBaz,}declare class Foo{ bar():number,baz():Baz, }",
+    "expectedReparseTree": "(program statements: (ambient_declaration (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))) (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))) automatic_semicolon: (automatic_semicolon))))",
+    "wrappedText": "declare interface IFoo{bar():number,baz():IBaz,}declare class Foo{ bar():number,baz():Baz, }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 282,
+      "$source": 0,
+      "$named": true,
+      "$other": [
+        115
+      ],
+      "$span": {
+        "start": 0,
+        "end": 58
+      },
+      "$nodeHandle": 1,
+      "_content": {
+        "$type": 289,
+        "$source": 0,
+        "$named": true,
+        "_name": "IFoo",
+        "_body": {
+          "$type": 338,
+          "$source": 0,
+          "$named": true,
+          "_opening": 5,
+          "_members": {
+            "$type": 366,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              14,
+              14
+            ],
+            "$span": {
+              "start": 27,
+              "end": 56
+            },
+            "$nodeHandle": 49,
+            "_content": [
+              {
+                "$type": 270,
+                "$source": 0,
+                "$named": true,
+                "_name": "bar",
+                "_parameters": {
+                  "$type": 258,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "()",
+                  "$span": {
+                    "start": 30,
+                    "end": 32
+                  },
+                  "$nodeHandle": 52
+                },
+                "_return_type": {
+                  "$type": 303,
+                  "$source": 0,
+                  "$named": true,
+                  "_type": {
+                    "$type": 336,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "number",
+                    "$span": {
+                      "start": 34,
+                      "end": 40
+                    },
+                    "$nodeHandle": 54
+                  },
+                  "$other": [
+                    36
+                  ],
+                  "$span": {
+                    "start": 32,
+                    "end": 40
+                  },
+                  "$nodeHandle": 53
+                },
+                "$span": {
+                  "start": 27,
+                  "end": 40
+                },
+                "$nodeHandle": 50
+              },
+              {
+                "$type": 270,
+                "$source": 0,
+                "$named": true,
+                "_name": "baz",
+                "_parameters": {
+                  "$type": 258,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "()",
+                  "$span": {
+                    "start": 47,
+                    "end": 49
+                  },
+                  "$nodeHandle": 55
+                },
+                "_return_type": {
+                  "$type": 303,
+                  "$source": 0,
+                  "$named": true,
+                  "_type": "IBaz",
+                  "$other": [
+                    36
+                  ],
+                  "$span": {
+                    "start": 49,
+                    "end": 55
+                  },
+                  "$nodeHandle": 56
+                },
+                "$span": {
+                  "start": 44,
+                  "end": 55
+                },
+                "$nodeHandle": 51
+              }
+            ],
+            "_separator_kind": 14,
+            "_leading_sep": false,
+            "_trailing_sep": true
+          },
+          "_closing": 6,
+          "$span": {
+            "start": 23,
+            "end": 58
+          },
+          "$nodeHandle": 48
+        },
+        "$other": [
+          136
+        ],
+        "$span": {
+          "start": 8,
+          "end": 58
+        },
+        "$nodeHandle": 47
+      }
+    },
+    "expectedOutput": "declare interface IFoo{bar():number,baz():IBaz,}"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "declare interface IFoo {\n  bar(): number,\n  baz(): IBaz,\n}",
+    "pattern": "ambient_declaration",
+    "edits": [],
+    "expectedSourceOut": "declare interface IFoo{bar():number,baz():IBaz,}",
+    "expectedReparseTree": "(ambient_declaration (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))) (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))))",
+    "wrappedText": "declare interface IFoo{bar():number,baz():IBaz,}",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 282,
+      "$source": 0,
+      "$named": true,
+      "$other": [
+        115
+      ],
+      "$span": {
+        "start": 60,
+        "end": 112
+      },
+      "$nodeHandle": 2,
+      "_content": {
+        "$type": 221,
+        "$source": 0,
+        "$named": true,
+        "_name": "Foo",
+        "_body": {
+          "$type": 257,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            5,
+            6
+          ],
+          "$span": {
+            "start": 78,
+            "end": 112
+          },
+          "$nodeHandle": 58,
+          "_content": [
+            {
+              "$type": 383,
+              "$source": 0,
+              "$named": true,
+              "_terminator": 14,
+              "$span": {
+                "start": 82,
+                "end": 96
+              },
+              "$nodeHandle": 59,
+              "_content": {
+                "$type": 270,
+                "$source": 0,
+                "$named": true,
+                "_name": "bar",
+                "_parameters": {
+                  "$type": 258,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "()",
+                  "$span": {
+                    "start": 85,
+                    "end": 87
+                  },
+                  "$nodeHandle": 62
+                },
+                "_return_type": {
+                  "$type": 303,
+                  "$source": 0,
+                  "$named": true,
+                  "_type": {
+                    "$type": 336,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "number",
+                    "$span": {
+                      "start": 89,
+                      "end": 95
+                    },
+                    "$nodeHandle": 64
+                  },
+                  "$other": [
+                    36
+                  ],
+                  "$span": {
+                    "start": 87,
+                    "end": 95
+                  },
+                  "$nodeHandle": 63
+                },
+                "$span": {
+                  "start": 82,
+                  "end": 95
+                },
+                "$nodeHandle": 61
+              }
+            },
+            {
+              "$type": 383,
+              "$source": 0,
+              "$named": true,
+              "_terminator": 14,
+              "$span": {
+                "start": 99,
+                "end": 110
+              },
+              "$nodeHandle": 60,
+              "_content": {
+                "$type": 270,
+                "$source": 0,
+                "$named": true,
+                "_name": "baz",
+                "_parameters": {
+                  "$type": 258,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "()",
+                  "$span": {
+                    "start": 102,
+                    "end": 104
+                  },
+                  "$nodeHandle": 66
+                },
+                "_return_type": {
+                  "$type": 303,
+                  "$source": 0,
+                  "$named": true,
+                  "_type": "Baz",
+                  "$other": [
+                    36
+                  ],
+                  "$span": {
+                    "start": 104,
+                    "end": 109
+                  },
+                  "$nodeHandle": 67
+                },
+                "$span": {
+                  "start": 99,
+                  "end": 109
+                },
+                "$nodeHandle": 65
+              }
+            }
+          ]
+        },
+        "_automatic_semicolon": true,
+        "$other": [
+          46
+        ],
+        "$span": {
+          "start": 68,
+          "end": 112
+        },
+        "$nodeHandle": 57,
+        "_decorator": []
+      }
+    },
+    "expectedOutput": "declare class Foo{ bar():number,baz():Baz, }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "declare class Foo {\n  bar(): number,\n  baz(): Baz,\n}",
+    "pattern": "ambient_declaration",
+    "edits": [],
+    "expectedSourceOut": "declare class Foo{ bar():number,baz():Baz, }",
+    "expectedReparseTree": "(ambient_declaration (class_declaration name: (type_identifier) body: (class_body (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))) automatic_semicolon: (automatic_semicolon)))",
+    "wrappedText": "declare class Foo{ bar():number,baz():Baz, }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 289,
+      "$source": 0,
+      "$named": true,
+      "_name": "IFoo",
+      "_body": {
+        "$type": 338,
+        "$source": 0,
+        "$named": true,
+        "_opening": 5,
+        "_members": {
+          "$type": 366,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            14,
+            14
+          ],
+          "$span": {
+            "start": 27,
+            "end": 56
+          },
+          "$nodeHandle": 69,
+          "_content": [
+            {
+              "$type": 270,
+              "$source": 0,
+              "$named": true,
+              "_name": "bar",
+              "_parameters": {
+                "$type": 258,
+                "$source": 0,
+                "$named": true,
+                "$text": "()",
+                "$span": {
+                  "start": 30,
+                  "end": 32
+                },
+                "$nodeHandle": 72
+              },
+              "_return_type": {
+                "$type": 303,
+                "$source": 0,
+                "$named": true,
+                "_type": {
+                  "$type": 336,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "number",
+                  "$span": {
+                    "start": 34,
+                    "end": 40
+                  },
+                  "$nodeHandle": 74
+                },
+                "$other": [
+                  36
+                ],
+                "$span": {
+                  "start": 32,
+                  "end": 40
+                },
+                "$nodeHandle": 73
+              },
+              "$span": {
+                "start": 27,
+                "end": 40
+              },
+              "$nodeHandle": 70
+            },
+            {
+              "$type": 270,
+              "$source": 0,
+              "$named": true,
+              "_name": "baz",
+              "_parameters": {
+                "$type": 258,
+                "$source": 0,
+                "$named": true,
+                "$text": "()",
+                "$span": {
+                  "start": 47,
+                  "end": 49
+                },
+                "$nodeHandle": 75
+              },
+              "_return_type": {
+                "$type": 303,
+                "$source": 0,
+                "$named": true,
+                "_type": "IBaz",
+                "$other": [
+                  36
+                ],
+                "$span": {
+                  "start": 49,
+                  "end": 55
+                },
+                "$nodeHandle": 76
+              },
+              "$span": {
+                "start": 44,
+                "end": 55
+              },
+              "$nodeHandle": 71
+            }
+          ],
+          "_separator_kind": 14,
+          "_leading_sep": false,
+          "_trailing_sep": true
+        },
+        "_closing": 6,
+        "$span": {
+          "start": 23,
+          "end": 58
+        },
+        "$nodeHandle": 68
+      },
+      "$other": [
+        136
+      ],
+      "$span": {
+        "start": 8,
+        "end": 58
+      },
+      "$nodeHandle": 3
+    },
+    "expectedOutput": "interface IFoo{bar():number,baz():IBaz,}"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "interface IFoo {\n  bar(): number,\n  baz(): IBaz,\n}",
+    "pattern": "interface_declaration",
+    "edits": [],
+    "expectedSourceOut": "interface IFoo{bar():number,baz():IBaz,}",
+    "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))) (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))))",
+    "wrappedText": "interface IFoo{bar():number,baz():IBaz,}",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 338,
+      "$source": 0,
+      "$named": true,
+      "_opening": 5,
+      "_members": {
+        "$type": 366,
+        "$source": 0,
+        "$named": true,
+        "$other": [
+          14,
+          14
+        ],
+        "$span": {
+          "start": 27,
+          "end": 56
+        },
+        "$nodeHandle": 77,
+        "_content": [
+          {
+            "$type": 270,
+            "$source": 0,
+            "$named": true,
+            "_name": "bar",
+            "_parameters": {
+              "$type": 258,
+              "$source": 0,
+              "$named": true,
+              "$text": "()",
+              "$span": {
+                "start": 30,
+                "end": 32
+              },
+              "$nodeHandle": 80
+            },
+            "_return_type": {
+              "$type": 303,
+              "$source": 0,
+              "$named": true,
+              "_type": {
+                "$type": 336,
+                "$source": 0,
+                "$named": true,
+                "$text": "number",
+                "$span": {
+                  "start": 34,
+                  "end": 40
+                },
+                "$nodeHandle": 82
+              },
+              "$other": [
+                36
+              ],
+              "$span": {
+                "start": 32,
+                "end": 40
+              },
+              "$nodeHandle": 81
+            },
+            "$span": {
+              "start": 27,
+              "end": 40
+            },
+            "$nodeHandle": 78
+          },
+          {
+            "$type": 270,
+            "$source": 0,
+            "$named": true,
+            "_name": "baz",
+            "_parameters": {
+              "$type": 258,
+              "$source": 0,
+              "$named": true,
+              "$text": "()",
+              "$span": {
+                "start": 47,
+                "end": 49
+              },
+              "$nodeHandle": 83
+            },
+            "_return_type": {
+              "$type": 303,
+              "$source": 0,
+              "$named": true,
+              "_type": "IBaz",
+              "$other": [
+                36
+              ],
+              "$span": {
+                "start": 49,
+                "end": 55
+              },
+              "$nodeHandle": 84
+            },
+            "$span": {
+              "start": 44,
+              "end": 55
+            },
+            "$nodeHandle": 79
+          }
+        ],
+        "_separator_kind": 14,
+        "_leading_sep": false,
+        "_trailing_sep": true
+      },
+      "_closing": 6,
+      "$span": {
+        "start": 23,
+        "end": 58
+      },
+      "$nodeHandle": 4
+    },
+    "expectedOutput": "{bar():number,baz():IBaz,}"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{\n  bar(): number,\n  baz(): IBaz,\n}",
+    "pattern": "object_type",
+    "edits": [],
+    "expectedSourceOut": "{bar():number,baz():IBaz,}",
+    "expectedReparseTree": "(interface_body members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))) (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))",
+    "wrappedText": "interface _I {bar():number,baz():IBaz,}",
+    "wrappedOffset": 13
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 258,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 30,
+        "end": 32
+      },
+      "$nodeHandle": 8
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "()",
+    "pattern": "formal_parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(formal_parameters)",
+    "wrappedText": "function _f() {}",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 258,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 47,
+        "end": 49
+      },
+      "$nodeHandle": 11
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "()",
+    "pattern": "formal_parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(formal_parameters)",
+    "wrappedText": "function _f() {}",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 258,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 85,
+        "end": 87
+      },
+      "$nodeHandle": 18
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "()",
+    "pattern": "formal_parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(formal_parameters)",
+    "wrappedText": "function _f() {}",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 258,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 102,
+        "end": 104
+      },
+      "$nodeHandle": 22
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "()",
+    "pattern": "formal_parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(formal_parameters)",
+    "wrappedText": "function _f() {}",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 303,
+      "$source": 0,
+      "$named": true,
+      "_type": {
+        "$type": 336,
+        "$source": 0,
+        "$named": true,
+        "$text": "number",
+        "$span": {
+          "start": 34,
+          "end": 40
+        },
+        "$nodeHandle": 102
+      },
+      "$other": [
+        36
+      ],
+      "$span": {
+        "start": 32,
+        "end": 40
+      },
+      "$nodeHandle": 9
+    },
+    "expectedOutput": ":number"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": ": number",
+    "pattern": "type_annotation",
+    "edits": [],
+    "expectedSourceOut": ":number",
+    "expectedReparseTree": "(type_annotation type: (predefined_type))",
+    "wrappedText": "let _:number;",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 303,
+      "$source": 0,
+      "$named": true,
+      "_type": "IBaz",
+      "$other": [
+        36
+      ],
+      "$span": {
+        "start": 49,
+        "end": 55
+      },
+      "$nodeHandle": 12
+    },
+    "expectedOutput": ":IBaz"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": ": IBaz",
+    "pattern": "type_annotation",
+    "edits": [],
+    "expectedSourceOut": ":IBaz",
+    "expectedReparseTree": "(type_annotation type: (type_identifier))",
+    "wrappedText": "let _:IBaz;",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 303,
+      "$source": 0,
+      "$named": true,
+      "_type": {
+        "$type": 336,
+        "$source": 0,
+        "$named": true,
+        "$text": "number",
+        "$span": {
+          "start": 89,
+          "end": 95
+        },
+        "$nodeHandle": 103
+      },
+      "$other": [
+        36
+      ],
+      "$span": {
+        "start": 87,
+        "end": 95
+      },
+      "$nodeHandle": 19
+    },
+    "expectedOutput": ":number"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": ": number",
+    "pattern": "type_annotation",
+    "edits": [],
+    "expectedSourceOut": ":number",
+    "expectedReparseTree": "(type_annotation type: (predefined_type))",
+    "wrappedText": "let _:number;",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 303,
+      "$source": 0,
+      "$named": true,
+      "_type": "Baz",
+      "$other": [
+        36
+      ],
+      "$span": {
+        "start": 104,
+        "end": 109
+      },
+      "$nodeHandle": 23
+    },
+    "expectedOutput": ":Baz"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": ": Baz",
+    "pattern": "type_annotation",
+    "edits": [],
+    "expectedSourceOut": ":Baz",
+    "expectedReparseTree": "(type_annotation type: (type_identifier))",
+    "wrappedText": "let _:Baz;",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 221,
+      "$source": 0,
+      "$named": true,
+      "_name": "Foo",
+      "_body": {
+        "$type": 257,
+        "$source": 0,
+        "$named": true,
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 78,
+          "end": 112
+        },
+        "$nodeHandle": 104,
+        "_content": [
+          {
+            "$type": 383,
+            "$source": 0,
+            "$named": true,
+            "_terminator": 14,
+            "$span": {
+              "start": 82,
+              "end": 96
+            },
+            "$nodeHandle": 105,
+            "_content": {
+              "$type": 270,
+              "$source": 0,
+              "$named": true,
+              "_name": "bar",
+              "_parameters": {
+                "$type": 258,
+                "$source": 0,
+                "$named": true,
+                "$text": "()",
+                "$span": {
+                  "start": 85,
+                  "end": 87
+                },
+                "$nodeHandle": 108
+              },
+              "_return_type": {
+                "$type": 303,
+                "$source": 0,
+                "$named": true,
+                "_type": {
+                  "$type": 336,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "number",
+                  "$span": {
+                    "start": 89,
+                    "end": 95
+                  },
+                  "$nodeHandle": 110
+                },
+                "$other": [
+                  36
+                ],
+                "$span": {
+                  "start": 87,
+                  "end": 95
+                },
+                "$nodeHandle": 109
+              },
+              "$span": {
+                "start": 82,
+                "end": 95
+              },
+              "$nodeHandle": 107
+            }
+          },
+          {
+            "$type": 383,
+            "$source": 0,
+            "$named": true,
+            "_terminator": 14,
+            "$span": {
+              "start": 99,
+              "end": 110
+            },
+            "$nodeHandle": 106,
+            "_content": {
+              "$type": 270,
+              "$source": 0,
+              "$named": true,
+              "_name": "baz",
+              "_parameters": {
+                "$type": 258,
+                "$source": 0,
+                "$named": true,
+                "$text": "()",
+                "$span": {
+                  "start": 102,
+                  "end": 104
+                },
+                "$nodeHandle": 112
+              },
+              "_return_type": {
+                "$type": 303,
+                "$source": 0,
+                "$named": true,
+                "_type": "Baz",
+                "$other": [
+                  36
+                ],
+                "$span": {
+                  "start": 104,
+                  "end": 109
+                },
+                "$nodeHandle": 113
+              },
+              "$span": {
+                "start": 99,
+                "end": 109
+              },
+              "$nodeHandle": 111
+            }
+          }
+        ]
+      },
+      "_automatic_semicolon": true,
+      "$other": [
+        46
+      ],
+      "$span": {
+        "start": 68,
+        "end": 112
+      },
+      "$nodeHandle": 13,
+      "_decorator": []
+    },
+    "expectedOutput": "class Foo{ bar():number,baz():Baz, }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "class Foo {\n  bar(): number,\n  baz(): Baz,\n}",
+    "pattern": "class_declaration",
+    "edits": [],
+    "expectedSourceOut": "class Foo{ bar():number,baz():Baz, }",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier))))) automatic_semicolon: (automatic_semicolon))",
+    "wrappedText": "class Foo{ bar():number,baz():Baz, }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 257,
+      "$source": 0,
+      "$named": true,
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 78,
+        "end": 112
+      },
+      "$nodeHandle": 14,
+      "_content": [
+        {
+          "$type": 383,
+          "$source": 0,
+          "$named": true,
+          "_terminator": 14,
+          "$span": {
+            "start": 82,
+            "end": 96
+          },
+          "$nodeHandle": 114,
+          "_content": {
+            "$type": 270,
+            "$source": 0,
+            "$named": true,
+            "_name": "bar",
+            "_parameters": {
+              "$type": 258,
+              "$source": 0,
+              "$named": true,
+              "$text": "()",
+              "$span": {
+                "start": 85,
+                "end": 87
+              },
+              "$nodeHandle": 117
+            },
+            "_return_type": {
+              "$type": 303,
+              "$source": 0,
+              "$named": true,
+              "_type": {
+                "$type": 336,
+                "$source": 0,
+                "$named": true,
+                "$text": "number",
+                "$span": {
+                  "start": 89,
+                  "end": 95
+                },
+                "$nodeHandle": 119
+              },
+              "$other": [
+                36
+              ],
+              "$span": {
+                "start": 87,
+                "end": 95
+              },
+              "$nodeHandle": 118
+            },
+            "$span": {
+              "start": 82,
+              "end": 95
+            },
+            "$nodeHandle": 116
+          }
+        },
+        {
+          "$type": 383,
+          "$source": 0,
+          "$named": true,
+          "_terminator": 14,
+          "$span": {
+            "start": 99,
+            "end": 110
+          },
+          "$nodeHandle": 115,
+          "_content": {
+            "$type": 270,
+            "$source": 0,
+            "$named": true,
+            "_name": "baz",
+            "_parameters": {
+              "$type": 258,
+              "$source": 0,
+              "$named": true,
+              "$text": "()",
+              "$span": {
+                "start": 102,
+                "end": 104
+              },
+              "$nodeHandle": 121
+            },
+            "_return_type": {
+              "$type": 303,
+              "$source": 0,
+              "$named": true,
+              "_type": "Baz",
+              "$other": [
+                36
+              ],
+              "$span": {
+                "start": 104,
+                "end": 109
+              },
+              "$nodeHandle": 122
+            },
+            "$span": {
+              "start": 99,
+              "end": 109
+            },
+            "$nodeHandle": 120
+          }
+        }
+      ]
+    },
+    "expectedOutput": "{ bar():number,baz():Baz, }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{\n  bar(): number,\n  baz(): Baz,\n}",
+    "pattern": "class_body",
+    "edits": [],
+    "expectedSourceOut": "{ bar():number,baz():Baz, }",
+    "expectedReparseTree": "(class_body (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))) (class_body_member (method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))",
+    "wrappedText": "class _C { bar():number,baz():Baz, }",
+    "wrappedOffset": 9
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 166,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 282,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            115
+          ],
+          "$span": {
+            "start": 0,
             "end": 42
           },
           "$nodeHandle": 8,

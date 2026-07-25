@@ -312,7 +312,6 @@ function _resolveOneLeaf<T>(v: _FromFieldInput, kind: string): T {
 }
 
 const _wrapKindIds: { readonly [kind: string]: number } = {
-	_class_body_method_sig: TSKindId.ClassBodyMethodSig,
 	_export_clause_group1: TSKindId.ExportClauseGroup1,
 	_export_statement_default: TSKindId.ExportStatementDefault,
 	_formal_parameters_group1: TSKindId.FormalParametersGroup1,
@@ -359,8 +358,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 
 function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
 	switch (kind) {
-		case '_class_body_method_sig':
-			return F.buildClassBodyMethodSig(children[0] as Parameters<typeof F.buildClassBodyMethodSig>[0]);
 		case '_export_clause_group1':
 			return F.buildExportClauseGroup1(children as Parameters<typeof F.buildExportClauseGroup1>[0]);
 		case '_export_statement_default':

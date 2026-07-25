@@ -451,8 +451,8 @@ export interface ClassBodyMethodSigTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _terminator: ClassBodyMethodSigTerminatorTransportSlot
   _method_signature: MethodSignatureTransport
-  _function_signature_automatic_semicolon: ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot
 }
 
 export interface ClassBodyMethodTransport {

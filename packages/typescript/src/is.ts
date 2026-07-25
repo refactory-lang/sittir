@@ -39,9 +39,6 @@ export interface IsGuards {
 	ArrowFunctionParameter<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ArrowFunctionParameter };
-	ClassBodyMethodSig<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ClassBodyMethodSig };
 	ClassHeritageExtendsClause<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ClassHeritageExtendsClause };
@@ -379,7 +376,6 @@ export interface AssertGuards {
 	ArrowFunctionParameter(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ArrowFunctionParameter };
-	ClassBodyMethodSig(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClassBodyMethodSig };
 	ClassHeritageExtendsClause(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ClassHeritageExtendsClause };
@@ -972,7 +968,6 @@ const _kindIdByKind = new Map<string, number>([
 
 export const is = {
 	ArrowFunctionParameter: _g(TSKindId.ArrowFunctionParameter),
-	ClassBodyMethodSig: _g(TSKindId.ClassBodyMethodSig),
 	ClassHeritageExtendsClause: _g(TSKindId.ClassHeritageExtendsClause),
 	ExportClauseGroup1: _g(TSKindId.ExportClauseGroup1),
 	ExportStatementDefault: _g(TSKindId.ExportStatementDefault),
@@ -1202,7 +1197,6 @@ function _makeAssertKind(guard: _AnyGuard) {
 
 export const assert = {
 	ArrowFunctionParameter: _makeAssert('ArrowFunctionParameter', is.ArrowFunctionParameter as _AnyGuard),
-	ClassBodyMethodSig: _makeAssert('ClassBodyMethodSig', is.ClassBodyMethodSig as _AnyGuard),
 	ClassHeritageExtendsClause: _makeAssert('ClassHeritageExtendsClause', is.ClassHeritageExtendsClause as _AnyGuard),
 	ExportClauseGroup1: _makeAssert('ExportClauseGroup1', is.ExportClauseGroup1 as _AnyGuard),
 	ExportStatementDefault: _makeAssert('ExportStatementDefault', is.ExportStatementDefault as _AnyGuard),

@@ -3,7 +3,6 @@
 /** All branch (non-leaf) node kind strings. */
 export const NODE_KINDS = [
   '_arrow_function_parameter',
-  '_class_body_method_sig',
   '_class_heritage_extends_clause',
   '_export_clause_group1',
   '_export_statement_default',
@@ -2090,10 +2089,6 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
 }>> = {
   '_arrow_function_parameter': [
     { name: 'parameter', required: true, multiple: false },
-  ],
-  '_class_body_method_sig': [
-    { name: 'methodSignature', required: true, multiple: false },
-    { name: 'functionSignatureAutomaticSemicolon', required: true, multiple: false },
   ],
   '_class_heritage_extends_clause': [
     { name: 'extendsClause', required: true, multiple: false },

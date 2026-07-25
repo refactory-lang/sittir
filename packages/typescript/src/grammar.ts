@@ -646,15 +646,14 @@ export type TypescriptGrammar = {
 	readonly class_body_method_sig: {
 		type: 'class_body_method_sig';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: true;
-			types: [
-				{ type: 'function_signature_automatic_semicolon'; named: true },
-				{ type: 'method_signature'; named: true }
-			];
+		fields: {
+			terminator: {
+				multiple: false;
+				required: true;
+				types: [{ type: ','; named: false }, { type: 'function_signature_automatic_semicolon'; named: true }];
+			};
 		};
+		children: { multiple: false; required: true; types: [{ type: 'method_signature'; named: true }] };
 	};
 	readonly class_declaration: {
 		type: 'class_declaration';

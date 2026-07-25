@@ -3292,9 +3292,9 @@ export interface ClassBodyMethod {
 export interface ClassBodyMethodSig {
 	readonly $type: TSKindId.ClassBodyMethodSig;
 	readonly _method_signature: MethodSignature;
-	readonly _function_signature_automatic_semicolon: '\n' | ',';
+	readonly _terminator: '\n' | ',';
 	methodSignature(): MethodSignature;
-	functionSignatureAutomaticSemicolon(): '\n' | ',';
+	terminator(): '\n' | ',';
 }
 
 export interface ClassHeritageExtendsClause {

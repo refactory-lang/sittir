@@ -187,7 +187,7 @@
     "_arrow_function_parameter.parameter": {
       "reserved_identifier": "_reserved_identifier"
     },
-    "_class_body_method_sig.function_signature_automatic_semicolon": {
+    "_class_body_method_sig.terminator": {
       "function_signature_automatic_semicolon": "_function_signature_automatic_semicolon"
     },
     "_export_statement_default.content": {
@@ -701,7 +701,7 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "function_signature_automatic_semicolon": {
+      "terminator": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -5841,11 +5841,12 @@
     },
     {
       "kind": "_class_body_method_sig",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "ClassBodyMethodSig",
-      "factoryName": "classBodyMethodSig",
+      "factoryName": "_classBodyMethodSig",
       "irKey": "classBodyMethodSig",
       "hidden": false,
+      "name": "_class_body_method_sig",
       "fields": [
         {
           "name": "method_signature",
@@ -5871,9 +5872,9 @@
           }
         },
         {
-          "name": "function_signature_automatic_semicolon",
-          "propertyName": "functionSignatureAutomaticSemicolon",
-          "paramName": "functionSignatureAutomaticSemicolon",
+          "name": "terminator",
+          "propertyName": "terminator",
+          "paramName": "terminator",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -5901,7 +5902,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
         "method_signature"
       ]

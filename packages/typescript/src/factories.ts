@@ -339,8 +339,9 @@ export function buildClassBodyMethod(config: T.ClassBodyMethod.Config) {
 	);
 }
 
-export function buildClassBodyMethodSig(child: T.MethodSignature | '\n') {
-	const _method_signature = child;
+export function buildClassBodyMethodSig(config: T.ClassBodyMethodSig.Config) {
+	const _method_signature = config.methodSignature;
+	const _terminator = config.terminator;
 	return withMethods(
 		withAccessors(
 			{
@@ -348,10 +349,15 @@ export function buildClassBodyMethodSig(child: T.MethodSignature | '\n') {
 				$source: 2 as const,
 				$named: true as const,
 				_method_signature,
-				$with: { $child: (v: T.MethodSignature | '\n') => buildClassBodyMethodSig(v) }
+				_terminator,
+				$with: {
+					methodSignature: (value: T.MethodSignature) => buildClassBodyMethodSig({ ...config, methodSignature: value }),
+					terminator: (value: '\n' | ',') => buildClassBodyMethodSig({ ...config, terminator: value })
+				}
 			},
 			{
-				methodSignature: () => _method_signature
+				methodSignature: () => _method_signature,
+				terminator: () => _terminator
 			}
 		),
 		methodsEngine
@@ -6608,7 +6614,7 @@ export type FluentKindMap = {
 	_catch_clause_group1: T.CatchClauseGroup1;
 	_class_body_member: T.ClassBodyMember;
 	_class_body_method: T.ClassBodyMethod;
-	_class_body_method_sig: FluentNode<'_class_body_method_sig', T.ClassBodyMethodSig.Config>;
+	_class_body_method_sig: T.ClassBodyMethodSig;
 	_class_heritage_extends_clause: FluentNode<'_class_heritage_extends_clause', T.ClassHeritageExtendsClause.Config>;
 	_enum_body_group1: T.EnumBodyGroup1;
 	_export_clause_group1: FluentNode<'_export_clause_group1', T.ExportClauseGroup1.Config>;

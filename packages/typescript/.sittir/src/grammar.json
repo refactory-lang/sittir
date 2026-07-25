@@ -11665,22 +11665,29 @@
           "name": "method_signature"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_function_signature_automatic_semicolon"
+          "type": "FIELD",
+          "name": "terminator",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_function_signature_automatic_semicolon"
+                },
+                "named": true,
+                "value": "function_signature_automatic_semicolon"
               },
-              "named": true,
-              "value": "function_signature_automatic_semicolon"
-            },
-            {
-              "type": "STRING",
-              "value": ","
-            }
-          ]
+              {
+                "type": "STRING",
+                "value": ","
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -13008,22 +13015,29 @@
           "name": "method_signature"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "_function_signature_automatic_semicolon"
+          "type": "FIELD",
+          "name": "terminator",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_function_signature_automatic_semicolon"
+                },
+                "named": true,
+                "value": "function_signature_automatic_semicolon"
               },
-              "named": true,
-              "value": "function_signature_automatic_semicolon"
-            },
-            {
-              "type": "STRING",
-              "value": ","
-            }
-          ]
+              {
+                "type": "STRING",
+                "value": ","
+              }
+            ]
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },

@@ -326,7 +326,6 @@ pub enum AnyTransport {
     Paren(ParenTransport),
     CloseParen(CloseParenTransport),
     Comma2(Comma2Transport),
-    Comma(CommaTransport),
     Const(ConstTransport),
     As(AsTransport),
     Export(ExportTransport),
@@ -336,6 +335,7 @@ pub enum AnyTransport {
     Namespace(NamespaceTransport),
     Var(VarTransport),
     From(FromTransport),
+    Comma(CommaTransport),
     Readonly(ReadonlyTransport),
     Extends(ExtendsTransport),
     Lt(LtTransport),
@@ -8392,13 +8392,13 @@ impl RenderableTransport for ClassBodyMemberContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot {
+pub enum ClassBodyMethodSigTerminatorTransportSlot {
     FunctionSignatureAutomaticSemicolon(FunctionSignatureAutomaticSemicolonTransport),
     Literal1_2c,
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMethodSigTerminatorTransportSlot {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -8411,14 +8411,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMethodSigFunctionSignat
                     )),
                     14 => Ok(Self::Literal1_2c),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot",
+                        "unknown kind id {other} in ClassBodyMethodSigTerminatorTransportSlot",
                     ))),
                 }
             }
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot")
+                    ::napi::Error::from_reason("$type property missing in ClassBodyMethodSigTerminatorTransportSlot")
                 )?;
                 match kind_id {
                     164 => Ok(Self::FunctionSignatureAutomaticSemicolon(
@@ -8426,60 +8426,60 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMethodSigFunctionSignat
                     )),
                     14 => Ok(Self::Literal1_2c),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot",
+                        "unknown kind id {other} in ClassBodyMethodSigTerminatorTransportSlot",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("ClassBodyMethodSigTerminatorTransportSlot: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot {
+impl ::napi::bindgen_prelude::ToNapiValue for ClassBodyMethodSigTerminatorTransportSlot {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot is receive-only"))
+        Err(::napi::Error::from_reason("ClassBodyMethodSigTerminatorTransportSlot is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ClassBodyMethodSigTerminatorTransportSlot> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+        ClassBodyMethodSigTerminatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassBodyMethodSigTerminatorTransportSlot> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot::to_napi_value(env, *val)
+        ClassBodyMethodSigTerminatorTransportSlot::to_napi_value(env, *val)
     }
 }
 
-fn class_body_method_sig_function_signature_automatic_semicolon_transport_slot_to_any(t: ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot) -> AnyTransport {
+fn class_body_method_sig_terminator_transport_slot_to_any(t: ClassBodyMethodSigTerminatorTransportSlot) -> AnyTransport {
     match t {
-        ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot::FunctionSignatureAutomaticSemicolon(inner) => AnyTransport::FunctionSignatureAutomaticSemicolon(inner),
-        ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot::Literal1_2c => AnyTransport::Literal1_2c,
+        ClassBodyMethodSigTerminatorTransportSlot::FunctionSignatureAutomaticSemicolon(inner) => AnyTransport::FunctionSignatureAutomaticSemicolon(inner),
+        ClassBodyMethodSigTerminatorTransportSlot::Literal1_2c => AnyTransport::Literal1_2c,
     }
 }
 
-impl RenderableTransport for ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot {
+impl RenderableTransport for ClassBodyMethodSigTerminatorTransportSlot {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot::FunctionSignatureAutomaticSemicolon(inner) => render_function_signature_automatic_semicolon(inner, dest),
-            ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot::Literal1_2c => dest.write_str(",").map_err(::askama::Error::from),
+            ClassBodyMethodSigTerminatorTransportSlot::FunctionSignatureAutomaticSemicolon(inner) => render_function_signature_automatic_semicolon(inner, dest),
+            ClassBodyMethodSigTerminatorTransportSlot::Literal1_2c => dest.write_str(",").map_err(::askama::Error::from),
         }
     }
 }
@@ -25816,10 +25816,10 @@ pub struct ClassBodyMethodSigTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_terminator"))]
+    pub terminator: ClassBodyMethodSigTerminatorTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_method_signature"))]
     pub method_signature: MethodSignatureTransport,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_function_signature_automatic_semicolon"))]
-    pub function_signature_automatic_semicolon: ClassBodyMethodSigFunctionSignatureAutomaticSemicolonTransportSlot,
 }
 
 impl RenderableTransport for ClassBodyMethodSigTransport {
@@ -43815,109 +43815,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<Comma2Transport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct CommaTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for CommaTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => ",".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                obj.get("$text")?.unwrap_or_else(|| ",".to_string())
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(false),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| ",".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CommaTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CommaTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        CommaTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CommaTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        CommaTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct ConstTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -44841,6 +44738,109 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FromTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         FromTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct CommaTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for CommaTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => ",".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                obj.get("$text")?.unwrap_or_else(|| ",".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| ",".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for CommaTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<CommaTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        CommaTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<CommaTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        CommaTransport::to_napi_value(env, *val)
     }
 }
 
@@ -53708,8 +53708,8 @@ fn render_class_body_method(node: &ClassBodyMethodTransport, dest: &mut dyn ::st
 
 fn render_class_body_method_sig(node: &ClassBodyMethodSigTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ClassBodyMethodSigTemplate {
-        function_signature_automatic_semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.function_signature_automatic_semicolon)),
         method_signature: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.method_signature)),
+        terminator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.terminator)),
     };
     template.render_into(dest)
 }
@@ -56785,10 +56785,6 @@ fn render_comma2(t: &Comma2Transport, dest: &mut dyn ::std::fmt::Write) -> Resul
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_comma(t: &CommaTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
 fn render_const(t: &ConstTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -56822,6 +56818,10 @@ fn render_var(t: &VarTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), 
 }
 
 fn render_from(t: &FromTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
+fn render_comma(t: &CommaTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -57770,7 +57770,6 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Paren(t) => t.render_into(dest),
             AnyTransport::CloseParen(t) => t.render_into(dest),
             AnyTransport::Comma2(t) => t.render_into(dest),
-            AnyTransport::Comma(t) => t.render_into(dest),
             AnyTransport::Const(t) => t.render_into(dest),
             AnyTransport::As(t) => t.render_into(dest),
             AnyTransport::Export(t) => t.render_into(dest),
@@ -57780,6 +57779,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Namespace(t) => t.render_into(dest),
             AnyTransport::Var(t) => t.render_into(dest),
             AnyTransport::From(t) => t.render_into(dest),
+            AnyTransport::Comma(t) => t.render_into(dest),
             AnyTransport::Readonly(t) => t.render_into(dest),
             AnyTransport::Extends(t) => t.render_into(dest),
             AnyTransport::Lt(t) => t.render_into(dest),
@@ -58206,7 +58206,6 @@ impl AnyTransport {
             Self::Paren(t) => t.transport_named,
             Self::CloseParen(t) => t.transport_named,
             Self::Comma2(t) => t.transport_named,
-            Self::Comma(t) => t.transport_named,
             Self::Const(t) => t.transport_named,
             Self::As(t) => t.transport_named,
             Self::Export(t) => t.transport_named,
@@ -58216,6 +58215,7 @@ impl AnyTransport {
             Self::Namespace(t) => t.transport_named,
             Self::Var(t) => t.transport_named,
             Self::From(t) => t.transport_named,
+            Self::Comma(t) => t.transport_named,
             Self::Readonly(t) => t.transport_named,
             Self::Extends(t) => t.transport_named,
             Self::Lt(t) => t.transport_named,

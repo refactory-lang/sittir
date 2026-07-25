@@ -54,8 +54,6 @@ import type {
 	CatchClauseTree,
 	Class,
 	ClassBody,
-	ClassBodyMethodSig,
-	ClassBodyMethodSigTree,
 	ClassBodyTree,
 	ClassDeclaration,
 	ClassDeclarationTree,
@@ -478,9 +476,6 @@ type _TypeAssert<T extends true> = T;
 export type _Type_ArrowFunctionParameter = _TypeAssert<
 	_TypeExtends<ArrowFunctionParameter['$type'], TSKindId.ArrowFunctionParameter>
 >;
-export type _Type_ClassBodyMethodSig = _TypeAssert<
-	_TypeExtends<ClassBodyMethodSig['$type'], TSKindId.ClassBodyMethodSig>
->;
 export type _Type_ClassHeritageExtendsClause = _TypeAssert<
 	_TypeExtends<ClassHeritageExtendsClause['$type'], TSKindId.ClassHeritageExtendsClause>
 >;
@@ -896,9 +891,6 @@ export type _Type_ErrorRecovery = _TypeAssert<_TypeExtends<ErrorRecovery['$type'
 // --- TreeNode types have correct `type` ---
 export type _Tree_ArrowFunctionParameter = _TypeAssert<
 	_TypeExtends<ArrowFunctionParameterTree['type'], '_arrow_function_parameter'>
->;
-export type _Tree_ClassBodyMethodSig = _TypeAssert<
-	_TypeExtends<ClassBodyMethodSigTree['type'], '_class_body_method_sig'>
 >;
 export type _Tree_ClassHeritageExtendsClause = _TypeAssert<
 	_TypeExtends<ClassHeritageExtendsClauseTree['type'], '_class_heritage_extends_clause'>

@@ -1263,13 +1263,10 @@ export function wrapClassBodyMethod(data: T.ClassBodyMethod, tree: TreeHandle) {
 	return _node;
 }
 
-export function wrapClassBodyMethodSig(
-	data: T.ClassBodyMethodSig & { readonly _comma?: '\n' | ',' },
-	tree: TreeHandle
-) {
+export function wrapClassBodyMethodSig(data: T.ClassBodyMethodSig, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_comma']),
+			...data,
 			$type: TSKindId.ClassBodyMethodSig as const,
 			_method_signature: normalizeSingularWrapSlot(data._method_signature, 'method_signature', true, data.$type, {
 				tree,
@@ -1277,25 +1274,19 @@ export function wrapClassBodyMethodSig(
 				slotName: 'method_signature',
 				span: (data as _NodeData).$span
 			}),
-			_function_signature_automatic_semicolon: normalizeSingularWrapSlot(
-				data._function_signature_automatic_semicolon ?? data._comma,
-				'function_signature_automatic_semicolon',
-				true,
-				data.$type,
-				{
-					tree,
-					nodeType: data.$type,
-					slotName: 'function_signature_automatic_semicolon',
-					span: (data as _NodeData).$span
-				}
-			),
+			_terminator: normalizeSingularWrapSlot(data._terminator, 'terminator', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'terminator',
+				span: (data as _NodeData).$span
+			}),
 
 			methodSignature() {
 				return drillIn<T.MethodSignature>(this._method_signature, tree);
 			},
-			functionSignatureAutomaticSemicolon() {
+			terminator() {
 				return drillAs<'\n' | ','>(
-					this._function_signature_automatic_semicolon,
+					this._terminator,
 					tree,
 					'function_signature_automatic_semicolon',
 					'_function_signature_automatic_semicolon'
@@ -1304,9 +1295,8 @@ export function wrapClassBodyMethodSig(
 			$with: {
 				methodSignature: (v: NonNullable<T.ClassBodyMethodSig['_method_signature']>) =>
 					wrapClassBodyMethodSig({ ...data, _method_signature: v }, tree),
-				functionSignatureAutomaticSemicolon: (
-					v: NonNullable<T.ClassBodyMethodSig['_function_signature_automatic_semicolon']>
-				) => wrapClassBodyMethodSig({ ...data, _function_signature_automatic_semicolon: v }, tree)
+				terminator: (v: NonNullable<T.ClassBodyMethodSig['_terminator']>) =>
+					wrapClassBodyMethodSig({ ...data, _terminator: v }, tree)
 			}
 		},
 		methodsEngine

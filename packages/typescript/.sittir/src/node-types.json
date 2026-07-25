@@ -1776,15 +1776,26 @@
   {
     "type": "class_body_method_sig",
     "named": true,
-    "fields": {},
+    "fields": {
+      "terminator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": ",",
+            "named": false
+          },
+          {
+            "type": "function_signature_automatic_semicolon",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
-        {
-          "type": "function_signature_automatic_semicolon",
-          "named": true
-        },
         {
           "type": "method_signature",
           "named": true

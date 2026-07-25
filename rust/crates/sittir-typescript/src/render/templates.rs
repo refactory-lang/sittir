@@ -166,8 +166,8 @@ pub struct ClassBodyMemberTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_class_body_method_sig.jinja", escape = "none")]
 pub struct ClassBodyMethodSigTemplate<'a> {
-    pub function_signature_automatic_semicolon: SingleNonterminalView<'a>,
     pub method_signature: SingleNonterminalView<'a>,
+    pub terminator: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

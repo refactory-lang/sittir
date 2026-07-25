@@ -4061,16 +4061,6 @@
     "grammar": "typescript",
     "backend": "native",
     "stage": "read-render-parse",
-    "location": "Flow-style ambient class declarations with commas [program]",
-    "message": "render: Missing field `_method_signature` on ClassBodyTransport._content on ClassDeclarationTransport._body "
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse",
     "location": "Typeof types [program]",
     "message": "render: Missing field `_static_marker` on PublicFieldDefinitionTransport._public_field_definition_static_mod"
   },
@@ -4783,16 +4773,6 @@
     "stage": "read-render-parse-shallow",
     "location": "Ambient declarations [program]",
     "message": "render: unknown kind id 202 in ForStatementInitializerTransportSlot on ForStatementTransport._initializer on"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-error",
-    "grammar": "typescript",
-    "backend": "native",
-    "stage": "read-render-parse-shallow",
-    "location": "Flow-style ambient class declarations with commas [program]",
-    "message": "render: Missing field `_method_signature` on ClassBodyTransport._content on ClassDeclarationTransport._body "
   },
   {
     "source": "validator",
@@ -8152,7 +8132,7 @@
     "backend": "native",
     "stage": "factory-render-parse-ast-mismatch",
     "location": "Flow-style ambient class declarations with commas (class_body)",
-    "message": "class_body: childCount 4 ≠ 2 [\"{\",class_body_method_sig,class_body_method_sig,\"}\"] vs [\"{\",\"}\"]"
+    "message": "class_body: childCount 4 ≠ 2 [\"{\",class_body_member,class_body_member,\"}\"] vs [\"{\",\"}\"]"
   },
   {
     "source": "validator",

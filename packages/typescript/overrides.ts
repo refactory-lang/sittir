@@ -474,6 +474,15 @@ export default grammar(
 				// Path `1/0/3/1`: seq pos 1 (repeat) → `/0` repeat content (choice) →
 				// arm 3 → arm-seq pos 1 (terminator choice).
 				class_body: {
+					// Arm 1 (method_signature) terminates with the unnamed mixed
+					// row `choice(_function_signature_automatic_semicolon, ',')`
+					// — same shape as arm 3's, but with one arm ANONYMOUS: the
+					// bare `,` lands in `$other` where the kind-derived slot
+					// can't reach it, so a comma-terminated signature leaves the
+					// `function_signature_automatic_semicolon` slot empty and
+					// wrap throws. Field both arms under the same `terminator`
+					// name as arm 3 (the expression_list/pattern_list precedent).
+					'1/0/1/1': field('terminator'),
 					'1/0/3/1': field('terminator')
 				},
 
