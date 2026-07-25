@@ -2,7 +2,9 @@ import { writeFileSync } from 'node:fs';
 
 import { assemble, AssembleCtx, type AssembledNodeMap } from '../assemble.ts';
 import { link } from '../link.ts';
-import { normalizeGrammar } from '../normalize.ts';
+import { normalizeGrammar, NormalizeCtx } from '../normalize.ts';
+import { DiagnosticSink } from '../../types/diagnostics.ts';
+import { loadGrammarJsonInlineList, buildInlinableKinds, buildPolymorphsConfigSkip } from '../inline-sets.ts';
 import type { ParseKindCollisionDiagnostic } from '../../types/parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './derive-shapes.ts';
 import type { AssembleWarning } from '../model/node-map.ts';
@@ -117,6 +119,29 @@ function isExpectedDiagnostic(
 	return (expectDiagnostics?.[code] ?? []).includes(ownerKind);
 }
 
+/**
+ * A `groups:` body-pattern entry that matched ZERO base-grammar positions.
+ * The body-pattern mechanism's ONLY effect is structural replacement of
+ * matching sub-trees — a zero-match entry means the hidden rule is orphaned
+ * and the base positions it was meant to elevate stay flat (their slots
+ * flatten into the parent, the repeat-over-multi-slot-seq violation). This
+ * failure mode is otherwise SILENT: the grammar still compiles and gates can
+ * hold while output regresses (the rust `attributed_parameter` wildcard-alias
+ * incident, 2026-07-25).
+ */
+export function fromBodyPatternZeroMatch(grammar: string, hiddenName: string): GrammarDiagnostic {
+	return {
+		scope: 'grammar',
+		code: 'body-pattern-zero-match',
+		severity: 'warning',
+		grammar,
+		ownerKind: hiddenName,
+		message: `groups: body-pattern '${hiddenName}' matched no base-grammar position — the visible-group elevation it declares never fired, so its match sites keep their flat (un-elevated) shape.`,
+		proposal: `The pattern body must remain STRUCTURALLY IDENTICAL to the base-grammar sub-tree it targets. If the base grammar changed (or the entry's body was edited), re-align the body — or delete the entry if the pattern is obsolete.`,
+		canProceed: true
+	};
+}
+
 export function collectGrammarDiagnostics(input: {
 	grammar: string;
 	parseKindCollisions: readonly ParseKindCollisionDiagnostic[];
@@ -176,7 +201,21 @@ export function collectGrammarDiagnosticsForGrammar(input: { rawGrammar: RawGram
 	diagnostics: readonly GrammarDiagnostic[];
 } {
 	const linked = link(input.rawGrammar);
-	const normalized = normalizeGrammar(linked);
+	// Mirror generate.ts's NormalizeCtx inputs (shared via inline-sets.ts): without
+	// inlineKinds, diagnoseSlotGrouping's shape-①b (auto-group helper bodies,
+	// e.g. rust `_match_block_optional1`) never fires on this path, so
+	// `multi-slot-nested-seq` violations were console-only during regen and
+	// absent from the persisted grammar-diagnostics.json / validation report.
+	const inlineKinds = new Set(loadGrammarJsonInlineList(input.rawGrammar.name) ?? []);
+	const normalized = normalizeGrammar(
+		linked,
+		new NormalizeCtx({
+			grammar: linked,
+			inlineKinds: buildInlinableKinds(inlineKinds, linked),
+			polymorphSkip: buildPolymorphsConfigSkip(input.rawGrammar.polymorphsConfig),
+			diagnostics: new DiagnosticSink()
+		})
+	);
 	const nodeMap = assemble(AssembleCtx.from(normalized));
 	// drain slot-grouping diagnostics populated during the normalizeGrammar() pass
 	const slotGroupingDiagnostics = drainSlotGroupingDiagnostics();
@@ -196,7 +235,10 @@ export function collectGrammarDiagnosticsForGrammar(input: { rawGrammar: RawGram
 			slotGroupingDiagnostics,
 			expectDiagnostics: input.rawGrammar.expectDiagnostics
 		}).diagnostics,
-		...contentAliasDiagnostics
+		...contentAliasDiagnostics,
+		...(input.rawGrammar.bodyPatternZeroMatches ?? []).map((name) =>
+			fromBodyPatternZeroMatch(input.rawGrammar.name, name)
+		)
 	];
 	return {
 		nodeMap,

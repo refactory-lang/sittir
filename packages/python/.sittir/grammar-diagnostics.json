@@ -26,6 +26,15 @@
   },
   {
     "scope": "grammar",
+    "code": "union-slot-nondegenerate-arm",
+    "severity": "warning",
+    "grammar": "python",
+    "ownerKind": "except_clause",
+    "message": "[collect-slots] kind 'except_clause': choice rule:_suite:root has unnamed-nonterminal arm(s) [simple_statements, newline] but cannot union-route — offending arm(s): structured seq[2](indent block). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
+    "canProceed": true
+  },
+  {
+    "scope": "grammar",
     "code": "union-slot-mixed-row",
     "severity": "warning",
     "grammar": "python",

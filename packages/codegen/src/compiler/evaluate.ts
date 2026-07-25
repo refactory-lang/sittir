@@ -648,6 +648,10 @@ export interface EvaluateCtx {
 	readonly sinks: MetadataSinks;
 	/** Setter for the word-rule name. */
 	readonly setWord: (w: string) => void;
+	/** Body-pattern (`groups:`) hidden names whose pattern matched zero
+	 *  positions in `applyPatternReplacement` — surfaced as the
+	 *  `body-pattern-zero-match` diagnostic. Mutated in place (mirrors `refs`). */
+	readonly bodyPatternZeroMatches: string[];
 }
 
 function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: GrammarOptions): { grammar: any } {
@@ -691,7 +695,8 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		sinks,
 		setWord: (w) => {
 			word = w;
-		}
+		},
+		bodyPatternZeroMatches: []
 	};
 
 	const { roles: collectedRoles } = withRoleScope(() => {
@@ -755,7 +760,8 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 		visibleExternals,
 		expectDiagnostics,
 		expectTestFailures,
-		orphanedSyntheticGroups
+		orphanedSyntheticGroups,
+		bodyPatternZeroMatches: ctx.bodyPatternZeroMatches.length > 0 ? [...ctx.bodyPatternZeroMatches] : undefined
 	} satisfies RawGrammar;
 	// Propagate enrich()'s un-aliasing diagnostics from the base grammar result
 	// (the `optionsOrBase` first arg in extension mode) onto this evaluated
@@ -2019,6 +2025,37 @@ function applyPatternReplacement(
 			// Preserve existing provenance — rewriting doesn't change authorship.
 		}
 	}
+	// A Path-B (groups: body-pattern) candidate that is REFERENCED NOWHERE
+	// after replacement is a silent failure: elevation-by-replacement is the
+	// mechanism's only effect, so its match sites keep their flat shape and
+	// the hidden rule orphans away — gates can hold while output regresses
+	// (the rust attributed_parameter wildcard-alias incident, 2026-07-25).
+	// Reference existence — NOT a local match count — is the signal, because
+	// the wire-side `applyWirePatternReplacement` usually rewrites the shared
+	// base rules FIRST, leaving nothing for this pass's own matcher while the
+	// alias refs it deposited are already present in `rules`. Path-A
+	// `_`-prefix rules are excluded: being referenced by name (never matched)
+	// is a legitimate use for them.
+	const pathBNames = candidates.filter((c) => c.aliasAs !== undefined).map((c) => c.name);
+	if (pathBNames.length > 0) {
+		const referenced = new Set<string>();
+		const collect = (rule: Rule<'evaluate'>): void => {
+			if (rule.type === SYMBOL) {
+				referenced.add((rule as SymbolRule<'evaluate'>).name);
+				return;
+			}
+			const r = rule as { members?: Rule<'evaluate'>[]; content?: Rule<'evaluate'> };
+			if (Array.isArray(r.members)) r.members.forEach(collect);
+			if (r.content) collect(r.content);
+		};
+		for (const [ruleName, body] of Object.entries(rules)) {
+			if (candidateNames.has(ruleName)) continue;
+			collect(body);
+		}
+		for (const name of pathBNames) {
+			if (!referenced.has(name)) ctx.bodyPatternZeroMatches.push(name);
+		}
+	}
 	// Ensure pattern candidates themselves have provenance recorded.
 	for (const c of candidates) {
 		if (!provenanceByKind.has(c.name)) {
@@ -2026,6 +2063,7 @@ function applyPatternReplacement(
 		}
 	}
 }
+
 
 /**
  * Returns true when `rule` is complex enough to be a meaningful structural

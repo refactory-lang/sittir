@@ -259,6 +259,15 @@ export interface RawGrammar {
 	 * parse. See docs/KNOWN_ISSUES.md's `_object_type_group1` entry.
 	 */
 	readonly orphanedSyntheticGroups?: readonly string[];
+
+	/**
+	 * `groups:` body-pattern entries (hidden `_<key>` names) whose pattern
+	 * matched ZERO positions during evaluate's `applyPatternReplacement` —
+	 * the elevation they declare silently never fired. Surfaced as the
+	 * `body-pattern-zero-match` diagnostic by
+	 * `collectGrammarDiagnosticsForGrammar`.
+	 */
+	readonly bodyPatternZeroMatches?: readonly string[];
 }
 
 /**

@@ -140,7 +140,11 @@ describe('post-evaluate invariant', () => {
 				// Enrich-synthesized clause-hoist names orphaned by an override
 				// redeclaring their recorded owner — read by
 				// collectGrammarDiagnosticsForGrammar to suppress phantom diagnostics.
-				'orphanedSyntheticGroups'
+				'orphanedSyntheticGroups',
+				// groups: body-pattern entries referenced nowhere after pattern
+				// replacement (silently-dead elevation) — read by
+				// collectGrammarDiagnosticsForGrammar for `body-pattern-zero-match`.
+				'bodyPatternZeroMatches'
 			]);
 			const extra = Object.keys(raw as unknown as Record<string, unknown>).filter((k) => !ALLOWED.has(k));
 			expect(extra, `unexpected RawGrammar fields: ${extra.join(', ')}`).toEqual([]);

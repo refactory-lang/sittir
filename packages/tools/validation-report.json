@@ -55,6 +55,24 @@
   },
   {
     "source": "grammar",
+    "severity": "warning",
+    "code": "multi-slot-nested-seq",
+    "grammar": "rust",
+    "backend": "native",
+    "location": "_match_block_optional1",
+    "message": "Kind '_match_block_optional1' has a multi-slot seq with 2 slots in a repeat/optional slot position."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "body-pattern-zero-match",
+    "grammar": "rust",
+    "backend": "native",
+    "location": "_match_block_arms",
+    "message": "groups: body-pattern '_match_block_arms' matched no base-grammar position — the visible-group elevation it declares never fired, so its match sites keep their flat (un-elevated) shape."
+  },
+  {
+    "source": "grammar",
     "severity": "info",
     "code": "parsekind-noninjective",
     "grammar": "rust",
@@ -142,6 +160,24 @@
     "backend": "native",
     "location": "binary_expression",
     "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression \"&&\" expression), seq[3](expression \"||\" expression), seq[3](expression \">>\" expression), seq[3](expression \">>>\" expression), seq[3](expression \"<<\" expression), seq[3](expression \"&\" expression), seq[3](expression \"^\" expression), seq[3](expression \"|\" expression), seq[3](expression \"+\" expression), seq[3](expression \"-\" expression), seq[3](expression \"*\" expression), seq[3](expression \"/\" expression), seq[3](expression \"%\" expression), seq[3](expression \"**\" expression), seq[3](expression \"<\" expression), seq[3](expression \"<=\" expression), seq[3](expression \"==\" expression), seq[3](expression \"===\" expression), seq[3](expression \"!=\" expression), seq[3](expression \"!==\" expression), seq[3](expression \">=\" expression), seq[3](expression \">\" expression), seq[3](expression \"??\" expression), seq[3](expression \"instanceof\" expression)] alongside union arm(s) [binary_expression_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "union-slot-mixed-row",
+    "grammar": "typescript",
+    "backend": "native",
+    "location": "jsx_opening_element",
+    "message": "[collect-slots] kind 'jsx_opening_element': choice rule:__jsx_start_opening_element_optional1:root is a singular mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [jsx_start_opening_element_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "union-slot-mixed-row",
+    "grammar": "typescript",
+    "backend": "native",
+    "location": "jsx_self_closing_element",
+    "message": "[collect-slots] kind 'jsx_self_closing_element': choice rule:__jsx_start_opening_element_optional1:root is a singular mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [jsx_start_opening_element_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot."
   },
   {
     "source": "grammar",
@@ -235,6 +271,42 @@
   },
   {
     "source": "grammar",
+    "severity": "warning",
+    "code": "multi-slot-nested-seq",
+    "grammar": "typescript",
+    "backend": "native",
+    "location": "__jsx_start_opening_element_optional1",
+    "message": "Kind '__jsx_start_opening_element_optional1' has a multi-slot seq with 2 slots in a repeat/optional slot position."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "multi-slot-nested-seq",
+    "grammar": "typescript",
+    "backend": "native",
+    "location": "_jsx_start_opening_element",
+    "message": "Kind '_jsx_start_opening_element' has a multi-slot seq with 2 slots in a repeat/optional slot position."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "multi-slot-nested-seq",
+    "grammar": "typescript",
+    "backend": "native",
+    "location": "_type_identifier",
+    "message": "Kind '_type_identifier' has a multi-slot seq with 2 slots in a repeat/optional slot position."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "body-pattern-zero-match",
+    "grammar": "typescript",
+    "backend": "native",
+    "location": "_jsx_opening_element_content",
+    "message": "groups: body-pattern '_jsx_opening_element_content' matched no base-grammar position — the visible-group elevation it declares never fired, so its match sites keep their flat (un-elevated) shape."
+  },
+  {
+    "source": "grammar",
     "severity": "info",
     "code": "parsekind-noninjective",
     "grammar": "typescript",
@@ -313,6 +385,15 @@
     "backend": "native",
     "location": "_suite",
     "message": "[collect-slots] kind '_suite': choice rule:_suite:root has unnamed-nonterminal arm(s) [simple_statements, newline] but cannot union-route — offending arm(s): structured seq[2](indent block). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "union-slot-nondegenerate-arm",
+    "grammar": "python",
+    "backend": "native",
+    "location": "except_clause",
+    "message": "[collect-slots] kind 'except_clause': choice rule:_suite:root has unnamed-nonterminal arm(s) [simple_statements, newline] but cannot union-route — offending arm(s): structured seq[2](indent block). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening."
   },
   {
     "source": "grammar",

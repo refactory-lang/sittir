@@ -4,12 +4,11 @@
  * Pipeline: evaluate → link → normalize → assemble → emitters.
  */
 
-import { existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync } from 'node:fs';
 import { evaluate } from './evaluate.ts';
 import { link } from './link.ts';
 import { normalizeGrammar as normalize, NormalizeCtx } from './normalize.ts';
-import { assemble, AssembleCtx, hydrateSlotRefs, classifyNode } from './assemble.ts';
+import { assemble, AssembleCtx, hydrateSlotRefs } from './assemble.ts';
 import { computeTransportSCC } from './scc.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts';
 import { tracePhaseRules, traceAssembleNodes } from './trace.ts';
@@ -27,6 +26,7 @@ import { computeFieldStorageInfo, computeSlotClasses } from '../emitters/shared.
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 import { extractGrammarRoles } from '../scm/extract-roles.ts';
 import { drainSlotGroupingDiagnostics } from './simplify.ts';
+import { loadGrammarJsonInlineList, buildInlinableKinds, buildPolymorphsConfigSkip } from './inline-sets.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
 import { assertEmittable } from './emit-gate.ts';
 import { formatCompilerDiagnostics } from './diagnostics/grammar-diagnostics.ts';
@@ -201,14 +201,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// Filtering that list would un-skip supertypes/keywords and emit phantom
 	// concrete kinds — so the decision set is kept distinct.
 	// TODO: Pull this into simplify() so that inlineKinds is available to the simplify pass without a separate read.
-	const NON_INLINABLE_MODEL_TYPES = new Set(['supertype', 'keyword', 'token', 'pattern', 'enum']);
-	const inlinableKinds = new Set(
-		[...inlineKinds].filter((k) => {
-			const rule = linked.rules[k];
-			if (!rule) return true; // un-classifiable (no IR rule) — leave inlinable
-			return !NON_INLINABLE_MODEL_TYPES.has(classifyNode(k, rule, { parentAliasedKinds: linked.parentAliasedKinds }));
-		})
-	);
+	const inlinableKinds = buildInlinableKinds(inlineKinds, linked);
 
 	// Build the extra polymorph skip-set for the slot-grouping diagnostic.
 	// `raw.polymorphsConfig` is the `polymorphs:` / `n:` declarative path-split
@@ -219,16 +212,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// Note: the parent kinds themselves are included too, to silence the top-level
 	// polymorph rule if it isn't already classified as PolymorphRule in the simplified
 	// map (e.g. when all arms are inlined, the structure gets flattened).
-	const polymorphsConfigSkip = new Set<string>();
-	for (const [parentKind, armMap] of Object.entries(raw.polymorphsConfig ?? {})) {
-		if (!armMap) continue;
-		polymorphsConfigSkip.add(parentKind);
-		for (const suffix of Object.values(armMap)) {
-			// `polymorphHiddenName` formula: `_${parentKind}_${suffix}` for non-hidden parents
-			const visibleParent = parentKind.startsWith('_') ? parentKind.slice(1) : parentKind;
-			polymorphsConfigSkip.add(`_${visibleParent}_${suffix}`);
-		}
-	}
+	const polymorphsConfigSkip = buildPolymorphsConfigSkip(raw.polymorphsConfig);
 
 	// Phase 3: Normalize — build a NormalizeCtx carrying the inline-decision set
 	// and polymorph skip-set; pass it to normalizeGrammar so the simplify phase
@@ -379,39 +363,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	return result;
 }
 
-/**
- * Read the `inline` list from the compiled `grammar.json` artifact if present.
- *
- * @remarks
- * `raw.inline` (from `evaluate()`) only contains what the overrides callback
- * explicitly returns — base-grammar string items in the `previous` array are
- * silently dropped by evaluate's `normalize()` pass (which only handles
- * symbol-ref objects, not plain strings). Reading grammar.json directly gives
- * the full merged list that tree-sitter itself used when compiling the parser,
- * making it the authoritative source for "is this kind deliberately inlined?".
- *
- * Returns `undefined` when the grammar has not been compiled (no `.sittir/`
- * directory). Callers treat `undefined` the same as an empty list — no kind
- * is considered deliberately inlined.
- *
- * @param grammar - Grammar name (e.g. `'rust'`, `'typescript'`, `'python'`).
- * @returns The `inline` string array from grammar.json, or `undefined`.
- */
-function loadGrammarJsonInlineList(grammar: string): readonly string[] | undefined {
-	const grammarJsonPath = join(process.cwd(), 'packages', grammar, '.sittir', 'src', 'grammar.json');
-	if (!existsSync(grammarJsonPath)) return undefined;
-	try {
-		const parsed = JSON.parse(readFileSync(grammarJsonPath, 'utf8')) as {
-			inline?: unknown;
-		};
-		if (Array.isArray(parsed.inline) && parsed.inline.every((v) => typeof v === 'string')) {
-			return parsed.inline as string[];
-		}
-		return undefined;
-	} catch {
-		return undefined;
-	}
-}
 
 /**
  * Collect kinds whose root rule was synthesized by evaluate's inline-alias-

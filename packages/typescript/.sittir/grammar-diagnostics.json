@@ -87,6 +87,24 @@
   },
   {
     "scope": "grammar",
+    "code": "union-slot-mixed-row",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "jsx_opening_element",
+    "message": "[collect-slots] kind 'jsx_opening_element': choice rule:__jsx_start_opening_element_optional1:root is a singular mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [jsx_start_opening_element_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "canProceed": true
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-mixed-row",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "jsx_self_closing_element",
+    "message": "[collect-slots] kind 'jsx_self_closing_element': choice rule:__jsx_start_opening_element_optional1:root is a singular mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [jsx_start_opening_element_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "canProceed": true
+  },
+  {
+    "scope": "grammar",
     "code": "union-slot-unaddressable",
     "severity": "warning",
     "grammar": "typescript",
@@ -237,6 +255,55 @@
         "override_modifier"
       ]
     }
+  },
+  {
+    "scope": "grammar",
+    "code": "multi-slot-nested-seq",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "__jsx_start_opening_element_optional1",
+    "message": "Kind '__jsx_start_opening_element_optional1' has a multi-slot seq with 2 slots in a repeat/optional slot position.",
+    "proposal": "Kind '__jsx_start_opening_element_optional1' has a multi-slot seq with 2 slots in a repeat/optional slot position. Propose: register a visible groups: entry so this substructure becomes a single group slot in the parent.",
+    "canProceed": true,
+    "details": {
+      "slotCount": 2
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "multi-slot-nested-seq",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "_jsx_start_opening_element",
+    "message": "Kind '_jsx_start_opening_element' has a multi-slot seq with 2 slots in a repeat/optional slot position.",
+    "proposal": "Kind '_jsx_start_opening_element' has a multi-slot seq with 2 slots in a repeat/optional slot position. Propose: register a visible groups: entry so this substructure becomes a single group slot in the parent.",
+    "canProceed": true,
+    "details": {
+      "slotCount": 2
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "multi-slot-nested-seq",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "_type_identifier",
+    "message": "Kind '_type_identifier' has a multi-slot seq with 2 slots in a repeat/optional slot position.",
+    "proposal": "Kind '_type_identifier' has a multi-slot seq with 2 slots in a repeat/optional slot position. Propose: register a visible groups: entry so this substructure becomes a single group slot in the parent.",
+    "canProceed": true,
+    "details": {
+      "slotCount": 2
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "body-pattern-zero-match",
+    "severity": "warning",
+    "grammar": "typescript",
+    "ownerKind": "_jsx_opening_element_content",
+    "message": "groups: body-pattern '_jsx_opening_element_content' matched no base-grammar position — the visible-group elevation it declares never fired, so its match sites keep their flat (un-elevated) shape.",
+    "proposal": "The pattern body must remain STRUCTURALLY IDENTICAL to the base-grammar sub-tree it targets. If the base grammar changed (or the entry's body was edited), re-align the body — or delete the entry if the pattern is obsolete.",
+    "canProceed": true
   },
   {
     "scope": "grammar",
