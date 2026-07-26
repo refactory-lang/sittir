@@ -2958,6 +2958,7 @@ export const enum TokenPatternKind {
 	TokenBindingPattern = 'token_binding_pattern',
 	Metavariable = 'metavariable',
 	NonSpecialToken = '_non_special_token',
+	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -2969,6 +2970,8 @@ export const enum TokenPatternKind {
 	Self = 'self',
 	Super = 'super',
 	Crate = 'crate',
+	PrimitiveType = '_primitive_type',
+	TokenTreePunctuation = '_token_tree_punctuation',
 	TokSq = "'"
 }
 
@@ -2977,6 +2980,7 @@ export const enum TokensKind {
 	TokenRepetition = 'token_repetition',
 	Metavariable = 'metavariable',
 	NonSpecialToken = '_non_special_token',
+	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -2988,6 +2992,8 @@ export const enum TokensKind {
 	Self = 'self',
 	Super = 'super',
 	Crate = 'crate',
+	PrimitiveType = '_primitive_type',
+	TokenTreePunctuation = '_token_tree_punctuation',
 	TokSq = "'"
 }
 
@@ -3017,6 +3023,7 @@ export const enum UseClauseKind {
 	Super = 'super',
 	Crate = 'crate',
 	ScopedIdentifier = 'scoped_identifier',
+	ReservedIdentifier = '_reserved_identifier',
 	UseAsClause = 'use_as_clause',
 	UseList = 'use_list',
 	ScopedUseList = 'scoped_use_list',
@@ -3105,6 +3112,7 @@ export const enum ExpressionKind {
 	CallExpression = 'call_expression',
 	ReturnExpression = 'return_expression',
 	YieldExpression = 'yield_expression',
+	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -3112,6 +3120,7 @@ export const enum ExpressionKind {
 	IntegerLiteral = 'integer_literal',
 	FloatLiteral = 'float_literal',
 	Identifier = 'identifier',
+	ReservedIdentifier = '_reserved_identifier',
 	Self = 'self',
 	ScopedIdentifier = 'scoped_identifier',
 	GenericFunction = 'generic_function',
@@ -3128,6 +3137,7 @@ export const enum ExpressionKind {
 	ClosureExpression = 'closure_expression',
 	ParenthesizedExpression = 'parenthesized_expression',
 	StructExpression = 'struct_expression',
+	ExpressionEndingWithBlock = '_expression_ending_with_block',
 	UnsafeBlock = 'unsafe_block',
 	AsyncBlock = 'async_block',
 	GenBlock = 'gen_block',
@@ -3158,24 +3168,14 @@ export const enum ExpressionEndingWithBlockKind {
 
 export const enum DelimTokensKind {
 	NonDelimToken = '_non_delim_token',
-	StringLiteral = 'string_literal',
-	RawStringLiteral = 'raw_string_literal',
-	CharLiteral = 'char_literal',
-	BooleanLiteral = 'boolean_literal',
-	IntegerLiteral = 'integer_literal',
-	FloatLiteral = 'float_literal',
-	Identifier = 'identifier',
-	MutableSpecifier = 'mutable_specifier',
-	Self = 'self',
-	Super = 'super',
-	Crate = 'crate',
-	TokSq = "'",
+	TokenPatternGroup1 = 'token_pattern_group1',
 	TokDollar = '$',
 	DelimTokenTree = 'delim_token_tree'
 }
 
 export const enum NonDelimTokenKind {
 	NonSpecialToken = '_non_special_token',
+	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -3187,12 +3187,15 @@ export const enum NonDelimTokenKind {
 	Self = 'self',
 	Super = 'super',
 	Crate = 'crate',
+	PrimitiveType = '_primitive_type',
+	TokenTreePunctuation = '_token_tree_punctuation',
 	TokSq = "'",
 	TokDollar = '$'
 }
 
 export const enum ConditionKind {
 	Expression = '_expression',
+	ExpressionExceptRange = '_expression_except_range',
 	UnaryExpression = 'unary_expression',
 	ReferenceExpression = 'reference_expression',
 	TryExpression = 'try_expression',
@@ -3203,6 +3206,7 @@ export const enum ConditionKind {
 	CallExpression = 'call_expression',
 	ReturnExpression = 'return_expression',
 	YieldExpression = 'yield_expression',
+	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -3210,6 +3214,7 @@ export const enum ConditionKind {
 	IntegerLiteral = 'integer_literal',
 	FloatLiteral = 'float_literal',
 	Identifier = 'identifier',
+	ReservedIdentifier = '_reserved_identifier',
 	Self = 'self',
 	ScopedIdentifier = 'scoped_identifier',
 	GenericFunction = 'generic_function',
@@ -3226,6 +3231,7 @@ export const enum ConditionKind {
 	ClosureExpression = 'closure_expression',
 	ParenthesizedExpression = 'parenthesized_expression',
 	StructExpression = 'struct_expression',
+	ExpressionEndingWithBlock = '_expression_ending_with_block',
 	UnsafeBlock = 'unsafe_block',
 	AsyncBlock = 'async_block',
 	GenBlock = 'gen_block',
@@ -3298,6 +3304,24 @@ export const enum PathKind {
 	Crate = 'crate',
 	ScopedIdentifier = 'scoped_identifier',
 	ReservedIdentifier = '_reserved_identifier'
+}
+
+export const enum TokenPatternGroup1Kind {
+	Literal = '_literal',
+	StringLiteral = 'string_literal',
+	RawStringLiteral = 'raw_string_literal',
+	CharLiteral = 'char_literal',
+	BooleanLiteral = 'boolean_literal',
+	IntegerLiteral = 'integer_literal',
+	FloatLiteral = 'float_literal',
+	Identifier = 'identifier',
+	MutableSpecifier = 'mutable_specifier',
+	Self = 'self',
+	Super = 'super',
+	Crate = 'crate',
+	PrimitiveType = '_primitive_type',
+	TokenTreePunctuation = '_token_tree_punctuation',
+	TokSq = "'"
 }
 
 // Node types — concrete interfaces
@@ -6096,7 +6120,9 @@ export type TokenPattern =
 	| MutableSpecifier
 	| Self
 	| Super
-	| Crate;
+	| Crate
+	| PrimitiveType
+	| TokenTreePunctuation;
 
 export type TokenPatternTree =
 	| TokenTreePatternTree
@@ -6113,7 +6139,9 @@ export type TokenPatternTree =
 	| MutableSpecifierTree
 	| SelfTree
 	| SuperTree
-	| CrateTree;
+	| CrateTree
+	| PrimitiveTypeTree
+	| TokenTreePunctuationTree;
 
 export type Tokens =
 	| TokenTree
@@ -6129,7 +6157,9 @@ export type Tokens =
 	| MutableSpecifier
 	| Self
 	| Super
-	| Crate;
+	| Crate
+	| PrimitiveType
+	| TokenTreePunctuation;
 
 export type TokensTree =
 	| TokenTreeTree
@@ -6145,7 +6175,9 @@ export type TokensTree =
 	| MutableSpecifierTree
 	| SelfTree
 	| SuperTree
-	| CrateTree;
+	| CrateTree
+	| PrimitiveTypeTree
+	| TokenTreePunctuationTree;
 
 export type NonSpecialToken =
 	| StringLiteral
@@ -6184,6 +6216,7 @@ export type UseClause =
 	| Super
 	| Crate
 	| ScopedIdentifier
+	| ReservedIdentifier
 	| UseAsClause
 	| UseList
 	| ScopedUseList
@@ -6196,6 +6229,7 @@ export type UseClauseTree =
 	| SuperTree
 	| CrateTree
 	| ScopedIdentifierTree
+	| ReservedIdentifierTree
 	| UseAsClauseTree
 	| UseListTree
 	| ScopedUseListTree
@@ -6350,6 +6384,7 @@ export type Expression =
 	| IntegerLiteral
 	| FloatLiteral
 	| Identifier
+	| ReservedIdentifier
 	| Self
 	| ScopedIdentifier
 	| GenericFunction
@@ -6398,6 +6433,7 @@ export type ExpressionTree =
 	| IntegerLiteralTree
 	| FloatLiteralTree
 	| IdentifierTree
+	| ReservedIdentifierTree
 	| SelfTree
 	| ScopedIdentifierTree
 	| GenericFunctionTree
@@ -6453,33 +6489,9 @@ export type ExpressionEndingWithBlockTree =
 	| ForExpressionTree
 	| ConstBlockTree;
 
-export type DelimTokens =
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
-	| Identifier
-	| MutableSpecifier
-	| Self
-	| Super
-	| Crate
-	| DelimTokenTree;
+export type DelimTokens = DelimTokenTree;
 
-export type DelimTokensTree =
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| CharLiteralTree
-	| BooleanLiteralTree
-	| IntegerLiteralTree
-	| FloatLiteralTree
-	| IdentifierTree
-	| MutableSpecifierTree
-	| SelfTree
-	| SuperTree
-	| CrateTree
-	| DelimTokenTreeTree;
+export type DelimTokensTree = DelimTokenTreeTree;
 
 export type NonDelimToken =
 	| NonSpecialToken
@@ -6493,7 +6505,9 @@ export type NonDelimToken =
 	| MutableSpecifier
 	| Self
 	| Super
-	| Crate;
+	| Crate
+	| PrimitiveType
+	| TokenTreePunctuation;
 
 export type NonDelimTokenTree =
 	| NonSpecialTokenTree
@@ -6507,10 +6521,13 @@ export type NonDelimTokenTree =
 	| MutableSpecifierTree
 	| SelfTree
 	| SuperTree
-	| CrateTree;
+	| CrateTree
+	| PrimitiveTypeTree
+	| TokenTreePunctuationTree;
 
 export type Condition =
 	| Expression
+	| ExpressionExceptRange
 	| UnaryExpression
 	| ReferenceExpression
 	| TryExpression
@@ -6528,6 +6545,7 @@ export type Condition =
 	| IntegerLiteral
 	| FloatLiteral
 	| Identifier
+	| ReservedIdentifier
 	| Self
 	| ScopedIdentifier
 	| GenericFunction
@@ -6544,6 +6562,7 @@ export type Condition =
 	| ClosureExpression
 	| ParenthesizedExpression
 	| StructExpression
+	| ExpressionEndingWithBlock
 	| UnsafeBlock
 	| AsyncBlock
 	| GenBlock
@@ -6561,6 +6580,7 @@ export type Condition =
 
 export type ConditionTree =
 	| ExpressionTree
+	| ExpressionExceptRangeTree
 	| UnaryExpressionTree
 	| ReferenceExpressionTree
 	| TryExpressionTree
@@ -6578,6 +6598,7 @@ export type ConditionTree =
 	| IntegerLiteralTree
 	| FloatLiteralTree
 	| IdentifierTree
+	| ReservedIdentifierTree
 	| SelfTree
 	| ScopedIdentifierTree
 	| GenericFunctionTree
@@ -6594,6 +6615,7 @@ export type ConditionTree =
 	| ClosureExpressionTree
 	| ParenthesizedExpressionTree
 	| StructExpressionTree
+	| ExpressionEndingWithBlockTree
 	| UnsafeBlockTree
 	| AsyncBlockTree
 	| GenBlockTree
@@ -6697,6 +6719,38 @@ export type PathTree =
 	| CrateTree
 	| ScopedIdentifierTree
 	| ReservedIdentifierTree;
+
+export type TokenPatternGroup1 =
+	| Literal
+	| StringLiteral
+	| RawStringLiteral
+	| CharLiteral
+	| BooleanLiteral
+	| IntegerLiteral
+	| FloatLiteral
+	| Identifier
+	| MutableSpecifier
+	| Self
+	| Super
+	| Crate
+	| PrimitiveType
+	| TokenTreePunctuation;
+
+export type TokenPatternGroup1Tree =
+	| LiteralTree
+	| StringLiteralTree
+	| RawStringLiteralTree
+	| CharLiteralTree
+	| BooleanLiteralTree
+	| IntegerLiteralTree
+	| FloatLiteralTree
+	| IdentifierTree
+	| MutableSpecifierTree
+	| SelfTree
+	| SuperTree
+	| CrateTree
+	| PrimitiveTypeTree
+	| TokenTreePunctuationTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
 export type EmptyStatement = Terminal<TSKindId.EmptyStatement>;

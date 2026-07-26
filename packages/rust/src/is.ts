@@ -20,6 +20,7 @@ import type {
 	Pattern,
 	Statement,
 	TokenPattern,
+	TokenPatternGroup1,
 	Tokens,
 	UseClause,
 	_Type
@@ -337,6 +338,7 @@ export interface IsGuards {
 	literal(v: { readonly $type: string | number }): v is Literal;
 	literalPattern(v: { readonly $type: string | number }): v is LiteralPattern;
 	path(v: { readonly $type: string | number }): v is Path;
+	tokenPatternGroup1(v: { readonly $type: string | number }): v is TokenPatternGroup1;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
@@ -575,6 +577,7 @@ export interface AssertGuards {
 	literal(v: { readonly $type: string | number }): asserts v is Literal;
 	literalPattern(v: { readonly $type: string | number }): asserts v is LiteralPattern;
 	path(v: { readonly $type: string | number }): asserts v is Path;
+	tokenPatternGroup1(v: { readonly $type: string | number }): asserts v is TokenPatternGroup1;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
@@ -592,9 +595,9 @@ const _supertype_declarationStatement_ids = new Set<number>([
 	186, 240, 161, 171, 172, 174, 175, 177, 178, 179, 188, 189, 190, 194, 195, 196, 204, 205, 185, 187
 ]);
 const _supertype_tokenPattern_ids = new Set<number>([
-	164, 166, 165, 138, 312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137
+	164, 166, 165, 138, 312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137, 338
 ]);
-const _supertype_tokens_ids = new Set<number>([168, 169, 138, 312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137]);
+const _supertype_tokens_ids = new Set<number>([168, 169, 138, 312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137, 338]);
 const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137, 338]);
 const _supertype_useClause_ids = new Set<number>([135, 1, 138, 136, 137, 244, 209, 208, 207, 210]);
 const _supertype_type_ids = new Set<number>([
@@ -611,8 +614,8 @@ const _supertype_expression_ids = new Set<number>([
 const _supertype_expressionEndingWithBlock_ids = new Set<number>([
 	290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281
 ]);
-const _supertype_delimTokens_ids = new Set<number>([312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137, 241]);
-const _supertype_nonDelimToken_ids = new Set<number>([312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137]);
+const _supertype_delimTokens_ids = new Set<number>([241]);
+const _supertype_nonDelimToken_ids = new Set<number>([312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137, 338]);
 const _supertype_condition_ids = new Set<number>([
 	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 125, 314, 122, 151, 1, 135, 244, 226, 288, 289, 259, 261,
 	240, 262, 285, 286, 287, 138, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281, 247, 269, 270
@@ -623,6 +626,7 @@ const _supertype_pattern_ids = new Set<number>([
 const _supertype_literal_ids = new Set<number>([312, 313, 125, 314, 122, 151]);
 const _supertype_literalPattern_ids = new Set<number>([312, 313, 125, 314, 122, 151, 311]);
 const _supertype_path_ids = new Set<number>([135, 1, 138, 136, 137, 244]);
+const _supertype_tokenPatternGroup1_ids = new Set<number>([312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137, 338]);
 
 const _kindIdByKind = new Map<string, number>([
 	['identifier', TSKindId.Identifier],
@@ -1094,7 +1098,8 @@ export const is = {
 	pattern: _sg(_supertype_pattern_ids),
 	literal: _sg(_supertype_literal_ids),
 	literalPattern: _sg(_supertype_literalPattern_ids),
-	path: _sg(_supertype_path_ids)
+	path: _sg(_supertype_path_ids),
+	tokenPatternGroup1: _sg(_supertype_tokenPatternGroup1_ids)
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -1321,7 +1326,8 @@ export const assert = {
 	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
 	literal: _makeAssert('literal', is.literal as _AnyGuard),
 	literalPattern: _makeAssert('literalPattern', is.literalPattern as _AnyGuard),
-	path: _makeAssert('path', is.path as _AnyGuard)
+	path: _makeAssert('path', is.path as _AnyGuard),
+	tokenPatternGroup1: _makeAssert('tokenPatternGroup1', is.tokenPatternGroup1 as _AnyGuard)
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.

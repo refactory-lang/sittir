@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 424,
+  "nodeCount": 425,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -27,6 +27,7 @@
     "pattern",
     "primary_expression",
     "primary_type",
+    "property_identifier",
     "statement",
     "type"
   ],
@@ -8536,7 +8537,7 @@
     {
       "kind": "_property_identifier",
       "modelType": "supertype",
-      "typeName": "PropertyIdentifier",
+      "typeName": "_PropertyIdentifier",
       "irKey": "propertyIdentifier",
       "hidden": true,
       "subtypes": [
@@ -8552,6 +8553,7 @@
       "hidden": true,
       "subtypes": [
         "_property_identifier",
+        "_reserved_identifier",
         "computed_property_name",
         "identifier",
         "number",
@@ -20256,6 +20258,17 @@
       "factoryFields": [
         "hash_bang_line",
         "statements"
+      ]
+    },
+    {
+      "kind": "property_identifier",
+      "modelType": "supertype",
+      "typeName": "PropertyIdentifier",
+      "irKey": "propertyIdentifier",
+      "hidden": true,
+      "subtypes": [
+        "identifier",
+        "jsx_identifier"
       ]
     },
     {

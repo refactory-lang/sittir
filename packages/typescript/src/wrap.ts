@@ -689,7 +689,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'template_literal_type',
 		'intersection_type',
 		'union_type'
-	])
+	]),
+	property_identifier: new Set(['jsx_identifier', 'identifier'])
 };
 
 function _wrapKindNameOf(entry: unknown): string | undefined {
@@ -5852,6 +5853,8 @@ export function wrapPropertyName(
 		'_property_identifier',
 		'property_identifier',
 		'identifier',
+		'_reserved_identifier',
+		'reserved_identifier',
 		'private_property_identifier',
 		'string',
 		'number',
@@ -5864,6 +5867,8 @@ export function wrapPropertyName(
 					'_property_identifier',
 					'property_identifier',
 					'identifier',
+					'_reserved_identifier',
+					'reserved_identifier',
 					'private_property_identifier',
 					'string',
 					'number',
@@ -5970,15 +5975,15 @@ export function wrapShorthandPropertyIdentifierPattern(
 	);
 }
 
-export function wrapPropertyIdentifier(
-	data: T.PropertyIdentifier & { readonly $other?: T.PropertyIdentifier | readonly T.PropertyIdentifier[] },
+export function wrap_PropertyIdentifier(
+	data: T._PropertyIdentifier & { readonly $other?: T._PropertyIdentifier | readonly T._PropertyIdentifier[] },
 	tree: TreeHandle
 ) {
 	const kindKeyed = _firstKindKeyedWrapChild(data, ['identifier', '_reserved_identifier', 'reserved_identifier']) as
-		| T.PropertyIdentifier
-		| readonly T.PropertyIdentifier[]
+		| T._PropertyIdentifier
+		| readonly T._PropertyIdentifier[]
 		| undefined;
-	return drillIn<T.PropertyIdentifier>(
+	return drillIn<T._PropertyIdentifier>(
 		normalizeSingularWrapSlot(
 			kindKeyed ??
 				_filterWrapChildrenByKind(data.$other, ['identifier', '_reserved_identifier', 'reserved_identifier']),
@@ -10351,6 +10356,7 @@ export function wrapEnumBodyGroup1(
 		readonly _enum_assignment?: T.EnumAssignment | T.PropertyName | readonly (T.EnumAssignment | T.PropertyName)[];
 		readonly _property_identifier?: T.EnumAssignment | T.PropertyName | readonly (T.EnumAssignment | T.PropertyName)[];
 		readonly _identifier?: T.EnumAssignment | T.PropertyName | readonly (T.EnumAssignment | T.PropertyName)[];
+		readonly _reserved_identifier?: T.EnumAssignment | T.PropertyName | readonly (T.EnumAssignment | T.PropertyName)[];
 		readonly _private_property_identifier?:
 			| T.EnumAssignment
 			| T.PropertyName
@@ -10374,6 +10380,7 @@ export function wrapEnumBodyGroup1(
 				'_number',
 				'_private_property_identifier',
 				'_property_identifier',
+				'_reserved_identifier',
 				'_string'
 			]),
 			$type: TSKindId.EnumBodyGroup1 as const,
@@ -10386,6 +10393,7 @@ export function wrapEnumBodyGroup1(
 								data._enum_assignment,
 								data._property_identifier,
 								data._identifier,
+								data._reserved_identifier,
 								data._private_property_identifier,
 								data._string,
 								data._number,
@@ -12523,6 +12531,26 @@ export function wrapUpdateExpressionPrefix(data: T.UpdateExpressionPrefix, tree:
 	return _node;
 }
 
+export function wrapPropertyIdentifier(
+	data: T.PropertyIdentifier & { readonly $other?: T.PropertyIdentifier | readonly T.PropertyIdentifier[] },
+	tree: TreeHandle
+) {
+	const kindKeyed = _firstKindKeyedWrapChild(data, ['jsx_identifier', 'identifier']) as
+		| T.PropertyIdentifier
+		| readonly T.PropertyIdentifier[]
+		| undefined;
+	return drillIn<T.PropertyIdentifier>(
+		normalizeSingularWrapSlot(
+			kindKeyed ?? _filterWrapChildrenByKind(data.$other, ['jsx_identifier', 'identifier']),
+			'children',
+			true,
+			data.$type,
+			{ tree, nodeType: data.$type, slotName: 'children', span: (data as _NodeData).$span }
+		),
+		tree
+	);
+}
+
 const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {
 	program: (d, t) => wrapProgram(d as unknown as T.Program, t),
 	hash_bang_line: (d) => ({ ...d, $type: TSKindId.HashBangLine as const }),
@@ -12646,7 +12674,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 		wrapShorthandPropertyIdentifier(d as unknown as T.ShorthandPropertyIdentifier, t),
 	_shorthand_property_identifier_pattern: (d, t) =>
 		wrapShorthandPropertyIdentifierPattern(d as unknown as T.ShorthandPropertyIdentifierPattern, t),
-	_property_identifier: (d, t) => wrapPropertyIdentifier(d as unknown as T.PropertyIdentifier, t),
+	_property_identifier: (d, t) => wrap_PropertyIdentifier(d as unknown as T._PropertyIdentifier, t),
 	public_field_definition: (d, t) => wrapPublicFieldDefinition(d as unknown as T.PublicFieldDefinition, t),
 	_import_identifier: (d, t) => wrapImportIdentifier(d as unknown as T.ImportIdentifier, t),
 	non_null_expression: (d, t) => wrapNonNullExpression(d as unknown as T.NonNullExpression, t),
@@ -12814,7 +12842,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	html_comment: (d) => ({ ...d, $type: TSKindId.HtmlComment as const }),
 	'||': (d) => d,
 	jsx_text: (d) => ({ ...d, $type: TSKindId.JsxText as const }),
-	__error_recovery: (d) => ({ ...d, $type: TSKindId.ErrorRecovery as const })
+	__error_recovery: (d) => ({ ...d, $type: TSKindId.ErrorRecovery as const }),
+	property_identifier: (d, t) => wrapPropertyIdentifier(d as unknown as T.PropertyIdentifier, t)
 };
 
 const _aliasTargetToSource: Record<string, string> = {
@@ -12891,7 +12920,6 @@ const _aliasTargetToSource: Record<string, string> = {
 	object_type_opening: '_object_type_opening',
 	operator: '_operator',
 	parenthesized_expression_typed: '_parenthesized_expression_typed',
-	property_identifier: '_property_identifier',
 	property_name: '_property_name',
 	public_field_definition_abstract_first: '_public_field_definition_abstract_first',
 	public_field_definition_access_first: '_public_field_definition_access_first',

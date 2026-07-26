@@ -890,7 +890,7 @@ export const enum TSKindId {
 	_StringSingleRepeat1 = 421,
 	_ForHeaderGroup1 = 422,
 	_InterfaceBody = 423,
-	PropertyIdentifier = 424,
+	_PropertyIdentifier = 424,
 	PublicFieldDefinitionAbstractFirst = 425,
 	PublicFieldDefinitionAccessFirst = 426,
 	_PublicFieldDefinitionAccessorOpt = 427,
@@ -2633,7 +2633,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case '_interface_body':
 			return TSKindId._InterfaceBody;
 		case '_property_identifier':
-			return TSKindId.PropertyIdentifier;
+			return TSKindId._PropertyIdentifier;
 		case '_public_field_definition_abstract_first':
 			return TSKindId.PublicFieldDefinitionAbstractFirst;
 		case '_public_field_definition_access_first':
@@ -2893,7 +2893,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'interface_body':
 			return TSKindId._InterfaceBody;
 		case 'property_identifier':
-			return TSKindId.PropertyIdentifier;
+			return TSKindId._PropertyIdentifier;
 		case 'public_field_definition_abstract_first':
 			return TSKindId.PublicFieldDefinitionAbstractFirst;
 		case 'public_field_definition_access_first':
@@ -3088,8 +3088,9 @@ export const enum PatternKind {
 }
 
 export const enum PropertyNameKind {
-	PropertyIdentifier = '_property_identifier',
+	_PropertyIdentifier = '_property_identifier',
 	Identifier = 'identifier',
+	ReservedIdentifier = '_reserved_identifier',
 	PrivatePropertyIdentifier = 'private_property_identifier',
 	String = 'string',
 	Number = 'number',
@@ -3158,6 +3159,11 @@ export const enum PrimaryTypeKind {
 	TemplateLiteralType = 'template_literal_type',
 	IntersectionType = 'intersection_type',
 	UnionType = 'union_type'
+}
+
+export const enum PropertyIdentifierKind {
+	JsxIdentifier = 'jsx_identifier',
+	Identifier = 'identifier'
 }
 
 // Node types — concrete interfaces
@@ -6545,10 +6551,17 @@ export type Pattern = LhsExpression | RestPattern;
 
 export type PatternTree = LhsExpressionTree | RestPatternTree;
 
-export type PropertyName = Identifier | PrivatePropertyIdentifier | String | Number | ComputedPropertyName;
+export type PropertyName =
+	| Identifier
+	| ReservedIdentifier
+	| PrivatePropertyIdentifier
+	| String
+	| Number
+	| ComputedPropertyName;
 
 export type PropertyNameTree =
 	| IdentifierTree
+	| ReservedIdentifierTree
 	| PrivatePropertyIdentifierTree
 	| StringTree
 	| NumberTree
@@ -6566,9 +6579,9 @@ export type ShorthandPropertyIdentifierPattern = Identifier | ReservedIdentifier
 
 export type ShorthandPropertyIdentifierPatternTree = IdentifierTree | ReservedIdentifierTree;
 
-export type PropertyIdentifier = Identifier | ReservedIdentifier;
+export type _PropertyIdentifier = Identifier | ReservedIdentifier;
 
-export type PropertyIdentifierTree = IdentifierTree | ReservedIdentifierTree;
+export type _PropertyIdentifierTree = IdentifierTree | ReservedIdentifierTree;
 
 export type ImportIdentifier = Identifier;
 
@@ -6638,6 +6651,10 @@ export type PrimaryTypeTree =
 	| TemplateLiteralTypeTree
 	| IntersectionTypeTree
 	| UnionTypeTree;
+
+export type PropertyIdentifier = JsxIdentifier | Identifier;
+
+export type PropertyIdentifierTree = JsxIdentifierTree | IdentifierTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
 export type EmptyStatement = Terminal<TSKindId.EmptyStatement>;

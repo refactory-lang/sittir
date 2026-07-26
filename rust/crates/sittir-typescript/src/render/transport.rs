@@ -4927,8 +4927,9 @@ impl RenderableTransport for PatternTransport {
 
 #[derive(Debug, Clone)]
 pub enum PropertyNameTransport {
-    PropertyIdentifier(PropertyIdentifierTransport),
+    _PropertyIdentifier(_PropertyIdentifierTransport),
     Identifier(IdentifierTransport),
+    ReservedIdentifier(ReservedIdentifierTransport),
     PrivatePropertyIdentifier(PrivatePropertyIdentifierTransport),
     String(StringTransport),
     Number(NumberTransport),
@@ -4949,6 +4950,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertyNameTransport {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
+                        if let Ok(value) = ReservedIdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReservedIdentifier(value));
+                        }
                         if let Ok(value) = PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::PrivatePropertyIdentifier(value));
                         }
@@ -4961,19 +4965,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertyNameTransport {
                         if let Ok(value) = ComputedPropertyNameTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ComputedPropertyName(value));
                         }
-                        if let Ok(value) = PropertyIdentifierTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::PropertyIdentifier(value));
+                        if let Ok(value) = _PropertyIdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::_PropertyIdentifier(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in PropertyNameTransport"))
                     },
-                    424 => Ok(Self::PropertyIdentifier(
-                        PropertyIdentifierTransport::from_napi_value(env, napi_val)?
+                    424 => Ok(Self::_PropertyIdentifier(
+                        _PropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    1 => Ok(Self::PropertyIdentifier(
-                        PropertyIdentifierTransport::from_napi_value(env, napi_val)?
+                    1 => Ok(Self::_PropertyIdentifier(
+                        _PropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    431 => Ok(Self::PropertyIdentifier(
-                        PropertyIdentifierTransport::from_napi_value(env, napi_val)?
+                    431 => Ok(Self::_PropertyIdentifier(
+                        _PropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     104 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
@@ -5006,6 +5010,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertyNameTransport {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
+                        if let Ok(value) = ReservedIdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReservedIdentifier(value));
+                        }
                         if let Ok(value) = PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::PrivatePropertyIdentifier(value));
                         }
@@ -5018,19 +5025,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertyNameTransport {
                         if let Ok(value) = ComputedPropertyNameTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ComputedPropertyName(value));
                         }
-                        if let Ok(value) = PropertyIdentifierTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::PropertyIdentifier(value));
+                        if let Ok(value) = _PropertyIdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::_PropertyIdentifier(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in PropertyNameTransport"))
                     },
-                    424 => Ok(Self::PropertyIdentifier(
-                        PropertyIdentifierTransport::from_napi_value(env, napi_val)?
+                    424 => Ok(Self::_PropertyIdentifier(
+                        _PropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    1 => Ok(Self::PropertyIdentifier(
-                        PropertyIdentifierTransport::from_napi_value(env, napi_val)?
+                    1 => Ok(Self::_PropertyIdentifier(
+                        _PropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    431 => Ok(Self::PropertyIdentifier(
-                        PropertyIdentifierTransport::from_napi_value(env, napi_val)?
+                    431 => Ok(Self::_PropertyIdentifier(
+                        _PropertyIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     104 => Ok(Self::PrivatePropertyIdentifier(
                         PrivatePropertyIdentifierTransport::from_napi_value(env, napi_val)?
@@ -5204,14 +5211,14 @@ impl RenderableTransport for StatementIdentifierTransport {
 }
 
 #[derive(Debug, Clone)]
-pub enum PropertyIdentifierTransport {
+pub enum _PropertyIdentifierTransport {
     Identifier(IdentifierTransport),
     ReservedIdentifier(ReservedIdentifierTransport),
     Verbatim(VerbatimTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for PropertyIdentifierTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for _PropertyIdentifierTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -5226,7 +5233,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertyIdentifierTransport {
                         if let Ok(value) = ReservedIdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ReservedIdentifier(value));
                         }
-                        Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in PropertyIdentifierTransport"))
+                        Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in _PropertyIdentifierTransport"))
                     },
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
@@ -5235,7 +5242,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertyIdentifierTransport {
                         ReservedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in PropertyIdentifierTransport",
+                        "unknown kind id {other} in _PropertyIdentifierTransport",
                     ))),
                 }
             }
@@ -5246,7 +5253,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertyIdentifierTransport {
             ::napi::ValueType::Object => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in PropertyIdentifierTransport")
+                    ::napi::Error::from_reason("$type property missing in _PropertyIdentifierTransport")
                 )?;
                 match kind_id {
                     424 => {
@@ -5256,7 +5263,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertyIdentifierTransport {
                         if let Ok(value) = ReservedIdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ReservedIdentifier(value));
                         }
-                        Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in PropertyIdentifierTransport"))
+                        Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in _PropertyIdentifierTransport"))
                     },
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
@@ -5265,59 +5272,59 @@ impl ::napi::bindgen_prelude::FromNapiValue for PropertyIdentifierTransport {
                         ReservedIdentifierTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in PropertyIdentifierTransport",
+                        "unknown kind id {other} in _PropertyIdentifierTransport",
                     ))),
                 }
             }
-            _ => Err(::napi::Error::from_reason("PropertyIdentifierTransport: expected u16 kind_id, string, or object with $type")),
+            _ => Err(::napi::Error::from_reason("_PropertyIdentifierTransport: expected u16 kind_id, string, or object with $type")),
         }
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PropertyIdentifierTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for _PropertyIdentifierTransport {
     unsafe fn to_napi_value(
         _env: ::napi::sys::napi_env,
         _val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("PropertyIdentifierTransport is receive-only"))
+        Err(::napi::Error::from_reason("_PropertyIdentifierTransport is receive-only"))
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PropertyIdentifierTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<_PropertyIdentifierTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        PropertyIdentifierTransport::from_napi_value(env, napi_val).map(Box::new)
+        _PropertyIdentifierTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PropertyIdentifierTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<_PropertyIdentifierTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        PropertyIdentifierTransport::to_napi_value(env, *val)
+        _PropertyIdentifierTransport::to_napi_value(env, *val)
     }
 }
 
-fn property_identifier_transport_to_any(t: PropertyIdentifierTransport) -> AnyTransport {
+fn _property_identifier_transport_to_any(t: _PropertyIdentifierTransport) -> AnyTransport {
     match t {
-        PropertyIdentifierTransport::Identifier(inner) => AnyTransport::Identifier(inner),
-        PropertyIdentifierTransport::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
-        PropertyIdentifierTransport::Verbatim(inner) => AnyTransport::Verbatim(inner),
+        _PropertyIdentifierTransport::Identifier(inner) => AnyTransport::Identifier(inner),
+        _PropertyIdentifierTransport::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
+        _PropertyIdentifierTransport::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
 
-impl RenderableTransport for PropertyIdentifierTransport {
+impl RenderableTransport for _PropertyIdentifierTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_property_identifier(self, dest)
+        render__property_identifier(self, dest)
     }
 }
 
@@ -57000,8 +57007,9 @@ fn render_pattern(t: &PatternTransport, dest: &mut dyn ::std::fmt::Write) -> Res
 
 fn render_property_name(t: &PropertyNameTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        PropertyNameTransport::PropertyIdentifier(inner) => render_property_identifier(inner, dest),
+        PropertyNameTransport::_PropertyIdentifier(inner) => render__property_identifier(inner, dest),
         PropertyNameTransport::Identifier(inner) => render_identifier(inner, dest),
+        PropertyNameTransport::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
         PropertyNameTransport::PrivatePropertyIdentifier(inner) => render_private_property_identifier(inner, dest),
         PropertyNameTransport::String(inner) => render_string(inner, dest),
         PropertyNameTransport::Number(inner) => render_number(inner, dest),
@@ -57018,11 +57026,11 @@ fn render_statement_identifier(t: &StatementIdentifierTransport, dest: &mut dyn 
     }
 }
 
-fn render_property_identifier(t: &PropertyIdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render__property_identifier(t: &_PropertyIdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        PropertyIdentifierTransport::Identifier(inner) => render_identifier(inner, dest),
-        PropertyIdentifierTransport::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
-        PropertyIdentifierTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        _PropertyIdentifierTransport::Identifier(inner) => render_identifier(inner, dest),
+        _PropertyIdentifierTransport::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
+        _PropertyIdentifierTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 

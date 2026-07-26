@@ -346,20 +346,6 @@ export const expressionEndingWithBlock = {
 } as const;
 
 export const delimTokens = {
-	string: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
-	rawString: _attach(FR.coerceToRawStringLiteral, {
-		from: FR.coerceToRawStringLiteral,
-		strict: F.buildRawStringLiteral
-	}),
-	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
-	integer: F.buildIntegerLiteral,
-	float: F.buildFloatLiteral,
-	identifier: F.buildIdentifier,
-	mutable: F.buildMutableSpecifier,
-	self: F.buildSelf,
-	super: F.buildSuper,
-	crate: F.buildCrate,
 	delimToken: _attach(FR.coerceToDelimTokenTree, { from: FR.coerceToDelimTokenTree, strict: F.buildDelimTokenTree })
 } as const;
 
@@ -518,6 +504,23 @@ export const path = {
 	super: F.buildSuper,
 	crate: F.buildCrate,
 	scoped: _attach(FR.coerceToScopedIdentifier, { from: FR.coerceToScopedIdentifier, strict: F.buildScopedIdentifier })
+} as const;
+
+export const tokenPatternGroup1 = {
+	string: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
+	rawString: _attach(FR.coerceToRawStringLiteral, {
+		from: FR.coerceToRawStringLiteral,
+		strict: F.buildRawStringLiteral
+	}),
+	char: F.buildCharLiteral,
+	boolean: F.buildBooleanLiteral,
+	integer: F.buildIntegerLiteral,
+	float: F.buildFloatLiteral,
+	identifier: F.buildIdentifier,
+	mutable: F.buildMutableSpecifier,
+	self: F.buildSelf,
+	super: F.buildSuper,
+	crate: F.buildCrate
 } as const;
 
 // Canonical factories — `from.*` resolves native JS values to grammar-specific NodeData.
@@ -1075,5 +1078,6 @@ export const ir = {
 	literal,
 	literalPattern,
 	path,
+	tokenPatternGroup1,
 	from
 } as const;

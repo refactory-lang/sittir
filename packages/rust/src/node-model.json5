@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 369,
+  "nodeCount": 370,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -19,7 +19,8 @@
     "_token_pattern",
     "_tokens",
     "_type",
-    "_use_clause"
+    "_use_clause",
+    "token_pattern_group1"
   ],
   "externals": [
     "_block_comment_content",
@@ -5018,7 +5019,11 @@
       "hidden": true,
       "subtypes": [
         "_expression",
+        "_expression_ending_with_block",
+        "_expression_except_range",
         "_let_chain",
+        "_literal",
+        "_reserved_identifier",
         "array_expression",
         "assignment_expression",
         "async_block",
@@ -5278,20 +5283,9 @@
       "hidden": true,
       "subtypes": [
         "$",
-        "'",
         "_non_delim_token",
-        "boolean_literal",
-        "char_literal",
-        "crate",
         "delim_token_tree",
-        "float_literal",
-        "identifier",
-        "integer_literal",
-        "mutable_specifier",
-        "raw_string_literal",
-        "self",
-        "string_literal",
-        "super"
+        "token_pattern_group1"
       ]
     },
     {
@@ -5360,7 +5354,10 @@
       "irKey": "expression",
       "hidden": true,
       "subtypes": [
+        "_expression_ending_with_block",
         "_expression_except_range",
+        "_literal",
+        "_reserved_identifier",
         "array_expression",
         "assignment_expression",
         "async_block",
@@ -6602,7 +6599,10 @@
       "subtypes": [
         "$",
         "'",
+        "_literal",
         "_non_special_token",
+        "_primitive_type",
+        "_token_tree_punctuation",
         "boolean_literal",
         "char_literal",
         "crate",
@@ -7693,7 +7693,10 @@
       "hidden": true,
       "subtypes": [
         "'",
+        "_literal",
         "_non_special_token",
+        "_primitive_type",
+        "_token_tree_punctuation",
         "boolean_literal",
         "char_literal",
         "crate",
@@ -8001,7 +8004,10 @@
       "hidden": true,
       "subtypes": [
         "'",
+        "_literal",
         "_non_special_token",
+        "_primitive_type",
+        "_token_tree_punctuation",
         "boolean_literal",
         "char_literal",
         "crate",
@@ -8250,6 +8256,7 @@
       "hidden": true,
       "subtypes": [
         "_path",
+        "_reserved_identifier",
         "crate",
         "identifier",
         "metavariable",
@@ -16978,6 +16985,30 @@
       "factoryFields": [
         "name",
         "type"
+      ]
+    },
+    {
+      "kind": "token_pattern_group1",
+      "modelType": "supertype",
+      "typeName": "TokenPatternGroup1",
+      "irKey": "tokenPatternGroup1",
+      "hidden": true,
+      "subtypes": [
+        "'",
+        "_literal",
+        "_primitive_type",
+        "_token_tree_punctuation",
+        "boolean_literal",
+        "char_literal",
+        "crate",
+        "float_literal",
+        "identifier",
+        "integer_literal",
+        "mutable_specifier",
+        "raw_string_literal",
+        "self",
+        "string_literal",
+        "super"
       ]
     },
     {

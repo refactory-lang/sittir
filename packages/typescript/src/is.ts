@@ -20,7 +20,6 @@ import type {
 	Pattern,
 	PrimaryExpression,
 	PrimaryType,
-	PropertyIdentifier,
 	PropertyName,
 	ShorthandPropertyIdentifier,
 	ShorthandPropertyIdentifierPattern,
@@ -31,7 +30,8 @@ import type {
 	_Identifier,
 	_JsxAttribute,
 	_JsxElement,
-	_JsxIdentifier
+	_JsxIdentifier,
+	_PropertyIdentifier
 } from './types.js';
 
 // IsGuards — per-kind + supertype type-narrowing guards.
@@ -364,7 +364,7 @@ export interface IsGuards {
 	statementIdentifier(v: { readonly $type: string | number }): v is StatementIdentifier;
 	shorthandPropertyIdentifier(v: { readonly $type: string | number }): v is ShorthandPropertyIdentifier;
 	shorthandPropertyIdentifierPattern(v: { readonly $type: string | number }): v is ShorthandPropertyIdentifierPattern;
-	propertyIdentifier(v: { readonly $type: string | number }): v is PropertyIdentifier;
+	propertyIdentifier(v: { readonly $type: string | number }): v is _PropertyIdentifier;
 	importIdentifier(v: { readonly $type: string | number }): v is ImportIdentifier;
 	type(v: { readonly $type: string | number }): v is Type;
 	tupleTypeMember(v: { readonly $type: string | number }): v is TupleTypeMember;
@@ -623,7 +623,7 @@ export interface AssertGuards {
 	shorthandPropertyIdentifierPattern(v: {
 		readonly $type: string | number;
 	}): asserts v is ShorthandPropertyIdentifierPattern;
-	propertyIdentifier(v: { readonly $type: string | number }): asserts v is PropertyIdentifier;
+	propertyIdentifier(v: { readonly $type: string | number }): asserts v is _PropertyIdentifier;
 	importIdentifier(v: { readonly $type: string | number }): asserts v is ImportIdentifier;
 	type(v: { readonly $type: string | number }): asserts v is Type;
 	tupleTypeMember(v: { readonly $type: string | number }): asserts v is TupleTypeMember;
@@ -660,7 +660,7 @@ const _supertype_formalParameter_ids = new Set<number>([297, 298]);
 const _supertype_destructuringPattern_ids = new Set<number>([214, 218]);
 const _supertype_identifier_ids = new Set<number>([110, 1]);
 const _supertype_pattern_ids = new Set<number>([236, 261]);
-const _supertype_propertyName_ids = new Set<number>([1, 104, 248, 103, 266]);
+const _supertype_propertyName_ids = new Set<number>([1, 431, 104, 248, 103, 266]);
 const _supertype_statementIdentifier_ids = new Set<number>([1, 431]);
 const _supertype_shorthandPropertyIdentifier_ids = new Set<number>([1, 431]);
 const _supertype_shorthandPropertyIdentifierPattern_ids = new Set<number>([1, 431]);

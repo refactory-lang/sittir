@@ -2443,6 +2443,8 @@ pub enum TokenPatternTransport {
     Self_(Self_Transport),
     Super(SuperTransport),
     Crate(CrateTransport),
+    PrimitiveType(PrimitiveTypeEnum),
+    TokenTreePunctuation(TokenTreePunctuationEnum),
     TokSq(TokSqTransport),
     Verbatim(VerbatimTransport),
 }
@@ -2499,6 +2501,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                         if let Ok(value) = CrateTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Crate(value));
                         }
+                        if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::PrimitiveType(value));
+                        }
+                        if let Ok(value) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenTreePunctuation(value));
+                        }
                         if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::TokSq(value));
                         }
@@ -2509,6 +2517,66 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                             return Ok(Self::StringLiteral(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in TokenPatternTransport"))
+                    },
+                    309 => {
+                        if let Ok(value) = TokenTreePatternTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenTreePattern(value));
+                        }
+                        if let Ok(value) = TokenRepetitionPatternTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenRepetitionPattern(value));
+                        }
+                        if let Ok(value) = TokenBindingPatternTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenBindingPattern(value));
+                        }
+                        if let Ok(value) = MetavariableTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Metavariable(value));
+                        }
+                        if let Ok(value) = RawStringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::RawStringLiteral(value));
+                        }
+                        if let Ok(value) = CharLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CharLiteral(value));
+                        }
+                        if let Ok(value) = BooleanLiteralEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::BooleanLiteral(value));
+                        }
+                        if let Ok(value) = IntegerLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IntegerLiteral(value));
+                        }
+                        if let Ok(value) = FloatLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FloatLiteral(value));
+                        }
+                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Identifier(value));
+                        }
+                        if let Ok(value) = MutableSpecifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MutableSpecifier(value));
+                        }
+                        if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Self_(value));
+                        }
+                        if let Ok(value) = SuperTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Super(value));
+                        }
+                        if let Ok(value) = CrateTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Crate(value));
+                        }
+                        if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::PrimitiveType(value));
+                        }
+                        if let Ok(value) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenTreePunctuation(value));
+                        }
+                        if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokSq(value));
+                        }
+                        if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::NonSpecialToken(value));
+                        }
+                        if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StringLiteral(value));
+                        }
+                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in TokenPatternTransport"))
                     },
                     164 => Ok(Self::TokenTreePattern(
                         TokenTreePatternTransport::from_napi_value(env, napi_val)?
@@ -2569,6 +2637,189 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                     )),
                     128 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    28 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    29 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    30 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    31 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    32 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    33 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    34 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    35 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    36 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    37 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    43 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    10 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    91 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    11 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    102 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    103 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    95 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    77 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    88 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    92 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    93 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    100 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    101 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    104 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    105 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    106 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    108 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    111 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    109 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    110 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    112 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    113 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    81 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    96 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    97 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    84 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    82 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    99 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    98 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    121 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    140 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    118 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    115 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    86 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    141 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    83 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    2 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    5 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    85 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    139 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    4 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    74 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    12 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TokenPatternTransport",
@@ -2628,6 +2879,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                         if let Ok(value) = CrateTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Crate(value));
                         }
+                        if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::PrimitiveType(value));
+                        }
+                        if let Ok(value) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenTreePunctuation(value));
+                        }
                         if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::TokSq(value));
                         }
@@ -2638,6 +2895,66 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                             return Ok(Self::StringLiteral(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in TokenPatternTransport"))
+                    },
+                    309 => {
+                        if let Ok(value) = TokenTreePatternTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenTreePattern(value));
+                        }
+                        if let Ok(value) = TokenRepetitionPatternTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenRepetitionPattern(value));
+                        }
+                        if let Ok(value) = TokenBindingPatternTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenBindingPattern(value));
+                        }
+                        if let Ok(value) = MetavariableTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Metavariable(value));
+                        }
+                        if let Ok(value) = RawStringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::RawStringLiteral(value));
+                        }
+                        if let Ok(value) = CharLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CharLiteral(value));
+                        }
+                        if let Ok(value) = BooleanLiteralEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::BooleanLiteral(value));
+                        }
+                        if let Ok(value) = IntegerLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IntegerLiteral(value));
+                        }
+                        if let Ok(value) = FloatLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FloatLiteral(value));
+                        }
+                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Identifier(value));
+                        }
+                        if let Ok(value) = MutableSpecifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MutableSpecifier(value));
+                        }
+                        if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Self_(value));
+                        }
+                        if let Ok(value) = SuperTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Super(value));
+                        }
+                        if let Ok(value) = CrateTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Crate(value));
+                        }
+                        if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::PrimitiveType(value));
+                        }
+                        if let Ok(value) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenTreePunctuation(value));
+                        }
+                        if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokSq(value));
+                        }
+                        if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::NonSpecialToken(value));
+                        }
+                        if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StringLiteral(value));
+                        }
+                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in TokenPatternTransport"))
                     },
                     164 => Ok(Self::TokenTreePattern(
                         TokenTreePatternTransport::from_napi_value(env, napi_val)?
@@ -2698,6 +3015,189 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                     )),
                     128 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    28 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    29 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    30 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    31 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    32 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    33 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    34 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    35 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    36 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    37 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    43 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    10 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    91 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    11 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    102 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    103 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    95 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    77 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    88 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    92 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    93 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    100 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    101 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    104 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    105 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    106 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    108 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    111 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    109 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    110 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    112 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    113 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    81 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    96 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    97 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    84 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    82 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    99 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    98 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    121 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    140 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    118 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    115 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    86 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    141 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    83 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    2 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    5 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    85 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    139 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    4 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    74 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    12 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TokenPatternTransport",
@@ -2765,6 +3265,8 @@ pub enum TokensTransport {
     Self_(Self_Transport),
     Super(SuperTransport),
     Crate(CrateTransport),
+    PrimitiveType(PrimitiveTypeEnum),
+    TokenTreePunctuation(TokenTreePunctuationEnum),
     TokSq(TokSqTransport),
     Verbatim(VerbatimTransport),
 }
@@ -2778,6 +3280,63 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokensTransport {
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
+                    309 => {
+                        if let Ok(value) = TokenTreeTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenTree(value));
+                        }
+                        if let Ok(value) = TokenRepetitionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenRepetition(value));
+                        }
+                        if let Ok(value) = MetavariableTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Metavariable(value));
+                        }
+                        if let Ok(value) = RawStringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::RawStringLiteral(value));
+                        }
+                        if let Ok(value) = CharLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CharLiteral(value));
+                        }
+                        if let Ok(value) = BooleanLiteralEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::BooleanLiteral(value));
+                        }
+                        if let Ok(value) = IntegerLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IntegerLiteral(value));
+                        }
+                        if let Ok(value) = FloatLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FloatLiteral(value));
+                        }
+                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Identifier(value));
+                        }
+                        if let Ok(value) = MutableSpecifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MutableSpecifier(value));
+                        }
+                        if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Self_(value));
+                        }
+                        if let Ok(value) = SuperTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Super(value));
+                        }
+                        if let Ok(value) = CrateTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Crate(value));
+                        }
+                        if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::PrimitiveType(value));
+                        }
+                        if let Ok(value) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenTreePunctuation(value));
+                        }
+                        if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokSq(value));
+                        }
+                        if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::NonSpecialToken(value));
+                        }
+                        if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StringLiteral(value));
+                        }
+                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in TokensTransport"))
+                    },
                     168 => Ok(Self::TokenTree(
                         TokenTreeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -2834,6 +3393,189 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokensTransport {
                     )),
                     128 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    28 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    29 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    30 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    31 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    32 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    33 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    34 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    35 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    36 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    37 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    43 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    10 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    91 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    11 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    102 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    103 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    95 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    77 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    88 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    92 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    93 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    100 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    101 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    104 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    105 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    106 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    108 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    111 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    109 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    110 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    112 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    113 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    81 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    96 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    97 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    84 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    82 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    99 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    98 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    121 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    140 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    118 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    115 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    86 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    141 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    83 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    2 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    5 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    85 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    139 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    4 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    74 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    12 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TokensTransport",
@@ -2850,6 +3592,63 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokensTransport {
                     ::napi::Error::from_reason("$type property missing in TokensTransport")
                 )?;
                 match kind_id {
+                    309 => {
+                        if let Ok(value) = TokenTreeTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenTree(value));
+                        }
+                        if let Ok(value) = TokenRepetitionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenRepetition(value));
+                        }
+                        if let Ok(value) = MetavariableTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Metavariable(value));
+                        }
+                        if let Ok(value) = RawStringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::RawStringLiteral(value));
+                        }
+                        if let Ok(value) = CharLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CharLiteral(value));
+                        }
+                        if let Ok(value) = BooleanLiteralEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::BooleanLiteral(value));
+                        }
+                        if let Ok(value) = IntegerLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IntegerLiteral(value));
+                        }
+                        if let Ok(value) = FloatLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FloatLiteral(value));
+                        }
+                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Identifier(value));
+                        }
+                        if let Ok(value) = MutableSpecifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MutableSpecifier(value));
+                        }
+                        if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Self_(value));
+                        }
+                        if let Ok(value) = SuperTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Super(value));
+                        }
+                        if let Ok(value) = CrateTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Crate(value));
+                        }
+                        if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::PrimitiveType(value));
+                        }
+                        if let Ok(value) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenTreePunctuation(value));
+                        }
+                        if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokSq(value));
+                        }
+                        if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::NonSpecialToken(value));
+                        }
+                        if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StringLiteral(value));
+                        }
+                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in TokensTransport"))
+                    },
                     168 => Ok(Self::TokenTree(
                         TokenTreeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -2906,6 +3705,189 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokensTransport {
                     )),
                     128 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    28 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    29 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    30 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    31 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    32 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    33 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    34 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    35 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    36 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    37 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    43 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    10 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    91 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    11 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    102 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    103 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    95 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    77 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    88 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    92 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    93 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    100 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    101 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    104 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    105 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    106 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    108 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    111 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    109 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    110 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    112 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    113 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    81 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    96 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    97 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    84 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    82 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    99 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    98 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    121 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    140 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    118 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    115 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    86 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    141 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    83 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    2 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    5 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    85 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    139 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    4 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    74 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    12 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TokensTransport",
@@ -3713,6 +4695,7 @@ pub enum UseClauseTransport {
     Super(SuperTransport),
     Crate(CrateTransport),
     ScopedIdentifier(ScopedIdentifierTransport),
+    ReservedIdentifier(ReservedIdentifierEnum),
     UseAsClause(UseAsClauseTransport),
     UseList(UseListTransport),
     ScopedUseList(ScopedUseListTransport),
@@ -3748,6 +4731,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseClauseTransport {
                         if let Ok(value) = ScopedIdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ScopedIdentifier(value));
                         }
+                        if let Ok(value) = ReservedIdentifierEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReservedIdentifier(value));
+                        }
                         if let Ok(value) = UseAsClauseTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::UseAsClause(value));
                         }
@@ -3782,6 +4768,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseClauseTransport {
                     )),
                     244 => Ok(Self::Path(
                         PathTransport::from_napi_value(env, napi_val)?
+                    )),
+                    52 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    69 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    56 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     209 => Ok(Self::UseAsClause(
                         UseAsClauseTransport::from_napi_value(env, napi_val)?
@@ -3829,6 +4824,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseClauseTransport {
                         if let Ok(value) = ScopedIdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ScopedIdentifier(value));
                         }
+                        if let Ok(value) = ReservedIdentifierEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReservedIdentifier(value));
+                        }
                         if let Ok(value) = UseAsClauseTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::UseAsClause(value));
                         }
@@ -3863,6 +4861,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseClauseTransport {
                     )),
                     244 => Ok(Self::Path(
                         PathTransport::from_napi_value(env, napi_val)?
+                    )),
+                    52 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    69 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    56 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     209 => Ok(Self::UseAsClause(
                         UseAsClauseTransport::from_napi_value(env, napi_val)?
@@ -5380,6 +6387,7 @@ pub enum ExpressionTransport {
     IntegerLiteral(IntegerLiteralTransport),
     FloatLiteral(FloatLiteralTransport),
     Identifier(IdentifierTransport),
+    ReservedIdentifier(ReservedIdentifierEnum),
     Self_(Self_Transport),
     ScopedIdentifier(ScopedIdentifierTransport),
     GenericFunction(GenericFunctionTransport),
@@ -5396,6 +6404,7 @@ pub enum ExpressionTransport {
     ClosureExpression(ClosureExpressionTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     StructExpression(StructExpressionTransport),
+    ExpressionEndingWithBlock(ExpressionEndingWithBlockTransport),
     UnsafeBlock(UnsafeBlockTransport),
     AsyncBlock(AsyncBlockTransport),
     GenBlock(GenBlockTransport),
@@ -5463,6 +6472,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
+                        if let Ok(value) = ReservedIdentifierEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReservedIdentifier(value));
+                        }
                         if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
                             return Ok(Self::Self_(value));
                         }
@@ -5556,10 +6568,160 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         if let Ok(value) = ContinueExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ContinueExpression(value));
                         }
+                        if let Ok(value) = ExpressionEndingWithBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ExpressionEndingWithBlock(value));
+                        }
                         if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Block(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ExpressionTransport"))
+                    },
+                    309 => {
+                        if let Ok(value) = UnaryExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::UnaryExpression(value));
+                        }
+                        if let Ok(value) = ReferenceExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReferenceExpression(value));
+                        }
+                        if let Ok(value) = TryExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TryExpression(value));
+                        }
+                        if let Ok(value) = BinaryExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::BinaryExpression(value));
+                        }
+                        if let Ok(value) = AssignmentExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::AssignmentExpression(value));
+                        }
+                        if let Ok(value) = CompoundAssignmentExprTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CompoundAssignmentExpr(value));
+                        }
+                        if let Ok(value) = TypeCastExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TypeCastExpression(value));
+                        }
+                        if let Ok(value) = CallExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CallExpression(value));
+                        }
+                        if let Ok(value) = RawStringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::RawStringLiteral(value));
+                        }
+                        if let Ok(value) = CharLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CharLiteral(value));
+                        }
+                        if let Ok(value) = BooleanLiteralEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::BooleanLiteral(value));
+                        }
+                        if let Ok(value) = IntegerLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IntegerLiteral(value));
+                        }
+                        if let Ok(value) = FloatLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FloatLiteral(value));
+                        }
+                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Identifier(value));
+                        }
+                        if let Ok(value) = ReservedIdentifierEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReservedIdentifier(value));
+                        }
+                        if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Self_(value));
+                        }
+                        if let Ok(value) = ScopedIdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ScopedIdentifier(value));
+                        }
+                        if let Ok(value) = GenericFunctionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::GenericFunction(value));
+                        }
+                        if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::AwaitExpression(value));
+                        }
+                        if let Ok(value) = FieldExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FieldExpression(value));
+                        }
+                        if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ArrayExpression(value));
+                        }
+                        if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MacroInvocation(value));
+                        }
+                        if let Ok(value) = UnitExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::UnitExpression(value));
+                        }
+                        if let Ok(value) = IndexExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IndexExpression(value));
+                        }
+                        if let Ok(value) = MetavariableTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Metavariable(value));
+                        }
+                        if let Ok(value) = ClosureExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ClosureExpression(value));
+                        }
+                        if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ParenthesizedExpression(value));
+                        }
+                        if let Ok(value) = StructExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StructExpression(value));
+                        }
+                        if let Ok(value) = UnsafeBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::UnsafeBlock(value));
+                        }
+                        if let Ok(value) = AsyncBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::AsyncBlock(value));
+                        }
+                        if let Ok(value) = GenBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::GenBlock(value));
+                        }
+                        if let Ok(value) = TryBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TryBlock(value));
+                        }
+                        if let Ok(value) = IfExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IfExpression(value));
+                        }
+                        if let Ok(value) = MatchExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MatchExpression(value));
+                        }
+                        if let Ok(value) = WhileExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::WhileExpression(value));
+                        }
+                        if let Ok(value) = LoopExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LoopExpression(value));
+                        }
+                        if let Ok(value) = ForExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ForExpression(value));
+                        }
+                        if let Ok(value) = ConstBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ConstBlock(value));
+                        }
+                        if let Ok(value) = RangeExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::RangeExpression(value));
+                        }
+                        if let Ok(value) = ExpressionExceptRangeTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ExpressionExceptRange(value));
+                        }
+                        if let Ok(value) = ReturnExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReturnExpression(value));
+                        }
+                        if let Ok(value) = YieldExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::YieldExpression(value));
+                        }
+                        if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StringLiteral(value));
+                        }
+                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TupleExpression(value));
+                        }
+                        if let Ok(value) = BreakExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::BreakExpression(value));
+                        }
+                        if let Ok(value) = ContinueExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ContinueExpression(value));
+                        }
+                        if let Ok(value) = ExpressionEndingWithBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ExpressionEndingWithBlock(value));
+                        }
+                        if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Block(value));
+                        }
+                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in ExpressionTransport"))
                     },
                     238 => Ok(Self::ExpressionExceptRange(
                         ExpressionExceptRangeTransport::from_napi_value(env, napi_val)?
@@ -5701,6 +6863,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     )),
                     128 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    52 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    69 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    56 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     247 => Ok(Self::RangeExpression(
                         RangeExpressionTransport::from_napi_value(env, napi_val)?
@@ -5763,6 +6934,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
+                        if let Ok(value) = ReservedIdentifierEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReservedIdentifier(value));
+                        }
                         if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
                             return Ok(Self::Self_(value));
                         }
@@ -5856,10 +7030,160 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         if let Ok(value) = ContinueExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ContinueExpression(value));
                         }
+                        if let Ok(value) = ExpressionEndingWithBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ExpressionEndingWithBlock(value));
+                        }
                         if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Block(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ExpressionTransport"))
+                    },
+                    309 => {
+                        if let Ok(value) = UnaryExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::UnaryExpression(value));
+                        }
+                        if let Ok(value) = ReferenceExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReferenceExpression(value));
+                        }
+                        if let Ok(value) = TryExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TryExpression(value));
+                        }
+                        if let Ok(value) = BinaryExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::BinaryExpression(value));
+                        }
+                        if let Ok(value) = AssignmentExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::AssignmentExpression(value));
+                        }
+                        if let Ok(value) = CompoundAssignmentExprTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CompoundAssignmentExpr(value));
+                        }
+                        if let Ok(value) = TypeCastExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TypeCastExpression(value));
+                        }
+                        if let Ok(value) = CallExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CallExpression(value));
+                        }
+                        if let Ok(value) = RawStringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::RawStringLiteral(value));
+                        }
+                        if let Ok(value) = CharLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CharLiteral(value));
+                        }
+                        if let Ok(value) = BooleanLiteralEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::BooleanLiteral(value));
+                        }
+                        if let Ok(value) = IntegerLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IntegerLiteral(value));
+                        }
+                        if let Ok(value) = FloatLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FloatLiteral(value));
+                        }
+                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Identifier(value));
+                        }
+                        if let Ok(value) = ReservedIdentifierEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReservedIdentifier(value));
+                        }
+                        if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Self_(value));
+                        }
+                        if let Ok(value) = ScopedIdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ScopedIdentifier(value));
+                        }
+                        if let Ok(value) = GenericFunctionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::GenericFunction(value));
+                        }
+                        if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::AwaitExpression(value));
+                        }
+                        if let Ok(value) = FieldExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FieldExpression(value));
+                        }
+                        if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ArrayExpression(value));
+                        }
+                        if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MacroInvocation(value));
+                        }
+                        if let Ok(value) = UnitExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::UnitExpression(value));
+                        }
+                        if let Ok(value) = IndexExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IndexExpression(value));
+                        }
+                        if let Ok(value) = MetavariableTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Metavariable(value));
+                        }
+                        if let Ok(value) = ClosureExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ClosureExpression(value));
+                        }
+                        if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ParenthesizedExpression(value));
+                        }
+                        if let Ok(value) = StructExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StructExpression(value));
+                        }
+                        if let Ok(value) = UnsafeBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::UnsafeBlock(value));
+                        }
+                        if let Ok(value) = AsyncBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::AsyncBlock(value));
+                        }
+                        if let Ok(value) = GenBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::GenBlock(value));
+                        }
+                        if let Ok(value) = TryBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TryBlock(value));
+                        }
+                        if let Ok(value) = IfExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IfExpression(value));
+                        }
+                        if let Ok(value) = MatchExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MatchExpression(value));
+                        }
+                        if let Ok(value) = WhileExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::WhileExpression(value));
+                        }
+                        if let Ok(value) = LoopExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LoopExpression(value));
+                        }
+                        if let Ok(value) = ForExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ForExpression(value));
+                        }
+                        if let Ok(value) = ConstBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ConstBlock(value));
+                        }
+                        if let Ok(value) = RangeExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::RangeExpression(value));
+                        }
+                        if let Ok(value) = ExpressionExceptRangeTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ExpressionExceptRange(value));
+                        }
+                        if let Ok(value) = ReturnExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReturnExpression(value));
+                        }
+                        if let Ok(value) = YieldExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::YieldExpression(value));
+                        }
+                        if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StringLiteral(value));
+                        }
+                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TupleExpression(value));
+                        }
+                        if let Ok(value) = BreakExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::BreakExpression(value));
+                        }
+                        if let Ok(value) = ContinueExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ContinueExpression(value));
+                        }
+                        if let Ok(value) = ExpressionEndingWithBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ExpressionEndingWithBlock(value));
+                        }
+                        if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Block(value));
+                        }
+                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in ExpressionTransport"))
                     },
                     238 => Ok(Self::ExpressionExceptRange(
                         ExpressionExceptRangeTransport::from_napi_value(env, napi_val)?
@@ -6001,6 +7325,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     )),
                     128 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    52 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    69 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    56 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     247 => Ok(Self::RangeExpression(
                         RangeExpressionTransport::from_napi_value(env, napi_val)?
@@ -6065,6 +7398,7 @@ fn expression_transport_to_any(t: ExpressionTransport) -> AnyTransport {
         ExpressionTransport::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
         ExpressionTransport::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
         ExpressionTransport::Identifier(inner) => AnyTransport::Identifier(inner),
+        ExpressionTransport::ReservedIdentifier(inner) => AnyTransport::ReservedIdentifier(inner),
         ExpressionTransport::Self_(inner) => AnyTransport::Self_(inner),
         ExpressionTransport::ScopedIdentifier(inner) => AnyTransport::ScopedIdentifier(inner),
         ExpressionTransport::GenericFunction(inner) => AnyTransport::GenericFunction(inner),
@@ -6081,6 +7415,7 @@ fn expression_transport_to_any(t: ExpressionTransport) -> AnyTransport {
         ExpressionTransport::ClosureExpression(inner) => AnyTransport::ClosureExpression(inner),
         ExpressionTransport::ParenthesizedExpression(inner) => AnyTransport::ParenthesizedExpression(inner),
         ExpressionTransport::StructExpression(inner) => AnyTransport::StructExpression(inner),
+        ExpressionTransport::ExpressionEndingWithBlock(inner) => expression_ending_with_block_transport_to_any(inner),
         ExpressionTransport::UnsafeBlock(inner) => AnyTransport::UnsafeBlock(inner),
         ExpressionTransport::AsyncBlock(inner) => AnyTransport::AsyncBlock(inner),
         ExpressionTransport::GenBlock(inner) => AnyTransport::GenBlock(inner),
@@ -6275,18 +7610,7 @@ impl RenderableTransport for ExpressionEndingWithBlockTransport {
 #[derive(Debug, Clone)]
 pub enum DelimTokensTransport {
     NonDelimToken(NonDelimTokenTransport),
-    StringLiteral(StringLiteralTransport),
-    RawStringLiteral(RawStringLiteralTransport),
-    CharLiteral(CharLiteralTransport),
-    BooleanLiteral(BooleanLiteralEnum),
-    IntegerLiteral(IntegerLiteralTransport),
-    FloatLiteral(FloatLiteralTransport),
-    Identifier(IdentifierTransport),
-    MutableSpecifier(MutableSpecifierTransport),
-    Self_(Self_Transport),
-    Super(SuperTransport),
-    Crate(CrateTransport),
-    TokSq(TokSqTransport),
+    TokenPatternGroup1(TokenPatternGroup1Transport),
     TokDollar(TokDollarTransport),
     DelimTokenTree(DelimTokenTreeTransport),
     Verbatim(VerbatimTransport),
@@ -6302,39 +7626,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     242 => {
-                        if let Ok(value) = RawStringLiteralTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::RawStringLiteral(value));
-                        }
-                        if let Ok(value) = CharLiteralTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::CharLiteral(value));
-                        }
-                        if let Ok(value) = BooleanLiteralEnum::from_napi_value(env, napi_val) {
-                            return Ok(Self::BooleanLiteral(value));
-                        }
-                        if let Ok(value) = IntegerLiteralTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::IntegerLiteral(value));
-                        }
-                        if let Ok(value) = FloatLiteralTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::FloatLiteral(value));
-                        }
-                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Identifier(value));
-                        }
-                        if let Ok(value) = MutableSpecifierTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::MutableSpecifier(value));
-                        }
-                        if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Self_(value));
-                        }
-                        if let Ok(value) = SuperTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Super(value));
-                        }
-                        if let Ok(value) = CrateTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Crate(value));
-                        }
-                        if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TokSq(value));
-                        }
                         if let Ok(value) = TokDollarTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::TokDollar(value));
                         }
@@ -6344,8 +7635,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                         if let Ok(value) = NonDelimTokenTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NonDelimToken(value));
                         }
-                        if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::StringLiteral(value));
+                        if let Ok(value) = TokenPatternGroup1Transport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenPatternGroup1(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in DelimTokensTransport"))
                     },
@@ -6394,11 +7685,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                     6 => Ok(Self::NonDelimToken(
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    127 => Ok(Self::BooleanLiteral(
-                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                    )),
-                    128 => Ok(Self::BooleanLiteral(
-                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    170 => Ok(Self::TokenPatternGroup1(
+                        TokenPatternGroup1Transport::from_napi_value(env, napi_val)?
                     )),
                     241 => Ok(Self::DelimTokenTree(
                         DelimTokenTreeTransport::from_napi_value(env, napi_val)?
@@ -6422,39 +7710,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                 )?;
                 match kind_id {
                     242 => {
-                        if let Ok(value) = RawStringLiteralTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::RawStringLiteral(value));
-                        }
-                        if let Ok(value) = CharLiteralTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::CharLiteral(value));
-                        }
-                        if let Ok(value) = BooleanLiteralEnum::from_napi_value(env, napi_val) {
-                            return Ok(Self::BooleanLiteral(value));
-                        }
-                        if let Ok(value) = IntegerLiteralTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::IntegerLiteral(value));
-                        }
-                        if let Ok(value) = FloatLiteralTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::FloatLiteral(value));
-                        }
-                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Identifier(value));
-                        }
-                        if let Ok(value) = MutableSpecifierTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::MutableSpecifier(value));
-                        }
-                        if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Self_(value));
-                        }
-                        if let Ok(value) = SuperTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Super(value));
-                        }
-                        if let Ok(value) = CrateTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::Crate(value));
-                        }
-                        if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TokSq(value));
-                        }
                         if let Ok(value) = TokDollarTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::TokDollar(value));
                         }
@@ -6464,8 +7719,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                         if let Ok(value) = NonDelimTokenTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NonDelimToken(value));
                         }
-                        if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::StringLiteral(value));
+                        if let Ok(value) = TokenPatternGroup1Transport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenPatternGroup1(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in DelimTokensTransport"))
                     },
@@ -6514,11 +7769,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                     6 => Ok(Self::NonDelimToken(
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
-                    127 => Ok(Self::BooleanLiteral(
-                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
-                    )),
-                    128 => Ok(Self::BooleanLiteral(
-                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    170 => Ok(Self::TokenPatternGroup1(
+                        TokenPatternGroup1Transport::from_napi_value(env, napi_val)?
                     )),
                     241 => Ok(Self::DelimTokenTree(
                         DelimTokenTreeTransport::from_napi_value(env, napi_val)?
@@ -6589,6 +7841,8 @@ pub enum NonDelimTokenTransport {
     Self_(Self_Transport),
     Super(SuperTransport),
     Crate(CrateTransport),
+    PrimitiveType(PrimitiveTypeEnum),
+    TokenTreePunctuation(TokenTreePunctuationEnum),
     TokSq(TokSqTransport),
     TokDollar(TokDollarTransport),
     Verbatim(VerbatimTransport),
@@ -6634,6 +7888,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                         if let Ok(value) = CrateTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Crate(value));
                         }
+                        if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::PrimitiveType(value));
+                        }
+                        if let Ok(value) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenTreePunctuation(value));
+                        }
                         if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::TokSq(value));
                         }
@@ -6647,6 +7907,57 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                             return Ok(Self::StringLiteral(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in NonDelimTokenTransport"))
+                    },
+                    309 => {
+                        if let Ok(value) = RawStringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::RawStringLiteral(value));
+                        }
+                        if let Ok(value) = CharLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CharLiteral(value));
+                        }
+                        if let Ok(value) = BooleanLiteralEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::BooleanLiteral(value));
+                        }
+                        if let Ok(value) = IntegerLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IntegerLiteral(value));
+                        }
+                        if let Ok(value) = FloatLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FloatLiteral(value));
+                        }
+                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Identifier(value));
+                        }
+                        if let Ok(value) = MutableSpecifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MutableSpecifier(value));
+                        }
+                        if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Self_(value));
+                        }
+                        if let Ok(value) = SuperTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Super(value));
+                        }
+                        if let Ok(value) = CrateTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Crate(value));
+                        }
+                        if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::PrimitiveType(value));
+                        }
+                        if let Ok(value) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenTreePunctuation(value));
+                        }
+                        if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokSq(value));
+                        }
+                        if let Ok(value) = TokDollarTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokDollar(value));
+                        }
+                        if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::NonSpecialToken(value));
+                        }
+                        if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StringLiteral(value));
+                        }
+                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in NonDelimTokenTransport"))
                     },
                     170 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
@@ -6695,6 +8006,189 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                     )),
                     128 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    28 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    29 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    30 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    31 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    32 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    33 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    34 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    35 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    36 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    37 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    43 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    10 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    91 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    11 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    102 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    103 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    95 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    77 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    88 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    92 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    93 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    100 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    101 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    104 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    105 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    106 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    108 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    111 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    109 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    110 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    112 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    113 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    81 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    96 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    97 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    84 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    82 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    99 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    98 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    121 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    140 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    118 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    115 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    86 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    141 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    83 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    2 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    5 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    85 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    139 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    4 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    74 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    12 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     6 => Ok(Self::TokDollar(
                         TokDollarTransport::from_napi_value(env, napi_val)?
@@ -6745,6 +8239,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                         if let Ok(value) = CrateTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Crate(value));
                         }
+                        if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::PrimitiveType(value));
+                        }
+                        if let Ok(value) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenTreePunctuation(value));
+                        }
                         if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::TokSq(value));
                         }
@@ -6758,6 +8258,57 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                             return Ok(Self::StringLiteral(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in NonDelimTokenTransport"))
+                    },
+                    309 => {
+                        if let Ok(value) = RawStringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::RawStringLiteral(value));
+                        }
+                        if let Ok(value) = CharLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CharLiteral(value));
+                        }
+                        if let Ok(value) = BooleanLiteralEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::BooleanLiteral(value));
+                        }
+                        if let Ok(value) = IntegerLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IntegerLiteral(value));
+                        }
+                        if let Ok(value) = FloatLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FloatLiteral(value));
+                        }
+                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Identifier(value));
+                        }
+                        if let Ok(value) = MutableSpecifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MutableSpecifier(value));
+                        }
+                        if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Self_(value));
+                        }
+                        if let Ok(value) = SuperTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Super(value));
+                        }
+                        if let Ok(value) = CrateTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Crate(value));
+                        }
+                        if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::PrimitiveType(value));
+                        }
+                        if let Ok(value) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenTreePunctuation(value));
+                        }
+                        if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokSq(value));
+                        }
+                        if let Ok(value) = TokDollarTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokDollar(value));
+                        }
+                        if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::NonSpecialToken(value));
+                        }
+                        if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StringLiteral(value));
+                        }
+                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in NonDelimTokenTransport"))
                     },
                     170 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
@@ -6806,6 +8357,189 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                     )),
                     128 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    28 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    29 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    30 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    31 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    32 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    33 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    34 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    35 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    36 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    37 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    43 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    10 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    91 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    11 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    102 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    103 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    95 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    77 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    88 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    92 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    93 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    100 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    101 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    104 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    105 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    106 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    108 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    111 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    109 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    110 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    112 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    113 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    81 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    96 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    97 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    84 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    82 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    99 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    98 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    121 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    140 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    118 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    115 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    86 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    141 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    83 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    2 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    5 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    85 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    139 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    4 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    74 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    12 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
                     )),
                     6 => Ok(Self::TokDollar(
                         TokDollarTransport::from_napi_value(env, napi_val)?
@@ -6864,6 +8598,8 @@ fn non_delim_token_transport_to_any(t: NonDelimTokenTransport) -> AnyTransport {
         NonDelimTokenTransport::Self_(inner) => AnyTransport::Self_(inner),
         NonDelimTokenTransport::Super(inner) => AnyTransport::Super(inner),
         NonDelimTokenTransport::Crate(inner) => AnyTransport::Crate(inner),
+        NonDelimTokenTransport::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        NonDelimTokenTransport::TokenTreePunctuation(inner) => AnyTransport::TokenTreePunctuation(inner),
         NonDelimTokenTransport::TokSq(inner) => AnyTransport::TokSq(inner),
         NonDelimTokenTransport::TokDollar(inner) => AnyTransport::TokDollar(inner),
         NonDelimTokenTransport::Verbatim(inner) => AnyTransport::Verbatim(inner),
@@ -6882,6 +8618,7 @@ impl RenderableTransport for NonDelimTokenTransport {
 #[derive(Debug, Clone)]
 pub enum ConditionTransport {
     Expression(ExpressionTransport),
+    ExpressionExceptRange(ExpressionExceptRangeTransport),
     UnaryExpression(UnaryExpressionTransport),
     ReferenceExpression(ReferenceExpressionTransport),
     TryExpression(TryExpressionTransport),
@@ -6899,6 +8636,7 @@ pub enum ConditionTransport {
     IntegerLiteral(IntegerLiteralTransport),
     FloatLiteral(FloatLiteralTransport),
     Identifier(IdentifierTransport),
+    ReservedIdentifier(ReservedIdentifierEnum),
     Self_(Self_Transport),
     ScopedIdentifier(ScopedIdentifierTransport),
     GenericFunction(GenericFunctionTransport),
@@ -6915,6 +8653,7 @@ pub enum ConditionTransport {
     ClosureExpression(ClosureExpressionTransport),
     ParenthesizedExpression(ParenthesizedExpressionTransport),
     StructExpression(StructExpressionTransport),
+    ExpressionEndingWithBlock(ExpressionEndingWithBlockTransport),
     UnsafeBlock(UnsafeBlockTransport),
     AsyncBlock(AsyncBlockTransport),
     GenBlock(GenBlockTransport),
@@ -6984,6 +8723,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
+                        if let Ok(value) = ReservedIdentifierEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReservedIdentifier(value));
+                        }
                         if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
                             return Ok(Self::Self_(value));
                         }
@@ -7065,6 +8807,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Expression(value));
                         }
+                        if let Ok(value) = ExpressionExceptRangeTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ExpressionExceptRange(value));
+                        }
                         if let Ok(value) = ReturnExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ReturnExpression(value));
                         }
@@ -7083,10 +8828,169 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         if let Ok(value) = ContinueExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ContinueExpression(value));
                         }
+                        if let Ok(value) = ExpressionEndingWithBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ExpressionEndingWithBlock(value));
+                        }
                         if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Block(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ConditionTransport"))
+                    },
+                    309 => {
+                        if let Ok(value) = UnaryExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::UnaryExpression(value));
+                        }
+                        if let Ok(value) = ReferenceExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReferenceExpression(value));
+                        }
+                        if let Ok(value) = TryExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TryExpression(value));
+                        }
+                        if let Ok(value) = BinaryExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::BinaryExpression(value));
+                        }
+                        if let Ok(value) = AssignmentExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::AssignmentExpression(value));
+                        }
+                        if let Ok(value) = CompoundAssignmentExprTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CompoundAssignmentExpr(value));
+                        }
+                        if let Ok(value) = TypeCastExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TypeCastExpression(value));
+                        }
+                        if let Ok(value) = CallExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CallExpression(value));
+                        }
+                        if let Ok(value) = RawStringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::RawStringLiteral(value));
+                        }
+                        if let Ok(value) = CharLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CharLiteral(value));
+                        }
+                        if let Ok(value) = BooleanLiteralEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::BooleanLiteral(value));
+                        }
+                        if let Ok(value) = IntegerLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IntegerLiteral(value));
+                        }
+                        if let Ok(value) = FloatLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FloatLiteral(value));
+                        }
+                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Identifier(value));
+                        }
+                        if let Ok(value) = ReservedIdentifierEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReservedIdentifier(value));
+                        }
+                        if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Self_(value));
+                        }
+                        if let Ok(value) = ScopedIdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ScopedIdentifier(value));
+                        }
+                        if let Ok(value) = GenericFunctionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::GenericFunction(value));
+                        }
+                        if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::AwaitExpression(value));
+                        }
+                        if let Ok(value) = FieldExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FieldExpression(value));
+                        }
+                        if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ArrayExpression(value));
+                        }
+                        if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MacroInvocation(value));
+                        }
+                        if let Ok(value) = UnitExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::UnitExpression(value));
+                        }
+                        if let Ok(value) = IndexExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IndexExpression(value));
+                        }
+                        if let Ok(value) = MetavariableTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Metavariable(value));
+                        }
+                        if let Ok(value) = ClosureExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ClosureExpression(value));
+                        }
+                        if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ParenthesizedExpression(value));
+                        }
+                        if let Ok(value) = StructExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StructExpression(value));
+                        }
+                        if let Ok(value) = UnsafeBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::UnsafeBlock(value));
+                        }
+                        if let Ok(value) = AsyncBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::AsyncBlock(value));
+                        }
+                        if let Ok(value) = GenBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::GenBlock(value));
+                        }
+                        if let Ok(value) = TryBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TryBlock(value));
+                        }
+                        if let Ok(value) = IfExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IfExpression(value));
+                        }
+                        if let Ok(value) = MatchExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MatchExpression(value));
+                        }
+                        if let Ok(value) = WhileExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::WhileExpression(value));
+                        }
+                        if let Ok(value) = LoopExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LoopExpression(value));
+                        }
+                        if let Ok(value) = ForExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ForExpression(value));
+                        }
+                        if let Ok(value) = ConstBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ConstBlock(value));
+                        }
+                        if let Ok(value) = RangeExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::RangeExpression(value));
+                        }
+                        if let Ok(value) = LetConditionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LetCondition(value));
+                        }
+                        if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LetChain(value));
+                        }
+                        if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Expression(value));
+                        }
+                        if let Ok(value) = ExpressionExceptRangeTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ExpressionExceptRange(value));
+                        }
+                        if let Ok(value) = ReturnExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReturnExpression(value));
+                        }
+                        if let Ok(value) = YieldExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::YieldExpression(value));
+                        }
+                        if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StringLiteral(value));
+                        }
+                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TupleExpression(value));
+                        }
+                        if let Ok(value) = BreakExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::BreakExpression(value));
+                        }
+                        if let Ok(value) = ContinueExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ContinueExpression(value));
+                        }
+                        if let Ok(value) = ExpressionEndingWithBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ExpressionEndingWithBlock(value));
+                        }
+                        if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Block(value));
+                        }
+                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in ConditionTransport"))
                     },
                     239 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
@@ -7226,11 +9130,23 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                     247 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
+                    238 => Ok(Self::ExpressionExceptRange(
+                        ExpressionExceptRangeTransport::from_napi_value(env, napi_val)?
+                    )),
                     127 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
                     128 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    52 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    69 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    56 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     269 => Ok(Self::LetCondition(
                         LetConditionTransport::from_napi_value(env, napi_val)?
@@ -7299,6 +9215,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
+                        if let Ok(value) = ReservedIdentifierEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReservedIdentifier(value));
+                        }
                         if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
                             return Ok(Self::Self_(value));
                         }
@@ -7380,6 +9299,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Expression(value));
                         }
+                        if let Ok(value) = ExpressionExceptRangeTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ExpressionExceptRange(value));
+                        }
                         if let Ok(value) = ReturnExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ReturnExpression(value));
                         }
@@ -7398,10 +9320,169 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         if let Ok(value) = ContinueExpressionTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ContinueExpression(value));
                         }
+                        if let Ok(value) = ExpressionEndingWithBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ExpressionEndingWithBlock(value));
+                        }
                         if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Block(value));
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ConditionTransport"))
+                    },
+                    309 => {
+                        if let Ok(value) = UnaryExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::UnaryExpression(value));
+                        }
+                        if let Ok(value) = ReferenceExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReferenceExpression(value));
+                        }
+                        if let Ok(value) = TryExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TryExpression(value));
+                        }
+                        if let Ok(value) = BinaryExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::BinaryExpression(value));
+                        }
+                        if let Ok(value) = AssignmentExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::AssignmentExpression(value));
+                        }
+                        if let Ok(value) = CompoundAssignmentExprTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CompoundAssignmentExpr(value));
+                        }
+                        if let Ok(value) = TypeCastExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TypeCastExpression(value));
+                        }
+                        if let Ok(value) = CallExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CallExpression(value));
+                        }
+                        if let Ok(value) = RawStringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::RawStringLiteral(value));
+                        }
+                        if let Ok(value) = CharLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CharLiteral(value));
+                        }
+                        if let Ok(value) = BooleanLiteralEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::BooleanLiteral(value));
+                        }
+                        if let Ok(value) = IntegerLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IntegerLiteral(value));
+                        }
+                        if let Ok(value) = FloatLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FloatLiteral(value));
+                        }
+                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Identifier(value));
+                        }
+                        if let Ok(value) = ReservedIdentifierEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReservedIdentifier(value));
+                        }
+                        if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Self_(value));
+                        }
+                        if let Ok(value) = ScopedIdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ScopedIdentifier(value));
+                        }
+                        if let Ok(value) = GenericFunctionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::GenericFunction(value));
+                        }
+                        if let Ok(value) = AwaitExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::AwaitExpression(value));
+                        }
+                        if let Ok(value) = FieldExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FieldExpression(value));
+                        }
+                        if let Ok(value) = ArrayExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ArrayExpression(value));
+                        }
+                        if let Ok(value) = MacroInvocationTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MacroInvocation(value));
+                        }
+                        if let Ok(value) = UnitExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::UnitExpression(value));
+                        }
+                        if let Ok(value) = IndexExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IndexExpression(value));
+                        }
+                        if let Ok(value) = MetavariableTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Metavariable(value));
+                        }
+                        if let Ok(value) = ClosureExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ClosureExpression(value));
+                        }
+                        if let Ok(value) = ParenthesizedExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ParenthesizedExpression(value));
+                        }
+                        if let Ok(value) = StructExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StructExpression(value));
+                        }
+                        if let Ok(value) = UnsafeBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::UnsafeBlock(value));
+                        }
+                        if let Ok(value) = AsyncBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::AsyncBlock(value));
+                        }
+                        if let Ok(value) = GenBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::GenBlock(value));
+                        }
+                        if let Ok(value) = TryBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TryBlock(value));
+                        }
+                        if let Ok(value) = IfExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IfExpression(value));
+                        }
+                        if let Ok(value) = MatchExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MatchExpression(value));
+                        }
+                        if let Ok(value) = WhileExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::WhileExpression(value));
+                        }
+                        if let Ok(value) = LoopExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LoopExpression(value));
+                        }
+                        if let Ok(value) = ForExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ForExpression(value));
+                        }
+                        if let Ok(value) = ConstBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ConstBlock(value));
+                        }
+                        if let Ok(value) = RangeExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::RangeExpression(value));
+                        }
+                        if let Ok(value) = LetConditionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LetCondition(value));
+                        }
+                        if let Ok(value) = LetChainTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::LetChain(value));
+                        }
+                        if let Ok(value) = ExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Expression(value));
+                        }
+                        if let Ok(value) = ExpressionExceptRangeTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ExpressionExceptRange(value));
+                        }
+                        if let Ok(value) = ReturnExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ReturnExpression(value));
+                        }
+                        if let Ok(value) = YieldExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::YieldExpression(value));
+                        }
+                        if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StringLiteral(value));
+                        }
+                        if let Ok(value) = TupleExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TupleExpression(value));
+                        }
+                        if let Ok(value) = BreakExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::BreakExpression(value));
+                        }
+                        if let Ok(value) = ContinueExpressionTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ContinueExpression(value));
+                        }
+                        if let Ok(value) = ExpressionEndingWithBlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::ExpressionEndingWithBlock(value));
+                        }
+                        if let Ok(value) = BlockTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Block(value));
+                        }
+                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in ConditionTransport"))
                     },
                     239 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
@@ -7541,11 +9622,23 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                     247 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
+                    238 => Ok(Self::ExpressionExceptRange(
+                        ExpressionExceptRangeTransport::from_napi_value(env, napi_val)?
+                    )),
                     127 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
                     )),
                     128 => Ok(Self::BooleanLiteral(
                         BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    52 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    69 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
+                    )),
+                    56 => Ok(Self::ReservedIdentifier(
+                        ReservedIdentifierEnum::from_napi_value(env, napi_val)?
                     )),
                     269 => Ok(Self::LetCondition(
                         LetConditionTransport::from_napi_value(env, napi_val)?
@@ -8400,6 +10493,754 @@ impl RenderableTransport for PathTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_path(self, dest)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum TokenPatternGroup1Transport {
+    StringLiteral(StringLiteralTransport),
+    RawStringLiteral(RawStringLiteralTransport),
+    CharLiteral(CharLiteralTransport),
+    BooleanLiteral(BooleanLiteralEnum),
+    IntegerLiteral(IntegerLiteralTransport),
+    FloatLiteral(FloatLiteralTransport),
+    Identifier(IdentifierTransport),
+    MutableSpecifier(MutableSpecifierTransport),
+    Self_(Self_Transport),
+    Super(SuperTransport),
+    Crate(CrateTransport),
+    PrimitiveType(PrimitiveTypeEnum),
+    TokenTreePunctuation(TokenTreePunctuationEnum),
+    TokSq(TokSqTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternGroup1Transport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    170 => {
+                        if let Ok(value) = RawStringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::RawStringLiteral(value));
+                        }
+                        if let Ok(value) = CharLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CharLiteral(value));
+                        }
+                        if let Ok(value) = BooleanLiteralEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::BooleanLiteral(value));
+                        }
+                        if let Ok(value) = IntegerLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IntegerLiteral(value));
+                        }
+                        if let Ok(value) = FloatLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FloatLiteral(value));
+                        }
+                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Identifier(value));
+                        }
+                        if let Ok(value) = MutableSpecifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MutableSpecifier(value));
+                        }
+                        if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Self_(value));
+                        }
+                        if let Ok(value) = SuperTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Super(value));
+                        }
+                        if let Ok(value) = CrateTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Crate(value));
+                        }
+                        if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::PrimitiveType(value));
+                        }
+                        if let Ok(value) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenTreePunctuation(value));
+                        }
+                        if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokSq(value));
+                        }
+                        if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StringLiteral(value));
+                        }
+                        Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in TokenPatternGroup1Transport"))
+                    },
+                    309 => {
+                        if let Ok(value) = RawStringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::RawStringLiteral(value));
+                        }
+                        if let Ok(value) = CharLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CharLiteral(value));
+                        }
+                        if let Ok(value) = BooleanLiteralEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::BooleanLiteral(value));
+                        }
+                        if let Ok(value) = IntegerLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IntegerLiteral(value));
+                        }
+                        if let Ok(value) = FloatLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FloatLiteral(value));
+                        }
+                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Identifier(value));
+                        }
+                        if let Ok(value) = MutableSpecifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MutableSpecifier(value));
+                        }
+                        if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Self_(value));
+                        }
+                        if let Ok(value) = SuperTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Super(value));
+                        }
+                        if let Ok(value) = CrateTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Crate(value));
+                        }
+                        if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::PrimitiveType(value));
+                        }
+                        if let Ok(value) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenTreePunctuation(value));
+                        }
+                        if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokSq(value));
+                        }
+                        if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StringLiteral(value));
+                        }
+                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in TokenPatternGroup1Transport"))
+                    },
+                    312 => Ok(Self::StringLiteral(
+                        StringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    313 => Ok(Self::RawStringLiteral(
+                        RawStringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    125 => Ok(Self::CharLiteral(
+                        CharLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    314 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    127 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    128 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    122 => Ok(Self::IntegerLiteral(
+                        IntegerLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    151 => Ok(Self::FloatLiteral(
+                        FloatLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    90 => Ok(Self::MutableSpecifier(
+                        MutableSpecifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    135 => Ok(Self::Self_(
+                        Self_Transport::from_napi_value(env, napi_val)?
+                    )),
+                    136 => Ok(Self::Super(
+                        SuperTransport::from_napi_value(env, napi_val)?
+                    )),
+                    137 => Ok(Self::Crate(
+                        CrateTransport::from_napi_value(env, napi_val)?
+                    )),
+                    28 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    29 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    30 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    31 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    32 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    33 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    34 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    35 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    36 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    37 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    43 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    338 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    10 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    91 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    11 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    102 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    103 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    95 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    77 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    88 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    92 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    93 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    100 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    101 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    104 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    105 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    106 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    108 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    111 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    109 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    110 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    112 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    113 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    81 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    96 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    97 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    84 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    82 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    99 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    98 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    121 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    140 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    118 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    115 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    86 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    141 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    83 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    2 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    5 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    85 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    139 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    4 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    74 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    12 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::TokSq(
+                        TokSqTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in TokenPatternGroup1Transport",
+                    ))),
+                }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in TokenPatternGroup1Transport")
+                )?;
+                match kind_id {
+                    170 => {
+                        if let Ok(value) = RawStringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::RawStringLiteral(value));
+                        }
+                        if let Ok(value) = CharLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CharLiteral(value));
+                        }
+                        if let Ok(value) = BooleanLiteralEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::BooleanLiteral(value));
+                        }
+                        if let Ok(value) = IntegerLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IntegerLiteral(value));
+                        }
+                        if let Ok(value) = FloatLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FloatLiteral(value));
+                        }
+                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Identifier(value));
+                        }
+                        if let Ok(value) = MutableSpecifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MutableSpecifier(value));
+                        }
+                        if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Self_(value));
+                        }
+                        if let Ok(value) = SuperTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Super(value));
+                        }
+                        if let Ok(value) = CrateTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Crate(value));
+                        }
+                        if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::PrimitiveType(value));
+                        }
+                        if let Ok(value) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenTreePunctuation(value));
+                        }
+                        if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokSq(value));
+                        }
+                        if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StringLiteral(value));
+                        }
+                        Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in TokenPatternGroup1Transport"))
+                    },
+                    309 => {
+                        if let Ok(value) = RawStringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::RawStringLiteral(value));
+                        }
+                        if let Ok(value) = CharLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::CharLiteral(value));
+                        }
+                        if let Ok(value) = BooleanLiteralEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::BooleanLiteral(value));
+                        }
+                        if let Ok(value) = IntegerLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::IntegerLiteral(value));
+                        }
+                        if let Ok(value) = FloatLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::FloatLiteral(value));
+                        }
+                        if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Identifier(value));
+                        }
+                        if let Ok(value) = MutableSpecifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::MutableSpecifier(value));
+                        }
+                        if let Ok(value) = Self_Transport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Self_(value));
+                        }
+                        if let Ok(value) = SuperTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Super(value));
+                        }
+                        if let Ok(value) = CrateTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Crate(value));
+                        }
+                        if let Ok(value) = PrimitiveTypeEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::PrimitiveType(value));
+                        }
+                        if let Ok(value) = TokenTreePunctuationEnum::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokenTreePunctuation(value));
+                        }
+                        if let Ok(value) = TokSqTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::TokSq(value));
+                        }
+                        if let Ok(value) = StringLiteralTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::StringLiteral(value));
+                        }
+                        Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in TokenPatternGroup1Transport"))
+                    },
+                    312 => Ok(Self::StringLiteral(
+                        StringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    313 => Ok(Self::RawStringLiteral(
+                        RawStringLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    125 => Ok(Self::CharLiteral(
+                        CharLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    314 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    127 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    128 => Ok(Self::BooleanLiteral(
+                        BooleanLiteralEnum::from_napi_value(env, napi_val)?
+                    )),
+                    122 => Ok(Self::IntegerLiteral(
+                        IntegerLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    151 => Ok(Self::FloatLiteral(
+                        FloatLiteralTransport::from_napi_value(env, napi_val)?
+                    )),
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    90 => Ok(Self::MutableSpecifier(
+                        MutableSpecifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    135 => Ok(Self::Self_(
+                        Self_Transport::from_napi_value(env, napi_val)?
+                    )),
+                    136 => Ok(Self::Super(
+                        SuperTransport::from_napi_value(env, napi_val)?
+                    )),
+                    137 => Ok(Self::Crate(
+                        CrateTransport::from_napi_value(env, napi_val)?
+                    )),
+                    28 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    29 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    30 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    31 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    32 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    33 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    34 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    35 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    36 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    37 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    38 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    39 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    40 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    41 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    42 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    43 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    44 => Ok(Self::PrimitiveType(
+                        PrimitiveTypeEnum::from_napi_value(env, napi_val)?
+                    )),
+                    338 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    10 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    91 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    11 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    102 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    103 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    95 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    77 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    88 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    94 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    92 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    93 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    100 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    101 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    104 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    105 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    106 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    107 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    108 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    111 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    109 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    110 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    112 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    113 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    81 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    96 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    97 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    84 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    82 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    99 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    98 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    121 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    140 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    118 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    115 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    86 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    141 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    83 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    2 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    5 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    85 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    139 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    4 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    74 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    12 => Ok(Self::TokenTreePunctuation(
+                        TokenTreePunctuationEnum::from_napi_value(env, napi_val)?
+                    )),
+                    45 => Ok(Self::TokSq(
+                        TokSqTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in TokenPatternGroup1Transport",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("TokenPatternGroup1Transport: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TokenPatternGroup1Transport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("TokenPatternGroup1Transport is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TokenPatternGroup1Transport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        TokenPatternGroup1Transport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TokenPatternGroup1Transport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        TokenPatternGroup1Transport::to_napi_value(env, *val)
+    }
+}
+
+fn token_pattern_group1_transport_to_any(t: TokenPatternGroup1Transport) -> AnyTransport {
+    match t {
+        TokenPatternGroup1Transport::StringLiteral(inner) => AnyTransport::StringLiteral(inner),
+        TokenPatternGroup1Transport::RawStringLiteral(inner) => AnyTransport::RawStringLiteral(inner),
+        TokenPatternGroup1Transport::CharLiteral(inner) => AnyTransport::CharLiteral(inner),
+        TokenPatternGroup1Transport::BooleanLiteral(inner) => AnyTransport::BooleanLiteral(inner),
+        TokenPatternGroup1Transport::IntegerLiteral(inner) => AnyTransport::IntegerLiteral(inner),
+        TokenPatternGroup1Transport::FloatLiteral(inner) => AnyTransport::FloatLiteral(inner),
+        TokenPatternGroup1Transport::Identifier(inner) => AnyTransport::Identifier(inner),
+        TokenPatternGroup1Transport::MutableSpecifier(inner) => AnyTransport::MutableSpecifier(inner),
+        TokenPatternGroup1Transport::Self_(inner) => AnyTransport::Self_(inner),
+        TokenPatternGroup1Transport::Super(inner) => AnyTransport::Super(inner),
+        TokenPatternGroup1Transport::Crate(inner) => AnyTransport::Crate(inner),
+        TokenPatternGroup1Transport::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
+        TokenPatternGroup1Transport::TokenTreePunctuation(inner) => AnyTransport::TokenTreePunctuation(inner),
+        TokenPatternGroup1Transport::TokSq(inner) => AnyTransport::TokSq(inner),
+        TokenPatternGroup1Transport::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for TokenPatternGroup1Transport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_token_pattern_group1(self, dest)
     }
 }
 
@@ -50423,6 +53264,8 @@ fn render_token_pattern(t: &TokenPatternTransport, dest: &mut dyn ::std::fmt::Wr
         TokenPatternTransport::Self_(inner) => render_self(inner, dest),
         TokenPatternTransport::Super(inner) => render_super(inner, dest),
         TokenPatternTransport::Crate(inner) => render_crate(inner, dest),
+        TokenPatternTransport::PrimitiveType(inner) => render_primitive_type(inner, dest),
+        TokenPatternTransport::TokenTreePunctuation(inner) => render_token_tree_punctuation(inner, dest),
         TokenPatternTransport::TokSq(inner) => render_tok_sq(inner, dest),
         TokenPatternTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
@@ -50445,6 +53288,8 @@ fn render_tokens(t: &TokensTransport, dest: &mut dyn ::std::fmt::Write) -> Resul
         TokensTransport::Self_(inner) => render_self(inner, dest),
         TokensTransport::Super(inner) => render_super(inner, dest),
         TokensTransport::Crate(inner) => render_crate(inner, dest),
+        TokensTransport::PrimitiveType(inner) => render_primitive_type(inner, dest),
+        TokensTransport::TokenTreePunctuation(inner) => render_token_tree_punctuation(inner, dest),
         TokensTransport::TokSq(inner) => render_tok_sq(inner, dest),
         TokensTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
@@ -50479,6 +53324,7 @@ fn render_use_clause(t: &UseClauseTransport, dest: &mut dyn ::std::fmt::Write) -
         UseClauseTransport::Super(inner) => render_super(inner, dest),
         UseClauseTransport::Crate(inner) => render_crate(inner, dest),
         UseClauseTransport::ScopedIdentifier(inner) => render_scoped_identifier(inner, dest),
+        UseClauseTransport::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
         UseClauseTransport::UseAsClause(inner) => render_use_as_clause(inner, dest),
         UseClauseTransport::UseList(inner) => render_use_list(inner, dest),
         UseClauseTransport::ScopedUseList(inner) => render_scoped_use_list(inner, dest),
@@ -50582,6 +53428,7 @@ fn render_expression(t: &ExpressionTransport, dest: &mut dyn ::std::fmt::Write) 
         ExpressionTransport::IntegerLiteral(inner) => render_integer_literal(inner, dest),
         ExpressionTransport::FloatLiteral(inner) => render_float_literal(inner, dest),
         ExpressionTransport::Identifier(inner) => render_identifier(inner, dest),
+        ExpressionTransport::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
         ExpressionTransport::Self_(inner) => render_self(inner, dest),
         ExpressionTransport::ScopedIdentifier(inner) => render_scoped_identifier(inner, dest),
         ExpressionTransport::GenericFunction(inner) => render_generic_function(inner, dest),
@@ -50598,6 +53445,7 @@ fn render_expression(t: &ExpressionTransport, dest: &mut dyn ::std::fmt::Write) 
         ExpressionTransport::ClosureExpression(inner) => render_closure_expression(inner, dest),
         ExpressionTransport::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
         ExpressionTransport::StructExpression(inner) => render_struct_expression(inner, dest),
+        ExpressionTransport::ExpressionEndingWithBlock(inner) => render_expression_ending_with_block(inner, dest),
         ExpressionTransport::UnsafeBlock(inner) => render_unsafe_block(inner, dest),
         ExpressionTransport::AsyncBlock(inner) => render_async_block(inner, dest),
         ExpressionTransport::GenBlock(inner) => render_gen_block(inner, dest),
@@ -50633,18 +53481,7 @@ fn render_expression_ending_with_block(t: &ExpressionEndingWithBlockTransport, d
 fn render_delim_tokens(t: &DelimTokensTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
         DelimTokensTransport::NonDelimToken(inner) => render_non_delim_token(inner, dest),
-        DelimTokensTransport::StringLiteral(inner) => render_string_literal(inner, dest),
-        DelimTokensTransport::RawStringLiteral(inner) => render_raw_string_literal(inner, dest),
-        DelimTokensTransport::CharLiteral(inner) => render_char_literal(inner, dest),
-        DelimTokensTransport::BooleanLiteral(inner) => render_boolean_literal(inner, dest),
-        DelimTokensTransport::IntegerLiteral(inner) => render_integer_literal(inner, dest),
-        DelimTokensTransport::FloatLiteral(inner) => render_float_literal(inner, dest),
-        DelimTokensTransport::Identifier(inner) => render_identifier(inner, dest),
-        DelimTokensTransport::MutableSpecifier(inner) => render_mutable_specifier(inner, dest),
-        DelimTokensTransport::Self_(inner) => render_self(inner, dest),
-        DelimTokensTransport::Super(inner) => render_super(inner, dest),
-        DelimTokensTransport::Crate(inner) => render_crate(inner, dest),
-        DelimTokensTransport::TokSq(inner) => render_tok_sq(inner, dest),
+        DelimTokensTransport::TokenPatternGroup1(inner) => render_token_pattern_group1(inner, dest),
         DelimTokensTransport::TokDollar(inner) => render_tok_dollar(inner, dest),
         DelimTokensTransport::DelimTokenTree(inner) => render_delim_token_tree(inner, dest),
         DelimTokensTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
@@ -50665,6 +53502,8 @@ fn render_non_delim_token(t: &NonDelimTokenTransport, dest: &mut dyn ::std::fmt:
         NonDelimTokenTransport::Self_(inner) => render_self(inner, dest),
         NonDelimTokenTransport::Super(inner) => render_super(inner, dest),
         NonDelimTokenTransport::Crate(inner) => render_crate(inner, dest),
+        NonDelimTokenTransport::PrimitiveType(inner) => render_primitive_type(inner, dest),
+        NonDelimTokenTransport::TokenTreePunctuation(inner) => render_token_tree_punctuation(inner, dest),
         NonDelimTokenTransport::TokSq(inner) => render_tok_sq(inner, dest),
         NonDelimTokenTransport::TokDollar(inner) => render_tok_dollar(inner, dest),
         NonDelimTokenTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
@@ -50674,6 +53513,7 @@ fn render_non_delim_token(t: &NonDelimTokenTransport, dest: &mut dyn ::std::fmt:
 fn render_condition(t: &ConditionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
         ConditionTransport::Expression(inner) => render_expression(inner, dest),
+        ConditionTransport::ExpressionExceptRange(inner) => render_expression_except_range(inner, dest),
         ConditionTransport::UnaryExpression(inner) => render_unary_expression(inner, dest),
         ConditionTransport::ReferenceExpression(inner) => render_reference_expression(inner, dest),
         ConditionTransport::TryExpression(inner) => render_try_expression(inner, dest),
@@ -50691,6 +53531,7 @@ fn render_condition(t: &ConditionTransport, dest: &mut dyn ::std::fmt::Write) ->
         ConditionTransport::IntegerLiteral(inner) => render_integer_literal(inner, dest),
         ConditionTransport::FloatLiteral(inner) => render_float_literal(inner, dest),
         ConditionTransport::Identifier(inner) => render_identifier(inner, dest),
+        ConditionTransport::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
         ConditionTransport::Self_(inner) => render_self(inner, dest),
         ConditionTransport::ScopedIdentifier(inner) => render_scoped_identifier(inner, dest),
         ConditionTransport::GenericFunction(inner) => render_generic_function(inner, dest),
@@ -50707,6 +53548,7 @@ fn render_condition(t: &ConditionTransport, dest: &mut dyn ::std::fmt::Write) ->
         ConditionTransport::ClosureExpression(inner) => render_closure_expression(inner, dest),
         ConditionTransport::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
         ConditionTransport::StructExpression(inner) => render_struct_expression(inner, dest),
+        ConditionTransport::ExpressionEndingWithBlock(inner) => render_expression_ending_with_block(inner, dest),
         ConditionTransport::UnsafeBlock(inner) => render_unsafe_block(inner, dest),
         ConditionTransport::AsyncBlock(inner) => render_async_block(inner, dest),
         ConditionTransport::GenBlock(inner) => render_gen_block(inner, dest),
@@ -50780,6 +53622,26 @@ fn render_path(t: &PathTransport, dest: &mut dyn ::std::fmt::Write) -> Result<()
         PathTransport::ScopedIdentifier(inner) => render_scoped_identifier(inner, dest),
         PathTransport::ReservedIdentifier(inner) => render_reserved_identifier(inner, dest),
         PathTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+    }
+}
+
+fn render_token_pattern_group1(t: &TokenPatternGroup1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    match t {
+        TokenPatternGroup1Transport::StringLiteral(inner) => render_string_literal(inner, dest),
+        TokenPatternGroup1Transport::RawStringLiteral(inner) => render_raw_string_literal(inner, dest),
+        TokenPatternGroup1Transport::CharLiteral(inner) => render_char_literal(inner, dest),
+        TokenPatternGroup1Transport::BooleanLiteral(inner) => render_boolean_literal(inner, dest),
+        TokenPatternGroup1Transport::IntegerLiteral(inner) => render_integer_literal(inner, dest),
+        TokenPatternGroup1Transport::FloatLiteral(inner) => render_float_literal(inner, dest),
+        TokenPatternGroup1Transport::Identifier(inner) => render_identifier(inner, dest),
+        TokenPatternGroup1Transport::MutableSpecifier(inner) => render_mutable_specifier(inner, dest),
+        TokenPatternGroup1Transport::Self_(inner) => render_self(inner, dest),
+        TokenPatternGroup1Transport::Super(inner) => render_super(inner, dest),
+        TokenPatternGroup1Transport::Crate(inner) => render_crate(inner, dest),
+        TokenPatternGroup1Transport::PrimitiveType(inner) => render_primitive_type(inner, dest),
+        TokenPatternGroup1Transport::TokenTreePunctuation(inner) => render_token_tree_punctuation(inner, dest),
+        TokenPatternGroup1Transport::TokSq(inner) => render_tok_sq(inner, dest),
+        TokenPatternGroup1Transport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
 

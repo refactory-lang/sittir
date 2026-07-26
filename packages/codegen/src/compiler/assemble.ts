@@ -466,6 +466,42 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			}
 		}
 
+		// Nested-supertype alias materialization (spec 026): a nested
+		// SUPERTYPE rule (e.g. rust's `_non_special_token`, itself a
+		// SUPERTYPE referenced as a subtype of `_tokens`/`_non_delim_token`/
+		// `_token_pattern`) can be aliased by tree-sitter's real compile into
+		// a genuinely distinct, named CST node at that occurrence
+		// (`SupertypeRule.subtypeParseNames`, confirmed against grammar.json
+		// — see `resolveHiddenSubtypes`'s doc comment). That aliased name has
+		// no entry of its own in `normalized.linkRules` (it's a parse-time
+		// label, not a rule sittir's own grammar declares), so the main loop
+		// above never assembles it. Give it one here: reuse the nested rule's
+		// OWN already-resolved subtypes (identical union either way — the
+		// alias and the hidden rule are the same underlying content, just a
+		// different name at this occurrence) under a fresh `AssembledSupertype`
+		// keyed by the alias, so it gets a real kindId/typeName/dispatch entry
+		// like any other node. Multiple parents aliasing the SAME nested rule
+		// to the SAME name (confirmed: `_tokens`/`_non_delim_token`/
+		// `_token_pattern` all alias `_non_special_token` to
+		// "token_pattern_group1") register it exactly once.
+		for (const rule of Object.values(normalized.linkRules)) {
+			if (rule.type !== SUPERTYPE || !rule.subtypeParseNames) continue;
+			for (const [subName, aliasName] of Object.entries(rule.subtypeParseNames)) {
+				if (nodes.has(aliasName)) continue;
+				const subRule = normalized.linkRules[subName];
+				// Only nested SUPERTYPE arms materialize their own node —
+				// other parse-alias occurrences (e.g. an ENUM-shaped hidden
+				// rule like rust's `_primitive_type`, aliased to
+				// `primitive_type` at this same site) aren't a case of
+				// tree-sitter inserting a distinct intermediate node; they
+				// stay resolved via `resolveHiddenSubtypes`'s existing
+				// flatten-through path.
+				if (!subRule || subRule.type !== SUPERTYPE) continue;
+				const subtypes = resolveSupertypeSubtypes(subRule, ctx);
+				nodes.set(aliasName, new AssembledSupertype(aliasName, subRule, subtypes));
+			}
+		}
+
 		collectAnonymousNodes(normalized.linkRules, nodes, wordMatcherRegex, kindEntries);
 		resolveCollidingNames(nodes);
 		resolveIrKeys(nodes);
@@ -865,27 +901,46 @@ function resolveHiddenSubtypes(
 		}
 		// Nested-supertype arms (e.g. rust's `_non_delim_token` stamping
 		// `_non_special_token`, itself a further SUPERTYPE with its own
-		// subtypes) fall through unchanged to the existing
-		// SUPERTYPE/topLevelAliasBodies branch below, which already pushes the
-		// bare name AND flattens its members — untouched, per binding decision.
-		//
-		// KNOWN GAP (not yet fixed): now that the enrich naming divergence is
-		// fixed (buildRuleCatalog no longer alphabetizes — see evaluate.ts),
-		// `subtypeParseNames` correctly records the REAL compiled alias for a
-		// nested-supertype member (e.g. rust's `_non_special_token` — referenced
-		// from `_tokens`/`_non_delim_token`/`_token_pattern` — aliases to
-		// "token_pattern_group1", verified against grammar.json). But
-		// substituting that alias here isn't sufficient on its own:
-		// `token_pattern_group1` has no separately assembled node anywhere in
-		// sittir's own pipeline — enrich's clause-hoist promotion computes the
-		// NAME but nothing synthesizes an actual node/kindId/wrap-dispatch
-		// entry for it, unlike top-level promoted arms. Confirmed by trying the
-		// substitution here: `emitSupertypeUnionDeclarations` (types.ts) throws
-		// "references subtype 'token_pattern_group1' which is not in
-		// NodeMap." Fixing this needs a real synthesis step (mint a node whose
-		// subtypes are `_non_special_token`'s own members) before this function
-		// can safely reference the alias name — not just a substitution here.
-		if (rule.type === SUPERTYPE || topLevelAliasBodies.has(name)) out.push(name);
+		// subtypes) push the bare name, then walk THIS rule's OWN direct
+		// `subtypes` list — NOT `resolveHiddenRuleContent`'s output, which
+		// flattens straight through nested supertypes to their eventual leaf
+		// kinds, erasing exactly the intermediate names `subtypeParseNames`
+		// records. Each SUPERTYPE rule stamps its own map, keyed by its own
+		// direct subtypes. A member with an entry there is substituted with
+		// its alias ONLY when the member is ITSELF a nested SUPERTYPE — spec
+		// 026's alias-materialization pass (assemble()'s main loop, right
+		// after the kind-classification switch) registers a real
+		// `AssembledSupertype` node for exactly that case, so the alias
+		// resolves to a real node (confirmed via grammar.json — see
+		// `loadGrammarJsonAliasMap`). A non-SUPERTYPE member with a
+		// parse-name entry (e.g. `_primitive_type`, an all-STRING ENUM
+		// aliased to `primitive_type` at this occurrence) has no such
+		// separately registered node — only the hidden ENUM kind itself
+		// exists — so it still recurses via `visit` as before.
+		if (rule.type === SUPERTYPE) {
+			out.push(name);
+			for (const sub of rule.subtypes) {
+				const parseName = rule.subtypeParseNames?.[sub];
+				const subRule = sub.startsWith('_') ? rules[sub] : undefined;
+				if (parseName !== undefined && subRule?.type === SUPERTYPE) {
+					if (!seen.has(parseName)) {
+						seen.add(parseName);
+						out.push(parseName);
+					}
+					continue;
+				}
+				if (sub.startsWith('_')) {
+					visit(sub);
+					continue;
+				}
+				if (!seen.has(sub)) {
+					seen.add(sub);
+					out.push(sub);
+				}
+			}
+			return;
+		}
+		if (topLevelAliasBodies.has(name)) out.push(name);
 		const resolved = resolveHiddenRuleContent(rule, new Set([name]), ctx);
 		if (resolved.length === 0) {
 			if (!out.includes(name)) out.push(name);

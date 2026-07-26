@@ -186,6 +186,22 @@
     "code": "typename-collision",
     "severity": "info",
     "grammar": "typescript",
+    "ownerKind": "_property_identifier",
+    "message": "[assemble] typeName collision: kind '_property_identifier' renamed 'PropertyIdentifier' → '_PropertyIdentifier' (visible sibling(s): 'property_identifier')",
+    "canProceed": true,
+    "details": {
+      "typeName": "PropertyIdentifier",
+      "newType": "_PropertyIdentifier",
+      "visibleKinds": [
+        "property_identifier"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "typescript",
     "ownerKind": "_module",
     "message": "[assemble] typeName collision: kind '_module' renamed 'Module' → '_Module' (visible sibling(s): 'module')",
     "canProceed": true,
