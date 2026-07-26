@@ -869,29 +869,22 @@ function resolveHiddenSubtypes(
 		// SUPERTYPE/topLevelAliasBodies branch below, which already pushes the
 		// bare name AND flattens its members — untouched, per binding decision.
 		//
-		// KNOWN DIVERGENCE (not yet fixed): `subtypeParseNames`' guessed name
-		// for this position can be WRONG relative to what tree-sitter
-		// actually compiled — enrich's clause-hoist promotion
-		// (`promoteExistingHiddenRuleName`, dsl/enrich.ts) runs twice per
-		// grammar (once building the wire config tree-sitter's native
-		// `grammar()` compiles, once inside sittir's own evaluate()
-		// pipeline), each with independent, order-dependent dedup state
-		// ("whichever parent asks first wins the name"). Confirmed via
-		// rust's `_non_special_token` (referenced from `_tokens` /
-		// `_non_delim_token` / `_token_pattern`): the wire-config run
-		// settles on "token_pattern_group1" (verified in the compiled
-		// grammar.json — see `loadGrammarJsonAliasMap`, inline-sets.ts,
-		// and `AssembleCtx.grammarJsonAliasMap`'s doc comment), while
-		// sittir's own run guesses "non_delim_token_group1" here — a name
-		// with NO corresponding assembled node at all. Substituting the
-		// real name alone isn't sufficient: types.ts's
-		// `emitSupertypeUnionDeclarations` (and presumably wrap's kindId
-		// dispatch) need a REAL node registered under that real name too,
-		// which sittir's own pipeline never mints. Fixing this needs the
-		// real name to also be registered as an alias across
-		// `nodeMap.nodes` / the kindId catalog / wrap's dispatch table —
-		// more than a name substitution here. `grammarJsonAliasMap` is
-		// already threaded onto `AssembleCtx` for that follow-up.
+		// KNOWN GAP (not yet fixed): now that the enrich naming divergence is
+		// fixed (buildRuleCatalog no longer alphabetizes — see evaluate.ts),
+		// `subtypeParseNames` correctly records the REAL compiled alias for a
+		// nested-supertype member (e.g. rust's `_non_special_token` — referenced
+		// from `_tokens`/`_non_delim_token`/`_token_pattern` — aliases to
+		// "token_pattern_group1", verified against grammar.json). But
+		// substituting that alias here isn't sufficient on its own:
+		// `token_pattern_group1` has no separately assembled node anywhere in
+		// sittir's own pipeline — enrich's clause-hoist promotion computes the
+		// NAME but nothing synthesizes an actual node/kindId/wrap-dispatch
+		// entry for it, unlike top-level promoted arms. Confirmed by trying the
+		// substitution here: `emitSupertypeUnionDeclarations` (types.ts) throws
+		// "references subtype 'token_pattern_group1' which is not in
+		// NodeMap." Fixing this needs a real synthesis step (mint a node whose
+		// subtypes are `_non_special_token`'s own members) before this function
+		// can safely reference the alias name — not just a substitution here.
 		if (rule.type === SUPERTYPE || topLevelAliasBodies.has(name)) out.push(name);
 		const resolved = resolveHiddenRuleContent(rule, new Set([name]), ctx);
 		if (resolved.length === 0) {

@@ -5,17 +5,8 @@
     "code": "seq-with-nested-seq",
     "grammar": "rust",
     "backend": "native",
-    "location": "_macro_definition_brace",
-    "message": "Kind '_macro_definition_brace' still contains a nested seq that should have been flattened, grouped, or normalized before derive."
-  },
-  {
-    "source": "grammar",
-    "severity": "error",
-    "code": "seq-with-nested-seq",
-    "grammar": "rust",
-    "backend": "native",
-    "location": "_macro_definition_bracket",
-    "message": "Kind '_macro_definition_bracket' still contains a nested seq that should have been flattened, grouped, or normalized before derive."
+    "location": "tuple_expression",
+    "message": "Kind 'tuple_expression' still contains a nested seq that should have been flattened, grouped, or normalized before derive."
   },
   {
     "source": "grammar",
@@ -32,17 +23,17 @@
     "code": "seq-with-nested-seq",
     "grammar": "rust",
     "backend": "native",
-    "location": "tuple_expression",
-    "message": "Kind 'tuple_expression' still contains a nested seq that should have been flattened, grouped, or normalized before derive."
+    "location": "_macro_definition_bracket",
+    "message": "Kind '_macro_definition_bracket' still contains a nested seq that should have been flattened, grouped, or normalized before derive."
   },
   {
     "source": "grammar",
-    "severity": "info",
-    "code": "typename-collision",
+    "severity": "error",
+    "code": "seq-with-nested-seq",
     "grammar": "rust",
     "backend": "native",
-    "location": "_mutable_specifier",
-    "message": "[assemble] typeName collision: kind '_mutable_specifier' renamed 'MutableSpecifier' → '_MutableSpecifier' (visible sibling(s): 'mutable_specifier')"
+    "location": "_macro_definition_brace",
+    "message": "Kind '_macro_definition_brace' still contains a nested seq that should have been flattened, grouped, or normalized before derive."
   },
   {
     "source": "grammar",
@@ -52,6 +43,15 @@
     "backend": "native",
     "location": "_type",
     "message": "[assemble] typeName collision: kind '_type' renamed 'Type' → '_Type' (visible sibling(s): 'type')"
+  },
+  {
+    "source": "grammar",
+    "severity": "info",
+    "code": "typename-collision",
+    "grammar": "rust",
+    "backend": "native",
+    "location": "_mutable_specifier",
+    "message": "[assemble] typeName collision: kind '_mutable_specifier' renamed 'MutableSpecifier' → '_MutableSpecifier' (visible sibling(s): 'mutable_specifier')"
   },
   {
     "source": "grammar",
@@ -92,6 +92,24 @@
   {
     "source": "grammar",
     "severity": "warning",
+    "code": "union-slot-mixed-row",
+    "grammar": "typescript",
+    "backend": "native",
+    "location": "binary_expression",
+    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression \"&&\" expression), seq[3](expression \"||\" expression), seq[3](expression \">>\" expression), seq[3](expression \">>>\" expression), seq[3](expression \"<<\" expression), seq[3](expression \"&\" expression), seq[3](expression \"^\" expression), seq[3](expression \"|\" expression), seq[3](expression \"+\" expression), seq[3](expression \"-\" expression), seq[3](expression \"*\" expression), seq[3](expression \"/\" expression), seq[3](expression \"%\" expression), seq[3](expression \"**\" expression), seq[3](expression \"<\" expression), seq[3](expression \"<=\" expression), seq[3](expression \"==\" expression), seq[3](expression \"===\" expression), seq[3](expression \"!=\" expression), seq[3](expression \"!==\" expression), seq[3](expression \">=\" expression), seq[3](expression \">\" expression), seq[3](expression \"??\" expression), seq[3](expression \"instanceof\" expression)] alongside union arm(s) [binary_expression_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "union-slot-unaddressable",
+    "grammar": "typescript",
+    "backend": "native",
+    "location": "public_field_definition",
+    "message": "[collect-slots] kind 'public_field_definition': fieldless structural choice qualifies for union routing but carries no rule id (rebuilt without id preservation) — union slot would be unaddressable at emit; keeping distribution. Fix the rebuild site to preserve ids."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
     "code": "union-slot-routed",
     "grammar": "typescript",
     "backend": "native",
@@ -127,60 +145,6 @@
   },
   {
     "source": "grammar",
-    "severity": "warning",
-    "code": "union-slot-mixed-row",
-    "grammar": "typescript",
-    "backend": "native",
-    "location": "binary_expression",
-    "message": "[collect-slots] kind 'binary_expression': choice rule:binary_expression:root is a singular mixed row — structured named arm(s) [seq[3](expression \"&&\" expression), seq[3](expression \"||\" expression), seq[3](expression \">>\" expression), seq[3](expression \">>>\" expression), seq[3](expression \"<<\" expression), seq[3](expression \"&\" expression), seq[3](expression \"^\" expression), seq[3](expression \"|\" expression), seq[3](expression \"+\" expression), seq[3](expression \"-\" expression), seq[3](expression \"*\" expression), seq[3](expression \"/\" expression), seq[3](expression \"%\" expression), seq[3](expression \"**\" expression), seq[3](expression \"<\" expression), seq[3](expression \"<=\" expression), seq[3](expression \"==\" expression), seq[3](expression \"===\" expression), seq[3](expression \"!=\" expression), seq[3](expression \"!==\" expression), seq[3](expression \">=\" expression), seq[3](expression \">\" expression), seq[3](expression \"??\" expression), seq[3](expression \"instanceof\" expression)] alongside union arm(s) [binary_expression_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot."
-  },
-  {
-    "source": "grammar",
-    "severity": "warning",
-    "code": "union-slot-unaddressable",
-    "grammar": "typescript",
-    "backend": "native",
-    "location": "public_field_definition",
-    "message": "[collect-slots] kind 'public_field_definition': fieldless structural choice qualifies for union routing but carries no rule id (rebuilt without id preservation) — union slot would be unaddressable at emit; keeping distribution. Fix the rebuild site to preserve ids."
-  },
-  {
-    "source": "grammar",
-    "severity": "info",
-    "code": "typename-collision",
-    "grammar": "typescript",
-    "backend": "native",
-    "location": "_accessibility_modifier",
-    "message": "[assemble] typeName collision: kind '_accessibility_modifier' renamed 'AccessibilityModifier' → '_AccessibilityModifier' (visible sibling(s): 'accessibility_modifier')"
-  },
-  {
-    "source": "grammar",
-    "severity": "info",
-    "code": "typename-collision",
-    "grammar": "typescript",
-    "backend": "native",
-    "location": "_call_signature",
-    "message": "[assemble] typeName collision: kind '_call_signature' renamed 'CallSignature' → '_CallSignature' (visible sibling(s): 'call_signature')"
-  },
-  {
-    "source": "grammar",
-    "severity": "info",
-    "code": "typename-collision",
-    "grammar": "typescript",
-    "backend": "native",
-    "location": "_identifier",
-    "message": "[assemble] typeName collision: kind '_identifier' renamed 'Identifier' → '_Identifier' (visible sibling(s): 'identifier')"
-  },
-  {
-    "source": "grammar",
-    "severity": "info",
-    "code": "typename-collision",
-    "grammar": "typescript",
-    "backend": "native",
-    "location": "_jsx_attribute",
-    "message": "[assemble] typeName collision: kind '_jsx_attribute' renamed 'JsxAttribute' → '_JsxAttribute' (visible sibling(s): 'jsx_attribute')"
-  },
-  {
-    "source": "grammar",
     "severity": "info",
     "code": "typename-collision",
     "grammar": "typescript",
@@ -203,8 +167,17 @@
     "code": "typename-collision",
     "grammar": "typescript",
     "backend": "native",
-    "location": "_module",
-    "message": "[assemble] typeName collision: kind '_module' renamed 'Module' → '_Module' (visible sibling(s): 'module')"
+    "location": "_jsx_attribute",
+    "message": "[assemble] typeName collision: kind '_jsx_attribute' renamed 'JsxAttribute' → '_JsxAttribute' (visible sibling(s): 'jsx_attribute')"
+  },
+  {
+    "source": "grammar",
+    "severity": "info",
+    "code": "typename-collision",
+    "grammar": "typescript",
+    "backend": "native",
+    "location": "_call_signature",
+    "message": "[assemble] typeName collision: kind '_call_signature' renamed 'CallSignature' → '_CallSignature' (visible sibling(s): 'call_signature')"
   },
   {
     "source": "grammar",
@@ -214,6 +187,33 @@
     "backend": "native",
     "location": "_number",
     "message": "[assemble] typeName collision: kind '_number' renamed 'Number' → '_Number' (visible sibling(s): 'number')"
+  },
+  {
+    "source": "grammar",
+    "severity": "info",
+    "code": "typename-collision",
+    "grammar": "typescript",
+    "backend": "native",
+    "location": "_identifier",
+    "message": "[assemble] typeName collision: kind '_identifier' renamed 'Identifier' → '_Identifier' (visible sibling(s): 'identifier')"
+  },
+  {
+    "source": "grammar",
+    "severity": "info",
+    "code": "typename-collision",
+    "grammar": "typescript",
+    "backend": "native",
+    "location": "_module",
+    "message": "[assemble] typeName collision: kind '_module' renamed 'Module' → '_Module' (visible sibling(s): 'module')"
+  },
+  {
+    "source": "grammar",
+    "severity": "info",
+    "code": "typename-collision",
+    "grammar": "typescript",
+    "backend": "native",
+    "location": "_accessibility_modifier",
+    "message": "[assemble] typeName collision: kind '_accessibility_modifier' renamed 'AccessibilityModifier' → '_AccessibilityModifier' (visible sibling(s): 'accessibility_modifier')"
   },
   {
     "source": "grammar",
@@ -232,15 +232,6 @@
     "backend": "native",
     "location": "_type_identifier",
     "message": "Kind '_type_identifier' has a multi-slot seq with 2 slots in a repeat/optional slot position."
-  },
-  {
-    "source": "grammar",
-    "severity": "info",
-    "code": "parsekind-noninjective",
-    "grammar": "typescript",
-    "backend": "native",
-    "location": "_augmented_assignment_lhs.identifier",
-    "message": "Slot 'identifier' of kind '_augmented_assignment_lhs' collapses [_reserved_identifier, identifier] onto parse kind 'identifier'."
   },
   {
     "source": "grammar",
@@ -268,6 +259,15 @@
     "backend": "native",
     "location": "arrow_function.parameter",
     "message": "Slot 'parameter' of kind 'arrow_function' collapses [_reserved_identifier, identifier] onto parse kind 'identifier'."
+  },
+  {
+    "source": "grammar",
+    "severity": "info",
+    "code": "parsekind-noninjective",
+    "grammar": "typescript",
+    "backend": "native",
+    "location": "_augmented_assignment_lhs.identifier",
+    "message": "Slot 'identifier' of kind '_augmented_assignment_lhs' collapses [_reserved_identifier, identifier] onto parse kind 'identifier'."
   },
   {
     "source": "grammar",
@@ -308,24 +308,6 @@
   {
     "source": "grammar",
     "severity": "warning",
-    "code": "union-slot-nondegenerate-arm",
-    "grammar": "python",
-    "backend": "native",
-    "location": "_suite",
-    "message": "[collect-slots] kind '_suite': choice rule:_suite:root has unnamed-nonterminal arm(s) [simple_statements, newline] but cannot union-route — offending arm(s): structured seq[2](indent block). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening."
-  },
-  {
-    "source": "grammar",
-    "severity": "warning",
-    "code": "union-slot-nondegenerate-arm",
-    "grammar": "python",
-    "backend": "native",
-    "location": "except_clause",
-    "message": "[collect-slots] kind 'except_clause': choice rule:_suite:root has unnamed-nonterminal arm(s) [simple_statements, newline] but cannot union-route — offending arm(s): structured seq[2](indent block). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening."
-  },
-  {
-    "source": "grammar",
-    "severity": "warning",
     "code": "union-slot-mixed-row",
     "grammar": "python",
     "backend": "native",
@@ -340,6 +322,24 @@
     "backend": "native",
     "location": "future_import_statement",
     "message": "[collect-slots] kind 'future_import_statement': choice rule:future_import_statement:root has unnamed-nonterminal arm(s) [future_import_statement_group1] but cannot union-route — offending arm(s): structured seq[3](\"(\" _import_list \")\"). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "union-slot-nondegenerate-arm",
+    "grammar": "python",
+    "backend": "native",
+    "location": "except_clause",
+    "message": "[collect-slots] kind 'except_clause': choice rule:_suite:root has unnamed-nonterminal arm(s) [simple_statements, newline] but cannot union-route — offending arm(s): structured seq[2](indent block). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening."
+  },
+  {
+    "source": "grammar",
+    "severity": "warning",
+    "code": "union-slot-nondegenerate-arm",
+    "grammar": "python",
+    "backend": "native",
+    "location": "_suite",
+    "message": "[collect-slots] kind '_suite': choice rule:_suite:root has unnamed-nonterminal arm(s) [simple_statements, newline] but cannot union-route — offending arm(s): structured seq[2](indent block). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening."
   },
   {
     "source": "grammar",
@@ -374,24 +374,6 @@
     "code": "typename-collision",
     "grammar": "python",
     "backend": "native",
-    "location": "False",
-    "message": "[assemble] typeName collision between visible kinds: 'False' renamed 'False' → 'False2' (siblings: 'false')"
-  },
-  {
-    "source": "grammar",
-    "severity": "info",
-    "code": "typename-collision",
-    "grammar": "python",
-    "backend": "native",
-    "location": "None",
-    "message": "[assemble] typeName collision between visible kinds: 'None' renamed 'None' → 'None2' (siblings: 'none')"
-  },
-  {
-    "source": "grammar",
-    "severity": "info",
-    "code": "typename-collision",
-    "grammar": "python",
-    "backend": "native",
     "location": "_string_content",
     "message": "[assemble] typeName collision: kind '_string_content' renamed 'StringContent' → '_StringContent' (visible sibling(s): 'string_content')"
   },
@@ -403,6 +385,24 @@
     "backend": "native",
     "location": "True",
     "message": "[assemble] typeName collision between visible kinds: 'True' renamed 'True' → 'True2' (siblings: 'true')"
+  },
+  {
+    "source": "grammar",
+    "severity": "info",
+    "code": "typename-collision",
+    "grammar": "python",
+    "backend": "native",
+    "location": "False",
+    "message": "[assemble] typeName collision between visible kinds: 'False' renamed 'False' → 'False2' (siblings: 'false')"
+  },
+  {
+    "source": "grammar",
+    "severity": "info",
+    "code": "typename-collision",
+    "grammar": "python",
+    "backend": "native",
+    "location": "None",
+    "message": "[assemble] typeName collision between visible kinds: 'None' renamed 'None' → 'None2' (siblings: 'none')"
   },
   {
     "source": "grammar",
@@ -470,6 +470,16 @@
     "grammar": "rust",
     "backend": "native",
     "stage": "read-render-parse",
+    "location": "Attribute macros [source_file]",
+    "message": "render: unknown kind id 170 in DelimTokensTransport on DelimTokenTreeParenTransport._delim_tokens on DelimTo"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-error",
+    "grammar": "rust",
+    "backend": "native",
+    "stage": "read-render-parse",
     "location": "Derive macro helper attributes [line_comment]",
     "message": "render: Missing field `_content`"
   },
@@ -481,7 +491,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Attributes and Expressions [source_file]",
-    "message": "re-parse error [ERROR in tuple_expression at \"2\"]: \"fn foo(){ bar(x,#[cfg()]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8,2,7,8 2,7,\""
+    "message": "re-parse error [ERROR in tuple_expression at \"2\"]: \"fn foo(){ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8,2\""
   },
   {
     "source": "validator",
@@ -590,6 +600,16 @@
     "grammar": "rust",
     "backend": "native",
     "stage": "read-render-parse",
+    "location": "Macro invocation - arbitrary tokens [source_file]",
+    "message": "render: unknown kind id 170 in DelimTokensTransport on DelimTokenTreeParenTransport._delim_tokens on DelimTo"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-error",
+    "grammar": "rust",
+    "backend": "native",
+    "stage": "read-render-parse",
     "location": "Macro invocation with comments [line_comment]",
     "message": "render: Missing field `_content`"
   },
@@ -601,7 +621,7 @@
     "backend": "native",
     "stage": "read-render-parse",
     "location": "Macro definition [source_file]",
-    "message": "re-parse error [MISSING \";\" in macro_definition_brace]: \"macro_rules!say_hello{ ()=>(())()=>(()) }macro_rules!four{ ()=>{  }()=>{  } }mac\""
+    "message": "re-parse error [MISSING \";\" in macro_definition_brace]: \"macro_rules!say_hello{ ()=>(println!(\"Hello!\");)()=>(println!(\"Hello!\");) }macro\""
   },
   {
     "source": "validator",
@@ -680,68 +700,8 @@
     "grammar": "rust",
     "backend": "native",
     "stage": "read-render-parse-ast-mismatch",
-    "location": "Attributes (source_file)",
-    "message": "source_file[2].attribute_item[2].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\","
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Attributes (token_tree)",
-    "message": "token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Attributes (inner_attribute_item)",
-    "message": "inner_attribute_item[3].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_paren: childCount 5 ≠ 2 [\"(\",token_pattern_group1,token_pattern_group1,t"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
     "location": "Inner attributes (source_file)",
-    "message": "source_file[0].mod_item[2].declaration_list[1].inner_attribute_item[3].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_paren: childCount 5 ≠ 2 ["
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Inner attributes (mod_item)",
-    "message": "mod_item[2].declaration_list[1].inner_attribute_item[3].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_paren: childCount 5 ≠ 2 [\"(\",token_patte"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Inner attributes (inner_attribute_item)",
-    "message": "inner_attribute_item[3].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_paren: childCount 5 ≠ 2 [\"(\",token_pattern_group1,token_pattern_group1,t"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Inner attributes (token_tree)",
-    "message": "token_tree[0].delim_token_tree_paren: childCount 5 ≠ 2 [\"(\",token_pattern_group1,token_pattern_group1,token_pattern_group1,\")\"] vs [\"(\",\")\"]"
+    "message": "source_file[1].expression_statement[0].match_expression[2].match_block[1].match_block_arms[0].last_match_arm: childCount 5 ≠ 4 [inner_attribute_item,match_patte"
   },
   {
     "source": "validator",
@@ -752,116 +712,6 @@
     "stage": "read-render-parse-ast-mismatch",
     "location": "Inner attributes (match_expression)",
     "message": "match_expression[2].match_block[1].match_block_arms[0].last_match_arm: childCount 5 ≠ 4 [inner_attribute_item,match_pattern,\"=>\",call_expression,\",\"] vs [inner_"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Key-Value Attribute Expressions (source_file)",
-    "message": "source_file[0].attribute_item[2].attribute[1].attribute_group1[1].macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Key-Value Attribute Expressions (macro_invocation)",
-    "message": "macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Key-Value Attribute Expressions (token_tree)",
-    "message": "token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Attribute macros (source_file)",
-    "message": "source_file[0].expression_statement[0].expression_statement_with_semi[0].call_expression[1].arguments[1].arguments_group1[0].attributed_argument[0].attribute_it"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Attribute macros (call_expression)",
-    "message": "call_expression[1].arguments[1].arguments_group1[0].attributed_argument[0].attribute_item[2].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_par"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Attribute macros (arguments)",
-    "message": "arguments[1].arguments_group1[0].attributed_argument[0].attribute_item[2].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_paren: childCount 6 ≠ "
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Attribute macros (attribute_item)",
-    "message": "attribute_item[2].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_paren: childCount 6 ≠ 2 [\"(\",token_pattern_group1,token_pattern_group1,token_p"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Derive macro helper attributes (source_file)",
-    "message": "source_file[1].attribute_item[2].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_paren: childCount 5 ≠ 2 [\"(\",token_pattern_group1,token_pattern"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Array expressions (source_file)",
-    "message": "source_file[4].expression_statement[0].expression_statement_with_semi[0].array_expression[0].array_expression_list[1].attribute_item[2].attribute[1].attribute_g"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Array expressions (attribute_item)",
-    "message": "attribute_item[2].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Array expressions (token_tree)",
-    "message": "token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\",\")\"]"
   },
   {
     "source": "validator",
@@ -882,26 +732,6 @@
     "stage": "read-render-parse-ast-mismatch",
     "location": "String literals (source_file)",
     "message": "source_file[2].expression_statement[0].expression_statement_with_semi[0].string_literal[0]: anon \"c\\\"\" ≠ \"\\\"\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Macro invocation - arbitrary tokens (source_file)",
-    "message": "source_file[0].expression_statement[0].expression_statement_with_semi[0].macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount 5 ≠ 2 [\"(\",token_p"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Macro invocation - arbitrary tokens (macro_invocation)",
-    "message": "macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount 5 ≠ 2 [\"(\",token_pattern_group1,token_pattern_group1,token_pattern_group1,\")\"] vs [\"(\",\")\"]"
   },
   {
     "source": "validator",
@@ -952,56 +782,6 @@
     "stage": "read-render-parse-ast-mismatch",
     "location": "Ignored patterns (tuple_pattern)",
     "message": "tuple_pattern[1].tuple_pattern_group1[0].identifier: type identifier ≠ remaining_field_pattern"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Inline const or Const blocks as pattern (source_file)",
-    "message": "source_file[0].function_item[3].block[2].expression_statement[0].match_expression[2].match_block[1].match_block_arms[0].match_arm[2].match_arm_with_comma[0].mac"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Inline const or Const blocks as pattern (function_item)",
-    "message": "function_item[3].block[2].expression_statement[0].match_expression[2].match_block[1].match_block_arms[0].match_arm[2].match_arm_with_comma[0].macro_invocation[2"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Inline const or Const blocks as pattern (match_expression)",
-    "message": "match_expression[2].match_block[1].match_block_arms[0].match_arm[2].match_arm_with_comma[0].macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Inline const or Const blocks as pattern (macro_invocation)",
-    "message": "macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-ast-mismatch",
-    "location": "Inline const or Const blocks as pattern (token_tree)",
-    "message": "token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\",\")\"]"
   },
   {
     "source": "validator",
@@ -1070,6 +850,16 @@
     "grammar": "rust",
     "backend": "native",
     "stage": "read-render-parse-shallow",
+    "location": "Attribute macros [source_file]",
+    "message": "render: unknown kind id 170 in DelimTokensTransport on DelimTokenTreeParenTransport._delim_tokens on DelimTo"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-error",
+    "grammar": "rust",
+    "backend": "native",
+    "stage": "read-render-parse-shallow",
     "location": "Derive macro helper attributes [line_comment]",
     "message": "render: Missing field `_content`"
   },
@@ -1081,7 +871,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Attributes and Expressions [source_file]",
-    "message": "re-parse error [ERROR in tuple_expression at \"2\"]: \"fn foo(){ bar(x,#[cfg()]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8,2,7,8 2,7,\""
+    "message": "re-parse error [ERROR in tuple_expression at \"2\"]: \"fn foo(){ bar(x,#[cfg(foo=\"bar\")]y);let z=[#[hello]2,7,8];let t=(#[hello]2,7,8,2\""
   },
   {
     "source": "validator",
@@ -1190,6 +980,16 @@
     "grammar": "rust",
     "backend": "native",
     "stage": "read-render-parse-shallow",
+    "location": "Macro invocation - arbitrary tokens [source_file]",
+    "message": "render: unknown kind id 170 in DelimTokensTransport on DelimTokenTreeParenTransport._delim_tokens on DelimTo"
+  },
+  {
+    "source": "validator",
+    "severity": "error",
+    "code": "read-render-parse-shallow-error",
+    "grammar": "rust",
+    "backend": "native",
+    "stage": "read-render-parse-shallow",
     "location": "Macro invocation with comments [line_comment]",
     "message": "render: Missing field `_content`"
   },
@@ -1201,7 +1001,7 @@
     "backend": "native",
     "stage": "read-render-parse-shallow",
     "location": "Macro definition [source_file]",
-    "message": "re-parse error [MISSING \";\" in macro_definition_brace]: \"macro_rules!say_hello{ ()=>(())()=>(()) }macro_rules!four{ ()=>{  }()=>{  } }mac\""
+    "message": "re-parse error [MISSING \";\" in macro_definition_brace]: \"macro_rules!say_hello{ ()=>(println!(\"Hello!\");)()=>(println!(\"Hello!\");) }macro\""
   },
   {
     "source": "validator",
@@ -1280,68 +1080,8 @@
     "grammar": "rust",
     "backend": "native",
     "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Attributes (source_file)",
-    "message": "source_file[2].attribute_item[2].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\","
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Attributes (token_tree)",
-    "message": "token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Attributes (inner_attribute_item)",
-    "message": "inner_attribute_item[3].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_paren: childCount 5 ≠ 2 [\"(\",token_pattern_group1,token_pattern_group1,t"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Inner attributes (source_file)",
-    "message": "source_file[0].mod_item[2].declaration_list[1].inner_attribute_item[3].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_paren: childCount 5 ≠ 2 ["
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Inner attributes (mod_item)",
-    "message": "mod_item[2].declaration_list[1].inner_attribute_item[3].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_paren: childCount 5 ≠ 2 [\"(\",token_patte"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Inner attributes (inner_attribute_item)",
-    "message": "inner_attribute_item[3].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_paren: childCount 5 ≠ 2 [\"(\",token_pattern_group1,token_pattern_group1,t"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Inner attributes (token_tree)",
-    "message": "token_tree[0].delim_token_tree_paren: childCount 5 ≠ 2 [\"(\",token_pattern_group1,token_pattern_group1,token_pattern_group1,\")\"] vs [\"(\",\")\"]"
+    "message": "source_file[1].expression_statement[0].match_expression[2].match_block[1].match_block_arms[0].last_match_arm: childCount 5 ≠ 4 [inner_attribute_item,match_patte"
   },
   {
     "source": "validator",
@@ -1352,116 +1092,6 @@
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Inner attributes (match_expression)",
     "message": "match_expression[2].match_block[1].match_block_arms[0].last_match_arm: childCount 5 ≠ 4 [inner_attribute_item,match_pattern,\"=>\",call_expression,\",\"] vs [inner_"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Key-Value Attribute Expressions (source_file)",
-    "message": "source_file[0].attribute_item[2].attribute[1].attribute_group1[1].macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Key-Value Attribute Expressions (macro_invocation)",
-    "message": "macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Key-Value Attribute Expressions (token_tree)",
-    "message": "token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Attribute macros (source_file)",
-    "message": "source_file[0].expression_statement[0].expression_statement_with_semi[0].call_expression[1].arguments[1].arguments_group1[0].attributed_argument[0].attribute_it"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Attribute macros (call_expression)",
-    "message": "call_expression[1].arguments[1].arguments_group1[0].attributed_argument[0].attribute_item[2].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_par"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Attribute macros (arguments)",
-    "message": "arguments[1].arguments_group1[0].attributed_argument[0].attribute_item[2].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_paren: childCount 6 ≠ "
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Attribute macros (attribute_item)",
-    "message": "attribute_item[2].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_paren: childCount 6 ≠ 2 [\"(\",token_pattern_group1,token_pattern_group1,token_p"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Derive macro helper attributes (source_file)",
-    "message": "source_file[1].attribute_item[2].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_paren: childCount 5 ≠ 2 [\"(\",token_pattern_group1,token_pattern"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Array expressions (source_file)",
-    "message": "source_file[4].expression_statement[0].expression_statement_with_semi[0].array_expression[0].array_expression_list[1].attribute_item[2].attribute[1].attribute_g"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Array expressions (attribute_item)",
-    "message": "attribute_item[2].attribute[1].attribute_group1[0].token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Array expressions (token_tree)",
-    "message": "token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\",\")\"]"
   },
   {
     "source": "validator",
@@ -1482,26 +1112,6 @@
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "String literals (source_file)",
     "message": "source_file[2].expression_statement[0].expression_statement_with_semi[0].string_literal[0]: anon \"c\\\"\" ≠ \"\\\"\""
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Macro invocation - arbitrary tokens (source_file)",
-    "message": "source_file[0].expression_statement[0].expression_statement_with_semi[0].macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount 5 ≠ 2 [\"(\",token_p"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Macro invocation - arbitrary tokens (macro_invocation)",
-    "message": "macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount 5 ≠ 2 [\"(\",token_pattern_group1,token_pattern_group1,token_pattern_group1,\")\"] vs [\"(\",\")\"]"
   },
   {
     "source": "validator",
@@ -1552,56 +1162,6 @@
     "stage": "read-render-parse-shallow-ast-mismatch",
     "location": "Ignored patterns (tuple_pattern)",
     "message": "tuple_pattern[1].tuple_pattern_group1[0].identifier: type identifier ≠ remaining_field_pattern"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Inline const or Const blocks as pattern (source_file)",
-    "message": "source_file[0].function_item[3].block[2].expression_statement[0].match_expression[2].match_block[1].match_block_arms[0].match_arm[2].match_arm_with_comma[0].mac"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Inline const or Const blocks as pattern (function_item)",
-    "message": "function_item[3].block[2].expression_statement[0].match_expression[2].match_block[1].match_block_arms[0].match_arm[2].match_arm_with_comma[0].macro_invocation[2"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Inline const or Const blocks as pattern (match_expression)",
-    "message": "match_expression[2].match_block[1].match_block_arms[0].match_arm[2].match_arm_with_comma[0].macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Inline const or Const blocks as pattern (macro_invocation)",
-    "message": "macro_invocation[2].token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\",\")\"]"
-  },
-  {
-    "source": "validator",
-    "severity": "error",
-    "code": "read-render-parse-shallow-ast-mismatch",
-    "grammar": "rust",
-    "backend": "native",
-    "stage": "read-render-parse-shallow-ast-mismatch",
-    "location": "Inline const or Const blocks as pattern (token_tree)",
-    "message": "token_tree[0].delim_token_tree_paren: childCount 3 ≠ 2 [\"(\",token_pattern_group1,\")\"] vs [\"(\",\")\"]"
   },
   {
     "source": "validator",

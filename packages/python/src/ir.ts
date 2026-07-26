@@ -23,7 +23,7 @@ function _attach<T extends (...args: never[]) => unknown, P extends Record<strin
 
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
-export const compoundStatement = {
+export const statement = {
 	if: _attach(FR.coerceToIfStatement, { from: FR.coerceToIfStatement, strict: F.buildIfStatement }),
 	for: _attach(FR.coerceToForStatement, { from: FR.coerceToForStatement, strict: F.buildForStatement }),
 	while: _attach(FR.coerceToWhileStatement, { from: FR.coerceToWhileStatement, strict: F.buildWhileStatement }),
@@ -39,68 +39,6 @@ export const compoundStatement = {
 		strict: F.buildDecoratedDefinition
 	}),
 	match: _attach(FR.coerceToMatchStatement, { from: FR.coerceToMatchStatement, strict: F.buildMatchStatement })
-} as const;
-
-export const dictPatternKv = {
-	splat: _attach(FR.coerceToSplatPattern, { from: FR.coerceToSplatPattern, strict: F.buildSplatPattern })
-} as const;
-
-export const expressionWithinForInClause = {
-	lambdaWithinForIn: _attach(FR.coerceToLambdaWithinForInClause, {
-		from: FR.coerceToLambdaWithinForInClause,
-		strict: F.buildLambdaWithinForInClause
-	})
-} as const;
-
-export const expressions = {
-	expression: _attach(FR.coerceToExpressionList, { from: FR.coerceToExpressionList, strict: F.buildExpressionList })
-} as const;
-
-export const fExpression = {
-	expression: _attach(FR.coerceToExpressionList, { from: FR.coerceToExpressionList, strict: F.buildExpressionList }),
-	pattern: _attach(FR.coerceToPatternList, { from: FR.coerceToPatternList, strict: F.buildPatternList }),
-	yield: _attach(FR.coerceToYield, { from: FR.coerceToYield, strict: F.buildYield })
-} as const;
-
-export const leftHandSide = {
-	pattern: _attach(FR.coerceToPatternList, { from: FR.coerceToPatternList, strict: F.buildPatternList })
-} as const;
-
-export const namedExpressionLhs = {
-	identifier: F.buildIdentifier
-} as const;
-
-export const rightHandSide = {
-	expression: _attach(FR.coerceToExpressionList, { from: FR.coerceToExpressionList, strict: F.buildExpressionList }),
-	assignment: _attach(FR.coerceToAssignment, { from: FR.coerceToAssignment, strict: F.buildAssignment }),
-	augmented: _attach(FR.coerceToAugmentedAssignment, {
-		from: FR.coerceToAugmentedAssignment,
-		strict: F.buildAugmentedAssignment
-	}),
-	pattern: _attach(FR.coerceToPatternList, { from: FR.coerceToPatternList, strict: F.buildPatternList }),
-	yield: _attach(FR.coerceToYield, { from: FR.coerceToYield, strict: F.buildYield })
-} as const;
-
-export const simplePattern = {
-	class: _attach(FR.coerceToClassPattern, { from: FR.coerceToClassPattern, strict: F.buildClassPattern }),
-	splat: _attach(FR.coerceToSplatPattern, { from: FR.coerceToSplatPattern, strict: F.buildSplatPattern }),
-	union: _attach(FR.coerceToUnionPattern, { from: FR.coerceToUnionPattern, strict: F.buildUnionPattern }),
-	caseList: _attach(FR.coerceToCaseListPattern, { from: FR.coerceToCaseListPattern, strict: F.buildCaseListPattern }),
-	caseTuple: _attach(FR.coerceToCaseTuplePattern, {
-		from: FR.coerceToCaseTuplePattern,
-		strict: F.buildCaseTuplePattern
-	}),
-	dict: _attach(FR.coerceToDictPattern, { from: FR.coerceToDictPattern, strict: F.buildDictPattern }),
-	string: _attach(FR.coerceToString, { from: FR.coerceToString, strict: F.buildString }),
-	concatenated: _attach(FR.coerceToConcatenatedString, {
-		from: FR.coerceToConcatenatedString,
-		strict: F.buildConcatenatedString
-	}),
-	true: F.buildTrue,
-	false: F.buildFalse,
-	none: F.buildNone,
-	complex: _attach(FR.coerceToComplexPattern, { from: FR.coerceToComplexPattern, strict: F.buildComplexPattern }),
-	dotted: _attach(FR.coerceToDottedName, { from: FR.coerceToDottedName, strict: F.buildDottedName })
 } as const;
 
 export const simpleStatement = {
@@ -137,7 +75,15 @@ export const simpleStatement = {
 	})
 } as const;
 
-export const statement = {
+export const namedExpressionLhs = {
+	identifier: F.buildIdentifier
+} as const;
+
+export const expressions = {
+	expression: _attach(FR.coerceToExpressionList, { from: FR.coerceToExpressionList, strict: F.buildExpressionList })
+} as const;
+
+export const compoundStatement = {
 	if: _attach(FR.coerceToIfStatement, { from: FR.coerceToIfStatement, strict: F.buildIfStatement }),
 	for: _attach(FR.coerceToForStatement, { from: FR.coerceToForStatement, strict: F.buildForStatement }),
 	while: _attach(FR.coerceToWhileStatement, { from: FR.coerceToWhileStatement, strict: F.buildWhileStatement }),
@@ -155,20 +101,26 @@ export const statement = {
 	match: _attach(FR.coerceToMatchStatement, { from: FR.coerceToMatchStatement, strict: F.buildMatchStatement })
 } as const;
 
-export const expression = {
-	comparison: _attach(FR.coerceToComparisonOperator, {
-		from: FR.coerceToComparisonOperator,
-		strict: F.buildComparisonOperator
+export const simplePattern = {
+	class: _attach(FR.coerceToClassPattern, { from: FR.coerceToClassPattern, strict: F.buildClassPattern }),
+	splat: _attach(FR.coerceToSplatPattern, { from: FR.coerceToSplatPattern, strict: F.buildSplatPattern }),
+	union: _attach(FR.coerceToUnionPattern, { from: FR.coerceToUnionPattern, strict: F.buildUnionPattern }),
+	caseList: _attach(FR.coerceToCaseListPattern, { from: FR.coerceToCaseListPattern, strict: F.buildCaseListPattern }),
+	caseTuple: _attach(FR.coerceToCaseTuplePattern, {
+		from: FR.coerceToCaseTuplePattern,
+		strict: F.buildCaseTuplePattern
 	}),
-	not: _attach(FR.coerceToNotOperator, { from: FR.coerceToNotOperator, strict: F.buildNotOperator }),
-	boolean: _attach(FR.coerceToBooleanOperator, { from: FR.coerceToBooleanOperator, strict: F.buildBooleanOperator }),
-	lambda: _attach(FR.coerceToLambda, { from: FR.coerceToLambda, strict: F.buildLambda }),
-	conditional: _attach(FR.coerceToConditionalExpression, {
-		from: FR.coerceToConditionalExpression,
-		strict: F.buildConditionalExpression
+	dict: _attach(FR.coerceToDictPattern, { from: FR.coerceToDictPattern, strict: F.buildDictPattern }),
+	string: _attach(FR.coerceToString, { from: FR.coerceToString, strict: F.buildString }),
+	concatenated: _attach(FR.coerceToConcatenatedString, {
+		from: FR.coerceToConcatenatedString,
+		strict: F.buildConcatenatedString
 	}),
-	named: _attach(FR.coerceToNamedExpression, { from: FR.coerceToNamedExpression, strict: F.buildNamedExpression }),
-	as: _attach(FR.coerceToAsPattern, { from: FR.coerceToAsPattern, strict: F.buildAsPattern })
+	true: F.buildTrue,
+	false: F.buildFalse,
+	none: F.buildNone,
+	complex: _attach(FR.coerceToComplexPattern, { from: FR.coerceToComplexPattern, strict: F.buildComplexPattern }),
+	dotted: _attach(FR.coerceToDottedName, { from: FR.coerceToDottedName, strict: F.buildDottedName })
 } as const;
 
 export const parameter = {
@@ -200,6 +152,29 @@ export const pattern = {
 	}),
 	tuple: _attach(FR.coerceToTuplePattern, { from: FR.coerceToTuplePattern, strict: F.buildTuplePattern }),
 	list: _attach(FR.coerceToListPattern, { from: FR.coerceToListPattern, strict: F.buildListPattern })
+} as const;
+
+export const expressionWithinForInClause = {
+	lambdaWithinForIn: _attach(FR.coerceToLambdaWithinForInClause, {
+		from: FR.coerceToLambdaWithinForInClause,
+		strict: F.buildLambdaWithinForInClause
+	})
+} as const;
+
+export const expression = {
+	comparison: _attach(FR.coerceToComparisonOperator, {
+		from: FR.coerceToComparisonOperator,
+		strict: F.buildComparisonOperator
+	}),
+	not: _attach(FR.coerceToNotOperator, { from: FR.coerceToNotOperator, strict: F.buildNotOperator }),
+	boolean: _attach(FR.coerceToBooleanOperator, { from: FR.coerceToBooleanOperator, strict: F.buildBooleanOperator }),
+	lambda: _attach(FR.coerceToLambda, { from: FR.coerceToLambda, strict: F.buildLambda }),
+	conditional: _attach(FR.coerceToConditionalExpression, {
+		from: FR.coerceToConditionalExpression,
+		strict: F.buildConditionalExpression
+	}),
+	named: _attach(FR.coerceToNamedExpression, { from: FR.coerceToNamedExpression, strict: F.buildNamedExpression }),
+	as: _attach(FR.coerceToAsPattern, { from: FR.coerceToAsPattern, strict: F.buildAsPattern })
 } as const;
 
 export const primaryExpression = {
@@ -236,6 +211,31 @@ export const primaryExpression = {
 		from: FR.coerceToListSplatPattern,
 		strict: F.buildListSplatPattern
 	})
+} as const;
+
+export const leftHandSide = {
+	pattern: _attach(FR.coerceToPatternList, { from: FR.coerceToPatternList, strict: F.buildPatternList })
+} as const;
+
+export const rightHandSide = {
+	expression: _attach(FR.coerceToExpressionList, { from: FR.coerceToExpressionList, strict: F.buildExpressionList }),
+	assignment: _attach(FR.coerceToAssignment, { from: FR.coerceToAssignment, strict: F.buildAssignment }),
+	augmented: _attach(FR.coerceToAugmentedAssignment, {
+		from: FR.coerceToAugmentedAssignment,
+		strict: F.buildAugmentedAssignment
+	}),
+	pattern: _attach(FR.coerceToPatternList, { from: FR.coerceToPatternList, strict: F.buildPatternList }),
+	yield: _attach(FR.coerceToYield, { from: FR.coerceToYield, strict: F.buildYield })
+} as const;
+
+export const fExpression = {
+	expression: _attach(FR.coerceToExpressionList, { from: FR.coerceToExpressionList, strict: F.buildExpressionList }),
+	pattern: _attach(FR.coerceToPatternList, { from: FR.coerceToPatternList, strict: F.buildPatternList }),
+	yield: _attach(FR.coerceToYield, { from: FR.coerceToYield, strict: F.buildYield })
+} as const;
+
+export const dictPatternKv = {
+	splat: _attach(FR.coerceToSplatPattern, { from: FR.coerceToSplatPattern, strict: F.buildSplatPattern })
 } as const;
 
 // Canonical factories — `from.*` resolves native JS values to grammar-specific NodeData.
@@ -278,198 +278,249 @@ export const from = {
 
 export const ir = {
 	// Node factories
-	aliasedImport: _attach(FR.coerceToAliasedImport, { from: FR.coerceToAliasedImport, strict: F.buildAliasedImport }),
-	argumentList: _attach(FR.coerceToArgumentList, { from: FR.coerceToArgumentList, strict: F.buildArgumentList }),
-	asPattern: _attach(FR.coerceToAsPattern, { from: FR.coerceToAsPattern, strict: F.buildAsPattern }),
-	assertStatement: _attach(FR.coerceToAssertStatement, {
-		from: FR.coerceToAssertStatement,
-		strict: F.buildAssertStatement
+	module: _attach(FR.coerceToModule, { from: FR.coerceToModule, strict: F.buildModule }),
+	importStatement: _attach(FR.coerceToImportStatement, {
+		from: FR.coerceToImportStatement,
+		strict: F.buildImportStatement
 	}),
-	assignment: _attach(FR.coerceToAssignment, { from: FR.coerceToAssignment, strict: F.buildAssignment }),
-	attribute: _attach(FR.coerceToAttribute, { from: FR.coerceToAttribute, strict: F.buildAttribute }),
-	augmentedAssignment: _attach(FR.coerceToAugmentedAssignment, {
-		from: FR.coerceToAugmentedAssignment,
-		strict: F.buildAugmentedAssignment
-	}),
-	await: _attach(FR.coerceToAwait, { from: FR.coerceToAwait, strict: F.buildAwait }),
-	binaryOperator: _attach(FR.coerceToBinaryOperator, {
-		from: FR.coerceToBinaryOperator,
-		strict: F.buildBinaryOperator
-	}),
-	block: _attach(FR.coerceToBlock, { from: FR.coerceToBlock, strict: F.buildBlock }),
-	booleanOperator: _attach(FR.coerceToBooleanOperator, {
-		from: FR.coerceToBooleanOperator,
-		strict: F.buildBooleanOperator
-	}),
-	call: _attach(FR.coerceToCall, { from: FR.coerceToCall, strict: F.buildCall }),
-	caseClause: _attach(FR.coerceToCaseClause, { from: FR.coerceToCaseClause, strict: F.buildCaseClause }),
-	caseListPattern: _attach(FR.coerceToCaseListPattern, {
-		from: FR.coerceToCaseListPattern,
-		strict: F.buildCaseListPattern
-	}),
-	casePattern: _attach(FR.coerceToCasePattern, { from: FR.coerceToCasePattern, strict: F.buildCasePattern }),
-	caseTuplePattern: _attach(FR.coerceToCaseTuplePattern, {
-		from: FR.coerceToCaseTuplePattern,
-		strict: F.buildCaseTuplePattern
-	}),
-	chevron: _attach(FR.coerceToChevron, { from: FR.coerceToChevron, strict: F.buildChevron }),
-	classDefinition: _attach(FR.coerceToClassDefinition, {
-		from: FR.coerceToClassDefinition,
-		strict: F.buildClassDefinition
-	}),
-	classPattern: _attach(FR.coerceToClassPattern, { from: FR.coerceToClassPattern, strict: F.buildClassPattern }),
-	comparisonOperator: _attach(FR.coerceToComparisonOperator, {
-		from: FR.coerceToComparisonOperator,
-		strict: F.buildComparisonOperator
-	}),
-	complexPattern: _attach(FR.coerceToComplexPattern, {
-		from: FR.coerceToComplexPattern,
-		strict: F.buildComplexPattern
-	}),
-	concatenatedString: _attach(FR.coerceToConcatenatedString, {
-		from: FR.coerceToConcatenatedString,
-		strict: F.buildConcatenatedString
-	}),
-	conditionalExpression: _attach(FR.coerceToConditionalExpression, {
-		from: FR.coerceToConditionalExpression,
-		strict: F.buildConditionalExpression
-	}),
-	constrainedType: _attach(FR.coerceToConstrainedType, {
-		from: FR.coerceToConstrainedType,
-		strict: F.buildConstrainedType
-	}),
-	decoratedDefinition: _attach(FR.coerceToDecoratedDefinition, {
-		from: FR.coerceToDecoratedDefinition,
-		strict: F.buildDecoratedDefinition
-	}),
-	decorator: _attach(FR.coerceToDecorator, { from: FR.coerceToDecorator, strict: F.buildDecorator }),
-	defaultParameter: _attach(FR.coerceToDefaultParameter, {
-		from: FR.coerceToDefaultParameter,
-		strict: F.buildDefaultParameter
-	}),
-	deleteStatement: _attach(FR.coerceToDeleteStatement, {
-		from: FR.coerceToDeleteStatement,
-		strict: F.buildDeleteStatement
-	}),
-	dictPattern: _attach(FR.coerceToDictPattern, { from: FR.coerceToDictPattern, strict: F.buildDictPattern }),
-	dictionary: _attach(FR.coerceToDictionary, { from: FR.coerceToDictionary, strict: F.buildDictionary }),
-	dictionaryComprehension: _attach(FR.coerceToDictionaryComprehension, {
-		from: FR.coerceToDictionaryComprehension,
-		strict: F.buildDictionaryComprehension
-	}),
-	dictionarySplat: _attach(FR.coerceToDictionarySplat, {
-		from: FR.coerceToDictionarySplat,
-		strict: F.buildDictionarySplat
-	}),
-	dictionarySplatPattern: _attach(FR.coerceToDictionarySplatPattern, {
-		from: FR.coerceToDictionarySplatPattern,
-		strict: F.buildDictionarySplatPattern
-	}),
-	dottedName: _attach(FR.coerceToDottedName, { from: FR.coerceToDottedName, strict: F.buildDottedName }),
-	elifClause: _attach(FR.coerceToElifClause, { from: FR.coerceToElifClause, strict: F.buildElifClause }),
-	elseClause: _attach(FR.coerceToElseClause, { from: FR.coerceToElseClause, strict: F.buildElseClause }),
-	exceptClause: _attach(FR.coerceToExceptClause, { from: FR.coerceToExceptClause, strict: F.buildExceptClause }),
-	execStatement: _attach(FR.coerceToExecStatement, { from: FR.coerceToExecStatement, strict: F.buildExecStatement }),
-	expressionList: _attach(FR.coerceToExpressionList, {
-		from: FR.coerceToExpressionList,
-		strict: F.buildExpressionList
-	}),
-	expressionStatement: _attach(FR.coerceToExpressionStatement, {
-		from: FR.coerceToExpressionStatement,
-		strict: F.buildExpressionStatement
-	}),
-	finallyClause: _attach(FR.coerceToFinallyClause, { from: FR.coerceToFinallyClause, strict: F.buildFinallyClause }),
-	forInClause: _attach(FR.coerceToForInClause, { from: FR.coerceToForInClause, strict: F.buildForInClause }),
-	forStatement: _attach(FR.coerceToForStatement, { from: FR.coerceToForStatement, strict: F.buildForStatement }),
-	formatSpecifier: _attach(FR.coerceToFormatSpecifier, {
-		from: FR.coerceToFormatSpecifier,
-		strict: F.buildFormatSpecifier
-	}),
-	functionDefinition: _attach(FR.coerceToFunctionDefinition, {
-		from: FR.coerceToFunctionDefinition,
-		strict: F.buildFunctionDefinition
+	relativeImport: _attach(FR.coerceToRelativeImport, {
+		from: FR.coerceToRelativeImport,
+		strict: F.buildRelativeImport
 	}),
 	futureImportStatement: _attach(FR.coerceToFutureImportStatement, {
 		from: FR.coerceToFutureImportStatement,
 		strict: F.buildFutureImportStatement
 	}),
-	generatorExpression: _attach(FR.coerceToGeneratorExpression, {
-		from: FR.coerceToGeneratorExpression,
-		strict: F.buildGeneratorExpression
-	}),
-	genericType: _attach(FR.coerceToGenericType, { from: FR.coerceToGenericType, strict: F.buildGenericType }),
-	globalStatement: _attach(FR.coerceToGlobalStatement, {
-		from: FR.coerceToGlobalStatement,
-		strict: F.buildGlobalStatement
-	}),
-	ifClause: _attach(FR.coerceToIfClause, { from: FR.coerceToIfClause, strict: F.buildIfClause }),
-	ifStatement: _attach(FR.coerceToIfStatement, { from: FR.coerceToIfStatement, strict: F.buildIfStatement }),
 	importFromStatement: _attach(FR.coerceToImportFromStatement, {
 		from: FR.coerceToImportFromStatement,
 		strict: F.buildImportFromStatement
 	}),
-	importStatement: _attach(FR.coerceToImportStatement, {
-		from: FR.coerceToImportStatement,
-		strict: F.buildImportStatement
+	aliasedImport: _attach(FR.coerceToAliasedImport, { from: FR.coerceToAliasedImport, strict: F.buildAliasedImport }),
+	printStatement: _attach(FR.coerceToPrintStatement, {
+		from: FR.coerceToPrintStatement,
+		strict: F.buildPrintStatement
 	}),
-	interpolation: _attach(FR.coerceToInterpolation, { from: FR.coerceToInterpolation, strict: F.buildInterpolation }),
-	keywordArgument: _attach(FR.coerceToKeywordArgument, {
-		from: FR.coerceToKeywordArgument,
-		strict: F.buildKeywordArgument
+	chevron: _attach(FR.coerceToChevron, { from: FR.coerceToChevron, strict: F.buildChevron }),
+	assertStatement: _attach(FR.coerceToAssertStatement, {
+		from: FR.coerceToAssertStatement,
+		strict: F.buildAssertStatement
 	}),
-	keywordPattern: _attach(FR.coerceToKeywordPattern, {
-		from: FR.coerceToKeywordPattern,
-		strict: F.buildKeywordPattern
+	expressionStatement: _attach(FR.coerceToExpressionStatement, {
+		from: FR.coerceToExpressionStatement,
+		strict: F.buildExpressionStatement
 	}),
-	lambda: _attach(FR.coerceToLambda, { from: FR.coerceToLambda, strict: F.buildLambda }),
-	lambdaParameters: _attach(FR.coerceToLambdaParameters, {
-		from: FR.coerceToLambdaParameters,
-		strict: F.buildLambdaParameters
+	namedExpression: _attach(FR.coerceToNamedExpression, {
+		from: FR.coerceToNamedExpression,
+		strict: F.buildNamedExpression
 	}),
-	lambdaWithinForInClause: _attach(FR.coerceToLambdaWithinForInClause, {
-		from: FR.coerceToLambdaWithinForInClause,
-		strict: F.buildLambdaWithinForInClause
+	returnStatement: _attach(FR.coerceToReturnStatement, {
+		from: FR.coerceToReturnStatement,
+		strict: F.buildReturnStatement
 	}),
-	list: _attach(FR.coerceToList, { from: FR.coerceToList, strict: F.buildList }),
-	listComprehension: _attach(FR.coerceToListComprehension, {
-		from: FR.coerceToListComprehension,
-		strict: F.buildListComprehension
+	deleteStatement: _attach(FR.coerceToDeleteStatement, {
+		from: FR.coerceToDeleteStatement,
+		strict: F.buildDeleteStatement
 	}),
-	listPattern: _attach(FR.coerceToListPattern, { from: FR.coerceToListPattern, strict: F.buildListPattern }),
-	listSplat: _attach(FR.coerceToListSplat, { from: FR.coerceToListSplat, strict: F.buildListSplat }),
-	listSplatPattern: _attach(FR.coerceToListSplatPattern, {
-		from: FR.coerceToListSplatPattern,
-		strict: F.buildListSplatPattern
+	raiseStatement: _attach(FR.coerceToRaiseStatement, {
+		from: FR.coerceToRaiseStatement,
+		strict: F.buildRaiseStatement
 	}),
+	ifStatement: _attach(FR.coerceToIfStatement, { from: FR.coerceToIfStatement, strict: F.buildIfStatement }),
+	elifClause: _attach(FR.coerceToElifClause, { from: FR.coerceToElifClause, strict: F.buildElifClause }),
+	elseClause: _attach(FR.coerceToElseClause, { from: FR.coerceToElseClause, strict: F.buildElseClause }),
 	matchStatement: _attach(FR.coerceToMatchStatement, {
 		from: FR.coerceToMatchStatement,
 		strict: F.buildMatchStatement
 	}),
-	memberType: _attach(FR.coerceToMemberType, { from: FR.coerceToMemberType, strict: F.buildMemberType }),
-	module: _attach(FR.coerceToModule, { from: FR.coerceToModule, strict: F.buildModule }),
-	namedExpression: _attach(FR.coerceToNamedExpression, {
-		from: FR.coerceToNamedExpression,
-		strict: F.buildNamedExpression
+	caseClause: _attach(FR.coerceToCaseClause, { from: FR.coerceToCaseClause, strict: F.buildCaseClause }),
+	forStatement: _attach(FR.coerceToForStatement, { from: FR.coerceToForStatement, strict: F.buildForStatement }),
+	whileStatement: _attach(FR.coerceToWhileStatement, {
+		from: FR.coerceToWhileStatement,
+		strict: F.buildWhileStatement
+	}),
+	tryStatement: _attach(FR.coerceToTryStatement, { from: FR.coerceToTryStatement, strict: F.buildTryStatement }),
+	exceptClause: _attach(FR.coerceToExceptClause, { from: FR.coerceToExceptClause, strict: F.buildExceptClause }),
+	finallyClause: _attach(FR.coerceToFinallyClause, { from: FR.coerceToFinallyClause, strict: F.buildFinallyClause }),
+	withStatement: _attach(FR.coerceToWithStatement, { from: FR.coerceToWithStatement, strict: F.buildWithStatement }),
+	withClause: _attach(FR.coerceToWithClause, { from: FR.coerceToWithClause, strict: F.buildWithClause }),
+	withItem: _attach(FR.coerceToWithItem, { from: FR.coerceToWithItem, strict: F.buildWithItem }),
+	functionDefinition: _attach(FR.coerceToFunctionDefinition, {
+		from: FR.coerceToFunctionDefinition,
+		strict: F.buildFunctionDefinition
+	}),
+	parameters: _attach(FR.coerceToParameters, { from: FR.coerceToParameters, strict: F.buildParameters }),
+	lambdaParameters: _attach(FR.coerceToLambdaParameters, {
+		from: FR.coerceToLambdaParameters,
+		strict: F.buildLambdaParameters
+	}),
+	listSplat: _attach(FR.coerceToListSplat, { from: FR.coerceToListSplat, strict: F.buildListSplat }),
+	dictionarySplat: _attach(FR.coerceToDictionarySplat, {
+		from: FR.coerceToDictionarySplat,
+		strict: F.buildDictionarySplat
+	}),
+	globalStatement: _attach(FR.coerceToGlobalStatement, {
+		from: FR.coerceToGlobalStatement,
+		strict: F.buildGlobalStatement
 	}),
 	nonlocalStatement: _attach(FR.coerceToNonlocalStatement, {
 		from: FR.coerceToNonlocalStatement,
 		strict: F.buildNonlocalStatement
 	}),
-	notOperator: _attach(FR.coerceToNotOperator, { from: FR.coerceToNotOperator, strict: F.buildNotOperator }),
-	pair: _attach(FR.coerceToPair, { from: FR.coerceToPair, strict: F.buildPair }),
-	parameters: _attach(FR.coerceToParameters, { from: FR.coerceToParameters, strict: F.buildParameters }),
-	parenthesizedExpression: _attach(FR.coerceToParenthesizedExpression, {
-		from: FR.coerceToParenthesizedExpression,
-		strict: F.buildParenthesizedExpression
+	execStatement: _attach(FR.coerceToExecStatement, { from: FR.coerceToExecStatement, strict: F.buildExecStatement }),
+	typeAliasStatement: _attach(FR.coerceToTypeAliasStatement, {
+		from: FR.coerceToTypeAliasStatement,
+		strict: F.buildTypeAliasStatement
 	}),
+	classDefinition: _attach(FR.coerceToClassDefinition, {
+		from: FR.coerceToClassDefinition,
+		strict: F.buildClassDefinition
+	}),
+	typeParameter: _attach(FR.coerceToTypeParameter, { from: FR.coerceToTypeParameter, strict: F.buildTypeParameter }),
 	parenthesizedListSplat: _attach(FR.coerceToParenthesizedListSplat, {
 		from: FR.coerceToParenthesizedListSplat,
 		strict: F.buildParenthesizedListSplat
 	}),
+	argumentList: _attach(FR.coerceToArgumentList, { from: FR.coerceToArgumentList, strict: F.buildArgumentList }),
+	decoratedDefinition: _attach(FR.coerceToDecoratedDefinition, {
+		from: FR.coerceToDecoratedDefinition,
+		strict: F.buildDecoratedDefinition
+	}),
+	decorator: _attach(FR.coerceToDecorator, { from: FR.coerceToDecorator, strict: F.buildDecorator }),
+	block: _attach(FR.coerceToBlock, { from: FR.coerceToBlock, strict: F.buildBlock }),
+	expressionList: _attach(FR.coerceToExpressionList, {
+		from: FR.coerceToExpressionList,
+		strict: F.buildExpressionList
+	}),
+	dottedName: _attach(FR.coerceToDottedName, { from: FR.coerceToDottedName, strict: F.buildDottedName }),
+	casePattern: _attach(FR.coerceToCasePattern, { from: FR.coerceToCasePattern, strict: F.buildCasePattern }),
+	unionPattern: _attach(FR.coerceToUnionPattern, { from: FR.coerceToUnionPattern, strict: F.buildUnionPattern }),
+	dictPattern: _attach(FR.coerceToDictPattern, { from: FR.coerceToDictPattern, strict: F.buildDictPattern }),
+	keywordPattern: _attach(FR.coerceToKeywordPattern, {
+		from: FR.coerceToKeywordPattern,
+		strict: F.buildKeywordPattern
+	}),
+	splatPattern: _attach(FR.coerceToSplatPattern, { from: FR.coerceToSplatPattern, strict: F.buildSplatPattern }),
+	classPattern: _attach(FR.coerceToClassPattern, { from: FR.coerceToClassPattern, strict: F.buildClassPattern }),
+	complexPattern: _attach(FR.coerceToComplexPattern, {
+		from: FR.coerceToComplexPattern,
+		strict: F.buildComplexPattern
+	}),
+	tuplePattern: _attach(FR.coerceToTuplePattern, { from: FR.coerceToTuplePattern, strict: F.buildTuplePattern }),
+	listPattern: _attach(FR.coerceToListPattern, { from: FR.coerceToListPattern, strict: F.buildListPattern }),
+	defaultParameter: _attach(FR.coerceToDefaultParameter, {
+		from: FR.coerceToDefaultParameter,
+		strict: F.buildDefaultParameter
+	}),
+	typedDefaultParameter: _attach(FR.coerceToTypedDefaultParameter, {
+		from: FR.coerceToTypedDefaultParameter,
+		strict: F.buildTypedDefaultParameter
+	}),
+	listSplatPattern: _attach(FR.coerceToListSplatPattern, {
+		from: FR.coerceToListSplatPattern,
+		strict: F.buildListSplatPattern
+	}),
+	dictionarySplatPattern: _attach(FR.coerceToDictionarySplatPattern, {
+		from: FR.coerceToDictionarySplatPattern,
+		strict: F.buildDictionarySplatPattern
+	}),
+	asPattern: _attach(FR.coerceToAsPattern, { from: FR.coerceToAsPattern, strict: F.buildAsPattern }),
+	notOperator: _attach(FR.coerceToNotOperator, { from: FR.coerceToNotOperator, strict: F.buildNotOperator }),
+	booleanOperator: _attach(FR.coerceToBooleanOperator, {
+		from: FR.coerceToBooleanOperator,
+		strict: F.buildBooleanOperator
+	}),
+	binaryOperator: _attach(FR.coerceToBinaryOperator, {
+		from: FR.coerceToBinaryOperator,
+		strict: F.buildBinaryOperator
+	}),
+	unaryOperator: _attach(FR.coerceToUnaryOperator, { from: FR.coerceToUnaryOperator, strict: F.buildUnaryOperator }),
+	comparisonOperator: _attach(FR.coerceToComparisonOperator, {
+		from: FR.coerceToComparisonOperator,
+		strict: F.buildComparisonOperator
+	}),
+	lambda: _attach(FR.coerceToLambda, { from: FR.coerceToLambda, strict: F.buildLambda }),
+	lambdaWithinForInClause: _attach(FR.coerceToLambdaWithinForInClause, {
+		from: FR.coerceToLambdaWithinForInClause,
+		strict: F.buildLambdaWithinForInClause
+	}),
+	assignment: _attach(FR.coerceToAssignment, { from: FR.coerceToAssignment, strict: F.buildAssignment }),
+	augmentedAssignment: _attach(FR.coerceToAugmentedAssignment, {
+		from: FR.coerceToAugmentedAssignment,
+		strict: F.buildAugmentedAssignment
+	}),
 	patternList: _attach(FR.coerceToPatternList, { from: FR.coerceToPatternList, strict: F.buildPatternList }),
-	printStatement: _attach(FR.coerceToPrintStatement, {
-		from: FR.coerceToPrintStatement,
-		strict: F.buildPrintStatement
+	yield: _attach(FR.coerceToYield, { from: FR.coerceToYield, strict: F.buildYield }),
+	attribute: _attach(FR.coerceToAttribute, { from: FR.coerceToAttribute, strict: F.buildAttribute }),
+	subscript: _attach(FR.coerceToSubscript, { from: FR.coerceToSubscript, strict: F.buildSubscript }),
+	slice: _attach(FR.coerceToSlice, { from: FR.coerceToSlice, strict: F.buildSlice }),
+	call: _attach(FR.coerceToCall, { from: FR.coerceToCall, strict: F.buildCall }),
+	typedParameter: _attach(FR.coerceToTypedParameter, {
+		from: FR.coerceToTypedParameter,
+		strict: F.buildTypedParameter
+	}),
+	type: _attach(FR.coerceToType, { from: FR.coerceToType, strict: F.buildType }),
+	splatType: _attach(FR.coerceToSplatType, { from: FR.coerceToSplatType, strict: F.buildSplatType }),
+	genericType: _attach(FR.coerceToGenericType, { from: FR.coerceToGenericType, strict: F.buildGenericType }),
+	unionType: _attach(FR.coerceToUnionType, { from: FR.coerceToUnionType, strict: F.buildUnionType }),
+	constrainedType: _attach(FR.coerceToConstrainedType, {
+		from: FR.coerceToConstrainedType,
+		strict: F.buildConstrainedType
+	}),
+	memberType: _attach(FR.coerceToMemberType, { from: FR.coerceToMemberType, strict: F.buildMemberType }),
+	keywordArgument: _attach(FR.coerceToKeywordArgument, {
+		from: FR.coerceToKeywordArgument,
+		strict: F.buildKeywordArgument
+	}),
+	list: _attach(FR.coerceToList, { from: FR.coerceToList, strict: F.buildList }),
+	set: _attach(FR.coerceToSet, { from: FR.coerceToSet, strict: F.buildSet }),
+	tuple: _attach(FR.coerceToTuple, { from: FR.coerceToTuple, strict: F.buildTuple }),
+	dictionary: _attach(FR.coerceToDictionary, { from: FR.coerceToDictionary, strict: F.buildDictionary }),
+	pair: _attach(FR.coerceToPair, { from: FR.coerceToPair, strict: F.buildPair }),
+	listComprehension: _attach(FR.coerceToListComprehension, {
+		from: FR.coerceToListComprehension,
+		strict: F.buildListComprehension
+	}),
+	dictionaryComprehension: _attach(FR.coerceToDictionaryComprehension, {
+		from: FR.coerceToDictionaryComprehension,
+		strict: F.buildDictionaryComprehension
+	}),
+	setComprehension: _attach(FR.coerceToSetComprehension, {
+		from: FR.coerceToSetComprehension,
+		strict: F.buildSetComprehension
+	}),
+	generatorExpression: _attach(FR.coerceToGeneratorExpression, {
+		from: FR.coerceToGeneratorExpression,
+		strict: F.buildGeneratorExpression
+	}),
+	parenthesizedExpression: _attach(FR.coerceToParenthesizedExpression, {
+		from: FR.coerceToParenthesizedExpression,
+		strict: F.buildParenthesizedExpression
+	}),
+	forInClause: _attach(FR.coerceToForInClause, { from: FR.coerceToForInClause, strict: F.buildForInClause }),
+	ifClause: _attach(FR.coerceToIfClause, { from: FR.coerceToIfClause, strict: F.buildIfClause }),
+	conditionalExpression: _attach(FR.coerceToConditionalExpression, {
+		from: FR.coerceToConditionalExpression,
+		strict: F.buildConditionalExpression
+	}),
+	concatenatedString: _attach(FR.coerceToConcatenatedString, {
+		from: FR.coerceToConcatenatedString,
+		strict: F.buildConcatenatedString
+	}),
+	string: _attach(FR.coerceToString, { from: FR.coerceToString, strict: F.buildString }),
+	stringContent: _attach(FR.coerceToStringContent, { from: FR.coerceToStringContent, strict: F.buildStringContent }),
+	interpolation: _attach(FR.coerceToInterpolation, { from: FR.coerceToInterpolation, strict: F.buildInterpolation }),
+	formatSpecifier: _attach(FR.coerceToFormatSpecifier, {
+		from: FR.coerceToFormatSpecifier,
+		strict: F.buildFormatSpecifier
+	}),
+	await: _attach(FR.coerceToAwait, { from: FR.coerceToAwait, strict: F.buildAwait }),
+	caseTuplePattern: _attach(FR.coerceToCaseTuplePattern, {
+		from: FR.coerceToCaseTuplePattern,
+		strict: F.buildCaseTuplePattern
+	}),
+	caseListPattern: _attach(FR.coerceToCaseListPattern, {
+		from: FR.coerceToCaseListPattern,
+		strict: F.buildCaseListPattern
 	}),
 	printStatementGroup1: _attach(FR.coerceToPrintStatementGroup1, {
 		from: FR.coerceToPrintStatementGroup1,
@@ -479,75 +530,24 @@ export const ir = {
 		from: FR.coerceToPrintStatementGroup2,
 		strict: F.buildPrintStatementGroup2
 	}),
-	raiseStatement: _attach(FR.coerceToRaiseStatement, {
-		from: FR.coerceToRaiseStatement,
-		strict: F.buildRaiseStatement
-	}),
-	relativeImport: _attach(FR.coerceToRelativeImport, {
-		from: FR.coerceToRelativeImport,
-		strict: F.buildRelativeImport
-	}),
-	returnStatement: _attach(FR.coerceToReturnStatement, {
-		from: FR.coerceToReturnStatement,
-		strict: F.buildReturnStatement
-	}),
-	set: _attach(FR.coerceToSet, { from: FR.coerceToSet, strict: F.buildSet }),
-	setComprehension: _attach(FR.coerceToSetComprehension, {
-		from: FR.coerceToSetComprehension,
-		strict: F.buildSetComprehension
-	}),
-	slice: _attach(FR.coerceToSlice, { from: FR.coerceToSlice, strict: F.buildSlice }),
-	splatPattern: _attach(FR.coerceToSplatPattern, { from: FR.coerceToSplatPattern, strict: F.buildSplatPattern }),
-	splatType: _attach(FR.coerceToSplatType, { from: FR.coerceToSplatType, strict: F.buildSplatType }),
-	string: _attach(FR.coerceToString, { from: FR.coerceToString, strict: F.buildString }),
-	stringContent: _attach(FR.coerceToStringContent, { from: FR.coerceToStringContent, strict: F.buildStringContent }),
-	subscript: _attach(FR.coerceToSubscript, { from: FR.coerceToSubscript, strict: F.buildSubscript }),
-	tryStatement: _attach(FR.coerceToTryStatement, { from: FR.coerceToTryStatement, strict: F.buildTryStatement }),
-	tuple: _attach(FR.coerceToTuple, { from: FR.coerceToTuple, strict: F.buildTuple }),
-	tuplePattern: _attach(FR.coerceToTuplePattern, { from: FR.coerceToTuplePattern, strict: F.buildTuplePattern }),
-	type: _attach(FR.coerceToType, { from: FR.coerceToType, strict: F.buildType }),
-	typeAliasStatement: _attach(FR.coerceToTypeAliasStatement, {
-		from: FR.coerceToTypeAliasStatement,
-		strict: F.buildTypeAliasStatement
-	}),
-	typeParameter: _attach(FR.coerceToTypeParameter, { from: FR.coerceToTypeParameter, strict: F.buildTypeParameter }),
-	typedDefaultParameter: _attach(FR.coerceToTypedDefaultParameter, {
-		from: FR.coerceToTypedDefaultParameter,
-		strict: F.buildTypedDefaultParameter
-	}),
-	typedParameter: _attach(FR.coerceToTypedParameter, {
-		from: FR.coerceToTypedParameter,
-		strict: F.buildTypedParameter
-	}),
-	unaryOperator: _attach(FR.coerceToUnaryOperator, { from: FR.coerceToUnaryOperator, strict: F.buildUnaryOperator }),
-	unionPattern: _attach(FR.coerceToUnionPattern, { from: FR.coerceToUnionPattern, strict: F.buildUnionPattern }),
-	unionType: _attach(FR.coerceToUnionType, { from: FR.coerceToUnionType, strict: F.buildUnionType }),
-	whileStatement: _attach(FR.coerceToWhileStatement, {
-		from: FR.coerceToWhileStatement,
-		strict: F.buildWhileStatement
-	}),
-	withClause: _attach(FR.coerceToWithClause, { from: FR.coerceToWithClause, strict: F.buildWithClause }),
-	withItem: _attach(FR.coerceToWithItem, { from: FR.coerceToWithItem, strict: F.buildWithItem }),
-	withStatement: _attach(FR.coerceToWithStatement, { from: FR.coerceToWithStatement, strict: F.buildWithStatement }),
-	yield: _attach(FR.coerceToYield, { from: FR.coerceToYield, strict: F.buildYield }),
 
 	// Keyword factories
+	passStatement: F.buildPassStatement,
 	breakStatement: F.buildBreakStatement,
 	continueStatement: F.buildContinueStatement,
+	true: F.buildTrue,
 	false: F.buildFalse,
 	none: F.buildNone,
-	passStatement: F.buildPassStatement,
-	true: F.buildTrue,
 
 	// Leaf node factories
-	comment: F.buildComment,
+	importPrefix: F.buildImportPrefix,
 	escapeSequence: F.buildEscapeSequence,
+	typeConversion: F.buildTypeConversion,
+	integer: F.buildInteger,
 	float: F.buildFloat,
 	identifier: F.buildIdentifier,
-	importPrefix: F.buildImportPrefix,
-	integer: F.buildInteger,
+	comment: F.buildComment,
 	lineContinuation: F.buildLineContinuation,
-	typeConversion: F.buildTypeConversion,
 	stringStart: F.buildStringStart,
 	escapeInterpolation: F.buildEscapeInterpolation,
 	stringEnd: F.buildStringEnd,
@@ -648,20 +648,20 @@ export const ir = {
 	with: _attach(FR.coerceToWithStatement, { from: FR.coerceToWithStatement, strict: F.buildWithStatement }),
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
-	compoundStatement,
-	dictPatternKv,
-	expressionWithinForInClause,
-	expressions,
-	fExpression,
-	leftHandSide,
-	namedExpressionLhs,
-	rightHandSide,
-	simplePattern,
-	simpleStatement,
 	statement,
-	expression,
+	simpleStatement,
+	namedExpressionLhs,
+	expressions,
+	compoundStatement,
+	simplePattern,
 	parameter,
 	pattern,
+	expressionWithinForInClause,
+	expression,
 	primaryExpression,
+	leftHandSide,
+	rightHandSide,
+	fExpression,
+	dictPatternKv,
 	from
 } as const;

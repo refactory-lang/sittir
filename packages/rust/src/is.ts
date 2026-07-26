@@ -27,554 +27,554 @@ import type {
 
 // IsGuards — per-kind + supertype type-narrowing guards.
 export interface IsGuards {
-	ArgumentsGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArgumentsGroup1 };
-	AttributeGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributeGroup1 };
-	AttributedArgument<T extends { readonly $type: number }>(
+	sourceFile<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SourceFile };
+	expressionStatement<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.AttributedArgument };
-	AttributedEnumVariant<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.ExpressionStatement };
+	macroDefinition<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MacroDefinition };
+	macroRule<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MacroRule };
+	tokenTreePattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreePattern };
+	tokenBindingPattern<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.AttributedEnumVariant };
-	AttributedFieldDeclaration<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.TokenBindingPattern };
+	tokenRepetitionPattern<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.AttributedFieldDeclaration };
-	AttributedParameter<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.TokenRepetitionPattern };
+	tokenTree<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTree };
+	tokenRepetition<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenRepetition };
+	attributeItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributeItem };
+	innerAttributeItem<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.AttributedParameter };
-	AttributedTypeParameter<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.InnerAttributeItem };
+	attribute<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Attribute };
+	modItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ModItem };
+	foreignModItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForeignModItem };
+	declarationList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DeclarationList };
+	structItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StructItem };
+	unionItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UnionItem };
+	enumItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.EnumItem };
+	enumVariantList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.EnumVariantList };
+	enumVariant<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.EnumVariant };
+	fieldDeclarationList<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.AttributedTypeParameter };
-	ClosureExpressionExpr<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.FieldDeclarationList };
+	fieldDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FieldDeclaration };
+	orderedFieldDeclarationList<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.ClosureExpressionExpr };
-	DelimTokenTreeBrace<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.OrderedFieldDeclarationList };
+	externCrateDeclaration<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.DelimTokenTreeBrace };
-	DelimTokenTreeBracket<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.ExternCrateDeclaration };
+	constItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ConstItem };
+	staticItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StaticItem };
+	typeItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeItem };
+	functionItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionItem };
+	functionSignatureItem<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.DelimTokenTreeBracket };
-	DelimTokenTreeParen<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.FunctionSignatureItem };
+	functionModifiers<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.DelimTokenTreeParen };
-	EnumVariantListGroup1<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.FunctionModifiers };
+	whereClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WhereClause };
+	wherePredicate<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WherePredicate };
+	implItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImplItem };
+	traitItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TraitItem };
+	associatedType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AssociatedType };
+	traitBounds<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TraitBounds };
+	higherRankedTraitBound<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.EnumVariantListGroup1 };
-	ExpressionStatementWithSemi<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.HigherRankedTraitBound };
+	removedTraitBound<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.ExpressionStatementWithSemi };
-	FieldDeclarationListGroup1<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.RemovedTraitBound };
+	typeParameters<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeParameters };
+	constParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ConstParameter };
+	typeParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeParameter };
+	lifetimeParameter<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.FieldDeclarationListGroup1 };
-	FieldInitializerListGroup1<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.LifetimeParameter };
+	letDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LetDeclaration };
+	useDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseDeclaration };
+	scopedUseList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ScopedUseList };
+	useList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseList };
+	useAsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseAsClause };
+	useWildcard<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseWildcard };
+	parameters<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Parameters };
+	selfParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SelfParameter };
+	variadicParameter<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.FieldInitializerListGroup1 };
-	FunctionTypeFnForm<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.VariadicParameter };
+	parameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Parameter };
+	externModifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExternModifier };
+	visibilityModifier<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.FunctionTypeFnForm };
-	FunctionTypeTraitForm<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.FunctionTypeTraitForm };
-	ImplItemBody<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImplItemBody };
-	LetChain<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LetChain };
-	MacroDefinitionBrace<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.MacroDefinitionBrace };
-	MacroDefinitionBracket<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.MacroDefinitionBracket };
-	MacroDefinitionParen<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.MacroDefinitionParen };
-	OrderedFieldDeclarationListGroup1<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.OrderedFieldDeclarationListGroup1 };
-	ParametersGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ParametersGroup1 };
-	ReferenceExpressionRawMut<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ReferenceExpressionRawMut };
-	SlicePatternGroup1<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.SlicePatternGroup1 };
-	StructPatternGroup1<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.StructPatternGroup1 };
-	TokenTreeBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreeBrace };
-	TokenTreeBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreeBracket };
-	TokenTreeParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreeParen };
-	TokenTreePatternBrace<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.TokenTreePatternBrace };
-	TokenTreePatternBracket<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.TokenTreePatternBracket };
-	TokenTreePatternParen<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.TokenTreePatternParen };
-	TuplePatternGroup1<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.TuplePatternGroup1 };
-	TypeArgument<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeArgument };
-	UseBoundsGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseBoundsGroup1 };
-	UseListGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseListGroup1 };
-	VisibilityModifierGroup1<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.VisibilityModifierGroup1 };
-	WhereClauseGroup1<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.WhereClauseGroup1 };
-	abstractType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractType };
-	arguments<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Arguments };
-	arrayExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArrayExpression };
+	): v is T & { readonly $type: TSKindId.VisibilityModifier };
+	bracketedType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BracketedType };
+	qualifiedType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.QualifiedType };
+	lifetime<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Lifetime };
 	arrayType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArrayType };
+	forLifetimes<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForLifetimes };
+	functionType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionType };
+	tupleType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TupleType };
+	genericFunction<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.GenericFunction };
+	genericType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.GenericType };
+	genericTypeWithTurbofish<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.GenericTypeWithTurbofish };
+	boundedType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BoundedType };
+	useBounds<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseBounds };
+	typeArguments<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeArguments };
+	typeBinding<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeBinding };
+	referenceType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ReferenceType };
+	pointerType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PointerType };
+	abstractType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AbstractType };
+	dynamicType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DynamicType };
+	macroInvocation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MacroInvocation };
+	delimTokenTree<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DelimTokenTree };
+	scopedIdentifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ScopedIdentifier };
+	scopedTypeIdentifierInExpressionPosition<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.ScopedTypeIdentifierInExpressionPosition };
+	scopedTypeIdentifier<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.ScopedTypeIdentifier };
+	rangeExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RangeExpression };
+	unaryExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UnaryExpression };
+	tryExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TryExpression };
+	referenceExpression<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.ReferenceExpression };
+	binaryExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BinaryExpression };
 	assignmentExpression<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.AssignmentExpression };
-	associatedType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AssociatedType };
-	asyncBlock<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AsyncBlock };
-	attribute<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Attribute };
-	attributeItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributeItem };
-	awaitExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AwaitExpression };
+	compoundAssignmentExpr<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.CompoundAssignmentExpr };
+	typeCastExpression<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.TypeCastExpression };
+	returnExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ReturnExpression };
+	yieldExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.YieldExpression };
+	callExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CallExpression };
+	arguments<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Arguments };
+	arrayExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArrayExpression };
+	parenthesizedExpression<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.ParenthesizedExpression };
+	tupleExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TupleExpression };
+	structExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StructExpression };
+	fieldInitializerList<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.FieldInitializerList };
+	shorthandFieldInitializer<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.ShorthandFieldInitializer };
+	fieldInitializer<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FieldInitializer };
 	baseFieldInitializer<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.BaseFieldInitializer };
-	binaryExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BinaryExpression };
-	block<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Block };
-	blockComment<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BlockComment };
-	boundedType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BoundedType };
-	bracketedType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BracketedType };
-	breakExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BreakExpression };
-	callExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CallExpression };
-	capturedPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CapturedPattern };
+	ifExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.IfExpression };
+	letCondition<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LetCondition };
+	LetChain<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LetChain };
+	elseClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ElseClause };
+	matchExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MatchExpression };
+	matchBlock<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MatchBlock };
+	matchArm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MatchArm };
+	lastMatchArm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LastMatchArm };
+	matchPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MatchPattern };
+	whileExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WhileExpression };
+	loopExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LoopExpression };
+	forExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForExpression };
+	constBlock<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ConstBlock };
 	closureExpression<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ClosureExpression };
 	closureParameters<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ClosureParameters };
-	compoundAssignmentExpr<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.CompoundAssignmentExpr };
-	constBlock<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ConstBlock };
-	constItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ConstItem };
-	constParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ConstParameter };
+	label<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Label };
+	breakExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BreakExpression };
 	continueExpression<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ContinueExpression };
-	declarationList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DeclarationList };
-	delimTokenTree<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DelimTokenTree };
-	dynamicType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.DynamicType };
-	elseClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ElseClause };
-	enumItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.EnumItem };
-	enumVariant<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.EnumVariant };
-	enumVariantList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.EnumVariantList };
-	expressionStatement<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ExpressionStatement };
-	externCrateDeclaration<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ExternCrateDeclaration };
-	externModifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ExternModifier };
-	fieldDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FieldDeclaration };
-	fieldDeclarationList<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.FieldDeclarationList };
-	fieldExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FieldExpression };
-	fieldInitializer<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FieldInitializer };
-	fieldInitializerList<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.FieldInitializerList };
-	fieldPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FieldPattern };
-	forExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForExpression };
-	forLifetimes<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForLifetimes };
-	foreignModItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ForeignModItem };
-	functionItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionItem };
-	functionModifiers<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.FunctionModifiers };
-	functionSignatureItem<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.FunctionSignatureItem };
-	functionType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FunctionType };
-	genBlock<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.GenBlock };
-	genericFunction<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.GenericFunction };
-	genericPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.GenericPattern };
-	genericType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.GenericType };
-	genericTypeWithTurbofish<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.GenericTypeWithTurbofish };
-	higherRankedTraitBound<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.HigherRankedTraitBound };
-	ifExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.IfExpression };
-	implItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImplItem };
 	indexExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.IndexExpression };
-	innerAttributeItem<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.InnerAttributeItem };
-	label<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Label };
-	lastMatchArm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LastMatchArm };
-	letCondition<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LetCondition };
-	letDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LetDeclaration };
-	lifetime<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Lifetime };
-	lifetimeParameter<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.LifetimeParameter };
-	lineComment<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LineComment };
-	loopExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LoopExpression };
-	macroDefinition<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MacroDefinition };
-	macroInvocation<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MacroInvocation };
-	macroRule<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MacroRule };
-	matchArm<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MatchArm };
-	matchBlock<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MatchBlock };
-	matchExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MatchExpression };
-	matchPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MatchPattern };
-	modItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ModItem };
-	mutPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MutPattern };
-	negativeLiteral<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NegativeLiteral };
-	orPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.OrPattern };
-	orderedFieldDeclarationList<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.OrderedFieldDeclarationList };
-	parameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Parameter };
-	parameters<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Parameters };
-	parenthesizedExpression<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ParenthesizedExpression };
-	pointerType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.PointerType };
-	qualifiedType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.QualifiedType };
-	rangeExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RangeExpression };
-	rangePattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RangePattern };
-	rawStringLiteral<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RawStringLiteral };
-	refPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RefPattern };
-	referenceExpression<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ReferenceExpression };
-	referencePattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ReferencePattern };
-	referenceType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ReferenceType };
-	removedTraitBound<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.RemovedTraitBound };
-	returnExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ReturnExpression };
-	scopedIdentifier<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ScopedIdentifier };
-	scopedTypeIdentifier<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ScopedTypeIdentifier };
-	scopedTypeIdentifierInExpressionPosition<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ScopedTypeIdentifierInExpressionPosition };
-	scopedUseList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ScopedUseList };
-	selfParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SelfParameter };
-	shorthandFieldInitializer<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ShorthandFieldInitializer };
-	slicePattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SlicePattern };
-	sourceFile<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SourceFile };
-	staticItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StaticItem };
-	stringLiteral<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StringLiteral };
-	structExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StructExpression };
-	structItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StructItem };
-	structPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StructPattern };
-	tokenBindingPattern<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.TokenBindingPattern };
-	tokenRepetition<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenRepetition };
-	tokenRepetitionPattern<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.TokenRepetitionPattern };
-	tokenTree<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTree };
-	tokenTreePattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreePattern };
-	traitBounds<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TraitBounds };
-	traitItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TraitItem };
+	awaitExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AwaitExpression };
+	fieldExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FieldExpression };
+	unsafeBlock<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UnsafeBlock };
+	asyncBlock<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AsyncBlock };
+	genBlock<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.GenBlock };
 	tryBlock<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TryBlock };
-	tryExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TryExpression };
-	tupleExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TupleExpression };
+	block<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.Block };
+	genericPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.GenericPattern };
 	tuplePattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TuplePattern };
+	slicePattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SlicePattern };
 	tupleStructPattern<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.TupleStructPattern };
-	tupleType<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TupleType };
-	typeArguments<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeArguments };
-	typeBinding<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeBinding };
-	typeCastExpression<T extends { readonly $type: number }>(
+	structPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StructPattern };
+	fieldPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.FieldPattern };
+	mutPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.MutPattern };
+	rangePattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RangePattern };
+	refPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RefPattern };
+	capturedPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CapturedPattern };
+	referencePattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ReferencePattern };
+	orPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.OrPattern };
+	negativeLiteral<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.NegativeLiteral };
+	stringLiteral<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StringLiteral };
+	rawStringLiteral<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.RawStringLiteral };
+	lineComment<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.LineComment };
+	blockComment<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.BlockComment };
+	AttributeGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.AttributeGroup1 };
+	EnumVariantListGroup1<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.TypeCastExpression };
-	typeItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeItem };
-	typeParameter<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeParameter };
-	typeParameters<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeParameters };
-	unaryExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UnaryExpression };
-	unionItem<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UnionItem };
-	unsafeBlock<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UnsafeBlock };
-	useAsClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseAsClause };
-	useBounds<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseBounds };
-	useDeclaration<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseDeclaration };
-	useList<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseList };
-	useWildcard<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseWildcard };
-	variadicParameter<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.EnumVariantListGroup1 };
+	FieldDeclarationListGroup1<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.VariadicParameter };
-	visibilityModifier<T extends { readonly $type: number }>(
+	): v is T & { readonly $type: TSKindId.FieldDeclarationListGroup1 };
+	OrderedFieldDeclarationListGroup1<T extends { readonly $type: number }>(
 		v: T
-	): v is T & { readonly $type: TSKindId.VisibilityModifier };
-	whereClause<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WhereClause };
-	wherePredicate<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WherePredicate };
-	whileExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WhileExpression };
-	yieldExpression<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.YieldExpression };
+	): v is T & { readonly $type: TSKindId.OrderedFieldDeclarationListGroup1 };
+	WhereClauseGroup1<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.WhereClauseGroup1 };
+	UseListGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseListGroup1 };
+	ParametersGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ParametersGroup1 };
+	VisibilityModifierGroup1<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.VisibilityModifierGroup1 };
+	UseBoundsGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.UseBoundsGroup1 };
+	ArgumentsGroup1<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ArgumentsGroup1 };
+	FieldInitializerListGroup1<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.FieldInitializerListGroup1 };
+	TuplePatternGroup1<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.TuplePatternGroup1 };
+	SlicePatternGroup1<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.SlicePatternGroup1 };
+	StructPatternGroup1<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.StructPatternGroup1 };
+	ReferenceExpressionRawMut<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.ReferenceExpressionRawMut };
+	ImplItemBody<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.ImplItemBody };
+	ClosureExpressionExpr<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.ClosureExpressionExpr };
+	FunctionTypeTraitForm<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.FunctionTypeTraitForm };
+	FunctionTypeFnForm<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.FunctionTypeFnForm };
+	MacroDefinitionParen<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.MacroDefinitionParen };
+	MacroDefinitionBracket<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.MacroDefinitionBracket };
+	MacroDefinitionBrace<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.MacroDefinitionBrace };
+	ExpressionStatementWithSemi<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.ExpressionStatementWithSemi };
+	TokenTreePatternParen<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.TokenTreePatternParen };
+	TokenTreePatternBracket<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.TokenTreePatternBracket };
+	TokenTreePatternBrace<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.TokenTreePatternBrace };
+	TokenTreeParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreeParen };
+	TokenTreeBracket<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreeBracket };
+	TokenTreeBrace<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TokenTreeBrace };
+	DelimTokenTreeParen<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.DelimTokenTreeParen };
+	DelimTokenTreeBracket<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.DelimTokenTreeBracket };
+	DelimTokenTreeBrace<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.DelimTokenTreeBrace };
+	AttributedFieldDeclaration<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.AttributedFieldDeclaration };
+	AttributedEnumVariant<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.AttributedEnumVariant };
+	AttributedParameter<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.AttributedParameter };
+	AttributedTypeParameter<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.AttributedTypeParameter };
+	AttributedArgument<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.AttributedArgument };
+	TypeArgument<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.TypeArgument };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
-	condition(v: { readonly $type: string | number }): v is Condition;
-	declarationStatement(v: { readonly $type: string | number }): v is DeclarationStatement;
-	delimTokens(v: { readonly $type: string | number }): v is DelimTokens;
-	expression(v: { readonly $type: string | number }): v is Expression;
-	expressionEndingWithBlock(v: { readonly $type: string | number }): v is ExpressionEndingWithBlock;
-	expressionExceptRange(v: { readonly $type: string | number }): v is ExpressionExceptRange;
-	literal(v: { readonly $type: string | number }): v is Literal;
-	literalPattern(v: { readonly $type: string | number }): v is LiteralPattern;
-	nonDelimToken(v: { readonly $type: string | number }): v is NonDelimToken;
-	nonSpecialToken(v: { readonly $type: string | number }): v is NonSpecialToken;
-	path(v: { readonly $type: string | number }): v is Path;
-	pattern(v: { readonly $type: string | number }): v is Pattern;
 	statement(v: { readonly $type: string | number }): v is Statement;
+	declarationStatement(v: { readonly $type: string | number }): v is DeclarationStatement;
 	tokenPattern(v: { readonly $type: string | number }): v is TokenPattern;
 	tokens(v: { readonly $type: string | number }): v is Tokens;
-	type(v: { readonly $type: string | number }): v is _Type;
+	nonSpecialToken(v: { readonly $type: string | number }): v is NonSpecialToken;
 	useClause(v: { readonly $type: string | number }): v is UseClause;
+	type(v: { readonly $type: string | number }): v is _Type;
+	expressionExceptRange(v: { readonly $type: string | number }): v is ExpressionExceptRange;
+	expression(v: { readonly $type: string | number }): v is Expression;
+	expressionEndingWithBlock(v: { readonly $type: string | number }): v is ExpressionEndingWithBlock;
+	delimTokens(v: { readonly $type: string | number }): v is DelimTokens;
+	nonDelimToken(v: { readonly $type: string | number }): v is NonDelimToken;
+	condition(v: { readonly $type: string | number }): v is Condition;
+	pattern(v: { readonly $type: string | number }): v is Pattern;
+	literal(v: { readonly $type: string | number }): v is Literal;
+	literalPattern(v: { readonly $type: string | number }): v is LiteralPattern;
+	path(v: { readonly $type: string | number }): v is Path;
 }
 
 // AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.
 export interface AssertGuards {
-	ArgumentsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArgumentsGroup1 };
-	AttributeGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributeGroup1 };
-	AttributedArgument(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedArgument };
-	AttributedEnumVariant(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedEnumVariant };
-	AttributedFieldDeclaration(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.AttributedFieldDeclaration };
-	AttributedParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedParameter };
-	AttributedTypeParameter(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.AttributedTypeParameter };
-	ClosureExpressionExpr(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClosureExpressionExpr };
-	DelimTokenTreeBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTreeBrace };
-	DelimTokenTreeBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTreeBracket };
-	DelimTokenTreeParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTreeParen };
-	EnumVariantListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.EnumVariantListGroup1 };
-	ExpressionStatementWithSemi(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.ExpressionStatementWithSemi };
-	FieldDeclarationListGroup1(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.FieldDeclarationListGroup1 };
-	FieldInitializerListGroup1(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.FieldInitializerListGroup1 };
-	FunctionTypeFnForm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionTypeFnForm };
-	FunctionTypeTraitForm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionTypeTraitForm };
-	ImplItemBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImplItemBody };
-	LetChain(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LetChain };
-	MacroDefinitionBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroDefinitionBrace };
-	MacroDefinitionBracket(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.MacroDefinitionBracket };
-	MacroDefinitionParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroDefinitionParen };
-	OrderedFieldDeclarationListGroup1(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.OrderedFieldDeclarationListGroup1 };
-	ParametersGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ParametersGroup1 };
-	ReferenceExpressionRawMut(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.ReferenceExpressionRawMut };
-	SlicePatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SlicePatternGroup1 };
-	StructPatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StructPatternGroup1 };
-	TokenTreeBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreeBrace };
-	TokenTreeBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreeBracket };
-	TokenTreeParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreeParen };
-	TokenTreePatternBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreePatternBrace };
-	TokenTreePatternBracket(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.TokenTreePatternBracket };
-	TokenTreePatternParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreePatternParen };
-	TuplePatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TuplePatternGroup1 };
-	TypeArgument(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeArgument };
-	UseBoundsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseBoundsGroup1 };
-	UseListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseListGroup1 };
-	VisibilityModifierGroup1(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.VisibilityModifierGroup1 };
-	WhereClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WhereClauseGroup1 };
-	abstractType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractType };
-	arguments(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Arguments };
-	arrayExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrayExpression };
-	arrayType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrayType };
-	assignmentExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AssignmentExpression };
-	associatedType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AssociatedType };
-	asyncBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AsyncBlock };
-	attribute(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Attribute };
-	attributeItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributeItem };
-	awaitExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AwaitExpression };
-	baseFieldInitializer(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BaseFieldInitializer };
-	binaryExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BinaryExpression };
-	block(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Block };
-	blockComment(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BlockComment };
-	boundedType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BoundedType };
-	bracketedType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BracketedType };
-	breakExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BreakExpression };
-	callExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CallExpression };
-	capturedPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CapturedPattern };
-	closureExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClosureExpression };
-	closureParameters(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClosureParameters };
-	compoundAssignmentExpr(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.CompoundAssignmentExpr };
-	constBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ConstBlock };
-	constItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ConstItem };
-	constParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ConstParameter };
-	continueExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ContinueExpression };
-	declarationList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DeclarationList };
-	delimTokenTree(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTree };
-	dynamicType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DynamicType };
-	elseClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ElseClause };
-	enumItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.EnumItem };
-	enumVariant(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.EnumVariant };
-	enumVariantList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.EnumVariantList };
-	expressionStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExpressionStatement };
-	externCrateDeclaration(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.ExternCrateDeclaration };
-	externModifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExternModifier };
-	fieldDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FieldDeclaration };
-	fieldDeclarationList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FieldDeclarationList };
-	fieldExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FieldExpression };
-	fieldInitializer(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FieldInitializer };
-	fieldInitializerList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FieldInitializerList };
-	fieldPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FieldPattern };
-	forExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForExpression };
-	forLifetimes(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForLifetimes };
-	foreignModItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForeignModItem };
-	functionItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionItem };
-	functionModifiers(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionModifiers };
-	functionSignatureItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionSignatureItem };
-	functionType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionType };
-	genBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.GenBlock };
-	genericFunction(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.GenericFunction };
-	genericPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.GenericPattern };
-	genericType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.GenericType };
-	genericTypeWithTurbofish(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.GenericTypeWithTurbofish };
-	higherRankedTraitBound(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.HigherRankedTraitBound };
-	ifExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.IfExpression };
-	implItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImplItem };
-	indexExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.IndexExpression };
-	innerAttributeItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.InnerAttributeItem };
-	label(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Label };
-	lastMatchArm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LastMatchArm };
-	letCondition(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LetCondition };
-	letDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LetDeclaration };
-	lifetime(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Lifetime };
-	lifetimeParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LifetimeParameter };
-	lineComment(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LineComment };
-	loopExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LoopExpression };
-	macroDefinition(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroDefinition };
-	macroInvocation(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroInvocation };
-	macroRule(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroRule };
-	matchArm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MatchArm };
-	matchBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MatchBlock };
-	matchExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MatchExpression };
-	matchPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MatchPattern };
-	modItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ModItem };
-	mutPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MutPattern };
-	negativeLiteral(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NegativeLiteral };
-	orPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.OrPattern };
-	orderedFieldDeclarationList(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.OrderedFieldDeclarationList };
-	parameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Parameter };
-	parameters(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Parameters };
-	parenthesizedExpression(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.ParenthesizedExpression };
-	pointerType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PointerType };
-	qualifiedType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.QualifiedType };
-	rangeExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RangeExpression };
-	rangePattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RangePattern };
-	rawStringLiteral(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RawStringLiteral };
-	refPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RefPattern };
-	referenceExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ReferenceExpression };
-	referencePattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ReferencePattern };
-	referenceType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ReferenceType };
-	removedTraitBound(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RemovedTraitBound };
-	returnExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ReturnExpression };
-	scopedIdentifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ScopedIdentifier };
-	scopedTypeIdentifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ScopedTypeIdentifier };
-	scopedTypeIdentifierInExpressionPosition(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.ScopedTypeIdentifierInExpressionPosition };
-	scopedUseList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ScopedUseList };
-	selfParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SelfParameter };
-	shorthandFieldInitializer(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.ShorthandFieldInitializer };
-	slicePattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SlicePattern };
 	sourceFile(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SourceFile };
-	staticItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StaticItem };
-	stringLiteral(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StringLiteral };
-	structExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StructExpression };
-	structItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StructItem };
-	structPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StructPattern };
+	expressionStatement(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExpressionStatement };
+	macroDefinition(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroDefinition };
+	macroRule(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroRule };
+	tokenTreePattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreePattern };
 	tokenBindingPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenBindingPattern };
-	tokenRepetition(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenRepetition };
 	tokenRepetitionPattern(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.TokenRepetitionPattern };
 	tokenTree(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTree };
-	tokenTreePattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreePattern };
-	traitBounds(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TraitBounds };
-	traitItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TraitItem };
-	tryBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TryBlock };
-	tryExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TryExpression };
-	tupleExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleExpression };
-	tuplePattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TuplePattern };
-	tupleStructPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleStructPattern };
-	tupleType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleType };
-	typeArguments(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeArguments };
-	typeBinding(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeBinding };
-	typeCastExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeCastExpression };
-	typeItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeItem };
-	typeParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeParameter };
-	typeParameters(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeParameters };
-	unaryExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UnaryExpression };
+	tokenRepetition(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenRepetition };
+	attributeItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributeItem };
+	innerAttributeItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.InnerAttributeItem };
+	attribute(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Attribute };
+	modItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ModItem };
+	foreignModItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForeignModItem };
+	declarationList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DeclarationList };
+	structItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StructItem };
 	unionItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UnionItem };
-	unsafeBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UnsafeBlock };
-	useAsClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseAsClause };
-	useBounds(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseBounds };
-	useDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseDeclaration };
-	useList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseList };
-	useWildcard(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseWildcard };
-	variadicParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.VariadicParameter };
-	visibilityModifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.VisibilityModifier };
+	enumItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.EnumItem };
+	enumVariantList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.EnumVariantList };
+	enumVariant(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.EnumVariant };
+	fieldDeclarationList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FieldDeclarationList };
+	fieldDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FieldDeclaration };
+	orderedFieldDeclarationList(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.OrderedFieldDeclarationList };
+	externCrateDeclaration(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.ExternCrateDeclaration };
+	constItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ConstItem };
+	staticItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StaticItem };
+	typeItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeItem };
+	functionItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionItem };
+	functionSignatureItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionSignatureItem };
+	functionModifiers(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionModifiers };
 	whereClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WhereClause };
 	wherePredicate(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WherePredicate };
-	whileExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WhileExpression };
+	implItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImplItem };
+	traitItem(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TraitItem };
+	associatedType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AssociatedType };
+	traitBounds(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TraitBounds };
+	higherRankedTraitBound(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.HigherRankedTraitBound };
+	removedTraitBound(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RemovedTraitBound };
+	typeParameters(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeParameters };
+	constParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ConstParameter };
+	typeParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeParameter };
+	lifetimeParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LifetimeParameter };
+	letDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LetDeclaration };
+	useDeclaration(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseDeclaration };
+	scopedUseList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ScopedUseList };
+	useList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseList };
+	useAsClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseAsClause };
+	useWildcard(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseWildcard };
+	parameters(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Parameters };
+	selfParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SelfParameter };
+	variadicParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.VariadicParameter };
+	parameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Parameter };
+	externModifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExternModifier };
+	visibilityModifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.VisibilityModifier };
+	bracketedType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BracketedType };
+	qualifiedType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.QualifiedType };
+	lifetime(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Lifetime };
+	arrayType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrayType };
+	forLifetimes(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForLifetimes };
+	functionType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionType };
+	tupleType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleType };
+	genericFunction(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.GenericFunction };
+	genericType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.GenericType };
+	genericTypeWithTurbofish(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.GenericTypeWithTurbofish };
+	boundedType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BoundedType };
+	useBounds(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseBounds };
+	typeArguments(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeArguments };
+	typeBinding(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeBinding };
+	referenceType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ReferenceType };
+	pointerType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.PointerType };
+	abstractType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AbstractType };
+	dynamicType(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DynamicType };
+	macroInvocation(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroInvocation };
+	delimTokenTree(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTree };
+	scopedIdentifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ScopedIdentifier };
+	scopedTypeIdentifierInExpressionPosition(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.ScopedTypeIdentifierInExpressionPosition };
+	scopedTypeIdentifier(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ScopedTypeIdentifier };
+	rangeExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RangeExpression };
+	unaryExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UnaryExpression };
+	tryExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TryExpression };
+	referenceExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ReferenceExpression };
+	binaryExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BinaryExpression };
+	assignmentExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AssignmentExpression };
+	compoundAssignmentExpr(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.CompoundAssignmentExpr };
+	typeCastExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeCastExpression };
+	returnExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ReturnExpression };
 	yieldExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.YieldExpression };
+	callExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CallExpression };
+	arguments(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Arguments };
+	arrayExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArrayExpression };
+	parenthesizedExpression(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.ParenthesizedExpression };
+	tupleExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleExpression };
+	structExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StructExpression };
+	fieldInitializerList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FieldInitializerList };
+	shorthandFieldInitializer(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.ShorthandFieldInitializer };
+	fieldInitializer(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FieldInitializer };
+	baseFieldInitializer(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BaseFieldInitializer };
+	ifExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.IfExpression };
+	letCondition(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LetCondition };
+	LetChain(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LetChain };
+	elseClause(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ElseClause };
+	matchExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MatchExpression };
+	matchBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MatchBlock };
+	matchArm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MatchArm };
+	lastMatchArm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LastMatchArm };
+	matchPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MatchPattern };
+	whileExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WhileExpression };
+	loopExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LoopExpression };
+	forExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ForExpression };
+	constBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ConstBlock };
+	closureExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClosureExpression };
+	closureParameters(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClosureParameters };
+	label(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Label };
+	breakExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BreakExpression };
+	continueExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ContinueExpression };
+	indexExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.IndexExpression };
+	awaitExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AwaitExpression };
+	fieldExpression(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FieldExpression };
+	unsafeBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UnsafeBlock };
+	asyncBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AsyncBlock };
+	genBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.GenBlock };
+	tryBlock(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TryBlock };
+	block(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.Block };
+	genericPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.GenericPattern };
+	tuplePattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TuplePattern };
+	slicePattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SlicePattern };
+	tupleStructPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TupleStructPattern };
+	structPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StructPattern };
+	fieldPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FieldPattern };
+	mutPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MutPattern };
+	rangePattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RangePattern };
+	refPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RefPattern };
+	capturedPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.CapturedPattern };
+	referencePattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ReferencePattern };
+	orPattern(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.OrPattern };
+	negativeLiteral(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.NegativeLiteral };
+	stringLiteral(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StringLiteral };
+	rawStringLiteral(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.RawStringLiteral };
+	lineComment(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.LineComment };
+	blockComment(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.BlockComment };
+	AttributeGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributeGroup1 };
+	EnumVariantListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.EnumVariantListGroup1 };
+	FieldDeclarationListGroup1(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.FieldDeclarationListGroup1 };
+	OrderedFieldDeclarationListGroup1(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.OrderedFieldDeclarationListGroup1 };
+	WhereClauseGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WhereClauseGroup1 };
+	UseListGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseListGroup1 };
+	ParametersGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ParametersGroup1 };
+	VisibilityModifierGroup1(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.VisibilityModifierGroup1 };
+	UseBoundsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.UseBoundsGroup1 };
+	ArgumentsGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ArgumentsGroup1 };
+	FieldInitializerListGroup1(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.FieldInitializerListGroup1 };
+	TuplePatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TuplePatternGroup1 };
+	SlicePatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SlicePatternGroup1 };
+	StructPatternGroup1(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StructPatternGroup1 };
+	ReferenceExpressionRawMut(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.ReferenceExpressionRawMut };
+	ImplItemBody(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ImplItemBody };
+	ClosureExpressionExpr(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ClosureExpressionExpr };
+	FunctionTypeTraitForm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionTypeTraitForm };
+	FunctionTypeFnForm(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.FunctionTypeFnForm };
+	MacroDefinitionParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroDefinitionParen };
+	MacroDefinitionBracket(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.MacroDefinitionBracket };
+	MacroDefinitionBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroDefinitionBrace };
+	ExpressionStatementWithSemi(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.ExpressionStatementWithSemi };
+	TokenTreePatternParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreePatternParen };
+	TokenTreePatternBracket(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.TokenTreePatternBracket };
+	TokenTreePatternBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreePatternBrace };
+	TokenTreeParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreeParen };
+	TokenTreeBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreeBracket };
+	TokenTreeBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreeBrace };
+	DelimTokenTreeParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTreeParen };
+	DelimTokenTreeBracket(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTreeBracket };
+	DelimTokenTreeBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.DelimTokenTreeBrace };
+	AttributedFieldDeclaration(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.AttributedFieldDeclaration };
+	AttributedEnumVariant(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedEnumVariant };
+	AttributedParameter(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedParameter };
+	AttributedTypeParameter(v: {
+		readonly $type: number;
+	}): asserts v is { readonly $type: TSKindId.AttributedTypeParameter };
+	AttributedArgument(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.AttributedArgument };
+	TypeArgument(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TypeArgument };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
-	condition(v: { readonly $type: string | number }): asserts v is Condition;
-	declarationStatement(v: { readonly $type: string | number }): asserts v is DeclarationStatement;
-	delimTokens(v: { readonly $type: string | number }): asserts v is DelimTokens;
-	expression(v: { readonly $type: string | number }): asserts v is Expression;
-	expressionEndingWithBlock(v: { readonly $type: string | number }): asserts v is ExpressionEndingWithBlock;
-	expressionExceptRange(v: { readonly $type: string | number }): asserts v is ExpressionExceptRange;
-	literal(v: { readonly $type: string | number }): asserts v is Literal;
-	literalPattern(v: { readonly $type: string | number }): asserts v is LiteralPattern;
-	nonDelimToken(v: { readonly $type: string | number }): asserts v is NonDelimToken;
-	nonSpecialToken(v: { readonly $type: string | number }): asserts v is NonSpecialToken;
-	path(v: { readonly $type: string | number }): asserts v is Path;
-	pattern(v: { readonly $type: string | number }): asserts v is Pattern;
 	statement(v: { readonly $type: string | number }): asserts v is Statement;
+	declarationStatement(v: { readonly $type: string | number }): asserts v is DeclarationStatement;
 	tokenPattern(v: { readonly $type: string | number }): asserts v is TokenPattern;
 	tokens(v: { readonly $type: string | number }): asserts v is Tokens;
-	type(v: { readonly $type: string | number }): asserts v is _Type;
+	nonSpecialToken(v: { readonly $type: string | number }): asserts v is NonSpecialToken;
 	useClause(v: { readonly $type: string | number }): asserts v is UseClause;
+	type(v: { readonly $type: string | number }): asserts v is _Type;
+	expressionExceptRange(v: { readonly $type: string | number }): asserts v is ExpressionExceptRange;
+	expression(v: { readonly $type: string | number }): asserts v is Expression;
+	expressionEndingWithBlock(v: { readonly $type: string | number }): asserts v is ExpressionEndingWithBlock;
+	delimTokens(v: { readonly $type: string | number }): asserts v is DelimTokens;
+	nonDelimToken(v: { readonly $type: string | number }): asserts v is NonDelimToken;
+	condition(v: { readonly $type: string | number }): asserts v is Condition;
+	pattern(v: { readonly $type: string | number }): asserts v is Pattern;
+	literal(v: { readonly $type: string | number }): asserts v is Literal;
+	literalPattern(v: { readonly $type: string | number }): asserts v is LiteralPattern;
+	path(v: { readonly $type: string | number }): asserts v is Path;
 }
 
 // Runtime: kind guards compare numeric TSKindId only (Phase D).
@@ -585,14 +585,25 @@ function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boole
 	return (v) => ids.has(v.$type);
 }
 
-const _supertype_condition_ids = new Set<number>([
-	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 125, 314, 122, 151, 1, 135, 244, 226, 288, 289, 259, 261,
-	240, 262, 285, 286, 287, 138, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281, 247, 269, 270
+const _supertype_statement_ids = new Set<number>([
+	160, 186, 240, 161, 171, 172, 174, 175, 177, 178, 179, 188, 189, 190, 194, 195, 196, 204, 205, 185, 187
 ]);
 const _supertype_declarationStatement_ids = new Set<number>([
 	186, 240, 161, 171, 172, 174, 175, 177, 178, 179, 188, 189, 190, 194, 195, 196, 204, 205, 185, 187
 ]);
-const _supertype_delimTokens_ids = new Set<number>([312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137, 241]);
+const _supertype_tokenPattern_ids = new Set<number>([
+	164, 166, 165, 138, 312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137
+]);
+const _supertype_tokens_ids = new Set<number>([168, 169, 138, 312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137]);
+const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137, 338]);
+const _supertype_useClause_ids = new Set<number>([135, 1, 138, 136, 137, 244, 209, 208, 207, 210]);
+const _supertype_type_ids = new Set<number>([
+	236, 233, 138, 234, 227, 246, 224, 225, 221, 223, 428, 240, 237, 229, 199
+]);
+const _supertype_expressionExceptRange_ids = new Set<number>([
+	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 125, 314, 122, 151, 1, 135, 244, 226, 288, 289, 259, 261,
+	240, 262, 285, 286, 287, 138, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281
+]);
 const _supertype_expression_ids = new Set<number>([
 	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 125, 314, 122, 151, 1, 135, 244, 226, 288, 289, 259, 261,
 	240, 262, 285, 286, 287, 138, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281, 247
@@ -600,29 +611,18 @@ const _supertype_expression_ids = new Set<number>([
 const _supertype_expressionEndingWithBlock_ids = new Set<number>([
 	290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281
 ]);
-const _supertype_expressionExceptRange_ids = new Set<number>([
-	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 125, 314, 122, 151, 1, 135, 244, 226, 288, 289, 259, 261,
-	240, 262, 285, 286, 287, 138, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281
-]);
-const _supertype_literal_ids = new Set<number>([312, 313, 125, 314, 122, 151]);
-const _supertype_literalPattern_ids = new Set<number>([312, 313, 125, 314, 122, 151, 311]);
+const _supertype_delimTokens_ids = new Set<number>([312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137, 241]);
 const _supertype_nonDelimToken_ids = new Set<number>([312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137]);
-const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137, 338]);
-const _supertype_path_ids = new Set<number>([135, 1, 138, 136, 137, 244]);
+const _supertype_condition_ids = new Set<number>([
+	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 125, 314, 122, 151, 1, 135, 244, 226, 288, 289, 259, 261,
+	240, 262, 285, 286, 287, 138, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281, 247, 269, 270
+]);
 const _supertype_pattern_ids = new Set<number>([
 	312, 313, 125, 314, 122, 151, 311, 1, 244, 296, 297, 299, 300, 305, 298, 306, 307, 303, 304, 308, 281, 240, 340
 ]);
-const _supertype_statement_ids = new Set<number>([
-	160, 186, 240, 161, 171, 172, 174, 175, 177, 178, 179, 188, 189, 190, 194, 195, 196, 204, 205, 185, 187
-]);
-const _supertype_tokenPattern_ids = new Set<number>([
-	164, 166, 165, 138, 312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137
-]);
-const _supertype_tokens_ids = new Set<number>([168, 169, 138, 312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137]);
-const _supertype_type_ids = new Set<number>([
-	236, 233, 138, 234, 227, 246, 224, 225, 221, 223, 428, 240, 237, 229, 199
-]);
-const _supertype_useClause_ids = new Set<number>([135, 1, 138, 136, 137, 244, 209, 208, 207, 210]);
+const _supertype_literal_ids = new Set<number>([312, 313, 125, 314, 122, 151]);
+const _supertype_literalPattern_ids = new Set<number>([312, 313, 125, 314, 122, 151, 311]);
+const _supertype_path_ids = new Set<number>([135, 1, 138, 136, 137, 244]);
 
 const _kindIdByKind = new Map<string, number>([
 	['identifier', TSKindId.Identifier],
@@ -896,205 +896,205 @@ const _kindIdByKind = new Map<string, number>([
 ]);
 
 export const is = {
-	ArgumentsGroup1: _g(TSKindId.ArgumentsGroup1),
-	AttributeGroup1: _g(TSKindId.AttributeGroup1),
-	AttributedArgument: _g(TSKindId.AttributedArgument),
-	AttributedEnumVariant: _g(TSKindId.AttributedEnumVariant),
-	AttributedFieldDeclaration: _g(TSKindId.AttributedFieldDeclaration),
-	AttributedParameter: _g(TSKindId.AttributedParameter),
-	AttributedTypeParameter: _g(TSKindId.AttributedTypeParameter),
-	ClosureExpressionExpr: _g(TSKindId.ClosureExpressionExpr),
-	DelimTokenTreeBrace: _g(TSKindId.DelimTokenTreeBrace),
-	DelimTokenTreeBracket: _g(TSKindId.DelimTokenTreeBracket),
-	DelimTokenTreeParen: _g(TSKindId.DelimTokenTreeParen),
-	EnumVariantListGroup1: _g(TSKindId.EnumVariantListGroup1),
-	ExpressionStatementWithSemi: _g(TSKindId.ExpressionStatementWithSemi),
-	FieldDeclarationListGroup1: _g(TSKindId.FieldDeclarationListGroup1),
-	FieldInitializerListGroup1: _g(TSKindId.FieldInitializerListGroup1),
-	FunctionTypeFnForm: _g(TSKindId.FunctionTypeFnForm),
-	FunctionTypeTraitForm: _g(TSKindId.FunctionTypeTraitForm),
-	ImplItemBody: _g(TSKindId.ImplItemBody),
-	LetChain: _g(TSKindId.LetChain),
-	MacroDefinitionBrace: _g(TSKindId.MacroDefinitionBrace),
-	MacroDefinitionBracket: _g(TSKindId.MacroDefinitionBracket),
-	MacroDefinitionParen: _g(TSKindId.MacroDefinitionParen),
-	OrderedFieldDeclarationListGroup1: _g(TSKindId.OrderedFieldDeclarationListGroup1),
-	ParametersGroup1: _g(TSKindId.ParametersGroup1),
-	ReferenceExpressionRawMut: _g(TSKindId.ReferenceExpressionRawMut),
-	SlicePatternGroup1: _g(TSKindId.SlicePatternGroup1),
-	StructPatternGroup1: _g(TSKindId.StructPatternGroup1),
-	TokenTreeBrace: _g(TSKindId.TokenTreeBrace),
-	TokenTreeBracket: _g(TSKindId.TokenTreeBracket),
-	TokenTreeParen: _g(TSKindId.TokenTreeParen),
-	TokenTreePatternBrace: _g(TSKindId.TokenTreePatternBrace),
-	TokenTreePatternBracket: _g(TSKindId.TokenTreePatternBracket),
-	TokenTreePatternParen: _g(TSKindId.TokenTreePatternParen),
-	TuplePatternGroup1: _g(TSKindId.TuplePatternGroup1),
-	TypeArgument: _g(TSKindId.TypeArgument),
-	UseBoundsGroup1: _g(TSKindId.UseBoundsGroup1),
-	UseListGroup1: _g(TSKindId.UseListGroup1),
-	VisibilityModifierGroup1: _g(TSKindId.VisibilityModifierGroup1),
-	WhereClauseGroup1: _g(TSKindId.WhereClauseGroup1),
-	abstractType: _g(TSKindId.AbstractType),
-	arguments: _g(TSKindId.Arguments),
-	arrayExpression: _g(TSKindId.ArrayExpression),
-	arrayType: _g(TSKindId.ArrayType),
-	assignmentExpression: _g(TSKindId.AssignmentExpression),
-	associatedType: _g(TSKindId.AssociatedType),
-	asyncBlock: _g(TSKindId.AsyncBlock),
-	attribute: _g(TSKindId.Attribute),
-	attributeItem: _g(TSKindId.AttributeItem),
-	awaitExpression: _g(TSKindId.AwaitExpression),
-	baseFieldInitializer: _g(TSKindId.BaseFieldInitializer),
-	binaryExpression: _g(TSKindId.BinaryExpression),
-	block: _g(TSKindId.Block),
-	blockComment: _g(TSKindId.BlockComment),
-	boundedType: _g(TSKindId.BoundedType),
-	bracketedType: _g(TSKindId.BracketedType),
-	breakExpression: _g(TSKindId.BreakExpression),
-	callExpression: _g(TSKindId.CallExpression),
-	capturedPattern: _g(TSKindId.CapturedPattern),
-	closureExpression: _g(TSKindId.ClosureExpression),
-	closureParameters: _g(TSKindId.ClosureParameters),
-	compoundAssignmentExpr: _g(TSKindId.CompoundAssignmentExpr),
-	constBlock: _g(TSKindId.ConstBlock),
-	constItem: _g(TSKindId.ConstItem),
-	constParameter: _g(TSKindId.ConstParameter),
-	continueExpression: _g(TSKindId.ContinueExpression),
-	declarationList: _g(TSKindId.DeclarationList),
-	delimTokenTree: _g(TSKindId.DelimTokenTree),
-	dynamicType: _g(TSKindId.DynamicType),
-	elseClause: _g(TSKindId.ElseClause),
-	enumItem: _g(TSKindId.EnumItem),
-	enumVariant: _g(TSKindId.EnumVariant),
-	enumVariantList: _g(TSKindId.EnumVariantList),
-	expressionStatement: _g(TSKindId.ExpressionStatement),
-	externCrateDeclaration: _g(TSKindId.ExternCrateDeclaration),
-	externModifier: _g(TSKindId.ExternModifier),
-	fieldDeclaration: _g(TSKindId.FieldDeclaration),
-	fieldDeclarationList: _g(TSKindId.FieldDeclarationList),
-	fieldExpression: _g(TSKindId.FieldExpression),
-	fieldInitializer: _g(TSKindId.FieldInitializer),
-	fieldInitializerList: _g(TSKindId.FieldInitializerList),
-	fieldPattern: _g(TSKindId.FieldPattern),
-	forExpression: _g(TSKindId.ForExpression),
-	forLifetimes: _g(TSKindId.ForLifetimes),
-	foreignModItem: _g(TSKindId.ForeignModItem),
-	functionItem: _g(TSKindId.FunctionItem),
-	functionModifiers: _g(TSKindId.FunctionModifiers),
-	functionSignatureItem: _g(TSKindId.FunctionSignatureItem),
-	functionType: _g(TSKindId.FunctionType),
-	genBlock: _g(TSKindId.GenBlock),
-	genericFunction: _g(TSKindId.GenericFunction),
-	genericPattern: _g(TSKindId.GenericPattern),
-	genericType: _g(TSKindId.GenericType),
-	genericTypeWithTurbofish: _g(TSKindId.GenericTypeWithTurbofish),
-	higherRankedTraitBound: _g(TSKindId.HigherRankedTraitBound),
-	ifExpression: _g(TSKindId.IfExpression),
-	implItem: _g(TSKindId.ImplItem),
-	indexExpression: _g(TSKindId.IndexExpression),
-	innerAttributeItem: _g(TSKindId.InnerAttributeItem),
-	label: _g(TSKindId.Label),
-	lastMatchArm: _g(TSKindId.LastMatchArm),
-	letCondition: _g(TSKindId.LetCondition),
-	letDeclaration: _g(TSKindId.LetDeclaration),
-	lifetime: _g(TSKindId.Lifetime),
-	lifetimeParameter: _g(TSKindId.LifetimeParameter),
-	lineComment: _g(TSKindId.LineComment),
-	loopExpression: _g(TSKindId.LoopExpression),
-	macroDefinition: _g(TSKindId.MacroDefinition),
-	macroInvocation: _g(TSKindId.MacroInvocation),
-	macroRule: _g(TSKindId.MacroRule),
-	matchArm: _g(TSKindId.MatchArm),
-	matchBlock: _g(TSKindId.MatchBlock),
-	matchExpression: _g(TSKindId.MatchExpression),
-	matchPattern: _g(TSKindId.MatchPattern),
-	modItem: _g(TSKindId.ModItem),
-	mutPattern: _g(TSKindId.MutPattern),
-	negativeLiteral: _g(TSKindId.NegativeLiteral),
-	orPattern: _g(TSKindId.OrPattern),
-	orderedFieldDeclarationList: _g(TSKindId.OrderedFieldDeclarationList),
-	parameter: _g(TSKindId.Parameter),
-	parameters: _g(TSKindId.Parameters),
-	parenthesizedExpression: _g(TSKindId.ParenthesizedExpression),
-	pointerType: _g(TSKindId.PointerType),
-	qualifiedType: _g(TSKindId.QualifiedType),
-	rangeExpression: _g(TSKindId.RangeExpression),
-	rangePattern: _g(TSKindId.RangePattern),
-	rawStringLiteral: _g(TSKindId.RawStringLiteral),
-	refPattern: _g(TSKindId.RefPattern),
-	referenceExpression: _g(TSKindId.ReferenceExpression),
-	referencePattern: _g(TSKindId.ReferencePattern),
-	referenceType: _g(TSKindId.ReferenceType),
-	removedTraitBound: _g(TSKindId.RemovedTraitBound),
-	returnExpression: _g(TSKindId.ReturnExpression),
-	scopedIdentifier: _g(TSKindId.ScopedIdentifier),
-	scopedTypeIdentifier: _g(TSKindId.ScopedTypeIdentifier),
-	scopedTypeIdentifierInExpressionPosition: _g(TSKindId.ScopedTypeIdentifierInExpressionPosition),
-	scopedUseList: _g(TSKindId.ScopedUseList),
-	selfParameter: _g(TSKindId.SelfParameter),
-	shorthandFieldInitializer: _g(TSKindId.ShorthandFieldInitializer),
-	slicePattern: _g(TSKindId.SlicePattern),
 	sourceFile: _g(TSKindId.SourceFile),
-	staticItem: _g(TSKindId.StaticItem),
-	stringLiteral: _g(TSKindId.StringLiteral),
-	structExpression: _g(TSKindId.StructExpression),
-	structItem: _g(TSKindId.StructItem),
-	structPattern: _g(TSKindId.StructPattern),
+	expressionStatement: _g(TSKindId.ExpressionStatement),
+	macroDefinition: _g(TSKindId.MacroDefinition),
+	macroRule: _g(TSKindId.MacroRule),
+	tokenTreePattern: _g(TSKindId.TokenTreePattern),
 	tokenBindingPattern: _g(TSKindId.TokenBindingPattern),
-	tokenRepetition: _g(TSKindId.TokenRepetition),
 	tokenRepetitionPattern: _g(TSKindId.TokenRepetitionPattern),
 	tokenTree: _g(TSKindId.TokenTree),
-	tokenTreePattern: _g(TSKindId.TokenTreePattern),
-	traitBounds: _g(TSKindId.TraitBounds),
-	traitItem: _g(TSKindId.TraitItem),
-	tryBlock: _g(TSKindId.TryBlock),
-	tryExpression: _g(TSKindId.TryExpression),
-	tupleExpression: _g(TSKindId.TupleExpression),
-	tuplePattern: _g(TSKindId.TuplePattern),
-	tupleStructPattern: _g(TSKindId.TupleStructPattern),
-	tupleType: _g(TSKindId.TupleType),
-	typeArguments: _g(TSKindId.TypeArguments),
-	typeBinding: _g(TSKindId.TypeBinding),
-	typeCastExpression: _g(TSKindId.TypeCastExpression),
-	typeItem: _g(TSKindId.TypeItem),
-	typeParameter: _g(TSKindId.TypeParameter),
-	typeParameters: _g(TSKindId.TypeParameters),
-	unaryExpression: _g(TSKindId.UnaryExpression),
+	tokenRepetition: _g(TSKindId.TokenRepetition),
+	attributeItem: _g(TSKindId.AttributeItem),
+	innerAttributeItem: _g(TSKindId.InnerAttributeItem),
+	attribute: _g(TSKindId.Attribute),
+	modItem: _g(TSKindId.ModItem),
+	foreignModItem: _g(TSKindId.ForeignModItem),
+	declarationList: _g(TSKindId.DeclarationList),
+	structItem: _g(TSKindId.StructItem),
 	unionItem: _g(TSKindId.UnionItem),
-	unsafeBlock: _g(TSKindId.UnsafeBlock),
-	useAsClause: _g(TSKindId.UseAsClause),
-	useBounds: _g(TSKindId.UseBounds),
-	useDeclaration: _g(TSKindId.UseDeclaration),
-	useList: _g(TSKindId.UseList),
-	useWildcard: _g(TSKindId.UseWildcard),
-	variadicParameter: _g(TSKindId.VariadicParameter),
-	visibilityModifier: _g(TSKindId.VisibilityModifier),
+	enumItem: _g(TSKindId.EnumItem),
+	enumVariantList: _g(TSKindId.EnumVariantList),
+	enumVariant: _g(TSKindId.EnumVariant),
+	fieldDeclarationList: _g(TSKindId.FieldDeclarationList),
+	fieldDeclaration: _g(TSKindId.FieldDeclaration),
+	orderedFieldDeclarationList: _g(TSKindId.OrderedFieldDeclarationList),
+	externCrateDeclaration: _g(TSKindId.ExternCrateDeclaration),
+	constItem: _g(TSKindId.ConstItem),
+	staticItem: _g(TSKindId.StaticItem),
+	typeItem: _g(TSKindId.TypeItem),
+	functionItem: _g(TSKindId.FunctionItem),
+	functionSignatureItem: _g(TSKindId.FunctionSignatureItem),
+	functionModifiers: _g(TSKindId.FunctionModifiers),
 	whereClause: _g(TSKindId.WhereClause),
 	wherePredicate: _g(TSKindId.WherePredicate),
-	whileExpression: _g(TSKindId.WhileExpression),
+	implItem: _g(TSKindId.ImplItem),
+	traitItem: _g(TSKindId.TraitItem),
+	associatedType: _g(TSKindId.AssociatedType),
+	traitBounds: _g(TSKindId.TraitBounds),
+	higherRankedTraitBound: _g(TSKindId.HigherRankedTraitBound),
+	removedTraitBound: _g(TSKindId.RemovedTraitBound),
+	typeParameters: _g(TSKindId.TypeParameters),
+	constParameter: _g(TSKindId.ConstParameter),
+	typeParameter: _g(TSKindId.TypeParameter),
+	lifetimeParameter: _g(TSKindId.LifetimeParameter),
+	letDeclaration: _g(TSKindId.LetDeclaration),
+	useDeclaration: _g(TSKindId.UseDeclaration),
+	scopedUseList: _g(TSKindId.ScopedUseList),
+	useList: _g(TSKindId.UseList),
+	useAsClause: _g(TSKindId.UseAsClause),
+	useWildcard: _g(TSKindId.UseWildcard),
+	parameters: _g(TSKindId.Parameters),
+	selfParameter: _g(TSKindId.SelfParameter),
+	variadicParameter: _g(TSKindId.VariadicParameter),
+	parameter: _g(TSKindId.Parameter),
+	externModifier: _g(TSKindId.ExternModifier),
+	visibilityModifier: _g(TSKindId.VisibilityModifier),
+	bracketedType: _g(TSKindId.BracketedType),
+	qualifiedType: _g(TSKindId.QualifiedType),
+	lifetime: _g(TSKindId.Lifetime),
+	arrayType: _g(TSKindId.ArrayType),
+	forLifetimes: _g(TSKindId.ForLifetimes),
+	functionType: _g(TSKindId.FunctionType),
+	tupleType: _g(TSKindId.TupleType),
+	genericFunction: _g(TSKindId.GenericFunction),
+	genericType: _g(TSKindId.GenericType),
+	genericTypeWithTurbofish: _g(TSKindId.GenericTypeWithTurbofish),
+	boundedType: _g(TSKindId.BoundedType),
+	useBounds: _g(TSKindId.UseBounds),
+	typeArguments: _g(TSKindId.TypeArguments),
+	typeBinding: _g(TSKindId.TypeBinding),
+	referenceType: _g(TSKindId.ReferenceType),
+	pointerType: _g(TSKindId.PointerType),
+	abstractType: _g(TSKindId.AbstractType),
+	dynamicType: _g(TSKindId.DynamicType),
+	macroInvocation: _g(TSKindId.MacroInvocation),
+	delimTokenTree: _g(TSKindId.DelimTokenTree),
+	scopedIdentifier: _g(TSKindId.ScopedIdentifier),
+	scopedTypeIdentifierInExpressionPosition: _g(TSKindId.ScopedTypeIdentifierInExpressionPosition),
+	scopedTypeIdentifier: _g(TSKindId.ScopedTypeIdentifier),
+	rangeExpression: _g(TSKindId.RangeExpression),
+	unaryExpression: _g(TSKindId.UnaryExpression),
+	tryExpression: _g(TSKindId.TryExpression),
+	referenceExpression: _g(TSKindId.ReferenceExpression),
+	binaryExpression: _g(TSKindId.BinaryExpression),
+	assignmentExpression: _g(TSKindId.AssignmentExpression),
+	compoundAssignmentExpr: _g(TSKindId.CompoundAssignmentExpr),
+	typeCastExpression: _g(TSKindId.TypeCastExpression),
+	returnExpression: _g(TSKindId.ReturnExpression),
 	yieldExpression: _g(TSKindId.YieldExpression),
+	callExpression: _g(TSKindId.CallExpression),
+	arguments: _g(TSKindId.Arguments),
+	arrayExpression: _g(TSKindId.ArrayExpression),
+	parenthesizedExpression: _g(TSKindId.ParenthesizedExpression),
+	tupleExpression: _g(TSKindId.TupleExpression),
+	structExpression: _g(TSKindId.StructExpression),
+	fieldInitializerList: _g(TSKindId.FieldInitializerList),
+	shorthandFieldInitializer: _g(TSKindId.ShorthandFieldInitializer),
+	fieldInitializer: _g(TSKindId.FieldInitializer),
+	baseFieldInitializer: _g(TSKindId.BaseFieldInitializer),
+	ifExpression: _g(TSKindId.IfExpression),
+	letCondition: _g(TSKindId.LetCondition),
+	LetChain: _g(TSKindId.LetChain),
+	elseClause: _g(TSKindId.ElseClause),
+	matchExpression: _g(TSKindId.MatchExpression),
+	matchBlock: _g(TSKindId.MatchBlock),
+	matchArm: _g(TSKindId.MatchArm),
+	lastMatchArm: _g(TSKindId.LastMatchArm),
+	matchPattern: _g(TSKindId.MatchPattern),
+	whileExpression: _g(TSKindId.WhileExpression),
+	loopExpression: _g(TSKindId.LoopExpression),
+	forExpression: _g(TSKindId.ForExpression),
+	constBlock: _g(TSKindId.ConstBlock),
+	closureExpression: _g(TSKindId.ClosureExpression),
+	closureParameters: _g(TSKindId.ClosureParameters),
+	label: _g(TSKindId.Label),
+	breakExpression: _g(TSKindId.BreakExpression),
+	continueExpression: _g(TSKindId.ContinueExpression),
+	indexExpression: _g(TSKindId.IndexExpression),
+	awaitExpression: _g(TSKindId.AwaitExpression),
+	fieldExpression: _g(TSKindId.FieldExpression),
+	unsafeBlock: _g(TSKindId.UnsafeBlock),
+	asyncBlock: _g(TSKindId.AsyncBlock),
+	genBlock: _g(TSKindId.GenBlock),
+	tryBlock: _g(TSKindId.TryBlock),
+	block: _g(TSKindId.Block),
+	genericPattern: _g(TSKindId.GenericPattern),
+	tuplePattern: _g(TSKindId.TuplePattern),
+	slicePattern: _g(TSKindId.SlicePattern),
+	tupleStructPattern: _g(TSKindId.TupleStructPattern),
+	structPattern: _g(TSKindId.StructPattern),
+	fieldPattern: _g(TSKindId.FieldPattern),
+	mutPattern: _g(TSKindId.MutPattern),
+	rangePattern: _g(TSKindId.RangePattern),
+	refPattern: _g(TSKindId.RefPattern),
+	capturedPattern: _g(TSKindId.CapturedPattern),
+	referencePattern: _g(TSKindId.ReferencePattern),
+	orPattern: _g(TSKindId.OrPattern),
+	negativeLiteral: _g(TSKindId.NegativeLiteral),
+	stringLiteral: _g(TSKindId.StringLiteral),
+	rawStringLiteral: _g(TSKindId.RawStringLiteral),
+	lineComment: _g(TSKindId.LineComment),
+	blockComment: _g(TSKindId.BlockComment),
+	AttributeGroup1: _g(TSKindId.AttributeGroup1),
+	EnumVariantListGroup1: _g(TSKindId.EnumVariantListGroup1),
+	FieldDeclarationListGroup1: _g(TSKindId.FieldDeclarationListGroup1),
+	OrderedFieldDeclarationListGroup1: _g(TSKindId.OrderedFieldDeclarationListGroup1),
+	WhereClauseGroup1: _g(TSKindId.WhereClauseGroup1),
+	UseListGroup1: _g(TSKindId.UseListGroup1),
+	ParametersGroup1: _g(TSKindId.ParametersGroup1),
+	VisibilityModifierGroup1: _g(TSKindId.VisibilityModifierGroup1),
+	UseBoundsGroup1: _g(TSKindId.UseBoundsGroup1),
+	ArgumentsGroup1: _g(TSKindId.ArgumentsGroup1),
+	FieldInitializerListGroup1: _g(TSKindId.FieldInitializerListGroup1),
+	TuplePatternGroup1: _g(TSKindId.TuplePatternGroup1),
+	SlicePatternGroup1: _g(TSKindId.SlicePatternGroup1),
+	StructPatternGroup1: _g(TSKindId.StructPatternGroup1),
+	ReferenceExpressionRawMut: _g(TSKindId.ReferenceExpressionRawMut),
+	ImplItemBody: _g(TSKindId.ImplItemBody),
+	ClosureExpressionExpr: _g(TSKindId.ClosureExpressionExpr),
+	FunctionTypeTraitForm: _g(TSKindId.FunctionTypeTraitForm),
+	FunctionTypeFnForm: _g(TSKindId.FunctionTypeFnForm),
+	MacroDefinitionParen: _g(TSKindId.MacroDefinitionParen),
+	MacroDefinitionBracket: _g(TSKindId.MacroDefinitionBracket),
+	MacroDefinitionBrace: _g(TSKindId.MacroDefinitionBrace),
+	ExpressionStatementWithSemi: _g(TSKindId.ExpressionStatementWithSemi),
+	TokenTreePatternParen: _g(TSKindId.TokenTreePatternParen),
+	TokenTreePatternBracket: _g(TSKindId.TokenTreePatternBracket),
+	TokenTreePatternBrace: _g(TSKindId.TokenTreePatternBrace),
+	TokenTreeParen: _g(TSKindId.TokenTreeParen),
+	TokenTreeBracket: _g(TSKindId.TokenTreeBracket),
+	TokenTreeBrace: _g(TSKindId.TokenTreeBrace),
+	DelimTokenTreeParen: _g(TSKindId.DelimTokenTreeParen),
+	DelimTokenTreeBracket: _g(TSKindId.DelimTokenTreeBracket),
+	DelimTokenTreeBrace: _g(TSKindId.DelimTokenTreeBrace),
+	AttributedFieldDeclaration: _g(TSKindId.AttributedFieldDeclaration),
+	AttributedEnumVariant: _g(TSKindId.AttributedEnumVariant),
+	AttributedParameter: _g(TSKindId.AttributedParameter),
+	AttributedTypeParameter: _g(TSKindId.AttributedTypeParameter),
+	AttributedArgument: _g(TSKindId.AttributedArgument),
+	TypeArgument: _g(TSKindId.TypeArgument),
 	kind: (v: { readonly $type: number }, k: string): boolean => {
 		const id = _kindIdByKind.get(k);
 		return id !== undefined && v.$type === id;
 	},
-	condition: _sg(_supertype_condition_ids),
-	declarationStatement: _sg(_supertype_declarationStatement_ids),
-	delimTokens: _sg(_supertype_delimTokens_ids),
-	expression: _sg(_supertype_expression_ids),
-	expressionEndingWithBlock: _sg(_supertype_expressionEndingWithBlock_ids),
-	expressionExceptRange: _sg(_supertype_expressionExceptRange_ids),
-	literal: _sg(_supertype_literal_ids),
-	literalPattern: _sg(_supertype_literalPattern_ids),
-	nonDelimToken: _sg(_supertype_nonDelimToken_ids),
-	nonSpecialToken: _sg(_supertype_nonSpecialToken_ids),
-	path: _sg(_supertype_path_ids),
-	pattern: _sg(_supertype_pattern_ids),
 	statement: _sg(_supertype_statement_ids),
+	declarationStatement: _sg(_supertype_declarationStatement_ids),
 	tokenPattern: _sg(_supertype_tokenPattern_ids),
 	tokens: _sg(_supertype_tokens_ids),
+	nonSpecialToken: _sg(_supertype_nonSpecialToken_ids),
+	useClause: _sg(_supertype_useClause_ids),
 	type: _sg(_supertype_type_ids),
-	useClause: _sg(_supertype_useClause_ids)
+	expressionExceptRange: _sg(_supertype_expressionExceptRange_ids),
+	expression: _sg(_supertype_expression_ids),
+	expressionEndingWithBlock: _sg(_supertype_expressionEndingWithBlock_ids),
+	delimTokens: _sg(_supertype_delimTokens_ids),
+	nonDelimToken: _sg(_supertype_nonDelimToken_ids),
+	condition: _sg(_supertype_condition_ids),
+	pattern: _sg(_supertype_pattern_ids),
+	literal: _sg(_supertype_literal_ids),
+	literalPattern: _sg(_supertype_literalPattern_ids),
+	path: _sg(_supertype_path_ids)
 } as unknown as IsGuards;
 
 // assert — reuses `is` runtime logic via closure; TypeError on mismatch.
@@ -1120,208 +1120,208 @@ function _makeAssertKind(guard: _AnyGuard) {
 }
 
 export const assert = {
-	ArgumentsGroup1: _makeAssert('ArgumentsGroup1', is.ArgumentsGroup1 as _AnyGuard),
-	AttributeGroup1: _makeAssert('AttributeGroup1', is.AttributeGroup1 as _AnyGuard),
-	AttributedArgument: _makeAssert('AttributedArgument', is.AttributedArgument as _AnyGuard),
-	AttributedEnumVariant: _makeAssert('AttributedEnumVariant', is.AttributedEnumVariant as _AnyGuard),
-	AttributedFieldDeclaration: _makeAssert('AttributedFieldDeclaration', is.AttributedFieldDeclaration as _AnyGuard),
-	AttributedParameter: _makeAssert('AttributedParameter', is.AttributedParameter as _AnyGuard),
-	AttributedTypeParameter: _makeAssert('AttributedTypeParameter', is.AttributedTypeParameter as _AnyGuard),
-	ClosureExpressionExpr: _makeAssert('ClosureExpressionExpr', is.ClosureExpressionExpr as _AnyGuard),
-	DelimTokenTreeBrace: _makeAssert('DelimTokenTreeBrace', is.DelimTokenTreeBrace as _AnyGuard),
-	DelimTokenTreeBracket: _makeAssert('DelimTokenTreeBracket', is.DelimTokenTreeBracket as _AnyGuard),
-	DelimTokenTreeParen: _makeAssert('DelimTokenTreeParen', is.DelimTokenTreeParen as _AnyGuard),
-	EnumVariantListGroup1: _makeAssert('EnumVariantListGroup1', is.EnumVariantListGroup1 as _AnyGuard),
-	ExpressionStatementWithSemi: _makeAssert('ExpressionStatementWithSemi', is.ExpressionStatementWithSemi as _AnyGuard),
-	FieldDeclarationListGroup1: _makeAssert('FieldDeclarationListGroup1', is.FieldDeclarationListGroup1 as _AnyGuard),
-	FieldInitializerListGroup1: _makeAssert('FieldInitializerListGroup1', is.FieldInitializerListGroup1 as _AnyGuard),
-	FunctionTypeFnForm: _makeAssert('FunctionTypeFnForm', is.FunctionTypeFnForm as _AnyGuard),
-	FunctionTypeTraitForm: _makeAssert('FunctionTypeTraitForm', is.FunctionTypeTraitForm as _AnyGuard),
-	ImplItemBody: _makeAssert('ImplItemBody', is.ImplItemBody as _AnyGuard),
-	LetChain: _makeAssert('LetChain', is.LetChain as _AnyGuard),
-	MacroDefinitionBrace: _makeAssert('MacroDefinitionBrace', is.MacroDefinitionBrace as _AnyGuard),
-	MacroDefinitionBracket: _makeAssert('MacroDefinitionBracket', is.MacroDefinitionBracket as _AnyGuard),
-	MacroDefinitionParen: _makeAssert('MacroDefinitionParen', is.MacroDefinitionParen as _AnyGuard),
-	OrderedFieldDeclarationListGroup1: _makeAssert(
-		'OrderedFieldDeclarationListGroup1',
-		is.OrderedFieldDeclarationListGroup1 as _AnyGuard
-	),
-	ParametersGroup1: _makeAssert('ParametersGroup1', is.ParametersGroup1 as _AnyGuard),
-	ReferenceExpressionRawMut: _makeAssert('ReferenceExpressionRawMut', is.ReferenceExpressionRawMut as _AnyGuard),
-	SlicePatternGroup1: _makeAssert('SlicePatternGroup1', is.SlicePatternGroup1 as _AnyGuard),
-	StructPatternGroup1: _makeAssert('StructPatternGroup1', is.StructPatternGroup1 as _AnyGuard),
-	TokenTreeBrace: _makeAssert('TokenTreeBrace', is.TokenTreeBrace as _AnyGuard),
-	TokenTreeBracket: _makeAssert('TokenTreeBracket', is.TokenTreeBracket as _AnyGuard),
-	TokenTreeParen: _makeAssert('TokenTreeParen', is.TokenTreeParen as _AnyGuard),
-	TokenTreePatternBrace: _makeAssert('TokenTreePatternBrace', is.TokenTreePatternBrace as _AnyGuard),
-	TokenTreePatternBracket: _makeAssert('TokenTreePatternBracket', is.TokenTreePatternBracket as _AnyGuard),
-	TokenTreePatternParen: _makeAssert('TokenTreePatternParen', is.TokenTreePatternParen as _AnyGuard),
-	TuplePatternGroup1: _makeAssert('TuplePatternGroup1', is.TuplePatternGroup1 as _AnyGuard),
-	TypeArgument: _makeAssert('TypeArgument', is.TypeArgument as _AnyGuard),
-	UseBoundsGroup1: _makeAssert('UseBoundsGroup1', is.UseBoundsGroup1 as _AnyGuard),
-	UseListGroup1: _makeAssert('UseListGroup1', is.UseListGroup1 as _AnyGuard),
-	VisibilityModifierGroup1: _makeAssert('VisibilityModifierGroup1', is.VisibilityModifierGroup1 as _AnyGuard),
-	WhereClauseGroup1: _makeAssert('WhereClauseGroup1', is.WhereClauseGroup1 as _AnyGuard),
-	abstractType: _makeAssert('abstractType', is.abstractType as _AnyGuard),
-	arguments: _makeAssert('arguments', is.arguments as _AnyGuard),
-	arrayExpression: _makeAssert('arrayExpression', is.arrayExpression as _AnyGuard),
-	arrayType: _makeAssert('arrayType', is.arrayType as _AnyGuard),
-	assignmentExpression: _makeAssert('assignmentExpression', is.assignmentExpression as _AnyGuard),
-	associatedType: _makeAssert('associatedType', is.associatedType as _AnyGuard),
-	asyncBlock: _makeAssert('asyncBlock', is.asyncBlock as _AnyGuard),
-	attribute: _makeAssert('attribute', is.attribute as _AnyGuard),
-	attributeItem: _makeAssert('attributeItem', is.attributeItem as _AnyGuard),
-	awaitExpression: _makeAssert('awaitExpression', is.awaitExpression as _AnyGuard),
-	baseFieldInitializer: _makeAssert('baseFieldInitializer', is.baseFieldInitializer as _AnyGuard),
-	binaryExpression: _makeAssert('binaryExpression', is.binaryExpression as _AnyGuard),
-	block: _makeAssert('block', is.block as _AnyGuard),
-	blockComment: _makeAssert('blockComment', is.blockComment as _AnyGuard),
-	boundedType: _makeAssert('boundedType', is.boundedType as _AnyGuard),
-	bracketedType: _makeAssert('bracketedType', is.bracketedType as _AnyGuard),
-	breakExpression: _makeAssert('breakExpression', is.breakExpression as _AnyGuard),
-	callExpression: _makeAssert('callExpression', is.callExpression as _AnyGuard),
-	capturedPattern: _makeAssert('capturedPattern', is.capturedPattern as _AnyGuard),
-	closureExpression: _makeAssert('closureExpression', is.closureExpression as _AnyGuard),
-	closureParameters: _makeAssert('closureParameters', is.closureParameters as _AnyGuard),
-	compoundAssignmentExpr: _makeAssert('compoundAssignmentExpr', is.compoundAssignmentExpr as _AnyGuard),
-	constBlock: _makeAssert('constBlock', is.constBlock as _AnyGuard),
-	constItem: _makeAssert('constItem', is.constItem as _AnyGuard),
-	constParameter: _makeAssert('constParameter', is.constParameter as _AnyGuard),
-	continueExpression: _makeAssert('continueExpression', is.continueExpression as _AnyGuard),
-	declarationList: _makeAssert('declarationList', is.declarationList as _AnyGuard),
-	delimTokenTree: _makeAssert('delimTokenTree', is.delimTokenTree as _AnyGuard),
-	dynamicType: _makeAssert('dynamicType', is.dynamicType as _AnyGuard),
-	elseClause: _makeAssert('elseClause', is.elseClause as _AnyGuard),
-	enumItem: _makeAssert('enumItem', is.enumItem as _AnyGuard),
-	enumVariant: _makeAssert('enumVariant', is.enumVariant as _AnyGuard),
-	enumVariantList: _makeAssert('enumVariantList', is.enumVariantList as _AnyGuard),
+	sourceFile: _makeAssert('sourceFile', is.sourceFile as _AnyGuard),
 	expressionStatement: _makeAssert('expressionStatement', is.expressionStatement as _AnyGuard),
-	externCrateDeclaration: _makeAssert('externCrateDeclaration', is.externCrateDeclaration as _AnyGuard),
-	externModifier: _makeAssert('externModifier', is.externModifier as _AnyGuard),
-	fieldDeclaration: _makeAssert('fieldDeclaration', is.fieldDeclaration as _AnyGuard),
-	fieldDeclarationList: _makeAssert('fieldDeclarationList', is.fieldDeclarationList as _AnyGuard),
-	fieldExpression: _makeAssert('fieldExpression', is.fieldExpression as _AnyGuard),
-	fieldInitializer: _makeAssert('fieldInitializer', is.fieldInitializer as _AnyGuard),
-	fieldInitializerList: _makeAssert('fieldInitializerList', is.fieldInitializerList as _AnyGuard),
-	fieldPattern: _makeAssert('fieldPattern', is.fieldPattern as _AnyGuard),
-	forExpression: _makeAssert('forExpression', is.forExpression as _AnyGuard),
-	forLifetimes: _makeAssert('forLifetimes', is.forLifetimes as _AnyGuard),
+	macroDefinition: _makeAssert('macroDefinition', is.macroDefinition as _AnyGuard),
+	macroRule: _makeAssert('macroRule', is.macroRule as _AnyGuard),
+	tokenTreePattern: _makeAssert('tokenTreePattern', is.tokenTreePattern as _AnyGuard),
+	tokenBindingPattern: _makeAssert('tokenBindingPattern', is.tokenBindingPattern as _AnyGuard),
+	tokenRepetitionPattern: _makeAssert('tokenRepetitionPattern', is.tokenRepetitionPattern as _AnyGuard),
+	tokenTree: _makeAssert('tokenTree', is.tokenTree as _AnyGuard),
+	tokenRepetition: _makeAssert('tokenRepetition', is.tokenRepetition as _AnyGuard),
+	attributeItem: _makeAssert('attributeItem', is.attributeItem as _AnyGuard),
+	innerAttributeItem: _makeAssert('innerAttributeItem', is.innerAttributeItem as _AnyGuard),
+	attribute: _makeAssert('attribute', is.attribute as _AnyGuard),
+	modItem: _makeAssert('modItem', is.modItem as _AnyGuard),
 	foreignModItem: _makeAssert('foreignModItem', is.foreignModItem as _AnyGuard),
+	declarationList: _makeAssert('declarationList', is.declarationList as _AnyGuard),
+	structItem: _makeAssert('structItem', is.structItem as _AnyGuard),
+	unionItem: _makeAssert('unionItem', is.unionItem as _AnyGuard),
+	enumItem: _makeAssert('enumItem', is.enumItem as _AnyGuard),
+	enumVariantList: _makeAssert('enumVariantList', is.enumVariantList as _AnyGuard),
+	enumVariant: _makeAssert('enumVariant', is.enumVariant as _AnyGuard),
+	fieldDeclarationList: _makeAssert('fieldDeclarationList', is.fieldDeclarationList as _AnyGuard),
+	fieldDeclaration: _makeAssert('fieldDeclaration', is.fieldDeclaration as _AnyGuard),
+	orderedFieldDeclarationList: _makeAssert('orderedFieldDeclarationList', is.orderedFieldDeclarationList as _AnyGuard),
+	externCrateDeclaration: _makeAssert('externCrateDeclaration', is.externCrateDeclaration as _AnyGuard),
+	constItem: _makeAssert('constItem', is.constItem as _AnyGuard),
+	staticItem: _makeAssert('staticItem', is.staticItem as _AnyGuard),
+	typeItem: _makeAssert('typeItem', is.typeItem as _AnyGuard),
 	functionItem: _makeAssert('functionItem', is.functionItem as _AnyGuard),
-	functionModifiers: _makeAssert('functionModifiers', is.functionModifiers as _AnyGuard),
 	functionSignatureItem: _makeAssert('functionSignatureItem', is.functionSignatureItem as _AnyGuard),
+	functionModifiers: _makeAssert('functionModifiers', is.functionModifiers as _AnyGuard),
+	whereClause: _makeAssert('whereClause', is.whereClause as _AnyGuard),
+	wherePredicate: _makeAssert('wherePredicate', is.wherePredicate as _AnyGuard),
+	implItem: _makeAssert('implItem', is.implItem as _AnyGuard),
+	traitItem: _makeAssert('traitItem', is.traitItem as _AnyGuard),
+	associatedType: _makeAssert('associatedType', is.associatedType as _AnyGuard),
+	traitBounds: _makeAssert('traitBounds', is.traitBounds as _AnyGuard),
+	higherRankedTraitBound: _makeAssert('higherRankedTraitBound', is.higherRankedTraitBound as _AnyGuard),
+	removedTraitBound: _makeAssert('removedTraitBound', is.removedTraitBound as _AnyGuard),
+	typeParameters: _makeAssert('typeParameters', is.typeParameters as _AnyGuard),
+	constParameter: _makeAssert('constParameter', is.constParameter as _AnyGuard),
+	typeParameter: _makeAssert('typeParameter', is.typeParameter as _AnyGuard),
+	lifetimeParameter: _makeAssert('lifetimeParameter', is.lifetimeParameter as _AnyGuard),
+	letDeclaration: _makeAssert('letDeclaration', is.letDeclaration as _AnyGuard),
+	useDeclaration: _makeAssert('useDeclaration', is.useDeclaration as _AnyGuard),
+	scopedUseList: _makeAssert('scopedUseList', is.scopedUseList as _AnyGuard),
+	useList: _makeAssert('useList', is.useList as _AnyGuard),
+	useAsClause: _makeAssert('useAsClause', is.useAsClause as _AnyGuard),
+	useWildcard: _makeAssert('useWildcard', is.useWildcard as _AnyGuard),
+	parameters: _makeAssert('parameters', is.parameters as _AnyGuard),
+	selfParameter: _makeAssert('selfParameter', is.selfParameter as _AnyGuard),
+	variadicParameter: _makeAssert('variadicParameter', is.variadicParameter as _AnyGuard),
+	parameter: _makeAssert('parameter', is.parameter as _AnyGuard),
+	externModifier: _makeAssert('externModifier', is.externModifier as _AnyGuard),
+	visibilityModifier: _makeAssert('visibilityModifier', is.visibilityModifier as _AnyGuard),
+	bracketedType: _makeAssert('bracketedType', is.bracketedType as _AnyGuard),
+	qualifiedType: _makeAssert('qualifiedType', is.qualifiedType as _AnyGuard),
+	lifetime: _makeAssert('lifetime', is.lifetime as _AnyGuard),
+	arrayType: _makeAssert('arrayType', is.arrayType as _AnyGuard),
+	forLifetimes: _makeAssert('forLifetimes', is.forLifetimes as _AnyGuard),
 	functionType: _makeAssert('functionType', is.functionType as _AnyGuard),
-	genBlock: _makeAssert('genBlock', is.genBlock as _AnyGuard),
+	tupleType: _makeAssert('tupleType', is.tupleType as _AnyGuard),
 	genericFunction: _makeAssert('genericFunction', is.genericFunction as _AnyGuard),
-	genericPattern: _makeAssert('genericPattern', is.genericPattern as _AnyGuard),
 	genericType: _makeAssert('genericType', is.genericType as _AnyGuard),
 	genericTypeWithTurbofish: _makeAssert('genericTypeWithTurbofish', is.genericTypeWithTurbofish as _AnyGuard),
-	higherRankedTraitBound: _makeAssert('higherRankedTraitBound', is.higherRankedTraitBound as _AnyGuard),
-	ifExpression: _makeAssert('ifExpression', is.ifExpression as _AnyGuard),
-	implItem: _makeAssert('implItem', is.implItem as _AnyGuard),
-	indexExpression: _makeAssert('indexExpression', is.indexExpression as _AnyGuard),
-	innerAttributeItem: _makeAssert('innerAttributeItem', is.innerAttributeItem as _AnyGuard),
-	label: _makeAssert('label', is.label as _AnyGuard),
-	lastMatchArm: _makeAssert('lastMatchArm', is.lastMatchArm as _AnyGuard),
-	letCondition: _makeAssert('letCondition', is.letCondition as _AnyGuard),
-	letDeclaration: _makeAssert('letDeclaration', is.letDeclaration as _AnyGuard),
-	lifetime: _makeAssert('lifetime', is.lifetime as _AnyGuard),
-	lifetimeParameter: _makeAssert('lifetimeParameter', is.lifetimeParameter as _AnyGuard),
-	lineComment: _makeAssert('lineComment', is.lineComment as _AnyGuard),
-	loopExpression: _makeAssert('loopExpression', is.loopExpression as _AnyGuard),
-	macroDefinition: _makeAssert('macroDefinition', is.macroDefinition as _AnyGuard),
-	macroInvocation: _makeAssert('macroInvocation', is.macroInvocation as _AnyGuard),
-	macroRule: _makeAssert('macroRule', is.macroRule as _AnyGuard),
-	matchArm: _makeAssert('matchArm', is.matchArm as _AnyGuard),
-	matchBlock: _makeAssert('matchBlock', is.matchBlock as _AnyGuard),
-	matchExpression: _makeAssert('matchExpression', is.matchExpression as _AnyGuard),
-	matchPattern: _makeAssert('matchPattern', is.matchPattern as _AnyGuard),
-	modItem: _makeAssert('modItem', is.modItem as _AnyGuard),
-	mutPattern: _makeAssert('mutPattern', is.mutPattern as _AnyGuard),
-	negativeLiteral: _makeAssert('negativeLiteral', is.negativeLiteral as _AnyGuard),
-	orPattern: _makeAssert('orPattern', is.orPattern as _AnyGuard),
-	orderedFieldDeclarationList: _makeAssert('orderedFieldDeclarationList', is.orderedFieldDeclarationList as _AnyGuard),
-	parameter: _makeAssert('parameter', is.parameter as _AnyGuard),
-	parameters: _makeAssert('parameters', is.parameters as _AnyGuard),
-	parenthesizedExpression: _makeAssert('parenthesizedExpression', is.parenthesizedExpression as _AnyGuard),
-	pointerType: _makeAssert('pointerType', is.pointerType as _AnyGuard),
-	qualifiedType: _makeAssert('qualifiedType', is.qualifiedType as _AnyGuard),
-	rangeExpression: _makeAssert('rangeExpression', is.rangeExpression as _AnyGuard),
-	rangePattern: _makeAssert('rangePattern', is.rangePattern as _AnyGuard),
-	rawStringLiteral: _makeAssert('rawStringLiteral', is.rawStringLiteral as _AnyGuard),
-	refPattern: _makeAssert('refPattern', is.refPattern as _AnyGuard),
-	referenceExpression: _makeAssert('referenceExpression', is.referenceExpression as _AnyGuard),
-	referencePattern: _makeAssert('referencePattern', is.referencePattern as _AnyGuard),
+	boundedType: _makeAssert('boundedType', is.boundedType as _AnyGuard),
+	useBounds: _makeAssert('useBounds', is.useBounds as _AnyGuard),
+	typeArguments: _makeAssert('typeArguments', is.typeArguments as _AnyGuard),
+	typeBinding: _makeAssert('typeBinding', is.typeBinding as _AnyGuard),
 	referenceType: _makeAssert('referenceType', is.referenceType as _AnyGuard),
-	removedTraitBound: _makeAssert('removedTraitBound', is.removedTraitBound as _AnyGuard),
-	returnExpression: _makeAssert('returnExpression', is.returnExpression as _AnyGuard),
+	pointerType: _makeAssert('pointerType', is.pointerType as _AnyGuard),
+	abstractType: _makeAssert('abstractType', is.abstractType as _AnyGuard),
+	dynamicType: _makeAssert('dynamicType', is.dynamicType as _AnyGuard),
+	macroInvocation: _makeAssert('macroInvocation', is.macroInvocation as _AnyGuard),
+	delimTokenTree: _makeAssert('delimTokenTree', is.delimTokenTree as _AnyGuard),
 	scopedIdentifier: _makeAssert('scopedIdentifier', is.scopedIdentifier as _AnyGuard),
-	scopedTypeIdentifier: _makeAssert('scopedTypeIdentifier', is.scopedTypeIdentifier as _AnyGuard),
 	scopedTypeIdentifierInExpressionPosition: _makeAssert(
 		'scopedTypeIdentifierInExpressionPosition',
 		is.scopedTypeIdentifierInExpressionPosition as _AnyGuard
 	),
-	scopedUseList: _makeAssert('scopedUseList', is.scopedUseList as _AnyGuard),
-	selfParameter: _makeAssert('selfParameter', is.selfParameter as _AnyGuard),
-	shorthandFieldInitializer: _makeAssert('shorthandFieldInitializer', is.shorthandFieldInitializer as _AnyGuard),
-	slicePattern: _makeAssert('slicePattern', is.slicePattern as _AnyGuard),
-	sourceFile: _makeAssert('sourceFile', is.sourceFile as _AnyGuard),
-	staticItem: _makeAssert('staticItem', is.staticItem as _AnyGuard),
-	stringLiteral: _makeAssert('stringLiteral', is.stringLiteral as _AnyGuard),
-	structExpression: _makeAssert('structExpression', is.structExpression as _AnyGuard),
-	structItem: _makeAssert('structItem', is.structItem as _AnyGuard),
-	structPattern: _makeAssert('structPattern', is.structPattern as _AnyGuard),
-	tokenBindingPattern: _makeAssert('tokenBindingPattern', is.tokenBindingPattern as _AnyGuard),
-	tokenRepetition: _makeAssert('tokenRepetition', is.tokenRepetition as _AnyGuard),
-	tokenRepetitionPattern: _makeAssert('tokenRepetitionPattern', is.tokenRepetitionPattern as _AnyGuard),
-	tokenTree: _makeAssert('tokenTree', is.tokenTree as _AnyGuard),
-	tokenTreePattern: _makeAssert('tokenTreePattern', is.tokenTreePattern as _AnyGuard),
-	traitBounds: _makeAssert('traitBounds', is.traitBounds as _AnyGuard),
-	traitItem: _makeAssert('traitItem', is.traitItem as _AnyGuard),
-	tryBlock: _makeAssert('tryBlock', is.tryBlock as _AnyGuard),
-	tryExpression: _makeAssert('tryExpression', is.tryExpression as _AnyGuard),
-	tupleExpression: _makeAssert('tupleExpression', is.tupleExpression as _AnyGuard),
-	tuplePattern: _makeAssert('tuplePattern', is.tuplePattern as _AnyGuard),
-	tupleStructPattern: _makeAssert('tupleStructPattern', is.tupleStructPattern as _AnyGuard),
-	tupleType: _makeAssert('tupleType', is.tupleType as _AnyGuard),
-	typeArguments: _makeAssert('typeArguments', is.typeArguments as _AnyGuard),
-	typeBinding: _makeAssert('typeBinding', is.typeBinding as _AnyGuard),
-	typeCastExpression: _makeAssert('typeCastExpression', is.typeCastExpression as _AnyGuard),
-	typeItem: _makeAssert('typeItem', is.typeItem as _AnyGuard),
-	typeParameter: _makeAssert('typeParameter', is.typeParameter as _AnyGuard),
-	typeParameters: _makeAssert('typeParameters', is.typeParameters as _AnyGuard),
+	scopedTypeIdentifier: _makeAssert('scopedTypeIdentifier', is.scopedTypeIdentifier as _AnyGuard),
+	rangeExpression: _makeAssert('rangeExpression', is.rangeExpression as _AnyGuard),
 	unaryExpression: _makeAssert('unaryExpression', is.unaryExpression as _AnyGuard),
-	unionItem: _makeAssert('unionItem', is.unionItem as _AnyGuard),
-	unsafeBlock: _makeAssert('unsafeBlock', is.unsafeBlock as _AnyGuard),
-	useAsClause: _makeAssert('useAsClause', is.useAsClause as _AnyGuard),
-	useBounds: _makeAssert('useBounds', is.useBounds as _AnyGuard),
-	useDeclaration: _makeAssert('useDeclaration', is.useDeclaration as _AnyGuard),
-	useList: _makeAssert('useList', is.useList as _AnyGuard),
-	useWildcard: _makeAssert('useWildcard', is.useWildcard as _AnyGuard),
-	variadicParameter: _makeAssert('variadicParameter', is.variadicParameter as _AnyGuard),
-	visibilityModifier: _makeAssert('visibilityModifier', is.visibilityModifier as _AnyGuard),
-	whereClause: _makeAssert('whereClause', is.whereClause as _AnyGuard),
-	wherePredicate: _makeAssert('wherePredicate', is.wherePredicate as _AnyGuard),
-	whileExpression: _makeAssert('whileExpression', is.whileExpression as _AnyGuard),
+	tryExpression: _makeAssert('tryExpression', is.tryExpression as _AnyGuard),
+	referenceExpression: _makeAssert('referenceExpression', is.referenceExpression as _AnyGuard),
+	binaryExpression: _makeAssert('binaryExpression', is.binaryExpression as _AnyGuard),
+	assignmentExpression: _makeAssert('assignmentExpression', is.assignmentExpression as _AnyGuard),
+	compoundAssignmentExpr: _makeAssert('compoundAssignmentExpr', is.compoundAssignmentExpr as _AnyGuard),
+	typeCastExpression: _makeAssert('typeCastExpression', is.typeCastExpression as _AnyGuard),
+	returnExpression: _makeAssert('returnExpression', is.returnExpression as _AnyGuard),
 	yieldExpression: _makeAssert('yieldExpression', is.yieldExpression as _AnyGuard),
+	callExpression: _makeAssert('callExpression', is.callExpression as _AnyGuard),
+	arguments: _makeAssert('arguments', is.arguments as _AnyGuard),
+	arrayExpression: _makeAssert('arrayExpression', is.arrayExpression as _AnyGuard),
+	parenthesizedExpression: _makeAssert('parenthesizedExpression', is.parenthesizedExpression as _AnyGuard),
+	tupleExpression: _makeAssert('tupleExpression', is.tupleExpression as _AnyGuard),
+	structExpression: _makeAssert('structExpression', is.structExpression as _AnyGuard),
+	fieldInitializerList: _makeAssert('fieldInitializerList', is.fieldInitializerList as _AnyGuard),
+	shorthandFieldInitializer: _makeAssert('shorthandFieldInitializer', is.shorthandFieldInitializer as _AnyGuard),
+	fieldInitializer: _makeAssert('fieldInitializer', is.fieldInitializer as _AnyGuard),
+	baseFieldInitializer: _makeAssert('baseFieldInitializer', is.baseFieldInitializer as _AnyGuard),
+	ifExpression: _makeAssert('ifExpression', is.ifExpression as _AnyGuard),
+	letCondition: _makeAssert('letCondition', is.letCondition as _AnyGuard),
+	LetChain: _makeAssert('LetChain', is.LetChain as _AnyGuard),
+	elseClause: _makeAssert('elseClause', is.elseClause as _AnyGuard),
+	matchExpression: _makeAssert('matchExpression', is.matchExpression as _AnyGuard),
+	matchBlock: _makeAssert('matchBlock', is.matchBlock as _AnyGuard),
+	matchArm: _makeAssert('matchArm', is.matchArm as _AnyGuard),
+	lastMatchArm: _makeAssert('lastMatchArm', is.lastMatchArm as _AnyGuard),
+	matchPattern: _makeAssert('matchPattern', is.matchPattern as _AnyGuard),
+	whileExpression: _makeAssert('whileExpression', is.whileExpression as _AnyGuard),
+	loopExpression: _makeAssert('loopExpression', is.loopExpression as _AnyGuard),
+	forExpression: _makeAssert('forExpression', is.forExpression as _AnyGuard),
+	constBlock: _makeAssert('constBlock', is.constBlock as _AnyGuard),
+	closureExpression: _makeAssert('closureExpression', is.closureExpression as _AnyGuard),
+	closureParameters: _makeAssert('closureParameters', is.closureParameters as _AnyGuard),
+	label: _makeAssert('label', is.label as _AnyGuard),
+	breakExpression: _makeAssert('breakExpression', is.breakExpression as _AnyGuard),
+	continueExpression: _makeAssert('continueExpression', is.continueExpression as _AnyGuard),
+	indexExpression: _makeAssert('indexExpression', is.indexExpression as _AnyGuard),
+	awaitExpression: _makeAssert('awaitExpression', is.awaitExpression as _AnyGuard),
+	fieldExpression: _makeAssert('fieldExpression', is.fieldExpression as _AnyGuard),
+	unsafeBlock: _makeAssert('unsafeBlock', is.unsafeBlock as _AnyGuard),
+	asyncBlock: _makeAssert('asyncBlock', is.asyncBlock as _AnyGuard),
+	genBlock: _makeAssert('genBlock', is.genBlock as _AnyGuard),
+	tryBlock: _makeAssert('tryBlock', is.tryBlock as _AnyGuard),
+	block: _makeAssert('block', is.block as _AnyGuard),
+	genericPattern: _makeAssert('genericPattern', is.genericPattern as _AnyGuard),
+	tuplePattern: _makeAssert('tuplePattern', is.tuplePattern as _AnyGuard),
+	slicePattern: _makeAssert('slicePattern', is.slicePattern as _AnyGuard),
+	tupleStructPattern: _makeAssert('tupleStructPattern', is.tupleStructPattern as _AnyGuard),
+	structPattern: _makeAssert('structPattern', is.structPattern as _AnyGuard),
+	fieldPattern: _makeAssert('fieldPattern', is.fieldPattern as _AnyGuard),
+	mutPattern: _makeAssert('mutPattern', is.mutPattern as _AnyGuard),
+	rangePattern: _makeAssert('rangePattern', is.rangePattern as _AnyGuard),
+	refPattern: _makeAssert('refPattern', is.refPattern as _AnyGuard),
+	capturedPattern: _makeAssert('capturedPattern', is.capturedPattern as _AnyGuard),
+	referencePattern: _makeAssert('referencePattern', is.referencePattern as _AnyGuard),
+	orPattern: _makeAssert('orPattern', is.orPattern as _AnyGuard),
+	negativeLiteral: _makeAssert('negativeLiteral', is.negativeLiteral as _AnyGuard),
+	stringLiteral: _makeAssert('stringLiteral', is.stringLiteral as _AnyGuard),
+	rawStringLiteral: _makeAssert('rawStringLiteral', is.rawStringLiteral as _AnyGuard),
+	lineComment: _makeAssert('lineComment', is.lineComment as _AnyGuard),
+	blockComment: _makeAssert('blockComment', is.blockComment as _AnyGuard),
+	AttributeGroup1: _makeAssert('AttributeGroup1', is.AttributeGroup1 as _AnyGuard),
+	EnumVariantListGroup1: _makeAssert('EnumVariantListGroup1', is.EnumVariantListGroup1 as _AnyGuard),
+	FieldDeclarationListGroup1: _makeAssert('FieldDeclarationListGroup1', is.FieldDeclarationListGroup1 as _AnyGuard),
+	OrderedFieldDeclarationListGroup1: _makeAssert(
+		'OrderedFieldDeclarationListGroup1',
+		is.OrderedFieldDeclarationListGroup1 as _AnyGuard
+	),
+	WhereClauseGroup1: _makeAssert('WhereClauseGroup1', is.WhereClauseGroup1 as _AnyGuard),
+	UseListGroup1: _makeAssert('UseListGroup1', is.UseListGroup1 as _AnyGuard),
+	ParametersGroup1: _makeAssert('ParametersGroup1', is.ParametersGroup1 as _AnyGuard),
+	VisibilityModifierGroup1: _makeAssert('VisibilityModifierGroup1', is.VisibilityModifierGroup1 as _AnyGuard),
+	UseBoundsGroup1: _makeAssert('UseBoundsGroup1', is.UseBoundsGroup1 as _AnyGuard),
+	ArgumentsGroup1: _makeAssert('ArgumentsGroup1', is.ArgumentsGroup1 as _AnyGuard),
+	FieldInitializerListGroup1: _makeAssert('FieldInitializerListGroup1', is.FieldInitializerListGroup1 as _AnyGuard),
+	TuplePatternGroup1: _makeAssert('TuplePatternGroup1', is.TuplePatternGroup1 as _AnyGuard),
+	SlicePatternGroup1: _makeAssert('SlicePatternGroup1', is.SlicePatternGroup1 as _AnyGuard),
+	StructPatternGroup1: _makeAssert('StructPatternGroup1', is.StructPatternGroup1 as _AnyGuard),
+	ReferenceExpressionRawMut: _makeAssert('ReferenceExpressionRawMut', is.ReferenceExpressionRawMut as _AnyGuard),
+	ImplItemBody: _makeAssert('ImplItemBody', is.ImplItemBody as _AnyGuard),
+	ClosureExpressionExpr: _makeAssert('ClosureExpressionExpr', is.ClosureExpressionExpr as _AnyGuard),
+	FunctionTypeTraitForm: _makeAssert('FunctionTypeTraitForm', is.FunctionTypeTraitForm as _AnyGuard),
+	FunctionTypeFnForm: _makeAssert('FunctionTypeFnForm', is.FunctionTypeFnForm as _AnyGuard),
+	MacroDefinitionParen: _makeAssert('MacroDefinitionParen', is.MacroDefinitionParen as _AnyGuard),
+	MacroDefinitionBracket: _makeAssert('MacroDefinitionBracket', is.MacroDefinitionBracket as _AnyGuard),
+	MacroDefinitionBrace: _makeAssert('MacroDefinitionBrace', is.MacroDefinitionBrace as _AnyGuard),
+	ExpressionStatementWithSemi: _makeAssert('ExpressionStatementWithSemi', is.ExpressionStatementWithSemi as _AnyGuard),
+	TokenTreePatternParen: _makeAssert('TokenTreePatternParen', is.TokenTreePatternParen as _AnyGuard),
+	TokenTreePatternBracket: _makeAssert('TokenTreePatternBracket', is.TokenTreePatternBracket as _AnyGuard),
+	TokenTreePatternBrace: _makeAssert('TokenTreePatternBrace', is.TokenTreePatternBrace as _AnyGuard),
+	TokenTreeParen: _makeAssert('TokenTreeParen', is.TokenTreeParen as _AnyGuard),
+	TokenTreeBracket: _makeAssert('TokenTreeBracket', is.TokenTreeBracket as _AnyGuard),
+	TokenTreeBrace: _makeAssert('TokenTreeBrace', is.TokenTreeBrace as _AnyGuard),
+	DelimTokenTreeParen: _makeAssert('DelimTokenTreeParen', is.DelimTokenTreeParen as _AnyGuard),
+	DelimTokenTreeBracket: _makeAssert('DelimTokenTreeBracket', is.DelimTokenTreeBracket as _AnyGuard),
+	DelimTokenTreeBrace: _makeAssert('DelimTokenTreeBrace', is.DelimTokenTreeBrace as _AnyGuard),
+	AttributedFieldDeclaration: _makeAssert('AttributedFieldDeclaration', is.AttributedFieldDeclaration as _AnyGuard),
+	AttributedEnumVariant: _makeAssert('AttributedEnumVariant', is.AttributedEnumVariant as _AnyGuard),
+	AttributedParameter: _makeAssert('AttributedParameter', is.AttributedParameter as _AnyGuard),
+	AttributedTypeParameter: _makeAssert('AttributedTypeParameter', is.AttributedTypeParameter as _AnyGuard),
+	AttributedArgument: _makeAssert('AttributedArgument', is.AttributedArgument as _AnyGuard),
+	TypeArgument: _makeAssert('TypeArgument', is.TypeArgument as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),
-	condition: _makeAssert('condition', is.condition as _AnyGuard),
-	declarationStatement: _makeAssert('declarationStatement', is.declarationStatement as _AnyGuard),
-	delimTokens: _makeAssert('delimTokens', is.delimTokens as _AnyGuard),
-	expression: _makeAssert('expression', is.expression as _AnyGuard),
-	expressionEndingWithBlock: _makeAssert('expressionEndingWithBlock', is.expressionEndingWithBlock as _AnyGuard),
-	expressionExceptRange: _makeAssert('expressionExceptRange', is.expressionExceptRange as _AnyGuard),
-	literal: _makeAssert('literal', is.literal as _AnyGuard),
-	literalPattern: _makeAssert('literalPattern', is.literalPattern as _AnyGuard),
-	nonDelimToken: _makeAssert('nonDelimToken', is.nonDelimToken as _AnyGuard),
-	nonSpecialToken: _makeAssert('nonSpecialToken', is.nonSpecialToken as _AnyGuard),
-	path: _makeAssert('path', is.path as _AnyGuard),
-	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
 	statement: _makeAssert('statement', is.statement as _AnyGuard),
+	declarationStatement: _makeAssert('declarationStatement', is.declarationStatement as _AnyGuard),
 	tokenPattern: _makeAssert('tokenPattern', is.tokenPattern as _AnyGuard),
 	tokens: _makeAssert('tokens', is.tokens as _AnyGuard),
+	nonSpecialToken: _makeAssert('nonSpecialToken', is.nonSpecialToken as _AnyGuard),
+	useClause: _makeAssert('useClause', is.useClause as _AnyGuard),
 	type: _makeAssert('type', is.type as _AnyGuard),
-	useClause: _makeAssert('useClause', is.useClause as _AnyGuard)
+	expressionExceptRange: _makeAssert('expressionExceptRange', is.expressionExceptRange as _AnyGuard),
+	expression: _makeAssert('expression', is.expression as _AnyGuard),
+	expressionEndingWithBlock: _makeAssert('expressionEndingWithBlock', is.expressionEndingWithBlock as _AnyGuard),
+	delimTokens: _makeAssert('delimTokens', is.delimTokens as _AnyGuard),
+	nonDelimToken: _makeAssert('nonDelimToken', is.nonDelimToken as _AnyGuard),
+	condition: _makeAssert('condition', is.condition as _AnyGuard),
+	pattern: _makeAssert('pattern', is.pattern as _AnyGuard),
+	literal: _makeAssert('literal', is.literal as _AnyGuard),
+	literalPattern: _makeAssert('literalPattern', is.literalPattern as _AnyGuard),
+	path: _makeAssert('path', is.path as _AnyGuard)
 } as unknown as AssertGuards;
 
 // Shape guards — narrow through NamespaceMap when kind is already known.

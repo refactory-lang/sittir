@@ -2793,7 +2793,17 @@ export function buildRuleCatalog(
 	const identifiedRules: Record<string, Rule<'evaluate'>> = {};
 	const reachable = computeReachableRuleNames(rules);
 
-	for (const ownerKind of Object.keys(rules).sort()) {
+	// NOT `.sort()`-ed: `rules`' own key order already matches tree-sitter's
+	// native `grammar(base, {rules})` merge (base declaration order, with
+	// override-only-new rules appended) — see grammarFn. Alphabetizing here
+	// used to silently diverge that order from the REAL compiled parser's,
+	// which order-dependent enrich() dedup (dsl/enrich.ts
+	// `promoteExistingHiddenRuleName` — "whichever parent asks first wins
+	// the synthesized name") relies on matching. A hidden rule referenced
+	// from multiple parents (e.g. rust's `_non_special_token`, referenced
+	// from `_tokens`/`_non_delim_token`/`_token_pattern`) would then mint a
+	// DIFFERENT winning name than what tree-sitter actually compiled.
+	for (const ownerKind of Object.keys(rules)) {
 		const rule = rules[ownerKind];
 		if (!rule) continue;
 		// A hidden, unreachable rule is OMITTED from `identifiedRules` (not

@@ -17,24 +17,6 @@
   },
   {
     "scope": "grammar",
-    "code": "union-slot-nondegenerate-arm",
-    "severity": "warning",
-    "grammar": "python",
-    "ownerKind": "_suite",
-    "message": "[collect-slots] kind '_suite': choice rule:_suite:root has unnamed-nonterminal arm(s) [simple_statements, newline] but cannot union-route — offending arm(s): structured seq[2](indent block). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
-    "canProceed": true
-  },
-  {
-    "scope": "grammar",
-    "code": "union-slot-nondegenerate-arm",
-    "severity": "warning",
-    "grammar": "python",
-    "ownerKind": "except_clause",
-    "message": "[collect-slots] kind 'except_clause': choice rule:_suite:root has unnamed-nonterminal arm(s) [simple_statements, newline] but cannot union-route — offending arm(s): structured seq[2](indent block). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
-    "canProceed": true
-  },
-  {
-    "scope": "grammar",
     "code": "union-slot-mixed-row",
     "severity": "warning",
     "grammar": "python",
@@ -49,6 +31,24 @@
     "grammar": "python",
     "ownerKind": "future_import_statement",
     "message": "[collect-slots] kind 'future_import_statement': choice rule:future_import_statement:root has unnamed-nonterminal arm(s) [future_import_statement_group1] but cannot union-route — offending arm(s): structured seq[3](\"(\" _import_list \")\"). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
+    "canProceed": true
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-nondegenerate-arm",
+    "severity": "warning",
+    "grammar": "python",
+    "ownerKind": "except_clause",
+    "message": "[collect-slots] kind 'except_clause': choice rule:_suite:root has unnamed-nonterminal arm(s) [simple_statements, newline] but cannot union-route — offending arm(s): structured seq[2](indent block). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
+    "canProceed": true
+  },
+  {
+    "scope": "grammar",
+    "code": "union-slot-nondegenerate-arm",
+    "severity": "warning",
+    "grammar": "python",
+    "ownerKind": "_suite",
+    "message": "[collect-slots] kind '_suite': choice rule:_suite:root has unnamed-nonterminal arm(s) [simple_statements, newline] but cannot union-route — offending arm(s): structured seq[2](indent block). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
     "canProceed": true
   },
   {
@@ -97,38 +97,6 @@
     "code": "typename-collision",
     "severity": "info",
     "grammar": "python",
-    "ownerKind": "False",
-    "message": "[assemble] typeName collision between visible kinds: 'False' renamed 'False' → 'False2' (siblings: 'false')",
-    "canProceed": true,
-    "details": {
-      "typeName": "False",
-      "newType": "False2",
-      "siblingKinds": [
-        "false"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "None",
-    "message": "[assemble] typeName collision between visible kinds: 'None' renamed 'None' → 'None2' (siblings: 'none')",
-    "canProceed": true,
-    "details": {
-      "typeName": "None",
-      "newType": "None2",
-      "siblingKinds": [
-        "none"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "python",
     "ownerKind": "_string_content",
     "message": "[assemble] typeName collision: kind '_string_content' renamed 'StringContent' → '_StringContent' (visible sibling(s): 'string_content')",
     "canProceed": true,
@@ -153,6 +121,38 @@
       "newType": "True2",
       "siblingKinds": [
         "true"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "False",
+    "message": "[assemble] typeName collision between visible kinds: 'False' renamed 'False' → 'False2' (siblings: 'false')",
+    "canProceed": true,
+    "details": {
+      "typeName": "False",
+      "newType": "False2",
+      "siblingKinds": [
+        "false"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "None",
+    "message": "[assemble] typeName collision between visible kinds: 'None' renamed 'None' → 'None2' (siblings: 'none')",
+    "canProceed": true,
+    "details": {
+      "typeName": "None",
+      "newType": "None2",
+      "siblingKinds": [
+        "none"
       ]
     }
   },

@@ -962,7 +962,7 @@ export interface LambdaParametersTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _parameters: ParametersTransport
+  _parameters: _ParametersTransport
 }
 
 export interface LambdaTransport {
@@ -1168,8 +1168,7 @@ export interface ParametersTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _parameter: Array<ParameterTransport>
-  _trailing_sep?: boolean
+  _parameters?: _ParametersTransport
 }
 
 export interface ParametersTransport {
@@ -1180,7 +1179,8 @@ export interface ParametersTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _parameters?: ParametersTransport
+  _parameter: Array<ParameterTransport>
+  _trailing_sep?: boolean
 }
 
 export interface ParenthesizedExpressionTransport {

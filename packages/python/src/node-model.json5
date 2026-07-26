@@ -35,30 +35,10 @@
   ],
   "polymorphFormKinds": [],
   "polymorphVariants": {
-    "_match_block": {
+    "future_import_statement": {
       "definedBy": "override",
       "childKind": {
-        "match_block_block": "block"
-      }
-    },
-    "assignment": {
-      "definedBy": "override",
-      "childKind": {
-        "assignment_eq": "eq",
-        "assignment_type": "type",
-        "assignment_typed": "typed"
-      }
-    },
-    "case_pattern": {
-      "definedBy": "override",
-      "childKind": {
-        "case_pattern_group1": "group1"
-      }
-    },
-    "expression_list": {
-      "definedBy": "override",
-      "childKind": {
-        "expression_list_group1": "group1"
+        "future_import_statement_group1": "group1"
       }
     },
     "expression_statement": {
@@ -67,10 +47,37 @@
         "expression_statement_tuple": "tuple"
       }
     },
-    "future_import_statement": {
+    "_match_block": {
       "definedBy": "override",
       "childKind": {
-        "future_import_statement_group1": "group1"
+        "match_block_block": "block"
+      }
+    },
+    "with_clause": {
+      "definedBy": "override",
+      "childKind": {
+        "with_clause_bare": "bare",
+        "with_clause_paren": "paren"
+      }
+    },
+    "expression_list": {
+      "definedBy": "override",
+      "childKind": {
+        "expression_list_group1": "group1"
+      }
+    },
+    "case_pattern": {
+      "definedBy": "override",
+      "childKind": {
+        "case_pattern_group1": "group1"
+      }
+    },
+    "assignment": {
+      "definedBy": "override",
+      "childKind": {
+        "assignment_eq": "eq",
+        "assignment_type": "type",
+        "assignment_typed": "typed"
       }
     },
     "pattern_list": {
@@ -84,85 +91,53 @@
       "childKind": {
         "string_content_group1": "group1"
       }
-    },
-    "with_clause": {
-      "definedBy": "override",
-      "childKind": {
-        "with_clause_bare": "bare",
-        "with_clause_paren": "paren"
-      }
     }
   },
   "fieldAliasMap": {
-    "_argument_list_group1.content": {
-      "parenthesized_expression": "parenthesized_list_splat"
-    },
-    "_dict_pattern_group2.dict_pattern_kv": {
-      "dict_pattern_kv": "_dict_pattern_kv"
-    },
-    "_dict_pattern_group2.content": {
-      "dict_pattern_group1": "_key_value_pattern"
-    },
-    "_except_clause_group1.content": {
-      "except_clause_as": "_except_clause_as",
-      "except_clause_list": "_except_clause_list"
-    },
-    "_match_block.content": {
-      "match_block_block": "_match_block_block",
-      "newline": "_newline"
-    },
     "_simple_statements.newline": {
       "newline": "_newline"
     },
-    "_suite.simple_statements": {
-      "simple_statements": "_simple_statements"
+    "future_import_statement.import_list": {
+      "future_import_statement_group1": "_import_list"
     },
-    "_suite.newline": {
-      "newline": "_newline"
+    "import_from_statement.wildcard_import": {
+      "future_import_statement_group1": "_import_list"
     },
-    "argument_list.arguments": {
-      "argument_list_group1": "_argument_list_group1"
+    "expression_statement.content": {
+      "expression_statement_tuple": "_expression_statement_tuple"
     },
-    "as_pattern.alias": {
-      "as_pattern_target": "expression"
-    },
-    "assignment.content": {
-      "assignment_eq": "_assignment_eq",
-      "assignment_type": "_assignment_type",
-      "assignment_typed": "_assignment_typed"
-    },
-    "case_clause.consequence": {
+    "if_statement.consequence": {
       "simple_statements": "_simple_statements",
       "newline": "_newline"
-    },
-    "case_pattern.content": {
-      "as_pattern": "_as_pattern",
-      "case_pattern_group1": "_simple_pattern"
-    },
-    "class_definition.body": {
-      "simple_statements": "_simple_statements",
-      "newline": "_newline"
-    },
-    "class_pattern.arguments": {
-      "list_pattern_group1": "_list_pattern_group1"
-    },
-    "comparison_operator.comparators": {
-      "comparison_operator_comparator": "_comparison_operator_comparator"
-    },
-    "decorator.newline": {
-      "newline": "_newline"
-    },
-    "dict_pattern.dict_pattern_group2": {
-      "dict_pattern_group2": "_dict_pattern_group2"
-    },
-    "dictionary.entries": {
-      "dictionary_group1": "_dictionary_group1"
     },
     "elif_clause.consequence": {
       "simple_statements": "_simple_statements",
       "newline": "_newline"
     },
     "else_clause.body": {
+      "simple_statements": "_simple_statements",
+      "newline": "_newline"
+    },
+    "match_statement.body": {
+      "block": "_match_block"
+    },
+    "_match_block.content": {
+      "match_block_block": "_match_block_block",
+      "newline": "_newline"
+    },
+    "case_clause.consequence": {
+      "simple_statements": "_simple_statements",
+      "newline": "_newline"
+    },
+    "for_statement.body": {
+      "simple_statements": "_simple_statements",
+      "newline": "_newline"
+    },
+    "while_statement.body": {
+      "simple_statements": "_simple_statements",
+      "newline": "_newline"
+    },
+    "try_statement.body": {
       "simple_statements": "_simple_statements",
       "newline": "_newline"
     },
@@ -175,81 +150,11 @@
     "except_clause.newline": {
       "newline": "_newline"
     },
-    "expression_list.tail": {
-      "expression_list_group1": "_expression_list_group1"
-    },
-    "expression_statement.content": {
-      "expression_statement_tuple": "_expression_statement_tuple"
-    },
     "finally_clause.block": {
       "simple_statements": "_simple_statements",
       "newline": "_newline"
     },
-    "for_statement.body": {
-      "simple_statements": "_simple_statements",
-      "newline": "_newline"
-    },
-    "format_specifier.content": {
-      "format_expression": "interpolation"
-    },
-    "function_definition.body": {
-      "simple_statements": "_simple_statements",
-      "newline": "_newline"
-    },
-    "future_import_statement.import_list": {
-      "future_import_statement_group1": "_import_list"
-    },
-    "if_statement.consequence": {
-      "simple_statements": "_simple_statements",
-      "newline": "_newline"
-    },
-    "import_from_statement.wildcard_import": {
-      "future_import_statement_group1": "_import_list"
-    },
-    "lambda_parameters.parameters": {
-      "parameter_list": "_parameters"
-    },
-    "list.collection_elements": {
-      "element_list": "_collection_elements"
-    },
-    "list_pattern.patterns": {
-      "pattern_group": "_patterns"
-    },
-    "match_statement.body": {
-      "block": "_match_block"
-    },
-    "parameters.parameters": {
-      "parameter_list": "_parameters"
-    },
-    "parenthesized_expression.content": {
-      "parenthesized_expression": "parenthesized_list_splat"
-    },
-    "parenthesized_list_splat.content": {
-      "parenthesized_expression": "parenthesized_list_splat"
-    },
-    "pattern_list.tail": {
-      "pattern_list_group1": "_pattern_list_group1"
-    },
-    "set.collection_elements": {
-      "element_list": "_collection_elements"
-    },
-    "slice.step": {
-      "slice_group1": "_slice_group1"
-    },
-    "string_content.content": {
-      "string_content_group1": "_not_escape_sequence"
-    },
-    "try_statement.body": {
-      "simple_statements": "_simple_statements",
-      "newline": "_newline"
-    },
-    "tuple.collection_elements": {
-      "element_list": "_collection_elements"
-    },
-    "tuple_pattern.patterns": {
-      "pattern_group": "_patterns"
-    },
-    "while_statement.body": {
+    "with_statement.body": {
       "simple_statements": "_simple_statements",
       "newline": "_newline"
     },
@@ -257,259 +162,114 @@
       "with_clause_bare": "_with_clause_bare",
       "with_clause_paren": "_with_clause_paren"
     },
-    "with_statement.body": {
+    "function_definition.body": {
       "simple_statements": "_simple_statements",
       "newline": "_newline"
+    },
+    "parameters.parameters": {
+      "parameter_list": "_parameters"
+    },
+    "lambda_parameters.parameters": {
+      "parameter_list": "_parameters"
+    },
+    "class_definition.body": {
+      "simple_statements": "_simple_statements",
+      "newline": "_newline"
+    },
+    "parenthesized_list_splat.content": {
+      "parenthesized_expression": "parenthesized_list_splat"
+    },
+    "argument_list.arguments": {
+      "argument_list_group1": "_argument_list_group1"
+    },
+    "decorator.newline": {
+      "newline": "_newline"
+    },
+    "_suite.simple_statements": {
+      "simple_statements": "_simple_statements"
+    },
+    "_suite.newline": {
+      "newline": "_newline"
+    },
+    "expression_list.tail": {
+      "expression_list_group1": "_expression_list_group1"
+    },
+    "case_pattern.content": {
+      "as_pattern": "_as_pattern",
+      "case_pattern_group1": "_simple_pattern"
+    },
+    "dict_pattern.dict_pattern_group2": {
+      "dict_pattern_group2": "_dict_pattern_group2"
+    },
+    "class_pattern.arguments": {
+      "list_pattern_group1": "_list_pattern_group1"
+    },
+    "tuple_pattern.patterns": {
+      "pattern_group": "_patterns"
+    },
+    "list_pattern.patterns": {
+      "pattern_group": "_patterns"
+    },
+    "as_pattern.alias": {
+      "as_pattern_target": "expression"
+    },
+    "comparison_operator.comparators": {
+      "comparison_operator_comparator": "_comparison_operator_comparator"
+    },
+    "assignment.content": {
+      "assignment_eq": "_assignment_eq",
+      "assignment_type": "_assignment_type",
+      "assignment_typed": "_assignment_typed"
+    },
+    "pattern_list.tail": {
+      "pattern_list_group1": "_pattern_list_group1"
+    },
+    "slice.step": {
+      "slice_group1": "_slice_group1"
+    },
+    "list.collection_elements": {
+      "element_list": "_collection_elements"
+    },
+    "set.collection_elements": {
+      "element_list": "_collection_elements"
+    },
+    "tuple.collection_elements": {
+      "element_list": "_collection_elements"
+    },
+    "dictionary.entries": {
+      "dictionary_group1": "_dictionary_group1"
+    },
+    "parenthesized_expression.content": {
+      "parenthesized_expression": "parenthesized_list_splat"
+    },
+    "string_content.content": {
+      "string_content_group1": "_not_escape_sequence"
+    },
+    "format_specifier.content": {
+      "format_expression": "interpolation"
+    },
+    "_except_clause_group1.content": {
+      "except_clause_as": "_except_clause_as",
+      "except_clause_list": "_except_clause_list"
+    },
+    "_argument_list_group1.content": {
+      "parenthesized_expression": "parenthesized_list_splat"
+    },
+    "_dict_pattern_group2.dict_pattern_kv": {
+      "dict_pattern_kv": "_dict_pattern_kv"
+    },
+    "_dict_pattern_group2.content": {
+      "dict_pattern_group1": "_key_value_pattern"
     }
   },
   "factorySlots": {
-    "_argument_list_group1": {
-      "content": {
+    "module": {
+      "statement": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
         "nonEmpty": false
-      }
-    },
-    "_as_pattern": {
-      "case_pattern": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "identifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_assignment_eq": {
-      "right": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_assignment_type": {
-      "type": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_assignment_typed": {
-      "type": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "right": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_collection_elements": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "_comparison_operator_comparator": {
-      "operators": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "primary_expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_comprehension_clauses": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "_dict_pattern_group2": {
-      "dict_pattern_kv": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "_dictionary_group1": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "_except_clause_as": {
-      "value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "alias": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_except_clause_group1": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_except_clause_list": {
-      "value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
-    "_expression_list_group1": {
-      "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
-    "_expression_statement_tuple": {
-      "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
-    "_import_list": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
-    "_key_value_pattern": {
-      "key": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_list_pattern_group1": {
-      "case_pattern": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
-    "_match_block": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_match_block_block": {
-      "alternative": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "_parameters": {
-      "parameter": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
-    "_pattern_list_group1": {
-      "pattern": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
-    "_patterns": {
-      "pattern": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
       }
     },
     "_simple_statements": {
@@ -528,17 +288,8 @@
         "nonEmpty": false
       }
     },
-    "_slice_group1": {
-      "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_with_clause_bare": {
-      "with_item": {
+    "import_statement": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -546,8 +297,56 @@
         "nonEmpty": true
       }
     },
-    "_with_clause_paren": {
-      "with_item": {
+    "relative_import": {
+      "import_prefix": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "dotted_name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "future_import_statement": {
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      },
+      "import_list": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "import_from_statement": {
+      "module_name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "wildcard_import": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_import_list": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -571,24 +370,17 @@
         "nonEmpty": false
       }
     },
-    "argument_list": {
-      "arguments": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "as_pattern": {
-      "expression": {
+    "print_statement": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
-      },
-      "alias": {
+      }
+    },
+    "chevron": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -605,14 +397,7 @@
         "nonEmpty": true
       }
     },
-    "assignment": {
-      "left": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
+    "expression_statement": {
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -621,15 +406,15 @@
         "nonEmpty": false
       }
     },
-    "attribute": {
-      "object": {
+    "named_expression": {
+      "name": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "attribute": {
+      "value": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -637,22 +422,17 @@
         "nonEmpty": false
       }
     },
-    "augmented_assignment": {
-      "left": {
+    "return_statement": {
+      "expressions": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
-      },
-      "operator": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "right": {
+      }
+    },
+    "delete_statement": {
+      "expressions": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -660,40 +440,38 @@
         "nonEmpty": false
       }
     },
-    "await": {
-      "primary_expression": {
+    "raise_statement": {
+      "expressions": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "cause": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
     },
-    "binary_operator": {
-      "left": {
+    "if_statement": {
+      "condition": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "operator": {
+      "consequence": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "right": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "block": {
-      "statement": {
+      "alternative": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -701,22 +479,15 @@
         "nonEmpty": false
       }
     },
-    "boolean_operator": {
-      "left": {
+    "elif_clause": {
+      "condition": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "operator": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "right": {
+      "consequence": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -724,15 +495,33 @@
         "nonEmpty": false
       }
     },
-    "call": {
-      "function": {
+    "else_clause": {
+      "body": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
+      }
+    },
+    "match_statement": {
+      "subject": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
       },
-      "arguments": {
+      "body": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_match_block": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -761,428 +550,6 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false
-      }
-    },
-    "case_list_pattern": {
-      "case_pattern": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "case_pattern": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "case_tuple_pattern": {
-      "case_pattern": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "chevron": {
-      "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "class_definition": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "type_parameters": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "superclasses": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "body": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "class_pattern": {
-      "dotted_name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "arguments": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "comparison_operator": {
-      "left": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "comparators": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
-    "complex_pattern": {
-      "real": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "imaginary": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "operator": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "concatenated_string": {
-      "string": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
-    "conditional_expression": {
-      "body": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "condition": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "alternative": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "constrained_type": {
-      "base_type": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "constraint": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "decorated_definition": {
-      "decorator": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      },
-      "definition": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "decorator": {
-      "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "newline": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "default_parameter": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "delete_statement": {
-      "expressions": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "dict_pattern": {
-      "dict_pattern_group2": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "dictionary": {
-      "entries": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "dictionary_comprehension": {
-      "body": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "comprehension_clauses": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "dictionary_splat": {
-      "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "dictionary_splat_pattern": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "dotted_name": {
-      "identifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
-    "elif_clause": {
-      "condition": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "consequence": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "else_clause": {
-      "body": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "except_clause": {
-      "except_clause_group1": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "simple_statements": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "block": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "newline": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "exec_statement": {
-      "code": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "in_clause": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "expression_list": {
-      "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "tail": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "expression_statement": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "finally_clause": {
-      "block": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "for_in_clause": {
-      "async_marker": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "left": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "right": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
       }
     },
     "for_statement": {
@@ -1222,12 +589,136 @@
         "nonEmpty": false
       }
     },
-    "format_specifier": {
-      "content": {
+    "while_statement": {
+      "condition": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "body": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "alternative": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "try_statement": {
+      "body": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "except_clauses": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
         "multiple": true,
+        "nonEmpty": false
+      },
+      "else_clause": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "finally_clause": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "except_clause": {
+      "except_clause_group1": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "simple_statements": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "block": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "newline": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "finally_clause": {
+      "block": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "with_statement": {
+      "async_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "with_clause": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "body": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "with_clause": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "with_item": {
+      "value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -1275,15 +766,8 @@
         "nonEmpty": false
       }
     },
-    "future_import_statement": {
-      "name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "import_list": {
+    "parameters": {
+      "parameters": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1291,15 +775,8 @@
         "nonEmpty": false
       }
     },
-    "generator_expression": {
-      "body": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "comprehension_clauses": {
+    "lambda_parameters": {
+      "parameters": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1307,15 +784,17 @@
         "nonEmpty": false
       }
     },
-    "generic_type": {
-      "identifier": {
+    "list_splat": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
-      },
-      "type_parameter": {
+      }
+    },
+    "dictionary_splat": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1332,47 +811,8 @@
         "nonEmpty": true
       }
     },
-    "if_clause": {
-      "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "if_statement": {
-      "condition": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "consequence": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "alternative": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "import_from_statement": {
-      "module_name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "wildcard_import": {
+    "nonlocal_statement": {
+      "identifier": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1380,8 +820,77 @@
         "nonEmpty": true
       }
     },
-    "import_statement": {
+    "exec_statement": {
+      "code": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "in_clause": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "type_alias_statement": {
+      "type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "left": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "right": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "class_definition": {
       "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "type_parameters": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "superclasses": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "body": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "type_parameter": {
+      "type": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1389,22 +898,17 @@
         "nonEmpty": true
       }
     },
-    "interpolation": {
-      "expression": {
+    "parenthesized_list_splat": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
-      },
-      "type_conversion": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "format_specifier": {
+      }
+    },
+    "argument_list": {
+      "arguments": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -1412,8 +916,117 @@
         "nonEmpty": false
       }
     },
-    "keyword_argument": {
-      "name": {
+    "decorated_definition": {
+      "decorator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      },
+      "definition": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "decorator": {
+      "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "newline": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "block": {
+      "statement": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "expression_list": {
+      "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "tail": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "dotted_name": {
+      "identifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "case_pattern": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_as_pattern": {
+      "case_pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "identifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "union_pattern": {
+      "simple_pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "dict_pattern": {
+      "dict_pattern_group2": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_key_value_pattern": {
+      "key": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1421,15 +1034,6 @@
         "nonEmpty": false
       },
       "value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "keyword_identifier": {
-      "identifier": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1453,6 +1057,264 @@
         "nonEmpty": false
       }
     },
+    "splat_pattern": {
+      "operator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "identifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "class_pattern": {
+      "dotted_name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "arguments": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "complex_pattern": {
+      "real": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "imaginary": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "operator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_parameters": {
+      "parameter": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_patterns": {
+      "pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "tuple_pattern": {
+      "patterns": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "list_pattern": {
+      "patterns": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "default_parameter": {
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "typed_default_parameter": {
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "list_splat_pattern": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "dictionary_splat_pattern": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "as_pattern": {
+      "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "alias": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "not_operator": {
+      "argument": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "boolean_operator": {
+      "left": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "operator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "right": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "binary_operator": {
+      "left": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "operator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "right": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "unary_operator": {
+      "operator": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "argument": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "comparison_operator": {
+      "left": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "comparators": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
     "lambda": {
       "parameters": {
         "unnamed": false,
@@ -1462,15 +1324,6 @@
         "nonEmpty": false
       },
       "body": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "lambda_parameters": {
-      "parameters": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1494,50 +1347,14 @@
         "nonEmpty": false
       }
     },
-    "list": {
-      "collection_elements": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "list_comprehension": {
-      "body": {
+    "assignment": {
+      "left": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "comprehension_clauses": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "list_pattern": {
-      "patterns": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "list_splat": {
-      "expression": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "list_splat_pattern": {
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -1546,117 +1363,22 @@
         "nonEmpty": false
       }
     },
-    "match_statement": {
-      "subject": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      },
-      "body": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "member_type": {
-      "base_type": {
+    "augmented_assignment": {
+      "left": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "identifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "module": {
-      "statement": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "named_expression": {
-      "name": {
+      "operator": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "nonlocal_statement": {
-      "identifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": true,
-        "nonEmpty": true
-      }
-    },
-    "not_operator": {
-      "argument": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "pair": {
-      "key": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "value": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "parameters": {
-      "parameters": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "parenthesized_expression": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "parenthesized_list_splat": {
-      "content": {
+      "right": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1680,104 +1402,45 @@
         "nonEmpty": false
       }
     },
-    "print_statement": {
+    "yield": {
       "content": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
     },
-    "print_statement_group1": {
-      "chevron": {
+    "attribute": {
+      "object": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "argument": {
+      "attribute": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "subscript": {
+      "value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "subscript": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
         "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "print_statement_group2": {
-      "argument": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
-    "raise_statement": {
-      "expressions": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "cause": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "relative_import": {
-      "import_prefix": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "dotted_name": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "return_statement": {
-      "expressions": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "set": {
-      "collection_elements": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "set_comprehension": {
-      "body": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "comprehension_clauses": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
+        "nonEmpty": true
       }
     },
     "slice": {
@@ -1803,15 +1466,40 @@
         "nonEmpty": false
       }
     },
-    "splat_pattern": {
-      "operator": {
+    "call": {
+      "function": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "identifier": {
+      "arguments": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "typed_parameter": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "type": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1826,6 +1514,293 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false
+      }
+    },
+    "generic_type": {
+      "identifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "type_parameter": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "union_type": {
+      "left": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "right": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "constrained_type": {
+      "base_type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "constraint": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "member_type": {
+      "base_type": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "identifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "keyword_argument": {
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "list": {
+      "collection_elements": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "set": {
+      "collection_elements": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "tuple": {
+      "collection_elements": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "dictionary": {
+      "entries": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "pair": {
+      "key": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "value": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "list_comprehension": {
+      "body": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "comprehension_clauses": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "dictionary_comprehension": {
+      "body": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "comprehension_clauses": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "set_comprehension": {
+      "body": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "comprehension_clauses": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "generator_expression": {
+      "body": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "comprehension_clauses": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_comprehension_clauses": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "parenthesized_expression": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "_collection_elements": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "for_in_clause": {
+      "async_marker": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "left": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "right": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "if_clause": {
+      "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "conditional_expression": {
+      "body": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "condition": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "alternative": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "concatenated_string": {
+      "string": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
       }
     },
     "string": {
@@ -1860,71 +1835,57 @@
         "nonEmpty": false
       }
     },
-    "subscript": {
-      "value": {
+    "interpolation": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "subscript": {
+      "type_conversion": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "format_specifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "format_specifier": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": true,
-        "nonEmpty": true
+        "nonEmpty": false
       }
     },
-    "try_statement": {
-      "body": {
+    "keyword_identifier": {
+      "identifier": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
-      },
-      "except_clauses": {
+      }
+    },
+    "await": {
+      "primary_expression": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      },
-      "else_clause": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "finally_clause": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
     },
-    "tuple": {
-      "collection_elements": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "tuple_pattern": {
-      "patterns": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "type": {
+    "_except_clause_group1": {
       "content": {
         "unnamed": false,
         "slotCount": 1,
@@ -1933,31 +1894,17 @@
         "nonEmpty": false
       }
     },
-    "type_alias_statement": {
-      "type": {
+    "_argument_list_group1": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "left": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "right": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
+        "required": false,
+        "multiple": true,
         "nonEmpty": false
       }
     },
-    "type_parameter": {
-      "type": {
+    "_expression_list_group1": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1965,47 +1912,94 @@
         "nonEmpty": true
       }
     },
-    "typed_default_parameter": {
-      "name": {
+    "_list_pattern_group1": {
+      "case_pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_dict_pattern_group2": {
+      "dict_pattern_kv": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "type": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "_pattern_list_group1": {
+      "pattern": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_slice_group1": {
+      "expression": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
-      },
+      }
+    },
+    "_dictionary_group1": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "_except_clause_as": {
       "value": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
-      }
-    },
-    "typed_parameter": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
       },
-      "type": {
+      "alias": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
         "multiple": false,
         "nonEmpty": false
       }
     },
-    "unary_operator": {
-      "operator": {
+    "case_tuple_pattern": {
+      "case_pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "case_list_pattern": {
+      "case_pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "print_statement_group1": {
+      "chevron": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2015,22 +2009,40 @@
       "argument": {
         "unnamed": false,
         "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "print_statement_group2": {
+      "argument": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "_assignment_eq": {
+      "right": {
+        "unnamed": false,
+        "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       }
     },
-    "union_pattern": {
-      "simple_pattern": {
+    "_assignment_type": {
+      "type": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": true,
-        "nonEmpty": true
+        "multiple": false,
+        "nonEmpty": false
       }
     },
-    "union_type": {
-      "left": {
+    "_assignment_typed": {
+      "type": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -2045,75 +2057,63 @@
         "nonEmpty": false
       }
     },
-    "while_statement": {
-      "condition": {
+    "_expression_statement_tuple": {
+      "expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "body": {
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_with_clause_bare": {
+      "with_item": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_with_clause_paren": {
+      "with_item": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": true,
+        "nonEmpty": true
+      }
+    },
+    "_match_block_block": {
       "alternative": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
-        "multiple": false,
+        "multiple": true,
         "nonEmpty": false
       }
     },
-    "with_clause": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "with_item": {
+    "_except_clause_list": {
       "value": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
+        "multiple": true,
+        "nonEmpty": true
       }
     },
-    "with_statement": {
-      "async_marker": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "with_clause": {
+    "_comparison_operator_comparator": {
+      "operators": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
         "multiple": false,
         "nonEmpty": false
       },
-      "body": {
+      "primary_expression": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "yield": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
         "multiple": false,
         "nonEmpty": false
       }

@@ -23,7 +23,174 @@ function _attach<T extends (...args: never[]) => unknown, P extends Record<strin
 
 // Supertype-grouped sub-namespaces — tree-shakeable top-level consts.
 // Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).
-export const condition = {
+export const statement = {
+	expression: _attach(FR.coerceToExpressionStatement, {
+		from: FR.coerceToExpressionStatement,
+		strict: F.buildExpressionStatement
+	}),
+	const: _attach(FR.coerceToConstItem, { from: FR.coerceToConstItem, strict: F.buildConstItem }),
+	macro: _attach(FR.coerceToMacroInvocation, { from: FR.coerceToMacroInvocation, strict: F.buildMacroInvocation }),
+	attribute: _attach(FR.coerceToAttributeItem, { from: FR.coerceToAttributeItem, strict: F.buildAttributeItem }),
+	innerAttribute: _attach(FR.coerceToInnerAttributeItem, {
+		from: FR.coerceToInnerAttributeItem,
+		strict: F.buildInnerAttributeItem
+	}),
+	mod: _attach(FR.coerceToModItem, { from: FR.coerceToModItem, strict: F.buildModItem }),
+	foreignMod: _attach(FR.coerceToForeignModItem, { from: FR.coerceToForeignModItem, strict: F.buildForeignModItem }),
+	struct: _attach(FR.coerceToStructItem, { from: FR.coerceToStructItem, strict: F.buildStructItem }),
+	union: _attach(FR.coerceToUnionItem, { from: FR.coerceToUnionItem, strict: F.buildUnionItem }),
+	enum: _attach(FR.coerceToEnumItem, { from: FR.coerceToEnumItem, strict: F.buildEnumItem }),
+	type: _attach(FR.coerceToTypeItem, { from: FR.coerceToTypeItem, strict: F.buildTypeItem }),
+	function: _attach(FR.coerceToFunctionItem, { from: FR.coerceToFunctionItem, strict: F.buildFunctionItem }),
+	functionSignature: _attach(FR.coerceToFunctionSignatureItem, {
+		from: FR.coerceToFunctionSignatureItem,
+		strict: F.buildFunctionSignatureItem
+	}),
+	impl: _attach(FR.coerceToImplItem, { from: FR.coerceToImplItem, strict: F.buildImplItem }),
+	trait: _attach(FR.coerceToTraitItem, { from: FR.coerceToTraitItem, strict: F.buildTraitItem }),
+	associated: _attach(FR.coerceToAssociatedType, { from: FR.coerceToAssociatedType, strict: F.buildAssociatedType }),
+	let: _attach(FR.coerceToLetDeclaration, { from: FR.coerceToLetDeclaration, strict: F.buildLetDeclaration }),
+	use: _attach(FR.coerceToUseDeclaration, { from: FR.coerceToUseDeclaration, strict: F.buildUseDeclaration }),
+	externCrate: _attach(FR.coerceToExternCrateDeclaration, {
+		from: FR.coerceToExternCrateDeclaration,
+		strict: F.buildExternCrateDeclaration
+	}),
+	static: _attach(FR.coerceToStaticItem, { from: FR.coerceToStaticItem, strict: F.buildStaticItem })
+} as const;
+
+export const declarationStatement = {
+	const: _attach(FR.coerceToConstItem, { from: FR.coerceToConstItem, strict: F.buildConstItem }),
+	macro: _attach(FR.coerceToMacroInvocation, { from: FR.coerceToMacroInvocation, strict: F.buildMacroInvocation }),
+	attribute: _attach(FR.coerceToAttributeItem, { from: FR.coerceToAttributeItem, strict: F.buildAttributeItem }),
+	innerAttribute: _attach(FR.coerceToInnerAttributeItem, {
+		from: FR.coerceToInnerAttributeItem,
+		strict: F.buildInnerAttributeItem
+	}),
+	mod: _attach(FR.coerceToModItem, { from: FR.coerceToModItem, strict: F.buildModItem }),
+	foreignMod: _attach(FR.coerceToForeignModItem, { from: FR.coerceToForeignModItem, strict: F.buildForeignModItem }),
+	struct: _attach(FR.coerceToStructItem, { from: FR.coerceToStructItem, strict: F.buildStructItem }),
+	union: _attach(FR.coerceToUnionItem, { from: FR.coerceToUnionItem, strict: F.buildUnionItem }),
+	enum: _attach(FR.coerceToEnumItem, { from: FR.coerceToEnumItem, strict: F.buildEnumItem }),
+	type: _attach(FR.coerceToTypeItem, { from: FR.coerceToTypeItem, strict: F.buildTypeItem }),
+	function: _attach(FR.coerceToFunctionItem, { from: FR.coerceToFunctionItem, strict: F.buildFunctionItem }),
+	functionSignature: _attach(FR.coerceToFunctionSignatureItem, {
+		from: FR.coerceToFunctionSignatureItem,
+		strict: F.buildFunctionSignatureItem
+	}),
+	impl: _attach(FR.coerceToImplItem, { from: FR.coerceToImplItem, strict: F.buildImplItem }),
+	trait: _attach(FR.coerceToTraitItem, { from: FR.coerceToTraitItem, strict: F.buildTraitItem }),
+	associated: _attach(FR.coerceToAssociatedType, { from: FR.coerceToAssociatedType, strict: F.buildAssociatedType }),
+	let: _attach(FR.coerceToLetDeclaration, { from: FR.coerceToLetDeclaration, strict: F.buildLetDeclaration }),
+	use: _attach(FR.coerceToUseDeclaration, { from: FR.coerceToUseDeclaration, strict: F.buildUseDeclaration }),
+	externCrate: _attach(FR.coerceToExternCrateDeclaration, {
+		from: FR.coerceToExternCrateDeclaration,
+		strict: F.buildExternCrateDeclaration
+	}),
+	static: _attach(FR.coerceToStaticItem, { from: FR.coerceToStaticItem, strict: F.buildStaticItem })
+} as const;
+
+export const tokenPattern = {
+	tokenTree: _attach(FR.coerceToTokenTreePattern, {
+		from: FR.coerceToTokenTreePattern,
+		strict: F.buildTokenTreePattern
+	}),
+	tokenRepetition: _attach(FR.coerceToTokenRepetitionPattern, {
+		from: FR.coerceToTokenRepetitionPattern,
+		strict: F.buildTokenRepetitionPattern
+	}),
+	tokenBinding: _attach(FR.coerceToTokenBindingPattern, {
+		from: FR.coerceToTokenBindingPattern,
+		strict: F.buildTokenBindingPattern
+	}),
+	metavariable: F.buildMetavariable,
+	string: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
+	rawString: _attach(FR.coerceToRawStringLiteral, {
+		from: FR.coerceToRawStringLiteral,
+		strict: F.buildRawStringLiteral
+	}),
+	char: F.buildCharLiteral,
+	boolean: F.buildBooleanLiteral,
+	integer: F.buildIntegerLiteral,
+	float: F.buildFloatLiteral,
+	identifier: F.buildIdentifier,
+	mutable: F.buildMutableSpecifier,
+	self: F.buildSelf,
+	super: F.buildSuper,
+	crate: F.buildCrate
+} as const;
+
+export const tokens = {
+	token: _attach(FR.coerceToTokenTree, { from: FR.coerceToTokenTree, strict: F.buildTokenTree }),
+	metavariable: F.buildMetavariable,
+	string: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
+	rawString: _attach(FR.coerceToRawStringLiteral, {
+		from: FR.coerceToRawStringLiteral,
+		strict: F.buildRawStringLiteral
+	}),
+	char: F.buildCharLiteral,
+	boolean: F.buildBooleanLiteral,
+	integer: F.buildIntegerLiteral,
+	float: F.buildFloatLiteral,
+	identifier: F.buildIdentifier,
+	mutable: F.buildMutableSpecifier,
+	self: F.buildSelf,
+	super: F.buildSuper,
+	crate: F.buildCrate
+} as const;
+
+export const nonSpecialToken = {
+	string: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
+	rawString: _attach(FR.coerceToRawStringLiteral, {
+		from: FR.coerceToRawStringLiteral,
+		strict: F.buildRawStringLiteral
+	}),
+	char: F.buildCharLiteral,
+	boolean: F.buildBooleanLiteral,
+	integer: F.buildIntegerLiteral,
+	float: F.buildFloatLiteral,
+	identifier: F.buildIdentifier,
+	mutable: F.buildMutableSpecifier,
+	self: F.buildSelf,
+	super: F.buildSuper,
+	crate: F.buildCrate
+} as const;
+
+export const useClause = {
+	self: F.buildSelf,
+	identifier: F.buildIdentifier,
+	metavariable: F.buildMetavariable,
+	super: F.buildSuper,
+	crate: F.buildCrate,
+	scoped: _attach(FR.coerceToScopedIdentifier, { from: FR.coerceToScopedIdentifier, strict: F.buildScopedIdentifier }),
+	useAs: _attach(FR.coerceToUseAsClause, { from: FR.coerceToUseAsClause, strict: F.buildUseAsClause }),
+	use: _attach(FR.coerceToUseList, { from: FR.coerceToUseList, strict: F.buildUseList }),
+	scopedUse: _attach(FR.coerceToScopedUseList, { from: FR.coerceToScopedUseList, strict: F.buildScopedUseList })
+} as const;
+
+export const type = {
+	abstract: _attach(FR.coerceToAbstractType, { from: FR.coerceToAbstractType, strict: F.buildAbstractType }),
+	reference: _attach(FR.coerceToReferenceType, { from: FR.coerceToReferenceType, strict: F.buildReferenceType }),
+	metavariable: F.buildMetavariable,
+	pointer: _attach(FR.coerceToPointerType, { from: FR.coerceToPointerType, strict: F.buildPointerType }),
+	generic: _attach(FR.coerceToGenericType, { from: FR.coerceToGenericType, strict: F.buildGenericType }),
+	scopedType: _attach(FR.coerceToScopedTypeIdentifier, {
+		from: FR.coerceToScopedTypeIdentifier,
+		strict: F.buildScopedTypeIdentifier
+	}),
+	tuple: _attach(FR.coerceToTupleType, { from: FR.coerceToTupleType, strict: F.buildTupleType }),
+	unit: F.buildUnitType,
+	array: _attach(FR.coerceToArrayType, { from: FR.coerceToArrayType, strict: F.buildArrayType }),
+	function: _attach(FR.coerceToFunctionType, { from: FR.coerceToFunctionType, strict: F.buildFunctionType }),
+	macro: _attach(FR.coerceToMacroInvocation, { from: FR.coerceToMacroInvocation, strict: F.buildMacroInvocation }),
+	dynamic: _attach(FR.coerceToDynamicType, { from: FR.coerceToDynamicType, strict: F.buildDynamicType }),
+	bounded: _attach(FR.coerceToBoundedType, { from: FR.coerceToBoundedType, strict: F.buildBoundedType }),
+	removedTrait: _attach(FR.coerceToRemovedTraitBound, {
+		from: FR.coerceToRemovedTraitBound,
+		strict: F.buildRemovedTraitBound
+	})
+} as const;
+
+export const expressionExceptRange = {
 	unary: _attach(FR.coerceToUnaryExpression, { from: FR.coerceToUnaryExpression, strict: F.buildUnaryExpression }),
 	reference: _attach(FR.coerceToReferenceExpression, {
 		from: FR.coerceToReferenceExpression,
@@ -90,58 +257,7 @@ export const condition = {
 	while: _attach(FR.coerceToWhileExpression, { from: FR.coerceToWhileExpression, strict: F.buildWhileExpression }),
 	loop: _attach(FR.coerceToLoopExpression, { from: FR.coerceToLoopExpression, strict: F.buildLoopExpression }),
 	for: _attach(FR.coerceToForExpression, { from: FR.coerceToForExpression, strict: F.buildForExpression }),
-	const: _attach(FR.coerceToConstBlock, { from: FR.coerceToConstBlock, strict: F.buildConstBlock }),
-	range: _attach(FR.coerceToRangeExpression, { from: FR.coerceToRangeExpression, strict: F.buildRangeExpression }),
-	let: _attach(FR.coerceToLetCondition, { from: FR.coerceToLetCondition, strict: F.buildLetCondition })
-} as const;
-
-export const declarationStatement = {
-	const: _attach(FR.coerceToConstItem, { from: FR.coerceToConstItem, strict: F.buildConstItem }),
-	macro: _attach(FR.coerceToMacroInvocation, { from: FR.coerceToMacroInvocation, strict: F.buildMacroInvocation }),
-	attribute: _attach(FR.coerceToAttributeItem, { from: FR.coerceToAttributeItem, strict: F.buildAttributeItem }),
-	innerAttribute: _attach(FR.coerceToInnerAttributeItem, {
-		from: FR.coerceToInnerAttributeItem,
-		strict: F.buildInnerAttributeItem
-	}),
-	mod: _attach(FR.coerceToModItem, { from: FR.coerceToModItem, strict: F.buildModItem }),
-	foreignMod: _attach(FR.coerceToForeignModItem, { from: FR.coerceToForeignModItem, strict: F.buildForeignModItem }),
-	struct: _attach(FR.coerceToStructItem, { from: FR.coerceToStructItem, strict: F.buildStructItem }),
-	union: _attach(FR.coerceToUnionItem, { from: FR.coerceToUnionItem, strict: F.buildUnionItem }),
-	enum: _attach(FR.coerceToEnumItem, { from: FR.coerceToEnumItem, strict: F.buildEnumItem }),
-	type: _attach(FR.coerceToTypeItem, { from: FR.coerceToTypeItem, strict: F.buildTypeItem }),
-	function: _attach(FR.coerceToFunctionItem, { from: FR.coerceToFunctionItem, strict: F.buildFunctionItem }),
-	functionSignature: _attach(FR.coerceToFunctionSignatureItem, {
-		from: FR.coerceToFunctionSignatureItem,
-		strict: F.buildFunctionSignatureItem
-	}),
-	impl: _attach(FR.coerceToImplItem, { from: FR.coerceToImplItem, strict: F.buildImplItem }),
-	trait: _attach(FR.coerceToTraitItem, { from: FR.coerceToTraitItem, strict: F.buildTraitItem }),
-	associated: _attach(FR.coerceToAssociatedType, { from: FR.coerceToAssociatedType, strict: F.buildAssociatedType }),
-	let: _attach(FR.coerceToLetDeclaration, { from: FR.coerceToLetDeclaration, strict: F.buildLetDeclaration }),
-	use: _attach(FR.coerceToUseDeclaration, { from: FR.coerceToUseDeclaration, strict: F.buildUseDeclaration }),
-	externCrate: _attach(FR.coerceToExternCrateDeclaration, {
-		from: FR.coerceToExternCrateDeclaration,
-		strict: F.buildExternCrateDeclaration
-	}),
-	static: _attach(FR.coerceToStaticItem, { from: FR.coerceToStaticItem, strict: F.buildStaticItem })
-} as const;
-
-export const delimTokens = {
-	string: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
-	rawString: _attach(FR.coerceToRawStringLiteral, {
-		from: FR.coerceToRawStringLiteral,
-		strict: F.buildRawStringLiteral
-	}),
-	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
-	integer: F.buildIntegerLiteral,
-	float: F.buildFloatLiteral,
-	identifier: F.buildIdentifier,
-	mutable: F.buildMutableSpecifier,
-	self: F.buildSelf,
-	super: F.buildSuper,
-	crate: F.buildCrate,
-	delimToken: _attach(FR.coerceToDelimTokenTree, { from: FR.coerceToDelimTokenTree, strict: F.buildDelimTokenTree })
+	const: _attach(FR.coerceToConstBlock, { from: FR.coerceToConstBlock, strict: F.buildConstBlock })
 } as const;
 
 export const expression = {
@@ -229,7 +345,42 @@ export const expressionEndingWithBlock = {
 	const: _attach(FR.coerceToConstBlock, { from: FR.coerceToConstBlock, strict: F.buildConstBlock })
 } as const;
 
-export const expressionExceptRange = {
+export const delimTokens = {
+	string: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
+	rawString: _attach(FR.coerceToRawStringLiteral, {
+		from: FR.coerceToRawStringLiteral,
+		strict: F.buildRawStringLiteral
+	}),
+	char: F.buildCharLiteral,
+	boolean: F.buildBooleanLiteral,
+	integer: F.buildIntegerLiteral,
+	float: F.buildFloatLiteral,
+	identifier: F.buildIdentifier,
+	mutable: F.buildMutableSpecifier,
+	self: F.buildSelf,
+	super: F.buildSuper,
+	crate: F.buildCrate,
+	delimToken: _attach(FR.coerceToDelimTokenTree, { from: FR.coerceToDelimTokenTree, strict: F.buildDelimTokenTree })
+} as const;
+
+export const nonDelimToken = {
+	string: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
+	rawString: _attach(FR.coerceToRawStringLiteral, {
+		from: FR.coerceToRawStringLiteral,
+		strict: F.buildRawStringLiteral
+	}),
+	char: F.buildCharLiteral,
+	boolean: F.buildBooleanLiteral,
+	integer: F.buildIntegerLiteral,
+	float: F.buildFloatLiteral,
+	identifier: F.buildIdentifier,
+	mutable: F.buildMutableSpecifier,
+	self: F.buildSelf,
+	super: F.buildSuper,
+	crate: F.buildCrate
+} as const;
+
+export const condition = {
 	unary: _attach(FR.coerceToUnaryExpression, { from: FR.coerceToUnaryExpression, strict: F.buildUnaryExpression }),
 	reference: _attach(FR.coerceToReferenceExpression, {
 		from: FR.coerceToReferenceExpression,
@@ -296,75 +447,9 @@ export const expressionExceptRange = {
 	while: _attach(FR.coerceToWhileExpression, { from: FR.coerceToWhileExpression, strict: F.buildWhileExpression }),
 	loop: _attach(FR.coerceToLoopExpression, { from: FR.coerceToLoopExpression, strict: F.buildLoopExpression }),
 	for: _attach(FR.coerceToForExpression, { from: FR.coerceToForExpression, strict: F.buildForExpression }),
-	const: _attach(FR.coerceToConstBlock, { from: FR.coerceToConstBlock, strict: F.buildConstBlock })
-} as const;
-
-export const literal = {
-	string: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
-	rawString: _attach(FR.coerceToRawStringLiteral, {
-		from: FR.coerceToRawStringLiteral,
-		strict: F.buildRawStringLiteral
-	}),
-	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
-	integer: F.buildIntegerLiteral,
-	float: F.buildFloatLiteral
-} as const;
-
-export const literalPattern = {
-	string: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
-	rawString: _attach(FR.coerceToRawStringLiteral, {
-		from: FR.coerceToRawStringLiteral,
-		strict: F.buildRawStringLiteral
-	}),
-	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
-	integer: F.buildIntegerLiteral,
-	float: F.buildFloatLiteral,
-	negative: _attach(FR.coerceToNegativeLiteral, { from: FR.coerceToNegativeLiteral, strict: F.buildNegativeLiteral })
-} as const;
-
-export const nonDelimToken = {
-	string: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
-	rawString: _attach(FR.coerceToRawStringLiteral, {
-		from: FR.coerceToRawStringLiteral,
-		strict: F.buildRawStringLiteral
-	}),
-	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
-	integer: F.buildIntegerLiteral,
-	float: F.buildFloatLiteral,
-	identifier: F.buildIdentifier,
-	mutable: F.buildMutableSpecifier,
-	self: F.buildSelf,
-	super: F.buildSuper,
-	crate: F.buildCrate
-} as const;
-
-export const nonSpecialToken = {
-	string: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
-	rawString: _attach(FR.coerceToRawStringLiteral, {
-		from: FR.coerceToRawStringLiteral,
-		strict: F.buildRawStringLiteral
-	}),
-	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
-	integer: F.buildIntegerLiteral,
-	float: F.buildFloatLiteral,
-	identifier: F.buildIdentifier,
-	mutable: F.buildMutableSpecifier,
-	self: F.buildSelf,
-	super: F.buildSuper,
-	crate: F.buildCrate
-} as const;
-
-export const path = {
-	self: F.buildSelf,
-	identifier: F.buildIdentifier,
-	metavariable: F.buildMetavariable,
-	super: F.buildSuper,
-	crate: F.buildCrate,
-	scoped: _attach(FR.coerceToScopedIdentifier, { from: FR.coerceToScopedIdentifier, strict: F.buildScopedIdentifier })
+	const: _attach(FR.coerceToConstBlock, { from: FR.coerceToConstBlock, strict: F.buildConstBlock }),
+	range: _attach(FR.coerceToRangeExpression, { from: FR.coerceToRangeExpression, strict: F.buildRangeExpression }),
+	let: _attach(FR.coerceToLetCondition, { from: FR.coerceToLetCondition, strict: F.buildLetCondition })
 } as const;
 
 export const pattern = {
@@ -401,55 +486,19 @@ export const pattern = {
 	macro: _attach(FR.coerceToMacroInvocation, { from: FR.coerceToMacroInvocation, strict: F.buildMacroInvocation })
 } as const;
 
-export const statement = {
-	expression: _attach(FR.coerceToExpressionStatement, {
-		from: FR.coerceToExpressionStatement,
-		strict: F.buildExpressionStatement
+export const literal = {
+	string: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
+	rawString: _attach(FR.coerceToRawStringLiteral, {
+		from: FR.coerceToRawStringLiteral,
+		strict: F.buildRawStringLiteral
 	}),
-	const: _attach(FR.coerceToConstItem, { from: FR.coerceToConstItem, strict: F.buildConstItem }),
-	macro: _attach(FR.coerceToMacroInvocation, { from: FR.coerceToMacroInvocation, strict: F.buildMacroInvocation }),
-	attribute: _attach(FR.coerceToAttributeItem, { from: FR.coerceToAttributeItem, strict: F.buildAttributeItem }),
-	innerAttribute: _attach(FR.coerceToInnerAttributeItem, {
-		from: FR.coerceToInnerAttributeItem,
-		strict: F.buildInnerAttributeItem
-	}),
-	mod: _attach(FR.coerceToModItem, { from: FR.coerceToModItem, strict: F.buildModItem }),
-	foreignMod: _attach(FR.coerceToForeignModItem, { from: FR.coerceToForeignModItem, strict: F.buildForeignModItem }),
-	struct: _attach(FR.coerceToStructItem, { from: FR.coerceToStructItem, strict: F.buildStructItem }),
-	union: _attach(FR.coerceToUnionItem, { from: FR.coerceToUnionItem, strict: F.buildUnionItem }),
-	enum: _attach(FR.coerceToEnumItem, { from: FR.coerceToEnumItem, strict: F.buildEnumItem }),
-	type: _attach(FR.coerceToTypeItem, { from: FR.coerceToTypeItem, strict: F.buildTypeItem }),
-	function: _attach(FR.coerceToFunctionItem, { from: FR.coerceToFunctionItem, strict: F.buildFunctionItem }),
-	functionSignature: _attach(FR.coerceToFunctionSignatureItem, {
-		from: FR.coerceToFunctionSignatureItem,
-		strict: F.buildFunctionSignatureItem
-	}),
-	impl: _attach(FR.coerceToImplItem, { from: FR.coerceToImplItem, strict: F.buildImplItem }),
-	trait: _attach(FR.coerceToTraitItem, { from: FR.coerceToTraitItem, strict: F.buildTraitItem }),
-	associated: _attach(FR.coerceToAssociatedType, { from: FR.coerceToAssociatedType, strict: F.buildAssociatedType }),
-	let: _attach(FR.coerceToLetDeclaration, { from: FR.coerceToLetDeclaration, strict: F.buildLetDeclaration }),
-	use: _attach(FR.coerceToUseDeclaration, { from: FR.coerceToUseDeclaration, strict: F.buildUseDeclaration }),
-	externCrate: _attach(FR.coerceToExternCrateDeclaration, {
-		from: FR.coerceToExternCrateDeclaration,
-		strict: F.buildExternCrateDeclaration
-	}),
-	static: _attach(FR.coerceToStaticItem, { from: FR.coerceToStaticItem, strict: F.buildStaticItem })
+	char: F.buildCharLiteral,
+	boolean: F.buildBooleanLiteral,
+	integer: F.buildIntegerLiteral,
+	float: F.buildFloatLiteral
 } as const;
 
-export const tokenPattern = {
-	tokenTree: _attach(FR.coerceToTokenTreePattern, {
-		from: FR.coerceToTokenTreePattern,
-		strict: F.buildTokenTreePattern
-	}),
-	tokenRepetition: _attach(FR.coerceToTokenRepetitionPattern, {
-		from: FR.coerceToTokenRepetitionPattern,
-		strict: F.buildTokenRepetitionPattern
-	}),
-	tokenBinding: _attach(FR.coerceToTokenBindingPattern, {
-		from: FR.coerceToTokenBindingPattern,
-		strict: F.buildTokenBindingPattern
-	}),
-	metavariable: F.buildMetavariable,
+export const literalPattern = {
 	string: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
 	rawString: _attach(FR.coerceToRawStringLiteral, {
 		from: FR.coerceToRawStringLiteral,
@@ -459,65 +508,16 @@ export const tokenPattern = {
 	boolean: F.buildBooleanLiteral,
 	integer: F.buildIntegerLiteral,
 	float: F.buildFloatLiteral,
-	identifier: F.buildIdentifier,
-	mutable: F.buildMutableSpecifier,
-	self: F.buildSelf,
-	super: F.buildSuper,
-	crate: F.buildCrate
+	negative: _attach(FR.coerceToNegativeLiteral, { from: FR.coerceToNegativeLiteral, strict: F.buildNegativeLiteral })
 } as const;
 
-export const tokens = {
-	token: _attach(FR.coerceToTokenTree, { from: FR.coerceToTokenTree, strict: F.buildTokenTree }),
-	metavariable: F.buildMetavariable,
-	string: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
-	rawString: _attach(FR.coerceToRawStringLiteral, {
-		from: FR.coerceToRawStringLiteral,
-		strict: F.buildRawStringLiteral
-	}),
-	char: F.buildCharLiteral,
-	boolean: F.buildBooleanLiteral,
-	integer: F.buildIntegerLiteral,
-	float: F.buildFloatLiteral,
-	identifier: F.buildIdentifier,
-	mutable: F.buildMutableSpecifier,
-	self: F.buildSelf,
-	super: F.buildSuper,
-	crate: F.buildCrate
-} as const;
-
-export const type = {
-	abstract: _attach(FR.coerceToAbstractType, { from: FR.coerceToAbstractType, strict: F.buildAbstractType }),
-	reference: _attach(FR.coerceToReferenceType, { from: FR.coerceToReferenceType, strict: F.buildReferenceType }),
-	metavariable: F.buildMetavariable,
-	pointer: _attach(FR.coerceToPointerType, { from: FR.coerceToPointerType, strict: F.buildPointerType }),
-	generic: _attach(FR.coerceToGenericType, { from: FR.coerceToGenericType, strict: F.buildGenericType }),
-	scopedType: _attach(FR.coerceToScopedTypeIdentifier, {
-		from: FR.coerceToScopedTypeIdentifier,
-		strict: F.buildScopedTypeIdentifier
-	}),
-	tuple: _attach(FR.coerceToTupleType, { from: FR.coerceToTupleType, strict: F.buildTupleType }),
-	unit: F.buildUnitType,
-	array: _attach(FR.coerceToArrayType, { from: FR.coerceToArrayType, strict: F.buildArrayType }),
-	function: _attach(FR.coerceToFunctionType, { from: FR.coerceToFunctionType, strict: F.buildFunctionType }),
-	macro: _attach(FR.coerceToMacroInvocation, { from: FR.coerceToMacroInvocation, strict: F.buildMacroInvocation }),
-	dynamic: _attach(FR.coerceToDynamicType, { from: FR.coerceToDynamicType, strict: F.buildDynamicType }),
-	bounded: _attach(FR.coerceToBoundedType, { from: FR.coerceToBoundedType, strict: F.buildBoundedType }),
-	removedTrait: _attach(FR.coerceToRemovedTraitBound, {
-		from: FR.coerceToRemovedTraitBound,
-		strict: F.buildRemovedTraitBound
-	})
-} as const;
-
-export const useClause = {
+export const path = {
 	self: F.buildSelf,
 	identifier: F.buildIdentifier,
 	metavariable: F.buildMetavariable,
 	super: F.buildSuper,
 	crate: F.buildCrate,
-	scoped: _attach(FR.coerceToScopedIdentifier, { from: FR.coerceToScopedIdentifier, strict: F.buildScopedIdentifier }),
-	useAs: _attach(FR.coerceToUseAsClause, { from: FR.coerceToUseAsClause, strict: F.buildUseAsClause }),
-	use: _attach(FR.coerceToUseList, { from: FR.coerceToUseList, strict: F.buildUseList }),
-	scopedUse: _attach(FR.coerceToScopedUseList, { from: FR.coerceToScopedUseList, strict: F.buildScopedUseList })
+	scoped: _attach(FR.coerceToScopedIdentifier, { from: FR.coerceToScopedIdentifier, strict: F.buildScopedIdentifier })
 } as const;
 
 // Canonical factories — `from.*` resolves native JS values to grammar-specific NodeData.
@@ -572,52 +572,283 @@ export const from = {
 
 export const ir = {
 	// Node factories
-	abstractType: _attach(FR.coerceToAbstractType, { from: FR.coerceToAbstractType, strict: F.buildAbstractType }),
-	arguments: _attach(FR.coerceToArguments, { from: FR.coerceToArguments, strict: F.buildArguments }),
-	arrayExpression: _attach(FR.coerceToArrayExpression, {
-		from: FR.coerceToArrayExpression,
-		strict: F.buildArrayExpression
+	sourceFile: _attach(FR.coerceToSourceFile, { from: FR.coerceToSourceFile, strict: F.buildSourceFile }),
+	expressionStatement: _attach(FR.coerceToExpressionStatement, {
+		from: FR.coerceToExpressionStatement,
+		strict: F.buildExpressionStatement
 	}),
-	arrayType: _attach(FR.coerceToArrayType, { from: FR.coerceToArrayType, strict: F.buildArrayType }),
-	assignmentExpression: _attach(FR.coerceToAssignmentExpression, {
-		from: FR.coerceToAssignmentExpression,
-		strict: F.buildAssignmentExpression
+	macroDefinition: _attach(FR.coerceToMacroDefinition, {
+		from: FR.coerceToMacroDefinition,
+		strict: F.buildMacroDefinition
 	}),
+	macroRule: _attach(FR.coerceToMacroRule, { from: FR.coerceToMacroRule, strict: F.buildMacroRule }),
+	tokenTreePattern: _attach(FR.coerceToTokenTreePattern, {
+		from: FR.coerceToTokenTreePattern,
+		strict: F.buildTokenTreePattern
+	}),
+	tokenBindingPattern: _attach(FR.coerceToTokenBindingPattern, {
+		from: FR.coerceToTokenBindingPattern,
+		strict: F.buildTokenBindingPattern
+	}),
+	tokenRepetitionPattern: _attach(FR.coerceToTokenRepetitionPattern, {
+		from: FR.coerceToTokenRepetitionPattern,
+		strict: F.buildTokenRepetitionPattern
+	}),
+	tokenTree: _attach(FR.coerceToTokenTree, { from: FR.coerceToTokenTree, strict: F.buildTokenTree }),
+	tokenRepetition: _attach(FR.coerceToTokenRepetition, {
+		from: FR.coerceToTokenRepetition,
+		strict: F.buildTokenRepetition
+	}),
+	attributeItem: _attach(FR.coerceToAttributeItem, { from: FR.coerceToAttributeItem, strict: F.buildAttributeItem }),
+	innerAttributeItem: _attach(FR.coerceToInnerAttributeItem, {
+		from: FR.coerceToInnerAttributeItem,
+		strict: F.buildInnerAttributeItem
+	}),
+	attribute: _attach(FR.coerceToAttribute, { from: FR.coerceToAttribute, strict: F.buildAttribute }),
+	modItem: _attach(FR.coerceToModItem, { from: FR.coerceToModItem, strict: F.buildModItem }),
+	foreignModItem: _attach(FR.coerceToForeignModItem, {
+		from: FR.coerceToForeignModItem,
+		strict: F.buildForeignModItem
+	}),
+	declarationList: _attach(FR.coerceToDeclarationList, {
+		from: FR.coerceToDeclarationList,
+		strict: F.buildDeclarationList
+	}),
+	structItem: _attach(FR.coerceToStructItem, { from: FR.coerceToStructItem, strict: F.buildStructItem }),
+	unionItem: _attach(FR.coerceToUnionItem, { from: FR.coerceToUnionItem, strict: F.buildUnionItem }),
+	enumItem: _attach(FR.coerceToEnumItem, { from: FR.coerceToEnumItem, strict: F.buildEnumItem }),
+	enumVariantList: _attach(FR.coerceToEnumVariantList, {
+		from: FR.coerceToEnumVariantList,
+		strict: F.buildEnumVariantList
+	}),
+	enumVariant: _attach(FR.coerceToEnumVariant, { from: FR.coerceToEnumVariant, strict: F.buildEnumVariant }),
+	fieldDeclarationList: _attach(FR.coerceToFieldDeclarationList, {
+		from: FR.coerceToFieldDeclarationList,
+		strict: F.buildFieldDeclarationList
+	}),
+	fieldDeclaration: _attach(FR.coerceToFieldDeclaration, {
+		from: FR.coerceToFieldDeclaration,
+		strict: F.buildFieldDeclaration
+	}),
+	orderedFieldDeclarationList: _attach(FR.coerceToOrderedFieldDeclarationList, {
+		from: FR.coerceToOrderedFieldDeclarationList,
+		strict: F.buildOrderedFieldDeclarationList
+	}),
+	externCrateDeclaration: _attach(FR.coerceToExternCrateDeclaration, {
+		from: FR.coerceToExternCrateDeclaration,
+		strict: F.buildExternCrateDeclaration
+	}),
+	constItem: _attach(FR.coerceToConstItem, { from: FR.coerceToConstItem, strict: F.buildConstItem }),
+	staticItem: _attach(FR.coerceToStaticItem, { from: FR.coerceToStaticItem, strict: F.buildStaticItem }),
+	typeItem: _attach(FR.coerceToTypeItem, { from: FR.coerceToTypeItem, strict: F.buildTypeItem }),
+	functionItem: _attach(FR.coerceToFunctionItem, { from: FR.coerceToFunctionItem, strict: F.buildFunctionItem }),
+	functionSignatureItem: _attach(FR.coerceToFunctionSignatureItem, {
+		from: FR.coerceToFunctionSignatureItem,
+		strict: F.buildFunctionSignatureItem
+	}),
+	functionModifiers: _attach(FR.coerceToFunctionModifiers, {
+		from: FR.coerceToFunctionModifiers,
+		strict: F.buildFunctionModifiers
+	}),
+	whereClause: _attach(FR.coerceToWhereClause, { from: FR.coerceToWhereClause, strict: F.buildWhereClause }),
+	wherePredicate: _attach(FR.coerceToWherePredicate, {
+		from: FR.coerceToWherePredicate,
+		strict: F.buildWherePredicate
+	}),
+	implItem: _attach(FR.coerceToImplItem, { from: FR.coerceToImplItem, strict: F.buildImplItem }),
+	traitItem: _attach(FR.coerceToTraitItem, { from: FR.coerceToTraitItem, strict: F.buildTraitItem }),
 	associatedType: _attach(FR.coerceToAssociatedType, {
 		from: FR.coerceToAssociatedType,
 		strict: F.buildAssociatedType
 	}),
-	asyncBlock: _attach(FR.coerceToAsyncBlock, { from: FR.coerceToAsyncBlock, strict: F.buildAsyncBlock }),
-	attribute: _attach(FR.coerceToAttribute, { from: FR.coerceToAttribute, strict: F.buildAttribute }),
-	attributeItem: _attach(FR.coerceToAttributeItem, { from: FR.coerceToAttributeItem, strict: F.buildAttributeItem }),
-	awaitExpression: _attach(FR.coerceToAwaitExpression, {
-		from: FR.coerceToAwaitExpression,
-		strict: F.buildAwaitExpression
+	traitBounds: _attach(FR.coerceToTraitBounds, { from: FR.coerceToTraitBounds, strict: F.buildTraitBounds }),
+	higherRankedTraitBound: _attach(FR.coerceToHigherRankedTraitBound, {
+		from: FR.coerceToHigherRankedTraitBound,
+		strict: F.buildHigherRankedTraitBound
 	}),
-	baseFieldInitializer: _attach(FR.coerceToBaseFieldInitializer, {
-		from: FR.coerceToBaseFieldInitializer,
-		strict: F.buildBaseFieldInitializer
+	removedTraitBound: _attach(FR.coerceToRemovedTraitBound, {
+		from: FR.coerceToRemovedTraitBound,
+		strict: F.buildRemovedTraitBound
+	}),
+	typeParameters: _attach(FR.coerceToTypeParameters, {
+		from: FR.coerceToTypeParameters,
+		strict: F.buildTypeParameters
+	}),
+	constParameter: _attach(FR.coerceToConstParameter, {
+		from: FR.coerceToConstParameter,
+		strict: F.buildConstParameter
+	}),
+	typeParameter: _attach(FR.coerceToTypeParameter, { from: FR.coerceToTypeParameter, strict: F.buildTypeParameter }),
+	lifetimeParameter: _attach(FR.coerceToLifetimeParameter, {
+		from: FR.coerceToLifetimeParameter,
+		strict: F.buildLifetimeParameter
+	}),
+	letDeclaration: _attach(FR.coerceToLetDeclaration, {
+		from: FR.coerceToLetDeclaration,
+		strict: F.buildLetDeclaration
+	}),
+	useDeclaration: _attach(FR.coerceToUseDeclaration, {
+		from: FR.coerceToUseDeclaration,
+		strict: F.buildUseDeclaration
+	}),
+	scopedUseList: _attach(FR.coerceToScopedUseList, { from: FR.coerceToScopedUseList, strict: F.buildScopedUseList }),
+	useList: _attach(FR.coerceToUseList, { from: FR.coerceToUseList, strict: F.buildUseList }),
+	useAsClause: _attach(FR.coerceToUseAsClause, { from: FR.coerceToUseAsClause, strict: F.buildUseAsClause }),
+	useWildcard: _attach(FR.coerceToUseWildcard, { from: FR.coerceToUseWildcard, strict: F.buildUseWildcard }),
+	parameters: _attach(FR.coerceToParameters, { from: FR.coerceToParameters, strict: F.buildParameters }),
+	selfParameter: _attach(FR.coerceToSelfParameter, { from: FR.coerceToSelfParameter, strict: F.buildSelfParameter }),
+	variadicParameter: _attach(FR.coerceToVariadicParameter, {
+		from: FR.coerceToVariadicParameter,
+		strict: F.buildVariadicParameter
+	}),
+	parameter: _attach(FR.coerceToParameter, { from: FR.coerceToParameter, strict: F.buildParameter }),
+	externModifier: _attach(FR.coerceToExternModifier, {
+		from: FR.coerceToExternModifier,
+		strict: F.buildExternModifier
+	}),
+	visibilityModifier: _attach(FR.coerceToVisibilityModifier, {
+		from: FR.coerceToVisibilityModifier,
+		strict: F.buildVisibilityModifier
+	}),
+	bracketedType: _attach(FR.coerceToBracketedType, { from: FR.coerceToBracketedType, strict: F.buildBracketedType }),
+	qualifiedType: _attach(FR.coerceToQualifiedType, { from: FR.coerceToQualifiedType, strict: F.buildQualifiedType }),
+	lifetime: _attach(FR.coerceToLifetime, { from: FR.coerceToLifetime, strict: F.buildLifetime }),
+	arrayType: _attach(FR.coerceToArrayType, { from: FR.coerceToArrayType, strict: F.buildArrayType }),
+	forLifetimes: _attach(FR.coerceToForLifetimes, { from: FR.coerceToForLifetimes, strict: F.buildForLifetimes }),
+	functionType: _attach(FR.coerceToFunctionType, { from: FR.coerceToFunctionType, strict: F.buildFunctionType }),
+	tupleType: _attach(FR.coerceToTupleType, { from: FR.coerceToTupleType, strict: F.buildTupleType }),
+	genericFunction: _attach(FR.coerceToGenericFunction, {
+		from: FR.coerceToGenericFunction,
+		strict: F.buildGenericFunction
+	}),
+	genericType: _attach(FR.coerceToGenericType, { from: FR.coerceToGenericType, strict: F.buildGenericType }),
+	genericTypeWithTurbofish: _attach(FR.coerceToGenericTypeWithTurbofish, {
+		from: FR.coerceToGenericTypeWithTurbofish,
+		strict: F.buildGenericTypeWithTurbofish
+	}),
+	boundedType: _attach(FR.coerceToBoundedType, { from: FR.coerceToBoundedType, strict: F.buildBoundedType }),
+	useBounds: _attach(FR.coerceToUseBounds, { from: FR.coerceToUseBounds, strict: F.buildUseBounds }),
+	typeArguments: _attach(FR.coerceToTypeArguments, { from: FR.coerceToTypeArguments, strict: F.buildTypeArguments }),
+	typeBinding: _attach(FR.coerceToTypeBinding, { from: FR.coerceToTypeBinding, strict: F.buildTypeBinding }),
+	referenceType: _attach(FR.coerceToReferenceType, { from: FR.coerceToReferenceType, strict: F.buildReferenceType }),
+	pointerType: _attach(FR.coerceToPointerType, { from: FR.coerceToPointerType, strict: F.buildPointerType }),
+	abstractType: _attach(FR.coerceToAbstractType, { from: FR.coerceToAbstractType, strict: F.buildAbstractType }),
+	dynamicType: _attach(FR.coerceToDynamicType, { from: FR.coerceToDynamicType, strict: F.buildDynamicType }),
+	macroInvocation: _attach(FR.coerceToMacroInvocation, {
+		from: FR.coerceToMacroInvocation,
+		strict: F.buildMacroInvocation
+	}),
+	delimTokenTree: _attach(FR.coerceToDelimTokenTree, {
+		from: FR.coerceToDelimTokenTree,
+		strict: F.buildDelimTokenTree
+	}),
+	scopedIdentifier: _attach(FR.coerceToScopedIdentifier, {
+		from: FR.coerceToScopedIdentifier,
+		strict: F.buildScopedIdentifier
+	}),
+	scopedTypeIdentifierInExpressionPosition: _attach(FR.coerceToScopedTypeIdentifierInExpressionPosition, {
+		from: FR.coerceToScopedTypeIdentifierInExpressionPosition,
+		strict: F.buildScopedTypeIdentifierInExpressionPosition
+	}),
+	scopedTypeIdentifier: _attach(FR.coerceToScopedTypeIdentifier, {
+		from: FR.coerceToScopedTypeIdentifier,
+		strict: F.buildScopedTypeIdentifier
+	}),
+	rangeExpression: _attach(FR.coerceToRangeExpression, {
+		from: FR.coerceToRangeExpression,
+		strict: F.buildRangeExpression
+	}),
+	unaryExpression: _attach(FR.coerceToUnaryExpression, {
+		from: FR.coerceToUnaryExpression,
+		strict: F.buildUnaryExpression
+	}),
+	tryExpression: _attach(FR.coerceToTryExpression, { from: FR.coerceToTryExpression, strict: F.buildTryExpression }),
+	referenceExpression: _attach(FR.coerceToReferenceExpression, {
+		from: FR.coerceToReferenceExpression,
+		strict: F.buildReferenceExpression
 	}),
 	binaryExpression: _attach(FR.coerceToBinaryExpression, {
 		from: FR.coerceToBinaryExpression,
 		strict: F.buildBinaryExpression
 	}),
-	block: _attach(FR.coerceToBlock, { from: FR.coerceToBlock, strict: F.buildBlock }),
-	blockComment: _attach(FR.coerceToBlockComment, { from: FR.coerceToBlockComment, strict: F.buildBlockComment }),
-	boundedType: _attach(FR.coerceToBoundedType, { from: FR.coerceToBoundedType, strict: F.buildBoundedType }),
-	bracketedType: _attach(FR.coerceToBracketedType, { from: FR.coerceToBracketedType, strict: F.buildBracketedType }),
-	breakExpression: _attach(FR.coerceToBreakExpression, {
-		from: FR.coerceToBreakExpression,
-		strict: F.buildBreakExpression
+	assignmentExpression: _attach(FR.coerceToAssignmentExpression, {
+		from: FR.coerceToAssignmentExpression,
+		strict: F.buildAssignmentExpression
+	}),
+	compoundAssignmentExpr: _attach(FR.coerceToCompoundAssignmentExpr, {
+		from: FR.coerceToCompoundAssignmentExpr,
+		strict: F.buildCompoundAssignmentExpr
+	}),
+	typeCastExpression: _attach(FR.coerceToTypeCastExpression, {
+		from: FR.coerceToTypeCastExpression,
+		strict: F.buildTypeCastExpression
+	}),
+	returnExpression: _attach(FR.coerceToReturnExpression, {
+		from: FR.coerceToReturnExpression,
+		strict: F.buildReturnExpression
+	}),
+	yieldExpression: _attach(FR.coerceToYieldExpression, {
+		from: FR.coerceToYieldExpression,
+		strict: F.buildYieldExpression
 	}),
 	callExpression: _attach(FR.coerceToCallExpression, {
 		from: FR.coerceToCallExpression,
 		strict: F.buildCallExpression
 	}),
-	capturedPattern: _attach(FR.coerceToCapturedPattern, {
-		from: FR.coerceToCapturedPattern,
-		strict: F.buildCapturedPattern
+	arguments: _attach(FR.coerceToArguments, { from: FR.coerceToArguments, strict: F.buildArguments }),
+	arrayExpression: _attach(FR.coerceToArrayExpression, {
+		from: FR.coerceToArrayExpression,
+		strict: F.buildArrayExpression
 	}),
+	parenthesizedExpression: _attach(FR.coerceToParenthesizedExpression, {
+		from: FR.coerceToParenthesizedExpression,
+		strict: F.buildParenthesizedExpression
+	}),
+	tupleExpression: _attach(FR.coerceToTupleExpression, {
+		from: FR.coerceToTupleExpression,
+		strict: F.buildTupleExpression
+	}),
+	structExpression: _attach(FR.coerceToStructExpression, {
+		from: FR.coerceToStructExpression,
+		strict: F.buildStructExpression
+	}),
+	fieldInitializerList: _attach(FR.coerceToFieldInitializerList, {
+		from: FR.coerceToFieldInitializerList,
+		strict: F.buildFieldInitializerList
+	}),
+	shorthandFieldInitializer: _attach(FR.coerceToShorthandFieldInitializer, {
+		from: FR.coerceToShorthandFieldInitializer,
+		strict: F.buildShorthandFieldInitializer
+	}),
+	fieldInitializer: _attach(FR.coerceToFieldInitializer, {
+		from: FR.coerceToFieldInitializer,
+		strict: F.buildFieldInitializer
+	}),
+	baseFieldInitializer: _attach(FR.coerceToBaseFieldInitializer, {
+		from: FR.coerceToBaseFieldInitializer,
+		strict: F.buildBaseFieldInitializer
+	}),
+	ifExpression: _attach(FR.coerceToIfExpression, { from: FR.coerceToIfExpression, strict: F.buildIfExpression }),
+	letCondition: _attach(FR.coerceToLetCondition, { from: FR.coerceToLetCondition, strict: F.buildLetCondition }),
+	elseClause: _attach(FR.coerceToElseClause, { from: FR.coerceToElseClause, strict: F.buildElseClause }),
+	matchExpression: _attach(FR.coerceToMatchExpression, {
+		from: FR.coerceToMatchExpression,
+		strict: F.buildMatchExpression
+	}),
+	matchBlock: _attach(FR.coerceToMatchBlock, { from: FR.coerceToMatchBlock, strict: F.buildMatchBlock }),
+	matchArm: _attach(FR.coerceToMatchArm, { from: FR.coerceToMatchArm, strict: F.buildMatchArm }),
+	lastMatchArm: _attach(FR.coerceToLastMatchArm, { from: FR.coerceToLastMatchArm, strict: F.buildLastMatchArm }),
+	matchPattern: _attach(FR.coerceToMatchPattern, { from: FR.coerceToMatchPattern, strict: F.buildMatchPattern }),
+	whileExpression: _attach(FR.coerceToWhileExpression, {
+		from: FR.coerceToWhileExpression,
+		strict: F.buildWhileExpression
+	}),
+	loopExpression: _attach(FR.coerceToLoopExpression, {
+		from: FR.coerceToLoopExpression,
+		strict: F.buildLoopExpression
+	}),
+	forExpression: _attach(FR.coerceToForExpression, { from: FR.coerceToForExpression, strict: F.buildForExpression }),
+	constBlock: _attach(FR.coerceToConstBlock, { from: FR.coerceToConstBlock, strict: F.buildConstBlock }),
 	closureExpression: _attach(FR.coerceToClosureExpression, {
 		from: FR.coerceToClosureExpression,
 		strict: F.buildClosureExpression
@@ -626,323 +857,92 @@ export const ir = {
 		from: FR.coerceToClosureParameters,
 		strict: F.buildClosureParameters
 	}),
-	compoundAssignmentExpr: _attach(FR.coerceToCompoundAssignmentExpr, {
-		from: FR.coerceToCompoundAssignmentExpr,
-		strict: F.buildCompoundAssignmentExpr
-	}),
-	constBlock: _attach(FR.coerceToConstBlock, { from: FR.coerceToConstBlock, strict: F.buildConstBlock }),
-	constItem: _attach(FR.coerceToConstItem, { from: FR.coerceToConstItem, strict: F.buildConstItem }),
-	constParameter: _attach(FR.coerceToConstParameter, {
-		from: FR.coerceToConstParameter,
-		strict: F.buildConstParameter
+	label: _attach(FR.coerceToLabel, { from: FR.coerceToLabel, strict: F.buildLabel }),
+	breakExpression: _attach(FR.coerceToBreakExpression, {
+		from: FR.coerceToBreakExpression,
+		strict: F.buildBreakExpression
 	}),
 	continueExpression: _attach(FR.coerceToContinueExpression, {
 		from: FR.coerceToContinueExpression,
 		strict: F.buildContinueExpression
 	}),
-	declarationList: _attach(FR.coerceToDeclarationList, {
-		from: FR.coerceToDeclarationList,
-		strict: F.buildDeclarationList
+	indexExpression: _attach(FR.coerceToIndexExpression, {
+		from: FR.coerceToIndexExpression,
+		strict: F.buildIndexExpression
 	}),
-	delimTokenTree: _attach(FR.coerceToDelimTokenTree, {
-		from: FR.coerceToDelimTokenTree,
-		strict: F.buildDelimTokenTree
-	}),
-	dynamicType: _attach(FR.coerceToDynamicType, { from: FR.coerceToDynamicType, strict: F.buildDynamicType }),
-	elseClause: _attach(FR.coerceToElseClause, { from: FR.coerceToElseClause, strict: F.buildElseClause }),
-	enumItem: _attach(FR.coerceToEnumItem, { from: FR.coerceToEnumItem, strict: F.buildEnumItem }),
-	enumVariant: _attach(FR.coerceToEnumVariant, { from: FR.coerceToEnumVariant, strict: F.buildEnumVariant }),
-	enumVariantList: _attach(FR.coerceToEnumVariantList, {
-		from: FR.coerceToEnumVariantList,
-		strict: F.buildEnumVariantList
-	}),
-	expressionStatement: _attach(FR.coerceToExpressionStatement, {
-		from: FR.coerceToExpressionStatement,
-		strict: F.buildExpressionStatement
-	}),
-	externCrateDeclaration: _attach(FR.coerceToExternCrateDeclaration, {
-		from: FR.coerceToExternCrateDeclaration,
-		strict: F.buildExternCrateDeclaration
-	}),
-	externModifier: _attach(FR.coerceToExternModifier, {
-		from: FR.coerceToExternModifier,
-		strict: F.buildExternModifier
-	}),
-	fieldDeclaration: _attach(FR.coerceToFieldDeclaration, {
-		from: FR.coerceToFieldDeclaration,
-		strict: F.buildFieldDeclaration
-	}),
-	fieldDeclarationList: _attach(FR.coerceToFieldDeclarationList, {
-		from: FR.coerceToFieldDeclarationList,
-		strict: F.buildFieldDeclarationList
+	awaitExpression: _attach(FR.coerceToAwaitExpression, {
+		from: FR.coerceToAwaitExpression,
+		strict: F.buildAwaitExpression
 	}),
 	fieldExpression: _attach(FR.coerceToFieldExpression, {
 		from: FR.coerceToFieldExpression,
 		strict: F.buildFieldExpression
 	}),
-	fieldInitializer: _attach(FR.coerceToFieldInitializer, {
-		from: FR.coerceToFieldInitializer,
-		strict: F.buildFieldInitializer
-	}),
-	fieldInitializerList: _attach(FR.coerceToFieldInitializerList, {
-		from: FR.coerceToFieldInitializerList,
-		strict: F.buildFieldInitializerList
-	}),
-	fieldPattern: _attach(FR.coerceToFieldPattern, { from: FR.coerceToFieldPattern, strict: F.buildFieldPattern }),
-	forExpression: _attach(FR.coerceToForExpression, { from: FR.coerceToForExpression, strict: F.buildForExpression }),
-	forLifetimes: _attach(FR.coerceToForLifetimes, { from: FR.coerceToForLifetimes, strict: F.buildForLifetimes }),
-	foreignModItem: _attach(FR.coerceToForeignModItem, {
-		from: FR.coerceToForeignModItem,
-		strict: F.buildForeignModItem
-	}),
-	functionItem: _attach(FR.coerceToFunctionItem, { from: FR.coerceToFunctionItem, strict: F.buildFunctionItem }),
-	functionModifiers: _attach(FR.coerceToFunctionModifiers, {
-		from: FR.coerceToFunctionModifiers,
-		strict: F.buildFunctionModifiers
-	}),
-	functionSignatureItem: _attach(FR.coerceToFunctionSignatureItem, {
-		from: FR.coerceToFunctionSignatureItem,
-		strict: F.buildFunctionSignatureItem
-	}),
-	functionType: _attach(FR.coerceToFunctionType, { from: FR.coerceToFunctionType, strict: F.buildFunctionType }),
+	unsafeBlock: _attach(FR.coerceToUnsafeBlock, { from: FR.coerceToUnsafeBlock, strict: F.buildUnsafeBlock }),
+	asyncBlock: _attach(FR.coerceToAsyncBlock, { from: FR.coerceToAsyncBlock, strict: F.buildAsyncBlock }),
 	genBlock: _attach(FR.coerceToGenBlock, { from: FR.coerceToGenBlock, strict: F.buildGenBlock }),
-	genericFunction: _attach(FR.coerceToGenericFunction, {
-		from: FR.coerceToGenericFunction,
-		strict: F.buildGenericFunction
-	}),
+	tryBlock: _attach(FR.coerceToTryBlock, { from: FR.coerceToTryBlock, strict: F.buildTryBlock }),
+	block: _attach(FR.coerceToBlock, { from: FR.coerceToBlock, strict: F.buildBlock }),
 	genericPattern: _attach(FR.coerceToGenericPattern, {
 		from: FR.coerceToGenericPattern,
 		strict: F.buildGenericPattern
 	}),
-	genericType: _attach(FR.coerceToGenericType, { from: FR.coerceToGenericType, strict: F.buildGenericType }),
-	genericTypeWithTurbofish: _attach(FR.coerceToGenericTypeWithTurbofish, {
-		from: FR.coerceToGenericTypeWithTurbofish,
-		strict: F.buildGenericTypeWithTurbofish
+	tuplePattern: _attach(FR.coerceToTuplePattern, { from: FR.coerceToTuplePattern, strict: F.buildTuplePattern }),
+	slicePattern: _attach(FR.coerceToSlicePattern, { from: FR.coerceToSlicePattern, strict: F.buildSlicePattern }),
+	tupleStructPattern: _attach(FR.coerceToTupleStructPattern, {
+		from: FR.coerceToTupleStructPattern,
+		strict: F.buildTupleStructPattern
 	}),
-	higherRankedTraitBound: _attach(FR.coerceToHigherRankedTraitBound, {
-		from: FR.coerceToHigherRankedTraitBound,
-		strict: F.buildHigherRankedTraitBound
-	}),
-	ifExpression: _attach(FR.coerceToIfExpression, { from: FR.coerceToIfExpression, strict: F.buildIfExpression }),
-	implItem: _attach(FR.coerceToImplItem, { from: FR.coerceToImplItem, strict: F.buildImplItem }),
-	indexExpression: _attach(FR.coerceToIndexExpression, {
-		from: FR.coerceToIndexExpression,
-		strict: F.buildIndexExpression
-	}),
-	innerAttributeItem: _attach(FR.coerceToInnerAttributeItem, {
-		from: FR.coerceToInnerAttributeItem,
-		strict: F.buildInnerAttributeItem
-	}),
-	label: _attach(FR.coerceToLabel, { from: FR.coerceToLabel, strict: F.buildLabel }),
-	lastMatchArm: _attach(FR.coerceToLastMatchArm, { from: FR.coerceToLastMatchArm, strict: F.buildLastMatchArm }),
-	letCondition: _attach(FR.coerceToLetCondition, { from: FR.coerceToLetCondition, strict: F.buildLetCondition }),
-	letDeclaration: _attach(FR.coerceToLetDeclaration, {
-		from: FR.coerceToLetDeclaration,
-		strict: F.buildLetDeclaration
-	}),
-	lifetime: _attach(FR.coerceToLifetime, { from: FR.coerceToLifetime, strict: F.buildLifetime }),
-	lifetimeParameter: _attach(FR.coerceToLifetimeParameter, {
-		from: FR.coerceToLifetimeParameter,
-		strict: F.buildLifetimeParameter
-	}),
-	lineComment: _attach(FR.coerceToLineComment, { from: FR.coerceToLineComment, strict: F.buildLineComment }),
-	loopExpression: _attach(FR.coerceToLoopExpression, {
-		from: FR.coerceToLoopExpression,
-		strict: F.buildLoopExpression
-	}),
-	macroDefinition: _attach(FR.coerceToMacroDefinition, {
-		from: FR.coerceToMacroDefinition,
-		strict: F.buildMacroDefinition
-	}),
-	macroInvocation: _attach(FR.coerceToMacroInvocation, {
-		from: FR.coerceToMacroInvocation,
-		strict: F.buildMacroInvocation
-	}),
-	macroRule: _attach(FR.coerceToMacroRule, { from: FR.coerceToMacroRule, strict: F.buildMacroRule }),
-	matchArm: _attach(FR.coerceToMatchArm, { from: FR.coerceToMatchArm, strict: F.buildMatchArm }),
-	matchBlock: _attach(FR.coerceToMatchBlock, { from: FR.coerceToMatchBlock, strict: F.buildMatchBlock }),
-	matchExpression: _attach(FR.coerceToMatchExpression, {
-		from: FR.coerceToMatchExpression,
-		strict: F.buildMatchExpression
-	}),
-	matchPattern: _attach(FR.coerceToMatchPattern, { from: FR.coerceToMatchPattern, strict: F.buildMatchPattern }),
-	modItem: _attach(FR.coerceToModItem, { from: FR.coerceToModItem, strict: F.buildModItem }),
+	structPattern: _attach(FR.coerceToStructPattern, { from: FR.coerceToStructPattern, strict: F.buildStructPattern }),
+	fieldPattern: _attach(FR.coerceToFieldPattern, { from: FR.coerceToFieldPattern, strict: F.buildFieldPattern }),
 	mutPattern: _attach(FR.coerceToMutPattern, { from: FR.coerceToMutPattern, strict: F.buildMutPattern }),
-	negativeLiteral: _attach(FR.coerceToNegativeLiteral, {
-		from: FR.coerceToNegativeLiteral,
-		strict: F.buildNegativeLiteral
-	}),
-	orPattern: _attach(FR.coerceToOrPattern, { from: FR.coerceToOrPattern, strict: F.buildOrPattern }),
-	orderedFieldDeclarationList: _attach(FR.coerceToOrderedFieldDeclarationList, {
-		from: FR.coerceToOrderedFieldDeclarationList,
-		strict: F.buildOrderedFieldDeclarationList
-	}),
-	parameter: _attach(FR.coerceToParameter, { from: FR.coerceToParameter, strict: F.buildParameter }),
-	parameters: _attach(FR.coerceToParameters, { from: FR.coerceToParameters, strict: F.buildParameters }),
-	parenthesizedExpression: _attach(FR.coerceToParenthesizedExpression, {
-		from: FR.coerceToParenthesizedExpression,
-		strict: F.buildParenthesizedExpression
-	}),
-	pointerType: _attach(FR.coerceToPointerType, { from: FR.coerceToPointerType, strict: F.buildPointerType }),
-	qualifiedType: _attach(FR.coerceToQualifiedType, { from: FR.coerceToQualifiedType, strict: F.buildQualifiedType }),
-	rangeExpression: _attach(FR.coerceToRangeExpression, {
-		from: FR.coerceToRangeExpression,
-		strict: F.buildRangeExpression
-	}),
 	rangePattern: _attach(FR.coerceToRangePattern, { from: FR.coerceToRangePattern, strict: F.buildRangePattern }),
-	rawStringLiteral: _attach(FR.coerceToRawStringLiteral, {
-		from: FR.coerceToRawStringLiteral,
-		strict: F.buildRawStringLiteral
-	}),
 	refPattern: _attach(FR.coerceToRefPattern, { from: FR.coerceToRefPattern, strict: F.buildRefPattern }),
-	referenceExpression: _attach(FR.coerceToReferenceExpression, {
-		from: FR.coerceToReferenceExpression,
-		strict: F.buildReferenceExpression
+	capturedPattern: _attach(FR.coerceToCapturedPattern, {
+		from: FR.coerceToCapturedPattern,
+		strict: F.buildCapturedPattern
 	}),
 	referencePattern: _attach(FR.coerceToReferencePattern, {
 		from: FR.coerceToReferencePattern,
 		strict: F.buildReferencePattern
 	}),
-	referenceType: _attach(FR.coerceToReferenceType, { from: FR.coerceToReferenceType, strict: F.buildReferenceType }),
-	removedTraitBound: _attach(FR.coerceToRemovedTraitBound, {
-		from: FR.coerceToRemovedTraitBound,
-		strict: F.buildRemovedTraitBound
+	orPattern: _attach(FR.coerceToOrPattern, { from: FR.coerceToOrPattern, strict: F.buildOrPattern }),
+	negativeLiteral: _attach(FR.coerceToNegativeLiteral, {
+		from: FR.coerceToNegativeLiteral,
+		strict: F.buildNegativeLiteral
 	}),
-	returnExpression: _attach(FR.coerceToReturnExpression, {
-		from: FR.coerceToReturnExpression,
-		strict: F.buildReturnExpression
-	}),
-	scopedIdentifier: _attach(FR.coerceToScopedIdentifier, {
-		from: FR.coerceToScopedIdentifier,
-		strict: F.buildScopedIdentifier
-	}),
-	scopedTypeIdentifier: _attach(FR.coerceToScopedTypeIdentifier, {
-		from: FR.coerceToScopedTypeIdentifier,
-		strict: F.buildScopedTypeIdentifier
-	}),
-	scopedTypeIdentifierInExpressionPosition: _attach(FR.coerceToScopedTypeIdentifierInExpressionPosition, {
-		from: FR.coerceToScopedTypeIdentifierInExpressionPosition,
-		strict: F.buildScopedTypeIdentifierInExpressionPosition
-	}),
-	scopedUseList: _attach(FR.coerceToScopedUseList, { from: FR.coerceToScopedUseList, strict: F.buildScopedUseList }),
-	selfParameter: _attach(FR.coerceToSelfParameter, { from: FR.coerceToSelfParameter, strict: F.buildSelfParameter }),
-	shorthandFieldInitializer: _attach(FR.coerceToShorthandFieldInitializer, {
-		from: FR.coerceToShorthandFieldInitializer,
-		strict: F.buildShorthandFieldInitializer
-	}),
-	slicePattern: _attach(FR.coerceToSlicePattern, { from: FR.coerceToSlicePattern, strict: F.buildSlicePattern }),
-	sourceFile: _attach(FR.coerceToSourceFile, { from: FR.coerceToSourceFile, strict: F.buildSourceFile }),
-	staticItem: _attach(FR.coerceToStaticItem, { from: FR.coerceToStaticItem, strict: F.buildStaticItem }),
 	stringLiteral: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
-	structExpression: _attach(FR.coerceToStructExpression, {
-		from: FR.coerceToStructExpression,
-		strict: F.buildStructExpression
+	rawStringLiteral: _attach(FR.coerceToRawStringLiteral, {
+		from: FR.coerceToRawStringLiteral,
+		strict: F.buildRawStringLiteral
 	}),
-	structItem: _attach(FR.coerceToStructItem, { from: FR.coerceToStructItem, strict: F.buildStructItem }),
-	structPattern: _attach(FR.coerceToStructPattern, { from: FR.coerceToStructPattern, strict: F.buildStructPattern }),
-	tokenBindingPattern: _attach(FR.coerceToTokenBindingPattern, {
-		from: FR.coerceToTokenBindingPattern,
-		strict: F.buildTokenBindingPattern
-	}),
-	tokenRepetition: _attach(FR.coerceToTokenRepetition, {
-		from: FR.coerceToTokenRepetition,
-		strict: F.buildTokenRepetition
-	}),
-	tokenRepetitionPattern: _attach(FR.coerceToTokenRepetitionPattern, {
-		from: FR.coerceToTokenRepetitionPattern,
-		strict: F.buildTokenRepetitionPattern
-	}),
-	tokenTree: _attach(FR.coerceToTokenTree, { from: FR.coerceToTokenTree, strict: F.buildTokenTree }),
-	tokenTreePattern: _attach(FR.coerceToTokenTreePattern, {
-		from: FR.coerceToTokenTreePattern,
-		strict: F.buildTokenTreePattern
-	}),
-	traitBounds: _attach(FR.coerceToTraitBounds, { from: FR.coerceToTraitBounds, strict: F.buildTraitBounds }),
-	traitItem: _attach(FR.coerceToTraitItem, { from: FR.coerceToTraitItem, strict: F.buildTraitItem }),
-	tryBlock: _attach(FR.coerceToTryBlock, { from: FR.coerceToTryBlock, strict: F.buildTryBlock }),
-	tryExpression: _attach(FR.coerceToTryExpression, { from: FR.coerceToTryExpression, strict: F.buildTryExpression }),
-	tupleExpression: _attach(FR.coerceToTupleExpression, {
-		from: FR.coerceToTupleExpression,
-		strict: F.buildTupleExpression
-	}),
-	tuplePattern: _attach(FR.coerceToTuplePattern, { from: FR.coerceToTuplePattern, strict: F.buildTuplePattern }),
-	tupleStructPattern: _attach(FR.coerceToTupleStructPattern, {
-		from: FR.coerceToTupleStructPattern,
-		strict: F.buildTupleStructPattern
-	}),
-	tupleType: _attach(FR.coerceToTupleType, { from: FR.coerceToTupleType, strict: F.buildTupleType }),
-	typeArguments: _attach(FR.coerceToTypeArguments, { from: FR.coerceToTypeArguments, strict: F.buildTypeArguments }),
-	typeBinding: _attach(FR.coerceToTypeBinding, { from: FR.coerceToTypeBinding, strict: F.buildTypeBinding }),
-	typeCastExpression: _attach(FR.coerceToTypeCastExpression, {
-		from: FR.coerceToTypeCastExpression,
-		strict: F.buildTypeCastExpression
-	}),
-	typeItem: _attach(FR.coerceToTypeItem, { from: FR.coerceToTypeItem, strict: F.buildTypeItem }),
-	typeParameter: _attach(FR.coerceToTypeParameter, { from: FR.coerceToTypeParameter, strict: F.buildTypeParameter }),
-	typeParameters: _attach(FR.coerceToTypeParameters, {
-		from: FR.coerceToTypeParameters,
-		strict: F.buildTypeParameters
-	}),
-	unaryExpression: _attach(FR.coerceToUnaryExpression, {
-		from: FR.coerceToUnaryExpression,
-		strict: F.buildUnaryExpression
-	}),
-	unionItem: _attach(FR.coerceToUnionItem, { from: FR.coerceToUnionItem, strict: F.buildUnionItem }),
-	unsafeBlock: _attach(FR.coerceToUnsafeBlock, { from: FR.coerceToUnsafeBlock, strict: F.buildUnsafeBlock }),
-	useAsClause: _attach(FR.coerceToUseAsClause, { from: FR.coerceToUseAsClause, strict: F.buildUseAsClause }),
-	useBounds: _attach(FR.coerceToUseBounds, { from: FR.coerceToUseBounds, strict: F.buildUseBounds }),
-	useDeclaration: _attach(FR.coerceToUseDeclaration, {
-		from: FR.coerceToUseDeclaration,
-		strict: F.buildUseDeclaration
-	}),
-	useList: _attach(FR.coerceToUseList, { from: FR.coerceToUseList, strict: F.buildUseList }),
-	useWildcard: _attach(FR.coerceToUseWildcard, { from: FR.coerceToUseWildcard, strict: F.buildUseWildcard }),
-	variadicParameter: _attach(FR.coerceToVariadicParameter, {
-		from: FR.coerceToVariadicParameter,
-		strict: F.buildVariadicParameter
-	}),
-	visibilityModifier: _attach(FR.coerceToVisibilityModifier, {
-		from: FR.coerceToVisibilityModifier,
-		strict: F.buildVisibilityModifier
-	}),
-	whereClause: _attach(FR.coerceToWhereClause, { from: FR.coerceToWhereClause, strict: F.buildWhereClause }),
-	wherePredicate: _attach(FR.coerceToWherePredicate, {
-		from: FR.coerceToWherePredicate,
-		strict: F.buildWherePredicate
-	}),
-	whileExpression: _attach(FR.coerceToWhileExpression, {
-		from: FR.coerceToWhileExpression,
-		strict: F.buildWhileExpression
-	}),
-	yieldExpression: _attach(FR.coerceToYieldExpression, {
-		from: FR.coerceToYieldExpression,
-		strict: F.buildYieldExpression
-	}),
+	lineComment: _attach(FR.coerceToLineComment, { from: FR.coerceToLineComment, strict: F.buildLineComment }),
+	blockComment: _attach(FR.coerceToBlockComment, { from: FR.coerceToBlockComment, strict: F.buildBlockComment }),
 
 	// Keyword factories
-	crate: F.buildCrate,
 	mutableSpecifier: F.buildMutableSpecifier,
 	self: F.buildSelf,
 	super: F.buildSuper,
+	crate: F.buildCrate,
 
 	// Leaf node factories
-	booleanLiteral: F.buildBooleanLiteral,
+	fragmentSpecifier: F.buildFragmentSpecifier,
+	unitType: F.buildUnitType,
+	unitExpression: F.buildUnitExpression,
+	integerLiteral: F.buildIntegerLiteral,
 	charLiteral: F.buildCharLiteral,
 	escapeSequence: F.buildEscapeSequence,
-	fragmentSpecifier: F.buildFragmentSpecifier,
+	booleanLiteral: F.buildBooleanLiteral,
 	identifier: F.buildIdentifier,
-	integerLiteral: F.buildIntegerLiteral,
-	metavariable: F.buildMetavariable,
 	shebang: F.buildShebang,
-	unitExpression: F.buildUnitExpression,
-	unitType: F.buildUnitType,
+	metavariable: F.buildMetavariable,
 	stringContent: F.buildStringContent,
 	rawStringLiteralContent: F.buildRawStringLiteralContent,
 	floatLiteral: F.buildFloatLiteral,
 
 	// Supertype-stripped short aliases
 	abstract: _attach(FR.coerceToAbstractType, { from: FR.coerceToAbstractType, strict: F.buildAbstractType }),
-	array: _attach(FR.coerceToArrayExpression, { from: FR.coerceToArrayExpression, strict: F.buildArrayExpression }),
+	array: _attach(FR.coerceToArrayType, { from: FR.coerceToArrayType, strict: F.buildArrayType }),
 	assignment: _attach(FR.coerceToAssignmentExpression, {
 		from: FR.coerceToAssignmentExpression,
 		strict: F.buildAssignmentExpression
@@ -965,7 +965,7 @@ export const ir = {
 		from: FR.coerceToCompoundAssignmentExpr,
 		strict: F.buildCompoundAssignmentExpr
 	}),
-	const: _attach(FR.coerceToConstBlock, { from: FR.coerceToConstBlock, strict: F.buildConstBlock }),
+	const: _attach(FR.coerceToConstItem, { from: FR.coerceToConstItem, strict: F.buildConstItem }),
 	continue: _attach(FR.coerceToContinueExpression, {
 		from: FR.coerceToContinueExpression,
 		strict: F.buildContinueExpression
@@ -987,7 +987,7 @@ export const ir = {
 		strict: F.buildFunctionSignatureItem
 	}),
 	gen: _attach(FR.coerceToGenBlock, { from: FR.coerceToGenBlock, strict: F.buildGenBlock }),
-	generic: _attach(FR.coerceToGenericFunction, { from: FR.coerceToGenericFunction, strict: F.buildGenericFunction }),
+	generic: _attach(FR.coerceToGenericType, { from: FR.coerceToGenericType, strict: F.buildGenericType }),
 	if: _attach(FR.coerceToIfExpression, { from: FR.coerceToIfExpression, strict: F.buildIfExpression }),
 	impl: _attach(FR.coerceToImplItem, { from: FR.coerceToImplItem, strict: F.buildImplItem }),
 	index: _attach(FR.coerceToIndexExpression, { from: FR.coerceToIndexExpression, strict: F.buildIndexExpression }),
@@ -996,7 +996,7 @@ export const ir = {
 		strict: F.buildInnerAttributeItem
 	}),
 	integer: F.buildIntegerLiteral,
-	let: _attach(FR.coerceToLetCondition, { from: FR.coerceToLetCondition, strict: F.buildLetCondition }),
+	let: _attach(FR.coerceToLetDeclaration, { from: FR.coerceToLetDeclaration, strict: F.buildLetDeclaration }),
 	loop: _attach(FR.coerceToLoopExpression, { from: FR.coerceToLoopExpression, strict: F.buildLoopExpression }),
 	macro: _attach(FR.coerceToMacroInvocation, { from: FR.coerceToMacroInvocation, strict: F.buildMacroInvocation }),
 	match: _attach(FR.coerceToMatchExpression, { from: FR.coerceToMatchExpression, strict: F.buildMatchExpression }),
@@ -1016,10 +1016,7 @@ export const ir = {
 		strict: F.buildRawStringLiteral
 	}),
 	ref: _attach(FR.coerceToRefPattern, { from: FR.coerceToRefPattern, strict: F.buildRefPattern }),
-	reference: _attach(FR.coerceToReferenceExpression, {
-		from: FR.coerceToReferenceExpression,
-		strict: F.buildReferenceExpression
-	}),
+	reference: _attach(FR.coerceToReferenceType, { from: FR.coerceToReferenceType, strict: F.buildReferenceType }),
 	removedTrait: _attach(FR.coerceToRemovedTraitBound, {
 		from: FR.coerceToRemovedTraitBound,
 		strict: F.buildRemovedTraitBound
@@ -1034,7 +1031,7 @@ export const ir = {
 	slice: _attach(FR.coerceToSlicePattern, { from: FR.coerceToSlicePattern, strict: F.buildSlicePattern }),
 	static: _attach(FR.coerceToStaticItem, { from: FR.coerceToStaticItem, strict: F.buildStaticItem }),
 	string: _attach(FR.coerceToStringLiteral, { from: FR.coerceToStringLiteral, strict: F.buildStringLiteral }),
-	struct: _attach(FR.coerceToStructExpression, { from: FR.coerceToStructExpression, strict: F.buildStructExpression }),
+	struct: _attach(FR.coerceToStructItem, { from: FR.coerceToStructItem, strict: F.buildStructItem }),
 	token: _attach(FR.coerceToTokenTree, { from: FR.coerceToTokenTree, strict: F.buildTokenTree }),
 	tokenBinding: _attach(FR.coerceToTokenBindingPattern, {
 		from: FR.coerceToTokenBindingPattern,
@@ -1042,7 +1039,7 @@ export const ir = {
 	}),
 	trait: _attach(FR.coerceToTraitItem, { from: FR.coerceToTraitItem, strict: F.buildTraitItem }),
 	try: _attach(FR.coerceToTryExpression, { from: FR.coerceToTryExpression, strict: F.buildTryExpression }),
-	tuple: _attach(FR.coerceToTupleExpression, { from: FR.coerceToTupleExpression, strict: F.buildTupleExpression }),
+	tuple: _attach(FR.coerceToTupleType, { from: FR.coerceToTupleType, strict: F.buildTupleType }),
 	tupleStruct: _attach(FR.coerceToTupleStructPattern, {
 		from: FR.coerceToTupleStructPattern,
 		strict: F.buildTupleStructPattern
@@ -1053,7 +1050,7 @@ export const ir = {
 	}),
 	unary: _attach(FR.coerceToUnaryExpression, { from: FR.coerceToUnaryExpression, strict: F.buildUnaryExpression }),
 	union: _attach(FR.coerceToUnionItem, { from: FR.coerceToUnionItem, strict: F.buildUnionItem }),
-	unit: F.buildUnitExpression,
+	unit: F.buildUnitType,
 	unsafe: _attach(FR.coerceToUnsafeBlock, { from: FR.coerceToUnsafeBlock, strict: F.buildUnsafeBlock }),
 	use: _attach(FR.coerceToUseDeclaration, { from: FR.coerceToUseDeclaration, strict: F.buildUseDeclaration }),
 	useAs: _attach(FR.coerceToUseAsClause, { from: FR.coerceToUseAsClause, strict: F.buildUseAsClause }),
@@ -1061,22 +1058,22 @@ export const ir = {
 	yield: _attach(FR.coerceToYieldExpression, { from: FR.coerceToYieldExpression, strict: F.buildYieldExpression }),
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
-	condition,
-	declarationStatement,
-	delimTokens,
-	expression,
-	expressionEndingWithBlock,
-	expressionExceptRange,
-	literal,
-	literalPattern,
-	nonDelimToken,
-	nonSpecialToken,
-	path,
-	pattern,
 	statement,
+	declarationStatement,
 	tokenPattern,
 	tokens,
-	type,
+	nonSpecialToken,
 	useClause,
+	type,
+	expressionExceptRange,
+	expression,
+	expressionEndingWithBlock,
+	delimTokens,
+	nonDelimToken,
+	condition,
+	pattern,
+	literal,
+	literalPattern,
+	path,
 	from
 } as const;

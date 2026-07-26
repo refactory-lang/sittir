@@ -1825,7 +1825,7 @@ export interface ModuleTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name: _ModuleNameTransportSlot
+  _name: ModuleNameTransportSlot
   _body?: StatementBlockTransport
 }
 
@@ -1837,7 +1837,7 @@ export interface ModuleTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _name: ModuleNameTransportSlot
+  _name: _ModuleNameTransportSlot
   _body?: StatementBlockTransport
 }
 

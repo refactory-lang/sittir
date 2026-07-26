@@ -375,17 +375,6 @@ export interface BlockCommentTransport {
   _doc?: Box<AnyTransport>
 }
 
-export interface BlockOptional1Transport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _label: LabelTransport
-}
-
 export interface BlockTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -481,17 +470,6 @@ export interface ClosureExpressionExprTransport {
   _body: Box<ClosureExpressionExprBodyTransportSlot>
 }
 
-export interface ClosureExpressionOptional1Transport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _return_type: _TypeTransport
-}
-
 export interface ClosureExpressionTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -551,17 +529,6 @@ export interface ConstBlockTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _body: Box<BlockTransport>
-}
-
-export interface ConstItemOptional1Transport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
-  _value: ExpressionTransport
 }
 
 export interface ConstItemTransport {
@@ -730,6 +697,17 @@ export interface EnumVariantListTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _enum_variant_list_group1?: EnumVariantListGroup1Transport
+}
+
+export interface EnumVariantOptional1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _value: ExpressionTransport
 }
 
 export interface EnumVariantTransport {
@@ -949,6 +927,17 @@ export interface ForLifetimesTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _lifetime: Array<LifetimeTransport>
+}
+
+export interface FunctionItemOptional1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _return_type: _TypeTransport
 }
 
 export interface FunctionItemTransport {
@@ -2625,6 +2614,17 @@ export interface WherePredicateTransport {
   '$triviaData'?: TransportTrivia
   _left: WherePredicateLeftTransportSlot
   _bounds: TraitBoundsTransport
+}
+
+export interface WhileExpressionOptional1Transport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _label: LabelTransport
 }
 
 export interface WhileExpressionTransport {
