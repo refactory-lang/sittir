@@ -595,74 +595,77 @@ const _supertype_declarationStatement_ids = new Set<number>([
 	186, 240, 161, 171, 172, 174, 175, 177, 178, 179, 188, 189, 190, 194, 195, 196, 204, 205, 185, 187
 ]);
 const _supertype_tokenPattern_ids = new Set<number>([
-	164, 166, 165, 138, 312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137, 338
+	164, 166, 165, 137, 312, 313, 124, 314, 121, 151, 1, 80, 134, 135, 136, 338, 339
 ]);
-const _supertype_tokens_ids = new Set<number>([168, 169, 138, 312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137, 338]);
-const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137, 338]);
-const _supertype_useClause_ids = new Set<number>([135, 1, 138, 136, 137, 244, 209, 208, 207, 210]);
+const _supertype_tokens_ids = new Set<number>([
+	168, 169, 137, 312, 313, 124, 314, 121, 151, 1, 80, 134, 135, 136, 338, 339
+]);
+const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 124, 314, 121, 151, 1, 80, 134, 135, 136, 338, 339]);
+const _supertype_useClause_ids = new Set<number>([134, 1, 137, 135, 136, 244, 209, 208, 207, 210]);
 const _supertype_type_ids = new Set<number>([
-	236, 233, 138, 234, 227, 246, 224, 225, 221, 223, 428, 240, 237, 229, 199
+	236, 233, 137, 234, 227, 246, 224, 225, 221, 223, 429, 240, 237, 229, 199
 ]);
 const _supertype_expressionExceptRange_ids = new Set<number>([
-	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 125, 314, 122, 151, 1, 135, 244, 226, 288, 289, 259, 261,
-	240, 262, 285, 286, 287, 138, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281
+	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 124, 314, 121, 151, 1, 134, 244, 226, 288, 289, 259, 261,
+	240, 262, 285, 286, 287, 137, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281
 ]);
 const _supertype_expression_ids = new Set<number>([
-	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 125, 314, 122, 151, 1, 135, 244, 226, 288, 289, 259, 261,
-	240, 262, 285, 286, 287, 138, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281, 247
+	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 124, 314, 121, 151, 1, 134, 244, 226, 288, 289, 259, 261,
+	240, 262, 285, 286, 287, 137, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281, 247
 ]);
 const _supertype_expressionEndingWithBlock_ids = new Set<number>([
 	290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281
 ]);
 const _supertype_delimTokens_ids = new Set<number>([241]);
-const _supertype_nonDelimToken_ids = new Set<number>([312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137, 338]);
+const _supertype_nonDelimToken_ids = new Set<number>([312, 313, 124, 314, 121, 151, 1, 80, 134, 135, 136, 338, 339]);
 const _supertype_condition_ids = new Set<number>([
-	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 125, 314, 122, 151, 1, 135, 244, 226, 288, 289, 259, 261,
-	240, 262, 285, 286, 287, 138, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281, 247, 269, 270
+	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 124, 314, 121, 151, 1, 134, 244, 226, 288, 289, 259, 261,
+	240, 262, 285, 286, 287, 137, 282, 260, 263, 290, 291, 292, 293, 294, 268, 273, 278, 279, 280, 281, 247, 269, 270
 ]);
 const _supertype_pattern_ids = new Set<number>([
-	312, 313, 125, 314, 122, 151, 311, 1, 244, 296, 297, 299, 300, 305, 298, 306, 307, 303, 304, 308, 281, 240, 340
+	312, 313, 124, 314, 121, 151, 311, 1, 244, 296, 297, 299, 300, 305, 298, 306, 307, 303, 304, 308, 281, 240, 341
 ]);
-const _supertype_literal_ids = new Set<number>([312, 313, 125, 314, 122, 151]);
-const _supertype_literalPattern_ids = new Set<number>([312, 313, 125, 314, 122, 151, 311]);
-const _supertype_path_ids = new Set<number>([135, 1, 138, 136, 137, 244]);
-const _supertype_tokenPatternGroup1_ids = new Set<number>([312, 313, 125, 314, 122, 151, 1, 90, 135, 136, 137, 338]);
+const _supertype_literal_ids = new Set<number>([312, 313, 124, 314, 121, 151]);
+const _supertype_literalPattern_ids = new Set<number>([312, 313, 124, 314, 121, 151, 311]);
+const _supertype_path_ids = new Set<number>([134, 1, 137, 135, 136, 244]);
+const _supertype_tokenPatternGroup1_ids = new Set<number>([
+	312, 313, 124, 314, 121, 151, 1, 80, 134, 135, 136, 338, 339
+]);
 
 const _kindIdByKind = new Map<string, number>([
 	['identifier', TSKindId.Identifier],
-	['as', TSKindId.As],
-	['async', TSKindId.Async],
-	['await', TSKindId.Await],
-	['break', TSKindId.Break],
-	['const', TSKindId.Const],
-	['continue', TSKindId.Continue],
-	['enum', TSKindId.Enum],
-	['fn', TSKindId.Fn],
-	['for', TSKindId.For],
-	['gen', TSKindId.Gen],
-	['if', TSKindId.If],
-	['impl', TSKindId.Impl],
-	['let', TSKindId.Let],
-	['loop', TSKindId.Loop],
-	['match', TSKindId.Match],
 	['mod', TSKindId.Mod],
-	['pub', TSKindId.Pub],
-	['return', TSKindId.Return],
-	['static', TSKindId.Static],
 	['struct', TSKindId.Struct],
-	['trait', TSKindId.Trait],
-	['type', TSKindId.Type],
 	['union', TSKindId.Union],
-	['unsafe', TSKindId.Unsafe],
-	['use', TSKindId.Use],
-	['where', TSKindId.Where],
-	['while', TSKindId.While],
+	['enum', TSKindId.Enum],
 	['extern', TSKindId.Extern],
+	['const', TSKindId.Const],
+	['static', TSKindId.Static],
+	['type', TSKindId.Type],
+	['fn', TSKindId.Fn],
+	['async', TSKindId.Async],
+	['unsafe', TSKindId.Unsafe],
+	['where', TSKindId.Where],
+	['impl', TSKindId.Impl],
+	['trait', TSKindId.Trait],
+	['for', TSKindId.For],
+	['let', TSKindId.Let],
+	['use', TSKindId.Use],
+	['as', TSKindId.As],
 	['dyn', TSKindId.Dyn],
 	['mutable_specifier', TSKindId.MutableSpecifier],
+	['return', TSKindId.Return],
 	['yield', TSKindId.Yield],
+	['if', TSKindId.If],
 	['else', TSKindId.Else],
+	['match', TSKindId.Match],
+	['while', TSKindId.While],
+	['loop', TSKindId.Loop],
 	['in', TSKindId.In],
+	['break', TSKindId.Break],
+	['continue', TSKindId.Continue],
+	['await', TSKindId.Await],
+	['gen', TSKindId.Gen],
 	['try', TSKindId.Try],
 	['ref', TSKindId.Ref],
 	['integer_literal', TSKindId.IntegerLiteral],
@@ -674,6 +677,7 @@ const _kindIdByKind = new Map<string, number>([
 	['crate', TSKindId.Crate],
 	['metavariable', TSKindId.Metavariable],
 	['_', TSKindId.Anonymous],
+	['pub', TSKindId.Pub],
 	['raw', TSKindId.Raw],
 	['move', TSKindId.Move],
 	['_line_comment_content', TSKindId.LineCommentContent],
@@ -846,6 +850,7 @@ const _kindIdByKind = new Map<string, number>([
 	['_range_pattern_group2', TSKindId.RangePatternGroup2],
 	['_block_comment_group1', TSKindId.BlockCommentGroup1],
 	['_token_tree_punctuation', TSKindId.TokenTreePunctuation],
+	['_token_keywords', TSKindId.TokenKeywords],
 	['_use_wildcard_clause', TSKindId.UseWildcardClause],
 	['_wildcard_pattern', TSKindId.WildcardPattern],
 	['_reference_expression_raw_const', TSKindId.ReferenceExpressionRawConst],

@@ -4478,6 +4478,48 @@ export function buildTokenTreePunctuation(
 	);
 }
 
+export function buildTokenKeywords(
+	text:
+		| 'as'
+		| 'async'
+		| 'await'
+		| 'break'
+		| 'const'
+		| 'continue'
+		| 'default'
+		| 'enum'
+		| 'fn'
+		| 'for'
+		| 'gen'
+		| 'if'
+		| 'impl'
+		| 'let'
+		| 'loop'
+		| 'match'
+		| 'mod'
+		| 'pub'
+		| 'return'
+		| 'static'
+		| 'struct'
+		| 'trait'
+		| 'type'
+		| 'union'
+		| 'unsafe'
+		| 'use'
+		| 'where'
+		| 'while'
+) {
+	return withMethods(
+		{
+			$type: TSKindId.TokenKeywords as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
 export function buildUseWildcardClause(config: T.UseWildcardClause.Config) {
 	const _path = config.path;
 	return withMethods(
@@ -5843,6 +5885,7 @@ export type FluentKindMap = {
 	_range_pattern_group2: T.RangePatternGroup2;
 	_block_comment_group1: T.BlockCommentGroup1;
 	_token_tree_punctuation: T.TokenTreePunctuation;
+	_token_keywords: T.TokenKeywords;
 	_use_wildcard_clause: T.UseWildcardClause;
 	_reference_expression_raw_const: T.ReferenceExpressionRawConst;
 	_reference_expression_raw_mut: FluentNode<'_reference_expression_raw_mut', T.ReferenceExpressionRawMut.Config>;
@@ -6075,6 +6118,7 @@ export const _factoryMap = {
 	_range_pattern_group2: buildRangePatternGroup2,
 	_block_comment_group1: buildBlockCommentGroup1,
 	_token_tree_punctuation: buildTokenTreePunctuation,
+	_token_keywords: buildTokenKeywords,
 	_use_wildcard_clause: buildUseWildcardClause,
 	_reference_expression_raw_const: buildReferenceExpressionRawConst,
 	_reference_expression_raw_mut: buildReferenceExpressionRawMut,

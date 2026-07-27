@@ -332,6 +332,8 @@ import type {
 	TokenBindingPatternTree,
 	TokenBindingPatternType,
 	TokenBindingPatternTypeTree,
+	TokenKeywords,
+	TokenKeywordsTree,
 	TokenRepetition,
 	TokenRepetitionPattern,
 	TokenRepetitionPatternTree,
@@ -861,6 +863,39 @@ export type _Type_TokenTreePunctuation = _TypeAssert<
 		| TSKindId.Qmark
 	>
 >;
+export type _Type_TokenKeywords = _TypeAssert<
+	_TypeExtends<
+		TokenKeywords['$type'],
+		| TSKindId.As
+		| TSKindId.Async
+		| TSKindId.Await
+		| TSKindId.Break
+		| TSKindId.Const
+		| TSKindId.Continue
+		| TSKindId.Default
+		| TSKindId.Enum
+		| TSKindId.Fn
+		| TSKindId.For
+		| TSKindId.Gen
+		| TSKindId.If
+		| TSKindId.Impl
+		| TSKindId.Let
+		| TSKindId.Loop
+		| TSKindId.Match
+		| TSKindId.Mod
+		| TSKindId.Pub
+		| TSKindId.Return
+		| TSKindId.Static
+		| TSKindId.Struct
+		| TSKindId.Trait
+		| TSKindId.Type
+		| TSKindId.Union
+		| TSKindId.Unsafe
+		| TSKindId.Use
+		| TSKindId.Where
+		| TSKindId.While
+	>
+>;
 export type _Type_ReferenceExpressionRawConst = _TypeAssert<
 	_TypeExtends<ReferenceExpressionRawConst['$type'], TSKindId.ReferenceExpressionRawConst>
 >;
@@ -1199,6 +1234,7 @@ export type _Tree_CompoundAssignmentExprOperator = _TypeAssert<
 export type _Tree_TokenTreePunctuation = _TypeAssert<
 	_TypeExtends<TokenTreePunctuationTree['type'], '_token_tree_punctuation'>
 >;
+export type _Tree_TokenKeywords = _TypeAssert<_TypeExtends<TokenKeywordsTree['type'], '_token_keywords'>>;
 export type _Tree_ReferenceExpressionRawConst = _TypeAssert<
 	_TypeExtends<ReferenceExpressionRawConstTree['type'], '_reference_expression_raw_const'>
 >;

@@ -4221,9 +4221,78 @@ var overrides_default = grammar(
         // compile — see `applyToIndexedMember`'s negative-index convention
         // and `transform()`'s flat-vs-path-mode dispatch in
         // packages/codegen/src/dsl/transform/transform.ts.
-        _non_special_token: ($, original) => transform2(original, {
-          "-30": alias2("token_tree_punctuation")
-        }),
+        // _non_special_token — positions 9-36 (the 28 bare reserved-word
+        // literals `'as'`...`'while'`) consolidated into a single
+        // `_token_keywords` reference, mirroring the existing
+        // `_token_tree_punctuation` treatment for position 7's
+        // punctuation run. Unlike `_non_special_token` itself (a
+        // nested SUPERTYPE, materialized via afd2d90d0's assemble.ts
+        // pass and read/wrapped as `token_pattern_group1`),
+        // `_token_keywords`'s body is PURE bare-STRING members with no
+        // symbol refs at all — link.ts's `classifyHiddenChoiceRule`
+        // admits it as an ENUM (its first, string-literal-only
+        // admission check), not a SUPERTYPE, giving the 28 keywords
+        // proper type/enum/factory representation instead of being
+        // invisible to the type system (confirmed missing from both
+        // `Tokens`'s union and `TokenPatternGroup1Kind`'s enum before
+        // this change). Position 8 (bare `'`) is deliberately left
+        // alone — it's the one case that still hits the
+        // text-leaf-fusion path (specs/026), which the wrap.ts fix
+        // already handles; folding it into `_token_keywords` would mix
+        // an unrelated single-character case into a "reserved word"
+        // enum for no benefit.
+        //
+        // Applies the existing position-7 transform() patch first
+        // (unchanged), then slices the result's own `members` array
+        // directly — `transform()`'s position-indexed patch API can
+        // only replace one member at a time, not consolidate a range,
+        // so positions 9-36 are dropped by slicing to `members[0..8]`
+        // (literal/identifier/mutable_specifier/self/super/crate/
+        // primitive_type-alias/punctuation-alias/apostrophe) and
+        // appending the new reference — reusing the transform-patched
+        // original's own member objects verbatim avoids re-authoring
+        // the primitive_type alias's inline `choice(...primitiveTypes)`
+        // content by hand.
+        _non_special_token: ($, original) => {
+          const patched = transform2(original, {
+            "-30": alias2("token_tree_punctuation")
+          });
+          const members = patched.members;
+          return {
+            ...patched,
+            members: [...members.slice(0, 9), $._token_keywords]
+          };
+        },
+        _token_keywords: ($) => choice(
+          "as",
+          "async",
+          "await",
+          "break",
+          "const",
+          "continue",
+          "default",
+          "enum",
+          "fn",
+          "for",
+          "gen",
+          "if",
+          "impl",
+          "let",
+          "loop",
+          "match",
+          "mod",
+          "pub",
+          "return",
+          "static",
+          "struct",
+          "trait",
+          "type",
+          "union",
+          "unsafe",
+          "use",
+          "where",
+          "while"
+        ),
         // use_wildcard — re-authored as a VISIBLE clause group. Base was the
         // double-optional `seq(optional(seq(optional($._path), '::')), '*')`, which
         // (once detectClause is gone) the enrich auto-hoist inlines into a presence-

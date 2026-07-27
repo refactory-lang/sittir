@@ -624,7 +624,8 @@ const _K3: readonly string[] = [
 	'super',
 	'crate',
 	'_primitive_type',
-	'_token_tree_punctuation'
+	'_token_tree_punctuation',
+	'_token_keywords'
 ];
 const _K4: readonly string[] = [
 	'token_tree_pattern',
