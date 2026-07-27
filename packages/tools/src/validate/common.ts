@@ -1196,9 +1196,20 @@ function resolveWrappedStorageValue(node: WrappedNodeData, storageKey: string): 
 			try {
 				return (accessor as () => unknown).call(node);
 			} catch (e) {
-				if (process.env['SITTIR_VALIDATOR_DUMP_ACCESSOR_THROW']) {
-					process.stderr.write(`[accessor-throw] key=${storageKey} accessor=${accessorName} type=${(node as any).$type} err=${(e as Error).message}\n`);
-				}
+				// Unconditional (not env-gated): a thrown accessor here means this
+				// ENTIRE slot falls back to raw, unwrapped stubs below — including
+				// any sibling elements in an array-valued slot that wrapped fine on
+				// their own. That masking previously required
+				// SITTIR_VALIDATOR_DUMP_ACCESSOR_THROW to even see; without it, a
+				// downstream render/FromNapiValue error on an innocent sibling
+				// element was the only visible symptom, misdirecting investigation
+				// toward that sibling instead of the actual failing accessor (see
+				// specs/026-nested-supertype-alias-materialization/spec.md's
+				// Progress section for the concrete case this cost real
+				// investigation time on).
+				process.stderr.write(
+					`[accessor-throw] key=${storageKey} accessor=${accessorName} type=${(node as any).$type} err=${(e as Error).message}\n`
+				);
 				return node[storageKey];
 			}
 		}

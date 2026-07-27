@@ -1383,40 +1383,44 @@ export function wrapStatement(
 		'extern_crate_declaration',
 		'static_item'
 	]) as T.Statement | readonly T.Statement[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'expression_statement',
+			'_declaration_statement',
+			'declaration_statement',
+			'const_item',
+			'macro_invocation',
+			'macro_definition',
+			'empty_statement',
+			'attribute_item',
+			'inner_attribute_item',
+			'mod_item',
+			'foreign_mod_item',
+			'struct_item',
+			'union_item',
+			'enum_item',
+			'type_item',
+			'function_item',
+			'function_signature_item',
+			'impl_item',
+			'trait_item',
+			'associated_type',
+			'let_declaration',
+			'use_declaration',
+			'extern_crate_declaration',
+			'static_item'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillIn<T.Statement>(data as T.Statement, tree);
+	}
 	return drillIn<T.Statement>(
-		normalizeSingularWrapSlot(
-			kindKeyed ??
-				_filterWrapChildrenByKind(data.$other, [
-					'expression_statement',
-					'_declaration_statement',
-					'declaration_statement',
-					'const_item',
-					'macro_invocation',
-					'macro_definition',
-					'empty_statement',
-					'attribute_item',
-					'inner_attribute_item',
-					'mod_item',
-					'foreign_mod_item',
-					'struct_item',
-					'union_item',
-					'enum_item',
-					'type_item',
-					'function_item',
-					'function_signature_item',
-					'impl_item',
-					'trait_item',
-					'associated_type',
-					'let_declaration',
-					'use_declaration',
-					'extern_crate_declaration',
-					'static_item'
-				]),
-			'children',
-			true,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'children', span: (data as _NodeData).$span }
-		),
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
 		tree
 	);
 }
@@ -1599,40 +1603,44 @@ export function wrapTokenPattern(
 		'token_tree_punctuation',
 		"'"
 	]) as T.TokenPattern | readonly T.TokenPattern[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'token_tree_pattern',
+			'token_repetition_pattern',
+			'token_binding_pattern',
+			'metavariable',
+			'_non_special_token',
+			'non_special_token',
+			'_literal',
+			'literal',
+			'string_literal',
+			'raw_string_literal',
+			'char_literal',
+			'boolean_literal',
+			'integer_literal',
+			'float_literal',
+			'identifier',
+			'mutable_specifier',
+			'self',
+			'super',
+			'crate',
+			'_primitive_type',
+			'primitive_type',
+			'_token_tree_punctuation',
+			'token_tree_punctuation',
+			"'"
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillIn<T.TokenPattern>(data as T.TokenPattern, tree);
+	}
 	return drillIn<T.TokenPattern>(
-		normalizeSingularWrapSlot(
-			kindKeyed ??
-				_filterWrapChildrenByKind(data.$other, [
-					'token_tree_pattern',
-					'token_repetition_pattern',
-					'token_binding_pattern',
-					'metavariable',
-					'_non_special_token',
-					'non_special_token',
-					'_literal',
-					'literal',
-					'string_literal',
-					'raw_string_literal',
-					'char_literal',
-					'boolean_literal',
-					'integer_literal',
-					'float_literal',
-					'identifier',
-					'mutable_specifier',
-					'self',
-					'super',
-					'crate',
-					'_primitive_type',
-					'primitive_type',
-					'_token_tree_punctuation',
-					'token_tree_punctuation',
-					"'"
-				]),
-			'children',
-			true,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'children', span: (data as _NodeData).$span }
-		),
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
 		tree
 	);
 }
@@ -2098,34 +2106,38 @@ export function wrapNonSpecialToken(
 		'token_tree_punctuation',
 		"'"
 	]) as T.NonSpecialToken | readonly T.NonSpecialToken[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'_literal',
+			'literal',
+			'string_literal',
+			'raw_string_literal',
+			'char_literal',
+			'boolean_literal',
+			'integer_literal',
+			'float_literal',
+			'identifier',
+			'mutable_specifier',
+			'self',
+			'super',
+			'crate',
+			'_primitive_type',
+			'primitive_type',
+			'_token_tree_punctuation',
+			'token_tree_punctuation',
+			"'"
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillIn<T.NonSpecialToken>(data as T.NonSpecialToken, tree);
+	}
 	return drillIn<T.NonSpecialToken>(
-		normalizeSingularWrapSlot(
-			kindKeyed ??
-				_filterWrapChildrenByKind(data.$other, [
-					'_literal',
-					'literal',
-					'string_literal',
-					'raw_string_literal',
-					'char_literal',
-					'boolean_literal',
-					'integer_literal',
-					'float_literal',
-					'identifier',
-					'mutable_specifier',
-					'self',
-					'super',
-					'crate',
-					'_primitive_type',
-					'primitive_type',
-					'_token_tree_punctuation',
-					'token_tree_punctuation',
-					"'"
-				]),
-			'children',
-			true,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'children', span: (data as _NodeData).$span }
-		),
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
 		tree
 	);
 }
@@ -4006,30 +4018,34 @@ export function wrapUseClause(
 		'scoped_use_list',
 		'use_wildcard'
 	]) as T.UseClause | readonly T.UseClause[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'_path',
+			'path',
+			'self',
+			'identifier',
+			'metavariable',
+			'super',
+			'crate',
+			'scoped_identifier',
+			'_reserved_identifier',
+			'reserved_identifier',
+			'use_as_clause',
+			'use_list',
+			'scoped_use_list',
+			'use_wildcard'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillIn<T.UseClause>(data as T.UseClause, tree);
+	}
 	return drillIn<T.UseClause>(
-		normalizeSingularWrapSlot(
-			kindKeyed ??
-				_filterWrapChildrenByKind(data.$other, [
-					'_path',
-					'path',
-					'self',
-					'identifier',
-					'metavariable',
-					'super',
-					'crate',
-					'scoped_identifier',
-					'_reserved_identifier',
-					'reserved_identifier',
-					'use_as_clause',
-					'use_list',
-					'scoped_use_list',
-					'use_wildcard'
-				]),
-			'children',
-			true,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'children', span: (data as _NodeData).$span }
-		),
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
 		tree
 	);
 }
@@ -4414,35 +4430,39 @@ export function wrap_Type(data: T._Type & { readonly $other?: T._Type | readonly
 		'_primitive_type',
 		'primitive_type'
 	]) as T._Type | readonly T._Type[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'abstract_type',
+			'reference_type',
+			'metavariable',
+			'pointer_type',
+			'generic_type',
+			'scoped_type_identifier',
+			'tuple_type',
+			'unit_type',
+			'array_type',
+			'function_type',
+			'_type_identifier',
+			'type_identifier',
+			'macro_invocation',
+			'never_type',
+			'dynamic_type',
+			'bounded_type',
+			'removed_trait_bound',
+			'_primitive_type',
+			'primitive_type'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillIn<T._Type>(data as T._Type, tree);
+	}
 	return drillIn<T._Type>(
-		normalizeSingularWrapSlot(
-			kindKeyed ??
-				_filterWrapChildrenByKind(data.$other, [
-					'abstract_type',
-					'reference_type',
-					'metavariable',
-					'pointer_type',
-					'generic_type',
-					'scoped_type_identifier',
-					'tuple_type',
-					'unit_type',
-					'array_type',
-					'function_type',
-					'_type_identifier',
-					'type_identifier',
-					'macro_invocation',
-					'never_type',
-					'dynamic_type',
-					'bounded_type',
-					'removed_trait_bound',
-					'_primitive_type',
-					'primitive_type'
-				]),
-			'children',
-			true,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'children', span: (data as _NodeData).$span }
-		),
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
 		tree
 	);
 }
@@ -5241,66 +5261,70 @@ export function wrapExpressionExceptRange(
 		'for_expression',
 		'const_block'
 	]) as T.ExpressionExceptRange | readonly T.ExpressionExceptRange[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'unary_expression',
+			'reference_expression',
+			'try_expression',
+			'binary_expression',
+			'assignment_expression',
+			'compound_assignment_expr',
+			'type_cast_expression',
+			'call_expression',
+			'return_expression',
+			'yield_expression',
+			'_literal',
+			'literal',
+			'string_literal',
+			'raw_string_literal',
+			'char_literal',
+			'boolean_literal',
+			'integer_literal',
+			'float_literal',
+			'identifier',
+			'_reserved_identifier',
+			'reserved_identifier',
+			'self',
+			'scoped_identifier',
+			'generic_function',
+			'await_expression',
+			'field_expression',
+			'array_expression',
+			'tuple_expression',
+			'macro_invocation',
+			'unit_expression',
+			'break_expression',
+			'continue_expression',
+			'index_expression',
+			'metavariable',
+			'closure_expression',
+			'parenthesized_expression',
+			'struct_expression',
+			'_expression_ending_with_block',
+			'expression_ending_with_block',
+			'unsafe_block',
+			'async_block',
+			'gen_block',
+			'try_block',
+			'block',
+			'if_expression',
+			'match_expression',
+			'while_expression',
+			'loop_expression',
+			'for_expression',
+			'const_block'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillIn<T.ExpressionExceptRange>(data as T.ExpressionExceptRange, tree);
+	}
 	return drillIn<T.ExpressionExceptRange>(
-		normalizeSingularWrapSlot(
-			kindKeyed ??
-				_filterWrapChildrenByKind(data.$other, [
-					'unary_expression',
-					'reference_expression',
-					'try_expression',
-					'binary_expression',
-					'assignment_expression',
-					'compound_assignment_expr',
-					'type_cast_expression',
-					'call_expression',
-					'return_expression',
-					'yield_expression',
-					'_literal',
-					'literal',
-					'string_literal',
-					'raw_string_literal',
-					'char_literal',
-					'boolean_literal',
-					'integer_literal',
-					'float_literal',
-					'identifier',
-					'_reserved_identifier',
-					'reserved_identifier',
-					'self',
-					'scoped_identifier',
-					'generic_function',
-					'await_expression',
-					'field_expression',
-					'array_expression',
-					'tuple_expression',
-					'macro_invocation',
-					'unit_expression',
-					'break_expression',
-					'continue_expression',
-					'index_expression',
-					'metavariable',
-					'closure_expression',
-					'parenthesized_expression',
-					'struct_expression',
-					'_expression_ending_with_block',
-					'expression_ending_with_block',
-					'unsafe_block',
-					'async_block',
-					'gen_block',
-					'try_block',
-					'block',
-					'if_expression',
-					'match_expression',
-					'while_expression',
-					'loop_expression',
-					'for_expression',
-					'const_block'
-				]),
-			'children',
-			true,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'children', span: (data as _NodeData).$span }
-		),
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
 		tree
 	);
 }
@@ -5364,69 +5388,73 @@ export function wrapExpression(
 		'const_block',
 		'range_expression'
 	]) as T.Expression | readonly T.Expression[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'_expression_except_range',
+			'expression_except_range',
+			'unary_expression',
+			'reference_expression',
+			'try_expression',
+			'binary_expression',
+			'assignment_expression',
+			'compound_assignment_expr',
+			'type_cast_expression',
+			'call_expression',
+			'return_expression',
+			'yield_expression',
+			'_literal',
+			'literal',
+			'string_literal',
+			'raw_string_literal',
+			'char_literal',
+			'boolean_literal',
+			'integer_literal',
+			'float_literal',
+			'identifier',
+			'_reserved_identifier',
+			'reserved_identifier',
+			'self',
+			'scoped_identifier',
+			'generic_function',
+			'await_expression',
+			'field_expression',
+			'array_expression',
+			'tuple_expression',
+			'macro_invocation',
+			'unit_expression',
+			'break_expression',
+			'continue_expression',
+			'index_expression',
+			'metavariable',
+			'closure_expression',
+			'parenthesized_expression',
+			'struct_expression',
+			'_expression_ending_with_block',
+			'expression_ending_with_block',
+			'unsafe_block',
+			'async_block',
+			'gen_block',
+			'try_block',
+			'block',
+			'if_expression',
+			'match_expression',
+			'while_expression',
+			'loop_expression',
+			'for_expression',
+			'const_block',
+			'range_expression'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillIn<T.Expression>(data as T.Expression, tree);
+	}
 	return drillIn<T.Expression>(
-		normalizeSingularWrapSlot(
-			kindKeyed ??
-				_filterWrapChildrenByKind(data.$other, [
-					'_expression_except_range',
-					'expression_except_range',
-					'unary_expression',
-					'reference_expression',
-					'try_expression',
-					'binary_expression',
-					'assignment_expression',
-					'compound_assignment_expr',
-					'type_cast_expression',
-					'call_expression',
-					'return_expression',
-					'yield_expression',
-					'_literal',
-					'literal',
-					'string_literal',
-					'raw_string_literal',
-					'char_literal',
-					'boolean_literal',
-					'integer_literal',
-					'float_literal',
-					'identifier',
-					'_reserved_identifier',
-					'reserved_identifier',
-					'self',
-					'scoped_identifier',
-					'generic_function',
-					'await_expression',
-					'field_expression',
-					'array_expression',
-					'tuple_expression',
-					'macro_invocation',
-					'unit_expression',
-					'break_expression',
-					'continue_expression',
-					'index_expression',
-					'metavariable',
-					'closure_expression',
-					'parenthesized_expression',
-					'struct_expression',
-					'_expression_ending_with_block',
-					'expression_ending_with_block',
-					'unsafe_block',
-					'async_block',
-					'gen_block',
-					'try_block',
-					'block',
-					'if_expression',
-					'match_expression',
-					'while_expression',
-					'loop_expression',
-					'for_expression',
-					'const_block',
-					'range_expression'
-				]),
-			'children',
-			true,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'children', span: (data as _NodeData).$span }
-		),
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
 		tree
 	);
 }
@@ -5509,21 +5537,25 @@ export function wrapDelimTokens(
 		'$',
 		'delim_token_tree'
 	]) as T.DelimTokens | readonly T.DelimTokens[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'_non_delim_token',
+			'non_delim_token',
+			'token_pattern_group1',
+			'$',
+			'delim_token_tree'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillIn<T.DelimTokens>(data as T.DelimTokens, tree);
+	}
 	return drillIn<T.DelimTokens>(
-		normalizeSingularWrapSlot(
-			kindKeyed ??
-				_filterWrapChildrenByKind(data.$other, [
-					'_non_delim_token',
-					'non_delim_token',
-					'token_pattern_group1',
-					'$',
-					'delim_token_tree'
-				]),
-			'children',
-			true,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'children', span: (data as _NodeData).$span }
-		),
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
 		tree
 	);
 }
@@ -5555,37 +5587,41 @@ export function wrapNonDelimToken(
 		"'",
 		'$'
 	]) as T.NonDelimToken | readonly T.NonDelimToken[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'_non_special_token',
+			'non_special_token',
+			'_literal',
+			'literal',
+			'string_literal',
+			'raw_string_literal',
+			'char_literal',
+			'boolean_literal',
+			'integer_literal',
+			'float_literal',
+			'identifier',
+			'mutable_specifier',
+			'self',
+			'super',
+			'crate',
+			'_primitive_type',
+			'primitive_type',
+			'_token_tree_punctuation',
+			'token_tree_punctuation',
+			"'",
+			'$'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillIn<T.NonDelimToken>(data as T.NonDelimToken, tree);
+	}
 	return drillIn<T.NonDelimToken>(
-		normalizeSingularWrapSlot(
-			kindKeyed ??
-				_filterWrapChildrenByKind(data.$other, [
-					'_non_special_token',
-					'non_special_token',
-					'_literal',
-					'literal',
-					'string_literal',
-					'raw_string_literal',
-					'char_literal',
-					'boolean_literal',
-					'integer_literal',
-					'float_literal',
-					'identifier',
-					'mutable_specifier',
-					'self',
-					'super',
-					'crate',
-					'_primitive_type',
-					'primitive_type',
-					'_token_tree_punctuation',
-					'token_tree_punctuation',
-					"'",
-					'$'
-				]),
-			'children',
-			true,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'children', span: (data as _NodeData).$span }
-		),
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
 		tree
 	);
 }
@@ -7021,74 +7057,78 @@ export function wrapCondition(
 		'_let_chain',
 		'let_chain'
 	]) as T.Condition | readonly T.Condition[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'_expression',
+			'expression',
+			'_expression_except_range',
+			'expression_except_range',
+			'unary_expression',
+			'reference_expression',
+			'try_expression',
+			'binary_expression',
+			'assignment_expression',
+			'compound_assignment_expr',
+			'type_cast_expression',
+			'call_expression',
+			'return_expression',
+			'yield_expression',
+			'_literal',
+			'literal',
+			'string_literal',
+			'raw_string_literal',
+			'char_literal',
+			'boolean_literal',
+			'integer_literal',
+			'float_literal',
+			'identifier',
+			'_reserved_identifier',
+			'reserved_identifier',
+			'self',
+			'scoped_identifier',
+			'generic_function',
+			'await_expression',
+			'field_expression',
+			'array_expression',
+			'tuple_expression',
+			'macro_invocation',
+			'unit_expression',
+			'break_expression',
+			'continue_expression',
+			'index_expression',
+			'metavariable',
+			'closure_expression',
+			'parenthesized_expression',
+			'struct_expression',
+			'_expression_ending_with_block',
+			'expression_ending_with_block',
+			'unsafe_block',
+			'async_block',
+			'gen_block',
+			'try_block',
+			'block',
+			'if_expression',
+			'match_expression',
+			'while_expression',
+			'loop_expression',
+			'for_expression',
+			'const_block',
+			'range_expression',
+			'let_condition',
+			'_let_chain',
+			'let_chain'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillIn<T.Condition>(data as T.Condition, tree);
+	}
 	return drillIn<T.Condition>(
-		normalizeSingularWrapSlot(
-			kindKeyed ??
-				_filterWrapChildrenByKind(data.$other, [
-					'_expression',
-					'expression',
-					'_expression_except_range',
-					'expression_except_range',
-					'unary_expression',
-					'reference_expression',
-					'try_expression',
-					'binary_expression',
-					'assignment_expression',
-					'compound_assignment_expr',
-					'type_cast_expression',
-					'call_expression',
-					'return_expression',
-					'yield_expression',
-					'_literal',
-					'literal',
-					'string_literal',
-					'raw_string_literal',
-					'char_literal',
-					'boolean_literal',
-					'integer_literal',
-					'float_literal',
-					'identifier',
-					'_reserved_identifier',
-					'reserved_identifier',
-					'self',
-					'scoped_identifier',
-					'generic_function',
-					'await_expression',
-					'field_expression',
-					'array_expression',
-					'tuple_expression',
-					'macro_invocation',
-					'unit_expression',
-					'break_expression',
-					'continue_expression',
-					'index_expression',
-					'metavariable',
-					'closure_expression',
-					'parenthesized_expression',
-					'struct_expression',
-					'_expression_ending_with_block',
-					'expression_ending_with_block',
-					'unsafe_block',
-					'async_block',
-					'gen_block',
-					'try_block',
-					'block',
-					'if_expression',
-					'match_expression',
-					'while_expression',
-					'loop_expression',
-					'for_expression',
-					'const_block',
-					'range_expression',
-					'let_condition',
-					'_let_chain',
-					'let_chain'
-				]),
-			'children',
-			true,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'children', span: (data as _NodeData).$span }
-		),
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
 		tree
 	);
 }
@@ -8257,45 +8297,49 @@ export function wrapPattern(
 		'_wildcard_pattern',
 		'wildcard_pattern'
 	]) as T.Pattern | readonly T.Pattern[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'_literal_pattern',
+			'literal_pattern',
+			'string_literal',
+			'raw_string_literal',
+			'char_literal',
+			'boolean_literal',
+			'integer_literal',
+			'float_literal',
+			'negative_literal',
+			'identifier',
+			'scoped_identifier',
+			'generic_pattern',
+			'tuple_pattern',
+			'tuple_struct_pattern',
+			'struct_pattern',
+			'_reserved_identifier',
+			'reserved_identifier',
+			'ref_pattern',
+			'slice_pattern',
+			'captured_pattern',
+			'reference_pattern',
+			'remaining_field_pattern',
+			'mut_pattern',
+			'range_pattern',
+			'or_pattern',
+			'const_block',
+			'macro_invocation',
+			'_wildcard_pattern',
+			'wildcard_pattern'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillIn<T.Pattern>(data as T.Pattern, tree);
+	}
 	return drillIn<T.Pattern>(
-		normalizeSingularWrapSlot(
-			kindKeyed ??
-				_filterWrapChildrenByKind(data.$other, [
-					'_literal_pattern',
-					'literal_pattern',
-					'string_literal',
-					'raw_string_literal',
-					'char_literal',
-					'boolean_literal',
-					'integer_literal',
-					'float_literal',
-					'negative_literal',
-					'identifier',
-					'scoped_identifier',
-					'generic_pattern',
-					'tuple_pattern',
-					'tuple_struct_pattern',
-					'struct_pattern',
-					'_reserved_identifier',
-					'reserved_identifier',
-					'ref_pattern',
-					'slice_pattern',
-					'captured_pattern',
-					'reference_pattern',
-					'remaining_field_pattern',
-					'mut_pattern',
-					'range_pattern',
-					'or_pattern',
-					'const_block',
-					'macro_invocation',
-					'_wildcard_pattern',
-					'wildcard_pattern'
-				]),
-			'children',
-			true,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'children', span: (data as _NodeData).$span }
-		),
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
 		tree
 	);
 }
@@ -8750,22 +8794,26 @@ export function wrapLiteral(
 		'integer_literal',
 		'float_literal'
 	]) as T.Literal | readonly T.Literal[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'string_literal',
+			'raw_string_literal',
+			'char_literal',
+			'boolean_literal',
+			'integer_literal',
+			'float_literal'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillIn<T.Literal>(data as T.Literal, tree);
+	}
 	return drillIn<T.Literal>(
-		normalizeSingularWrapSlot(
-			kindKeyed ??
-				_filterWrapChildrenByKind(data.$other, [
-					'string_literal',
-					'raw_string_literal',
-					'char_literal',
-					'boolean_literal',
-					'integer_literal',
-					'float_literal'
-				]),
-			'children',
-			true,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'children', span: (data as _NodeData).$span }
-		),
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
 		tree
 	);
 }
@@ -8783,23 +8831,27 @@ export function wrapLiteralPattern(
 		'float_literal',
 		'negative_literal'
 	]) as T.LiteralPattern | readonly T.LiteralPattern[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'string_literal',
+			'raw_string_literal',
+			'char_literal',
+			'boolean_literal',
+			'integer_literal',
+			'float_literal',
+			'negative_literal'
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillIn<T.LiteralPattern>(data as T.LiteralPattern, tree);
+	}
 	return drillIn<T.LiteralPattern>(
-		normalizeSingularWrapSlot(
-			kindKeyed ??
-				_filterWrapChildrenByKind(data.$other, [
-					'string_literal',
-					'raw_string_literal',
-					'char_literal',
-					'boolean_literal',
-					'integer_literal',
-					'float_literal',
-					'negative_literal'
-				]),
-			'children',
-			true,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'children', span: (data as _NodeData).$span }
-		),
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
 		tree
 	);
 }
@@ -12381,34 +12433,38 @@ export function wrapTokenPatternGroup1(
 		'token_tree_punctuation',
 		"'"
 	]) as T.TokenPatternGroup1 | readonly T.TokenPatternGroup1[] | undefined;
+	const filtered =
+		kindKeyed ??
+		_filterWrapChildrenByKind(data.$other, [
+			'_literal',
+			'literal',
+			'string_literal',
+			'raw_string_literal',
+			'char_literal',
+			'boolean_literal',
+			'integer_literal',
+			'float_literal',
+			'identifier',
+			'mutable_specifier',
+			'self',
+			'super',
+			'crate',
+			'_primitive_type',
+			'primitive_type',
+			'_token_tree_punctuation',
+			'token_tree_punctuation',
+			"'"
+		]);
+	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
+		return drillIn<T.TokenPatternGroup1>(data as T.TokenPatternGroup1, tree);
+	}
 	return drillIn<T.TokenPatternGroup1>(
-		normalizeSingularWrapSlot(
-			kindKeyed ??
-				_filterWrapChildrenByKind(data.$other, [
-					'_literal',
-					'literal',
-					'string_literal',
-					'raw_string_literal',
-					'char_literal',
-					'boolean_literal',
-					'integer_literal',
-					'float_literal',
-					'identifier',
-					'mutable_specifier',
-					'self',
-					'super',
-					'crate',
-					'_primitive_type',
-					'primitive_type',
-					'_token_tree_punctuation',
-					'token_tree_punctuation',
-					"'"
-				]),
-			'children',
-			true,
-			data.$type,
-			{ tree, nodeType: data.$type, slotName: 'children', span: (data as _NodeData).$span }
-		),
+		normalizeSingularWrapSlot(filtered, 'children', true, data.$type, {
+			tree,
+			nodeType: data.$type,
+			slotName: 'children',
+			span: (data as _NodeData).$span
+		}),
 		tree
 	);
 }

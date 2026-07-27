@@ -700,7 +700,20 @@ function emitTransparentSupertypeWrap(node: AssembledSupertype): string {
 		// (reader kind-named slots) — probe those first; `$other` covers the
 		// legacy bucketed shape.
 		`  const kindKeyed = _firstKindKeyedWrapChild(data, ${JSON.stringify(allowedKinds)}) as T.${node.typeName} | readonly T.${node.typeName}[] | undefined;`,
-		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(kindKeyed ?? _filterWrapChildrenByKind(data.$other, ${JSON.stringify(allowedKinds)}), "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);`,
+		`  const filtered = kindKeyed ?? _filterWrapChildrenByKind(data.$other, ${JSON.stringify(allowedKinds)});`,
+		// The native reader collapses a node whose children are ALL
+		// anonymous tokens (no named member — e.g. this supertype's visible
+		// occurrence wrapping a bare punctuation/lifetime token like `'`)
+		// into a text-only leaf: no kind-keyed child, no `$other` bucket to
+		// drill into. The occurrence itself already carries the leaf's own
+		// `$text`/`$span`/`$type` — exactly the bare-leaf shape the
+		// transport side already accepts for such members — so treat the
+		// node itself as the resolved member instead of requiring a named
+		// child that will never surface.
+		`  if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {`,
+		`    return drillIn<T.${node.typeName}>(data as T.${node.typeName}, tree);`,
+		`  }`,
+		`  return drillIn<T.${node.typeName}>(normalizeSingularWrapSlot(filtered, "children", true, data.$type, { tree, nodeType: data.$type, slotName: "children", span: (data as _NodeData).$span }), tree);`,
 		`}`
 	].join('\n');
 }

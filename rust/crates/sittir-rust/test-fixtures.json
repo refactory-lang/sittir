@@ -28885,6 +28885,573 @@
     "kind": "render",
     "grammar": "rust",
     "input": {
+      "$type": 257,
+      "$source": 0,
+      "$named": true,
+      "_function": "foo",
+      "_arguments": {
+        "$type": 258,
+        "$source": 0,
+        "$named": true,
+        "_arguments_group1": {
+          "$type": 330,
+          "$source": 0,
+          "$named": true,
+          "_attributed_argument": [
+            {
+              "$type": 391,
+              "$source": 0,
+              "$named": true,
+              "_attribute_item": [
+                {
+                  "$type": 171,
+                  "$source": 0,
+                  "$named": true,
+                  "_attribute": {
+                    "$type": 173,
+                    "$source": 0,
+                    "$named": true,
+                    "_path": "attr",
+                    "_attribute_group1": {
+                      "$type": 321,
+                      "$source": 0,
+                      "$named": true,
+                      "_arguments": {
+                        "$type": 241,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 10,
+                          "end": 34
+                        },
+                        "$nodeHandle": 165,
+                        "_content": {
+                          "$type": 384,
+                          "$source": 0,
+                          "$named": true,
+                          "$other": [
+                            7,
+                            8
+                          ],
+                          "$span": {
+                            "start": 10,
+                            "end": 34
+                          },
+                          "$nodeHandle": 166,
+                          "_delim_tokens": [
+                            {
+                              "$type": 338,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "=>",
+                              "$span": {
+                                "start": 11,
+                                "end": 13
+                              },
+                              "$nodeHandle": 168
+                            },
+                            "arbitrary",
+                            "tokens",
+                            {
+                              "$type": 338,
+                              "$source": 0,
+                              "$named": true,
+                              "$text": "<=",
+                              "$span": {
+                                "start": 31,
+                                "end": 33
+                              },
+                              "$nodeHandle": 172
+                            }
+                          ]
+                        }
+                      },
+                      "$span": {
+                        "start": 10,
+                        "end": 34
+                      },
+                      "$nodeHandle": 164
+                    },
+                    "$span": {
+                      "start": 6,
+                      "end": 34
+                    },
+                    "$nodeHandle": 163
+                  },
+                  "$other": [
+                    74,
+                    75,
+                    76
+                  ],
+                  "$span": {
+                    "start": 4,
+                    "end": 35
+                  },
+                  "$nodeHandle": 162
+                }
+              ],
+              "$span": {
+                "start": 4,
+                "end": 37
+              },
+              "$nodeHandle": 160,
+              "_expression": "x"
+            },
+            {
+              "$type": 391,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 39,
+                "end": 40
+              },
+              "$nodeHandle": 161,
+              "_attribute_item": [],
+              "_expression": "y"
+            }
+          ],
+          "$other": [
+            83
+          ],
+          "$span": {
+            "start": 4,
+            "end": 40
+          },
+          "$nodeHandle": 159,
+          "_trailing_sep": false
+        },
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 3,
+          "end": 41
+        },
+        "$nodeHandle": 158
+      },
+      "$span": {
+        "start": 0,
+        "end": 41
+      },
+      "$nodeHandle": 4
+    },
+    "expectedOutput": "foo(#[attr(=>arbitrary tokens<=)]x,y)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "foo(#[attr(=> arbitrary tokens <=)] x, y)",
+    "pattern": "call_expression",
+    "edits": [],
+    "expectedSourceOut": "foo(#[attr(=>arbitrary tokens<=)]x,y)",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier)) (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation))))))) (identifier)) (attributed_argument (identifier)))))",
+    "wrappedText": "fn _f() { let _ = foo(#[attr(=>arbitrary tokens<=)]x,y); }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 258,
+      "$source": 0,
+      "$named": true,
+      "_arguments_group1": {
+        "$type": 330,
+        "$source": 0,
+        "$named": true,
+        "_attributed_argument": [
+          {
+            "$type": 391,
+            "$source": 0,
+            "$named": true,
+            "_attribute_item": [
+              {
+                "$type": 171,
+                "$source": 0,
+                "$named": true,
+                "_attribute": {
+                  "$type": 173,
+                  "$source": 0,
+                  "$named": true,
+                  "_path": "attr",
+                  "_attribute_group1": {
+                    "$type": 321,
+                    "$source": 0,
+                    "$named": true,
+                    "_arguments": {
+                      "$type": 241,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 10,
+                        "end": 34
+                      },
+                      "$nodeHandle": 211,
+                      "_content": {
+                        "$type": 384,
+                        "$source": 0,
+                        "$named": true,
+                        "$other": [
+                          7,
+                          8
+                        ],
+                        "$span": {
+                          "start": 10,
+                          "end": 34
+                        },
+                        "$nodeHandle": 212,
+                        "_delim_tokens": [
+                          {
+                            "$type": 338,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "=>",
+                            "$span": {
+                              "start": 11,
+                              "end": 13
+                            },
+                            "$nodeHandle": 214
+                          },
+                          "arbitrary",
+                          "tokens",
+                          {
+                            "$type": 338,
+                            "$source": 0,
+                            "$named": true,
+                            "$text": "<=",
+                            "$span": {
+                              "start": 31,
+                              "end": 33
+                            },
+                            "$nodeHandle": 218
+                          }
+                        ]
+                      }
+                    },
+                    "$span": {
+                      "start": 10,
+                      "end": 34
+                    },
+                    "$nodeHandle": 210
+                  },
+                  "$span": {
+                    "start": 6,
+                    "end": 34
+                  },
+                  "$nodeHandle": 209
+                },
+                "$other": [
+                  74,
+                  75,
+                  76
+                ],
+                "$span": {
+                  "start": 4,
+                  "end": 35
+                },
+                "$nodeHandle": 208
+              }
+            ],
+            "$span": {
+              "start": 4,
+              "end": 37
+            },
+            "$nodeHandle": 206,
+            "_expression": "x"
+          },
+          {
+            "$type": 391,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 39,
+              "end": 40
+            },
+            "$nodeHandle": 207,
+            "_attribute_item": [],
+            "_expression": "y"
+          }
+        ],
+        "$other": [
+          83
+        ],
+        "$span": {
+          "start": 4,
+          "end": 40
+        },
+        "$nodeHandle": 205,
+        "_trailing_sep": false
+      },
+      "$other": [
+        7,
+        8
+      ],
+      "$span": {
+        "start": 3,
+        "end": 41
+      },
+      "$nodeHandle": 5
+    },
+    "expectedOutput": "(#[attr(=>arbitrary tokens<=)]x,y)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(#[attr(=> arbitrary tokens <=)] x, y)",
+    "pattern": "arguments",
+    "edits": [],
+    "expectedSourceOut": "(#[attr(=>arbitrary tokens<=)]x,y)",
+    "expectedReparseTree": "(arguments (arguments_group1 (attributed_argument (attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier)) (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation))))))) (identifier)) (attributed_argument (identifier))))",
+    "wrappedText": "f(#[attr(=>arbitrary tokens<=)]x,y);",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 171,
+      "$source": 0,
+      "$named": true,
+      "_attribute": {
+        "$type": 173,
+        "$source": 0,
+        "$named": true,
+        "_path": "attr",
+        "_attribute_group1": {
+          "$type": 321,
+          "$source": 0,
+          "$named": true,
+          "_arguments": {
+            "$type": 241,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 10,
+              "end": 34
+            },
+            "$nodeHandle": 252,
+            "_content": {
+              "$type": 384,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                7,
+                8
+              ],
+              "$span": {
+                "start": 10,
+                "end": 34
+              },
+              "$nodeHandle": 253,
+              "_delim_tokens": [
+                {
+                  "$type": 338,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "=>",
+                  "$span": {
+                    "start": 11,
+                    "end": 13
+                  },
+                  "$nodeHandle": 255
+                },
+                "arbitrary",
+                "tokens",
+                {
+                  "$type": 338,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "<=",
+                  "$span": {
+                    "start": 31,
+                    "end": 33
+                  },
+                  "$nodeHandle": 259
+                }
+              ]
+            }
+          },
+          "$span": {
+            "start": 10,
+            "end": 34
+          },
+          "$nodeHandle": 251
+        },
+        "$span": {
+          "start": 6,
+          "end": 34
+        },
+        "$nodeHandle": 250
+      },
+      "$other": [
+        74,
+        75,
+        76
+      ],
+      "$span": {
+        "start": 4,
+        "end": 35
+      },
+      "$nodeHandle": 9
+    },
+    "expectedOutput": "#[attr(=>arbitrary tokens<=)]"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "#[attr(=> arbitrary tokens <=)]",
+    "pattern": "attribute_item",
+    "edits": [],
+    "expectedSourceOut": "#[attr(=>arbitrary tokens<=)]",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) (attribute_group1 arguments: (token_tree (delim_token_tree_paren (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier)) (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation)))))))",
+    "wrappedText": "#[attr(=>arbitrary tokens<=)]",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 241,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 10,
+        "end": 34
+      },
+      "$nodeHandle": 12,
+      "_content": {
+        "$type": 384,
+        "$source": 0,
+        "$named": true,
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 10,
+          "end": 34
+        },
+        "$nodeHandle": 324,
+        "_delim_tokens": [
+          {
+            "$type": 338,
+            "$source": 0,
+            "$named": true,
+            "$text": "=>",
+            "$span": {
+              "start": 11,
+              "end": 13
+            },
+            "$nodeHandle": 326
+          },
+          "arbitrary",
+          "tokens",
+          {
+            "$type": 338,
+            "$source": 0,
+            "$named": true,
+            "$text": "<=",
+            "$span": {
+              "start": 31,
+              "end": 33
+            },
+            "$nodeHandle": 330
+          }
+        ]
+      }
+    },
+    "expectedOutput": "(=>arbitrary tokens<=)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(=> arbitrary tokens <=)",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "(=>arbitrary tokens<=)",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren (token_pattern_group1 (token_tree_punctuation)) (token_pattern_group1 (identifier)) (token_pattern_group1 (identifier)) (token_pattern_group1 (token_tree_punctuation))))",
+    "wrappedText": "fn _f() { mac! (=>arbitrary tokens<=) }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 168,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 101,
+        "end": 103
+      },
+      "$nodeHandle": 44,
+      "_content": {
+        "$type": 384,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 101,
+          "end": 103
+        },
+        "$nodeHandle": 356,
+        "_delim_tokens": []
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "()",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren))",
+    "wrappedText": "fn _f() { mac! () }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 168,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 104,
+        "end": 106
+      },
+      "$nodeHandle": 47,
+      "_content": {
+        "$type": 384,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 104,
+          "end": 106
+        },
+        "$nodeHandle": 357,
+        "_delim_tokens": []
+      }
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "()",
+    "pattern": "token_tree",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(token_tree (delim_token_tree_paren))",
+    "wrappedText": "fn _f() { mac! () }",
+    "wrappedOffset": 15
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
       "$type": 157,
       "$source": 0,
       "$named": true,
@@ -77971,7 +78538,7 @@
           "start": 2,
           "end": 9
         },
-        "$nodeHandle": 356,
+        "$nodeHandle": 358,
         "_content": {
           "$type": 384,
           "$source": 0,
@@ -77984,7 +78551,7 @@
             "start": 2,
             "end": 9
           },
-          "$nodeHandle": 357,
+          "$nodeHandle": 359,
           "_delim_tokens": [
             {
               "$type": 338,
@@ -77995,7 +78562,7 @@
                 "start": 3,
                 "end": 4
               },
-              "$nodeHandle": 359
+              "$nodeHandle": 361
             },
             "a",
             {
@@ -78007,7 +78574,7 @@
                 "start": 7,
                 "end": 8
               },
-              "$nodeHandle": 362
+              "$nodeHandle": 364
             }
           ]
         }
@@ -78050,7 +78617,7 @@
           "start": 13,
           "end": 20
         },
-        "$nodeHandle": 363,
+        "$nodeHandle": 365,
         "_content": {
           "$type": 384,
           "$source": 0,
@@ -78063,7 +78630,7 @@
             "start": 13,
             "end": 20
           },
-          "$nodeHandle": 364,
+          "$nodeHandle": 366,
           "_delim_tokens": [
             {
               "$type": 338,
@@ -78074,7 +78641,7 @@
                 "start": 14,
                 "end": 15
               },
-              "$nodeHandle": 366
+              "$nodeHandle": 368
             },
             "a",
             {
@@ -78086,7 +78653,7 @@
                 "start": 18,
                 "end": 19
               },
-              "$nodeHandle": 369
+              "$nodeHandle": 371
             }
           ]
         }
@@ -78129,7 +78696,7 @@
           "start": 24,
           "end": 31
         },
-        "$nodeHandle": 370,
+        "$nodeHandle": 372,
         "_content": {
           "$type": 384,
           "$source": 0,
@@ -78142,7 +78709,7 @@
             "start": 24,
             "end": 31
           },
-          "$nodeHandle": 371,
+          "$nodeHandle": 373,
           "_delim_tokens": [
             {
               "$type": 338,
@@ -78153,7 +78720,7 @@
                 "start": 25,
                 "end": 26
               },
-              "$nodeHandle": 373
+              "$nodeHandle": 375
             },
             "a",
             {
@@ -78165,7 +78732,7 @@
                 "start": 29,
                 "end": 30
               },
-              "$nodeHandle": 376
+              "$nodeHandle": 378
             }
           ]
         }
@@ -78208,7 +78775,7 @@
           "start": 35,
           "end": 46
         },
-        "$nodeHandle": 377,
+        "$nodeHandle": 379,
         "_content": {
           "$type": 384,
           "$source": 0,
@@ -78221,7 +78788,7 @@
             "start": 35,
             "end": 46
           },
-          "$nodeHandle": 378,
+          "$nodeHandle": 380,
           "_delim_tokens": [
             "b",
             {
@@ -78233,7 +78800,7 @@
                 "start": 38,
                 "end": 39
               },
-              "$nodeHandle": 381
+              "$nodeHandle": 383
             },
             "c",
             {
@@ -78245,7 +78812,7 @@
                 "start": 42,
                 "end": 43
               },
-              "$nodeHandle": 384
+              "$nodeHandle": 386
             },
             {
               "$type": 338,
@@ -78256,7 +78823,7 @@
                 "start": 44,
                 "end": 45
               },
-              "$nodeHandle": 386
+              "$nodeHandle": 388
             }
           ]
         }
@@ -78299,7 +78866,7 @@
           "start": 50,
           "end": 61
         },
-        "$nodeHandle": 387,
+        "$nodeHandle": 389,
         "_content": {
           "$type": 384,
           "$source": 0,
@@ -78312,7 +78879,7 @@
             "start": 50,
             "end": 61
           },
-          "$nodeHandle": 388,
+          "$nodeHandle": 390,
           "_delim_tokens": [
             "'a'",
             {
@@ -78324,7 +78891,7 @@
                 "start": 54,
                 "end": 57
               },
-              "$nodeHandle": 391
+              "$nodeHandle": 393
             },
             "'z'"
           ]
@@ -78368,7 +78935,7 @@
           "start": 65,
           "end": 84
         },
-        "$nodeHandle": 393,
+        "$nodeHandle": 395,
         "_content": {
           "$type": 384,
           "$source": 0,
@@ -78381,7 +78948,7 @@
             "start": 65,
             "end": 84
           },
-          "$nodeHandle": 394,
+          "$nodeHandle": 396,
           "_delim_tokens": [
             "'\\u{0}'",
             {
@@ -78393,7 +78960,7 @@
                 "start": 73,
                 "end": 76
               },
-              "$nodeHandle": 397
+              "$nodeHandle": 399
             },
             "'\\u{2}'"
           ]
@@ -78437,7 +79004,7 @@
           "start": 88,
           "end": 99
         },
-        "$nodeHandle": 399,
+        "$nodeHandle": 401,
         "_content": {
           "$type": 384,
           "$source": 0,
@@ -78450,7 +79017,7 @@
             "start": 88,
             "end": 99
           },
-          "$nodeHandle": 400,
+          "$nodeHandle": 402,
           "_delim_tokens": [
             {
               "$type": 170,
@@ -78461,21 +79028,9 @@
                 "start": 89,
                 "end": 90
               },
-              "$nodeHandle": 400,
-              "$childIndex": 1
+              "$nodeHandle": 403
             },
-            {
-              "$type": 170,
-              "$source": 0,
-              "$named": true,
-              "$text": "lifetime",
-              "$span": {
-                "start": 90,
-                "end": 98
-              },
-              "$nodeHandle": 400,
-              "$childIndex": 2
-            }
+            "lifetime"
           ]
         }
       },
@@ -78517,7 +79072,7 @@
           "start": 108,
           "end": 111
         },
-        "$nodeHandle": 402,
+        "$nodeHandle": 405,
         "_content": {
           "$type": 384,
           "$source": 0,
@@ -78530,7 +79085,7 @@
             "start": 108,
             "end": 111
           },
-          "$nodeHandle": 403,
+          "$nodeHandle": 406,
           "_delim_tokens": [
             "a"
           ]
@@ -78543,7 +79098,7 @@
         "start": 100,
         "end": 111
       },
-      "$nodeHandle": 74
+      "$nodeHandle": 75
     },
     "expectedOutput": "default!(a)"
   },
@@ -78574,7 +79129,7 @@
           "start": 119,
           "end": 122
         },
-        "$nodeHandle": 405,
+        "$nodeHandle": 408,
         "_content": {
           "$type": 384,
           "$source": 0,
@@ -78587,7 +79142,7 @@
             "start": 119,
             "end": 122
           },
-          "$nodeHandle": 406,
+          "$nodeHandle": 409,
           "_delim_tokens": [
             "a"
           ]
@@ -78600,7 +79155,7 @@
         "start": 113,
         "end": 122
       },
-      "$nodeHandle": 79
+      "$nodeHandle": 80
     },
     "expectedOutput": "union!(a)"
   },
@@ -78639,7 +79194,7 @@
           "start": 2,
           "end": 9
         },
-        "$nodeHandle": 440,
+        "$nodeHandle": 443,
         "_delim_tokens": [
           {
             "$type": 338,
@@ -78650,7 +79205,7 @@
               "start": 3,
               "end": 4
             },
-            "$nodeHandle": 442
+            "$nodeHandle": 445
           },
           "a",
           {
@@ -78662,7 +79217,7 @@
               "start": 7,
               "end": 8
             },
-            "$nodeHandle": 445
+            "$nodeHandle": 448
           }
         ]
       }
@@ -78704,7 +79259,7 @@
           "start": 13,
           "end": 20
         },
-        "$nodeHandle": 446,
+        "$nodeHandle": 449,
         "_delim_tokens": [
           {
             "$type": 338,
@@ -78715,7 +79270,7 @@
               "start": 14,
               "end": 15
             },
-            "$nodeHandle": 448
+            "$nodeHandle": 451
           },
           "a",
           {
@@ -78727,7 +79282,7 @@
               "start": 18,
               "end": 19
             },
-            "$nodeHandle": 451
+            "$nodeHandle": 454
           }
         ]
       }
@@ -78769,7 +79324,7 @@
           "start": 24,
           "end": 31
         },
-        "$nodeHandle": 452,
+        "$nodeHandle": 455,
         "_delim_tokens": [
           {
             "$type": 338,
@@ -78780,7 +79335,7 @@
               "start": 25,
               "end": 26
             },
-            "$nodeHandle": 454
+            "$nodeHandle": 457
           },
           "a",
           {
@@ -78792,7 +79347,7 @@
               "start": 29,
               "end": 30
             },
-            "$nodeHandle": 457
+            "$nodeHandle": 460
           }
         ]
       }
@@ -78834,7 +79389,7 @@
           "start": 35,
           "end": 46
         },
-        "$nodeHandle": 458,
+        "$nodeHandle": 461,
         "_delim_tokens": [
           "b",
           {
@@ -78846,7 +79401,7 @@
               "start": 38,
               "end": 39
             },
-            "$nodeHandle": 461
+            "$nodeHandle": 464
           },
           "c",
           {
@@ -78858,7 +79413,7 @@
               "start": 42,
               "end": 43
             },
-            "$nodeHandle": 464
+            "$nodeHandle": 467
           },
           {
             "$type": 338,
@@ -78869,7 +79424,7 @@
               "start": 44,
               "end": 45
             },
-            "$nodeHandle": 466
+            "$nodeHandle": 469
           }
         ]
       }
@@ -78911,7 +79466,7 @@
           "start": 50,
           "end": 61
         },
-        "$nodeHandle": 467,
+        "$nodeHandle": 470,
         "_delim_tokens": [
           "'a'",
           {
@@ -78923,7 +79478,7 @@
               "start": 54,
               "end": 57
             },
-            "$nodeHandle": 470
+            "$nodeHandle": 473
           },
           "'z'"
         ]
@@ -78966,7 +79521,7 @@
           "start": 65,
           "end": 84
         },
-        "$nodeHandle": 472,
+        "$nodeHandle": 475,
         "_delim_tokens": [
           "'\\u{0}'",
           {
@@ -78978,7 +79533,7 @@
               "start": 73,
               "end": 76
             },
-            "$nodeHandle": 475
+            "$nodeHandle": 478
           },
           "'\\u{2}'"
         ]
@@ -79021,7 +79576,7 @@
           "start": 88,
           "end": 99
         },
-        "$nodeHandle": 477,
+        "$nodeHandle": 480,
         "_delim_tokens": [
           {
             "$type": 170,
@@ -79032,21 +79587,9 @@
               "start": 89,
               "end": 90
             },
-            "$nodeHandle": 477,
-            "$childIndex": 1
+            "$nodeHandle": 481
           },
-          {
-            "$type": 170,
-            "$source": 0,
-            "$named": true,
-            "$text": "lifetime",
-            "$span": {
-              "start": 90,
-              "end": 98
-            },
-            "$nodeHandle": 477,
-            "$childIndex": 2
-          }
+          "lifetime"
         ]
       }
     },
@@ -79074,7 +79617,7 @@
         "start": 108,
         "end": 111
       },
-      "$nodeHandle": 75,
+      "$nodeHandle": 76,
       "_content": {
         "$type": 384,
         "$source": 0,
@@ -79087,7 +79630,7 @@
           "start": 108,
           "end": 111
         },
-        "$nodeHandle": 479,
+        "$nodeHandle": 483,
         "_delim_tokens": [
           "a"
         ]
@@ -79117,7 +79660,7 @@
         "start": 119,
         "end": 122
       },
-      "$nodeHandle": 80,
+      "$nodeHandle": 81,
       "_content": {
         "$type": 384,
         "$source": 0,
@@ -79130,7 +79673,7 @@
           "start": 119,
           "end": 122
         },
-        "$nodeHandle": 481,
+        "$nodeHandle": 485,
         "_delim_tokens": [
           "a"
         ]
@@ -79160,7 +79703,7 @@
         "start": 135,
         "end": 137
       },
-      "$nodeHandle": 91,
+      "$nodeHandle": 92,
       "_content": {
         "$type": 384,
         "$source": 0,
@@ -79169,7 +79712,7 @@
           "start": 135,
           "end": 137
         },
-        "$nodeHandle": 487,
+        "$nodeHandle": 491,
         "_delim_tokens": []
       }
     },
@@ -79197,7 +79740,7 @@
         "start": 157,
         "end": 164
       },
-      "$nodeHandle": 104,
+      "$nodeHandle": 105,
       "_content": {
         "$type": 384,
         "$source": 0,
@@ -79210,7 +79753,7 @@
           "start": 157,
           "end": 164
         },
-        "$nodeHandle": 504,
+        "$nodeHandle": 508,
         "_delim_tokens": [
           {
             "$type": 168,
@@ -79220,7 +79763,7 @@
               "start": 158,
               "end": 163
             },
-            "$nodeHandle": 505,
+            "$nodeHandle": 509,
             "_content": {
               "$type": 385,
               "$source": 0,
@@ -79233,7 +79776,7 @@
                 "start": 158,
                 "end": 163
               },
-              "$nodeHandle": 506,
+              "$nodeHandle": 510,
               "_delim_tokens": [
                 "a"
               ]
@@ -79266,7 +79809,7 @@
         "start": 158,
         "end": 163
       },
-      "$nodeHandle": 106,
+      "$nodeHandle": 107,
       "_content": {
         "$type": 385,
         "$source": 0,
@@ -79279,7 +79822,7 @@
           "start": 158,
           "end": 163
         },
-        "$nodeHandle": 508,
+        "$nodeHandle": 512,
         "_delim_tokens": [
           "a"
         ]

@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "03ee52c23d4fe7eab2b59206625fd059fed09f759ef6df28adcbc54468204779",
+  "source_hash": "bf53961147850a0a67d2872e1419d96f5a6ca2419de594e3732a1fe7e4f4065b",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "f132517a8f4f1b39a8267a3af6a5cbe8a5ebe1b162e6744dd2d234adb3955e6a",
     "packages/typescript/.sittir/grammar.js": "f7d46ae59507173ebdd7b835fca4edb8cbf591354fa324d7e8834625fbe8d29a",
@@ -31,7 +31,7 @@
     "packages/typescript/src/type-test.ts": "966e6b0d0cb562834bacb6e77d3268f4a596d37fab0a45ba517c45a81024dc54",
     "packages/typescript/src/types.ts": "9804b5cbb806a5bcd6fc54e207b459905e49166958f3c96a7f5b3828dfbd9e26",
     "packages/typescript/src/utils.ts": "d2538a7dadc51d6ab68a280f6f67e240854484580a17e992bb9206d1fa288276",
-    "packages/typescript/src/wrap.ts": "8acd03a992ae2ceee5f4e48fdcf579514daf69c84f4631e9b33c37f28575842e",
+    "packages/typescript/src/wrap.ts": "8faecfe7a414f954702d4546e67302e08b482a0d4453e6b30c625fbbbacc50d2",
     "packages/typescript/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "packages/typescript/templates/_ambient_declaration_global.jinja": "9c78483e215a5b1f64449a4d4a6680a4c3500d608c93f5877eed3c96d09a8621",
     "packages/typescript/templates/_ambient_declaration_module.jinja": "6be42a8e201fb10b472912e8e496446ea8e2ad1168c4b32eeb33697485af1d5e",
