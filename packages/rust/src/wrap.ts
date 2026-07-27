@@ -485,7 +485,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'eq_gt',
 		'pound',
 		'qmark',
-		"'",
+		'_token_pattern_quote',
+		'token_pattern_quote',
 		'_token_keywords',
 		'token_keywords',
 		'as',
@@ -515,7 +516,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'unsafe',
 		'use',
 		'where',
-		'while'
+		'while',
+		"'"
 	]),
 	_tokens: new Set([
 		'token_tree',
@@ -604,7 +606,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'eq_gt',
 		'pound',
 		'qmark',
-		"'",
+		'_token_pattern_quote',
+		'token_pattern_quote',
 		'_token_keywords',
 		'token_keywords',
 		'as',
@@ -634,7 +637,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'unsafe',
 		'use',
 		'where',
-		'while'
+		'while',
+		"'"
 	]),
 	_non_special_token: new Set([
 		'_literal',
@@ -718,7 +722,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'eq_gt',
 		'pound',
 		'qmark',
-		"'",
+		'_token_pattern_quote',
+		'token_pattern_quote',
 		'_token_keywords',
 		'token_keywords',
 		'as',
@@ -1023,7 +1028,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'eq_gt',
 		'pound',
 		'qmark',
-		"'",
+		'_token_pattern_quote',
+		'token_pattern_quote',
 		'_token_keywords',
 		'token_keywords',
 		'as',
@@ -1054,6 +1060,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'use',
 		'where',
 		'while',
+		"'",
 		'$',
 		'token_pattern_group1',
 		'delim_token_tree'
@@ -1142,7 +1149,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'eq_gt',
 		'pound',
 		'qmark',
-		"'",
+		'_token_pattern_quote',
+		'token_pattern_quote',
 		'_token_keywords',
 		'token_keywords',
 		'as',
@@ -1173,6 +1181,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'use',
 		'where',
 		'while',
+		"'",
 		'$'
 	]),
 	_condition: new Set([
@@ -1392,7 +1401,8 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'eq_gt',
 		'pound',
 		'qmark',
-		"'",
+		'_token_pattern_quote',
+		'token_pattern_quote',
 		'_token_keywords',
 		'token_keywords',
 		'as',
@@ -1951,6 +1961,7 @@ export function wrapTokenRepetitionPattern(
 		readonly _metavariable?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _primitive_type?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _token_tree_punctuation?: T.TokenPattern | readonly T.TokenPattern[];
+		readonly _token_pattern_quote?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _string_literal?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _raw_string_literal?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _char_literal?: T.TokenPattern | readonly T.TokenPattern[];
@@ -1962,8 +1973,8 @@ export function wrapTokenRepetitionPattern(
 		readonly _self?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _super?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _crate?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly "_'"?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _token_keywords?: T.TokenPattern | readonly T.TokenPattern[];
+		readonly "_'"?: T.TokenPattern | readonly T.TokenPattern[];
 	},
 	tree: TreeHandle
 ) {
@@ -1987,6 +1998,7 @@ export function wrapTokenRepetitionPattern(
 				'_token_binding_pattern',
 				'_token_keywords',
 				'_token_pattern_group1',
+				'_token_pattern_quote',
 				'_token_repetition_pattern',
 				'_token_tree_pattern',
 				'_token_tree_punctuation'
@@ -2003,6 +2015,7 @@ export function wrapTokenRepetitionPattern(
 							data._metavariable,
 							data._primitive_type,
 							data._token_tree_punctuation,
+							data._token_pattern_quote,
 							data._string_literal,
 							data._raw_string_literal,
 							data._char_literal,
@@ -2014,8 +2027,8 @@ export function wrapTokenRepetitionPattern(
 							data._self,
 							data._super,
 							data._crate,
-							data["_'"],
-							data._token_keywords
+							data._token_keywords,
+							data["_'"]
 						]),
 				false,
 				'token_pattern',
@@ -2162,6 +2175,7 @@ export function wrapTokenRepetition(
 		readonly _metavariable?: T.Tokens | readonly T.Tokens[];
 		readonly _primitive_type?: T.Tokens | readonly T.Tokens[];
 		readonly _token_tree_punctuation?: T.Tokens | readonly T.Tokens[];
+		readonly _token_pattern_quote?: T.Tokens | readonly T.Tokens[];
 		readonly _string_literal?: T.Tokens | readonly T.Tokens[];
 		readonly _raw_string_literal?: T.Tokens | readonly T.Tokens[];
 		readonly _char_literal?: T.Tokens | readonly T.Tokens[];
@@ -2173,8 +2187,8 @@ export function wrapTokenRepetition(
 		readonly _self?: T.Tokens | readonly T.Tokens[];
 		readonly _super?: T.Tokens | readonly T.Tokens[];
 		readonly _crate?: T.Tokens | readonly T.Tokens[];
-		readonly "_'"?: T.Tokens | readonly T.Tokens[];
 		readonly _token_keywords?: T.Tokens | readonly T.Tokens[];
+		readonly "_'"?: T.Tokens | readonly T.Tokens[];
 	},
 	tree: TreeHandle
 ) {
@@ -2197,6 +2211,7 @@ export function wrapTokenRepetition(
 				'_super',
 				'_token_keywords',
 				'_token_pattern_group1',
+				'_token_pattern_quote',
 				'_token_repetition',
 				'_token_tree',
 				'_token_tree_punctuation'
@@ -2212,6 +2227,7 @@ export function wrapTokenRepetition(
 							data._metavariable,
 							data._primitive_type,
 							data._token_tree_punctuation,
+							data._token_pattern_quote,
 							data._string_literal,
 							data._raw_string_literal,
 							data._char_literal,
@@ -2223,8 +2239,8 @@ export function wrapTokenRepetition(
 							data._self,
 							data._super,
 							data._crate,
-							data["_'"],
-							data._token_keywords
+							data._token_keywords,
+							data["_'"]
 						]),
 				false,
 				'tokens',
@@ -2294,7 +2310,8 @@ export function wrapNonSpecialToken(
 		'primitive_type',
 		'_token_tree_punctuation',
 		'token_tree_punctuation',
-		"'",
+		'_token_pattern_quote',
+		'token_pattern_quote',
 		'_token_keywords',
 		'token_keywords'
 	]) as T.NonSpecialToken | readonly T.NonSpecialToken[] | undefined;
@@ -2318,7 +2335,8 @@ export function wrapNonSpecialToken(
 			'primitive_type',
 			'_token_tree_punctuation',
 			'token_tree_punctuation',
-			"'",
+			'_token_pattern_quote',
+			'token_pattern_quote',
 			'_token_keywords',
 			'token_keywords'
 		]);
@@ -5077,7 +5095,7 @@ export function wrapGenericTypeWithTurbofish(data: T.GenericTypeWithTurbofish, t
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'turbofish', span: (data as _NodeData).$span }
 				),
-				{ '::': 74 }
+				{ '::': 73 }
 			),
 			_type_arguments: normalizeSingularWrapSlot(data._type_arguments, 'type_arguments', true, data.$type, {
 				tree,
@@ -6015,7 +6033,7 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle) {
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '-': 81, '*': 11, '!': 49 }
+				{ '-': 81, '*': 11, '!': 48 }
 			),
 			_operand: normalizeSingularWrapSlot(data._operand, 'operand', true, data.$type, {
 				tree,
@@ -6172,9 +6190,9 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 					'^': 85,
 					'==': 86,
 					'!=': 87,
-					'<': 69,
+					'<': 68,
 					'<=': 88,
-					'>': 71,
+					'>': 70,
 					'>=': 89,
 					'<<': 90,
 					'>>': 91,
@@ -10635,7 +10653,7 @@ export function wrapRangeExpressionBinary(data: T.RangeExpressionBinary, tree: T
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
-				{ '..': 106, '...': 76, '..=': 140 }
+				{ '..': 106, '...': 75, '..=': 140 }
 			),
 			_end: normalizeSingularWrapSlot(data._end, 'end', true, data.$type, {
 				tree,
@@ -10814,7 +10832,7 @@ export function wrapRangePatternLeftWithRight(
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'content', span: (data as _NodeData).$span }
 				),
-				{ '...': 76, '..=': 140, '..': 106 }
+				{ '...': 75, '..=': 140, '..': 106 }
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
 				tree,
@@ -11205,6 +11223,7 @@ export function wrapTokenTreePatternParen(
 		readonly _metavariable?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _primitive_type?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _token_tree_punctuation?: T.TokenPattern | readonly T.TokenPattern[];
+		readonly _token_pattern_quote?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _string_literal?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _raw_string_literal?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _char_literal?: T.TokenPattern | readonly T.TokenPattern[];
@@ -11216,8 +11235,8 @@ export function wrapTokenTreePatternParen(
 		readonly _self?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _super?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _crate?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly "_'"?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _token_keywords?: T.TokenPattern | readonly T.TokenPattern[];
+		readonly "_'"?: T.TokenPattern | readonly T.TokenPattern[];
 	},
 	tree: TreeHandle
 ) {
@@ -11241,6 +11260,7 @@ export function wrapTokenTreePatternParen(
 				'_token_binding_pattern',
 				'_token_keywords',
 				'_token_pattern_group1',
+				'_token_pattern_quote',
 				'_token_repetition_pattern',
 				'_token_tree_pattern',
 				'_token_tree_punctuation'
@@ -11257,6 +11277,7 @@ export function wrapTokenTreePatternParen(
 							data._metavariable,
 							data._primitive_type,
 							data._token_tree_punctuation,
+							data._token_pattern_quote,
 							data._string_literal,
 							data._raw_string_literal,
 							data._char_literal,
@@ -11268,8 +11289,8 @@ export function wrapTokenTreePatternParen(
 							data._self,
 							data._super,
 							data._crate,
-							data["_'"],
-							data._token_keywords
+							data._token_keywords,
+							data["_'"]
 						]),
 				false,
 				'token_pattern',
@@ -11298,6 +11319,7 @@ export function wrapTokenTreePatternBracket(
 		readonly _metavariable?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _primitive_type?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _token_tree_punctuation?: T.TokenPattern | readonly T.TokenPattern[];
+		readonly _token_pattern_quote?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _string_literal?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _raw_string_literal?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _char_literal?: T.TokenPattern | readonly T.TokenPattern[];
@@ -11309,8 +11331,8 @@ export function wrapTokenTreePatternBracket(
 		readonly _self?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _super?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _crate?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly "_'"?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _token_keywords?: T.TokenPattern | readonly T.TokenPattern[];
+		readonly "_'"?: T.TokenPattern | readonly T.TokenPattern[];
 	},
 	tree: TreeHandle
 ) {
@@ -11334,6 +11356,7 @@ export function wrapTokenTreePatternBracket(
 				'_token_binding_pattern',
 				'_token_keywords',
 				'_token_pattern_group1',
+				'_token_pattern_quote',
 				'_token_repetition_pattern',
 				'_token_tree_pattern',
 				'_token_tree_punctuation'
@@ -11350,6 +11373,7 @@ export function wrapTokenTreePatternBracket(
 							data._metavariable,
 							data._primitive_type,
 							data._token_tree_punctuation,
+							data._token_pattern_quote,
 							data._string_literal,
 							data._raw_string_literal,
 							data._char_literal,
@@ -11361,8 +11385,8 @@ export function wrapTokenTreePatternBracket(
 							data._self,
 							data._super,
 							data._crate,
-							data["_'"],
-							data._token_keywords
+							data._token_keywords,
+							data["_'"]
 						]),
 				false,
 				'token_pattern',
@@ -11391,6 +11415,7 @@ export function wrapTokenTreePatternBrace(
 		readonly _metavariable?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _primitive_type?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _token_tree_punctuation?: T.TokenPattern | readonly T.TokenPattern[];
+		readonly _token_pattern_quote?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _string_literal?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _raw_string_literal?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _char_literal?: T.TokenPattern | readonly T.TokenPattern[];
@@ -11402,8 +11427,8 @@ export function wrapTokenTreePatternBrace(
 		readonly _self?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _super?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _crate?: T.TokenPattern | readonly T.TokenPattern[];
-		readonly "_'"?: T.TokenPattern | readonly T.TokenPattern[];
 		readonly _token_keywords?: T.TokenPattern | readonly T.TokenPattern[];
+		readonly "_'"?: T.TokenPattern | readonly T.TokenPattern[];
 	},
 	tree: TreeHandle
 ) {
@@ -11427,6 +11452,7 @@ export function wrapTokenTreePatternBrace(
 				'_token_binding_pattern',
 				'_token_keywords',
 				'_token_pattern_group1',
+				'_token_pattern_quote',
 				'_token_repetition_pattern',
 				'_token_tree_pattern',
 				'_token_tree_punctuation'
@@ -11443,6 +11469,7 @@ export function wrapTokenTreePatternBrace(
 							data._metavariable,
 							data._primitive_type,
 							data._token_tree_punctuation,
+							data._token_pattern_quote,
 							data._string_literal,
 							data._raw_string_literal,
 							data._char_literal,
@@ -11454,8 +11481,8 @@ export function wrapTokenTreePatternBrace(
 							data._self,
 							data._super,
 							data._crate,
-							data["_'"],
-							data._token_keywords
+							data._token_keywords,
+							data["_'"]
 						]),
 				false,
 				'token_pattern',
@@ -11483,6 +11510,7 @@ export function wrapTokenTreeParen(
 		readonly _metavariable?: T.Tokens | readonly T.Tokens[];
 		readonly _primitive_type?: T.Tokens | readonly T.Tokens[];
 		readonly _token_tree_punctuation?: T.Tokens | readonly T.Tokens[];
+		readonly _token_pattern_quote?: T.Tokens | readonly T.Tokens[];
 		readonly _string_literal?: T.Tokens | readonly T.Tokens[];
 		readonly _raw_string_literal?: T.Tokens | readonly T.Tokens[];
 		readonly _char_literal?: T.Tokens | readonly T.Tokens[];
@@ -11494,8 +11522,8 @@ export function wrapTokenTreeParen(
 		readonly _self?: T.Tokens | readonly T.Tokens[];
 		readonly _super?: T.Tokens | readonly T.Tokens[];
 		readonly _crate?: T.Tokens | readonly T.Tokens[];
-		readonly "_'"?: T.Tokens | readonly T.Tokens[];
 		readonly _token_keywords?: T.Tokens | readonly T.Tokens[];
+		readonly "_'"?: T.Tokens | readonly T.Tokens[];
 	},
 	tree: TreeHandle
 ) {
@@ -11518,6 +11546,7 @@ export function wrapTokenTreeParen(
 				'_super',
 				'_token_keywords',
 				'_token_pattern_group1',
+				'_token_pattern_quote',
 				'_token_repetition',
 				'_token_tree',
 				'_token_tree_punctuation'
@@ -11533,6 +11562,7 @@ export function wrapTokenTreeParen(
 							data._metavariable,
 							data._primitive_type,
 							data._token_tree_punctuation,
+							data._token_pattern_quote,
 							data._string_literal,
 							data._raw_string_literal,
 							data._char_literal,
@@ -11544,8 +11574,8 @@ export function wrapTokenTreeParen(
 							data._self,
 							data._super,
 							data._crate,
-							data["_'"],
-							data._token_keywords
+							data._token_keywords,
+							data["_'"]
 						]),
 				false,
 				'tokens',
@@ -11573,6 +11603,7 @@ export function wrapTokenTreeBracket(
 		readonly _metavariable?: T.Tokens | readonly T.Tokens[];
 		readonly _primitive_type?: T.Tokens | readonly T.Tokens[];
 		readonly _token_tree_punctuation?: T.Tokens | readonly T.Tokens[];
+		readonly _token_pattern_quote?: T.Tokens | readonly T.Tokens[];
 		readonly _string_literal?: T.Tokens | readonly T.Tokens[];
 		readonly _raw_string_literal?: T.Tokens | readonly T.Tokens[];
 		readonly _char_literal?: T.Tokens | readonly T.Tokens[];
@@ -11584,8 +11615,8 @@ export function wrapTokenTreeBracket(
 		readonly _self?: T.Tokens | readonly T.Tokens[];
 		readonly _super?: T.Tokens | readonly T.Tokens[];
 		readonly _crate?: T.Tokens | readonly T.Tokens[];
-		readonly "_'"?: T.Tokens | readonly T.Tokens[];
 		readonly _token_keywords?: T.Tokens | readonly T.Tokens[];
+		readonly "_'"?: T.Tokens | readonly T.Tokens[];
 	},
 	tree: TreeHandle
 ) {
@@ -11608,6 +11639,7 @@ export function wrapTokenTreeBracket(
 				'_super',
 				'_token_keywords',
 				'_token_pattern_group1',
+				'_token_pattern_quote',
 				'_token_repetition',
 				'_token_tree',
 				'_token_tree_punctuation'
@@ -11623,6 +11655,7 @@ export function wrapTokenTreeBracket(
 							data._metavariable,
 							data._primitive_type,
 							data._token_tree_punctuation,
+							data._token_pattern_quote,
 							data._string_literal,
 							data._raw_string_literal,
 							data._char_literal,
@@ -11634,8 +11667,8 @@ export function wrapTokenTreeBracket(
 							data._self,
 							data._super,
 							data._crate,
-							data["_'"],
-							data._token_keywords
+							data._token_keywords,
+							data["_'"]
 						]),
 				false,
 				'tokens',
@@ -11663,6 +11696,7 @@ export function wrapTokenTreeBrace(
 		readonly _metavariable?: T.Tokens | readonly T.Tokens[];
 		readonly _primitive_type?: T.Tokens | readonly T.Tokens[];
 		readonly _token_tree_punctuation?: T.Tokens | readonly T.Tokens[];
+		readonly _token_pattern_quote?: T.Tokens | readonly T.Tokens[];
 		readonly _string_literal?: T.Tokens | readonly T.Tokens[];
 		readonly _raw_string_literal?: T.Tokens | readonly T.Tokens[];
 		readonly _char_literal?: T.Tokens | readonly T.Tokens[];
@@ -11674,8 +11708,8 @@ export function wrapTokenTreeBrace(
 		readonly _self?: T.Tokens | readonly T.Tokens[];
 		readonly _super?: T.Tokens | readonly T.Tokens[];
 		readonly _crate?: T.Tokens | readonly T.Tokens[];
-		readonly "_'"?: T.Tokens | readonly T.Tokens[];
 		readonly _token_keywords?: T.Tokens | readonly T.Tokens[];
+		readonly "_'"?: T.Tokens | readonly T.Tokens[];
 	},
 	tree: TreeHandle
 ) {
@@ -11698,6 +11732,7 @@ export function wrapTokenTreeBrace(
 				'_super',
 				'_token_keywords',
 				'_token_pattern_group1',
+				'_token_pattern_quote',
 				'_token_repetition',
 				'_token_tree',
 				'_token_tree_punctuation'
@@ -11713,6 +11748,7 @@ export function wrapTokenTreeBrace(
 							data._metavariable,
 							data._primitive_type,
 							data._token_tree_punctuation,
+							data._token_pattern_quote,
 							data._string_literal,
 							data._raw_string_literal,
 							data._char_literal,
@@ -11724,8 +11760,8 @@ export function wrapTokenTreeBrace(
 							data._self,
 							data._super,
 							data._crate,
-							data["_'"],
-							data._token_keywords
+							data._token_keywords,
+							data["_'"]
 						]),
 				false,
 				'tokens',
@@ -11751,6 +11787,7 @@ export function wrapDelimTokenTreeParen(
 		readonly _token_pattern_group1?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _primitive_type?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _token_tree_punctuation?: T.DelimTokens | readonly T.DelimTokens[];
+		readonly _token_pattern_quote?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _string_literal?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _raw_string_literal?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _char_literal?: T.DelimTokens | readonly T.DelimTokens[];
@@ -11762,8 +11799,8 @@ export function wrapDelimTokenTreeParen(
 		readonly _self?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _super?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _crate?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly "_'"?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _token_keywords?: T.DelimTokens | readonly T.DelimTokens[];
+		readonly "_'"?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _$?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _delim_token_tree?: T.DelimTokens | readonly T.DelimTokens[];
 	},
@@ -11789,6 +11826,7 @@ export function wrapDelimTokenTreeParen(
 				'_super',
 				'_token_keywords',
 				'_token_pattern_group1',
+				'_token_pattern_quote',
 				'_token_tree',
 				'_token_tree_punctuation'
 			]),
@@ -11801,6 +11839,7 @@ export function wrapDelimTokenTreeParen(
 							data._token_pattern_group1,
 							data._primitive_type,
 							data._token_tree_punctuation,
+							data._token_pattern_quote,
 							data._string_literal,
 							data._raw_string_literal,
 							data._char_literal,
@@ -11812,8 +11851,8 @@ export function wrapDelimTokenTreeParen(
 							data._self,
 							data._super,
 							data._crate,
-							data["_'"],
 							data._token_keywords,
+							data["_'"],
 							data._$,
 							data._delim_token_tree
 						]),
@@ -11841,6 +11880,7 @@ export function wrapDelimTokenTreeBracket(
 		readonly _token_pattern_group1?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _primitive_type?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _token_tree_punctuation?: T.DelimTokens | readonly T.DelimTokens[];
+		readonly _token_pattern_quote?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _string_literal?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _raw_string_literal?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _char_literal?: T.DelimTokens | readonly T.DelimTokens[];
@@ -11852,8 +11892,8 @@ export function wrapDelimTokenTreeBracket(
 		readonly _self?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _super?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _crate?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly "_'"?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _token_keywords?: T.DelimTokens | readonly T.DelimTokens[];
+		readonly "_'"?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _$?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _delim_token_tree?: T.DelimTokens | readonly T.DelimTokens[];
 	},
@@ -11879,6 +11919,7 @@ export function wrapDelimTokenTreeBracket(
 				'_super',
 				'_token_keywords',
 				'_token_pattern_group1',
+				'_token_pattern_quote',
 				'_token_tree',
 				'_token_tree_punctuation'
 			]),
@@ -11891,6 +11932,7 @@ export function wrapDelimTokenTreeBracket(
 							data._token_pattern_group1,
 							data._primitive_type,
 							data._token_tree_punctuation,
+							data._token_pattern_quote,
 							data._string_literal,
 							data._raw_string_literal,
 							data._char_literal,
@@ -11902,8 +11944,8 @@ export function wrapDelimTokenTreeBracket(
 							data._self,
 							data._super,
 							data._crate,
-							data["_'"],
 							data._token_keywords,
+							data["_'"],
 							data._$,
 							data._delim_token_tree
 						]),
@@ -11931,6 +11973,7 @@ export function wrapDelimTokenTreeBrace(
 		readonly _token_pattern_group1?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _primitive_type?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _token_tree_punctuation?: T.DelimTokens | readonly T.DelimTokens[];
+		readonly _token_pattern_quote?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _string_literal?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _raw_string_literal?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _char_literal?: T.DelimTokens | readonly T.DelimTokens[];
@@ -11942,8 +11985,8 @@ export function wrapDelimTokenTreeBrace(
 		readonly _self?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _super?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _crate?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly "_'"?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _token_keywords?: T.DelimTokens | readonly T.DelimTokens[];
+		readonly "_'"?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _$?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _delim_token_tree?: T.DelimTokens | readonly T.DelimTokens[];
 	},
@@ -11969,6 +12012,7 @@ export function wrapDelimTokenTreeBrace(
 				'_super',
 				'_token_keywords',
 				'_token_pattern_group1',
+				'_token_pattern_quote',
 				'_token_tree',
 				'_token_tree_punctuation'
 			]),
@@ -11981,6 +12025,7 @@ export function wrapDelimTokenTreeBrace(
 							data._token_pattern_group1,
 							data._primitive_type,
 							data._token_tree_punctuation,
+							data._token_pattern_quote,
 							data._string_literal,
 							data._raw_string_literal,
 							data._char_literal,
@@ -11992,8 +12037,8 @@ export function wrapDelimTokenTreeBrace(
 							data._self,
 							data._super,
 							data._crate,
-							data["_'"],
 							data._token_keywords,
+							data["_'"],
 							data._$,
 							data._delim_token_tree
 						]),
@@ -12645,7 +12690,8 @@ export function wrapTokenPatternGroup1(
 		'primitive_type',
 		'_token_tree_punctuation',
 		'token_tree_punctuation',
-		"'",
+		'_token_pattern_quote',
+		'token_pattern_quote',
 		'_token_keywords',
 		'token_keywords'
 	]) as T.TokenPatternGroup1 | readonly T.TokenPatternGroup1[] | undefined;
@@ -12669,7 +12715,8 @@ export function wrapTokenPatternGroup1(
 			'primitive_type',
 			'_token_tree_punctuation',
 			'token_tree_punctuation',
-			"'",
+			'_token_pattern_quote',
+			'token_pattern_quote',
 			'_token_keywords',
 			'token_keywords'
 		]);
@@ -13022,6 +13069,7 @@ const _aliasTargetToSource: Record<string, string> = {
 	struct_pattern_group1: '_struct_pattern_group1',
 	token_binding_pattern_type: '_token_binding_pattern_type',
 	token_pattern: '_token_pattern',
+	token_pattern_quote: '_token_pattern_quote',
 	token_tree_brace: '_token_tree_brace',
 	token_tree_bracket: '_token_tree_bracket',
 	token_tree_paren: '_token_tree_paren',

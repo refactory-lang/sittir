@@ -1885,10 +1885,12 @@ export type RustGrammar = {
 				{ type: 'primitive_type'; named: true },
 				{ type: 'self'; named: true },
 				{ type: 'super'; named: true },
+				{ type: 'token_pattern_quote'; named: true },
 				{ type: 'token_tree_punctuation'; named: true }
 			];
 		};
 	};
+	readonly token_pattern_quote: { type: 'token_pattern_quote'; named: true; fields: {} };
 	readonly token_repetition: {
 		type: 'token_repetition';
 		named: true;

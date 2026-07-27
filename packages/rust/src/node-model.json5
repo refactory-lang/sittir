@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 371,
+  "nodeCount": 372,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -6624,10 +6624,10 @@
       "irKey": "nonSpecialToken",
       "hidden": true,
       "subtypes": [
-        "'",
         "_literal",
         "_primitive_type",
         "_token_keywords",
+        "_token_pattern_quote",
         "_token_tree_punctuation",
         "boolean_literal",
         "char_literal",
@@ -7754,6 +7754,16 @@
         "token_repetition_pattern",
         "token_tree_pattern"
       ]
+    },
+    {
+      "kind": "_token_pattern_quote",
+      "modelType": "token",
+      "typeName": "TokenPatternQuote",
+      "irKey": "tokenPatternQuote",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"'\" as const",
+      "text": "'"
     },
     {
       "kind": "_token_tree_brace",
@@ -17036,10 +17046,10 @@
       "irKey": "tokenPatternGroup1",
       "hidden": true,
       "subtypes": [
-        "'",
         "_literal",
         "_primitive_type",
         "_token_keywords",
+        "_token_pattern_quote",
         "_token_tree_punctuation",
         "boolean_literal",
         "char_literal",
