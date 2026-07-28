@@ -2302,7 +2302,8 @@ export function coerceToLastMatchArm(input: T.LastMatchArm.Loose): ReturnType<ty
 			'pattern',
 			_resolveOneBranch<T.MatchPattern>(input.pattern, 'match_pattern')
 		),
-		value: _requireField('last_match_arm', 'value', _resolveOne<T.Expression>(input.value, _K10, _K11))
+		value: _requireField('last_match_arm', 'value', _resolveOne<T.Expression>(input.value, _K10, _K11)),
+		comma: _resolveBooleanKeyword(input.comma)
 	});
 }
 

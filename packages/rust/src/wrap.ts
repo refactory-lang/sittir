@@ -7521,6 +7521,14 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle) {
 				slotName: 'value',
 				span: (data as _NodeData).$span
 			}),
+			_comma: coerceBooleanKeywordStorage(
+				normalizeSingularWrapSlot(data._comma, 'comma', false, data.$type, {
+					tree,
+					nodeType: data.$type,
+					slotName: 'comma',
+					span: (data as _NodeData).$span
+				})
+			),
 
 			attributes() {
 				return drillInAll<T.AttributeItem | T.InnerAttributeItem>(
@@ -7534,11 +7542,15 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle) {
 			value() {
 				return drillIn<T.Expression>(this._value, tree);
 			},
+			comma() {
+				return this._comma;
+			},
 			$with: {
 				attributes: (...v: NonNullable<T.LastMatchArm['_attributes']>[number][]) =>
 					wrapLastMatchArm({ ...data, _attributes: v }, tree),
 				pattern: (v: NonNullable<T.LastMatchArm['_pattern']>) => wrapLastMatchArm({ ...data, _pattern: v }, tree),
-				value: (v: NonNullable<T.LastMatchArm['_value']>) => wrapLastMatchArm({ ...data, _value: v }, tree)
+				value: (v: NonNullable<T.LastMatchArm['_value']>) => wrapLastMatchArm({ ...data, _value: v }, tree),
+				comma: (v: NonNullable<T.LastMatchArm['_comma']>) => wrapLastMatchArm({ ...data, _comma: v }, tree)
 			}
 		},
 		methodsEngine

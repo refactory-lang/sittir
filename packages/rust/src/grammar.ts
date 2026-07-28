@@ -1145,6 +1145,7 @@ export type RustGrammar = {
 				required: false;
 				types: [{ type: 'attribute_item'; named: true }, { type: 'inner_attribute_item'; named: true }];
 			};
+			comma: { multiple: false; required: false; types: [{ type: ','; named: false }] };
 			pattern: { multiple: false; required: true; types: [{ type: 'match_pattern'; named: true }] };
 			value: { multiple: false; required: true; types: [{ type: '_expression'; named: true }] };
 		};

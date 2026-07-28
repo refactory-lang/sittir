@@ -3365,6 +3365,16 @@
           }
         ]
       },
+      "comma": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": ",",
+            "named": false
+          }
+        ]
+      },
       "pattern": {
         "multiple": false,
         "required": true,

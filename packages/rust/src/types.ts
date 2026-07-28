@@ -4407,9 +4407,14 @@ export interface LastMatchArm {
 	readonly _attributes?: readonly (AttributeItem | InnerAttributeItem)[];
 	readonly _pattern: MatchPattern;
 	readonly _value: Expression;
+	readonly _comma?: boolean;
+	readonly __inputHints__?: {
+		readonly comma?: BooleanKeyword<','>;
+	};
 	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
 	pattern(): MatchPattern;
 	value(): Expression;
+	comma(): boolean | undefined;
 }
 
 export interface MatchPattern {

@@ -2936,6 +2936,7 @@ export function buildLastMatchArm(config: T.LastMatchArm.Config) {
 	const _attributes = config.attributes ?? [];
 	const _pattern = config.pattern;
 	const _value = config.value;
+	const _comma = coerceBooleanKeywordStorage(config.comma);
 	return withMethods(
 		withAccessors(
 			{
@@ -2945,17 +2946,21 @@ export function buildLastMatchArm(config: T.LastMatchArm.Config) {
 				_attributes,
 				_pattern,
 				_value,
+				_comma,
 				$with: {
 					attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
 						buildLastMatchArm({ ...config, attributes: values }),
 					pattern: (value: T.MatchPattern) => buildLastMatchArm({ ...config, pattern: value }),
-					value: (value: T.Expression) => buildLastMatchArm({ ...config, value: value })
+					value: (value: T.Expression) => buildLastMatchArm({ ...config, value: value }),
+					comma: (value?: NonNullable<Parameters<typeof buildLastMatchArm>[0]>['comma']) =>
+						buildLastMatchArm({ ...config, comma: value })
 				}
 			},
 			{
 				attributes: () => _attributes,
 				pattern: () => _pattern,
-				value: () => _value
+				value: () => _value,
+				comma: () => _comma
 			}
 		),
 		methodsEngine

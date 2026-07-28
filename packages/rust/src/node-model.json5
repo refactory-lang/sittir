@@ -2378,6 +2378,13 @@
         "required": true,
         "multiple": false,
         "nonEmpty": false
+      },
+      "comma": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "match_pattern": {
@@ -13706,6 +13713,26 @@
             "kinds": [
               "_expression"
             ]
+          }
+        },
+        {
+          "name": "comma",
+          "propertyName": "comma",
+          "paramName": "comma",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": ",",
+              "parseKind": "comma"
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": []
           }
         }
       ],
