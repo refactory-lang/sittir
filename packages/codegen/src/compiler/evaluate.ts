@@ -1679,7 +1679,7 @@ function drainRenderAsMetadata(opts: GrammarOptions, ctx: EvaluateCtx): Record<s
 	if (!wireCtx || !wireCtx.renderAs) return undefined;
 
 	const $ = createProxy('_renderAs_', refs);
-	const rawEntries = wireCtx.renderAs($ as unknown as Record<string, unknown>);
+	const rawEntries = wireCtx.renderAs($);
 	if (!rawEntries || Object.keys(rawEntries).length === 0) return undefined;
 
 	const result: Record<string, Rule<'evaluate'>> = {};
@@ -1723,7 +1723,7 @@ function drainVisibleExternalsMetadata(
 	if (!wireCtx || !wireCtx.visibleExternals) return undefined;
 
 	const $ = createProxy('_visibleExternals_', refs);
-	const rawEntries = wireCtx.visibleExternals($ as unknown as Record<string, unknown>);
+	const rawEntries = wireCtx.visibleExternals($);
 	if (!rawEntries || Object.keys(rawEntries).length === 0) return undefined;
 
 	const result: Record<string, Rule<'evaluate'>> = {};
@@ -2373,7 +2373,7 @@ function applyVisibleExternalsRewrite(rules: Record<string, Rule<'evaluate'>>, c
 	const { evaluateCtx, wireCtx } = ctx;
 	if (!wireCtx.visibleExternals) return;
 	const $ = createProxy('_visibleExternals_', evaluateCtx.refs);
-	const rawEntries = wireCtx.visibleExternals($ as unknown as Record<string, unknown>);
+	const rawEntries = wireCtx.visibleExternals($);
 	if (!rawEntries) return;
 	const hiddenToVisible = new Map<string, string>();
 	for (const hiddenName of Object.keys(rawEntries)) {
@@ -2783,7 +2783,7 @@ function computeReachableRuleNames(rules: Record<string, Rule<'evaluate'>>): Set
 		const rule = rules[name];
 		if (!rule) continue;
 		walker.foldDeep<null>(rule, null, (acc, r) => {
-			if (r.type === SYMBOL) reachable.add((r as unknown as { name: string }).name);
+			if (r.type === SYMBOL) reachable.add(r.name);
 			return acc;
 		});
 	}

@@ -1611,7 +1611,7 @@ function buildVisibleExternalsRewritingFn(fn: RuleFn, hiddenToVisible: ReadonlyM
 function applyWireVisibleExternalsRewrite(rules: Record<string, RuleFn>, config: VisibleExternalsConfig | undefined): void {
 	if (!config) return;
 	const $ = makeSimpleDollarProxy();
-	const entries = withStringGlobalShim(() => config($ as unknown as Record<string, unknown>));
+	const entries = withStringGlobalShim(() => config($));
 	if (!entries) return;
 	const hiddenToVisible = new Map<string, string>();
 	for (const hiddenName of Object.keys(entries)) {

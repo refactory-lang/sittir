@@ -1073,12 +1073,10 @@ export function matchesEmpty(rule: RuntimeRule): boolean {
 	if (isOptionalType(t)) return true;
 	if (isPlainRepeatType(t)) return true;
 	if (isChoiceType(t)) {
-		const members = (rule as unknown as { members: RuntimeRule[] }).members;
-		return members.some((m) => matchesEmpty(m));
+		return membersOf(rule).some((m) => matchesEmpty(m));
 	}
 	if (isSeqType(t)) {
-		const members = (rule as unknown as { members: RuntimeRule[] }).members;
-		return members.every((m) => matchesEmpty(m));
+		return membersOf(rule).every((m) => matchesEmpty(m));
 	}
 	return false;
 }
@@ -1112,18 +1110,18 @@ function extractNonEmpty(rule: RuntimeRule): { nonEmpty: unknown } | null {
 		return { nonEmpty };
 	}
 	if (isOptionalType(t)) {
-		const inner = (rule as unknown as { content: RuntimeRule }).content;
+		const inner = contentOf(rule);
 		return matchesEmpty(inner) ? extractNonEmpty(inner) : { nonEmpty: inner };
 	}
 	if (isChoiceType(t)) {
-		const members = (rule as unknown as { members: RuntimeRule[] }).members;
+		const members = membersOf(rule);
 		const nonEmpty = members.filter((m) => !matchesEmpty(m));
 		if (nonEmpty.length === 0) return null;
 		if (nonEmpty.length === 1) return { nonEmpty: nonEmpty[0] };
 		return { nonEmpty: { type: t, members: nonEmpty } };
 	}
 	if (isSeqType(t)) {
-		const members = [...(rule as unknown as { members: RuntimeRule[] }).members];
+		const members = [...membersOf(rule)];
 		for (let i = 0; i < members.length; i++) {
 			const factored = extractNonEmpty(members[i]!);
 			if (factored) {

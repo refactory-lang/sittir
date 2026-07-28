@@ -1,0 +1,25 @@
+id: no-unnecessary-as-any
+language: TypeScript
+severity: hint
+message: >
+  `as any` erases type safety entirely. Almost always used to silence a type
+  error the author didn't want to solve properly. Work out the real type
+  (or a narrower `as unknown as X`) instead. Test-file usages for ad-hoc
+  fixture literals are a common, acceptable exception — review call site
+  before flagging as slop.
+files:
+  - packages/codegen/src/**
+  - packages/rust/overrides.ts
+  - packages/typescript/overrides.ts
+  - packages/python/overrides.ts
+  - packages/rust/base.ts
+ignores:
+  - "**/__tests__/**"
+  - "**/*.test.ts"
+rule:
+  pattern: $X as any
+note: >
+  Codegen-cleanup audit (2026-07-28): scanned packages/codegen/src/** for
+  this pattern — found zero non-test occurrences at that time. Kept as a
+  standing rule so future changes don't reintroduce the pattern outside
+  __tests__/*.test.ts.

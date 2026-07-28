@@ -2758,12 +2758,10 @@ function matchesEmpty(rule) {
   if (isOptionalType(t)) return true;
   if (isPlainRepeatType(t)) return true;
   if (isChoiceType(t)) {
-    const members = rule.members;
-    return members.some((m) => matchesEmpty(m));
+    return membersOf2(rule).some((m) => matchesEmpty(m));
   }
   if (isSeqType(t)) {
-    const members = rule.members;
-    return members.every((m) => matchesEmpty(m));
+    return membersOf2(rule).every((m) => matchesEmpty(m));
   }
   return false;
 }
@@ -2782,18 +2780,18 @@ function extractNonEmpty(rule) {
     return { nonEmpty };
   }
   if (isOptionalType(t)) {
-    const inner = rule.content;
+    const inner = contentOf2(rule);
     return matchesEmpty(inner) ? extractNonEmpty(inner) : { nonEmpty: inner };
   }
   if (isChoiceType(t)) {
-    const members = rule.members;
+    const members = membersOf2(rule);
     const nonEmpty = members.filter((m) => !matchesEmpty(m));
     if (nonEmpty.length === 0) return null;
     if (nonEmpty.length === 1) return { nonEmpty: nonEmpty[0] };
     return { nonEmpty: { type: t, members: nonEmpty } };
   }
   if (isSeqType(t)) {
-    const members = [...rule.members];
+    const members = [...membersOf2(rule)];
     for (let i = 0; i < members.length; i++) {
       const factored = extractNonEmpty(members[i]);
       if (factored) {
