@@ -57,8 +57,6 @@ declare global {
 		immediate<R extends AuthoringRule>(rule: R): ImmediateTokenRule<ToGrammarRule<R>>;
 	};
 
-
-
 	declare const prec: {
 		<R extends AuthoringRule>(value: number | string, rule: R): PrecRule<ToGrammarRule<R>>;
 		left<R extends AuthoringRule>(value: number | string, rule: R): PrecLeftRule<ToGrammarRule<R>>;
