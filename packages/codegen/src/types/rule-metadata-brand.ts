@@ -17,10 +17,4 @@
  */
 declare const RULE_METADATA_BRAND: unique symbol;
 
-/**
- * Opaque provenance bag. Exposes NO readable properties to compiler code —
- * any attempt to read a fact off it directly (`rule.metadata.source`) is a
- * compile error. The only way to construct or read the real shape is through
- * `dsl/rule-metadata.ts`'s `makeRuleMetadata` / `readRuleMetadata`.
- */
 export type RuleMetadata = { readonly [RULE_METADATA_BRAND]?: never };

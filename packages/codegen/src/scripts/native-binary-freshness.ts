@@ -17,16 +17,11 @@
 import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-/** Freshness report for one host binary. */
 export interface HostBinaryFreshness {
-	/** Repo-relative binary path, e.g. `rust/crates/sittir-rust/sittir-rust.darwin-arm64.node`. */
 	rel: string;
 	binaryMtimeMs: number;
-	/** Newest mtime across the crate's `src/**` + `templates/**` inputs. */
 	newestInputMtimeMs: number;
-	/** Repo-relative path of the newest input (diagnostic). */
 	newestInputRel: string;
-	/** True when the binary is OLDER than at least one compiled-in input. */
 	stale: boolean;
 }
 

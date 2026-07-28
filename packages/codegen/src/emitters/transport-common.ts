@@ -7,20 +7,6 @@ import type {
 } from '../compiler/model/node-map.ts';
 import { isNodeRef, storageKindOfRef } from '../compiler/model/node-map.ts';
 
-/**
- * Classification of a transport slot by its type width.
- *
- * - `concrete`      — exactly one known kind; emit `<Kind>Transport` directly.
- *                     `typeName` is the assembled node's typeName (PascalCase,
- *                     leading-underscore-stripped) used to derive the Rust
- *                     struct name and render fn name. Falls back to the kind
- *                     string when nodeMap is unavailable (test / exported path).
- * - `supertype`     — kind set is a subset of a known assembled supertype's
- *                     resolved subtypes; emit `<Supertype>Transport` enum.
- *                     `supertypeName` is the supertype's `typeName` (PascalCase).
- * - `heterogeneous` — no grammar-bound type (theoretically unreachable in
- *                     sittir's pipeline; retained as a compile-safety escape).
- */
 export type SlotClass =
 	| { readonly tag: 'concrete'; readonly kind: string; readonly typeName: string }
 	| { readonly tag: 'supertype'; readonly supertypeName: string }

@@ -46,14 +46,7 @@ import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 export interface GeneratedFiles {
 	grammar: string;
 	types: string;
-	/** engine.ts — thin wrapper around createNativeEngine from @sittir/common/engine. Native-only; no JS-engine fallback (see emitters/engine.ts). */
 	engine: string;
-	/** Per-rule `.jinja` files. `EmittedTemplates.bodies`
-	 *  is keyed by rule kind with the full file contents (incl.
-	 *  `@generated` header). Separator / flank metadata lives INLINE
-	 *  in each body via `| join("<sep>")` and
-	 *  `| joinWithTrailing(...)` filters; no sidecar. CLI writes each
-	 *  body to `packages/<grammar>/templates/<kind>.jinja`. */
 	jinjaTemplates: EmittedTemplates;
 	factories: string;
 	wrap: string;
@@ -66,24 +59,12 @@ export interface GeneratedFiles {
 	typeTests: string;
 	config: string;
 	nodeModel: string;
-	/** overrides.suggested.ts — human-readable derivation log. `undefined` when there's nothing to suggest (emission disabled or empty result); the caller skips writing the file in that case. */
 	suggested: string | undefined;
-	/** is.ts — per-grammar type guards (is/assert/isTree/isNode). */
 	is: string;
-	/** kind_ids.rs — per-grammar numeric KindId constants for the Rust render crate */
 	kindIds: string;
-	/** The intermediate NodeMap — available for inspection */
 	nodeMap: NodeMap;
-	/** Generated ID tables (from parser.c) — exposed for CLI callers that need
-	 *  to pass them to Rust-render emitters such as render-module emission. */
 	generatedIdTables?: GeneratedIdTables;
-	/** Grammar-owned Rust render-module outputs, when requested by the caller. */
 	renderModule?: RenderModuleBundle;
-	/**
-	 * Slot-grouping diagnostics accumulated during the normalize phase.
-	 * Surfaced by runCodegen() via stderr so propose-promotion suggestions
-	 * print during `sittir gen --all` without requiring a separate preflight run.
-	 */
 	slotGroupingDiagnostics: readonly SlotGroupingDiagnostic[];
 }
 
@@ -91,47 +72,9 @@ export interface GenerateConfig {
 	grammar: string;
 	nodes?: string[];
 	outputDir: string;
-	/**
-	 * Which derived source tags are accepted into the rule tree.
-	 * Defaults to all derived sources (permissive). `grammar` and
-	 * `override` are always-on and can't be filtered out — this
-	 * controls which DERIVATIONS Link's inference / promotion passes
-	 * mutate the rule tree with.
-	 *
-	 * Entries EXCLUDED from this filter still appear in the
-	 * `derivations` log (and therefore in `overrides.suggested.ts`)
-	 * so you can review what Link inferred and either adopt it into
-	 * overrides.ts or leave it in the log.
-	 *
-	 * @example
-	 * // Strict base pipeline — no inference / promotion:
-	 * { include: { rules: [], fields: [] } }
-	 *
-	 * // Accept promotion, review inference:
-	 * { include: { rules: ['promoted'], fields: [] } }
-	 *
-	 * // Default (permissive): everything applied.
-	 * { include: undefined }
-	 */
 	include?: IncludeFilter;
-	/**
-	 * Emit runtime validation in leaf factories (regex check against
-	 * the grammar's declared pattern). Default `false` — enum
-	 * factories always validate, keywords have nothing to check, but
-	 * leaf patterns can diverge from JS RegExp syntax (Unicode
-	 * property escapes without the `u` flag, PCRE-only features) so
-	 * opt-in avoids surprising the non-strict call sites.
-	 */
 	strict?: boolean;
-	/**
-	 * Round-trip failure diagnostics to surface in overrides.suggested.ts.
-	 * Collected by the CLI `--roundtrip` flag; when absent, the suggested
-	 * emitter skips the round-trip section. Passing empty or omitting
-	 * produces the same output — the emitter only adds the section
-	 * when at least one diagnostic exists.
-	 */
 	roundTripFailures?: readonly RoundTripDiagnostic[];
-	/** Emit grammar-owned Rust render-module artifacts in emit.ts. */
 	emitRenderModule?: boolean;
 }
 

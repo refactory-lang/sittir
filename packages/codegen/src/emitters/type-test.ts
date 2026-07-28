@@ -17,26 +17,9 @@ import { referencedKinds, resolveHiddenKeywordLiteral } from './shared.ts';
 
 export interface EmitTypeTestsConfig {
 	nodeMap: NodeMap;
-	/**
-	 * Parser-symbol ID tables for numeric $type assertion emission.
-	 * When present, generated type tests emit `TSKindId.X` in extends checks.
-	 * When absent (legacy callers), falls back to string literal checks.
-	 */
 	generatedIdTables?: GeneratedIdTables;
 }
 
-/**
- * Returns the expected-type expression for a `_TypeExtends<X['$type'], ...>` check.
- *
- * @remarks
- * When kindEntries is present (KindID pipeline), emits `TSKindId.X`. When
- * absent (legacy / unit-test path), falls back to `'<kind>'` string literal.
- *
- * @param kind - The grammar kind string.
- * @param kindEntries - Collected kind-enum entries, or `undefined` for fallback.
- * @param nodeMap - The assembled node map.
- * @returns Expression string suitable for `_TypeExtends<X['$type'], <expr>>`.
- */
 function typeTestDiscriminant(
 	kind: string,
 	kindEntries: readonly KindEnumEntry[] | undefined,

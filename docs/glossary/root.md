@@ -164,3 +164,117 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * on disk — same semantics as the old `--skip-ts-chain` / standalone flags.
  */
 ```
+
+### `PolymorphVariantDescriptor` (`packages/codegen/src/polymorph-variant.ts:13`)
+
+```text
+/**
+ * (source-homonym resolution, decision 6 outcome revision — renamed, not
+ * removed.) This field is the descriptor's OWN discriminated-union tag
+ * (structurally identical in role to `rule.type`), not the authorship/
+ * provenance homonym decision 6 targets: its two values name which of the
+ * two shapes below is present. It drives live variant dispatch —
+ * `packages/tools/src/validate/common.ts`'s `inferOverrideHelperVariant` /
+ * `inferPolymorphVariant` (`switch (desc.definedBy)`) and
+ * `read-render-parse.ts`'s `if (desc.definedBy !== 'override') continue` —
+ * and the JSON serialized into node-model.json5 is this union's wire
+ * format, so there is no compile-time narrowing once round-tripped.
+ * Renamed from `source` → `definedBy` (decision 7 small cleanup b) so the
+ * stem no longer collides with the provenance vocabulary.
+ */
+```
+
+### `CodegenOptions` (`packages/codegen/src/run-codegen.ts:44`)
+
+```text
+/**
+ * The library-facing option shape for both `runCodegen` and `runFullRegen`.
+ * Generalizes the old `CodegenConfig` + `CliArgs` from cli.ts.
+ */
+```
+
+### `grammar` (`packages/codegen/src/run-codegen.ts:49`)
+
+```text
+/** Grammar name (rust, typescript, python). */
+```
+
+### `outputDir` (`packages/codegen/src/run-codegen.ts:51`)
+
+```text
+/** Output directory for generated TS files (e.g. packages/rust/src). */
+```
+
+### `nodes` (`packages/codegen/src/run-codegen.ts:53`)
+
+```text
+/** Specific node kinds to generate (mutually exclusive with `all`). */
+```
+
+### `all` (`packages/codegen/src/run-codegen.ts:55`)
+
+```text
+/** Generate full native render-module artifacts (equivalent to --all). */
+```
+
+### `testsDir` (`packages/codegen/src/run-codegen.ts:57`)
+
+```text
+/** Output directory for test files (default: ../tests relative to outputDir). */
+```
+
+### `compileParser` (`packages/codegen/src/run-codegen.ts:59`)
+
+```text
+/** Compile override grammar to .sittir/parser.wasm (standalone step). */
+```
+
+### `transpile` (`packages/codegen/src/run-codegen.ts:61`)
+
+```text
+/** Transpile overrides.ts to .sittir/grammar.js (standalone step). */
+```
+
+### `tsGenerate` (`packages/codegen/src/run-codegen.ts:63`)
+
+```text
+/** Run 'tree-sitter generate' in .sittir/ (standalone step). */
+```
+
+### `skipTsChain` (`packages/codegen/src/run-codegen.ts:65`)
+
+```text
+/** Skip the auto transpile + tree-sitter generate chain that --all normally runs. */
+```
+
+### `buildNative` (`packages/codegen/src/run-codegen.ts:67`)
+
+```text
+/**
+	 * Whether to rebuild the N-API binding after native emit (default: true).
+	 * Set to `false` to skip cargo rebuild (--no-build-native).
+	 */
+```
+
+### `workspaceCheck` (`packages/codegen/src/run-codegen.ts:72`)
+
+```text
+/**
+	 * Whether to run `cargo check --workspace` after the native rebuild
+	 * (default: true). Set to `false` (--no-workspace-check) in multi-grammar
+	 * drivers for all but the LAST grammar — the final check covers the whole
+	 * workspace, making the earlier per-grammar checks redundant.
+	 */
+```
+
+### `noEmitDiff` (`packages/codegen/src/run-codegen.ts:79`)
+
+```text
+/** Suppress the post-regen emit-diff report (--no-emit-diff). */
+```
+
+### `allowDiagnostics` (`packages/codegen/src/run-codegen.ts:81`)
+
+```text
+/** List of diagnostic messages to allow (passed from CLI allowlist). */
+```

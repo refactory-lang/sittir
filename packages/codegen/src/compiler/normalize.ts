@@ -44,14 +44,6 @@ import { deriveStructuralVariantChildren, prefixNamedSuffix } from './variant-st
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 
-/**
- * Normalize phase context (S2, `BaseCtx<'link'>` — Normalize READS
- * `Grammar<'link'>` = {@link LinkedGrammar}; see
- * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §2). Adds the
- * inline-decision set and the polymorph skip-set the slot-grouping diagnostic
- * consults, on top of BaseCtx's grammar facts (rules / diagnostics / wordMatcher
- * / builder). See compiler/ctx.ts.
- */
 export class NormalizeCtx extends BaseCtx<'link'> {
 	/** Inline-decision set (kinds emitters skip / normalize preserves). */
 	readonly inlineKinds: ReadonlySet<string>;

@@ -68,23 +68,8 @@ interface SlotModel {
 export interface EmitWrapConfig {
 	grammar: string;
 	nodeMap: NodeMap;
-	/**
-	 * Parser-symbol ID tables (from `loadGeneratedIdTables`). When present,
-	 * per-kind wrap functions stamp `$type: TSKindId.X` to convert the string
-	 * from core's readNode to the numeric runtime discriminant. When absent,
-	 * $type is inherited from data (string passthrough — legacy mode).
-	 */
 	generatedIdTables?: GeneratedIdTables;
-	/**
-	 * Kind names listed in the grammar's `inline:` array. When a kind has no
-	 * parser symbol AND appears here, it's a deliberately inlined rule — warn
-	 * and skip. When absent from this list, it's a codegen bug — throw.
-	 */
 	inlineKinds?: readonly string[];
-	/**
-	 * Kind names synthesized by evaluate's inline-alias-source pass. No parser
-	 * symbol by design; warn and skip.
-	 */
 	synthesizedKinds?: ReadonlySet<string>;
 	kindEntries?: readonly KindEnumEntry[];
 }
@@ -182,9 +167,7 @@ export namespace wrap {
 interface WrapNode {
 	readonly kind: string;
 	readonly typeName: string;
-	/** rawFactoryName for $with — null when the kind has no factory. */
 	readonly rawFactoryName?: string;
-	/** Child-factory surface when the node exposes positional child factories. */
 	readonly childSurface?: 'direct' | 'spread' | null;
 }
 
@@ -217,19 +200,6 @@ function buildSupertypeMembersMap(nodeMap: NodeMap): Map<string, string[]> {
 	return out;
 }
 
-/**
- * Resolve the drill-in expression for a field storage assignment.
- * Returns the raw-field read expression AND the inline accessor body.
- *
- * @param f - The assembled nonterminal field descriptor.
- * @param nodeMap - The assembled node map, needed to derive the per-field
- *   element type for generic type arguments on drill helpers.
- * @returns An object with `storeExpr` (storage init from `data` via
- *   `readRawField` — bridges the `AnyNodeData` type which doesn't
- *   declare per-kind `_<name>` properties) and `accessorBody` (reads
- *   `this._<name>` directly — the literal declares the property so
- *   TS resolves it from the inferred literal type).
- */
 interface ResolveSlotDrillConfig {
 	readonly dataExpr: string;
 	readonly elemType: string;
@@ -238,40 +208,9 @@ interface ResolveSlotDrillConfig {
 	readonly alias?: readonly [string, string];
 	readonly storageInfo?: ReturnType<typeof resolveFieldStorageInfo>;
 	readonly allowedKinds?: readonly string[];
-	/**
-	 * Optional list of concrete `_<kind>` storage keys to probe in lieu of
-	 * the slot's nominal single key. When set, the storeExpr becomes a
-	 * `??`-coalesce chain over these keys. See `collectConcreteStorageKeys`.
-	 */
 	readonly candidateStorageKeys?: readonly string[];
-	/**
-	 * Pre-built numeric-kindId array expression (e.g. `[TSKindId.DotDotEq,
-	 * TSKindId.DotDot]`) for a kindEnum slot's member discriminants. Drives the
-	 * `$other` reclamation fallback (option B). Built by the caller, which holds
-	 * `nodeMap` + `kindEntries` for `kindDiscriminantExpr` resolution.
-	 */
 	readonly reclaimKindIdsExpr?: string;
-	/**
-	 * Stamped text→member-kindId pairs for a kindEnum slot (see
-	 * `kindEnumTextIdPairs`, shared.ts). Baked into `projectKindEnumStorage`'s
-	 * call so wrapper-materialized enum reads project to NUMERIC member ids on
-	 * the wire (id-first contract) instead of raw text.
-	 */
 	readonly kindEnumTextIdPairs?: readonly (readonly [string, number])[];
-	/**
-	 * Emit `normalizeRepeatedWrapSlot<unknown>`/`normalizeSingularWrapSlot<unknown>`
-	 * with an EXPLICIT type argument instead of leaving `T` to be inferred from
-	 * `reclaimedStoreExpr`. For a multi-field `AssembledSeparatedList`
-	 * (`emitSeparatedListWrap`'s `_content` local — see its doc comment), the
-	 * probe combines candidate storage keys from MORE THAN ONE real slot (e.g.
-	 * TypeScript's `enum_body_group1`: `PropertyName`-kind keys AND a
-	 * `EnumAssignment`-kind key), which don't share a common element type.
-	 * `_content` there is consumed only by `_hasSeparatorFlank`/
-	 * `_separatorKindOf` (both take `readonly unknown[]`), never stored or
-	 * exposed as a typed accessor — so forcing `T = unknown` is the correct
-	 * type, not a type-hole cast: it matches what the value is actually used
-	 * for, rather than masking a real mismatch.
-	 */
 	readonly forceUnknownElement?: boolean;
 }
 
@@ -816,20 +755,6 @@ function emitSeparatedListWrap(
 	return lines.join('\n');
 }
 
-/**
- * Emit a per-kind wrap function using shape A:
- * inline object literal with `_<name>` storage, method shorthand accessors,
- * inline `$with` property, wrapped by `withMethods<T>`.
- *
- * No `Object.defineProperty`, no `freezeNodeData`, no `Record<string,unknown>` casts.
- *
- * @param node - The assembled node descriptor (kind, typeName, rawFactoryName).
- * @param fields - Named field slots for this node.
- * @param children - Unnamed child slots for this node.
- * @param kindEntries - KindEnumEntry list for numeric `$type` stamping; undefined for legacy.
- * @param nodeMap - The assembled node map (for kindIdMemberName).
- * @returns Emitted TypeScript source string for the wrap function.
- */
 function computeCollidedReclaimKinds(
 	fields: readonly AssembledNonterminal[],
 	ownerKind: string,

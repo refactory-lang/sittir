@@ -4598,3 +4598,1056 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  *   slots into `fields`).
  */
 ```
+
+### `triviaKinds` (`packages/codegen/src/emitters/client-utils.ts:11`)
+
+```text
+/** Trivia kind names (e.g. `['line_comment', 'block_comment']`). */
+```
+
+### `expectTestFailures` (`packages/codegen/src/emitters/emit.ts:54`)
+
+```text
+/** Kind → reason for known-failing generated tests (`expectTestFailures:`
+	 *  in overrides.ts) — threaded to `emitTests` for `describe.skip` emission. */
+```
+
+### `CodegenEmitter` (`packages/codegen/src/emitters/emitter.ts:3`)
+
+```text
+/** Constructor-based emitter with no init() lifecycle phase. */
+```
+
+### `strict` (`packages/codegen/src/emitters/factories.ts:62`)
+
+```text
+/** Emit runtime leaf pattern validation. Default `false`. */
+```
+
+### `generatedIdTables` (`packages/codegen/src/emitters/factories.ts:64`)
+
+```text
+/**
+	 * Parser-symbol ID tables (from `loadGeneratedIdTables`). When present,
+	 * factories stamp numeric `$type: TSKindId.X` discriminants. When absent
+	 * (legacy callers / unit tests), falls back to string `$type: 'kind' as const`.
+	 */
+```
+
+### `inlineKinds` (`packages/codegen/src/emitters/factories.ts:71`)
+
+```text
+/**
+	 * Kind names listed in the grammar's `inline:` array. When a kind has no
+	 * parser symbol AND appears here, it's a deliberately inlined rule — warn
+	 * and skip. When it's absent from this list, it's a codegen bug — throw.
+	 */
+```
+
+### `synthesizedKinds` (`packages/codegen/src/emitters/factories.ts:77`)
+
+```text
+/**
+	 * Kind names synthesized by evaluate's inline-alias-source pass
+	 * (`synthesizeInlineAliasSources`). These have no parser symbol by design;
+	 * warn and skip, same treatment as inline-list kinds.
+	 */
+```
+
+### `buildFactoryMapEntries` (`packages/codegen/src/emitters/factories.ts:219`)
+
+```text
+/**
+ * Emit factory source for each eligible node and push it into `lines`.
+ *
+ * @param nodeMap - The assembled node map.
+ * @param strict - Whether runtime leaf pattern validation is enabled.
+ * @param aliasSourceKinds - Set of kinds that are alias sources (included even if hidden).
+ * @param leafReConsts - Map from kind to its compiled-regex constant name.
+ * @param kindEntries - KindEnumEntry list for numeric $type emission; undefined for legacy fallback.
+ * @param lines - Output line buffer; factory declarations are appended here.
+ * @remarks
+ *   Dispatch is on `modelType`. Polymorph form groups are skipped at the top
+ *   level (`classifyFactoryEmission` → `skip-polymorph-form-group`).
+ */
+```
+
+### `MapEntry` (`packages/codegen/src/emitters/factories.ts:1126`)
+
+```text
+/**
+ * Factory map entry descriptor — used to emit `FluentKindMap` and `_factoryMap`.
+ *
+ * @remarks
+ *   Factory signature shape — `'config'` for config-object factories,
+ *   `'children'` for child-backed rest/single-child factories,
+ *   `'direct'` for field-backed direct-value factories, and `'text'`
+ *   for leaf / keyword factories that take a raw string.
+ */
+```
+
+### `polymorphVariants` (`packages/codegen/src/emitters/factory-map.ts:45`)
+
+```text
+/**
+	 * Polymorph variant discriminators. For each polymorph parent kind a
+	 * descriptor telling `nodeToConfig` how to stamp `$variant` on the
+	 * derived config.
+	 *
+	 *   source='override' — variant inferred from the first named child's
+	 *     kind. The `childKind` map is `<parent_childKind>: <variantName>`.
+	 *   source='promoted' — variant inferred from field-presence. The
+	 *     `fields` map is `<variantName>: [<fieldPropertyName>...]`
+	 *     (match if every listed field is present on the config).
+	 *
+	 * The dispatcher's switch on `config.$variant` expects the tag to be
+	 * present; validators and legacy readNode→factory paths use this map
+	 * to derive it from the parsed tree.
+	 */
+```
+
+### `generatedIdTables` (`packages/codegen/src/emitters/from.ts:53`)
+
+```text
+/**
+	 * Parser-symbol ID tables for numeric $type comparison emission.
+	 * When present, from.ts emits `input.$type === TSKindId.X` checks.
+	 * When absent (legacy callers), falls back to string literal checks.
+	 */
+```
+
+### `enumValues` (`packages/codegen/src/emitters/from.ts:661`)
+
+```text
+/** Enum value list when the underlying node is an enum. */
+```
+
+### `KindInterner` (`packages/codegen/src/emitters/from.ts:703`)
+
+```text
+/** Interner signature passed through the resolver emitter calls. */
+```
+
+### `generatedIdTables` (`packages/codegen/src/emitters/is.ts:34`)
+
+```text
+/**
+	 * Parser-symbol ID tables (from `loadGeneratedIdTables`). When present,
+	 * guards compare BOTH numeric `TSKindId.X` and string kind-name during
+	 * Phase A coexistence. Kinds with no parser symbol (TSGrammar-only) are
+	 * skipped — they can never appear at runtime. When absent (legacy /
+	 * unit-test callers), guards compare string kind-names only.
+	 */
+```
+
+### `member` (`packages/codegen/src/emitters/is.ts:139`)
+
+```text
+/** TSKindId enum member name (e.g. 'FunctionItem'); present when kindEntries available. */
+```
+
+### `numericId` (`packages/codegen/src/emitters/is.ts:141`)
+
+```text
+/** Numeric TSKindId; undefined when kind has no parser symbol. */
+```
+
+### `memberIds` (`packages/codegen/src/emitters/is.ts:201`)
+
+```text
+/** Numeric IDs of member kinds (Phase A coexistence); empty = string-only. */
+```
+
+### `parseId` (`packages/codegen/src/emitters/kind-discriminant.ts:32`)
+
+```text
+/**
+	 * The alias occurrence's own runtime symbol id, when this kind's ONLY
+	 * visible identity comes from an `alias_sym_*` occurrence distinct from
+	 * its plain `sym_*` storage id (see `GeneratedIdEntry.parseId`). Runtime
+	 * `$type` dispatch tables must also map THIS id to the kind — it's what
+	 * tree-sitter actually emits at the aliased position.
+	 */
+```
+
+### `symbolName` (`packages/codegen/src/emitters/kind-discriminant.ts:40`)
+
+```text
+/**
+	 * Symbol name from `ts_symbol_names[]`, when distinct from `kind`.
+	 * Anonymous tokens (`anon_sym_PLUS`) carry the literal text (`"+"`)
+	 * here while `kind` is the parser symbol name (`"PLUS"`). Used to
+	 * emit additional `kindIdFromName` switch arms so JS callers passing
+	 * the literal text can also resolve to the correct id.
+	 */
+```
+
+### `anon` (`packages/codegen/src/emitters/kind-discriminant.ts:48`)
+
+```text
+/** True when this entry came from an `anon_sym_*` parser symbol. */
+```
+
+### `kindDiscriminantExprForId` (`packages/codegen/src/emitters/kind-discriminant.ts:141`)
+
+```text
+/**
+ * {@link kindDiscriminantExpr} for call sites holding a LITERAL TOKEN TEXT
+ * (a `STRING` rule's value) rather than a kind/rule name — resolves via
+ * {@link findKindEntryForLiteral} so the anonymous token wins over a
+ * same-spelled named rule (#129). The grammar's own rule-type
+ * discrimination (STRING vs SYMBOL) decides which of the two functions a
+ * call site uses; this must never be called with a rule name.
+ */
+```
+
+### `parseId` (`packages/codegen/src/emitters/kind-discriminant.ts:175`)
+
+```text
+/** See `GeneratedIdEntry.parseId` — the alias occurrence's own runtime id, when distinct from `id`. */
+```
+
+### `grammar` (`packages/codegen/src/emitters/kind-id-rust.ts:25`)
+
+```text
+/** Grammar name, e.g. `'rust'` | `'typescript'` | `'python'`. */
+```
+
+### `name` (`packages/codegen/src/emitters/node-model.ts:57`)
+
+```text
+/** for node-ref: target kind name */
+```
+
+### `parseKind` (`packages/codegen/src/emitters/node-model.ts:59`)
+
+```text
+/** CST kind / alias target when it differs from the storage kind */
+```
+
+### `unresolved` (`packages/codegen/src/emitters/node-model.ts:61`)
+
+```text
+/** for node-ref: true when the ref was not resolved to an AssembledNode */
+```
+
+### `value` (`packages/codegen/src/emitters/node-model.ts:63`)
+
+```text
+/** for terminal: string value */
+```
+
+### `factoryShape` (`packages/codegen/src/emitters/node-model.ts:90`)
+
+```text
+/**
+	 * PR-K: factory calling convention (`text`/`config`/`direct`/`spread`),
+	 * folded from `factory-map.json5`'s `factoryShapes`. Present only for
+	 * factory-emitting kinds (`classifyFactoryShape` non-null).
+	 */
+```
+
+### `factoryFields` (`packages/codegen/src/emitters/node-model.ts:96`)
+
+```text
+/**
+	 * PR-K: the factory-declared field names, folded from `factory-map.json5`'s
+	 * `factoryFields`. Present only for factory-emitting kinds.
+	 */
+```
+
+### `separator` (`packages/codegen/src/emitters/node-model.ts:107`)
+
+```text
+/**
+	 * Repeat-list separator surfaced when the assembled rule was a
+	 * `repeat` / `repeat1` (the former-container shape, Phase 1d.vii).
+	 * Field-carrying branches don't surface this — the repeat separator
+	 * is reachable via the per-value metadata on the relevant
+	 * `AssembledNonterminal` slot.
+	 */
+```
+
+### `text` (`packages/codegen/src/emitters/node-model.ts:129`)
+
+```text
+/**
+	 * Present when the pattern's sole realisation is a single fixed anonymous
+	 * literal (e.g. `_semicolon` → `";"`). Used by the render-module to gate
+	 * the u16 kind-id acceptance branch in the generated `FromNapiValue` impl.
+	 * Absent for content-bearing patterns (identifier, number, …).
+	 */
+```
+
+### `SerializedSeparatedList` (`packages/codegen/src/emitters/node-model.ts:167`)
+
+```text
+/**
+ * No wire/render/factory support yet (separator-as-slot Task 2) — this
+ * serialization is deliberately minimal (mirrors `SerializedMulti`'s shape
+ * using the analogous `AssembledSeparatedList` facts) rather than attempting
+ * to serialize the full separator rule tree, which is a later task's design
+ * surface.
+ */
+```
+
+### `polymorphVariants` (`packages/codegen/src/emitters/node-model.ts:201`)
+
+```text
+/**
+	 * PR-K: polymorph variant dispatch tables, folded from
+	 * `factory-map.json5`'s `polymorphVariants` (top-level, keyed by parent
+	 * kind). Built via the shared `buildFactoryMap` so the dispatch logic stays
+	 * single-sourced. Consumed by the validators' `nodeToConfig` /
+	 * `inferPolymorphVariant` / variant-adopted-kind scan.
+	 */
+```
+
+### `fieldAliasMap` (`packages/codegen/src/emitters/node-model.ts:209`)
+
+```text
+/**
+	 * PR-K: per-field alias-source map, folded from `factory-map.json5`'s
+	 * `fieldAliasMap` (top-level, keyed `"parentKind.fieldName"` →
+	 * `{ aliasTarget: sourceKind }`). The per-field `values[].parseKind`/`name`
+	 * carry the same facts, but the alias-source PAIRING + the
+	 * factory-emitting-kind FILTER (`collectAliasSourceKinds`) live only in
+	 * `buildFactoryMap`. Serializing the finished map keeps that filtering
+	 * single-sourced — a validator-side rebuild would have to re-derive it.
+	 * Consumed by `resolveAliasedKind`.
+	 */
+```
+
+### `factorySlots` (`packages/codegen/src/emitters/node-model.ts:220`)
+
+```text
+/**
+	 * PR-K: per-kind slot metadata, folded from `factory-map.json5`'s
+	 * `factorySlots` (top-level, keyed by kind). Same single-source rationale
+	 * as `fieldAliasMap` — the emitting-kind filter is `buildFactoryMap`'s, not
+	 * reconstructable from per-field data without duplicating it. Consumed by
+	 * `nodeToConfig`'s config-surface normalization.
+	 */
+```
+
+### `RefineKindInfo` (`packages/codegen/src/emitters/refine-emit.ts:16`)
+
+```text
+/**
+ * Per-kind refine descriptor collected once, consumed by every emitter
+ * that needs to walk the forms. Exposes the field-literal narrowing
+ * per form so downstream emission doesn't re-walk the rule tree.
+ */
+```
+
+### `narrowedFields` (`packages/codegen/src/emitters/refine-emit.ts:31`)
+
+```text
+/** Per-form field narrowings: each entry says "in this form, field
+	 *  `fieldName` should be narrowed to the literal `literal`". */
+```
+
+### `jinjaTemplates` (`packages/codegen/src/emitters/render-module-runner.ts:20`)
+
+```text
+/** Pre-computed jinja templates. When omitted, a fresh TemplateEmitter drives the loop. */
+```
+
+### `Grammar` (`packages/codegen/src/emitters/render-module.ts:81`)
+
+```text
+/** Grammars the emitter supports. Matches the three per-grammar packages. */
+```
+
+### `RustRenderModuleEmit` (`packages/codegen/src/emitters/render-module.ts:89`)
+
+```text
+/**
+ * Output of a single emit pass. Each field names a file path
+ * (relative to the repo root) and its exact contents. The CLI writes
+ * them; this module does not touch disk. Key invariant: re-running
+ * the emitter over the same inputs produces byte-identical output.
+ */
+```
+
+### `hashRs` (`packages/codegen/src/emitters/render-module.ts:96`)
+
+```text
+/** `rust/crates/sittir-{lang}/src/render/hash.rs` */
+```
+
+### `hashTs` (`packages/codegen/src/emitters/render-module.ts:98`)
+
+```text
+/** `packages/{lang}/src/hash.ts` */
+```
+
+### `templatesRs` (`packages/codegen/src/emitters/render-module.ts:100`)
+
+```text
+/** `rust/crates/sittir-{lang}/src/render/templates.rs` — per-kind Template structs */
+```
+
+### `transportRs` (`packages/codegen/src/emitters/render-module.ts:102`)
+
+```text
+/** `rust/crates/sittir-{lang}/src/render/transport.rs` — AnyTransport + FromNapiValue + typed dispatch + transport bridge */
+```
+
+### `libRs` (`packages/codegen/src/emitters/render-module.ts:104`)
+
+```text
+/** `rust/crates/sittir-{lang}/src/render/mod.rs` — exposes transport render entrypoints */
+```
+
+### `parseNames` (`packages/codegen/src/emitters/render-module.ts:329`)
+
+```text
+/** Storage→parse pairs merged from every walked supertype (the owner AND
+	 * flattened reserved sub-supertypes) — see `SupertypeRule.subtypeParseNames`.
+	 * Keyed by `subtypes[].subKind`; first-stamped pair wins on collision. */
+```
+
+### `hasTransportField` (`packages/codegen/src/emitters/render-module.ts:457`)
+
+```text
+/** True when this slot has a corresponding field in the transport struct.
+	 *  Slots without transport fields (virtual presentation slots from the
+	 *  template walker) must be defaulted to "" in the typed dispatch path. */
+```
+
+### `storageName` (`packages/codegen/src/emitters/render-module.ts:461`)
+
+```text
+/** Rust struct storage identifier for this slot — used to build `node.<storageName>`
+	 *  access expressions. Defaults to `name` when no assembled slot exists. */
+```
+
+### `isUnnamed` (`packages/codegen/src/emitters/render-module.ts:464`)
+
+```text
+/** True when this slot was inferred (not declared via `field(...)`) — i.e. it
+	 *  came from `slotModel.unnamed`. Consumers use this to
+	 *  route lookups through `node.children` instead of `node.fields[name]`. */
+```
+
+### `separator` (`packages/codegen/src/emitters/render-module.ts:470`)
+
+```text
+/** Per-slot separator stamped on the slot's NodeRef/TerminalValue metadata.
+	 *  Used by ListNonterminalView emission so each list-multiplicity slot
+	 *  gets its own separator (rather than a node-wide first-match). */
+```
+
+### `backingTransportField` (`packages/codegen/src/emitters/render-module.ts:474`)
+
+```text
+/**
+	 * When this surface slot was produced by inlining a group-lift helper
+	 * (e.g. template inlined `_const_item_optional1` and exposed its inner
+	 * field `value`), this field names the HELPER's transport struct field
+	 * (e.g. `const_item_optional1`) that must be matched at render time.
+	 *
+	 * When set, the render fn emits a match on the backing helper field
+	 * and then accesses the inner field (`v.<name>`). If the inner field
+	 * is itself `Option<T>` (`backingInnerRequired = false`), a nested
+	 * match is required to flatten it.
+	 */
+```
+
+### `backingInnerRequired` (`packages/codegen/src/emitters/render-module.ts:486`)
+
+```text
+/**
+	 * True when the inner field (`v.<name>` inside the group-lift helper)
+	 * is a required (non-Option) transport — Renderable::Transport(inner)
+	 * can be used directly.
+	 * False when the inner field is itself Option<T> — a nested match is
+	 * needed: `match &v.<name> { Some(inner) => Present(inner), None => Missing }`.
+	 * Only meaningful when `backingTransportField` is set.
+	 */
+```
+
+### `backingDirectField` (`packages/codegen/src/emitters/render-module.ts:495`)
+
+```text
+/**
+	 * When set, the transport struct ALSO has a direct field (`_<backingDirectField>`)
+	 * that the native CST reader can populate directly (since tree-sitter exposes
+	 * the inner CST field at the parent level, not wrapped inside a helper object).
+	 * The render fn tries this direct field first (for CST read path), then falls
+	 * back to `backingTransportField` (for factory path).
+	 * Only meaningful when `backingTransportField` is set.
+	 */
+```
+
+### `transportHasChildren` (`packages/codegen/src/emitters/render-module.ts:511`)
+
+```text
+/** True when the transport struct actually has a `children` field (structuralChildren.length > 0).
+	 *  The template may reference `children` (hasChildren === true) without a transport field —
+	 *  in that case we emit an empty ListNonterminalView instead of accessing node.children. */
+```
+
+### `childrenRequired` (`packages/codegen/src/emitters/render-module.ts:515`)
+
+```text
+/** True when the transport struct's `children` field is `Vec<...>` (not `Option<Vec<...>>`). */
+```
+
+### `childrenMultiple` (`packages/codegen/src/emitters/render-module.ts:517`)
+
+```text
+/** True when the transport struct's `children` field is `Vec<T>` (multiple elements possible).
+	 *  When false, the field is scalar: `T` (required) or `Option<T>` (optional). */
+```
+
+### `PerSlotChildEnum` (`packages/codegen/src/emitters/render-module.ts:2544`)
+
+```text
+/**
+ * Per-slot children enum entry: identifies a heterogeneous slot (named or
+ * unnamed) on a parent node, plus the set of concrete kinds it accepts.
+ *
+ * Per cleanup-rules.md §E1 (no special treatment for unnamed vs named slots):
+ * BOTH kinds of heterogeneous slots get per-slot typed enums. Per-slot enums
+ * give us Box-elision (non-recursive variants stay inline in the parent
+ * struct) that `Box<AnyTransport>` cannot.
+ */
+```
+
+### `typeName` (`packages/codegen/src/emitters/render-module.ts:2554`)
+
+```text
+/** PascalCase typeName of the parent node. */
+```
+
+### `ownerKind` (`packages/codegen/src/emitters/render-module.ts:2556`)
+
+```text
+/** Raw grammar kind of the parent node — owner key for SCC lookup. */
+```
+
+### `fieldName` (`packages/codegen/src/emitters/render-module.ts:2558`)
+
+```text
+/** Slot name — symmetric for named and unnamed slots (cleanup-rules §E1). */
+```
+
+### `kinds` (`packages/codegen/src/emitters/render-module.ts:2560`)
+
+```text
+/** Concrete kinds in this slot. */
+```
+
+### `literals` (`packages/codegen/src/emitters/render-module.ts:2562`)
+
+```text
+/** Terminal literal children that may appear in runtime `$children`. */
+```
+
+### `parseAliases` (`packages/codegen/src/emitters/render-module.ts:2564`)
+
+```text
+/**
+	 * `parseKind -> storageKind` pairs for this slot's values whose wire
+	 * `$type` (`parseKind`, e.g. `type_identifier`) diverges from the
+	 * canonical storage kind sittir models it under (`node`, e.g.
+	 * `identifier` — see `aliasTargetToSourceMapOf`'s doc comment,
+	 * node-map.ts). A visible-to-visible `alias($.identifier,
+	 * $.type_identifier)` reference site canonicalizes to the SOURCE kind
+	 * here (unlike a hidden hidden-rule alias, which `nodeMap.aliasedHiddenKinds`
+	 * already covers) — so the runtime kind id for the ALIAS TARGET
+	 * (`type_identifier`) is otherwise missing from the generated
+	 * `FromNapiValue` match arms. Threaded into `acceptedTransportKinds` so
+	 * the id arm for the storage kind (`identifier`) also accepts the
+	 * alias-target id, per slot (the alias-target set is per-reference-site,
+	 * not global to the kind).
+	 *
+	 * PR-K3c: retained ONLY for the name-based fallback — kinds present in
+	 * `acceptedIdsByKind` never consult it.
+	 */
+```
+
+### `acceptedIdsByKind` (`packages/codegen/src/emitters/render-module.ts:2583`)
+
+```text
+/**
+	 * Per-storage-kind accepted wire ids from the mint stamps
+	 * (`acceptedIdPairsByKindOf`, node-map.ts). Kinds absent here (id-less
+	 * values, supertype-expanded arms with no value in hand) fall back to
+	 * the name chain (`acceptedTransportKinds` + `kindIdByKind`).
+	 */
+```
+
+### `TransportMetadataField` (`packages/codegen/src/emitters/render-module.ts:3506`)
+
+```text
+/**
+ * Single source of truth for transport struct metadata fields.
+ * Every transport struct (branch, leaf, polymorph) carries these
+ * metadata fields. All emission helpers that produce struct field
+ * declarations, `None` initialisers, `obj.get(...)` reads, or
+ * `transport.<field>` bridge accesses derive from this array.
+ *
+ * @remarks
+ * `jsName` is the `$`-prefixed JS property name on the wire.
+ * `rustName` is the Rust struct field name.
+ * `rustType` is the Rust type for the struct field declaration.
+ * `bridgeMap` (optional) is an inline `.map(...)` transformation
+ * applied when reading the field value in the transport-to-NodeData
+ * bridge function. When absent the field is passed through directly.
+ * `needsExplicitTypeAnnotation` flags fields whose `obj.get(...)` call
+ * in the manual `FromNapiValue` impl requires a leading type annotation
+ * (e.g. `let x: Option<Foo> = obj.get(...)?;`).
+ */
+```
+
+### `enumTypeName` (`packages/codegen/src/emitters/render-module.ts:4081`)
+
+```text
+/**
+ * True when an `AssembledEnum` has exactly one member value.
+ *
+ * Single-member enums are presence markers — the field either holds
+ * the one known literal or is absent. The Rust transport layer maps
+ * these to plain `bool` rather than a single-variant enum type, and
+ * JS sends `true`/`false` (or omits the field) instead of an object
+ * with `$text`. This eliminates the enum struct entirely and lets
+ * `#[napi(object)]` handle the bool field automatically.
+ */
+```
+
+### `collectAliasSourceKinds` (`packages/codegen/src/emitters/shared.ts:48`)
+
+```text
+/**
+ * Compute the set of kind names referenced by any structural node in the
+ * NodeMap — walked once, consumed by multiple emitters.
+ *
+ * A kind is "referenced" when it appears in:
+ *   - A structural node's `fields[*].values` (node-ref kind names).
+ *   - A structural node's `children[*].values` (node-ref kind names).
+ *   - A polymorph form's fields / children (same, per form).
+ *   - A supertype's `subtypes` list.
+ *
+ * Emitters that decide which terminal aliases / Tree interfaces to emit
+ * use this to skip unreferenced terminals whose only consumer is a missing
+ * factory binding. Previously duplicated in `types.ts::computeReferencedKinds`,
+ * `type-test.ts` (inline walker), and `types.ts::collectAndEmitTokenTypeAliases`
+ * (inline walker) — one walk, three derivations that had to stay in sync.
+ *
+ * @param nodeMap - The assembled node map to walk.
+ * @returns The set of referenced kind strings.
+ */
+```
+
+### `TypeComponent` (`packages/codegen/src/emitters/shared.ts:285`)
+
+```text
+/**
+ * One component of a field or child type expression. Callers assemble a
+ * final TS type expression by formatting these (adding / omitting a `T.`
+ * prefix, wrapping literals in `JSON.stringify`, routing `missing` to a
+ * fallback stub, etc.).
+ *
+ * Three shapes:
+ *
+ * - **`nodeKind`** — a resolved node kind in the NodeMap. `value` is the
+ *   kind's computed `typeName` (already PascalCase, always a valid TS
+ *   identifier when emitted unquoted; callers that need a quoted form
+ *   when `typeName` is not ident-shaped should branch on
+ *   {@link isValidIdent}). `rawKind` is the original kind string — used
+ *   as the indexed-access key when falling back to `"kind-string"` under
+ *   unquoted-alias conditions.
+ * - **`literal`** — an inline string literal from a terminal value.
+ *   `value` is the raw string; callers typically `JSON.stringify` it.
+ * - **`missing`** — a kind referenced in the slot's values that isn't in
+ *   the NodeMap. `value` is a PascalCase fallback identifier; `rawKind`
+ *   is the raw kind. types.ts registers this for stub emission;
+ *   factories.ts prefixes with `T.`.
+ *
+ * `fieldTypeComponents` pre-inlines hidden single-literal keywords (the
+ * `_kw_*` pattern) as `literal` components so consumer emitters don't
+ * surface helper wrapper types.
+ */
+```
+
+### `PrimitiveFieldStorage` (`packages/codegen/src/emitters/shared.ts:441`)
+
+```text
+/** Rust struct-field storage for a `classifyPrimitiveField` verdict. */
+```
+
+### `UnnamedChildSlotFacts` (`packages/codegen/src/emitters/shared.ts:686`)
+
+```text
+/** Real facts about a container-shape branch's single unnamed child slot. */
+```
+
+### `RoundTripDiagnostic` (`packages/codegen/src/emitters/suggested.ts:127`)
+
+```text
+/**
+ * Round-trip diagnostic captured by corpus validation. One entry per
+ * corpus case that failed parse → readNode → render → reparse: we
+ * surface the offending rule kind plus an input/output diff so the
+ * user can spot the drop (typically a missing `joinBy` separator, a
+ * `transform()` patch that would wrap a repeated slot, or a render
+ * template gap). Emitted as a dedicated section at the top of
+ * overrides.suggested.ts.
+ */
+```
+
+### `entry` (`packages/codegen/src/emitters/suggested.ts:137`)
+
+```text
+/** Corpus entry name (e.g., "Async / await used as identifiers"). */
+```
+
+### `kind` (`packages/codegen/src/emitters/suggested.ts:139`)
+
+```text
+/** Rule<'link'> kind the validator was testing. */
+```
+
+### `source` (`packages/codegen/src/emitters/suggested.ts:141`)
+
+```text
+/**
+	 * Which validator raised the diagnostic:
+	 *  - 'render' — `parse → readNode → render → reparse`
+	 *    (template / routing / joinBy issues)
+	 *  - 'factory' — `parse → readNode → factory() → render → reparse`
+	 *    (factory API surface gaps: missing fields, wrong defaults)
+	 */
+```
+
+### `category` (`packages/codegen/src/emitters/suggested.ts:149`)
+
+```text
+/** What broke — 'parse-error' (rendered text unparseable) or 'ast-mismatch' (structural drift). */
+```
+
+### `input` (`packages/codegen/src/emitters/suggested.ts:151`)
+
+```text
+/** Input source text. */
+```
+
+### `rendered` (`packages/codegen/src/emitters/suggested.ts:153`)
+
+```text
+/** Rendered text (what the renderer emitted). Absent when parse-error occurs before render. */
+```
+
+### `message` (`packages/codegen/src/emitters/suggested.ts:155`)
+
+```text
+/** Human-readable message from the validator. */
+```
+
+### `roundTripFailures` (`packages/codegen/src/emitters/suggested.ts:162`)
+
+```text
+/** Corpus round-trip diagnostics, collected by CLI --roundtrip. */
+```
+
+### `kind` (`packages/codegen/src/emitters/suggested.ts:646`)
+
+```text
+/** Parent rule kind whose body contains the nested seq. */
+```
+
+### `path` (`packages/codegen/src/emitters/suggested.ts:648`)
+
+```text
+/** Slash-separated positional path to the seq within the rule body. */
+```
+
+### `discriminatorGuess` (`packages/codegen/src/emitters/suggested.ts:650`)
+
+```text
+/** Heuristic discriminator guess — first structural member's name, or position-based fallback. */
+```
+
+### `TemplateFile` (`packages/codegen/src/emitters/template-hash.ts:39`)
+
+```text
+/**
+ * Input to `computeTemplateBundleHash`. One entry per `.jinja` file
+ * in the grammar's templates directory.
+ */
+```
+
+### `filename` (`packages/codegen/src/emitters/template-hash.ts:44`)
+
+```text
+/**
+	 * Template filename, without the directory prefix (e.g.
+	 * `function_item.jinja`). Used only as the per-entry framing
+	 * label; the same template under two different filenames hashes
+	 * differently.
+	 */
+```
+
+### `content` (`packages/codegen/src/emitters/template-hash.ts:51`)
+
+```text
+/**
+	 * Template body. Line endings will be CRLF → LF normalized before
+	 * hashing, so the caller needn't pre-normalize.
+	 */
+```
+
+### `isWordChar` (`packages/codegen/src/emitters/templates.ts:77`)
+
+```text
+/** Grammar-faithful word-class test for a single char (ASCII table from
+	 *  wordCharAsciiTable + Unicode-alphanumeric fallback). Used for
+	 *  compile-time STATIC-STATIC seam spaces; dynamic seams belong to the
+	 *  runtime SpacingWriter with the same class. */
+```
+
+### `rules` (`packages/codegen/src/emitters/templates.ts:83`)
+
+```text
+/**
+	 * PR-137: `normalizedRules` (wrapper-deleted `RenderRule` view), not
+	 * `linkRules` — `emitSymbol`'s hidden-helper fallback (the only
+	 * consumer) used to bridge `linkRules[name]` through a per-call
+	 * `deleteWrapper()`; verified byte-identical to reading
+	 * `normalizedRules[name]` directly for every hidden ref the fallback
+	 * actually reaches, across all 3 grammars, so the bridge is gone.
+	 */
+```
+
+### `visitingHelpers` (`packages/codegen/src/emitters/templates.ts:92`)
+
+```text
+/**
+	 * Cycle guard for hidden-helper recursion in `emitSymbol`. A flat mutable
+	 * Set tracks visited helper names, keyed by `@${name}`, passed down via
+	 * this field. Each call to `emitOne()` resets it.
+	 */
+```
+
+### `ownerSlots` (`packages/codegen/src/emitters/templates.ts:98`)
+
+```text
+/**
+	 * Owner-level slots for the current node being emitted, keyed by
+	 * `storageName` (snake_case, matches `rule.fieldName.toLowerCase()`).
+	 * Used as a fallback when `slotByRuleId` lookup fails because the
+	 * symbol's rule `id` doesn't match any of the slot's `sourceRuleIds` — a gap
+	 * that occurs when `simplifyRule` creates new rule objects without
+	 * preserving the original ID. Set by `emitBranchTemplate` and
+	 * `emitGroupTemplate` before recursing into the node's `renderRule`.
+	 */
+```
+
+### `currentKind` (`packages/codegen/src/emitters/templates.ts:108`)
+
+```text
+/**
+	 * DIAGNOSTIC (`DBG_SLOT_MISS=1`): the kind currently being emitted, threaded
+	 * by `emitOne` so `lookupSlot` can attribute a `slotByRuleId` miss to a kind.
+	 */
+```
+
+### `generatedIdTables` (`packages/codegen/src/emitters/test.ts:34`)
+
+```text
+/**
+	 * Parser-symbol ID tables for numeric $type assertion emission.
+	 * When present, generated tests emit `TSKindId.X` in `toBe()` calls.
+	 * When absent (legacy callers), falls back to string literal checks.
+	 */
+```
+
+### `expectTestFailures` (`packages/codegen/src/emitters/test.ts:40`)
+
+```text
+/**
+	 * Kind → reason for known-failing tests (`expectTestFailures:` in the
+	 * grammar's overrides.ts). Listed kinds emit `describe.skip` with the
+	 * reason inline so the suite stays green on tracked defects without
+	 * masking regressions in other kinds.
+	 */
+```
+
+### `SlotClass` (`packages/codegen/src/emitters/transport-common.ts:10`)
+
+```text
+/**
+ * Classification of a transport slot by its type width.
+ *
+ * - `concrete`      — exactly one known kind; emit `<Kind>Transport` directly.
+ *                     `typeName` is the assembled node's typeName (PascalCase,
+ *                     leading-underscore-stripped) used to derive the Rust
+ *                     struct name and render fn name. Falls back to the kind
+ *                     string when nodeMap is unavailable (test / exported path).
+ * - `supertype`     — kind set is a subset of a known assembled supertype's
+ *                     resolved subtypes; emit `<Supertype>Transport` enum.
+ *                     `supertypeName` is the supertype's `typeName` (PascalCase).
+ * - `heterogeneous` — no grammar-bound type (theoretically unreachable in
+ *                     sittir's pipeline; retained as a compile-safety escape).
+ */
+```
+
+### `generatedIdTables` (`packages/codegen/src/emitters/type-test.ts:20`)
+
+```text
+/**
+	 * Parser-symbol ID tables for numeric $type assertion emission.
+	 * When present, generated type tests emit `TSKindId.X` in extends checks.
+	 * When absent (legacy callers), falls back to string literal checks.
+	 */
+```
+
+### `typeTestDiscriminant` (`packages/codegen/src/emitters/type-test.ts:28`)
+
+```text
+/**
+ * Returns the expected-type expression for a `_TypeExtends<X['$type'], ...>` check.
+ *
+ * @remarks
+ * When kindEntries is present (KindID pipeline), emits `TSKindId.X`. When
+ * absent (legacy / unit-test path), falls back to `'<kind>'` string literal.
+ *
+ * @param kind - The grammar kind string.
+ * @param kindEntries - Collected kind-enum entries, or `undefined` for fallback.
+ * @param nodeMap - The assembled node map.
+ * @returns Expression string suitable for `_TypeExtends<X['$type'], <expr>>`.
+ */
+```
+
+### `generatedIdTables` (`packages/codegen/src/emitters/wrap.ts:71`)
+
+```text
+/**
+	 * Parser-symbol ID tables (from `loadGeneratedIdTables`). When present,
+	 * per-kind wrap functions stamp `$type: TSKindId.X` to convert the string
+	 * from core's readNode to the numeric runtime discriminant. When absent,
+	 * $type is inherited from data (string passthrough — legacy mode).
+	 */
+```
+
+### `inlineKinds` (`packages/codegen/src/emitters/wrap.ts:78`)
+
+```text
+/**
+	 * Kind names listed in the grammar's `inline:` array. When a kind has no
+	 * parser symbol AND appears here, it's a deliberately inlined rule — warn
+	 * and skip. When absent from this list, it's a codegen bug — throw.
+	 */
+```
+
+### `synthesizedKinds` (`packages/codegen/src/emitters/wrap.ts:84`)
+
+```text
+/**
+	 * Kind names synthesized by evaluate's inline-alias-source pass. No parser
+	 * symbol by design; warn and skip.
+	 */
+```
+
+### `rawFactoryName` (`packages/codegen/src/emitters/wrap.ts:185`)
+
+```text
+/** rawFactoryName for $with — null when the kind has no factory. */
+```
+
+### `childSurface` (`packages/codegen/src/emitters/wrap.ts:187`)
+
+```text
+/** Child-factory surface when the node exposes positional child factories. */
+```
+
+### `ResolveSlotDrillConfig` (`packages/codegen/src/emitters/wrap.ts:220`)
+
+```text
+/**
+ * Resolve the drill-in expression for a field storage assignment.
+ * Returns the raw-field read expression AND the inline accessor body.
+ *
+ * @param f - The assembled nonterminal field descriptor.
+ * @param nodeMap - The assembled node map, needed to derive the per-field
+ *   element type for generic type arguments on drill helpers.
+ * @returns An object with `storeExpr` (storage init from `data` via
+ *   `readRawField` — bridges the `AnyNodeData` type which doesn't
+ *   declare per-kind `_<name>` properties) and `accessorBody` (reads
+ *   `this._<name>` directly — the literal declares the property so
+ *   TS resolves it from the inferred literal type).
+ */
+```
+
+### `candidateStorageKeys` (`packages/codegen/src/emitters/wrap.ts:241`)
+
+```text
+/**
+	 * Optional list of concrete `_<kind>` storage keys to probe in lieu of
+	 * the slot's nominal single key. When set, the storeExpr becomes a
+	 * `??`-coalesce chain over these keys. See `collectConcreteStorageKeys`.
+	 */
+```
+
+### `reclaimKindIdsExpr` (`packages/codegen/src/emitters/wrap.ts:247`)
+
+```text
+/**
+	 * Pre-built numeric-kindId array expression (e.g. `[TSKindId.DotDotEq,
+	 * TSKindId.DotDot]`) for a kindEnum slot's member discriminants. Drives the
+	 * `$other` reclamation fallback (option B). Built by the caller, which holds
+	 * `nodeMap` + `kindEntries` for `kindDiscriminantExpr` resolution.
+	 */
+```
+
+### `kindEnumTextIdPairs` (`packages/codegen/src/emitters/wrap.ts:254`)
+
+```text
+/**
+	 * Stamped text→member-kindId pairs for a kindEnum slot (see
+	 * `kindEnumTextIdPairs`, shared.ts). Baked into `projectKindEnumStorage`'s
+	 * call so wrapper-materialized enum reads project to NUMERIC member ids on
+	 * the wire (id-first contract) instead of raw text.
+	 */
+```
+
+### `forceUnknownElement` (`packages/codegen/src/emitters/wrap.ts:261`)
+
+```text
+/**
+	 * Emit `normalizeRepeatedWrapSlot<unknown>`/`normalizeSingularWrapSlot<unknown>`
+	 * with an EXPLICIT type argument instead of leaving `T` to be inferred from
+	 * `reclaimedStoreExpr`. For a multi-field `AssembledSeparatedList`
+	 * (`emitSeparatedListWrap`'s `_content` local — see its doc comment), the
+	 * probe combines candidate storage keys from MORE THAN ONE real slot (e.g.
+	 * TypeScript's `enum_body_group1`: `PropertyName`-kind keys AND a
+	 * `EnumAssignment`-kind key), which don't share a common element type.
+	 * `_content` there is consumed only by `_hasSeparatorFlank`/
+	 * `_separatorKindOf` (both take `readonly unknown[]`), never stored or
+	 * exposed as a typed accessor — so forcing `T = unknown` is the correct
+	 * type, not a type-hole cast: it matches what the value is actually used
+	 * for, rather than masking a real mismatch.
+	 */
+```
+
+### `computeCollidedReclaimKinds` (`packages/codegen/src/emitters/wrap.ts:819`)
+
+```text
+/**
+ * Emit a per-kind wrap function using shape A:
+ * inline object literal with `_<name>` storage, method shorthand accessors,
+ * inline `$with` property, wrapped by `withMethods<T>`.
+ *
+ * No `Object.defineProperty`, no `freezeNodeData`, no `Record<string,unknown>` casts.
+ *
+ * @param node - The assembled node descriptor (kind, typeName, rawFactoryName).
+ * @param fields - Named field slots for this node.
+ * @param children - Unnamed child slots for this node.
+ * @param kindEntries - KindEnumEntry list for numeric `$type` stamping; undefined for legacy.
+ * @param nodeMap - The assembled node map (for kindIdMemberName).
+ * @returns Emitted TypeScript source string for the wrap function.
+ */
+```

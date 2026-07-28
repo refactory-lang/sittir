@@ -286,12 +286,6 @@ function relaxForOptionalBody(refName: string, multiplicity: Multiplicity): Mult
 // 2. Slot model & derivation
 // ============================================================================
 
-/**
- * Unresolved kind reference — used during derivation, before the
- * `resolveSlotRefs` pass replaces it with the actual AssembledNode.
- * Kept in the `NodeRef.node` union so diagnostic / serialization paths
- * can surface dangling references as typed values.
- */
 export interface UnresolvedRef {
 	readonly kind: 'unresolved-ref';
 	readonly name: string;
@@ -308,10 +302,6 @@ export interface UnresolvedRef {
  * when this value's `multiplicity` is `'array'` or `'nonEmptyArray'`.
  * Populated by the unified `deriveSlots` walk — undefined on values from
  * non-repeat positions.
- */
-/**
- * Slot taxonomy classification for branch/group nodes.
- * Computed post-assembly by `computeSlotClasses()`.
  */
 export type BranchSlotClass =
 	| { tag: 'multiSlot' }
@@ -332,23 +322,6 @@ export interface FieldStorageInfo {
 	readonly collapsesMultiplicity: boolean;
 }
 
-/**
- * A single entry inside a slot's `values` array. It is EITHER a node
- * reference (`node` set, `value` absent) OR an inline string literal (`value`
- * set, `node` absent) — discriminated structurally by presence, via
- * {@link isNodeRef} / {@link isTerminalValue}, NOT by a `kind` tag.
- *
- * PR-P Task 3 folded the former two interfaces (`NodeRef` + `TerminalValue`)
- * into this one: a literal is now a `NodeRef` carrying `value` (and the
- * literal-only `immediate` / `tokenized` token-wrapper flags) instead of a
- * `node`. The value union is `NodeRef[]`.
- *
- * `immediate` is set when the literal's rule was wrapped in a `TokenRule` with
- * `immediate: true` (`token.immediate(...)` / tree-sitter `IMMEDIATE_TOKEN`);
- * render emits the literal adjacent to the preceding token (no leading
- * whitespace). `tokenized` is set when wrapped in any `TokenRule`. Absent /
- * false → default field-spacing rules.
- */
 export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	// Node-reference target. Present for true references; absent for inline
 	// literals (which carry `value` instead). Mutually exclusive with `value`.
@@ -398,11 +371,6 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly tokenized?: boolean;
 }
 
-/**
- * The slot-value type. Formerly a `NodeRef | TerminalValue` union; now a
- * single `NodeRef` (literals fold in as `value`-bearing refs). Alias retained
- * so the many `NodeOrTerminal[]` annotations need not all change at once.
- */
 export type NodeOrTerminal = NodeRef;
 
 export function isNodeRef(v: NodeOrTerminal): v is NodeRef & { node: AssembledNode | UnresolvedRef } {
@@ -961,43 +929,16 @@ export interface ParseKindCollisionContext {
 	readonly ruleSignatures: Readonly<Record<string, string>>;
 }
 
-/**
- * Grammar-wide inputs threaded through node-map's slot derivation
- * (Principle #14 / §7.7 — R1). Every field is optional because the
- * derivation entry points accept partial context (test fixtures pass
- * none); per-kind record builders narrow with {@link KindedDeriveCtx}.
- * Recursion-LOCAL traversal state (e.g. `multiplicity` in
- * `deriveValuesForRule`) stays an explicit parameter per CW6 — never ctx.
- */
 export interface DeriveCtx {
-	/** Generated kind-id table — resolves anonymous-token kinds. */
 	readonly kindEntries?: readonly GeneratedKindEntry[];
-	/** Owning kind under derivation — audit + diagnostics attribution. */
 	readonly kindName?: string;
-	/** Canonical rule signatures for parse-kind collision resolution. */
 	readonly collision?: ParseKindCollisionContext;
-	/** Visible alias target → source kinds (alias-source slot expansion). */
 	readonly visibleAliasTargets?: ReadonlyMap<string, readonly string[]>;
-	/** Post-simplify rules, for alias-source value derivation. */
 	readonly simplifiedRules?: Record<string, SimplifiedRule>;
-	/** Assembled node table — resolves UnresolvedRef in the parameterless cascade. */
 	readonly nodes?: ReadonlyMap<string, AssembledNodeBase<Rule<'link'>>>;
-	/**
-	 * Union-slot design §5 (PR 1.5): when deriving values for the SANCTIONED
-	 * union-routing choice only (`collect-slots.ts` restricts a choice's
-	 * members to its `unionArms ∪ degenerateNamedArms` and calls `buildSlot`
-	 * with `sanctionedUnion = true`), stamp each degenerate arm's OWN
-	 * `fieldName` onto its derived values as `parseName`. Scoped to this ctx
-	 * flag (rather than firing on any fieldName-carrying CHOICE member) so the
-	 * pre-existing shared-arm-fieldName choice (operator enums — `buildSlot`
-	 * called on the WHOLE original choice, `sanctionedUnion` false) keeps
-	 * deriving `parseNames` from kinds only; only the restricted union-slot
-	 * choice's arms are eligible for label-routing.
-	 */
 	readonly stampArmFieldNamesAsParseName?: boolean;
 }
 
-/** {@link DeriveCtx} with the owning kind bound — per-kind record builders. */
 export interface KindedDeriveCtx extends DeriveCtx {
 	readonly kindName: string;
 }
@@ -1561,17 +1502,6 @@ export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 		return this.factoryName === undefined;
 	}
 
-	/**
-	 * True when this node's rule shape is a text template — a rule whose
-	 * parse result is emitted as a single string of text rather than a
-	 * structured config/children value. Two sources: verbatim-token-stream
-	 * rules (bare-literal sequences with no fields / symbols), and rules
-	 * that reach an external hidden token.
-	 *
-	 * Consumers (emitters) use this instead of reading `node.rule` directly —
-	 * per the project convention that only renderTemplate() methods on
-	 * AssembledNode subclasses reach into the raw rule.
-	 */
 	get rawFactoryName(): string | undefined {
 		if (this.factoryName === undefined) return undefined;
 		return `build${this.typeName}`;
@@ -1609,28 +1539,13 @@ export abstract class AssembledNodeBase<R extends AnyRule = Rule<'link'>> {
 // 3. AssembledNonterminal & naming projection
 // ============================================================================
 
-/** Stored (non-computed) constructor inputs for {@link AssembledNonterminal}. */
 export interface AssembledNonterminalInit {
 	readonly values: readonly NodeOrTerminal[];
 	readonly fieldName?: string;
 	readonly hasTrailing: boolean;
 	readonly hasLeading: boolean;
-	/**
-	 * Rule<'link'>-ids of every simplified/render-rule position that produced this slot —
-	 * see `AssembledNonterminal.sourceRuleIds`.
-	 */
 	readonly sourceRuleIds: readonly RuleId[];
-	/** Validator-only facts. OPAQUE to the compiler (see {@link OpaqueFacts}) —
-	 *  never read here to drive logic or emission; defaults to empty. */
 	readonly metadata?: OpaqueFacts;
-	/**
-	 * (debt PR-P1, item 4) Blind passthrough of the owning rule's opaque
-	 * `RuleMetadata` bag (`types/rule.ts`'s `RuleBase.metadata`). Collect-slots
-	 * copies this WITHOUT reading it — never branch on it here. Only a
-	 * dsl-sanctioned reader (`dsl/rule-metadata.ts`'s `readRuleMetadata`, from
-	 * enrich/wire/diagnostics code) may open it, e.g. for node-model
-	 * serialization or validator diagnostics.
-	 */
 	readonly ruleMetadata?: RuleMetadata;
 	storageInfo?: FieldStorageInfo;
 }
@@ -1648,14 +1563,6 @@ export function mergeSourceRuleIds(...groups: readonly (readonly RuleId[] | unde
 	return out;
 }
 
-/**
- * A fully-resolved slot produced by the collect-slots / assemble pipeline.
- *
- * Naming properties (`storageName`, `name`, `configKey`, `propertyName`,
- * `paramName`, `parseNames`) are computed getters derived from `values` +
- * `fieldName` via {@link projectSlotNaming}. They are never stored or spread
- * — use `.with(overrides)` to create a modified copy.
- */
 export class AssembledNonterminal {
 	readonly values: readonly NodeOrTerminal[];
 	readonly fieldName?: string;
@@ -1825,7 +1732,6 @@ export function acceptedIdPairsByKindOf(slot: {
 	return out;
 }
 
-/** The slot-naming inputs a projection needs (the only stored facts). */
 export interface SlotNamingInputs {
 	readonly fieldName?: string;
 	readonly values: readonly NodeOrTerminal[];
@@ -2337,22 +2243,6 @@ export function unwrapStructuralPassthroughs(rule: Rule<'link'>): Rule<'link'> {
  */
 export abstract class AssembledLeaf<R extends AnyRule = Rule<'link'>> extends AssembledNodeBase<R> {}
 
-/**
- * Open-text non-branch kind whose surface form is matched by a regex
- * (PatternRule<'link'>) or is a pure-text structural rule (terminal-shape, no
- * fields, no symbol refs). Examples: `identifier`, `integer_literal`,
- * `string_content`.
- *
- * PR-P Task 2: widened from `PatternRule<'link'> | TerminalRule` to `Rule<'link'>` because
- * TerminalRule was deleted — terminal-shape kinds now arrive with their
- * original unwrapped rule (may be SeqRule<'link'>, ChoiceRule<'link'>, etc.).
- *
- * Renamed from the original `AssembledLeaf` class. The `modelType`
- * discriminant is `'pattern'` (renamed from `'leaf'` during the
- * taxonomy-driven emitter dispatch refactor). The new `AssembledLeaf`
- * is now an abstract base (above); `AssembledPattern` is one of its
- * four concrete subclasses.
- */
 export class AssembledPattern extends AssembledLeaf<Rule<'link'>> {
 	readonly modelType = 'pattern' as const;
 
@@ -2475,12 +2365,6 @@ export class AssembledToken extends AssembledLeaf<StringRule<'link'> | TokenRule
 		return `${JSON.stringify(this.rule.value)} as const`;
 	}
 
-	/**
-	 * Child-context stamp: wrap the single-literal text in a NodeData
-	 * object. `$named: false` — tokens are anonymous in tree-sitter's
-	 * output (non-word literals like `..` / `=>` never have a named
-	 * entry in `node-types.json`).
-	 */
 	get text(): string | undefined {
 		if (this.rule.type === STRING) return this.rule.value;
 		return undefined;
@@ -2583,31 +2467,6 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule<'link'> 
 	}
 }
 
-/**
- * AssembledMulti — hidden repeat helpers that tree-sitter inlines at
- * parse time.
- *
- * Shape: a hidden rule whose top-level content is `repeat` or `repeat1`
- * (possibly wrapped in `optional` / `variant`). Canonical case: python
- *   `_collection_elements: repeat1(choice(expression, yield, list_splat, ...))`
- * used inside `tuple`, `list`, `set`, etc.
- *
- * These never surface as parse-tree nodes — tree-sitter expands the
- * repeat in-place at every referrer. Our codegen therefore:
- *   - Emits NO interface / factory / from-resolver / wrap function /
- *     render template for the helper itself.
- *   - Emits a TYPE ALIAS naming the element union:
- *       `export type CollectionElements = Expression | Yield | ListSplat | …`
- *   - Inlines the repeat at every referrer (`inlineRefs` extends
- *     to cover `multi` alongside `group`), so the referrer's walker
- *     sees `repeat1(...)` directly and sets `multiple: true` on the
- *     child slot → rest-params factory.
- *
- * Mirrors the existing "hidden helper" story:
- *   group    — hidden seq with fields  (inline fields)
- *   supertype — hidden choice of symbols (dispatch to one subtype)
- *   multi    — hidden repeat of union    (inline as multi child slot)
- */
 export class AssembledMulti extends AssembledNodeBase<RepeatRule | Repeat1Rule> {
 	readonly modelType = 'multi' as const;
 	// rule narrowed — multis are hidden repeat helpers. Classifier
@@ -2761,21 +2620,6 @@ export class AssembledGroup extends AssembledNodeBase<Rule<'link'>> {
 	}
 }
 
-/**
- * A repeated rule with genuine per-instance separator variability — either
- * the separator itself is nonterminal (multiple possible literal kinds), or
- * it's a literal separator with an optional leading/trailing flank. See
- * docs/superpowers/specs/2026-07-12-separator-as-slot-design.md. Classified
- * by `assemble.ts`'s `isSeparatedListShape` — distinct from `AssembledMulti`
- * (hidden repeat-shape helpers tree-sitter inlines away, an unrelated
- * concept sharing only the REPEAT/REPEAT1 rule type).
- *
- * Unlike `AssembledGroup`, does NOT route through
- * `buildSlotsRecord`/`deriveSlots` (the general-purpose slot-collection/
- * merge machinery this design explicitly avoids) — it has exactly two
- * fixed-purpose fields (`elements`, `separatorRule`), derived directly via
- * `deriveValuesForRule`.
- */
 export class AssembledSeparatedList extends AssembledNodeBase<RepeatRule | Repeat1Rule> {
 	readonly modelType = 'separatedList' as const;
 	readonly elements: readonly NodeOrTerminal[];

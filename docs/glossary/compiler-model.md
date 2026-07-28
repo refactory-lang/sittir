@@ -1147,3 +1147,279 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `.slots`; non-structural kinds return `[]`.
  */
 ```
+
+### `UnresolvedRef` (`packages/codegen/src/compiler/model/node-map.ts:289`)
+
+```text
+/**
+ * Unresolved kind reference — used during derivation, before the
+ * `resolveSlotRefs` pass replaces it with the actual AssembledNode.
+ * Kept in the `NodeRef.node` union so diagnostic / serialization paths
+ * can surface dangling references as typed values.
+ */
+```
+
+### `BranchSlotClass` (`packages/codegen/src/compiler/model/node-map.ts:312`)
+
+```text
+/**
+ * Slot taxonomy classification for branch/group nodes.
+ * Computed post-assembly by `computeSlotClasses()`.
+ */
+```
+
+### `NodeRef` (`packages/codegen/src/compiler/model/node-map.ts:335`)
+
+```text
+/**
+ * A single entry inside a slot's `values` array. It is EITHER a node
+ * reference (`node` set, `value` absent) OR an inline string literal (`value`
+ * set, `node` absent) — discriminated structurally by presence, via
+ * {@link isNodeRef} / {@link isTerminalValue}, NOT by a `kind` tag.
+ *
+ * PR-P Task 3 folded the former two interfaces (`NodeRef` + `TerminalValue`)
+ * into this one: a literal is now a `NodeRef` carrying `value` (and the
+ * literal-only `immediate` / `tokenized` token-wrapper flags) instead of a
+ * `node`. The value union is `NodeRef[]`.
+ *
+ * `immediate` is set when the literal's rule was wrapped in a `TokenRule` with
+ * `immediate: true` (`token.immediate(...)` / tree-sitter `IMMEDIATE_TOKEN`);
+ * render emits the literal adjacent to the preceding token (no leading
+ * whitespace). `tokenized` is set when wrapped in any `TokenRule`. Absent /
+ * false → default field-spacing rules.
+ */
+```
+
+### `NodeOrTerminal` (`packages/codegen/src/compiler/model/node-map.ts:401`)
+
+```text
+/**
+ * The slot-value type. Formerly a `NodeRef | TerminalValue` union; now a
+ * single `NodeRef` (literals fold in as `value`-bearing refs). Alias retained
+ * so the many `NodeOrTerminal[]` annotations need not all change at once.
+ */
+```
+
+### `DeriveCtx` (`packages/codegen/src/compiler/model/node-map.ts:964`)
+
+```text
+/**
+ * Grammar-wide inputs threaded through node-map's slot derivation
+ * (Principle #14 / §7.7 — R1). Every field is optional because the
+ * derivation entry points accept partial context (test fixtures pass
+ * none); per-kind record builders narrow with {@link KindedDeriveCtx}.
+ * Recursion-LOCAL traversal state (e.g. `multiplicity` in
+ * `deriveValuesForRule`) stays an explicit parameter per CW6 — never ctx.
+ */
+```
+
+### `kindEntries` (`packages/codegen/src/compiler/model/node-map.ts:973`)
+
+```text
+/** Generated kind-id table — resolves anonymous-token kinds. */
+```
+
+### `kindName` (`packages/codegen/src/compiler/model/node-map.ts:975`)
+
+```text
+/** Owning kind under derivation — audit + diagnostics attribution. */
+```
+
+### `collision` (`packages/codegen/src/compiler/model/node-map.ts:977`)
+
+```text
+/** Canonical rule signatures for parse-kind collision resolution. */
+```
+
+### `visibleAliasTargets` (`packages/codegen/src/compiler/model/node-map.ts:979`)
+
+```text
+/** Visible alias target → source kinds (alias-source slot expansion). */
+```
+
+### `simplifiedRules` (`packages/codegen/src/compiler/model/node-map.ts:981`)
+
+```text
+/** Post-simplify rules, for alias-source value derivation. */
+```
+
+### `nodes` (`packages/codegen/src/compiler/model/node-map.ts:983`)
+
+```text
+/** Assembled node table — resolves UnresolvedRef in the parameterless cascade. */
+```
+
+### `stampArmFieldNamesAsParseName` (`packages/codegen/src/compiler/model/node-map.ts:985`)
+
+```text
+/**
+	 * Union-slot design §5 (PR 1.5): when deriving values for the SANCTIONED
+	 * union-routing choice only (`collect-slots.ts` restricts a choice's
+	 * members to its `unionArms ∪ degenerateNamedArms` and calls `buildSlot`
+	 * with `sanctionedUnion = true`), stamp each degenerate arm's OWN
+	 * `fieldName` onto its derived values as `parseName`. Scoped to this ctx
+	 * flag (rather than firing on any fieldName-carrying CHOICE member) so the
+	 * pre-existing shared-arm-fieldName choice (operator enums — `buildSlot`
+	 * called on the WHOLE original choice, `sanctionedUnion` false) keeps
+	 * deriving `parseNames` from kinds only; only the restricted union-slot
+	 * choice's arms are eligible for label-routing.
+	 */
+```
+
+### `KindedDeriveCtx` (`packages/codegen/src/compiler/model/node-map.ts:1000`)
+
+```text
+/** {@link DeriveCtx} with the owning kind bound — per-kind record builders. */
+```
+
+### `rawFactoryName` (`packages/codegen/src/compiler/model/node-map.ts:1564`)
+
+```text
+/**
+	 * True when this node's rule shape is a text template — a rule whose
+	 * parse result is emitted as a single string of text rather than a
+	 * structured config/children value. Two sources: verbatim-token-stream
+	 * rules (bare-literal sequences with no fields / symbols), and rules
+	 * that reach an external hidden token.
+	 *
+	 * Consumers (emitters) use this instead of reading `node.rule` directly —
+	 * per the project convention that only renderTemplate() methods on
+	 * AssembledNode subclasses reach into the raw rule.
+	 */
+```
+
+### `AssembledNonterminalInit` (`packages/codegen/src/compiler/model/node-map.ts:1612`)
+
+```text
+/** Stored (non-computed) constructor inputs for {@link AssembledNonterminal}. */
+```
+
+### `sourceRuleIds` (`packages/codegen/src/compiler/model/node-map.ts:1618`)
+
+```text
+/**
+	 * Rule<'link'>-ids of every simplified/render-rule position that produced this slot —
+	 * see `AssembledNonterminal.sourceRuleIds`.
+	 */
+```
+
+### `metadata` (`packages/codegen/src/compiler/model/node-map.ts:1623`)
+
+```text
+/** Validator-only facts. OPAQUE to the compiler (see {@link OpaqueFacts}) —
+	 *  never read here to drive logic or emission; defaults to empty. */
+```
+
+### `ruleMetadata` (`packages/codegen/src/compiler/model/node-map.ts:1626`)
+
+```text
+/**
+	 * (debt PR-P1, item 4) Blind passthrough of the owning rule's opaque
+	 * `RuleMetadata` bag (`types/rule.ts`'s `RuleBase.metadata`). Collect-slots
+	 * copies this WITHOUT reading it — never branch on it here. Only a
+	 * dsl-sanctioned reader (`dsl/rule-metadata.ts`'s `readRuleMetadata`, from
+	 * enrich/wire/diagnostics code) may open it, e.g. for node-model
+	 * serialization or validator diagnostics.
+	 */
+```
+
+### `AssembledNonterminal` (`packages/codegen/src/compiler/model/node-map.ts:1651`)
+
+```text
+/**
+ * A fully-resolved slot produced by the collect-slots / assemble pipeline.
+ *
+ * Naming properties (`storageName`, `name`, `configKey`, `propertyName`,
+ * `paramName`, `parseNames`) are computed getters derived from `values` +
+ * `fieldName` via {@link projectSlotNaming}. They are never stored or spread
+ * — use `.with(overrides)` to create a modified copy.
+ */
+```
+
+### `SlotNamingInputs` (`packages/codegen/src/compiler/model/node-map.ts:1828`)
+
+```text
+/** The slot-naming inputs a projection needs (the only stored facts). */
+```
+
+### `AssembledPattern` (`packages/codegen/src/compiler/model/node-map.ts:2340`)
+
+```text
+/**
+ * Open-text non-branch kind whose surface form is matched by a regex
+ * (PatternRule<'link'>) or is a pure-text structural rule (terminal-shape, no
+ * fields, no symbol refs). Examples: `identifier`, `integer_literal`,
+ * `string_content`.
+ *
+ * PR-P Task 2: widened from `PatternRule<'link'> | TerminalRule` to `Rule<'link'>` because
+ * TerminalRule was deleted — terminal-shape kinds now arrive with their
+ * original unwrapped rule (may be SeqRule<'link'>, ChoiceRule<'link'>, etc.).
+ *
+ * Renamed from the original `AssembledLeaf` class. The `modelType`
+ * discriminant is `'pattern'` (renamed from `'leaf'` during the
+ * taxonomy-driven emitter dispatch refactor). The new `AssembledLeaf`
+ * is now an abstract base (above); `AssembledPattern` is one of its
+ * four concrete subclasses.
+ */
+```
+
+### `text` (`packages/codegen/src/compiler/model/node-map.ts:2478`)
+
+```text
+/**
+	 * Child-context stamp: wrap the single-literal text in a NodeData
+	 * object. `$named: false` — tokens are anonymous in tree-sitter's
+	 * output (non-word literals like `..` / `=>` never have a named
+	 * entry in `node-types.json`).
+	 */
+```
+
+### `AssembledMulti` (`packages/codegen/src/compiler/model/node-map.ts:2586`)
+
+```text
+/**
+ * AssembledMulti — hidden repeat helpers that tree-sitter inlines at
+ * parse time.
+ *
+ * Shape: a hidden rule whose top-level content is `repeat` or `repeat1`
+ * (possibly wrapped in `optional` / `variant`). Canonical case: python
+ *   `_collection_elements: repeat1(choice(expression, yield, list_splat, ...))`
+ * used inside `tuple`, `list`, `set`, etc.
+ *
+ * These never surface as parse-tree nodes — tree-sitter expands the
+ * repeat in-place at every referrer. Our codegen therefore:
+ *   - Emits NO interface / factory / from-resolver / wrap function /
+ *     render template for the helper itself.
+ *   - Emits a TYPE ALIAS naming the element union:
+ *       `export type CollectionElements = Expression | Yield | ListSplat | …`
+ *   - Inlines the repeat at every referrer (`inlineRefs` extends
+ *     to cover `multi` alongside `group`), so the referrer's walker
+ *     sees `repeat1(...)` directly and sets `multiple: true` on the
+ *     child slot → rest-params factory.
+ *
+ * Mirrors the existing "hidden helper" story:
+ *   group    — hidden seq with fields  (inline fields)
+ *   supertype — hidden choice of symbols (dispatch to one subtype)
+ *   multi    — hidden repeat of union    (inline as multi child slot)
+ */
+```
+
+### `AssembledSeparatedList` (`packages/codegen/src/compiler/model/node-map.ts:2764`)
+
+```text
+/**
+ * A repeated rule with genuine per-instance separator variability — either
+ * the separator itself is nonterminal (multiple possible literal kinds), or
+ * it's a literal separator with an optional leading/trailing flank. See
+ * docs/superpowers/specs/2026-07-12-separator-as-slot-design.md. Classified
+ * by `assemble.ts`'s `isSeparatedListShape` — distinct from `AssembledMulti`
+ * (hidden repeat-shape helpers tree-sitter inlines away, an unrelated
+ * concept sharing only the REPEAT/REPEAT1 rule type).
+ *
+ * Unlike `AssembledGroup`, does NOT route through
+ * `buildSlotsRecord`/`deriveSlots` (the general-purpose slot-collection/
+ * merge machinery this design explicitly avoids) — it has exactly two
+ * fixed-purpose fields (`elements`, `separatorRule`), derived directly via
+ * `deriveValuesForRule`.
+ */
+```

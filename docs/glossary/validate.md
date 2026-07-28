@@ -51,3 +51,57 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * no file I/O.
  */
 ```
+
+### `renderable` (`packages/codegen/src/validate/renderable.ts:35`)
+
+```text
+/** Count of kinds that are renderable via one of the three paths. */
+```
+
+### `missing` (`packages/codegen/src/validate/renderable.ts:37`)
+
+```text
+/** Kinds that have NO viable path. */
+```
+
+### `RenderKindPath` (`packages/codegen/src/validate/rule-lookup.ts:16`)
+
+```text
+/**
+ * Classification of how a kind reaches a rendered output string.
+ *
+ *   `template` — the kind has an entry in `templates directory` that
+ *     render() substitutes into. Branches, containers, groups,
+ *     polymorphs.
+ *   `text`     — the kind is a pure leaf (string/pattern/keyword/
+ *     enum), so `render(node)` just returns `node.text`.
+ *   `dispatch` — the kind is a supertype; render dispatches to the
+ *     concrete subtype's rule. Never addressed directly.
+ *   `none`     — the kind is a hidden token or an unreachable
+ *     rule that render() can't produce.
+ */
+```
+
+### `kinds` (`packages/codegen/src/validate/rule-lookup.ts:32`)
+
+```text
+/** All kinds known to the NodeMap, keyed by string. */
+```
+
+### `renderable` (`packages/codegen/src/validate/rule-lookup.ts:34`)
+
+```text
+/** Kinds that reach a render path: template | text | dispatch. */
+```
+
+### `templated` (`packages/codegen/src/validate/rule-lookup.ts:36`)
+
+```text
+/** Kinds with a template.yaml rule entry (templates only). */
+```
+
+### `path` (`packages/codegen/src/validate/rule-lookup.ts:38`)
+
+```text
+/** Classification per kind. */
+```

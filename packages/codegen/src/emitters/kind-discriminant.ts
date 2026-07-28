@@ -29,23 +29,8 @@ export interface KindEnumEntry {
 	readonly kind: string;
 	readonly member: string;
 	readonly id: number;
-	/**
-	 * The alias occurrence's own runtime symbol id, when this kind's ONLY
-	 * visible identity comes from an `alias_sym_*` occurrence distinct from
-	 * its plain `sym_*` storage id (see `GeneratedIdEntry.parseId`). Runtime
-	 * `$type` dispatch tables must also map THIS id to the kind — it's what
-	 * tree-sitter actually emits at the aliased position.
-	 */
 	readonly parseId?: number;
-	/**
-	 * Symbol name from `ts_symbol_names[]`, when distinct from `kind`.
-	 * Anonymous tokens (`anon_sym_PLUS`) carry the literal text (`"+"`)
-	 * here while `kind` is the parser symbol name (`"PLUS"`). Used to
-	 * emit additional `kindIdFromName` switch arms so JS callers passing
-	 * the literal text can also resolve to the correct id.
-	 */
 	readonly symbolName?: string;
-	/** True when this entry came from an `anon_sym_*` parser symbol. */
 	readonly anon?: boolean;
 }
 
@@ -138,14 +123,6 @@ export function kindDiscriminantExpr(kind: string, nodeMap: NodeMap, kindEntries
 	return `TSKindId.${entry.member}`;
 }
 
-/**
- * {@link kindDiscriminantExpr} for call sites holding a LITERAL TOKEN TEXT
- * (a `STRING` rule's value) rather than a kind/rule name — resolves via
- * {@link findKindEntryForLiteral} so the anonymous token wins over a
- * same-spelled named rule (#129). The grammar's own rule-type
- * discrimination (STRING vs SYMBOL) decides which of the two functions a
- * call site uses; this must never be called with a rule name.
- */
 export function kindDiscriminantExprForId(id: number, kindEntries: readonly KindEnumEntry[]): string | undefined {
 	const entry = kindEntries.find((e) => e.id === id);
 	return entry === undefined ? undefined : `TSKindId.${entry.member}`;
@@ -172,7 +149,6 @@ function toIdMap(ids: GeneratedIdTables['kindIds']): Map<string, number> {
 
 interface CatalogRow {
 	readonly id?: number;
-	/** See `GeneratedIdEntry.parseId` — the alias occurrence's own runtime id, when distinct from `id`. */
 	readonly parseId?: number;
 	readonly parser?: {
 		readonly cSymbol: string;

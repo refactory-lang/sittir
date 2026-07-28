@@ -22,20 +22,7 @@ export interface ParseKindCollisionValue<T> {
 	readonly original: T;
 	readonly parseKind?: string;
 	readonly storageKind?: string;
-	/**
-	 * Mint-time parser id of `parseKind` (PR-K3e). When present, bucket
-	 * identity is the id, not the name — same-spelled parse kinds with
-	 * different parser symbols (#129 class) land in different buckets.
-	 * Absent for id-less pipelines (enrich runs pre-parser).
-	 */
 	readonly parseKindId?: number;
-	/**
-	 * Mint-time parser id of `storageKind` (PR-K3e). When present,
-	 * storage-kind distinctness is decided by id: same-id values are the
-	 * same runtime identity even under different names (hidden/visible
-	 * twins), and differing ids still fall through to the structural
-	 * signature for the merge-or-diagnose decision.
-	 */
 	readonly storageKindId?: number;
 	readonly structuralSignature: string;
 	readonly preferRepresentative?: boolean;

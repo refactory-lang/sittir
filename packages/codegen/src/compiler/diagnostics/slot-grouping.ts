@@ -85,11 +85,8 @@ export interface SlotGroupingDiagnostic extends Diagnostic {
 	readonly severity: 'warning';
 	readonly message: string;
 	readonly canProceed: boolean;
-	/** The kind that owns the rule containing the violation. */
 	readonly ownerKind: string;
-	/** The slot count of the offending sub-rule (for multi-slot-nested-seq). */
 	readonly slotCount: number;
-	/** Human-readable propose-promotion text for the author. */
 	readonly proposal: string;
 }
 

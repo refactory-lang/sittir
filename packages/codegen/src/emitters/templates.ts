@@ -74,41 +74,11 @@ export interface EmittedTemplates {
 export interface EmitCtx {
 	readonly nodeMap: NodeMap;
 	readonly wordMatcher: RegExp;
-	/** Grammar-faithful word-class test for a single char (ASCII table from
-	 *  wordCharAsciiTable + Unicode-alphanumeric fallback). Used for
-	 *  compile-time STATIC-STATIC seam spaces; dynamic seams belong to the
-	 *  runtime SpacingWriter with the same class. */
 	readonly isWordChar: (c: string) => boolean;
 	readonly externals: readonly string[];
-	/**
-	 * PR-137: `normalizedRules` (wrapper-deleted `RenderRule` view), not
-	 * `linkRules` — `emitSymbol`'s hidden-helper fallback (the only
-	 * consumer) used to bridge `linkRules[name]` through a per-call
-	 * `deleteWrapper()`; verified byte-identical to reading
-	 * `normalizedRules[name]` directly for every hidden ref the fallback
-	 * actually reaches, across all 3 grammars, so the bridge is gone.
-	 */
 	readonly rules: Record<string, RenderRule>;
-	/**
-	 * Cycle guard for hidden-helper recursion in `emitSymbol`. A flat mutable
-	 * Set tracks visited helper names, keyed by `@${name}`, passed down via
-	 * this field. Each call to `emitOne()` resets it.
-	 */
 	readonly visitingHelpers: Set<string>;
-	/**
-	 * Owner-level slots for the current node being emitted, keyed by
-	 * `storageName` (snake_case, matches `rule.fieldName.toLowerCase()`).
-	 * Used as a fallback when `slotByRuleId` lookup fails because the
-	 * symbol's rule `id` doesn't match any of the slot's `sourceRuleIds` — a gap
-	 * that occurs when `simplifyRule` creates new rule objects without
-	 * preserving the original ID. Set by `emitBranchTemplate` and
-	 * `emitGroupTemplate` before recursing into the node's `renderRule`.
-	 */
 	readonly ownerSlots?: Readonly<Record<string, AssembledNonterminal>>;
-	/**
-	 * DIAGNOSTIC (`DBG_SLOT_MISS=1`): the kind currently being emitted, threaded
-	 * by `emitOne` so `lookupSlot` can attribute a `slotByRuleId` miss to a kind.
-	 */
 	readonly currentKind?: string;
 }
 

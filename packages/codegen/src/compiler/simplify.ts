@@ -38,17 +38,6 @@ import type { RuleBuilder } from '../dsl/rule-transforms.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import type { NormalizedGrammar } from './types.ts';
 
-/**
- * Simplify phase context (S2, `BaseCtx<'normalize'>` — Simplify READS
- * `Grammar<'normalize'>` = {@link NormalizedGrammar}; see
- * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §2): simplify
- * operates on the wrapper-free render view, so its `ctx.rules` holds
- * `Record<string, RenderRule>` (`NormalizedGrammar.rules` — the map being
- * simplified). Adds the inline-decision set and the variant-resolved
- * polymorph skip-set the slot-grouping diagnostic consults. (Was an
- * interface extending the dsl `TransformCtx`; now a compiler-layer class —
- * see compiler/ctx.ts.)
- */
 export class SimplifyCtx extends BaseCtx<'normalize'> {
 	readonly inlineKinds: ReadonlySet<string>;
 	/** Extra kinds the slot-grouping diagnostic skips (variant-resolved). */

@@ -50,11 +50,6 @@ const SAFE_IDENT_KEY = /^[A-Za-z_$][\w$]*$/;
 export interface EmitFromConfig {
 	grammar: string;
 	nodeMap: NodeMap;
-	/**
-	 * Parser-symbol ID tables for numeric $type comparison emission.
-	 * When present, from.ts emits `input.$type === TSKindId.X` checks.
-	 * When absent (legacy callers), falls back to string literal checks.
-	 */
 	generatedIdTables?: GeneratedIdTables;
 	kindEntries?: readonly KindEnumEntry[];
 }
@@ -658,7 +653,6 @@ interface LeafFromNode {
 	readonly typeName: string;
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
-	/** Enum value list when the underlying node is an enum. */
 	readonly enumValues?: readonly string[];
 }
 
@@ -700,7 +694,6 @@ function emitKeywordFrom(node: LeafFromNode): string {
 // Field-level resolver call generation
 // ---------------------------------------------------------------------------
 
-/** Interner signature passed through the resolver emitter calls. */
 type KindInterner = (kinds: readonly string[]) => string;
 
 function resolveFieldFromTypedInput(

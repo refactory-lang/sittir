@@ -80,38 +80,14 @@ export type PathSegment =
 	| { kind: 'index'; value: number }
 	| { kind: 'wildcard' }
 	| {
-			/**
-			 * Kind-based descent: match every symbol occurrence of `name`
-			 * in the current subtree. Skips occurrences already wrapped in
-			 * a named `field()` (reusing a target kind is almost always
-			 * unintended — the semi form's `field('length', _expression)`
-			 * must survive when the list form's `_expression` is patched).
-			 *
-			 * Syntax: `(name)` — parentheses are required.
-			 */
 			kind: 'kind-match';
 			name: string;
 	  }
 	| {
-			/**
-			 * Field traversal: descend through a field('name', ...) wrapper
-			 * at the current rule position. Hard-errors if the current rule
-			 * is not a field wrapper or if the field name doesn't match.
-			 *
-			 * Syntax: `name:` — colon suffix.
-			 */
 			kind: 'fieldName';
 			name: string;
 	  };
 
-/**
- * Tagged error thrown by path-descent failure points (out-of-bounds
- * index, "cannot descend into primitive" etc). Wildcards catch only
- * this class — every other exception (TypeError, missing-global
- * errors from nativeRequired, bugs in reconstruction helpers, throws
- * from user-supplied patch functions) propagates so real bugs aren't
- * masked as "wildcard matched zero".
- */
 export class ApplyPathSkip extends Error {
 	constructor(message: string) {
 		super(message);
@@ -274,15 +250,6 @@ function isEnrichGroupLiftSymbol(rule: RuntimeRule): boolean {
 	return meta?.author === 'enrich';
 }
 
-/**
- * Look up the body of an enrich group-lift's referenced hidden rule by name.
- * The body is NOT carried on the symbol (that leaks the seq into grammar.json);
- * enrich registers its merged rule-map here so path-descent can resolve and
- * patch the referenced `_<parent>_<kind><N>` rule. Both runtimes work: enrich
- * runs first (registering), rule fns run later (consuming), within one grammar's
- * processing. `set` writes a patched body back so the materialized group kind
- * AND the parser seed reflect the patch.
- */
 export interface GroupLiftRuleMap {
 	get(name: string): RuntimeRule | undefined;
 	set(name: string, body: RuntimeRule): void;

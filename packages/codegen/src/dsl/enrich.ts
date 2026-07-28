@@ -98,12 +98,6 @@ export interface GrammarResult {
 	};
 }
 
-/**
- * Type-level mirror of what `enrich()` does to the rules at runtime: each rule
- * is replaced by its post-enrich shape (`EnrichRule`). Applied to a flat
- * grammar-shape schema (`{ rules: {…} }`); other inputs (e.g. the internal
- * `GrammarResult` wrapper) pass through unchanged.
- */
 export type EnrichedGrammar<B> = B extends GrammarJson
 	? {
 			readonly [K in keyof B]: K extends 'rules'
@@ -603,11 +597,8 @@ function reportSkip(pass: string, ruleName: string, reason: string): void {
 // (except supertypes). See compiler-phase-glossary.md for full details.
 
 interface SymbolTarget {
-	/** Raw symbol name (preserves any leading underscore for supertype detection). */
 	readonly name: string;
-	/** The SYMBOL rule itself, used as the FIELD's content. */
 	readonly symbolRule: Rule;
-	/** Rebuild the original seq-member rule around a freshly-built FIELD node. */
 	wrap(fieldNode: Rule): Rule;
 }
 
@@ -1704,9 +1695,6 @@ function unaliasDiagnosticKey(diagnostic: ParseKindCollisionDiagnostic): string 
 	].join(' ');
 }
 
-/** A per-`enrich()`-call sink for un-aliasing diagnostics — array + dedupe-by-key
- *  Set, mirroring the assemble-time check's shape but WITHOUT the module-global
- *  lifetime. Created fresh per invocation and attached to that call's result. */
 interface UnaliasDiagnosticSink {
 	readonly diagnostics: ParseKindCollisionDiagnostic[];
 	readonly seen: Set<string>;
@@ -1725,28 +1713,8 @@ export function getEnrichUnaliasDiagnostics(grammar: unknown): readonly ParseKin
 	return Array.isArray(diagnostics) ? (diagnostics as ParseKindCollisionDiagnostic[]) : [];
 }
 
-/**
- * @internal — a single value contributing to a target-name bucket: either an
- * ALIAS site (`aliasSite` set, eligible to be dropped) or a bare SYMBOL
- * reference sharing the same target name (its own storage kind IS its parse
- * kind — never dropped, but must be counted so `diagnoseParseKindCollisions`
- * sees the full set of colliding storage kinds, matching the real base-grammar
- * shape `choice($.generic_type, alias($.generic_type_with_turbofish,
- * $.generic_type))` where the bare `$.generic_type` branch is what makes the
- * collision detectable at all).
- */
 interface UnaliasCandidate {
 	readonly targetName: string;
-	/**
-	 * Enclosing FIELD name, when this value sits (directly or transitively)
-	 * inside a `field(name, …)` wrapper — otherwise `undefined` (positional).
-	 * Two aliases sharing a `targetName` but living in DIFFERENT fields are
-	 * genuinely distinguishable (the field name disambiguates the read-time
-	 * slot), so the collision bucketing keys on `(slotKey ?? targetName,
-	 * targetName)` rather than `targetName` alone. When `undefined` the
-	 * effective key falls back to `targetName`, preserving the pre-slotKey
-	 * behavior for positional (non-field-wrapped) collisions.
-	 */
 	readonly slotKey: string | undefined;
 	readonly storageKind: string | undefined;
 	readonly resolvedBody: RuntimeRule;
@@ -2055,34 +2023,6 @@ function promoteExistingHiddenRuleName(
 	return { visibleName };
 }
 
-/**
- * PR 3 (2026-07-21 union-slot design): classify a bare choice-arm position
- * (unnamed — no field wrapper) and, if it is STRUCTURED (multi-slot, or a
- * symbol ref to a hidden rule whose own body is multi-slot), mint it a kind
- * identity so it can join the union-slot routing (`collect-slots.ts`'s
- * `partitionChoiceArms`) as a distinguishable member. Returns `null` when no
- * mint is needed (the arm is already a fine union member as-is — a plain
- * reference, or a single-slot body that collapses cleanly) or when minting
- * collided with an existing rule name (caller keeps the arm unchanged,
- * matching every other collision-guard in this file — no partial synthesis).
- *
- * Two cases, per the design's "mint = promote, not synthesize" distinction:
- *   - The arm is a bare `symbol(name)` ref to an EXISTING hidden rule whose
- *     body is structured — promote that rule directly (no body copy):
- *     `alias($.<existingHiddenName>, $.<freshVisibleName>)`. Exemplar:
- *     python's `dict_pattern` — the comma-separated list's REPEATED-TAIL
- *     occurrence of `choice($._key_value_pattern, $.splat_pattern)` still
- *     references the hidden `_key_value_pattern` unpromoted (the author's
- *     `dict_pattern: {'1/0/0/0': 'kv'}` override only reached the HEAD
- *     occurrence of the same choice).
- *   - The arm is itself an anonymous structured `seq`/`choice` (no separate
- *     rule name) — synthesize a fresh hidden rule from the arm's own body,
- *     same as the inline-unsafe `optional(seq)` path (`visibleGroupSynthName`).
- *
- * Deliberately NOT handled here (gate (c), a separate follow-up): a
- * FIELD-NAMED arm sitting alongside union arms in the same choice (a mixed
- * row) — this pass only mints for unnamed arms.
- */
 function armLeadingSymbolName(
 	rule: Rule,
 	rulesBag: Record<string, Rule>,

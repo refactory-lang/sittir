@@ -169,3 +169,21 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Mirrors `projectSlotNaming`'s storageName inputs at the rule level.
  */
 ```
+
+### `ownerKind` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:88`)
+
+```text
+/** The kind that owns the rule containing the violation. */
+```
+
+### `slotCount` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:90`)
+
+```text
+/** The slot count of the offending sub-rule (for multi-slot-nested-seq). */
+```
+
+### `proposal` (`packages/codegen/src/compiler/diagnostics/slot-grouping.ts:92`)
+
+```text
+/** Human-readable propose-promotion text for the author. */
+```

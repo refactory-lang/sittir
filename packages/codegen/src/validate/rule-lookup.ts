@@ -13,29 +13,12 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 
-/**
- * Classification of how a kind reaches a rendered output string.
- *
- *   `template` — the kind has an entry in `templates directory` that
- *     render() substitutes into. Branches, containers, groups,
- *     polymorphs.
- *   `text`     — the kind is a pure leaf (string/pattern/keyword/
- *     enum), so `render(node)` just returns `node.text`.
- *   `dispatch` — the kind is a supertype; render dispatches to the
- *     concrete subtype's rule. Never addressed directly.
- *   `none`     — the kind is a hidden token or an unreachable
- *     rule that render() can't produce.
- */
 export type RenderKindPath = 'template' | 'text' | 'dispatch' | 'none';
 
 export interface RuleLookup {
-	/** All kinds known to the NodeMap, keyed by string. */
 	readonly kinds: ReadonlySet<string>;
-	/** Kinds that reach a render path: template | text | dispatch. */
 	readonly renderable: ReadonlySet<string>;
-	/** Kinds with a template.yaml rule entry (templates only). */
 	readonly templated: ReadonlySet<string>;
-	/** Classification per kind. */
 	readonly path: ReadonlyMap<string, RenderKindPath>;
 }
 

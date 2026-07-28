@@ -78,94 +78,6 @@ import type { DeriveShapeDiagnostic } from './diagnostics/derive-shapes.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 
-/**
- * Phase context for the Assemble phase (S2, `BaseCtx<'simplify'>` — Assemble
- * READS `Grammar<'simplify'>` = {@link SimplifiedGrammar}; see
- * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §2). The
- * grammar container itself now lives on `ctx.grammar` — `assemble()`'s former
- * `(normalized, ctx)` two-param signature folds into just `(ctx)` (§2: "the
- * whole input container moves INTO the ctx").
- *
- * Absorbs the former `SubtypeCtx` (`topLevelAliasBodies` — R4 / #14; `seen`
- * cycle-guards and the per-call subtypeSet stay explicit pass-local params,
- * CW6). The hidden-body/subtype-resolution family (`resolveHiddenSubtypes` /
- * `includeAliasMemberKinds` / `isAliasMemberKind` / `isCompatibleSubtypeMember`
- * / `resolveHiddenRuleContent`) migrated OFF `linkRules` onto `normalizedRules`
- * (2026-07-05, PR-137 follow-on-3): the wrapper shapes that switch used to
- * pattern-match (REPEAT/REPEAT1/OPTIONAL/ALIAS/TOKEN) don't exist post-
- * wrapper-deletion — their meaning is stamped as leaf attributes
- * (`multiplicity`/`aliasedFrom`/`aliasNamed`/`fieldName`) — so the family now
- * checks those attributes BEFORE dispatching on `rule.type`. See each
- * function's doc comment for its specific translation.
- *
- * PR-137 follow-on-4 (same day) re-examined that choice: follow-on-3's own
- * justification ("wrapper shapes don't exist here") is EQUALLY true of
- * `ctx.rules` (`SimplifiedRule` — also wrapper-free, `SimplifiedGrammar`'s own
- * phase product, the map `assemble()`'s input container is actually named
- * for) — so it never actually established why `normalizedRules` beat `rules`.
- * Migrating the family to `ctx.rules` was tried and EMPIRICALLY REJECTED: it
- * changes real output. Across all 3 grammars' hidden supertype/alias-mint
- * chains, exactly one diverges — python's `_simple_pattern` supertype loses
- * its `_simple_pattern_negative` subtype entry (the polymorph-variant-adopted
- * `-1`/`-1.0` match-pattern arm, `overrides.ts`'s `_simple_pattern: { '11':
- * 'negative' }`) and gains bogus `integer`/`float` entries instead — verified
- * via `pnpm exec tsx packages/cli/src/cli.ts gen --grammar python …`: the
- * regen diff shows `node-model.json5`'s `_simple_pattern.subtypes` changing,
- * cascading into `types.ts`'s `SimplePattern` union (dropping
- * `SimplePatternNegative`) and `transport.rs`'s dispatch table (deleting the
- * kind_id-250 arm entirely) — a real runtime dispatch break for `-1` literal
- * match patterns, not a cosmetic difference. rust (16 supertypes) and
- * typescript (26 supertypes) showed zero divergence; python showed this one.
- *
- * Root cause: `_simple_pattern_negative`'s body is `SEQ[OPTIONAL('-'),
- * CHOICE(integer, float)]`. On `normalizedRules` (wrapper-deletion only) this
- * stays a top-level SEQ — a shape `resolveHiddenRuleContent`'s switch has NO
- * case for, so it falls to `default: []` (opaque), and the caller's "opaque →
- * keep the hidden name as-is" fallback correctly preserves
- * `_simple_pattern_negative` as its own subtype entry. On `rules`,
- * `simplifySeqRule`'s anonymous-literal stripping deletes the bare `-` (not
- * slot-promoted) and the resulting single-member seq collapses to the inner
- * `CHOICE(integer, float)` — a shape the switch DOES handle, so it wrongly
- * expands to `integer`/`float` directly, discarding the variant-adopted
- * kind's own name. This is the SAME bug class the `_delim_tokens` regression
- * fixture below already guards (an opaque wrapper shape being unmasked into a
- * dispatchable one), but triggered by simplify's SEQ-collapse rather than by
- * wrapper-deletion's multiplicity stamping — and there is no leaf attribute
- * (analogous to `multiplicity`/`fieldName`) that survives simplify's
- * canonicalization to flag "this used to be an opaque multi-member SEQ",
- * so an attribute check can't neutralize it the way the multiplicity/
- * fieldName checks neutralize the wrapper-deletion case. The family's
- * opacity-via-shape fallback depends on the input NOT having gone through
- * simplify's independent structural canonicalization (anon-literal SEQ
- * stripping, single-member collapse, branch-merging) — `normalizedRules`
- * (wrapper-deletion only) is the correct, and only correct, source for that
- * reason, not merely a leftover choice. Since `resolveHiddenRuleContent` is
- * one shared primitive reachable from any hidden kind via mutual recursion
- * across all five family functions, this can't be split per-function or
- * per-kind — the whole family reads the same map uniformly.
- *
- * `topLevelAliasBodies` stays as a distinct field: it isn't a body cache (its
- * VALUES are fully reproducible from `normalizedRules[name]` — verified
- * empirically, every alias-body kind across all 3 grammars satisfies
- * `normalizedRules[name] === applyWrapperDeletion(topLevelAliasBodies.get(name))`),
- * it's a *presence* table (which hidden kinds are alias-mint targets at all)
- * with no rule-level attribute equivalent — a hidden kind's own rule body
- * carries no trace of being aliased-TO by some other rule elsewhere in the
- * grammar.
- *
- * `rules` reads `grammar.rules` — same one-liner as every other phase ctx
- * (2026-07-05: `SimplifiedGrammar`'s phase product field was renamed from
- * `simplifiedRules` to `rules`, closing the one exception this class used to
- * need; see `Grammar<P>`'s doc comment in types.ts). `normalizedRules` stays
- * exposed as its own getter below — the resolver family (and no one else on
- * this ctx) reads it directly, per the correction above.
- *
- * `nodes` is the cross-node store the post-passes need for `markUserFacing` /
- * resolveColliding / resolveIrKeys / collectAnonymous — a live `Map` so the
- * post-passes can read peers; exposed as a getter (the class's one mutation
- * surface) rather than a bare public field. `kindEntries` feeds the same
- * per-node constructors that previously received it positionally.
- */
 export class AssembleCtx extends BaseCtx<'simplify'> {
 	readonly kindEntries?: readonly GeneratedKindEntry[];
 	readonly generatedIdTables?: GeneratedIdTables;
@@ -965,23 +877,6 @@ function resolveHiddenRuleContent(rule: RenderRule, seen: Set<string>, ctx: Asse
  *   - `visible ≥ 2` → rename lower-priority visible(s) via {@link renameCollidingVisibleKinds}
  *   - `hidden ≥ 2` → rename lower-priority hidden(s) via {@link renameCollidingHiddenOnlyKinds}
  */
-/**
- * Populate each node's `userFacing` flag — the single source of truth
- * for whether emitters (templates, factories, types, IR) should
- * produce output for the kind.
- *
- * - `token` / `multi` modelTypes: never user-facing (structural helpers).
- * - Visible kinds (not `_`-prefixed): user-facing.
- * - Hidden kinds: user-facing only when they're alias sources
- *   (referenced elsewhere via `aliasedFrom`, meaning factories
- *   stamp this kind as `$type`).
- *
- * Alias-source detection: walk every node's field / child value
- * slots and collect unresolved-ref names starting with `_`. Those
- * references only exist in the emitted NodeMap when
- * `walkForChildren` / `deriveValuesForRule` stamped the source
- * (`aliasedFrom`) rather than the visible target.
- */
 export function hydrateSlotRefs(nodeMap: NodeMap): void {
 	const externals = nodeMap.externals ?? new Set<string>();
 	for (const [kind, node] of nodeMap.nodes) {
@@ -1049,21 +944,8 @@ function hydrateSlots(
 	}
 }
 
-/**
- * Per-node context for {@link markUserFacing} — carries the two cross-node
- * sets pre-computed once before the per-node loop (M3 / spec §7.7 / principle
- * #14: cross-node state lives on ctx, not a getter-with-arg).
- *
- * @internal — not exported; used only by the post-pass driver inside assemble().
- */
 interface _UserFacingCtx {
-	/** Hidden kinds that appear as alias sources in at least one other node's slot. */
 	readonly aliasSourceKinds: ReadonlySet<string>;
-	/**
-	 * Hidden variant-child kind strings (`${parent}_${child}`) registered via
-	 * `polymorphVariants`. These are NOT slot-reachable when the parent is a
-	 * supertype, so they must be promoted independently of `aliasSourceKinds`.
-	 */
 	readonly variantChildKinds: ReadonlySet<string>;
 }
 

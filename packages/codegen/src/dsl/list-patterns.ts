@@ -26,14 +26,6 @@
 import { typeEq, type RuntimeRule } from '../types/runtime-shapes.ts';
 import type { SeparatorFlankMode } from '../types/rule.ts';
 
-/**
- * The nested separator fact's shape (`{value, trailing?, leading?}`, PR-S),
- * phrased structurally over `RuntimeRule` (rather than a specific
- * `RuleBase<Phase>['separator']`) so `separatorFactsEqual` accepts the fact
- * at ANY phase view (`RuleBase<'normalize'>.separator`,
- * `RepeatRule<'link'>.separator`, …) without a phase-widening cast at the
- * call site — they all share this identical structural shape post-PR-S.
- */
 interface SeparatorFact {
 	readonly value: RuntimeRule;
 	readonly trailing?: SeparatorFlankMode;

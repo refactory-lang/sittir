@@ -218,11 +218,6 @@ export function prefixNamedSuffix(parentKind: string, targetName: string): strin
 	return suffix.length > 0 ? suffix : null;
 }
 
-/**
- * One qualifying choice node found while walking a kind's rule body: the
- * choice itself, plus the resolved `{suffix -> targetName}` pairs for each
- * arm (in member order).
- */
 export interface StructuralVariantChoice {
 	readonly choice: ChoiceRule<'link'>;
 	readonly arms: readonly { readonly suffix: string; readonly targetName: string }[];

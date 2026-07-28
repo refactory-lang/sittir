@@ -118,7 +118,6 @@ function descendOptional(
 
 type Input = string | RegExp | Rule;
 
-/** Marker emitted by `field('name')` — a placeholder for transform patches. */
 export interface FieldPlaceholder {
 	readonly __sittirPlaceholder: 'field';
 	readonly name: string;

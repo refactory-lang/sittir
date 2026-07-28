@@ -32,9 +32,7 @@ import { buildRuleLookup } from './rule-lookup.ts';
 export interface RenderableResult {
 	grammar: string;
 	total: number;
-	/** Count of kinds that are renderable via one of the three paths. */
 	renderable: number;
-	/** Kinds that have NO viable path. */
 	missing: MissingKind[];
 }
 

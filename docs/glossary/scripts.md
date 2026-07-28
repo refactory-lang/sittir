@@ -182,3 +182,85 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * legacy code.
  */
 ```
+
+### `ranges` (`packages/codegen/src/scripts/emit-diff.ts:44`)
+
+```text
+/** New-file line ranges, e.g. "L120-207", "L410". Empty for collapsed/binary. */
+```
+
+### `collapsed` (`packages/codegen/src/scripts/emit-diff.ts:46`)
+
+```text
+/** parser/binary artifact — counts only, no line ranges (kept terse). */
+```
+
+### `source_hash` (`packages/codegen/src/scripts/generated-manifest.ts:130`)
+
+```text
+/**
+	 * SHA256 of the source inputs that drove this generation —
+	 * `packages/<grammar>/overrides.ts` (hand-edited adjuster) +
+	 * `packages/<grammar>/package.json` (pins the upstream tree-sitter version).
+	 * If either changes, source_hash changes; verifiers detect the mismatch
+	 * and require a regen. This is the cross-layer synchronicity guarantee:
+	 * the manifest doesn't just say "files match what was last written";
+	 * it says "files match what was last written AND those writes were
+	 * driven by the current source inputs."
+	 */
+```
+
+### `host_files` (`packages/codegen/src/scripts/generated-manifest.ts:142`)
+
+```text
+/**
+	 * Per-platform napi binaries (`*.node`), recorded as the
+	 * {@link HOST_BINARY_SENTINEL} sentinel — NOT content-hashed. Binary
+	 * bytes vary per rebuild (and per machine), so content hashes produced
+	 * false MODIFIED positives on every locally rebuilt binary. Verification
+	 * instead checks FRESHNESS on the current host: the binary must be newer
+	 * than the crate's generated `src/**` + `templates/**` inputs (see
+	 * `native-binary-freshness.ts`). Missing-locally is still tolerated
+	 * (binaries are per-platform).
+	 */
+```
+
+### `stale` (`packages/codegen/src/scripts/generated-manifest.ts:265`)
+
+```text
+/**
+	 * Host binaries (`*.node`) present on this machine but OLDER than the
+	 * crate's generated `src/**` + `templates/**` inputs — they would
+	 * validate stale code (or segfault). Fix: rebuild the binary.
+	 */
+```
+
+### `HostBinaryFreshness` (`packages/codegen/src/scripts/native-binary-freshness.ts:20`)
+
+```text
+/** Freshness report for one host binary. */
+```
+
+### `rel` (`packages/codegen/src/scripts/native-binary-freshness.ts:22`)
+
+```text
+/** Repo-relative binary path, e.g. `rust/crates/sittir-rust/sittir-rust.darwin-arm64.node`. */
+```
+
+### `newestInputMtimeMs` (`packages/codegen/src/scripts/native-binary-freshness.ts:25`)
+
+```text
+/** Newest mtime across the crate's `src/**` + `templates/**` inputs. */
+```
+
+### `newestInputRel` (`packages/codegen/src/scripts/native-binary-freshness.ts:27`)
+
+```text
+/** Repo-relative path of the newest input (diagnostic). */
+```
+
+### `stale` (`packages/codegen/src/scripts/native-binary-freshness.ts:29`)
+
+```text
+/** True when the binary is OLDER than at least one compiled-in input. */
+```

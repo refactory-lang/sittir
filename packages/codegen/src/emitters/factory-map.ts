@@ -42,21 +42,6 @@ export interface FactoryMapData {
 	readonly fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
 	readonly factoryFields: Readonly<Record<string, readonly string[]>>;
 	readonly factorySlots: Readonly<Record<string, Readonly<Record<string, FactorySlotMeta>>>>;
-	/**
-	 * Polymorph variant discriminators. For each polymorph parent kind a
-	 * descriptor telling `nodeToConfig` how to stamp `$variant` on the
-	 * derived config.
-	 *
-	 *   source='override' — variant inferred from the first named child's
-	 *     kind. The `childKind` map is `<parent_childKind>: <variantName>`.
-	 *   source='promoted' — variant inferred from field-presence. The
-	 *     `fields` map is `<variantName>: [<fieldPropertyName>...]`
-	 *     (match if every listed field is present on the config).
-	 *
-	 * The dispatcher's switch on `config.$variant` expects the tag to be
-	 * present; validators and legacy readNode→factory paths use this map
-	 * to derive it from the parsed tree.
-	 */
 	readonly polymorphVariants: PolymorphVariantMap;
 }
 

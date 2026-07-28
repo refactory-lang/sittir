@@ -26,13 +26,6 @@ import type { SCMCapture } from './parse.ts';
 // Public types
 // ---------------------------------------------------------------------------
 
-/**
- * Semantic roles extracted from tree-sitter SCM query captures.
- *
- * Base roles (`'string'`, `'number'`, etc.) are the union of all sub-role
- * captures. Sub-roles (`'string.special'`, `'number.float'`, etc.) carry
- * finer-grained distinctions when the grammar's SCM captures provide them.
- */
 export type Role =
 	| 'trivia'
 	| 'string'
@@ -64,7 +57,6 @@ export interface RoleEntry {
 export interface GrammarRoles {
 	grammar: string;
 	entries: RoleEntry[];
-	/** Convenience accessor — get kinds for a specific role */
 	get(role: Role): string[];
 }
 
@@ -75,7 +67,6 @@ export interface GrammarRoles {
 type QueryFile = 'highlights' | 'tags';
 
 interface CaptureRoleMapping {
-	/** Base capture name — matches the capture itself or any sub-captures. */
 	captureBase: string;
 	role: Role;
 	source: QueryFile;

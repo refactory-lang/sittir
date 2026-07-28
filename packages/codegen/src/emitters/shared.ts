@@ -45,25 +45,6 @@ import { hasCatalogEntry } from './kind-discriminant.ts';
 // Re-export derived helpers so emitters can import from one place.
 export { isRequired, isMultiple, isNonEmpty, deriveSlotCardinality, deriveChildrenCardinality };
 
-/**
- * Compute the set of kind names referenced by any structural node in the
- * NodeMap — walked once, consumed by multiple emitters.
- *
- * A kind is "referenced" when it appears in:
- *   - A structural node's `fields[*].values` (node-ref kind names).
- *   - A structural node's `children[*].values` (node-ref kind names).
- *   - A polymorph form's fields / children (same, per form).
- *   - A supertype's `subtypes` list.
- *
- * Emitters that decide which terminal aliases / Tree interfaces to emit
- * use this to skip unreferenced terminals whose only consumer is a missing
- * factory binding. Previously duplicated in `types.ts::computeReferencedKinds`,
- * `type-test.ts` (inline walker), and `types.ts::collectAndEmitTokenTypeAliases`
- * (inline walker) — one walk, three derivations that had to stay in sync.
- *
- * @param nodeMap - The assembled node map to walk.
- * @returns The set of referenced kind strings.
- */
 export function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	const out = new Set<string>();
 	for (const [, n] of nodeMap.nodes) {
@@ -282,32 +263,6 @@ export function stampExpressionFor(
 // Field / child type-expression projection (shared by types.ts + factories.ts)
 // ---------------------------------------------------------------------------
 
-/**
- * One component of a field or child type expression. Callers assemble a
- * final TS type expression by formatting these (adding / omitting a `T.`
- * prefix, wrapping literals in `JSON.stringify`, routing `missing` to a
- * fallback stub, etc.).
- *
- * Three shapes:
- *
- * - **`nodeKind`** — a resolved node kind in the NodeMap. `value` is the
- *   kind's computed `typeName` (already PascalCase, always a valid TS
- *   identifier when emitted unquoted; callers that need a quoted form
- *   when `typeName` is not ident-shaped should branch on
- *   {@link isValidIdent}). `rawKind` is the original kind string — used
- *   as the indexed-access key when falling back to `"kind-string"` under
- *   unquoted-alias conditions.
- * - **`literal`** — an inline string literal from a terminal value.
- *   `value` is the raw string; callers typically `JSON.stringify` it.
- * - **`missing`** — a kind referenced in the slot's values that isn't in
- *   the NodeMap. `value` is a PascalCase fallback identifier; `rawKind`
- *   is the raw kind. types.ts registers this for stub emission;
- *   factories.ts prefixes with `T.`.
- *
- * `fieldTypeComponents` pre-inlines hidden single-literal keywords (the
- * `_kw_*` pattern) as `literal` components so consumer emitters don't
- * surface helper wrapper types.
- */
 export type TypeComponent =
 	| { kind: 'nodeKind'; value: string; rawKind: string }
 	// `resolvedKindId` is the PR-K2 mint stamp carried off the terminal
@@ -438,7 +393,6 @@ export function keywordPresenceIsNonEmptyRepeat(field: AssembledNonterminal): bo
 	return field.values.every((v) => v.multiplicity === 'nonEmptyArray');
 }
 
-/** Rust struct-field storage for a `classifyPrimitiveField` verdict. */
 export type PrimitiveFieldStorage = { kind: 'boolean'; text: string } | { kind: 'verbatim' };
 
 export function classifyPrimitiveField(
@@ -683,7 +637,6 @@ export function classifyChildFactorySurface(node: AssembledNode, nodeMap: NodeMa
 	return slotClass.tag === 'singleSlot' && slotClass.slot.isUnnamed ? 'direct' : null;
 }
 
-/** Real facts about a container-shape branch's single unnamed child slot. */
 export interface UnnamedChildSlotFacts {
 	readonly slot: AssembledNonterminal;
 	readonly multiple: boolean;

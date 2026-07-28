@@ -220,3 +220,37 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * @returns The parent language name, or `undefined` if not found.
  */
 ```
+
+### `Role` (`packages/codegen/src/scm/extract-roles.ts:29`)
+
+```text
+/**
+ * Semantic roles extracted from tree-sitter SCM query captures.
+ *
+ * Base roles (`'string'`, `'number'`, etc.) are the union of all sub-role
+ * captures. Sub-roles (`'string.special'`, `'number.float'`, etc.) carry
+ * finer-grained distinctions when the grammar's SCM captures provide them.
+ */
+```
+
+### `get` (`packages/codegen/src/scm/extract-roles.ts:67`)
+
+```text
+/** Convenience accessor — get kinds for a specific role */
+```
+
+### `captureBase` (`packages/codegen/src/scm/extract-roles.ts:78`)
+
+```text
+/** Base capture name — matches the capture itself or any sub-captures. */
+```
+
+### `TokenCursor` (`packages/codegen/src/scm/parse.ts:156`)
+
+```text
+/**
+ * Lightweight cursor over a token array. Provides `peek()` / `advance()`
+ * with proper `Token | undefined` return types so the parser never needs
+ * unchecked index access.
+ */
+```

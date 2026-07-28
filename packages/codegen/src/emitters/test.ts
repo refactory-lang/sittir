@@ -31,18 +31,7 @@ import { buildSeparatedListContentSlot } from './wrap.ts';
 export interface EmitTestsConfig {
 	grammar: string;
 	nodeMap: NodeMap;
-	/**
-	 * Parser-symbol ID tables for numeric $type assertion emission.
-	 * When present, generated tests emit `TSKindId.X` in `toBe()` calls.
-	 * When absent (legacy callers), falls back to string literal checks.
-	 */
 	generatedIdTables?: GeneratedIdTables;
-	/**
-	 * Kind → reason for known-failing tests (`expectTestFailures:` in the
-	 * grammar's overrides.ts). Listed kinds emit `describe.skip` with the
-	 * reason inline so the suite stays green on tracked defects without
-	 * masking regressions in other kinds.
-	 */
 	expectTestFailures?: Readonly<Record<string, string>>;
 }
 

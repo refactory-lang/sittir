@@ -32,14 +32,12 @@ export type { GrammarResult } from './enrich.ts';
 export { wire } from './wire/wire.ts';
 export type { WireConfig, WiredOpts } from './wire/wire.ts';
 
-/** 1-arg → transform placeholder; 2-arg → a grammar-shapes `FieldRule` (rule body). */
 interface AuthoringField {
 	(name: string): FieldPlaceholder;
 	<const N extends string>(name: N, content: AuthoringRule): FieldRule<N, GrammarRule>;
 }
 export const field = fieldImpl as unknown as AuthoringField;
 
-/** 1-arg string → transform placeholder; 1/2-arg rule → a grammar-shapes `AliasRule`. */
 interface AuthoringAlias {
 	(name: string): AliasPlaceholder;
 	(rule: AuthoringRule, value?: string | AuthoringRule): AliasRule<string, GrammarRule>;

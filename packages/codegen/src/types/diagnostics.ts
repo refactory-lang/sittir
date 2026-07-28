@@ -29,7 +29,6 @@ export interface Diagnostic {
 	readonly details?: Record<string, unknown>;
 }
 
-/** Static, author-facing facts about the authored grammar; subject is a Rule. */
 export interface GrammarDiagnostic<TRule = Rule> extends Diagnostic {
 	readonly scope: 'grammar';
 	readonly grammar: string;
@@ -39,7 +38,6 @@ export interface GrammarDiagnostic<TRule = Rule> extends Diagnostic {
 	readonly subject?: TRule;
 }
 
-/** Emitted during the compile pipeline about a rule OR an assembled node. */
 export interface CompilerDiagnostic<TSubject = Rule | unknown> extends Diagnostic {
 	readonly scope: 'compiler';
 	readonly phase: 'evaluate' | 'link' | 'normalize' | 'simplify' | 'assemble' | 'emit';
@@ -47,7 +45,6 @@ export interface CompilerDiagnostic<TSubject = Rule | unknown> extends Diagnosti
 	readonly subject?: TSubject;
 }
 
-/** Render / read / parse execution. */
 export interface RuntimeDiagnostic extends Diagnostic {
 	readonly scope: 'runtime';
 	readonly stage: 'render' | 'read' | 'parse';
@@ -59,17 +56,6 @@ export interface RuntimeDiagnostic extends Diagnostic {
 // PR-G additions: DiagnosticSink + EmitHaltedError
 // ---------------------------------------------------------------------------
 
-/**
- * Accumulator for pipeline diagnostics. Passed through the compile chain;
- * the Assemble→Project gate (emit-gate.ts::assertEmittable) consults it.
- *
- * Sugar methods (fail/warn/info) map to the underlying severity values so
- * PR-H/PR-L callers can use the spec vocabulary while the Severity union
- * stays single-sourced here.
- *
- * hasBlocking() keys on severity === 'fail' — NOT on canProceed — so the
- * gate remains inert until PR-L (when real diagnostics start emitting 'fail').
- */
 export class DiagnosticSink {
 	private readonly _items: Diagnostic[] = [];
 
@@ -98,10 +84,6 @@ export class DiagnosticSink {
 	}
 }
 
-/**
- * Thrown by assertEmittable() when the DiagnosticSink contains 'fail' items.
- * Mirrors GrammarDiagnosticError's message format (code: message per line).
- */
 export class EmitHaltedError extends Error {
 	readonly blocking: readonly Diagnostic[];
 

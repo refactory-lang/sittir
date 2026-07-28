@@ -64,36 +64,6 @@ function makePolymorphAliasNode(hiddenName: string, visibleName: string): Runtim
 	return alias(sym(hiddenName), sym(visibleName));
 }
 
-/**
- * Apply patches to a rule. Patches are an object with path-string keys
- * and Rule (or one-arg field placeholder) values:
- *
- *     transform(original, {
- *         0:       field('name'),       // flat numeric — single-segment path
- *         '0/1':   field('inner'),      // nested path
- *         '0/*\/0': field('items'),     // wildcard
- *     })
- *
- * Two evaluation modes, auto-detected by key shape:
- *
- * 1. **Flat positional** — every key is a pure numeric string. Patches
- *    apply to seq members at that position, recursively descending
- *    through choice alternatives and content wrappers (preserves
- *    legacy override behavior on rules where the original is a choice
- *    of equal-shape alternatives).
- *
- * 2. **Path-addressed** — at least one key contains `/` or `*`. Each
- *    key is parsed as a path and applied to exactly the position(s) it
- *    addresses. Precedence wrappers (prec/PREC_LEFT/...) are
- *    transparent so the same paths work in both sittir and tree-sitter
- *    runtimes.
- *
- * Field patches are marked `metadata.fieldSource: 'override'` (debt PR-P1)
- * for diagnostics. One-arg `field('name')` placeholders are filled in
- * from the original member at the target position; an enrich-inferred
- * field wrapper on the original is unwrapped before re-wrapping to
- * avoid nested fields.
- */
 type PatchSet = Record<number | string, RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder>;
 
 export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: PatchSet[]): RuntimeRule {
@@ -528,36 +498,6 @@ function resolvePatch(
 	return patch as RuntimeRule;
 }
 
-/**
- * Resolve a one-arg field() placeholder against the original member at
- * its target position.
- *
- * @remarks
- * One-arg `field('name')` placeholder — wrap the original member using
- * the runtime's native field() so the resulting rule shape matches
- * whatever runtime is loading us.
- *
- * An enrich-inferred field on the original member is unwrapped to avoid
- * nested `field('override', field('enriched', inner))`.
- *
- * Bare STRING content is handled specially: tree-sitter strips FIELD
- * wrappers around anonymous string literals during grammar normalization
- * (fields must label structural content, not bare tokens).
- * `maybeKeywordSymbol` synthesizes a hidden `_kw_<name>` rule that
- * produces the original token and returns a SYMBOL reference — FIELD
- * around SYMBOL survives the normalizer. wire() then auto-inlines the
- * helper back into the grammar's LR state machine so parse behavior
- * stays aligned with the pre-promotion bare token. Shared helper used
- * by both this one-arg field() placeholder and dsl/field.ts's two-arg
- * form; receives the prec stack so synthetic rules inherit any OUTER
- * precedence wrapper the original position lived under.
- *
- * @param patch - The one-arg FieldPlaceholder with the desired field name.
- * @param originalMember - The rule currently at the target position.
- * @param precStack - Accumulated prec wrappers for keyword symbol synthesis.
- * @returns A new field rule marked `metadata.fieldSource: 'override'`.
- * @throws {Error} If no global `field()` function is available in the runtime.
- */
 function findEnrichShapedFieldThroughTransparentWrappers(
 	node: unknown
 ): { found: FieldLike; reconstruct: (newInner: unknown) => unknown } | null {

@@ -41,44 +41,19 @@ import { writeManifestForGrammar, type Grammar } from './scripts/generated-manif
 import type { NodeMap } from './compiler/types.ts';
 import { formatEmitDiff } from './scripts/emit-diff.ts';
 
-/**
- * The library-facing option shape for both `runCodegen` and `runFullRegen`.
- * Generalizes the old `CodegenConfig` + `CliArgs` from cli.ts.
- */
 export interface CodegenOptions {
-	/** Grammar name (rust, typescript, python). */
 	grammar: string;
-	/** Output directory for generated TS files (e.g. packages/rust/src). */
 	outputDir: string;
-	/** Specific node kinds to generate (mutually exclusive with `all`). */
 	nodes?: string[];
-	/** Generate full native render-module artifacts (equivalent to --all). */
 	all?: boolean;
-	/** Output directory for test files (default: ../tests relative to outputDir). */
 	testsDir?: string;
-	/** Compile override grammar to .sittir/parser.wasm (standalone step). */
 	compileParser?: boolean;
-	/** Transpile overrides.ts to .sittir/grammar.js (standalone step). */
 	transpile?: boolean;
-	/** Run 'tree-sitter generate' in .sittir/ (standalone step). */
 	tsGenerate?: boolean;
-	/** Skip the auto transpile + tree-sitter generate chain that --all normally runs. */
 	skipTsChain?: boolean;
-	/**
-	 * Whether to rebuild the N-API binding after native emit (default: true).
-	 * Set to `false` to skip cargo rebuild (--no-build-native).
-	 */
 	buildNative?: boolean;
-	/**
-	 * Whether to run `cargo check --workspace` after the native rebuild
-	 * (default: true). Set to `false` (--no-workspace-check) in multi-grammar
-	 * drivers for all but the LAST grammar — the final check covers the whole
-	 * workspace, making the earlier per-grammar checks redundant.
-	 */
 	workspaceCheck?: boolean;
-	/** Suppress the post-regen emit-diff report (--no-emit-diff). */
 	noEmitDiff?: boolean;
-	/** List of diagnostic messages to allow (passed from CLI allowlist). */
 	allowDiagnostics?: string[];
 }
 

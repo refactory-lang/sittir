@@ -10,20 +10,6 @@
  * see it.
  */
 
-/**
- * (source-homonym resolution, decision 6 outcome revision — renamed, not
- * removed.) This field is the descriptor's OWN discriminated-union tag
- * (structurally identical in role to `rule.type`), not the authorship/
- * provenance homonym decision 6 targets: its two values name which of the
- * two shapes below is present. It drives live variant dispatch —
- * `packages/tools/src/validate/common.ts`'s `inferOverrideHelperVariant` /
- * `inferPolymorphVariant` (`switch (desc.definedBy)`) and
- * `read-render-parse.ts`'s `if (desc.definedBy !== 'override') continue` —
- * and the JSON serialized into node-model.json5 is this union's wire
- * format, so there is no compile-time narrowing once round-tripped.
- * Renamed from `source` → `definedBy` (decision 7 small cleanup b) so the
- * stem no longer collides with the provenance vocabulary.
- */
 export type PolymorphVariantDescriptor =
 	| {
 			readonly definedBy: 'override';

@@ -31,13 +31,6 @@ import { collectAllKinds } from './types.ts';
 export interface EmitIsConfig {
 	grammar: string;
 	nodeMap: NodeMap;
-	/**
-	 * Parser-symbol ID tables (from `loadGeneratedIdTables`). When present,
-	 * guards compare BOTH numeric `TSKindId.X` and string kind-name during
-	 * Phase A coexistence. Kinds with no parser symbol (TSGrammar-only) are
-	 * skipped — they can never appear at runtime. When absent (legacy /
-	 * unit-test callers), guards compare string kind-names only.
-	 */
 	generatedIdTables?: GeneratedIdTables;
 }
 
@@ -136,9 +129,7 @@ export function emitIs(config: EmitIsConfig): string {
 		kind: string;
 		typeName: string;
 		guardKey: string;
-		/** TSKindId enum member name (e.g. 'FunctionItem'); present when kindEntries available. */
 		member?: string;
-		/** Numeric TSKindId; undefined when kind has no parser symbol. */
 		numericId?: number;
 	}> = [];
 	const usedCamelKeys = new Set<string>();
@@ -198,7 +189,6 @@ export function emitIs(config: EmitIsConfig): string {
 		typeName: string;
 		guardKey: string;
 		memberKinds: string[];
-		/** Numeric IDs of member kinds (Phase A coexistence); empty = string-only. */
 		memberIds: number[];
 	}> = [];
 	for (const [kind, node] of nodeMap.nodes) {

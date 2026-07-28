@@ -43,7 +43,6 @@ import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { wireGetCurrentRuleKind, wireRegisterRefineForms } from '../wire/wire.ts';
 import type { RefineForm } from '../wire/wire.ts';
 
-/** `{ formName → { path → branchIndex | literal } }`. */
 export type FormMap = Record<string, Record<string, number | string>>;
 
 export function refine(original: RuntimeRule, forms: FormMap): RuntimeRule {

@@ -73,11 +73,6 @@ export type FieldLike = {
 	type: 'FIELD';
 	name: string;
 	content: unknown;
-	/** Opaque (debt PR-P1): the former `source?: string` provenance tag is
-	 *  gone — `dsl/primitives/field.ts` now stamps `metadata.fieldSource`
-	 *  instead (via `dsl/rule-metadata.ts`'s `makeRuleMetadata`). Untyped
-	 *  here since `types/` cannot import the opaque brand's dsl-owned
-	 *  constructor; writers cast through `unknown`. */
 	metadata?: unknown;
 };
 

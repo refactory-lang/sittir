@@ -124,42 +124,19 @@ function findSymbolPosition(rule: Rule<'link'>, targetSymbol: string, fieldName:
 	return null;
 }
 
-/**
- * Round-trip diagnostic captured by corpus validation. One entry per
- * corpus case that failed parse → readNode → render → reparse: we
- * surface the offending rule kind plus an input/output diff so the
- * user can spot the drop (typically a missing `joinBy` separator, a
- * `transform()` patch that would wrap a repeated slot, or a render
- * template gap). Emitted as a dedicated section at the top of
- * overrides.suggested.ts.
- */
 export interface RoundTripDiagnostic {
-	/** Corpus entry name (e.g., "Async / await used as identifiers"). */
 	readonly entry: string;
-	/** Rule<'link'> kind the validator was testing. */
 	readonly kind: string;
-	/**
-	 * Which validator raised the diagnostic:
-	 *  - 'render' — `parse → readNode → render → reparse`
-	 *    (template / routing / joinBy issues)
-	 *  - 'factory' — `parse → readNode → factory() → render → reparse`
-	 *    (factory API surface gaps: missing fields, wrong defaults)
-	 */
 	readonly source: 'render' | 'factory';
-	/** What broke — 'parse-error' (rendered text unparseable) or 'ast-mismatch' (structural drift). */
 	readonly category: 'parse-error' | 'ast-mismatch';
-	/** Input source text. */
 	readonly input?: string;
-	/** Rendered text (what the renderer emitted). Absent when parse-error occurs before render. */
 	readonly rendered?: string;
-	/** Human-readable message from the validator. */
 	readonly message: string;
 }
 
 export interface EmitSuggestedConfig {
 	grammar: string;
 	nodeMap: NodeMap;
-	/** Corpus round-trip diagnostics, collected by CLI --roundtrip. */
 	roundTripFailures?: readonly RoundTripDiagnostic[];
 }
 
@@ -643,11 +620,8 @@ function groupInferencesByKind(entries: readonly InferredFieldEntry[]): Map<stri
 // ---------------------------------------------------------------------------
 
 export interface GroupCandidate {
-	/** Parent rule kind whose body contains the nested seq. */
 	kind: string;
-	/** Slash-separated positional path to the seq within the rule body. */
 	path: string;
-	/** Heuristic discriminator guess — first structural member's name, or position-based fallback. */
 	discriminatorGuess: string;
 }
 

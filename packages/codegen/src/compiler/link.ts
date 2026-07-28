@@ -90,89 +90,12 @@ import { RuleWalker } from '../dsl/rule-walker.ts';
 // link() — main entry point
 // ---------------------------------------------------------------------------
 
-/**
- * Public options bag for {@link link} (formerly named `LinkCtx` — renamed so
- * the name is free for the phase-internal context below, matching the
- * NormalizeCtx/SimplifyCtx/AssembleCtx convention).
- *
- * Folds the former positional `include?` + `generatedIdTables?` args into a
- * single `(raw, ctx?)` shape (CW5). The old 3-arg positional form is gone —
- * every real caller either omitted both or used it positionally, and the
- * one that did (generate.ts) is updated alongside this.
- */
 export interface LinkOptions {
 	readonly include?: IncludeFilter;
 	readonly generatedIdTables?: GeneratedIdTables;
-	/**
-	 * Pipeline-wide `DiagnosticSink` (PR-H ctx threading). When supplied, Link
-	 * phase diagnostics (e.g. `liftSeparators`'s `non-literal-separator`
-	 * warning) land in THIS sink — the same instance `generate.ts` threads
-	 * through `NormalizeCtx`/`AssembleCtx.from`/`assertEmittable` — so they
-	 * are visible to callers reading the sink after the pipeline runs.
-	 * Defaults to a fresh, throwaway `DiagnosticSink` (pre-PR-S task 5
-	 * behavior) for callers (mostly tests) that only care about the returned
-	 * `LinkedGrammar` and never asked for diagnostics.
-	 */
 	readonly diagnostics?: DiagnosticSink;
 }
 
-/**
- * Phase context for the Link phase (S2, `BaseCtx<'evaluate'>` — Link READS
- * `Grammar<'evaluate'>` = {@link RawGrammar}; see
- * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §2). Was
- * `BaseCtx<Rule<'link'>>` (R12 PR-4) — a mislabel: the ctx was always
- * constructed from `raw.rules` (`Rule<'evaluate'>`-shaped), never the
- * `Rule<'link'>` resolve-loop accumulator (PR #136's finding, closed here —
- * `ctx.rules`/`ctx.grammar.rules` is now honestly the RAW pre-resolve view).
- *
- * Merges the former `ResolveCtx` (rule-resolution walk: `rules` — inherited
- * from `BaseCtx`, was `allRules` — `supertypes`, `externalRoles`) and
- * `HiddenClassifyCtx` (hidden-rule classification cluster: `inline`,
- * `derivations`, `applyPromotedRules`, `hiddenChoicesWithNamedAliasMembers`)
- * — both were R4 / #14 pass-constant/pass-shared state for the same `link()`
- * call, just threaded as two separate bags. `currentName`/per-rule `name`
- * stay explicit trailing params (CW6), as in `resolveRule(rule, ctx, name)`.
- *
- * `externalRoles` and `derivations` are write-through accumulators mutated
- * during the resolve/classify walks (role-lookup memoization and the
- * promoted-rules log, respectively) — kept as plain mutable fields rather
- * than wrapped in methods, mirroring `AssembleCtx.nodes`' getter tradeoff.
- *
- * S3 raw-vs-accumulator audit (per
- * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §3): every
- * `ctx.rules` / `ctx.grammar.rules` read site inside this file was checked
- * against what it factually needs. All FOUR consult the RAW pre-resolve view
- * (correctly — none needed the post-resolve accumulator, which is already
- * threaded explicitly as a plain parameter everywhere it IS needed):
- *   - `resolveRule`'s ALIAS case / `isClauseHoistVisibleGroupAlias` guard —
- *     runs DURING the resolve loop itself, so only the raw view exists yet;
- *     the mint condition structurally requires "no independent rule body
- *     exists" (`ctx.rules[rule.value] === undefined`), a fact only the raw
- *     grammar can answer.
- *   - `resolveSymbolRoleOrPass` (legacy structural role detection) — same
- *     reason: called from `resolveRule` during the resolve loop, checking the
- *     RAW target's shape (`_foo: () => role('indent')` dummy declarations,
- *     which never survive into any resolved view).
- *   - `mintContentAliasKinds`'s walk (`for (const [name, rule] of
- *     Object.entries(ctx.rules))`) and its `ctx.rules[hiddenBody]` lookup —
- *     both explicitly walk the RAW tree because `resolveRule` (run earlier,
- *     over the SAME raw source) already collapsed the ALIAS nodes this pass
- *     is looking for into plain SYMBOL refs; walking the post-resolve
- *     accumulator would find nothing to mint. The minted body is then run
- *     through `resolveRule` fresh, so the pre-resolve (unresolved) form is
- *     exactly what's wanted.
- *   - `collectTopLevelAliasBodies`'s `rawRules = ctx.rules` walk — same
- *     rationale (finds ALIAS nodes the resolve loop already collapsed); its
- *     sibling `dereferenceTopLevelAliasBody` call correctly takes the
- *     ACCUMULATOR as an explicit `resolvedRules` parameter (not `ctx.rules`)
- *     to follow already-resolved SYMBOL chains.
- * `classifyAndLogHiddenRules` / `classifyHiddenRule` / `classifyHiddenChoiceRule`
- * already take the accumulator as an explicit `rules` parameter (V2 fixed
- * this pre-S3 — kept as-is). `applyOverridePolymorphs` /
- * `deriveStructuralVariantChildren` callers in this file, normalize.ts, and
- * assemble.ts each pass an explicit accumulator/carried-view parameter, never
- * an ambient ctx field. No STOP-worthy wrong-phase value flow found.
- */
 export class LinkCtx extends BaseCtx<'evaluate'> {
 	readonly supertypes: ReadonlySet<string>;
 	readonly externalRoles: Map<string, ExternalRole>;
@@ -765,9 +688,7 @@ function _wouldInlineAtAssemble(kindName: string, rules: Record<string, Rule<'li
 //
 export interface VariantChoiceLocation {
 	choice: ChoiceRule<'link'>;
-	/** Members of the outer seq that appear before the choice. */
 	prefix: Rule<'link'>[];
-	/** Members of the outer seq that appear after the choice. */
 	suffix: Rule<'link'>[];
 }
 
@@ -1325,29 +1246,9 @@ function resolveSymbolRoleOrPass(rule: SymbolRule<'link'>, ctx: LinkCtx): Rule<'
 // classifyHiddenRule — determine what a hidden rule IS
 // ---------------------------------------------------------------------------
 
-/**
- * Result of classifying a hidden (or grammar-declared-supertype) rule.
- *
- * (debt PR-P1, item 3) Replaces the former stamp-then-reread pattern: the
- * classifiers used to stamp a top-level `source` / `metadata.source` tag onto
- * the returned rule, and the caller (`classifyAndLogHiddenRules`) re-read that
- * stamp off the rule to decide whether to log a derivation + mutate the rule
- * map. Per decision 3's corollary, that "stamp then re-inspect the rule"
- * pattern must become direct return-value dataflow: the classifier now
- * returns its classification/classifiedBy ALONGSIDE the rule, and the caller
- * reads ONLY the return value — never re-reads a tag off `rule`.
- */
 interface ClassifyResult {
 	readonly rule: Rule<'link'>;
-	/** Set only when `rule` was newly classified this call (enum or supertype). */
 	readonly classification?: 'enum' | 'supertype';
-	/**
-	 * Whether this classification was declared in the grammar (`'grammar'`,
-	 * e.g. present in `grammar.supertypes`) or inferred by this structural
-	 * classifier (`'link'`). For the derivation log (diagnostics only) — NOT
-	 * an authorship fact (decision 6: `'promoted'` is not an `author` value;
-	 * it lives on its own `classifiedBy` axis in `RuleMetadataShape`).
-	 */
 	readonly classifiedBy?: 'grammar' | 'link';
 }
 
@@ -2627,16 +2528,7 @@ function unwrapAliasForCheck(rule: Rule<'link'>): Rule<'link'> {
  */
 
 export interface RefinePathResolution {
-	/** The field name whose content resolves to the choice, when the
-	 *  path descent crossed a `field(name, ...)` wrapper. `undefined`
-	 *  when the choice is at the rule root or inside a non-field
-	 *  wrapper (refine currently only supports the field-wrapping
-	 *  case, but we keep this optional so future non-field refinement
-	 *  sites don't need a schema change). */
 	readonly fieldName: string | undefined;
-	/** The resolved choice rule — either a `ChoiceRule<'link'>` or an `EnumRule<'link'>`
-	 *  (the normalized choice-of-strings). Both expose `members`, so
-	 *  consumers that walk them uniformly work without adapting. */
 	readonly choice: ChoiceRule<'link'> | EnumRule<'link'>;
 }
 /**
@@ -2756,18 +2648,6 @@ function stepPath(
 			);
 	}
 }
-/**
- * Unwrap common single-content wrappers (optional, repeat, repeat1) to
- * reach an inner `choice` — or an `enum` (normalized choice-of-strings).
- * Returns `undefined` if the eventual node is neither a choice nor an
- * enum. Wrappers between the start and the terminal choice are
- * structurally transparent for selection purposes.
- *
- * `EnumRule<'link'>` is shape-compatible with `ChoiceRule<'link'>` (both expose
- * `members`) — callers that walk members uniformly can accept the union
- * without further adaptation. The discriminant is still useful
- * information downstream so we surface it here instead of collapsing.
- */
 function unwrapToChoice(
 	rule: Rule<'link'>,
 	rules?: Readonly<Record<string, Rule<'link'>>>

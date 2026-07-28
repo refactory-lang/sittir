@@ -8,7 +8,6 @@ import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 export interface EmitClientUtilsConfig {
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
-	/** Trivia kind names (e.g. `['line_comment', 'block_comment']`). */
 	triviaKinds?: string[];
 }
 

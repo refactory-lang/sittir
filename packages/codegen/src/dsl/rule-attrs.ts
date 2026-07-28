@@ -39,22 +39,6 @@ export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): 
 	return { ...result, ...patch };
 }
 
-/**
- * Attributes shared across the arms of a choice / polymorph. ONE derivation
- * consumed by both phases (was previously implemented twice, inconsistently —
- * simplify's `liftSharedArmAttrs` was choice-only + unanimous-multiplicity;
- * collect-slots' `sharedArmFieldName` + `strongestArmMultiplicity` were
- * choice+polymorph + strongest-multiplicity):
- *  - simplify's `liftSharedArmAttrs` hoists the UNANIMOUS attrs onto the choice.
- *  - collect-slots reads the unanimous `fieldName` (slot naming) and the
- *    `strongestMultiplicity` (to lift an array multiplicity a single arm carries,
- *    e.g. `choice(commaSep1(X), X)`).
- *
- * `fieldName` / `multiplicity` / `nonterminal` / `separator` are UNANIMOUS —
- * present and equal on EVERY arm, else `undefined`. `strongestMultiplicity` is
- * the most-multi multiplicity ANY single arm carries (`nonEmptyArray > array >
- * optional`; `single` / absent ignored), regardless of unanimity.
- */
 export interface SharedArmAttrs {
 	readonly fieldName?: string;
 	readonly multiplicity?: Multiplicity;
@@ -65,15 +49,6 @@ export interface SharedArmAttrs {
 
 const MULTIPLICITY_RANK: Record<Multiplicity, number> = { single: 0, optional: 1, array: 2, nonEmptyArray: 3 };
 
-/**
- * Structural-read shape for the stamped leaf attributes. These only exist
- * on `RuleBase<'normalize' | 'simplify'>` per the type, but `sharedArmAttrs`
- * is called from `collect-slots.ts` with `AnyRule` values that are, at
- * runtime, always post-wrapper-deletion (normalize-phase) rules — the
- * wrapper-bearing 'evaluate'/'link' views just don't carry these fields.
- * Matches the established structural-read-cast pattern (see
- * `findRepeatFlag` in dsl/rule-transforms.ts).
- */
 type StampedAttrs = Pick<RuleBase<'normalize'>, 'fieldName' | 'multiplicity' | 'nonterminal' | 'separator'>;
 
 function armsOf(rule: AnyRule): readonly AnyRule[] {

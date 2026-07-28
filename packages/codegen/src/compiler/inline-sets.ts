@@ -35,10 +35,6 @@ export function loadGrammarJsonInlineList(grammar: string): readonly string[] | 
 	}
 }
 
-/**
- * A single grammar.json rule node — recursive, JSON-shaped (not sittir's own
- * `Rule<Phase>` IR). Only the fields this module's walk reads are typed.
- */
 interface GrammarJsonNode {
 	readonly type: string;
 	readonly name?: string;

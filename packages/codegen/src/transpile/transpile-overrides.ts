@@ -33,18 +33,13 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const packagesRoot = resolve(__dirname, '../../..');
 
 export interface TranspileOptions {
-	/** Grammar name — e.g. 'rust', 'python', 'typescript'. */
 	grammar: string;
-	/** Override the default packages root (used in tests). */
 	packagesRoot?: string;
 }
 
 export interface TranspileResult {
-	/** Absolute path to the generated `.sittir/grammar.js`. */
 	outputPath: string;
-	/** Source size in bytes. */
 	sourceBytes: number;
-	/** Output size in bytes. */
 	outputBytes: number;
 }
 

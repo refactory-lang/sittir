@@ -78,7 +78,6 @@ import type { CodegenEmitter } from './emitter.ts';
 import { collectSeparatorCandidateKindNames } from './wrap.ts';
 import type { Rule } from '../types/rule.ts';
 
-/** Grammars the emitter supports. Matches the three per-grammar packages. */
 export type Grammar = 'rust' | 'typescript' | 'python';
 const SUPPORTED_GRAMMARS = ['rust', 'typescript', 'python'] as const;
 
@@ -86,22 +85,11 @@ export function isRenderModuleGrammar(grammar: string): grammar is Grammar {
 	return (SUPPORTED_GRAMMARS as readonly string[]).includes(grammar);
 }
 
-/**
- * Output of a single emit pass. Each field names a file path
- * (relative to the repo root) and its exact contents. The CLI writes
- * them; this module does not touch disk. Key invariant: re-running
- * the emitter over the same inputs produces byte-identical output.
- */
 export interface RustRenderModuleEmit {
-	/** `rust/crates/sittir-{lang}/src/render/hash.rs` */
 	hashRs: { path: string; contents: string };
-	/** `packages/{lang}/src/hash.ts` */
 	hashTs: { path: string; contents: string };
-	/** `rust/crates/sittir-{lang}/src/render/templates.rs` — per-kind Template structs */
 	templatesRs: { path: string; contents: string };
-	/** `rust/crates/sittir-{lang}/src/render/transport.rs` — AnyTransport + FromNapiValue + typed dispatch + transport bridge */
 	transportRs: { path: string; contents: string };
-	/** `rust/crates/sittir-{lang}/src/render/mod.rs` — exposes transport render entrypoints */
 	libRs: { path: string; contents: string };
 }
 
@@ -326,9 +314,6 @@ interface EffectiveSupertypeTransportSubtype {
 interface EffectiveSupertypeTransportShape {
 	readonly subtypes: readonly EffectiveSupertypeTransportSubtype[];
 	readonly suppressedKinds: readonly string[];
-	/** Storage→parse pairs merged from every walked supertype (the owner AND
-	 * flattened reserved sub-supertypes) — see `SupertypeRule.subtypeParseNames`.
-	 * Keyed by `subtypes[].subKind`; first-stamped pair wins on collision. */
 	readonly parseNames: ReadonlyMap<string, string>;
 }
 
@@ -454,52 +439,14 @@ interface EmittedField {
 	view: EmittedNonterminalView;
 	required: boolean;
 	multiple: boolean; // true when the transport-side field is Vec<Box<AnyTransport>>
-	/** True when this slot has a corresponding field in the transport struct.
-	 *  Slots without transport fields (virtual presentation slots from the
-	 *  template walker) must be defaulted to "" in the typed dispatch path. */
 	hasTransportField: boolean;
-	/** Rust struct storage identifier for this slot — used to build `node.<storageName>`
-	 *  access expressions. Defaults to `name` when no assembled slot exists. */
 	storageName: string;
-	/** True when this slot was inferred (not declared via `field(...)`) — i.e. it
-	 *  came from `slotModel.unnamed`. Consumers use this to
-	 *  route lookups through `node.children` instead of `node.fields[name]`. */
 	isUnnamed: boolean;
 	hasLeading: boolean;
 	hasTrailing: boolean;
-	/** Per-slot separator stamped on the slot's NodeRef/TerminalValue metadata.
-	 *  Used by ListNonterminalView emission so each list-multiplicity slot
-	 *  gets its own separator (rather than a node-wide first-match). */
 	separator?: string;
-	/**
-	 * When this surface slot was produced by inlining a group-lift helper
-	 * (e.g. template inlined `_const_item_optional1` and exposed its inner
-	 * field `value`), this field names the HELPER's transport struct field
-	 * (e.g. `const_item_optional1`) that must be matched at render time.
-	 *
-	 * When set, the render fn emits a match on the backing helper field
-	 * and then accesses the inner field (`v.<name>`). If the inner field
-	 * is itself `Option<T>` (`backingInnerRequired = false`), a nested
-	 * match is required to flatten it.
-	 */
 	backingTransportField?: string;
-	/**
-	 * True when the inner field (`v.<name>` inside the group-lift helper)
-	 * is a required (non-Option) transport — Renderable::Transport(inner)
-	 * can be used directly.
-	 * False when the inner field is itself Option<T> — a nested match is
-	 * needed: `match &v.<name> { Some(inner) => Present(inner), None => Missing }`.
-	 * Only meaningful when `backingTransportField` is set.
-	 */
 	backingInnerRequired?: boolean;
-	/**
-	 * When set, the transport struct ALSO has a direct field (`_<backingDirectField>`)
-	 * that the native CST reader can populate directly (since tree-sitter exposes
-	 * the inner CST field at the parent level, not wrapped inside a helper object).
-	 * The render fn tries this direct field first (for CST read path), then falls
-	 * back to `backingTransportField` (for factory path).
-	 * Only meaningful when `backingTransportField` is set.
-	 */
 	backingDirectField?: string;
 }
 
@@ -508,14 +455,8 @@ interface EmittedStruct {
 	kind: string;
 	fields: EmittedField[];
 	hasChildren: boolean;
-	/** True when the transport struct actually has a `children` field (structuralChildren.length > 0).
-	 *  The template may reference `children` (hasChildren === true) without a transport field —
-	 *  in that case we emit an empty ListNonterminalView instead of accessing node.children. */
 	transportHasChildren: boolean;
-	/** True when the transport struct's `children` field is `Vec<...>` (not `Option<Vec<...>>`). */
 	childrenRequired: boolean;
-	/** True when the transport struct's `children` field is `Vec<T>` (multiple elements possible).
-	 *  When false, the field is scalar: `T` (required) or `Option<T>` (optional). */
 	childrenMultiple: boolean;
 	hasVariant: boolean;
 	hasText: boolean;
@@ -2541,51 +2482,13 @@ function expandConcreteTransportKinds(
 	return expanded;
 }
 
-/**
- * Per-slot children enum entry: identifies a heterogeneous slot (named or
- * unnamed) on a parent node, plus the set of concrete kinds it accepts.
- *
- * Per cleanup-rules.md §E1 (no special treatment for unnamed vs named slots):
- * BOTH kinds of heterogeneous slots get per-slot typed enums. Per-slot enums
- * give us Box-elision (non-recursive variants stay inline in the parent
- * struct) that `Box<AnyTransport>` cannot.
- */
 interface PerSlotChildEnum {
-	/** PascalCase typeName of the parent node. */
 	typeName: string;
-	/** Raw grammar kind of the parent node — owner key for SCC lookup. */
 	ownerKind: string;
-	/** Slot name — symmetric for named and unnamed slots (cleanup-rules §E1). */
 	fieldName: string;
-	/** Concrete kinds in this slot. */
 	kinds: readonly string[];
-	/** Terminal literal children that may appear in runtime `$children`. */
 	literals: readonly TransportLiteral[];
-	/**
-	 * `parseKind -> storageKind` pairs for this slot's values whose wire
-	 * `$type` (`parseKind`, e.g. `type_identifier`) diverges from the
-	 * canonical storage kind sittir models it under (`node`, e.g.
-	 * `identifier` — see `aliasTargetToSourceMapOf`'s doc comment,
-	 * node-map.ts). A visible-to-visible `alias($.identifier,
-	 * $.type_identifier)` reference site canonicalizes to the SOURCE kind
-	 * here (unlike a hidden hidden-rule alias, which `nodeMap.aliasedHiddenKinds`
-	 * already covers) — so the runtime kind id for the ALIAS TARGET
-	 * (`type_identifier`) is otherwise missing from the generated
-	 * `FromNapiValue` match arms. Threaded into `acceptedTransportKinds` so
-	 * the id arm for the storage kind (`identifier`) also accepts the
-	 * alias-target id, per slot (the alias-target set is per-reference-site,
-	 * not global to the kind).
-	 *
-	 * PR-K3c: retained ONLY for the name-based fallback — kinds present in
-	 * `acceptedIdsByKind` never consult it.
-	 */
 	parseAliases: Readonly<Record<string, string>>;
-	/**
-	 * Per-storage-kind accepted wire ids from the mint stamps
-	 * (`acceptedIdPairsByKindOf`, node-map.ts). Kinds absent here (id-less
-	 * values, supertype-expanded arms with no value in hand) fall back to
-	 * the name chain (`acceptedTransportKinds` + `kindIdByKind`).
-	 */
 	acceptedIdsByKind: ReadonlyMap<string, readonly number[]>;
 }
 
@@ -3503,24 +3406,6 @@ function leafDefaultTextLiteral(node: AssembledNode): string | undefined {
 	return undefined;
 }
 
-/**
- * Single source of truth for transport struct metadata fields.
- * Every transport struct (branch, leaf, polymorph) carries these
- * metadata fields. All emission helpers that produce struct field
- * declarations, `None` initialisers, `obj.get(...)` reads, or
- * `transport.<field>` bridge accesses derive from this array.
- *
- * @remarks
- * `jsName` is the `$`-prefixed JS property name on the wire.
- * `rustName` is the Rust struct field name.
- * `rustType` is the Rust type for the struct field declaration.
- * `bridgeMap` (optional) is an inline `.map(...)` transformation
- * applied when reading the field value in the transport-to-NodeData
- * bridge function. When absent the field is passed through directly.
- * `needsExplicitTypeAnnotation` flags fields whose `obj.get(...)` call
- * in the manual `FromNapiValue` impl requires a leading type annotation
- * (e.g. `let x: Option<Foo> = obj.get(...)?;`).
- */
 interface TransportMetadataField {
 	jsName: string;
 	rustName: string;
@@ -4078,16 +3963,6 @@ function literalToVariantName(literal: string): string {
 	return `V${hex}`;
 }
 
-/**
- * True when an `AssembledEnum` has exactly one member value.
- *
- * Single-member enums are presence markers — the field either holds
- * the one known literal or is absent. The Rust transport layer maps
- * these to plain `bool` rather than a single-variant enum type, and
- * JS sends `true`/`false` (or omits the field) instead of an object
- * with `$text`. This eliminates the enum struct entirely and lets
- * `#[napi(object)]` handle the bool field automatically.
- */
 function enumTypeName(node: AssembledEnum): string {
 	return `${rustTypeIdent(node.typeName)}Enum`;
 }

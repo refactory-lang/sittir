@@ -153,11 +153,6 @@ function tokenise(source: string): Token[] {
 // Token-stream cursor
 // ---------------------------------------------------------------------------
 
-/**
- * Lightweight cursor over a token array. Provides `peek()` / `advance()`
- * with proper `Token | undefined` return types so the parser never needs
- * unchecked index access.
- */
 class TokenCursor {
 	private readonly tokens: Token[];
 	pos: number;

@@ -13,11 +13,6 @@ import type { NodeMap, RefineForm } from '../compiler/types.ts';
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import { narrowedFieldLiteralsForForm } from '../compiler/link.ts';
 
-/**
- * Per-kind refine descriptor collected once, consumed by every emitter
- * that needs to walk the forms. Exposes the field-literal narrowing
- * per form so downstream emission doesn't re-walk the rule tree.
- */
 export interface RefineKindInfo {
 	readonly kind: string;
 	readonly typeName: string;
@@ -28,8 +23,6 @@ export interface RefineKindInfo {
 export interface RefineFormInfo {
 	readonly name: string;
 	readonly form: RefineForm;
-	/** Per-form field narrowings: each entry says "in this form, field
-	 *  `fieldName` should be narrowed to the literal `literal`". */
 	readonly narrowedFields: ReadonlyArray<{
 		fieldName: string;
 		literal: string;

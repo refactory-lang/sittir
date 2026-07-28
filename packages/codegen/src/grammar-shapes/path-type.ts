@@ -45,7 +45,6 @@ import type { FieldLike } from '../types/runtime-shapes.ts';
 // transparently peeling PREC wrappers.
 // ---------------------------------------------------------------------------
 
-/** Peel all leading PREC wrappers (transparent) to the structural rule. */
 type PeelPrec<N extends GrammarRule> = N extends PrecRuleUnion ? PeelPrec<N['content']> : N;
 
 // ---------------------------------------------------------------------------
@@ -56,7 +55,6 @@ type PeelPrec<N extends GrammarRule> = N extends PrecRuleUnion ? PeelPrec<N['con
 
 type IndicesOf<M extends readonly unknown[]> = Extract<keyof M, `${number}`>;
 
-/** Valid first-segment index strings for rule `N` (top-level). */
 export type TopLevelKeys<N extends GrammarRule> =
 	PeelPrec<N> extends infer P
 		? P extends SeqRule | ChoiceRule
@@ -86,9 +84,6 @@ export type TopLevelKeys<N extends GrammarRule> =
 // intellisense-demo.test-d.ts.
 // ---------------------------------------------------------------------------
 
-/** Non-numeric first-segment forms from `parsePath` that the type model
- *  cannot bounds-check, accepted permissively. (`name:` also admits junk like
- *  `'5:'` — TS can't cheaply require a letter-initial; permissive is fine.) */
 type NonNumericFirstSegment = '_' | `(${string})` | `${string}:` | `-${number}`;
 
 export type PathKey<N extends GrammarRule> =
@@ -116,25 +111,8 @@ export type PathKey<N extends GrammarRule> =
 //     tsgo time.
 // ---------------------------------------------------------------------------
 
-/** Patch values accepted in a transform patch-map: tree-sitter `RuleOrLiteral`
- *  (native rule objects + literals) plus sittir's DSL placeholder/result types.
- *  Sourced from the actual primitive return interfaces (DRY) via type-only
- *  imports — no runtime cycle (primitives don't import grammar-shapes).
- *
- *  `field('x')` returns `FieldPlaceholder`; `field('x', content)` returns
- *  `FieldLike`; `variant('y')` returns `VariantPlaceholder`. RESIDUAL:
- *  `alias()` is typed `=> unknown` (source-side, overloaded — fixing it needs
- *  overload signatures in dsl/primitives/alias.ts, outside this file set), so
- *  alias-valued transform entries are NOT cleared by enriching this union.
- *  `AliasPlaceholder` is included for the day `alias()` returns it; today it
- *  has no effect on the `unknown`-typed alias() expression. Reported as a
- *  residual — NOT papered with a `unknown`/`any` union (that would collapse
- *  the whole value type and accept anything). */
 export type TransformPatchValue = RuleOrLiteral | FieldPlaceholder | FieldLike | VariantPlaceholder | AliasPlaceholder;
 
-/** A single patch-map for one rule: path-key → patch value. */
 export type TransformPatchMap<Keys extends string> = Partial<Record<Keys, TransformPatchValue>>;
 
-/** FAST key strategy: segment-1 keys from the RAW shape (enrich-invariant for
- *  top-level member count). */
 export type FastKeys<R extends GrammarRule> = PathKey<R>;

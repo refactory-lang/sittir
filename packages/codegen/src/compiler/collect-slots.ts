@@ -166,33 +166,11 @@ export function isStructuralChoice(rule: Extract<AnyRule, { type: 'CHOICE' }>): 
 // one source, one derivation.
 // ---------------------------------------------------------------------------
 
-/** Per-arm partition of a fieldless structural choice (union-slot design §2). */
 export interface ChoiceArmPartition {
-	/**
-	 * Degenerate fielded arms — a bare `field(x, ref)`, one slot, NO ambient
-	 * literals (enum_body's `field('name', _property_name)`, the export arms'
-	 * `field('declaration', declaration)`). PR 1.5 (2026-07-21 design §5):
-	 * these join the union slot, routed by FIELD LABEL instead of by kind —
-	 * tree-sitter already labels these children, so no mint/grammar change.
-	 */
 	degenerateNamedArms: AnyRule[];
-	/**
-	 * Structured named arms — fields plus ambient literals, or more than one
-	 * field (dict_pattern's kv `field(key) ":" field(value)`,
-	 * arrow_function's signature arm). Still a gate (b)/(c) violation
-	 * (`union-slot-mixed-row` / `union-slot-nondegenerate-arm`) until PR 3's
-	 * group mint gives them a group kind to join the union by.
-	 */
 	structuredNamedArms: AnyRule[];
-	/** Unnamed single-nonterminal reference arms — union-member kind identity. */
 	unionArms: AnyRule[];
-	/** Bare terminal arms (literal string/token) — no slot or kind identity. */
 	literalArms: AnyRule[];
-	/**
-	 * Unnamed structured arms (multi-member seq with ambient literals, nested
-	 * choice) — gate (b) violations until PR 3's group-mint widening gives them
-	 * a group kind to join the union by.
-	 */
 	structuredArms: AnyRule[];
 }
 

@@ -51,8 +51,6 @@ export interface EmitAllConfig {
 	triviaKinds?: string[];
 	grammarRoles?: GrammarRoles;
 	emitRenderModule?: boolean;
-	/** Kind → reason for known-failing generated tests (`expectTestFailures:`
-	 *  in overrides.ts) — threaded to `emitTests` for `describe.skip` emission. */
 	expectTestFailures?: Readonly<Record<string, string>>;
 }
 

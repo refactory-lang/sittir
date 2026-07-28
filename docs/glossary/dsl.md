@@ -1245,3 +1245,271 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 * rules map.
 	 */
 ```
+
+### `AuthoringField` (`packages/codegen/src/dsl/dsl-authoring.ts:35`)
+
+```text
+/** 1-arg → transform placeholder; 2-arg → a grammar-shapes `FieldRule` (rule body). */
+```
+
+### `AuthoringAlias` (`packages/codegen/src/dsl/dsl-authoring.ts:42`)
+
+```text
+/** 1-arg string → transform placeholder; 1/2-arg rule → a grammar-shapes `AliasRule`. */
+```
+
+### `EnrichedGrammar` (`packages/codegen/src/dsl/enrich.ts:101`)
+
+```text
+/**
+ * Type-level mirror of what `enrich()` does to the rules at runtime: each rule
+ * is replaced by its post-enrich shape (`EnrichRule`). Applied to a flat
+ * grammar-shape schema (`{ rules: {…} }`); other inputs (e.g. the internal
+ * `GrammarResult` wrapper) pass through unchanged.
+ */
+```
+
+### `name` (`packages/codegen/src/dsl/enrich.ts:606`)
+
+```text
+/** Raw symbol name (preserves any leading underscore for supertype detection). */
+```
+
+### `symbolRule` (`packages/codegen/src/dsl/enrich.ts:608`)
+
+```text
+/** The SYMBOL rule itself, used as the FIELD's content. */
+```
+
+### `wrap` (`packages/codegen/src/dsl/enrich.ts:610`)
+
+```text
+/** Rebuild the original seq-member rule around a freshly-built FIELD node. */
+```
+
+### `UnaliasDiagnosticSink` (`packages/codegen/src/dsl/enrich.ts:1707`)
+
+```text
+/** A per-`enrich()`-call sink for un-aliasing diagnostics — array + dedupe-by-key
+ *  Set, mirroring the assemble-time check's shape but WITHOUT the module-global
+ *  lifetime. Created fresh per invocation and attached to that call's result. */
+```
+
+### `UnaliasCandidate` (`packages/codegen/src/dsl/enrich.ts:1728`)
+
+```text
+/**
+ * @internal — a single value contributing to a target-name bucket: either an
+ * ALIAS site (`aliasSite` set, eligible to be dropped) or a bare SYMBOL
+ * reference sharing the same target name (its own storage kind IS its parse
+ * kind — never dropped, but must be counted so `diagnoseParseKindCollisions`
+ * sees the full set of colliding storage kinds, matching the real base-grammar
+ * shape `choice($.generic_type, alias($.generic_type_with_turbofish,
+ * $.generic_type))` where the bare `$.generic_type` branch is what makes the
+ * collision detectable at all).
+ */
+```
+
+### `slotKey` (`packages/codegen/src/dsl/enrich.ts:1740`)
+
+```text
+/**
+	 * Enclosing FIELD name, when this value sits (directly or transitively)
+	 * inside a `field(name, …)` wrapper — otherwise `undefined` (positional).
+	 * Two aliases sharing a `targetName` but living in DIFFERENT fields are
+	 * genuinely distinguishable (the field name disambiguates the read-time
+	 * slot), so the collision bucketing keys on `(slotKey ?? targetName,
+	 * targetName)` rather than `targetName` alone. When `undefined` the
+	 * effective key falls back to `targetName`, preserving the pre-slotKey
+	 * behavior for positional (non-field-wrapped) collisions.
+	 */
+```
+
+### `armLeadingSymbolName` (`packages/codegen/src/dsl/enrich.ts:2058`)
+
+```text
+/**
+ * PR 3 (2026-07-21 union-slot design): classify a bare choice-arm position
+ * (unnamed — no field wrapper) and, if it is STRUCTURED (multi-slot, or a
+ * symbol ref to a hidden rule whose own body is multi-slot), mint it a kind
+ * identity so it can join the union-slot routing (`collect-slots.ts`'s
+ * `partitionChoiceArms`) as a distinguishable member. Returns `null` when no
+ * mint is needed (the arm is already a fine union member as-is — a plain
+ * reference, or a single-slot body that collapses cleanly) or when minting
+ * collided with an existing rule name (caller keeps the arm unchanged,
+ * matching every other collision-guard in this file — no partial synthesis).
+ *
+ * Two cases, per the design's "mint = promote, not synthesize" distinction:
+ *   - The arm is a bare `symbol(name)` ref to an EXISTING hidden rule whose
+ *     body is structured — promote that rule directly (no body copy):
+ *     `alias($.<existingHiddenName>, $.<freshVisibleName>)`. Exemplar:
+ *     python's `dict_pattern` — the comma-separated list's REPEATED-TAIL
+ *     occurrence of `choice($._key_value_pattern, $.splat_pattern)` still
+ *     references the hidden `_key_value_pattern` unpromoted (the author's
+ *     `dict_pattern: {'1/0/0/0': 'kv'}` override only reached the HEAD
+ *     occurrence of the same choice).
+ *   - The arm is itself an anonymous structured `seq`/`choice` (no separate
+ *     rule name) — synthesize a fresh hidden rule from the arm's own body,
+ *     same as the inline-unsafe `optional(seq)` path (`visibleGroupSynthName`).
+ *
+ * Deliberately NOT handled here (gate (c), a separate follow-up): a
+ * FIELD-NAMED arm sitting alongside union arms in the same choice (a mixed
+ * row) — this pass only mints for unnamed arms.
+ */
+```
+
+### `SeparatorFact` (`packages/codegen/src/dsl/list-patterns.ts:29`)
+
+```text
+/**
+ * The nested separator fact's shape (`{value, trailing?, leading?}`, PR-S),
+ * phrased structurally over `RuntimeRule` (rather than a specific
+ * `RuleBase<Phase>['separator']`) so `separatorFactsEqual` accepts the fact
+ * at ANY phase view (`RuleBase<'normalize'>.separator`,
+ * `RepeatRule<'link'>.separator`, …) without a phase-widening cast at the
+ * call site — they all share this identical structural shape post-PR-S.
+ */
+```
+
+### `SharedArmAttrs` (`packages/codegen/src/dsl/rule-attrs.ts:42`)
+
+```text
+/**
+ * Attributes shared across the arms of a choice / polymorph. ONE derivation
+ * consumed by both phases (was previously implemented twice, inconsistently —
+ * simplify's `liftSharedArmAttrs` was choice-only + unanimous-multiplicity;
+ * collect-slots' `sharedArmFieldName` + `strongestArmMultiplicity` were
+ * choice+polymorph + strongest-multiplicity):
+ *  - simplify's `liftSharedArmAttrs` hoists the UNANIMOUS attrs onto the choice.
+ *  - collect-slots reads the unanimous `fieldName` (slot naming) and the
+ *    `strongestMultiplicity` (to lift an array multiplicity a single arm carries,
+ *    e.g. `choice(commaSep1(X), X)`).
+ *
+ * `fieldName` / `multiplicity` / `nonterminal` / `separator` are UNANIMOUS —
+ * present and equal on EVERY arm, else `undefined`. `strongestMultiplicity` is
+ * the most-multi multiplicity ANY single arm carries (`nonEmptyArray > array >
+ * optional`; `single` / absent ignored), regardless of unanimity.
+ */
+```
+
+### `StampedAttrs` (`packages/codegen/src/dsl/rule-attrs.ts:68`)
+
+```text
+/**
+ * Structural-read shape for the stamped leaf attributes. These only exist
+ * on `RuleBase<'normalize' | 'simplify'>` per the type, but `sharedArmAttrs`
+ * is called from `collect-slots.ts` with `AnyRule` values that are, at
+ * runtime, always post-wrapper-deletion (normalize-phase) rules — the
+ * wrapper-bearing 'evaluate'/'link' views just don't carry these fields.
+ * Matches the established structural-read-cast pattern (see
+ * `findRepeatFlag` in dsl/rule-transforms.ts).
+ */
+```
+
+### `RuleMetadataShape` (`packages/codegen/src/dsl/rule-metadata.ts:44`)
+
+```text
+/**
+ * The real provenance shape. Absorbs:
+ *   - the former `RuleBase.metadata` bag (`source` / `inlinedFrom`)
+ *   - the former top-level `FieldRule.source` (`'grammar' | 'override' |
+ *     'enriched' | 'inferred'`) — relocated here as `fieldSource` (debt PR-P1
+ *     item 2; the 'inferred' arm is dropped per the confirmed-dead-writer
+ *     probe, lingering-debt-inventory-research.md §2.6)
+ *   - the former top-level `SymbolRule.source` (`'grammar' | 'link' |
+ *     'group-lift'`) — relocated here as `symbolSource` (debt PR-P1 item 2)
+ *
+ * Deliberately kept as separate per-fact keys rather than one unified
+ * `source` — the three vocabularies are genuinely different value sets (see
+ * lingering-debt-inventory-research.md §5.4's "source homonyms" note);
+ * collapsing them is a separate design discussion, not in scope here.
+ *
+ * (debt: source-homonym resolution, decision 6, 2026-07-04) The former
+ * `source?: 'grammar' | 'promoted' | 'override' | 'enrich' | 'group-lift'`
+ * field wore TWO different facts under one name:
+ *   - WHO ORIGINALLY WROTE the rule's text — grammar authoring, an
+ *     overrides.ts patch, dsl-side enrich synthesis, or evaluate synthesis.
+ *     This is `author` below. `'group-lift'` never actually appeared as a
+ *     `source` value in practice (only as `symbolSource`) and is dropped.
+ *   - WHETHER a classification was DECLARED (grammar-authored, e.g.
+ *     `grammar.supertypes`) or INFERRED by link's structural classifier
+ *     (the former `'promoted'` value). This is `classifiedBy` below — it is
+ *     NOT an authorship fact (the rule's text is still grammar-authored
+ *     either way; only the ENUM/SUPERTYPE classification decision was
+ *     inferred rather than declared).
+ */
+```
+
+### `author` (`packages/codegen/src/dsl/rule-metadata.ts:74`)
+
+```text
+/**
+	 * WHO wrote this rule's text. `'grammar'` — authored directly in the
+	 * grammar. `'override'` — authored or replaced by an overrides.ts patch.
+	 * `'enrich'` — dsl-side enrich synthesized this position (path-descent in
+	 * transform-path.ts and link's enrich↔link handoff key on this to travel
+	 * through / resolve the synthesized position). `'evaluate'` — evaluate
+	 * synthesized this rule (mirrors `RuleProvenance`'s
+	 * `'evaluate-synthesized'`, decision 6).
+	 */
+```
+
+### `classifiedBy` (`packages/codegen/src/dsl/rule-metadata.ts:84`)
+
+```text
+/**
+	 * WHETHER a rule's ENUM/SUPERTYPE classification was declared in the
+	 * grammar (`'grammar'`, e.g. present in `grammar.supertypes`) or inferred
+	 * by link's structural classifier (`'link'`, the former `source:
+	 * 'promoted'` value). Diagnostics-only (the `promotedRules` derivation
+	 * log / suggested.ts's override-candidate surfacing) — never an
+	 * authorship fact.
+	 */
+```
+
+### `inlinedFrom` (`packages/codegen/src/dsl/rule-metadata.ts:93`)
+
+```text
+/** Diagnostics-only: the hidden kind whose body was spliced in by the
+	 *  normalize inline hoist (§D-2a). */
+```
+
+### `fieldSource` (`packages/codegen/src/dsl/rule-metadata.ts:96`)
+
+```text
+/** Relocated `FieldRule.source` (debt PR-P1 item 2). */
+```
+
+### `symbolSource` (`packages/codegen/src/dsl/rule-metadata.ts:98`)
+
+```text
+/** Relocated `SymbolRule.source` (debt PR-P1 item 2). */
+```
+
+### `RuleBuilder` (`packages/codegen/src/dsl/rule-transforms.ts:35`)
+
+```text
+/**
+ * Strategy interface for constructing wrapper/structural rules. Injected via
+ * `TransformCtx.builder` so each call-site delegates node-vs-attribute
+ * decisions to the phase rather than hard-coding them. Two implementations:
+ *
+ *  - `structuralBuilder` (defined here, dsl-side): builds plain node literals
+ *    exactly as construction sites did before — byte-identical results. Used
+ *    as the no-ctx default (`ctx.builder ?? structuralBuilder`).
+ *
+ *  - `attributeBuilder` (defined in compiler/simplify.ts): overrides the
+ *    wrapper constructors to push attributes instead of building nodes — so
+ *    simplify stays field/optional/repeat/repeat1-node-free by construction.
+ */
+```
+
+### `InlineRefsCtx` (`packages/codegen/src/dsl/rule-transforms.ts:212`)
+
+```text
+/**
+ * Ctx for the shared `inlineRefs` op (R3 / PR-O M1 closure). Self-contained
+ * so non-phase callers (assemble's alias-body path) can construct it without
+ * a full TransformCtx.
+ */
+```

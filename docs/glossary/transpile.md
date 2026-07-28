@@ -59,3 +59,33 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * resolves through normal Node module resolution.
  */
 ```
+
+### `grammar` (`packages/codegen/src/transpile/transpile-overrides.ts:36`)
+
+```text
+/** Grammar name — e.g. 'rust', 'python', 'typescript'. */
+```
+
+### `packagesRoot` (`packages/codegen/src/transpile/transpile-overrides.ts:38`)
+
+```text
+/** Override the default packages root (used in tests). */
+```
+
+### `outputPath` (`packages/codegen/src/transpile/transpile-overrides.ts:43`)
+
+```text
+/** Absolute path to the generated `.sittir/grammar.js`. */
+```
+
+### `sourceBytes` (`packages/codegen/src/transpile/transpile-overrides.ts:45`)
+
+```text
+/** Source size in bytes. */
+```
+
+### `outputBytes` (`packages/codegen/src/transpile/transpile-overrides.ts:47`)
+
+```text
+/** Output size in bytes. */
+```

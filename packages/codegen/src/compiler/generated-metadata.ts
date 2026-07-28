@@ -13,30 +13,9 @@ import { loadWebTreeSitter } from '../engine-loader.ts';
 import { type KindParserMetadata } from './types.ts';
 import type * as TS from 'web-tree-sitter';
 
-/**
- * One row of the parser symbol catalog (KindID runtime migration design,
- * 2026-04-30). When `id` / `parser` are absent, the kind exists in the
- * codegen rule set but tree-sitter inlined it during parser compilation —
- * presence is `TSGrammar` only, not `TSInternals`. A row's mere existence
- * here is the canonical record of "this kind is reachable from the
- * grammar"; downstream code reads `parser` to discover whether it also
- * surfaces at runtime.
- */
 export interface GeneratedIdEntry {
-	/** STORAGE kind id — the rule's own truth, independent of aliasing. */
 	readonly id?: number;
-	/**
-	 * PARSE kind id — the id a node actually carries at runtime when this
-	 * kind is produced through an alias occurrence whose display name isn't
-	 * covered by `id`'s own symbol (e.g. `_newline`'s storage id 101 vs its
-	 * `alias($._newline, $.newline)` occurrence's own id 294). Render/read
-	 * dispatch match arms MUST key on this when present — it's what
-	 * tree-sitter emits — falling back to `id` when there's no separate
-	 * alias occurrence. Absent for the common case where a kind's storage
-	 * id and its parse-time id are the same thing.
-	 */
 	readonly parseId?: number;
-	/** Parser-origin metadata; absent iff the kind has no parser symbol. */
 	readonly parser?: KindParserMetadata;
 }
 
@@ -53,7 +32,6 @@ export interface GeneratedIdTables {
 export interface GeneratedKindEntry {
 	readonly kind: string;
 	readonly id: number;
-	/** See `GeneratedIdEntry.parseId` — the id to key render/read dispatch on, when it differs from `id`. */
 	readonly parseId?: number;
 	readonly symbolName?: string;
 	readonly anon?: boolean;
@@ -129,15 +107,6 @@ export function collectGeneratedKindEntries(tables: GeneratedIdTables | undefine
 		}));
 }
 
-/**
- * Minimal structural shape shared by every catalog-entry type that the kind
- * resolution chain operates on (`GeneratedKindEntry` here, `KindEnumEntry`
- * in emitters/kind-discriminant.ts). PR-K1 (KindId-NodeRefs design,
- * docs/superpowers/specs/2026-07-20-kindid-noderefs-design.md §2.2): there
- * is exactly ONE resolution chain pair in the codebase — the two modules
- * previously carried parallel chains whose step-3 scopes disagreed, and
- * every divergence between them was a latent bug of the #129 class.
- */
 export interface KindEntryLike {
 	readonly kind: string;
 	readonly symbolName?: string;

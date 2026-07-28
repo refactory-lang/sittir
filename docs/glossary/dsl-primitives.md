@@ -150,3 +150,15 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Called by `grammarFn` in evaluate.ts — not by override authors.
  */
 ```
+
+### `FieldPlaceholder` (`packages/codegen/src/dsl/primitives/field.ts:121`)
+
+```text
+/** Marker emitted by `field('name')` — a placeholder for transform patches. */
+```
+
+### `FormMap` (`packages/codegen/src/dsl/primitives/refine.ts:46`)
+
+```text
+/** `{ formName → { path → branchIndex | literal } }`. */
+```

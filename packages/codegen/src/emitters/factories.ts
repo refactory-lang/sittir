@@ -59,26 +59,10 @@ import type { CodegenEmitter } from './emitter.ts';
 export interface EmitFactoriesConfig {
 	grammar: string;
 	nodeMap: NodeMap;
-	/** Emit runtime leaf pattern validation. Default `false`. */
 	strict?: boolean;
-	/**
-	 * Parser-symbol ID tables (from `loadGeneratedIdTables`). When present,
-	 * factories stamp numeric `$type: TSKindId.X` discriminants. When absent
-	 * (legacy callers / unit tests), falls back to string `$type: 'kind' as const`.
-	 */
 	generatedIdTables?: GeneratedIdTables;
 	kindEntries?: readonly KindEnumEntry[];
-	/**
-	 * Kind names listed in the grammar's `inline:` array. When a kind has no
-	 * parser symbol AND appears here, it's a deliberately inlined rule — warn
-	 * and skip. When it's absent from this list, it's a codegen bug — throw.
-	 */
 	inlineKinds?: readonly string[];
-	/**
-	 * Kind names synthesized by evaluate's inline-alias-source pass
-	 * (`synthesizeInlineAliasSources`). These have no parser symbol by design;
-	 * warn and skip, same treatment as inline-list kinds.
-	 */
 	synthesizedKinds?: ReadonlySet<string>;
 }
 
@@ -216,19 +200,6 @@ function factoryTypeDiscriminant(
 	return `${kindDiscriminantExpr(kind, nodeMap, kindEntries)} as const`;
 }
 
-/**
- * Emit factory source for each eligible node and push it into `lines`.
- *
- * @param nodeMap - The assembled node map.
- * @param strict - Whether runtime leaf pattern validation is enabled.
- * @param aliasSourceKinds - Set of kinds that are alias sources (included even if hidden).
- * @param leafReConsts - Map from kind to its compiled-regex constant name.
- * @param kindEntries - KindEnumEntry list for numeric $type emission; undefined for legacy fallback.
- * @param lines - Output line buffer; factory declarations are appended here.
- * @remarks
- *   Dispatch is on `modelType`. Polymorph form groups are skipped at the top
- *   level (`classifyFactoryEmission` → `skip-polymorph-form-group`).
- */
 function buildFactoryMapEntries(
 	nodeMap: NodeMap,
 	_aliasSourceKinds: Set<string>,
@@ -1123,15 +1094,6 @@ function stripUselessEscapes(pattern: string): string {
 // Internal interfaces
 // ---------------------------------------------------------------------------
 
-/**
- * Factory map entry descriptor — used to emit `FluentKindMap` and `_factoryMap`.
- *
- * @remarks
- *   Factory signature shape — `'config'` for config-object factories,
- *   `'children'` for child-backed rest/single-child factories,
- *   `'direct'` for field-backed direct-value factories, and `'text'`
- *   for leaf / keyword factories that take a raw string.
- */
 interface MapEntry {
 	kind: string;
 	factory: string;

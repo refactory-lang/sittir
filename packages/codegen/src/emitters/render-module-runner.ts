@@ -17,7 +17,6 @@ export interface RunRenderModuleEmitterConfig {
 	grammar: Grammar;
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
-	/** Pre-computed jinja templates. When omitted, a fresh TemplateEmitter drives the loop. */
 	jinjaTemplates?: EmittedTemplates;
 }
 

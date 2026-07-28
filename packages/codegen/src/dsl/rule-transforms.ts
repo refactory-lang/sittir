@@ -32,19 +32,6 @@ export type LeafMultiplicity = 'optional' | 'single' | 'array' | 'nonEmptyArray'
 // RuleBuilder — context-injected rule construction strategy
 // ---------------------------------------------------------------------------
 
-/**
- * Strategy interface for constructing wrapper/structural rules. Injected via
- * `TransformCtx.builder` so each call-site delegates node-vs-attribute
- * decisions to the phase rather than hard-coding them. Two implementations:
- *
- *  - `structuralBuilder` (defined here, dsl-side): builds plain node literals
- *    exactly as construction sites did before — byte-identical results. Used
- *    as the no-ctx default (`ctx.builder ?? structuralBuilder`).
- *
- *  - `attributeBuilder` (defined in compiler/simplify.ts): overrides the
- *    wrapper constructors to push attributes instead of building nodes — so
- *    simplify stays field/optional/repeat/repeat1-node-free by construction.
- */
 export interface RuleBuilder {
 	seq(members: AnyRule[]): AnyRule;
 	choice(members: AnyRule[]): AnyRule;
@@ -209,11 +196,6 @@ export function pushAttrsToLeaves(
 	}
 }
 
-/**
- * Ctx for the shared `inlineRefs` op (R3 / PR-O M1 closure). Self-contained
- * so non-phase callers (assemble's alias-body path) can construct it without
- * a full TransformCtx.
- */
 export interface InlineRefsCtx {
 	readonly rules: Readonly<Record<string, AnyRule>>;
 	readonly inlineKinds?: ReadonlySet<string>;

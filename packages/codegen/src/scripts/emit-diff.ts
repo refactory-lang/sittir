@@ -41,9 +41,7 @@ interface FileChange {
 	emitter: Emitter;
 	added: number;
 	removed: number;
-	/** New-file line ranges, e.g. "L120-207", "L410". Empty for collapsed/binary. */
 	ranges: string[];
-	/** parser/binary artifact — counts only, no line ranges (kept terse). */
 	collapsed: boolean;
 	binary: boolean;
 }

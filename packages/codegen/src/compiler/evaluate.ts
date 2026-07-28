@@ -426,7 +426,6 @@ interface GrammarOptions {
  * When called with one arg: fresh grammar.
  * When called with two args: grammar extension (base + overrides).
  */
-/** Metadata accumulator sinks filled by grammar() metadata callbacks. */
 interface MetadataSinks {
 	extras: string[];
 	externals: string[];
@@ -435,36 +434,17 @@ interface MetadataSinks {
 	conflicts: string[][];
 }
 
-/**
- * The evaluate-phase ctx (§7.7 / Principle #14 — R2). Constructed ONCE per
- * grammarFn invocation; every field is always available there, so all are
- * required. Pass-LOCAL derived state (externalSet, the field-enum sweep
- * maps, pattern candidates) stays in explicit parameters per CW6.
- */
 export interface EvaluateCtx {
-	/** The rule record under evaluation (mutated by passes). */
 	readonly rules: Record<string, Rule<'evaluate'>>;
-	/** Per-kind provenance (mutated as synthetic rules are injected). */
 	readonly provenanceByKind: Map<string, RuleProvenance>;
-	/** Symbol-reference accumulator shared across all rule evaluations. */
 	readonly refs: SymbolRef[];
-	/** The grammar options under evaluation. */
 	readonly opts: GrammarOptions;
-	/** Base-grammar rules snapshot (empty for fresh grammars). */
 	readonly baseRules: Record<string, Rule<'evaluate'>>;
-	/** The evaluated base grammar object, or null for fresh grammars. */
 	readonly baseGrammar: unknown;
-	/** The externals metadata sink (same live array as sinks.externals). */
 	readonly externals: readonly string[];
-	/** True when extending a base grammar. */
 	readonly isExtension: boolean;
-	/** Metadata accumulator sinks. */
 	readonly sinks: MetadataSinks;
-	/** Setter for the word-rule name. */
 	readonly setWord: (w: string) => void;
-	/** Body-pattern (`groups:`) hidden names whose pattern matched zero
-	 *  positions in `applyPatternReplacement` — surfaced as the
-	 *  `body-pattern-zero-match` diagnostic. Mutated in place (mirrors `refs`). */
 	readonly bodyPatternZeroMatches: string[];
 }
 
@@ -749,15 +729,10 @@ function purgeSupersededEnumRules(
 	}
 }
 
-/** A field-enum candidate discovered during the first collection pass. */
 interface FieldEnumOccurrence {
-	/** The grammar kind that owns the field. */
 	readonly parentKind: string;
-	/** The field name (e.g. `'mutable_specifier'`). */
 	readonly fieldName: string;
-	/** The sorted, comma-joined literal values — used as the dedup key. */
 	readonly memberKey: string;
-	/** The actual member list for constructing the EnumRule<'evaluate'>. */
 	readonly members: StringRule<'evaluate'>[];
 }
 
@@ -954,13 +929,9 @@ function fieldNameMatchesGrammarRule(fieldName: string, ctx: EvaluateCtx, member
 	return ruleKey === targetKey;
 }
 
-/** Pass-local state for one synthesizeFieldEnumRules sweep (CW6: explicit param, not ctx). */
 interface FieldEnumSweepState {
-	/** Accumulator for synthesized literal-set rule entries. */
 	readonly newRules: Map<string, Rule<'evaluate'>>;
-	/** Pre-computed dedup map from the first pass. */
 	readonly memberKeyToCanonicalName: Map<string, string>;
-	/** Field sites with conflicting member sets — left inline. */
 	readonly conflictingSites: ReadonlySet<string>;
 }
 
@@ -1308,16 +1279,6 @@ function isBlankRule(rule: Rule<'evaluate'>): boolean {
 // Wire-phase pattern find-and-replace
 // ---------------------------------------------------------------------------
 
-/**
- * A pattern candidate: an author-declared `_`-prefixed rule whose body is
- * complex enough to serve as a structural replacement target.
- *
- * When `aliasAs` is set, replacement sites emit
- * `alias($._<name>, $.<aliasAs>)` so tree-sitter exposes a visible CST
- * node at each match. This is the body-pattern-groups path. Without
- * `aliasAs`, replacement emits a bare hidden `symbol(<name>)` reference
- * (the legacy `_`-prefix path).
- */
 interface PatternCandidate {
 	readonly name: string;
 	readonly body: Rule<'evaluate'>;
@@ -1566,15 +1527,7 @@ function patternRulesEqual(a: Rule<'evaluate'>, b: Rule<'evaluate'>): boolean {
 // visibleExternals — SYMBOL→ALIAS rewrite (sittir-pipeline path)
 // ---------------------------------------------------------------------------
 
-/**
- * Recursively rewrite every `SymbolRule<'evaluate'>` whose `name` is a
- * `visibleExternals:` key into a named `AliasRule<'evaluate'>` wrapping that
- * symbol. Sittir-pipeline counterpart of `wire.ts`'s
- * `rewriteVisibleExternalRefsRt` — both MUST produce structurally identical
- * output (see `VisibleExternalsConfig`'s doc comment).
- */
 interface VisibleExternalsRewriteCtx {
-	/** hidden external name → visible (underscore-trimmed) alias name. */
 	readonly hiddenToVisible: ReadonlyMap<string, string>;
 }
 
@@ -1634,14 +1587,6 @@ function rewriteVisibleExternalRefsInArray(
 	return changed ? out : members;
 }
 
-/**
- * Evaluate the `visibleExternals:` fn from the wire context (if configured)
- * and rewrite every matching SYMBOL reference across ALL rules — authored
- * AND unoverridden base rules alike, since `rules` already holds every base
- * rule's evaluated body as plain data by this point (unlike wire.ts's
- * lazy-fn-per-rule tree-sitter-CLI model, sittir's evaluate pipeline has no
- * "unreached" base rule bodies to separately inject a passthrough for).
- */
 interface ApplyVisibleExternalsCtx {
 	readonly evaluateCtx: EvaluateCtx;
 	readonly wireCtx: WireContext;
@@ -1895,7 +1840,6 @@ export interface RuleCatalogBuildResult {
 	readonly ruleCatalog: RuleCatalog;
 }
 
-/** Ctx for {@link buildRuleCatalog} — just the provenance map it needs. */
 export interface BuildRuleCatalogCtx {
 	readonly provenanceByKind?: ReadonlyMap<string, RuleProvenance>;
 }
@@ -1974,7 +1918,6 @@ export function buildRuleCatalog(
 	};
 }
 
-/** Ctx for {@link attachReferenceRuleIds}. */
 export interface AttachReferenceRuleIdsCtx {
 	readonly ruleCatalog: RuleCatalog;
 }

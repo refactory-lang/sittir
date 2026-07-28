@@ -127,28 +127,8 @@ function collectFiles(grammar: Grammar): string[] {
 
 interface Manifest {
 	grammar: Grammar;
-	/**
-	 * SHA256 of the source inputs that drove this generation —
-	 * `packages/<grammar>/overrides.ts` (hand-edited adjuster) +
-	 * `packages/<grammar>/package.json` (pins the upstream tree-sitter version).
-	 * If either changes, source_hash changes; verifiers detect the mismatch
-	 * and require a regen. This is the cross-layer synchronicity guarantee:
-	 * the manifest doesn't just say "files match what was last written";
-	 * it says "files match what was last written AND those writes were
-	 * driven by the current source inputs."
-	 */
 	source_hash: string;
 	files: Record<string, string>;
-	/**
-	 * Per-platform napi binaries (`*.node`), recorded as the
-	 * {@link HOST_BINARY_SENTINEL} sentinel — NOT content-hashed. Binary
-	 * bytes vary per rebuild (and per machine), so content hashes produced
-	 * false MODIFIED positives on every locally rebuilt binary. Verification
-	 * instead checks FRESHNESS on the current host: the binary must be newer
-	 * than the crate's generated `src/**` + `templates/**` inputs (see
-	 * `native-binary-freshness.ts`). Missing-locally is still tolerated
-	 * (binaries are per-platform).
-	 */
 	host_files?: Record<string, string>;
 }
 
@@ -262,11 +242,6 @@ export interface VerifyResult {
 	missing: string[];
 	modified: string[];
 	extra: string[];
-	/**
-	 * Host binaries (`*.node`) present on this machine but OLDER than the
-	 * crate's generated `src/**` + `templates/**` inputs — they would
-	 * validate stale code (or segfault). Fix: rebuild the binary.
-	 */
 	stale: string[];
 }
 
