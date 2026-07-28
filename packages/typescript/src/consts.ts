@@ -2966,6 +2966,33 @@ export const _PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKERS = [
 ] as const;
 export type PublicFieldDefinitionOptionalityMarkerValue = (typeof _PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKERS)[number];
 
+/** Valid values for `_reserved_identifier` nodes. */
+export const _RESERVED_IDENTIFIERS = [
+  'declare',
+  'namespace',
+  'type',
+  'public',
+  'private',
+  'protected',
+  'override',
+  'readonly',
+  'module',
+  'any',
+  'number',
+  'boolean',
+  'string',
+  'symbol',
+  'export',
+  'object',
+  'new',
+  'get',
+  'set',
+  'async',
+  'static',
+  'let',
+] as const;
+export type ReservedIdentifierValue = (typeof _RESERVED_IDENTIFIERS)[number];
+
 /** Valid values for `_semicolon` nodes. */
 export const _SEMICOLONS = [
   '

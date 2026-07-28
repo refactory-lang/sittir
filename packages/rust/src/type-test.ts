@@ -866,6 +866,7 @@ export type _Type_TokenTreePunctuation = _TypeAssert<
 export type _Type_TokenKeywords = _TypeAssert<
 	_TypeExtends<
 		TokenKeywords['$type'],
+		| TSKindId.Squote
 		| TSKindId.As
 		| TSKindId.Async
 		| TSKindId.Await

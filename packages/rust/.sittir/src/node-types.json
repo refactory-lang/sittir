@@ -5408,20 +5408,11 @@
           "named": true
         },
         {
-          "type": "token_pattern_quote",
-          "named": true
-        },
-        {
           "type": "token_tree_punctuation",
           "named": true
         }
       ]
     }
-  },
-  {
-    "type": "token_pattern_quote",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "token_repetition",

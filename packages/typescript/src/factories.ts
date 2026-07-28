@@ -2773,9 +2773,31 @@ export function buildComputedPropertyName(expression: T.ComputedPropertyName.Con
 	);
 }
 
-export function buildReservedIdentifier(text: string) {
-	if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0)
-		throw new Error(`_reserved_identifier: text must be non-empty`);
+export function buildReservedIdentifier(
+	text:
+		| 'declare'
+		| 'namespace'
+		| 'type'
+		| 'public'
+		| 'private'
+		| 'protected'
+		| 'override'
+		| 'readonly'
+		| 'module'
+		| 'any'
+		| 'number'
+		| 'boolean'
+		| 'string'
+		| 'symbol'
+		| 'export'
+		| 'object'
+		| 'new'
+		| 'get'
+		| 'set'
+		| 'async'
+		| 'static'
+		| 'let'
+) {
 	return withMethods(
 		{
 			$type: TSKindId.ReservedIdentifier as const,

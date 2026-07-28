@@ -239,12 +239,12 @@ describe('for_statement', () => {
 
 describe('for_in_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.forInStatement({ content: { $type: TSKindId.ForHeaderLhs, $text: 'test', $source: 2, $named: true , _left: { $type: TSKindId.LhsExpression, $text: 'test', $source: 2, $named: true , _content: { $type: TSKindId.ReservedIdentifier, $text: 'test', $source: 2, $named: true } as any } as any } as any, operator: "in", right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any, body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any });
+    const node = ir.forInStatement({ content: { $type: TSKindId.ForHeaderLhs, $text: 'test', $source: 2, $named: true , _left: { $type: TSKindId.LhsExpression, $text: 'test', $source: 2, $named: true , _content: { $type: TSKindId.ReservedIdentifier, $text: 'declare', $source: 2, $named: true } as any } as any } as any, operator: "in", right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any, body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.ForInStatement);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.forInStatement({ content: { $type: TSKindId.ForHeaderLhs, $text: 'test', $source: 2, $named: true , _left: { $type: TSKindId.LhsExpression, $text: 'test', $source: 2, $named: true , _content: { $type: TSKindId.ReservedIdentifier, $text: 'test', $source: 2, $named: true } as any } as any } as any, operator: "in", right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any, body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any });
+    const node = ir.forInStatement({ content: { $type: TSKindId.ForHeaderLhs, $text: 'test', $source: 2, $named: true , _left: { $type: TSKindId.LhsExpression, $text: 'test', $source: 2, $named: true , _content: { $type: TSKindId.ReservedIdentifier, $text: 'declare', $source: 2, $named: true } as any } as any } as any, operator: "in", right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any, body: { $type: TSKindId.EmptyStatement, $text: ';', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -476,12 +476,12 @@ describe('object_pattern', () => {
 
 describe('assignment_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.assignmentPattern({ left: { $type: TSKindId.LhsExpression, $text: 'test', $source: 2, $named: true , _content: { $type: TSKindId.ReservedIdentifier, $text: 'test', $source: 2, $named: true } as any } as any, right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any });
+    const node = ir.assignmentPattern({ left: { $type: TSKindId.LhsExpression, $text: 'test', $source: 2, $named: true , _content: { $type: TSKindId.ReservedIdentifier, $text: 'declare', $source: 2, $named: true } as any } as any, right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.AssignmentPattern);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.assignmentPattern({ left: { $type: TSKindId.LhsExpression, $text: 'test', $source: 2, $named: true , _content: { $type: TSKindId.ReservedIdentifier, $text: 'test', $source: 2, $named: true } as any } as any, right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any });
+    const node = ir.assignmentPattern({ left: { $type: TSKindId.LhsExpression, $text: 'test', $source: 2, $named: true , _content: { $type: TSKindId.ReservedIdentifier, $text: 'declare', $source: 2, $named: true } as any } as any, right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -616,12 +616,12 @@ describe('generator_function_declaration', () => {
 
 describe('arrow_function', () => {
   it('factory produces correct type', () => {
-    const node = ir.arrowFunction({ content: { $type: TSKindId.ArrowFunctionParameter, $text: 'test', $source: 2, $named: true , _parameter: { $type: TSKindId.ReservedIdentifier, $text: 'test', $source: 2, $named: true } as any } as any, body: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any });
+    const node = ir.arrowFunction({ content: { $type: TSKindId.ArrowFunctionParameter, $text: 'test', $source: 2, $named: true , _parameter: { $type: TSKindId.ReservedIdentifier, $text: 'declare', $source: 2, $named: true } as any } as any, body: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.ArrowFunction);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.arrowFunction({ content: { $type: TSKindId.ArrowFunctionParameter, $text: 'test', $source: 2, $named: true , _parameter: { $type: TSKindId.ReservedIdentifier, $text: 'test', $source: 2, $named: true } as any } as any, body: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any });
+    const node = ir.arrowFunction({ content: { $type: TSKindId.ArrowFunctionParameter, $text: 'test', $source: 2, $named: true , _parameter: { $type: TSKindId.ReservedIdentifier, $text: 'declare', $source: 2, $named: true } as any } as any, body: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -696,12 +696,12 @@ describe('assignment_expression', () => {
 
 describe('augmented_assignment_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.augmentedAssignmentExpression({ left: { $type: TSKindId.ReservedIdentifier, $text: 'test', $source: 2, $named: true } as any, operator: "+=", right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any });
+    const node = ir.augmentedAssignmentExpression({ left: { $type: TSKindId.ReservedIdentifier, $text: 'declare', $source: 2, $named: true } as any, operator: "+=", right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.AugmentedAssignmentExpression);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.augmentedAssignmentExpression({ left: { $type: TSKindId.ReservedIdentifier, $text: 'test', $source: 2, $named: true } as any, operator: "+=", right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any });
+    const node = ir.augmentedAssignmentExpression({ left: { $type: TSKindId.ReservedIdentifier, $text: 'declare', $source: 2, $named: true } as any, operator: "+=", right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -1056,12 +1056,12 @@ describe('pair', () => {
 
 describe('pair_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.pairPattern({ key: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, value: { $type: TSKindId.AssignmentPattern, $text: 'test', $source: 2, $named: true , _left: { $type: TSKindId.LhsExpression, $text: 'test', $source: 2, $named: true , _content: { $type: TSKindId.ReservedIdentifier, $text: 'test', $source: 2, $named: true } as any } as any, _right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any } as any });
+    const node = ir.pairPattern({ key: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, value: { $type: TSKindId.AssignmentPattern, $text: 'test', $source: 2, $named: true , _left: { $type: TSKindId.LhsExpression, $text: 'test', $source: 2, $named: true , _content: { $type: TSKindId.ReservedIdentifier, $text: 'declare', $source: 2, $named: true } as any } as any, _right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any } as any });
     expect(node.$type).toBe(TSKindId.PairPattern);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.pairPattern({ key: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, value: { $type: TSKindId.AssignmentPattern, $text: 'test', $source: 2, $named: true , _left: { $type: TSKindId.LhsExpression, $text: 'test', $source: 2, $named: true , _content: { $type: TSKindId.ReservedIdentifier, $text: 'test', $source: 2, $named: true } as any } as any, _right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any } as any });
+    const node = ir.pairPattern({ key: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any, value: { $type: TSKindId.AssignmentPattern, $text: 'test', $source: 2, $named: true , _left: { $type: TSKindId.LhsExpression, $text: 'test', $source: 2, $named: true , _content: { $type: TSKindId.ReservedIdentifier, $text: 'declare', $source: 2, $named: true } as any } as any, _right: { $type: TSKindId.Undefined, $text: 'undefined', $source: 2, $named: true } as any } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });

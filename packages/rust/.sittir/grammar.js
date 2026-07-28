@@ -4253,18 +4253,16 @@ var overrides_default = grammar(
         // original's own member objects verbatim avoids re-authoring
         // the primitive_type alias's inline `choice(...primitiveTypes)`
         // content by hand.
-        // Position 8 (bare `'`) also gets its own alias here, same
-        // technique as `_token_tree_punctuation`/`_token_keywords` —
-        // giving it a real, named intermediate node prevents
-        // tree-sitter from fusing `token_pattern_group1`'s occurrence
-        // into a zero-child text leaf for this member (confirmed via
-        // probe-kind earlier this session: real child chain
-        // token_pattern_group1 -> token_pattern_quote -> `'`, vs. the
-        // zero-children collapse without it). This is the one case
-        // that was left deliberately alone when `_token_keywords` was
-        // extracted, since the wrap.ts fallback (6af273087) already
-        // covered it — fixing it at the grammar level here makes that
-        // fallback branch dead code for rust's current corpus.
+        // Position 8 (bare `'`) folds directly into `_token_keywords`
+        // rather than getting its own separate alias — it's
+        // technically a lifetime token, close enough kin to the
+        // reserved words to share the same choice, and doing so gives
+        // it the same ENUM classification (classifyHiddenChoiceRule's
+        // admission check) as the keywords instead of the
+        // modelType=token dead-end a standalone `'`-only rule hits
+        // (no factories.ts/from.ts support, no TokenPatternGroup1
+        // union member — confirmed via an earlier, now-superseded
+        // `_token_pattern_quote` rule).
         _non_special_token: ($, original) => {
           const patched = transform2(original, {
             "-30": alias2("token_tree_punctuation")
@@ -4272,11 +4270,11 @@ var overrides_default = grammar(
           const members = patched.members;
           return {
             ...patched,
-            members: [...members.slice(0, 8), alias2($._token_pattern_quote, $.token_pattern_quote), $._token_keywords]
+            members: [...members.slice(0, 8), $._token_keywords]
           };
         },
-        _token_pattern_quote: ($) => "'",
         _token_keywords: ($) => choice(
+          "'",
           "as",
           "async",
           "await",

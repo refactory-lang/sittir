@@ -4480,6 +4480,7 @@ export function buildTokenTreePunctuation(
 
 export function buildTokenKeywords(
 	text:
+		| "'"
 		| 'as'
 		| 'async'
 		| 'await'

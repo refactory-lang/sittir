@@ -725,15 +725,6 @@
           "value": "token_tree_punctuation"
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_token_pattern_quote"
-          },
-          "named": true,
-          "value": "token_pattern_quote"
-        },
-        {
           "type": "SYMBOL",
           "name": "_token_keywords"
         }
@@ -10384,13 +10375,13 @@
         }
       ]
     },
-    "_token_pattern_quote": {
-      "type": "STRING",
-      "value": "'"
-    },
     "_token_keywords": {
       "type": "CHOICE",
       "members": [
+        {
+          "type": "STRING",
+          "value": "'"
+        },
         {
           "type": "STRING",
           "value": "as"

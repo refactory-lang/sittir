@@ -799,7 +799,31 @@ export type _Type_False = _TypeAssert<_TypeExtends<False['$type'], TSKindId.Fals
 export type _Type_Null = _TypeAssert<_TypeExtends<Null['$type'], TSKindId.Null>>;
 export type _Type_Undefined = _TypeAssert<_TypeExtends<Undefined['$type'], TSKindId.Undefined>>;
 export type _Type_ReservedIdentifier = _TypeAssert<
-	_TypeExtends<ReservedIdentifier['$type'], TSKindId.ReservedIdentifier>
+	_TypeExtends<
+		ReservedIdentifier['$type'],
+		| TSKindId.Declare
+		| TSKindId.Namespace
+		| TSKindId.AnonType
+		| TSKindId.Public
+		| TSKindId.Private
+		| TSKindId.Protected
+		| TSKindId.Override
+		| TSKindId.Readonly
+		| TSKindId.AnonModule
+		| TSKindId.Any
+		| TSKindId.AnonNumber
+		| TSKindId.Boolean
+		| TSKindId.AnonString
+		| TSKindId.Symbol
+		| TSKindId.Export
+		| TSKindId.AnonObject
+		| TSKindId.New
+		| TSKindId.Get
+		| TSKindId.Set
+		| TSKindId.Async
+		| TSKindId.Static
+		| TSKindId.Let
+	>
 >;
 export type _Type_Semicolon = _TypeAssert<
 	_TypeExtends<Semicolon['$type'], TSKindId.AutomaticSemicolon | TSKindId.Semi>

@@ -1134,6 +1134,37 @@ export default grammar(
 				'storagename-collision': ['_export_statement_group2']
 			},
 			rules: {
+				// _reserved_identifier — upstream shape is
+				// `(_, previous) => choice(...18 TS-specific bare strings,
+				// previous)`, where `previous` is the base JS grammar's own
+				// `_reserved_identifier` (get/set/async/static/export/let),
+				// left NESTED as a sub-CHOICE member rather than flattened.
+				// That nesting blocks classifyHiddenChoiceRule's ENUM
+				// admission (requires flat SYMBOL/STRING/named-ALIAS members
+				// only — mirrors rust's `_non_special_token` REPEAT1 case,
+				// specs/026), so `_reserved_identifier` stays unclassified
+				// (rule.type=CHOICE, "mixed/structural — survive as-is") and
+				// inlines directly into `_property_identifier`'s occurrence
+				// with no node of its own — which is what lets
+				// `_property_identifier`'s alias (`statement_identifier_group1`)
+				// collapse into a text-only leaf when the matched alternative
+				// is one of these bare reserved words, hitting the same
+				// anonymous-token-fusion path the wrap.ts fallback exists for.
+				// Flatten programmatically (not hardcoding the string list,
+				// so this stays correct if upstream's own list ever changes).
+				_reserved_identifier: ($, original) => {
+					const members = original.members;
+					const last = members[members.length - 1];
+					const flatMembers =
+						last && last.type === 'CHOICE' && Array.isArray(last.members)
+							? [...members.slice(0, -1), ...last.members]
+							: members;
+					return {
+						...original,
+						members: flatMembers
+					};
+				},
+
 				// parenthesized_expression: held. Base is plain `seq('(',
 				// _expressions, ')')` with no outer prec — my hoist's prec
 				// preservation captures OUTER wrappers, not per-alt prec. The

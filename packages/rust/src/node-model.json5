@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 372,
+  "nodeCount": 371,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -6598,7 +6598,6 @@
       "hidden": true,
       "subtypes": [
         "$",
-        "'",
         "_literal",
         "_non_special_token",
         "_primitive_type",
@@ -6627,7 +6626,6 @@
         "_literal",
         "_primitive_type",
         "_token_keywords",
-        "_token_pattern_quote",
         "_token_tree_punctuation",
         "boolean_literal",
         "char_literal",
@@ -7695,6 +7693,7 @@
       "irKey": "tokenKeywords",
       "hidden": false,
       "values": [
+        "'",
         "as",
         "async",
         "await",
@@ -7732,7 +7731,6 @@
       "irKey": "tokenPattern",
       "hidden": true,
       "subtypes": [
-        "'",
         "_literal",
         "_non_special_token",
         "_primitive_type",
@@ -7754,16 +7752,6 @@
         "token_repetition_pattern",
         "token_tree_pattern"
       ]
-    },
-    {
-      "kind": "_token_pattern_quote",
-      "modelType": "token",
-      "typeName": "TokenPatternQuote",
-      "irKey": "tokenPatternQuote",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"'\" as const",
-      "text": "'"
     },
     {
       "kind": "_token_tree_brace",
@@ -8054,7 +8042,6 @@
       "irKey": "tokens",
       "hidden": true,
       "subtypes": [
-        "'",
         "_literal",
         "_non_special_token",
         "_primitive_type",
@@ -17049,7 +17036,6 @@
         "_literal",
         "_primitive_type",
         "_token_keywords",
-        "_token_pattern_quote",
         "_token_tree_punctuation",
         "boolean_literal",
         "char_literal",

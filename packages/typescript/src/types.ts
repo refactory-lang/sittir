@@ -31,6 +31,29 @@ export type LeafStringMap = {
 	false: 'false';
 	null: 'null';
 	undefined: 'undefined';
+	_reserved_identifier:
+		| 'declare'
+		| 'namespace'
+		| 'type'
+		| 'public'
+		| 'private'
+		| 'protected'
+		| 'override'
+		| 'readonly'
+		| 'module'
+		| 'any'
+		| 'number'
+		| 'boolean'
+		| 'string'
+		| 'symbol'
+		| 'export'
+		| 'object'
+		| 'new'
+		| 'get'
+		| 'set'
+		| 'async'
+		| 'static'
+		| 'let';
 	_semicolon: '\n' | ';';
 	_kind: 'let' | 'const';
 	__for_header_operator: 'in' | 'of';
@@ -5582,7 +5605,52 @@ export type True = Terminal<TSKindId.True, 'true'>;
 export type False = Terminal<TSKindId.False, 'false'>;
 export type Null = Terminal<TSKindId.Null, 'null'>;
 export type Undefined = Terminal<TSKindId.Undefined, 'undefined'>;
-export type ReservedIdentifier = Terminal<TSKindId.ReservedIdentifier, string>;
+export type ReservedIdentifier = Terminal<
+	| TSKindId.Declare
+	| TSKindId.Namespace
+	| TSKindId.AnonType
+	| TSKindId.Public
+	| TSKindId.Private
+	| TSKindId.Protected
+	| TSKindId.Override
+	| TSKindId.Readonly
+	| TSKindId.AnonModule
+	| TSKindId.Any
+	| TSKindId.AnonNumber
+	| TSKindId.Boolean
+	| TSKindId.AnonString
+	| TSKindId.Symbol
+	| TSKindId.Export
+	| TSKindId.AnonObject
+	| TSKindId.New
+	| TSKindId.Get
+	| TSKindId.Set
+	| TSKindId.Async
+	| TSKindId.Static
+	| TSKindId.Let,
+	| 'declare'
+	| 'namespace'
+	| 'type'
+	| 'public'
+	| 'private'
+	| 'protected'
+	| 'override'
+	| 'readonly'
+	| 'module'
+	| 'any'
+	| 'number'
+	| 'boolean'
+	| 'string'
+	| 'symbol'
+	| 'export'
+	| 'object'
+	| 'new'
+	| 'get'
+	| 'set'
+	| 'async'
+	| 'static'
+	| 'let'
+>;
 export type Semicolon = Terminal<TSKindId.AutomaticSemicolon | TSKindId.Semi, '\n' | ';'>;
 export type Kind = Terminal<TSKindId.Let | TSKindId.Const, 'let' | 'const'>;
 export type ForHeaderOperator = Terminal<TSKindId.In | TSKindId.Of, 'in' | 'of'>;
