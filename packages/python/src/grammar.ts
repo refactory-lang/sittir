@@ -144,13 +144,8 @@ export type PythonGrammar = {
 		type: 'as_pattern';
 		named: true;
 		fields: {
-			alias: { multiple: false; required: false; types: [{ type: 'as_pattern_target'; named: true }] };
-			expression: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
-		};
-		children: {
-			multiple: true;
-			required: false;
-			types: [{ type: 'case_pattern'; named: true }, { type: 'identifier'; named: true }];
+			alias: { multiple: false; required: true; types: [{ type: 'as_pattern_target'; named: true }] };
+			expression: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
 		};
 	};
 	readonly assert_statement: {
@@ -346,6 +341,16 @@ export type PythonGrammar = {
 			function: { multiple: false; required: true; types: [{ type: 'primary_expression'; named: true }] };
 		};
 	};
+	readonly case_as_pattern: {
+		type: 'case_as_pattern';
+		named: true;
+		fields: {};
+		children: {
+			multiple: true;
+			required: true;
+			types: [{ type: 'case_pattern'; named: true }, { type: 'identifier'; named: true }];
+		};
+	};
 	readonly case_clause: {
 		type: 'case_clause';
 		named: true;
@@ -375,22 +380,9 @@ export type PythonGrammar = {
 		fields: {};
 		children: {
 			multiple: false;
-			required: true;
-			types: [
-				{ type: 'as_pattern'; named: true },
-				{ type: 'case_pattern_group1'; named: true },
-				{ type: 'keyword_pattern'; named: true }
-			];
-		};
-	};
-	readonly case_pattern_group1: {
-		type: 'case_pattern_group1';
-		named: true;
-		fields: {};
-		children: {
-			multiple: false;
 			required: false;
 			types: [
+				{ type: 'case_as_pattern'; named: true },
 				{ type: 'case_list_pattern'; named: true },
 				{ type: 'case_tuple_pattern'; named: true },
 				{ type: 'class_pattern'; named: true },
@@ -399,6 +391,7 @@ export type PythonGrammar = {
 				{ type: 'dict_pattern'; named: true },
 				{ type: 'dotted_name'; named: true },
 				{ type: 'false'; named: true },
+				{ type: 'keyword_pattern'; named: true },
 				{ type: 'none'; named: true },
 				{ type: 'simple_pattern_negative'; named: true },
 				{ type: 'splat_pattern'; named: true },
@@ -493,6 +486,16 @@ export type PythonGrammar = {
 			multiple: false;
 			required: true;
 			types: [{ type: 'float'; named: true }, { type: 'integer'; named: true }];
+		};
+	};
+	readonly comprehension_clauses: {
+		type: 'comprehension_clauses';
+		named: true;
+		fields: {};
+		children: {
+			multiple: true;
+			required: true;
+			types: [{ type: 'for_in_clause'; named: true }, { type: 'if_clause'; named: true }];
 		};
 	};
 	readonly concatenated_string: {
@@ -628,11 +631,7 @@ export type PythonGrammar = {
 		type: 'dictionary_comprehension';
 		named: true;
 		fields: { body: { multiple: false; required: true; types: [{ type: 'pair'; named: true }] } };
-		children: {
-			multiple: true;
-			required: true;
-			types: [{ type: 'for_in_clause'; named: true }, { type: 'if_clause'; named: true }];
-		};
+		children: { multiple: false; required: true; types: [{ type: 'comprehension_clauses'; named: true }] };
 	};
 	readonly dictionary_group1: {
 		type: 'dictionary_group1';
@@ -937,11 +936,7 @@ export type PythonGrammar = {
 		type: 'generator_expression';
 		named: true;
 		fields: { body: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] } };
-		children: {
-			multiple: true;
-			required: true;
-			types: [{ type: 'for_in_clause'; named: true }, { type: 'if_clause'; named: true }];
-		};
+		children: { multiple: false; required: true; types: [{ type: 'comprehension_clauses'; named: true }] };
 	};
 	readonly generic_type: {
 		type: 'generic_type';
@@ -997,20 +992,9 @@ export type PythonGrammar = {
 				required: false;
 				types: [{ type: 'aliased_import'; named: true }, { type: 'dotted_name'; named: true }];
 			};
-			wildcard_import: {
-				multiple: true;
-				required: true;
-				types: [
-					{ type: '('; named: false },
-					{ type: ')'; named: false },
-					{ type: ','; named: false },
-					{ type: 'aliased_import'; named: true },
-					{ type: 'dotted_name'; named: true },
-					{ type: 'future_import_statement_group1'; named: true },
-					{ type: 'wildcard_import'; named: true }
-				];
-			};
+			wildcard_import: { multiple: false; required: false; types: [{ type: 'wildcard_import'; named: true }] };
 		};
+		children: { multiple: false; required: false; types: [{ type: 'future_import_statement_group1'; named: true }] };
 	};
 	readonly import_prefix: { type: 'import_prefix'; named: true; fields: {} };
 	readonly import_statement: {
@@ -1104,11 +1088,7 @@ export type PythonGrammar = {
 		type: 'list_comprehension';
 		named: true;
 		fields: { body: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] } };
-		children: {
-			multiple: true;
-			required: true;
-			types: [{ type: 'for_in_clause'; named: true }, { type: 'if_clause'; named: true }];
-		};
+		children: { multiple: false; required: true; types: [{ type: 'comprehension_clauses'; named: true }] };
 	};
 	readonly list_pattern: {
 		type: 'list_pattern';
@@ -1323,11 +1303,7 @@ export type PythonGrammar = {
 		type: 'set_comprehension';
 		named: true;
 		fields: { body: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] } };
-		children: {
-			multiple: true;
-			required: true;
-			types: [{ type: 'for_in_clause'; named: true }, { type: 'if_clause'; named: true }];
-		};
+		children: { multiple: false; required: true; types: [{ type: 'comprehension_clauses'; named: true }] };
 	};
 	readonly simple_pattern_negative: {
 		type: 'simple_pattern_negative';

@@ -406,7 +406,7 @@
     "fields": {
       "alias": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "as_pattern_target",
@@ -416,7 +416,7 @@
       },
       "expression": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "expression",
@@ -424,20 +424,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "case_pattern",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -928,6 +914,25 @@
     }
   },
   {
+    "type": "case_as_pattern",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "case_pattern",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "case_clause",
     "named": true,
     "fields": {
@@ -992,31 +997,12 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "as_pattern",
-          "named": true
-        },
-        {
-          "type": "case_pattern_group1",
-          "named": true
-        },
-        {
-          "type": "keyword_pattern",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "case_pattern_group1",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
       "required": false,
       "types": [
+        {
+          "type": "case_as_pattern",
+          "named": true
+        },
         {
           "type": "case_list_pattern",
           "named": true
@@ -1047,6 +1033,10 @@
         },
         {
           "type": "false",
+          "named": true
+        },
+        {
+          "type": "keyword_pattern",
           "named": true
         },
         {
@@ -1332,6 +1322,25 @@
         },
         {
           "type": "integer",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "comprehension_clauses",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "for_in_clause",
+          "named": true
+        },
+        {
+          "type": "if_clause",
           "named": true
         }
       ]
@@ -1695,15 +1704,11 @@
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
-          "type": "for_in_clause",
-          "named": true
-        },
-        {
-          "type": "if_clause",
+          "type": "comprehension_clauses",
           "named": true
         }
       ]
@@ -2407,15 +2412,11 @@
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
-          "type": "for_in_clause",
-          "named": true
-        },
-        {
-          "type": "if_clause",
+          "type": "comprehension_clauses",
           "named": true
         }
       ]
@@ -2559,39 +2560,25 @@
         ]
       },
       "wildcard_import": {
-        "multiple": true,
-        "required": true,
+        "multiple": false,
+        "required": false,
         "types": [
-          {
-            "type": "(",
-            "named": false
-          },
-          {
-            "type": ")",
-            "named": false
-          },
-          {
-            "type": ",",
-            "named": false
-          },
-          {
-            "type": "aliased_import",
-            "named": true
-          },
-          {
-            "type": "dotted_name",
-            "named": true
-          },
-          {
-            "type": "future_import_statement_group1",
-            "named": true
-          },
           {
             "type": "wildcard_import",
             "named": true
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "future_import_statement_group1",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -2857,15 +2844,11 @@
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
-          "type": "for_in_clause",
-          "named": true
-        },
-        {
-          "type": "if_clause",
+          "type": "comprehension_clauses",
           "named": true
         }
       ]
@@ -3429,15 +3412,11 @@
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
-          "type": "for_in_clause",
-          "named": true
-        },
-        {
-          "type": "if_clause",
+          "type": "comprehension_clauses",
           "named": true
         }
       ]

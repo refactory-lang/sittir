@@ -138,8 +138,17 @@ export default grammar(
 					0: field('identifier')
 				},
 
+				// import_from_statement: 1 field(s)
+				// Path-scoped to choice arm 0 (the bare `$.wildcard_import` symbol).
+				// The previous flat `3: field('wildcard_import')` wrapped the WHOLE
+				// position-3 choice, so in the parenthesized arm
+				// (`seq('(', $._import_list, ')')`) the field landed on the anonymous
+				// '(' / ',' / ')' tokens (the named imports inside `_import_list`
+				// already carry their own field('name')) — the wildcard_import slot
+				// then filtered those out and threw "repeated slot 'wildcard_import'
+				// requires at least one value" for `from a import (b, c)`.
 				import_from_statement: {
-					3: field('wildcard_import')
+					'3/0': field('wildcard_import') // wildcard_import [struct=0]
 				},
 
 				keyword_pattern: {
@@ -204,6 +213,87 @@ export default grammar(
 				case_list_pattern: ($) =>
 					seq('[', optional(seq($.case_pattern, repeat(seq(',', $.case_pattern)), optional(','))), ']'),
 
+				// Case-context as-pattern split — same two-rules-one-parse-kind class
+				// as `case_tuple_pattern`/`case_list_pattern` just above. Base
+				// `case_pattern` arm 0 is `alias($._as_pattern, $.as_pattern)`:
+				// match-statement `X as name` patterns parse to the SAME `as_pattern`
+				// kind as the expression-context rule (`seq($.expression, 'as',
+				// field('alias', alias($.expression, $.as_pattern_target)))`), whose
+				// wrap requires an `expression` child the case shape
+				// (`seq($.case_pattern, 'as', $.identifier)`) never produces — every
+				// case-context as-pattern threw at wrap time ("singular slot
+				// 'expression' on 'as_pattern' requires one value"). Declare the case
+				// shape as its own REAL visible rule (per the precedent above, a
+				// choice-arm position can't mint a content alias, so `alias($._x, …)`
+				// would never enter the NodeMap). Non-natural name: the natural
+				// stripped name `as_pattern` is taken by the expression-context kind.
+				case_as_pattern: ($) => seq($.case_pattern, 'as', $.identifier),
+				case_pattern: ($) => prec(1, choice($.case_as_pattern, $.keyword_pattern, $._simple_pattern)),
+
+				// Comprehension-clause visibility (hidden-repeat-helper class): the
+				// base `_comprehension_clauses` (`seq($.for_in_clause,
+				// repeat(choice($.for_in_clause, $.if_clause)))`) is a hidden rule
+				// referenced as a MANDATORY seq member from all four comprehension
+				// kinds — tree-sitter inlines it (children flatten onto the parent),
+				// but sittir models it as a singular `comprehension_clauses` slot,
+				// and the native read never reassembles the flattened
+				// for_in_clause/if_clause children into that slot: every
+				// comprehension threw at wrap time ("singular slot
+				// 'comprehension_clauses' … requires one value; got undefined").
+				// A Track-B reference-site alias can't help here — every reference
+				// is mandatory (no `optional(...)` site to satisfy
+				// `parentIsOptionalSeq`, see the `set`/`element_list` note above) —
+				// so declare it as a REAL visible rule (natural stripped name, per
+				// the `print_statement_group1/2` precedent: it's what the generated
+				// model already expects) and reference it directly.
+				// Body is `repeat1(choice(...))`, NOT the base's
+				// `seq($.for_in_clause, repeat(choice(...)))`: the seq shape derives
+				// TWO slots (position-0 `for_in_clause` + the repeat as `content`),
+				// but the native reader can only fill ONE bucket from the flat
+				// children, and the generated render fn papers over the missing
+				// slot by feeding BOTH template slots the same buffer — duplicating
+				// every clause on deep render (`(x for x in y for x in y)`).
+				// repeat1 is a deliberate, slight acceptance-widening (a leading
+				// if_clause becomes grammatical to the override parser; base
+				// rejects it) — it can't reject anything the base accepts, so no
+				// override-parser ERROR regressions are possible from it.
+				comprehension_clauses: ($) => repeat1(choice($.for_in_clause, $.if_clause)),
+				list_comprehension: ($) => seq('[', field('body', $.expression), $.comprehension_clauses, ']'),
+				dictionary_comprehension: ($) => seq('{', field('body', $.pair), $.comprehension_clauses, '}'),
+				set_comprehension: ($) => seq('{', field('body', $.expression), $.comprehension_clauses, '}'),
+				generator_expression: ($) => seq('(', field('body', $.expression), $.comprehension_clauses, ')'),
+
+				// print_statement: base is a bare `choice(prec(1, seq('print',
+				// chevron, ...)), prec(-3, prec.dynamic(-1, seq('print',
+				// commaSep1(field('argument', expression)), ...))))` — TWO
+				// anonymous seq arms, neither BLANK. Sittir's own IR auto-names
+				// these `_print_statement_group1`/`_print_statement_group2` and
+				// (per the multi-slot/single-slot visible-group rule) models
+				// `content` as a union referencing both — but since neither
+				// arm is authored as its own named rule OR wrapped in
+				// `alias($._x, $.x)`, tree-sitter's native grammar compiler
+				// just flattens both arms' fields (chevron / argument) directly
+				// onto `print_statement` itself. The `_print_statement_group1`/
+				// `_print_statement_group2` node-refs in the IR's `content`
+				// field never resolve against the real parser output —
+				// `hydrateSlots` (assemble.ts) correctly detects this as its
+				// documented "inlined-before-assemble" category and leaves
+				// them `UnresolvedRef`, but nothing downstream falls back to
+				// the flattened fields, so `wrapPrintStatement`'s `_content`
+				// accessor chain (`_content ?? _print_statement_group1 ??
+				// _print_statement_group2`) never finds a value — every
+				// print-statement form throws at wrap time.
+				//
+				// Per the `case_tuple_pattern`/`case_list_pattern` precedent
+				// just above (same file, same root cause class): a CHOICE ARM
+				// position is NOT the `optional(...)`/`CHOICE[x, BLANK]` shape
+				// `mintContentAliasKinds` requires to register a
+				// reference-site alias — an `alias($._x, ...)` here would
+				// never enter the NodeMap. The fix is to declare each arm as
+				// its OWN real, independently-visible rule (natural stripped
+				// names — already what the generated types/wrap model
+				// expects) and reference them directly by symbol, matching
+				// the base grammar's arms verbatim (including precedence).
 				print_statement_group1: ($) =>
 					seq('print', $.chevron, repeat(seq(',', field('argument', $.expression))), optional(',')),
 				print_statement_group2: ($) =>

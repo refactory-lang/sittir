@@ -66,12 +66,6 @@
         "expression_list_group1": "group1"
       }
     },
-    "case_pattern": {
-      "definedBy": "override",
-      "childKind": {
-        "case_pattern_group1": "group1"
-      }
-    },
     "assignment": {
       "definedBy": "override",
       "childKind": {
@@ -100,7 +94,7 @@
     "future_import_statement.import_list": {
       "future_import_statement_group1": "_import_list"
     },
-    "import_from_statement.wildcard_import": {
+    "import_from_statement.import_list": {
       "future_import_statement_group1": "_import_list"
     },
     "expression_statement.content": {
@@ -193,10 +187,6 @@
     },
     "expression_list.tail": {
       "expression_list_group1": "_expression_list_group1"
-    },
-    "case_pattern.content": {
-      "as_pattern": "_as_pattern",
-      "case_pattern_group1": "_simple_pattern"
     },
     "dict_pattern.dict_pattern_group2": {
       "dict_pattern_group2": "_dict_pattern_group2"
@@ -340,9 +330,23 @@
       "wildcard_import": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": true,
-        "nonEmpty": true
+        "nonEmpty": false
+      },
+      "import_list": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "_import_list": {
@@ -984,22 +988,6 @@
     },
     "case_pattern": {
       "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_as_pattern": {
-      "case_pattern": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "identifier": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1712,15 +1700,6 @@
         "nonEmpty": false
       }
     },
-    "_comprehension_clauses": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
     "parenthesized_expression": {
       "content": {
         "unnamed": false,
@@ -1991,6 +1970,31 @@
     },
     "case_list_pattern": {
       "case_pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "case_as_pattern": {
+      "case_pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "identifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "comprehension_clauses": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
         "required": false,
@@ -2372,68 +2376,6 @@
       "factoryShape": "spread"
     },
     {
-      "kind": "_as_pattern",
-      "modelType": "branch",
-      "typeName": "_AsPattern",
-      "factoryName": "_asPattern",
-      "irKey": "_asPattern",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "case_pattern",
-          "propertyName": "casePattern",
-          "paramName": "casePattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "case_pattern",
-              "parseKind": "case_pattern",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "case_pattern"
-            ]
-          }
-        },
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "identifier"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "factoryFields": [
-        "case_pattern",
-        "identifier"
-      ]
-    },
-    {
       "kind": "_assignment_eq",
       "modelType": "group",
       "typeName": "AssignmentEq",
@@ -2778,52 +2720,6 @@
         "try_statement",
         "while_statement",
         "with_statement"
-      ]
-    },
-    {
-      "kind": "_comprehension_clauses",
-      "modelType": "branch",
-      "typeName": "ComprehensionClauses",
-      "factoryName": "comprehensionClauses",
-      "irKey": "comprehensionClauses",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "for_in_clause",
-              "parseKind": "for_in_clause",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "if_clause",
-              "parseKind": "if_clause",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "for_in_clause",
-              "if_clause"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "spread",
-      "factoryFields": [
-        "content"
       ]
     },
     {
@@ -4897,6 +4793,68 @@
       "factoryShape": "text"
     },
     {
+      "kind": "case_as_pattern",
+      "modelType": "branch",
+      "typeName": "CaseAsPattern",
+      "factoryName": "caseAsPattern",
+      "irKey": "caseAsPattern",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "case_pattern",
+          "propertyName": "casePattern",
+          "paramName": "casePattern",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "case_pattern",
+              "parseKind": "case_pattern",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "case_pattern"
+            ]
+          }
+        },
+        {
+          "name": "identifier",
+          "propertyName": "identifier",
+          "paramName": "identifier",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "identifier"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "case_pattern",
+        "identifier"
+      ]
+    },
+    {
       "kind": "case_clause",
       "modelType": "branch",
       "typeName": "CaseClause",
@@ -5055,8 +5013,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_as_pattern",
-              "parseKind": "as_pattern",
+              "name": "case_as_pattern",
+              "parseKind": "case_as_pattern",
               "unresolved": true
             },
             {
@@ -5070,14 +5028,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_simple_pattern",
-              "parseKind": "case_pattern_group1",
+              "parseKind": "_simple_pattern",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_as_pattern",
+              "case_as_pattern",
               "keyword_pattern",
               "_simple_pattern"
             ]
@@ -5565,6 +5523,52 @@
       "factoryFields": [
         "imaginary",
         "operator",
+        "content"
+      ]
+    },
+    {
+      "kind": "comprehension_clauses",
+      "modelType": "branch",
+      "typeName": "ComprehensionClauses",
+      "factoryName": "comprehensionClauses",
+      "irKey": "comprehensionClauses",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "for_in_clause",
+              "parseKind": "for_in_clause",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "if_clause",
+              "parseKind": "if_clause",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "for_in_clause",
+              "if_clause"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "spread",
+      "factoryFields": [
         "content"
       ]
     },
@@ -6166,15 +6170,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_comprehension_clauses",
-              "parseKind": "_comprehension_clauses",
+              "name": "comprehension_clauses",
+              "parseKind": "comprehension_clauses",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_comprehension_clauses"
+              "comprehension_clauses"
             ]
           }
         }
@@ -7522,15 +7526,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_comprehension_clauses",
-              "parseKind": "_comprehension_clauses",
+              "name": "comprehension_clauses",
+              "parseKind": "comprehension_clauses",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_comprehension_clauses"
+              "comprehension_clauses"
             ]
           }
         }
@@ -7884,36 +7888,42 @@
         },
         {
           "name": "wildcard_import",
-          "propertyName": "wildcardImports",
-          "paramName": "wildcardImports",
-          "required": true,
+          "propertyName": "wildcardImport",
+          "paramName": "wildcardImport",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "*",
+              "parseKind": "star"
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
+          "name": "name",
+          "propertyName": "names",
+          "paramName": "names",
+          "required": false,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "wildcard_import",
-              "parseKind": "wildcard_import",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "_import_list",
-              "parseKind": "future_import_statement_group1",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "dotted_name",
               "parseKind": "dotted_name",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "aliased_import",
               "parseKind": "aliased_import",
               "unresolved": true
@@ -7922,10 +7932,31 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "wildcard_import",
-              "_import_list",
               "dotted_name",
               "aliased_import"
+            ]
+          }
+        },
+        {
+          "name": "import_list",
+          "propertyName": "importList",
+          "paramName": "importList",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_import_list",
+              "parseKind": "future_import_statement_group1",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_import_list"
             ]
           }
         }
@@ -7934,7 +7965,8 @@
       "factoryShape": "config",
       "factoryFields": [
         "module_name",
-        "wildcard_import"
+        "name",
+        "import_list"
       ]
     },
     {
@@ -8521,15 +8553,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_comprehension_clauses",
-              "parseKind": "_comprehension_clauses",
+              "name": "comprehension_clauses",
+              "parseKind": "comprehension_clauses",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_comprehension_clauses"
+              "comprehension_clauses"
             ]
           }
         }
@@ -9866,15 +9898,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_comprehension_clauses",
-              "parseKind": "_comprehension_clauses",
+              "name": "comprehension_clauses",
+              "parseKind": "comprehension_clauses",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_comprehension_clauses"
+              "comprehension_clauses"
             ]
           }
         }

@@ -522,6 +522,11 @@ export const ir = {
 		from: FR.coerceToCaseListPattern,
 		strict: F.buildCaseListPattern
 	}),
+	caseAsPattern: _attach(FR.coerceToCaseAsPattern, { from: FR.coerceToCaseAsPattern, strict: F.buildCaseAsPattern }),
+	comprehensionClauses: _attach(FR.coerceToComprehensionClauses, {
+		from: FR.coerceToComprehensionClauses,
+		strict: F.buildComprehensionClauses
+	}),
 	printStatementGroup1: _attach(FR.coerceToPrintStatementGroup1, {
 		from: FR.coerceToPrintStatementGroup1,
 		strict: F.buildPrintStatementGroup1

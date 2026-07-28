@@ -149,7 +149,9 @@ export function buildFutureImportStatement(config: Partial<T.FutureImportStateme
 
 export function buildImportFromStatement(config: T.ImportFromStatement.Config) {
 	const _module_name = config.moduleName;
-	const _wildcard_import = config.wildcardImport ?? [];
+	const _wildcard_import = coerceBooleanKeywordStorage(config.wildcardImport);
+	const _name = config.name ?? [];
+	const _import_list = config.importList;
 	return withMethods(
 		withAccessors(
 			{
@@ -158,17 +160,23 @@ export function buildImportFromStatement(config: T.ImportFromStatement.Config) {
 				$named: true as const,
 				_module_name,
 				_wildcard_import,
+				_name,
+				_import_list,
 				$with: {
 					moduleName: (value: T.RelativeImport | T.DottedName) =>
 						buildImportFromStatement({ ...config, moduleName: value }),
-					wildcardImports: (
-						...values: NonEmptyArray<T.WildcardImport | T.ImportList | T.DottedName | T.AliasedImport>
-					) => buildImportFromStatement({ ...config, wildcardImport: values })
+					wildcardImport: (value?: NonNullable<Parameters<typeof buildImportFromStatement>[0]>['wildcardImport']) =>
+						buildImportFromStatement({ ...config, wildcardImport: value }),
+					names: (...values: (T.DottedName | T.AliasedImport)[]) =>
+						buildImportFromStatement({ ...config, name: values }),
+					importList: (value?: T.ImportList) => buildImportFromStatement({ ...config, importList: value })
 				}
 			},
 			{
 				moduleName: () => _module_name,
-				wildcardImports: () => _wildcard_import
+				wildcardImport: () => _wildcard_import,
+				names: () => _name,
+				importList: () => _import_list
 			}
 		),
 		methodsEngine
@@ -1232,7 +1240,7 @@ export function buildDottedName(...children: T.Identifier[]) {
 	);
 }
 
-export function buildCasePattern(child: T._AsPattern | T.KeywordPattern | T.SimplePattern) {
+export function buildCasePattern(child: T.CaseAsPattern | T.KeywordPattern | T.SimplePattern) {
 	const _content = child;
 	return withMethods(
 		withAccessors(
@@ -1241,35 +1249,10 @@ export function buildCasePattern(child: T._AsPattern | T.KeywordPattern | T.Simp
 				$source: 2 as const,
 				$named: true as const,
 				_content,
-				$with: { $child: (v: T._AsPattern | T.KeywordPattern | T.SimplePattern) => buildCasePattern(v) }
+				$with: { $child: (v: T.CaseAsPattern | T.KeywordPattern | T.SimplePattern) => buildCasePattern(v) }
 			},
 			{
 				content: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
-export function build_AsPattern(config: T._AsPattern.Config) {
-	const _case_pattern = config.casePattern;
-	const _identifier = config.identifier;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId._AsPattern as const,
-				$source: 2 as const,
-				$named: true as const,
-				_case_pattern,
-				_identifier,
-				$with: {
-					casePattern: (value: T.CasePattern) => build_AsPattern({ ...config, casePattern: value }),
-					identifier: (value: T.Identifier) => build_AsPattern({ ...config, identifier: value })
-				}
-			},
-			{
-				casePattern: () => _case_pattern,
-				identifier: () => _identifier
 			}
 		),
 		methodsEngine
@@ -2516,25 +2499,6 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config) {
 	);
 }
 
-export function buildComprehensionClauses(...children: (T.ForInClause | T.IfClause)[]) {
-	const _content = children;
-	return withMethods(
-		withAccessors(
-			{
-				$type: TSKindId.ComprehensionClauses as const,
-				$source: 2 as const,
-				$named: true as const,
-				_content,
-				$with: { $children: (...vs: (T.ForInClause | T.IfClause)[]) => buildComprehensionClauses(...vs) }
-			},
-			{
-				contents: () => _content
-			}
-		),
-		methodsEngine
-	);
-}
-
 export function buildParenthesizedExpression(child: T.Expression | T.Yield | T.ParenthesizedListSplat | T.ListSplat) {
 	const _content = child;
 	return withMethods(
@@ -3211,6 +3175,50 @@ export function buildCaseListPattern(...children: T.CasePattern[]) {
 	);
 }
 
+export function buildCaseAsPattern(config: T.CaseAsPattern.Config) {
+	const _case_pattern = config.casePattern;
+	const _identifier = config.identifier;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.CaseAsPattern as const,
+				$source: 2 as const,
+				$named: true as const,
+				_case_pattern,
+				_identifier,
+				$with: {
+					casePattern: (value: T.CasePattern) => buildCaseAsPattern({ ...config, casePattern: value }),
+					identifier: (value: T.Identifier) => buildCaseAsPattern({ ...config, identifier: value })
+				}
+			},
+			{
+				casePattern: () => _case_pattern,
+				identifier: () => _identifier
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildComprehensionClauses(...children: (T.ForInClause | T.IfClause)[]) {
+	const _content = children;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.ComprehensionClauses as const,
+				$source: 2 as const,
+				$named: true as const,
+				_content,
+				$with: { $children: (...vs: (T.ForInClause | T.IfClause)[]) => buildComprehensionClauses(...vs) }
+			},
+			{
+				contents: () => _content
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildPrintStatementGroup1(config: T.PrintStatementGroup1.Config) {
 	const _chevron = config.chevron;
 	const _argument = config.argument ?? [];
@@ -3691,7 +3699,6 @@ export type FluentKindMap = {
 	expression_list: FluentNode<'expression_list', T.ExpressionList.Config>;
 	dotted_name: FluentNode<'dotted_name', T.DottedName.Config>;
 	case_pattern: FluentNode<'case_pattern', T.CasePattern.Config>;
-	_as_pattern: FluentNode<'_as_pattern', T._AsPattern.Config>;
 	union_pattern: FluentNode<'union_pattern', T.UnionPattern.Config>;
 	dict_pattern: FluentNode<'dict_pattern', T.DictPattern.Config>;
 	_key_value_pattern: T.KeyValuePattern;
@@ -3742,7 +3749,6 @@ export type FluentKindMap = {
 	dictionary_comprehension: FluentNode<'dictionary_comprehension', T.DictionaryComprehension.Config>;
 	set_comprehension: FluentNode<'set_comprehension', T.SetComprehension.Config>;
 	generator_expression: FluentNode<'generator_expression', T.GeneratorExpression.Config>;
-	_comprehension_clauses: FluentNode<'_comprehension_clauses', T.ComprehensionClauses.Config>;
 	parenthesized_expression: FluentNode<'parenthesized_expression', T.ParenthesizedExpression.Config>;
 	_collection_elements: FluentNode<'_collection_elements', T.CollectionElements.Config>;
 	for_in_clause: FluentNode<'for_in_clause', T.ForInClause.Config>;
@@ -3775,6 +3781,8 @@ export type FluentKindMap = {
 	_except_clause_as: T.ExceptClauseAs;
 	case_tuple_pattern: FluentNode<'case_tuple_pattern', T.CaseTuplePattern.Config>;
 	case_list_pattern: FluentNode<'case_list_pattern', T.CaseListPattern.Config>;
+	case_as_pattern: FluentNode<'case_as_pattern', T.CaseAsPattern.Config>;
+	comprehension_clauses: FluentNode<'comprehension_clauses', T.ComprehensionClauses.Config>;
 	print_statement_group1: FluentNode<'print_statement_group1', T.PrintStatementGroup1.Config>;
 	print_statement_group2: FluentNode<'print_statement_group2', T.PrintStatementGroup2.Config>;
 	_assignment_eq: T.AssignmentEq;
@@ -3853,7 +3861,6 @@ export const _factoryMap = {
 	expression_list: buildExpressionList,
 	dotted_name: buildDottedName,
 	case_pattern: buildCasePattern,
-	_as_pattern: build_AsPattern,
 	union_pattern: buildUnionPattern,
 	dict_pattern: buildDictPattern,
 	_key_value_pattern: buildKeyValuePattern,
@@ -3904,7 +3911,6 @@ export const _factoryMap = {
 	dictionary_comprehension: buildDictionaryComprehension,
 	set_comprehension: buildSetComprehension,
 	generator_expression: buildGeneratorExpression,
-	_comprehension_clauses: buildComprehensionClauses,
 	parenthesized_expression: buildParenthesizedExpression,
 	_collection_elements: buildCollectionElements,
 	for_in_clause: buildForInClause,
@@ -3937,6 +3943,8 @@ export const _factoryMap = {
 	_except_clause_as: buildExceptClauseAs,
 	case_tuple_pattern: buildCaseTuplePattern,
 	case_list_pattern: buildCaseListPattern,
+	case_as_pattern: buildCaseAsPattern,
+	comprehension_clauses: buildComprehensionClauses,
 	print_statement_group1: buildPrintStatementGroup1,
 	print_statement_group2: buildPrintStatementGroup2,
 	_assignment_eq: buildAssignmentEq,

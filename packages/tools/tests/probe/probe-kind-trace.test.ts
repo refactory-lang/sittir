@@ -109,7 +109,12 @@ describe('probe-kind native trace helpers', () => {
 		expect(trace.trace.native).toBeDefined();
 	});
 
-	it('limits trace output to the requested engine and reproduces native wrap errors for validator-like probes', async () => {
+	it('limits trace output to the requested engine for validator-like probes', async () => {
+		// This probe historically reproduced a native wrap error ("singular slot
+		// 'comprehension_clauses' on 'generator_expression' requires one value")
+		// — that bug is fixed (comprehension_clauses is a real visible rule in
+		// packages/python/overrides.ts now), so the trace is asserted to be a
+		// clean, native-only round trip instead.
 		const trace = await probeTrace('python', '(x for x in y)', {
 			kind: 'generator_expression',
 			engine: 'native'
@@ -117,9 +122,8 @@ describe('probe-kind native trace helpers', () => {
 
 		expect(trace.trace.js).toBeUndefined();
 		expect(trace.trace.native).toMatchObject({
-			wrapError: expect.stringContaining(
-				'singular slot "comprehension_clauses" on "generator_expression" requires one value'
-			)
+			shallow: expect.objectContaining({ rendered: '(x for x in y)' }),
+			deep: expect.objectContaining({ rendered: '(x for x in y)' })
 		});
 	});
 });

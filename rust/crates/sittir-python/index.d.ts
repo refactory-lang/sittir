@@ -91,18 +91,6 @@ export interface AsPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _case_pattern: Box<CasePatternTransport>
-  _identifier: IdentifierTransport
-}
-
-export interface AsPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
   _expression: Box<ExpressionTransport>
   _alias: Box<ExpressionTransport>
 }
@@ -247,6 +235,18 @@ export interface CallTransport {
   '$triviaData'?: TransportTrivia
   _function: Box<PrimaryExpressionTransport>
   _arguments: Box<CallArgumentsTransportSlot>
+}
+
+export interface CaseAsPatternTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _case_pattern: Box<CasePatternTransport>
+  _identifier: IdentifierTransport
 }
 
 export interface CaseClauseTransport {
@@ -869,7 +869,9 @@ export interface ImportFromStatementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _module_name: ImportFromStatementModuleNameTransportSlot
-  _wildcard_import: Array<ImportFromStatementWildcardImportTransportSlot>
+  _wildcard_import?: boolean
+  _name?: Array<ImportFromStatementNameTransportSlot>
+  _import_list?: ImportListTransport
 }
 
 export interface ImportListTransport {
