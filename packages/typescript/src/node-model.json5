@@ -8090,6 +8090,7 @@
       "factoryName": "metaPropertyGroup1",
       "irKey": "metaPropertyGroup1",
       "hidden": false,
+      "text": "new . target",
       "factoryShape": "text"
     },
     {
@@ -8099,6 +8100,7 @@
       "factoryName": "metaPropertyGroup2",
       "irKey": "metaPropertyGroup2",
       "hidden": false,
+      "text": "import . meta",
       "factoryShape": "text"
     },
     {

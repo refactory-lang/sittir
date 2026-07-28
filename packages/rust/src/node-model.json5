@@ -7406,6 +7406,7 @@
       "factoryName": "referenceExpressionRawConst",
       "irKey": "referenceExpressionRawConst",
       "hidden": false,
+      "text": "raw const",
       "factoryShape": "text"
     },
     {
@@ -18593,6 +18594,7 @@
       "factoryName": "unitExpression",
       "irKey": "unitExpression",
       "hidden": false,
+      "text": "( )",
       "factoryShape": "text"
     },
     {
@@ -18602,6 +18604,7 @@
       "factoryName": "unitType",
       "irKey": "unitType",
       "hidden": false,
+      "text": "( )",
       "factoryShape": "text"
     },
     {

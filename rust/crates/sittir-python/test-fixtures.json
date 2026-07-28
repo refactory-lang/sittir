@@ -8816,6 +8816,1491 @@
       "$named": true,
       "$span": {
         "start": 0,
+        "end": 92
+      },
+      "$nodeHandle": 0,
+      "_statement": [
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 0,
+            "end": 24
+          },
+          "$nodeHandle": 36,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 0,
+                "end": 24
+              },
+              "$nodeHandle": 42,
+              "_content": {
+                "$type": 193,
+                "$source": 0,
+                "$named": true,
+                "_left": "a",
+                "_comparators": [
+                  {
+                    "$type": 261,
+                    "$source": 0,
+                    "$named": true,
+                    "_operators": 94,
+                    "$span": {
+                      "start": 2,
+                      "end": 5
+                    },
+                    "$nodeHandle": 44,
+                    "_primary_expression": "b"
+                  },
+                  {
+                    "$type": 261,
+                    "$source": 0,
+                    "$named": true,
+                    "_operators": 95,
+                    "$span": {
+                      "start": 6,
+                      "end": 10
+                    },
+                    "$nodeHandle": 45,
+                    "_primary_expression": "c"
+                  },
+                  {
+                    "$type": 261,
+                    "$source": 0,
+                    "$named": true,
+                    "_operators": 96,
+                    "$span": {
+                      "start": 11,
+                      "end": 15
+                    },
+                    "$nodeHandle": 46,
+                    "_primary_expression": "d"
+                  },
+                  {
+                    "$type": 261,
+                    "$source": 0,
+                    "$named": true,
+                    "_operators": 98,
+                    "$span": {
+                      "start": 16,
+                      "end": 20
+                    },
+                    "$nodeHandle": 47,
+                    "_primary_expression": "e"
+                  },
+                  {
+                    "$type": 261,
+                    "$source": 0,
+                    "$named": true,
+                    "_operators": 99,
+                    "$span": {
+                      "start": 21,
+                      "end": 24
+                    },
+                    "$nodeHandle": 48,
+                    "_primary_expression": "f"
+                  }
+                ],
+                "$span": {
+                  "start": 0,
+                  "end": 24
+                },
+                "$nodeHandle": 43
+              }
+            }
+          ]
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 25,
+            "end": 45
+          },
+          "$nodeHandle": 37,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 25,
+                "end": 45
+              },
+              "$nodeHandle": 49,
+              "_content": {
+                "$type": 188,
+                "$source": 0,
+                "$named": true,
+                "_left": {
+                  "$type": 187,
+                  "$source": 0,
+                  "$named": true,
+                  "_argument": {
+                    "$type": 193,
+                    "$source": 0,
+                    "$named": true,
+                    "_left": "a",
+                    "_comparators": [
+                      {
+                        "$type": 261,
+                        "$source": 0,
+                        "$named": true,
+                        "_operators": 96,
+                        "$span": {
+                          "start": 31,
+                          "end": 35
+                        },
+                        "$nodeHandle": 53,
+                        "_primary_expression": "b"
+                      }
+                    ],
+                    "$span": {
+                      "start": 29,
+                      "end": 35
+                    },
+                    "$nodeHandle": 52
+                  },
+                  "$other": [
+                    52
+                  ],
+                  "$span": {
+                    "start": 25,
+                    "end": 35
+                  },
+                  "$nodeHandle": 51
+                },
+                "_operator": 54,
+                "_right": {
+                  "$type": 193,
+                  "$source": 0,
+                  "$named": true,
+                  "_left": "c",
+                  "_comparators": [
+                    {
+                      "$type": 261,
+                      "$source": 0,
+                      "$named": true,
+                      "_operators": 96,
+                      "$span": {
+                        "start": 41,
+                        "end": 45
+                      },
+                      "$nodeHandle": 55,
+                      "_primary_expression": "d"
+                    }
+                  ],
+                  "$span": {
+                    "start": 39,
+                    "end": 45
+                  },
+                  "$nodeHandle": 54
+                },
+                "$span": {
+                  "start": 25,
+                  "end": 45
+                },
+                "$nodeHandle": 50
+              }
+            }
+          ]
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 46,
+            "end": 56
+          },
+          "$nodeHandle": 38,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 46,
+                "end": 56
+              },
+              "$nodeHandle": 56,
+              "_content": {
+                "$type": 193,
+                "$source": 0,
+                "$named": true,
+                "_left": "a",
+                "_comparators": [
+                  {
+                    "$type": 261,
+                    "$source": 0,
+                    "$named": true,
+                    "_operators": 191,
+                    "$span": {
+                      "start": 48,
+                      "end": 56
+                    },
+                    "$nodeHandle": 58,
+                    "_primary_expression": "b"
+                  }
+                ],
+                "$span": {
+                  "start": 46,
+                  "end": 56
+                },
+                "$nodeHandle": 57
+              }
+            }
+          ]
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 57,
+            "end": 67
+          },
+          "$nodeHandle": 39,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 57,
+                "end": 67
+              },
+              "$nodeHandle": 59,
+              "_content": {
+                "$type": 193,
+                "$source": 0,
+                "$named": true,
+                "_left": "a",
+                "_comparators": [
+                  {
+                    "$type": 261,
+                    "$source": 0,
+                    "$named": true,
+                    "_operators": 192,
+                    "$span": {
+                      "start": 59,
+                      "end": 67
+                    },
+                    "$nodeHandle": 61,
+                    "_primary_expression": "b"
+                  }
+                ],
+                "$span": {
+                  "start": 57,
+                  "end": 67
+                },
+                "$nodeHandle": 60
+              }
+            }
+          ]
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 68,
+            "end": 85
+          },
+          "$nodeHandle": 40,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 68,
+                "end": 85
+              },
+              "$nodeHandle": 62,
+              "_content": {
+                "$type": 188,
+                "$source": 0,
+                "$named": true,
+                "_left": {
+                  "$type": 193,
+                  "$source": 0,
+                  "$named": true,
+                  "_left": "a",
+                  "_comparators": [
+                    {
+                      "$type": 261,
+                      "$source": 0,
+                      "$named": true,
+                      "_operators": 62,
+                      "$span": {
+                        "start": 70,
+                        "end": 74
+                      },
+                      "$nodeHandle": 65,
+                      "_primary_expression": "b"
+                    }
+                  ],
+                  "$span": {
+                    "start": 68,
+                    "end": 74
+                  },
+                  "$nodeHandle": 64
+                },
+                "_operator": 53,
+                "_right": {
+                  "$type": 193,
+                  "$source": 0,
+                  "$named": true,
+                  "_left": "c",
+                  "_comparators": [
+                    {
+                      "$type": 261,
+                      "$source": 0,
+                      "$named": true,
+                      "_operators": 97,
+                      "$span": {
+                        "start": 81,
+                        "end": 85
+                      },
+                      "$nodeHandle": 67,
+                      "_primary_expression": "d"
+                    }
+                  ],
+                  "$span": {
+                    "start": 79,
+                    "end": 85
+                  },
+                  "$nodeHandle": 66
+                },
+                "$span": {
+                  "start": 68,
+                  "end": 85
+                },
+                "$nodeHandle": 63
+              }
+            }
+          ]
+        },
+        {
+          "$type": 110,
+          "$source": 0,
+          "$named": true,
+          "_newline": 101,
+          "$span": {
+            "start": 86,
+            "end": 92
+          },
+          "$nodeHandle": 41,
+          "_simple_statement": [
+            {
+              "$type": 122,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 86,
+                "end": 92
+              },
+              "$nodeHandle": 68,
+              "_content": {
+                "$type": 193,
+                "$source": 0,
+                "$named": true,
+                "_left": "a",
+                "_comparators": [
+                  {
+                    "$type": 261,
+                    "$source": 0,
+                    "$named": true,
+                    "_operators": 100,
+                    "$span": {
+                      "start": 88,
+                      "end": 92
+                    },
+                    "$nodeHandle": 70,
+                    "_primary_expression": "b"
+                  }
+                ],
+                "$span": {
+                  "start": 86,
+                  "end": 92
+                },
+                "$nodeHandle": 69
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "expectedOutput": "a<b<=c==d>=e>f\nnot a==b or c==d\na not in b\na is not b\na is b and c!=d\na<>b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a < b <= c == d >= e > f\nnot a == b or c == d\na not in b\na is not b\na is b and c != d\na <> b",
+    "pattern": "module",
+    "edits": [],
+    "expectedSourceOut": "a<b<=c==d>=e>f\nnot a==b or c==d\na not in b\na is not b\na is b and c!=d\na<>b",
+    "expectedReparseTree": "(module (statement_group1 (expression_statement (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)) comparators: (comparison_operator_comparator (identifier)) comparators: (comparison_operator_comparator (identifier)) comparators: (comparison_operator_comparator (identifier)) comparators: (comparison_operator_comparator (identifier)))) (newline)) (statement_group1 (expression_statement (boolean_operator left: (not_operator argument: (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))) right: (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier))))) (newline)) (statement_group1 (expression_statement (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))) (newline)) (statement_group1 (expression_statement (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))) (newline)) (statement_group1 (expression_statement (boolean_operator left: (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier))) right: (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier))))) (newline)) (statement_group1 (expression_statement (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))) (newline)))",
+    "wrappedText": "a<b<=c==d>=e>f\nnot a==b or c==d\na not in b\na is not b\na is b and c!=d\na<>b",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 0,
+        "end": 24
+      },
+      "$nodeHandle": 7,
+      "_content": {
+        "$type": 193,
+        "$source": 0,
+        "$named": true,
+        "_left": "a",
+        "_comparators": [
+          {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_operators": 94,
+            "$span": {
+              "start": 2,
+              "end": 5
+            },
+            "$nodeHandle": 72,
+            "_primary_expression": "b"
+          },
+          {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_operators": 95,
+            "$span": {
+              "start": 6,
+              "end": 10
+            },
+            "$nodeHandle": 73,
+            "_primary_expression": "c"
+          },
+          {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_operators": 96,
+            "$span": {
+              "start": 11,
+              "end": 15
+            },
+            "$nodeHandle": 74,
+            "_primary_expression": "d"
+          },
+          {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_operators": 98,
+            "$span": {
+              "start": 16,
+              "end": 20
+            },
+            "$nodeHandle": 75,
+            "_primary_expression": "e"
+          },
+          {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_operators": 99,
+            "$span": {
+              "start": 21,
+              "end": 24
+            },
+            "$nodeHandle": 76,
+            "_primary_expression": "f"
+          }
+        ],
+        "$span": {
+          "start": 0,
+          "end": 24
+        },
+        "$nodeHandle": 71
+      }
+    },
+    "expectedOutput": "a<b<=c==d>=e>f"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a < b <= c == d >= e > f",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "a<b<=c==d>=e>f",
+    "expectedReparseTree": "(expression_statement (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)) comparators: (comparison_operator_comparator (identifier)) comparators: (comparison_operator_comparator (identifier)) comparators: (comparison_operator_comparator (identifier)) comparators: (comparison_operator_comparator (identifier))))",
+    "wrappedText": "a<b<=c==d>=e>f",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 25,
+        "end": 45
+      },
+      "$nodeHandle": 14,
+      "_content": {
+        "$type": 188,
+        "$source": 0,
+        "$named": true,
+        "_left": {
+          "$type": 187,
+          "$source": 0,
+          "$named": true,
+          "_argument": {
+            "$type": 193,
+            "$source": 0,
+            "$named": true,
+            "_left": "a",
+            "_comparators": [
+              {
+                "$type": 261,
+                "$source": 0,
+                "$named": true,
+                "_operators": 96,
+                "$span": {
+                  "start": 31,
+                  "end": 35
+                },
+                "$nodeHandle": 80,
+                "_primary_expression": "b"
+              }
+            ],
+            "$span": {
+              "start": 29,
+              "end": 35
+            },
+            "$nodeHandle": 79
+          },
+          "$other": [
+            52
+          ],
+          "$span": {
+            "start": 25,
+            "end": 35
+          },
+          "$nodeHandle": 78
+        },
+        "_operator": 54,
+        "_right": {
+          "$type": 193,
+          "$source": 0,
+          "$named": true,
+          "_left": "c",
+          "_comparators": [
+            {
+              "$type": 261,
+              "$source": 0,
+              "$named": true,
+              "_operators": 96,
+              "$span": {
+                "start": 41,
+                "end": 45
+              },
+              "$nodeHandle": 82,
+              "_primary_expression": "d"
+            }
+          ],
+          "$span": {
+            "start": 39,
+            "end": 45
+          },
+          "$nodeHandle": 81
+        },
+        "$span": {
+          "start": 25,
+          "end": 45
+        },
+        "$nodeHandle": 77
+      }
+    },
+    "expectedOutput": "not a==b or c==d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "not a == b or c == d",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "not a==b or c==d",
+    "expectedReparseTree": "(expression_statement (boolean_operator left: (not_operator argument: (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))) right: (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))))",
+    "wrappedText": "not a==b or c==d",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 46,
+        "end": 56
+      },
+      "$nodeHandle": 21,
+      "_content": {
+        "$type": 193,
+        "$source": 0,
+        "$named": true,
+        "_left": "a",
+        "_comparators": [
+          {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_operators": 191,
+            "$span": {
+              "start": 48,
+              "end": 56
+            },
+            "$nodeHandle": 84,
+            "_primary_expression": "b"
+          }
+        ],
+        "$span": {
+          "start": 46,
+          "end": 56
+        },
+        "$nodeHandle": 83
+      }
+    },
+    "expectedOutput": "a not in b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a not in b",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "a not in b",
+    "expectedReparseTree": "(expression_statement (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier))))",
+    "wrappedText": "a not in b",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 57,
+        "end": 67
+      },
+      "$nodeHandle": 24,
+      "_content": {
+        "$type": 193,
+        "$source": 0,
+        "$named": true,
+        "_left": "a",
+        "_comparators": [
+          {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_operators": 192,
+            "$span": {
+              "start": 59,
+              "end": 67
+            },
+            "$nodeHandle": 86,
+            "_primary_expression": "b"
+          }
+        ],
+        "$span": {
+          "start": 57,
+          "end": 67
+        },
+        "$nodeHandle": 85
+      }
+    },
+    "expectedOutput": "a is not b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a is not b",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "a is not b",
+    "expectedReparseTree": "(expression_statement (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier))))",
+    "wrappedText": "a is not b",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 68,
+        "end": 85
+      },
+      "$nodeHandle": 27,
+      "_content": {
+        "$type": 188,
+        "$source": 0,
+        "$named": true,
+        "_left": {
+          "$type": 193,
+          "$source": 0,
+          "$named": true,
+          "_left": "a",
+          "_comparators": [
+            {
+              "$type": 261,
+              "$source": 0,
+              "$named": true,
+              "_operators": 62,
+              "$span": {
+                "start": 70,
+                "end": 74
+              },
+              "$nodeHandle": 89,
+              "_primary_expression": "b"
+            }
+          ],
+          "$span": {
+            "start": 68,
+            "end": 74
+          },
+          "$nodeHandle": 88
+        },
+        "_operator": 53,
+        "_right": {
+          "$type": 193,
+          "$source": 0,
+          "$named": true,
+          "_left": "c",
+          "_comparators": [
+            {
+              "$type": 261,
+              "$source": 0,
+              "$named": true,
+              "_operators": 97,
+              "$span": {
+                "start": 81,
+                "end": 85
+              },
+              "$nodeHandle": 91,
+              "_primary_expression": "d"
+            }
+          ],
+          "$span": {
+            "start": 79,
+            "end": 85
+          },
+          "$nodeHandle": 90
+        },
+        "$span": {
+          "start": 68,
+          "end": 85
+        },
+        "$nodeHandle": 87
+      }
+    },
+    "expectedOutput": "a is b and c!=d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a is b and c != d",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "a is b and c!=d",
+    "expectedReparseTree": "(expression_statement (boolean_operator left: (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier))) right: (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))))",
+    "wrappedText": "a is b and c!=d",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 122,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 86,
+        "end": 92
+      },
+      "$nodeHandle": 33,
+      "_content": {
+        "$type": 193,
+        "$source": 0,
+        "$named": true,
+        "_left": "a",
+        "_comparators": [
+          {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_operators": 100,
+            "$span": {
+              "start": 88,
+              "end": 92
+            },
+            "$nodeHandle": 93,
+            "_primary_expression": "b"
+          }
+        ],
+        "$span": {
+          "start": 86,
+          "end": 92
+        },
+        "$nodeHandle": 92
+      }
+    },
+    "expectedOutput": "a<>b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a <> b",
+    "pattern": "expression_statement",
+    "edits": [],
+    "expectedSourceOut": "a<>b",
+    "expectedReparseTree": "(expression_statement (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier))))",
+    "wrappedText": "a<>b",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 193,
+      "$source": 0,
+      "$named": true,
+      "_left": "a",
+      "_comparators": [
+        {
+          "$type": 261,
+          "$source": 0,
+          "$named": true,
+          "_operators": 94,
+          "$span": {
+            "start": 2,
+            "end": 5
+          },
+          "$nodeHandle": 94,
+          "_primary_expression": "b"
+        },
+        {
+          "$type": 261,
+          "$source": 0,
+          "$named": true,
+          "_operators": 95,
+          "$span": {
+            "start": 6,
+            "end": 10
+          },
+          "$nodeHandle": 95,
+          "_primary_expression": "c"
+        },
+        {
+          "$type": 261,
+          "$source": 0,
+          "$named": true,
+          "_operators": 96,
+          "$span": {
+            "start": 11,
+            "end": 15
+          },
+          "$nodeHandle": 96,
+          "_primary_expression": "d"
+        },
+        {
+          "$type": 261,
+          "$source": 0,
+          "$named": true,
+          "_operators": 98,
+          "$span": {
+            "start": 16,
+            "end": 20
+          },
+          "$nodeHandle": 97,
+          "_primary_expression": "e"
+        },
+        {
+          "$type": 261,
+          "$source": 0,
+          "$named": true,
+          "_operators": 99,
+          "$span": {
+            "start": 21,
+            "end": 24
+          },
+          "$nodeHandle": 98,
+          "_primary_expression": "f"
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 24
+      },
+      "$nodeHandle": 8
+    },
+    "expectedOutput": "a<b<=c==d>=e>f"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a < b <= c == d >= e > f",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "a<b<=c==d>=e>f",
+    "expectedReparseTree": "(comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)) comparators: (comparison_operator_comparator (identifier)) comparators: (comparison_operator_comparator (identifier)) comparators: (comparison_operator_comparator (identifier)) comparators: (comparison_operator_comparator (identifier)))",
+    "wrappedText": "_ = a<b<=c==d>=e>f",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 193,
+      "$source": 0,
+      "$named": true,
+      "_left": "a",
+      "_comparators": [
+        {
+          "$type": 261,
+          "$source": 0,
+          "$named": true,
+          "_operators": 96,
+          "$span": {
+            "start": 31,
+            "end": 35
+          },
+          "$nodeHandle": 99,
+          "_primary_expression": "b"
+        }
+      ],
+      "$span": {
+        "start": 29,
+        "end": 35
+      },
+      "$nodeHandle": 17
+    },
+    "expectedOutput": "a==b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a == b",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "a==b",
+    "expectedReparseTree": "(comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))",
+    "wrappedText": "_ = a==b",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 193,
+      "$source": 0,
+      "$named": true,
+      "_left": "c",
+      "_comparators": [
+        {
+          "$type": 261,
+          "$source": 0,
+          "$named": true,
+          "_operators": 96,
+          "$span": {
+            "start": 41,
+            "end": 45
+          },
+          "$nodeHandle": 100,
+          "_primary_expression": "d"
+        }
+      ],
+      "$span": {
+        "start": 39,
+        "end": 45
+      },
+      "$nodeHandle": 19
+    },
+    "expectedOutput": "c==d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "c == d",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "c==d",
+    "expectedReparseTree": "(comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))",
+    "wrappedText": "_ = c==d",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 193,
+      "$source": 0,
+      "$named": true,
+      "_left": "a",
+      "_comparators": [
+        {
+          "$type": 261,
+          "$source": 0,
+          "$named": true,
+          "_operators": 191,
+          "$span": {
+            "start": 48,
+            "end": 56
+          },
+          "$nodeHandle": 101,
+          "_primary_expression": "b"
+        }
+      ],
+      "$span": {
+        "start": 46,
+        "end": 56
+      },
+      "$nodeHandle": 22
+    },
+    "expectedOutput": "a not in b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a not in b",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "a not in b",
+    "expectedReparseTree": "(comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))",
+    "wrappedText": "_ = a not in b",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 193,
+      "$source": 0,
+      "$named": true,
+      "_left": "a",
+      "_comparators": [
+        {
+          "$type": 261,
+          "$source": 0,
+          "$named": true,
+          "_operators": 192,
+          "$span": {
+            "start": 59,
+            "end": 67
+          },
+          "$nodeHandle": 102,
+          "_primary_expression": "b"
+        }
+      ],
+      "$span": {
+        "start": 57,
+        "end": 67
+      },
+      "$nodeHandle": 25
+    },
+    "expectedOutput": "a is not b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a is not b",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "a is not b",
+    "expectedReparseTree": "(comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))",
+    "wrappedText": "_ = a is not b",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 193,
+      "$source": 0,
+      "$named": true,
+      "_left": "a",
+      "_comparators": [
+        {
+          "$type": 261,
+          "$source": 0,
+          "$named": true,
+          "_operators": 62,
+          "$span": {
+            "start": 70,
+            "end": 74
+          },
+          "$nodeHandle": 103,
+          "_primary_expression": "b"
+        }
+      ],
+      "$span": {
+        "start": 68,
+        "end": 74
+      },
+      "$nodeHandle": 29
+    },
+    "expectedOutput": "a is b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a is b",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "a is b",
+    "expectedReparseTree": "(comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))",
+    "wrappedText": "_ = a is b",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 193,
+      "$source": 0,
+      "$named": true,
+      "_left": "c",
+      "_comparators": [
+        {
+          "$type": 261,
+          "$source": 0,
+          "$named": true,
+          "_operators": 97,
+          "$span": {
+            "start": 81,
+            "end": 85
+          },
+          "$nodeHandle": 104,
+          "_primary_expression": "d"
+        }
+      ],
+      "$span": {
+        "start": 79,
+        "end": 85
+      },
+      "$nodeHandle": 31
+    },
+    "expectedOutput": "c!=d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "c != d",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "c!=d",
+    "expectedReparseTree": "(comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))",
+    "wrappedText": "_ = c!=d",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 193,
+      "$source": 0,
+      "$named": true,
+      "_left": "a",
+      "_comparators": [
+        {
+          "$type": 261,
+          "$source": 0,
+          "$named": true,
+          "_operators": 100,
+          "$span": {
+            "start": 88,
+            "end": 92
+          },
+          "$nodeHandle": 105,
+          "_primary_expression": "b"
+        }
+      ],
+      "$span": {
+        "start": 86,
+        "end": 92
+      },
+      "$nodeHandle": 34
+    },
+    "expectedOutput": "a<>b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a <> b",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "a<>b",
+    "expectedReparseTree": "(comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))",
+    "wrappedText": "_ = a<>b",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 188,
+      "$source": 0,
+      "$named": true,
+      "_left": {
+        "$type": 187,
+        "$source": 0,
+        "$named": true,
+        "_argument": {
+          "$type": 193,
+          "$source": 0,
+          "$named": true,
+          "_left": "a",
+          "_comparators": [
+            {
+              "$type": 261,
+              "$source": 0,
+              "$named": true,
+              "_operators": 96,
+              "$span": {
+                "start": 31,
+                "end": 35
+              },
+              "$nodeHandle": 108,
+              "_primary_expression": "b"
+            }
+          ],
+          "$span": {
+            "start": 29,
+            "end": 35
+          },
+          "$nodeHandle": 107
+        },
+        "$other": [
+          52
+        ],
+        "$span": {
+          "start": 25,
+          "end": 35
+        },
+        "$nodeHandle": 106
+      },
+      "_operator": 54,
+      "_right": {
+        "$type": 193,
+        "$source": 0,
+        "$named": true,
+        "_left": "c",
+        "_comparators": [
+          {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_operators": 96,
+            "$span": {
+              "start": 41,
+              "end": 45
+            },
+            "$nodeHandle": 110,
+            "_primary_expression": "d"
+          }
+        ],
+        "$span": {
+          "start": 39,
+          "end": 45
+        },
+        "$nodeHandle": 109
+      },
+      "$span": {
+        "start": 25,
+        "end": 45
+      },
+      "$nodeHandle": 15
+    },
+    "expectedOutput": "not a==b or c==d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "not a == b or c == d",
+    "pattern": "boolean_operator",
+    "edits": [],
+    "expectedSourceOut": "not a==b or c==d",
+    "expectedReparseTree": "(boolean_operator left: (not_operator argument: (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier)))) right: (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier))))",
+    "wrappedText": "_ = not a==b or c==d",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 188,
+      "$source": 0,
+      "$named": true,
+      "_left": {
+        "$type": 193,
+        "$source": 0,
+        "$named": true,
+        "_left": "a",
+        "_comparators": [
+          {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_operators": 62,
+            "$span": {
+              "start": 70,
+              "end": 74
+            },
+            "$nodeHandle": 112,
+            "_primary_expression": "b"
+          }
+        ],
+        "$span": {
+          "start": 68,
+          "end": 74
+        },
+        "$nodeHandle": 111
+      },
+      "_operator": 53,
+      "_right": {
+        "$type": 193,
+        "$source": 0,
+        "$named": true,
+        "_left": "c",
+        "_comparators": [
+          {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_operators": 97,
+            "$span": {
+              "start": 81,
+              "end": 85
+            },
+            "$nodeHandle": 114,
+            "_primary_expression": "d"
+          }
+        ],
+        "$span": {
+          "start": 79,
+          "end": 85
+        },
+        "$nodeHandle": 113
+      },
+      "$span": {
+        "start": 68,
+        "end": 85
+      },
+      "$nodeHandle": 28
+    },
+    "expectedOutput": "a is b and c!=d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a is b and c != d",
+    "pattern": "boolean_operator",
+    "edits": [],
+    "expectedSourceOut": "a is b and c!=d",
+    "expectedReparseTree": "(boolean_operator left: (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier))) right: (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier))))",
+    "wrappedText": "_ = a is b and c!=d",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 187,
+      "$source": 0,
+      "$named": true,
+      "_argument": {
+        "$type": 193,
+        "$source": 0,
+        "$named": true,
+        "_left": "a",
+        "_comparators": [
+          {
+            "$type": 261,
+            "$source": 0,
+            "$named": true,
+            "_operators": 96,
+            "$span": {
+              "start": 31,
+              "end": 35
+            },
+            "$nodeHandle": 116,
+            "_primary_expression": "b"
+          }
+        ],
+        "$span": {
+          "start": 29,
+          "end": 35
+        },
+        "$nodeHandle": 115
+      },
+      "$other": [
+        52
+      ],
+      "$span": {
+        "start": 25,
+        "end": 35
+      },
+      "$nodeHandle": 16
+    },
+    "expectedOutput": "not a==b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "not a == b",
+    "pattern": "not_operator",
+    "edits": [],
+    "expectedSourceOut": "not a==b",
+    "expectedReparseTree": "(not_operator argument: (comparison_operator left: (identifier) comparators: (comparison_operator_comparator (identifier))))",
+    "wrappedText": "_ = not a==b",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 108,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 0,
         "end": 68
       },
       "$nodeHandle": 0,

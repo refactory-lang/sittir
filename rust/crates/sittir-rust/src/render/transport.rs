@@ -28383,9 +28383,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitTypeTransport {
     ) -> ::napi::Result<Self> {
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "( )".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                obj.get("$text")?.unwrap_or_default()
+                obj.get("$text")?.unwrap_or_else(|| "( )".to_string())
             }
         };
         Ok(Self {
@@ -28407,7 +28409,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitTypeTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "( )".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -30290,9 +30292,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitExpressionTransport {
     ) -> ::napi::Result<Self> {
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "( )".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                obj.get("$text")?.unwrap_or_default()
+                obj.get("$text")?.unwrap_or_else(|| "( )".to_string())
             }
         };
         Ok(Self {
@@ -30314,7 +30318,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitExpressionTransport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "( )".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -37505,9 +37509,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReferenceExpressionRawConstTrans
     ) -> ::napi::Result<Self> {
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "raw const".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                obj.get("$text")?.unwrap_or_default()
+                obj.get("$text")?.unwrap_or_else(|| "raw const".to_string())
             }
         };
         Ok(Self {
@@ -37529,7 +37535,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReferenceExpressionRawConstTrans
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "raw const".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;

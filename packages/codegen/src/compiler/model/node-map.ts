@@ -2225,20 +2225,57 @@ export class AssembledPattern extends AssembledLeaf<Rule<'link'>> {
 	}
 }
 
-function collectFixedLiteral(rule: Rule<'link'>): string | undefined {
+/**
+ * Walk a rule subtree collecting leaf `string` values.
+ * Returns the single distinct string if every non-blank reachable leaf is
+ * the same fixed literal, or `undefined` the moment any content-bearing
+ * external (symbol) or multi-value divergence is encountered.
+ *
+ * Blanks (empty `choice` / `seq`) are skipped — they contribute no text and
+ * represent the "omit" arm of an `optional`.
+ *
+ * Multi-member SEQs of fixed literals (e.g. python's `_not_in` =
+ * `seq('not', 'in')`, aliased to `'not in'`) ARE a fixed realisation: every
+ * parse of the rule produces exactly the same token sequence. Their members
+ * are collected in `deterministic` mode (no OPTIONAL / blank-arm CHOICE
+ * allowed — optionality inside a seq means divergent realisations) and
+ * joined with `joiner`: a single space at grammar level (canonical token
+ * separation), an empty string inside `token(...)` (contiguous by
+ * construction).
+ *
+ * @param ctx.joiner - separator used when concatenating a multi-member SEQ's
+ *   literals. `' '` outside `token()`, `''` inside.
+ * @param ctx.deterministic - when true, any optionality (OPTIONAL, blank
+ *   CHOICE arm) makes the subtree non-fixed. Used for members of a
+ *   multi-member SEQ, where "same text OR absent" is no longer a single
+ *   fixed realisation.
+ */
+interface FixedLiteralCtx {
+	joiner: string;
+	deterministic: boolean;
+}
+
+function collectFixedLiteral(
+	rule: Rule<'link'>,
+	ctx: FixedLiteralCtx = { joiner: ' ', deterministic: false }
+): string | undefined {
 	switch (rule.type) {
 		case STRING:
 			return rule.value || undefined;
 		case OPTIONAL:
-			// optional(X): the blank arm contributes nothing; X may yield a fixed literal
-			return collectFixedLiteral(rule.content);
+			// optional(X): the blank arm contributes nothing; X may yield a fixed
+			// literal. In deterministic mode optionality means two realisations.
+			return ctx.deterministic ? undefined : collectFixedLiteral(rule.content, ctx);
 		case CHOICE: {
 			if (rule.members.length === 0) return undefined; // blank sentinel
 			let found: string | undefined;
 			for (const m of rule.members) {
 				const isBlank = (m.type === CHOICE && m.members.length === 0) || (m.type === SEQ && m.members.length === 0);
-				if (isBlank) continue; // blank arm — ignore
-				const v = collectFixedLiteral(m);
+				if (isBlank) {
+					if (ctx.deterministic) return undefined; // blank arm = optionality
+					continue; // blank arm — ignore
+				}
+				const v = collectFixedLiteral(m, ctx);
 				if (v === undefined) return undefined; // non-literal or divergent branch
 				if (found === undefined) found = v;
 				else if (found !== v) return undefined; // two different literals
@@ -2247,19 +2284,25 @@ function collectFixedLiteral(rule: Rule<'link'>): string | undefined {
 		}
 		case SEQ: {
 			if (rule.members.length === 0) return undefined; // blank sentinel
-			// A seq of a single non-blank member is safe; multi-member seqs are not
-			// fixed single literals (they'd produce concatenated output).
 			const nonBlanks = rule.members.filter(
 				(m) => !((m.type === CHOICE && m.members.length === 0) || (m.type === SEQ && m.members.length === 0))
 			);
-			if (nonBlanks.length !== 1) return undefined;
 			const [only] = nonBlanks;
-			if (!only) return undefined;
-			return collectFixedLiteral(only);
+			if (nonBlanks.length === 1 && only) return collectFixedLiteral(only, ctx);
+			// Multi-member seq: fixed iff every member is itself a deterministic
+			// fixed literal; the realisation is their joined concatenation.
+			const parts: string[] = [];
+			for (const m of nonBlanks) {
+				const v = collectFixedLiteral(m, { ...ctx, deterministic: true });
+				if (v === undefined) return undefined;
+				parts.push(v);
+			}
+			return parts.length > 0 ? parts.join(ctx.joiner) : undefined;
 		}
 		case TOKEN:
-			// token(X) wrapper — recurse into content
-			return collectFixedLiteral((rule as { content: Rule<'link'> }).content);
+			// token(X) wrapper — recurse into content. Token content is contiguous
+			// source text, so inner seq members join with no separator.
+			return collectFixedLiteral((rule as { content: Rule<'link'> }).content, { ...ctx, joiner: '' });
 		// PR-P Task 2: TERMINAL case removed — TerminalRule deleted; collectFixedLiteral
 		// called on the unwrapped rule directly now (see AssembledPattern.fixedLiteralText).
 		default:

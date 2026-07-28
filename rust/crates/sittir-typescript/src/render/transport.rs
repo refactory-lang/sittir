@@ -40415,9 +40415,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyGroup1Transport {
     ) -> ::napi::Result<Self> {
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "new . target".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                obj.get("$text")?.unwrap_or_default()
+                obj.get("$text")?.unwrap_or_else(|| "new . target".to_string())
             }
         };
         Ok(Self {
@@ -40439,7 +40441,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyGroup1Transport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "new . target".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
@@ -40516,9 +40518,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyGroup2Transport {
     ) -> ::napi::Result<Self> {
         let text = match transport_value_type(env, napi_val)? {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "import . meta".to_string(),
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                obj.get("$text")?.unwrap_or_default()
+                obj.get("$text")?.unwrap_or_else(|| "import . meta".to_string())
             }
         };
         Ok(Self {
@@ -40540,7 +40544,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetaPropertyGroup2Transport {
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_default();
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "import . meta".to_string());
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;

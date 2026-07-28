@@ -3277,7 +3277,8 @@
       "typeName": "IsNot",
       "factoryName": "isNot",
       "irKey": "isNot",
-      "hidden": false
+      "hidden": false,
+      "text": "is not"
     },
     {
       "kind": "_key_value_pattern",
@@ -3491,7 +3492,8 @@
       "typeName": "NotIn",
       "factoryName": "notIn",
       "irKey": "notIn",
-      "hidden": false
+      "hidden": false,
+      "text": "not in"
     },
     {
       "kind": "_parameters",
