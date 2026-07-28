@@ -42478,10 +42478,10 @@ pub struct ExportStatementTypeExportTransport {
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
     pub source: Option<StringTransport>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
-    pub export_clause: ExportClauseTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
     pub semicolon: SemicolonEnum,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
+    pub export_clause: ExportClauseTransport,
 }
 
 impl RenderableTransport for ExportStatementTypeExportTransport {
@@ -59351,6 +59351,7 @@ fn render_parenthesized_expression_typed(node: &ParenthesizedExpressionTypedTran
 fn render_export_statement_type_export(node: &ExportStatementTypeExportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExportStatementTypeExportTemplate {
         export_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.export_clause)),
+        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
         source: match &node.source {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,

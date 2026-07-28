@@ -950,8 +950,8 @@ export interface ExportStatementTypeExportTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _source?: StringTransport
-  _export_clause: ExportClauseTransport
   _semicolon: SemicolonEnum
+  _export_clause: ExportClauseTransport
 }
 
 export interface ExpressionStatementTransport {

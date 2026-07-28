@@ -331,9 +331,6 @@ export interface IsGuards {
 	PublicFieldDefinitionDeclareFirst<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
-	ExportStatementTypeExport<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ExportStatementTypeExport };
 	ExportStatementEqualsExport<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ExportStatementEqualsExport };
@@ -588,9 +585,6 @@ export interface AssertGuards {
 	PublicFieldDefinitionDeclareFirst(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
-	ExportStatementTypeExport(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.ExportStatementTypeExport };
 	ExportStatementEqualsExport(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ExportStatementEqualsExport };
@@ -1138,7 +1132,6 @@ export const is = {
 	ExportStatementDefaultClauseFrom: _g(TSKindId.ExportStatementDefaultClauseFrom),
 	ForHeaderLhs: _g(TSKindId.ForHeaderLhs),
 	PublicFieldDefinitionDeclareFirst: _g(TSKindId.PublicFieldDefinitionDeclareFirst),
-	ExportStatementTypeExport: _g(TSKindId.ExportStatementTypeExport),
 	ExportStatementEqualsExport: _g(TSKindId.ExportStatementEqualsExport),
 	ExportStatementNamespaceExport: _g(TSKindId.ExportStatementNamespaceExport),
 	StringDouble: _g(TSKindId.StringDouble),
@@ -1391,7 +1384,6 @@ export const assert = {
 		'PublicFieldDefinitionDeclareFirst',
 		is.PublicFieldDefinitionDeclareFirst as _AnyGuard
 	),
-	ExportStatementTypeExport: _makeAssert('ExportStatementTypeExport', is.ExportStatementTypeExport as _AnyGuard),
 	ExportStatementEqualsExport: _makeAssert('ExportStatementEqualsExport', is.ExportStatementEqualsExport as _AnyGuard),
 	ExportStatementNamespaceExport: _makeAssert(
 		'ExportStatementNamespaceExport',

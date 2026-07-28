@@ -11050,8 +11050,15 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "_semicolon"
+          "type": "FIELD",
+          "name": "semicolon",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_semicolon"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },
@@ -13650,8 +13657,15 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "_semicolon"
+          "type": "FIELD",
+          "name": "semicolon",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_semicolon"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         }
       ]
     },

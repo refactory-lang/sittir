@@ -997,12 +997,15 @@ export type TypescriptGrammar = {
 	readonly export_statement_type_export: {
 		type: 'export_statement_type_export';
 		named: true;
-		fields: { source: { multiple: false; required: false; types: [{ type: 'string'; named: true }] } };
-		children: {
-			multiple: true;
-			required: true;
-			types: [{ type: 'automatic_semicolon'; named: true }, { type: 'export_clause'; named: true }];
+		fields: {
+			semicolon: {
+				multiple: false;
+				required: true;
+				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
+			};
+			source: { multiple: false; required: false; types: [{ type: 'string'; named: true }] };
 		};
+		children: { multiple: false; required: true; types: [{ type: 'export_clause'; named: true }] };
 	};
 	readonly expression_statement: {
 		type: 'expression_statement';

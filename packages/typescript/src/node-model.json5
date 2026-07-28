@@ -6611,11 +6611,12 @@
     },
     {
       "kind": "_export_statement_type_export",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "ExportStatementTypeExport",
-      "factoryName": "exportStatementTypeExport",
+      "factoryName": "_exportStatementTypeExport",
       "irKey": "exportStatementTypeExport",
       "hidden": false,
+      "name": "_export_statement_type_export",
       "fields": [
         {
           "name": "export_clause",

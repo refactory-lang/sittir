@@ -264,6 +264,7 @@ pub struct ExportStatementNamespaceExportTemplate<'a> {
 #[template(path = "_export_statement_type_export.jinja", escape = "none")]
 pub struct ExportStatementTypeExportTemplate<'a> {
     pub export_clause: SingleNonterminalView<'a>,
+    pub semicolon: SingleNonterminalView<'a>,
     pub source: OptionalNonterminalView<'a>,
 }
 

@@ -60296,6 +60296,718 @@
           "$named": true,
           "$span": {
             "start": 0,
+            "end": 24
+          },
+          "$nodeHandle": 22,
+          "_content": {
+            "$type": 388,
+            "$source": 0,
+            "$named": true,
+            "_export_clause": {
+              "$type": 169,
+              "$source": 0,
+              "$named": true,
+              "_export_clause_group1": {
+                "$type": 353,
+                "$source": 0,
+                "$named": true,
+                "_export_specifier": [
+                  {
+                    "$type": 170,
+                    "$source": 0,
+                    "$named": true,
+                    "_name": "UserType",
+                    "$span": {
+                      "start": 14,
+                      "end": 22
+                    },
+                    "$nodeHandle": 28
+                  }
+                ],
+                "$span": {
+                  "start": 14,
+                  "end": 22
+                },
+                "$nodeHandle": 27,
+                "_trailing_sep": false
+              },
+              "$other": [
+                5,
+                6
+              ],
+              "$span": {
+                "start": 12,
+                "end": 24
+              },
+              "$nodeHandle": 26
+            },
+            "_semicolon": 159,
+            "$other": [
+              128,
+              7
+            ],
+            "$span": {
+              "start": 0,
+              "end": 24
+            },
+            "$nodeHandle": 25
+          }
+        },
+        {
+          "$type": 167,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 25,
+            "end": 67
+          },
+          "$nodeHandle": 23,
+          "_content": {
+            "$type": 388,
+            "$source": 0,
+            "$named": true,
+            "_export_clause": {
+              "$type": 169,
+              "$source": 0,
+              "$named": true,
+              "_export_clause_group1": {
+                "$type": 353,
+                "$source": 0,
+                "$named": true,
+                "_export_specifier": [
+                  {
+                    "$type": 170,
+                    "$source": 0,
+                    "$named": true,
+                    "_name": "UserType",
+                    "$span": {
+                      "start": 39,
+                      "end": 47
+                    },
+                    "$nodeHandle": 32
+                  }
+                ],
+                "$span": {
+                  "start": 39,
+                  "end": 47
+                },
+                "$nodeHandle": 31,
+                "_trailing_sep": false
+              },
+              "$other": [
+                5,
+                6
+              ],
+              "$span": {
+                "start": 37,
+                "end": 49
+              },
+              "$nodeHandle": 30
+            },
+            "_source": {
+              "$type": 248,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 55,
+                "end": 66
+              },
+              "$nodeHandle": 33,
+              "_content": {
+                "$type": 394,
+                "$source": 0,
+                "$named": true,
+                "$other": [
+                  155,
+                  155
+                ],
+                "$span": {
+                  "start": 55,
+                  "end": 66
+                },
+                "$nodeHandle": 34,
+                "_content": [
+                  "./User.js"
+                ]
+              }
+            },
+            "_semicolon": 23,
+            "$other": [
+              128,
+              7,
+              10
+            ],
+            "$span": {
+              "start": 25,
+              "end": 67
+            },
+            "$nodeHandle": 29
+          }
+        },
+        {
+          "$type": 167,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 68,
+            "end": 113
+          },
+          "$nodeHandle": 24,
+          "_content": {
+            "$type": 388,
+            "$source": 0,
+            "$named": true,
+            "_export_clause": {
+              "$type": 169,
+              "$source": 0,
+              "$named": true,
+              "_export_clause_group1": {
+                "$type": 353,
+                "$source": 0,
+                "$named": true,
+                "_export_specifier": [
+                  {
+                    "$type": 170,
+                    "$source": 0,
+                    "$named": true,
+                    "_name": "A",
+                    "$span": {
+                      "start": 82,
+                      "end": 83
+                    },
+                    "$nodeHandle": 38
+                  },
+                  {
+                    "$type": 170,
+                    "$source": 0,
+                    "$named": true,
+                    "_name": "B",
+                    "$span": {
+                      "start": 85,
+                      "end": 86
+                    },
+                    "$nodeHandle": 39
+                  },
+                  {
+                    "$type": 170,
+                    "$source": 0,
+                    "$named": true,
+                    "_name": "C",
+                    "_alias": "D",
+                    "$other": [
+                      4
+                    ],
+                    "$span": {
+                      "start": 88,
+                      "end": 94
+                    },
+                    "$nodeHandle": 40
+                  }
+                ],
+                "$other": [
+                  14,
+                  14
+                ],
+                "$span": {
+                  "start": 82,
+                  "end": 94
+                },
+                "$nodeHandle": 37,
+                "_trailing_sep": false
+              },
+              "$other": [
+                5,
+                6
+              ],
+              "$span": {
+                "start": 80,
+                "end": 96
+              },
+              "$nodeHandle": 36
+            },
+            "_source": {
+              "$type": 248,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 102,
+                "end": 112
+              },
+              "$nodeHandle": 41,
+              "_content": {
+                "$type": 395,
+                "$source": 0,
+                "$named": true,
+                "$other": [
+                  156,
+                  156
+                ],
+                "$span": {
+                  "start": 102,
+                  "end": 112
+                },
+                "$nodeHandle": 42,
+                "_content": [
+                  "mymodule"
+                ]
+              }
+            },
+            "_semicolon": 23,
+            "$other": [
+              128,
+              7,
+              10
+            ],
+            "$span": {
+              "start": 68,
+              "end": 113
+            },
+            "$nodeHandle": 35
+          }
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 113
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "export type{ UserType }\nexport type{ UserType }from\"./User.js\";export type{ A,B,C as D }from'mymodule';"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "export type { UserType }\nexport type { UserType } from \"./User.js\";\nexport type { A, B, C as D } from 'mymodule';",
+    "pattern": "program",
+    "edits": [],
+    "expectedSourceOut": "export type{ UserType }\nexport type{ UserType }from\"./User.js\";export type{ A,B,C as D }from'mymodule';",
+    "expectedReparseTree": "(program statements: (export_statement (export_statement_type_export (export_clause (export_clause_group1 (export_specifier name: (identifier)))) semicolon: (automatic_semicolon))) statements: (export_statement (export_statement_type_export (export_clause (export_clause_group1 (export_specifier name: (identifier)))) source: (string (string_double (unescaped_double_string_fragment))))) statements: (export_statement (export_statement_type_export (export_clause (export_clause_group1 (export_specifier name: (identifier)) (export_specifier name: (identifier)) (export_specifier name: (identifier) alias: (identifier)))) source: (string (string_single (unescaped_single_string_fragment))))))",
+    "wrappedText": "export type{ UserType }\nexport type{ UserType }from\"./User.js\";export type{ A,B,C as D }from'mymodule';",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 167,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 0,
+        "end": 24
+      },
+      "$nodeHandle": 1,
+      "_content": {
+        "$type": 388,
+        "$source": 0,
+        "$named": true,
+        "_export_clause": {
+          "$type": 169,
+          "$source": 0,
+          "$named": true,
+          "_export_clause_group1": {
+            "$type": 353,
+            "$source": 0,
+            "$named": true,
+            "_export_specifier": [
+              {
+                "$type": 170,
+                "$source": 0,
+                "$named": true,
+                "_name": "UserType",
+                "$span": {
+                  "start": 14,
+                  "end": 22
+                },
+                "$nodeHandle": 46
+              }
+            ],
+            "$span": {
+              "start": 14,
+              "end": 22
+            },
+            "$nodeHandle": 45,
+            "_trailing_sep": false
+          },
+          "$other": [
+            5,
+            6
+          ],
+          "$span": {
+            "start": 12,
+            "end": 24
+          },
+          "$nodeHandle": 44
+        },
+        "_semicolon": 159,
+        "$other": [
+          128,
+          7
+        ],
+        "$span": {
+          "start": 0,
+          "end": 24
+        },
+        "$nodeHandle": 43
+      }
+    },
+    "expectedOutput": "export type{ UserType }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "export type { UserType }",
+    "pattern": "export_statement",
+    "edits": [],
+    "expectedSourceOut": "export type{ UserType }",
+    "expectedReparseTree": "(export_statement (export_statement_type_export (export_clause (export_clause_group1 (export_specifier name: (identifier)))) semicolon: (automatic_semicolon)))",
+    "wrappedText": "export type{ UserType }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 167,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 25,
+        "end": 67
+      },
+      "$nodeHandle": 2,
+      "_content": {
+        "$type": 388,
+        "$source": 0,
+        "$named": true,
+        "_export_clause": {
+          "$type": 169,
+          "$source": 0,
+          "$named": true,
+          "_export_clause_group1": {
+            "$type": 353,
+            "$source": 0,
+            "$named": true,
+            "_export_specifier": [
+              {
+                "$type": 170,
+                "$source": 0,
+                "$named": true,
+                "_name": "UserType",
+                "$span": {
+                  "start": 39,
+                  "end": 47
+                },
+                "$nodeHandle": 50
+              }
+            ],
+            "$span": {
+              "start": 39,
+              "end": 47
+            },
+            "$nodeHandle": 49,
+            "_trailing_sep": false
+          },
+          "$other": [
+            5,
+            6
+          ],
+          "$span": {
+            "start": 37,
+            "end": 49
+          },
+          "$nodeHandle": 48
+        },
+        "_source": {
+          "$type": 248,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 55,
+            "end": 66
+          },
+          "$nodeHandle": 51,
+          "_content": {
+            "$type": 394,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              155,
+              155
+            ],
+            "$span": {
+              "start": 55,
+              "end": 66
+            },
+            "$nodeHandle": 52,
+            "_content": [
+              "./User.js"
+            ]
+          }
+        },
+        "_semicolon": 23,
+        "$other": [
+          128,
+          7,
+          10
+        ],
+        "$span": {
+          "start": 25,
+          "end": 67
+        },
+        "$nodeHandle": 47
+      }
+    },
+    "expectedOutput": "export type{ UserType }from\"./User.js\";"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "export type { UserType } from \"./User.js\";",
+    "pattern": "export_statement",
+    "edits": [],
+    "expectedSourceOut": "export type{ UserType }from\"./User.js\";",
+    "expectedReparseTree": "(export_statement (export_statement_type_export (export_clause (export_clause_group1 (export_specifier name: (identifier)))) source: (string (string_double (unescaped_double_string_fragment)))))",
+    "wrappedText": "export type{ UserType }from\"./User.js\";",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 167,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 68,
+        "end": 113
+      },
+      "$nodeHandle": 3,
+      "_content": {
+        "$type": 388,
+        "$source": 0,
+        "$named": true,
+        "_export_clause": {
+          "$type": 169,
+          "$source": 0,
+          "$named": true,
+          "_export_clause_group1": {
+            "$type": 353,
+            "$source": 0,
+            "$named": true,
+            "_export_specifier": [
+              {
+                "$type": 170,
+                "$source": 0,
+                "$named": true,
+                "_name": "A",
+                "$span": {
+                  "start": 82,
+                  "end": 83
+                },
+                "$nodeHandle": 56
+              },
+              {
+                "$type": 170,
+                "$source": 0,
+                "$named": true,
+                "_name": "B",
+                "$span": {
+                  "start": 85,
+                  "end": 86
+                },
+                "$nodeHandle": 57
+              },
+              {
+                "$type": 170,
+                "$source": 0,
+                "$named": true,
+                "_name": "C",
+                "_alias": "D",
+                "$other": [
+                  4
+                ],
+                "$span": {
+                  "start": 88,
+                  "end": 94
+                },
+                "$nodeHandle": 58
+              }
+            ],
+            "$other": [
+              14,
+              14
+            ],
+            "$span": {
+              "start": 82,
+              "end": 94
+            },
+            "$nodeHandle": 55,
+            "_trailing_sep": false
+          },
+          "$other": [
+            5,
+            6
+          ],
+          "$span": {
+            "start": 80,
+            "end": 96
+          },
+          "$nodeHandle": 54
+        },
+        "_source": {
+          "$type": 248,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 102,
+            "end": 112
+          },
+          "$nodeHandle": 59,
+          "_content": {
+            "$type": 395,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              156,
+              156
+            ],
+            "$span": {
+              "start": 102,
+              "end": 112
+            },
+            "$nodeHandle": 60,
+            "_content": [
+              "mymodule"
+            ]
+          }
+        },
+        "_semicolon": 23,
+        "$other": [
+          128,
+          7,
+          10
+        ],
+        "$span": {
+          "start": 68,
+          "end": 113
+        },
+        "$nodeHandle": 53
+      }
+    },
+    "expectedOutput": "export type{ A,B,C as D }from'mymodule';"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "export type { A, B, C as D } from 'mymodule';",
+    "pattern": "export_statement",
+    "edits": [],
+    "expectedSourceOut": "export type{ A,B,C as D }from'mymodule';",
+    "expectedReparseTree": "(export_statement (export_statement_type_export (export_clause (export_clause_group1 (export_specifier name: (identifier)) (export_specifier name: (identifier)) (export_specifier name: (identifier) alias: (identifier)))) source: (string (string_single (unescaped_single_string_fragment)))))",
+    "wrappedText": "export type{ A,B,C as D }from'mymodule';",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 248,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 55,
+        "end": 66
+      },
+      "$nodeHandle": 12,
+      "_content": {
+        "$type": 394,
+        "$source": 0,
+        "$named": true,
+        "$other": [
+          155,
+          155
+        ],
+        "$span": {
+          "start": 55,
+          "end": 66
+        },
+        "$nodeHandle": 69,
+        "_content": [
+          "./User.js"
+        ]
+      }
+    },
+    "expectedOutput": "\"./User.js\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "\"./User.js\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "\"./User.js\"",
+    "expectedReparseTree": "(string (string_double (unescaped_double_string_fragment)))",
+    "wrappedText": "let _ = \"./User.js\";",
+    "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 248,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 102,
+        "end": 112
+      },
+      "$nodeHandle": 20,
+      "_content": {
+        "$type": 395,
+        "$source": 0,
+        "$named": true,
+        "$other": [
+          156,
+          156
+        ],
+        "$span": {
+          "start": 102,
+          "end": 112
+        },
+        "$nodeHandle": 70,
+        "_content": [
+          "mymodule"
+        ]
+      }
+    },
+    "expectedOutput": "'mymodule'"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "'mymodule'",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "'mymodule'",
+    "expectedReparseTree": "(string (string_single (unescaped_single_string_fragment)))",
+    "wrappedText": "let _ = 'mymodule';",
+    "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 166,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 167,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 0,
             "end": 26
           },
           "$nodeHandle": 11,

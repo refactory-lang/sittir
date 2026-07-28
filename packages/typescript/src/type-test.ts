@@ -128,8 +128,6 @@ import type {
 	ExportStatementNamespaceExport,
 	ExportStatementNamespaceExportTree,
 	ExportStatementTree,
-	ExportStatementTypeExport,
-	ExportStatementTypeExportTree,
 	ExpressionStatement,
 	ExpressionStatementTree,
 	ExtendsClause,
@@ -754,9 +752,6 @@ export type _Type_ForHeaderLhs = _TypeAssert<_TypeExtends<ForHeaderLhs['$type'],
 export type _Type_PublicFieldDefinitionDeclareFirst = _TypeAssert<
 	_TypeExtends<PublicFieldDefinitionDeclareFirst['$type'], TSKindId.PublicFieldDefinitionDeclareFirst>
 >;
-export type _Type_ExportStatementTypeExport = _TypeAssert<
-	_TypeExtends<ExportStatementTypeExport['$type'], TSKindId.ExportStatementTypeExport>
->;
 export type _Type_ExportStatementEqualsExport = _TypeAssert<
 	_TypeExtends<ExportStatementEqualsExport['$type'], TSKindId.ExportStatementEqualsExport>
 >;
@@ -1181,9 +1176,6 @@ export type _Tree_ExportStatementDefaultClauseFrom = _TypeAssert<
 export type _Tree_ForHeaderLhs = _TypeAssert<_TypeExtends<ForHeaderLhsTree['type'], '_for_header_lhs'>>;
 export type _Tree_PublicFieldDefinitionDeclareFirst = _TypeAssert<
 	_TypeExtends<PublicFieldDefinitionDeclareFirstTree['type'], '_public_field_definition_declare_first'>
->;
-export type _Tree_ExportStatementTypeExport = _TypeAssert<
-	_TypeExtends<ExportStatementTypeExportTree['type'], '_export_statement_type_export'>
 >;
 export type _Tree_ExportStatementEqualsExport = _TypeAssert<
 	_TypeExtends<ExportStatementEqualsExportTree['type'], '_export_statement_equals_export'>

@@ -6929,7 +6929,7 @@ export type FluentKindMap = {
 	_public_field_definition_abstract_first: T.PublicFieldDefinitionAbstractFirst;
 	_public_field_definition_readonly_first: T.PublicFieldDefinitionReadonlyFirst;
 	_parenthesized_expression_typed: T.ParenthesizedExpressionTyped;
-	_export_statement_type_export: FluentNode<'_export_statement_type_export', T.ExportStatementTypeExport.Config>;
+	_export_statement_type_export: T.ExportStatementTypeExport;
 	_export_statement_equals_export: FluentNode<'_export_statement_equals_export', T.ExportStatementEqualsExport.Config>;
 	_export_statement_namespace_export: FluentNode<
 		'_export_statement_namespace_export',
