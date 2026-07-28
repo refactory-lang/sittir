@@ -23,9 +23,8 @@ import type { AnyRule, PhaseName, Rule, RenderRule, SimplifiedRule, RuleId, Symb
 import type { AssembledNode, AssembledNonterminal } from './model/node-map.ts';
 import type { SCCAnalysis } from './scc.ts';
 
-// ExternalRole lives in the IR type layer (R11) — re-exported here so
-// existing compiler-side importers keep working. (R12/decision-7 V2 Task 2:
-// PolymorphVariant, formerly re-exported alongside it, is deleted.)
+// ExternalRole lives in the IR type layer — re-exported here so existing
+// compiler-side importers keep working.
 import type { ExternalRole } from '../types/ir.ts';
 export type { ExternalRole };
 
@@ -270,12 +269,6 @@ export type Grammar<P extends PhaseName> = P extends 'evaluate'
 // ---------------------------------------------------------------------------
 // Assemble output
 // ---------------------------------------------------------------------------
-
-// `KindProjection` and `ProjectionContext` interfaces removed (parallel-cache
-// anti-pattern per DRY — one source, one derivation). The kind
-// set previously stored on `AssembledField.projection.kinds` is now derived
-// on demand from `slot.values` via the `kindsOf(slot)` helper in node-map.ts.
-// `NodeMap.projections` was unused (zero consumers) — also removed.
 
 export interface SignaturePool {
 	readonly signatures: Map<string, string>;

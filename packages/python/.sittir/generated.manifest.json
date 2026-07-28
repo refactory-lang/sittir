@@ -1,9 +1,9 @@
 {
   "grammar": "python",
-  "source_hash": "874dc4329d72c2697f73755f9ff90b0f00728265f59486c23b2bc732d766a74c",
+  "source_hash": "5055e23fec2711c9f553d527a8719741a6f54ba1b35f4d7aaccf7a414996c71c",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "7ad01677c51d8e94ddedf40e78bc34afd96db5283eef465bd6b809036afe0267",
-    "packages/python/.sittir/grammar.js": "9d6488041ca5c98f14c5337e110c88ad70fcebed72490139a83167ac2dbbd76f",
+    "packages/python/.sittir/grammar.js": "435d5ec18c3b3761601f213f8cd59f8c2d804045eb19ce804139d09046d32b98",
     "packages/python/.sittir/package.json": "6a1413e0bf0bab41ebd77e08177e5364cbd2b4a257f40ad5d28590abe85867fb",
     "packages/python/.sittir/parser.wasm": "f9275bb5262da4870fa90051731922ec7722df4772bc2a03c915a85a27b517bd",
     "packages/python/.sittir/src/grammar.json": "0ee281e7f772705c53a1348f9f182048efd2cc010f49bb6cd0442ad59997acb1",

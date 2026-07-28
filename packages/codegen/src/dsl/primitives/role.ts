@@ -33,9 +33,6 @@ import type { Rule } from '../../types/rule.ts';
 import type { ExternalRole } from '../../types/ir.ts';
 import { isSymbolLike } from '../../types/runtime-shapes.ts';
 
-// Module-local accumulator. Null when no `grammar(...)` call is on
-// the stack — calling `role()` in that state is an error because we
-// have no scope to attach the binding to.
 let currentRoles: Map<string, ExternalRole> | null = null;
 
 const VALID_ROLE_NAMES = new Set(['indent', 'dedent', 'newline'] as const);

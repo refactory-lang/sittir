@@ -181,3 +181,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * for both consumers without runtime feature detection.
  */
 ```
+
+### `currentRoles` (`packages/codegen/src/dsl/primitives/role.ts:39`)
+
+```text
+/**
+ * Module-local accumulator. Null when no `grammar(...)` call is on
+ * the stack — calling `role()` in that state is an error because we
+ * have no scope to attach the binding to.
+ */
+```

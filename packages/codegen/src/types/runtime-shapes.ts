@@ -107,15 +107,15 @@ export function isEnrichShapedFieldWrapper(v: unknown): v is FieldLike {
 	if (symName === undefined) return false;
 	// Shape 2: reserved `_kw_` prefix — enrich's exclusive namespace.
 	if (symName.startsWith('_kw_')) return true;
-	// Shape 1: NAME === SYM, or the supertype-stripped variant. Exact
-	// equality is checked FIRST so a symbol whose own name ends in digits
-	// (`field('foo2', $.foo2)`) is not misclassified by the suffix-strip
-	// below (PR #117 review finding).
+	/* Shape 1: NAME === SYM, or the supertype-stripped variant. Exact equality
+	   is checked FIRST so a symbol whose own name ends in digits
+	   (`field('foo2', $.foo2)`) is not misclassified by the suffix-strip
+	   below. */
 	const strippedSym = symName.replace(/^_/, '');
 	if (v.name === symName || v.name === strippedSym) return true;
-	// Numbered-duplicate variant: enrich appends a digit run to the field
-	// name when the same symbol occurs multiple times in one seq
-	// (`expression1`, `expression2`) — strip the suffix and re-compare.
+	/* Numbered-duplicate variant: enrich appends a digit run to the field
+	   name when the same symbol occurs multiple times in one seq
+	   (`expression1`, `expression2`) — strip the suffix and re-compare. */
 	const baseName = v.name.replace(/[0-9]+$/, '');
 	return baseName !== v.name && (baseName === symName || baseName === strippedSym);
 }

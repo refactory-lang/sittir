@@ -45,7 +45,6 @@ for (const g of grammarsToRegen) {
 async function regenTemplatesRs(grammar: Grammar): Promise<void> {
 	console.log(`\n=== Regenerating templates.rs for ${grammar} ===`);
 
-	// Phases 1–4: evaluate → link → normalize → assemble
 	const grammarJsPath = resolveGrammarJsPath(grammar);
 	const overridesPath = resolveOverridesPath(grammar);
 	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
@@ -60,7 +59,6 @@ async function regenTemplatesRs(grammar: Grammar): Promise<void> {
 	const renderModule = runRenderModuleEmitter({ grammar, nodeMap, generatedIdTables });
 	const emit = renderModule.emit;
 
-	// Write split render module files
 	mkdirSync(dirname(emit.templatesRs.path), { recursive: true });
 	writeFileSync(emit.templatesRs.path, emit.templatesRs.contents, 'utf8');
 	console.log(`  → ${emit.templatesRs.path} (${emit.templatesRs.contents.length} bytes)`);

@@ -108,14 +108,13 @@ function buildSingularAdjacency(nodeMap: NodeMap): Map<string, Set<string>> {
 		outs.add(to);
 	};
 
-	// supertype map: typeName → resolved subtype set. Authoritative
-	// renderer-side mapping; we re-use it so the graph matches what
-	// `classifySlot` actually emits at the field-type site.
+	/* supertype map: typeName → resolved subtype set. Authoritative
+	   renderer-side mapping; we re-use it so the graph matches what
+	   `classifySlot` actually emits at the field-type site. */
 	const supertypeMap = buildSupertypeTransportSet(nodeMap);
 
-	// Index typeName → kind so we can resolve `classifySlot` results
-	// (which return supertype `typeName`) back to a kind for edge
-	// emission.
+	// `classifySlot` returns supertype results keyed by `typeName`; this
+	// index resolves that back to a kind for edge emission.
 	const kindOfTypeName = new Map<string, string>();
 	for (const [kind, node] of nodeMap.nodes) {
 		if (node.modelType === 'supertype') {
@@ -124,13 +123,9 @@ function buildSingularAdjacency(nodeMap: NodeMap): Map<string, Set<string>> {
 	}
 
 	for (const [kind, node] of nodeMap.nodes) {
-		// Ensure node appears in adjacency even if it has no edges.
 		if (!adjacency.has(kind)) adjacency.set(kind, new Set());
 
 		if (node.modelType === 'supertype') {
-			// Supertype kind relays to each of its resolved subtype kinds.
-			// A field typed `<Supertype>Transport` is effectively a singular
-			// reference to any subkind.
 			const supertype = node as AssembledSupertype;
 			for (const subKind of supertype.subtypes) {
 				addEdge(kind, subKind);
@@ -138,9 +133,6 @@ function buildSingularAdjacency(nodeMap: NodeMap): Map<string, Set<string>> {
 			continue;
 		}
 
-		// Structural shapes: branch / group / polymorph carry slots.
-		// Multi / leaf / pattern / keyword / token / enum carry no
-		// singular structural slots that own transport struct fields.
 		for (const slot of structuralSingularSlots(node)) {
 			const slotKinds = kindsOf(slot);
 			if (slotKinds.length === 0) continue;
@@ -150,20 +142,18 @@ function buildSingularAdjacency(nodeMap: NodeMap): Map<string, Set<string>> {
 				continue;
 			}
 			if (cls.tag === 'supertype') {
-				// Field type is the supertype enum — graph edge points at the
-				// supertype kind, which carries onward relay edges to subkinds.
+				/* Field type is the supertype enum — graph edge points at the
+				   supertype kind, which carries onward relay edges to subkinds. */
 				const supertypeKind = kindOfTypeName.get(cls.supertypeName);
 				if (supertypeKind !== undefined) {
 					addEdge(kind, supertypeKind);
 				} else {
-					// Fall back to direct edges if the supertype kind isn't
-					// resolvable (shouldn't happen in practice).
+					/* Fall back to direct edges if the supertype kind isn't
+					   resolvable (shouldn't happen in practice). */
 					for (const k of slotKinds) addEdge(kind, k);
 				}
 				continue;
 			}
-			// Heterogeneous: per-slot enum owned by this kind. Variants are
-			// the slot's concrete kinds — edge from the owner to each.
 			for (const k of slotKinds) addEdge(kind, k);
 		}
 	}
@@ -234,12 +224,8 @@ function tarjanSCC(adjacency: ReadonlyMap<string, ReadonlySet<string>>): {
 				if (lowlink.get(v) === index.get(v)) {
 					const component: string[] = [];
 					const componentId = sccs.length;
-					// Pop until we get v.
-					// Guarded loop — must terminate since v is on stack.
-					// Bounded by stack size (the count of nodes pushed
-					// since v was pushed).
-					// (cleanup-rules: no defensive infinite loops; stack
-					// invariant guarantees v's presence.)
+					/* Pop until we get v — bounded by the stack invariant that v is
+					   on the stack, so this always terminates. */
 					// eslint-disable-next-line no-constant-condition
 					while (true) {
 						const w = stack.pop()!;

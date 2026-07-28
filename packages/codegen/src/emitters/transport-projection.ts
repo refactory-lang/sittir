@@ -7,10 +7,10 @@ import { fieldTypeComponents, resolveHiddenKeywordLiteral } from './shared.ts';
 export interface TransportLiteral {
 	readonly kind: string;
 	readonly text: string;
-	// PR-K3a: the mint-time literal-chain id (NodeRef.resolvedKindId)
-	// carried through from the terminal value. Absent for kind-derived
-	// literals (keyword/token model nodes) and hidden-keyword inlines —
-	// those fall back to emit-time chain resolution.
+	/* The mint-time literal-chain id (NodeRef.resolvedKindId) carried through
+	   from the terminal value. Absent for kind-derived literals (keyword/token
+	   model nodes) and hidden-keyword inlines — those fall back to emit-time
+	   chain resolution. */
 	readonly resolvedKindId?: number;
 }
 
@@ -46,10 +46,9 @@ function isConcreteTransportNode(node: AssembledNode, nodeMap: NodeMap): boolean
 		case 'keyword':
 		case 'token':
 		case 'enum':
-		// TEMPORARY (separator-as-slot Task 2 follow-up — see
-		// isSlotBearingCompound's doc comment, shared.ts): 'separatedList'
-		// shares 'branch's transport-concreteness for byte-identical output
-		// pending Tasks 4-6's real per-instance capture.
+		/* TEMPORARY: 'separatedList' shares 'branch's transport-concreteness for
+		   byte-identical output pending real per-instance separator capture —
+		   see isSlotBearingCompound's doc comment (shared.ts). */
 		case 'separatedList':
 			return true;
 		case 'group':
@@ -70,14 +69,14 @@ function collectTransportLiterals(
 	const literals: TransportLiteral[] = [];
 	const seen = new Set<string>();
 	const add = (literal: TransportLiteral, skipIfNodeKind: boolean): void => {
-		// The node-kind guard only applies to KIND-DERIVED literals (their
-		// `kind` names a real transport node, whose struct already covers the
-		// value — a Literal unit variant would duplicate it). Bare literal
-		// TEXTS must not be name-matched against node kinds: a keyword text
-		// that happens to spell a rule name (#129: python's `'type'`) is a
-		// DIFFERENT parser identity (anon token) and dropping it here left
-		// the anon token's kind id with no AnyTransport arm at all. Genuine
-		// id collisions are deduped at arm emission (emittedNodeIds).
+		/* The node-kind guard only applies to KIND-DERIVED literals (their `kind`
+		   names a real transport node, whose struct already covers the value — a
+		   Literal unit variant would duplicate it). Bare literal TEXTS must not
+		   be name-matched against node kinds: a keyword text that happens to
+		   spell a rule name (e.g. python's `'type'`) is a DIFFERENT parser
+		   identity (anon token) and dropping it here left the anon token's kind
+		   id with no AnyTransport arm at all. Genuine id collisions are deduped
+		   at arm emission (emittedNodeIds). */
 		if (skipIfNodeKind && nodeKinds.has(literal.kind)) return;
 		const key = `${literal.kind}\0${literal.text}`;
 		if (seen.has(key)) return;

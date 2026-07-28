@@ -36,56 +36,41 @@ import {
 } from '../types/runtime-shapes.ts';
 import { detectRepeatSeparator } from './list-patterns.ts';
 
-// ---------------------------------------------------------------------------
-// ruleMatchesEmpty
-// ---------------------------------------------------------------------------
-
 export function ruleMatchesEmpty(rule: unknown): boolean {
 	if (!rule || typeof rule !== 'object') return false;
 	const r = rule as Record<string, unknown>;
 	const t = typeof r.type === 'string' ? r.type : '';
 
-	// Always-empty wrappers
 	if (isOptionalType(t) || isPlainRepeatType(t) || isBlankType(t)) return true;
 
-	// repeat1 — empty iff content is empty (unusual, but guard conservatively)
 	if (typeEq(t, 'REPEAT1')) {
 		return ruleMatchesEmpty(r.content);
 	}
 
-	// seq — ALL members must match empty
 	if (isSeqType(t)) {
 		const members = r.members;
 		if (!Array.isArray(members) || members.length === 0) return true;
 		return members.every((m) => ruleMatchesEmpty(m));
 	}
 
-	// choice — ANY member matches empty
 	if (typeEq(t, 'CHOICE')) {
 		const members = r.members;
 		if (!Array.isArray(members)) return false;
 		return members.some((m) => ruleMatchesEmpty(m));
 	}
 
-	// field / prec — delegate to content
 	if (isFieldType(t) || isPrecWrapper(r as { type: string })) {
 		return ruleMatchesEmpty(r.content);
 	}
 
-	// string / symbol / token / pattern — conservatively non-empty
 	if (isStringType(t) || isSymbolType(t) || typeEq(t, 'TOKEN') || typeEq(t, 'PATTERN')) return false;
 
-	// Unknown rule type — conservatively non-empty
 	return false;
 }
 
 function isPlainRepeatType(t: string): boolean {
 	return t === 'REPEAT';
 }
-
-// ---------------------------------------------------------------------------
-// isInlineSafe
-// ---------------------------------------------------------------------------
 
 function collectSlots(members: unknown[], rulesBag?: Record<string, unknown>): unknown[] {
 	const slots: unknown[] = [];
@@ -94,25 +79,22 @@ function collectSlots(members: unknown[], rulesBag?: Record<string, unknown>): u
 		const r = m as Record<string, unknown>;
 		const t = typeof r.type === 'string' ? r.type : '';
 
-		// Drop pure literals and blank
 		if (isStringType(t) || typeEq(t, 'TOKEN') || isBlankType(t)) continue;
 
-		// PR 3 (2026-07-21 union-slot design): drop a SYMBOL slot that
-		// resolves to no rule body in `rulesBag` — a structural/external
-		// scanner token (indent/dedent/newline-role and similar), not
-		// content. Without this, e.g. python's `_suite` middle arm
-		// `seq($._indent, $.block)` counts as TWO slots (`_indent`,
-		// `block`) instead of one, wrongly classifying it inline-UNSAFE
-		// and minting a group that fragments `_suite`'s otherwise-uniform
-		// `block` output across its three choice arms. `rulesBag` is
-		// optional (existing test-only call sites pass none) — omitting
-		// it preserves the prior, permissive counting exactly.
+		/* Drop a SYMBOL slot that resolves to no rule body in `rulesBag` — a
+		   structural/external scanner token (indent/dedent/newline-role and
+		   similar), not content. Without this, e.g. python's `_suite` middle
+		   arm `seq($._indent, $.block)` counts as TWO slots (`_indent`,
+		   `block`) instead of one, wrongly classifying it inline-UNSAFE and
+		   minting a group that fragments `_suite`'s otherwise-uniform `block`
+		   output across its three choice arms. `rulesBag` is optional
+		   (existing test-only call sites pass none) — omitting it preserves
+		   the permissive counting that ignores this distinction. */
 		if (rulesBag && isSymbolType(t)) {
 			const name = typeof r.name === 'string' ? r.name : undefined;
 			if (name !== undefined && !(name in rulesBag)) continue;
 		}
 
-		// Everything else is a slot
 		slots.push(m);
 	}
 	return slots;
@@ -250,32 +232,32 @@ export function isInlineSafe(seqBody: unknown, rulesBag?: Record<string, unknown
 	const r = seqBody as Record<string, unknown>;
 	const t = typeof r.type === 'string' ? r.type : '';
 
-	// Bare `repeat`/`repeat1` body — a LIST is one flat slot (e.g.
-	// `formal_parameters = repeat1(parameter, SEP)`, `class_body`, `enum_body`).
-	// Like the separated-list seq shape below, aliasing a bare repeat makes
-	// tree-sitter DISTRIBUTE the alias across every element (one alias node per
-	// element) instead of one group → array-of-siblings → empty render. A list
-	// stays INLINE-FLAT (one list slot); only genuine co-optional groups (a bare
-	// `choice`, e.g. rust `visibility_modifier`) take the visible-alias path.
-	//
-	// EXCEPT when the repeat has genuine per-instance separator variability
-	// (a non-literal separator rule) — such a list can't render from one
-	// fixed separator string on the inline-flat path and needs its own
-	// visible `AssembledSeparatedList` template instead. See
-	// `repeatHasGenuineSeparatorVariability`.
+	/* Bare `repeat`/`repeat1` body — a LIST is one flat slot (e.g.
+	   `formal_parameters = repeat1(parameter, SEP)`, `class_body`, `enum_body`).
+	   Like the separated-list seq shape below, aliasing a bare repeat makes
+	   tree-sitter DISTRIBUTE the alias across every element (one alias node
+	   per element) instead of one group → array-of-siblings → empty render.
+	   A list stays INLINE-FLAT (one list slot); only genuine co-optional
+	   groups (a bare `choice`, e.g. rust `visibility_modifier`) take the
+	   visible-alias path.
+
+	   EXCEPT when the repeat has genuine per-instance separator variability
+	   (a non-literal separator rule) — such a list can't render from one
+	   fixed separator string on the inline-flat path and needs its own
+	   visible `AssembledSeparatedList` template instead. See
+	   `repeatHasGenuineSeparatorVariability`. */
 	if (isRepeatLike(t)) return !repeatHasGenuineSeparatorVariability(seqBody as RuntimeRule);
 
-	// PR 3 (2026-07-21 union-slot design): a bare `alias(content, $.name)`
-	// body is ALSO one flat slot — the alias already gives the position its
-	// OWN kind identity (whatever `.value` names), producing exactly one
-	// CST node regardless of how complex `content` is internally. Minting
-	// a second wrapper kind around it is redundant (and wrong — the
-	// mint's synthesized template doesn't know about the alias's own
-	// relabeling, e.g. rust's `_type` choice arm
-	// `alias($.identifier, $.type_identifier)`: promoting the arm's owning
-	// hidden rule produced a template referencing `type_identifier` while
-	// the derived slot model expected the arm's OWN field name — a
-	// slot-preservation crash, not a naming collision).
+	/* A bare `alias(content, $.name)` body is ALSO one flat slot — the alias
+	   already gives the position its OWN kind identity (whatever `.value`
+	   names), producing exactly one CST node regardless of how complex
+	   `content` is internally. Minting a second wrapper kind around it is
+	   redundant (and wrong — the mint's synthesized template doesn't know
+	   about the alias's own relabeling, e.g. rust's `_type` choice arm
+	   `alias($.identifier, $.type_identifier)`: promoting the arm's owning
+	   hidden rule produced a template referencing `type_identifier` while the
+	   derived slot model expected the arm's OWN field name — a
+	   slot-preservation crash, not a naming collision). */
 	if (typeEq(t, 'ALIAS')) return true;
 
 	if (!isSeqType(t)) return false;
@@ -283,36 +265,38 @@ export function isInlineSafe(seqBody: unknown, rulesBag?: Record<string, unknown
 	const members = r.members;
 	if (!Array.isArray(members)) return false;
 
-	// A body containing a (possibly nested) top-level `repeat`/`repeat1` is a
-	// LIST → render flat, NOT a co-optional group. This generalizes the
-	// separated-list guard below: the list's repeat is frequently nested inside
-	// an inner seq — `commaSep1` desugars to
-	// `seq(seq(E, repeat(seq(SEP, E))), optional(SEP))`, so the repeat is two
-	// levels down (where_clause / formal_parameters / enum_body / list_pattern)
-	// — or sits beside a trailing element (`seq(repeat(E), field(last))`, e.g.
-	// rust `match_block`). Aliasing any of these makes tree-sitter distribute the
-	// alias across each element (array-of-siblings → "not an array" AST mismatch).
-	// Only genuine groups with NO repeat (a bare `choice`, e.g. rust
-	// `visibility_modifier`; python `slice`) take the visible-alias path.
-	// Safe by construction: declining to mint reverts the kind to inline (floor)
-	// behavior, which cannot regress below floor.
-	//
-	// EXCEPT when the top-level repeat has genuine per-instance separator
-	// variability (a non-literal separator, or an adjacent stranded
-	// optional/choice-of-blank separator flank sibling in this same seq) —
-	// see `seqHasGenuineSeparatorVariability`. Such a list falls through to
-	// the visible-promotion path below, same as a multi-slot/bare-choice body.
+	/* A body containing a (possibly nested) top-level `repeat`/`repeat1` is a
+	   LIST → render flat, NOT a co-optional group. This generalizes the
+	   separated-list guard below: the list's repeat is frequently nested
+	   inside an inner seq — `commaSep1` desugars to
+	   `seq(seq(E, repeat(seq(SEP, E))), optional(SEP))`, so the repeat is two
+	   levels down (where_clause / formal_parameters / enum_body /
+	   list_pattern) — or sits beside a trailing element
+	   (`seq(repeat(E), field(last))`, e.g. rust `match_block`). Aliasing any
+	   of these makes tree-sitter distribute the alias across each element
+	   (array-of-siblings → "not an array" AST mismatch). Only genuine groups
+	   with NO repeat (a bare `choice`, e.g. rust `visibility_modifier`;
+	   python `slice`) take the visible-alias path. Safe by construction:
+	   declining to mint reverts the kind to inline (floor) behavior, which
+	   cannot regress below floor.
+
+	   EXCEPT when the top-level repeat has genuine per-instance separator
+	   variability (a non-literal separator, or an adjacent stranded
+	   optional/choice-of-blank separator flank sibling in this same seq) —
+	   see `seqHasGenuineSeparatorVariability`. Such a list falls through to
+	   the visible-promotion path below, same as a multi-slot/bare-choice
+	   body. */
 	if (seqHasTopLevelRepeat(members)) return !seqHasGenuineSeparatorVariability(members);
 
 	const slots = collectSlots(members, rulesBag);
 
-	// Must have exactly one slot
 	if (slots.length !== 1) return false;
 
-	// The single slot must be a field or symbol (not a bare choice, repeat, etc.).
-	// Descend through prec wrappers only — a field slot is itself field-typed and
-	// is already inline-safe; descending into it would expose its content (possibly
-	// a choice), which would incorrectly classify the slot as unsafe.
+	/* The single slot must be a field or symbol (not a bare choice, repeat,
+	   etc.). Descend through prec wrappers only — a field slot is itself
+	   field-typed and is already inline-safe; descending into it would
+	   expose its content (possibly a choice), which would incorrectly
+	   classify the slot as unsafe. */
 	const core = unwrapPrec(slots[0]);
 	if (!core || typeof core !== 'object') return false;
 	const coreType = (core as Record<string, unknown>).type;
@@ -321,10 +305,6 @@ export function isInlineSafe(seqBody: unknown, rulesBag?: Record<string, unknown
 	return isFieldType(coreType) || isSymbolType(coreType);
 }
 
-// ---------------------------------------------------------------------------
-// isSupertypeLike
-// ---------------------------------------------------------------------------
-
 export function isSupertypeLike(body: unknown): boolean {
 	const b = unwrapPrec(body);
 	if (!b || typeof b !== 'object') return false;
@@ -332,12 +312,12 @@ export function isSupertypeLike(body: unknown): boolean {
 	if (typeof t !== 'string' || !isChoiceType(t)) return false;
 	const members = (b as Record<string, unknown>).members;
 	if (!Array.isArray(members) || members.length === 0) return false;
-	// Member compatibility mirrors link's `classifyHiddenChoiceRule`
-	// supertype test (SYMBOL / named alias / enum-or-string): each such arm
-	// materializes its OWN node (or token) at parse time, so the choice as
-	// a whole stays a pure dispatch point. A named ALIAS arm (e.g.
-	// tree-sitter-rust's aliased `u8|i8|…` primitive enum inside
-	// `_expression_except_range`) is as dispatchable as a bare symbol ref.
+	/* Member compatibility mirrors link's `classifyHiddenChoiceRule` supertype
+	   test (SYMBOL / named alias / enum-or-string): each such arm
+	   materializes its OWN node (or token) at parse time, so the choice as a
+	   whole stays a pure dispatch point. A named ALIAS arm (e.g.
+	   tree-sitter-rust's aliased `u8|i8|…` primitive enum inside
+	   `_expression_except_range`) is as dispatchable as a bare symbol ref. */
 	return members.every((m) => {
 		const core = unwrapPrec(m);
 		if (!core || typeof core !== 'object') return false;

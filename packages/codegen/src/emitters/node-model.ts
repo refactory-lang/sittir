@@ -178,14 +178,15 @@ export function emitNodeModel(config: EmitNodeModelConfig): string {
 }
 
 export function buildNodeModel(nodeMap: NodeMap): SerializedNodeModel {
-	// PR-K: fold ALL of factory-map's sections in via the SINGLE shared builder
-	// (one derivation; validators just READ). `factoryShapes` / `factoryFields`
-	// attach per-node; `polymorphVariants` / `factorySlots` / `fieldAliasMap` go
-	// top-level. The per-field data carries the raw facts (required/multiple/
-	// nonEmpty + values[].parseKind), but the alias-source pairing and the
-	// factory-emitting-kind FILTER live only in `buildFactoryMap` — serializing
-	// its finished output keeps that logic single-sourced and the validator maps
-	// byte-identical to the legacy factory-map (gate: counts stay stable).
+	/* Fold ALL of factory-map's sections in via the SINGLE shared builder (one
+	   derivation; validators just READ). `factoryShapes` / `factoryFields`
+	   attach per-node; `polymorphVariants` / `factorySlots` / `fieldAliasMap` go
+	   top-level. The per-field data carries the raw facts
+	   (required/multiple/nonEmpty + values[].parseKind), but the alias-source
+	   pairing and the factory-emitting-kind FILTER live only in
+	   `buildFactoryMap` — serializing its finished output keeps that logic
+	   single-sourced and the validator maps byte-identical to the legacy
+	   factory-map (gate: counts stay stable). */
 	const factoryData = buildFactoryMap(nodeMap);
 
 	const nodes: SerializedNode[] = [];
@@ -234,13 +235,10 @@ function serializeNode(node: AssembledNode): SerializedNode {
 	};
 	switch (node.modelType) {
 		case 'branch': {
-			// Phase 1d.vii (spec 022): `AssembledBranch` absorbed the
-			// former `AssembledContainer`. Container-shape branches
-			// (no fields) used to serialize as `modelType: 'container'`
-			// with a `separator` field; that variant is gone, but the
-			// runtime separator data still lives on `AssembledBranch.separator`
-			// for branches whose simplified rule is a `repeat` / `repeat1`.
-			// Surface it on the unified branch payload only when present.
+			/* Container-shape branches (no fields) carry their runtime separator
+			   data on `AssembledBranch.separator`, for branches whose simplified
+			   rule is a `repeat` / `repeat1`. Surface it on the branch payload
+			   only when present. */
 			const out: SerializedBranch = {
 				...base,
 				modelType: 'branch',
@@ -323,10 +321,9 @@ function serializeField(field: AssembledNonterminal): SerializedField {
 		multiple: isMultiple(field),
 		nonEmpty: isNonEmpty(field),
 		values: field.values.map(serializeValue),
-		// projection: derived from values via kindsOf() instead of read from
-		// a stored cache (eliminated in spec 022 Phase 1d.i). The serialized
-		// JSON shape is preserved (typeName: '', kinds: [...]) for byte-
-		// identity of node-model.json5 output.
+		/* projection: derived from values via kindsOf(), not read from a
+		   stored cache. The serialized JSON shape is preserved (typeName: '',
+		   kinds: [...]) for byte-identity of node-model.json5 output. */
 		projection: {
 			typeName: '',
 			kinds: [...kindsOf(field)]

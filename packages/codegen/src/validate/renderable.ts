@@ -25,10 +25,6 @@ import type { RawNodeEntry } from './node-types-loader.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { buildRuleLookup } from './rule-lookup.ts';
 
-// ---------------------------------------------------------------------------
-// Result shape
-// ---------------------------------------------------------------------------
-
 export interface RenderableResult {
 	grammar: string;
 	total: number;
@@ -40,10 +36,6 @@ export interface MissingKind {
 	kind: string;
 	reason: string;
 }
-
-// ---------------------------------------------------------------------------
-// Main
-// ---------------------------------------------------------------------------
 
 export function validateRenderableFromNodeMap(grammar: string, nodeMap: NodeMap): RenderableResult {
 	const rawEntries = loadRawEntries(grammar);
@@ -82,17 +74,9 @@ function isPureLeafEntry(entry: RawNodeEntry): boolean {
 	return !hasFields && !hasChildren;
 }
 
-// ---------------------------------------------------------------------------
-// Entry filtering
-// ---------------------------------------------------------------------------
-
 function isNamedEntry(entry: RawNodeEntry): boolean {
 	return entry.named;
 }
-
-// ---------------------------------------------------------------------------
-// Formatting
-// ---------------------------------------------------------------------------
 
 export function formatRenderableReport(result: RenderableResult): string {
 	const lines: string[] = [];

@@ -1,23 +1,24 @@
-// Unified diagnostics model for sittir codegen.
-// See docs/superpowers/specs/2026-05-28-diagnostics-model-design.md
-//
-// One base `Diagnostic` + three scope-discriminated subtypes:
-//   - GrammarDiagnostic<TRule>     — static, author-facing facts about the grammar
-//   - CompilerDiagnostic<TSubject> — pipeline-phase issues (rule or node)
-//   - RuntimeDiagnostic            — render/read/parse execution
-// `scope` is the discriminant; `ruleId` is the stable back-pointer; `subject`
-// is an optional typed escape hatch.
-//
-// NOTE: NodeData is a generated per-grammar type (emitted by emitters/types.ts),
-// not statically importable into the compiler. TSubject defaults to `Rule | unknown`
-// as the documented fallback per spec. Callers with concrete node data may specialize
-// the generic (e.g. CompilerDiagnostic<MyNodeData>).
+/**
+ * Unified diagnostics model for sittir codegen.
+ *
+ * One base `Diagnostic` + three scope-discriminated subtypes:
+ *   - GrammarDiagnostic<TRule>     — static, author-facing facts about the grammar
+ *   - CompilerDiagnostic<TSubject> — pipeline-phase issues (rule or node)
+ *   - RuntimeDiagnostic            — render/read/parse execution
+ * `scope` is the discriminant; `ruleId` is the stable back-pointer; `subject`
+ * is an optional typed escape hatch.
+ *
+ * NOTE: NodeData is a generated per-grammar type (emitted by emitters/types.ts),
+ * not statically importable into the compiler. TSubject defaults to `Rule | unknown`
+ * as the documented fallback. Callers with concrete node data may specialize
+ * the generic (e.g. CompilerDiagnostic<MyNodeData>).
+ */
 
 import type { RuleId, Rule } from './rule.ts';
 
-// PR-G: 'fail' is reserved for the Assemble→Project gate (emit-gate.ts).
-// It is currently unused — nothing emits it until PR-L. The existing
-// 'error'/'warning' vocabulary and canProceed blocking signal are untouched.
+/* 'fail' is reserved for the Assemble→Project gate (emit-gate.ts) and is
+   currently unused by any emitter; the existing 'error'/'warning' vocabulary
+   and canProceed blocking signal are untouched. */
 export type Severity = 'error' | 'warning' | 'info' | 'fail';
 
 export interface Diagnostic {
@@ -51,10 +52,6 @@ export interface RuntimeDiagnostic extends Diagnostic {
 	readonly nodeId?: string;
 	readonly span?: { readonly start: number; readonly end: number };
 }
-
-// ---------------------------------------------------------------------------
-// PR-G additions: DiagnosticSink + EmitHaltedError
-// ---------------------------------------------------------------------------
 
 export class DiagnosticSink {
 	private readonly _items: Diagnostic[] = [];

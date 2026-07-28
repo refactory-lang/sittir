@@ -24,10 +24,9 @@ export function resolveGrammarJsPath(grammar: string): string {
 }
 
 export function resolveOverridesPath(grammar: string): string {
-	// Navigate from compiler/ → src/ → codegen/ → packages/
-	const compilerDir = dirname(new URL(import.meta.url).pathname); // compiler/
-	const srcDir = dirname(compilerDir); // src/
-	const codegenDir = dirname(srcDir); // codegen/
-	const packagesDir = dirname(codegenDir); // packages/
+	const compilerDir = dirname(new URL(import.meta.url).pathname);
+	const srcDir = dirname(compilerDir);
+	const codegenDir = dirname(srcDir);
+	const packagesDir = dirname(codegenDir);
 	return join(packagesDir, grammar, 'overrides.ts');
 }

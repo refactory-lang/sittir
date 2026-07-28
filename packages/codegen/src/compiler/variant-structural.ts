@@ -174,10 +174,6 @@ import type { AliasRule, ChoiceRule, Rule, SeqRule, SymbolRule } from '../types/
  */
 export { polymorphVisibleName };
 
-// ---------------------------------------------------------------------------
-// Per-arm + per-choice matching
-// ---------------------------------------------------------------------------
-
 function stripHiddenPrefix(name: string): string {
 	return name.startsWith('_') ? name.slice(1) : name;
 }
@@ -242,10 +238,6 @@ function matchStructuralVariantChoice(
 	return arms.length > 0 ? { match: { choice: rule, arms }, matchedIndices } : null;
 }
 
-// ---------------------------------------------------------------------------
-// Recursive descent — find every qualifying choice in a kind's body
-// ---------------------------------------------------------------------------
-
 function collectStructuralVariantChoices(
 	rule: Rule<'link'>,
 	parentKind: string,
@@ -285,10 +277,6 @@ export function findStructuralVariantChoices(
 	collectStructuralVariantChoices(rule, kind, rules, out);
 	return out;
 }
-
-// ---------------------------------------------------------------------------
-// Grammar-wide derivation — the Map assemble.ts consumes
-// ---------------------------------------------------------------------------
 
 export function deriveStructuralVariantChildren(rules: Record<string, Rule<'link'>>): Map<string, string[]> {
 	const out = new Map<string, string[]>();

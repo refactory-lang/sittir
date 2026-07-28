@@ -91,8 +91,6 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 		// `variantChildKinds`. Emit them into polymorphVariants so
 		// `.from()`-dispatch and the validator's deep-read path both
 		// know which kinds participate in variant() adoption.
-		// Phase 1d.vii (spec 022): the former `'container'` modelType
-		// folded into `'branch'`; the discriminant collapses too.
 		if (node.modelType === 'branch' && node.variantChildKinds.length > 0) {
 			if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
 			const childKind: Record<string, string> = {};

@@ -102,12 +102,12 @@ type OptionalInner<C extends ChoiceRule> = C['members'] extends readonly [infer 
 // ---------------------------------------------------------------------------
 // Field-name decision for a wrapped symbol.
 // ---------------------------------------------------------------------------
-// Soundness: numbered-duplicate names need cross-tuple counting, which we do
-// NOT attempt structurally. The base name is the symbol name (supertype:
-// strip leading `_`). When the same base name occurs more than once among
-// the seq's wrap-eligible members, the runtime numbers them — so we widen to
-// `string` (degrade NAME, keep STRUCTURE). Uniqueness is decided by
-// CountBaseName over the members tuple.
+/* Soundness: numbered-duplicate names need cross-tuple counting, which we do
+   NOT attempt structurally. The base name is the symbol name (supertype:
+   strip leading `_`). When the same base name occurs more than once among the
+   seq's wrap-eligible members, the runtime numbers them — so we widen to
+   `string` (degrade NAME, keep STRUCTURE). Uniqueness is decided by
+   CountBaseName over the members tuple. */
 
 type StripUnderscore<S extends string> = S extends `_${infer R}` ? R : S;
 
@@ -209,10 +209,10 @@ type WrapShape3Members<M extends readonly GrammarRule[], Name extends string> = 
 
 type EnrichMember<N extends GrammarRule, AllMembers extends readonly GrammarRule[]> =
 	MemberWrapName<N> extends infer WName
-		? // never-guard FIRST: a non-wrap member yields `WName = never`, and a
-			// bare `WName extends string` DISTRIBUTES over never -> never (the
-			// `: N` fallback is unreachable), collapsing every non-wrapped member.
-			// `[never] extends [string]` is `true`, so the never test must precede.
+		? /* never-guard FIRST: a non-wrap member yields `WName = never`, and a
+		     bare `WName extends string` DISTRIBUTES over never -> never (the
+		     `: N` fallback is unreachable), collapsing every non-wrapped member.
+		     `[never] extends [string]` is `true`, so the never test must precede. */
 			[WName] extends [never]
 			? N // not a wrap target -> unchanged
 			: WName extends string
@@ -280,5 +280,4 @@ export type EnrichRule<N extends GrammarRule> =
 					? { type: 'REPEAT1'; content: EnrichRepeatContent<N['content']> }
 					: N;
 
-// Re-exports for consumers.
 export type { GrammarRule, SeqRule, ChoiceRule, SymbolRule, FieldRule };

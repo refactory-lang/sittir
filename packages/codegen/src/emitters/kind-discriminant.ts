@@ -37,11 +37,11 @@ export interface KindEnumEntry {
 export function kindIdMemberName(nodeMap: NodeMap, kind: string): string {
 	const typeName = nodeMap.nodes.get(kind)?.typeName;
 	if (typeName) return typeName;
-	// toPascal strips leading underscores (`_literal` → `Literal`). For
-	// hidden kinds this creates member-name collisions with visible kinds
-	// that have the same base name (`literal` → `Literal`). Preserve the
-	// leading underscore so hidden kinds get a distinct member:
-	// `_literal` → `_Literal`, `_primitive_type` → `_PrimitiveType`.
+	/* toPascal strips leading underscores (`_literal` → `Literal`). For
+	   hidden kinds this creates member-name collisions with visible kinds
+	   that have the same base name (`literal` → `Literal`). Preserve the
+	   leading underscore so hidden kinds get a distinct member: `_literal` →
+	   `_Literal`, `_primitive_type` → `_PrimitiveType`. */
 	const prefix = kind.match(/^_+/)?.[0] ?? '';
 	return `${prefix}${toPascal(kind)}`;
 }
@@ -62,10 +62,10 @@ export function collectKindEntries(
 		const row = fullCatalog.get(kind);
 		if (row === undefined || row.id === undefined) continue;
 		let member = kindIdMemberName(nodeMap, kind);
-		// Disambiguate member-name collisions. Two different catalog keys
-		// can produce the same PascalCase member (e.g. `_literal` typeName
-		// `Literal` and anon token `literal` → `Literal`). Append the
-		// numeric id to the second occurrence so the enum compiles.
+		/* Disambiguate member-name collisions. Two different catalog keys can
+		   produce the same PascalCase member (e.g. `_literal` typeName `Literal`
+		   and anon token `literal` → `Literal`). Append the numeric id to the
+		   second occurrence so the enum compiles. */
 		const existing = seenMembers.get(member);
 		if (existing !== undefined && existing !== kind) {
 			member = `${member}_${row.id}`;
@@ -81,14 +81,11 @@ export function collectKindEntries(
 }
 
 export function findKindEntry(kindEntries: readonly KindEnumEntry[], kind: string): KindEnumEntry | undefined {
-	// Delegates to THE shared kind-name chain (PR-K1 — see KindEntryLike in
-	// compiler/generated-metadata.ts for the full step documentation,
-	// including why step 3 is anon-scoped: the `_as_pattern` shadowing bug).
-	// Behavior delta vs this module's historical inline chain: a step 4
-	// (named-symbolName fallback for hidden compound tokens like `_is_not` ←
-	// `"is not"`) is now present, reachable only when steps 1-3 all miss —
-	// previously such lookups returned undefined here while the
-	// compiler-side chain resolved them.
+	/* Delegates to the shared kind-name chain — see KindEntryLike in
+	   compiler/generated-metadata.ts for the full step documentation,
+	   including why step 3 is anon-scoped: the `_as_pattern` shadowing bug.
+	   A step 4 (named-symbolName fallback for hidden compound tokens like
+	   `_is_not` ← `"is not"`) is reachable only when steps 1-3 all miss. */
 	return findEntryForKindName(kindEntries, kind);
 }
 
@@ -96,7 +93,7 @@ export function findKindEntryForLiteral(
 	kindEntries: readonly KindEnumEntry[],
 	literalText: string
 ): KindEnumEntry | undefined {
-	// Delegates to THE shared literal-text chain (PR-K1).
+	// Delegates to the shared literal-text chain.
 	return findEntryForLiteralText(kindEntries, literalText);
 }
 
