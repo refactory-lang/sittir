@@ -488,24 +488,6 @@ export function resolveBitflagConstName(
 	return (bareCounts.get(bare) ?? 0) > 1 ? bitflagPrefixedConstName(kind, field.propertyName) : bare;
 }
 
-/**
- * Convert a keyword string to a valid PascalCase const-enum member.
- * Strips non-word characters and PascalCases each segment.
- *
- * Examples: `async` → `Async`, `pub(crate)` → `PubCrate`.
- *
- * Pure-punctuation literals (e.g. python comparison operators `<`,
- * `>=`, `!=`) all have zero word segments after the non-word strip;
- * routing them all through the `Unknown` fallback produced duplicate
- * enum members that `tsgo` / TS-native rejects with `Identifier X has
- * already been declared`. Map the most common operator punctuation
- * to mnemonic names so each literal produces a distinct identifier.
- * The table intentionally covers comparison + bitwise + logical +
- * assignment forms shared across rust / ts / python grammars; any
- * literal not in the table still falls through to the
- * char-code-based fallback below, which generates a unique name per
- * literal (prefixed `Op_<codepoints>`) so duplicates never collide.
- */
 const PUNCT_MNEMONIC: Record<string, string> = {
 	'<': 'Lt',
 	'>': 'Gt',

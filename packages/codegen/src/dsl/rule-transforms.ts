@@ -41,11 +41,6 @@ export interface RuleBuilder {
 	field(name: string, content: AnyRule): AnyRule;
 }
 
-/**
- * Structural builder: each method builds the plain node literal exactly as
- * the construction sites previously did. Byte-identical to hand-written
- * literals; used as the safe default when no ctx.builder is present.
- */
 export const structuralBuilder: RuleBuilder = {
 	seq: (members) => ({ type: SEQ, members }),
 	choice: (members) => ({ type: CHOICE, members }),
@@ -88,23 +83,6 @@ export function combineMultiplicity(outerIn: LeafMultiplicity, innerIn: LeafMult
 	return undefined;
 }
 
-/**
- * Does `rule` contain a repeat/repeat1 that declares the given flag?
- *
- * `trailing: true` marks `sepBy` shapes where the final separator is
- * optional (e.g. rust's `{ a, b, }`). `leading: true` marks the
- * mirror shape `sep, x, (sep x)*` (rust's or_pattern `| a | b`, if
- * written as a single repeat). Evaluate's `liftCommaSep` captures
- * both from their canonical seq patterns. Render reads each flag via
- * the `joinByTrailing` / `joinByLeading` template hints to know
- * whether to probe for a flanking anon-separator token when emitting
- * `$$$CHILDREN`.
- *
- * Walks the same transparent-wrapper set as `findNestedSeparator`
- * (seq / choice / optional / variant / clause / group / field).
- *
- * Moved from template-walker.ts (origin: template-walker.ts:65).
- */
 const flagWalker = new RuleWalker();
 
 export function findRepeatFlag(rule: AnyRule, flag: 'trailing' | 'leading'): boolean {
@@ -431,24 +409,6 @@ function tryFusePair(head: AnyRule, next: AnyRule | undefined): AnyRule | null {
 	return null;
 }
 
-/**
- * Fuse head+repeat separated-list pairs into a single multi slot, recursively.
- * Behaviour-preserving everywhere else — non-seq rules and seqs without the
- * head+repeat shape pass through unchanged (reference-identical when no fusion
- * applies).
- *
- * Recursion is delegated to a bare `RuleWalker<AnyRule>` (R12 traversal
- * engine), replacing the former `recurseChildren`-based self-recursive
- * visitor. `RuleWalker.map` is NOT a drop-in replacement: `map` already
- * recurses the whole subtree internally and applies `visit` to every
- * already-mapped node, so `visit` here (`fuseAtNode`) does ONLY the
- * single-level fusion — it must NOT call `fuseHeadRepeatLists` on itself
- * (that would recurse twice). `fuseHeadRepeatLists` additionally applies
- * `fuseAtNode` to `map`'s own return value, since `map` rebuilds a node's
- * children bottom-up but does not apply `visit` to the top node itself —
- * matching `recurseChildren(rule, fuseHeadRepeatLists)` followed by the
- * seq-fusion check that used to sit inline in this function.
- */
 const fuseHeadRepeatListsWalker = new RuleWalker<AnyRule>();
 
 function fuseAtNode(recursed: AnyRule): AnyRule {

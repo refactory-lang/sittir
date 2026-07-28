@@ -296,13 +296,6 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	return result as unknown as EnrichedGrammar<B>;
 }
 
-/**
- * Well-known non-enumerable key attached by `enrich()` to the grammar result
- * when clause-hoist synthesized any hidden group rules. Wire.ts reads this to
- * register the hoisted names in `WireContext.syntheticInline` so they end up
- * in the grammar's `inline:` list (required to prevent tree-sitter LR
- * conflicts from the newly-injected hidden rules).
- */
 export const ENRICH_CLAUSE_GROUPS_KEY = '__enrichedClauseGroups__' as const;
 
 export function getEnrichClauseGroups(grammar: unknown): ReadonlySet<string> {
@@ -312,15 +305,6 @@ export function getEnrichClauseGroups(grammar: unknown): ReadonlySet<string> {
 	return new Set();
 }
 
-/**
- * Well-known non-enumerable key attached by `enrich()` to the grammar result:
- * synthesized clause-hoist name → the parent kind whose (pre-override) body
- * it was hoisted from. Covers BOTH categories `ENRICH_CLAUSE_GROUPS_KEY`
- * covers (inline-safe) AND the visible-aliased hidden names it deliberately
- * excludes (`_<parent>_group<N>`) — wire() needs both, since an override
- * redeclaring the recorded owner orphans the synthesized rule regardless of
- * which category it's in.
- */
 export const ENRICH_CLAUSE_GROUP_OWNERS_KEY = '__enrichedClauseGroupOwners__' as const;
 
 export function getEnrichClauseGroupOwners(grammar: unknown): ReadonlyMap<string, string> {
@@ -330,11 +314,6 @@ export function getEnrichClauseGroupOwners(grammar: unknown): ReadonlyMap<string
 	return new Map();
 }
 
-/**
- * Well-known non-enumerable key attached by `enrich()`: the hidden SOURCE
- * rule names behind every visible-group mint (`alias($._src, $.visible)`) —
- * both the promote-existing-hidden-rule and synthesize-new-body categories.
- */
 export const ENRICH_VISIBLE_GROUP_SOURCES_KEY = '__enrichedVisibleGroupSources__' as const;
 
 export function getEnrichVisibleGroupSources(grammar: unknown): ReadonlySet<string> {
@@ -1668,21 +1647,6 @@ export function clusterSignatures(values: readonly RuntimeRule[]): string[] {
 	return clusterOf;
 }
 
-/**
- * Well-known non-enumerable key under which `enrich()` attaches the
- * (downgraded, non-blocking) `parsekind-noninjective` diagnostics its
- * un-aliasing pass produced for a given grammar evaluation. Read via
- * `getEnrichUnaliasDiagnostics`.
- *
- * Attached to the SAME evaluation's own return object rather than a
- * module-level accumulator (the former design): a module-global array only
- * populated on the FIRST import of a grammar's entry path — Node caches the
- * module, so a second `evaluate()` of the same grammar in one process would
- * observe an empty drain even though the diagnostics conceptually still apply;
- * concurrent evaluations of different grammars would also interleave into one
- * shared array. Travelling with the result object avoids both: the diagnostics
- * stay on the (cached) grammar object, correct on every read, per-grammar.
- */
 export const ENRICH_UNALIAS_DIAGNOSTICS_KEY = '__enrichUnaliasDiagnostics__' as const;
 
 function unaliasDiagnosticKey(diagnostic: ParseKindCollisionDiagnostic): string {

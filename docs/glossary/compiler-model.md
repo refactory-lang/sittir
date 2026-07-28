@@ -1423,3 +1423,59 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `deriveValuesForRule`.
  */
 ```
+
+### `BranchSlotClass` (`packages/codegen/src/compiler/model/node-map.ts:294`)
+
+```text
+/**
+ * A slot-content entry that references a grammar node kind. After
+ * `resolveSlotRefs` the `.node` field holds the resolved `AssembledNode`;
+ * before that pass (or for unresolvable dead-kind references) it holds
+ * an `UnresolvedRef`.
+ *
+ * Per-value `separator` / `trailing` / `leading` replace the prior per-slot
+ * `AssembledNonterminal.hasTrailing` / `hasLeading` flags. Only meaningful
+ * when this value's `multiplicity` is `'array'` or `'nonEmptyArray'`.
+ * Populated by the unified `deriveSlots` walk — undefined on values from
+ * non-repeat positions.
+ */
+```
+
+### `RESERVED_ACCESSOR_NAMES` (`packages/codegen/src/compiler/model/node-map.ts:467`)
+
+```text
+/**
+ * `Object.prototype` members that, if a grammar field name camelCases onto
+ * one of them, produce a public accessor that shadows a special JS/TS
+ * meaning rather than a plain data property — most visibly `constructor`
+ * (TypeScript's `new_expression` grammar field), which trips
+ * `no-misused-new` on the emitted interface and, worse, overwrites
+ * `Object.prototype.constructor` on every wrapped node instance.
+ */
+```
+
+### `DERIVE_AUDIT` (`packages/codegen/src/compiler/model/node-map.ts:591`)
+
+```text
+/**
+ * Dev audit — log shapes that reach derivation in a non-canonical form.
+ * Simplify's canonicalization should produce a top-level `seq` (or a
+ * single atomic member) with members that are
+ * fields / literals / repeats / symbols. Anything else means simplify
+ * didn't finish normalizing, and the trivialized `projectFields` /
+ * `projectChildren` walks won't see the content.
+ *
+ * Opt in via `SITTIR_AUDIT_DERIVE=1`; otherwise silent (zero overhead in
+ * normal codegen runs). Captures per-kind shape signatures so we can
+ * count distinct non-canonical patterns across the corpus and decide
+ * which simplify passes still need work.
+ */
+```
+
+### `currentAuditKind` (`packages/codegen/src/compiler/model/node-map.ts:625`)
+
+```text
+/** Transient — each AssembledNode's constructor sets this before the lazy
+ * `fields` / `children` getters fire, so the audit can attribute shapes
+ * to their originating kind. */
+```

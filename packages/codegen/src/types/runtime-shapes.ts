@@ -160,9 +160,6 @@ export const isOptionalType = <T>(t: T): t is T & { type: 'OPTIONAL' } & Optiona
 export const isFieldType = <T>(t: T): t is T & { type: 'FIELD' } & FieldRule => typeEq(t, 'FIELD');
 export const isSymbolType = <T>(t: T): t is T & { type: 'SYMBOL' } & SymbolRule => typeEq(t, 'SYMBOL');
 export const isStringType = <T>(t: T): t is T & { type: 'STRING' } & StringRule => typeEq(t, 'STRING');
-/** Plain repeat (zero-or-more). Excludes repeat1. Callers that need
- *  either should use {@link isRepeatType}. */
 export const isPlainRepeatType = (t: unknown): boolean => typeEq(t, 'REPEAT');
-/** Either repeat variant — true for both `repeat` and `repeat1`. */
 export const isRepeatType = (t: unknown): boolean => typeEq(t, 'REPEAT') || typeEq(t, 'REPEAT1');
 export const isBlankType = (t: unknown): boolean => typeEq(t, 'BLANK');

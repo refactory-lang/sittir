@@ -64,11 +64,6 @@ export interface RuleCatalog {
 	readonly classificationById: ReadonlyMap<RuleId, RuleClassification>;
 }
 
-/**
- * Where a kind/field exists across the pipeline. Per KindID runtime
- * migration design (2026-04-30): describes ontology / existence, kept
- * separate from `KindUseFlag` which describes operations.
- */
 export const KindPresenceFlag = {
 	None: 0,
 	/** Rule appears in `grammar.js` (codegen rule catalog). */
@@ -80,10 +75,6 @@ export const KindPresenceFlag = {
 } as const;
 export type KindPresenceFlag = number;
 
-/**
- * What sittir can do with a kind. Behavior-based; complements
- * `KindPresenceFlag`'s file-based / existence-based view.
- */
 const KindUseFlag = {
 	None: 0,
 	/** Sittir can ingest/hydrate the kind from parsed runtime nodes. */

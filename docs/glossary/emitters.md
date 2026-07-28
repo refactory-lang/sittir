@@ -5651,3 +5651,194 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * @returns Emitted TypeScript source string for the wrap function.
  */
 ```
+
+### `PUNCT_MNEMONIC` (`packages/codegen/src/emitters/consts.ts:491`)
+
+```text
+/**
+ * Convert a keyword string to a valid PascalCase const-enum member.
+ * Strips non-word characters and PascalCases each segment.
+ *
+ * Examples: `async` → `Async`, `pub(crate)` → `PubCrate`.
+ *
+ * Pure-punctuation literals (e.g. python comparison operators `<`,
+ * `>=`, `!=`) all have zero word segments after the non-word strip;
+ * routing them all through the `Unknown` fallback produced duplicate
+ * enum members that `tsgo` / TS-native rejects with `Identifier X has
+ * already been declared`. Map the most common operator punctuation
+ * to mnemonic names so each literal produces a distinct identifier.
+ * The table intentionally covers comparison + bitwise + logical +
+ * assignment forms shared across rust / ts / python grammars; any
+ * literal not in the table still falls through to the
+ * char-code-based fallback below, which generates a unique name per
+ * literal (prefixed `Op_<codepoints>`) so duplicates never collide.
+ */
+```
+
+### `optChain` (`packages/codegen/src/emitters/from.ts:714`)
+
+```text
+/**
+	 * Single-access camelCase read on the bag
+	 * branch. After the isNodeData identity quick-return at resolver entry,
+	 * the resolver body runs only for loose-bag input, which carries the
+	 * camelCase property directly. No cast — if the typed input union
+	 * doesn't expose the camelCase property at this position that is a
+	 * real type error, not something to paper over.
+	 */
+```
+
+### `RESERVED` (`packages/codegen/src/emitters/is.ts:39`)
+
+```text
+/** JS reserved words that need a trailing `_` when used as a guard key. */
+```
+
+### `RESERVED_GUARD_NAMES` (`packages/codegen/src/emitters/is.ts:90`)
+
+```text
+/** Methods on the `is` / `assert` namespaces beyond per-kind entries. */
+```
+
+### `RESERVED_SUPERTYPE_ENUM_NAMES` (`packages/codegen/src/emitters/render-module.ts:269`)
+
+```text
+/**
+ * Per-supertype transport enum names that collide with pre-existing
+ * generated items and must be skipped during Phase 2 supertype-enum
+ * emission.  The `_literal` supertype has `typeName = 'Literal'` which
+ * would produce `pub enum LiteralTransport`.  Keep reserved so the
+ * supertype enum is not emitted; slots fall back to `Box<AnyTransport>`
+ * (`heterogeneous`).
+ */
+```
+
+### `RESERVED_TRANSPORT_STRUCT_NAMES` (`packages/codegen/src/emitters/render-module.ts:279`)
+
+```text
+/**
+ * Sittir-infra transport type names `rustTransportStructName` must never
+ * collide with — `renderTransportSupport` emits exactly one of each,
+ * unconditionally, as global dispatch/support machinery (the `AnyTransport`
+ * kind_id-dispatch enum, `VerbatimTransport`/`ProtectedTransport`'s bare-text
+ * carriers, `LiteralTransport`). A grammar-authored kind whose PascalCase
+ * `typeName` happens to match one of these (confirmed concretely: TypeScript's
+ * `any` keyword type-names to `Any`, so its per-kind struct would otherwise
+ * also be named `AnyTransport`) produces two Rust items with the identical
+ * name in the same module — a hard `E0428`/`E0119` compile error, not a
+ * cosmetic naming quirk. This was a documented, anticipated risk left
+ * unresolved by the original typed-transport-fields plan (its "Open
+ * questions" #1 covered the analogous supertype-enum case, resolved there via
+ * `RESERVED_SUPERTYPE_ENUM_NAMES`'s skip-and-fall-back strategy — skipping
+ * isn't available here since a kind's own per-kind struct can't just be
+ * omitted without losing its data).
+ */
+```
+
+### `RENDERABLE_PREFIX` (`packages/codegen/src/emitters/render-module.ts:1195`)
+
+```text
+/**
+ * Fully-qualified prefix for the core `Renderable` enum.
+ *
+ * This module defines a local `pub enum Renderable` (Text+Joined) that
+ * shadows `sittir_core::filters::Renderable` (Text+Joined+Transport).
+ * The typed dispatch path constructs `::sittir_core::filters::Renderable::Transport`
+ * values that feed into `ListNonterminalView.items`, so the full path is
+ * required to avoid resolving to the wrong local type.
+ */
+```
+
+### `collectFromSlots` (`packages/codegen/src/emitters/render-module.ts:1907`)
+
+```text
+/** Accumulate supertype names from a single node's slots — named and
+	 *  unnamed flow through one path (cleanup-rules §E1). */
+```
+
+### `TRANSPORT_METADATA_FIELDS` (`packages/codegen/src/emitters/render-module.ts:3417`)
+
+```text
+/**
+ * Metadata fields shared by all transport structs.
+ *
+ * `transport_text` is intentionally absent — it is present on branch
+ * transport structs (which always include it) but NOT on leaf structs
+ * (which use a plain `text: String` field instead). It is added
+ * conditionally by `renderTransportMetadataFields`.
+ */
+```
+
+### `TRANSPORT_TEXT_FIELD` (`packages/codegen/src/emitters/render-module.ts:3448`)
+
+```text
+/**
+ * The `transport_text` field, conditional on branch structs. Kept
+ * separate from `TRANSPORT_METADATA_FIELDS` because leaf structs use
+ * a plain `text: String` instead.
+ */
+```
+
+### `LITERAL_TO_VARIANT_NAME` (`packages/codegen/src/emitters/render-module.ts:3737`)
+
+```text
+/**
+ * Mapping from operator/punctuation literal text to a safe Rust PascalCase
+ * identifier. Covers the symbols that appear across the three grammars
+ * (rust, typescript, python). Identifiers that need disambiguation from
+ * Rust keywords get a `Kw` suffix.
+ */
+```
+
+### `IDENT_RE` (`packages/codegen/src/emitters/shared.ts:127`)
+
+```text
+/** TypeScript identifier pattern — starts with letter/underscore/dollar,
+ * continues with word chars or dollar. Used by emitters to decide whether
+ * a kind name can be emitted as a bare identifier vs. a quoted literal. */
+```
+
+### `JINJA_COND_FULL_RE` (`packages/codegen/src/emitters/templates.ts:342`)
+
+```text
+/** Full Jinja conditional: `{% if ... %}...{% endif %}` (incl. whitespace-strip variants). */
+```
+
+### `SLOT_WORDLIKE_CHAR` (`packages/codegen/src/emitters/templates.ts:345`)
+
+```text
+/**
+ * A virtual word-like character used to stand in for slot emissions
+ * (`{{ name }}`) and other dynamic content whose runtime first/last char
+ * is unknown but typically an identifier / literal head. Using a real
+ * word character lets the grammar's wordMatcher decide consistently
+ * (matches `\w`, `[a-zA-Z_]`, identifier-shaped patterns).
+ */
+```
+
+### `DEFAULT_JOIN_SEPARATOR` (`packages/codegen/src/emitters/templates.ts:724`)
+
+```text
+/**
+ * Default join separator when the grammar didn't capture an explicit
+ * separator literal. SpacingWriter first consumer (2026-07-24 spec):
+ * empty — the render-time writer inserts a space exactly where a
+ * word-class char would collide with a word-class char, so unseparated
+ * lists no longer need a simulated style space. This is what lets a
+ * statement list whose items self-terminate (';', visible `newline` /
+ * `automatic_semicolon` nodes rendering '\n') join without planting
+ * line-leading whitespace after the terminator — a python indentation
+ * error under the old ' ' default. Grammar-captured separators
+ * (ruleSep / per-value separators) are real tokens and unaffected.
+ */
+```
+
+### `MAX_DUMMY_DEPTH` (`packages/codegen/src/emitters/test.ts:444`)
+
+```text
+/** Maximum branch-recursion depth for synthesized dummy stubs. Bounds
+ * self-referential grammars (e.g. `expression` containing `expression`);
+ * beyond this depth `buildDummyStub` falls back to the flat base literal
+ * (`$type`/`$text`/`$source`/`$named`, omitting nested required fields —
+ * see its docstring) rather than looping forever. */
+```

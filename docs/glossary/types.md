@@ -697,3 +697,29 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 *  here since `types/` cannot import the opaque brand's dsl-owned
 	 *  constructor; writers cast through `unknown`. */
 ```
+
+### `isLinkSymbol` (`packages/codegen/src/types/rule.ts:360`)
+
+```text
+/**
+ * (debt PR-P1) Was `r.type === SYMBOL && r.source === 'link'`; `SymbolRule.source`
+ * is deleted (relocated to `metadata.symbolSource`, dsl-owned + opaque). `literal`
+ * is set ONLY by `compiler/link.ts`'s `canonicalizeRuleLiterals` — the same
+ * (now-sole) writer that used to also stamp `source: 'link'` — so checking
+ * `literal !== undefined` directly is the exact same condition structurally,
+ * not a re-derivation: the one write site produced both facts together.
+ */
+```
+
+### `isPlainRepeatType` (`packages/codegen/src/types/runtime-shapes.ts:163`)
+
+```text
+/** Plain repeat (zero-or-more). Excludes repeat1. Callers that need
+ *  either should use {@link isRepeatType}. */
+```
+
+### `isRepeatType` (`packages/codegen/src/types/runtime-shapes.ts:166`)
+
+```text
+/** Either repeat variant — true for both `repeat` and `repeat1`. */
+```

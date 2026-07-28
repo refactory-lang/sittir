@@ -132,28 +132,12 @@ interface Manifest {
 	host_files?: Record<string, string>;
 }
 
-/** Sentinel value for `host_files` entries — see {@link Manifest.host_files}. */
 const HOST_BINARY_SENTINEL = 'freshness-checked';
 
 function sourceInputsFor(grammar: Grammar): string[] {
 	return [join(REPO_ROOT, `packages/${grammar}/overrides.ts`), join(REPO_ROOT, `packages/${grammar}/package.json`)];
 }
 
-/**
- * Memoized hash of the GENERATION-side `packages/codegen/src/**` — the third
- * input to every generation. If codegen source changes (e.g., a bugfix in a
- * wrap emitter), the same per-grammar overrides should produce different
- * output, so the source_hash needs to reflect this. Memoized per process
- * because it walks many files and never changes within a single run.
- *
- * Scoped to PRODUCER code: `validate/**` is excluded — validators CONSUME
- * generated output and never alter the emitted bytes, so hashing them forced
- * a full regen for every validator-only edit (the only validator-derived
- * artifact, `test-fixtures.json`, is manifest-untracked — see
- * `isManifestUntracked`). Everything else (compiler, emitters, run-codegen,
- * scripts) stays in the hash: `scripts/` includes this manifest module
- * itself, whose format changes legitimately require a re-stamp.
- */
 let cachedCodegenHash: string | null = null;
 
 function codegenSourceHash(): string {

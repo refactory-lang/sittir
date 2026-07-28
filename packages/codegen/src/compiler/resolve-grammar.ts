@@ -10,10 +10,6 @@ import { dirname, join } from 'node:path';
 
 const require = createRequire(import.meta.url);
 
-/**
- * Well-known grammar.js paths for grammars with non-standard layouts.
- * Most grammars use `tree-sitter-{grammar}/grammar.js`.
- */
 const GRAMMAR_JS_PATHS: Record<string, string> = {
 	typescript: 'tree-sitter-typescript/typescript/grammar.js',
 	tsx: 'tree-sitter-typescript/tsx/grammar.js'

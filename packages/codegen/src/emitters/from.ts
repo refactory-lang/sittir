@@ -711,14 +711,6 @@ function resolveFieldFromTypedInput(
 	// type args were stripped in a follow-up to the from-cleanup pass —
 	// TS now infers the slot type from parameters / call context.
 	void parentTypeName;
-	/**
-	 * Single-access camelCase read on the bag
-	 * branch. After the isNodeData identity quick-return at resolver entry,
-	 * the resolver body runs only for loose-bag input, which carries the
-	 * camelCase property directly. No cast — if the typed input union
-	 * doesn't expose the camelCase property at this position that is a
-	 * real type error, not something to paper over.
-	 */
 	const optChain = inputOptional ? '?' : '';
 	const access = `${sourceVar}${optChain}.${field.configKey}`;
 	return resolveFieldCall(access, field, isMultiple(field), nodeMap, intern, true, undefined, kindEntries);

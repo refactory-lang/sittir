@@ -5509,3 +5509,206 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * arm (in member order).
  */
 ```
+
+### `hydrateSlotRefs` (`packages/codegen/src/compiler/assemble.ts:865`)
+
+```text
+/**
+ * Find `typeName` collisions between hidden (`_`-prefixed) kinds and their visible
+ * siblings, and disambiguate by renaming the hidden kinds.
+ *
+ * @param nodes - The full assembled node map; `typeName` and `factoryName` on
+ *   colliding hidden nodes are mutated.
+ * @remarks
+ *   Non-colliding hidden kinds keep their clean names. Emits a warning for every
+ *   rename so the run log surfaces which grammar rules are sharing names.
+ *
+ *   Three collision patterns are handled:
+ *   - `visible ≥ 1` AND `hidden ≥ 1` → rename hidden(s) via {@link renameCollidingHiddenKinds}
+ *   - `visible ≥ 2` → rename lower-priority visible(s) via {@link renameCollidingVisibleKinds}
+ *   - `hidden ≥ 2` → rename lower-priority hidden(s) via {@link renameCollidingHiddenOnlyKinds}
+ */
+```
+
+### `collectedUnnamedChoiceKinds` (`packages/codegen/src/compiler/collect-slots.ts:85`)
+
+```text
+/**
+ * Sink for unnamed-choice-slot occurrences (Task C2). A naked choice (no
+ * `fieldName`, not a polymorph) has no grammar-given name, so it falls back to
+ * an unresolvable `content` slot — the grammar author must field-name it in
+ * `packages/<lang>/overrides.ts`. Rather than emit a scattered per-occurrence
+ * warning, the default sink ACCUMULATES the owning kinds so the codegen run can
+ * report them as one collected diagnostic (drain via {@link drainUnnamedChoiceSlots}).
+ * Tests install a spy via {@link setUnnamedChoiceWarner}.
+ */
+```
+
+### `unionSlotRouting` (`packages/codegen/src/compiler/collect-slots.ts:223`)
+
+```text
+/**
+ * Union-slot routing switch. Default ON; `SITTIR_UNION_SLOT_ROUTING=0` forces
+ * the pre-design distribution behavior (A/B comparison + census dry-runs).
+ * The gate (a) boundary pass also toggles this off for its pessimistic rerun.
+ * Diagnostics (`union-slot-routed` / `union-slot-nondegenerate-arm`) fire on
+ * the PREDICATE regardless of the switch, so a routing-disabled run still
+ * yields the full census.
+ */
+```
+
+### `_synthesizedUnionChoiceIds` (`packages/codegen/src/compiler/collect-slots.ts:239`)
+
+```text
+/**
+ * Rule-ids of choices that synthesized a union slot since the last drain.
+ * The `deriveSlots` boundary drains this after each whole-rule collection and
+ * uses `sourceRuleIds` intersection to find the union slots in the output
+ * (slot object identity does not survive `mergeChoiceArms`' `.with()` copies;
+ * rule-id back-pointers do — feedback_ruleid_backpointer).
+ */
+```
+
+### `MetadataSinks` (`packages/codegen/src/compiler/evaluate.ts:424`)
+
+```text
+/**
+ * The `grammar()` function — mirrors tree-sitter's DSL entry point.
+ * When called with one arg: fresh grammar.
+ * When called with two args: grammar extension (base + overrides).
+ */
+```
+
+### `NON_INLINABLE_MODEL_TYPES` (`packages/codegen/src/compiler/inline-sets.ts:78`)
+
+```text
+/**
+ * Inline-DECISION set for the simplify pass: which grammar.inline kinds
+ * inlineRefs should substitute. The gate is "in grammar.inline AND modelType
+ * is NOT a supertype / keyword / token / pattern / enum". Supertypes are typed
+ * unions referenced by name (inlining them explodes a clean union into its
+ * alternatives at a seq position → non-canonical choice-at-seq); keyword /
+ * token helpers are leaf lexemes that must stay as scalar slot refs. The
+ * remaining inline kinds — auto-synthesized group-lift helpers (`branch`) and
+ * the hidden structural helpers tree-sitter expands at parse time — ARE
+ * inlined so sittir's derivation matches the flat parser output.
+ *
+ * NOTE: this is a SEPARATE set from the raw grammar.json inline list, which
+ * the emitters use as the "skip emitting this inlined kind" list
+ * (emitters/shared.ts). Filtering that list would un-skip supertypes/keywords
+ * and emit phantom concrete kinds — so the decision set is kept distinct.
+ */
+```
+
+### `ROLE_TO_RULE_TYPE` (`packages/codegen/src/compiler/link.ts:1200`)
+
+```text
+/**
+ * Resolve a symbol rule, inlining it when it references an external role token.
+ *
+ * @param rule - The symbol rule to resolve.
+ * @param ctx - Link phase context; `ctx.rules` is used for legacy structural
+ *   detection, `ctx.externalRoles` is the pre-bound external role map (entries
+ *   are added when a dummy role rule is detected — legacy path).
+ * @returns An inlined role rule (`indent`/`dedent`/`newline`) when the symbol
+ *   resolves to an external role; the original symbol rule otherwise.
+ * @remarks
+ *   Two resolution paths:
+ *   - Pre-bound: the override declared the role via `role($._indent, 'indent')`
+ *     in `externals`; `raw.externalRoles` seeded the map before `resolveRule`
+ *     ran. Inline a role node so template emitters render real newlines/indents.
+ *   - Legacy structural: the grammar declares a dummy rule like
+ *     `_foo: ($) => role('indent')` whose body is a direct
+ *     `indent`/`dedent`/`newline` node. Inline it and record the binding for
+ *     downstream consumers.
+ *   Visible symbols that don't match either path are returned unchanged.
+ */
+```
+
+### `GRAMMAR_JS_PATHS` (`packages/codegen/src/compiler/resolve-grammar.ts:13`)
+
+```text
+/**
+ * Well-known grammar.js paths for grammars with non-standard layouts.
+ * Most grammars use `tree-sitter-{grammar}/grammar.js`.
+ */
+```
+
+### `attributeBuilder` (`packages/codegen/src/compiler/simplify.ts:87`)
+
+```text
+/**
+ * Compiler-side `RuleBuilder` that converts wrapper-construction calls into
+ * attribute pushes (via `deleteWrapper`), keeping simplify's output
+ * field/optional/repeat/repeat1-node-free. Structural constructors (`seq` /
+ * `choice`) delegate to the structural builder (same plain node literals).
+ *
+ * - `field(name, X)` → push `fieldName` + `nonterminal:true` onto X.
+ * - `optional(X)` → empty-seq sentinel when X is already empty; strip bare
+ *   anonymous delimiter string; otherwise `deleteWrapper(optional(X))` which
+ *   pushes `multiplicity: 'optional'` onto the leaves.
+ * - `repeat(X)` / `repeat1(X)` → `deleteWrapper({type:REPEAT|REPEAT1, content:X})`.
+ * - `seq` / `choice` → plain structural nodes (same as structuralBuilder).
+ */
+```
+
+### `seqOfLeavesWalker` (`packages/codegen/src/compiler/simplify.ts:125`)
+
+```text
+/**
+ * Canonicalize a rule toward the universal seq-of-leaves shape:
+ *   - Recursively canonicalize children.
+ *   - Flatten degenerate single-member seqs (`seq([X])` → `X`).
+ *
+ * Does NOT perform attribute push-down — applyWrapperDeletion in normalize
+ * already did that. Does NOT synthesize groups — applyAutoGroups (wire
+ * phase) already did that.
+ *
+ * This is the final structural cleanup pass that absorbs the trivial
+ * `seq([X])` → `X` shapes left behind by upstream transformations.
+ * Idempotent — running it twice produces the same result as running once.
+ *
+ * Stays AnyRule-typed (phase-visibility-tightening finding): recursion is
+ * delegated to a bare `RuleWalker<AnyRule>` (R12 traversal engine), which
+ * still passes through wrapper nodes (FIELD/OPTIONAL/REPEAT/REPEAT1/TOKEN/
+ * ALIAS) structurally via its generic `content` edge — confirmed load-bearing
+ * by `simplify-universal-shape.test.ts`'s "preserves leaf content inside
+ * wrappers (does not push down attributes)" case, which feeds a FIELD-wrapped
+ * rule directly and asserts the wrapper survives untouched. Every PRODUCTION
+ * call (`computeSimplifiedRules`) passes RenderRule-shaped input (simplifyRule
+ * already guarantees no wrapper nodes reach this point), but the function
+ * itself is not restricted to that — narrowing the signature would make the
+ * type dishonest in the other direction (claiming it can't handle a shape it
+ * demonstrably does).
+ *
+ * `RuleWalker.map` is NOT a drop-in replacement for the former
+ * `recurseChildren`-based self-recursive visitor: `map` already recurses the
+ * whole subtree internally and applies `visit` to every already-mapped node,
+ * so `visit` here (`collapseSingleMemberSeq`) does ONLY the single-level
+ * collapse — it must NOT call `canonicalizeSeqOfLeaves` on itself (that would
+ * recurse twice). The exported function additionally applies
+ * `collapseSingleMemberSeq` to `map`'s own return value, since `map` rebuilds
+ * a node's children bottom-up but does not apply `visit` to the top node
+ * itself — matching `recurseChildren(rule, canonicalizeSeqOfLeaves)` followed
+ * by the collapse check that used to sit inline in this function.
+ */
+```
+
+### `KindPresenceFlag` (`packages/codegen/src/compiler/types.ts:67`)
+
+```text
+/**
+ * Where a kind/field exists across the pipeline. Per KindID runtime
+ * migration design (2026-04-30): describes ontology / existence, kept
+ * separate from `KindUseFlag` which describes operations.
+ */
+```
+
+### `KindUseFlag` (`packages/codegen/src/compiler/types.ts:83`)
+
+```text
+/**
+ * What sittir can do with a kind. Behavior-based; complements
+ * `KindPresenceFlag`'s file-based / existence-based view.
+ */
+```

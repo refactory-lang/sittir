@@ -1012,3 +1012,30 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * - ALIAS: not handled — an alias is semantically distinct from its content.
  */
 ```
+
+### `ShapedSymbols` (`packages/codegen/src/dsl/wire/wire.ts:222`)
+
+```text
+/**
+ * Shape of an options argument passed to tree-sitter's `grammar()` — the
+ * fields `wire()` knows about. Extra fields are passed through
+ * unchanged.
+ *
+ * `Base` is the base tree-sitter grammar's type (typically `typeof base`
+ * imported from `tree-sitter-<lang>/grammar.js`). Constrains
+ * `polymorphs` / `transforms` keys to base rule kinds; `rules` stays
+ * permissive (`Partial<Record<BaseKind, RuleFn>> & Record<string, RuleFn>`)
+ * to keep the hidden-name escape hatch for synthesized rules
+ * (`_kw_<field>`, `_<parent>_<variant>`, `_<alias>`).
+ */
+```
+
+### `passthroughBaseRuleFn` (`packages/codegen/src/dsl/wire/wire.ts:786`)
+
+```text
+/**
+ * Passthrough rule fn for base rules that wire couldn't otherwise reach.
+ * Returns `previous` unchanged; the pattern-replacement pass wraps this
+ * fn so the returned body is structurally walked and substituted.
+ */
+```

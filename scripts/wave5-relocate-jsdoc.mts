@@ -74,7 +74,10 @@ function extractSymbolName(declText: string): string {
     'class',
     'type',
     'abstract',
-    'declare'
+    'declare',
+    'const',
+    'let',
+    'var'
   ]);
   const tokens = declText.split(/\s+/);
   for (const tok of tokens) {

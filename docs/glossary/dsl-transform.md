@@ -940,3 +940,14 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * @throws {Error} If no global `field()` function is available in the runtime.
  */
 ```
+
+### `PREC_VARIANT_MAP` (`packages/codegen/src/dsl/transform/transform-path.ts:573`)
+
+```text
+/**
+ * Reconstruct a precedence wrapper via the runtime's native prec.left/
+ * prec.right/prec.dynamic/prec function. Preserves the precedence
+ * value so tree-sitter's parser-generator can resolve conflicts the
+ * same way as the base grammar.
+ */
+```

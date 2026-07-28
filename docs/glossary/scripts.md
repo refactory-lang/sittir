@@ -264,3 +264,58 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /** True when the binary is OLDER than at least one compiled-in input. */
 ```
+
+### `EMITTER_ORDER` (`packages/codegen/src/scripts/emit-diff.ts:23`)
+
+```text
+/** Emitter buckets, in display order. */
+```
+
+### `HOST_BINARY_SENTINEL` (`packages/codegen/src/scripts/generated-manifest.ts:135`)
+
+```text
+/** Sentinel value for `host_files` entries — see {@link Manifest.host_files}. */
+```
+
+### `cachedCodegenHash` (`packages/codegen/src/scripts/generated-manifest.ts:142`)
+
+```text
+/**
+ * Memoized hash of the GENERATION-side `packages/codegen/src/**` — the third
+ * input to every generation. If codegen source changes (e.g., a bugfix in a
+ * wrap emitter), the same per-grammar overrides should produce different
+ * output, so the source_hash needs to reflect this. Memoized per process
+ * because it walks many files and never changes within a single run.
+ *
+ * Scoped to PRODUCER code: `validate/**` is excluded — validators CONSUME
+ * generated output and never alter the emitted bytes, so hashing them forced
+ * a full regen for every validator-only edit (the only validator-derived
+ * artifact, `test-fixtures.json`, is manifest-untracked — see
+ * `isManifestUntracked`). Everything else (compiler, emitters, run-codegen,
+ * scripts) stays in the hash: `scripts/` includes this manifest module
+ * itself, whose format changes legitimately require a re-stamp.
+ */
+```
+
+### `ALLOWLISTED_RENAMES` (`packages/codegen/src/scripts/reconcile-naming.ts:44`)
+
+```text
+/**
+ * Intended §2 renames, accepted as count-gated improvements (not byte-identical
+ * to legacy). Each entry pins the EXACT expected delta — kind, slot, projection,
+ * AND both the legacy and recomputed values. A divergence is allowlisted only if
+ * it matches an entry on all five fields, so a NEW mismatch on the same slot (a
+ * different projection, or the same projection with different values) is still
+ * UNEXPECTED and fails the gate. This keeps the "count-gated" promise: the
+ * allowlist suppresses precisely the known rename, nothing adjacent.
+ *
+ * These are inferred UNNAMED slots with a GENUINELY single parse-kind that §2
+ * projects to the kind name, where legacy hard-coded the generic `content`; the
+ * kind name is the desired surface, and the PR-B cutover renames the field.
+ *
+ * NB: only TRULY single-kind slots belong here. `splat_pattern.content` looked
+ * single-kind but holds `[identifier, "_"]` (a literal with no parseKind); its
+ * `content` name is correct and is now produced by the projection's
+ * `hasUnnamedValue` guard — NOT allowlisted.
+ */
+```

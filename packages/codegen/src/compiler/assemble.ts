@@ -862,21 +862,6 @@ function resolveHiddenRuleContent(rule: RenderRule, seen: Set<string>, ctx: Asse
 	}
 }
 
-/**
- * Find `typeName` collisions between hidden (`_`-prefixed) kinds and their visible
- * siblings, and disambiguate by renaming the hidden kinds.
- *
- * @param nodes - The full assembled node map; `typeName` and `factoryName` on
- *   colliding hidden nodes are mutated.
- * @remarks
- *   Non-colliding hidden kinds keep their clean names. Emits a warning for every
- *   rename so the run log surfaces which grammar rules are sharing names.
- *
- *   Three collision patterns are handled:
- *   - `visible ≥ 1` AND `hidden ≥ 1` → rename hidden(s) via {@link renameCollidingHiddenKinds}
- *   - `visible ≥ 2` → rename lower-priority visible(s) via {@link renameCollidingVisibleKinds}
- *   - `hidden ≥ 2` → rename lower-priority hidden(s) via {@link renameCollidingHiddenOnlyKinds}
- */
 export function hydrateSlotRefs(nodeMap: NodeMap): void {
 	const externals = nodeMap.externals ?? new Set<string>();
 	for (const [kind, node] of nodeMap.nodes) {

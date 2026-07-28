@@ -2,7 +2,7 @@ id: function-level-jsdoc
 language: TypeScript
 severity: hint
 message: >
-  Function/method/type-level JSDoc block. Per AGENTS.md "Wave-style
+  Function/method/type/const-level JSDoc block. Per AGENTS.md "Wave-style
   decomposition before commits" (wave 5+): this documentation should move to
   (or update) an entry in docs/compiler-phase-glossary.md (or the matching
   docs/glossary/<dir>.md) instead of living as a JSDoc block above the
@@ -21,6 +21,7 @@ rule:
     - kind: interface_declaration
     - kind: class_declaration
     - kind: type_alias_declaration
+    - kind: lexical_declaration
     - kind: property_signature
     - kind: method_signature
     - all:
@@ -32,17 +33,17 @@ rule:
               - kind: interface_declaration
               - kind: class_declaration
               - kind: type_alias_declaration
+              - kind: lexical_declaration
   follows:
     kind: comment
     regex: '^/\*\*'
     stopBy: neighbor
 note: >
   Wave 5 comment-cleanup audit (2026-07-28): started narrowed to function/
-  method declarations only (`export const`/`export type`/`export interface`
-  excluded, since those doc data shapes not function contracts). Widened to
-  also cover interface/class/type-alias declarations and interface members
-  (`property_signature` / `method_signature`) once the same relocation
-  convention was confirmed to apply there too — `export const` (lexical
-  declarations) remains OUT of scope. Cross-check each match against whether
-  the target glossary doc already documents the symbol before moving/
-  rewriting anything.
+  method declarations only, then widened to interface/class/type-alias
+  declarations and interface members (`property_signature` /
+  `method_signature`), then widened again to `const`/`let` declarations
+  (`lexical_declaration`, bare and exported) once the same relocation
+  convention was confirmed to apply there too. Cross-check each match
+  against whether the target glossary doc already documents the symbol
+  before moving/rewriting anything.

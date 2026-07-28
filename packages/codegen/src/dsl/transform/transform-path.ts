@@ -570,12 +570,6 @@ function reconstructRepeatWithMetadata(rule: RuntimeRule, newContent: RuntimeRul
 	return baseNode as unknown as RuntimeRule;
 }
 
-/**
- * Reconstruct a precedence wrapper via the runtime's native prec.left/
- * prec.right/prec.dynamic/prec function. Preserves the precedence
- * value so tree-sitter's parser-generator can resolve conflicts the
- * same way as the base grammar.
- */
 const PREC_VARIANT_MAP = {
 	PREC_LEFT: 'left',
 	PREC_RIGHT: 'right',

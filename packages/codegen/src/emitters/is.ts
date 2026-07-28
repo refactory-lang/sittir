@@ -36,7 +36,6 @@ export interface EmitIsConfig {
 
 const toCamelCase = snakeToCamel;
 
-/** JS reserved words that need a trailing `_` when used as a guard key. */
 const RESERVED = new Set([
 	'break',
 	'case',
@@ -87,7 +86,6 @@ const RESERVED = new Set([
 	'kind'
 ]);
 
-/** Methods on the `is` / `assert` namespaces beyond per-kind entries. */
 const RESERVED_GUARD_NAMES = new Set(['kind']);
 
 function safeGuardKey(camel: string): string {

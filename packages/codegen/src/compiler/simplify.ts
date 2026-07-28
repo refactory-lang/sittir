@@ -84,19 +84,6 @@ import type { AssembledNode } from './model/node-map.ts';
 // of constructing wrapper nodes, so simplify stays field/optional/repeat-free.
 // ---------------------------------------------------------------------------
 
-/**
- * Compiler-side `RuleBuilder` that converts wrapper-construction calls into
- * attribute pushes (via `deleteWrapper`), keeping simplify's output
- * field/optional/repeat/repeat1-node-free. Structural constructors (`seq` /
- * `choice`) delegate to the structural builder (same plain node literals).
- *
- * - `field(name, X)` → push `fieldName` + `nonterminal:true` onto X.
- * - `optional(X)` → empty-seq sentinel when X is already empty; strip bare
- *   anonymous delimiter string; otherwise `deleteWrapper(optional(X))` which
- *   pushes `multiplicity: 'optional'` onto the leaves.
- * - `repeat(X)` / `repeat1(X)` → `deleteWrapper({type:REPEAT|REPEAT1, content:X})`.
- * - `seq` / `choice` → plain structural nodes (same as structuralBuilder).
- */
 export const attributeBuilder: RuleBuilder = {
 	seq: (members) => ({ type: SEQ, members }),
 	choice: (members) => ({ type: CHOICE, members }),
@@ -122,43 +109,6 @@ export const attributeBuilder: RuleBuilder = {
 // These are used exclusively by the simplify phase.
 // ---------------------------------------------------------------------------
 
-/**
- * Canonicalize a rule toward the universal seq-of-leaves shape:
- *   - Recursively canonicalize children.
- *   - Flatten degenerate single-member seqs (`seq([X])` → `X`).
- *
- * Does NOT perform attribute push-down — applyWrapperDeletion in normalize
- * already did that. Does NOT synthesize groups — applyAutoGroups (wire
- * phase) already did that.
- *
- * This is the final structural cleanup pass that absorbs the trivial
- * `seq([X])` → `X` shapes left behind by upstream transformations.
- * Idempotent — running it twice produces the same result as running once.
- *
- * Stays AnyRule-typed (phase-visibility-tightening finding): recursion is
- * delegated to a bare `RuleWalker<AnyRule>` (R12 traversal engine), which
- * still passes through wrapper nodes (FIELD/OPTIONAL/REPEAT/REPEAT1/TOKEN/
- * ALIAS) structurally via its generic `content` edge — confirmed load-bearing
- * by `simplify-universal-shape.test.ts`'s "preserves leaf content inside
- * wrappers (does not push down attributes)" case, which feeds a FIELD-wrapped
- * rule directly and asserts the wrapper survives untouched. Every PRODUCTION
- * call (`computeSimplifiedRules`) passes RenderRule-shaped input (simplifyRule
- * already guarantees no wrapper nodes reach this point), but the function
- * itself is not restricted to that — narrowing the signature would make the
- * type dishonest in the other direction (claiming it can't handle a shape it
- * demonstrably does).
- *
- * `RuleWalker.map` is NOT a drop-in replacement for the former
- * `recurseChildren`-based self-recursive visitor: `map` already recurses the
- * whole subtree internally and applies `visit` to every already-mapped node,
- * so `visit` here (`collapseSingleMemberSeq`) does ONLY the single-level
- * collapse — it must NOT call `canonicalizeSeqOfLeaves` on itself (that would
- * recurse twice). The exported function additionally applies
- * `collapseSingleMemberSeq` to `map`'s own return value, since `map` rebuilds
- * a node's children bottom-up but does not apply `visit` to the top node
- * itself — matching `recurseChildren(rule, canonicalizeSeqOfLeaves)` followed
- * by the collapse check that used to sit inline in this function.
- */
 const seqOfLeavesWalker = new RuleWalker<AnyRule>();
 
 function collapseSingleMemberSeq(recursed: AnyRule): AnyRule {

@@ -41,24 +41,6 @@ export interface Divergence {
 	recomputed: string;
 }
 
-/**
- * Intended §2 renames, accepted as count-gated improvements (not byte-identical
- * to legacy). Each entry pins the EXACT expected delta — kind, slot, projection,
- * AND both the legacy and recomputed values. A divergence is allowlisted only if
- * it matches an entry on all five fields, so a NEW mismatch on the same slot (a
- * different projection, or the same projection with different values) is still
- * UNEXPECTED and fails the gate. This keeps the "count-gated" promise: the
- * allowlist suppresses precisely the known rename, nothing adjacent.
- *
- * These are inferred UNNAMED slots with a GENUINELY single parse-kind that §2
- * projects to the kind name, where legacy hard-coded the generic `content`; the
- * kind name is the desired surface, and the PR-B cutover renames the field.
- *
- * NB: only TRULY single-kind slots belong here. `splat_pattern.content` looked
- * single-kind but holds `[identifier, "_"]` (a literal with no parseKind); its
- * `content` name is correct and is now produced by the projection's
- * `hasUnnamedValue` guard — NOT allowlisted.
- */
 export const ALLOWLISTED_RENAMES: readonly Divergence[] = [
 	// format_specifier.content: genuinely 1 value → format_expression.
 	{

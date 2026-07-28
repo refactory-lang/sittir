@@ -38,20 +38,6 @@ import { isSymbolLike } from '../../types/runtime-shapes.ts';
 // have no scope to attach the binding to.
 let currentRoles: Map<string, ExternalRole> | null = null;
 
-/**
- * Mark an external token symbol with a structural-whitespace role.
- * Returns the symbol unchanged so the call site can be a transparent
- * member of the externals array.
- *
- * **Tree-sitter compatibility**: when `role()` is called outside any
- * sittir-managed scope (e.g. when tree-sitter's CLI loads the
- * transpiled `.sittir/grammar.js` and runs `grammar()` natively),
- * the binding is silently dropped and only the symbol passthrough
- * runs. Tree-sitter doesn't read role bindings — they only matter
- * to sittir's Link phase, which always evaluates the override file
- * inside a `withRoleScope` block. This keeps the same call site valid
- * for both consumers without runtime feature detection.
- */
 const VALID_ROLE_NAMES = new Set(['indent', 'dedent', 'newline'] as const);
 
 export function role(symbol: Rule, roleName: 'indent' | 'dedent' | 'newline'): Rule {

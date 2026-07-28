@@ -40,11 +40,6 @@ export interface RawNodeEntry {
 	subtypes?: Array<{ type: string; named: boolean }>;
 }
 
-/**
- * Non-standard node-types.json locations. Most grammars follow the
- * `tree-sitter-{name}/src/node-types.json` convention; this table
- * lists the exceptions (typescript ships two grammars per package).
- */
 const GRAMMAR_PATHS: Readonly<Record<string, string>> = {
 	typescript: 'tree-sitter-typescript/typescript/src/node-types.json',
 	tsx: 'tree-sitter-typescript/tsx/src/node-types.json'

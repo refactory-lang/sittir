@@ -75,22 +75,6 @@ export function loadGrammarJsonAliasMap(grammar: string): ReadonlyMap<string, st
 	return out;
 }
 
-/**
- * Inline-DECISION set for the simplify pass: which grammar.inline kinds
- * inlineRefs should substitute. The gate is "in grammar.inline AND modelType
- * is NOT a supertype / keyword / token / pattern / enum". Supertypes are typed
- * unions referenced by name (inlining them explodes a clean union into its
- * alternatives at a seq position → non-canonical choice-at-seq); keyword /
- * token helpers are leaf lexemes that must stay as scalar slot refs. The
- * remaining inline kinds — auto-synthesized group-lift helpers (`branch`) and
- * the hidden structural helpers tree-sitter expands at parse time — ARE
- * inlined so sittir's derivation matches the flat parser output.
- *
- * NOTE: this is a SEPARATE set from the raw grammar.json inline list, which
- * the emitters use as the "skip emitting this inlined kind" list
- * (emitters/shared.ts). Filtering that list would un-skip supertypes/keywords
- * and emit phantom concrete kinds — so the decision set is kept distinct.
- */
 const NON_INLINABLE_MODEL_TYPES = new Set(['supertype', 'keyword', 'token', 'pattern', 'enum']);
 
 export function buildInlinableKinds(inlineKinds: ReadonlySet<string>, linked: LinkedGrammar): Set<string> {

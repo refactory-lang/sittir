@@ -44,7 +44,6 @@ interface AuthoringAlias {
 }
 export const alias = aliasImpl as unknown as AuthoringAlias;
 
-/** Patches preserve the rule's shape → return the original's (recursive) type. */
 export const transform = transformImpl as unknown as <T>(original: T, ...patches: readonly unknown[]) => T;
 
 // `prec`/`token` are runtime-injected by `saveAndInjectDslGlobals` (same as

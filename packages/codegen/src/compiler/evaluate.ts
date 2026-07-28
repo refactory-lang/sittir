@@ -421,11 +421,6 @@ interface GrammarOptions {
 	precedences?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[][];
 }
 
-/**
- * The `grammar()` function — mirrors tree-sitter's DSL entry point.
- * When called with one arg: fresh grammar.
- * When called with two args: grammar extension (base + overrides).
- */
 interface MetadataSinks {
 	extras: string[];
 	externals: string[];

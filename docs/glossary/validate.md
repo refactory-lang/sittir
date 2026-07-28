@@ -105,3 +105,13 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /** Classification per kind. */
 ```
+
+### `GRAMMAR_PATHS` (`packages/codegen/src/validate/node-types-loader.ts:43`)
+
+```text
+/**
+ * Non-standard node-types.json locations. Most grammars follow the
+ * `tree-sitter-{name}/src/node-types.json` convention; this table
+ * lists the exceptions (typescript ships two grammars per package).
+ */
+```

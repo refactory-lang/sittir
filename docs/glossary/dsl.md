@@ -1513,3 +1513,120 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * a full TransformCtx.
  */
 ```
+
+### `transform` (`packages/codegen/src/dsl/dsl-authoring.ts:47`)
+
+```text
+/** Patches preserve the rule's shape → return the original's (recursive) type. */
+```
+
+### `ENRICH_CLAUSE_GROUPS_KEY` (`packages/codegen/src/dsl/enrich.ts:299`)
+
+```text
+/**
+ * Well-known non-enumerable key attached by `enrich()` to the grammar result
+ * when clause-hoist synthesized any hidden group rules. Wire.ts reads this to
+ * register the hoisted names in `WireContext.syntheticInline` so they end up
+ * in the grammar's `inline:` list (required to prevent tree-sitter LR
+ * conflicts from the newly-injected hidden rules).
+ */
+```
+
+### `ENRICH_CLAUSE_GROUP_OWNERS_KEY` (`packages/codegen/src/dsl/enrich.ts:315`)
+
+```text
+/**
+ * Well-known non-enumerable key attached by `enrich()` to the grammar result:
+ * synthesized clause-hoist name → the parent kind whose (pre-override) body
+ * it was hoisted from. Covers BOTH categories `ENRICH_CLAUSE_GROUPS_KEY`
+ * covers (inline-safe) AND the visible-aliased hidden names it deliberately
+ * excludes (`_<parent>_group<N>`) — wire() needs both, since an override
+ * redeclaring the recorded owner orphans the synthesized rule regardless of
+ * which category it's in.
+ */
+```
+
+### `ENRICH_VISIBLE_GROUP_SOURCES_KEY` (`packages/codegen/src/dsl/enrich.ts:333`)
+
+```text
+/**
+ * Well-known non-enumerable key attached by `enrich()`: the hidden SOURCE
+ * rule names behind every visible-group mint (`alias($._src, $.visible)`) —
+ * both the promote-existing-hidden-rule and synthesize-new-body categories.
+ */
+```
+
+### `ENRICH_UNALIAS_DIAGNOSTICS_KEY` (`packages/codegen/src/dsl/enrich.ts:1671`)
+
+```text
+/**
+ * Well-known non-enumerable key under which `enrich()` attaches the
+ * (downgraded, non-blocking) `parsekind-noninjective` diagnostics its
+ * un-aliasing pass produced for a given grammar evaluation. Read via
+ * `getEnrichUnaliasDiagnostics`.
+ *
+ * Attached to the SAME evaluation's own return object rather than a
+ * module-level accumulator (the former design): a module-global array only
+ * populated on the FIRST import of a grammar's entry path — Node caches the
+ * module, so a second `evaluate()` of the same grammar in one process would
+ * observe an empty drain even though the diagnostics conceptually still apply;
+ * concurrent evaluations of different grammars would also interleave into one
+ * shared array. Travelling with the result object avoids both: the diagnostics
+ * stay on the (cached) grammar object, correct on every read, per-grammar.
+ */
+```
+
+### `structuralBuilder` (`packages/codegen/src/dsl/rule-transforms.ts:44`)
+
+```text
+/**
+ * Structural builder: each method builds the plain node literal exactly as
+ * the construction sites previously did. Byte-identical to hand-written
+ * literals; used as the safe default when no ctx.builder is present.
+ */
+```
+
+### `flagWalker` (`packages/codegen/src/dsl/rule-transforms.ts:91`)
+
+```text
+/**
+ * Does `rule` contain a repeat/repeat1 that declares the given flag?
+ *
+ * `trailing: true` marks `sepBy` shapes where the final separator is
+ * optional (e.g. rust's `{ a, b, }`). `leading: true` marks the
+ * mirror shape `sep, x, (sep x)*` (rust's or_pattern `| a | b`, if
+ * written as a single repeat). Evaluate's `liftCommaSep` captures
+ * both from their canonical seq patterns. Render reads each flag via
+ * the `joinByTrailing` / `joinByLeading` template hints to know
+ * whether to probe for a flanking anon-separator token when emitting
+ * `$$$CHILDREN`.
+ *
+ * Walks the same transparent-wrapper set as `findNestedSeparator`
+ * (seq / choice / optional / variant / clause / group / field).
+ *
+ * Moved from template-walker.ts (origin: template-walker.ts:65).
+ */
+```
+
+### `fuseHeadRepeatListsWalker` (`packages/codegen/src/dsl/rule-transforms.ts:434`)
+
+```text
+/**
+ * Fuse head+repeat separated-list pairs into a single multi slot, recursively.
+ * Behaviour-preserving everywhere else — non-seq rules and seqs without the
+ * head+repeat shape pass through unchanged (reference-identical when no fusion
+ * applies).
+ *
+ * Recursion is delegated to a bare `RuleWalker<AnyRule>` (R12 traversal
+ * engine), replacing the former `recurseChildren`-based self-recursive
+ * visitor. `RuleWalker.map` is NOT a drop-in replacement: `map` already
+ * recurses the whole subtree internally and applies `visit` to every
+ * already-mapped node, so `visit` here (`fuseAtNode`) does ONLY the
+ * single-level fusion — it must NOT call `fuseHeadRepeatLists` on itself
+ * (that would recurse twice). `fuseHeadRepeatLists` additionally applies
+ * `fuseAtNode` to `map`'s own return value, since `map` rebuilds a node's
+ * children bottom-up but does not apply `visit` to the top node itself —
+ * matching `recurseChildren(rule, fuseHeadRepeatLists)` followed by the
+ * seq-fusion check that used to sit inline in this function.
+ */
+```

@@ -278,3 +278,15 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /** List of diagnostic messages to allow (passed from CLI allowlist). */
 ```
+
+### `OXFMT_EFFECTIVE_CONFIG` (`packages/codegen/src/oxfmt-config.ts:36`)
+
+```text
+/**
+ * The effective config for formatting a single `.ts` file's content via
+ * oxfmt's programmatic `format()` API. That API does not auto-discover
+ * `.editorconfig` the way oxfmt's CLI does, so `.editorconfig`'s
+ * `indent_style = tab` rule for `.ts` files (repo-wide, `root = true`,
+ * unambiguous) is merged in by hand here.
+ */
+```

@@ -1197,26 +1197,6 @@ function resolveNamedAliasWithProvenance(content: Rule<'link'>, ctx: LinkCtx, ta
 	return sym;
 }
 
-/**
- * Resolve a symbol rule, inlining it when it references an external role token.
- *
- * @param rule - The symbol rule to resolve.
- * @param ctx - Link phase context; `ctx.rules` is used for legacy structural
- *   detection, `ctx.externalRoles` is the pre-bound external role map (entries
- *   are added when a dummy role rule is detected — legacy path).
- * @returns An inlined role rule (`indent`/`dedent`/`newline`) when the symbol
- *   resolves to an external role; the original symbol rule otherwise.
- * @remarks
- *   Two resolution paths:
- *   - Pre-bound: the override declared the role via `role($._indent, 'indent')`
- *     in `externals`; `raw.externalRoles` seeded the map before `resolveRule`
- *     ran. Inline a role node so template emitters render real newlines/indents.
- *   - Legacy structural: the grammar declares a dummy rule like
- *     `_foo: ($) => role('indent')` whose body is a direct
- *     `indent`/`dedent`/`newline` node. Inline it and record the binding for
- *     downstream consumers.
- *   Visible symbols that don't match either path are returned unchanged.
- */
 const ROLE_TO_RULE_TYPE = {
 	indent: INDENT,
 	dedent: DEDENT,

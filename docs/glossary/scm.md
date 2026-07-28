@@ -254,3 +254,34 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * unchecked index access.
  */
 ```
+
+### `CAPTURE_TO_ROLE` (`packages/codegen/src/scm/extract-roles.ts:75`)
+
+```text
+/**
+ * Mapping from SCM capture names to semantic roles.
+ *
+ * Each entry maps a capture base (e.g. `'comment'`) to a role. Sub-captures
+ * like `@comment.documentation` map to the same base role (`'trivia'`).
+ *
+ * Entries with an explicit sub-capture (e.g. `'string.special'`) produce a
+ * sub-role AND contribute to the parent base role. The sub-capture entry must
+ * come BEFORE the base entry so that the more specific match wins during
+ * iteration (the first match that fires also populates the base role via the
+ * base-capture fallthrough).
+ */
+```
+
+### `FALLBACK_PROBES` (`packages/codegen/src/scm/extract-roles.ts:235`)
+
+```text
+/**
+ * Well-known kind names that map to semantic roles across tree-sitter
+ * grammars. When SCM captures don't discover a role, these probes add
+ * the canonical kind names for that role so the `ir.from.*` surface
+ * can emit canonical factories.
+ *
+ * Each probe is a [role, candidate-kind-names] pair. The probe only
+ * fires if the role has no kinds after SCM extraction.
+ */
+```

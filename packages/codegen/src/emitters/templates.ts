@@ -339,16 +339,8 @@ export function emitGroupTemplate(node: AssembledGroup, ctx: EmitCtx): string {
 //   adjacent to visible content (e.g. `pub fn` not `pub  fn` nor `pubfn`).
 // ---------------------------------------------------------------------------
 
-/** Full Jinja conditional: `{% if ... %}...{% endif %}` (incl. whitespace-strip variants). */
 const JINJA_COND_FULL_RE = /^(\{%-? if [^%]+-?%\})([\s\S]*)(\{%-? endif -?%\})$/;
 
-/**
- * A virtual word-like character used to stand in for slot emissions
- * (`{{ name }}`) and other dynamic content whose runtime first/last char
- * is unknown but typically an identifier / literal head. Using a real
- * word character lets the grammar's wordMatcher decide consistently
- * (matches `\w`, `[a-zA-Z_]`, identifier-shaped patterns).
- */
 const SLOT_WORDLIKE_CHAR = 'a';
 
 function firstBoundaryCharOfFragment(fragment: string): string | undefined {
@@ -721,18 +713,6 @@ function selectJoinFilter(
 	return 'join';
 }
 
-/**
- * Default join separator when the grammar didn't capture an explicit
- * separator literal. SpacingWriter first consumer (2026-07-24 spec):
- * empty — the render-time writer inserts a space exactly where a
- * word-class char would collide with a word-class char, so unseparated
- * lists no longer need a simulated style space. This is what lets a
- * statement list whose items self-terminate (';', visible `newline` /
- * `automatic_semicolon` nodes rendering '\n') join without planting
- * line-leading whitespace after the terminator — a python indentation
- * error under the old ' ' default. Grammar-captured separators
- * (ruleSep / per-value separators) are real tokens and unaffected.
- */
 const DEFAULT_JOIN_SEPARATOR = '';
 
 function emitListSlot(slotName: string, rule: RenderRule, slot?: AssembledNonterminal): string {

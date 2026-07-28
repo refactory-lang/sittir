@@ -82,15 +82,6 @@ function findNestedSeparator(rule: AnyRule): RuleBase<'normalize'>['separator'] 
 	}
 }
 
-/**
- * Sink for unnamed-choice-slot occurrences (Task C2). A naked choice (no
- * `fieldName`, not a polymorph) has no grammar-given name, so it falls back to
- * an unresolvable `content` slot — the grammar author must field-name it in
- * `packages/<lang>/overrides.ts`. Rather than emit a scattered per-occurrence
- * warning, the default sink ACCUMULATES the owning kinds so the codegen run can
- * report them as one collected diagnostic (drain via {@link drainUnnamedChoiceSlots}).
- * Tests install a spy via {@link setUnnamedChoiceWarner}.
- */
 const collectedUnnamedChoiceKinds = new Set<string>();
 // Extra listeners registered via addUnnamedChoiceListener (e.g. the DiagnosticSink
 // forwarder in generate.ts). These run IN ADDITION to the primary warner, so
@@ -220,14 +211,6 @@ export function unionRoutingGateB(partition: ChoiceArmPartition): boolean {
 	return partition.unionArms.length > 0 && partition.structuredArms.length === 0 && partition.literalArms.length === 0;
 }
 
-/**
- * Union-slot routing switch. Default ON; `SITTIR_UNION_SLOT_ROUTING=0` forces
- * the pre-design distribution behavior (A/B comparison + census dry-runs).
- * The gate (a) boundary pass also toggles this off for its pessimistic rerun.
- * Diagnostics (`union-slot-routed` / `union-slot-nondegenerate-arm`) fire on
- * the PREDICATE regardless of the switch, so a routing-disabled run still
- * yields the full census.
- */
 let unionSlotRouting = process.env['SITTIR_UNION_SLOT_ROUTING'] !== '0';
 
 export function setUnionSlotRouting(on: boolean): boolean {
@@ -236,13 +219,6 @@ export function setUnionSlotRouting(on: boolean): boolean {
 	return prev;
 }
 
-/**
- * Rule-ids of choices that synthesized a union slot since the last drain.
- * The `deriveSlots` boundary drains this after each whole-rule collection and
- * uses `sourceRuleIds` intersection to find the union slots in the output
- * (slot object identity does not survive `mergeChoiceArms`' `.with()` copies;
- * rule-id back-pointers do — feedback_ruleid_backpointer).
- */
 const _synthesizedUnionChoiceIds = new Set<string>();
 
 export function drainSynthesizedUnionChoiceIds(): ReadonlySet<string> {

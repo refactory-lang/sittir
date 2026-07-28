@@ -266,33 +266,8 @@ export const RUST_KEYWORDS = new Set([
 	'union'
 ]);
 
-/**
- * Per-supertype transport enum names that collide with pre-existing
- * generated items and must be skipped during Phase 2 supertype-enum
- * emission.  The `_literal` supertype has `typeName = 'Literal'` which
- * would produce `pub enum LiteralTransport`.  Keep reserved so the
- * supertype enum is not emitted; slots fall back to `Box<AnyTransport>`
- * (`heterogeneous`).
- */
 const RESERVED_SUPERTYPE_ENUM_NAMES = new Set(['LiteralTransport']);
 
-/**
- * Sittir-infra transport type names `rustTransportStructName` must never
- * collide with — `renderTransportSupport` emits exactly one of each,
- * unconditionally, as global dispatch/support machinery (the `AnyTransport`
- * kind_id-dispatch enum, `VerbatimTransport`/`ProtectedTransport`'s bare-text
- * carriers, `LiteralTransport`). A grammar-authored kind whose PascalCase
- * `typeName` happens to match one of these (confirmed concretely: TypeScript's
- * `any` keyword type-names to `Any`, so its per-kind struct would otherwise
- * also be named `AnyTransport`) produces two Rust items with the identical
- * name in the same module — a hard `E0428`/`E0119` compile error, not a
- * cosmetic naming quirk. This was a documented, anticipated risk left
- * unresolved by the original typed-transport-fields plan (its "Open
- * questions" #1 covered the analogous supertype-enum case, resolved there via
- * `RESERVED_SUPERTYPE_ENUM_NAMES`'s skip-and-fall-back strategy — skipping
- * isn't available here since a kind's own per-kind struct can't just be
- * omitted without losing its data).
- */
 const RESERVED_TRANSPORT_STRUCT_NAMES = new Set([
 	'AnyTransport',
 	'VerbatimTransport',
@@ -1192,15 +1167,6 @@ function renderTypedBranchFn(
 	return lines;
 }
 
-/**
- * Fully-qualified prefix for the core `Renderable` enum.
- *
- * This module defines a local `pub enum Renderable` (Text+Joined) that
- * shadows `sittir_core::filters::Renderable` (Text+Joined+Transport).
- * The typed dispatch path constructs `::sittir_core::filters::Renderable::Transport`
- * values that feed into `ListNonterminalView.items`, so the full path is
- * required to avoid resolving to the wrong local type.
- */
 const RENDERABLE_PREFIX = '::sittir_core::filters::';
 
 function emitIterCollectBuffer(ident: string, sourceExpr: string, mapBody: string, filterAnon = false): string[] {
@@ -1904,8 +1870,6 @@ function filtersModule(): string {
 function collectUsedSupertypeNames(nodes: readonly AssembledNode[], nodeMap: NodeMap): Set<string> {
 	const used = new Set<string>();
 
-	/** Accumulate supertype names from a single node's slots — named and
-	 *  unnamed flow through one path (cleanup-rules §E1). */
 	const collectFromSlots = (slots: readonly AssembledNonterminal[]): void => {
 		for (const slot of slots) {
 			const cls = classifySlotForEmit(kindsOf(slot), nodeMap);
@@ -3414,14 +3378,6 @@ interface TransportMetadataField {
 	needsExplicitTypeAnnotation?: boolean;
 }
 
-/**
- * Metadata fields shared by all transport structs.
- *
- * `transport_text` is intentionally absent — it is present on branch
- * transport structs (which always include it) but NOT on leaf structs
- * (which use a plain `text: String` field instead). It is added
- * conditionally by `renderTransportMetadataFields`.
- */
 const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
 	{ jsName: '$source', rustName: 'transport_source', rustType: 'Option<Source>' },
 	{ jsName: '$named', rustName: 'transport_named', rustType: 'Option<bool>' },
@@ -3445,11 +3401,6 @@ const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
 	{ jsName: '$triviaData', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>' }
 ];
 
-/**
- * The `transport_text` field, conditional on branch structs. Kept
- * separate from `TRANSPORT_METADATA_FIELDS` because leaf structs use
- * a plain `text: String` instead.
- */
 const TRANSPORT_TEXT_FIELD: TransportMetadataField = {
 	jsName: '$text',
 	rustName: 'transport_text',
@@ -3734,12 +3685,6 @@ function rustTypeIdent(name: string): string {
 // Enum transport type emission
 // ----------------------------------------------------------------------
 
-/**
- * Mapping from operator/punctuation literal text to a safe Rust PascalCase
- * identifier. Covers the symbols that appear across the three grammars
- * (rust, typescript, python). Identifiers that need disambiguation from
- * Rust keywords get a `Kw` suffix.
- */
 const LITERAL_TO_VARIANT_NAME: ReadonlyMap<string, string> = new Map([
 	// Arithmetic
 	['+', 'Plus'],

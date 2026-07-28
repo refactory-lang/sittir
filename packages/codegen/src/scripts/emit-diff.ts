@@ -20,7 +20,6 @@
 import { execFileSync } from 'node:child_process';
 import { REPO_ROOT, generatedRootsFor, type Grammar } from './generated-manifest.ts';
 
-/** Emitter buckets, in display order. */
 const EMITTER_ORDER = [
 	'factory',
 	'from',

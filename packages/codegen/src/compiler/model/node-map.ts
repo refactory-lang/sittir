@@ -291,18 +291,6 @@ export interface UnresolvedRef {
 	readonly name: string;
 }
 
-/**
- * A slot-content entry that references a grammar node kind. After
- * `resolveSlotRefs` the `.node` field holds the resolved `AssembledNode`;
- * before that pass (or for unresolvable dead-kind references) it holds
- * an `UnresolvedRef`.
- *
- * Per-value `separator` / `trailing` / `leading` replace the prior per-slot
- * `AssembledNonterminal.hasTrailing` / `hasLeading` flags. Only meaningful
- * when this value's `multiplicity` is `'array'` or `'nonEmptyArray'`.
- * Populated by the unified `deriveSlots` walk — undefined on values from
- * non-repeat positions.
- */
 export type BranchSlotClass =
 	| { tag: 'multiSlot' }
 	| {
@@ -464,14 +452,6 @@ export interface RenderTemplateSlot {
 // Derivation helpers — walk a Rule<'link'> to produce fields, children, content types
 // ---------------------------------------------------------------------------
 
-/**
- * `Object.prototype` members that, if a grammar field name camelCases onto
- * one of them, produce a public accessor that shadows a special JS/TS
- * meaning rather than a plain data property — most visibly `constructor`
- * (TypeScript's `new_expression` grammar field), which trips
- * `no-misused-new` on the emitted interface and, worse, overwrites
- * `Object.prototype.constructor` on every wrapped node instance.
- */
 const RESERVED_ACCESSOR_NAMES: ReadonlySet<string> = new Set([
 	'constructor',
 	'toString',
@@ -588,19 +568,6 @@ export function hasAnyChild(rule: Rule<'link'>): boolean {
 	}
 }
 
-/**
- * Dev audit — log shapes that reach derivation in a non-canonical form.
- * Simplify's canonicalization should produce a top-level `seq` (or a
- * single atomic member) with members that are
- * fields / literals / repeats / symbols. Anything else means simplify
- * didn't finish normalizing, and the trivialized `projectFields` /
- * `projectChildren` walks won't see the content.
- *
- * Opt in via `SITTIR_AUDIT_DERIVE=1`; otherwise silent (zero overhead in
- * normal codegen runs). Captures per-kind shape signatures so we can
- * count distinct non-canonical patterns across the corpus and decide
- * which simplify passes still need work.
- */
 const DERIVE_AUDIT = process.env.SITTIR_AUDIT_DERIVE === '1';
 // Audit default is now 'strict' — every non-canonical shape across the
 // curated grammars has been drained via variant adoption + inline
@@ -622,9 +589,6 @@ function deriveAuditMode(): 'strict' | 'report' | 'off' {
 }
 const auditCounts = new Map<string, number>();
 const auditKindsByShape = new Map<string, string[]>();
-/** Transient — each AssembledNode's constructor sets this before the lazy
- * `fields` / `children` getters fire, so the audit can attribute shapes
- * to their originating kind. */
 let currentAuditKind: string | undefined;
 export function setAuditKindContext(kind: string | undefined): void {
 	currentAuditKind = kind;

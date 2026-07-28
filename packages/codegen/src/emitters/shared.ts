@@ -124,9 +124,6 @@ export function slotLiteralValues(slot: { values: readonly NodeOrTerminal[] }): 
 	return slot.values.filter(isTerminalValue).map((v) => v.value);
 }
 
-/** TypeScript identifier pattern — starts with letter/underscore/dollar,
- * continues with word chars or dollar. Used by emitters to decide whether
- * a kind name can be emitted as a bare identifier vs. a quoted literal. */
 const IDENT_RE = /^[A-Za-z_$][\w$]*$/;
 
 export function isValidIdent(s: string): boolean {

@@ -357,14 +357,6 @@ export const isGroup = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof
 export const isString = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof STRING }> => r.type === STRING;
 export const isSymbol = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof SYMBOL }> => r.type === SYMBOL;
 export const isAlias = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof ALIAS }> => r.type === ALIAS;
-/**
- * (debt PR-P1) Was `r.type === SYMBOL && r.source === 'link'`; `SymbolRule.source`
- * is deleted (relocated to `metadata.symbolSource`, dsl-owned + opaque). `literal`
- * is set ONLY by `compiler/link.ts`'s `canonicalizeRuleLiterals` — the same
- * (now-sole) writer that used to also stamp `source: 'link'` — so checking
- * `literal !== undefined` directly is the exact same condition structurally,
- * not a re-derivation: the one write site produced both facts together.
- */
 export const isLinkSymbol = <R extends AnyRule>(r: R): r is Extract<R, { type: typeof SYMBOL }> =>
 	r.type === SYMBOL && r.literal !== undefined;
 export const literalTextOf = (r: AnyRule): string | undefined =>
