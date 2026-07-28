@@ -108,8 +108,6 @@ import type {
 	EscapeSequenceTree,
 	ExpressionStatement,
 	ExpressionStatementTree,
-	ExpressionStatementWithSemi,
-	ExpressionStatementWithSemiTree,
 	ExternCrateDeclaration,
 	ExternCrateDeclarationTree,
 	ExternModifier,
@@ -678,9 +676,6 @@ export type _Type_MacroDefinitionBracket = _TypeAssert<
 export type _Type_MacroDefinitionBrace = _TypeAssert<
 	_TypeExtends<MacroDefinitionBrace['$type'], TSKindId.MacroDefinitionBrace>
 >;
-export type _Type_ExpressionStatementWithSemi = _TypeAssert<
-	_TypeExtends<ExpressionStatementWithSemi['$type'], TSKindId.ExpressionStatementWithSemi>
->;
 export type _Type_TokenTreePatternParen = _TypeAssert<
 	_TypeExtends<TokenTreePatternParen['$type'], TSKindId.TokenTreePatternParen>
 >;
@@ -1164,9 +1159,6 @@ export type _Tree_MacroDefinitionBracket = _TypeAssert<
 >;
 export type _Tree_MacroDefinitionBrace = _TypeAssert<
 	_TypeExtends<MacroDefinitionBraceTree['type'], '_macro_definition_brace'>
->;
-export type _Tree_ExpressionStatementWithSemi = _TypeAssert<
-	_TypeExtends<ExpressionStatementWithSemiTree['type'], '_expression_statement_with_semi'>
 >;
 export type _Tree_TokenTreePatternParen = _TypeAssert<
 	_TypeExtends<TokenTreePatternParenTree['type'], '_token_tree_pattern_paren'>

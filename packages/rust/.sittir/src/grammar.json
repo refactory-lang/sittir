@@ -5690,8 +5690,15 @@
                 "value": "return"
               },
               {
-                "type": "SYMBOL",
-                "name": "_expression"
+                "type": "FIELD",
+                "name": "expression",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_expression"
+                },
+                "metadata": {
+                  "fieldSource": "enriched"
+                }
               }
             ]
           }
@@ -5720,8 +5727,15 @@
                 "value": "yield"
               },
               {
-                "type": "SYMBOL",
-                "name": "_expression"
+                "type": "FIELD",
+                "name": "expression",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_expression"
+                },
+                "metadata": {
+                  "fieldSource": "enriched"
+                }
               }
             ]
           }
@@ -11548,8 +11562,15 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "_expression"
+          "type": "FIELD",
+          "name": "expression",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_expression"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         },
         {
           "type": "STRING",

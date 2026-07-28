@@ -949,9 +949,9 @@ export interface ExportStatementTypeExportTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
+  _export_clause: ExportClauseTransport
   _source?: StringTransport
   _semicolon: SemicolonEnum
-  _export_clause: ExportClauseTransport
 }
 
 export interface ExpressionStatementTransport {

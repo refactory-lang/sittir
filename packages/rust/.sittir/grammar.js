@@ -1144,6 +1144,7 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
   for (let i = 0; i < MAX_ITERATIONS; i++) {
     const before = r;
     r = applySymbolToField(ruleName, r, supertypeNames);
+    r = applyChoiceArmFieldWrap(ruleName, r, supertypeNames, rulesBag);
     r = applyOptionalKeyword(ruleName, r, kwRules, wordMatcher);
     if (r === before) {
       converged = true;
@@ -1196,6 +1197,80 @@ function extractSupertypeNames(base2, hasWrapper) {
   }
   if (Array.isArray(supertypes)) return harvestSupertypeNames(supertypes);
   return /* @__PURE__ */ new Set();
+}
+function isAnonymousLiteralShapedRule(name, rulesBag, seen) {
+  if (seen.has(name)) return false;
+  seen.add(name);
+  const rule = rulesBag[name];
+  if (!rule) return true;
+  return isAnonymousLiteralShapedContent(rule, rulesBag, seen);
+}
+function isAnonymousLiteralShapedContent(rule, rulesBag, seen) {
+  if (isStringType(rule.type) || rule.type === "PATTERN") return true;
+  if (isChoiceType(rule.type)) {
+    const members = rule.members;
+    return members.every((m) => isAnonymousLiteralShapedContent(m, rulesBag, seen));
+  }
+  if (isSymbolType(rule.type) && typeof rule.name === "string") {
+    return isAnonymousLiteralShapedRule(rule.name, rulesBag, seen);
+  }
+  return false;
+}
+function applyChoiceArmFieldWrap(ruleName, rule, supertypeNames, rulesBag) {
+  if (ruleName.startsWith("_")) return rule;
+  let cursor = rule;
+  const precStack = [];
+  while (isPrecWrapper(cursor)) {
+    precStack.push(cursor);
+    cursor = cursor.content;
+  }
+  if (!isChoiceType(cursor.type)) return rule;
+  const armMembers = cursor.members;
+  let anyArmChanged = false;
+  const newArms = armMembers.map((arm) => {
+    let armCursor = arm;
+    const armPrecStack = [];
+    while (isPrecWrapper(armCursor)) {
+      armPrecStack.push(armCursor);
+      armCursor = armCursor.content;
+    }
+    if (!isSeqType(armCursor.type)) return arm;
+    const seqMembers = armCursor.members;
+    const existing = collectFieldNamesRuntime(armCursor);
+    let armChanged = false;
+    const newSeqMembers = seqMembers.map((m) => {
+      const t = detectSymbolTarget(m);
+      if (!t) return m;
+      if (!isBareShapeTarget(m, t)) return m;
+      let fieldName = t.name;
+      if (t.name.startsWith("_")) {
+        const eligible = supertypeNames.has(t.name) || isAnonymousLiteralShapedRule(t.name, rulesBag, /* @__PURE__ */ new Set());
+        if (!eligible) return m;
+        fieldName = t.name.slice(1);
+      }
+      if (existing.has(fieldName)) {
+        reportSkip("choice-arm-field", ruleName, `field '${fieldName}' already exists`);
+        return m;
+      }
+      existing.add(fieldName);
+      armChanged = true;
+      const fieldNode = makeField(fieldName, t.symbolRule);
+      return t.wrap(fieldNode);
+    });
+    if (!armChanged) return arm;
+    anyArmChanged = true;
+    let rebuiltArm = { ...armCursor, members: newSeqMembers };
+    for (let i = armPrecStack.length - 1; i >= 0; i--) {
+      rebuiltArm = { ...armPrecStack[i], content: rebuiltArm };
+    }
+    return rebuiltArm;
+  });
+  if (!anyArmChanged) return rule;
+  let result = { ...cursor, members: newArms };
+  for (let i = precStack.length - 1; i >= 0; i--) {
+    result = { ...precStack[i], content: result };
+  }
+  return result;
 }
 function extractWordName(word) {
   if (typeof word === "string") return word;

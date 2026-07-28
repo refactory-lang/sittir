@@ -3679,6 +3679,190 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
+      "$type": 166,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 167,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 0,
+            "end": 16
+          },
+          "$nodeHandle": 6,
+          "_content": {
+            "$type": 389,
+            "$source": 0,
+            "$named": true,
+            "_expression": "Linter",
+            "_semicolon": 23,
+            "$other": [
+              128,
+              42
+            ],
+            "$span": {
+              "start": 0,
+              "end": 16
+            },
+            "$nodeHandle": 8
+          }
+        },
+        {
+          "$type": 167,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 17,
+            "end": 29
+          },
+          "$nodeHandle": 7,
+          "_content": {
+            "$type": 389,
+            "$source": 0,
+            "$named": true,
+            "_expression": {
+              "$type": 213,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 26,
+                "end": 28
+              },
+              "$nodeHandle": 10,
+              "_properties": []
+            },
+            "_semicolon": 23,
+            "$other": [
+              128,
+              42
+            ],
+            "$span": {
+              "start": 17,
+              "end": 29
+            },
+            "$nodeHandle": 9
+          }
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 29
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "export=Linter;export={  };"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "export = Linter;\nexport = {};",
+    "pattern": "program",
+    "edits": [],
+    "expectedSourceOut": "export=Linter;export={  };",
+    "expectedReparseTree": "(program statements: (export_statement (export_statement_equals_export expression: (identifier))) statements: (export_statement (export_statement_equals_export expression: (object))))",
+    "wrappedText": "export=Linter;export={  };",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 167,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 0,
+        "end": 16
+      },
+      "$nodeHandle": 1,
+      "_content": {
+        "$type": 389,
+        "$source": 0,
+        "$named": true,
+        "_expression": "Linter",
+        "_semicolon": 23,
+        "$other": [
+          128,
+          42
+        ],
+        "$span": {
+          "start": 0,
+          "end": 16
+        },
+        "$nodeHandle": 11
+      }
+    },
+    "expectedOutput": "export=Linter;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "export = Linter;",
+    "pattern": "export_statement",
+    "edits": [],
+    "expectedSourceOut": "export=Linter;",
+    "expectedReparseTree": "(export_statement (export_statement_equals_export expression: (identifier)))",
+    "wrappedText": "export=Linter;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 167,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 17,
+        "end": 29
+      },
+      "$nodeHandle": 2,
+      "_content": {
+        "$type": 389,
+        "$source": 0,
+        "$named": true,
+        "_expression": {
+          "$type": 213,
+          "$source": 0,
+          "$named": true,
+          "$span": {
+            "start": 26,
+            "end": 28
+          },
+          "$nodeHandle": 13,
+          "_properties": []
+        },
+        "_semicolon": 23,
+        "$other": [
+          128,
+          42
+        ],
+        "$span": {
+          "start": 17,
+          "end": 29
+        },
+        "$nodeHandle": 12
+      }
+    },
+    "expectedOutput": "export={  };"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "export = {};",
+    "pattern": "export_statement",
+    "edits": [],
+    "expectedSourceOut": "export={  };",
+    "expectedReparseTree": "(export_statement (export_statement_equals_export expression: (object)))",
+    "wrappedText": "export={  };",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
       "$type": 213,
       "$source": 0,
       "$named": true,
@@ -21146,7 +21330,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class A extends B<C>(D)implements C{  }",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause (extends_clause value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (type_identifier)) arguments: (arguments arguments: (identifier))))) (implements_clause (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (type_identifier)) arguments: (arguments arguments: (identifier))))) (implements_clause (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class A extends B<C>(D)implements C{  }",
     "wrappedOffset": 0
   },
@@ -21296,7 +21480,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class A extends B<C>(D)implements C{  }",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause (extends_clause value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (type_identifier)) arguments: (arguments arguments: (identifier))))) (implements_clause (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (type_identifier)) arguments: (arguments arguments: (identifier))))) (implements_clause (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class A extends B<C>(D)implements C{  }",
     "wrappedOffset": 0
   },
@@ -22031,7 +22215,7 @@
     "pattern": "export_statement",
     "edits": [],
     "expectedSourceOut": "export class A extends B<C>(D)implements C{  }",
-    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause (extends_clause value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (type_identifier)) arguments: (arguments arguments: (identifier))))) (implements_clause (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)))))",
+    "expectedReparseTree": "(export_statement (export_statement_default (export_statement_default_decl_arm declaration: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause value: (call_expression (call_expression_call function: (identifier) type_arguments: (type_arguments (type_identifier)) arguments: (arguments arguments: (identifier))))) (implements_clause (type_identifier)))) body: (class_body) automatic_semicolon: (automatic_semicolon)))))",
     "wrappedText": "export class A extends B<C>(D)implements C{  }",
     "wrappedOffset": 0
   },
@@ -22623,7 +22807,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "abstract class Foo{ abstract baz():void; }class Bar extends Foo{ override baz(){  }\n }",
-    "expectedReparseTree": "(program statements: (abstract_class_declaration name: (type_identifier) body: (class_body (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))))) statements: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause (extends_clause value: (identifier)))) body: (class_body (class_body_method (method_definition override_modifier: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (abstract_class_declaration name: (type_identifier) body: (class_body (class_body_member (abstract_method_signature name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type)))))) statements: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause value: (identifier)))) body: (class_body (class_body_method (method_definition override_modifier: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "abstract class Foo{ abstract baz():void; }class Bar extends Foo{ override baz(){  }\n }",
     "wrappedOffset": 0
   },
@@ -23136,7 +23320,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class Bar extends Foo{ override baz(){  }\n }",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause (extends_clause value: (identifier)))) body: (class_body (class_body_method (method_definition override_modifier: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause value: (identifier)))) body: (class_body (class_body_method (method_definition override_modifier: (override_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class Bar extends Foo{ override baz(){  }\n }",
     "wrappedOffset": 0
   },
@@ -38087,7 +38271,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "class A extends B{ constructor(x:number,y:number){ super(x); }\npublic toString(){ return super.toString()+\" y=\"+this.y; }\n }",
-    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause (extends_clause value: (identifier)))) body: (class_body (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (super) arguments: (arguments arguments: (identifier))))) automatic_semicolon: (automatic_semicolon))) (automatic_semicolon)) (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement (binary_expression left: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments))) right: (string (string_double (unescaped_double_string_fragment)))) right: (member_expression object: (this) property: (property_identifier)))) automatic_semicolon: (automatic_semicolon))) (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause value: (identifier)))) body: (class_body (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (super) arguments: (arguments arguments: (identifier))))) automatic_semicolon: (automatic_semicolon))) (automatic_semicolon)) (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement (binary_expression left: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments))) right: (string (string_double (unescaped_double_string_fragment)))) right: (member_expression object: (this) property: (property_identifier)))) automatic_semicolon: (automatic_semicolon))) (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
     "wrappedText": "class A extends B{ constructor(x:number,y:number){ super(x); }\npublic toString(){ return super.toString()+\" y=\"+this.y; }\n }",
     "wrappedOffset": 0
   },
@@ -38559,7 +38743,7 @@
     "pattern": "class_declaration",
     "edits": [],
     "expectedSourceOut": "class A extends B{ constructor(x:number,y:number){ super(x); }\npublic toString(){ return super.toString()+\" y=\"+this.y; }\n }",
-    "expectedReparseTree": "(class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause (extends_clause value: (identifier)))) body: (class_body (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (super) arguments: (arguments arguments: (identifier))))) automatic_semicolon: (automatic_semicolon))) (automatic_semicolon)) (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement (binary_expression left: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments))) right: (string (string_double (unescaped_double_string_fragment)))) right: (member_expression object: (this) property: (property_identifier)))) automatic_semicolon: (automatic_semicolon))) (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) class_heritage: (class_heritage (class_heritage_extends_clause extends_clause: (extends_clause value: (identifier)))) body: (class_body (class_body_method (method_definition name: (property_identifier) parameters: (formal_parameters (formal_parameters_group1 (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))) (required_parameter pattern: (for_header_group1 (identifier)) type: (type_annotation type: (predefined_type))))) body: (statement_block statements: (expression_statement (call_expression (call_expression_call function: (super) arguments: (arguments arguments: (identifier))))) automatic_semicolon: (automatic_semicolon))) (automatic_semicolon)) (class_body_method (method_definition accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) body: (statement_block statements: (return_statement (binary_expression left: (binary_expression left: (call_expression (call_expression_call function: (member_expression object: (super) property: (property_identifier)) arguments: (arguments))) right: (string (string_double (unescaped_double_string_fragment)))) right: (member_expression object: (this) property: (property_identifier)))) automatic_semicolon: (automatic_semicolon))) (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
     "wrappedText": "class A extends B{ constructor(x:number,y:number){ super(x); }\npublic toString(){ return super.toString()+\" y=\"+this.y; }\n }",
     "wrappedOffset": 0
   },
@@ -60581,7 +60765,7 @@
     "pattern": "program",
     "edits": [],
     "expectedSourceOut": "export type{ UserType }\nexport type{ UserType }from\"./User.js\";export type{ A,B,C as D }from'mymodule';",
-    "expectedReparseTree": "(program statements: (export_statement (export_statement_type_export (export_clause (export_clause_group1 (export_specifier name: (identifier)))) semicolon: (automatic_semicolon))) statements: (export_statement (export_statement_type_export (export_clause (export_clause_group1 (export_specifier name: (identifier)))) source: (string (string_double (unescaped_double_string_fragment))))) statements: (export_statement (export_statement_type_export (export_clause (export_clause_group1 (export_specifier name: (identifier)) (export_specifier name: (identifier)) (export_specifier name: (identifier) alias: (identifier)))) source: (string (string_single (unescaped_single_string_fragment))))))",
+    "expectedReparseTree": "(program statements: (export_statement (export_statement_type_export export_clause: (export_clause (export_clause_group1 (export_specifier name: (identifier)))) semicolon: (automatic_semicolon))) statements: (export_statement (export_statement_type_export export_clause: (export_clause (export_clause_group1 (export_specifier name: (identifier)))) source: (string (string_double (unescaped_double_string_fragment))))) statements: (export_statement (export_statement_type_export export_clause: (export_clause (export_clause_group1 (export_specifier name: (identifier)) (export_specifier name: (identifier)) (export_specifier name: (identifier) alias: (identifier)))) source: (string (string_single (unescaped_single_string_fragment))))))",
     "wrappedText": "export type{ UserType }\nexport type{ UserType }from\"./User.js\";export type{ A,B,C as D }from'mymodule';",
     "wrappedOffset": 0
   },
@@ -60660,7 +60844,7 @@
     "pattern": "export_statement",
     "edits": [],
     "expectedSourceOut": "export type{ UserType }",
-    "expectedReparseTree": "(export_statement (export_statement_type_export (export_clause (export_clause_group1 (export_specifier name: (identifier)))) semicolon: (automatic_semicolon)))",
+    "expectedReparseTree": "(export_statement (export_statement_type_export export_clause: (export_clause (export_clause_group1 (export_specifier name: (identifier)))) semicolon: (automatic_semicolon)))",
     "wrappedText": "export type{ UserType }",
     "wrappedOffset": 0
   },
@@ -60767,7 +60951,7 @@
     "pattern": "export_statement",
     "edits": [],
     "expectedSourceOut": "export type{ UserType }from\"./User.js\";",
-    "expectedReparseTree": "(export_statement (export_statement_type_export (export_clause (export_clause_group1 (export_specifier name: (identifier)))) source: (string (string_double (unescaped_double_string_fragment)))))",
+    "expectedReparseTree": "(export_statement (export_statement_type_export export_clause: (export_clause (export_clause_group1 (export_specifier name: (identifier)))) source: (string (string_double (unescaped_double_string_fragment)))))",
     "wrappedText": "export type{ UserType }from\"./User.js\";",
     "wrappedOffset": 0
   },
@@ -60904,7 +61088,7 @@
     "pattern": "export_statement",
     "edits": [],
     "expectedSourceOut": "export type{ A,B,C as D }from'mymodule';",
-    "expectedReparseTree": "(export_statement (export_statement_type_export (export_clause (export_clause_group1 (export_specifier name: (identifier)) (export_specifier name: (identifier)) (export_specifier name: (identifier) alias: (identifier)))) source: (string (string_single (unescaped_single_string_fragment)))))",
+    "expectedReparseTree": "(export_statement (export_statement_type_export export_clause: (export_clause (export_clause_group1 (export_specifier name: (identifier)) (export_specifier name: (identifier)) (export_specifier name: (identifier) alias: (identifier)))) source: (string (string_single (unescaped_single_string_fragment)))))",
     "wrappedText": "export type{ A,B,C as D }from'mymodule';",
     "wrappedOffset": 0
   },

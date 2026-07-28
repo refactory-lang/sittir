@@ -42476,12 +42476,12 @@ pub struct ExportStatementTypeExportTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
+    pub export_clause: ExportClauseTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_source"))]
     pub source: Option<StringTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_semicolon"))]
     pub semicolon: SemicolonEnum,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_export_clause"))]
-    pub export_clause: ExportClauseTransport,
 }
 
 impl RenderableTransport for ExportStatementTypeExportTransport {
@@ -59363,6 +59363,7 @@ fn render_export_statement_type_export(node: &ExportStatementTypeExportTransport
 fn render_export_statement_equals_export(node: &ExportStatementEqualsExportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExportStatementEqualsExportTemplate {
         expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
+        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
     };
     template.render_into(dest)
 }
@@ -59370,6 +59371,7 @@ fn render_export_statement_equals_export(node: &ExportStatementEqualsExportTrans
 fn render_export_statement_namespace_export(node: &ExportStatementNamespaceExportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ExportStatementNamespaceExportTemplate {
         identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
+        semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.semicolon)),
     };
     template.render_into(dest)
 }

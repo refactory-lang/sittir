@@ -5490,11 +5490,12 @@
     },
     {
       "kind": "_expression_statement_with_semi",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "ExpressionStatementWithSemi",
-      "factoryName": "expressionStatementWithSemi",
+      "factoryName": "_expressionStatementWithSemi",
       "irKey": "expressionStatementWithSemi",
       "hidden": false,
+      "name": "_expression_statement_with_semi",
       "fields": [
         {
           "name": "expression",
@@ -5521,7 +5522,7 @@
         }
       ],
       "children": [],
-      "factoryShape": "direct",
+      "factoryShape": "config",
       "factoryFields": [
         "expression"
       ]

@@ -12376,137 +12376,17 @@ export function wrapExportStatementTypeExport(data: T.ExportStatementTypeExport,
 	return _node;
 }
 
-export function wrapExportStatementEqualsExport(
-	data: T.ExportStatementEqualsExport & {
-		readonly _as_expression?: T.Expression;
-		readonly _satisfies_expression?: T.Expression;
-		readonly _instantiation_expression?: T.Expression;
-		readonly _internal_module?: T.Expression;
-		readonly _type_assertion?: T.Expression;
-		readonly _identifier?: T.Expression;
-		readonly _subscript_expression?: T.Expression;
-		readonly _member_expression?: T.Expression;
-		readonly _parenthesized_expression?: T.Expression;
-		readonly _undefined?: T.Expression;
-		readonly _reserved_identifier?: T.Expression;
-		readonly _this?: T.Expression;
-		readonly _super?: T.Expression;
-		readonly _number?: T.Expression;
-		readonly _string?: T.Expression;
-		readonly _template_string?: T.Expression;
-		readonly _regex?: T.Expression;
-		readonly _true?: T.Expression;
-		readonly _false?: T.Expression;
-		readonly _null?: T.Expression;
-		readonly _object?: T.Expression;
-		readonly _array?: T.Expression;
-		readonly _function_expression?: T.Expression;
-		readonly _arrow_function?: T.Expression;
-		readonly _generator_function?: T.Expression;
-		readonly _class?: T.Expression;
-		readonly _meta_property?: T.Expression;
-		readonly _call_expression?: T.Expression;
-		readonly _non_null_expression?: T.Expression;
-		readonly _assignment_expression?: T.Expression;
-		readonly _augmented_assignment_expression?: T.Expression;
-		readonly _await_expression?: T.Expression;
-		readonly _unary_expression?: T.Expression;
-		readonly _binary_expression?: T.Expression;
-		readonly _ternary_expression?: T.Expression;
-		readonly _update_expression?: T.Expression;
-		readonly _new_expression?: T.Expression;
-		readonly _yield_expression?: T.Expression;
-	},
-	tree: TreeHandle
-) {
+export function wrapExportStatementEqualsExport(data: T.ExportStatementEqualsExport, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_array',
-				'_arrow_function',
-				'_as_expression',
-				'_assignment_expression',
-				'_augmented_assignment_expression',
-				'_await_expression',
-				'_binary_expression',
-				'_call_expression',
-				'_class',
-				'_false',
-				'_function_expression',
-				'_generator_function',
-				'_identifier',
-				'_instantiation_expression',
-				'_internal_module',
-				'_member_expression',
-				'_meta_property',
-				'_new_expression',
-				'_non_null_expression',
-				'_null',
-				'_number',
-				'_object',
-				'_parenthesized_expression',
-				'_regex',
-				'_reserved_identifier',
-				'_satisfies_expression',
-				'_string',
-				'_subscript_expression',
-				'_super',
-				'_template_string',
-				'_ternary_expression',
-				'_this',
-				'_true',
-				'_type_assertion',
-				'_unary_expression',
-				'_undefined',
-				'_update_expression',
-				'_yield_expression'
-			]),
+			...data,
 			$type: TSKindId.ExportStatementEqualsExport as const,
-			_expression: normalizeSingularWrapSlot(
-				data._expression ??
-					data._as_expression ??
-					data._satisfies_expression ??
-					data._instantiation_expression ??
-					data._internal_module ??
-					data._type_assertion ??
-					data._identifier ??
-					data._subscript_expression ??
-					data._member_expression ??
-					data._parenthesized_expression ??
-					data._undefined ??
-					data._reserved_identifier ??
-					data._this ??
-					data._super ??
-					data._number ??
-					data._string ??
-					data._template_string ??
-					data._regex ??
-					data._true ??
-					data._false ??
-					data._null ??
-					data._object ??
-					data._array ??
-					data._function_expression ??
-					data._arrow_function ??
-					data._generator_function ??
-					data._class ??
-					data._meta_property ??
-					data._call_expression ??
-					data._non_null_expression ??
-					data._assignment_expression ??
-					data._augmented_assignment_expression ??
-					data._await_expression ??
-					data._unary_expression ??
-					data._binary_expression ??
-					data._ternary_expression ??
-					data._update_expression ??
-					data._new_expression ??
-					data._yield_expression,
-				'expression',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
-			),
+			_expression: normalizeSingularWrapSlot(data._expression, 'expression', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'expression',
+				span: (data as _NodeData).$span
+			}),
 			_semicolon: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
 					data._semicolon ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi]),

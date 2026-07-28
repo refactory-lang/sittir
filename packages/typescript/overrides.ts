@@ -518,40 +518,9 @@ export default grammar(
 				// walker handles the shape via its per-branch + downgrade
 				// logic correctly; the audit flag surfaces real adoption
 				// opportunity but not a blocking bug.
-				// '1/4' fields arm 1's (`type_export`) trailing terminator.
-				// `seq('export', 'type', $.export_clause, optional($._from_clause),
-				// $._semicolon)` is a seq buried inside export_statement's own
-				// top-level CHOICE. enrich's pass-1 unambiguous-kind-to-name field
-				// wrapping only inspects a rule's OWN top-level seq body
-				// (`applySymbolToField` in packages/codegen/src/dsl/enrich.ts bails
-				// via `tryPromoteInRepeatSeq` whenever the top-level shape isn't a
-				// bare seq/prec(seq)/repeat(seq)) — it never descends into
-				// individual choice arms, so this position never got the same
-				// auto-field-wrap treatment `lexical_declaration` (whose body
-				// genuinely IS a top-level seq) gets for its own bare
-				// `$._semicolon`. `_export_statement_type_export` (the promoted
-				// arm's own visible kind) inherited the never-fielded body as-is:
-				// its compiled node-types.json declares only `source`, leaving
-				// `semicolon` an unfielded child. Since `automatic_semicolon` is a
-				// NAMED node type, the native reader (read_children,
-				// rust/crates/sittir-core/src/read_node.rs) routes it to its own
-				// kind-keyed `_automatic_semicolon` field when unfielded — a
-				// different key than the generated wrap code checks
-				// (`data._semicolon ?? readTerminalFromOther($other, ...)`, which
-				// only ever catches the anonymous `;` alternative). Result:
-				// explicit `;` renders fine, ASI (`export type { X }` with no
-				// trailing `;`) throws `singular slot "semicolon" ... requires one
-				// value; got undefined`. Field-tagging this position explicitly
-				// (matching `import_statement`'s `4: field('semicolon')` and
-				// `class_declaration`'s `6: field('automatic_semicolon')`
-				// precedents above) gives both alternatives the same compiled
-				// field, so read_children routes them to the same key regardless
-				// of which one matched — the same mechanism lexical_declaration
-				// already relies on.
 				export_statement: {
 					0: variant('default'),
 					1: variant('type_export'),
-					'1/4': field('semicolon'),
 					2: variant('equals_export'),
 					3: variant('namespace_export')
 				},

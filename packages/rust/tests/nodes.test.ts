@@ -1495,6 +1495,10 @@ describe('return_expression', () => {
 		expect(node.$type).toBe(TSKindId.ReturnExpression);
 		expect(node.$source).toBe(2);
 	});
+	it('render produces non-empty string', () => {
+		const node = ir.returnExpression({ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
 });
 
 describe('yield_expression', () => {
@@ -1502,6 +1506,10 @@ describe('yield_expression', () => {
 		const node = ir.yieldExpression();
 		expect(node.$type).toBe(TSKindId.YieldExpression);
 		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.yieldExpression({ $type: TSKindId.CharLiteral, $text: 'test', $source: 2, $named: true } as any);
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 

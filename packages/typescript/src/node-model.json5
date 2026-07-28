@@ -5816,11 +5816,12 @@
     },
     {
       "kind": "_class_heritage_extends_clause",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "ClassHeritageExtendsClause",
-      "factoryName": "classHeritageExtendsClause",
+      "factoryName": "_classHeritageExtendsClause",
       "irKey": "classHeritageExtendsClause",
       "hidden": false,
+      "name": "_class_heritage_extends_clause",
       "fields": [
         {
           "name": "extends_clause",
@@ -6487,11 +6488,12 @@
     },
     {
       "kind": "_export_statement_equals_export",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "ExportStatementEqualsExport",
-      "factoryName": "exportStatementEqualsExport",
+      "factoryName": "_exportStatementEqualsExport",
       "irKey": "exportStatementEqualsExport",
       "hidden": false,
+      "name": "_export_statement_equals_export",
       "fields": [
         {
           "name": "expression",
@@ -6549,11 +6551,12 @@
     },
     {
       "kind": "_export_statement_namespace_export",
-      "modelType": "branch",
+      "modelType": "group",
       "typeName": "ExportStatementNamespaceExport",
-      "factoryName": "exportStatementNamespaceExport",
+      "factoryName": "_exportStatementNamespaceExport",
       "irKey": "exportStatementNamespaceExport",
       "hidden": false,
+      "name": "_export_statement_namespace_export",
       "fields": [
         {
           "name": "identifier",

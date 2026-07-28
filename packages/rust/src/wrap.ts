@@ -6334,161 +6334,17 @@ export function wrapTypeCastExpression(data: T.TypeCastExpression, tree: TreeHan
 	return _node;
 }
 
-export function wrapReturnExpression(
-	data: T.ReturnExpression & {
-		readonly _unary_expression?: T.Expression;
-		readonly _reference_expression?: T.Expression;
-		readonly _try_expression?: T.Expression;
-		readonly _binary_expression?: T.Expression;
-		readonly _assignment_expression?: T.Expression;
-		readonly _compound_assignment_expr?: T.Expression;
-		readonly _type_cast_expression?: T.Expression;
-		readonly _call_expression?: T.Expression;
-		readonly _return_expression?: T.Expression;
-		readonly _yield_expression?: T.Expression;
-		readonly _string_literal?: T.Expression;
-		readonly _raw_string_literal?: T.Expression;
-		readonly _char_literal?: T.Expression;
-		readonly _boolean_literal?: T.Expression;
-		readonly _integer_literal?: T.Expression;
-		readonly _float_literal?: T.Expression;
-		readonly _identifier?: T.Expression;
-		readonly _reserved_identifier?: T.Expression;
-		readonly _self?: T.Expression;
-		readonly _scoped_identifier?: T.Expression;
-		readonly _generic_function?: T.Expression;
-		readonly _await_expression?: T.Expression;
-		readonly _field_expression?: T.Expression;
-		readonly _array_expression?: T.Expression;
-		readonly _tuple_expression?: T.Expression;
-		readonly _macro_invocation?: T.Expression;
-		readonly _unit_expression?: T.Expression;
-		readonly _break_expression?: T.Expression;
-		readonly _continue_expression?: T.Expression;
-		readonly _index_expression?: T.Expression;
-		readonly _metavariable?: T.Expression;
-		readonly _closure_expression?: T.Expression;
-		readonly _parenthesized_expression?: T.Expression;
-		readonly _struct_expression?: T.Expression;
-		readonly _unsafe_block?: T.Expression;
-		readonly _async_block?: T.Expression;
-		readonly _gen_block?: T.Expression;
-		readonly _try_block?: T.Expression;
-		readonly _block?: T.Expression;
-		readonly _if_expression?: T.Expression;
-		readonly _match_expression?: T.Expression;
-		readonly _while_expression?: T.Expression;
-		readonly _loop_expression?: T.Expression;
-		readonly _for_expression?: T.Expression;
-		readonly _const_block?: T.Expression;
-		readonly _range_expression?: T.Expression;
-	},
-	tree: TreeHandle
-) {
+export function wrapReturnExpression(data: T.ReturnExpression, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_array_expression',
-				'_assignment_expression',
-				'_async_block',
-				'_await_expression',
-				'_binary_expression',
-				'_block',
-				'_boolean_literal',
-				'_break_expression',
-				'_call_expression',
-				'_char_literal',
-				'_closure_expression',
-				'_compound_assignment_expr',
-				'_const_block',
-				'_continue_expression',
-				'_field_expression',
-				'_float_literal',
-				'_for_expression',
-				'_gen_block',
-				'_generic_function',
-				'_identifier',
-				'_if_expression',
-				'_index_expression',
-				'_integer_literal',
-				'_loop_expression',
-				'_macro_invocation',
-				'_match_expression',
-				'_metavariable',
-				'_parenthesized_expression',
-				'_range_expression',
-				'_raw_string_literal',
-				'_reference_expression',
-				'_reserved_identifier',
-				'_return_expression',
-				'_scoped_identifier',
-				'_self',
-				'_string_literal',
-				'_struct_expression',
-				'_try_block',
-				'_try_expression',
-				'_tuple_expression',
-				'_type_cast_expression',
-				'_unary_expression',
-				'_unit_expression',
-				'_unsafe_block',
-				'_while_expression',
-				'_yield_expression'
-			]),
+			...data,
 			$type: TSKindId.ReturnExpression as const,
-			_expression: normalizeSingularWrapSlot(
-				data._expression ??
-					data._unary_expression ??
-					data._reference_expression ??
-					data._try_expression ??
-					data._binary_expression ??
-					data._assignment_expression ??
-					data._compound_assignment_expr ??
-					data._type_cast_expression ??
-					data._call_expression ??
-					data._return_expression ??
-					data._yield_expression ??
-					data._string_literal ??
-					data._raw_string_literal ??
-					data._char_literal ??
-					data._boolean_literal ??
-					data._integer_literal ??
-					data._float_literal ??
-					data._identifier ??
-					data._reserved_identifier ??
-					data._self ??
-					data._scoped_identifier ??
-					data._generic_function ??
-					data._await_expression ??
-					data._field_expression ??
-					data._array_expression ??
-					data._tuple_expression ??
-					data._macro_invocation ??
-					data._unit_expression ??
-					data._break_expression ??
-					data._continue_expression ??
-					data._index_expression ??
-					data._metavariable ??
-					data._closure_expression ??
-					data._parenthesized_expression ??
-					data._struct_expression ??
-					data._unsafe_block ??
-					data._async_block ??
-					data._gen_block ??
-					data._try_block ??
-					data._block ??
-					data._if_expression ??
-					data._match_expression ??
-					data._while_expression ??
-					data._loop_expression ??
-					data._for_expression ??
-					data._const_block ??
-					data._range_expression,
-				'expression',
-				false,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
-			),
+			_expression: normalizeSingularWrapSlot(data._expression, 'expression', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'expression',
+				span: (data as _NodeData).$span
+			}),
 
 			expression() {
 				return drillIn<T.Expression | undefined>(this._expression, tree);
@@ -6503,161 +6359,17 @@ export function wrapReturnExpression(
 	return _node;
 }
 
-export function wrapYieldExpression(
-	data: T.YieldExpression & {
-		readonly _unary_expression?: T.Expression;
-		readonly _reference_expression?: T.Expression;
-		readonly _try_expression?: T.Expression;
-		readonly _binary_expression?: T.Expression;
-		readonly _assignment_expression?: T.Expression;
-		readonly _compound_assignment_expr?: T.Expression;
-		readonly _type_cast_expression?: T.Expression;
-		readonly _call_expression?: T.Expression;
-		readonly _return_expression?: T.Expression;
-		readonly _yield_expression?: T.Expression;
-		readonly _string_literal?: T.Expression;
-		readonly _raw_string_literal?: T.Expression;
-		readonly _char_literal?: T.Expression;
-		readonly _boolean_literal?: T.Expression;
-		readonly _integer_literal?: T.Expression;
-		readonly _float_literal?: T.Expression;
-		readonly _identifier?: T.Expression;
-		readonly _reserved_identifier?: T.Expression;
-		readonly _self?: T.Expression;
-		readonly _scoped_identifier?: T.Expression;
-		readonly _generic_function?: T.Expression;
-		readonly _await_expression?: T.Expression;
-		readonly _field_expression?: T.Expression;
-		readonly _array_expression?: T.Expression;
-		readonly _tuple_expression?: T.Expression;
-		readonly _macro_invocation?: T.Expression;
-		readonly _unit_expression?: T.Expression;
-		readonly _break_expression?: T.Expression;
-		readonly _continue_expression?: T.Expression;
-		readonly _index_expression?: T.Expression;
-		readonly _metavariable?: T.Expression;
-		readonly _closure_expression?: T.Expression;
-		readonly _parenthesized_expression?: T.Expression;
-		readonly _struct_expression?: T.Expression;
-		readonly _unsafe_block?: T.Expression;
-		readonly _async_block?: T.Expression;
-		readonly _gen_block?: T.Expression;
-		readonly _try_block?: T.Expression;
-		readonly _block?: T.Expression;
-		readonly _if_expression?: T.Expression;
-		readonly _match_expression?: T.Expression;
-		readonly _while_expression?: T.Expression;
-		readonly _loop_expression?: T.Expression;
-		readonly _for_expression?: T.Expression;
-		readonly _const_block?: T.Expression;
-		readonly _range_expression?: T.Expression;
-	},
-	tree: TreeHandle
-) {
+export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_array_expression',
-				'_assignment_expression',
-				'_async_block',
-				'_await_expression',
-				'_binary_expression',
-				'_block',
-				'_boolean_literal',
-				'_break_expression',
-				'_call_expression',
-				'_char_literal',
-				'_closure_expression',
-				'_compound_assignment_expr',
-				'_const_block',
-				'_continue_expression',
-				'_field_expression',
-				'_float_literal',
-				'_for_expression',
-				'_gen_block',
-				'_generic_function',
-				'_identifier',
-				'_if_expression',
-				'_index_expression',
-				'_integer_literal',
-				'_loop_expression',
-				'_macro_invocation',
-				'_match_expression',
-				'_metavariable',
-				'_parenthesized_expression',
-				'_range_expression',
-				'_raw_string_literal',
-				'_reference_expression',
-				'_reserved_identifier',
-				'_return_expression',
-				'_scoped_identifier',
-				'_self',
-				'_string_literal',
-				'_struct_expression',
-				'_try_block',
-				'_try_expression',
-				'_tuple_expression',
-				'_type_cast_expression',
-				'_unary_expression',
-				'_unit_expression',
-				'_unsafe_block',
-				'_while_expression',
-				'_yield_expression'
-			]),
+			...data,
 			$type: TSKindId.YieldExpression as const,
-			_expression: normalizeSingularWrapSlot(
-				data._expression ??
-					data._unary_expression ??
-					data._reference_expression ??
-					data._try_expression ??
-					data._binary_expression ??
-					data._assignment_expression ??
-					data._compound_assignment_expr ??
-					data._type_cast_expression ??
-					data._call_expression ??
-					data._return_expression ??
-					data._yield_expression ??
-					data._string_literal ??
-					data._raw_string_literal ??
-					data._char_literal ??
-					data._boolean_literal ??
-					data._integer_literal ??
-					data._float_literal ??
-					data._identifier ??
-					data._reserved_identifier ??
-					data._self ??
-					data._scoped_identifier ??
-					data._generic_function ??
-					data._await_expression ??
-					data._field_expression ??
-					data._array_expression ??
-					data._tuple_expression ??
-					data._macro_invocation ??
-					data._unit_expression ??
-					data._break_expression ??
-					data._continue_expression ??
-					data._index_expression ??
-					data._metavariable ??
-					data._closure_expression ??
-					data._parenthesized_expression ??
-					data._struct_expression ??
-					data._unsafe_block ??
-					data._async_block ??
-					data._gen_block ??
-					data._try_block ??
-					data._block ??
-					data._if_expression ??
-					data._match_expression ??
-					data._while_expression ??
-					data._loop_expression ??
-					data._for_expression ??
-					data._const_block ??
-					data._range_expression,
-				'expression',
-				false,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
-			),
+			_expression: normalizeSingularWrapSlot(data._expression, 'expression', false, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'expression',
+				span: (data as _NodeData).$span
+			}),
 
 			expression() {
 				return drillIn<T.Expression | undefined>(this._expression, tree);
@@ -10955,161 +10667,17 @@ export function wrapVisibilityModifierPub(data: T.VisibilityModifierPub, tree: T
 	return _node;
 }
 
-export function wrapExpressionStatementWithSemi(
-	data: T.ExpressionStatementWithSemi & {
-		readonly _unary_expression?: T.Expression;
-		readonly _reference_expression?: T.Expression;
-		readonly _try_expression?: T.Expression;
-		readonly _binary_expression?: T.Expression;
-		readonly _assignment_expression?: T.Expression;
-		readonly _compound_assignment_expr?: T.Expression;
-		readonly _type_cast_expression?: T.Expression;
-		readonly _call_expression?: T.Expression;
-		readonly _return_expression?: T.Expression;
-		readonly _yield_expression?: T.Expression;
-		readonly _string_literal?: T.Expression;
-		readonly _raw_string_literal?: T.Expression;
-		readonly _char_literal?: T.Expression;
-		readonly _boolean_literal?: T.Expression;
-		readonly _integer_literal?: T.Expression;
-		readonly _float_literal?: T.Expression;
-		readonly _identifier?: T.Expression;
-		readonly _reserved_identifier?: T.Expression;
-		readonly _self?: T.Expression;
-		readonly _scoped_identifier?: T.Expression;
-		readonly _generic_function?: T.Expression;
-		readonly _await_expression?: T.Expression;
-		readonly _field_expression?: T.Expression;
-		readonly _array_expression?: T.Expression;
-		readonly _tuple_expression?: T.Expression;
-		readonly _macro_invocation?: T.Expression;
-		readonly _unit_expression?: T.Expression;
-		readonly _break_expression?: T.Expression;
-		readonly _continue_expression?: T.Expression;
-		readonly _index_expression?: T.Expression;
-		readonly _metavariable?: T.Expression;
-		readonly _closure_expression?: T.Expression;
-		readonly _parenthesized_expression?: T.Expression;
-		readonly _struct_expression?: T.Expression;
-		readonly _unsafe_block?: T.Expression;
-		readonly _async_block?: T.Expression;
-		readonly _gen_block?: T.Expression;
-		readonly _try_block?: T.Expression;
-		readonly _block?: T.Expression;
-		readonly _if_expression?: T.Expression;
-		readonly _match_expression?: T.Expression;
-		readonly _while_expression?: T.Expression;
-		readonly _loop_expression?: T.Expression;
-		readonly _for_expression?: T.Expression;
-		readonly _const_block?: T.Expression;
-		readonly _range_expression?: T.Expression;
-	},
-	tree: TreeHandle
-) {
+export function wrapExpressionStatementWithSemi(data: T.ExpressionStatementWithSemi, tree: TreeHandle) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_array_expression',
-				'_assignment_expression',
-				'_async_block',
-				'_await_expression',
-				'_binary_expression',
-				'_block',
-				'_boolean_literal',
-				'_break_expression',
-				'_call_expression',
-				'_char_literal',
-				'_closure_expression',
-				'_compound_assignment_expr',
-				'_const_block',
-				'_continue_expression',
-				'_field_expression',
-				'_float_literal',
-				'_for_expression',
-				'_gen_block',
-				'_generic_function',
-				'_identifier',
-				'_if_expression',
-				'_index_expression',
-				'_integer_literal',
-				'_loop_expression',
-				'_macro_invocation',
-				'_match_expression',
-				'_metavariable',
-				'_parenthesized_expression',
-				'_range_expression',
-				'_raw_string_literal',
-				'_reference_expression',
-				'_reserved_identifier',
-				'_return_expression',
-				'_scoped_identifier',
-				'_self',
-				'_string_literal',
-				'_struct_expression',
-				'_try_block',
-				'_try_expression',
-				'_tuple_expression',
-				'_type_cast_expression',
-				'_unary_expression',
-				'_unit_expression',
-				'_unsafe_block',
-				'_while_expression',
-				'_yield_expression'
-			]),
+			...data,
 			$type: TSKindId.ExpressionStatementWithSemi as const,
-			_expression: normalizeSingularWrapSlot(
-				data._expression ??
-					data._unary_expression ??
-					data._reference_expression ??
-					data._try_expression ??
-					data._binary_expression ??
-					data._assignment_expression ??
-					data._compound_assignment_expr ??
-					data._type_cast_expression ??
-					data._call_expression ??
-					data._return_expression ??
-					data._yield_expression ??
-					data._string_literal ??
-					data._raw_string_literal ??
-					data._char_literal ??
-					data._boolean_literal ??
-					data._integer_literal ??
-					data._float_literal ??
-					data._identifier ??
-					data._reserved_identifier ??
-					data._self ??
-					data._scoped_identifier ??
-					data._generic_function ??
-					data._await_expression ??
-					data._field_expression ??
-					data._array_expression ??
-					data._tuple_expression ??
-					data._macro_invocation ??
-					data._unit_expression ??
-					data._break_expression ??
-					data._continue_expression ??
-					data._index_expression ??
-					data._metavariable ??
-					data._closure_expression ??
-					data._parenthesized_expression ??
-					data._struct_expression ??
-					data._unsafe_block ??
-					data._async_block ??
-					data._gen_block ??
-					data._try_block ??
-					data._block ??
-					data._if_expression ??
-					data._match_expression ??
-					data._while_expression ??
-					data._loop_expression ??
-					data._for_expression ??
-					data._const_block ??
-					data._range_expression,
-				'expression',
-				true,
-				data.$type,
-				{ tree, nodeType: data.$type, slotName: 'expression', span: (data as _NodeData).$span }
-			),
+			_expression: normalizeSingularWrapSlot(data._expression, 'expression', true, data.$type, {
+				tree,
+				nodeType: data.$type,
+				slotName: 'expression',
+				span: (data as _NodeData).$span
+			}),
 
 			expression() {
 				return drillIn<T.Expression>(this._expression, tree);

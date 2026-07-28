@@ -747,8 +747,7 @@ export type RustGrammar = {
 	readonly expression_statement_with_semi: {
 		type: 'expression_statement_with_semi';
 		named: true;
-		fields: {};
-		children: { multiple: false; required: true; types: [{ type: '_expression'; named: true }] };
+		fields: { expression: { multiple: false; required: true; types: [{ type: '_expression'; named: true }] } };
 	};
 	readonly extern_crate_declaration: {
 		type: 'extern_crate_declaration';
@@ -1655,8 +1654,7 @@ export type RustGrammar = {
 	readonly return_expression: {
 		type: 'return_expression';
 		named: true;
-		fields: {};
-		children: { multiple: false; required: false; types: [{ type: '_expression'; named: true }] };
+		fields: { expression: { multiple: false; required: false; types: [{ type: '_expression'; named: true }] } };
 	};
 	readonly scoped_identifier: {
 		type: 'scoped_identifier';
@@ -2452,8 +2450,7 @@ export type RustGrammar = {
 	readonly yield_expression: {
 		type: 'yield_expression';
 		named: true;
-		fields: {};
-		children: { multiple: false; required: false; types: [{ type: '_expression'; named: true }] };
+		fields: { expression: { multiple: false; required: false; types: [{ type: '_expression'; named: true }] } };
 	};
 	readonly '_anonymous_!': { type: '!'; named: false };
 	readonly '_anonymous_!=': { type: '!='; named: false };

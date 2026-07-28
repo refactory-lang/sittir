@@ -309,9 +309,6 @@ export interface IsGuards {
 	ArrowFunctionParameter<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ArrowFunctionParameter };
-	ClassHeritageExtendsClause<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ClassHeritageExtendsClause };
 	ImportClauseDefaultImport<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.ImportClauseDefaultImport };
@@ -331,12 +328,6 @@ export interface IsGuards {
 	PublicFieldDefinitionDeclareFirst<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
-	ExportStatementEqualsExport<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ExportStatementEqualsExport };
-	ExportStatementNamespaceExport<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ExportStatementNamespaceExport };
 	StringDouble<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StringDouble };
 	StringSingle<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.StringSingle };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };
@@ -563,9 +554,6 @@ export interface AssertGuards {
 	ArrowFunctionParameter(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ArrowFunctionParameter };
-	ClassHeritageExtendsClause(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.ClassHeritageExtendsClause };
 	ImportClauseDefaultImport(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.ImportClauseDefaultImport };
@@ -585,12 +573,6 @@ export interface AssertGuards {
 	PublicFieldDefinitionDeclareFirst(v: {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.PublicFieldDefinitionDeclareFirst };
-	ExportStatementEqualsExport(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.ExportStatementEqualsExport };
-	ExportStatementNamespaceExport(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.ExportStatementNamespaceExport };
 	StringDouble(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StringDouble };
 	StringSingle(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.StringSingle };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
@@ -1124,7 +1106,6 @@ export const is = {
 	objectTypeContent: _g(TSKindId.ObjectTypeContent),
 	ExportStatementDefault: _g(TSKindId.ExportStatementDefault),
 	ArrowFunctionParameter: _g(TSKindId.ArrowFunctionParameter),
-	ClassHeritageExtendsClause: _g(TSKindId.ClassHeritageExtendsClause),
 	ImportClauseDefaultImport: _g(TSKindId.ImportClauseDefaultImport),
 	ExportStatementDefaultFromArm: _g(TSKindId.ExportStatementDefaultFromArm),
 	ExportStatementDefaultStarFrom: _g(TSKindId.ExportStatementDefaultStarFrom),
@@ -1132,8 +1113,6 @@ export const is = {
 	ExportStatementDefaultClauseFrom: _g(TSKindId.ExportStatementDefaultClauseFrom),
 	ForHeaderLhs: _g(TSKindId.ForHeaderLhs),
 	PublicFieldDefinitionDeclareFirst: _g(TSKindId.PublicFieldDefinitionDeclareFirst),
-	ExportStatementEqualsExport: _g(TSKindId.ExportStatementEqualsExport),
-	ExportStatementNamespaceExport: _g(TSKindId.ExportStatementNamespaceExport),
 	StringDouble: _g(TSKindId.StringDouble),
 	StringSingle: _g(TSKindId.StringSingle),
 	kind: (v: { readonly $type: number }, k: string): boolean => {
@@ -1361,7 +1340,6 @@ export const assert = {
 	objectTypeContent: _makeAssert('objectTypeContent', is.objectTypeContent as _AnyGuard),
 	ExportStatementDefault: _makeAssert('ExportStatementDefault', is.ExportStatementDefault as _AnyGuard),
 	ArrowFunctionParameter: _makeAssert('ArrowFunctionParameter', is.ArrowFunctionParameter as _AnyGuard),
-	ClassHeritageExtendsClause: _makeAssert('ClassHeritageExtendsClause', is.ClassHeritageExtendsClause as _AnyGuard),
 	ImportClauseDefaultImport: _makeAssert('ImportClauseDefaultImport', is.ImportClauseDefaultImport as _AnyGuard),
 	ExportStatementDefaultFromArm: _makeAssert(
 		'ExportStatementDefaultFromArm',
@@ -1383,11 +1361,6 @@ export const assert = {
 	PublicFieldDefinitionDeclareFirst: _makeAssert(
 		'PublicFieldDefinitionDeclareFirst',
 		is.PublicFieldDefinitionDeclareFirst as _AnyGuard
-	),
-	ExportStatementEqualsExport: _makeAssert('ExportStatementEqualsExport', is.ExportStatementEqualsExport as _AnyGuard),
-	ExportStatementNamespaceExport: _makeAssert(
-		'ExportStatementNamespaceExport',
-		is.ExportStatementNamespaceExport as _AnyGuard
 	),
 	StringDouble: _makeAssert('StringDouble', is.StringDouble as _AnyGuard),
 	StringSingle: _makeAssert('StringSingle', is.StringSingle as _AnyGuard),

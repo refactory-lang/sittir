@@ -331,8 +331,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	type_arguments: TSKindId.TypeArguments,
 	delim_token_tree: TSKindId.DelimTokenTree,
 	range_expression: TSKindId.RangeExpression,
-	return_expression: TSKindId.ReturnExpression,
-	yield_expression: TSKindId.YieldExpression,
 	arguments: TSKindId.Arguments,
 	array_expression: TSKindId.ArrayExpression,
 	else_clause: TSKindId.ElseClause,
@@ -362,7 +360,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_macro_definition_paren: TSKindId.MacroDefinitionParen,
 	_macro_definition_bracket: TSKindId.MacroDefinitionBracket,
 	_macro_definition_brace: TSKindId.MacroDefinitionBrace,
-	_expression_statement_with_semi: TSKindId.ExpressionStatementWithSemi,
 	_token_tree_pattern_paren: TSKindId.TokenTreePatternParen,
 	_token_tree_pattern_bracket: TSKindId.TokenTreePatternBracket,
 	_token_tree_pattern_brace: TSKindId.TokenTreePatternBrace,
@@ -408,10 +405,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildDelimTokenTree(children[0] as Parameters<typeof F.buildDelimTokenTree>[0]);
 		case 'range_expression':
 			return F.buildRangeExpression(children[0] as Parameters<typeof F.buildRangeExpression>[0]);
-		case 'return_expression':
-			return F.buildReturnExpression(children[0] as Parameters<typeof F.buildReturnExpression>[0]);
-		case 'yield_expression':
-			return F.buildYieldExpression(children[0] as Parameters<typeof F.buildYieldExpression>[0]);
 		case 'arguments':
 			return F.buildArguments(children[0] as Parameters<typeof F.buildArguments>[0]);
 		case 'array_expression':
@@ -472,10 +465,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildMacroDefinitionBracket(...(children as Parameters<typeof F.buildMacroDefinitionBracket>));
 		case '_macro_definition_brace':
 			return F.buildMacroDefinitionBrace(...(children as Parameters<typeof F.buildMacroDefinitionBrace>));
-		case '_expression_statement_with_semi':
-			return F.buildExpressionStatementWithSemi(
-				children[0] as Parameters<typeof F.buildExpressionStatementWithSemi>[0]
-			);
 		case '_token_tree_pattern_paren':
 			return F.buildTokenTreePatternParen(...(children as Parameters<typeof F.buildTokenTreePatternParen>));
 		case '_token_tree_pattern_bracket':
@@ -2069,26 +2058,32 @@ export function coerceToTypeCastExpression(
 	});
 }
 
-export function coerceToReturnExpression(
-	input?: T.Expression | T.ReturnExpression
-): ReturnType<typeof F.buildReturnExpression> {
-	if (isNodeData(input) && input.$type === TSKindId.ReturnExpression) {
-		const data = input;
-		const child = (data as unknown as { _expression?: unknown })._expression;
-		return F.buildReturnExpression(child as Parameters<typeof F.buildReturnExpression>[0]);
-	}
-	return F.buildReturnExpression(input as Parameters<typeof F.buildReturnExpression>[0]);
+export function coerceToReturnExpression(input?: T.ReturnExpression.Loose): ReturnType<typeof F.buildReturnExpression> {
+	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.ReturnExpression)
+		return input as unknown as ReturnType<typeof F.buildReturnExpression>;
+	return F.buildReturnExpression(
+		_resolveOne<T.Expression>(
+			input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+				? input.expression
+				: input,
+			_K10,
+			_K11
+		)
+	);
 }
 
-export function coerceToYieldExpression(
-	input?: T.Expression | T.YieldExpression
-): ReturnType<typeof F.buildYieldExpression> {
-	if (isNodeData(input) && input.$type === TSKindId.YieldExpression) {
-		const data = input;
-		const child = (data as unknown as { _expression?: unknown })._expression;
-		return F.buildYieldExpression(child as Parameters<typeof F.buildYieldExpression>[0]);
-	}
-	return F.buildYieldExpression(input as Parameters<typeof F.buildYieldExpression>[0]);
+export function coerceToYieldExpression(input?: T.YieldExpression.Loose): ReturnType<typeof F.buildYieldExpression> {
+	if (input !== undefined && isNodeData(input) && (input.$type as string | number) === TSKindId.YieldExpression)
+		return input as unknown as ReturnType<typeof F.buildYieldExpression>;
+	return F.buildYieldExpression(
+		_resolveOne<T.Expression>(
+			input !== null && typeof input === 'object' && !isNodeData(input) && 'expression' in input
+				? input.expression
+				: input,
+			_K10,
+			_K11
+		)
+	);
 }
 
 export function coerceToCallExpression(input: T.CallExpression.Loose): ReturnType<typeof F.buildCallExpression> {
