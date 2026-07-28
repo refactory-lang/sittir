@@ -16,6 +16,7 @@ Generate typed factories, render templates, and native bindings from tree-sitter
 - The js/dispatch-based engine is **deprecated**. The Rust render engine, Rust Tree-Sitter bindings are the source of truth.
 - Generated artifacts are derived outputs. Do not hand-edit `packages/{rust,python,typescript}/src/*`, `packages/{rust,python,typescript}/templates/*.jinja`, `packages/{rust,python,typescript}/.sittir/*`, or `packages/{rust,python,typescript}/overrides.suggested.ts`; fix codegen or `packages/<lang>/overrides.ts` and regenerate.
 - TypeScript is ESM; local imports use `.ts` extensions.
+- Comments and documentation (glossary entries, ADRs, JSDoc, inline) must not reference spec/plan/PR/task numbers (e.g. "PR-137", "ADR-0009", "spec 026", "R11", "task 8"). Those planning artifacts get archived, renamed, or deleted — a numbered reference rots into a dangling pointer nobody can resolve. Describe the actual constraint, invariant, or rationale directly instead of citing where it was decided.
 
 ## Detailed instructions
 

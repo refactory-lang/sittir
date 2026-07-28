@@ -283,15 +283,40 @@ Allowed exceptions:
 
 When you've modified a TypeScript file and a function body contains a
 3+ line inline comment block explaining "what the next chunk does",
-promote that chunk to a named private helper with a JSDoc docstring
-using the standard tags (`@param`, `@returns`, `@throws`, `@remarks`,
-`@see`). Goal: linear, scannable function bodies — explanations live
-next to the code they describe, not above it.
+promote that chunk to a named private helper. Goal: linear, scannable
+function bodies — explanations live next to the code they describe,
+not above it.
 
 Reference commits: `60a0f77 codegen: wave 2 comment/decomposition
 cleanup`, `f72f540 codegen: wave 3 comment/decomposition cleanup`, and
 the wave 4 ADR-0009 follow-up. Match that style. Don't merge helpers
 that the directive would split — granularity per comment block.
+
+**Since wave 5:** function-level doc comments (what a function does,
+why it exists, its contract) do NOT live as a JSDoc block above the
+function in source — they become (or update) an entry in
+[docs/compiler-phase-glossary.md](docs/compiler-phase-glossary.md)
+instead. This applies to every significant function across
+`packages/codegen/src/**` (compiler/, dsl/, emitters/ — the glossary's
+own pipeline already spans enrich → evaluate → link → normalize →
+assemble → emit). Source keeps only a one-line comment when there's a
+genuinely non-obvious WHY (a hidden constraint, a subtle invariant, a
+workaround) — never a restated WHAT. A function with no glossary entry
+yet needs one added, not a JSDoc block re-added to source. Use ast-grep
+rules (see `rules/`) to enumerate candidates (JSDoc-above-function,
+3+ line in-method comment blocks) programmatically rather than
+re-deriving the search by hand each wave.
+
+**Same convention applies to `overrides.ts`** (rust/typescript/python),
+targeting a per-grammar glossary instead: `docs/<lang>-overrides-glossary.md`
+(mirrors `compiler-phase-glossary.md`'s format — one entry per rule,
+conflict, or override, keyed by name). Long rationale comments explaining
+why a specific override/conflict/precedence exists move there; source
+keeps only a short one-line pointer or nothing. The in-method → extract-
+to-helper half of this rule applies only where `overrides.ts` actually
+has extractable function bodies (most of the file is object/array
+literals passed as config, not imperative code) — don't force an
+extraction that doesn't fit the shape.
 
 ### Use `probe-kind.ts` before ad-hoc probes
 

@@ -1,0 +1,32 @@
+id: function-level-jsdoc
+language: TypeScript
+severity: hint
+message: >
+  Function/method-level JSDoc block. Per AGENTS.md "Wave-style decomposition
+  before commits" (wave 5+): this documentation should move to (or update)
+  an entry in docs/compiler-phase-glossary.md instead of living as a JSDoc
+  block above the function in source. Source keeps at most a one-line
+  comment for a genuinely non-obvious WHY — never a restated WHAT.
+files:
+  - packages/codegen/src/**
+ignores:
+  - "**/__tests__/**"
+  - "**/*.test.ts"
+  - "**/*.test-d.ts"
+rule:
+  any:
+    - kind: function_declaration
+    - kind: method_definition
+    - kind: export_statement
+  follows:
+    kind: comment
+    regex: '^/\*\*'
+    stopBy: neighbor
+note: >
+  Wave 5 comment-cleanup audit (2026-07-28): starter rule, not yet run to
+  completion across packages/codegen/src. `export_statement` catches
+  exported consts/types too, which is broader than "function/method" —
+  narrow with `not: {inside: {kind: variable_declaration}}` if that noise
+  matters for a given pass. Cross-check each match against whether
+  docs/compiler-phase-glossary.md already documents the function before
+  moving/rewriting anything.
