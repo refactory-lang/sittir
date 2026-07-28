@@ -1,0 +1,36 @@
+id: comment-audit
+language: TypeScript
+severity: hint
+message: >
+  Non-JSDoc comment (`//` line comment, or a `/* */` block that isn't
+  `/** */`-style). Per AGENTS.md "Wave-style decomposition before commits":
+  every comment is a candidate for removal via relocation. If it sits inside
+  a function/method body, the code it explains should be hoisted into a
+  named helper (or the function decomposed) — the comment becomes the
+  helper's name, not prose above a chunk. If it documents a function, type,
+  interface, class, const, or other declaration, it's a candidate for the
+  matching glossary doc (docs/glossary/<dir>.md for packages/codegen/src, or
+  the per-grammar overrides glossary). No length threshold, no attachment-type
+  restriction — flag everything in scope; pass 2 decides case by case.
+files:
+  - packages/codegen/src/**
+  - packages/rust/overrides.ts
+  - packages/typescript/overrides.ts
+  - packages/python/overrides.ts
+  - packages/rust/base.ts
+ignores:
+  - "**/__tests__/**"
+  - "**/*.test.ts"
+  - "**/*.test-d.ts"
+rule:
+  kind: comment
+  not:
+    regex: '^/\*\*'
+note: >
+  Wave 5 comment-cleanup audit (2026-07-28): scoped to non-JSDoc comments
+  first — `//` lines and non-`/** */` block comments — since `/** */` blocks
+  immediately preceding a function/method declaration are already handled
+  mechanically by scripts/wave5-relocate-jsdoc.mts (rules/function-level-jsdoc.yml
+  + rules/function-level-jsdoc-comment.yml). Remaining `/** */` blocks (module
+  headers, type/interface/const docs, or JSDoc not immediately adjacent to a
+  declaration) are a separate, lower-priority follow-up — not yet queried.

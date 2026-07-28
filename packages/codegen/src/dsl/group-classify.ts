@@ -40,16 +40,6 @@ import { detectRepeatSeparator } from './list-patterns.ts';
 // ruleMatchesEmpty
 // ---------------------------------------------------------------------------
 
-/**
- * Conservative empty-matching predicate. Returns true iff the rule can produce
- * the empty string:
- *   - `optional` / `repeat` / `blank`                      → always matches empty
- *   - `repeat1`                                             → iff content matches empty
- *   - `seq`                                                 → iff ALL members match empty
- *   - `choice`                                              → iff ANY member matches empty
- *   - `field` / prec-wrapper                               → iff content matches empty
- *   - `string` / `symbol` / `token` / `pattern`            → false (non-empty)
- */
 export function ruleMatchesEmpty(rule: unknown): boolean {
 	if (!rule || typeof rule !== 'object') return false;
 	const r = rule as Record<string, unknown>;
@@ -89,8 +79,6 @@ export function ruleMatchesEmpty(rule: unknown): boolean {
 	return false;
 }
 
-/** plain repeat (not repeat1). Duplicates `isPlainRepeatType` in
- *  runtime-shapes but keeps this module self-contained. */
 function isPlainRepeatType(t: string): boolean {
 	return t === 'REPEAT';
 }
@@ -99,15 +87,6 @@ function isPlainRepeatType(t: string): boolean {
 // isInlineSafe
 // ---------------------------------------------------------------------------
 
-/**
- * Collects the "slot" members of a seq body after dropping pure
- * literals/punctuation and `blank`. Descends transparently through `prec`
- * wrappers and `field` wrappers to find the underlying slot type.
- *
- * A "slot" is a member that contributes structured content — `field`,
- * `symbol`, `choice`, `repeat`, `repeat1`, `seq` (nested), or any non-literal
- * non-blank rule. Pure literals (`string`, `token`) and `blank` are dropped.
- */
 function collectSlots(members: unknown[], rulesBag?: Record<string, unknown>): unknown[] {
 	const slots: unknown[] = [];
 	for (const m of members) {
@@ -139,16 +118,6 @@ function collectSlots(members: unknown[], rulesBag?: Record<string, unknown>): u
 	return slots;
 }
 
-/**
- * Unwrap `prec` wrappers to reach the underlying slot type. Descends through
- * a chain of prec layers only. Returns the innermost rule that is not a prec
- * wrapper.
- *
- * NOTE: we do NOT descend through `field` here because a `field` slot is
- * itself the thing we are classifying (it is field-typed → inline-safe). If
- * we descended through it we would see its content (e.g. a bare `choice`),
- * which would incorrectly mark the slot as unsafe.
- */
 function unwrapPrec(rule: unknown): unknown {
 	let cur = rule;
 	while (cur && typeof cur === 'object') {
@@ -166,12 +135,6 @@ function isRepeatLike(t: string): boolean {
 	return isRepeatType(t) || typeEq(t, 'REPEAT1');
 }
 
-/**
- * Recursively inline the members of nested `seq` children into one flat list,
- * descending transparently through `prec` wrappers and nested `seq`s only. Does
- * NOT descend into `choice`/`field`/`optional`/`repeat` content — those are
- * opaque slots whose internals must not be flattened into the parent member list.
- */
 function flattenSeqMembers(members: unknown[]): unknown[] {
 	const out: unknown[] = [];
 	for (const m of members) {
@@ -189,10 +152,6 @@ function flattenSeqMembers(members: unknown[]): unknown[] {
 	return out;
 }
 
-/**
- * True iff the seq members contain a `repeat`/`repeat1` slot once nested seqs
- * are flattened (the hallmark of a list). `prec` wrappers are transparent.
- */
 function seqHasTopLevelRepeat(members: unknown[]): boolean {
 	for (const m of flattenSeqMembers(members)) {
 		const core = unwrapPrec(m);
@@ -207,24 +166,10 @@ function seqHasTopLevelRepeat(members: unknown[]): boolean {
 // Separator-variability qualification
 // ---------------------------------------------------------------------------
 
-/**
- * True iff a detected repeat separator itself varies per-instance: a
- * non-literal (`choice`/`symbol`/`pattern`) separator rule rather than a bare
- * `string` literal. A choice-of-separators (e.g. tree-sitter-typescript's
- * `sepBy1(choice(',', $._semicolon), X)`) or a symbol/pattern separator
- * (external-scanner-driven) means the concrete separator text can differ
- * per instance, so the list can't render from one fixed separator string —
- * the same signal `detectRepeatSeparator`'s existing callers
- * (`enrich.ts`'s `listSeparatorOfOptionalSeq`) already act on.
- */
 function isNonterminalSeparatorType(t: string): boolean {
 	return isChoiceType(t) || isSymbolType(t) || typeEq(t, 'PATTERN');
 }
 
-/**
- * True iff `repeatRule`'s own separator (per `detectRepeatSeparator` run on
- * its `content`) is non-literal — see `isNonterminalSeparatorType`.
- */
 function repeatHasNonterminalSeparator(repeatRule: RuntimeRule): boolean {
 	const content = (repeatRule as { content?: unknown }).content;
 	if (!content || typeof content !== 'object') return false;
@@ -233,14 +178,6 @@ function repeatHasNonterminalSeparator(repeatRule: RuntimeRule): boolean {
 	return isNonterminalSeparatorType(detected.separator.type);
 }
 
-/**
- * True iff `member` is an `optional(STRING sep)` or `choice(STRING sep,
- * blank)` flank whose literal value equals `sepValue` — mirrors the shape
- * `absorbTrailingListSeparators`/`peelOptionalSeq` (enrich.ts) already
- * recognize for a stranded leading/trailing separator flank sibling to a
- * list's repeat (e.g. `commaSep1(E)`'s desugared
- * `seq(E, repeat(seq(SEP, E)), optional(SEP))`).
- */
 function isOptionalSeparatorFlank(member: unknown, sepValue: string): boolean {
 	if (!member || typeof member !== 'object') return false;
 	const r = member as Record<string, unknown>;
@@ -274,17 +211,6 @@ function isOptionalSeparatorFlank(member: unknown, sepValue: string): boolean {
 	return false;
 }
 
-/**
- * True iff `repeatRule` (a top-level repeat member found among `siblings`,
- * the flattened seq member list it lives in) has genuine per-instance
- * separator variability: either its own separator is non-literal
- * (`repeatHasNonterminalSeparator`), or a SIBLING member in the same
- * flattened seq is an optional/choice-of-blank flank of that same separator
- * literal (a stranded leading/trailing comma). Either shape means the list
- * can't be rendered from one fixed separator string — it needs its own
- * visible `AssembledSeparatedList` template, not the hidden inline-flat
- * path.
- */
 function repeatMemberHasGenuineSeparatorVariability(repeatRule: RuntimeRule, siblings: unknown[]): boolean {
 	if (repeatHasNonterminalSeparator(repeatRule)) return true;
 
@@ -298,48 +224,10 @@ function repeatMemberHasGenuineSeparatorVariability(repeatRule: RuntimeRule, sib
 	return siblings.some((m) => m !== repeatRule && isOptionalSeparatorFlank(m, sepValue));
 }
 
-/**
- * True iff a BARE repeat/repeat1 body (not embedded in an enclosing seq) has
- * genuine separator variability. No sibling flank check applies here — a
- * bare repeat has no enclosing seq member list to hold a stranded flank —
- * so this reduces to the non-literal-separator check only.
- */
 function repeatHasGenuineSeparatorVariability(repeatRule: RuntimeRule): boolean {
 	return repeatHasNonterminalSeparator(repeatRule);
 }
 
-/**
- * True iff `members` (post-flattening) contains EXACTLY ONE separator-
- * carrying top-level repeat/repeat1 member AND that one repeat has genuine
- * separator variability — see `repeatMemberHasGenuineSeparatorVariability`.
- *
- * Scoped to the single-SEPARATOR-CARRYING-repeat case deliberately: a seq
- * body representing a genuine separated list (`commaSep1(E)` and its
- * Task-1-confirmed real-world shape) has exactly ONE top-level repeat
- * carrying the list's separator. The census here only counts repeats whose
- * content itself has a `detectRepeatSeparator`-detectable separator shape —
- * a repeat with NO separator shape at all can neither BE the separated
- * list (it has nothing to flag as separator-variable) nor be the
- * unrelated-repeat this guard exists to protect against (there's no
- * separator to mis-match a sibling flank against). This matters for real
- * grammar shapes like rust's `enum_variant_list`/`field_declaration_list`/
- * `ordered_field_declaration_list`/`arguments`, whose per-element unit is
- * `seq(repeat($.attribute_item), X)` — a per-element MODIFIER repeat with no
- * separator of its own, which `flattenSeqMembers` surfaces as a second
- * top-level repeat alongside the real list's separator-carrying repeat. A
- * naive "exactly one repeat, of ANY shape" census (the original guard) saw
- * 2 repeats there and bailed, leaving these kinds un-promoted; scoping the
- * census to separator-carrying repeats only fixes that without reopening
- * the original decoy-repeat false positive (the decoy CHOICE-with-no-
- * string-arm test case still detects as separator-carrying via
- * `detectRepeatSeparator`, so it's still correctly counted and the guard
- * still declines to flag multi-separator-repeat compound seqs). A seq with
- * MULTIPLE separator-carrying top-level repeats remains a different,
- * compound shape outside this qualification's design intent — declining to
- * flag it reverts to the existing inline-flat floor behavior (safe by
- * construction, per this file's existing "cannot regress below floor"
- * convention) rather than risking a false-positive match.
- */
 function seqHasGenuineSeparatorVariability(members: unknown[]): boolean {
 	const flat = flattenSeqMembers(members);
 	const repeatMembers: RuntimeRule[] = [];
@@ -357,21 +245,6 @@ function seqHasGenuineSeparatorVariability(members: unknown[]): boolean {
 	return repeatMemberHasGenuineSeparatorVariability(repeatMembers[0]!, flat);
 }
 
-/**
- * Returns true iff the seq body is "inline-safe":
- *   - After dropping pure literals (`string`, `token`) and `blank` from the
- *     seq's direct members, exactly ONE slot remains.
- *   - That slot (after descending through `prec`/`field` transparently) is a
- *     `field` or `symbol` — NOT a bare `choice`, `repeat`, `repeat1`, `seq`,
- *     or any other multi-valued / compound type.
- *
- * Multi-slot or bare-choice bodies are "inline-unsafe" and require a visible
- * AssembledGroup template for correct rendering.
- *
- * @param seqBody — the rule to classify. Typically the body of an
- *   `optional(seq)` position, but may also be called with non-seq bodies
- *   (returns false for them).
- */
 export function isInlineSafe(seqBody: unknown, rulesBag?: Record<string, unknown>): boolean {
 	if (!seqBody || typeof seqBody !== 'object') return false;
 	const r = seqBody as Record<string, unknown>;
@@ -452,32 +325,6 @@ export function isInlineSafe(seqBody: unknown, rulesBag?: Record<string, unknown
 // isSupertypeLike
 // ---------------------------------------------------------------------------
 
-/**
- * STRUCTURAL supertype test: true iff the rule body is a dispatch union —
- * a bare `choice` whose every arm reduces (through prec wrappers only) to a
- * plain symbol ref. Such a rule contributes no structure of its own: at
- * parse time exactly one arm's node materializes and the hidden rule
- * splices away, so wrapping it in a mint alias inserts a CST node level
- * into every position the union appears in AND severs the wrap layer's
- * concrete-kind expansion (keyed on `modelType === 'supertype'`) — the
- * failure class that took python to 0/115 when `_compound_statement` was
- * wrapped.
- *
- * Deliberately SHAPE-ONLY (string type tags via runtime-shapes, no
- * constructor stamps, no name conventions, no provenance registries): the
- * result must be identical under sittir's runtime and tree-sitter's CLI
- * runtime, or the two sides mint divergently (the
- * `_expression_statement_block_ending` phantom: sittir's transparent
- * `prec()` exposed a bare SYMBOL arm that minted, while the CLI saw
- * `PREC(SYMBOL)` and never minted — the IR then modeled a kind the parser
- * never produces).
- *
- * Distinct from the DECLARED-supertype gate (`counter.supertypeNames`),
- * which stays: declaration is authoritative where present; this predicate
- * covers the undeclared unions (`_expression_ending_with_block`,
- * `_expression_except_range`, …) that are supertypes in every structural
- * sense except the grammar's `supertypes:` array.
- */
 export function isSupertypeLike(body: unknown): boolean {
 	const b = unwrapPrec(body);
 	if (!b || typeof b !== 'object') return false;

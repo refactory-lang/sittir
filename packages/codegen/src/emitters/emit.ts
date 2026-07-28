@@ -79,13 +79,6 @@ function classifyRenderModuleEmission(grammar: string, emitRenderModule: boolean
 	return { tag: 'emit', validGrammar: grammar };
 }
 
-/**
- * Single-loop orchestrator: initializes all emitters, iterates
- * `nodeMap.nodes` once dispatching to each, then finalizes all.
- *
- * @param config - Union of what all emitters need.
- * @returns An object with every emitter's final output string.
- */
 export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const {
 		grammar,

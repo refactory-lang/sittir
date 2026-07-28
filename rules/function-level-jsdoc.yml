@@ -17,16 +17,33 @@ rule:
   any:
     - kind: function_declaration
     - kind: method_definition
-    - kind: export_statement
+    - all:
+        - kind: export_statement
+        - has:
+            field: declaration
+            kind: function_declaration
+        - not:
+            has:
+              field: declaration
+              kind: type_alias_declaration
+        - not:
+            has:
+              field: declaration
+              kind: interface_declaration
+        - not:
+            has:
+              field: declaration
+              kind: lexical_declaration
   follows:
     kind: comment
     regex: '^/\*\*'
     stopBy: neighbor
 note: >
-  Wave 5 comment-cleanup audit (2026-07-28): starter rule, not yet run to
-  completion across packages/codegen/src. `export_statement` catches
-  exported consts/types too, which is broader than "function/method" —
-  narrow with `not: {inside: {kind: variable_declaration}}` if that noise
-  matters for a given pass. Cross-check each match against whether
-  docs/compiler-phase-glossary.md already documents the function before
-  moving/rewriting anything.
+  Wave 5 comment-cleanup audit (2026-07-28): narrowed to actual
+  function/method declarations (`function_declaration`, `method_definition`,
+  or `export function`) — no longer matches `export const`/`export type`/
+  `export interface`, whose doc comments describe data shapes, not function
+  contracts, and are out of the AGENTS.md "function-level doc comment" rule's
+  scope (left as source-level documentation, not migrated to the glossary).
+  Cross-check each match against whether docs/compiler-phase-glossary.md
+  already documents the function before moving/rewriting anything.

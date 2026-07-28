@@ -15,10 +15,6 @@
 
 const ASCII_IDENTIFIER_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
-/**
- * True when `value` is a single bare ASCII identifier — letter or underscore
- * start, then letters / digits / underscores, whole-string. Grammar-independent.
- */
 export function isAsciiIdentifier(value: string): boolean {
 	return ASCII_IDENTIFIER_RE.test(value);
 }

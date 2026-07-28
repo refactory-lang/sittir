@@ -36,26 +36,6 @@ import { AssembledSupertype } from '../compiler/model/node-map.ts';
 import type { Rule } from '../types/rule.ts';
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 
-/**
- * Derive a short, readable base label for a single choice arm.
- *
- * Priority: explicit `variant()` label (from `tagVariants`) → named
- * symbol / supertype target → leading named member of a seq (symbol,
- * supertype, or identifier-shaped string literal) → `form${index}`
- * fallback.
- *
- * @param node - The rule for this choice arm.
- * @param index - Zero-based position within the parent CHOICE.
- * @returns A suggested name string (not yet deduplicated — use
- *   {@link deduplicateArmNames} to collide-resolve a full arm list).
- * @remarks Used when suggesting `variant(...)` for bare choices that
- *   lack explicit variant() markers. The name is a suggestion the
- *   grammar author can refine; the important property is that distinct
- *   arms produce distinct base names where possible.
- *
- *   Previously duplicated as an inline ladder inside `armNamesFor`.
- *   Both paths now share this base-name function.
- */
 function deriveArmNameFromRule(node: Rule<'link'>, index: number): string {
 	if (node.type === VARIANT) return node.name;
 	if (node.type === SYMBOL || node.type === SUPERTYPE) return node.name;
@@ -74,16 +54,6 @@ function deriveArmNameFromRule(node: Rule<'link'>, index: number): string {
 	return `form${index}`;
 }
 
-/**
- * Assign collision-free names to all arms of a CHOICE node.
- *
- * @param members - The choice's arm rules, in order.
- * @param nameFn - Per-arm name derivation function (receives rule + index).
- *   Defaults to {@link deriveArmNameFromRule}.
- * @returns An array of unique strings, one per arm. Duplicate base names
- *   get a numeric suffix (2, 3, …) so `registerPolymorphVariant`'s
- *   uniqueness guard accepts the full set.
- */
 function deduplicateArmNames(
 	members: readonly Rule<'link'>[],
 	nameFn: (m: Rule<'link'>, i: number) => string = deriveArmNameFromRule
@@ -97,18 +67,6 @@ function deduplicateArmNames(
 	});
 }
 
-/**
- * Locate the first CHOICE reachable from the rule root through the
- * transparent composition wrappers that `variant()` can target — seq
- * members + single-content wrappers. Returns the path to that choice
- * (joinable with `/`) plus a suggested variant name per alternative.
- * Names come from `tagVariants` when present (`variant.name` — "semi",
- * "form_1", ...); fall back to `form_N` for untagged choices.
- *
- * Returns null if no choice is reachable — the rule isn't a polymorph
- * candidate despite Link's suggestion (rare but possible when multiple
- * passes run; defensive).
- */
 function _locateTopLevelChoice(rule: Rule<'link'>): { choicePath: string; arms: string[] } | null {
 	function walk(node: Rule<'link'>, path: string): { choicePath: string; arms: string[] } | null {
 		if (node.type === CHOICE) {
@@ -139,13 +97,6 @@ function _locateTopLevelChoice(rule: Rule<'link'>): { choicePath: string; arms: 
 	return walk(rule, '');
 }
 
-/**
- * Find the position index of `targetSymbol` within a top-level SEQ rule.
- * Matches both the bare symbol (held inference — pipeline didn't rewrite)
- * and the already-wrapped `field(fieldName, symbol(targetSymbol))` shape
- * (applied inference). Returns null when the rule is not a SEQ at the
- * top level or the target can't be located as a direct member.
- */
 function findSymbolPosition(rule: Rule<'link'>, targetSymbol: string, fieldName: string): number | null {
 	if (rule.type !== SEQ) return null;
 	const unwrap = (r: Rule<'link'>): Rule<'link'> => {
@@ -662,16 +613,6 @@ function sortedInferences(entries: readonly InferredFieldEntry[]): InferredField
 	});
 }
 
-/**
- * Build the rule-block emitter: a closure over a seen-set that dedups
- * repeated kinds, plus a `quoteKey` helper so callers can render the
- * same kind as either a bare identifier or a JSON-quoted property key.
- *
- * @returns `{ emittedKinds, emit, quoteKey }` — shared state + emit closure
- * @remarks
- *   Every call to `emit(kind, fn)` is a no-op after the first for a given
- *   `kind`, so repeated entries in the source log collapse to one block.
- */
 function createDeduplicatingEmitter(): {
 	emittedKinds: Set<string>;
 	emit: (kind: string, fn: () => void) => void;
@@ -687,12 +628,6 @@ function createDeduplicatingEmitter(): {
 	return { emittedKinds, emit, quoteKey };
 }
 
-/**
- * Group inferred-field entries by their parent kind.
- *
- * @param entries - Inferred-field entries from the derivation log.
- * @returns Map from kind string to the entries that inferred fields on it.
- */
 function groupInferencesByKind(entries: readonly InferredFieldEntry[]): Map<string, InferredFieldEntry[]> {
 	const byKind = new Map<string, InferredFieldEntry[]>();
 	for (const e of entries) {
@@ -716,12 +651,6 @@ export interface GroupCandidate {
 	discriminatorGuess: string;
 }
 
-/**
- * Walk rule bodies looking for nested seqs that could benefit from
- * group synthesis. Candidates:
- *   - Live inside a wrapper (not at the top level of the rule body).
- *   - Have ≥1 structural member (field / symbol / supertype).
- */
 export function detectGroupCandidates(rules: Record<string, Rule<'link'>>): GroupCandidate[] {
 	const out: GroupCandidate[] = [];
 	for (const [kind, body] of Object.entries(rules)) {
@@ -864,10 +793,6 @@ function guessGroupDiscriminator(rule: Rule<'link'>, path: readonly number[]): s
 	return 'g' + path.join('_');
 }
 
-/**
- * Format the `suggestedGroups` export block. All entries are held —
- * the author copies them into the overrides.ts `groups:` block to activate.
- */
 export function emitSuggestedGroupsBlock(candidates: readonly GroupCandidate[]): string {
 	const out: string[] = [];
 	out.push('// ---------------------------------------------------------------');

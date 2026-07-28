@@ -19,9 +19,6 @@ const GRAMMAR_JS_PATHS: Record<string, string> = {
 	tsx: 'tree-sitter-typescript/tsx/grammar.js'
 };
 
-/**
- * Resolve a grammar name to the absolute path of its grammar.js file.
- */
 export function resolveGrammarJsPath(grammar: string): string {
 	const wellKnown = GRAMMAR_JS_PATHS[grammar];
 	if (wellKnown) {
@@ -30,10 +27,6 @@ export function resolveGrammarJsPath(grammar: string): string {
 	return require.resolve(`tree-sitter-${grammar}/grammar.js`);
 }
 
-/**
- * Resolve a grammar name to its overrides.ts path (if it exists).
- * Returns the path in packages/{grammar}/overrides.ts.
- */
 export function resolveOverridesPath(grammar: string): string {
 	// Navigate from compiler/ → src/ → codegen/ → packages/
 	const compilerDir = dirname(new URL(import.meta.url).pathname); // compiler/

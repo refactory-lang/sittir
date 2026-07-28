@@ -54,20 +54,6 @@ export type Grammar = (typeof GRAMMARS)[number];
 
 const MANIFEST_FILENAME = 'generated.manifest.json';
 
-/**
- * Repo-relative roots holding the cross-platform generated content for a
- * grammar. Single source of truth: the manifest (`files` section) and the
- * post-regen emit-diff report (`emit-diff.ts`) both consume this, so they can
- * never disagree about what counts as "generated."
- *
- * Intentional exclusions vs cleanup-rules.md §A1:
- *   - `overrides.ts` (hand-edited adjuster) — never generated.
- *   - `overrides.suggested.ts` — written by the codegen CLI AFTER its
- *     internal validation runs (it embeds validator diagnostics). Including
- *     it would force the manifest to be written twice per codegen invocation,
- *     for no real safety gain (it is human-review output, not consumed at
- *     runtime). Hand-edits to it are overwritten on the next codegen run.
- */
 export function generatedRootsFor(grammar: Grammar): string[] {
 	return [
 		`packages/${grammar}/src`,
@@ -104,15 +90,6 @@ function manifestPath(grammar: Grammar): string {
 	return join(REPO_ROOT, `packages/${grammar}/.sittir/${MANIFEST_FILENAME}`);
 }
 
-/**
- * OS/editor junk that can appear anywhere under a generated root (e.g.
- * Finder drops `.DS_Store` into any directory it has opened) but is never
- * part of codegen's own output. Tracking it would record a machine-local
- * path that's absent on a clean checkout, failing verification for no
- * codegen-related reason — same class of problem `isManifestUntracked`
- * solves for `test-fixtures.json`, but this one is skipped at the walk
- * itself since it was never a real generated file to begin with.
- */
 function isJunkFile(name: string): boolean {
 	return name === '.DS_Store';
 }
@@ -134,18 +111,6 @@ function sha256(file: string): string {
 	return createHash('sha256').update(readFileSync(file)).digest('hex');
 }
 
-/**
- * Files that `generatedRootsFor` lists (so `emit-diff.ts` still reports their
- * regen drift) but that the manifest must NOT hash-track. Currently just
- * `test-fixtures.json`: it is derived output, regenerated on every run, and
- * lands in its own dedicated `chore(validator): record validation run`
- * commit rather than bundled with feature/source changes (standing
- * discipline, not hook-enforced). Tracking it would record a hash that can
- * never match the committed file, so `assertGeneratedManifestsClean` would
- * fail on a clean checkout. Excluding it here keeps the write side (manifest
- * generation) and the read side (verification) in agreement: no entry
- * written, none expected.
- */
 function isManifestUntracked(relPath: string): boolean {
 	return relPath.endsWith('/test-fixtures.json');
 }
@@ -362,28 +327,6 @@ export function verifyManifestForGrammar(grammar: Grammar): VerifyResult {
 	return result;
 }
 
-/**
- * Throw a formatted error if any grammar's manifest verification fails.
- * Convenience for callers that just want a boolean gate.
- *
- * Missing manifest is treated as a HARD ERROR (was previously a warn-and-continue
- * "bootstrap mode" — that turned out to be a verification-bypass surface: any
- * caller that wanted to skip verification could just delete the manifest file
- * and proceed). The legitimate bootstrap path is "run codegen first":
- * `packages/codegen/src/cli.ts` runs with `SITTIR_INTERNAL_CODEGEN_RUN=1` set
- * (see below) so its OWN internal validators bypass verification, and codegen
- * writes the manifest at the end of its run. Once that happens, subsequent
- * external runs see a present manifest and verify normally.
- *
- * Codegen-internal bypass: when `SITTIR_INTERNAL_CODEGEN_RUN=1` is set, the
- * call returns silently. This env is set ONLY by `packages/codegen/src/cli.ts`
- * during its own internal validator runs (e.g. extractParityFixtures uses
- * validateReadRenderParse to extract parity fixtures BEFORE the manifest is
- * rewritten at codegen end). The codegen CLI is the writer of the manifest;
- * verifying mid-write would check the codegen process against its own
- * incomplete output. External callers (validator CLI, probe-validate, etc.)
- * do not set this env and therefore get full verification.
- */
 export function assertGeneratedManifestsClean(grammars?: readonly Grammar[]): void {
 	if (process.env.SITTIR_INTERNAL_CODEGEN_RUN === '1') return;
 	const targets = grammars ?? GRAMMARS;

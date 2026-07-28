@@ -45,11 +45,6 @@ function walkMtimes(root: string, repoRoot: string, newest: { mtimeMs: number; r
 	}
 }
 
-/**
- * Report freshness for every `*.node` present in the grammar's crate dir.
- * Returns `[]` when the crate dir or binaries are absent (not built yet —
- * absence is tolerated; staleness is not).
- */
 export function hostBinaryFreshnessFor(repoRoot: string, grammar: string): HostBinaryFreshness[] {
 	const crateDir = join(repoRoot, `rust/crates/sittir-${grammar}`);
 	if (!existsSync(crateDir)) return [];
@@ -72,11 +67,6 @@ export function hostBinaryFreshnessFor(repoRoot: string, grammar: string): HostB
 	});
 }
 
-/**
- * Throw when any present host binary is stale. No-op when no binary exists
- * (not built yet — callers fall back to their own "engine unavailable"
- * handling).
- */
 export function assertNativeBinaryFresh(repoRoot: string, grammar: string): void {
 	const stale = hostBinaryFreshnessFor(repoRoot, grammar).filter((b) => b.stale);
 	if (stale.length === 0) return;

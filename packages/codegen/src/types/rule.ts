@@ -467,24 +467,6 @@ export type VariantRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
  */
 export type EnumRule<T extends PhaseName = 'normalize'> = ChoiceRule<T>;
 
-/**
- * Predicate: rule is an enum-shaped ChoiceRule (flat, all-STRING members,
- * at least 2 members). Matches the pre-link form; post-link use literalTextOf.
- *
- * This is the canonical replacement for `rule.type === ENUM`.
- *
- * @remarks
- * The guard type is `Extract<R, {type: CHOICE}> & {readonly __enumShaped?:
- * never}` rather than plain `Extract<R, {type: CHOICE}>`. Without the brand,
- * TS treats a `false` result as "not CHOICE at all" (since the predicate
- * type is structurally indistinguishable from a plain `rule.type === CHOICE`
- * check), which wrongly excludes non-enum CHOICE rules from the false
- * branch — including collapsing it to `never` when `R` was already narrowed
- * to a CHOICE-only type (e.g. inside `switch (rule.type) case CHOICE:`). The
- * phantom brand makes the true-branch type a distinct (enum-shaped) subtype
- * of CHOICE, so the false branch correctly keeps every non-enum-shaped
- * member of `R`, CHOICE included.
- */
 export function isEnumChoiceRule<R extends AnyRule>(
 	rule: R
 ): rule is Extract<R, { type: typeof CHOICE }> & { readonly __enumShaped?: never } {
@@ -675,13 +657,6 @@ export const literalTextOf = (r: AnyRule): string | undefined =>
 // Tree walkers — pure Rule-tree projections, no AssembledNode concepts
 // ---------------------------------------------------------------------------
 
-/**
- * Collect the set of field names referenced anywhere in a rule tree.
- * Returns names only — cheap one-pass walker with no AssembledField
- * allocation. Pre-assembly phases (classifier) that only need field-set equality call this
- * instead of constructing full AssembledField objects just to extract
- * names.
- */
 export function collectFieldNames(rule: AnyRule): Set<string> {
 	const names = new Set<string>();
 	walkFieldNames(rule, names);
@@ -734,15 +709,6 @@ export interface SymbolRef {
 // for the path semantics.
 // ---------------------------------------------------------------
 
-/**
- * Return a new rule tree with the sub-rule at `path` replaced by
- * `replacement`. Pure — no mutation of input. Path segments index into:
- *   - seq.members[i] / choice.members[i]
- *   - wrapper.content (path '0' for optional/repeat/repeat1/field/
- *     token/alias/variant/clause/group)
- *
- * Throws if any segment fails to address.
- */
 export function replaceAtPath<R extends AnyRule>(rule: R, path: string, replacement: R): R {
 	const segments = path.split('/').filter((s) => s.length > 0);
 	return replaceAtPathRec(rule, segments, 0, replacement) as R;
@@ -775,10 +741,6 @@ function replaceAtPathRec(rule: AnyRule, segments: readonly string[], depth: num
 	}
 }
 
-/**
- * Symbol reference constructor — baseline DSL shadow used by metadata
- * helpers that need a real runtime symbol without fabricating the object.
- */
 export function sym(name: string): SymbolRule {
 	return { type: SYMBOL, name, hidden: name.startsWith('_'), inline: name.startsWith('_') };
 }

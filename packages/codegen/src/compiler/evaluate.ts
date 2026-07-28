@@ -93,21 +93,6 @@ export function normalize(input: Input): Rule<'evaluate'> {
 // Structural grouping
 // ---------------------------------------------------------------------------
 
-/**
- * Sequence combinator — matches all members in order.
- *
- * @remarks
- * A single-member seq collapses to its sole member: the extra layer has
- * the same parse semantics but confuses walkers that count seq members
- * for positional hints.
- *
- * @remarks
- * The separated-list LIFT — commaSep1 (`seq(x, repeat(seq(sep, x)))`) →
- * `repeat1{separator}` and trailing-separator absorption — is NOT performed
- * here. It runs once in the `link` pass (compiler/lift-separators.ts), after
- * wire and enrich-injection, so author callbacks see the un-lifted shape and
- * every separated list — authored or synthesized — is lifted from one place.
- */
 export function seq(...members: Input[]): Rule<'evaluate'> {
 	const normalized = members.map(normalize);
 
@@ -116,24 +101,6 @@ export function seq(...members: Input[]): Rule<'evaluate'> {
 	return { type: SEQ, members: normalized };
 }
 
-/**
- * Choice combinator — matches exactly one of the members.
- *
- * @remarks
- * A single-member choice collapses to its member — the wrapper has no
- * parse semantics.
- *
- * @remarks
- * `choice(x, blank())` is lowered to `optional(x)`. Tree-sitter encodes
- * blank() as either an empty seq (historical) or an empty choice; both
- * shapes mark "this branch matches nothing", so the outer choice is
- * "x or nothing" = `optional(x)`. Collapsing at DSL time means walkers
- * only ever see the optional shape.
- *
- * @remarks
- * An all-string choice is compacted to an `EnumRule<'evaluate'>` for fast downstream
- * handling.
- */
 export function choice(...members: Input[]): Rule<'evaluate'> {
 	const normalized = members.map(normalize);
 
@@ -161,39 +128,6 @@ export function choice(...members: Input[]): Rule<'evaluate'> {
 	return { type: CHOICE, members: normalized };
 }
 
-/**
- * Collapse an all-field choice into a factored field, or leave it as a
- * plain choice of (heterogeneously-named) fields.
- *
- * @param fieldMembers - All members of the choice, already confirmed to be FieldRule<'evaluate'>.
- * @returns A factored `FieldRule<'evaluate'>` when every branch shares one field
- *   name, otherwise a raw `choice` of the original `field()` members.
- * @remarks
- * All branches wrap the SAME field name — factor the field outward to
- * `field('x', choice(A, B))`. The choice content may itself simplify to an
- * enum when all inners are strings.
- *
- * Otherwise (different field names, or any branch wraps an alias — see
- * below), the choice passes through as-is: `choice(field('body', seq(...)),
- * field('semi', seq(...)))` stays exactly that. PR 2 (2026-07-21 union-slot
- * design) retired the prior VARIANT-retype encoding here (`FieldRule<'evaluate'>`
- * / `VariantRule` share the same `name`+`content` shape, so the retype was a
- * pure discriminator change) — that existed only for Link's now-deleted
- * `promotePolymorph` pass to recognize the shape and wrap the rule in a
- * `PolymorphRule`; `PolymorphRule`/`AssembledPolymorph` are fully gone from
- * the pipeline, so the fields now stay FIELD-typed and route into named
- * slots via PR 1's per-arm union-slot routing (`carriesNamedField`), same as
- * any other heterogeneous fielded choice.
- *
- * @remarks
- * Any branch wrapping an alias directly takes this same passthrough (checked
- * first, before the same-name factoring). Aliases are structural rename
- * markers; downstream passes (Link, assemble) depend on the alias appearing
- * inside a plain choice to route the synthetic kind into the NodeMap —
- * factoring or retyping shifts classification and leaves the alias target
- * unregistered (observed on rust `_line_doc_comment_marker` /
- * `_block_doc_comment_marker`).
- */
 function collapseAllFieldChoiceMembers(fieldMembers: FieldRule<'evaluate'>[]): Rule<'evaluate'> {
 	const anyAlias = fieldMembers.some((f) => f.content.type === ALIAS);
 	if (anyAlias) {
@@ -224,25 +158,6 @@ function collapseAllFieldChoiceMembers(fieldMembers: FieldRule<'evaluate'>[]): R
 	return { type: CHOICE, members: fieldMembers };
 }
 
-/**
- * Optional combinator — matches zero or one occurrence of the content.
- *
- * @remarks
- * `optional(optional(x))` collapses to `optional(x)` — two layers of
- * "zero or one" is the same as one layer.
- *
- * @remarks
- * `optional(repeat(x))` returns `repeat(x)` unchanged. `repeat` is
- * already optional in the config surface (`items?: T[]`, null-coalesced
- * to `[]` in the factory), so the wrapper adds no information.
- *
- * @remarks
- * `optional(repeat1(x))` is lowered to `repeat(x)`. The two are
- * parse-identical: tree-sitter surfaces "optional didn't fire" and
- * "repeat1 fired with zero items" identically (an empty children list).
- * The non-empty guarantee a bare `repeat1` carries only holds when there
- * is no `optional` wrapper to swallow the empty case.
- */
 export function optional(content: Input): Rule<'evaluate'> {
 	const resolved = normalize(content);
 	walkRefs(resolved, (ref) => {
@@ -262,17 +177,6 @@ export function optional(content: Input): Rule<'evaluate'> {
 	return { type: OPTIONAL, content: resolved };
 }
 
-/**
- * Zero-or-more repetition combinator.
- *
- * @remarks
- * `repeat(repeat(x))` collapses to `repeat(x)` when neither layer carries
- * a distinct separator — the outer loop is redundant.
- *
- * @remarks
- * `repeat(optional(x))` collapses to `repeat(x)` — repeat already handles
- * zero occurrences, so the optional wrapper is redundant.
- */
 export function repeat(content: Input): Rule<'evaluate'> {
 	const resolved = normalize(content);
 	walkRefs(resolved, (ref) => {
@@ -291,20 +195,6 @@ export function repeat(content: Input): Rule<'evaluate'> {
 	return { type: REPEAT, content: resolved };
 }
 
-/**
- * One-or-more repetition combinator.
- *
- * @remarks
- * `repeat1(repeat1(x))` collapses to `repeat1(x)` — the outer "one or
- * more" of "one or more" accepts the same strings as the inner.
- *
- * @remarks
- * `repeat1(repeat(x))` is NOT collapsed to `repeat1(x)`. The inner
- * `repeat(x)` can match empty, so `repeat1(repeat(x))` accepts
- * zero-or-more `x` (one outer iteration of zero inner matches), which
- * matches `repeat(x)`'s language — not `repeat1(x)`'s. The shape is
- * left alone to preserve grammar author intent.
- */
 export function repeat1(content: Input): Rule<'evaluate'> {
 	const resolved = normalize(content);
 	walkRefs(resolved, (ref) => {
@@ -340,18 +230,6 @@ export function createProxy(currentRule: string, refs: SymbolRef[]): Record<stri
 	});
 }
 
-/**
- * Authoritative "is this kind hidden?" check shared by Link and
- * downstream passes. Tree-sitter treats a rule as hidden when:
- *
- *   (a) its name begins with `_` (convention), OR
- *   (b) its name appears in the grammar's `inline:` array (explicit).
- *
- * Grammars that don't follow the leading-underscore convention can
- * still mark rules hidden via `inline`. Passing `undefined` for
- * `inlineList` falls back to convention-only, which is the safe
- * default when Link doesn't have grammar metadata at hand.
- */
 export function isHiddenKind(name: string, inlineList?: readonly string[]): boolean {
 	if (name.startsWith('_')) return true;
 	if (inlineList && inlineList.includes(name)) return true;
@@ -366,19 +244,6 @@ function getRef(rule: Rule<'evaluate'>): SymbolRef | undefined {
 	return (rule as SymbolRuleWithRef)._ref;
 }
 
-/**
- * Walk a rule tree and call `visit` on every direct symbol reference
- * (`_ref`-bearing SymbolRule<'evaluate'>), including refs nested inside `seq`,
- * `choice`, `optional`, `repeat`, `repeat1`, and `prec` wrappers.
- *
- * Stops at nested `field` boundaries: a `field('y', $.foo)` inside a
- * `field('x', seq(..., field('y', $.foo)))` keeps its own field name
- * — `x` does not propagate over the inner `field`.
- *
- * Also stops at `alias` boundaries — an alias creates a distinct kind
- * with its own surface, so the inner reference doesn't inherit the
- * outer wrapper's modifiers.
- */
 function walkRefs(rule: Rule<'evaluate'>, visit: (ref: SymbolRef) => void): void {
 	const ref = getRef(rule);
 	if (ref) visit(ref);
@@ -406,30 +271,6 @@ function walkRefs(rule: Rule<'evaluate'>, visit: (ref: SymbolRef) => void): void
 // Named patterns
 // ---------------------------------------------------------------------------
 
-/**
- * Field combinator — attaches a named field to a rule.
- *
- * @param name - The field name (snake_case, raw grammar name).
- * @param content - The rule occupying this field position. Omit to
- *   create a placeholder for `resolvePatch` in transform() patches.
- * @returns A FieldRule<'evaluate'> with the field name and resolved content.
- * @remarks
- * When `content` is omitted, a placeholder FieldRule<'evaluate'> is returned with
- * `_needsContent: true`, which `resolvePatch` swaps out with the
- * original member when applying transform() patches.
- * @remarks
- * Mirrors the bare `optional()` helper's canonical collapse:
- * `field('x', optional(repeat(...)))` → `field('x', repeat(...))` and
- * `field('x', optional(repeat1(...)))` → `field('x', repeat(...))`.
- * Both are parse-identical to `repeat(x)` — tree-sitter surfaces any
- * empty case as an empty children list. Collapsing both here keeps
- * evaluate output canonical across all the equivalent list encodings
- * grammar authors write.
- * @remarks
- * Propagates the field name to every nested symbol ref. Stops at inner
- * field/alias boundaries — those own their own field name. Does not
- * overwrite a field name already set by an inner wrapper.
- */
 export function field(name: string, content?: Input): FieldRule<'evaluate'> {
 	if (content === undefined) {
 		return {
@@ -447,20 +288,6 @@ export function field(name: string, content?: Input): FieldRule<'evaluate'> {
 	return { type: FIELD, name, content: resolved };
 }
 
-/**
- * Collapse `optional(repeat(...))` and `optional(repeat1(...))` to
- * `repeat(...)` inside a field's content.
- *
- * @param resolved - The already-normalized field content rule.
- * @returns The canonicalized rule with the optional wrapper removed when
- *   the inner content is a repeat variant.
- * @remarks
- * Both `optional(repeat(x))` and `optional(repeat1(x))` are
- * parse-identical to `repeat(x)` — tree-sitter surfaces any empty case
- * as an empty children list. Collapsing here keeps evaluate output
- * canonical across all the equivalent list encodings grammar authors
- * write.
- */
 function collapseOptionalRepeatInField(resolved: Rule<'evaluate'>): Rule<'evaluate'> {
 	if (resolved.type !== OPTIONAL) return resolved;
 	const inner = resolved.content;
@@ -570,19 +397,6 @@ export function blank(): Rule<'evaluate'> {
 	return { type: CHOICE, members: [] };
 }
 
-/**
- * `string(value)` — mirror of tree-sitter's baseline DSL `string()` helper.
- *
- * Tree-sitter's grammar.js API accepts plain JS strings wherever string
- * rules are needed (e.g. `seq('(', $._expr, ')')`) AND also provides an
- * explicit `string(value)` form. Sittir's `normalize()` already handles
- * both: bare strings normalize to `{ type: 'STRING', value }`.
- *
- * This explicit form is injected as a DSL global so that `renderAs`
- * bodies can use `string('x')` syntax (as specified) without relying on
- * bare string literals, and so that any author rule body that calls
- * `string(...)` explicitly continues to work.
- */
 export function string(value: string): StringRule<'evaluate'> {
 	return { type: STRING, value };
 }
@@ -781,37 +595,6 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 	return { grammar: grammarResult };
 }
 
-/**
- * For every `alias(inlineContent, $.target)` whose source isn't a
- * bare symbol reference to an existing rule or external token,
- * synthesize a hidden rule `_${target}` carrying the inline content
- * and rewrite the alias's source to point at it.
- *
- * Before:
- *    alias(choice('u8','u16',...), $.primitive_type)
- *
- * After:
- *    rules[_primitive_type] = choice('u8','u16',...)
- *    alias(symbol(_primitive_type), $.primitive_type)
- *
- * Why: downstream (link's `resolveNamedAliasWithProvenance`) produces
- * `symbol(target, aliasedFrom: source)` ONLY when the alias source is
- * a bare symbol. For inline content it can't stamp `aliasedFrom` and
- * drillAs loses the CST-visible target. By making every alias source
- * a named hidden rule here, we uniformly preserve alias-target
- * metadata through the pipeline.
- *
- * Also: the rules map now has a single named entry per alias target
- * (the `_${target}` source) without adding entries for visible-only
- * kinds — matching tree-sitter's declaration view.
- *
- * External scanner tokens (listed in `externals`) are treated the same
- * as declared rules: they already have parser-assigned symbol IDs and
- * need no synthetic source. `alias($._line_doc_content, $.doc_comment)`
- * must NOT produce `_doc_comment` — the source is an external with its
- * own parser identity; the visible target `doc_comment` is the alias
- * destination, not a hidden kind.
- */
 function synthesizeInlineAliasSources(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
 	const externalSet = new Set(ctx.externals);
 	const ruleEntries = Object.entries(rules);
@@ -899,37 +682,6 @@ function rewriteInlineAliases(
 // synthesizeFieldEnumRules — promote inline field-enums to named hidden rules
 // ---------------------------------------------------------------------------
 
-/**
- * Post-evaluation pass: detect `field(name, enum([...]))` patterns inside
- * every rule and synthesize a named hidden rule for each one. Replace the
- * field's inline enum content with a `SymbolRule<'evaluate'>` referencing the new rule.
- *
- * @remarks
- * A field whose content is a choice-of-literals (already collapsed to
- * `EnumRule<'evaluate'>` by `choice()`) represents a closed, compile-time-known set of
- * operator/punctuation tokens. Promoting these to named hidden rules enables
- * downstream emitters to generate a compact Rust enum with KindId-backed
- * discriminants rather than a heap-allocated `text: String` field.
- *
- * Also follows single-step symbol indirections: when a field's content is a
- * bare `SymbolRule<'evaluate'>` referencing a rule that resolves to a `StringRule<'evaluate'>` or
- * `EnumRule<'evaluate'>` (e.g. `field('mutability', $.mutable_specifier)` where
- * `mutable_specifier` = `'mut'`), the target rule's literals are collected
- * and a new enum kind is synthesized in the same way.
- *
- * Synthesized rules carry provenance `'evaluate-synthesized'` so emitters
- * recognize them as intentional codegen artifacts with no parser symbol.
- *
- * Deduplication: fields with identical member sets (across different parent
- * kinds) share a single synthesized enum kind. The canonical name is chosen
- * in priority order:
- *   1. An existing grammar rule with the same literal set → `_<ruleName>`.
- *   2. The field name, when shared across ≥2 parent kinds → `_<fieldName>`.
- *   3. Fall back: `_<firstParentKind>_<fieldName>` for the first occurrence.
- *
- * @param rules - Mutable rules map; synthesized rules are added in place.
- * @param provenanceByKind - Provenance map; entries are added for each new kind.
- */
 function synthesizeFieldEnumRules(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
 	// First pass: collect all (parentKind, fieldName, members) triples so we
 	// can count how often each field name appears with the same member set and
@@ -972,30 +724,6 @@ function synthesizeFieldEnumRules(rules: Record<string, Rule<'evaluate'>>, ctx: 
 	purgeSupersededEnumRules(rules, ctx, memberKeyToCanonicalName);
 }
 
-/**
- * Remove pre-existing hidden enum rules that are superseded by the current
- * pass's canonical name for the same member set.
- *
- * For example: the base grammar synthesizes `_update_expression_operator` for
- * `["++","--"]`. The override pass assigns `_operator` as the canonical name
- * for the same member set (the wire-deposited `_operator` is already present).
- * The old `_update_expression_operator` is no longer needed and should be
- * removed so it doesn't pollute downstream emitters.
- *
- * Criteria for removal:
- * - Hidden rule (name starts with `_`).
- * - Is an EnumRule<'evaluate'>.
- * - Its sorted member set maps to a DIFFERENT canonical name in
- *   `memberKeyToCanonicalName` (i.e., this name is not the canonical one).
- *
- * We do NOT require the rule to be in the current pass's `provenanceByKind`
- * because it may have been synthesized in an earlier pass (base grammar) and
- * carried forward through the rules-merge path.
- *
- * @param rules - Mutable rules map; superseded entries are deleted in place.
- * @param provenanceByKind - Provenance map; entries for deleted kinds are removed.
- * @param memberKeyToCanonicalName - The current pass's canonical name map.
- */
 function purgeSupersededEnumRules(
 	rules: Record<string, Rule<'evaluate'>>,
 	ctx: EvaluateCtx,
@@ -1033,13 +761,6 @@ interface FieldEnumOccurrence {
 	readonly members: StringRule<'evaluate'>[];
 }
 
-/**
- * Scan all rules for `field(name, enumContent)` patterns and return every
- * qualifying (parentKind × fieldName × memberSet) triple.
- *
- * @param rules - The full grammar rules map after evaluate-time synthesis.
- * @returns Array of occurrence records, one per qualifying field position.
- */
 function collectFieldEnumOccurrences(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): FieldEnumOccurrence[] {
 	const occurrences: FieldEnumOccurrence[] = [];
 	for (const [parentKind, rule] of Object.entries(rules)) {
@@ -1048,14 +769,6 @@ function collectFieldEnumOccurrences(rules: Record<string, Rule<'evaluate'>>, ct
 	return occurrences;
 }
 
-/**
- * Recursively walk a rule tree collecting qualifying field-enum positions.
- *
- * @param rule - Current rule node.
- * @param parentKind - Grammar kind that owns this subtree.
- * @param rules - Full rules map for symbol resolution.
- * @param out - Accumulator for discovered occurrences.
- */
 function walkFieldEnums(
 	rule: Rule<'evaluate'>,
 	ctx: EvaluateCtx,
@@ -1095,23 +808,6 @@ function walkFieldEnums(
 	}
 }
 
-/**
- * Build a `Map<memberKey, canonicalKindName>` for all discovered field-enum
- * occurrences using the priority-order naming strategy:
- *
- *   1. The field name matches an existing grammar rule with the same members →
- *      `_<fieldName>`.
- *   2. Field name shared across ≥2 distinct parent kinds → `_<fieldName>`.
- *   3. First-occurrence fallback → `_<firstParentKind>_<fieldName>`.
- *
- * When two different member sets would produce the same candidate name, the
- * lower-priority group falls back to `_<firstParentKind>_<fieldName>` to
- * avoid silent name collisions.
- *
- * @param occurrences - All qualifying field-enum occurrences from the first pass.
- * @param rules - Full grammar rules map for checking existing rule names.
- * @returns Map from `memberKey` to the chosen canonical hidden kind name.
- */
 function buildCanonicalEnumNames(occurrences: FieldEnumOccurrence[], ctx: EvaluateCtx): Map<string, string> {
 	// Group occurrences by memberKey.
 	const byKey = new Map<string, FieldEnumOccurrence[]>();
@@ -1143,10 +839,6 @@ function buildCanonicalEnumNames(occurrences: FieldEnumOccurrence[], ctx: Evalua
 	return result;
 }
 
-/**
- * Compute the fallback canonical name for a field-enum occurrence when no
- * higher-priority name can be assigned: `_<firstParentKind>_<fieldName>`.
- */
 function fallbackName(occ: FieldEnumOccurrence): string {
 	return `_${occ.parentKind}_${occ.fieldName}`;
 }
@@ -1155,14 +847,6 @@ function fieldEnumSiteKey(parentKind: string, fieldName: string): string {
 	return `${parentKind}\u0000${fieldName}`;
 }
 
-/**
- * Identify field sites that carry multiple distinct literal sets inside the
- * same parent rule.
- *
- * Those sites must stay inline through evaluate so simplify can merge the
- * enclosing choice into a single `field(name, choice(...))` surface before
- * any later enum-like storage classification runs.
- */
 function collectConflictingFieldEnumSites(occurrences: readonly FieldEnumOccurrence[]): ReadonlySet<string> {
 	const memberKeysBySite = new Map<string, Set<string>>();
 	for (const occ of occurrences) {
@@ -1181,14 +865,6 @@ function collectConflictingFieldEnumSites(occurrences: readonly FieldEnumOccurre
 	return conflicting;
 }
 
-/**
- * Claim a unique hidden enum kind name for a member set.
- *
- * Prefer the requested base name when it is still free. When that name has
- * already been claimed for a different member set, append a stable slug derived
- * from the literal set so different `parentKind + fieldName` collisions do not
- * all collapse onto the first synthesized rule.
- */
 function claimUniqueEnumName(
 	baseName: string,
 	ctx: EvaluateCtx,
@@ -1211,11 +887,6 @@ function claimUniqueEnumName(
 	return candidate;
 }
 
-/**
- * Return `true` when an existing rule name can safely be reused for this member
- * set: either the name is currently unused, or the existing rule resolves to
- * the exact same literal members.
- */
 function canReuseExistingEnumName(name: string, ctx: EvaluateCtx, memberKey: string): boolean {
 	const existing = ctx.rules[name];
 	if (existing === undefined) return true;
@@ -1224,9 +895,6 @@ function canReuseExistingEnumName(name: string, ctx: EvaluateCtx, memberKey: str
 	return buildEnumMemberKey(members) === memberKey;
 }
 
-/**
- * Build the stable key used for enum-member deduplication.
- */
 function buildEnumMemberKey(members: readonly StringRule<'evaluate'>[]): string {
 	return [...members]
 		.map((m) => m.value)
@@ -1234,12 +902,6 @@ function buildEnumMemberKey(members: readonly StringRule<'evaluate'>[]): string 
 		.join(',');
 }
 
-/**
- * Encode a member key into an identifier-safe, deterministic suffix.
- *
- * Each literal contributes lowercase alphanumerics directly; every other code
- * point is encoded as `xNN`. Commas separating members become `__`.
- */
 function enumMemberKeySlug(memberKey: string): string {
 	return memberKey
 		.split(',')
@@ -1252,22 +914,6 @@ function enumMemberKeySlug(memberKey: string): string {
 		.join('__');
 }
 
-/**
- * Derive a candidate canonical hidden kind name (with priority) for a group
- * of occurrences that share the same member set.
- *
- * Priority values (lower number = higher priority):
- *   1. Field name matches an existing grammar rule with the same literal set →
- *      `_<fieldName>`. Handles `mutable_specifier = 'mut'` cases.
- *   2. All occurrences share the same field name AND ≥2 distinct parents →
- *      `_<fieldName>`.
- *   3. Fallback → `_<firstParentKind>_<fieldName>`.
- *
- * @param group - All occurrences sharing this member set.
- * @param first - The first occurrence (used for naming).
- * @param rules - Grammar rules map for existing-rule lookup.
- * @returns The candidate name and its priority level (1 = highest).
- */
 function deriveCandidateName(
 	group: FieldEnumOccurrence[],
 	ctx: EvaluateCtx,
@@ -1293,17 +939,6 @@ function deriveCandidateName(
 	return { name: fallbackName(first), priority: 3 };
 }
 
-/**
- * Check whether a grammar rule named `fieldName` exists and resolves to the
- * same literal set as `members`. Used by `deriveCanonicalName` for priority-1
- * matching: if `field('mutable_specifier', ...)` and `rules['mutable_specifier']
- * = 'mut'`, the field name is itself the canonical name.
- *
- * @param fieldName - The field name to look up in `rules`.
- * @param members - The expected literal members for comparison.
- * @param rules - Full grammar rules map.
- * @returns `true` when `rules[fieldName]` resolves to the same member set.
- */
 function fieldNameMatchesGrammarRule(fieldName: string, ctx: EvaluateCtx, members: StringRule<'evaluate'>[]): boolean {
 	const rule = ctx.rules[fieldName];
 	if (rule === undefined) return false;
@@ -1329,17 +964,6 @@ interface FieldEnumSweepState {
 	readonly conflictingSites: ReadonlySet<string>;
 }
 
-/**
- * Walk a rule tree and rewrite every `field(name, inlineEnum)` to
- * `field(name, symbol(<canonicalEnumKindName>))`, collecting the synthesized
- * enum rules into `sweep.newRules`.
- *
- * @param rule - The rule tree to walk and potentially rewrite.
- * @param ctx - Evaluate ctx (rules map for symbol-reference resolution).
- * @param parentKind - The grammar kind that owns this rule (for naming).
- * @param sweep - The pass-local sweep state.
- * @returns The rewritten rule (may be structurally identical if no change was needed).
- */
 function rewriteFieldEnums(
 	rule: Rule<'evaluate'>,
 	ctx: EvaluateCtx,
@@ -1399,40 +1023,6 @@ function rewriteFieldEnums(
 	}
 }
 
-/**
- * Try to extract an enum definition from a field's content.
- *
- * Returns `{ enumKindName, synthesizedRule, replacementContent }` when the content
- * resolves to a closed set of string literals, or `null` when it does not
- * qualify.
- *
- * Qualifying shapes:
- *
- * 1. `EnumRule<'evaluate'>` (inline `choice('+', '-', ...)` already collapsed) — use
- *    its members directly. `replacementContent` is `symbol(enumKindName)`.
- *
- * 2. `StringRule<'evaluate'>` (single literal inline in the field position) — wrap in
- *    a 1-member enum. `replacementContent` is `symbol(enumKindName)`.
- *
- * 3. `SymbolRule<'evaluate'>` whose referent in `rules` resolves to a `StringRule<'evaluate'>` or
- *    `EnumRule<'evaluate'>` — use that rule's literals. Follows exactly one level of
- *    indirection (symbol → literal | enum).
- *    `replacementContent` is `symbol(enumKindName)`.
- *
- * 4. `repeat(X)` or `repeat1(X)` where `X` resolves to one of the above —
- *    the repeat wrapper is preserved in `replacementContent`:
- *    `repeat(symbol(enumKindName))` or `repeat1(symbol(enumKindName))`.
- *
- * The canonical kind name is looked up from `memberKeyToCanonicalName` rather
- * than derived from the parent/field context — ensuring all identical member
- * sets share one synthesized rule regardless of where they appear.
- *
- * @param content - The field's current content rule.
- * @param rules - Full rules map for symbol resolution.
- * @param memberKeyToCanonicalName - Pre-computed dedup map (first pass).
- * @returns Synthesized kind name, normalized literal-set rule, and the replacement content rule,
- *   or `null` when the content does not qualify.
- */
 function tryExtractFieldEnum(
 	content: Rule<'evaluate'>,
 	ctx: EvaluateCtx,
@@ -1465,35 +1055,11 @@ function tryExtractFieldEnum(
 	return { enumKindName, synthesizedRule, replacementContent };
 }
 
-/**
- * Peel one level of `repeat` or `repeat1` wrapper from a rule, returning
- * the inner content. Returns the rule unchanged when it is not a repeat
- * wrapper. Used by occurrence-collection and field-extraction passes to
- * treat `field(name, repeat(enum))` the same as `field(name, enum)`.
- *
- * @param rule - The rule to inspect.
- * @returns The inner content when `rule` is a `repeat` or `repeat1`,
- *   otherwise `rule` itself.
- */
 function peelRepeatWrapper(rule: Rule<'evaluate'>): Rule<'evaluate'> {
 	if (rule.type === REPEAT || rule.type === REPEAT1) return rule.content;
 	return rule;
 }
 
-/**
- * Resolve a rule to an ordered list of string members if it represents a
- * closed set of literals. Returns `null` when the rule cannot be reduced to
- * an all-literal set.
- *
- * @param rule - The rule to inspect.
- * @param rules - Full rules map for one-level symbol indirection.
- * @returns An array of `StringRule<'evaluate'>` members, or `null`.
- * @remarks
- * Only one level of symbol indirection is followed. Chains like
- * `symbol → symbol → enum` are intentionally NOT followed — deeper
- * resolution belongs in Link, and multi-level chains are uncommon for
- * operator fields.
- */
 function resolveToEnumMembers(rule: Rule<'evaluate'>, ctx: EvaluateCtx): StringRule<'evaluate'>[] | null {
 	// PR-P: ENUM type retired — detect via isEnumChoiceRule first.
 	if (isEnumChoiceRule(rule)) return rule.members as StringRule<'evaluate'>[];
@@ -1513,19 +1079,6 @@ function resolveToEnumMembers(rule: Rule<'evaluate'>, ctx: EvaluateCtx): StringR
 	}
 }
 
-/**
- * Resolve a target rule to enum members without further symbol indirection.
- *
- * @param target - The resolved rule (one hop from a symbol reference).
- * @returns An array of `StringRule<'evaluate'>` members, or `null` when the target is
- *   not a literal or all-literal choice/enum.
- * @remarks
- * Kept separate from {@link resolveToEnumMembers} to make the "one-level
- * indirection" constraint explicit and prevent accidental chain following.
- * A `ChoiceRule<'evaluate'>` reaching here is the raw evaluate-time form — all-string
- * choices should already have been collapsed to `EnumRule<'evaluate'>` by `choice()`,
- * but handle the raw form defensively.
- */
 function resolveToEnumMembersOneLevelDeep(target: Rule<'evaluate'>): StringRule<'evaluate'>[] | null {
 	switch (target.type) {
 		case STRING:
@@ -1543,31 +1096,16 @@ function resolveToEnumMembersOneLevelDeep(target: Rule<'evaluate'>): StringRule<
 	}
 }
 
-/**
- * Read the wire context `wire()` stashes on `opts.__wireContext__` — a
- * runtime-only channel not part of the public `GrammarOptions` shape.
- */
 function getWireContext(opts: GrammarOptions): WireContext | undefined {
 	return (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
 }
 
-/**
- * Read the refine() form metadata produced by the DSL during rule
- * evaluation. Returns `undefined` when no refine() calls fired (keeps
- * the `RawGrammar.refineForms` field absent rather than an empty map
- * for downstream consumers that check presence).
- */
 function drainRefineMetadata(opts: GrammarOptions): Map<string, RefineForm[]> | undefined {
 	const wireCtx = getWireContext(opts);
 	if (!wireCtx || wireCtx.refineForms.size === 0) return undefined;
 	return new Map(wireCtx.refineForms);
 }
 
-/**
- * Read the groups config from the wire context. Returns `undefined` when
- * no `groups:` block was supplied (keeps `RawGrammar.groups` absent for
- * downstream consumers that check presence).
- */
 function drainGroupsMetadata(opts: GrammarOptions): Record<string, Record<string, string> | undefined> | undefined {
 	const wireCtx = getWireContext(opts);
 	if (!wireCtx || !wireCtx.groups) return undefined;
@@ -1585,10 +1123,6 @@ function drainGroupsMetadata(opts: GrammarOptions): Record<string, Record<string
 	return g;
 }
 
-/**
- * Read the raw polymorphs path→variant-name config from the wire context.
- * Returns `undefined` when no `polymorphs:` block was supplied.
- */
 function drainPolymorphsConfigMetadata(
 	opts: GrammarOptions
 ): Record<string, Record<string, string> | undefined> | undefined {
@@ -1599,13 +1133,6 @@ function drainPolymorphsConfigMetadata(
 	return { ...p };
 }
 
-/**
- * Read the `expectDiagnostics:` config from the wire context — the grammar
- * author's own declaration of accepted, non-blocking diagnostic exceptions
- * per kind. Returns `undefined` when no `expectDiagnostics:` block was
- * supplied (keeps `RawGrammar.expectDiagnostics` absent for downstream
- * consumers that check presence).
- */
 function drainExpectDiagnosticsMetadata(opts: GrammarOptions): Record<string, readonly string[]> | undefined {
 	const wireCtx = getWireContext(opts);
 	if (!wireCtx || !wireCtx.expectDiagnostics) return undefined;
@@ -1619,13 +1146,6 @@ function drainExpectDiagnosticsMetadata(opts: GrammarOptions): Record<string, re
 	return e;
 }
 
-/**
- * Read the `expectTestFailures:` config from the wire context — the grammar
- * author's declaration of kinds whose generated `nodes.test.ts` tests are
- * known-failing (tracked defects); `emitters/test.ts` emits those as
- * `describe.skip` with the declared reason. Returns `undefined` when no
- * block was supplied, mirroring {@link drainExpectDiagnosticsMetadata}.
- */
 function drainExpectTestFailuresMetadata(opts: GrammarOptions): Record<string, string> | undefined {
 	const wireCtx = getWireContext(opts);
 	if (!wireCtx || !wireCtx.expectTestFailures) return undefined;
@@ -1637,42 +1157,12 @@ function drainExpectTestFailuresMetadata(opts: GrammarOptions): Record<string, s
 	return e;
 }
 
-/**
- * Read `WireContext.orphanedSyntheticGroups` — enrich-synthesized clause-hoist
- * names whose recorded owning parent this grammar's own `rules:` config
- * redeclares, so the synthesized name can no longer be referenced from
- * anywhere. Read by `collectGrammarDiagnosticsForGrammar` to suppress the
- * phantom content-collision/storagename-collision diagnostic these orphans
- * would otherwise raise.
- */
 function drainOrphanedSyntheticGroupsMetadata(opts: GrammarOptions): readonly string[] | undefined {
 	const wireCtx = getWireContext(opts);
 	if (!wireCtx || wireCtx.orphanedSyntheticGroups.size === 0) return undefined;
 	return [...wireCtx.orphanedSyntheticGroups];
 }
 
-/**
- * Evaluate the `renderAs:` fn from the wire context and inject the
- * resulting rule bodies into the rules map as 'evaluate-synthesized' entries.
- *
- * @remarks
- * Called AFTER `evaluateRulesAndInjectSynthetics` so the DSL globals are
- * still injected and a real `$` proxy is available. The fn is evaluated
- * with a fresh proxy so any `$.name` refs inside the fn body resolve
- * correctly (current support: `string(...)` literals and `blank()` —
- * neither needs the proxy, but we keep the proxy for forward
- * compatibility).
- *
- * The keys returned by the fn are ALSO removed from `rules` (stripping the
- * tree-sitter-side body when the base grammar had one). This is safe: the
- * external scanner produces these symbols; the grammar rule body is
- * redundant for tree-sitter and harmful for sittir (sittir would pick up
- * the base IMMEDIATE_TOKEN body and use it instead of the sittir-side
- * render body).
- *
- * @returns A Record<string, Rule<'evaluate'>> for `RawGrammar.renderAs`, or
- * `undefined` when no `renderAs:` was declared.
- */
 function drainRenderAsMetadata(opts: GrammarOptions, ctx: EvaluateCtx): Record<string, Rule<'evaluate'>> | undefined {
 	const { rules, refs, provenanceByKind } = ctx;
 	const wireCtx = getWireContext(opts);
@@ -1698,22 +1188,6 @@ function drainRenderAsMetadata(opts: GrammarOptions, ctx: EvaluateCtx): Record<s
 	return result;
 }
 
-/**
- * Evaluate the `visibleExternals:` fn from the wire context and return the
- * hidden-name → sittir-side render body map, for `RawGrammar.visibleExternals`.
- *
- * @remarks
- * Like `drainRenderAsMetadata`, this injects each body into `rules` under
- * the HIDDEN name (the storage identity), replacing the external scanner's
- * empty-pattern placeholder. The visible name is parse identity only,
- * carried by the ALIAS wrap on references — the SYMBOL→ALIAS
- * rewrite's alias target resolves to, and per `resolveRule`'s ALIAS case,
- * whether a name gets its own independent top-level IR kind is decided
- * solely by whether it's a `rules` bag key at all.
- *
- * @returns A Record<string, Rule<'evaluate'>> for `RawGrammar.visibleExternals`,
- * or `undefined` when no `visibleExternals:` was declared.
- */
 function drainVisibleExternalsMetadata(
 	opts: GrammarOptions,
 	ctx: EvaluateCtx
@@ -1744,29 +1218,6 @@ function drainVisibleExternalsMetadata(
 	return result;
 }
 
-/**
- * Merge enrich-generated override callbacks from the base grammar's
- * `__enrichOverrides__` side-channel into `opts.rules`.
- *
- * @param optionsOrBase - The first argument passed to `grammarFn`, which may
- *   carry the `__enrichOverrides__` property when the base was produced by
- *   `enrich()` in `dsl/enrich.ts`.
- * @param opts - The resolved `GrammarOptions` for the current grammar. User
- *   overrides already in `opts.rules` win on name collisions.
- * @remarks
- * Mirrors what `wrappedGrammar` does under tree-sitter CLI so both
- * runtimes process enrich identically.
- * @remarks
- * Known limitation: when a user override exists for a rule, enrich is
- * skipped entirely for that rule. The optional-keyword-prefix and
- * bare-keyword-prefix passes therefore don't auto-wrap tokens the user
- * would otherwise need to add via `field()` overrides (see rust's
- * `impl_item`/`async_block` unsafe/move overrides for the duplicated
- * pattern). Straight composition (enrich first, then user) was tried and
- * regressed several python rules — enrich's bare-keyword pass interferes
- * with user field/variant paths. Proper fix needs path-aware composition;
- * deferred.
- */
 function mergeEnrichOverridesIntoOptions(optionsOrBase: GrammarOptions | { grammar: any }, opts: GrammarOptions): void {
 	const enrichOverrides = (
 		optionsOrBase as {
@@ -1781,41 +1232,10 @@ function mergeEnrichOverridesIntoOptions(optionsOrBase: GrammarOptions | { gramm
 	}
 }
 
-/**
- * Seed the initial refs array from the base grammar's stored references.
- *
- * @param baseGrammar - The evaluated base grammar object, or `null` for a
- *   fresh grammar with no base.
- * @returns A new mutable array seeded with the base grammar's references, or
- *   an empty array when there is no base.
- * @remarks
- * Seeding with the base references ensures the diagnostic derivations in
- * Link can see the full reference graph, not just the handful of refs
- * introduced by override callbacks. Refs from rules the override replaces
- * are filtered by downstream passes.
- */
 function seedRefsFromBaseGrammar(baseGrammar: any): SymbolRef[] {
 	return baseGrammar?.references ? [...baseGrammar.references] : [];
 }
 
-/**
- * Evaluate all rule functions and inject wire-produced synthetic rules into
- * the shared rules map in a single step.
- *
- * @remarks
- * `wire()` populates its per-invocation context with synthetic-rule bodies
- * as each rule fn runs (variant/alias placeholder resolution deposits content
- * into `wireCtx.deposits`). Injecting immediately after rule evaluation
- * ensures synthetic rules are present before metadata callbacks run — those
- * callbacks may reference hidden rules by symbol in conflict or inline lists.
- *
- * @param opts - Grammar options containing the rule callbacks and optional
- *   `__wireContext__` carrying synthetic rule deposits.
- * @param baseRules - The base grammar's already-evaluated rules, forwarded as
- *   `previous` to each override callback.
- * @param refs - Mutable symbol-reference accumulator shared across rule evaluations.
- * @param rules - Mutable output map where evaluated and synthetic rules are stored.
- */
 function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
 	const { opts, refs, provenanceByKind } = ctx;
 	evaluateRuleFunctions(rules, ctx);
@@ -1857,34 +1277,6 @@ function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>
 	}
 }
 
-/**
- * Make `grammarFn`'s view of the base rules identical to tree-sitter's.
- *
- * @remarks
- * tree-sitter's native `grammar(base, ext)` reads the FINAL `base.grammar.rules`
- * (`mergedRules`) — the object that all of enrich's injected hidden rules AND every
- * `transform()` group-lift write-back mutate. An authored path-patch that descends
- * through an enrich group-lift symbol writes the patched body via
- * `groupLiftRuleMap.set(name, newBody)`, which mutates that same `mergedRules`; the
- * parser therefore sees the patch (e.g. rust `match_block`'s `field('last_arm')`
- * reaches grammar.json).
- *
- * `grammarFn` (this shim) instead forks `baseGrammar.rules` into a private `rules`
- * map at entry — `baseRules = {…baseGrammar.rules}`, `rules = {…baseRules}` — BEFORE
- * any rule fn runs, so a group-lift write-back lands in `baseGrammar.rules` but not
- * in the fork. Left alone, the IR reads a stale, pre-patch copy of the very rule
- * tree-sitter reads patched — a sittir-vs-tree-sitter divergence in how the SAME
- * input is consumed.
- *
- * Reconcile the fork with the final base state so both consumers read the one
- * `mergedRules`. Scoped to avoid clobbering: adopt the final body only for base
- * rules that (a) actually diverged from the entry snapshot — the write-back signal,
- * since nothing else mutates `baseGrammar.rules` mid-evaluation — and (b) the IR
- * still holds as that untouched entry snapshot (an authored rule fn / synthetic
- * injection / pattern-replacement that produced its own body replaced `rules[name]`,
- * so this stays false for them and is never overwritten). This is not consumer
- * branching — it makes `grammarFn`'s read of its inputs equal to tree-sitter's.
- */
 function adoptFinalBaseRules(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
 	const { baseGrammar, baseRules } = ctx;
 	if (baseGrammar === null || baseGrammar === undefined) return;
@@ -1898,32 +1290,6 @@ function adoptFinalBaseRules(rules: Record<string, Rule<'evaluate'>>, ctx: Evalu
 	}
 }
 
-/**
- * Remove `_kw_*` / `_<parent>_<suffix>` placeholder rules that were
- * pre-registered by wire() at setup time but never actually
- * deposited-into at rule-evaluation time.
- *
- * @remarks
- * `injectTransformHiddenRulePlaceholders` blindly registers a deferred
- * rule fn for every `field()` / `alias()` / `variant()` placeholder it
- * sees, even though only some placeholders will actually synthesize at
- * resolve time (`field('x')` with non-string content, e.g. the rust
- * `self_parameter.lifetime_name` field wrapping `optional($.lifetime)`,
- * never feeds `maybeKeywordSymbol`). The pre-registration is required
- * under tree-sitter's native `grammar()` because tree-sitter walks
- * rules in dependency order and errors on any unknown SYMBOL the
- * parent rule references — so the safe move at wire time is to register
- * every potentially-used name. But when the placeholder never actually
- * deposits, the registered deferred fn returns `blank()` and the
- * resulting empty rule lingers in the grammar as orphan leaf noise.
- * This pass deletes those orphans: for every `_`-prefixed rule whose
- * body is the empty-choice sentinel `blank()` emits AND which has no
- * matching deposit, drop the entry.
- *
- * Skips rules that DID receive a deposit (they're real synthesized
- * content). Skips rules whose body is non-blank (author-declared hidden
- * helpers are legitimate and can have any body).
- */
 function prunePlaceholderOrphans(rules: Record<string, Rule<'evaluate'>>, wireCtx: WireContext): void {
 	for (const name of Object.keys(rules)) {
 		if (!name.startsWith('_')) continue;
@@ -1934,9 +1300,6 @@ function prunePlaceholderOrphans(rules: Record<string, Rule<'evaluate'>>, wireCt
 	}
 }
 
-/**
- * True when `rule` is the empty-choice sentinel returned by `blank()`.
- */
 function isBlankRule(rule: Rule<'evaluate'>): boolean {
 	return rule.type === CHOICE && rule.members.length === 0;
 }
@@ -1961,32 +1324,6 @@ interface PatternCandidate {
 	readonly aliasAs?: string;
 }
 
-/**
- * Detect author-declared pattern rules and replace every matching sub-tree
- * in the grammar with `symbol(<pattern-name>)`.
- *
- * A rule is a pattern candidate when ALL of:
- *   1. Its name is in `authoredRuleNames` (explicitly declared in WireConfig.rules).
- *   2. Its name starts with `_` (hidden — signals "synthesized/internal pattern").
- *   3. Its name is NOT in `baseRules` (it's a NEW rule, not an override of a
- *      base-grammar rule). Overrides are intentional replacements, not patterns.
- *   4. Its body is complex: SEQ with ≥2 members, CHOICE with ≥2 members, or
- *      REPEAT/REPEAT1 wrapping non-trivial content (not a bare string/pattern).
- *      Single STRING / SYMBOL / PATTERN bodies are excluded to prevent false
- *      positives like `_wildcard_pattern: ($) => '_'` matching every `'_'`
- *      literal in the grammar.
- *
- * Replacement walks every rule in the merged grammar (skipping the pattern
- * candidates themselves to prevent self-substitution) and replaces matching
- * sub-trees with `symbol(<pattern-name>)`. The new symbol reference is plain
- * sittir-lowercase like every other symbol produced by `createProxy`.
- *
- * @remarks
- * This runs after `injectSyntheticRules` so the full merged rule set is
- * available, and before `prunePlaceholderOrphans` so that any pattern-rule
- * body that would have been pruned is instead preserved because it has real
- * content.
- */
 function applyPatternReplacement(
 	rules: Record<string, Rule<'evaluate'>>,
 	ctx: EvaluateCtx,
@@ -2072,14 +1409,6 @@ function applyPatternReplacement(
 	}
 }
 
-
-/**
- * Returns true when `rule` is complex enough to be a meaningful structural
- * pattern. Excludes trivial single-terminal bodies that would match too
- * broadly (every bare string, every symbol reference, every pattern).
- *
- * Exported for use by `deriveComplexAliasTargetHidden`.
- */
 export function isComplexBody(rule: Rule<'evaluate'>): boolean {
 	switch (rule.type) {
 		case SEQ:
@@ -2098,27 +1427,6 @@ export function isComplexBody(rule: Rule<'evaluate'>): boolean {
 	}
 }
 
-/**
- * Derive the set of hidden (`_`-prefixed) kinds that:
- *   1. Appear as the source of a NAMED ALIAS — either in pre-link form
- *      (`alias(symbol(_X), $visible)`) or post-link form
- *      (`symbol(visible, aliasedFrom='_X')`).
- *   2. Whose own rule body in `rules` satisfies {@link isComplexBody}.
- *
- * This is the on-demand structural replacement for `patternReplacementKinds`.
- * Both consumers receive different rule-map shapes:
- *   - `link.ts` calls this on `raw.rules` (pre-link; alias nodes present).
- *   - `normalize.ts` calls this on `linked.rules` (post-link; aliasedFrom present).
- *
- * The predicate is intentionally conservative (the derived set may be a
- * strict superset of the old `patternReplacementKinds` cache). Probe-verified
- * byte-identical for rust/typescript/python across normalize's rules,
- * normalizedRules, and simplifiedRules outputs.
- *
- * @remarks
- * The walk covers seq/choice members, content, polymorph forms, and
- * separator rule lists so aliases nested in any position are captured.
- */
 export function deriveComplexAliasTargetHidden(rules: Record<string, AnyRule>): ReadonlySet<string> {
 	const walker = new RuleWalker<AnyRule>();
 	const candidates = new Set<string>();
@@ -2149,12 +1457,6 @@ export function deriveComplexAliasTargetHidden(rules: Record<string, AnyRule>): 
 	return out;
 }
 
-/**
- * Recursively walk `rule`, replacing any sub-tree that structurally matches
- * a pattern candidate with `symbol(<candidate.name>)`. Returns the same
- * object reference when no replacement occurs (allows cheap change-detection
- * by reference equality in the caller).
- */
 function replacePatterns(rule: Rule<'evaluate'>, candidates: PatternCandidate[]): Rule<'evaluate'> {
 	// Check if this node itself matches any candidate.
 	for (const c of candidates) {
@@ -2205,10 +1507,6 @@ function replacePatterns(rule: Rule<'evaluate'>, candidates: PatternCandidate[])
 	}
 }
 
-/**
- * Map `replacePatterns` over an array, returning the original array when no
- * element changed (cheap reference-equality check for the parent node).
- */
 function replaceInArray(members: Rule<'evaluate'>[], candidates: PatternCandidate[]): Rule<'evaluate'>[] {
 	let changed = false;
 	const out: Rule<'evaluate'>[] = members.map((m) => {
@@ -2219,21 +1517,6 @@ function replaceInArray(members: Rule<'evaluate'>[], candidates: PatternCandidat
 	return changed ? out : members;
 }
 
-/**
- * Structural equality for pattern matching. Compares two Rule<'evaluate'> trees
- * recursively. Intentionally ignores the `id` field (assigned later by
- * `buildRuleCatalog`) and provenance/source annotations — only shape matters.
- *
- * Key design choices:
- * - PREC/PREC_LEFT/PREC_RIGHT wrappers: these are stripped by evaluate's
- *   `normalize()` in the sittir runtime, so by the time we see the evaluated
- *   rule body they won't be present. No special handling needed.
- * - ALIAS: not handled — aliases are specific and a pattern wouldn't
- *   meaningfully match an alias target.
- * - ENUM: compared member-by-member on `.value` (identical to rulesEqual).
- * - FIELD: name AND content must match. A field wrapper carrying the same
- *   content but a different name is a different structural pattern.
- */
 function patternRulesEqual(a: Rule<'evaluate'>, b: Rule<'evaluate'>): boolean {
 	if (a.type !== b.type) return false;
 	switch (a.type) {
@@ -2338,11 +1621,6 @@ function rewriteVisibleExternalRefs(rule: Rule<'evaluate'>, ctx: VisibleExternal
 	}
 }
 
-/**
- * Map `rewriteVisibleExternalRefs` over an array, returning the original
- * array when no element changed (cheap reference-equality check for the
- * parent node).
- */
 function rewriteVisibleExternalRefsInArray(
 	members: Rule<'evaluate'>[],
 	ctx: VisibleExternalsRewriteCtx
@@ -2387,41 +1665,10 @@ function applyVisibleExternalsRewrite(rules: Record<string, Rule<'evaluate'>>, c
 	}
 }
 
-/**
- * Evaluate all metadata callbacks (extras, externals, supertypes, inline,
- * conflicts, word) inside the current role scope.
- *
- * @remarks
- * The metadata callbacks must run inside the same `withRoleScope` closure as
- * the rule functions so any `role()` calls they contain attach to this
- * grammar's accumulator rather than a parent or sibling scope.
- *
- * @param opts - Grammar options containing the metadata callbacks.
- * @param baseGrammar - The evaluated base grammar object, or `null`.
- * @param refs - Mutable symbol-reference accumulator.
- * @param sinks - Mutable accumulators for each metadata list.
- * @param setWord - Callback to record the `word` rule name.
- */
 function evaluateMetadataCallbacksInScope(opts: GrammarOptions, ctx: EvaluateCtx): void {
 	evaluateMetadataCallbacks(opts, ctx);
 }
 
-/**
- * Evaluate each rule function in `opts.rules` and write the normalised
- * result into the shared `rules` map.
- *
- * @param opts - Grammar options containing the rule callbacks to evaluate.
- * @param baseRules - The base grammar's already-evaluated rules, passed as
- *   `previous` to each override callback.
- * @param refs - Mutable symbol-reference accumulator shared across all rule
- *   evaluations in this grammar invocation.
- * @param rules - Mutable output map where evaluated rules are stored.
- * @remarks
- * Each rule callback receives a fresh `$` proxy and, as its second
- * argument, the base grammar's version of that rule (if any).
- * wire()'s wrapped rule fns own their own context management
- * (currentRuleKind) per invocation — no try/finally needed here.
- */
 function evaluateRuleFunctions(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
 	const { opts, baseRules, refs, provenanceByKind, isExtension } = ctx;
 	for (const [name, ruleFn] of Object.entries(opts.rules)) {
@@ -2433,26 +1680,6 @@ function evaluateRuleFunctions(rules: Record<string, Rule<'evaluate'>>, ctx: Eva
 	}
 }
 
-/**
- * Inject synthetic rules created by alias() placeholders in transform patches
- * into the shared rules map.
- *
- * @param syntheticRules - Map of synthetic rule name → rule content produced
- *   by wire()'s rule-fn wrapper.
- * @param rules - Mutable output map to receive the synthetic rules.
- * @remarks
- * Synthetic rules are hidden variant rules for nested-alias polymorphs,
- * created when transform patches use alias() placeholders.
- *
- * Only fills keys not already populated by `evaluateRuleFunctions`. A
- * deferred-content fn registered by `wire/injectHiddenRulePlaceholders`
- * already ran and wrote the deposited body to `rules[name]` — re-writing
- * from `syntheticRules` would be a no-op for that case but a REGRESSION
- * for a nested-polymorph parent where compose's fn ran at that key and
- * further transformed the deposited body (e.g. `_visibility_modifier_pub`
- * — the outer's deposit + an inner variant split). Skipping preserves
- * the transform; the raw deposit is still correct when no compose ran.
- */
 function injectSyntheticRules(
 	rules: Record<string, Rule<'evaluate'>>,
 	ctx: EvaluateCtx,
@@ -2465,22 +1692,6 @@ function injectSyntheticRules(
 	}
 }
 
-/**
- * Inherit metadata lists from the base grammar when the override did not
- * explicitly re-declare them.
- *
- * @param opts - Grammar options for the current (override) grammar.
- * @param baseGrammar - The evaluated base grammar object, or `null` for a
- *   fresh grammar.
- * @param sinks - Mutable accumulators for each metadata list.
- * @param setWord - Callback to set the `word` rule name when inherited from
- *   the base.
- * @remarks
- * Tree-sitter CLI inherits externals, extras, supertypes, inline,
- * conflicts, and word implicitly when extending a base grammar. This
- * function models the same behaviour so downstream phases see the full
- * declaration set instead of an empty list.
- */
 function inheritBaseGrammarMetadata(opts: GrammarOptions, ctx: EvaluateCtx): void {
 	const { sinks, setWord } = ctx;
 	const inherited = ((ctx.baseGrammar as { grammar?: unknown } | null | undefined)?.grammar ?? ctx.baseGrammar) as {
@@ -2501,33 +1712,10 @@ function inheritBaseGrammarMetadata(opts: GrammarOptions, ctx: EvaluateCtx): voi
 	}
 }
 
-/**
- * Append `value` to `sink` only when it is not already present.
- *
- * @remarks
- * When an override callback does `[...prev, $._foo]` and
- * the base grammar already has `$._foo`, we must collapse to a single
- * entry. Symbol refs from `$.foo` are fresh objects on every proxy access
- * (`createProxy` does not cache), so reference equality always fails —
- * deduplication must compare by string value instead.
- *
- * @param sink - The mutable accumulator array to append into.
- * @param value - The string value to append if not already in `sink`.
- */
 function appendDedup(sink: string[], value: string): void {
 	if (!sink.includes(value)) sink.push(value);
 }
 
-/**
- * Run all the metadata callbacks (extras, externals, supertypes,
- * inline, conflicts, word) and write their results into the supplied
- * accumulators. Pulled out of grammarFn so the call site can wrap it
- * in `withRoleScope` cleanly.
- *
- * tree-sitter's pattern: each callback receives `($, baseValue)`
- * where `$` is a fresh proxy and `baseValue` is the base grammar's
- * version of that property.
- */
 function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void {
 	const { refs, sinks, setWord } = ctx;
 	const baseGrammar = ctx.baseGrammar as {
@@ -2626,12 +1814,6 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 	}
 }
 
-/**
- * Evaluate a grammar.js (or overrides.ts) file and return a RawGrammar.
- *
- * Injects DSL functions as globals, then imports the module.
- * Tree-sitter's grammar(base, { rules }) handles extension merging natively.
- */
 export async function evaluate(entryPath: string): Promise<RawGrammar> {
 	const g = globalThis as Record<string, unknown>;
 	const savedGlobals = saveAndInjectDslGlobals(g);
@@ -2643,23 +1825,6 @@ export async function evaluate(entryPath: string): Promise<RawGrammar> {
 	}
 }
 
-/**
- * Build the tree-sitter baseline DSL function map, save any pre-existing
- * globals under the same names, inject the DSL functions into `globalThis`,
- * and return the saved values for later restoration.
- *
- * @param g - `globalThis` cast to a mutable string-keyed record.
- * @returns A snapshot of the globals that were overwritten, keyed by name.
- * @remarks
- * Only tree-sitter baseline DSL shadows are injected as globals.
- * Sittir extensions (transform/insert/replace/role/enrich) are explicitly
- * imported from `@sittir/codegen/dsl` by override files and must not be
- * injected here.
- * @remarks
- * `globalThis` is typed as `typeof globalThis`, which doesn't include
- * our DSL props — `Record<string, unknown>` is the honest shape for the
- * bag we mutate inside this scope.
- */
 function saveAndInjectDslGlobals(g: Record<string, unknown>): Record<string, unknown> {
 	const dslFunctions: Record<string, unknown> = {
 		grammar: grammarFn,
@@ -2684,13 +1849,6 @@ function saveAndInjectDslGlobals(g: Record<string, unknown>): Record<string, unk
 	return savedGlobals;
 }
 
-/**
- * Import the grammar module at the given path and extract the RawGrammar
- * from its default or named export.
- *
- * @param entryPath - Absolute path to the grammar.js or overrides.ts file.
- * @returns The RawGrammar produced by the module's top-level `grammar()` call.
- */
 async function importAndExtractGrammar(entryPath: string): Promise<RawGrammar> {
 	const mod = (await import(entryPath)) as {
 		default?: unknown;
@@ -2701,13 +1859,6 @@ async function importAndExtractGrammar(entryPath: string): Promise<RawGrammar> {
 	return grammarObj as RawGrammar;
 }
 
-/**
- * Restore previously saved global values, deleting entries that were
- * `undefined` before injection.
- *
- * @param g - `globalThis` cast to a mutable string-keyed record.
- * @param savedGlobals - The snapshot returned by `saveAndInjectDslGlobals`.
- */
 function restoreSavedGlobals(g: Record<string, unknown>, savedGlobals: Record<string, unknown>): void {
 	for (const [name, original] of Object.entries(savedGlobals)) {
 		if (original === undefined) {
@@ -2749,29 +1900,6 @@ export interface BuildRuleCatalogCtx {
 	readonly provenanceByKind?: ReadonlyMap<string, RuleProvenance>;
 }
 
-/**
- * The set of rule names transitively reachable from any VISIBLE (non-`_`)
- * rule — visible kinds are treated as roots unconditionally (they are, by
- * construction, the grammar's directly-nameable surface), then every SYMBOL
- * reference reached by walking their bodies (via `RuleWalker.foldDeep`,
- * which descends through SEQ/CHOICE/FIELD/ALIAS/... children AND through
- * SYMBOL refs themselves) is added too. A HIDDEN rule name absent from this
- * set can never be produced by any live grammar production — nothing
- * visible, directly or transitively, refers to it.
- *
- * Used to gate `buildRuleCatalog`'s catalog-identity assignment (see
- * below): a cascaded/nested `polymorphs:` split can leave an enrich raw
- * clause-hoist mint behind as exactly this kind of orphan once a later
- * split repoints the live alias elsewhere (its content symbol name simply
- * stops appearing in anything reachable) — confirmed concretely for
- * typescript's `_export_statement_group2`/`_export_statement_group5`, see
- * docs/KNOWN_ISSUES.md's "Assemble-time grammar diagnostics scan every
- * `rules` map entry..." entry. This does NOT touch the raw `rules` map
- * (tree-sitter's own `grammar()` call still sees every declared rule name,
- * so nothing about the compiled parser changes) — it only decides which
- * kinds sittir's OWN downstream modeling (assemble/derive/emit) treats as
- * real, materializable grammar structure.
- */
 function computeReachableRuleNames(rules: Record<string, Rule<'evaluate'>>): Set<string> {
 	const walker = new RuleWalker<Rule<'evaluate'>>(rules);
 	const reachable = new Set<string>();
@@ -3007,13 +2135,6 @@ function classifyRule(
 	};
 }
 
-/**
- * Both {@link classifyIntrinsic} (catalog build, classifies pre-built
- * `BuildResult` children) and {@link isNonterminalRuleType} (children-free
- * predicate over a bare `Rule<'evaluate'>`, in rule-catalog.ts) call
- * {@link classifyByType} with their own computation of `anyChildNonterminal`,
- * so the per-rule-type table lives there in one place.
- */
 function classifyIntrinsic(
 	rule: Rule<'evaluate'>,
 	ctx: { readonly children: readonly BuildResult[] }

@@ -67,11 +67,6 @@ export interface SCCAnalysis {
 	sameSCC(kindA: string, kindB: string): boolean;
 }
 
-/**
- * Compute SCCs over the singular-reference transport graph (see file
- * docstring). Returns a frozen analysis object that emitters consult
- * for their Box / inline decisions.
- */
 export function computeTransportSCC(nodeMap: NodeMap): SCCAnalysis {
 	const adjacency = buildSingularAdjacency(nodeMap);
 	const { sccId, sccs } = tarjanSCC(adjacency);
@@ -102,12 +97,6 @@ export function computeTransportSCC(nodeMap: NodeMap): SCCAnalysis {
 	return result;
 }
 
-/**
- * Build the adjacency map: kind → set of kinds reachable via a single
- * singular-reference hop. Slot classification mirrors the renderer's
- * `classifySlot` so the graph reflects the actual emitted field type
- * (concrete struct / supertype enum / per-slot enum).
- */
 function buildSingularAdjacency(nodeMap: NodeMap): Map<string, Set<string>> {
 	const adjacency = new Map<string, Set<string>>();
 	const addEdge = (from: string, to: string): void => {
@@ -182,12 +171,6 @@ function buildSingularAdjacency(nodeMap: NodeMap): Map<string, Set<string>> {
 	return adjacency;
 }
 
-/**
- * The structural singular slots on a node, i.e. slots that map to a
- * non-Vec transport struct field. Multiple-arity slots are excluded —
- * `Vec<T>` is sized regardless of `T` and therefore never propagates
- * size dependencies.
- */
 function structuralSingularSlots(node: AssembledNode): readonly AssembledNonterminal[] {
 	let slots: readonly AssembledNonterminal[];
 	if (node.modelType === 'branch' || node.modelType === 'group') {
@@ -198,14 +181,6 @@ function structuralSingularSlots(node: AssembledNode): readonly AssembledNonterm
 	return slots.filter((slot) => !isMultiple(slot));
 }
 
-/**
- * Tarjan's classic SCC algorithm. Iterative formulation to avoid stack
- * overflow on large grammars.
- *
- * Returns:
- *   - sccId: map from each node to its SCC index
- *   - sccs:  list of SCCs, each as an array of node names
- */
 function tarjanSCC(adjacency: ReadonlyMap<string, ReadonlySet<string>>): {
 	sccId: Map<string, number>;
 	sccs: string[][];

@@ -38,11 +38,6 @@ export type PolymorphVariantDescriptor =
 
 export type PolymorphVariantMap = Readonly<Record<string, PolymorphVariantDescriptor>>;
 
-/**
- * Exhaustiveness helper. Place at the end of every switch on a
- * discriminated union so adding a new variant becomes a compile error
- * here instead of a silent wrong-answer at runtime.
- */
 export function assertNever(x: never): never {
 	throw new Error(`assertNever: unexpected variant ${JSON.stringify(x)}`);
 }

@@ -413,11 +413,6 @@ function serializeValue(v: NodeOrTerminal): SerializedValue {
 	return out;
 }
 
-/**
- * Best-effort extraction of element kind names from an `AssembledMulti`'s
- * `elementRule`. Walks choice/symbol/supertype; drops anonymous literals.
- * Used only for diagnostic display in node-model.json5.
- */
 function extractElementKinds(rule: Rule<'link'>): string[] {
 	const out = new Set<string>();
 	const walk = (r: Rule<'link'>): void => {

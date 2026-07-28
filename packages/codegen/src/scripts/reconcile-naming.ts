@@ -114,7 +114,6 @@ export const ALLOWLISTED_RENAMES: readonly Divergence[] = [
 	{ kind: 'match_block', slot: 'match_arm', projection: 'paramName', legacy: 'matchArms', recomputed: 'contents' }
 ];
 
-/** A divergence is allowlisted only if it matches an expected rename on ALL fields. */
 function isAllowlisted(d: Divergence): boolean {
 	return ALLOWLISTED_RENAMES.some(
 		(e) =>
@@ -126,22 +125,6 @@ function isAllowlisted(d: Divergence): boolean {
 	);
 }
 
-/**
- * Compare one slot's legacy projected names against the values the §2 PROJECTION
- * computes from `values` + `fieldName`. Returns one Divergence per mismatched
- * projection (empty array = fully consistent).
- *
- * `parseNames` is deliberately NOT an axis here. Unlike storageName/name/etc.
- * (which compare against the slot's REAL legacy stored fields), there is no
- * stored legacy `parseNames` to compare against — only `parseNamesNew` (which IS
- * this projection). The only "legacy" stand-in would be `kindsOf`, a
- * reconstruction that returns un-normalized SOURCE names (`_X`) the real reader
- * never used (it resolves `alias($._X, $.X)` → `X` at runtime). The projection's
- * `parseNames` is the alias target `X` — what tree-sitter actually emits — and
- * it's validated where it counts: the read-render-parse / AST-match metrics in
- * `validate:native` (tree-sitter ground truth), not by diffing against invented
- * legacy code.
- */
 export function diffSlotNames(slot: AssembledNonterminal, kind: string): Divergence[] {
 	const out: Divergence[] = [];
 	const proj = projectSlotNaming(slot);

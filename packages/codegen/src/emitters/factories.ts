@@ -86,23 +86,6 @@ export interface EmitFactoriesConfig {
 // FactoryEmitter helpers
 // ---------------------------------------------------------------------------
 
-/**
- * Detect whether any field across all nodes uses `nonEmpty: true`.
- *
- * @param nodeMap - The assembled node map for the grammar.
- * @returns `true` when at least one field carries `nonEmpty`, triggering the
- *   `NonEmptyArray` import in the generated file.
- * @remarks
- *   `NonEmptyArray` is conditional on any field having `nonEmpty: true`
- *   (rust has none; typescript + python do). `Edit` was previously
- *   imported but no emitted body references it — dropped.
- *
- *   Also checks `AssembledSeparatedList.nonEmpty` directly (a REPEAT1
- *   source rule) rather than through `allSlotsOf`'s `.fields` (the Task-2
- *   stub) — the stub can misderive a kind's real elements arity (see
- *   `emitSeparatedListFactory`'s doc comment), so it can't be trusted for
- *   this detection either.
- */
 function collectUsesNonEmptyArray(nodeMap: NodeMap): boolean {
 	for (const n of nodeMap.nodes.values()) {
 		if (n.modelType === 'separatedList' && n.nonEmpty) return true;
@@ -146,33 +129,10 @@ function collectUsesKindIdFromName(nodeMap: NodeMap, kindEntries: readonly KindE
 	return false;
 }
 
-/**
- * The old `_setField`, `_setFields`, `_branchMethods`, and `_leafMethods`
- * helpers are replaced by `withMethods` — emitted per-grammar in each
- * package's own `utils.ts` as a facade over `withMethods` from
- * `@sittir/common/utils` (not `@sittir/legacy-core`; see
- * `.claude/codegen-conventions.md` rule 3). `freezeNodeData`/
- * `buildWithNamespace` in `@sittir/legacy-core/src/nodeData.ts` are
- * `@forFutureUse` scaffolding, not currently wired into generated output.
- * Nothing to emit here.
- *
- * @returns Empty array — kept for call-site symmetry with `emitNonEmptyAssertHelper`.
- */
 function emitFluentSetterHelpers(): string[] {
 	return [];
 }
 
-/**
- * Emit the `_assertNonEmpty` runtime guard + static narrowing helper source lines.
- *
- * @returns Array of source lines for the helper (without trailing blank line).
- * @remarks
- *   Callers get `readonly T[]` from input collections (`_children.filter(...)`,
- *   `_resolveMany(...)`, etc.) but the factory's stored shape is the non-empty
- *   tuple `readonly [T, ...T[]]`. This assertion function throws on empty input
- *   AND narrows the static type of the argument so the subsequent assignment /
- *   spread type-checks without a cast.
- */
 function emitNonEmptyAssertHelper(): string[] {
 	return [
 		'function _assertNonEmpty<T>(',
@@ -187,22 +147,6 @@ function emitNonEmptyAssertHelper(): string[] {
 	];
 }
 
-/**
- * Compile leaf-pattern `RegExp` constants and push their declarations into `lines`.
- *
- * @param nodeMap - The assembled node map to scan for leaf nodes with patterns.
- * @param lines - Output line buffer; `const _leafRe_<name> = /.../` declarations
- *   are appended here as a side effect.
- * @returns Map from kind string to the emitted constant name (e.g. `_leafRe_identifier`).
- * @throws When a leaf pattern does not compile as a JavaScript `RegExp` under either
- *   the `'u'` flag or no flag.
- * @remarks
- *   RegExp constants are hoisted to module scope so they are compiled once at load
- *   time rather than per-call. For each patterned leaf, the `'u'` flag is tried
- *   first (needed for `\p{...}` property escapes), then no-flag. The constant name
- *   is `_leafRe_<camelKind>`; the leaf factory references it instead of the previous
- *   inline try/catch block.
- */
 function buildLeafReConsts(nodeMap: NodeMap, lines: string[]): Map<string, string> {
 	const leafReConsts = new Map<string, string>();
 	for (const [kind, node] of nodeMap.nodes) {
@@ -246,14 +190,6 @@ function buildLeafReConsts(nodeMap: NodeMap, lines: string[]): Map<string, strin
 	return leafReConsts;
 }
 
-/**
- * Produce the `$type` line for a factory return object literal.
- *
- * When `kindEntries` is present, emits the
- * numeric `TSKindId.X` discriminant. Without it (legacy callers / unit
- * tests), falls back to `'kind' as const` so the emitter is backward-
- * compatible.
- */
 function factoryTypeDiscriminant(
 	kind: string,
 	nodeMap: NodeMap,
@@ -292,18 +228,6 @@ function factoryTypeDiscriminant(
  * @remarks
  *   Dispatch is on `modelType`. Polymorph form groups are skipped at the top
  *   level (`classifyFactoryEmission` → `skip-polymorph-form-group`).
- */
-/**
- * Build the map entries list for `_factoryMap` and `FluentKindMap`.
- *
- * @param nodeMap - The assembled node map.
- * @param aliasSourceKinds - Set of kinds that are alias sources (included even if hidden).
- * @returns Ordered array of map entry descriptors.
- * @remarks
- *   Every kind with a factory lands here — branches, containers, leaves,
- *   keywords, enums — because each entry's type is `typeof <factory>`, so the map
- *   slot uses the factory's own signature directly. Polymorph form kinds are
- *   excluded (`polymorphFormKinds`) and are not registered separately.
  */
 function buildFactoryMapEntries(
 	nodeMap: NodeMap,
@@ -348,16 +272,6 @@ function buildFactoryMapEntries(
 	return mapEntries;
 }
 
-/**
- * Emit `FluentKindMap` type declaration source lines.
- *
- * @param mapEntries - Factory map entry descriptors produced by `buildFactoryMapEntries`.
- * @returns Array of source lines for the type declaration.
- * @remarks
- *   Only branches / containers / polymorphs get a `FluentNode` entry; leaves /
- *   keywords / enums produce raw `NodeData` instead and are keyed to their own
- *   interface.
- */
 function emitFluentKindMap(mapEntries: MapEntry[]): string[] {
 	const lines: string[] = [];
 	lines.push('export type FluentKindMap = {');
@@ -374,17 +288,6 @@ function emitFluentKindMap(mapEntries: MapEntry[]): string[] {
 	return lines;
 }
 
-/**
- * Emit `_factoryMap` const and `_FactoryMap` type alias source lines.
- *
- * @param mapEntries - Factory map entry descriptors produced by `buildFactoryMapEntries`.
- * @returns Array of source lines for the const and type alias.
- * @remarks
- *   Declared as a plain const so every entry's type comes from the factory's own
- *   signature via inference. `_FactoryMap` is then just `typeof _factoryMap`,
- *   giving consumers a precise type for each slot without duplicating the
- *   kind→factory mapping.
- */
 function emitFactoryMapConst(mapEntries: MapEntry[]): string[] {
 	const lines: string[] = [];
 	lines.push('export const _factoryMap = {');
@@ -407,9 +310,6 @@ function emitFactoryMapConst(mapEntries: MapEntry[]): string[] {
  * instance-local instead of living in module globals.
  */
 export namespace factory {
-	/**
-	 * Emit a leaf factory (pattern, keyword, enum).
-	 */
 	export function leaf(
 		output: string[],
 		node: AssembledNode,
@@ -440,11 +340,6 @@ export namespace factory {
 		if (result) output.push(result);
 	}
 
-	/**
-	 * Emit a branch factory — either container-shape (rest-param) or
-	 * field-carrying (config object, internally routes to single-field
-	 * when applicable).
-	 */
 	export function branch(
 		output: string[],
 		node: Extract<AssembledNode, { modelType: 'branch' }>,
@@ -454,10 +349,6 @@ export namespace factory {
 		output.push(emitFieldCarryingFactory(node, node.fields, nodeMap, kindEntries));
 	}
 
-	/**
-	 * Emit a group factory — field-carrying factory for hidden composition
-	 * fragments (polymorph form inner kinds).
-	 */
 	export function group(
 		output: string[],
 		node: Extract<AssembledNode, { modelType: 'group' }>,
@@ -468,14 +359,6 @@ export namespace factory {
 		output.push(result);
 	}
 
-	/**
-	 * Emit a `'separatedList'` factory — dedicated construct surface built
-	 * directly from `AssembledSeparatedList`'s own real fields (`elements`/
-	 * `separatorRule`/`leadingMode`/`trailingMode`), bypassing the Task-2
-	 * `_slots` stub entirely (see `AssembledSeparatedList`'s doc comment,
-	 * node-map.ts). Replaces the former `branch(...)` routing for this
-	 * modelType.
-	 */
 	export function separatedList(
 		output: string[],
 		node: AssembledSeparatedList,
@@ -487,32 +370,6 @@ export namespace factory {
 	}
 }
 
-/**
- * Build the runtime guard statements for a leaf factory.
- *
- * @param node - The leaf `AssembledNode` to generate guards for.
- * @param leafReConsts - Map from kind string to the module-level regex constant name.
- * @returns Array of guard statement strings (each is a complete `if (...) throw` statement).
- * @remarks
- *   Leaf factories accept arbitrary text but receive two categories of runtime guard:
- *
- *   1. **Pattern** — the module-level `_leafRe_*` const (hoisted for zero per-call
- *      regex compilation cost) is used directly if available.
- *
- *   2. **Non-empty** — every leaf gets this guard unconditionally. A named terminal
- *      always has at least one character in the parse tree, so an empty string is
- *      always semantically invalid regardless of pattern, word-kind, or enum constraints.
- *
- *   Reserved-keyword exclusion is intentionally omitted. The earlier heuristic
- *   ("if text matches word-pattern AND is in the collected keyword set, reject")
- *   rejected legitimate constructions: rust `_` in `'_` elided-lifetime identifier,
- *   python `print`/`match`/`exec` in identifier contexts (permitted via the grammar's
- *   `keyword_identifier` alias-to-identifier). Tree-sitter resolves these by grammar
- *   context; the factory has no context and cannot distinguish "this identifier slot
- *   permits the keyword" from "this one doesn't". The pattern check above still
- *   rejects non-identifier-shaped input; tree-sitter reparse in validators catches
- *   semantic misuse.
- */
 function buildLeafGuards(node: { kind: string }, leafReConsts: Map<string, string>): string[] {
 	const guards: string[] = [];
 	const reConst = leafReConsts.get(node.kind);
@@ -527,17 +384,6 @@ function buildLeafGuards(node: { kind: string }, leafReConsts: Map<string, strin
 	return guards;
 }
 
-/**
- * Build a TypeScript literal-union string for all enum values.
- *
- * @param node - The enum `AssembledNode` with a `values` array.
- * @returns A TS source string like `'foo' | 'bar' | 'baz'`.
- * @remarks
- *   Enums use compile-time literal-union typing on the parameter — the type
- *   system enforces the valid set, so no runtime `.includes()` guard is emitted.
- *   The `from()` resolvers that call enum factories via `Parameters<>` cast are
- *   trusted paths that do their own validation.
- */
 function buildEnumLiteralUnion(node: { values: readonly string[] }): string {
 	return node.values.map((v) => `'${escForSource(v)}'`).join(' | ');
 }
@@ -548,7 +394,6 @@ function buildEnumLiteralUnion(node: { values: readonly string[] }): string {
 
 type FieldCarryingNode = Extract<AssembledNode, { modelType: 'branch' | 'group' }>;
 
-/** Resolve a container node's children element type to a concrete TS type expression. */
 export function childElementType(node: { children: readonly AssembledNonterminal[] }, nodeMap: NodeMap): string {
 	const parts = new Set<string>();
 	for (const c of node.children) {
@@ -587,23 +432,6 @@ export function childElementType(node: { children: readonly AssembledNonterminal
 	return parts.size > 1 ? `(${union})` : union;
 }
 
-/**
- * Build the TypeScript stamp expression for an auto-stamp-eligible field.
- *
- * @remarks
- * Two cases:
- *
- * - **Source A** (`field.literalValues.length === 1`): the field content is an
- *   inline string literal. Stamp the string directly, e.g. `'pub' as const`.
- *
- * - **Source B** (`field.contentTypes.length === 1` and the referenced kind is
- *   an `AssembledKeyword`): the field content is a hidden-rule terminal with a
- *   single word-like text value (e.g. `_kw_async`). Stamp a minimal leaf
- *   NodeData object whose shape matches `Terminal<kind, text>`:
- *   `{ $type: '_kw_async', $text: 'async', $source: 2, $named: true }`.
- *
- * Returns `undefined` when the field is NOT auto-stamp-eligible.
- */
 function autoStampExpression(f: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
 	// Delegates to the shared stampExpressionFor which uses the new values model.
 	return stampExpressionFor(f, nodeMap);
@@ -710,23 +538,11 @@ function slotStorageExpr(
 	return slotStorageFromValueExpr(f, withDefault, nodeMap, kindEntries);
 }
 
-/**
- * `$with.<name>` setter parameter signature for a single-valued field.
- * Required fields take `(value: T)`; optional fields take `(value?: T)`.
- * Previously the emitter unconditionally used `(value?: T)` — the new shape
- * matches the field's actual required/optional contract so callers can't
- * accidentally clear a required field by calling `$with.foo()` with no arg.
- */
 function setterValueSignature(f: AssembledNonterminal, elemType: string): string {
 	if (isRequired(f)) return `value: ${elemType}`;
 	return `value?: ${elemType}`;
 }
 
-/**
- * Param type for a single-valued setter:
- *   - storage-rewritten fields: derive from the factory's own config slot.
- *   - default: plain `elemType`.
- */
 function setterElemType(f: AssembledNonterminal, elemType: string, fn: string, nodeMap: NodeMap): string {
 	if (resolveFieldStorageInfo(f, nodeMap).kind !== 'verbatim') {
 		return `NonNullable<Parameters<typeof ${fn}>[0]>['${f.configKey}']`;
@@ -761,17 +577,6 @@ export function fieldElementType(f: AssembledNonterminal, nodeMap: NodeMap): str
 	return [...new Set(parts)].join(' | ');
 }
 
-/**
- * Emit a branch/group factory — one field-list-driven body shared by all
- * three calling conventions (container/single-field/config), mirroring
- * `emitInterface` in types.ts: one loop over `fields` producing storage +
- * getters, with the calling convention affecting ONLY the signature line
- * and the `$with` block. Each convention resolves its own per-field
- * storage-value expression (`valueSourceFor`) up front — this is where the
- * three genuinely differ (raw `child`/`children` vs a bare param name vs
- * `config.<key>` routed through the boolean/bitflag/kindEnum coercion
- * helpers), not in how storage/getters/the `withMethods` wrapper get built.
- */
 function emitFieldCarryingFactory(
 	node: FieldCarryingNode,
 	fields: readonly AssembledNonterminal[],
@@ -940,19 +745,6 @@ function emitFieldCarryingFactory(
 	return renameUnusedConfigParam(lines);
 }
 
-/**
- * Resolve the rest-param type for a `$with.children` setter so it matches
- * the config's `children` slot shape. Three cases mirror the three shapes
- * `emitInterface` produces for `$children`:
- *
- *   - `anyMultiple && anyNonEmpty` → `NonEmptyArray<T>` (= `readonly [T, ...T[]]`).
- *   - `anyMultiple && !anyNonEmpty` → `T[]` (regular array).
- *   - `!anyMultiple` → `readonly [T]` (single-element tuple, exactly one arg).
- *
- * The TS rest-parameter type system accepts all three shapes; declaring
- * the right one means `factory({ ...config, children: items })` type-checks
- * without a runtime narrowing helper.
- */
 export function childrenSetterRestType(
 	children: readonly AssembledNonterminal[],
 	childElem: string,
@@ -965,15 +757,6 @@ export function childrenSetterRestType(
 	return `${childRest}[]`;
 }
 
-/**
- * Post-process emitted factory lines: rename the `config` parameter to
- * `_config` when the function body never reads it. Silences
- * `no-unused-vars` (lint rule explicitly exempts `_`-prefixed names)
- * without changing the public type signature — dispatchers and From
- * wrappers that forward `config` to these form factories continue to
- * type-check. Dropping the param entirely cascades into the dispatcher
- * + From emit, which is invasive; rename is the contained fix.
- */
 function renameUnusedConfigParam(lines: string[]): string {
 	const header = lines[0]!;
 	const body = lines.slice(1).join('\n');
@@ -987,24 +770,6 @@ function renameUnusedConfigParam(lines: string[]): string {
 // refine() per-form factory emission
 // ---------------------------------------------------------------------------
 
-/**
- * Emit a per-form factory for a refined kind.
- *
- * @remarks
- * The per-form factory accepts the form's narrowed Config (base kind's
- * Config minus the fields stamped by this form), stamps the form's
- * selected literals directly into `$fields` alongside user-supplied
- * fields, and returns a NodeData shape structurally identical to the
- * base factory's output (and to what `readNode` produces from a parsed
- * tree). No `$variant` tag — the selected literals live in `$fields`
- * exactly as they do when parsed, so the round-trip contract is
- * preserved.
- *
- * The fluent method suffix (render/toEdit/replace) mirrors the base
- * factory so the output shape is interchangeable; callers switching
- * between `ir.interfaceBody.curly(...)` and `readNode(...)` get the
- * same surface.
- */
 function emitRefineFormFactory(
 	node: AssembledNode,
 	form: RefineFormInfo,
@@ -1085,11 +850,6 @@ function emitRefineFormFactory(
 	return lines.join('\n');
 }
 
-/**
- * Per-form equivalent of `resolveConfigOptional` — factors the narrowed
- * fields out of the "required" check (those are stamped by this form and
- * never come from Config input).
- */
 function resolveRefineFormConfigOptional(
 	fields: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
@@ -1101,67 +861,17 @@ function resolveRefineFormConfigOptional(
 	return hasRequired ? '' : '?';
 }
 
-/**
- * Determine whether the `config` parameter should be optional (`?`).
- *
- * @param fields - The assembled field descriptors for the node.
- * @param nodeMap - The assembled node map (used for auto-stamp detection).
- * @returns The option marker — `'?'` when every non-auto-stamped field is
- *   optional, `''` otherwise.
- * @remarks
- *   Auto-stamp-eligible fields are excluded from the "required" check because
- *   they are never present in Config — the factory stamps them directly.
- *   Only fields that remain in Config can make config required.
- */
 function resolveConfigOptional(fields: readonly AssembledNonterminal[], nodeMap: NodeMap): '' | '?' {
 	fields = fields ?? [];
 	const hasRequired = fields.some((f) => isRequired(f) && autoStampExpression(f, nodeMap) === undefined);
 	return hasRequired ? '' : '?';
 }
 
-/**
- * Resolve the config type reference for a field-carrying factory parameter.
- *
- * @param node - The node descriptor (provides `typeName` and `parentKind`).
- * @param hasRefineForms - Whether the node's kind carries refine() forms.
- * @returns A TS source string like `T.FunctionItem.Config` or `ConfigOf<T.FunctionItem>`.
- * @remarks
- *   Refined base kinds alias their parent `T.<TypeName>.Config` to the
- *   first-declared form's narrowed Config (per emitRefineFormSubNamespaces),
- *   dropping the narrowed-out fields. The base factory still references
- *   every field directly, so it must bypass that narrowed alias and use the
- *   full generic projection instead.
- *
- *   Hygiene rule 5 — prefer concrete per-kind namespace alias over the
- *   `ConfigOf<T>` generic indirection. `T.${typeName}.Config` is emitted
- *   by the types.ts namespace-sugar pass and resolves to the same
- *   `ConfigFor<kind>` shape, so this is a pure typing-surface improvement
- *   with no runtime change.
- */
 function resolveConfigType(node: FieldCarryingNode, hasRefineForms: boolean): string {
 	if (hasRefineForms) return `ConfigOf<T.${node.typeName}>`;
 	return `T.${node.typeName}.Config`;
 }
 
-/**
- * Resolve the `$variant` tag name for a polymorph form factory.
- *
- * @param node - The node descriptor (provides `name` and `parentKind`).
- * @returns The form's short name (e.g. `'body'`, `'binary'`, `'form0'`), or
- *   `undefined` when the node is not a polymorph form.
- * @remarks
- *   Polymorph form factories tag their output with `$variant: '<name>'` so the
- *   renderer's variant dispatch (path 1) can discriminate forms whose templates
- *   differ only by literal tokens (e.g. rust `struct_item` body vs semi — same
- *   `$VARS`, differ by trailing `;`).
- *
- *   Single source of truth (DRY): the variant name is `form.name`, assigned at
- *   assembly time in {@link buildAssembledFormGroups}. Reconstructing it from
- *   the kind suffix is fragile — `source='override'` polymorphs use
- *   `${parent}__form_${name}` and slicing by `${parent}_` yields `_form_<name>`
- *   (leading underscore garbage). Use `form.name` directly and let assemble
- *   own the naming decision.
- */
 function resolvePolymorphFormVariantName(node: AssembledGroup): string | undefined {
 	return node.parentKind ? node.name : undefined;
 }
@@ -1178,17 +888,6 @@ interface ContainerNode {
 	readonly fields: readonly AssembledNonterminal[];
 }
 
-/**
- * Resolve the element type for a container node's children parameter.
- *
- * @param node - The container node descriptor.
- * @param nodeMap - The assembled node map for type resolution.
- * @returns A TS source string for the element type (e.g. `T.FunctionItem | T.Block`).
- * @remarks
- *   Uses the concrete element type union (e.g. `FunctionItem | Block`) instead of
- *   the generic `ChildOf<X>` alias so consumers see the actual types in
- *   hover/autocomplete with no indirection.
- */
 function resolveContainerElementType(node: ContainerNode, nodeMap: NodeMap): string {
 	// The unnamed-child slot lives in `node.fields`; derive the element type
 	// from it directly.
@@ -1199,50 +898,6 @@ function resolveContainerElementType(node: ContainerNode, nodeMap: NodeMap): str
 // SeparatedList factory (separator-as-slot Task 6)
 // ---------------------------------------------------------------------------
 
-/**
- * Emit a `'separatedList'` factory function.
- *
- * Signature: `fn(elements: T[] | NonEmptyArray<T>, options?: {...})` —
- * `elements` is always positional (a separatedList's whole rule identity is
- * array multiplicity, so there's never a singular-content case, unlike
- * `emitContainerFactory`). `options` is a SECOND, trailing parameter
- * (`elements` can't itself be a rest/spread param followed by more
- * arguments) and is emitted ONLY when at least one of
- * `separatorKind`/`leading`/`trailing` genuinely varies per-instance —
- * `mandatory`/`none` flank modes and a literal separator are all
- * compile-time-known and need no runtime parameter at all, mirroring
- * exactly which fields `emitSeparatedListWrap` (wrap.ts, Task 4) and
- * `renderTransportDataStruct` (render-module.ts, Task 5) conditionally
- * capture/emit.
- *
- * Storage keys (`_separator_kind`/`_leading_sep`/`_trailing_sep`) match
- * wrap.ts's `emitSeparatedListWrap` naming exactly (Task 4) — the same
- * per-instance concepts share one naming scheme across capture/render/
- * construct. The elements' own storage key/accessor, however, is NOT a
- * fixed `_content`/`content()` bucket — it is derived via
- * `canonicalSeparatedListField` (shared.ts), the SAME single-field
- * canonical-slot derivation `emitSeparatedListWrap`'s "Bug B fix" and
- * `renderTransportDataStruct`'s transport struct use, so the constructed
- * object's storage key matches the model's real slot name (e.g.
- * `_attributed_argument`, not `_content`) and satisfies both the wire
- * transport and the Task-2 `_slots` stub's `T.<TypeName>` interface in
- * types.ts (which declares `_<name>`/`<name>()` from the identical
- * `node.fields` source). Multi-field kinds (`node.fields.length > 1`, e.g.
- * TypeScript's `enum_body_group1`) can't route a flat `elements` array to
- * more than one field without partitioning by kind — they keep the generic
- * `_content`/`content()` bucket, which remains WRONG for those kinds (see
- * `expectTestFailures`) pending a real per-field partition.
- *
- * Bypasses `node.fields`/`.slots` (the Task-2 stub) entirely, reading
- * `node.elements`/`.nonEmpty`/`.leadingMode`/`.trailingMode`/`.separatorRule`
- * directly — the stub can misderive a kind's real shape for a rule that's
- * an alias of a hidden rule (empirically found: python's `lambda_parameters`,
- * whose rule id resolves through hidden `_parameters`, currently gets a
- * WRONG singular `child: T.Parameters` factory under the stub instead of
- * the real REPEAT1 array — this function fixes that as a side effect of
- * bypassing the stub, the same way Task 4's wrap.ts fix did for the wrap
- * side).
- */
 function emitSeparatedListFactory(
 	node: AssembledSeparatedList,
 	nodeMap: NodeMap,
@@ -1412,24 +1067,6 @@ function escForSource(s: string): string {
 	return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 }
 
-/**
- * Strip ESLint-flagged useless escapes that occur inside tree-sitter
- * grammar regex patterns. Only two cases appear in real grammars and
- * are safe to strip:
- *
- *   - `\[` inside a character class — `[` has no special meaning inside
- *     `[...]`, so the backslash is decorative.
- *   - `\-` at the end of a character class — a literal `-` after a prior
- *     character set needs no escape when it's the last char in the class.
- *
- * The stripped pattern must still compile as a RegExp. If it doesn't
- * (some grammar regex we didn't anticipate), fall back to the original
- * pattern so semantics stay identical. Full set-equivalence cannot be
- * checked at codegen time without running both regexes against a corpus
- * — the two specific transformations above are provably safe by the
- * JavaScript regex grammar, so compile-success is the strongest static
- * check we can offer.
- */
 function stripUselessEscapes(pattern: string): string {
 	let out = '';
 	let i = 0;

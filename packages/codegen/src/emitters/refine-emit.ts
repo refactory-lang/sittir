@@ -36,20 +36,6 @@ export interface RefineFormInfo {
 	}>;
 }
 
-/**
- * Collect refine metadata for every kind that carries forms, walking
- * each form's paths against the assembled rule tree to precompute the
- * narrowed field-literal pairs. Returns `undefined` when the grammar
- * has no refine metadata.
- *
- * @remarks
- * Path resolution at emit time reads the post-Link rule map (stored on
- * `NodeMap.rules`). Forms that don't resolve to field-wrapped choices
- * contribute an empty `narrowedFields` list — the form's factory still
- * exists but narrows nothing at the Config surface, which is the
- * intended behavior for selections that target anonymous structural
- * literals.
- */
 export function collectRefineKindInfos(nodeMap: NodeMap): RefineKindInfo[] | undefined {
 	const forms = nodeMap.refineForms;
 	if (!forms || forms.size === 0) return undefined;
@@ -68,10 +54,6 @@ export function collectRefineKindInfos(nodeMap: NodeMap): RefineKindInfo[] | und
 	return out;
 }
 
-/**
- * PascalCase a form name for type / factory naming. Treats `_` as a
- * word boundary so `snake_case` forms pascal-case correctly.
- */
 export function pascalCase(s: string): string {
 	return s
 		.split(/[_\s-]+/)
@@ -80,10 +62,6 @@ export function pascalCase(s: string): string {
 		.join('');
 }
 
-/**
- * camelCase a form name for fluent-key naming on the parent namespace
- * (e.g. `ir.interfaceBody.curly`).
- */
 export function camelCase(s: string): string {
 	const parts = s.split(/[_\s-]+/).filter((p) => p.length > 0);
 	if (parts.length === 0) return s;
@@ -97,18 +75,10 @@ export function camelCase(s: string): string {
 	);
 }
 
-/**
- * Per-form TS type name: `<ParentTypeName><FormPascal>`.
- * Example: `InterfaceBody` + `curly` → `InterfaceBodyCurly`.
- */
 export function refineFormTypeName(parentTypeName: string, formName: string): string {
 	return `${parentTypeName}${pascalCase(formName)}`;
 }
 
-/**
- * Per-form factory function name: `<kind-camel><FormPascal>`, matching
- * the base factory-naming convention already used for polymorph forms.
- */
 export function refineFormFactoryName(baseFactoryName: string, formName: string): string {
 	return `${baseFactoryName}${pascalCase(formName)}`;
 }

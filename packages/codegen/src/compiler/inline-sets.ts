@@ -19,18 +19,6 @@ import { join } from 'node:path';
 import { classifyNode } from './assemble.ts';
 import type { LinkedGrammar } from './types.ts';
 
-/**
- * Load the `inline` array from the compiled grammar.json (if present).
- *
- * `raw.inline` only contains what the overrides callback explicitly returns —
- * base-grammar string items in `previous` are silently dropped by evaluate's
- * normalize() pass (which only handles symbol-ref objects). Reading
- * grammar.json directly gives the full merged inline list that tree-sitter
- * itself used when compiling the parser.
- *
- * @param grammar - Grammar name (e.g. `'rust'`, `'typescript'`, `'python'`).
- * @returns The `inline` string array from grammar.json, or `undefined`.
- */
 export function loadGrammarJsonInlineList(grammar: string): readonly string[] | undefined {
 	const grammarJsonPath = join(process.cwd(), 'packages', grammar, '.sittir', 'src', 'grammar.json');
 	if (!existsSync(grammarJsonPath)) return undefined;
@@ -60,29 +48,6 @@ interface GrammarJsonNode {
 	readonly members?: readonly GrammarJsonNode[];
 }
 
-/**
- * Read back the REAL hidden-symbol → visible-alias-name mapping tree-sitter
- * actually compiled, from grammar.json's rule bodies.
- *
- * Needed because enrich's clause-hoist/choice-arm promotion
- * (`promoteExistingHiddenRuleName`, dsl/enrich.ts) runs TWICE per grammar —
- * once building the wire config tree-sitter's native `grammar()` call
- * compiles, once inside sittir's own evaluate() pipeline — each with its own
- * fresh, order-dependent dedup state ("whichever parent asks first wins the
- * name"). When one hidden rule is referenced from multiple parents (rust's
- * `_non_special_token`, referenced from `_tokens`/`_non_delim_token`/
- * `_token_pattern`), the two runs can settle on DIFFERENT winning names for
- * the identical shared target. Only the wire-config run's name is real —
- * it's what tree-sitter actually compiled into the parser — so this reads
- * it back from grammar.json rather than trusting sittir's own guess
- * (`SupertypeRule.subtypeParseNames`, computed by the OTHER run).
- *
- * @returns Map of hidden symbol name (`_foo`) → its real compiled alias
- *   name, or an empty map if grammar.json is absent/unreadable. A hidden
- *   name aliased to different names at different reference sites (not
- *   observed in practice — tree-sitter dedupes identical anonymous content
- *   to one shared alias) keeps whichever alias is encountered first.
- */
 export function loadGrammarJsonAliasMap(grammar: string): ReadonlyMap<string, string> {
 	const grammarJsonPath = join(process.cwd(), 'packages', grammar, '.sittir', 'src', 'grammar.json');
 	const out = new Map<string, string>();
@@ -142,18 +107,6 @@ export function buildInlinableKinds(inlineKinds: ReadonlySet<string>, linked: Li
 	);
 }
 
-/**
- * Extra polymorph skip-set for the slot-grouping diagnostic.
- *
- * `polymorphsConfig` is the `polymorphs:` / `n:` declarative path-split config
- * from overrides.ts. Each entry `{ parent: { path: suffix } }` produces hidden
- * arm rules named `_${parent}_${suffix}` (via `polymorphHiddenName`). These
- * arms are already handled by the polymorph dispatch machinery; the diagnostic
- * must not flag their multi-slot seq bodies as violations. The parent kinds
- * themselves are included too, to silence the top-level polymorph rule if it
- * isn't classified as such in the simplified map (e.g. when all arms are
- * inlined, the structure gets flattened).
- */
 export function buildPolymorphsConfigSkip(
 	polymorphsConfig: Readonly<Record<string, Readonly<Record<string, string>> | undefined>> | undefined
 ): Set<string> {

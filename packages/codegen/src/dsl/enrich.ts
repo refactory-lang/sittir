@@ -311,11 +311,6 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
  */
 export const ENRICH_CLAUSE_GROUPS_KEY = '__enrichedClauseGroups__' as const;
 
-/**
- * Extract the set of enrich-hoisted clause-group names from an enriched grammar
- * result. Returns an empty set when the grammar was not enriched or no clause
- * groups were synthesized.
- */
 export function getEnrichClauseGroups(grammar: unknown): ReadonlySet<string> {
 	if (!grammar || typeof grammar !== 'object') return new Set();
 	const names = (grammar as Record<string, unknown>)[ENRICH_CLAUSE_GROUPS_KEY];
@@ -334,11 +329,6 @@ export function getEnrichClauseGroups(grammar: unknown): ReadonlySet<string> {
  */
 export const ENRICH_CLAUSE_GROUP_OWNERS_KEY = '__enrichedClauseGroupOwners__' as const;
 
-/**
- * Extract the synthesized-name → owning-parent-kind map from an enriched
- * grammar result. Returns an empty map when the grammar was not enriched or
- * no clause groups were synthesized.
- */
 export function getEnrichClauseGroupOwners(grammar: unknown): ReadonlyMap<string, string> {
 	if (!grammar || typeof grammar !== 'object') return new Map();
 	const owners = (grammar as Record<string, unknown>)[ENRICH_CLAUSE_GROUP_OWNERS_KEY];
@@ -353,15 +343,6 @@ export function getEnrichClauseGroupOwners(grammar: unknown): ReadonlyMap<string
  */
 export const ENRICH_VISIBLE_GROUP_SOURCES_KEY = '__enrichedVisibleGroupSources__' as const;
 
-/**
- * Extract the hidden source names behind visible-group mints from an
- * enriched grammar result. Wire filters these OUT of the grammar's final
- * `inline:` list before it reaches tree-sitter: an inlined source rule is
- * erased during tree-sitter's inline processing, which vaporizes the alias
- * (and the minted kind's parser identity) while sittir's IR still models
- * the kind — the phantom-kind divergence. Un-inlining the source keeps the
- * mint real on both sides.
- */
 export function getEnrichVisibleGroupSources(grammar: unknown): ReadonlySet<string> {
 	if (!grammar || typeof grammar !== 'object') return new Set();
 	const names = (grammar as Record<string, unknown>)[ENRICH_VISIBLE_GROUP_SOURCES_KEY];
@@ -444,14 +425,6 @@ function applyEnrichPasses(
 	return r;
 }
 
-/**
- * @internal — pull the declared-supertype name set out of the base
- * grammar. Handles both the `{ grammar: { supertypes: $ => [...] } }`
- * wrapped form and the bare `{ supertypes: $ => [...] }` form. Returns
- * names WITH their leading underscore so callers can test
- * `supertypeNames.has('_expression')` and still strip the prefix when
- * composing the field name.
- */
 function extractSupertypeNames(base: unknown, hasWrapper: boolean): ReadonlySet<string> {
 	const root = hasWrapper ? (base as { grammar?: Record<string, unknown> }).grammar : (base as Record<string, unknown>);
 	const supertypes = root?.supertypes;
@@ -489,15 +462,6 @@ function extractSupertypeNames(base: unknown, hasWrapper: boolean): ReadonlySet<
 	return new Set();
 }
 
-/**
- * Resolve the grammar's `word` declaration to a rule NAME across both
- * runtimes. Under sittir's grammarFn it is already a string; in the emitted
- * `.sittir/grammar.js` (which runs enrich BEFORE tree-sitter's native
- * `grammar()`) it is still the raw `$ => $.identifier` callback — invoke it
- * with the same symbol-shaped proxy `extractSupertypeNames` uses and take
- * the returned symbol's name. Returns null when absent/unresolvable (the
- * word matcher then falls back via matchesWordShape).
- */
 function extractWordName(word: unknown): string | null {
 	if (typeof word === 'string') return word;
 	if (typeof word !== 'function') return null;
@@ -519,13 +483,6 @@ function extractWordName(word: unknown): string | null {
 	}
 }
 
-/**
- * @internal — extract supertype names from a result array. Accepts both
- * `[{name:'_expr'}, ...]` (SYMBOL-shaped) and `['_expr', ...]` (plain
- * strings). Returns names WITH the leading underscore so callers can
- * test membership and still strip the prefix when composing the field
- * name.
- */
 function harvestSupertypeNames(result: unknown): Set<string> {
 	const names = new Set<string>();
 	if (!Array.isArray(result)) return names;
@@ -544,24 +501,6 @@ function harvestSupertypeNames(result: unknown): Set<string> {
 // Direct-mutation builders
 // ---------------------------------------------------------------------------
 
-/** Fetch a runtime-injected DSL rule constructor from `globalThis`, or throw.
- *  enrich runs inside `grammar(enrich(base), …)`, which executes under an
- *  injected DSL runtime — sittir's lowercase constructors during evaluate.ts,
- *  tree-sitter's uppercase ones during CLI generation. Calling the injected fn
- *  directly produces a rule in the active runtime's case with no hand-rolled
- *  detection, and inherits the runtime's construction semantics (content
- *  normalization, `_ref.fieldName` stamping). A missing global means enrich
- *  was called outside any runtime — a unit test that forgot `installFakeDsl()`.
- *
- *  Accepts alternate names because the two runtimes don't agree on every
- *  constructor's name: the symbol constructor is `symbol` under sittir but
- *  `sym` under tree-sitter's CLI. The first name found wins.
- *
- *  Exported so other DSL-phase modules (e.g. `dsl/transform/transform.ts`'s
- *  polymorph alias-node mint sites) can route construction through the same
- *  runtime-injected constructors instead of hand-rolling rule literals — see
- *  `makeGroupLiftSymbol`/`makeVisibleGroupAlias` below for the canonical
- *  call pattern. */
 export function nativeRuleFn<F>(...names: string[]): F {
 	const g = globalThis as Record<string, unknown>;
 	for (const name of names) {
@@ -573,12 +512,6 @@ export function nativeRuleFn<F>(...names: string[]): F {
 	);
 }
 
-/** Wrap `content` in a FIELD via the injected `field()` constructor. The
- *  runtime fn normalizes the content and stamps `fieldName` on inner symbol
- *  refs (subsuming the former hand-rolled `propagateFieldName`); we add
- *  enrich's `fieldSource` marker (opaque `metadata` bag — debt PR-P1) so
- *  downstream passes recognize the promotion as enrich-originated rather
- *  than author-written. */
 function makeField(name: string, content: unknown): Rule {
 	const field = nativeRuleFn<(n: string, c: unknown) => Rule>('field');
 	return { ...field(name, content), metadata: makeRuleMetadata({ fieldSource: 'enriched' }) };
@@ -591,14 +524,6 @@ function makeSymbol(name: string): Rule {
 	return symFn(name);
 }
 
-/**
- * Register a `_kw_<fieldName>` hidden rule whose body is
- * `prec.left(1, stringLiteral)`. Idempotent — multiple positions that
- * promote the same keyword register the same body once.
- *
- * Returns a SYMBOL reference (in the active runtime's case, via the injected
- * `symbol()` constructor) that the caller embeds inside the new FIELD wrapper.
- */
 function registerKwRule(stringLiteral: Rule, keyword: string, kwRules: Record<string, Rule>): Rule {
 	const hiddenName = `_kw_${keyword}`;
 	if (!(hiddenName in kwRules)) {
@@ -623,7 +548,6 @@ function normalizeMember(m: unknown): {
 	return (m as { type: string }) ?? { type: 'UNKNOWN' };
 }
 
-/** Collect field names that already exist on the top-level seq. */
 function collectFieldNamesRuntime(rule: Rule): Set<string> {
 	const names = new Set<string>();
 	if (!isSeqType(rule.type)) return names;
@@ -645,11 +569,6 @@ function collectFieldNamesRuntime(rule: Rule): Set<string> {
 	return names;
 }
 
-/**
- * Detect `optional(content)` across both runtimes:
- * - sittir:      `{ type: 'OPTIONAL', content }`
- * - tree-sitter: `{ type: 'CHOICE', members: [content, {BLANK}] }`
- */
 function peelOptional(rule: Rule): { inner: Rule; isOptional: boolean } {
 	if (isOptionalType(rule.type)) {
 		return {
@@ -692,23 +611,10 @@ interface SymbolTarget {
 	wrap(fieldNode: Rule): Rule;
 }
 
-/**
- * @internal — true when `target` corresponds to Shape 1 (bare SYMBOL
- * at the seq position). Distinguishable by `target.symbolRule` being
- * `===` to the original `member`: bare-shape's wrap is identity, so the
- * detected symbol IS the seq-position rule itself. Used by the
- * supertype-prefixed guard in `applySymbolToField` —
- * see that function for the rationale.
- */
 function isBareShapeTarget(member: Rule, target: SymbolTarget): boolean {
 	return target.symbolRule === member;
 }
 
-/** @internal — detect which of the three shapes (bare / optional /
- *  optional-seq) the seq member is, and return a SymbolTarget that
- *  knows how to rebuild it once the inner SYMBOL is FIELD-wrapped.
- *  Returns null for any other shape (including multi-symbol seqs,
- *  optional(seq) with non-anon members, or non-symbol leaves). */
 function detectSymbolTarget(member: Rule): SymbolTarget | null {
 	// Shape 1: bare SYMBOL.
 	if (isSymbolType(member.type) && typeof (member as { name?: unknown }).name === 'string') {
@@ -760,11 +666,6 @@ function detectSymbolTarget(member: Rule): SymbolTarget | null {
 	};
 }
 
-/**
- * @internal Count symbols inside repeat/repeat1 wrappers. Used to
- * disqualify bare symbols whose kind also appears under a repeat.
- * Stops at field/alias boundaries.
- */
 function countSymbolsInRepeat(
 	node: Rule | undefined | null,
 	kindCounts: Map<string, number>,
@@ -905,20 +806,6 @@ function applySymbolToField(ruleName: string, rule: Rule, supertypeNames: Readon
 	return result;
 }
 
-/**
- * @internal — iterate outer-seq members and descend into any that are
- * `repeat(seq(...))` / `repeat1(seq(...))` (possibly prec-wrapped).
- * Applies the same field-promotion logic to bare symbols in the inner
- * seq. Returns the original array unchanged when no promotions fire.
- *
- * @param ruleName       - the parent rule name (for diagnostics)
- * @param members        - the outer seq's (possibly already-enriched) members
- * @param supertypeNames - declared supertype names for `_prefix` handling
- * @param existing       - mutable set of field names already claimed on
- *                         the parent seq (checked to prevent collisions)
- * @returns the same `members` array if nothing changed, or a new array
- *   with rebuilt repeat members
- */
 function promoteInsideRepeatMembers(
 	ruleName: string,
 	members: Rule[],
@@ -937,14 +824,6 @@ function promoteInsideRepeatMembers(
 	return result;
 }
 
-/**
- * @internal — given a single outer-seq member, check whether it is a
- * `repeat`/`repeat1` (possibly prec-wrapped) whose content is a `seq`.
- * If so, apply field-promotion to the inner seq's bare symbols.
- *
- * @returns the rebuilt member if any promotions fired, or `null` if
- *   the member was left unchanged.
- */
 function tryPromoteInRepeatMember(
 	ruleName: string,
 	member: Rule,
@@ -1040,20 +919,6 @@ function tryPromoteInRepeatMember(
 	return rebuilt;
 }
 
-/**
- * @internal — handle `repeat(seq(...))` / `repeat1(seq(...))` patterns
- * (possibly prec-wrapped) when the top-level rule is NOT itself a seq.
- *
- * Descends into the repeat's content, peeling any prec wrappers on
- * the inner rule. If the inner content is a seq, applies the same
- * per-member field-promotion logic as the top-level seq path:
- * `detectSymbolTarget` + uniqueness via `kindCounts` + claimed-name
- * via `collectFieldNamesRuntime` + `countSymbolsInRepeat` for further
- * nested repeats.
- *
- * @returns The rebuilt rule if any promotions fired; the original rule
- *   unchanged otherwise.
- */
 function tryPromoteInRepeatSeq(
 	ruleName: string,
 	rule: Rule,
@@ -1165,9 +1030,6 @@ function applyOptionalKeyword(
 	return walkOptionalKeyword(ruleName, rule, claimed, kwRules, wordMatcher) ?? rule;
 }
 
-/** @internal — strip any number of prec/prec.left/prec.right/prec.dynamic
- *  wrappers and return the innermost rule. Returns the input unchanged
- *  when no prec wrapper is present. */
 function peelPrec(rule: Rule): Rule {
 	let cursor: Rule = rule;
 	while (isPrecWrapper(cursor as { type: string })) {
@@ -1325,13 +1187,6 @@ interface ClauseHoistCounter {
 	readonly supertypeNames?: ReadonlySet<string>;
 }
 
-/**
- * @internal — canonical JSON stringify with sorted object keys. Ensures
- * that two structurally-equal rule bodies stringify identically even
- * when property insertion order differs between rule construction paths.
- * Mirrors the helper in auto-groups.ts (kept in sync, not shared yet —
- * DRY extraction is scheduled for Task 2.1).
- */
 function canonicalStringifyClause(value: unknown): string {
 	if (value === null || typeof value !== 'object') {
 		return JSON.stringify(value);
@@ -1367,15 +1222,6 @@ function canonicalStringifyClause(value: unknown): string {
 	return '{' + parts.join(',') + '}';
 }
 
-/**
- * @internal — peel an optional wrapper from a rule node. Returns the inner
- * seq content if the rule is `optional(seq)` (sittir form) or
- * `CHOICE[seq, BLANK]` (tree-sitter normalized form). Returns null if the
- * rule is not an optional-wrapping-a-seq pattern.
- *
- * Also returns the seq member and the index of the seq in the members array
- * (for CHOICE form) so callers can rebuild the CHOICE with a different member.
- */
 function peelOptionalSeq(rule: Rule): {
 	seqBody: Rule;
 	form: 'optional' | 'choice';
@@ -1399,16 +1245,6 @@ function peelOptionalSeq(rule: Rule): {
 	return null;
 }
 
-/**
- * @internal — extract the list separator string from an `optional(seq(...))`
- * (or `CHOICE[seq,BLANK]`) whose seq body carries a separated-list repeat.
- * Returns the separator literal (e.g. `","`) or null when the member is not an
- * optional-seq containing a repeat.
- *
- * Handles both the raw tree-sitter form `repeat(seq(STRING sep, x))` (separator
- * not yet lifted — enrich runs pre-evaluate) and an already-lifted
- * `repeat(x, separator)`.
- */
 function listSeparatorOfOptionalSeq(rule: Rule): string | null {
 	const peeled = peelOptionalSeq(rule);
 	if (peeled === null) return null;
@@ -1442,12 +1278,6 @@ function listSeparatorOfOptionalSeq(rule: Rule): string | null {
 	return null;
 }
 
-/**
- * @internal — if `rule` is `optional(STRING)` / `CHOICE[STRING,BLANK]`, return
- * the string literal; else null. Recognizes a stranded trailing separator
- * member. Returns null for `optional(seq(...))` (inner is not a bare string),
- * so it never matches the list member itself.
- */
 function optionalStringLiteral(rule: Rule): string | null {
 	const peeled = peelOptional(rule);
 	if (!peeled.isOptional) return null;
@@ -1456,12 +1286,6 @@ function optionalStringLiteral(rule: Rule): string | null {
 	return null;
 }
 
-/**
- * @internal — fold a stranded trailing `optional(sep)` into the preceding
- * `optional(seq(...))`'s body. Appends `trailingOptional` as the last seq
- * member and rebuilds the optional wrapper (both `optional` and
- * `CHOICE[seq,BLANK]` forms, via rebuildOptional).
- */
 function appendTrailingMemberToOptionalSeq(optSeqRule: Rule, trailingOptional: Rule): Rule {
 	const peeled = peelOptionalSeq(optSeqRule)!;
 	const seqBody = peeled.seqBody;
@@ -1470,28 +1294,6 @@ function appendTrailingMemberToOptionalSeq(optSeqRule: Rule, trailingOptional: R
 	return rebuildOptional(optSeqRule, newSeqBody);
 }
 
-/**
- * @internal — pre-fold a seq's member list, pulling each separated-list's
- * stranded trailing `optional(sep)` INTO the preceding `optional(seq(...
- * repeat(sep) ...))`. Returns the rewritten member array, or null when nothing
- * folds (reference-preserving when no fold applies).
- *
- * Trigger: adjacent `[ optional(seq containing repeat(sep S)) , optional(S) ]`
- * where the trailing literal `S` equals the list's own separator. The
- * separator-match guard prevents swallowing an unrelated trailing optional
- * (e.g. `optional(';')` after a comma-separated list).
- *
- * Why here: tree-sitter authors write the canonical separated-list-with-trailing
- * either as `optional(seq(list, optional(sep)))` (already one unit — handled) or
- * as `seq(optional(list), optional(sep))` (python `argument_list`). This pass
- * canonicalizes the second form into the first BEFORE the group-lift below, so
- * the whole list (head + repeat + trailing) is captured as one group. Without
- * it the trailing separator strands as a standalone member → wrapper-deletion
- * makes it a phantom `nonterminal:true` slot, and for visible (inline-unsafe)
- * groups it is permanently split from its list across the AssembledGroup
- * boundary. evaluate's `liftCommaSep` then absorbs the folded `optional(sep)`
- * into the group's `repeat1` as `trailing: true`.
- */
 function absorbTrailingListSeparators(members: Rule[]): Rule[] | null {
 	let changed = false;
 	const out: Rule[] = [];
@@ -1510,22 +1312,6 @@ function absorbTrailingListSeparators(members: Rule[]): Rule[] | null {
 	return changed ? out : null;
 }
 
-/**
- * @internal — walk `rule` and hoist any `optional(seq(STRING,FIELD…))` /
- * `CHOICE[seq(STRING,FIELD…),BLANK]` positions into hidden group rules.
- * Returns a (possibly rewritten) rule; never mutates the input.
- *
- * COUNTER DISCIPLINE: the `counter.opt` increments for EVERY `optional(seq)`
- * shape encountered in traversal order — both clause-seqs (which this pass
- * hoists) and non-clause-seqs (which applyAutoGroups hoists later). This
- * keeps the numbering in sync so the two passes never assign the same number
- * to different bodies within the same parent. applyAutoGroups resets its
- * own counter per-parent to 0 and counts from 1; after enrich, any position
- * where enrich hoisted is now `optional(SYMBOL)` — applyAutoGroups skips
- * those (not a seq) so its counter only increments for the non-clause
- * positions, which are the ones enrich skipped and left with their counter
- * slots intact.
- */
 function applyClauseHoist(
 	parentKind: string,
 	rule: Rule,
@@ -1876,18 +1662,6 @@ function applyClauseHoist(
 // Base-grammar un-aliasing (parsekind-noninjective auto-fix)
 // ---------------------------------------------------------------------------
 
-/**
- * Assign a stable cluster-id string to each value in `values`, where two
- * values get the SAME id iff `rulesEqual` (dsl/list-patterns.ts) says they're
- * structurally equal. Used as `diagnoseParseKindCollisions`'s
- * `structuralSignature` input — that function only needs values sharing a
- * signature to be groupable via `distinct()`, not a globally-canonical hash,
- * so an arbitrary-but-consistent per-call cluster index is sufficient and
- * avoids hand-rolling a serializer (DRY: reuses the existing, already
- * separator-shape-aware `rulesEqual` instead).
- *
- * @internal — exported for testing only.
- */
 export function clusterSignatures(values: readonly RuntimeRule[]): string[] {
 	const clusterOf: string[] = [];
 	const representatives: RuntimeRule[] = [];
@@ -1945,11 +1719,6 @@ function recordUnaliasDiagnostic(sink: UnaliasDiagnosticSink, diagnostic: ParseK
 	sink.diagnostics.push(diagnostic);
 }
 
-/**
- * Extract the un-aliasing diagnostics `enrich()` attached to an enriched
- * grammar result (or a grammar object that inherited them, e.g. via
- * `grammarFn`). Returns an empty array when none were attached.
- */
 export function getEnrichUnaliasDiagnostics(grammar: unknown): readonly ParseKindCollisionDiagnostic[] {
 	if (!grammar || typeof grammar !== 'object') return [];
 	const diagnostics = (grammar as Record<string, unknown>)[ENRICH_UNALIAS_DIAGNOSTICS_KEY];
@@ -1984,37 +1753,6 @@ interface UnaliasCandidate {
 	readonly aliasSite?: { readonly path: readonly (string | number)[]; readonly content: Rule; readonly named: boolean };
 }
 
-/**
- * @internal — walk `node` collecting every ALIAS site and bare SYMBOL leaf,
- * resolving each to its referenced rule body via `rulesBag` for structural
- * comparison. Descent runs through `RuleWalker.childEdgesOf` — the ONE
- * canonical child-edge relation (`dsl/rule-walker.ts`) — so every edge the
- * project's walker knows about is covered automatically: SEQ/CHOICE members,
- * FIELD/OPTIONAL/REPEAT/REPEAT1/PREC/TOKEN content, AND a repeat's
- * `separator.value`. (The former hand-rolled descent here silently omitted
- * the separator and token-wrapper edges, so an alias in one of those
- * positions was invisible — a coverage gap and a second, incomplete rule-tree
- * edge relation alongside the canonical one.)
- *
- * Two node kinds get special handling BEFORE the generic descent:
- *   - ALIAS: recorded as a candidate; NOT descended into (its resolved body
- *     is looked up directly via `rulesBag` instead) — mirrors
- *     `applyClauseHoist`'s treatment of its own synthesized wrappers as
- *     opaque once classified.
- *   - SYMBOL: recorded as a candidate leaf (its own storage kind IS its parse
- *     kind); leaves have no edges so descent is a no-op regardless.
- *
- * FIELD additionally rebinds `slotKey` to the field's name for its subtree, so
- * a field-wrapped alias buckets under its enclosing field rather than merging
- * with a same-target alias in a sibling field.
- *
- * The bare `OPTIONAL` edge (absent from `applyClauseHoist`'s
- * `optional(seq(...))`-specific descent) is covered too: sittir's own evaluate
- * runtime produces bare `OPTIONAL` nodes (not always the tree-sitter-CLI-lowered
- * `CHOICE[x,BLANK]` form) before tree-sitter's `grammar()` runs, so a
- * base-grammar alias can sit directly under `optional(...)` at this phase —
- * and `childEdgesOf` descends its `content` edge.
- */
 function collectUnaliasCandidates(
 	node: Rule,
 	path: readonly (string | number)[],
@@ -2056,15 +1794,6 @@ function collectUnaliasCandidates(
 	}
 }
 
-/**
- * @internal — replace the node at `path` (as recorded by
- * `collectUnaliasCandidates`, mirroring `RuleWalker.childEdgesOf`'s segments)
- * with `replacement`. Segments are `'members', <index>` (SEQ/CHOICE),
- * `'content'` (FIELD/OPTIONAL/REPEAT/REPEAT1/PREC/TOKEN), or
- * `'separator', 'value'` (a repeat's separator inner rule). The generic
- * single-property branch handles `content`/`separator`/`value` uniformly (an
- * object spread of the separator wrapper preserves its `trailing`/`leading`).
- */
 function rewriteUnaliasAt(node: Rule, path: readonly (string | number)[], replacement: Rule): Rule {
 	if (path.length === 0) return replacement;
 	const [key, ...rest] = path;
@@ -2079,56 +1808,6 @@ function rewriteUnaliasAt(node: Rule, path: readonly (string | number)[], replac
 	return { ...node, [k]: rest.length > 0 ? rewriteUnaliasAt(child, rest, replacement) : replacement } as Rule;
 }
 
-/**
- * @internal — resolve `alias($.X, $.Y)` sites where `X`'s rule body is
- * structurally distinct from the other value(s) sharing parse kind `Y`
- * (a `parsekind-noninjective` collision), so each storage kind surfaces under
- * its own name at read time instead of being coerced onto a shared kind.
- *
- * Reuses `diagnoseParseKindCollisions` (the same decision function the
- * later, assemble-time check calls) fed by locally-computed storage/parse
- * kind facts — its comparison logic is phase-agnostic, so it is not
- * reimplemented here. Structurally-identical collisions (the common,
- * intentional case, e.g. multiple hidden rules aliased to one shared display
- * name) merge with no diagnostic, unchanged from `diagnoseParseKindCollisions`'s
- * existing behavior. Only genuinely-distinct collisions trigger a rewrite.
- * This is usually safe (a distinct-storage-kind collision makes read-time
- * dispatch non-injective regardless of author intent), but "distinct" here
- * is judged by `rulesEqual` over RAW, pre-simplify rule shapes — a shallower
- * notion than the assemble-time check's post-simplify/catalog-resolved
- * `structuralSignatureOfValue`/`canonicalRuleSignature` comparison, and the
- * two CAN disagree in principle. No rule name is special-cased here anymore
- * (the former `GRANULARITY_MISMATCH_EXCLUSIONS` python `_suite` carve-out was
- * removed in `cb44e218b` — both `_simple_statements`/`_newline` retargeted
- * cleanly with no live issue remaining, and python's baseline actually
- * improved 107→108).
- * The diagnostic is downgraded to non-blocking severity and kept only as an
- * audit trail of the auto-fix, not a build-blocking error.
- *
- * Per firing candidate, the fix branches on whether `X`'s OWN top-level rule
- * (`rulesBag[X]`) is hidden (leading `_`, tree-sitter/sittir convention) or
- * visible:
- *   - visible → DROP the alias at this site (`alias($.X, $.Y)` → bare `$.X`),
- *     unchanged from this pass's original behavior — `X` already produces an
- *     independent named CST node once un-aliased.
- *   - hidden → RETARGET the alias at this site, from `alias($.X, $.Y)` to
- *     `alias($.X, $.<X-without-leading-underscore>)`. A hidden rule produces
- *     no CST node of its own if merely un-aliased (tree-sitter inlines its
- *     raw content wherever referenced) — aliasing IS the standard mechanism
- *     for giving a hidden rule independent visibility, so retargeting to a
- *     non-colliding name keeps it visible instead of dropping visibility
- *     altogether. Guarded: if the stripped name already exists as a rule
- *     (`rulesBag`/`kwRules`/`clauseGroupRules`), do NOT retarget — leave this
- *     specific candidate's alias untouched and do not downgrade its
- *     diagnostic (stays at original `error` severity, still-blocking, same as
- *     if this pass declined to act).
- *
- * Strictly single-site: only the rule passed in is inspected/rewritten — no
- * cross-rule sweep. Other occurrences of the same `alias($.X, $.Y)` pair in
- * sibling top-level rules are untouched by this call (each such rule gets its
- * own independent call from `applyEnrichPasses`, and is fixed only if ITS OWN
- * local bucket independently diagnoses a collision).
- */
 function applyUnaliasDistinct(
 	ruleName: string,
 	rule: Rule,
@@ -2280,18 +1959,6 @@ function applyUnaliasDistinct(
 	return { rule: result, diagnostics };
 }
 
-/**
- * @internal — get or create the synthesized hidden-rule name for a given
- * clause-seq body. Increments the per-parent counter and injects the seq
- * into `clauseGroupRules` on first encounter; dedupes across parents via
- * `dedupeMap`.
- *
- * Returns `null` when the synthesized name would collide with an existing
- * rule in `rulesBag` (already-authored rule with the same name). A stderr
- * notice is emitted in that case. The counter is incremented BEFORE the
- * collision check so the ordinal-position invariant with applyAutoGroups
- * is maintained even when a collision prevents hoisting.
- */
 function clauseHoistSynthName(
 	seqBody: Rule,
 	parentKind: string,
@@ -2326,29 +1993,6 @@ function clauseHoistSynthName(
 	return name;
 }
 
-/**
- * @internal — mint the hidden-rule + visible-alias name pair for an inline-UNSAFE
- * seq body that enrich surfaces as a VISIBLE CST kind.
- *
- * Unlike the prior content-alias approach (which aliased the multi-member seq
- * DIRECTLY — `alias(SEQ(...), $.name)`, which tree-sitter DISTRIBUTES across the
- * seq's members, scattering empty leaves), this registers a HIDDEN rule whose
- * body is the seq, exactly like the inline-safe clause-hoist path
- * (`clauseHoistSynthName`). The caller then references that hidden rule via a
- * symbol and wraps the symbol in `alias($._<name>, $.<name>)` so tree-sitter has
- * a single symbol-node to rename into ONE clean CST node.
- *
- * Naming:
- *   - hidden rule  = `_<parent>_group<N>` (registered in `clauseGroupRules`)
- *   - visible alias = `<parent>_group<N>` (the same name without the `_`)
- * Per-parent 1-indexed `grp` counter; cross-parent dedupe via
- * `canonicalStringifyClause`. Returns `null` on a name collision with an existing
- * rule in `rulesBag` (caller leaves the body inline).
- *
- * The visible name must NOT carry a leading `_` (tree-sitter would classify it
- * HIDDEN → the minted kind's slot is dropped at wrap/read), so `parentKind`'s
- * own leading `_` is stripped before composing the base name.
- */
 function visibleGroupSynthName(
 	content: Rule,
 	parentKind: string,
@@ -2390,18 +2034,6 @@ function visibleGroupSynthName(
 	return { visibleName, hiddenName };
 }
 
-/**
- * PR 3 (2026-07-21 union-slot design): promote an EXISTING hidden rule to a
- * visible group alias without duplicating its body ("mint = promote, not
- * synthesize" — the arm is already a bare `symbol(existingHiddenName)` ref;
- * the hidden rule just needs a friendly visible name). Dedupe key is the
- * hidden name itself (the rule IS the identity here, unlike
- * `visibleGroupSynthName`'s anonymous-body dedupe by content stringify).
- * Shares the SAME per-parent `grp` counter as `visibleGroupSynthName`, so
- * every choice-arm mint for a given parent gets a unique `_<parent>_group<N>`
- * name in traversal order, regardless of which of the two mint paths minted
- * it.
- */
 function promoteExistingHiddenRuleName(
 	existingHiddenName: string,
 	parentKind: string,
@@ -2451,25 +2083,6 @@ function promoteExistingHiddenRuleName(
  * FIELD-NAMED arm sitting alongside union arms in the same choice (a mixed
  * row) — this pass only mints for unnamed arms.
  */
-/**
- * PR 3 (2026-07-21 union-slot design) — narrowing guard: true when `arm`'s
- * LEFTMOST reachable position (descending through SEQ's first member,
- * every CHOICE member, and single-content wrappers — the same shape a
- * parser's FIRST-set walk would follow) references one of `siblingNames`.
- * Guards against minting a choice arm that is structurally a RECURSIVE
- * extension of a SIBLING arm in the same choice rather than an
- * independent alternative — e.g. python's `expression_statement`:
- * arm 0 is the bare `$.expression`; arm 1 is `seq(commaSep1($.expression),
- * optional(','))`, which itself STARTS with `$.expression`. Minting arm 1
- * into its own hidden rule creates a second grammar production sharing
- * arm 0's leading symbol — an unresolvable tree-sitter LR conflict, not a
- * cosmetic one (confirmed: no `conflicts:` declaration or rename
- * resolves it, since it's a genuine shared-prefix ambiguity between two
- * live productions). Skipping the mint here leaves the arm exactly as
- * enrich found it — whatever OTHER mechanism (variant()/polymorphs in
- * this grammar's own overrides.ts, same as before PR 3) already handles
- * it keeps doing so, unimpeded.
- */
 function armLeadingSymbolName(
 	rule: Rule,
 	rulesBag: Record<string, Rule>,
@@ -2509,25 +2122,6 @@ function armLeadingSymbolName(
 	return content ? armLeadingSymbolName(content, rulesBag, seen) : undefined;
 }
 
-/**
- * PR 3 (2026-07-21 union-slot design) — narrowing guard: true when `arm`'s
- * leading symbol (armLeadingSymbolName) is shared by another arm in the
- * same choice (per `collidingLeadingNames`, precomputed once per choice —
- * see the CHOICE branch of applyClauseHoist). Guards against minting a
- * choice arm that structurally shares its PREFIX with a sibling arm —
- * two exemplars, both python: `expression_statement`'s bare `$.expression`
- * arm vs. its `seq(commaSep1($.expression), optional(','))` arm (both
- * lead with `expression`); `except_clause`'s "as" vs. "list" arms (both
- * lead with `field('value', expr)`'s `expression` reference). Minting
- * either half of such a pair creates a second grammar production sharing
- * the other's leading symbol — an unresolvable tree-sitter LR conflict
- * (confirmed: no `conflicts:` declaration or rename resolves it, since
- * it's a genuine shared-prefix ambiguity between two live productions).
- * Skipping the mint leaves BOTH arms exactly as enrich found them —
- * whatever OTHER mechanism (variant()/polymorphs in this grammar's own
- * overrides.ts, same as before PR 3) already handles them keeps doing
- * so, unimpeded.
- */
 function armStartsWithSymbol(
 	rule: Rule,
 	collidingLeadingNames: ReadonlySet<string>,
@@ -2631,27 +2225,6 @@ function mintStructuredChoiceArm(
 	return null;
 }
 
-/**
- * @internal — build a SYMBOL reference for a synthesized enrich group-lift
- * (clause hoist today; all `optional(seq)`/`repeat(seq)` once the hoist
- * generalizes). Built via the active runtime's injected symbol constructor
- * (see `nativeRuleFn`) rather than any hand-rolled shape — `referenceRule`
- * is unused by construction (both runtimes agree on the `SYMBOL`
- * discriminant; the shape distinction lives in WHICH constructor is
- * injected, not in the wrapper rule's own case) but kept in the signature
- * for call-site symmetry with the other `make*` helpers.
- *
- * Provenance markers (both now live inside the opaque `metadata` bag — debt
- * PR-P1; the former top-level `SymbolRule.source` field is deleted):
- *   - `metadata.author: 'enrich'` — the canonical marker (debt: source-
- *     homonym resolution, decision 6 — was `metadata.source: 'enrich'`).
- *     Path-descent (transform-path.ts) reads this to recognize an
- *     enrich-synthesized group-lift symbol and travel THROUGH it into the
- *     hoisted body, so authored `transform()`/`groups:` path patches that
- *     address into a now-hoisted seq still resolve.
- *   - `metadata.symbolSource: 'group-lift'` — relocated legacy marker (was
- *     the top-level `SymbolRule.source`). Diagnostics only.
- */
 function makeGroupLiftSymbol(_referenceRule: Rule, name: string): Rule {
 	// Pure ref — NO inline body. Tree-sitter serializes any extra structural
 	// field on a SYMBOL into grammar.json (a `content` here leaks the seq into
@@ -2683,33 +2256,6 @@ function makeGroupLiftSymbol(_referenceRule: Rule, name: string): Rule {
 	} as unknown as Rule;
 }
 
-/**
- * @internal — wrap a SYMBOL ref to an inline-UNSAFE group's HIDDEN rule in a
- * TAGGED visible alias so the group surfaces as a single clean CST kind.
- *
- * Shape (confirmed against generated grammar.json ALIAS nodes):
- *   `{ type: 'ALIAS', content: symbol($._<name>), named: true,
- *      value: '<name>', metadata: { author: 'enrich' } }`
- *
- * - The aliased thing is a SYMBOL ref to the hidden `_<name>` rule (NOT the raw
- *   multi-member seq). tree-sitter renames that ONE symbol-node into ONE visible
- *   CST node for `<name>` (a real kindId in parser.c). Aliasing the raw seq
- *   instead made tree-sitter DISTRIBUTE the alias name across the seq members.
- * - `metadata.author === 'enrich'` (debt: source-homonym resolution, decision
- *   6 — was `metadata.source === 'enrich'`) is REQUIRED for transform-path: it
- *   travels THROUGH this tag for authored path-patches
- *   (`dsl/transform/transform-path.ts`'s `isEnrichContentAlias` /
- *   `descendThroughEnrichContentAlias` — the sanctioned dsl-side reader,
- *   doctrine decision 3). (Debt PR-0c: `compiler/link.ts`'s
- *   `mintContentAliasKinds` no longer reads this tag — it identifies the
- *   same population structurally via `isClauseHoistVisibleGroupAlias`,
- *   keying on the alias's `optional`/`CHOICE[x,BLANK]` parent shape, the
- *   target name's absence from `rules`, and the hidden content symbol not
- *   being in the grammar's `inline:` list. The write here stays load-bearing
- *   for transform-path only.)
- * - Case is the active runtime's: built via the injected `alias()`/`symbol()`
- *   constructors, so sittir evaluate yields lowercase, tree-sitter CLI uppercase.
- */
 function makeVisibleGroupAlias(symbolRef: Rule, name: string): Rule {
 	const aliasFn = nativeRuleFn<(r: unknown, v: unknown) => Rule>('alias');
 	const symbol = nativeRuleFn<(n: string) => Rule>('symbol', 'sym');

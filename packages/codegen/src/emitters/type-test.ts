@@ -37,11 +37,6 @@ export interface EmitTypeTestsConfig {
  * @param nodeMap - The assembled node map.
  * @returns Expression string suitable for `_TypeExtends<X['$type'], <expr>>`.
  */
-/**
- * @param isLeaf - When true, the node uses `Terminal<K>` (string-keyed `$type`);
- *   numeric discriminants are not applicable until `Terminal` itself is migrated.
- *   Phase A only migrates structural (branch/container/polymorph) interfaces.
- */
 function typeTestDiscriminant(
 	kind: string,
 	kindEntries: readonly KindEnumEntry[] | undefined,
@@ -57,18 +52,6 @@ function typeTestDiscriminant(
 	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
 
-/**
- * Build the expected discriminant for a type-test assertion on an enum kind.
- *
- * @remarks
- * Mirrors `enumMemberDiscriminant` in `types.ts`: resolves each member
- * value to its `TSKindId.X` entry and joins as a union. Falls back to
- * the string kind name when no entries resolve or `kindEntries` is absent.
- *
- * @param node - The `AssembledEnum` node.
- * @param kindEntries - Catalog entries for TSKindId lookup.
- * @returns The expected discriminant expression for the type assertion.
- */
 function enumMemberTypeTestDiscriminant(
 	node: AssembledEnum,
 	kindEntries: readonly KindEnumEntry[] | undefined

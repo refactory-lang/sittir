@@ -52,12 +52,6 @@ export interface ParseKindCollisionResolution<T> {
 	readonly diagnostics: readonly ParseKindCollisionDiagnostic[];
 }
 
-/**
- * Bucket / distinctness key for a kind: the stamped parser id when the
- * value carries one (collision-free identity), the name otherwise. The
- * two key spaces are prefixed so a numeric id can never be spelled by a
- * kind name.
- */
 function kindKey(id: number | undefined, name: string): string {
 	return id !== undefined ? `#${id}` : `n:${name}`;
 }

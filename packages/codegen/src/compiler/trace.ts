@@ -24,13 +24,6 @@ function tracedKinds(): readonly string[] {
 		.filter(Boolean);
 }
 
-/**
- * Emit the shape of each traced kind from a rules map after a pipeline
- * phase. Rules listed in `SITTIR_TRACE` that don't exist in the current
- * map are silently skipped — the same rule set won't necessarily exist
- * in every phase (Link may classify a kind into a synthetic type;
- * Normalize may inline single-use hidden rules, removing the entry).
- */
 export function tracePhaseRules(phase: string, rules: Record<string, AnyRule> | undefined | null): void {
 	const kinds = tracedKinds();
 	if (kinds.length === 0 || !rules) return;
@@ -45,12 +38,6 @@ export function tracePhaseRules(phase: string, rules: Record<string, AnyRule> | 
 	}
 }
 
-/**
- * Emit NodeMap-level state (post-Assemble) for each traced kind. The
- * structure is different from raw rules — branches carry fields/children
- * derivations, polymorphs carry forms — so we format the essentials
- * rather than full JSON (which pulls in parent-map cycles).
- */
 export function traceAssembleNodes(phase: string, nodes: Map<string, AssembledNode>): void {
 	const kinds = tracedKinds();
 	if (kinds.length === 0) return;

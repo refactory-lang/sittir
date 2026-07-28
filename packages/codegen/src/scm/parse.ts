@@ -41,18 +41,6 @@ interface Token {
 // Tokeniser
 // ---------------------------------------------------------------------------
 
-/**
- * Tokenise an SCM query source into a flat token stream.
- *
- * Recognised token shapes:
- * - `(` / `)` / `[` / `]` — structure
- * - `@capture.name` — capture
- * - `(#pred? ...)` — predicate (consumed as a single token including parens)
- * - `"string"` — string literal (skipped downstream)
- * - `identifier:` — field name (skipped downstream)
- * - `?` / `*` / `+` — quantifier (skipped downstream)
- * - `identifier` — kind name or other bareword
- */
 function tokenise(source: string): Token[] {
 	const tokens: Token[] = [];
 	let i = 0;
@@ -183,23 +171,19 @@ class TokenCursor {
 		return this.pos >= this.tokens.length;
 	}
 
-	/** Return current token without advancing, or `undefined` at end. */
 	peek(): Token | undefined {
 		return this.tokens[this.pos];
 	}
 
-	/** Return current token and advance, or `undefined` at end. */
 	advance(): Token | undefined {
 		return this.tokens[this.pos++];
 	}
 
-	/** Check if current token has the given kind. */
 	is(kind: TokenKind): boolean {
 		const t = this.tokens[this.pos];
 		return t !== undefined && t.kind === kind;
 	}
 
-	/** Consume the current token if it matches `kind`. Returns true if consumed. */
 	eat(kind: TokenKind): boolean {
 		const t = this.tokens[this.pos];
 		if (t !== undefined && t.kind === kind) {
@@ -214,25 +198,10 @@ class TokenCursor {
 // Parser
 // ---------------------------------------------------------------------------
 
-/**
- * Parse an SCM query source and extract all `(kind_name) @capture` bindings.
- *
- * For nested patterns like `(line_comment (doc_comment)) @comment.documentation`,
- * the capture is associated with the **outermost** kind in the pattern (i.e.
- * `line_comment`). Inner captures like `(parent field: (child) @cap)` associate
- * with the child kind.
- *
- * @returns Array of `{ kindName, captureName }` pairs.
- */
 export function parseSCMQuery(source: string): SCMCapture[] {
 	const c = new TokenCursor(tokenise(source));
 	const captures: SCMCapture[] = [];
 
-	/**
-	 * Parse a parenthesised node pattern body (LParen already consumed).
-	 *
-	 * @returns The kind name of this pattern node, or `undefined` if degenerate.
-	 */
 	function parsePattern(): string | undefined {
 		const first = c.peek();
 		if (!first || first.kind !== TokenKind.Identifier) {
@@ -273,7 +242,6 @@ export function parseSCMQuery(source: string): SCMCapture[] {
 		return kindName;
 	}
 
-	/** Skip past a bracket group `[...]`, handling nesting. */
 	function skipBracketGroup(): void {
 		c.advance(); // consume [
 		let depth = 1;
@@ -285,7 +253,6 @@ export function parseSCMQuery(source: string): SCMCapture[] {
 		}
 	}
 
-	/** Skip tokens to the matching `)` for the current `(`. */
 	function skipToClose(): void {
 		let depth = 1;
 		while (!c.done && depth > 0) {
@@ -296,7 +263,6 @@ export function parseSCMQuery(source: string): SCMCapture[] {
 		}
 	}
 
-	/** Try to consume a capture token; returns the capture value or undefined. */
 	function tryCapture(): string | undefined {
 		const tok = c.peek();
 		if (tok && tok.kind === TokenKind.Capture) {
@@ -441,16 +407,6 @@ export function parseSCMQuery(source: string): SCMCapture[] {
 // Inherits directive
 // ---------------------------------------------------------------------------
 
-/**
- * Parse the `; inherits: <language>` directive from an SCM file header.
- *
- * The directive is a line comment of the form:
- * ```scheme
- * ; inherits: javascript
- * ```
- *
- * @returns The parent language name, or `undefined` if not found.
- */
 export function parseInheritsDirective(source: string): string | undefined {
 	const match = /;\s*inherits:\s*([\w-]+)/.exec(source);
 	return match?.[1];

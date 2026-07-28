@@ -26,21 +26,6 @@ export type SlotClass =
 	| { readonly tag: 'supertype'; readonly supertypeName: string }
 	| { readonly tag: 'heterogeneous'; readonly useBox?: boolean };
 
-/**
- * Classify a slot's kind set against the supertype registry.
- *
- * Single source of derivation for slot class — all emitters (field type,
- * children type, render call, list buffer) MUST call this. DRY constraint.
- *
- * Tiebreak when multiple supertypes cover the kinds: the narrower supertype
- * (smallest `subtypes.size`) wins. If tied, Map insertion order (grammar order)
- * is the tiebreak — deterministic across runs.
- *
- * @param kinds - the kind set for this slot (projection.kinds for fields;
- *   deriveChildrenKinds result for children)
- * @param supertypeMap - result of `buildSupertypeTransportSet(nodeMap)`; when
- *   absent (test path / no nodeMap) multi-kind slots fall back to `heterogeneous`.
- */
 export function classifySlot(
 	kinds: readonly string[],
 	supertypeMap: ReadonlyMap<string, ReadonlySet<string>> = new Map()
@@ -77,12 +62,6 @@ export function classifySlot(
 	return { tag: 'heterogeneous' };
 }
 
-/**
- * Build a registry of supertype typeName → resolved concrete subtype set
- * from the assembled node map.
- *
- * @param nodeMap - the assembled node map for the grammar
- */
 export function buildSupertypeTransportSet(nodeMap: NodeMap): Map<string, ReadonlySet<string>> {
 	const result = new Map<string, ReadonlySet<string>>();
 	const expandSupertypeKinds = (kind: string, seen: Set<string> = new Set()): Set<string> => {
@@ -121,23 +100,6 @@ function expandWrapRuntimeKinds(kind: string, nodeMap: NodeMap | undefined, seen
 	return [kind];
 }
 
-/**
- * @param parseAliases - Optional per-slot `parseKind -> storageKind` pairs
- *   (see `aliasTargetToSourceMapOf`, node-map.ts) for the specific slot
- *   `kind` was drawn from. Covers the VISIBLE-to-visible alias case a
- *   reference site canonicalizes to its storage/source kind (e.g.
- *   `alias($.identifier, $.type_identifier)` used inline at a CHOICE
- *   member — the value's `node` resolves to `identifier`, but its
- *   `parseKind` — the wire `$type` tree-sitter actually stamps — is
- *   `type_identifier`). This is the SAME kind of "runtime id diverges
- *   from the modeled storage kind" fact `aliasedHiddenKinds` covers for
- *   HIDDEN alias-source rules, just carried per-value (on `NodeOrTerminal.
- *   parseKind`) instead of globally keyed by hidden rule name — a
- *   visible-to-visible alias reference site has no hidden rule name to key
- *   `aliasedHiddenKinds` by, so it can only be recovered from the slot
- *   that actually saw the alias. Any entry whose source equals `kind` adds
- *   its target id too.
- */
 export function acceptedTransportKinds(
 	kind: string,
 	nodeMap?: NodeMap,
@@ -165,19 +127,6 @@ export function acceptedTransportKinds(
 	return [...out];
 }
 
-/**
- * Extract the kind set from an `AssembledNonterminal.values` array.
- * Parallel to `AssembledNonterminal.projection.kinds` for field slots.
- * Terminal values (inline string literals) are skipped — they do not
- * contribute to the transport type.
- *
- * Unresolved refs are included using their `name` (the grammar kind string,
- * e.g. `_expression`) — mirroring how `AssembledNonterminal.projection.kinds`
- * is built in `deriveSlotsRaw`.
- *
- * @param child - any AssembledNonterminal (field or children slot)
- * @returns deduplicated list of resolved kind names
- */
 export function deriveChildrenKinds(
 	child: AssembledNonterminal,
 	nodeMap?: NodeMap,

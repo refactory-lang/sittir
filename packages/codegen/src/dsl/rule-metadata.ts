@@ -99,45 +99,14 @@ export interface RuleMetadataShape {
 	symbolSource?: 'grammar' | 'link' | 'group-lift';
 }
 
-/** Construct opaque rule metadata from the real shape — the single write seam. */
 export function makeRuleMetadata(shape: RuleMetadataShape): RuleMetadata {
 	return shape as unknown as RuleMetadata;
 }
 
-/**
- * Read opaque rule metadata back as the real shape. Sanctioned callers only
- * (see module header) — never call from compiler logic or an emitter's
- * branching path.
- *
- * Accepts `unknown` (not just `RuleMetadata`) as input: hand-constructed test
- * fixtures and some dsl-layer boundary shapes (`FieldLike`/`RuntimeRule`,
- * types/runtime-shapes.ts) carry `metadata` typed loosely — the read seam
- * itself is still the single sanctioned place the real shape is exposed, so
- * widening the input type here doesn't loosen the opacity contract on
- * `RuleBase.metadata` (which stays `RuleMetadata`, unreadable without this
- * function regardless of caller layer).
- */
 export function readRuleMetadata(meta: unknown): RuleMetadataShape | undefined {
 	return meta as RuleMetadataShape | undefined;
 }
 
-/**
- * Normalize a closed literal set to the canonical rule shape.
- *
- * (Relocated from `types/rule.ts` — debt PR-P1: it constructs the
- * `metadata` bag via `makeRuleMetadata`, which `types/` cannot import.)
- *
- * Multi-member sets remain a ChoiceRule (enum-shaped). A single literal
- * collapses to that StringRule so downstream phases classify it as the
- * corresponding keyword/token instead of carrying a degenerate enum shape.
- *
- * (debt: source-homonym resolution, decision 6) Callers pass EITHER
- * `author` (evaluate's grammar-authored-literal-set callers) OR
- * `classifiedBy` (link's enum-promotion classifier) — never both; they are
- * different facts (who wrote the text vs. whether the ENUM classification
- * was declared or inferred), so they are separate optional fields rather
- * than one overloaded `source` value.
- */
 export function normalizeEnumMembers(
 	members: readonly StringRule[],
 	provenance?: { author?: RuleMetadataShape['author']; classifiedBy?: RuleMetadataShape['classifiedBy'] }

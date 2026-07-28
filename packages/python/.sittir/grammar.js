@@ -533,20 +533,6 @@ var RuleWalker = class {
     this.#rules = rules;
     this.diagnostics = diagnostics;
   }
-  /**
-   * THE canonical child-edge relation WITH the property path to reach each
-   * child — single source of truth for both "what are this rule's children"
-   * and "how do I address one for a targeted rewrite". Edges: `members`
-   * (seq/choice) at `['members', i]`, `content` (wrappers/variant/group/
-   * token/alias) at `['content']`, and the stamped separator rule (the
-   * nested `separator.value` — a single `Rule`, PR-S) at
-   * `['separator', 'value']` (`trailing`/`leading` live alongside it on the
-   * wrapper object but aren't rule-tree edges). Leaves return [].
-   * `childrenOf` derives from this so there is exactly ONE edge relation;
-   * path-aware callers (e.g. enrich's un-aliasing rewrite) walk the edges
-   * directly to record a rewrite path without maintaining a second,
-   * possibly-incomplete descent of their own.
-   */
   childEdgesOf(rule) {
     const out = [];
     const bag = rule;
@@ -559,25 +545,9 @@ var RuleWalker = class {
       out.push({ segment: ["separator", "value"], child: bag.separator.value });
     return out;
   }
-  /**
-   * THE canonical child-edge relation — single source of truth for "what
-   * are this rule's children" (see `childEdgesOf` for the edge/path detail).
-   * map, fold, find, foldDeep, and findDeep all use this relation
-   * identically — no narrower traversal exists.
-   */
   childrenOf(rule) {
     return this.childEdgesOf(rule).map((e) => e.child);
   }
-  /**
-   * Bottom-up rebuild. Applies `visit` to each child's mapped result, then
-   * rebuilds this node ONLY if a child changed. Returns the SAME reference
-   * when nothing changed — load-bearing for fixpoint loops that compare
-   * `r === before` (enrich). Each edge (`members`, `content`, separator)
-   * tracks its own change independently, so an untouched sibling edge keeps
-   * its exact input reference even when another edge on the same node is
-   * rebuilt. Rebuilds via the SAME `childrenOf` edge relation `fold`/`find`
-   * use.
-   */
   map(rule, visit) {
     const bag = rule;
     const patch = {};
@@ -600,13 +570,11 @@ var RuleWalker = class {
     }
     return Object.keys(patch).length > 0 ? { ...rule, ...patch } : rule;
   }
-  /** Pre-order accumulate: visits `rule` itself, then descends childrenOf. */
   fold(rule, init, f) {
     let acc = f(init, rule);
     for (const child of this.childrenOf(rule)) acc = this.fold(child, acc, f);
     return acc;
   }
-  /** Pre-order search: tests `rule` itself, short-circuits on first match. */
   find(rule, pred) {
     if (pred(rule)) return rule;
     for (const child of this.childrenOf(rule)) {
@@ -615,7 +583,6 @@ var RuleWalker = class {
     }
     return void 0;
   }
-  /** One-step SYMBOL resolve through the bound rules map. */
   deref(ref) {
     if (this.#rules === void 0) {
       throw new Error("RuleWalker.deref: walker was constructed without a rules map");
@@ -623,12 +590,6 @@ var RuleWalker = class {
     if (ref.type !== SYMBOL) return void 0;
     return this.#rules[ref.name];
   }
-  /**
-   * fold that additionally descends THROUGH symbol refs (cycle-safe). Each
-   * reachable rule node is visited at most once per invocation (seen-set
-   * keyed on node identity); symbol refs are followed through the bound
-   * rules map.
-   */
   foldDeep(rule, init, f) {
     const seen = /* @__PURE__ */ new Set();
     const go = (r, acc) => {
@@ -644,12 +605,6 @@ var RuleWalker = class {
     };
     return go(rule, init);
   }
-  /**
-   * find that additionally descends THROUGH symbol refs (cycle-safe). Each
-   * reachable rule node is visited at most once per invocation (seen-set
-   * keyed on node identity); symbol refs are followed through the bound
-   * rules map.
-   */
   findDeep(rule, pred) {
     const seen = /* @__PURE__ */ new Set();
     const go = (r) => {

@@ -135,11 +135,6 @@ export interface GenerateConfig {
 	emitRenderModule?: boolean;
 }
 
-/**
- * Generate typed factory code using the new five-phase pipeline.
- *
- * evaluate(grammar.js) → link → normalize → assemble → adapter → emitters
- */
 export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// PR-G: Diagnostics accumulator for the Assemble→Project gate.
 	// PR-H: threaded into phase contexts so pipeline diagnostics flow here.
@@ -373,21 +368,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	return result;
 }
 
-
-/**
- * Collect kinds whose root rule was synthesized by evaluate's inline-alias-
- * source pass (`synthesizeInlineAliasSources`). These have no parser symbol
- * because tree-sitter inlines the alias body at parse time — the `_${target}`
- * intermediary exists only in the codegen rule map.
- *
- * @remarks
- * The provenance is set to `'evaluate-synthesized'` on the root
- * `RuleCatalogEntry` for each synthesized rule. Emitters treat these the same
- * as inline-list kinds: warn and skip, never throw.
- *
- * @param raw - The evaluated grammar, which carries the rule catalog.
- * @returns A `ReadonlySet<string>` of synthesized kind names.
- */
 function collectEvaluateSynthesizedKinds(raw: RawGrammar): ReadonlySet<string> {
 	const result = new Set<string>();
 	for (const [kind, rootId] of raw.ruleCatalog.rootsByKind) {

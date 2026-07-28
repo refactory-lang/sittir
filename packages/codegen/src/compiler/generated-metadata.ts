@@ -144,24 +144,6 @@ export interface KindEntryLike {
 	readonly anon?: boolean;
 }
 
-/**
- * THE kind-name resolution chain — for callers holding a KIND / RULE NAME
- * (never a bare literal token text; those go through
- * {@link findEntryForLiteralText}).
- *
- * 1. Exact catalog key (the canonical case).
- * 2. `_`-prefixed key — visible variant-child kinds emitted from hidden
- *    alias sources (`closure_expression_expr` → `_closure_expression_expr`).
- * 3. ANON-scoped symbolName — anonymous tokens whose display string differs
- *    from their key (`anon_sym_PLUS` → key `plus`, symbolName `"+"`).
- *    Anon-scoping is load-bearing: a general symbolName match at this
- *    position caused the `_as_pattern` shadowing bug (hidden `_as_pattern`
- *    symbolName `"as_pattern"` shadowing the real `as_pattern` entry).
- * 4. Named symbolName — hidden NAMED compound tokens whose display string
- *    is not a valid key spelling (`sym__is_not` → key `_is_not`, symbolName
- *    `"is not"`). Ordered AFTER the anon step so an anon twin always wins
- *    for texts both could match; reachable only when steps 1-3 all miss.
- */
 export function findEntryForKindName<T extends KindEntryLike>(entries: readonly T[], name: string): T | undefined {
 	return (
 		entries.find((entry) => entry.kind === name) ??
@@ -172,17 +154,10 @@ export function findEntryForKindName<T extends KindEntryLike>(entries: readonly 
 	);
 }
 
-/**
- * THE literal-text resolution chain — for callers holding a LITERAL TOKEN
- * TEXT (a `STRING` rule's value / enum member text). The anon-scoped
- * symbolName match runs FIRST: the caller holds a literal, so the anonymous
- * token is the correct identity even when a NAMED rule shares the spelling
- * (#129: python's `'type'` keyword vs the `type` rule). Falls back to the
- * full name chain for literals with no anon twin — named terminal keywords
- * (rust `'crate'`/`'self'`) and hidden named compound tokens (`'is not'`).
- */
 export function findEntryForLiteralText<T extends KindEntryLike>(entries: readonly T[], text: string): T | undefined {
-	return entries.find((entry) => entry.anon === true && entry.symbolName === text) ?? findEntryForKindName(entries, text);
+	return (
+		entries.find((entry) => entry.anon === true && entry.symbolName === text) ?? findEntryForKindName(entries, text)
+	);
 }
 
 export function findGeneratedKindEntry(

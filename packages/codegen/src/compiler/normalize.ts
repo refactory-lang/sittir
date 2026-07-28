@@ -109,26 +109,6 @@ function dbgChoiceId(label: string, rules: Record<string, Rule<'link'>>): void {
 	process.stderr.write(`[DBG_ID] ${label}: choice id=${find(r) ?? '<no-choice>'}\n`);
 }
 
-/**
- * §D-2a — structural `keepRef` predicate for the normalize inline hoist.
- *
- * A hidden seq/group helper `_x` is a fold candidate (its body may be spliced
- * into the referring parent) ONLY when it is referenced exactly once AND no
- * VISIBLE parse-kind rule's body resolves to it. `keepRef` is the complement:
- * the set of hidden kinds whose body ref must SURVIVE as a `symbol(_x)` (→
- * storageKind), because either
- *   - `refcount(_x) > 1` — the body is shared by several parents (inlining
- *     would duplicate it and lose the single shared kind), or
- *   - `hasVisibleTwin(_x)` — a parse-kind rule `x` (no leading `_`) is/contains
- *     `symbol(_x)` (e.g. `call_signature` ⇒ keep `_call_signature`); the twin
- *     is the surfaced CST kind and `_x` is its body.
- *
- * PURE rule traversal — derives ONLY from the rule tree
- * (`feedback_metadata_not_behavior`). Does NOT read `contentAliasedTo` /
- * `contentAliasedFrom` (those maps are empty on every grammar today and are
- * diagnostic-only). Invariant under folding: splices RELOCATE `symbol` refs
- * rather than remove them, so refcounts are conserved across passes.
- */
 export function computeKeepRef(rules: Readonly<Record<string, Rule<'link'>>>): Set<string> {
 	const refcount = new Map<string, number>();
 	// Hidden kinds `_x` that have a VISIBLE NAME-TWIN: a parse-kind rule named
@@ -182,30 +162,6 @@ export function computeKeepRef(rules: Readonly<Record<string, Rule<'link'>>>): S
 // inlineHiddenSeqRefs — §D-2a normalize inline hoist (v3: seq-unit multiplicity)
 // ---------------------------------------------------------------------------
 
-/**
- * §D-2a Task 4 — relocate group-inlining from the late `simplify` slot-wash to
- * a normalize-time rule-tree hoist so render AND slot projections derive the
- * inlined form from ONE source.
- *
- * Operates on the WRAPPER-DELETED rule map (multiplicity already pushed onto the
- * leaf `symbol(_x)` ref as a `multiplicity` / `separator` attribute). For each
- * parent reference `symbol(_x)` where `_x` is a fold-eligible hidden GROUP /
- * MULTI helper (`resolveGroupOrMultiInlineTarget` ≠ null) AND `!keepRef.has(_x)`
- * AND `_x !== '_import_list'` (gated until the deferred Task 6), the symbol is
- * replaced by the group's body **as a unit**, carrying the referring symbol's
- * multiplicity / separator onto the spliced SEQ node (NOT distributed onto its
- * leaves). When `_x` has no remaining reference, its entry is deleted.
- *
- * v3 correctness invariant (vs the BLOCKED v2): multiplicity is a property of
- * the SEQUENCE as a unit, not its members. We must NOT call
- * `reapplyInlinedLeafAttrs` / `pushAttrsToLeaves` — those distribute `optional`
- * onto every leaf incl. bare literals, and the render walker DROPS
- * optional-stamped literals (64 templates silently lost syntax tokens). Render
- * gates the seq's literals on its single internal slot via the EXISTING
- * optional-group emit (`emitters/templates.ts` `case 'seq'` + `pickConditionalKey`).
- *
- * Returns `true` when any splice happened (drives the normalize fixpoint loop).
- */
 export function inlineHiddenSeqRefs(
 	rules: Record<string, Rule<'link'>>,
 	_ctx: NormalizeCtx | undefined,
@@ -242,12 +198,6 @@ export function inlineHiddenSeqRefs(
 	return changed;
 }
 
-/**
- * Replace every fold-eligible `symbol(_x)` inside `rule` with the body of
- * `rules[_x]` (the group's `content`), carrying the symbol's seq-unit
- * multiplicity / separator / fieldName onto the spliced node and tagging
- * `metadata.inlinedFrom = _x`. Returns the same reference when nothing changed.
- */
 function spliceFoldableRefs(
 	rule: Rule<'link'>,
 	foldable: ReadonlySet<string>,
@@ -322,14 +272,6 @@ function spliceFoldableRefs(
 	}
 }
 
-/**
- * Build the spliced node for an inlined group body, preserving SEQ-UNIT
- * multiplicity. The referring symbol `ref` carries the multiplicity / separator
- * / fieldName pushed down by wrapper-deletion (e.g. `optional(_initializer)` →
- * `symbol(_initializer){multiplicity:'optional'}`). We re-home those attributes
- * onto the group's body — onto the SEQ node itself, not its leaves — so the
- * render emitter gates the whole sequence on its single internal slot.
- */
 function materializeInlinedBody(
 	ref: Extract<Rule<'link'>, { type: 'SYMBOL' }>,
 	body: Rule<'link'>,
@@ -545,18 +487,6 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 // fanOutSeqChoices
 // ---------------------------------------------------------------------------
 
-/**
- * Distribute a `seq` over an inner `choice` so downstream passes see
- * top-level choices:
- *
- *   seq(a, choice(b, c), d) → choice(seq(a, b, d), seq(a, c, d))
- *
- * Only applies when the seq contains EXACTLY ONE choice member —
- * distributing over multiple choices multiplies branches
- * combinatorially and rarely produces useful shapes. Recurses
- * through `optional`, `repeat`, `field`, `variant`, `clause`,
- * `group`, `token` wrappers. Non-lossy.
- */
 export function fanOutSeqChoices(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<'link'> {
 	switch (rule.type) {
 		case SEQ: {
@@ -608,26 +538,6 @@ export function fanOutSeqChoices(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<
 // factorChoiceBranches
 // ---------------------------------------------------------------------------
 
-/**
- * Identify rules that can be normalized as single-member seqs for
- * prefix/suffix factoring purposes.
- *
- * @param rule - A choice branch (already variant-unwrapped).
- * @returns `true` when the rule is a leaf / simple wrapper that `findCommonPrefix` can reliably compare against a seq member.
- * @remarks
- * Symbol / string / pattern are grammar leaves — exact structural equality
- * via `rulesEqual` behaves predictably. `field` and `token` carry
- * structural identity but are single-slot wrappers; treating them as
- * single-member seqs lets `choice(seq(A, B), A)` factor to `seq(A,
- * optional(B))` even when one branch is the bare atom rather than a
- * `seq([atom])`.
- *
- * Excluded: `optional`, `repeat`, `choice`, `variant`, `clause`, `group`,
- * `supertype`, `enum`, `terminal`, `indent`, `dedent`,
- * `newline`. Those either carry composite structure that the factor
- * extractor would mis-align, or already represent the "zero-or-more"
- * semantics that factoring produces.
- */
 function isAtomForFactoring(rule: Rule<'link'>): boolean {
 	switch (rule.type) {
 		case SYMBOL:
@@ -641,20 +551,6 @@ function isAtomForFactoring(rule: Rule<'link'>): boolean {
 	}
 }
 
-/**
- * Partition the bodies of factored choice branches by emptiness and build the
- * shared prefix and suffix slices.
- *
- * @param members - The original choice branch rules (may include variant wrappers).
- * @param seqs - Each branch's member list, already unwrapped from variant.
- * @param prefixLen - Number of leading elements shared across all branches.
- * @param suffixLen - Number of trailing elements shared across all branches.
- * @returns The common prefix, suffix, non-empty body rules, and an emptiness flag.
- * @remarks
- * `choice(seq(a,b,c), seq(a,c))` factors prefix=[a], suffix=[c], bodies=[[b], []];
- * the empty body means "no b" → the caller wraps the inner choice in `optional`.
- * Variant labels on branches are preserved in the returned nonEmpty rules.
- */
 function extractFactoredChoiceBody(
 	members: Rule<'link'>[],
 	seqs: Rule<'link'>[][],
@@ -679,16 +575,6 @@ function extractFactoredChoiceBody(
 	return { prefix, suffix, nonEmpty, hasEmpty };
 }
 
-/**
- * Pull common prefixes / suffixes out of a choice of seqs:
- *
- *   choice(seq(a, b, x), seq(a, b, y), seq(a, b, z))
- *      → seq(a, b, choice(x, y, z))
- *
- * Uses `findCommonPrefix` / `findCommonSuffix` (structural equality
- * via `rulesEqual`). Only applies at the top level of a `choice`;
- * recurses through wrappers for nested choices. Non-lossy.
- */
 export function factorChoiceBranches(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<'link'> {
 	switch (rule.type) {
 		case CHOICE: {
@@ -734,15 +620,6 @@ export function factorChoiceBranches(rule: Rule<'link'>, _ctx?: NormalizeCtx): R
 // dedupeSeqMembers
 // ---------------------------------------------------------------------------
 
-/**
- * Collapse adjacent duplicates inside a `seq`:
- *
- *   seq(x, x, y) → seq(x, y)
- *
- * Uses `rulesEqual` for structural equality. Only collapses
- * adjacent duplicates; non-adjacent duplicates are almost always
- * intentional repetition in the grammar.
- */
 export function dedupeSeqMembers(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<'link'> {
 	switch (rule.type) {
 		case SEQ: {
@@ -773,24 +650,6 @@ export function dedupeSeqMembers(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<
 // inlineSingleUseHidden
 // ---------------------------------------------------------------------------
 
-/**
- * Inline hidden (`_`-prefixed) rules that are referenced from exactly
- * one parent. The parent's symbol ref is replaced with the hidden
- * rule's content; the hidden entry is deleted from the map.
- *
- * Iterates to a fixed point: inlining can expose new single-use
- * refs when nested helpers reference each other. Rules classified
- * as `supertype`, `enum`, `terminal`, or `group` are
- * skipped — those already carry explicit structural meaning that
- * downstream classification relies on. Only raw `seq` / `choice` /
- * `optional` / `repeat` helpers get inlined.
- *
- * Architecture claim (per discussion): if the rule graph has no
- * unresolved references, inlining is observationally a no-op —
- * field / child derivations walk the resulting tree directly and
- * produce the same downstream shape whether the helper exists as
- * its own entry or as an expansion in its parent.
- */
 function inlineSingleUseHidden(
 	rules: Record<string, Rule<'link'>>,
 	ctx?: NormalizeCtx,
@@ -805,16 +664,6 @@ function inlineSingleUseHidden(
 	return work;
 }
 
-/**
- * Repeatedly scan the rule map for single-use hidden rules and inline them
- * into their one parent, iterating until no further inlining is possible.
- *
- * @param work - The mutable rule map to update in place.
- * @remarks
- * One pass is usually enough; up to four iterations catch cascading
- * opportunities where a parent being inlined exposes a new single-use child.
- * The loop breaks early when a full pass produces no changes.
- */
 function iterateInliningToFixedPoint(work: Record<string, Rule<'link'>>, preserveKinds?: ReadonlySet<string>): void {
 	for (let pass = 0; pass < 4; pass++) {
 		const refCounts = countReferences(work);
@@ -836,16 +685,6 @@ function iterateInliningToFixedPoint(work: Record<string, Rule<'link'>>, preserv
 	}
 }
 
-/**
- * A rule is terminal-shaped when its subtree has no fields and no symbol
- * references — hidden or visible. Tree-sitter exposes such a kind as a
- * pure text node at parse time.
- *
- * Skips rules that already have a classification wrapper (enum, supertype,
- * group) — those are structural but Assemble has dedicated classifiers.
- * PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule<'link'> union.
- * (Formerly exported from `link.ts`; moved here since this is its only caller.)
- */
 function isTerminalShape(rule: Rule<'link'>): boolean {
 	switch (rule.type) {
 		// PR-P: ENUM case removed — isEnumChoiceRule guard in CHOICE arm handles this.
@@ -892,10 +731,6 @@ function isTerminalShape(rule: Rule<'link'>): boolean {
 	return false;
 }
 
-/**
- * Like isTerminalShape but bare terminals (string/pattern/whitespace) count
- * as terminal. Used to recurse into composed structures.
- */
 function isTerminalShape_allowBareTerm(rule: Rule<'link'>): boolean {
 	switch (rule.type) {
 		case STRING:
@@ -930,17 +765,6 @@ function isTerminalShape_allowBareTerm(rule: Rule<'link'>): boolean {
 	return false;
 }
 
-/**
- * Determine whether a hidden rule carries explicit structural classification
- * that downstream phases rely on, making it ineligible for inlining.
- *
- * @param rule - The rule to test.
- * @returns `true` when the rule must be preserved as its own map entry.
- * @remarks
- * Rules of type `supertype`, `enum`, `terminal`, and `group`
- * already have explicit structural meaning. Only raw `seq`, `choice`,
- * `optional`, and `repeat` helpers get inlined.
- */
 function isStructurallyMeaningfulHiddenRule(rule: Rule<'link'>): boolean {
 	// PR-P: rule.type === ENUM replaced with isEnumChoiceRule.
 	// PR-P Task 2: rule.type === TERMINAL replaced with isTerminalShape — TerminalRule deleted;
@@ -949,16 +773,6 @@ function isStructurallyMeaningfulHiddenRule(rule: Rule<'link'>): boolean {
 	return rule.type === SUPERTYPE || isEnumChoiceRule(rule) || isTerminalShape(rule) || rule.type === GROUP;
 }
 
-/**
- * Find the single parent that holds a symbol reference to a hidden rule,
- * replace the symbol ref with the hidden rule's body, and delete the hidden
- * entry from the map.
- *
- * @param work - The mutable rule map to update in place.
- * @param name - The name of the hidden rule to inline.
- * @param rule - The hidden rule's current content.
- * @returns `true` when a parent was found and the inline succeeded.
- */
 function spliceHiddenRuleIntoSingleParent(
 	work: Record<string, Rule<'link'>>,
 	name: string,
@@ -976,12 +790,6 @@ function spliceHiddenRuleIntoSingleParent(
 	return false;
 }
 
-/**
- * Count outgoing references per kind across the rule map. Walks
- * symbol refs (via `walkSymbols`) and also includes names carried
- * in `SupertypeRule<'link'>.subtypes` — those aren't wrapped in a symbol
- * node but downstream classification needs the entry to survive.
- */
 function countReferences(rules: Record<string, Rule<'link'>>): Map<string, number> {
 	const counts = new Map<string, number>();
 	for (const rule of Object.values(rules)) {
@@ -1016,11 +824,6 @@ function walkSymbols(rule: Rule<'link'>, visit: (name: string) => void): void {
 	}
 }
 
-/**
- * Replace every symbol ref to `targetName` inside `rule` with the
- * content of `targetRule`. Returns the same reference when nothing
- * changed so callers can do identity comparison.
- */
 function replaceSymbolRef(rule: Rule<'link'>, targetName: string, targetRule: Rule<'link'>): Rule<'link'> {
 	switch (rule.type) {
 		case SYMBOL:
@@ -1058,12 +861,6 @@ function replaceSymbolRef(rule: Rule<'link'>, targetName: string, targetRule: Ru
 	}
 }
 
-/**
- * Recursive wrapper-collapse pass. Traverses the rule tree
- * bottom-up and rewrites degenerate wrappers into their simpler
- * equivalents. Non-lossy — every collapse preserves the set of
- * strings the rule matches.
- */
 export function collapseWrappers(rule: Rule<'link'>, _ctx?: NormalizeCtx): Rule<'link'> {
 	switch (rule.type) {
 		case OPTIONAL: {

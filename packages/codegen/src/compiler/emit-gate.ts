@@ -18,12 +18,6 @@
 import type { NodeMap } from './types.ts';
 import { DiagnosticSink, EmitHaltedError } from '../types/diagnostics.ts';
 
-/**
- * The single Assemble→Project boundary check (spec §4b/§7.5).
- *
- * Throws EmitHaltedError if the sink contains any 'fail'-severity
- * diagnostics. Inert until PR-L: no producer currently emits 'fail'.
- */
 export function assertEmittable(_nodeMap: NodeMap, diagnostics: DiagnosticSink): void {
 	if (diagnostics.hasBlocking()) {
 		throw new EmitHaltedError(diagnostics.all().filter((d) => d.severity === 'fail'));

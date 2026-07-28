@@ -47,23 +47,6 @@ export interface MissingKind {
 // Main
 // ---------------------------------------------------------------------------
 
-/**
- * C12: NodeMap-sourced variant. Skips the templates directory round-trip
- * entirely — renderability is a structural property, and the
- * shared `buildRuleLookup()` answers it directly from NodeMap.
- * Prefer this when you already have a NodeMap in hand (generate
- * returns one).
- *
- * Pure-leaf fallback: if an entry has no fields and no children in
- * node-types.json, `render()` returns `node.$text` directly via its
- * text fast-path — no template lookup needed. This covers:
- *   - Cluster A: visible STRING-rule kinds (`token`/`keyword` modelType)
- *     whose NodeMap path is `"none"` because `classify()` maps those
- *     to `"none"`.
- *   - Cluster B: visible alias targets absent from NodeMap entirely
- *     (e.g. `impl_item_semi`). `node-types.json` lists them as pure
- *     leaves; `readNode` captures `$text` and the fast-path renders.
- */
 export function validateRenderableFromNodeMap(grammar: string, nodeMap: NodeMap): RenderableResult {
 	const rawEntries = loadRawEntries(grammar);
 	const lookup = buildRuleLookup(nodeMap);
@@ -94,13 +77,6 @@ export function validateRenderableFromNodeMap(grammar: string, nodeMap: NodeMap)
 	return { grammar, total, renderable, missing };
 }
 
-/**
- * Return `true` when a node-types.json entry is a pure leaf: no fields,
- * no children, and not a supertype. These kinds render via `render()`'s
- * text fast-path (`node.$text` present, no `$fields`/`$children` needed).
- *
- * @param entry A raw node-types.json entry.
- */
 function isPureLeafEntry(entry: RawNodeEntry): boolean {
 	if (entry.subtypes && entry.subtypes.length > 0) return false;
 	const hasFields = entry.fields !== undefined && Object.keys(entry.fields).length > 0;

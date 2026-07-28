@@ -97,18 +97,20 @@ function fieldTransportLiterals(
 	field: AssembledNonterminal,
 	nodeMap: NodeMap
 ): Array<{ literal: TransportLiteral; fromKind: boolean }> {
-	return fieldTypeComponents(field, nodeMap).flatMap((component): Array<{ literal: TransportLiteral; fromKind: boolean }> => {
-		if (component.kind === 'literal') {
-			return [
-				{
-					literal: { kind: component.value, text: component.value, resolvedKindId: component.resolvedKindId },
-					fromKind: false
-				}
-			];
+	return fieldTypeComponents(field, nodeMap).flatMap(
+		(component): Array<{ literal: TransportLiteral; fromKind: boolean }> => {
+			if (component.kind === 'literal') {
+				return [
+					{
+						literal: { kind: component.value, text: component.value, resolvedKindId: component.resolvedKindId },
+						fromKind: false
+					}
+				];
+			}
+			const literal = terminalTransportLiteralForKind(component.rawKind, nodeMap);
+			return literal === undefined ? [] : [{ literal, fromKind: true }];
 		}
-		const literal = terminalTransportLiteralForKind(component.rawKind, nodeMap);
-		return literal === undefined ? [] : [{ literal, fromKind: true }];
-	});
+	);
 }
 
 function supertypeTransportTypeNames(nodeMap: NodeMap): Set<string> {

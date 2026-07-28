@@ -24,20 +24,6 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 		this.diagnostics = diagnostics;
 	}
 
-	/**
-	 * THE canonical child-edge relation WITH the property path to reach each
-	 * child — single source of truth for both "what are this rule's children"
-	 * and "how do I address one for a targeted rewrite". Edges: `members`
-	 * (seq/choice) at `['members', i]`, `content` (wrappers/variant/group/
-	 * token/alias) at `['content']`, and the stamped separator rule (the
-	 * nested `separator.value` — a single `Rule`, PR-S) at
-	 * `['separator', 'value']` (`trailing`/`leading` live alongside it on the
-	 * wrapper object but aren't rule-tree edges). Leaves return [].
-	 * `childrenOf` derives from this so there is exactly ONE edge relation;
-	 * path-aware callers (e.g. enrich's un-aliasing rewrite) walk the edges
-	 * directly to record a rewrite path without maintaining a second,
-	 * possibly-incomplete descent of their own.
-	 */
 	childEdgesOf(rule: R): readonly { readonly segment: readonly (string | number)[]; readonly child: R }[] {
 		const out: { readonly segment: readonly (string | number)[]; readonly child: R }[] = [];
 		const bag = rule as { members?: readonly R[]; content?: R; separator?: { value: R } };
@@ -51,26 +37,10 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 		return out;
 	}
 
-	/**
-	 * THE canonical child-edge relation — single source of truth for "what
-	 * are this rule's children" (see `childEdgesOf` for the edge/path detail).
-	 * map, fold, find, foldDeep, and findDeep all use this relation
-	 * identically — no narrower traversal exists.
-	 */
 	childrenOf(rule: R): readonly R[] {
 		return this.childEdgesOf(rule).map((e) => e.child);
 	}
 
-	/**
-	 * Bottom-up rebuild. Applies `visit` to each child's mapped result, then
-	 * rebuilds this node ONLY if a child changed. Returns the SAME reference
-	 * when nothing changed — load-bearing for fixpoint loops that compare
-	 * `r === before` (enrich). Each edge (`members`, `content`, separator)
-	 * tracks its own change independently, so an untouched sibling edge keeps
-	 * its exact input reference even when another edge on the same node is
-	 * rebuilt. Rebuilds via the SAME `childrenOf` edge relation `fold`/`find`
-	 * use.
-	 */
 	map(rule: R, visit: (r: R) => R): R {
 		const bag = rule as {
 			members?: readonly R[];
@@ -105,14 +75,12 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 		return Object.keys(patch).length > 0 ? ({ ...(rule as object), ...patch } as unknown as R) : rule;
 	}
 
-	/** Pre-order accumulate: visits `rule` itself, then descends childrenOf. */
 	fold<A>(rule: R, init: A, f: (acc: A, r: R) => A): A {
 		let acc = f(init, rule);
 		for (const child of this.childrenOf(rule)) acc = this.fold(child, acc, f);
 		return acc;
 	}
 
-	/** Pre-order search: tests `rule` itself, short-circuits on first match. */
 	find(rule: R, pred: (r: R) => boolean): R | undefined {
 		if (pred(rule)) return rule;
 		for (const child of this.childrenOf(rule)) {
@@ -122,7 +90,6 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 		return undefined;
 	}
 
-	/** One-step SYMBOL resolve through the bound rules map. */
 	deref(ref: R): R | undefined {
 		if (this.#rules === undefined) {
 			throw new Error('RuleWalker.deref: walker was constructed without a rules map');
@@ -131,12 +98,6 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 		return this.#rules[(ref as { name: string }).name];
 	}
 
-	/**
-	 * fold that additionally descends THROUGH symbol refs (cycle-safe). Each
-	 * reachable rule node is visited at most once per invocation (seen-set
-	 * keyed on node identity); symbol refs are followed through the bound
-	 * rules map.
-	 */
 	foldDeep<A>(rule: R, init: A, f: (acc: A, r: R) => A): A {
 		const seen = new Set<R>();
 		const go = (r: R, acc: A): A => {
@@ -153,12 +114,6 @@ export class RuleWalker<R extends AnyRule = AnyRule> {
 		return go(rule, init);
 	}
 
-	/**
-	 * find that additionally descends THROUGH symbol refs (cycle-safe). Each
-	 * reachable rule node is visited at most once per invocation (seen-set
-	 * keyed on node identity); symbol refs are followed through the bound
-	 * rules map.
-	 */
 	findDeep(rule: R, pred: (r: R) => boolean): R | undefined {
 		const seen = new Set<R>();
 		const go = (r: R): R | undefined => {

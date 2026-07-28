@@ -98,15 +98,6 @@ export abstract class BaseCtx<P extends PhaseName> {
 		this.builder = init.builder;
 	}
 
-	/**
-	 * Traversal engine bound to this phase's rules map + diagnostics (R12
-	 * PR-6). Lazily constructed (rather than eagerly in the ctor) because it
-	 * reads the `rules` accessor, which subclasses implement as `abstract` —
-	 * TypeScript forbids calling an abstract member from the base
-	 * constructor (the override isn't installed on `this` until the subclass
-	 * constructor body finishes). Memoized so repeated access returns the
-	 * same instance.
-	 */
 	get walker(): RuleWalker<PhaseRuleOf<P>> {
 		if (!this.#walker) this.#walker = new RuleWalker(this.rules, this.diagnostics);
 		return this.#walker;

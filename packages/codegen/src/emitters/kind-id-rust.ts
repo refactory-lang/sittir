@@ -28,19 +28,6 @@ export interface EmitKindIdRustConfig {
 	generatedIdTables: GeneratedIdTables;
 }
 
-/**
- * Convert a PascalCase `typeName` (as returned by `kindIdMemberName`) into
- * SCREAMING_SNAKE_CASE, preserving any leading underscore that marks the
- * kind as a hidden alias source.
- *
- * @param memberName - PascalCase member name, e.g. `'CallExpression'` or
- *   `'FieldIdentifier'` (already had its leading underscore stripped by
- *   `kindIdMemberName`; hidden kinds arrive here as `'FieldIdentifier'`).
- * @param rawKind - The original grammar kind string, used to detect whether
- *   a leading underscore must be re-attached (hidden kinds start with `_`).
- * @returns SCREAMING_SNAKE_CASE constant name, e.g. `'CALL_EXPRESSION'` or
- *   `'_FIELD_IDENTIFIER'`.
- */
 export function toScreamingSnakeCase(memberName: string, rawKind: string): string {
 	// `rawKind` is the source of truth for leading underscores (hidden-kind
 	// marker — `_field_identifier`, `_call_signature`). The grammar may
@@ -73,14 +60,6 @@ export function toScreamingSnakeCase(memberName: string, rawKind: string): strin
 	return `${prefix}${snake}`;
 }
 
-/**
- * Emit the Rust source for `kind_ids.rs` — one `pub const` per kind that
- * has a parser symbol (TSInternals presence), sorted by numeric id, plus a
- * `kind_name_from_id(KindId) -> &'static str` diagnostic helper.
- *
- * @returns The complete Rust source as a single string, ready to write to
- *   `rust/crates/sittir-{grammar}/src/render/kind_ids.rs` (or equivalent).
- */
 export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	const { grammar, nodeMap, generatedIdTables } = config;
 	// Source from the catalog superset so `kind_ids.rs` constants match

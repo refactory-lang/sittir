@@ -105,16 +105,6 @@ export function fromSlotGrouping(grammar: string, diagnostic: SlotGroupingDiagno
 	};
 }
 
-/**
- * Is `ownerKind` declared as an expected (non-blocking) exception for `code`?
- * `expectDiagnostics` comes from the grammar's OWN `overrides.ts` (`wire()`'s
- * `expectDiagnostics:` block, threaded through `RawGrammar.expectDiagnostics`)
- * — grammar-scoped by construction, since only the grammar whose overrides.ts
- * declares an entry ever supplies a non-empty `expectDiagnostics` here. See
- * docs/KNOWN_ISSUES.md for the canonical example (typescript's
- * `_object_type_group1`, exempted from both `content-collision` and
- * `storagename-collision`).
- */
 function isExpectedDiagnostic(
 	expectDiagnostics: Readonly<Record<string, readonly string[]>> | undefined,
 	code: string,
@@ -124,16 +114,6 @@ function isExpectedDiagnostic(
 	return (expectDiagnostics?.[code] ?? []).includes(ownerKind);
 }
 
-/**
- * A `groups:` body-pattern entry that matched ZERO base-grammar positions.
- * The body-pattern mechanism's ONLY effect is structural replacement of
- * matching sub-trees — a zero-match entry means the hidden rule is orphaned
- * and the base positions it was meant to elevate stay flat (their slots
- * flatten into the parent, the repeat-over-multi-slot-seq violation). This
- * failure mode is otherwise SILENT: the grammar still compiles and gates can
- * hold while output regresses (the rust `attributed_parameter` wildcard-alias
- * incident, 2026-07-25).
- */
 export function fromBodyPatternZeroMatch(grammar: string, hiddenName: string): GrammarDiagnostic {
 	return {
 		scope: 'grammar',
@@ -178,8 +158,7 @@ export function collectGrammarDiagnostics(input: {
 		// stays exactly as fromAssembleWarning already maps it (still has live,
 		// accepted, non-blocking instances) — do not touch fromAssembleWarning
 		// itself, which would flip it as a side effect.
-		if (warning.code !== 'storagename-collision' && warning.code !== 'nonterminal-separator-unstamped')
-			return mapped;
+		if (warning.code !== 'storagename-collision' && warning.code !== 'nonterminal-separator-unstamped') return mapped;
 		if (isExpectedDiagnostic(input.expectDiagnostics, warning.code, warning.ownerKind)) return mapped;
 		return { ...mapped, canProceed: false };
 	});
@@ -270,13 +249,6 @@ export function formatGrammarDiagnostics(diagnostics: readonly GrammarDiagnostic
 		.join('\n');
 }
 
-/**
- * Sibling of {@link formatGrammarDiagnostics} for `CompilerDiagnostic`s (PR-S
- * task 5) — kept alongside its natural relative in the same module rather
- * than a new one. `CompilerDiagnostic` has no `ownerKind`/`slotName` (those
- * are `GrammarDiagnostic`-only fields); reusing `formatGrammarDiagnostics`
- * as-is would print literal `-.-` noise, so this formats on `phase` instead.
- */
 export function formatCompilerDiagnostics(diagnostics: readonly CompilerDiagnostic[]): string {
 	if (diagnostics.length === 0) return 'No compiler diagnostics.';
 	return diagnostics
@@ -287,15 +259,6 @@ export function formatCompilerDiagnostics(diagnostics: readonly CompilerDiagnost
 		.join('\n');
 }
 
-/**
- * Persist a diagnostics array to JSON (Cluster D task 13). Sibling of
- * {@link formatGrammarDiagnostics}/{@link formatCompilerDiagnostics} — those
- * format for stderr, this serializes the same shape for a later task
- * (Cluster D task 14) to merge into a unified validation report. Works for
- * either `GrammarDiagnostic` or `CompilerDiagnostic` since both extend the
- * shared `Diagnostic` base (code/severity/message/proposal + scope-specific
- * fields), so no shape adaptation is needed — the array is written as-is.
- */
 export function writeGrammarDiagnosticsJson(
 	diagnostics: readonly (GrammarDiagnostic | CompilerDiagnostic)[],
 	outPath: string
@@ -303,24 +266,6 @@ export function writeGrammarDiagnosticsJson(
 	writeFileSync(outPath, JSON.stringify(diagnostics, null, 2));
 }
 
-/**
- * §D-2c — content-alias injectivity check (the ONLY consumer of the
- * diagnostic-only `contentAliasedTo`/`contentAliasedFrom` maps). Folded in from
- * the former compiler/diagnose-content-alias-injectivity.ts — its sole caller is
- * `collectGrammarDiagnosticsForGrammar` above.
- *
- * `contentAliasedTo` maps a hidden body kind `_x` to the visible twin(s)
- * minted from it. Fan-OUT (`_x → [a, b]`, one body reused by several twins) is
- * LEGITIMATE reuse — no diagnostic. The illegal shape is fan-IN: a single
- * visible twin minted from two DISTINCT hidden bodies (`_a → twin`, `_b →
- * twin`). That would silently drop one body in `mintContentAliasKinds`
- * (`if (!(value in rules))`), so the minted kind's slots/template would depend
- * on mint ORDER — non-deterministic. We flag it as an error mirroring the
- * parse-kind non-injective collision check.
- *
- * The maps are EMPTY on every grammar today (no enrich `alias($._name,$.name)`
- * nodes exist), so this returns `[]` — it guards a FUTURE violation.
- */
 export function diagnoseContentAliasInjectivity(input: {
 	grammar: string;
 	contentAliasedTo?: ReadonlyMap<string, readonly string[]>;

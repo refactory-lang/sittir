@@ -13,18 +13,6 @@ import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, Multiplicity } from '../types/rule.ts';
 import { separatorFactsEqual } from './list-patterns.ts';
 
-/**
- * Transfer slot-identity attributes from a discarded wrapper node onto the
- * survivor. Only absent attributes are transferred (`hasOwnProperty` guard
- * means the survivor's own values always win). This ensures:
- *   - `fieldName` / `multiplicity` / `separator` — slot-classification attrs
- *   - `id` — rule identity, so `slotByRuleId` resolves against the wrapper's
- *     pre-simplification id rather than degrading to fragile name fallbacks.
- *
- * Non-overriding: a passed-through inner node keeps its own id; only a
- * freshly-rebuilt structural node (`{ type:'CHOICE', members }`) gets the
- * source id stamped.
- */
 export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): R {
 	// `original` may be a wrapper-bearing (evaluate/link) rule where these
 	// stamped leaf attrs aren't part of the type yet (they're populated by
@@ -88,7 +76,6 @@ const MULTIPLICITY_RANK: Record<Multiplicity, number> = { single: 0, optional: 1
  */
 type StampedAttrs = Pick<RuleBase<'normalize'>, 'fieldName' | 'multiplicity' | 'nonterminal' | 'separator'>;
 
-/** The arms of a choice (`members`); `[]` otherwise. */
 function armsOf(rule: AnyRule): readonly AnyRule[] {
 	if (rule.type === CHOICE) return rule.members;
 	return [];

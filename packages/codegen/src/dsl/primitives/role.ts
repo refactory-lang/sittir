@@ -74,13 +74,6 @@ export function role(symbol: Rule, roleName: 'indent' | 'dedent' | 'newline'): R
 	return symbol;
 }
 
-/**
- * Run `fn` with a fresh role accumulator in scope. Returns the
- * accumulated bindings AND `fn`'s result. Save/restore guarantees
- * nested `grammar(...)` calls stay isolated even on exception paths.
- *
- * Called by `grammarFn` in evaluate.ts — not by override authors.
- */
 export function withRoleScope<T>(fn: () => T): {
 	roles: Map<string, ExternalRole>;
 	result: T;

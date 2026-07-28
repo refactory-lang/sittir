@@ -1,0 +1,43 @@
+id: function-level-jsdoc-comment
+language: TypeScript
+severity: hint
+message: >
+  Companion to function-level-jsdoc.yml — matches the JSDoc comment node
+  itself (not the declaration it precedes), so tooling can read its exact
+  text/line range for mechanical relocation into docs/compiler-phase-glossary.md.
+files:
+  - packages/codegen/src/**
+ignores:
+  - "**/__tests__/**"
+  - "**/*.test.ts"
+  - "**/*.test-d.ts"
+rule:
+  kind: comment
+  regex: '^/\*\*'
+  precedes:
+    stopBy: neighbor
+    any:
+      - kind: function_declaration
+      - kind: method_definition
+      - all:
+          - kind: export_statement
+          - has:
+              field: declaration
+              kind: function_declaration
+          - not:
+              has:
+                field: declaration
+                kind: type_alias_declaration
+          - not:
+              has:
+                field: declaration
+                kind: interface_declaration
+          - not:
+              has:
+                field: declaration
+                kind: lexical_declaration
+note: >
+  Wave 5 mechanical relocation codemod (scripts/wave5-relocate-jsdoc.mjs)
+  pairs this rule's matches 1:1 (by file, in source order) with
+  function-level-jsdoc.yml's matches — each comment match is the JSDoc
+  immediately preceding the declaration matched at the same index.

@@ -167,18 +167,6 @@ export function escapeJinjaString(value: string): string {
 	return value.replaceAll('\\', '\\\\').replaceAll('"', '\\"');
 }
 
-/**
- * Statically render a rule to its fixed literal text — only meaningful for
- * a rule classified `terminal` by Table 1 (`isNonterminalRuleType`,
- * rule-catalog.ts): every reachable descendant is compile-time-known text,
- * so there's nothing to capture at read-time. Callers gate on that
- * classification (e.g. `separatorToString` below); this function mirrors
- * Table 1's own recursive structure for the shapes actually reachable in a
- * `RenderRule` (GROUP/VARIANT survive wrapper-deletion; TOKEN is preserved
- * by the mechanism but excluded from `RenderRule`'s type — see
- * `RenderRule`'s doc comment — so it falls to `default` like any other
- * unreachable/nonterminal shape).
- */
 export function stringifyRule(rule: RenderRule): string {
 	switch (rule.type) {
 		case STRING:
@@ -217,8 +205,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			wordMatcher: this.#wordMatcher,
 			isWordChar: (() => {
 				const table = wordCharAsciiTable(this.#wordMatcher);
-				return (c: string) =>
-					c.charCodeAt(0) < 128 ? table[c.charCodeAt(0)]! : /[\p{L}\p{N}]/u.test(c);
+				return (c: string) => (c.charCodeAt(0) < 128 ? table[c.charCodeAt(0)]! : /[\p{L}\p{N}]/u.test(c));
 			})(),
 			externals: [...(config.nodeMap.externals ?? [])],
 			rules: config.nodeMap.normalizedRules ?? {},
@@ -394,11 +381,6 @@ const JINJA_COND_FULL_RE = /^(\{%-? if [^%]+-?%\})([\s\S]*)(\{%-? endif -?%\})$/
  */
 const SLOT_WORDLIKE_CHAR = 'a';
 
-/**
- * Extract the leftmost meaningful character from a template fragment:
- * the first real text char or, if the fragment opens with a `{{ slot }}`
- * expression, the word-like stand-in character.
- */
 function firstBoundaryCharOfFragment(fragment: string): string | undefined {
 	if (fragment.length === 0) return undefined;
 	// Slot at start → word-like.
@@ -421,32 +403,6 @@ function lastBoundaryCharOfFragment(fragment: string): string | undefined {
 	return trimmed[trimmed.length - 1];
 }
 
-/**
- * Detect whether a template string is a "pure top-level multi-conditional" —
- * two or more `{% if %}...{% endif %}` segments that are IMMEDIATELY ADJACENT
- * (no non-tag, non-whitespace content between `{% endif %}` and the next `{% if %}`).
- *
- * Example → true:
- *   `{% if A %}body_A{% endif %}{% if B %}body_B{% endif %}`
- *   `{% if A %}body_A{% endif %}{% if B %}body_B{% endif %}{% if C %}body_C{% endif %}`
- *
- * Example → false (nested):
- *   `{% if outer %}{% if A %}...{% endif %}{% if B %}...{% endif %}{% endif %}`
- *   (inner conditionals are at depth 1, not top-level)
- *
- * Example → false (interleaved non-tag content):
- *   `{% if type_params %}...{% endif %}{{ params }}{% if return_type %}...{% endif %}`
- *   (`{{ params }}` is non-tag content between the top-level segments)
- *
- * This distinction is critical: seq templates for nonterminals often have multiple
- * top-level conditionals separated by non-conditional content (slots, literals).
- * Only synthetic exclusive-arm choices produce PURE adjacent multi-conditionals.
- *
- * Algorithm: scan depth-tracking; when a top-level `{% endif %}` is found, check
- * if the immediately-following non-whitespace content is another `{% if %}` or
- * `{%-`. If YES: increment adjacentRun. If NO: reset to 0 (broken by non-tag).
- * Return true iff adjacentRun ever reaches ≥ 1 (meaning ≥ 2 adjacent segments).
- */
 function isTopLevelMultiConditional(cond: string): boolean {
 	let depth = 0;
 	let adjacentRun = 0; // count of consecutive adjacent top-level segments seen so far
@@ -476,10 +432,6 @@ function isTopLevelMultiConditional(cond: string): boolean {
 	return false;
 }
 
-/**
- * Insert `insert` immediately AFTER each top-level `{% if ... %}` opening tag
- * in `str`. "Top-level" means at depth 0 in the if/endif nesting.
- */
 function _insertAfterTopLevelIfTags(str: string, insert: string): string {
 	const TAG_RE = /(\{%-? if [^%]+-?%\}|\{%-? endif -?%\})/g;
 	let depth = 0;
@@ -506,10 +458,6 @@ function _insertAfterTopLevelIfTags(str: string, insert: string): string {
 	return result;
 }
 
-/**
- * Insert `insert` immediately BEFORE each top-level `{% endif %}` closing tag
- * in `str`. "Top-level" means the tag transitions from depth 1 to depth 0.
- */
 function _insertBeforeTopLevelEndifTags(str: string, insert: string): string {
 	const TAG_RE = /(\{%-? if [^%]+-?%\}|\{%-? endif -?%\})/g;
 	let depth = 0;
@@ -695,22 +643,6 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 // Slot emission helpers
 // ---------------------------------------------------------------------------
 
-/**
- * Look up an `AssembledNonterminal` for a rule from two sources:
- *
- * 1. `slotByRuleId` — registered during assembly via `slot.sourceRuleIds`.
- *    Fast O(1) lookup. Fails when `simplifyRule` creates new rule objects
- *    without preserving the original ID, or when the FieldRule ID doesn't
- *    match the renderRule's symbol ID.
- *
- * 2. `ctx.ownerSlots` fallback — keyed by `storageName` (which equals
- *    `rule.fieldName.toLowerCase()` for named fields). Used when the
- *    slotByRuleId lookup fails. Safe because `storageName` is unique within
- *    a node's slot set.
- *
- * Returns `undefined` when neither source finds a slot (test fixtures,
- * transient sub-rules without a registered slot).
- */
 function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | undefined {
 	// Primary: slotByRuleId (by registered rule ID)
 	if (rule.id) {
@@ -768,25 +700,6 @@ function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | unde
 	return recovered;
 }
 
-/**
- * Project a rule's separator metadata onto a primitive `string`. The
- * shared `RuleBase.separator` is the nested `{value, trailing?, leading?}`
- * fact (PR-S); the rendering layer only needs the primitive textual
- * separator. Gates on Table 1 (`isNonterminalRuleType`) rather than a bare
- * `StringRule` check — ANY terminal-classified shape (a plain literal, a
- * sequence of literals, a group/variant wrapping one) has fixed,
- * compile-time-known text and can be embedded directly via `stringifyRule`.
- * A genuinely nonterminal shape (choice/repeat/symbol/pattern) has no fixed
- * text — returns `undefined` (NOT `stringifyRule`'s `''`) so the caller
- * falls back to the slot's per-value separator / `DEFAULT_JOIN_SEPARATOR`
- * instead of silently treating "unknown" as "empty" (the previous
- * behavior: a choice-shaped separator like `choice(',', ';')` would render
- * with NO separator character at all, since `''` short-circuits the `??`
- * fallback chain in `emitListSlot` just as effectively as a real value).
- * `isNonterminalRuleType` is typed over `Rule<'evaluate'>` but classifies
- * purely by `.type` + child shape — phase-agnostic in practice, same cast
- * pattern used throughout PR-S (e.g. wrapper-deletion.ts's OPTIONAL case).
- */
 export function separatorToString(rule: RenderRule): string | undefined {
 	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
 	if (sep === undefined) return undefined;
@@ -794,32 +707,11 @@ export function separatorToString(rule: RenderRule): string | undefined {
 	return stringifyRule(sep.value as RenderRule);
 }
 
-/**
- * True when `rule` carries a genuinely nonterminal separator (Table 1,
- * `isNonterminalRuleType`) — i.e. `separatorToString` returned `undefined`
- * NOT because there's no separator at all, but because the separator's
- * text isn't compile-time-known (a `choice(',', ';')`-shaped separator has
- * no single fixed literal). Distinguishes the two `undefined` cases so
- * `emitListSlot` can reference the transport struct's own runtime-resolved
- * `.separator` field (populated by render-module.ts's
- * `buildSeparatorKindMatchLines` from the wire-captured `_separator_kind`)
- * instead of silently falling through to `DEFAULT_JOIN_SEPARATOR`.
- */
 function isNonterminalSeparatorRule(rule: RenderRule): boolean {
 	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
 	return sep !== undefined && isNonterminalRuleType(sep.value as Rule<'evaluate'>);
 }
 
-/**
- * Pick the join-filter name based on a rule's flank metadata, reading
- * trailing/leading attributes directly off the rule.
- *
- * When the rule itself carries no trailing/leading flags (e.g. the outer
- * choice in `fanOutSeqChoices`/`factorChoiceBranches` rebuilds), falls back
- * to the slot values' per-value trailing/leading flags — stamped by
- * `stampSeparatorOnValues` when the separator flowed from a repeat wrapper
- * through wrapper-deletion onto the slot entries.
- */
 function selectJoinFilter(
 	rule: RenderRule,
 	slot?: AssembledNonterminal
@@ -873,24 +765,6 @@ function selectJoinFilter(
  */
 const DEFAULT_JOIN_SEPARATOR = '';
 
-/**
- * Emit Jinja for a list-shaped slot: `{{ name | join("…") }}` (or one
- * of the trailing/leading/flanks variants). Reads the separator from
- * the supplied rule's attributes.
- *
- * The slot name is the RAW (snake_case, singular) field/symbol name,
- * lowercased. We deliberately do NOT use `slot.propertyName` (camelCase +
- * pluralized) — templates reference slots by their raw storage name, and
- * the render-side transport struct fields use that same raw name, so the
- * two must match.
- *
- * When the optional `slot` back-pointer is supplied, the separator is
- * overridden to `""` (empty concatenation) when ALL values in the slot
- * are `token.immediate(…)` terminal entries. Immediate tokens must
- * adjoin the preceding token with no whitespace separator — e.g. the
- * content fragments of a Python string literal (`string_content`,
- * `interpolation`) must concatenate without separator.
- */
 function emitListSlot(slotName: string, rule: RenderRule, slot?: AssembledNonterminal): string {
 	const filter = selectJoinFilter(rule, slot);
 	// Immediate-terminal check: when ALL slot values are terminal entries
@@ -931,23 +805,10 @@ function emitListSlot(slotName: string, rule: RenderRule, slot?: AssembledNonter
 	return `{{ ${slotName} | ${filter}("${escapeJinjaString(sep)}") }}`;
 }
 
-/**
- * Emit Jinja for a scalar slot: `{{ name }}`. The slot name is the RAW
- * (snake_case, singular) name lowercased.
- */
 function emitScalarSlot(slotName: string): string {
 	return `{{ ${slotName} }}`;
 }
 
-/**
- * Emit a slot reference from its registered back-pointer slot — the single
- * shared path for symbol, choice, and field-wrapped slots
- * (feedback_ruleid_backpointer). Identity and multiplicity come FROM THE SLOT
- * (its `storageName` is the render-struct field key), never re-derived per
- * call site from `rule.name` / `rule.fieldName`. The leaf `rule.multiplicity`
- * is honoured as a fallback for the case where wrapper push-down stamped the
- * leaf but slot derivation under-counted (the prior emitSymbol "Bug 5" path).
- */
 function emitSlotReference(rule: RenderRule, slot: AssembledNonterminal): string {
 	const slotName = (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase();
 	const mult = (rule as { multiplicity?: string }).multiplicity;
@@ -960,12 +821,6 @@ function emitSlotReference(rule: RenderRule, slot: AssembledNonterminal): string
 	return emitScalarSlot(slotName);
 }
 
-/**
- * Fallback slot emission keyed on a field name + the leaf `rule.multiplicity`,
- * for a field-wrapped rule that has NO registered back-pointer slot (rare —
- * e.g. a deleteWrapper-stamped fieldName whose rule id / fieldName didn't
- * resolve in `lookupSlot`). Prefer `emitSlotReference` whenever a slot exists.
- */
 function emitFieldNameSlot(slotName: string, rule: RenderRule): string {
 	const mult = (rule as { multiplicity?: string }).multiplicity;
 	if (mult === 'array' || mult === 'nonEmptyArray') {
@@ -987,17 +842,6 @@ function emitFieldNameSlot(slotName: string, rule: RenderRule): string {
 // multiplicity / separator) are now on the leaf rules themselves and
 // emitSymbol reads them directly. emitRule throws defensively if they appear.
 
-/**
- * Derive the Jinja slot expression for a symbol ref, driven by the leaf
- * attributes set by the enrich / push-down pass (fieldName, multiplicity,
- * separator). In RenderRule input the wrapper rule types (field / optional /
- * repeat / repeat1) are absent; their slot facts live here instead.
- *
- * Multiplicity mapping:
- *  - 'array' | 'nonEmptyArray' → list form: `{{ name | join("…") }}`
- *  - 'optional'               → conditional scalar: `{% if name | isPresent %}{{ name }}{% endif %}`
- *  - undefined (required)     → scalar: `{{ name }}`
- */
 function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx): string {
 	// Link-synthesized symbols carry their original literal text — render
 	// it verbatim so keyword tokens lifted from `_kw_foo` helpers emit as
@@ -1198,12 +1042,6 @@ function warnMultiSlotMultiplicityGroup(rule: Extract<RenderRule, { type: 'SEQ' 
 	);
 }
 
-/**
- * Pick a Jinja conditional predicate name for a clause whose body emits a
- * slot. In RenderRule (wrapper-free) input, field wrappers no longer exist —
- * field metadata lives as `fieldName` on the leaf. Check leaf attributes
- * first, then transparent wrappers, then symbol/seq fallbacks.
- */
 function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefined {
 	// PR2 Task 3.B3: field wrappers no longer appear in RenderRule. Check
 	// the leaf-level fieldName attribute instead (pushed down from FieldRule
@@ -1249,23 +1087,6 @@ function pickConditionalKey(content: RenderRule, ctx: EmitCtx): string | undefin
 	return undefined;
 }
 
-/**
- * Scan an emitted arm body for `emitChoice`'s union-routed path — the body is
- * the single authority on what the arm references (name- or id-based
- * partitioning of the render-tree arm is unreliable across choice rebuilds).
- *
- * `key` — the arm's discriminating slot: the first `{{ name }}` reference at
- * if-nesting depth 0 (an ungated reference is REQUIRED within the arm, so its
- * presence discriminates it — e.g. arrow_function's signature arm gates on
- * `parameters`, never on its leading OPTIONAL `type_parameters` block), else
- * the first gated reference.
- *
- * `needsGate` — whether the body has ANY depth-0 reference or literal text.
- * A body that is entirely self-gated blocks (e.g. range_pattern's
- * `{% if left %}…{% endif %}{% if content %}…{% endif %}` arm) must NOT get
- * an outer gate: nothing in it can leak, and wrapping it on one of its
- * optional refs would suppress the other forms.
- */
 function scanArmBody(body: string): { key: string | undefined; needsGate: boolean } {
 	const tagRe = /\{\{-?\s*([A-Za-z_]\w*)[^}]*\}\}|\{%-?\s*(if|endif)\b[^%]*?%\}/g;
 	let depth = 0;
@@ -1446,22 +1267,6 @@ function escapeRegex(s: string): string {
 	return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-/**
- * Verify each declared slot for `node` appears at least once in `body`.
- * Throws on missing slots — the gate that ensures the emitter's structural
- * rewrite didn't drop a slot reference. This is a structural check, not a
- * byte-equivalence one: the emitter is free to choose its own Jinja
- * formatting as long as every slot is referenced somewhere in the output.
- *
- * Uses word-boundary regex (`\bname\b`) on each slot's `storageName`
- * (snake_case, matches what the emitter writes into templates) so references
- * inside `{{ name }}`, `{% if name | isPresent %}`, and
- * `{{ names | join(...) }}` all match.
- *
- * Skips terminal-only slots (all values are literal terminals with no
- * node-refs) — these are deterministic-value tokens emitted as literals, not
- * as named slot references (e.g. `opening`/`closing` enum-delimiter slots).
- */
 function assertSlotPreservation(node: AssembledNode, body: string): void {
 	const slots = allSlotsOf(node);
 	if (slots.length === 0) return;
@@ -1555,18 +1360,6 @@ function assertSlotPreservation(node: AssembledNode, body: string): void {
 	}
 }
 
-/**
- * Run TemplateEmitter over an entire NodeMap. Convenience wrapper around
- * the per-modelType dispatch in emit.ts so test fixtures and diagnostic
- * tools don't have to duplicate the loop.
- *
- * Dispatches each node by its modelType, calling the appropriate per-type
- * emitter method (emitLeaf, emitBranch, emitGroup), and
- * applies the skip-emit gate via classifyTemplateEmission.
- *
- * @param config Grammar, NodeMap, and optional grammar SHA
- * @returns EmittedTemplates with bodies keyed by kind
- */
 export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplates {
 	const te = new TemplateEmitter(config);
 	for (const [, node] of config.nodeMap.nodes) {
@@ -1607,15 +1400,6 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 	return te.finalize();
 }
 
-/**
- * Write per-kind `.jinja` files to `outputDir`. Creates the directory
- * if it does not exist. After writing, scans the directory for any
- * `.jinja` files whose kind is not in `emitted` and removes them —
- * prevents stale files from accumulating across regenerations when a
- * rule is renamed or removed from the grammar.
- *
- * Preserves `.gitkeep` and non-`.jinja` files (README.md, etc.).
- */
 export function writeJinjaTemplates(emitted: EmittedTemplates, outputDir: string): void {
 	fs.mkdirSync(outputDir, { recursive: true });
 	for (const [kind, body] of emitted.bodies) {

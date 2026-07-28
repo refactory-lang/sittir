@@ -45,11 +45,6 @@ interface WrapperAttrs {
 // Internal recursive implementation
 // ---------------------------------------------------------------------------
 
-/**
- * Walk a rule tree collecting wrapper attributes as we descend through
- * consecutive wrappers, then recurse structurally and stamp collected
- * attrs onto the leaf.
- */
 function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule {
 	switch (rule.type) {
 		// ----- Wrapper cases — peel and accumulate -----
@@ -267,11 +262,6 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 	}
 }
 
-/**
- * Spread non-undefined wrapper attrs onto a rule object.
- * We only include keys that have actual values to avoid polluting the object
- * with `undefined`-valued fields.
- */
 function stampAttrs(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule {
 	if (
 		attrs.fieldName === undefined &&
@@ -299,24 +289,10 @@ function stampAttrs(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule {
 // Public API
 // ---------------------------------------------------------------------------
 
-/**
- * Delete all modifier wrappers from a single rule, pushing their attributes
- * down to the innermost non-wrapper rule.
- *
- * Structural rules (seq / choice / variant / group / clause / terminal /
- * polymorph) are recursed into so the entire rule tree is wrapper-free.
- */
 export function deleteWrapper(rule: Rule<'link'>): RenderRule {
 	return deleteWrapperWith(rule, {});
 }
 
-/**
- * Apply `deleteWrapper` to every entry in a rule map, returning a new map
- * typed as `Record<string, RenderRule>`.
- *
- * This is the map-form used by `normalizeGrammar()` to produce the `normalizedRules`
- * snapshot.
- */
 export function applyWrapperDeletion(rules: Record<string, Rule<'link'>>): Record<string, RenderRule> {
 	const result: Record<string, RenderRule> = {};
 	for (const [name, rule] of Object.entries(rules)) {

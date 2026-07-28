@@ -39,10 +39,6 @@ export interface RuleLookup {
 	readonly path: ReadonlyMap<string, RenderKindPath>;
 }
 
-/**
- * Build a rule inventory from a NodeMap. Cheap — no YAML parsing,
- * no file I/O.
- */
 export function buildRuleLookup(nodeMap: NodeMap): RuleLookup {
 	const kinds = new Set<string>();
 	const renderable = new Set<string>();

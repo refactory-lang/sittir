@@ -80,30 +80,6 @@ export const structuralBuilder: RuleBuilder = {
 // Each body is moved verbatim from its origin file; no logic changes.
 // ---------------------------------------------------------------------------
 
-/**
- * Combine an OUTER multiplicity (pushed down from an enclosing wrapper) with
- * a leaf's own INNER multiplicity into the effective slot multiplicity.
- *
- * `undefined` means "single / exactly one". The lattice:
- *   - nothing pushed (`outer === undefined`) → keep `inner`.
- *   - either side is a collection (array / nonEmptyArray) → the result is a
- *     collection. It is `nonEmptyArray` only when BOTH sides guarantee ≥1
- *     element (a side guarantees ≥1 iff it is single (`undefined`) or
- *     `nonEmptyArray`); otherwise `array` (allows empty).
- *   - neither is a collection → `optional` if either is optional, else single.
- *
- * Examples (the cases this fixes):
- *   combine('nonEmptyArray', undefined)  → 'nonEmptyArray'  (type_arguments union: ≥1)
- *   combine('nonEmptyArray', 'optional') → 'array'          (trait_bounds: 0-or-more)
- *   combine('array', 'optional')         → 'array'
- *   combine('optional', 'optional')      → 'optional'
- *
- * This replaces the prior "outer wins unless inner is already an array" rule,
- * which clobbered an inner `optional` with the outer `nonEmptyArray` and
- * produced `NonEmptyArray<T>` where the runtime slot is 0-or-more.
- *
- * Moved from rule-attrs.ts (origin: rule-attrs.ts:70).
- */
 export function combineMultiplicity(outerIn: LeafMultiplicity, innerIn: LeafMultiplicity): LeafMultiplicity {
 	// `'single'` is the canonical required-one value (rule.ts `Multiplicity`);
 	// a missing multiplicity defaults to it (null-coalesce). The lattice then
@@ -159,13 +135,6 @@ export function findRepeatFlag(rule: AnyRule, flag: 'trailing' | 'leading'): boo
 	);
 }
 
-/**
- * Unwrap structural wrappers around a repeat / repeat1 so the caller
- * can detect `optional(repeat(...))`, `group(repeat1(...))`, etc.
- * Returns `null` for anything that isn't ultimately a repeat shape.
- *
- * Moved from simplify.ts (origin: simplify.ts:1164).
- */
 export function extractRepeatShape(rule: AnyRule): { repeat: RepeatRule | Repeat1Rule; nonEmpty: boolean } | null {
 	switch (rule.type) {
 		case REPEAT:
@@ -182,15 +151,6 @@ export function extractRepeatShape(rule: AnyRule): { repeat: RepeatRule | Repeat
 	}
 }
 
-/**
- * Stamp `multiplicity` / `separator` / `fieldName` onto the slot-bearing
- * leaves of a (wrapper-free) rule body. Structural nodes are descended;
- * leaves are stamped. An existing array / nonEmptyArray multiplicity on a
- * leaf is preserved (it is already at least as multi as the pushed value).
- * `fieldName` is only applied to a leaf that has no field name yet.
- *
- * Moved from simplify.ts (origin: simplify.ts:1101). Was file-local; now exported.
- */
 export function pushAttrsToLeaves(
 	rule: AnyRule,
 	multiplicity: 'optional' | 'array' | 'nonEmptyArray' | undefined,
@@ -261,26 +221,6 @@ export interface InlineRefsCtx {
 
 const EMPTY_INLINE_KINDS: ReadonlySet<string> = new Set();
 
-/**
- * Inline hidden symbol references by substituting their content. Two inlining
- * paths are applied in priority order:
- *
- *  1. GROUP / MULTI path (existing): hidden group rules (seq-with-fields) and
- *     hidden multi helpers (repeat / repeat1 wrappers) are always inlined so
- *     the referrer's field walker sees the fields / multi-slot directly.
- *
- *  2. grammar.inline path (new): hidden symbol refs whose target appears in the
- *     grammar's `inline:` array are inlined unconditionally — these are
- *     helpers tree-sitter itself expands at parse time (e.g., auto-synthesized
- *     `_type_arguments_repeat1` from applyAutoGroups). Sittir's derivation
- *     view must match what tree-sitter produces: if the parser inlines a helper,
- *     the simplified rule must too. References with `source === 'group-lift'` are
- *     still inlined when `inlineKinds` contains the target — the group-lift guard
- *     only applies to the group/multi path (where the assemble-side AssembledGroup
- *     should materialise as its own node rather than being collapsed away).
- *
- * Cycle-safe via visited set.
- */
 export function inlineRefs<R extends AnyRule>(
 	rule: R,
 	ctx: InlineRefsCtx,
@@ -390,18 +330,6 @@ export function inlineRefs<R extends AnyRule>(
 	}
 }
 
-/**
- * Return the rule to inline for a hidden symbol target, or `null` if the
- * target should not be inlined. Two target shapes are inlined:
- *  - Hidden GROUP rules (`target.type === 'GROUP'`): inline the group's
- *    `content` (the seq-with-fields) so the referrer's field walker
- *    sees the fields directly.
- *  - Hidden MULTI helpers (body unwraps to a `repeat` / `repeat1`):
- *    inline the whole target rule so the wrapper survives and the
- *    walker marks the child slot as multi-valued.
- * All other hidden rules stay as-is — they are distinct structural
- * nodes or dispatch points.
- */
 export function resolveGroupOrMultiInlineTarget(target: AnyRule): AnyRule | null {
 	const isGroup = target.type === GROUP;
 	const isMulti = extractRepeatShape(target) !== null;
@@ -409,31 +337,6 @@ export function resolveGroupOrMultiInlineTarget(target: AnyRule): AnyRule | null
 	return isGroup ? (target as { content: AnyRule }).content : target;
 }
 
-/**
- * Re-apply a referring symbol's pushed-down leaf attributes onto the body
- * that replaced it during inlining.
- *
- * wrapper-deletion collapses modifier wrappers onto the innermost leaf
- * (e.g. `repeat1(SYMBOL(_x_repeat1))` → `SYMBOL{multiplicity:'nonEmptyArray',
- * separator}`). When `inlineRefs` substitutes that symbol with its target
- * body, the attributes on the symbol would be lost — collapsing a
- * multi-valued slot to singular and dropping the separator. We reconstruct
- * the equivalent modifier wrapper around the inlined body and re-run the
- * idempotent `deleteWrapper`, which re-pushes the attributes onto the
- * inlined body's leaves using the same "outer wins" rule wrapper-deletion
- * applied originally.
- *
- * The attributes are pushed onto the inlined body's *leaves* (symbols /
- * fields / terminals), not onto an enclosing seq node. A seq-level
- * multiplicity would be lost when `canonicalizeSeqOfLeaves` flattens the
- * inlined seq into its parent; leaf-level multiplicity survives flattening
- * and is what `deriveSlots` reads. Stamping descends through structural
- * nodes (seq / choice / group / variant / clause / token / alias) and stops
- * at leaves, where it sets the multiplicity (a leaf that is already
- * multi-valued keeps its stronger array/nonEmptyArray) and separator.
- *
- * No-op when the referring symbol carries no non-default leaf attributes.
- */
 function reapplyInlinedLeafAttrs(ref: AnyRule, inlined: AnyRule): AnyRule {
 	const r = ref as {
 		multiplicity?: 'optional' | 'array' | 'nonEmptyArray';
@@ -464,11 +367,6 @@ function reapplyInlinedLeafAttrs(ref: AnyRule, inlined: AnyRule): AnyRule {
 // ---------------------------------------------------------------------------
 type Mult = 'optional' | 'array' | 'nonEmptyArray' | undefined;
 const isArrayMult = (m: Mult): boolean => m === 'array' || m === 'nonEmptyArray';
-/**
- * Structural identity of two slot-bearing rules ignoring leaf attributes
- * (multiplicity / separator / fieldName / aliasedFrom). Used to decide that a
- * head element and a repeat element are "the same list element".
- */
 function sameSlotShape(a: AnyRule, b: AnyRule): boolean {
 	if (a.type !== b.type) return false;
 	switch (a.type) {
@@ -490,10 +388,6 @@ function sameSlotShape(a: AnyRule, b: AnyRule): boolean {
 			return false;
 	}
 }
-/**
- * If `head` + `next` form a head+repeat list pair, return the fused multi
- * element; otherwise `null`.
- */
 function tryFusePair(head: AnyRule, next: AnyRule | undefined): AnyRule | null {
 	if (!next) return null;
 	const headMult = (head as { multiplicity?: Mult }).multiplicity;

@@ -47,13 +47,6 @@ export async function compileParser(grammarDir: string, options?: CompileOptions
 	return wasmPath;
 }
 
-/**
- * Copy the base grammar's scanner.c into .sittir/src/ when missing,
- * preserving any relative #include paths it uses (e.g., typescript's
- * scanner.c includes ../../common/scanner.h). Looks under the grammar
- * package's node_modules/tree-sitter-<name>/{src,<lang>/src}/scanner.c.
- * No-op when no scanner.c exists in the base grammar (most grammars).
- */
 function syncExternalScanner(grammarDir: string, sittirDir: string): void {
 	const sittirScanner = join(sittirDir, 'src', 'scanner.c');
 	if (existsSync(sittirScanner)) return;

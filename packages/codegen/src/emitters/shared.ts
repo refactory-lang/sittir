@@ -30,39 +30,12 @@ import {
 	storageKindOfRef
 } from '../compiler/model/node-map.ts';
 
-/**
- * TEMPORARY (separator-as-slot Task 2 follow-up — see
- * `AssembledSeparatedList`'s doc comment, compiler/model/node-map.ts): the
- * render/wrap/factory pipeline currently treats `'separatedList'` nodes
- * exactly like `'branch'`/`'group'` (slot-bearing compounds) for
- * byte-identical emission, pending Tasks 4-6's real per-instance capture.
- * Centralizes the widened modelType check so the several call sites that
- * used to gate on `'branch'|'group'` alone stay in sync. Remove once
- * 'separatedList' gets its own dedicated emission and this predicate's
- * call sites revert to `'branch'|'group'` only.
- */
 export function isSlotBearingCompound(
 	node: AssembledNode
 ): node is AssembledBranch | AssembledGroup | AssembledSeparatedList {
 	return node.modelType === 'branch' || node.modelType === 'group' || node.modelType === 'separatedList';
 }
 
-/**
- * A separatedList's single-field-storage canonical slot — the `node.fields`
- * entry whose storage key wrap.ts/render-module.ts's transport-struct
- * emission actually use for the "whole element union" bucket (Bug B fix,
- * wrap.ts's `emitSeparatedListWrap`). Prefers the `arity === 'many'` field
- * (the real repeated-content slot) and falls back to the first field for
- * kinds with no such slot.
- *
- * SHARED across wrap.ts, factories.ts, from.ts, and test.ts so all four
- * emitters agree on the same canonical storage key a separatedList's
- * elements are read from / written to on the wire — see wrap.ts's
- * `emitSeparatedListWrap` doc comment ("Bug B fix") for the full rationale.
- * Multi-field kinds (`node.fields.length > 1`) must NOT use this helper for
- * storage — they route each field through `emitFieldStorageLines`/
- * `emitFieldAccessorLines` instead (see callers).
- */
 export function canonicalSeparatedListField(node: AssembledSeparatedList): AssembledNonterminal {
 	return node.fields.find((f) => f.arity === 'many') ?? node.fields[0]!;
 }
@@ -91,13 +64,6 @@ export { isRequired, isMultiple, isNonEmpty, deriveSlotCardinality, deriveChildr
  * @param nodeMap - The assembled node map to walk.
  * @returns The set of referenced kind strings.
  */
-/**
- * Collect hidden source kinds (leading `_`) referenced via any field
- * / child value slot across the node map. These are the kinds whose
- * factory stamps `$type: '_X'` at construction — emission paths
- * (factories, templates, types) must include them even though they're
- * hidden.
- */
 export function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	const out = new Set<string>();
 	for (const [, n] of nodeMap.nodes) {
@@ -112,14 +78,6 @@ export function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	return out;
 }
 
-/**
- * Compute the alias-target -> alias-source map for canonical hidden remaps.
- *
- * Tree-sitter parses `alias($._x, $.x)` as the visible target kind `x`,
- * while the generated Sittir surface treats the hidden source `_x` as
- * canonical. Both the wrap layer and native transport projector use this
- * single derivation so parser output is normalized consistently.
- */
 export function collectAliasTargetToSourceMap(nodeMap: NodeMap): Map<string, string> {
 	const out = new Map<string, string>();
 	for (const [kind, node] of nodeMap.nodes) {
@@ -171,11 +129,6 @@ export function referencedKinds(nodeMap: NodeMap): Set<string> {
 	return referenced;
 }
 
-/**
- * Extract the node kind names from a slot's `values` array.
- * Returns the name string for each NodeRef entry (resolved or unresolved).
- * Terminal values are excluded — they're not kinds.
- */
 export function slotKindNames(slot: { values: readonly NodeOrTerminal[] }): string[] {
 	const out: string[] = [];
 	for (const v of slot.values) {
@@ -186,9 +139,6 @@ export function slotKindNames(slot: { values: readonly NodeOrTerminal[] }): stri
 	return out;
 }
 
-/**
- * Extract the terminal literal values from a slot's `values` array.
- */
 export function slotLiteralValues(slot: { values: readonly NodeOrTerminal[] }): string[] {
 	return slot.values.filter(isTerminalValue).map((v) => v.value);
 }
@@ -198,45 +148,14 @@ export function slotLiteralValues(slot: { values: readonly NodeOrTerminal[] }): 
  * a kind name can be emitted as a bare identifier vs. a quoted literal. */
 const IDENT_RE = /^[A-Za-z_$][\w$]*$/;
 
-/** True when `s` is a valid unquoted TypeScript identifier. */
 export function isValidIdent(s: string): boolean {
 	return IDENT_RE.test(s);
 }
 
-/** If `name` is a valid identifier, return `name`. Otherwise return its
- * JSON-quoted form — suitable for emission inside union / indexed-access
- * type positions where a non-identifier key would otherwise be a syntax
- * error. */
 function _identOrQuoted(name: string): string {
 	return IDENT_RE.test(name) ? name : JSON.stringify(name);
 }
 
-/**
- * Resolve a field's effective single-literal value, if any.
- *
- * A field qualifies for auto-stamp when ALL of the following hold:
- *   - It is **required** — no values are `optional`.
- *   - It is **not repeated** — no values are `array` / `nonEmptyArray`.
- *   - Its *effective* resolved type is exactly one string literal.
- *
- * Two sources of "single string literal" are recognised:
- *
- * - **Source A — inline literal**: exactly one TerminalValue in `values`.
- *
- * - **Source B — referenced keyword kind**: exactly one NodeRef in `values`
- *   pointing to a hidden AssembledKeyword (a hidden rule whose body is a
- *   single word-like string, such as `_kw_async: $ => 'async'`).
- *
- * Returns `undefined` when the field is optional, is repeated, has
- * multiple possible values, or the referenced kind is not a single-
- * literal terminal.
- *
- * @remarks
- * Phase 1 (ADR-0010): omit auto-stamp-eligible fields from Config input
- * and stamp the constant directly in factory output.  The field stays in
- * the `$fields` block of the concrete TypeScript interface so NodeData
- * output shape is unchanged and round-trips with readNode remain identical.
- */
 export function resolveEffectiveLiteral(field: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
 	// Only required fields are auto-stamped — optional fields control
 	// whether a keyword is present at all, which must remain user choice.
@@ -274,39 +193,10 @@ export function resolveEffectiveLiteral(field: AssembledNonterminal, nodeMap: No
 	return undefined;
 }
 
-/**
- * Returns `true` when `resolveEffectiveLiteral` would return a value —
- * i.e., the field is auto-stamp-eligible per ADR-0010 phase 1.
- */
 export function isAutoStampField(field: AssembledNonterminal, nodeMap: NodeMap): boolean {
 	return resolveEffectiveLiteral(field, nodeMap) !== undefined;
 }
 
-/**
- * Return the literal string that a hidden single-literal keyword kind
- * produces, or `undefined` if the kind is not a hidden single-literal
- * keyword.
- *
- * @remarks
- * Hidden `_kw_<name>` rules are an implementation detail for preserving
- * FIELD wrappers around bare string tokens (tree-sitter strips FIELD
- * around anonymous STRING; routing through a SYMBOL preserves it).
- * Consumers don't care that a hidden helper rule exists — the surface
- * type should be the literal string the keyword produces. This helper
- * lets type / factory emitters inline `"&"` / `"async"` / etc. in
- * field type expressions and fluent setter signatures instead of
- * surfacing a `KwLifetime` / `KwAsync` wrapper type.
- *
- * A kind qualifies when:
- *   - The kind name starts with `_` (hidden-rule marker).
- *   - The resolved node is an {@link AssembledKeyword} — its rule body
- *     is a single `StringRule`.
- *
- * @param kindName - The kind to probe.
- * @param nodeMap - Assembled node map (needed to resolve `kindName`
- *   to its `AssembledNode` and check for a keyword shape).
- * @returns The keyword's literal text, or `undefined`.
- */
 export function resolveHiddenKeywordLiteral(kindName: string, nodeMap: NodeMap): string | undefined {
 	if (!kindName.startsWith('_')) return undefined;
 	const node = nodeMap.nodes.get(kindName);
@@ -326,12 +216,6 @@ export function resolveHiddenKeywordLiteral(kindName: string, nodeMap: NodeMap):
 	return undefined;
 }
 
-/**
- * Returns `true` when every kind a slot resolves to is hidden (`_`-prefixed).
- * Such fields represent parser-inserted infrastructure (e.g. `_semicolon` →
- * `_automatic_semicolon`) that shouldn't be exposed as a required user-facing
- * factory parameter.
- */
 export function isHiddenInfraSlot(slot: AssembledNonterminal, nodeMap: NodeMap): boolean {
 	const kinds = slotKindNames(slot);
 	if (kinds.length === 0) return false;
@@ -352,26 +236,6 @@ function isHiddenInfraKind(kindName: string, nodeMap: NodeMap): boolean {
 // Generic slot helpers — work on AssembledNonterminal (unified slot type).
 // ---------------------------------------------------------------------------
 
-/**
- * Build the TypeScript stamp expression for an auto-stamp-eligible REQUIRED slot.
- *
- * Returns `undefined` when:
- * - The slot is optional (no stamp needed — omit the key from the factory call).
- * - The slot is not auto-stamp-eligible.
- *
- * Two expression shapes:
- * - **Inline literal** (TerminalValue): `JSON.stringify(value) + " as const"`
- * - **Referenced keyword** (hidden AssembledKeyword NodeRef): NodeData object literal
- *   `{ $type: '...', $text: '...', $source: 2 as const, $named: true as const }`
- * - **Referenced parameterless compound**: factory call expression from
- *   `ref.stampExpression` — e.g. `"breakExpression()"`.
- *
- * @remarks
- * This function replaces the field-only `autoStampExpression()` inside factories.ts
- * for the general case. The factories.ts private function is kept as-is for backwards
- * compat; this helper is the authoritative version for emitters that need to handle
- * children slots too.
- */
 export function stampExpressionFor(
 	slot: AssembledNonterminal,
 	nodeMap: NodeMap,
@@ -452,23 +316,6 @@ export type TypeComponent =
 	| { kind: 'literal'; value: string; resolvedKindId?: number }
 	| { kind: 'missing'; value: string; rawKind: string };
 
-/**
- * Compute the shared {@link TypeComponent} list for a field slot.
- *
- * Pure derivation over the slot's `values`. Applies:
- *   1. Hidden-keyword inlining: `_kw_async` → literal `"async"`.
- *   2. NodeMap lookup: resolved kind → `nodeKind`; missing → `missing`
- *      (with a PascalCase fallback name for consumers that need one).
- *
- * Used by `types.ts::fieldTypeExpr` and `factories.ts::fieldElementType`
- * — previously two parallel walkers with near-identical logic, differing
- * only in prefix choice and missing-kind handling.
- *
- * @param field - The field whose slot values drive the projection.
- * @param nodeMap - The assembled node map for kind resolution.
- * @returns Ordered components (in the order the kinds / literals appear
- *   in `field.values`). Callers deduplicate at emission time.
- */
 export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMap): TypeComponent[] {
 	const out: TypeComponent[] = [];
 	for (const v of field.values) {
@@ -494,17 +341,6 @@ export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMa
 	return out;
 }
 
-/**
- * Compute the shared {@link TypeComponent} list for a children slot.
- *
- * Child slots intentionally project only constructible / drillable node refs.
- * Inline terminal values in the grammar (separator commas, keywords like
- * `"from"`, etc.) are filtered out by the wrap layer and never appear in the
- * public children accessor surface, so the type projection must ignore them too.
- *
- * Hidden keyword refs are still inlined to string literals because they are
- * node-backed slots the public surface can carry.
- */
 export function childTypeComponents(child: AssembledNonterminal, nodeMap: NodeMap): TypeComponent[] {
 	const out: TypeComponent[] = [];
 	for (const rawKind of slotKindNames(child)) {
@@ -528,17 +364,6 @@ export function childTypeComponents(child: AssembledNonterminal, nodeMap: NodeMa
 // Keyword-presence classifier (ADR-0012)
 // ---------------------------------------------------------------------------
 
-/**
- * Resolve a single NodeOrTerminal entry to a single literal string, or
- * `undefined` when the entry doesn't point at a single literal.
- *
- * Three sources:
- *   - TerminalValue → its `.value`.
- *   - NodeRef to a hidden `_kw_*` keyword kind (AssembledKeyword) or
- *     hidden single-string AssembledToken → the keyword/token text.
- *
- * Any other shape (non-literal node ref, unresolved ref) returns undefined.
- */
 function resolveEntryLiteral(entry: NodeOrTerminal, nodeMap: NodeMap): string | undefined {
 	if (isTerminalValue(entry)) return entry.value;
 	if (!isNodeRef(entry)) return undefined;
@@ -557,32 +382,6 @@ function resolveEntryLiteral(entry: NodeOrTerminal, nodeMap: NodeMap): string | 
 	return undefined;
 }
 
-/**
- * Classify a field's keyword-presence intent from its slot `values` +
- * per-value multiplicity. Returns `'boolean'` for `optional(single-literal)`
- * (or the degenerate `repeat(single-literal)`), `'bitflag'` for
- * `repeat(choice-of-literals)`, and `null` when the field isn't a
- * keyword-presence pattern.
- *
- * Shape criteria:
- *
- * - **`'boolean'`** — EITHER:
- *   - exactly one `values` entry, resolves to a single literal, multiplicity
- *     is `'optional'`; OR
- *   - every entry resolves to a literal AND every entry's multiplicity is
- *     `'array'` / `'nonEmptyArray'` AND the set of distinct literals has
- *     size exactly 1 (degenerate repeat-of-one-literal).
- *
- * - **`'bitflag'`** — every entry resolves to a literal AND every entry's
- *   multiplicity is `'array'` / `'nonEmptyArray'` AND the set of distinct
- *   literal values has size >= 2.
- *
- * - **`null`** otherwise — any non-literal NodeRef (a symbol pointing at
- *   a structural kind) disqualifies, as does mixed or required-single
- *   multiplicity.
- *
- * @see ADR-0012 for the motivation and the three-row taxonomy.
- */
 export function keywordPresenceKind(field: AssembledNonterminal, nodeMap: NodeMap): 'boolean' | 'bitflag' | null {
 	if (field.values.length === 0) return null;
 
@@ -609,10 +408,6 @@ export function keywordPresenceKind(field: AssembledNonterminal, nodeMap: NodeMa
 	return null;
 }
 
-/**
- * The single literal for a boolean-keyword field. Returns `undefined` if
- * the field is not a boolean-keyword field.
- */
 export function keywordPresenceValue(field: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
 	if (keywordPresenceKind(field, nodeMap) !== 'boolean') return undefined;
 	// For single-entry optional: the entry's literal. For degenerate
@@ -624,12 +419,6 @@ export function keywordPresenceValue(field: AssembledNonterminal, nodeMap: NodeM
 	return undefined;
 }
 
-/**
- * The ordered-unique literal set for a bitflag field. Returns an empty
- * array if the field is not a bitflag field. Order follows the order
- * the literals appear in the grammar's `values` array — that order is
- * the canonical render / enum-declaration order.
- */
 export function keywordPresenceValues(field: AssembledNonterminal, nodeMap: NodeMap): readonly string[] {
 	if (keywordPresenceKind(field, nodeMap) !== 'bitflag') return [];
 	const seen = new Set<string>();
@@ -644,11 +433,6 @@ export function keywordPresenceValues(field: AssembledNonterminal, nodeMap: Node
 	return out;
 }
 
-/**
- * Returns `true` when EVERY entry in the slot's `values` has multiplicity
- * `nonEmptyArray`. Used by the consts emitter to decide whether a bitflag
- * enum needs a `None = 0` member (repeat allows zero → yes, repeat1 no).
- */
 export function keywordPresenceIsNonEmptyRepeat(field: AssembledNonterminal): boolean {
 	if (field.values.length === 0) return false;
 	return field.values.every((v) => v.multiplicity === 'nonEmptyArray');
@@ -657,71 +441,6 @@ export function keywordPresenceIsNonEmptyRepeat(field: AssembledNonterminal): bo
 /** Rust struct-field storage for a `classifyPrimitiveField` verdict. */
 export type PrimitiveFieldStorage = { kind: 'boolean'; text: string } | { kind: 'verbatim' };
 
-/**
- * Classifies a slot whose ENTIRE value set is bare anonymous-literal
- * terminals (no node-ref at all — e.g. rust `self_parameter.self` is a bare
- * `field('self', 'self')` literal, not a reference to a keyword KIND) that
- * the Rust transport struct should type as a primitive (`bool` / `String`)
- * instead of routing through `rustTransportSlotType`'s node-ref-based
- * per-slot-enum / `AnyTransport` classification.
- *
- * `kindsOf()`-based slot classification (used to type the transport struct
- * field) intentionally skips `TerminalValue` entries, so a terminal-only
- * field is left with an empty kind set and no distinguishing content —
- * falling back to `AnyTransport`, which accepts neither wrap's collapsed
- * `bool` nor its bare verbatim string.
- *
- * Node-ref fields (to a keyword/token/pattern/branch/supertype KIND) are
- * deliberately EXCLUDED (gated out before consulting storage info at all):
- * a node-ref to a keyword/token/pattern kind already works today, because
- * that kind's OWN leaf transport struct has a manual `FromNapiValue`
- * accepting bare strings/booleans (see `renderLeafTransportNapiImpls`) —
- * e.g. rust `closure_expression.move_marker`, a node-ref to `_move_marker`.
- * A node-ref to an ordinary branch/supertype kind (e.g. `call_expression.
- * callee` → `_expression`) is a completely normal structural child —
- * `resolveFieldStorageInfo`'s `'verbatim'` result for THAT case means
- * "not a bounded keyword-literal set", not "wrap sends bare text"; treating
- * it as a primitive would be wrong (confirmed: an earlier version of this
- * function gated on `resolveFieldStorageInfo` alone and wrongly collapsed
- * ordinary structural fields to `String`).
- *
- * Within the terminal-only gate, `resolveFieldStorageInfo` (the SAME
- * slot-storage classification `wrap.ts` already uses) distinguishes what
- * wrap actually puts on the wire:
- *
- * - `'boolean'` — wrap collapses this to a JS `true`/absent boolean
- *   (rust `self_parameter.reference` → `&`, `closure_expression.async_marker`
- *   → `async`). The Rust field should be a plain `bool` carrying presence,
- *   with `text` the fixed literal to write when present.
- * - `'verbatim'` — the literal has no stamped catalog kind_id at all. Wrap
- *   sends the literal's raw text on the wire; the Rust field should be a
- *   plain `String`/`Option<String>` (mirroring the slot's own
- *   required/optional — NOT collapsed, unlike `'boolean'`) carrying it
- *   through.
- * - `'kindEnum'` — has a stamped catalog kind_id, but that alone does NOT
- *   mean wrap sends the numeric id: confirmed empirically (`tool
- *   probe-kind`), rust `self_parameter.self` and `extern_crate_declaration.
- *   crate` are ALSO `'kindEnum'` (each resolves to its own single keyword
- *   kind, `self`/`crate`) yet wrap sends raw TEXT (`"self"`/`"crate"`) —
- *   while `visibility_modifier_pub._pub` and `binary_expression.operator`
- *   are ALSO `'kindEnum'` and wrap sends the numeric kind_id. The
- *   discriminator is whether the resolved kind is VISIBLE in our model
- *   (`hidden === false` — has its own factory, e.g. `self`/`crate`: a user
- *   can construct one directly, so wrap treats it as a genuine leaf node
- *   and forwards its text) vs a pure hidden/anonymous marker (`hidden ===
- *   true`, e.g. `pub`, the `&&`/`+`/... operator tokens: no dedicated
- *   factory, so wrap forwards only the bare kind_id). Only the VISIBLE case
- *   gets `'verbatim'` treatment here; the hidden case is left alone —
- *   `AnyTransport`'s existing kind_id branch already resolves it correctly,
- *   and redirecting it to `String` breaks it (converting a raw napi Number
- *   into a Rust `String` fails).
- * - `'bitflag'` — also NOT covered; a separate concern with no observed
- *   regression.
- *
- * Multiple/array-multiplicity slots are also excluded (`undefined`) — no
- * observed case needs a `Vec<String>` carrier yet; safer to fall through to
- * the existing path than introduce untested Vec-of-primitive handling.
- */
 export function classifyPrimitiveField(
 	field: AssembledNonterminal,
 	nodeMap: NodeMap
@@ -833,16 +552,6 @@ export function computeFieldStorageInfo(nodeMap: NodeMap): void {
 	}
 }
 
-/**
- * Stamped text→member-kindId pairs for a kindEnum slot — the compile-time
- * fact the wrap projection uses to put NUMERIC member ids on the wire when a
- * reference site materializes the enum as its own wrapper node (`{ $type:
- * <wrapper id>, $text: "private" }`). Ids come from the construction-time
- * stamps only (`AssembledEnum.resolvedByText`, `TerminalValue.resolvedKindId`,
- * keyword/token catalog rows) — never a runtime text chase; a member with no
- * stamped id is simply absent (the projection falls back to text for it, and
- * the render-side enum's string branch still accepts that).
- */
 export function kindEnumTextIdPairs(
 	field: AssembledNonterminal,
 	nodeMap: NodeMap,
@@ -873,10 +582,6 @@ export function kindEnumTextIdPairs(
 	return out;
 }
 
-/**
- * Shared classification for the public field-storage contract emitted by the
- * generator.
- */
 export function resolveFieldStorageInfo(
 	field: AssembledNonterminal,
 	nodeMap: NodeMap,
@@ -894,28 +599,6 @@ export type { BranchSlotClass } from '../compiler/model/node-map.ts';
 export type FactoryShape = 'config' | 'spread' | 'text' | 'direct';
 export type ChildFactorySurface = 'direct' | 'spread';
 
-/**
- * Classify a branch/group/polymorph node's user-facing slot count — the ONE
- * source of truth for single-slot vs multi-slot detection.
- *
- * Filters out:
- * - Auto-stamp fields (constant-valued, stamped by factory)
- * - Hidden-infra fields (all-hidden-kind slots, parser infrastructure)
- * - Keyword-presence fields (boolean / bitflag keyword toggles)
- *
- * Returns `multiSlot` when 0 or 2+ user-facing slots remain (0 maps to
- * the parameterless factory path, which is a multi-slot degenerate).
- * Returns `singleSlot` with full metadata when exactly 1 survives.
- *
- * @remarks
- * Replaces ad-hoc `isSingleFieldDirect` checks in factories.ts,
- * factory-map.ts, and from.ts. Those call sites should migrate to
- * this function (Task 3).
- *
- * @param node - An AssembledNode (only `branch`, `group`, and `polymorph` modelTypes
- *   produce meaningful results; other modelTypes always return `multiSlot`).
- * @param nodeMap - The assembled node map, needed by the filtering helpers.
- */
 export function classifyBranchSlots(node: AssembledNode, nodeMap: NodeMap): BranchSlotClass {
 	if (!isSlotBearingCompound(node)) {
 		return { tag: 'multiSlot' };
@@ -943,11 +626,6 @@ export function classifyBranchSlots(node: AssembledNode, nodeMap: NodeMap): Bran
 	};
 }
 
-/**
- * Post-assembly pass: compute and store `slotClass` on every branch/group/
- * polymorph
- * node in the node map. Called from `generate.ts` after `hydrateSlotRefs`.
- */
 export function computeSlotClasses(nodeMap: NodeMap): void {
 	for (const [, node] of nodeMap.nodes) {
 		if (isSlotBearingCompound(node)) {
@@ -956,15 +634,6 @@ export function computeSlotClasses(nodeMap: NodeMap): void {
 	}
 }
 
-/**
- * Resolve the sole field eligible for the direct-value factory surface.
- *
- * @remarks
- * This is intentionally narrower than {@link classifyBranchSlots}: the slot
- * must be a named field slot (not an inferred child), and hidden
- * infrastructure kinds remain config-only even when they structurally
- * collapse to one field.
- */
 export function resolveSingleFieldFactorySlot(node: AssembledNode, nodeMap: NodeMap): AssembledNonterminal | undefined {
 	if (!isSlotBearingCompound(node)) return undefined;
 	if (node.kind.startsWith('_')) return undefined;
@@ -984,15 +653,6 @@ function configurableFactoryFields(fields: readonly AssembledNonterminal[], node
 	);
 }
 
-/**
- * Resolve the raw field names visible on a kind's factory surface.
- *
- * @remarks
- * Validator metadata uses this to decide when orphan `$children` should be
- * promoted back into named config slots. The field list must match the actual
- * factory surface, so auto-stamped fields, keyword-presence toggles, and
- * hidden infra are excluded.
- */
 export function resolveFactoryFieldNames(node: AssembledNode, nodeMap: NodeMap): readonly string[] | undefined {
 	switch (node.modelType) {
 		case 'branch':
@@ -1006,15 +666,6 @@ export function resolveFactoryFieldNames(node: AssembledNode, nodeMap: NodeMap):
 	}
 }
 
-/**
- * Resolve whether a branch factory consumes children directly instead of a config bag.
- *
- * @remarks
- * `direct` covers the single unnamed-child surface (`factory(child)`), while
- * `spread` covers repeated child surfaces (`factory(...children)`). Field-backed
- * direct factories intentionally return `null` here — they still consume a direct
- * value, but not through the children surface used by wrap/from dispatch.
- */
 export function classifyChildFactorySurface(node: AssembledNode, nodeMap: NodeMap): ChildFactorySurface | null {
 	// 'group' (e.g. `wrap.group()`'s own call site) and 'separatedList' both
 	// legitimately reach this function with a broad `AssembledNode` and
@@ -1040,40 +691,12 @@ export interface UnnamedChildSlotFacts {
 	readonly nonEmpty: boolean;
 }
 
-/**
- * Resolve the real multiplicity/requiredness/non-emptiness of a
- * container-shape branch's single unnamed child slot (`fields[0]`).
- *
- * @remarks
- * The single canonical source for these facts. `classifyFactoryShape`'s
- * 'direct'/'spread' label only says which calling convention applies — it
- * doesn't carry the shape's multiplicity/requiredness/non-emptiness, and
- * every call site that needs those (factories.ts, from.ts, test.ts) used to
- * re-derive them independently, which is how a hidden kind's required
- * singular unnamed slot (e.g. a polymorph's hoisted child, `_match_block`)
- * once got mislabeled 'spread' in one of those derivations despite its real
- * arity being singular. Read the facts from here instead of re-deriving them.
- *
- * Takes `fields` directly (not a full `AssembledNode`) since every call site
- * has already gated on container-shape-ness (typically via
- * `classifyChildFactorySurface(...) !== null`) before reaching for the slot
- * itself. Returns `null` when there's no field (not a container shape).
- */
 export function unnamedChildSlotFacts(fields: readonly AssembledNonterminal[]): UnnamedChildSlotFacts | null {
 	const slot = fields[0];
 	if (!slot) return null;
 	return { slot, multiple: isMultiple(slot), required: isRequired(slot), nonEmpty: isNonEmpty(slot) };
 }
 
-/**
- * Shared factory-shape classification used by emitters and validator metadata.
- *
- * @remarks
- * This encodes only the validator-relevant calling convention:
- * - `direct` => factory takes one direct value (sole field OR sole child)
- * - `spread` => factory takes positional children (`...children`)
- * - `config` => factory takes a config object
- */
 export function classifyFactoryShape(
 	node: AssembledNode,
 	nodeMap: NodeMap,
@@ -1242,18 +865,6 @@ export function classifyTemplateEmission(node: AssembledNode): TemplateEmission 
 	return 'emit';
 }
 
-/**
- * Derive a 128-entry ASCII word-class table from the grammar's Link-pinned
- * `wordMatcher` regex (SpacingWriter spec: "the Link-pinned wordMatcher
- * already carried on LinkedGrammar — no new configuration").
- *
- * Per-char classification uses the PAIR test rather than a single-char
- * match: a char is word-class iff it would EXTEND a word match ('a'+c
- * matches longer than 'a') or START one that the next word char joins
- * (c+'a' matches longer than c). This is grammar-faithful where a naive
- * single-char test fails — digits are word-INTERIOR for identifier-shaped
- * word patterns without being valid word STARTS.
- */
 export function wordCharAsciiTable(wordMatcher: RegExp): boolean[] {
 	const src = wordMatcher.source.replace(/\$$/, '');
 	const flags = wordMatcher.flags.replace(/[gm]/g, '');

@@ -46,18 +46,6 @@ export interface EmitTestsConfig {
 	expectTestFailures?: Readonly<Record<string, string>>;
 }
 
-/**
- * Returns the expected-value expression for a `toBe($type)` assertion.
- *
- * @remarks
- * When kindEntries is present (KindID pipeline), emits `TSKindId.X`. When
- * absent (legacy / unit-test path), falls back to `'<kind>'` string literal.
- *
- * @param kind - The grammar kind string.
- * @param kindEntries - Collected kind-enum entries, or `undefined` for fallback.
- * @param nodeMap - The assembled node map.
- * @returns Expression string suitable for `expect(node.$type).toBe(<expr>)`.
- */
 function testTypeDiscriminant(
 	kind: string,
 	kindEntries: readonly KindEnumEntry[] | undefined,
@@ -152,13 +140,6 @@ export function emitTests(config: EmitTestsConfig): string {
 	return lines.join('\n');
 }
 
-/**
- * Emit a branch test — dispatches to the container calling convention
- * (positional element args) when `classifyChildFactorySurface` recognizes
- * an unnamed child slot, otherwise falls through to the regular
- * field-carrying config-object test below. Single entry point so
- * `emitTests`' dispatch loop doesn't have to know about the two shapes.
- */
 function emitBranchTest(
 	lines: string[],
 	node: AssembledNode,
@@ -286,23 +267,6 @@ function emitContainerTest(
 	lines.push('');
 }
 
-/**
- * SeparatedList factories (`emitSeparatedListFactory`, factories.ts) take a
- * positional `elements` array — never a config object — so this mirrors that
- * function's own derivation of the content slot ({@link
- * buildSeparatedListContentSlot}) rather than routing through
- * `emitBranchTest`'s field-config-object shape. Builds a dummy for ONE
- * element via `dummyValueForField` and wraps it in an array literal here,
- * rather than delegating to `dummyValue` — `dummyValue`'s keyword-presence
- * fast path returns a bare scalar (`true` / `0 as never`) for the WHOLE
- * field before checking multiplicity, which is correct for a genuine
- * Config-object field but wrong for this synthetic elements slot (every
- * separatedList factory requires a real array, even when its content is
- * keyword/literal-shaped). This both satisfies `nonEmpty` lists'
- * `_assertNonEmpty` runtime check and guarantees non-empty render output —
- * so no separate empty-config render-test branch is needed here (unlike
- * `emitBranchTest`, which must accommodate an all-optional minimal config).
- */
 function emitSeparatedListTest(
 	lines: string[],
 	node: AssembledNode,
@@ -369,13 +333,6 @@ function emitLeafTest(
 	lines.push('');
 }
 
-/**
- * Pick a sample string that satisfies a tree-sitter leaf pattern.
- * Tries a handful of common shapes, returning the first that matches
- * (anchored full-string). When `pattern` is undefined the leaf accepts
- * arbitrary text and `'test'` is fine. Returns `null` when no
- * candidate matches and the test should be skipped.
- */
 function pickSampleForPattern(pattern: string | undefined): string | null {
 	if (!pattern) return 'test';
 	// Common candidates ordered loosely from "most likely to match
@@ -456,39 +413,6 @@ function emitEnumTest(
 	lines.push('');
 }
 
-/**
- * Resolve a slot's candidate kind names to the first one reachable that has
- * a plain leaf/keyword/enum/token shape (safe as a `$text`-only stub),
- * expanding supertypes recursively. Falls back to the first concrete
- * candidate (leaf or not) when no leaf-shaped descendant exists anywhere in
- * `candidates`.
- *
- * @remarks
- * PR (gen-tests-native-backend): this used to fall back to a
- * grammar-global "safe leaf" (`identifier`) whenever no leaf was found
- * among a *single* starting kind's supertype expansion. That is unsound:
- * `identifier` is frequently not a member of the target field's transport
- * slot at all (e.g. a `MatchPatternTransport` field, or a
- * `UnaryExpressionOperatorEnum` field), so native's strict transport
- * `FromNapiValue` rejects it ("unknown kind id 1 in ..."). The native JS
- * render engine tolerated this because it does not validate structural/enum
- * conformance — only the native transport layer does — so the bug was
- * invisible under `SITTIR_BACKEND=js`.
- *
- * The fix: only resolve *within* the field's own candidate kinds (plus
- * their supertype expansions), never substitute an unrelated kind from
- * elsewhere in the grammar. When every candidate is itself a branch
- * requiring nested structure, the caller ({@link buildDummyStub}) descends
- * into it recursively instead of stubbing it as a flat leaf.
- *
- * @param candidates - Kind names offered by the field (a supertype expands
- *   to multiple; a concrete kind is a single-element list).
- * @param nodeMap - Assembled node map for supertype/kind lookup.
- * @param kindEntries - Parser-symbol catalog; when provided, skips kinds
- *   that lack a parser symbol.
- * @returns A concrete kind name — prefers a leaf-shaped one, else the first
- *   concrete candidate found, else the first raw candidate.
- */
 function resolveConcreteKind(
 	candidates: readonly string[],
 	nodeMap: NodeMap,
@@ -535,22 +459,6 @@ function resolveConcreteKind(
  * see its docstring) rather than looping forever. */
 const MAX_DUMMY_DEPTH = 6;
 
-/**
- * Build a dummy expression for a single dummy value of the given field, for
- * use inside a larger stub literal (config-object value or array element).
- *
- * @remarks
- * Dispatches on the field's actual storage classification
- * ({@link resolveFieldStorageInfo}) before falling back to node-ref
- * resolution:
- *  - `boolean` / `bitflag` / `kindEnum` fields are terminal *text* fields at
- *    the factory Config surface (coerced via `coerceKindEnumStorage` et al.)
- *    — the dummy is the bare literal text, never a `{ $type, $text }` stub.
- *  - Node-ref fields resolve to a concrete kind within the field's own
- *    candidate set ({@link resolveConcreteKind}) and, when that kind is
- *    branch-shaped, recurse via {@link buildDummyStub} to satisfy its own
- *    required fields instead of emitting an under-structured leaf stub.
- */
 function dummyValueForField(
 	field: AssembledNonterminal,
 	nodeMap: NodeMap,
@@ -595,29 +503,6 @@ function dummyValueForField(
 	return buildDummyStub(concrete, nodeMap, kindEntries, depth, visiting);
 }
 
-/**
- * Build a complete dummy stub literal for `kind`, recursing into required
- * fields when `kind` is branch- or group-shaped.
- *
- * @remarks
- * Leaf/keyword/enum/token kinds are safe as flat `{ $type, $text, $source,
- * $named }` stubs (this is what native's transport `FromNapiValue` expects
- * for those shapes). Branch AND group kinds additionally require every
- * required field to be present and correctly shaped — a flat stub is
- * rejected with "Missing field `_x`" by the native transport. Groups
- * (`AssembledGroup`, `modelType === 'group'`) are the synthesized hidden
- * single-field wrapper kinds (e.g. `_match_arm_with_comma`) — structurally
- * a one-field record like a branch, just keyed via `.slots` instead of
- * `.fields` (see {@link allSlotsOf}). This function fills required fields
- * recursively for both shapes, bounded by {@link MAX_DUMMY_DEPTH} and a
- * per-branch `visiting` set (cycle guard for self-referential grammars).
- *
- * When recursion bottoms out (depth limit or cycle) the stub still declares
- * `$type`/`$text`/`$source`/`$named` but omits nested required fields —
- * this may still fail construction for pathological kinds, matching the
- * existing "skip when no safe sample found" precedent elsewhere in this
- * emitter (see {@link pickSampleForPattern}) rather than guessing further.
- */
 function buildDummyStub(
 	kind: string,
 	nodeMap: NodeMap,
@@ -684,16 +569,6 @@ function dummyValue(field: AssembledNonterminal, nodeMap?: NodeMap, kindEntries?
 	return dummyValueForField(field, nodeMap, kindEntries, 0, new Set());
 }
 
-/**
- * Returns a safe `$text` value for a stub node of the given kind.
- *
- * @remarks
- * Keyword kinds have a fixed text (e.g. `type`, `fn`, `async`) — using
- * a keyword stub with `$text: 'test'` fails transport validation because
- * `assertTextIn` enforces the exact keyword string. For non-keyword kinds
- * (leaves, enums, branches), `'test'` is accepted since their validators
- * either have no text constraint or accept arbitrary strings.
- */
 function dummyTextForKind(kind: string, nodeMap: NodeMap): string {
 	const node = nodeMap.nodes.get(kind);
 	if (!node) return 'test';

@@ -394,12 +394,6 @@ interface BitflagBinding {
 	readonly nonEmptyRepeat: boolean;
 }
 
-/**
- * Walk the NodeMap and emit a `const enum` declaration per bitflag-
- * classified field. Deduplicates by `constName`: when two fields
- * collapse to the same name and carry the same keyword set, a single
- * declaration serves both.
- */
 function emitBitflagConstEnums(lines: string[], nodeMap: NodeMap): void {
 	const bindings = collectBitflagBindings(nodeMap);
 	if (bindings.length === 0) return;
@@ -427,13 +421,6 @@ function emitBitflagConstEnums(lines: string[], nodeMap: NodeMap): void {
 	}
 }
 
-/**
- * Walk the NodeMap and collect one BitflagBinding per bitflag-
- * classified field across all structural and group kinds. Resolves
- * the const name with collision disambiguation — fields whose name
- * collapses to the same PascalCase identifier across kinds get a
- * kind-prefixed name instead of the bare field-name form.
- */
 function collectBitflagBindings(nodeMap: NodeMap): BitflagBinding[] {
 	const candidates: {
 		kind: string;
@@ -471,33 +458,14 @@ function collectBitflagBindings(nodeMap: NodeMap): BitflagBinding[] {
 	}));
 }
 
-/**
- * Compute the const enum name for a bitflag field from its property
- * name alone (collision-free form).
- *
- * Examples: `modifiers` → `Modifiers`, `functionModifiers` → `FunctionModifiers`.
- */
 export function bitflagBareConstName(propertyName: string): string {
 	return pascalCaseFromCamel(propertyName);
 }
 
-/**
- * Compute the disambiguated const enum name by prefixing the parent
- * kind.
- *
- * Example: `class_declaration.modifiers` → `ClassDeclarationModifiers`.
- */
 export function bitflagPrefixedConstName(kind: string, propertyName: string): string {
 	return pascalCaseFromSnake(kind) + pascalCaseFromCamel(propertyName);
 }
 
-/**
- * Resolve the bitflag const name for a given kind + field pair.
- *
- * This must agree with {@link collectBitflagBindings} — callers in
- * other emitters (types / factories / from) use this to reference the
- * emitted name.
- */
 export function resolveBitflagConstName(
 	kind: string,
 	field: AssembledNonterminal,
@@ -637,8 +605,6 @@ function pascalCaseFromCamel(s: string): string {
 	return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-/** Yield the fields of a node — branch, group, or (TEMPORARY, see
- * isSlotBearingCompound's doc comment, shared.ts) separatedList. */
 function fieldsOfNode(node: AssembledNode): readonly AssembledNonterminal[] {
 	switch (node.modelType) {
 		case 'branch':

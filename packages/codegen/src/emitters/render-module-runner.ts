@@ -21,12 +21,6 @@ export interface RunRenderModuleEmitterConfig {
 	jinjaTemplates?: EmittedTemplates;
 }
 
-/**
- * Drive the class-based emitter contract for render-module emission.
- * Mirrors the loop that emitAll() runs, but narrowed to TemplateEmitter
- * and RenderModuleEmitter. Use this in scripts and tests instead of
- * calling emitRenderModuleBundle directly.
- */
 export function runRenderModuleEmitter(config: RunRenderModuleEmitterConfig): RenderModuleBundle {
 	const templateEmitter = new TemplateEmitter({ grammar: config.grammar, nodeMap: config.nodeMap });
 	const renderModuleEmitter = new RenderModuleEmitter({

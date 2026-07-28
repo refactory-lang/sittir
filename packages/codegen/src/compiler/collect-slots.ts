@@ -61,15 +61,6 @@ import {
 } from './model/node-map.ts';
 import { findRepeatFlag } from '../dsl/rule-transforms.ts';
 
-/**
- * Walk a rule tree to find the first separator string nested inside it.
- * Mirrors `findRepeatFlag`'s descent through seq/choice members, but looks
- * for a separator string rather than a boolean flag. Used when the enclosing
- * slot-rule itself has no separator (e.g. an outer choice rebuilt by
- * `fanOutSeqChoices`/`factorChoiceBranches` carries only the rule id, not the
- * separator), but an inner arm carries the structured separator object set by
- * `applyWrapperDeletion`.
- */
 function findNestedSeparator(rule: AnyRule): RuleBase<'normalize'>['separator'] {
 	const sep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator;
 	if (sep !== undefined) return sep;
@@ -114,12 +105,6 @@ export function setUnnamedChoiceWarner(fn: (kind: string | undefined) => void): 
 	unnamedChoiceWarner = fn;
 }
 
-/**
- * Register an ADDITIONAL listener that fires alongside the default accumulator
- * (not instead of it). Used by `generate.ts` to forward unnamed-choice events
- * to the `DiagnosticSink` without breaking `drainUnnamedChoiceSlots`.
- * Returns a cleanup function to remove the listener.
- */
 export function addUnnamedChoiceListener(fn: (kind: string | undefined) => void): () => void {
 	_extraUnnamedChoiceListeners.push(fn);
 	return () => {
@@ -128,45 +113,20 @@ export function addUnnamedChoiceListener(fn: (kind: string | undefined) => void)
 	};
 }
 
-/**
- * Return + clear the kinds that produced an unnamed choice slot during
- * collection. The codegen CLI calls this after a run to emit one diagnostic
- * listing the kinds whose choice needs an explicit grammar field name.
- */
 export function drainUnnamedChoiceSlots(): string[] {
 	const out = [...collectedUnnamedChoiceKinds].sort();
 	collectedUnnamedChoiceKinds.clear();
 	return out;
 }
 
-/**
- * If every arm of a choice/polymorph carries the SAME `fieldName`, return it.
- * simplify strips a wrapping `field()`'s name off the choice node itself but
- * leaves it stamped on each arm (e.g. `field('operator', choice(<,>,...))` →
- * arms each `{ ..., fieldName: 'operator' }`). Recovering the shared name keeps
- * the choice slot correctly named instead of defaulting to `content`. Thin
- * adapter over the shared {@link sharedArmAttrs} arm-walk.
- */
 function sharedArmFieldName(rule: AnyRule): string | undefined {
 	return sharedArmAttrs(rule).fieldName;
 }
 
-/**
- * The strongest multiplicity carried by any direct arm of a choice/polymorph,
- * or `undefined` if no arm carries one. "Strongest" = most-multi:
- * nonEmptyArray > array > optional. Used to lift an array multiplicity that
- * simplify left on an inner arm (e.g. `choice(choice(X){nonEmptyArray}, X)`)
- * up to the outer choice slot. Thin adapter over {@link sharedArmAttrs}.
- */
 function strongestArmMultiplicity(rule: AnyRule): Multiplicity | undefined {
 	return sharedArmAttrs(rule).strongestMultiplicity;
 }
 
-/**
- * True iff this rule (anywhere in its tree, not crossing into a nested
- * nonterminal slot boundary) carries a `fieldName`. Used to decide whether a
- * choice arm is "structural" (contributes named fields) vs a bare union member.
- */
 function carriesNamedField(rule: AnyRule): boolean {
 	if ((rule as { fieldName?: string }).fieldName !== undefined) return true;
 	switch (rule.type) {
@@ -187,12 +147,6 @@ function carriesNamedField(rule: AnyRule): boolean {
 	}
 }
 
-/**
- * A "structural" choice has at least one arm that is a multi-member seq OR
- * carries distinct named fields — meaning the arms contribute their own field
- * slots rather than forming a single value union. Such a choice must be
- * distributed into its arms (and merged by name), not collapsed to one slot.
- */
 export function isStructuralChoice(rule: Extract<AnyRule, { type: 'CHOICE' }>): boolean {
 	// All arms field-named with the SAME name → operator-enum style; that is a
 	// single slot recovered by `sharedArmFieldName`, NOT structural.
@@ -242,14 +196,6 @@ export interface ChoiceArmPartition {
 	structuredArms: AnyRule[];
 }
 
-/**
- * True iff a named arm reduces (through a single-member seq unwrap) to
- * exactly one field-named slot node — no ambient literals, no additional
- * fields alongside it. Union-slot design §5 (PR 1.5): only a DEGENERATE named
- * arm is eligible for label-routing into the union; a multi-member seq or a
- * nested choice stays a `structuredNamedArms` gate (b)/(c) violation until
- * PR 3's group mint gives it a group kind instead.
- */
 function isDegenerateFieldArm(m: AnyRule): boolean {
 	let node = m;
 	while (node.type === SEQ && node.members.length === 1) node = node.members[0]!;
@@ -257,14 +203,6 @@ function isDegenerateFieldArm(m: AnyRule): boolean {
 	return (node as { fieldName?: string }).fieldName !== undefined && isSlotNode(node);
 }
 
-/**
- * Partition a choice's arms per the union-slot model. An arm is classified in
- * priority order: field-named (degenerate → union-by-label, else structured
- * → distribute) → nested choice / multi-member seq (structured, gate (b)
- * violation) → single-nonterminal reference (union member) → bare literal. A
- * single-member seq classifies as its sole member (simplify normally
- * collapses these; tolerate stragglers).
- */
 export function partitionChoiceArms(rule: Extract<AnyRule, { type: 'CHOICE' }>): ChoiceArmPartition {
 	const out: ChoiceArmPartition = {
 		degenerateNamedArms: [],
@@ -300,18 +238,8 @@ export function partitionChoiceArms(rule: Extract<AnyRule, { type: 'CHOICE' }>):
 	return out;
 }
 
-/**
- * Gate (b) of the union-slot design: a fieldless structural choice qualifies
- * for union routing iff it has ≥1 unnamed-nonterminal arm and every arm is
- * either field-named or an unnamed single-nonterminal reference. Gate (a)
- * (the union slot's projected storageName free in the owning rule) needs
- * whole-rule visibility and is checked at the `deriveSlots` boundary
- * (`_deriveSlotsInternal`, node-map.ts), not here.
- */
 export function unionRoutingGateB(partition: ChoiceArmPartition): boolean {
-	return (
-		partition.unionArms.length > 0 && partition.structuredArms.length === 0 && partition.literalArms.length === 0
-	);
+	return partition.unionArms.length > 0 && partition.structuredArms.length === 0 && partition.literalArms.length === 0;
 }
 
 /**
@@ -324,7 +252,6 @@ export function unionRoutingGateB(partition: ChoiceArmPartition): boolean {
  */
 let unionSlotRouting = process.env['SITTIR_UNION_SLOT_ROUTING'] !== '0';
 
-/** Toggle union-slot routing; returns the previous value (for save/restore). */
 export function setUnionSlotRouting(on: boolean): boolean {
 	const prev = unionSlotRouting;
 	unionSlotRouting = on;
@@ -340,14 +267,12 @@ export function setUnionSlotRouting(on: boolean): boolean {
  */
 const _synthesizedUnionChoiceIds = new Set<string>();
 
-/** Return + clear the choice rule-ids that synthesized a union slot. */
 export function drainSynthesizedUnionChoiceIds(): ReadonlySet<string> {
 	const out = new Set(_synthesizedUnionChoiceIds);
 	_synthesizedUnionChoiceIds.clear();
 	return out;
 }
 
-/** Compact one-line shape label for a choice arm (diagnostic messages only). */
 function describeArmShape(m: AnyRule): string {
 	const fieldName = (m as { fieldName?: string }).fieldName;
 	const prefix = fieldName !== undefined ? `field(${fieldName}):` : '';
@@ -361,7 +286,6 @@ function describeArmShape(m: AnyRule): string {
 	}
 }
 
-/** Depth-1 leaf label for {@link describeArmShape}. */
 function describeArmLeaf(m: AnyRule): string {
 	if (m.type === SYMBOL || m.type === SUPERTYPE) return m.name;
 	const value = (m as { value?: string }).value;
@@ -369,7 +293,6 @@ function describeArmLeaf(m: AnyRule): string {
 	return m.type.toLowerCase();
 }
 
-/** Merge same-named slots within one arm (collapse duplicate field positions). */
 function mergeByName(slots: AssembledNonterminal[]): AssembledNonterminal[] {
 	if (slots.length <= 1) return slots;
 	const out: AssembledNonterminal[] = [];
@@ -402,12 +325,6 @@ function mergeByName(slots: AssembledNonterminal[]): AssembledNonterminal[] {
 	return out;
 }
 
-/**
- * Merge per-arm slot lists from a structural choice. A field present in every
- * arm keeps its multiplicity; a field MISSING from some arm is relaxed to
- * optional (it may be absent depending on which arm the parse took). Values and
- * flank flags union across arms.
- */
 function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[] {
 	const merged = new Map<string, AssembledNonterminal>();
 	const presence = new Map<string, number>();
@@ -459,7 +376,6 @@ function mergeChoiceArms(arms: AssembledNonterminal[][]): AssembledNonterminal[]
 	return [...namedOut, ...unnamedOut];
 }
 
-/** Relax a slot's singular/required values to optional (cross-arm absence). */
 function relaxToOptional(slot: AssembledNonterminal): AssembledNonterminal {
 	return slot.with({
 		values: slot.values.map((v) =>
@@ -472,7 +388,6 @@ function relaxToOptional(slot: AssembledNonterminal): AssembledNonterminal {
 	});
 }
 
-/** True iff this node is a slot-bearing nonterminal (intrinsic or pushed-down). */
 function isSlotNode(rule: AnyRule): boolean {
 	if ((rule as { nonterminal?: boolean }).nonterminal === true) return true;
 	// isNonterminalRuleType classifies purely by `.type` + child shape — phase-
@@ -484,24 +399,6 @@ function isSlotNode(rule: AnyRule): boolean {
 	return isNonterminalRuleType(rule as Rule<'evaluate'>);
 }
 
-/**
- * The slot's effective multiplicity. Prefer the leaf's OWN pushed-down
- * `multiplicity`; fall back to the `inherited` value from the closest
- * structural ancestor that supplies one.
- *
- * The seq-inheritance band-aid is deleted: the seq case of `collectSlots`
- * no longer propagates `rule.multiplicity ?? inherited` — it just passes
- * `inherited` unchanged (always `'single'` in practice because seqs carry
- * no multiplicity after wrapper-deletion push-down). The `inherited` param
- * remains for the `clause` case, which unconditionally passes `'optional'`
- * so that fields inside a DSL clause node stay optional-typed.
- *
- * The nonEmptyArray → array relaxation is preserved: the at-least-one
- * guarantee of a repeat1 applies to the seq group as a whole, not to each
- * individual member slot. This covers inherited 'nonEmptyArray' from a
- * group/variant ancestor (push-down handles the seq-member case separately
- * by relaxing in the seq push-down itself).
- */
 function slotMultiplicity(rule: AnyRule, inherited: Multiplicity): Multiplicity {
 	const own = (rule as { multiplicity?: Multiplicity }).multiplicity;
 	if (own !== undefined) return own;
@@ -511,12 +408,6 @@ function slotMultiplicity(rule: AnyRule, inherited: Multiplicity): Multiplicity 
 	return inherited;
 }
 
-/**
- * Build ONE AssembledNonterminal for a single nonterminal node.
- *
- * `kindForName` is the synthesized branch kind (the rule's owning kind),
- * used only to label the unnamed-choice warning.
- */
 function buildSlot(
 	rule: AnyRule,
 	kindForName: string | undefined,
@@ -634,9 +525,9 @@ function buildSlot(
 	// choices rebuilt by `fanOutSeqChoices`/`factorChoiceBranches` (which carry
 	// only the rule id, not the separator) still inherit the separator from the
 	// arm that has it (e.g. the inlined `_import_list` arm with `sep=",trailing"`).
-	const ownOrInheritedSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
-	const nestedScanSep =
-		ownOrInheritedSep === undefined && isMultiSlot ? findNestedSeparator(rule) : undefined;
+	const ownOrInheritedSep =
+		(rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
+	const nestedScanSep = ownOrInheritedSep === undefined && isMultiSlot ? findNestedSeparator(rule) : undefined;
 	const sep = ownOrInheritedSep ?? nestedScanSep;
 	// `sep` is always the nested {value, trailing?, leading?} object (or
 	// undefined) post-PR-S — no more string/array shapes to type-dispatch on.
@@ -693,13 +584,6 @@ function buildSlot(
 	});
 }
 
-/**
- * Walk a wrapper-free RenderRule and collect one slot per nonterminal node.
- *
- * @param rule        wrapper-free rule (post `applyWrapperDeletion`)
- * @param kindForName owning branch kind name (for unnamed-choice warnings)
- * @param kindEntries generated kind table (for literal → kind resolution)
- */
 export function collectSlots(
 	rule: AnyRule,
 	kindForName?: string,
@@ -748,8 +632,7 @@ export function collectSlots(
 			// arms all alias to `block`, so the body slot mis-derives to `block`).
 			if ((rule as { fieldName?: string }).fieldName === undefined && isStructuralChoice(rule)) {
 				const armMult = (rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited;
-				const choiceSep =
-					(rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
+				const choiceSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
 				// Union-slot routing (2026-07-21 design §2): unnamed single-
 				// nonterminal arms collectively form ONE union slot; field-named
 				// arms keep distributing into named slots. Diagnostics fire on the
