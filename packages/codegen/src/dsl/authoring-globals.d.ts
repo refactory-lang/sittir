@@ -52,11 +52,14 @@ declare global {
 	// declared `const` with per-call-signature generics (an `interface` here
 	// would declare a type, not the global value, and a generic param on the
 	// container would make bare `token(...)` uninstantiable).
-	const token: {
+	declare const token: {
 		<R extends AuthoringRule>(rule: R): TokenRule<ToGrammarRule<R>>;
 		immediate<R extends AuthoringRule>(rule: R): ImmediateTokenRule<ToGrammarRule<R>>;
 	};
-	const prec: {
+
+
+
+	declare const prec: {
 		<R extends AuthoringRule>(value: number | string, rule: R): PrecRule<ToGrammarRule<R>>;
 		left<R extends AuthoringRule>(value: number | string, rule: R): PrecLeftRule<ToGrammarRule<R>>;
 		right<R extends AuthoringRule>(value: number | string, rule: R): PrecRightRule<ToGrammarRule<R>>;

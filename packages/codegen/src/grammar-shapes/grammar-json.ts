@@ -164,7 +164,7 @@ export type AuthoringRule = GrammarRule | string | RegExp;
 export type ToGrammarRule<S extends string | RegExp | GrammarRule> = S extends string
 	? StringRule<S>
 	: S extends RegExp
-		? PatternRule<S>
+		? PatternRule<string>
 		: S extends GrammarRule
 			? S
 			: S;

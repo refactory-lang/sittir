@@ -21,6 +21,7 @@ Thumbs.db
 # infigraph's local code-graph cache/index (embeddings, kuzu db, session logs)
 .infigraph/
 .claude/scheduled_tasks.lock
+.archive/
 # `.sittir/` is the per-grammar generated-output staging area. Its CONTENTS
 # are ignored, EXCEPT the well-known tracked artifacts un-ignored below — so
 # they're first-class tracked (no more `git add -f`, no "ignored" warnings,
@@ -84,3 +85,4 @@ packages/tools/src/**/*.d.ts.map
 # Local cargo build tuning (e.g. lld linker) — per-machine, requires lld installed
 .cargo/config.toml
 **/.DS_Store
+.infigraph-corrupt-backup-20260722-082016/

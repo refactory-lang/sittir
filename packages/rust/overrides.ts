@@ -7,10 +7,17 @@
  * @generated from overrides.json — review before committing
  */
 // tree-sitter's ambient DSL (`Rule` / `RuleOrLiteral` / `GrammarSchema` /
-// `GrammarSymbols` / `RuleBuilder` + `grammar` / `seq` / `choice` / `prec` /
-// `repeat` / `repeat1` / `optional` / `token` / ...) is pulled in via
-// `tree-sitter-cli/dsl.d.ts` in tsconfig.overrides.json `types` — NOT a
-// `/// <reference>` directive (that fails TS2688 under this rootDir).
+// `GrammarSymbols` / `RuleBuilder` + `seq` / `choice` / `repeat` / `repeat1` /
+// `optional` / ...) is pulled in via `tree-sitter-cli/dsl.d.ts` in
+// tsconfig.overrides.json `types` — NOT a `/// <reference>` directive (that
+// fails TS2688 under this rootDir). `prec` / `token` / `grammar` are NOT
+// ambient here: they're imported from dsl-authoring.ts below, which shadows
+// (via ordinary lexical scoping) tree-sitter's ambient versions with sittir's
+// own AuthoringRule-typed / GrammarResult-typed re-exports of the SAME
+// runtime-injected functions (see dsl-authoring.ts for why — `const`-declared
+// ambient globals don't merge as overloads across files the way
+// `declare function` does, and tree-sitter's `grammar()` expects a flat
+// `GrammarSchema` base rather than enrich()'s `{grammar:{…}}` shape).
 //
 // The wire payload is passed INLINE to `wire<EnrichedGrammar<RustGrammarShape>>(…)`
 // at the bottom of the file (see the comment there). The explicit type-arg
@@ -22,15 +29,16 @@
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
 
-import { transform, enrich, field, alias, variant, wire } from '../codegen/src/dsl/dsl-authoring.ts';
+import { transform, enrich, field, alias, variant, wire, prec, token, grammar } from '../codegen/src/dsl/dsl-authoring.ts';
 import type { RustGrammarShape } from '../codegen/src/grammar-shapes/grammar-shape.rust.ts';
 import type { EnrichedGrammar } from '../codegen/src/dsl/enrich.ts';
 
 // `string` is the ONE DSL primitive with no ambient/exported declaration: it
 // is a runtime global injected by tree-sitter's `grammar()`, used solely
-// inside the `renderAs` callback below. All other DSL fns (`seq` / `choice` /
-// `prec` / `repeat` / `repeat1` / `optional` / `token` / `grammar`) are
-// tree-sitter ambient now (see the `types` note above) — no stubs needed.
+// inside the `renderAs` callback below. `seq` / `choice` / `repeat` /
+// `repeat1` / `optional` are tree-sitter ambient (see the `types` note
+// above); `prec` / `token` / `grammar` are imported from dsl-authoring.ts
+// instead of ambient — no stubs needed either way.
 declare const string: (value: string) => unknown;
 
 // `enrich(base)` is defined BEFORE the wire payload so the inline
@@ -66,15 +74,12 @@ const enrichedBase = enrich(base);
 // `WireConfig<EnrichedGrammar<RustGrammarShape>>` (`$` is a typed
 // `ShapedSymbols`, each `previous`/`original` the precise per-rule shape).
 //
-// The `@ts-expect-error` below is the one designated suppression point
-// (per the file header): `enrich()` returns sittir's `GrammarResult`
-// (`{grammar: {…}}`) which wire's base-extraction handles at runtime, but
-// its static type doesn't match tree-sitter's flat `GrammarSchema` — so
-// `grammar(enrichedBase, …)`'s first arg is rejected. The directive keeps
-// this honest (it fails if the mismatch ever resolves) rather than a
-// silent cast. (The separate `conflicts`/`SymbolRule` errors inside the wire
-// payload are pre-existing and unrelated to this seam.)
-// @ts-expect-error — GrammarResult ({grammar:{rules}}) vs tree-sitter's flat GrammarSchema; runtime-handled by wire's base extraction.
+// `grammar` here is dsl-authoring.ts's own typed re-export of the
+// runtime-injected `grammarFn` (its real two-arg contract IS `(base:
+// GrammarResult, options: WiredOpts)`), not tree-sitter's ambient
+// `GrammarSchema`-based overloads — so `enrichedBase`'s `{grammar:{…}}`
+// shape needs no suppression here. (The separate `conflicts`/`SymbolRule`
+// errors inside the wire payload are pre-existing and unrelated to this seam.)
 export default grammar(
 	enrichedBase,
 	wire<EnrichedGrammar<RustGrammarShape>>(
@@ -997,11 +1002,11 @@ export default grammar(
 					const patched = transform(original, {
 						'-30': alias('token_tree_punctuation')
 					});
-					const members = (patched as unknown as { members: unknown[] }).members;
+					const members = patched.members;
 					return {
-						...(patched as unknown as object),
+						...patched,
 						members: [...members.slice(0, 8), $._token_keywords]
-					} as unknown as ReturnType<typeof transform>;
+					};
 				},
 
 				_token_keywords: ($) =>

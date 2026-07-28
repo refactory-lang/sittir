@@ -59,13 +59,3 @@ Tool outputs are automatically compressed to save context window budget.
 - `get_code_snippet` passes through uncompressed for edit accuracy
 - No action needed — compression is transparent and automatic
 <!-- END INFIGRAPH -->
-
-### Override parser comparison
-
-Comparing base tree-sitter WASM vs `packages/<grammar>/.sittir/parser.wasm` on the corpus:
-
-- rust: base parser errors `2`, override parser errors `12`, override-only regressions `10`
-- typescript: base parser errors `2`, override parser errors `31`, override-only regressions `29`
-- python: base parser errors `0`, override parser errors `1`, override-only regressions `1`
-
-So the remaining skip debt is primarily **override parser regression**, not validator/read-render-parse logic.

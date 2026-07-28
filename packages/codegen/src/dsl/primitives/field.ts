@@ -242,7 +242,7 @@ function buildTwoArgFieldResult(native: (n: string, c: Input) => unknown, name: 
 		return {
 			...reconstructed,
 			metadata
-		} as unknown as FieldLike;
+		};
 	}
-	return { ...initial, metadata } as unknown as FieldLike;
+	return { ...initial, metadata };
 }

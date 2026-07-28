@@ -3391,6 +3391,9 @@ function buildTwoArgFieldResult(native, name, content) {
 var field2 = field;
 var alias2 = alias;
 var transform2 = transform;
+var prec = globalThis.prec;
+var token = globalThis.token;
+var grammar = globalThis.grammar;
 
 // packages/rust/overrides.ts
 var enrichedBase = enrich(base_default);

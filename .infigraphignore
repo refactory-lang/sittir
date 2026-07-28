@@ -4,3 +4,4 @@ target/
 dist/
 __pycache__/
 .worktrees/oh, and
+.archive/

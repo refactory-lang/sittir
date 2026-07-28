@@ -243,6 +243,15 @@ importers:
       '@types/node':
         specifier: ^25.6.0
         version: 25.6.0
+      tree-sitter-python:
+        specifier: ^0.25.0
+        version: 0.25.0
+      tree-sitter-rust:
+        specifier: ^0.24.0
+        version: 0.24.0(tree-sitter@0.22.4)
+      tree-sitter-typescript:
+        specifier: ^0.23.2
+        version: 0.23.2
       typescript:
         specifier: ^7.0.2
         version: 7.0.2

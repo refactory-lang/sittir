@@ -385,13 +385,6 @@ export function emitGroupTemplate(node: AssembledGroup, ctx: EmitCtx): string {
 /** Full Jinja conditional: `{% if ... %}...{% endif %}` (incl. whitespace-strip variants). */
 const JINJA_COND_FULL_RE = /^(\{%-? if [^%]+-?%\})([\s\S]*)(\{%-? endif -?%\})$/;
 
-const SLOT_END: BoundaryEnd = { kind: 'slot' };
-const UNKNOWN_END: BoundaryEnd = { kind: 'unknown' };
-
-function literalEnd(text: string): BoundaryEnd {
-	return { kind: 'literal', text };
-}
-
 /**
  * A virtual word-like character used to stand in for slot emissions
  * (`{{ name }}`) and other dynamic content whose runtime first/last char

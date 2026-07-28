@@ -1529,7 +1529,7 @@ function resolveNamedAliasWithProvenance(content: Rule<'link'>, ctx: LinkCtx, ta
 	const sym: SymbolRule<'link'> = aliasedFrom
 		? { type: SYMBOL, name: targetName, aliasedFrom, inline: false }
 		: { type: SYMBOL, name: targetName, inline: false };
-	return sym as unknown as Rule<'link'>;
+	return sym;
 }
 
 /**

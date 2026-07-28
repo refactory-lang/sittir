@@ -232,7 +232,7 @@ function walkRule(
 			// Simplified rules normally have wrappers deleted, but handle
 			// defensively. Content is in slot position (genuine group-lift position).
 			walkRule(
-				(rule as unknown as { content: Rule<'link'> }).content,
+				(rule as { content: Rule<'link'> }).content,
 				ownerKind,
 				records,
 				/* inSlotPosition= */ true,

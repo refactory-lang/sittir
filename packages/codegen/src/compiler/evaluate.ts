@@ -1544,13 +1544,21 @@ function resolveToEnumMembersOneLevelDeep(target: Rule<'evaluate'>): StringRule<
 }
 
 /**
+ * Read the wire context `wire()` stashes on `opts.__wireContext__` — a
+ * runtime-only channel not part of the public `GrammarOptions` shape.
+ */
+function getWireContext(opts: GrammarOptions): WireContext | undefined {
+	return (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+}
+
+/**
  * Read the refine() form metadata produced by the DSL during rule
  * evaluation. Returns `undefined` when no refine() calls fired (keeps
  * the `RawGrammar.refineForms` field absent rather than an empty map
  * for downstream consumers that check presence).
  */
 function drainRefineMetadata(opts: GrammarOptions): Map<string, RefineForm[]> | undefined {
-	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+	const wireCtx = getWireContext(opts);
 	if (!wireCtx || wireCtx.refineForms.size === 0) return undefined;
 	return new Map(wireCtx.refineForms);
 }
@@ -1561,7 +1569,7 @@ function drainRefineMetadata(opts: GrammarOptions): Map<string, RefineForm[]> | 
  * downstream consumers that check presence).
  */
 function drainGroupsMetadata(opts: GrammarOptions): Record<string, Record<string, string> | undefined> | undefined {
-	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+	const wireCtx = getWireContext(opts);
 	if (!wireCtx || !wireCtx.groups) return undefined;
 	const raw = wireCtx.groups as Record<string, unknown>;
 	// Filter out body-pattern entries (function values) — those are
@@ -1584,7 +1592,7 @@ function drainGroupsMetadata(opts: GrammarOptions): Record<string, Record<string
 function drainPolymorphsConfigMetadata(
 	opts: GrammarOptions
 ): Record<string, Record<string, string> | undefined> | undefined {
-	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+	const wireCtx = getWireContext(opts);
 	if (!wireCtx || !wireCtx.polymorphsConfig) return undefined;
 	const p = wireCtx.polymorphsConfig as Record<string, Record<string, string> | undefined>;
 	if (Object.keys(p).length === 0) return undefined;
@@ -1599,7 +1607,7 @@ function drainPolymorphsConfigMetadata(
  * consumers that check presence).
  */
 function drainExpectDiagnosticsMetadata(opts: GrammarOptions): Record<string, readonly string[]> | undefined {
-	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+	const wireCtx = getWireContext(opts);
 	if (!wireCtx || !wireCtx.expectDiagnostics) return undefined;
 	// WireConfig's Partial<Record<...>> admits undefined values; drop them so
 	// RawGrammar.expectDiagnostics carries only defined kind lists.
@@ -1619,7 +1627,7 @@ function drainExpectDiagnosticsMetadata(opts: GrammarOptions): Record<string, re
  * block was supplied, mirroring {@link drainExpectDiagnosticsMetadata}.
  */
 function drainExpectTestFailuresMetadata(opts: GrammarOptions): Record<string, string> | undefined {
-	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+	const wireCtx = getWireContext(opts);
 	if (!wireCtx || !wireCtx.expectTestFailures) return undefined;
 	const e: Record<string, string> = {};
 	for (const [kind, reason] of Object.entries(wireCtx.expectTestFailures)) {
@@ -1638,7 +1646,7 @@ function drainExpectTestFailuresMetadata(opts: GrammarOptions): Record<string, s
  * would otherwise raise.
  */
 function drainOrphanedSyntheticGroupsMetadata(opts: GrammarOptions): readonly string[] | undefined {
-	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+	const wireCtx = getWireContext(opts);
 	if (!wireCtx || wireCtx.orphanedSyntheticGroups.size === 0) return undefined;
 	return [...wireCtx.orphanedSyntheticGroups];
 }
@@ -1667,7 +1675,7 @@ function drainOrphanedSyntheticGroupsMetadata(opts: GrammarOptions): readonly st
  */
 function drainRenderAsMetadata(opts: GrammarOptions, ctx: EvaluateCtx): Record<string, Rule<'evaluate'>> | undefined {
 	const { rules, refs, provenanceByKind } = ctx;
-	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+	const wireCtx = getWireContext(opts);
 	if (!wireCtx || !wireCtx.renderAs) return undefined;
 
 	const $ = createProxy('_renderAs_', refs);
@@ -1711,7 +1719,7 @@ function drainVisibleExternalsMetadata(
 	ctx: EvaluateCtx
 ): Record<string, Rule<'evaluate'>> | undefined {
 	const { rules, refs, provenanceByKind } = ctx;
-	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+	const wireCtx = getWireContext(opts);
 	if (!wireCtx || !wireCtx.visibleExternals) return undefined;
 
 	const $ = createProxy('_visibleExternals_', refs);
@@ -1811,7 +1819,7 @@ function seedRefsFromBaseGrammar(baseGrammar: any): SymbolRef[] {
 function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
 	const { opts, refs, provenanceByKind } = ctx;
 	evaluateRuleFunctions(rules, ctx);
-	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+	const wireCtx = getWireContext(opts);
 	if (wireCtx) {
 		injectSyntheticRules(rules, ctx, wireCtx.deposits);
 		// Apply group-lift write-backs BEFORE body-pattern injection and
@@ -2625,7 +2633,7 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
  * Tree-sitter's grammar(base, { rules }) handles extension merging natively.
  */
 export async function evaluate(entryPath: string): Promise<RawGrammar> {
-	const g = globalThis as unknown as Record<string, unknown>;
+	const g = globalThis as Record<string, unknown>;
 	const savedGlobals = saveAndInjectDslGlobals(g);
 
 	try {
