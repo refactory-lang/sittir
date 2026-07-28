@@ -64,7 +64,6 @@ export function classifyByType(
 		case OPTIONAL:
 		case VARIANT:
 		case GROUP:
-			// Recursive: nonterminal iff any child is.
 			return anyChildNonterminal ? 'nonterminal' : 'terminal';
 		default:
 			return assertNever(ruleType);

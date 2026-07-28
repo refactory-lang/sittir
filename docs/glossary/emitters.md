@@ -5842,3 +5842,83 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * (`$type`/`$text`/`$source`/`$named`, omitting nested required fields —
  * see its docstring) rather than looping forever. */
 ```
+
+### `TransportLiteral.resolvedKindId` (`packages/codegen/src/emitters/transport-projection.ts`)
+
+The mint-time literal-chain id (`NodeRef.resolvedKindId`) carried through from
+the terminal value. Absent for kind-derived literals (keyword/token model
+nodes) and hidden-keyword inlines — those fall back to emit-time chain
+resolution.
+
+### `buildNodeModel` — folding in factory-map (`packages/codegen/src/emitters/node-model.ts`)
+
+ALL of factory-map's sections are folded in through the SINGLE shared builder,
+so there is one derivation and validators only READ. `factoryShapes` /
+`factoryFields` attach per-node; `polymorphVariants` / `factorySlots` /
+`fieldAliasMap` go top-level.
+
+The per-field data carries the raw facts (`required` / `multiple` /
+`nonEmpty` plus `values[].parseKind`), but the alias-source pairing and the
+factory-emitting-kind FILTER live only in `buildFactoryMap`. Serializing that
+builder's finished output is what keeps the filtering logic single-sourced and
+the validator maps byte-identical to the factory-map output.
+
+### `collectVariantAdoptedBranches` (`packages/codegen/src/emitters/factory-map.ts`)
+
+Variant-adopted branches are kinds that went through Link's push-down
+(`pushAmbientScaffoldIntoVariantChildren`): they classify as `branch` but still
+carry the variant-child kinds on `variantChildKinds`. They must land in
+`polymorphVariants` so that `.from()`-dispatch and the validator's deep-read
+path both know which kinds participate in `variant()` adoption.
+
+### `mapVariantChildKindsToSuffixes` (`packages/codegen/src/emitters/factory-map.ts`)
+
+Uses `prefixNamedSuffix` (`compiler/variant-structural.ts`) rather than a raw
+`${kind}_` slice. The raw slice is unsound when `kind` is hidden: a hidden
+parent's visible target strips its OWN leading `_` independently of the
+parent's, per `polymorphVisibleName`'s convention — `_match_block` yields
+`match_block_block`, not `_match_block_block`. It falls back to the full name
+only for the (currently unobserved) shape where the target doesn't prefix-match
+at all.
+
+### `pushAliasMintedArmParseNames` (`packages/codegen/src/emitters/factory-map.ts`)
+
+`alias($._hidden, $.visible)` ALWAYS materializes a real node under its PARSE
+name at the arm's position — tree-sitter never splices through an aliased
+symbol — so the runtime child is keyed by that name. It is emitted ALONGSIDE
+the leaf expansion, because a slot may also reference the storage kind at
+un-aliased positions.
+
+The pair is the DECLARED `aliasedFrom` fact stamped at the link flatten
+(`SupertypeRule.subtypeParseNames`). Twin association is keyed on that fact and
+is never derived by adding or stripping an underscore.
+
+### `coversExactly` (`packages/codegen/src/emitters/transport-common.ts`)
+
+A slot only collapses onto a supertype transport when its kind set EQUALS the
+supertype's full resolved subtype set — a proper subset is not enough.
+
+A subset match would collapse the slot onto a wider supertype transport than it
+actually ranges over, and when that supertype is large and self-recursive the
+result is a native stack overflow: rust's `match_arm` slot
+`{attribute_item, inner_attribute_item}` is a 2-of-21 subset of
+`declaration_statement`, which transitively references `match_arm` again, so
+the generated `FromNapiValue` recurses through the whole statement graph.
+Subset slots instead fall through to `heterogeneous`, which emits a per-slot
+enum of exactly their kinds.
+
+### `addVisibleAliasNameOfHiddenKind` (`packages/codegen/src/emitters/transport-common.ts`)
+
+A hidden kind that is also the CONTENT of a named alias
+(`alias(symbol(_X), $.visible)`) shares its runtime kind id with that alias's
+visible name. The generated id catalog (`KIND_NAMES`, see `emitters/types.ts`)
+records the id under the VISIBLE name, not the raw hidden kind key — so without
+adding the alias target, `kindIdByKind.get(kind)` misses on the hidden key
+entirely and the id arm silently drops.
+
+### `emitIs` — numeric `$type` guard bodies (`packages/codegen/src/emitters/is.ts`)
+
+All producers emit a numeric `$type`, so the emitted guards compare numeric
+`TSKindId` values only. The one exception is the legacy path taken when
+`generatedIdTables` is absent — unit-test callers that bypass the full codegen
+pipeline — which falls back to string equality.

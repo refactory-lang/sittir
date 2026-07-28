@@ -47,7 +47,4 @@ export type {
 	PatchMap,
 	RenderAsConfig
 } from './wire/wire.ts';
-// `GrammarBase` was renamed `GrammarJson` (defined in grammar-shapes/, not
-// wire.ts) — re-exported here from its real source so this stable import
-// surface keeps offering the base-grammar-shape type under its current name.
 export type { GrammarJson } from '../grammar-shapes/grammar-json.ts';

@@ -49,10 +49,6 @@ export function traceAssembleNodes(phase: string, nodes: Map<string, AssembledNo
 		}
 		console.error(`[sittir-trace] ${phase}: '${k}'`);
 		console.error(`  modelType=${node.modelType} typeName=${node.typeName}`);
-		// Access the slots Record when present (AssembledBranch / AssembledGroup).
-		// Path A (post-removal of structuralFields/Children): trace prints the
-		// fields-only subset (named-grammar-field slots). The `.fields` getter
-		// on Branch / Group is the canonical "named slots" view that survived.
 		if ('slots' in node) {
 			const fields = (node as { fields: readonly AssembledNonterminal[] }).fields;
 			if (fields.length > 0) console.error(`  fields=${JSON.stringify(fields.map((f) => f.name))}`);

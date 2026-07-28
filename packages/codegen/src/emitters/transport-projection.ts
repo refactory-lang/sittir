@@ -7,10 +7,6 @@ import { fieldTypeComponents, resolveHiddenKeywordLiteral } from './shared.ts';
 export interface TransportLiteral {
 	readonly kind: string;
 	readonly text: string;
-	/* The mint-time literal-chain id (NodeRef.resolvedKindId) carried through
-	   from the terminal value. Absent for kind-derived literals (keyword/token
-	   model nodes) and hidden-keyword inlines — those fall back to emit-time
-	   chain resolution. */
 	readonly resolvedKindId?: number;
 }
 

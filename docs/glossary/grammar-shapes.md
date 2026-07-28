@@ -197,3 +197,69 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /** FAST key strategy: segment-1 keys from the RAW shape (enrich-invariant for
  *  top-level member count). */
 ```
+
+### Parameterized rule shapes (`packages/codegen/src/grammar-shapes/grammar-json.ts`)
+
+`SeqRule` / `ChoiceRule` / … mirror tree-sitter's own discriminants, refined
+over content: containers are bound over `readonly GrammarRule[]`, and leaves
+mirror tree-sitter's `SymbolRule` shape structurally. `Rule` is the ambient
+tree-sitter union.
+
+`PrecRuleUnion` and `SingleContentWrapper` are the discriminant guards used by
+the purely type-level `Enrich<>` and path types.
+
+### `MutableDeep` (`packages/codegen/src/grammar-shapes/grammar-json.ts`)
+
+The readonly→mutable bridge, used ONLY to PROVE the subtyping ladder
+`GrammarJson ⊑ GrammarSchema<string>` (modulo readonly). It recursively strips
+`readonly` so containers become `members: GrammarRule[]` (mutable), which IS
+assignable to tree-sitter's `Rule`. It is not used at any runtime or navigation
+site — it exists purely as an assertion aid.
+
+### `PeelPrec` / `TopLevelKeys` (`packages/codegen/src/grammar-shapes/path-type.ts`)
+
+`PeelPrec` resolves a single positional index against a rule's children after
+transparently peeling PREC wrappers.
+
+`TopLevelKeys` is the first-segment autocomplete layer — the cheap, perf-safe
+one. It is the union of valid top-level index segments for a rule (after the
+PREC peel), and editors offer these as completions for the first path segment.
+
+### `PathKey` (`packages/codegen/src/grammar-shapes/path-type.ts`)
+
+The type a transform patch-object KEY should have for rule `N`.
+
+Shallow-precise, deep-permissive. The FIRST segment autocompletes to the rule's
+real top-level INDICES (`TopLevelKeys`, bounds-checked), but `parsePath`
+(`dsl/transform/transform-path.ts`) also admits non-numeric first segments the
+type model cannot bounds-check: wildcard `_`, kind-match `(name)`,
+field-traversal `name:`, and reverse index `-N`. Those are accepted permissively
+so authored paths like `'(_expression)'`, `'_'`, and `'-1'` don't false-reject.
+Deeper segments degrade to free-form via the `/${string}` tail — the soundness
+rule is never to REJECT a deep path that can't be proven invalid.
+
+CRUCIAL: the precise numeric `TopLevelKeys` arm must be preserved. The
+permissive arms must NOT widen the whole union to `string`, or out-of-bounds
+numeric keys — `'7'` on a 2-arm choice — would be silently accepted. That
+out-of-bounds rejection is guarded by a negative-controlled
+`@ts-expect-error` in `intellisense-demo.test-d.ts`.
+
+### `TransformPatchMap` / `FastKeys` (`packages/codegen/src/grammar-shapes/path-type.ts`)
+
+`TransformPatchMap<R>` keys each patch entry by `PathKey<R>`
+(segment-1-precise) and values by the patch-value union. `TransformsFor<S>`
+maps EVERY rule kind in a schema to its `original`-shape's patch-map. That
+mapped type spans the whole rule set and is the standing type-checker PERF
+risk, so it is parameterized over `KeyOf<R>` — the key strategy can be swapped
+without touching the value/mapping machinery:
+
+- PRECISE keys — `PathKey<EnrichRule<R>>`, which instantiates `EnrichRule` per
+  rule. This is the cost driver.
+- FAST keys — `PathKey<R>` on the RAW rule. Top-level member count is
+  enrich-INVARIANT (enrich wraps in place and never adds or removes a top-level
+  member), so segment-1 autocomplete is identical without instantiating
+  `EnrichRule`. This is the perf fallback if PRECISE degrades check time.
+
+The type-only imports of the DSL primitive return interfaces keep the value
+axis DRY and introduce no runtime cycle — the primitives don't import
+`grammar-shapes`.

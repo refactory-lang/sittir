@@ -83,35 +83,33 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 		if (Object.keys(slots).length > 0) factorySlots[kind] = slots;
 	}
 
-	const polymorphVariants: Record<string, PolymorphVariantDescriptor> = {};
-	for (const [kind, node] of nodeMap.nodes) {
-		// Variant-adopted branches — kinds that went through Link's
-		// push-down (see link.ts `pushAmbientScaffoldIntoVariantChildren`)
-		// classify as branch but still carry the variant-child kinds on
-		// `variantChildKinds`. Emit them into polymorphVariants so
-		// `.from()`-dispatch and the validator's deep-read path both
-		// know which kinds participate in variant() adoption.
-		if (node.modelType === 'branch' && node.variantChildKinds.length > 0) {
-			if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
-			const childKind: Record<string, string> = {};
-			for (const visibleName of node.variantChildKinds) {
-				// `prefixNamedSuffix` (compiler/variant-structural.ts) — NOT a
-				// raw `${kind}_` slice, which is unsound when `kind` is hidden
-				// (a hidden parent's visible target strips its OWN leading `_`
-				// independently of the parent's, per `polymorphVisibleName`'s
-				// convention; e.g. `_match_block` → `match_block_block`, not
-				// `_match_block_block`). Falls back to the full name only for
-				// the (currently unobserved) shape where the target doesn't
-				// prefix-match at all.
-				const suffix = prefixNamedSuffix(kind, visibleName) ?? visibleName;
-				childKind[visibleName] = suffix;
-			}
-			polymorphVariants[kind] = { definedBy: 'override', childKind };
-			continue;
-		}
-	}
+	const polymorphVariants = collectVariantAdoptedBranches(nodeMap, aliasSet);
 
 	return { factoryShapes, fieldAliasMap, factoryFields, factorySlots, polymorphVariants };
+}
+
+function collectVariantAdoptedBranches(
+	nodeMap: NodeMap,
+	aliasSet: ReadonlySet<string>
+): Record<string, PolymorphVariantDescriptor> {
+	const polymorphVariants: Record<string, PolymorphVariantDescriptor> = {};
+	for (const [kind, node] of nodeMap.nodes) {
+		if (node.modelType !== 'branch' || node.variantChildKinds.length === 0) continue;
+		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
+		polymorphVariants[kind] = {
+			definedBy: 'override',
+			childKind: mapVariantChildKindsToSuffixes(kind, node.variantChildKinds)
+		};
+	}
+	return polymorphVariants;
+}
+
+function mapVariantChildKindsToSuffixes(kind: string, variantChildKinds: readonly string[]): Record<string, string> {
+	const childKind: Record<string, string> = {};
+	for (const visibleName of variantChildKinds) {
+		childKind[visibleName] = prefixNamedSuffix(kind, visibleName) ?? visibleName;
+	}
+	return childKind;
 }
 
 function shapeOf(node: AssembledNode, nodeMap: NodeMap): FactoryShape | null {
@@ -145,19 +143,7 @@ export function expandRuntimeDiscriminatorKinds(discriminatorKinds: readonly str
 			return;
 		}
 		visiting.add(normalized);
-		// Alias-minted arms: `alias($._hidden, $.visible)` ALWAYS materializes
-		// a real node under its PARSE name at the arm's position (tree-sitter
-		// never splices through an aliased symbol), so the runtime child is
-		// keyed by that name — emit it ALONGSIDE the leaf expansion (a slot may
-		// also reference the storage kind at un-aliased positions). The pair is
-		// the DECLARED `aliasedFrom` fact stamped at the link flatten
-		// (`SupertypeRule.subtypeParseNames`) — twin association is keyed on
-		// it, never derived by underscore add/strip.
-		for (const parseName of Object.values(node.subtypeParseNames ?? {})) {
-			if (seen.has(parseName)) continue;
-			seen.add(parseName);
-			expanded.push(parseName);
-		}
+		pushAliasMintedArmParseNames(node, seen, expanded);
 		for (const subtype of node.subtypes) visit(subtype);
 		visiting.delete(normalized);
 	}
@@ -166,4 +152,16 @@ export function expandRuntimeDiscriminatorKinds(discriminatorKinds: readonly str
 		visit(discriminatorKind);
 	}
 	return expanded;
+}
+
+function pushAliasMintedArmParseNames(
+	node: { readonly subtypeParseNames?: Readonly<Record<string, string>> },
+	seen: Set<string>,
+	expanded: string[]
+): void {
+	for (const parseName of Object.values(node.subtypeParseNames ?? {})) {
+		if (seen.has(parseName)) continue;
+		seen.add(parseName);
+		expanded.push(parseName);
+	}
 }

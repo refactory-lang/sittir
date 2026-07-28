@@ -144,10 +144,6 @@ function seqHasTopLevelRepeat(members: unknown[]): boolean {
 	return false;
 }
 
-// ---------------------------------------------------------------------------
-// Separator-variability qualification
-// ---------------------------------------------------------------------------
-
 function isNonterminalSeparatorType(t: string): boolean {
 	return isChoiceType(t) || isSymbolType(t) || typeEq(t, 'PATTERN');
 }

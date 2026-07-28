@@ -3357,58 +3357,15 @@ var overrides_default = grammar(
       name: "rust",
       conflicts: ($, previous) => [
         ...previous ?? [],
-        // match_arm split: the `seq(expr, ',')` vs block-ending variants
-        // expose a shared-prefix conflict with other expression
-        // contexts when the parser sees `… => if_expr (`.
         [$._expression_except_range, $._match_arm_block_ending],
-        // PR 3 un-inlining: `_path` (a minted visible-group arm source,
-        // filtered out of `inline:` so its mint survives to the parser)
-        // re-exposes the `for identifier • ::` prefix ambiguity with
-        // generic_pattern / generic_type_with_turbofish that inlining
-        // previously let the LR table merge — the fork tree-sitter
-        // itself suggests.
         [$.generic_type_with_turbofish, $.generic_pattern, $._path],
-        // (Removed: `[$._scoped_identifier_group1, $._scoped_type_identifier_group1]`
-        // and `[$.scoped_use_list, $._scoped_identifier_group1, $._use_wildcard_clause]`
-        // — their mint sources are gone under the `isSupertypeLike`
-        // structural mint decline; the names no longer exist.)
-        // Pair-only state of the turbofish trio above (`impl identifier
-        // • ::` — no generic_pattern in scope there).
         [$.generic_type_with_turbofish, $._path],
-        // `struct X ( crate • :: …` — `pub(crate)`-style visibility vs a
-        // crate-rooted path in tuple-struct field position.
         [$.visibility_modifier, $._path],
-        // PR 3 (2026-07-21 union-slot design): closure_expression's
-        // widened choice-arm mint (`_closure_expression_group1`) shares
-        // the `closure_parameters block • ';'` prefix with
-        // `_expression_except_range` — same class as the match_arm
-        // conflict just above.
         [$._expression_except_range, $._closure_expression_group1],
-        // visibility_modifier variant extraction: `pub(crate)` vs
-        // `crate::foo` share the `crate` prefix.
         [$.scoped_identifier, $.scoped_type_identifier, $._visibility_modifier_crate],
-        // visibility_modifier variant extraction: `pub` vs `pub(x)`
-        // share the `pub` prefix; parser needs lookahead.
         [$._visibility_modifier_pub],
-        // `_attributed_type_parameter` (body-pattern in groups:) and `_type`
-        // both can begin with `metavariable` — declare the conflict so
-        // tree-sitter uses lookahead instead of failing parser generation.
         [$._attributed_type_parameter, $._type],
-        // `_attributed_argument` = seq(repeat(attribute_item), _expression).
-        // Since repeat(attribute_item) can be zero, bare `_expression` is a
-        // valid `_attributed_argument`. This creates an LR ambiguity in
-        // array_expression's list-arm where elements share the same structural
-        // unit as call arguments. The conflict declaration allows tree-sitter's
-        // GLR mechanism to disambiguate at parse time.
         [$._attributed_argument]
-        // NOTE: two conflicts were added here for an earlier shape of the
-        // _token_tree_punctuation fix ([$._non_delim_token, ...] and
-        // [$._token_pattern, ...], both resolving a nested-repeat ambiguity
-        // from wrapping the alias in its own repeat1). Removed — the
-        // current shape (rules: below aliases the whole
-        // prec.right(repeat1(choice(...))) arm, no repeat of our own) has
-        // no inner repeat, so the ambiguity these existed to resolve no
-        // longer arises.
       ],
       polymorphs: {
         array_expression: { "2/0": "semi", "2/1": "list" },
@@ -3441,13 +3398,6 @@ var overrides_default = grammar(
           "1": "parens"
         },
         in_path: ($) => seq("in", $._path),
-        // --- body-pattern groups: tree-sitter visible-kind synthesis ---
-        // Each function-valued entry below declares a STRUCTURAL PATTERN.
-        // Codegen creates `_<key>` as the hidden rule body and rewrites every
-        // matching sub-tree as `alias($._<key>, $.<key>)` so tree-sitter emits
-        // the visible kind as a CST node. Without alias, tree-sitter inlines
-        // the hidden `_*` rule and the kind never appears at runtime — the
-        // transport-side slot remains permanently empty.
         attributed_field_declaration: ($) => seq(repeat($.attribute_item), $.field_declaration),
         attributed_enum_variant: ($) => seq(repeat($.attribute_item), $.enum_variant),
         attributed_parameter: ($) => seq(optional($.attribute_item), choice($.parameter, $.self_parameter, $.variadic_parameter, "_", $._type)),
@@ -3497,9 +3447,6 @@ var overrides_default = grammar(
           "1/0": field2("move_marker")
         },
         array_expression: [{ 1: field2("attributes") }],
-        // arguments: handled by the `attributed_argument` body-pattern group
-        // (see groups: above) — each call arg is synthesized as a visible
-        // `attributed_argument` kind, like `attributed_parameter`.
         attribute: {
           0: field2("path")
         },
@@ -3508,9 +3455,7 @@ var overrides_default = grammar(
         },
         bounded_type: {
           0: field2("left"),
-          // lifetime | _type | use_bounds [struct=0]
           2: field2("right")
-          // lifetime | _type | use_bounds [struct=1]
         },
         closure_expression: {
           "0/0": field2("static_marker"),
@@ -3532,51 +3477,19 @@ var overrides_default = grammar(
         generic_type_with_turbofish: {
           1: field2("turbofish")
         },
-        // generic_type: base rule unchanged. ADR-0006 dispatches via
-        // drillAs at alias-declared field sites so consumers see source-
-        // typed views (`generic_type_with_turbofish` with the turbofish
-        // template). Validators walk the wrapped tree, rewrite `$type`
-        // to source, and use the `generic_type_with_turbofish` reparse
-        // wrapper that accepts turbofish in a scoped-path context.
-        // impl_item: field('where_clause') at pos 5 (inferred from 86%
-        // agreement across 7 parents), plus polymorph at pos 6 —
-        // choice(field('body', declaration_list), ';'). The ';' arm is
-        // the trait-signature form (no body), which the template walker
-        // drops without a polymorph split.
-        //
-        // Field-promotion wave 1 (016 task #23):
-        //   - pos 0 = `optional('unsafe')` — leading `unsafe` marker on
-        //     `unsafe impl` blocks. Path `0/0` descends into the optional
-        //     and labels the bare literal as `unsafe_marker` (016 task
-        //     #30 naming convention). Kept hand-promoted because enrich's
-        //     auto-promotion at this position introduces extra spacing
-        //     in the rendered output (`unsafe impl Foo {}` round-trips
-        //     only with the manual override).
-        //   - pos 3/0/0 = `optional('!')` — the `!` in `impl !Send for X`
-        //     (negative trait impl). Path `3/0/0/0` reaches the bare `!`
-        //     literal inside the inner-seq's leading optional. The
-        //     `negative` name is context-specific (not `bang_marker`).
-        // impl_item — field promotion (unsafe_marker, negative) is handled inline in the
-        // rules: replacement (de-polymorph). Was:
-        // impl_item: { '0/0': field('unsafe_marker'), '3/0/0/0': field('negative') },
         index_expression: {
           0: field2("object"),
-          // _expression [struct=0]
           2: field2("index")
-          // _expression [struct=1]
         },
         macro_invocation: {
           2: field2("token_tree")
-          // token_tree [struct=0]
         },
         mod_item: [],
         negative_literal: {
           1: field2("value")
-          // integer_literal | float_literal [struct=0]
         },
         ordered_field_declaration_list: {
           1: field2("attributes")
-          // per-element group [struct=0]
         },
         or_pattern: {
           "0/0": field2("left"),
@@ -3589,11 +3502,8 @@ var overrides_default = grammar(
         },
         raw_string_literal: {
           0: field2("raw_string_literal_start"),
-          //  [struct=0]
           1: field2("string_content"),
-          // string_content [struct=1]
           2: field2("raw_string_literal_end")
-          //  [struct=2]
         },
         range_expression: {
           "0/0": field2("start"),
@@ -3605,44 +3515,27 @@ var overrides_default = grammar(
           "2/1": field2("end"),
           "3": field2("operator")
         },
-        // reference_expression — full rule replacement in `rules:` below.
-        // The reference-mode is a single optional choice slot whose arms are
-        // real alias kinds that OWN their full surface (`raw const` / `raw mut`),
-        // so `&` stays a bare mandatory literal and `& mut x` / `& x` render
-        // correctly with no polymorph/forms machinery. See rules: reference_expression.
         reference_pattern: {
           2: field2("pattern")
-          // _pattern [struct=1]
         },
         reference_type: {},
         self_parameter: {
           0: field2("reference")
-          // optional('&')
         },
         shorthand_field_initializer: {
           0: field2("attributes")
-          // attribute_item [struct=0]
-          // pos 1 $.identifier auto-labelled by enrich pass 1
         },
         source_file: {
           1: field2("statements")
-          // _statement [struct=1]
         },
         static_item: {
           2: field2("mutable_specifier")
-          // mutable_specifier [struct=1]
         },
-        // struct_item: three body shapes — brace (`{ ... }`), tuple
-        // (`(...)` + `;`), unit (`;`). Polymorph-split each into a visible
-        // variant so the trailing `;` on tuple/unit forms gets rendered
-        // (the flat template dropped it because `;` is an anonymous
-        // token not routed to any field).
         trait_item: {
           "1/0": field2("unsafe_marker")
         },
         try_expression: {
           0: field2("value")
-          // _expression [struct=0]
         },
         tuple_expression: {
           1: field2("attributes"),
@@ -3653,24 +3546,12 @@ var overrides_default = grammar(
         },
         type_item: {
           4: field2("where_clause"),
-          // where_clause [struct=1]
           7: field2("trailing_where_clause")
-          // where_clause [struct=2]
         },
-        // type_parameters: handled by `attributed_type_parameter` body-
-        // pattern in `groups:`. The parser conflict with `_type` (both
-        // begin with metavariable) is declared in `conflicts:` above.
-        // No override-side field-promotion needed.
         unary_expression: {
           0: field2("operator"),
-          // choice('-', '*', '!')
           1: field2("operand")
-          // $._expression
         },
-        // use_wildcard — manually re-authored in `rules:` below as a VISIBLE
-        // (non-inlined) clause group `_use_wildcard_clause`, so it has a real
-        // presence slot to gate the co-mandatory `::` (the enrich auto-hoist
-        // inlined it, losing presence → `::*`). See rules: use_wildcard.
         variadic_parameter: {},
         expression_statement: {
           0: variant("with_semi"),
@@ -3701,24 +3582,6 @@ var overrides_default = grammar(
           1: variant("bracket"),
           2: variant("brace")
         }
-        // _let_chain: left-recursive `_let_chain && let_condition` vs
-        // base `let_condition`. Hidden rule — tree-sitter flattens the
-        // recursion at parse time, so variant() adoption would emit
-        // unreachable `_let_chain_and` / `_let_chain_base` kinds. The
-        // non-canonical audit for this kind reflects the derive walker's
-        // view of an inlined helper; it doesn't surface as a user-facing
-        // shape. No variant() here — see the `_let_chain` entry in
-        // `rules:` below for the storagename-collision fix (field()
-        // naming, not variant()).
-        // block_comment: deferred. Inner choice at `1/0` branches on
-        // doc-marker form vs bare `_block_comment_content`, but the
-        // latter is an EXTERNAL token (lexer callback). Variant hoist
-        // tries to reference `_block_comment_content` from a generated
-        // hidden rule, and tree-sitter rejects it as "used as both an
-        // external token and a non-terminal rule." Resolving this
-        // needs either conflicts-awareness in the hoist or a
-        // merge-branches path that doesn't extract the external-token
-        // branch.
       },
       rules: {
         _token_tree_punctuation: ($) => choice(
@@ -3878,7 +3741,7 @@ var overrides_default = grammar(
         _inner_line_doc_comment_marker: string("!"),
         // //! inner line doc
         _outer_block_doc_comment_marker: string("*"),
-        // /** outer block doc */ (was '!' in MVP — typo)
+        // /** outer block doc */
         _inner_block_doc_comment_marker: string("!"),
         // /*! inner block doc */
         _raw_string_literal_start: string('r#"'),

@@ -12,50 +12,135 @@ the convention this glossary exists to serve — long rationale comments in
 
 ---
 
-### `conflicts` (`packages/rust/overrides.ts:88`)
+### Module preamble — where the DSL globals come from (`packages/rust/overrides.ts:9`)
 
-```text
-			// `previous` is the base grammar's conflicts list — concat so we
-			// don't drop the base entries (`$._type`, `$._pattern`, etc.).
-```
+Tree-sitter's ambient DSL (`Rule` / `RuleOrLiteral` / `GrammarSchema` /
+`GrammarSymbols` / `RuleBuilder` plus `seq` / `choice` / `repeat` / `repeat1` /
+`optional` / …) reaches this file through `tree-sitter-cli/dsl.d.ts` listed in
+`tsconfig.overrides.json`'s `types`, NOT via a `/// <reference>` directive —
+a reference directive fails with TS2688 under this `rootDir`.
+
+`prec` / `token` / `grammar` are deliberately NOT ambient here. They are
+imported from `dsl-authoring.ts`, which shadows tree-sitter's ambient versions
+through ordinary lexical scoping with sittir's own `AuthoringRule`-typed /
+`GrammarResult`-typed re-exports of the SAME runtime-injected functions.
+`dsl-authoring.ts` explains why: `const`-declared ambient globals don't merge
+as overloads across files the way `declare function` does, and tree-sitter's
+`grammar()` expects a flat `GrammarSchema` base rather than `enrich()`'s
+`{ grammar: { … } }` shape.
+
+### `string` (`packages/rust/overrides.ts:26`)
+
+`string` is the ONE DSL primitive with no ambient or exported declaration: it
+is a runtime global injected by tree-sitter's `grammar()`, used solely inside
+the `renderAs` callback. Everything else is either ambient (see the module
+preamble entry above) or imported, so this is the only stub the file needs.
+
+### `enrichedBase` (`packages/rust/overrides.ts:28`)
+
+Two reasons this is a named binding declared before the wire payload rather
+than an inline `enrich(base)` argument.
+
+Type inference: the inline `wire({…}, enrichedBase)` call infers `wire`'s `B`
+type-param from `enrichedBase` (typed `EnrichedGrammar<RustGrammarShape>`), and
+that inference contextually types the config literal against
+`WireConfig<EnrichedGrammar<RustGrammarShape>>` — every rule/transform/groups/
+conflicts callback's `$` is a typed `ShapedSymbols`, and each
+`previous`/`original` is the precise per-rule post-enrich shape, with no
+explicit `WireConfig` annotation anywhere. Hoisting the payload into a separate
+`const config = {…}` would lose all of that: its callback params would infer as
+implicit `any`, because the literal has no contextual type at its declaration
+site.
+
+Behaviour: `wire` needs the enriched base so body-pattern groups (the
+function-valued entries in `groups:`) can walk base rules and inject
+pattern-replacing passthroughs. Without the base arg, unoverridden base rules
+bypass pattern replacement and tree-sitter never emits the `alias()`-wrapped
+visible kinds.
+
+### `wire<EnrichedGrammar<RustGrammarShape>>` (`packages/rust/overrides.ts:32`)
+
+The explicit type-arg binds `B` to the lazy `EnrichedGrammar<RustGrammarShape>`
+alias rather than letting it reach `WireConfig<B>` as a fresh generic
+parameter. That distinction is load-bearing: a generically-parameterized
+`config: WireConfig<B>` forces TS to eagerly instantiate the precise
+`TransformsConfig<B>` mapped-type branch while contextually typing the literal,
+which trips TS2589 ("excessively deep"). The concrete alias is evaluated lazily
+and stays shallow. The type-arg is the only `EnrichedGrammar` reference left at
+a value position, and the inline literal is still fully checked against
+`WireConfig<EnrichedGrammar<RustGrammarShape>>`.
+
+`grammar` here is `dsl-authoring.ts`'s own typed re-export of the
+runtime-injected `grammarFn` — its real two-arg contract is
+`(base: GrammarResult, options: WiredOpts)`, not tree-sitter's ambient
+`GrammarSchema`-based overloads — so `enrichedBase`'s `{ grammar: { … } }`
+shape needs no suppression at this call site.
+
+### `conflicts` (`packages/rust/overrides.ts:35`)
+
+`previous` is the base grammar's conflicts list — concat so the base entries
+(`$._type`, `$._pattern`, etc.) aren't dropped. The sittir-added entries:
+
+- `[_expression_except_range, _match_arm_block_ending]` — the match_arm split
+  into `seq(expr, ',')` vs block-ending variants exposes a shared-prefix
+  conflict with other expression contexts when the parser sees `… => if_expr (`.
+- `[generic_type_with_turbofish, generic_pattern, _path]` — `_path` is a minted
+  visible-group arm source, filtered out of `inline:` so its mint survives to
+  the parser. Un-inlined it re-exposes the `for identifier ::` prefix ambiguity
+  with generic_pattern / generic_type_with_turbofish that inlining previously
+  let the LR table merge; this is the fork tree-sitter itself suggests.
+- `[generic_type_with_turbofish, _path]` — the pair-only state of the turbofish
+  trio above (`impl identifier ::`, where no generic_pattern is in scope).
+- `[visibility_modifier, _path]` — `struct X ( crate :: …`: `pub(crate)`-style
+  visibility vs a crate-rooted path in tuple-struct field position.
+- `[_expression_except_range, _closure_expression_group1]` —
+  closure_expression's widened choice-arm mint shares the
+  `closure_parameters block ';'` prefix with `_expression_except_range`; same
+  class as the match_arm conflict.
+- `[scoped_identifier, scoped_type_identifier, _visibility_modifier_crate]` —
+  visibility_modifier variant extraction: `pub(crate)` and `crate::foo` share
+  the `crate` prefix.
+- `[_visibility_modifier_pub]` — variant extraction again: `pub` and `pub(x)`
+  share the `pub` prefix, so the parser needs lookahead.
+- `[_attributed_type_parameter, _type]` — the `_attributed_type_parameter`
+  body-pattern and `_type` can both begin with `metavariable`; declaring the
+  conflict makes tree-sitter use lookahead instead of failing parser
+  generation.
+- `[_attributed_argument]` — `_attributed_argument` is
+  `seq(repeat(attribute_item), _expression)`, and since the repeat can be zero
+  a bare `_expression` is a valid `_attributed_argument`. That creates an LR
+  ambiguity in array_expression's list-arm, where elements share the same
+  structural unit as call arguments; the declaration lets GLR disambiguate at
+  parse time.
 
 ### `polymorphs` (`packages/rust/overrides.ts:145`)
 
-```text
-			// PR 3 (2026-07-21 union-slot design): `scoped_identifier`'s widened
-			// choice-arm mint (`_scoped_identifier_group1`) and
-			// `scoped_type_identifier`'s corresponding
-			// `_scoped_type_identifier_in_expression_position_group1` mint land
-			// in Rust's `identifier '::' ...` position — one of the grammar's
-			// most heavily hand-tuned ambiguities (turbofish generics vs.
-			// scoped path vs. generic pattern vs. tree-sitter's OWN internal
-			// `_scoped_type_identifier_group1` auto-naming for an anonymous
-			// hidden rule extracted from `scoped_type_identifier`'s own body).
-			// Adding pairwise/grouped `conflicts` entries for this cluster
-			// didn't converge — each lookahead context (bare, 'for', 'impl',
-			// generic_pattern-adjacent) needed a DIFFERENT rule combination,
-			// suggesting the ambiguity isn't a fixed closed set. Inlining the
-			// two mints we control instead dissolves their own LR states
-			// entirely (same technique already used above for
-			// `_except_clause_as_optional1`) — the alias at each reference
-			// site still produces its own labeled CST node (inlining
-			// substitutes the RULE's production at its call site; it doesn't
-			// touch the alias wrapping that call site), so union-slot routing
-			// is unaffected while the extra ambiguous state disappears.
-			// (Removed the PR 3 `inline:` additions for `_scoped_identifier_group1` /
-			// `_scoped_type_identifier_in_expression_position_group1` /
-			// `_scoped_type_identifier_group1` — those mints no longer exist under
-			// the `isSupertypeLike` structural mint decline, so there is nothing
-			// to dissolve; the surrounding rationale comment above is retained for
-			// history.)
-```
+Widened choice-arm mints that land in Rust's `identifier '::' …` position hit
+one of the grammar's most heavily hand-tuned ambiguities: turbofish generics vs
+scoped path vs generic pattern vs tree-sitter's OWN internal
+`_scoped_type_identifier_group1` auto-naming for an anonymous hidden rule
+extracted from `scoped_type_identifier`'s body.
 
-### `macro_definition` (`packages/rust/overrides.ts:176`)
+Adding pairwise or grouped `conflicts` entries for this cluster does not
+converge — each lookahead context (bare, `for`, `impl`, generic_pattern-adjacent)
+needs a DIFFERENT rule combination, which says the ambiguity isn't a fixed
+closed set. The technique that works is inlining the mints sittir controls,
+dissolving their LR states entirely (the same move used for
+`_except_clause_as_optional1`). Union-slot routing survives: inlining
+substitutes the RULE's production at its call site and does not touch the alias
+wrapping that call site, so each reference still produces its own labeled CST
+node.
 
-```text
-				// impl_item — converted to a full rules: replacement (de-polymorph).
-				// Was: impl_item: { '6/0': 'body', '6/1': 'semi' },
-```
+Under the `isSupertypeLike` structural mint decline these particular mints are
+no longer produced, so there is currently nothing here to dissolve — but the
+ambiguity cluster and the inlining remedy both remain live if a mint lands in
+that position again.
+
+### `impl_item` — no polymorph entry (`packages/rust/overrides.ts`)
+
+`impl_item` is de-polymorphed: it is expressed as a full `rules:` replacement
+instead, because its co-optional trait clause has to render as a unit. See the
+`_impl_item_unsafe_marker` entry below.
 
 ### `range_pattern` (`packages/rust/overrides.ts:187`)
 
@@ -115,6 +200,21 @@ the convention this glossary exists to serve — long rationale comments in
 				// the choice becomes all-symbol (canonical) and every arm renders.
 				// (Followup: enrich should auto-lift structural choice arms.)
 ```
+
+### `groups` — body-pattern entries (`packages/rust/overrides.ts`)
+
+Every function-valued entry in `groups:` declares a STRUCTURAL PATTERN rather
+than a rule body. Codegen creates `_<key>` as the hidden rule body and rewrites
+every matching sub-tree as `alias($._<key>, $.<key>)`, so tree-sitter emits the
+visible kind as a real CST node. Without the alias, tree-sitter inlines the
+hidden `_*` rule, the kind never appears at runtime, and the transport-side
+slot stays permanently empty.
+
+Two positions are covered entirely by this mechanism and therefore have no
+`transforms:` entry of their own: call arguments (synthesized as the visible
+`attributed_argument` kind, mirroring `attributed_parameter`) and
+`type_parameters` (via `attributed_type_parameter`, whose `metavariable`
+overlap with `_type` is declared in `conflicts:`).
 
 ### `attributed_field_declaration` (`packages/rust/overrides.ts:253`)
 
@@ -456,6 +556,15 @@ the convention this glossary exists to serve — long rationale comments in
 				// reason as async_block (see note above).
 ```
 
+### `generic_type` (`packages/rust/overrides.ts`)
+
+The base rule is deliberately left unchanged. Dispatch happens via `drillAs` at
+alias-declared field sites, so consumers see source-typed views — a
+`generic_type_with_turbofish` carrying the turbofish template. Validators walk
+the wrapped tree, rewrite `$type` to source, and use the
+`generic_type_with_turbofish` reparse wrapper, which accepts a turbofish in a
+scoped-path context.
+
 ### `index_expression` (`packages/rust/overrides.ts:604`)
 
 ```text
@@ -564,6 +673,13 @@ the convention this glossary exists to serve — long rationale comments in
 ```text
 				// static_item: 2 field(s)
 ```
+
+### `struct_item` (`packages/rust/overrides.ts`)
+
+Three body shapes: brace (`{ … }`), tuple (`(…)` + `;`), and unit (`;`). Each
+is polymorph-split into its own visible variant so the trailing `;` on the
+tuple and unit forms gets rendered — the flat template dropped it, because `;`
+is an anonymous token not routed to any field.
 
 ### `trait_item` (`packages/rust/overrides.ts:720`)
 
@@ -677,6 +793,16 @@ the convention this glossary exists to serve — long rationale comments in
 				// Three delimiter-variants — distinct opening/closing literals per
 				// arm, same inner content. Split so each arm owns its template.
 ```
+
+### `block_comment` — no variant entry (`packages/rust/overrides.ts`)
+
+Deliberately absent from `variants:`. The inner choice at `1/0` branches on the
+doc-marker form vs a bare `_block_comment_content`, but the latter is an
+EXTERNAL token produced by a lexer callback. The variant hoist tries to
+reference `_block_comment_content` from a generated hidden rule, and
+tree-sitter rejects that as "used as both an external token and a non-terminal
+rule". Supporting it needs either conflicts-awareness in the hoist or a
+merge-branches path that leaves the external-token branch unextracted.
 
 ### `_token_tree_punctuation` (`packages/rust/overrides.ts:867`)
 
@@ -907,12 +1033,6 @@ the convention this glossary exists to serve — long rationale comments in
 			// delimiter-count parameter needed.
 			// Known-failing generated nodes.test.ts kinds — tracked defects, not
 			// silenced mysteries. Remove an entry + regen when its issue is fixed.
-```
-
-### `_outer_line_doc_comment_marker` (`packages/rust/overrides.ts:1218`)
-
-```text
-				// Doc comment markers
 ```
 
 ### `_raw_string_literal_start` (`packages/rust/overrides.ts:1223`)

@@ -1630,3 +1630,58 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * seq-fusion check that used to sit inline in this function.
  */
 ```
+
+### `dsl-authoring.ts` — module purpose (`packages/codegen/src/dsl/dsl-authoring.ts`)
+
+An authoring-typed facade over the DSL primitives, imported by `overrides.ts`.
+Same runtime implementations as `./index.ts`, but with grammar-shapes return
+types that are accurate in the tree-sitter authoring context, where these
+primitives produce tree-sitter-shaped rules. The loose dual-runtime
+`FieldLike` / `RuntimeRule` types stay codegen-internal — `overrides.ts` never
+sees them. One boundary cast per primitive asserts the authoring-context
+contract; runtime behaviour is unchanged.
+
+### `prec` / `token` (`packages/codegen/src/dsl/dsl-authoring.ts`)
+
+Both are runtime-injected by `saveAndInjectDslGlobals` (see
+`compiler/evaluate.ts`) before an `overrides.ts` module graph is evaluated —
+the same mechanism as `field` / `alias`'s underlying primitives. Unlike those
+two there is no sittir-owned `primitives/prec.ts` / `primitives/token.ts`
+runtime, because tree-sitter's own `prec` / `token` need no override-specific
+placeholder behaviour. So this module re-types the SAME injected global rather
+than re-implementing it.
+
+`overrides.ts` imports these and thereby shadows the ambient `prec` / `token`
+declared in `authoring-globals.d.ts`, via ordinary lexical scoping. That
+sidesteps the fact that `const`-declared ambient globals don't merge as
+overloads across files the way `declare function` does. `seq` / `choice` /
+`field` / `alias` / `optional` / `repeat` / `repeat1` / `sym` / `string` /
+`blank` merge fine and need no such treatment.
+
+### `grammar` (`packages/codegen/src/dsl/dsl-authoring.ts`)
+
+Runtime-injected the same way — this is `evaluate.ts`'s own `grammarFn`, NOT
+tree-sitter's ambient `grammar()`. Its real two-arg (extension) contract is
+`(base: <flat enriched grammar shape>, options: WiredOpts) => GrammarResult`:
+`enrich(base)` returns `EnrichedGrammar<B>`, the SAME flat `{ name, rules, … }`
+shape as `B` (sittir's readonly-tupled grammar-shape rules, each enriched) and
+not a `{ grammar: { … } }` wrapper, while `wire()` returns `WiredOpts`.
+`grammarFn`'s own return value IS `{ grammar: { … } }`-shaped
+(`GrammarResult`), which is what a base-extension call receives.
+
+Tree-sitter's ambient overloads instead expect a flat but MUTABLE
+`GrammarSchema` base. Typing this re-export against the real contract is what
+lets `overrides.ts` call `grammar(enrichedBase, wire(…))` without a
+suppression.
+
+### `mergeUnanimousAttrs` — separator comparison (`packages/codegen/src/dsl/rule-attrs.ts`)
+
+`separator` is the nested `{ value, trailing?, leading? }` fact, and the
+wrapper object carries no `.type` discriminant, so it is compared via
+`separatorFactsEqual` rather than the generic rule comparison.
+
+`separatorFactsEqual` narrows to whatever `rulesEqual`'s switch explicitly
+handles and returns `false` silently for a `.value` shape `rulesEqual` doesn't
+recognise. That is harmless today — a post-wrapper-deletion separator's
+`.value` is always a STRING literal at this point — but it is the thing to
+revisit if separators ever grow richer rule-shaped values.

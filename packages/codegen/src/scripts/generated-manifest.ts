@@ -43,8 +43,6 @@ import { fileURLToPath } from 'node:url';
 import { hostBinaryFreshnessFor } from './native-binary-freshness.ts';
 
 export const REPO_ROOT = (() => {
-	// File location: packages/codegen/src/scripts/generated-manifest.ts
-	// Repo root is 5 dirname() steps up from the file location.
 	const here = dirname(fileURLToPath(import.meta.url));
 	return dirname(dirname(dirname(dirname(here))));
 })();
@@ -147,7 +145,6 @@ function codegenSourceHash(): string {
 	const files: string[] = [];
 	walk(codegenSrc, files);
 	for (const f of files.sort()) {
-		// Skip generated `.js`/`.d.ts` companions and test directories.
 		if (f.endsWith('.js') || f.endsWith('.d.ts')) continue;
 		if (f.includes('/__tests__/')) continue;
 		// Consumer-side validators don't affect generated output.
@@ -163,7 +160,6 @@ function codegenSourceHash(): string {
 
 export function computeSourceHash(grammar: Grammar): string {
 	const hash = createHash('sha256');
-	// 1. Per-grammar source inputs (overrides.ts + package.json).
 	for (const input of sourceInputsFor(grammar)) {
 		if (existsSync(input)) {
 			hash.update(`${relative(REPO_ROOT, input)}\0`);
@@ -253,7 +249,6 @@ export function verifyManifestForGrammar(grammar: Grammar): VerifyResult {
 		result.sourceHashMismatch = true;
 	}
 
-	// Cross-platform `files`: every entry must exist and match.
 	const expectedFiles = new Set(Object.keys(manifest.files));
 	const actualFiles = new Set(collectFiles(grammar).map((f) => relative(REPO_ROOT, f)));
 	for (const [rel, expectedHash] of Object.entries(manifest.files)) {

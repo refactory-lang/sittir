@@ -49,8 +49,6 @@ export function toScreamingSnakeCase(memberName: string, rawKind: string): strin
 		return `${prefix}${cleaned}`;
 	}
 
-	// Insert an underscore before each interior uppercase letter, then
-	// upper-case the whole string.
 	const snake = cleaned
 		.replace(/([A-Z])/g, '_$1')
 		.replace(/^_/, '') // remove leading underscore added by replace
@@ -103,7 +101,6 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push(`    }`);
 	lines.push(`}`);
 
-	// Trailing newline — Rust convention.
 	lines.push('');
 
 	return lines.join('\n');

@@ -93,7 +93,6 @@ export function findKindEntryForLiteral(
 	kindEntries: readonly KindEnumEntry[],
 	literalText: string
 ): KindEnumEntry | undefined {
-	// Delegates to the shared literal-text chain.
 	return findEntryForLiteralText(kindEntries, literalText);
 }
 

@@ -46,12 +46,6 @@
  * hardcoded `RustSupertypes`).
  */
 
-// ---------------------------------------------------------------------------
-// Parameterized rule shapes — tree-sitter's discriminants, refined over content.
-// Containers bound over `readonly GrammarRule[]`; leaves mirror tree-sitter's
-// `SymbolRule` shape structurally. `Rule` is the ambient tree-sitter union.
-// ---------------------------------------------------------------------------
-
 export interface SeqRule<M extends readonly GrammarRule[] = readonly GrammarRule[]> {
 	readonly type: 'SEQ';
 	readonly members: M;
@@ -165,21 +159,9 @@ export interface GrammarJson {
 	readonly supertypeNames?: readonly string[];
 }
 
-// ---------------------------------------------------------------------------
-// Discriminant guards used by the (purely type-level) Enrich<> + path types.
-// ---------------------------------------------------------------------------
-
 export type PrecRuleUnion = PrecRule | PrecLeftRule | PrecRightRule | PrecDynamicRule;
 
 export type SingleContentWrapper = RepeatRule | Repeat1Rule | FieldRule | AliasRule | TokenRule | ImmediateTokenRule;
-
-// ---------------------------------------------------------------------------
-// MutableDeep<> — the readonly→mutable bridge used ONLY to PROVE the
-// subtyping ladder `GrammarJson ⊑ GrammarSchema<string>` (modulo readonly).
-// It recursively strips `readonly` so the result's containers become
-// `members: GrammarRule[]` (mutable), which IS assignable to tree-sitter's
-// `Rule`. Not used at any runtime/navigation site — purely an assertion aid.
-// ---------------------------------------------------------------------------
 
 export type MutableDeep<T> = T extends readonly (infer _U)[]
 	? { -readonly [K in keyof T]: MutableDeep<T[K]> }

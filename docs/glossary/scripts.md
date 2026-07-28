@@ -319,3 +319,24 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `hasUnnamedValue` guard — NOT allowlisted.
  */
 ```
+
+### `ALLOWLISTED_RENAMES` (`packages/codegen/src/scripts/reconcile-naming.ts`)
+
+Each entry records a slot-name divergence between the legacy identity and the
+recomputed projection that is EXPECTED and therefore must not fail the
+reconciliation gate. Three clusters, one per root cause:
+
+- `format_specifier.content` — the slot genuinely holds exactly one value, so
+  the recomputed name resolves to the kind, `format_expression`.
+- `_suite.block` — the opposite-direction correction (kind name → `content`).
+  `_suite`'s values have storage kinds `{_simple_statements, block, _newline}`,
+  all with `parseKind=block`. The storage-kind → storage-name derivation
+  therefore sees MULTI-storage and yields `content`, while the legacy name was
+  cross-wired to the parse name `block`. All five derived projections flip
+  `block` → `content`.
+- `match_block.match_arm` (rust) — the same multi-storage-kind pattern as
+  `_suite`. The arm slot holds `{match_arm, last_match_arm}`, two distinct
+  non-aliased storage kinds, so the derivation yields `content` while the
+  legacy name was cross-wired to the kind name `match_arm`. Whether
+  `last_match_arm` SHOULD be unified with `match_arm` so the slot reads
+  `matchArms` is a separate open design question, not part of this allowlist.

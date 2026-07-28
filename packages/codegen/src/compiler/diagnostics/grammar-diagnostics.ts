@@ -94,15 +94,13 @@ export function fromSlotGrouping(grammar: string, diagnostic: SlotGroupingDiagno
 		ownerKind: diagnostic.ownerKind,
 		message: diagnostic.message,
 		proposal: diagnostic.proposal,
-		// Forward the producer's canProceed verbatim (content-collision now always
-		// pushes false when it fires — the accepted-floor exception is applied by
-		// this function's caller, collectGrammarDiagnostics, where `grammar` is
-		// known; the other 3 SlotGroupingShape codes still always push
-		// canProceed: true) rather than hardcoding true here, which would silently
-		// swallow the flip.
 		canProceed: diagnostic.canProceed,
 		details: { slotCount: diagnostic.slotCount }
 	};
+}
+
+function isBlockingAssembleWarningCode(code: string): boolean {
+	return code === 'storagename-collision' || code === 'nonterminal-separator-unstamped';
 }
 
 function isExpectedDiagnostic(
@@ -137,12 +135,6 @@ export function collectGrammarDiagnostics(input: {
 }): { diagnostics: readonly GrammarDiagnostic[] } {
 	const parseKindMapped = input.parseKindCollisions.map((diagnostic) => ({
 		...fromParseKindCollision(input.grammar, diagnostic),
-		// Assemble-time parsekind-noninjective means enrich did NOT resolve this
-		// collision (an enrich-resolved one would already be gone from the
-		// grammar by assemble time) — always genuinely blocking. Enrich's own
-		// info-severity audit-trail diagnostics never reach this line (they merge
-		// in separately, in run-codegen.ts's getEnrichUnaliasDiagnostics path),
-		// so this override cannot affect them.
 		canProceed: false
 	}));
 	const deriveShapeMapped = (input.deriveShapeDiagnostics ?? []).map((diagnostic) =>
@@ -150,25 +142,12 @@ export function collectGrammarDiagnostics(input: {
 	);
 	const assembleWarningMapped = (input.assembleWarnings ?? []).map((warning) => {
 		const mapped = fromAssembleWarning(input.grammar, warning);
-		// Only specific assemble-warning codes block: storagename-collision (PR-L)
-		// and nonterminal-separator-unstamped (a zero-instance guard — any firing
-		// means a nonterminal separator reached the slot-value stamp path, which
-		// would silently render as a hardcoded space; see collect-slots.ts).
-		// typename-collision (the only other code sharing fromAssembleWarning)
-		// stays exactly as fromAssembleWarning already maps it (still has live,
-		// accepted, non-blocking instances) — do not touch fromAssembleWarning
-		// itself, which would flip it as a side effect.
-		if (warning.code !== 'storagename-collision' && warning.code !== 'nonterminal-separator-unstamped') return mapped;
+		if (!isBlockingAssembleWarningCode(warning.code)) return mapped;
 		if (isExpectedDiagnostic(input.expectDiagnostics, warning.code, warning.ownerKind)) return mapped;
 		return { ...mapped, canProceed: false };
 	});
 	const slotGroupingMapped = (input.slotGroupingDiagnostics ?? []).map((diagnostic) => {
 		const mapped = fromSlotGrouping(input.grammar, diagnostic);
-		// content-collision's producer (slot-grouping.ts) always emits canProceed:
-		// false when it fires — the expectDiagnostics exception is applied here
-		// instead, mirroring the storagename-collision override above. The other
-		// 3 SlotGroupingShape codes always push canProceed: true at their own
-		// construction sites, so this override never touches them.
 		if (
 			diagnostic.code === 'content-collision' &&
 			isExpectedDiagnostic(input.expectDiagnostics, diagnostic.code, diagnostic.ownerKind)
@@ -203,7 +182,6 @@ export function collectGrammarDiagnosticsForGrammar(input: { rawGrammar: RawGram
 	const nodeMap = assemble(
 		AssembleCtx.from(normalized, undefined, undefined, loadGrammarJsonAliasMap(input.rawGrammar.name))
 	);
-	// drain slot-grouping diagnostics populated during the normalizeGrammar() pass
 	const slotGroupingDiagnostics = drainSlotGroupingDiagnostics();
 	// §D-2c content-alias injectivity — sole consumer of the diagnostic-only
 	// contentAliasedTo map (empty today; guards a future violation).

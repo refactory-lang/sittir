@@ -12,20 +12,109 @@ the convention this glossary exists to serve — long rationale comments in
 
 ---
 
-### `conflicts` (`packages/typescript/overrides.ts:31`)
+### `base` import (`packages/typescript/overrides.ts:11`)
 
-```text
-			// Conflict markers for variant() adoption on kinds where splitting
-			// exposes LR(1) ambiguities the unsplit grammar resolved via shared
-			// state. Each entry names two or more rules tree-sitter should
-			// treat as requiring a GLR state so it can defer the decision
-			// until more input disambiguates. Hidden (`_foo`) and visible
-			// (`$.foo`) names are both valid here.
-			// `previous` is the TS grammar's own conflicts list (which
-			// itself concats the JS base's conflicts). Concat so we don't
-			// drop the base entries — we only ADD the new ones required by
-			// variant() adoption.
-```
+The import points at the **typescript** (non-tsx) grammar so the codegen
+surface matches the reparse target — `WASM_PATHS.typescript` loads the non-tsx
+wasm. Pointing it at `tsx/grammar.js` is harmless for a non-JSX corpus but a
+latent mismatch: anything JSX-shaped would reparse-fail. One grammar,
+end-to-end.
+
+### `enrichedBase` (`packages/typescript/overrides.ts:19`)
+
+`enrich(base)` is bound once and the SAME enriched grammar is handed to both
+`grammar()` and `wire()` (matching rust). `wire` needs the enriched base so its
+base-dependent passes — auto-group synthesis, body-pattern groups, and the
+enrich-hoisted-clause inline registration — operate on the post-enrich shape.
+Without the second argument those passes silently no-op, leaving
+enrich-hoisted clause groups un-inlined and producing LR conflicts.
+
+### `conflicts` (`packages/typescript/overrides.ts:25`)
+
+Conflict markers for `variant()` adoption on kinds where splitting exposes
+LR(1) ambiguities the unsplit grammar resolved via shared state. Each entry
+names two or more rules tree-sitter should treat as requiring a GLR state, so
+it can defer the decision until more input disambiguates. Hidden (`_foo`) and
+visible (`$.foo`) names are both valid.
+
+`previous` is the TS grammar's own conflicts list (which itself concats the JS
+base's conflicts). Concat so the base entries survive — this list only ADDS the
+entries `variant()` adoption requires.
+
+Per-entry rationale for the sittir-added groups:
+
+- `[sequence_expression, _parenthesized_expression_typed]` — the
+  parenthesized_expression split makes `( expression )` and
+  `( sequence_expression )` share the expression prefix, so the typed variant's
+  hidden rule competes with `sequence_expression` at `( expression •`. GLR
+  resolves on what follows.
+- `[sequence_expression, _parenthesized_expression_group1]` — same class, for
+  the widened mint's own group rule.
+- `[primary_expression, arrow_function]` — a latent `async` ambiguity the split
+  exposes. Previously tree-sitter resolved `async (` via state shared between
+  the typed parenthesized expression and arrow_function's call signature; with
+  the typed variant lifted to its own hidden rule the parser needs explicit GLR
+  to decide whether `async (` starts a call or an arrow function.
+- `[primary_expression, _property_name]` — `export` as `primary_expression` vs
+  as `_property_name`, which collide once the typed-parenthesized variant
+  brings more expression contexts into the same state.
+- `[string]` — the string refine rewrite is one fielded `seq` with a correlated
+  `contents` choice. Both content arms accept `escape_sequence`, so after the
+  opening quote tree-sitter needs GLR to defer which repeat arm owns the
+  fragment stream until more input arrives.
+- `[await_expression, _update_expression_postfix]` and its siblings — the
+  hoisted `_update_expression_postfix` / `_update_expression_prefix` hidden
+  rules inherit the outer `prec.left(0, …)`, but after extraction each has
+  `prec 0` individually and competes with `await_expression` (prec
+  `unary_void`) on `await expr • '++'` / `'++' • expr`. One unsplit rule
+  carried the whole choice under one prec declaration and the LR table handled
+  it internally; after splitting, GLR is the only resolver.
+- `[await_expression, _update_expression_group1]` — same ambiguity, inherited
+  by the widened mint's own group rule.
+- `[_variable_declarator_group1, _for_header_let_const_kind]` — a `for (let x`
+  shared-prefix ambiguity, surfaced when repointing
+  `_export_statement_default`'s nested `from_arm` alias onto its fully-split
+  polymorph home shifted rule registration order.
+- `[import, _meta_property_group2]` — the `import.meta` arm mint and the
+  `import` rule share the `import` keyword prefix.
+- `[primary_expression, _meta_property_group1]` — the `new.target` twin: the
+  mint shares the `new` keyword prefix with primary_expression's new_expression
+  arm.
+- `[_lhs_expression, _export_statement_equals_export]` — `export = <lhs>` and a
+  bare lhs expression statement share the expression prefix once the
+  export-statement mints are no longer inline-dissolved.
+- `[object_assignment_pattern, _lhs_expression]` (and its 3-way superset with
+  the `export =` arm) — cascade of the same un-dissolution: `{ x` may open an
+  object assignment pattern or a bare lhs.
+- `[function_type, _arrow_function__call_signature]` and
+  `[constructor_type, _arrow_function__call_signature]` — arrow-function family
+  cascade: the `_call_signature` polymorph helper and function_type share the
+  `( params )` prefix in type position.
+- `[_lhs_expression]` — the `_lhs_expression` cascade walks the whole type
+  family one pairwise suggestion at a time (primary_type → literal_type →
+  readonly_type → …), so GLR is declared on the union itself as well; same
+  singleton pattern as `[class]` and `[string]`.
+- `[primary_expression, _export_statement_default_from_arm]` /
+  `[…_decl_arm]` — the `_export_statement_default` outer split inherits the
+  outer `_export_statement_default` vs primary_expression conflict on the
+  `export` prefix, propagated to the two outer variants.
+- `[primary_expression, _parameter_name, readonly_type]` — inlining
+  `_kw_readonly_marker` into `_parameter_name` makes the bare `'readonly'`
+  token visible in `_parameter_name`'s state machine. At
+  `'<' '(' 'readonly' • '('` (a generic-typed function-type parameter) the
+  parser sees three readings: `_parameter_name 'readonly' • pattern`,
+  `primary_expression 'readonly'` (treating `readonly` as an identifier), and
+  `readonly_type 'readonly' • type`. Static precedence can't separate them.
+- `[_class_body_method]` — class_body repeat-choice split: the `method` arm
+  ends with `optional(_semicolon)`, so tree-sitter can't decide whether to
+  consume the `;` as part of `_class_body_method` or as the next iteration's
+  start. The self-conflict tells it to fork.
+- `[_class_body_method_sig, _class_body_member]` — `method_signature` appears
+  both in the `method_sig` arm (followed by `_function_signature_…` or `,`) and
+  in the `member` arm (wrapped in a choice-of-member-kinds).
+- `[primary_expression, _for_header_lhs]` and the other `_for_header` pairs —
+  each `_for_header` sub-variant inherits the for-header's identifier-prefix
+  ambiguity.
 
 ### `inline` (`packages/typescript/overrides.ts:232`)
 
@@ -49,6 +138,16 @@ the convention this glossary exists to serve — long rationale comments in
 			// parse time, in ways that slightly alter tree output. Kept as
 			// `conflicts:` entries which preserve the exact pre-inline shape.
 ```
+
+The surviving structured mints listed here are load-bearing: un-inlining them
+re-opens the non-convergent `_lhs_expression` / reserved-identifier conflict
+cascade. Entries whose mints were retired by the `isSupertypeLike` structural
+decline are dead — tree-sitter emits a non-fatal "inline rule not defined"
+warning for each, and they should be dropped on the next overrides sweep.
+
+`_kw_readonly_marker` and `_kw_async_marker` are NOT listed: `wire()`
+auto-inlines them whenever field promotion synthesizes them, so only the
+polymorph helpers need to appear explicitly.
 
 ### `_export_statement_default` (`packages/typescript/overrides.ts:305`)
 
@@ -574,6 +673,32 @@ the convention this glossary exists to serve — long rationale comments in
 				// Model the real read surface instead of forcing a missing slot.
 ```
 
+### JS-inherited function family — `async_marker` promotion (`packages/typescript/overrides.ts`)
+
+`function_expression`, `function_declaration`, `generator_function`, and
+`generator_function_declaration` all start with `optional('async')` at
+position 0, and each labels `0/0` as `async_marker` so render preserves
+`async function …` / `async function* …` shapes.
+
+They need hand-promotion because all four are wrapped in `prec(…)`, and
+enrich's optional-keyword pass doesn't descend through `prec`. `arrow_function`
+is a bare seq, so enrich auto-promotes it and needs no entry.
+
+The promotion only works because `_kw_async_marker` is inlined at every
+reference site (see `inline:`). Un-inlined, the synthesized hidden rule's
+`prec(-1)` body collides with `primary_expression` / `_property_name` on
+`{ async (` (method-shorthand vs async-function ambiguity) and with sibling
+function rules on `'async' • 'function'`. Inlining folds the body into each
+function rule's state machine — the same shape as the pre-promotion grammar —
+while the FIELD wrapper survives inlining, so the parse tree still labels the
+marker.
+
+The same rule governs the other standalone optional-punct markers
+(`abstract`, `const`, `await`, `readonly`): only prec-wrapped sites such as
+`constructor_type` need a hand-written entry; bare-seq sites like
+`construct_signature`, `type_parameter`, `for_in_statement`, and
+`_parameter_name` are covered by enrich.
+
 ### `function_expression` (`packages/typescript/overrides.ts:826`)
 
 ```text
@@ -731,6 +856,20 @@ the convention this glossary exists to serve — long rationale comments in
 				// polymorphs outermost), so it shifts every path under
 				// position 1 by one segment.
 ```
+
+### `_type_query_subscript_expression` — deferred promotion (`packages/typescript/overrides.ts`)
+
+Tree-sitter aliases this hidden rule to the public `subscript_expression` kind
+via `alias($._type_query_subscript_expression, $.subscript_expression)`, and
+the base JS `subscript_expression` already labels its `?.` with
+`optional(field('optional_chain', $.optional_chain))`.
+
+Adding `optional_chain_marker` on the hidden alias source would extend the
+merged kind's field set, but the merged template (emitted from the canonical
+`subscript_expression` rule) only references `optional_chain` — so the coverage
+validator flags the unreferenced `optional_chain_marker` field. Promoting at
+the alias source needs either coalescing both field names downstream, or
+overriding the canonical rule too.
 
 ### `parenthesized_expression` (`packages/typescript/overrides.ts:1001`)
 
@@ -982,3 +1121,11 @@ the convention this glossary exists to serve — long rationale comments in
 				// (`_separator_kind` assumes a uniform separator — out of scope,
 				// see the design doc).
 ```
+
+### `interface_body` — no override possible (`packages/typescript/overrides.ts`)
+
+`interface_body` is a tree-sitter alias target of `object_type`; it has no base
+rule of its own, so there is nothing an override callback can refine. It
+inherits its parse shape from `object_type`. Per-form factory support for
+`interface_body` would need a codegen pass that mirrors `object_type`'s
+`refineForms` onto the alias-target kind.

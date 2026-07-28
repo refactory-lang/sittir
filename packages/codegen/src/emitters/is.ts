@@ -109,7 +109,6 @@ export function emitIs(config: EmitIsConfig): string {
 		? collectKindEntries(allKinds, nodeMap, generatedIdTables)
 		: undefined;
 
-	// Build a fast lookup map: kind → numeric id, for guard body emission.
 	const kindIdByKind = new Map<string, number>();
 	if (kindEntries) {
 		for (const e of kindEntries) kindIdByKind.set(e.kind, e.id);
@@ -145,12 +144,10 @@ export function emitIs(config: EmitIsConfig): string {
 				// has no parser symbol, do not emit a guard for it — it has no
 				// runtime presence and the guard would always return false.
 				if (kindEntries && numericId === undefined) {
-					// TSGrammar-only — no runtime presence; skip guard emission.
 					break;
 				}
 				const camel = toCamelCase(kind);
 				const guardKey = safeGuardKey(camel);
-				// Collision detection — mirrors types emitter FR-017.
 				if (usedCamelKeys.has(guardKey) || RESERVED_GUARD_NAMES.has(camel)) {
 					throw new Error(
 						`is emitter: camelCase kind '${camel}' collides with reserved guard key ` +
@@ -180,8 +177,6 @@ export function emitIs(config: EmitIsConfig): string {
 		}
 	}
 
-	// Collect supertypes. Each supertype becomes `is.<name>` (narrow to the
-	// union) and `assert.<name>` (throws on mismatch).
 	const supertypes: Array<{
 		kind: string;
 		typeName: string;
@@ -273,7 +268,6 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push('}');
 	lines.push('');
 
-	// AssertGuards — same shape as IsGuards but with `asserts v is T`.
 	lines.push('// AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.');
 	lines.push('export interface AssertGuards {');
 	for (const s of structuralKinds) {
@@ -289,10 +283,7 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push('}');
 	lines.push('');
 
-	// Runtime construction.
 	if (kindEntries) {
-		// Phase D: all producers emit numeric $type. Guards compare numeric
-		// TSKindId only — the string-comparison arm has been removed.
 		lines.push('// Runtime: kind guards compare numeric TSKindId only (Phase D).');
 		lines.push('function _g(id: number): (v: { readonly $type: number }) => boolean {');
 		lines.push('    return (v) => v.$type === id;');
@@ -346,11 +337,9 @@ export function emitIs(config: EmitIsConfig): string {
 		lines.push('');
 	}
 
-	// The is const — per-kind, kind(), supertype methods.
 	lines.push('export const is = {');
 	for (const s of structuralKinds) {
 		if (kindEntries && s.numericId !== undefined) {
-			// Phase D: numeric-only comparison.
 			const expr = kindDiscriminantExpr(s.kind, nodeMap, kindEntries);
 			lines.push(`    ${s.guardKey}: _g(${expr}),`);
 		} else {
@@ -358,7 +347,6 @@ export function emitIs(config: EmitIsConfig): string {
 		}
 	}
 	if (kindEntries) {
-		// Phase D: kind() compares only numeric $type via the map lookup.
 		lines.push(`    kind: (v: { readonly $type: number }, k: string): boolean => {`);
 		lines.push(`        const id = _kindIdByKind.get(k);`);
 		lines.push(`        return id !== undefined && v.$type === id;`);
@@ -380,7 +368,6 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push('} as unknown as IsGuards;');
 	lines.push('');
 
-	// The assert const — wraps each `is` entry with a throwing semantics.
 	// Kind-named asserts (e.g. `assert.functionItem`) use the method name
 	// as the expected-type label. The generic `assert.kind(v, k)` uses the
 	// second argument `k` as the expected-type label instead — otherwise
@@ -424,7 +411,6 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push('} as unknown as AssertGuards;');
 	lines.push('');
 
-	// Shape guards — isTree / isNode — overloaded signatures.
 	lines.push('// Shape guards — narrow through NamespaceMap when kind is already known.');
 	lines.push('// Overload 1: typed input whose type is a NamespaceMap key → narrow to Tree/Node projection.');
 	lines.push('// Overload 2: generic unknown → fall back to AnyTreeNode / AnyNodeData.');

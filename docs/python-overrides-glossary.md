@@ -12,15 +12,45 @@ the convention this glossary exists to serve — long rationale comments in
 
 ---
 
-### `externals` (`packages/python/overrides.ts:24`)
+### `enrichedBase` (`packages/python/overrides.ts:14`)
 
-```text
-			// Structural-whitespace role bindings — declared inline in the
-			// externals callback. `role(symbolRef, name)` returns the symbol
-			// unchanged (so externals still receives a valid token reference)
-			// and records the binding on a per-grammar accumulator that Link
-			// reads to drive symbol resolution. No more dummy `_indent` rules.
-```
+`enrich(base)` is bound once and the SAME enriched grammar is handed to both
+`grammar()` and `wire()` (matching rust and typescript). `wire`'s
+base-dependent passes — auto-group synthesis, body-pattern groups, and the
+enrich-hoisted-clause inline registration — must see the post-enrich shape;
+enriching twice, or wiring against the raw base, desynchronises them from the
+grammar tree-sitter actually compiles.
+
+### `externals` (`packages/python/overrides.ts:20`)
+
+Binds structural-whitespace roles onto python's existing base externals.
+`role(symbolRef, name)` records the binding on a per-grammar accumulator that
+Link reads to drive symbol resolution, and returns the symbol unchanged so
+`externals` still receives a valid token reference.
+
+The callback returns `prev` directly rather than spreading it alongside the
+`role()` return values: tree-sitter's `grammar()` does not dedupe the externals
+list, so a spread would emit every token twice and the generated `parser.c`
+would fail to compile.
+
+### `conflicts` (`packages/python/overrides.ts:26`)
+
+Every entry declares a GLR fork that only became necessary because a variant
+arm was lifted out of a rule tree-sitter had previously merged into a single
+LR(1) state.
+
+- `[expression_statement, _expression_statement_tuple]` — both arms start with
+  `expression`, and only the tuple form accepts the trailing `,`.
+- `[_except_clause_as, _except_clause_list]` — both begin with
+  `field('value', expression)` and diverge only on the `as` / `,`
+  continuation.
+- `[as_pattern, _except_clause_as]` — `except E as e:` overlaps `E as e` after
+  the shared `expression 'as'` prefix.
+- `[_expressions, expression_list]` — `_expressions` is a minted visible-group
+  arm source, filtered out of `inline:` so its mint survives to the parser.
+  Keeping it un-inlined leaves it sharing the `expression ,` prefix with
+  `expression_list`; this is the fork tree-sitter itself suggests for the
+  yield/tuple overlap.
 
 ### `inline` (`packages/python/overrides.ts:69`)
 
@@ -195,18 +225,6 @@ the convention this glossary exists to serve — long rationale comments in
 				// headless group renders via its captured leading flank.
 ```
 
-### `class_pattern` (`packages/python/overrides.ts:245`)
-
-```text
-				// class_pattern: 2 field(s)
-```
-
-### `comparison_operator` (`packages/python/overrides.ts:250`)
-
-```text
-				// comparison_operator: 2 field(s)
-```
-
 ### `complex_pattern` (`packages/python/overrides.ts:256`)
 
 ```text
@@ -214,24 +232,6 @@ the convention this glossary exists to serve — long rationale comments in
 				// and a trailing number choice (3). Positions 2 and 3 are both unnamed
 				// → 2 `content` slots; name the operator so the number stays the single
 				// sanctioned `content` (base-rule field, complex_pattern is not a polymorph).
-```
-
-### `conditional_expression` (`packages/python/overrides.ts:266`)
-
-```text
-				// conditional_expression: 3 field(s)
-```
-
-### `constrained_type` (`packages/python/overrides.ts:273`)
-
-```text
-				// constrained_type: 2 field(s)
-```
-
-### `decorator` (`packages/python/overrides.ts:279`)
-
-```text
-				// decorator: 2 field(s)
 ```
 
 ### `dictionary` (`packages/python/overrides.ts:284`)
@@ -250,50 +250,16 @@ the convention this glossary exists to serve — long rationale comments in
 				// whole clause (`in` + exprs) renders only when present.
 ```
 
-### `for_in_clause` (`packages/python/overrides.ts:303`)
+### `for_in_clause` (`packages/python/overrides.ts:128`)
 
-```text
-				// for_in_clause: prec.left(seq(optional('async'), 'for', ...)).
-				// The prec.left wrapper hides the seq from enrich's auto-promotion
-				// walker, so the position is still hand-promoted (016 task #30
-				// naming convention).
-```
+`for_in_clause` is `prec.left(seq(optional('async'), 'for', …))`. The
+`prec.left` wrapper hides the seq from enrich's auto-promotion walker, so the
+`async` position has to be hand-promoted here.
 
-### `finally_clause` (`packages/python/overrides.ts:311`)
-
-```text
-				// finally_clause: 1 field(s)
-```
-
-### `generic_type` (`packages/python/overrides.ts:316`)
-
-```text
-				// generic_type: 2 field(s)
-```
-
-### `import_from_statement` (`packages/python/overrides.ts:321`)
-
-```text
-				// import_from_statement: 1 field(s)
-```
-
-### `keyword_pattern` (`packages/python/overrides.ts:326`)
-
-```text
-				// keyword_pattern: 2 field(s)
-```
-
-### `member_type` (`packages/python/overrides.ts:331`)
-
-```text
-				// member_type: 2 field(s)
-```
-
-### `slice` (`packages/python/overrides.ts:336`)
-
-```text
-				// slice: 3 field(s)
-```
+`for_statement`, `function_definition`, and `with_statement` also start with
+`optional('async')` at position 0, but their seqs are unwrapped, so enrich
+auto-promotes them as `field('async_marker', SYMBOL(_kw_async_marker))` and
+they need no entry in `transforms`.
 
 ### `splat_pattern` (`packages/python/overrides.ts:343`)
 
@@ -311,18 +277,6 @@ the convention this glossary exists to serve — long rationale comments in
 				// same convention as `argument_list`'s naked-choice `1: field(...)` above.
 ```
 
-### `splat_type` (`packages/python/overrides.ts:359`)
-
-```text
-				// splat_type: 1 field(s)
-```
-
-### `string` (`packages/python/overrides.ts:364`)
-
-```text
-				// string: 3 field(s)
-```
-
 ### `type_alias_statement` (`packages/python/overrides.ts:369`)
 
 ```text
@@ -333,18 +287,6 @@ the convention this glossary exists to serve — long rationale comments in
 				// unwrapped, and $fields only has left/right. The spec-008-US7
 				// regression test (python type_alias_statement collision)
 				// assumes the wrapped form.
-```
-
-### `try_statement` (`packages/python/overrides.ts:380`)
-
-```text
-				// try_statement: 3 field(s)
-```
-
-### `union_type` (`packages/python/overrides.ts:385`)
-
-```text
-				// union_type: 2 field(s)
 ```
 
 ### `_except_clause_as` (`packages/python/overrides.ts:397`)

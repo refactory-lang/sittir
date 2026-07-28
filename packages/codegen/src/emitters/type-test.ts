@@ -99,7 +99,6 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
 			case 'pattern':
 			case 'keyword':
 			case 'enum':
-				// Only test leaves that actually made it into types.ts.
 				if (!node.rawFactoryName && !referenced.has(kind)) continue;
 				// Hidden `_kw_*` keywords are dropped from types.ts (the
 				// factory inlines their literal), so skip them here too —
@@ -162,11 +161,6 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
 	}
 	body.push('');
 
-	// Config assertion dropped — base-kind `${TypeName}Config` aliases are
-	// no longer emitted (spec 008 US7 landing). `X.Config` (namespace sugar)
-	// and `ConfigOf<X>` resolve to the same type by construction; the old
-	// test was a tautology.
-
 	body.push('// --- TreeNode types have correct `type` ---');
 	// TreeNode.type is from tree-sitter and stays as a string literal always.
 	for (const s of structuralKinds) {
@@ -183,8 +177,6 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
 	}
 	body.push('');
 
-	// Imports — now emitted from the narrowed set.
-	// When kindEntries are present, also import TSKindId for the numeric checks.
 	const typeImportList = [...typeImports].sort();
 	if (needsKindIdImport) {
 		lines.push(`import type { ${typeImportList.join(', ')} } from './types.js';`);

@@ -141,15 +141,6 @@ export function isPrecWrapper(rule: { type: string }): boolean {
 	return t === 'PREC' || t === 'PREC_LEFT' || t === 'PREC_RIGHT' || t === 'PREC_DYNAMIC';
 }
 
-// ---------------------------------------------------------------------------
-// Per-type discriminators. Both runtimes agree on UPPERCASE discriminants
-// (the case split is dissolved — see the module header), so these are plain
-// equality checks; they're consolidated here (rather than inline `t ===
-// 'SEQ'` scattered per file) because callers frequently hold `t: unknown`
-// and want a typed narrowing guard, not because of any remaining case
-// ambiguity.
-// ---------------------------------------------------------------------------
-
 export function typeEq(t: unknown, upper: string): boolean {
 	return t === upper;
 }

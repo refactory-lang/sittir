@@ -31,12 +31,6 @@ export async function compileParser(grammarDir: string, options?: CompileOptions
 		stdio: 'pipe'
 	});
 
-	/* Some grammars (e.g., tree-sitter-typescript) bundle a custom external
-	   scanner that tree-sitter generate doesn't materialize. Without it, the
-	   WASM build fails with "Missing symbols" for the
-	   tree_sitter_<lang>_external_scanner_* functions. Copy the base
-	   grammar's scanner.c (and any header it relatively-includes) into
-	   .sittir/src/ before building. */
 	syncExternalScanner(grammarDir, sittirDir);
 
 	execFileSync('npx', ['tree-sitter', 'build', '--wasm', '-o', 'parser.wasm'], {

@@ -33,25 +33,12 @@
  */
 
 import type { GrammarRule, SeqRule, ChoiceRule, PrecRuleUnion, SingleContentWrapper } from './grammar-json.ts';
-// Type-only imports of the DSL primitive return interfaces (DRY value-axis;
-// no runtime cycle — primitives don't import grammar-shapes).
 import type { FieldPlaceholder } from '../dsl/primitives/field.ts';
 import type { VariantPlaceholder } from '../dsl/primitives/variant.ts';
 import type { AliasPlaceholder } from '../dsl/primitives/alias.ts';
 import type { FieldLike } from '../types/runtime-shapes.ts';
 
-// ---------------------------------------------------------------------------
-// Resolve a single positional index against a rule's children, after
-// transparently peeling PREC wrappers.
-// ---------------------------------------------------------------------------
-
 type PeelPrec<N extends GrammarRule> = N extends PrecRuleUnion ? PeelPrec<N['content']> : N;
-
-// ---------------------------------------------------------------------------
-// First-segment autocomplete (shallow). The cheap, perf-safe layer: the
-// union of valid top-level index segments for a rule (after PREC peel).
-// Editors offer these as completions for the first path segment.
-// ---------------------------------------------------------------------------
 
 type IndicesOf<M extends readonly unknown[]> = Extract<keyof M, `${number}`>;
 
@@ -64,26 +51,6 @@ export type TopLevelKeys<N extends GrammarRule> =
 				: never
 		: never;
 
-// ---------------------------------------------------------------------------
-// PathKey — the type a transform patch-object KEY should have for rule `N`.
-//
-// Shallow-precise + deep-permissive: the FIRST segment autocompletes to the
-// rule's real top-level INDICES (`TopLevelKeys`, bounds-checked), but the
-// `parsePath` grammar also admits non-numeric first segments the type model
-// can't bounds-check — wildcard `_`, kind-match `(name)`, field-traversal
-// `name:`, reverse index `-N` (see dsl/transform/transform-path.ts::parsePath).
-// Those are accepted permissively so authored paths like `'(_expression)'` /
-// `'_'` / `'-1'` don't false-reject. Deeper segments degrade to free-form via
-// the `/${string}` tail (soundness: never REJECT a deep path we can't prove
-// invalid).
-//
-// CRUCIAL: the precise numeric `TopLevelKeys` arm is preserved — the
-// permissive arms must NOT widen the whole union to `string`, or out-of-bounds
-// numeric keys (e.g. `'7'` on a 2-arm choice) would be silently accepted. That
-// OOB rejection is guarded by the negative-controlled @ts-expect-error in
-// intellisense-demo.test-d.ts.
-// ---------------------------------------------------------------------------
-
 type NonNumericFirstSegment = '_' | `(${string})` | `${string}:` | `-${number}`;
 
 export type PathKey<N extends GrammarRule> =
@@ -91,25 +58,6 @@ export type PathKey<N extends GrammarRule> =
 	| NonNumericFirstSegment
 	| `${TopLevelKeys<N>}/${string}`
 	| `${NonNumericFirstSegment}/${string}`;
-
-// ---------------------------------------------------------------------------
-// Per-rule transform patch-map types (Phase-2 TransformsConfig upgrade).
-//
-// `TransformPatchMap<R>` keys each patch entry by `PathKey<R>`
-// (segment-1-precise) and values by the patch-value union. `TransformsFor<S>`
-// maps EVERY rule kind in a schema to its `original`-shape's patch-map — this
-// is the 182-rule mapped type whose PERF is the stated risk, so it's
-// parameterized over `KeyOf<R>` (swap the key strategy without
-// touching the value/mapping machinery):
-//
-//   - PRECISE keys: `PathKey<EnrichRule<R>>` — instantiates EnrichRule
-//     per rule (the cost driver).
-//   - FAST keys: `PathKey<R>` on the RAW rule — top-level member count
-//     is enrich-INVARIANT (enrich wraps in-place, never adds/removes a
-//     top-level member), so segment-1 autocomplete is identical without
-//     instantiating EnrichRule. Used as the perf fallback if PRECISE degrades
-//     tsgo time.
-// ---------------------------------------------------------------------------
 
 export type TransformPatchValue = RuleOrLiteral | FieldPlaceholder | FieldLike | VariantPlaceholder | AliasPlaceholder;
 

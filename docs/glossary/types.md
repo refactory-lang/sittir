@@ -723,3 +723,25 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /** Either repeat variant — true for both `repeat` and `repeat1`. */
 ```
+
+### `Severity` (`packages/codegen/src/types/diagnostics.ts`)
+
+`'fail'` is reserved for the Assemble→Project gate in `emit-gate.ts`. No
+emitter produces it today; the `'error'` / `'warning'` vocabulary plus the
+`canProceed` blocking signal carry all current blocking behaviour.
+
+### `ParseKindCollisionDiagnostic.severity` (`packages/codegen/src/types/parsekind-collisions.ts`)
+
+`diagnoseParseKindCollisions` always produces `'error'`, but the field is
+widened to the full `Severity` so a caller — `applyUnaliasDistinct` in
+`dsl/enrich.ts` — can DOWNGRADE the diagnostic when it auto-fixes the collision
+instead of merely reporting it. The shape is otherwise identical, so this stays
+one type rather than a second near-duplicate interface.
+
+### Per-type discriminators (`packages/codegen/src/types/runtime-shapes.ts`)
+
+`typeEq` and the `isXType` family are plain equality checks — both runtimes
+agree on UPPERCASE discriminants, so there is no case ambiguity left to
+absorb. They are consolidated here rather than written inline as `t === 'SEQ'`
+per call site because callers frequently hold a `t: unknown` and want a typed
+narrowing guard.

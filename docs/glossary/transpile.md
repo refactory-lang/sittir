@@ -89,3 +89,12 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /** Output size in bytes. */
 ```
+
+### `syncExternalScanner` (`packages/codegen/src/transpile/compile-parser.ts`)
+
+Some grammars — tree-sitter-typescript among them — bundle a custom external
+scanner that `tree-sitter generate` does not materialize. Without it the WASM
+build fails with "Missing symbols" for the
+`tree_sitter_<lang>_external_scanner_*` functions, so the base grammar's
+`scanner.c` (and any header it relatively-includes) is copied into
+`.sittir/src/` before building.

@@ -16,9 +16,6 @@
 
 import type { RuleId, Rule } from './rule.ts';
 
-/* 'fail' is reserved for the Assemble→Project gate (emit-gate.ts) and is
-   currently unused by any emitter; the existing 'error'/'warning' vocabulary
-   and canProceed blocking signal are untouched. */
 export type Severity = 'error' | 'warning' | 'info' | 'fail';
 
 export interface Diagnostic {

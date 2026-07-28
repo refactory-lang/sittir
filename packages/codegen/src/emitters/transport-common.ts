@@ -26,26 +26,24 @@ export function classifySlot(
 	const kindSet = new Set(kinds);
 	let bestMatch: { supertypeName: string; size: number } | undefined;
 	for (const [supertypeName, subtypes] of supertypeMap) {
-		// Exact-set match: the slot's kind set must EQUAL the supertype's full
-		// resolved subtype set, not merely be a subset. A proper subset would
-		// collapse the slot onto a wider supertype transport than it actually
-		// ranges over — and when that supertype is large and self-recursive
-		// (e.g. match_arm's `{attribute_item, inner_attribute_item}` is a
-		// 2-of-21 subset of `declaration_statement`, which transitively
-		// references match_arm again) the generated `FromNapiValue` recurses
-		// through the whole statement graph and overflows the native stack.
-		// Subset slots instead fall through to `heterogeneous`, which emits a
-		// per-slot enum of exactly their kinds.
-		if (kindSet.size === subtypes.size && [...kindSet].every((k) => subtypes.has(k))) {
-			if (bestMatch === undefined || subtypes.size < bestMatch.size) {
-				bestMatch = { supertypeName, size: subtypes.size };
-			}
+		if (!coversExactly(kindSet, subtypes)) continue;
+		if (bestMatch === undefined || subtypes.size < bestMatch.size) {
+			bestMatch = { supertypeName, size: subtypes.size };
 		}
 	}
 	if (bestMatch !== undefined) {
 		return { tag: 'supertype', supertypeName: bestMatch.supertypeName };
 	}
 	return { tag: 'heterogeneous' };
+}
+
+function coversExactly(kindSet: ReadonlySet<string>, subtypes: ReadonlySet<string>): boolean {
+	return kindSet.size === subtypes.size && [...kindSet].every((k) => subtypes.has(k));
+}
+
+function addVisibleAliasNameOfHiddenKind(out: Set<string>, nodeMap: NodeMap, kind: string): void {
+	const aliasTarget = nodeMap.aliasedHiddenKinds?.get(kind);
+	if (aliasTarget !== undefined) out.add(aliasTarget);
 }
 
 export function buildSupertypeTransportSet(nodeMap: NodeMap): Map<string, ReadonlySet<string>> {
@@ -95,16 +93,7 @@ export function acceptedTransportKinds(
 	const node = nodeMap.nodes.get(kind);
 	if (!node) return [kind];
 	const out = new Set<string>([kind]);
-	// A hidden kind that's also the CONTENT of a named alias
-	// (`alias(symbol(_X), $.visible)`) shares its runtime kind id with
-	// that alias's visible name — the generated id catalog (KIND_NAMES,
-	// see emitters/types.ts) records the id under the visible name, not
-	// the raw hidden kind key. Without this, `kindIdByKind.get(kind)`
-	// (the hidden key) misses entirely and the id arm silently drops —
-	// see native-transport-emit.test.ts's "accepts visible alias kind
-	// ids for hidden-wrapper child enums".
-	const aliasTarget = nodeMap.aliasedHiddenKinds?.get(kind);
-	if (aliasTarget !== undefined) out.add(aliasTarget);
+	addVisibleAliasNameOfHiddenKind(out, nodeMap, kind);
 	if (parseAliases) {
 		for (const [target, source] of Object.entries(parseAliases)) {
 			if (source === kind) out.add(target);

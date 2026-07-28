@@ -178,15 +178,6 @@ export function emitNodeModel(config: EmitNodeModelConfig): string {
 }
 
 export function buildNodeModel(nodeMap: NodeMap): SerializedNodeModel {
-	/* Fold ALL of factory-map's sections in via the SINGLE shared builder (one
-	   derivation; validators just READ). `factoryShapes` / `factoryFields`
-	   attach per-node; `polymorphVariants` / `factorySlots` / `fieldAliasMap` go
-	   top-level. The per-field data carries the raw facts
-	   (required/multiple/nonEmpty + values[].parseKind), but the alias-source
-	   pairing and the factory-emitting-kind FILTER live only in
-	   `buildFactoryMap` — serializing its finished output keeps that logic
-	   single-sourced and the validator maps byte-identical to the legacy
-	   factory-map (gate: counts stay stable). */
 	const factoryData = buildFactoryMap(nodeMap);
 
 	const nodes: SerializedNode[] = [];

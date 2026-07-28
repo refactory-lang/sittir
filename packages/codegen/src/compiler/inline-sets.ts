@@ -95,7 +95,6 @@ export function buildPolymorphsConfigSkip(
 		if (!armMap) continue;
 		skip.add(parentKind);
 		for (const suffix of Object.values(armMap)) {
-			// `polymorphHiddenName` formula: `_${parentKind}_${suffix}` for non-hidden parents
 			const visibleParent = parentKind.startsWith('_') ? parentKind.slice(1) : parentKind;
 			skip.add(`_${visibleParent}_${suffix}`);
 		}

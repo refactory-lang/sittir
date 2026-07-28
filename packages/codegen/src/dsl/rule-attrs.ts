@@ -61,19 +61,10 @@ export function sharedArmAttrs(rule: AnyRule): SharedArmAttrs {
 	if (arms.length === 0) return {};
 	const a0 = arms[0]! as StampedAttrs;
 	const stamped = (r: AnyRule): StampedAttrs => r as StampedAttrs;
-	// A primitive attr is unanimous when present on a0 and === on every arm.
 	const unanimous = <T>(get: (r: StampedAttrs) => T): T | undefined => {
 		const v = get(a0);
 		return v !== undefined && arms.every((m) => get(stamped(m)) === v) ? v : undefined;
 	};
-	// separator is the nested {value, trailing?, leading?} fact — compare via
-	// separatorFactsEqual since the wrapper object has no `.type` discriminant.
-	// (This replaces a prior JSON.stringify comparison, which was fully general;
-	// separatorFactsEqual narrows to whatever rulesEqual's switch explicitly
-	// handles, silently `false` for a `.value` shape rulesEqual doesn't
-	// recognize. Harmless in practice — a post-wrapper-deletion separator's
-	// `.value` is always a STRING literal here — but worth flagging if
-	// separators ever grow richer rule-shaped values.)
 	const sep0 = a0.separator;
 	const separator =
 		sep0 !== undefined && arms.every((m) => separatorFactsEqual(stamped(m).separator, sep0)) ? sep0 : undefined;

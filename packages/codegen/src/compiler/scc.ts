@@ -77,7 +77,6 @@ export function computeTransportSCC(nodeMap: NodeMap): SCCAnalysis {
 			for (const k of scc) recursive.add(k);
 			continue;
 		}
-		// Singleton SCC — recursive only when it has a self-edge.
 		const only = scc[0]!;
 		const outs = adjacency.get(only);
 		if (outs && outs.has(only)) recursive.add(only);
@@ -219,7 +218,6 @@ function tarjanSCC(adjacency: ReadonlyMap<string, ReadonlySet<string>>): {
 					if (wi < cur) lowlink.set(frame.node, wi);
 				}
 			} else {
-				// All neighbors visited — possibly emit SCC.
 				const v = frame.node;
 				if (lowlink.get(v) === index.get(v)) {
 					const component: string[] = [];

@@ -187,3 +187,40 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /** Human-readable propose-promotion text for the author. */
 ```
+
+### `fromSlotGrouping` — `canProceed` forwarding (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts`)
+
+The producer's `canProceed` is forwarded verbatim rather than hardcoded to
+`true`. `content-collision` always pushes `false` when it fires; the
+accepted-floor exception is applied by the caller,
+`collectGrammarDiagnostics`, where the grammar name is known. The other three
+`SlotGroupingShape` codes still always push `true`. Hardcoding `true` here
+would silently swallow the flip.
+
+### `collectGrammarDiagnostics` — blocking overrides (`packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts`)
+
+Three severity overrides are applied at collection time, all for the same
+reason: the producer can't see the grammar-level expectation lists.
+
+An assemble-time `parsekind-noninjective` means enrich did NOT resolve the
+collision — an enrich-resolved one would already be gone from the grammar by
+assemble time — so it is always genuinely blocking. Enrich's own info-severity
+audit-trail diagnostics never reach this path; they merge in separately via
+`run-codegen.ts`'s `getEnrichUnaliasDiagnostics`, so the override cannot
+affect them.
+
+`isBlockingAssembleWarningCode` names the only two assemble-warning codes that
+block: `storagename-collision`, and `nonterminal-separator-unstamped` — a
+zero-instance guard, where any firing means a nonterminal separator reached the
+slot-value stamp path and would silently render as a hardcoded space (see
+`collect-slots.ts`). `typename-collision`, the only other code sharing
+`fromAssembleWarning`, stays exactly as `fromAssembleWarning` maps it because
+it still has live, accepted, non-blocking instances. The check must stay in the
+caller — flipping `fromAssembleWarning` itself would take `typename-collision`
+with it as a side effect.
+
+`content-collision`'s producer (`slot-grouping.ts`) always emits
+`canProceed: false` when it fires, so the `expectDiagnostics` exception is
+applied here instead, mirroring the `storagename-collision` override. The other
+three `SlotGroupingShape` codes always push `canProceed: true` at their own
+construction sites, so this override never touches them.

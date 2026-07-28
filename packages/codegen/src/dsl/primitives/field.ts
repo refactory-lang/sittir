@@ -37,21 +37,18 @@ export function maybeKeywordSymbol(
 	const c = content as { type?: string; value?: string };
 	if (!c || typeof c.type !== 'string') return content;
 
-	// Bare STRING — synthesize the hidden rule and return a SYMBOL ref.
 	if (isStringType(c.type)) {
 		return synthesizeKwSymbol(fieldName, content, wrapSyntheticBody);
 	}
 
-	// OPTIONAL(STRING) — descend through the wrapper, recurse into
-	// content, and rebuild the optional around the new SYMBOL ref.
-	// Tree-sitter's FIELD(OPTIONAL(SYMBOL)) survives; FIELD(OPTIONAL(STRING))
-	// may not.
+	/* Tree-sitter's FIELD(OPTIONAL(SYMBOL)) survives; FIELD(OPTIONAL(STRING))
+	   may not. */
 	if (isOptionalType(c.type)) {
 		return descendOptional(fieldName, content, wrapSyntheticBody, 'optional');
 	}
 
-	// CHOICE(STRING, BLANK) is tree-sitter's normalized form for
-	// `optional(STRING)`. Detect the shape and treat as optional.
+	/* CHOICE(STRING, BLANK) is tree-sitter's normalized form for
+	   `optional(STRING)`. */
 	if (isChoiceType(c.type)) {
 		const members = (content as { members?: Array<{ type?: string }> }).members;
 		if (Array.isArray(members) && members.length === 2) {
@@ -104,13 +101,11 @@ function descendOptional(
 	const rewritten = maybeKeywordSymbol(fieldName, inner, wrapSyntheticBody);
 	if (rewritten === inner) return content;
 
-	// Rebuild the wrapper around the rewritten inner.
 	if (wrapperKind === 'optional') {
 		const nativeOptional = (globalThis as { optional?: (c: unknown) => unknown }).optional;
 		if (typeof nativeOptional !== 'function') return content;
 		return nativeOptional(rewritten);
 	}
-	// choice-blank: reconstruct the CHOICE preserving the BLANK position.
 	const c = content as { type: string; members: Array<{ type?: string }> };
 	const newMembers = c.members.map((m) => (m.type === 'BLANK' ? m : (rewritten as typeof m)));
 	return { ...c, members: newMembers };

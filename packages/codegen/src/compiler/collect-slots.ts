@@ -145,18 +145,6 @@ export function isStructuralChoice(rule: Extract<AnyRule, { type: 'CHOICE' }>): 
 	return rule.members.some((m) => (m.type === SEQ && m.members.length > 1) || carriesNamedField(m));
 }
 
-// ---------------------------------------------------------------------------
-// Union-slot routing predicate (2026-07-21 union-slot-choice design, PR 1)
-//
-// Slot identity has exactly two sources with disjoint parse routing:
-//   - `field()` = slot identity (named per-arm slots, routed by field label);
-//   - an unnamed single-nonterminal arm = union-member kind identity (all such
-//     arms map into ONE `'content'` union slot, routed by kind).
-// The partition below is the SINGLE predicate for both the census tool
-// (`sittir tool union-slot-census`) and the CHOICE-case routing decision —
-// one source, one derivation.
-// ---------------------------------------------------------------------------
-
 export interface ChoiceArmPartition {
 	degenerateNamedArms: AnyRule[];
 	structuredNamedArms: AnyRule[];
@@ -385,7 +373,6 @@ function buildSlot(
 			: undefined;
 	const mult = armLifted ?? slotMultiplicity(rule, inherited);
 
-	// --- Determine the slot name ---
 	// Named-vs-positional is derived directly from `fieldName` presence at read
 	// time (`AssembledNonterminal.isUnnamed`) — no stored classification here.
 	let baseName: string | undefined = (rule as { fieldName?: string }).fieldName;
@@ -393,7 +380,6 @@ function buildSlot(
 	if (baseName === undefined) {
 		switch (rule.type) {
 			case SYMBOL: {
-				// Drop the hidden-rule leading underscore (`_expression` → `expression`).
 				baseName = rule.name.replace(/^_+/, '') || rule.name;
 				break;
 			}
@@ -408,7 +394,7 @@ function buildSlot(
 				// `{{ operator }}`). Recover the slot name from a fieldName
 				// shared by all arms before falling back to `content` — this
 				// keeps `binary_expression.operator` / `comparison_operator`
-				// named correctly under the Chunk D operator-enum (link-symbol
+				// named correctly under the operator-enum shape (link-symbol
 				// arms each carry `fieldName: 'operator'`). Without this the
 				// choice mis-names to `content`, the template's `{{ operator }}`
 				// is unresolvable, and read cannot populate the slot.
@@ -417,10 +403,10 @@ function buildSlot(
 					baseName = sharedArm;
 					break;
 				}
-				// Unnamed choice → `content` (Task C2). Warn unless this is a
+				// Unnamed choice → `content`. Warn unless this is a
 				// registered polymorph (polymorph metadata drives the TYPE
 				// surface only; render just renders `content`) — or a sanctioned
-				// union slot (2026-07-21 union-slot design: the qualifying case
+				// union slot (for a qualifying union the `content` name
 				// is the intended model, not a missing-name smell).
 				if (rule.type === CHOICE && !sanctionedUnion) {
 					// Prefer rule.id (encodes owning-kind + rule-tree path provenance)
@@ -444,7 +430,6 @@ function buildSlot(
 		}
 	}
 
-	// --- Build values for the slot from the node itself ---
 	// buildSlot's `rule` param is AnyRule but is, at runtime, always the
 	// post-wrapper-deletion (link-derived) shape deriveValuesForRule expects —
 	// same phase-widening read as isSlotNode above (post-PR-S, RepeatRule's
@@ -472,7 +457,6 @@ function buildSlot(
 
 	const isMultiSlot = dedupedValues.some((v) => v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray');
 
-	// --- Separator + trailing/leading flags (array slots only) ---
 	// A member that inherits its array multiplicity from an enclosing seq also
 	// inherits that seq's separator (the member itself carries none).
 	// When sep is still undefined, fall back to a nested-arm scan so that outer
@@ -531,7 +515,7 @@ function buildSlot(
 		hasTrailing,
 		hasLeading,
 		sourceRuleIds: rule.id ? [rule.id] : [],
-		// (debt PR-P1, item 4) Blind opaque passthrough — never read/branched
+		// Blind opaque passthrough — never read/branched
 		// on here or by any compiler consumer. Only a dsl-sanctioned reader
 		// (diagnostics / node-model serialization) may open this bag.
 		ruleMetadata: rule.metadata
@@ -587,7 +571,7 @@ export function collectSlots(
 			if ((rule as { fieldName?: string }).fieldName === undefined && isStructuralChoice(rule)) {
 				const armMult = (rule as { multiplicity?: Multiplicity }).multiplicity ?? inherited;
 				const choiceSep = (rule as { separator?: RuleBase<'normalize'>['separator'] }).separator ?? inheritedSeparator;
-				// Union-slot routing (2026-07-21 design §2): unnamed single-
+				// Union-slot routing: unnamed single-
 				// nonterminal arms collectively form ONE union slot; field-named
 				// arms keep distributing into named slots. Diagnostics fire on the
 				// predicate even when routing is switched off (census dry-runs).
@@ -595,10 +579,10 @@ export function collectSlots(
 				if (partition.unionArms.length > 0) {
 					const ruleId = (rule as { id?: string }).id;
 					const site = `choice ${ruleId ?? '(no id)'}`;
-					// Mixed rows do not route (2026-07-21 design, user refinement):
+					// Mixed rows do not route:
 					// a field-named arm alongside union arms is as heterogeneous
 					// as an ambient-literal structured arm — its END-STATE is an
-					// INLINED KIND from the PR 3 mint (dict_pattern's
+					// INLINED KIND from the choice-arm mint (dict_pattern's
 					// `_key_value_pattern` is the exemplar), joining the union BY
 					// KIND so the choice resolves to ONE kind-dispatched slot.
 					// Two reasons, one rule: REPEATED mixed rows are order-lossy
@@ -606,7 +590,7 @@ export function collectSlots(
 					// interleaving of `A, B = 1, C`), and even SINGULAR mixed
 					// rows make a worse factory surface (N parallel optionals vs
 					// one union member). Until the mint lands: diagnose + status
-					// quo. PR 1 routing = PURE unions only.
+					// quo. Routing admits PURE unions only.
 					const effectiveMult =
 						((rule as { multiplicity?: Multiplicity }).multiplicity === undefined
 							? strongestArmMultiplicity(rule)
@@ -664,8 +648,8 @@ export function collectSlots(
 							const namedArmSlots = partition.structuredNamedArms.map((m) =>
 								mergeByName(collectSlots(m, kindForName, kindEntries, armMult, choiceSep))
 							);
-							// Degenerate fielded arms join the union by FIELD LABEL
-							// (PR 1.5 §5): restrict to the unnamed union arms PLUS the
+							// Degenerate fielded arms join the union by FIELD LABEL —
+							// restrict to the unnamed union arms PLUS the
 							// degenerate arms — deriveValuesForRule stamps each
 							// degenerate arm's values with parseName = its fieldName.
 							const restricted = {

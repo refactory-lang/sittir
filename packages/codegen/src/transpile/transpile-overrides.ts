@@ -29,7 +29,6 @@ import { fileURLToPath } from 'node:url';
 const requireFromHere = createRequire(import.meta.url);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-// packages/codegen/src/transpile/ → packages/
 const packagesRoot = resolve(__dirname, '../../..');
 
 export interface TranspileOptions {

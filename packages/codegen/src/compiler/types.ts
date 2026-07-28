@@ -28,10 +28,6 @@ import type { SCCAnalysis } from './scc.ts';
 import type { ExternalRole } from '../types/ir.ts';
 export type { ExternalRole };
 
-// ---------------------------------------------------------------------------
-// Evaluate rule occurrence identity and classification
-// ---------------------------------------------------------------------------
-
 export type RuleProvenance = 'grammar-authored' | 'override-authored-or-replaced' | 'evaluate-synthesized';
 
 export type RulePathSegment =
@@ -109,10 +105,6 @@ export interface GeneratedMetadataCatalog {
 	readonly fieldByName: ReadonlyMap<string, GeneratedMetadata>;
 }
 
-// ---------------------------------------------------------------------------
-// Evaluate output
-// ---------------------------------------------------------------------------
-
 export interface RawGrammar {
 	readonly name: string;
 	readonly rules: Record<string, Rule<'evaluate'>>;
@@ -141,10 +133,6 @@ export interface RefineForm {
 	readonly name: string;
 	readonly selections: Record<string, number | string>;
 }
-
-// ---------------------------------------------------------------------------
-// Derivation log — sidecar of everything Link inferred / promoted
-// ---------------------------------------------------------------------------
 
 export interface DerivationLog {
 	readonly inferredFields: InferredFieldEntry[];
@@ -181,10 +169,6 @@ export interface PromotedRuleEntry {
 	}[];
 }
 
-// ---------------------------------------------------------------------------
-// Link output
-// ---------------------------------------------------------------------------
-
 export interface LinkedGrammar {
 	readonly name: string;
 	readonly rules: Record<string, Rule<'link'>>;
@@ -210,10 +194,6 @@ export interface IncludeFilter {
 	readonly rules?: readonly 'promoted'[];
 	readonly fields?: readonly DerivedFieldSource[];
 }
-
-// ---------------------------------------------------------------------------
-// Normalize output
-// ---------------------------------------------------------------------------
 
 export interface NormalizedGrammar {
 	readonly name: string;
@@ -248,10 +228,6 @@ export interface SimplifiedGrammar {
 	readonly refineForms?: Map<string, RefineForm[]>;
 }
 
-// ---------------------------------------------------------------------------
-// The Grammar<Phase> family (2026-07-04 design)
-// ---------------------------------------------------------------------------
-
 export type PhaseRuleOf<P extends PhaseName> = P extends 'simplify'
 	? SimplifiedRule
 	: P extends 'normalize'
@@ -265,10 +241,6 @@ export type Grammar<P extends PhaseName> = P extends 'evaluate'
 		: P extends 'normalize'
 			? NormalizedGrammar
 			: SimplifiedGrammar;
-
-// ---------------------------------------------------------------------------
-// Assemble output
-// ---------------------------------------------------------------------------
 
 export interface SignaturePool {
 	readonly signatures: Map<string, string>;

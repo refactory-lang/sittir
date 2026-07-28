@@ -5712,3 +5712,34 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `KindPresenceFlag`'s file-based / existence-based view.
  */
 ```
+
+### `carrySeparatorForward` (`packages/codegen/src/compiler/wrapper-deletion.ts`)
+
+Shared by the `REPEAT` and `REPEAT1` cases of `deleteWrapperWith`, which
+previously carried byte-identical copies of this logic.
+
+`rule.separator` is already the nested `{ value, trailing?, leading? }` shape —
+`RepeatRule<'link'>` shares `RuleBase<'normalize'>.separator`'s shape — so the
+fact is carried across unchanged rather than reconstructed. The two are
+parameterized over different phases but are structurally identical, which is
+the "rides along for free" design; the cast just changes the phase view.
+
+The separator's inner rule can itself contain wrapper nodes — a synthetic or
+non-literal separator such as a CHOICE containing a FIELD — that need the same
+push-down as any other rule position. The recursion only fires when the
+separator is being carried forward for the FIRST time, i.e. it came from
+`rule.separator` rather than an already-processed `attrs.separator` from an
+outer wrapper. Reprocessing an already-deleted separator would be wasted work
+rather than incorrect, but this keeps it to exactly once.
+
+### `ChoiceArmPartition` / union-slot routing predicate (`packages/codegen/src/compiler/collect-slots.ts`)
+
+Slot identity has exactly two sources, with disjoint parse routing:
+
+- `field()` is slot identity — named per-arm slots, routed by field label.
+- An unnamed single-nonterminal arm is union-member kind identity — all such
+  arms map into ONE `'content'` union slot, routed by kind.
+
+The partition is the SINGLE predicate behind both the census tool
+(`sittir tool union-slot-census`) and the CHOICE-case routing decision: one
+source, one derivation.
