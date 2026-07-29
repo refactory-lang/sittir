@@ -648,6 +648,16 @@ export default grammar(
 						']'
 					),
 
+				// type_query's `typeof x<T>` arm has the same field-name-divergence
+				// collision as call_expression above, just against
+				// `instantiation_expression`: `_type_query_instantiation_expression`
+				// uses `field('function', ...)` where canonical
+				// `instantiation_expression` (`seq($.expression,
+				// field('type_arguments', ...))`) has a bare, unfielded
+				// `expression` slot — "singular slot 'expression' on
+				// 'instantiation_expression' requires one value; got undefined".
+				// Same fix, same reasoning: alias to a new distinct visible name
+				// instead of colliding.
 				type_query: ($) =>
 					prec.right(
 						seq(
@@ -656,12 +666,30 @@ export default grammar(
 								alias($._type_query_subscript_expression, $.subscript_expression),
 								alias($._type_query_member_expression, $.member_expression),
 								alias($._type_query_call_expression, $.type_query_call_expression),
-								alias($._type_query_instantiation_expression, $.instantiation_expression),
+								alias($._type_query_instantiation_expression, $.type_query_instantiation_expression),
 								$.identifier,
 								$.this
 							)
 						)
 					),
+
+				// _tuple_type_member's two arms collide the same way as
+				// call_expression above, but on required_parameter/
+				// optional_parameter: `tuple_parameter` uses `field('name', ...)`
+				// where canonical `required_parameter` routes its subject via
+				// `field('pattern', ...)` (inside `_parameter_name`) —
+				// "singular slot 'pattern' on 'required_parameter' requires one
+				// value; got undefined". `optional_tuple_parameter` has the
+				// identical latent mismatch against `optional_parameter`
+				// (same `field('name', ...)` vs. `_parameter_name`'s
+				// `field('pattern', ...)`), not yet observed as a failure but
+				// fixed alongside it for the same reason. Both
+				// `tuple_parameter`/`optional_tuple_parameter` already have
+				// their own natural (non-hidden) names, so — like
+				// `decorator_call_expression` above — they're unaliased
+				// outright rather than routed to a new name.
+				_tuple_type_member: ($) =>
+					choice($.tuple_parameter, $.optional_tuple_parameter, $.optional_type, $.rest_type, $.type),
 
 				_type_query_member_expression_in_type_annotation: ($) =>
 					seq(

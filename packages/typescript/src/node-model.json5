@@ -167,7 +167,8 @@
     "type_query": {
       "definedBy": "override",
       "childKind": {
-        "type_query_call_expression": "call_expression"
+        "type_query_call_expression": "call_expression",
+        "type_query_instantiation_expression": "instantiation_expression"
       }
     },
     "index_signature": {
@@ -432,7 +433,7 @@
       "subscript_expression": "_type_query_subscript_expression",
       "member_expression": "_type_query_member_expression",
       "type_query_call_expression": "_type_query_call_expression",
-      "instantiation_expression": "_type_query_instantiation_expression"
+      "type_query_instantiation_expression": "_type_query_instantiation_expression"
     },
     "mapped_type_clause.name": {
       "type_identifier": "identifier"
@@ -23026,7 +23027,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_instantiation_expression",
-              "parseKind": "instantiation_expression",
+              "parseKind": "type_query_instantiation_expression",
               "unresolved": true
             },
             {

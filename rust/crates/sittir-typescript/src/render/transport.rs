@@ -6309,13 +6309,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleTypeMemberTransport {
                     309 => Ok(Self::TupleParameter(
                         TupleParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    297 => Ok(Self::TupleParameter(
-                        TupleParameterTransport::from_napi_value(env, napi_val)?
-                    )),
                     310 => Ok(Self::OptionalTupleParameter(
-                        OptionalTupleParameterTransport::from_napi_value(env, napi_val)?
-                    )),
-                    298 => Ok(Self::OptionalTupleParameter(
                         OptionalTupleParameterTransport::from_napi_value(env, napi_val)?
                     )),
                     311 => Ok(Self::OptionalType(
@@ -6438,13 +6432,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleTypeMemberTransport {
                     309 => Ok(Self::TupleParameter(
                         TupleParameterTransport::from_napi_value(env, napi_val)?
                     )),
-                    297 => Ok(Self::TupleParameter(
-                        TupleParameterTransport::from_napi_value(env, napi_val)?
-                    )),
                     310 => Ok(Self::OptionalTupleParameter(
-                        OptionalTupleParameterTransport::from_napi_value(env, napi_val)?
-                    )),
-                    298 => Ok(Self::OptionalTupleParameter(
                         OptionalTupleParameterTransport::from_napi_value(env, napi_val)?
                     )),
                     311 => Ok(Self::OptionalType(
@@ -21079,9 +21067,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryContentTransportSlot {
                     326 => Ok(Self::TypeQueryInstantiationExpression(
                         TypeQueryInstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    277 => Ok(Self::TypeQueryInstantiationExpression(
-                        TypeQueryInstantiationExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -21119,9 +21104,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryContentTransportSlot {
                         TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     326 => Ok(Self::TypeQueryInstantiationExpression(
-                        TypeQueryInstantiationExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
-                    277 => Ok(Self::TypeQueryInstantiationExpression(
                         TypeQueryInstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(

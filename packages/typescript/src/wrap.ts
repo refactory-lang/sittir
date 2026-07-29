@@ -9242,7 +9242,7 @@ export function wrapTypeQuery(
 			| T.TypeQueryInstantiationExpression
 			| T.Identifier
 			| T.This;
-		readonly _instantiation_expression?:
+		readonly _type_query_instantiation_expression?:
 			| T.TypeQuerySubscriptExpression
 			| T.TypeQueryMemberExpression
 			| T.TypeQueryCallExpression
@@ -9270,11 +9270,11 @@ export function wrapTypeQuery(
 		{
 			..._omitWrapKeys(data, [
 				'_identifier',
-				'_instantiation_expression',
 				'_member_expression',
 				'_subscript_expression',
 				'_this',
-				'_type_query_call_expression'
+				'_type_query_call_expression',
+				'_type_query_instantiation_expression'
 			]),
 			$type: TSKindId.TypeQuery as const,
 			_content: normalizeSingularWrapSlot(
@@ -9282,7 +9282,7 @@ export function wrapTypeQuery(
 					data._subscript_expression ??
 					data._member_expression ??
 					data._type_query_call_expression ??
-					data._instantiation_expression ??
+					data._type_query_instantiation_expression ??
 					data._identifier ??
 					data._this,
 				'content',
@@ -10777,8 +10777,6 @@ export function wrapEnumBodyGroup1(
 
 export function wrapTupleTypeGroup1(
 	data: T.TupleTypeGroup1 & {
-		readonly _required_parameter?: T.TupleTypeMember;
-		readonly _optional_parameter?: T.TupleTypeMember;
 		readonly _tuple_parameter?: T.TupleTypeMember;
 		readonly _optional_tuple_parameter?: T.TupleTypeMember;
 		readonly _optional_type?: T.TupleTypeMember;
@@ -10819,8 +10817,6 @@ export function wrapTupleTypeGroup1(
 		data._tuple_type_member !== undefined
 			? _toArr(data._tuple_type_member)
 			: _concatInSourceOrder([
-					data._required_parameter,
-					data._optional_parameter,
 					data._tuple_parameter,
 					data._optional_tuple_parameter,
 					data._optional_type,
@@ -10875,13 +10871,11 @@ export function wrapTupleTypeGroup1(
 				'_member_expression',
 				'_nested_type_identifier',
 				'_object_type',
-				'_optional_parameter',
 				'_optional_tuple_parameter',
 				'_optional_type',
 				'_parenthesized_type',
 				'_predefined_type',
 				'_readonly_type',
-				'_required_parameter',
 				'_rest_type',
 				'_template_literal_type',
 				'_this',
@@ -13074,8 +13068,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 const _aliasTargetToSource: Record<string, string> = {
 	_for_header_group1: '_lhs_expression',
 	_member_expression: 'nested_identifier',
-	_optional_parameter: 'optional_tuple_parameter',
-	_required_parameter: 'tuple_parameter',
 	_statement_identifier_group1: '_reserved_identifier',
 	_string: '_jsx_string',
 	_this_type: 'this',

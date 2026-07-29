@@ -87032,6 +87032,225 @@
       "$type": 166,
       "$source": 0,
       "$named": true,
+      "_comment": [
+        "// This is a special construct, different from both \"typeof (f<T>)\" and",
+        "// \"(typeof f)<T>\" (which are both invalid)"
+      ],
+      "_statements": [
+        {
+          "$type": 294,
+          "$source": 0,
+          "$named": true,
+          "_name": "T",
+          "_value": {
+            "$type": 327,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              8
+            ],
+            "$span": {
+              "start": 125,
+              "end": 136
+            },
+            "$nodeHandle": 6,
+            "_content": {
+              "$type": 326,
+              "$source": 0,
+              "$named": true,
+              "_function": "f",
+              "_type_arguments": {
+                "$type": 337,
+                "$source": 0,
+                "$named": true,
+                "$other": [
+                  80,
+                  87
+                ],
+                "$span": {
+                  "start": 133,
+                  "end": 136
+                },
+                "$nodeHandle": 8,
+                "_type": [
+                  "T"
+                ]
+              },
+              "$span": {
+                "start": 132,
+                "end": 136
+              },
+              "$nodeHandle": 7
+            }
+          },
+          "_semicolon": 22,
+          "$other": [
+            7,
+            41
+          ],
+          "$span": {
+            "start": 116,
+            "end": 137
+          },
+          "$nodeHandle": 5
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 137
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "type T=typeof f<T>;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "// This is a special construct, different from both \"typeof (f<T>)\" and\n// \"(typeof f)<T>\" (which are both invalid)\ntype T = typeof f<T>;",
+    "pattern": "program",
+    "edits": [],
+    "expectedSourceOut": "type T=typeof f<T>;",
+    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (type_query (type_query_instantiation_expression function: (identifier) type_arguments: (type_arguments (type_identifier))))))",
+    "wrappedText": "type T=typeof f<T>;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 294,
+      "$source": 0,
+      "$named": true,
+      "_name": "T",
+      "_value": {
+        "$type": 327,
+        "$source": 0,
+        "$named": true,
+        "$other": [
+          8
+        ],
+        "$span": {
+          "start": 125,
+          "end": 136
+        },
+        "$nodeHandle": 9,
+        "_content": {
+          "$type": 326,
+          "$source": 0,
+          "$named": true,
+          "_function": "f",
+          "_type_arguments": {
+            "$type": 337,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              80,
+              87
+            ],
+            "$span": {
+              "start": 133,
+              "end": 136
+            },
+            "$nodeHandle": 11,
+            "_type": [
+              "T"
+            ]
+          },
+          "$span": {
+            "start": 132,
+            "end": 136
+          },
+          "$nodeHandle": 10
+        }
+      },
+      "_semicolon": 22,
+      "$other": [
+        7,
+        41
+      ],
+      "$span": {
+        "start": 116,
+        "end": 137
+      },
+      "$nodeHandle": 1
+    },
+    "expectedOutput": "type T=typeof f<T>;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "type T = typeof f<T>;",
+    "pattern": "type_alias_declaration",
+    "edits": [],
+    "expectedSourceOut": "type T=typeof f<T>;",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (type_query (type_query_instantiation_expression function: (identifier) type_arguments: (type_arguments (type_identifier)))))",
+    "wrappedText": "type T=typeof f<T>;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 327,
+      "$source": 0,
+      "$named": true,
+      "$other": [
+        8
+      ],
+      "$span": {
+        "start": 125,
+        "end": 136
+      },
+      "$nodeHandle": 2,
+      "_content": {
+        "$type": 326,
+        "$source": 0,
+        "$named": true,
+        "_function": "f",
+        "_type_arguments": {
+          "$type": 337,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            80,
+            87
+          ],
+          "$span": {
+            "start": 133,
+            "end": 136
+          },
+          "$nodeHandle": 13,
+          "_type": [
+            "T"
+          ]
+        },
+        "$span": {
+          "start": 132,
+          "end": 136
+        },
+        "$nodeHandle": 12
+      }
+    },
+    "expectedOutput": "typeof f<T>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "typeof f<T>",
+    "pattern": "type_query",
+    "edits": [],
+    "expectedSourceOut": "typeof f<T>",
+    "expectedReparseTree": "(type_query (type_query_instantiation_expression function: (identifier) type_arguments: (type_arguments (type_identifier))))",
+    "wrappedText": "type _X = typeof f<T>;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 166,
+      "$source": 0,
+      "$named": true,
       "_statements": [
         {
           "$type": 294,

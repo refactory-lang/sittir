@@ -1681,8 +1681,8 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[306, 'asserts'],
 	[307, 'asserts_annotation'],
 	[308, 'type'],
-	[309, 'required_parameter'],
-	[310, 'optional_parameter'],
+	[309, 'tuple_parameter'],
+	[310, 'optional_tuple_parameter'],
 	[311, 'optional_type'],
 	[312, 'rest_type'],
 	[313, '_tuple_type_member'],
@@ -1698,7 +1698,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[323, 'member_expression'],
 	[324, 'subscript_expression'],
 	[325, 'type_query_call_expression'],
-	[326, 'instantiation_expression'],
+	[326, 'type_query_instantiation_expression'],
 	[327, 'type_query'],
 	[328, 'index_type_query'],
 	[329, 'lookup_type'],
@@ -2837,6 +2837,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TypeQueryCallExpressionInTypeAnnotation;
 		case 'type_query_call_expression':
 			return TSKindId.TypeQueryCallExpression;
+		case 'type_query_instantiation_expression':
+			return TSKindId.TypeQueryInstantiationExpression;
 		case 'export_clause_group1':
 			return TSKindId.ExportClauseGroup1;
 		case 'import_statement_group1':
@@ -5915,12 +5917,8 @@ export interface TypeQueryCallExpressionInTypeAnnotationTree extends AnyTreeNode
 }
 export interface AssertsTree extends TreeNode<'asserts'> {}
 export interface AssertsAnnotationTree extends TreeNode<'asserts_annotation'> {}
-export interface TupleParameterTree extends AnyTreeNode {
-	readonly type: 'tuple_parameter';
-}
-export interface OptionalTupleParameterTree extends AnyTreeNode {
-	readonly type: 'optional_tuple_parameter';
-}
+export interface TupleParameterTree extends TreeNode<'tuple_parameter'> {}
+export interface OptionalTupleParameterTree extends TreeNode<'optional_tuple_parameter'> {}
 export interface OptionalTypeTree extends TreeNode<'optional_type'> {}
 export interface RestTypeTree extends TreeNode<'rest_type'> {}
 export interface ConstructorTypeTree extends TreeNode<'constructor_type'> {}

@@ -8995,22 +8995,12 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "tuple_parameter"
-          },
-          "named": true,
-          "value": "required_parameter"
+          "type": "SYMBOL",
+          "name": "tuple_parameter"
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "optional_tuple_parameter"
-          },
-          "named": true,
-          "value": "optional_parameter"
+          "type": "SYMBOL",
+          "name": "optional_tuple_parameter"
         },
         {
           "type": "SYMBOL",
@@ -9770,7 +9760,7 @@
                   "name": "_type_query_instantiation_expression"
                 },
                 "named": true,
-                "value": "instantiation_expression"
+                "value": "type_query_instantiation_expression"
               },
               {
                 "type": "SYMBOL",

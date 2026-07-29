@@ -4264,32 +4264,10 @@
     "fields": {
       "expression": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "expression",
-            "named": true
-          }
-        ]
-      },
-      "function": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "import",
-            "named": true
-          },
-          {
-            "type": "member_expression",
-            "named": true
-          },
-          {
-            "type": "subscript_expression",
             "named": true
           }
         ]
@@ -5437,19 +5415,9 @@
           }
         ]
       },
-      "name": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
       "pattern": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "pattern",
@@ -5495,6 +5463,32 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "optional_tuple_parameter",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_annotation",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -5961,23 +5955,9 @@
           }
         ]
       },
-      "name": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "rest_pattern",
-            "named": true
-          }
-        ]
-      },
       "pattern": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "pattern",
@@ -6589,6 +6569,36 @@
     }
   },
   {
+    "type": "tuple_parameter",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "rest_pattern",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_annotation",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "tuple_type",
     "named": true,
     "fields": {},
@@ -6612,7 +6622,7 @@
       "required": true,
       "types": [
         {
-          "type": "optional_parameter",
+          "type": "optional_tuple_parameter",
           "named": true
         },
         {
@@ -6620,11 +6630,11 @@
           "named": true
         },
         {
-          "type": "required_parameter",
+          "type": "rest_type",
           "named": true
         },
         {
-          "type": "rest_type",
+          "type": "tuple_parameter",
           "named": true
         },
         {
@@ -6859,10 +6869,6 @@
           "named": true
         },
         {
-          "type": "instantiation_expression",
-          "named": true
-        },
-        {
           "type": "member_expression",
           "named": true
         },
@@ -6876,6 +6882,10 @@
         },
         {
           "type": "type_query_call_expression",
+          "named": true
+        },
+        {
+          "type": "type_query_instantiation_expression",
           "named": true
         }
       ]
@@ -6943,6 +6953,44 @@
           },
           {
             "type": "member_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "type_query_instantiation_expression",
+    "named": true,
+    "fields": {
+      "function": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "import",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "subscript_expression",
+            "named": true
+          }
+        ]
+      },
+      "type_arguments": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_arguments",
             "named": true
           }
         ]
