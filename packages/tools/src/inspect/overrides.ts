@@ -15,7 +15,7 @@
  *
  * Options:
  *   --grammar          Which grammar(s) to compare (default: all)
- *   --backup-dir       Directory containing <grammar>-overrides.ts backup files
+ *   --backup-dir       Directory containing <grammar>-grammar.sittir.ts backup files
  *   --backup-rust      Path to Rust overrides backup file (overrides --backup-dir)
  *   --backup-python    Path to Python overrides backup file
  *   --backup-typescript Path to TypeScript overrides backup file
@@ -51,7 +51,7 @@ export interface CompareOverridesOptions {
 // ---------------------------------------------------------------------------
 
 /**
- * Extract the transform() patch key sets per rule name from an overrides.ts
+ * Extract the transform() patch key sets per rule name from a grammar.sittir.ts
  * or overrides.suggested.ts source string.
  *
  * A rule entry is any line matching the pattern:
@@ -110,7 +110,7 @@ interface CompareResult {
 
 function resolveBackupPath(grammar: GrammarName, opts: CompareOverridesOptions): string | undefined {
 	if (opts.backupFiles[grammar]) return resolve(opts.backupFiles[grammar]!);
-	if (opts.backupDir) return join(resolve(opts.backupDir), `${grammar}-overrides.ts`);
+	if (opts.backupDir) return join(resolve(opts.backupDir), `${grammar}-grammar.sittir.ts`);
 	return undefined;
 }
 

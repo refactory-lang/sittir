@@ -173,7 +173,7 @@ direction.
 
 | Component                              | Lines | Where                       |
 | -------------------------------------- | ----: | --------------------------- |
-| Template-mode grammar overrides        |   4–8 | per `packages/<lang>/overrides.ts` |
+| Template-mode grammar overrides        |   4–8 | per `packages/<lang>/grammar.sittir.ts` |
 | Slot extractor + `snippets.ts` emitter |  ~250 | `@sittir/codegen`           |
 | `FillHandle` class                     |   ~20 | `@sittir/core`              |
 | `CompiledTemplate` + `TemplateBuilder` |  ~200 | `sittir-core` (Rust)        |
@@ -244,7 +244,7 @@ template-mode parsing produces `ERROR` nodes for templates that "look
 right" in the target language, the alias-propagation assumption is
 wrong and we need a transparent injection mechanism (e.g., enrich-time
 pass that adds `_sittir_metavar` to every relevant rule's choice
-automatically). Signal: a per-grammar `overrides.ts` whose template-mode
+automatically). Signal: a per-grammar `grammar.sittir.ts` whose template-mode
 section is comparable in size to the rest of the file.
 
 If `template_read`'s napi contract drifts from `read`'s — a separate

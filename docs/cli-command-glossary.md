@@ -20,7 +20,7 @@ Generate typed factories, templates, and native bindings from a grammar
 - `-n, --nodes <list>` — Comma-separated node kinds to generate
 - `-a, --all` — Generate TS + native render-module artifacts (full chain)
 - `--tests-dir <dir>` — Output directory for test files
-- `--transpile` — Transpile overrides.ts → .sittir/grammar.js
+- `--transpile` — Transpile grammar.sittir.ts → .sittir/grammar.js
 - `--compile-parser` — Compile override grammar to .sittir/parser.wasm
 - `--ts-generate` — Run 'tree-sitter generate' in .sittir/
 - `--skip-ts-chain` — Skip the auto transpile + tree-sitter generate chain
@@ -202,7 +202,7 @@ Compare override key sets between backup and current overrides.suggested.ts
 **Options**
 
 - `-g, --grammar <name>` — Grammar(s) to compare: rust|python|typescript|all (default: `all`)
-- `--backup-dir <dir>` — Directory containing <grammar>-overrides.ts backup files
+- `--backup-dir <dir>` — Directory containing <grammar>-grammar.sittir.ts backup files
 - `--backup-rust <file>` — Path to Rust overrides backup file
 - `--backup-python <file>` — Path to Python overrides backup file
 - `--backup-typescript <file>` — Path to TypeScript overrides backup file
@@ -431,7 +431,7 @@ Dump a rule shape at every compiler phase
 
 - `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
 - `-k, --kind <kind>` — Rule kind to probe
-- `--no-overrides` — Skip overrides.ts, use base grammar.js directly
+- `--no-overrides` — Skip grammar.sittir.ts, use base grammar.js directly
 - `--compact` — Compact JSON output (no indent)
 - `--skip-emit` — Skip the emit phases (types + template)
 - `--brief` — Print only grammar, kind, and simplify fields

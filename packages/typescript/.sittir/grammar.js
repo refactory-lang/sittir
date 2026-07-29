@@ -27,12 +27,12 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// packages/typescript/overrides.ts
-var overrides_exports = {};
-__export(overrides_exports, {
-  default: () => overrides_default
+// packages/typescript/grammar.sittir.ts
+var grammar_sittir_exports = {};
+__export(grammar_sittir_exports, {
+  default: () => grammar_sittir_default
 });
-module.exports = __toCommonJS(overrides_exports);
+module.exports = __toCommonJS(grammar_sittir_exports);
 var import_grammar = __toESM(require("tree-sitter-typescript/typescript/grammar.js"), 1);
 
 // packages/codegen/src/types/runtime-shapes.ts
@@ -3470,9 +3470,9 @@ function refine(original, forms) {
   return original;
 }
 
-// packages/typescript/overrides.ts
+// packages/typescript/grammar.sittir.ts
 var enrichedBase = enrich(import_grammar.default);
-var overrides_default = grammar(
+var grammar_sittir_default = grammar(
   enrichedBase,
   wire(
     {

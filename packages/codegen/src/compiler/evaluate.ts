@@ -2,7 +2,7 @@
  * compiler/evaluate.ts — Evaluate phase.
  *
  * Executes grammar.js DSL and produces a RawGrammar.
- * When overrides.ts exists, it uses tree-sitter's native grammar(base, { rules })
+ * When grammar.sittir.ts exists, it uses tree-sitter's native grammar(base, { rules })
  * extension mechanism — each rule fn receives ($, original).
  */
 

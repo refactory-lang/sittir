@@ -1,5 +1,5 @@
 /**
- * overrides.ts — Grammar extension for rust
+ * grammar.sittir.ts — Grammar extension for rust
  *
  * Converted from overrides.json. Each entry wraps an unnamed child
  * at a positional index with a named field.

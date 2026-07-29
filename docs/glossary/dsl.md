@@ -561,7 +561,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * resolves it, since it's a genuine shared-prefix ambiguity between two
  * live productions). Skipping the mint here leaves the arm exactly as
  * enrich found it — whatever OTHER mechanism (variant()/polymorphs in
- * this grammar's own overrides.ts, same as before PR 3) already handles
+ * this grammar's own grammar.sittir.ts, same as before PR 3) already handles
  * it keeps doing so, unimpeded.
  */
 ```
@@ -585,7 +585,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * it's a genuine shared-prefix ambiguity between two live productions).
  * Skipping the mint leaves BOTH arms exactly as enrich found them —
  * whatever OTHER mechanism (variant()/polymorphs in this grammar's own
- * overrides.ts, same as before PR 3) already handles them keeps doing
+ * grammar.sittir.ts, same as before PR 3) already handles them keeps doing
  * so, unimpeded.
  */
 ```
@@ -1428,7 +1428,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * `source?: 'grammar' | 'promoted' | 'override' | 'enrich' | 'group-lift'`
  * field wore TWO different facts under one name:
  *   - WHO ORIGINALLY WROTE the rule's text — grammar authoring, an
- *     overrides.ts patch, dsl-side enrich synthesis, or evaluate synthesis.
+ *     grammar.sittir.ts patch, dsl-side enrich synthesis, or evaluate synthesis.
  *     This is `author` below. `'group-lift'` never actually appeared as a
  *     `source` value in practice (only as `symbolSource`) and is dropped.
  *   - WHETHER a classification was DECLARED (grammar-authored, e.g.
@@ -1445,7 +1445,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /**
 	 * WHO wrote this rule's text. `'grammar'` — authored directly in the
-	 * grammar. `'override'` — authored or replaced by an overrides.ts patch.
+	 * grammar. `'override'` — authored or replaced by an grammar.sittir.ts patch.
 	 * `'enrich'` — dsl-side enrich synthesized this position (path-descent in
 	 * transform-path.ts and link's enrich↔link handoff key on this to travel
 	 * through / resolve the synthesized position). `'evaluate'` — evaluate
@@ -1633,25 +1633,25 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ### `dsl-authoring.ts` — module purpose (`packages/codegen/src/dsl/dsl-authoring.ts`)
 
-An authoring-typed facade over the DSL primitives, imported by `overrides.ts`.
+An authoring-typed facade over the DSL primitives, imported by `grammar.sittir.ts`.
 Same runtime implementations as `./index.ts`, but with grammar-shapes return
 types that are accurate in the tree-sitter authoring context, where these
 primitives produce tree-sitter-shaped rules. The loose dual-runtime
-`FieldLike` / `RuntimeRule` types stay codegen-internal — `overrides.ts` never
+`FieldLike` / `RuntimeRule` types stay codegen-internal — `grammar.sittir.ts` never
 sees them. One boundary cast per primitive asserts the authoring-context
 contract; runtime behaviour is unchanged.
 
 ### `prec` / `token` (`packages/codegen/src/dsl/dsl-authoring.ts`)
 
 Both are runtime-injected by `saveAndInjectDslGlobals` (see
-`compiler/evaluate.ts`) before an `overrides.ts` module graph is evaluated —
+`compiler/evaluate.ts`) before an `grammar.sittir.ts` module graph is evaluated —
 the same mechanism as `field` / `alias`'s underlying primitives. Unlike those
 two there is no sittir-owned `primitives/prec.ts` / `primitives/token.ts`
 runtime, because tree-sitter's own `prec` / `token` need no override-specific
 placeholder behaviour. So this module re-types the SAME injected global rather
 than re-implementing it.
 
-`overrides.ts` imports these and thereby shadows the ambient `prec` / `token`
+`grammar.sittir.ts` imports these and thereby shadows the ambient `prec` / `token`
 declared in `authoring-globals.d.ts`, via ordinary lexical scoping. That
 sidesteps the fact that `const`-declared ambient globals don't merge as
 overloads across files the way `declare function` does. `seq` / `choice` /
@@ -1671,7 +1671,7 @@ not a `{ grammar: { … } }` wrapper, while `wire()` returns `WiredOpts`.
 
 Tree-sitter's ambient overloads instead expect a flat but MUTABLE
 `GrammarSchema` base. Typing this re-export against the real contract is what
-lets `overrides.ts` call `grammar(enrichedBase, wire(…))` without a
+lets `grammar.sittir.ts` call `grammar(enrichedBase, wire(…))` without a
 suppression.
 
 ### `mergeUnanimousAttrs` — separator comparison (`packages/codegen/src/dsl/rule-attrs.ts`)

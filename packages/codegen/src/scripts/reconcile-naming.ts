@@ -109,7 +109,7 @@ export function diffSlotNames(slot: AssembledNonterminal, kind: string): Diverge
 }
 
 function resolveEntryPath(grammar: Grammar, repoRoot: string): string {
-	const overridesPath = resolve(repoRoot, `packages/${grammar}/overrides.ts`);
+	const overridesPath = resolve(repoRoot, `packages/${grammar}/grammar.sittir.ts`);
 	if (existsSync(overridesPath)) return overridesPath;
 	for (const c of [`tree-sitter-${grammar}/grammar.js`, `tree-sitter-${grammar}/common/define-grammar.js`]) {
 		try {

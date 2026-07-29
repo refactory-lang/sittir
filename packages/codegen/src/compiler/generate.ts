@@ -98,7 +98,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// Resolve grammar.js path
 	const grammarJsPath = resolveGrammarJsPath(cfg.grammar);
 
-	// Use overrides.ts if it exists (grammar extension), else base grammar.js
+	// Use grammar.sittir.ts if it exists (grammar extension), else base grammar.js
 	const overridesPath = resolveOverridesPath(cfg.grammar);
 	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
 
@@ -148,7 +148,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 	// Build the extra polymorph skip-set for the slot-grouping diagnostic.
 	// `raw.polymorphsConfig` is the `polymorphs:` / `n:` declarative path-split
-	// config from overrides.ts. Each entry `{ parent: { path: suffix } }` produces
+	// config from grammar.sittir.ts. Each entry `{ parent: { path: suffix } }` produces
 	// hidden arm rules named `_${parent}_${suffix}` (via `polymorphHiddenName`).
 	// These arms are already handled by the polymorph dispatch machinery; the
 	// diagnostic must not flag their multi-slot seq bodies as violations.

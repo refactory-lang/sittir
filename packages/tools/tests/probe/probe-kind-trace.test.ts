@@ -113,7 +113,7 @@ describe('probe-kind native trace helpers', () => {
 		// This probe historically reproduced a native wrap error ("singular slot
 		// 'comprehension_clauses' on 'generator_expression' requires one value")
 		// — that bug is fixed (comprehension_clauses is a real visible rule in
-		// packages/python/overrides.ts now), so the trace is asserted to be a
+		// packages/python/grammar.sittir.ts now), so the trace is asserted to be a
 		// clean, native-only round trip instead.
 		const trace = await probeTrace('python', '(x for x in y)', {
 			kind: 'generator_expression',

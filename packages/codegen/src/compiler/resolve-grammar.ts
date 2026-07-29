@@ -28,5 +28,5 @@ export function resolveOverridesPath(grammar: string): string {
 	const srcDir = dirname(compilerDir);
 	const codegenDir = dirname(srcDir);
 	const packagesDir = dirname(codegenDir);
-	return join(packagesDir, grammar, 'overrides.ts');
+	return join(packagesDir, grammar, 'grammar.sittir.ts');
 }

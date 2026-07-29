@@ -8,7 +8,7 @@ export const probeStages: CommandModule = {
 	register: (program) => {
 		withGrammar(defineCommand(program, probeStages))
 			.requiredOption('-k, --kind <kind>', 'Rule kind to probe')
-			.option('--no-overrides', 'Skip overrides.ts, use base grammar.js directly')
+			.option('--no-overrides', 'Skip grammar.sittir.ts, use base grammar.js directly')
 			.option('--compact', 'Compact JSON output (no indent)')
 			.option('--skip-emit', 'Skip the emit phases (types + template)')
 			.option('--brief', 'Print only grammar, kind, and simplify fields')

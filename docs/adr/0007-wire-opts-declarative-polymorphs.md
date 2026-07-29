@@ -35,7 +35,7 @@ Four alternatives were genuinely considered during design.
 
 > "with wrapOpts, i could add the polymorphs up top with the variant definitions, and not have to add them to rules at all"
 
-The observation that collapsed the design: if the author declares polymorphs once, at the top of `overrides.ts`, then `wrapOpts` has the complete synthetic-name list BEFORE `grammar()` runs — no pass-1 dry-run, no monkey-patch, no static source scan. Declarative polymorphs are an artefact the author already wants (one place to see every variant in the grammar); wiring them into `opts.rules` is a mechanical follow-on the helper does for free.
+The observation that collapsed the design: if the author declares polymorphs once, at the top of `grammar.sittir.ts`, then `wrapOpts` has the complete synthetic-name list BEFORE `grammar()` runs — no pass-1 dry-run, no monkey-patch, no static source scan. Declarative polymorphs are an artefact the author already wants (one place to see every variant in the grammar); wiring them into `opts.rules` is a mechanical follow-on the helper does for free.
 
 ## Alternatives Considered
 
@@ -47,7 +47,7 @@ The observation that collapsed the design: if the author declares polymorphs onc
 
 - **Static scan of rule fn source via `fn.toString()`** — regex-match `variant('x')` / `alias('x', ...)` in each user rule's source, register the discovered names. Zero author boilerplate. Rejected: fragile to import-renames, dynamic names, minification. Solves name discovery but not the communication channel for captured content.
 
-- **Explicit `buildGrammar(base, opts)` helper** replacing the wrapper with a local-name invocation at the `overrides.ts` entry point. Same internals (pass-1 dry-run, pre-register, post-swap) without the globalThis mutation. Rejected in favour of the declarative approach because it still carries pass-1 and module state.
+- **Explicit `buildGrammar(base, opts)` helper** replacing the wrapper with a local-name invocation at the `grammar.sittir.ts` entry point. Same internals (pass-1 dry-run, pre-register, post-swap) without the globalThis mutation. Rejected in favour of the declarative approach because it still carries pass-1 and module state.
 
 ## Decision
 
@@ -94,7 +94,7 @@ The polymorph-variant metadata that downstream sittir codegen consumes (`{parent
 
 ## Consequences
 
-- **Enables**: Declarative polymorph authoring at the top of each `overrides.ts`. All 32 `variant()` sites across rust/python/typescript migrated to a `polymorphs: {parent: {path: suffix}}` block; seven rule entries (Case A) vanished entirely, replaced by wire's synthesized rule fns. Per-invocation closure state — two concurrent `wire()` calls can't trip over each other. `evaluate.ts` reads polymorph metadata directly from `opts.__wireContext__` and only falls back to the legacy drain when wire isn't in use.
+- **Enables**: Declarative polymorph authoring at the top of each `grammar.sittir.ts`. All 32 `variant()` sites across rust/python/typescript migrated to a `polymorphs: {parent: {path: suffix}}` block; seven rule entries (Case A) vanished entirely, replaced by wire's synthesized rule fns. Per-invocation closure state — two concurrent `wire()` calls can't trip over each other. `evaluate.ts` reads polymorph metadata directly from `opts.__wireContext__` and only falls back to the legacy drain when wire isn't in use.
 - **Costs**: Authors declare polymorphs once per grammar. About 30 variant sites × 3 grammars; mechanical. No signature or output changes at the sittir compiler level.
 - **Scope reduction — `installGrammarWrapper` not fully deleted**: The initial plan targeted full removal of the monkey-patch. During migration we discovered that the wrapper also handles **non-polymorph aliases** — authored `alias($._, $.wildcard_pattern)` sites that register an on-the-fly hidden rule `_wildcard_pattern` without a matching `polymorphs:` declaration. Wire only pre-registers _declared_ polymorph hidden rules, so removing the wrapper would break these authored aliases under tree-sitter CLI (the pass-1 dry-run is what makes tree-sitter's `ruleMap` snapshot include them). The wrapper is now narrow-purpose: it handles non-polymorph alias discovery only; its polymorph work has become redundant-but-harmless because wire's dual-write routing absorbs the same deposits. Fully retiring the wrapper would require either (a) absorbing arbitrary aliases into `wire()` via an explicit declaration block (`aliases: [...]`) — adds author boilerplate per standalone alias; or (b) a discovery mechanism we already rejected in the alternatives (static source scan, pre-eval). Kept as an open question for a follow-up ADR if authored aliases grow in number.
 - **Follow-ups landed**: wire.ts + unit tests, rust/python/typescript overrides migrated to `polymorphs:` blocks, `evaluate.ts` reading metadata from wire context.

@@ -1,5 +1,5 @@
 /**
- * overrides.ts — Grammar extension for python
+ * grammar.sittir.ts — Grammar extension for python
  *
  * Converted from overrides.json. Each entry wraps an unnamed child
  * at a positional index with a named field.
@@ -315,7 +315,7 @@ export default grammar(
 				// the wrap layer's `content` accessor never finds ("singular
 				// slot 'content' on 'case_pattern' requires one value; got
 				// undefined"). Same root-cause class, same fix, as rust's
-				// `_pattern`/`_wildcard_pattern` (packages/rust/overrides.ts):
+				// `_pattern`/`_wildcard_pattern` (packages/rust/grammar.sittir.ts):
 				// alias the literal into its own real, named node so it can
 				// fill the slot like every sibling arm.
 				_simple_pattern: ($) =>

@@ -25,7 +25,7 @@
  *                         `runTemplateEmitter`).
  *
  * With `--no-overrides`, evaluates the base tree-sitter grammar.js
- * directly (skipping `overrides.ts`). Useful for seeing what
+ * directly (skipping `grammar.sittir.ts`). Useful for seeing what
  * enrich vs overrides are each contributing.
  *
  * ## Why
@@ -61,7 +61,7 @@ export async function run(opts: ProbeStagesOptions): Promise<number> {
 	const repoRoot = resolve(new URL('../../../..', import.meta.url).pathname);
 
 	const { resolveGrammarJsPath } = await load('resolveGrammar');
-	const overridesPath = resolve(repoRoot, `packages/${grammar}/overrides.ts`);
+	const overridesPath = resolve(repoRoot, `packages/${grammar}/grammar.sittir.ts`);
 	const grammarJsPath = resolveGrammarJsPath(grammar);
 	const useOverrides = !opts.noOverrides && existsSync(overridesPath);
 	const entryPath = useOverrides ? overridesPath : grammarJsPath;

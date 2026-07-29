@@ -21,7 +21,7 @@ export default defineConfig({
 		'target/',
 		'.agents/**',
 		'.claude/**',
-		'**/overrides.ts',
+		'**/grammar.sittir.ts',
 		'tests/format-roundtrip/fixtures/**',
 		'archive/**'
 	]

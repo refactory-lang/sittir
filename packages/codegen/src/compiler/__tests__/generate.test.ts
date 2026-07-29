@@ -160,7 +160,7 @@ describe('generate() — non-literal-separator diagnostic surfacing (PR-S task 5
 	it('rust and python generate() runs are silent; typescript surfaces exactly the known object_type/interface_body gap', async () => {
 		// Empirical "0 witnesses" proof for rust and python. TypeScript is
 		// NOT silent — ground truth (verified empirically, not assumed): its
-		// `object_type` override (packages/typescript/overrides.ts) splits the
+		// `object_type` override (packages/typescript/grammar.sittir.ts) splits the
 		// member list into `object_type_content_comma` / `_semi` visible rules
 		// specifically so each carries its own single-literal separator
 		// template (see that file's comment on `object_type_content`). But

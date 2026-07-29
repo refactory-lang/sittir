@@ -1,4 +1,4 @@
-# ADR 0005 — Transpile `overrides.ts` to `.sittir/grammar.js`
+# ADR 0005 — Transpile `grammar.sittir.ts` to `.sittir/grammar.js`
 
 **Status**: Accepted
 **Date**: 2026-04-15
@@ -6,11 +6,11 @@
 
 ## Context
 
-ADR-0001 requires tree-sitter's toolchain to run against `overrides.ts`. But tree-sitter's parser generator expects a JavaScript file (`grammar.js`), not a TypeScript one. The authoring environment uses TypeScript for type checking and editor support. These two facts are in tension: we cannot sacrifice TypeScript authoring, and we cannot sacrifice tree-sitter compatibility.
+ADR-0001 requires tree-sitter's toolchain to run against `grammar.sittir.ts`. But tree-sitter's parser generator expects a JavaScript file (`grammar.js`), not a TypeScript one. The authoring environment uses TypeScript for type checking and editor support. These two facts are in tension: we cannot sacrifice TypeScript authoring, and we cannot sacrifice tree-sitter compatibility.
 
 ## Forcing Constraint
 
-> "for overrides.ts we can always transpile first, right?"
+> "for grammar.sittir.ts we can always transpile first, right?"
 
 ## Alternatives Considered
 
@@ -20,7 +20,7 @@ ADR-0001 requires tree-sitter's toolchain to run against `overrides.ts`. But tre
 
 ## Decision
 
-Sittir owns a mechanical transpile step that converts `packages/<lang>/overrides.ts` to `packages/<lang>/.sittir/grammar.js`. Each grammar package has a `tree-sitter.json` pointing at the `.sittir/` directory. CI runs the transpile + `tree-sitter generate` as one pipeline. The transpile is considered a build-step detail, not a change in authoring surface — maintainers only edit `.ts`.
+Sittir owns a mechanical transpile step that converts `packages/<lang>/grammar.sittir.ts` to `packages/<lang>/.sittir/grammar.js`. Each grammar package has a `tree-sitter.json` pointing at the `.sittir/` directory. CI runs the transpile + `tree-sitter generate` as one pipeline. The transpile is considered a build-step detail, not a change in authoring surface — maintainers only edit `.ts`.
 
 ## Principles Applied
 
@@ -30,8 +30,8 @@ Sittir owns a mechanical transpile step that converts `packages/<lang>/overrides
 ## Consequences
 
 - **Enables**: TypeScript authoring with full type checking, and tree-sitter-validated output, from the same source. `.sittir/` is a build artifact — gitignored per package.
-- **Costs**: One more build step in the pipeline. CI needs to run transpile before tree-sitter generate. Type errors in `overrides.ts` fail the build before tree-sitter ever runs (acceptable — catches problems earlier).
-- **Follow-ups**: `@sittir/codegen` ships a dual CJS+ESM build so `overrides.ts` can import DSL primitives in whichever module system the transpile target uses.
+- **Costs**: One more build step in the pipeline. CI needs to run transpile before tree-sitter generate. Type errors in `grammar.sittir.ts` fail the build before tree-sitter ever runs (acceptable — catches problems earlier).
+- **Follow-ups**: `@sittir/codegen` ships a dual CJS+ESM build so `grammar.sittir.ts` can import DSL primitives in whichever module system the transpile target uses.
 
 ## Verification
 

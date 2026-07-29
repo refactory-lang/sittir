@@ -133,7 +133,7 @@ interface Manifest {
 const HOST_BINARY_SENTINEL = 'freshness-checked';
 
 function sourceInputsFor(grammar: Grammar): string[] {
-	return [join(REPO_ROOT, `packages/${grammar}/overrides.ts`), join(REPO_ROOT, `packages/${grammar}/package.json`)];
+	return [join(REPO_ROOT, `packages/${grammar}/grammar.sittir.ts`), join(REPO_ROOT, `packages/${grammar}/package.json`)];
 }
 
 let cachedCodegenHash: string | null = null;
@@ -242,7 +242,7 @@ export function verifyManifestForGrammar(grammar: Grammar): VerifyResult {
 	const manifest = JSON.parse(readFileSync(path, 'utf-8')) as Manifest;
 
 	// Source-hash cross-layer synchronicity check: did the source inputs
-	// (overrides.ts + package.json) change since this manifest was written?
+	// (grammar.sittir.ts + package.json) change since this manifest was written?
 	// If yes, the generated content is stale relative to current inputs and
 	// the user needs to re-run codegen.
 	if (manifest.source_hash !== computeSourceHash(grammar)) {
@@ -299,7 +299,7 @@ export function assertGeneratedManifestsClean(grammars?: readonly Grammar[]): vo
 		}
 		if (r.sourceHashMismatch) {
 			lines.push(
-				`    SOURCE INPUTS CHANGED (overrides.ts, package.json, or packages/codegen/src/** edited since last regen)`
+				`    SOURCE INPUTS CHANGED (grammar.sittir.ts, package.json, or packages/codegen/src/** edited since last regen)`
 			);
 		}
 		for (const f of r.modified) lines.push(`    MODIFIED: ${f}`);

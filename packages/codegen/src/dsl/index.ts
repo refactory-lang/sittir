@@ -1,7 +1,7 @@
 /**
  * @sittir/codegen/dsl — sittir's DSL layer for override files.
  *
- * This is the stable import surface for `packages/<lang>/overrides.ts`.
+ * This is the stable import surface for `packages/<lang>/grammar.sittir.ts`.
  * Override files import from here:
  *
  *     import { transform, role, enrich, field, alias } from '@sittir/codegen/dsl'

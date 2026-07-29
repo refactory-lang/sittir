@@ -25,7 +25,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * Transpile `packages/<grammar>/overrides.ts` to
+ * Transpile `packages/<grammar>/grammar.sittir.ts` to
  * `packages/<grammar>/.sittir/grammar.js`. Returns the output path
  * and basic stats. Throws on transpile errors with esbuild's diagnostic
  * messages attached.

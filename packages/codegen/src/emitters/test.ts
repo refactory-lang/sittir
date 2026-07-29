@@ -94,7 +94,7 @@ export function emitTests(config: EmitTestsConfig): string {
 		if (!isValidIdent(key)) continue;
 		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 
-		// Known-failing kind (`expectTestFailures:` in overrides.ts): emit the
+		// Known-failing kind (`expectTestFailures:` in grammar.sittir.ts): emit the
 		// tests into a scratch buffer, then splice them in as `describe.skip`
 		// with the declared reason. Skipping at the describe level (rather than
 		// per-`it`) keeps the override surface to one kind→reason entry.

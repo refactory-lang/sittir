@@ -43,7 +43,7 @@ describe('per-rule transform patch-map (the TransformsConfig value surface)', ()
 
 	it('authored keys typecheck against the patch-map', () => {
 		type Patch = TransformPatchMap<FastKeys<Rules['or_pattern']>>;
-		// real authored paths (from overrides.ts): 0/0, 0/2, 1/1
+		// real authored paths (from grammar.sittir.ts): 0/0, 0/2, 1/1
 		assertType<Patch>({ '0/0': { __sittirPlaceholder: 'field', name: 'left' } });
 		assertType<Patch>({ '1/1': { __sittirPlaceholder: 'field', name: 'right' } });
 	});
@@ -57,7 +57,7 @@ describe('per-rule transform patch-map (the TransformsConfig value surface)', ()
 
 	it('non-numeric path keys (wildcard / kind-match / reverse) are accepted', () => {
 		type Patch = TransformPatchMap<FastKeys<Rules['or_pattern']>>;
-		// These authored forms exist in real overrides.ts (`_pattern` uses `-1`,
+		// These authored forms exist in real grammar.sittir.ts (`_pattern` uses `-1`,
 		// other rules use `(_expression)` / `_`) — must NOT false-reject.
 		assertType<Patch>({ _: field('x') });
 		assertType<Patch>({ '(_expression)': field('elements') });

@@ -232,7 +232,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ### `transpile` (`packages/codegen/src/run-codegen.ts:61`)
 
 ```text
-/** Transpile overrides.ts to .sittir/grammar.js (standalone step). */
+/** Transpile grammar.sittir.ts to .sittir/grammar.js (standalone step). */
 ```
 
 ### `tsGenerate` (`packages/codegen/src/run-codegen.ts:63`)

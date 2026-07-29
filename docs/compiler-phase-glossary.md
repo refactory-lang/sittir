@@ -209,7 +209,7 @@ Executes the grammar.js DSL and produces a `RawGrammar`. Mirrors tree-sitter's
 > `unwrapOptionalChoiceRt`.
 
 ### `evaluate(entryPath)`
-**Pattern:** CLI invocation with a grammar.js or overrides.ts path.
+**Pattern:** CLI invocation with a grammar.js or grammar.sittir.ts path.
 **Action:** Injects DSL globals, imports the module, extracts the grammar, runs post-evaluation passes (synthetic-alias-source synthesis, field-enum synthesis, pattern replacement).
 **Output:** `Promise<RawGrammar>`.
 

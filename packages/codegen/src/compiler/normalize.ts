@@ -79,7 +79,7 @@ export class NormalizeCtx extends BaseCtx<'link'> {
  * tree-sitter's parser-generator doesn't see these mutations and the parse
  * tree wouldn't match the typed surface. Heuristic candidates that need
  * promotion are surfaced via suggested.ts; the user authors variant() in
- * overrides.ts to make them explicit.
+ * grammar.sittir.ts to make them explicit.
  */
 // DIAGNOSTIC (`DBG_ID_LOSS=<kind>`): print the first choice's id for <kind>
 // after each normalization pass, to pinpoint where a rule id gets dropped.

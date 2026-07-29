@@ -90,7 +90,7 @@ describe('transpileOverrides — integration', () => {
 		expect(bundled).toMatch(/module\.exports\s*=\s*module\.exports\.default/);
 	});
 
-	it('throws when overrides.ts does not exist', async () => {
-		await expect(transpileOverrides({ grammar: 'nonexistent-grammar-xyz' })).rejects.toThrow(/no overrides\.ts/);
+	it('throws when grammar.sittir.ts does not exist', async () => {
+		await expect(transpileOverrides({ grammar: 'nonexistent-grammar-xyz' })).rejects.toThrow(/no grammar\.sittir\.ts/);
 	});
 });

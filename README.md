@@ -125,7 +125,7 @@ shipped them yet but they are in scope:
   exist only in memory (constructed factories, modified copies after
   `$with`).
 - **More grammars.** Adding a language is a workspace package, a
-  `tree-sitter-<lang>` dependency, and an `overrides.ts`. Go, Java, C,
+  `tree-sitter-<lang>` dependency, and an `grammar.sittir.ts`. Go, Java, C,
   SQL, and others have mature tree-sitter grammars and are candidates
   whenever a use case appears.
 
@@ -133,7 +133,7 @@ shipped them yet but they are in scope:
 
 - **One pipeline, many languages.** All language-specific knowledge enters
   through `grammar.json`, `node-types.json`, and a per-grammar
-  `overrides.ts`. The compiler is grammar-agnostic; the same emitters
+  `grammar.sittir.ts`. The compiler is grammar-agnostic; the same emitters
   produce Rust, TypeScript, and Python packages today and accept any other
   tree-sitter grammar without code changes.
 - **Render fidelity, then ergonomics.** A round-trip
@@ -161,7 +161,7 @@ A full regeneration runs in two stages. First, an auto-chain pushes the
 override DSL into the actual parser:
 
 ```
-overrides.ts ──▶ transpile ──▶ .sittir/grammar.js ──▶ tree-sitter generate
+grammar.sittir.ts ──▶ transpile ──▶ .sittir/grammar.js ──▶ tree-sitter generate
                                                           │
                                                           ├─▶ grammar.json
                                                           ├─▶ node-types.json
@@ -183,8 +183,8 @@ summary below is the contract a reader needs to navigate the source.
 
 | Phase                | Source                       | Input                           | Output                              | Responsibility                                                                                                                                                                                            |
 | -------------------- | ---------------------------- | ------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **0. Enrich**        | `dsl/enrich.ts`              | `GrammarResult`                 | Enriched `GrammarResult` + `_kw_*`  | Mechanical grammar pre-pass invoked from `overrides.ts` as `grammar(enrich(base), {...})`. Promotes bare symbols to `field()`, lifts `optional(literal)` keywords into hidden `_kw_*` rules. Because enrich runs inside the override-DSL transpile, its rewrites end up in `.sittir/grammar.js` — the parser and the downstream codegen see identical rules. |
-| **1. Evaluate**      | `compiler/evaluate.ts`       | `grammar.js` / `overrides.ts`   | `RawGrammar`                        | Executes the tree-sitter DSL with sittir extensions (`role()`, `variant()`, `transform()`). Normalizes seq/choice/optional/repeat, lifts `commaSep` patterns, synthesizes hidden enum rules from inline `field(name, choice('a','b','c'))`. |
+| **0. Enrich**        | `dsl/enrich.ts`              | `GrammarResult`                 | Enriched `GrammarResult` + `_kw_*`  | Mechanical grammar pre-pass invoked from `grammar.sittir.ts` as `grammar(enrich(base), {...})`. Promotes bare symbols to `field()`, lifts `optional(literal)` keywords into hidden `_kw_*` rules. Because enrich runs inside the override-DSL transpile, its rewrites end up in `.sittir/grammar.js` — the parser and the downstream codegen see identical rules. |
+| **1. Evaluate**      | `compiler/evaluate.ts`       | `grammar.js` / `grammar.sittir.ts`   | `RawGrammar`                        | Executes the tree-sitter DSL with sittir extensions (`role()`, `variant()`, `transform()`). Normalizes seq/choice/optional/repeat, lifts `commaSep` patterns, synthesizes hidden enum rules from inline `field(name, choice('a','b','c'))`. |
 | **2. Link**          | `compiler/link.ts`           | `RawGrammar`, `node-types.json` | `LinkedGrammar`                     | Resolves what each node *is*. Strips `alias` and `token` wrappers, classifies hidden rules (enum / supertype / group), detects clauses, infers field names from the symbol-reference graph, classifies polymorphs (both heuristic and `variant()`-sourced), annotates block-bearer fields. Shape-preserving — no restructuring. |
 | **3. Optimize**      | `compiler/optimize.ts`       | `LinkedGrammar`                 | `OptimizedGrammar`                  | Non-lossy structural simplification. Collapses degenerate wrappers, fans out `seq(a, choice(b, c))`, factors common prefix/suffix, dedupes adjacent members, inlines single-use hidden rules. Does not rename fields or reclassify nodes. |
 | **3.5. Simplify**    | `compiler/simplify.ts`       | `OptimizedGrammar`              | `simplifiedRules` map               | Derivation-only view. Strips anonymous delimiters, hoists fields out of single-content wrappers, merges position-equivalent choice branches. Used to derive each kind's field/child slots — *not* used by template emission, which keeps the raw rule so delimiters survive. |
@@ -204,7 +204,7 @@ Three commitments worth flagging:
   DSL.
 - **Same pipeline runs every grammar.** Rust, TypeScript, and Python share
   one compiler. New grammars enter through a workspace package and a
-  `packages/<lang>/overrides.ts`; no compiler fork.
+  `packages/<lang>/grammar.sittir.ts`; no compiler fork.
 
 ### Runtime
 
@@ -380,7 +380,7 @@ boundary used by codemods.
 
 Every `@sittir/<grammar>` package is regenerated as a unit. Hand edits to
 generated files are reverted on the next run; language-specific knowledge
-lives in `packages/<lang>/overrides.ts`.
+lives in `packages/<lang>/grammar.sittir.ts`.
 
 | File                                          | Contents                                                                                       |
 | --------------------------------------------- | ---------------------------------------------------------------------------------------------- |

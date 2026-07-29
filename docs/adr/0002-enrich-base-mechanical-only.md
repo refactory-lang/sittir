@@ -6,7 +6,7 @@
 
 ## Context
 
-Several low-risk grammar improvements (promoting a leading keyword into a named field, wrapping a single-kind reference as a field, normalizing `seq(X, repeat(X))` to `repeat1(X)`) are currently being re-derived by hand in every grammar's `overrides.ts`, and some of them live invisibly inside sittir's Link phase. Maintainers cannot tell what transformations will be applied to a base grammar by reading the override file alone. We want these applied automatically.
+Several low-risk grammar improvements (promoting a leading keyword into a named field, wrapping a single-kind reference as a field, normalizing `seq(X, repeat(X))` to `repeat1(X)`) are currently being re-derived by hand in every grammar's `grammar.sittir.ts`, and some of them live invisibly inside sittir's Link phase. Maintainers cannot tell what transformations will be applied to a base grammar by reading the override file alone. We want these applied automatically.
 
 We also discussed more ambitious auto-inference — "this field name is used in 60% of similar rules, let's apply it everywhere" — which would save more hand-authoring but requires thresholds, counts, and judgment calls.
 
@@ -17,7 +17,7 @@ We also discussed more ambitious auto-inference — "this field name is used in 
 ## Alternatives Considered
 
 - **Include heuristic inference in enrich**: would reduce hand-authored overrides further, but every heuristic introduces a "why did this happen?" mystery the maintainer can't debug without reading compiler source. Rejected.
-- **Keep mechanical passes in Link (status quo)**: maintainers still can't see them by reading overrides.ts. Rejected.
+- **Keep mechanical passes in Link (status quo)**: maintainers still can't see them by reading grammar.sittir.ts. Rejected.
 - **Expose a lower-level `applyPass()` API**: maintainers opt into individual passes. Rejected as overkill for three well-defined mechanical rules.
 
 ## Decision

@@ -2020,7 +2020,7 @@ export class AssembledBranch<
 	readonly renderRule: RenderRule;
 	/**
 	 * Visible variant-child kinds registered via `variant()` adoption in
-	 * overrides.ts (empty on non-override-polymorph parents). Populated
+	 * grammar.sittir.ts (empty on non-override-polymorph parents). Populated
 	 * for parents whose variant children live deep in the rule and were
 	 * handled by Link's push-down path — they classify as branches
 	 * rather than polymorphs but still need the metadata for `.from()`

@@ -1,8 +1,8 @@
-// Sittir-owned authoring type surface for overrides.ts.
+// Sittir-owned authoring type surface for grammar.sittir.ts.
 //
 // These ambient `declare global` signatures type the tree-sitter-INJECTED DSL
 // globals (`seq`/`choice`/`field`/…) over the sittir-owned `AuthoringRule`
-// vocabulary (grammar-shapes rules + bare literals), so authoring in overrides.ts
+// vocabulary (grammar-shapes rules + bare literals), so authoring in grammar.sittir.ts
 // composes into the recursive rule types and gets IntelliSense.
 //
 // Why our own `AuthoringRule` and not tree-sitter's `RuleOrLiteral`: our rule
@@ -11,7 +11,7 @@
 // over `AuthoringRule` lets our rules compose into each other (the mismatch that
 // otherwise breaks `seq(choice(...))`). These merge with tree-sitter's ambient
 // `declare function seq` as overloads; ours matches the grammar-shapes args.
-// Scoped to overrides via tsconfig.overrides.json; codegen internals untouched.
+// Scoped to overrides via tsconfig.grammar-sittir.json; codegen internals untouched.
 //
 // The declared set mirrors EXACTLY the runtime globals sittir injects
 // (compiler/evaluate.ts saveAndInjectDslGlobals): grammar, seq, choice,

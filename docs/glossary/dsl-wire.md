@@ -846,7 +846,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * index signature, so `$.x` does NOT leak `| undefined` under
  * `noUncheckedIndexedAccess` — unlike tree-sitter's `GrammarSymbols`, whose
  * index-signature leak makes `$.x: SymbolRule<'evaluate'> | undefined` and breaks
- * composition (`undefined ⊄ AuthoringRule`) in overrides.ts authoring.
+ * composition (`undefined ⊄ AuthoringRule`) in grammar.sittir.ts authoring.
  */
 ```
 

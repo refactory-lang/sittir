@@ -27,12 +27,12 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// packages/rust/overrides.ts
-var overrides_exports = {};
-__export(overrides_exports, {
-  default: () => overrides_default
+// packages/rust/grammar.sittir.ts
+var grammar_sittir_exports = {};
+__export(grammar_sittir_exports, {
+  default: () => grammar_sittir_default
 });
-module.exports = __toCommonJS(overrides_exports);
+module.exports = __toCommonJS(grammar_sittir_exports);
 
 // packages/rust/base.ts
 var import_grammar = __toESM(require("tree-sitter-rust/grammar.js"), 1);
@@ -3458,9 +3458,9 @@ var prec = globalThis.prec;
 var token = globalThis.token;
 var grammar = globalThis.grammar;
 
-// packages/rust/overrides.ts
+// packages/rust/grammar.sittir.ts
 var enrichedBase = enrich(base_default);
-var overrides_default = grammar(
+var grammar_sittir_default = grammar(
   enrichedBase,
   wire(
     {

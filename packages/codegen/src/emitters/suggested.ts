@@ -7,7 +7,7 @@
  *   1. `export const` data arrays (`promotedRules`, `inferredFields`,
  *      `repeatedShapes`) for programmatic consumption.
  *   2. A `suggestedRules` object literal whose entries match the
- *      shape of `overrides.ts` — each entry is a real
+ *      shape of `grammar.sittir.ts` — each entry is a real
  *      `transform(original, { ... })` / `choice(...)` expression
  *      ready to drop into your `grammar(base, { rules })` map.
  *
@@ -160,7 +160,7 @@ export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
 	lines.push('// grammar extension snippets plus the raw data arrays they');
 	lines.push('// came from. Every `suggestedRules` entry is a real');
 	lines.push('// `transform(...)` or `choice(...)` expression; paste the');
-	lines.push('// ones you want into your own overrides.ts.');
+	lines.push('// ones you want into your own grammar.sittir.ts.');
 	lines.push('');
 	lines.push('// @ts-nocheck — the DSL globals (grammar, transform, field,');
 	lines.push("// choice, $) are injected by @sittir/codegen's evaluator at");
@@ -249,14 +249,14 @@ export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
 	// Copy-paste ready transforms block (ADR-0008)
 	// ---------------------------------------------------------------
 	// Inferred fields + polymorph candidates produce patch maps that
-	// belong in the `transforms:` block of overrides.ts — each value
+	// belong in the `transforms:` block of grammar.sittir.ts — each value
 	// is a plain object (or array of objects for multiple patch sets)
 	// that `transform()` unpacks at rule-evaluation time. Keeping them
 	// separate from `suggestedRules` matches the two-block shape the
-	// grammars now author by hand (see rust/overrides.ts for the
+	// grammars now author by hand (see rust/grammar.sittir.ts for the
 	// template).
 	lines.push('// ---------------------------------------------------------------');
-	lines.push('// suggestedTransforms — drop entries into your overrides.ts');
+	lines.push('// suggestedTransforms — drop entries into your grammar.sittir.ts');
 	lines.push('// `transforms:` block. Each value is a patch map (or an');
 	lines.push('// array of patch maps when both field and polymorph');
 	lines.push('// candidates target the same kind).');
@@ -332,7 +332,7 @@ export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
 					`  // [${tag}] ${quoteKey(kind)} field '${e.fieldName}' on $.${e.targetSymbol}` +
 						` — ${pct}% agreement, ${e.sampleSize} parents. Parent rule is not a top-level` +
 						` SEQ so transform() can't target a position; inference is applied inside Link's` +
-						` applyInferredFields pass (tree rewrite) rather than via overrides.ts.`
+						` applyInferredFields pass (tree rewrite) rather than via grammar.sittir.ts.`
 				);
 			}
 			if (!hasFieldPatch && !hasVariantPatch) {
@@ -415,9 +415,9 @@ export function emitSuggested(config: EmitSuggestedConfig): string | undefined {
 	// ---------------------------------------------------------------
 	// These are NEW rule definitions (not transforms of existing ones)
 	// so they stay in `suggestedRules` with the `$ => ...` callback
-	// shape used by overrides.ts's `rules:` block.
+	// shape used by grammar.sittir.ts's `rules:` block.
 	lines.push('// ---------------------------------------------------------------');
-	lines.push('// suggestedRules — drop entries into your overrides.ts');
+	lines.push('// suggestedRules — drop entries into your grammar.sittir.ts');
 	lines.push('// `rules:` block. Each value defines a NEW rule (supertype');
 	lines.push('// union or repeated-shape group) authored as a `$ => ...`');
 	lines.push('// callback.');
@@ -770,7 +770,7 @@ function guessGroupDiscriminator(rule: Rule<'link'>, path: readonly number[]): s
 export function emitSuggestedGroupsBlock(candidates: readonly GroupCandidate[]): string {
 	const out: string[] = [];
 	out.push('// ---------------------------------------------------------------');
-	out.push('// suggestedGroups — drop entries into your overrides.ts');
+	out.push('// suggestedGroups — drop entries into your grammar.sittir.ts');
 	out.push('// `groups:` block. Each entry lifts a nested sub-rule into');
 	out.push('// a hidden synthesized kind materialized as AssembledGroup.');
 	out.push('// All entries are held — none are auto-applied.');

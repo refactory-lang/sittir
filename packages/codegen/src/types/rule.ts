@@ -459,7 +459,7 @@ export interface SymbolRef {
 // Path-addressed rule rewriting
 //
 // Slash-separated positional paths (e.g. '1/1/0/1/3') used by
-// `polymorphs:` / `transforms:` / `groups:` in overrides.ts. See
+// `polymorphs:` / `transforms:` / `groups:` in grammar.sittir.ts. See
 // docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
 // for the path semantics.
 // ---------------------------------------------------------------

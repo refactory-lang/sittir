@@ -5,7 +5,7 @@ import { link } from '../link.ts';
 import { deriveStructuralVariantChildren, polymorphVisibleName } from '../variant-structural.ts';
 
 const __dirname = new URL('.', import.meta.url).pathname;
-const resolveOverrides = (grammar: string) => resolve(__dirname, `../../../../${grammar}/overrides.ts`);
+const resolveOverrides = (grammar: string) => resolve(__dirname, `../../../../${grammar}/grammar.sittir.ts`);
 
 /**
  * R12/decision-7 V2 Task 2: this suite formerly asserted the WIRE metadata

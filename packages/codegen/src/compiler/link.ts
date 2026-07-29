@@ -668,7 +668,7 @@ function extractAliasedFromName(content: Rule<'link'>, supertypes: ReadonlySet<s
 
 // tagVariants / isStructurallyHomogeneousChoice removed.
 // Auto-wrapping heuristics replaced by explicit user-declared
-// `variant()` / `polymorphs:` in overrides.ts. See commit
+// `variant()` / `polymorphs:` in grammar.sittir.ts. See commit
 // "013: disable tagAllRulesVariants — auto-tagging masked real
 // adoption work" for the rationale.
 
@@ -2027,7 +2027,7 @@ export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
  *     alias/variant/clause/group)
  *
  * Throws if any segment fails to address. Mirrors path semantics used
- * by `polymorphs:` / `transforms:` in `overrides.ts`.
+ * by `polymorphs:` / `transforms:` in `grammar.sittir.ts`.
  */
 
 export function resolveGroupPath(rule: Rule<'link'>, path: string): Rule<'link'> {
