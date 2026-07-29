@@ -34,7 +34,8 @@ import {
 	loadNodeModel,
 	type TSNode,
 	type TSTree,
-	type WrappedNodeData
+	type WrappedNodeData,
+	type AccessorThrowRecord
 } from './common.ts';
 
 /**
@@ -264,6 +265,14 @@ export interface ReadRenderParseResult {
 		input?: string;
 		rendered?: string;
 	}[];
+	/**
+	 * Accessor-throw occurrences hit while materializing wrapped nodes for
+	 * this run (see `AccessorThrowRecord`'s doc comment). Each throw masks
+	 * its whole slot behind a raw stub fallback — not necessarily a hard
+	 * round-trip failure on its own, but a real signal worth surfacing
+	 * beyond the transient stderr line.
+	 */
+	accessorThrows: AccessorThrowRecord[];
 }
 
 /**
@@ -447,6 +456,10 @@ export async function validateReadRenderParse(
 		input?: string;
 		rendered?: string;
 	}[] = [];
+	const accessorThrows: AccessorThrowRecord[] = [];
+	const onAccessorThrow = (rec: AccessorThrowRecord): void => {
+		accessorThrows.push(rec);
+	};
 	let pass = 0;
 	let astMatchPass = 0;
 	let skip = 0;
@@ -488,7 +501,7 @@ export async function validateReadRenderParse(
 					const list = candidatesByKind.get(sourceKind) ?? [];
 					list.push({ start: span.start, end: span.end, node: w });
 					candidatesByKind.set(sourceKind, list);
-				});
+				}, onAccessorThrow);
 			}
 			const testableKinds = [...candidatesByKind.keys()];
 
@@ -560,7 +573,7 @@ export async function validateReadRenderParse(
 							cand.node.$childIndex != null &&
 							handle.read
 								? (handle.read(cand.node.$nodeHandle, cand.node.$childIndex) as unknown as AnyNodeData)
-								: (stripStructuralNodeText(materializeWrappedNodeData(cand.node)) as AnyNodeData);
+								: (stripStructuralNodeText(materializeWrappedNodeData(cand.node, onAccessorThrow)) as AnyNodeData);
 					} catch (e) {
 						kindErrors.push({
 							name: `${entry.name} [${kind}]`,
@@ -824,7 +837,8 @@ export async function validateReadRenderParse(
 		skip,
 		astMatchPass,
 		errors,
-		astMismatches
+		astMismatches,
+		accessorThrows
 	};
 }
 

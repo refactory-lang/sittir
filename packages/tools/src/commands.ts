@@ -389,6 +389,16 @@ export function collectValidatorFailuresForGrammar(counts: GrammarCounts): Valid
 			label: m.entry ? `${m.entry} (${m.kind})` : m.kind,
 			message: m.message
 		});
+	// Slot-masking, not necessarily a hard round-trip failure on its own —
+	// 'warning' like the literal-leak coverage issues below, not 'error'.
+	for (const t of readRenderParse.accessorThrows)
+		failures.push({
+			stage: 'read-render-parse-accessor-throw',
+			code: 'accessor-throw',
+			severity: 'warning',
+			label: `${t.key} (${t.accessor}, type=${t.type})`,
+			message: t.message
+		});
 	for (const e of readRenderParseShallow.errors)
 		failures.push({
 			stage: 'read-render-parse-shallow',
@@ -404,6 +414,14 @@ export function collectValidatorFailuresForGrammar(counts: GrammarCounts): Valid
 			severity: 'error',
 			label: m.entry ? `${m.entry} (${m.kind})` : m.kind,
 			message: m.message
+		});
+	for (const t of readRenderParseShallow.accessorThrows)
+		failures.push({
+			stage: 'read-render-parse-shallow-accessor-throw',
+			code: 'accessor-throw',
+			severity: 'warning',
+			label: `${t.key} (${t.accessor}, type=${t.type})`,
+			message: t.message
 		});
 	for (const e of factoryRenderParse.errors)
 		failures.push({

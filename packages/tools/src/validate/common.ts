@@ -1095,7 +1095,11 @@ export async function loadNodeModel(grammar: string): Promise<LoadedNodeModel> {
  * and get skipped. Leaves short-circuit when accessing a getter that
  * doesn't return a wrapped-shape value.
  */
-export function walkWrappedTree(root: unknown, visit: (w: WrappedNodeData) => void): void {
+export function walkWrappedTree(
+	root: unknown,
+	visit: (w: WrappedNodeData) => void,
+	onAccessorThrow?: (rec: AccessorThrowRecord) => void
+): void {
 	const seen = new Set<string>();
 	const recurse = (w: unknown): void => {
 		if (!isWrappedNodeData(w)) return;
@@ -1110,7 +1114,7 @@ export function walkWrappedTree(root: unknown, visit: (w: WrappedNodeData) => vo
 		visit(w);
 		for (const k of Object.keys(w)) {
 			if (k !== '$other' && !k.startsWith('_')) continue;
-			const v = resolveWrappedStorageValue(w, k);
+			const v = resolveWrappedStorageValue(w, k, onAccessorThrow);
 			if (isWrappedNodeData(v)) recurse(v);
 			else if (Array.isArray(v)) for (const x of v) if (isWrappedNodeData(x)) recurse(x);
 		}
@@ -1118,8 +1122,11 @@ export function walkWrappedTree(root: unknown, visit: (w: WrappedNodeData) => vo
 	recurse(root);
 }
 
-export function materializeWrappedNodeData(root: unknown): AnyNodeData {
-	return materializeWrappedValue(root) as AnyNodeData;
+export function materializeWrappedNodeData(
+	root: unknown,
+	onAccessorThrow?: (rec: AccessorThrowRecord) => void
+): AnyNodeData {
+	return materializeWrappedValue(root, onAccessorThrow) as AnyNodeData;
 }
 
 export function stripStructuralNodeText<T>(root: T): T {
@@ -1161,32 +1168,52 @@ export function stripStructuralNodeText<T>(root: T): T {
 	return root;
 }
 
-function materializeWrappedValue(value: unknown): unknown {
+/**
+ * One accessor-throw occurrence — a slot's declared getter threw instead of
+ * returning a value, so `resolveWrappedStorageValue` fell back to the raw,
+ * unwrapped stub for that slot (see its doc comment for what that masks).
+ * Callers that care about these beyond the unconditional stderr line (e.g.
+ * `validateReadRenderParse`, for folding into the unified validation report)
+ * pass an `onAccessorThrow` collector through to receive one record per
+ * occurrence, in addition to — not instead of — the stderr line.
+ */
+export interface AccessorThrowRecord {
+	readonly key: string;
+	readonly accessor: string;
+	readonly type: unknown;
+	readonly message: string;
+}
+
+function materializeWrappedValue(value: unknown, onAccessorThrow?: (rec: AccessorThrowRecord) => void): unknown {
 	if (Array.isArray(value)) {
-		return value.map((entry) => materializeWrappedValue(entry));
+		return value.map((entry) => materializeWrappedValue(entry, onAccessorThrow));
 	}
 	if (!isWrappedNodeData(value)) return value;
 	const materialized: Record<string, unknown> = {};
 	for (const [key, raw] of Object.entries(value)) {
 		if (key === '$with' || typeof raw === 'function') continue;
 		if (key === '$other') {
-			const resolved = resolveWrappedStorageValue(value, key);
+			const resolved = resolveWrappedStorageValue(value, key, onAccessorThrow);
 			if (resolved === undefined) continue;
-			materialized.$other = materializeWrappedValue(resolved);
+			materialized.$other = materializeWrappedValue(resolved, onAccessorThrow);
 			continue;
 		}
 		if (key.startsWith('_')) {
-			const resolved = resolveWrappedStorageValue(value, key);
+			const resolved = resolveWrappedStorageValue(value, key, onAccessorThrow);
 			if (resolved === undefined) continue;
-			materialized[key] = materializeWrappedValue(resolved);
+			materialized[key] = materializeWrappedValue(resolved, onAccessorThrow);
 			continue;
 		}
-		materialized[key] = materializeWrappedValue(raw);
+		materialized[key] = materializeWrappedValue(raw, onAccessorThrow);
 	}
 	return materialized;
 }
 
-function resolveWrappedStorageValue(node: WrappedNodeData, storageKey: string): unknown {
+function resolveWrappedStorageValue(
+	node: WrappedNodeData,
+	storageKey: string,
+	onAccessorThrow?: (rec: AccessorThrowRecord) => void
+): unknown {
 	if (storageKey !== '$other' && !storageKey.startsWith('_')) {
 		return node[storageKey];
 	}
@@ -1207,9 +1234,10 @@ function resolveWrappedStorageValue(node: WrappedNodeData, storageKey: string): 
 				// specs/026-nested-supertype-alias-materialization/spec.md's
 				// Progress section for the concrete case this cost real
 				// investigation time on).
-				process.stderr.write(
-					`[accessor-throw] key=${storageKey} accessor=${accessorName} type=${(node as any).$type} err=${(e as Error).message}\n`
-				);
+				const message = (e as Error).message;
+				const type = (node as any).$type;
+				process.stderr.write(`[accessor-throw] key=${storageKey} accessor=${accessorName} type=${type} err=${message}\n`);
+				onAccessorThrow?.({ key: storageKey, accessor: accessorName, type, message });
 				return node[storageKey];
 			}
 		}
