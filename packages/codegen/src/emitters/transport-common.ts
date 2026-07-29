@@ -1,10 +1,5 @@
 import type { NodeMap } from '../compiler/types.ts';
-import type {
-	AssembledNonterminal,
-	AssembledNode,
-	AssembledSupertype,
-	UnresolvedRef
-} from '../compiler/model/node-map.ts';
+import type { AssembledNonterminal, AssembledSupertype } from '../compiler/model/node-map.ts';
 import { isNodeRef, storageKindOfRef } from '../compiler/model/node-map.ts';
 
 export type SlotClass =

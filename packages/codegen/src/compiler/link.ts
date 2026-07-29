@@ -41,8 +41,7 @@ import type {
 	Repeat1Rule,
 	SymbolRule,
 	StringRule,
-	RepeatRule,
-	AliasRule
+	RepeatRule
 } from '../types/rule.ts';
 import {
 	isSeq,

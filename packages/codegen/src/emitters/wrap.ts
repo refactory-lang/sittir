@@ -343,7 +343,7 @@ function resolveSlotAliasRewrite(
 	// member_expression, call_expression, and instantiation_expression are ALL
 	// aliased). Return every pair — drillAs/drillAsAll try each in turn and at
 	// most one can match a given node's actual (single) real kind.
-	const pairs: (readonly [string, string])[] = [...Object.entries(aliasTargetToSourceMapOf(slot))];
+	const pairs: (readonly [string, string])[] = Object.entries(aliasTargetToSourceMapOf(slot));
 	// A slot can ALSO reference a hidden rule (e.g. `_tuple_type_member`,
 	// `type`) that's itself modeled as a supertype-like node (an inlined
 	// hidden choice, same mechanism tree-sitter's own `supertype` nodes use)

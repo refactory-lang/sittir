@@ -828,7 +828,7 @@ export function wordCharAsciiTable(wordMatcher: RegExp): boolean[] {
 		const m = pair.match(anchored);
 		return !!(m && m[0] !== undefined && m[0].length > 1);
 	};
-	const table: boolean[] = new Array(128).fill(false);
+	const table: boolean[] = Array.from({ length: 128 }, () => false);
 	for (let i = 0; i < 128; i++) {
 		const c = String.fromCharCode(i);
 		table[i] = joins(`a${c}`) || joins(`${c}a`);
