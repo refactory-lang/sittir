@@ -53,7 +53,7 @@ function dummyNodeLiteral(
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string {
 	const typeExpr = nodeMap ? testTypeDiscriminant(kind, kindEntries, nodeMap) : `'${kind}'`;
-	return `{ $type: ${typeExpr}, $text: '${dummyText}', $source: 2, $named: true } as any`;
+	return `{ $type: ${typeExpr}, $text: '${escForSource(dummyText)}', $source: 2, $named: true } as any`;
 }
 
 export function emitTests(config: EmitTestsConfig): string {
