@@ -27,7 +27,13 @@ describe('node-model emitter', () => {
 						values: [
 							{
 								node: { kind: 'unresolved-ref', name: 'identifier' },
+								// PR-K2: in-memory kind-id stamps must NEVER reach
+								// node-model.json5 — names stay the identity on disk
+								// (KindId-NodeRefs design §2.4; python regen renumbers
+								// parser ids, so serialized ids would be regen noise).
+								storageKindId: 42,
 								parseKind: { kind: 'unresolved-ref', name: 'decorator' },
+								parseKindId: 7,
 								multiplicity: 'single'
 							}
 						],
@@ -54,5 +60,9 @@ describe('node-model emitter', () => {
 		const serialized = emitNodeModel({ grammar: 'synth', nodeMap });
 		expect(serialized).toContain('"parseKind": "decorator"');
 		expect(serialized).not.toContain('aliasSources');
+		// PR-K2 serialization shape: id stamps are in-memory facts only.
+		expect(serialized).not.toContain('storageKindId');
+		expect(serialized).not.toContain('parseKindId');
+		expect(serialized).not.toContain('resolvedKindId');
 	});
 });

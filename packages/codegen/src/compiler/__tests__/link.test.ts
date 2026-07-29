@@ -199,6 +199,11 @@ describe('Link — hidden rule classification', () => {
 				type: 'SUPERTYPE',
 				name: '_simple_pattern',
 				subtypes: ['identifier', '_simple_pattern_negative'],
+				// The flatten stamps the aliased arm's storage→parse pair
+				// alongside variantArms — the parse name carries the alias
+				// occurrence's own runtime symbol id for dispatch (see
+				// `SupertypeRule.subtypeParseNames`).
+				subtypeParseNames: { _simple_pattern_negative: 'simple_pattern_negative' },
 				variantArms: ['_simple_pattern_negative']
 			});
 		});

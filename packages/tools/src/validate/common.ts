@@ -724,6 +724,11 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		// use structural rendering (macro token content is
 		// author-declared-verbatim, mixes named and anon tokens).
 		delim_token_tree: (r) => `fn _f() { mac! ${r} }`,
+		// Post-alias-catalog-split (PR #165), the same content reads as
+		// `token_tree` — the `delim_token_tree` key above stopped matching
+		// and this kind's probing/fixtures silently vanished (19→0, see
+		// docs/KNOWN_ISSUES.md). Same wrapper body restores coverage.
+		token_tree: (r) => `fn _f() { mac! ${r} }`,
 		// visibility_modifier is a declaration-position prefix — has no
 		// supertype it fits under. Only fires when variant() adoption
 		// has been applied (see `wrapForReparse` — wrappers whose kind
@@ -1190,7 +1195,21 @@ function resolveWrappedStorageValue(node: WrappedNodeData, storageKey: string): 
 		if (typeof accessor === 'function' && accessor.length === 0) {
 			try {
 				return (accessor as () => unknown).call(node);
-			} catch {
+			} catch (e) {
+				// Unconditional (not env-gated): a thrown accessor here means this
+				// ENTIRE slot falls back to raw, unwrapped stubs below — including
+				// any sibling elements in an array-valued slot that wrapped fine on
+				// their own. That masking previously required
+				// SITTIR_VALIDATOR_DUMP_ACCESSOR_THROW to even see; without it, a
+				// downstream render/FromNapiValue error on an innocent sibling
+				// element was the only visible symptom, misdirecting investigation
+				// toward that sibling instead of the actual failing accessor (see
+				// specs/026-nested-supertype-alias-materialization/spec.md's
+				// Progress section for the concrete case this cost real
+				// investigation time on).
+				process.stderr.write(
+					`[accessor-throw] key=${storageKey} accessor=${accessorName} type=${(node as any).$type} err=${(e as Error).message}\n`
+				);
 				return node[storageKey];
 			}
 		}

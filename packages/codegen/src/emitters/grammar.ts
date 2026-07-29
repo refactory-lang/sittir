@@ -38,8 +38,6 @@ export function emitGrammar(config: EmitGrammarConfig): string {
 	lines.push('');
 	lines.push(`export type ${grammarAlias} = {`);
 
-	// Deduplicate: some types appear twice (named + unnamed).
-	// Use "type:named" as the key to avoid duplicate property names.
 	const seen = new Set<string>();
 	for (const entry of entries) {
 		const key = entry.named ? entry.type : `_anonymous_${entry.type}`;

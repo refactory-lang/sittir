@@ -23,6 +23,7 @@ import {
 	kindDiscriminantExpr,
 	kindIdMemberName,
 	findKindEntry,
+	findKindEntryForLiteral,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 export {
@@ -33,12 +34,6 @@ export {
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 
-/**
- * Return the discriminant expression for a kind, falling back to a JSON
- * string literal when `kindEntries` is absent (legacy callers / tests
- * that don't supply `generatedIdTables`). The primary path always uses
- * `TSKindId.X` so generated grammar packages carry numeric discriminants.
- */
 function kindDiscriminantOrLiteral(
 	kind: string,
 	nodeMap: NodeMap,
@@ -167,9 +162,19 @@ export function emitTypes(config: EmitTypesConfig): string {
 	// 2. Scoped enums per supertype
 	if (supertypes.length > 0) {
 		lines.push('// Scoped enums per supertype');
+		const emittedKindEnums = new Set<string>();
 		for (const st of supertypes) {
-			const cleanName = st.kind.replace(/^_/, '');
-			const enumName = toPascal(cleanName) + 'Kind';
+			// Base the name on the node's own resolved typeName (same source
+			// emitSupertypeUnionDeclarations uses below) rather than
+			// re-deriving from `st.kind` — a hidden/visible pair sharing one
+			// cleaned name (e.g. `_property_identifier` / `property_identifier`)
+			// already got disambiguated typeNames upstream; stripping the `_`
+			// again here would collide the two into one duplicate enum.
+			const stNode = nodeMap.nodes.get(st.kind);
+			const typeName = stNode?.typeName ?? toPascal(st.kind.replace(/^_/, ''));
+			const enumName = typeName + 'Kind';
+			if (emittedKindEnums.has(enumName)) continue;
+			emittedKindEnums.add(enumName);
 			lines.push(`export const enum ${enumName} {`);
 			const seenSubMembers = new Set<string>();
 			for (const sub of st.subtypes) {
@@ -369,17 +374,6 @@ export function emitTypes(config: EmitTypesConfig): string {
 // Grammar key helpers
 // ---------------------------------------------------------------------------
 
-/**
- * Build the set of kind keys known to grammar.ts (the PythonGrammar / RustGrammar
- * type literal). Tree type interfaces can only use `NodeKind<Grammar>` as their
- * discriminator, so kinds absent from grammar.ts — hidden rules, promoted
- * terminals, synthesised forms — must fall back to a generic `AnyTreeNode`.
- *
- * @param grammar - Grammar name (e.g. `"rust"`, `"python"`).
- * @returns Set of kind strings present in the node-types.json for this grammar.
- *   Anonymous tokens are stored under the `_anonymous_<token>` key convention.
- *   Returns an empty set when node-types.json is unavailable.
- */
 function buildGrammarKeySet(grammar: string): Set<string> {
 	const grammarKeys = new Set<string>();
 	try {
@@ -405,19 +399,6 @@ interface NodeCategories {
 	leafValueMap: Map<string, string[]>;
 }
 
-/**
- * Partition all nodes in the NodeMap into the five categories used by the
- * type emitter.
- *
- * @remarks
- * Groups that act as standalone inlined hidden rules (e.g. python's
- * `_key_value_pattern`) need an interface emitted so field/child content-type
- * unions referencing their `typeName` resolve. Polymorph form groups are
- * skipped here — their parent polymorph emits the form interface inline.
- *
- * @param nodeMap - The fully assembled node map for this grammar.
- * @returns An object with five categorised collections.
- */
 function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 	const structNodes: StructuralNode[] = [];
 	const leafKinds: string[] = [];
@@ -469,19 +450,6 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 	return { structNodes, leafKinds, supertypes, keywordKinds, leafValueMap };
 }
 
-/**
- * Return the canonical list of kinds that get a TSKindId integer-enum
- * entry — struct kinds (branch / container / polymorph / standalone
- * group) and leaf kinds (leaf / keyword / enum). This is the single
- * source of truth used by:
- *
- *   - this file's own `kindEntries = collectKindEntries(allKinds, ...)`
- *   - the `is.ts` emitter's runtime `_kindIdByKind` map
- *
- * Both consumers MUST receive the same list — drift means a guard or
- * lookup references a TSKindId member that the integer enum never
- * received, breaking the generated package's type-check.
- */
 export function collectAllKinds(nodeMap: NodeMap): readonly string[] {
 	const { structNodes, leafKinds } = collectNodesByCategory(nodeMap);
 	return [...structNodes.map((n) => n.kind), ...leafKinds];
@@ -491,20 +459,6 @@ export function collectAllKinds(nodeMap: NodeMap): readonly string[] {
 // SyntaxKind enum emission
 // ---------------------------------------------------------------------------
 
-/**
- * Emit the `export const enum SyntaxKind { … }` block, deduplicating on
- * member name.
- *
- * @remarks
- * Two kinds can resolve to the same `typeName` (e.g. python's `true` and
- * the string-literal keyword `'True'` both map to `True`). The first
- * occurrence wins; subsequent duplicates are skipped to avoid a
- * `const enum` duplicate-member error.
- *
- * @param lines - Output line buffer to append to.
- * @param allKinds - Ordered list of all kind strings (structural + leaf).
- * @param nodeMap - The assembled node map, used to look up `typeName` per kind.
- */
 function emitSyntaxKindEnum(lines: string[], allKinds: readonly string[], nodeMap: NodeMap): void {
 	lines.push('export const enum SyntaxKind {');
 	const seenEnumMembers = new Set<string>();
@@ -519,15 +473,6 @@ function emitSyntaxKindEnum(lines: string[], allKinds: readonly string[], nodeMa
 	lines.push('');
 }
 
-/**
- * Emit the runtime KindID enum and bidirectional lookup helpers.
- *
- * @remarks
- * The generator stays name-first: the lookup helpers are still emitted
- * from kind names, but the runtime discriminant surface is numeric so
- * data/transport interfaces can carry `TSKindId.*` instead of string
- * literals.
- */
 function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[]): void {
 	lines.push('export const enum TSKindId {');
 	for (const entry of entries) {
@@ -576,6 +521,14 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[]): vo
 		//    new *reported* errors, because the failure mode is a silent
 		//    `continue` (`nativeCoords === null`), not a thrown error.
 		lines.push(`  [${entry.id}, ${JSON.stringify(entry.kind)}],`);
+		// parseId row: a kind whose only visible identity is an alias
+		// occurrence carries the alias's OWN runtime symbol id (e.g.
+		// `_simple_statements` storage id 110, `alias_sym_simple_statements`
+		// 295) — runtime `$type` arrives as the PARSE id, so it must resolve
+		// to the same canonical catalog key for wrapNode dispatch.
+		if (entry.parseId !== undefined && entry.parseId !== entry.id) {
+			lines.push(`  [${entry.parseId}, ${JSON.stringify(entry.kind)}],`);
+		}
 	}
 	lines.push(']);');
 	lines.push('');
@@ -591,6 +544,12 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[]): vo
 		// punctuation text, e.g. "+", not a kind name).
 		const displayName = entry.symbolName && !entry.anon ? entry.symbolName : entry.kind;
 		lines.push(`  [${entry.id}, ${JSON.stringify(displayName)}],`);
+		// parseId row — same rationale as KIND_NAMES above; the WASM
+		// bridge matches native numeric `$type` (the parse id at aliased
+		// positions) against tree-sitter's display label.
+		if (entry.parseId !== undefined && entry.parseId !== entry.id) {
+			lines.push(`  [${entry.parseId}, ${JSON.stringify(displayName)}],`);
+		}
 	}
 	lines.push(']);');
 	lines.push('');
@@ -623,18 +582,6 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[]): vo
 // LookupUnion factory
 // ---------------------------------------------------------------------------
 
-/**
- * Return a no-op `LookupUnion` that always returns `undefined`, forcing the
- * emitter to inline every field and child union directly.
- *
- * @remarks
- * Spec 008 US4 / FR-007 mandates always inlining field/child unions. The
- * prior `_union_<name>` alias dedup pass saved only ~6 aliases per grammar
- * and emitted ugly auto-generated names. Inlining removes the naming problem
- * entirely and makes each field type self-describing.
- *
- * @returns A `LookupUnion` function that unconditionally returns `undefined`.
- */
 function makeInliningLookupUnion(): LookupUnion {
 	return () => undefined;
 }
@@ -643,31 +590,17 @@ function makeInliningLookupUnion(): LookupUnion {
 // Enum member discriminant resolution
 // ---------------------------------------------------------------------------
 
-/**
- * Build the `$type` discriminant expression for an enum kind by resolving
- * each member value to its `TSKindId.X` entry and joining as a union.
- *
- * @remarks
- * Enum kinds are codegen-only constructs — they have no parser.c symbol of
- * their own. At runtime the `$type` will always be one of the member
- * tokens' parser symbol IDs. Each member value (e.g. `".."`, `"u8"`) is
- * an anonymous token that has a catalog entry via its `symbolName`. When
- * `kindEntries` is present and at least one member resolves, the
- * discriminant is a union of `TSKindId.X` references. Falls back to
- * `number` when no members resolve (shouldn't happen for real grammars)
- * or when `kindEntries` is absent.
- *
- * @param node - The `AssembledEnum` node whose member discriminant to build.
- * @param kindEntries - Catalog entries for TSKindId lookup; `undefined` for
- *   legacy callers without parser.c metadata.
- * @returns The discriminant expression string (e.g.
- *   `TSKindId.DotDot` or `TSKindId.U8 | TSKindId.I8 | ...`).
- */
 function enumMemberDiscriminant(node: AssembledEnum, kindEntries: readonly KindEnumEntry[] | undefined): string {
 	if (!kindEntries) return JSON.stringify(node.kind);
 	const members: string[] = [];
 	for (const value of node.values) {
-		const entry = findKindEntry(kindEntries, value);
+		// PR-K3a: member texts resolve through the node's construction-time
+		// literal-chain record (anon-scoped first, #129) — the emitter
+		// catalog is consulted only to map the resolved catalog KIND to its
+		// TSKindId member name (exact-key hit). The direct name-chain
+		// fallback covers nodes constructed without a catalog (fixtures).
+		const rec = node.resolvedByText.get(value);
+		const entry = rec !== undefined ? findKindEntry(kindEntries, rec.kind) : findKindEntry(kindEntries, value);
 		if (entry) {
 			members.push(`TSKindId.${entry.member}`);
 		}
@@ -680,28 +613,6 @@ function enumMemberDiscriminant(node: AssembledEnum, kindEntries: readonly KindE
 // Leaf terminal alias emission
 // ---------------------------------------------------------------------------
 
-/**
- * Emit `export type <TypeName> = Terminal<kind, textType>` aliases for all
- * leaf / keyword / enum kinds, skipping those that are completely unreferenced.
- *
- * @remarks
- * Every leaf/keyword/enum is a `Terminal<K, V>`, so all terminal shapes share
- * one shared shape from `@sittir/types`.
- *
- * T073: a terminal is skipped when ALL of the following are true:
- * - It has no factory binding (`rawFactoryName` is absent) — downstream
- *   `factories.ts` would not import the type.
- * - It does not appear in any structural field/child content union.
- * - It is not listed as a supertype member.
- * Truly orphaned terminals (hidden tokens that survived link with no factory
- * and no references) are dropped to avoid dead exports.
- *
- * @param lines - Output line buffer to append to.
- * @param leafKinds - Ordered list of leaf kind strings.
- * @param nodeMap - The assembled node map.
- * @param generatedTypes - Mutable set tracking type names already emitted;
- *   updated in place as new aliases are added.
- */
 function emitLeafTerminalAliases(
 	lines: string[],
 	leafKinds: string[],
@@ -746,27 +657,6 @@ function emitLeafTerminalAliases(
 // Tree interface declaration emission
 // ---------------------------------------------------------------------------
 
-/**
- * Emit `export interface <TypeName>Tree` declarations for every structural
- * and leaf kind, plus synthetic per-form Tree interfaces for polymorphs.
- *
- * @remarks
- * Tree interfaces are retained for every kind because tree-sitter's native
- * `field` / `children` typing lives here, grammar-key-anchored. These
- * shape-match `X.Tree` (= `TreeNodeOf<X>`) structurally, but reach the
- * grammar schema through the `TreeNode<'kind'>` computed type. `X.Tree`
- * (namespace sugar) is the preferred consumer path; the flat `XTree`
- * interface stays because factories emit `replace(target: T.XTree)` with an
- * interface reference — anonymous type projections from namespace sugar are
- * verbose.
- *
- * @param lines - Output line buffer to append to.
- * @param nodeKinds - Structural kind strings.
- * @param leafKinds - Leaf kind strings.
- * @param nodeMap - The assembled node map.
- * @param grammarKeys - Set of kind keys present in grammar.ts / node-types.json.
- * @returns The set of type names for which a Tree interface was emitted.
- */
 function emitTreeInterfaceDeclarations(
 	lines: string[],
 	nodeKinds: string[],
@@ -807,23 +697,6 @@ function emitTreeInterfaceDeclarations(
 // Supertype union emission
 // ---------------------------------------------------------------------------
 
-/**
- * Emit `export type <TypeName> = | A | B | …` union declarations for every
- * supertype, plus the corresponding `<TypeName>Tree` union.
- *
- * @remarks
- * Unions must be emitted under the `AssembledNode`'s `typeName` (e.g.
- * `HiddenFExpression` for `_f_expression`), matching what `fieldTypeExpr`
- * references in the structural interfaces above. Using a local
- * `toPascal(kind.replace(/^_/, ''))` would produce `FExpression`, leaving
- * field references dangling.
- *
- * @param lines - Output line buffer to append to.
- * @param supertypes - List of supertype descriptors (kind + subtypes array).
- * @param nodeMap - The assembled node map.
- * @param generatedTypes - Mutable set of emitted type names; updated in place.
- * @throws {Error} If a supertype has zero subtypes or a subtype is absent from the map.
- */
 function emitSupertypeUnionDeclarations(
 	lines: string[],
 	supertypes: { kind: string; subtypes: string[] }[],
@@ -885,27 +758,6 @@ function emitSupertypeUnionDeclarations(
 // Token type alias collection and emission
 // ---------------------------------------------------------------------------
 
-/**
- * Collect all token type names that are actually referenced in field/child
- * content-type lists of structured nodes, then emit their type and Tree
- * interface declarations.
- *
- * @remarks
- * Only tokens that ARE actually referenced in field/child content-type lists
- * of structured nodes get stubs. Pure punctuation delimiters (e.g. `...`,
- * `;`, `->`) never appear as typed union members — they're surfaced only as
- * `named: false` anonymous children and would produce unreferenced dead
- * exports if emitted.
- *
- * Stubs are emitted as `type` aliases over `Terminal<kind>` rather than
- * verbose `interface` declarations — semantically identical, much shorter.
- *
- * @param lines - Output line buffer to append to.
- * @param nodeMap - The assembled node map.
- * @param generatedTypes - Mutable set of emitted type names; updated in place.
- * @param treeEmitted - Mutable set of type names for which a Tree interface was
- *   already emitted; updated in place as new token Tree interfaces are added.
- */
 function collectAndEmitTokenTypeAliases(
 	lines: string[],
 	nodeMap: NodeMap,
@@ -949,19 +801,6 @@ function collectAndEmitTokenTypeAliases(
 // camelCase collision guard
 // ---------------------------------------------------------------------------
 
-/**
- * Assert that no two structural kinds in the grammar camelCase to the same
- * identifier.
- *
- * @remarks
- * Two snake_case kinds that collapse to the same camelCase identifier would
- * shadow each other under the `is.*` guards and namespace sugar forms. This
- * function errors at emit time rather than generating broken output.
- *
- * @param nodeKinds - Ordered list of structural kind strings to check.
- * @throws {Error} If two kinds map to the same camelCase identifier
- *   (spec 008 FR-017).
- */
 function assertNoCamelCaseCollisions(nodeKinds: string[]): void {
 	const camelNames = new Map<string, string>();
 	for (const kind of nodeKinds) {
@@ -981,18 +820,6 @@ function assertNoCamelCaseCollisions(nodeKinds: string[]): void {
 // Per-kind namespace interface line emission
 // ---------------------------------------------------------------------------
 
-/**
- * Emit a single `export interface <TypeName>Ns extends NodeNs<…> {}` line.
- *
- * @remarks
- * Spec 009 Layer 1: threads `NamespaceMap` through `NodeNs` so that
- * `Loose` → `FromInputOf<T, Scalars, Strings, [], NamespaceMap>` can
- * short-circuit multi-branch union recursions to `NamespaceMap[K]['Loose']`
- * lookups instead of re-projecting per arm.
- *
- * @param lines - Output line buffer to append to.
- * @param typeName - The `TypeName` portion of the interface name.
- */
 function emitNamespaceInterfaceLine(lines: string[], typeName: string): void {
 	lines.push(
 		`export interface ${typeName}Ns extends NodeNs<${typeName}, LeafScalarMap, LeafStringMap, NamespaceMap> {}`
@@ -1070,24 +897,6 @@ function emitInterface(
 // Field array declaration emission
 // ---------------------------------------------------------------------------
 
-/**
- * Emit the `readonly <name><opt>: <arrayType>` declaration for a repeated
- * (`multiple`) field inside a `$fields` block.
- *
- * @remarks
- * `repeat1` fields carry a grammar-enforced `length >= 1` guarantee. They
- * are emitted as `NonEmptyArray<T>` — the alias is inherently `readonly`
- * (TS1354 forbids prefixing a type-alias reference with `readonly`, so the
- * `readonly` lives inside the alias definition). Plain `repeat` fields stay
- * `readonly T[]`.
- *
- * @param lines - Output line buffer to append to.
- * @param name - The raw field name (snake_case).
- * @param opt - Optionality suffix: `""` for required, `"?"` for optional.
- * @param typeExpr - The resolved TypeScript type expression for the element type.
- * @param nonEmpty - Whether the field is `repeat1` (non-empty array guaranteed).
- *   `undefined` is treated as `false`.
- */
 function emitFieldArrayDeclaration(
 	lines: string[],
 	name: string,
@@ -1104,13 +913,6 @@ function emitFieldArrayDeclaration(
 	}
 }
 
-/**
- * Expand a field's content types into the identifier parts that
- * would form its type union. Used by both the dedup pre-pass and
- * the emission pass. Literal-value enums and empty unions return
- * `[]` — they don't get aliased because they don't produce a
- * multi-type union.
- */
 function _fieldTypeParts(field: AssembledNonterminal, nodeMap?: NodeMap): string[] {
 	const litVals = slotLiteralValues(field);
 	if (litVals.length > 0) return [];
@@ -1124,15 +926,6 @@ function _fieldTypeParts(field: AssembledNonterminal, nodeMap?: NodeMap): string
 	});
 }
 
-/**
- * Format a field's type expression for the types.ts surface — bare
- * identifiers (no `T.` prefix) and missing kinds registered via
- * {@link missingKindTypes} for stub emission.
- *
- * Delegates to the shared {@link fieldTypeComponents} walker so the node-ref /
- * literal / alias-source / hidden-keyword logic lives in one place
- * (factories.ts::fieldElementType is the same walk with a `T.` prefix).
- */
 function fieldTypeExpr(field: AssembledNonterminal, nodeMap?: NodeMap, lookupUnion?: LookupUnion): string {
 	const litVals = slotLiteralValues(field);
 	const kinds = slotKindNames(field);
@@ -1164,21 +957,6 @@ function fieldTypeExpr(field: AssembledNonterminal, nodeMap?: NodeMap, lookupUni
 	return deduped.join(' | ');
 }
 
-/**
- * Wrap a field's type expression with the correct ADR-0012 brand when
- * the field classifies as keyword-presence, or fall through to the
- * auto-stamp brand, or no brand otherwise.
- *
- * Precedence:
- *   1. `BooleanKeyword<T>` when `keywordPresenceKind === 'boolean'`.
- *   2. `Bitflag<ConstEnumName, T>` when `keywordPresenceKind === 'bitflag'`.
- *   3. `AutoStamp<T>` when `isAutoStampField`.
- *   4. Bare `T` otherwise.
- *
- * The keyword-presence and auto-stamp domains don't overlap: auto-stamp
- * requires required+non-repeated, boolean requires optional, bitflag
- * requires repeat.
- */
 function stringUnion(values: readonly string[]): string {
 	return values.length === 0 ? 'never' : values.map((value) => JSON.stringify(value)).join(' | ');
 }
@@ -1195,13 +973,22 @@ function enumStorageDiscriminantExpr(
 		if (entry) members.add(`TSKindId.${entry.member}`);
 		const node = nodeMap.nodes.get(enumKind);
 		if (!(node instanceof AssembledEnum)) continue;
+		// Enum member values and storageInfo.texts are LITERAL TOKEN TEXTS —
+		// the node's construction-time literal-chain record is authoritative
+		// (anon token wins a same-spelled named rule, #129; PR-K3a); the
+		// emitter catalog only maps resolved kind → TSKindId member. Chain
+		// fallback covers catalog-less construction (fixtures). Must stay
+		// consistent with factories.ts's kindEnumTextMapExpr or the declared
+		// Config type and the runtime stamp diverge.
 		for (const value of node.values) {
-			const valueEntry = findKindEntry(kindEntries, value);
+			const rec = node.resolvedByText.get(value);
+			const valueEntry =
+				rec !== undefined ? findKindEntry(kindEntries, rec.kind) : findKindEntryForLiteral(kindEntries, value);
 			if (valueEntry) members.add(`TSKindId.${valueEntry.member}`);
 		}
 	}
 	for (const text of storageInfo.texts) {
-		const entry = findKindEntry(kindEntries, text);
+		const entry = findKindEntryForLiteral(kindEntries, text);
 		if (entry) members.add(`TSKindId.${entry.member}`);
 	}
 	return members.size === 0 ? 'number' : [...members].join(' | ');
@@ -1295,7 +1082,6 @@ function toPascal(kind: string): string {
 		.join('');
 }
 
-/** Quote a type/object key if it is not a plain identifier. */
 function quoteKey(key: string): string {
 	return /^[A-Za-z_$][\w$]*$/.test(key) ? key : JSON.stringify(key);
 }
@@ -1304,17 +1090,6 @@ function quoteKey(key: string): string {
 // refine() per-form type emission (ADR-0010 phase 2)
 // ---------------------------------------------------------------------------
 
-/**
- * Emit per-form Tree aliases for every refined kind.
- *
- * @remarks
- * Refine narrows choice selections at the Config/factory surface, not
- * the parse shape — the tree produced by tree-sitter is identical
- * regardless of which form constructed the node. The per-form Tree
- * alias therefore points at the base kind's Tree type; it exists so
- * method return types (`curly().type(...)`) can name a form-
- * specific Tree type at compile time without a structural duplicate.
- */
 function emitRefineFormTreeAliases(lines: string[], refineInfos: readonly RefineKindInfo[] | undefined): void {
 	if (!refineInfos || refineInfos.length === 0) return;
 	lines.push('// refine() per-form Tree aliases — same shape as the base kind Tree.');
@@ -1327,21 +1102,6 @@ function emitRefineFormTreeAliases(lines: string[], refineInfos: readonly Refine
 	lines.push('');
 }
 
-/**
- * Emit the namespace sugar block for one kind — the declaration-merged
- * `namespace <TypeName> { Config; Fluent; Loose; Tree; Kind; }` block,
- * plus per-form sub-namespaces when refine() registered forms for this
- * kind.
- *
- * For refined kinds:
- *   - Each form gets its own sub-namespace `<TypeName>.<FormPascal>`
- *     exposing `Config` (base Config minus the form's auto-stamped
- *     fields) and `Tree` (alias to the base kind Tree).
- *   - The top-level `<TypeName>.Config` shadows the generic
- *     `ConfigFor<'kind'>` with the first-declared form's Config — so
- *     bare-call sugar `ir.<kind>({...})` routes to the default form's
- *     Config surface.
- */
 function emitNamespaceSugarBlock(
 	lines: string[],
 	kind: string,
@@ -1365,16 +1125,6 @@ function emitNamespaceSugarBlock(
 	lines.push('}');
 }
 
-/**
- * Emit the per-form sub-namespace blocks for a refined kind.
- *
- * Each form gets:
- *   - `Config` — `Omit<ConfigFor<'kind'>, 'field1' | 'field2'>` stripping
- *     the form's narrowed fields (those selections map to a single
- *     string literal, so phase-1 auto-stamp would otherwise need to be
- *     reapplied on top of the main Config).
- *   - `Tree`   — alias to the base Tree type (same parse shape).
- */
 function emitRefineFormSubNamespaces(
 	lines: string[],
 	parentTypeName: string,

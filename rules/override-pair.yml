@@ -1,0 +1,17 @@
+id: override-pair
+language: TypeScript
+severity: hint
+message: >
+  Named object entry (rule/group/etc.) in an overrides.ts wire payload,
+  immediately preceded by a comment explaining it. Companion declaration-side
+  rule for scripts/wave5-relocate-overrides-comments.mts — paired 1:1 with
+  override-pair-comment.yml by file, in source order.
+files:
+  - packages/rust/overrides.ts
+  - packages/typescript/overrides.ts
+  - packages/python/overrides.ts
+rule:
+  kind: pair
+  follows:
+    kind: comment
+    stopBy: neighbor

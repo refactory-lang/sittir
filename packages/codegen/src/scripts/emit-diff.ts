@@ -20,7 +20,6 @@
 import { execFileSync } from 'node:child_process';
 import { REPO_ROOT, generatedRootsFor, type Grammar } from './generated-manifest.ts';
 
-/** Emitter buckets, in display order. */
 const EMITTER_ORDER = [
 	'factory',
 	'from',
@@ -41,18 +40,11 @@ interface FileChange {
 	emitter: Emitter;
 	added: number;
 	removed: number;
-	/** New-file line ranges, e.g. "L120-207", "L410". Empty for collapsed/binary. */
 	ranges: string[];
-	/** parser/binary artifact — counts only, no line ranges (kept terse). */
 	collapsed: boolean;
 	binary: boolean;
 }
 
-/**
- * Map an output path to the emitter that produced it. File-level granularity:
- * one file == one emitter (render-module.ts and the rust render crate are the
- * two halves of the render emitter; lib.rs/index.* are the native bindings).
- */
 function emitterFor(rel: string): Emitter {
 	const base = rel.split('/').pop() ?? rel;
 	if (rel.startsWith('rust/crates/')) {
@@ -86,13 +78,11 @@ function emitterFor(rel: string): Emitter {
 	}
 }
 
-/** parser/binary artifacts: counts only, line ranges suppressed (they churn). */
 function isCollapsed(rel: string): boolean {
 	const base = rel.split('/').pop() ?? rel;
 	return base === 'parser.c' || base === 'parser.wasm' || base.endsWith('.node');
 }
 
-/** Compress a new-file hunk header `@@ -_ +start,count @@` into "L120-131". */
 function formatRange(start: number, count: number): string {
 	if (count <= 0) return `L${start}`; // pure deletion: anchor at the deletion point
 	if (count === 1) return `L${start}`;
@@ -103,7 +93,6 @@ const HUNK_RE = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@/;
 const NEW_PATH_RE = /^\+\+\+ b\/(.+)$/;
 const OLD_PATH_RE = /^--- a\/(.+)$/;
 
-/** Build a fresh `FileChange` record for a newly-seen `diff --git` section. */
 function beginFileChange(rel: string): FileChange {
 	return {
 		path: rel,
@@ -116,7 +105,6 @@ function beginFileChange(rel: string): FileChange {
 	};
 }
 
-/** Parse `git diff --unified=0` output into per-file change records. */
 function parseDiff(diff: string): FileChange[] {
 	const files: FileChange[] = [];
 	let cur: FileChange | null = null;
@@ -172,18 +160,12 @@ function parseDiff(diff: string): FileChange[] {
 	return files;
 }
 
-/** At most `max` ranges, then a `+N more` tail, to keep one line per file. */
 function joinRanges(ranges: string[], max = 6): string {
 	if (ranges.length === 0) return '';
 	if (ranges.length <= max) return ranges.join(', ');
 	return `${ranges.slice(0, max).join(', ')}, +${ranges.length - max} more`;
 }
 
-/**
- * Run the regen diff for a grammar and format it. Returns `null` when git is
- * unavailable or this is not a working tree (the report is a convenience, never
- * a hard dependency — a missing git must not fail codegen).
- */
 export function formatEmitDiff(grammar: Grammar): string | null {
 	let raw: string;
 	try {

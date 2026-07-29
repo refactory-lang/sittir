@@ -33,25 +33,8 @@ import type { Rule } from '../../types/rule.ts';
 import type { ExternalRole } from '../../types/ir.ts';
 import { isSymbolLike } from '../../types/runtime-shapes.ts';
 
-// Module-local accumulator. Null when no `grammar(...)` call is on
-// the stack — calling `role()` in that state is an error because we
-// have no scope to attach the binding to.
 let currentRoles: Map<string, ExternalRole> | null = null;
 
-/**
- * Mark an external token symbol with a structural-whitespace role.
- * Returns the symbol unchanged so the call site can be a transparent
- * member of the externals array.
- *
- * **Tree-sitter compatibility**: when `role()` is called outside any
- * sittir-managed scope (e.g. when tree-sitter's CLI loads the
- * transpiled `.sittir/grammar.js` and runs `grammar()` natively),
- * the binding is silently dropped and only the symbol passthrough
- * runs. Tree-sitter doesn't read role bindings — they only matter
- * to sittir's Link phase, which always evaluates the override file
- * inside a `withRoleScope` block. This keeps the same call site valid
- * for both consumers without runtime feature detection.
- */
 const VALID_ROLE_NAMES = new Set(['indent', 'dedent', 'newline'] as const);
 
 export function role(symbol: Rule, roleName: 'indent' | 'dedent' | 'newline'): Rule {
@@ -74,13 +57,6 @@ export function role(symbol: Rule, roleName: 'indent' | 'dedent' | 'newline'): R
 	return symbol;
 }
 
-/**
- * Run `fn` with a fresh role accumulator in scope. Returns the
- * accumulated bindings AND `fn`'s result. Save/restore guarantees
- * nested `grammar(...)` calls stay isolated even on exception paths.
- *
- * Called by `grammarFn` in evaluate.ts — not by override authors.
- */
 export function withRoleScope<T>(fn: () => T): {
 	roles: Map<string, ExternalRole>;
 	result: T;

@@ -33,11 +33,14 @@ import {
 	isMultiple,
 	isRequired,
 	isNodeRef,
-	isUnresolvedRef,
+	isTerminalValue,
 	kindsOf,
 	structuralFieldsOf,
 	allFormFieldsOf,
-	allSlotsOf
+	allSlotsOf,
+	aliasTargetToSourceMapOf,
+	acceptedIdPairsByKindOf,
+	storageKindOfRef
 } from '../compiler/model/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import type { TemplateFile } from './template-hash.ts';
@@ -51,12 +54,21 @@ import {
 	classifySlot,
 	type SlotClass
 } from './transport-common.ts';
-import { keywordPresenceValue, slotLiteralValues, isSlotBearingCompound } from './shared.ts';
+import {
+	keywordPresenceValue,
+	slotLiteralValues,
+	isSlotBearingCompound,
+	classifyBranchSlots,
+	classifyPrimitiveField,
+	type PrimitiveFieldStorage,
+	wordCharAsciiTable
+} from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
 	collectKindEntries,
 	collectCatalogKinds,
 	findKindEntry,
+	findKindEntryForLiteral,
 	kindIdMemberName,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
@@ -66,7 +78,6 @@ import type { CodegenEmitter } from './emitter.ts';
 import { collectSeparatorCandidateKindNames } from './wrap.ts';
 import type { Rule } from '../types/rule.ts';
 
-/** Grammars the emitter supports. Matches the three per-grammar packages. */
 export type Grammar = 'rust' | 'typescript' | 'python';
 const SUPPORTED_GRAMMARS = ['rust', 'typescript', 'python'] as const;
 
@@ -74,22 +85,11 @@ export function isRenderModuleGrammar(grammar: string): grammar is Grammar {
 	return (SUPPORTED_GRAMMARS as readonly string[]).includes(grammar);
 }
 
-/**
- * Output of a single emit pass. Each field names a file path
- * (relative to the repo root) and its exact contents. The CLI writes
- * them; this module does not touch disk. Key invariant: re-running
- * the emitter over the same inputs produces byte-identical output.
- */
 export interface RustRenderModuleEmit {
-	/** `rust/crates/sittir-{lang}/src/render/hash.rs` */
 	hashRs: { path: string; contents: string };
-	/** `packages/{lang}/src/hash.ts` */
 	hashTs: { path: string; contents: string };
-	/** `rust/crates/sittir-{lang}/src/render/templates.rs` — per-kind Template structs */
 	templatesRs: { path: string; contents: string };
-	/** `rust/crates/sittir-{lang}/src/render/transport.rs` — AnyTransport + FromNapiValue + typed dispatch + transport bridge */
 	transportRs: { path: string; contents: string };
-	/** `rust/crates/sittir-{lang}/src/render/mod.rs` — exposes transport render entrypoints */
 	libRs: { path: string; contents: string };
 }
 
@@ -266,15 +266,14 @@ export const RUST_KEYWORDS = new Set([
 	'union'
 ]);
 
-/**
- * Per-supertype transport enum names that collide with pre-existing
- * generated items and must be skipped during Phase 2 supertype-enum
- * emission.  The `_literal` supertype has `typeName = 'Literal'` which
- * would produce `pub enum LiteralTransport`.  Keep reserved so the
- * supertype enum is not emitted; slots fall back to `Box<AnyTransport>`
- * (`heterogeneous`).
- */
 const RESERVED_SUPERTYPE_ENUM_NAMES = new Set(['LiteralTransport']);
+
+const RESERVED_TRANSPORT_STRUCT_NAMES = new Set([
+	'AnyTransport',
+	'VerbatimTransport',
+	'ProtectedTransport',
+	'LiteralTransport'
+]);
 
 function isReservedSupertypeTransportNode(node: AssembledNode): node is AssembledSupertype {
 	return (
@@ -290,6 +289,7 @@ interface EffectiveSupertypeTransportSubtype {
 interface EffectiveSupertypeTransportShape {
 	readonly subtypes: readonly EffectiveSupertypeTransportSubtype[];
 	readonly suppressedKinds: readonly string[];
+	readonly parseNames: ReadonlyMap<string, string>;
 }
 
 function collectEffectiveSupertypeTransportShape(
@@ -301,11 +301,13 @@ function collectEffectiveSupertypeTransportShape(
 		readonly emittedKinds: Set<string>;
 		readonly suppressedKinds: Set<string>;
 		readonly subtypes: EffectiveSupertypeTransportSubtype[];
+		readonly parseNames: Map<string, string>;
 	} = {
 		variantKindByName: new Map(),
 		emittedKinds: new Set(),
 		suppressedKinds: new Set(),
-		subtypes: []
+		subtypes: [],
+		parseNames: new Map()
 	}
 ): EffectiveSupertypeTransportShape {
 	const appendSubtype = (subKind: string, subNode: AssembledNode): void => {
@@ -325,10 +327,14 @@ function collectEffectiveSupertypeTransportShape(
 	if (seen.has(supertypeNode.kind)) {
 		return {
 			subtypes: state.subtypes,
-			suppressedKinds: [...state.suppressedKinds]
+			suppressedKinds: [...state.suppressedKinds],
+			parseNames: state.parseNames
 		};
 	}
 	seen.add(supertypeNode.kind);
+	for (const [storage, parse] of Object.entries(supertypeNode.subtypeParseNames ?? {})) {
+		if (!state.parseNames.has(storage)) state.parseNames.set(storage, parse);
+	}
 	for (const subKind of supertypeNode.subtypes) {
 		const subNode = nodeMap.nodes.get(subKind);
 		if (subNode === undefined) continue;
@@ -341,14 +347,11 @@ function collectEffectiveSupertypeTransportShape(
 	}
 	return {
 		subtypes: state.subtypes,
-		suppressedKinds: [...state.suppressedKinds]
+		suppressedKinds: [...state.suppressedKinds],
+		parseNames: state.parseNames
 	};
 }
 
-/** Rust field identifier mapping for generated render/transport structs.
- *  Askama template expressions do not accept raw identifiers (`r#pub`),
- *  so keyword-named fields use a uniform `_` suffix (`pub_`, `type_`,
- *  `crate_`, etc.) across the Rust render module. */
 export function rustFieldIdent(id: string): string {
 	if (RUST_KEYWORDS.has(id)) return `${id}_`;
 	return id;
@@ -388,13 +391,6 @@ export function planRenderModuleTemplateCopies(lang: Grammar, templates: Emitted
 	return { directory, files };
 }
 
-/** Struct name: PascalCase(kind). Mirrors the AssembledNode.typeName
- *  conventions so emitted struct names match the factory/type naming
- *  per the T027 struct-name directive.
- *
- *  Prefers the AssembledNode.typeName when a matching node exists (this
- *  is the `_`-stripped form for hidden user-facing aliases); falls back
- *  to a pascal conversion for bare kinds. */
 function structNameFor(kind: string, node: AssembledNode | undefined): string {
 	if (node) return `${node.typeName}Template`;
 	return `${pascal(kind)}Template`;
@@ -418,52 +414,14 @@ interface EmittedField {
 	view: EmittedNonterminalView;
 	required: boolean;
 	multiple: boolean; // true when the transport-side field is Vec<Box<AnyTransport>>
-	/** True when this slot has a corresponding field in the transport struct.
-	 *  Slots without transport fields (virtual presentation slots from the
-	 *  template walker) must be defaulted to "" in the typed dispatch path. */
 	hasTransportField: boolean;
-	/** Rust struct storage identifier for this slot — used to build `node.<storageName>`
-	 *  access expressions. Defaults to `name` when no assembled slot exists. */
 	storageName: string;
-	/** True when this slot was inferred (not declared via `field(...)`) — i.e. it
-	 *  came from `slotModel.unnamed`. Consumers use this to
-	 *  route lookups through `node.children` instead of `node.fields[name]`. */
 	isUnnamed: boolean;
 	hasLeading: boolean;
 	hasTrailing: boolean;
-	/** Per-slot separator stamped on the slot's NodeRef/TerminalValue metadata.
-	 *  Used by ListNonterminalView emission so each list-multiplicity slot
-	 *  gets its own separator (rather than a node-wide first-match). */
 	separator?: string;
-	/**
-	 * When this surface slot was produced by inlining a group-lift helper
-	 * (e.g. template inlined `_const_item_optional1` and exposed its inner
-	 * field `value`), this field names the HELPER's transport struct field
-	 * (e.g. `const_item_optional1`) that must be matched at render time.
-	 *
-	 * When set, the render fn emits a match on the backing helper field
-	 * and then accesses the inner field (`v.<name>`). If the inner field
-	 * is itself `Option<T>` (`backingInnerRequired = false`), a nested
-	 * match is required to flatten it.
-	 */
 	backingTransportField?: string;
-	/**
-	 * True when the inner field (`v.<name>` inside the group-lift helper)
-	 * is a required (non-Option) transport — Renderable::Transport(inner)
-	 * can be used directly.
-	 * False when the inner field is itself Option<T> — a nested match is
-	 * needed: `match &v.<name> { Some(inner) => Present(inner), None => Missing }`.
-	 * Only meaningful when `backingTransportField` is set.
-	 */
 	backingInnerRequired?: boolean;
-	/**
-	 * When set, the transport struct ALSO has a direct field (`_<backingDirectField>`)
-	 * that the native CST reader can populate directly (since tree-sitter exposes
-	 * the inner CST field at the parent level, not wrapped inside a helper object).
-	 * The render fn tries this direct field first (for CST read path), then falls
-	 * back to `backingTransportField` (for factory path).
-	 * Only meaningful when `backingTransportField` is set.
-	 */
 	backingDirectField?: string;
 }
 
@@ -472,14 +430,8 @@ interface EmittedStruct {
 	kind: string;
 	fields: EmittedField[];
 	hasChildren: boolean;
-	/** True when the transport struct actually has a `children` field (structuralChildren.length > 0).
-	 *  The template may reference `children` (hasChildren === true) without a transport field —
-	 *  in that case we emit an empty ListNonterminalView instead of accessing node.children. */
 	transportHasChildren: boolean;
-	/** True when the transport struct's `children` field is `Vec<...>` (not `Option<Vec<...>>`). */
 	childrenRequired: boolean;
-	/** True when the transport struct's `children` field is `Vec<T>` (multiple elements possible).
-	 *  When false, the field is scalar: `T` (required) or `Option<T>` (optional). */
 	childrenMultiple: boolean;
 	hasVariant: boolean;
 	hasText: boolean;
@@ -755,14 +707,6 @@ function mergeTemplateSurfaceFromBody(body: string, surface: RenderTemplateSurfa
 	};
 }
 
-/**
- * Build a RenderTemplateSurface from the assembled slot model, without
- * invoking the legacy template walker. Named slots drive the surface:
- * a multiple named slot maps to `'field'` view, a singular named slot
- * maps to `'scalar'`. `hasLeading`/`hasTrailing` are forwarded from the
- * slot. `usesChildren`/`usesVariant`/`usesText` are all false here —
- * mergeTemplateSurfaceFromBody fills those in via body-regex fallback.
- */
 function buildSlotModelSurface(node: AssembledNode | undefined): RenderTemplateSurface {
 	const slotModel = renderSlotModelOf(node);
 	const slots = slotModel.named.map((slot) => ({
@@ -804,18 +748,6 @@ function renderStructDefs(structs: EmittedStruct[]): string {
 	return lines.join('\n');
 }
 
-/**
- * Pick the per-cardinality nonterminal-view type for an emitted slot.
- *
- * The four-type taxonomy:
- * - `SingleNonterminalView<'a>` — known-required, single occurrence.
- * - `OptionalNonterminalView<'a>` — known zero-or-one.
- * - `ListNonterminalView<'a>` — known zero-or-more.
- * - `NonterminalView<'a>` — escape hatch when cardinality is genuinely
- *   ambiguous at codegen time. Under current rules every emitted slot
- *   resolves to one of the three concrete types; the umbrella is
- *   reserved for future cases where the walker can't decide.
- */
 function slotFieldType(f: EmittedField): string {
 	// list view OR field-view-with-multiple → always-list (original cases).
 	// Also treat any multiple-backed field as list: transport type Vec<X> or
@@ -893,17 +825,6 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 // Slot classification — single source for slot type width
 // ----------------------------------------------------------------------
 
-/**
- * Classify a slot for emit purposes — same as `classifySlot` but also:
- * - resolves `concrete` using the assembled typeName (PascalCase)
- * - downgrades `concrete` to `heterogeneous` when the single kind maps to a
- *   multi node (no transport struct) or polymorph (no ToNapiValue in Phase 1)
- * - classifies multi-kind slots as `supertype` when they match an assembled
- *   supertype's subtypes (Phase 2)
- *
- * @param kinds - the kind set for this slot
- * @param nodeMap - for modelType lookup + supertype map construction
- */
 function classifySlotForEmit(kinds: readonly string[], nodeMap: NodeMap): SlotClass {
 	const supertypeMap = buildSupertypeTransportSet(nodeMap);
 	const cls = classifySlot(kinds, supertypeMap);
@@ -939,14 +860,6 @@ function classifySlotForEmit(kinds: readonly string[], nodeMap: NodeMap): SlotCl
 	return cls;
 }
 
-/**
- * Like `buildSlotRenderCall` but emits a `write`-to-dest statement
- * instead of a String-returning expression. Used by the streaming
- * fallback branch render fn.
- *
- * @param cls  - slot classification
- * @param expr - Rust expression for the slot value
- */
 function buildSlotWriteCall(cls: SlotClass, expr: string): string {
 	switch (cls.tag) {
 		case 'concrete':
@@ -967,33 +880,6 @@ function buildSlotWriteCall(cls: SlotClass, expr: string): string {
 // Typed transport dispatch — render_transport_dispatch + per-kind fns
 // ----------------------------------------------------------------------
 
-/**
- * Emit per-kind `render_<kind>` functions, per-supertype render
- * helpers, plus the top-level `render_transport_dispatch` that routes
- * `&AnyTransport` to the right fn.
- *
- * Each per-kind fn builds the `*Template` struct directly from the typed
- * transport fields (no `NodeData` round-trip) and writes directly into a
- * caller-provided `&mut dyn fmt::Write` via `template.render_into(dest)`.
- * This is the direct render path introduced by Task 4 of the renderable-
- * native-views plan.
- *
- * Per-supertype render helpers are emitted AFTER all per-kind fns so every
- * concrete subtype render fn is already declared when the supertype match arm
- * references it.
- *
- * (R5: the legacy transport→NodeData inverse bridge was verified zero-caller
- * and deleted — typed transport dispatch is the ONLY render path.)
- *
- * @param usedSupertypeNames - supertype typeNames actually used as slot types;
- *   only these get render helpers emitted. Passed from renderTransportSupport
- *   (single derivation, DRY).
- * @param kindIdByKind - Map<kind, u16 id>, same source `renderTransportSupport`
- *   already computes for supertype/per-slot enum dispatch (`buildKindIdByKind`).
- *   Threaded through so `'separatedList'` kinds with a nonterminal separator
- *   can resolve each candidate arm's numeric KindId for the render-side
- *   `_separator_kind` → literal match (see `buildSeparatorKindMatchLines`).
- */
 function renderTypedDispatch(
 	structs: EmittedStruct[],
 	nodes: readonly AssembledNode[],
@@ -1028,9 +914,27 @@ function renderTypedDispatch(
 	// dispatches branch nodes through their Askama template fns. This
 	// function is retained as the `pub fn -> String` entry point for callers
 	// that need an owned String (e.g. render_transport, parity tests).
+	// Per-grammar word class, derived at emit time from the Link-pinned
+	// wordMatcher (SpacingWriter spec: no new configuration). ASCII table
+	// via the pair test in wordCharAsciiTable; >=0x80 falls back to
+	// Unicode alphanumerics.
+	const wordTable = wordCharAsciiTable(nodeMap.wordMatcher ?? /\w/);
+	lines.push(`/// Word-class table derived from this grammar's Link-pinned word pattern.`);
+	lines.push(
+		`static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core::spacing::WordMatcher::new(`
+	);
+	lines.push(`    [${wordTable.map((b) => (b ? 'true' : 'false')).join(', ')}],`);
+	lines.push(`    char::is_alphanumeric,`);
+	lines.push(`);`);
+	lines.push('');
 	lines.push(`pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::askama::Error> {`);
 	lines.push(`    let mut s = String::new();`);
-	lines.push(`    transport.render_into(&mut s)?;`);
+	lines.push(`    // SpacingWriter (2026-07-24 spec): root-level wrap — inserts a space`);
+	lines.push(`    // only where a word-class char would collide with a word-class char`);
+	lines.push(`    // across write seams, per this grammar's own word class. Wrap ONCE`);
+	lines.push(`    // here — never per level.`);
+	lines.push(`    let mut w = ::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER);`);
+	lines.push(`    transport.render_into(&mut w)?;`);
 	lines.push(`    Ok(s)`);
 	lines.push(`}`);
 	lines.push('');
@@ -1109,14 +1013,6 @@ function rustTypedRenderFnName(typeName: string): string {
 	return `render_${rustSnakeIdent(typeName)}`;
 }
 
-/**
- * Emit the `render_<kind>(t: &<Kind>Transport, dest: &mut dyn fmt::Write)`
- * function for a single node. Dispatches based on modelType:
- *
- * - polymorph → match on enum variants, delegate to per-form fns
- * - branch / container / group → build template struct, render_into(dest)
- * - leaf / keyword / token / enum → write text directly to dest
- */
 function renderTypedKindFn(
 	node: AssembledNode,
 	structsByKind: Map<string, EmittedStruct>,
@@ -1147,12 +1043,6 @@ function renderTypedKindFn(
 	}
 }
 
-/**
- * Emit a fallback typed render fn for branch/container/group nodes that
- * have no template struct (no `.jinja` file). Writes children directly
- * into dest, or falls back to writing `transport_text` if there are no
- * children.
- */
 function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): string[] {
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const structName = rustTransportStructName(node);
@@ -1204,14 +1094,6 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 	return lines;
 }
 
-/**
- * Emit a simple leaf/keyword/token/enum typed render fn that writes the
- * transport text directly into dest.
- *
- * For `enum` modelType nodes: transport is the Rust enum; write via `Display`
- * (`t.to_string()`).
- * For all others: write `t.text` directly.
- */
 function renderTypedLeafFn(node: AssembledNode): string[] {
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const typeName = rustTransportStructName(node);
@@ -1227,12 +1109,6 @@ function renderTypedLeafFn(node: AssembledNode): string[] {
 	];
 }
 
-/**
- * Build a name→projection.kinds map from a list of assembled fields.
- * Used to feed `classifySlot` per field in `buildTypedTemplateBody`.
- *
- * @param fields - the node's structural fields
- */
 function buildFieldKindsByName(fields: readonly AssembledNonterminal[]): ReadonlyMap<string, readonly string[]> {
 	const map = new Map<string, readonly string[]>();
 	for (const f of fields) {
@@ -1241,7 +1117,6 @@ function buildFieldKindsByName(fields: readonly AssembledNonterminal[]): Readonl
 	return map;
 }
 
-/** Returns the set of field names whose slots contain mixed named+anonymous content. */
 function buildFieldMixedByName(fields: readonly AssembledNonterminal[]): ReadonlySet<string> {
 	const set = new Set<string>();
 	for (const f of fields) {
@@ -1252,10 +1127,6 @@ function buildFieldMixedByName(fields: readonly AssembledNonterminal[]): Readonl
 	return set;
 }
 
-/**
- * Emit a branch/container/group typed render fn that builds the template
- * struct from the typed transport fields.
- */
 function renderTypedBranchFn(
 	node: AssembledNode,
 	struct: EmittedStruct,
@@ -1296,26 +1167,8 @@ function renderTypedBranchFn(
 	return lines;
 }
 
-/**
- * Fully-qualified prefix for the core `Renderable` enum.
- *
- * This module defines a local `pub enum Renderable` (Text+Joined) that
- * shadows `sittir_core::filters::Renderable` (Text+Joined+Transport).
- * The typed dispatch path constructs `::sittir_core::filters::Renderable::Transport`
- * values that feed into `ListNonterminalView.items`, so the full path is
- * required to avoid resolving to the wrong local type.
- */
 const RENDERABLE_PREFIX = '::sittir_core::filters::';
 
-/**
- * Emit the iter/map/collect pattern that wraps each element in
- * `Renderable::Transport`. Shared by both single-child and list-slot
- * buffer emitters.
- *
- * @param ident      - Rust identifier base (e.g. `"children"`, `"parameters"`)
- * @param sourceExpr - The iterable expression to `.iter()` over
- * @param mapBody    - The closure body inside `.map(|t| ...)` (e.g. `Renderable::Transport(t)`)
- */
 function emitIterCollectBuffer(ident: string, sourceExpr: string, mapBody: string, filterAnon = false): string[] {
 	const R = RENDERABLE_PREFIX;
 	const lines: string[] = [`    let ${ident}_buf: Vec<${R}Renderable<'_>> = ${sourceExpr}.iter()`];
@@ -1326,21 +1179,6 @@ function emitIterCollectBuffer(ident: string, sourceExpr: string, mapBody: strin
 	return lines;
 }
 
-/**
- * Emit the Rust boilerplate that converts a list-shaped transport slot into a
- * `*_buf: Vec<Renderable>` ready for `ListNonterminalView`.
- *
- * Concrete, supertype, and heterogeneous slots all share one path:
- * `Renderable::Transport(t)` — every concrete transport struct, supertype
- * enum, and `AnyTransport` implements `RenderableTransport`, so Rust
- * auto-coerces `&T` to `&dyn RenderableTransport` and no explicit cast is
- * needed.
- *
- * @param ident - Rust identifier base (e.g. `"children"`, `"parameters"`).
- * @param required - When `true`, the slot is a required Vec; when `false`
- *   it is `Option<Vec<...>>` and needs `as_deref()`.
- * @returns Lines to splice into the parent function body.
- */
 function emitListSlotBuffer(ident: string, required: boolean, filterAnon = false): string[] {
 	const R = RENDERABLE_PREFIX;
 	const mapBody = `${R}Renderable::Transport(t)`;
@@ -1353,26 +1191,6 @@ function emitListSlotBuffer(ident: string, required: boolean, filterAnon = false
 	];
 }
 
-/**
- * Emit `match node.separator_kind { Some(<id>) => "<lit>", ..., _ => <fallback> }`
- * lines resolving a `'separatedList'` node's per-instance nonterminal-separator
- * KindId back to its compile-time-known literal text (design doc's "Render"
- * section: the render side never stores separator text, only resynthesizes it).
- *
- * Candidates come from `collectSeparatorCandidateKindNames` — the SAME walk
- * wrap.ts's `_separator_kind` wire capture uses (kind-discriminant.ts), so the
- * match arms enumerate exactly the kinds a real `_separator_kind` value can
- * hold. For a `STRING` arm, `rule.value` doubles as both the catalog lookup
- * key (an anon token's literal text IS its `symbolName`, per
- * `buildKindIdByKind`) and the literal text to emit — a nonterminal
- * separator's arms are themselves just literals (no real grammar kind has one
- * today; see `emitSeparatedListWrap`'s doc comment, wrap.ts).
- *
- * Returns `undefined` (caller falls back to the plain literal `fallbackSeparator`)
- * when `kindIdByKind` is unavailable (no parser.c-derived numeric dispatch) or
- * none of the candidates resolve to a known id — codegen must still emit a
- * syntactically valid expression in that case.
- */
 function buildSeparatorKindMatchLines(
 	separatorRule: Rule<'link'>,
 	fallbackSeparator: string,
@@ -1394,45 +1212,6 @@ function buildSeparatorKindMatchLines(
 	];
 }
 
-/**
- * Build the function body that constructs a template struct from typed
- * transport fields and calls `template.render_into(dest)`.
- *
- * Strategy: for every field and children slot, stream directly via
- * `Renderable::Transport(&node.field)`.  Rust auto-coerces `&T` to
- * `&dyn RenderableTransport` since every concrete transport struct and
- * supertype enum implements the trait.  This avoids the intermediate
- * `String` allocation that the old path incurred
- * (render_* → String → borrow as &str → Renderable::Text).
- *
- * Heterogeneous (Box<AnyTransport>) fields follow the same pattern using
- * `node.field.as_ref()` (Box::as_ref → &dyn RenderableTransport) — unchanged
- * from the previous Task 21 work.
- *
- * The final `template.render_into(dest)` call streams directly into the
- * caller-provided `&mut dyn fmt::Write` — no intermediate `String` allocation.
- *
- * @param struct - the template struct description
- * @param separator - the list/children separator for this kind
- * @param fieldKindsByName - per-field projection kinds (fieldName → kinds[]).
- *   Used to classify each field slot for typed render calls. Falls back to
- *   heterogeneous (Box<AnyTransport>) when a field name is absent.
- * @param fieldMixedByName - set of field names whose slots have mixed named+anonymous
- *   content. When a field is in this set, it is always classified as heterogeneous
- *   regardless of what classifySlotForEmit returns, matching the transport struct
- *   field type emitted by rustTransportSlotType (which then chooses per-slot enum
- *   vs Box<AnyTransport> via `hasAnyConcreteChildKind`).
- * @param childrenCls - slot classification for the children slot. Falls back
- *   to heterogeneous when not provided.
- * @param node - the assembled node this struct was built for. Only consulted
- *   for `'separatedList'`-classified nodes, to wire real per-instance
- *   `leading`/`trailing`/`separator` values into list slots' `ListNonterminalView`
- *   instead of the hardcoded `false`/`sepLiteral` every other kind still uses
- *   (see the `f.view === 'list' || f.multiple` branch below).
- * @param kindIdByKind - Map<kind, u16 id>, needed to resolve a nonterminal
- *   separator's candidate arms to their numeric KindId for the `_separator_kind`
- *   match (see `buildSeparatorKindMatchLines`).
- */
 function buildTypedTemplateBody(
 	struct: EmittedStruct,
 	separator: string,
@@ -1447,6 +1226,20 @@ function buildTypedTemplateBody(
 	const templateName = struct.name;
 	const sepLiteral = JSON.stringify(separator);
 	const R = RENDERABLE_PREFIX;
+
+	// `'boolean'`/`'verbatim'`-classified fields (see `classifyPrimitiveField`
+	// docstring) get a `bool`/`String` transport struct field
+	// (`renderTransportField`), not a per-slot enum or `AnyTransport`.
+	// Precompute once so both the `$text` fast-path "checkable" predicate
+	// below and the main template-struct loop agree with what the struct
+	// actually declares.
+	const primitiveByName = new Map<string, PrimitiveFieldStorage>();
+	if (nodeMap !== undefined && slotModel !== undefined) {
+		for (const f of [...slotModel.named, ...slotModel.unnamed]) {
+			const cls = classifyPrimitiveField(f, nodeMap);
+			if (cls !== undefined) primitiveByName.set(f.name, cls);
+		}
+	}
 
 	// `$text` fast-path — match JS render's `nodeHasStructure` short-circuit.
 	// Shallow validator reads only `$type` + `$text` for nested nodes. With
@@ -1463,6 +1256,10 @@ function buildTypedTemplateBody(
 		const allSlots = [...slotModel.named, ...slotModel.unnamed];
 		const allCheckable = allSlots.every((slot) => {
 			if (isMultiple(slot)) return true; // Vec<T> or Option<Vec<T>> — both checkable.
+			// `Option<bool>` (boolean-collapsed terminal-only field) is checkable
+			// via `unwrap_or(false)` negation, same presence semantics as
+			// `Option<T>::is_none()`.
+			if (primitiveByName.get(slot.name)?.kind === 'boolean') return true;
 			return !isRequired(slot); // Option<T> is checkable; required T is not.
 		});
 		if (allCheckable && allSlots.length > 0) {
@@ -1472,7 +1269,10 @@ function buildTypedTemplateBody(
 				if (seenStorage.has(slot.storageName)) continue;
 				seenStorage.add(slot.storageName);
 				const rIdent = rustFieldIdent(slot.storageName);
-				if (isMultiple(slot) && isRequired(slot)) {
+				if (primitiveByName.get(slot.name)?.kind === 'boolean') {
+					// `Option<bool>` field — `None` and `Some(false)` both mean absent.
+					checks.push(`!node.${rIdent}.unwrap_or(false)`);
+				} else if (isMultiple(slot) && isRequired(slot)) {
 					// Vec<T> — empty when length 0.
 					checks.push(`node.${rIdent}.is_empty()`);
 				} else if (isMultiple(slot)) {
@@ -1549,6 +1349,35 @@ function buildTypedTemplateBody(
 	for (const f of struct.fields) {
 		const rIdent = rustFieldIdent(f.storageName);
 		const templateIdent = rustFieldIdent(f.name);
+		const primitive = primitiveByName.get(f.name);
+		if (primitive?.kind === 'boolean') {
+			// `Option<bool>` field — presence (`Some(true)`; `None`/`Some(false)`
+			// both mean absent) gates the fixed literal text (the same text
+			// `keywordPresenceValue` stamped on the struct-field decision in
+			// `renderTransportField`). No transport dispatch needed.
+			lines.push(`        ${templateIdent}: if node.${rIdent}.unwrap_or(false) {`);
+			lines.push(
+				`            OptionalNonterminalView::Present(${R}Renderable::Text(${JSON.stringify(primitive.text)}))`
+			);
+			lines.push(`        } else {`);
+			lines.push(`            OptionalNonterminalView::Missing`);
+			lines.push(`        },`);
+			continue;
+		}
+		if (primitive?.kind === 'verbatim') {
+			// `String`/`Option<String>` field — wrap sends the raw literal
+			// text (no kind_id), never a presence bool — mirrors `f.required`
+			// exactly like any other Option<T>/T field.
+			if (f.required) {
+				lines.push(`        ${templateIdent}: SingleNonterminalView(${R}Renderable::Text(&node.${rIdent})),`);
+			} else {
+				lines.push(`        ${templateIdent}: match &node.${rIdent} {`);
+				lines.push(`            Some(v) => OptionalNonterminalView::Present(${R}Renderable::Text(v)),`);
+				lines.push(`            None => OptionalNonterminalView::Missing,`);
+				lines.push(`        },`);
+			}
+			continue;
+		}
 		const kinds = fieldKindsByName.get(f.name) ?? [];
 		const cls = classifyField(f.name, kinds);
 		const isBoxed = cls.tag === 'heterogeneous' && cls.useBox !== false;
@@ -1729,12 +1558,6 @@ pub use kind_ids::*;
 // Public API
 // ----------------------------------------------------------------------
 
-/**
- * Emit `hash.rs` + `hash.ts` for a single grammar (T016/T017 surface).
- * Kept as the historic low-dep entry point — the richer `emitRenderModule`
- * (T027+) subsumes it but we keep this exported so the existing unit
- * tests and intermediate CLI paths stay green.
- */
 export function emitHashFiles(
 	lang: Grammar,
 	files: readonly TemplateFile[]
@@ -1755,20 +1578,6 @@ export function emitHashFiles(
 	};
 }
 
-/**
- * Emit the full render module for a grammar — hash files, per-kind
- * template structs, direct-render helpers, lib.rs,
- * Cargo.toml.
- *
- * @param lang — grammar identifier.
- * @param files — the grammar's `.jinja` bundle (filename → body).
- *   Used for the hash input AND for per-kind struct-field derivation.
- * @param nodeMap — the assembled node map, source of direct-render
- *   metadata tables and typeName lookups.
- * @param generatedIdTables — optional numeric KindID tables (T021+).
- * @returns paired file contents. The CLI writes them + handles the
- *   `.jinja` directory copy separately (T030).
- */
 export function emitRenderModule(
 	lang: Grammar,
 	files: readonly TemplateFile[],
@@ -1863,6 +1672,28 @@ function renderTransportSupport(
 	// fields that reference the enum types can resolve them at compile time.
 	const usedSupertypeNames = collectUsedSupertypeNames(nodes, nodeMap);
 	const kidByKind = kindEntries ? buildKindIdByKind(kindEntries) : undefined;
+	// Cross-supertype self-alias ids: a mint arm (`alias($._hidden_supertype,
+	// $.visible)`) records its storage→parse pair on the REFERENCING
+	// supertype's `subtypeParseNames`, but the id must also be accepted by the
+	// STORAGE supertype's OWN enum — a delegated decode
+	// (`ExpressionTransport` 432-arm → `ExpressionExceptRangeTransport`) hands
+	// the same napi value down, so the inner enum sees the alias id too.
+	// Collect globally (the pair never lives on the storage supertype itself).
+	const selfAliasIdsBySupertype = new Map<string, number[]>();
+	if (kindEntries !== undefined) {
+		for (const [, node] of nodeMap.nodes) {
+			if (node.modelType !== 'supertype') continue;
+			for (const [storage, parse] of Object.entries((node as AssembledSupertype).subtypeParseNames ?? {})) {
+				if (nodeMap.nodes.get(storage)?.modelType !== 'supertype') continue;
+				const parseEntry = findKindEntry(kindEntries, parse);
+				const parseId = parseEntry?.parseId ?? parseEntry?.id;
+				if (parseId === undefined) continue;
+				const ids = selfAliasIdsBySupertype.get(storage);
+				if (ids === undefined) selfAliasIdsBySupertype.set(storage, [parseId]);
+				else if (!ids.includes(parseId)) ids.push(parseId);
+			}
+		}
+	}
 	const supertypeEnumLines: string[] = [];
 	for (const [, node] of nodeMap.nodes) {
 		if (node.modelType !== 'supertype') continue;
@@ -1871,7 +1702,15 @@ function renderTransportSupport(
 		// (e.g. `_literal` → `LiteralTransport` is in RESERVED_SUPERTYPE_ENUM_NAMES).
 		const enumName = `${rustTypeIdent(node.typeName)}Transport`;
 		if (RESERVED_SUPERTYPE_ENUM_NAMES.has(enumName)) continue;
-		supertypeEnumLines.push(...emitSupertypeTransportEnum(node as AssembledSupertype, kidByKind, nodeMap));
+		supertypeEnumLines.push(
+			...emitSupertypeTransportEnum(
+				node as AssembledSupertype,
+				kidByKind,
+				nodeMap,
+				kindEntries,
+				selfAliasIdsBySupertype.get(node.kind)
+			)
+		);
 	}
 
 	// Collect per-slot children enums (heterogeneous children slots where no
@@ -1884,7 +1723,7 @@ function renderTransportSupport(
 		)
 	);
 	const perSlotEnumLines: string[] = perSlotEnums.flatMap((entry) =>
-		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey)
+		emitPerSlotChildEnum(entry, kidByKind, nodeMap, literalVariantByKey, kindEntries)
 	);
 
 	return pruneUnreferencedBridges(
@@ -1913,15 +1752,6 @@ function renderTransportSupport(
 	);
 }
 
-/**
- * R5 reachability gate: drop any `*_transport_to_any` bridge fn that nothing
- * in the assembled transport.rs references. The file-top
- * `#![allow(dead_code)]` means rustc will never flag an unreferenced bridge,
- * so without this prune a dead bridge survives silently (exactly how the
- * deleted transport→NodeData island hid). Reachability is computed against
- * the FINAL assembled text — by construction, every emitted bridge has a
- * live caller.
- */
 function pruneUnreferencedBridges(rendered: string): string {
 	const lines = rendered.split('\n');
 	const out: string[] = [];
@@ -1947,12 +1777,6 @@ function pruneUnreferencedBridges(rendered: string): string {
 	return out.join('\n');
 }
 
-/**
- * Common Rust `use` imports shared across templates.rs, bridge.rs, dispatch.rs,
- * and transport.rs. Each file gets the full set — Rust's module system deduplicates
- * and the `#![allow(unused_imports)]` suppresses warnings for imports not needed
- * in a particular file.
- */
 function commonRustUseImports(hasNumericDispatch: boolean): string {
 	const lines: string[] = [];
 	lines.push(
@@ -1975,10 +1799,6 @@ function commonRustUseImports(hasNumericDispatch: boolean): string {
 	return lines.join('\n');
 }
 
-/**
- * The Askama `filters` module — must live in the same module as `#[derive(Template)]`
- * structs so Askama's derive macro can resolve custom filter names at build time.
- */
 function filtersModule(): string {
 	return [
 		'pub mod filters {',
@@ -2047,19 +1867,9 @@ function filtersModule(): string {
 	].join('\n');
 }
 
-/**
- * Collect the set of supertype `typeName`s that are actually used as
- * field or children slot types across all assembled nodes. Only these
- * supertypes need per-supertype transport enum emission.
- *
- * @param nodes - assembled nodes (transport projection)
- * @param nodeMap - for classification
- */
 function collectUsedSupertypeNames(nodes: readonly AssembledNode[], nodeMap: NodeMap): Set<string> {
 	const used = new Set<string>();
 
-	/** Accumulate supertype names from a single node's slots — named and
-	 *  unnamed flow through one path (cleanup-rules §E1). */
 	const collectFromSlots = (slots: readonly AssembledNonterminal[]): void => {
 		for (const slot of slots) {
 			const cls = classifySlotForEmit(kindsOf(slot), nodeMap);
@@ -2096,11 +1906,6 @@ function collectUsedSupertypeNames(nodes: readonly AssembledNode[], nodeMap: Nod
 	return used;
 }
 
-/**
- * Build a `Map<string, number>` from `kindEntries` for O(1) lookup by kind.
- * Also indexes `symbolName` when present so literal kinds (e.g. `"+"`)
- * resolve the same way as their parser-symbol names (`PLUS`).
- */
 function buildKindIdByKind(kindEntries: readonly KindEnumEntry[]): ReadonlyMap<string, number> {
 	const map = new Map<string, number>();
 	for (const e of kindEntries) {
@@ -2112,10 +1917,10 @@ function buildKindIdByKind(kindEntries: readonly KindEnumEntry[]): ReadonlyMap<s
 	return map;
 }
 
-/**
- * Emit `AnyTransport` with the string-tagged `#[serde(tag = "$type")]` derive.
- * Fallback path when `generatedIdTables` is unavailable (no parser.c).
- */
+function enumMemberAcceptedIds(node: AssembledEnum): number[] {
+	return [...node.resolvedByText.values()].map((e) => e.id);
+}
+
 function renderAnyTransportWithStringTag(
 	nodes: readonly AssembledNode[],
 	literals: readonly TransportLiteral[]
@@ -2166,28 +1971,6 @@ function renderAnyTransportWithStringTag(
  * @param nodeMap       - for typeName + modelType lookups
  */
 
-/**
- * Returns true when a node's emitted `FromNapiValue` will NOT silently match
- * any bare JS string by coercing it to an object. Used to sort string-fallback
- * dispatch arms so "greedy" all-optional structs come LAST.
- *
- * Two categories return true (i.e. are safe to try first):
- *
- * 1. Leaf nodes (`pattern` / `keyword` / `token` / `enum`): use
- *    `renderLeafTransportNapiImpls` which reads `text` directly from the JS
- *    string value — they correctly decode a bare string and produce a
- *    non-empty `text` field.
- *
- * 2. Branch / group / polymorph nodes with at least one required (non-Option)
- *    grammar field: `#[napi(object)]`-derived `FromNapiValue` coerces the JS
- *    string to a boxed String object via `napi_coerce_to_object`; all property
- *    lookups return `undefined`. A required field (`String`, not `Option<String>`)
- *    cannot be `undefined` → deserialization fails → the arm is correctly skipped.
- *
- * All-optional branch/group/polymorph nodes are the "greedy" case: every field
- * becomes `None` when coerced from a string, so `FromNapiValue` silently
- * succeeds regardless of the input — these must come LAST.
- */
 function nodeTransportHasRequiredField(node: AssembledNode): boolean {
 	// Leaf types use renderLeafTransportNapiImpls — always safe on bare strings.
 	if (
@@ -2203,26 +1986,6 @@ function nodeTransportHasRequiredField(node: AssembledNode): boolean {
 	return allFormFieldsOf(node).some((slot) => isRequired(slot));
 }
 
-/**
- * SCC-driven Box decision for a per-slot or supertype enum variant.
- *
- * The eventual rule is: Box variant `V` (a kind name) in enum `E`
- * (owned by `enumOwnerKind`) iff `V` is not leaf-like AND `V` and
- * `enumOwnerKind` are in the same SCC of the singular transport-
- * reference graph. The `computeTransportSCC` pass populates
- * `nodeMap.scc` with the analysis; consumers call `scc.sameSCC(...)`.
- *
- * **Live status (sittir-12):** the SCC analysis IS computed end-to-end
- * and exposed via `nodeMap.scc`, but `boxedInEnum` still falls back to
- * the conservative `Box-all-non-leaf` rule. Enabling SCC-based unboxing
- * for rust deep read-render-parse used to trigger a V8 stack overflow
- * inside napi-rs's `String::from_napi_value` error path (it
- * JSON.stringify's the deeply-nested object for diagnostic context).
- * That error path is no longer reachable: every hand-emitted
- * `FromNapiValue` impl now dispatches on `napi_typeof` first (see
- * `renderTransportValueTypeHelper`), so no typed read is ever attempted
- * on a mismatched shape. Flipping the SCC predicate can be retried.
- */
 function isLeafLikeNode(n: AssembledNode): boolean {
 	return n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
 }
@@ -2246,20 +2009,6 @@ function boxedInEnum(
 	return false;
 }
 
-/**
- * Emit the `transport_value_type` helper — a plain `napi_typeof` probe used
- * by every hand-emitted `FromNapiValue` impl in this module.
- *
- * Dispatching on the JS value's type FIRST (instead of probing typed reads
- * `u16` → `String` → `Object` in sequence) is load-bearing: napi-rs's
- * `String::from_napi_value` failure path JSON.stringify's Object inputs for
- * diagnostics — a JS callback re-entered from deep native recursion that
- * overflows the V8 stack on recursive AST shapes
- * (block→statement→expression→block) and aborts the process
- * (`Check failed: IsOnCentralStack()`, exit 133). `napi_typeof` is a plain
- * C call with no JS re-entry and no diagnostic error construction, so a
- * mismatched shape never pays that cost.
- */
 function renderTransportValueTypeHelper(): string[] {
 	// Hand-expanded `napi::type_of!` — the macro internally invokes a bare
 	// `check_status!`, which would have to be in scope at the expansion site.
@@ -2283,24 +2032,6 @@ function renderTransportValueTypeHelper(): string[] {
 	];
 }
 
-/**
- * Emit the `from_napi_value` body shared by supertype and per-slot transport
- * enums: strict three-shape dispatch on `napi_typeof` (raw u16 kind_id /
- * bare string → Verbatim / object with numeric `$type`).
- *
- * The typeof dispatch (see `renderTransportValueTypeHelper`) replaces the
- * earlier sequential probing, which crashed on deep recursive inputs. It
- * also keeps bare-string semantics exact: `Object::from_napi_value`
- * SUCCEEDS on a JS string (property access auto-boxes primitives), so any
- * ordering that probes Object before String would swallow bare strings
- * into a "$type property missing" error instead of the Verbatim arm.
- *
- * @param enumName - Rust enum name, e.g. `PatternTransport`.
- * @param kindIdArms - shared `match kind_id` arms (must end with a
- *   catch-all `other =>` arm so the match is exhaustive over u16).
- * @param admitsVerbatim - whether the enum has a `Verbatim` variant; gates
- *   the bare-string arm (bare strings carry no kind tag).
- */
 function emitTransportEnumFromNapiValueBody(
 	enumName: string,
 	kindIdArms: readonly string[],
@@ -2343,14 +2074,46 @@ function emitTransportEnumFromNapiValueBody(
 	return lines;
 }
 
+function emitAliasUnwrapRecurseArm(aliasId: number, enumName: string, errorLabel: string): string[] {
+	const arms: string[] = [];
+	arms.push(`                ${aliasId} => {`);
+	arms.push(`                    if let Ok(obj) = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val) {`);
+	arms.push(`                        if let Ok(keys) = ::napi::bindgen_prelude::Object::keys(&obj) {`);
+	arms.push(`                            for key in keys {`);
+	arms.push(`                                if !key.starts_with('_') {`);
+	arms.push(`                                    continue;`);
+	arms.push(`                                }`);
+	arms.push(
+		`                                if let Some(child) = obj.get::<::napi::bindgen_prelude::Unknown>(&key)? {`
+	);
+	arms.push(`                                    return Self::from_napi_value(env, ::napi::JsValue::raw(&child));`);
+	arms.push(`                                }`);
+	arms.push(`                            }`);
+	arms.push(`                        }`);
+	arms.push(`                    }`);
+	arms.push(
+		`                    Err(::napi::Error::from_reason(${JSON.stringify(
+			`${errorLabel} kind id ${aliasId} in ${enumName}: no kind-keyed child slot to unwrap`
+		)}))`
+	);
+	arms.push(`                },`);
+	return arms;
+}
+
 function emitSupertypeTransportEnum(
 	supertypeNode: AssembledSupertype,
 	kindIdByKind: ReadonlyMap<string, number> | undefined,
-	nodeMap: NodeMap
+	nodeMap: NodeMap,
+	kindEntries?: readonly KindEnumEntry[],
+	selfAliasIds?: readonly number[]
 ): string[] {
 	const enumName = `${rustTypeIdent(supertypeNode.typeName)}Transport`;
 	const lines: string[] = [];
-	const { subtypes: validSubtypes, suppressedKinds } = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
+	const {
+		subtypes: validSubtypes,
+		suppressedKinds,
+		parseNames
+	} = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
 	const ownerKind = supertypeNode.kind;
 
 	// SCC-driven Box rule. Box only when the variant kind and the
@@ -2360,10 +2123,8 @@ function emitSupertypeTransportEnum(
 	const isBoxed = (subKind: string, subNode: AssembledNode): boolean =>
 		boxedInEnum(subKind, ownerKind, subNode, nodeMap);
 
-	// Does this supertype admit any AssembledPattern variant? Pattern variants
-	// share verbatim-text render semantics; bare-string inputs are wrapped as
-	// Verbatim. See VerbatimTransport docstring for rationale.
-	const admitsVerbatim = validSubtypes.some(({ subNode }) => subNode.modelType === 'pattern');
+	// See `admitsVerbatimCollapse` docstring for the full rationale.
+	const admitsVerbatim = admitsVerbatimCollapse(supertypeNode.subtypes, nodeMap);
 
 	const emitDecodeTrials = (leafOnly = false, indent = '                '): string[] => {
 		// Self-alias / reserved-supertype kind_id: parser sent the supertype's
@@ -2440,19 +2201,48 @@ function emitSupertypeTransportEnum(
 				arms.push(`                },`);
 				emittedIds.add(id);
 			}
+			// Parse-aliases of THIS supertype itself: a mint arm
+			// (`alias($._expression_except_range, $.expression_group1)`) makes
+			// the hidden supertype VISIBLE at that position, so runtime nodes
+			// arrive under the alias occurrence's own id (`alias_sym_*`). The
+			// grammar-agnostic reader stores such a node's single unlabeled
+			// child under a kind-keyed slot (`{ $type: <aliasId>,
+			// _<childKind>: <child> }` — read_node.rs kind-named-slot routing),
+			// so no variant struct can decode the wrapper directly (decode
+			// trials would probe the wrong object). Unwrap the kind-keyed slot
+			// and re-dispatch Self on the concrete child, which carries its own
+			// `$type`.
+			for (const aliasId of selfAliasIds ?? []) {
+				if (emittedIds.has(aliasId)) continue;
+				emittedIds.add(aliasId);
+				arms.push(...emitAliasUnwrapRecurseArm(aliasId, enumName, 'self-alias'));
+			}
 			for (const { subKind, subNode } of validSubtypes) {
 				const variant = rustTypeIdent(subNode.typeName);
 				const typeName = rustTransportStructName(subNode);
+				// Owner-kind / supertype-membership ids stay name-resolved (spec §2.3
+				// keep-list); enum member ids are stamped facts (PR-K3b).
 				const acceptedKinds = new Set([subKind, ...collectConcreteTransportKinds(subKind, nodeMap)]);
+				const acceptedIds = [...acceptedKinds]
+					.map((k) => kindIdByKind.get(k))
+					.filter((id): id is number => id !== undefined);
+				// Aliased arm: also accept the parse name's id — the alias
+				// occurrence's own runtime symbol (`alias_sym_*`), the id
+				// tree-sitter actually emits at that arm's position. Resolved
+				// through THE kind-name chain (its `_`-prefix step is what maps
+				// a mint's visible name to its `alias_sym_*` catalog row).
+				const parseName = parseNames.get(subKind);
+				if (parseName !== undefined && kindEntries !== undefined) {
+					const parseEntry = findKindEntry(kindEntries, parseName);
+					const parseId = parseEntry?.parseId ?? parseEntry?.id;
+					if (parseId !== undefined) acceptedIds.push(parseId);
+				}
 				if (subNode instanceof AssembledEnum) {
-					for (const resolvedKind of subNode.resolvedKinds) {
-						acceptedKinds.add(resolvedKind);
-					}
+					acceptedIds.push(...enumMemberAcceptedIds(subNode));
 				}
 				const boxed = isBoxed(subKind, subNode);
-				for (const acceptedKind of acceptedKinds) {
-					const id = kindIdByKind.get(acceptedKind);
-					if (id === undefined || emittedIds.has(id)) continue;
+				for (const id of acceptedIds) {
+					if (emittedIds.has(id)) continue;
 					emittedIds.add(id);
 					if (boxed) {
 						arms.push(`                ${id} => Ok(Self::${variant}(Box::new(`);
@@ -2566,17 +2356,6 @@ function emitSupertypeTransportEnum(
 	return lines;
 }
 
-/**
- * Emit `render_<supertype>(t: &<Supertype>Transport, dest: &mut dyn fmt::Write) -> Result<(), ::askama::Error>`
- * as a bounded match over the enum variants.
- *
- * Each arm delegates to the concrete kind's render fn through the parent
- * typed helper. Arm count is bounded by the supertype's subtype
- * count (~5–40), not the full grammar (~1040 for rust).
- *
- * @param supertypeNode - the assembled supertype node
- * @param nodeMap       - for typeName + modelType lookups
- */
 function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: NodeMap): string[] {
 	const enumName = `${rustTypeIdent(supertypeNode.typeName)}Transport`;
 	const fnName = `render_${rustSnakeIdent(supertypeNode.typeName)}`;
@@ -2584,7 +2363,8 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 	const { subtypes: validSubtypes } = collectEffectiveSupertypeTransportShape(supertypeNode, nodeMap);
 	const ownerKind = supertypeNode.kind;
 
-	const admitsVerbatim = validSubtypes.some(({ subNode }) => subNode.modelType === 'pattern');
+	// See `admitsVerbatimCollapse` docstring for the full rationale.
+	const admitsVerbatim = admitsVerbatimCollapse(supertypeNode.subtypes, nodeMap);
 
 	lines.push(`fn ${fnName}(t: &${enumName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	lines.push(`    match t {`);
@@ -2621,6 +2401,21 @@ function collectConcreteTransportKinds(kind: string, nodeMap: NodeMap, seen: Set
 	return [...concreteKinds];
 }
 
+function admitsVerbatimCollapse(kinds: readonly string[], nodeMap: NodeMap): boolean {
+	const isHiddenPatternLeaf = (candidateKind: string): boolean =>
+		candidateKind.startsWith('_') && nodeMap.nodes.get(candidateKind)?.modelType === 'pattern';
+	const kindCollapses = (kind: string): boolean => {
+		const node = nodeMap.nodes.get(kind);
+		if (node === undefined) return false;
+		if (node.modelType === 'pattern') return true;
+		if (node.modelType !== 'branch' && node.modelType !== 'group') return false;
+		const slotClass = classifyBranchSlots(node, nodeMap);
+		if (slotClass.tag !== 'singleSlot' || slotClass.arity !== 'multiple') return false;
+		return slotClass.slot.values.some((value) => isNodeRef(value) && isHiddenPatternLeaf(storageKindOfRef(value.node)));
+	};
+	return kinds.some((kind) => collectConcreteTransportKinds(kind, nodeMap).some(kindCollapses));
+}
+
 function expandConcreteTransportKinds(
 	kinds: readonly string[],
 	nodeMap: NodeMap
@@ -2651,55 +2446,20 @@ function expandConcreteTransportKinds(
 	return expanded;
 }
 
-/**
- * Per-slot children enum entry: identifies a heterogeneous slot (named or
- * unnamed) on a parent node, plus the set of concrete kinds it accepts.
- *
- * Per cleanup-rules.md §E1 (no special treatment for unnamed vs named slots):
- * BOTH kinds of heterogeneous slots get per-slot typed enums. Per-slot enums
- * give us Box-elision (non-recursive variants stay inline in the parent
- * struct) that `Box<AnyTransport>` cannot.
- */
 interface PerSlotChildEnum {
-	/** PascalCase typeName of the parent node. */
 	typeName: string;
-	/** Raw grammar kind of the parent node — owner key for SCC lookup. */
 	ownerKind: string;
-	/** Slot name — symmetric for named and unnamed slots (cleanup-rules §E1). */
 	fieldName: string;
-	/** Concrete kinds in this slot. */
 	kinds: readonly string[];
-	/** Terminal literal children that may appear in runtime `$children`. */
 	literals: readonly TransportLiteral[];
+	parseAliases: Readonly<Record<string, string>>;
+	acceptedIdsByKind: ReadonlyMap<string, readonly number[]>;
 }
 
-/**
- * Returns `true` when at least one kind in `kinds` can produce a concrete
- * transport type (i.e. `concreteTransportTypeName` returns non-null).
- * When all kinds are supertypes / multi / polymorph, a per-slot enum would be
- * empty and must not be emitted — callers fall back to `Box<AnyTransport>`.
- */
 function hasAnyConcreteChildKind(kinds: readonly string[], nodeMap: NodeMap): boolean {
 	return expandConcreteTransportKinds(kinds, nodeMap).length > 0;
 }
 
-/**
- * Collect all nodes whose `structuralChildren` classify as `heterogeneous`
- * (multiple distinct kinds, no grammar supertype covering them) — these need
- * a `{TypeName}ChildTransportSlot` per-slot enum emitted before the struct.
- *
- * Polymorph forms are also covered: each form that has heterogeneous children
- * contributes its own entry (keyed by `formTypeName` so the enum name is
- * distinct from the parent struct).
- *
- * Per cleanup-rules §E1, named heterogeneous fields ALSO get per-slot enums
- * (`{TypeName}{FieldName}TransportSlot`). Under option (c) of the task, the
- * enum is emitted alongside the existing `Box<AnyTransport>` field type so
- * the enum is available for future use without changing field types yet.
- *
- * @param nodes   - assembled nodes from the transport projection
- * @param nodeMap - for classification
- */
 function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: NodeMap): PerSlotChildEnum[] {
 	const entries: PerSlotChildEnum[] = [];
 	const seen = new Set<string>();
@@ -2726,11 +2486,15 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 		const slotKinds = kindsOf(field);
 		const literalSet = new Set<string>();
 		const literals: TransportLiteral[] = [];
-		for (const text of slotLiteralValues(field)) {
+		// Iterate the terminal values directly (not slotLiteralValues) so the
+		// mint-time resolvedKindId stamp rides along (PR-K3a).
+		for (const v of field.values) {
+			if (!isTerminalValue(v)) continue;
+			const text = v.value;
 			const key = `${text}\0${text}`;
 			if (literalSet.has(key)) continue;
 			literalSet.add(key);
-			literals.push({ kind: text, text });
+			literals.push({ kind: text, text, resolvedKindId: v.resolvedKindId });
 		}
 		// Mixed-content override: a slot with named kinds AND anonymous literal
 		// content is heterogeneous regardless of classifier.
@@ -2742,7 +2506,17 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 		if (seen.has(enumName)) return;
 		if (reservedTransportNames.has(enumName)) return;
 		seen.add(enumName);
-		entries.push({ typeName, ownerKind, fieldName: field.name, kinds: slotKinds, literals });
+		const parseAliases = aliasTargetToSourceMapOf(field);
+		const acceptedIdsByKind = acceptedIdPairsByKindOf(field);
+		entries.push({
+			typeName,
+			ownerKind,
+			fieldName: field.name,
+			kinds: slotKinds,
+			literals,
+			parseAliases,
+			acceptedIdsByKind
+		});
 	};
 
 	for (const node of nodes) {
@@ -2755,23 +2529,12 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 	return entries;
 }
 
-/**
- * Emit a `{TypeName}ChildTransportSlot` per-slot children enum for a heterogeneous
- * children slot. The enum has one variant per concrete child kind; each variant
- * wraps the concrete transport struct (boxed for non-leaf kinds).
- *
- * Mirrors `emitSupertypeTransportEnum` but is derived from the specific child
- * kinds in a slot rather than grammar supertype membership.
- *
- * @param entry - the per-slot enum descriptor (typeName + child kinds)
- * @param kindIdByKind - map from kind to numeric parser symbol id (for FromNapiValue)
- * @param nodeMap - for transport struct names and modelType lookups
- */
 function emitPerSlotChildEnum(
 	entry: PerSlotChildEnum,
 	kindIdByKind: ReadonlyMap<string, number> | undefined,
 	nodeMap: NodeMap,
-	literalVariantByKey: ReadonlyMap<string, string>
+	literalVariantByKey: ReadonlyMap<string, string>,
+	kindEntries?: readonly KindEnumEntry[]
 ): string[] {
 	const enumName = perSlotEnumName(entry.typeName, entry.fieldName);
 	const lines: string[] = [];
@@ -2788,14 +2551,8 @@ function emitPerSlotChildEnum(
 	const isBoxed = (variantKind: string, variantNode: AssembledNode): boolean =>
 		boxedInEnum(variantKind, ownerKind, variantNode, nodeMap);
 
-	// AssembledPattern variants — the kinds whose render template emits the
-	// `text` field verbatim (`identifier`, `integer_literal`, etc.). When at
-	// least one is present in this enum, we admit bare-string inputs via the
-	// `Verbatim(VerbatimTransport)` variant. Bare strings carry no kind tag,
-	// and any pattern variant would render their text identically — Verbatim
-	// is the explicit "untyped text" carrier that avoids the ambiguity of
-	// picking among interchangeable pattern variants.
-	const admitsVerbatim = validKinds.some(({ node }) => node.modelType === 'pattern');
+	// See `admitsVerbatimCollapse` docstring for the full rationale.
+	const admitsVerbatim = admitsVerbatimCollapse(entry.kinds, nodeMap);
 
 	// Spec 024 cleanup-§E1: named-slot enums are load-bearing alongside unnamed
 	// `$children` enums — `rustTransportSlotType` returns the per-slot enum name
@@ -2831,16 +2588,34 @@ function emitPerSlotChildEnum(
 		for (const { kind, node, concreteName } of validKinds) {
 			const variant = rustTypeIdent(node.typeName);
 			const typeName = concreteName;
-			const acceptedKinds = new Set<string>(acceptedTransportKinds(kind, nodeMap));
+			// PR-K3c: value-backed kinds take their accepted ids straight from
+			// the mint stamps (storageKindId + parseKindId subsume both name-
+			// keyed alias redirects, per reference site). The name chain remains
+			// only for kinds with no value in hand (supertype-expanded arms) or
+			// id-less values.
+			const stampedIds = entry.acceptedIdsByKind.get(kind);
+			const acceptedIds =
+				stampedIds !== undefined
+					? [...stampedIds]
+					: [...new Set<string>(acceptedTransportKinds(kind, nodeMap, entry.parseAliases))]
+							.map((k) => kindIdByKind.get(k))
+							.filter((id): id is number => id !== undefined);
 			if (node instanceof AssembledEnum) {
-				for (const resolvedKind of node.resolvedKinds) {
-					acceptedKinds.add(resolvedKind);
-				}
+				acceptedIds.push(...enumMemberAcceptedIds(node));
+			}
+			// A pattern whose sole realization is a fixed literal (e.g.
+			// `_semicolon` = `choice($._automatic_semicolon, ';')` → `';'`)
+			// has no catalog row under its own hidden name, so neither the
+			// mint stamp nor the name-derived chain above resolves an id for
+			// it. Resolve through the same literal-first chain already used
+			// for `entry.literals` below (~3106-3110).
+			if (node.modelType === 'pattern' && node.fixedLiteralText !== undefined && kindEntries !== undefined) {
+				const literalId = findKindEntryForLiteral(kindEntries, node.fixedLiteralText)?.id;
+				if (literalId !== undefined) acceptedIds.push(literalId);
 			}
 			const boxed = isBoxed(kind, node);
-			for (const acceptedKind of acceptedKinds) {
-				const id = kindIdByKind.get(acceptedKind);
-				if (id === undefined || emittedIds.has(id)) continue;
+			for (const id of acceptedIds) {
+				if (emittedIds.has(id)) continue;
 				emittedIds.add(id);
 				if (boxed) {
 					kindIdArms.push(`                ${id} => Ok(Self::${variant}(Box::new(`);
@@ -2854,11 +2629,43 @@ function emitPerSlotChildEnum(
 			}
 		}
 		for (const literal of entry.literals) {
-			const id = kindIdByKind.get(literal.kind);
+			// PR-K3a: the mint stamp (resolvedKindId, minted through the same
+			// literal-first chain — #129) is authoritative when present. The
+			// emit-time chain remains only for stamp-less literals (kind-
+			// derived keyword/token texts) and the no-catalog fallback.
+			const id =
+				literal.resolvedKindId ??
+				(kindEntries !== undefined
+					? (findKindEntryForLiteral(kindEntries, literal.text) ?? findKindEntry(kindEntries, literal.kind))?.id
+					: kindIdByKind.get(literal.kind));
 			const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 			if (id === undefined || variant === undefined || emittedIds.has(id)) continue;
 			emittedIds.add(id);
 			kindIdArms.push(`                ${id} => Ok(Self::${variant}),`);
+		}
+		// Alias-canonicalized wrapper ids (narrow scope): one of this slot's
+		// raw storage kinds (`entry.kinds`, pre-expansion) is a hidden
+		// supertype that got flattened into `validKinds` above (per
+		// `expandConcreteTransportKinds` — every supertype-modelType kind has
+		// `concreteTransportTypeName === null`, so it's never its own
+		// variant). When a value at this reference site was ALSO wrapped by
+		// an enrich-minted `alias($._hidden_supertype, $.visible_name)` (the
+		// `parseAliases` fact — `aliasTargetToSourceMapOf`, node-map.ts), the
+		// alias occurrence's own wire id (e.g. python's
+		// `_case_pattern_group1` / id 293, wrapping a matched
+		// `union_pattern`) has no variant to land on directly — it must
+		// unwrap its single kind-keyed child and re-dispatch, same as a
+		// supertype's cross-supertype self-alias id. Scoped tightly to
+		// exactly this shape (flattened-supertype storage target already
+		// covered by this same enum); NOT a general alias-name fallback.
+		for (const [parseName, storageKind] of Object.entries(entry.parseAliases)) {
+			if (!entry.kinds.includes(storageKind)) continue;
+			if (nodeMap.nodes.get(storageKind)?.modelType !== 'supertype') continue;
+			const parseEntry = kindEntries !== undefined ? findKindEntry(kindEntries, parseName) : undefined;
+			const aliasId = parseEntry?.parseId ?? parseEntry?.id ?? kindIdByKind.get(parseName);
+			if (aliasId === undefined || emittedIds.has(aliasId)) continue;
+			emittedIds.add(aliasId);
+			kindIdArms.push(...emitAliasUnwrapRecurseArm(aliasId, enumName, 'alias-wrapper'));
 		}
 		kindIdArms.push(`                other => Err(::napi::Error::from_reason(format!(`);
 		kindIdArms.push(`                    "unknown kind id {other} in ${enumName}",`);
@@ -2968,48 +2775,16 @@ function emitPerSlotChildEnum(
 	return lines;
 }
 
-/**
- * Emit `AnyTransport` with a custom `FromNapiValue` impl that reads `$type`
- * as a numeric `u16` KindId directly from the JS object properties (no serde,
- * no JSON intermediate). Phase B of the KindID runtime migration.
- *
- * Per the spec: the `AnyTransport` enum body itself has no serde derives —
- * only `Debug + Clone`. The custom `FromNapiValue` impl reads `$type` as `u16`
- * and dispatches to the per-kind struct's `FromNapiValue` (generated by
- * `#[napi(object)]`). Literal variants are unit variants — JS sends only `$type`
- * and no payload; the static text is embedded in the Rust dispatch arms.
- *
- * Unknown kind IDs produce a napi error with the numeric ID in the message
- * so that diagnostics can surface useful context.
- *
- * DRY constraint: the match arms come from the same `kindEntries` list that
- * `emitKindIdRust` uses for `kind_ids.rs` constants — both consumers read
- * from the same source so dispatch and constants stay in sync.
- *
- * @param nodes — assembled nodes that appear in the transport projection
- * @param literals — literal (terminal text-only) transport kinds
- * @param nodeMap — for `kindIdMemberName` lookups (typeName derivation)
- * @param kindEntries — entries from the symbol catalog; used for ID→variant dispatch
- */
 function renderAnyTransportWithNapiFromValue(
 	nodes: readonly AssembledNode[],
 	literals: readonly TransportLiteral[],
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]
 ): string[] {
-	// Index by both `kind` (canonical catalog name) and `symbolName` (anon-token
-	// literal text). Literal arms are keyed by `literal.kind`, which for
-	// component literals carries the literal text (`"+"`) rather than the
-	// parser-symbol name (`"PLUS"`). Without the symbolName index, `+` and
-	// other operator-token literals would fall through to `id === undefined` and
-	// silently skip — leaving the dispatch incomplete.
-	const kindIdByKind = new Map<string, number>();
-	for (const e of kindEntries) {
-		kindIdByKind.set(e.kind, e.id);
-		if (e.symbolName !== undefined && !kindIdByKind.has(e.symbolName)) {
-			kindIdByKind.set(e.symbolName, e.id);
-		}
-	}
+	// Node-arm id index — the shared `buildKindIdByKind` construction (DRY:
+	// this was previously an inline duplicate of that helper). Literal arms
+	// do NOT resolve through this map — see the literal-first note below.
+	const kindIdByKind = buildKindIdByKind(kindEntries);
 
 	const lines: string[] = [];
 
@@ -3076,8 +2851,19 @@ function renderAnyTransportWithNapiFromValue(
 	// One match arm per literal kind — unit variants, no payload.
 	// The literal text is a compile-time constant; JS does not need to send it.
 	// Use the same emittedNodeIds set to skip KindIds already claimed by node arms.
+	// Resolution is literal-first (#129): `kindIdByKind` keys every entry by
+	// its catalog kind BEFORE symbolName, so a literal whose text equals a
+	// NAMED rule's name (python's `'type'`) resolved to the rule's id — which
+	// a node arm had already claimed, so the literal arm was deduped away and
+	// the anon token's id had NO arm at all. Resolve the literal TEXT through
+	// the anon-scoped lookup, falling back to the catalog-key form for
+	// literals keyed by parser-symbol name.
 	for (const [index, literal] of literals.entries()) {
-		const id = kindIdByKind.get(literal.kind);
+		// PR-K3a: mint stamp first; emit-time chain only for stamp-less
+		// (kind-derived) literals.
+		const id =
+			literal.resolvedKindId ??
+			(findKindEntryForLiteral(kindEntries, literal.text) ?? findKindEntry(kindEntries, literal.kind))?.id;
 		if (id === undefined) continue;
 		if (emittedNodeIds.has(id)) continue; // T016: skip duplicate KindId
 		emittedNodeIds.add(id);
@@ -3143,15 +2929,6 @@ function renderAnyTransportWithNapiFromValue(
 	return lines;
 }
 
-/**
- * Per-grammar `Renderable` extension enum. Closed family: `Text` for
- * already-final render-ready strings, `Joined` for streaming join wrappers.
- * Display + FastWritable dispatch on the variant.
- *
- * The `Node` variant (previously present) is removed in Phase 2: per-template
- * render functions call typed helpers directly and produce `String` values,
- * which they wrap as `Renderable::Text`. No render fn creates `Renderable::Node`.
- */
 function renderGrammarRenderable(): string[] {
 	return [
 		'#[derive(Debug, Clone, Copy)]',
@@ -3200,36 +2977,10 @@ function renderTransportEntry(): string[] {
 	];
 }
 
-/**
- * Previously emitted a `pub struct LiteralTransport { text: String, ... }` napi
- * object so JS could send the literal text across the FFI boundary. Now that
- * `AnyTransport` literal variants are unit variants (no payload), the struct is
- * no longer needed and this function returns an empty array.
- *
- * The static text for each literal is embedded directly in the
- * `render_transport_dispatch` match arms.
- */
 function renderLiteralTransportStruct(_literals: readonly TransportLiteral[]): string[] {
 	return [];
 }
 
-/**
- * Emit the `VerbatimTransport` struct — a synthetic carrier for bare-string
- * inputs that have no `$type` annotation. Used by per-slot and supertype
- * enums that admit at least one AssembledPattern variant (kinds whose render
- * template emits the text verbatim — `identifier`, `integer_literal`, etc.).
- *
- * The struct itself has no kind_id, no factory or from-side production —
- * it ONLY appears via the `FromNapiValue` bare-string fast-path. The render
- * arm in the enclosing enum writes `self.text` directly to the destination.
- *
- * Rationale: AssembledPattern variants are interchangeable at the render
- * boundary (they all emit `{{ text }}`). On the recursive deep-read path,
- * leaf positions sometimes send text without a `$type` annotation; previously
- * the variant-trial fallback silently matched whatever variant's FromNapiValue
- * happened to accept the input first (e.g., StringLiteralTransport matched
- * bare strings and rendered as `""`). Verbatim removes the ambiguity.
- */
 function renderVerbatimTransportStruct(): string[] {
 	return [
 		'#[derive(Debug, Clone)]',
@@ -3274,11 +3025,7 @@ function leafBooleanPresenceLiteral(node: AssembledNode, nodeMap: NodeMap): stri
 	for (const [, owner] of nodeMap.nodes) {
 		for (const field of structuralFieldsOf(owner)) {
 			if (keywordPresenceValue(field, nodeMap) !== literal) continue;
-			if (
-				field.values.some(
-					(value) => isNodeRef(value) && (isUnresolvedRef(value.node) ? value.node.name : value.node.kind) === node.kind
-				)
-			) {
+			if (field.values.some((value) => isNodeRef(value) && storageKindOfRef(value.node) === node.kind)) {
 				return literal;
 			}
 		}
@@ -3464,31 +3211,6 @@ function renderTransportDataStruct(
 	return lines;
 }
 
-/**
- * Emit manual napi `FromNapiValue` + `ToNapiValue` impls for a leaf
- * transport struct. Two cfg-gated `FromNapiValue` variants are emitted:
- *
- * - `#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]`
- *   reads the napi value as a plain JS string and constructs the struct
- *   with only `text` populated (metadata fields are `None` / default).
- *   JS callers in release mode send a bare string for leaf fields.
- *
- * - `#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]`
- *   reads the napi value as a JS object and extracts the full set of
- *   metadata fields (`$text`, `$source`, `$named`, `$span`, `$nodeId`).
- *   JS callers in debug mode send the complete transport object.
- *
- * `ToNapiValue` is a no-op stub in both modes. Transport is receive-only
- * (JS→Rust); the stub satisfies `#[napi(object)]` field bounds on parent
- * branch structs that embed these leaf types.
- *
- * @param structName - Rust struct name, e.g. `IdentifierTransport`.
- * @param named - Whether this leaf node is named in tree-sitter. Tokens are always
- *   anonymous (`false`); patterns and keywords are always named (`true`). Used to
- *   hardcode `transport_named` in non-debug mode so the children filter
- *   `.filter(|t| t.transport_named().unwrap_or(true))` works correctly without
- *   needing to read `$named` from the JS object.
- */
 function renderLeafTransportNapiImpls(
 	structName: string,
 	named: boolean,
@@ -3648,24 +3370,6 @@ function leafDefaultTextLiteral(node: AssembledNode): string | undefined {
 	return undefined;
 }
 
-/**
- * Single source of truth for transport struct metadata fields.
- * Every transport struct (branch, leaf, polymorph) carries these
- * metadata fields. All emission helpers that produce struct field
- * declarations, `None` initialisers, `obj.get(...)` reads, or
- * `transport.<field>` bridge accesses derive from this array.
- *
- * @remarks
- * `jsName` is the `$`-prefixed JS property name on the wire.
- * `rustName` is the Rust struct field name.
- * `rustType` is the Rust type for the struct field declaration.
- * `bridgeMap` (optional) is an inline `.map(...)` transformation
- * applied when reading the field value in the transport-to-NodeData
- * bridge function. When absent the field is passed through directly.
- * `needsExplicitTypeAnnotation` flags fields whose `obj.get(...)` call
- * in the manual `FromNapiValue` impl requires a leading type annotation
- * (e.g. `let x: Option<Foo> = obj.get(...)?;`).
- */
 interface TransportMetadataField {
 	jsName: string;
 	rustName: string;
@@ -3674,14 +3378,6 @@ interface TransportMetadataField {
 	needsExplicitTypeAnnotation?: boolean;
 }
 
-/**
- * Metadata fields shared by all transport structs.
- *
- * `transport_text` is intentionally absent — it is present on branch
- * transport structs (which always include it) but NOT on leaf structs
- * (which use a plain `text: String` field instead). It is added
- * conditionally by `renderTransportMetadataFields`.
- */
 const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
 	{ jsName: '$source', rustName: 'transport_source', rustType: 'Option<Source>' },
 	{ jsName: '$named', rustName: 'transport_named', rustType: 'Option<bool>' },
@@ -3705,24 +3401,12 @@ const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
 	{ jsName: '$triviaData', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>' }
 ];
 
-/**
- * The `transport_text` field, conditional on branch structs. Kept
- * separate from `TRANSPORT_METADATA_FIELDS` because leaf structs use
- * a plain `text: String` instead.
- */
 const TRANSPORT_TEXT_FIELD: TransportMetadataField = {
 	jsName: '$text',
 	rustName: 'transport_text',
 	rustType: 'Option<String>'
 };
 
-/**
- * Emit struct field declarations with `#[cfg_attr(feature = "napi-bindings", napi(js_name = "..."))]`
- * attributes for branch/group/polymorph transport structs that carry
- * `#[napi(object)]` on the struct.
- *
- * @param includeText - true for branch structs (adds `transport_text`).
- */
 function renderTransportMetadataFields(includeText: boolean): string[] {
 	const lines: string[] = [];
 	// source, named — always first
@@ -3750,15 +3434,6 @@ function renderTransportMetadataFields(includeText: boolean): string[] {
 	return lines;
 }
 
-/**
- * Plain struct fields for leaf/keyword/token transport structs. Unlike
- * branch structs, these do not carry `#[napi(object)]` on the struct itself,
- * so individual field `cfg_attr(napi(...))` attributes would have no proc-macro
- * to consume them and could confuse napi-derive. Plain field declarations are
- * used instead; `FromNapiValue` is emitted manually below the struct definition
- * (via `renderLeafTransportNapiImpls`), reading the JS property names with the
- * `$`-prefixed keys explicitly.
- */
 function renderLeafTransportPlainFields(): string[] {
 	return [...TRANSPORT_METADATA_FIELDS.map((f) => `    pub ${f.rustName}: ${f.rustType},`), '    pub text: String,'];
 }
@@ -3782,43 +3457,45 @@ function renderTransportField(
 	// napi structs to read the same storage keys directly. Symmetric for named
 	// and unnamed slots (cleanup-rules §E1).
 	lines.push(`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(`_${field.storageName}`)}))]`);
+	// `'boolean'`/`'verbatim'`-classified fields (see `classifyPrimitiveField`
+	// docstring) bypass `rustTransportSlotType` entirely and get a primitive
+	// Rust type instead — wrap sends a presence bool or bare text for these,
+	// never the kind_id/object shape `rustTransportSlotType`'s per-slot-enum
+	// / `AnyTransport` machinery expects.
+	const required = forceOptional ? false : isRequired(field);
+	const primitive = classifyPrimitiveField(field, nodeMap);
+	const primitiveType =
+		primitive?.kind === 'boolean'
+			? // `Option<bool>`, NOT bare `bool`: wrap OMITS the wire key entirely
+				// when absent/false (confirmed via `tool probe-kind`) rather than
+				// sending an explicit `false`. `#[napi(object)]` derive requires a
+				// non-Option field's key to always be present, so a bare `bool`
+				// throws "Missing field" on every absent instance — the common
+				// case for an optional keyword modifier. Render-side glue treats
+				// `None` the same as `Some(false)` (`unwrap_or(false)`).
+				'Option<bool>'
+			: primitive?.kind === 'verbatim'
+				? required
+					? 'String'
+					: 'Option<String>'
+				: undefined;
 	lines.push(
-		`    pub ${rustName}: ${rustTransportSlotType(
-			kindsOf(field),
-			nodeMap,
-			{ required: forceOptional ? false : isRequired(field), multiple: isMultiple(field) },
-			parentKind,
-			typeName,
-			field.name,
-			slotLiteralValues(field)
-		)},`
+		`    pub ${rustName}: ${
+			primitiveType ??
+			rustTransportSlotType(
+				kindsOf(field),
+				nodeMap,
+				{ required, multiple: isMultiple(field) },
+				parentKind,
+				typeName,
+				field.name,
+				slotLiteralValues(field)
+			)
+		},`
 	);
 	return lines;
 }
 
-/**
- * Unified emitter for the Rust type of a transport slot.
- *
- * Per cleanup-rules §E1 ("no special treatment for unnamed vs named slots"),
- * every slot (named or kind-derived) emits the same per-slot typed enum
- * shape — `{TypeName}{FieldName}TransportSlot` for heterogeneous slots.
- *
- *   - `concrete`      → `T` / `Vec<T>` / `Option<T>` / `Option<Vec<T>>`
- *   - `supertype`     → `T` / `Vec<T>` / `Option<T>` / `Option<Vec<T>>`
- *   - `heterogeneous` → per-slot enum (or `Box<AnyTransport>` fallback when
- *     no concrete child kind exists)
- *
- * @param slotKinds   - Named child kinds for this slot (terminals excluded; see
- *   `kindsOf`).
- * @param nodeMap     - For classification + concrete transport name lookup.
- * @param cardinality - Slot cardinality (required / multiple).
- * @param typeName    - Parent node's PascalCase typeName (per-slot enum name
- *   prefix).
- * @param fieldName   - The slot's name (per-slot enum name suffix source).
- * @param literalTexts - Anonymous literal terminal values appearing in this
- *   slot. A slot with BOTH named kinds AND literal terminals is forced
- *   heterogeneous (mixed-content override).
- */
 function rustTransportSlotType(
 	slotKinds: readonly string[],
 	nodeMap: NodeMap,
@@ -3918,16 +3595,6 @@ function findSupertypeKindByTypeName(supertypeName: string, nodeMap: NodeMap): s
 	return map.get(supertypeName);
 }
 
-/**
- * Emit `FromNapiValue` / `ToNapiValue` impls for `Box<EnumName>`. napi-rs's
- * derive does not auto-generate Box-wrapping impls for custom enums, but
- * `Box-at-back-edge` slot typing makes `Box<EnumName>` show up as a field
- * type wherever an enum-typed slot closes a singular size cycle. Without
- * these impls the generated transport structs (which derive `#[napi(object)]`)
- * fail to compile with "trait FromNapiValue is not implemented for Box<…>".
- *
- * Pattern mirrors the existing `Box<AnyTransport>` impls.
- */
 function renderBoxedEnumNapiImpls(enumName: string): string[] {
 	return [
 		`#[cfg(feature = "napi-bindings")]`,
@@ -3953,15 +3620,6 @@ function renderBoxedEnumNapiImpls(enumName: string): string[] {
 	];
 }
 
-/**
- * Rust type name for a concrete transport struct given a grammar kind.
- * Returns `null` when the kind maps to a supertype or multi node — those are
- * NOT emitted as transport structs/enums in Phase 1 (Phase 2 will add them).
- * The caller must fall back to `Box<AnyTransport>` on `null`.
- *
- * @param kind - Grammar kind string (e.g. `"identifier"`, `"_expression"`).
- * @param nodeMap - For typeName + modelType lookup.
- */
 function concreteTransportTypeName(kind: string, nodeMap: NodeMap): string | null {
 	const node = nodeMap.nodes.get(kind);
 	if (node !== undefined) {
@@ -3978,18 +3636,6 @@ function concreteTransportTypeName(kind: string, nodeMap: NodeMap): string | nul
 	return null;
 }
 
-/**
- * Name for a per-slot children enum for a heterogeneous children slot.
-/**
- * Per-slot transport enum name for a heterogeneous slot.
- *
- * Format: `{TypeName}{SlotName}TransportSlot` — symmetric for named and
- * unnamed slots (e.g. `ModItemBodyTransportSlot` for `mod_item.body`,
- * `AttributedParameterParameterTransportSlot` for `_attributed_parameter.parameter`).
- *
- * @param typeName - The parent node's typeName (PascalCase).
- * @param fieldName - The slot's name (snake_case / lowercase).
- */
 function perSlotEnumName(typeName: string, fieldName: string): string {
 	const base = rustTypeIdent(typeName);
 	// Field names are typically snake_case / lowercase (e.g. `body`, `type_arguments`).
@@ -4000,17 +3646,12 @@ function perSlotEnumName(typeName: string, fieldName: string): string {
 	return `${base}${sanitized}TransportSlot`;
 }
 
-/**
- * Rust type name for the transport representation of a node.
- *
- * For `enum` modelType nodes: the transport type is the Rust enum itself
- * (`XxxEnum`). All other nodes use the standard `XxxTransport` struct name.
- */
 function rustTransportStructName(node: AssembledNode): string {
 	if (node instanceof AssembledEnum) {
 		return enumTypeName(node);
 	}
-	return `${rustTypeIdent(node.typeName)}Transport`;
+	const name = `${rustTypeIdent(node.typeName)}Transport`;
+	return RESERVED_TRANSPORT_STRUCT_NAMES.has(name) ? `${rustTypeIdent(node.typeName)}KindTransport` : name;
 }
 
 function rustTransportVariantName(node: AssembledNode): string {
@@ -4044,12 +3685,6 @@ function rustTypeIdent(name: string): string {
 // Enum transport type emission
 // ----------------------------------------------------------------------
 
-/**
- * Mapping from operator/punctuation literal text to a safe Rust PascalCase
- * identifier. Covers the symbols that appear across the three grammars
- * (rust, typescript, python). Identifiers that need disambiguation from
- * Rust keywords get a `Kw` suffix.
- */
 const LITERAL_TO_VARIANT_NAME: ReadonlyMap<string, string> = new Map([
 	// Arithmetic
 	['+', 'Plus'],
@@ -4252,16 +3887,6 @@ const LITERAL_TO_VARIANT_NAME: ReadonlyMap<string, string> = new Map([
 	['vis', 'Vis']
 ]);
 
-/**
- * Convert a literal text value to a safe Rust PascalCase enum variant name.
- *
- * Lookup order:
- * 1. Exact match in `LITERAL_TO_VARIANT_NAME` (operator/keyword/symbol table).
- * 2. Alphanumeric identifier: PascalCase the token (e.g. `async_block` → `AsyncBlock`).
- * 3. Fallback: encode each byte as `U{hex}` to guarantee a valid Rust identifier.
- *
- * @param literal - The grammar literal string (e.g. `"+"`, `"mut"`, `"u8"`).
- */
 function literalToVariantName(literal: string): string {
 	const known = LITERAL_TO_VARIANT_NAME.get(literal);
 	if (known !== undefined) return known;
@@ -4283,44 +3908,10 @@ function literalToVariantName(literal: string): string {
 	return `V${hex}`;
 }
 
-/**
- * True when an `AssembledEnum` has exactly one member value.
- *
- * Single-member enums are presence markers — the field either holds
- * the one known literal or is absent. The Rust transport layer maps
- * these to plain `bool` rather than a single-variant enum type, and
- * JS sends `true`/`false` (or omits the field) instead of an object
- * with `$text`. This eliminates the enum struct entirely and lets
- * `#[napi(object)]` handle the bool field automatically.
- */
-/**
- * Enum type name for an `AssembledEnum` node. Appends `Enum` to the typeName
- * (PascalCase) to avoid collision with the companion `*Transport` struct naming
- * convention. Used by the parent transport struct field type.
- *
- * Example: typeName `BinaryExpressionOperator` → `BinaryExpressionOperatorEnum`.
- */
 function enumTypeName(node: AssembledEnum): string {
 	return `${rustTypeIdent(node.typeName)}Enum`;
 }
 
-/**
- * Emit a Rust enum type for an `AssembledEnum` node (synthesized field-enum
- * or pre-existing grammar enum). Replaces the `text: String` leaf-struct path
- * with a closed, statically-known variant set.
- * Emits for multi-member enums:
- * - `#[derive(Debug, Clone, Copy)] pub enum XxxEnum { ... }`
- * - `impl FromNapiValue` — reads a plain `u16` KindId (no heap allocation)
- *   and dispatches to the correct variant via a match on numeric IDs.
- *   Falls back to `$text: String` matching when `kindEntries` is absent.
- * - `impl RenderableTransport` — writes the static literal text per variant
- * - `impl Display` — writes the static literal text per variant
- *
- * @param node - the AssembledEnum node
- * @param hasNapi - whether napi-bindings feature is present (from generatedIdTables)
- * @param kindEntries - catalog entries for KindId lookup; when present, emits
- *   numeric `u16` dispatch in `FromNapiValue` instead of `$text: String` matching
- */
 function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: readonly KindEnumEntry[]): string[] {
 	const enumName = enumTypeName(node);
 	const values = node.values;
@@ -4354,7 +3945,11 @@ function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: rea
 			// inputs; see transport_value_type).
 			const kindIdMatchArms = (indent: string): void => {
 				for (const v of values) {
-					const entry = findKindEntry(kindEntries, v);
+					// `values` are LITERAL member texts — read the node's
+					// construction-time literal-chain resolution (PR-K3a;
+					// anon-scoped first so a same-spelled named rule can't
+					// shadow, #129).
+					const entry = node.resolvedByText.get(v);
 					const variant = literalToVariantName(v);
 					if (entry !== undefined) {
 						lines.push(`${indent}${entry.id} => return Ok(Self::${variant}), // ${JSON.stringify(v)}`);

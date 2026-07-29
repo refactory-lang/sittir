@@ -17,31 +17,9 @@ import { referencedKinds, resolveHiddenKeywordLiteral } from './shared.ts';
 
 export interface EmitTypeTestsConfig {
 	nodeMap: NodeMap;
-	/**
-	 * Parser-symbol ID tables for numeric $type assertion emission.
-	 * When present, generated type tests emit `TSKindId.X` in extends checks.
-	 * When absent (legacy callers), falls back to string literal checks.
-	 */
 	generatedIdTables?: GeneratedIdTables;
 }
 
-/**
- * Returns the expected-type expression for a `_TypeExtends<X['$type'], ...>` check.
- *
- * @remarks
- * When kindEntries is present (KindID pipeline), emits `TSKindId.X`. When
- * absent (legacy / unit-test path), falls back to `'<kind>'` string literal.
- *
- * @param kind - The grammar kind string.
- * @param kindEntries - Collected kind-enum entries, or `undefined` for fallback.
- * @param nodeMap - The assembled node map.
- * @returns Expression string suitable for `_TypeExtends<X['$type'], <expr>>`.
- */
-/**
- * @param isLeaf - When true, the node uses `Terminal<K>` (string-keyed `$type`);
- *   numeric discriminants are not applicable until `Terminal` itself is migrated.
- *   Phase A only migrates structural (branch/container/polymorph) interfaces.
- */
 function typeTestDiscriminant(
 	kind: string,
 	kindEntries: readonly KindEnumEntry[] | undefined,
@@ -57,18 +35,6 @@ function typeTestDiscriminant(
 	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
 
-/**
- * Build the expected discriminant for a type-test assertion on an enum kind.
- *
- * @remarks
- * Mirrors `enumMemberDiscriminant` in `types.ts`: resolves each member
- * value to its `TSKindId.X` entry and joins as a union. Falls back to
- * the string kind name when no entries resolve or `kindEntries` is absent.
- *
- * @param node - The `AssembledEnum` node.
- * @param kindEntries - Catalog entries for TSKindId lookup.
- * @returns The expected discriminant expression for the type assertion.
- */
 function enumMemberTypeTestDiscriminant(
 	node: AssembledEnum,
 	kindEntries: readonly KindEnumEntry[] | undefined
@@ -76,7 +42,12 @@ function enumMemberTypeTestDiscriminant(
 	if (!kindEntries) return `'${node.kind}'`;
 	const members: string[] = [];
 	for (const value of node.values) {
-		const entry = findKindEntry(kindEntries, value);
+		// PR-K3a: construction-time literal-chain record first (anon-scoped,
+		// #129), exactly as types.ts's enumMemberDiscriminant — the two
+		// surfaces must derive the same union. Name-chain fallback covers
+		// catalog-less construction (fixtures).
+		const rec = node.resolvedByText.get(value);
+		const entry = rec !== undefined ? findKindEntry(kindEntries, rec.kind) : findKindEntry(kindEntries, value);
 		if (entry) {
 			members.push(`TSKindId.${entry.member}`);
 		}
@@ -128,7 +99,6 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
 			case 'pattern':
 			case 'keyword':
 			case 'enum':
-				// Only test leaves that actually made it into types.ts.
 				if (!node.rawFactoryName && !referenced.has(kind)) continue;
 				// Hidden `_kw_*` keywords are dropped from types.ts (the
 				// factory inlines their literal), so skip them here too —
@@ -191,11 +161,6 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
 	}
 	body.push('');
 
-	// Config assertion dropped — base-kind `${TypeName}Config` aliases are
-	// no longer emitted (spec 008 US7 landing). `X.Config` (namespace sugar)
-	// and `ConfigOf<X>` resolve to the same type by construction; the old
-	// test was a tautology.
-
 	body.push('// --- TreeNode types have correct `type` ---');
 	// TreeNode.type is from tree-sitter and stays as a string literal always.
 	for (const s of structuralKinds) {
@@ -212,8 +177,6 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
 	}
 	body.push('');
 
-	// Imports — now emitted from the narrowed set.
-	// When kindEntries are present, also import TSKindId for the numeric checks.
 	const typeImportList = [...typeImports].sort();
 	if (needsKindIdImport) {
 		lines.push(`import type { ${typeImportList.join(', ')} } from './types.js';`);

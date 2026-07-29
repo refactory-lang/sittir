@@ -51,6 +51,7 @@ export interface EmitAllConfig {
 	triviaKinds?: string[];
 	grammarRoles?: GrammarRoles;
 	emitRenderModule?: boolean;
+	expectTestFailures?: Readonly<Record<string, string>>;
 }
 
 export interface EmitAllResult {
@@ -76,13 +77,6 @@ function classifyRenderModuleEmission(grammar: string, emitRenderModule: boolean
 	return { tag: 'emit', validGrammar: grammar };
 }
 
-/**
- * Single-loop orchestrator: initializes all emitters, iterates
- * `nodeMap.nodes` once dispatching to each, then finalizes all.
- *
- * @param config - Union of what all emitters need.
- * @returns An object with every emitter's final output string.
- */
 export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const {
 		grammar,
@@ -93,16 +87,14 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		strict,
 		triviaKinds,
 		grammarRoles,
-		emitRenderModule
+		emitRenderModule,
+		expectTestFailures
 	} = config;
 	const renderModuleEmission = classifyRenderModuleEmission(grammar, emitRenderModule);
 	const kindEntries = generatedIdTables
 		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
 
-	// -----------------------------------------------------------------
-	// 1. Initialize per-node-dispatch emitters (preamble, internal state)
-	// -----------------------------------------------------------------
 	const factoryEmitter = new FactoryEmitter({
 		grammar,
 		nodeMap,
@@ -140,9 +132,60 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 				})
 			: undefined;
 
-	// -----------------------------------------------------------------
-	// 2. ONE loop — taxonomy dispatch happens HERE
-	// -----------------------------------------------------------------
+	dispatchNodeMapByTaxonomy(
+		{ factoryEmitter, fromEmitter, wrapEmitter, templateEmitter, renderModuleEmitterInst },
+		{ nodeMap, kindEntries, inlineKinds, synthesizedKinds }
+	);
+
+	const factories = factoryEmitter.finalize();
+	const from = fromEmitter.finalize();
+	const wrap = wrapEmitter.finalize();
+	const jinjaTemplates = templateEmitter.finalize();
+	const renderModule = renderModuleEmitterInst?.finalize(jinjaTemplates);
+
+	const types = emitTypes({ grammar, nodeMap, generatedIdTables });
+	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
+	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
+	const is = emitIs({ grammar, nodeMap, generatedIdTables });
+	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures });
+	const typeTests = emitTypeTests({ nodeMap, generatedIdTables });
+	const utils = emitClientUtils({ nodeMap, generatedIdTables, triviaKinds });
+
+	return {
+		factories,
+		from,
+		wrap,
+		types,
+		consts,
+		irNamespace,
+		is,
+		tests,
+		typeTests,
+		jinjaTemplates,
+		utils,
+		renderModule
+	};
+}
+
+interface NodeDispatchEmitters {
+	readonly factoryEmitter: FactoryEmitter;
+	readonly fromEmitter: FromEmitter;
+	readonly wrapEmitter: WrapEmitter;
+	readonly templateEmitter: TemplateEmitter;
+	readonly renderModuleEmitterInst: RenderModuleEmitter | undefined;
+}
+
+interface NodeDispatchContext {
+	readonly nodeMap: NodeMap;
+	readonly kindEntries: ReturnType<typeof collectKindEntries> | undefined;
+	readonly inlineKinds: readonly string[] | undefined;
+	readonly synthesizedKinds: ReadonlySet<string> | undefined;
+}
+
+function dispatchNodeMapByTaxonomy(emitters: NodeDispatchEmitters, ctx: NodeDispatchContext): void {
+	const { factoryEmitter, fromEmitter, wrapEmitter, templateEmitter, renderModuleEmitterInst } = emitters;
+	const { nodeMap, kindEntries, inlineKinds, synthesizedKinds } = ctx;
+
 	for (const [kind, node] of nodeMap.nodes) {
 		const factoryEmission = classifyFactoryEmission(kind, node, {
 			nodeMap,
@@ -204,16 +247,14 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 			case 'token':
 			case 'multi':
 				break;
-			// TEMPORARY (separator-as-slot Task 2 follow-up — see
-			// isSlotBearingCompound's doc comment, shared.ts): template/
-			// render-module still share 'branch's full emission for
-			// byte-identical output. Remove once 'separatedList' gets its own
-			// dedicated emission there too. wrap.ts (Task 4), factories.ts
-			// (Task 6), and from.ts (Task 6 follow-up) switched over to their
-			// own dedicated emission — see `emitSeparatedListWrap`'s doc
-			// comment (wrap.ts), `emitSeparatedListFactory`'s doc comment
-			// (factories.ts), and `emitSeparatedListFrom`'s doc comment
-			// (from.ts).
+			/* TEMPORARY: template/render-module still share 'branch's full
+			   emission for byte-identical output — see isSlotBearingCompound's doc
+			   comment (shared.ts). Remove once 'separatedList' gets its own
+			   dedicated emission there too; wrap.ts, factories.ts, and from.ts
+			   already have their own dedicated emission — see
+			   `emitSeparatedListWrap`'s doc comment (wrap.ts),
+			   `emitSeparatedListFactory`'s doc comment (factories.ts), and
+			   `emitSeparatedListFrom`'s doc comment (from.ts). */
 			case 'separatedList':
 				if (factoryEmission === 'emit') factoryEmitter.emitSeparatedList(node);
 				if (fromEmission === 'emit') fromEmitter.emitSeparatedList(node);
@@ -226,40 +267,4 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 			factoryEmitter.emitRefineForms(kind, node);
 		}
 	}
-
-	// -----------------------------------------------------------------
-	// 3. Finalize per-node-dispatch emitters (footer, join, return)
-	// -----------------------------------------------------------------
-	const factories = factoryEmitter.finalize();
-	const from = fromEmitter.finalize();
-	const wrap = wrapEmitter.finalize();
-	const jinjaTemplates = templateEmitter.finalize();
-	const renderModule = renderModuleEmitterInst?.finalize(jinjaTemplates);
-
-	// -----------------------------------------------------------------
-	// 4. Run emitters that use their own internal iteration
-	//    (category collection, multi-pass patterns, etc.)
-	// -----------------------------------------------------------------
-	const types = emitTypes({ grammar, nodeMap, generatedIdTables });
-	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
-	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
-	const is = emitIs({ grammar, nodeMap, generatedIdTables });
-	const tests = emitTests({ grammar, nodeMap, generatedIdTables });
-	const typeTests = emitTypeTests({ nodeMap, generatedIdTables });
-	const utils = emitClientUtils({ nodeMap, generatedIdTables, triviaKinds });
-
-	return {
-		factories,
-		from,
-		wrap,
-		types,
-		consts,
-		irNamespace,
-		is,
-		tests,
-		typeTests,
-		jinjaTemplates,
-		utils,
-		renderModule
-	};
 }

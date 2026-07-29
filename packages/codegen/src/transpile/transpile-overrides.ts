@@ -29,31 +29,19 @@ import { fileURLToPath } from 'node:url';
 const requireFromHere = createRequire(import.meta.url);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-// packages/codegen/src/transpile/ → packages/
 const packagesRoot = resolve(__dirname, '../../..');
 
 export interface TranspileOptions {
-	/** Grammar name — e.g. 'rust', 'python', 'typescript'. */
 	grammar: string;
-	/** Override the default packages root (used in tests). */
 	packagesRoot?: string;
 }
 
 export interface TranspileResult {
-	/** Absolute path to the generated `.sittir/grammar.js`. */
 	outputPath: string;
-	/** Source size in bytes. */
 	sourceBytes: number;
-	/** Output size in bytes. */
 	outputBytes: number;
 }
 
-/**
- * Transpile `packages/<grammar>/overrides.ts` to
- * `packages/<grammar>/.sittir/grammar.js`. Returns the output path
- * and basic stats. Throws on transpile errors with esbuild's diagnostic
- * messages attached.
- */
 export async function transpileOverrides(opts: TranspileOptions): Promise<TranspileResult> {
 	const root = opts.packagesRoot ?? packagesRoot;
 	const inputPath = join(root, opts.grammar, 'overrides.ts');
@@ -180,14 +168,6 @@ export async function transpileOverrides(opts: TranspileOptions): Promise<Transp
 	};
 }
 
-/**
- * Copy any external scanner source files (scanner.c, scanner.cc) from
- * the base grammar's src/ directory into the transpiled .sittir/src/
- * so tree-sitter generate + native compilation can find them.
- *
- * The base grammar package may not exist (some grammars have no
- * scanner) — in that case the function silently does nothing.
- */
 function copyExternalScannerSources(grammar: string, outputDir: string): void {
 	let basePkgPath: string;
 	try {
@@ -217,16 +197,6 @@ function copyExternalScannerSources(grammar: string, outputDir: string): void {
 	}
 }
 
-/**
- * esbuild plugin that marks any import resolving to a tree-sitter
- * base grammar (`tree-sitter-<lang>/grammar.js`) as external. Matches
- * both package-name imports and relative pnpm-store paths.
- *
- * Critically: when the import is externalized, the `require()` call
- * in the bundled output must use a path that tree-sitter's CLI can
- * resolve at runtime. We rewrite to the package-name form so it
- * resolves through normal Node module resolution.
- */
 function externalizeTreeSitterBases(): esbuild.Plugin {
 	return {
 		name: 'externalize-tree-sitter-bases',

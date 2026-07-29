@@ -2,7 +2,14 @@ import { writeFileSync } from 'node:fs';
 
 import { assemble, AssembleCtx, type AssembledNodeMap } from '../assemble.ts';
 import { link } from '../link.ts';
-import { normalizeGrammar } from '../normalize.ts';
+import { normalizeGrammar, NormalizeCtx } from '../normalize.ts';
+import { DiagnosticSink } from '../../types/diagnostics.ts';
+import {
+	loadGrammarJsonInlineList,
+	loadGrammarJsonAliasMap,
+	buildInlinableKinds,
+	buildPolymorphsConfigSkip
+} from '../inline-sets.ts';
 import type { ParseKindCollisionDiagnostic } from '../../types/parsekind-collisions.ts';
 import type { DeriveShapeDiagnostic } from './derive-shapes.ts';
 import type { AssembleWarning } from '../model/node-map.ts';
@@ -87,27 +94,15 @@ export function fromSlotGrouping(grammar: string, diagnostic: SlotGroupingDiagno
 		ownerKind: diagnostic.ownerKind,
 		message: diagnostic.message,
 		proposal: diagnostic.proposal,
-		// Forward the producer's canProceed verbatim (content-collision now always
-		// pushes false when it fires — the accepted-floor exception is applied by
-		// this function's caller, collectGrammarDiagnostics, where `grammar` is
-		// known; the other 3 SlotGroupingShape codes still always push
-		// canProceed: true) rather than hardcoding true here, which would silently
-		// swallow the flip.
 		canProceed: diagnostic.canProceed,
 		details: { slotCount: diagnostic.slotCount }
 	};
 }
 
-/**
- * Is `ownerKind` declared as an expected (non-blocking) exception for `code`?
- * `expectDiagnostics` comes from the grammar's OWN `overrides.ts` (`wire()`'s
- * `expectDiagnostics:` block, threaded through `RawGrammar.expectDiagnostics`)
- * — grammar-scoped by construction, since only the grammar whose overrides.ts
- * declares an entry ever supplies a non-empty `expectDiagnostics` here. See
- * docs/KNOWN_ISSUES.md for the canonical example (typescript's
- * `_object_type_group1`, exempted from both `content-collision` and
- * `storagename-collision`).
- */
+function isBlockingAssembleWarningCode(code: string): boolean {
+	return code === 'storagename-collision' || code === 'nonterminal-separator-unstamped';
+}
+
 function isExpectedDiagnostic(
 	expectDiagnostics: Readonly<Record<string, readonly string[]>> | undefined,
 	code: string,
@@ -115,6 +110,19 @@ function isExpectedDiagnostic(
 ): boolean {
 	if (ownerKind === undefined) return false;
 	return (expectDiagnostics?.[code] ?? []).includes(ownerKind);
+}
+
+export function fromBodyPatternZeroMatch(grammar: string, hiddenName: string): GrammarDiagnostic {
+	return {
+		scope: 'grammar',
+		code: 'body-pattern-zero-match',
+		severity: 'warning',
+		grammar,
+		ownerKind: hiddenName,
+		message: `groups: body-pattern '${hiddenName}' matched no base-grammar position — the visible-group elevation it declares never fired, so its match sites keep their flat (un-elevated) shape.`,
+		proposal: `The pattern body must remain STRUCTURALLY IDENTICAL to the base-grammar sub-tree it targets. If the base grammar changed (or the entry's body was edited), re-align the body — or delete the entry if the pattern is obsolete.`,
+		canProceed: true
+	};
 }
 
 export function collectGrammarDiagnostics(input: {
@@ -127,12 +135,6 @@ export function collectGrammarDiagnostics(input: {
 }): { diagnostics: readonly GrammarDiagnostic[] } {
 	const parseKindMapped = input.parseKindCollisions.map((diagnostic) => ({
 		...fromParseKindCollision(input.grammar, diagnostic),
-		// Assemble-time parsekind-noninjective means enrich did NOT resolve this
-		// collision (an enrich-resolved one would already be gone from the
-		// grammar by assemble time) — always genuinely blocking. Enrich's own
-		// info-severity audit-trail diagnostics never reach this line (they merge
-		// in separately, in run-codegen.ts's getEnrichUnaliasDiagnostics path),
-		// so this override cannot affect them.
 		canProceed: false
 	}));
 	const deriveShapeMapped = (input.deriveShapeDiagnostics ?? []).map((diagnostic) =>
@@ -140,22 +142,12 @@ export function collectGrammarDiagnostics(input: {
 	);
 	const assembleWarningMapped = (input.assembleWarnings ?? []).map((warning) => {
 		const mapped = fromAssembleWarning(input.grammar, warning);
-		// storagename-collision is the ONLY assemble-warning code PR-L blocks on.
-		// typename-collision (the only other code sharing fromAssembleWarning)
-		// stays exactly as fromAssembleWarning already maps it (still has live,
-		// accepted, non-blocking instances) — do not touch fromAssembleWarning
-		// itself, which would flip it as a side effect.
-		if (warning.code !== 'storagename-collision') return mapped;
+		if (!isBlockingAssembleWarningCode(warning.code)) return mapped;
 		if (isExpectedDiagnostic(input.expectDiagnostics, warning.code, warning.ownerKind)) return mapped;
 		return { ...mapped, canProceed: false };
 	});
 	const slotGroupingMapped = (input.slotGroupingDiagnostics ?? []).map((diagnostic) => {
 		const mapped = fromSlotGrouping(input.grammar, diagnostic);
-		// content-collision's producer (slot-grouping.ts) always emits canProceed:
-		// false when it fires — the expectDiagnostics exception is applied here
-		// instead, mirroring the storagename-collision override above. The other
-		// 3 SlotGroupingShape codes always push canProceed: true at their own
-		// construction sites, so this override never touches them.
 		if (
 			diagnostic.code === 'content-collision' &&
 			isExpectedDiagnostic(input.expectDiagnostics, diagnostic.code, diagnostic.ownerKind)
@@ -172,9 +164,24 @@ export function collectGrammarDiagnosticsForGrammar(input: { rawGrammar: RawGram
 	diagnostics: readonly GrammarDiagnostic[];
 } {
 	const linked = link(input.rawGrammar);
-	const normalized = normalizeGrammar(linked);
-	const nodeMap = assemble(AssembleCtx.from(normalized));
-	// drain slot-grouping diagnostics populated during the normalizeGrammar() pass
+	// Mirror generate.ts's NormalizeCtx inputs (shared via inline-sets.ts): without
+	// inlineKinds, diagnoseSlotGrouping's shape-①b (auto-group helper bodies,
+	// e.g. rust `_match_block_optional1`) never fires on this path, so
+	// `multi-slot-nested-seq` violations were console-only during regen and
+	// absent from the persisted grammar-diagnostics.json / validation report.
+	const inlineKinds = new Set(loadGrammarJsonInlineList(input.rawGrammar.name) ?? []);
+	const normalized = normalizeGrammar(
+		linked,
+		new NormalizeCtx({
+			grammar: linked,
+			inlineKinds: buildInlinableKinds(inlineKinds, linked),
+			polymorphSkip: buildPolymorphsConfigSkip(input.rawGrammar.polymorphsConfig),
+			diagnostics: new DiagnosticSink()
+		})
+	);
+	const nodeMap = assemble(
+		AssembleCtx.from(normalized, undefined, undefined, loadGrammarJsonAliasMap(input.rawGrammar.name))
+	);
 	const slotGroupingDiagnostics = drainSlotGroupingDiagnostics();
 	// §D-2c content-alias injectivity — sole consumer of the diagnostic-only
 	// contentAliasedTo map (empty today; guards a future violation).
@@ -192,7 +199,10 @@ export function collectGrammarDiagnosticsForGrammar(input: { rawGrammar: RawGram
 			slotGroupingDiagnostics,
 			expectDiagnostics: input.rawGrammar.expectDiagnostics
 		}).diagnostics,
-		...contentAliasDiagnostics
+		...contentAliasDiagnostics,
+		...(input.rawGrammar.bodyPatternZeroMatches ?? []).map((name) =>
+			fromBodyPatternZeroMatch(input.rawGrammar.name, name)
+		)
 	];
 	return {
 		nodeMap,
@@ -217,13 +227,6 @@ export function formatGrammarDiagnostics(diagnostics: readonly GrammarDiagnostic
 		.join('\n');
 }
 
-/**
- * Sibling of {@link formatGrammarDiagnostics} for `CompilerDiagnostic`s (PR-S
- * task 5) — kept alongside its natural relative in the same module rather
- * than a new one. `CompilerDiagnostic` has no `ownerKind`/`slotName` (those
- * are `GrammarDiagnostic`-only fields); reusing `formatGrammarDiagnostics`
- * as-is would print literal `-.-` noise, so this formats on `phase` instead.
- */
 export function formatCompilerDiagnostics(diagnostics: readonly CompilerDiagnostic[]): string {
 	if (diagnostics.length === 0) return 'No compiler diagnostics.';
 	return diagnostics
@@ -234,15 +237,6 @@ export function formatCompilerDiagnostics(diagnostics: readonly CompilerDiagnost
 		.join('\n');
 }
 
-/**
- * Persist a diagnostics array to JSON (Cluster D task 13). Sibling of
- * {@link formatGrammarDiagnostics}/{@link formatCompilerDiagnostics} — those
- * format for stderr, this serializes the same shape for a later task
- * (Cluster D task 14) to merge into a unified validation report. Works for
- * either `GrammarDiagnostic` or `CompilerDiagnostic` since both extend the
- * shared `Diagnostic` base (code/severity/message/proposal + scope-specific
- * fields), so no shape adaptation is needed — the array is written as-is.
- */
 export function writeGrammarDiagnosticsJson(
 	diagnostics: readonly (GrammarDiagnostic | CompilerDiagnostic)[],
 	outPath: string
@@ -250,24 +244,6 @@ export function writeGrammarDiagnosticsJson(
 	writeFileSync(outPath, JSON.stringify(diagnostics, null, 2));
 }
 
-/**
- * §D-2c — content-alias injectivity check (the ONLY consumer of the
- * diagnostic-only `contentAliasedTo`/`contentAliasedFrom` maps). Folded in from
- * the former compiler/diagnose-content-alias-injectivity.ts — its sole caller is
- * `collectGrammarDiagnosticsForGrammar` above.
- *
- * `contentAliasedTo` maps a hidden body kind `_x` to the visible twin(s)
- * minted from it. Fan-OUT (`_x → [a, b]`, one body reused by several twins) is
- * LEGITIMATE reuse — no diagnostic. The illegal shape is fan-IN: a single
- * visible twin minted from two DISTINCT hidden bodies (`_a → twin`, `_b →
- * twin`). That would silently drop one body in `mintContentAliasKinds`
- * (`if (!(value in rules))`), so the minted kind's slots/template would depend
- * on mint ORDER — non-deterministic. We flag it as an error mirroring the
- * parse-kind non-injective collision check.
- *
- * The maps are EMPTY on every grammar today (no enrich `alias($._name,$.name)`
- * nodes exist), so this returns `[]` — it guards a FUTURE violation.
- */
 export function diagnoseContentAliasInjectivity(input: {
 	grammar: string;
 	contentAliasedTo?: ReadonlyMap<string, readonly string[]>;

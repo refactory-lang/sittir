@@ -12,5 +12,4 @@
  * deletion site; do not resurrect the type.
  */
 
-/** External-scanner role binding (indent / dedent / newline tokens). */
 export type ExternalRole = { role: 'indent' | 'dedent' | 'newline' };

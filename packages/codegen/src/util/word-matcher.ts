@@ -11,8 +11,8 @@
  * RegExp; `matchesWordShape` is the canonical predicate that bakes the
  * `/^\w+$/` fallback so call sites never re-spell it.
  *
- * PIN-AT-LINK CONTRACT (2026-07-05 design, PR-137 follow-on): within the main
- * compiler pipeline, `compileWordMatcher` is called EXACTLY ONCE per grammar —
+ * PIN-AT-LINK CONTRACT: within the main compiler pipeline, `compileWordMatcher`
+ * is called EXACTLY ONCE per grammar —
  * in `compiler/link.ts`'s `link()`, over `raw.rules` (the evaluate-view rule
  * tree, where the `word` rule's authored wrappers, notably a trailing
  * `REPEAT`, are still intact). The result is carried forward unchanged as
@@ -34,22 +34,6 @@
 import { CHOICE, OPTIONAL, PATTERN, REPEAT, REPEAT1, SEQ, STRING, TOKEN } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule } from '../types/rule.ts';
 
-/**
- * Compile the grammar's `word` rule into a full-match RegExp so callers can
- * check whether an arbitrary string matches the grammar's identifier shape
- * (e.g. "does `match` look like an identifier under python's soft-keyword
- * rules?").
- *
- * Returns `undefined` when:
- * - `word` is null / missing / not a known rule name.
- * - The rule's tree references shapes the walker doesn't understand (e.g. a
- *   symbol ref into another rule). Callers should route through
- *   {@link matchesWordShape}, which applies the `/^\w+$/` fallback in that case.
- *
- * @remarks
- *   First tries the `u` flag (needed for `\p{...}` property escapes); if that
- *   fails, retries flag-less so older grammars keep working.
- */
 export function compileWordMatcher(
 	word: string | null | undefined,
 	rules: Record<string, AnyRule>
@@ -71,39 +55,10 @@ export function compileWordMatcher(
 	}
 }
 
-/**
- * The canonical "does this literal lex as a word?" predicate — i.e. whether
- * tree-sitter will lex it as a word token under the grammar's `word` rule.
- *
- * Single source of truth for the keyword/word-shape test: pass the grammar's
- * compiled matcher (from {@link compileWordMatcher}) when available; when it is
- * `undefined` (no `word` declaration, or the rule shape isn't expressible as a
- * single regex), this falls back to the conservative `/^\w+$/` heuristic.
- * Call sites MUST route through this rather than re-spelling the fallback.
- *
- * @param value - The literal text from the grammar (e.g. `"if"`, `"+"`, `"->"`).
- * @param wordMatcher - The compiled word-rule pattern, or `undefined`.
- * @returns `true` when `value` has word shape (→ `AssembledKeyword`); `false`
- *   for punctuation / operators (→ `AssembledToken`).
- */
 export function matchesWordShape(value: string, wordMatcher: RegExp | undefined): boolean {
 	return wordMatcher ? wordMatcher.test(value) : /^\w+$/.test(value);
 }
 
-/**
- * Convert a Rule subtree to a regex source fragment. Returns `null`
- * for shapes that can't be expressed as a single regex — notably
- * symbol references (which would need another rule lookup) and
- * anything outside the supported text-terminal shapes.
- *
- * This walker runs in BOTH the sittir pipeline and the tree-sitter CLI path
- * (where enrich() sees the native DSL objects), but both now agree on
- * UPPERCASE discriminants (`'PATTERN'`, `'TOKEN'`, `'IMMEDIATE_TOKEN'`, …) —
- * no case normalization needed. (Previously the CLI path silently fell back
- * to `/^\w+$/` while the sittir path used the real grammar word rule,
- * letting keyword-promotion diverge between parser and IR — PR #111 review
- * finding; the dual-case boundary that caused that is now dissolved.)
- */
 function ruleToRegexSource(rule: AnyRule): string | null {
 	const shaped = rule as {
 		value?: string;
@@ -116,9 +71,9 @@ function ruleToRegexSource(rule: AnyRule): string | null {
 		case STRING:
 			return shaped.value === undefined ? null : escapeRegexLiteral(shaped.value);
 		case TOKEN:
-			// PR-P Task 2: TERMINAL case removed — TerminalRule deleted from Rule union.
-			// (IMMEDIATE_TOKEN is a tree-sitter-native shape that never appears in
-			// sittir's AnyRule union, so no case is needed for it here.)
+			/* No TERMINAL case: the Rule union has no TerminalRule variant.
+			   (IMMEDIATE_TOKEN is a tree-sitter-native shape that never appears in
+			   sittir's AnyRule union, so no case is needed for it either.) */
 			return shaped.content ? ruleToRegexSource(shaped.content) : null;
 		case SEQ: {
 			const parts: string[] = [];
@@ -154,9 +109,9 @@ function ruleToRegexSource(rule: AnyRule): string | null {
 			return `(?:${p})+`;
 		}
 		default:
-			// symbol / field / variant / supertype / enum / indent /
-			// dedent / newline — none of these have a single regex
-			// representation without additional context.
+			/* symbol / field / variant / supertype / enum / indent / dedent /
+			   newline — none of these have a single regex representation
+			   without additional context. */
 			return null;
 	}
 }

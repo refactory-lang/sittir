@@ -3,4 +3,5 @@ node_modules/
 target/
 dist/
 __pycache__/
-.worktrees/
+.worktrees/oh, and
+.archive/

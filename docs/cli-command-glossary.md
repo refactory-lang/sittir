@@ -214,6 +214,20 @@ Compare override key sets between backup and current overrides.suggested.ts
 pnpm exec tsx packages/cli/src/cli.ts tool compare-overrides [options]
 ```
 
+### `tool defect-histogram`
+
+Group read-render-parse failures by defect signature (deepest transport frame)
+
+**Options**
+
+- `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool defect-histogram [options]
+```
+
 ### `tool diff-failures`
 
 Dump per-kind validator failures for a grammar
@@ -386,6 +400,7 @@ Structured diagnostics for parse → readNode → render cycle
 - `--trace` — Emit full multi-lane trace (js + native, shallow + deep)
 - `--log-parse` — Log tree-sitter parse events to stderr
 - `--full` — Emit complete multi-lane trace (like --trace)
+- `--shipped` — Also parse with the grammar's shipped upstream wasm (tree-sitter-<lang> on npm) and include its cst/sexp/hasError for comparison against the override parser
 
 **Example**
 

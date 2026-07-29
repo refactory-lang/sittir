@@ -46,16 +46,7 @@ export type TypescriptGrammar = {
 	readonly pattern: {
 		type: 'pattern';
 		named: true;
-		subtypes: [
-			{ type: 'array_pattern'; named: true },
-			{ type: 'identifier'; named: true },
-			{ type: 'member_expression'; named: true },
-			{ type: 'non_null_expression'; named: true },
-			{ type: 'object_pattern'; named: true },
-			{ type: 'rest_pattern'; named: true },
-			{ type: 'subscript_expression'; named: true },
-			{ type: 'undefined'; named: true }
-		];
+		subtypes: [{ type: 'for_header_group1'; named: true }, { type: 'rest_pattern'; named: true }];
 	};
 	readonly primary_expression: {
 		type: 'primary_expression';
@@ -232,7 +223,11 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			name: { multiple: false; required: true; types: [{ type: 'property_identifier'; named: true }] };
-			semicolon: { multiple: false; required: false; types: [{ type: ';'; named: false }] };
+			semicolon: {
+				multiple: false;
+				required: false;
+				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
+			};
 			type: { multiple: false; required: true; types: [{ type: 'type'; named: true }] };
 		};
 	};
@@ -295,7 +290,21 @@ export type TypescriptGrammar = {
 				required: true;
 				types: [{ type: 'expression'; named: true }, { type: 'statement_block'; named: true }];
 			};
-			parameters: { multiple: false; required: false; types: [{ type: 'formal_parameters'; named: true }] };
+		};
+		children: {
+			multiple: false;
+			required: true;
+			types: [
+				{ type: 'arrow_function__call_signature'; named: true },
+				{ type: 'arrow_function_parameter'; named: true }
+			];
+		};
+	};
+	readonly arrow_function__call_signature: {
+		type: 'arrow_function__call_signature';
+		named: true;
+		fields: {
+			parameters: { multiple: false; required: true; types: [{ type: 'formal_parameters'; named: true }] };
 			return_type: {
 				multiple: false;
 				required: false;
@@ -307,7 +316,6 @@ export type TypescriptGrammar = {
 			};
 			type_parameters: { multiple: false; required: false; types: [{ type: 'type_parameters'; named: true }] };
 		};
-		children: { multiple: false; required: false; types: [{ type: 'arrow_function_parameter'; named: true }] };
 	};
 	readonly arrow_function_parameter: {
 		type: 'arrow_function_parameter';
@@ -364,16 +372,7 @@ export type TypescriptGrammar = {
 			left: {
 				multiple: false;
 				required: true;
-				types: [
-					{ type: 'array_pattern'; named: true },
-					{ type: 'identifier'; named: true },
-					{ type: 'member_expression'; named: true },
-					{ type: 'non_null_expression'; named: true },
-					{ type: 'object_pattern'; named: true },
-					{ type: 'parenthesized_expression'; named: true },
-					{ type: 'subscript_expression'; named: true },
-					{ type: 'undefined'; named: true }
-				];
+				types: [{ type: 'for_header_group1'; named: true }, { type: 'parenthesized_expression'; named: true }];
 			};
 			right: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
 			using_marker: { multiple: false; required: false; types: [{ type: 'using'; named: false }] };
@@ -436,14 +435,10 @@ export type TypescriptGrammar = {
 		type: 'binary_expression';
 		named: true;
 		fields: {
-			left: {
-				multiple: false;
-				required: true;
-				types: [{ type: 'expression'; named: true }, { type: 'private_property_identifier'; named: true }];
-			};
+			left: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
 			operator: {
 				multiple: false;
-				required: true;
+				required: false;
 				types: [
 					{ type: '!='; named: false },
 					{ type: '!=='; named: false },
@@ -466,12 +461,25 @@ export type TypescriptGrammar = {
 					{ type: '>>>'; named: false },
 					{ type: '??'; named: false },
 					{ type: '^'; named: false },
-					{ type: 'in'; named: false },
 					{ type: 'instanceof'; named: false },
 					{ type: '|'; named: false },
 					{ type: '||'; named: false }
 				];
 			};
+			right: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
+		};
+		children: { multiple: false; required: false; types: [{ type: 'binary_expression_group1'; named: true }] };
+	};
+	readonly binary_expression_group1: {
+		type: 'binary_expression_group1';
+		named: true;
+		fields: {
+			left: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'expression'; named: true }, { type: 'private_property_identifier'; named: true }];
+			};
+			operator: { multiple: false; required: true; types: [{ type: 'in'; named: false }] };
 			right: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
 		};
 	};
@@ -480,7 +488,11 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			label: { multiple: false; required: false; types: [{ type: 'statement_identifier'; named: true }] };
-			semicolon: { multiple: false; required: false; types: [{ type: ';'; named: false }] };
+			semicolon: {
+				multiple: false;
+				required: true;
+				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
+			};
 		};
 	};
 	readonly call_expression: {
@@ -615,8 +627,8 @@ export type TypescriptGrammar = {
 		fields: {
 			terminator: {
 				multiple: false;
-				required: false;
-				types: [{ type: ','; named: false }, { type: ';'; named: false }];
+				required: true;
+				types: [{ type: ','; named: false }, { type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
 			};
 		};
 		children: {
@@ -634,18 +646,29 @@ export type TypescriptGrammar = {
 		type: 'class_body_method';
 		named: true;
 		fields: { decorator: { multiple: true; required: false; types: [{ type: 'decorator'; named: true }] } };
-		children: { multiple: false; required: true; types: [{ type: 'method_definition'; named: true }] };
+		children: {
+			multiple: true;
+			required: true;
+			types: [{ type: 'automatic_semicolon'; named: true }, { type: 'method_definition'; named: true }];
+		};
 	};
 	readonly class_body_method_sig: {
 		type: 'class_body_method_sig';
 		named: true;
-		fields: {};
+		fields: {
+			terminator: {
+				multiple: false;
+				required: true;
+				types: [{ type: ','; named: false }, { type: 'function_signature_automatic_semicolon'; named: true }];
+			};
+		};
 		children: { multiple: false; required: true; types: [{ type: 'method_signature'; named: true }] };
 	};
 	readonly class_declaration: {
 		type: 'class_declaration';
 		named: true;
 		fields: {
+			automatic_semicolon: { multiple: false; required: false; types: [{ type: 'automatic_semicolon'; named: true }] };
 			body: { multiple: false; required: true; types: [{ type: 'class_body'; named: true }] };
 			class_heritage: { multiple: false; required: false; types: [{ type: 'class_heritage'; named: true }] };
 			decorator: { multiple: true; required: false; types: [{ type: 'decorator'; named: true }] };
@@ -677,6 +700,7 @@ export type TypescriptGrammar = {
 		type: 'class_static_block';
 		named: true;
 		fields: { body: { multiple: false; required: true; types: [{ type: 'statement_block'; named: true }] } };
+		children: { multiple: false; required: false; types: [{ type: 'automatic_semicolon'; named: true }] };
 	};
 	readonly computed_property_name: {
 		type: 'computed_property_name';
@@ -722,13 +746,23 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			label: { multiple: false; required: false; types: [{ type: 'statement_identifier'; named: true }] };
-			semicolon: { multiple: false; required: false; types: [{ type: ';'; named: false }] };
+			semicolon: {
+				multiple: false;
+				required: true;
+				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
+			};
 		};
 	};
 	readonly debugger_statement: {
 		type: 'debugger_statement';
 		named: true;
-		fields: { semicolon: { multiple: false; required: false; types: [{ type: ';'; named: false }] } };
+		fields: {
+			semicolon: {
+				multiple: false;
+				required: true;
+				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
+			};
+		};
 	};
 	readonly decorator: {
 		type: 'decorator';
@@ -756,7 +790,11 @@ export type TypescriptGrammar = {
 		fields: {
 			body: { multiple: false; required: true; types: [{ type: 'statement'; named: true }] };
 			condition: { multiple: false; required: true; types: [{ type: 'parenthesized_expression'; named: true }] };
-			semicolon: { multiple: false; required: false; types: [{ type: ';'; named: false }] };
+			semicolon: {
+				multiple: false;
+				required: false;
+				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
+			};
 		};
 	};
 	readonly else_clause: {
@@ -878,6 +916,12 @@ export type TypescriptGrammar = {
 			];
 		};
 	};
+	readonly export_statement_default_clause_from: {
+		type: 'export_statement_default_clause_from';
+		named: true;
+		fields: { source: { multiple: false; required: true; types: [{ type: 'string'; named: true }] } };
+		children: { multiple: false; required: true; types: [{ type: 'export_clause'; named: true }] };
+	};
 	readonly export_statement_default_decl_arm: {
 		type: 'export_statement_default_decl_arm';
 		named: true;
@@ -888,78 +932,88 @@ export type TypescriptGrammar = {
 		children: {
 			multiple: false;
 			required: false;
-			types: [{ type: 'export_statement_default_decl_arm_default_kw'; named: true }];
+			types: [{ type: 'export_statement_default_default_kw'; named: true }];
 		};
 	};
-	readonly export_statement_default_decl_arm_default_kw: {
-		type: 'export_statement_default_decl_arm_default_kw';
+	readonly export_statement_default_default_kw: {
+		type: 'export_statement_default_default_kw';
 		named: true;
 		fields: { declaration: { multiple: false; required: false; types: [{ type: 'declaration'; named: true }] } };
-		children: {
-			multiple: false;
-			required: false;
-			types: [{ type: 'export_statement_default_decl_arm_default_kw_value'; named: true }];
-		};
-	};
-	readonly export_statement_default_decl_arm_default_kw_value: {
-		type: 'export_statement_default_decl_arm_default_kw_value';
-		named: true;
-		fields: { value: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] } };
+		children: { multiple: false; required: false; types: [{ type: 'export_statement_default_value'; named: true }] };
 	};
 	readonly export_statement_default_from_arm: {
 		type: 'export_statement_default_from_arm';
 		named: true;
 		fields: {};
 		children: {
-			multiple: false;
+			multiple: true;
 			required: true;
 			types: [
+				{ type: 'automatic_semicolon'; named: true },
 				{ type: 'export_clause'; named: true },
-				{ type: 'export_statement_default_from_arm_clause_from'; named: true },
-				{ type: 'export_statement_default_from_arm_ns_from'; named: true },
-				{ type: 'export_statement_default_from_arm_star_from'; named: true }
+				{ type: 'export_statement_default_clause_from'; named: true },
+				{ type: 'export_statement_default_ns_from'; named: true },
+				{ type: 'export_statement_default_star_from'; named: true }
 			];
 		};
 	};
-	readonly export_statement_default_from_arm_clause_from: {
-		type: 'export_statement_default_from_arm_clause_from';
-		named: true;
-		fields: { source: { multiple: false; required: true; types: [{ type: 'string'; named: true }] } };
-		children: { multiple: false; required: true; types: [{ type: 'export_clause'; named: true }] };
-	};
-	readonly export_statement_default_from_arm_ns_from: {
-		type: 'export_statement_default_from_arm_ns_from';
+	readonly export_statement_default_ns_from: {
+		type: 'export_statement_default_ns_from';
 		named: true;
 		fields: { source: { multiple: false; required: true; types: [{ type: 'string'; named: true }] } };
 		children: { multiple: false; required: true; types: [{ type: 'namespace_export'; named: true }] };
 	};
-	readonly export_statement_default_from_arm_star_from: {
-		type: 'export_statement_default_from_arm_star_from';
+	readonly export_statement_default_star_from: {
+		type: 'export_statement_default_star_from';
 		named: true;
 		fields: { source: { multiple: false; required: true; types: [{ type: 'string'; named: true }] } };
+	};
+	readonly export_statement_default_value: {
+		type: 'export_statement_default_value';
+		named: true;
+		fields: { value: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] } };
+		children: { multiple: false; required: false; types: [{ type: 'automatic_semicolon'; named: true }] };
 	};
 	readonly export_statement_equals_export: {
 		type: 'export_statement_equals_export';
 		named: true;
 		fields: {};
-		children: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
+		children: {
+			multiple: true;
+			required: true;
+			types: [{ type: 'automatic_semicolon'; named: true }, { type: 'expression'; named: true }];
+		};
 	};
 	readonly export_statement_namespace_export: {
 		type: 'export_statement_namespace_export';
 		named: true;
 		fields: {};
-		children: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
+		children: {
+			multiple: true;
+			required: true;
+			types: [{ type: 'automatic_semicolon'; named: true }, { type: 'identifier'; named: true }];
+		};
 	};
 	readonly export_statement_type_export: {
 		type: 'export_statement_type_export';
 		named: true;
 		fields: { source: { multiple: false; required: false; types: [{ type: 'string'; named: true }] } };
-		children: { multiple: false; required: true; types: [{ type: 'export_clause'; named: true }] };
+		children: {
+			multiple: true;
+			required: true;
+			types: [{ type: 'automatic_semicolon'; named: true }, { type: 'export_clause'; named: true }];
+		};
 	};
 	readonly expression_statement: {
 		type: 'expression_statement';
 		named: true;
-		fields: { semicolon: { multiple: false; required: false; types: [{ type: ';'; named: false }] } };
+		fields: {
+			semicolon: {
+				multiple: false;
+				required: true;
+				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
+			};
+		};
 		children: {
 			multiple: false;
 			required: true;
@@ -999,6 +1053,24 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: { primary_type: { multiple: false; required: true; types: [{ type: 'primary_type'; named: true }] } };
 	};
+	readonly for_header_group1: {
+		type: 'for_header_group1';
+		named: true;
+		fields: {};
+		children: {
+			multiple: false;
+			required: true;
+			types: [
+				{ type: 'array_pattern'; named: true },
+				{ type: 'identifier'; named: true },
+				{ type: 'member_expression'; named: true },
+				{ type: 'non_null_expression'; named: true },
+				{ type: 'object_pattern'; named: true },
+				{ type: 'subscript_expression'; named: true },
+				{ type: 'undefined'; named: true }
+			];
+		};
+	};
 	readonly for_header_let_const_kind: {
 		type: 'for_header_let_const_kind';
 		named: true;
@@ -1018,6 +1090,7 @@ export type TypescriptGrammar = {
 				];
 			};
 		};
+		children: { multiple: false; required: false; types: [{ type: 'automatic_semicolon'; named: true }] };
 	};
 	readonly for_header_lhs: {
 		type: 'for_header_lhs';
@@ -1026,16 +1099,7 @@ export type TypescriptGrammar = {
 			left: {
 				multiple: false;
 				required: true;
-				types: [
-					{ type: 'array_pattern'; named: true },
-					{ type: 'identifier'; named: true },
-					{ type: 'member_expression'; named: true },
-					{ type: 'non_null_expression'; named: true },
-					{ type: 'object_pattern'; named: true },
-					{ type: 'parenthesized_expression'; named: true },
-					{ type: 'subscript_expression'; named: true },
-					{ type: 'undefined'; named: true }
-				];
+				types: [{ type: 'for_header_group1'; named: true }, { type: 'parenthesized_expression'; named: true }];
 			};
 		};
 	};
@@ -1150,6 +1214,7 @@ export type TypescriptGrammar = {
 			};
 			type_parameters: { multiple: false; required: false; types: [{ type: 'type_parameters'; named: true }] };
 		};
+		children: { multiple: false; required: false; types: [{ type: 'automatic_semicolon'; named: true }] };
 	};
 	readonly function_expression: {
 		type: 'function_expression';
@@ -1184,6 +1249,15 @@ export type TypescriptGrammar = {
 					{ type: 'asserts_annotation'; named: true },
 					{ type: 'type_annotation'; named: true },
 					{ type: 'type_predicate_annotation'; named: true }
+				];
+			};
+			semicolon: {
+				multiple: false;
+				required: true;
+				types: [
+					{ type: ';'; named: false },
+					{ type: 'automatic_semicolon'; named: true },
+					{ type: 'function_signature_automatic_semicolon'; named: true }
 				];
 			};
 			type_parameters: { multiple: false; required: false; types: [{ type: 'type_parameters'; named: true }] };
@@ -1245,6 +1319,7 @@ export type TypescriptGrammar = {
 			};
 			type_parameters: { multiple: false; required: false; types: [{ type: 'type_parameters'; named: true }] };
 		};
+		children: { multiple: false; required: false; types: [{ type: 'automatic_semicolon'; named: true }] };
 	};
 	readonly generic_type: {
 		type: 'generic_type';
@@ -1279,7 +1354,11 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
-			semicolon: { multiple: false; required: false; types: [{ type: ';'; named: false }] };
+			semicolon: {
+				multiple: false;
+				required: true;
+				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
+			};
 			value: {
 				multiple: false;
 				required: true;
@@ -1373,14 +1452,9 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			from_clause: {
-				multiple: true;
+				multiple: false;
 				required: false;
-				types: [
-					{ type: 'from'; named: false },
-					{ type: 'import_clause'; named: true },
-					{ type: 'import_require_clause'; named: true },
-					{ type: 'string'; named: true }
-				];
+				types: [{ type: 'import_require_clause'; named: true }, { type: 'import_statement_group1'; named: true }];
 			};
 			import_attribute: { multiple: false; required: false; types: [{ type: 'import_attribute'; named: true }] };
 			import_clause: {
@@ -1388,9 +1462,19 @@ export type TypescriptGrammar = {
 				required: false;
 				types: [{ type: 'type'; named: false }, { type: 'typeof'; named: false }];
 			};
-			semicolon: { multiple: false; required: false; types: [{ type: ';'; named: false }] };
+			semicolon: {
+				multiple: false;
+				required: true;
+				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
+			};
 			source: { multiple: false; required: false; types: [{ type: 'string'; named: true }] };
 		};
+	};
+	readonly import_statement_group1: {
+		type: 'import_statement_group1';
+		named: true;
+		fields: { source: { multiple: false; required: true; types: [{ type: 'string'; named: true }] } };
+		children: { multiple: false; required: true; types: [{ type: 'import_clause'; named: true }] };
 	};
 	readonly index_signature: {
 		type: 'index_signature';
@@ -1527,7 +1611,11 @@ export type TypescriptGrammar = {
 				required: true;
 				types: [{ type: 'const'; named: false }, { type: 'let'; named: false }];
 			};
-			semicolon: { multiple: false; required: false; types: [{ type: ';'; named: false }] };
+			semicolon: {
+				multiple: false;
+				required: true;
+				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
+			};
 		};
 	};
 	readonly literal_type: {
@@ -1582,7 +1670,18 @@ export type TypescriptGrammar = {
 			};
 		};
 	};
-	readonly meta_property: { type: 'meta_property'; named: true; fields: {} };
+	readonly meta_property: {
+		type: 'meta_property';
+		named: true;
+		fields: {};
+		children: {
+			multiple: false;
+			required: true;
+			types: [{ type: 'meta_property_group1'; named: true }, { type: 'meta_property_group2'; named: true }];
+		};
+	};
+	readonly meta_property_group1: { type: 'meta_property_group1'; named: true; fields: {} };
+	readonly meta_property_group2: { type: 'meta_property_group2'; named: true; fields: {} };
 	readonly method_definition: {
 		type: 'method_definition';
 		named: true;
@@ -2071,7 +2170,13 @@ export type TypescriptGrammar = {
 	readonly return_statement: {
 		type: 'return_statement';
 		named: true;
-		fields: { semicolon: { multiple: false; required: false; types: [{ type: ';'; named: false }] } };
+		fields: {
+			semicolon: {
+				multiple: false;
+				required: true;
+				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
+			};
+		};
 		children: {
 			multiple: false;
 			required: false;
@@ -2100,7 +2205,10 @@ export type TypescriptGrammar = {
 	readonly statement_block: {
 		type: 'statement_block';
 		named: true;
-		fields: { statements: { multiple: true; required: false; types: [{ type: 'statement'; named: true }] } };
+		fields: {
+			automatic_semicolon: { multiple: false; required: false; types: [{ type: 'automatic_semicolon'; named: true }] };
+			statements: { multiple: true; required: false; types: [{ type: 'statement'; named: true }] };
+		};
 	};
 	readonly string: {
 		type: 'string';
@@ -2243,7 +2351,13 @@ export type TypescriptGrammar = {
 	readonly throw_statement: {
 		type: 'throw_statement';
 		named: true;
-		fields: { semicolon: { multiple: false; required: false; types: [{ type: ';'; named: false }] } };
+		fields: {
+			semicolon: {
+				multiple: false;
+				required: true;
+				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
+			};
+		};
 		children: {
 			multiple: false;
 			required: true;
@@ -2286,7 +2400,11 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			name: { multiple: false; required: true; types: [{ type: 'type_identifier'; named: true }] };
-			semicolon: { multiple: false; required: false; types: [{ type: ';'; named: false }] };
+			semicolon: {
+				multiple: false;
+				required: true;
+				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
+			};
 			type_parameters: { multiple: false; required: false; types: [{ type: 'type_parameters'; named: true }] };
 			value: { multiple: false; required: true; types: [{ type: 'type'; named: true }] };
 		};
@@ -2444,11 +2562,25 @@ export type TypescriptGrammar = {
 				required: true;
 				types: [{ type: ','; named: false }, { type: 'variable_declarator'; named: true }];
 			};
-			semicolon: { multiple: false; required: false; types: [{ type: ';'; named: false }] };
+			semicolon: {
+				multiple: false;
+				required: true;
+				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
+			};
 		};
 	};
 	readonly variable_declarator: {
 		type: 'variable_declarator';
+		named: true;
+		fields: {};
+		children: {
+			multiple: false;
+			required: true;
+			types: [{ type: 'variable_declarator_group1'; named: true }, { type: 'variable_declarator_group2'; named: true }];
+		};
+	};
+	readonly variable_declarator_group1: {
+		type: 'variable_declarator_group1';
 		named: true;
 		fields: {
 			name: {
@@ -2462,6 +2594,14 @@ export type TypescriptGrammar = {
 			};
 			type: { multiple: false; required: false; types: [{ type: 'type_annotation'; named: true }] };
 			value: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
+		};
+	};
+	readonly variable_declarator_group2: {
+		type: 'variable_declarator_group2';
+		named: true;
+		fields: {
+			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
+			type: { multiple: false; required: true; types: [{ type: 'type_annotation'; named: true }] };
 		};
 	};
 	readonly while_statement: {
@@ -2556,6 +2696,7 @@ export type TypescriptGrammar = {
 	readonly _anonymous_assert: { type: 'assert'; named: false };
 	readonly _anonymous_asserts: { type: 'asserts'; named: false };
 	readonly _anonymous_async: { type: 'async'; named: false };
+	readonly automatic_semicolon: { type: 'automatic_semicolon'; named: true };
 	readonly _anonymous_await: { type: 'await'; named: false };
 	readonly _anonymous_boolean: { type: 'boolean'; named: false };
 	readonly _anonymous_break: { type: 'break'; named: false };
@@ -2580,6 +2721,7 @@ export type TypescriptGrammar = {
 	readonly _anonymous_for: { type: 'for'; named: false };
 	readonly _anonymous_from: { type: 'from'; named: false };
 	readonly _anonymous_function: { type: 'function'; named: false };
+	readonly function_signature_automatic_semicolon: { type: 'function_signature_automatic_semicolon'; named: true };
 	readonly _anonymous_get: { type: 'get'; named: false };
 	readonly _anonymous_global: { type: 'global'; named: false };
 	readonly hash_bang_line: { type: 'hash_bang_line'; named: true };

@@ -13,18 +13,6 @@ import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, Multiplicity } from '../types/rule.ts';
 import { separatorFactsEqual } from './list-patterns.ts';
 
-/**
- * Transfer slot-identity attributes from a discarded wrapper node onto the
- * survivor. Only absent attributes are transferred (`hasOwnProperty` guard
- * means the survivor's own values always win). This ensures:
- *   - `fieldName` / `multiplicity` / `separator` — slot-classification attrs
- *   - `id` — rule identity, so `slotByRuleId` resolves against the wrapper's
- *     pre-simplification id rather than degrading to fragile name fallbacks.
- *
- * Non-overriding: a passed-through inner node keeps its own id; only a
- * freshly-rebuilt structural node (`{ type:'CHOICE', members }`) gets the
- * source id stamped.
- */
 export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): R {
 	// `original` may be a wrapper-bearing (evaluate/link) rule where these
 	// stamped leaf attrs aren't part of the type yet (they're populated by
@@ -51,22 +39,6 @@ export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): 
 	return { ...result, ...patch };
 }
 
-/**
- * Attributes shared across the arms of a choice / polymorph. ONE derivation
- * consumed by both phases (was previously implemented twice, inconsistently —
- * simplify's `liftSharedArmAttrs` was choice-only + unanimous-multiplicity;
- * collect-slots' `sharedArmFieldName` + `strongestArmMultiplicity` were
- * choice+polymorph + strongest-multiplicity):
- *  - simplify's `liftSharedArmAttrs` hoists the UNANIMOUS attrs onto the choice.
- *  - collect-slots reads the unanimous `fieldName` (slot naming) and the
- *    `strongestMultiplicity` (to lift an array multiplicity a single arm carries,
- *    e.g. `choice(commaSep1(X), X)`).
- *
- * `fieldName` / `multiplicity` / `nonterminal` / `separator` are UNANIMOUS —
- * present and equal on EVERY arm, else `undefined`. `strongestMultiplicity` is
- * the most-multi multiplicity ANY single arm carries (`nonEmptyArray > array >
- * optional`; `single` / absent ignored), regardless of unanimity.
- */
 export interface SharedArmAttrs {
 	readonly fieldName?: string;
 	readonly multiplicity?: Multiplicity;
@@ -77,18 +49,8 @@ export interface SharedArmAttrs {
 
 const MULTIPLICITY_RANK: Record<Multiplicity, number> = { single: 0, optional: 1, array: 2, nonEmptyArray: 3 };
 
-/**
- * Structural-read shape for the stamped leaf attributes. These only exist
- * on `RuleBase<'normalize' | 'simplify'>` per the type, but `sharedArmAttrs`
- * is called from `collect-slots.ts` with `AnyRule` values that are, at
- * runtime, always post-wrapper-deletion (normalize-phase) rules — the
- * wrapper-bearing 'evaluate'/'link' views just don't carry these fields.
- * Matches the established structural-read-cast pattern (see
- * `findRepeatFlag` in dsl/rule-transforms.ts).
- */
 type StampedAttrs = Pick<RuleBase<'normalize'>, 'fieldName' | 'multiplicity' | 'nonterminal' | 'separator'>;
 
-/** The arms of a choice (`members`); `[]` otherwise. */
 function armsOf(rule: AnyRule): readonly AnyRule[] {
 	if (rule.type === CHOICE) return rule.members;
 	return [];
@@ -99,19 +61,10 @@ export function sharedArmAttrs(rule: AnyRule): SharedArmAttrs {
 	if (arms.length === 0) return {};
 	const a0 = arms[0]! as StampedAttrs;
 	const stamped = (r: AnyRule): StampedAttrs => r as StampedAttrs;
-	// A primitive attr is unanimous when present on a0 and === on every arm.
 	const unanimous = <T>(get: (r: StampedAttrs) => T): T | undefined => {
 		const v = get(a0);
 		return v !== undefined && arms.every((m) => get(stamped(m)) === v) ? v : undefined;
 	};
-	// separator is the nested {value, trailing?, leading?} fact — compare via
-	// separatorFactsEqual since the wrapper object has no `.type` discriminant.
-	// (This replaces a prior JSON.stringify comparison, which was fully general;
-	// separatorFactsEqual narrows to whatever rulesEqual's switch explicitly
-	// handles, silently `false` for a `.value` shape rulesEqual doesn't
-	// recognize. Harmless in practice — a post-wrapper-deletion separator's
-	// `.value` is always a STRING literal here — but worth flagging if
-	// separators ever grow richer rule-shaped values.)
 	const sep0 = a0.separator;
 	const separator =
 		sep0 !== undefined && arms.every((m) => separatorFactsEqual(stamped(m).separator, sep0)) ? sep0 : undefined;

@@ -36,32 +36,11 @@
 
 import { createHash } from 'node:crypto';
 
-/**
- * Input to `computeTemplateBundleHash`. One entry per `.jinja` file
- * in the grammar's templates directory.
- */
 export interface TemplateFile {
-	/**
-	 * Template filename, without the directory prefix (e.g.
-	 * `function_item.jinja`). Used only as the per-entry framing
-	 * label; the same template under two different filenames hashes
-	 * differently.
-	 */
 	filename: string;
-	/**
-	 * Template body. Line endings will be CRLF → LF normalized before
-	 * hashing, so the caller needn't pre-normalize.
-	 */
 	content: string;
 }
 
-/**
- * Compute a stable SHA-256 hex digest over a set of template files.
- *
- * @param files — the grammar's `.jinja` files. Order is irrelevant;
- *   the function sorts by filename internally.
- * @returns lowercase hex-encoded SHA-256 digest, 64 characters.
- */
 export function computeTemplateBundleHash(files: readonly TemplateFile[]): string {
 	const sorted = [...files].sort((a, b) => (a.filename < b.filename ? -1 : a.filename > b.filename ? 1 : 0));
 	const hash = createHash('sha256');

@@ -5,42 +5,13 @@ import type {
 	AssembledSupertype,
 	UnresolvedRef
 } from '../compiler/model/node-map.ts';
-import { isNodeRef, isUnresolvedRef } from '../compiler/model/node-map.ts';
+import { isNodeRef, storageKindOfRef } from '../compiler/model/node-map.ts';
 
-/**
- * Classification of a transport slot by its type width.
- *
- * - `concrete`      — exactly one known kind; emit `<Kind>Transport` directly.
- *                     `typeName` is the assembled node's typeName (PascalCase,
- *                     leading-underscore-stripped) used to derive the Rust
- *                     struct name and render fn name. Falls back to the kind
- *                     string when nodeMap is unavailable (test / exported path).
- * - `supertype`     — kind set is a subset of a known assembled supertype's
- *                     resolved subtypes; emit `<Supertype>Transport` enum.
- *                     `supertypeName` is the supertype's `typeName` (PascalCase).
- * - `heterogeneous` — no grammar-bound type (theoretically unreachable in
- *                     sittir's pipeline; retained as a compile-safety escape).
- */
 export type SlotClass =
 	| { readonly tag: 'concrete'; readonly kind: string; readonly typeName: string }
 	| { readonly tag: 'supertype'; readonly supertypeName: string }
 	| { readonly tag: 'heterogeneous'; readonly useBox?: boolean };
 
-/**
- * Classify a slot's kind set against the supertype registry.
- *
- * Single source of derivation for slot class — all emitters (field type,
- * children type, render call, list buffer) MUST call this. DRY constraint.
- *
- * Tiebreak when multiple supertypes cover the kinds: the narrower supertype
- * (smallest `subtypes.size`) wins. If tied, Map insertion order (grammar order)
- * is the tiebreak — deterministic across runs.
- *
- * @param kinds - the kind set for this slot (projection.kinds for fields;
- *   deriveChildrenKinds result for children)
- * @param supertypeMap - result of `buildSupertypeTransportSet(nodeMap)`; when
- *   absent (test path / no nodeMap) multi-kind slots fall back to `heterogeneous`.
- */
 export function classifySlot(
 	kinds: readonly string[],
 	supertypeMap: ReadonlyMap<string, ReadonlySet<string>> = new Map()
@@ -55,20 +26,9 @@ export function classifySlot(
 	const kindSet = new Set(kinds);
 	let bestMatch: { supertypeName: string; size: number } | undefined;
 	for (const [supertypeName, subtypes] of supertypeMap) {
-		// Exact-set match: the slot's kind set must EQUAL the supertype's full
-		// resolved subtype set, not merely be a subset. A proper subset would
-		// collapse the slot onto a wider supertype transport than it actually
-		// ranges over — and when that supertype is large and self-recursive
-		// (e.g. match_arm's `{attribute_item, inner_attribute_item}` is a
-		// 2-of-21 subset of `declaration_statement`, which transitively
-		// references match_arm again) the generated `FromNapiValue` recurses
-		// through the whole statement graph and overflows the native stack.
-		// Subset slots instead fall through to `heterogeneous`, which emits a
-		// per-slot enum of exactly their kinds.
-		if (kindSet.size === subtypes.size && [...kindSet].every((k) => subtypes.has(k))) {
-			if (bestMatch === undefined || subtypes.size < bestMatch.size) {
-				bestMatch = { supertypeName, size: subtypes.size };
-			}
+		if (!coversExactly(kindSet, subtypes)) continue;
+		if (bestMatch === undefined || subtypes.size < bestMatch.size) {
+			bestMatch = { supertypeName, size: subtypes.size };
 		}
 	}
 	if (bestMatch !== undefined) {
@@ -77,12 +37,15 @@ export function classifySlot(
 	return { tag: 'heterogeneous' };
 }
 
-/**
- * Build a registry of supertype typeName → resolved concrete subtype set
- * from the assembled node map.
- *
- * @param nodeMap - the assembled node map for the grammar
- */
+function coversExactly(kindSet: ReadonlySet<string>, subtypes: ReadonlySet<string>): boolean {
+	return kindSet.size === subtypes.size && [...kindSet].every((k) => subtypes.has(k));
+}
+
+function addVisibleAliasNameOfHiddenKind(out: Set<string>, nodeMap: NodeMap, kind: string): void {
+	const aliasTarget = nodeMap.aliasedHiddenKinds?.get(kind);
+	if (aliasTarget !== undefined) out.add(aliasTarget);
+}
+
 export function buildSupertypeTransportSet(nodeMap: NodeMap): Map<string, ReadonlySet<string>> {
 	const result = new Map<string, ReadonlySet<string>>();
 	const expandSupertypeKinds = (kind: string, seen: Set<string> = new Set()): Set<string> => {
@@ -121,36 +84,24 @@ function expandWrapRuntimeKinds(kind: string, nodeMap: NodeMap | undefined, seen
 	return [kind];
 }
 
-export function acceptedTransportKinds(kind: string, nodeMap?: NodeMap): string[] {
+export function acceptedTransportKinds(
+	kind: string,
+	nodeMap?: NodeMap,
+	parseAliases?: Readonly<Record<string, string>>
+): string[] {
 	if (!nodeMap) return [kind];
 	const node = nodeMap.nodes.get(kind);
 	if (!node) return [kind];
-	// A hidden kind that's also the CONTENT of a named alias
-	// (`alias(symbol(_X), $.visible)`) shares its runtime kind id with
-	// that alias's visible name — the generated id catalog (KIND_NAMES,
-	// see emitters/types.ts) records the id under the visible name, not
-	// the raw hidden kind key. Without this, `kindIdByKind.get(kind)`
-	// (the hidden key) misses entirely and the id arm silently drops —
-	// see native-transport-emit.test.ts's "accepts visible alias kind
-	// ids for hidden-wrapper child enums".
-	const aliasTarget = nodeMap.aliasedHiddenKinds?.get(kind);
-	if (aliasTarget !== undefined) return [kind, aliasTarget];
-	return [kind];
+	const out = new Set<string>([kind]);
+	addVisibleAliasNameOfHiddenKind(out, nodeMap, kind);
+	if (parseAliases) {
+		for (const [target, source] of Object.entries(parseAliases)) {
+			if (source === kind) out.add(target);
+		}
+	}
+	return [...out];
 }
 
-/**
- * Extract the kind set from an `AssembledNonterminal.values` array.
- * Parallel to `AssembledNonterminal.projection.kinds` for field slots.
- * Terminal values (inline string literals) are skipped — they do not
- * contribute to the transport type.
- *
- * Unresolved refs are included using their `name` (the grammar kind string,
- * e.g. `_expression`) — mirroring how `AssembledNonterminal.projection.kinds`
- * is built in `deriveSlotsRaw`.
- *
- * @param child - any AssembledNonterminal (field or children slot)
- * @returns deduplicated list of resolved kind names
- */
 export function deriveChildrenKinds(
 	child: AssembledNonterminal,
 	nodeMap?: NodeMap,
@@ -159,7 +110,7 @@ export function deriveChildrenKinds(
 	const kinds = new Set<string>();
 	for (const v of child.values) {
 		if (!isNodeRef(v)) continue;
-		const kind = isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : (v.node as AssembledNode).kind;
+		const kind = storageKindOfRef(v.node);
 		for (const expanded of expandWrapRuntimeKinds(kind, nodeMap, seen)) kinds.add(expanded);
 	}
 	return [...kinds];

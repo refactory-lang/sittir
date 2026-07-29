@@ -1,6 +1,5 @@
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 
-/** Constructor-based emitter with no init() lifecycle phase. */
 export interface CodegenEmitter<TResult, TFinalizeArg = void> {
 	emitLeaf?(node: Extract<AssembledNode, { modelType: 'pattern' | 'keyword' | 'enum' }>): void;
 	emitBranch?(node: Extract<AssembledNode, { modelType: 'branch' }>): void;

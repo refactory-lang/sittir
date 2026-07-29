@@ -41,26 +41,7 @@ export interface Divergence {
 	recomputed: string;
 }
 
-/**
- * Intended §2 renames, accepted as count-gated improvements (not byte-identical
- * to legacy). Each entry pins the EXACT expected delta — kind, slot, projection,
- * AND both the legacy and recomputed values. A divergence is allowlisted only if
- * it matches an entry on all five fields, so a NEW mismatch on the same slot (a
- * different projection, or the same projection with different values) is still
- * UNEXPECTED and fails the gate. This keeps the "count-gated" promise: the
- * allowlist suppresses precisely the known rename, nothing adjacent.
- *
- * These are inferred UNNAMED slots with a GENUINELY single parse-kind that §2
- * projects to the kind name, where legacy hard-coded the generic `content`; the
- * kind name is the desired surface, and the PR-B cutover renames the field.
- *
- * NB: only TRULY single-kind slots belong here. `splat_pattern.content` looked
- * single-kind but holds `[identifier, "_"]` (a literal with no parseKind); its
- * `content` name is correct and is now produced by the projection's
- * `hasUnnamedValue` guard — NOT allowlisted.
- */
 export const ALLOWLISTED_RENAMES: readonly Divergence[] = [
-	// format_specifier.content: genuinely 1 value → format_expression.
 	{
 		kind: 'format_specifier',
 		slot: 'content',
@@ -90,23 +71,11 @@ export const ALLOWLISTED_RENAMES: readonly Divergence[] = [
 		legacy: 'contents',
 		recomputed: 'formatExpressions'
 	},
-	// _suite.block: the OPPOSITE-direction correction (kind name → `content`).
-	// _suite's values have storage-kinds {_simple_statements, block, _newline}
-	// (all `parseKind=block`). storageKind→storageName makes this MULTI-storage
-	// → `content`; legacy was cross-wired to the parseName `block`. The
-	// projection corrects it (Fix 4 / spec §2); the PR-B cutover renames the
-	// field. The 5 derived projections all flip block→content.
 	{ kind: '_suite', slot: 'block', projection: 'storageName', legacy: 'block', recomputed: 'content' },
 	{ kind: '_suite', slot: 'block', projection: 'name', legacy: 'block', recomputed: 'content' },
 	{ kind: '_suite', slot: 'block', projection: 'configKey', legacy: 'block', recomputed: 'content' },
 	{ kind: '_suite', slot: 'block', projection: 'propertyName', legacy: 'block', recomputed: 'content' },
 	{ kind: '_suite', slot: 'block', projection: 'paramName', legacy: 'block', recomputed: 'content' },
-	// match_block.match_arm (rust): same multi-storage-kind pattern as _suite —
-	// the arm slot holds {match_arm, last_match_arm} (2 distinct, non-aliased
-	// storage kinds), so storageKind→storageName yields `content`. Legacy was
-	// cross-wired to the kind name `match_arm`. (Whether last_match_arm SHOULD be
-	// unified with match_arm so the slot reads `matchArms` is a separate spec
-	// question for the PR-B cutover.)
 	{ kind: 'match_block', slot: 'match_arm', projection: 'storageName', legacy: 'match_arm', recomputed: 'content' },
 	{ kind: 'match_block', slot: 'match_arm', projection: 'name', legacy: 'match_arm', recomputed: 'content' },
 	{ kind: 'match_block', slot: 'match_arm', projection: 'configKey', legacy: 'matchArm', recomputed: 'content' },
@@ -114,7 +83,6 @@ export const ALLOWLISTED_RENAMES: readonly Divergence[] = [
 	{ kind: 'match_block', slot: 'match_arm', projection: 'paramName', legacy: 'matchArms', recomputed: 'contents' }
 ];
 
-/** A divergence is allowlisted only if it matches an expected rename on ALL fields. */
 function isAllowlisted(d: Divergence): boolean {
 	return ALLOWLISTED_RENAMES.some(
 		(e) =>
@@ -126,22 +94,6 @@ function isAllowlisted(d: Divergence): boolean {
 	);
 }
 
-/**
- * Compare one slot's legacy projected names against the values the §2 PROJECTION
- * computes from `values` + `fieldName`. Returns one Divergence per mismatched
- * projection (empty array = fully consistent).
- *
- * `parseNames` is deliberately NOT an axis here. Unlike storageName/name/etc.
- * (which compare against the slot's REAL legacy stored fields), there is no
- * stored legacy `parseNames` to compare against — only `parseNamesNew` (which IS
- * this projection). The only "legacy" stand-in would be `kindsOf`, a
- * reconstruction that returns un-normalized SOURCE names (`_X`) the real reader
- * never used (it resolves `alias($._X, $.X)` → `X` at runtime). The projection's
- * `parseNames` is the alias target `X` — what tree-sitter actually emits — and
- * it's validated where it counts: the read-render-parse / AST-match metrics in
- * `validate:native` (tree-sitter ground truth), not by diffing against invented
- * legacy code.
- */
 export function diffSlotNames(slot: AssembledNonterminal, kind: string): Divergence[] {
 	const out: Divergence[] = [];
 	const proj = projectSlotNaming(slot);
@@ -162,9 +114,7 @@ function resolveEntryPath(grammar: Grammar, repoRoot: string): string {
 	for (const c of [`tree-sitter-${grammar}/grammar.js`, `tree-sitter-${grammar}/common/define-grammar.js`]) {
 		try {
 			return requireFromHere.resolve(c);
-		} catch {
-			/* next */
-		}
+		} catch {}
 	}
 	throw new Error(`reconcile-naming: could not resolve grammar entry for '${grammar}'`);
 }

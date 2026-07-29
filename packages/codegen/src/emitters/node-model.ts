@@ -39,7 +39,8 @@ import {
 	isMultiple,
 	isNonEmpty,
 	kindsOf,
-	valueParseKindsOf
+	valueParseKindsOf,
+	storageKindOfRef
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
 import type { FactoryShape, FactorySlotMeta } from './factory-map.ts';
@@ -53,13 +54,9 @@ export interface EmitNodeModelConfig {
 interface SerializedValue {
 	kind: 'node-ref' | 'terminal';
 	multiplicity: string;
-	/** for node-ref: target kind name */
 	name?: string;
-	/** CST kind / alias target when it differs from the storage kind */
 	parseKind?: string;
-	/** for node-ref: true when the ref was not resolved to an AssembledNode */
 	unresolved?: boolean;
-	/** for terminal: string value */
 	value?: string;
 }
 
@@ -86,16 +83,7 @@ interface SerializedNodeBase {
 	hidden: boolean;
 	isParameterless?: boolean;
 	stampExpression?: string;
-	/**
-	 * PR-K: factory calling convention (`text`/`config`/`direct`/`spread`),
-	 * folded from `factory-map.json5`'s `factoryShapes`. Present only for
-	 * factory-emitting kinds (`classifyFactoryShape` non-null).
-	 */
 	factoryShape?: FactoryShape;
-	/**
-	 * PR-K: the factory-declared field names, folded from `factory-map.json5`'s
-	 * `factoryFields`. Present only for factory-emitting kinds.
-	 */
 	factoryFields?: string[];
 }
 
@@ -103,13 +91,6 @@ interface SerializedBranch extends SerializedNodeBase {
 	modelType: 'branch';
 	fields: SerializedField[];
 	children: SerializedSlot[];
-	/**
-	 * Repeat-list separator surfaced when the assembled rule was a
-	 * `repeat` / `repeat1` (the former-container shape, Phase 1d.vii).
-	 * Field-carrying branches don't surface this — the repeat separator
-	 * is reachable via the per-value metadata on the relevant
-	 * `AssembledNonterminal` slot.
-	 */
 	separator?: string;
 }
 
@@ -125,12 +106,6 @@ interface SerializedGroupNode extends SerializedNodeBase {
 interface SerializedLeaf extends SerializedNodeBase {
 	modelType: 'pattern';
 	pattern?: string;
-	/**
-	 * Present when the pattern's sole realisation is a single fixed anonymous
-	 * literal (e.g. `_semicolon` → `";"`). Used by the render-module to gate
-	 * the u16 kind-id acceptance branch in the generated `FromNapiValue` impl.
-	 * Absent for content-bearing patterns (identifier, number, …).
-	 */
 	text?: string;
 }
 
@@ -163,13 +138,6 @@ interface SerializedMulti extends SerializedNodeBase {
 	elementKinds: string[];
 }
 
-/**
- * No wire/render/factory support yet (separator-as-slot Task 2) — this
- * serialization is deliberately minimal (mirrors `SerializedMulti`'s shape
- * using the analogous `AssembledSeparatedList` facts) rather than attempting
- * to serialize the full separator rule tree, which is a later task's design
- * surface.
- */
 interface SerializedSeparatedList extends SerializedNodeBase {
 	modelType: 'separatedList';
 	nonEmpty: boolean;
@@ -197,32 +165,8 @@ interface SerializedNodeModel {
 	supertypes: string[];
 	externals: string[];
 	polymorphFormKinds: string[];
-	/**
-	 * PR-K: polymorph variant dispatch tables, folded from
-	 * `factory-map.json5`'s `polymorphVariants` (top-level, keyed by parent
-	 * kind). Built via the shared `buildFactoryMap` so the dispatch logic stays
-	 * single-sourced. Consumed by the validators' `nodeToConfig` /
-	 * `inferPolymorphVariant` / variant-adopted-kind scan.
-	 */
 	polymorphVariants: PolymorphVariantMap;
-	/**
-	 * PR-K: per-field alias-source map, folded from `factory-map.json5`'s
-	 * `fieldAliasMap` (top-level, keyed `"parentKind.fieldName"` →
-	 * `{ aliasTarget: sourceKind }`). The per-field `values[].parseKind`/`name`
-	 * carry the same facts, but the alias-source PAIRING + the
-	 * factory-emitting-kind FILTER (`collectAliasSourceKinds`) live only in
-	 * `buildFactoryMap`. Serializing the finished map keeps that filtering
-	 * single-sourced — a validator-side rebuild would have to re-derive it.
-	 * Consumed by `resolveAliasedKind`.
-	 */
 	fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
-	/**
-	 * PR-K: per-kind slot metadata, folded from `factory-map.json5`'s
-	 * `factorySlots` (top-level, keyed by kind). Same single-source rationale
-	 * as `fieldAliasMap` — the emitting-kind filter is `buildFactoryMap`'s, not
-	 * reconstructable from per-field data without duplicating it. Consumed by
-	 * `nodeToConfig`'s config-surface normalization.
-	 */
 	factorySlots: Readonly<Record<string, Readonly<Record<string, FactorySlotMeta>>>>;
 	nodes: SerializedNode[];
 }
@@ -234,14 +178,6 @@ export function emitNodeModel(config: EmitNodeModelConfig): string {
 }
 
 export function buildNodeModel(nodeMap: NodeMap): SerializedNodeModel {
-	// PR-K: fold ALL of factory-map's sections in via the SINGLE shared builder
-	// (one derivation; validators just READ). `factoryShapes` / `factoryFields`
-	// attach per-node; `polymorphVariants` / `factorySlots` / `fieldAliasMap` go
-	// top-level. The per-field data carries the raw facts (required/multiple/
-	// nonEmpty + values[].parseKind), but the alias-source pairing and the
-	// factory-emitting-kind FILTER live only in `buildFactoryMap` — serializing
-	// its finished output keeps that logic single-sourced and the validator maps
-	// byte-identical to the legacy factory-map (gate: counts stay stable).
 	const factoryData = buildFactoryMap(nodeMap);
 
 	const nodes: SerializedNode[] = [];
@@ -290,13 +226,10 @@ function serializeNode(node: AssembledNode): SerializedNode {
 	};
 	switch (node.modelType) {
 		case 'branch': {
-			// Phase 1d.vii (spec 022): `AssembledBranch` absorbed the
-			// former `AssembledContainer`. Container-shape branches
-			// (no fields) used to serialize as `modelType: 'container'`
-			// with a `separator` field; that variant is gone, but the
-			// runtime separator data still lives on `AssembledBranch.separator`
-			// for branches whose simplified rule is a `repeat` / `repeat1`.
-			// Surface it on the unified branch payload only when present.
+			/* Container-shape branches (no fields) carry their runtime separator
+			   data on `AssembledBranch.separator`, for branches whose simplified
+			   rule is a `repeat` / `repeat1`. Surface it on the branch payload
+			   only when present. */
 			const out: SerializedBranch = {
 				...base,
 				modelType: 'branch',
@@ -379,10 +312,9 @@ function serializeField(field: AssembledNonterminal): SerializedField {
 		multiple: isMultiple(field),
 		nonEmpty: isNonEmpty(field),
 		values: field.values.map(serializeValue),
-		// projection: derived from values via kindsOf() instead of read from
-		// a stored cache (eliminated in spec 022 Phase 1d.i). The serialized
-		// JSON shape is preserved (typeName: '', kinds: [...]) for byte-
-		// identity of node-model.json5 output.
+		/* projection: derived from values via kindsOf(), not read from a
+		   stored cache. The serialized JSON shape is preserved (typeName: '',
+		   kinds: [...]) for byte-identity of node-model.json5 output. */
 		projection: {
 			typeName: '',
 			kinds: [...kindsOf(field)]
@@ -393,7 +325,7 @@ function serializeField(field: AssembledNonterminal): SerializedField {
 
 function serializeValue(v: NodeOrTerminal): SerializedValue {
 	if (isNodeRef(v)) {
-		const name = isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : v.node.kind;
+		const name = storageKindOfRef(v.node);
 		const out: SerializedValue = {
 			kind: 'node-ref',
 			multiplicity: v.multiplicity,
@@ -412,11 +344,6 @@ function serializeValue(v: NodeOrTerminal): SerializedValue {
 	return out;
 }
 
-/**
- * Best-effort extraction of element kind names from an `AssembledMulti`'s
- * `elementRule`. Walks choice/symbol/supertype; drops anonymous literals.
- * Used only for diagnostic display in node-model.json5.
- */
 function extractElementKinds(rule: Rule<'link'>): string[] {
 	const out = new Set<string>();
 	const walk = (r: Rule<'link'>): void => {

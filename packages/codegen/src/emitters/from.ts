@@ -13,6 +13,7 @@ import {
 	collectKindEntries,
 	collectCatalogKinds,
 	kindDiscriminantExpr,
+	kindDiscriminantExprForId,
 	hasCatalogEntry,
 	findKindEntry,
 	type KindEnumEntry
@@ -35,11 +36,12 @@ import {
 	classifyFactoryShape,
 	classifyChildFactorySurface,
 	classifyFromEmission,
-	unnamedChildSlotFacts
+	unnamedChildSlotFacts,
+	canonicalSeparatedListField
 } from './shared.ts';
-import { fieldElementType, childElementType } from './factories.ts';
+import { fieldElementType, childElementType, kindEnumTextMapExpr } from './factories.ts';
 import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
-import { isNodeRef, isTerminalValue, isUnresolvedRef } from '../compiler/model/node-map.ts';
+import { isNodeRef, isTerminalValue, storageKindIdByNameOf, storageKindOfRef } from '../compiler/model/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/model/node-map.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
@@ -48,11 +50,6 @@ const SAFE_IDENT_KEY = /^[A-Za-z_$][\w$]*$/;
 export interface EmitFromConfig {
 	grammar: string;
 	nodeMap: NodeMap;
-	/**
-	 * Parser-symbol ID tables for numeric $type comparison emission.
-	 * When present, from.ts emits `input.$type === TSKindId.X` checks.
-	 * When absent (legacy callers), falls back to string literal checks.
-	 */
 	generatedIdTables?: GeneratedIdTables;
 	kindEntries?: readonly KindEnumEntry[];
 }
@@ -61,27 +58,6 @@ export interface EmitFromConfig {
 // Dedup helpers
 // ---------------------------------------------------------------------------
 
-/**
- * Builds a reverse-lookup map from a sorted subtype key to the named
- * supertype constant identifier for dedup.
- *
- * @remarks
- * Each unique resolver kind list gets a single module-scoped constant
- * declaration; resolver call sites reference that constant instead of
- * repeating the literal array inline. Supertypes get *named* constants
- * (`_super_expression`) — when a field's content exactly matches a
- * supertype's subtype set we reuse the supertype's name as the dedup
- * identifier, making the generated code readable and aligning the physical
- * constant with the grammar's own supertype declarations. Any other list
- * falls through to numbered `_K0`, `_K1`, …
- *
- * Reverse lookup: sorted-subtypes key → supertype constant name.
- * First occurrence wins — two supertypes sharing an exact subtype set is
- * rare and the first name is as good as any.
- *
- * @param nodeMap - The assembled node map containing supertype entries.
- * @returns A map from sorted-subtypes key string to `_super_<name>` identifier.
- */
 function buildSupertypeByKey(nodeMap: NodeMap): Map<string, string> {
 	const supertypeByKey = new Map<string, string>();
 	for (const [kind, node] of nodeMap.nodes) {
@@ -96,20 +72,6 @@ function buildSupertypeByKey(nodeMap: NodeMap): Map<string, string> {
 	return supertypeByKey;
 }
 
-/**
- * Creates a kind-list interner that deduplicates resolver kind arrays
- * into module-scoped constants.
- *
- * @remarks
- * Looks up by sorted supertype signature first — gives readable names for
- * the common case. Otherwise falls back to numbered dedup (`_K0`, `_K1`, …).
- *
- * @param supertypeByKey - Reverse lookup built by {@link buildSupertypeByKey}.
- * @param kindTableIndex - Mutable map from JSON-serialized kind list to index.
- * @param kindTableLiterals - Mutable array of JSON kind-list literals.
- * @param namedEntries - Mutable map from supertype constant name to JSON literal.
- * @returns An interner function that maps a kind list to its constant identifier.
- */
 function buildKindInterner(
 	supertypeByKey: Map<string, string>,
 	kindTableIndex: Map<string, number>,
@@ -140,75 +102,27 @@ function buildKindInterner(
 // Emission helpers for the from.ts header block
 // ---------------------------------------------------------------------------
 
-/**
- * Emits the namespace import lines into the generated from.ts header.
- *
- * @remarks
- * Factories are accessed via `F.<name>`; types via
- * `T.<Kind>.Config` / `.Loose` / `.Fluent`. Collapsing to a namespace
- * import eliminates the per-factory import wall (~3kB in rust) to a
- * single line.
- *
- * @param lines - Output lines array to push into.
- */
 function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEntry[] | undefined): void {
 	lines.push(`import * as F from './factories.js';`);
 	lines.push(`import type * as T from './types.js';`);
+	// `kindIdFromName` was a runtime kind-id resolver from before PR-K3d baked
+	// kind ids into generated from.ts statically (`kindIdExpr: TSKindId.<member>`
+	// above) — no call site references it anymore, so importing it here is
+	// dead weight that trips no-unused-vars.
 	if (kindEntries) {
-		lines.push(`import { TSKindId, kindIdFromName } from './types.js';`);
-	} else {
-		lines.push(`import { kindIdFromName } from './types.js';`);
+		lines.push(`import { TSKindId } from './types.js';`);
 	}
 	lines.push("import type { AnyNodeData } from '@sittir/types';");
 	lines.push("import { coerceKindEnumStorage, isNodeData } from './utils.js';");
 	lines.push('');
 }
 
-/**
- * Emits the `_FromFieldInput` closed union type declaration into generated
- * from.ts, capturing every shape a loose-from() field value can hold.
- *
- * @remarks
- * Every loose-from() caller can hand us:
- *   - a fully-built NodeData     (passthrough path)
- *   - a primitive                (leaf-factory dispatch)
- *   - a { kind, ...rest } object (kind-tagged dispatch)
- *   - an array of any of above   (multi-field slot)
- *   - undefined / null           (absent optional field)
- *
- * `_FromFieldInput` is intentionally `unknown`. Generated field resolver
- * helpers immediately narrow with runtime guards (`typeof`, `Array.isArray`,
- * `isNodeData`, `'kind' in value`), and keeping the alias closed causes
- * recursive assignability failures once strict Config surfaces expose large
- * concrete node unions.
- *
- * @param lines - Output lines array to push into.
- */
 function emitFromFieldInputType(lines: string[]): void {
 	lines.push('/** Runtime-narrowed field input bag for generated from() helpers. */');
 	lines.push('type _FromFieldInput = unknown;');
 	lines.push('');
 }
 
-/**
- * Emits the `_fromMap` runtime dispatch table and `_FromMap` type alias into
- * generated from.ts.
- *
- * @remarks
- * Same pattern as `_factoryMap` in factories.ts: declared as a plain `as const`
- * object so every entry's type is inferred from the per-kind `fromX` signature.
- * `_FromMap = typeof _fromMap` gives consumers the precise per-slot type without
- * duplicating the kind→function mapping.
- *
- * Declared BEFORE the resolver helpers so `_resolveByKind<K>` can reference
- * `_FromMap[K]` / `_fromMap[kind]` in its signature — the per-kind function
- * declarations it points at are hoisted at both the TS type level and the
- * runtime level, so forward references across the per-node blocks below
- * resolve cleanly.
- *
- * @param lines - Output lines array to push into.
- * @param nodeMap - The assembled node map.
- */
 function emitFromMapDeclaration(
 	lines: string[],
 	nodeMap: NodeMap,
@@ -230,15 +144,6 @@ function emitFromMapDeclaration(
 	lines.push('');
 }
 
-/**
- * Emits the interned resolver kind-list constants (dedup table) before
- * the per-node blocks, ensuring every `_KN` / `_super_X` identifier is
- * declared by the time it is referenced.
- *
- * @param lines - Output lines array to push into.
- * @param namedEntries - Map from supertype constant name to JSON literal.
- * @param kindTableLiterals - Array of numbered JSON kind-list literals.
- */
 function emitInternedKindTable(lines: string[], namedEntries: Map<string, string>, kindTableLiterals: string[]): void {
 	if (kindTableLiterals.length > 0 || namedEntries.size > 0) {
 		lines.push('// Interned resolver kind lists (dedup)');
@@ -263,9 +168,6 @@ function emitInternedKindTable(lines: string[], namedEntries: Map<string, string
  * instance-local instead of living in module globals.
  */
 export namespace from {
-	/**
-	 * Emit a leaf from() resolver — string-like (pattern, enum) or keyword.
-	 */
 	export function leaf(output: string[], node: AssembledNode): void {
 		if (!node.rawFactoryName || !node.fromFunctionName) return;
 		let result: string | undefined;
@@ -290,10 +192,6 @@ export namespace from {
 		if (result) output.push(result);
 	}
 
-	/**
-	 * Emit a branch from() resolver — container shape, text-template,
-	 * or regular field-carrying branch.
-	 */
 	export function branch(
 		output: string[],
 		node: BranchLikeForFrom,
@@ -304,10 +202,6 @@ export namespace from {
 		output.push(emitBranchFrom(node, nodeMap, intern, kindEntries));
 	}
 
-	/**
-	 * Emit a `'separatedList'` from() resolver — dedicated construct/
-	 * reconstruction surface, see `emitSeparatedListFrom`'s doc comment.
-	 */
 	export function separatedList(
 		output: string[],
 		node: AssembledSeparatedList,
@@ -336,10 +230,6 @@ interface BranchLikeNode {
 	readonly slotClass?: BranchSlotClass;
 }
 
-/**
- * Builds the input signature parts for a branch from() function.
- * Return type is omitted — TS infers it from the body.
- */
 function buildBranchSignatureParts(
 	node: BranchLikeNode,
 	_factory: string,
@@ -359,23 +249,6 @@ function emitBranchNodeDataPassthrough(lines: string[], inputOptional: boolean, 
 	lines.push(`  if (${passGuard}isNodeData(input)) return input as unknown as ${returnType};`);
 }
 
-/**
- * Returns the target factory name when a required field can default to an
- * empty factory call, or `null` when it cannot.
- *
- * A field qualifies for default-empty when:
- * 1. `isRequired(field)` is true.
- * 2. Its `values` resolve to exactly ONE kind (not a union).
- * 3. That kind's factory can be called with zero arguments:
- *    - Container shape with rest-params (multiple children) — always callable.
- *    - Container shape with optional singular child — callable.
- *    - Config-based factory where every non-auto-stamp field is optional and
- *      every non-auto-stamp child is either auto-stamp-eligible or repeat-0+.
- *
- * @param field - The field slot to check.
- * @param nodeMap - The assembled node map.
- * @returns The target factory's `rawFactoryName` if it qualifies, or `null`.
- */
 function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): string | null {
 	if (!isRequired(field)) return null;
 	if (isHiddenInfraSlot(field, nodeMap)) return null;
@@ -415,13 +288,6 @@ function canDefaultToEmpty(field: AssembledNonterminal, nodeMap: NodeMap): strin
 	return targetNode.rawFactoryName;
 }
 
-/**
- * Emit a branch from() resolver — dispatches to the container calling
- * convention (positional element args) when `classifyChildFactorySurface`
- * recognizes an unnamed child slot, otherwise falls through to the regular
- * field-carrying Loose-input resolution below. Single entry point so
- * `branch()`'s dispatcher doesn't have to know about the two shapes.
- */
 function emitBranchFrom(
 	node: BranchLikeForFrom,
 	nodeMap: NodeMap,
@@ -464,7 +330,7 @@ function emitBranchFrom(
 	if (fields.length > 0) {
 		if (canDirectFactoryCall) {
 			lines.push(
-				`  if (${inputOptional ? 'input !== undefined && ' : ''}isNodeData(input) && (input.$type as string | number) === kindIdFromName(${JSON.stringify(node.kind)})) return input as unknown as ${returnType};`
+				`  if (${inputOptional ? 'input !== undefined && ' : ''}isNodeData(input) && (input.$type as string | number) === ${containerTypeCheck(node.kind, kindEntries, nodeMap)}) return input as unknown as ${returnType};`
 			);
 		} else {
 			emitBranchNodeDataPassthrough(lines, inputOptional, returnType);
@@ -480,7 +346,7 @@ function emitBranchFrom(
 		for (const f of fields) {
 			if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
 			if (needsNonEmptyHoist(f)) {
-				const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional);
+				const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional, kindEntries);
 				lines.push(`  const ${neName(f)} = ${call};`);
 				lines.push(`  _assertNonEmpty(${neName(f)}, '${node.kind}.${f.propertyName}');`);
 			}
@@ -492,7 +358,16 @@ function emitBranchFrom(
 		// and multiple (array) fields.
 		if (canDirectFactoryCall) {
 			const inputExpr = `(input !== null && typeof input === 'object' && !isNodeData(input) && ${JSON.stringify(soleField.configKey)} in input ? input.${soleField.configKey} : input)`;
-			const call = resolveFieldCall(inputExpr, soleField, isMultiple(soleField), nodeMap, intern);
+			const call = resolveFieldCall(
+				inputExpr,
+				soleField,
+				isMultiple(soleField),
+				nodeMap,
+				intern,
+				true,
+				undefined,
+				kindEntries
+			);
 			// Gap A: sole-slot direct-call factories skip the Config object
 			// literal entirely, so a required sole field needs its own guard.
 			const guardedCall = isRequired(soleField)
@@ -506,7 +381,7 @@ function emitBranchFrom(
 				if (needsNonEmptyHoist(f)) {
 					lines.push(`    ${f.configKey}: ${neName(f)},`);
 				} else {
-					const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional);
+					const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional, kindEntries);
 					const defaultFactory = canDefaultToEmpty(f, nodeMap);
 					if (defaultFactory) {
 						lines.push(`    ${f.configKey}: ${call} ?? F.${defaultFactory}(),`);
@@ -548,59 +423,12 @@ interface ContainerFromNode {
 	readonly fields?: readonly AssembledNonterminal[];
 }
 
-/**
- * Returns the runtime expression used to compare `.$type` in container
- * from() guards.
- *
- * @remarks
- * When `kindEntries` is present (KindID pipeline), emits `TSKindId.X` — a
- * numeric discriminant. When absent (legacy / unit-test path), falls back
- * to `'<kind>'` string literal so callers without real grammar ID tables
- * continue to compile.
- *
- * @param kind - The grammar kind string.
- * @param kindEntries - Collected kind-enum entries, or `undefined` for fallback.
- * @param nodeMap - The assembled node map (used for member-name derivation).
- * @returns An expression string suitable for `input.$type === <expr>`.
- */
 function containerTypeCheck(kind: string, kindEntries: readonly KindEnumEntry[] | undefined, nodeMap: NodeMap): string {
 	if (!kindEntries) return `'${kind}'`;
 	if (!hasCatalogEntry(kindEntries, kind)) return `'${kind}'`;
 	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
 
-/**
- * Shared body for a rest-param (`...input`) from() resolver that reconstructs
- * either from a flat list of already-resolved elements or by unwrapping an
- * existing self-NodeData value's storage. Both `emitRepeatedContainerFrom`
- * (container-shape branches — spreads the resolved elements into the
- * factory's `(...children: T[])` rest param) and `emitSeparatedListFrom`
- * (`'separatedList'` kinds — passes the resolved elements as the single
- * `elements: T[] | NonEmptyArray<T>` array argument, Task 6) share this exact
- * three-shape structure (numeric-discriminant gate, self-NodeData unwrap,
- * fresh-input fallback); they differ ONLY in how the final call expression is
- * built from a resolved variable name, which `buildCallExpr` parameterizes.
- *
- * @param fn - The `fromX` function name to emit.
- * @param factory - The `F.<factoryName>` reference string.
- * @param tName - The `T.<TypeName>` reference string.
- * @param elementType - The child element type union string.
- * @param kind - The grammar kind string for the self-NodeData check.
- * @param kindEntries - Collected kind-enum entries for numeric $type comparison.
- * @param nodeMap - The assembled node map (used for member-name derivation).
- * @param storageKey - The wire storage key to unwrap on the self-NodeData path.
- * @param buildCallExpr - Builds the final `factory(...)` call expression from
- *   a resolved variable name (`'input'` or `'children'`) — spread-via-unknown
- *   for container-shape factories, direct array cast for `'separatedList'`.
- * @param childrenTypeAnnotation - Optional explicit type annotation for the
- *   self-NodeData-unwrap `children` local (e.g. `': readonly unknown[]'`) —
- *   `emitSeparatedListFrom` needs this so its direct (non-`unknown`-laundered)
- *   cast type-checks; the local's inferred type otherwise widens to `any[]`
- *   via the `Array.isArray` ternary, which a direct cast rejects even though
- *   the runtime value is the same. `emitRepeatedContainerFrom` doesn't need
- *   it since its cast still routes through `unknown` first.
- * @returns The emitted function source string.
- */
 function emitRestParamFromResolver(
 	fn: string,
 	factory: string,
@@ -654,24 +482,6 @@ function emitRestParamFromResolver(
 	].join('\n');
 }
 
-/**
- * Emits the repeated-children variant of a container from() function, using
- * rest-parameter spread syntax.
- *
- * @remarks
- * Singular-child containers take one positional arg (`child?: T`); repeated-
- * child containers take `...children: T[]`. The from function has to match
- * the factory's signature at the call sites it forwards to.
- *
- * @param fn - The `fromX` function name to emit.
- * @param factory - The `F.<factoryName>` reference string.
- * @param tName - The `T.<TypeName>` reference string.
- * @param elementType - The child element type union string.
- * @param kind - The grammar kind string for the self-NodeData check.
- * @param kindEntries - Collected kind-enum entries for numeric $type comparison.
- * @param nodeMap - The assembled node map (used for member-name derivation).
- * @returns The emitted function source string.
- */
 function emitRepeatedContainerFrom(
 	fn: string,
 	factory: string,
@@ -698,30 +508,6 @@ function emitRepeatedContainerFrom(
 	);
 }
 
-/**
- * Emits the singular-child variant of a container from() function.
- *
- * @remarks
- * Casts the extracted single child all the way to the element type — the
- * container factory requires a non-nullable element when the grammar says
- * the child is required, and we can't express "indexed access on a non-null
- * tuple" through ConfigOf without pushing casts downstream.
- *
- * Empty collections (e.g. python `()` / `[]`) have no named children —
- * readNode promotes `(` / `)` / `[` / `]` into fields and produces no
- * `children`. Calling `factory(undefined)` rebuilds the empty form;
- * indexing `children[0]` in that case throws "Cannot read properties of
- * undefined (reading '0')".
- *
- * @param fn - The `fromX` function name to emit.
- * @param factory - The `F.<factoryName>` reference string.
- * @param tName - The `T.<TypeName>` reference string.
- * @param elementType - The child element type union string.
- * @param kind - The grammar kind string for the self-NodeData check.
- * @param kindEntries - Collected kind-enum entries for numeric $type comparison.
- * @param nodeMap - The assembled node map (used for member-name derivation).
- * @returns The emitted function source string.
- */
 function emitSingularContainerFrom(
 	fn: string,
 	factory: string,
@@ -790,64 +576,6 @@ function emitContainerFrom(
 	return emitSingularContainerFrom(fn, factory, tName, elementType, node.kind, kindEntries, nodeMap, storageKey);
 }
 
-/**
- * Emit a `'separatedList'` from() resolver — dedicated construct/
- * reconstruction surface built directly from `AssembledSeparatedList`'s own
- * real fields, bypassing the Task-2 `_slots` stub entirely (see
- * `AssembledSeparatedList`'s doc comment, node-map.ts, and
- * `emitSeparatedListFactory`'s doc comment, factories.ts).
- *
- * Shares `emitRestParamFromResolver`'s three-shape structure with
- * `emitRepeatedContainerFrom` (see that function's doc comment for the
- * shared shape), with ONE deliberate difference in the call expression: the
- * resolved elements are passed to the factory as the `elements` ARRAY
- * argument directly (`factory(children as Parameters<typeof
- * factory>[0])`), never spread and never indexed — factories.ts's Task 6
- * signature is `factory(elements: T[] | NonEmptyArray<T>, options?: {...})`,
- * not the old `factory(...children: T[])` `emitRepeatedContainerFrom`
- * assumes. Before this function existed, `classifyChildFactorySurface`'s
- * stub-based 'spread'/'direct' classification routed `'separatedList'`
- * kinds through the SAME spread/index call shape `emitRepeatedContainerFrom`
- * still uses for real container-shape branches — which silently bound
- * `children[0]` to `elements` and `children[1]` to `options` instead of the
- * whole array once the Task 6 factory signature landed (found in
- * spec-compliance review of Task 6, confirmed via code reading:
- * `_assertNonEmpty` is a no-op outside `SITTIR_DEBUG`, so the mis-binding
- * compiled and ran silently rather than throwing).
- *
- * Deliberately NOT `as unknown as Parameters<...>` (the cast pattern that
- * let the original bug hide from tsgo undetected) — empirically confirmed
- * (`tsgo` against a scratch repro) that a DIRECT cast from a `readonly`
- * array type to the tuple-shaped `NonEmptyArray<T>` target IS accepted as
- * "sufficiently overlapping" (tsgo TS2352's own comparability rule), for
- * both the rest-param `input` (already `readonly (...)[]`-typed) and the
- * self-NodeData-unwrap `children` local, PROVIDED that local carries an
- * explicit `readonly unknown[]` annotation — its inferred type otherwise
- * widens to `any[]` (via the `Array.isArray` ternary), which tsgo does
- * reject directly. A narrower cast means a genuinely wrong shape at one of
- * these two remaining opaque-`unknown`-origin sites (the self-NodeData
- * unwrap's `stored` read, and `_wrapWithChildren`'s own `children` param)
- * would now surface as a real tsgo error instead of silently laundering
- * through `unknown`, closing the exact gap that let this bug ship
- * undetected the first time.
- *
- * `options` is omitted on the fresh-input path (no source node exists there
- * to read per-instance facts from — the factory's own defaults apply, same
- * as before this fix). On the self-NodeData-unwrap path, `options` IS built
- * from the original wrapped node's own `_separator_kind`/`_leading_sep`/
- * `_trailing_sep` — calling `from()` on an already-wrapped separatedList
- * node used to silently reconstruct it with the factory's DEFAULTS (comma,
- * no flanks) regardless of what the original instance actually was, e.g.
- * `objectTypeContentFrom()` on a wrapped semicolon-delimited node would
- * change its rendered syntax back to a comma. Gated identically to
- * `emitSeparatedListFactory`'s own options surface (`node.separatorRule !==
- * undefined` / `leadingMode === 'optional'` / `trailingMode === 'optional'`)
- * so only fields the factory actually accepts get passed. `separatorKind`
- * needs a NUMBER→NAME reverse lookup since the wire stores a KindId but the
- * factory's `options.separatorKind` takes one of the candidate NAME
- * strings — built the same way `emitSeparatedListFactory`'s forward
- * (name→id) lookup is, just with the object literal's key/value swapped.
- */
 function emitSeparatedListFrom(
 	node: AssembledSeparatedList,
 	kindEntries: readonly KindEnumEntry[] | undefined,
@@ -859,6 +587,11 @@ function emitSeparatedListFrom(
 	const tName = `T.${node.typeName}`;
 	const contentSlot = buildSeparatedListContentSlot(node);
 	const elemType = fieldElementType(contentSlot, nodeMap);
+	// Same single-field-storage rule as `emitSeparatedListFactory`
+	// (factories.ts): the self-NodeData-unwrap path must read the SAME wire
+	// storage key the factory actually wrote. Multi-field kinds keep the
+	// generic `_content` bucket (see factories.ts's doc comment).
+	const contentStorageKey = node.fields.length > 1 ? '_content' : canonicalSeparatedListField(node).storageKey;
 
 	// Mirrors emitSeparatedListFactory's own gating exactly (see that
 	// function's doc comment, factories.ts) — kept consistent across
@@ -905,7 +638,7 @@ function emitSeparatedListFrom(
 		node.kind,
 		kindEntries,
 		nodeMap,
-		'_content',
+		contentStorageKey,
 		(varExpr, isSelfUnwrap) =>
 			isSelfUnwrap && hasOptions
 				? buildOptionsPreservingCall(varExpr)
@@ -922,7 +655,6 @@ interface LeafFromNode {
 	readonly typeName: string;
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
-	/** Enum value list when the underlying node is an enum. */
 	readonly enumValues?: readonly string[];
 }
 
@@ -964,24 +696,16 @@ function emitKeywordFrom(node: LeafFromNode): string {
 // Field-level resolver call generation
 // ---------------------------------------------------------------------------
 
-/** Interner signature passed through the resolver emitter calls. */
 type KindInterner = (kinds: readonly string[]) => string;
 
-/**
- * Build a field-resolver call that reads a single camelCase property
- * directly off a typed FromInput bag (`input?.fieldName`). Typed
- * access flows the FromInput's per-field type into the resolver's
- * generic slot — no `_f` normalize, no index-signature widening. Used
- * by branch `fromX` bodies after the top-level kind discriminator has
- * already handed back any pre-built node.
- */
 function resolveFieldFromTypedInput(
 	field: AssembledNonterminal,
 	nodeMap: NodeMap,
 	parentTypeName: string,
 	intern: KindInterner,
 	sourceVar: string,
-	inputOptional: boolean
+	inputOptional: boolean,
+	kindEntries?: readonly KindEnumEntry[]
 ): string {
 	// parentTypeName is retained for signature stability with callers;
 	// the prior implementation used it to build an explicit
@@ -989,40 +713,16 @@ function resolveFieldFromTypedInput(
 	// type args were stripped in a follow-up to the from-cleanup pass —
 	// TS now infers the slot type from parameters / call context.
 	void parentTypeName;
-	/**
-	 * Single-access camelCase read on the bag
-	 * branch. After the isNodeData identity quick-return at resolver entry,
-	 * the resolver body runs only for loose-bag input, which carries the
-	 * camelCase property directly. No cast — if the typed input union
-	 * doesn't expose the camelCase property at this position that is a
-	 * real type error, not something to paper over.
-	 */
 	const optChain = inputOptional ? '?' : '';
 	const access = `${sourceVar}${optChain}.${field.configKey}`;
-	return resolveFieldCall(access, field, isMultiple(field), nodeMap, intern);
+	return resolveFieldCall(access, field, isMultiple(field), nodeMap, intern, true, undefined, kindEntries);
 }
 
-/**
- * Expands supertype references in a field's content types to their concrete
- * subtypes, deduplicating the result.
- *
- * @remarks
- * A content entry whose kind is a supertype in the NodeMap expands to that
- * supertype's declared subtypes — the resolver works at the concrete kind
- * layer, so dispatching through a supertype literal would never match
- * anything. Expansion also lets the interner reach for the named `_super_<name>`
- * dedup entry since the interner keys on the full subtype set.
- *
- * Deduplication is applied after expansion: contentTypes may legitimately
- * contain a supertype AND one of its concrete subtypes (e.g. `_expression`
- * and `range_expression` can both appear on the same field), and the
- * expansion would otherwise surface the concrete kind twice.
- *
- * @param contentTypes - The raw content types from the field.
- * @param nodeMap - The assembled node map (used to look up supertype subtypes).
- * @returns Deduplicated list of concrete kind strings.
- */
-function expandAndDedupeContentTypes(contentTypes: readonly string[], nodeMap: NodeMap): string[] {
+function expandAndDedupeContentTypes(
+	contentTypes: readonly string[],
+	nodeMap: NodeMap,
+	idByKind?: ReadonlyMap<string, number>
+): string[] {
 	const seen = new Set<string>();
 	const expanded: string[] = [];
 	const visit = (kind: string): void => {
@@ -1031,33 +731,26 @@ function expandAndDedupeContentTypes(contentTypes: readonly string[], nodeMap: N
 			for (const subtype of node.subtypes) visit(subtype);
 			return;
 		}
-		if (seen.has(kind)) return;
-		seen.add(kind);
+		// PR-K3e: dedupe by the mint-stamped id where the slot's values carry
+		// one — same-id kinds are one runtime identity even under different
+		// names. Name key for stamp-less kinds (incl. supertype expansions).
+		const id = idByKind?.get(kind);
+		const key = id !== undefined ? `#${id}` : `n:${kind}`;
+		if (seen.has(key)) return;
+		seen.add(key);
 		expanded.push(kind);
 	};
 	for (const t of contentTypes) visit(t);
 	return expanded;
 }
 
-/**
- * Classifies a list of concrete kind strings into leaf kinds and branch kinds
- * for resolver dispatch.
- *
- * @remarks
- * Anonymous tokens have no factory binding and are skipped. Unknown kinds
- * (not in the node map) are treated as branch kinds so they go through
- * `_resolveByKind`.
- *
- * @param expanded - Concrete kind strings (already deduplicated / supertype-expanded).
- * @param nodeMap - The assembled node map.
- * @returns Object with `leafKinds` and `branchKinds` arrays.
- */
 function classifyKindsForResolver(
 	expanded: string[],
 	nodeMap: NodeMap
-): { leafKinds: string[]; branchKinds: string[] } {
+): { leafKinds: string[]; branchKinds: string[]; tokenKinds: string[] } {
 	const leafKinds: string[] = [];
 	const branchKinds: string[] = [];
+	const tokenKinds: string[] = [];
 	for (const t of expanded) {
 		const n = nodeMap.nodes.get(t);
 		if (!n) {
@@ -1072,7 +765,12 @@ function classifyKindsForResolver(
 				leafKinds.push(t);
 				break;
 			case 'token':
-				// Anonymous tokens have no factory binding — skip.
+				// Anonymous tokens have no factory binding — no resolver
+				// dispatch, but they are still VALID union members: report
+				// them so the single-kind fast path can pass an already-built
+				// token NodeData through instead of auto-wrapping it into the
+				// primary branch's container (#128).
+				tokenKinds.push(t);
 				break;
 			case 'supertype':
 			case 'branch':
@@ -1084,34 +782,14 @@ function classifyKindsForResolver(
 				break;
 		}
 	}
-	return { leafKinds, branchKinds };
+	return { leafKinds, branchKinds, tokenKinds };
 }
 
-/**
- * Selects the single-kind fast-path resolver call when dispatch reduces to
- * exactly one possible target kind.
- *
- * @remarks
- * When there is only one possible target, skip the generic `_resolveOne` /
- * `_resolveMany` entry point (which iterates the leafKinds / branchKinds
- * arrays) and emit a direct specialized call. Removes one function-call
- * layer + array-iteration dispatch per field read at runtime.
- *
- * Call sites no longer carry an explicit `<T>` type argument — TS infers
- * the slot type from the parameter type / return context at the assignment.
- * The per-call-site `NonNullable<T.X.Config['y']>` ceremony was orphaned
- * after the earlier from-cleanup pass removed the `as X` casts it paired with.
- *
- * @param prop - The property access expression string.
- * @param leafKinds - Classified leaf kind names.
- * @param branchKinds - Classified branch kind names.
- * @param fieldMultiple - Whether the slot accepts multiple values.
- * @returns The fast-path call string, or `undefined` if there is more than one kind.
- */
 function buildSingleKindFastPath(
 	prop: string,
 	leafKinds: string[],
 	branchKinds: string[],
+	altKindExprs: readonly string[],
 	fieldMultiple: boolean,
 	elementType?: string
 ): string | undefined {
@@ -1127,27 +805,35 @@ function buildSingleKindFastPath(
 			? '_resolveOneLeaf'
 			: '_resolveOneBranch';
 	const tArg = elementType ? `<${elementType}>` : '';
-	return `${specialized}${tArg}(${prop}, ${JSON.stringify(kindName)})`;
+	// Branch fast path with anonymous-token union siblings (e.g.
+	// mod_item.content's `';' | DeclarationList`): pass the token kinds'
+	// discriminants so the resolver recognizes an already-valid
+	// alternate-branch NodeData instead of auto-wrapping it into the
+	// primary container (#128). Leaf resolvers never wrap, so they need
+	// no alternate list. PR-K3d: the discriminants are baked at codegen
+	// (`altKindDiscriminants`) — no runtime `kindIdFromName` re-resolution.
+	const altArg = !isLeaf && altKindExprs.length > 0 ? `, [${altKindExprs.join(', ')}]` : '';
+	return `${specialized}${tArg}(${prop}, ${JSON.stringify(kindName)}${altArg})`;
 }
 
-/**
- * Emits an interned-array resolver call, referring to module-scoped
- * constants instead of repeating literal arrays at every call site.
- *
- * @remarks
- * Duplicated entries collapse to a single module-scoped `_KN = [...]` decl
- * or `_super_<name>` when the list matches a supertype exactly.
- *
- * Call sites no longer carry an explicit `<T>` type argument — TS infers
- * the slot type from the parameter type / return context at the assignment.
- *
- * @param prop - The property access expression string.
- * @param leafKinds - Classified leaf kind names.
- * @param branchKinds - Classified branch kind names.
- * @param fieldMultiple - Whether the slot accepts multiple values.
- * @param intern - Kind-list interner.
- * @returns The resolver call string with interned array references.
- */
+function altKindDiscriminants(
+	tokenKinds: readonly string[],
+	values: readonly NodeOrTerminal[],
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string[] {
+	return tokenKinds.map((t) => {
+		const stampedId = values.find(
+			(v) => isNodeRef(v) && storageKindOfRef(v.node) === t && v.storageKindId !== undefined
+		)?.storageKindId;
+		const stamped =
+			stampedId !== undefined && kindEntries !== undefined
+				? kindDiscriminantExprForId(stampedId, kindEntries)
+				: undefined;
+		return stamped ?? containerTypeCheck(t, kindEntries, nodeMap);
+	});
+}
+
 function buildInternedArrayResolverCall(
 	prop: string,
 	leafKinds: string[],
@@ -1181,7 +867,10 @@ function resolveFieldCall(
 	/** Pre-computed element type expression for the explicit `<T>` type
 	 * argument on the resolver call. When omitted, falls back to deriving
 	 * from the field shape (only possible when `field` is an `AssembledNonterminal`). */
-	elementTypeOverride?: string
+	elementTypeOverride?: string,
+	/** Catalog entries — required for kindEnum fields to emit compile-time
+	 * literal-aware discriminants (shared kindEnumTextMapExpr, #129). */
+	kindEntries?: readonly KindEnumEntry[]
 ): string {
 	// Short-circuit keyword-presence fields through dedicated
 	// resolvers. Boolean / bitflag inputs must NOT get routed through the
@@ -1194,8 +883,8 @@ function resolveFieldCall(
 
 	const storageInfo = 'name' in field ? resolveFieldStorageInfo(field as AssembledNonterminal, nodeMap) : undefined;
 
-	const expanded = expandAndDedupeContentTypes(slotKindNames(field), nodeMap);
-	const { leafKinds, branchKinds } = classifyKindsForResolver(expanded, nodeMap);
+	const expanded = expandAndDedupeContentTypes(slotKindNames(field), nodeMap, storageKindIdByNameOf(field));
+	const { leafKinds, branchKinds, tokenKinds } = classifyKindsForResolver(expanded, nodeMap);
 
 	// Pass an explicit element type when we have one — `resolveFieldCall` is
 	// also invoked with merged children pseudo-fields (no AssembledNonterminal
@@ -1204,41 +893,30 @@ function resolveFieldCall(
 	const elementType =
 		elementTypeOverride ?? ('name' in field ? fieldElementType(field as AssembledNonterminal, nodeMap) : undefined);
 
-	const fastPath = buildSingleKindFastPath(prop, leafKinds, branchKinds, fieldMultiple, elementType);
+	const fastPath = buildSingleKindFastPath(
+		prop,
+		leafKinds,
+		branchKinds,
+		altKindDiscriminants(tokenKinds, field.values, nodeMap, kindEntries),
+		fieldMultiple,
+		elementType
+	);
 	const baseCall =
 		fastPath !== undefined
 			? fastPath
 			: buildInternedArrayResolverCall(prop, leafKinds, branchKinds, fieldMultiple, intern, elementType);
 	if (storageInfo?.kind === 'kindEnum') {
-		return `coerceKindEnumStorage(${baseCall}, ${kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap)})`;
+		return `coerceKindEnumStorage(${baseCall}, ${kindEnumTextMapExpr(field as AssembledNonterminal, nodeMap, kindEntries)})`;
 	}
 	return baseCall;
 }
 
-function kindEnumTextMapExpr(field: AssembledNonterminal, nodeMap: NodeMap): string {
-	const entries: string[] = [];
-	for (const value of field.values) {
-		if (isNodeRef(value)) {
-			const kind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
-			const node = nodeMap.nodes.get(kind);
-			if (!(node?.modelType === 'enum')) continue;
-			for (const text of node.values) {
-				entries.push(`[${JSON.stringify(text)}, kindIdFromName(${JSON.stringify(text)})] as const`);
-			}
-			continue;
-		}
-		if (!isTerminalValue(value)) continue;
-		entries.push(`[${JSON.stringify(value.value)}, kindIdFromName(${JSON.stringify(value.value)})] as const`);
-	}
-	return `[${entries.join(', ')}]`;
-}
+// kindEnumTextMapExpr: shared with factories.ts (imported above) — from.ts
+// previously carried a duplicate that emitted runtime `kindIdFromName(text)`
+// lookups, resolving literal texts through the name-polymorphic runtime
+// switch (rust `'block'` → the named block RULE's id instead of the
+// anon_sym_block token's) — the runtime face of the #129 shadowing class.
 
-/**
- * Emit the resolver call string for a keyword-presence field.
- *
- * Returns `undefined` when the field isn't a keyword-presence pattern
- * (caller falls through to the default resolver).
- */
 function keywordPresenceResolverCall(
 	prop: string,
 	field: { values: readonly NodeOrTerminal[] },
@@ -1255,19 +933,6 @@ function keywordPresenceResolverCall(
 // Module-scoped resolver helpers (emitted into generated from.ts)
 // ---------------------------------------------------------------------------
 
-/**
- * Builds the leaf registry entries from NodeMap leaves, keywords, and enums.
- *
- * @remarks
- * Enum factories declare their parameter as a literal union at the type
- * level but the factory's runtime guard accepts any string and throws on
- * invalid values. The registry slot declares the factory as `(text: string)`
- * so the enum's narrower signature is exposed through a thin closure — no
- * cast at the call site, runtime guard still catches invalid input.
- *
- * @param nodeMap - The assembled node map.
- * @returns Array of registry entry source strings to push into the `_leafRegistry` literal.
- */
 function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
 	const registryEntries: string[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
@@ -1297,20 +962,6 @@ function buildLeafRegistryEntries(nodeMap: NodeMap, kindEntries: readonly KindEn
 	return registryEntries;
 }
 
-/**
- * Emits the `_resolveByKind` generic helper into generated from.ts.
- *
- * @remarks
- * Generic over the kind literal so the return type is the precise
- * `ReturnType<_FromMap[K]>` — each per-kind factory's output flows through,
- * not a widened `AnyNodeData` union. Callers pass a narrow kind (string-
- * literal from the field's content types or narrowed via an `in`-check
- * against `_fromMap`) to get the specific return shape back. The internal
- * sideways cast routes around per-slot parameter variance without going
- * through `unknown` / `any`.
- *
- * @param lines - Output lines array to push into.
- */
 function emitResolveByKindHelper(lines: string[]): void {
 	// Type guard for keyof _FromMap so `kind in _fromMap` checks elsewhere
 	// narrow the string parameter without an unchecked cast.
@@ -1328,39 +979,10 @@ function emitResolveByKindHelper(lines: string[]): void {
 	lines.push('');
 }
 
-/**
- * Determines the scalar resolver parameter name, prefixing with `_` when
- * the grammar has no scalar leaf kinds to satisfy the oxlint unused-variable
- * convention.
- *
- * @remarks
- * When the grammar declares no scalar leaf kinds the function body is empty —
- * prefixing the parameter with `_` prevents oxlint from flagging it. Callers
- * still pass arguments; the `_` is a lint convention only.
- *
- * @param hasBool - Whether the grammar has a `boolean_literal` kind.
- * @param hasInt - Whether the grammar has an integer literal kind.
- * @param hasFloat - Whether the grammar has a float literal kind.
- * @returns The parameter name string: `'v'` or `'_v'`.
- */
 function resolveScalarParamName(hasBool: boolean, hasInt: boolean, hasFloat: boolean): string {
 	return hasBool || hasInt || hasFloat ? 'v' : '_v';
 }
 
-/**
- * Emits the `_resolveOne` generic helper into generated from.ts.
- *
- * @remarks
- * Resolvers are emitted with a `<T>` type parameter so the call site can
- * name the expected slot shape (`_resolveOne<FunctionItem>`); no `extends`
- * constraint because the factory-emitted node interfaces don't all
- * structurally satisfy `AnyNodeData` (they omit the `named` property), and
- * adding such a constraint would force every call site to re-widen. The
- * input is the closed `_FromFieldInput` union so no caller has to cast
- * anything loose.
- *
- * @param lines - Output lines array to push into.
- */
 function emitResolveOneHelper(lines: string[]): void {
 	// Generic <T> reflects the caller-supplied slot shape. Body branches
 	// produce either a factory output, a scalar leaf, a resolved branch,
@@ -1408,19 +1030,6 @@ function emitResolveOneHelper(lines: string[]): void {
 	lines.push('');
 }
 
-/**
- * Emits the `_assertNonEmpty` runtime guard and static narrowing helper into
- * generated from.ts.
- *
- * @remarks
- * Runtime guard + static narrowing helper for repeat1-sourced list fields.
- * `from()` resolves a loose input to a `readonly T[]` via `_resolveMany*`,
- * but the factory's config slot is the non-empty tuple `readonly [T, ...T[]]`.
- * Calling this assertion on the resolver result narrows the static type to
- * the tuple shape AND throws at runtime if the input was empty.
- *
- * @param lines - Output lines array to push into.
- */
 function emitAssertNonEmptyHelper(lines: string[]): void {
 	lines.push('function _assertNonEmpty<T>(');
 	lines.push('  arr: readonly T[],');
@@ -1432,19 +1041,6 @@ function emitAssertNonEmptyHelper(lines: string[]): void {
 	lines.push('}');
 }
 
-/**
- * Emits the `_requireField` runtime guard into generated from.ts.
- *
- * @remarks
- * Gap A: a required slot whose loose-input value didn't resolve to any
- * known branch/leaf kind comes back `undefined` from `_resolveOne` —
- * indistinguishable from a legitimately-absent optional slot. Call sites
- * for REQUIRED, non-defaultable fields wrap the resolver result in this
- * guard so the failure surfaces at the `from()` boundary (naming the kind
- * and slot) instead of silently constructing a node with a missing field.
- *
- * @param lines - Output lines array to push into.
- */
 function emitRequireFieldHelper(lines: string[]): void {
 	lines.push('function _requireField<T>(kind: string, slot: string, v: T): T {');
 	lines.push('  if (v === undefined || v === null) {');
@@ -1465,27 +1061,6 @@ interface WrapChildrenEntry {
 	readonly kindIdExpr: string;
 }
 
-/**
- * Collects all branch/separatedList kinds that accept `$other` (catch-all
- * children) — used by the `_wrapWithChildren` runtime dispatch table in
- * generated from.ts.
- *
- * @remarks
- * Child-surface branches wrap through the same taxonomy used by the factory
- * emitter: direct unnamed-child factories call `F.kind(children[0])`, while
- * spread-child factories call `F.kind(...children)`. `'separatedList'`
- * kinds are handled separately with `childSurface: 'array'` (`F.kind(children
- * as ...)`, the whole array as the single `elements` argument) — routing
- * them through `classifyChildFactorySurface`'s stub-based 'direct'/'spread'
- * classification here would reproduce the same real from() mis-binding bug
- * `emitSeparatedListFrom`'s doc comment (this file) documents; every
- * `'separatedList'` kind unconditionally gets an `'array'` entry regardless
- * of what the stub would have classified it as.
- *
- * @param nodeMap - The assembled node map.
- * @param kindEntries - Kind enum entries for TSKindId emission.
- * @returns Array of wrap-children descriptors.
- */
 function collectWrapChildrenEntries(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
@@ -1518,23 +1093,6 @@ function collectWrapChildrenEntries(
 	return entries;
 }
 
-/**
- * Emits the `_wrapKindIds` map and `_wrapWithChildren` dispatcher into
- * generated from.ts.
- *
- * @remarks
- * Gap 3 (array auto-wrap): when `_resolveOneBranch` receives an array and
- * the target kind is in `_wrapKindIds`, each element is resolved and the
- * array is forwarded to the factory via `_wrapWithChildren`.
- *
- * Gap 4 (single-value auto-wrap): when `_resolveOneBranch` receives a
- * NodeData whose `$type` differs from the target kind, it wraps the value
- * as a single child if the target kind accepts children.
- *
- * @param lines - Output lines array to push into.
- * @param nodeMap - The assembled node map.
- * @param kindEntries - Kind enum entries for TSKindId emission.
- */
 function emitWrapWithChildrenTable(
 	lines: string[],
 	nodeMap: NodeMap,
@@ -1693,13 +1251,21 @@ function emitResolverHelpers(
 	// since _resolveOneBranch references _wrapKindIds and _wrapWithChildren.
 	emitWrapWithChildrenTable(lines, nodeMap, kindEntries);
 
-	lines.push('function _resolveOneBranch<T>(v: _FromFieldInput, kind: string): T {');
+	lines.push(
+		'function _resolveOneBranch<T>(v: _FromFieldInput, kind: string, altKinds?: readonly (string | number)[]): T {'
+	);
 	lines.push('  if (v === undefined || v === null) return v as T;');
 	// Gap 4: NodeData pass-through if $type matches; wrap as single child
-	// when it doesn't and target kind supports children.
+	// when it doesn't and target kind supports children. `altKinds` carries
+	// the slot's OTHER union members (anonymous tokens the resolver
+	// classification has no factory dispatch for, e.g. mod_item.content's
+	// `';'` external form) — a NodeData already matching one is a VALID
+	// alternate branch and must pass through, not get auto-wrapped into the
+	// primary branch's container (#128).
 	lines.push('  if (isNodeData(v)) {');
 	lines.push('    const wrapId = _wrapKindIds[kind];');
 	lines.push('    if (wrapId !== undefined && v.$type !== wrapId) {');
+	lines.push('      if (altKinds !== undefined && altKinds.some(k => k === v.$type)) return v as T;');
 	lines.push('      return _wrapWithChildren(kind, [v]) as T;');
 	lines.push('    }');
 	lines.push('    return v as T;');
@@ -1751,10 +1317,12 @@ function emitResolverHelpers(
 	lines.push('}');
 	lines.push('');
 
-	lines.push('function _resolveManyBranch<T>(v: _FromFieldInput, kind: string): readonly T[] {');
+	lines.push(
+		'function _resolveManyBranch<T>(v: _FromFieldInput, kind: string, altKinds?: readonly (string | number)[]): readonly T[] {'
+	);
 	lines.push('  if (v === undefined || v === null) return [];');
 	lines.push('  const arr: readonly _FromFieldInput[] = Array.isArray(v) ? v : [v];');
-	lines.push('  return arr.map(e => _resolveOneBranch<T>(e, kind));');
+	lines.push('  return arr.map(e => _resolveOneBranch<T>(e, kind, altKinds));');
 	lines.push('}');
 	lines.push('');
 

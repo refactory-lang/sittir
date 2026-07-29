@@ -27,10 +27,6 @@ import type { Rule, RuleBase, RenderRule } from '../types/rule.ts';
 import { fuseHeadRepeatLists, combineMultiplicity } from '../dsl/rule-transforms.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
 
-// ---------------------------------------------------------------------------
-// Accumulated modifier attributes from unwrapped wrappers
-// ---------------------------------------------------------------------------
-
 interface WrapperAttrs {
 	fieldName?: string;
 	multiplicity?: 'optional' | 'array' | 'nonEmptyArray';
@@ -41,19 +37,14 @@ interface WrapperAttrs {
 	nonterminal?: boolean;
 }
 
-// ---------------------------------------------------------------------------
-// Internal recursive implementation
-// ---------------------------------------------------------------------------
+function carrySeparatorForward(attrs: WrapperAttrs, ruleSeparator: unknown): RuleBase<'normalize'>['separator'] {
+	const rawSep = attrs.separator ?? (ruleSeparator as RuleBase<'normalize'>['separator']);
+	if (attrs.separator !== undefined || rawSep === undefined) return rawSep;
+	return { ...rawSep, value: deleteWrapperWith(rawSep.value as Rule<'link'>, {}) };
+}
 
-/**
- * Walk a rule tree collecting wrapper attributes as we descend through
- * consecutive wrappers, then recurse structurally and stamp collected
- * attrs onto the leaf.
- */
 function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule {
 	switch (rule.type) {
-		// ----- Wrapper cases — peel and accumulate -----
-
 		case OPTIONAL: {
 			// Only stamp multiplicity if not already set by an outer wrapper.
 			// Special case: optional(repeat(...)) and optional(repeat1(...)) are both
@@ -99,24 +90,7 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 			// the result can only be 'array' | 'nonEmptyArray' (never 'single'),
 			// narrower than the function's general LeafMultiplicity return type.
 			const mult = (combineMultiplicity(attrs.multiplicity, 'array') ?? 'array') as 'array' | 'nonEmptyArray';
-			// rule.separator is already the nested {value, trailing?, leading?}
-			// shape (RepeatRule<'link'> shares RuleBase<'normalize'>.separator's
-			// shape) — carry it across unchanged instead of reconstructing it.
-			// `rule.separator` is `Rule<'link'>`-phase-parameterized; WrapperAttrs.separator
-			// is normalize-phase. Structurally identical fact carried across the phase
-			// boundary unchanged (the "rides along for free" design) — cast the phase view.
-			const rawSep = attrs.separator ?? (rule.separator as RuleBase<'normalize'>['separator']);
-			// The separator's inner rule can itself contain wrapper nodes (a
-			// synthetic/future non-literal separator, e.g. a CHOICE containing a
-			// FIELD) that need the same push-down as any other rule position.
-			// Only recurse when carrying it forward for the first time (i.e. it
-			// came from `rule.separator`, not an already-processed `attrs.separator`
-			// from an outer wrapper) — reprocessing an already-deleted separator
-			// would be wasted work, not incorrect, but this keeps it to exactly once.
-			const sep =
-				attrs.separator === undefined && rawSep !== undefined
-					? { ...rawSep, value: deleteWrapperWith(rawSep.value as Rule<'link'>, {}) }
-					: rawSep;
+			const sep = carrySeparatorForward(attrs, rule.separator);
 			// repeat forces an array slot (Table 2), incl. terminal content.
 			const next: WrapperAttrs = { ...attrs, multiplicity: mult, separator: sep, nonterminal: true };
 			return deleteWrapperWith(rule.content, next);
@@ -132,28 +106,11 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 			const mult = (combineMultiplicity(attrs.multiplicity, 'nonEmptyArray') ?? 'nonEmptyArray') as
 				| 'array'
 				| 'nonEmptyArray';
-			// Same "rides along for free" carry as REPEAT above.
-			// `rule.separator` is `Rule<'link'>`-phase-parameterized; WrapperAttrs.separator
-			// is normalize-phase. Structurally identical fact carried across the phase
-			// boundary unchanged (the "rides along for free" design) — cast the phase view.
-			const rawSep = attrs.separator ?? (rule.separator as RuleBase<'normalize'>['separator']);
-			// The separator's inner rule can itself contain wrapper nodes (a
-			// synthetic/future non-literal separator, e.g. a CHOICE containing a
-			// FIELD) that need the same push-down as any other rule position.
-			// Only recurse when carrying it forward for the first time (i.e. it
-			// came from `rule.separator`, not an already-processed `attrs.separator`
-			// from an outer wrapper) — reprocessing an already-deleted separator
-			// would be wasted work, not incorrect, but this keeps it to exactly once.
-			const sep =
-				attrs.separator === undefined && rawSep !== undefined
-					? { ...rawSep, value: deleteWrapperWith(rawSep.value as Rule<'link'>, {}) }
-					: rawSep;
+			const sep = carrySeparatorForward(attrs, rule.separator);
 			// repeat1 forces a nonEmptyArray slot (Table 2), incl. terminal content.
 			const next: WrapperAttrs = { ...attrs, multiplicity: mult, separator: sep, nonterminal: true };
 			return deleteWrapperWith(rule.content, next);
 		}
-
-		// ----- Structural cases — recurse into members/content, stamp attrs onto this node -----
 
 		case SEQ: {
 			// Push the wrapper's multiplicity intrinsically onto each SLOT-BEARING
@@ -185,7 +142,6 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 					m.type === 'SYMBOL' ||
 					m.type === 'SUPERTYPE' ||
 					m.type === CHOICE ||
-					m.type === SEQ ||
 					m.type === GROUP ||
 					m.type === VARIANT;
 				const memberAttrs: WrapperAttrs =
@@ -257,8 +213,6 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 			return deleteWrapperWith(rule.content, next);
 		}
 
-		// ----- Leaf cases — stamp attrs and return -----
-
 		default: {
 			// Covers: string, pattern, symbol, enum, supertype,
 			//         indent, dedent, newline
@@ -267,11 +221,6 @@ function deleteWrapperWith(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule 
 	}
 }
 
-/**
- * Spread non-undefined wrapper attrs onto a rule object.
- * We only include keys that have actual values to avoid polluting the object
- * with `undefined`-valued fields.
- */
 function stampAttrs(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule {
 	if (
 		attrs.fieldName === undefined &&
@@ -294,29 +243,10 @@ function stampAttrs(rule: Rule<'link'>, attrs: WrapperAttrs): RenderRule {
 	if (attrs.nonterminal !== undefined) patch['nonterminal'] = attrs.nonterminal;
 	return { ...rule, ...patch } as RenderRule;
 }
-
-// ---------------------------------------------------------------------------
-// Public API
-// ---------------------------------------------------------------------------
-
-/**
- * Delete all modifier wrappers from a single rule, pushing their attributes
- * down to the innermost non-wrapper rule.
- *
- * Structural rules (seq / choice / variant / group / clause / terminal /
- * polymorph) are recursed into so the entire rule tree is wrapper-free.
- */
 export function deleteWrapper(rule: Rule<'link'>): RenderRule {
 	return deleteWrapperWith(rule, {});
 }
 
-/**
- * Apply `deleteWrapper` to every entry in a rule map, returning a new map
- * typed as `Record<string, RenderRule>`.
- *
- * This is the map-form used by `normalizeGrammar()` to produce the `normalizedRules`
- * snapshot.
- */
 export function applyWrapperDeletion(rules: Record<string, Rule<'link'>>): Record<string, RenderRule> {
 	const result: Record<string, RenderRule> = {};
 	for (const [name, rule] of Object.entries(rules)) {

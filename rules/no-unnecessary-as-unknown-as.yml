@@ -1,0 +1,55 @@
+id: no-unnecessary-as-unknown-as
+language: TypeScript
+severity: hint
+message: >
+  `as X as unknown as Y` double-cast candidate. NOT all matches are slop —
+  this codebase has several DELIBERATE, DOCUMENTED uses of this pattern
+  (see notes below). Before touching a match, check whether the cast is
+  still needed by temporarily removing it and running
+  `pnpm exec tsc --noEmit -p packages/codegen/tsconfig.json`:
+    - if it still compiles, the cast was unnecessary — remove it (or
+      narrow to a single `as Y` if a direct cast is required and a plain
+      assignment isn't).
+    - if it now fails with a real structural mismatch (e.g. TS2353,
+      "does not exist on type"), the cast is load-bearing — leave it.
+files:
+  - packages/codegen/src/**
+  - packages/rust/overrides.ts
+  - packages/typescript/overrides.ts
+  - packages/python/overrides.ts
+  - packages/rust/base.ts
+ignores:
+  - "**/__tests__/**"
+  - "**/*.test.ts"
+rule:
+  pattern: $X as unknown as $T
+note: >
+  Codegen-cleanup audit (2026-07-28): reviewed all ~930 non-test hits of
+  this pattern in packages/codegen/src. The overwhelming majority are
+  legitimate:
+    - `dsl/dsl-authoring.ts` (field/alias/transform/prec/token/grammar) —
+      explicitly documented "one boundary cast per primitive asserts the
+      authoring-context contract" pattern in the file header. Leave alone.
+    - `dsl/rule-metadata.ts` / `compiler/opaque-facts.ts` — documented
+      opaque-brand write/read seams (single construct site per module).
+    - `dsl/wire/wire.ts` (`wire()`'s `cfg`/`baseArg` aliasing) — documented
+      "sanctioned boundary cast" working around a TS2589 excessively-deep
+      generic-instantiation issue.
+    - `dsl/enrich.ts`, `dsl/transform/{transform,transform-path}.ts`,
+      `dsl/rule-transforms.ts`, `dsl/rule-walker.ts` — structural duck-typed
+      access across the large `Rule<Phase>` discriminated union / unbounded
+      generics (`R extends RuntimeRule`), where TS can't statically prove
+      the accessed field exists on every union member. Verified at least
+      one such site (`compiler/normalize.ts`'s `collapseWrappers` SEQ case)
+      genuinely needs the cast — removing it produces a real TS2353.
+  Confirmed-removable examples found and fixed in this pass (already
+  landed — see git history, commit cf75465a6 and follow-ups):
+    - `dsl/primitives/field.ts` `buildTwoArgFieldResult` — two redundant
+      `as unknown as FieldLike` where the object literal already satisfied
+      the return type.
+    - `compiler/link.ts` `resolveNamedAliasWithProvenance` — redundant cast
+      of a `SymbolRule<'link'>` (already a `Rule<'link'>` union member).
+    - `compiler/diagnostics/slot-grouping.ts` `walkRule`'s OPTIONAL/FIELD
+      case — dropped the unnecessary `unknown` bridge (a direct `as {
+      content: Rule<'link'> }` sufficed, matching the sibling
+      VARIANT/GROUP case one branch below).

@@ -257,6 +257,7 @@ exports[`@sittir/rust — API surface snapshot (SC-008) > top-level exports 1`] 
   "tokens": "object",
   "type": "object",
   "useClause": "object",
+  "withAccessors": "function",
   "withMethods": "function",
   "wrapNode": "function",
 }

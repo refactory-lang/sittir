@@ -40,7 +40,7 @@ import { transform as transformFn } from '../transform/transform.ts';
 import { isFieldPlaceholder } from '../primitives/field.ts';
 import { isAliasPlaceholder } from '../primitives/alias.ts';
 import { isVariantPlaceholder } from '../primitives/variant.ts';
-import { getEnrichClauseGroups, getEnrichClauseGroupOwners } from '../enrich.ts';
+import { getEnrichClauseGroups, getEnrichClauseGroupOwners, getEnrichVisibleGroupSources } from '../enrich.ts';
 // Phase-2: tuple-precise base-grammar constraint + per-rule transform path keys.
 import type { GrammarJson, GrammarRule, SymbolRule, AuthoringRule } from '../../grammar-shapes/grammar-json.ts';
 import type { FastKeys, TransformPatchMap } from '../../grammar-shapes/path-type.ts';
@@ -49,95 +49,36 @@ import type { FastKeys, TransformPatchMap } from '../../grammar-shapes/path-type
 // RenderAsConfig — sittir-side rule bodies for external scanner symbols
 // ---------------------------------------------------------------------------
 
-/**
- * A function taking the grammar's `$` proxy and returning a record from
- * external-symbol-name to a sittir DSL rule body.
- *
- * The returned bodies are used by sittir's slot/render/factory pipeline
- * AS IF they were regular author-written rules. They are stripped from
- * the grammar that reaches tree-sitter (the external scanner still
- * produces the symbol). Supported body forms include `string(lit)` for
- * literal stamping and `blank()` for zero-width markers that collapse
- * the surrounding `choice(...)` into `optional(...)`.
- *
- * @example
- *   renderAs: ($) => ({
- *     _outer_block_doc_comment_marker: string('!'),
- *     _automatic_semicolon: blank(),
- *   })
- */
 export type RenderAsConfig = ($: Record<string, unknown>) => Record<string, unknown>;
+
+// ---------------------------------------------------------------------------
+// VisibleExternalsConfig — materialize hidden external-scanner symbols as
+// named CST-visible aliases
+// ---------------------------------------------------------------------------
+
+export type VisibleExternalsConfig = ($: Record<string, unknown>) => Record<string, unknown>;
 
 // ---------------------------------------------------------------------------
 // WireContext + module-level current pointer
 // ---------------------------------------------------------------------------
 
-/**
- * Per-`wire()`-invocation state. All fields are mutable so DSL helpers
- * (variant/alias/conflict registration) can push into them while the
- * rule-fn wrapper has this context installed.
- */
 export interface WireContext {
-	/** Hidden-rule name → captured content body. */
 	readonly deposits: Map<string, RuntimeRule>;
-	/** Hidden `_kw_*` helper names that should be appended to the
-	 *  grammar's inline list after rule evaluation deposits their body. */
 	readonly syntheticInline: Set<string>;
-	/** Enrich-synthesized clause-hoist names (both inline-safe and
-	 *  visible-aliased categories — see `getEnrichClauseGroupOwners`) whose
-	 *  recorded owning parent is redeclared in THIS grammar's own
-	 *  `rules:` config. An override author can never reference a
-	 *  synthesized name by hand (it doesn't exist until enrich() mints it
-	 *  from the base grammar's pre-override shape), so redeclaring the
-	 *  owner unconditionally orphans it. Read by
-	 *  `collectGrammarDiagnosticsForGrammar` to suppress the phantom
-	 *  content-collision/storagename-collision diagnostic these orphans
-	 *  would otherwise raise for a kind that can never occur in a parse. */
+	readonly inlineRemovals: Set<string>;
 	readonly orphanedSyntheticGroups: Set<string>;
-	/** Conflict groups (rule-name arrays) registered by variant() for
-	 *  sibling-variant ambiguity. Drained by the wrapped `conflicts`
-	 *  callback when tree-sitter invokes it. */
 	readonly conflictGroups: string[][];
-	/** Per-rule form declarations registered by refine(). Ordered list
-	 *  — the first form is the default the bare factory call routes to.
-	 *  Emitters consume this to generate namespace-keyed factories
-	 *  (`ir.interfaceBody.curly(...)`) with narrowed Configs. The rule
-	 *  tree itself is unchanged by refine(); tree-sitter parses with
-	 *  the original shape. */
 	readonly refineForms: Map<string, RefineForm[]>;
-	/** Per-kind group-lift map from config. Link reads this to synthesize
-	 *  nested sub-rules into hidden AssembledGroup kinds. See:
-	 *  docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md */
 	readonly groups?: GroupsConfig;
-	/** Raw polymorphs path→variant-name config. Link passes this to
-	 *  applyGroupOverrides so synthesized kind names include polymorph-
-	 *  ancestor context segments. */
 	readonly polymorphsConfig?: PolymorphsConfig;
-	/** Sittir-side rule bodies for external scanner symbols. Each entry
-	 *  gives sittir's slot/render/factory pipeline a structural body for
-	 *  a symbol produced by the C external scanner. The body is used
-	 *  sittir-side only; when the grammar reaches tree-sitter the entry
-	 *  is stripped (the external scanner still produces the symbol).
-	 *  See: renderAs mechanism. */
 	readonly renderAs?: RenderAsConfig;
-	/** Per-kind, per-diagnostic-code exceptions from `expectDiagnostics:`.
-	 *  See `WireConfig.expectDiagnostics` for the full description. */
+	readonly visibleExternals?: VisibleExternalsConfig;
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
-	/** Name of the rule currently being evaluated, for variant()'s
-	 *  auto-prefix behavior (`variant('eq')` under `assignment` →
-	 *  `_assignment_eq`). Set by the rule-fn wrapper. */
+	readonly expectTestFailures?: Partial<Record<string, string>>;
 	currentRuleKind: string | null;
-	/** Rule<'evaluate'> names explicitly authored in `config.rules`. Synthetic `_kw_*`
-	 *  auto-inline only applies to helpers wire synthesized itself. */
 	readonly authoredRuleNames: ReadonlySet<string>;
 }
 
-/**
- * A single named form declared via `refine(original, { name: selections })`.
- * `selections` maps a path (into `original`) to a chosen branch — either
- * a numeric branch index or a literal string matching one of the choice
- * arm's string values. See the refine() DSL primitive for the full design.
- */
 export interface RefineForm {
 	readonly name: string;
 	readonly selections: Record<string, number | string>;
@@ -145,32 +86,16 @@ export interface RefineForm {
 
 let currentContext: WireContext | null = null;
 
-/** Read the active wire context, or null if no `wire()`-wrapped rule
- *  fn is currently executing. DSL helpers use this to decide whether
- *  to route state into the wire closure or into the legacy module
- *  accumulator in `synthetic-rules.ts`. */
 export function getCurrentWireContext(): WireContext | null {
 	return currentContext;
 }
 
-/**
- * Register a hidden-rule body against the active wire context. Returns
- * `true` when the context absorbed the call, `false` when there is no
- * active context (caller falls back to the legacy accumulator).
- */
 export function wireRegisterSyntheticRule(name: string, content: RuntimeRule): boolean {
 	if (!currentContext) return false;
 	currentContext.deposits.set(name, content);
 	return true;
 }
 
-/**
- * Register a synthesized `_kw_*` helper for automatic inlining.
- *
- * @remarks
- * Only wire-authored helpers participate. If the grammar author declared
- * the rule explicitly in `config.rules`, they own its `inline:` policy.
- */
 export function wireRegisterSyntheticInline(name: string): boolean {
 	if (!currentContext) return false;
 	if (currentContext.authoredRuleNames.has(name)) return false;
@@ -178,10 +103,6 @@ export function wireRegisterSyntheticInline(name: string): boolean {
 	return true;
 }
 
-/**
- * Register a conflict group against the active wire context. Dedupes
- * by exact group membership (same names in same order).
- */
 export function wireRegisterConflict(names: readonly string[]): boolean {
 	if (!currentContext) return false;
 	if (names.length === 0) return true;
@@ -193,40 +114,16 @@ export function wireRegisterConflict(names: readonly string[]): boolean {
 	return true;
 }
 
-/**
- * Register per-rule form declarations against the active wire context.
- *
- * @remarks
- * Invoked by `refine(original, forms)`. The forms list is stored
- * as-is — validation (path resolves to a choice, selections are in
- * range, etc.) happens at codegen time inside `link.ts` or the
- * emitters, not here, because the rule tree may still be mid-transform
- * at refine() call time (enrich not yet fired, transform patches not
- * applied). Deferring validation avoids ordering hazards.
- *
- * Returns `true` when the context absorbed the call, `false` when
- * there is no active context.
- */
 export function wireRegisterRefineForms(kind: string, forms: RefineForm[]): boolean {
 	if (!currentContext) return false;
 	currentContext.refineForms.set(kind, forms);
 	return true;
 }
 
-/** Current rule kind on the active wire context, or null when inactive. */
 export function wireGetCurrentRuleKind(): string | null {
 	return currentContext?.currentRuleKind ?? null;
 }
 
-/**
- * Install a fresh `WireContext` for the duration of `fn` and return
- * both the callback result and the context so tests can assert on
- * deposits / conflictGroups that were registered during the call.
- *
- * Intended for unit tests of DSL helpers (variant/alias/transform/
- * hoist) that need a wire context without going through full wire()
- * composition. Production callers should use `wire()`.
- */
 export function withWireContext<T>(
 	ruleKind: string | null,
 	fn: (ctx: WireContext) => T
@@ -234,6 +131,7 @@ export function withWireContext<T>(
 	const ctx: WireContext = {
 		deposits: new Map(),
 		syntheticInline: new Set(),
+		inlineRemovals: new Set(),
 		orphanedSyntheticGroups: new Set(),
 		conflictGroups: [],
 		refineForms: new Map(),
@@ -279,85 +177,19 @@ export function withWireContext<T>(
  * doesn't supply a base type.
  */
 
-/** @internal — extract the rule-kind string union from a base grammar.
- *  Handles both shapes: `{ rules: { … } }` (tree-sitter native) and
- *  flat top-level keys (sittir-emitted `<Lang>Grammar`). */
 type BaseKind<Base extends GrammarJson = GrammarJson> = Base extends {
 	readonly rules: infer R;
 }
 	? keyof R & string
 	: keyof Base & string;
 
-/**
- * Declarative polymorph map: parent rule kind → (path-in-original → suffix).
- *
- * @example
- *   { assignment: { '1/0': 'eq', '1/1': 'type', '1/2': 'typed' } }
- *
- * Keys are typed as `keyof Base['rules']` when a base grammar is
- * supplied; else fall back to plain `string`. Path strings and suffix
- * names stay untyped — paths describe runtime descents into the rule
- * tree (`seq`/`choice` indices), suffixes are author-introduced.
- */
 export type PolymorphsConfig<Base extends GrammarJson = GrammarJson> = Partial<
 	Record<BaseKind<Base>, Record<string, string>>
 >;
 
-/**
- * Per-kind group-lift map. Each entry's key is either:
- *   1. A parent kind whose rule body contains a sub-rule to lift —
- *      the value is `path → discriminator`, same slash-separated path
- *      semantics as `polymorphs:` / `transforms:`, with the
- *      discriminator becoming the leaf segment of the synthesized
- *      hidden kind name. (Path-mode — existing behavior.)
- *   2. A visible kind name (NO leading underscore) whose value is a
- *      RuleFn (body-pattern function). Codegen synthesizes the hidden
- *      `_<key>` rule from the function body and rewrites every
- *      structurally-matching sub-tree in the grammar as
- *      `alias($._<key>, $.<key>)` so tree-sitter emits the visible kind
- *      as a CST node. (Body-pattern mode — for tree-sitter inlining
- *      workarounds where a hidden helper would otherwise vanish from
- *      the parse tree.)
- *
- * For path-mode entries the synthesized kind name follows polymorph-
- * ancestor context: each path segment that ALSO appears in `polymorphs:`
- * for the same kind contributes its variant name to the synthesized
- * kind. Non-polymorph segments don't contribute. See:
- *   docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
- *
- * Keys are plain `string` rather than `BaseKind<Base>` because the
- * post-polymorph-aliased rule map contains synthesized variant kinds
- * (e.g. `_visibility_modifier_pub`) that aren't exported in the base
- * grammar's kind set. `BaseKind<Base>` was too narrow — it caused a
- * type error on those keys that was masked by `--noCheck` but would
- * fail when the build check is re-enabled.
- */
 export type GroupsConfigValue = Record<string, string> | RuleFn;
 export type GroupsConfig = Partial<Record<string, GroupsConfigValue>>;
 
-/**
- * Declarative transforms map: each rule kind → a patch-map (or array
- * of patch-maps for multi-patchset rules). Values inside each patch-
- * map are DSL placeholders (`field`, `variant`, `alias`) or native
- * rule objects.
- *
- * @example
- *   {
- *     async_block: { '1/0': field('move'), 2: field('block') },
- *     array_expression: [
- *       { 1: field('attributes') },
- *       { '2/_expression': field('elements') },
- *     ],
- *   }
- *
- * wire() walks every patch value at config time, enumerates every
- * placeholder, and pre-registers the corresponding hidden rule names
- * (`_kw_<field>`, `_<parent>_<variant>`, `_<alias>`) in opts.rules as
- * deferred-content fns. The synthesized rule fn calls
- * `transform(original, ...patches)` at rule-fn-call time; placeholder
- * resolution deposits captured content into wire's context; the
- * deferred fns read deposits.
- */
 export type TransformsConfig<Base extends GrammarJson = GrammarJson> = [GrammarRule] extends [
 	Base['rules'][keyof Base['rules']]
 ]
@@ -385,29 +217,8 @@ export type TransformsConfig<Base extends GrammarJson = GrammarJson> = [GrammarR
 			}
 		: Partial<Record<BaseKind<Base>, PatchMap | PatchMap[]>>;
 
-/** A single patch-map — path-in-original → patch value. */
 export type PatchMap = Record<string, unknown>;
 
-/**
- * Shape of an options argument passed to tree-sitter's `grammar()` — the
- * fields `wire()` knows about. Extra fields are passed through
- * unchanged.
- *
- * `Base` is the base tree-sitter grammar's type (typically `typeof base`
- * imported from `tree-sitter-<lang>/grammar.js`). Constrains
- * `polymorphs` / `transforms` keys to base rule kinds; `rules` stays
- * permissive (`Partial<Record<BaseKind, RuleFn>> & Record<string, RuleFn>`)
- * to keep the hidden-name escape hatch for synthesized rules
- * (`_kw_<field>`, `_<parent>_<variant>`, `_<alias>`).
- */
-/**
- * Clean `$` proxy: rule-name → symbol reference, mapped over the schema's
- * CONCRETE rule names (including hidden `_`-prefixed rules). Crucially it has NO
- * index signature, so `$.x` does NOT leak `| undefined` under
- * `noUncheckedIndexedAccess` — unlike tree-sitter's `GrammarSymbols`, whose
- * index-signature leak makes `$.x: SymbolRule<'evaluate'> | undefined` and breaks
- * composition (`undefined ⊄ AuthoringRule`) in overrides.ts authoring.
- */
 export type ShapedSymbols<B extends GrammarJson> = {
 	readonly [R in keyof B['rules'] & string]: SymbolRule<R>;
 } & {
@@ -422,23 +233,10 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 	Grammar<NewRules, keyof B['rules'] & string>,
 	'rules' | 'conflicts'
 > & {
-	/**
-	 * Conflict sets — same clean-`$` typing as `rules`/`groups` (`ShapedSymbols<B>`,
-	 * no `undefined` leak). `previous` is the base grammar's conflict list.
-	 */
 	readonly conflicts?: (
 		$: ShapedSymbols<B>,
 		previous: readonly (readonly AuthoringRule[])[]
 	) => readonly (readonly AuthoringRule[])[];
-	/**
-	 * Rule<'evaluate'> bodies — clean-`$` builders. `previous`/`original` is typed PER RULE as
-	 * `B['rules'][K]` directly — the input rule's exact shape, preserved not
-	 * flattened. (`B` here is the ALREADY-ENRICHED schema from `enrich()`'s typed
-	 * return, so `B['rules'][K]` is the post-enrich shape; no re-application of
-	 * `EnrichRule`.) Keyed over the schema's CONCRETE rule names (mapping over
-	 * `NewRules` would absorb to `string` and lose per-key precision). Loose
-	 * `=> unknown` return accepts sittir DSL outputs.
-	 */
 	readonly rules?: {
 		readonly [K in keyof B['rules'] & string]?: ($: ShapedSymbols<B>, previous: B['rules'][K]) => unknown;
 	} & {
@@ -449,46 +247,15 @@ export type WireConfig<B extends GrammarJson, NewRules extends string = string> 
 		readonly [name: string]: ($: ShapedSymbols<B>, previous?: any) => unknown;
 	};
 	readonly polymorphs?: PolymorphsConfig<B>;
-	/**
-	 * Group-lift map — same `$` typing as `rules`. Path-mode entries are
-	 * `path → discriminator` records; body-pattern-mode entries are clean-`$`
-	 * builders (`($: ShapedSymbols<B>) => unknown`), not the untyped `RuleFn`.
-	 */
 	readonly groups?: Partial<
 		Record<string, Record<string, string> | (($: ShapedSymbols<B>, previous?: GrammarRule) => unknown)>
 	>;
 	readonly transforms?: TransformsConfig<B>;
-	/** Side-channel from `enrich()` — preserved unchanged. */
 	readonly __enrichOverrides__?: Record<string, RuleFn>;
-	/**
-	 * Sittir-side render bodies for external scanner symbols.
-	 * Takes the grammar's `$` proxy and returns a record from external-
-	 * symbol-name to a sittir DSL rule body. Supported body forms include
-	 * `string(lit)` for literal stamping and `blank()` for zero-width
-	 * markers that collapse the surrounding `choice(...)` into
-	 * `optional(...)`. Bodies enter sittir's slot/render/factory pipeline
-	 * as regular rules and are stripped from the tree-sitter grammar
-	 * output.
-	 *
-	 * @example
-	 *   renderAs: ($) => ({
-	 *     _outer_block_doc_comment_marker: string('!'),
-	 *     _automatic_semicolon: blank(),
-	 *   })
-	 */
 	readonly renderAs?: RenderAsConfig;
-	/**
-	 * Per-kind, per-diagnostic-code exceptions — declares that a specific
-	 * grammar diagnostic (e.g. `'content-collision'`, `'storagename-collision'`)
-	 * is EXPECTED and should stay non-blocking for the listed kind names,
-	 * instead of the grammar-wide blocking default. Use this ONLY for a
-	 * genuinely accepted, documented floor (see docs/KNOWN_ISSUES.md) — not
-	 * as a way to silence a diagnostic you haven't investigated.
-	 *
-	 * @example
-	 *   expectDiagnostics: { 'content-collision': ['_object_type_group1'] }
-	 */
+	readonly visibleExternals?: VisibleExternalsConfig;
 	readonly expectDiagnostics?: Partial<Record<string, readonly string[]>>;
+	readonly expectTestFailures?: Partial<Record<string, string>>;
 };
 
 export interface WiredOpts {
@@ -503,12 +270,6 @@ export interface WiredOpts {
 	readonly precedences?: DollarFn<unknown[][]>;
 	readonly reserved?: Record<string, DollarFn<unknown[]>>;
 	readonly __enrichOverrides__?: Record<string, RuleFn>;
-	/**
-	 * Attached so sittir's compiler pipeline (evaluate → link) can read
-	 * the polymorph metadata without driving rule evaluation a second
-	 * time. Non-enumerable on the returned object so tree-sitter's
-	 * own iteration doesn't trip on it.
-	 */
 	readonly __wireContext__?: WireContext;
 }
 
@@ -533,7 +294,6 @@ export interface WiredOpts {
 // lets them flow with zero cast. The internal machinery still consumes this
 // loose type unchanged.
 type SittirRuleFn = ($: any, previous?: any) => unknown;
-/** @internal alias for the internal rules-map element type (the dual-runtime seam). */
 type RuleFn = SittirRuleFn;
 type ConflictsFn = (this: unknown, $: unknown, previous?: unknown[][]) => unknown[][];
 type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
@@ -592,13 +352,16 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 	const context: WireContext = {
 		deposits: new Map(),
 		syntheticInline: new Set(),
+		inlineRemovals: new Set(),
 		orphanedSyntheticGroups: new Set(),
 		conflictGroups: [],
 		refineForms: new Map(),
 		groups: cfg.groups,
 		polymorphsConfig: cfg.polymorphs,
 		renderAs: cfg.renderAs,
+		visibleExternals: cfg.visibleExternals,
 		expectDiagnostics: cfg.expectDiagnostics,
+		expectTestFailures: cfg.expectTestFailures,
 		currentRuleKind: null,
 		authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
 	};
@@ -640,7 +403,14 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 	// `previous` unchanged but then `applyWirePatternReplacement` wraps the
 	// passthrough so the body undergoes pattern replacement. Without this,
 	// unoverridden base rules bypass replacement entirely.
-	if (baseArg && cfg.groups && hasBodyPatternGroups(cfg.groups)) {
+	// visibleExternals needs the SAME passthrough treatment as body-pattern
+	// groups: its SYMBOL→ALIAS rewrite (applyWireVisibleExternalsRewrite,
+	// below) only reaches rule fns present in `outRules` — an unoverridden
+	// base rule with no entry here never gets wrapped, so a `$._x` reference
+	// buried in an un-overridden base rule would silently escape the
+	// rewrite (the exact phantom-kind divergence class this file guards
+	// against elsewhere).
+	if (baseArg && ((cfg.groups && hasBodyPatternGroups(cfg.groups)) || cfg.visibleExternals)) {
 		const baseRules = (baseArg.grammar?.rules ?? baseArg.rules ?? {}) as Record<string, RuleFn>;
 		for (const baseName of Object.keys(baseRules)) {
 			if (baseName in outRules) continue;
@@ -653,6 +423,10 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 	// evaluated. This is the tree-sitter-runtime path; evaluate.ts has its
 	// own post-evaluation pass for the sittir-pipeline path.
 	applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
+	// visibleExternals: SYMBOL→ALIAS rewrite (tree-sitter-CLI-runtime path).
+	// evaluate.ts's applyVisibleExternalsRewrite is the sittir-pipeline twin
+	// — both MUST produce structurally identical output.
+	applyWireVisibleExternalsRewrite(outRules, cfg.visibleExternals);
 
 	// Drain enrich-hoisted clause-group names into syntheticInline so they
 	// appear in the grammar's inline: list. Enrich injects _<parent>_optionalN
@@ -672,6 +446,11 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		for (const name of getEnrichClauseGroups(base)) {
 			context.syntheticInline.add(name);
 		}
+		// Visible-group mint SOURCES must not be inlined away — see
+		// `WireContext.inlineRemovals` / `getEnrichVisibleGroupSources`.
+		for (const name of getEnrichVisibleGroupSources(base)) {
+			context.inlineRemovals.add(name);
+		}
 		// A synthesized clause-hoist name (recorded owner = the parent kind
 		// enrich() hoisted it FROM) is orphaned once THIS grammar's own
 		// `rules:` config redeclares that owner — the override text could
@@ -679,9 +458,48 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 		// minted it from the base grammar's pre-override shape, so replacing
 		// the owner's body necessarily drops the only reference. See
 		// `WireContext.orphanedSyntheticGroups`.
+		// PR 3 (2026-07-21 union-slot design): a visible-aliased clause-hoist
+		// mint (the inline-UNSAFE category — excluded from `syntheticInline`
+		// above precisely because we WANT it to stay a distinguishable kind,
+		// not get inlined away) can share a structural prefix with its own
+		// owning parent rule (e.g. python's `expression_statement`, whose
+		// arm 0 is `$.expression` and whose newly-hoisted arm 1
+		// `_expression_statement_group1` also starts with `commaSep1($.expression)`
+		// — both begin `expression • …`, an unresolved tree-sitter LR
+		// conflict without an explicit GLR fork). Proactively register a
+		// conflict between the owner and every such mint, mirroring the
+		// hand-authored `conflicts: [$.expression_statement,
+		// $._expression_statement_tuple]` pattern this codebase already used
+		// for the pre-existing variant()-only mint path — but automatic, so
+		// it covers every clause-hoist visible-group mint (this widened
+		// bare-choice-arm gate included) without per-grammar hand-maintenance.
+		// Harmless when the two rules don't actually conflict in a given
+		// grammar: tree-sitter's `conflicts:` only enables a GLR fork; it
+		// doesn't change accepted language and costs a little parse-table
+		// size, not correctness, when unused.
+		const inlineSafeNames = getEnrichClauseGroups(base);
 		for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base)) {
 			if (context.authoredRuleNames.has(ownerKind)) {
 				context.orphanedSyntheticGroups.add(syntheticName);
+			}
+			if (!inlineSafeNames.has(syntheticName) && ownerKind !== syntheticName) {
+				const pairKey = [ownerKind, syntheticName].join('\u0000');
+				if (!context.conflictGroups.some((g) => g.join('\u0000') === pairKey)) {
+					context.conflictGroups.push([ownerKind, syntheticName]);
+				}
+				// A minted group's own body can ALSO self-conflict — e.g. a
+				// shared comma/element shape recurring across sibling rules
+				// (python's `_expression_list_group1` vs `assert_statement`'s
+				// own `commaSep1` repeat) confuses tree-sitter's LALR merge
+				// independent of the owner pairing above. A single-rule
+				// `conflicts` entry is tree-sitter's own documented way to
+				// request a GLR self-fork for a rule (see its own error
+				// resolution list: "Add a conflict for these rules:
+				// `<rule>`" with just the one name).
+				const selfKey = [syntheticName].join('\u0000');
+				if (!context.conflictGroups.some((g) => g.join('\u0000') === selfKey)) {
+					context.conflictGroups.push([syntheticName]);
+				}
 			}
 		}
 		// Re-run body-pattern replacement so any `groups:` body-pattern can match
@@ -725,19 +543,6 @@ export function wire<B extends GrammarJson = any>(config: WireConfig<B>, base?: 
 // wire() helpers
 // ---------------------------------------------------------------------------
 
-/**
- * For every polymorph parent, either wrap the author's rule fn (compose
- * — user runs first, variant transform on the result) or synthesize a
- * fresh rule fn that applies the variant patches to `original` directly.
- *
- * `context` is threaded in so parents whose name is a hidden rule (starts
- * with `_`) can fall back to reading their own body from
- * `context.deposits` — this is the case when a parent was synthesized as
- * an arm of an OUTER polymorph (e.g. `_visibility_modifier_pub` produced
- * by `visibility_modifier: {1:'pub'}` and then adopted as its own inner
- * polymorph parent). The outer runs first at iteration time and deposits
- * its arm body; the inner's parent fn reads that deposit as its base.
- */
 function composeOrSynthesizePolymorphParents(
 	rules: Record<string, RuleFn>,
 	polymorphs: PolymorphsConfig,
@@ -750,20 +555,6 @@ function composeOrSynthesizePolymorphParents(
 	}
 }
 
-/**
- * Build a rule fn for a polymorph parent. Base-body resolution order:
- *
- *   1. User-supplied `userFn` (from config.rules) — runs first, so any
- *      author-level field/keyword transforms see the base-shape rule
- *      tree and the variant transform applies on that output.
- *   2. For hidden-name parents (leading `_`) produced by an outer
- *      polymorph, read the body from `context.deposits` — the outer
- *      rule fn (which iterates at its base-grammar position, ahead of
- *      the injected hidden name) populates that deposit when its own
- *      variant transform resolves.
- *   3. Otherwise use `original` (the `previous` arg tree-sitter passes —
- *      the base grammar's body of this rule).
- */
 function buildPolymorphParentFn(
 	parent: string,
 	armMap: Record<string, string>,
@@ -788,20 +579,6 @@ function buildPolymorphParentFn(
 	};
 }
 
-/**
- * Inject one deferred-content rule fn per declared `_<parent>_<suffix>`
- * hidden rule. The fn reads captured content from `context.deposits` at
- * the moment tree-sitter iterates to it.
- *
- * Skips keys already filled by `composeOrSynthesizePolymorphParents` —
- * that happens when a hidden name is BOTH an arm of one polymorph AND
- * itself a polymorph parent (e.g. `_visibility_modifier_pub` = the
- * `pub` arm of `visibility_modifier` AND its own polymorph parent
- * splitting the inner `choice(self, super, crate, seq('in', _path))`).
- * Compose installs the parent fn there; its body-resolution logic reads
- * the outer's deposit directly (see `buildPolymorphParentFn`), so this
- * overwrite would drop the inner split.
- */
 function injectHiddenRulePlaceholders(
 	rules: Record<string, RuleFn>,
 	polymorphs: PolymorphsConfig,
@@ -817,35 +594,15 @@ function injectHiddenRulePlaceholders(
 	}
 }
 
-/**
- * Compute the visible-kind name for a polymorph variant.
- *
- * When the parent is itself a hidden rule (name starts with `_`) —
- * e.g. `_visibility_modifier_pub`, produced as an arm of an outer
- * polymorph — the leading underscore is stripped so the generated
- * variant kind (`visibility_modifier_pub_in_path`) is visible in the
- * parse tree. Without stripping, the visible alias target would also
- * lead with `_` and tree-sitter would hide it, collapsing the variant.
- *
- * Used by wire's injectHiddenRulePlaceholders AND transform.ts's
- * variant-resolution paths so both agree on the rule name.
- */
 export function polymorphVisibleName(parentKind: string, suffix: string): string {
 	const visibleParent = parentKind.startsWith('_') ? parentKind.slice(1) : parentKind;
 	return `${visibleParent}_${suffix}`;
 }
 
-/** Hidden rule name for a polymorph variant — underscore-prefixed visible form. */
 export function polymorphHiddenName(parentKind: string, suffix: string): string {
 	return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
 
-/**
- * For each transforms entry, wrap (or synthesize) its rule fn to apply
- * the declared patch-maps via `transform(original, ...patchSets)`. If
- * the author already has a `rules:` entry for the same kind, compose:
- * user fn runs first, transform patches apply on its output.
- */
 function composeOrSynthesizeTransformParents(rules: Record<string, RuleFn>, transforms: TransformsConfig): void {
 	for (const [kind, entry] of Object.entries(transforms)) {
 		if (!entry) continue;
@@ -855,13 +612,6 @@ function composeOrSynthesizeTransformParents(rules: Record<string, RuleFn>, tran
 	}
 }
 
-/**
- * Build a rule fn for a transforms entry. Invokes the user-supplied
- * fn first (if present), then applies each patch-map sequentially via
- * `transform(original, ...patchSets)`. Matches `transform()`'s
- * rest-parameter signature so multi-patch-set rules behave exactly as
- * they did when the call was written inline in the rule body.
- */
 function buildTransformParentFn(patchSets: readonly PatchMap[], userFn: SittirRuleFn | undefined): SittirRuleFn {
 	return function wiredTransformParent($, original) {
 		const base = userFn ? userFn($, original) : original;
@@ -869,23 +619,6 @@ function buildTransformParentFn(patchSets: readonly PatchMap[], userFn: SittirRu
 	};
 }
 
-/**
- * Walk every patch value in the transforms config at wire() time and
- * pre-register the hidden-rule name each placeholder would generate
- * at rule-fn-call time. Placeholders map to hidden names as follows:
- *
- * - `field('x')` (one-arg) → potentially `_kw_x` (only if captured
- *   content is a bare string at runtime; pre-register regardless — an
- *   unused deferred fn is harmless).
- * - `variant('y')` under rule kind `K` → `_K_y`.
- * - `alias('z')` (one-arg) → `_z`.
- *
- * Two-arg `field(name, content)` calls are already resolved to native
- * rules at module-load time (by `field.ts::field`) and their
- * `_kw_<name>` registrations route through the wire context directly
- * when a context is active. This function only needs to handle
- * placeholder objects that remain unresolved until `transform()` fires.
- */
 function injectTransformHiddenRulePlaceholders(
 	rules: Record<string, RuleFn>,
 	transforms: TransformsConfig,
@@ -902,15 +635,6 @@ function injectTransformHiddenRulePlaceholders(
 	}
 }
 
-/**
- * Inspect a single patch value. If it's a recognised placeholder,
- * compute the hidden rule name it would produce and inject a deferred-
- * content fn in `rules` for that name. No-op for non-placeholder
- * values (already-resolved native rules, two-arg field results, etc.).
- *
- * @param parentKind - For variant placeholders: the rule kind the
- *   placeholder lives under, used for the auto-prefix `_<parent>_<suffix>`.
- */
 function registerHiddenRuleForPlaceholder(
 	value: unknown,
 	parentKind: string,
@@ -934,32 +658,6 @@ function registerHiddenRuleForPlaceholder(
 	}
 }
 
-/**
- * Build the deferred-content placeholder for a single hidden rule.
- *
- * @remarks
- * The returned fn is invoked by tree-sitter (or sittir's grammarFn)
- * during rule iteration. Resolution order — first match wins:
- *
- *   1. **Wire deposit** — content captured at `transform()` /
- *      `variant()` / `alias()` resolve time via
- *      `wireRegisterSyntheticRule`. This is the authoritative source
- *      when a placeholder actually synthesizes.
- *
- *   2. **Pre-existing base rule (`previous`)** — when the hidden name
- *      already exists in the base grammar (e.g. rust's `_kw_move`
- *      registered by `dsl/enrich.ts` as `STRING('move')`, then
- *      referenced via `$._kw_move` inside async_block / gen_block /
- *      closure_expression). The deferred fn receives the pre-existing
- *      base rule as its second argument — returning it preserves the
- *      base body when no deposit overrides it. Without this fallback,
- *      the deferred fn would overwrite enrich's good content with
- *      `blank()`, breaking every rule that uses the hidden symbol.
- *
- *   3. **`blank()` fallback** — when neither source has content.
- *      Normally consumed by `evaluate`'s `prunePlaceholderOrphans` so
- *      BLANK orphans don't pollute the grammar.
- */
 function makeDeferredContentFn(context: WireContext, hiddenName: string): SittirRuleFn {
 	return function deferredHiddenRule(_$, previous) {
 		const body = context.deposits.get(hiddenName);
@@ -970,22 +668,12 @@ function makeDeferredContentFn(context: WireContext, hiddenName: string): Sittir
 	};
 }
 
-/**
- * Wrap every rule fn in the outgoing rules bag so the wire context is
- * active (and `currentRuleKind` set) while the fn runs. Saves and
- * restores both values so nested / re-entrant grammar calls don't leak
- * state into each other.
- */
 function wrapAllRuleFns(rules: Record<string, RuleFn>, context: WireContext): void {
 	for (const [name, fn] of Object.entries(rules)) {
 		rules[name] = wrapOneRuleFn(name, fn, context);
 	}
 }
 
-/**
- * Wrap a single rule fn. Captures the caller's previous context +
- * currentRuleKind, installs this context, runs the fn, restores.
- */
 function wrapOneRuleFn(name: string, fn: RuleFn, context: WireContext): RuleFn {
 	return function wiredRuleFn($, previous) {
 		const prevContext = currentContext;
@@ -1001,49 +689,14 @@ function wrapOneRuleFn(name: string, fn: RuleFn, context: WireContext): RuleFn {
 	};
 }
 
-/**
- * Wrap the user's `conflicts` callback so accumulated variant conflict
- * groups drain into its return list, each group's names symbolized
- * through the provided `$` proxy.
- *
- * If the user didn't supply a `conflicts`, return a fresh one that just
- * drains the accumulator. If the accumulator is empty when tree-sitter
- * invokes the callback, the wrapped fn still passes the user's list
- * through unchanged.
- */
 function wrapConflictsCallback(userConflicts: ConflictsFn | undefined, context: WireContext): ConflictsFn | undefined {
 	return buildWiredConflictsFn(userConflicts, context);
 }
 
-/**
- * Wrap the user's `inline` callback so synthesized `_kw_*` helpers drain
- * into the returned inline list after rule evaluation deposits them.
- *
- * @remarks
- * Tree-sitter evaluates metadata callbacks after rules, so the set is
- * complete by the time this runs. `_kw_*` helpers are leaf token rules,
- * which satisfies tree-sitter's inline restrictions.
- */
 function wrapInlineCallback(userInline: DollarFn<unknown[]> | undefined, context: WireContext): DollarFn<unknown[]> {
 	return buildWiredInlineFn(userInline, context);
 }
 
-/**
- * Build the wired conflicts callback that drains accumulated variant
- * conflict groups into the returned conflict list.
- *
- * @remarks
- * Always returns a drainer, even when the user didn't supply a conflicts
- * callback and no groups have registered yet. We can't know at wire-time
- * whether variants will register later (they're registered lazily when
- * rule fns run), so we install the drainer unconditionally. The drainer
- * short-circuits at call-time when `conflictGroups` is still empty,
- * keeping the overhead minimal when no variants are declared.
- *
- * @param userConflicts - The author's original conflicts callback, if any.
- * @param context - The active wire context whose `conflictGroups` are drained.
- * @returns A wrapped conflicts callback that appends symbolized group entries.
- */
 function buildWiredConflictsFn(userConflicts: ConflictsFn | undefined, context: WireContext): ConflictsFn {
 	return function wiredConflicts(this: unknown, $: unknown, previous?: unknown[][]): unknown[][] {
 		const base = userConflicts ? userConflicts.call(this, $, previous) : (previous ?? []);
@@ -1053,32 +706,38 @@ function buildWiredConflictsFn(userConflicts: ConflictsFn | undefined, context: 
 	};
 }
 
-/**
- * Build the wired inline callback that appends synthesized keyword-helper
- * names to the grammar's inline list.
- *
- * @remarks
- * Name-based dedupe matters here for the same reason as `appendDedup` in
- * evaluate.ts: every `$._kw_x` lookup produces a fresh symbol object.
- */
 function buildWiredInlineFn(userInline: DollarFn<unknown[]> | undefined, context: WireContext): DollarFn<unknown[]> {
 	return function wiredInline(this: unknown, $: unknown, previous?: unknown[]): unknown[] {
-		const base = userInline ? userInline.call(this, $, previous) : (previous ?? []);
+		let base = userInline ? userInline.call(this, $, previous) : (previous ?? []);
+		// Filter OUT visible-group mint sources (see WireContext.inlineRemovals):
+		// leaving `_src` in `inline:` makes tree-sitter erase the rule before
+		// table construction, vaporizing `alias($._src, $.visible)` — and with
+		// it the minted kind's entire parser identity — while the IR still
+		// models the kind. Un-inlining keeps the mint real on both sides.
+		if (context.inlineRemovals.size > 0) {
+			base = (base as unknown[]).filter((entry) => {
+				const symbol = entry as { type?: string; name?: string } | null;
+				return !(
+					symbol &&
+					typeof symbol === 'object' &&
+					symbol.type === 'SYMBOL' &&
+					typeof symbol.name === 'string' &&
+					context.inlineRemovals.has(symbol.name)
+				);
+			});
+		}
 		if (context.syntheticInline.size === 0) return base as unknown[];
 		const existingNames = collectInlineNames(base as unknown[]);
 		const appended: unknown[] = [];
 		for (const name of context.syntheticInline) {
 			if (existingNames.has(name)) continue;
+			if (context.inlineRemovals.has(name)) continue;
 			appended.push(nativeInlineRef($, name));
 		}
 		return appended.length === 0 ? (base as unknown[]) : [...(base as unknown[]), ...appended];
 	};
 }
 
-/**
- * Extract rule names from an `inline:` callback result using the same
- * name semantics tree-sitter stores in the final grammar.
- */
 function collectInlineNames(entries: readonly unknown[]): Set<string> {
 	const names = new Set<string>();
 	for (const entry of entries) {
@@ -1091,41 +750,12 @@ function collectInlineNames(entries: readonly unknown[]): Set<string> {
 	return names;
 }
 
-/**
- * Resolve an inline entry through the runtime's native symbol constructor.
- *
- * @remarks
- * Sittir's evaluator injects `symbol(name)` as part of the baseline DSL
- * globals; tree-sitter metadata callbacks always receive the `$` proxy, so
- * falling back to `$[name]` keeps the callback native-shaped there too.
- */
 function nativeInlineRef($: unknown, name: string): unknown {
 	const nativeSym = (globalThis as { sym?: (name: string) => unknown }).sym;
 	if (typeof nativeSym === 'function') return nativeSym(name);
 	return ($ as Record<string, unknown>)[name];
 }
 
-/**
- * Produce a symbol-shaped object for a variant-child kind name that
- * isn't a declared tree-sitter rule.
- *
- * @remarks
- * Variant conflict names (e.g. `array_expression_semi`) are parse-tree
- * node kinds produced by `alias($._rule, $.kind)` — they never appear
- * as declared rules in `opts.rules`, so tree-sitter's `RuleBuilder`
- * proxy returns a `ReferenceError` when we try `$[name]`.
- *
- * We construct the SYMBOL object directly. Tree-sitter's `normalize()`
- * accepts any object with a string `type` property (the default branch
- * of its switch), so `{type: 'SYMBOL', name}` passes through and its
- * `.name` is what gets stored in `grammar.conflicts`. This mirrors
- * what the legacy `installGrammarWrapper` did by post-appending bare
- * strings to the already-normalized conflicts array.
- *
- * `$` is unused but kept in the signature so any future caller that
- * wants to fall back to the proxy lookup for real rule names can do so
- * without changing the surface.
- */
 function symbolizeRef(_$: unknown, name: string): unknown {
 	return { type: 'SYMBOL', name };
 }
@@ -1134,7 +764,6 @@ function symbolizeRef(_$: unknown, name: string): unknown {
 // Wire-phase pattern find-and-replace
 // ---------------------------------------------------------------------------
 
-/** True when any value in `groups` is a function (body-pattern entry). */
 function hasBodyPatternGroups(groups: GroupsConfig): boolean {
 	for (const value of Object.values(groups)) {
 		if (typeof value === 'function') return true;
@@ -1142,37 +771,16 @@ function hasBodyPatternGroups(groups: GroupsConfig): boolean {
 	return false;
 }
 
-/**
- * Passthrough rule fn for base rules that wire couldn't otherwise reach.
- * Returns `previous` unchanged; the pattern-replacement pass wraps this
- * fn so the returned body is structurally walked and substituted.
- */
 const passthroughBaseRuleFn: SittirRuleFn = function passthroughBaseRuleFn(_$, previous) {
 	return previous;
 };
 
-/** Minimal candidate record for wire-phase pattern replacement. */
 interface WirePatternCandidate {
 	readonly name: string;
 	readonly body: RuntimeRule;
-	/** When set, every replacement site emits
-	 *  `alias($._<name>, $.<aliasAs>)` so tree-sitter produces a visible
-	 *  `aliasAs` CST node at each substitution. Set by `groups:` body-
-	 *  pattern entries; absent for legacy `_`-prefix candidates. */
 	readonly aliasAs?: string;
 }
 
-/**
- * Build a minimal `$` proxy that returns `{ type: 'SYMBOL', name }` for any
- * property lookup. Used to eagerly evaluate pattern-candidate rule fns so we
- * can inspect their bodies without requiring the full sittir evaluate pipeline.
- *
- * The proxy works in both the sittir runtime and tree-sitter's CLI runtime
- * (where `$.<name>` normally returns a CLI-native object) — both now agree on
- * UPPERCASE discriminants, so the explicit `SYMBOL` here matches either path.
- * Eagerly evaluated bodies are only compared structurally — they don't enter
- * the grammar itself.
- */
 function makeSimpleDollarProxy(): Record<string, unknown> {
 	return new Proxy({} as Record<string, unknown>, {
 		get(_target, name: string): unknown {
@@ -1181,26 +789,6 @@ function makeSimpleDollarProxy(): Record<string, unknown> {
 	});
 }
 
-/**
- * Returns true when a RuntimeRule body is complex enough to be a meaningful
- * structural pattern. Excludes trivial single-terminal bodies.
- *
- * Mirrors the `isComplexBody` check in evaluate.ts but operates on
- * RuntimeRule (unknown shape) rather than the typed sittir Rule<'evaluate'>
- * — both runtimes agree on UPPERCASE discriminants, so `typeEq` here is a
- * plain equality check (kept for the typed narrowing it gives callers).
- *
- * Exclusions:
- * - Single STRING / string literal → would match every identical literal
- * - Single SYMBOL reference → would match every reference to that rule
- * - Single PATTERN → would match every regex of the same value
- * - REPEAT/REPEAT1 wrapping a trivial STRING or SYMBOL (e.g. `repeat('x')`)
- *
- * Included:
- * - SEQ with ≥2 members (`_wildcard_pattern: ($) => '_'` is a STRING, excluded)
- * - CHOICE with ≥2 members
- * - REPEAT/REPEAT1 wrapping a non-trivial content node
- */
 function isComplexBodyRt(rule: RuntimeRule): boolean {
 	const r = rule as { type: string; members?: unknown[]; content?: unknown };
 	const t = r.type;
@@ -1215,31 +803,6 @@ function isComplexBodyRt(rule: RuntimeRule): boolean {
 	return false;
 }
 
-/**
- * Structural equality for two RuntimeRule bodies. Recursive.
- *
- * A candidate body evaluated in the sittir runtime matches a rule body
- * evaluated in tree-sitter's runtime because both agree on UPPERCASE
- * discriminants — no case reconciliation needed.
- *
- * Edge cases:
- * - PREC/PREC_LEFT/PREC_RIGHT wrappers: sittir's `prec()` helper strips the
- *   wrapper before storing the rule, so they won't appear in sittir-runtime
- *   bodies. Tree-sitter preserves them. We treat them as non-matching (return
- *   false for unknown types) — prec-wrapped patterns are more specific than
- *   the declared body and should NOT be replaced.
- * - FIELD wrappers: name AND content must match. A field carrying the same
- *   content but a different name is a different structural pattern.
- * - ALIAS: not handled — an alias is semantically distinct from its content.
- */
-/**
- * Normalize tree-sitter's `choice(x, BLANK)` to `optional(x)` so body-pattern
- * matching works on the wire/tree-sitter-CLI path, where the IR's later
- * `choice(x,BLANK)→optional(x)` normalization hasn't run yet. Without this,
- * an authored body fn that writes `optional($.x)` never matches the raw base
- * grammar's `choice($.x, BLANK)` form, so the alias-to-visible-kind never
- * fires (e.g. rust `attributed_parameter` stayed a phantom IR-only kind).
- */
 function unwrapOptionalChoiceRt(node: unknown): unknown {
 	if (!node || typeof node !== 'object') return node;
 	const r = node as { type?: string; members?: unknown[] };
@@ -1290,20 +853,6 @@ function patternBodyEqual(aIn: unknown, bIn: unknown): boolean {
 	return false;
 }
 
-/**
- * Recursively walk a rule body and replace any sub-tree that structurally
- * matches a pattern candidate with a SYMBOL reference. Returns the original
- * object reference when nothing changed (cheap change-detection for the caller).
- *
- * Always emits a bare tree-sitter-native `{type:'SYMBOL', name}` — this
- * function (via `applyWirePatternReplacement`) only ever runs on the
- * tree-sitter-CLI path (evaluate.ts's `applyPatternReplacement` is the
- * separate sittir-pipeline counterpart), so there is no sittir-runtime
- * `hidden`/`inline` stamping to preserve here.
- *
- * @param rule - The rule body to search (RuntimeRule, any shape).
- * @param candidates - The list of detected pattern candidates.
- */
 function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidate[]): unknown {
 	if (!rule || typeof rule !== 'object') return rule;
 	const r = rule as { type: string; members?: unknown[]; content?: unknown };
@@ -1356,9 +905,6 @@ function replaceInBodyRt(rule: unknown, candidates: readonly WirePatternCandidat
 	return rule;
 }
 
-/**
- * Wrap a rule fn so its return value has matching pattern sub-trees replaced.
- */
 function buildPatternReplacingFn(fn: RuleFn, candidates: readonly WirePatternCandidate[]): RuleFn {
 	return function patternReplacingRuleFn($, previous) {
 		const result = fn($, previous);
@@ -1366,25 +912,88 @@ function buildPatternReplacingFn(fn: RuleFn, candidates: readonly WirePatternCan
 	};
 }
 
-/**
- * Detect author-declared pattern rules and wrap all non-pattern rule fns so
- * their outputs have matching sub-trees replaced with SYMBOL references.
- *
- * This is the tree-sitter-runtime counterpart of evaluate.ts's
- * `applyPatternReplacement`. Whereas evaluate.ts can run a post-evaluation
- * pass over already-computed Rule<'evaluate'> objects, wire.ts must wrap rule fns because
- * tree-sitter evaluates them lazily one by one.
- *
- * A candidate is an authored `_`-prefixed rule in `outRules` whose eagerly-
- * evaluated body is complex (SEQ ≥2, CHOICE ≥2, or REPEAT with non-trivial
- * content). We try-evaluate each fn with a synthetic `$` proxy and `previous`
- * = undefined; rules that depend on `original` (transform-based fns) will
- * return undefined or throw, and are safely skipped.
- *
- * Note: evaluate.ts's post-evaluation `applyPatternReplacement` pass already
- * handles the sittir-pipeline path (after all rule fns have run). This wire.ts
- * pass handles the tree-sitter-CLI path, where evaluate.ts does not run.
- */
+// ---------------------------------------------------------------------------
+// visibleExternals — SYMBOL→ALIAS rewrite (tree-sitter-CLI-runtime path)
+// ---------------------------------------------------------------------------
+
+function withStringGlobalShim<T>(fn: () => T): T {
+	const g = globalThis as Record<string, unknown>;
+	const hadString = 'string' in g;
+	const previous = g.string;
+	if (!hadString) {
+		g.string = (value: string) => ({ type: 'STRING', value });
+	}
+	try {
+		return fn();
+	} finally {
+		if (!hadString) delete g.string;
+		else g.string = previous;
+	}
+}
+
+function rewriteVisibleExternalRefsRt(rule: unknown, hiddenToVisible: ReadonlyMap<string, string>): unknown {
+	if (!rule || typeof rule !== 'object') return rule;
+	const r = rule as { type: string; members?: unknown[]; content?: unknown; name?: string };
+	const t = r.type;
+	if (t === 'SYMBOL') {
+		const visibleName = hiddenToVisible.get(r.name ?? '');
+		if (visibleName === undefined) return rule;
+		return { type: 'ALIAS', content: rule, named: true, value: visibleName };
+	}
+	if (t === 'SEQ' || t === 'CHOICE') {
+		const members = r.members;
+		if (!Array.isArray(members)) return rule;
+		let changed = false;
+		const newMembers = members.map((m) => {
+			const replaced = rewriteVisibleExternalRefsRt(m, hiddenToVisible);
+			if (replaced !== m) changed = true;
+			return replaced;
+		});
+		return changed ? { ...r, members: newMembers } : rule;
+	}
+	if (
+		t === 'OPTIONAL' ||
+		t === 'REPEAT' ||
+		t === 'REPEAT1' ||
+		t === 'FIELD' ||
+		t === 'PREC' ||
+		t === 'PREC_LEFT' ||
+		t === 'PREC_RIGHT' ||
+		t === 'PREC_DYNAMIC' ||
+		t === 'TOKEN' ||
+		t === 'ALIAS'
+	) {
+		const newContent = rewriteVisibleExternalRefsRt(r.content, hiddenToVisible);
+		return newContent !== r.content ? { ...r, content: newContent } : rule;
+	}
+	return rule;
+}
+
+function buildVisibleExternalsRewritingFn(fn: RuleFn, hiddenToVisible: ReadonlyMap<string, string>): RuleFn {
+	return function visibleExternalsRewritingRuleFn($, previous) {
+		const result = fn($, previous);
+		return rewriteVisibleExternalRefsRt(result, hiddenToVisible);
+	};
+}
+
+function applyWireVisibleExternalsRewrite(
+	rules: Record<string, RuleFn>,
+	config: VisibleExternalsConfig | undefined
+): void {
+	if (!config) return;
+	const $ = makeSimpleDollarProxy();
+	const entries = withStringGlobalShim(() => config($));
+	if (!entries) return;
+	const hiddenToVisible = new Map<string, string>();
+	for (const hiddenName of Object.keys(entries)) {
+		hiddenToVisible.set(hiddenName, hiddenName.replace(/^_+/, ''));
+	}
+	if (hiddenToVisible.size === 0) return;
+	for (const [name, fn] of Object.entries(rules)) {
+		rules[name] = buildVisibleExternalsRewritingFn(fn, hiddenToVisible);
+	}
+}
+
 function applyWirePatternReplacement(
 	rules: Record<string, RuleFn>,
 	authoredRuleNames: ReadonlySet<string>,

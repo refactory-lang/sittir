@@ -144,11 +144,11 @@ function parsePath(pathStr) {
 var membersOf = (r) => r.members;
 var contentOf = (r) => r.content;
 function applyPath(rule, segments, patch, precStack) {
-  if (segments.length === 0) {
-    return typeof patch === "function" ? patch(rule, precStack) : patch;
-  }
   if (isPrecWrapper(rule)) {
     return descendThroughPrecWrapper(rule, segments, patch, precStack);
+  }
+  if (segments.length === 0) {
+    return typeof patch === "function" ? patch(rule, precStack) : patch;
   }
   if (isEnrichGroupLiftSymbol(rule)) {
     return descendThroughGroupLiftSymbol(rule, segments, patch, precStack);
@@ -198,6 +198,9 @@ function isEnrichGroupLiftSymbol(rule) {
 var groupLiftRuleMap;
 function setGroupLiftRuleMap(map) {
   groupLiftRuleMap = map;
+}
+function getGroupLiftRuleBody(name) {
+  return groupLiftRuleMap?.get(name);
 }
 function descendThroughGroupLiftSymbol(rule, segments, patch, precStack) {
   const name = rule.name;
@@ -411,14 +414,14 @@ var PREC_VARIANT_MAP = {
 function reconstructPrec(rule, newContent) {
   const t = rule.type;
   const value = rule.value ?? 0;
-  const prec = nativeRequired("prec");
+  const prec2 = nativeRequired("prec");
   const variant2 = PREC_VARIANT_MAP[t];
   if (variant2) {
-    const fn = prec[variant2];
+    const fn = prec2[variant2];
     if (typeof fn !== "function") throw new Error(`transform: native prec.${variant2} not available`);
     return fn(value, newContent);
   }
-  return prec(value, newContent);
+  return prec2(value, newContent);
 }
 function wrapInPrecStack(content, precStack, reconstructPrec2) {
   if (!precStack?.length) return content;
@@ -530,20 +533,6 @@ var RuleWalker = class {
     this.#rules = rules;
     this.diagnostics = diagnostics;
   }
-  /**
-   * THE canonical child-edge relation WITH the property path to reach each
-   * child — single source of truth for both "what are this rule's children"
-   * and "how do I address one for a targeted rewrite". Edges: `members`
-   * (seq/choice) at `['members', i]`, `content` (wrappers/variant/group/
-   * token/alias) at `['content']`, and the stamped separator rule (the
-   * nested `separator.value` — a single `Rule`, PR-S) at
-   * `['separator', 'value']` (`trailing`/`leading` live alongside it on the
-   * wrapper object but aren't rule-tree edges). Leaves return [].
-   * `childrenOf` derives from this so there is exactly ONE edge relation;
-   * path-aware callers (e.g. enrich's un-aliasing rewrite) walk the edges
-   * directly to record a rewrite path without maintaining a second,
-   * possibly-incomplete descent of their own.
-   */
   childEdgesOf(rule) {
     const out = [];
     const bag = rule;
@@ -556,25 +545,9 @@ var RuleWalker = class {
       out.push({ segment: ["separator", "value"], child: bag.separator.value });
     return out;
   }
-  /**
-   * THE canonical child-edge relation — single source of truth for "what
-   * are this rule's children" (see `childEdgesOf` for the edge/path detail).
-   * map, fold, find, foldDeep, and findDeep all use this relation
-   * identically — no narrower traversal exists.
-   */
   childrenOf(rule) {
     return this.childEdgesOf(rule).map((e) => e.child);
   }
-  /**
-   * Bottom-up rebuild. Applies `visit` to each child's mapped result, then
-   * rebuilds this node ONLY if a child changed. Returns the SAME reference
-   * when nothing changed — load-bearing for fixpoint loops that compare
-   * `r === before` (enrich). Each edge (`members`, `content`, separator)
-   * tracks its own change independently, so an untouched sibling edge keeps
-   * its exact input reference even when another edge on the same node is
-   * rebuilt. Rebuilds via the SAME `childrenOf` edge relation `fold`/`find`
-   * use.
-   */
   map(rule, visit) {
     const bag = rule;
     const patch = {};
@@ -597,13 +570,11 @@ var RuleWalker = class {
     }
     return Object.keys(patch).length > 0 ? { ...rule, ...patch } : rule;
   }
-  /** Pre-order accumulate: visits `rule` itself, then descends childrenOf. */
   fold(rule, init, f) {
     let acc = f(init, rule);
     for (const child of this.childrenOf(rule)) acc = this.fold(child, acc, f);
     return acc;
   }
-  /** Pre-order search: tests `rule` itself, short-circuits on first match. */
   find(rule, pred) {
     if (pred(rule)) return rule;
     for (const child of this.childrenOf(rule)) {
@@ -612,7 +583,6 @@ var RuleWalker = class {
     }
     return void 0;
   }
-  /** One-step SYMBOL resolve through the bound rules map. */
   deref(ref) {
     if (this.#rules === void 0) {
       throw new Error("RuleWalker.deref: walker was constructed without a rules map");
@@ -620,12 +590,6 @@ var RuleWalker = class {
     if (ref.type !== SYMBOL) return void 0;
     return this.#rules[ref.name];
   }
-  /**
-   * fold that additionally descends THROUGH symbol refs (cycle-safe). Each
-   * reachable rule node is visited at most once per invocation (seen-set
-   * keyed on node identity); symbol refs are followed through the bound
-   * rules map.
-   */
   foldDeep(rule, init, f) {
     const seen = /* @__PURE__ */ new Set();
     const go = (r, acc) => {
@@ -641,12 +605,6 @@ var RuleWalker = class {
     };
     return go(rule, init);
   }
-  /**
-   * find that additionally descends THROUGH symbol refs (cycle-safe). Each
-   * reachable rule node is visited at most once per invocation (seen-set
-   * keyed on node identity); symbol refs are followed through the bound
-   * rules map.
-   */
   findDeep(rule, pred) {
     const seen = /* @__PURE__ */ new Set();
     const go = (r) => {
@@ -749,22 +707,28 @@ function detectRepeatSeparator(resolved) {
 }
 
 // packages/codegen/src/types/parsekind-collisions.ts
+function kindKey(id, name) {
+  return id !== void 0 ? `#${id}` : `n:${name}`;
+}
 function diagnoseParseKindCollisions(input) {
   const byParseKind = /* @__PURE__ */ new Map();
   for (const value of input.values) {
     if (value.parseKind === void 0 || value.storageKind === void 0) continue;
-    const bucket = byParseKind.get(value.parseKind) ?? [];
+    const key = kindKey(value.parseKindId, value.parseKind);
+    const bucket = byParseKind.get(key) ?? [];
     bucket.push(value);
-    byParseKind.set(value.parseKind, bucket);
+    byParseKind.set(key, bucket);
   }
   const mergedByParseKind = /* @__PURE__ */ new Map();
   const diagnostics = [];
-  for (const [parseKind, bucket] of byParseKind) {
+  for (const [parseKey, bucket] of byParseKind) {
+    const parseKind = bucket[0].parseKind;
     const storageKinds = distinct(bucket.map((value) => value.storageKind));
-    if (storageKinds.length <= 1) continue;
+    const storageIdentities = distinct(bucket.map((value) => kindKey(value.storageKindId, value.storageKind)));
+    if (storageIdentities.length <= 1) continue;
     const signatures = distinct(bucket.map((value) => value.structuralSignature));
     if (signatures.length === 1) {
-      mergedByParseKind.set(parseKind, pickRepresentative(bucket, parseKind));
+      mergedByParseKind.set(parseKey, pickRepresentative(bucket, parseKind));
       continue;
     }
     diagnostics.push({
@@ -783,22 +747,22 @@ function diagnoseParseKindCollisions(input) {
   if (mergedByParseKind.size === 0) {
     return { values: input.values.map((value) => value.original), diagnostics };
   }
-  const emittedParseKinds = /* @__PURE__ */ new Set();
+  const emittedParseKeys = /* @__PURE__ */ new Set();
   const values = [];
   for (const value of input.values) {
-    const parseKind = value.parseKind;
-    if (parseKind === void 0) {
+    if (value.parseKind === void 0) {
       values.push(value.original);
       continue;
     }
-    const merged = mergedByParseKind.get(parseKind);
+    const parseKey = kindKey(value.parseKindId, value.parseKind);
+    const merged = mergedByParseKind.get(parseKey);
     if (!merged) {
       values.push(value.original);
       continue;
     }
-    if (emittedParseKinds.has(parseKind)) continue;
+    if (emittedParseKeys.has(parseKey)) continue;
     values.push(merged.original);
-    emittedParseKinds.add(parseKind);
+    emittedParseKeys.add(parseKey);
   }
   return { values, diagnostics };
 }
@@ -838,13 +802,17 @@ function ruleMatchesEmpty(rule) {
 function isPlainRepeatType2(t) {
   return t === "REPEAT";
 }
-function collectSlots(members) {
+function collectSlots(members, rulesBag) {
   const slots = [];
   for (const m of members) {
     if (!m || typeof m !== "object") continue;
     const r = m;
     const t = typeof r.type === "string" ? r.type : "";
     if (isStringType(t) || typeEq(t, "TOKEN") || isBlankType(t)) continue;
+    if (rulesBag && isSymbolType(t)) {
+      const name = typeof r.name === "string" ? r.name : void 0;
+      if (name !== void 0 && !(name in rulesBag)) continue;
+    }
     slots.push(m);
   }
   return slots;
@@ -953,22 +921,41 @@ function seqHasGenuineSeparatorVariability(members) {
   if (repeatMembers.length !== 1) return false;
   return repeatMemberHasGenuineSeparatorVariability(repeatMembers[0], flat);
 }
-function isInlineSafe(seqBody) {
+function isInlineSafe(seqBody, rulesBag) {
   if (!seqBody || typeof seqBody !== "object") return false;
   const r = seqBody;
   const t = typeof r.type === "string" ? r.type : "";
   if (isRepeatLike(t)) return !repeatHasGenuineSeparatorVariability(seqBody);
+  if (typeEq(t, "ALIAS")) return true;
   if (!isSeqType(t)) return false;
   const members = r.members;
   if (!Array.isArray(members)) return false;
   if (seqHasTopLevelRepeat(members)) return !seqHasGenuineSeparatorVariability(members);
-  const slots = collectSlots(members);
+  const slots = collectSlots(members, rulesBag);
   if (slots.length !== 1) return false;
   const core = unwrapPrec(slots[0]);
   if (!core || typeof core !== "object") return false;
   const coreType = core.type;
   if (typeof coreType !== "string") return false;
   return isFieldType(coreType) || isSymbolType(coreType);
+}
+function isSupertypeLike(body) {
+  const b = unwrapPrec(body);
+  if (!b || typeof b !== "object") return false;
+  const t = b.type;
+  if (typeof t !== "string" || !isChoiceType(t)) return false;
+  const members = b.members;
+  if (!Array.isArray(members) || members.length === 0) return false;
+  return members.every((m) => {
+    const core = unwrapPrec(m);
+    if (!core || typeof core !== "object") return false;
+    const c = core;
+    const coreType = c.type;
+    if (typeof coreType !== "string") return false;
+    if (isSymbolType(coreType) || isStringType(coreType)) return true;
+    if (typeEq(coreType, "ALIAS")) return c.named === true;
+    return false;
+  });
 }
 
 // packages/codegen/src/util/word-matcher.ts
@@ -1079,6 +1066,15 @@ function enrich(baseInput) {
       unaliasSink
     ) : rule;
   }
+  for (const groupName of Object.keys(clauseGroupRules)) {
+    const groupBody = clauseGroupRules[groupName];
+    if (!groupBody) continue;
+    const groupUnaliasResult = applyUnaliasDistinct(groupName, groupBody, rulesBag, kwRules, clauseGroupRules);
+    clauseGroupRules[groupName] = groupUnaliasResult.rule;
+    for (const diagnostic of groupUnaliasResult.diagnostics) {
+      recordUnaliasDiagnostic(unaliasSink, diagnostic);
+    }
+  }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
   setGroupLiftRuleMap({
     get: (n) => mergedRules[n],
@@ -1112,6 +1108,14 @@ function enrich(baseInput) {
       configurable: true
     });
   }
+  if (visibleGroupHiddenNames.size > 0) {
+    Object.defineProperty(result, ENRICH_VISIBLE_GROUP_SOURCES_KEY, {
+      value: visibleGroupHiddenNames,
+      enumerable: false,
+      writable: false,
+      configurable: true
+    });
+  }
   return result;
 }
 var ENRICH_CLAUSE_GROUPS_KEY = "__enrichedClauseGroups__";
@@ -1127,6 +1131,13 @@ function getEnrichClauseGroupOwners(grammar2) {
   const owners = grammar2[ENRICH_CLAUSE_GROUP_OWNERS_KEY];
   if (owners instanceof Map) return owners;
   return /* @__PURE__ */ new Map();
+}
+var ENRICH_VISIBLE_GROUP_SOURCES_KEY = "__enrichedVisibleGroupSources__";
+function getEnrichVisibleGroupSources(grammar2) {
+  if (!grammar2 || typeof grammar2 !== "object") return /* @__PURE__ */ new Set();
+  const names = grammar2[ENRICH_VISIBLE_GROUP_SOURCES_KEY];
+  if (names instanceof Set) return names;
+  return /* @__PURE__ */ new Set();
 }
 function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, clauseGroupRules, clauseDedupeMap, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, wordMatcher, unaliasSink) {
   const MAX_ITERATIONS = 8;
@@ -1145,7 +1156,7 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
     process.stderr.write(`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations
 `);
   }
-  const clauseHoistCounter = { opt: 0, grp: 0 };
+  const clauseHoistCounter = { opt: 0, grp: 0, supertypeNames };
   r = applyClauseHoist(
     ruleName,
     r,
@@ -1762,7 +1773,7 @@ function absorbTrailingListSeparators(members) {
   }
   return changed ? out : null;
 }
-function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners) {
+function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, ambientPrec) {
   const peeled = peelOptionalSeq(rule);
   if (peeled !== null) {
     const recursedSeqBody = applyClauseHoist(
@@ -1774,7 +1785,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       counter,
       groupDedupeMap,
       visibleGroupHiddenNames,
-      clauseGroupOwners
+      clauseGroupOwners,
+      ambientPrec
     );
     if (ruleMatchesEmpty(recursedSeqBody)) {
       counter.opt += 1;
@@ -1787,7 +1799,7 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         newMembers[peeled.seqIdx] = recursedSeqBody;
         return { ...rule, members: newMembers };
       }
-    } else if (isInlineSafe(recursedSeqBody)) {
+    } else if (isInlineSafe(recursedSeqBody, rulesBag)) {
       const name = clauseHoistSynthName(recursedSeqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules);
       if (name !== null) {
         if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
@@ -1810,7 +1822,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         groupDedupeMap,
         counter,
         rulesBag,
-        clauseGroupRules
+        clauseGroupRules,
+        ambientPrec
       );
       if (names !== null) {
         visibleGroupHiddenNames.add(names.hiddenName);
@@ -1837,6 +1850,46 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       }
     }
   }
+  {
+    const opt = peelOptional(rule);
+    if (opt.isOptional) {
+      const recursed = applyClauseHoist(
+        parentKind,
+        opt.inner,
+        rulesBag,
+        clauseGroupRules,
+        dedupeMap,
+        counter,
+        groupDedupeMap,
+        visibleGroupHiddenNames,
+        clauseGroupOwners,
+        ambientPrec
+      );
+      const promoted = mintStructuredChoiceArm(
+        recursed,
+        parentKind,
+        rulesBag,
+        clauseGroupRules,
+        counter,
+        groupDedupeMap,
+        visibleGroupHiddenNames,
+        clauseGroupOwners,
+        // Single non-BLANK arm: no siblings, no leading-name collisions.
+        /* @__PURE__ */ new Set(),
+        ambientPrec
+      );
+      const final = promoted ?? recursed;
+      if (final === opt.inner) return rule;
+      if (isOptionalType(rule.type)) {
+        return { ...rule, content: final };
+      }
+      const members = rule.members;
+      const idx = members.findIndex((m) => m.type !== "BLANK");
+      const newMembers = members.slice();
+      newMembers[idx] = final;
+      return { ...rule, members: newMembers };
+    }
+  }
   if (isSeqType(rule.type)) {
     const rawMembers = rule.members;
     if (!Array.isArray(rawMembers)) return rule;
@@ -1853,7 +1906,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         counter,
         groupDedupeMap,
         visibleGroupHiddenNames,
-        clauseGroupOwners
+        clauseGroupOwners,
+        ambientPrec
       );
       if (out !== m) changed = true;
       return out;
@@ -1863,6 +1917,15 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
   if (isChoiceType(rule.type)) {
     const members = rule.members;
     if (!Array.isArray(members)) return rule;
+    const leadingNameCounts = /* @__PURE__ */ new Map();
+    for (const m of members) {
+      const name = armLeadingSymbolName(m, rulesBag);
+      if (name !== void 0) leadingNameCounts.set(name, (leadingNameCounts.get(name) ?? 0) + 1);
+    }
+    const collidingLeadingNames = /* @__PURE__ */ new Set();
+    for (const [name, count] of leadingNameCounts) {
+      if (count >= 2) collidingLeadingNames.add(name);
+    }
     let changed = false;
     const newMembers = members.map((m) => {
       const out = applyClauseHoist(
@@ -1874,16 +1937,31 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         counter,
         groupDedupeMap,
         visibleGroupHiddenNames,
-        clauseGroupOwners
+        clauseGroupOwners,
+        ambientPrec
       );
-      if (out !== m) changed = true;
-      return out;
+      const promoted = mintStructuredChoiceArm(
+        out,
+        parentKind,
+        rulesBag,
+        clauseGroupRules,
+        counter,
+        groupDedupeMap,
+        visibleGroupHiddenNames,
+        clauseGroupOwners,
+        collidingLeadingNames,
+        ambientPrec
+      );
+      const final = promoted ?? out;
+      if (final !== m) changed = true;
+      return final;
     });
     return changed ? { ...rule, members: newMembers } : rule;
   }
   if (isRepeatType(rule.type) || isPrecWrapper(rule)) {
     const content = rule.content;
     if (!content) return rule;
+    const innerAmbientPrec = isPrecWrapper(rule) ? rule : ambientPrec;
     const newContent = applyClauseHoist(
       parentKind,
       content,
@@ -1893,7 +1971,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       counter,
       groupDedupeMap,
       visibleGroupHiddenNames,
-      clauseGroupOwners
+      clauseGroupOwners,
+      innerAmbientPrec
     );
     if (newContent === content) return rule;
     return { ...rule, content: newContent };
@@ -1910,7 +1989,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       counter,
       groupDedupeMap,
       visibleGroupHiddenNames,
-      clauseGroupOwners
+      clauseGroupOwners,
+      ambientPrec
     );
     if (newContent === content) return rule;
     return { ...rule, content: newContent };
@@ -2100,12 +2180,13 @@ function clauseHoistSynthName(seqBody, parentKind, dedupeMap, counter, rulesBag,
   clauseGroupRules[name] = seqBody;
   return name;
 }
-function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules) {
+function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, ambientPrec) {
   const key = canonicalStringifyClause(content);
+  const registeredBody = ambientPrec ? { ...ambientPrec, content } : content;
   const existing = groupDedupeMap[key];
   if (existing !== void 0) {
     const hiddenName2 = `_${existing}`;
-    if (!(hiddenName2 in clauseGroupRules)) clauseGroupRules[hiddenName2] = content;
+    if (!(hiddenName2 in clauseGroupRules)) clauseGroupRules[hiddenName2] = registeredBody;
     return { visibleName: existing, hiddenName: hiddenName2 };
   }
   counter.grp += 1;
@@ -2119,8 +2200,107 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
     return null;
   }
   groupDedupeMap[key] = visibleName;
-  clauseGroupRules[hiddenName] = content;
+  clauseGroupRules[hiddenName] = registeredBody;
   return { visibleName, hiddenName };
+}
+function promoteExistingHiddenRuleName(existingHiddenName, parentKind, groupDedupeMap, counter, rulesBag) {
+  const existing = groupDedupeMap[existingHiddenName];
+  if (existing !== void 0) return { visibleName: existing };
+  counter.grp += 1;
+  const visibleName = `${parentKind.replace(/^_+/, "")}_group${counter.grp}`;
+  if (visibleName in rulesBag) {
+    process.stderr.write(
+      `enrich: visible-group promotion skipped for '${parentKind}' \u2014 rule '${visibleName}' already exists in base.grammar.rules
+`
+    );
+    return null;
+  }
+  groupDedupeMap[existingHiddenName] = visibleName;
+  return { visibleName };
+}
+function armLeadingSymbolName(rule, rulesBag, seen = /* @__PURE__ */ new Set()) {
+  if (seen.has(rule)) return void 0;
+  seen.add(rule);
+  const t = rule.type;
+  if (typeof t !== "string") return void 0;
+  if (isSymbolType(t)) {
+    const name = rule.name;
+    if (typeof name !== "string") return void 0;
+    const hidden = rule.hidden;
+    if (!hidden) return name;
+    const body = rulesBag[name];
+    return body ? armLeadingSymbolName(body, rulesBag, seen) ?? name : name;
+  }
+  if (isSeqType(t)) {
+    const members = rule.members;
+    const first = Array.isArray(members) ? members[0] : void 0;
+    return first ? armLeadingSymbolName(first, rulesBag, seen) : void 0;
+  }
+  if (isChoiceType(t)) {
+    return void 0;
+  }
+  const content = rule.content;
+  return content ? armLeadingSymbolName(content, rulesBag, seen) : void 0;
+}
+function armStartsWithSymbol(rule, collidingLeadingNames, rulesBag) {
+  if (collidingLeadingNames.size === 0) return false;
+  const name = armLeadingSymbolName(rule, rulesBag);
+  return name !== void 0 && collidingLeadingNames.has(name);
+}
+function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, counter, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, collidingLeadingNames, ambientPrec) {
+  const t = arm.type;
+  if (typeof t !== "string") return null;
+  if (armStartsWithSymbol(arm, collidingLeadingNames, rulesBag)) return null;
+  if (isPrecWrapper(arm)) {
+    const content = arm.content;
+    if (!content) return null;
+    const minted = mintStructuredChoiceArm(
+      content,
+      parentKind,
+      rulesBag,
+      clauseGroupRules,
+      counter,
+      groupDedupeMap,
+      visibleGroupHiddenNames,
+      clauseGroupOwners,
+      collidingLeadingNames
+    );
+    if (!minted) return null;
+    return { ...arm, content: minted };
+  }
+  if (isSymbolType(t)) {
+    const name = arm.name;
+    if (typeof name !== "string" || !name.startsWith("_")) return null;
+    if (counter.supertypeNames?.has(name)) return null;
+    if (Object.hasOwn(clauseGroupRules, name)) return null;
+    const body = rulesBag[name];
+    if (!body || ruleMatchesEmpty(body) || isInlineSafe(body, rulesBag)) return null;
+    if (isSupertypeLike(body)) return null;
+    const promoted = promoteExistingHiddenRuleName(name, parentKind, groupDedupeMap, counter, rulesBag);
+    if (!promoted) return null;
+    visibleGroupHiddenNames.add(name);
+    if (!clauseGroupOwners.has(name)) clauseGroupOwners.set(name, parentKind);
+    return makeVisibleGroupAlias(arm, promoted.visibleName);
+  }
+  if (isSeqType(t) || isChoiceType(t)) {
+    if (ruleMatchesEmpty(arm) || isInlineSafe(arm, rulesBag)) return null;
+    if (isSupertypeLike(arm)) return null;
+    const names = visibleGroupSynthName(
+      arm,
+      parentKind,
+      groupDedupeMap,
+      counter,
+      rulesBag,
+      clauseGroupRules,
+      ambientPrec
+    );
+    if (!names) return null;
+    visibleGroupHiddenNames.add(names.hiddenName);
+    if (!clauseGroupOwners.has(names.hiddenName)) clauseGroupOwners.set(names.hiddenName, parentKind);
+    const symbolRef = makeGroupLiftSymbol(arm, names.hiddenName);
+    return makeVisibleGroupAlias(symbolRef, names.visibleName);
+  }
+  return null;
 }
 function makeGroupLiftSymbol(_referenceRule, name) {
   const symbol = nativeRuleFn("symbol", "sym");
@@ -2168,13 +2348,16 @@ function wire(config, base2) {
   const context = {
     deposits: /* @__PURE__ */ new Map(),
     syntheticInline: /* @__PURE__ */ new Set(),
+    inlineRemovals: /* @__PURE__ */ new Set(),
     orphanedSyntheticGroups: /* @__PURE__ */ new Set(),
     conflictGroups: [],
     refineForms: /* @__PURE__ */ new Map(),
     groups: cfg.groups,
     polymorphsConfig: cfg.polymorphs,
     renderAs: cfg.renderAs,
+    visibleExternals: cfg.visibleExternals,
     expectDiagnostics: cfg.expectDiagnostics,
+    expectTestFailures: cfg.expectTestFailures,
     currentRuleKind: null,
     authoredRuleNames: new Set(Object.keys(cfg.rules ?? {}))
   };
@@ -2185,7 +2368,7 @@ function wire(config, base2) {
   composeOrSynthesizePolymorphParents(outRules, polymorphs, context);
   injectHiddenRulePlaceholders(outRules, polymorphs, context);
   injectTransformHiddenRulePlaceholders(outRules, transforms, context);
-  if (baseArg && cfg.groups && hasBodyPatternGroups(cfg.groups)) {
+  if (baseArg && (cfg.groups && hasBodyPatternGroups(cfg.groups) || cfg.visibleExternals)) {
     const baseRules = baseArg.grammar?.rules ?? baseArg.rules ?? {};
     for (const baseName of Object.keys(baseRules)) {
       if (baseName in outRules) continue;
@@ -2194,13 +2377,28 @@ function wire(config, base2) {
   }
   wrapAllRuleFns(outRules, context);
   applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
+  applyWireVisibleExternalsRewrite(outRules, cfg.visibleExternals);
   if (baseArg) {
     for (const name of getEnrichClauseGroups(base2)) {
       context.syntheticInline.add(name);
     }
+    for (const name of getEnrichVisibleGroupSources(base2)) {
+      context.inlineRemovals.add(name);
+    }
+    const inlineSafeNames = getEnrichClauseGroups(base2);
     for (const [syntheticName, ownerKind] of getEnrichClauseGroupOwners(base2)) {
       if (context.authoredRuleNames.has(ownerKind)) {
         context.orphanedSyntheticGroups.add(syntheticName);
+      }
+      if (!inlineSafeNames.has(syntheticName) && ownerKind !== syntheticName) {
+        const pairKey = [ownerKind, syntheticName].join("\0");
+        if (!context.conflictGroups.some((g) => g.join("\0") === pairKey)) {
+          context.conflictGroups.push([ownerKind, syntheticName]);
+        }
+        const selfKey = [syntheticName].join("\0");
+        if (!context.conflictGroups.some((g) => g.join("\0") === selfKey)) {
+          context.conflictGroups.push([syntheticName]);
+        }
       }
     }
     applyWirePatternReplacement(outRules, context.authoredRuleNames, cfg.groups, context);
@@ -2348,12 +2546,19 @@ function buildWiredConflictsFn(userConflicts, context) {
 }
 function buildWiredInlineFn(userInline, context) {
   return function wiredInline($, previous) {
-    const base2 = userInline ? userInline.call(this, $, previous) : previous ?? [];
+    let base2 = userInline ? userInline.call(this, $, previous) : previous ?? [];
+    if (context.inlineRemovals.size > 0) {
+      base2 = base2.filter((entry) => {
+        const symbol = entry;
+        return !(symbol && typeof symbol === "object" && symbol.type === "SYMBOL" && typeof symbol.name === "string" && context.inlineRemovals.has(symbol.name));
+      });
+    }
     if (context.syntheticInline.size === 0) return base2;
     const existingNames = collectInlineNames(base2);
     const appended = [];
     for (const name of context.syntheticInline) {
       if (existingNames.has(name)) continue;
+      if (context.inlineRemovals.has(name)) continue;
       appended.push(nativeInlineRef($, name));
     }
     return appended.length === 0 ? base2 : [...base2, ...appended];
@@ -2487,6 +2692,66 @@ function buildPatternReplacingFn(fn, candidates) {
     const result = fn($, previous);
     return replaceInBodyRt(result, candidates);
   };
+}
+function withStringGlobalShim(fn) {
+  const g = globalThis;
+  const hadString = "string" in g;
+  const previous = g.string;
+  if (!hadString) {
+    g.string = (value) => ({ type: "STRING", value });
+  }
+  try {
+    return fn();
+  } finally {
+    if (!hadString) delete g.string;
+    else g.string = previous;
+  }
+}
+function rewriteVisibleExternalRefsRt(rule, hiddenToVisible) {
+  if (!rule || typeof rule !== "object") return rule;
+  const r = rule;
+  const t = r.type;
+  if (t === "SYMBOL") {
+    const visibleName = hiddenToVisible.get(r.name ?? "");
+    if (visibleName === void 0) return rule;
+    return { type: "ALIAS", content: rule, named: true, value: visibleName };
+  }
+  if (t === "SEQ" || t === "CHOICE") {
+    const members = r.members;
+    if (!Array.isArray(members)) return rule;
+    let changed = false;
+    const newMembers = members.map((m) => {
+      const replaced = rewriteVisibleExternalRefsRt(m, hiddenToVisible);
+      if (replaced !== m) changed = true;
+      return replaced;
+    });
+    return changed ? { ...r, members: newMembers } : rule;
+  }
+  if (t === "OPTIONAL" || t === "REPEAT" || t === "REPEAT1" || t === "FIELD" || t === "PREC" || t === "PREC_LEFT" || t === "PREC_RIGHT" || t === "PREC_DYNAMIC" || t === "TOKEN" || t === "ALIAS") {
+    const newContent = rewriteVisibleExternalRefsRt(r.content, hiddenToVisible);
+    return newContent !== r.content ? { ...r, content: newContent } : rule;
+  }
+  return rule;
+}
+function buildVisibleExternalsRewritingFn(fn, hiddenToVisible) {
+  return function visibleExternalsRewritingRuleFn($, previous) {
+    const result = fn($, previous);
+    return rewriteVisibleExternalRefsRt(result, hiddenToVisible);
+  };
+}
+function applyWireVisibleExternalsRewrite(rules, config) {
+  if (!config) return;
+  const $ = makeSimpleDollarProxy();
+  const entries = withStringGlobalShim(() => config($));
+  if (!entries) return;
+  const hiddenToVisible = /* @__PURE__ */ new Map();
+  for (const hiddenName of Object.keys(entries)) {
+    hiddenToVisible.set(hiddenName, hiddenName.replace(/^_+/, ""));
+  }
+  if (hiddenToVisible.size === 0) return;
+  for (const [name, fn] of Object.entries(rules)) {
+    rules[name] = buildVisibleExternalsRewritingFn(fn, hiddenToVisible);
+  }
 }
 function applyWirePatternReplacement(rules, authoredRuleNames, groups, context) {
   const candidates = [];
@@ -2866,13 +3131,29 @@ function resolvePatch(patch, originalMember, precStack) {
     if (!parentKind) {
       throw new Error(`variant('${patch.name}'): no current rule kind \u2014 variant() must be used inside a rule callback`);
     }
+    const visibleName = polymorphVisibleName(parentKind, patch.name);
+    if (originalMember.type === "ALIAS") {
+      const content = originalMember.content;
+      if (content?.type === "SYMBOL" && typeof content.name === "string") {
+        const body = getGroupLiftRuleBody(content.name);
+        if (body !== void 0) {
+          const depositName = polymorphHiddenName(parentKind, patch.name);
+          wireRegisterSyntheticRule(depositName, body);
+          return {
+            ...originalMember,
+            content: { ...content, name: depositName },
+            value: visibleName
+          };
+        }
+      }
+      return { ...originalMember, value: visibleName };
+    }
     if (variantBranchIsUnmaterializable(originalMember)) {
       return {
         ...deField(originalMember),
         metadata: makeRuleMetadata({ fieldSource: "override" })
       };
     }
-    const visibleName = polymorphVisibleName(parentKind, patch.name);
     const hiddenName = polymorphHiddenName(parentKind, patch.name);
     return registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack));
   }
@@ -3032,12 +3313,10 @@ function matchesEmpty(rule) {
   if (isOptionalType(t)) return true;
   if (isPlainRepeatType(t)) return true;
   if (isChoiceType(t)) {
-    const members = rule.members;
-    return members.some((m) => matchesEmpty(m));
+    return membersOf2(rule).some((m) => matchesEmpty(m));
   }
   if (isSeqType(t)) {
-    const members = rule.members;
-    return members.every((m) => matchesEmpty(m));
+    return membersOf2(rule).every((m) => matchesEmpty(m));
   }
   return false;
 }
@@ -3056,18 +3335,18 @@ function extractNonEmpty(rule) {
     return { nonEmpty };
   }
   if (isOptionalType(t)) {
-    const inner = rule.content;
+    const inner = contentOf2(rule);
     return matchesEmpty(inner) ? extractNonEmpty(inner) : { nonEmpty: inner };
   }
   if (isChoiceType(t)) {
-    const members = rule.members;
+    const members = membersOf2(rule);
     const nonEmpty = members.filter((m) => !matchesEmpty(m));
     if (nonEmpty.length === 0) return null;
     if (nonEmpty.length === 1) return { nonEmpty: nonEmpty[0] };
     return { nonEmpty: { type: t, members: nonEmpty } };
   }
   if (isSeqType(t)) {
-    const members = [...rule.members];
+    const members = [...membersOf2(rule)];
     for (let i = 0; i < members.length; i++) {
       const factored = extractNonEmpty(members[i]);
       if (factored) {
@@ -3107,11 +3386,6 @@ var overrides_default = grammar(
   wire(
     {
       name: "python",
-      // Structural-whitespace role bindings — declared inline in the
-      // externals callback. `role(symbolRef, name)` returns the symbol
-      // unchanged (so externals still receives a valid token reference)
-      // and records the binding on a per-grammar accumulator that Link
-      // reads to drive symbol resolution. No more dummy `_indent` rules.
       externals: ($, prev) => {
         role($._indent, "indent");
         role($._dedent, "dedent");
@@ -3120,140 +3394,30 @@ var overrides_default = grammar(
       },
       conflicts: ($, previous) => [
         ...previous ?? [],
-        // expression_statement tuple-variant extraction: the bare
-        // `expression` arm and the hoisted `_expression_statement_tuple`
-        // both start with `expression • …`. In the base grammar
-        // tree-sitter's LR(1) table merged the common prefix into a
-        // single state; with the tuple form lifted into its own hidden
-        // rule, tree-sitter needs an explicit GLR fork group to decide
-        // between the bare expression and the tuple form on the `,`
-        // suffix that only the tuple accepts.
         [$.expression_statement, $._expression_statement_tuple],
-        // except_clause variant split: the `as` form (`except E as e:`)
-        // and the comma-list form (`except E1, E2:`) both begin with
-        // `field('value', expression) • …` and only diverge on the `as` /
-        // `,` continuation. Lifting each arm into its own hidden rule
-        // (`_except_clause_as` / `_except_clause_list`) requires an explicit
-        // GLR fork to decide between them after the shared prefix.
         [$._except_clause_as, $._except_clause_list],
-        // The `as` form (`except E as e:`) overlaps with `as_pattern`
-        // (`E as e`) after the shared `expression 'as'` prefix — fork.
-        [$.as_pattern, $._except_clause_as]
+        [$.as_pattern, $._except_clause_as],
+        [$._expressions, $.expression_list]
       ],
-      // EXPERIMENT (see `_except_clause_as` in `rules`). The real fix is enrich
-      // auto-hoisting inline-safe groups nested inside variant arms — FOLLOWUP.
-      // Inline the hoisted group into tree-sitter so the `as_pattern` LR overlap
-      // dissolves exactly as the base grammar resolves it (no extra conflict
-      // needed — the `as` is inline in `_except_clause_as` at parse time).
       inline: ($, previous) => [...previous ?? [], $._except_clause_as_optional1],
+      visibleExternals: (_$) => ({
+        _newline: string("\n")
+      }),
       polymorphs: {
         assignment: { "1/0": "eq", "1/1": "type", "1/2": "typed" },
-        // expression_statement: bare expression / comma-separated tuple
-        // form / assignment / augmented_assignment / yield. Arms 0, 2,
-        // 3, 4 are bare symbol refs to existing visible kinds — the
-        // classifier treats the all-symbol shape as canonical, so they
-        // need no adoption. Arm 1 is the structural seq (tuple form);
-        // adopting it wraps the seq in an alias so the rule becomes an
-        // all-symbol choice from the walker's perspective. The
-        // `conflicts` entry above tells tree-sitter to fork between
-        // `expression` and `_expression_statement_tuple` when the LR
-        // table sees `expression • …` and needs to decide on the `,`
-        // continuation only the tuple form accepts.
         expression_statement: {
           1: "tuple"
         },
-        // with_clause: bare (`a, b, c`) vs parenthesized (`(a, b, c)`).
-        // Same with_item content on both arms; paren form wraps with
-        // '(' ... ')'. Split per variant so each owns its template.
         with_clause: {
           0: "bare",
           1: "paren"
         },
-        // _match_block: base rule is
-        //   choice(
-        //     seq($._indent, repeat(field('alternative', $.case_clause)),
-        //         $._dedent),                         // arm 0 — block form
-        //     $._newline,                             // arm 1 — empty form
-        //   )
-        // Heterogeneous: one seq + one bare symbol. Splitting the seq arm
-        // into `_match_block_block` leaves the remaining choice as all
-        // symbol-like (alias + symbol) — canonical.
         _match_block: { 0: "block" },
-        // dict_pattern: base rule is
-        //   seq('{', optional(seq(
-        //     commaSep1(choice($._key_value_pattern, $.splat_pattern)),
-        //     optional(','),
-        //   )), '}')
-        // liftCommaSep converts the commaSep1 into a repeat1 with
-        // separator, so after simplify the path to the heterogeneous
-        // choice is 1/0/0 (optional → seq → repeat1 → choice). One arm is
-        // the inlined `_key_value_pattern` seq (tree-sitter wraps the
-        // hidden rule in an alias); the other is `splat_pattern`.
-        // Splitting the key-value arm into `dict_pattern_kv` leaves the
-        // remaining choice all symbol-like. Requires infra (B)'s alias
-        // descent in applyPath.
         dict_pattern: { "1/0/0/0": "kv" },
-        // _simple_pattern: base rule is
-        //   prec(1, choice(
-        //     class_pattern,               ← 0
-        //     splat_pattern,               ← 1
-        //     union_pattern,               ← 2
-        //     alias(_list_pattern, …),     ← 3
-        //     alias(_tuple_pattern, …),    ← 4
-        //     dict_pattern,                ← 5
-        //     string,                      ← 6
-        //     concatenated_string,         ← 7
-        //     true,                        ← 8
-        //     false,                       ← 9
-        //     none,                        ← 10
-        //     seq(optional('-'),           ← 11 — negative literal arm
-        //         choice(integer, float)),
-        //     complex_pattern,             ← 12
-        //     dotted_name,                 ← 13
-        //     '_',                         ← 14
-        //   ))
-        // Arm 11 is a SEQ containing an optional anonymous '-' token.
-        // The anonymous token is not a named child, so the parent template
-        // `{{ children | join(" ") }}` renders only the integer/float,
-        // silently dropping '-' for negative patterns like `-1` or `-1.0`.
-        // Adopting arm 11 as `simple_pattern_negative` (visible kind,
-        // leading '_' stripped per polymorphVisibleName convention) gives it
-        // its own template that includes the '-' prefix literal.
-        //
-        // Note: `_simple_pattern` is a hidden rule, so no conflicts entry
-        // is needed — tree-sitter inlines it into parent rules directly.
-        // The visible variant kind is `simple_pattern_negative`.
         _simple_pattern: { "11": "negative" },
-        // except_clause: base rule is
-        //   seq('except', optional('*'), optional(choice(
-        //     seq(field('value', expr), optional(seq('as', field('alias', expr)))),  ← arm 0 "as" form
-        //     commaSep1(field('value', expr)),                                        ← arm 1 comma-list form
-        //   )), ':', _suite)
-        // The two arms have DIFFERENT field sets (arm 0: value + optional
-        // alias; arm 1: repeated value), so the cross-branch field merge
-        // (hoistSharedFieldFromBranchesForChoice) can't fuse them — the
-        // choice reaches derivation as the non-canonical
-        // `seq-member-choice-needs-variant-or-merge` shape (hard error).
-        // Split per variant so each form owns its template. Path: seq pos 2
-        // = the optional, `/0` = its choice content, `/0`,`/1` = the arms.
-        // `except_clause` is visible, but the arms share the `expression`
-        // prefix; if tree-sitter reports an unresolved conflict between the
-        // aliased forms, add `[$.except_clause_as, $.except_clause_list]` to
-        // `conflicts`.
         except_clause: { "2/0/0": "as", "2/0/1": "list" }
       },
       groups: {
-        // comparison_operator: each comparator pair is
-        // seq(field('operators', choice(...)), primary_expression).
-        // Without this lift the parent's $children flattens to alternating
-        // operator / primary_expression entries joined in sequence, losing
-        // the per-pair grouping needed to render `a < b <= c` correctly.
-        // `comparison_operator` is: prec.left(seq(primary_expression,
-        //   repeat1(seq(field('operators', choice(...)), primary_expression)))).
-        // The inner seq of the repeat1 is the multi-slot repeated unit —
-        // a multi-slot repeated unit must be a visible node so the flat
-        // parse can be reconstructed. This is step 1 of making multiplicity
-        // intrinsic; the first groups: registration in python overrides.
         comparison_operator_comparator: ($) => seq(
           field(
             "operators",
@@ -3275,162 +3439,87 @@ var overrides_default = grammar(
         )
       },
       transforms: {
-        // argument_list: name the naked args choice (was an unresolvable
-        // `content` slot). expression | list_splat | dictionary_splat |
-        // parenthesized_expression | keyword_argument
         argument_list: {
           1: field("arguments")
         },
-        // class_pattern: 2 field(s)
+        expression_list: {
+          1: field("tail")
+        },
+        pattern_list: {
+          1: field("tail")
+        },
         class_pattern: {
           2: field("arguments")
-          // case_pattern [struct=1]
         },
-        // comparison_operator: 2 field(s)
         comparison_operator: {
           0: field("left"),
-          // primary_expression [struct=0]
           1: field("comparators")
-          // primary_expression [struct=1]
         },
-        // complex_pattern: real/imaginary (0,1) + the `+`/`-` operator enum (2)
-        // and a trailing number choice (3). Positions 2 and 3 are both unnamed
-        // → 2 `content` slots; name the operator so the number stays the single
-        // sanctioned `content` (base-rule field, complex_pattern is not a polymorph).
         complex_pattern: {
           0: field("real"),
-          // integer | float [struct=0]
           1: field("imaginary"),
-          // integer | float [struct=1]
           2: field("operator")
-          // '+' | '-'
         },
-        // conditional_expression: 3 field(s)
         conditional_expression: {
           0: field("body"),
-          // expression [struct=0]
           2: field("condition"),
-          // expression [struct=1]
           4: field("alternative")
-          // expression [struct=2]
         },
-        // constrained_type: 2 field(s)
         constrained_type: {
           0: field("base_type"),
-          // type [struct=0]
           2: field("constraint")
-          // type [struct=1]
         },
-        // decorator: 2 field(s)
         decorator: {
           2: field("newline")
-          //  [struct=1]
         },
-        // dictionary: name the naked entries choice (pair | dictionary_splat)
         dictionary: {
           1: field("entries")
         },
-        // exec_statement: grammar is seq('exec', code, optional(seq('in', exprs)))
-        // Template walker emits the `in` keyword as a literal at top level,
-        // which surfaces in rendering even when the optional(seq(...))
-        // didn't match. Wrap the optional as field('in_clause') so the
-        // whole clause (`in` + exprs) renders only when present.
         exec_statement: {
           2: field("in_clause")
         },
-        // for_statement / function_definition / with_statement: each
-        // starts with `optional('async')` at pos 0. Auto-promoted by
-        // enrich (016 task #30) as `field('async_marker', SYMBOL(_kw_async_marker))`.
-        // Wave 2's manual entries are now redundant.
-        // for_in_clause: prec.left(seq(optional('async'), 'for', ...)).
-        // The prec.left wrapper hides the seq from enrich's auto-promotion
-        // walker, so the position is still hand-promoted (016 task #30
-        // naming convention).
         for_in_clause: {
           "0/0": field("async_marker")
         },
-        // finally_clause: 1 field(s)
         finally_clause: {
           2: field("block")
-          // block [struct=0]
         },
-        // generic_type: 2 field(s)
         generic_type: {
           0: field("identifier")
-          // identifier [struct=0]
         },
-        // import_from_statement: 1 field(s)
         import_from_statement: {
           3: field("wildcard_import")
-          // wildcard_import [struct=0]
         },
-        // keyword_pattern: 2 field(s)
         keyword_pattern: {
           2: field("simple_pattern")
-          // _simple_pattern | class_pattern | complex_pattern | concatenated_string | dict_pattern | dotted_name | false | float | integer | list_pattern | none | splat_pattern | string | true | tuple_pattern | union_pattern [struct=1]
         },
-        // member_type: 2 field(s)
         member_type: {
           0: field("base_type")
-          // type [struct=0]
         },
-        // slice: 3 field(s)
         slice: {
           0: field("start"),
-          // expression [struct=0]
           2: field("stop"),
-          // expression [struct=1]
           3: field("step")
-          // expression [struct=2]
         },
-        // splat_pattern: base is `seq(choice('*', '**'), choice($.identifier, '_'))`.
-        // Position 1 is one semantic slot — "what's being splatted" —
-        // that can be a real identifier OR the `_` discard marker; the
-        // prior override only field-named the `_` arm (`'1/1'`), leaving
-        // the `$.identifier` arm unnamed. Both then derived the SAME
-        // kind-derived storageName ('identifier'), a storagename-
-        // collision whose last-write-wins merge silently dropped the
-        // `_` value. Field-naming the WHOLE choice (not one arm) makes
-        // this the same-name-both-positions "genuinely one combined
-        // slot" case: one named `identifier` slot unioning both values,
-        // same convention as `argument_list`'s naked-choice `1: field(...)` above.
         splat_pattern: {
           "0": field("operator"),
-          // '*' | '**'
           1: field("identifier")
-          // identifier | '_'
         },
-        // splat_type: 1 field(s)
         splat_type: {
           0: field("identifier")
-          // identifier [struct=0]
         },
-        // string: 3 field(s)
         string: {
           1: field("content")
-          // interpolation | string_content [struct=1]
         },
-        // type_alias_statement: wrap base position 0 (bare 'type' literal)
-        // as field('type') so $fields.type carries the keyword. Without
-        // this override, enrich's bare-leading-keyword pass (globally off
-        // — rust corpus regresses with it on) leaves the literal
-        // unwrapped, and $fields only has left/right. The spec-008-US7
-        // regression test (python type_alias_statement collision)
-        // assumes the wrapped form.
         type_alias_statement: {
           0: field("type")
         },
-        // try_statement: 3 field(s)
         try_statement: {
           3: field("except_clauses")
-          // except_clause [struct=0]
         },
-        // union_type: 2 field(s)
         union_type: {
           0: field("left"),
-          // type [struct=0]
           2: field("right")
-          // type [struct=1]
         }
       },
       rules: {
@@ -3438,117 +3527,45 @@ var overrides_default = grammar(
           let base2 = original.members;
           return choice(...base2.slice(0, -1), $.list_splat_pattern);
         },
-        // EXPERIMENT (manual; real fix = enrich should auto-hoist an inline-safe
-        // group nested inside a variant arm). The `except_clause` polymorph split
-        // auto-creates `_except_clause_as` = seq(value, optional(seq('as', alias)));
-        // enrich does NOT recurse into the variant arm to hoist the inner
-        // inline-safe group, so the emitter leaks `as` ungated
-        // (`except E:` -> `except E as:`). Redefine it with the inner group
-        // explicitly hoisted to `_except_clause_as_optional1` so the emitter
-        // inline+gates the `as`.
         _except_clause_as: ($) => seq(field("value", $.expression), optional($._except_clause_as_optional1)),
         _except_clause_as_optional1: ($) => seq("as", field("alias", $.expression)),
-        // Track B (separator-as-slot follow-up): _collection_elements/
-        // _parameters/_patterns are grammar-authored, standalone hidden
-        // rules (not sittir enrich synthesis) carrying genuine optional
-        // trailing/leading separator flanks — confirmed live (Task 2).
-        // Unlike Track A's enrich-synthesized `_<parent>_group<N>`
-        // helpers, there is no enrich pass to hook a visible-promotion
-        // alias into; these are pre-existing base-grammar rules referenced
-        // directly by their parents (`parameters`/`lambda_parameters` for
-        // `_parameters`; `tuple_pattern`/`list_pattern` for `_patterns`;
-        // `list`/`set`/`tuple` for `_collection_elements`).
-        //
-        // IMPORTANT — alias the SYMBOL at each REFERENCE SITE, never the
-        // hidden rule's OWN body. An earlier version of this fix redefined
-        // each hidden rule's body as `alias(previous, $.visibleName)`
-        // (`previous` being the rule's SEQ content, not a symbol).
-        // Tree-sitter's `flatten_grammar` doesn't wrap a non-symbol alias
-        // in a single container node — it pushes the alias down onto
-        // EVERY symbol step of the flattened production. `_parameters`'s
-        // production flattens to `[pattern, _patterns_repeat1?, ','?]`-
-        // shaped steps, so BOTH the first element and the hidden
-        // repeat-continuation helper each individually surfaced as
-        // separate `pattern_group`/`parameter_list` nodes — confirmed via
-        // probe-kind: `tuple_pattern` on `(a, b)` produced
-        // `pattern_group("a")` AND a second `pattern_group(", b")`, while
-        // the IR (correctly) expects exactly one value for that singular
-        // slot. Track A's already-proven mechanism aliases the SYMBOL at
-        // the reference site instead (`alias($._hiddenRule,
-        // $.visibleName)`), which produces exactly one container node
-        // regardless of the hidden rule's own internal structure
-        // (confirmed already working in this codebase: `_list_pattern_
-        // group1` is shared across 3 different parent rules, each
-        // aliasing the symbol at its own reference site, and correctly
-        // produces one node per occurrence). Applying that same pattern
-        // here.
-        //
-        // Naming: `patterns` and `collection_elements` are free (no
-        // existing kind by those names in python's grammar). `parameters`
-        // is NOT free — python already has a distinct VISIBLE `parameters`
-        // kind (`seq('(', optional($._parameters), ')')`, the parenthesized
-        // wrapper) — aliasing `_parameters` to `$.parameters` would collide
-        // with it. Named the promoted list `parameter_list` instead
-        // (verified no existing `parameter_list` kind either).
-        //
-        // `field()`-wrapping each reference site with the SAME name as
-        // the alias target is still required (orthogonal to the body-vs-
-        // reference-site fix above): `buildSlot`'s field-name derivation
-        // for an unnamed (bare-symbol) reference falls back to the RAW
-        // symbol name minus its leading underscore (`_parameters` ->
-        // `parameters`), independent of what the referenced symbol
-        // resolves to via alias. That diverges from
-        // `emitters/templates.ts`'s slot-reference naming for this same
-        // position (which follows the ALIAS-RESOLVED render rule's name,
-        // `parameter_list`) whenever the alias target differs from the
-        // raw symbol's stripped name — confirmed via a real cargo build
-        // failure (`ParametersTransport` has no field `parameter_list`).
-        // Explicitly field-wrapping each reference with the SAME name as
-        // its alias target realigns both derivations and eliminates the
-        // divergence, without touching any emitter.
-        // NOTE on field(): do NOT field()-wrap these alias references.
-        // `link.ts`'s `mintContentAliasKinds` (the pass that actually
-        // registers the visible kind from a reference-site alias) only
-        // mints when the alias is the IMMEDIATE content of `optional(...)`
-        // / a 2-member `CHOICE[x, BLANK]` (`isClauseHoistVisibleGroupAlias`'s
-        // `parentIsOptionalSeq` check) — its structural walk treats `field()`
-        // as an opaque wrapper (falls through the generic `content` case,
-        // which resets `parentIsOptionalSeq` to `false`), so interposing a
-        // `field()` between `optional(...)` and the alias silently
-        // prevents the mint entirely (confirmed: with field() present, the
-        // promoted kinds vanished — `no NodeMap render path`, kind absent
-        // from node-model.json5). This also means Bug 1's field()-wrap
-        // workaround (from the earlier body-alias mechanism) is no longer
-        // needed at all: with the reference resolving THROUGH the alias to
-        // the real `parameter_list`/`pattern_group`/`element_list` kind
-        // (not the mismatched `_parameters`/`_patterns`/
-        // `_collection_elements` hidden name), `buildSlot`'s bare-symbol
-        // field-name fallback (strip leading `_`) already produces the
-        // SAME name `emitters/templates.ts` derives — no divergence to
-        // paper over.
         parameters: ($) => seq("(", optional(alias($._parameters, $.parameter_list)), ")"),
-        // `lambda_parameters`'s base definition is the bare symbol
-        // `$ => $._parameters` (its whole body IS the reference). Aliasing
-        // this reference site too is a deliberate decision, not an
-        // oversight: `_parameters`'s separator variability is a property
-        // of the RULE, not of which parent references it — leaving this
-        // site unaliased would silently revert `lambda_parameters` to the
-        // ORIGINAL pre-feature behavior (hidden, AssembledMulti-
-        // classified, separator unreachable), defeating this feature for
-        // that reference site. (No `optional(...)` needed for the mint
-        // here — `parameters`'s reference site above already satisfies
-        // `parentIsOptionalSeq` and mints the kind; this site just needs
-        // to resolve through the same alias.)
         lambda_parameters: ($) => alias($._parameters, $.parameter_list),
         tuple_pattern: ($) => seq("(", optional(alias($._patterns, $.pattern_group)), ")"),
         list_pattern: ($) => seq("[", optional(alias($._patterns, $.pattern_group)), "]"),
         list: ($) => seq("[", optional(alias($._collection_elements, $.element_list)), "]"),
-        // `set`'s reference is MANDATORY (base: `seq('{', $._collection_elements, '}')`,
-        // no `optional(...)`) — it can't itself satisfy `parentIsOptionalSeq`,
-        // but doesn't need to: `list`/`tuple`'s optional-wrapped references
-        // mint the kind; this site just resolves through the same alias.
         set: ($) => seq("{", alias($._collection_elements, $.element_list), "}"),
-        tuple: ($) => seq("(", optional(alias($._collection_elements, $.element_list)), ")")
+        tuple: ($) => seq("(", optional(alias($._collection_elements, $.element_list)), ")"),
+        case_tuple_pattern: ($) => seq("(", optional(seq($.case_pattern, repeat(seq(",", $.case_pattern)), optional(","))), ")"),
+        case_list_pattern: ($) => seq("[", optional(seq($.case_pattern, repeat(seq(",", $.case_pattern)), optional(","))), "]"),
+        print_statement_group1: ($) => seq("print", $.chevron, repeat(seq(",", field("argument", $.expression))), optional(",")),
+        print_statement_group2: ($) => seq(
+          "print",
+          field("argument", $.expression),
+          repeat(seq(",", field("argument", $.expression))),
+          optional(",")
+        ),
+        print_statement: ($) => choice(prec(1, $.print_statement_group1), prec(-3, prec.dynamic(-1, $.print_statement_group2))),
+        _simple_pattern: ($) => prec(
+          1,
+          choice(
+            $.class_pattern,
+            $.splat_pattern,
+            $.union_pattern,
+            $.case_list_pattern,
+            $.case_tuple_pattern,
+            $.dict_pattern,
+            $.string,
+            $.concatenated_string,
+            $.true,
+            $.false,
+            $.none,
+            seq(optional("-"), choice($.integer, $.float)),
+            $.complex_pattern,
+            $.dotted_name,
+            "_"
+          )
+        )
       }
     },
     enrichedBase

@@ -9,6 +9,7 @@ export { run as profileFactory, type ProfileFactoryOptions } from './profile/fac
 export { run as bench, type BenchOptions } from './profile/bench.ts';
 export { run as benchCodemod, type BenchCodemodOptions } from './profile/codemod.ts';
 export { run as diffFailures, type DiffFailuresOptions } from './validate/diff.ts';
+export { run as defectHistogram, type DefectHistogramOptions } from './validate/defect-histogram.ts';
 export { run as dumpAstMismatches, type DumpAstMismatchesOptions } from './validate/dump-ast-mismatches.ts';
 export { run as checkBaseline, type CheckBaselineOptions } from './validate/baseline.ts';
 export { run as propose14, type Propose14Options } from './validate/propose-14.ts';

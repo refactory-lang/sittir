@@ -24,7 +24,13 @@ export type TreeNode<K extends NodeKind<PythonGrammar>> = BaseTreeNode<PythonGra
 export type LeafScalarMap = {};
 
 export type LeafStringMap = {
-	_async_marker: 'async';
+	pass_statement: 'pass';
+	break_statement: 'break';
+	continue_statement: 'continue';
+	true: 'True';
+	false: 'False';
+	none: 'None';
+	_unary_operator_operator: '+' | '-' | '~';
 	_augmented_assignment_operator:
 		| '+='
 		| '-='
@@ -39,221 +45,207 @@ export type LeafStringMap = {
 		| '&='
 		| '^='
 		| '|=';
-	_complex_pattern_operator: '+' | '-';
-	_kw_async_marker: 'async';
-	_kw_type: 'type';
+	_async_marker: 'async';
 	_splat_pattern_operator: '*' | '**';
-	_unary_operator_operator: '+' | '-' | '~';
-	break_statement: 'break';
-	continue_statement: 'continue';
-	false: 'False';
-	none: 'None';
-	pass_statement: 'pass';
-	true: 'True';
-	as: 'as';
-	async: 'async';
+	_complex_pattern_operator: '+' | '-';
+	import: 'import';
 	from: 'from';
+	__future__: '__future__';
+	as: 'as';
 	assert: 'assert';
+	return: 'return';
+	del: 'del';
+	raise: 'raise';
+	pass: 'pass';
+	break: 'break';
+	continue: 'continue';
+	if: 'if';
+	elif: 'elif';
+	else: 'else';
+	match: 'match';
+	case: 'case';
+	for: 'for';
+	in: 'in';
+	while: 'while';
+	try: 'try';
+	finally: 'finally';
+	with: 'with';
+	def: 'def';
+	global: 'global';
+	nonlocal: 'nonlocal';
+	exec: 'exec';
+	class: 'class';
+	_: '_';
+	not: 'not';
 	and: 'and';
 	or: 'or';
-	break: 'break';
-	case: 'case';
-	class: 'class';
-	if: 'if';
-	else: 'else';
-	continue: 'continue';
-	del: 'del';
-	elif: 'elif';
-	exec: 'exec';
-	in: 'in';
-	False: 'False';
-	finally: 'finally';
-	for: 'for';
-	def: 'def';
-	__future__: '__future__';
-	import: 'import';
-	global: 'global';
-	match: 'match';
-	None: 'None';
-	nonlocal: 'nonlocal';
-	not: 'not';
-	pass: 'pass';
-	print: 'print';
-	raise: 'raise';
-	return: 'return';
-	_: '_';
 	True: 'True';
-	try: 'try';
-	while: 'while';
-	with: 'with';
+	False: 'False';
+	None: 'None';
+	print: 'print';
+	async: 'async';
 };
 
 export const enum SyntaxKind {
-	_ArgumentListGroup1 = '_argument_list_group1',
+	Module = 'module',
+	SimpleStatements = '_simple_statements',
+	ImportStatement = 'import_statement',
+	RelativeImport = 'relative_import',
+	FutureImportStatement = 'future_import_statement',
+	ImportFromStatement = 'import_from_statement',
+	ImportList = '_import_list',
+	AliasedImport = 'aliased_import',
+	PrintStatement = 'print_statement',
+	Chevron = 'chevron',
+	AssertStatement = 'assert_statement',
+	ExpressionStatement = 'expression_statement',
+	NamedExpression = 'named_expression',
+	ReturnStatement = 'return_statement',
+	DeleteStatement = 'delete_statement',
+	RaiseStatement = 'raise_statement',
+	IfStatement = 'if_statement',
+	ElifClause = 'elif_clause',
+	ElseClause = 'else_clause',
+	MatchStatement = 'match_statement',
+	MatchBlock = '_match_block',
+	CaseClause = 'case_clause',
+	ForStatement = 'for_statement',
+	WhileStatement = 'while_statement',
+	TryStatement = 'try_statement',
+	ExceptClause = 'except_clause',
+	FinallyClause = 'finally_clause',
+	WithStatement = 'with_statement',
+	WithClause = 'with_clause',
+	WithItem = 'with_item',
+	FunctionDefinition = 'function_definition',
+	Parameters = 'parameters',
+	LambdaParameters = 'lambda_parameters',
+	ListSplat = 'list_splat',
+	DictionarySplat = 'dictionary_splat',
+	GlobalStatement = 'global_statement',
+	NonlocalStatement = 'nonlocal_statement',
+	ExecStatement = 'exec_statement',
+	TypeAliasStatement = 'type_alias_statement',
+	ClassDefinition = 'class_definition',
+	TypeParameter = 'type_parameter',
+	ParenthesizedListSplat = 'parenthesized_list_splat',
+	ArgumentList = 'argument_list',
+	DecoratedDefinition = 'decorated_definition',
+	Decorator = 'decorator',
+	Suite = '_suite',
+	Block = 'block',
+	ExpressionList = 'expression_list',
+	DottedName = 'dotted_name',
+	CasePattern = 'case_pattern',
 	_AsPattern = '_as_pattern',
+	UnionPattern = 'union_pattern',
+	DictPattern = 'dict_pattern',
+	KeyValuePattern = '_key_value_pattern',
+	KeywordPattern = 'keyword_pattern',
+	SplatPattern = 'splat_pattern',
+	ClassPattern = 'class_pattern',
+	ComplexPattern = 'complex_pattern',
+	_Parameters = '_parameters',
+	Patterns = '_patterns',
+	TuplePattern = 'tuple_pattern',
+	ListPattern = 'list_pattern',
+	DefaultParameter = 'default_parameter',
+	TypedDefaultParameter = 'typed_default_parameter',
+	ListSplatPattern = 'list_splat_pattern',
+	DictionarySplatPattern = 'dictionary_splat_pattern',
+	AsPattern = 'as_pattern',
+	NotOperator = 'not_operator',
+	BooleanOperator = 'boolean_operator',
+	BinaryOperator = 'binary_operator',
+	UnaryOperator = 'unary_operator',
+	ComparisonOperator = 'comparison_operator',
+	Lambda = 'lambda',
+	LambdaWithinForInClause = 'lambda_within_for_in_clause',
+	Assignment = 'assignment',
+	AugmentedAssignment = 'augmented_assignment',
+	PatternList = 'pattern_list',
+	Yield = 'yield',
+	Attribute = 'attribute',
+	Subscript = 'subscript',
+	Slice = 'slice',
+	Call = 'call',
+	TypedParameter = 'typed_parameter',
+	Type = 'type',
+	SplatType = 'splat_type',
+	GenericType = 'generic_type',
+	UnionType = 'union_type',
+	ConstrainedType = 'constrained_type',
+	MemberType = 'member_type',
+	KeywordArgument = 'keyword_argument',
+	List = 'list',
+	Set = 'set',
+	Tuple = 'tuple',
+	Dictionary = 'dictionary',
+	Pair = 'pair',
+	ListComprehension = 'list_comprehension',
+	DictionaryComprehension = 'dictionary_comprehension',
+	SetComprehension = 'set_comprehension',
+	GeneratorExpression = 'generator_expression',
+	ComprehensionClauses = '_comprehension_clauses',
+	ParenthesizedExpression = 'parenthesized_expression',
+	CollectionElements = '_collection_elements',
+	ForInClause = 'for_in_clause',
+	IfClause = 'if_clause',
+	ConditionalExpression = 'conditional_expression',
+	ConcatenatedString = 'concatenated_string',
+	String = 'string',
+	StringContent = 'string_content',
+	Interpolation = 'interpolation',
+	FormatSpecifier = 'format_specifier',
+	KeywordIdentifier = 'keyword_identifier',
+	Await = 'await',
+	RaiseStatementOptional1 = '_raise_statement_optional1',
+	ExceptClauseGroup1 = '_except_clause_group1',
+	FunctionDefinitionOptional1 = '_function_definition_optional1',
+	ArgumentListGroup1 = '_argument_list_group1',
+	ExpressionListGroup1 = '_expression_list_group1',
+	ListPatternGroup1 = '_list_pattern_group1',
+	DictPatternGroup2 = '_dict_pattern_group2',
+	PatternListGroup1 = '_pattern_list_group1',
+	SliceGroup1 = '_slice_group1',
+	DictionaryGroup1 = '_dictionary_group1',
+	ExceptClauseAs = '_except_clause_as',
+	ExceptClauseAsOptional1 = '_except_clause_as_optional1',
+	CaseTuplePattern = 'case_tuple_pattern',
+	CaseListPattern = 'case_list_pattern',
+	PrintStatementGroup1 = 'print_statement_group1',
+	PrintStatementGroup2 = 'print_statement_group2',
 	AssignmentEq = '_assignment_eq',
 	AssignmentType = '_assignment_type',
 	AssignmentTyped = '_assignment_typed',
-	CollectionElements = '_collection_elements',
-	ComparisonOperatorComparator = '_comparison_operator_comparator',
-	ComprehensionClauses = '_comprehension_clauses',
-	_DictPatternGroup1 = '_dict_pattern_group1',
-	_DictionaryGroup1 = '_dictionary_group1',
-	ExceptClauseAs = '_except_clause_as',
-	ExceptClauseAsOptional1 = '_except_clause_as_optional1',
-	ExceptClauseList = '_except_clause_list',
 	ExpressionStatementTuple = '_expression_statement_tuple',
-	FunctionDefinitionOptional1 = '_function_definition_optional1',
-	ImportList = '_import_list',
-	KeyValuePattern = '_key_value_pattern',
-	_ListPattern = '_list_pattern',
-	_ListPatternGroup1 = '_list_pattern_group1',
-	MatchBlock = '_match_block',
-	MatchBlockBlock = '_match_block_block',
-	_Parameters = '_parameters',
-	Patterns = '_patterns',
-	RaiseStatementOptional1 = '_raise_statement_optional1',
-	SimplePatternNegative = '_simple_pattern_negative',
-	SimpleStatements = '_simple_statements',
-	_SliceGroup1 = '_slice_group1',
-	Suite = '_suite',
-	_TuplePattern = '_tuple_pattern',
 	WithClauseBare = '_with_clause_bare',
 	WithClauseParen = '_with_clause_paren',
-	AliasedImport = 'aliased_import',
-	ArgumentList = 'argument_list',
-	AsPattern = 'as_pattern',
-	AssertStatement = 'assert_statement',
-	Assignment = 'assignment',
-	Attribute = 'attribute',
-	AugmentedAssignment = 'augmented_assignment',
-	Await = 'await',
-	BinaryOperator = 'binary_operator',
-	Block = 'block',
-	BooleanOperator = 'boolean_operator',
-	Call = 'call',
-	CaseClause = 'case_clause',
-	CasePattern = 'case_pattern',
-	Chevron = 'chevron',
-	ClassDefinition = 'class_definition',
-	ClassPattern = 'class_pattern',
-	ComparisonOperator = 'comparison_operator',
-	ComplexPattern = 'complex_pattern',
-	ConcatenatedString = 'concatenated_string',
-	ConditionalExpression = 'conditional_expression',
-	ConstrainedType = 'constrained_type',
-	DecoratedDefinition = 'decorated_definition',
-	Decorator = 'decorator',
-	DefaultParameter = 'default_parameter',
-	DeleteStatement = 'delete_statement',
-	DictPattern = 'dict_pattern',
-	Dictionary = 'dictionary',
-	DictionaryComprehension = 'dictionary_comprehension',
-	DictionarySplat = 'dictionary_splat',
-	DictionarySplatPattern = 'dictionary_splat_pattern',
-	DottedName = 'dotted_name',
-	ElifClause = 'elif_clause',
-	ElseClause = 'else_clause',
-	ExceptClause = 'except_clause',
-	ExecStatement = 'exec_statement',
-	ExpressionList = 'expression_list',
-	ExpressionStatement = 'expression_statement',
-	FinallyClause = 'finally_clause',
-	ForInClause = 'for_in_clause',
-	ForStatement = 'for_statement',
-	FormatSpecifier = 'format_specifier',
-	FunctionDefinition = 'function_definition',
-	FutureImportStatement = 'future_import_statement',
-	GeneratorExpression = 'generator_expression',
-	GenericType = 'generic_type',
-	GlobalStatement = 'global_statement',
-	IfClause = 'if_clause',
-	IfStatement = 'if_statement',
-	ImportFromStatement = 'import_from_statement',
-	ImportStatement = 'import_statement',
-	Interpolation = 'interpolation',
-	KeywordArgument = 'keyword_argument',
-	KeywordIdentifier = 'keyword_identifier',
-	KeywordPattern = 'keyword_pattern',
-	Lambda = 'lambda',
-	LambdaParameters = 'lambda_parameters',
-	LambdaWithinForInClause = 'lambda_within_for_in_clause',
-	List = 'list',
-	ListComprehension = 'list_comprehension',
-	ListPattern = 'list_pattern',
-	ListSplat = 'list_splat',
-	ListSplatPattern = 'list_splat_pattern',
-	MatchStatement = 'match_statement',
-	MemberType = 'member_type',
-	Module = 'module',
-	NamedExpression = 'named_expression',
-	NonlocalStatement = 'nonlocal_statement',
-	NotOperator = 'not_operator',
-	Pair = 'pair',
-	Parameters = 'parameters',
-	ParenthesizedExpression = 'parenthesized_expression',
-	ParenthesizedListSplat = 'parenthesized_list_splat',
-	PatternList = 'pattern_list',
-	PrintStatement = 'print_statement',
-	RaiseStatement = 'raise_statement',
-	RelativeImport = 'relative_import',
-	ReturnStatement = 'return_statement',
-	Set = 'set',
-	SetComprehension = 'set_comprehension',
-	Slice = 'slice',
-	SplatPattern = 'splat_pattern',
-	SplatType = 'splat_type',
-	String = 'string',
-	StringContent = 'string_content',
-	Subscript = 'subscript',
-	TryStatement = 'try_statement',
-	Tuple = 'tuple',
-	TuplePattern = 'tuple_pattern',
-	Type = 'type',
-	TypeAliasStatement = 'type_alias_statement',
-	TypeParameter = 'type_parameter',
-	TypedDefaultParameter = 'typed_default_parameter',
-	TypedParameter = 'typed_parameter',
-	UnaryOperator = 'unary_operator',
-	UnionPattern = 'union_pattern',
-	UnionType = 'union_type',
-	WhileStatement = 'while_statement',
-	WithClause = 'with_clause',
-	WithItem = 'with_item',
-	WithStatement = 'with_statement',
-	Yield = 'yield',
-	ListPatternGroup1 = 'list_pattern_group1',
-	ArgumentListGroup1 = 'argument_list_group1',
-	DictPatternGroup1 = 'dict_pattern_group1',
-	DictionaryGroup1 = 'dictionary_group1',
-	ElementList = 'element_list',
-	PatternGroup = 'pattern_group',
-	ParameterList = 'parameter_list',
-	SliceGroup1 = 'slice_group1',
-	AsyncMarker = '_async_marker',
-	AugmentedAssignmentOperator = '_augmented_assignment_operator',
-	ComplexPatternOperator = '_complex_pattern_operator',
-	IsNot = '_is_not',
-	KwAsyncMarker = '_kw_async_marker',
-	KwType = '_kw_type',
-	NotIn = '_not_in',
-	SplatPatternOperator = '_splat_pattern_operator',
-	UnaryOperatorOperator = '_unary_operator_operator',
+	MatchBlockBlock = '_match_block_block',
+	SimplePatternNegative = '_simple_pattern_negative',
+	ExceptClauseList = '_except_clause_list',
+	ComparisonOperatorComparator = '_comparison_operator_comparator',
+	ImportPrefix = 'import_prefix',
+	PassStatement = 'pass_statement',
 	BreakStatement = 'break_statement',
-	Comment = 'comment',
 	ContinueStatement = 'continue_statement',
+	NotIn = '_not_in',
+	IsNot = '_is_not',
 	EscapeSequence = 'escape_sequence',
-	False = 'false',
+	TypeConversion = 'type_conversion',
+	Integer = 'integer',
 	Float = 'float',
 	Identifier = 'identifier',
-	ImportPrefix = 'import_prefix',
-	Integer = 'integer',
-	LineContinuation = 'line_continuation',
-	None = 'none',
-	PassStatement = 'pass_statement',
 	True = 'true',
-	TypeConversion = 'type_conversion',
-	Newline = '_newline',
+	False = 'false',
+	None = 'none',
+	Comment = 'comment',
+	LineContinuation = 'line_continuation',
+	UnaryOperatorOperator = '_unary_operator_operator',
+	AugmentedAssignmentOperator = '_augmented_assignment_operator',
+	AsyncMarker = '_async_marker',
+	SplatPatternOperator = '_splat_pattern_operator',
+	ComplexPatternOperator = '_complex_pattern_operator',
 	Indent = '_indent',
 	Dedent = '_dedent',
 	StringStart = 'string_start',
@@ -264,42 +256,42 @@ export const enum SyntaxKind {
 	CloseParen = ')',
 	CloseBrace = '}',
 	Except = 'except',
-	As = 'as',
-	Async = 'async',
+	Import = 'import',
 	From = 'from',
+	FutureU = '__future__',
+	As = 'as',
 	Assert = 'assert',
+	Return = 'return',
+	Del = 'del',
+	Raise = 'raise',
+	Pass = 'pass',
+	Break = 'break',
+	Continue = 'continue',
+	If = 'if',
+	Elif = 'elif',
+	Else = 'else',
+	Match = 'match',
+	Case = 'case',
+	For = 'for',
+	In = 'in',
+	While = 'while',
+	Try = 'try',
+	Finally = 'finally',
+	With = 'with',
+	Def = 'def',
+	Global = 'global',
+	Nonlocal = 'nonlocal',
+	Exec = 'exec',
+	Class = 'class',
+	Anonymous = '_',
+	Not = 'not',
 	And = 'and',
 	Or = 'or',
-	Break = 'break',
-	Case = 'case',
-	Class = 'class',
-	If = 'if',
-	Else = 'else',
-	Continue = 'continue',
-	Del = 'del',
-	Elif = 'elif',
-	Exec = 'exec',
-	In = 'in',
-	False2 = 'False',
-	Finally = 'finally',
-	For = 'for',
-	Def = 'def',
-	FutureU = '__future__',
-	Import = 'import',
-	Global = 'global',
-	Match = 'match',
-	None2 = 'None',
-	Nonlocal = 'nonlocal',
-	Not = 'not',
-	Pass = 'pass',
-	Print = 'print',
-	Raise = 'raise',
-	Return = 'return',
-	Anonymous = '_',
 	True2 = 'True',
-	Try = 'try',
-	While = 'while',
-	With = 'with'
+	False2 = 'False',
+	None2 = 'None',
+	Print = 'print',
+	Async = 'async'
 }
 
 export const enum TSKindId {
@@ -311,84 +303,84 @@ export const enum TSKindId {
 	FutureU = 6,
 	Lparen = 7,
 	Rparen = 8,
-	Comma = 9,
+	Comma2 = 9,
 	As = 10,
 	Star2 = 11,
-	Print = 12,
-	GtGt = 13,
-	Assert = 14,
-	ColonEq = 15,
-	Return = 16,
-	Del = 17,
-	Raise = 18,
-	Pass = 19,
-	Break = 20,
-	Continue = 21,
-	If = 22,
-	Colon = 23,
-	Elif = 24,
-	Else = 25,
-	Match = 26,
-	Case = 27,
-	Async = 28,
-	For = 29,
-	In = 30,
-	While = 31,
-	Try = 32,
-	Except = 33,
-	Star2_34 = 34,
-	Finally = 35,
-	With = 36,
-	Def = 37,
-	StarStar = 38,
-	Global = 39,
-	Nonlocal = 40,
-	Exec = 41,
-	Eq = 42,
-	Class = 43,
-	Lbrack = 44,
-	Rbrack = 45,
-	At2 = 46,
-	Anonymous = 47,
-	Pipe2 = 48,
-	Lbrace = 49,
-	Rbrace = 50,
-	Plus = 51,
-	Dash = 52,
-	Not = 53,
-	And = 54,
-	Or = 55,
-	Slash2 = 56,
-	Percent = 57,
-	SlashSlash = 58,
-	Amp = 59,
-	Caret = 60,
-	LtLt = 61,
-	Tilde = 62,
-	Is = 63,
-	AnonLambda = 64,
-	PlusEq = 65,
-	DashEq = 66,
-	StarEq = 67,
-	SlashEq = 68,
-	AtEq = 69,
-	SlashSlashEq = 70,
-	PercentEq = 71,
-	StarStarEq = 72,
-	GtGtEq = 73,
-	LtLtEq = 74,
-	AmpEq = 75,
-	CaretEq = 76,
-	PipeEq = 77,
-	AnonYield = 78,
-	Ellipsis2 = 79,
-	AnonType = 80,
-	EscapeSequence = 81,
-	Bslash = 82,
-	FormatSpecifierToken1 = 83,
-	TypeConversion = 84,
-	Integer = 85,
-	Float = 86,
+	GtGt = 12,
+	Assert = 13,
+	ColonEq = 14,
+	Return = 15,
+	Del = 16,
+	Raise = 17,
+	Pass = 18,
+	Break = 19,
+	Continue = 20,
+	If = 21,
+	Colon = 22,
+	Elif = 23,
+	Else = 24,
+	Match = 25,
+	Case = 26,
+	Async = 27,
+	For = 28,
+	In = 29,
+	While = 30,
+	Try = 31,
+	Except = 32,
+	Star2_33 = 33,
+	Finally = 34,
+	With = 35,
+	Def = 36,
+	StarStar = 37,
+	Global = 38,
+	Nonlocal = 39,
+	Exec = 40,
+	Eq = 41,
+	Class = 42,
+	Lbrack = 43,
+	Rbrack = 44,
+	At2 = 45,
+	Anonymous = 46,
+	Pipe2 = 47,
+	Lbrace = 48,
+	Rbrace = 49,
+	Plus = 50,
+	Dash = 51,
+	Not = 52,
+	And = 53,
+	Or = 54,
+	Slash2 = 55,
+	Percent = 56,
+	SlashSlash = 57,
+	Amp = 58,
+	Caret = 59,
+	LtLt = 60,
+	Tilde = 61,
+	Is = 62,
+	AnonLambda = 63,
+	PlusEq = 64,
+	DashEq = 65,
+	StarEq = 66,
+	SlashEq = 67,
+	AtEq = 68,
+	SlashSlashEq = 69,
+	PercentEq = 70,
+	StarStarEq = 71,
+	GtGtEq = 72,
+	LtLtEq = 73,
+	AmpEq = 74,
+	CaretEq = 75,
+	PipeEq = 76,
+	AnonYield = 77,
+	Ellipsis2 = 78,
+	AnonType = 79,
+	EscapeSequence = 80,
+	Bslash = 81,
+	FormatSpecifierToken1 = 82,
+	TypeConversion = 83,
+	Integer = 84,
+	Float = 85,
+	Print = 86,
 	AnonAwait = 87,
 	True = 88,
 	False = 89,
@@ -469,130 +461,137 @@ export const enum TSKindId {
 	SimplePattern = 164,
 	_AsPattern = 165,
 	UnionPattern = 166,
-	_ListPattern = 167,
-	_TuplePattern = 168,
-	DictPattern = 169,
-	KeyValuePattern = 170,
-	KeywordPattern = 171,
-	SplatPattern = 172,
-	ClassPattern = 173,
-	ComplexPattern = 174,
-	_Parameters = 175,
-	Patterns = 176,
-	Parameter = 177,
-	Pattern = 178,
-	TuplePattern = 179,
-	ListPattern = 180,
-	DefaultParameter = 181,
-	TypedDefaultParameter = 182,
-	ListSplatPattern = 183,
-	DictionarySplatPattern = 184,
-	AsPattern = 185,
-	ExpressionWithinForInClause = 186,
-	Expression = 187,
-	PrimaryExpression = 188,
-	NotOperator = 189,
-	BooleanOperator = 190,
-	BinaryOperator = 191,
-	UnaryOperator = 192,
-	NotIn = 193,
-	IsNot = 194,
-	ComparisonOperator = 195,
-	Lambda = 196,
-	LambdaWithinForInClause = 197,
-	Assignment = 198,
-	AugmentedAssignment = 199,
-	PatternList = 200,
-	RightHandSide = 201,
-	Yield = 202,
-	Attribute = 203,
-	Subscript = 204,
-	Slice = 205,
-	Call = 206,
-	TypedParameter = 207,
-	Type = 208,
-	SplatType = 209,
-	GenericType = 210,
-	UnionType = 211,
-	ConstrainedType = 212,
-	MemberType = 213,
-	KeywordArgument = 214,
-	List = 215,
-	Set = 216,
-	Tuple = 217,
-	Dictionary = 218,
-	Pair = 219,
-	ListComprehension = 220,
-	DictionaryComprehension = 221,
-	SetComprehension = 222,
-	GeneratorExpression = 223,
-	ComprehensionClauses = 224,
-	ParenthesizedExpression = 225,
-	CollectionElements = 226,
-	ForInClause = 227,
-	IfClause = 228,
-	ConditionalExpression = 229,
-	ConcatenatedString = 230,
-	String = 231,
-	StringContent = 232,
-	Interpolation = 233,
-	FExpression = 234,
-	NotEscapeSequence = 235,
-	FormatSpecifier = 236,
-	Await = 237,
-	PositionalSeparator = 238,
-	KeywordSeparator = 239,
-	_ArgumentListGroup1 = 240,
-	_ListPatternGroup1 = 241,
-	_DictPatternGroup1 = 242,
-	_SliceGroup1 = 243,
-	_DictionaryGroup1 = 244,
-	ExceptClauseAs = 245,
-	AssignmentEq = 246,
-	AssignmentType = 247,
-	AssignmentTyped = 248,
-	ExpressionStatementTuple = 249,
-	WithClauseBare = 250,
-	WithClauseParen = 251,
-	MatchBlockBlock = 252,
-	DictPatternKv = 253,
-	SimplePatternNegative = 254,
-	ExceptClauseList = 255,
-	ComparisonOperatorComparator = 256,
-	ModuleRepeat1 = 257,
-	_SimpleStatementsRepeat1 = 258,
-	ImportPrefixRepeat1 = 259,
-	_ImportListRepeat1 = 260,
-	PrintStatementRepeat1 = 261,
-	AssertStatementRepeat1 = 262,
-	IfStatementRepeat1 = 263,
-	MatchStatementRepeat1 = 264,
-	CaseClauseRepeat1 = 265,
-	TryStatementRepeat1 = 266,
-	GlobalStatementRepeat1 = 267,
-	TypeParameterRepeat1 = 268,
-	DecoratedDefinitionRepeat1 = 269,
-	DottedNameRepeat1 = 270,
-	UnionPatternRepeat1 = 271,
-	_ParametersRepeat1 = 272,
-	_PatternsRepeat1 = 273,
-	ComparisonOperatorRepeat1 = 274,
-	SubscriptRepeat1 = 275,
-	_ComprehensionClausesRepeat1 = 276,
-	_CollectionElementsRepeat1 = 277,
-	ForInClauseRepeat1 = 278,
-	ConcatenatedStringRepeat1 = 279,
-	StringRepeat1 = 280,
-	StringContentRepeat1 = 281,
-	FormatSpecifierRepeat1 = 282,
-	_ArgumentListGroup1Repeat1 = 283,
-	_DictPatternGroup1Repeat1 = 284,
-	_DictionaryGroup1Repeat1 = 285,
-	_WithClauseBareRepeat1 = 286,
-	_MatchBlockBlockRepeat1 = 287,
-	_ExceptClauseListRepeat1 = 288,
-	_AsPatternTarget = 289,
-	_FormatExpression = 290
+	DictPattern = 167,
+	KeyValuePattern = 168,
+	KeywordPattern = 169,
+	SplatPattern = 170,
+	ClassPattern = 171,
+	ComplexPattern = 172,
+	_Parameters = 173,
+	Patterns = 174,
+	Parameter = 175,
+	Pattern = 176,
+	TuplePattern = 177,
+	ListPattern = 178,
+	DefaultParameter = 179,
+	TypedDefaultParameter = 180,
+	ListSplatPattern = 181,
+	DictionarySplatPattern = 182,
+	AsPattern = 183,
+	ExpressionWithinForInClause = 184,
+	Expression = 185,
+	PrimaryExpression = 186,
+	NotOperator = 187,
+	BooleanOperator = 188,
+	BinaryOperator = 189,
+	UnaryOperator = 190,
+	NotIn = 191,
+	IsNot = 192,
+	ComparisonOperator = 193,
+	Lambda = 194,
+	LambdaWithinForInClause = 195,
+	Assignment = 196,
+	AugmentedAssignment = 197,
+	PatternList = 198,
+	RightHandSide = 199,
+	Yield = 200,
+	Attribute = 201,
+	Subscript = 202,
+	Slice = 203,
+	Call = 204,
+	TypedParameter = 205,
+	Type = 206,
+	SplatType = 207,
+	GenericType = 208,
+	UnionType = 209,
+	ConstrainedType = 210,
+	MemberType = 211,
+	KeywordArgument = 212,
+	List = 213,
+	Set = 214,
+	Tuple = 215,
+	Dictionary = 216,
+	Pair = 217,
+	ListComprehension = 218,
+	DictionaryComprehension = 219,
+	SetComprehension = 220,
+	GeneratorExpression = 221,
+	ComprehensionClauses = 222,
+	ParenthesizedExpression = 223,
+	CollectionElements = 224,
+	ForInClause = 225,
+	IfClause = 226,
+	ConditionalExpression = 227,
+	ConcatenatedString = 228,
+	String = 229,
+	StringContent = 230,
+	Interpolation = 231,
+	FExpression = 232,
+	NotEscapeSequence = 233,
+	FormatSpecifier = 234,
+	Await = 235,
+	PositionalSeparator = 236,
+	KeywordSeparator = 237,
+	ExceptClauseGroup1 = 238,
+	ArgumentListGroup1 = 239,
+	ExpressionListGroup1 = 240,
+	ListPatternGroup1 = 241,
+	DictPatternGroup2 = 242,
+	PatternListGroup1 = 243,
+	SliceGroup1 = 244,
+	DictionaryGroup1 = 245,
+	ExceptClauseAs = 246,
+	CaseTuplePattern = 247,
+	CaseListPattern = 248,
+	PrintStatementGroup1 = 249,
+	PrintStatementGroup2 = 250,
+	AssignmentEq = 251,
+	AssignmentType = 252,
+	AssignmentTyped = 253,
+	ExpressionStatementTuple = 254,
+	WithClauseBare = 255,
+	WithClauseParen = 256,
+	MatchBlockBlock = 257,
+	DictPatternKv = 258,
+	SimplePatternNegative = 259,
+	ExceptClauseList = 260,
+	ComparisonOperatorComparator = 261,
+	ModuleRepeat1 = 262,
+	_SimpleStatementsRepeat1 = 263,
+	ImportPrefixRepeat1 = 264,
+	_ImportListRepeat1 = 265,
+	AssertStatementRepeat1 = 266,
+	IfStatementRepeat1 = 267,
+	MatchStatementRepeat1 = 268,
+	CaseClauseRepeat1 = 269,
+	TryStatementRepeat1 = 270,
+	GlobalStatementRepeat1 = 271,
+	TypeParameterRepeat1 = 272,
+	DecoratedDefinitionRepeat1 = 273,
+	DottedNameRepeat1 = 274,
+	UnionPatternRepeat1 = 275,
+	_ParametersRepeat1 = 276,
+	_PatternsRepeat1 = 277,
+	ComparisonOperatorRepeat1 = 278,
+	SubscriptRepeat1 = 279,
+	_ComprehensionClausesRepeat1 = 280,
+	_CollectionElementsRepeat1 = 281,
+	ForInClauseRepeat1 = 282,
+	ConcatenatedStringRepeat1 = 283,
+	StringRepeat1 = 284,
+	StringContentRepeat1 = 285,
+	FormatSpecifierRepeat1 = 286,
+	_ArgumentListGroup1Repeat1 = 287,
+	_DictPatternGroup2Repeat1 = 288,
+	_DictionaryGroup1Repeat1 = 289,
+	PrintStatementGroup1Repeat1 = 290,
+	_WithClauseBareRepeat1 = 291,
+	_MatchBlockBlockRepeat1 = 292,
+	_ExceptClauseListRepeat1 = 293,
+	_AsPatternTarget = 294,
+	_CasePatternGroup1 = 295,
+	_FormatExpression = 296,
+	_FutureImportStatementGroup1 = 297
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -607,81 +606,81 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[9, 'comma'],
 	[10, 'as'],
 	[11, 'star'],
-	[12, 'print'],
-	[13, 'gt_gt'],
-	[14, 'assert'],
-	[15, 'colon_eq'],
-	[16, 'return'],
-	[17, 'del'],
-	[18, 'raise'],
-	[19, 'pass'],
-	[20, 'break'],
-	[21, 'continue'],
-	[22, 'if'],
-	[23, 'colon'],
-	[24, 'elif'],
-	[25, 'else'],
-	[26, 'match'],
-	[27, 'case'],
-	[28, 'async'],
-	[29, 'for'],
-	[30, 'in'],
-	[31, 'while'],
-	[32, 'try'],
-	[33, 'except'],
-	[34, 'star2'],
-	[35, 'finally'],
-	[36, 'with'],
-	[37, 'def'],
-	[38, 'star_star'],
-	[39, 'global'],
-	[40, 'nonlocal'],
-	[41, 'exec'],
-	[42, 'eq'],
-	[43, 'class'],
-	[44, 'lbrack'],
-	[45, 'rbrack'],
-	[46, 'at'],
-	[47, '_'],
-	[48, 'pipe'],
-	[49, 'lbrace'],
-	[50, 'rbrace'],
-	[51, 'plus'],
-	[52, 'dash'],
-	[53, 'not'],
-	[54, 'and'],
-	[55, 'or'],
-	[56, 'slash'],
-	[57, 'percent'],
-	[58, 'slash_slash'],
-	[59, 'amp'],
-	[60, 'caret'],
-	[61, 'lt_lt'],
-	[62, 'tilde'],
-	[63, 'is'],
-	[64, 'anon_lambda'],
-	[65, 'plus_eq'],
-	[66, 'dash_eq'],
-	[67, 'star_eq'],
-	[68, 'slash_eq'],
-	[69, 'at_eq'],
-	[70, 'slash_slash_eq'],
-	[71, 'percent_eq'],
-	[72, 'star_star_eq'],
-	[73, 'gt_gt_eq'],
-	[74, 'lt_lt_eq'],
-	[75, 'amp_eq'],
-	[76, 'caret_eq'],
-	[77, 'pipe_eq'],
-	[78, 'anon_yield'],
-	[79, 'ellipsis'],
-	[80, 'anon_type'],
-	[81, 'escape_sequence'],
-	[82, 'bslash'],
-	[83, 'format_specifier_token1'],
-	[84, 'type_conversion'],
-	[85, 'integer'],
-	[86, 'float'],
+	[12, 'gt_gt'],
+	[13, 'assert'],
+	[14, 'colon_eq'],
+	[15, 'return'],
+	[16, 'del'],
+	[17, 'raise'],
+	[18, 'pass'],
+	[19, 'break'],
+	[20, 'continue'],
+	[21, 'if'],
+	[22, 'colon'],
+	[23, 'elif'],
+	[24, 'else'],
+	[25, 'match'],
+	[26, 'case'],
+	[27, 'async'],
+	[28, 'for'],
+	[29, 'in'],
+	[30, 'while'],
+	[31, 'try'],
+	[32, 'except'],
+	[33, 'star2'],
+	[34, 'finally'],
+	[35, 'with'],
+	[36, 'def'],
+	[37, 'star_star'],
+	[38, 'global'],
+	[39, 'nonlocal'],
+	[40, 'exec'],
+	[41, 'eq'],
+	[42, 'class'],
+	[43, 'lbrack'],
+	[44, 'rbrack'],
+	[45, 'at'],
+	[46, '_'],
+	[47, 'pipe'],
+	[48, 'lbrace'],
+	[49, 'rbrace'],
+	[50, 'plus'],
+	[51, 'dash'],
+	[52, 'not'],
+	[53, 'and'],
+	[54, 'or'],
+	[55, 'slash'],
+	[56, 'percent'],
+	[57, 'slash_slash'],
+	[58, 'amp'],
+	[59, 'caret'],
+	[60, 'lt_lt'],
+	[61, 'tilde'],
+	[62, 'is'],
+	[63, 'anon_lambda'],
+	[64, 'plus_eq'],
+	[65, 'dash_eq'],
+	[66, 'star_eq'],
+	[67, 'slash_eq'],
+	[68, 'at_eq'],
+	[69, 'slash_slash_eq'],
+	[70, 'percent_eq'],
+	[71, 'star_star_eq'],
+	[72, 'gt_gt_eq'],
+	[73, 'lt_lt_eq'],
+	[74, 'amp_eq'],
+	[75, 'caret_eq'],
+	[76, 'pipe_eq'],
+	[77, 'anon_yield'],
+	[78, 'ellipsis'],
+	[79, 'anon_type'],
+	[80, 'escape_sequence'],
+	[81, 'bslash'],
+	[82, 'format_specifier_token1'],
+	[83, 'type_conversion'],
+	[84, 'integer'],
+	[85, 'float'],
+	[86, 'print'],
 	[87, 'anon_await'],
 	[88, 'true'],
 	[89, 'false'],
@@ -706,6 +705,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[108, 'module'],
 	[109, '_statement'],
 	[110, '_simple_statements'],
+	[298, '_simple_statements'],
 	[111, 'import_statement'],
 	[112, 'import_prefix'],
 	[113, 'relative_import'],
@@ -762,130 +762,137 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[164, '_simple_pattern'],
 	[165, '_as_pattern'],
 	[166, 'union_pattern'],
-	[167, '_list_pattern'],
-	[168, '_tuple_pattern'],
-	[169, 'dict_pattern'],
-	[170, '_key_value_pattern'],
-	[171, 'keyword_pattern'],
-	[172, 'splat_pattern'],
-	[173, 'class_pattern'],
-	[174, 'complex_pattern'],
-	[175, '_parameters'],
-	[176, '_patterns'],
-	[177, 'parameter'],
-	[178, 'pattern'],
-	[179, 'tuple_pattern'],
-	[180, 'list_pattern'],
-	[181, 'default_parameter'],
-	[182, 'typed_default_parameter'],
-	[183, 'list_splat_pattern'],
-	[184, 'dictionary_splat_pattern'],
-	[185, 'as_pattern'],
-	[186, '_expression_within_for_in_clause'],
-	[187, 'expression'],
-	[188, 'primary_expression'],
-	[189, 'not_operator'],
-	[190, 'boolean_operator'],
-	[191, 'binary_operator'],
-	[192, 'unary_operator'],
-	[193, '_not_in'],
-	[194, '_is_not'],
-	[195, 'comparison_operator'],
-	[196, 'lambda'],
-	[197, 'lambda_within_for_in_clause'],
-	[198, 'assignment'],
-	[199, 'augmented_assignment'],
-	[200, 'pattern_list'],
-	[201, '_right_hand_side'],
-	[202, 'yield'],
-	[203, 'attribute'],
-	[204, 'subscript'],
-	[205, 'slice'],
-	[206, 'call'],
-	[207, 'typed_parameter'],
-	[208, 'type'],
-	[209, 'splat_type'],
-	[210, 'generic_type'],
-	[211, 'union_type'],
-	[212, 'constrained_type'],
-	[213, 'member_type'],
-	[214, 'keyword_argument'],
-	[215, 'list'],
-	[216, 'set'],
-	[217, 'tuple'],
-	[218, 'dictionary'],
-	[219, 'pair'],
-	[220, 'list_comprehension'],
-	[221, 'dictionary_comprehension'],
-	[222, 'set_comprehension'],
-	[223, 'generator_expression'],
-	[224, '_comprehension_clauses'],
-	[225, 'parenthesized_expression'],
-	[226, '_collection_elements'],
-	[227, 'for_in_clause'],
-	[228, 'if_clause'],
-	[229, 'conditional_expression'],
-	[230, 'concatenated_string'],
-	[231, 'string'],
-	[232, 'string_content'],
-	[233, 'interpolation'],
-	[234, '_f_expression'],
-	[235, '_not_escape_sequence'],
-	[236, 'format_specifier'],
-	[237, 'await'],
-	[238, 'positional_separator'],
-	[239, 'keyword_separator'],
-	[240, '_argument_list_group1'],
+	[167, 'dict_pattern'],
+	[168, '_key_value_pattern'],
+	[169, 'keyword_pattern'],
+	[170, 'splat_pattern'],
+	[171, 'class_pattern'],
+	[172, 'complex_pattern'],
+	[173, '_parameters'],
+	[174, '_patterns'],
+	[175, 'parameter'],
+	[176, 'pattern'],
+	[177, 'tuple_pattern'],
+	[178, 'list_pattern'],
+	[179, 'default_parameter'],
+	[180, 'typed_default_parameter'],
+	[181, 'list_splat_pattern'],
+	[182, 'dictionary_splat_pattern'],
+	[183, 'as_pattern'],
+	[184, '_expression_within_for_in_clause'],
+	[185, 'expression'],
+	[186, 'primary_expression'],
+	[187, 'not_operator'],
+	[188, 'boolean_operator'],
+	[189, 'binary_operator'],
+	[190, 'unary_operator'],
+	[191, '_not_in'],
+	[192, '_is_not'],
+	[193, 'comparison_operator'],
+	[194, 'lambda'],
+	[195, 'lambda_within_for_in_clause'],
+	[196, 'assignment'],
+	[197, 'augmented_assignment'],
+	[198, 'pattern_list'],
+	[199, '_right_hand_side'],
+	[200, 'yield'],
+	[201, 'attribute'],
+	[202, 'subscript'],
+	[203, 'slice'],
+	[204, 'call'],
+	[205, 'typed_parameter'],
+	[206, 'type'],
+	[207, 'splat_type'],
+	[208, 'generic_type'],
+	[209, 'union_type'],
+	[210, 'constrained_type'],
+	[211, 'member_type'],
+	[212, 'keyword_argument'],
+	[213, 'list'],
+	[214, 'set'],
+	[215, 'tuple'],
+	[216, 'dictionary'],
+	[217, 'pair'],
+	[218, 'list_comprehension'],
+	[219, 'dictionary_comprehension'],
+	[220, 'set_comprehension'],
+	[221, 'generator_expression'],
+	[222, '_comprehension_clauses'],
+	[223, 'parenthesized_expression'],
+	[224, '_collection_elements'],
+	[225, 'for_in_clause'],
+	[226, 'if_clause'],
+	[227, 'conditional_expression'],
+	[228, 'concatenated_string'],
+	[229, 'string'],
+	[230, 'string_content'],
+	[231, 'interpolation'],
+	[232, '_f_expression'],
+	[233, '_not_escape_sequence'],
+	[234, 'format_specifier'],
+	[235, 'await'],
+	[236, 'positional_separator'],
+	[237, 'keyword_separator'],
+	[238, '_except_clause_group1'],
+	[239, '_argument_list_group1'],
+	[240, '_expression_list_group1'],
 	[241, '_list_pattern_group1'],
-	[242, '_dict_pattern_group1'],
-	[243, '_slice_group1'],
-	[244, '_dictionary_group1'],
-	[245, '_except_clause_as'],
-	[246, '_assignment_eq'],
-	[247, '_assignment_type'],
-	[248, '_assignment_typed'],
-	[249, '_expression_statement_tuple'],
-	[250, '_with_clause_bare'],
-	[251, '_with_clause_paren'],
-	[252, '_match_block_block'],
-	[253, '_dict_pattern_kv'],
-	[254, '_simple_pattern_negative'],
-	[255, '_except_clause_list'],
-	[256, '_comparison_operator_comparator'],
-	[257, 'module_repeat1'],
-	[258, '_simple_statements_repeat1'],
-	[259, 'import_prefix_repeat1'],
-	[260, '_import_list_repeat1'],
-	[261, 'print_statement_repeat1'],
-	[262, 'assert_statement_repeat1'],
-	[263, 'if_statement_repeat1'],
-	[264, 'match_statement_repeat1'],
-	[265, 'case_clause_repeat1'],
-	[266, 'try_statement_repeat1'],
-	[267, 'global_statement_repeat1'],
-	[268, 'type_parameter_repeat1'],
-	[269, 'decorated_definition_repeat1'],
-	[270, 'dotted_name_repeat1'],
-	[271, 'union_pattern_repeat1'],
-	[272, '_parameters_repeat1'],
-	[273, '_patterns_repeat1'],
-	[274, 'comparison_operator_repeat1'],
-	[275, 'subscript_repeat1'],
-	[276, '_comprehension_clauses_repeat1'],
-	[277, '_collection_elements_repeat1'],
-	[278, 'for_in_clause_repeat1'],
-	[279, 'concatenated_string_repeat1'],
-	[280, 'string_repeat1'],
-	[281, 'string_content_repeat1'],
-	[282, 'format_specifier_repeat1'],
-	[283, '_argument_list_group1_repeat1'],
-	[284, '_dict_pattern_group1_repeat1'],
-	[285, '_dictionary_group1_repeat1'],
-	[286, '_with_clause_bare_repeat1'],
-	[287, '_match_block_block_repeat1'],
-	[288, '_except_clause_list_repeat1'],
-	[289, '_as_pattern_target'],
-	[290, '_format_expression']
+	[242, '_dict_pattern_group2'],
+	[243, '_pattern_list_group1'],
+	[244, '_slice_group1'],
+	[245, '_dictionary_group1'],
+	[246, '_except_clause_as'],
+	[247, 'case_tuple_pattern'],
+	[248, 'case_list_pattern'],
+	[249, 'print_statement_group1'],
+	[250, 'print_statement_group2'],
+	[251, '_assignment_eq'],
+	[252, '_assignment_type'],
+	[253, '_assignment_typed'],
+	[254, '_expression_statement_tuple'],
+	[255, '_with_clause_bare'],
+	[256, '_with_clause_paren'],
+	[257, '_match_block_block'],
+	[258, '_dict_pattern_kv'],
+	[259, '_simple_pattern_negative'],
+	[260, '_except_clause_list'],
+	[261, '_comparison_operator_comparator'],
+	[262, 'module_repeat1'],
+	[263, '_simple_statements_repeat1'],
+	[264, 'import_prefix_repeat1'],
+	[265, '_import_list_repeat1'],
+	[266, 'assert_statement_repeat1'],
+	[267, 'if_statement_repeat1'],
+	[268, 'match_statement_repeat1'],
+	[269, 'case_clause_repeat1'],
+	[270, 'try_statement_repeat1'],
+	[271, 'global_statement_repeat1'],
+	[272, 'type_parameter_repeat1'],
+	[273, 'decorated_definition_repeat1'],
+	[274, 'dotted_name_repeat1'],
+	[275, 'union_pattern_repeat1'],
+	[276, '_parameters_repeat1'],
+	[277, '_patterns_repeat1'],
+	[278, 'comparison_operator_repeat1'],
+	[279, 'subscript_repeat1'],
+	[280, '_comprehension_clauses_repeat1'],
+	[281, '_collection_elements_repeat1'],
+	[282, 'for_in_clause_repeat1'],
+	[283, 'concatenated_string_repeat1'],
+	[284, 'string_repeat1'],
+	[285, 'string_content_repeat1'],
+	[286, 'format_specifier_repeat1'],
+	[287, '_argument_list_group1_repeat1'],
+	[288, '_dict_pattern_group2_repeat1'],
+	[289, '_dictionary_group1_repeat1'],
+	[290, 'print_statement_group1_repeat1'],
+	[291, '_with_clause_bare_repeat1'],
+	[292, '_match_block_block_repeat1'],
+	[293, '_except_clause_list_repeat1'],
+	[294, '_as_pattern_target'],
+	[295, '_case_pattern_group1'],
+	[296, '_format_expression'],
+	[297, '_future_import_statement_group1']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -901,81 +908,81 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[9, 'comma'],
 	[10, 'as'],
 	[11, 'star'],
-	[12, 'print'],
-	[13, 'gt_gt'],
-	[14, 'assert'],
-	[15, 'colon_eq'],
-	[16, 'return'],
-	[17, 'del'],
-	[18, 'raise'],
-	[19, 'pass'],
-	[20, 'break'],
-	[21, 'continue'],
-	[22, 'if'],
-	[23, 'colon'],
-	[24, 'elif'],
-	[25, 'else'],
-	[26, 'match'],
-	[27, 'case'],
-	[28, 'async'],
-	[29, 'for'],
-	[30, 'in'],
-	[31, 'while'],
-	[32, 'try'],
-	[33, 'except'],
-	[34, 'star2'],
-	[35, 'finally'],
-	[36, 'with'],
-	[37, 'def'],
-	[38, 'star_star'],
-	[39, 'global'],
-	[40, 'nonlocal'],
-	[41, 'exec'],
-	[42, 'eq'],
-	[43, 'class'],
-	[44, 'lbrack'],
-	[45, 'rbrack'],
-	[46, 'at'],
-	[47, '_'],
-	[48, 'pipe'],
-	[49, 'lbrace'],
-	[50, 'rbrace'],
-	[51, 'plus'],
-	[52, 'dash'],
-	[53, 'not'],
-	[54, 'and'],
-	[55, 'or'],
-	[56, 'slash'],
-	[57, 'percent'],
-	[58, 'slash_slash'],
-	[59, 'amp'],
-	[60, 'caret'],
-	[61, 'lt_lt'],
-	[62, 'tilde'],
-	[63, 'is'],
-	[64, 'anon_lambda'],
-	[65, 'plus_eq'],
-	[66, 'dash_eq'],
-	[67, 'star_eq'],
-	[68, 'slash_eq'],
-	[69, 'at_eq'],
-	[70, 'slash_slash_eq'],
-	[71, 'percent_eq'],
-	[72, 'star_star_eq'],
-	[73, 'gt_gt_eq'],
-	[74, 'lt_lt_eq'],
-	[75, 'amp_eq'],
-	[76, 'caret_eq'],
-	[77, 'pipe_eq'],
-	[78, 'anon_yield'],
-	[79, 'ellipsis'],
-	[80, 'anon_type'],
-	[81, 'escape_sequence'],
-	[82, 'bslash'],
-	[83, 'format_specifier_token1'],
-	[84, 'type_conversion'],
-	[85, 'integer'],
-	[86, 'float'],
+	[12, 'gt_gt'],
+	[13, 'assert'],
+	[14, 'colon_eq'],
+	[15, 'return'],
+	[16, 'del'],
+	[17, 'raise'],
+	[18, 'pass'],
+	[19, 'break'],
+	[20, 'continue'],
+	[21, 'if'],
+	[22, 'colon'],
+	[23, 'elif'],
+	[24, 'else'],
+	[25, 'match'],
+	[26, 'case'],
+	[27, 'async'],
+	[28, 'for'],
+	[29, 'in'],
+	[30, 'while'],
+	[31, 'try'],
+	[32, 'except'],
+	[33, 'star2'],
+	[34, 'finally'],
+	[35, 'with'],
+	[36, 'def'],
+	[37, 'star_star'],
+	[38, 'global'],
+	[39, 'nonlocal'],
+	[40, 'exec'],
+	[41, 'eq'],
+	[42, 'class'],
+	[43, 'lbrack'],
+	[44, 'rbrack'],
+	[45, 'at'],
+	[46, '_'],
+	[47, 'pipe'],
+	[48, 'lbrace'],
+	[49, 'rbrace'],
+	[50, 'plus'],
+	[51, 'dash'],
+	[52, 'not'],
+	[53, 'and'],
+	[54, 'or'],
+	[55, 'slash'],
+	[56, 'percent'],
+	[57, 'slash_slash'],
+	[58, 'amp'],
+	[59, 'caret'],
+	[60, 'lt_lt'],
+	[61, 'tilde'],
+	[62, 'is'],
+	[63, 'anon_lambda'],
+	[64, 'plus_eq'],
+	[65, 'dash_eq'],
+	[66, 'star_eq'],
+	[67, 'slash_eq'],
+	[68, 'at_eq'],
+	[69, 'slash_slash_eq'],
+	[70, 'percent_eq'],
+	[71, 'star_star_eq'],
+	[72, 'gt_gt_eq'],
+	[73, 'lt_lt_eq'],
+	[74, 'amp_eq'],
+	[75, 'caret_eq'],
+	[76, 'pipe_eq'],
+	[77, 'anon_yield'],
+	[78, 'ellipsis'],
+	[79, 'anon_type'],
+	[80, 'escape_sequence'],
+	[81, 'bslash'],
+	[82, 'format_specifier_token1'],
+	[83, 'type_conversion'],
+	[84, 'integer'],
+	[85, 'float'],
+	[86, 'print'],
 	[87, 'anon_await'],
 	[88, 'true'],
 	[89, 'false'],
@@ -1000,6 +1007,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[108, 'module'],
 	[109, '_statement'],
 	[110, 'simple_statements'],
+	[298, 'simple_statements'],
 	[111, 'import_statement'],
 	[112, 'import_prefix'],
 	[113, 'relative_import'],
@@ -1056,130 +1064,137 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[164, '_simple_pattern'],
 	[165, 'as_pattern'],
 	[166, 'union_pattern'],
-	[167, 'list_pattern'],
-	[168, 'tuple_pattern'],
-	[169, 'dict_pattern'],
-	[170, '_key_value_pattern'],
-	[171, 'keyword_pattern'],
-	[172, 'splat_pattern'],
-	[173, 'class_pattern'],
-	[174, 'complex_pattern'],
-	[175, 'parameter_list'],
-	[176, 'pattern_group'],
-	[177, 'parameter'],
-	[178, 'pattern'],
-	[179, 'tuple_pattern'],
-	[180, 'list_pattern'],
-	[181, 'default_parameter'],
-	[182, 'typed_default_parameter'],
-	[183, 'list_splat_pattern'],
-	[184, 'dictionary_splat_pattern'],
-	[185, 'as_pattern'],
-	[186, '_expression_within_for_in_clause'],
-	[187, 'expression'],
-	[188, 'primary_expression'],
-	[189, 'not_operator'],
-	[190, 'boolean_operator'],
-	[191, 'binary_operator'],
-	[192, 'unary_operator'],
-	[193, 'not in'],
-	[194, 'is not'],
-	[195, 'comparison_operator'],
-	[196, 'lambda'],
-	[197, 'lambda'],
-	[198, 'assignment'],
-	[199, 'augmented_assignment'],
-	[200, 'pattern_list'],
-	[201, '_right_hand_side'],
-	[202, 'yield'],
-	[203, 'attribute'],
-	[204, 'subscript'],
-	[205, 'slice'],
-	[206, 'call'],
-	[207, 'typed_parameter'],
-	[208, 'type'],
-	[209, 'splat_type'],
-	[210, 'generic_type'],
-	[211, 'union_type'],
-	[212, 'constrained_type'],
-	[213, 'member_type'],
-	[214, 'keyword_argument'],
-	[215, 'list'],
-	[216, 'set'],
-	[217, 'tuple'],
-	[218, 'dictionary'],
-	[219, 'pair'],
-	[220, 'list_comprehension'],
-	[221, 'dictionary_comprehension'],
-	[222, 'set_comprehension'],
-	[223, 'generator_expression'],
-	[224, '_comprehension_clauses'],
-	[225, 'parenthesized_expression'],
-	[226, 'element_list'],
-	[227, 'for_in_clause'],
-	[228, 'if_clause'],
-	[229, 'conditional_expression'],
-	[230, 'concatenated_string'],
-	[231, 'string'],
-	[232, 'string_content'],
-	[233, 'interpolation'],
-	[234, '_f_expression'],
-	[235, '_not_escape_sequence'],
-	[236, 'format_specifier'],
-	[237, 'await'],
-	[238, 'positional_separator'],
-	[239, 'keyword_separator'],
-	[240, 'argument_list_group1'],
+	[167, 'dict_pattern'],
+	[168, 'dict_pattern_group1'],
+	[169, 'keyword_pattern'],
+	[170, 'splat_pattern'],
+	[171, 'class_pattern'],
+	[172, 'complex_pattern'],
+	[173, 'parameter_list'],
+	[174, 'pattern_group'],
+	[175, 'parameter'],
+	[176, 'pattern'],
+	[177, 'tuple_pattern'],
+	[178, 'list_pattern'],
+	[179, 'default_parameter'],
+	[180, 'typed_default_parameter'],
+	[181, 'list_splat_pattern'],
+	[182, 'dictionary_splat_pattern'],
+	[183, 'as_pattern'],
+	[184, '_expression_within_for_in_clause'],
+	[185, 'expression'],
+	[186, 'primary_expression'],
+	[187, 'not_operator'],
+	[188, 'boolean_operator'],
+	[189, 'binary_operator'],
+	[190, 'unary_operator'],
+	[191, 'not in'],
+	[192, 'is not'],
+	[193, 'comparison_operator'],
+	[194, 'lambda'],
+	[195, 'lambda'],
+	[196, 'assignment'],
+	[197, 'augmented_assignment'],
+	[198, 'pattern_list'],
+	[199, '_right_hand_side'],
+	[200, 'yield'],
+	[201, 'attribute'],
+	[202, 'subscript'],
+	[203, 'slice'],
+	[204, 'call'],
+	[205, 'typed_parameter'],
+	[206, 'type'],
+	[207, 'splat_type'],
+	[208, 'generic_type'],
+	[209, 'union_type'],
+	[210, 'constrained_type'],
+	[211, 'member_type'],
+	[212, 'keyword_argument'],
+	[213, 'list'],
+	[214, 'set'],
+	[215, 'tuple'],
+	[216, 'dictionary'],
+	[217, 'pair'],
+	[218, 'list_comprehension'],
+	[219, 'dictionary_comprehension'],
+	[220, 'set_comprehension'],
+	[221, 'generator_expression'],
+	[222, '_comprehension_clauses'],
+	[223, 'parenthesized_expression'],
+	[224, 'element_list'],
+	[225, 'for_in_clause'],
+	[226, 'if_clause'],
+	[227, 'conditional_expression'],
+	[228, 'concatenated_string'],
+	[229, 'string'],
+	[230, 'string_content'],
+	[231, 'interpolation'],
+	[232, '_f_expression'],
+	[233, 'string_content_group1'],
+	[234, 'format_specifier'],
+	[235, 'await'],
+	[236, 'positional_separator'],
+	[237, 'keyword_separator'],
+	[238, 'except_clause_group1'],
+	[239, 'argument_list_group1'],
+	[240, 'expression_list_group1'],
 	[241, 'list_pattern_group1'],
-	[242, 'dict_pattern_group1'],
-	[243, 'slice_group1'],
-	[244, 'dictionary_group1'],
-	[245, 'except_clause_as'],
-	[246, 'assignment_eq'],
-	[247, 'assignment_type'],
-	[248, 'assignment_typed'],
-	[249, 'expression_statement_tuple'],
-	[250, 'with_clause_bare'],
-	[251, 'with_clause_paren'],
-	[252, 'match_block_block'],
-	[253, 'dict_pattern_kv'],
-	[254, 'simple_pattern_negative'],
-	[255, 'except_clause_list'],
-	[256, 'comparison_operator_comparator'],
-	[257, 'module_repeat1'],
-	[258, '_simple_statements_repeat1'],
-	[259, 'import_prefix_repeat1'],
-	[260, '_import_list_repeat1'],
-	[261, 'print_statement_repeat1'],
-	[262, 'assert_statement_repeat1'],
-	[263, 'if_statement_repeat1'],
-	[264, 'match_statement_repeat1'],
-	[265, 'case_clause_repeat1'],
-	[266, 'try_statement_repeat1'],
-	[267, 'global_statement_repeat1'],
-	[268, 'type_parameter_repeat1'],
-	[269, 'decorated_definition_repeat1'],
-	[270, 'dotted_name_repeat1'],
-	[271, 'union_pattern_repeat1'],
-	[272, '_parameters_repeat1'],
-	[273, '_patterns_repeat1'],
-	[274, 'comparison_operator_repeat1'],
-	[275, 'subscript_repeat1'],
-	[276, '_comprehension_clauses_repeat1'],
-	[277, '_collection_elements_repeat1'],
-	[278, 'for_in_clause_repeat1'],
-	[279, 'concatenated_string_repeat1'],
-	[280, 'string_repeat1'],
-	[281, 'string_content_repeat1'],
-	[282, 'format_specifier_repeat1'],
-	[283, '_argument_list_group1_repeat1'],
-	[284, '_dict_pattern_group1_repeat1'],
-	[285, '_dictionary_group1_repeat1'],
-	[286, '_with_clause_bare_repeat1'],
-	[287, '_match_block_block_repeat1'],
-	[288, '_except_clause_list_repeat1'],
-	[289, 'as_pattern_target'],
-	[290, 'format_expression']
+	[242, 'dict_pattern_group2'],
+	[243, 'pattern_list_group1'],
+	[244, 'slice_group1'],
+	[245, 'dictionary_group1'],
+	[246, 'except_clause_as'],
+	[247, 'case_tuple_pattern'],
+	[248, 'case_list_pattern'],
+	[249, 'print_statement_group1'],
+	[250, 'print_statement_group2'],
+	[251, 'assignment_eq'],
+	[252, 'assignment_type'],
+	[253, 'assignment_typed'],
+	[254, 'expression_statement_tuple'],
+	[255, 'with_clause_bare'],
+	[256, 'with_clause_paren'],
+	[257, 'match_block_block'],
+	[258, 'dict_pattern_kv'],
+	[259, 'simple_pattern_negative'],
+	[260, 'except_clause_list'],
+	[261, 'comparison_operator_comparator'],
+	[262, 'module_repeat1'],
+	[263, '_simple_statements_repeat1'],
+	[264, 'import_prefix_repeat1'],
+	[265, '_import_list_repeat1'],
+	[266, 'assert_statement_repeat1'],
+	[267, 'if_statement_repeat1'],
+	[268, 'match_statement_repeat1'],
+	[269, 'case_clause_repeat1'],
+	[270, 'try_statement_repeat1'],
+	[271, 'global_statement_repeat1'],
+	[272, 'type_parameter_repeat1'],
+	[273, 'decorated_definition_repeat1'],
+	[274, 'dotted_name_repeat1'],
+	[275, 'union_pattern_repeat1'],
+	[276, '_parameters_repeat1'],
+	[277, '_patterns_repeat1'],
+	[278, 'comparison_operator_repeat1'],
+	[279, 'subscript_repeat1'],
+	[280, '_comprehension_clauses_repeat1'],
+	[281, '_collection_elements_repeat1'],
+	[282, 'for_in_clause_repeat1'],
+	[283, 'concatenated_string_repeat1'],
+	[284, 'string_repeat1'],
+	[285, 'string_content_repeat1'],
+	[286, 'format_specifier_repeat1'],
+	[287, '_argument_list_group1_repeat1'],
+	[288, '_dict_pattern_group2_repeat1'],
+	[289, '_dictionary_group1_repeat1'],
+	[290, 'print_statement_group1_repeat1'],
+	[291, '_with_clause_bare_repeat1'],
+	[292, '_match_block_block_repeat1'],
+	[293, '_except_clause_list_repeat1'],
+	[294, 'as_pattern_target'],
+	[295, 'case_pattern_group1'],
+	[296, 'format_expression'],
+	[297, 'future_import_statement_group1']
 ]);
 
 export function kindIdFromName(kindName: string): TSKindId {
@@ -1201,13 +1216,11 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'rparen':
 			return TSKindId.Rparen;
 		case 'comma':
-			return TSKindId.Comma;
+			return TSKindId.Comma2;
 		case 'as':
 			return TSKindId.As;
 		case 'star':
 			return TSKindId.Star2;
-		case 'print':
-			return TSKindId.Print;
 		case 'gt_gt':
 			return TSKindId.GtGt;
 		case 'assert':
@@ -1251,7 +1264,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'except':
 			return TSKindId.Except;
 		case 'star2':
-			return TSKindId.Star2_34;
+			return TSKindId.Star2_33;
 		case 'finally':
 			return TSKindId.Finally;
 		case 'with':
@@ -1356,6 +1369,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Integer;
 		case 'float':
 			return TSKindId.Float;
+		case 'print':
+			return TSKindId.Print;
 		case 'anon_await':
 			return TSKindId.AnonAwait;
 		case 'true':
@@ -1516,10 +1531,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId._AsPattern;
 		case 'union_pattern':
 			return TSKindId.UnionPattern;
-		case '_list_pattern':
-			return TSKindId._ListPattern;
-		case '_tuple_pattern':
-			return TSKindId._TuplePattern;
 		case 'dict_pattern':
 			return TSKindId.DictPattern;
 		case '_key_value_pattern':
@@ -1662,18 +1673,32 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PositionalSeparator;
 		case 'keyword_separator':
 			return TSKindId.KeywordSeparator;
+		case '_except_clause_group1':
+			return TSKindId.ExceptClauseGroup1;
 		case '_argument_list_group1':
-			return TSKindId._ArgumentListGroup1;
+			return TSKindId.ArgumentListGroup1;
+		case '_expression_list_group1':
+			return TSKindId.ExpressionListGroup1;
 		case '_list_pattern_group1':
-			return TSKindId._ListPatternGroup1;
-		case '_dict_pattern_group1':
-			return TSKindId._DictPatternGroup1;
+			return TSKindId.ListPatternGroup1;
+		case '_dict_pattern_group2':
+			return TSKindId.DictPatternGroup2;
+		case '_pattern_list_group1':
+			return TSKindId.PatternListGroup1;
 		case '_slice_group1':
-			return TSKindId._SliceGroup1;
+			return TSKindId.SliceGroup1;
 		case '_dictionary_group1':
-			return TSKindId._DictionaryGroup1;
+			return TSKindId.DictionaryGroup1;
 		case '_except_clause_as':
 			return TSKindId.ExceptClauseAs;
+		case 'case_tuple_pattern':
+			return TSKindId.CaseTuplePattern;
+		case 'case_list_pattern':
+			return TSKindId.CaseListPattern;
+		case 'print_statement_group1':
+			return TSKindId.PrintStatementGroup1;
+		case 'print_statement_group2':
+			return TSKindId.PrintStatementGroup2;
 		case '_assignment_eq':
 			return TSKindId.AssignmentEq;
 		case '_assignment_type':
@@ -1704,8 +1729,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ImportPrefixRepeat1;
 		case '_import_list_repeat1':
 			return TSKindId._ImportListRepeat1;
-		case 'print_statement_repeat1':
-			return TSKindId.PrintStatementRepeat1;
 		case 'assert_statement_repeat1':
 			return TSKindId.AssertStatementRepeat1;
 		case 'if_statement_repeat1':
@@ -1750,10 +1773,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.FormatSpecifierRepeat1;
 		case '_argument_list_group1_repeat1':
 			return TSKindId._ArgumentListGroup1Repeat1;
-		case '_dict_pattern_group1_repeat1':
-			return TSKindId._DictPatternGroup1Repeat1;
+		case '_dict_pattern_group2_repeat1':
+			return TSKindId._DictPatternGroup2Repeat1;
 		case '_dictionary_group1_repeat1':
 			return TSKindId._DictionaryGroup1Repeat1;
+		case 'print_statement_group1_repeat1':
+			return TSKindId.PrintStatementGroup1Repeat1;
 		case '_with_clause_bare_repeat1':
 			return TSKindId._WithClauseBareRepeat1;
 		case '_match_block_block_repeat1':
@@ -1762,8 +1787,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId._ExceptClauseListRepeat1;
 		case '_as_pattern_target':
 			return TSKindId._AsPatternTarget;
+		case '_case_pattern_group1':
+			return TSKindId._CasePatternGroup1;
 		case '_format_expression':
 			return TSKindId._FormatExpression;
+		case '_future_import_statement_group1':
+			return TSKindId._FutureImportStatementGroup1;
 		case ';':
 			return TSKindId.Semi;
 		case '.':
@@ -1773,7 +1802,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case ')':
 			return TSKindId.Rparen;
 		case ',':
-			return TSKindId.Comma;
+			return TSKindId.Comma2;
 		case '*':
 			return TSKindId.Star2;
 		case '>>':
@@ -1864,6 +1893,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Newline;
 		case 'simple_statements':
 			return TSKindId.SimpleStatements;
+		case 'dict_pattern_group1':
+			return TSKindId.KeyValuePattern;
 		case 'parameter_list':
 			return TSKindId._Parameters;
 		case 'pattern_group':
@@ -1874,16 +1905,24 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.IsNot;
 		case 'element_list':
 			return TSKindId.CollectionElements;
+		case 'string_content_group1':
+			return TSKindId.NotEscapeSequence;
+		case 'except_clause_group1':
+			return TSKindId.ExceptClauseGroup1;
 		case 'argument_list_group1':
-			return TSKindId._ArgumentListGroup1;
+			return TSKindId.ArgumentListGroup1;
+		case 'expression_list_group1':
+			return TSKindId.ExpressionListGroup1;
 		case 'list_pattern_group1':
-			return TSKindId._ListPatternGroup1;
-		case 'dict_pattern_group1':
-			return TSKindId._DictPatternGroup1;
+			return TSKindId.ListPatternGroup1;
+		case 'dict_pattern_group2':
+			return TSKindId.DictPatternGroup2;
+		case 'pattern_list_group1':
+			return TSKindId.PatternListGroup1;
 		case 'slice_group1':
-			return TSKindId._SliceGroup1;
+			return TSKindId.SliceGroup1;
 		case 'dictionary_group1':
-			return TSKindId._DictionaryGroup1;
+			return TSKindId.DictionaryGroup1;
 		case 'except_clause_as':
 			return TSKindId.ExceptClauseAs;
 		case 'assignment_eq':
@@ -1910,15 +1949,21 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ComparisonOperatorComparator;
 		case 'as_pattern_target':
 			return TSKindId._AsPatternTarget;
+		case 'case_pattern_group1':
+			return TSKindId._CasePatternGroup1;
 		case 'format_expression':
 			return TSKindId._FormatExpression;
+		case 'future_import_statement_group1':
+			return TSKindId._FutureImportStatementGroup1;
 		default:
 			throw new TypeError(`unknown kind name ${kindName}`);
 	}
 }
 
 // Scoped enums per supertype
-export const enum CompoundStatementKind {
+export const enum StatementKind {
+	SimpleStatements = '_simple_statements',
+	CompoundStatement = '_compound_statement',
 	IfStatement = 'if_statement',
 	ForStatement = 'for_statement',
 	WhileStatement = 'while_statement',
@@ -1928,64 +1973,6 @@ export const enum CompoundStatementKind {
 	ClassDefinition = 'class_definition',
 	DecoratedDefinition = 'decorated_definition',
 	MatchStatement = 'match_statement'
-}
-
-export const enum DictPatternKvKind {
-	KeyValuePattern = '_key_value_pattern',
-	SplatPattern = 'splat_pattern'
-}
-
-export const enum ExpressionWithinForInClauseKind {
-	Expression = 'expression',
-	LambdaWithinForInClause = 'lambda_within_for_in_clause'
-}
-
-export const enum ExpressionsKind {
-	Expression = 'expression',
-	ExpressionList = 'expression_list'
-}
-
-export const enum FExpressionKind {
-	Expression = 'expression',
-	ExpressionList = 'expression_list',
-	PatternList = 'pattern_list',
-	Yield = 'yield'
-}
-
-export const enum LeftHandSideKind {
-	Pattern = 'pattern',
-	PatternList = 'pattern_list'
-}
-
-export const enum NamedExpressionLhsKind {
-	Identifier = 'identifier',
-	KeywordIdentifier = 'keyword_identifier'
-}
-
-export const enum RightHandSideKind {
-	Expression = 'expression',
-	ExpressionList = 'expression_list',
-	Assignment = 'assignment',
-	AugmentedAssignment = 'augmented_assignment',
-	PatternList = 'pattern_list',
-	Yield = 'yield'
-}
-
-export const enum SimplePatternKind {
-	ClassPattern = 'class_pattern',
-	SplatPattern = 'splat_pattern',
-	UnionPattern = 'union_pattern',
-	_ListPattern = '_list_pattern',
-	_TuplePattern = '_tuple_pattern',
-	DictPattern = 'dict_pattern',
-	String = 'string',
-	ConcatenatedString = 'concatenated_string',
-	True = 'true',
-	False = 'false',
-	None = 'none',
-	SimplePatternNegative = '_simple_pattern_negative',
-	ComplexPattern = 'complex_pattern',
-	DottedName = 'dotted_name'
 }
 
 export const enum SimpleStatementKind {
@@ -2007,9 +1994,17 @@ export const enum SimpleStatementKind {
 	TypeAliasStatement = 'type_alias_statement'
 }
 
-export const enum StatementKind {
-	SimpleStatements = '_simple_statements',
-	CompoundStatement = '_compound_statement',
+export const enum NamedExpressionLhsKind {
+	Identifier = 'identifier',
+	KeywordIdentifier = 'keyword_identifier'
+}
+
+export const enum ExpressionsKind {
+	Expression = 'expression',
+	ExpressionList = 'expression_list'
+}
+
+export const enum CompoundStatementKind {
 	IfStatement = 'if_statement',
 	ForStatement = 'for_statement',
 	WhileStatement = 'while_statement',
@@ -2021,15 +2016,21 @@ export const enum StatementKind {
 	MatchStatement = 'match_statement'
 }
 
-export const enum ExpressionKind {
-	ComparisonOperator = 'comparison_operator',
-	NotOperator = 'not_operator',
-	BooleanOperator = 'boolean_operator',
-	Lambda = 'lambda',
-	PrimaryExpression = 'primary_expression',
-	ConditionalExpression = 'conditional_expression',
-	NamedExpression = 'named_expression',
-	AsPattern = 'as_pattern'
+export const enum SimplePatternKind {
+	ClassPattern = 'class_pattern',
+	SplatPattern = 'splat_pattern',
+	UnionPattern = 'union_pattern',
+	CaseListPattern = 'case_list_pattern',
+	CaseTuplePattern = 'case_tuple_pattern',
+	DictPattern = 'dict_pattern',
+	String = 'string',
+	ConcatenatedString = 'concatenated_string',
+	True = 'true',
+	False = 'false',
+	None = 'none',
+	SimplePatternNegative = '_simple_pattern_negative',
+	ComplexPattern = 'complex_pattern',
+	DottedName = 'dotted_name'
 }
 
 export const enum ParameterKind {
@@ -2052,6 +2053,22 @@ export const enum PatternKind {
 	ListSplatPattern = 'list_splat_pattern',
 	TuplePattern = 'tuple_pattern',
 	ListPattern = 'list_pattern'
+}
+
+export const enum ExpressionWithinForInClauseKind {
+	Expression = 'expression',
+	LambdaWithinForInClause = 'lambda_within_for_in_clause'
+}
+
+export const enum ExpressionKind {
+	ComparisonOperator = 'comparison_operator',
+	NotOperator = 'not_operator',
+	BooleanOperator = 'boolean_operator',
+	Lambda = 'lambda',
+	PrimaryExpression = 'primary_expression',
+	ConditionalExpression = 'conditional_expression',
+	NamedExpression = 'named_expression',
+	AsPattern = 'as_pattern'
 }
 
 export const enum PrimaryExpressionKind {
@@ -2083,11 +2100,435 @@ export const enum PrimaryExpressionKind {
 	ListSplatPattern = 'list_splat_pattern'
 }
 
+export const enum LeftHandSideKind {
+	Pattern = 'pattern',
+	PatternList = 'pattern_list'
+}
+
+export const enum RightHandSideKind {
+	Expression = 'expression',
+	ExpressionList = 'expression_list',
+	Assignment = 'assignment',
+	AugmentedAssignment = 'augmented_assignment',
+	PatternList = 'pattern_list',
+	Yield = 'yield'
+}
+
+export const enum FExpressionKind {
+	Expression = 'expression',
+	ExpressionList = 'expression_list',
+	PatternList = 'pattern_list',
+	Yield = 'yield'
+}
+
+export const enum DictPatternKvKind {
+	KeyValuePattern = '_key_value_pattern',
+	SplatPattern = 'splat_pattern'
+}
+
 // Node types — concrete interfaces
-export interface _ArgumentListGroup1 {
-	readonly $type: TSKindId._ArgumentListGroup1;
-	readonly _content?: readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[];
-	contents(): readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[];
+export interface Module {
+	readonly $type: TSKindId.Module;
+	readonly _statement?: readonly Statement[];
+	statements(): readonly Statement[];
+}
+
+export interface SimpleStatements {
+	readonly $type: TSKindId.SimpleStatements;
+	readonly _simple_statement: NonEmptyArray<SimpleStatement>;
+	readonly _newline: AutoStamp<'\n'>;
+	simpleStatements(): NonEmptyArray<SimpleStatement>;
+	newline(): AutoStamp<'\n'>;
+}
+
+export interface ImportStatement {
+	readonly $type: TSKindId.ImportStatement;
+	readonly _name: NonEmptyArray<DottedName | AliasedImport>;
+	names(): NonEmptyArray<DottedName | AliasedImport>;
+}
+
+export interface RelativeImport {
+	readonly $type: TSKindId.RelativeImport;
+	readonly _import_prefix: ImportPrefix;
+	readonly _dotted_name?: DottedName;
+	importPrefix(): ImportPrefix;
+	dottedName(): DottedName | undefined;
+}
+
+export interface FutureImportStatement {
+	readonly $type: TSKindId.FutureImportStatement;
+	readonly _name?: readonly (DottedName | AliasedImport)[];
+	readonly _import_list?: ImportList;
+	names(): readonly (DottedName | AliasedImport)[];
+	importList(): ImportList | undefined;
+}
+
+export interface ImportFromStatement {
+	readonly $type: TSKindId.ImportFromStatement;
+	readonly _module_name: RelativeImport | DottedName;
+	readonly _wildcard_import: NonEmptyArray<WildcardImport | ImportList | DottedName | AliasedImport>;
+	moduleName(): RelativeImport | DottedName;
+	wildcardImports(): NonEmptyArray<WildcardImport | ImportList | DottedName | AliasedImport>;
+}
+
+export interface ImportList {
+	readonly $type: TSKindId.ImportList;
+	readonly _name: NonEmptyArray<DottedName | AliasedImport>;
+	names(): NonEmptyArray<DottedName | AliasedImport>;
+}
+
+export interface AliasedImport {
+	readonly $type: TSKindId.AliasedImport;
+	readonly _name: DottedName;
+	readonly _alias: Identifier;
+	name(): DottedName;
+	alias(): Identifier;
+}
+
+export interface PrintStatement {
+	readonly $type: TSKindId.PrintStatement;
+	readonly _content: PrintStatementGroup1 | PrintStatementGroup2;
+	content(): PrintStatementGroup1 | PrintStatementGroup2;
+}
+
+export interface Chevron {
+	readonly $type: TSKindId.Chevron;
+	readonly _expression: Expression;
+	expression(): Expression;
+}
+
+export interface AssertStatement {
+	readonly $type: TSKindId.AssertStatement;
+	readonly _expression: NonEmptyArray<Expression>;
+	expressions(): NonEmptyArray<Expression>;
+}
+
+export interface ExpressionStatement {
+	readonly $type: TSKindId.ExpressionStatement;
+	readonly _content: Expression | ExpressionStatementTuple | Assignment | AugmentedAssignment | Yield;
+	content(): Expression | ExpressionStatementTuple | Assignment | AugmentedAssignment | Yield;
+}
+
+export interface NamedExpression {
+	readonly $type: TSKindId.NamedExpression;
+	readonly _name: NamedExpressionLhs;
+	readonly _value: Expression;
+	name(): NamedExpressionLhs;
+	value(): Expression;
+}
+
+export interface ReturnStatement {
+	readonly $type: TSKindId.ReturnStatement;
+	readonly _expressions?: Expressions;
+	expressions(): Expressions | undefined;
+}
+
+export interface DeleteStatement {
+	readonly $type: TSKindId.DeleteStatement;
+	readonly _expressions: Expressions;
+	expressions(): Expressions;
+}
+
+export interface RaiseStatement {
+	readonly $type: TSKindId.RaiseStatement;
+	readonly _expressions?: Expressions;
+	readonly _cause?: Expression;
+	expressions(): Expressions | undefined;
+	cause(): Expression | undefined;
+}
+
+export interface IfStatement {
+	readonly $type: TSKindId.IfStatement;
+	readonly _condition: Expression;
+	readonly _consequence: SimpleStatements | Block | '\n';
+	readonly _alternative?: readonly (ElifClause | ElseClause)[];
+	condition(): Expression;
+	consequence(): SimpleStatements | Block | '\n';
+	alternatives(): readonly (ElifClause | ElseClause)[];
+}
+
+export interface ElifClause {
+	readonly $type: TSKindId.ElifClause;
+	readonly _condition: Expression;
+	readonly _consequence: SimpleStatements | Block | '\n';
+	condition(): Expression;
+	consequence(): SimpleStatements | Block | '\n';
+}
+
+export interface ElseClause {
+	readonly $type: TSKindId.ElseClause;
+	readonly _body: SimpleStatements | Block | '\n';
+	body(): SimpleStatements | Block | '\n';
+}
+
+export interface MatchStatement {
+	readonly $type: TSKindId.MatchStatement;
+	readonly _subject: NonEmptyArray<Expression>;
+	readonly _body: MatchBlock;
+	subjects(): NonEmptyArray<Expression>;
+	body(): MatchBlock;
+}
+
+export interface MatchBlock {
+	readonly $type: TSKindId.MatchBlock;
+	readonly _content: MatchBlockBlock | '\n';
+	content(): MatchBlockBlock | '\n';
+}
+
+export interface CaseClause {
+	readonly $type: TSKindId.CaseClause;
+	readonly _case_pattern: NonEmptyArray<CasePattern>;
+	readonly _guard?: IfClause;
+	readonly _consequence: SimpleStatements | Block | '\n';
+	casePatterns(): NonEmptyArray<CasePattern>;
+	guard(): IfClause | undefined;
+	consequence(): SimpleStatements | Block | '\n';
+}
+
+export interface ForStatement {
+	readonly $type: TSKindId.ForStatement;
+	readonly _async_marker?: boolean;
+	readonly _left: LeftHandSide;
+	readonly _right: Expressions;
+	readonly _body: SimpleStatements | Block | '\n';
+	readonly _alternative?: ElseClause;
+	readonly __inputHints__?: {
+		readonly async_marker?: BooleanKeyword<'async'>;
+	};
+	asyncMarker(): boolean | undefined;
+	left(): LeftHandSide;
+	right(): Expressions;
+	body(): SimpleStatements | Block | '\n';
+	alternative(): ElseClause | undefined;
+}
+
+export interface WhileStatement {
+	readonly $type: TSKindId.WhileStatement;
+	readonly _condition: Expression;
+	readonly _body: SimpleStatements | Block | '\n';
+	readonly _alternative?: ElseClause;
+	condition(): Expression;
+	body(): SimpleStatements | Block | '\n';
+	alternative(): ElseClause | undefined;
+}
+
+export interface TryStatement {
+	readonly $type: TSKindId.TryStatement;
+	readonly _body: SimpleStatements | Block | '\n';
+	readonly _except_clauses?: readonly ExceptClause[];
+	readonly _else_clause?: ElseClause;
+	readonly _finally_clause?: FinallyClause;
+	body(): SimpleStatements | Block | '\n';
+	exceptClauses(): readonly ExceptClause[];
+	elseClause(): ElseClause | undefined;
+	finallyClause(): FinallyClause | undefined;
+}
+
+export interface ExceptClause {
+	readonly $type: TSKindId.ExceptClause;
+	readonly _except_clause_group1?: ExceptClauseGroup1;
+	readonly _simple_statements?: SimpleStatements;
+	readonly _block?: Block;
+	readonly _newline?: boolean;
+	readonly __inputHints__?: {
+		readonly newline?: BooleanKeyword<'\n'>;
+	};
+	exceptClauseGroup1(): ExceptClauseGroup1 | undefined;
+	simpleStatements(): SimpleStatements | undefined;
+	block(): Block | undefined;
+	newline(): boolean | undefined;
+}
+
+export interface FinallyClause {
+	readonly $type: TSKindId.FinallyClause;
+	readonly _block: SimpleStatements | Block | '\n';
+	block(): SimpleStatements | Block | '\n';
+}
+
+export interface WithStatement {
+	readonly $type: TSKindId.WithStatement;
+	readonly _async_marker?: boolean;
+	readonly _with_clause: WithClause;
+	readonly _body: SimpleStatements | Block | '\n';
+	readonly __inputHints__?: {
+		readonly async_marker?: BooleanKeyword<'async'>;
+	};
+	asyncMarker(): boolean | undefined;
+	withClause(): WithClause;
+	body(): SimpleStatements | Block | '\n';
+}
+
+export interface WithClause {
+	readonly $type: TSKindId.WithClause;
+	readonly _content: WithClauseBare | WithClauseParen;
+	content(): WithClauseBare | WithClauseParen;
+}
+
+export interface WithItem {
+	readonly $type: TSKindId.WithItem;
+	readonly _value: Expression;
+	value(): Expression;
+}
+
+export interface FunctionDefinition {
+	readonly $type: TSKindId.FunctionDefinition;
+	readonly _async_marker?: boolean;
+	readonly _name: Identifier;
+	readonly _type_parameters?: TypeParameter;
+	readonly _parameters: Parameters;
+	readonly _return_type?: Type;
+	readonly _body: SimpleStatements | Block | '\n';
+	readonly __inputHints__?: {
+		readonly async_marker?: BooleanKeyword<'async'>;
+	};
+	asyncMarker(): boolean | undefined;
+	name(): Identifier;
+	typeParameters(): TypeParameter | undefined;
+	parameters(): Parameters;
+	returnType(): Type | undefined;
+	body(): SimpleStatements | Block | '\n';
+}
+
+export interface Parameters {
+	readonly $type: TSKindId.Parameters;
+	readonly _parameters?: _Parameters;
+	parameters(): _Parameters | undefined;
+}
+
+export interface LambdaParameters {
+	readonly $type: TSKindId.LambdaParameters;
+	readonly _parameters: _Parameters;
+	parameters(): _Parameters;
+}
+
+export interface ListSplat {
+	readonly $type: TSKindId.ListSplat;
+	readonly _expression: Expression;
+	expression(): Expression;
+}
+
+export interface DictionarySplat {
+	readonly $type: TSKindId.DictionarySplat;
+	readonly _expression: Expression;
+	expression(): Expression;
+}
+
+export interface GlobalStatement {
+	readonly $type: TSKindId.GlobalStatement;
+	readonly _identifier: NonEmptyArray<Identifier>;
+	identifiers(): NonEmptyArray<Identifier>;
+}
+
+export interface NonlocalStatement {
+	readonly $type: TSKindId.NonlocalStatement;
+	readonly _identifier: NonEmptyArray<Identifier>;
+	identifiers(): NonEmptyArray<Identifier>;
+}
+
+export interface ExecStatement {
+	readonly $type: TSKindId.ExecStatement;
+	readonly _code: String | Identifier;
+	readonly _in_clause?: readonly Expression[];
+	code(): String | Identifier;
+	inClauses(): readonly Expression[];
+}
+
+export interface TypeAliasStatement {
+	readonly $type: TSKindId.TypeAliasStatement;
+	readonly _type: AutoStamp<number>;
+	readonly _left: Type;
+	readonly _right: Type;
+	readonly __inputHints__?: {
+		readonly type: AutoStamp<KindEnum<'type', TSKindId.AnonType>>;
+	};
+	type(): AutoStamp<number>;
+	left(): Type;
+	right(): Type;
+}
+
+export interface ClassDefinition {
+	readonly $type: TSKindId.ClassDefinition;
+	readonly _name: Identifier;
+	readonly _type_parameters?: TypeParameter;
+	readonly _superclasses?: ArgumentList;
+	readonly _body: SimpleStatements | Block | '\n';
+	name(): Identifier;
+	typeParameters(): TypeParameter | undefined;
+	superclasses(): ArgumentList | undefined;
+	body(): SimpleStatements | Block | '\n';
+}
+
+export interface TypeParameter {
+	readonly $type: TSKindId.TypeParameter;
+	readonly _type: NonEmptyArray<Type>;
+	types(): NonEmptyArray<Type>;
+}
+
+export interface ParenthesizedListSplat {
+	readonly $type: TSKindId.ParenthesizedListSplat;
+	readonly _content: ParenthesizedListSplat | ListSplat;
+	content(): ParenthesizedListSplat | ListSplat;
+}
+
+export interface ArgumentList {
+	readonly $type: TSKindId.ArgumentList;
+	readonly _arguments?: ArgumentListGroup1;
+	arguments(): ArgumentListGroup1 | undefined;
+}
+
+export interface DecoratedDefinition {
+	readonly $type: TSKindId.DecoratedDefinition;
+	readonly _decorator: NonEmptyArray<Decorator>;
+	readonly _definition: ClassDefinition | FunctionDefinition;
+	decorators(): NonEmptyArray<Decorator>;
+	definition(): ClassDefinition | FunctionDefinition;
+}
+
+export interface Decorator {
+	readonly $type: TSKindId.Decorator;
+	readonly _expression: Expression;
+	readonly _newline: AutoStamp<'\n'>;
+	expression(): Expression;
+	newline(): AutoStamp<'\n'>;
+}
+
+export interface Suite {
+	readonly $type: '_suite';
+	readonly _simple_statements?: SimpleStatements;
+	readonly _block?: Block;
+	readonly _newline?: boolean;
+	readonly __inputHints__?: {
+		readonly newline?: BooleanKeyword<'\n'>;
+	};
+	simpleStatements(): SimpleStatements | undefined;
+	block(): Block | undefined;
+	newline(): boolean | undefined;
+}
+
+export interface Block {
+	readonly $type: TSKindId.Block;
+	readonly _statement?: readonly Statement[];
+	statements(): readonly Statement[];
+}
+
+export interface ExpressionList {
+	readonly $type: TSKindId.ExpressionList;
+	readonly _expression: Expression;
+	readonly _tail: ',' | ExpressionListGroup1;
+	expression(): Expression;
+	tail(): ',' | ExpressionListGroup1;
+}
+
+export interface DottedName {
+	readonly $type: TSKindId.DottedName;
+	readonly _identifier: NonEmptyArray<Identifier>;
+	identifiers(): NonEmptyArray<Identifier>;
+}
+
+export interface CasePattern {
+	readonly $type: TSKindId.CasePattern;
+	readonly _content: _AsPattern | KeywordPattern | SimplePattern;
+	content(): _AsPattern | KeywordPattern | SimplePattern;
 }
 
 export interface _AsPattern {
@@ -2098,116 +2539,16 @@ export interface _AsPattern {
 	identifier(): Identifier;
 }
 
-export interface AssignmentEq {
-	readonly $type: TSKindId.AssignmentEq;
-	readonly _right: RightHandSide;
-	right(): RightHandSide;
+export interface UnionPattern {
+	readonly $type: TSKindId.UnionPattern;
+	readonly _simple_pattern: NonEmptyArray<SimplePattern>;
+	simplePatterns(): NonEmptyArray<SimplePattern>;
 }
 
-export interface AssignmentType {
-	readonly $type: TSKindId.AssignmentType;
-	readonly _type: Type;
-	type(): Type;
-}
-
-export interface AssignmentTyped {
-	readonly $type: TSKindId.AssignmentTyped;
-	readonly _type: Type;
-	readonly _right: RightHandSide;
-	type(): Type;
-	right(): RightHandSide;
-}
-
-export interface CollectionElements {
-	readonly $type: TSKindId.CollectionElements;
-	readonly _content?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
-	contents(): readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
-}
-
-export interface ComparisonOperatorComparator {
-	readonly $type: TSKindId.ComparisonOperatorComparator;
-	readonly _operators: number;
-	readonly _primary_expression: PrimaryExpression;
-	readonly __inputHints__?: {
-		readonly operators: KindEnum<
-			'<' | '<=' | '==' | '!=' | '>=' | '>' | '<>' | 'in' | 'not in' | 'is' | 'is not',
-			| TSKindId.Lt
-			| TSKindId.LtEq
-			| TSKindId.EqEq
-			| TSKindId.BangEq
-			| TSKindId.GtEq
-			| TSKindId.Gt
-			| TSKindId.LtGt
-			| TSKindId.In
-			| TSKindId.NotIn
-			| TSKindId.Is
-			| TSKindId.IsNot
-		>;
-	};
-	operators(): number;
-	primaryExpression(): PrimaryExpression;
-}
-
-export interface ComprehensionClauses {
-	readonly $type: TSKindId.ComprehensionClauses;
-	readonly _content?: readonly (ForInClause | IfClause)[];
-	contents(): readonly (ForInClause | IfClause)[];
-}
-
-export interface _DictPatternGroup1 {
-	readonly $type: TSKindId._DictPatternGroup1;
-	readonly _dict_pattern_kv: DictPatternKv;
-	readonly _key?: readonly SimplePattern[];
-	readonly _value?: readonly CasePattern[];
-	readonly _splat_pattern?: readonly SplatPattern[];
-	dictPatternKv(): DictPatternKv;
-	keys(): readonly SimplePattern[];
-	values(): readonly CasePattern[];
-	splatPatterns(): readonly SplatPattern[];
-}
-
-export interface _DictionaryGroup1 {
-	readonly $type: TSKindId._DictionaryGroup1;
-	readonly _content?: readonly (Pair | DictionarySplat)[];
-	contents(): readonly (Pair | DictionarySplat)[];
-}
-
-export interface ExceptClauseAs {
-	readonly $type: TSKindId.ExceptClauseAs;
-	readonly _value: Expression;
-	readonly _alias?: Expression;
-	value(): Expression;
-	alias(): Expression | undefined;
-}
-
-export interface ExceptClauseAsOptional1 {
-	readonly $type: '_except_clause_as_optional1';
-	readonly _alias: Expression;
-	alias(): Expression;
-}
-
-export interface ExceptClauseList {
-	readonly $type: TSKindId.ExceptClauseList;
-	readonly _value: NonEmptyArray<Expression>;
-	values(): NonEmptyArray<Expression>;
-}
-
-export interface ExpressionStatementTuple {
-	readonly $type: TSKindId.ExpressionStatementTuple;
-	readonly _expression: NonEmptyArray<Expression>;
-	expressions(): NonEmptyArray<Expression>;
-}
-
-export interface FunctionDefinitionOptional1 {
-	readonly $type: '_function_definition_optional1';
-	readonly _return_type: Type;
-	returnType(): Type;
-}
-
-export interface ImportList {
-	readonly $type: TSKindId.ImportList;
-	readonly _name: NonEmptyArray<DottedName | AliasedImport>;
-	names(): NonEmptyArray<DottedName | AliasedImport>;
+export interface DictPattern {
+	readonly $type: TSKindId.DictPattern;
+	readonly _dict_pattern_group2?: DictPatternGroup2;
+	dictPatternGroup2(): DictPatternGroup2 | undefined;
 }
 
 export interface KeyValuePattern {
@@ -2218,28 +2559,47 @@ export interface KeyValuePattern {
 	value(): CasePattern;
 }
 
-export interface _ListPattern {
-	readonly $type: TSKindId._ListPattern;
-	readonly _list_pattern_group1?: ListPatternGroup1;
-	listPatternGroup1(): ListPatternGroup1 | undefined;
+export interface KeywordPattern {
+	readonly $type: TSKindId.KeywordPattern;
+	readonly _identifier: Identifier;
+	readonly _simple_pattern: SimplePattern;
+	identifier(): Identifier;
+	simplePattern(): SimplePattern;
 }
 
-export interface _ListPatternGroup1 {
-	readonly $type: TSKindId._ListPatternGroup1;
-	readonly _case_pattern: NonEmptyArray<CasePattern>;
-	casePatterns(): NonEmptyArray<CasePattern>;
+export interface SplatPattern {
+	readonly $type: TSKindId.SplatPattern;
+	readonly _operator: number;
+	readonly _identifier: Identifier | '_';
+	readonly __inputHints__?: {
+		readonly operator: KindEnum<'*' | '**', TSKindId.Star2 | TSKindId.StarStar>;
+	};
+	operator(): number;
+	identifier(): Identifier | '_';
 }
 
-export interface MatchBlock {
-	readonly $type: TSKindId.MatchBlock;
-	readonly _match_block_block: MatchBlockBlock;
-	matchBlockBlock(): MatchBlockBlock;
+export interface ClassPattern {
+	readonly $type: TSKindId.ClassPattern;
+	readonly _dotted_name: DottedName;
+	readonly _arguments?: ListPatternGroup1;
+	dottedName(): DottedName;
+	arguments(): ListPatternGroup1 | undefined;
 }
 
-export interface MatchBlockBlock {
-	readonly $type: TSKindId.MatchBlockBlock;
-	readonly _alternative?: readonly CaseClause[];
-	alternatives(): readonly CaseClause[];
+export interface ComplexPattern {
+	readonly $type: TSKindId.ComplexPattern;
+	readonly _real?: boolean;
+	readonly _imaginary: Integer | Float;
+	readonly _operator: number;
+	readonly _content: Integer | Float;
+	readonly __inputHints__?: {
+		readonly real?: BooleanKeyword<'-'>;
+		readonly operator: KindEnum<'+' | '-', TSKindId.Plus | TSKindId.Dash>;
+	};
+	real(): boolean | undefined;
+	imaginary(): Integer | Float;
+	operator(): number;
+	content(): Integer | Float;
 }
 
 export interface _Parameters {
@@ -2254,70 +2614,46 @@ export interface Patterns {
 	patterns(): NonEmptyArray<Pattern>;
 }
 
-export interface RaiseStatementOptional1 {
-	readonly $type: '_raise_statement_optional1';
-	readonly _cause: Expression;
-	cause(): Expression;
+export interface TuplePattern {
+	readonly $type: TSKindId.TuplePattern;
+	readonly _patterns?: Patterns;
+	patterns(): Patterns | undefined;
 }
 
-export interface SimplePatternNegative {
-	readonly $type: TSKindId.SimplePatternNegative;
-	readonly _content: Integer | Float;
-	content(): Integer | Float;
+export interface ListPattern {
+	readonly $type: TSKindId.ListPattern;
+	readonly _patterns?: Patterns;
+	patterns(): Patterns | undefined;
 }
 
-export interface SimpleStatements {
-	readonly $type: TSKindId.SimpleStatements;
-	readonly _simple_statement: NonEmptyArray<SimpleStatement>;
-	simpleStatements(): NonEmptyArray<SimpleStatement>;
+export interface DefaultParameter {
+	readonly $type: TSKindId.DefaultParameter;
+	readonly _name: Identifier | TuplePattern;
+	readonly _value: Expression;
+	name(): Identifier | TuplePattern;
+	value(): Expression;
 }
 
-export interface _SliceGroup1 {
-	readonly $type: TSKindId._SliceGroup1;
-	readonly _expression?: Expression;
-	expression(): Expression | undefined;
+export interface TypedDefaultParameter {
+	readonly $type: TSKindId.TypedDefaultParameter;
+	readonly _name: Identifier;
+	readonly _type: Type;
+	readonly _value: Expression;
+	name(): Identifier;
+	type(): Type;
+	value(): Expression;
 }
 
-export interface Suite {
-	readonly $type: '_suite';
-	readonly _simple_statements?: SimpleStatements;
-	readonly _block?: Block;
-	readonly _newline?: Newline;
-	simpleStatements(): SimpleStatements | undefined;
-	block(): Block | undefined;
-	newline(): Newline | undefined;
+export interface ListSplatPattern {
+	readonly $type: TSKindId.ListSplatPattern;
+	readonly _content: Identifier | Subscript | Attribute;
+	content(): Identifier | Subscript | Attribute;
 }
 
-export interface _TuplePattern {
-	readonly $type: TSKindId._TuplePattern;
-	readonly _list_pattern_group1?: ListPatternGroup1;
-	listPatternGroup1(): ListPatternGroup1 | undefined;
-}
-
-export interface WithClauseBare {
-	readonly $type: TSKindId.WithClauseBare;
-	readonly _with_item: NonEmptyArray<WithItem>;
-	withItems(): NonEmptyArray<WithItem>;
-}
-
-export interface WithClauseParen {
-	readonly $type: TSKindId.WithClauseParen;
-	readonly _with_item: NonEmptyArray<WithItem>;
-	withItems(): NonEmptyArray<WithItem>;
-}
-
-export interface AliasedImport {
-	readonly $type: TSKindId.AliasedImport;
-	readonly _name: DottedName;
-	readonly _alias: Identifier;
-	name(): DottedName;
-	alias(): Identifier;
-}
-
-export interface ArgumentList {
-	readonly $type: TSKindId.ArgumentList;
-	readonly _arguments?: ArgumentListGroup1;
-	arguments(): ArgumentListGroup1 | undefined;
+export interface DictionarySplatPattern {
+	readonly $type: TSKindId.DictionarySplatPattern;
+	readonly _content: Identifier | Subscript | Attribute;
+	content(): Identifier | Subscript | Attribute;
 }
 
 export interface AsPattern {
@@ -2328,60 +2664,23 @@ export interface AsPattern {
 	alias(): Expression;
 }
 
-export interface AssertStatement {
-	readonly $type: TSKindId.AssertStatement;
-	readonly _expression: NonEmptyArray<Expression>;
-	expressions(): NonEmptyArray<Expression>;
+export interface NotOperator {
+	readonly $type: TSKindId.NotOperator;
+	readonly _argument: Expression;
+	argument(): Expression;
 }
 
-export interface Assignment {
-	readonly $type: TSKindId.Assignment;
-	readonly _left: LeftHandSide;
-	readonly _content: AssignmentEq | AssignmentType | AssignmentTyped;
-	left(): LeftHandSide;
-	content(): AssignmentEq | AssignmentType | AssignmentTyped;
-}
-
-export interface Attribute {
-	readonly $type: TSKindId.Attribute;
-	readonly _object: PrimaryExpression;
-	readonly _attribute: Identifier;
-	object(): PrimaryExpression;
-	attribute(): Identifier;
-}
-
-export interface AugmentedAssignment {
-	readonly $type: TSKindId.AugmentedAssignment;
-	readonly _left: LeftHandSide;
+export interface BooleanOperator {
+	readonly $type: TSKindId.BooleanOperator;
+	readonly _left: Expression;
 	readonly _operator: number;
-	readonly _right: RightHandSide;
+	readonly _right: Expression;
 	readonly __inputHints__?: {
-		readonly operator: KindEnum<
-			'+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|=',
-			| TSKindId.PlusEq
-			| TSKindId.DashEq
-			| TSKindId.StarEq
-			| TSKindId.SlashEq
-			| TSKindId.AtEq
-			| TSKindId.SlashSlashEq
-			| TSKindId.PercentEq
-			| TSKindId.StarStarEq
-			| TSKindId.GtGtEq
-			| TSKindId.LtLtEq
-			| TSKindId.AmpEq
-			| TSKindId.CaretEq
-			| TSKindId.PipeEq
-		>;
+		readonly operator: KindEnum<'and' | 'or', TSKindId.And | TSKindId.Or>;
 	};
-	left(): LeftHandSide;
+	left(): Expression;
 	operator(): number;
-	right(): RightHandSide;
-}
-
-export interface Await {
-	readonly $type: TSKindId.Await;
-	readonly _primary_expression: PrimaryExpression;
-	primaryExpression(): PrimaryExpression;
+	right(): Expression;
 }
 
 export interface BinaryOperator {
@@ -2412,73 +2711,15 @@ export interface BinaryOperator {
 	right(): PrimaryExpression;
 }
 
-export interface Block {
-	readonly $type: TSKindId.Block;
-	readonly _statement?: readonly Statement[];
-	statements(): readonly Statement[];
-}
-
-export interface BooleanOperator {
-	readonly $type: TSKindId.BooleanOperator;
-	readonly _left: Expression;
+export interface UnaryOperator {
+	readonly $type: TSKindId.UnaryOperator;
 	readonly _operator: number;
-	readonly _right: Expression;
+	readonly _argument: PrimaryExpression;
 	readonly __inputHints__?: {
-		readonly operator: KindEnum<'and' | 'or', TSKindId.And | TSKindId.Or>;
+		readonly operator: KindEnum<'+' | '-' | '~', TSKindId.Plus | TSKindId.Dash | TSKindId.Tilde>;
 	};
-	left(): Expression;
 	operator(): number;
-	right(): Expression;
-}
-
-export interface Call {
-	readonly $type: TSKindId.Call;
-	readonly _function: PrimaryExpression;
-	readonly _arguments: GeneratorExpression | ArgumentList;
-	function(): PrimaryExpression;
-	arguments(): GeneratorExpression | ArgumentList;
-}
-
-export interface CaseClause {
-	readonly $type: TSKindId.CaseClause;
-	readonly _case_pattern: NonEmptyArray<CasePattern>;
-	readonly _guard?: IfClause;
-	readonly _consequence: SimpleStatements | Block | Newline;
-	casePatterns(): NonEmptyArray<CasePattern>;
-	guard(): IfClause | undefined;
-	consequence(): SimpleStatements | Block | Newline;
-}
-
-export interface CasePattern {
-	readonly $type: TSKindId.CasePattern;
-	readonly _content: _AsPattern | KeywordPattern | SimplePattern;
-	content(): _AsPattern | KeywordPattern | SimplePattern;
-}
-
-export interface Chevron {
-	readonly $type: TSKindId.Chevron;
-	readonly _expression: Expression;
-	expression(): Expression;
-}
-
-export interface ClassDefinition {
-	readonly $type: TSKindId.ClassDefinition;
-	readonly _name: Identifier;
-	readonly _type_parameters?: TypeParameter;
-	readonly _superclasses?: ArgumentList;
-	readonly _body: SimpleStatements | Block | Newline;
-	name(): Identifier;
-	typeParameters(): TypeParameter | undefined;
-	superclasses(): ArgumentList | undefined;
-	body(): SimpleStatements | Block | Newline;
-}
-
-export interface ClassPattern {
-	readonly $type: TSKindId.ClassPattern;
-	readonly _dotted_name: DottedName;
-	readonly _arguments?: ListPatternGroup1;
-	dottedName(): DottedName;
-	arguments(): ListPatternGroup1 | undefined;
+	argument(): PrimaryExpression;
 }
 
 export interface ComparisonOperator {
@@ -2489,36 +2730,140 @@ export interface ComparisonOperator {
 	comparators(): NonEmptyArray<ComparisonOperatorComparator>;
 }
 
-export interface ComplexPattern {
-	readonly $type: TSKindId.ComplexPattern;
-	readonly _real?: boolean;
-	readonly _imaginary: Integer | Float;
-	readonly _operator: number;
-	readonly _content: Integer | Float;
-	readonly __inputHints__?: {
-		readonly real?: BooleanKeyword<'-'>;
-		readonly operator: KindEnum<'+' | '-', TSKindId.Plus | TSKindId.Dash>;
-	};
-	real(): boolean | undefined;
-	imaginary(): Integer | Float;
-	operator(): number;
-	content(): Integer | Float;
-}
-
-export interface ConcatenatedString {
-	readonly $type: TSKindId.ConcatenatedString;
-	readonly _string: NonEmptyArray<String>;
-	strings(): NonEmptyArray<String>;
-}
-
-export interface ConditionalExpression {
-	readonly $type: TSKindId.ConditionalExpression;
+export interface Lambda {
+	readonly $type: TSKindId.Lambda;
+	readonly _parameters?: LambdaParameters;
 	readonly _body: Expression;
-	readonly _condition: Expression;
-	readonly _alternative: Expression;
+	parameters(): LambdaParameters | undefined;
 	body(): Expression;
-	condition(): Expression;
-	alternative(): Expression;
+}
+
+export interface LambdaWithinForInClause {
+	readonly $type: TSKindId.LambdaWithinForInClause;
+	readonly _parameters?: LambdaParameters;
+	readonly _body: ExpressionWithinForInClause;
+	parameters(): LambdaParameters | undefined;
+	body(): ExpressionWithinForInClause;
+}
+
+export interface Assignment {
+	readonly $type: TSKindId.Assignment;
+	readonly _left: LeftHandSide;
+	readonly _content: AssignmentEq | AssignmentType | AssignmentTyped;
+	left(): LeftHandSide;
+	content(): AssignmentEq | AssignmentType | AssignmentTyped;
+}
+
+export interface AugmentedAssignment {
+	readonly $type: TSKindId.AugmentedAssignment;
+	readonly _left: LeftHandSide;
+	readonly _operator: number;
+	readonly _right: RightHandSide;
+	readonly __inputHints__?: {
+		readonly operator: KindEnum<
+			'+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|=',
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.AtEq
+			| TSKindId.SlashSlashEq
+			| TSKindId.PercentEq
+			| TSKindId.StarStarEq
+			| TSKindId.GtGtEq
+			| TSKindId.LtLtEq
+			| TSKindId.AmpEq
+			| TSKindId.CaretEq
+			| TSKindId.PipeEq
+		>;
+	};
+	left(): LeftHandSide;
+	operator(): number;
+	right(): RightHandSide;
+}
+
+export interface PatternList {
+	readonly $type: TSKindId.PatternList;
+	readonly _pattern: Pattern;
+	readonly _tail: ',' | PatternListGroup1;
+	pattern(): Pattern;
+	tail(): ',' | PatternListGroup1;
+}
+
+export interface Yield {
+	readonly $type: TSKindId.Yield;
+	readonly _content?: Expression | Expressions;
+	content(): Expression | Expressions | undefined;
+}
+
+export interface Attribute {
+	readonly $type: TSKindId.Attribute;
+	readonly _object: PrimaryExpression;
+	readonly _attribute: Identifier;
+	object(): PrimaryExpression;
+	attribute(): Identifier;
+}
+
+export interface Subscript {
+	readonly $type: TSKindId.Subscript;
+	readonly _value: PrimaryExpression;
+	readonly _subscript: NonEmptyArray<Expression | Slice>;
+	value(): PrimaryExpression;
+	subscripts(): NonEmptyArray<Expression | Slice>;
+}
+
+export interface Slice {
+	readonly $type: TSKindId.Slice;
+	readonly _start?: Expression;
+	readonly _stop?: Expression;
+	readonly _step?: SliceGroup1;
+	start(): Expression | undefined;
+	stop(): Expression | undefined;
+	step(): SliceGroup1 | undefined;
+}
+
+export interface Call {
+	readonly $type: TSKindId.Call;
+	readonly _function: PrimaryExpression;
+	readonly _arguments: GeneratorExpression | ArgumentList;
+	function(): PrimaryExpression;
+	arguments(): GeneratorExpression | ArgumentList;
+}
+
+export interface TypedParameter {
+	readonly $type: TSKindId.TypedParameter;
+	readonly _content: Identifier | ListSplatPattern | DictionarySplatPattern;
+	readonly _type: Type;
+	content(): Identifier | ListSplatPattern | DictionarySplatPattern;
+	type(): Type;
+}
+
+export interface Type {
+	readonly $type: TSKindId.Type;
+	readonly _content: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
+	content(): Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
+}
+
+export interface SplatType {
+	readonly $type: TSKindId.SplatType;
+	readonly _identifier: SplatPatternOperator | Identifier;
+	identifier(): SplatPatternOperator | Identifier;
+}
+
+export interface GenericType {
+	readonly $type: TSKindId.GenericType;
+	readonly _identifier: Identifier;
+	readonly _type_parameter: TypeParameter;
+	identifier(): Identifier;
+	typeParameter(): TypeParameter;
+}
+
+export interface UnionType {
+	readonly $type: TSKindId.UnionType;
+	readonly _left: Type;
+	readonly _right: Type;
+	left(): Type;
+	right(): Type;
 }
 
 export interface ConstrainedType {
@@ -2529,44 +2874,60 @@ export interface ConstrainedType {
 	constraint(): Type;
 }
 
-export interface DecoratedDefinition {
-	readonly $type: TSKindId.DecoratedDefinition;
-	readonly _decorator: NonEmptyArray<Decorator>;
-	readonly _definition: ClassDefinition | FunctionDefinition;
-	decorators(): NonEmptyArray<Decorator>;
-	definition(): ClassDefinition | FunctionDefinition;
+export interface MemberType {
+	readonly $type: TSKindId.MemberType;
+	readonly _base_type: Type;
+	readonly _identifier: Identifier;
+	baseType(): Type;
+	identifier(): Identifier;
 }
 
-export interface Decorator {
-	readonly $type: TSKindId.Decorator;
-	readonly _expression: Expression;
-	expression(): Expression;
-}
-
-export interface DefaultParameter {
-	readonly $type: TSKindId.DefaultParameter;
-	readonly _name: Identifier | TuplePattern;
+export interface KeywordArgument {
+	readonly $type: TSKindId.KeywordArgument;
+	readonly _name: Identifier;
 	readonly _value: Expression;
-	name(): Identifier | TuplePattern;
+	name(): Identifier;
 	value(): Expression;
 }
 
-export interface DeleteStatement {
-	readonly $type: TSKindId.DeleteStatement;
-	readonly _expressions: Expressions;
-	expressions(): Expressions;
+export interface List {
+	readonly $type: TSKindId.List;
+	readonly _collection_elements?: CollectionElements;
+	collectionElements(): CollectionElements | undefined;
 }
 
-export interface DictPattern {
-	readonly $type: TSKindId.DictPattern;
-	readonly _dict_pattern_group1?: DictPatternGroup1;
-	dictPatternGroup1(): DictPatternGroup1 | undefined;
+export interface Set {
+	readonly $type: TSKindId.Set;
+	readonly _collection_elements: CollectionElements;
+	collectionElements(): CollectionElements;
+}
+
+export interface Tuple {
+	readonly $type: TSKindId.Tuple;
+	readonly _collection_elements?: CollectionElements;
+	collectionElements(): CollectionElements | undefined;
 }
 
 export interface Dictionary {
 	readonly $type: TSKindId.Dictionary;
 	readonly _entries?: DictionaryGroup1;
 	entries(): DictionaryGroup1 | undefined;
+}
+
+export interface Pair {
+	readonly $type: TSKindId.Pair;
+	readonly _key: Expression;
+	readonly _value: Expression;
+	key(): Expression;
+	value(): Expression;
+}
+
+export interface ListComprehension {
+	readonly $type: TSKindId.ListComprehension;
+	readonly _body: Expression;
+	readonly _comprehension_clauses: ComprehensionClauses;
+	body(): Expression;
+	comprehensionClauses(): ComprehensionClauses;
 }
 
 export interface DictionaryComprehension {
@@ -2577,74 +2938,38 @@ export interface DictionaryComprehension {
 	comprehensionClauses(): ComprehensionClauses;
 }
 
-export interface DictionarySplat {
-	readonly $type: TSKindId.DictionarySplat;
-	readonly _expression: Expression;
-	expression(): Expression;
+export interface SetComprehension {
+	readonly $type: TSKindId.SetComprehension;
+	readonly _body: Expression;
+	readonly _comprehension_clauses: ComprehensionClauses;
+	body(): Expression;
+	comprehensionClauses(): ComprehensionClauses;
 }
 
-export interface DictionarySplatPattern {
-	readonly $type: TSKindId.DictionarySplatPattern;
-	readonly _content: Identifier | Subscript | Attribute;
-	content(): Identifier | Subscript | Attribute;
+export interface GeneratorExpression {
+	readonly $type: TSKindId.GeneratorExpression;
+	readonly _body: Expression;
+	readonly _comprehension_clauses: ComprehensionClauses;
+	body(): Expression;
+	comprehensionClauses(): ComprehensionClauses;
 }
 
-export interface DottedName {
-	readonly $type: TSKindId.DottedName;
-	readonly _identifier: NonEmptyArray<Identifier>;
-	identifiers(): NonEmptyArray<Identifier>;
+export interface ComprehensionClauses {
+	readonly $type: TSKindId.ComprehensionClauses;
+	readonly _content?: readonly (ForInClause | IfClause)[];
+	contents(): readonly (ForInClause | IfClause)[];
 }
 
-export interface ElifClause {
-	readonly $type: TSKindId.ElifClause;
-	readonly _condition: Expression;
-	readonly _consequence: SimpleStatements | Block | Newline;
-	condition(): Expression;
-	consequence(): SimpleStatements | Block | Newline;
+export interface ParenthesizedExpression {
+	readonly $type: TSKindId.ParenthesizedExpression;
+	readonly _content: Expression | Yield | ParenthesizedListSplat | ListSplat;
+	content(): Expression | Yield | ParenthesizedListSplat | ListSplat;
 }
 
-export interface ElseClause {
-	readonly $type: TSKindId.ElseClause;
-	readonly _body: SimpleStatements | Block | Newline;
-	body(): SimpleStatements | Block | Newline;
-}
-
-export interface ExceptClause {
-	readonly $type: TSKindId.ExceptClause;
-	readonly _content?: ExceptClauseAs | ExceptClauseList;
-	readonly _simple_statements?: SimpleStatements;
-	readonly _block?: Block;
-	readonly _newline?: Newline;
-	content(): ExceptClauseAs | ExceptClauseList | undefined;
-	simpleStatements(): SimpleStatements | undefined;
-	block(): Block | undefined;
-	newline(): Newline | undefined;
-}
-
-export interface ExecStatement {
-	readonly $type: TSKindId.ExecStatement;
-	readonly _code: String | Identifier;
-	readonly _in_clause?: readonly Expression[];
-	code(): String | Identifier;
-	inClauses(): readonly Expression[];
-}
-
-export interface ExpressionList {
-	readonly $type: TSKindId.ExpressionList;
-	readonly _expression: NonEmptyArray<Expression>;
-	expressions(): NonEmptyArray<Expression>;
-}
-
-export interface ExpressionStatement {
-	readonly $type: TSKindId.ExpressionStatement;
-	readonly _content: Expression | ExpressionStatementTuple | Assignment | AugmentedAssignment | Yield;
-	content(): Expression | ExpressionStatementTuple | Assignment | AugmentedAssignment | Yield;
-}
-
-export interface FinallyClause {
-	readonly $type: TSKindId.FinallyClause;
-	readonly _block: SimpleStatements | Block | Newline;
-	block(): SimpleStatements | Block | Newline;
+export interface CollectionElements {
+	readonly $type: TSKindId.CollectionElements;
+	readonly _content?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
+	contents(): readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
 }
 
 export interface ForInClause {
@@ -2660,335 +2985,26 @@ export interface ForInClause {
 	rights(): NonEmptyArray<ExpressionWithinForInClause>;
 }
 
-export interface ForStatement {
-	readonly $type: TSKindId.ForStatement;
-	readonly _async_marker?: boolean;
-	readonly _left: LeftHandSide;
-	readonly _right: Expressions;
-	readonly _body: SimpleStatements | Block | Newline;
-	readonly _alternative?: ElseClause;
-	readonly __inputHints__?: {
-		readonly async_marker?: BooleanKeyword<'async'>;
-	};
-	asyncMarker(): boolean | undefined;
-	left(): LeftHandSide;
-	right(): Expressions;
-	body(): SimpleStatements | Block | Newline;
-	alternative(): ElseClause | undefined;
-}
-
-export interface FormatSpecifier {
-	readonly $type: TSKindId.FormatSpecifier;
-	readonly _content?: readonly ('[^{}\\n]+' | Interpolation)[];
-	contents(): readonly ('[^{}\\n]+' | Interpolation)[];
-}
-
-export interface FunctionDefinition {
-	readonly $type: TSKindId.FunctionDefinition;
-	readonly _async_marker?: boolean;
-	readonly _name: Identifier;
-	readonly _type_parameters?: TypeParameter;
-	readonly _parameters: Parameters;
-	readonly _return_type?: Type;
-	readonly _body: SimpleStatements | Block | Newline;
-	readonly __inputHints__?: {
-		readonly async_marker?: BooleanKeyword<'async'>;
-	};
-	asyncMarker(): boolean | undefined;
-	name(): Identifier;
-	typeParameters(): TypeParameter | undefined;
-	parameters(): Parameters;
-	returnType(): Type | undefined;
-	body(): SimpleStatements | Block | Newline;
-}
-
-export interface FutureImportStatement {
-	readonly $type: TSKindId.FutureImportStatement;
-	readonly _name: NonEmptyArray<DottedName | AliasedImport>;
-	names(): NonEmptyArray<DottedName | AliasedImport>;
-}
-
-export interface GeneratorExpression {
-	readonly $type: TSKindId.GeneratorExpression;
-	readonly _body: Expression;
-	readonly _comprehension_clauses: ComprehensionClauses;
-	body(): Expression;
-	comprehensionClauses(): ComprehensionClauses;
-}
-
-export interface GenericType {
-	readonly $type: TSKindId.GenericType;
-	readonly _identifier: Identifier;
-	readonly _type_parameter: TypeParameter;
-	identifier(): Identifier;
-	typeParameter(): TypeParameter;
-}
-
-export interface GlobalStatement {
-	readonly $type: TSKindId.GlobalStatement;
-	readonly _identifier: NonEmptyArray<Identifier>;
-	identifiers(): NonEmptyArray<Identifier>;
-}
-
 export interface IfClause {
 	readonly $type: TSKindId.IfClause;
 	readonly _expression: Expression;
 	expression(): Expression;
 }
 
-export interface IfStatement {
-	readonly $type: TSKindId.IfStatement;
+export interface ConditionalExpression {
+	readonly $type: TSKindId.ConditionalExpression;
+	readonly _body: Expression;
 	readonly _condition: Expression;
-	readonly _consequence: SimpleStatements | Block | Newline;
-	readonly _alternative?: readonly (ElifClause | ElseClause)[];
+	readonly _alternative: Expression;
+	body(): Expression;
 	condition(): Expression;
-	consequence(): SimpleStatements | Block | Newline;
-	alternatives(): readonly (ElifClause | ElseClause)[];
+	alternative(): Expression;
 }
 
-export interface ImportFromStatement {
-	readonly $type: TSKindId.ImportFromStatement;
-	readonly _module_name: RelativeImport | DottedName;
-	readonly _wildcard_import: NonEmptyArray<WildcardImport | DottedName | AliasedImport>;
-	moduleName(): RelativeImport | DottedName;
-	wildcardImports(): NonEmptyArray<WildcardImport | DottedName | AliasedImport>;
-}
-
-export interface ImportStatement {
-	readonly $type: TSKindId.ImportStatement;
-	readonly _name: NonEmptyArray<DottedName | AliasedImport>;
-	names(): NonEmptyArray<DottedName | AliasedImport>;
-}
-
-export interface Interpolation {
-	readonly $type: TSKindId.Interpolation;
-	readonly _expression: FExpression;
-	readonly _type_conversion?: TypeConversion;
-	readonly _format_specifier?: FormatSpecifier;
-	expression(): FExpression;
-	typeConversion(): TypeConversion | undefined;
-	formatSpecifier(): FormatSpecifier | undefined;
-}
-
-export interface KeywordArgument {
-	readonly $type: TSKindId.KeywordArgument;
-	readonly _name: Identifier;
-	readonly _value: Expression;
-	name(): Identifier;
-	value(): Expression;
-}
-
-export interface KeywordIdentifier {
-	readonly $type: 'keyword_identifier';
-	readonly _identifier: Identifier;
-	identifier(): Identifier;
-}
-
-export interface KeywordPattern {
-	readonly $type: TSKindId.KeywordPattern;
-	readonly _identifier: Identifier;
-	readonly _simple_pattern: SimplePattern;
-	identifier(): Identifier;
-	simplePattern(): SimplePattern;
-}
-
-export interface Lambda {
-	readonly $type: TSKindId.Lambda;
-	readonly _parameters?: LambdaParameters;
-	readonly _body: Expression;
-	parameters(): LambdaParameters | undefined;
-	body(): Expression;
-}
-
-export interface LambdaParameters {
-	readonly $type: TSKindId.LambdaParameters;
-	readonly _parameters: _Parameters;
-	parameters(): _Parameters;
-}
-
-export interface LambdaWithinForInClause {
-	readonly $type: TSKindId.LambdaWithinForInClause;
-	readonly _parameters?: LambdaParameters;
-	readonly _body: ExpressionWithinForInClause;
-	parameters(): LambdaParameters | undefined;
-	body(): ExpressionWithinForInClause;
-}
-
-export interface List {
-	readonly $type: TSKindId.List;
-	readonly _element_list?: ElementList;
-	elementList(): ElementList | undefined;
-}
-
-export interface ListComprehension {
-	readonly $type: TSKindId.ListComprehension;
-	readonly _body: Expression;
-	readonly _comprehension_clauses: ComprehensionClauses;
-	body(): Expression;
-	comprehensionClauses(): ComprehensionClauses;
-}
-
-export interface ListPattern {
-	readonly $type: TSKindId.ListPattern;
-	readonly _pattern_group?: PatternGroup;
-	patternGroup(): PatternGroup | undefined;
-}
-
-export interface ListSplat {
-	readonly $type: TSKindId.ListSplat;
-	readonly _expression: Expression;
-	expression(): Expression;
-}
-
-export interface ListSplatPattern {
-	readonly $type: TSKindId.ListSplatPattern;
-	readonly _content: Identifier | Subscript | Attribute;
-	content(): Identifier | Subscript | Attribute;
-}
-
-export interface MatchStatement {
-	readonly $type: TSKindId.MatchStatement;
-	readonly _subject: NonEmptyArray<Expression>;
-	readonly _body: MatchBlock;
-	subjects(): NonEmptyArray<Expression>;
-	body(): MatchBlock;
-}
-
-export interface MemberType {
-	readonly $type: TSKindId.MemberType;
-	readonly _base_type: Type;
-	readonly _identifier: Identifier;
-	baseType(): Type;
-	identifier(): Identifier;
-}
-
-export interface Module {
-	readonly $type: TSKindId.Module;
-	readonly _statement?: readonly Statement[];
-	statements(): readonly Statement[];
-}
-
-export interface NamedExpression {
-	readonly $type: TSKindId.NamedExpression;
-	readonly _name: NamedExpressionLhs;
-	readonly _value: Expression;
-	name(): NamedExpressionLhs;
-	value(): Expression;
-}
-
-export interface NonlocalStatement {
-	readonly $type: TSKindId.NonlocalStatement;
-	readonly _identifier: NonEmptyArray<Identifier>;
-	identifiers(): NonEmptyArray<Identifier>;
-}
-
-export interface NotOperator {
-	readonly $type: TSKindId.NotOperator;
-	readonly _argument: Expression;
-	argument(): Expression;
-}
-
-export interface Pair {
-	readonly $type: TSKindId.Pair;
-	readonly _key: Expression;
-	readonly _value: Expression;
-	key(): Expression;
-	value(): Expression;
-}
-
-export interface Parameters {
-	readonly $type: TSKindId.Parameters;
-	readonly _parameter_list?: ParameterList;
-	parameterList(): ParameterList | undefined;
-}
-
-export interface ParenthesizedExpression {
-	readonly $type: TSKindId.ParenthesizedExpression;
-	readonly _content: Expression | Yield | ParenthesizedListSplat | ListSplat;
-	content(): Expression | Yield | ParenthesizedListSplat | ListSplat;
-}
-
-export interface ParenthesizedListSplat {
-	readonly $type: TSKindId.ParenthesizedListSplat;
-	readonly _content: ParenthesizedListSplat | ListSplat;
-	content(): ParenthesizedListSplat | ListSplat;
-}
-
-export interface PatternList {
-	readonly $type: TSKindId.PatternList;
-	readonly _pattern: NonEmptyArray<Pattern>;
-	patterns(): NonEmptyArray<Pattern>;
-}
-
-export interface PrintStatement {
-	readonly $type: TSKindId.PrintStatement;
-	readonly _argument?: readonly Expression[];
-	readonly _chevron?: Chevron;
-	arguments(): readonly Expression[];
-	chevron(): Chevron | undefined;
-}
-
-export interface RaiseStatement {
-	readonly $type: TSKindId.RaiseStatement;
-	readonly _expressions?: Expressions;
-	readonly _cause?: Expression;
-	expressions(): Expressions | undefined;
-	cause(): Expression | undefined;
-}
-
-export interface RelativeImport {
-	readonly $type: TSKindId.RelativeImport;
-	readonly _import_prefix: ImportPrefix;
-	readonly _dotted_name?: DottedName;
-	importPrefix(): ImportPrefix;
-	dottedName(): DottedName | undefined;
-}
-
-export interface ReturnStatement {
-	readonly $type: TSKindId.ReturnStatement;
-	readonly _expressions?: Expressions;
-	expressions(): Expressions | undefined;
-}
-
-export interface Set {
-	readonly $type: TSKindId.Set;
-	readonly _collection_elements: CollectionElements;
-	collectionElements(): CollectionElements;
-}
-
-export interface SetComprehension {
-	readonly $type: TSKindId.SetComprehension;
-	readonly _body: Expression;
-	readonly _comprehension_clauses: ComprehensionClauses;
-	body(): Expression;
-	comprehensionClauses(): ComprehensionClauses;
-}
-
-export interface Slice {
-	readonly $type: TSKindId.Slice;
-	readonly _start?: Expression;
-	readonly _stop?: Expression;
-	readonly _step?: SliceGroup1;
-	start(): Expression | undefined;
-	stop(): Expression | undefined;
-	step(): SliceGroup1 | undefined;
-}
-
-export interface SplatPattern {
-	readonly $type: TSKindId.SplatPattern;
-	readonly _operator: number;
-	readonly _identifier: Identifier | '_';
-	readonly __inputHints__?: {
-		readonly operator: KindEnum<'*' | '**', TSKindId.Star2 | TSKindId.StarStar>;
-	};
-	operator(): number;
-	identifier(): Identifier | '_';
-}
-
-export interface SplatType {
-	readonly $type: TSKindId.SplatType;
-	readonly _identifier: SplatPatternOperator | Identifier;
-	identifier(): SplatPatternOperator | Identifier;
+export interface ConcatenatedString {
+	readonly $type: TSKindId.ConcatenatedString;
+	readonly _string: NonEmptyArray<String>;
+	strings(): NonEmptyArray<String>;
 }
 
 export interface String {
@@ -3007,202 +3023,234 @@ export interface StringContent {
 	contents(): readonly (EscapeInterpolation | EscapeSequence | '\\' | _StringContent)[];
 }
 
-export interface Subscript {
-	readonly $type: TSKindId.Subscript;
-	readonly _value: PrimaryExpression;
-	readonly _subscript: NonEmptyArray<Expression | Slice>;
-	value(): PrimaryExpression;
-	subscripts(): NonEmptyArray<Expression | Slice>;
+export interface Interpolation {
+	readonly $type: TSKindId.Interpolation;
+	readonly _expression: FExpression;
+	readonly _type_conversion?: TypeConversion;
+	readonly _format_specifier?: FormatSpecifier;
+	expression(): FExpression;
+	typeConversion(): TypeConversion | undefined;
+	formatSpecifier(): FormatSpecifier | undefined;
 }
 
-export interface TryStatement {
-	readonly $type: TSKindId.TryStatement;
-	readonly _body: SimpleStatements | Block | Newline;
-	readonly _except_clauses?: readonly ExceptClause[];
-	readonly _else_clause?: ElseClause;
-	readonly _finally_clause?: FinallyClause;
-	body(): SimpleStatements | Block | Newline;
-	exceptClauses(): readonly ExceptClause[];
-	elseClause(): ElseClause | undefined;
-	finallyClause(): FinallyClause | undefined;
+export interface FormatSpecifier {
+	readonly $type: TSKindId.FormatSpecifier;
+	readonly _content?: readonly ('[^{}\\n]+' | Interpolation)[];
+	contents(): readonly ('[^{}\\n]+' | Interpolation)[];
 }
 
-export interface Tuple {
-	readonly $type: TSKindId.Tuple;
-	readonly _element_list?: ElementList;
-	elementList(): ElementList | undefined;
+export interface KeywordIdentifier {
+	readonly $type: 'keyword_identifier';
+	readonly _identifier: Identifier;
+	identifier(): Identifier;
 }
 
-export interface TuplePattern {
-	readonly $type: TSKindId.TuplePattern;
-	readonly _pattern_group?: PatternGroup;
-	patternGroup(): PatternGroup | undefined;
+export interface Await {
+	readonly $type: TSKindId.Await;
+	readonly _primary_expression: PrimaryExpression;
+	primaryExpression(): PrimaryExpression;
 }
 
-export interface Type {
-	readonly $type: TSKindId.Type;
-	readonly _content: Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
-	content(): Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType;
+export interface RaiseStatementOptional1 {
+	readonly $type: '_raise_statement_optional1';
+	readonly _cause: Expression;
+	cause(): Expression;
 }
 
-export interface TypeAliasStatement {
-	readonly $type: TSKindId.TypeAliasStatement;
-	readonly _type: AutoStamp<number>;
-	readonly _left: Type;
-	readonly _right: Type;
-	readonly __inputHints__?: {
-		readonly type: AutoStamp<KindEnum<'type', TSKindId.Type>>;
-	};
-	type(): AutoStamp<number>;
-	left(): Type;
-	right(): Type;
+export interface ExceptClauseGroup1 {
+	readonly $type: TSKindId.ExceptClauseGroup1;
+	readonly _content: ExceptClauseAs | ExceptClauseList;
+	content(): ExceptClauseAs | ExceptClauseList;
 }
 
-export interface TypeParameter {
-	readonly $type: TSKindId.TypeParameter;
-	readonly _type: NonEmptyArray<Type>;
-	types(): NonEmptyArray<Type>;
-}
-
-export interface TypedDefaultParameter {
-	readonly $type: TSKindId.TypedDefaultParameter;
-	readonly _name: Identifier;
-	readonly _type: Type;
-	readonly _value: Expression;
-	name(): Identifier;
-	type(): Type;
-	value(): Expression;
-}
-
-export interface TypedParameter {
-	readonly $type: TSKindId.TypedParameter;
-	readonly _content: Identifier | ListSplatPattern | DictionarySplatPattern;
-	readonly _type: Type;
-	content(): Identifier | ListSplatPattern | DictionarySplatPattern;
-	type(): Type;
-}
-
-export interface UnaryOperator {
-	readonly $type: TSKindId.UnaryOperator;
-	readonly _operator: number;
-	readonly _argument: PrimaryExpression;
-	readonly __inputHints__?: {
-		readonly operator: KindEnum<'+' | '-' | '~', TSKindId.Plus | TSKindId.Dash | TSKindId.Tilde>;
-	};
-	operator(): number;
-	argument(): PrimaryExpression;
-}
-
-export interface UnionPattern {
-	readonly $type: TSKindId.UnionPattern;
-	readonly _simple_pattern: NonEmptyArray<SimplePattern>;
-	simplePatterns(): NonEmptyArray<SimplePattern>;
-}
-
-export interface UnionType {
-	readonly $type: TSKindId.UnionType;
-	readonly _left: Type;
-	readonly _right: Type;
-	left(): Type;
-	right(): Type;
-}
-
-export interface WhileStatement {
-	readonly $type: TSKindId.WhileStatement;
-	readonly _condition: Expression;
-	readonly _body: SimpleStatements | Block | Newline;
-	readonly _alternative?: ElseClause;
-	condition(): Expression;
-	body(): SimpleStatements | Block | Newline;
-	alternative(): ElseClause | undefined;
-}
-
-export interface WithClause {
-	readonly $type: TSKindId.WithClause;
-	readonly _content: WithClauseBare | WithClauseParen;
-	content(): WithClauseBare | WithClauseParen;
-}
-
-export interface WithItem {
-	readonly $type: TSKindId.WithItem;
-	readonly _value: Expression;
-	value(): Expression;
-}
-
-export interface WithStatement {
-	readonly $type: TSKindId.WithStatement;
-	readonly _async_marker?: boolean;
-	readonly _with_clause: WithClause;
-	readonly _body: SimpleStatements | Block | Newline;
-	readonly __inputHints__?: {
-		readonly async_marker?: BooleanKeyword<'async'>;
-	};
-	asyncMarker(): boolean | undefined;
-	withClause(): WithClause;
-	body(): SimpleStatements | Block | Newline;
-}
-
-export interface Yield {
-	readonly $type: TSKindId.Yield;
-	readonly _content?: Expression | Expressions;
-	content(): Expression | Expressions | undefined;
-}
-
-export interface ListPatternGroup1 {
-	readonly $type: 'list_pattern_group1';
-	readonly _case_pattern: NonEmptyArray<CasePattern>;
-	casePatterns(): NonEmptyArray<CasePattern>;
+export interface FunctionDefinitionOptional1 {
+	readonly $type: '_function_definition_optional1';
+	readonly _return_type: Type;
+	returnType(): Type;
 }
 
 export interface ArgumentListGroup1 {
-	readonly $type: 'argument_list_group1';
+	readonly $type: TSKindId.ArgumentListGroup1;
 	readonly _content?: readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[];
 	contents(): readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[];
 }
 
-export interface DictPatternGroup1 {
-	readonly $type: 'dict_pattern_group1';
+export interface ExpressionListGroup1 {
+	readonly $type: TSKindId.ExpressionListGroup1;
+	readonly _expression: NonEmptyArray<Expression>;
+	expressions(): NonEmptyArray<Expression>;
+}
+
+export interface ListPatternGroup1 {
+	readonly $type: TSKindId.ListPatternGroup1;
+	readonly _case_pattern: NonEmptyArray<CasePattern>;
+	casePatterns(): NonEmptyArray<CasePattern>;
+}
+
+export interface DictPatternGroup2 {
+	readonly $type: TSKindId.DictPatternGroup2;
 	readonly _dict_pattern_kv: DictPatternKv;
-	readonly _key?: readonly SimplePattern[];
-	readonly _value?: readonly CasePattern[];
-	readonly _splat_pattern?: readonly SplatPattern[];
+	readonly _content?: readonly (KeyValuePattern | SplatPattern)[];
 	dictPatternKv(): DictPatternKv;
-	keys(): readonly SimplePattern[];
-	values(): readonly CasePattern[];
-	splatPatterns(): readonly SplatPattern[];
+	contents(): readonly (KeyValuePattern | SplatPattern)[];
 }
 
-export interface DictionaryGroup1 {
-	readonly $type: 'dictionary_group1';
-	readonly _content?: readonly (Pair | DictionarySplat)[];
-	contents(): readonly (Pair | DictionarySplat)[];
-}
-
-export interface ElementList {
-	readonly $type: 'element_list';
-	readonly _content?: readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
-	contents(): readonly (Expression | Yield | ListSplat | ParenthesizedListSplat)[];
-}
-
-export interface PatternGroup {
-	readonly $type: 'pattern_group';
+export interface PatternListGroup1 {
+	readonly $type: TSKindId.PatternListGroup1;
 	readonly _pattern: NonEmptyArray<Pattern>;
 	patterns(): NonEmptyArray<Pattern>;
 }
 
-export interface ParameterList {
-	readonly $type: 'parameter_list';
-	readonly _parameter: NonEmptyArray<Parameter>;
-	parameters(): NonEmptyArray<Parameter>;
-}
-
 export interface SliceGroup1 {
-	readonly $type: 'slice_group1';
+	readonly $type: TSKindId.SliceGroup1;
 	readonly _expression?: Expression;
 	expression(): Expression | undefined;
 }
 
+export interface DictionaryGroup1 {
+	readonly $type: TSKindId.DictionaryGroup1;
+	readonly _content?: readonly (Pair | DictionarySplat)[];
+	contents(): readonly (Pair | DictionarySplat)[];
+}
+
+export interface ExceptClauseAs {
+	readonly $type: TSKindId.ExceptClauseAs;
+	readonly _value: Expression;
+	readonly _alias?: Expression;
+	value(): Expression;
+	alias(): Expression | undefined;
+}
+
+export interface ExceptClauseAsOptional1 {
+	readonly $type: '_except_clause_as_optional1';
+	readonly _alias: Expression;
+	alias(): Expression;
+}
+
+export interface CaseTuplePattern {
+	readonly $type: TSKindId.CaseTuplePattern;
+	readonly _case_pattern?: readonly CasePattern[];
+	casePatterns(): readonly CasePattern[];
+}
+
+export interface CaseListPattern {
+	readonly $type: TSKindId.CaseListPattern;
+	readonly _case_pattern?: readonly CasePattern[];
+	casePatterns(): readonly CasePattern[];
+}
+
+export interface PrintStatementGroup1 {
+	readonly $type: TSKindId.PrintStatementGroup1;
+	readonly _chevron: Chevron;
+	readonly _argument?: readonly Expression[];
+	chevron(): Chevron;
+	arguments(): readonly Expression[];
+}
+
+export interface PrintStatementGroup2 {
+	readonly $type: TSKindId.PrintStatementGroup2;
+	readonly _argument?: readonly Expression[];
+	arguments(): readonly Expression[];
+}
+
+export interface AssignmentEq {
+	readonly $type: TSKindId.AssignmentEq;
+	readonly _right: RightHandSide;
+	right(): RightHandSide;
+}
+
+export interface AssignmentType {
+	readonly $type: TSKindId.AssignmentType;
+	readonly _type: Type;
+	type(): Type;
+}
+
+export interface AssignmentTyped {
+	readonly $type: TSKindId.AssignmentTyped;
+	readonly _type: Type;
+	readonly _right: RightHandSide;
+	type(): Type;
+	right(): RightHandSide;
+}
+
+export interface ExpressionStatementTuple {
+	readonly $type: TSKindId.ExpressionStatementTuple;
+	readonly _expression: NonEmptyArray<Expression>;
+	expressions(): NonEmptyArray<Expression>;
+}
+
+export interface WithClauseBare {
+	readonly $type: TSKindId.WithClauseBare;
+	readonly _with_item: NonEmptyArray<WithItem>;
+	withItems(): NonEmptyArray<WithItem>;
+}
+
+export interface WithClauseParen {
+	readonly $type: TSKindId.WithClauseParen;
+	readonly _with_item: NonEmptyArray<WithItem>;
+	withItems(): NonEmptyArray<WithItem>;
+}
+
+export interface MatchBlockBlock {
+	readonly $type: TSKindId.MatchBlockBlock;
+	readonly _alternative?: readonly CaseClause[];
+	alternatives(): readonly CaseClause[];
+}
+
+export interface SimplePatternNegative {
+	readonly $type: TSKindId.SimplePatternNegative;
+	readonly _content: Integer | Float;
+	content(): Integer | Float;
+}
+
+export interface ExceptClauseList {
+	readonly $type: TSKindId.ExceptClauseList;
+	readonly _value: NonEmptyArray<Expression>;
+	values(): NonEmptyArray<Expression>;
+}
+
+export interface ComparisonOperatorComparator {
+	readonly $type: TSKindId.ComparisonOperatorComparator;
+	readonly _operators: number;
+	readonly _primary_expression: PrimaryExpression;
+	readonly __inputHints__?: {
+		readonly operators: KindEnum<
+			'<' | '<=' | '==' | '!=' | '>=' | '>' | '<>' | 'in' | 'not in' | 'is' | 'is not',
+			| TSKindId.Lt
+			| TSKindId.LtEq
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.GtEq
+			| TSKindId.Gt
+			| TSKindId.LtGt
+			| TSKindId.In
+			| TSKindId.NotIn
+			| TSKindId.Is
+			| TSKindId.IsNot
+		>;
+	};
+	operators(): number;
+	primaryExpression(): PrimaryExpression;
+}
+
 // Leaf node types
+export type ImportPrefix = Terminal<TSKindId.ImportPrefix, string>;
+export type PassStatement = Terminal<TSKindId.PassStatement, 'pass'>;
+export type BreakStatement = Terminal<TSKindId.BreakStatement, 'break'>;
+export type ContinueStatement = Terminal<TSKindId.ContinueStatement, 'continue'>;
+export type NotIn = Terminal<TSKindId.NotIn, string>;
+export type IsNot = Terminal<TSKindId.IsNot, string>;
+export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
+export type TypeConversion = Terminal<TSKindId.TypeConversion, string>;
+export type Integer = Terminal<TSKindId.Integer, string>;
+export type Float = Terminal<TSKindId.Float, string>;
+export type Identifier = Terminal<TSKindId.Identifier, string>;
+export type True = Terminal<TSKindId.True, 'True'>;
+export type False = Terminal<TSKindId.False, 'False'>;
+export type None = Terminal<TSKindId.None, 'None'>;
+export type Comment = Terminal<TSKindId.Comment, string>;
+export type LineContinuation = Terminal<TSKindId.LineContinuation, string>;
+export type UnaryOperatorOperator = Terminal<TSKindId.Plus | TSKindId.Dash | TSKindId.Tilde, '+' | '-' | '~'>;
 export type AugmentedAssignmentOperator = Terminal<
 	| TSKindId.PlusEq
 	| TSKindId.DashEq
@@ -3219,26 +3267,8 @@ export type AugmentedAssignmentOperator = Terminal<
 	| TSKindId.PipeEq,
 	'+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|='
 >;
-export type ComplexPatternOperator = Terminal<TSKindId.Plus | TSKindId.Dash, '+' | '-'>;
-export type IsNot = Terminal<TSKindId.IsNot, string>;
-export type NotIn = Terminal<TSKindId.NotIn, string>;
 export type SplatPatternOperator = Terminal<TSKindId.Star2 | TSKindId.StarStar, '*' | '**'>;
-export type UnaryOperatorOperator = Terminal<TSKindId.Plus | TSKindId.Dash | TSKindId.Tilde, '+' | '-' | '~'>;
-export type BreakStatement = Terminal<TSKindId.BreakStatement, 'break'>;
-export type Comment = Terminal<TSKindId.Comment, string>;
-export type ContinueStatement = Terminal<TSKindId.ContinueStatement, 'continue'>;
-export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
-export type False = Terminal<TSKindId.False, 'False'>;
-export type Float = Terminal<TSKindId.Float, string>;
-export type Identifier = Terminal<TSKindId.Identifier, string>;
-export type ImportPrefix = Terminal<TSKindId.ImportPrefix, string>;
-export type Integer = Terminal<TSKindId.Integer, string>;
-export type LineContinuation = Terminal<TSKindId.LineContinuation, string>;
-export type None = Terminal<TSKindId.None, 'None'>;
-export type PassStatement = Terminal<TSKindId.PassStatement, 'pass'>;
-export type True = Terminal<TSKindId.True, 'True'>;
-export type TypeConversion = Terminal<TSKindId.TypeConversion, string>;
-export type Newline = Terminal<TSKindId.Newline, string>;
+export type ComplexPatternOperator = Terminal<TSKindId.Plus | TSKindId.Dash, '+' | '-'>;
 export type Indent = Terminal<TSKindId.Indent, string>;
 export type Dedent = Terminal<TSKindId.Dedent, string>;
 export type StringStart = Terminal<TSKindId.StringStart, string>;
@@ -3251,12 +3281,182 @@ export type CloseBrace = Terminal<'}', string>;
 export type Except = Terminal<TSKindId.Except, string>;
 
 // Tree types
-export interface _ArgumentListGroup1Tree extends AnyTreeNode {
-	readonly type: '_argument_list_group1';
+export interface ModuleTree extends TreeNode<'module'> {}
+export interface SimpleStatementsTree extends AnyTreeNode {
+	readonly type: '_simple_statements';
 }
+export interface ImportStatementTree extends TreeNode<'import_statement'> {}
+export interface RelativeImportTree extends TreeNode<'relative_import'> {}
+export interface FutureImportStatementTree extends TreeNode<'future_import_statement'> {}
+export interface ImportFromStatementTree extends TreeNode<'import_from_statement'> {}
+export interface ImportListTree extends AnyTreeNode {
+	readonly type: '_import_list';
+}
+export interface AliasedImportTree extends TreeNode<'aliased_import'> {}
+export interface PrintStatementTree extends TreeNode<'print_statement'> {}
+export interface ChevronTree extends TreeNode<'chevron'> {}
+export interface AssertStatementTree extends TreeNode<'assert_statement'> {}
+export interface ExpressionStatementTree extends TreeNode<'expression_statement'> {}
+export interface NamedExpressionTree extends TreeNode<'named_expression'> {}
+export interface ReturnStatementTree extends TreeNode<'return_statement'> {}
+export interface DeleteStatementTree extends TreeNode<'delete_statement'> {}
+export interface RaiseStatementTree extends TreeNode<'raise_statement'> {}
+export interface IfStatementTree extends TreeNode<'if_statement'> {}
+export interface ElifClauseTree extends TreeNode<'elif_clause'> {}
+export interface ElseClauseTree extends TreeNode<'else_clause'> {}
+export interface MatchStatementTree extends TreeNode<'match_statement'> {}
+export interface MatchBlockTree extends AnyTreeNode {
+	readonly type: '_match_block';
+}
+export interface CaseClauseTree extends TreeNode<'case_clause'> {}
+export interface ForStatementTree extends TreeNode<'for_statement'> {}
+export interface WhileStatementTree extends TreeNode<'while_statement'> {}
+export interface TryStatementTree extends TreeNode<'try_statement'> {}
+export interface ExceptClauseTree extends TreeNode<'except_clause'> {}
+export interface FinallyClauseTree extends TreeNode<'finally_clause'> {}
+export interface WithStatementTree extends TreeNode<'with_statement'> {}
+export interface WithClauseTree extends TreeNode<'with_clause'> {}
+export interface WithItemTree extends TreeNode<'with_item'> {}
+export interface FunctionDefinitionTree extends TreeNode<'function_definition'> {}
+export interface ParametersTree extends TreeNode<'parameters'> {}
+export interface LambdaParametersTree extends TreeNode<'lambda_parameters'> {}
+export interface ListSplatTree extends TreeNode<'list_splat'> {}
+export interface DictionarySplatTree extends TreeNode<'dictionary_splat'> {}
+export interface GlobalStatementTree extends TreeNode<'global_statement'> {}
+export interface NonlocalStatementTree extends TreeNode<'nonlocal_statement'> {}
+export interface ExecStatementTree extends TreeNode<'exec_statement'> {}
+export interface TypeAliasStatementTree extends TreeNode<'type_alias_statement'> {}
+export interface ClassDefinitionTree extends TreeNode<'class_definition'> {}
+export interface TypeParameterTree extends TreeNode<'type_parameter'> {}
+export interface ParenthesizedListSplatTree extends TreeNode<'parenthesized_list_splat'> {}
+export interface ArgumentListTree extends TreeNode<'argument_list'> {}
+export interface DecoratedDefinitionTree extends TreeNode<'decorated_definition'> {}
+export interface DecoratorTree extends TreeNode<'decorator'> {}
+export interface SuiteTree extends AnyTreeNode {
+	readonly type: '_suite';
+}
+export interface BlockTree extends TreeNode<'block'> {}
+export interface ExpressionListTree extends TreeNode<'expression_list'> {}
+export interface DottedNameTree extends TreeNode<'dotted_name'> {}
+export interface CasePatternTree extends TreeNode<'case_pattern'> {}
 export interface _AsPatternTree extends AnyTreeNode {
 	readonly type: '_as_pattern';
 }
+export interface UnionPatternTree extends TreeNode<'union_pattern'> {}
+export interface DictPatternTree extends TreeNode<'dict_pattern'> {}
+export interface KeyValuePatternTree extends AnyTreeNode {
+	readonly type: '_key_value_pattern';
+}
+export interface KeywordPatternTree extends TreeNode<'keyword_pattern'> {}
+export interface SplatPatternTree extends TreeNode<'splat_pattern'> {}
+export interface ClassPatternTree extends TreeNode<'class_pattern'> {}
+export interface ComplexPatternTree extends TreeNode<'complex_pattern'> {}
+export interface _ParametersTree extends AnyTreeNode {
+	readonly type: '_parameters';
+}
+export interface PatternsTree extends AnyTreeNode {
+	readonly type: '_patterns';
+}
+export interface TuplePatternTree extends TreeNode<'tuple_pattern'> {}
+export interface ListPatternTree extends TreeNode<'list_pattern'> {}
+export interface DefaultParameterTree extends TreeNode<'default_parameter'> {}
+export interface TypedDefaultParameterTree extends TreeNode<'typed_default_parameter'> {}
+export interface ListSplatPatternTree extends TreeNode<'list_splat_pattern'> {}
+export interface DictionarySplatPatternTree extends TreeNode<'dictionary_splat_pattern'> {}
+export interface AsPatternTree extends TreeNode<'as_pattern'> {}
+export interface NotOperatorTree extends TreeNode<'not_operator'> {}
+export interface BooleanOperatorTree extends TreeNode<'boolean_operator'> {}
+export interface BinaryOperatorTree extends TreeNode<'binary_operator'> {}
+export interface UnaryOperatorTree extends TreeNode<'unary_operator'> {}
+export interface ComparisonOperatorTree extends TreeNode<'comparison_operator'> {}
+export interface LambdaTree extends TreeNode<'lambda'> {}
+export interface LambdaWithinForInClauseTree extends AnyTreeNode {
+	readonly type: 'lambda_within_for_in_clause';
+}
+export interface AssignmentTree extends TreeNode<'assignment'> {}
+export interface AugmentedAssignmentTree extends TreeNode<'augmented_assignment'> {}
+export interface PatternListTree extends TreeNode<'pattern_list'> {}
+export interface YieldTree extends TreeNode<'yield'> {}
+export interface AttributeTree extends TreeNode<'attribute'> {}
+export interface SubscriptTree extends TreeNode<'subscript'> {}
+export interface SliceTree extends TreeNode<'slice'> {}
+export interface CallTree extends TreeNode<'call'> {}
+export interface TypedParameterTree extends TreeNode<'typed_parameter'> {}
+export interface TypeTree extends TreeNode<'type'> {}
+export interface SplatTypeTree extends TreeNode<'splat_type'> {}
+export interface GenericTypeTree extends TreeNode<'generic_type'> {}
+export interface UnionTypeTree extends TreeNode<'union_type'> {}
+export interface ConstrainedTypeTree extends TreeNode<'constrained_type'> {}
+export interface MemberTypeTree extends TreeNode<'member_type'> {}
+export interface KeywordArgumentTree extends TreeNode<'keyword_argument'> {}
+export interface ListTree extends TreeNode<'list'> {}
+export interface SetTree extends TreeNode<'set'> {}
+export interface TupleTree extends TreeNode<'tuple'> {}
+export interface DictionaryTree extends TreeNode<'dictionary'> {}
+export interface PairTree extends TreeNode<'pair'> {}
+export interface ListComprehensionTree extends TreeNode<'list_comprehension'> {}
+export interface DictionaryComprehensionTree extends TreeNode<'dictionary_comprehension'> {}
+export interface SetComprehensionTree extends TreeNode<'set_comprehension'> {}
+export interface GeneratorExpressionTree extends TreeNode<'generator_expression'> {}
+export interface ComprehensionClausesTree extends AnyTreeNode {
+	readonly type: '_comprehension_clauses';
+}
+export interface ParenthesizedExpressionTree extends TreeNode<'parenthesized_expression'> {}
+export interface CollectionElementsTree extends AnyTreeNode {
+	readonly type: '_collection_elements';
+}
+export interface ForInClauseTree extends TreeNode<'for_in_clause'> {}
+export interface IfClauseTree extends TreeNode<'if_clause'> {}
+export interface ConditionalExpressionTree extends TreeNode<'conditional_expression'> {}
+export interface ConcatenatedStringTree extends TreeNode<'concatenated_string'> {}
+export interface StringTree extends TreeNode<'string'> {}
+export interface StringContentTree extends TreeNode<'string_content'> {}
+export interface InterpolationTree extends TreeNode<'interpolation'> {}
+export interface FormatSpecifierTree extends TreeNode<'format_specifier'> {}
+export interface KeywordIdentifierTree extends AnyTreeNode {
+	readonly type: 'keyword_identifier';
+}
+export interface AwaitTree extends TreeNode<'await'> {}
+export interface RaiseStatementOptional1Tree extends AnyTreeNode {
+	readonly type: '_raise_statement_optional1';
+}
+export interface ExceptClauseGroup1Tree extends AnyTreeNode {
+	readonly type: '_except_clause_group1';
+}
+export interface FunctionDefinitionOptional1Tree extends AnyTreeNode {
+	readonly type: '_function_definition_optional1';
+}
+export interface ArgumentListGroup1Tree extends AnyTreeNode {
+	readonly type: '_argument_list_group1';
+}
+export interface ExpressionListGroup1Tree extends AnyTreeNode {
+	readonly type: '_expression_list_group1';
+}
+export interface ListPatternGroup1Tree extends AnyTreeNode {
+	readonly type: '_list_pattern_group1';
+}
+export interface DictPatternGroup2Tree extends AnyTreeNode {
+	readonly type: '_dict_pattern_group2';
+}
+export interface PatternListGroup1Tree extends AnyTreeNode {
+	readonly type: '_pattern_list_group1';
+}
+export interface SliceGroup1Tree extends AnyTreeNode {
+	readonly type: '_slice_group1';
+}
+export interface DictionaryGroup1Tree extends AnyTreeNode {
+	readonly type: '_dictionary_group1';
+}
+export interface ExceptClauseAsTree extends AnyTreeNode {
+	readonly type: '_except_clause_as';
+}
+export interface ExceptClauseAsOptional1Tree extends AnyTreeNode {
+	readonly type: '_except_clause_as_optional1';
+}
+export interface CaseTuplePatternTree extends TreeNode<'case_tuple_pattern'> {}
+export interface CaseListPatternTree extends TreeNode<'case_list_pattern'> {}
+export interface PrintStatementGroup1Tree extends TreeNode<'print_statement_group1'> {}
+export interface PrintStatementGroup2Tree extends TreeNode<'print_statement_group2'> {}
 export interface AssignmentEqTree extends AnyTreeNode {
 	readonly type: '_assignment_eq';
 }
@@ -3266,77 +3466,8 @@ export interface AssignmentTypeTree extends AnyTreeNode {
 export interface AssignmentTypedTree extends AnyTreeNode {
 	readonly type: '_assignment_typed';
 }
-export interface CollectionElementsTree extends AnyTreeNode {
-	readonly type: '_collection_elements';
-}
-export interface ComparisonOperatorComparatorTree extends AnyTreeNode {
-	readonly type: '_comparison_operator_comparator';
-}
-export interface ComprehensionClausesTree extends AnyTreeNode {
-	readonly type: '_comprehension_clauses';
-}
-export interface _DictPatternGroup1Tree extends AnyTreeNode {
-	readonly type: '_dict_pattern_group1';
-}
-export interface _DictionaryGroup1Tree extends AnyTreeNode {
-	readonly type: '_dictionary_group1';
-}
-export interface ExceptClauseAsTree extends AnyTreeNode {
-	readonly type: '_except_clause_as';
-}
-export interface ExceptClauseAsOptional1Tree extends AnyTreeNode {
-	readonly type: '_except_clause_as_optional1';
-}
-export interface ExceptClauseListTree extends AnyTreeNode {
-	readonly type: '_except_clause_list';
-}
 export interface ExpressionStatementTupleTree extends AnyTreeNode {
 	readonly type: '_expression_statement_tuple';
-}
-export interface FunctionDefinitionOptional1Tree extends AnyTreeNode {
-	readonly type: '_function_definition_optional1';
-}
-export interface ImportListTree extends AnyTreeNode {
-	readonly type: '_import_list';
-}
-export interface KeyValuePatternTree extends AnyTreeNode {
-	readonly type: '_key_value_pattern';
-}
-export interface _ListPatternTree extends AnyTreeNode {
-	readonly type: '_list_pattern';
-}
-export interface _ListPatternGroup1Tree extends AnyTreeNode {
-	readonly type: '_list_pattern_group1';
-}
-export interface MatchBlockTree extends AnyTreeNode {
-	readonly type: '_match_block';
-}
-export interface MatchBlockBlockTree extends AnyTreeNode {
-	readonly type: '_match_block_block';
-}
-export interface _ParametersTree extends AnyTreeNode {
-	readonly type: '_parameters';
-}
-export interface PatternsTree extends AnyTreeNode {
-	readonly type: '_patterns';
-}
-export interface RaiseStatementOptional1Tree extends AnyTreeNode {
-	readonly type: '_raise_statement_optional1';
-}
-export interface SimplePatternNegativeTree extends AnyTreeNode {
-	readonly type: '_simple_pattern_negative';
-}
-export interface SimpleStatementsTree extends AnyTreeNode {
-	readonly type: '_simple_statements';
-}
-export interface _SliceGroup1Tree extends AnyTreeNode {
-	readonly type: '_slice_group1';
-}
-export interface SuiteTree extends AnyTreeNode {
-	readonly type: '_suite';
-}
-export interface _TuplePatternTree extends AnyTreeNode {
-	readonly type: '_tuple_pattern';
 }
 export interface WithClauseBareTree extends AnyTreeNode {
 	readonly type: '_with_clause_bare';
@@ -3344,166 +3475,61 @@ export interface WithClauseBareTree extends AnyTreeNode {
 export interface WithClauseParenTree extends AnyTreeNode {
 	readonly type: '_with_clause_paren';
 }
-export interface AliasedImportTree extends TreeNode<'aliased_import'> {}
-export interface ArgumentListTree extends TreeNode<'argument_list'> {}
-export interface AsPatternTree extends TreeNode<'as_pattern'> {}
-export interface AssertStatementTree extends TreeNode<'assert_statement'> {}
-export interface AssignmentTree extends TreeNode<'assignment'> {}
-export interface AttributeTree extends TreeNode<'attribute'> {}
-export interface AugmentedAssignmentTree extends TreeNode<'augmented_assignment'> {}
-export interface AwaitTree extends TreeNode<'await'> {}
-export interface BinaryOperatorTree extends TreeNode<'binary_operator'> {}
-export interface BlockTree extends TreeNode<'block'> {}
-export interface BooleanOperatorTree extends TreeNode<'boolean_operator'> {}
-export interface CallTree extends TreeNode<'call'> {}
-export interface CaseClauseTree extends TreeNode<'case_clause'> {}
-export interface CasePatternTree extends TreeNode<'case_pattern'> {}
-export interface ChevronTree extends TreeNode<'chevron'> {}
-export interface ClassDefinitionTree extends TreeNode<'class_definition'> {}
-export interface ClassPatternTree extends TreeNode<'class_pattern'> {}
-export interface ComparisonOperatorTree extends TreeNode<'comparison_operator'> {}
-export interface ComplexPatternTree extends TreeNode<'complex_pattern'> {}
-export interface ConcatenatedStringTree extends TreeNode<'concatenated_string'> {}
-export interface ConditionalExpressionTree extends TreeNode<'conditional_expression'> {}
-export interface ConstrainedTypeTree extends TreeNode<'constrained_type'> {}
-export interface DecoratedDefinitionTree extends TreeNode<'decorated_definition'> {}
-export interface DecoratorTree extends TreeNode<'decorator'> {}
-export interface DefaultParameterTree extends TreeNode<'default_parameter'> {}
-export interface DeleteStatementTree extends TreeNode<'delete_statement'> {}
-export interface DictPatternTree extends TreeNode<'dict_pattern'> {}
-export interface DictionaryTree extends TreeNode<'dictionary'> {}
-export interface DictionaryComprehensionTree extends TreeNode<'dictionary_comprehension'> {}
-export interface DictionarySplatTree extends TreeNode<'dictionary_splat'> {}
-export interface DictionarySplatPatternTree extends TreeNode<'dictionary_splat_pattern'> {}
-export interface DottedNameTree extends TreeNode<'dotted_name'> {}
-export interface ElifClauseTree extends TreeNode<'elif_clause'> {}
-export interface ElseClauseTree extends TreeNode<'else_clause'> {}
-export interface ExceptClauseTree extends TreeNode<'except_clause'> {}
-export interface ExecStatementTree extends TreeNode<'exec_statement'> {}
-export interface ExpressionListTree extends TreeNode<'expression_list'> {}
-export interface ExpressionStatementTree extends TreeNode<'expression_statement'> {}
-export interface FinallyClauseTree extends TreeNode<'finally_clause'> {}
-export interface ForInClauseTree extends TreeNode<'for_in_clause'> {}
-export interface ForStatementTree extends TreeNode<'for_statement'> {}
-export interface FormatSpecifierTree extends TreeNode<'format_specifier'> {}
-export interface FunctionDefinitionTree extends TreeNode<'function_definition'> {}
-export interface FutureImportStatementTree extends TreeNode<'future_import_statement'> {}
-export interface GeneratorExpressionTree extends TreeNode<'generator_expression'> {}
-export interface GenericTypeTree extends TreeNode<'generic_type'> {}
-export interface GlobalStatementTree extends TreeNode<'global_statement'> {}
-export interface IfClauseTree extends TreeNode<'if_clause'> {}
-export interface IfStatementTree extends TreeNode<'if_statement'> {}
-export interface ImportFromStatementTree extends TreeNode<'import_from_statement'> {}
-export interface ImportStatementTree extends TreeNode<'import_statement'> {}
-export interface InterpolationTree extends TreeNode<'interpolation'> {}
-export interface KeywordArgumentTree extends TreeNode<'keyword_argument'> {}
-export interface KeywordIdentifierTree extends AnyTreeNode {
-	readonly type: 'keyword_identifier';
+export interface MatchBlockBlockTree extends AnyTreeNode {
+	readonly type: '_match_block_block';
 }
-export interface KeywordPatternTree extends TreeNode<'keyword_pattern'> {}
-export interface LambdaTree extends TreeNode<'lambda'> {}
-export interface LambdaParametersTree extends TreeNode<'lambda_parameters'> {}
-export interface LambdaWithinForInClauseTree extends AnyTreeNode {
-	readonly type: 'lambda_within_for_in_clause';
+export interface SimplePatternNegativeTree extends AnyTreeNode {
+	readonly type: '_simple_pattern_negative';
 }
-export interface ListTree extends TreeNode<'list'> {}
-export interface ListComprehensionTree extends TreeNode<'list_comprehension'> {}
-export interface ListPatternTree extends TreeNode<'list_pattern'> {}
-export interface ListSplatTree extends TreeNode<'list_splat'> {}
-export interface ListSplatPatternTree extends TreeNode<'list_splat_pattern'> {}
-export interface MatchStatementTree extends TreeNode<'match_statement'> {}
-export interface MemberTypeTree extends TreeNode<'member_type'> {}
-export interface ModuleTree extends TreeNode<'module'> {}
-export interface NamedExpressionTree extends TreeNode<'named_expression'> {}
-export interface NonlocalStatementTree extends TreeNode<'nonlocal_statement'> {}
-export interface NotOperatorTree extends TreeNode<'not_operator'> {}
-export interface PairTree extends TreeNode<'pair'> {}
-export interface ParametersTree extends TreeNode<'parameters'> {}
-export interface ParenthesizedExpressionTree extends TreeNode<'parenthesized_expression'> {}
-export interface ParenthesizedListSplatTree extends TreeNode<'parenthesized_list_splat'> {}
-export interface PatternListTree extends TreeNode<'pattern_list'> {}
-export interface PrintStatementTree extends TreeNode<'print_statement'> {}
-export interface RaiseStatementTree extends TreeNode<'raise_statement'> {}
-export interface RelativeImportTree extends TreeNode<'relative_import'> {}
-export interface ReturnStatementTree extends TreeNode<'return_statement'> {}
-export interface SetTree extends TreeNode<'set'> {}
-export interface SetComprehensionTree extends TreeNode<'set_comprehension'> {}
-export interface SliceTree extends TreeNode<'slice'> {}
-export interface SplatPatternTree extends TreeNode<'splat_pattern'> {}
-export interface SplatTypeTree extends TreeNode<'splat_type'> {}
-export interface StringTree extends TreeNode<'string'> {}
-export interface StringContentTree extends TreeNode<'string_content'> {}
-export interface SubscriptTree extends TreeNode<'subscript'> {}
-export interface TryStatementTree extends TreeNode<'try_statement'> {}
-export interface TupleTree extends TreeNode<'tuple'> {}
-export interface TuplePatternTree extends TreeNode<'tuple_pattern'> {}
-export interface TypeTree extends TreeNode<'type'> {}
-export interface TypeAliasStatementTree extends TreeNode<'type_alias_statement'> {}
-export interface TypeParameterTree extends TreeNode<'type_parameter'> {}
-export interface TypedDefaultParameterTree extends TreeNode<'typed_default_parameter'> {}
-export interface TypedParameterTree extends TreeNode<'typed_parameter'> {}
-export interface UnaryOperatorTree extends TreeNode<'unary_operator'> {}
-export interface UnionPatternTree extends TreeNode<'union_pattern'> {}
-export interface UnionTypeTree extends TreeNode<'union_type'> {}
-export interface WhileStatementTree extends TreeNode<'while_statement'> {}
-export interface WithClauseTree extends TreeNode<'with_clause'> {}
-export interface WithItemTree extends TreeNode<'with_item'> {}
-export interface WithStatementTree extends TreeNode<'with_statement'> {}
-export interface YieldTree extends TreeNode<'yield'> {}
-export interface ListPatternGroup1Tree extends TreeNode<'list_pattern_group1'> {}
-export interface ArgumentListGroup1Tree extends TreeNode<'argument_list_group1'> {}
-export interface DictPatternGroup1Tree extends TreeNode<'dict_pattern_group1'> {}
-export interface DictionaryGroup1Tree extends TreeNode<'dictionary_group1'> {}
-export interface ElementListTree extends TreeNode<'element_list'> {}
-export interface PatternGroupTree extends TreeNode<'pattern_group'> {}
-export interface ParameterListTree extends TreeNode<'parameter_list'> {}
-export interface SliceGroup1Tree extends TreeNode<'slice_group1'> {}
-export interface AugmentedAssignmentOperatorTree extends AnyTreeNode {
-	readonly type: '_augmented_assignment_operator';
+export interface ExceptClauseListTree extends AnyTreeNode {
+	readonly type: '_except_clause_list';
 }
-export interface ComplexPatternOperatorTree extends AnyTreeNode {
-	readonly type: '_complex_pattern_operator';
+export interface ComparisonOperatorComparatorTree extends AnyTreeNode {
+	readonly type: '_comparison_operator_comparator';
 }
-export interface IsNotTree extends AnyTreeNode {
-	readonly type: '_is_not';
-}
-export interface NotInTree extends AnyTreeNode {
-	readonly type: '_not_in';
-}
-export interface SplatPatternOperatorTree extends AnyTreeNode {
-	readonly type: '_splat_pattern_operator';
-}
-export interface UnaryOperatorOperatorTree extends AnyTreeNode {
-	readonly type: '_unary_operator_operator';
+export interface ImportPrefixTree extends TreeNode<'import_prefix'> {}
+export interface PassStatementTree extends AnyTreeNode {
+	readonly type: 'pass_statement';
 }
 export interface BreakStatementTree extends AnyTreeNode {
 	readonly type: 'break_statement';
 }
-export interface CommentTree extends TreeNode<'comment'> {}
 export interface ContinueStatementTree extends AnyTreeNode {
 	readonly type: 'continue_statement';
 }
-export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
-export interface FalseTree extends AnyTreeNode {
-	readonly type: 'false';
+export interface NotInTree extends AnyTreeNode {
+	readonly type: '_not_in';
 }
+export interface IsNotTree extends AnyTreeNode {
+	readonly type: '_is_not';
+}
+export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
+export interface TypeConversionTree extends TreeNode<'type_conversion'> {}
+export interface IntegerTree extends TreeNode<'integer'> {}
 export interface FloatTree extends TreeNode<'float'> {}
 export interface IdentifierTree extends TreeNode<'identifier'> {}
-export interface ImportPrefixTree extends TreeNode<'import_prefix'> {}
-export interface IntegerTree extends TreeNode<'integer'> {}
-export interface LineContinuationTree extends TreeNode<'line_continuation'> {}
-export interface NoneTree extends AnyTreeNode {
-	readonly type: 'none';
-}
-export interface PassStatementTree extends AnyTreeNode {
-	readonly type: 'pass_statement';
-}
 export interface TrueTree extends AnyTreeNode {
 	readonly type: 'true';
 }
-export interface TypeConversionTree extends TreeNode<'type_conversion'> {}
-export interface NewlineTree extends AnyTreeNode {
-	readonly type: '_newline';
+export interface FalseTree extends AnyTreeNode {
+	readonly type: 'false';
+}
+export interface NoneTree extends AnyTreeNode {
+	readonly type: 'none';
+}
+export interface CommentTree extends TreeNode<'comment'> {}
+export interface LineContinuationTree extends TreeNode<'line_continuation'> {}
+export interface UnaryOperatorOperatorTree extends AnyTreeNode {
+	readonly type: '_unary_operator_operator';
+}
+export interface AugmentedAssignmentOperatorTree extends AnyTreeNode {
+	readonly type: '_augmented_assignment_operator';
+}
+export interface SplatPatternOperatorTree extends AnyTreeNode {
+	readonly type: '_splat_pattern_operator';
+}
+export interface ComplexPatternOperatorTree extends AnyTreeNode {
+	readonly type: '_complex_pattern_operator';
 }
 export interface IndentTree extends AnyTreeNode {
 	readonly type: '_indent';
@@ -3529,17 +3555,86 @@ export interface CloseBraceTree extends AnyTreeNode {
 export interface ExceptTree extends AnyTreeNode {
 	readonly type: 'except';
 }
-export interface AsTree extends AnyTreeNode {
-	readonly type: 'as';
-}
-export interface AsyncTree extends AnyTreeNode {
-	readonly type: 'async';
+export interface ImportTree extends AnyTreeNode {
+	readonly type: 'import';
 }
 export interface FromTree extends AnyTreeNode {
 	readonly type: 'from';
 }
+export interface AsTree extends AnyTreeNode {
+	readonly type: 'as';
+}
 export interface AssertTree extends AnyTreeNode {
 	readonly type: 'assert';
+}
+export interface ReturnTree extends AnyTreeNode {
+	readonly type: 'return';
+}
+export interface DelTree extends AnyTreeNode {
+	readonly type: 'del';
+}
+export interface RaiseTree extends AnyTreeNode {
+	readonly type: 'raise';
+}
+export interface PassTree extends AnyTreeNode {
+	readonly type: 'pass';
+}
+export interface BreakTree extends AnyTreeNode {
+	readonly type: 'break';
+}
+export interface ContinueTree extends AnyTreeNode {
+	readonly type: 'continue';
+}
+export interface IfTree extends AnyTreeNode {
+	readonly type: 'if';
+}
+export interface ElifTree extends AnyTreeNode {
+	readonly type: 'elif';
+}
+export interface ElseTree extends AnyTreeNode {
+	readonly type: 'else';
+}
+export interface MatchTree extends AnyTreeNode {
+	readonly type: 'match';
+}
+export interface CaseTree extends AnyTreeNode {
+	readonly type: 'case';
+}
+export interface ForTree extends AnyTreeNode {
+	readonly type: 'for';
+}
+export interface InTree extends AnyTreeNode {
+	readonly type: 'in';
+}
+export interface WhileTree extends AnyTreeNode {
+	readonly type: 'while';
+}
+export interface TryTree extends AnyTreeNode {
+	readonly type: 'try';
+}
+export interface FinallyTree extends AnyTreeNode {
+	readonly type: 'finally';
+}
+export interface WithTree extends AnyTreeNode {
+	readonly type: 'with';
+}
+export interface DefTree extends AnyTreeNode {
+	readonly type: 'def';
+}
+export interface GlobalTree extends AnyTreeNode {
+	readonly type: 'global';
+}
+export interface NonlocalTree extends AnyTreeNode {
+	readonly type: 'nonlocal';
+}
+export interface ExecTree extends AnyTreeNode {
+	readonly type: 'exec';
+}
+export interface ClassTree extends AnyTreeNode {
+	readonly type: 'class';
+}
+export interface NotTree extends AnyTreeNode {
+	readonly type: 'not';
 }
 export interface AndTree extends AnyTreeNode {
 	readonly type: 'and';
@@ -3547,93 +3642,25 @@ export interface AndTree extends AnyTreeNode {
 export interface OrTree extends AnyTreeNode {
 	readonly type: 'or';
 }
-export interface BreakTree extends AnyTreeNode {
-	readonly type: 'break';
-}
-export interface CaseTree extends AnyTreeNode {
-	readonly type: 'case';
-}
-export interface ClassTree extends AnyTreeNode {
-	readonly type: 'class';
-}
-export interface IfTree extends AnyTreeNode {
-	readonly type: 'if';
-}
-export interface ElseTree extends AnyTreeNode {
-	readonly type: 'else';
-}
-export interface ContinueTree extends AnyTreeNode {
-	readonly type: 'continue';
-}
-export interface DelTree extends AnyTreeNode {
-	readonly type: 'del';
-}
-export interface ElifTree extends AnyTreeNode {
-	readonly type: 'elif';
-}
-export interface ExecTree extends AnyTreeNode {
-	readonly type: 'exec';
-}
-export interface InTree extends AnyTreeNode {
-	readonly type: 'in';
+export interface True2Tree extends AnyTreeNode {
+	readonly type: 'True';
 }
 export interface False2Tree extends AnyTreeNode {
 	readonly type: 'False';
 }
-export interface FinallyTree extends AnyTreeNode {
-	readonly type: 'finally';
-}
-export interface ForTree extends AnyTreeNode {
-	readonly type: 'for';
-}
-export interface DefTree extends AnyTreeNode {
-	readonly type: 'def';
-}
-export interface ImportTree extends AnyTreeNode {
-	readonly type: 'import';
-}
-export interface GlobalTree extends AnyTreeNode {
-	readonly type: 'global';
-}
-export interface MatchTree extends AnyTreeNode {
-	readonly type: 'match';
-}
 export interface None2Tree extends AnyTreeNode {
 	readonly type: 'None';
-}
-export interface NonlocalTree extends AnyTreeNode {
-	readonly type: 'nonlocal';
-}
-export interface NotTree extends AnyTreeNode {
-	readonly type: 'not';
-}
-export interface PassTree extends AnyTreeNode {
-	readonly type: 'pass';
 }
 export interface PrintTree extends AnyTreeNode {
 	readonly type: 'print';
 }
-export interface RaiseTree extends AnyTreeNode {
-	readonly type: 'raise';
-}
-export interface ReturnTree extends AnyTreeNode {
-	readonly type: 'return';
-}
-export interface True2Tree extends AnyTreeNode {
-	readonly type: 'True';
-}
-export interface TryTree extends AnyTreeNode {
-	readonly type: 'try';
-}
-export interface WhileTree extends AnyTreeNode {
-	readonly type: 'while';
-}
-export interface WithTree extends AnyTreeNode {
-	readonly type: 'with';
+export interface AsyncTree extends AnyTreeNode {
+	readonly type: 'async';
 }
 
 // Supertype unions
-export type CompoundStatement =
+export type Statement =
+	| SimpleStatements
 	| IfStatement
 	| ForStatement
 	| WhileStatement
@@ -3644,7 +3671,8 @@ export type CompoundStatement =
 	| DecoratedDefinition
 	| MatchStatement;
 
-export type CompoundStatementTree =
+export type StatementTree =
+	| SimpleStatementsTree
 	| IfStatementTree
 	| ForStatementTree
 	| WhileStatementTree
@@ -3654,71 +3682,6 @@ export type CompoundStatementTree =
 	| ClassDefinitionTree
 	| DecoratedDefinitionTree
 	| MatchStatementTree;
-
-export type DictPatternKv = KeyValuePattern | SplatPattern;
-
-export type DictPatternKvTree = KeyValuePatternTree | SplatPatternTree;
-
-export type ExpressionWithinForInClause = LambdaWithinForInClause;
-
-export type ExpressionWithinForInClauseTree = LambdaWithinForInClauseTree;
-
-export type Expressions = ExpressionList;
-
-export type ExpressionsTree = ExpressionListTree;
-
-export type FExpression = ExpressionList | PatternList | Yield;
-
-export type FExpressionTree = ExpressionListTree | PatternListTree | YieldTree;
-
-export type LeftHandSide = PatternList;
-
-export type LeftHandSideTree = PatternListTree;
-
-export type NamedExpressionLhs = Identifier | KeywordIdentifier;
-
-export type NamedExpressionLhsTree = IdentifierTree | KeywordIdentifierTree;
-
-export type RightHandSide = ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
-
-export type RightHandSideTree =
-	| ExpressionListTree
-	| AssignmentTree
-	| AugmentedAssignmentTree
-	| PatternListTree
-	| YieldTree;
-
-export type SimplePattern =
-	| ClassPattern
-	| SplatPattern
-	| UnionPattern
-	| _ListPattern
-	| _TuplePattern
-	| DictPattern
-	| String
-	| ConcatenatedString
-	| True
-	| False
-	| None
-	| SimplePatternNegative
-	| ComplexPattern
-	| DottedName;
-
-export type SimplePatternTree =
-	| ClassPatternTree
-	| SplatPatternTree
-	| UnionPatternTree
-	| _ListPatternTree
-	| _TuplePatternTree
-	| DictPatternTree
-	| StringTree
-	| ConcatenatedStringTree
-	| TrueTree
-	| FalseTree
-	| NoneTree
-	| SimplePatternNegativeTree
-	| ComplexPatternTree
-	| DottedNameTree;
 
 export type SimpleStatement =
 	| FutureImportStatement
@@ -3756,9 +3719,15 @@ export type SimpleStatementTree =
 	| ExecStatementTree
 	| TypeAliasStatementTree;
 
-export type Statement =
-	| SimpleStatements
-	| CompoundStatement
+export type NamedExpressionLhs = Identifier | KeywordIdentifier;
+
+export type NamedExpressionLhsTree = IdentifierTree | KeywordIdentifierTree;
+
+export type Expressions = ExpressionList;
+
+export type ExpressionsTree = ExpressionListTree;
+
+export type CompoundStatement =
 	| IfStatement
 	| ForStatement
 	| WhileStatement
@@ -3769,9 +3738,7 @@ export type Statement =
 	| DecoratedDefinition
 	| MatchStatement;
 
-export type StatementTree =
-	| SimpleStatementsTree
-	| CompoundStatementTree
+export type CompoundStatementTree =
 	| IfStatementTree
 	| ForStatementTree
 	| WhileStatementTree
@@ -3782,23 +3749,37 @@ export type StatementTree =
 	| DecoratedDefinitionTree
 	| MatchStatementTree;
 
-export type Expression =
-	| ComparisonOperator
-	| NotOperator
-	| BooleanOperator
-	| Lambda
-	| ConditionalExpression
-	| NamedExpression
-	| AsPattern;
+export type SimplePattern =
+	| ClassPattern
+	| SplatPattern
+	| UnionPattern
+	| CaseListPattern
+	| CaseTuplePattern
+	| DictPattern
+	| String
+	| ConcatenatedString
+	| True
+	| False
+	| None
+	| SimplePatternNegative
+	| ComplexPattern
+	| DottedName;
 
-export type ExpressionTree =
-	| ComparisonOperatorTree
-	| NotOperatorTree
-	| BooleanOperatorTree
-	| LambdaTree
-	| ConditionalExpressionTree
-	| NamedExpressionTree
-	| AsPatternTree;
+export type SimplePatternTree =
+	| ClassPatternTree
+	| SplatPatternTree
+	| UnionPatternTree
+	| CaseListPatternTree
+	| CaseTuplePatternTree
+	| DictPatternTree
+	| StringTree
+	| ConcatenatedStringTree
+	| TrueTree
+	| FalseTree
+	| NoneTree
+	| SimplePatternNegativeTree
+	| ComplexPatternTree
+	| DottedNameTree;
 
 export type Parameter =
 	| Identifier
@@ -3835,6 +3816,28 @@ export type PatternTree =
 	| ListSplatPatternTree
 	| TuplePatternTree
 	| ListPatternTree;
+
+export type ExpressionWithinForInClause = LambdaWithinForInClause;
+
+export type ExpressionWithinForInClauseTree = LambdaWithinForInClauseTree;
+
+export type Expression =
+	| ComparisonOperator
+	| NotOperator
+	| BooleanOperator
+	| Lambda
+	| ConditionalExpression
+	| NamedExpression
+	| AsPattern;
+
+export type ExpressionTree =
+	| ComparisonOperatorTree
+	| NotOperatorTree
+	| BooleanOperatorTree
+	| LambdaTree
+	| ConditionalExpressionTree
+	| NamedExpressionTree
+	| AsPatternTree;
 
 export type PrimaryExpression =
 	| Await
@@ -3890,330 +3893,345 @@ export type PrimaryExpressionTree =
 	| GeneratorExpressionTree
 	| ListSplatPatternTree;
 
+export type LeftHandSide = Pattern | PatternList;
+
+export type LeftHandSideTree = PatternTree | PatternListTree;
+
+export type RightHandSide = Expression | ExpressionList | Assignment | AugmentedAssignment | PatternList | Yield;
+
+export type RightHandSideTree =
+	| ExpressionTree
+	| ExpressionListTree
+	| AssignmentTree
+	| AugmentedAssignmentTree
+	| PatternListTree
+	| YieldTree;
+
+export type FExpression = Expression | ExpressionList | PatternList | Yield;
+
+export type FExpressionTree = ExpressionTree | ExpressionListTree | PatternListTree | YieldTree;
+
+export type DictPatternKv = KeyValuePattern | SplatPattern;
+
+export type DictPatternKvTree = KeyValuePatternTree | SplatPatternTree;
+
 // Token type aliases (only tokens referenced in field/child unions)
+export type WildcardImport = Terminal<TSKindId.WildcardImport>;
+export interface WildcardImportTree extends AnyTreeNode {
+	readonly type: 'wildcard_import';
+}
 export type Ellipsis2 = Terminal<TSKindId.Ellipsis2>;
 export interface Ellipsis2Tree extends AnyTreeNode {
 	readonly type: 'ellipsis';
-}
-export type KeywordSeparator = Terminal<TSKindId.KeywordSeparator>;
-export interface KeywordSeparatorTree extends AnyTreeNode {
-	readonly type: 'keyword_separator';
 }
 export type PositionalSeparator = Terminal<TSKindId.PositionalSeparator>;
 export interface PositionalSeparatorTree extends AnyTreeNode {
 	readonly type: 'positional_separator';
 }
-export type WildcardImport = Terminal<TSKindId.WildcardImport>;
-export interface WildcardImportTree extends AnyTreeNode {
-	readonly type: 'wildcard_import';
+export type KeywordSeparator = Terminal<TSKindId.KeywordSeparator>;
+export interface KeywordSeparatorTree extends AnyTreeNode {
+	readonly type: 'keyword_separator';
 }
 
 export type PythonNode =
-	| _ArgumentListGroup1
+	| Module
+	| SimpleStatements
+	| ImportStatement
+	| RelativeImport
+	| FutureImportStatement
+	| ImportFromStatement
+	| ImportList
+	| AliasedImport
+	| PrintStatement
+	| Chevron
+	| AssertStatement
+	| ExpressionStatement
+	| NamedExpression
+	| ReturnStatement
+	| DeleteStatement
+	| RaiseStatement
+	| IfStatement
+	| ElifClause
+	| ElseClause
+	| MatchStatement
+	| MatchBlock
+	| CaseClause
+	| ForStatement
+	| WhileStatement
+	| TryStatement
+	| ExceptClause
+	| FinallyClause
+	| WithStatement
+	| WithClause
+	| WithItem
+	| FunctionDefinition
+	| Parameters
+	| LambdaParameters
+	| ListSplat
+	| DictionarySplat
+	| GlobalStatement
+	| NonlocalStatement
+	| ExecStatement
+	| TypeAliasStatement
+	| ClassDefinition
+	| TypeParameter
+	| ParenthesizedListSplat
+	| ArgumentList
+	| DecoratedDefinition
+	| Decorator
+	| Suite
+	| Block
+	| ExpressionList
+	| DottedName
+	| CasePattern
 	| _AsPattern
+	| UnionPattern
+	| DictPattern
+	| KeyValuePattern
+	| KeywordPattern
+	| SplatPattern
+	| ClassPattern
+	| ComplexPattern
+	| _Parameters
+	| Patterns
+	| TuplePattern
+	| ListPattern
+	| DefaultParameter
+	| TypedDefaultParameter
+	| ListSplatPattern
+	| DictionarySplatPattern
+	| AsPattern
+	| NotOperator
+	| BooleanOperator
+	| BinaryOperator
+	| UnaryOperator
+	| ComparisonOperator
+	| Lambda
+	| LambdaWithinForInClause
+	| Assignment
+	| AugmentedAssignment
+	| PatternList
+	| Yield
+	| Attribute
+	| Subscript
+	| Slice
+	| Call
+	| TypedParameter
+	| Type
+	| SplatType
+	| GenericType
+	| UnionType
+	| ConstrainedType
+	| MemberType
+	| KeywordArgument
+	| List
+	| Set
+	| Tuple
+	| Dictionary
+	| Pair
+	| ListComprehension
+	| DictionaryComprehension
+	| SetComprehension
+	| GeneratorExpression
+	| ComprehensionClauses
+	| ParenthesizedExpression
+	| CollectionElements
+	| ForInClause
+	| IfClause
+	| ConditionalExpression
+	| ConcatenatedString
+	| String
+	| StringContent
+	| Interpolation
+	| FormatSpecifier
+	| KeywordIdentifier
+	| Await
+	| RaiseStatementOptional1
+	| ExceptClauseGroup1
+	| FunctionDefinitionOptional1
+	| ArgumentListGroup1
+	| ExpressionListGroup1
+	| ListPatternGroup1
+	| DictPatternGroup2
+	| PatternListGroup1
+	| SliceGroup1
+	| DictionaryGroup1
+	| ExceptClauseAs
+	| ExceptClauseAsOptional1
+	| CaseTuplePattern
+	| CaseListPattern
+	| PrintStatementGroup1
+	| PrintStatementGroup2
 	| AssignmentEq
 	| AssignmentType
 	| AssignmentTyped
-	| CollectionElements
-	| ComparisonOperatorComparator
-	| ComprehensionClauses
-	| _DictPatternGroup1
-	| _DictionaryGroup1
-	| ExceptClauseAs
-	| ExceptClauseAsOptional1
-	| ExceptClauseList
 	| ExpressionStatementTuple
-	| FunctionDefinitionOptional1
-	| ImportList
-	| KeyValuePattern
-	| _ListPattern
-	| _ListPatternGroup1
-	| MatchBlock
-	| MatchBlockBlock
-	| _Parameters
-	| Patterns
-	| RaiseStatementOptional1
-	| SimplePatternNegative
-	| SimpleStatements
-	| _SliceGroup1
-	| Suite
-	| _TuplePattern
 	| WithClauseBare
 	| WithClauseParen
-	| AliasedImport
-	| ArgumentList
-	| AsPattern
-	| AssertStatement
-	| Assignment
-	| Attribute
-	| AugmentedAssignment
-	| Await
-	| BinaryOperator
-	| Block
-	| BooleanOperator
-	| Call
-	| CaseClause
-	| CasePattern
-	| Chevron
-	| ClassDefinition
-	| ClassPattern
-	| ComparisonOperator
-	| ComplexPattern
-	| ConcatenatedString
-	| ConditionalExpression
-	| ConstrainedType
-	| DecoratedDefinition
-	| Decorator
-	| DefaultParameter
-	| DeleteStatement
-	| DictPattern
-	| Dictionary
-	| DictionaryComprehension
-	| DictionarySplat
-	| DictionarySplatPattern
-	| DottedName
-	| ElifClause
-	| ElseClause
-	| ExceptClause
-	| ExecStatement
-	| ExpressionList
-	| ExpressionStatement
-	| FinallyClause
-	| ForInClause
-	| ForStatement
-	| FormatSpecifier
-	| FunctionDefinition
-	| FutureImportStatement
-	| GeneratorExpression
-	| GenericType
-	| GlobalStatement
-	| IfClause
-	| IfStatement
-	| ImportFromStatement
-	| ImportStatement
-	| Interpolation
-	| KeywordArgument
-	| KeywordIdentifier
-	| KeywordPattern
-	| Lambda
-	| LambdaParameters
-	| LambdaWithinForInClause
-	| List
-	| ListComprehension
-	| ListPattern
-	| ListSplat
-	| ListSplatPattern
-	| MatchStatement
-	| MemberType
-	| Module
-	| NamedExpression
-	| NonlocalStatement
-	| NotOperator
-	| Pair
-	| Parameters
-	| ParenthesizedExpression
-	| ParenthesizedListSplat
-	| PatternList
-	| PrintStatement
-	| RaiseStatement
-	| RelativeImport
-	| ReturnStatement
-	| Set
-	| SetComprehension
-	| Slice
-	| SplatPattern
-	| SplatType
-	| String
-	| StringContent
-	| Subscript
-	| TryStatement
-	| Tuple
-	| TuplePattern
-	| Type
-	| TypeAliasStatement
-	| TypeParameter
-	| TypedDefaultParameter
-	| TypedParameter
-	| UnaryOperator
-	| UnionPattern
-	| UnionType
-	| WhileStatement
-	| WithClause
-	| WithItem
-	| WithStatement
-	| Yield
-	| ListPatternGroup1
-	| ArgumentListGroup1
-	| DictPatternGroup1
-	| DictionaryGroup1
-	| ElementList
-	| PatternGroup
-	| ParameterList
-	| SliceGroup1;
+	| MatchBlockBlock
+	| SimplePatternNegative
+	| ExceptClauseList
+	| ComparisonOperatorComparator;
 
 export interface KindMap {
-	_argument_list_group1: _ArgumentListGroup1;
+	module: Module;
+	_simple_statements: SimpleStatements;
+	import_statement: ImportStatement;
+	relative_import: RelativeImport;
+	future_import_statement: FutureImportStatement;
+	import_from_statement: ImportFromStatement;
+	_import_list: ImportList;
+	aliased_import: AliasedImport;
+	print_statement: PrintStatement;
+	chevron: Chevron;
+	assert_statement: AssertStatement;
+	expression_statement: ExpressionStatement;
+	named_expression: NamedExpression;
+	return_statement: ReturnStatement;
+	delete_statement: DeleteStatement;
+	raise_statement: RaiseStatement;
+	if_statement: IfStatement;
+	elif_clause: ElifClause;
+	else_clause: ElseClause;
+	match_statement: MatchStatement;
+	_match_block: MatchBlock;
+	case_clause: CaseClause;
+	for_statement: ForStatement;
+	while_statement: WhileStatement;
+	try_statement: TryStatement;
+	except_clause: ExceptClause;
+	finally_clause: FinallyClause;
+	with_statement: WithStatement;
+	with_clause: WithClause;
+	with_item: WithItem;
+	function_definition: FunctionDefinition;
+	parameters: Parameters;
+	lambda_parameters: LambdaParameters;
+	list_splat: ListSplat;
+	dictionary_splat: DictionarySplat;
+	global_statement: GlobalStatement;
+	nonlocal_statement: NonlocalStatement;
+	exec_statement: ExecStatement;
+	type_alias_statement: TypeAliasStatement;
+	class_definition: ClassDefinition;
+	type_parameter: TypeParameter;
+	parenthesized_list_splat: ParenthesizedListSplat;
+	argument_list: ArgumentList;
+	decorated_definition: DecoratedDefinition;
+	decorator: Decorator;
+	_suite: Suite;
+	block: Block;
+	expression_list: ExpressionList;
+	dotted_name: DottedName;
+	case_pattern: CasePattern;
 	_as_pattern: _AsPattern;
+	union_pattern: UnionPattern;
+	dict_pattern: DictPattern;
+	_key_value_pattern: KeyValuePattern;
+	keyword_pattern: KeywordPattern;
+	splat_pattern: SplatPattern;
+	class_pattern: ClassPattern;
+	complex_pattern: ComplexPattern;
+	_parameters: _Parameters;
+	_patterns: Patterns;
+	tuple_pattern: TuplePattern;
+	list_pattern: ListPattern;
+	default_parameter: DefaultParameter;
+	typed_default_parameter: TypedDefaultParameter;
+	list_splat_pattern: ListSplatPattern;
+	dictionary_splat_pattern: DictionarySplatPattern;
+	as_pattern: AsPattern;
+	not_operator: NotOperator;
+	boolean_operator: BooleanOperator;
+	binary_operator: BinaryOperator;
+	unary_operator: UnaryOperator;
+	comparison_operator: ComparisonOperator;
+	lambda: Lambda;
+	lambda_within_for_in_clause: LambdaWithinForInClause;
+	assignment: Assignment;
+	augmented_assignment: AugmentedAssignment;
+	pattern_list: PatternList;
+	yield: Yield;
+	attribute: Attribute;
+	subscript: Subscript;
+	slice: Slice;
+	call: Call;
+	typed_parameter: TypedParameter;
+	type: Type;
+	splat_type: SplatType;
+	generic_type: GenericType;
+	union_type: UnionType;
+	constrained_type: ConstrainedType;
+	member_type: MemberType;
+	keyword_argument: KeywordArgument;
+	list: List;
+	set: Set;
+	tuple: Tuple;
+	dictionary: Dictionary;
+	pair: Pair;
+	list_comprehension: ListComprehension;
+	dictionary_comprehension: DictionaryComprehension;
+	set_comprehension: SetComprehension;
+	generator_expression: GeneratorExpression;
+	_comprehension_clauses: ComprehensionClauses;
+	parenthesized_expression: ParenthesizedExpression;
+	_collection_elements: CollectionElements;
+	for_in_clause: ForInClause;
+	if_clause: IfClause;
+	conditional_expression: ConditionalExpression;
+	concatenated_string: ConcatenatedString;
+	string: String;
+	string_content: StringContent;
+	interpolation: Interpolation;
+	format_specifier: FormatSpecifier;
+	keyword_identifier: KeywordIdentifier;
+	await: Await;
+	_raise_statement_optional1: RaiseStatementOptional1;
+	_except_clause_group1: ExceptClauseGroup1;
+	_function_definition_optional1: FunctionDefinitionOptional1;
+	_argument_list_group1: ArgumentListGroup1;
+	_expression_list_group1: ExpressionListGroup1;
+	_list_pattern_group1: ListPatternGroup1;
+	_dict_pattern_group2: DictPatternGroup2;
+	_pattern_list_group1: PatternListGroup1;
+	_slice_group1: SliceGroup1;
+	_dictionary_group1: DictionaryGroup1;
+	_except_clause_as: ExceptClauseAs;
+	_except_clause_as_optional1: ExceptClauseAsOptional1;
+	case_tuple_pattern: CaseTuplePattern;
+	case_list_pattern: CaseListPattern;
+	print_statement_group1: PrintStatementGroup1;
+	print_statement_group2: PrintStatementGroup2;
 	_assignment_eq: AssignmentEq;
 	_assignment_type: AssignmentType;
 	_assignment_typed: AssignmentTyped;
-	_collection_elements: CollectionElements;
-	_comparison_operator_comparator: ComparisonOperatorComparator;
-	_comprehension_clauses: ComprehensionClauses;
-	_dict_pattern_group1: _DictPatternGroup1;
-	_dictionary_group1: _DictionaryGroup1;
-	_except_clause_as: ExceptClauseAs;
-	_except_clause_as_optional1: ExceptClauseAsOptional1;
-	_except_clause_list: ExceptClauseList;
 	_expression_statement_tuple: ExpressionStatementTuple;
-	_function_definition_optional1: FunctionDefinitionOptional1;
-	_import_list: ImportList;
-	_key_value_pattern: KeyValuePattern;
-	_list_pattern: _ListPattern;
-	_list_pattern_group1: _ListPatternGroup1;
-	_match_block: MatchBlock;
-	_match_block_block: MatchBlockBlock;
-	_parameters: _Parameters;
-	_patterns: Patterns;
-	_raise_statement_optional1: RaiseStatementOptional1;
-	_simple_pattern_negative: SimplePatternNegative;
-	_simple_statements: SimpleStatements;
-	_slice_group1: _SliceGroup1;
-	_suite: Suite;
-	_tuple_pattern: _TuplePattern;
 	_with_clause_bare: WithClauseBare;
 	_with_clause_paren: WithClauseParen;
-	aliased_import: AliasedImport;
-	argument_list: ArgumentList;
-	as_pattern: AsPattern;
-	assert_statement: AssertStatement;
-	assignment: Assignment;
-	attribute: Attribute;
-	augmented_assignment: AugmentedAssignment;
-	await: Await;
-	binary_operator: BinaryOperator;
-	block: Block;
-	boolean_operator: BooleanOperator;
-	call: Call;
-	case_clause: CaseClause;
-	case_pattern: CasePattern;
-	chevron: Chevron;
-	class_definition: ClassDefinition;
-	class_pattern: ClassPattern;
-	comparison_operator: ComparisonOperator;
-	complex_pattern: ComplexPattern;
-	concatenated_string: ConcatenatedString;
-	conditional_expression: ConditionalExpression;
-	constrained_type: ConstrainedType;
-	decorated_definition: DecoratedDefinition;
-	decorator: Decorator;
-	default_parameter: DefaultParameter;
-	delete_statement: DeleteStatement;
-	dict_pattern: DictPattern;
-	dictionary: Dictionary;
-	dictionary_comprehension: DictionaryComprehension;
-	dictionary_splat: DictionarySplat;
-	dictionary_splat_pattern: DictionarySplatPattern;
-	dotted_name: DottedName;
-	elif_clause: ElifClause;
-	else_clause: ElseClause;
-	except_clause: ExceptClause;
-	exec_statement: ExecStatement;
-	expression_list: ExpressionList;
-	expression_statement: ExpressionStatement;
-	finally_clause: FinallyClause;
-	for_in_clause: ForInClause;
-	for_statement: ForStatement;
-	format_specifier: FormatSpecifier;
-	function_definition: FunctionDefinition;
-	future_import_statement: FutureImportStatement;
-	generator_expression: GeneratorExpression;
-	generic_type: GenericType;
-	global_statement: GlobalStatement;
-	if_clause: IfClause;
-	if_statement: IfStatement;
-	import_from_statement: ImportFromStatement;
-	import_statement: ImportStatement;
-	interpolation: Interpolation;
-	keyword_argument: KeywordArgument;
-	keyword_identifier: KeywordIdentifier;
-	keyword_pattern: KeywordPattern;
-	lambda: Lambda;
-	lambda_parameters: LambdaParameters;
-	lambda_within_for_in_clause: LambdaWithinForInClause;
-	list: List;
-	list_comprehension: ListComprehension;
-	list_pattern: ListPattern;
-	list_splat: ListSplat;
-	list_splat_pattern: ListSplatPattern;
-	match_statement: MatchStatement;
-	member_type: MemberType;
-	module: Module;
-	named_expression: NamedExpression;
-	nonlocal_statement: NonlocalStatement;
-	not_operator: NotOperator;
-	pair: Pair;
-	parameters: Parameters;
-	parenthesized_expression: ParenthesizedExpression;
-	parenthesized_list_splat: ParenthesizedListSplat;
-	pattern_list: PatternList;
-	print_statement: PrintStatement;
-	raise_statement: RaiseStatement;
-	relative_import: RelativeImport;
-	return_statement: ReturnStatement;
-	set: Set;
-	set_comprehension: SetComprehension;
-	slice: Slice;
-	splat_pattern: SplatPattern;
-	splat_type: SplatType;
-	string: String;
-	string_content: StringContent;
-	subscript: Subscript;
-	try_statement: TryStatement;
-	tuple: Tuple;
-	tuple_pattern: TuplePattern;
-	type: Type;
-	type_alias_statement: TypeAliasStatement;
-	type_parameter: TypeParameter;
-	typed_default_parameter: TypedDefaultParameter;
-	typed_parameter: TypedParameter;
-	unary_operator: UnaryOperator;
-	union_pattern: UnionPattern;
-	union_type: UnionType;
-	while_statement: WhileStatement;
-	with_clause: WithClause;
-	with_item: WithItem;
-	with_statement: WithStatement;
-	yield: Yield;
-	list_pattern_group1: ListPatternGroup1;
-	argument_list_group1: ArgumentListGroup1;
-	dict_pattern_group1: DictPatternGroup1;
-	dictionary_group1: DictionaryGroup1;
-	element_list: ElementList;
-	pattern_group: PatternGroup;
-	parameter_list: ParameterList;
-	slice_group1: SliceGroup1;
-	_augmented_assignment_operator: AugmentedAssignmentOperator;
-	_complex_pattern_operator: ComplexPatternOperator;
-	_is_not: IsNot;
-	_not_in: NotIn;
-	_splat_pattern_operator: SplatPatternOperator;
-	_unary_operator_operator: UnaryOperatorOperator;
+	_match_block_block: MatchBlockBlock;
+	_simple_pattern_negative: SimplePatternNegative;
+	_except_clause_list: ExceptClauseList;
+	_comparison_operator_comparator: ComparisonOperatorComparator;
+	import_prefix: ImportPrefix;
+	pass_statement: PassStatement;
 	break_statement: BreakStatement;
-	comment: Comment;
 	continue_statement: ContinueStatement;
+	_not_in: NotIn;
+	_is_not: IsNot;
 	escape_sequence: EscapeSequence;
-	false: False;
+	type_conversion: TypeConversion;
+	integer: Integer;
 	float: Float;
 	identifier: Identifier;
-	import_prefix: ImportPrefix;
-	integer: Integer;
-	line_continuation: LineContinuation;
-	none: None;
-	pass_statement: PassStatement;
 	true: True;
-	type_conversion: TypeConversion;
-	_newline: Newline;
+	false: False;
+	none: None;
+	comment: Comment;
+	line_continuation: LineContinuation;
+	_unary_operator_operator: UnaryOperatorOperator;
+	_augmented_assignment_operator: AugmentedAssignmentOperator;
+	_splat_pattern_operator: SplatPatternOperator;
+	_complex_pattern_operator: ComplexPatternOperator;
 	_indent: Indent;
 	_dedent: Dedent;
 	string_start: StringStart;
@@ -4227,19 +4245,156 @@ export interface KindMap {
 }
 
 // Per-kind namespace interfaces — one computed base per kind (spec 008 US1)
-export interface _ArgumentListGroup1Ns extends NodeNs<
-	_ArgumentListGroup1,
+export interface ModuleNs extends NodeNs<Module, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface SimpleStatementsNs extends NodeNs<SimpleStatements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ImportStatementNs extends NodeNs<ImportStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface RelativeImportNs extends NodeNs<RelativeImport, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FutureImportStatementNs extends NodeNs<
+	FutureImportStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
+export interface ImportFromStatementNs extends NodeNs<
+	ImportFromStatement,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface ImportListNs extends NodeNs<ImportList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AliasedImportNs extends NodeNs<AliasedImport, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PrintStatementNs extends NodeNs<PrintStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ChevronNs extends NodeNs<Chevron, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AssertStatementNs extends NodeNs<AssertStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExpressionStatementNs extends NodeNs<
+	ExpressionStatement,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface NamedExpressionNs extends NodeNs<NamedExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ReturnStatementNs extends NodeNs<ReturnStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface DeleteStatementNs extends NodeNs<DeleteStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface RaiseStatementNs extends NodeNs<RaiseStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface IfStatementNs extends NodeNs<IfStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ElifClauseNs extends NodeNs<ElifClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ElseClauseNs extends NodeNs<ElseClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MatchStatementNs extends NodeNs<MatchStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MatchBlockNs extends NodeNs<MatchBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface CaseClauseNs extends NodeNs<CaseClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ForStatementNs extends NodeNs<ForStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface WhileStatementNs extends NodeNs<WhileStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TryStatementNs extends NodeNs<TryStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExceptClauseNs extends NodeNs<ExceptClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FinallyClauseNs extends NodeNs<FinallyClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface WithStatementNs extends NodeNs<WithStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface WithClauseNs extends NodeNs<WithClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface WithItemNs extends NodeNs<WithItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FunctionDefinitionNs extends NodeNs<FunctionDefinition, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ParametersNs extends NodeNs<Parameters, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface LambdaParametersNs extends NodeNs<LambdaParameters, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ListSplatNs extends NodeNs<ListSplat, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface DictionarySplatNs extends NodeNs<DictionarySplat, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface GlobalStatementNs extends NodeNs<GlobalStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface NonlocalStatementNs extends NodeNs<NonlocalStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExecStatementNs extends NodeNs<ExecStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TypeAliasStatementNs extends NodeNs<TypeAliasStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ClassDefinitionNs extends NodeNs<ClassDefinition, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TypeParameterNs extends NodeNs<TypeParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ParenthesizedListSplatNs extends NodeNs<
+	ParenthesizedListSplat,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface ArgumentListNs extends NodeNs<ArgumentList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface DecoratedDefinitionNs extends NodeNs<
+	DecoratedDefinition,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface DecoratorNs extends NodeNs<Decorator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface SuiteNs extends NodeNs<Suite, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface BlockNs extends NodeNs<Block, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExpressionListNs extends NodeNs<ExpressionList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface DottedNameNs extends NodeNs<DottedName, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface CasePatternNs extends NodeNs<CasePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface _AsPatternNs extends NodeNs<_AsPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AssignmentEqNs extends NodeNs<AssignmentEq, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AssignmentTypeNs extends NodeNs<AssignmentType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AssignmentTypedNs extends NodeNs<AssignmentTyped, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface CollectionElementsNs extends NodeNs<CollectionElements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ComparisonOperatorComparatorNs extends NodeNs<
-	ComparisonOperatorComparator,
+export interface UnionPatternNs extends NodeNs<UnionPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface DictPatternNs extends NodeNs<DictPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface KeyValuePatternNs extends NodeNs<KeyValuePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface KeywordPatternNs extends NodeNs<KeywordPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface SplatPatternNs extends NodeNs<SplatPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ClassPatternNs extends NodeNs<ClassPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ComplexPatternNs extends NodeNs<ComplexPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface _ParametersNs extends NodeNs<_Parameters, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PatternsNs extends NodeNs<Patterns, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TuplePatternNs extends NodeNs<TuplePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ListPatternNs extends NodeNs<ListPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface DefaultParameterNs extends NodeNs<DefaultParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TypedDefaultParameterNs extends NodeNs<
+	TypedDefaultParameter,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface ListSplatPatternNs extends NodeNs<ListSplatPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface DictionarySplatPatternNs extends NodeNs<
+	DictionarySplatPattern,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface AsPatternNs extends NodeNs<AsPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface NotOperatorNs extends NodeNs<NotOperator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface BooleanOperatorNs extends NodeNs<BooleanOperator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface BinaryOperatorNs extends NodeNs<BinaryOperator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface UnaryOperatorNs extends NodeNs<UnaryOperator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ComparisonOperatorNs extends NodeNs<ComparisonOperator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface LambdaNs extends NodeNs<Lambda, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface LambdaWithinForInClauseNs extends NodeNs<
+	LambdaWithinForInClause,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface AssignmentNs extends NodeNs<Assignment, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AugmentedAssignmentNs extends NodeNs<
+	AugmentedAssignment,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface PatternListNs extends NodeNs<PatternList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface YieldNs extends NodeNs<Yield, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AttributeNs extends NodeNs<Attribute, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface SubscriptNs extends NodeNs<Subscript, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface SliceNs extends NodeNs<Slice, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface CallNs extends NodeNs<Call, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TypedParameterNs extends NodeNs<TypedParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TypeNs extends NodeNs<Type, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface SplatTypeNs extends NodeNs<SplatType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface GenericTypeNs extends NodeNs<GenericType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface UnionTypeNs extends NodeNs<UnionType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ConstrainedTypeNs extends NodeNs<ConstrainedType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MemberTypeNs extends NodeNs<MemberType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface KeywordArgumentNs extends NodeNs<KeywordArgument, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ListNs extends NodeNs<List, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface SetNs extends NodeNs<Set, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TupleNs extends NodeNs<Tuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface DictionaryNs extends NodeNs<Dictionary, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PairNs extends NodeNs<Pair, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ListComprehensionNs extends NodeNs<ListComprehension, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface DictionaryComprehensionNs extends NodeNs<
+	DictionaryComprehension,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface SetComprehensionNs extends NodeNs<SetComprehension, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface GeneratorExpressionNs extends NodeNs<
+	GeneratorExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
@@ -4250,8 +4405,53 @@ export interface ComprehensionClausesNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface _DictPatternGroup1Ns extends NodeNs<_DictPatternGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _DictionaryGroup1Ns extends NodeNs<_DictionaryGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ParenthesizedExpressionNs extends NodeNs<
+	ParenthesizedExpression,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface CollectionElementsNs extends NodeNs<CollectionElements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ForInClauseNs extends NodeNs<ForInClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface IfClauseNs extends NodeNs<IfClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ConditionalExpressionNs extends NodeNs<
+	ConditionalExpression,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface ConcatenatedStringNs extends NodeNs<ConcatenatedString, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface StringNs extends NodeNs<String, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface StringContentNs extends NodeNs<StringContent, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface InterpolationNs extends NodeNs<Interpolation, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FormatSpecifierNs extends NodeNs<FormatSpecifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface KeywordIdentifierNs extends NodeNs<KeywordIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AwaitNs extends NodeNs<Await, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface RaiseStatementOptional1Ns extends NodeNs<
+	RaiseStatementOptional1,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface ExceptClauseGroup1Ns extends NodeNs<ExceptClauseGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FunctionDefinitionOptional1Ns extends NodeNs<
+	FunctionDefinitionOptional1,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface ArgumentListGroup1Ns extends NodeNs<ArgumentListGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExpressionListGroup1Ns extends NodeNs<
+	ExpressionListGroup1,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface ListPatternGroup1Ns extends NodeNs<ListPatternGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface DictPatternGroup2Ns extends NodeNs<DictPatternGroup2, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PatternListGroup1Ns extends NodeNs<PatternListGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface SliceGroup1Ns extends NodeNs<SliceGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface DictionaryGroup1Ns extends NodeNs<DictionaryGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExceptClauseAsNs extends NodeNs<ExceptClauseAs, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExceptClauseAsOptional1Ns extends NodeNs<
 	ExceptClauseAsOptional1,
@@ -4259,363 +4459,185 @@ export interface ExceptClauseAsOptional1Ns extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface ExceptClauseListNs extends NodeNs<ExceptClauseList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface CaseTuplePatternNs extends NodeNs<CaseTuplePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface CaseListPatternNs extends NodeNs<CaseListPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PrintStatementGroup1Ns extends NodeNs<
+	PrintStatementGroup1,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface PrintStatementGroup2Ns extends NodeNs<
+	PrintStatementGroup2,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface AssignmentEqNs extends NodeNs<AssignmentEq, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AssignmentTypeNs extends NodeNs<AssignmentType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AssignmentTypedNs extends NodeNs<AssignmentTyped, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface ExpressionStatementTupleNs extends NodeNs<
 	ExpressionStatementTuple,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface FunctionDefinitionOptional1Ns extends NodeNs<
-	FunctionDefinitionOptional1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface ImportListNs extends NodeNs<ImportList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface KeyValuePatternNs extends NodeNs<KeyValuePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _ListPatternNs extends NodeNs<_ListPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _ListPatternGroup1Ns extends NodeNs<_ListPatternGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MatchBlockNs extends NodeNs<MatchBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface WithClauseBareNs extends NodeNs<WithClauseBare, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface WithClauseParenNs extends NodeNs<WithClauseParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MatchBlockBlockNs extends NodeNs<MatchBlockBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _ParametersNs extends NodeNs<_Parameters, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface PatternsNs extends NodeNs<Patterns, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface RaiseStatementOptional1Ns extends NodeNs<
-	RaiseStatementOptional1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
 export interface SimplePatternNegativeNs extends NodeNs<
 	SimplePatternNegative,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface SimpleStatementsNs extends NodeNs<SimpleStatements, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _SliceGroup1Ns extends NodeNs<_SliceGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface SuiteNs extends NodeNs<Suite, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _TuplePatternNs extends NodeNs<_TuplePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface WithClauseBareNs extends NodeNs<WithClauseBare, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface WithClauseParenNs extends NodeNs<WithClauseParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AliasedImportNs extends NodeNs<AliasedImport, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ArgumentListNs extends NodeNs<ArgumentList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AsPatternNs extends NodeNs<AsPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AssertStatementNs extends NodeNs<AssertStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AssignmentNs extends NodeNs<Assignment, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AttributeNs extends NodeNs<Attribute, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AugmentedAssignmentNs extends NodeNs<
-	AugmentedAssignment,
+export interface ExceptClauseListNs extends NodeNs<ExceptClauseList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ComparisonOperatorComparatorNs extends NodeNs<
+	ComparisonOperatorComparator,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface AwaitNs extends NodeNs<Await, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface BinaryOperatorNs extends NodeNs<BinaryOperator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface BlockNs extends NodeNs<Block, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface BooleanOperatorNs extends NodeNs<BooleanOperator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface CallNs extends NodeNs<Call, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface CaseClauseNs extends NodeNs<CaseClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface CasePatternNs extends NodeNs<CasePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ChevronNs extends NodeNs<Chevron, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ClassDefinitionNs extends NodeNs<ClassDefinition, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ClassPatternNs extends NodeNs<ClassPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ComparisonOperatorNs extends NodeNs<ComparisonOperator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ComplexPatternNs extends NodeNs<ComplexPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ConcatenatedStringNs extends NodeNs<ConcatenatedString, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ConditionalExpressionNs extends NodeNs<
-	ConditionalExpression,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface ConstrainedTypeNs extends NodeNs<ConstrainedType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DecoratedDefinitionNs extends NodeNs<
-	DecoratedDefinition,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface DecoratorNs extends NodeNs<Decorator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DefaultParameterNs extends NodeNs<DefaultParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DeleteStatementNs extends NodeNs<DeleteStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DictPatternNs extends NodeNs<DictPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DictionaryNs extends NodeNs<Dictionary, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DictionaryComprehensionNs extends NodeNs<
-	DictionaryComprehension,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface DictionarySplatNs extends NodeNs<DictionarySplat, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DictionarySplatPatternNs extends NodeNs<
-	DictionarySplatPattern,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface DottedNameNs extends NodeNs<DottedName, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ElifClauseNs extends NodeNs<ElifClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ElseClauseNs extends NodeNs<ElseClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ExceptClauseNs extends NodeNs<ExceptClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ExecStatementNs extends NodeNs<ExecStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ExpressionListNs extends NodeNs<ExpressionList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ExpressionStatementNs extends NodeNs<
-	ExpressionStatement,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface FinallyClauseNs extends NodeNs<FinallyClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ForInClauseNs extends NodeNs<ForInClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ForStatementNs extends NodeNs<ForStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface FormatSpecifierNs extends NodeNs<FormatSpecifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface FunctionDefinitionNs extends NodeNs<FunctionDefinition, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface FutureImportStatementNs extends NodeNs<
-	FutureImportStatement,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface GeneratorExpressionNs extends NodeNs<
-	GeneratorExpression,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface GenericTypeNs extends NodeNs<GenericType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface GlobalStatementNs extends NodeNs<GlobalStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface IfClauseNs extends NodeNs<IfClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface IfStatementNs extends NodeNs<IfStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ImportFromStatementNs extends NodeNs<
-	ImportFromStatement,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface ImportStatementNs extends NodeNs<ImportStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface InterpolationNs extends NodeNs<Interpolation, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface KeywordArgumentNs extends NodeNs<KeywordArgument, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface KeywordIdentifierNs extends NodeNs<KeywordIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface KeywordPatternNs extends NodeNs<KeywordPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface LambdaNs extends NodeNs<Lambda, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface LambdaParametersNs extends NodeNs<LambdaParameters, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface LambdaWithinForInClauseNs extends NodeNs<
-	LambdaWithinForInClause,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface ListNs extends NodeNs<List, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ListComprehensionNs extends NodeNs<ListComprehension, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ListPatternNs extends NodeNs<ListPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ListSplatNs extends NodeNs<ListSplat, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ListSplatPatternNs extends NodeNs<ListSplatPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MatchStatementNs extends NodeNs<MatchStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MemberTypeNs extends NodeNs<MemberType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ModuleNs extends NodeNs<Module, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface NamedExpressionNs extends NodeNs<NamedExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface NonlocalStatementNs extends NodeNs<NonlocalStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface NotOperatorNs extends NodeNs<NotOperator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface PairNs extends NodeNs<Pair, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ParametersNs extends NodeNs<Parameters, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ParenthesizedExpressionNs extends NodeNs<
-	ParenthesizedExpression,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface ParenthesizedListSplatNs extends NodeNs<
-	ParenthesizedListSplat,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface PatternListNs extends NodeNs<PatternList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface PrintStatementNs extends NodeNs<PrintStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface RaiseStatementNs extends NodeNs<RaiseStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface RelativeImportNs extends NodeNs<RelativeImport, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ReturnStatementNs extends NodeNs<ReturnStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface SetNs extends NodeNs<Set, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface SetComprehensionNs extends NodeNs<SetComprehension, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface SliceNs extends NodeNs<Slice, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface SplatPatternNs extends NodeNs<SplatPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface SplatTypeNs extends NodeNs<SplatType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface StringNs extends NodeNs<String, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface StringContentNs extends NodeNs<StringContent, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface SubscriptNs extends NodeNs<Subscript, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TryStatementNs extends NodeNs<TryStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TupleNs extends NodeNs<Tuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TuplePatternNs extends NodeNs<TuplePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TypeNs extends NodeNs<Type, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TypeAliasStatementNs extends NodeNs<TypeAliasStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TypeParameterNs extends NodeNs<TypeParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TypedDefaultParameterNs extends NodeNs<
-	TypedDefaultParameter,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface TypedParameterNs extends NodeNs<TypedParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface UnaryOperatorNs extends NodeNs<UnaryOperator, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface UnionPatternNs extends NodeNs<UnionPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface UnionTypeNs extends NodeNs<UnionType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface WhileStatementNs extends NodeNs<WhileStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface WithClauseNs extends NodeNs<WithClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface WithItemNs extends NodeNs<WithItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface WithStatementNs extends NodeNs<WithStatement, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface YieldNs extends NodeNs<Yield, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ListPatternGroup1Ns extends NodeNs<ListPatternGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ArgumentListGroup1Ns extends NodeNs<ArgumentListGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DictPatternGroup1Ns extends NodeNs<DictPatternGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DictionaryGroup1Ns extends NodeNs<DictionaryGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ElementListNs extends NodeNs<ElementList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface PatternGroupNs extends NodeNs<PatternGroup, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ParameterListNs extends NodeNs<ParameterList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface SliceGroup1Ns extends NodeNs<SliceGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 
 export interface NamespaceMap {
-	_argument_list_group1: _ArgumentListGroup1Ns;
+	module: ModuleNs;
+	_simple_statements: SimpleStatementsNs;
+	import_statement: ImportStatementNs;
+	relative_import: RelativeImportNs;
+	future_import_statement: FutureImportStatementNs;
+	import_from_statement: ImportFromStatementNs;
+	_import_list: ImportListNs;
+	aliased_import: AliasedImportNs;
+	print_statement: PrintStatementNs;
+	chevron: ChevronNs;
+	assert_statement: AssertStatementNs;
+	expression_statement: ExpressionStatementNs;
+	named_expression: NamedExpressionNs;
+	return_statement: ReturnStatementNs;
+	delete_statement: DeleteStatementNs;
+	raise_statement: RaiseStatementNs;
+	if_statement: IfStatementNs;
+	elif_clause: ElifClauseNs;
+	else_clause: ElseClauseNs;
+	match_statement: MatchStatementNs;
+	_match_block: MatchBlockNs;
+	case_clause: CaseClauseNs;
+	for_statement: ForStatementNs;
+	while_statement: WhileStatementNs;
+	try_statement: TryStatementNs;
+	except_clause: ExceptClauseNs;
+	finally_clause: FinallyClauseNs;
+	with_statement: WithStatementNs;
+	with_clause: WithClauseNs;
+	with_item: WithItemNs;
+	function_definition: FunctionDefinitionNs;
+	parameters: ParametersNs;
+	lambda_parameters: LambdaParametersNs;
+	list_splat: ListSplatNs;
+	dictionary_splat: DictionarySplatNs;
+	global_statement: GlobalStatementNs;
+	nonlocal_statement: NonlocalStatementNs;
+	exec_statement: ExecStatementNs;
+	type_alias_statement: TypeAliasStatementNs;
+	class_definition: ClassDefinitionNs;
+	type_parameter: TypeParameterNs;
+	parenthesized_list_splat: ParenthesizedListSplatNs;
+	argument_list: ArgumentListNs;
+	decorated_definition: DecoratedDefinitionNs;
+	decorator: DecoratorNs;
+	_suite: SuiteNs;
+	block: BlockNs;
+	expression_list: ExpressionListNs;
+	dotted_name: DottedNameNs;
+	case_pattern: CasePatternNs;
 	_as_pattern: _AsPatternNs;
+	union_pattern: UnionPatternNs;
+	dict_pattern: DictPatternNs;
+	_key_value_pattern: KeyValuePatternNs;
+	keyword_pattern: KeywordPatternNs;
+	splat_pattern: SplatPatternNs;
+	class_pattern: ClassPatternNs;
+	complex_pattern: ComplexPatternNs;
+	_parameters: _ParametersNs;
+	_patterns: PatternsNs;
+	tuple_pattern: TuplePatternNs;
+	list_pattern: ListPatternNs;
+	default_parameter: DefaultParameterNs;
+	typed_default_parameter: TypedDefaultParameterNs;
+	list_splat_pattern: ListSplatPatternNs;
+	dictionary_splat_pattern: DictionarySplatPatternNs;
+	as_pattern: AsPatternNs;
+	not_operator: NotOperatorNs;
+	boolean_operator: BooleanOperatorNs;
+	binary_operator: BinaryOperatorNs;
+	unary_operator: UnaryOperatorNs;
+	comparison_operator: ComparisonOperatorNs;
+	lambda: LambdaNs;
+	lambda_within_for_in_clause: LambdaWithinForInClauseNs;
+	assignment: AssignmentNs;
+	augmented_assignment: AugmentedAssignmentNs;
+	pattern_list: PatternListNs;
+	yield: YieldNs;
+	attribute: AttributeNs;
+	subscript: SubscriptNs;
+	slice: SliceNs;
+	call: CallNs;
+	typed_parameter: TypedParameterNs;
+	type: TypeNs;
+	splat_type: SplatTypeNs;
+	generic_type: GenericTypeNs;
+	union_type: UnionTypeNs;
+	constrained_type: ConstrainedTypeNs;
+	member_type: MemberTypeNs;
+	keyword_argument: KeywordArgumentNs;
+	list: ListNs;
+	set: SetNs;
+	tuple: TupleNs;
+	dictionary: DictionaryNs;
+	pair: PairNs;
+	list_comprehension: ListComprehensionNs;
+	dictionary_comprehension: DictionaryComprehensionNs;
+	set_comprehension: SetComprehensionNs;
+	generator_expression: GeneratorExpressionNs;
+	_comprehension_clauses: ComprehensionClausesNs;
+	parenthesized_expression: ParenthesizedExpressionNs;
+	_collection_elements: CollectionElementsNs;
+	for_in_clause: ForInClauseNs;
+	if_clause: IfClauseNs;
+	conditional_expression: ConditionalExpressionNs;
+	concatenated_string: ConcatenatedStringNs;
+	string: StringNs;
+	string_content: StringContentNs;
+	interpolation: InterpolationNs;
+	format_specifier: FormatSpecifierNs;
+	keyword_identifier: KeywordIdentifierNs;
+	await: AwaitNs;
+	_raise_statement_optional1: RaiseStatementOptional1Ns;
+	_except_clause_group1: ExceptClauseGroup1Ns;
+	_function_definition_optional1: FunctionDefinitionOptional1Ns;
+	_argument_list_group1: ArgumentListGroup1Ns;
+	_expression_list_group1: ExpressionListGroup1Ns;
+	_list_pattern_group1: ListPatternGroup1Ns;
+	_dict_pattern_group2: DictPatternGroup2Ns;
+	_pattern_list_group1: PatternListGroup1Ns;
+	_slice_group1: SliceGroup1Ns;
+	_dictionary_group1: DictionaryGroup1Ns;
+	_except_clause_as: ExceptClauseAsNs;
+	_except_clause_as_optional1: ExceptClauseAsOptional1Ns;
+	case_tuple_pattern: CaseTuplePatternNs;
+	case_list_pattern: CaseListPatternNs;
+	print_statement_group1: PrintStatementGroup1Ns;
+	print_statement_group2: PrintStatementGroup2Ns;
 	_assignment_eq: AssignmentEqNs;
 	_assignment_type: AssignmentTypeNs;
 	_assignment_typed: AssignmentTypedNs;
-	_collection_elements: CollectionElementsNs;
-	_comparison_operator_comparator: ComparisonOperatorComparatorNs;
-	_comprehension_clauses: ComprehensionClausesNs;
-	_dict_pattern_group1: _DictPatternGroup1Ns;
-	_dictionary_group1: _DictionaryGroup1Ns;
-	_except_clause_as: ExceptClauseAsNs;
-	_except_clause_as_optional1: ExceptClauseAsOptional1Ns;
-	_except_clause_list: ExceptClauseListNs;
 	_expression_statement_tuple: ExpressionStatementTupleNs;
-	_function_definition_optional1: FunctionDefinitionOptional1Ns;
-	_import_list: ImportListNs;
-	_key_value_pattern: KeyValuePatternNs;
-	_list_pattern: _ListPatternNs;
-	_list_pattern_group1: _ListPatternGroup1Ns;
-	_match_block: MatchBlockNs;
-	_match_block_block: MatchBlockBlockNs;
-	_parameters: _ParametersNs;
-	_patterns: PatternsNs;
-	_raise_statement_optional1: RaiseStatementOptional1Ns;
-	_simple_pattern_negative: SimplePatternNegativeNs;
-	_simple_statements: SimpleStatementsNs;
-	_slice_group1: _SliceGroup1Ns;
-	_suite: SuiteNs;
-	_tuple_pattern: _TuplePatternNs;
 	_with_clause_bare: WithClauseBareNs;
 	_with_clause_paren: WithClauseParenNs;
-	aliased_import: AliasedImportNs;
-	argument_list: ArgumentListNs;
-	as_pattern: AsPatternNs;
-	assert_statement: AssertStatementNs;
-	assignment: AssignmentNs;
-	attribute: AttributeNs;
-	augmented_assignment: AugmentedAssignmentNs;
-	await: AwaitNs;
-	binary_operator: BinaryOperatorNs;
-	block: BlockNs;
-	boolean_operator: BooleanOperatorNs;
-	call: CallNs;
-	case_clause: CaseClauseNs;
-	case_pattern: CasePatternNs;
-	chevron: ChevronNs;
-	class_definition: ClassDefinitionNs;
-	class_pattern: ClassPatternNs;
-	comparison_operator: ComparisonOperatorNs;
-	complex_pattern: ComplexPatternNs;
-	concatenated_string: ConcatenatedStringNs;
-	conditional_expression: ConditionalExpressionNs;
-	constrained_type: ConstrainedTypeNs;
-	decorated_definition: DecoratedDefinitionNs;
-	decorator: DecoratorNs;
-	default_parameter: DefaultParameterNs;
-	delete_statement: DeleteStatementNs;
-	dict_pattern: DictPatternNs;
-	dictionary: DictionaryNs;
-	dictionary_comprehension: DictionaryComprehensionNs;
-	dictionary_splat: DictionarySplatNs;
-	dictionary_splat_pattern: DictionarySplatPatternNs;
-	dotted_name: DottedNameNs;
-	elif_clause: ElifClauseNs;
-	else_clause: ElseClauseNs;
-	except_clause: ExceptClauseNs;
-	exec_statement: ExecStatementNs;
-	expression_list: ExpressionListNs;
-	expression_statement: ExpressionStatementNs;
-	finally_clause: FinallyClauseNs;
-	for_in_clause: ForInClauseNs;
-	for_statement: ForStatementNs;
-	format_specifier: FormatSpecifierNs;
-	function_definition: FunctionDefinitionNs;
-	future_import_statement: FutureImportStatementNs;
-	generator_expression: GeneratorExpressionNs;
-	generic_type: GenericTypeNs;
-	global_statement: GlobalStatementNs;
-	if_clause: IfClauseNs;
-	if_statement: IfStatementNs;
-	import_from_statement: ImportFromStatementNs;
-	import_statement: ImportStatementNs;
-	interpolation: InterpolationNs;
-	keyword_argument: KeywordArgumentNs;
-	keyword_identifier: KeywordIdentifierNs;
-	keyword_pattern: KeywordPatternNs;
-	lambda: LambdaNs;
-	lambda_parameters: LambdaParametersNs;
-	lambda_within_for_in_clause: LambdaWithinForInClauseNs;
-	list: ListNs;
-	list_comprehension: ListComprehensionNs;
-	list_pattern: ListPatternNs;
-	list_splat: ListSplatNs;
-	list_splat_pattern: ListSplatPatternNs;
-	match_statement: MatchStatementNs;
-	member_type: MemberTypeNs;
-	module: ModuleNs;
-	named_expression: NamedExpressionNs;
-	nonlocal_statement: NonlocalStatementNs;
-	not_operator: NotOperatorNs;
-	pair: PairNs;
-	parameters: ParametersNs;
-	parenthesized_expression: ParenthesizedExpressionNs;
-	parenthesized_list_splat: ParenthesizedListSplatNs;
-	pattern_list: PatternListNs;
-	print_statement: PrintStatementNs;
-	raise_statement: RaiseStatementNs;
-	relative_import: RelativeImportNs;
-	return_statement: ReturnStatementNs;
-	set: SetNs;
-	set_comprehension: SetComprehensionNs;
-	slice: SliceNs;
-	splat_pattern: SplatPatternNs;
-	splat_type: SplatTypeNs;
-	string: StringNs;
-	string_content: StringContentNs;
-	subscript: SubscriptNs;
-	try_statement: TryStatementNs;
-	tuple: TupleNs;
-	tuple_pattern: TuplePatternNs;
-	type: TypeNs;
-	type_alias_statement: TypeAliasStatementNs;
-	type_parameter: TypeParameterNs;
-	typed_default_parameter: TypedDefaultParameterNs;
-	typed_parameter: TypedParameterNs;
-	unary_operator: UnaryOperatorNs;
-	union_pattern: UnionPatternNs;
-	union_type: UnionTypeNs;
-	while_statement: WhileStatementNs;
-	with_clause: WithClauseNs;
-	with_item: WithItemNs;
-	with_statement: WithStatementNs;
-	yield: YieldNs;
-	list_pattern_group1: ListPatternGroup1Ns;
-	argument_list_group1: ArgumentListGroup1Ns;
-	dict_pattern_group1: DictPatternGroup1Ns;
-	dictionary_group1: DictionaryGroup1Ns;
-	element_list: ElementListNs;
-	pattern_group: PatternGroupNs;
-	parameter_list: ParameterListNs;
-	slice_group1: SliceGroup1Ns;
+	_match_block_block: MatchBlockBlockNs;
+	_simple_pattern_negative: SimplePatternNegativeNs;
+	_except_clause_list: ExceptClauseListNs;
+	_comparison_operator_comparator: ComparisonOperatorComparatorNs;
 }
 
 export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];
@@ -4625,12 +4647,355 @@ export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];
 
 // Namespace sugar — merges with each data interface so consumers can write
 // <TypeName>.Config / .Fluent / .Loose / .Tree alongside using <TypeName> as a type.
-export namespace _ArgumentListGroup1 {
-	export type Config = ConfigFor<'_argument_list_group1'>;
-	export type Fluent = FluentFor<'_argument_list_group1'>;
-	export type Loose = LooseFor<'_argument_list_group1'>;
-	export type Tree = TreeFor<'_argument_list_group1'>;
-	export type Kind = '_argument_list_group1';
+export namespace Module {
+	export type Config = ConfigFor<'module'>;
+	export type Fluent = FluentFor<'module'>;
+	export type Loose = LooseFor<'module'>;
+	export type Tree = TreeFor<'module'>;
+	export type Kind = 'module';
+}
+export namespace SimpleStatements {
+	export type Config = ConfigFor<'_simple_statements'>;
+	export type Fluent = FluentFor<'_simple_statements'>;
+	export type Loose = LooseFor<'_simple_statements'>;
+	export type Tree = TreeFor<'_simple_statements'>;
+	export type Kind = '_simple_statements';
+}
+export namespace ImportStatement {
+	export type Config = ConfigFor<'import_statement'>;
+	export type Fluent = FluentFor<'import_statement'>;
+	export type Loose = LooseFor<'import_statement'>;
+	export type Tree = TreeFor<'import_statement'>;
+	export type Kind = 'import_statement';
+}
+export namespace RelativeImport {
+	export type Config = ConfigFor<'relative_import'>;
+	export type Fluent = FluentFor<'relative_import'>;
+	export type Loose = LooseFor<'relative_import'>;
+	export type Tree = TreeFor<'relative_import'>;
+	export type Kind = 'relative_import';
+}
+export namespace FutureImportStatement {
+	export type Config = ConfigFor<'future_import_statement'>;
+	export type Fluent = FluentFor<'future_import_statement'>;
+	export type Loose = LooseFor<'future_import_statement'>;
+	export type Tree = TreeFor<'future_import_statement'>;
+	export type Kind = 'future_import_statement';
+}
+export namespace ImportFromStatement {
+	export type Config = ConfigFor<'import_from_statement'>;
+	export type Fluent = FluentFor<'import_from_statement'>;
+	export type Loose = LooseFor<'import_from_statement'>;
+	export type Tree = TreeFor<'import_from_statement'>;
+	export type Kind = 'import_from_statement';
+}
+export namespace ImportList {
+	export type Config = ConfigFor<'_import_list'>;
+	export type Fluent = FluentFor<'_import_list'>;
+	export type Loose = LooseFor<'_import_list'>;
+	export type Tree = TreeFor<'_import_list'>;
+	export type Kind = '_import_list';
+}
+export namespace AliasedImport {
+	export type Config = ConfigFor<'aliased_import'>;
+	export type Fluent = FluentFor<'aliased_import'>;
+	export type Loose = LooseFor<'aliased_import'>;
+	export type Tree = TreeFor<'aliased_import'>;
+	export type Kind = 'aliased_import';
+}
+export namespace PrintStatement {
+	export type Config = ConfigFor<'print_statement'>;
+	export type Fluent = FluentFor<'print_statement'>;
+	export type Loose = LooseFor<'print_statement'>;
+	export type Tree = TreeFor<'print_statement'>;
+	export type Kind = 'print_statement';
+}
+export namespace Chevron {
+	export type Config = ConfigFor<'chevron'>;
+	export type Fluent = FluentFor<'chevron'>;
+	export type Loose = LooseFor<'chevron'>;
+	export type Tree = TreeFor<'chevron'>;
+	export type Kind = 'chevron';
+}
+export namespace AssertStatement {
+	export type Config = ConfigFor<'assert_statement'>;
+	export type Fluent = FluentFor<'assert_statement'>;
+	export type Loose = LooseFor<'assert_statement'>;
+	export type Tree = TreeFor<'assert_statement'>;
+	export type Kind = 'assert_statement';
+}
+export namespace ExpressionStatement {
+	export type Config = ConfigFor<'expression_statement'>;
+	export type Fluent = FluentFor<'expression_statement'>;
+	export type Loose = LooseFor<'expression_statement'>;
+	export type Tree = TreeFor<'expression_statement'>;
+	export type Kind = 'expression_statement';
+}
+export namespace NamedExpression {
+	export type Config = ConfigFor<'named_expression'>;
+	export type Fluent = FluentFor<'named_expression'>;
+	export type Loose = LooseFor<'named_expression'>;
+	export type Tree = TreeFor<'named_expression'>;
+	export type Kind = 'named_expression';
+}
+export namespace ReturnStatement {
+	export type Config = ConfigFor<'return_statement'>;
+	export type Fluent = FluentFor<'return_statement'>;
+	export type Loose = LooseFor<'return_statement'>;
+	export type Tree = TreeFor<'return_statement'>;
+	export type Kind = 'return_statement';
+}
+export namespace DeleteStatement {
+	export type Config = ConfigFor<'delete_statement'>;
+	export type Fluent = FluentFor<'delete_statement'>;
+	export type Loose = LooseFor<'delete_statement'>;
+	export type Tree = TreeFor<'delete_statement'>;
+	export type Kind = 'delete_statement';
+}
+export namespace RaiseStatement {
+	export type Config = ConfigFor<'raise_statement'>;
+	export type Fluent = FluentFor<'raise_statement'>;
+	export type Loose = LooseFor<'raise_statement'>;
+	export type Tree = TreeFor<'raise_statement'>;
+	export type Kind = 'raise_statement';
+}
+export namespace IfStatement {
+	export type Config = ConfigFor<'if_statement'>;
+	export type Fluent = FluentFor<'if_statement'>;
+	export type Loose = LooseFor<'if_statement'>;
+	export type Tree = TreeFor<'if_statement'>;
+	export type Kind = 'if_statement';
+}
+export namespace ElifClause {
+	export type Config = ConfigFor<'elif_clause'>;
+	export type Fluent = FluentFor<'elif_clause'>;
+	export type Loose = LooseFor<'elif_clause'>;
+	export type Tree = TreeFor<'elif_clause'>;
+	export type Kind = 'elif_clause';
+}
+export namespace ElseClause {
+	export type Config = ConfigFor<'else_clause'>;
+	export type Fluent = FluentFor<'else_clause'>;
+	export type Loose = LooseFor<'else_clause'>;
+	export type Tree = TreeFor<'else_clause'>;
+	export type Kind = 'else_clause';
+}
+export namespace MatchStatement {
+	export type Config = ConfigFor<'match_statement'>;
+	export type Fluent = FluentFor<'match_statement'>;
+	export type Loose = LooseFor<'match_statement'>;
+	export type Tree = TreeFor<'match_statement'>;
+	export type Kind = 'match_statement';
+}
+export namespace MatchBlock {
+	export type Config = ConfigFor<'_match_block'>;
+	export type Fluent = FluentFor<'_match_block'>;
+	export type Loose = LooseFor<'_match_block'>;
+	export type Tree = TreeFor<'_match_block'>;
+	export type Kind = '_match_block';
+}
+export namespace CaseClause {
+	export type Config = ConfigFor<'case_clause'>;
+	export type Fluent = FluentFor<'case_clause'>;
+	export type Loose = LooseFor<'case_clause'>;
+	export type Tree = TreeFor<'case_clause'>;
+	export type Kind = 'case_clause';
+}
+export namespace ForStatement {
+	export type Config = ConfigFor<'for_statement'>;
+	export type Fluent = FluentFor<'for_statement'>;
+	export type Loose = LooseFor<'for_statement'>;
+	export type Tree = TreeFor<'for_statement'>;
+	export type Kind = 'for_statement';
+}
+export namespace WhileStatement {
+	export type Config = ConfigFor<'while_statement'>;
+	export type Fluent = FluentFor<'while_statement'>;
+	export type Loose = LooseFor<'while_statement'>;
+	export type Tree = TreeFor<'while_statement'>;
+	export type Kind = 'while_statement';
+}
+export namespace TryStatement {
+	export type Config = ConfigFor<'try_statement'>;
+	export type Fluent = FluentFor<'try_statement'>;
+	export type Loose = LooseFor<'try_statement'>;
+	export type Tree = TreeFor<'try_statement'>;
+	export type Kind = 'try_statement';
+}
+export namespace ExceptClause {
+	export type Config = ConfigFor<'except_clause'>;
+	export type Fluent = FluentFor<'except_clause'>;
+	export type Loose = LooseFor<'except_clause'>;
+	export type Tree = TreeFor<'except_clause'>;
+	export type Kind = 'except_clause';
+}
+export namespace FinallyClause {
+	export type Config = ConfigFor<'finally_clause'>;
+	export type Fluent = FluentFor<'finally_clause'>;
+	export type Loose = LooseFor<'finally_clause'>;
+	export type Tree = TreeFor<'finally_clause'>;
+	export type Kind = 'finally_clause';
+}
+export namespace WithStatement {
+	export type Config = ConfigFor<'with_statement'>;
+	export type Fluent = FluentFor<'with_statement'>;
+	export type Loose = LooseFor<'with_statement'>;
+	export type Tree = TreeFor<'with_statement'>;
+	export type Kind = 'with_statement';
+}
+export namespace WithClause {
+	export type Config = ConfigFor<'with_clause'>;
+	export type Fluent = FluentFor<'with_clause'>;
+	export type Loose = LooseFor<'with_clause'>;
+	export type Tree = TreeFor<'with_clause'>;
+	export type Kind = 'with_clause';
+}
+export namespace WithItem {
+	export type Config = ConfigFor<'with_item'>;
+	export type Fluent = FluentFor<'with_item'>;
+	export type Loose = LooseFor<'with_item'>;
+	export type Tree = TreeFor<'with_item'>;
+	export type Kind = 'with_item';
+}
+export namespace FunctionDefinition {
+	export type Config = ConfigFor<'function_definition'>;
+	export type Fluent = FluentFor<'function_definition'>;
+	export type Loose = LooseFor<'function_definition'>;
+	export type Tree = TreeFor<'function_definition'>;
+	export type Kind = 'function_definition';
+}
+export namespace Parameters {
+	export type Config = ConfigFor<'parameters'>;
+	export type Fluent = FluentFor<'parameters'>;
+	export type Loose = LooseFor<'parameters'>;
+	export type Tree = TreeFor<'parameters'>;
+	export type Kind = 'parameters';
+}
+export namespace LambdaParameters {
+	export type Config = ConfigFor<'lambda_parameters'>;
+	export type Fluent = FluentFor<'lambda_parameters'>;
+	export type Loose = LooseFor<'lambda_parameters'>;
+	export type Tree = TreeFor<'lambda_parameters'>;
+	export type Kind = 'lambda_parameters';
+}
+export namespace ListSplat {
+	export type Config = ConfigFor<'list_splat'>;
+	export type Fluent = FluentFor<'list_splat'>;
+	export type Loose = LooseFor<'list_splat'>;
+	export type Tree = TreeFor<'list_splat'>;
+	export type Kind = 'list_splat';
+}
+export namespace DictionarySplat {
+	export type Config = ConfigFor<'dictionary_splat'>;
+	export type Fluent = FluentFor<'dictionary_splat'>;
+	export type Loose = LooseFor<'dictionary_splat'>;
+	export type Tree = TreeFor<'dictionary_splat'>;
+	export type Kind = 'dictionary_splat';
+}
+export namespace GlobalStatement {
+	export type Config = ConfigFor<'global_statement'>;
+	export type Fluent = FluentFor<'global_statement'>;
+	export type Loose = LooseFor<'global_statement'>;
+	export type Tree = TreeFor<'global_statement'>;
+	export type Kind = 'global_statement';
+}
+export namespace NonlocalStatement {
+	export type Config = ConfigFor<'nonlocal_statement'>;
+	export type Fluent = FluentFor<'nonlocal_statement'>;
+	export type Loose = LooseFor<'nonlocal_statement'>;
+	export type Tree = TreeFor<'nonlocal_statement'>;
+	export type Kind = 'nonlocal_statement';
+}
+export namespace ExecStatement {
+	export type Config = ConfigFor<'exec_statement'>;
+	export type Fluent = FluentFor<'exec_statement'>;
+	export type Loose = LooseFor<'exec_statement'>;
+	export type Tree = TreeFor<'exec_statement'>;
+	export type Kind = 'exec_statement';
+}
+export namespace TypeAliasStatement {
+	export type Config = ConfigFor<'type_alias_statement'>;
+	export type Fluent = FluentFor<'type_alias_statement'>;
+	export type Loose = LooseFor<'type_alias_statement'>;
+	export type Tree = TreeFor<'type_alias_statement'>;
+	export type Kind = 'type_alias_statement';
+}
+export namespace ClassDefinition {
+	export type Config = ConfigFor<'class_definition'>;
+	export type Fluent = FluentFor<'class_definition'>;
+	export type Loose = LooseFor<'class_definition'>;
+	export type Tree = TreeFor<'class_definition'>;
+	export type Kind = 'class_definition';
+}
+export namespace TypeParameter {
+	export type Config = ConfigFor<'type_parameter'>;
+	export type Fluent = FluentFor<'type_parameter'>;
+	export type Loose = LooseFor<'type_parameter'>;
+	export type Tree = TreeFor<'type_parameter'>;
+	export type Kind = 'type_parameter';
+}
+export namespace ParenthesizedListSplat {
+	export type Config = ConfigFor<'parenthesized_list_splat'>;
+	export type Fluent = FluentFor<'parenthesized_list_splat'>;
+	export type Loose = LooseFor<'parenthesized_list_splat'>;
+	export type Tree = TreeFor<'parenthesized_list_splat'>;
+	export type Kind = 'parenthesized_list_splat';
+}
+export namespace ArgumentList {
+	export type Config = ConfigFor<'argument_list'>;
+	export type Fluent = FluentFor<'argument_list'>;
+	export type Loose = LooseFor<'argument_list'>;
+	export type Tree = TreeFor<'argument_list'>;
+	export type Kind = 'argument_list';
+}
+export namespace DecoratedDefinition {
+	export type Config = ConfigFor<'decorated_definition'>;
+	export type Fluent = FluentFor<'decorated_definition'>;
+	export type Loose = LooseFor<'decorated_definition'>;
+	export type Tree = TreeFor<'decorated_definition'>;
+	export type Kind = 'decorated_definition';
+}
+export namespace Decorator {
+	export type Config = ConfigFor<'decorator'>;
+	export type Fluent = FluentFor<'decorator'>;
+	export type Loose = LooseFor<'decorator'>;
+	export type Tree = TreeFor<'decorator'>;
+	export type Kind = 'decorator';
+}
+export namespace Suite {
+	export type Config = ConfigFor<'_suite'>;
+	export type Fluent = FluentFor<'_suite'>;
+	export type Loose = LooseFor<'_suite'>;
+	export type Tree = TreeFor<'_suite'>;
+	export type Kind = '_suite';
+}
+export namespace Block {
+	export type Config = ConfigFor<'block'>;
+	export type Fluent = FluentFor<'block'>;
+	export type Loose = LooseFor<'block'>;
+	export type Tree = TreeFor<'block'>;
+	export type Kind = 'block';
+}
+export namespace ExpressionList {
+	export type Config = ConfigFor<'expression_list'>;
+	export type Fluent = FluentFor<'expression_list'>;
+	export type Loose = LooseFor<'expression_list'>;
+	export type Tree = TreeFor<'expression_list'>;
+	export type Kind = 'expression_list';
+}
+export namespace DottedName {
+	export type Config = ConfigFor<'dotted_name'>;
+	export type Fluent = FluentFor<'dotted_name'>;
+	export type Loose = LooseFor<'dotted_name'>;
+	export type Tree = TreeFor<'dotted_name'>;
+	export type Kind = 'dotted_name';
+}
+export namespace CasePattern {
+	export type Config = ConfigFor<'case_pattern'>;
+	export type Fluent = FluentFor<'case_pattern'>;
+	export type Loose = LooseFor<'case_pattern'>;
+	export type Tree = TreeFor<'case_pattern'>;
+	export type Kind = 'case_pattern';
 }
 export namespace _AsPattern {
 	export type Config = ConfigFor<'_as_pattern'>;
@@ -4638,6 +5003,545 @@ export namespace _AsPattern {
 	export type Loose = LooseFor<'_as_pattern'>;
 	export type Tree = TreeFor<'_as_pattern'>;
 	export type Kind = '_as_pattern';
+}
+export namespace UnionPattern {
+	export type Config = ConfigFor<'union_pattern'>;
+	export type Fluent = FluentFor<'union_pattern'>;
+	export type Loose = LooseFor<'union_pattern'>;
+	export type Tree = TreeFor<'union_pattern'>;
+	export type Kind = 'union_pattern';
+}
+export namespace DictPattern {
+	export type Config = ConfigFor<'dict_pattern'>;
+	export type Fluent = FluentFor<'dict_pattern'>;
+	export type Loose = LooseFor<'dict_pattern'>;
+	export type Tree = TreeFor<'dict_pattern'>;
+	export type Kind = 'dict_pattern';
+}
+export namespace KeyValuePattern {
+	export type Config = ConfigFor<'_key_value_pattern'>;
+	export type Fluent = FluentFor<'_key_value_pattern'>;
+	export type Loose = LooseFor<'_key_value_pattern'>;
+	export type Tree = TreeFor<'_key_value_pattern'>;
+	export type Kind = '_key_value_pattern';
+}
+export namespace KeywordPattern {
+	export type Config = ConfigFor<'keyword_pattern'>;
+	export type Fluent = FluentFor<'keyword_pattern'>;
+	export type Loose = LooseFor<'keyword_pattern'>;
+	export type Tree = TreeFor<'keyword_pattern'>;
+	export type Kind = 'keyword_pattern';
+}
+export namespace SplatPattern {
+	export type Config = ConfigFor<'splat_pattern'>;
+	export type Fluent = FluentFor<'splat_pattern'>;
+	export type Loose = LooseFor<'splat_pattern'>;
+	export type Tree = TreeFor<'splat_pattern'>;
+	export type Kind = 'splat_pattern';
+}
+export namespace ClassPattern {
+	export type Config = ConfigFor<'class_pattern'>;
+	export type Fluent = FluentFor<'class_pattern'>;
+	export type Loose = LooseFor<'class_pattern'>;
+	export type Tree = TreeFor<'class_pattern'>;
+	export type Kind = 'class_pattern';
+}
+export namespace ComplexPattern {
+	export type Config = ConfigFor<'complex_pattern'>;
+	export type Fluent = FluentFor<'complex_pattern'>;
+	export type Loose = LooseFor<'complex_pattern'>;
+	export type Tree = TreeFor<'complex_pattern'>;
+	export type Kind = 'complex_pattern';
+}
+export namespace _Parameters {
+	export type Config = ConfigFor<'_parameters'>;
+	export type Fluent = FluentFor<'_parameters'>;
+	export type Loose = LooseFor<'_parameters'>;
+	export type Tree = TreeFor<'_parameters'>;
+	export type Kind = '_parameters';
+}
+export namespace Patterns {
+	export type Config = ConfigFor<'_patterns'>;
+	export type Fluent = FluentFor<'_patterns'>;
+	export type Loose = LooseFor<'_patterns'>;
+	export type Tree = TreeFor<'_patterns'>;
+	export type Kind = '_patterns';
+}
+export namespace TuplePattern {
+	export type Config = ConfigFor<'tuple_pattern'>;
+	export type Fluent = FluentFor<'tuple_pattern'>;
+	export type Loose = LooseFor<'tuple_pattern'>;
+	export type Tree = TreeFor<'tuple_pattern'>;
+	export type Kind = 'tuple_pattern';
+}
+export namespace ListPattern {
+	export type Config = ConfigFor<'list_pattern'>;
+	export type Fluent = FluentFor<'list_pattern'>;
+	export type Loose = LooseFor<'list_pattern'>;
+	export type Tree = TreeFor<'list_pattern'>;
+	export type Kind = 'list_pattern';
+}
+export namespace DefaultParameter {
+	export type Config = ConfigFor<'default_parameter'>;
+	export type Fluent = FluentFor<'default_parameter'>;
+	export type Loose = LooseFor<'default_parameter'>;
+	export type Tree = TreeFor<'default_parameter'>;
+	export type Kind = 'default_parameter';
+}
+export namespace TypedDefaultParameter {
+	export type Config = ConfigFor<'typed_default_parameter'>;
+	export type Fluent = FluentFor<'typed_default_parameter'>;
+	export type Loose = LooseFor<'typed_default_parameter'>;
+	export type Tree = TreeFor<'typed_default_parameter'>;
+	export type Kind = 'typed_default_parameter';
+}
+export namespace ListSplatPattern {
+	export type Config = ConfigFor<'list_splat_pattern'>;
+	export type Fluent = FluentFor<'list_splat_pattern'>;
+	export type Loose = LooseFor<'list_splat_pattern'>;
+	export type Tree = TreeFor<'list_splat_pattern'>;
+	export type Kind = 'list_splat_pattern';
+}
+export namespace DictionarySplatPattern {
+	export type Config = ConfigFor<'dictionary_splat_pattern'>;
+	export type Fluent = FluentFor<'dictionary_splat_pattern'>;
+	export type Loose = LooseFor<'dictionary_splat_pattern'>;
+	export type Tree = TreeFor<'dictionary_splat_pattern'>;
+	export type Kind = 'dictionary_splat_pattern';
+}
+export namespace AsPattern {
+	export type Config = ConfigFor<'as_pattern'>;
+	export type Fluent = FluentFor<'as_pattern'>;
+	export type Loose = LooseFor<'as_pattern'>;
+	export type Tree = TreeFor<'as_pattern'>;
+	export type Kind = 'as_pattern';
+}
+export namespace NotOperator {
+	export type Config = ConfigFor<'not_operator'>;
+	export type Fluent = FluentFor<'not_operator'>;
+	export type Loose = LooseFor<'not_operator'>;
+	export type Tree = TreeFor<'not_operator'>;
+	export type Kind = 'not_operator';
+}
+export namespace BooleanOperator {
+	export type Config = ConfigFor<'boolean_operator'>;
+	export type Fluent = FluentFor<'boolean_operator'>;
+	export type Loose = LooseFor<'boolean_operator'>;
+	export type Tree = TreeFor<'boolean_operator'>;
+	export type Kind = 'boolean_operator';
+}
+export namespace BinaryOperator {
+	export type Config = ConfigFor<'binary_operator'>;
+	export type Fluent = FluentFor<'binary_operator'>;
+	export type Loose = LooseFor<'binary_operator'>;
+	export type Tree = TreeFor<'binary_operator'>;
+	export type Kind = 'binary_operator';
+}
+export namespace UnaryOperator {
+	export type Config = ConfigFor<'unary_operator'>;
+	export type Fluent = FluentFor<'unary_operator'>;
+	export type Loose = LooseFor<'unary_operator'>;
+	export type Tree = TreeFor<'unary_operator'>;
+	export type Kind = 'unary_operator';
+}
+export namespace ComparisonOperator {
+	export type Config = ConfigFor<'comparison_operator'>;
+	export type Fluent = FluentFor<'comparison_operator'>;
+	export type Loose = LooseFor<'comparison_operator'>;
+	export type Tree = TreeFor<'comparison_operator'>;
+	export type Kind = 'comparison_operator';
+}
+export namespace Lambda {
+	export type Config = ConfigFor<'lambda'>;
+	export type Fluent = FluentFor<'lambda'>;
+	export type Loose = LooseFor<'lambda'>;
+	export type Tree = TreeFor<'lambda'>;
+	export type Kind = 'lambda';
+}
+export namespace LambdaWithinForInClause {
+	export type Config = ConfigFor<'lambda_within_for_in_clause'>;
+	export type Fluent = FluentFor<'lambda_within_for_in_clause'>;
+	export type Loose = LooseFor<'lambda_within_for_in_clause'>;
+	export type Tree = TreeFor<'lambda_within_for_in_clause'>;
+	export type Kind = 'lambda_within_for_in_clause';
+}
+export namespace Assignment {
+	export type Config = ConfigFor<'assignment'>;
+	export type Fluent = FluentFor<'assignment'>;
+	export type Loose = LooseFor<'assignment'>;
+	export type Tree = TreeFor<'assignment'>;
+	export type Kind = 'assignment';
+}
+export namespace AugmentedAssignment {
+	export type Config = ConfigFor<'augmented_assignment'>;
+	export type Fluent = FluentFor<'augmented_assignment'>;
+	export type Loose = LooseFor<'augmented_assignment'>;
+	export type Tree = TreeFor<'augmented_assignment'>;
+	export type Kind = 'augmented_assignment';
+}
+export namespace PatternList {
+	export type Config = ConfigFor<'pattern_list'>;
+	export type Fluent = FluentFor<'pattern_list'>;
+	export type Loose = LooseFor<'pattern_list'>;
+	export type Tree = TreeFor<'pattern_list'>;
+	export type Kind = 'pattern_list';
+}
+export namespace Yield {
+	export type Config = ConfigFor<'yield'>;
+	export type Fluent = FluentFor<'yield'>;
+	export type Loose = LooseFor<'yield'>;
+	export type Tree = TreeFor<'yield'>;
+	export type Kind = 'yield';
+}
+export namespace Attribute {
+	export type Config = ConfigFor<'attribute'>;
+	export type Fluent = FluentFor<'attribute'>;
+	export type Loose = LooseFor<'attribute'>;
+	export type Tree = TreeFor<'attribute'>;
+	export type Kind = 'attribute';
+}
+export namespace Subscript {
+	export type Config = ConfigFor<'subscript'>;
+	export type Fluent = FluentFor<'subscript'>;
+	export type Loose = LooseFor<'subscript'>;
+	export type Tree = TreeFor<'subscript'>;
+	export type Kind = 'subscript';
+}
+export namespace Slice {
+	export type Config = ConfigFor<'slice'>;
+	export type Fluent = FluentFor<'slice'>;
+	export type Loose = LooseFor<'slice'>;
+	export type Tree = TreeFor<'slice'>;
+	export type Kind = 'slice';
+}
+export namespace Call {
+	export type Config = ConfigFor<'call'>;
+	export type Fluent = FluentFor<'call'>;
+	export type Loose = LooseFor<'call'>;
+	export type Tree = TreeFor<'call'>;
+	export type Kind = 'call';
+}
+export namespace TypedParameter {
+	export type Config = ConfigFor<'typed_parameter'>;
+	export type Fluent = FluentFor<'typed_parameter'>;
+	export type Loose = LooseFor<'typed_parameter'>;
+	export type Tree = TreeFor<'typed_parameter'>;
+	export type Kind = 'typed_parameter';
+}
+export namespace Type {
+	export type Config = ConfigFor<'type'>;
+	export type Fluent = FluentFor<'type'>;
+	export type Loose = LooseFor<'type'>;
+	export type Tree = TreeFor<'type'>;
+	export type Kind = 'type';
+}
+export namespace SplatType {
+	export type Config = ConfigFor<'splat_type'>;
+	export type Fluent = FluentFor<'splat_type'>;
+	export type Loose = LooseFor<'splat_type'>;
+	export type Tree = TreeFor<'splat_type'>;
+	export type Kind = 'splat_type';
+}
+export namespace GenericType {
+	export type Config = ConfigFor<'generic_type'>;
+	export type Fluent = FluentFor<'generic_type'>;
+	export type Loose = LooseFor<'generic_type'>;
+	export type Tree = TreeFor<'generic_type'>;
+	export type Kind = 'generic_type';
+}
+export namespace UnionType {
+	export type Config = ConfigFor<'union_type'>;
+	export type Fluent = FluentFor<'union_type'>;
+	export type Loose = LooseFor<'union_type'>;
+	export type Tree = TreeFor<'union_type'>;
+	export type Kind = 'union_type';
+}
+export namespace ConstrainedType {
+	export type Config = ConfigFor<'constrained_type'>;
+	export type Fluent = FluentFor<'constrained_type'>;
+	export type Loose = LooseFor<'constrained_type'>;
+	export type Tree = TreeFor<'constrained_type'>;
+	export type Kind = 'constrained_type';
+}
+export namespace MemberType {
+	export type Config = ConfigFor<'member_type'>;
+	export type Fluent = FluentFor<'member_type'>;
+	export type Loose = LooseFor<'member_type'>;
+	export type Tree = TreeFor<'member_type'>;
+	export type Kind = 'member_type';
+}
+export namespace KeywordArgument {
+	export type Config = ConfigFor<'keyword_argument'>;
+	export type Fluent = FluentFor<'keyword_argument'>;
+	export type Loose = LooseFor<'keyword_argument'>;
+	export type Tree = TreeFor<'keyword_argument'>;
+	export type Kind = 'keyword_argument';
+}
+export namespace List {
+	export type Config = ConfigFor<'list'>;
+	export type Fluent = FluentFor<'list'>;
+	export type Loose = LooseFor<'list'>;
+	export type Tree = TreeFor<'list'>;
+	export type Kind = 'list';
+}
+export namespace Set {
+	export type Config = ConfigFor<'set'>;
+	export type Fluent = FluentFor<'set'>;
+	export type Loose = LooseFor<'set'>;
+	export type Tree = TreeFor<'set'>;
+	export type Kind = 'set';
+}
+export namespace Tuple {
+	export type Config = ConfigFor<'tuple'>;
+	export type Fluent = FluentFor<'tuple'>;
+	export type Loose = LooseFor<'tuple'>;
+	export type Tree = TreeFor<'tuple'>;
+	export type Kind = 'tuple';
+}
+export namespace Dictionary {
+	export type Config = ConfigFor<'dictionary'>;
+	export type Fluent = FluentFor<'dictionary'>;
+	export type Loose = LooseFor<'dictionary'>;
+	export type Tree = TreeFor<'dictionary'>;
+	export type Kind = 'dictionary';
+}
+export namespace Pair {
+	export type Config = ConfigFor<'pair'>;
+	export type Fluent = FluentFor<'pair'>;
+	export type Loose = LooseFor<'pair'>;
+	export type Tree = TreeFor<'pair'>;
+	export type Kind = 'pair';
+}
+export namespace ListComprehension {
+	export type Config = ConfigFor<'list_comprehension'>;
+	export type Fluent = FluentFor<'list_comprehension'>;
+	export type Loose = LooseFor<'list_comprehension'>;
+	export type Tree = TreeFor<'list_comprehension'>;
+	export type Kind = 'list_comprehension';
+}
+export namespace DictionaryComprehension {
+	export type Config = ConfigFor<'dictionary_comprehension'>;
+	export type Fluent = FluentFor<'dictionary_comprehension'>;
+	export type Loose = LooseFor<'dictionary_comprehension'>;
+	export type Tree = TreeFor<'dictionary_comprehension'>;
+	export type Kind = 'dictionary_comprehension';
+}
+export namespace SetComprehension {
+	export type Config = ConfigFor<'set_comprehension'>;
+	export type Fluent = FluentFor<'set_comprehension'>;
+	export type Loose = LooseFor<'set_comprehension'>;
+	export type Tree = TreeFor<'set_comprehension'>;
+	export type Kind = 'set_comprehension';
+}
+export namespace GeneratorExpression {
+	export type Config = ConfigFor<'generator_expression'>;
+	export type Fluent = FluentFor<'generator_expression'>;
+	export type Loose = LooseFor<'generator_expression'>;
+	export type Tree = TreeFor<'generator_expression'>;
+	export type Kind = 'generator_expression';
+}
+export namespace ComprehensionClauses {
+	export type Config = ConfigFor<'_comprehension_clauses'>;
+	export type Fluent = FluentFor<'_comprehension_clauses'>;
+	export type Loose = LooseFor<'_comprehension_clauses'>;
+	export type Tree = TreeFor<'_comprehension_clauses'>;
+	export type Kind = '_comprehension_clauses';
+}
+export namespace ParenthesizedExpression {
+	export type Config = ConfigFor<'parenthesized_expression'>;
+	export type Fluent = FluentFor<'parenthesized_expression'>;
+	export type Loose = LooseFor<'parenthesized_expression'>;
+	export type Tree = TreeFor<'parenthesized_expression'>;
+	export type Kind = 'parenthesized_expression';
+}
+export namespace CollectionElements {
+	export type Config = ConfigFor<'_collection_elements'>;
+	export type Fluent = FluentFor<'_collection_elements'>;
+	export type Loose = LooseFor<'_collection_elements'>;
+	export type Tree = TreeFor<'_collection_elements'>;
+	export type Kind = '_collection_elements';
+}
+export namespace ForInClause {
+	export type Config = ConfigFor<'for_in_clause'>;
+	export type Fluent = FluentFor<'for_in_clause'>;
+	export type Loose = LooseFor<'for_in_clause'>;
+	export type Tree = TreeFor<'for_in_clause'>;
+	export type Kind = 'for_in_clause';
+}
+export namespace IfClause {
+	export type Config = ConfigFor<'if_clause'>;
+	export type Fluent = FluentFor<'if_clause'>;
+	export type Loose = LooseFor<'if_clause'>;
+	export type Tree = TreeFor<'if_clause'>;
+	export type Kind = 'if_clause';
+}
+export namespace ConditionalExpression {
+	export type Config = ConfigFor<'conditional_expression'>;
+	export type Fluent = FluentFor<'conditional_expression'>;
+	export type Loose = LooseFor<'conditional_expression'>;
+	export type Tree = TreeFor<'conditional_expression'>;
+	export type Kind = 'conditional_expression';
+}
+export namespace ConcatenatedString {
+	export type Config = ConfigFor<'concatenated_string'>;
+	export type Fluent = FluentFor<'concatenated_string'>;
+	export type Loose = LooseFor<'concatenated_string'>;
+	export type Tree = TreeFor<'concatenated_string'>;
+	export type Kind = 'concatenated_string';
+}
+export namespace String {
+	export type Config = ConfigFor<'string'>;
+	export type Fluent = FluentFor<'string'>;
+	export type Loose = LooseFor<'string'>;
+	export type Tree = TreeFor<'string'>;
+	export type Kind = 'string';
+}
+export namespace StringContent {
+	export type Config = ConfigFor<'string_content'>;
+	export type Fluent = FluentFor<'string_content'>;
+	export type Loose = LooseFor<'string_content'>;
+	export type Tree = TreeFor<'string_content'>;
+	export type Kind = 'string_content';
+}
+export namespace Interpolation {
+	export type Config = ConfigFor<'interpolation'>;
+	export type Fluent = FluentFor<'interpolation'>;
+	export type Loose = LooseFor<'interpolation'>;
+	export type Tree = TreeFor<'interpolation'>;
+	export type Kind = 'interpolation';
+}
+export namespace FormatSpecifier {
+	export type Config = ConfigFor<'format_specifier'>;
+	export type Fluent = FluentFor<'format_specifier'>;
+	export type Loose = LooseFor<'format_specifier'>;
+	export type Tree = TreeFor<'format_specifier'>;
+	export type Kind = 'format_specifier';
+}
+export namespace KeywordIdentifier {
+	export type Config = ConfigFor<'keyword_identifier'>;
+	export type Fluent = FluentFor<'keyword_identifier'>;
+	export type Loose = LooseFor<'keyword_identifier'>;
+	export type Tree = TreeFor<'keyword_identifier'>;
+	export type Kind = 'keyword_identifier';
+}
+export namespace Await {
+	export type Config = ConfigFor<'await'>;
+	export type Fluent = FluentFor<'await'>;
+	export type Loose = LooseFor<'await'>;
+	export type Tree = TreeFor<'await'>;
+	export type Kind = 'await';
+}
+export namespace RaiseStatementOptional1 {
+	export type Config = ConfigFor<'_raise_statement_optional1'>;
+	export type Fluent = FluentFor<'_raise_statement_optional1'>;
+	export type Loose = LooseFor<'_raise_statement_optional1'>;
+	export type Tree = TreeFor<'_raise_statement_optional1'>;
+	export type Kind = '_raise_statement_optional1';
+}
+export namespace ExceptClauseGroup1 {
+	export type Config = ConfigFor<'_except_clause_group1'>;
+	export type Fluent = FluentFor<'_except_clause_group1'>;
+	export type Loose = LooseFor<'_except_clause_group1'>;
+	export type Tree = TreeFor<'_except_clause_group1'>;
+	export type Kind = '_except_clause_group1';
+}
+export namespace FunctionDefinitionOptional1 {
+	export type Config = ConfigFor<'_function_definition_optional1'>;
+	export type Fluent = FluentFor<'_function_definition_optional1'>;
+	export type Loose = LooseFor<'_function_definition_optional1'>;
+	export type Tree = TreeFor<'_function_definition_optional1'>;
+	export type Kind = '_function_definition_optional1';
+}
+export namespace ArgumentListGroup1 {
+	export type Config = ConfigFor<'_argument_list_group1'>;
+	export type Fluent = FluentFor<'_argument_list_group1'>;
+	export type Loose = LooseFor<'_argument_list_group1'>;
+	export type Tree = TreeFor<'_argument_list_group1'>;
+	export type Kind = '_argument_list_group1';
+}
+export namespace ExpressionListGroup1 {
+	export type Config = ConfigFor<'_expression_list_group1'>;
+	export type Fluent = FluentFor<'_expression_list_group1'>;
+	export type Loose = LooseFor<'_expression_list_group1'>;
+	export type Tree = TreeFor<'_expression_list_group1'>;
+	export type Kind = '_expression_list_group1';
+}
+export namespace ListPatternGroup1 {
+	export type Config = ConfigFor<'_list_pattern_group1'>;
+	export type Fluent = FluentFor<'_list_pattern_group1'>;
+	export type Loose = LooseFor<'_list_pattern_group1'>;
+	export type Tree = TreeFor<'_list_pattern_group1'>;
+	export type Kind = '_list_pattern_group1';
+}
+export namespace DictPatternGroup2 {
+	export type Config = ConfigFor<'_dict_pattern_group2'>;
+	export type Fluent = FluentFor<'_dict_pattern_group2'>;
+	export type Loose = LooseFor<'_dict_pattern_group2'>;
+	export type Tree = TreeFor<'_dict_pattern_group2'>;
+	export type Kind = '_dict_pattern_group2';
+}
+export namespace PatternListGroup1 {
+	export type Config = ConfigFor<'_pattern_list_group1'>;
+	export type Fluent = FluentFor<'_pattern_list_group1'>;
+	export type Loose = LooseFor<'_pattern_list_group1'>;
+	export type Tree = TreeFor<'_pattern_list_group1'>;
+	export type Kind = '_pattern_list_group1';
+}
+export namespace SliceGroup1 {
+	export type Config = ConfigFor<'_slice_group1'>;
+	export type Fluent = FluentFor<'_slice_group1'>;
+	export type Loose = LooseFor<'_slice_group1'>;
+	export type Tree = TreeFor<'_slice_group1'>;
+	export type Kind = '_slice_group1';
+}
+export namespace DictionaryGroup1 {
+	export type Config = ConfigFor<'_dictionary_group1'>;
+	export type Fluent = FluentFor<'_dictionary_group1'>;
+	export type Loose = LooseFor<'_dictionary_group1'>;
+	export type Tree = TreeFor<'_dictionary_group1'>;
+	export type Kind = '_dictionary_group1';
+}
+export namespace ExceptClauseAs {
+	export type Config = ConfigFor<'_except_clause_as'>;
+	export type Fluent = FluentFor<'_except_clause_as'>;
+	export type Loose = LooseFor<'_except_clause_as'>;
+	export type Tree = TreeFor<'_except_clause_as'>;
+	export type Kind = '_except_clause_as';
+}
+export namespace ExceptClauseAsOptional1 {
+	export type Config = ConfigFor<'_except_clause_as_optional1'>;
+	export type Fluent = FluentFor<'_except_clause_as_optional1'>;
+	export type Loose = LooseFor<'_except_clause_as_optional1'>;
+	export type Tree = TreeFor<'_except_clause_as_optional1'>;
+	export type Kind = '_except_clause_as_optional1';
+}
+export namespace CaseTuplePattern {
+	export type Config = ConfigFor<'case_tuple_pattern'>;
+	export type Fluent = FluentFor<'case_tuple_pattern'>;
+	export type Loose = LooseFor<'case_tuple_pattern'>;
+	export type Tree = TreeFor<'case_tuple_pattern'>;
+	export type Kind = 'case_tuple_pattern';
+}
+export namespace CaseListPattern {
+	export type Config = ConfigFor<'case_list_pattern'>;
+	export type Fluent = FluentFor<'case_list_pattern'>;
+	export type Loose = LooseFor<'case_list_pattern'>;
+	export type Tree = TreeFor<'case_list_pattern'>;
+	export type Kind = 'case_list_pattern';
+}
+export namespace PrintStatementGroup1 {
+	export type Config = ConfigFor<'print_statement_group1'>;
+	export type Fluent = FluentFor<'print_statement_group1'>;
+	export type Loose = LooseFor<'print_statement_group1'>;
+	export type Tree = TreeFor<'print_statement_group1'>;
+	export type Kind = 'print_statement_group1';
+}
+export namespace PrintStatementGroup2 {
+	export type Config = ConfigFor<'print_statement_group2'>;
+	export type Fluent = FluentFor<'print_statement_group2'>;
+	export type Loose = LooseFor<'print_statement_group2'>;
+	export type Tree = TreeFor<'print_statement_group2'>;
+	export type Kind = 'print_statement_group2';
 }
 export namespace AssignmentEq {
 	export type Config = ConfigFor<'_assignment_eq'>;
@@ -4660,173 +5564,12 @@ export namespace AssignmentTyped {
 	export type Tree = TreeFor<'_assignment_typed'>;
 	export type Kind = '_assignment_typed';
 }
-export namespace CollectionElements {
-	export type Config = ConfigFor<'_collection_elements'>;
-	export type Fluent = FluentFor<'_collection_elements'>;
-	export type Loose = LooseFor<'_collection_elements'>;
-	export type Tree = TreeFor<'_collection_elements'>;
-	export type Kind = '_collection_elements';
-}
-export namespace ComparisonOperatorComparator {
-	export type Config = ConfigFor<'_comparison_operator_comparator'>;
-	export type Fluent = FluentFor<'_comparison_operator_comparator'>;
-	export type Loose = LooseFor<'_comparison_operator_comparator'>;
-	export type Tree = TreeFor<'_comparison_operator_comparator'>;
-	export type Kind = '_comparison_operator_comparator';
-}
-export namespace ComprehensionClauses {
-	export type Config = ConfigFor<'_comprehension_clauses'>;
-	export type Fluent = FluentFor<'_comprehension_clauses'>;
-	export type Loose = LooseFor<'_comprehension_clauses'>;
-	export type Tree = TreeFor<'_comprehension_clauses'>;
-	export type Kind = '_comprehension_clauses';
-}
-export namespace _DictPatternGroup1 {
-	export type Config = ConfigFor<'_dict_pattern_group1'>;
-	export type Fluent = FluentFor<'_dict_pattern_group1'>;
-	export type Loose = LooseFor<'_dict_pattern_group1'>;
-	export type Tree = TreeFor<'_dict_pattern_group1'>;
-	export type Kind = '_dict_pattern_group1';
-}
-export namespace _DictionaryGroup1 {
-	export type Config = ConfigFor<'_dictionary_group1'>;
-	export type Fluent = FluentFor<'_dictionary_group1'>;
-	export type Loose = LooseFor<'_dictionary_group1'>;
-	export type Tree = TreeFor<'_dictionary_group1'>;
-	export type Kind = '_dictionary_group1';
-}
-export namespace ExceptClauseAs {
-	export type Config = ConfigFor<'_except_clause_as'>;
-	export type Fluent = FluentFor<'_except_clause_as'>;
-	export type Loose = LooseFor<'_except_clause_as'>;
-	export type Tree = TreeFor<'_except_clause_as'>;
-	export type Kind = '_except_clause_as';
-}
-export namespace ExceptClauseAsOptional1 {
-	export type Config = ConfigFor<'_except_clause_as_optional1'>;
-	export type Fluent = FluentFor<'_except_clause_as_optional1'>;
-	export type Loose = LooseFor<'_except_clause_as_optional1'>;
-	export type Tree = TreeFor<'_except_clause_as_optional1'>;
-	export type Kind = '_except_clause_as_optional1';
-}
-export namespace ExceptClauseList {
-	export type Config = ConfigFor<'_except_clause_list'>;
-	export type Fluent = FluentFor<'_except_clause_list'>;
-	export type Loose = LooseFor<'_except_clause_list'>;
-	export type Tree = TreeFor<'_except_clause_list'>;
-	export type Kind = '_except_clause_list';
-}
 export namespace ExpressionStatementTuple {
 	export type Config = ConfigFor<'_expression_statement_tuple'>;
 	export type Fluent = FluentFor<'_expression_statement_tuple'>;
 	export type Loose = LooseFor<'_expression_statement_tuple'>;
 	export type Tree = TreeFor<'_expression_statement_tuple'>;
 	export type Kind = '_expression_statement_tuple';
-}
-export namespace FunctionDefinitionOptional1 {
-	export type Config = ConfigFor<'_function_definition_optional1'>;
-	export type Fluent = FluentFor<'_function_definition_optional1'>;
-	export type Loose = LooseFor<'_function_definition_optional1'>;
-	export type Tree = TreeFor<'_function_definition_optional1'>;
-	export type Kind = '_function_definition_optional1';
-}
-export namespace ImportList {
-	export type Config = ConfigFor<'_import_list'>;
-	export type Fluent = FluentFor<'_import_list'>;
-	export type Loose = LooseFor<'_import_list'>;
-	export type Tree = TreeFor<'_import_list'>;
-	export type Kind = '_import_list';
-}
-export namespace KeyValuePattern {
-	export type Config = ConfigFor<'_key_value_pattern'>;
-	export type Fluent = FluentFor<'_key_value_pattern'>;
-	export type Loose = LooseFor<'_key_value_pattern'>;
-	export type Tree = TreeFor<'_key_value_pattern'>;
-	export type Kind = '_key_value_pattern';
-}
-export namespace _ListPattern {
-	export type Config = ConfigFor<'_list_pattern'>;
-	export type Fluent = FluentFor<'_list_pattern'>;
-	export type Loose = LooseFor<'_list_pattern'>;
-	export type Tree = TreeFor<'_list_pattern'>;
-	export type Kind = '_list_pattern';
-}
-export namespace _ListPatternGroup1 {
-	export type Config = ConfigFor<'_list_pattern_group1'>;
-	export type Fluent = FluentFor<'_list_pattern_group1'>;
-	export type Loose = LooseFor<'_list_pattern_group1'>;
-	export type Tree = TreeFor<'_list_pattern_group1'>;
-	export type Kind = '_list_pattern_group1';
-}
-export namespace MatchBlock {
-	export type Config = ConfigFor<'_match_block'>;
-	export type Fluent = FluentFor<'_match_block'>;
-	export type Loose = LooseFor<'_match_block'>;
-	export type Tree = TreeFor<'_match_block'>;
-	export type Kind = '_match_block';
-}
-export namespace MatchBlockBlock {
-	export type Config = ConfigFor<'_match_block_block'>;
-	export type Fluent = FluentFor<'_match_block_block'>;
-	export type Loose = LooseFor<'_match_block_block'>;
-	export type Tree = TreeFor<'_match_block_block'>;
-	export type Kind = '_match_block_block';
-}
-export namespace _Parameters {
-	export type Config = ConfigFor<'_parameters'>;
-	export type Fluent = FluentFor<'_parameters'>;
-	export type Loose = LooseFor<'_parameters'>;
-	export type Tree = TreeFor<'_parameters'>;
-	export type Kind = '_parameters';
-}
-export namespace Patterns {
-	export type Config = ConfigFor<'_patterns'>;
-	export type Fluent = FluentFor<'_patterns'>;
-	export type Loose = LooseFor<'_patterns'>;
-	export type Tree = TreeFor<'_patterns'>;
-	export type Kind = '_patterns';
-}
-export namespace RaiseStatementOptional1 {
-	export type Config = ConfigFor<'_raise_statement_optional1'>;
-	export type Fluent = FluentFor<'_raise_statement_optional1'>;
-	export type Loose = LooseFor<'_raise_statement_optional1'>;
-	export type Tree = TreeFor<'_raise_statement_optional1'>;
-	export type Kind = '_raise_statement_optional1';
-}
-export namespace SimplePatternNegative {
-	export type Config = ConfigFor<'_simple_pattern_negative'>;
-	export type Fluent = FluentFor<'_simple_pattern_negative'>;
-	export type Loose = LooseFor<'_simple_pattern_negative'>;
-	export type Tree = TreeFor<'_simple_pattern_negative'>;
-	export type Kind = '_simple_pattern_negative';
-}
-export namespace SimpleStatements {
-	export type Config = ConfigFor<'_simple_statements'>;
-	export type Fluent = FluentFor<'_simple_statements'>;
-	export type Loose = LooseFor<'_simple_statements'>;
-	export type Tree = TreeFor<'_simple_statements'>;
-	export type Kind = '_simple_statements';
-}
-export namespace _SliceGroup1 {
-	export type Config = ConfigFor<'_slice_group1'>;
-	export type Fluent = FluentFor<'_slice_group1'>;
-	export type Loose = LooseFor<'_slice_group1'>;
-	export type Tree = TreeFor<'_slice_group1'>;
-	export type Kind = '_slice_group1';
-}
-export namespace Suite {
-	export type Config = ConfigFor<'_suite'>;
-	export type Fluent = FluentFor<'_suite'>;
-	export type Loose = LooseFor<'_suite'>;
-	export type Tree = TreeFor<'_suite'>;
-	export type Kind = '_suite';
-}
-export namespace _TuplePattern {
-	export type Config = ConfigFor<'_tuple_pattern'>;
-	export type Fluent = FluentFor<'_tuple_pattern'>;
-	export type Loose = LooseFor<'_tuple_pattern'>;
-	export type Tree = TreeFor<'_tuple_pattern'>;
-	export type Kind = '_tuple_pattern';
 }
 export namespace WithClauseBare {
 	export type Config = ConfigFor<'_with_clause_bare'>;
@@ -4842,773 +5585,31 @@ export namespace WithClauseParen {
 	export type Tree = TreeFor<'_with_clause_paren'>;
 	export type Kind = '_with_clause_paren';
 }
-export namespace AliasedImport {
-	export type Config = ConfigFor<'aliased_import'>;
-	export type Fluent = FluentFor<'aliased_import'>;
-	export type Loose = LooseFor<'aliased_import'>;
-	export type Tree = TreeFor<'aliased_import'>;
-	export type Kind = 'aliased_import';
-}
-export namespace ArgumentList {
-	export type Config = ConfigFor<'argument_list'>;
-	export type Fluent = FluentFor<'argument_list'>;
-	export type Loose = LooseFor<'argument_list'>;
-	export type Tree = TreeFor<'argument_list'>;
-	export type Kind = 'argument_list';
-}
-export namespace AsPattern {
-	export type Config = ConfigFor<'as_pattern'>;
-	export type Fluent = FluentFor<'as_pattern'>;
-	export type Loose = LooseFor<'as_pattern'>;
-	export type Tree = TreeFor<'as_pattern'>;
-	export type Kind = 'as_pattern';
-}
-export namespace AssertStatement {
-	export type Config = ConfigFor<'assert_statement'>;
-	export type Fluent = FluentFor<'assert_statement'>;
-	export type Loose = LooseFor<'assert_statement'>;
-	export type Tree = TreeFor<'assert_statement'>;
-	export type Kind = 'assert_statement';
-}
-export namespace Assignment {
-	export type Config = ConfigFor<'assignment'>;
-	export type Fluent = FluentFor<'assignment'>;
-	export type Loose = LooseFor<'assignment'>;
-	export type Tree = TreeFor<'assignment'>;
-	export type Kind = 'assignment';
-}
-export namespace Attribute {
-	export type Config = ConfigFor<'attribute'>;
-	export type Fluent = FluentFor<'attribute'>;
-	export type Loose = LooseFor<'attribute'>;
-	export type Tree = TreeFor<'attribute'>;
-	export type Kind = 'attribute';
-}
-export namespace AugmentedAssignment {
-	export type Config = ConfigFor<'augmented_assignment'>;
-	export type Fluent = FluentFor<'augmented_assignment'>;
-	export type Loose = LooseFor<'augmented_assignment'>;
-	export type Tree = TreeFor<'augmented_assignment'>;
-	export type Kind = 'augmented_assignment';
-}
-export namespace Await {
-	export type Config = ConfigFor<'await'>;
-	export type Fluent = FluentFor<'await'>;
-	export type Loose = LooseFor<'await'>;
-	export type Tree = TreeFor<'await'>;
-	export type Kind = 'await';
-}
-export namespace BinaryOperator {
-	export type Config = ConfigFor<'binary_operator'>;
-	export type Fluent = FluentFor<'binary_operator'>;
-	export type Loose = LooseFor<'binary_operator'>;
-	export type Tree = TreeFor<'binary_operator'>;
-	export type Kind = 'binary_operator';
-}
-export namespace Block {
-	export type Config = ConfigFor<'block'>;
-	export type Fluent = FluentFor<'block'>;
-	export type Loose = LooseFor<'block'>;
-	export type Tree = TreeFor<'block'>;
-	export type Kind = 'block';
-}
-export namespace BooleanOperator {
-	export type Config = ConfigFor<'boolean_operator'>;
-	export type Fluent = FluentFor<'boolean_operator'>;
-	export type Loose = LooseFor<'boolean_operator'>;
-	export type Tree = TreeFor<'boolean_operator'>;
-	export type Kind = 'boolean_operator';
-}
-export namespace Call {
-	export type Config = ConfigFor<'call'>;
-	export type Fluent = FluentFor<'call'>;
-	export type Loose = LooseFor<'call'>;
-	export type Tree = TreeFor<'call'>;
-	export type Kind = 'call';
-}
-export namespace CaseClause {
-	export type Config = ConfigFor<'case_clause'>;
-	export type Fluent = FluentFor<'case_clause'>;
-	export type Loose = LooseFor<'case_clause'>;
-	export type Tree = TreeFor<'case_clause'>;
-	export type Kind = 'case_clause';
-}
-export namespace CasePattern {
-	export type Config = ConfigFor<'case_pattern'>;
-	export type Fluent = FluentFor<'case_pattern'>;
-	export type Loose = LooseFor<'case_pattern'>;
-	export type Tree = TreeFor<'case_pattern'>;
-	export type Kind = 'case_pattern';
-}
-export namespace Chevron {
-	export type Config = ConfigFor<'chevron'>;
-	export type Fluent = FluentFor<'chevron'>;
-	export type Loose = LooseFor<'chevron'>;
-	export type Tree = TreeFor<'chevron'>;
-	export type Kind = 'chevron';
-}
-export namespace ClassDefinition {
-	export type Config = ConfigFor<'class_definition'>;
-	export type Fluent = FluentFor<'class_definition'>;
-	export type Loose = LooseFor<'class_definition'>;
-	export type Tree = TreeFor<'class_definition'>;
-	export type Kind = 'class_definition';
-}
-export namespace ClassPattern {
-	export type Config = ConfigFor<'class_pattern'>;
-	export type Fluent = FluentFor<'class_pattern'>;
-	export type Loose = LooseFor<'class_pattern'>;
-	export type Tree = TreeFor<'class_pattern'>;
-	export type Kind = 'class_pattern';
-}
-export namespace ComparisonOperator {
-	export type Config = ConfigFor<'comparison_operator'>;
-	export type Fluent = FluentFor<'comparison_operator'>;
-	export type Loose = LooseFor<'comparison_operator'>;
-	export type Tree = TreeFor<'comparison_operator'>;
-	export type Kind = 'comparison_operator';
-}
-export namespace ComplexPattern {
-	export type Config = ConfigFor<'complex_pattern'>;
-	export type Fluent = FluentFor<'complex_pattern'>;
-	export type Loose = LooseFor<'complex_pattern'>;
-	export type Tree = TreeFor<'complex_pattern'>;
-	export type Kind = 'complex_pattern';
-}
-export namespace ConcatenatedString {
-	export type Config = ConfigFor<'concatenated_string'>;
-	export type Fluent = FluentFor<'concatenated_string'>;
-	export type Loose = LooseFor<'concatenated_string'>;
-	export type Tree = TreeFor<'concatenated_string'>;
-	export type Kind = 'concatenated_string';
-}
-export namespace ConditionalExpression {
-	export type Config = ConfigFor<'conditional_expression'>;
-	export type Fluent = FluentFor<'conditional_expression'>;
-	export type Loose = LooseFor<'conditional_expression'>;
-	export type Tree = TreeFor<'conditional_expression'>;
-	export type Kind = 'conditional_expression';
-}
-export namespace ConstrainedType {
-	export type Config = ConfigFor<'constrained_type'>;
-	export type Fluent = FluentFor<'constrained_type'>;
-	export type Loose = LooseFor<'constrained_type'>;
-	export type Tree = TreeFor<'constrained_type'>;
-	export type Kind = 'constrained_type';
-}
-export namespace DecoratedDefinition {
-	export type Config = ConfigFor<'decorated_definition'>;
-	export type Fluent = FluentFor<'decorated_definition'>;
-	export type Loose = LooseFor<'decorated_definition'>;
-	export type Tree = TreeFor<'decorated_definition'>;
-	export type Kind = 'decorated_definition';
-}
-export namespace Decorator {
-	export type Config = ConfigFor<'decorator'>;
-	export type Fluent = FluentFor<'decorator'>;
-	export type Loose = LooseFor<'decorator'>;
-	export type Tree = TreeFor<'decorator'>;
-	export type Kind = 'decorator';
-}
-export namespace DefaultParameter {
-	export type Config = ConfigFor<'default_parameter'>;
-	export type Fluent = FluentFor<'default_parameter'>;
-	export type Loose = LooseFor<'default_parameter'>;
-	export type Tree = TreeFor<'default_parameter'>;
-	export type Kind = 'default_parameter';
-}
-export namespace DeleteStatement {
-	export type Config = ConfigFor<'delete_statement'>;
-	export type Fluent = FluentFor<'delete_statement'>;
-	export type Loose = LooseFor<'delete_statement'>;
-	export type Tree = TreeFor<'delete_statement'>;
-	export type Kind = 'delete_statement';
-}
-export namespace DictPattern {
-	export type Config = ConfigFor<'dict_pattern'>;
-	export type Fluent = FluentFor<'dict_pattern'>;
-	export type Loose = LooseFor<'dict_pattern'>;
-	export type Tree = TreeFor<'dict_pattern'>;
-	export type Kind = 'dict_pattern';
-}
-export namespace Dictionary {
-	export type Config = ConfigFor<'dictionary'>;
-	export type Fluent = FluentFor<'dictionary'>;
-	export type Loose = LooseFor<'dictionary'>;
-	export type Tree = TreeFor<'dictionary'>;
-	export type Kind = 'dictionary';
-}
-export namespace DictionaryComprehension {
-	export type Config = ConfigFor<'dictionary_comprehension'>;
-	export type Fluent = FluentFor<'dictionary_comprehension'>;
-	export type Loose = LooseFor<'dictionary_comprehension'>;
-	export type Tree = TreeFor<'dictionary_comprehension'>;
-	export type Kind = 'dictionary_comprehension';
-}
-export namespace DictionarySplat {
-	export type Config = ConfigFor<'dictionary_splat'>;
-	export type Fluent = FluentFor<'dictionary_splat'>;
-	export type Loose = LooseFor<'dictionary_splat'>;
-	export type Tree = TreeFor<'dictionary_splat'>;
-	export type Kind = 'dictionary_splat';
-}
-export namespace DictionarySplatPattern {
-	export type Config = ConfigFor<'dictionary_splat_pattern'>;
-	export type Fluent = FluentFor<'dictionary_splat_pattern'>;
-	export type Loose = LooseFor<'dictionary_splat_pattern'>;
-	export type Tree = TreeFor<'dictionary_splat_pattern'>;
-	export type Kind = 'dictionary_splat_pattern';
-}
-export namespace DottedName {
-	export type Config = ConfigFor<'dotted_name'>;
-	export type Fluent = FluentFor<'dotted_name'>;
-	export type Loose = LooseFor<'dotted_name'>;
-	export type Tree = TreeFor<'dotted_name'>;
-	export type Kind = 'dotted_name';
-}
-export namespace ElifClause {
-	export type Config = ConfigFor<'elif_clause'>;
-	export type Fluent = FluentFor<'elif_clause'>;
-	export type Loose = LooseFor<'elif_clause'>;
-	export type Tree = TreeFor<'elif_clause'>;
-	export type Kind = 'elif_clause';
-}
-export namespace ElseClause {
-	export type Config = ConfigFor<'else_clause'>;
-	export type Fluent = FluentFor<'else_clause'>;
-	export type Loose = LooseFor<'else_clause'>;
-	export type Tree = TreeFor<'else_clause'>;
-	export type Kind = 'else_clause';
-}
-export namespace ExceptClause {
-	export type Config = ConfigFor<'except_clause'>;
-	export type Fluent = FluentFor<'except_clause'>;
-	export type Loose = LooseFor<'except_clause'>;
-	export type Tree = TreeFor<'except_clause'>;
-	export type Kind = 'except_clause';
-}
-export namespace ExecStatement {
-	export type Config = ConfigFor<'exec_statement'>;
-	export type Fluent = FluentFor<'exec_statement'>;
-	export type Loose = LooseFor<'exec_statement'>;
-	export type Tree = TreeFor<'exec_statement'>;
-	export type Kind = 'exec_statement';
-}
-export namespace ExpressionList {
-	export type Config = ConfigFor<'expression_list'>;
-	export type Fluent = FluentFor<'expression_list'>;
-	export type Loose = LooseFor<'expression_list'>;
-	export type Tree = TreeFor<'expression_list'>;
-	export type Kind = 'expression_list';
-}
-export namespace ExpressionStatement {
-	export type Config = ConfigFor<'expression_statement'>;
-	export type Fluent = FluentFor<'expression_statement'>;
-	export type Loose = LooseFor<'expression_statement'>;
-	export type Tree = TreeFor<'expression_statement'>;
-	export type Kind = 'expression_statement';
-}
-export namespace FinallyClause {
-	export type Config = ConfigFor<'finally_clause'>;
-	export type Fluent = FluentFor<'finally_clause'>;
-	export type Loose = LooseFor<'finally_clause'>;
-	export type Tree = TreeFor<'finally_clause'>;
-	export type Kind = 'finally_clause';
-}
-export namespace ForInClause {
-	export type Config = ConfigFor<'for_in_clause'>;
-	export type Fluent = FluentFor<'for_in_clause'>;
-	export type Loose = LooseFor<'for_in_clause'>;
-	export type Tree = TreeFor<'for_in_clause'>;
-	export type Kind = 'for_in_clause';
-}
-export namespace ForStatement {
-	export type Config = ConfigFor<'for_statement'>;
-	export type Fluent = FluentFor<'for_statement'>;
-	export type Loose = LooseFor<'for_statement'>;
-	export type Tree = TreeFor<'for_statement'>;
-	export type Kind = 'for_statement';
-}
-export namespace FormatSpecifier {
-	export type Config = ConfigFor<'format_specifier'>;
-	export type Fluent = FluentFor<'format_specifier'>;
-	export type Loose = LooseFor<'format_specifier'>;
-	export type Tree = TreeFor<'format_specifier'>;
-	export type Kind = 'format_specifier';
-}
-export namespace FunctionDefinition {
-	export type Config = ConfigFor<'function_definition'>;
-	export type Fluent = FluentFor<'function_definition'>;
-	export type Loose = LooseFor<'function_definition'>;
-	export type Tree = TreeFor<'function_definition'>;
-	export type Kind = 'function_definition';
-}
-export namespace FutureImportStatement {
-	export type Config = ConfigFor<'future_import_statement'>;
-	export type Fluent = FluentFor<'future_import_statement'>;
-	export type Loose = LooseFor<'future_import_statement'>;
-	export type Tree = TreeFor<'future_import_statement'>;
-	export type Kind = 'future_import_statement';
-}
-export namespace GeneratorExpression {
-	export type Config = ConfigFor<'generator_expression'>;
-	export type Fluent = FluentFor<'generator_expression'>;
-	export type Loose = LooseFor<'generator_expression'>;
-	export type Tree = TreeFor<'generator_expression'>;
-	export type Kind = 'generator_expression';
-}
-export namespace GenericType {
-	export type Config = ConfigFor<'generic_type'>;
-	export type Fluent = FluentFor<'generic_type'>;
-	export type Loose = LooseFor<'generic_type'>;
-	export type Tree = TreeFor<'generic_type'>;
-	export type Kind = 'generic_type';
-}
-export namespace GlobalStatement {
-	export type Config = ConfigFor<'global_statement'>;
-	export type Fluent = FluentFor<'global_statement'>;
-	export type Loose = LooseFor<'global_statement'>;
-	export type Tree = TreeFor<'global_statement'>;
-	export type Kind = 'global_statement';
-}
-export namespace IfClause {
-	export type Config = ConfigFor<'if_clause'>;
-	export type Fluent = FluentFor<'if_clause'>;
-	export type Loose = LooseFor<'if_clause'>;
-	export type Tree = TreeFor<'if_clause'>;
-	export type Kind = 'if_clause';
-}
-export namespace IfStatement {
-	export type Config = ConfigFor<'if_statement'>;
-	export type Fluent = FluentFor<'if_statement'>;
-	export type Loose = LooseFor<'if_statement'>;
-	export type Tree = TreeFor<'if_statement'>;
-	export type Kind = 'if_statement';
-}
-export namespace ImportFromStatement {
-	export type Config = ConfigFor<'import_from_statement'>;
-	export type Fluent = FluentFor<'import_from_statement'>;
-	export type Loose = LooseFor<'import_from_statement'>;
-	export type Tree = TreeFor<'import_from_statement'>;
-	export type Kind = 'import_from_statement';
-}
-export namespace ImportStatement {
-	export type Config = ConfigFor<'import_statement'>;
-	export type Fluent = FluentFor<'import_statement'>;
-	export type Loose = LooseFor<'import_statement'>;
-	export type Tree = TreeFor<'import_statement'>;
-	export type Kind = 'import_statement';
-}
-export namespace Interpolation {
-	export type Config = ConfigFor<'interpolation'>;
-	export type Fluent = FluentFor<'interpolation'>;
-	export type Loose = LooseFor<'interpolation'>;
-	export type Tree = TreeFor<'interpolation'>;
-	export type Kind = 'interpolation';
-}
-export namespace KeywordArgument {
-	export type Config = ConfigFor<'keyword_argument'>;
-	export type Fluent = FluentFor<'keyword_argument'>;
-	export type Loose = LooseFor<'keyword_argument'>;
-	export type Tree = TreeFor<'keyword_argument'>;
-	export type Kind = 'keyword_argument';
-}
-export namespace KeywordIdentifier {
-	export type Config = ConfigFor<'keyword_identifier'>;
-	export type Fluent = FluentFor<'keyword_identifier'>;
-	export type Loose = LooseFor<'keyword_identifier'>;
-	export type Tree = TreeFor<'keyword_identifier'>;
-	export type Kind = 'keyword_identifier';
-}
-export namespace KeywordPattern {
-	export type Config = ConfigFor<'keyword_pattern'>;
-	export type Fluent = FluentFor<'keyword_pattern'>;
-	export type Loose = LooseFor<'keyword_pattern'>;
-	export type Tree = TreeFor<'keyword_pattern'>;
-	export type Kind = 'keyword_pattern';
-}
-export namespace Lambda {
-	export type Config = ConfigFor<'lambda'>;
-	export type Fluent = FluentFor<'lambda'>;
-	export type Loose = LooseFor<'lambda'>;
-	export type Tree = TreeFor<'lambda'>;
-	export type Kind = 'lambda';
-}
-export namespace LambdaParameters {
-	export type Config = ConfigFor<'lambda_parameters'>;
-	export type Fluent = FluentFor<'lambda_parameters'>;
-	export type Loose = LooseFor<'lambda_parameters'>;
-	export type Tree = TreeFor<'lambda_parameters'>;
-	export type Kind = 'lambda_parameters';
-}
-export namespace LambdaWithinForInClause {
-	export type Config = ConfigFor<'lambda_within_for_in_clause'>;
-	export type Fluent = FluentFor<'lambda_within_for_in_clause'>;
-	export type Loose = LooseFor<'lambda_within_for_in_clause'>;
-	export type Tree = TreeFor<'lambda_within_for_in_clause'>;
-	export type Kind = 'lambda_within_for_in_clause';
-}
-export namespace List {
-	export type Config = ConfigFor<'list'>;
-	export type Fluent = FluentFor<'list'>;
-	export type Loose = LooseFor<'list'>;
-	export type Tree = TreeFor<'list'>;
-	export type Kind = 'list';
-}
-export namespace ListComprehension {
-	export type Config = ConfigFor<'list_comprehension'>;
-	export type Fluent = FluentFor<'list_comprehension'>;
-	export type Loose = LooseFor<'list_comprehension'>;
-	export type Tree = TreeFor<'list_comprehension'>;
-	export type Kind = 'list_comprehension';
-}
-export namespace ListPattern {
-	export type Config = ConfigFor<'list_pattern'>;
-	export type Fluent = FluentFor<'list_pattern'>;
-	export type Loose = LooseFor<'list_pattern'>;
-	export type Tree = TreeFor<'list_pattern'>;
-	export type Kind = 'list_pattern';
-}
-export namespace ListSplat {
-	export type Config = ConfigFor<'list_splat'>;
-	export type Fluent = FluentFor<'list_splat'>;
-	export type Loose = LooseFor<'list_splat'>;
-	export type Tree = TreeFor<'list_splat'>;
-	export type Kind = 'list_splat';
-}
-export namespace ListSplatPattern {
-	export type Config = ConfigFor<'list_splat_pattern'>;
-	export type Fluent = FluentFor<'list_splat_pattern'>;
-	export type Loose = LooseFor<'list_splat_pattern'>;
-	export type Tree = TreeFor<'list_splat_pattern'>;
-	export type Kind = 'list_splat_pattern';
-}
-export namespace MatchStatement {
-	export type Config = ConfigFor<'match_statement'>;
-	export type Fluent = FluentFor<'match_statement'>;
-	export type Loose = LooseFor<'match_statement'>;
-	export type Tree = TreeFor<'match_statement'>;
-	export type Kind = 'match_statement';
-}
-export namespace MemberType {
-	export type Config = ConfigFor<'member_type'>;
-	export type Fluent = FluentFor<'member_type'>;
-	export type Loose = LooseFor<'member_type'>;
-	export type Tree = TreeFor<'member_type'>;
-	export type Kind = 'member_type';
-}
-export namespace Module {
-	export type Config = ConfigFor<'module'>;
-	export type Fluent = FluentFor<'module'>;
-	export type Loose = LooseFor<'module'>;
-	export type Tree = TreeFor<'module'>;
-	export type Kind = 'module';
-}
-export namespace NamedExpression {
-	export type Config = ConfigFor<'named_expression'>;
-	export type Fluent = FluentFor<'named_expression'>;
-	export type Loose = LooseFor<'named_expression'>;
-	export type Tree = TreeFor<'named_expression'>;
-	export type Kind = 'named_expression';
-}
-export namespace NonlocalStatement {
-	export type Config = ConfigFor<'nonlocal_statement'>;
-	export type Fluent = FluentFor<'nonlocal_statement'>;
-	export type Loose = LooseFor<'nonlocal_statement'>;
-	export type Tree = TreeFor<'nonlocal_statement'>;
-	export type Kind = 'nonlocal_statement';
-}
-export namespace NotOperator {
-	export type Config = ConfigFor<'not_operator'>;
-	export type Fluent = FluentFor<'not_operator'>;
-	export type Loose = LooseFor<'not_operator'>;
-	export type Tree = TreeFor<'not_operator'>;
-	export type Kind = 'not_operator';
-}
-export namespace Pair {
-	export type Config = ConfigFor<'pair'>;
-	export type Fluent = FluentFor<'pair'>;
-	export type Loose = LooseFor<'pair'>;
-	export type Tree = TreeFor<'pair'>;
-	export type Kind = 'pair';
-}
-export namespace Parameters {
-	export type Config = ConfigFor<'parameters'>;
-	export type Fluent = FluentFor<'parameters'>;
-	export type Loose = LooseFor<'parameters'>;
-	export type Tree = TreeFor<'parameters'>;
-	export type Kind = 'parameters';
-}
-export namespace ParenthesizedExpression {
-	export type Config = ConfigFor<'parenthesized_expression'>;
-	export type Fluent = FluentFor<'parenthesized_expression'>;
-	export type Loose = LooseFor<'parenthesized_expression'>;
-	export type Tree = TreeFor<'parenthesized_expression'>;
-	export type Kind = 'parenthesized_expression';
-}
-export namespace ParenthesizedListSplat {
-	export type Config = ConfigFor<'parenthesized_list_splat'>;
-	export type Fluent = FluentFor<'parenthesized_list_splat'>;
-	export type Loose = LooseFor<'parenthesized_list_splat'>;
-	export type Tree = TreeFor<'parenthesized_list_splat'>;
-	export type Kind = 'parenthesized_list_splat';
-}
-export namespace PatternList {
-	export type Config = ConfigFor<'pattern_list'>;
-	export type Fluent = FluentFor<'pattern_list'>;
-	export type Loose = LooseFor<'pattern_list'>;
-	export type Tree = TreeFor<'pattern_list'>;
-	export type Kind = 'pattern_list';
-}
-export namespace PrintStatement {
-	export type Config = ConfigFor<'print_statement'>;
-	export type Fluent = FluentFor<'print_statement'>;
-	export type Loose = LooseFor<'print_statement'>;
-	export type Tree = TreeFor<'print_statement'>;
-	export type Kind = 'print_statement';
-}
-export namespace RaiseStatement {
-	export type Config = ConfigFor<'raise_statement'>;
-	export type Fluent = FluentFor<'raise_statement'>;
-	export type Loose = LooseFor<'raise_statement'>;
-	export type Tree = TreeFor<'raise_statement'>;
-	export type Kind = 'raise_statement';
-}
-export namespace RelativeImport {
-	export type Config = ConfigFor<'relative_import'>;
-	export type Fluent = FluentFor<'relative_import'>;
-	export type Loose = LooseFor<'relative_import'>;
-	export type Tree = TreeFor<'relative_import'>;
-	export type Kind = 'relative_import';
-}
-export namespace ReturnStatement {
-	export type Config = ConfigFor<'return_statement'>;
-	export type Fluent = FluentFor<'return_statement'>;
-	export type Loose = LooseFor<'return_statement'>;
-	export type Tree = TreeFor<'return_statement'>;
-	export type Kind = 'return_statement';
-}
-export namespace Set {
-	export type Config = ConfigFor<'set'>;
-	export type Fluent = FluentFor<'set'>;
-	export type Loose = LooseFor<'set'>;
-	export type Tree = TreeFor<'set'>;
-	export type Kind = 'set';
-}
-export namespace SetComprehension {
-	export type Config = ConfigFor<'set_comprehension'>;
-	export type Fluent = FluentFor<'set_comprehension'>;
-	export type Loose = LooseFor<'set_comprehension'>;
-	export type Tree = TreeFor<'set_comprehension'>;
-	export type Kind = 'set_comprehension';
-}
-export namespace Slice {
-	export type Config = ConfigFor<'slice'>;
-	export type Fluent = FluentFor<'slice'>;
-	export type Loose = LooseFor<'slice'>;
-	export type Tree = TreeFor<'slice'>;
-	export type Kind = 'slice';
-}
-export namespace SplatPattern {
-	export type Config = ConfigFor<'splat_pattern'>;
-	export type Fluent = FluentFor<'splat_pattern'>;
-	export type Loose = LooseFor<'splat_pattern'>;
-	export type Tree = TreeFor<'splat_pattern'>;
-	export type Kind = 'splat_pattern';
-}
-export namespace SplatType {
-	export type Config = ConfigFor<'splat_type'>;
-	export type Fluent = FluentFor<'splat_type'>;
-	export type Loose = LooseFor<'splat_type'>;
-	export type Tree = TreeFor<'splat_type'>;
-	export type Kind = 'splat_type';
-}
-export namespace String {
-	export type Config = ConfigFor<'string'>;
-	export type Fluent = FluentFor<'string'>;
-	export type Loose = LooseFor<'string'>;
-	export type Tree = TreeFor<'string'>;
-	export type Kind = 'string';
-}
-export namespace StringContent {
-	export type Config = ConfigFor<'string_content'>;
-	export type Fluent = FluentFor<'string_content'>;
-	export type Loose = LooseFor<'string_content'>;
-	export type Tree = TreeFor<'string_content'>;
-	export type Kind = 'string_content';
-}
-export namespace Subscript {
-	export type Config = ConfigFor<'subscript'>;
-	export type Fluent = FluentFor<'subscript'>;
-	export type Loose = LooseFor<'subscript'>;
-	export type Tree = TreeFor<'subscript'>;
-	export type Kind = 'subscript';
-}
-export namespace TryStatement {
-	export type Config = ConfigFor<'try_statement'>;
-	export type Fluent = FluentFor<'try_statement'>;
-	export type Loose = LooseFor<'try_statement'>;
-	export type Tree = TreeFor<'try_statement'>;
-	export type Kind = 'try_statement';
-}
-export namespace Tuple {
-	export type Config = ConfigFor<'tuple'>;
-	export type Fluent = FluentFor<'tuple'>;
-	export type Loose = LooseFor<'tuple'>;
-	export type Tree = TreeFor<'tuple'>;
-	export type Kind = 'tuple';
-}
-export namespace TuplePattern {
-	export type Config = ConfigFor<'tuple_pattern'>;
-	export type Fluent = FluentFor<'tuple_pattern'>;
-	export type Loose = LooseFor<'tuple_pattern'>;
-	export type Tree = TreeFor<'tuple_pattern'>;
-	export type Kind = 'tuple_pattern';
-}
-export namespace Type {
-	export type Config = ConfigFor<'type'>;
-	export type Fluent = FluentFor<'type'>;
-	export type Loose = LooseFor<'type'>;
-	export type Tree = TreeFor<'type'>;
-	export type Kind = 'type';
-}
-export namespace TypeAliasStatement {
-	export type Config = ConfigFor<'type_alias_statement'>;
-	export type Fluent = FluentFor<'type_alias_statement'>;
-	export type Loose = LooseFor<'type_alias_statement'>;
-	export type Tree = TreeFor<'type_alias_statement'>;
-	export type Kind = 'type_alias_statement';
-}
-export namespace TypeParameter {
-	export type Config = ConfigFor<'type_parameter'>;
-	export type Fluent = FluentFor<'type_parameter'>;
-	export type Loose = LooseFor<'type_parameter'>;
-	export type Tree = TreeFor<'type_parameter'>;
-	export type Kind = 'type_parameter';
-}
-export namespace TypedDefaultParameter {
-	export type Config = ConfigFor<'typed_default_parameter'>;
-	export type Fluent = FluentFor<'typed_default_parameter'>;
-	export type Loose = LooseFor<'typed_default_parameter'>;
-	export type Tree = TreeFor<'typed_default_parameter'>;
-	export type Kind = 'typed_default_parameter';
-}
-export namespace TypedParameter {
-	export type Config = ConfigFor<'typed_parameter'>;
-	export type Fluent = FluentFor<'typed_parameter'>;
-	export type Loose = LooseFor<'typed_parameter'>;
-	export type Tree = TreeFor<'typed_parameter'>;
-	export type Kind = 'typed_parameter';
-}
-export namespace UnaryOperator {
-	export type Config = ConfigFor<'unary_operator'>;
-	export type Fluent = FluentFor<'unary_operator'>;
-	export type Loose = LooseFor<'unary_operator'>;
-	export type Tree = TreeFor<'unary_operator'>;
-	export type Kind = 'unary_operator';
-}
-export namespace UnionPattern {
-	export type Config = ConfigFor<'union_pattern'>;
-	export type Fluent = FluentFor<'union_pattern'>;
-	export type Loose = LooseFor<'union_pattern'>;
-	export type Tree = TreeFor<'union_pattern'>;
-	export type Kind = 'union_pattern';
-}
-export namespace UnionType {
-	export type Config = ConfigFor<'union_type'>;
-	export type Fluent = FluentFor<'union_type'>;
-	export type Loose = LooseFor<'union_type'>;
-	export type Tree = TreeFor<'union_type'>;
-	export type Kind = 'union_type';
-}
-export namespace WhileStatement {
-	export type Config = ConfigFor<'while_statement'>;
-	export type Fluent = FluentFor<'while_statement'>;
-	export type Loose = LooseFor<'while_statement'>;
-	export type Tree = TreeFor<'while_statement'>;
-	export type Kind = 'while_statement';
-}
-export namespace WithClause {
-	export type Config = ConfigFor<'with_clause'>;
-	export type Fluent = FluentFor<'with_clause'>;
-	export type Loose = LooseFor<'with_clause'>;
-	export type Tree = TreeFor<'with_clause'>;
-	export type Kind = 'with_clause';
-}
-export namespace WithItem {
-	export type Config = ConfigFor<'with_item'>;
-	export type Fluent = FluentFor<'with_item'>;
-	export type Loose = LooseFor<'with_item'>;
-	export type Tree = TreeFor<'with_item'>;
-	export type Kind = 'with_item';
-}
-export namespace WithStatement {
-	export type Config = ConfigFor<'with_statement'>;
-	export type Fluent = FluentFor<'with_statement'>;
-	export type Loose = LooseFor<'with_statement'>;
-	export type Tree = TreeFor<'with_statement'>;
-	export type Kind = 'with_statement';
-}
-export namespace Yield {
-	export type Config = ConfigFor<'yield'>;
-	export type Fluent = FluentFor<'yield'>;
-	export type Loose = LooseFor<'yield'>;
-	export type Tree = TreeFor<'yield'>;
-	export type Kind = 'yield';
-}
-export namespace ListPatternGroup1 {
-	export type Config = ConfigFor<'list_pattern_group1'>;
-	export type Fluent = FluentFor<'list_pattern_group1'>;
-	export type Loose = LooseFor<'list_pattern_group1'>;
-	export type Tree = TreeFor<'list_pattern_group1'>;
-	export type Kind = 'list_pattern_group1';
-}
-export namespace ArgumentListGroup1 {
-	export type Config = ConfigFor<'argument_list_group1'>;
-	export type Fluent = FluentFor<'argument_list_group1'>;
-	export type Loose = LooseFor<'argument_list_group1'>;
-	export type Tree = TreeFor<'argument_list_group1'>;
-	export type Kind = 'argument_list_group1';
-}
-export namespace DictPatternGroup1 {
-	export type Config = ConfigFor<'dict_pattern_group1'>;
-	export type Fluent = FluentFor<'dict_pattern_group1'>;
-	export type Loose = LooseFor<'dict_pattern_group1'>;
-	export type Tree = TreeFor<'dict_pattern_group1'>;
-	export type Kind = 'dict_pattern_group1';
-}
-export namespace DictionaryGroup1 {
-	export type Config = ConfigFor<'dictionary_group1'>;
-	export type Fluent = FluentFor<'dictionary_group1'>;
-	export type Loose = LooseFor<'dictionary_group1'>;
-	export type Tree = TreeFor<'dictionary_group1'>;
-	export type Kind = 'dictionary_group1';
-}
-export namespace ElementList {
-	export type Config = ConfigFor<'element_list'>;
-	export type Fluent = FluentFor<'element_list'>;
-	export type Loose = LooseFor<'element_list'>;
-	export type Tree = TreeFor<'element_list'>;
-	export type Kind = 'element_list';
-}
-export namespace PatternGroup {
-	export type Config = ConfigFor<'pattern_group'>;
-	export type Fluent = FluentFor<'pattern_group'>;
-	export type Loose = LooseFor<'pattern_group'>;
-	export type Tree = TreeFor<'pattern_group'>;
-	export type Kind = 'pattern_group';
-}
-export namespace ParameterList {
-	export type Config = ConfigFor<'parameter_list'>;
-	export type Fluent = FluentFor<'parameter_list'>;
-	export type Loose = LooseFor<'parameter_list'>;
-	export type Tree = TreeFor<'parameter_list'>;
-	export type Kind = 'parameter_list';
-}
-export namespace SliceGroup1 {
-	export type Config = ConfigFor<'slice_group1'>;
-	export type Fluent = FluentFor<'slice_group1'>;
-	export type Loose = LooseFor<'slice_group1'>;
-	export type Tree = TreeFor<'slice_group1'>;
-	export type Kind = 'slice_group1';
+export namespace MatchBlockBlock {
+	export type Config = ConfigFor<'_match_block_block'>;
+	export type Fluent = FluentFor<'_match_block_block'>;
+	export type Loose = LooseFor<'_match_block_block'>;
+	export type Tree = TreeFor<'_match_block_block'>;
+	export type Kind = '_match_block_block';
+}
+export namespace SimplePatternNegative {
+	export type Config = ConfigFor<'_simple_pattern_negative'>;
+	export type Fluent = FluentFor<'_simple_pattern_negative'>;
+	export type Loose = LooseFor<'_simple_pattern_negative'>;
+	export type Tree = TreeFor<'_simple_pattern_negative'>;
+	export type Kind = '_simple_pattern_negative';
+}
+export namespace ExceptClauseList {
+	export type Config = ConfigFor<'_except_clause_list'>;
+	export type Fluent = FluentFor<'_except_clause_list'>;
+	export type Loose = LooseFor<'_except_clause_list'>;
+	export type Tree = TreeFor<'_except_clause_list'>;
+	export type Kind = '_except_clause_list';
+}
+export namespace ComparisonOperatorComparator {
+	export type Config = ConfigFor<'_comparison_operator_comparator'>;
+	export type Fluent = FluentFor<'_comparison_operator_comparator'>;
+	export type Loose = LooseFor<'_comparison_operator_comparator'>;
+	export type Tree = TreeFor<'_comparison_operator_comparator'>;
+	export type Kind = '_comparison_operator_comparator';
 }

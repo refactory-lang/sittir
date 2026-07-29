@@ -29,7 +29,7 @@ import {
 	TOKEN,
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule } from '../types/rule.ts';
+import type { AnyRule, RenderRule, Rule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule } from '../types/rule.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { withAttrsFrom, sharedArmAttrs } from '../dsl/rule-attrs.ts';
@@ -38,17 +38,6 @@ import type { RuleBuilder } from '../dsl/rule-transforms.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 import type { NormalizedGrammar } from './types.ts';
 
-/**
- * Simplify phase context (S2, `BaseCtx<'normalize'>` — Simplify READS
- * `Grammar<'normalize'>` = {@link NormalizedGrammar}; see
- * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §2): simplify
- * operates on the wrapper-free render view, so its `ctx.rules` holds
- * `Record<string, RenderRule>` (`NormalizedGrammar.rules` — the map being
- * simplified). Adds the inline-decision set and the variant-resolved
- * polymorph skip-set the slot-grouping diagnostic consults. (Was an
- * interface extending the dsl `TransformCtx`; now a compiler-layer class —
- * see compiler/ctx.ts.)
- */
 export class SimplifyCtx extends BaseCtx<'normalize'> {
 	readonly inlineKinds: ReadonlySet<string>;
 	/** Extra kinds the slot-grouping diagnostic skips (variant-resolved). */
@@ -69,19 +58,6 @@ export class SimplifyCtx extends BaseCtx<'normalize'> {
 	}
 }
 
-/**
- * Build a minimal `Grammar<'normalize'>` (= {@link NormalizedGrammar}) from a
- * bare wrapper-deleted rules map, defaulting every other phase-invariant
- * field to an empty/absent value. For call sites (tests, `makeDefaultCtx`)
- * that only have a rules map in hand — not a full linked-grammar bundle —
- * and need a `SimplifyCtx` (S2: `SimplifyCtx` now requires a full
- * `Grammar<'normalize'>` container, not a bare `rules` field). `linkRules`
- * is left empty: these callers have no distinct mid-normalize link-phase
- * view to carry (only that of a real `normalizeGrammar()` run), and only
- * `simplify`'s own `ctx.rules` read (→ `grammar.rules`) is exercised by
- * `computeSimplifiedRules` — the carried `linkRules` view is consumed
- * downstream by assemble, not by simplify itself.
- */
 export function makeNormalizedGrammar(rules: Record<string, RenderRule>): NormalizedGrammar {
 	return {
 		name: '',
@@ -108,19 +84,6 @@ import type { AssembledNode } from './model/node-map.ts';
 // of constructing wrapper nodes, so simplify stays field/optional/repeat-free.
 // ---------------------------------------------------------------------------
 
-/**
- * Compiler-side `RuleBuilder` that converts wrapper-construction calls into
- * attribute pushes (via `deleteWrapper`), keeping simplify's output
- * field/optional/repeat/repeat1-node-free. Structural constructors (`seq` /
- * `choice`) delegate to the structural builder (same plain node literals).
- *
- * - `field(name, X)` → push `fieldName` + `nonterminal:true` onto X.
- * - `optional(X)` → empty-seq sentinel when X is already empty; strip bare
- *   anonymous delimiter string; otherwise `deleteWrapper(optional(X))` which
- *   pushes `multiplicity: 'optional'` onto the leaves.
- * - `repeat(X)` / `repeat1(X)` → `deleteWrapper({type:REPEAT|REPEAT1, content:X})`.
- * - `seq` / `choice` → plain structural nodes (same as structuralBuilder).
- */
 export const attributeBuilder: RuleBuilder = {
 	seq: (members) => ({ type: SEQ, members }),
 	choice: (members) => ({ type: CHOICE, members }),
@@ -134,11 +97,14 @@ export const attributeBuilder: RuleBuilder = {
 		if (content.type === STRING && !isSlotPromotedLiteral(content)) {
 			return { type: SEQ, members: [] };
 		}
-		return deleteWrapper({ type: OPTIONAL, content }) as RenderRule;
+		// Cast, not narrow: `content: AnyRule` (RuleBuilder's phase-generic
+		// param) vs `deleteWrapper`'s `Rule<'link'>` — same "narrow via
+		// AnyRule, cast back" convention as rule-catalog.ts's `ruleChildren`.
+		return deleteWrapper({ type: OPTIONAL, content } as Rule<'link'>) as RenderRule;
 	},
-	repeat: (content) => deleteWrapper({ type: REPEAT, content }) as RenderRule,
-	repeat1: (content) => deleteWrapper({ type: REPEAT1, content }) as RenderRule,
-	field: (name, content) => deleteWrapper({ type: FIELD, name, content }) as RenderRule
+	repeat: (content) => deleteWrapper({ type: REPEAT, content } as Rule<'link'>) as RenderRule,
+	repeat1: (content) => deleteWrapper({ type: REPEAT1, content } as Rule<'link'>) as RenderRule,
+	field: (name, content) => deleteWrapper({ type: FIELD, name, content } as Rule<'link'>) as RenderRule
 };
 
 // ---------------------------------------------------------------------------
@@ -146,43 +112,6 @@ export const attributeBuilder: RuleBuilder = {
 // These are used exclusively by the simplify phase.
 // ---------------------------------------------------------------------------
 
-/**
- * Canonicalize a rule toward the universal seq-of-leaves shape:
- *   - Recursively canonicalize children.
- *   - Flatten degenerate single-member seqs (`seq([X])` → `X`).
- *
- * Does NOT perform attribute push-down — applyWrapperDeletion in normalize
- * already did that. Does NOT synthesize groups — applyAutoGroups (wire
- * phase) already did that.
- *
- * This is the final structural cleanup pass that absorbs the trivial
- * `seq([X])` → `X` shapes left behind by upstream transformations.
- * Idempotent — running it twice produces the same result as running once.
- *
- * Stays AnyRule-typed (phase-visibility-tightening finding): recursion is
- * delegated to a bare `RuleWalker<AnyRule>` (R12 traversal engine), which
- * still passes through wrapper nodes (FIELD/OPTIONAL/REPEAT/REPEAT1/TOKEN/
- * ALIAS) structurally via its generic `content` edge — confirmed load-bearing
- * by `simplify-universal-shape.test.ts`'s "preserves leaf content inside
- * wrappers (does not push down attributes)" case, which feeds a FIELD-wrapped
- * rule directly and asserts the wrapper survives untouched. Every PRODUCTION
- * call (`computeSimplifiedRules`) passes RenderRule-shaped input (simplifyRule
- * already guarantees no wrapper nodes reach this point), but the function
- * itself is not restricted to that — narrowing the signature would make the
- * type dishonest in the other direction (claiming it can't handle a shape it
- * demonstrably does).
- *
- * `RuleWalker.map` is NOT a drop-in replacement for the former
- * `recurseChildren`-based self-recursive visitor: `map` already recurses the
- * whole subtree internally and applies `visit` to every already-mapped node,
- * so `visit` here (`collapseSingleMemberSeq`) does ONLY the single-level
- * collapse — it must NOT call `canonicalizeSeqOfLeaves` on itself (that would
- * recurse twice). The exported function additionally applies
- * `collapseSingleMemberSeq` to `map`'s own return value, since `map` rebuilds
- * a node's children bottom-up but does not apply `visit` to the top node
- * itself — matching `recurseChildren(rule, canonicalizeSeqOfLeaves)` followed
- * by the collapse check that used to sit inline in this function.
- */
 const seqOfLeavesWalker = new RuleWalker<AnyRule>();
 
 function collapseSingleMemberSeq(recursed: AnyRule): AnyRule {
@@ -207,16 +136,6 @@ export function canonicalizeSeqOfLeaves(rule: AnyRule): AnyRule {
 	return collapseSingleMemberSeq(seqOfLeavesWalker.map(rule, collapseSingleMemberSeq));
 }
 
-/**
- * Leaf classification: a rule that contributes a single slot value (or a
- * literal) with no further structural content underneath. Used by
- * `assertUniversalShape` to validate seq members.
- *
- * ALIAS/TOKEN cases deleted (phase-visibility-tightening): both are
- * WrapperPhase-only (types/rule.ts) and collapse to `never` under the
- * RenderRule/SimplifiedRule values this function actually receives (always
- * post-`applyWrapperDeletion`) — `default: false` already covers them.
- */
 function isLeaf(rule: RenderRule): boolean {
 	switch (rule.type) {
 		case SYMBOL:
@@ -231,30 +150,16 @@ function isLeaf(rule: RenderRule): boolean {
 	}
 }
 
-/**
- * Test whether a choice member matches the empty string — the canonical
- * signal for "this branch contributes nothing" so the enclosing choice
- * can be simplified to `optional(non-empty-branches)`.
- */
 export function isEmptyMatchMember(rule: RenderRule): boolean {
 	if (rule.type === PATTERN && rule.value === '') return true;
 	if (rule.type === SEQ && rule.members.length === 0) return true;
 	return false;
 }
 
-/**
- * Is this literal slot DATA (a value-marker like `static`/`crate`/`ref`) rather
- * than a bare render-only delimiter (`else`/`->`/`,`)? Slot data survives
- * simplify; bare delimiters are stripped.
- */
 export function isSlotPromotedLiteral(rule: RenderRule): boolean {
 	return (rule as { nonterminal?: boolean }).nonterminal === true;
 }
 
-/**
- * Hoist guard: true when any seq inside `rule` mixes field() members
- * with named-symbol siblings.
- */
 function hasNamedSiblingOfInnerField(rule: AnyRule): boolean {
 	switch (rule.type) {
 		case SEQ: {
@@ -280,7 +185,6 @@ function hasNamedSiblingOfInnerField(rule: AnyRule): boolean {
 	}
 }
 
-/** True when `rule` is (or wraps) a symbol/supertype that tree-sitter would label. */
 function isNamedReference(rule: AnyRule): boolean {
 	switch (rule.type) {
 		case SYMBOL:
@@ -316,13 +220,6 @@ function hasInnerFieldAtExposableDepth(rule: AnyRule): boolean {
 	}
 }
 
-/**
- * Drop an outer `field('outer', …)` wrapper when an inner `field()` sits at
- * exposable depth (tree-sitter flattens nested field paths, so the inner field
- * IS a top-level field of the parent). Bails on direct field nesting or a
- * named-symbol sibling that would lose its outer-field label.
- *
- */
 export function hoistInnerFieldFromWrapperForField(rule: AnyRule): AnyRule {
 	if (rule.type !== FIELD) return rule;
 	const content = rule.content;
@@ -333,17 +230,11 @@ export function hoistInnerFieldFromWrapperForField(rule: AnyRule): AnyRule {
 	return content;
 }
 
-/**
- * Expand a choice branch into a flat array of its top-level members.
- */
 function normalizeBranchToMembers(branch: AnyRule): AnyRule[] {
 	if (branch.type === SEQ) return branch.members;
 	return [branch];
 }
 
-/**
- * Count occurrences of each field name in a branch's top-level members.
- */
 function countFieldNames(members: AnyRule[]): Map<string, number> {
 	const counts = new Map<string, number>();
 	for (const m of members) {
@@ -352,10 +243,6 @@ function countFieldNames(members: AnyRule[]): Map<string, number> {
 	return counts;
 }
 
-/**
- * Return the first field name that appears EXACTLY ONCE in every
- * branch's top-level members, or null if no such name exists.
- */
 function firstFieldNameSharedExactlyOncePerBranch(perBranchCounts: Map<string, number>[]): string | null {
 	if (perBranchCounts.length === 0) return null;
 	const first = perBranchCounts[0]!;
@@ -369,23 +256,6 @@ function firstFieldNameSharedExactlyOncePerBranch(perBranchCounts: Map<string, n
 	return null;
 }
 
-/**
- * Extract `field(name, ...)` from each branch, union their contents
- * into a single hoisted field, and keep branch-specific residuals as
- * a side choice wrapped in optional when any branch has nothing left.
- *
- * Stays AnyRule-typed (phase-visibility-tightening finding): its
- * `m.type === FIELD` check is production-dead (0 hits, all 3 grammars,
- * instrumented regen) — every production caller reaches this only through
- * `simplifyRule`'s FIELD-free guarantee — but `simplify-canonical.test.ts`
- * calls the exported `hoistSharedFieldFromBranchesForChoice` (and therefore
- * this) directly with FIELD-bearing fixtures, bypassing that guarantee by
- * design (its header comment documents the intent: exercise this function
- * on pre-wrapper-deleted input). Narrowing to RenderRule would break a
- * genuine, intentional test surface, not just a dead branch — same
- * classification as the sibling `mergeBranchesForChoice`/
- * `mergePositionForChoice`/`liftSharedArmAttrs` family.
- */
 function extractFieldFromBranchesForChoice(perBranch: AnyRule[][], name: string, ctx?: SimplifyCtx): AnyRule {
 	const b = ctx?.builder ?? structuralBuilder;
 	const hoistedContents: AnyRule[] = [];
@@ -396,7 +266,11 @@ function extractFieldFromBranchesForChoice(perBranch: AnyRule[][], name: string,
 		let extracted: FieldRule | null = null;
 		for (const m of members) {
 			if (m.type === FIELD && m.name === name && extracted === null) {
-				extracted = m;
+				// Cast, not narrow: `AnyRule` distributes across every phase,
+				// while `FieldRule` (bare) defaults to a single phase — same
+				// "narrow via AnyRule, cast back" convention as
+				// rule-catalog.ts's `ruleChildren`.
+				extracted = m as FieldRule;
 				continue;
 			}
 			rest.push(m);
@@ -424,12 +298,6 @@ function extractFieldFromBranchesForChoice(perBranch: AnyRule[][], name: string,
 	return { type: SEQ, members: [hoisted, residualPart] };
 }
 
-/**
- * Lift a field name shared by every choice branch into an enclosing seq,
- * unioning field contents across branches. Residuals become optional choice.
- *
- * AnyRule-typed for the same reason as {@link extractFieldFromBranchesForChoice}.
- */
 export function hoistSharedFieldFromBranchesForChoice(rule: ChoiceRule, ctx?: SimplifyCtx): AnyRule {
 	if (rule.members.length < 2) return rule;
 	if (rule.members.some((m) => m.type === VARIANT)) return rule;
@@ -440,9 +308,6 @@ export function hoistSharedFieldFromBranchesForChoice(rule: ChoiceRule, ctx?: Si
 	return extractFieldFromBranchesForChoice(perBranch, candidate, ctx);
 }
 
-/**
- * Lift a slot-shape attribute shared by EVERY choice arm onto the choice node.
- */
 function liftSharedArmAttrs(rule: ChoiceRule): AnyRule {
 	const shared = sharedArmAttrs(rule);
 	let result: ChoiceRule = rule;
@@ -457,18 +322,11 @@ function liftSharedArmAttrs(rule: ChoiceRule): AnyRule {
 	return result;
 }
 
-/**
- * Peel `group` wrappers to expose the seq inside.
- */
 function unwrapForMerge(rule: AnyRule): AnyRule {
 	if (rule.type === GROUP) return unwrapForMerge(rule.content);
 	return rule;
 }
 
-/**
- * Are these positions (one per branch, all at the same seq index)
- * structurally equivalent?
- */
 function positionsAreMergeable(position: readonly AnyRule[]): boolean {
 	if (position.length === 0) return true;
 	const first = position[0]!;
@@ -488,10 +346,6 @@ function positionsAreMergeable(position: readonly AnyRule[]): boolean {
 	return position.every((p) => JSON.stringify(p) === firstJson);
 }
 
-/**
- * Merge N same-position rules (already verified as mergeable) into a single canonical rule.
- *
- */
 function mergePositionForChoice(position: readonly AnyRule[], ctx?: SimplifyCtx): AnyRule {
 	const b = ctx?.builder ?? structuralBuilder;
 	const first = position[0]!;
@@ -504,7 +358,6 @@ function mergePositionForChoice(position: readonly AnyRule[], ctx?: SimplifyCtx)
 	return first;
 }
 
-/** Deduplicate rules by JSON equality, preserving first-seen order. */
 function dedupeByJson(rules: readonly AnyRule[]): AnyRule[] {
 	const seen = new Set<string>();
 	const out: AnyRule[] = [];
@@ -517,27 +370,10 @@ function dedupeByJson(rules: readonly AnyRule[]): AnyRule[] {
 	return out;
 }
 
-/**
- * Structural AnyRule equality — compares all discriminant + content fields recursively.
- */
 export function rulesStructurallyEqual(a: AnyRule, b: AnyRule): boolean {
 	return JSON.stringify(a) === JSON.stringify(b);
 }
 
-/**
- * Merge a choice of structurally-equivalent branches into a flat seq with
- * per-position unioned field contents. Bails (→ `liftSharedArmAttrs`) when
- * branches aren't same-length mergeable seqs; NEVER unwraps `variant()`.
- *
- * AnyRule-typed (phase-visibility-tightening finding, verified empirically):
- * its `br.type === FIELD` check is production-dead (0 hits across all 3
- * grammars, instrumented regen), but `simplify-canonical.test.ts` calls this
- * exported function directly with FIELD-bearing fixtures, bypassing
- * `simplifyRule`'s FIELD-free guarantee by design — a genuine, intentional
- * test surface (not just dead code), so narrowing to RenderRule would break
- * it. `mergePositionForChoice` (called from here) and `liftSharedArmAttrs`
- * (the bail-out path) share this classification.
- */
 export function mergeBranchesForChoice(rule: ChoiceRule, ctx?: SimplifyCtx): AnyRule {
 	if (rule.members.length === 0) return rule;
 	// variant() marks polymorph-distinct branches — bail, this is a polymorph surface.
@@ -559,6 +395,20 @@ export function mergeBranchesForChoice(rule: ChoiceRule, ctx?: SimplifyCtx): Any
 		const position = unwrapped.map((br) => br.members[i]!);
 		if (!positionsAreMergeable(position)) return liftSharedArmAttrs(rule);
 	}
+	// Soundness guard (#171): merging unions each position INDEPENDENTLY,
+	// which is only sound when at most one position actually varies across
+	// branches. Two or more co-varying positions are correlated by branch
+	// construction (e.g. a string rule's opening/contents/closing arms) —
+	// independent unioning would produce a decorrelated grammar accepting
+	// combinations no branch authored. Bail to the attr-lift path instead.
+	let varyingPositions = 0;
+	for (let i = 0; i < len; i++) {
+		const position = unwrapped.map((br) => br.members[i]!);
+		if (dedupeByJson(position).length > 1) {
+			varyingPositions++;
+			if (varyingPositions >= 2) return liftSharedArmAttrs(rule);
+		}
+	}
 	// All positions mergeable. Build the merged seq.
 	const mergedMembers: AnyRule[] = [];
 	for (let i = 0; i < len; i++) {
@@ -570,10 +420,6 @@ export function mergeBranchesForChoice(rule: ChoiceRule, ctx?: SimplifyCtx): Any
 	return { type: SEQ, members: mergedMembers };
 }
 
-/**
- * Test-only post-condition check. Throws with kind + offending sub-rule type
- * if a branch/group body isn't a seq-of-leaves (or a bare leaf).
- */
 export function assertUniversalShape(node: AssembledNode): void {
 	if (node.modelType !== 'branch' && node.modelType !== 'group') return;
 	const body = node.simplifiedRule;
@@ -595,12 +441,6 @@ export function assertUniversalShape(node: AssembledNode): void {
 	}
 }
 
-/**
- * SimplifiedRule-level mirror of {@link assertUniversalShape}, operating on
- * a rule directly so `computeSimplifiedRules` can fail-fast at the simplify
- * boundary (called on `canonicalized[kind]`, the final SimplifiedRule map
- * entry, before it's returned).
- */
 export function assertUniversalShapeRule(rule: SimplifiedRule, kind: string): void {
 	if (rule.type !== SEQ) {
 		if (!isLeaf(rule)) {
@@ -631,10 +471,6 @@ const _slotGroupingSeen = new Set<string>();
 
 const slotGroupingKey = (rec: SlotGroupingDiagnostic): string => `${rec.ownerKind} ${rec.code}`;
 
-/**
- * Push a record if its (ownerKind, shape) hasn't been seen this run. Returns
- * true when newly added (so the caller can log only first occurrences).
- */
 function recordSlotGroupingDiagnostic(rec: SlotGroupingDiagnostic): boolean {
 	const key = slotGroupingKey(rec);
 	if (_slotGroupingSeen.has(key)) return false;
@@ -643,34 +479,17 @@ function recordSlotGroupingDiagnostic(rec: SlotGroupingDiagnostic): boolean {
 	return true;
 }
 
-/**
- * Clear the accumulator. Called once at the start of each `normalizeGrammar()` run so
- * diagnostics from one grammar never leak into the next (the multiple
- * `computeSimplifiedRules` calls within a run still accumulate into one batch).
- */
 export function resetSlotGroupingDiagnostics(): void {
 	_slotGroupingDiagnostics.length = 0;
 	_slotGroupingSeen.clear();
 }
 
-/**
- * Return + clear the slot-grouping diagnostics accumulated during the current
- * `normalizeGrammar()` run. The codegen CLI calls this after regen to print
- * propose-promotion suggestions; tests call it to verify the wiring.
- */
 export function drainSlotGroupingDiagnostics(): SlotGroupingDiagnostic[] {
 	const out = [..._slotGroupingDiagnostics];
 	resetSlotGroupingDiagnostics();
 	return out;
 }
 
-/**
- * Minimal `SimplifyCtx` for the public boundary when no ctx is supplied (e.g.
- * direct `simplifyRule(rule)` calls in tests). The per-rule-type handlers take a
- * concrete `ctx: SimplifyCtx`; this normalizes once so they never see `undefined`.
- * Injects `attributeBuilder` so even bare `simplifyRule(rule)` calls use the
- * attribute-push strategy.
- */
 export function makeDefaultCtx(): SimplifyCtx {
 	return new SimplifyCtx({
 		grammar: makeNormalizedGrammar({}),
@@ -679,69 +498,11 @@ export function makeDefaultCtx(): SimplifyCtx {
 	});
 }
 
-/**
- * Recurse into every descendant exactly ONCE via `ctx.walker.map` (RuleWalker's
- * canonical `members`/`content`/`separator.value` child-edge relation, R12
- * PR-6) — bottom-up over every child edge, INCLUDING a rule's
- * `.separator.value` (a real Rule, PR-S) — then dispatch on the fully
- * child-simplified root.
- *
- * `RuleWalker.map(rule, visit)` already owns recursion: for each child edge it
- * computes `visit(this.map(child, visit))`, i.e. it descends into a child's
- * OWN children first and only then calls `visit` on the (already-recursed)
- * child. Critically, `map` never calls `visit` on the `rule` argument passed
- * to the top-level call — only on the results of recursing into its children.
- * So `visit` MUST be a plain, non-recursive, single-node transform
- * (`simplifyDispatch` below) — passing something that itself calls
- * `ctx.walker.map` again (as an earlier revision of this function did) makes
- * every node get walked twice: once by this call's own internal recursion,
- * once more when `visit` re-invokes `map` on the same already-recursed node.
- * That compounds at every level (T(n) = 2·T(n-1)) — exponential, not the
- * "pure recursion-mechanism swap" this migration (PR-S task 4) intends. Since
- * `map` doesn't visit the root, `simplifyRule` calls `simplifyDispatch` one
- * more time explicitly, on the walked result, to dispatch-simplify the root
- * itself — giving every node (root included) exactly one `simplifyDispatch`
- * call, in bottom-up order.
- */
 export function simplifyRule(rule: RenderRule, ctx: SimplifyCtx = makeDefaultCtx()): RenderRule {
 	const withSimplifiedChildren = ctx.walker.map(rule, (r) => simplifyDispatch(r as RenderRule, ctx)) as RenderRule;
 	return simplifyDispatch(withSimplifiedChildren, ctx);
 }
 
-/**
- * Dispatch a single, already-child-simplified rule to its per-type simplify
- * handler. Thin switch over the RenderRule union (the wrapper-free view
- * `applyWrapperDeletion` produces — see `SimplifyCtx extends BaseCtx<'normalize'>`).
- * This function is deliberately NON-RECURSIVE — it must never call
- * `ctx.walker.map` (or `simplifyRule`) itself. It is used two ways: as the
- * `visit` callback `simplifyRule` passes to `ctx.walker.map` (applied once per
- * descendant, by the walker's own recursion), and as the final explicit call
- * `simplifyRule` makes on the walked root. Either way, by the time this runs,
- * the rule's `.members`/`.content`/`.separator.value` have already been fully
- * recursively simplified — replacing five places (this switch plus
- * `simplifySeqRule`/`simplifyChoiceRule`/`simplifyGroupRule`/`simplifyVariantRule`,
- * each previously recursing into its own subset of children directly) with one
- * walker-driven recursion, so a rule carrying a non-literal separator gets its
- * `.separator.value` simplified exactly like any other rule position instead
- * of being skipped by all five (PR-S task 4).
- *
- * By simplify-time, FIELD / OPTIONAL / REPEAT / REPEAT1 / ALIAS / TOKEN nodes
- * must never appear in the input:
- *  - `applyWrapperDeletion` (which runs before this in the production pipeline)
- *    converts FIELD/OPTIONAL/REPEAT/REPEAT1 to `fieldName` / `multiplicity`
- *    attributes and pushes ALIAS down to `aliasedFrom`+`aliasNamed` leaf
- *    attributes. TOKEN is the exception: wrapper-deletion PRESERVES the node
- *    (`{...rule, content}`, wrapper-deletion.ts) — its absence here is a
- *    type-level assertion (`TokenRule` → `never` under `RenderRule`) backed
- *    empirically (0 surviving top-level token rules across all 3 grammars),
- *    not a mechanism guarantee; see the preserve-token-wrappers debt. All
- *    six still collapse to `never` under `RenderRule` (types/rule.ts).
- *  - Construction sites inside `mergePositionForChoice` / `extractFieldFromBranchesForChoice`
- *    and the empty-match fold in `simplifyChoiceRule` now delegate to
- *    `ctx.builder` (= `attributeBuilder` in production) which pushes attributes
- *    instead of building wrapper nodes.
- * The `default` branch throws so any stray wrapper node is caught immediately.
- */
 function simplifyDispatch(rule: RenderRule, ctx: SimplifyCtx): RenderRule {
 	switch (rule.type) {
 		// simplifySeqRule/simplifyChoiceRule are typed AnyRule-out (see the
@@ -831,7 +592,6 @@ function simplifyChoiceRule(rule: ChoiceRule, ctx: SimplifyCtx = makeDefaultCtx(
 	return withAttrsFrom(rule, hoistSharedFieldFromBranchesForChoice(merged as ChoiceRule, ctx));
 }
 
-/** Simplify every rule in the map, each run to fixpoint (see `normalizeToFixpoint`). */
 export function simplifyRules(rules: Record<string, RenderRule>, ctx?: SimplifyCtx): Record<string, RenderRule> {
 	const out: Record<string, RenderRule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
@@ -840,16 +600,6 @@ export function simplifyRules(rules: Record<string, RenderRule>, ctx?: SimplifyC
 	return out;
 }
 
-/**
- * Compute the derivation-only simplified view of every rule in the map.
- *
- * Relocated from normalize.ts as part of PR1 — all simplification logic lives
- * in simplify.ts. Input type widened to RenderRule: applyWrapperDeletion in
- * normalize.ts produces a wrapper-less map, and simplify operates on that.
- *
- * @param normalizedRules - Wrapper-less rule map (output of applyWrapperDeletion).
- * @returns A new map containing the simplified form of each rule.
- */
 export function computeSimplifiedRules(ctx: SimplifyCtx): Record<string, SimplifiedRule> {
 	// Option 2 (R12): the operated-on render-rule map lives on ctx.rules.
 	// Construction sites delegate wrapper-vs-attribute to ctx.builder (SimplifyCtx
@@ -867,7 +617,7 @@ export function computeSimplifiedRules(ctx: SimplifyCtx): Record<string, Simplif
 		// Re-fuse head+repeat list pairs too — inlineRefs can splice a helper body
 		// and re-expose a non-adjacent head-single + tail-array of the same element.
 		const wrapperFree = fuseHeadRepeatLists(
-			deleteWrapper(canonicalizeSeqOfLeaves(rule) as AnyRule) as AnyRule
+			deleteWrapper(canonicalizeSeqOfLeaves(rule) as Rule<'link'>) as AnyRule
 		) as SimplifiedRule;
 		canonicalized[kind] = wrapperFree;
 	}
@@ -909,13 +659,6 @@ export function computeSimplifiedRules(ctx: SimplifyCtx): Record<string, Simplif
 	return canonicalized;
 }
 
-/**
- * Run `inlineRefs` + `simplifyRule` to fixpoint. The two passes enable each
- * other (an inline can expose a nested seq for simplifyRule to flatten, a
- * stripped branch can let a sibling choice merge), and each is non-increasing on
- * structural size (member count / nesting depth), so the loop converges — real
- * grammars in 2-3 iters; the 16-iter cap guards a non-converging shape.
- */
 function normalizeToFixpoint(
 	rule: RenderRule,
 	ctx: SimplifyCtx | undefined,
@@ -943,11 +686,6 @@ function normalizeToFixpoint(
 // wrappers with inner fields at exposable depth are dropped.
 // ---------------------------------------------------------------------------
 
-/**
- * Bottom-up inner-field hoist for template emission. Preserves all
- * literals and structure; only drops outer field wrappers with exposable
- * inner fields. Idempotent.
- */
 export function hoistInnerFieldsForTemplate(rule: AnyRule): AnyRule {
 	switch (rule.type) {
 		case SEQ:
@@ -992,13 +730,6 @@ export function hoistInnerFieldsForTemplate(rule: AnyRule): AnyRule {
 // the simplify fixpoint).
 // ---------------------------------------------------------------------------
 
-/**
- * Collapse a `seq`, carrying the seq node's slot attrs onto the survivor when
- * the node is discarded (`seq(x) → x` / multi-member flatten) — else
- * multiplicity/separator/fieldName are lost. `multiplicity` COMBINES via the
- * lattice (survivor `optional` + seq `array` → `array`); the rest ride along
- * absent-only (`withAttrsFrom`). See glossary (Phase 3.5).
- */
 function simplifySeqRule(rule: SeqRule, _ctx: SimplifyCtx = makeDefaultCtx()): AnyRule {
 	// Members already simplified by simplifyRule's ctx.walker.map recursion —
 	// this function no longer recurses into its own children (PR-S task 4).

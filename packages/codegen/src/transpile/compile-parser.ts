@@ -31,12 +31,6 @@ export async function compileParser(grammarDir: string, options?: CompileOptions
 		stdio: 'pipe'
 	});
 
-	// Some grammars (e.g., tree-sitter-typescript) bundle a custom
-	// external scanner that tree-sitter generate doesn't materialize.
-	// Without it, the WASM build fails with "Missing symbols" for the
-	// tree_sitter_<lang>_external_scanner_* functions. Copy the
-	// base grammar's scanner.c (and any header it relatively-includes)
-	// into .sittir/src/ before building.
 	syncExternalScanner(grammarDir, sittirDir);
 
 	execFileSync('npx', ['tree-sitter', 'build', '--wasm', '-o', 'parser.wasm'], {
@@ -47,13 +41,6 @@ export async function compileParser(grammarDir: string, options?: CompileOptions
 	return wasmPath;
 }
 
-/**
- * Copy the base grammar's scanner.c into .sittir/src/ when missing,
- * preserving any relative #include paths it uses (e.g., typescript's
- * scanner.c includes ../../common/scanner.h). Looks under the grammar
- * package's node_modules/tree-sitter-<name>/{src,<lang>/src}/scanner.c.
- * No-op when no scanner.c exists in the base grammar (most grammars).
- */
 function syncExternalScanner(grammarDir: string, sittirDir: string): void {
 	const sittirScanner = join(sittirDir, 'src', 'scanner.c');
 	if (existsSync(sittirScanner)) return;
@@ -68,16 +55,20 @@ function syncExternalScanner(grammarDir: string, sittirDir: string): void {
 
 	mkdirSync(dirname(sittirScanner), { recursive: true });
 	copyFileSync(baseScanner, sittirScanner);
+	copyRelativeScannerIncludes(baseScanner, sittirScanner);
+}
 
-	// Resolve relative #include paths in the scanner — copy any
-	// referenced header alongside, mirroring its relative position
-	// from the .sittir/src/scanner.c location.
+/**
+ * Mirrors any header the scanner reaches via a relative `#include "..."`
+ * alongside the copied scanner, at the same relative position from the new
+ * .sittir/src/scanner.c location. Same-directory includes and tree-sitter's
+ * own runtime headers are already resolvable and don't need copying.
+ */
+function copyRelativeScannerIncludes(baseScanner: string, sittirScanner: string): void {
 	const src = readFileSync(baseScanner, 'utf8');
 	const includeRe = /#include\s+"([^"]+)"/g;
 	for (const match of src.matchAll(includeRe)) {
 		const incPath = match[1]!;
-		// Skip same-dir includes (handled by other sync logic) and
-		// absolute paths.
 		if (!incPath.includes('/') || incPath.startsWith('tree_sitter/')) continue;
 		const baseInc = resolve(dirname(baseScanner), incPath);
 		if (!existsSync(baseInc)) continue;

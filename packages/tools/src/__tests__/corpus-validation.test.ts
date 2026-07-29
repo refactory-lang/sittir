@@ -141,7 +141,13 @@ const FLOORS = {
 		// 2026-07-17 floor reset — see header.
 		rtPass: 133,
 		rtTotal: 136,
-		rtAstMatchPass: 118,
+		// 118→117 (2026-07-20): restoring token_tree's REPARSE_WRAPPERS key
+		// (silently lost since PR #165's alias-catalog split) converted that
+		// kind's silently-skipped probe back into a counted candidate; its
+		// pre-existing shallow AST mismatch (walker token-adjacency class,
+		// see docs/KNOWN_ISSUES.md) now shows as a visible failure. Coverage
+		// gain, not a render regression — deep floor (123) unaffected.
+		rtAstMatchPass: 117,
 		rtDeepPass: 133,
 		rtDeepAstMatchPass: 123,
 		covPass: 161,

@@ -35,6 +35,20 @@ export function withMethods<T extends AnyNodeData>(node: T, engine: WithMethodsE
 	});
 }
 
+/**
+ * Attach `accessors` to `node` as non-enumerable own properties (ADR-0018
+ * FR-002 / SC-004). Generated factories build the `$`-metadata + `_`-storage
+ * object literal first, then route every accessor method through this helper
+ * instead of inlining `<name>() { ... }` as an ordinary (enumerable) literal
+ * property — `Object.keys(node)` must expose only `$`- and `_`-prefixed keys.
+ */
+export function withAccessors<T extends object, A extends Record<string, unknown>>(node: T, accessors: A): T & A {
+	for (const key of Object.keys(accessors)) {
+		Object.defineProperty(node, key, { value: accessors[key], enumerable: false, writable: true, configurable: true });
+	}
+	return node as T & A;
+}
+
 export function isNodeData(v: unknown): v is AnyNodeData {
 	if (v === null || typeof v !== 'object') return false;
 	const o = v as Record<string, unknown>;

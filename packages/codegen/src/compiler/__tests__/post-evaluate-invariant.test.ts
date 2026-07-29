@@ -127,13 +127,24 @@ describe('post-evaluate invariant', () => {
 				'groups',
 				'polymorphsConfig',
 				'renderAs',
+				// visibleExternals: — externals auto-aliased visible with a
+				// fixed render body (drainVisibleExternalsMetadata).
+				'visibleExternals',
 				// Per-kind diagnostic exceptions from overrides.ts `expectDiagnostics:` —
 				// read by collectGrammarDiagnostics (grammar-diagnostics.ts).
 				'expectDiagnostics',
+				// Per-kind known-failing generated-test declarations from
+				// `expectTestFailures:` — read by emitTests (emitters/test.ts)
+				// for describe.skip emission.
+				'expectTestFailures',
 				// Enrich-synthesized clause-hoist names orphaned by an override
 				// redeclaring their recorded owner — read by
 				// collectGrammarDiagnosticsForGrammar to suppress phantom diagnostics.
-				'orphanedSyntheticGroups'
+				'orphanedSyntheticGroups',
+				// groups: body-pattern entries referenced nowhere after pattern
+				// replacement (silently-dead elevation) — read by
+				// collectGrammarDiagnosticsForGrammar for `body-pattern-zero-match`.
+				'bodyPatternZeroMatches'
 			]);
 			const extra = Object.keys(raw as unknown as Record<string, unknown>).filter((k) => !ALLOWED.has(k));
 			expect(extra, `unexpected RawGrammar fields: ${extra.join(', ')}`).toEqual([]);

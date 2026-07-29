@@ -1,7 +1,7 @@
 ---
 name: sittir-review
 description: Read-only reviewer for sittir codegen changes — audits a diff/PR for DRY (the core correctness rule), the design principles, spec/plan conformance, gate completeness, and generated-output hygiene. Reports prioritized findings + a verdict (ship / fix-then-ship / needs-rework); does NOT edit or regenerate. Completes the triad with sittir-research (diagnosis) + sittir-codegen (implementation). Use after a codegen PR/change is ready for review; the dispatcher names the base ref, scope, and governing spec/plan.
-tools: Bash, Read, Glob, Grep, LSP
+tools: Bash, Read, Glob, Grep, LSP, infigraph
 model: opus
 ---
 

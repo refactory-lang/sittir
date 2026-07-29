@@ -4,12 +4,11 @@
  * Pipeline: evaluate → link → normalize → assemble → emitters.
  */
 
-import { existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync } from 'node:fs';
 import { evaluate } from './evaluate.ts';
 import { link } from './link.ts';
 import { normalizeGrammar as normalize, NormalizeCtx } from './normalize.ts';
-import { assemble, AssembleCtx, hydrateSlotRefs, classifyNode } from './assemble.ts';
+import { assemble, AssembleCtx, hydrateSlotRefs } from './assemble.ts';
 import { computeTransportSCC } from './scc.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts';
 import { tracePhaseRules, traceAssembleNodes } from './trace.ts';
@@ -27,6 +26,12 @@ import { computeFieldStorageInfo, computeSlotClasses } from '../emitters/shared.
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 import { extractGrammarRoles } from '../scm/extract-roles.ts';
 import { drainSlotGroupingDiagnostics } from './simplify.ts';
+import {
+	loadGrammarJsonInlineList,
+	loadGrammarJsonAliasMap,
+	buildInlinableKinds,
+	buildPolymorphsConfigSkip
+} from './inline-sets.ts';
 import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
 import { assertEmittable } from './emit-gate.ts';
 import { formatCompilerDiagnostics } from './diagnostics/grammar-diagnostics.ts';
@@ -41,14 +46,7 @@ import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
 export interface GeneratedFiles {
 	grammar: string;
 	types: string;
-	/** engine.ts — thin wrapper around createNativeEngine from @sittir/common/engine. Native-only; no JS-engine fallback (see emitters/engine.ts). */
 	engine: string;
-	/** Per-rule `.jinja` files. `EmittedTemplates.bodies`
-	 *  is keyed by rule kind with the full file contents (incl.
-	 *  `@generated` header). Separator / flank metadata lives INLINE
-	 *  in each body via `| join("<sep>")` and
-	 *  `| joinWithTrailing(...)` filters; no sidecar. CLI writes each
-	 *  body to `packages/<grammar>/templates/<kind>.jinja`. */
 	jinjaTemplates: EmittedTemplates;
 	factories: string;
 	wrap: string;
@@ -61,24 +59,12 @@ export interface GeneratedFiles {
 	typeTests: string;
 	config: string;
 	nodeModel: string;
-	/** overrides.suggested.ts — human-readable derivation log. `undefined` when there's nothing to suggest (emission disabled or empty result); the caller skips writing the file in that case. */
 	suggested: string | undefined;
-	/** is.ts — per-grammar type guards (is/assert/isTree/isNode). */
 	is: string;
-	/** kind_ids.rs — per-grammar numeric KindId constants for the Rust render crate */
 	kindIds: string;
-	/** The intermediate NodeMap — available for inspection */
 	nodeMap: NodeMap;
-	/** Generated ID tables (from parser.c) — exposed for CLI callers that need
-	 *  to pass them to Rust-render emitters such as render-module emission. */
 	generatedIdTables?: GeneratedIdTables;
-	/** Grammar-owned Rust render-module outputs, when requested by the caller. */
 	renderModule?: RenderModuleBundle;
-	/**
-	 * Slot-grouping diagnostics accumulated during the normalize phase.
-	 * Surfaced by runCodegen() via stderr so propose-promotion suggestions
-	 * print during `sittir gen --all` without requiring a separate preflight run.
-	 */
 	slotGroupingDiagnostics: readonly SlotGroupingDiagnostic[];
 }
 
@@ -86,55 +72,12 @@ export interface GenerateConfig {
 	grammar: string;
 	nodes?: string[];
 	outputDir: string;
-	/**
-	 * Which derived source tags are accepted into the rule tree.
-	 * Defaults to all derived sources (permissive). `grammar` and
-	 * `override` are always-on and can't be filtered out — this
-	 * controls which DERIVATIONS Link's inference / promotion passes
-	 * mutate the rule tree with.
-	 *
-	 * Entries EXCLUDED from this filter still appear in the
-	 * `derivations` log (and therefore in `overrides.suggested.ts`)
-	 * so you can review what Link inferred and either adopt it into
-	 * overrides.ts or leave it in the log.
-	 *
-	 * @example
-	 * // Strict base pipeline — no inference / promotion:
-	 * { include: { rules: [], fields: [] } }
-	 *
-	 * // Accept promotion, review inference:
-	 * { include: { rules: ['promoted'], fields: [] } }
-	 *
-	 * // Default (permissive): everything applied.
-	 * { include: undefined }
-	 */
 	include?: IncludeFilter;
-	/**
-	 * Emit runtime validation in leaf factories (regex check against
-	 * the grammar's declared pattern). Default `false` — enum
-	 * factories always validate, keywords have nothing to check, but
-	 * leaf patterns can diverge from JS RegExp syntax (Unicode
-	 * property escapes without the `u` flag, PCRE-only features) so
-	 * opt-in avoids surprising the non-strict call sites.
-	 */
 	strict?: boolean;
-	/**
-	 * Round-trip failure diagnostics to surface in overrides.suggested.ts.
-	 * Collected by the CLI `--roundtrip` flag; when absent, the suggested
-	 * emitter skips the round-trip section. Passing empty or omitting
-	 * produces the same output — the emitter only adds the section
-	 * when at least one diagnostic exists.
-	 */
 	roundTripFailures?: readonly RoundTripDiagnostic[];
-	/** Emit grammar-owned Rust render-module artifacts in emit.ts. */
 	emitRenderModule?: boolean;
 }
 
-/**
- * Generate typed factory code using the new five-phase pipeline.
- *
- * evaluate(grammar.js) → link → normalize → assemble → adapter → emitters
- */
 export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// PR-G: Diagnostics accumulator for the Assemble→Project gate.
 	// PR-H: threaded into phase contexts so pipeline diagnostics flow here.
@@ -201,14 +144,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// Filtering that list would un-skip supertypes/keywords and emit phantom
 	// concrete kinds — so the decision set is kept distinct.
 	// TODO: Pull this into simplify() so that inlineKinds is available to the simplify pass without a separate read.
-	const NON_INLINABLE_MODEL_TYPES = new Set(['supertype', 'keyword', 'token', 'pattern', 'enum']);
-	const inlinableKinds = new Set(
-		[...inlineKinds].filter((k) => {
-			const rule = linked.rules[k];
-			if (!rule) return true; // un-classifiable (no IR rule) — leave inlinable
-			return !NON_INLINABLE_MODEL_TYPES.has(classifyNode(k, rule, { parentAliasedKinds: linked.parentAliasedKinds }));
-		})
-	);
+	const inlinableKinds = buildInlinableKinds(inlineKinds, linked);
 
 	// Build the extra polymorph skip-set for the slot-grouping diagnostic.
 	// `raw.polymorphsConfig` is the `polymorphs:` / `n:` declarative path-split
@@ -219,16 +155,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// Note: the parent kinds themselves are included too, to silence the top-level
 	// polymorph rule if it isn't already classified as PolymorphRule in the simplified
 	// map (e.g. when all arms are inlined, the structure gets flattened).
-	const polymorphsConfigSkip = new Set<string>();
-	for (const [parentKind, armMap] of Object.entries(raw.polymorphsConfig ?? {})) {
-		if (!armMap) continue;
-		polymorphsConfigSkip.add(parentKind);
-		for (const suffix of Object.values(armMap)) {
-			// `polymorphHiddenName` formula: `_${parentKind}_${suffix}` for non-hidden parents
-			const visibleParent = parentKind.startsWith('_') ? parentKind.slice(1) : parentKind;
-			polymorphsConfigSkip.add(`_${visibleParent}_${suffix}`);
-		}
-	}
+	const polymorphsConfigSkip = buildPolymorphsConfigSkip(raw.polymorphsConfig);
 
 	// Phase 3: Normalize — build a NormalizeCtx carrying the inline-decision set
 	// and polymorph skip-set; pass it to normalizeGrammar so the simplify phase
@@ -248,7 +175,12 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 	// Phase 4: Assemble — caller-owned ctx (R12): built from `normalized` via
 	// the canonical factory, threading the pipeline's live DiagnosticSink.
-	const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables, diagnostics));
+	// `grammarJsonAliasMap` corrects nested-supertype-arm naming divergence
+	// between enrich's two per-grammar evaluations — see AssembleCtx's doc
+	// comment on the field and inline-sets.ts's loadGrammarJsonAliasMap.
+	const nodeMap = assemble(
+		AssembleCtx.from(normalized, generatedIdTables, diagnostics, loadGrammarJsonAliasMap(cfg.grammar))
+	);
 	traceAssembleNodes('assemble', nodeMap.nodes);
 
 	// Assemble→Project gate (PR-G). Inert until PR-L: nothing emits `fail`, so
@@ -340,7 +272,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		strict: cfg.strict,
 		triviaKinds,
 		grammarRoles,
-		emitRenderModule: cfg.emitRenderModule
+		emitRenderModule: cfg.emitRenderModule,
+		expectTestFailures: raw.expectTestFailures
 	});
 
 	const result: GeneratedFiles = {
@@ -378,54 +311,6 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	return result;
 }
 
-/**
- * Read the `inline` list from the compiled `grammar.json` artifact if present.
- *
- * @remarks
- * `raw.inline` (from `evaluate()`) only contains what the overrides callback
- * explicitly returns — base-grammar string items in the `previous` array are
- * silently dropped by evaluate's `normalize()` pass (which only handles
- * symbol-ref objects, not plain strings). Reading grammar.json directly gives
- * the full merged list that tree-sitter itself used when compiling the parser,
- * making it the authoritative source for "is this kind deliberately inlined?".
- *
- * Returns `undefined` when the grammar has not been compiled (no `.sittir/`
- * directory). Callers treat `undefined` the same as an empty list — no kind
- * is considered deliberately inlined.
- *
- * @param grammar - Grammar name (e.g. `'rust'`, `'typescript'`, `'python'`).
- * @returns The `inline` string array from grammar.json, or `undefined`.
- */
-function loadGrammarJsonInlineList(grammar: string): readonly string[] | undefined {
-	const grammarJsonPath = join(process.cwd(), 'packages', grammar, '.sittir', 'src', 'grammar.json');
-	if (!existsSync(grammarJsonPath)) return undefined;
-	try {
-		const parsed = JSON.parse(readFileSync(grammarJsonPath, 'utf8')) as {
-			inline?: unknown;
-		};
-		if (Array.isArray(parsed.inline) && parsed.inline.every((v) => typeof v === 'string')) {
-			return parsed.inline as string[];
-		}
-		return undefined;
-	} catch {
-		return undefined;
-	}
-}
-
-/**
- * Collect kinds whose root rule was synthesized by evaluate's inline-alias-
- * source pass (`synthesizeInlineAliasSources`). These have no parser symbol
- * because tree-sitter inlines the alias body at parse time — the `_${target}`
- * intermediary exists only in the codegen rule map.
- *
- * @remarks
- * The provenance is set to `'evaluate-synthesized'` on the root
- * `RuleCatalogEntry` for each synthesized rule. Emitters treat these the same
- * as inline-list kinds: warn and skip, never throw.
- *
- * @param raw - The evaluated grammar, which carries the rule catalog.
- * @returns A `ReadonlySet<string>` of synthesized kind names.
- */
 function collectEvaluateSynthesizedKinds(raw: RawGrammar): ReadonlySet<string> {
 	const result = new Set<string>();
 	for (const [kind, rootId] of raw.ruleCatalog.rootsByKind) {

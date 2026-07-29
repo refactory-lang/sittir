@@ -42,21 +42,6 @@ export interface FactoryMapData {
 	readonly fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>;
 	readonly factoryFields: Readonly<Record<string, readonly string[]>>;
 	readonly factorySlots: Readonly<Record<string, Readonly<Record<string, FactorySlotMeta>>>>;
-	/**
-	 * Polymorph variant discriminators. For each polymorph parent kind a
-	 * descriptor telling `nodeToConfig` how to stamp `$variant` on the
-	 * derived config.
-	 *
-	 *   source='override' — variant inferred from the first named child's
-	 *     kind. The `childKind` map is `<parent_childKind>: <variantName>`.
-	 *   source='promoted' — variant inferred from field-presence. The
-	 *     `fields` map is `<variantName>: [<fieldPropertyName>...]`
-	 *     (match if every listed field is present on the config).
-	 *
-	 * The dispatcher's switch on `config.$variant` expects the tag to be
-	 * present; validators and legacy readNode→factory paths use this map
-	 * to derive it from the parsed tree.
-	 */
 	readonly polymorphVariants: PolymorphVariantMap;
 }
 
@@ -98,37 +83,33 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 		if (Object.keys(slots).length > 0) factorySlots[kind] = slots;
 	}
 
-	const polymorphVariants: Record<string, PolymorphVariantDescriptor> = {};
-	for (const [kind, node] of nodeMap.nodes) {
-		// Variant-adopted branches — kinds that went through Link's
-		// push-down (see link.ts `pushAmbientScaffoldIntoVariantChildren`)
-		// classify as branch but still carry the variant-child kinds on
-		// `variantChildKinds`. Emit them into polymorphVariants so
-		// `.from()`-dispatch and the validator's deep-read path both
-		// know which kinds participate in variant() adoption.
-		// Phase 1d.vii (spec 022): the former `'container'` modelType
-		// folded into `'branch'`; the discriminant collapses too.
-		if (node.modelType === 'branch' && node.variantChildKinds.length > 0) {
-			if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
-			const childKind: Record<string, string> = {};
-			for (const visibleName of node.variantChildKinds) {
-				// `prefixNamedSuffix` (compiler/variant-structural.ts) — NOT a
-				// raw `${kind}_` slice, which is unsound when `kind` is hidden
-				// (a hidden parent's visible target strips its OWN leading `_`
-				// independently of the parent's, per `polymorphVisibleName`'s
-				// convention; e.g. `_match_block` → `match_block_block`, not
-				// `_match_block_block`). Falls back to the full name only for
-				// the (currently unobserved) shape where the target doesn't
-				// prefix-match at all.
-				const suffix = prefixNamedSuffix(kind, visibleName) ?? visibleName;
-				childKind[visibleName] = suffix;
-			}
-			polymorphVariants[kind] = { definedBy: 'override', childKind };
-			continue;
-		}
-	}
+	const polymorphVariants = collectVariantAdoptedBranches(nodeMap, aliasSet);
 
 	return { factoryShapes, fieldAliasMap, factoryFields, factorySlots, polymorphVariants };
+}
+
+function collectVariantAdoptedBranches(
+	nodeMap: NodeMap,
+	aliasSet: ReadonlySet<string>
+): Record<string, PolymorphVariantDescriptor> {
+	const polymorphVariants: Record<string, PolymorphVariantDescriptor> = {};
+	for (const [kind, node] of nodeMap.nodes) {
+		if (node.modelType !== 'branch' || node.variantChildKinds.length === 0) continue;
+		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
+		polymorphVariants[kind] = {
+			definedBy: 'override',
+			childKind: mapVariantChildKindsToSuffixes(kind, node.variantChildKinds)
+		};
+	}
+	return polymorphVariants;
+}
+
+function mapVariantChildKindsToSuffixes(kind: string, variantChildKinds: readonly string[]): Record<string, string> {
+	const childKind: Record<string, string> = {};
+	for (const visibleName of variantChildKinds) {
+		childKind[visibleName] = prefixNamedSuffix(kind, visibleName) ?? visibleName;
+	}
+	return childKind;
 }
 
 function shapeOf(node: AssembledNode, nodeMap: NodeMap): FactoryShape | null {
@@ -162,6 +143,7 @@ export function expandRuntimeDiscriminatorKinds(discriminatorKinds: readonly str
 			return;
 		}
 		visiting.add(normalized);
+		pushAliasMintedArmParseNames(node, seen, expanded);
 		for (const subtype of node.subtypes) visit(subtype);
 		visiting.delete(normalized);
 	}
@@ -170,4 +152,16 @@ export function expandRuntimeDiscriminatorKinds(discriminatorKinds: readonly str
 		visit(discriminatorKind);
 	}
 	return expanded;
+}
+
+function pushAliasMintedArmParseNames(
+	node: { readonly subtypeParseNames?: Readonly<Record<string, string>> },
+	seen: Set<string>,
+	expanded: string[]
+): void {
+	for (const parseName of Object.values(node.subtypeParseNames ?? {})) {
+		if (seen.has(parseName)) continue;
+		seen.add(parseName);
+		expanded.push(parseName);
+	}
 }

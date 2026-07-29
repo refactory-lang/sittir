@@ -27,7 +27,8 @@ import {
 	reconstructWrapper,
 	reconstructPrec,
 	reconstructContainer,
-	wrapInPrecStack
+	wrapInPrecStack,
+	getGroupLiftRuleBody
 } from './transform-path.ts';
 import { isFieldPlaceholder, maybeKeywordSymbol } from '../primitives/field.ts';
 import type { FieldPlaceholder } from '../primitives/field.ts';
@@ -57,71 +58,14 @@ import type { RuntimeRule, FieldLike } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
 import { nativeRuleFn } from '../enrich.ts';
 
-/**
- * Build the `alias($._<hiddenName>, $.<visibleName>)` node minted for a
- * polymorph variant arm: tree-sitter matches the hidden synthetic rule but
- * surfaces the visible kind name in parse trees. Shared by
- * `buildHoistedVariants` (hoisted-choice path) and `registerAliasedVariant`
- * (non-hoisted variant placeholder path) — both previously hand-rolled the
- * same `{type:'ALIAS', content:{type:'SYMBOL',...}}` literal.
- *
- * Routed through the runtime-injected `alias`/`sym` constructors (mirrors
- * `dsl/enrich.ts`'s `makeVisibleGroupAlias`/`makeGroupLiftSymbol`) per
- * project convention: "always use the rule builder functions" rather than
- * fabricate rule shapes by hand. `sym(hiddenName)` stamps
- * `hidden`/`inline: true` on the inner SYMBOL (since `hiddenName` is
- * `_`-prefixed) — this is provably inert for this call site:
- * `compiler/link.ts`'s `resolveNamedAliasWithProvenance` (the ALIAS
- * resolver that fires for this shape) discards the entire `content` node
- * and reconstructs a fresh SYMBOL from just `content.name`, never reading
- * `.hidden`/`.inline`.
- */
 function makePolymorphAliasNode(hiddenName: string, visibleName: string): RuntimeRule {
 	const alias = nativeRuleFn<(content: unknown, value: unknown) => RuntimeRule>('alias');
 	const sym = nativeRuleFn<(name: string) => RuntimeRule>('sym', 'symbol');
 	return alias(sym(hiddenName), sym(visibleName));
 }
 
-/**
- * Apply patches to a rule. Patches are an object with path-string keys
- * and Rule (or one-arg field placeholder) values:
- *
- *     transform(original, {
- *         0:       field('name'),       // flat numeric — single-segment path
- *         '0/1':   field('inner'),      // nested path
- *         '0/*\/0': field('items'),     // wildcard
- *     })
- *
- * Two evaluation modes, auto-detected by key shape:
- *
- * 1. **Flat positional** — every key is a pure numeric string. Patches
- *    apply to seq members at that position, recursively descending
- *    through choice alternatives and content wrappers (preserves
- *    legacy override behavior on rules where the original is a choice
- *    of equal-shape alternatives).
- *
- * 2. **Path-addressed** — at least one key contains `/` or `*`. Each
- *    key is parsed as a path and applied to exactly the position(s) it
- *    addresses. Precedence wrappers (prec/PREC_LEFT/...) are
- *    transparent so the same paths work in both sittir and tree-sitter
- *    runtimes.
- *
- * Field patches are marked `metadata.fieldSource: 'override'` (debt PR-P1)
- * for diagnostics. One-arg `field('name')` placeholders are filled in
- * from the original member at the target position; an enrich-inferred
- * field wrapper on the original is unwrapped before re-wrapping to
- * avoid nested fields.
- */
 type PatchSet = Record<number | string, RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder>;
 
-/**
- * @typeparam Base - The base tree-sitter grammar's type (typically
- *   `typeof base` from `tree-sitter-<lang>/grammar.js`). Reserved for
- *   future grammar-aware path validation; currently a phantom parameter
- *   that lets call sites write `transform<typeof base>(original, ...)`
- *   so the generic surface is uniform with `wire<Base>` /
- *   `PolymorphsConfig<Base>` / `TransformsConfig<Base>`.
- */
 export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: PatchSet[]): RuntimeRule {
 	let rule = original;
 	for (const patches of patchSets) {
@@ -136,22 +80,6 @@ export function transform<_Base = unknown>(original: RuntimeRule, ...patchSets: 
 	return rule;
 }
 
-/**
- * Determine whether a patch-set must be processed in path mode rather
- * than flat-positional mode.
- *
- * @remarks
- * Path mode triggers whenever a key is not a pure non-negative integer.
- * Originally the predicate only checked for `/` or `*`; extending it to
- * the full "not-a-non-neg-integer" gate routes negative indices (`-1`)
- * and kind-name segments (`_expression`) through parsePath + applyPath
- * (they parsed as invalid in flat mode previously). Flat mode stays
- * reserved for simple positional patching of seq members with plain
- * `N: patch` entries.
- *
- * @param patches - The patch-set whose keys are inspected.
- * @returns `true` if any key is not a pure non-negative integer string.
- */
 function requiresPathMode(patches: PatchSet): boolean {
 	return Object.keys(patches).some((k) => !/^\d+$/.test(k));
 }
@@ -172,20 +100,6 @@ function applyPathPatches(
 	return rule;
 }
 
-/**
- * Separate a patch-set into variant patches and all other patches so
- * they can be applied in the correct two-phase order.
- *
- * @remarks
- * Variant patches must be applied after all other patches have baked
- * their field placements into the structure. Sequential per-patch
- * application can't handle hoisting because hoisting the first patch
- * restructures the rule so the second patch's path no longer resolves.
- *
- * @param patches - The full patch-set to partition.
- * @returns Two arrays: `variantEntries` for variant() patches and
- *   `otherEntries` for everything else.
- */
 function partitionPatchesByVariant(
 	patches: Record<number | string, RuntimeRule | FieldPlaceholder | AliasPlaceholder | VariantPlaceholder>
 ): {
@@ -202,21 +116,6 @@ function partitionPatchesByVariant(
 	return { variantEntries, otherEntries };
 }
 
-/**
- * Apply variant patches to a rule, using hoisting when any variant
- * targets an empty-matching alternative, falling back to per-patch
- * application otherwise.
- *
- * @remarks
- * If any variant would extract an empty-matching body, hoist ALL sibling
- * variants to the nearest enclosing scaffolding so none match empty.
- * Literals move into each alias body so tree-sitter accepts the extracted
- * hidden rules (named syntactic rules can't match empty).
- *
- * @param rule - The rule (after non-variant patches) to apply variants to.
- * @param variantEntries - Array of [pathKey, VariantPlaceholder] pairs.
- * @returns The rule with all variant patches applied.
- */
 function applyVariantPatches(
 	rule: RuntimeRule,
 	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>
@@ -248,20 +147,6 @@ function applyVariantPatches(
 	return result;
 }
 
-/**
- * Detect and apply "hoisted variant" restructuring when any variant()
- * patch targets an empty-matching choice alternative. Without hoisting,
- * tree-sitter rejects the extracted hidden rule (named syntactic rules
- * can't match empty). With hoisting, the surrounding rule scaffolding
- * (e.g. `[` and `]` literals around the choice) moves INTO each alias
- * body — guarantees non-empty AND disambiguates from sibling rules with
- * similar inner shapes.
- *
- * Only handles the common case: top-level seq containing a choice whose
- * alternatives are the variant targets. Paths must all be `N/M` with
- * the same `N` (the choice's position in the seq). For more complex
- * nestings, the caller falls back to per-patch variant extraction.
- */
 function tryHoistSiblingVariants(
 	rule: RuntimeRule,
 	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>
@@ -292,25 +177,6 @@ function tryHoistSiblingVariants(
 	return buildHoistedVariants(core, seqMembers, choiceMembers, resolvedPos, choice, parsed, parentKind, precStack);
 }
 
-/**
- * Peel prec wrappers from a rule root and set up the debug/bail context for
- * hoist analysis.
- *
- * @remarks
- * Grammars commonly wrap a polymorph in `prec.left(N, seq(...))` /
- * `prec.right(N, ...)` / `prec(tag, ...)` to resolve intra-rule ambiguities.
- * The same prec is reapplied to each hoisted variant's body so the extracted
- * rules inherit the parent's conflict-resolution context; otherwise
- * tree-sitter's LR table sees unresolvable ambiguities at the
- * extracted-variant sites. When SITTIR_DEBUG is set, the bail helper logs
- * which guard failed so authors can diagnose why a hoist didn't take effect —
- * "rule looks right but only one form was split" is otherwise impossible to
- * diagnose without stepping into transform.ts.
- *
- * @param rule - The rule to peel prec wrappers from.
- * @returns `bail` helper that logs + returns null, accumulated `precStack`, and
- *   the unwrapped `core` rule.
- */
 function peelPrecWrappersFromRule(rule: RuntimeRule): {
 	bail: (reason: string) => null;
 	precStack: RuntimeRule[];
@@ -331,19 +197,6 @@ function peelPrecWrappersFromRule(rule: RuntimeRule): {
 	return { bail, precStack, core };
 }
 
-/**
- * Parse variant patch entries into structured records for hoist analysis.
- *
- * @remarks
- * Each entry must be a two-segment `N/M` path with both segments being
- * plain indices. Kind-match and wildcard paths are not supported for
- * hoisting; the caller falls back to per-patch extraction if any entry
- * fails validation.
- *
- * @param variantEntries - Array of [pathKey, VariantPlaceholder] pairs.
- * @param bail - Bail function to call (and return) on validation failure.
- * @returns Parsed array or `null` if bail was invoked.
- */
 function parseVariantPathsForHoist(
 	variantEntries: ReadonlyArray<[string, VariantPlaceholder]>,
 	bail: (reason: string) => null
@@ -369,33 +222,6 @@ function parseVariantPathsForHoist(
 	return parsed;
 }
 
-/**
- * Build hoisted variant rules and register all required metadata.
- *
- * @remarks
- * Hoisted variants inherit their parent seq's scaffolding, so they
- * share a token prefix (e.g. `[` + attribute_item repeat) that defeats
- * tree-sitter's LR(1) lookahead. A conflict group is declared across all
- * variant names so the parser-generator emits a GLR state that forks on
- * the prefix and picks the completing interpretation at parse time. Each
- * variant is also declared as a self-conflict — when the variant shares
- * an internal repeat helper with sibling grammar rules (tree-sitter
- * dedups identical repeat shapes across rules, producing a single
- * `*_repeat1`), multiple reduction paths through the same shared helper
- * still produce an unresolved state without the self-entry.
- *
- * @param core - The unwrapped seq rule (after prec peeling).
- * @param seqMembers - Current members of the seq.
- * @param choiceMembers - Members of the targeted choice node.
- * @param resolvedPos - Resolved index of the choice inside the seq.
- * @param choice - The choice rule being replaced.
- * @param parsed - Pre-parsed variant path records.
- * @param parentKind - The kind name of the enclosing rule.
- * @param precStack - Accumulated prec wrappers to reapply around each
- *   variant body.
- * @returns The collapsed choice rule replacing the old seq member, plus
- *   the set of path keys consumed by hoisting.
- */
 function buildHoistedVariants(
 	core: RuntimeRule,
 	seqMembers: RuntimeRule[],
@@ -451,20 +277,6 @@ function buildHoistedVariants(
 	return { rule: newChoice, consumed: new Set(parsed.map((p) => p.key)) };
 }
 
-/**
- * Register the GLR conflict groups required for hoisted sibling variants.
- *
- * @remarks
- * Hoisted variants share a token prefix from their parent seq's scaffolding,
- * defeating tree-sitter's LR(1) lookahead. A cross-variant conflict group
- * causes the parser-generator to emit a GLR state that forks on the shared
- * prefix. Each variant is also registered as a self-conflict because
- * tree-sitter deduplicates identical repeat shapes across rules into a
- * single `*_repeat1` helper; without the self-entry, multiple reduction
- * paths through the shared helper produce an unresolved state.
- *
- * @param variantNames - Fully-qualified names of all hoisted variants.
- */
 function registerHoistedVariantConflicts(variantNames: string[]): void {
 	if (variantNames.length > 0 && !wireRegisterConflict(variantNames)) {
 		throw new Error(`registerConflict: no active wire() context`);
@@ -482,13 +294,6 @@ function registerHoistedVariantConflicts(variantNames: string[]): void {
 const membersOf = (r: RuntimeRule): RuntimeRule[] => (r as unknown as { members: RuntimeRule[] }).members;
 const contentOf = (r: RuntimeRule): RuntimeRule => (r as unknown as { content: RuntimeRule }).content;
 
-/**
- * Count a rule body's own parse anchors — anonymous tokens (STRING /
- * PATTERN / TOKEN) and named-symbol children — WITHOUT descending into
- * referenced symbols (a referenced rule's tokens live in that rule, not
- * here). seq/choice sum their members; single-content wrappers
- * (field/optional/repeat/prec/alias) descend into `content`.
- */
 function countBodyAnchors(rule: RuntimeRule): { tokens: number; named: number } {
 	const t = rule.type;
 	if (t === 'STRING' || t === 'PATTERN' || t === 'TOKEN') return { tokens: 1, named: 0 };
@@ -508,27 +313,11 @@ function countBodyAnchors(rule: RuntimeRule): { tokens: number; named: number } 
 	return { tokens: 0, named: 0 };
 }
 
-/**
- * A variant branch is "un-materializable" when its body is a transparent
- * unit production: a single named-symbol child reached through fields /
- * prec wrappers, carrying NO anonymous token of its own. Tree-sitter
- * inlines such a hidden rule away and bubbles the inner field up to the
- * parent kind, so an `alias($._hidden, $.visible)` over it promises a CST
- * node that never appears (e.g. `match_arm_block_ending`). Emitting the
- * alias is a lie; leave the branch as its bare content instead.
- */
 function variantBranchIsUnmaterializable(rule: RuntimeRule): boolean {
 	const { tokens, named } = countBodyAnchors(rule);
 	return tokens === 0 && named <= 1;
 }
 
-/**
- * Strip field association from a rule so its position reads as an unnamed
- * body slot. Removes a leading `field(name, X)` wrapper AND the
- * `fieldName` annotation sittir propagates down through single-content
- * wrappers (prec/optional/repeat) to the leaf — both must go or the slot
- * collector re-creates the named slot from the surviving `fieldName`.
- */
 function deField(rule: RuntimeRule): RuntimeRule {
 	const inner = isFieldLike(rule) ? contentOf(rule) : rule;
 	const stripPropagated = (r: RuntimeRule): RuntimeRule => {
@@ -575,21 +364,6 @@ function applyFlatPatches(original: RuntimeRule, patches: Record<number | string
 	return original;
 }
 
-/**
- * Descend through a precedence wrapper during flat-positional patching,
- * preserving the precedence value on the way back out.
- *
- * @remarks
- * Reconstructing via native `prec` rather than spreading the original
- * wrapper is critical: tree-sitter's parser-generator resolves conflicts
- * using the precedence value that appears in the compiled grammar. If we
- * dropped or changed that value, the parser would resolve ambiguities
- * differently from the base grammar author's intent.
- *
- * @param original - The prec-wrapped rule to descend into.
- * @param patches - Flat-positional patches forwarded to the recursive call.
- * @returns Reconstructed prec wrapper with the inner content patched.
- */
 function applyFlatPatchesThroughPrec(
 	original: RuntimeRule,
 	patches: Record<number | string, RuntimeRule>
@@ -598,28 +372,6 @@ function applyFlatPatchesThroughPrec(
 	return reconstructPrec(original, newContent);
 }
 
-/**
- * Apply flat-positional patches to a seq rule's members by raw index.
- *
- * @remarks
- * Accepts a `'SEQ'` rule from either runtime (both agree on the
- * discriminant) so the same transform call works in both. Reconstructed via
- * native dsl so the result has the runtime-correct rule shape.
- *
- * Non-pure-numeric keys are rejected up front — `Number('foo')` is NaN
- * and `Number('-0')` is 0. Typos like `'1a'` or `',0'` would otherwise
- * silently no-op. Matches parsePath's strict `/^\d+$/` gate so flat and
- * path modes agree on validity.
- *
- * Out-of-bounds indices throw to match path mode's behavior at
- * applyToMembers. Silently skipping was a footgun where a typo looked
- * like a no-op in sittir runtime.
- *
- * @param original - The seq rule to patch.
- * @param patches - Map of non-negative integer key strings to replacement rules.
- * @returns A new seq rule with the patched members.
- * @throws {Error} If a key is not a non-negative integer or an index is out of bounds.
- */
 function applyFlatPatchesToSeq(original: RuntimeRule, patches: Record<number | string, RuntimeRule>): RuntimeRule {
 	const members = [...membersOf(original)];
 	for (const [key, patch] of Object.entries(patches)) {
@@ -640,23 +392,6 @@ function applyFlatPatchesToSeq(original: RuntimeRule, patches: Record<number | s
 const wrapInPrec = (content: RuntimeRule, precStack?: readonly RuntimeRule[]): RuntimeRule =>
 	wrapInPrecStack(content, precStack, reconstructPrec);
 
-/**
- * Wrap a hoisted variant's body in the parent rule's accumulated prec
- * context, preserving the conflict-resolution intent the grammar author
- * declared on the parent rule.
- *
- * @remarks
- * `wrapInPrec` reapplies the prec stack inner-first so the outermost
- * prec wrapper remains outermost in the result — matching path-descent's
- * reassembly order in `applyPath`. Without this wrapping, tree-sitter's
- * conflict resolver would see the extracted variant without any precedence
- * or associativity annotation, and could resolve ambiguities differently
- * from the base grammar.
- *
- * @param hoistedSeq - The reconstructed seq for a single variant arm.
- * @param precStack - Prec wrappers collected during `peelPrecWrappersFromRule`.
- * @returns The variant body with the full prec stack reapplied.
- */
 function wrapVariantBodyInParentPrec(hoistedSeq: RuntimeRule, precStack: ReadonlyArray<RuntimeRule>): RuntimeRule {
 	return wrapInPrec(hoistedSeq, precStack);
 }
@@ -682,6 +417,61 @@ function resolvePatch(
 		if (!parentKind) {
 			throw new Error(`variant('${patch.name}'): no current rule kind — variant() must be used inside a rule callback`);
 		}
+		const visibleName = polymorphVisibleName(parentKind, patch.name);
+		// PR 3 (2026-07-21 union-slot design): the arm may already be an
+		// enrich-minted visible-group alias (`mintStructuredChoiceArm` /
+		// `applyClauseHoist`, widened to fire at bare choice-arm positions —
+		// see dsl/enrich.ts) by the time variant() sees it. Its target is,
+		// by construction of that mint gate, already a materializing named
+		// kind — checked here BEFORE `variantBranchIsUnmaterializable`
+		// below, which can't see through a SYMBOL content to the hidden
+		// rule's own body and would misjudge an alias-wrapped symbol ref as
+		// a unit production. variant() just RENAMES the alias to the
+		// friendlier `<parent>_<suffix>` identity instead of wrapping a
+		// second hidden rule around the same content ("mint = promote, not
+		// synthesize" — matches enrich's own convention, avoids a double mint).
+		if ((originalMember as { type?: string }).type === 'ALIAS') {
+			// Label-only rename: we can't safely delete a rule from the base
+			// grammar's rules map (tree-sitter tolerates dead/unreferenced
+			// entries, but relocating-then-deleting risks stranding OTHER
+			// consumers keyed by the old name — e.g. enrich's own
+			// getEnrichClauseGroupOwners snapshot, taken before this rename
+			// runs). Just relabel the outer alias's visible identity to what
+			// variant()/polymorphs intends; the underlying enrich-minted
+			// hidden rule keeps its own name. Double-mint collisions this
+			// could otherwise cause are prevented upstream now — enrich's
+			// mintStructuredChoiceArm skips minting for a choice arm that
+			// structurally recurses through a bare-symbol sibling arm (see
+			// armStartsWithSymbol in dsl/enrich.ts) — so this rename only
+			// ever relabels a mint that has no competing identity to collide
+			// with.
+			const content = (originalMember as { content?: unknown }).content as { type?: string; name?: string } | undefined;
+			if (content?.type === 'SYMBOL' && typeof content.name === 'string') {
+				const body = getGroupLiftRuleBody(content.name);
+				if (body !== undefined) {
+					// Deposit under the NESTED polymorph's own hidden name (not the
+					// original enrich group-lift name) and repoint the alias's
+					// `content` there too — a nested `polymorphs:` config keyed on
+					// this exact deposit name (e.g. typescript's cascaded
+					// `_export_statement_default_from_arm: {...}`) further splits the
+					// deposited body IN PLACE under that name. Leaving `content`
+					// pointing at the original group-lift symbol would strand this
+					// alias on the pre-split raw mint while the real, fully-split
+					// content lives — unreferenced by this alias — under the deposit
+					// name (confirmed: `_export_statement_group2` vs. the properly
+					// split `_export_statement_default_from_arm`, PR 3 storagename-
+					// collision root cause).
+					const depositName = polymorphHiddenName(parentKind, patch.name);
+					wireRegisterSyntheticRule(depositName, body);
+					return {
+						...(originalMember as object),
+						content: { ...content, name: depositName },
+						value: visibleName
+					} as unknown as RuntimeRule;
+				}
+			}
+			return { ...(originalMember as object), value: visibleName } as unknown as RuntimeRule;
+		}
 		// A transparent unit-production branch (single named symbol via
 		// fields/prec, no anonymous token) cannot become a CST node:
 		// tree-sitter inlines it and bubbles the inner field up to the
@@ -699,7 +489,6 @@ function resolvePatch(
 				metadata: makeRuleMetadata({ fieldSource: 'override' })
 			} as unknown as RuntimeRule;
 		}
-		const visibleName = polymorphVisibleName(parentKind, patch.name);
 		const hiddenName = polymorphHiddenName(parentKind, patch.name);
 		return registerAliasedVariant(hiddenName, visibleName, originalMember, (body) => wrapInPrec(body, precStack));
 	}
@@ -709,53 +498,6 @@ function resolvePatch(
 	return patch as RuntimeRule;
 }
 
-/**
- * Resolve a one-arg field() placeholder against the original member at
- * its target position.
- *
- * @remarks
- * One-arg `field('name')` placeholder — wrap the original member using
- * the runtime's native field() so the resulting rule shape matches
- * whatever runtime is loading us.
- *
- * An enrich-inferred field on the original member is unwrapped to avoid
- * nested `field('override', field('enriched', inner))`.
- *
- * Bare STRING content is handled specially: tree-sitter strips FIELD
- * wrappers around anonymous string literals during grammar normalization
- * (fields must label structural content, not bare tokens).
- * `maybeKeywordSymbol` synthesizes a hidden `_kw_<name>` rule that
- * produces the original token and returns a SYMBOL reference — FIELD
- * around SYMBOL survives the normalizer. wire() then auto-inlines the
- * helper back into the grammar's LR state machine so parse behavior
- * stays aligned with the pre-promotion bare token. Shared helper used
- * by both this one-arg field() placeholder and dsl/field.ts's two-arg
- * form; receives the prec stack so synthetic rules inherit any OUTER
- * precedence wrapper the original position lived under.
- *
- * @param patch - The one-arg FieldPlaceholder with the desired field name.
- * @param originalMember - The rule currently at the target position.
- * @param precStack - Accumulated prec wrappers for keyword symbol synthesis.
- * @returns A new field rule marked `metadata.fieldSource: 'override'`.
- * @throws {Error} If no global `field()` function is available in the runtime.
- */
-/**
- * Descend through field-transparent wrappers (optional, prec/*) to find
- * the first enrich-shaped field inside (see `isEnrichShapedFieldWrapper`).
- * Returns a reconstruction function that rebuilds the wrapper chain with
- * a new inner value, plus the found field (if any). Does NOT descend into
- * seq/general-choice/repeat/field.
- *
- * Handles two shapes of "optional" wrapper:
- *   - Sittir pipeline: `{ type: 'OPTIONAL', content: ... }`.
- *   - Tree-sitter CLI pipeline: `{ type: 'CHOICE', members: [content, BLANK] }` —
- *     tree-sitter's `optional(x)` desugars to `choice(x, blank())`. The
- *     enrich pass uses `rebuildOptional` which preserves this CHOICE shape.
- *     We treat 2-member CHOICE-with-BLANK as transparent so the rename
- *     reaches the field inside.
- *
- * Only used by resolveFieldPlaceholder for the nested-enrich-shaped-field case.
- */
 function findEnrichShapedFieldThroughTransparentWrappers(
 	node: unknown
 ): { found: FieldLike; reconstruct: (newInner: unknown) => unknown } | null {
@@ -924,21 +666,6 @@ function resolveFieldPlaceholder(
 	return { ...result, metadata: makeRuleMetadata({ fieldSource: 'override' }) } as unknown as RuntimeRule;
 }
 
-/**
- * Resolve an alias() placeholder by registering a hidden rule with the
- * original content and returning an alias reference.
- *
- * @remarks
- * alias('variant_name'): registers a hidden rule with the original
- * content and returns `alias($._hidden, $.visible)`. The hidden rule is
- * picked up by evaluate.ts (sittir) or the grammar wrapper (tree-sitter
- * CLI) after all callbacks run.
- *
- * @param patch - The AliasPlaceholder with the desired alias name.
- * @param originalMember - The rule currently at the target position.
- * @param precStack - Accumulated prec wrappers for the hidden rule body.
- * @returns A new alias rule wrapping the hidden rule.
- */
 function resolveAliasPlaceholder(
 	patch: AliasPlaceholder,
 	originalMember: RuntimeRule,
@@ -956,22 +683,6 @@ function resolveAliasPlaceholder(
 // tree-sitter won't accept as a syntactic rule."
 // ---------------------------------------------------------------------------
 
-/**
- * Build the `alias($._hidden, $.visible)` node AND register the
- * hidden rule's body. Shared between variant() and alias() placeholders
- * because both need the same empty-match / prec handling.
- *
- * Tree-sitter refuses to compile a named syntactic rule whose body
- * matches the empty string (it can't decide which copy-count to choose
- * while parsing). A raw variant extraction can easily produce such a
- * body — e.g. rust's `array_expression` list form is
- * `repeat(elem, sep=',')` which matches zero or more, including zero.
- *
- * When the content is empty-matchable AND we can factor out a non-empty
- * core, extract the core and wrap the call-site alias in `optional()`.
- * The language is preserved (`optional(repeat1(X))` = `repeat(X)`) and
- * the hidden rule is guaranteed non-empty so tree-sitter accepts it.
- */
 export function registerAliasedVariant(
 	hiddenName: string,
 	aliasValue: string,
@@ -1003,47 +714,25 @@ export function registerAliasedVariant(
 	return aliasNode;
 }
 
-/**
- * Conservative empty-match detector. Returns true when `rule` can
- * produce a zero-length match. Used only to decide whether the
- * factored non-empty core is actually non-empty — errs on the side of
- * saying "true" for unknown shapes so callers don't wrongly claim a
- * body is non-empty.
- */
 export function matchesEmpty(rule: RuntimeRule): boolean {
 	const t = rule.type;
 	if (isBlankType(t)) return true;
 	if (isOptionalType(t)) return true;
 	if (isPlainRepeatType(t)) return true;
 	if (isChoiceType(t)) {
-		const members = (rule as unknown as { members: RuntimeRule[] }).members;
-		return members.some((m) => matchesEmpty(m));
+		return membersOf(rule).some((m) => matchesEmpty(m));
 	}
 	if (isSeqType(t)) {
-		const members = (rule as unknown as { members: RuntimeRule[] }).members;
-		return members.every((m) => matchesEmpty(m));
+		return membersOf(rule).every((m) => matchesEmpty(m));
 	}
 	return false;
 }
 
-/**
- * If `rule` matches the empty string but has a factorable non-empty
- * core, return `{ nonEmpty }` — the caller wraps the call site in
- * `optional()` so the language stays the same. Returns null when the
- * rule is either non-empty already or can't be factored.
- */
 function factorOutEmptiness(rule: RuntimeRule): { nonEmpty: unknown } | null {
 	if (!matchesEmpty(rule)) return null;
 	return extractNonEmpty(rule);
 }
 
-/**
- * Recursively strip empty-matching branches from transparent
- * composition nodes (SEQ / CHOICE / OPTIONAL / REPEAT) until the
- * result is guaranteed non-empty. Returns null when the whole rule
- * is unconditionally empty or the shape is too pathological to
- * factor cleanly — caller surfaces the limitation upstream.
- */
 function extractNonEmpty(rule: RuntimeRule): { nonEmpty: unknown } | null {
 	const t = rule.type;
 	if (isPlainRepeatType(t)) {
@@ -1055,18 +744,18 @@ function extractNonEmpty(rule: RuntimeRule): { nonEmpty: unknown } | null {
 		return { nonEmpty };
 	}
 	if (isOptionalType(t)) {
-		const inner = (rule as unknown as { content: RuntimeRule }).content;
+		const inner = contentOf(rule);
 		return matchesEmpty(inner) ? extractNonEmpty(inner) : { nonEmpty: inner };
 	}
 	if (isChoiceType(t)) {
-		const members = (rule as unknown as { members: RuntimeRule[] }).members;
+		const members = membersOf(rule);
 		const nonEmpty = members.filter((m) => !matchesEmpty(m));
 		if (nonEmpty.length === 0) return null;
 		if (nonEmpty.length === 1) return { nonEmpty: nonEmpty[0] };
 		return { nonEmpty: { type: t, members: nonEmpty } };
 	}
 	if (isSeqType(t)) {
-		const members = [...(rule as unknown as { members: RuntimeRule[] }).members];
+		const members = [...membersOf(rule)];
 		for (let i = 0; i < members.length; i++) {
 			const factored = extractNonEmpty(members[i]!);
 			if (factored) {

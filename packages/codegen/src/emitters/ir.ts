@@ -267,12 +267,6 @@ export function emitIr(config: EmitIrConfig): string {
 // Helpers
 // ---------------------------------------------------------------------------
 
-/**
- * Factory+from bundle expression, shared by flat and grouped emission.
- * Kinds with refine() metadata carry per-form bundles keyed by the form's
- * camelCase short name (e.g. `ir.interfaceBody.curly`). Branches call the
- * loose `from()` path by default and expose the raw factory as `.strict`.
- */
 function bundleExpr(node: AssembledNode, refineInfo?: RefineKindInfo): string {
 	// TEMPORARY: 'separatedList' widened in alongside 'branch' — see
 	// isSlotBearingCompound's doc comment (shared.ts).
@@ -295,24 +289,11 @@ function bundleExpr(node: AssembledNode, refineInfo?: RefineKindInfo): string {
 	return `_attach(F.${node.rawFactoryName}, { from: FR.${node.fromFunctionName} })`;
 }
 
-/**
- * Supertype kind → group namespace name.
- *   `_expression`            → `expression`
- *   `_declaration_statement` → `declarationStatement`
- *   `_literal_pattern`       → `literalPattern`
- */
 function groupNameFor(supertypeKind: string): string {
 	const bare = supertypeKind.replace(/^_+/, '');
 	return toCamel(bare);
 }
 
-/**
- * Member kind → short key within its supertype group.
- * Strip the last underscored segment (e.g. `_expression`, `_item`, `_pattern`).
- * If that collides with a JS reserved word, suffix with `_` per FR-029.
- *
- * Falls back to the full camelCased kind if stripping would leave nothing.
- */
 function memberKeyFor(memberKind: string, supertypeKind: string): string {
 	const bareMember = memberKind.replace(/^_+/, '');
 	const parts = bareMember.split('_');
@@ -345,15 +326,6 @@ function toCamel(snake: string): string {
 // `from` namespace — canonical factory helpers (spec 023 US6)
 // ---------------------------------------------------------------------------
 
-/**
- * Resolve role kinds to concrete AssembledNode entries that exist in the
- * nodeMap. Filters out candidate kinds that don't have a node entry.
- *
- * Also probes the hidden (`_`-prefixed) variant of each kind name, since
- * tree-sitter SCM captures reference unprefixed names but the grammar's
- * internal representation may use the hidden prefix (e.g. `type_identifier`
- * in SCM → `_type_identifier` in grammar).
- */
 function resolveRoleNodes(role: Role, grammarRoles: GrammarRoles, nodeMap: NodeMap): AssembledNode[] {
 	const kindNames = grammarRoles.get(role);
 	const nodes: AssembledNode[] = [];
@@ -368,32 +340,14 @@ function resolveRoleNodes(role: Role, grammarRoles: GrammarRoles, nodeMap: NodeM
 	return nodes;
 }
 
-/**
- * Check if a node is a leaf factory (takes a text string, not a config object).
- * Leaf modelTypes: pattern, enum, keyword.
- */
 function isLeafFactory(node: AssembledNode): boolean {
 	return node.modelType === 'pattern' || node.modelType === 'enum' || node.modelType === 'keyword';
 }
 
-/**
- * Build the ReturnType expression for a factory. Uses `ReturnType<typeof F.xxx>`
- * so the type tracks the fluent methods attached by withMethods.
- */
 function returnTypeExpr(node: AssembledNode): string {
 	return `ReturnType<typeof F.${node.rawFactoryName}>`;
 }
 
-/**
- * Emit the `from` const — canonical factories that accept native JS values
- * and resolve to grammar-specific NodeData kinds.
- *
- * Emitted as `export const from = { ... } as const` for tree-shakeable
- * standalone access (`from.boolean(...)`) and also referenced inside the
- * `ir` object for `ir.from.boolean(...)` access.
- *
- * @returns Lines to prepend before the `ir` const. Empty if no roles have kinds.
- */
 function emitFromNamespace(grammarRoles: GrammarRoles, nodeMap: NodeMap): string[] {
 	const fns: string[] = [];
 
@@ -416,13 +370,6 @@ function emitFromNamespace(grammarRoles: GrammarRoles, nodeMap: NodeMap): string
 	return lines;
 }
 
-/**
- * `from.boolean(value: boolean)` — resolves `true`/`false` to the grammar's
- * boolean kind. Handles three shapes:
- * - Enum leaf: `booleanLiteral('true' | 'false')` (Rust)
- * - Keyword pair: `true_()` / `false_()` (Python, TypeScript)
- * - Single leaf: direct factory call
- */
 function emitFromBoolean(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const nodes = resolveRoleNodes('boolean', grammarRoles, nodeMap);
 	if (nodes.length === 0) return;
@@ -456,10 +403,6 @@ function emitFromBoolean(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: stri
 	}
 }
 
-/**
- * `from.number(value: number)` — resolves integers to integer-kind, floats to
- * float-kind. When only one number kind exists, routes everything there.
- */
 function emitFromNumber(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const nodes = resolveRoleNodes('number', grammarRoles, nodeMap);
 	const leafNodes = nodes.filter(isLeafFactory);
@@ -499,18 +442,6 @@ function emitFromNumber(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: strin
 	}
 }
 
-/**
- * `from.string(value: string)` — routes to the primary string kind.
- *
- * Most grammars have branch string nodes (with escape sequences, content
- * children). For these, the canonical factory composes the branch: it wraps
- * the input text in a string-content leaf and passes it to the branch
- * factory. Only emitted when a composition path exists.
- *
- * Heuristic for primary string kind: the first kind whose name contains
- * `string` (not `char`, `raw`, `template`, `regex`). This picks
- * `string_literal` for Rust and `string` for TypeScript/Python.
- */
 function emitFromString(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const nodes = resolveRoleNodes('string', grammarRoles, nodeMap);
 	if (nodes.length === 0) return;
@@ -543,11 +474,6 @@ function emitFromString(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: strin
 	// Otherwise: skip — too complex to auto-compose
 }
 
-/**
- * `from.comment(text: string)` — routes to line/block comment kinds.
- * Discriminates by prefix: `//` or `#` → line comment, `/*` → block comment.
- * When only one comment kind exists, routes everything there.
- */
 function emitFromComment(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const nodes = resolveRoleNodes('trivia', grammarRoles, nodeMap);
 	if (nodes.length === 0) return;
@@ -598,11 +524,6 @@ function emitFromComment(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: stri
 	// `ir.blockComment(...)` factories directly.
 }
 
-/**
- * `from.type(name: string)` — routes to the grammar's type-identifier kind.
- * Excludes `type.builtin` kinds. When the type kind is a branch that takes
- * an identifier child, composes `F.typeIdentifier(F.identifier(name))`.
- */
 function emitFromType(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	// Get type kinds, excluding builtin types
 	const typeKinds = grammarRoles.get('type');
@@ -646,13 +567,6 @@ function emitFromType(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[
 	}
 }
 
-/**
- * `from.identifier(name: string)` — routes to the grammar's `identifier` kind.
- *
- * Looks for the `identifier` kind in the `variable` role. Does not exclude
- * `variable.builtin` since some grammars (TypeScript) capture `identifier`
- * under both `@variable` and `@variable.builtin`.
- */
 function emitFromIdentifier(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const varKinds = grammarRoles.get('variable');
 
@@ -668,11 +582,6 @@ function emitFromIdentifier(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: s
 	fns.push('  },');
 }
 
-/**
- * Emit definition-role aliases — `from.function`, `from.class`, etc.
- * These are direct references to the grammar-specific `ir.*` entry,
- * not wrapper functions. E.g., `from.function = ir.functionItem`.
- */
 function emitFromAliases(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const ALIAS_ROLES: readonly { role: Role; canonicalName: string }[] = [
 		{ role: 'definition.function', canonicalName: 'function' },

@@ -7,6 +7,7 @@ import { fieldTypeComponents, resolveHiddenKeywordLiteral } from './shared.ts';
 export interface TransportLiteral {
 	readonly kind: string;
 	readonly text: string;
+	readonly resolvedKindId?: number;
 }
 
 export interface TransportProjection {
@@ -41,10 +42,9 @@ function isConcreteTransportNode(node: AssembledNode, nodeMap: NodeMap): boolean
 		case 'keyword':
 		case 'token':
 		case 'enum':
-		// TEMPORARY (separator-as-slot Task 2 follow-up — see
-		// isSlotBearingCompound's doc comment, shared.ts): 'separatedList'
-		// shares 'branch's transport-concreteness for byte-identical output
-		// pending Tasks 4-6's real per-instance capture.
+		/* TEMPORARY: 'separatedList' shares 'branch's transport-concreteness for
+		   byte-identical output pending real per-instance separator capture —
+		   see isSlotBearingCompound's doc comment (shared.ts). */
 		case 'separatedList':
 			return true;
 		case 'group':
@@ -64,8 +64,16 @@ function collectTransportLiterals(
 ): TransportLiteral[] {
 	const literals: TransportLiteral[] = [];
 	const seen = new Set<string>();
-	const add = (literal: TransportLiteral): void => {
-		if (nodeKinds.has(literal.kind)) return;
+	const add = (literal: TransportLiteral, skipIfNodeKind: boolean): void => {
+		/* The node-kind guard only applies to KIND-DERIVED literals (their `kind`
+		   names a real transport node, whose struct already covers the value — a
+		   Literal unit variant would duplicate it). Bare literal TEXTS must not
+		   be name-matched against node kinds: a keyword text that happens to
+		   spell a rule name (e.g. python's `'type'`) is a DIFFERENT parser
+		   identity (anon token) and dropping it here left the anon token's kind
+		   id with no AnyTransport arm at all. Genuine id collisions are deduped
+		   at arm emission (emittedNodeIds). */
+		if (skipIfNodeKind && nodeKinds.has(literal.kind)) return;
 		const key = `${literal.kind}\0${literal.text}`;
 		if (seen.has(key)) return;
 		seen.add(key);
@@ -74,20 +82,30 @@ function collectTransportLiterals(
 
 	for (const node of nodes) {
 		for (const field of allFormFieldsOf(node)) {
-			for (const literal of fieldTransportLiterals(field, nodeMap)) add(literal);
+			for (const { literal, fromKind } of fieldTransportLiterals(field, nodeMap)) add(literal, fromKind);
 		}
 	}
 	return literals;
 }
 
-function fieldTransportLiterals(field: AssembledNonterminal, nodeMap: NodeMap): TransportLiteral[] {
-	return fieldTypeComponents(field, nodeMap).flatMap((component) => {
-		if (component.kind === 'literal') {
-			return [{ kind: component.value, text: component.value }];
+function fieldTransportLiterals(
+	field: AssembledNonterminal,
+	nodeMap: NodeMap
+): Array<{ literal: TransportLiteral; fromKind: boolean }> {
+	return fieldTypeComponents(field, nodeMap).flatMap(
+		(component): Array<{ literal: TransportLiteral; fromKind: boolean }> => {
+			if (component.kind === 'literal') {
+				return [
+					{
+						literal: { kind: component.value, text: component.value, resolvedKindId: component.resolvedKindId },
+						fromKind: false
+					}
+				];
+			}
+			const literal = terminalTransportLiteralForKind(component.rawKind, nodeMap);
+			return literal === undefined ? [] : [{ literal, fromKind: true }];
 		}
-		const literal = terminalTransportLiteralForKind(component.rawKind, nodeMap);
-		return literal === undefined ? [] : [literal];
-	});
+	);
 }
 
 function supertypeTransportTypeNames(nodeMap: NodeMap): Set<string> {

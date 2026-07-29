@@ -571,6 +571,32 @@
     }
   },
   {
+    "type": "array_expression_group1",
+    "named": true,
+    "fields": {
+      "length": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "array_expression_list",
     "named": true,
     "fields": {
@@ -609,16 +635,6 @@
             "named": true
           }
         ]
-      },
-      "length": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_expression",
-            "named": true
-          }
-        ]
       }
     },
     "children": {
@@ -626,7 +642,7 @@
       "required": true,
       "types": [
         {
-          "type": "_expression",
+          "type": "array_expression_group1",
           "named": true
         }
       ]
@@ -760,16 +776,6 @@
     "type": "attribute",
     "named": true,
     "fields": {
-      "arguments": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "token_tree",
-            "named": true
-          }
-        ]
-      },
       "path": {
         "multiple": false,
         "required": true,
@@ -796,6 +802,32 @@
           },
           {
             "type": "super",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "attribute_group1",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "attribute_group1",
+    "named": true,
+    "fields": {
+      "arguments": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "token_tree",
             "named": true
           }
         ]
@@ -1157,6 +1189,21 @@
     "type": "block_comment",
     "named": true,
     "extra": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "block_comment_group1",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "block_comment_group1",
+    "named": true,
     "fields": {
       "doc": {
         "multiple": false,
@@ -1838,39 +1885,11 @@
       "required": false,
       "types": [
         {
-          "type": "_literal",
-          "named": true
-        },
-        {
-          "type": "crate",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "mutable_specifier",
-          "named": true
-        },
-        {
-          "type": "primitive_type",
-          "named": true
-        },
-        {
-          "type": "self",
-          "named": true
-        },
-        {
-          "type": "super",
+          "type": "token_pattern_group1",
           "named": true
         },
         {
           "type": "token_tree",
-          "named": true
-        },
-        {
-          "type": "token_tree_punctuation",
           "named": true
         }
       ]
@@ -1885,39 +1904,11 @@
       "required": false,
       "types": [
         {
-          "type": "_literal",
-          "named": true
-        },
-        {
-          "type": "crate",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "mutable_specifier",
-          "named": true
-        },
-        {
-          "type": "primitive_type",
-          "named": true
-        },
-        {
-          "type": "self",
-          "named": true
-        },
-        {
-          "type": "super",
+          "type": "token_pattern_group1",
           "named": true
         },
         {
           "type": "token_tree",
-          "named": true
-        },
-        {
-          "type": "token_tree_punctuation",
           "named": true
         }
       ]
@@ -1932,39 +1923,11 @@
       "required": false,
       "types": [
         {
-          "type": "_literal",
-          "named": true
-        },
-        {
-          "type": "crate",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "mutable_specifier",
-          "named": true
-        },
-        {
-          "type": "primitive_type",
-          "named": true
-        },
-        {
-          "type": "self",
-          "named": true
-        },
-        {
-          "type": "super",
+          "type": "token_pattern_group1",
           "named": true
         },
         {
           "type": "token_tree",
-          "named": true
-        },
-        {
-          "type": "token_tree_punctuation",
           "named": true
         }
       ]
@@ -3385,6 +3348,46 @@
     }
   },
   {
+    "type": "last_match_arm",
+    "named": true,
+    "fields": {
+      "attributes": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "attribute_item",
+            "named": true
+          },
+          {
+            "type": "inner_attribute_item",
+            "named": true
+          }
+        ]
+      },
+      "pattern": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "match_pattern",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "let_chain",
     "named": true,
     "fields": {
@@ -3799,21 +3802,11 @@
             "named": true
           }
         ]
-      },
-      "value": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "_expression",
-            "named": true
-          }
-        ]
       }
     },
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "async_block",
@@ -3906,7 +3899,7 @@
         "required": true,
         "types": [
           {
-            "type": "match_arm",
+            "type": "last_match_arm",
             "named": true
           }
         ]
@@ -4445,10 +4438,29 @@
   {
     "type": "range_pattern",
     "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "range_pattern_group2",
+          "named": true
+        },
+        {
+          "type": "range_pattern_prefix",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "range_pattern_group2",
+    "named": true,
     "fields": {
       "left": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "_literal_pattern",
@@ -4491,10 +4503,6 @@
         },
         {
           "type": "range_pattern_left_with_right",
-          "named": true
-        },
-        {
-          "type": "range_pattern_prefix",
           "named": true
         }
       ]
@@ -5364,6 +5372,49 @@
     }
   },
   {
+    "type": "token_pattern_group1",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "_literal",
+          "named": true
+        },
+        {
+          "type": "crate",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "mutable_specifier",
+          "named": true
+        },
+        {
+          "type": "primitive_type",
+          "named": true
+        },
+        {
+          "type": "self",
+          "named": true
+        },
+        {
+          "type": "super",
+          "named": true
+        },
+        {
+          "type": "token_tree_punctuation",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "token_repetition",
     "named": true,
     "fields": {
@@ -5391,35 +5442,11 @@
       "required": false,
       "types": [
         {
-          "type": "_literal",
-          "named": true
-        },
-        {
-          "type": "crate",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
           "type": "metavariable",
           "named": true
         },
         {
-          "type": "mutable_specifier",
-          "named": true
-        },
-        {
-          "type": "primitive_type",
-          "named": true
-        },
-        {
-          "type": "self",
-          "named": true
-        },
-        {
-          "type": "super",
+          "type": "token_pattern_group1",
           "named": true
         },
         {
@@ -5428,10 +5455,6 @@
         },
         {
           "type": "token_tree",
-          "named": true
-        },
-        {
-          "type": "token_tree_punctuation",
           "named": true
         }
       ]
@@ -5465,39 +5488,15 @@
       "required": false,
       "types": [
         {
-          "type": "_literal",
-          "named": true
-        },
-        {
-          "type": "crate",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
           "type": "metavariable",
           "named": true
         },
         {
-          "type": "mutable_specifier",
-          "named": true
-        },
-        {
-          "type": "primitive_type",
-          "named": true
-        },
-        {
-          "type": "self",
-          "named": true
-        },
-        {
-          "type": "super",
-          "named": true
-        },
-        {
           "type": "token_binding_pattern",
+          "named": true
+        },
+        {
+          "type": "token_pattern_group1",
           "named": true
         },
         {
@@ -5506,10 +5505,6 @@
         },
         {
           "type": "token_tree_pattern",
-          "named": true
-        },
-        {
-          "type": "token_tree_punctuation",
           "named": true
         }
       ]
@@ -5559,35 +5554,11 @@
       "required": false,
       "types": [
         {
-          "type": "_literal",
-          "named": true
-        },
-        {
-          "type": "crate",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
           "type": "metavariable",
           "named": true
         },
         {
-          "type": "mutable_specifier",
-          "named": true
-        },
-        {
-          "type": "primitive_type",
-          "named": true
-        },
-        {
-          "type": "self",
-          "named": true
-        },
-        {
-          "type": "super",
+          "type": "token_pattern_group1",
           "named": true
         },
         {
@@ -5596,10 +5567,6 @@
         },
         {
           "type": "token_tree",
-          "named": true
-        },
-        {
-          "type": "token_tree_punctuation",
           "named": true
         }
       ]
@@ -5614,35 +5581,11 @@
       "required": false,
       "types": [
         {
-          "type": "_literal",
-          "named": true
-        },
-        {
-          "type": "crate",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
           "type": "metavariable",
           "named": true
         },
         {
-          "type": "mutable_specifier",
-          "named": true
-        },
-        {
-          "type": "primitive_type",
-          "named": true
-        },
-        {
-          "type": "self",
-          "named": true
-        },
-        {
-          "type": "super",
+          "type": "token_pattern_group1",
           "named": true
         },
         {
@@ -5651,10 +5594,6 @@
         },
         {
           "type": "token_tree",
-          "named": true
-        },
-        {
-          "type": "token_tree_punctuation",
           "named": true
         }
       ]
@@ -5669,35 +5608,11 @@
       "required": false,
       "types": [
         {
-          "type": "_literal",
-          "named": true
-        },
-        {
-          "type": "crate",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
           "type": "metavariable",
           "named": true
         },
         {
-          "type": "mutable_specifier",
-          "named": true
-        },
-        {
-          "type": "primitive_type",
-          "named": true
-        },
-        {
-          "type": "self",
-          "named": true
-        },
-        {
-          "type": "super",
+          "type": "token_pattern_group1",
           "named": true
         },
         {
@@ -5706,10 +5621,6 @@
         },
         {
           "type": "token_tree",
-          "named": true
-        },
-        {
-          "type": "token_tree_punctuation",
           "named": true
         }
       ]
@@ -5747,39 +5658,15 @@
       "required": false,
       "types": [
         {
-          "type": "_literal",
-          "named": true
-        },
-        {
-          "type": "crate",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
           "type": "metavariable",
           "named": true
         },
         {
-          "type": "mutable_specifier",
-          "named": true
-        },
-        {
-          "type": "primitive_type",
-          "named": true
-        },
-        {
-          "type": "self",
-          "named": true
-        },
-        {
-          "type": "super",
-          "named": true
-        },
-        {
           "type": "token_binding_pattern",
+          "named": true
+        },
+        {
+          "type": "token_pattern_group1",
           "named": true
         },
         {
@@ -5788,10 +5675,6 @@
         },
         {
           "type": "token_tree_pattern",
-          "named": true
-        },
-        {
-          "type": "token_tree_punctuation",
           "named": true
         }
       ]
@@ -5806,39 +5689,15 @@
       "required": false,
       "types": [
         {
-          "type": "_literal",
-          "named": true
-        },
-        {
-          "type": "crate",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
           "type": "metavariable",
           "named": true
         },
         {
-          "type": "mutable_specifier",
-          "named": true
-        },
-        {
-          "type": "primitive_type",
-          "named": true
-        },
-        {
-          "type": "self",
-          "named": true
-        },
-        {
-          "type": "super",
-          "named": true
-        },
-        {
           "type": "token_binding_pattern",
+          "named": true
+        },
+        {
+          "type": "token_pattern_group1",
           "named": true
         },
         {
@@ -5847,10 +5706,6 @@
         },
         {
           "type": "token_tree_pattern",
-          "named": true
-        },
-        {
-          "type": "token_tree_punctuation",
           "named": true
         }
       ]
@@ -5865,39 +5720,15 @@
       "required": false,
       "types": [
         {
-          "type": "_literal",
-          "named": true
-        },
-        {
-          "type": "crate",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
           "type": "metavariable",
           "named": true
         },
         {
-          "type": "mutable_specifier",
-          "named": true
-        },
-        {
-          "type": "primitive_type",
-          "named": true
-        },
-        {
-          "type": "self",
-          "named": true
-        },
-        {
-          "type": "super",
-          "named": true
-        },
-        {
           "type": "token_binding_pattern",
+          "named": true
+        },
+        {
+          "type": "token_pattern_group1",
           "named": true
         },
         {
@@ -5906,10 +5737,6 @@
         },
         {
           "type": "token_tree_pattern",
-          "named": true
-        },
-        {
-          "type": "token_tree_punctuation",
           "named": true
         }
       ]

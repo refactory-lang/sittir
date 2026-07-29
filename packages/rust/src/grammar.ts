@@ -189,6 +189,12 @@ export type RustGrammar = {
 			types: [{ type: 'array_expression_list'; named: true }, { type: 'array_expression_semi'; named: true }];
 		};
 	};
+	readonly array_expression_group1: {
+		type: 'array_expression_group1';
+		named: true;
+		fields: { length: { multiple: false; required: true; types: [{ type: '_expression'; named: true }] } };
+		children: { multiple: false; required: true; types: [{ type: '_expression'; named: true }] };
+	};
 	readonly array_expression_list: {
 		type: 'array_expression_list';
 		named: true;
@@ -198,11 +204,8 @@ export type RustGrammar = {
 	readonly array_expression_semi: {
 		type: 'array_expression_semi';
 		named: true;
-		fields: {
-			attributes: { multiple: true; required: false; types: [{ type: 'attribute_item'; named: true }] };
-			length: { multiple: false; required: true; types: [{ type: '_expression'; named: true }] };
-		};
-		children: { multiple: false; required: true; types: [{ type: '_expression'; named: true }] };
+		fields: { attributes: { multiple: true; required: false; types: [{ type: 'attribute_item'; named: true }] } };
+		children: { multiple: false; required: true; types: [{ type: 'array_expression_group1'; named: true }] };
 	};
 	readonly array_type: {
 		type: 'array_type';
@@ -242,7 +245,6 @@ export type RustGrammar = {
 		type: 'attribute';
 		named: true;
 		fields: {
-			arguments: { multiple: false; required: false; types: [{ type: 'token_tree'; named: true }] };
 			path: {
 				multiple: false;
 				required: true;
@@ -255,6 +257,14 @@ export type RustGrammar = {
 					{ type: 'super'; named: true }
 				];
 			};
+		};
+		children: { multiple: false; required: false; types: [{ type: 'attribute_group1'; named: true }] };
+	};
+	readonly attribute_group1: {
+		type: 'attribute_group1';
+		named: true;
+		fields: {
+			arguments: { multiple: false; required: false; types: [{ type: 'token_tree'; named: true }] };
 			value: { multiple: false; required: false; types: [{ type: '_expression'; named: true }] };
 		};
 	};
@@ -394,6 +404,12 @@ export type RustGrammar = {
 		type: 'block_comment';
 		named: true;
 		extra: true;
+		fields: {};
+		children: { multiple: false; required: false; types: [{ type: 'block_comment_group1'; named: true }] };
+	};
+	readonly block_comment_group1: {
+		type: 'block_comment_group1';
+		named: true;
 		fields: {
 			doc: { multiple: false; required: false; types: [{ type: 'doc_comment'; named: true }] };
 			inner: { multiple: false; required: false; types: [{ type: 'inner_doc_comment_marker'; named: true }] };
@@ -613,17 +629,7 @@ export type RustGrammar = {
 		children: {
 			multiple: true;
 			required: false;
-			types: [
-				{ type: '_literal'; named: true },
-				{ type: 'crate'; named: true },
-				{ type: 'identifier'; named: true },
-				{ type: 'mutable_specifier'; named: true },
-				{ type: 'primitive_type'; named: true },
-				{ type: 'self'; named: true },
-				{ type: 'super'; named: true },
-				{ type: 'token_tree'; named: true },
-				{ type: 'token_tree_punctuation'; named: true }
-			];
+			types: [{ type: 'token_pattern_group1'; named: true }, { type: 'token_tree'; named: true }];
 		};
 	};
 	readonly delim_token_tree_bracket: {
@@ -633,17 +639,7 @@ export type RustGrammar = {
 		children: {
 			multiple: true;
 			required: false;
-			types: [
-				{ type: '_literal'; named: true },
-				{ type: 'crate'; named: true },
-				{ type: 'identifier'; named: true },
-				{ type: 'mutable_specifier'; named: true },
-				{ type: 'primitive_type'; named: true },
-				{ type: 'self'; named: true },
-				{ type: 'super'; named: true },
-				{ type: 'token_tree'; named: true },
-				{ type: 'token_tree_punctuation'; named: true }
-			];
+			types: [{ type: 'token_pattern_group1'; named: true }, { type: 'token_tree'; named: true }];
 		};
 	};
 	readonly delim_token_tree_paren: {
@@ -653,17 +649,7 @@ export type RustGrammar = {
 		children: {
 			multiple: true;
 			required: false;
-			types: [
-				{ type: '_literal'; named: true },
-				{ type: 'crate'; named: true },
-				{ type: 'identifier'; named: true },
-				{ type: 'mutable_specifier'; named: true },
-				{ type: 'primitive_type'; named: true },
-				{ type: 'self'; named: true },
-				{ type: 'super'; named: true },
-				{ type: 'token_tree'; named: true },
-				{ type: 'token_tree_punctuation'; named: true }
-			];
+			types: [{ type: 'token_pattern_group1'; named: true }, { type: 'token_tree'; named: true }];
 		};
 	};
 	readonly dynamic_type: {
@@ -1150,6 +1136,19 @@ export type RustGrammar = {
 		named: true;
 		fields: { identifier: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] } };
 	};
+	readonly last_match_arm: {
+		type: 'last_match_arm';
+		named: true;
+		fields: {
+			attributes: {
+				multiple: true;
+				required: false;
+				types: [{ type: 'attribute_item'; named: true }, { type: 'inner_attribute_item'; named: true }];
+			};
+			pattern: { multiple: false; required: true; types: [{ type: 'match_pattern'; named: true }] };
+			value: { multiple: false; required: true; types: [{ type: '_expression'; named: true }] };
+		};
+	};
 	readonly let_chain: {
 		type: 'let_chain';
 		named: true;
@@ -1297,11 +1296,10 @@ export type RustGrammar = {
 				types: [{ type: 'attribute_item'; named: true }, { type: 'inner_attribute_item'; named: true }];
 			};
 			pattern: { multiple: false; required: true; types: [{ type: 'match_pattern'; named: true }] };
-			value: { multiple: false; required: false; types: [{ type: '_expression'; named: true }] };
 		};
 		children: {
 			multiple: false;
-			required: false;
+			required: true;
 			types: [
 				{ type: 'async_block'; named: true },
 				{ type: 'block'; named: true },
@@ -1332,7 +1330,7 @@ export type RustGrammar = {
 	readonly match_block_arms: {
 		type: 'match_block_arms';
 		named: true;
-		fields: { last_arm: { multiple: false; required: true; types: [{ type: 'match_arm'; named: true }] } };
+		fields: { last_arm: { multiple: false; required: true; types: [{ type: 'last_match_arm'; named: true }] } };
 		children: { multiple: true; required: false; types: [{ type: 'match_arm'; named: true }] };
 	};
 	readonly match_expression: {
@@ -1529,10 +1527,20 @@ export type RustGrammar = {
 	readonly range_pattern: {
 		type: 'range_pattern';
 		named: true;
+		fields: {};
+		children: {
+			multiple: false;
+			required: true;
+			types: [{ type: 'range_pattern_group2'; named: true }, { type: 'range_pattern_prefix'; named: true }];
+		};
+	};
+	readonly range_pattern_group2: {
+		type: 'range_pattern_group2';
+		named: true;
 		fields: {
 			left: {
 				multiple: false;
-				required: false;
+				required: true;
 				types: [
 					{ type: '_literal_pattern'; named: true },
 					{ type: 'crate'; named: true },
@@ -1547,11 +1555,7 @@ export type RustGrammar = {
 		children: {
 			multiple: false;
 			required: true;
-			types: [
-				{ type: 'range_pattern_left_bare'; named: true },
-				{ type: 'range_pattern_left_with_right'; named: true },
-				{ type: 'range_pattern_prefix'; named: true }
-			];
+			types: [{ type: 'range_pattern_left_bare'; named: true }, { type: 'range_pattern_left_with_right'; named: true }];
 		};
 	};
 	readonly range_pattern_left_bare: { type: 'range_pattern_left_bare'; named: true; fields: {} };
@@ -1866,6 +1870,25 @@ export type RustGrammar = {
 			type: { multiple: false; required: true; types: [{ type: 'fragment_specifier'; named: true }] };
 		};
 	};
+	readonly token_pattern_group1: {
+		type: 'token_pattern_group1';
+		named: true;
+		fields: {};
+		children: {
+			multiple: false;
+			required: false;
+			types: [
+				{ type: '_literal'; named: true },
+				{ type: 'crate'; named: true },
+				{ type: 'identifier'; named: true },
+				{ type: 'mutable_specifier'; named: true },
+				{ type: 'primitive_type'; named: true },
+				{ type: 'self'; named: true },
+				{ type: 'super'; named: true },
+				{ type: 'token_tree_punctuation'; named: true }
+			];
+		};
+	};
 	readonly token_repetition: {
 		type: 'token_repetition';
 		named: true;
@@ -1880,17 +1903,10 @@ export type RustGrammar = {
 			multiple: true;
 			required: false;
 			types: [
-				{ type: '_literal'; named: true },
-				{ type: 'crate'; named: true },
-				{ type: 'identifier'; named: true },
 				{ type: 'metavariable'; named: true },
-				{ type: 'mutable_specifier'; named: true },
-				{ type: 'primitive_type'; named: true },
-				{ type: 'self'; named: true },
-				{ type: 'super'; named: true },
+				{ type: 'token_pattern_group1'; named: true },
 				{ type: 'token_repetition'; named: true },
-				{ type: 'token_tree'; named: true },
-				{ type: 'token_tree_punctuation'; named: true }
+				{ type: 'token_tree'; named: true }
 			];
 		};
 	};
@@ -1908,18 +1924,11 @@ export type RustGrammar = {
 			multiple: true;
 			required: false;
 			types: [
-				{ type: '_literal'; named: true },
-				{ type: 'crate'; named: true },
-				{ type: 'identifier'; named: true },
 				{ type: 'metavariable'; named: true },
-				{ type: 'mutable_specifier'; named: true },
-				{ type: 'primitive_type'; named: true },
-				{ type: 'self'; named: true },
-				{ type: 'super'; named: true },
 				{ type: 'token_binding_pattern'; named: true },
+				{ type: 'token_pattern_group1'; named: true },
 				{ type: 'token_repetition_pattern'; named: true },
-				{ type: 'token_tree_pattern'; named: true },
-				{ type: 'token_tree_punctuation'; named: true }
+				{ type: 'token_tree_pattern'; named: true }
 			];
 		};
 	};
@@ -1948,17 +1957,10 @@ export type RustGrammar = {
 			multiple: true;
 			required: false;
 			types: [
-				{ type: '_literal'; named: true },
-				{ type: 'crate'; named: true },
-				{ type: 'identifier'; named: true },
 				{ type: 'metavariable'; named: true },
-				{ type: 'mutable_specifier'; named: true },
-				{ type: 'primitive_type'; named: true },
-				{ type: 'self'; named: true },
-				{ type: 'super'; named: true },
+				{ type: 'token_pattern_group1'; named: true },
 				{ type: 'token_repetition'; named: true },
-				{ type: 'token_tree'; named: true },
-				{ type: 'token_tree_punctuation'; named: true }
+				{ type: 'token_tree'; named: true }
 			];
 		};
 	};
@@ -1970,17 +1972,10 @@ export type RustGrammar = {
 			multiple: true;
 			required: false;
 			types: [
-				{ type: '_literal'; named: true },
-				{ type: 'crate'; named: true },
-				{ type: 'identifier'; named: true },
 				{ type: 'metavariable'; named: true },
-				{ type: 'mutable_specifier'; named: true },
-				{ type: 'primitive_type'; named: true },
-				{ type: 'self'; named: true },
-				{ type: 'super'; named: true },
+				{ type: 'token_pattern_group1'; named: true },
 				{ type: 'token_repetition'; named: true },
-				{ type: 'token_tree'; named: true },
-				{ type: 'token_tree_punctuation'; named: true }
+				{ type: 'token_tree'; named: true }
 			];
 		};
 	};
@@ -1992,17 +1987,10 @@ export type RustGrammar = {
 			multiple: true;
 			required: false;
 			types: [
-				{ type: '_literal'; named: true },
-				{ type: 'crate'; named: true },
-				{ type: 'identifier'; named: true },
 				{ type: 'metavariable'; named: true },
-				{ type: 'mutable_specifier'; named: true },
-				{ type: 'primitive_type'; named: true },
-				{ type: 'self'; named: true },
-				{ type: 'super'; named: true },
+				{ type: 'token_pattern_group1'; named: true },
 				{ type: 'token_repetition'; named: true },
-				{ type: 'token_tree'; named: true },
-				{ type: 'token_tree_punctuation'; named: true }
+				{ type: 'token_tree'; named: true }
 			];
 		};
 	};
@@ -2028,18 +2016,11 @@ export type RustGrammar = {
 			multiple: true;
 			required: false;
 			types: [
-				{ type: '_literal'; named: true },
-				{ type: 'crate'; named: true },
-				{ type: 'identifier'; named: true },
 				{ type: 'metavariable'; named: true },
-				{ type: 'mutable_specifier'; named: true },
-				{ type: 'primitive_type'; named: true },
-				{ type: 'self'; named: true },
-				{ type: 'super'; named: true },
 				{ type: 'token_binding_pattern'; named: true },
+				{ type: 'token_pattern_group1'; named: true },
 				{ type: 'token_repetition_pattern'; named: true },
-				{ type: 'token_tree_pattern'; named: true },
-				{ type: 'token_tree_punctuation'; named: true }
+				{ type: 'token_tree_pattern'; named: true }
 			];
 		};
 	};
@@ -2051,18 +2032,11 @@ export type RustGrammar = {
 			multiple: true;
 			required: false;
 			types: [
-				{ type: '_literal'; named: true },
-				{ type: 'crate'; named: true },
-				{ type: 'identifier'; named: true },
 				{ type: 'metavariable'; named: true },
-				{ type: 'mutable_specifier'; named: true },
-				{ type: 'primitive_type'; named: true },
-				{ type: 'self'; named: true },
-				{ type: 'super'; named: true },
 				{ type: 'token_binding_pattern'; named: true },
+				{ type: 'token_pattern_group1'; named: true },
 				{ type: 'token_repetition_pattern'; named: true },
-				{ type: 'token_tree_pattern'; named: true },
-				{ type: 'token_tree_punctuation'; named: true }
+				{ type: 'token_tree_pattern'; named: true }
 			];
 		};
 	};
@@ -2074,18 +2048,11 @@ export type RustGrammar = {
 			multiple: true;
 			required: false;
 			types: [
-				{ type: '_literal'; named: true },
-				{ type: 'crate'; named: true },
-				{ type: 'identifier'; named: true },
 				{ type: 'metavariable'; named: true },
-				{ type: 'mutable_specifier'; named: true },
-				{ type: 'primitive_type'; named: true },
-				{ type: 'self'; named: true },
-				{ type: 'super'; named: true },
 				{ type: 'token_binding_pattern'; named: true },
+				{ type: 'token_pattern_group1'; named: true },
 				{ type: 'token_repetition_pattern'; named: true },
-				{ type: 'token_tree_pattern'; named: true },
-				{ type: 'token_tree_punctuation'; named: true }
+				{ type: 'token_tree_pattern'; named: true }
 			];
 		};
 	};

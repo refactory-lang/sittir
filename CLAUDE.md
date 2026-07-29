@@ -16,6 +16,7 @@ Generate typed factories, render templates, and native bindings from tree-sitter
 - The js/dispatch-based engine is **deprecated**. The Rust render engine, Rust Tree-Sitter bindings are the source of truth.
 - Generated artifacts are derived outputs. Do not hand-edit `packages/{rust,python,typescript}/src/*`, `packages/{rust,python,typescript}/templates/*.jinja`, `packages/{rust,python,typescript}/.sittir/*`, or `packages/{rust,python,typescript}/overrides.suggested.ts`; fix codegen or `packages/<lang>/overrides.ts` and regenerate.
 - TypeScript is ESM; local imports use `.ts` extensions.
+- Comments and documentation (glossary entries, ADRs, JSDoc, inline) must not reference spec/plan/PR/task numbers (e.g. "PR-137", "ADR-0009", "spec 026", "R11", "task 8"). Those planning artifacts get archived, renamed, or deleted — a numbered reference rots into a dangling pointer nobody can resolve. Describe the actual constraint, invariant, or rationale directly instead of citing where it was decided.
 
 ## Detailed instructions
 
@@ -59,13 +60,3 @@ Tool outputs are automatically compressed to save context window budget.
 - `get_code_snippet` passes through uncompressed for edit accuracy
 - No action needed — compression is transparent and automatic
 <!-- END INFIGRAPH -->
-
-### Override parser comparison
-
-Comparing base tree-sitter WASM vs `packages/<grammar>/.sittir/parser.wasm` on the corpus:
-
-- rust: base parser errors `2`, override parser errors `12`, override-only regressions `10`
-- typescript: base parser errors `2`, override parser errors `31`, override-only regressions `29`
-- python: base parser errors `0`, override parser errors `1`, override-only regressions `1`
-
-So the remaining skip debt is primarily **override parser regression**, not validator/read-render-parse logic.

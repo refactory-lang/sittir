@@ -43,21 +43,8 @@ import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { wireGetCurrentRuleKind, wireRegisterRefineForms } from '../wire/wire.ts';
 import type { RefineForm } from '../wire/wire.ts';
 
-/** `{ formName → { path → branchIndex | literal } }`. */
 export type FormMap = Record<string, Record<string, number | string>>;
 
-/**
- * Declare per-form choice selections for the current rule.
- *
- * Returns the rule unchanged structurally — the codegen metadata is
- * deposited into the active wire context. Validation (path resolves
- * to a choice, selection picks a valid arm) runs at codegen time, not
- * here: authoring-time paths may address positions that enrich or
- * transform will still modify before codegen reads them.
- *
- * @throws {Error} If called outside a wire() context.
- * @throws {Error} If a form name is duplicated within the same call.
- */
 export function refine(original: RuntimeRule, forms: FormMap): RuntimeRule {
 	const kind = wireGetCurrentRuleKind();
 	if (!kind) {

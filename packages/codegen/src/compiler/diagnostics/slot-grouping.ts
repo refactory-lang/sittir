@@ -85,11 +85,8 @@ export interface SlotGroupingDiagnostic extends Diagnostic {
 	readonly severity: 'warning';
 	readonly message: string;
 	readonly canProceed: boolean;
-	/** The kind that owns the rule containing the violation. */
 	readonly ownerKind: string;
-	/** The slot count of the offending sub-rule (for multi-slot-nested-seq). */
 	readonly slotCount: number;
-	/** Human-readable propose-promotion text for the author. */
 	readonly proposal: string;
 }
 
@@ -97,18 +94,6 @@ export interface SlotGroupingDiagnostic extends Diagnostic {
 // Main entry point
 // ---------------------------------------------------------------------------
 
-/**
- * Walk every simplified rule in the map and emit a diagnostic record for each
- * violation of the "one slot per structural boundary" invariant.
- *
- * @param rules - The simplified rule map (output of `computeSimplifiedRules`).
- * @param inlineKinds - The grammar's inline kind set (from wire phase). Auto-group
- *   helpers (`_<parent>_repeat<N>`, `_<parent>_optional<N>`) are in this set;
- *   their top-level bodies are treated as slot-position seqs and checked.
- *   All other kinds are only checked for NESTED slot-position seqs.
- * @param polymorphSkipExtra - Extra kind names to skip for shape ①/②/③.
- * @returns An array of diagnostic records (may be empty).
- */
 export function diagnoseSlotGrouping(
 	rules: Record<string, SimplifiedRule>,
 	inlineKinds: ReadonlySet<string> = new Set(),
@@ -179,16 +164,6 @@ export function diagnoseSlotGrouping(
 // Walk — visits seq and repeat/repeat1 nodes tracking slot position
 // ---------------------------------------------------------------------------
 
-/**
- * @param inSlotPosition - True when `rule` occupies a slot-creating position:
- *   inside a repeat/optional content, inside a choice arm, or as the top-level
- *   body of an inline-listed (auto-group helper) kind.
- * @param inChoiceArm - True when `rule` is directly inside a choice arm.
- *   Multi-slot seqs in choice arms are handled by collectSlots' union semantics
- *   (a choice is a single slot boundary regardless of arm content) and are NOT
- *   genuine group-lift violations. Only repeat/optional positions are genuine.
- *   This flag lets checkSeq distinguish the two sources of inSlotPosition.
- */
 function walkRule(
 	rule: Rule<'link'>,
 	ownerKind: string,
@@ -232,7 +207,7 @@ function walkRule(
 			// Simplified rules normally have wrappers deleted, but handle
 			// defensively. Content is in slot position (genuine group-lift position).
 			walkRule(
-				(rule as unknown as { content: Rule<'link'> }).content,
+				(rule as { content: Rule<'link'> }).content,
 				ownerKind,
 				records,
 				/* inSlotPosition= */ true,
@@ -386,13 +361,6 @@ function checkRepeatOfSymbol(
 // content's slot count IS this node's slot count.
 // ---------------------------------------------------------------------------
 
-/**
- * Count the number of slots contributed by `rule`.
- *
- * This is the shared primitive for the slot-grouping diagnostic and any
- * future consumer that needs a count without building full `AssembledNonterminal`
- * records. Consumers must NOT re-derive terminality — call this function.
- */
 export function countSlots(rule: Rule<'link'>): number {
 	switch (rule.type) {
 		case SEQ:
@@ -413,23 +381,6 @@ export function countSlots(rule: Rule<'link'>): number {
 	}
 }
 
-/**
- * Count the CONTENT slots a rule's body yields — UNNAMED nonterminal slots that
- * resolve to the generic `content` storage name (no `fieldName`, not a single
- * named parse kind). A node whose body yields >1 of these cannot emit (they'd
- * share the `_content` storage key) — at least one needs a `field()` name.
- *
- * Mirrors `countSlots`' distribution with two refinements:
- *   - A FIELD-NAMED seq is ONE named slot (its `fieldName` makes it a single
- *     slot); it is NOT distributed into (its inner unnamed slots belong to that
- *     named group, not the enclosing node).
- *   - Only slot boundaries that resolve to `content` count (single named kind →
- *     named by its kind, not `content`; a string literal inside a choice/optional
- *     /repeat IS a slot value and makes the boundary unnamed-multi → `content`).
- *
- * Counted on the simplified rule BEFORE `mergeSlotsByName` folds duplicate
- * `content` slots into one (which would mask the collision).
- */
 export function countContentSlots(rule: Rule<'link'>): number {
 	switch (rule.type) {
 		case SEQ:
@@ -446,7 +397,6 @@ export function countContentSlots(rule: Rule<'link'>): number {
 	}
 }
 
-/** A slot boundary that resolves to the generic `content` storage name. */
 function isContentSlot(rule: Rule<'link'>): boolean {
 	if (!isNonterminalRuleType(rule)) return false; // terminal — emits no slot
 	if ((rule as { fieldName?: string }).fieldName !== undefined) return false; // named slot
@@ -456,11 +406,6 @@ function isContentSlot(rule: Rule<'link'>): boolean {
 	return !(named.size === 1 && !hasUnnamed);
 }
 
-/**
- * The distinct named parse kinds a slot-boundary rule would expose, plus whether
- * it carries any unnamed value (literal / pattern / enum / anonymous token).
- * Mirrors `projectSlotNaming`'s storageName inputs at the rule level.
- */
 function slotKindProfile(rule: Rule<'link'>): { named: Set<string>; hasUnnamed: boolean } {
 	switch (rule.type) {
 		case SYMBOL:

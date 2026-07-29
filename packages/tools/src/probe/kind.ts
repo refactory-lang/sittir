@@ -40,6 +40,15 @@
  *                   inputAstShapeEqual, summary }` — quick verdict on
  *                 whether the two pipelines agreed.
  *
+ * With `--shipped`:
+ *   - `shipped`: `{ cst, sexp, hasError }` from parsing the SAME source with
+ *                the grammar's shipped upstream wasm (`tree-sitter-<lang>` on
+ *                npm) instead of sittir's override-compiled
+ *                `packages/<lang>/.sittir/parser.wasm`. Lets a single probe
+ *                answer "does this diverge in the override grammar, or does
+ *                the real grammar already parse it this way?" without
+ *                standing up a corpus-wide base-vs-override sweep.
+ *
  * With `--trace`:
  *   - emits a richer matrix for the selected target:
  *     `js.shallow`, `js.deep`, `native.shallow`, `native.deep`
@@ -65,6 +74,7 @@
  * follow-up note in this file's docstring at the bottom of the diff.
  */
 
+import { fileURLToPath } from 'node:url';
 import {
 	loadLanguageForGrammar,
 	loadKindIdFromName,
@@ -78,6 +88,7 @@ import {
 	stripStructuralNodeText,
 	loadReadTreeNode,
 	walkNativeForKind,
+	WASM_PATHS,
 	type TSNode
 } from '../validate/common.ts';
 import type * as TS from 'web-tree-sitter';
@@ -104,6 +115,7 @@ export interface ProbeKindOptions {
 	trace: boolean;
 	logParse: boolean;
 	full: boolean;
+	shipped: boolean;
 }
 
 export async function run(opts: ProbeKindOptions): Promise<number> {
@@ -149,6 +161,12 @@ export async function run(opts: ProbeKindOptions): Promise<number> {
 		...probeOpts,
 		engine: traceEngine
 	};
+	// Step 0 (optional): parse the same source with the grammar's shipped
+	// upstream wasm, independent of engine/trace/kind branching below, so
+	// every output shape can carry the same `shipped` block.
+	const shippedReport = opts.shipped
+		? await probeShipped(grammar, source, { kind: probeOpts.kind, range: probeOpts.range })
+		: undefined;
 	// Focused native-pipeline view: default when `--kind` is given (unless
 	// --trace/--full). Shows the slot at EVERY native stage so the layer that
 	// drops it is obvious — cst (parse) → raw (raw read) → wrapped (materialized
@@ -174,14 +192,16 @@ export async function run(opts: ProbeKindOptions): Promise<number> {
 			legacyWrapped: deep.legacyDeepNodeData,
 			transport: deep.nativeTransport,
 			rendered: deep.rendered,
-			renderError: deep.renderError
+			renderError: deep.renderError,
+			shipped: shippedReport
 		};
 		process.stdout.write(JSON.stringify(focused, null, opts.pretty ? 2 : undefined) + '\n');
 		return 0;
 	}
 	if (wantFull) {
 		const trace = await probeTrace(grammar, source, traceOpts);
-		process.stdout.write(JSON.stringify(trace, null, opts.pretty ? 2 : undefined) + '\n');
+		const out = { ...trace, shipped: shippedReport };
+		process.stdout.write(JSON.stringify(out, null, opts.pretty ? 2 : undefined) + '\n');
 		return 0;
 	}
 	const report = await probe(grammar, source, probeOpts);
@@ -217,6 +237,7 @@ export async function run(opts: ProbeKindOptions): Promise<number> {
 		out.engineNative = engineNativeReport;
 		out.compareEngines = compareEngines;
 	}
+	out.shipped = shippedReport;
 	process.stdout.write(JSON.stringify(out, null, indent) + '\n');
 	return 0;
 }
@@ -249,6 +270,15 @@ export interface ProbeReport {
 		reparsedShape: string;
 	};
 	diff: { sourceLen: number; renderedLen?: number; sameText?: boolean };
+	/** `--shipped`: parse of the same source/target via the grammar's shipped
+	 *  upstream wasm rather than the override-compiled parser. */
+	shipped?: ProbeShippedReport;
+}
+
+export interface ProbeShippedReport {
+	cst: CstNode;
+	sexp: string;
+	hasError: boolean;
 }
 
 export interface ProbeTraceLane {
@@ -520,6 +550,36 @@ export async function probe(
 			sameText
 		}
 	};
+}
+
+/**
+ * Parse `source` with the grammar's shipped upstream wasm (the
+ * `tree-sitter-<lang>` npm package's own `.wasm`) rather than sittir's
+ * override-compiled `packages/<lang>/.sittir/parser.wasm`. This is the
+ * "unmodified base grammar" lane: it answers whether a parse divergence
+ * originates in the override grammar or already exists upstream, without
+ * standing up a corpus-wide base-vs-override sweep (see `--shipped`).
+ */
+async function probeShipped(
+	grammar: string,
+	source: string,
+	target: { kind?: string; range?: { start: number; end: number } }
+): Promise<ProbeShippedReport | undefined> {
+	const wasmSpecifier = WASM_PATHS[grammar];
+	if (!wasmSpecifier) return undefined;
+	const wasmPath = fileURLToPath(import.meta.resolve(wasmSpecifier));
+	const { Parser, lang } = await loadLanguageFromPath(wasmPath);
+	const parser = new Parser();
+	parser.setLanguage(lang);
+	const tree = parser.parse(source);
+	if (!tree) return undefined;
+	let node = tree.rootNode;
+	if (target.range) {
+		node = findNodeCoveringRange(tree.rootNode, target.range.start, target.range.end) ?? tree.rootNode;
+	} else if (target.kind) {
+		node = findFirstByKind(tree.rootNode, target.kind) ?? tree.rootNode;
+	}
+	return { cst: dumpCst(node, null), sexp: node.toString(), hasError: tree.rootNode.hasError };
 }
 
 export async function probeTrace(

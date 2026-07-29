@@ -34,7 +34,6 @@ export function isAliasPlaceholder(v: unknown): v is AliasPlaceholder {
 }
 
 export function alias(rule: Rule | string, value?: string | Rule): unknown {
-	// One-arg string form: alias('variant_name') → placeholder for transform.
 	if (typeof rule === 'string' && value === undefined) {
 		return {
 			__sittirPlaceholder: 'alias' as const,
@@ -49,11 +48,9 @@ export function alias(rule: Rule | string, value?: string | Rule): unknown {
 		);
 	}
 
-	// Two-arg form — delegate to native alias.
 	if (value !== undefined) {
 		return native(rule, value);
 	}
 
-	// One-arg symbol form: alias($.name) ≡ alias($.name, $.name).
 	return native(rule, rule);
 }

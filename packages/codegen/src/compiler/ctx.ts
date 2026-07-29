@@ -35,26 +35,10 @@ import type { DiagnosticSink } from '../types/diagnostics.ts';
 import type { RuleBuilder } from '../dsl/rule-transforms.ts';
 import { RuleWalker } from '../dsl/rule-walker.ts';
 
-/**
- * Construction inputs shared by every phase ctx.
- *
- * `P` is the phase whose `Grammar<P>` container this ctx reads — `'evaluate'`
- * (link reads `RawGrammar`), `'link'` (normalize reads `LinkedGrammar`),
- * `'normalize'` (simplify reads `NormalizedGrammar`), or `'simplify'`
- * (assemble reads `SimplifiedGrammar`). The pipeline refines it in order:
- * `BaseCtx<'evaluate'>` (link) → `BaseCtx<'link'>` (normalize) →
- * `BaseCtx<'normalize'>` (simplify) → `BaseCtx<'simplify'>` (assemble).
- */
 export interface BaseCtxInit<P extends PhaseName> {
 	readonly grammar: Grammar<P>;
 	readonly diagnostics: DiagnosticSink;
-	/**
-	 * Grammar word-shape predicate — "does this string lex as a word under the
-	 * grammar's `word` rule?". Curried `matchesWordShape` bound to the grammar's
-	 * compiled matcher; `undefined` when the grammar declares no `word`.
-	 */
 	readonly wordMatcher?: (s: string) => boolean;
-	/** Rule-construction strategy (structural vs attribute); falls back to structuralBuilder. */
 	readonly builder?: RuleBuilder;
 }
 
@@ -98,15 +82,6 @@ export abstract class BaseCtx<P extends PhaseName> {
 		this.builder = init.builder;
 	}
 
-	/**
-	 * Traversal engine bound to this phase's rules map + diagnostics (R12
-	 * PR-6). Lazily constructed (rather than eagerly in the ctor) because it
-	 * reads the `rules` accessor, which subclasses implement as `abstract` —
-	 * TypeScript forbids calling an abstract member from the base
-	 * constructor (the override isn't installed on `this` until the subclass
-	 * constructor body finishes). Memoized so repeated access returns the
-	 * same instance.
-	 */
 	get walker(): RuleWalker<PhaseRuleOf<P>> {
 		if (!this.#walker) this.#walker = new RuleWalker(this.rules, this.diagnostics);
 		return this.#walker;

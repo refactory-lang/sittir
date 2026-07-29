@@ -1,0 +1,17 @@
+id: override-pair-comment
+language: TypeScript
+severity: hint
+message: >
+  Companion to override-pair.yml — matches the LAST comment node immediately
+  preceding a named object entry (not the full multi-line `//` run, if any —
+  scripts/wave5-relocate-overrides-comments.mts walks backward over the raw
+  text to recover the run's true start).
+files:
+  - packages/rust/overrides.ts
+  - packages/typescript/overrides.ts
+  - packages/python/overrides.ts
+rule:
+  kind: comment
+  precedes:
+    kind: pair
+    stopBy: neighbor

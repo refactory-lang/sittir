@@ -60,6 +60,7 @@ import {
 	hasAnyChild,
 	nameNode,
 	isNodeRef,
+	storageKindOfRef,
 	isUnresolvedRef,
 	allSlotsOf,
 	resetParseKindCollisionDiagnostics,
@@ -77,98 +78,32 @@ import type { DeriveShapeDiagnostic } from './diagnostics/derive-shapes.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { BaseCtx, type BaseCtxInit } from './ctx.ts';
 
-/**
- * Phase context for the Assemble phase (S2, `BaseCtx<'simplify'>` — Assemble
- * READS `Grammar<'simplify'>` = {@link SimplifiedGrammar}; see
- * docs/superpowers/specs/2026-07-04-grammar-phase-ctx-design.md §2). The
- * grammar container itself now lives on `ctx.grammar` — `assemble()`'s former
- * `(normalized, ctx)` two-param signature folds into just `(ctx)` (§2: "the
- * whole input container moves INTO the ctx").
- *
- * Absorbs the former `SubtypeCtx` (`topLevelAliasBodies` — R4 / #14; `seen`
- * cycle-guards and the per-call subtypeSet stay explicit pass-local params,
- * CW6). The hidden-body/subtype-resolution family (`resolveHiddenSubtypes` /
- * `includeAliasMemberKinds` / `isAliasMemberKind` / `isCompatibleSubtypeMember`
- * / `resolveHiddenRuleContent`) migrated OFF `linkRules` onto `normalizedRules`
- * (2026-07-05, PR-137 follow-on-3): the wrapper shapes that switch used to
- * pattern-match (REPEAT/REPEAT1/OPTIONAL/ALIAS/TOKEN) don't exist post-
- * wrapper-deletion — their meaning is stamped as leaf attributes
- * (`multiplicity`/`aliasedFrom`/`aliasNamed`/`fieldName`) — so the family now
- * checks those attributes BEFORE dispatching on `rule.type`. See each
- * function's doc comment for its specific translation.
- *
- * PR-137 follow-on-4 (same day) re-examined that choice: follow-on-3's own
- * justification ("wrapper shapes don't exist here") is EQUALLY true of
- * `ctx.rules` (`SimplifiedRule` — also wrapper-free, `SimplifiedGrammar`'s own
- * phase product, the map `assemble()`'s input container is actually named
- * for) — so it never actually established why `normalizedRules` beat `rules`.
- * Migrating the family to `ctx.rules` was tried and EMPIRICALLY REJECTED: it
- * changes real output. Across all 3 grammars' hidden supertype/alias-mint
- * chains, exactly one diverges — python's `_simple_pattern` supertype loses
- * its `_simple_pattern_negative` subtype entry (the polymorph-variant-adopted
- * `-1`/`-1.0` match-pattern arm, `overrides.ts`'s `_simple_pattern: { '11':
- * 'negative' }`) and gains bogus `integer`/`float` entries instead — verified
- * via `pnpm exec tsx packages/cli/src/cli.ts gen --grammar python …`: the
- * regen diff shows `node-model.json5`'s `_simple_pattern.subtypes` changing,
- * cascading into `types.ts`'s `SimplePattern` union (dropping
- * `SimplePatternNegative`) and `transport.rs`'s dispatch table (deleting the
- * kind_id-250 arm entirely) — a real runtime dispatch break for `-1` literal
- * match patterns, not a cosmetic difference. rust (16 supertypes) and
- * typescript (26 supertypes) showed zero divergence; python showed this one.
- *
- * Root cause: `_simple_pattern_negative`'s body is `SEQ[OPTIONAL('-'),
- * CHOICE(integer, float)]`. On `normalizedRules` (wrapper-deletion only) this
- * stays a top-level SEQ — a shape `resolveHiddenRuleContent`'s switch has NO
- * case for, so it falls to `default: []` (opaque), and the caller's "opaque →
- * keep the hidden name as-is" fallback correctly preserves
- * `_simple_pattern_negative` as its own subtype entry. On `rules`,
- * `simplifySeqRule`'s anonymous-literal stripping deletes the bare `-` (not
- * slot-promoted) and the resulting single-member seq collapses to the inner
- * `CHOICE(integer, float)` — a shape the switch DOES handle, so it wrongly
- * expands to `integer`/`float` directly, discarding the variant-adopted
- * kind's own name. This is the SAME bug class the `_delim_tokens` regression
- * fixture below already guards (an opaque wrapper shape being unmasked into a
- * dispatchable one), but triggered by simplify's SEQ-collapse rather than by
- * wrapper-deletion's multiplicity stamping — and there is no leaf attribute
- * (analogous to `multiplicity`/`fieldName`) that survives simplify's
- * canonicalization to flag "this used to be an opaque multi-member SEQ",
- * so an attribute check can't neutralize it the way the multiplicity/
- * fieldName checks neutralize the wrapper-deletion case. The family's
- * opacity-via-shape fallback depends on the input NOT having gone through
- * simplify's independent structural canonicalization (anon-literal SEQ
- * stripping, single-member collapse, branch-merging) — `normalizedRules`
- * (wrapper-deletion only) is the correct, and only correct, source for that
- * reason, not merely a leftover choice. Since `resolveHiddenRuleContent` is
- * one shared primitive reachable from any hidden kind via mutual recursion
- * across all five family functions, this can't be split per-function or
- * per-kind — the whole family reads the same map uniformly.
- *
- * `topLevelAliasBodies` stays as a distinct field: it isn't a body cache (its
- * VALUES are fully reproducible from `normalizedRules[name]` — verified
- * empirically, every alias-body kind across all 3 grammars satisfies
- * `normalizedRules[name] === applyWrapperDeletion(topLevelAliasBodies.get(name))`),
- * it's a *presence* table (which hidden kinds are alias-mint targets at all)
- * with no rule-level attribute equivalent — a hidden kind's own rule body
- * carries no trace of being aliased-TO by some other rule elsewhere in the
- * grammar.
- *
- * `rules` reads `grammar.rules` — same one-liner as every other phase ctx
- * (2026-07-05: `SimplifiedGrammar`'s phase product field was renamed from
- * `simplifiedRules` to `rules`, closing the one exception this class used to
- * need; see `Grammar<P>`'s doc comment in types.ts). `normalizedRules` stays
- * exposed as its own getter below — the resolver family (and no one else on
- * this ctx) reads it directly, per the correction above.
- *
- * `nodes` is the cross-node store the post-passes need for `markUserFacing` /
- * resolveColliding / resolveIrKeys / collectAnonymous — a live `Map` so the
- * post-passes can read peers; exposed as a getter (the class's one mutation
- * surface) rather than a bare public field. `kindEntries` feeds the same
- * per-node constructors that previously received it positionally.
- */
 export class AssembleCtx extends BaseCtx<'simplify'> {
 	readonly kindEntries?: readonly GeneratedKindEntry[];
 	readonly generatedIdTables?: GeneratedIdTables;
 	readonly topLevelAliasBodies: ReadonlyMap<string, Rule<'link'>>;
+	/**
+	 * Hidden symbol name → its REAL compiled alias name, read back from the
+	 * compiled `grammar.json` (see `loadGrammarJsonAliasMap`, inline-sets.ts).
+	 *
+	 * Needed because enrich's clause-hoist/choice-arm promotion
+	 * (`promoteExistingHiddenRuleName`, enrich.ts) is evaluated TWICE per
+	 * grammar — once building the wire config tree-sitter's native
+	 * `grammar()` call compiles, once inside sittir's own evaluate()
+	 * pipeline — each with its OWN fresh `groupDedupeMap`/counter state.
+	 * The promotion is order-dependent ("whichever parent asks first wins
+	 * the name"), so when a single hidden rule is referenced from multiple
+	 * parents (e.g. rust's `_non_special_token`, referenced from `_tokens`,
+	 * `_non_delim_token`, AND `_token_pattern`), the two invocations can —
+	 * and in this exact case do — settle on DIFFERENT winning names
+	 * ("token_pattern_group1" vs "non_delim_token_group1") depending on
+	 * which parent each invocation happens to visit first. Only the
+	 * wire-config invocation's name is real (it's what tree-sitter actually
+	 * compiled); sittir's own `subtypeParseNames` guess can be wrong. This
+	 * map lets `resolveHiddenSubtypes` correct for that divergence rather
+	 * than trusting the guess.
+	 */
+	readonly grammarJsonAliasMap: ReadonlyMap<string, string>;
 	private readonly _nodes: Map<string, AssembledNode>;
 
 	constructor(
@@ -176,6 +111,7 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 			generatedIdTables?: GeneratedIdTables;
 			kindEntries?: readonly GeneratedKindEntry[];
 			topLevelAliasBodies?: ReadonlyMap<string, Rule<'link'>>;
+			grammarJsonAliasMap?: ReadonlyMap<string, string>;
 			nodes?: Map<string, AssembledNode>;
 		}
 	) {
@@ -183,58 +119,35 @@ export class AssembleCtx extends BaseCtx<'simplify'> {
 		this.kindEntries = init.kindEntries;
 		this.generatedIdTables = init.generatedIdTables;
 		this.topLevelAliasBodies = init.topLevelAliasBodies ?? new Map();
+		this.grammarJsonAliasMap = init.grammarJsonAliasMap ?? new Map();
 		this._nodes = init.nodes ?? new Map();
 	}
 
-	/** `grammar.rules` — `SimplifiedGrammar`'s phase product (see class doc comment). */
 	get rules(): Record<string, SimplifiedRule> {
 		return this.grammar.rules;
 	}
 
-	/**
-	 * `grammar.normalizedRules` — the wrapper-deleted `RenderRule` view. The
-	 * hidden-body/subtype-resolution family's map source (see class doc
-	 * comment's PR-137 follow-on-4 correction for why `rules`/`SimplifiedRule`
-	 * is NOT safe here: simplify's independent structural canonicalization —
-	 * beyond wrapper-deletion — can unmask an intentionally opaque SEQ shape
-	 * into a dispatchable one, corrupting the family's "unresolvable → keep
-	 * the hidden name" fallback for polymorph-variant-adopted arms). Modifier
-	 * wrappers (optional/field/repeat/repeat1/alias/token) are pushed down to
-	 * leaf attributes (`multiplicity`/`fieldName`/`separator`/`aliasedFrom`/
-	 * `aliasNamed`); structural rules (seq/choice/variant/group/supertype) are
-	 * preserved and recursed into — the honest post-normalize equivalent of
-	 * `linkRules` for callers that read attributes instead of wrapper shape.
-	 */
 	get normalizedRules(): Record<string, RenderRule> {
 		return this.grammar.normalizedRules;
 	}
 
-	/** Live node-map accumulator built during assemble(); post-passes read peers from it. */
 	get nodes(): Map<string, AssembledNode> {
 		return this._nodes;
 	}
 
-	/**
-	 * Canonical construction from a SimplifiedGrammar — the ONE derivation of
-	 * the assemble view (the grammar container, alias bodies). Callers own
-	 * the ctx (R12): generate.ts passes its live DiagnosticSink; tests take
-	 * the default.
-	 *
-	 * The grammar word-matcher is NOT derived here — it's pinned once at Link
-	 * time (`link.ts`, from `raw.rules`) and carried onto `normalized.wordMatcher`
-	 * unchanged; see `LinkedGrammar.wordMatcher`'s doc comment.
-	 */
 	static from(
 		normalized: SimplifiedGrammar,
 		generatedIdTables?: GeneratedIdTables,
-		diagnostics: DiagnosticSink = new DiagnosticSink()
+		diagnostics: DiagnosticSink = new DiagnosticSink(),
+		grammarJsonAliasMap?: ReadonlyMap<string, string>
 	): AssembleCtx {
 		return new AssembleCtx({
 			grammar: normalized,
 			diagnostics,
 			wordMatcher: (s) => matchesWordShape(s, normalized.wordMatcher),
 			generatedIdTables,
-			topLevelAliasBodies: normalized.topLevelAliasBodies ?? new Map()
+			topLevelAliasBodies: normalized.topLevelAliasBodies ?? new Map(),
+			grammarJsonAliasMap
 		});
 	}
 }
@@ -248,11 +161,6 @@ export interface AssembledNodeMap extends NodeMap {
 // ---------------------------------------------------------------------------
 // assemble() — main entry point
 // ---------------------------------------------------------------------------
-/**
- * @param ctx - The Assemble phase context; `ctx.grammar` (`Grammar<'simplify'>`
- *   = {@link SimplifiedGrammar}) is the input container — folded in per §2
- *   (formerly a separate `normalized` positional param).
- */
 export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 	const normalized = ctx.grammar;
 	// Link-time-pinned, carried — NOT recompiled here. See
@@ -439,6 +347,42 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			}
 		}
 
+		// Nested-supertype alias materialization (spec 026): a nested
+		// SUPERTYPE rule (e.g. rust's `_non_special_token`, itself a
+		// SUPERTYPE referenced as a subtype of `_tokens`/`_non_delim_token`/
+		// `_token_pattern`) can be aliased by tree-sitter's real compile into
+		// a genuinely distinct, named CST node at that occurrence
+		// (`SupertypeRule.subtypeParseNames`, confirmed against grammar.json
+		// — see `resolveHiddenSubtypes`'s doc comment). That aliased name has
+		// no entry of its own in `normalized.linkRules` (it's a parse-time
+		// label, not a rule sittir's own grammar declares), so the main loop
+		// above never assembles it. Give it one here: reuse the nested rule's
+		// OWN already-resolved subtypes (identical union either way — the
+		// alias and the hidden rule are the same underlying content, just a
+		// different name at this occurrence) under a fresh `AssembledSupertype`
+		// keyed by the alias, so it gets a real kindId/typeName/dispatch entry
+		// like any other node. Multiple parents aliasing the SAME nested rule
+		// to the SAME name (confirmed: `_tokens`/`_non_delim_token`/
+		// `_token_pattern` all alias `_non_special_token` to
+		// "token_pattern_group1") register it exactly once.
+		for (const rule of Object.values(normalized.linkRules)) {
+			if (rule.type !== SUPERTYPE || !rule.subtypeParseNames) continue;
+			for (const [subName, aliasName] of Object.entries(rule.subtypeParseNames)) {
+				if (nodes.has(aliasName)) continue;
+				const subRule = normalized.linkRules[subName];
+				// Only nested SUPERTYPE arms materialize their own node —
+				// other parse-alias occurrences (e.g. an ENUM-shaped hidden
+				// rule like rust's `_primitive_type`, aliased to
+				// `primitive_type` at this same site) aren't a case of
+				// tree-sitter inserting a distinct intermediate node; they
+				// stay resolved via `resolveHiddenSubtypes`'s existing
+				// flatten-through path.
+				if (!subRule || subRule.type !== SUPERTYPE) continue;
+				const subtypes = resolveSupertypeSubtypes(subRule, ctx);
+				nodes.set(aliasName, new AssembledSupertype(aliasName, subRule, subtypes));
+			}
+		}
+
 		collectAnonymousNodes(normalized.linkRules, nodes, wordMatcherRegex, kindEntries);
 		resolveCollidingNames(nodes);
 		resolveIrKeys(nodes);
@@ -450,7 +394,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 			for (const slot of allSlotsOf(n)) {
 				for (const v of slot.values) {
 					if (!isNodeRef(v)) continue;
-					const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
+					const name = storageKindOfRef(v.node);
 					if (name.startsWith('_')) aliasSourceKinds.add(name);
 				}
 			}
@@ -599,28 +543,6 @@ function computePolymorphFormKinds(_nodes: Map<string, AssembledNode>): Set<stri
 	return new Set<string>();
 }
 
-/**
- * Identify rule kinds whose resolved body is wholly optional — references
- * to these are effectively optional at every use site, regardless of how
- * the SYMBOL ref sits in its parent rule. See `currentOptionalBodyKinds`
- * in node-map.ts for the consumer side.
- *
- * A body counts as wholly optional when, stripping transparent wrappers
- * (alias, token, terminal — none of which change "can this match
- * invisibly?" semantics), the top-level form is one of:
- *   - `optional(X)` — the canonical post-stamp shape (DSL-time
- *     `choice(blank, X)` lowers to this; `stampStaticRenderAs`
- *     re-applies the same lowering after blank substitution).
- *   - `choice(...)` containing the blank sentinel. Defensive — the stamp
- *     pass collapses these to `optional()` already, but authored rules
- *     might use this shape directly.
- *
- * Sittir's `terminal` wrapper appears in promoted rules (e.g.
- * `_semicolon` becomes `terminal(optional(';'))` after the normalize
- * fixpoint). Without stripping it, the optionality would be hidden one
- * layer deep and the slot model would still treat references as
- * required-single.
- */
 function collectOptionalBodyKinds(rules: Record<string, Rule<'link'>>): ReadonlySet<string> {
 	const out = new Set<string>();
 	const isBlank = (r: Rule<'link'>): boolean =>
@@ -649,26 +571,6 @@ function collectOptionalBodyKinds(rules: Record<string, Rule<'link'>>): Readonly
 // Supertype + group assembly helpers
 // ---------------------------------------------------------------------------
 
-/**
- * Resolve the subtype kind list for a supertype node from its rule.
- *
- * @param rule - The rule as it appears in `normalized.linkRules` (pre-inlining;
- *   fed by the caller's main assemble loop — see `assemble()`'s own iteration
- *   over `normalized.linkRules`, out of scope for the `ctx.normalizedRules`
- *   read below since this parameter is dictated by that caller, not by this
- *   function's own map reads).
- * @param ctx - The Assemble phase context, used for hidden-rule resolution.
- * @returns The ordered list of concrete kind names that are members of this
- *   supertype union after resolving any hidden-rule indirections.
- * @remarks
- *   Sources in priority order:
- *   1. `SupertypeRule<'link'>.subtypes` — Link's pre-computed list.
- *   2. `choice` members — each `symbol` child's name (fallback).
- *   3. Empty list — for any other rule shape (best-effort).
- *
- *   Hidden names (`_foo`) are then resolved to the concrete kinds that
- *   tree-sitter actually surfaces at runtime via {@link resolveHiddenSubtypes}.
- */
 function resolveSupertypeSubtypes(rule: Rule<'link'>, ctx: AssembleCtx): string[] {
 	let subtypes: string[];
 	if (rule.type === SUPERTYPE) {
@@ -681,29 +583,14 @@ function resolveSupertypeSubtypes(rule: Rule<'link'>, ctx: AssembleCtx): string[
 	} else {
 		subtypes = [];
 	}
-	return resolveHiddenSubtypes(subtypes, ctx, rule.type === SUPERTYPE ? rule.name : undefined);
+	return resolveHiddenSubtypes(
+		subtypes,
+		ctx,
+		rule.type === SUPERTYPE ? rule.name : undefined,
+		rule.type === SUPERTYPE ? rule.subtypeParseNames : undefined
+	);
 }
 
-/**
- * Unwrap a `GroupRule<'link'>` to obtain the inner content rule, its simplified view,
- * and its wrapper-deleted RenderRule.
- *
- * @param rule - The raw rule from `normalized.rules`.
- * @param simplifiedRule - The pre-computed simplified rule for the same kind.
- * @param renderRule - The wrapper-deleted RenderRule for the same kind (from
- *   `normalized.normalizedRules[kind]` or a per-call `deleteWrapper` fallback).
- * @returns `groupRule` — the inner seq-with-fields content; `groupSimplified` —
- *   the simplified view of that inner content; `groupRenderRule` — the
- *   wrapper-deleted view of the inner content.
- * @remarks
- *   When the rule is a `GroupRule<'link'>` the pre-computed `simplifiedRule` and
- *   `renderRule` apply to the OUTER group wrapper (the top-level kind entry).
- *   `applyWrapperDeletion` and `simplifyRule` both recurse through group wrappers
- *   preserving the outer node, so `renderRule.content` and `simplifiedRule.content`
- *   are the wrapper-deleted / simplified inner content respectively. Non-group
- *   rules pass through as-is (the fallback path — groups that didn't get the
- *   `GroupRule<'link'>` wrapper).
- */
 function unwrapGroupRuleAndSimplified(
 	rule: Rule<'link'>,
 	simplifiedRule: SimplifiedRule,
@@ -724,20 +611,6 @@ function unwrapGroupRuleAndSimplified(
 // resolveIrKeys — dedupe-aware short-name pass over the whole NodeMap
 // ---------------------------------------------------------------------------
 
-/**
- * Assign a deduplicated short ir-namespace key to every factory-bearing node.
- *
- * @param nodes - The full assembled node map; `irKey` on each node is mutated.
- * @remarks
- *   The ir namespace (`import { ir } from './ir.js'`) exposes each kind under a
- *   short ergonomic key. Collisions on the short form fall back to the full
- *   `factoryName`; JS reserved words get a `_` suffix. This pass claims keys in
- *   nodeMap iteration order.
- *
- *   Two-phase algorithm: supertypes are pre-claimed first so they block suffix-
- *   stripped collisions. Within each factory-bearing phase, hidden kinds sort
- *   after non-hidden so visible kinds always claim the short key first.
- */
 function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
 	const claimed = new Set<string>();
 	preclaimSupertypeIrKeys(nodes, claimed);
@@ -746,49 +619,12 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
 	for (const node of phase2) assignIrKeyWithFallback(node, claimed);
 }
 
-/**
- * Resolve hidden rule names (`_foo`) referenced as subtypes to the
- * concrete kinds that actually appear in the parse tree.
- *
- * @param names - Raw subtype names from the rule tree (may include `_`-prefixed hidden names).
- * @param ctx - Assemble phase context; `ctx.normalizedRules`/`ctx.topLevelAliasBodies` resolve hidden rule bodies.
- * @returns The resolved list of concrete kind names, deduplicated and in visitation order.
- * @remarks
- *   Tree-sitter inlines hidden rules at parse time — a `_type_identifier` defined as
- *   `alias($.identifier, $.type_identifier)` shows up as `type_identifier` at runtime,
- *   never as `_type_identifier`. Supertype expansion maps built from raw rule-tree names
- *   would miss those kinds and the runtime routing map would fail to promote them.
- *
- *   Handled shapes:
- *   - `alias(x, y)` → `y` (the alias label)
- *   - `symbol(target)` → recurse on target (follow chains)
- *   - `choice(a, b, …)` → flatten each branch
- *   - everything else → keep the hidden name as-is (best-effort)
- *
- *   Non-hidden names pass through unchanged.
- *
- *   2026-07-05 (PR-137 follow-on-3): body lookups migrated from
- *   `ctx.linkRules` to `ctx.normalizedRules` (see `AssembleCtx.normalizedRules`
- *   / `resolveHiddenRuleContent`'s doc comments for the attribute-aware
- *   rationale). follow-on-4 (same day) re-examined `normalizedRules` vs
- *   `ctx.rules` and confirmed empirically that `normalizedRules` must stay —
- *   see `AssembleCtx`'s class doc comment for the `_simple_pattern_negative`
- *   finding that settled it. `ctx.topLevelAliasBodies` is UNCHANGED — its
- *   `.has(name)` test is a presence fact ("is this hidden kind an alias-mint
- *   target elsewhere in the grammar") with no rule-attribute equivalent (a
- *   hidden kind's own rule body carries no trace of being aliased-TO by
- *   another rule), so it can't be derived from `normalizedRules[name]`'s
- *   attributes the way the wrapper shapes could. Its VALUES, however, are now
- *   redundant with `normalizedRules[name]` (verified empirically: every
- *   alias-body kind across all 3 grammars satisfies `normalizedRules[name] ===
- *   applyWrapperDeletion(topLevelAliasBodies.get(name))`, since
- *   `normalizeGrammar` already threads alias-target bodies through the same
- *   wrapper-deletion pipeline and merges them into `normalizedRules` under the
- *   identical hidden-kind key) — so the `body` lookup below reads
- *   `rules[name]` uniformly instead of `topLevelAliasBodies.get(name) ??
- *   rules[name]`.
- */
-function resolveHiddenSubtypes(names: readonly string[], ctx: AssembleCtx, ownerName?: string): string[] {
+function resolveHiddenSubtypes(
+	names: readonly string[],
+	ctx: AssembleCtx,
+	ownerName?: string,
+	subtypeParseNames?: Readonly<Record<string, string>>
+): string[] {
 	const { normalizedRules: rules, topLevelAliasBodies } = ctx;
 	// Post-synthesis-removal: the rules map is keyed by SOURCE kinds
 	// only (hidden `_X`). Subtype names surface as source kinds; we
@@ -810,7 +646,60 @@ function resolveHiddenSubtypes(names: readonly string[], ctx: AssembleCtx, owner
 			out.push(name);
 			return;
 		}
-		if (rule.type === SUPERTYPE || topLevelAliasBodies.has(name)) out.push(name);
+		// Declared parse-alias fact: this hidden arm MATERIALIZES as its own
+		// node at this supertype site (SupertypeRule.subtypeParseNames, stamped
+		// by classifyHiddenChoiceRule — types/rule.ts's doc comment on the
+		// field). When the arm's own rule isn't ITSELF a nested SUPERTYPE, it's
+		// a dedicated leaf/branch content kind (e.g. `_lhs_expression`, backed
+		// by its own LhsExpressionTransport) that must survive as-is rather
+		// than being flattened to its leaf members by resolveHiddenRuleContent
+		// below.
+		if (rule.type !== SUPERTYPE && subtypeParseNames && Object.prototype.hasOwnProperty.call(subtypeParseNames, name)) {
+			out.push(name);
+			return;
+		}
+		// Nested-supertype arms (e.g. rust's `_non_delim_token` stamping
+		// `_non_special_token`, itself a further SUPERTYPE with its own
+		// subtypes) push the bare name, then walk THIS rule's OWN direct
+		// `subtypes` list — NOT `resolveHiddenRuleContent`'s output, which
+		// flattens straight through nested supertypes to their eventual leaf
+		// kinds, erasing exactly the intermediate names `subtypeParseNames`
+		// records. Each SUPERTYPE rule stamps its own map, keyed by its own
+		// direct subtypes. A member with an entry there is substituted with
+		// its alias ONLY when the member is ITSELF a nested SUPERTYPE — spec
+		// 026's alias-materialization pass (assemble()'s main loop, right
+		// after the kind-classification switch) registers a real
+		// `AssembledSupertype` node for exactly that case, so the alias
+		// resolves to a real node (confirmed via grammar.json — see
+		// `loadGrammarJsonAliasMap`). A non-SUPERTYPE member with a
+		// parse-name entry (e.g. `_primitive_type`, an all-STRING ENUM
+		// aliased to `primitive_type` at this occurrence) has no such
+		// separately registered node — only the hidden ENUM kind itself
+		// exists — so it still recurses via `visit` as before.
+		if (rule.type === SUPERTYPE) {
+			out.push(name);
+			for (const sub of rule.subtypes) {
+				const parseName = rule.subtypeParseNames?.[sub];
+				const subRule = sub.startsWith('_') ? rules[sub] : undefined;
+				if (parseName !== undefined && subRule?.type === SUPERTYPE) {
+					if (!seen.has(parseName)) {
+						seen.add(parseName);
+						out.push(parseName);
+					}
+					continue;
+				}
+				if (sub.startsWith('_')) {
+					visit(sub);
+					continue;
+				}
+				if (!seen.has(sub)) {
+					seen.add(sub);
+					out.push(sub);
+				}
+			}
+			return;
+		}
+		if (topLevelAliasBodies.has(name)) out.push(name);
 		const resolved = resolveHiddenRuleContent(rule, new Set([name]), ctx);
 		if (resolved.length === 0) {
 			if (!out.includes(name)) out.push(name);
@@ -880,81 +769,6 @@ function isCompatibleSubtypeMember(
 	return resolved.every((member) => isCompatibleSubtypeMember(member, ctx, subtypeSet, seen));
 }
 
-/**
- * Attribute-aware hidden-body walker (2026-07-05, PR-137 follow-on-3 —
- * migrated OFF `ctx.linkRules` onto `ctx.normalizedRules`; see
- * `AssembleCtx.normalizedRules`'s doc comment). `rule` is a `RenderRule`
- * (wrapper-free): `optional`/`field`/`repeat`/`repeat1`/`alias` wrappers don't
- * exist as `rule.type` values on this view — their meaning is stamped onto
- * whatever leaf they used to wrap, as `multiplicity`/`fieldName`/`aliasedFrom`/
- * `aliasNamed`. The link-view switch enforced wrapper opacity by SIMPLY HAVING
- * NO CASE for REPEAT/REPEAT1/OPTIONAL/FIELD (falling to `default: []`); the
- * equivalent here is an explicit attribute check BEFORE the type switch,
- * covering every rule type uniformly (a repeat/optional can wrap ANY rule
- * shape, not just the ones the old switch happened to dispatch):
- *
- *   - `multiplicity === 'array' | 'nonEmptyArray'` — was `repeat`/`repeat1`.
- *     LOAD-BEARING: this is the crash fix (regression fixture:
- *     `assemble.test.ts` "keeps a REPEAT1(CHOICE(...)) punctuation-literal
- *     group opaque..."). A `REPEAT1(CHOICE('%','+',...))` (rust's
- *     `_non_special_token`'s TOKEN_TREE_NON_SPECIAL_PUNCTUATION arm, reached
- *     through `_delim_tokens`'s supertype chain) collapses post-wrapper-
- *     deletion to a bare `CHOICE(...)` stamped `multiplicity: 'nonEmptyArray'`
- *     — structurally indistinguishable from an unwrapped CHOICE without this
- *     check, so the old switch's CHOICE case would wrongly recurse into the
- *     punctuation arms and surface `%` as a bogus subtype name (crashing
- *     `emitSupertypeUnionDeclarations`). PR-137 follow-on-4 confirmed this
- *     particular shape actually survives `computeSimplifiedRules` unchanged
- *     too (`simplifyChoiceRule` bails to a no-op `liftSharedArmAttrs` for two
- *     bare STRING branches; `simplifySeqRule`'s anonymous-literal stripping
- *     only fires on SEQ members, never CHOICE members) — but a SIBLING shape
- *     (a SEQ, not a CHOICE, wrapping one anonymous literal + one nonterminal)
- *     does NOT survive unchanged, which is why the family stays on
- *     `normalizedRules` rather than migrating to `ctx.rules` — see the `case
- *     SEQ` branch below and `AssembleCtx`'s class doc comment for that
- *     finding (python's `_simple_pattern_negative`).
- *   - `multiplicity === 'optional'` — was `optional`. The link-view switch had
- *     no OPTIONAL case either (same opacity), so this mirrors it exactly.
- *   - `fieldName !== undefined` — was `field`. Kept for parity though no
- *     caller in this family is expected to hand a field-wrapped position
- *     (callers only pass hidden-kind top-level bodies and supertype/choice
- *     arms, never seq-internal field slots).
- *
- * `ALIAS` is dropped as a switch case (not translated): unlike `token`,
- * `alias` is fully consumed by `applyWrapperDeletion` (it never survives as
- * its own node — the wrapper disappears and `aliasedFrom`/`aliasNamed` land on
- * its content), so `RenderRule` can never have `type === 'ALIAS'` at runtime,
- * not just by static type (`AliasRule<'normalize'> = never`). Its resolution
- * ("resolve to the alias's source kind": `rule.named && content.type ===
- * SYMBOL` → the inner symbol's OWN name — the SOURCE kind, not the alias's
- * `value` target; else → `rule.value`) is subsumed by two reads: the SYMBOL
- * case's existing `aliasedFrom ?? name` (unchanged — that fact predates this
- * migration; see `SymbolRule.aliasedFrom`'s doc comment, a link-time
- * stamping distinct from wrapper-deletion's but carrying the same source-kind
- * meaning and never conflicting, since wrapper-deletion's outer-alias-wins
- * merge only overwrites when an ENCLOSING alias exists) for the
- * `content.type === SYMBOL` case; and a NEW generic non-SYMBOL fallback below
- * (`rule.aliasedFrom` on any other leaf type) for the `else` branch — the old
- * switch never had to handle "alias-of-non-symbol" as its own case because
- * the link-view ALIAS node caught it structurally; post-wrapper-deletion the
- * content's own type dispatches instead, so the fallback re-surfaces exactly
- * that one fact (`rule.value`, preserved as `aliasedFrom`) the SYMBOL-only
- * read would otherwise miss.
- *
- * `TOKEN` is dropped as a switch case (matching `emitters/templates.ts`'s
- * `isLeftmostTerminalImmediate` precedent — see its NOTE comment,
- * `project_preserve_token_wrappers`): `applyWrapperDeletion`'s TOKEN case
- * technically PRESERVES the node (`{...rule, content}`, not deleted like
- * ALIAS), so `RenderRule`'s `never` for TOKEN is a type-level assertion, not a
- * runtime guarantee — but it's backed by the same EMPIRICAL fact that
- * consumer already relies on (0 top-level `token(...)` survivors into
- * `normalizedRules` across all 3 grammars). Adding a defensive case here would
- * require an `as`-cast the gates forbid for a shape that doesn't occur;
- * `default: []` is honest (a hidden supertype/choice chain reaching a
- * TOKEN-wrapped position would be opaque anyway, since opacity is the safe
- * fallback) and matches the recorded preserve-token-wrappers debt rather than
- * papering over it per-callsite.
- */
 function resolveHiddenRuleContent(rule: RenderRule, seen: Set<string>, ctx: AssembleCtx): string[] {
 	const rules = ctx.normalizedRules;
 	// Wrapper-opacity attribute checks — see doc comment. Must run BEFORE the
@@ -1048,62 +862,6 @@ function resolveHiddenRuleContent(rule: RenderRule, seen: Set<string>, ctx: Asse
 	}
 }
 
-/**
- * Find `typeName` collisions between hidden (`_`-prefixed) kinds and their visible
- * siblings, and disambiguate by renaming the hidden kinds.
- *
- * @param nodes - The full assembled node map; `typeName` and `factoryName` on
- *   colliding hidden nodes are mutated.
- * @remarks
- *   Non-colliding hidden kinds keep their clean names. Emits a warning for every
- *   rename so the run log surfaces which grammar rules are sharing names.
- *
- *   Three collision patterns are handled:
- *   - `visible ≥ 1` AND `hidden ≥ 1` → rename hidden(s) via {@link renameCollidingHiddenKinds}
- *   - `visible ≥ 2` → rename lower-priority visible(s) via {@link renameCollidingVisibleKinds}
- *   - `hidden ≥ 2` → rename lower-priority hidden(s) via {@link renameCollidingHiddenOnlyKinds}
- */
-/**
- * Populate each node's `userFacing` flag — the single source of truth
- * for whether emitters (templates, factories, types, IR) should
- * produce output for the kind.
- *
- * - `token` / `multi` modelTypes: never user-facing (structural helpers).
- * - Visible kinds (not `_`-prefixed): user-facing.
- * - Hidden kinds: user-facing only when they're alias sources
- *   (referenced elsewhere via `aliasedFrom`, meaning factories
- *   stamp this kind as `$type`).
- *
- * Alias-source detection: walk every node's field / child value
- * slots and collect unresolved-ref names starting with `_`. Those
- * references only exist in the emitted NodeMap when
- * `walkForChildren` / `deriveValuesForRule` stamped the source
- * (`aliasedFrom`) rather than the visible target.
- */
-/**
- * Hydrate every slot value's `node` reference from `UnresolvedRef` to the
- * concrete `AssembledNode` produced during assembly.
- *
- * Called by the codegen pipeline AFTER `assemble()` returns AND AFTER the
- * raw NodeMap has been serialized (e.g. `node-model.json5` emit) but
- * BEFORE the in-memory consumers (factories, types, render, etc.) read
- * slot graphs. Once hydrated, `slot.values[*].node` carries the full
- * `AssembledNode` reference — the consumer-side
- * `isUnresolvedRef(v.node) ? v.node.name : v.node.kind` ternary becomes
- * unnecessary; emitters can read `v.node.kind` (or `.modelType`) directly.
- *
- * THROWS on any reference that points to a kind absent from `nodes` —
- * unresolvable refs are codegen bugs, not runtime data, and must surface
- * loudly. The error names source kind, slot, and unresolved target.
- *
- * Mutation: rewrites `NodeRef.node` in place via a single justified
- * `readonly` cast. Slot `values` array identity is preserved; only the
- * `.node` field updates. Constitution VIII exception — this IS the
- * legitimate boundary turning the `T | UnresolvedRef` placeholder into
- * the resolved `T`. After hydration the node graph is CYCLIC, so the
- * NodeMap is no longer JSON-serializable — call this only after any
- * serialization passes.
- */
 export function hydrateSlotRefs(nodeMap: NodeMap): void {
 	const externals = nodeMap.externals ?? new Set<string>();
 	for (const [kind, node] of nodeMap.nodes) {
@@ -1129,18 +887,13 @@ function hydrateSlots(
 				(v as { node: AssembledNode | UnresolvedRef }).node = target;
 				continue;
 			}
-			// Canonical-hidden architecture: alias-target names like
-			// `as_pattern_target` are the VISIBLE names; the assembled node
-			// map registers the hidden source `_as_pattern_target`. When the
-			// visible name isn't found, retry with `_<name>` — that's the
-			// canonical form per the alias-target → hidden-source convention.
-			if (!targetName.startsWith('_')) {
-				const hiddenSource = nodes.get(`_${targetName}`);
-				if (hiddenSource) {
-					(v as { node: AssembledNode | UnresolvedRef }).node = hiddenSource;
-					continue;
-				}
-			}
+			// PR-K3f: the historical `_<name>` retry (visible alias-target name →
+			// hidden MODEL node) was probed across all three grammars and fired
+			// ZERO times — the mint now resolves canonical names, so every
+			// hydratable ref hits the primary lookup above. Retired per the
+			// KindId-NodeRefs spec §2.3 retire-list. A future grammar that
+			// reintroduces visible→hidden refs surfaces below as the loud
+			// unresolved-slot-reference diagnostic, not a silent rewire.
 			// Three legitimate categories where the target ISN'T in the
 			// assembled NodeMap and we leave the `UnresolvedRef` in place:
 			//
@@ -1176,47 +929,11 @@ function hydrateSlots(
 	}
 }
 
-/**
- * Per-node context for {@link markUserFacing} — carries the two cross-node
- * sets pre-computed once before the per-node loop (M3 / spec §7.7 / principle
- * #14: cross-node state lives on ctx, not a getter-with-arg).
- *
- * @internal — not exported; used only by the post-pass driver inside assemble().
- */
 interface _UserFacingCtx {
-	/** Hidden kinds that appear as alias sources in at least one other node's slot. */
 	readonly aliasSourceKinds: ReadonlySet<string>;
-	/**
-	 * Hidden variant-child kind strings (`${parent}_${child}`) registered via
-	 * `polymorphVariants`. These are NOT slot-reachable when the parent is a
-	 * supertype, so they must be promoted independently of `aliasSourceKinds`.
-	 */
 	readonly variantChildKinds: ReadonlySet<string>;
 }
 
-/**
- * Mark every node in `nodes` with its `userFacing` flag (M3 — merged pass).
- *
- * A single `(node, ctx)` pass that replaces the former two-pass sequence
- * (`markUserFacing` + `markVariantChildrenUserFacing`). The set of kinds
- * marked `userFacing=true` is the union of:
- *
- *   (a) visible (non-`_`-prefixed) non-token/multi kinds,
- *   (b) hidden polymorph kinds (dispatched into via `$variant`),
- *   (c) hidden kinds that surface as alias sources in another node's slots
- *       (`ctx.aliasSourceKinds`), and
- *   (d) hidden variant-child kinds from `polymorphVariants` that the slot
- *       walker never reaches when the parent is a supertype
- *       (`ctx.variantChildKinds`).
- *
- * Per principle #14, `userFacing` is cross-node state (whether THIS hidden
- * kind appears in ANOTHER node's slot, or in the `polymorphVariants` list),
- * so it MUST be a `(node, ctx)` pass — never a getter-with-arg. Emitters read
- * the populated `node.userFacing` field; no read-site changes needed.
- *
- * @param node - The node to mark; `node.userFacing` is written in place.
- * @param ctx - Pre-computed cross-node sets (built once before the loop).
- */
 function markUserFacing(node: AssembledNode, ctx: _UserFacingCtx): void {
 	const { kind } = node;
 	if (node.modelType === 'token' || node.modelType === 'multi') {
@@ -1259,23 +976,6 @@ function resolveCollidingNames(nodes: Map<string, AssembledNode>): void {
 	}
 }
 
-/**
- * Rename hidden kinds that share a `typeName` with at least one non-token visible kind
- * by adding a `_` prefix to their `typeName` and `factoryName`.
- *
- * @param visible - Nodes with non-hidden kinds that share the same `typeName`.
- * @param hidden - Nodes with hidden (`_`-prefixed) kinds that share the same `typeName`.
- * @param typeName - The shared `typeName` string before disambiguation.
- * @remarks
- *   Only renames when a visible sibling actually gets an exported TypeScript declaration.
- *   Token nodes (`modelType === 'token'`) are anonymous structural delimiters that only
- *   appear as exported type aliases if they are referenced in a field/child union — many
- *   aren't. If ALL visible siblings are tokens, there is no actual TypeScript collision
- *   and the hidden kind's name is left unchanged.
- *
- *   Visible wins. Hidden kinds are renamed with a `_` prefix to preserve the tree-sitter
- *   convention that hidden/internal kinds start with an underscore.
- */
 function renameCollidingHiddenKinds(visible: AssembledNode[], hidden: AssembledNode[], typeName: string): void {
 	const hasNonTokenVisible = visible.some((n) => n.modelType !== 'token');
 	if (!hasNonTokenVisible) return;
@@ -1297,18 +997,6 @@ function renameCollidingHiddenKinds(visible: AssembledNode[], hidden: AssembledN
 	}
 }
 
-/**
- * Rename all but the first (alphabetically) of multiple visible kinds that have
- * collapsed to the same `typeName`, appending a numeric disambiguator to the rest.
- *
- * @param visible - Two or more visible (non-hidden) nodes that share the same `typeName`.
- * @param typeName - The shared `typeName` string before disambiguation.
- * @remarks
- *   Two visible kinds collapse to the same typeName when grammar symbols differ only
- *   in case (e.g. python's `true` keyword + `True` named node). The first kind (sorted
- *   by kind string) keeps the original name; subsequent ones receive a numeric suffix.
- *   A warning is emitted so the situation is visible in the run log.
- */
 function renameCollidingVisibleKinds(visible: AssembledNode[], typeName: string): void {
 	const sorted = [...visible].sort((a, b) => a.kind.localeCompare(b.kind));
 	for (let i = 1; i < sorted.length; i++) {
@@ -1332,16 +1020,6 @@ function renameCollidingVisibleKinds(visible: AssembledNode[], typeName: string)
 	}
 }
 
-/**
- * Rename all but the first of multiple hidden kinds that have normalised to the same
- * `typeName`, appending a numeric suffix to each after the first.
- *
- * @param hidden - Two or more hidden (`_`-prefixed) nodes that share the same `typeName`.
- * @param typeName - The shared `typeName` string before disambiguation.
- * @remarks
- *   Two hidden kinds both normalized to the same name receive numeric suffixes on every
- *   node after the first. A warning is emitted for each rename.
- */
 function renameCollidingHiddenOnlyKinds(hidden: AssembledNode[], typeName: string): void {
 	for (let i = 1; i < hidden.length; i++) {
 		const h = hidden[i]!;
@@ -1359,17 +1037,6 @@ function renameCollidingHiddenOnlyKinds(hidden: AssembledNode[], typeName: strin
 	}
 }
 
-/**
- * Pre-claim the short ir-namespace key for every supertype node in the map.
- *
- * @param nodes - The full assembled node map.
- * @param claimed - Mutable set of already-claimed ir keys; modified in place.
- * @remarks
- *   Supertypes don't get factories but they DO occupy a name in the ir namespace
- *   (as a type alias). Pre-claiming their short form ensures that a factoryless
- *   supertype like python `expression` still blocks `expression_statement` from
- *   collapsing its irKey onto `expression`.
- */
 function preclaimSupertypeIrKeys(nodes: Map<string, AssembledNode>, claimed: Set<string>): void {
 	for (const node of nodes.values()) {
 		if (node.modelType !== 'supertype') continue;
@@ -1377,24 +1044,6 @@ function preclaimSupertypeIrKeys(nodes: Map<string, AssembledNode>, claimed: Set
 	}
 }
 
-/**
- * Partition factory-bearing nodes into two priority phases for ir-key assignment.
- *
- * @param nodes - The full assembled node map.
- * @returns Two arrays — `phase1` contains nodes whose short form equals their
- *   factoryName (they have no distinct fallback), `phase2` contains nodes whose
- *   short form is a suffix-stripped abbreviation of their factoryName (they have
- *   a longer factoryName to fall back to on collision). Within each phase, hidden
- *   kinds sort after non-hidden so visible kinds claim the short key first.
- * @remarks
- *   Priority 1 — "short form is the full name". Any node whose short irKey equals its
- *   own factoryName gets first dibs (it has nothing to fall back to that wouldn't
- *   also collide). Examples: `expression`, `as_pattern` (→ `asPattern`), `module`
- *   (→ `module`). This forces suffix-stripped collisions (e.g. `expression_statement`
- *   → `expression`) to lose to the genuinely-short kind.
- *   Priority 2 — "short form is a strip of the full name". These have a distinct
- *   factoryName fallback (e.g. `expression_statement` → `expressionStatement`).
- */
 function partitionNodesIntoIrKeyPhases(nodes: Map<string, AssembledNode>): {
 	phase1: AssembledNode[];
 	phase2: AssembledNode[];
@@ -1418,18 +1067,6 @@ function partitionNodesIntoIrKeyPhases(nodes: Map<string, AssembledNode>): {
 	return { phase1, phase2 };
 }
 
-/**
- * Assign an ir-namespace key to a single node, falling back to the full factory
- * name (and then a numeric suffix) when the short form is already claimed.
- *
- * @param node - The node whose `irKey` property is assigned.
- * @param claimed - Mutable set of already-claimed ir keys; modified in place.
- * @remarks
- *   On collision, falls back to the full factory name. For hidden kinds this is
- *   `hiddenX`, distinct from the visible short form. In the extremely rare case
- *   where even the full name collides (two kinds normalise to the same factoryName),
- *   a numeric suffix is appended to guarantee uniqueness.
- */
 function assignIrKeyWithFallback(node: AssembledNode, claimed: Set<string>): void {
 	const short = shortenIrKey(node.kind);
 	if (!claimed.has(short)) {
@@ -1507,18 +1144,6 @@ function collectAnonymousNodes(
 	}
 }
 
-/**
- * Recursively collect all string literals from a rule tree into `out`.
- *
- * @param rule - The rule to walk.
- * @param out - Mutable set that receives each string literal value.
- * @remarks
- *   `enum` rules are deliberately **not** descended. Enum values are the `text`
- *   content of the parent kind, not distinct node kinds — the parser produces a
- *   single node (e.g. `primitive_type` with text `"usize"`), never a `usize`
- *   node, so collecting the enum member strings as anonymous token kinds would
- *   be incorrect.
- */
 function walkForStrings(rule: Rule<'link'>, out: Map<string, string>): void {
 	switch (rule.type) {
 		case STRING:
@@ -1570,22 +1195,6 @@ type ModelType = AssembledNode['modelType'];
 // fixpoint (enables flatten + canonicalize to re-fire on inlined
 // content). Imported above; no longer defined here.
 
-/**
- * Classify a rule into a model type by pure rule.type dispatch.
- *
- * By the time rules reach Assemble, Link and Normalize have already
- * pre-classified the interesting cases via dedicated rule types:
- *
- *   EnumRule<'link'>       — Link: choice-of-strings
- *   SupertypeRule<'link'>  — Link: hidden choice-of-symbols (grammar or promoted)
- *   GroupRule<'link'>      — Link: hidden seq with fields
- *   TerminalRule   — Link: subtree with no fields and no symbol refs
- *   PolymorphRule  — Normalize: choice-of-variants with heterogeneous fields
- *
- * Assemble just dispatches on rule.type. The only structural inspection
- * left is distinguishing branch (has fields) from container (has children
- * only) for ordinary seq rules — that's a one-level check.
- */
 export function classifyNode(
 	kind: string,
 	rule: Rule<'link'>,
@@ -1614,19 +1223,6 @@ export function classifyNode(
 	return classifyTerminalFallback(kind, rule);
 }
 
-/**
- * A rule whose ENTIRE top-level structure is a repeated list with genuine
- * per-instance separator variability — either the separator itself is
- * nonterminal (multiple possible literal kinds), or it's a literal
- * separator with an optional (not mandatory, not absent) leading/trailing
- * flank. See docs/superpowers/specs/2026-07-12-separator-as-slot-design.md.
- *
- * Does NOT match a branch that merely HAS one array-multiplicity field
- * among several named fields (that stays 'branch', unchanged) — only a
- * rule whose own top-level type IS repeat/repeat1 qualifies, which is
- * exactly the same shape gate `isHiddenRepeatHelper` uses via
- * `extractRepeatShape` for the (unrelated) hidden-multi case above.
- */
 function isSeparatedListShape(rule: Rule<'link'>): boolean {
 	if (rule.type !== REPEAT && rule.type !== REPEAT1) return false;
 	const sep = rule.separator;
@@ -1639,28 +1235,6 @@ function isSeparatedListShape(rule: Rule<'link'>): boolean {
 	return sep.trailing === 'optional' || sep.leading === 'optional';
 }
 
-/**
- * Test whether a kind should be classified as a hidden `multi` helper.
- *
- * @param kind - The rule kind name (snake_case, may start with `_`).
- * @param rule - The rule body for that kind.
- * @param parentAliasedKinds - Optional set of hidden kind names that appear
- *   as the content of a named alias in a parent rule. When provided, kinds
- *   in this set are excluded from the `multi` classification even if their
- *   rule body is a repeat: they surface as REAL runtime CST nodes (under
- *   the alias target name) and need their own `branch` transport type.
- * @returns `true` when the kind is hidden, its body unwraps to a repeat,
- *   AND it is NOT aliased by a parent rule.
- * @remarks
- *   Hidden repeat helpers are inlined by tree-sitter at parse time, so they never
- *   surface as concrete nodes. Classifying them as `multi` lets downstream emitters
- *   skip the interface/factory/resolver and the walker inlines the repeat at
- *   referrers (rest-params factory, multi-valued child slot). See AssembledMulti doc.
- *
- *   Aliased hidden kinds (e.g. `_with_clause_bare` aliased to `with_clause_bare`)
- *   are NOT inlined — tree-sitter exposes them as concrete named nodes. They must
- *   classify as `branch` so the Rust transport can dispatch on their kind ID.
- */
 function isHiddenRepeatHelper(kind: string, rule: Rule<'link'>, parentAliasedKinds?: ReadonlySet<string>): boolean {
 	if (!kind.startsWith('_')) return false;
 	if (extractRepeatShape(rule) === null) return false;
@@ -1670,42 +1244,11 @@ function isHiddenRepeatHelper(kind: string, rule: Rule<'link'>, parentAliasedKin
 	return true;
 }
 
-/**
- * Classify a rule as `branch` based on presence of fields or children,
- * or return `null` when neither applies.
- *
- * The prior `'container'` model was collapsed into
- * `'branch'`: nodes that carry only unnamed children (no `field()` on
- * the rule) are still `AssembledBranch` instances, distinguishable at
- * the call site via `AssembledBranch.isContainerShape`. The single
- * classification arm reflects that there is one runtime class for
- * both shapes.
- *
- * @param rule - The rule to inspect.
- * @returns `'branch'` if the rule has any named field or unnamed child,
- *   or `null` when neither applies.
- * @remarks
- *   Only existence checks are performed — not full extraction. The class
- *   getter (`AssembledBranch.fields`) does the full walk later, once.
- */
 function classifyBranchOrContainer(rule: Rule<'link'>): ModelType | null {
 	if (hasAnyField(rule) || hasAnyChild(rule)) return 'branch';
 	return null;
 }
 
-/**
- * Apply the terminal fallback classification after all structural checks
- * have failed to assign a model type.
- *
- * @param kind - The rule kind name, used in the error message.
- * @param rule - The rule body for that kind.
- * @returns `'pattern'` for all-text subtrees, `'enum'` for pure choice-of-strings.
- * @throws {Error} When the rule cannot be classified by any heuristic — indicates
- *   that Link should have wrapped it as a `TerminalRule`.
- * @remarks
- *   All-text subtree → leaf; pure choice-of-strings → enum. Anything still
- *   unclassifiable after this is a real pipeline error.
- */
 function classifyTerminalFallback(kind: string, rule: Rule<'link'>): ModelType {
 	// PR-P: isEnumChoiceRule checked BEFORE isAllTextShape — an all-STRING ChoiceRule<'link'>
 	// passes isAllTextShape too, but must classify as 'enum', not 'pattern'.
@@ -1717,16 +1260,6 @@ function classifyTerminalFallback(kind: string, rule: Rule<'link'>): ModelType {
 	);
 }
 
-/**
- * Shape-inspection helper for the classifier fallback. A rule is
- * "all text" when every leaf is a string or pattern and there are
- * no symbol references. Walked recursively through seq/choice/
- * optional/repeat/token/variant/clause/group wrappers.
- *
- * Exported so the slot-grouping diagnostic can reuse the SAME predicate
- * to suppress content-collision false-positives on pattern kinds — DRY:
- * one definition, no mirrored copy that can drift (e.g. the REPEAT1 case).
- */
 export function isAllTextShape(rule: Rule<'link'>): boolean {
 	switch (rule.type) {
 		case STRING:

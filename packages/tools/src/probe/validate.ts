@@ -107,6 +107,7 @@ export async function run(opts: ProbeValidateOptions): Promise<number> {
 		pretty: opts.pretty,
 		baseline: undefined,
 		baselineParser: false,
+		shipped: false,
 		engine,
 		trace: opts.trace,
 		logParse: false,

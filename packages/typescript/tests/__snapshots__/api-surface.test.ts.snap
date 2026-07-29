@@ -290,6 +290,7 @@ exports[`@sittir/typescript — API surface snapshot (SC-008) > top-level export
   "toEdit": "function",
   "tupleTypeMember": "object",
   "type": "object",
+  "withAccessors": "function",
   "withMethods": "function",
   "wrapNode": "function",
 }

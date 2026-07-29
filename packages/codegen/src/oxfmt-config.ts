@@ -33,11 +33,4 @@ export const OXFMT_CONFIG: FormatConfig = {
 	]
 };
 
-/**
- * The effective config for formatting a single `.ts` file's content via
- * oxfmt's programmatic `format()` API. That API does not auto-discover
- * `.editorconfig` the way oxfmt's CLI does, so `.editorconfig`'s
- * `indent_style = tab` rule for `.ts` files (repo-wide, `root = true`,
- * unambiguous) is merged in by hand here.
- */
 export const OXFMT_EFFECTIVE_CONFIG: FormatConfig = { ...OXFMT_CONFIG, useTabs: true };

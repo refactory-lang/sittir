@@ -120,6 +120,31 @@ function findNodeBySpanOfKind(node: TSNode, startIndex: number, endIndex: number
 	return null;
 }
 
+/**
+ * Locate the first parse defect (MISSING or ERROR node) in a re-parsed
+ * tree and describe it as a cause signature: the broken construct, not
+ * the entry that happened to contain it. Root-kind entries (source_file/
+ * program/module) fail whenever ANY nested render is off, so bucketing
+ * re-parse failures by entry kind measures blast radius, not defects —
+ * this pins the actual divergence point instead.
+ */
+function firstParseDefect(node: TSNode): string | null {
+	if (node.isMissing) {
+		return `MISSING "${node.type}" in ${node.parent?.type ?? 'root'}`;
+	}
+	if (node.isError) {
+		const tokenHead = node.text.replace(/\s+/g, ' ').slice(0, 20);
+		return `ERROR in ${node.parent?.type ?? 'root'} at "${tokenHead}"`;
+	}
+	for (let i = 0; i < node.childCount; i++) {
+		const c = node.child(i);
+		if (!c || !c.hasError) continue;
+		const hit = firstParseDefect(c);
+		if (hit) return hit;
+	}
+	return null;
+}
+
 function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
 	if (node.type === kind && node.startIndex === offset) return node;
 	for (let i = 0; i < node.childCount; i++) {
@@ -436,6 +461,9 @@ export async function validateReadRenderParse(
 			const tree1 = parser.parse(entry.source) as TSTree;
 			if (tree1.rootNode.hasError) {
 				skip++;
+				if (process.env.SITTIR_VALIDATOR_ENTRY_LOG) {
+					console.log(`ENTRY\t${recursive ? 'deep' : 'shallow'}\t${entry.name}\tskip-parse-error\tast-fail`);
+				}
 				continue; // Corpus entries with parse errors (intentional error tests)
 			}
 
@@ -466,12 +494,23 @@ export async function validateReadRenderParse(
 
 			if (testableKinds.length === 0) {
 				skip++;
+				if (process.env.SITTIR_VALIDATOR_ENTRY_LOG) {
+					console.log(`ENTRY\t${recursive ? 'deep' : 'shallow'}\t${entry.name}\tskip-no-testable\tast-fail`);
+				}
 				continue;
 			}
 
 			// Test round-trip for each testable kind found
 			let entryOk = true;
 			let entryAstMatch = true;
+			// Tracks whether ANY kind in this entry ever reached a genuine
+			// round-trip attempt (kindHadCandidate=true below) — as opposed to
+			// every candidate silently `continue`-ing via a neutral skip
+			// (no supertype context, empty render). Without this, an entry
+			// where EVERY kind's candidates are all neutrally skipped falls
+			// through with entryOk/entryAstMatch still at their initial `true`,
+			// counting as a pass despite testing nothing at all.
+			let entryHadAnyCandidate = false;
 			for (const kind of testableKinds) {
 				if (shouldStop) break;
 
@@ -509,9 +548,18 @@ export async function validateReadRenderParse(
 					// no native coords.
 					let data: AnyNodeData;
 					try {
+						// `$childIndex` is undefined for a candidate that IS the tree
+						// root (nothing above it to index into) — defaulting it to 0
+						// would make `handle.read(handle, 0)` drill into the root's
+						// FIRST CHILD, silently round-tripping the wrong node (the
+						// child mislabeled as the parent). Root candidates take the
+						// deep-materialization path instead of guessing an index.
 						data =
-							recursive !== true && cand.node.$nodeHandle != null && handle.read
-								? (handle.read(cand.node.$nodeHandle, cand.node.$childIndex ?? 0) as unknown as AnyNodeData)
+							recursive !== true &&
+							cand.node.$nodeHandle != null &&
+							cand.node.$childIndex != null &&
+							handle.read
+								? (handle.read(cand.node.$nodeHandle, cand.node.$childIndex) as unknown as AnyNodeData)
 								: (stripStructuralNodeText(materializeWrappedNodeData(cand.node)) as AnyNodeData);
 					} catch (e) {
 						kindErrors.push({
@@ -535,6 +583,10 @@ export async function validateReadRenderParse(
 					}
 					try {
 						const rendered = render(data);
+						if (process.env['SITTIR_VALIDATOR_DUMP_RENDER'] && entry.name === process.env['SITTIR_VALIDATOR_DUMP_RENDER']) {
+							writeSync(2, `[dump-render] mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)} data=${JSON.stringify(data)}\n`);
+							writeSync(2, `[dump-render] mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)} rendered=${JSON.stringify(rendered)}\n`);
+						}
 
 						// Wrap for reparse using supertype context
 						const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, {
@@ -549,10 +601,13 @@ export async function validateReadRenderParse(
 
 						// Re-parse
 						const tree2 = parser.parse(wrapped.text) as TSTree;
+						if (process.env['SITTIR_VALIDATOR_DUMP_RENDER'] && entry.name === process.env['SITTIR_VALIDATOR_DUMP_RENDER']) {
+							writeSync(2, `[dump-reparse] mode=${recursive ? 'deep' : 'shallow'} entry=${entry.name} kind=${String(kind)} hasError=${tree2.rootNode.hasError} wrappedText=${JSON.stringify(wrapped.text)} sexp=${JSON.stringify(tree2.rootNode.toString().slice(0,300))}\n`);
+						}
 						if (tree2.rootNode.hasError) {
 							const failure = {
 								name: `${entry.name} [${renderedKind}]`,
-								message: `re-parse error: "${rendered.slice(0, 80)}"`,
+								message: `re-parse error [${firstParseDefect(tree2.rootNode) ?? 'unlocated'}]: "${rendered.slice(0, 80)}"`,
 								input: inputSource,
 								rendered
 							};
@@ -587,7 +642,7 @@ export async function validateReadRenderParse(
 						if (!node2) {
 							const failure = {
 								name: `${entry.name} [${renderedKind}]`,
-								message: `kind not found at rendered offset ${wrapped.offset}`,
+								message: `kind not found at rendered offset ${wrapped.offset}${/^\s/.test(rendered) ? ' [leading-whitespace render]' : ''}`,
 								input: inputSource,
 								rendered
 							};
@@ -688,12 +743,40 @@ export async function validateReadRenderParse(
 				// counts when EVERY candidate node that round-tripped
 				// also matched structurally — surfacing partial AST
 				// regressions even when entry-pass survives.
-				if (!kindHadCandidate) continue; // every candidate skipped — neutral on this kind
+				if (process.env.SITTIR_VALIDATOR_KIND_LOG) {
+					const outcome = kindHadCandidate ? (kindOk ? 'pass' : 'fail') : kindErrors.length > 0 ? 'fail' : 'neutral';
+					console.log(`KIND\t${recursive ? 'deep' : 'shallow'}\t${entry.name}\t${kind}\t${outcome}`);
+				}
+				if (!kindHadCandidate) {
+					// `kindHadCandidate` only flips on a full round-trip SUCCESS,
+					// so a kind where every candidate genuinely ATTEMPTED and
+					// FAILED (read threw / re-parse error / kind not found — the
+					// paths that push kindErrors) lands here exactly like a kind
+					// whose candidates were all neutrally skipped (no supertype,
+					// empty render — paths that push nothing). Distinguish by the
+					// collected errors: real failures must be REPORTED and score
+					// the entry as a failure — silently `continue`-ing here made
+					// 100%-failing kinds invisible to diff-failures entirely (no
+					// error line, no fail count), which masked a whole regression
+					// class from the standard tooling.
+					if (kindErrors.length > 0) {
+						errors.push(kindErrors[0]!);
+						entryHadAnyCandidate = true;
+						entryOk = false;
+						entryAstMatch = false;
+						// KIND_LOG mode: keep walking remaining kinds for full
+						// per-kind coverage — entry scoring is already latched.
+						if (!process.env.SITTIR_VALIDATOR_KIND_LOG) break;
+						continue;
+					}
+					continue; // every candidate neutrally skipped — neutral on this kind
+				}
+				entryHadAnyCandidate = true;
 				if (!kindOk) {
 					if (kindErrors.length > 0) errors.push(kindErrors[0]!);
 					entryOk = false;
 					entryAstMatch = false;
-					break;
+					if (!process.env.SITTIR_VALIDATOR_KIND_LOG) break;
 				}
 				if (!kindAstMatch) {
 					if (kindAstMismatches.length > 0) astMismatches.push(kindAstMismatches[0]!);
@@ -701,8 +784,21 @@ export async function validateReadRenderParse(
 				}
 			}
 
-			if (entryOk) pass++;
-			if (entryAstMatch) astMatchPass++;
+			// An entry whose every kind was neutrally skipped (no genuine
+			// round-trip attempt ever succeeded past the read step) has tested
+			// nothing — score it like the testableKinds.length===0 case above
+			// (skip), not a silent pass. See entryHadAnyCandidate's doc comment.
+			if (!entryHadAnyCandidate) {
+				skip++;
+			} else {
+				if (entryOk) pass++;
+				if (entryAstMatch) astMatchPass++;
+			}
+			if (process.env.SITTIR_VALIDATOR_ENTRY_LOG) {
+				const outcome = !entryHadAnyCandidate ? 'skip' : entryOk ? 'pass' : 'fail';
+				const ast = entryHadAnyCandidate && entryAstMatch ? 'ast-pass' : 'ast-fail';
+				console.log(`ENTRY\t${recursive ? 'deep' : 'shallow'}\t${entry.name}\t${outcome}\t${ast}`);
+			}
 		} catch (e) {
 			errors.push({
 				name: entry.name,

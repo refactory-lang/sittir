@@ -8,14 +8,17 @@
  * Uses the rust grammar as a concrete example.
  *
  * `it.fails` cases: specs/022-binding-simplify-assemble/IMPLEMENTATION-
- * STATUS.md documents freeze + non-enumerable accessors/$with as deferred
- * ("hygiene rule: iterative optimizations") — `freezeNodeData` and
- * `buildWithNamespace` (packages/common/src/nodeData.ts) are tagged
- * `@forFutureUse ADR-0018` and not yet wired into generated factory output.
- * These cases assert the ADR's target contract and are expected to fail
- * until that wiring lands; `it.fails` flags loudly (test failure) if one
- * unexpectedly starts passing, which is the signal that its slice of the
- * feature has shipped and the case should convert back to a plain `it`.
+ * STATUS.md documents freeze/$with as deferred ("hygiene rule: iterative
+ * optimizations") — `freezeNodeData` and `buildWithNamespace` (packages/
+ * common/src/nodeData.ts) are tagged `@forFutureUse ADR-0018` and not yet
+ * wired into generated factory output. Non-enumerable accessors (FR-002 /
+ * SC-004) shipped separately via `withAccessors` (packages/common/src/
+ * utils.ts), wired into `packages/codegen/src/emitters/factories.ts`'s three
+ * accessor-emission sites. The remaining `it.fails` cases assert the ADR's
+ * target contract and are expected to fail until freeze/$with wiring lands;
+ * `it.fails` flags loudly (test failure) if one unexpectedly starts passing,
+ * which is the signal that its slice of the feature has shipped and the case
+ * should convert back to a plain `it`.
  */
 
 import { describe, it, expect } from 'vitest';
@@ -64,15 +67,7 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 		expect((rec['_name'] as { $text?: string }).$text).toBe('my_fn');
 	});
 
-	// CONFIRMED GAP (not a stale assertion — verified against actual factory
-	// output 2026-07-17): accessor methods are currently ENUMERABLE, contradicting
-	// ADR-0018's documented contract (specs/022-binding-simplify-assemble/
-	// IMPLEMENTATION-STATUS.md groups this under "Phase 2: Surface reshape...
-	// ✅ Shipped", but `Object.keys(node)` demonstrably includes accessor names
-	// like 'name', 'body', 'parameters'). Left failing on purpose rather than
-	// weakening the assertion — this is a real deviation from the documented
-	// surface, root cause not yet isolated to a specific emitter line.
-	it.fails('FR-002: accessor function is non-enumerable', () => {
+	it('FR-002: accessor function is non-enumerable', () => {
 		expect(isNonEnumerable(node, 'name')).toBe(true);
 	});
 
@@ -84,9 +79,7 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 		expect(value.$text).toBe('my_fn');
 	});
 
-	// See the CONFIRMED GAP note above FR-002 — this fails for the same
-	// reason (accessor names currently enumerable).
-	it.fails('SC-004: Object.keys() returns only $-metadata and _-storage keys (no accessor names)', () => {
+	it('SC-004: Object.keys() returns only $-metadata and _-storage keys (no accessor names)', () => {
 		const keys = Object.keys(node);
 		// No accessor names in enumerable keys
 		expect(keys.filter((k) => !k.startsWith('$') && !k.startsWith('_'))).toEqual([]);

@@ -46,12 +46,6 @@
  * hardcoded `RustSupertypes`).
  */
 
-// ---------------------------------------------------------------------------
-// Parameterized rule shapes — tree-sitter's discriminants, refined over content.
-// Containers bound over `readonly GrammarRule[]`; leaves mirror tree-sitter's
-// `SymbolRule` shape structurally. `Rule` is the ambient tree-sitter union.
-// ---------------------------------------------------------------------------
-
 export interface SeqRule<M extends readonly GrammarRule[] = readonly GrammarRule[]> {
 	readonly type: 'SEQ';
 	readonly members: M;
@@ -60,13 +54,6 @@ export interface ChoiceRule<M extends readonly GrammarRule[] = readonly GrammarR
 	readonly type: 'CHOICE';
 	readonly members: M;
 }
-/** SYMBOL leaf — structurally mirrors tree-sitter's ambient `SymbolRule<Name>`
- *  (`{ type: 'SYMBOL'; name: Name }`). Defined as sittir's OWN interface,
- *  not an alias of the ambient type: this module renames its authoring
- *  shapes to the `<X>Rule` form (decision 5), so a local `SymbolRule` alias
- *  would shadow — and self-reference — the ambient `SymbolRule` it used to
- *  point to. Kept byte-identical in shape; only the definition strategy
- *  changed. */
 export interface SymbolRule<Name extends string = string> {
 	readonly type: 'SYMBOL';
 	readonly name: Name;
@@ -131,7 +118,6 @@ export interface PrecDynamicRule<C extends GrammarRule = GrammarRule> {
 	readonly content: C;
 }
 
-/** Union of every compiled-grammar.json rule shape (loose any-rule alias). */
 export type GrammarRule =
 	| SeqRule<readonly GrammarRule[]>
 	| ChoiceRule<readonly GrammarRule[]>
@@ -150,21 +136,12 @@ export type GrammarRule =
 	| PrecRightRule<GrammarRule>
 	| PrecDynamicRule<GrammarRule>;
 
-/**
- * Authoring-surface input: what the sittir-owned DSL primitives (`seq`/`choice`/
- * `field`/…) accept and compose in `overrides.ts`. A superset of the recursive
- * grammar-shape rules plus the bare literals tree-sitter allows. Deliberately
- * NOT tree-sitter's `RuleOrLiteral` (whose `Rule` members are MUTABLE, so our
- * readonly-tuple rule shapes aren't assignable to it — that mismatch is what
- * breaks `seq(choice(...))` composition). Our rules ARE `⊑ AuthoringRule`, so
- * they compose into each other.
- */
 export type AuthoringRule = GrammarRule | string | RegExp;
 
 export type ToGrammarRule<S extends string | RegExp | GrammarRule> = S extends string
 	? StringRule<S>
 	: S extends RegExp
-		? PatternRule<S>
+		? PatternRule<string>
 		: S extends GrammarRule
 			? S
 			: S;
@@ -176,33 +153,15 @@ export type AuthoringRulesToRules<M extends readonly AuthoringRule[]> = M extend
 	? [ToGrammarRule<Head>, ...AuthoringRulesToRules<Rest>]
 	: [];
 
-/** Top-level compiled grammar.json shape (the subset we type off). */
 export interface GrammarJson {
 	readonly name: string;
 	readonly rules: Readonly<Record<string, GrammarRule>>;
-	/** Compiled supertype-name array. Named `supertypeNames` (not
-	 *  `supertypes`) to avoid colliding with tree-sitter's authoring callback
-	 *  of the same name — see the file header. */
 	readonly supertypeNames?: readonly string[];
 }
 
-// ---------------------------------------------------------------------------
-// Discriminant guards used by the (purely type-level) Enrich<> + path types.
-// ---------------------------------------------------------------------------
-
-/** PREC wrappers are transparent to path addressing (skip a segment). */
 export type PrecRuleUnion = PrecRule | PrecLeftRule | PrecRightRule | PrecDynamicRule;
 
-/** Single-content wrappers that CONSUME a path segment (index 0 / -1). */
 export type SingleContentWrapper = RepeatRule | Repeat1Rule | FieldRule | AliasRule | TokenRule | ImmediateTokenRule;
-
-// ---------------------------------------------------------------------------
-// MutableDeep<> — the readonly→mutable bridge used ONLY to PROVE the
-// subtyping ladder `GrammarJson ⊑ GrammarSchema<string>` (modulo readonly).
-// It recursively strips `readonly` so the result's containers become
-// `members: GrammarRule[]` (mutable), which IS assignable to tree-sitter's
-// `Rule`. Not used at any runtime/navigation site — purely an assertion aid.
-// ---------------------------------------------------------------------------
 
 export type MutableDeep<T> = T extends readonly (infer _U)[]
 	? { -readonly [K in keyof T]: MutableDeep<T[K]> }

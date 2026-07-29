@@ -22,6 +22,7 @@ export default defineConfig({
 		'.agents/**',
 		'.claude/**',
 		'**/overrides.ts',
-		'tests/format-roundtrip/fixtures/**'
+		'tests/format-roundtrip/fixtures/**',
+		'archive/**'
 	]
 });

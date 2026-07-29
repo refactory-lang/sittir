@@ -24,19 +24,28 @@ export type TreeNode<K extends NodeKind<RustGrammar>> = BaseTreeNode<RustGrammar
 export type LeafScalarMap = {};
 
 export type LeafStringMap = {
-	__range_expression_binary_operator: '..' | '...' | '..=';
-	_compound_assignment_expr_operator: '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=';
-	_impl_item_unsafe_marker: 'unsafe';
-	_kw_async_marker: 'async';
-	_kw_in: 'in';
-	_kw_move_marker: 'move';
-	_kw_pub: 'pub';
-	_kw_static_marker: 'static';
-	_kw_unsafe_marker: 'unsafe';
-	_move_marker: 'move';
-	_mutable_specifier: 'mut';
-	_operator: '+' | '*' | '?';
-	_pointer_type_const: 'const';
+	fragment_specifier:
+		| 'block'
+		| 'expr'
+		| 'expr_2021'
+		| 'ident'
+		| 'item'
+		| 'lifetime'
+		| 'literal'
+		| 'meta'
+		| 'pat'
+		| 'pat_param'
+		| 'path'
+		| 'stmt'
+		| 'tt'
+		| 'ty'
+		| 'vis';
+	mutable_specifier: 'mut';
+	boolean_literal: 'true' | 'false';
+	_reserved_identifier: 'default' | 'union' | 'gen';
+	self: 'self';
+	super: 'super';
+	crate: 'crate';
 	_primitive_type:
 		| 'u8'
 		| 'i8'
@@ -55,7 +64,6 @@ export type LeafStringMap = {
 		| 'bool'
 		| 'str'
 		| 'char';
-	_reserved_identifier: 'default' | 'union' | 'gen';
 	_token_binding_pattern_type:
 		| 'block'
 		| 'expr'
@@ -72,6 +80,7 @@ export type LeafStringMap = {
 		| 'tt'
 		| 'ty'
 		| 'vis';
+	_compound_assignment_expr_operator: '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=';
 	_token_tree_punctuation:
 		| '+'
 		| '-'
@@ -117,382 +126,380 @@ export type LeafStringMap = {
 		| '=>'
 		| '#'
 		| '?';
-	_unary_expression_operator: '-' | '*' | '!';
-	_unsafe_marker: 'unsafe';
+	_token_keywords:
+		| "'"
+		| 'as'
+		| 'async'
+		| 'await'
+		| 'break'
+		| 'const'
+		| 'continue'
+		| 'default'
+		| 'enum'
+		| 'fn'
+		| 'for'
+		| 'gen'
+		| 'if'
+		| 'impl'
+		| 'let'
+		| 'loop'
+		| 'match'
+		| 'mod'
+		| 'pub'
+		| 'return'
+		| 'static'
+		| 'struct'
+		| 'trait'
+		| 'type'
+		| 'union'
+		| 'unsafe'
+		| 'use'
+		| 'where'
+		| 'while';
 	_wildcard_pattern: '_';
-	boolean_literal: 'true' | 'false';
-	crate: 'crate';
-	fragment_specifier:
-		| 'block'
-		| 'expr'
-		| 'expr_2021'
-		| 'ident'
-		| 'item'
-		| 'lifetime'
-		| 'literal'
-		| 'meta'
-		| 'pat'
-		| 'pat_param'
-		| 'path'
-		| 'stmt'
-		| 'tt'
-		| 'ty'
-		| 'vis';
-	mutable_specifier: 'mut';
-	self: 'self';
-	super: 'super';
-	for: 'for';
-	_: '_';
-	as: 'as';
-	fn: 'fn';
-	unsafe: 'unsafe';
-	in: 'in';
-	async: 'async';
-	move: 'move';
-	pub: 'pub';
-	static: 'static';
-	else: 'else';
-	if: 'if';
-	mut: 'mut';
-	const: 'const';
-	raw: 'raw';
-	impl: 'impl';
-	type: 'type';
-	await: 'await';
-	break: 'break';
-	continue: 'continue';
-	dyn: 'dyn';
+	_pointer_type_const: 'const';
+	_operator: '+' | '*' | '?';
+	_unsafe_marker: 'unsafe';
+	_mutable_specifier: 'mut';
+	_unary_expression_operator: '-' | '*' | '!';
+	_move_marker: 'move';
+	__range_expression_binary_operator: '..' | '...' | '..=';
+	mod: 'mod';
+	struct: 'struct';
+	union: 'union';
 	enum: 'enum';
 	extern: 'extern';
+	const: 'const';
+	static: 'static';
 	ref: 'ref';
-	gen: 'gen';
-	let: 'let';
-	loop: 'loop';
-	match: 'match';
-	mod: 'mod';
-	return: 'return';
-	struct: 'struct';
-	trait: 'trait';
-	try: 'try';
-	union: 'union';
-	use: 'use';
+	type: 'type';
+	fn: 'fn';
 	where: 'where';
-	while: 'while';
+	impl: 'impl';
+	trait: 'trait';
+	for: 'for';
+	let: 'let';
+	use: 'use';
+	as: 'as';
+	dyn: 'dyn';
+	mut: 'mut';
+	return: 'return';
 	yield: 'yield';
+	if: 'if';
+	else: 'else';
+	match: 'match';
+	while: 'while';
+	loop: 'loop';
+	in: 'in';
+	async: 'async';
+	break: 'break';
+	continue: 'continue';
+	await: 'await';
+	unsafe: 'unsafe';
+	gen: 'gen';
+	try: 'try';
+	_: '_';
+	raw: 'raw';
+	pub: 'pub';
+	move: 'move';
 };
 
 export const enum SyntaxKind {
-	AbstractTypeOptional1 = '_abstract_type_optional1',
-	_ArgumentsGroup1 = '_arguments_group1',
-	ArrayExpressionList = '_array_expression_list',
-	ArrayExpressionSemi = '_array_expression_semi',
-	ArrayTypeOptional1 = '_array_type_optional1',
-	AttributedArgument = '_attributed_argument',
-	AttributedEnumVariant = '_attributed_enum_variant',
-	AttributedFieldDeclaration = '_attributed_field_declaration',
-	AttributedOrderedField = '_attributed_ordered_field',
-	AttributedParameter = '_attributed_parameter',
-	AttributedTypeParameter = '_attributed_type_parameter',
-	BlockOptional1 = '_block_optional1',
-	ClosureExpressionBlock = '_closure_expression_block',
-	ClosureExpressionExpr = '_closure_expression_expr',
-	ClosureExpressionOptional1 = '_closure_expression_optional1',
-	ConstItemOptional1 = '_const_item_optional1',
-	ConstParameterOptional1 = '_const_parameter_optional1',
-	DelimTokenTreeBrace = '_delim_token_tree_brace',
-	DelimTokenTreeBracket = '_delim_token_tree_bracket',
-	DelimTokenTreeParen = '_delim_token_tree_paren',
-	_EnumVariantListGroup1 = '_enum_variant_list_group1',
-	ExpressionStatementWithSemi = '_expression_statement_with_semi',
-	ExternCrateDeclarationOptional1 = '_extern_crate_declaration_optional1',
-	_FieldDeclarationListGroup1 = '_field_declaration_list_group1',
-	_FieldInitializerListGroup1 = '_field_initializer_list_group1',
-	FieldPatternNamed = '_field_pattern_named',
-	FunctionTypeFnForm = '_function_type_fn_form',
-	FunctionTypeTraitForm = '_function_type_trait_form',
-	ImplItemBody = '_impl_item_body',
-	ImplItemGroup1 = '_impl_item_group1',
-	ImplItemNegativeClause = '_impl_item_negative_clause',
-	ImplItemPositiveClause = '_impl_item_positive_clause',
-	InPath = '_in_path',
+	SourceFile = 'source_file',
+	ExpressionStatement = 'expression_statement',
+	MacroDefinition = 'macro_definition',
+	MacroRule = 'macro_rule',
+	TokenTreePattern = 'token_tree_pattern',
+	TokenBindingPattern = 'token_binding_pattern',
+	TokenRepetitionPattern = 'token_repetition_pattern',
+	TokenTree = 'token_tree',
+	TokenRepetition = 'token_repetition',
+	AttributeItem = 'attribute_item',
+	InnerAttributeItem = 'inner_attribute_item',
+	Attribute = 'attribute',
+	ModItem = 'mod_item',
+	ForeignModItem = 'foreign_mod_item',
+	DeclarationList = 'declaration_list',
+	StructItem = 'struct_item',
+	UnionItem = 'union_item',
+	EnumItem = 'enum_item',
+	EnumVariantList = 'enum_variant_list',
+	EnumVariant = 'enum_variant',
+	FieldDeclarationList = 'field_declaration_list',
+	FieldDeclaration = 'field_declaration',
+	OrderedFieldDeclarationList = 'ordered_field_declaration_list',
+	ExternCrateDeclaration = 'extern_crate_declaration',
+	ConstItem = 'const_item',
+	StaticItem = 'static_item',
+	TypeItem = 'type_item',
+	FunctionItem = 'function_item',
+	FunctionSignatureItem = 'function_signature_item',
+	FunctionModifiers = 'function_modifiers',
+	WhereClause = 'where_clause',
+	WherePredicate = 'where_predicate',
+	ImplItem = 'impl_item',
+	TraitItem = 'trait_item',
+	AssociatedType = 'associated_type',
+	TraitBounds = 'trait_bounds',
+	HigherRankedTraitBound = 'higher_ranked_trait_bound',
+	RemovedTraitBound = 'removed_trait_bound',
+	TypeParameters = 'type_parameters',
+	ConstParameter = 'const_parameter',
+	TypeParameter = 'type_parameter',
+	LifetimeParameter = 'lifetime_parameter',
+	LetDeclaration = 'let_declaration',
+	UseDeclaration = 'use_declaration',
+	ScopedUseList = 'scoped_use_list',
+	UseList = 'use_list',
+	UseAsClause = 'use_as_clause',
+	UseWildcard = 'use_wildcard',
+	Parameters = 'parameters',
+	SelfParameter = 'self_parameter',
+	VariadicParameter = 'variadic_parameter',
+	Parameter = 'parameter',
+	ExternModifier = 'extern_modifier',
+	VisibilityModifier = 'visibility_modifier',
+	BracketedType = 'bracketed_type',
+	QualifiedType = 'qualified_type',
+	Lifetime = 'lifetime',
+	ArrayType = 'array_type',
+	ForLifetimes = 'for_lifetimes',
+	FunctionType = 'function_type',
+	TupleType = 'tuple_type',
+	GenericFunction = 'generic_function',
+	GenericType = 'generic_type',
+	GenericTypeWithTurbofish = 'generic_type_with_turbofish',
+	BoundedType = 'bounded_type',
+	UseBounds = 'use_bounds',
+	TypeArguments = 'type_arguments',
+	TypeBinding = 'type_binding',
+	ReferenceType = 'reference_type',
+	PointerType = 'pointer_type',
+	AbstractType = 'abstract_type',
+	DynamicType = 'dynamic_type',
+	MacroInvocation = 'macro_invocation',
+	DelimTokenTree = 'delim_token_tree',
+	ScopedIdentifier = 'scoped_identifier',
+	ScopedTypeIdentifierInExpressionPosition = 'scoped_type_identifier_in_expression_position',
+	ScopedTypeIdentifier = 'scoped_type_identifier',
+	RangeExpression = 'range_expression',
+	UnaryExpression = 'unary_expression',
+	TryExpression = 'try_expression',
+	ReferenceExpression = 'reference_expression',
+	BinaryExpression = 'binary_expression',
+	AssignmentExpression = 'assignment_expression',
+	CompoundAssignmentExpr = 'compound_assignment_expr',
+	TypeCastExpression = 'type_cast_expression',
+	ReturnExpression = 'return_expression',
+	YieldExpression = 'yield_expression',
+	CallExpression = 'call_expression',
+	Arguments = 'arguments',
+	ArrayExpression = 'array_expression',
+	ParenthesizedExpression = 'parenthesized_expression',
+	TupleExpression = 'tuple_expression',
+	StructExpression = 'struct_expression',
+	FieldInitializerList = 'field_initializer_list',
+	ShorthandFieldInitializer = 'shorthand_field_initializer',
+	FieldInitializer = 'field_initializer',
+	BaseFieldInitializer = 'base_field_initializer',
+	IfExpression = 'if_expression',
+	LetCondition = 'let_condition',
 	LetChain = '_let_chain',
+	ElseClause = 'else_clause',
+	MatchExpression = 'match_expression',
+	MatchBlock = 'match_block',
+	MatchArm = 'match_arm',
+	LastMatchArm = 'last_match_arm',
+	MatchPattern = 'match_pattern',
+	WhileExpression = 'while_expression',
+	LoopExpression = 'loop_expression',
+	ForExpression = 'for_expression',
+	ConstBlock = 'const_block',
+	ClosureExpression = 'closure_expression',
+	ClosureParameters = 'closure_parameters',
+	Label = 'label',
+	BreakExpression = 'break_expression',
+	ContinueExpression = 'continue_expression',
+	IndexExpression = 'index_expression',
+	AwaitExpression = 'await_expression',
+	FieldExpression = 'field_expression',
+	UnsafeBlock = 'unsafe_block',
+	AsyncBlock = 'async_block',
+	GenBlock = 'gen_block',
+	TryBlock = 'try_block',
+	Block = 'block',
+	GenericPattern = 'generic_pattern',
+	TuplePattern = 'tuple_pattern',
+	SlicePattern = 'slice_pattern',
+	TupleStructPattern = 'tuple_struct_pattern',
+	StructPattern = 'struct_pattern',
+	FieldPattern = 'field_pattern',
+	MutPattern = 'mut_pattern',
+	RangePattern = 'range_pattern',
+	RefPattern = 'ref_pattern',
+	CapturedPattern = 'captured_pattern',
+	ReferencePattern = 'reference_pattern',
+	OrPattern = 'or_pattern',
+	NegativeLiteral = 'negative_literal',
+	StringLiteral = 'string_literal',
+	RawStringLiteral = 'raw_string_literal',
+	Comment = 'comment',
+	LineComment = 'line_comment',
+	BlockComment = 'block_comment',
+	AttributeGroup1 = '_attribute_group1',
+	EnumVariantListGroup1 = '_enum_variant_list_group1',
+	EnumVariantOptional1 = '_enum_variant_optional1',
+	FieldDeclarationListGroup1 = '_field_declaration_list_group1',
+	OrderedFieldDeclarationListGroup1 = '_ordered_field_declaration_list_group1',
+	ExternCrateDeclarationOptional1 = '_extern_crate_declaration_optional1',
+	FunctionItemOptional1 = '_function_item_optional1',
+	WhereClauseGroup1 = '_where_clause_group1',
+	ConstParameterOptional1 = '_const_parameter_optional1',
+	TypeParameterOptional1 = '_type_parameter_optional1',
 	LetDeclarationOptional1 = '_let_declaration_optional1',
 	LetDeclarationOptional2 = '_let_declaration_optional2',
-	LineCommentDoc = '_line_comment_doc',
-	MacroDefinitionBrace = '_macro_definition_brace',
-	MacroDefinitionBracket = '_macro_definition_bracket',
-	MacroDefinitionParen = '_macro_definition_paren',
-	MatchArmWithComma = '_match_arm_with_comma',
-	MatchBlockArms = '_match_block_arms',
+	UseListGroup1 = '_use_list_group1',
+	ParametersGroup1 = '_parameters_group1',
+	VariadicParameterOptional1 = '_variadic_parameter_optional1',
+	VisibilityModifierGroup1 = '_visibility_modifier_group1',
+	ArrayTypeOptional1 = '_array_type_optional1',
+	UseBoundsGroup1 = '_use_bounds_group1',
+	AbstractTypeOptional1 = '_abstract_type_optional1',
+	ArgumentsGroup1 = '_arguments_group1',
+	ArrayExpressionGroup1 = '_array_expression_group1',
+	FieldInitializerListGroup1 = '_field_initializer_list_group1',
 	MatchPatternOptional1 = '_match_pattern_optional1',
+	WhileExpressionOptional1 = '_while_expression_optional1',
+	TuplePatternGroup1 = '_tuple_pattern_group1',
+	SlicePatternGroup1 = '_slice_pattern_group1',
+	StructPatternGroup1 = '_struct_pattern_group1',
+	RangePatternGroup2 = '_range_pattern_group2',
+	BlockCommentGroup1 = '_block_comment_group1',
+	UseWildcardClause = '_use_wildcard_clause',
+	ReferenceExpressionRawMut = '_reference_expression_raw_mut',
+	ImplItemBody = '_impl_item_body',
+	ImplItemPositiveClause = '_impl_item_positive_clause',
+	ImplItemNegativeClause = '_impl_item_negative_clause',
+	ArrayExpressionSemi = '_array_expression_semi',
+	ArrayExpressionList = '_array_expression_list',
+	ClosureExpressionBlock = '_closure_expression_block',
+	ClosureExpressionExpr = '_closure_expression_expr',
+	FieldPatternNamed = '_field_pattern_named',
+	FunctionTypeTraitForm = '_function_type_trait_form',
+	FunctionTypeFnForm = '_function_type_fn_form',
+	MacroDefinitionParen = '_macro_definition_paren',
+	MacroDefinitionBracket = '_macro_definition_bracket',
+	MacroDefinitionBrace = '_macro_definition_brace',
 	OrPatternBinary = '_or_pattern_binary',
 	OrPatternPrefix = '_or_pattern_prefix',
-	_OrderedFieldDeclarationListGroup1 = '_ordered_field_declaration_list_group1',
-	_ParametersGroup1 = '_parameters_group1',
 	RangeExpressionBinary = '_range_expression_binary',
 	RangeExpressionPostfix = '_range_expression_postfix',
 	RangeExpressionPrefix = '_range_expression_prefix',
-	RangePatternLeftWithRight = '_range_pattern_left_with_right',
 	RangePatternPrefix = '_range_pattern_prefix',
-	ReferenceExpressionRawMut = '_reference_expression_raw_mut',
-	_SlicePatternGroup1 = '_slice_pattern_group1',
+	RangePatternLeftWithRight = '_range_pattern_left_with_right',
 	StructItemBrace = '_struct_item_brace',
 	StructItemTuple = '_struct_item_tuple',
-	_StructPatternGroup1 = '_struct_pattern_group1',
-	TokenTreeBrace = '_token_tree_brace',
-	TokenTreeBracket = '_token_tree_bracket',
-	TokenTreeParen = '_token_tree_paren',
-	TokenTreePatternBrace = '_token_tree_pattern_brace',
-	TokenTreePatternBracket = '_token_tree_pattern_bracket',
-	TokenTreePatternParen = '_token_tree_pattern_paren',
-	_TuplePatternGroup1 = '_tuple_pattern_group1',
-	TypeArgument = '_type_argument',
-	TypeParameterOptional1 = '_type_parameter_optional1',
-	_UseBoundsGroup1 = '_use_bounds_group1',
-	_UseListGroup1 = '_use_list_group1',
-	UseWildcardClause = '_use_wildcard_clause',
-	UseWildcardGroup1 = '_use_wildcard_group1',
-	VariadicParameterOptional1 = '_variadic_parameter_optional1',
-	_VisibilityModifierGroup1 = '_visibility_modifier_group1',
-	VisibilityModifierInPath = '_visibility_modifier_in_path',
 	VisibilityModifierPub = '_visibility_modifier_pub',
-	_WhereClauseGroup1 = '_where_clause_group1',
-	AbstractType = 'abstract_type',
-	Arguments = 'arguments',
-	ArrayExpression = 'array_expression',
-	ArrayType = 'array_type',
-	AssignmentExpression = 'assignment_expression',
-	AssociatedType = 'associated_type',
-	AsyncBlock = 'async_block',
-	Attribute = 'attribute',
-	AttributeItem = 'attribute_item',
-	AwaitExpression = 'await_expression',
-	BaseFieldInitializer = 'base_field_initializer',
-	BinaryExpression = 'binary_expression',
-	Block = 'block',
-	BlockComment = 'block_comment',
-	BoundedType = 'bounded_type',
-	BracketedType = 'bracketed_type',
-	BreakExpression = 'break_expression',
-	CallExpression = 'call_expression',
-	CapturedPattern = 'captured_pattern',
-	ClosureExpression = 'closure_expression',
-	ClosureParameters = 'closure_parameters',
-	Comment = 'comment',
-	CompoundAssignmentExpr = 'compound_assignment_expr',
-	ConstBlock = 'const_block',
-	ConstItem = 'const_item',
-	ConstParameter = 'const_parameter',
-	ContinueExpression = 'continue_expression',
-	DeclarationList = 'declaration_list',
-	DelimTokenTree = 'delim_token_tree',
-	DynamicType = 'dynamic_type',
-	ElseClause = 'else_clause',
-	EnumItem = 'enum_item',
-	EnumVariant = 'enum_variant',
-	EnumVariantList = 'enum_variant_list',
-	ExpressionStatement = 'expression_statement',
-	ExternCrateDeclaration = 'extern_crate_declaration',
-	ExternModifier = 'extern_modifier',
-	FieldDeclaration = 'field_declaration',
-	FieldDeclarationList = 'field_declaration_list',
-	FieldExpression = 'field_expression',
-	FieldInitializer = 'field_initializer',
-	FieldInitializerList = 'field_initializer_list',
-	FieldPattern = 'field_pattern',
-	ForExpression = 'for_expression',
-	ForLifetimes = 'for_lifetimes',
-	ForeignModItem = 'foreign_mod_item',
-	FunctionItem = 'function_item',
-	FunctionModifiers = 'function_modifiers',
-	FunctionSignatureItem = 'function_signature_item',
-	FunctionType = 'function_type',
-	GenBlock = 'gen_block',
-	GenericFunction = 'generic_function',
-	GenericPattern = 'generic_pattern',
-	GenericType = 'generic_type',
-	GenericTypeWithTurbofish = 'generic_type_with_turbofish',
-	HigherRankedTraitBound = 'higher_ranked_trait_bound',
-	IfExpression = 'if_expression',
-	ImplItem = 'impl_item',
-	IndexExpression = 'index_expression',
-	InnerAttributeItem = 'inner_attribute_item',
-	Label = 'label',
-	LastMatchArm = 'last_match_arm',
-	LetCondition = 'let_condition',
-	LetDeclaration = 'let_declaration',
-	Lifetime = 'lifetime',
-	LifetimeParameter = 'lifetime_parameter',
-	LineComment = 'line_comment',
-	LoopExpression = 'loop_expression',
-	MacroDefinition = 'macro_definition',
-	MacroInvocation = 'macro_invocation',
-	MacroRule = 'macro_rule',
-	MatchArm = 'match_arm',
-	MatchBlock = 'match_block',
-	MatchExpression = 'match_expression',
-	MatchPattern = 'match_pattern',
-	ModItem = 'mod_item',
-	MutPattern = 'mut_pattern',
-	NegativeLiteral = 'negative_literal',
-	OrPattern = 'or_pattern',
-	OrderedFieldDeclarationList = 'ordered_field_declaration_list',
-	Parameter = 'parameter',
-	Parameters = 'parameters',
-	ParenthesizedExpression = 'parenthesized_expression',
-	PointerType = 'pointer_type',
-	QualifiedType = 'qualified_type',
-	RangeExpression = 'range_expression',
-	RangePattern = 'range_pattern',
-	RawStringLiteral = 'raw_string_literal',
-	RefPattern = 'ref_pattern',
-	ReferenceExpression = 'reference_expression',
-	ReferencePattern = 'reference_pattern',
-	ReferenceType = 'reference_type',
-	RemovedTraitBound = 'removed_trait_bound',
-	ReturnExpression = 'return_expression',
-	ScopedIdentifier = 'scoped_identifier',
-	ScopedTypeIdentifier = 'scoped_type_identifier',
-	ScopedTypeIdentifierInExpressionPosition = 'scoped_type_identifier_in_expression_position',
-	ScopedUseList = 'scoped_use_list',
-	SelfParameter = 'self_parameter',
-	ShorthandFieldInitializer = 'shorthand_field_initializer',
-	SlicePattern = 'slice_pattern',
-	SourceFile = 'source_file',
-	StaticItem = 'static_item',
-	StringLiteral = 'string_literal',
-	StructExpression = 'struct_expression',
-	StructItem = 'struct_item',
-	StructPattern = 'struct_pattern',
-	TokenBindingPattern = 'token_binding_pattern',
-	TokenRepetition = 'token_repetition',
-	TokenRepetitionPattern = 'token_repetition_pattern',
-	TokenTree = 'token_tree',
-	TokenTreePattern = 'token_tree_pattern',
-	TraitBounds = 'trait_bounds',
-	TraitItem = 'trait_item',
-	TryBlock = 'try_block',
-	TryExpression = 'try_expression',
-	TupleExpression = 'tuple_expression',
-	TuplePattern = 'tuple_pattern',
-	TupleStructPattern = 'tuple_struct_pattern',
-	TupleType = 'tuple_type',
-	TypeArguments = 'type_arguments',
-	TypeBinding = 'type_binding',
-	TypeCastExpression = 'type_cast_expression',
-	TypeItem = 'type_item',
-	TypeParameter = 'type_parameter',
-	TypeParameters = 'type_parameters',
-	UnaryExpression = 'unary_expression',
-	UnionItem = 'union_item',
-	UnsafeBlock = 'unsafe_block',
-	UseAsClause = 'use_as_clause',
-	UseBounds = 'use_bounds',
-	UseDeclaration = 'use_declaration',
-	UseList = 'use_list',
-	UseWildcard = 'use_wildcard',
-	VariadicParameter = 'variadic_parameter',
-	VisibilityModifier = 'visibility_modifier',
-	WhereClause = 'where_clause',
-	WherePredicate = 'where_predicate',
-	WhileExpression = 'while_expression',
-	YieldExpression = 'yield_expression',
-	ArgumentsGroup1 = 'arguments_group1',
-	VisibilityModifierGroup1 = 'visibility_modifier_group1',
-	EnumVariantListGroup1 = 'enum_variant_list_group1',
-	FieldDeclarationListGroup1 = 'field_declaration_list_group1',
-	FieldInitializerListGroup1 = 'field_initializer_list_group1',
-	OrderedFieldDeclarationListGroup1 = 'ordered_field_declaration_list_group1',
-	ParametersGroup1 = 'parameters_group1',
-	SlicePatternGroup1 = 'slice_pattern_group1',
-	StructPatternGroup1 = 'struct_pattern_group1',
-	TuplePatternGroup1 = 'tuple_pattern_group1',
-	UseBoundsGroup1 = 'use_bounds_group1',
-	UseListGroup1 = 'use_list_group1',
-	WhereClauseGroup1 = 'where_clause_group1',
+	ExpressionStatementWithSemi = '_expression_statement_with_semi',
+	MatchArmWithComma = '_match_arm_with_comma',
+	LineCommentDoc = '_line_comment_doc',
+	TokenTreePatternParen = '_token_tree_pattern_paren',
+	TokenTreePatternBracket = '_token_tree_pattern_bracket',
+	TokenTreePatternBrace = '_token_tree_pattern_brace',
+	TokenTreeParen = '_token_tree_paren',
+	TokenTreeBracket = '_token_tree_bracket',
+	TokenTreeBrace = '_token_tree_brace',
+	DelimTokenTreeParen = '_delim_token_tree_paren',
+	DelimTokenTreeBracket = '_delim_token_tree_bracket',
+	DelimTokenTreeBrace = '_delim_token_tree_brace',
+	InPath = '_in_path',
+	AttributedFieldDeclaration = '_attributed_field_declaration',
+	AttributedEnumVariant = '_attributed_enum_variant',
+	AttributedParameter = '_attributed_parameter',
+	AttributedTypeParameter = '_attributed_type_parameter',
+	AttributedArgument = '_attributed_argument',
+	AttributedOrderedField = '_attributed_ordered_field',
+	TypeArgument = '_type_argument',
+	MatchBlockArms = '_match_block_arms',
 	VisibilityModifierPubParens = '_visibility_modifier_pub_parens',
-	RangeExpressionBinaryOperator = '__range_expression_binary_operator',
-	CompoundAssignmentExprOperator = '_compound_assignment_expr_operator',
-	FieldIdentifier = '_field_identifier',
-	ImplItemUnsafeMarker = '_impl_item_unsafe_marker',
-	KwAsyncMarker = '_kw_async_marker',
-	KwIn = '_kw_in',
-	KwMoveMarker = '_kw_move_marker',
-	KwPub = '_kw_pub',
-	KwStaticMarker = '_kw_static_marker',
-	KwUnsafeMarker = '_kw_unsafe_marker',
-	LineCommentContent = '_line_comment_content',
-	LineCommentRegularDslash = '_line_comment_regular_dslash',
-	MoveMarker = '_move_marker',
-	_MutableSpecifier = '_mutable_specifier',
-	Operator = '_operator',
-	PointerTypeConst = '_pointer_type_const',
-	PrimitiveType = '_primitive_type',
-	ReferenceExpressionRawConst = '_reference_expression_raw_const',
-	ReservedIdentifier = '_reserved_identifier',
-	TokenBindingPatternType = '_token_binding_pattern_type',
-	TokenTreePunctuation = '_token_tree_punctuation',
-	TypeIdentifier = '_type_identifier',
-	UnaryExpressionOperator = '_unary_expression_operator',
-	UnsafeMarker = '_unsafe_marker',
-	WildcardPattern = '_wildcard_pattern',
-	BooleanLiteral = 'boolean_literal',
-	CharLiteral = 'char_literal',
-	Crate = 'crate',
-	EscapeSequence = 'escape_sequence',
 	FragmentSpecifier = 'fragment_specifier',
-	Identifier = 'identifier',
-	IntegerLiteral = 'integer_literal',
-	Metavariable = 'metavariable',
-	MutableSpecifier = 'mutable_specifier',
-	Self = 'self',
-	Shebang = 'shebang',
-	Super = 'super',
-	UnitExpression = 'unit_expression',
 	UnitType = 'unit_type',
+	MutableSpecifier = 'mutable_specifier',
+	UnitExpression = 'unit_expression',
+	IntegerLiteral = 'integer_literal',
+	CharLiteral = 'char_literal',
+	EscapeSequence = 'escape_sequence',
+	BooleanLiteral = 'boolean_literal',
+	Identifier = 'identifier',
+	Shebang = 'shebang',
+	ReservedIdentifier = '_reserved_identifier',
+	TypeIdentifier = '_type_identifier',
+	FieldIdentifier = '_field_identifier',
+	Self = 'self',
+	Super = 'super',
+	Crate = 'crate',
+	Metavariable = 'metavariable',
+	PrimitiveType = '_primitive_type',
+	TokenBindingPatternType = '_token_binding_pattern_type',
+	CompoundAssignmentExprOperator = '_compound_assignment_expr_operator',
+	TokenTreePunctuation = '_token_tree_punctuation',
+	TokenKeywords = '_token_keywords',
+	WildcardPattern = '_wildcard_pattern',
+	ReferenceExpressionRawConst = '_reference_expression_raw_const',
+	PointerTypeConst = '_pointer_type_const',
+	LineCommentRegularDslash = '_line_comment_regular_dslash',
+	LineCommentContent = '_line_comment_content',
+	Operator = '_operator',
+	UnsafeMarker = '_unsafe_marker',
+	_MutableSpecifier = '_mutable_specifier',
+	UnaryExpressionOperator = '_unary_expression_operator',
+	MoveMarker = '_move_marker',
+	RangeExpressionBinaryOperator = '__range_expression_binary_operator',
 	StringContent = 'string_content',
+	RawStringLiteralStart = '_raw_string_literal_start',
 	RawStringLiteralContent = 'raw_string_literal_content',
+	RawStringLiteralEnd = '_raw_string_literal_end',
 	FloatLiteral = 'float_literal',
 	LineDocContent = '_line_doc_content',
 	ErrorSentinel = '_error_sentinel',
-	For = 'for',
-	Anonymous = '_',
-	As = 'as',
-	Fn = 'fn',
-	Unsafe = 'unsafe',
-	In = 'in',
-	Async = 'async',
-	Move = 'move',
-	Pub = 'pub',
-	Static = 'static',
-	Else = 'else',
-	If = 'if',
-	Mut = 'mut',
-	Const = 'const',
-	Raw = 'raw',
-	Impl = 'impl',
-	Type = 'type',
-	Await = 'await',
-	Break = 'break',
-	Continue = 'continue',
-	Dyn = 'dyn',
+	Mod = 'mod',
+	Struct = 'struct',
+	Union = 'union',
 	Enum = 'enum',
 	Extern = 'extern',
+	Const = 'const',
+	Static = 'static',
 	Ref = 'ref',
-	Gen = 'gen',
-	Let = 'let',
-	Loop = 'loop',
-	Match = 'match',
-	Mod = 'mod',
-	Return = 'return',
-	Struct = 'struct',
-	Trait = 'trait',
-	Try = 'try',
-	Union = 'union',
-	Use = 'use',
+	Type = 'type',
+	Fn = 'fn',
 	Where = 'where',
+	Impl = 'impl',
+	Trait = 'trait',
+	For = 'for',
+	Let = 'let',
+	Use = 'use',
+	As = 'as',
+	Dyn = 'dyn',
+	Mut = 'mut',
+	Return = 'return',
+	Yield = 'yield',
+	If = 'if',
+	Else = 'else',
+	Match = 'match',
 	While = 'while',
-	Yield = 'yield'
+	Loop = 'loop',
+	In = 'in',
+	Async = 'async',
+	Break = 'break',
+	Continue = 'continue',
+	Await = 'await',
+	Unsafe = 'unsafe',
+	Gen = 'gen',
+	Try = 'try',
+	Anonymous = '_',
+	Raw = 'raw',
+	Pub = 'pub',
+	Move = 'move'
 }
 
 export const enum TSKindId {
@@ -540,103 +547,103 @@ export const enum TSKindId {
 	Bool = 42,
 	Str = 43,
 	Char = 44,
-	Squote = 45,
-	As = 46,
-	Async = 47,
-	Await = 48,
-	Break = 49,
-	Const = 50,
-	Continue = 51,
-	Default = 52,
-	Enum = 53,
-	Fn = 54,
-	For = 55,
-	Gen = 56,
-	If = 57,
-	Impl = 58,
-	Let = 59,
-	Loop = 60,
-	Match = 61,
-	Mod = 62,
-	Pub = 63,
-	Return = 64,
-	Static = 65,
-	Struct = 66,
-	Trait = 67,
-	Type = 68,
-	Union = 69,
-	Unsafe = 70,
-	Use = 71,
-	Where = 72,
-	While = 73,
-	Pound = 74,
-	Lbrack = 75,
-	Rbrack = 76,
-	Bang = 77,
-	Eq = 78,
-	Lbrace = 79,
-	Rbrace = 80,
-	Extern = 81,
-	Lt = 82,
-	Comma = 83,
-	Gt = 84,
-	ColonColon = 85,
-	DotDotDot = 86,
-	Lt2 = 87,
-	Amp2 = 88,
-	Dyn = 89,
-	MutableSpecifier = 90,
-	Dash = 91,
-	AmpAmp = 92,
-	PipePipe = 93,
-	Pipe2 = 94,
-	Caret = 95,
-	EqEq = 96,
-	BangEq = 97,
-	LtEq = 98,
-	GtEq = 99,
-	LtLt = 100,
-	GtGt = 101,
-	Slash = 102,
-	Percent = 103,
-	PlusEq = 104,
-	DashEq = 105,
-	StarEq = 106,
-	SlashEq = 107,
-	PercentEq = 108,
-	AmpEq = 109,
-	PipeEq = 110,
-	CaretEq = 111,
-	LtLtEq = 112,
-	GtGtEq = 113,
-	Yield = 114,
-	DotDot = 115,
-	Else = 116,
-	In = 117,
-	Dot = 118,
-	Try = 119,
-	Ref = 120,
-	At = 121,
-	IntegerLiteral = 122,
-	StringLiteralToken1 = 123,
-	Dquote = 124,
-	CharLiteral = 125,
-	EscapeSequence = 126,
-	True = 127,
-	False = 128,
-	SlashSlash = 129,
-	Bang2 = 130,
-	Slash2 = 131,
-	SlashStar = 132,
-	StarSlash = 133,
-	Shebang = 134,
-	Self = 135,
-	Super = 136,
-	Crate = 137,
-	Metavariable = 138,
-	DashGt = 139,
-	Anonymous = 140,
-	DotDotEq = 141,
+	Pound = 45,
+	Lbrack = 46,
+	Rbrack = 47,
+	Bang = 48,
+	Mod = 49,
+	Lbrace = 50,
+	Rbrace = 51,
+	Struct = 52,
+	Union = 53,
+	Enum = 54,
+	Extern = 55,
+	Const = 56,
+	Static = 57,
+	Type = 58,
+	Eq = 59,
+	Fn = 60,
+	Async = 61,
+	Default = 62,
+	Unsafe = 63,
+	Where = 64,
+	Impl = 65,
+	Trait = 66,
+	For = 67,
+	Lt = 68,
+	Comma = 69,
+	Gt = 70,
+	Let = 71,
+	Use = 72,
+	ColonColon = 73,
+	As = 74,
+	DotDotDot = 75,
+	Squote = 76,
+	Lt2 = 77,
+	Amp2 = 78,
+	Dyn = 79,
+	MutableSpecifier = 80,
+	Dash = 81,
+	AmpAmp = 82,
+	PipePipe = 83,
+	Pipe2 = 84,
+	Caret = 85,
+	EqEq = 86,
+	BangEq = 87,
+	LtEq = 88,
+	GtEq = 89,
+	LtLt = 90,
+	GtGt = 91,
+	Slash = 92,
+	Percent = 93,
+	PlusEq = 94,
+	DashEq = 95,
+	StarEq = 96,
+	SlashEq = 97,
+	PercentEq = 98,
+	AmpEq = 99,
+	PipeEq = 100,
+	CaretEq = 101,
+	LtLtEq = 102,
+	GtGtEq = 103,
+	Return = 104,
+	Yield = 105,
+	DotDot = 106,
+	If = 107,
+	Else = 108,
+	Match = 109,
+	While = 110,
+	Loop = 111,
+	In = 112,
+	Break = 113,
+	Continue = 114,
+	Dot = 115,
+	Await = 116,
+	Gen = 117,
+	Try = 118,
+	Ref = 119,
+	At = 120,
+	IntegerLiteral = 121,
+	StringLiteralToken1 = 122,
+	Dquote = 123,
+	CharLiteral = 124,
+	EscapeSequence = 125,
+	True = 126,
+	False = 127,
+	SlashSlash = 128,
+	Bang2 = 129,
+	Slash2 = 130,
+	SlashStar = 131,
+	StarSlash = 132,
+	Shebang = 133,
+	Self = 134,
+	Super = 135,
+	Crate = 136,
+	Metavariable = 137,
+	DashGt = 138,
+	Anonymous = 139,
+	DotDotEq = 140,
+	Pub = 141,
 	Raw = 142,
 	Move = 143,
 	_LineCommentRegularDslashToken1 = 144,
@@ -665,259 +672,265 @@ export const enum TSKindId {
 	FragmentSpecifier = 167,
 	TokenTree = 168,
 	TokenRepetition = 169,
-	AttributeItem = 170,
-	InnerAttributeItem = 171,
-	Attribute = 172,
-	ModItem = 173,
-	ForeignModItem = 174,
-	DeclarationList = 175,
-	StructItem = 176,
-	UnionItem = 177,
-	EnumItem = 178,
-	EnumVariantList = 179,
-	EnumVariant = 180,
-	FieldDeclarationList = 181,
-	FieldDeclaration = 182,
-	OrderedFieldDeclarationList = 183,
-	ExternCrateDeclaration = 184,
-	ConstItem = 185,
-	StaticItem = 186,
-	TypeItem = 187,
-	FunctionItem = 188,
-	FunctionSignatureItem = 189,
-	FunctionModifiers = 190,
-	WhereClause = 191,
-	WherePredicate = 192,
-	ImplItem = 193,
-	TraitItem = 194,
-	AssociatedType = 195,
-	TraitBounds = 196,
-	HigherRankedTraitBound = 197,
-	RemovedTraitBound = 198,
-	TypeParameters = 199,
-	ConstParameter = 200,
-	TypeParameter = 201,
-	LifetimeParameter = 202,
-	LetDeclaration = 203,
-	UseDeclaration = 204,
-	UseClause = 205,
-	ScopedUseList = 206,
-	UseList = 207,
-	UseAsClause = 208,
-	UseWildcard = 209,
-	Parameters = 210,
-	SelfParameter = 211,
-	VariadicParameter = 212,
-	Parameter = 213,
-	ExternModifier = 214,
-	VisibilityModifier = 215,
-	_Type = 216,
-	BracketedType = 217,
-	QualifiedType = 218,
-	Lifetime = 219,
-	ArrayType = 220,
-	ForLifetimes = 221,
-	FunctionType = 222,
-	TupleType = 223,
-	UnitType = 224,
-	GenericFunction = 225,
-	GenericType = 226,
-	GenericTypeWithTurbofish = 227,
-	BoundedType = 228,
-	UseBounds = 229,
-	TypeArguments = 230,
-	TypeBinding = 231,
-	ReferenceType = 232,
-	PointerType = 233,
-	NeverType = 234,
-	AbstractType = 235,
-	DynamicType = 236,
-	ExpressionExceptRange = 237,
-	Expression = 238,
-	MacroInvocation = 239,
-	DelimTokenTree = 240,
-	DelimTokens = 241,
-	NonDelimToken = 242,
-	ScopedIdentifier = 243,
-	ScopedTypeIdentifierInExpressionPosition = 244,
-	ScopedTypeIdentifier = 245,
-	RangeExpression = 246,
-	UnaryExpression = 247,
-	TryExpression = 248,
-	ReferenceExpression = 249,
-	BinaryExpression = 250,
-	AssignmentExpression = 251,
-	CompoundAssignmentExpr = 252,
-	TypeCastExpression = 253,
-	ReturnExpression = 254,
-	YieldExpression = 255,
-	CallExpression = 256,
-	Arguments = 257,
-	ArrayExpression = 258,
-	ParenthesizedExpression = 259,
-	TupleExpression = 260,
-	UnitExpression = 261,
-	StructExpression = 262,
-	FieldInitializerList = 263,
-	ShorthandFieldInitializer = 264,
-	FieldInitializer = 265,
-	BaseFieldInitializer = 266,
-	IfExpression = 267,
-	LetCondition = 268,
-	LetChain = 269,
-	Condition = 270,
-	ElseClause = 271,
-	MatchExpression = 272,
-	MatchBlock = 273,
-	MatchArm = 274,
-	LastMatchArm = 275,
-	MatchPattern = 276,
-	WhileExpression = 277,
-	LoopExpression = 278,
-	ForExpression = 279,
-	ConstBlock = 280,
-	ClosureExpression = 281,
-	ClosureParameters = 282,
-	Label = 283,
-	BreakExpression = 284,
-	ContinueExpression = 285,
-	IndexExpression = 286,
-	AwaitExpression = 287,
-	FieldExpression = 288,
-	UnsafeBlock = 289,
-	AsyncBlock = 290,
-	GenBlock = 291,
-	TryBlock = 292,
-	Block = 293,
-	Pattern = 294,
-	GenericPattern = 295,
-	TuplePattern = 296,
-	SlicePattern = 297,
-	TupleStructPattern = 298,
-	StructPattern = 299,
-	FieldPattern = 300,
-	RemainingFieldPattern = 301,
-	MutPattern = 302,
-	RangePattern = 303,
-	RefPattern = 304,
-	CapturedPattern = 305,
-	ReferencePattern = 306,
-	OrPattern = 307,
-	Literal_308 = 308,
-	LiteralPattern = 309,
-	NegativeLiteral = 310,
-	StringLiteral = 311,
-	RawStringLiteral = 312,
-	BooleanLiteral = 313,
-	LineComment = 314,
-	_LineDocCommentMarker = 315,
-	InnerLineDocCommentMarker = 316,
-	OuterLineDocCommentMarker = 317,
-	BlockComment = 318,
-	_BlockDocCommentMarker = 319,
-	_EnumVariantListGroup1 = 320,
-	_FieldDeclarationListGroup1 = 321,
-	_OrderedFieldDeclarationListGroup1 = 322,
-	_WhereClauseGroup1 = 323,
-	_UseListGroup1 = 324,
-	_ParametersGroup1 = 325,
-	_VisibilityModifierGroup1 = 326,
-	_UseBoundsGroup1 = 327,
-	_ArgumentsGroup1 = 328,
-	_FieldInitializerListGroup1 = 329,
-	_TuplePatternGroup1 = 330,
-	_SlicePatternGroup1 = 331,
-	_StructPatternGroup1 = 332,
-	TokenTreePunctuation = 333,
-	UseWildcardClause = 334,
-	WildcardPattern = 335,
-	ReferenceExpressionRawConst = 336,
-	ReferenceExpressionRawMut = 337,
-	ImplItemUnsafeMarker = 338,
-	ImplItemBody = 339,
-	ImplItemSemi = 340,
-	ImplItemPositiveClause = 341,
-	ImplItemNegativeClause = 342,
-	ArrayExpressionSemi = 343,
-	ArrayExpressionList = 344,
-	ClosureExpressionBlock = 345,
-	ClosureExpressionExpr = 346,
-	FieldPatternNamed = 347,
-	FunctionTypeTraitForm = 348,
-	FunctionTypeFnForm = 349,
-	MacroDefinitionParen = 350,
-	MacroDefinitionBracket = 351,
-	MacroDefinitionBrace = 352,
-	ModItemExternal = 353,
-	OrPatternBinary = 354,
-	OrPatternPrefix = 355,
-	RangeExpressionBinary = 356,
-	RangeExpressionPostfix = 357,
-	RangeExpressionPrefix = 358,
-	RangePatternPrefix = 359,
-	RangePatternLeftWithRight = 360,
-	RangePatternLeftBare = 361,
-	StructItemBrace = 362,
-	StructItemTuple = 363,
-	StructItemUnit = 364,
-	VisibilityModifierPub = 365,
-	VisibilityModifierInPath = 366,
-	PointerTypeConst = 367,
-	ExpressionStatementWithSemi = 368,
-	ForeignModItemSemi = 369,
-	MatchArmWithComma = 370,
-	LineCommentRegularDslash = 371,
-	LineCommentDoc = 372,
-	TokenTreePatternParen = 373,
-	TokenTreePatternBracket = 374,
-	TokenTreePatternBrace = 375,
-	TokenTreeParen = 376,
-	TokenTreeBracket = 377,
-	TokenTreeBrace = 378,
-	DelimTokenTreeParen = 379,
-	DelimTokenTreeBracket = 380,
-	DelimTokenTreeBrace = 381,
-	AttributedFieldDeclaration = 382,
-	AttributedEnumVariant = 383,
-	AttributedParameter = 384,
-	AttributedTypeParameter = 385,
-	AttributedArgument = 386,
-	AttributedOrderedField = 387,
-	TypeArgument = 388,
-	MatchBlockArms = 389,
-	SourceFileRepeat1 = 390,
-	TokenRepetitionPatternRepeat1 = 391,
-	TokenRepetitionRepeat1 = 392,
-	DeclarationListRepeat1 = 393,
-	FunctionModifiersRepeat1 = 394,
-	TraitBoundsRepeat1 = 395,
-	TypeParametersRepeat1 = 396,
-	ForLifetimesRepeat1 = 397,
-	TupleTypeRepeat1 = 398,
-	TypeArgumentsRepeat1 = 399,
-	TupleExpressionRepeat1 = 400,
-	TupleExpressionRepeat2 = 401,
-	MatchArmRepeat1 = 402,
-	StringLiteralRepeat1 = 403,
-	_EnumVariantListGroup1Repeat1 = 404,
-	_FieldDeclarationListGroup1Repeat1 = 405,
-	_OrderedFieldDeclarationListGroup1Repeat1 = 406,
-	_WhereClauseGroup1Repeat1 = 407,
-	_UseListGroup1Repeat1 = 408,
-	_ParametersGroup1Repeat1 = 409,
-	_UseBoundsGroup1Repeat1 = 410,
-	_ArgumentsGroup1Repeat1 = 411,
-	_FieldInitializerListGroup1Repeat1 = 412,
-	_ClosureParametersOptional1Repeat1 = 413,
-	_TuplePatternGroup1Repeat1 = 414,
-	_SlicePatternGroup1Repeat1 = 415,
-	_StructPatternGroup1Repeat1 = 416,
-	_MacroDefinitionParenRepeat1 = 417,
-	_DelimTokenTreeParenRepeat1 = 418,
-	_MatchBlockArmsRepeat1 = 419,
-	FieldIdentifier = 420,
-	_ShorthandFieldIdentifier = 422,
-	TypeIdentifier = 423
+	NonSpecialToken = 170,
+	AttributeItem = 171,
+	InnerAttributeItem = 172,
+	Attribute = 173,
+	ModItem = 174,
+	ForeignModItem = 175,
+	DeclarationList = 176,
+	StructItem = 177,
+	UnionItem = 178,
+	EnumItem = 179,
+	EnumVariantList = 180,
+	EnumVariant = 181,
+	FieldDeclarationList = 182,
+	FieldDeclaration = 183,
+	OrderedFieldDeclarationList = 184,
+	ExternCrateDeclaration = 185,
+	ConstItem = 186,
+	StaticItem = 187,
+	TypeItem = 188,
+	FunctionItem = 189,
+	FunctionSignatureItem = 190,
+	FunctionModifiers = 191,
+	WhereClause = 192,
+	WherePredicate = 193,
+	ImplItem = 194,
+	TraitItem = 195,
+	AssociatedType = 196,
+	TraitBounds = 197,
+	HigherRankedTraitBound = 198,
+	RemovedTraitBound = 199,
+	TypeParameters = 200,
+	ConstParameter = 201,
+	TypeParameter = 202,
+	LifetimeParameter = 203,
+	LetDeclaration = 204,
+	UseDeclaration = 205,
+	UseClause = 206,
+	ScopedUseList = 207,
+	UseList = 208,
+	UseAsClause = 209,
+	UseWildcard = 210,
+	Parameters = 211,
+	SelfParameter = 212,
+	VariadicParameter = 213,
+	Parameter = 214,
+	ExternModifier = 215,
+	VisibilityModifier = 216,
+	_Type = 217,
+	BracketedType = 218,
+	QualifiedType = 219,
+	Lifetime = 220,
+	ArrayType = 221,
+	ForLifetimes = 222,
+	FunctionType = 223,
+	TupleType = 224,
+	UnitType = 225,
+	GenericFunction = 226,
+	GenericType = 227,
+	GenericTypeWithTurbofish = 228,
+	BoundedType = 229,
+	UseBounds = 230,
+	TypeArguments = 231,
+	TypeBinding = 232,
+	ReferenceType = 233,
+	PointerType = 234,
+	NeverType = 235,
+	AbstractType = 236,
+	DynamicType = 237,
+	ExpressionExceptRange = 238,
+	Expression = 239,
+	MacroInvocation = 240,
+	DelimTokenTree = 241,
+	DelimTokens = 242,
+	NonDelimToken = 243,
+	ScopedIdentifier = 244,
+	ScopedTypeIdentifierInExpressionPosition = 245,
+	ScopedTypeIdentifier = 246,
+	RangeExpression = 247,
+	UnaryExpression = 248,
+	TryExpression = 249,
+	ReferenceExpression = 250,
+	BinaryExpression = 251,
+	AssignmentExpression = 252,
+	CompoundAssignmentExpr = 253,
+	TypeCastExpression = 254,
+	ReturnExpression = 255,
+	YieldExpression = 256,
+	CallExpression = 257,
+	Arguments = 258,
+	ArrayExpression = 259,
+	ParenthesizedExpression = 260,
+	TupleExpression = 261,
+	UnitExpression = 262,
+	StructExpression = 263,
+	FieldInitializerList = 264,
+	ShorthandFieldInitializer = 265,
+	FieldInitializer = 266,
+	BaseFieldInitializer = 267,
+	IfExpression = 268,
+	LetCondition = 269,
+	LetChain = 270,
+	Condition = 271,
+	ElseClause = 272,
+	MatchExpression = 273,
+	MatchBlock = 274,
+	MatchArm = 275,
+	LastMatchArm = 276,
+	MatchPattern = 277,
+	WhileExpression = 278,
+	LoopExpression = 279,
+	ForExpression = 280,
+	ConstBlock = 281,
+	ClosureExpression = 282,
+	ClosureParameters = 283,
+	Label = 284,
+	BreakExpression = 285,
+	ContinueExpression = 286,
+	IndexExpression = 287,
+	AwaitExpression = 288,
+	FieldExpression = 289,
+	UnsafeBlock = 290,
+	AsyncBlock = 291,
+	GenBlock = 292,
+	TryBlock = 293,
+	Block = 294,
+	Pattern = 295,
+	GenericPattern = 296,
+	TuplePattern = 297,
+	SlicePattern = 298,
+	TupleStructPattern = 299,
+	StructPattern = 300,
+	FieldPattern = 301,
+	RemainingFieldPattern = 302,
+	MutPattern = 303,
+	RangePattern = 304,
+	RefPattern = 305,
+	CapturedPattern = 306,
+	ReferencePattern = 307,
+	OrPattern = 308,
+	Literal_309 = 309,
+	LiteralPattern = 310,
+	NegativeLiteral = 311,
+	StringLiteral = 312,
+	RawStringLiteral = 313,
+	BooleanLiteral = 314,
+	LineComment = 315,
+	_LineDocCommentMarker = 316,
+	InnerLineDocCommentMarker = 317,
+	OuterLineDocCommentMarker = 318,
+	BlockComment = 319,
+	_BlockDocCommentMarker = 320,
+	AttributeGroup1 = 321,
+	EnumVariantListGroup1 = 322,
+	FieldDeclarationListGroup1 = 323,
+	OrderedFieldDeclarationListGroup1 = 324,
+	WhereClauseGroup1 = 325,
+	UseListGroup1 = 326,
+	ParametersGroup1 = 327,
+	VisibilityModifierGroup1 = 328,
+	UseBoundsGroup1 = 329,
+	ArgumentsGroup1 = 330,
+	ArrayExpressionGroup1 = 331,
+	FieldInitializerListGroup1 = 332,
+	TuplePatternGroup1 = 333,
+	SlicePatternGroup1 = 334,
+	StructPatternGroup1 = 335,
+	RangePatternGroup2 = 336,
+	BlockCommentGroup1 = 337,
+	TokenTreePunctuation = 338,
+	TokenKeywords = 339,
+	UseWildcardClause = 340,
+	WildcardPattern = 341,
+	ReferenceExpressionRawConst = 342,
+	ReferenceExpressionRawMut = 343,
+	_ImplItemUnsafeMarker = 344,
+	ImplItemBody = 345,
+	ImplItemSemi = 346,
+	ImplItemPositiveClause = 347,
+	ImplItemNegativeClause = 348,
+	ArrayExpressionSemi = 349,
+	ArrayExpressionList = 350,
+	ClosureExpressionBlock = 351,
+	ClosureExpressionExpr = 352,
+	FieldPatternNamed = 353,
+	FunctionTypeTraitForm = 354,
+	FunctionTypeFnForm = 355,
+	MacroDefinitionParen = 356,
+	MacroDefinitionBracket = 357,
+	MacroDefinitionBrace = 358,
+	ModItemExternal = 359,
+	OrPatternBinary = 360,
+	OrPatternPrefix = 361,
+	RangeExpressionBinary = 362,
+	RangeExpressionPostfix = 363,
+	RangeExpressionPrefix = 364,
+	RangePatternPrefix = 365,
+	RangePatternLeftWithRight = 366,
+	RangePatternLeftBare = 367,
+	StructItemBrace = 368,
+	StructItemTuple = 369,
+	StructItemUnit = 370,
+	VisibilityModifierPub = 371,
+	_VisibilityModifierInPath = 372,
+	PointerTypeConst = 373,
+	ExpressionStatementWithSemi = 374,
+	ForeignModItemSemi = 375,
+	MatchArmWithComma = 376,
+	LineCommentRegularDslash = 377,
+	LineCommentDoc = 378,
+	TokenTreePatternParen = 379,
+	TokenTreePatternBracket = 380,
+	TokenTreePatternBrace = 381,
+	TokenTreeParen = 382,
+	TokenTreeBracket = 383,
+	TokenTreeBrace = 384,
+	DelimTokenTreeParen = 385,
+	DelimTokenTreeBracket = 386,
+	DelimTokenTreeBrace = 387,
+	AttributedFieldDeclaration = 388,
+	AttributedEnumVariant = 389,
+	AttributedParameter = 390,
+	AttributedTypeParameter = 391,
+	AttributedArgument = 392,
+	AttributedOrderedField = 393,
+	TypeArgument = 394,
+	MatchBlockArms = 395,
+	SourceFileRepeat1 = 396,
+	TokenRepetitionPatternRepeat1 = 397,
+	TokenRepetitionRepeat1 = 398,
+	DeclarationListRepeat1 = 399,
+	FunctionModifiersRepeat1 = 400,
+	TraitBoundsRepeat1 = 401,
+	TypeParametersRepeat1 = 402,
+	ForLifetimesRepeat1 = 403,
+	TupleTypeRepeat1 = 404,
+	TypeArgumentsRepeat1 = 405,
+	TupleExpressionRepeat1 = 406,
+	TupleExpressionRepeat2 = 407,
+	MatchArmRepeat1 = 408,
+	StringLiteralRepeat1 = 409,
+	_EnumVariantListGroup1Repeat1 = 410,
+	_FieldDeclarationListGroup1Repeat1 = 411,
+	_OrderedFieldDeclarationListGroup1Repeat1 = 412,
+	_WhereClauseGroup1Repeat1 = 413,
+	_UseListGroup1Repeat1 = 414,
+	_ParametersGroup1Repeat1 = 415,
+	_UseBoundsGroup1Repeat1 = 416,
+	_ArgumentsGroup1Repeat1 = 417,
+	_FieldInitializerListGroup1Repeat1 = 418,
+	_ClosureParametersOptional1Repeat1 = 419,
+	_TuplePatternGroup1Repeat1 = 420,
+	_SlicePatternGroup1Repeat1 = 421,
+	_StructPatternGroup1Repeat1 = 422,
+	_MacroDefinitionParenRepeat1 = 423,
+	_DelimTokenTreeParenRepeat1 = 424,
+	_MatchBlockArmsRepeat1 = 425,
+	FieldIdentifier = 426,
+	_ShorthandFieldIdentifier = 428,
+	TypeIdentifier = 429
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -965,103 +978,103 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[42, 'bool'],
 	[43, 'str'],
 	[44, 'char'],
-	[45, 'squote'],
-	[46, 'as'],
-	[47, 'async'],
-	[48, 'await'],
-	[49, 'break'],
-	[50, 'const'],
-	[51, 'continue'],
-	[52, 'default'],
-	[53, 'enum'],
-	[54, 'fn'],
-	[55, 'for'],
-	[56, 'gen'],
-	[57, 'if'],
-	[58, 'impl'],
-	[59, 'let'],
-	[60, 'loop'],
-	[61, 'match'],
-	[62, 'mod'],
-	[63, 'pub'],
-	[64, 'return'],
-	[65, 'static'],
-	[66, 'struct'],
-	[67, 'trait'],
-	[68, 'type'],
-	[69, 'union'],
-	[70, 'unsafe'],
-	[71, 'use'],
-	[72, 'where'],
-	[73, 'while'],
-	[74, 'pound'],
-	[75, 'lbrack'],
-	[76, 'rbrack'],
-	[77, 'bang'],
-	[78, 'eq'],
-	[79, 'lbrace'],
-	[80, 'rbrace'],
-	[81, 'extern'],
-	[82, 'lt'],
-	[83, 'comma'],
-	[84, 'gt'],
-	[85, 'colon_colon'],
-	[86, 'dot_dot_dot'],
-	[87, 'lt2'],
-	[88, 'amp'],
-	[89, 'dyn'],
-	[90, 'mutable_specifier'],
-	[91, 'dash'],
-	[92, 'amp_amp'],
-	[93, 'pipe_pipe'],
-	[94, 'pipe'],
-	[95, 'caret'],
-	[96, 'eq_eq'],
-	[97, 'bang_eq'],
-	[98, 'lt_eq'],
-	[99, 'gt_eq'],
-	[100, 'lt_lt'],
-	[101, 'gt_gt'],
-	[102, 'slash'],
-	[103, 'percent'],
-	[104, 'plus_eq'],
-	[105, 'dash_eq'],
-	[106, 'star_eq'],
-	[107, 'slash_eq'],
-	[108, 'percent_eq'],
-	[109, 'amp_eq'],
-	[110, 'pipe_eq'],
-	[111, 'caret_eq'],
-	[112, 'lt_lt_eq'],
-	[113, 'gt_gt_eq'],
-	[114, 'yield'],
-	[115, 'dot_dot'],
-	[116, 'else'],
-	[117, 'in'],
-	[118, 'dot'],
-	[119, 'try'],
-	[120, 'ref'],
-	[121, 'at'],
-	[122, 'integer_literal'],
-	[123, 'string_literal_token1'],
-	[124, 'dquote'],
-	[125, 'char_literal'],
-	[126, 'escape_sequence'],
-	[127, 'true'],
-	[128, 'false'],
-	[129, 'slash_slash'],
-	[130, 'bang2'],
-	[131, 'slash2'],
-	[132, 'slash_star'],
-	[133, 'star_slash'],
-	[134, 'shebang'],
-	[135, 'self'],
-	[136, 'super'],
-	[137, 'crate'],
-	[138, 'metavariable'],
-	[139, 'dash_gt'],
-	[140, '_'],
-	[141, 'dot_dot_eq'],
+	[45, 'pound'],
+	[46, 'lbrack'],
+	[47, 'rbrack'],
+	[48, 'bang'],
+	[49, 'mod'],
+	[50, 'lbrace'],
+	[51, 'rbrace'],
+	[52, 'struct'],
+	[53, 'union'],
+	[54, 'enum'],
+	[55, 'extern'],
+	[56, 'const'],
+	[57, 'static'],
+	[58, 'type'],
+	[59, 'eq'],
+	[60, 'fn'],
+	[61, 'async'],
+	[62, 'default'],
+	[63, 'unsafe'],
+	[64, 'where'],
+	[65, 'impl'],
+	[66, 'trait'],
+	[67, 'for'],
+	[68, 'lt'],
+	[69, 'comma'],
+	[70, 'gt'],
+	[71, 'let'],
+	[72, 'use'],
+	[73, 'colon_colon'],
+	[74, 'as'],
+	[75, 'dot_dot_dot'],
+	[76, 'squote'],
+	[77, 'lt2'],
+	[78, 'amp'],
+	[79, 'dyn'],
+	[80, 'mutable_specifier'],
+	[81, 'dash'],
+	[82, 'amp_amp'],
+	[83, 'pipe_pipe'],
+	[84, 'pipe'],
+	[85, 'caret'],
+	[86, 'eq_eq'],
+	[87, 'bang_eq'],
+	[88, 'lt_eq'],
+	[89, 'gt_eq'],
+	[90, 'lt_lt'],
+	[91, 'gt_gt'],
+	[92, 'slash'],
+	[93, 'percent'],
+	[94, 'plus_eq'],
+	[95, 'dash_eq'],
+	[96, 'star_eq'],
+	[97, 'slash_eq'],
+	[98, 'percent_eq'],
+	[99, 'amp_eq'],
+	[100, 'pipe_eq'],
+	[101, 'caret_eq'],
+	[102, 'lt_lt_eq'],
+	[103, 'gt_gt_eq'],
+	[104, 'return'],
+	[105, 'yield'],
+	[106, 'dot_dot'],
+	[107, 'if'],
+	[108, 'else'],
+	[109, 'match'],
+	[110, 'while'],
+	[111, 'loop'],
+	[112, 'in'],
+	[113, 'break'],
+	[114, 'continue'],
+	[115, 'dot'],
+	[116, 'await'],
+	[117, 'gen'],
+	[118, 'try'],
+	[119, 'ref'],
+	[120, 'at'],
+	[121, 'integer_literal'],
+	[122, 'string_literal_token1'],
+	[123, 'dquote'],
+	[124, 'char_literal'],
+	[125, 'escape_sequence'],
+	[126, 'true'],
+	[127, 'false'],
+	[128, 'slash_slash'],
+	[129, 'bang2'],
+	[130, 'slash2'],
+	[131, 'slash_star'],
+	[132, 'star_slash'],
+	[133, 'shebang'],
+	[134, 'self'],
+	[135, 'super'],
+	[136, 'crate'],
+	[137, 'metavariable'],
+	[138, 'dash_gt'],
+	[139, '_'],
+	[140, 'dot_dot_eq'],
+	[141, 'pub'],
 	[142, 'raw'],
 	[143, 'move'],
 	[144, '_line_comment_regular_dslash_token1'],
@@ -1090,259 +1103,266 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[167, 'fragment_specifier'],
 	[168, 'token_tree'],
 	[169, 'token_repetition'],
-	[170, 'attribute_item'],
-	[171, 'inner_attribute_item'],
-	[172, 'attribute'],
-	[173, 'mod_item'],
-	[174, 'foreign_mod_item'],
-	[175, 'declaration_list'],
-	[176, 'struct_item'],
-	[177, 'union_item'],
-	[178, 'enum_item'],
-	[179, 'enum_variant_list'],
-	[180, 'enum_variant'],
-	[181, 'field_declaration_list'],
-	[182, 'field_declaration'],
-	[183, 'ordered_field_declaration_list'],
-	[184, 'extern_crate_declaration'],
-	[185, 'const_item'],
-	[186, 'static_item'],
-	[187, 'type_item'],
-	[188, 'function_item'],
-	[189, 'function_signature_item'],
-	[190, 'function_modifiers'],
-	[191, 'where_clause'],
-	[192, 'where_predicate'],
-	[193, 'impl_item'],
-	[194, 'trait_item'],
-	[195, 'associated_type'],
-	[196, 'trait_bounds'],
-	[197, 'higher_ranked_trait_bound'],
-	[198, 'removed_trait_bound'],
-	[199, 'type_parameters'],
-	[200, 'const_parameter'],
-	[201, 'type_parameter'],
-	[202, 'lifetime_parameter'],
-	[203, 'let_declaration'],
-	[204, 'use_declaration'],
-	[205, '_use_clause'],
-	[206, 'scoped_use_list'],
-	[207, 'use_list'],
-	[208, 'use_as_clause'],
-	[209, 'use_wildcard'],
-	[210, 'parameters'],
-	[211, 'self_parameter'],
-	[212, 'variadic_parameter'],
-	[213, 'parameter'],
-	[214, 'extern_modifier'],
-	[215, 'visibility_modifier'],
-	[216, '_type'],
-	[217, 'bracketed_type'],
-	[218, 'qualified_type'],
-	[219, 'lifetime'],
-	[220, 'array_type'],
-	[221, 'for_lifetimes'],
-	[222, 'function_type'],
-	[223, 'tuple_type'],
-	[224, 'unit_type'],
-	[225, 'generic_function'],
-	[226, 'generic_type'],
-	[227, 'generic_type_with_turbofish'],
-	[228, 'bounded_type'],
-	[229, 'use_bounds'],
-	[230, 'type_arguments'],
-	[231, 'type_binding'],
-	[232, 'reference_type'],
-	[233, 'pointer_type'],
-	[234, 'never_type'],
-	[235, 'abstract_type'],
-	[236, 'dynamic_type'],
-	[237, '_expression_except_range'],
-	[238, '_expression'],
-	[239, 'macro_invocation'],
-	[240, 'delim_token_tree'],
-	[241, '_delim_tokens'],
-	[242, '_non_delim_token'],
-	[243, 'scoped_identifier'],
-	[244, 'scoped_type_identifier_in_expression_position'],
-	[245, 'scoped_type_identifier'],
-	[246, 'range_expression'],
-	[247, 'unary_expression'],
-	[248, 'try_expression'],
-	[249, 'reference_expression'],
-	[250, 'binary_expression'],
-	[251, 'assignment_expression'],
-	[252, 'compound_assignment_expr'],
-	[253, 'type_cast_expression'],
-	[254, 'return_expression'],
-	[255, 'yield_expression'],
-	[256, 'call_expression'],
-	[257, 'arguments'],
-	[258, 'array_expression'],
-	[259, 'parenthesized_expression'],
-	[260, 'tuple_expression'],
-	[261, 'unit_expression'],
-	[262, 'struct_expression'],
-	[263, 'field_initializer_list'],
-	[264, 'shorthand_field_initializer'],
-	[265, 'field_initializer'],
-	[266, 'base_field_initializer'],
-	[267, 'if_expression'],
-	[268, 'let_condition'],
-	[269, '_let_chain'],
-	[270, '_condition'],
-	[271, 'else_clause'],
-	[272, 'match_expression'],
-	[273, 'match_block'],
-	[274, 'match_arm'],
-	[275, 'last_match_arm'],
-	[276, 'match_pattern'],
-	[277, 'while_expression'],
-	[278, 'loop_expression'],
-	[279, 'for_expression'],
-	[280, 'const_block'],
-	[281, 'closure_expression'],
-	[282, 'closure_parameters'],
-	[283, 'label'],
-	[284, 'break_expression'],
-	[285, 'continue_expression'],
-	[286, 'index_expression'],
-	[287, 'await_expression'],
-	[288, 'field_expression'],
-	[289, 'unsafe_block'],
-	[290, 'async_block'],
-	[291, 'gen_block'],
-	[292, 'try_block'],
-	[293, 'block'],
-	[294, '_pattern'],
-	[295, 'generic_pattern'],
-	[296, 'tuple_pattern'],
-	[297, 'slice_pattern'],
-	[298, 'tuple_struct_pattern'],
-	[299, 'struct_pattern'],
-	[300, 'field_pattern'],
-	[301, 'remaining_field_pattern'],
-	[302, 'mut_pattern'],
-	[303, 'range_pattern'],
-	[304, 'ref_pattern'],
-	[305, 'captured_pattern'],
-	[306, 'reference_pattern'],
-	[307, 'or_pattern'],
-	[308, '_literal'],
-	[309, '_literal_pattern'],
-	[310, 'negative_literal'],
-	[311, 'string_literal'],
-	[312, 'raw_string_literal'],
-	[313, 'boolean_literal'],
-	[314, 'line_comment'],
-	[315, '_line_doc_comment_marker'],
-	[316, '_inner_line_doc_comment_marker'],
-	[317, '_outer_line_doc_comment_marker'],
-	[318, 'block_comment'],
-	[319, '_block_doc_comment_marker'],
-	[320, '_enum_variant_list_group1'],
-	[321, '_field_declaration_list_group1'],
-	[322, '_ordered_field_declaration_list_group1'],
-	[323, '_where_clause_group1'],
-	[324, '_use_list_group1'],
-	[325, '_parameters_group1'],
-	[326, '_visibility_modifier_group1'],
-	[327, '_use_bounds_group1'],
-	[328, '_arguments_group1'],
-	[329, '_field_initializer_list_group1'],
-	[330, '_tuple_pattern_group1'],
-	[331, '_slice_pattern_group1'],
-	[332, '_struct_pattern_group1'],
-	[333, '_token_tree_punctuation'],
-	[334, '_use_wildcard_clause'],
-	[335, '_wildcard_pattern'],
-	[336, '_reference_expression_raw_const'],
-	[337, '_reference_expression_raw_mut'],
-	[338, '_impl_item_unsafe_marker'],
-	[339, '_impl_item_body'],
-	[340, '_impl_item_semi'],
-	[341, '_impl_item_positive_clause'],
-	[342, '_impl_item_negative_clause'],
-	[343, '_array_expression_semi'],
-	[344, '_array_expression_list'],
-	[345, '_closure_expression_block'],
-	[346, '_closure_expression_expr'],
-	[347, '_field_pattern_named'],
-	[348, '_function_type_trait_form'],
-	[349, '_function_type_fn_form'],
-	[350, '_macro_definition_paren'],
-	[351, '_macro_definition_bracket'],
-	[352, '_macro_definition_brace'],
-	[353, '_mod_item_external'],
-	[354, '_or_pattern_binary'],
-	[355, '_or_pattern_prefix'],
-	[356, '_range_expression_binary'],
-	[357, '_range_expression_postfix'],
-	[358, '_range_expression_prefix'],
-	[359, '_range_pattern_prefix'],
-	[360, '_range_pattern_left_with_right'],
-	[361, '_range_pattern_left_bare'],
-	[362, '_struct_item_brace'],
-	[363, '_struct_item_tuple'],
-	[364, '_struct_item_unit'],
-	[365, '_visibility_modifier_pub'],
-	[366, '_visibility_modifier_in_path'],
-	[367, '_pointer_type_const'],
-	[368, '_expression_statement_with_semi'],
-	[369, '_foreign_mod_item_semi'],
-	[370, '_match_arm_with_comma'],
-	[371, '_line_comment_regular_dslash'],
-	[372, '_line_comment_doc'],
-	[373, '_token_tree_pattern_paren'],
-	[374, '_token_tree_pattern_bracket'],
-	[375, '_token_tree_pattern_brace'],
-	[376, '_token_tree_paren'],
-	[377, '_token_tree_bracket'],
-	[378, '_token_tree_brace'],
-	[379, '_delim_token_tree_paren'],
-	[380, '_delim_token_tree_bracket'],
-	[381, '_delim_token_tree_brace'],
-	[382, '_attributed_field_declaration'],
-	[383, '_attributed_enum_variant'],
-	[384, '_attributed_parameter'],
-	[385, '_attributed_type_parameter'],
-	[386, '_attributed_argument'],
-	[387, '_attributed_ordered_field'],
-	[388, '_type_argument'],
-	[389, '_match_block_arms'],
-	[390, 'source_file_repeat1'],
-	[391, 'token_repetition_pattern_repeat1'],
-	[392, 'token_repetition_repeat1'],
-	[393, 'declaration_list_repeat1'],
-	[394, 'function_modifiers_repeat1'],
-	[395, 'trait_bounds_repeat1'],
-	[396, 'type_parameters_repeat1'],
-	[397, 'for_lifetimes_repeat1'],
-	[398, 'tuple_type_repeat1'],
-	[399, 'type_arguments_repeat1'],
-	[400, 'tuple_expression_repeat1'],
-	[401, 'tuple_expression_repeat2'],
-	[402, 'match_arm_repeat1'],
-	[403, 'string_literal_repeat1'],
-	[404, '_enum_variant_list_group1_repeat1'],
-	[405, '_field_declaration_list_group1_repeat1'],
-	[406, '_ordered_field_declaration_list_group1_repeat1'],
-	[407, '_where_clause_group1_repeat1'],
-	[408, '_use_list_group1_repeat1'],
-	[409, '_parameters_group1_repeat1'],
-	[410, '_use_bounds_group1_repeat1'],
-	[411, '_arguments_group1_repeat1'],
-	[412, '_field_initializer_list_group1_repeat1'],
-	[413, '_closure_parameters_optional1_repeat1'],
-	[414, '_tuple_pattern_group1_repeat1'],
-	[415, '_slice_pattern_group1_repeat1'],
-	[416, '_struct_pattern_group1_repeat1'],
-	[417, '_macro_definition_paren_repeat1'],
-	[418, '_delim_token_tree_paren_repeat1'],
-	[419, '_match_block_arms_repeat1'],
-	[420, '_field_identifier'],
-	[422, '_shorthand_field_identifier'],
-	[423, '_type_identifier']
+	[170, '_non_special_token'],
+	[171, 'attribute_item'],
+	[172, 'inner_attribute_item'],
+	[173, 'attribute'],
+	[174, 'mod_item'],
+	[175, 'foreign_mod_item'],
+	[176, 'declaration_list'],
+	[177, 'struct_item'],
+	[178, 'union_item'],
+	[179, 'enum_item'],
+	[180, 'enum_variant_list'],
+	[181, 'enum_variant'],
+	[182, 'field_declaration_list'],
+	[183, 'field_declaration'],
+	[184, 'ordered_field_declaration_list'],
+	[185, 'extern_crate_declaration'],
+	[186, 'const_item'],
+	[187, 'static_item'],
+	[188, 'type_item'],
+	[189, 'function_item'],
+	[190, 'function_signature_item'],
+	[191, 'function_modifiers'],
+	[192, 'where_clause'],
+	[193, 'where_predicate'],
+	[194, 'impl_item'],
+	[195, 'trait_item'],
+	[196, 'associated_type'],
+	[197, 'trait_bounds'],
+	[198, 'higher_ranked_trait_bound'],
+	[199, 'removed_trait_bound'],
+	[200, 'type_parameters'],
+	[201, 'const_parameter'],
+	[202, 'type_parameter'],
+	[203, 'lifetime_parameter'],
+	[204, 'let_declaration'],
+	[205, 'use_declaration'],
+	[206, '_use_clause'],
+	[207, 'scoped_use_list'],
+	[208, 'use_list'],
+	[209, 'use_as_clause'],
+	[210, 'use_wildcard'],
+	[211, 'parameters'],
+	[212, 'self_parameter'],
+	[213, 'variadic_parameter'],
+	[214, 'parameter'],
+	[215, 'extern_modifier'],
+	[216, 'visibility_modifier'],
+	[217, '_type'],
+	[218, 'bracketed_type'],
+	[219, 'qualified_type'],
+	[220, 'lifetime'],
+	[221, 'array_type'],
+	[222, 'for_lifetimes'],
+	[223, 'function_type'],
+	[224, 'tuple_type'],
+	[225, 'unit_type'],
+	[226, 'generic_function'],
+	[227, 'generic_type'],
+	[228, 'generic_type_with_turbofish'],
+	[229, 'bounded_type'],
+	[230, 'use_bounds'],
+	[231, 'type_arguments'],
+	[232, 'type_binding'],
+	[233, 'reference_type'],
+	[234, 'pointer_type'],
+	[235, 'never_type'],
+	[236, 'abstract_type'],
+	[237, 'dynamic_type'],
+	[238, '_expression_except_range'],
+	[239, '_expression'],
+	[240, 'macro_invocation'],
+	[241, 'delim_token_tree'],
+	[242, '_delim_tokens'],
+	[243, '_non_delim_token'],
+	[244, 'scoped_identifier'],
+	[245, 'scoped_type_identifier_in_expression_position'],
+	[246, 'scoped_type_identifier'],
+	[247, 'range_expression'],
+	[248, 'unary_expression'],
+	[249, 'try_expression'],
+	[250, 'reference_expression'],
+	[251, 'binary_expression'],
+	[252, 'assignment_expression'],
+	[253, 'compound_assignment_expr'],
+	[254, 'type_cast_expression'],
+	[255, 'return_expression'],
+	[256, 'yield_expression'],
+	[257, 'call_expression'],
+	[258, 'arguments'],
+	[259, 'array_expression'],
+	[260, 'parenthesized_expression'],
+	[261, 'tuple_expression'],
+	[262, 'unit_expression'],
+	[263, 'struct_expression'],
+	[264, 'field_initializer_list'],
+	[265, 'shorthand_field_initializer'],
+	[266, 'field_initializer'],
+	[267, 'base_field_initializer'],
+	[268, 'if_expression'],
+	[269, 'let_condition'],
+	[270, '_let_chain'],
+	[427, '_let_chain'],
+	[271, '_condition'],
+	[272, 'else_clause'],
+	[273, 'match_expression'],
+	[274, 'match_block'],
+	[275, 'match_arm'],
+	[276, 'last_match_arm'],
+	[277, 'match_pattern'],
+	[278, 'while_expression'],
+	[279, 'loop_expression'],
+	[280, 'for_expression'],
+	[281, 'const_block'],
+	[282, 'closure_expression'],
+	[283, 'closure_parameters'],
+	[284, 'label'],
+	[285, 'break_expression'],
+	[286, 'continue_expression'],
+	[287, 'index_expression'],
+	[288, 'await_expression'],
+	[289, 'field_expression'],
+	[290, 'unsafe_block'],
+	[291, 'async_block'],
+	[292, 'gen_block'],
+	[293, 'try_block'],
+	[294, 'block'],
+	[295, '_pattern'],
+	[296, 'generic_pattern'],
+	[297, 'tuple_pattern'],
+	[298, 'slice_pattern'],
+	[299, 'tuple_struct_pattern'],
+	[300, 'struct_pattern'],
+	[301, 'field_pattern'],
+	[302, 'remaining_field_pattern'],
+	[303, 'mut_pattern'],
+	[304, 'range_pattern'],
+	[305, 'ref_pattern'],
+	[306, 'captured_pattern'],
+	[307, 'reference_pattern'],
+	[308, 'or_pattern'],
+	[309, '_literal'],
+	[310, '_literal_pattern'],
+	[311, 'negative_literal'],
+	[312, 'string_literal'],
+	[313, 'raw_string_literal'],
+	[314, 'boolean_literal'],
+	[315, 'line_comment'],
+	[316, '_line_doc_comment_marker'],
+	[317, '_inner_line_doc_comment_marker'],
+	[318, '_outer_line_doc_comment_marker'],
+	[319, 'block_comment'],
+	[320, '_block_doc_comment_marker'],
+	[321, '_attribute_group1'],
+	[322, '_enum_variant_list_group1'],
+	[323, '_field_declaration_list_group1'],
+	[324, '_ordered_field_declaration_list_group1'],
+	[325, '_where_clause_group1'],
+	[326, '_use_list_group1'],
+	[327, '_parameters_group1'],
+	[328, '_visibility_modifier_group1'],
+	[329, '_use_bounds_group1'],
+	[330, '_arguments_group1'],
+	[331, '_array_expression_group1'],
+	[332, '_field_initializer_list_group1'],
+	[333, '_tuple_pattern_group1'],
+	[334, '_slice_pattern_group1'],
+	[335, '_struct_pattern_group1'],
+	[336, '_range_pattern_group2'],
+	[337, '_block_comment_group1'],
+	[338, '_token_tree_punctuation'],
+	[339, '_token_keywords'],
+	[340, '_use_wildcard_clause'],
+	[341, '_wildcard_pattern'],
+	[342, '_reference_expression_raw_const'],
+	[343, '_reference_expression_raw_mut'],
+	[344, '_impl_item_unsafe_marker'],
+	[345, '_impl_item_body'],
+	[346, '_impl_item_semi'],
+	[347, '_impl_item_positive_clause'],
+	[348, '_impl_item_negative_clause'],
+	[349, '_array_expression_semi'],
+	[350, '_array_expression_list'],
+	[351, '_closure_expression_block'],
+	[352, '_closure_expression_expr'],
+	[353, '_field_pattern_named'],
+	[354, '_function_type_trait_form'],
+	[355, '_function_type_fn_form'],
+	[356, '_macro_definition_paren'],
+	[357, '_macro_definition_bracket'],
+	[358, '_macro_definition_brace'],
+	[359, '_mod_item_external'],
+	[360, '_or_pattern_binary'],
+	[361, '_or_pattern_prefix'],
+	[362, '_range_expression_binary'],
+	[363, '_range_expression_postfix'],
+	[364, '_range_expression_prefix'],
+	[365, '_range_pattern_prefix'],
+	[366, '_range_pattern_left_with_right'],
+	[367, '_range_pattern_left_bare'],
+	[368, '_struct_item_brace'],
+	[369, '_struct_item_tuple'],
+	[370, '_struct_item_unit'],
+	[371, '_visibility_modifier_pub'],
+	[372, '_visibility_modifier_in_path'],
+	[373, '_pointer_type_const'],
+	[374, '_expression_statement_with_semi'],
+	[375, '_foreign_mod_item_semi'],
+	[376, '_match_arm_with_comma'],
+	[377, '_line_comment_regular_dslash'],
+	[378, '_line_comment_doc'],
+	[379, '_token_tree_pattern_paren'],
+	[380, '_token_tree_pattern_bracket'],
+	[381, '_token_tree_pattern_brace'],
+	[382, '_token_tree_paren'],
+	[383, '_token_tree_bracket'],
+	[384, '_token_tree_brace'],
+	[385, '_delim_token_tree_paren'],
+	[386, '_delim_token_tree_bracket'],
+	[387, '_delim_token_tree_brace'],
+	[388, '_attributed_field_declaration'],
+	[389, '_attributed_enum_variant'],
+	[390, '_attributed_parameter'],
+	[391, '_attributed_type_parameter'],
+	[392, '_attributed_argument'],
+	[393, '_attributed_ordered_field'],
+	[394, '_type_argument'],
+	[395, '_match_block_arms'],
+	[396, 'source_file_repeat1'],
+	[397, 'token_repetition_pattern_repeat1'],
+	[398, 'token_repetition_repeat1'],
+	[399, 'declaration_list_repeat1'],
+	[400, 'function_modifiers_repeat1'],
+	[401, 'trait_bounds_repeat1'],
+	[402, 'type_parameters_repeat1'],
+	[403, 'for_lifetimes_repeat1'],
+	[404, 'tuple_type_repeat1'],
+	[405, 'type_arguments_repeat1'],
+	[406, 'tuple_expression_repeat1'],
+	[407, 'tuple_expression_repeat2'],
+	[408, 'match_arm_repeat1'],
+	[409, 'string_literal_repeat1'],
+	[410, '_enum_variant_list_group1_repeat1'],
+	[411, '_field_declaration_list_group1_repeat1'],
+	[412, '_ordered_field_declaration_list_group1_repeat1'],
+	[413, '_where_clause_group1_repeat1'],
+	[414, '_use_list_group1_repeat1'],
+	[415, '_parameters_group1_repeat1'],
+	[416, '_use_bounds_group1_repeat1'],
+	[417, '_arguments_group1_repeat1'],
+	[418, '_field_initializer_list_group1_repeat1'],
+	[419, '_closure_parameters_optional1_repeat1'],
+	[420, '_tuple_pattern_group1_repeat1'],
+	[421, '_slice_pattern_group1_repeat1'],
+	[422, '_struct_pattern_group1_repeat1'],
+	[423, '_macro_definition_paren_repeat1'],
+	[424, '_delim_token_tree_paren_repeat1'],
+	[425, '_match_block_arms_repeat1'],
+	[426, '_field_identifier'],
+	[428, '_shorthand_field_identifier'],
+	[429, '_type_identifier']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -1391,103 +1411,103 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[42, 'bool'],
 	[43, 'str'],
 	[44, 'char'],
-	[45, 'squote'],
-	[46, 'as'],
-	[47, 'async'],
-	[48, 'await'],
-	[49, 'break'],
-	[50, 'const'],
-	[51, 'continue'],
-	[52, 'default'],
-	[53, 'enum'],
-	[54, 'fn'],
-	[55, 'for'],
-	[56, 'gen'],
-	[57, 'if'],
-	[58, 'impl'],
-	[59, 'let'],
-	[60, 'loop'],
-	[61, 'match'],
-	[62, 'mod'],
-	[63, 'pub'],
-	[64, 'return'],
-	[65, 'static'],
-	[66, 'struct'],
-	[67, 'trait'],
-	[68, 'type'],
-	[69, 'union'],
-	[70, 'unsafe'],
-	[71, 'use'],
-	[72, 'where'],
-	[73, 'while'],
-	[74, 'pound'],
-	[75, 'lbrack'],
-	[76, 'rbrack'],
-	[77, 'bang'],
-	[78, 'eq'],
-	[79, 'lbrace'],
-	[80, 'rbrace'],
-	[81, 'extern'],
-	[82, 'lt'],
-	[83, 'comma'],
-	[84, 'gt'],
-	[85, 'colon_colon'],
-	[86, 'dot_dot_dot'],
-	[87, 'lt2'],
-	[88, 'amp'],
-	[89, 'dyn'],
-	[90, 'mutable_specifier'],
-	[91, 'dash'],
-	[92, 'amp_amp'],
-	[93, 'pipe_pipe'],
-	[94, 'pipe'],
-	[95, 'caret'],
-	[96, 'eq_eq'],
-	[97, 'bang_eq'],
-	[98, 'lt_eq'],
-	[99, 'gt_eq'],
-	[100, 'lt_lt'],
-	[101, 'gt_gt'],
-	[102, 'slash'],
-	[103, 'percent'],
-	[104, 'plus_eq'],
-	[105, 'dash_eq'],
-	[106, 'star_eq'],
-	[107, 'slash_eq'],
-	[108, 'percent_eq'],
-	[109, 'amp_eq'],
-	[110, 'pipe_eq'],
-	[111, 'caret_eq'],
-	[112, 'lt_lt_eq'],
-	[113, 'gt_gt_eq'],
-	[114, 'yield'],
-	[115, 'dot_dot'],
-	[116, 'else'],
-	[117, 'in'],
-	[118, 'dot'],
-	[119, 'try'],
-	[120, 'ref'],
-	[121, 'at'],
-	[122, 'integer_literal'],
-	[123, '"'],
-	[124, 'dquote'],
-	[125, 'char_literal'],
-	[126, 'escape_sequence'],
-	[127, 'true'],
-	[128, 'false'],
-	[129, 'slash_slash'],
-	[130, 'bang2'],
-	[131, 'slash2'],
-	[132, 'slash_star'],
-	[133, 'star_slash'],
-	[134, 'shebang'],
-	[135, 'self'],
-	[136, 'super'],
-	[137, 'crate'],
-	[138, 'metavariable'],
-	[139, 'dash_gt'],
-	[140, '_'],
-	[141, 'dot_dot_eq'],
+	[45, 'pound'],
+	[46, 'lbrack'],
+	[47, 'rbrack'],
+	[48, 'bang'],
+	[49, 'mod'],
+	[50, 'lbrace'],
+	[51, 'rbrace'],
+	[52, 'struct'],
+	[53, 'union'],
+	[54, 'enum'],
+	[55, 'extern'],
+	[56, 'const'],
+	[57, 'static'],
+	[58, 'type'],
+	[59, 'eq'],
+	[60, 'fn'],
+	[61, 'async'],
+	[62, 'default'],
+	[63, 'unsafe'],
+	[64, 'where'],
+	[65, 'impl'],
+	[66, 'trait'],
+	[67, 'for'],
+	[68, 'lt'],
+	[69, 'comma'],
+	[70, 'gt'],
+	[71, 'let'],
+	[72, 'use'],
+	[73, 'colon_colon'],
+	[74, 'as'],
+	[75, 'dot_dot_dot'],
+	[76, 'squote'],
+	[77, 'lt2'],
+	[78, 'amp'],
+	[79, 'dyn'],
+	[80, 'mutable_specifier'],
+	[81, 'dash'],
+	[82, 'amp_amp'],
+	[83, 'pipe_pipe'],
+	[84, 'pipe'],
+	[85, 'caret'],
+	[86, 'eq_eq'],
+	[87, 'bang_eq'],
+	[88, 'lt_eq'],
+	[89, 'gt_eq'],
+	[90, 'lt_lt'],
+	[91, 'gt_gt'],
+	[92, 'slash'],
+	[93, 'percent'],
+	[94, 'plus_eq'],
+	[95, 'dash_eq'],
+	[96, 'star_eq'],
+	[97, 'slash_eq'],
+	[98, 'percent_eq'],
+	[99, 'amp_eq'],
+	[100, 'pipe_eq'],
+	[101, 'caret_eq'],
+	[102, 'lt_lt_eq'],
+	[103, 'gt_gt_eq'],
+	[104, 'return'],
+	[105, 'yield'],
+	[106, 'dot_dot'],
+	[107, 'if'],
+	[108, 'else'],
+	[109, 'match'],
+	[110, 'while'],
+	[111, 'loop'],
+	[112, 'in'],
+	[113, 'break'],
+	[114, 'continue'],
+	[115, 'dot'],
+	[116, 'await'],
+	[117, 'gen'],
+	[118, 'try'],
+	[119, 'ref'],
+	[120, 'at'],
+	[121, 'integer_literal'],
+	[122, '"'],
+	[123, 'dquote'],
+	[124, 'char_literal'],
+	[125, 'escape_sequence'],
+	[126, 'true'],
+	[127, 'false'],
+	[128, 'slash_slash'],
+	[129, 'bang2'],
+	[130, 'slash2'],
+	[131, 'slash_star'],
+	[132, 'star_slash'],
+	[133, 'shebang'],
+	[134, 'self'],
+	[135, 'super'],
+	[136, 'crate'],
+	[137, 'metavariable'],
+	[138, 'dash_gt'],
+	[139, '_'],
+	[140, 'dot_dot_eq'],
+	[141, 'pub'],
 	[142, 'raw'],
 	[143, 'move'],
 	[144, '_line_comment_regular_dslash_token1'],
@@ -1516,259 +1536,266 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[167, 'fragment_specifier'],
 	[168, 'token_tree'],
 	[169, 'token_repetition'],
-	[170, 'attribute_item'],
-	[171, 'inner_attribute_item'],
-	[172, 'attribute'],
-	[173, 'mod_item'],
-	[174, 'foreign_mod_item'],
-	[175, 'declaration_list'],
-	[176, 'struct_item'],
-	[177, 'union_item'],
-	[178, 'enum_item'],
-	[179, 'enum_variant_list'],
-	[180, 'enum_variant'],
-	[181, 'field_declaration_list'],
-	[182, 'field_declaration'],
-	[183, 'ordered_field_declaration_list'],
-	[184, 'extern_crate_declaration'],
-	[185, 'const_item'],
-	[186, 'static_item'],
-	[187, 'type_item'],
-	[188, 'function_item'],
-	[189, 'function_signature_item'],
-	[190, 'function_modifiers'],
-	[191, 'where_clause'],
-	[192, 'where_predicate'],
-	[193, 'impl_item'],
-	[194, 'trait_item'],
-	[195, 'associated_type'],
-	[196, 'trait_bounds'],
-	[197, 'higher_ranked_trait_bound'],
-	[198, 'removed_trait_bound'],
-	[199, 'type_parameters'],
-	[200, 'const_parameter'],
-	[201, 'type_parameter'],
-	[202, 'lifetime_parameter'],
-	[203, 'let_declaration'],
-	[204, 'use_declaration'],
-	[205, '_use_clause'],
-	[206, 'scoped_use_list'],
-	[207, 'use_list'],
-	[208, 'use_as_clause'],
-	[209, 'use_wildcard'],
-	[210, 'parameters'],
-	[211, 'self_parameter'],
-	[212, 'variadic_parameter'],
-	[213, 'parameter'],
-	[214, 'extern_modifier'],
-	[215, 'visibility_modifier'],
-	[216, '_type'],
-	[217, 'bracketed_type'],
-	[218, 'qualified_type'],
-	[219, 'lifetime'],
-	[220, 'array_type'],
-	[221, 'for_lifetimes'],
-	[222, 'function_type'],
-	[223, 'tuple_type'],
-	[224, 'unit_type'],
-	[225, 'generic_function'],
-	[226, 'generic_type'],
-	[227, 'generic_type_with_turbofish'],
-	[228, 'bounded_type'],
-	[229, 'use_bounds'],
-	[230, 'type_arguments'],
-	[231, 'type_binding'],
-	[232, 'reference_type'],
-	[233, 'pointer_type'],
-	[234, 'never_type'],
-	[235, 'abstract_type'],
-	[236, 'dynamic_type'],
-	[237, '_expression_except_range'],
-	[238, '_expression'],
-	[239, 'macro_invocation'],
-	[240, 'token_tree'],
-	[241, '_delim_tokens'],
-	[242, '_non_delim_token'],
-	[243, 'scoped_identifier'],
-	[244, 'scoped_type_identifier'],
+	[170, 'token_pattern_group1'],
+	[171, 'attribute_item'],
+	[172, 'inner_attribute_item'],
+	[173, 'attribute'],
+	[174, 'mod_item'],
+	[175, 'foreign_mod_item'],
+	[176, 'declaration_list'],
+	[177, 'struct_item'],
+	[178, 'union_item'],
+	[179, 'enum_item'],
+	[180, 'enum_variant_list'],
+	[181, 'enum_variant'],
+	[182, 'field_declaration_list'],
+	[183, 'field_declaration'],
+	[184, 'ordered_field_declaration_list'],
+	[185, 'extern_crate_declaration'],
+	[186, 'const_item'],
+	[187, 'static_item'],
+	[188, 'type_item'],
+	[189, 'function_item'],
+	[190, 'function_signature_item'],
+	[191, 'function_modifiers'],
+	[192, 'where_clause'],
+	[193, 'where_predicate'],
+	[194, 'impl_item'],
+	[195, 'trait_item'],
+	[196, 'associated_type'],
+	[197, 'trait_bounds'],
+	[198, 'higher_ranked_trait_bound'],
+	[199, 'removed_trait_bound'],
+	[200, 'type_parameters'],
+	[201, 'const_parameter'],
+	[202, 'type_parameter'],
+	[203, 'lifetime_parameter'],
+	[204, 'let_declaration'],
+	[205, 'use_declaration'],
+	[206, '_use_clause'],
+	[207, 'scoped_use_list'],
+	[208, 'use_list'],
+	[209, 'use_as_clause'],
+	[210, 'use_wildcard'],
+	[211, 'parameters'],
+	[212, 'self_parameter'],
+	[213, 'variadic_parameter'],
+	[214, 'parameter'],
+	[215, 'extern_modifier'],
+	[216, 'visibility_modifier'],
+	[217, '_type'],
+	[218, 'bracketed_type'],
+	[219, 'qualified_type'],
+	[220, 'lifetime'],
+	[221, 'array_type'],
+	[222, 'for_lifetimes'],
+	[223, 'function_type'],
+	[224, 'tuple_type'],
+	[225, 'unit_type'],
+	[226, 'generic_function'],
+	[227, 'generic_type'],
+	[228, 'generic_type_with_turbofish'],
+	[229, 'bounded_type'],
+	[230, 'use_bounds'],
+	[231, 'type_arguments'],
+	[232, 'type_binding'],
+	[233, 'reference_type'],
+	[234, 'pointer_type'],
+	[235, 'never_type'],
+	[236, 'abstract_type'],
+	[237, 'dynamic_type'],
+	[238, '_expression_except_range'],
+	[239, '_expression'],
+	[240, 'macro_invocation'],
+	[241, 'token_tree'],
+	[242, '_delim_tokens'],
+	[243, '_non_delim_token'],
+	[244, 'scoped_identifier'],
 	[245, 'scoped_type_identifier'],
-	[246, 'range_expression'],
-	[247, 'unary_expression'],
-	[248, 'try_expression'],
-	[249, 'reference_expression'],
-	[250, 'binary_expression'],
-	[251, 'assignment_expression'],
-	[252, 'compound_assignment_expr'],
-	[253, 'type_cast_expression'],
-	[254, 'return_expression'],
-	[255, 'yield_expression'],
-	[256, 'call_expression'],
-	[257, 'arguments'],
-	[258, 'array_expression'],
-	[259, 'parenthesized_expression'],
-	[260, 'tuple_expression'],
-	[261, 'unit_expression'],
-	[262, 'struct_expression'],
-	[263, 'field_initializer_list'],
-	[264, 'shorthand_field_initializer'],
-	[265, 'field_initializer'],
-	[266, 'base_field_initializer'],
-	[267, 'if_expression'],
-	[268, 'let_condition'],
-	[269, 'let_chain'],
-	[270, '_condition'],
-	[271, 'else_clause'],
-	[272, 'match_expression'],
-	[273, 'match_block'],
-	[274, 'match_arm'],
+	[246, 'scoped_type_identifier'],
+	[247, 'range_expression'],
+	[248, 'unary_expression'],
+	[249, 'try_expression'],
+	[250, 'reference_expression'],
+	[251, 'binary_expression'],
+	[252, 'assignment_expression'],
+	[253, 'compound_assignment_expr'],
+	[254, 'type_cast_expression'],
+	[255, 'return_expression'],
+	[256, 'yield_expression'],
+	[257, 'call_expression'],
+	[258, 'arguments'],
+	[259, 'array_expression'],
+	[260, 'parenthesized_expression'],
+	[261, 'tuple_expression'],
+	[262, 'unit_expression'],
+	[263, 'struct_expression'],
+	[264, 'field_initializer_list'],
+	[265, 'shorthand_field_initializer'],
+	[266, 'field_initializer'],
+	[267, 'base_field_initializer'],
+	[268, 'if_expression'],
+	[269, 'let_condition'],
+	[270, 'let_chain'],
+	[427, 'let_chain'],
+	[271, '_condition'],
+	[272, 'else_clause'],
+	[273, 'match_expression'],
+	[274, 'match_block'],
 	[275, 'match_arm'],
-	[276, 'match_pattern'],
-	[277, 'while_expression'],
-	[278, 'loop_expression'],
-	[279, 'for_expression'],
-	[280, 'const_block'],
-	[281, 'closure_expression'],
-	[282, 'closure_parameters'],
-	[283, 'label'],
-	[284, 'break_expression'],
-	[285, 'continue_expression'],
-	[286, 'index_expression'],
-	[287, 'await_expression'],
-	[288, 'field_expression'],
-	[289, 'unsafe_block'],
-	[290, 'async_block'],
-	[291, 'gen_block'],
-	[292, 'try_block'],
-	[293, 'block'],
-	[294, '_pattern'],
-	[295, 'generic_pattern'],
-	[296, 'tuple_pattern'],
-	[297, 'slice_pattern'],
-	[298, 'tuple_struct_pattern'],
-	[299, 'struct_pattern'],
-	[300, 'field_pattern'],
-	[301, 'remaining_field_pattern'],
-	[302, 'mut_pattern'],
-	[303, 'range_pattern'],
-	[304, 'ref_pattern'],
-	[305, 'captured_pattern'],
-	[306, 'reference_pattern'],
-	[307, 'or_pattern'],
-	[308, '_literal'],
-	[309, '_literal_pattern'],
-	[310, 'negative_literal'],
-	[311, 'string_literal'],
-	[312, 'raw_string_literal'],
-	[313, 'boolean_literal'],
-	[314, 'line_comment'],
-	[315, '_line_doc_comment_marker'],
-	[316, 'inner_doc_comment_marker'],
-	[317, 'outer_doc_comment_marker'],
-	[318, 'block_comment'],
-	[319, '_block_doc_comment_marker'],
-	[320, 'enum_variant_list_group1'],
-	[321, 'field_declaration_list_group1'],
-	[322, 'ordered_field_declaration_list_group1'],
-	[323, 'where_clause_group1'],
-	[324, 'use_list_group1'],
-	[325, 'parameters_group1'],
-	[326, 'visibility_modifier_group1'],
-	[327, 'use_bounds_group1'],
-	[328, 'arguments_group1'],
-	[329, 'field_initializer_list_group1'],
-	[330, 'tuple_pattern_group1'],
-	[331, 'slice_pattern_group1'],
-	[332, 'struct_pattern_group1'],
-	[333, 'token_tree_punctuation'],
-	[334, '_use_wildcard_clause'],
-	[335, 'wildcard_pattern'],
-	[336, 'reference_expression_raw_const'],
-	[337, 'reference_expression_raw_mut'],
-	[338, '_impl_item_unsafe_marker'],
-	[339, 'impl_item_body'],
-	[340, 'impl_item_semi'],
-	[341, 'impl_item_positive_clause'],
-	[342, 'impl_item_negative_clause'],
-	[343, 'array_expression_semi'],
-	[344, 'array_expression_list'],
-	[345, 'closure_expression_block'],
-	[346, 'closure_expression_expr'],
-	[347, 'field_pattern_named'],
-	[348, 'function_type_trait_form'],
-	[349, 'function_type_fn_form'],
-	[350, 'macro_definition_paren'],
-	[351, 'macro_definition_bracket'],
-	[352, 'macro_definition_brace'],
-	[353, 'mod_item_external'],
-	[354, 'or_pattern_binary'],
-	[355, 'or_pattern_prefix'],
-	[356, 'range_expression_binary'],
-	[357, 'range_expression_postfix'],
-	[358, 'range_expression_prefix'],
-	[359, 'range_pattern_prefix'],
-	[360, 'range_pattern_left_with_right'],
-	[361, 'range_pattern_left_bare'],
-	[362, 'struct_item_brace'],
-	[363, 'struct_item_tuple'],
-	[364, 'struct_item_unit'],
-	[365, 'visibility_modifier_pub'],
-	[366, 'visibility_modifier_in_path'],
-	[367, 'pointer_type_const'],
-	[368, 'expression_statement_with_semi'],
-	[369, 'foreign_mod_item_semi'],
-	[370, 'match_arm_with_comma'],
-	[371, 'line_comment_regular_dslash'],
-	[372, 'line_comment_doc'],
-	[373, 'token_tree_pattern_paren'],
-	[374, 'token_tree_pattern_bracket'],
-	[375, 'token_tree_pattern_brace'],
-	[376, 'token_tree_paren'],
-	[377, 'token_tree_bracket'],
-	[378, 'token_tree_brace'],
-	[379, 'delim_token_tree_paren'],
-	[380, 'delim_token_tree_bracket'],
-	[381, 'delim_token_tree_brace'],
-	[382, 'attributed_field_declaration'],
-	[383, 'attributed_enum_variant'],
-	[384, 'attributed_parameter'],
-	[385, 'attributed_type_parameter'],
-	[386, 'attributed_argument'],
-	[387, 'attributed_ordered_field'],
-	[388, 'type_argument'],
-	[389, 'match_block_arms'],
-	[390, 'source_file_repeat1'],
-	[391, 'token_repetition_pattern_repeat1'],
-	[392, 'token_repetition_repeat1'],
-	[393, 'declaration_list_repeat1'],
-	[394, 'function_modifiers_repeat1'],
-	[395, 'trait_bounds_repeat1'],
-	[396, 'type_parameters_repeat1'],
-	[397, 'for_lifetimes_repeat1'],
-	[398, 'tuple_type_repeat1'],
-	[399, 'type_arguments_repeat1'],
-	[400, 'tuple_expression_repeat1'],
-	[401, 'tuple_expression_repeat2'],
-	[402, 'match_arm_repeat1'],
-	[403, 'string_literal_repeat1'],
-	[404, '_enum_variant_list_group1_repeat1'],
-	[405, '_field_declaration_list_group1_repeat1'],
-	[406, '_ordered_field_declaration_list_group1_repeat1'],
-	[407, '_where_clause_group1_repeat1'],
-	[408, '_use_list_group1_repeat1'],
-	[409, '_parameters_group1_repeat1'],
-	[410, '_use_bounds_group1_repeat1'],
-	[411, '_arguments_group1_repeat1'],
-	[412, '_field_initializer_list_group1_repeat1'],
-	[413, '_closure_parameters_optional1_repeat1'],
-	[414, '_tuple_pattern_group1_repeat1'],
-	[415, '_slice_pattern_group1_repeat1'],
-	[416, '_struct_pattern_group1_repeat1'],
-	[417, '_macro_definition_paren_repeat1'],
-	[418, '_delim_token_tree_paren_repeat1'],
-	[419, '_match_block_arms_repeat1'],
-	[420, 'field_identifier'],
-	[422, 'shorthand_field_identifier'],
-	[423, 'type_identifier']
+	[276, 'last_match_arm'],
+	[277, 'match_pattern'],
+	[278, 'while_expression'],
+	[279, 'loop_expression'],
+	[280, 'for_expression'],
+	[281, 'const_block'],
+	[282, 'closure_expression'],
+	[283, 'closure_parameters'],
+	[284, 'label'],
+	[285, 'break_expression'],
+	[286, 'continue_expression'],
+	[287, 'index_expression'],
+	[288, 'await_expression'],
+	[289, 'field_expression'],
+	[290, 'unsafe_block'],
+	[291, 'async_block'],
+	[292, 'gen_block'],
+	[293, 'try_block'],
+	[294, 'block'],
+	[295, '_pattern'],
+	[296, 'generic_pattern'],
+	[297, 'tuple_pattern'],
+	[298, 'slice_pattern'],
+	[299, 'tuple_struct_pattern'],
+	[300, 'struct_pattern'],
+	[301, 'field_pattern'],
+	[302, 'remaining_field_pattern'],
+	[303, 'mut_pattern'],
+	[304, 'range_pattern'],
+	[305, 'ref_pattern'],
+	[306, 'captured_pattern'],
+	[307, 'reference_pattern'],
+	[308, 'or_pattern'],
+	[309, '_literal'],
+	[310, '_literal_pattern'],
+	[311, 'negative_literal'],
+	[312, 'string_literal'],
+	[313, 'raw_string_literal'],
+	[314, 'boolean_literal'],
+	[315, 'line_comment'],
+	[316, '_line_doc_comment_marker'],
+	[317, 'inner_doc_comment_marker'],
+	[318, 'outer_doc_comment_marker'],
+	[319, 'block_comment'],
+	[320, '_block_doc_comment_marker'],
+	[321, 'attribute_group1'],
+	[322, 'enum_variant_list_group1'],
+	[323, 'field_declaration_list_group1'],
+	[324, 'ordered_field_declaration_list_group1'],
+	[325, 'where_clause_group1'],
+	[326, 'use_list_group1'],
+	[327, 'parameters_group1'],
+	[328, 'visibility_modifier_group1'],
+	[329, 'use_bounds_group1'],
+	[330, 'arguments_group1'],
+	[331, 'array_expression_group1'],
+	[332, 'field_initializer_list_group1'],
+	[333, 'tuple_pattern_group1'],
+	[334, 'slice_pattern_group1'],
+	[335, 'struct_pattern_group1'],
+	[336, 'range_pattern_group2'],
+	[337, 'block_comment_group1'],
+	[338, 'token_tree_punctuation'],
+	[339, '_token_keywords'],
+	[340, '_use_wildcard_clause'],
+	[341, 'wildcard_pattern'],
+	[342, 'reference_expression_raw_const'],
+	[343, 'reference_expression_raw_mut'],
+	[344, '_impl_item_unsafe_marker'],
+	[345, 'impl_item_body'],
+	[346, 'impl_item_semi'],
+	[347, 'impl_item_positive_clause'],
+	[348, 'impl_item_negative_clause'],
+	[349, 'array_expression_semi'],
+	[350, 'array_expression_list'],
+	[351, 'closure_expression_block'],
+	[352, 'closure_expression_expr'],
+	[353, 'field_pattern_named'],
+	[354, 'function_type_trait_form'],
+	[355, 'function_type_fn_form'],
+	[356, 'macro_definition_paren'],
+	[357, 'macro_definition_bracket'],
+	[358, 'macro_definition_brace'],
+	[359, 'mod_item_external'],
+	[360, 'or_pattern_binary'],
+	[361, 'or_pattern_prefix'],
+	[362, 'range_expression_binary'],
+	[363, 'range_expression_postfix'],
+	[364, 'range_expression_prefix'],
+	[365, 'range_pattern_prefix'],
+	[366, 'range_pattern_left_with_right'],
+	[367, 'range_pattern_left_bare'],
+	[368, 'struct_item_brace'],
+	[369, 'struct_item_tuple'],
+	[370, 'struct_item_unit'],
+	[371, 'visibility_modifier_pub'],
+	[372, 'visibility_modifier_in_path'],
+	[373, 'pointer_type_const'],
+	[374, 'expression_statement_with_semi'],
+	[375, 'foreign_mod_item_semi'],
+	[376, 'match_arm_with_comma'],
+	[377, 'line_comment_regular_dslash'],
+	[378, 'line_comment_doc'],
+	[379, 'token_tree_pattern_paren'],
+	[380, 'token_tree_pattern_bracket'],
+	[381, 'token_tree_pattern_brace'],
+	[382, 'token_tree_paren'],
+	[383, 'token_tree_bracket'],
+	[384, 'token_tree_brace'],
+	[385, 'delim_token_tree_paren'],
+	[386, 'delim_token_tree_bracket'],
+	[387, 'delim_token_tree_brace'],
+	[388, 'attributed_field_declaration'],
+	[389, 'attributed_enum_variant'],
+	[390, 'attributed_parameter'],
+	[391, 'attributed_type_parameter'],
+	[392, 'attributed_argument'],
+	[393, 'attributed_ordered_field'],
+	[394, 'type_argument'],
+	[395, 'match_block_arms'],
+	[396, 'source_file_repeat1'],
+	[397, 'token_repetition_pattern_repeat1'],
+	[398, 'token_repetition_repeat1'],
+	[399, 'declaration_list_repeat1'],
+	[400, 'function_modifiers_repeat1'],
+	[401, 'trait_bounds_repeat1'],
+	[402, 'type_parameters_repeat1'],
+	[403, 'for_lifetimes_repeat1'],
+	[404, 'tuple_type_repeat1'],
+	[405, 'type_arguments_repeat1'],
+	[406, 'tuple_expression_repeat1'],
+	[407, 'tuple_expression_repeat2'],
+	[408, 'match_arm_repeat1'],
+	[409, 'string_literal_repeat1'],
+	[410, '_enum_variant_list_group1_repeat1'],
+	[411, '_field_declaration_list_group1_repeat1'],
+	[412, '_ordered_field_declaration_list_group1_repeat1'],
+	[413, '_where_clause_group1_repeat1'],
+	[414, '_use_list_group1_repeat1'],
+	[415, '_parameters_group1_repeat1'],
+	[416, '_use_bounds_group1_repeat1'],
+	[417, '_arguments_group1_repeat1'],
+	[418, '_field_initializer_list_group1_repeat1'],
+	[419, '_closure_parameters_optional1_repeat1'],
+	[420, '_tuple_pattern_group1_repeat1'],
+	[421, '_slice_pattern_group1_repeat1'],
+	[422, '_struct_pattern_group1_repeat1'],
+	[423, '_macro_definition_paren_repeat1'],
+	[424, '_delim_token_tree_paren_repeat1'],
+	[425, '_match_block_arms_repeat1'],
+	[426, 'field_identifier'],
+	[428, 'shorthand_field_identifier'],
+	[429, 'type_identifier']
 ]);
 
 export function kindIdFromName(kindName: string): TSKindId {
@@ -1861,64 +1888,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Str;
 		case 'char':
 			return TSKindId.Char;
-		case 'squote':
-			return TSKindId.Squote;
-		case 'as':
-			return TSKindId.As;
-		case 'async':
-			return TSKindId.Async;
-		case 'await':
-			return TSKindId.Await;
-		case 'break':
-			return TSKindId.Break;
-		case 'const':
-			return TSKindId.Const;
-		case 'continue':
-			return TSKindId.Continue;
-		case 'default':
-			return TSKindId.Default;
-		case 'enum':
-			return TSKindId.Enum;
-		case 'fn':
-			return TSKindId.Fn;
-		case 'for':
-			return TSKindId.For;
-		case 'gen':
-			return TSKindId.Gen;
-		case 'if':
-			return TSKindId.If;
-		case 'impl':
-			return TSKindId.Impl;
-		case 'let':
-			return TSKindId.Let;
-		case 'loop':
-			return TSKindId.Loop;
-		case 'match':
-			return TSKindId.Match;
-		case 'mod':
-			return TSKindId.Mod;
-		case 'pub':
-			return TSKindId.Pub;
-		case 'return':
-			return TSKindId.Return;
-		case 'static':
-			return TSKindId.Static;
-		case 'struct':
-			return TSKindId.Struct;
-		case 'trait':
-			return TSKindId.Trait;
-		case 'type':
-			return TSKindId.Type;
-		case 'union':
-			return TSKindId.Union;
-		case 'unsafe':
-			return TSKindId.Unsafe;
-		case 'use':
-			return TSKindId.Use;
-		case 'where':
-			return TSKindId.Where;
-		case 'while':
-			return TSKindId.While;
 		case 'pound':
 			return TSKindId.Pound;
 		case 'lbrack':
@@ -1927,24 +1896,62 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Rbrack;
 		case 'bang':
 			return TSKindId.Bang;
-		case 'eq':
-			return TSKindId.Eq;
+		case 'mod':
+			return TSKindId.Mod;
 		case 'lbrace':
 			return TSKindId.Lbrace;
 		case 'rbrace':
 			return TSKindId.Rbrace;
+		case 'struct':
+			return TSKindId.Struct;
+		case 'union':
+			return TSKindId.Union;
+		case 'enum':
+			return TSKindId.Enum;
 		case 'extern':
 			return TSKindId.Extern;
+		case 'const':
+			return TSKindId.Const;
+		case 'static':
+			return TSKindId.Static;
+		case 'type':
+			return TSKindId.Type;
+		case 'eq':
+			return TSKindId.Eq;
+		case 'fn':
+			return TSKindId.Fn;
+		case 'async':
+			return TSKindId.Async;
+		case 'default':
+			return TSKindId.Default;
+		case 'unsafe':
+			return TSKindId.Unsafe;
+		case 'where':
+			return TSKindId.Where;
+		case 'impl':
+			return TSKindId.Impl;
+		case 'trait':
+			return TSKindId.Trait;
+		case 'for':
+			return TSKindId.For;
 		case 'lt':
 			return TSKindId.Lt;
 		case 'comma':
 			return TSKindId.Comma;
 		case 'gt':
 			return TSKindId.Gt;
+		case 'let':
+			return TSKindId.Let;
+		case 'use':
+			return TSKindId.Use;
 		case 'colon_colon':
 			return TSKindId.ColonColon;
+		case 'as':
+			return TSKindId.As;
 		case 'dot_dot_dot':
 			return TSKindId.DotDotDot;
+		case 'squote':
+			return TSKindId.Squote;
 		case 'lt2':
 			return TSKindId.Lt2;
 		case 'amp':
@@ -1999,16 +2006,34 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.LtLtEq;
 		case 'gt_gt_eq':
 			return TSKindId.GtGtEq;
+		case 'return':
+			return TSKindId.Return;
 		case 'yield':
 			return TSKindId.Yield;
 		case 'dot_dot':
 			return TSKindId.DotDot;
+		case 'if':
+			return TSKindId.If;
 		case 'else':
 			return TSKindId.Else;
+		case 'match':
+			return TSKindId.Match;
+		case 'while':
+			return TSKindId.While;
+		case 'loop':
+			return TSKindId.Loop;
 		case 'in':
 			return TSKindId.In;
+		case 'break':
+			return TSKindId.Break;
+		case 'continue':
+			return TSKindId.Continue;
 		case 'dot':
 			return TSKindId.Dot;
+		case 'await':
+			return TSKindId.Await;
+		case 'gen':
+			return TSKindId.Gen;
 		case 'try':
 			return TSKindId.Try;
 		case 'ref':
@@ -2055,6 +2080,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Anonymous;
 		case 'dot_dot_eq':
 			return TSKindId.DotDotEq;
+		case 'pub':
+			return TSKindId.Pub;
 		case 'raw':
 			return TSKindId.Raw;
 		case 'move':
@@ -2111,6 +2138,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TokenTree;
 		case 'token_repetition':
 			return TSKindId.TokenRepetition;
+		case '_non_special_token':
+			return TSKindId.NonSpecialToken;
 		case 'attribute_item':
 			return TSKindId.AttributeItem;
 		case 'inner_attribute_item':
@@ -2388,7 +2417,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'or_pattern':
 			return TSKindId.OrPattern;
 		case '_literal':
-			return TSKindId.Literal_308;
+			return TSKindId.Literal_309;
 		case '_literal_pattern':
 			return TSKindId.LiteralPattern;
 		case 'negative_literal':
@@ -2411,34 +2440,44 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.BlockComment;
 		case '_block_doc_comment_marker':
 			return TSKindId._BlockDocCommentMarker;
+		case '_attribute_group1':
+			return TSKindId.AttributeGroup1;
 		case '_enum_variant_list_group1':
-			return TSKindId._EnumVariantListGroup1;
+			return TSKindId.EnumVariantListGroup1;
 		case '_field_declaration_list_group1':
-			return TSKindId._FieldDeclarationListGroup1;
+			return TSKindId.FieldDeclarationListGroup1;
 		case '_ordered_field_declaration_list_group1':
-			return TSKindId._OrderedFieldDeclarationListGroup1;
+			return TSKindId.OrderedFieldDeclarationListGroup1;
 		case '_where_clause_group1':
-			return TSKindId._WhereClauseGroup1;
+			return TSKindId.WhereClauseGroup1;
 		case '_use_list_group1':
-			return TSKindId._UseListGroup1;
+			return TSKindId.UseListGroup1;
 		case '_parameters_group1':
-			return TSKindId._ParametersGroup1;
+			return TSKindId.ParametersGroup1;
 		case '_visibility_modifier_group1':
-			return TSKindId._VisibilityModifierGroup1;
+			return TSKindId.VisibilityModifierGroup1;
 		case '_use_bounds_group1':
-			return TSKindId._UseBoundsGroup1;
+			return TSKindId.UseBoundsGroup1;
 		case '_arguments_group1':
-			return TSKindId._ArgumentsGroup1;
+			return TSKindId.ArgumentsGroup1;
+		case '_array_expression_group1':
+			return TSKindId.ArrayExpressionGroup1;
 		case '_field_initializer_list_group1':
-			return TSKindId._FieldInitializerListGroup1;
+			return TSKindId.FieldInitializerListGroup1;
 		case '_tuple_pattern_group1':
-			return TSKindId._TuplePatternGroup1;
+			return TSKindId.TuplePatternGroup1;
 		case '_slice_pattern_group1':
-			return TSKindId._SlicePatternGroup1;
+			return TSKindId.SlicePatternGroup1;
 		case '_struct_pattern_group1':
-			return TSKindId._StructPatternGroup1;
+			return TSKindId.StructPatternGroup1;
+		case '_range_pattern_group2':
+			return TSKindId.RangePatternGroup2;
+		case '_block_comment_group1':
+			return TSKindId.BlockCommentGroup1;
 		case '_token_tree_punctuation':
 			return TSKindId.TokenTreePunctuation;
+		case '_token_keywords':
+			return TSKindId.TokenKeywords;
 		case '_use_wildcard_clause':
 			return TSKindId.UseWildcardClause;
 		case '_wildcard_pattern':
@@ -2448,7 +2487,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case '_reference_expression_raw_mut':
 			return TSKindId.ReferenceExpressionRawMut;
 		case '_impl_item_unsafe_marker':
-			return TSKindId.ImplItemUnsafeMarker;
+			return TSKindId._ImplItemUnsafeMarker;
 		case '_impl_item_body':
 			return TSKindId.ImplItemBody;
 		case '_impl_item_semi':
@@ -2504,7 +2543,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case '_visibility_modifier_pub':
 			return TSKindId.VisibilityModifierPub;
 		case '_visibility_modifier_in_path':
-			return TSKindId.VisibilityModifierInPath;
+			return TSKindId._VisibilityModifierInPath;
 		case '_pointer_type_const':
 			return TSKindId.PointerTypeConst;
 		case '_expression_statement_with_semi':
@@ -2639,8 +2678,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Qmark;
 		case 'primitive_type':
 			return TSKindId.U8;
-		case "'":
-			return TSKindId.Squote;
 		case '#':
 			return TSKindId.Pound;
 		case '[':
@@ -2649,12 +2686,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Rbrack;
 		case '!':
 			return TSKindId.Bang;
-		case '=':
-			return TSKindId.Eq;
 		case '{':
 			return TSKindId.Lbrace;
 		case '}':
 			return TSKindId.Rbrace;
+		case '=':
+			return TSKindId.Eq;
 		case '<':
 			return TSKindId.Lt;
 		case ',':
@@ -2665,6 +2702,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ColonColon;
 		case '...':
 			return TSKindId.DotDotDot;
+		case "'":
+			return TSKindId.Squote;
 		case '&':
 			return TSKindId.Amp2;
 		case '-':
@@ -2739,34 +2778,44 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.InnerBlockDocCommentMarker;
 		case 'doc_comment':
 			return TSKindId.LineDocContent;
+		case 'token_pattern_group1':
+			return TSKindId.NonSpecialToken;
 		case 'let_chain':
 			return TSKindId.LetChain;
+		case 'attribute_group1':
+			return TSKindId.AttributeGroup1;
 		case 'enum_variant_list_group1':
-			return TSKindId._EnumVariantListGroup1;
+			return TSKindId.EnumVariantListGroup1;
 		case 'field_declaration_list_group1':
-			return TSKindId._FieldDeclarationListGroup1;
+			return TSKindId.FieldDeclarationListGroup1;
 		case 'ordered_field_declaration_list_group1':
-			return TSKindId._OrderedFieldDeclarationListGroup1;
+			return TSKindId.OrderedFieldDeclarationListGroup1;
 		case 'where_clause_group1':
-			return TSKindId._WhereClauseGroup1;
+			return TSKindId.WhereClauseGroup1;
 		case 'use_list_group1':
-			return TSKindId._UseListGroup1;
+			return TSKindId.UseListGroup1;
 		case 'parameters_group1':
-			return TSKindId._ParametersGroup1;
+			return TSKindId.ParametersGroup1;
 		case 'visibility_modifier_group1':
-			return TSKindId._VisibilityModifierGroup1;
+			return TSKindId.VisibilityModifierGroup1;
 		case 'use_bounds_group1':
-			return TSKindId._UseBoundsGroup1;
+			return TSKindId.UseBoundsGroup1;
 		case 'arguments_group1':
-			return TSKindId._ArgumentsGroup1;
+			return TSKindId.ArgumentsGroup1;
+		case 'array_expression_group1':
+			return TSKindId.ArrayExpressionGroup1;
 		case 'field_initializer_list_group1':
-			return TSKindId._FieldInitializerListGroup1;
+			return TSKindId.FieldInitializerListGroup1;
 		case 'tuple_pattern_group1':
-			return TSKindId._TuplePatternGroup1;
+			return TSKindId.TuplePatternGroup1;
 		case 'slice_pattern_group1':
-			return TSKindId._SlicePatternGroup1;
+			return TSKindId.SlicePatternGroup1;
 		case 'struct_pattern_group1':
-			return TSKindId._StructPatternGroup1;
+			return TSKindId.StructPatternGroup1;
+		case 'range_pattern_group2':
+			return TSKindId.RangePatternGroup2;
+		case 'block_comment_group1':
+			return TSKindId.BlockCommentGroup1;
 		case 'token_tree_punctuation':
 			return TSKindId.TokenTreePunctuation;
 		case 'wildcard_pattern':
@@ -2830,7 +2879,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'visibility_modifier_pub':
 			return TSKindId.VisibilityModifierPub;
 		case 'visibility_modifier_in_path':
-			return TSKindId.VisibilityModifierInPath;
+			return TSKindId._VisibilityModifierInPath;
 		case 'pointer_type_const':
 			return TSKindId.PointerTypeConst;
 		case 'expression_statement_with_semi':
@@ -2889,55 +2938,30 @@ export function kindIdFromName(kindName: string): TSKindId {
 }
 
 // Scoped enums per supertype
-export const enum ConditionKind {
-	Expression = '_expression',
-	UnaryExpression = 'unary_expression',
-	ReferenceExpression = 'reference_expression',
-	TryExpression = 'try_expression',
-	BinaryExpression = 'binary_expression',
-	AssignmentExpression = 'assignment_expression',
-	CompoundAssignmentExpr = 'compound_assignment_expr',
-	TypeCastExpression = 'type_cast_expression',
-	CallExpression = 'call_expression',
-	ReturnExpression = 'return_expression',
-	YieldExpression = 'yield_expression',
-	StringLiteral = 'string_literal',
-	RawStringLiteral = 'raw_string_literal',
-	CharLiteral = 'char_literal',
-	BooleanLiteral = 'boolean_literal',
-	IntegerLiteral = 'integer_literal',
-	FloatLiteral = 'float_literal',
-	Identifier = 'identifier',
-	Self = 'self',
-	ScopedIdentifier = 'scoped_identifier',
-	GenericFunction = 'generic_function',
-	AwaitExpression = 'await_expression',
-	FieldExpression = 'field_expression',
-	ArrayExpression = 'array_expression',
-	TupleExpression = 'tuple_expression',
+export const enum StatementKind {
+	ExpressionStatement = 'expression_statement',
+	DeclarationStatement = '_declaration_statement',
+	ConstItem = 'const_item',
 	MacroInvocation = 'macro_invocation',
-	UnitExpression = 'unit_expression',
-	BreakExpression = 'break_expression',
-	ContinueExpression = 'continue_expression',
-	IndexExpression = 'index_expression',
-	Metavariable = 'metavariable',
-	ClosureExpression = 'closure_expression',
-	ParenthesizedExpression = 'parenthesized_expression',
-	StructExpression = 'struct_expression',
-	UnsafeBlock = 'unsafe_block',
-	AsyncBlock = 'async_block',
-	GenBlock = 'gen_block',
-	TryBlock = 'try_block',
-	Block = 'block',
-	IfExpression = 'if_expression',
-	MatchExpression = 'match_expression',
-	WhileExpression = 'while_expression',
-	LoopExpression = 'loop_expression',
-	ForExpression = 'for_expression',
-	ConstBlock = 'const_block',
-	RangeExpression = 'range_expression',
-	LetCondition = 'let_condition',
-	LetChain = '_let_chain'
+	MacroDefinition = 'macro_definition',
+	EmptyStatement = 'empty_statement',
+	AttributeItem = 'attribute_item',
+	InnerAttributeItem = 'inner_attribute_item',
+	ModItem = 'mod_item',
+	ForeignModItem = 'foreign_mod_item',
+	StructItem = 'struct_item',
+	UnionItem = 'union_item',
+	EnumItem = 'enum_item',
+	TypeItem = 'type_item',
+	FunctionItem = 'function_item',
+	FunctionSignatureItem = 'function_signature_item',
+	ImplItem = 'impl_item',
+	TraitItem = 'trait_item',
+	AssociatedType = 'associated_type',
+	LetDeclaration = 'let_declaration',
+	UseDeclaration = 'use_declaration',
+	ExternCrateDeclaration = 'extern_crate_declaration',
+	StaticItem = 'static_item'
 }
 
 export const enum DeclarationStatementKind {
@@ -2964,8 +2988,13 @@ export const enum DeclarationStatementKind {
 	StaticItem = 'static_item'
 }
 
-export const enum DelimTokensKind {
-	NonDelimToken = '_non_delim_token',
+export const enum TokenPatternKind {
+	TokenTreePattern = 'token_tree_pattern',
+	TokenRepetitionPattern = 'token_repetition_pattern',
+	TokenBindingPattern = 'token_binding_pattern',
+	Metavariable = 'metavariable',
+	NonSpecialToken = '_non_special_token',
+	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -2977,23 +3006,17 @@ export const enum DelimTokensKind {
 	Self = 'self',
 	Super = 'super',
 	Crate = 'crate',
-	TokSq = "'",
-	TokDollar = '$',
-	DelimTokenTree = 'delim_token_tree'
+	PrimitiveType = '_primitive_type',
+	TokenTreePunctuation = '_token_tree_punctuation',
+	TokenKeywords = '_token_keywords'
 }
 
-export const enum ExpressionKind {
-	ExpressionExceptRange = '_expression_except_range',
-	UnaryExpression = 'unary_expression',
-	ReferenceExpression = 'reference_expression',
-	TryExpression = 'try_expression',
-	BinaryExpression = 'binary_expression',
-	AssignmentExpression = 'assignment_expression',
-	CompoundAssignmentExpr = 'compound_assignment_expr',
-	TypeCastExpression = 'type_cast_expression',
-	CallExpression = 'call_expression',
-	ReturnExpression = 'return_expression',
-	YieldExpression = 'yield_expression',
+export const enum TokensKind {
+	TokenTree = 'token_tree',
+	TokenRepetition = 'token_repetition',
+	Metavariable = 'metavariable',
+	NonSpecialToken = '_non_special_token',
+	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -3001,48 +3024,66 @@ export const enum ExpressionKind {
 	IntegerLiteral = 'integer_literal',
 	FloatLiteral = 'float_literal',
 	Identifier = 'identifier',
+	MutableSpecifier = 'mutable_specifier',
 	Self = 'self',
-	ScopedIdentifier = 'scoped_identifier',
-	GenericFunction = 'generic_function',
-	AwaitExpression = 'await_expression',
-	FieldExpression = 'field_expression',
-	ArrayExpression = 'array_expression',
-	TupleExpression = 'tuple_expression',
-	MacroInvocation = 'macro_invocation',
-	UnitExpression = 'unit_expression',
-	BreakExpression = 'break_expression',
-	ContinueExpression = 'continue_expression',
-	IndexExpression = 'index_expression',
-	Metavariable = 'metavariable',
-	ClosureExpression = 'closure_expression',
-	ParenthesizedExpression = 'parenthesized_expression',
-	StructExpression = 'struct_expression',
-	UnsafeBlock = 'unsafe_block',
-	AsyncBlock = 'async_block',
-	GenBlock = 'gen_block',
-	TryBlock = 'try_block',
-	Block = 'block',
-	IfExpression = 'if_expression',
-	MatchExpression = 'match_expression',
-	WhileExpression = 'while_expression',
-	LoopExpression = 'loop_expression',
-	ForExpression = 'for_expression',
-	ConstBlock = 'const_block',
-	RangeExpression = 'range_expression'
+	Super = 'super',
+	Crate = 'crate',
+	PrimitiveType = '_primitive_type',
+	TokenTreePunctuation = '_token_tree_punctuation',
+	TokenKeywords = '_token_keywords'
 }
 
-export const enum ExpressionEndingWithBlockKind {
-	UnsafeBlock = 'unsafe_block',
-	AsyncBlock = 'async_block',
-	GenBlock = 'gen_block',
-	TryBlock = 'try_block',
-	Block = 'block',
-	IfExpression = 'if_expression',
-	MatchExpression = 'match_expression',
-	WhileExpression = 'while_expression',
-	LoopExpression = 'loop_expression',
-	ForExpression = 'for_expression',
-	ConstBlock = 'const_block'
+export const enum NonSpecialTokenKind {
+	Literal = '_literal',
+	StringLiteral = 'string_literal',
+	RawStringLiteral = 'raw_string_literal',
+	CharLiteral = 'char_literal',
+	BooleanLiteral = 'boolean_literal',
+	IntegerLiteral = 'integer_literal',
+	FloatLiteral = 'float_literal',
+	Identifier = 'identifier',
+	MutableSpecifier = 'mutable_specifier',
+	Self = 'self',
+	Super = 'super',
+	Crate = 'crate',
+	PrimitiveType = '_primitive_type',
+	TokenTreePunctuation = '_token_tree_punctuation',
+	TokenKeywords = '_token_keywords'
+}
+
+export const enum UseClauseKind {
+	Path = '_path',
+	Self = 'self',
+	Identifier = 'identifier',
+	Metavariable = 'metavariable',
+	Super = 'super',
+	Crate = 'crate',
+	ScopedIdentifier = 'scoped_identifier',
+	ReservedIdentifier = '_reserved_identifier',
+	UseAsClause = 'use_as_clause',
+	UseList = 'use_list',
+	ScopedUseList = 'scoped_use_list',
+	UseWildcard = 'use_wildcard'
+}
+
+export const enum _TypeKind {
+	AbstractType = 'abstract_type',
+	ReferenceType = 'reference_type',
+	Metavariable = 'metavariable',
+	PointerType = 'pointer_type',
+	GenericType = 'generic_type',
+	ScopedTypeIdentifier = 'scoped_type_identifier',
+	TupleType = 'tuple_type',
+	UnitType = 'unit_type',
+	ArrayType = 'array_type',
+	FunctionType = 'function_type',
+	TypeIdentifier = '_type_identifier',
+	MacroInvocation = 'macro_invocation',
+	NeverType = 'never_type',
+	DynamicType = 'dynamic_type',
+	BoundedType = 'bounded_type',
+	RemovedTraitBound = 'removed_trait_bound',
+	PrimitiveType = '_primitive_type'
 }
 
 export const enum ExpressionExceptRangeKind {
@@ -3095,27 +3136,19 @@ export const enum ExpressionExceptRangeKind {
 	ConstBlock = 'const_block'
 }
 
-export const enum LiteralKind {
-	StringLiteral = 'string_literal',
-	RawStringLiteral = 'raw_string_literal',
-	CharLiteral = 'char_literal',
-	BooleanLiteral = 'boolean_literal',
-	IntegerLiteral = 'integer_literal',
-	FloatLiteral = 'float_literal'
-}
-
-export const enum LiteralPatternKind {
-	StringLiteral = 'string_literal',
-	RawStringLiteral = 'raw_string_literal',
-	CharLiteral = 'char_literal',
-	BooleanLiteral = 'boolean_literal',
-	IntegerLiteral = 'integer_literal',
-	FloatLiteral = 'float_literal',
-	NegativeLiteral = 'negative_literal'
-}
-
-export const enum NonDelimTokenKind {
-	NonSpecialToken = '_non_special_token',
+export const enum ExpressionKind {
+	ExpressionExceptRange = '_expression_except_range',
+	UnaryExpression = 'unary_expression',
+	ReferenceExpression = 'reference_expression',
+	TryExpression = 'try_expression',
+	BinaryExpression = 'binary_expression',
+	AssignmentExpression = 'assignment_expression',
+	CompoundAssignmentExpr = 'compound_assignment_expr',
+	TypeCastExpression = 'type_cast_expression',
+	CallExpression = 'call_expression',
+	ReturnExpression = 'return_expression',
+	YieldExpression = 'yield_expression',
+	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
@@ -3123,15 +3156,61 @@ export const enum NonDelimTokenKind {
 	IntegerLiteral = 'integer_literal',
 	FloatLiteral = 'float_literal',
 	Identifier = 'identifier',
-	MutableSpecifier = 'mutable_specifier',
+	ReservedIdentifier = '_reserved_identifier',
 	Self = 'self',
-	Super = 'super',
-	Crate = 'crate',
-	TokSq = "'",
-	TokDollar = '$'
+	ScopedIdentifier = 'scoped_identifier',
+	GenericFunction = 'generic_function',
+	AwaitExpression = 'await_expression',
+	FieldExpression = 'field_expression',
+	ArrayExpression = 'array_expression',
+	TupleExpression = 'tuple_expression',
+	MacroInvocation = 'macro_invocation',
+	UnitExpression = 'unit_expression',
+	BreakExpression = 'break_expression',
+	ContinueExpression = 'continue_expression',
+	IndexExpression = 'index_expression',
+	Metavariable = 'metavariable',
+	ClosureExpression = 'closure_expression',
+	ParenthesizedExpression = 'parenthesized_expression',
+	StructExpression = 'struct_expression',
+	ExpressionEndingWithBlock = '_expression_ending_with_block',
+	UnsafeBlock = 'unsafe_block',
+	AsyncBlock = 'async_block',
+	GenBlock = 'gen_block',
+	TryBlock = 'try_block',
+	Block = 'block',
+	IfExpression = 'if_expression',
+	MatchExpression = 'match_expression',
+	WhileExpression = 'while_expression',
+	LoopExpression = 'loop_expression',
+	ForExpression = 'for_expression',
+	ConstBlock = 'const_block',
+	RangeExpression = 'range_expression'
 }
 
-export const enum NonSpecialTokenKind {
+export const enum ExpressionEndingWithBlockKind {
+	UnsafeBlock = 'unsafe_block',
+	AsyncBlock = 'async_block',
+	GenBlock = 'gen_block',
+	TryBlock = 'try_block',
+	Block = 'block',
+	IfExpression = 'if_expression',
+	MatchExpression = 'match_expression',
+	WhileExpression = 'while_expression',
+	LoopExpression = 'loop_expression',
+	ForExpression = 'for_expression',
+	ConstBlock = 'const_block'
+}
+
+export const enum DelimTokensKind {
+	NonDelimToken = '_non_delim_token',
+	TokenPatternGroup1 = 'token_pattern_group1',
+	TokDollar = '$',
+	DelimTokenTree = 'delim_token_tree'
+}
+
+export const enum NonDelimTokenKind {
+	NonSpecialToken = '_non_special_token',
 	Literal = '_literal',
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
@@ -3146,17 +3225,63 @@ export const enum NonSpecialTokenKind {
 	Crate = 'crate',
 	PrimitiveType = '_primitive_type',
 	TokenTreePunctuation = '_token_tree_punctuation',
-	TokSq = "'"
+	TokenKeywords = '_token_keywords',
+	TokDollar = '$'
 }
 
-export const enum PathKind {
-	Self = 'self',
+export const enum ConditionKind {
+	Expression = '_expression',
+	ExpressionExceptRange = '_expression_except_range',
+	UnaryExpression = 'unary_expression',
+	ReferenceExpression = 'reference_expression',
+	TryExpression = 'try_expression',
+	BinaryExpression = 'binary_expression',
+	AssignmentExpression = 'assignment_expression',
+	CompoundAssignmentExpr = 'compound_assignment_expr',
+	TypeCastExpression = 'type_cast_expression',
+	CallExpression = 'call_expression',
+	ReturnExpression = 'return_expression',
+	YieldExpression = 'yield_expression',
+	Literal = '_literal',
+	StringLiteral = 'string_literal',
+	RawStringLiteral = 'raw_string_literal',
+	CharLiteral = 'char_literal',
+	BooleanLiteral = 'boolean_literal',
+	IntegerLiteral = 'integer_literal',
+	FloatLiteral = 'float_literal',
 	Identifier = 'identifier',
-	Metavariable = 'metavariable',
-	Super = 'super',
-	Crate = 'crate',
+	ReservedIdentifier = '_reserved_identifier',
+	Self = 'self',
 	ScopedIdentifier = 'scoped_identifier',
-	ReservedIdentifier = '_reserved_identifier'
+	GenericFunction = 'generic_function',
+	AwaitExpression = 'await_expression',
+	FieldExpression = 'field_expression',
+	ArrayExpression = 'array_expression',
+	TupleExpression = 'tuple_expression',
+	MacroInvocation = 'macro_invocation',
+	UnitExpression = 'unit_expression',
+	BreakExpression = 'break_expression',
+	ContinueExpression = 'continue_expression',
+	IndexExpression = 'index_expression',
+	Metavariable = 'metavariable',
+	ClosureExpression = 'closure_expression',
+	ParenthesizedExpression = 'parenthesized_expression',
+	StructExpression = 'struct_expression',
+	ExpressionEndingWithBlock = '_expression_ending_with_block',
+	UnsafeBlock = 'unsafe_block',
+	AsyncBlock = 'async_block',
+	GenBlock = 'gen_block',
+	TryBlock = 'try_block',
+	Block = 'block',
+	IfExpression = 'if_expression',
+	MatchExpression = 'match_expression',
+	WhileExpression = 'while_expression',
+	LoopExpression = 'loop_expression',
+	ForExpression = 'for_expression',
+	ConstBlock = 'const_block',
+	RangeExpression = 'range_expression',
+	LetCondition = 'let_condition',
+	LetChain = '_let_chain'
 }
 
 export const enum PatternKind {
@@ -3188,134 +3313,1487 @@ export const enum PatternKind {
 	WildcardPattern = '_wildcard_pattern'
 }
 
-export const enum StatementKind {
-	ExpressionStatement = 'expression_statement',
-	DeclarationStatement = '_declaration_statement',
-	ConstItem = 'const_item',
-	MacroInvocation = 'macro_invocation',
-	MacroDefinition = 'macro_definition',
-	EmptyStatement = 'empty_statement',
-	AttributeItem = 'attribute_item',
-	InnerAttributeItem = 'inner_attribute_item',
-	ModItem = 'mod_item',
-	ForeignModItem = 'foreign_mod_item',
-	StructItem = 'struct_item',
-	UnionItem = 'union_item',
-	EnumItem = 'enum_item',
-	TypeItem = 'type_item',
-	FunctionItem = 'function_item',
-	FunctionSignatureItem = 'function_signature_item',
-	ImplItem = 'impl_item',
-	TraitItem = 'trait_item',
-	AssociatedType = 'associated_type',
-	LetDeclaration = 'let_declaration',
-	UseDeclaration = 'use_declaration',
-	ExternCrateDeclaration = 'extern_crate_declaration',
-	StaticItem = 'static_item'
+export const enum LiteralKind {
+	StringLiteral = 'string_literal',
+	RawStringLiteral = 'raw_string_literal',
+	CharLiteral = 'char_literal',
+	BooleanLiteral = 'boolean_literal',
+	IntegerLiteral = 'integer_literal',
+	FloatLiteral = 'float_literal'
 }
 
-export const enum TokenPatternKind {
-	TokenTreePattern = 'token_tree_pattern',
-	TokenRepetitionPattern = 'token_repetition_pattern',
-	TokenBindingPattern = 'token_binding_pattern',
-	Metavariable = 'metavariable',
-	NonSpecialToken = '_non_special_token',
+export const enum LiteralPatternKind {
 	StringLiteral = 'string_literal',
 	RawStringLiteral = 'raw_string_literal',
 	CharLiteral = 'char_literal',
 	BooleanLiteral = 'boolean_literal',
 	IntegerLiteral = 'integer_literal',
 	FloatLiteral = 'float_literal',
-	Identifier = 'identifier',
-	MutableSpecifier = 'mutable_specifier',
-	Self = 'self',
-	Super = 'super',
-	Crate = 'crate',
-	TokSq = "'"
+	NegativeLiteral = 'negative_literal'
 }
 
-export const enum TokensKind {
-	TokenTree = 'token_tree',
-	TokenRepetition = 'token_repetition',
-	Metavariable = 'metavariable',
-	NonSpecialToken = '_non_special_token',
-	StringLiteral = 'string_literal',
-	RawStringLiteral = 'raw_string_literal',
-	CharLiteral = 'char_literal',
-	BooleanLiteral = 'boolean_literal',
-	IntegerLiteral = 'integer_literal',
-	FloatLiteral = 'float_literal',
-	Identifier = 'identifier',
-	MutableSpecifier = 'mutable_specifier',
-	Self = 'self',
-	Super = 'super',
-	Crate = 'crate',
-	TokSq = "'"
-}
-
-export const enum TypeKind {
-	AbstractType = 'abstract_type',
-	ReferenceType = 'reference_type',
-	Metavariable = 'metavariable',
-	PointerType = 'pointer_type',
-	GenericType = 'generic_type',
-	ScopedTypeIdentifier = 'scoped_type_identifier',
-	TupleType = 'tuple_type',
-	UnitType = 'unit_type',
-	ArrayType = 'array_type',
-	FunctionType = 'function_type',
-	TypeIdentifier = '_type_identifier',
-	MacroInvocation = 'macro_invocation',
-	NeverType = 'never_type',
-	DynamicType = 'dynamic_type',
-	BoundedType = 'bounded_type',
-	RemovedTraitBound = 'removed_trait_bound',
-	PrimitiveType = '_primitive_type'
-}
-
-export const enum UseClauseKind {
-	Path = '_path',
+export const enum PathKind {
 	Self = 'self',
 	Identifier = 'identifier',
 	Metavariable = 'metavariable',
 	Super = 'super',
 	Crate = 'crate',
 	ScopedIdentifier = 'scoped_identifier',
-	UseAsClause = 'use_as_clause',
-	UseList = 'use_list',
-	ScopedUseList = 'scoped_use_list',
-	UseWildcard = 'use_wildcard'
+	ReservedIdentifier = '_reserved_identifier'
+}
+
+export const enum TokenPatternGroup1Kind {
+	Literal = '_literal',
+	StringLiteral = 'string_literal',
+	RawStringLiteral = 'raw_string_literal',
+	CharLiteral = 'char_literal',
+	BooleanLiteral = 'boolean_literal',
+	IntegerLiteral = 'integer_literal',
+	FloatLiteral = 'float_literal',
+	Identifier = 'identifier',
+	MutableSpecifier = 'mutable_specifier',
+	Self = 'self',
+	Super = 'super',
+	Crate = 'crate',
+	PrimitiveType = '_primitive_type',
+	TokenTreePunctuation = '_token_tree_punctuation',
+	TokenKeywords = '_token_keywords'
 }
 
 // Node types — concrete interfaces
-export interface AbstractTypeOptional1 {
-	readonly $type: '_abstract_type_optional1';
+export interface SourceFile {
+	readonly $type: TSKindId.SourceFile;
+	readonly _shebang?: Shebang;
+	readonly _statements?: readonly Statement[];
+	shebang(): Shebang | undefined;
+	statements(): readonly Statement[];
+}
+
+export interface ExpressionStatement {
+	readonly $type: TSKindId.ExpressionStatement;
+	readonly _content: ExpressionStatementWithSemi | ExpressionEndingWithBlock;
+	content(): ExpressionStatementWithSemi | ExpressionEndingWithBlock;
+}
+
+export interface MacroDefinition {
+	readonly $type: TSKindId.MacroDefinition;
+	readonly _name: Identifier;
+	readonly _content: MacroDefinitionParen | MacroDefinitionBracket | MacroDefinitionBrace;
+	name(): Identifier;
+	content(): MacroDefinitionParen | MacroDefinitionBracket | MacroDefinitionBrace;
+}
+
+export interface MacroRule {
+	readonly $type: TSKindId.MacroRule;
+	readonly _left: TokenTreePattern;
+	readonly _right: TokenTree;
+	left(): TokenTreePattern;
+	right(): TokenTree;
+}
+
+export interface TokenTreePattern {
+	readonly $type: TSKindId.TokenTreePattern;
+	readonly _content: TokenTreePatternParen | TokenTreePatternBracket | TokenTreePatternBrace;
+	content(): TokenTreePatternParen | TokenTreePatternBracket | TokenTreePatternBrace;
+}
+
+export interface TokenBindingPattern {
+	readonly $type: TSKindId.TokenBindingPattern;
+	readonly _name: Metavariable;
+	readonly _type: number;
+	readonly __inputHints__?: {
+		readonly type: KindEnum<
+			| 'block'
+			| 'expr'
+			| 'expr_2021'
+			| 'ident'
+			| 'item'
+			| 'lifetime'
+			| 'literal'
+			| 'meta'
+			| 'pat'
+			| 'pat_param'
+			| 'path'
+			| 'stmt'
+			| 'tt'
+			| 'ty'
+			| 'vis',
+			| TSKindId.AnonBlock
+			| TSKindId.Expr
+			| TSKindId.Expr2021
+			| TSKindId.Ident
+			| TSKindId.Item
+			| TSKindId.AnonLifetime
+			| TSKindId.Literal
+			| TSKindId.Meta
+			| TSKindId.Pat
+			| TSKindId.PatParam
+			| TSKindId.Path
+			| TSKindId.Stmt
+			| TSKindId.Tt
+			| TSKindId.Ty
+			| TSKindId.Vis
+		>;
+	};
+	name(): Metavariable;
+	type(): number;
+}
+
+export interface TokenRepetitionPattern {
+	readonly $type: TSKindId.TokenRepetitionPattern;
+	readonly _token_pattern?: readonly TokenPattern[];
+	readonly _separator?: boolean;
+	readonly _operator: number;
+	readonly __inputHints__?: {
+		readonly separator?: BooleanKeyword<'[^+*?]+'>;
+		readonly operator: KindEnum<'+' | '*' | '?', TSKindId.Plus | TSKindId.Star | TSKindId.Qmark>;
+	};
+	tokenPatterns(): readonly TokenPattern[];
+	separator(): boolean | undefined;
+	operator(): number;
+}
+
+export interface TokenTree {
+	readonly $type: TSKindId.TokenTree;
+	readonly _content:
+		| TokenTreeParen
+		| TokenTreeBracket
+		| TokenTreeBrace
+		| DelimTokenTreeParen
+		| DelimTokenTreeBracket
+		| DelimTokenTreeBrace;
+	content():
+		| TokenTreeParen
+		| TokenTreeBracket
+		| TokenTreeBrace
+		| DelimTokenTreeParen
+		| DelimTokenTreeBracket
+		| DelimTokenTreeBrace;
+}
+
+export interface TokenRepetition {
+	readonly $type: TSKindId.TokenRepetition;
+	readonly _tokens?: readonly Tokens[];
+	readonly _separator?: boolean;
+	readonly _operator: number;
+	readonly __inputHints__?: {
+		readonly separator?: BooleanKeyword<'[^+*?]+'>;
+		readonly operator: KindEnum<'+' | '*' | '?', TSKindId.Plus | TSKindId.Star | TSKindId.Qmark>;
+	};
+	tokens(): readonly Tokens[];
+	separator(): boolean | undefined;
+	operator(): number;
+}
+
+export interface AttributeItem {
+	readonly $type: TSKindId.AttributeItem;
+	readonly _attribute: Attribute;
+	attribute(): Attribute;
+}
+
+export interface InnerAttributeItem {
+	readonly $type: TSKindId.InnerAttributeItem;
+	readonly _attribute: Attribute;
+	attribute(): Attribute;
+}
+
+export interface Attribute {
+	readonly $type: TSKindId.Attribute;
+	readonly _path: Path;
+	readonly _attribute_group1?: AttributeGroup1;
+	path(): Path;
+	attributeGroup1(): AttributeGroup1 | undefined;
+}
+
+export interface ModItem {
+	readonly $type: TSKindId.ModItem;
+	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _name: Identifier;
+	readonly _content: ';' | DeclarationList;
+	visibilityModifier(): VisibilityModifier | undefined;
+	name(): Identifier;
+	content(): ';' | DeclarationList;
+}
+
+export interface ForeignModItem {
+	readonly $type: TSKindId.ForeignModItem;
+	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _extern_modifier: ExternModifier;
+	readonly _content: ';' | DeclarationList;
+	visibilityModifier(): VisibilityModifier | undefined;
+	externModifier(): ExternModifier;
+	content(): ';' | DeclarationList;
+}
+
+export interface DeclarationList {
+	readonly $type: TSKindId.DeclarationList;
+	readonly _declaration_statement?: readonly DeclarationStatement[];
+	declarationStatements(): readonly DeclarationStatement[];
+}
+
+export interface StructItem {
+	readonly $type: TSKindId.StructItem;
+	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _name: Identifier;
+	readonly _type_parameters?: TypeParameters;
+	readonly _content: StructItemBrace | StructItemTuple | ';';
+	visibilityModifier(): VisibilityModifier | undefined;
+	name(): Identifier;
+	typeParameters(): TypeParameters | undefined;
+	content(): StructItemBrace | StructItemTuple | ';';
+}
+
+export interface UnionItem {
+	readonly $type: TSKindId.UnionItem;
+	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _name: Identifier;
+	readonly _type_parameters?: TypeParameters;
+	readonly _where_clause?: WhereClause;
+	readonly _body: FieldDeclarationList;
+	visibilityModifier(): VisibilityModifier | undefined;
+	name(): Identifier;
+	typeParameters(): TypeParameters | undefined;
+	whereClause(): WhereClause | undefined;
+	body(): FieldDeclarationList;
+}
+
+export interface EnumItem {
+	readonly $type: TSKindId.EnumItem;
+	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _name: Identifier;
+	readonly _type_parameters?: TypeParameters;
+	readonly _where_clause?: WhereClause;
+	readonly _body: EnumVariantList;
+	visibilityModifier(): VisibilityModifier | undefined;
+	name(): Identifier;
+	typeParameters(): TypeParameters | undefined;
+	whereClause(): WhereClause | undefined;
+	body(): EnumVariantList;
+}
+
+export interface EnumVariantList {
+	readonly $type: TSKindId.EnumVariantList;
+	readonly _enum_variant_list_group1?: EnumVariantListGroup1;
+	enumVariantListGroup1(): EnumVariantListGroup1 | undefined;
+}
+
+export interface EnumVariant {
+	readonly $type: TSKindId.EnumVariant;
+	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _name: Identifier;
+	readonly _body?: FieldDeclarationList | OrderedFieldDeclarationList;
+	readonly _value?: Expression;
+	visibilityModifier(): VisibilityModifier | undefined;
+	name(): Identifier;
+	body(): FieldDeclarationList | OrderedFieldDeclarationList | undefined;
+	value(): Expression | undefined;
+}
+
+export interface FieldDeclarationList {
+	readonly $type: TSKindId.FieldDeclarationList;
+	readonly _field_declaration_list_group1?: FieldDeclarationListGroup1;
+	fieldDeclarationListGroup1(): FieldDeclarationListGroup1 | undefined;
+}
+
+export interface FieldDeclaration {
+	readonly $type: TSKindId.FieldDeclaration;
+	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _name: Identifier;
+	readonly _type: _Type;
+	visibilityModifier(): VisibilityModifier | undefined;
+	name(): Identifier;
+	type(): _Type;
+}
+
+export interface OrderedFieldDeclarationList {
+	readonly $type: TSKindId.OrderedFieldDeclarationList;
+	readonly _attributes?: OrderedFieldDeclarationListGroup1;
+	attributes(): OrderedFieldDeclarationListGroup1 | undefined;
+}
+
+export interface ExternCrateDeclaration {
+	readonly $type: TSKindId.ExternCrateDeclaration;
+	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _crate: AutoStamp<number>;
+	readonly _name: Identifier;
+	readonly _alias?: Identifier;
+	readonly __inputHints__?: {
+		readonly crate: AutoStamp<KindEnum<'crate', TSKindId.Crate>>;
+	};
+	visibilityModifier(): VisibilityModifier | undefined;
+	crate(): AutoStamp<number>;
+	name(): Identifier;
+	alias(): Identifier | undefined;
+}
+
+export interface ConstItem {
+	readonly $type: TSKindId.ConstItem;
+	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _name: Identifier;
+	readonly _type: _Type;
+	readonly _value?: Expression;
+	visibilityModifier(): VisibilityModifier | undefined;
+	name(): Identifier;
+	type(): _Type;
+	value(): Expression | undefined;
+}
+
+export interface StaticItem {
+	readonly $type: TSKindId.StaticItem;
+	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _mutable_specifier?: 'ref' | MutableSpecifier;
+	readonly _name: Identifier;
+	readonly _type: _Type;
+	readonly _value?: Expression;
+	visibilityModifier(): VisibilityModifier | undefined;
+	mutableSpecifier(): 'ref' | MutableSpecifier | undefined;
+	name(): Identifier;
+	type(): _Type;
+	value(): Expression | undefined;
+}
+
+export interface TypeItem {
+	readonly $type: TSKindId.TypeItem;
+	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _name: Identifier;
+	readonly _type_parameters?: TypeParameters;
+	readonly _where_clause?: WhereClause;
+	readonly _type: _Type;
+	readonly _trailing_where_clause?: WhereClause;
+	visibilityModifier(): VisibilityModifier | undefined;
+	name(): Identifier;
+	typeParameters(): TypeParameters | undefined;
+	whereClause(): WhereClause | undefined;
+	type(): _Type;
+	trailingWhereClause(): WhereClause | undefined;
+}
+
+export interface FunctionItem {
+	readonly $type: TSKindId.FunctionItem;
+	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _function_modifiers?: FunctionModifiers;
+	readonly _name: Identifier | Metavariable;
+	readonly _type_parameters?: TypeParameters;
+	readonly _parameters: Parameters;
+	readonly _return_type?: _Type;
+	readonly _where_clause?: WhereClause;
+	readonly _body: Block;
+	visibilityModifier(): VisibilityModifier | undefined;
+	functionModifiers(): FunctionModifiers | undefined;
+	name(): Identifier | Metavariable;
+	typeParameters(): TypeParameters | undefined;
+	parameters(): Parameters;
+	returnType(): _Type | undefined;
+	whereClause(): WhereClause | undefined;
+	body(): Block;
+}
+
+export interface FunctionSignatureItem {
+	readonly $type: TSKindId.FunctionSignatureItem;
+	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _function_modifiers?: FunctionModifiers;
+	readonly _name: Identifier | Metavariable;
+	readonly _type_parameters?: TypeParameters;
+	readonly _parameters: Parameters;
+	readonly _return_type?: _Type;
+	readonly _where_clause?: WhereClause;
+	visibilityModifier(): VisibilityModifier | undefined;
+	functionModifiers(): FunctionModifiers | undefined;
+	name(): Identifier | Metavariable;
+	typeParameters(): TypeParameters | undefined;
+	parameters(): Parameters;
+	returnType(): _Type | undefined;
+	whereClause(): WhereClause | undefined;
+}
+
+export interface FunctionModifiers {
+	readonly $type: TSKindId.FunctionModifiers;
+	readonly _modifier: NonEmptyArray<'async' | 'default' | 'const' | 'unsafe' | ExternModifier>;
+	modifiers(): NonEmptyArray<'async' | 'default' | 'const' | 'unsafe' | ExternModifier>;
+}
+
+export interface WhereClause {
+	readonly $type: TSKindId.WhereClause;
+	readonly _where_clause_group1?: WhereClauseGroup1;
+	whereClauseGroup1(): WhereClauseGroup1 | undefined;
+}
+
+export interface WherePredicate {
+	readonly $type: TSKindId.WherePredicate;
+	readonly _left:
+		| Lifetime
+		| Identifier
+		| ScopedTypeIdentifier
+		| GenericType
+		| ReferenceType
+		| PointerType
+		| TupleType
+		| ArrayType
+		| HigherRankedTraitBound
+		| PrimitiveType;
+	readonly _bounds: TraitBounds;
+	left():
+		| Lifetime
+		| Identifier
+		| ScopedTypeIdentifier
+		| GenericType
+		| ReferenceType
+		| PointerType
+		| TupleType
+		| ArrayType
+		| HigherRankedTraitBound
+		| PrimitiveType;
+	bounds(): TraitBounds;
+}
+
+export interface ImplItem {
+	readonly $type: TSKindId.ImplItem;
+	readonly _unsafe_marker?: boolean;
+	readonly _type_parameters?: TypeParameters;
+	readonly _trait_clause?: ImplItemPositiveClause | ImplItemNegativeClause;
+	readonly _type: _Type;
+	readonly _where_clause?: WhereClause;
+	readonly _content: ImplItemBody | ';';
+	readonly __inputHints__?: {
+		readonly unsafe_marker?: BooleanKeyword<'unsafe'>;
+	};
+	unsafeMarker(): boolean | undefined;
+	typeParameters(): TypeParameters | undefined;
+	traitClause(): ImplItemPositiveClause | ImplItemNegativeClause | undefined;
+	type(): _Type;
+	whereClause(): WhereClause | undefined;
+	content(): ImplItemBody | ';';
+}
+
+export interface TraitItem {
+	readonly $type: TSKindId.TraitItem;
+	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _unsafe_marker?: boolean;
+	readonly _name: Identifier;
+	readonly _type_parameters?: TypeParameters;
+	readonly _bounds?: TraitBounds;
+	readonly _where_clause?: WhereClause;
+	readonly _body: DeclarationList;
+	readonly __inputHints__?: {
+		readonly unsafe_marker?: BooleanKeyword<'unsafe'>;
+	};
+	visibilityModifier(): VisibilityModifier | undefined;
+	unsafeMarker(): boolean | undefined;
+	name(): Identifier;
+	typeParameters(): TypeParameters | undefined;
+	bounds(): TraitBounds | undefined;
+	whereClause(): WhereClause | undefined;
+	body(): DeclarationList;
+}
+
+export interface AssociatedType {
+	readonly $type: TSKindId.AssociatedType;
+	readonly _name: Identifier;
+	readonly _type_parameters?: TypeParameters;
+	readonly _bounds?: TraitBounds;
+	readonly _where_clause?: WhereClause;
+	name(): Identifier;
+	typeParameters(): TypeParameters | undefined;
+	bounds(): TraitBounds | undefined;
+	whereClause(): WhereClause | undefined;
+}
+
+export interface TraitBounds {
+	readonly $type: TSKindId.TraitBounds;
+	readonly _bounds: NonEmptyArray<_Type | Lifetime | HigherRankedTraitBound>;
+	bounds(): NonEmptyArray<_Type | Lifetime | HigherRankedTraitBound>;
+}
+
+export interface HigherRankedTraitBound {
+	readonly $type: TSKindId.HigherRankedTraitBound;
 	readonly _type_parameters: TypeParameters;
+	readonly _type: _Type;
 	typeParameters(): TypeParameters;
+	type(): _Type;
 }
 
-export interface _ArgumentsGroup1 {
-	readonly $type: TSKindId._ArgumentsGroup1;
-	readonly _attributed_argument: NonEmptyArray<AttributedArgument>;
-	attributedArguments(): NonEmptyArray<AttributedArgument>;
+export interface RemovedTraitBound {
+	readonly $type: TSKindId.RemovedTraitBound;
+	readonly _type: _Type;
+	type(): _Type;
 }
 
-export interface ArrayExpressionList {
-	readonly $type: TSKindId.ArrayExpressionList;
-	readonly _attributes?: readonly AttributeItem[];
+export interface TypeParameters {
+	readonly $type: TSKindId.TypeParameters;
+	readonly _attributed_type_parameter: NonEmptyArray<AttributedTypeParameter>;
+	attributedTypeParameters(): NonEmptyArray<AttributedTypeParameter>;
+}
+
+export interface ConstParameter {
+	readonly $type: TSKindId.ConstParameter;
+	readonly _name: Identifier;
+	readonly _type: _Type;
+	readonly _value?: Block | Identifier | Literal | NegativeLiteral;
+	name(): Identifier;
+	type(): _Type;
+	value(): Block | Identifier | Literal | NegativeLiteral | undefined;
+}
+
+export interface TypeParameter {
+	readonly $type: TSKindId.TypeParameter;
+	readonly _name: Identifier;
+	readonly _bounds?: TraitBounds;
+	readonly _default_type?: _Type;
+	name(): Identifier;
+	bounds(): TraitBounds | undefined;
+	defaultType(): _Type | undefined;
+}
+
+export interface LifetimeParameter {
+	readonly $type: TSKindId.LifetimeParameter;
+	readonly _name: Lifetime;
+	readonly _bounds?: TraitBounds;
+	name(): Lifetime;
+	bounds(): TraitBounds | undefined;
+}
+
+export interface LetDeclaration {
+	readonly $type: TSKindId.LetDeclaration;
+	readonly _mutable_specifier?: boolean;
+	readonly _pattern: Pattern;
+	readonly _type?: _Type;
+	readonly _value?: Expression;
+	readonly _alternative?: Block;
+	readonly __inputHints__?: {
+		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+	};
+	mutableSpecifier(): boolean | undefined;
+	pattern(): Pattern;
+	type(): _Type | undefined;
+	value(): Expression | undefined;
+	alternative(): Block | undefined;
+}
+
+export interface UseDeclaration {
+	readonly $type: TSKindId.UseDeclaration;
+	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _argument: UseClause;
+	visibilityModifier(): VisibilityModifier | undefined;
+	argument(): UseClause;
+}
+
+export interface ScopedUseList {
+	readonly $type: TSKindId.ScopedUseList;
+	readonly _path?: Path;
+	readonly _list: UseList;
+	path(): Path | undefined;
+	list(): UseList;
+}
+
+export interface UseList {
+	readonly $type: TSKindId.UseList;
+	readonly _use_list_group1?: UseListGroup1;
+	useListGroup1(): UseListGroup1 | undefined;
+}
+
+export interface UseAsClause {
+	readonly $type: TSKindId.UseAsClause;
+	readonly _path: Path;
+	readonly _alias: Identifier;
+	path(): Path;
+	alias(): Identifier;
+}
+
+export interface UseWildcard {
+	readonly $type: TSKindId.UseWildcard;
+	readonly _path?: Path;
+	path(): Path | undefined;
+}
+
+export interface Parameters {
+	readonly $type: TSKindId.Parameters;
+	readonly _parameters_group1?: ParametersGroup1;
+	parametersGroup1(): ParametersGroup1 | undefined;
+}
+
+export interface SelfParameter {
+	readonly $type: TSKindId.SelfParameter;
+	readonly _reference?: boolean;
+	readonly _lifetime?: Lifetime;
+	readonly _mutable_specifier?: boolean;
+	readonly _self: AutoStamp<number>;
+	readonly __inputHints__?: {
+		readonly reference?: BooleanKeyword<'&'>;
+		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+		readonly self: AutoStamp<KindEnum<'self', TSKindId.Self>>;
+	};
+	reference(): boolean | undefined;
+	lifetime(): Lifetime | undefined;
+	mutableSpecifier(): boolean | undefined;
+	self(): AutoStamp<number>;
+}
+
+export interface VariadicParameter {
+	readonly $type: TSKindId.VariadicParameter;
+	readonly _mutable_specifier?: boolean;
+	readonly _pattern?: Pattern;
+	readonly __inputHints__?: {
+		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+	};
+	mutableSpecifier(): boolean | undefined;
+	pattern(): Pattern | undefined;
+}
+
+export interface Parameter {
+	readonly $type: TSKindId.Parameter;
+	readonly _mutable_specifier?: boolean;
+	readonly _pattern: Pattern | Self;
+	readonly _type: _Type;
+	readonly __inputHints__?: {
+		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+	};
+	mutableSpecifier(): boolean | undefined;
+	pattern(): Pattern | Self;
+	type(): _Type;
+}
+
+export interface ExternModifier {
+	readonly $type: TSKindId.ExternModifier;
+	readonly _string_literal?: StringLiteral;
+	stringLiteral(): StringLiteral | undefined;
+}
+
+export interface VisibilityModifier {
+	readonly $type: TSKindId.VisibilityModifier;
+	readonly _content: Crate | VisibilityModifierPub;
+	content(): Crate | VisibilityModifierPub;
+}
+
+export interface BracketedType {
+	readonly $type: TSKindId.BracketedType;
+	readonly _content: _Type | QualifiedType;
+	content(): _Type | QualifiedType;
+}
+
+export interface QualifiedType {
+	readonly $type: TSKindId.QualifiedType;
+	readonly _type: _Type;
+	readonly _alias: _Type;
+	type(): _Type;
+	alias(): _Type;
+}
+
+export interface Lifetime {
+	readonly $type: TSKindId.Lifetime;
+	readonly _identifier: Identifier;
+	identifier(): Identifier;
+}
+
+export interface ArrayType {
+	readonly $type: TSKindId.ArrayType;
+	readonly _element: _Type;
+	readonly _length?: Expression;
+	element(): _Type;
+	length(): Expression | undefined;
+}
+
+export interface ForLifetimes {
+	readonly $type: TSKindId.ForLifetimes;
+	readonly _lifetime: NonEmptyArray<Lifetime>;
+	lifetimes(): NonEmptyArray<Lifetime>;
+}
+
+export interface FunctionType {
+	readonly $type: TSKindId.FunctionType;
+	readonly _for_lifetimes?: ForLifetimes;
+	readonly _parameters: Parameters;
+	readonly _function_type_trait_form?: FunctionTypeTraitForm;
+	readonly _function_type_fn_form?: FunctionTypeFnForm;
+	readonly _return_type?: _Type;
+	forLifetimes(): ForLifetimes | undefined;
+	parameters(): Parameters;
+	functionTypeTraitForm(): FunctionTypeTraitForm | undefined;
+	functionTypeFnForm(): FunctionTypeFnForm | undefined;
+	returnType(): _Type | undefined;
+}
+
+export interface TupleType {
+	readonly $type: TSKindId.TupleType;
+	readonly _type: NonEmptyArray<_Type>;
+	types(): NonEmptyArray<_Type>;
+}
+
+export interface GenericFunction {
+	readonly $type: TSKindId.GenericFunction;
+	readonly _function: Identifier | ScopedIdentifier | FieldExpression;
+	readonly _type_arguments: TypeArguments;
+	function(): Identifier | ScopedIdentifier | FieldExpression;
+	typeArguments(): TypeArguments;
+}
+
+export interface GenericType {
+	readonly $type: TSKindId.GenericType;
+	readonly _type: Identifier | ScopedTypeIdentifier;
+	readonly _type_arguments: TypeArguments;
+	type(): Identifier | ScopedTypeIdentifier;
+	typeArguments(): TypeArguments;
+}
+
+export interface GenericTypeWithTurbofish {
+	readonly $type: TSKindId.GenericTypeWithTurbofish;
+	readonly _type: Identifier | ScopedIdentifier;
+	readonly _turbofish: AutoStamp<number>;
+	readonly _type_arguments: TypeArguments;
+	readonly __inputHints__?: {
+		readonly turbofish: AutoStamp<KindEnum<'::', TSKindId.ColonColon>>;
+	};
+	type(): Identifier | ScopedIdentifier;
+	turbofish(): AutoStamp<number>;
+	typeArguments(): TypeArguments;
+}
+
+export interface BoundedType {
+	readonly $type: TSKindId.BoundedType;
+	readonly _left: Lifetime | _Type | UseBounds;
+	readonly _right: Lifetime | _Type | UseBounds;
+	left(): Lifetime | _Type | UseBounds;
+	right(): Lifetime | _Type | UseBounds;
+}
+
+export interface UseBounds {
+	readonly $type: TSKindId.UseBounds;
+	readonly _bounds?: UseBoundsGroup1;
+	bounds(): UseBoundsGroup1 | undefined;
+}
+
+export interface TypeArguments {
+	readonly $type: TSKindId.TypeArguments;
+	readonly _type_argument: NonEmptyArray<TypeArgument>;
+	typeArguments(): NonEmptyArray<TypeArgument>;
+}
+
+export interface TypeBinding {
+	readonly $type: TSKindId.TypeBinding;
+	readonly _name: Identifier;
+	readonly _type_arguments?: TypeArguments;
+	readonly _type: _Type;
+	name(): Identifier;
+	typeArguments(): TypeArguments | undefined;
+	type(): _Type;
+}
+
+export interface ReferenceType {
+	readonly $type: TSKindId.ReferenceType;
+	readonly _lifetime?: Lifetime;
+	readonly _mutable_specifier?: boolean;
+	readonly _type: _Type;
+	readonly __inputHints__?: {
+		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+	};
+	lifetime(): Lifetime | undefined;
+	mutableSpecifier(): boolean | undefined;
+	type(): _Type;
+}
+
+export interface PointerType {
+	readonly $type: TSKindId.PointerType;
+	readonly _content: 'const' | MutableSpecifier;
+	readonly _type: _Type;
+	content(): 'const' | MutableSpecifier;
+	type(): _Type;
+}
+
+export interface AbstractType {
+	readonly $type: TSKindId.AbstractType;
+	readonly _type_parameters?: TypeParameters;
+	readonly _trait:
+		| Identifier
+		| ScopedTypeIdentifier
+		| RemovedTraitBound
+		| GenericType
+		| FunctionType
+		| TupleType
+		| BoundedType;
+	typeParameters(): TypeParameters | undefined;
+	trait(): Identifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
+}
+
+export interface DynamicType {
+	readonly $type: TSKindId.DynamicType;
+	readonly _trait: HigherRankedTraitBound | Identifier | ScopedTypeIdentifier | GenericType | FunctionType | TupleType;
+	trait(): HigherRankedTraitBound | Identifier | ScopedTypeIdentifier | GenericType | FunctionType | TupleType;
+}
+
+export interface MacroInvocation {
+	readonly $type: TSKindId.MacroInvocation;
+	readonly _macro: ScopedIdentifier | Identifier;
+	readonly _token_tree: DelimTokenTree;
+	macro(): ScopedIdentifier | Identifier;
+	tokenTree(): DelimTokenTree;
+}
+
+export interface DelimTokenTree {
+	readonly $type: TSKindId.DelimTokenTree;
+	readonly _content: DelimTokenTreeParen | DelimTokenTreeBracket | DelimTokenTreeBrace;
+	content(): DelimTokenTreeParen | DelimTokenTreeBracket | DelimTokenTreeBrace;
+}
+
+export interface ScopedIdentifier {
+	readonly $type: TSKindId.ScopedIdentifier;
+	readonly _path?: Path | BracketedType | GenericTypeWithTurbofish;
+	readonly _name: Identifier | Super;
+	path(): Path | BracketedType | GenericTypeWithTurbofish | undefined;
+	name(): Identifier | Super;
+}
+
+export interface ScopedTypeIdentifierInExpressionPosition {
+	readonly $type: TSKindId.ScopedTypeIdentifierInExpressionPosition;
+	readonly _path?: Path | GenericTypeWithTurbofish;
+	readonly _name: Identifier;
+	path(): Path | GenericTypeWithTurbofish | undefined;
+	name(): Identifier;
+}
+
+export interface ScopedTypeIdentifier {
+	readonly $type: TSKindId.ScopedTypeIdentifier;
+	readonly _path?: Path | GenericTypeWithTurbofish | BracketedType | GenericType;
+	readonly _name: Identifier;
+	path(): Path | GenericTypeWithTurbofish | BracketedType | GenericType | undefined;
+	name(): Identifier;
+}
+
+export interface RangeExpression {
+	readonly $type: TSKindId.RangeExpression;
+	readonly _content: RangeExpressionBinary | RangeExpressionPostfix | RangeExpressionPrefix | '..';
+	content(): RangeExpressionBinary | RangeExpressionPostfix | RangeExpressionPrefix | '..';
+}
+
+export interface UnaryExpression {
+	readonly $type: TSKindId.UnaryExpression;
+	readonly _operator: number;
+	readonly _operand: Expression;
+	readonly __inputHints__?: {
+		readonly operator: KindEnum<'-' | '*' | '!', TSKindId.Dash | TSKindId.Star | TSKindId.Bang>;
+	};
+	operator(): number;
+	operand(): Expression;
+}
+
+export interface TryExpression {
+	readonly $type: TSKindId.TryExpression;
+	readonly _value: Expression;
+	value(): Expression;
+}
+
+export interface ReferenceExpression {
+	readonly $type: TSKindId.ReferenceExpression;
+	readonly _content?: ReferenceExpressionRawConst | ReferenceExpressionRawMut | MutableSpecifier;
+	readonly _value: Expression;
+	content(): ReferenceExpressionRawConst | ReferenceExpressionRawMut | MutableSpecifier | undefined;
+	value(): Expression;
+}
+
+export interface BinaryExpression {
+	readonly $type: TSKindId.BinaryExpression;
+	readonly _left: Expression;
+	readonly _operator: number;
+	readonly _right: Expression;
+	readonly __inputHints__?: {
+		readonly operator: KindEnum<
+			'&&' | '||' | '&' | '|' | '^' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '<<' | '>>' | '+' | '-' | '*' | '/' | '%',
+			| TSKindId.AmpAmp
+			| TSKindId.PipePipe
+			| TSKindId.Amp2
+			| TSKindId.Pipe2
+			| TSKindId.Caret
+			| TSKindId.EqEq
+			| TSKindId.BangEq
+			| TSKindId.Lt
+			| TSKindId.LtEq
+			| TSKindId.Gt
+			| TSKindId.GtEq
+			| TSKindId.LtLt
+			| TSKindId.GtGt
+			| TSKindId.Plus
+			| TSKindId.Dash
+			| TSKindId.Star
+			| TSKindId.Slash
+			| TSKindId.Percent
+		>;
+	};
+	left(): Expression;
+	operator(): number;
+	right(): Expression;
+}
+
+export interface AssignmentExpression {
+	readonly $type: TSKindId.AssignmentExpression;
+	readonly _left: Expression;
+	readonly _right: Expression;
+	left(): Expression;
+	right(): Expression;
+}
+
+export interface CompoundAssignmentExpr {
+	readonly $type: TSKindId.CompoundAssignmentExpr;
+	readonly _left: Expression;
+	readonly _operator: number;
+	readonly _right: Expression;
+	readonly __inputHints__?: {
+		readonly operator: KindEnum<
+			'+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=',
+			| TSKindId.PlusEq
+			| TSKindId.DashEq
+			| TSKindId.StarEq
+			| TSKindId.SlashEq
+			| TSKindId.PercentEq
+			| TSKindId.AmpEq
+			| TSKindId.PipeEq
+			| TSKindId.CaretEq
+			| TSKindId.LtLtEq
+			| TSKindId.GtGtEq
+		>;
+	};
+	left(): Expression;
+	operator(): number;
+	right(): Expression;
+}
+
+export interface TypeCastExpression {
+	readonly $type: TSKindId.TypeCastExpression;
+	readonly _value: Expression;
+	readonly _type: _Type;
+	value(): Expression;
+	type(): _Type;
+}
+
+export interface ReturnExpression {
+	readonly $type: TSKindId.ReturnExpression;
+	readonly _expression?: Expression;
+	expression(): Expression | undefined;
+}
+
+export interface YieldExpression {
+	readonly $type: TSKindId.YieldExpression;
+	readonly _expression?: Expression;
+	expression(): Expression | undefined;
+}
+
+export interface CallExpression {
+	readonly $type: TSKindId.CallExpression;
+	readonly _function: ExpressionExceptRange;
+	readonly _arguments: Arguments;
+	function(): ExpressionExceptRange;
+	arguments(): Arguments;
+}
+
+export interface Arguments {
+	readonly $type: TSKindId.Arguments;
 	readonly _arguments_group1?: ArgumentsGroup1;
-	attributes(): readonly AttributeItem[];
 	argumentsGroup1(): ArgumentsGroup1 | undefined;
 }
 
-export interface ArrayExpressionSemi {
-	readonly $type: TSKindId.ArrayExpressionSemi;
-	readonly _attributes?: readonly AttributeItem[];
+export interface ArrayExpression {
+	readonly $type: TSKindId.ArrayExpression;
+	readonly _content: ArrayExpressionSemi | ArrayExpressionList;
+	content(): ArrayExpressionSemi | ArrayExpressionList;
+}
+
+export interface ParenthesizedExpression {
+	readonly $type: TSKindId.ParenthesizedExpression;
 	readonly _expression: Expression;
-	readonly _length: Expression;
-	attributes(): readonly AttributeItem[];
 	expression(): Expression;
-	length(): Expression;
+}
+
+export interface TupleExpression {
+	readonly $type: TSKindId.TupleExpression;
+	readonly _attributes?: readonly AttributeItem[];
+	readonly _elements?: readonly Expression[];
+	attributes(): readonly AttributeItem[];
+	elements(): readonly Expression[];
+}
+
+export interface StructExpression {
+	readonly $type: TSKindId.StructExpression;
+	readonly _name: Identifier | ScopedTypeIdentifierInExpressionPosition | GenericTypeWithTurbofish;
+	readonly _body: FieldInitializerList;
+	name(): Identifier | ScopedTypeIdentifierInExpressionPosition | GenericTypeWithTurbofish;
+	body(): FieldInitializerList;
+}
+
+export interface FieldInitializerList {
+	readonly $type: TSKindId.FieldInitializerList;
+	readonly _initializers?: FieldInitializerListGroup1;
+	initializers(): FieldInitializerListGroup1 | undefined;
+}
+
+export interface ShorthandFieldInitializer {
+	readonly $type: TSKindId.ShorthandFieldInitializer;
+	readonly _attributes?: readonly AttributeItem[];
+	readonly _identifier: Identifier;
+	attributes(): readonly AttributeItem[];
+	identifier(): Identifier;
+}
+
+export interface FieldInitializer {
+	readonly $type: TSKindId.FieldInitializer;
+	readonly _attribute_item?: readonly AttributeItem[];
+	readonly _field: Identifier | IntegerLiteral;
+	readonly _value: Expression;
+	attributeItems(): readonly AttributeItem[];
+	field(): Identifier | IntegerLiteral;
+	value(): Expression;
+}
+
+export interface BaseFieldInitializer {
+	readonly $type: TSKindId.BaseFieldInitializer;
+	readonly _expression: Expression;
+	expression(): Expression;
+}
+
+export interface IfExpression {
+	readonly $type: TSKindId.IfExpression;
+	readonly _condition: Condition;
+	readonly _consequence: Block;
+	readonly _alternative?: ElseClause;
+	condition(): Condition;
+	consequence(): Block;
+	alternative(): ElseClause | undefined;
+}
+
+export interface LetCondition {
+	readonly $type: TSKindId.LetCondition;
+	readonly _pattern: Pattern;
+	readonly _value: Expression;
+	pattern(): Pattern;
+	value(): Expression;
+}
+
+export interface LetChain {
+	readonly $type: TSKindId.LetChain;
+	readonly _left: LetChain | LetCondition | Expression;
+	readonly _right: LetCondition | Expression;
+	left(): LetChain | LetCondition | Expression;
+	right(): LetCondition | Expression;
+}
+
+export interface ElseClause {
+	readonly $type: TSKindId.ElseClause;
+	readonly _content: Block | IfExpression;
+	content(): Block | IfExpression;
+}
+
+export interface MatchExpression {
+	readonly $type: TSKindId.MatchExpression;
+	readonly _value: Expression;
+	readonly _body: MatchBlock;
+	value(): Expression;
+	body(): MatchBlock;
+}
+
+export interface MatchBlock {
+	readonly $type: TSKindId.MatchBlock;
+	readonly _match_block_arms?: MatchBlockArms;
+	matchBlockArms(): MatchBlockArms | undefined;
+}
+
+export interface MatchArm {
+	readonly $type: TSKindId.MatchArm;
+	readonly _attributes?: readonly (AttributeItem | InnerAttributeItem)[];
+	readonly _pattern: MatchPattern;
+	readonly _content: MatchArmWithComma | ExpressionEndingWithBlock;
+	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
+	pattern(): MatchPattern;
+	content(): MatchArmWithComma | ExpressionEndingWithBlock;
+}
+
+export interface LastMatchArm {
+	readonly $type: TSKindId.LastMatchArm;
+	readonly _attributes?: readonly (AttributeItem | InnerAttributeItem)[];
+	readonly _pattern: MatchPattern;
+	readonly _value: Expression;
+	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
+	pattern(): MatchPattern;
+	value(): Expression;
+}
+
+export interface MatchPattern {
+	readonly $type: TSKindId.MatchPattern;
+	readonly _pattern: Pattern;
+	readonly _condition?: Condition;
+	pattern(): Pattern;
+	condition(): Condition | undefined;
+}
+
+export interface WhileExpression {
+	readonly $type: TSKindId.WhileExpression;
+	readonly _label?: Label;
+	readonly _condition: Condition;
+	readonly _body: Block;
+	label(): Label | undefined;
+	condition(): Condition;
+	body(): Block;
+}
+
+export interface LoopExpression {
+	readonly $type: TSKindId.LoopExpression;
+	readonly _label?: Label;
+	readonly _body: Block;
+	label(): Label | undefined;
+	body(): Block;
+}
+
+export interface ForExpression {
+	readonly $type: TSKindId.ForExpression;
+	readonly _label?: Label;
+	readonly _pattern: Pattern;
+	readonly _value: Expression;
+	readonly _body: Block;
+	label(): Label | undefined;
+	pattern(): Pattern;
+	value(): Expression;
+	body(): Block;
+}
+
+export interface ConstBlock {
+	readonly $type: TSKindId.ConstBlock;
+	readonly _body: Block;
+	body(): Block;
+}
+
+export interface ClosureExpression {
+	readonly $type: TSKindId.ClosureExpression;
+	readonly _static_marker?: boolean;
+	readonly _async_marker?: boolean;
+	readonly _move_marker?: boolean;
+	readonly _parameters: ClosureParameters;
+	readonly _content: ClosureExpressionBlock | ClosureExpressionExpr;
+	readonly __inputHints__?: {
+		readonly static_marker?: BooleanKeyword<'static'>;
+		readonly async_marker?: BooleanKeyword<'async'>;
+		readonly move_marker?: BooleanKeyword<'move'>;
+	};
+	staticMarker(): boolean | undefined;
+	asyncMarker(): boolean | undefined;
+	moveMarker(): boolean | undefined;
+	parameters(): ClosureParameters;
+	content(): ClosureExpressionBlock | ClosureExpressionExpr;
+}
+
+export interface ClosureParameters {
+	readonly $type: TSKindId.ClosureParameters;
+	readonly _parameters?: readonly (Pattern | Parameter)[];
+	parameters(): readonly (Pattern | Parameter)[];
+}
+
+export interface Label {
+	readonly $type: TSKindId.Label;
+	readonly _identifier: Identifier;
+	identifier(): Identifier;
+}
+
+export interface BreakExpression {
+	readonly $type: TSKindId.BreakExpression;
+	readonly _label?: Label;
+	readonly _expression?: Expression;
+	label(): Label | undefined;
+	expression(): Expression | undefined;
+}
+
+export interface ContinueExpression {
+	readonly $type: TSKindId.ContinueExpression;
+	readonly _label?: Label;
+	label(): Label | undefined;
+}
+
+export interface IndexExpression {
+	readonly $type: TSKindId.IndexExpression;
+	readonly _object: Expression;
+	readonly _index: Expression;
+	object(): Expression;
+	index(): Expression;
+}
+
+export interface AwaitExpression {
+	readonly $type: TSKindId.AwaitExpression;
+	readonly _expression: Expression;
+	expression(): Expression;
+}
+
+export interface FieldExpression {
+	readonly $type: TSKindId.FieldExpression;
+	readonly _value: Expression;
+	readonly _field: Identifier | IntegerLiteral;
+	value(): Expression;
+	field(): Identifier | IntegerLiteral;
+}
+
+export interface UnsafeBlock {
+	readonly $type: TSKindId.UnsafeBlock;
+	readonly _block: Block;
+	block(): Block;
+}
+
+export interface AsyncBlock {
+	readonly $type: TSKindId.AsyncBlock;
+	readonly _move_marker?: boolean;
+	readonly _block: Block;
+	readonly __inputHints__?: {
+		readonly move_marker?: BooleanKeyword<'move'>;
+	};
+	moveMarker(): boolean | undefined;
+	block(): Block;
+}
+
+export interface GenBlock {
+	readonly $type: TSKindId.GenBlock;
+	readonly _move_marker?: boolean;
+	readonly _block: Block;
+	readonly __inputHints__?: {
+		readonly move_marker?: BooleanKeyword<'move'>;
+	};
+	moveMarker(): boolean | undefined;
+	block(): Block;
+}
+
+export interface TryBlock {
+	readonly $type: TSKindId.TryBlock;
+	readonly _block: Block;
+	block(): Block;
+}
+
+export interface Block {
+	readonly $type: TSKindId.Block;
+	readonly _label?: Label;
+	readonly _statement?: readonly Statement[];
+	readonly _trailing_expression?: Expression;
+	label(): Label | undefined;
+	statements(): readonly Statement[];
+	trailingExpression(): Expression | undefined;
+}
+
+export interface GenericPattern {
+	readonly $type: TSKindId.GenericPattern;
+	readonly _content: Identifier | ScopedIdentifier;
+	readonly _type_arguments: TypeArguments;
+	content(): Identifier | ScopedIdentifier;
+	typeArguments(): TypeArguments;
+}
+
+export interface TuplePattern {
+	readonly $type: TSKindId.TuplePattern;
+	readonly _elements?: TuplePatternGroup1;
+	elements(): TuplePatternGroup1 | undefined;
+}
+
+export interface SlicePattern {
+	readonly $type: TSKindId.SlicePattern;
+	readonly _slice_pattern_group1?: SlicePatternGroup1;
+	slicePatternGroup1(): SlicePatternGroup1 | undefined;
+}
+
+export interface TupleStructPattern {
+	readonly $type: TSKindId.TupleStructPattern;
+	readonly _type: Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
+	readonly _slice_pattern_group1?: SlicePatternGroup1;
+	type(): Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
+	slicePatternGroup1(): SlicePatternGroup1 | undefined;
+}
+
+export interface StructPattern {
+	readonly $type: TSKindId.StructPattern;
+	readonly _type: Identifier | ScopedTypeIdentifier;
+	readonly _fields?: StructPatternGroup1;
+	type(): Identifier | ScopedTypeIdentifier;
+	fields(): StructPatternGroup1 | undefined;
+}
+
+export interface FieldPattern {
+	readonly $type: TSKindId.FieldPattern;
+	readonly _ref_marker?: boolean;
+	readonly _mutable_specifier?: boolean;
+	readonly _content: Identifier | FieldPatternNamed;
+	readonly __inputHints__?: {
+		readonly ref_marker?: BooleanKeyword<'ref'>;
+		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+	};
+	refMarker(): boolean | undefined;
+	mutableSpecifier(): boolean | undefined;
+	content(): Identifier | FieldPatternNamed;
+}
+
+export interface MutPattern {
+	readonly $type: TSKindId.MutPattern;
+	readonly _mutable_specifier: AutoStamp<'mut'>;
+	readonly _pattern: Pattern;
+	mutableSpecifier(): AutoStamp<'mut'>;
+	pattern(): Pattern;
+}
+
+export interface RangePattern {
+	readonly $type: TSKindId.RangePattern;
+	readonly _content: RangePatternGroup2 | RangePatternPrefix;
+	content(): RangePatternGroup2 | RangePatternPrefix;
+}
+
+export interface RefPattern {
+	readonly $type: TSKindId.RefPattern;
+	readonly _pattern: Pattern;
+	pattern(): Pattern;
+}
+
+export interface CapturedPattern {
+	readonly $type: TSKindId.CapturedPattern;
+	readonly _identifier: Identifier;
+	readonly _pattern: Pattern;
+	identifier(): Identifier;
+	pattern(): Pattern;
+}
+
+export interface ReferencePattern {
+	readonly $type: TSKindId.ReferencePattern;
+	readonly _mutable_specifier?: boolean;
+	readonly _pattern: Pattern;
+	readonly __inputHints__?: {
+		readonly mutable_specifier?: BooleanKeyword<'mut'>;
+	};
+	mutableSpecifier(): boolean | undefined;
+	pattern(): Pattern;
+}
+
+export interface OrPattern {
+	readonly $type: TSKindId.OrPattern;
+	readonly _content: OrPatternBinary | OrPatternPrefix;
+	content(): OrPatternBinary | OrPatternPrefix;
+}
+
+export interface NegativeLiteral {
+	readonly $type: TSKindId.NegativeLiteral;
+	readonly _value: IntegerLiteral | FloatLiteral;
+	value(): IntegerLiteral | FloatLiteral;
+}
+
+export interface StringLiteral {
+	readonly $type: TSKindId.StringLiteral;
+	readonly _content?: readonly (EscapeSequence | StringContent)[];
+	contents(): readonly (EscapeSequence | StringContent)[];
+}
+
+export interface RawStringLiteral {
+	readonly $type: TSKindId.RawStringLiteral;
+	readonly _string_content: RawStringLiteralContent;
+	stringContent(): RawStringLiteralContent;
+}
+
+export interface Comment {
+	readonly $type: 'comment';
+	readonly _content: LineComment | BlockComment;
+	content(): LineComment | BlockComment;
+}
+
+export interface LineComment {
+	readonly $type: TSKindId.LineComment;
+	readonly _content: LineCommentRegularDslash | LineCommentDoc | LineCommentContent;
+	content(): LineCommentRegularDslash | LineCommentDoc | LineCommentContent;
+}
+
+export interface BlockComment {
+	readonly $type: TSKindId.BlockComment;
+	readonly _block_comment_group1?: BlockCommentGroup1;
+	blockCommentGroup1(): BlockCommentGroup1 | undefined;
+}
+
+export interface AttributeGroup1 {
+	readonly $type: TSKindId.AttributeGroup1;
+	readonly _value?: Expression;
+	readonly _arguments?: DelimTokenTree;
+	value(): Expression | undefined;
+	arguments(): DelimTokenTree | undefined;
+}
+
+export interface EnumVariantListGroup1 {
+	readonly $type: TSKindId.EnumVariantListGroup1;
+	readonly _attributed_enum_variant: NonEmptyArray<AttributedEnumVariant>;
+	attributedEnumVariants(): NonEmptyArray<AttributedEnumVariant>;
+}
+
+export interface EnumVariantOptional1 {
+	readonly $type: '_enum_variant_optional1';
+	readonly _value: Expression;
+	value(): Expression;
+}
+
+export interface FieldDeclarationListGroup1 {
+	readonly $type: TSKindId.FieldDeclarationListGroup1;
+	readonly _attributed_field_declaration: NonEmptyArray<AttributedFieldDeclaration>;
+	attributedFieldDeclarations(): NonEmptyArray<AttributedFieldDeclaration>;
+}
+
+export interface OrderedFieldDeclarationListGroup1 {
+	readonly $type: TSKindId.OrderedFieldDeclarationListGroup1;
+	readonly _attributed_ordered_field: NonEmptyArray<AttributedOrderedField>;
+	attributedOrderedFields(): NonEmptyArray<AttributedOrderedField>;
+}
+
+export interface ExternCrateDeclarationOptional1 {
+	readonly $type: '_extern_crate_declaration_optional1';
+	readonly _alias: Identifier;
+	alias(): Identifier;
+}
+
+export interface FunctionItemOptional1 {
+	readonly $type: '_function_item_optional1';
+	readonly _return_type: _Type;
+	returnType(): _Type;
+}
+
+export interface WhereClauseGroup1 {
+	readonly $type: TSKindId.WhereClauseGroup1;
+	readonly _where_predicate: NonEmptyArray<WherePredicate>;
+	wherePredicates(): NonEmptyArray<WherePredicate>;
+}
+
+export interface ConstParameterOptional1 {
+	readonly $type: '_const_parameter_optional1';
+	readonly _value: Block | Identifier | Literal | NegativeLiteral;
+	value(): Block | Identifier | Literal | NegativeLiteral;
+}
+
+export interface TypeParameterOptional1 {
+	readonly $type: '_type_parameter_optional1';
+	readonly _default_type: _Type;
+	defaultType(): _Type;
+}
+
+export interface LetDeclarationOptional1 {
+	readonly $type: '_let_declaration_optional1';
+	readonly _type: _Type;
+	type(): _Type;
+}
+
+export interface LetDeclarationOptional2 {
+	readonly $type: '_let_declaration_optional2';
+	readonly _alternative: Block;
+	alternative(): Block;
+}
+
+export interface UseListGroup1 {
+	readonly $type: TSKindId.UseListGroup1;
+	readonly _use_clause: NonEmptyArray<UseClause>;
+	useClauses(): NonEmptyArray<UseClause>;
+}
+
+export interface ParametersGroup1 {
+	readonly $type: TSKindId.ParametersGroup1;
+	readonly _attributed_parameter: NonEmptyArray<AttributedParameter>;
+	attributedParameters(): NonEmptyArray<AttributedParameter>;
+}
+
+export interface VariadicParameterOptional1 {
+	readonly $type: '_variadic_parameter_optional1';
+	readonly _pattern: Pattern;
+	pattern(): Pattern;
+}
+
+export interface VisibilityModifierGroup1 {
+	readonly $type: TSKindId.VisibilityModifierGroup1;
+	readonly _content: Self | Super | Crate | InPath;
+	content(): Self | Super | Crate | InPath;
 }
 
 export interface ArrayTypeOptional1 {
@@ -3324,60 +4802,134 @@ export interface ArrayTypeOptional1 {
 	length(): Expression;
 }
 
-export interface AttributedArgument {
-	readonly $type: TSKindId.AttributedArgument;
-	readonly _attribute_item?: readonly AttributeItem[];
+export interface UseBoundsGroup1 {
+	readonly $type: TSKindId.UseBoundsGroup1;
+	readonly _content?: readonly (Lifetime | Identifier)[];
+	contents(): readonly (Lifetime | Identifier)[];
+}
+
+export interface AbstractTypeOptional1 {
+	readonly $type: '_abstract_type_optional1';
+	readonly _type_parameters: TypeParameters;
+	typeParameters(): TypeParameters;
+}
+
+export interface ArgumentsGroup1 {
+	readonly $type: TSKindId.ArgumentsGroup1;
+	readonly _attributed_argument: NonEmptyArray<AttributedArgument>;
+	attributedArguments(): NonEmptyArray<AttributedArgument>;
+}
+
+export interface ArrayExpressionGroup1 {
+	readonly $type: TSKindId.ArrayExpressionGroup1;
 	readonly _expression: Expression;
-	attributeItems(): readonly AttributeItem[];
+	readonly _length: Expression;
 	expression(): Expression;
+	length(): Expression;
 }
 
-export interface AttributedEnumVariant {
-	readonly $type: TSKindId.AttributedEnumVariant;
-	readonly _attribute_item?: readonly AttributeItem[];
-	readonly _enum_variant: EnumVariant;
-	attributeItems(): readonly AttributeItem[];
-	enumVariant(): EnumVariant;
+export interface FieldInitializerListGroup1 {
+	readonly $type: TSKindId.FieldInitializerListGroup1;
+	readonly _content?: readonly (ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer)[];
+	contents(): readonly (ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer)[];
 }
 
-export interface AttributedFieldDeclaration {
-	readonly $type: TSKindId.AttributedFieldDeclaration;
-	readonly _attribute_item?: readonly AttributeItem[];
-	readonly _field_declaration: FieldDeclaration;
-	attributeItems(): readonly AttributeItem[];
-	fieldDeclaration(): FieldDeclaration;
+export interface MatchPatternOptional1 {
+	readonly $type: '_match_pattern_optional1';
+	readonly _condition: Condition;
+	condition(): Condition;
 }
 
-export interface AttributedOrderedField {
-	readonly $type: TSKindId.AttributedOrderedField;
-	readonly _attribute_item?: readonly AttributeItem[];
-	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _type: _Type;
-	attributeItems(): readonly AttributeItem[];
-	visibilityModifier(): VisibilityModifier | undefined;
-	type(): _Type;
-}
-
-export interface AttributedParameter {
-	readonly $type: TSKindId.AttributedParameter;
-	readonly _attribute_item?: AttributeItem;
-	readonly _content: Parameter | SelfParameter | VariadicParameter | '_' | _Type;
-	attributeItem(): AttributeItem | undefined;
-	content(): Parameter | SelfParameter | VariadicParameter | '_' | _Type;
-}
-
-export interface AttributedTypeParameter {
-	readonly $type: TSKindId.AttributedTypeParameter;
-	readonly _attribute_item?: readonly AttributeItem[];
-	readonly _content: Metavariable | TypeParameter | LifetimeParameter | ConstParameter;
-	attributeItems(): readonly AttributeItem[];
-	content(): Metavariable | TypeParameter | LifetimeParameter | ConstParameter;
-}
-
-export interface BlockOptional1 {
-	readonly $type: '_block_optional1';
+export interface WhileExpressionOptional1 {
+	readonly $type: '_while_expression_optional1';
 	readonly _label: Label;
 	label(): Label;
+}
+
+export interface TuplePatternGroup1 {
+	readonly $type: TSKindId.TuplePatternGroup1;
+	readonly _content?: readonly (Pattern | ClosureExpression)[];
+	contents(): readonly (Pattern | ClosureExpression)[];
+}
+
+export interface SlicePatternGroup1 {
+	readonly $type: TSKindId.SlicePatternGroup1;
+	readonly _pattern: NonEmptyArray<Pattern>;
+	patterns(): NonEmptyArray<Pattern>;
+}
+
+export interface StructPatternGroup1 {
+	readonly $type: TSKindId.StructPatternGroup1;
+	readonly _content?: readonly (FieldPattern | RemainingFieldPattern)[];
+	contents(): readonly (FieldPattern | RemainingFieldPattern)[];
+}
+
+export interface RangePatternGroup2 {
+	readonly $type: TSKindId.RangePatternGroup2;
+	readonly _left: LiteralPattern | Path;
+	readonly _content: RangePatternLeftWithRight | '..';
+	left(): LiteralPattern | Path;
+	content(): RangePatternLeftWithRight | '..';
+}
+
+export interface BlockCommentGroup1 {
+	readonly $type: TSKindId.BlockCommentGroup1;
+	readonly _outer?: boolean;
+	readonly _inner?: boolean;
+	readonly _doc?: BlockCommentContent;
+	readonly __inputHints__?: {
+		readonly outer?: BooleanKeyword<'*'>;
+		readonly inner?: BooleanKeyword<'!'>;
+	};
+	outer(): boolean | undefined;
+	inner(): boolean | undefined;
+	doc(): BlockCommentContent | undefined;
+}
+
+export interface UseWildcardClause {
+	readonly $type: TSKindId.UseWildcardClause;
+	readonly _path: Path;
+	path(): Path;
+}
+
+export interface ReferenceExpressionRawMut {
+	readonly $type: TSKindId.ReferenceExpressionRawMut;
+	readonly _mutable_specifier: MutableSpecifier;
+	mutableSpecifier(): MutableSpecifier;
+}
+
+export interface ImplItemBody {
+	readonly $type: TSKindId.ImplItemBody;
+	readonly _declaration_list: DeclarationList;
+	declarationList(): DeclarationList;
+}
+
+export interface ImplItemPositiveClause {
+	readonly $type: TSKindId.ImplItemPositiveClause;
+	readonly _trait: Identifier | ScopedTypeIdentifier | GenericType;
+	trait(): Identifier | ScopedTypeIdentifier | GenericType;
+}
+
+export interface ImplItemNegativeClause {
+	readonly $type: TSKindId.ImplItemNegativeClause;
+	readonly _trait: Identifier | ScopedTypeIdentifier | GenericType;
+	trait(): Identifier | ScopedTypeIdentifier | GenericType;
+}
+
+export interface ArrayExpressionSemi {
+	readonly $type: TSKindId.ArrayExpressionSemi;
+	readonly _attributes?: readonly AttributeItem[];
+	readonly _array_expression_group1: ArrayExpressionGroup1;
+	attributes(): readonly AttributeItem[];
+	arrayExpressionGroup1(): ArrayExpressionGroup1;
+}
+
+export interface ArrayExpressionList {
+	readonly $type: TSKindId.ArrayExpressionList;
+	readonly _attributes?: readonly AttributeItem[];
+	readonly _arguments_group1?: ArgumentsGroup1;
+	attributes(): readonly AttributeItem[];
+	argumentsGroup1(): ArgumentsGroup1 | undefined;
 }
 
 export interface ClosureExpressionBlock {
@@ -3394,72 +4946,6 @@ export interface ClosureExpressionExpr {
 	body(): Expression | '_';
 }
 
-export interface ClosureExpressionOptional1 {
-	readonly $type: '_closure_expression_optional1';
-	readonly _return_type: _Type;
-	returnType(): _Type;
-}
-
-export interface ConstItemOptional1 {
-	readonly $type: '_const_item_optional1';
-	readonly _value: Expression;
-	value(): Expression;
-}
-
-export interface ConstParameterOptional1 {
-	readonly $type: '_const_parameter_optional1';
-	readonly _value: Block | Identifier | Literal | NegativeLiteral;
-	value(): Block | Identifier | Literal | NegativeLiteral;
-}
-
-export interface DelimTokenTreeBrace {
-	readonly $type: TSKindId.DelimTokenTreeBrace;
-	readonly _delim_tokens?: readonly DelimTokens[];
-	delimTokens(): readonly DelimTokens[];
-}
-
-export interface DelimTokenTreeBracket {
-	readonly $type: TSKindId.DelimTokenTreeBracket;
-	readonly _delim_tokens?: readonly DelimTokens[];
-	delimTokens(): readonly DelimTokens[];
-}
-
-export interface DelimTokenTreeParen {
-	readonly $type: TSKindId.DelimTokenTreeParen;
-	readonly _delim_tokens?: readonly DelimTokens[];
-	delimTokens(): readonly DelimTokens[];
-}
-
-export interface _EnumVariantListGroup1 {
-	readonly $type: TSKindId._EnumVariantListGroup1;
-	readonly _attributed_enum_variant: NonEmptyArray<AttributedEnumVariant>;
-	attributedEnumVariants(): NonEmptyArray<AttributedEnumVariant>;
-}
-
-export interface ExpressionStatementWithSemi {
-	readonly $type: TSKindId.ExpressionStatementWithSemi;
-	readonly _expression: Expression;
-	expression(): Expression;
-}
-
-export interface ExternCrateDeclarationOptional1 {
-	readonly $type: '_extern_crate_declaration_optional1';
-	readonly _alias: Identifier;
-	alias(): Identifier;
-}
-
-export interface _FieldDeclarationListGroup1 {
-	readonly $type: TSKindId._FieldDeclarationListGroup1;
-	readonly _attributed_field_declaration: NonEmptyArray<AttributedFieldDeclaration>;
-	attributedFieldDeclarations(): NonEmptyArray<AttributedFieldDeclaration>;
-}
-
-export interface _FieldInitializerListGroup1 {
-	readonly $type: TSKindId._FieldInitializerListGroup1;
-	readonly _content?: readonly (ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer)[];
-	contents(): readonly (ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer)[];
-}
-
 export interface FieldPatternNamed {
 	readonly $type: TSKindId.FieldPatternNamed;
 	readonly _name: Identifier;
@@ -3468,84 +4954,20 @@ export interface FieldPatternNamed {
 	pattern(): Pattern;
 }
 
-export interface FunctionTypeFnForm {
-	readonly $type: TSKindId.FunctionTypeFnForm;
-	readonly _function_modifiers?: FunctionModifiers;
-	functionModifiers(): FunctionModifiers | undefined;
-}
-
 export interface FunctionTypeTraitForm {
 	readonly $type: TSKindId.FunctionTypeTraitForm;
 	readonly _trait: Identifier | ScopedTypeIdentifier;
 	trait(): Identifier | ScopedTypeIdentifier;
 }
 
-export interface ImplItemBody {
-	readonly $type: TSKindId.ImplItemBody;
-	readonly _declaration_list: DeclarationList;
-	declarationList(): DeclarationList;
+export interface FunctionTypeFnForm {
+	readonly $type: TSKindId.FunctionTypeFnForm;
+	readonly _function_modifiers?: FunctionModifiers;
+	functionModifiers(): FunctionModifiers | undefined;
 }
 
-export interface ImplItemGroup1 {
-	readonly $type: '_impl_item_group1';
-	readonly _trait: Identifier | ScopedTypeIdentifier | GenericType;
-	trait(): Identifier | ScopedTypeIdentifier | GenericType;
-}
-
-export interface ImplItemNegativeClause {
-	readonly $type: TSKindId.ImplItemNegativeClause;
-	readonly _trait: Identifier | ScopedTypeIdentifier | GenericType;
-	trait(): Identifier | ScopedTypeIdentifier | GenericType;
-}
-
-export interface ImplItemPositiveClause {
-	readonly $type: TSKindId.ImplItemPositiveClause;
-	readonly _trait: Identifier | ScopedTypeIdentifier | GenericType;
-	trait(): Identifier | ScopedTypeIdentifier | GenericType;
-}
-
-export interface InPath {
-	readonly $type: '_in_path';
-	readonly _path: Path;
-	path(): Path;
-}
-
-export interface LetChain {
-	readonly $type: TSKindId.LetChain;
-	readonly _left: LetChain | LetCondition | Expression;
-	readonly _right: LetCondition | Expression;
-	left(): LetChain | LetCondition | Expression;
-	right(): LetCondition | Expression;
-}
-
-export interface LetDeclarationOptional1 {
-	readonly $type: '_let_declaration_optional1';
-	readonly _type: _Type;
-	type(): _Type;
-}
-
-export interface LetDeclarationOptional2 {
-	readonly $type: '_let_declaration_optional2';
-	readonly _alternative: Block;
-	alternative(): Block;
-}
-
-export interface LineCommentDoc {
-	readonly $type: TSKindId.LineCommentDoc;
-	readonly _outer?: boolean;
-	readonly _inner?: boolean;
-	readonly _doc: LineDocContent;
-	readonly __inputHints__?: {
-		readonly outer?: BooleanKeyword<'/'>;
-		readonly inner?: BooleanKeyword<'!'>;
-	};
-	outer(): boolean | undefined;
-	inner(): boolean | undefined;
-	doc(): LineDocContent;
-}
-
-export interface MacroDefinitionBrace {
-	readonly $type: TSKindId.MacroDefinitionBrace;
+export interface MacroDefinitionParen {
+	readonly $type: TSKindId.MacroDefinitionParen;
 	readonly _macro_rule?: readonly MacroRule[];
 	macroRules(): readonly MacroRule[];
 }
@@ -3556,30 +4978,10 @@ export interface MacroDefinitionBracket {
 	macroRules(): readonly MacroRule[];
 }
 
-export interface MacroDefinitionParen {
-	readonly $type: TSKindId.MacroDefinitionParen;
+export interface MacroDefinitionBrace {
+	readonly $type: TSKindId.MacroDefinitionBrace;
 	readonly _macro_rule?: readonly MacroRule[];
 	macroRules(): readonly MacroRule[];
-}
-
-export interface MatchArmWithComma {
-	readonly $type: TSKindId.MatchArmWithComma;
-	readonly _value: Expression;
-	value(): Expression;
-}
-
-export interface MatchBlockArms {
-	readonly $type: TSKindId.MatchBlockArms;
-	readonly _match_arm?: readonly MatchArm[];
-	readonly _last_arm: LastMatchArm;
-	matchArms(): readonly MatchArm[];
-	lastArm(): LastMatchArm;
-}
-
-export interface MatchPatternOptional1 {
-	readonly $type: '_match_pattern_optional1';
-	readonly _condition: Condition;
-	condition(): Condition;
 }
 
 export interface OrPatternBinary {
@@ -3594,18 +4996,6 @@ export interface OrPatternPrefix {
 	readonly $type: TSKindId.OrPatternPrefix;
 	readonly _right: Pattern;
 	right(): Pattern;
-}
-
-export interface _OrderedFieldDeclarationListGroup1 {
-	readonly $type: TSKindId._OrderedFieldDeclarationListGroup1;
-	readonly _attributed_ordered_field: NonEmptyArray<AttributedOrderedField>;
-	attributedOrderedFields(): NonEmptyArray<AttributedOrderedField>;
-}
-
-export interface _ParametersGroup1 {
-	readonly $type: TSKindId._ParametersGroup1;
-	readonly _attributed_parameter: NonEmptyArray<AttributedParameter>;
-	attributedParameters(): NonEmptyArray<AttributedParameter>;
 }
 
 export interface RangeExpressionBinary {
@@ -3643,17 +5033,6 @@ export interface RangeExpressionPrefix {
 	end(): Expression;
 }
 
-export interface RangePatternLeftWithRight {
-	readonly $type: TSKindId.RangePatternLeftWithRight;
-	readonly _content: number;
-	readonly _right: LiteralPattern | Path;
-	readonly __inputHints__?: {
-		readonly content: KindEnum<'...' | '..=' | '..', TSKindId.DotDotDot | TSKindId.DotDotEq | TSKindId.DotDot>;
-	};
-	content(): number;
-	right(): LiteralPattern | Path;
-}
-
 export interface RangePatternPrefix {
 	readonly $type: TSKindId.RangePatternPrefix;
 	readonly _content: number;
@@ -3665,16 +5044,15 @@ export interface RangePatternPrefix {
 	right(): LiteralPattern | Path;
 }
 
-export interface ReferenceExpressionRawMut {
-	readonly $type: TSKindId.ReferenceExpressionRawMut;
-	readonly _mutable_specifier: MutableSpecifier;
-	mutableSpecifier(): MutableSpecifier;
-}
-
-export interface _SlicePatternGroup1 {
-	readonly $type: TSKindId._SlicePatternGroup1;
-	readonly _pattern: NonEmptyArray<Pattern>;
-	patterns(): NonEmptyArray<Pattern>;
+export interface RangePatternLeftWithRight {
+	readonly $type: TSKindId.RangePatternLeftWithRight;
+	readonly _content: number;
+	readonly _right: LiteralPattern | Path;
+	readonly __inputHints__?: {
+		readonly content: KindEnum<'...' | '..=' | '..', TSKindId.DotDotDot | TSKindId.DotDotEq | TSKindId.DotDot>;
+	};
+	content(): number;
+	right(): LiteralPattern | Path;
 }
 
 export interface StructItemBrace {
@@ -3693,115 +5071,6 @@ export interface StructItemTuple {
 	whereClause(): WhereClause | undefined;
 }
 
-export interface _StructPatternGroup1 {
-	readonly $type: TSKindId._StructPatternGroup1;
-	readonly _content?: readonly (FieldPattern | RemainingFieldPattern)[];
-	contents(): readonly (FieldPattern | RemainingFieldPattern)[];
-}
-
-export interface TokenTreeBrace {
-	readonly $type: TSKindId.TokenTreeBrace;
-	readonly _tokens?: readonly Tokens[];
-	tokens(): readonly Tokens[];
-}
-
-export interface TokenTreeBracket {
-	readonly $type: TSKindId.TokenTreeBracket;
-	readonly _tokens?: readonly Tokens[];
-	tokens(): readonly Tokens[];
-}
-
-export interface TokenTreeParen {
-	readonly $type: TSKindId.TokenTreeParen;
-	readonly _tokens?: readonly Tokens[];
-	tokens(): readonly Tokens[];
-}
-
-export interface TokenTreePatternBrace {
-	readonly $type: TSKindId.TokenTreePatternBrace;
-	readonly _token_pattern?: readonly TokenPattern[];
-	tokenPatterns(): readonly TokenPattern[];
-}
-
-export interface TokenTreePatternBracket {
-	readonly $type: TSKindId.TokenTreePatternBracket;
-	readonly _token_pattern?: readonly TokenPattern[];
-	tokenPatterns(): readonly TokenPattern[];
-}
-
-export interface TokenTreePatternParen {
-	readonly $type: TSKindId.TokenTreePatternParen;
-	readonly _token_pattern?: readonly TokenPattern[];
-	tokenPatterns(): readonly TokenPattern[];
-}
-
-export interface _TuplePatternGroup1 {
-	readonly $type: TSKindId._TuplePatternGroup1;
-	readonly _content?: readonly (Pattern | ClosureExpression)[];
-	contents(): readonly (Pattern | ClosureExpression)[];
-}
-
-export interface TypeArgument {
-	readonly $type: TSKindId.TypeArgument;
-	readonly _content: _Type | TypeBinding | Lifetime | Literal | Block;
-	readonly _trait_bounds?: TraitBounds;
-	content(): _Type | TypeBinding | Lifetime | Literal | Block;
-	traitBounds(): TraitBounds | undefined;
-}
-
-export interface TypeParameterOptional1 {
-	readonly $type: '_type_parameter_optional1';
-	readonly _default_type: _Type;
-	defaultType(): _Type;
-}
-
-export interface _UseBoundsGroup1 {
-	readonly $type: TSKindId._UseBoundsGroup1;
-	readonly _content?: readonly (Lifetime | Identifier)[];
-	contents(): readonly (Lifetime | Identifier)[];
-}
-
-export interface _UseListGroup1 {
-	readonly $type: TSKindId._UseListGroup1;
-	readonly _use_clause: NonEmptyArray<UseClause>;
-	useClauses(): NonEmptyArray<UseClause>;
-}
-
-export interface UseWildcardClause {
-	readonly $type: TSKindId.UseWildcardClause;
-	readonly _path: Path;
-	path(): Path;
-}
-
-export interface UseWildcardGroup1 {
-	readonly $type: '_use_wildcard_group1';
-	readonly _path?: Path;
-	path(): Path | undefined;
-}
-
-export interface VariadicParameterOptional1 {
-	readonly $type: '_variadic_parameter_optional1';
-	readonly _pattern: Pattern;
-	pattern(): Pattern;
-}
-
-export interface _VisibilityModifierGroup1 {
-	readonly $type: TSKindId._VisibilityModifierGroup1;
-	readonly _content: Self | Super | Crate | InPath;
-	content(): Self | Super | Crate | InPath;
-}
-
-export interface VisibilityModifierInPath {
-	readonly $type: TSKindId.VisibilityModifierInPath;
-	readonly _in: AutoStamp<number>;
-	readonly _path: Path;
-	readonly __inputHints__?: {
-		readonly in: AutoStamp<KindEnum<'in', TSKindId.In>>;
-	};
-	in(): AutoStamp<number>;
-	path(): Path;
-}
-
 export interface VisibilityModifierPub {
 	readonly $type: TSKindId.VisibilityModifierPub;
 	readonly _pub: AutoStamp<number>;
@@ -3813,1431 +5082,156 @@ export interface VisibilityModifierPub {
 	visibilityModifierGroup1(): VisibilityModifierGroup1 | undefined;
 }
 
-export interface _WhereClauseGroup1 {
-	readonly $type: TSKindId._WhereClauseGroup1;
-	readonly _where_predicate: NonEmptyArray<WherePredicate>;
-	wherePredicates(): NonEmptyArray<WherePredicate>;
-}
-
-export interface AbstractType {
-	readonly $type: TSKindId.AbstractType;
-	readonly _type_parameters?: TypeParameters;
-	readonly _trait:
-		| Identifier
-		| ScopedTypeIdentifier
-		| RemovedTraitBound
-		| GenericType
-		| FunctionType
-		| TupleType
-		| BoundedType;
-	typeParameters(): TypeParameters | undefined;
-	trait(): Identifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
-}
-
-export interface Arguments {
-	readonly $type: TSKindId.Arguments;
-	readonly _arguments_group1?: ArgumentsGroup1;
-	argumentsGroup1(): ArgumentsGroup1 | undefined;
-}
-
-export interface ArrayExpression {
-	readonly $type: TSKindId.ArrayExpression;
-	readonly _content: ArrayExpressionSemi | ArrayExpressionList;
-	content(): ArrayExpressionSemi | ArrayExpressionList;
-}
-
-export interface ArrayType {
-	readonly $type: TSKindId.ArrayType;
-	readonly _element: _Type;
-	readonly _length?: Expression;
-	element(): _Type;
-	length(): Expression | undefined;
-}
-
-export interface AssignmentExpression {
-	readonly $type: TSKindId.AssignmentExpression;
-	readonly _left: Expression;
-	readonly _right: Expression;
-	left(): Expression;
-	right(): Expression;
-}
-
-export interface AssociatedType {
-	readonly $type: TSKindId.AssociatedType;
-	readonly _name: Identifier;
-	readonly _type_parameters?: TypeParameters;
-	readonly _bounds?: TraitBounds;
-	readonly _where_clause?: WhereClause;
-	name(): Identifier;
-	typeParameters(): TypeParameters | undefined;
-	bounds(): TraitBounds | undefined;
-	whereClause(): WhereClause | undefined;
-}
-
-export interface AsyncBlock {
-	readonly $type: TSKindId.AsyncBlock;
-	readonly _move_marker?: boolean;
-	readonly _block: Block;
-	readonly __inputHints__?: {
-		readonly move_marker?: BooleanKeyword<'move'>;
-	};
-	moveMarker(): boolean | undefined;
-	block(): Block;
-}
-
-export interface Attribute {
-	readonly $type: TSKindId.Attribute;
-	readonly _path: Path;
-	readonly _value?: Expression;
-	readonly _arguments?: DelimTokenTree;
-	path(): Path;
-	value(): Expression | undefined;
-	arguments(): DelimTokenTree | undefined;
-}
-
-export interface AttributeItem {
-	readonly $type: TSKindId.AttributeItem;
-	readonly _attribute: Attribute;
-	attribute(): Attribute;
-}
-
-export interface AwaitExpression {
-	readonly $type: TSKindId.AwaitExpression;
+export interface ExpressionStatementWithSemi {
+	readonly $type: TSKindId.ExpressionStatementWithSemi;
 	readonly _expression: Expression;
 	expression(): Expression;
 }
 
-export interface BaseFieldInitializer {
-	readonly $type: TSKindId.BaseFieldInitializer;
-	readonly _expression: Expression;
-	expression(): Expression;
+export interface MatchArmWithComma {
+	readonly $type: TSKindId.MatchArmWithComma;
+	readonly _value: Expression;
+	value(): Expression;
 }
 
-export interface BinaryExpression {
-	readonly $type: TSKindId.BinaryExpression;
-	readonly _left: Expression;
-	readonly _operator: number;
-	readonly _right: Expression;
-	readonly __inputHints__?: {
-		readonly operator: KindEnum<
-			'&&' | '||' | '&' | '|' | '^' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '<<' | '>>' | '+' | '-' | '*' | '/' | '%',
-			| TSKindId.AmpAmp
-			| TSKindId.PipePipe
-			| TSKindId.Amp2
-			| TSKindId.Pipe2
-			| TSKindId.Caret
-			| TSKindId.EqEq
-			| TSKindId.BangEq
-			| TSKindId.Lt
-			| TSKindId.LtEq
-			| TSKindId.Gt
-			| TSKindId.GtEq
-			| TSKindId.LtLt
-			| TSKindId.GtGt
-			| TSKindId.Plus
-			| TSKindId.Dash
-			| TSKindId.Star
-			| TSKindId.Slash
-			| TSKindId.Percent
-		>;
-	};
-	left(): Expression;
-	operator(): number;
-	right(): Expression;
-}
-
-export interface Block {
-	readonly $type: TSKindId.Block;
-	readonly _label?: Label;
-	readonly _statement?: readonly Statement[];
-	readonly _trailing_expression?: Expression;
-	label(): Label | undefined;
-	statements(): readonly Statement[];
-	trailingExpression(): Expression | undefined;
-}
-
-export interface BlockComment {
-	readonly $type: TSKindId.BlockComment;
+export interface LineCommentDoc {
+	readonly $type: TSKindId.LineCommentDoc;
 	readonly _outer?: boolean;
 	readonly _inner?: boolean;
-	readonly _doc?: BlockCommentContent;
+	readonly _doc: LineDocContent;
 	readonly __inputHints__?: {
-		readonly outer?: BooleanKeyword<'*'>;
+		readonly outer?: BooleanKeyword<'/'>;
 		readonly inner?: BooleanKeyword<'!'>;
 	};
 	outer(): boolean | undefined;
 	inner(): boolean | undefined;
-	doc(): BlockCommentContent | undefined;
+	doc(): LineDocContent;
 }
 
-export interface BoundedType {
-	readonly $type: TSKindId.BoundedType;
-	readonly _left: Lifetime | _Type | UseBounds;
-	readonly _right: Lifetime | _Type | UseBounds;
-	left(): Lifetime | _Type | UseBounds;
-	right(): Lifetime | _Type | UseBounds;
+export interface TokenTreePatternParen {
+	readonly $type: TSKindId.TokenTreePatternParen;
+	readonly _token_pattern?: readonly TokenPattern[];
+	tokenPatterns(): readonly TokenPattern[];
 }
 
-export interface BracketedType {
-	readonly $type: TSKindId.BracketedType;
-	readonly _content: _Type | QualifiedType;
-	content(): _Type | QualifiedType;
+export interface TokenTreePatternBracket {
+	readonly $type: TSKindId.TokenTreePatternBracket;
+	readonly _token_pattern?: readonly TokenPattern[];
+	tokenPatterns(): readonly TokenPattern[];
 }
 
-export interface BreakExpression {
-	readonly $type: TSKindId.BreakExpression;
-	readonly _label?: Label;
-	readonly _expression?: Expression;
-	label(): Label | undefined;
-	expression(): Expression | undefined;
+export interface TokenTreePatternBrace {
+	readonly $type: TSKindId.TokenTreePatternBrace;
+	readonly _token_pattern?: readonly TokenPattern[];
+	tokenPatterns(): readonly TokenPattern[];
 }
 
-export interface CallExpression {
-	readonly $type: TSKindId.CallExpression;
-	readonly _function: ExpressionExceptRange;
-	readonly _arguments: Arguments;
-	function(): ExpressionExceptRange;
-	arguments(): Arguments;
+export interface TokenTreeParen {
+	readonly $type: TSKindId.TokenTreeParen;
+	readonly _tokens?: readonly Tokens[];
+	tokens(): readonly Tokens[];
 }
 
-export interface CapturedPattern {
-	readonly $type: TSKindId.CapturedPattern;
-	readonly _identifier: Identifier;
-	readonly _pattern: Pattern;
-	identifier(): Identifier;
-	pattern(): Pattern;
+export interface TokenTreeBracket {
+	readonly $type: TSKindId.TokenTreeBracket;
+	readonly _tokens?: readonly Tokens[];
+	tokens(): readonly Tokens[];
 }
 
-export interface ClosureExpression {
-	readonly $type: TSKindId.ClosureExpression;
-	readonly _static_marker?: boolean;
-	readonly _async_marker?: boolean;
-	readonly _move_marker?: boolean;
-	readonly _parameters: ClosureParameters;
-	readonly _content: ClosureExpressionBlock | ClosureExpressionExpr;
-	readonly __inputHints__?: {
-		readonly static_marker?: BooleanKeyword<'static'>;
-		readonly async_marker?: BooleanKeyword<'async'>;
-		readonly move_marker?: BooleanKeyword<'move'>;
-	};
-	staticMarker(): boolean | undefined;
-	asyncMarker(): boolean | undefined;
-	moveMarker(): boolean | undefined;
-	parameters(): ClosureParameters;
-	content(): ClosureExpressionBlock | ClosureExpressionExpr;
+export interface TokenTreeBrace {
+	readonly $type: TSKindId.TokenTreeBrace;
+	readonly _tokens?: readonly Tokens[];
+	tokens(): readonly Tokens[];
 }
 
-export interface ClosureParameters {
-	readonly $type: TSKindId.ClosureParameters;
-	readonly _parameters?: readonly (Pattern | Parameter)[];
-	parameters(): readonly (Pattern | Parameter)[];
+export interface DelimTokenTreeParen {
+	readonly $type: TSKindId.DelimTokenTreeParen;
+	readonly _delim_tokens?: readonly DelimTokens[];
+	delimTokens(): readonly DelimTokens[];
 }
 
-export interface Comment {
-	readonly $type: 'comment';
-	readonly _content: LineComment | BlockComment;
-	content(): LineComment | BlockComment;
+export interface DelimTokenTreeBracket {
+	readonly $type: TSKindId.DelimTokenTreeBracket;
+	readonly _delim_tokens?: readonly DelimTokens[];
+	delimTokens(): readonly DelimTokens[];
 }
 
-export interface CompoundAssignmentExpr {
-	readonly $type: TSKindId.CompoundAssignmentExpr;
-	readonly _left: Expression;
-	readonly _operator: number;
-	readonly _right: Expression;
-	readonly __inputHints__?: {
-		readonly operator: KindEnum<
-			'+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=',
-			| TSKindId.PlusEq
-			| TSKindId.DashEq
-			| TSKindId.StarEq
-			| TSKindId.SlashEq
-			| TSKindId.PercentEq
-			| TSKindId.AmpEq
-			| TSKindId.PipeEq
-			| TSKindId.CaretEq
-			| TSKindId.LtLtEq
-			| TSKindId.GtGtEq
-		>;
-	};
-	left(): Expression;
-	operator(): number;
-	right(): Expression;
+export interface DelimTokenTreeBrace {
+	readonly $type: TSKindId.DelimTokenTreeBrace;
+	readonly _delim_tokens?: readonly DelimTokens[];
+	delimTokens(): readonly DelimTokens[];
 }
 
-export interface ConstBlock {
-	readonly $type: TSKindId.ConstBlock;
-	readonly _body: Block;
-	body(): Block;
+export interface InPath {
+	readonly $type: '_in_path';
+	readonly _path: Path;
+	path(): Path;
 }
 
-export interface ConstItem {
-	readonly $type: TSKindId.ConstItem;
-	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _name: Identifier;
-	readonly _type: _Type;
-	readonly _value?: Expression;
-	visibilityModifier(): VisibilityModifier | undefined;
-	name(): Identifier;
-	type(): _Type;
-	value(): Expression | undefined;
-}
-
-export interface ConstParameter {
-	readonly $type: TSKindId.ConstParameter;
-	readonly _name: Identifier;
-	readonly _type: _Type;
-	readonly _value?: Block | Identifier | Literal | NegativeLiteral;
-	name(): Identifier;
-	type(): _Type;
-	value(): Block | Identifier | Literal | NegativeLiteral | undefined;
-}
-
-export interface ContinueExpression {
-	readonly $type: TSKindId.ContinueExpression;
-	readonly _label?: Label;
-	label(): Label | undefined;
-}
-
-export interface DeclarationList {
-	readonly $type: TSKindId.DeclarationList;
-	readonly _declaration_statement?: readonly DeclarationStatement[];
-	declarationStatements(): readonly DeclarationStatement[];
-}
-
-export interface DelimTokenTree {
-	readonly $type: TSKindId.DelimTokenTree;
-	readonly _content: DelimTokenTreeParen | DelimTokenTreeBracket | DelimTokenTreeBrace;
-	content(): DelimTokenTreeParen | DelimTokenTreeBracket | DelimTokenTreeBrace;
-}
-
-export interface DynamicType {
-	readonly $type: TSKindId.DynamicType;
-	readonly _trait: HigherRankedTraitBound | Identifier | ScopedTypeIdentifier | GenericType | FunctionType | TupleType;
-	trait(): HigherRankedTraitBound | Identifier | ScopedTypeIdentifier | GenericType | FunctionType | TupleType;
-}
-
-export interface ElseClause {
-	readonly $type: TSKindId.ElseClause;
-	readonly _content: Block | IfExpression;
-	content(): Block | IfExpression;
-}
-
-export interface EnumItem {
-	readonly $type: TSKindId.EnumItem;
-	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _name: Identifier;
-	readonly _type_parameters?: TypeParameters;
-	readonly _where_clause?: WhereClause;
-	readonly _body: EnumVariantList;
-	visibilityModifier(): VisibilityModifier | undefined;
-	name(): Identifier;
-	typeParameters(): TypeParameters | undefined;
-	whereClause(): WhereClause | undefined;
-	body(): EnumVariantList;
-}
-
-export interface EnumVariant {
-	readonly $type: TSKindId.EnumVariant;
-	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _name: Identifier;
-	readonly _body?: FieldDeclarationList | OrderedFieldDeclarationList;
-	readonly _value?: Expression;
-	visibilityModifier(): VisibilityModifier | undefined;
-	name(): Identifier;
-	body(): FieldDeclarationList | OrderedFieldDeclarationList | undefined;
-	value(): Expression | undefined;
-}
-
-export interface EnumVariantList {
-	readonly $type: TSKindId.EnumVariantList;
-	readonly _enum_variant_list_group1?: EnumVariantListGroup1;
-	enumVariantListGroup1(): EnumVariantListGroup1 | undefined;
-}
-
-export interface ExpressionStatement {
-	readonly $type: TSKindId.ExpressionStatement;
-	readonly _content: ExpressionStatementWithSemi | ExpressionEndingWithBlock;
-	content(): ExpressionStatementWithSemi | ExpressionEndingWithBlock;
-}
-
-export interface ExternCrateDeclaration {
-	readonly $type: TSKindId.ExternCrateDeclaration;
-	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _crate: AutoStamp<number>;
-	readonly _name: Identifier;
-	readonly _alias?: Identifier;
-	readonly __inputHints__?: {
-		readonly crate: AutoStamp<KindEnum<'crate', TSKindId.Crate>>;
-	};
-	visibilityModifier(): VisibilityModifier | undefined;
-	crate(): AutoStamp<number>;
-	name(): Identifier;
-	alias(): Identifier | undefined;
-}
-
-export interface ExternModifier {
-	readonly $type: TSKindId.ExternModifier;
-	readonly _string_literal?: StringLiteral;
-	stringLiteral(): StringLiteral | undefined;
-}
-
-export interface FieldDeclaration {
-	readonly $type: TSKindId.FieldDeclaration;
-	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _name: Identifier;
-	readonly _type: _Type;
-	visibilityModifier(): VisibilityModifier | undefined;
-	name(): Identifier;
-	type(): _Type;
-}
-
-export interface FieldDeclarationList {
-	readonly $type: TSKindId.FieldDeclarationList;
-	readonly _field_declaration_list_group1?: FieldDeclarationListGroup1;
-	fieldDeclarationListGroup1(): FieldDeclarationListGroup1 | undefined;
-}
-
-export interface FieldExpression {
-	readonly $type: TSKindId.FieldExpression;
-	readonly _value: Expression;
-	readonly _field: Identifier | IntegerLiteral;
-	value(): Expression;
-	field(): Identifier | IntegerLiteral;
-}
-
-export interface FieldInitializer {
-	readonly $type: TSKindId.FieldInitializer;
+export interface AttributedFieldDeclaration {
+	readonly $type: TSKindId.AttributedFieldDeclaration;
 	readonly _attribute_item?: readonly AttributeItem[];
-	readonly _field: Identifier | IntegerLiteral;
-	readonly _value: Expression;
+	readonly _field_declaration: FieldDeclaration;
 	attributeItems(): readonly AttributeItem[];
-	field(): Identifier | IntegerLiteral;
-	value(): Expression;
+	fieldDeclaration(): FieldDeclaration;
 }
 
-export interface FieldInitializerList {
-	readonly $type: TSKindId.FieldInitializerList;
-	readonly _initializers?: FieldInitializerListGroup1;
-	initializers(): FieldInitializerListGroup1 | undefined;
+export interface AttributedEnumVariant {
+	readonly $type: TSKindId.AttributedEnumVariant;
+	readonly _attribute_item?: readonly AttributeItem[];
+	readonly _enum_variant: EnumVariant;
+	attributeItems(): readonly AttributeItem[];
+	enumVariant(): EnumVariant;
 }
 
-export interface FieldPattern {
-	readonly $type: TSKindId.FieldPattern;
-	readonly _ref_marker?: boolean;
-	readonly _mutable_specifier?: boolean;
-	readonly _content: Identifier | FieldPatternNamed;
-	readonly __inputHints__?: {
-		readonly ref_marker?: BooleanKeyword<'ref'>;
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
-	};
-	refMarker(): boolean | undefined;
-	mutableSpecifier(): boolean | undefined;
-	content(): Identifier | FieldPatternNamed;
+export interface AttributedParameter {
+	readonly $type: TSKindId.AttributedParameter;
+	readonly _attribute_item?: AttributeItem;
+	readonly _content: Parameter | SelfParameter | VariadicParameter | '_' | _Type;
+	attributeItem(): AttributeItem | undefined;
+	content(): Parameter | SelfParameter | VariadicParameter | '_' | _Type;
 }
 
-export interface ForExpression {
-	readonly $type: TSKindId.ForExpression;
-	readonly _label?: Label;
-	readonly _pattern: Pattern;
-	readonly _value: Expression;
-	readonly _body: Block;
-	label(): Label | undefined;
-	pattern(): Pattern;
-	value(): Expression;
-	body(): Block;
+export interface AttributedTypeParameter {
+	readonly $type: TSKindId.AttributedTypeParameter;
+	readonly _attribute_item?: readonly AttributeItem[];
+	readonly _content: Metavariable | TypeParameter | LifetimeParameter | ConstParameter;
+	attributeItems(): readonly AttributeItem[];
+	content(): Metavariable | TypeParameter | LifetimeParameter | ConstParameter;
 }
 
-export interface ForLifetimes {
-	readonly $type: TSKindId.ForLifetimes;
-	readonly _lifetime: NonEmptyArray<Lifetime>;
-	lifetimes(): NonEmptyArray<Lifetime>;
-}
-
-export interface ForeignModItem {
-	readonly $type: TSKindId.ForeignModItem;
-	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _extern_modifier: ExternModifier;
-	readonly _content: ';' | DeclarationList;
-	visibilityModifier(): VisibilityModifier | undefined;
-	externModifier(): ExternModifier;
-	content(): ';' | DeclarationList;
-}
-
-export interface FunctionItem {
-	readonly $type: TSKindId.FunctionItem;
-	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _function_modifiers?: FunctionModifiers;
-	readonly _name: Identifier | Metavariable;
-	readonly _type_parameters?: TypeParameters;
-	readonly _parameters: Parameters;
-	readonly _return_type?: _Type;
-	readonly _where_clause?: WhereClause;
-	readonly _body: Block;
-	visibilityModifier(): VisibilityModifier | undefined;
-	functionModifiers(): FunctionModifiers | undefined;
-	name(): Identifier | Metavariable;
-	typeParameters(): TypeParameters | undefined;
-	parameters(): Parameters;
-	returnType(): _Type | undefined;
-	whereClause(): WhereClause | undefined;
-	body(): Block;
-}
-
-export interface FunctionModifiers {
-	readonly $type: TSKindId.FunctionModifiers;
-	readonly _modifier: NonEmptyArray<'async' | 'default' | 'const' | 'unsafe' | ExternModifier>;
-	modifiers(): NonEmptyArray<'async' | 'default' | 'const' | 'unsafe' | ExternModifier>;
-}
-
-export interface FunctionSignatureItem {
-	readonly $type: TSKindId.FunctionSignatureItem;
-	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _function_modifiers?: FunctionModifiers;
-	readonly _name: Identifier | Metavariable;
-	readonly _type_parameters?: TypeParameters;
-	readonly _parameters: Parameters;
-	readonly _return_type?: _Type;
-	readonly _where_clause?: WhereClause;
-	visibilityModifier(): VisibilityModifier | undefined;
-	functionModifiers(): FunctionModifiers | undefined;
-	name(): Identifier | Metavariable;
-	typeParameters(): TypeParameters | undefined;
-	parameters(): Parameters;
-	returnType(): _Type | undefined;
-	whereClause(): WhereClause | undefined;
-}
-
-export interface FunctionType {
-	readonly $type: TSKindId.FunctionType;
-	readonly _for_lifetimes?: ForLifetimes;
-	readonly _parameters: Parameters;
-	readonly _function_type_trait_form?: FunctionTypeTraitForm;
-	readonly _function_type_fn_form?: FunctionTypeFnForm;
-	readonly _return_type?: _Type;
-	forLifetimes(): ForLifetimes | undefined;
-	parameters(): Parameters;
-	functionTypeTraitForm(): FunctionTypeTraitForm | undefined;
-	functionTypeFnForm(): FunctionTypeFnForm | undefined;
-	returnType(): _Type | undefined;
-}
-
-export interface GenBlock {
-	readonly $type: TSKindId.GenBlock;
-	readonly _move_marker?: boolean;
-	readonly _block: Block;
-	readonly __inputHints__?: {
-		readonly move_marker?: BooleanKeyword<'move'>;
-	};
-	moveMarker(): boolean | undefined;
-	block(): Block;
-}
-
-export interface GenericFunction {
-	readonly $type: TSKindId.GenericFunction;
-	readonly _function: Identifier | ScopedIdentifier | FieldExpression;
-	readonly _type_arguments: TypeArguments;
-	function(): Identifier | ScopedIdentifier | FieldExpression;
-	typeArguments(): TypeArguments;
-}
-
-export interface GenericPattern {
-	readonly $type: TSKindId.GenericPattern;
-	readonly _content: Identifier | ScopedIdentifier;
-	readonly _type_arguments: TypeArguments;
-	content(): Identifier | ScopedIdentifier;
-	typeArguments(): TypeArguments;
-}
-
-export interface GenericType {
-	readonly $type: TSKindId.GenericType;
-	readonly _type: Identifier | ScopedTypeIdentifier;
-	readonly _type_arguments: TypeArguments;
-	type(): Identifier | ScopedTypeIdentifier;
-	typeArguments(): TypeArguments;
-}
-
-export interface GenericTypeWithTurbofish {
-	readonly $type: TSKindId.GenericTypeWithTurbofish;
-	readonly _type: Identifier | ScopedIdentifier;
-	readonly _turbofish: AutoStamp<number>;
-	readonly _type_arguments: TypeArguments;
-	readonly __inputHints__?: {
-		readonly turbofish: AutoStamp<KindEnum<'::', TSKindId.ColonColon>>;
-	};
-	type(): Identifier | ScopedIdentifier;
-	turbofish(): AutoStamp<number>;
-	typeArguments(): TypeArguments;
-}
-
-export interface HigherRankedTraitBound {
-	readonly $type: TSKindId.HigherRankedTraitBound;
-	readonly _type_parameters: TypeParameters;
-	readonly _type: _Type;
-	typeParameters(): TypeParameters;
-	type(): _Type;
-}
-
-export interface IfExpression {
-	readonly $type: TSKindId.IfExpression;
-	readonly _condition: Condition;
-	readonly _consequence: Block;
-	readonly _alternative?: ElseClause;
-	condition(): Condition;
-	consequence(): Block;
-	alternative(): ElseClause | undefined;
-}
-
-export interface ImplItem {
-	readonly $type: TSKindId.ImplItem;
-	readonly _unsafe_marker?: boolean;
-	readonly _type_parameters?: TypeParameters;
-	readonly _trait_clause?: ImplItemPositiveClause | ImplItemNegativeClause;
-	readonly _type: _Type;
-	readonly _where_clause?: WhereClause;
-	readonly _content: ImplItemBody | ';';
-	readonly __inputHints__?: {
-		readonly unsafe_marker?: BooleanKeyword<'unsafe'>;
-	};
-	unsafeMarker(): boolean | undefined;
-	typeParameters(): TypeParameters | undefined;
-	traitClause(): ImplItemPositiveClause | ImplItemNegativeClause | undefined;
-	type(): _Type;
-	whereClause(): WhereClause | undefined;
-	content(): ImplItemBody | ';';
-}
-
-export interface IndexExpression {
-	readonly $type: TSKindId.IndexExpression;
-	readonly _object: Expression;
-	readonly _index: Expression;
-	object(): Expression;
-	index(): Expression;
-}
-
-export interface InnerAttributeItem {
-	readonly $type: TSKindId.InnerAttributeItem;
-	readonly _attribute: Attribute;
-	attribute(): Attribute;
-}
-
-export interface Label {
-	readonly $type: TSKindId.Label;
-	readonly _identifier: Identifier;
-	identifier(): Identifier;
-}
-
-export interface LastMatchArm {
-	readonly $type: TSKindId.LastMatchArm;
-	readonly _attributes?: readonly (AttributeItem | InnerAttributeItem)[];
-	readonly _pattern: MatchPattern;
-	readonly _value: Expression;
-	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
-	pattern(): MatchPattern;
-	value(): Expression;
-}
-
-export interface LetCondition {
-	readonly $type: TSKindId.LetCondition;
-	readonly _pattern: Pattern;
-	readonly _value: Expression;
-	pattern(): Pattern;
-	value(): Expression;
-}
-
-export interface LetDeclaration {
-	readonly $type: TSKindId.LetDeclaration;
-	readonly _mutable_specifier?: boolean;
-	readonly _pattern: Pattern;
-	readonly _type?: _Type;
-	readonly _value?: Expression;
-	readonly _alternative?: Block;
-	readonly __inputHints__?: {
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
-	};
-	mutableSpecifier(): boolean | undefined;
-	pattern(): Pattern;
-	type(): _Type | undefined;
-	value(): Expression | undefined;
-	alternative(): Block | undefined;
-}
-
-export interface Lifetime {
-	readonly $type: TSKindId.Lifetime;
-	readonly _identifier: Identifier;
-	identifier(): Identifier;
-}
-
-export interface LifetimeParameter {
-	readonly $type: TSKindId.LifetimeParameter;
-	readonly _name: Lifetime;
-	readonly _bounds?: TraitBounds;
-	name(): Lifetime;
-	bounds(): TraitBounds | undefined;
-}
-
-export interface LineComment {
-	readonly $type: TSKindId.LineComment;
-	readonly _content: LineCommentRegularDslash | LineCommentDoc | LineCommentContent;
-	content(): LineCommentRegularDslash | LineCommentDoc | LineCommentContent;
-}
-
-export interface LoopExpression {
-	readonly $type: TSKindId.LoopExpression;
-	readonly _label?: Label;
-	readonly _body: Block;
-	label(): Label | undefined;
-	body(): Block;
-}
-
-export interface MacroDefinition {
-	readonly $type: TSKindId.MacroDefinition;
-	readonly _name: Identifier;
-	readonly _content: MacroDefinitionParen | MacroDefinitionBracket | MacroDefinitionBrace;
-	name(): Identifier;
-	content(): MacroDefinitionParen | MacroDefinitionBracket | MacroDefinitionBrace;
-}
-
-export interface MacroInvocation {
-	readonly $type: TSKindId.MacroInvocation;
-	readonly _macro: ScopedIdentifier | Identifier;
-	readonly _token_tree: DelimTokenTree;
-	macro(): ScopedIdentifier | Identifier;
-	tokenTree(): DelimTokenTree;
-}
-
-export interface MacroRule {
-	readonly $type: TSKindId.MacroRule;
-	readonly _left: TokenTreePattern;
-	readonly _right: TokenTree;
-	left(): TokenTreePattern;
-	right(): TokenTree;
-}
-
-export interface MatchArm {
-	readonly $type: TSKindId.MatchArm;
-	readonly _attributes?: readonly (AttributeItem | InnerAttributeItem)[];
-	readonly _pattern: MatchPattern;
-	readonly _content: MatchArmWithComma | ExpressionEndingWithBlock;
-	attributes(): readonly (AttributeItem | InnerAttributeItem)[];
-	pattern(): MatchPattern;
-	content(): MatchArmWithComma | ExpressionEndingWithBlock;
-}
-
-export interface MatchBlock {
-	readonly $type: TSKindId.MatchBlock;
-	readonly _match_block_arms?: MatchBlockArms;
-	matchBlockArms(): MatchBlockArms | undefined;
-}
-
-export interface MatchExpression {
-	readonly $type: TSKindId.MatchExpression;
-	readonly _value: Expression;
-	readonly _body: MatchBlock;
-	value(): Expression;
-	body(): MatchBlock;
-}
-
-export interface MatchPattern {
-	readonly $type: TSKindId.MatchPattern;
-	readonly _pattern: Pattern;
-	readonly _condition?: Condition;
-	pattern(): Pattern;
-	condition(): Condition | undefined;
-}
-
-export interface ModItem {
-	readonly $type: TSKindId.ModItem;
-	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _name: Identifier;
-	readonly _content: ';' | DeclarationList;
-	visibilityModifier(): VisibilityModifier | undefined;
-	name(): Identifier;
-	content(): ';' | DeclarationList;
-}
-
-export interface MutPattern {
-	readonly $type: TSKindId.MutPattern;
-	readonly _mutable_specifier: AutoStamp<'mut'>;
-	readonly _pattern: Pattern;
-	mutableSpecifier(): AutoStamp<'mut'>;
-	pattern(): Pattern;
-}
-
-export interface NegativeLiteral {
-	readonly $type: TSKindId.NegativeLiteral;
-	readonly _value: IntegerLiteral | FloatLiteral;
-	value(): IntegerLiteral | FloatLiteral;
-}
-
-export interface OrPattern {
-	readonly $type: TSKindId.OrPattern;
-	readonly _content: OrPatternBinary | OrPatternPrefix;
-	content(): OrPatternBinary | OrPatternPrefix;
-}
-
-export interface OrderedFieldDeclarationList {
-	readonly $type: TSKindId.OrderedFieldDeclarationList;
-	readonly _attributes?: OrderedFieldDeclarationListGroup1;
-	attributes(): OrderedFieldDeclarationListGroup1 | undefined;
-}
-
-export interface Parameter {
-	readonly $type: TSKindId.Parameter;
-	readonly _mutable_specifier?: boolean;
-	readonly _pattern: Pattern | Self;
-	readonly _type: _Type;
-	readonly __inputHints__?: {
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
-	};
-	mutableSpecifier(): boolean | undefined;
-	pattern(): Pattern | Self;
-	type(): _Type;
-}
-
-export interface Parameters {
-	readonly $type: TSKindId.Parameters;
-	readonly _parameters_group1?: ParametersGroup1;
-	parametersGroup1(): ParametersGroup1 | undefined;
-}
-
-export interface ParenthesizedExpression {
-	readonly $type: TSKindId.ParenthesizedExpression;
+export interface AttributedArgument {
+	readonly $type: TSKindId.AttributedArgument;
+	readonly _attribute_item?: readonly AttributeItem[];
 	readonly _expression: Expression;
+	attributeItems(): readonly AttributeItem[];
 	expression(): Expression;
 }
 
-export interface PointerType {
-	readonly $type: TSKindId.PointerType;
-	readonly _content: 'const' | MutableSpecifier;
-	readonly _type: _Type;
-	content(): 'const' | MutableSpecifier;
-	type(): _Type;
-}
-
-export interface QualifiedType {
-	readonly $type: TSKindId.QualifiedType;
-	readonly _type: _Type;
-	readonly _alias: _Type;
-	type(): _Type;
-	alias(): _Type;
-}
-
-export interface RangeExpression {
-	readonly $type: TSKindId.RangeExpression;
-	readonly _content: RangeExpressionBinary | RangeExpressionPostfix | RangeExpressionPrefix | '..';
-	content(): RangeExpressionBinary | RangeExpressionPostfix | RangeExpressionPrefix | '..';
-}
-
-export interface RangePattern {
-	readonly $type: TSKindId.RangePattern;
-	readonly _left?: LiteralPattern | Path;
-	readonly _content?: RangePatternLeftWithRight | '..';
-	readonly _range_pattern_prefix?: RangePatternPrefix;
-	left(): LiteralPattern | Path | undefined;
-	content(): RangePatternLeftWithRight | '..' | undefined;
-	rangePatternPrefix(): RangePatternPrefix | undefined;
-}
-
-export interface RawStringLiteral {
-	readonly $type: TSKindId.RawStringLiteral;
-	readonly _string_content: RawStringLiteralContent;
-	stringContent(): RawStringLiteralContent;
-}
-
-export interface RefPattern {
-	readonly $type: TSKindId.RefPattern;
-	readonly _pattern: Pattern;
-	pattern(): Pattern;
-}
-
-export interface ReferenceExpression {
-	readonly $type: TSKindId.ReferenceExpression;
-	readonly _content?: ReferenceExpressionRawConst | ReferenceExpressionRawMut | MutableSpecifier;
-	readonly _value: Expression;
-	content(): ReferenceExpressionRawConst | ReferenceExpressionRawMut | MutableSpecifier | undefined;
-	value(): Expression;
-}
-
-export interface ReferencePattern {
-	readonly $type: TSKindId.ReferencePattern;
-	readonly _mutable_specifier?: boolean;
-	readonly _pattern: Pattern;
-	readonly __inputHints__?: {
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
-	};
-	mutableSpecifier(): boolean | undefined;
-	pattern(): Pattern;
-}
-
-export interface ReferenceType {
-	readonly $type: TSKindId.ReferenceType;
-	readonly _lifetime?: Lifetime;
-	readonly _mutable_specifier?: boolean;
-	readonly _type: _Type;
-	readonly __inputHints__?: {
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
-	};
-	lifetime(): Lifetime | undefined;
-	mutableSpecifier(): boolean | undefined;
-	type(): _Type;
-}
-
-export interface RemovedTraitBound {
-	readonly $type: TSKindId.RemovedTraitBound;
-	readonly _type: _Type;
-	type(): _Type;
-}
-
-export interface ReturnExpression {
-	readonly $type: TSKindId.ReturnExpression;
-	readonly _expression?: Expression;
-	expression(): Expression | undefined;
-}
-
-export interface ScopedIdentifier {
-	readonly $type: TSKindId.ScopedIdentifier;
-	readonly _path?: Path | BracketedType | GenericTypeWithTurbofish;
-	readonly _name: Identifier | Super;
-	path(): Path | BracketedType | GenericTypeWithTurbofish | undefined;
-	name(): Identifier | Super;
-}
-
-export interface ScopedTypeIdentifier {
-	readonly $type: TSKindId.ScopedTypeIdentifier;
-	readonly _path?: Path | GenericTypeWithTurbofish | BracketedType | GenericType;
-	readonly _name: Identifier;
-	path(): Path | GenericTypeWithTurbofish | BracketedType | GenericType | undefined;
-	name(): Identifier;
-}
-
-export interface ScopedTypeIdentifierInExpressionPosition {
-	readonly $type: TSKindId.ScopedTypeIdentifierInExpressionPosition;
-	readonly _path?: Path | GenericTypeWithTurbofish;
-	readonly _name: Identifier;
-	path(): Path | GenericTypeWithTurbofish | undefined;
-	name(): Identifier;
-}
-
-export interface ScopedUseList {
-	readonly $type: TSKindId.ScopedUseList;
-	readonly _path?: Path;
-	readonly _list: UseList;
-	path(): Path | undefined;
-	list(): UseList;
-}
-
-export interface SelfParameter {
-	readonly $type: TSKindId.SelfParameter;
-	readonly _reference?: boolean;
-	readonly _lifetime?: Lifetime;
-	readonly _mutable_specifier?: boolean;
-	readonly _self: AutoStamp<number>;
-	readonly __inputHints__?: {
-		readonly reference?: BooleanKeyword<'&'>;
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
-		readonly self: AutoStamp<KindEnum<'self', TSKindId.Self>>;
-	};
-	reference(): boolean | undefined;
-	lifetime(): Lifetime | undefined;
-	mutableSpecifier(): boolean | undefined;
-	self(): AutoStamp<number>;
-}
-
-export interface ShorthandFieldInitializer {
-	readonly $type: TSKindId.ShorthandFieldInitializer;
-	readonly _attributes?: readonly AttributeItem[];
-	readonly _identifier: Identifier;
-	attributes(): readonly AttributeItem[];
-	identifier(): Identifier;
-}
-
-export interface SlicePattern {
-	readonly $type: TSKindId.SlicePattern;
-	readonly _slice_pattern_group1?: SlicePatternGroup1;
-	slicePatternGroup1(): SlicePatternGroup1 | undefined;
-}
-
-export interface SourceFile {
-	readonly $type: TSKindId.SourceFile;
-	readonly _shebang?: Shebang;
-	readonly _statements?: readonly Statement[];
-	shebang(): Shebang | undefined;
-	statements(): readonly Statement[];
-}
-
-export interface StaticItem {
-	readonly $type: TSKindId.StaticItem;
+export interface AttributedOrderedField {
+	readonly $type: TSKindId.AttributedOrderedField;
+	readonly _attribute_item?: readonly AttributeItem[];
 	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _mutable_specifier?: 'ref' | MutableSpecifier;
-	readonly _name: Identifier;
 	readonly _type: _Type;
-	readonly _value?: Expression;
+	attributeItems(): readonly AttributeItem[];
 	visibilityModifier(): VisibilityModifier | undefined;
-	mutableSpecifier(): 'ref' | MutableSpecifier | undefined;
-	name(): Identifier;
-	type(): _Type;
-	value(): Expression | undefined;
-}
-
-export interface StringLiteral {
-	readonly $type: TSKindId.StringLiteral;
-	readonly _content?: readonly (EscapeSequence | StringContent)[];
-	contents(): readonly (EscapeSequence | StringContent)[];
-}
-
-export interface StructExpression {
-	readonly $type: TSKindId.StructExpression;
-	readonly _name: Identifier | ScopedTypeIdentifierInExpressionPosition | GenericTypeWithTurbofish;
-	readonly _body: FieldInitializerList;
-	name(): Identifier | ScopedTypeIdentifierInExpressionPosition | GenericTypeWithTurbofish;
-	body(): FieldInitializerList;
-}
-
-export interface StructItem {
-	readonly $type: TSKindId.StructItem;
-	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _name: Identifier;
-	readonly _type_parameters?: TypeParameters;
-	readonly _content: StructItemBrace | StructItemTuple | ';';
-	visibilityModifier(): VisibilityModifier | undefined;
-	name(): Identifier;
-	typeParameters(): TypeParameters | undefined;
-	content(): StructItemBrace | StructItemTuple | ';';
-}
-
-export interface StructPattern {
-	readonly $type: TSKindId.StructPattern;
-	readonly _type: Identifier | ScopedTypeIdentifier;
-	readonly _fields?: StructPatternGroup1;
-	type(): Identifier | ScopedTypeIdentifier;
-	fields(): StructPatternGroup1 | undefined;
-}
-
-export interface TokenBindingPattern {
-	readonly $type: TSKindId.TokenBindingPattern;
-	readonly _name: Metavariable;
-	readonly _type: number;
-	readonly __inputHints__?: {
-		readonly type: KindEnum<
-			| 'block'
-			| 'expr'
-			| 'expr_2021'
-			| 'ident'
-			| 'item'
-			| 'lifetime'
-			| 'literal'
-			| 'meta'
-			| 'pat'
-			| 'pat_param'
-			| 'path'
-			| 'stmt'
-			| 'tt'
-			| 'ty'
-			| 'vis',
-			| TSKindId.Block
-			| TSKindId.Expr
-			| TSKindId.Expr2021
-			| TSKindId.Ident
-			| TSKindId.Item
-			| TSKindId.Lifetime
-			| TSKindId.Literal
-			| TSKindId.Meta
-			| TSKindId.Pat
-			| TSKindId.PatParam
-			| TSKindId.Path
-			| TSKindId.Stmt
-			| TSKindId.Tt
-			| TSKindId.Ty
-			| TSKindId.Vis
-		>;
-	};
-	name(): Metavariable;
-	type(): number;
-}
-
-export interface TokenRepetition {
-	readonly $type: TSKindId.TokenRepetition;
-	readonly _tokens?: readonly Tokens[];
-	readonly _separator?: boolean;
-	readonly _operator: number;
-	readonly __inputHints__?: {
-		readonly separator?: BooleanKeyword<'[^+*?]+'>;
-		readonly operator: KindEnum<'+' | '*' | '?', TSKindId.Plus | TSKindId.Star | TSKindId.Qmark>;
-	};
-	tokens(): readonly Tokens[];
-	separator(): boolean | undefined;
-	operator(): number;
-}
-
-export interface TokenRepetitionPattern {
-	readonly $type: TSKindId.TokenRepetitionPattern;
-	readonly _token_pattern?: readonly TokenPattern[];
-	readonly _separator?: boolean;
-	readonly _operator: number;
-	readonly __inputHints__?: {
-		readonly separator?: BooleanKeyword<'[^+*?]+'>;
-		readonly operator: KindEnum<'+' | '*' | '?', TSKindId.Plus | TSKindId.Star | TSKindId.Qmark>;
-	};
-	tokenPatterns(): readonly TokenPattern[];
-	separator(): boolean | undefined;
-	operator(): number;
-}
-
-export interface TokenTree {
-	readonly $type: TSKindId.TokenTree;
-	readonly _content:
-		| TokenTreeParen
-		| TokenTreeBracket
-		| TokenTreeBrace
-		| DelimTokenTreeParen
-		| DelimTokenTreeBracket
-		| DelimTokenTreeBrace;
-	content():
-		| TokenTreeParen
-		| TokenTreeBracket
-		| TokenTreeBrace
-		| DelimTokenTreeParen
-		| DelimTokenTreeBracket
-		| DelimTokenTreeBrace;
-}
-
-export interface TokenTreePattern {
-	readonly $type: TSKindId.TokenTreePattern;
-	readonly _content: TokenTreePatternParen | TokenTreePatternBracket | TokenTreePatternBrace;
-	content(): TokenTreePatternParen | TokenTreePatternBracket | TokenTreePatternBrace;
-}
-
-export interface TraitBounds {
-	readonly $type: TSKindId.TraitBounds;
-	readonly _bounds: NonEmptyArray<_Type | Lifetime | HigherRankedTraitBound>;
-	bounds(): NonEmptyArray<_Type | Lifetime | HigherRankedTraitBound>;
-}
-
-export interface TraitItem {
-	readonly $type: TSKindId.TraitItem;
-	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _unsafe_marker?: boolean;
-	readonly _name: Identifier;
-	readonly _type_parameters?: TypeParameters;
-	readonly _bounds?: TraitBounds;
-	readonly _where_clause?: WhereClause;
-	readonly _body: DeclarationList;
-	readonly __inputHints__?: {
-		readonly unsafe_marker?: BooleanKeyword<'unsafe'>;
-	};
-	visibilityModifier(): VisibilityModifier | undefined;
-	unsafeMarker(): boolean | undefined;
-	name(): Identifier;
-	typeParameters(): TypeParameters | undefined;
-	bounds(): TraitBounds | undefined;
-	whereClause(): WhereClause | undefined;
-	body(): DeclarationList;
-}
-
-export interface TryBlock {
-	readonly $type: TSKindId.TryBlock;
-	readonly _block: Block;
-	block(): Block;
-}
-
-export interface TryExpression {
-	readonly $type: TSKindId.TryExpression;
-	readonly _value: Expression;
-	value(): Expression;
-}
-
-export interface TupleExpression {
-	readonly $type: TSKindId.TupleExpression;
-	readonly _attributes?: readonly AttributeItem[];
-	readonly _elements?: readonly Expression[];
-	attributes(): readonly AttributeItem[];
-	elements(): readonly Expression[];
-}
-
-export interface TuplePattern {
-	readonly $type: TSKindId.TuplePattern;
-	readonly _elements?: TuplePatternGroup1;
-	elements(): TuplePatternGroup1 | undefined;
-}
-
-export interface TupleStructPattern {
-	readonly $type: TSKindId.TupleStructPattern;
-	readonly _type: Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
-	readonly _slice_pattern_group1?: SlicePatternGroup1;
-	type(): Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
-	slicePatternGroup1(): SlicePatternGroup1 | undefined;
-}
-
-export interface TupleType {
-	readonly $type: TSKindId.TupleType;
-	readonly _type: NonEmptyArray<_Type>;
-	types(): NonEmptyArray<_Type>;
-}
-
-export interface TypeArguments {
-	readonly $type: TSKindId.TypeArguments;
-	readonly _type_argument: NonEmptyArray<TypeArgument>;
-	typeArguments(): NonEmptyArray<TypeArgument>;
-}
-
-export interface TypeBinding {
-	readonly $type: TSKindId.TypeBinding;
-	readonly _name: Identifier;
-	readonly _type_arguments?: TypeArguments;
-	readonly _type: _Type;
-	name(): Identifier;
-	typeArguments(): TypeArguments | undefined;
 	type(): _Type;
 }
 
-export interface TypeCastExpression {
-	readonly $type: TSKindId.TypeCastExpression;
-	readonly _value: Expression;
-	readonly _type: _Type;
-	value(): Expression;
-	type(): _Type;
+export interface TypeArgument {
+	readonly $type: TSKindId.TypeArgument;
+	readonly _content: _Type | TypeBinding | Lifetime | Literal | Block;
+	readonly _trait_bounds?: TraitBounds;
+	content(): _Type | TypeBinding | Lifetime | Literal | Block;
+	traitBounds(): TraitBounds | undefined;
 }
 
-export interface TypeItem {
-	readonly $type: TSKindId.TypeItem;
-	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _name: Identifier;
-	readonly _type_parameters?: TypeParameters;
-	readonly _where_clause?: WhereClause;
-	readonly _type: _Type;
-	readonly _trailing_where_clause?: WhereClause;
-	visibilityModifier(): VisibilityModifier | undefined;
-	name(): Identifier;
-	typeParameters(): TypeParameters | undefined;
-	whereClause(): WhereClause | undefined;
-	type(): _Type;
-	trailingWhereClause(): WhereClause | undefined;
-}
-
-export interface TypeParameter {
-	readonly $type: TSKindId.TypeParameter;
-	readonly _name: Identifier;
-	readonly _bounds?: TraitBounds;
-	readonly _default_type?: _Type;
-	name(): Identifier;
-	bounds(): TraitBounds | undefined;
-	defaultType(): _Type | undefined;
-}
-
-export interface TypeParameters {
-	readonly $type: TSKindId.TypeParameters;
-	readonly _attributed_type_parameter: NonEmptyArray<AttributedTypeParameter>;
-	attributedTypeParameters(): NonEmptyArray<AttributedTypeParameter>;
-}
-
-export interface UnaryExpression {
-	readonly $type: TSKindId.UnaryExpression;
-	readonly _operator: number;
-	readonly _operand: Expression;
-	readonly __inputHints__?: {
-		readonly operator: KindEnum<'-' | '*' | '!', TSKindId.Dash | TSKindId.Star | TSKindId.Bang>;
-	};
-	operator(): number;
-	operand(): Expression;
-}
-
-export interface UnionItem {
-	readonly $type: TSKindId.UnionItem;
-	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _name: Identifier;
-	readonly _type_parameters?: TypeParameters;
-	readonly _where_clause?: WhereClause;
-	readonly _body: FieldDeclarationList;
-	visibilityModifier(): VisibilityModifier | undefined;
-	name(): Identifier;
-	typeParameters(): TypeParameters | undefined;
-	whereClause(): WhereClause | undefined;
-	body(): FieldDeclarationList;
-}
-
-export interface UnsafeBlock {
-	readonly $type: TSKindId.UnsafeBlock;
-	readonly _block: Block;
-	block(): Block;
-}
-
-export interface UseAsClause {
-	readonly $type: TSKindId.UseAsClause;
-	readonly _path: Path;
-	readonly _alias: Identifier;
-	path(): Path;
-	alias(): Identifier;
-}
-
-export interface UseBounds {
-	readonly $type: TSKindId.UseBounds;
-	readonly _bounds?: UseBoundsGroup1;
-	bounds(): UseBoundsGroup1 | undefined;
-}
-
-export interface UseDeclaration {
-	readonly $type: TSKindId.UseDeclaration;
-	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _argument: UseClause;
-	visibilityModifier(): VisibilityModifier | undefined;
-	argument(): UseClause;
-}
-
-export interface UseList {
-	readonly $type: TSKindId.UseList;
-	readonly _use_list_group1?: UseListGroup1;
-	useListGroup1(): UseListGroup1 | undefined;
-}
-
-export interface UseWildcard {
-	readonly $type: TSKindId.UseWildcard;
-	readonly _path?: Path;
-	path(): Path | undefined;
-}
-
-export interface VariadicParameter {
-	readonly $type: TSKindId.VariadicParameter;
-	readonly _mutable_specifier?: boolean;
-	readonly _pattern?: Pattern;
-	readonly __inputHints__?: {
-		readonly mutable_specifier?: BooleanKeyword<'mut'>;
-	};
-	mutableSpecifier(): boolean | undefined;
-	pattern(): Pattern | undefined;
-}
-
-export interface VisibilityModifier {
-	readonly $type: TSKindId.VisibilityModifier;
-	readonly _content: Crate | VisibilityModifierPub;
-	content(): Crate | VisibilityModifierPub;
-}
-
-export interface WhereClause {
-	readonly $type: TSKindId.WhereClause;
-	readonly _where_clause_group1?: WhereClauseGroup1;
-	whereClauseGroup1(): WhereClauseGroup1 | undefined;
-}
-
-export interface WherePredicate {
-	readonly $type: TSKindId.WherePredicate;
-	readonly _left:
-		| Lifetime
-		| Identifier
-		| ScopedTypeIdentifier
-		| GenericType
-		| ReferenceType
-		| PointerType
-		| TupleType
-		| ArrayType
-		| HigherRankedTraitBound
-		| PrimitiveType;
-	readonly _bounds: TraitBounds;
-	left():
-		| Lifetime
-		| Identifier
-		| ScopedTypeIdentifier
-		| GenericType
-		| ReferenceType
-		| PointerType
-		| TupleType
-		| ArrayType
-		| HigherRankedTraitBound
-		| PrimitiveType;
-	bounds(): TraitBounds;
-}
-
-export interface WhileExpression {
-	readonly $type: TSKindId.WhileExpression;
-	readonly _label?: Label;
-	readonly _condition: Condition;
-	readonly _body: Block;
-	label(): Label | undefined;
-	condition(): Condition;
-	body(): Block;
-}
-
-export interface YieldExpression {
-	readonly $type: TSKindId.YieldExpression;
-	readonly _expression?: Expression;
-	expression(): Expression | undefined;
-}
-
-export interface ArgumentsGroup1 {
-	readonly $type: 'arguments_group1';
-	readonly _attributed_argument: NonEmptyArray<AttributedArgument>;
-	attributedArguments(): NonEmptyArray<AttributedArgument>;
-}
-
-export interface VisibilityModifierGroup1 {
-	readonly $type: 'visibility_modifier_group1';
-	readonly _content: Self | Super | Crate | InPath;
-	content(): Self | Super | Crate | InPath;
-}
-
-export interface EnumVariantListGroup1 {
-	readonly $type: 'enum_variant_list_group1';
-	readonly _attributed_enum_variant: NonEmptyArray<AttributedEnumVariant>;
-	attributedEnumVariants(): NonEmptyArray<AttributedEnumVariant>;
-}
-
-export interface FieldDeclarationListGroup1 {
-	readonly $type: 'field_declaration_list_group1';
-	readonly _attributed_field_declaration: NonEmptyArray<AttributedFieldDeclaration>;
-	attributedFieldDeclarations(): NonEmptyArray<AttributedFieldDeclaration>;
-}
-
-export interface FieldInitializerListGroup1 {
-	readonly $type: 'field_initializer_list_group1';
-	readonly _content?: readonly (ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer)[];
-	contents(): readonly (ShorthandFieldInitializer | FieldInitializer | BaseFieldInitializer)[];
-}
-
-export interface OrderedFieldDeclarationListGroup1 {
-	readonly $type: 'ordered_field_declaration_list_group1';
-	readonly _attributed_ordered_field: NonEmptyArray<AttributedOrderedField>;
-	attributedOrderedFields(): NonEmptyArray<AttributedOrderedField>;
-}
-
-export interface ParametersGroup1 {
-	readonly $type: 'parameters_group1';
-	readonly _attributed_parameter: NonEmptyArray<AttributedParameter>;
-	attributedParameters(): NonEmptyArray<AttributedParameter>;
-}
-
-export interface SlicePatternGroup1 {
-	readonly $type: 'slice_pattern_group1';
-	readonly _pattern: NonEmptyArray<Pattern>;
-	patterns(): NonEmptyArray<Pattern>;
-}
-
-export interface StructPatternGroup1 {
-	readonly $type: 'struct_pattern_group1';
-	readonly _content?: readonly (FieldPattern | RemainingFieldPattern)[];
-	contents(): readonly (FieldPattern | RemainingFieldPattern)[];
-}
-
-export interface TuplePatternGroup1 {
-	readonly $type: 'tuple_pattern_group1';
-	readonly _content?: readonly (Pattern | ClosureExpression)[];
-	contents(): readonly (Pattern | ClosureExpression)[];
-}
-
-export interface UseBoundsGroup1 {
-	readonly $type: 'use_bounds_group1';
-	readonly _content?: readonly (Lifetime | Identifier)[];
-	contents(): readonly (Lifetime | Identifier)[];
-}
-
-export interface UseListGroup1 {
-	readonly $type: 'use_list_group1';
-	readonly _use_clause: NonEmptyArray<UseClause>;
-	useClauses(): NonEmptyArray<UseClause>;
-}
-
-export interface WhereClauseGroup1 {
-	readonly $type: 'where_clause_group1';
-	readonly _where_predicate: NonEmptyArray<WherePredicate>;
-	wherePredicates(): NonEmptyArray<WherePredicate>;
+export interface MatchBlockArms {
+	readonly $type: TSKindId.MatchBlockArms;
+	readonly _match_arm?: readonly MatchArm[];
+	readonly _last_arm: LastMatchArm;
+	matchArms(): readonly MatchArm[];
+	lastArm(): LastMatchArm;
 }
 
 export interface VisibilityModifierPubParens {
@@ -5247,27 +5241,57 @@ export interface VisibilityModifierPubParens {
 }
 
 // Leaf node types
-export type RangeExpressionBinaryOperator = Terminal<
-	TSKindId.DotDot | TSKindId.DotDotDot | TSKindId.DotDotEq,
-	'..' | '...' | '..='
+export type FragmentSpecifier = Terminal<
+	| TSKindId.AnonBlock
+	| TSKindId.Expr
+	| TSKindId.Expr2021
+	| TSKindId.Ident
+	| TSKindId.Item
+	| TSKindId.AnonLifetime
+	| TSKindId.Literal
+	| TSKindId.Meta
+	| TSKindId.Pat
+	| TSKindId.PatParam
+	| TSKindId.Path
+	| TSKindId.Stmt
+	| TSKindId.Tt
+	| TSKindId.Ty
+	| TSKindId.Vis,
+	| 'block'
+	| 'expr'
+	| 'expr_2021'
+	| 'ident'
+	| 'item'
+	| 'lifetime'
+	| 'literal'
+	| 'meta'
+	| 'pat'
+	| 'pat_param'
+	| 'path'
+	| 'stmt'
+	| 'tt'
+	| 'ty'
+	| 'vis'
 >;
-export type CompoundAssignmentExprOperator = Terminal<
-	| TSKindId.PlusEq
-	| TSKindId.DashEq
-	| TSKindId.StarEq
-	| TSKindId.SlashEq
-	| TSKindId.PercentEq
-	| TSKindId.AmpEq
-	| TSKindId.PipeEq
-	| TSKindId.CaretEq
-	| TSKindId.LtLtEq
-	| TSKindId.GtGtEq,
-	'+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>='
+export type UnitType = Terminal<TSKindId.UnitType, string>;
+export type MutableSpecifier = Terminal<TSKindId.MutableSpecifier, 'mut'>;
+export type UnitExpression = Terminal<TSKindId.UnitExpression, string>;
+export type IntegerLiteral = Terminal<TSKindId.IntegerLiteral, string>;
+export type CharLiteral = Terminal<TSKindId.CharLiteral, string>;
+export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
+export type BooleanLiteral = Terminal<TSKindId.True | TSKindId.False, 'true' | 'false'>;
+export type Identifier = Terminal<TSKindId.Identifier, string>;
+export type Shebang = Terminal<TSKindId.Shebang, string>;
+export type ReservedIdentifier = Terminal<
+	TSKindId.Default | TSKindId.Union | TSKindId.Gen,
+	'default' | 'union' | 'gen'
 >;
+export type TypeIdentifier = Terminal<TSKindId.TypeIdentifier, string>;
 export type FieldIdentifier = Terminal<TSKindId.FieldIdentifier, string>;
-export type LineCommentContent = Terminal<TSKindId.LineCommentContent, string>;
-export type LineCommentRegularDslash = Terminal<TSKindId.LineCommentRegularDslash, string>;
-export type Operator = Terminal<TSKindId.Plus | TSKindId.Star | TSKindId.Qmark, '+' | '*' | '?'>;
+export type Self = Terminal<TSKindId.Self, 'self'>;
+export type Super = Terminal<TSKindId.Super, 'super'>;
+export type Crate = Terminal<TSKindId.Crate, 'crate'>;
+export type Metavariable = Terminal<TSKindId.Metavariable, string>;
 export type PrimitiveType = Terminal<
 	| TSKindId.U8
 	| TSKindId.I8
@@ -5304,18 +5328,13 @@ export type PrimitiveType = Terminal<
 	| 'str'
 	| 'char'
 >;
-export type ReferenceExpressionRawConst = Terminal<TSKindId.ReferenceExpressionRawConst, string>;
-export type ReservedIdentifier = Terminal<
-	TSKindId.Default | TSKindId.Union | TSKindId.Gen,
-	'default' | 'union' | 'gen'
->;
 export type TokenBindingPatternType = Terminal<
-	| TSKindId.Block
+	| TSKindId.AnonBlock
 	| TSKindId.Expr
 	| TSKindId.Expr2021
 	| TSKindId.Ident
 	| TSKindId.Item
-	| TSKindId.Lifetime
+	| TSKindId.AnonLifetime
 	| TSKindId.Literal
 	| TSKindId.Meta
 	| TSKindId.Pat
@@ -5340,6 +5359,19 @@ export type TokenBindingPatternType = Terminal<
 	| 'tt'
 	| 'ty'
 	| 'vis'
+>;
+export type CompoundAssignmentExprOperator = Terminal<
+	| TSKindId.PlusEq
+	| TSKindId.DashEq
+	| TSKindId.StarEq
+	| TSKindId.SlashEq
+	| TSKindId.PercentEq
+	| TSKindId.AmpEq
+	| TSKindId.PipeEq
+	| TSKindId.CaretEq
+	| TSKindId.LtLtEq
+	| TSKindId.GtGtEq,
+	'+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>='
 >;
 export type TokenTreePunctuation = Terminal<
 	| TSKindId.Plus
@@ -5431,55 +5463,79 @@ export type TokenTreePunctuation = Terminal<
 	| '#'
 	| '?'
 >;
-export type TypeIdentifier = Terminal<TSKindId.TypeIdentifier, string>;
-export type UnaryExpressionOperator = Terminal<TSKindId.Dash | TSKindId.Star | TSKindId.Bang, '-' | '*' | '!'>;
-export type BooleanLiteral = Terminal<TSKindId.True | TSKindId.False, 'true' | 'false'>;
-export type CharLiteral = Terminal<TSKindId.CharLiteral, string>;
-export type Crate = Terminal<TSKindId.Crate, 'crate'>;
-export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
-export type FragmentSpecifier = Terminal<
-	| TSKindId.Block
-	| TSKindId.Expr
-	| TSKindId.Expr2021
-	| TSKindId.Ident
-	| TSKindId.Item
-	| TSKindId.Lifetime
-	| TSKindId.Literal
-	| TSKindId.Meta
-	| TSKindId.Pat
-	| TSKindId.PatParam
-	| TSKindId.Path
-	| TSKindId.Stmt
-	| TSKindId.Tt
-	| TSKindId.Ty
-	| TSKindId.Vis,
-	| 'block'
-	| 'expr'
-	| 'expr_2021'
-	| 'ident'
-	| 'item'
-	| 'lifetime'
-	| 'literal'
-	| 'meta'
-	| 'pat'
-	| 'pat_param'
-	| 'path'
-	| 'stmt'
-	| 'tt'
-	| 'ty'
-	| 'vis'
+export type TokenKeywords = Terminal<
+	| TSKindId.Squote
+	| TSKindId.As
+	| TSKindId.Async
+	| TSKindId.Await
+	| TSKindId.Break
+	| TSKindId.Const
+	| TSKindId.Continue
+	| TSKindId.Default
+	| TSKindId.Enum
+	| TSKindId.Fn
+	| TSKindId.For
+	| TSKindId.Gen
+	| TSKindId.If
+	| TSKindId.Impl
+	| TSKindId.Let
+	| TSKindId.Loop
+	| TSKindId.Match
+	| TSKindId.Mod
+	| TSKindId.Pub
+	| TSKindId.Return
+	| TSKindId.Static
+	| TSKindId.Struct
+	| TSKindId.Trait
+	| TSKindId.Type
+	| TSKindId.Union
+	| TSKindId.Unsafe
+	| TSKindId.Use
+	| TSKindId.Where
+	| TSKindId.While,
+	| "'"
+	| 'as'
+	| 'async'
+	| 'await'
+	| 'break'
+	| 'const'
+	| 'continue'
+	| 'default'
+	| 'enum'
+	| 'fn'
+	| 'for'
+	| 'gen'
+	| 'if'
+	| 'impl'
+	| 'let'
+	| 'loop'
+	| 'match'
+	| 'mod'
+	| 'pub'
+	| 'return'
+	| 'static'
+	| 'struct'
+	| 'trait'
+	| 'type'
+	| 'union'
+	| 'unsafe'
+	| 'use'
+	| 'where'
+	| 'while'
 >;
-export type Identifier = Terminal<TSKindId.Identifier, string>;
-export type IntegerLiteral = Terminal<TSKindId.IntegerLiteral, string>;
-export type Metavariable = Terminal<TSKindId.Metavariable, string>;
-export type MutableSpecifier = Terminal<TSKindId.MutableSpecifier, 'mut'>;
-export type Self = Terminal<TSKindId.Self, 'self'>;
-export type Shebang = Terminal<TSKindId.Shebang, string>;
-export type Super = Terminal<TSKindId.Super, 'super'>;
-export type UnitExpression = Terminal<TSKindId.UnitExpression, string>;
-export type UnitType = Terminal<TSKindId.UnitType, string>;
+export type ReferenceExpressionRawConst = Terminal<TSKindId.ReferenceExpressionRawConst, string>;
+export type LineCommentRegularDslash = Terminal<TSKindId.LineCommentRegularDslash, string>;
+export type LineCommentContent = Terminal<TSKindId.LineCommentContent, string>;
+export type Operator = Terminal<TSKindId.Plus | TSKindId.Star | TSKindId.Qmark, '+' | '*' | '?'>;
+export type UnaryExpressionOperator = Terminal<TSKindId.Dash | TSKindId.Star | TSKindId.Bang, '-' | '*' | '!'>;
+export type RangeExpressionBinaryOperator = Terminal<
+	TSKindId.DotDot | TSKindId.DotDotDot | TSKindId.DotDotEq,
+	'..' | '...' | '..='
+>;
 export type StringContent = Terminal<TSKindId.StringContent, string>;
+export type RawStringLiteralStart = Terminal<TSKindId.RawStringLiteralStart, string>;
 export type RawStringLiteralContent = Terminal<TSKindId.RawStringLiteralContent, string>;
+export type RawStringLiteralEnd = Terminal<TSKindId.RawStringLiteralEnd, string>;
 export type FloatLiteral = Terminal<TSKindId.FloatLiteral, string>;
 export type LineDocContent = Terminal<TSKindId.LineDocContent, string>;
 export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
@@ -5487,107 +5543,184 @@ export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
 export type BlockCommentContent = Terminal<TSKindId._BlockCommentContent, string>;
 
 // Tree types
-export interface AbstractTypeOptional1Tree extends AnyTreeNode {
-	readonly type: '_abstract_type_optional1';
+export interface SourceFileTree extends TreeNode<'source_file'> {}
+export interface ExpressionStatementTree extends TreeNode<'expression_statement'> {}
+export interface MacroDefinitionTree extends TreeNode<'macro_definition'> {}
+export interface MacroRuleTree extends TreeNode<'macro_rule'> {}
+export interface TokenTreePatternTree extends TreeNode<'token_tree_pattern'> {}
+export interface TokenBindingPatternTree extends TreeNode<'token_binding_pattern'> {}
+export interface TokenRepetitionPatternTree extends TreeNode<'token_repetition_pattern'> {}
+export interface TokenTreeTree extends TreeNode<'token_tree'> {}
+export interface TokenRepetitionTree extends TreeNode<'token_repetition'> {}
+export interface AttributeItemTree extends TreeNode<'attribute_item'> {}
+export interface InnerAttributeItemTree extends TreeNode<'inner_attribute_item'> {}
+export interface AttributeTree extends TreeNode<'attribute'> {}
+export interface ModItemTree extends TreeNode<'mod_item'> {}
+export interface ForeignModItemTree extends TreeNode<'foreign_mod_item'> {}
+export interface DeclarationListTree extends TreeNode<'declaration_list'> {}
+export interface StructItemTree extends TreeNode<'struct_item'> {}
+export interface UnionItemTree extends TreeNode<'union_item'> {}
+export interface EnumItemTree extends TreeNode<'enum_item'> {}
+export interface EnumVariantListTree extends TreeNode<'enum_variant_list'> {}
+export interface EnumVariantTree extends TreeNode<'enum_variant'> {}
+export interface FieldDeclarationListTree extends TreeNode<'field_declaration_list'> {}
+export interface FieldDeclarationTree extends TreeNode<'field_declaration'> {}
+export interface OrderedFieldDeclarationListTree extends TreeNode<'ordered_field_declaration_list'> {}
+export interface ExternCrateDeclarationTree extends TreeNode<'extern_crate_declaration'> {}
+export interface ConstItemTree extends TreeNode<'const_item'> {}
+export interface StaticItemTree extends TreeNode<'static_item'> {}
+export interface TypeItemTree extends TreeNode<'type_item'> {}
+export interface FunctionItemTree extends TreeNode<'function_item'> {}
+export interface FunctionSignatureItemTree extends TreeNode<'function_signature_item'> {}
+export interface FunctionModifiersTree extends TreeNode<'function_modifiers'> {}
+export interface WhereClauseTree extends TreeNode<'where_clause'> {}
+export interface WherePredicateTree extends TreeNode<'where_predicate'> {}
+export interface ImplItemTree extends TreeNode<'impl_item'> {}
+export interface TraitItemTree extends TreeNode<'trait_item'> {}
+export interface AssociatedTypeTree extends TreeNode<'associated_type'> {}
+export interface TraitBoundsTree extends TreeNode<'trait_bounds'> {}
+export interface HigherRankedTraitBoundTree extends TreeNode<'higher_ranked_trait_bound'> {}
+export interface RemovedTraitBoundTree extends TreeNode<'removed_trait_bound'> {}
+export interface TypeParametersTree extends TreeNode<'type_parameters'> {}
+export interface ConstParameterTree extends TreeNode<'const_parameter'> {}
+export interface TypeParameterTree extends TreeNode<'type_parameter'> {}
+export interface LifetimeParameterTree extends TreeNode<'lifetime_parameter'> {}
+export interface LetDeclarationTree extends TreeNode<'let_declaration'> {}
+export interface UseDeclarationTree extends TreeNode<'use_declaration'> {}
+export interface ScopedUseListTree extends TreeNode<'scoped_use_list'> {}
+export interface UseListTree extends TreeNode<'use_list'> {}
+export interface UseAsClauseTree extends TreeNode<'use_as_clause'> {}
+export interface UseWildcardTree extends TreeNode<'use_wildcard'> {}
+export interface ParametersTree extends TreeNode<'parameters'> {}
+export interface SelfParameterTree extends TreeNode<'self_parameter'> {}
+export interface VariadicParameterTree extends TreeNode<'variadic_parameter'> {}
+export interface ParameterTree extends TreeNode<'parameter'> {}
+export interface ExternModifierTree extends TreeNode<'extern_modifier'> {}
+export interface VisibilityModifierTree extends TreeNode<'visibility_modifier'> {}
+export interface BracketedTypeTree extends TreeNode<'bracketed_type'> {}
+export interface QualifiedTypeTree extends TreeNode<'qualified_type'> {}
+export interface LifetimeTree extends TreeNode<'lifetime'> {}
+export interface ArrayTypeTree extends TreeNode<'array_type'> {}
+export interface ForLifetimesTree extends TreeNode<'for_lifetimes'> {}
+export interface FunctionTypeTree extends TreeNode<'function_type'> {}
+export interface TupleTypeTree extends TreeNode<'tuple_type'> {}
+export interface GenericFunctionTree extends TreeNode<'generic_function'> {}
+export interface GenericTypeTree extends TreeNode<'generic_type'> {}
+export interface GenericTypeWithTurbofishTree extends TreeNode<'generic_type_with_turbofish'> {}
+export interface BoundedTypeTree extends TreeNode<'bounded_type'> {}
+export interface UseBoundsTree extends TreeNode<'use_bounds'> {}
+export interface TypeArgumentsTree extends TreeNode<'type_arguments'> {}
+export interface TypeBindingTree extends TreeNode<'type_binding'> {}
+export interface ReferenceTypeTree extends TreeNode<'reference_type'> {}
+export interface PointerTypeTree extends TreeNode<'pointer_type'> {}
+export interface AbstractTypeTree extends TreeNode<'abstract_type'> {}
+export interface DynamicTypeTree extends TreeNode<'dynamic_type'> {}
+export interface MacroInvocationTree extends TreeNode<'macro_invocation'> {}
+export interface DelimTokenTreeTree extends AnyTreeNode {
+	readonly type: 'delim_token_tree';
 }
-export interface _ArgumentsGroup1Tree extends AnyTreeNode {
-	readonly type: '_arguments_group1';
+export interface ScopedIdentifierTree extends TreeNode<'scoped_identifier'> {}
+export interface ScopedTypeIdentifierInExpressionPositionTree extends AnyTreeNode {
+	readonly type: 'scoped_type_identifier_in_expression_position';
 }
-export interface ArrayExpressionListTree extends AnyTreeNode {
-	readonly type: '_array_expression_list';
+export interface ScopedTypeIdentifierTree extends TreeNode<'scoped_type_identifier'> {}
+export interface RangeExpressionTree extends TreeNode<'range_expression'> {}
+export interface UnaryExpressionTree extends TreeNode<'unary_expression'> {}
+export interface TryExpressionTree extends TreeNode<'try_expression'> {}
+export interface ReferenceExpressionTree extends TreeNode<'reference_expression'> {}
+export interface BinaryExpressionTree extends TreeNode<'binary_expression'> {}
+export interface AssignmentExpressionTree extends TreeNode<'assignment_expression'> {}
+export interface CompoundAssignmentExprTree extends TreeNode<'compound_assignment_expr'> {}
+export interface TypeCastExpressionTree extends TreeNode<'type_cast_expression'> {}
+export interface ReturnExpressionTree extends TreeNode<'return_expression'> {}
+export interface YieldExpressionTree extends TreeNode<'yield_expression'> {}
+export interface CallExpressionTree extends TreeNode<'call_expression'> {}
+export interface ArgumentsTree extends TreeNode<'arguments'> {}
+export interface ArrayExpressionTree extends TreeNode<'array_expression'> {}
+export interface ParenthesizedExpressionTree extends TreeNode<'parenthesized_expression'> {}
+export interface TupleExpressionTree extends TreeNode<'tuple_expression'> {}
+export interface StructExpressionTree extends TreeNode<'struct_expression'> {}
+export interface FieldInitializerListTree extends TreeNode<'field_initializer_list'> {}
+export interface ShorthandFieldInitializerTree extends TreeNode<'shorthand_field_initializer'> {}
+export interface FieldInitializerTree extends TreeNode<'field_initializer'> {}
+export interface BaseFieldInitializerTree extends TreeNode<'base_field_initializer'> {}
+export interface IfExpressionTree extends TreeNode<'if_expression'> {}
+export interface LetConditionTree extends TreeNode<'let_condition'> {}
+export interface LetChainTree extends AnyTreeNode {
+	readonly type: '_let_chain';
 }
-export interface ArrayExpressionSemiTree extends AnyTreeNode {
-	readonly type: '_array_expression_semi';
+export interface ElseClauseTree extends TreeNode<'else_clause'> {}
+export interface MatchExpressionTree extends TreeNode<'match_expression'> {}
+export interface MatchBlockTree extends TreeNode<'match_block'> {}
+export interface MatchArmTree extends TreeNode<'match_arm'> {}
+export interface LastMatchArmTree extends TreeNode<'last_match_arm'> {}
+export interface MatchPatternTree extends TreeNode<'match_pattern'> {}
+export interface WhileExpressionTree extends TreeNode<'while_expression'> {}
+export interface LoopExpressionTree extends TreeNode<'loop_expression'> {}
+export interface ForExpressionTree extends TreeNode<'for_expression'> {}
+export interface ConstBlockTree extends TreeNode<'const_block'> {}
+export interface ClosureExpressionTree extends TreeNode<'closure_expression'> {}
+export interface ClosureParametersTree extends TreeNode<'closure_parameters'> {}
+export interface LabelTree extends TreeNode<'label'> {}
+export interface BreakExpressionTree extends TreeNode<'break_expression'> {}
+export interface ContinueExpressionTree extends TreeNode<'continue_expression'> {}
+export interface IndexExpressionTree extends TreeNode<'index_expression'> {}
+export interface AwaitExpressionTree extends TreeNode<'await_expression'> {}
+export interface FieldExpressionTree extends TreeNode<'field_expression'> {}
+export interface UnsafeBlockTree extends TreeNode<'unsafe_block'> {}
+export interface AsyncBlockTree extends TreeNode<'async_block'> {}
+export interface GenBlockTree extends TreeNode<'gen_block'> {}
+export interface TryBlockTree extends TreeNode<'try_block'> {}
+export interface BlockTree extends TreeNode<'block'> {}
+export interface GenericPatternTree extends TreeNode<'generic_pattern'> {}
+export interface TuplePatternTree extends TreeNode<'tuple_pattern'> {}
+export interface SlicePatternTree extends TreeNode<'slice_pattern'> {}
+export interface TupleStructPatternTree extends TreeNode<'tuple_struct_pattern'> {}
+export interface StructPatternTree extends TreeNode<'struct_pattern'> {}
+export interface FieldPatternTree extends TreeNode<'field_pattern'> {}
+export interface MutPatternTree extends TreeNode<'mut_pattern'> {}
+export interface RangePatternTree extends TreeNode<'range_pattern'> {}
+export interface RefPatternTree extends TreeNode<'ref_pattern'> {}
+export interface CapturedPatternTree extends TreeNode<'captured_pattern'> {}
+export interface ReferencePatternTree extends TreeNode<'reference_pattern'> {}
+export interface OrPatternTree extends TreeNode<'or_pattern'> {}
+export interface NegativeLiteralTree extends TreeNode<'negative_literal'> {}
+export interface StringLiteralTree extends TreeNode<'string_literal'> {}
+export interface RawStringLiteralTree extends TreeNode<'raw_string_literal'> {}
+export interface CommentTree extends AnyTreeNode {
+	readonly type: 'comment';
 }
-export interface ArrayTypeOptional1Tree extends AnyTreeNode {
-	readonly type: '_array_type_optional1';
+export interface LineCommentTree extends TreeNode<'line_comment'> {}
+export interface BlockCommentTree extends TreeNode<'block_comment'> {}
+export interface AttributeGroup1Tree extends AnyTreeNode {
+	readonly type: '_attribute_group1';
 }
-export interface AttributedArgumentTree extends AnyTreeNode {
-	readonly type: '_attributed_argument';
-}
-export interface AttributedEnumVariantTree extends AnyTreeNode {
-	readonly type: '_attributed_enum_variant';
-}
-export interface AttributedFieldDeclarationTree extends AnyTreeNode {
-	readonly type: '_attributed_field_declaration';
-}
-export interface AttributedOrderedFieldTree extends AnyTreeNode {
-	readonly type: '_attributed_ordered_field';
-}
-export interface AttributedParameterTree extends AnyTreeNode {
-	readonly type: '_attributed_parameter';
-}
-export interface AttributedTypeParameterTree extends AnyTreeNode {
-	readonly type: '_attributed_type_parameter';
-}
-export interface BlockOptional1Tree extends AnyTreeNode {
-	readonly type: '_block_optional1';
-}
-export interface ClosureExpressionBlockTree extends AnyTreeNode {
-	readonly type: '_closure_expression_block';
-}
-export interface ClosureExpressionExprTree extends AnyTreeNode {
-	readonly type: '_closure_expression_expr';
-}
-export interface ClosureExpressionOptional1Tree extends AnyTreeNode {
-	readonly type: '_closure_expression_optional1';
-}
-export interface ConstItemOptional1Tree extends AnyTreeNode {
-	readonly type: '_const_item_optional1';
-}
-export interface ConstParameterOptional1Tree extends AnyTreeNode {
-	readonly type: '_const_parameter_optional1';
-}
-export interface DelimTokenTreeBraceTree extends AnyTreeNode {
-	readonly type: '_delim_token_tree_brace';
-}
-export interface DelimTokenTreeBracketTree extends AnyTreeNode {
-	readonly type: '_delim_token_tree_bracket';
-}
-export interface DelimTokenTreeParenTree extends AnyTreeNode {
-	readonly type: '_delim_token_tree_paren';
-}
-export interface _EnumVariantListGroup1Tree extends AnyTreeNode {
+export interface EnumVariantListGroup1Tree extends AnyTreeNode {
 	readonly type: '_enum_variant_list_group1';
 }
-export interface ExpressionStatementWithSemiTree extends AnyTreeNode {
-	readonly type: '_expression_statement_with_semi';
+export interface EnumVariantOptional1Tree extends AnyTreeNode {
+	readonly type: '_enum_variant_optional1';
+}
+export interface FieldDeclarationListGroup1Tree extends AnyTreeNode {
+	readonly type: '_field_declaration_list_group1';
+}
+export interface OrderedFieldDeclarationListGroup1Tree extends AnyTreeNode {
+	readonly type: '_ordered_field_declaration_list_group1';
 }
 export interface ExternCrateDeclarationOptional1Tree extends AnyTreeNode {
 	readonly type: '_extern_crate_declaration_optional1';
 }
-export interface _FieldDeclarationListGroup1Tree extends AnyTreeNode {
-	readonly type: '_field_declaration_list_group1';
+export interface FunctionItemOptional1Tree extends AnyTreeNode {
+	readonly type: '_function_item_optional1';
 }
-export interface _FieldInitializerListGroup1Tree extends AnyTreeNode {
-	readonly type: '_field_initializer_list_group1';
+export interface WhereClauseGroup1Tree extends AnyTreeNode {
+	readonly type: '_where_clause_group1';
 }
-export interface FieldPatternNamedTree extends AnyTreeNode {
-	readonly type: '_field_pattern_named';
+export interface ConstParameterOptional1Tree extends AnyTreeNode {
+	readonly type: '_const_parameter_optional1';
 }
-export interface FunctionTypeFnFormTree extends AnyTreeNode {
-	readonly type: '_function_type_fn_form';
-}
-export interface FunctionTypeTraitFormTree extends AnyTreeNode {
-	readonly type: '_function_type_trait_form';
-}
-export interface ImplItemBodyTree extends AnyTreeNode {
-	readonly type: '_impl_item_body';
-}
-export interface ImplItemGroup1Tree extends AnyTreeNode {
-	readonly type: '_impl_item_group1';
-}
-export interface ImplItemNegativeClauseTree extends AnyTreeNode {
-	readonly type: '_impl_item_negative_clause';
-}
-export interface ImplItemPositiveClauseTree extends AnyTreeNode {
-	readonly type: '_impl_item_positive_clause';
-}
-export interface InPathTree extends AnyTreeNode {
-	readonly type: '_in_path';
-}
-export interface LetChainTree extends AnyTreeNode {
-	readonly type: '_let_chain';
+export interface TypeParameterOptional1Tree extends AnyTreeNode {
+	readonly type: '_type_parameter_optional1';
 }
 export interface LetDeclarationOptional1Tree extends AnyTreeNode {
 	readonly type: '_let_declaration_optional1';
@@ -5595,38 +5728,107 @@ export interface LetDeclarationOptional1Tree extends AnyTreeNode {
 export interface LetDeclarationOptional2Tree extends AnyTreeNode {
 	readonly type: '_let_declaration_optional2';
 }
-export interface LineCommentDocTree extends AnyTreeNode {
-	readonly type: '_line_comment_doc';
+export interface UseListGroup1Tree extends AnyTreeNode {
+	readonly type: '_use_list_group1';
 }
-export interface MacroDefinitionBraceTree extends AnyTreeNode {
-	readonly type: '_macro_definition_brace';
+export interface ParametersGroup1Tree extends AnyTreeNode {
+	readonly type: '_parameters_group1';
 }
-export interface MacroDefinitionBracketTree extends AnyTreeNode {
-	readonly type: '_macro_definition_bracket';
+export interface VariadicParameterOptional1Tree extends AnyTreeNode {
+	readonly type: '_variadic_parameter_optional1';
+}
+export interface VisibilityModifierGroup1Tree extends AnyTreeNode {
+	readonly type: '_visibility_modifier_group1';
+}
+export interface ArrayTypeOptional1Tree extends AnyTreeNode {
+	readonly type: '_array_type_optional1';
+}
+export interface UseBoundsGroup1Tree extends AnyTreeNode {
+	readonly type: '_use_bounds_group1';
+}
+export interface AbstractTypeOptional1Tree extends AnyTreeNode {
+	readonly type: '_abstract_type_optional1';
+}
+export interface ArgumentsGroup1Tree extends AnyTreeNode {
+	readonly type: '_arguments_group1';
+}
+export interface ArrayExpressionGroup1Tree extends AnyTreeNode {
+	readonly type: '_array_expression_group1';
+}
+export interface FieldInitializerListGroup1Tree extends AnyTreeNode {
+	readonly type: '_field_initializer_list_group1';
+}
+export interface MatchPatternOptional1Tree extends AnyTreeNode {
+	readonly type: '_match_pattern_optional1';
+}
+export interface WhileExpressionOptional1Tree extends AnyTreeNode {
+	readonly type: '_while_expression_optional1';
+}
+export interface TuplePatternGroup1Tree extends AnyTreeNode {
+	readonly type: '_tuple_pattern_group1';
+}
+export interface SlicePatternGroup1Tree extends AnyTreeNode {
+	readonly type: '_slice_pattern_group1';
+}
+export interface StructPatternGroup1Tree extends AnyTreeNode {
+	readonly type: '_struct_pattern_group1';
+}
+export interface RangePatternGroup2Tree extends AnyTreeNode {
+	readonly type: '_range_pattern_group2';
+}
+export interface BlockCommentGroup1Tree extends AnyTreeNode {
+	readonly type: '_block_comment_group1';
+}
+export interface UseWildcardClauseTree extends AnyTreeNode {
+	readonly type: '_use_wildcard_clause';
+}
+export interface ReferenceExpressionRawMutTree extends AnyTreeNode {
+	readonly type: '_reference_expression_raw_mut';
+}
+export interface ImplItemBodyTree extends AnyTreeNode {
+	readonly type: '_impl_item_body';
+}
+export interface ImplItemPositiveClauseTree extends AnyTreeNode {
+	readonly type: '_impl_item_positive_clause';
+}
+export interface ImplItemNegativeClauseTree extends AnyTreeNode {
+	readonly type: '_impl_item_negative_clause';
+}
+export interface ArrayExpressionSemiTree extends AnyTreeNode {
+	readonly type: '_array_expression_semi';
+}
+export interface ArrayExpressionListTree extends AnyTreeNode {
+	readonly type: '_array_expression_list';
+}
+export interface ClosureExpressionBlockTree extends AnyTreeNode {
+	readonly type: '_closure_expression_block';
+}
+export interface ClosureExpressionExprTree extends AnyTreeNode {
+	readonly type: '_closure_expression_expr';
+}
+export interface FieldPatternNamedTree extends AnyTreeNode {
+	readonly type: '_field_pattern_named';
+}
+export interface FunctionTypeTraitFormTree extends AnyTreeNode {
+	readonly type: '_function_type_trait_form';
+}
+export interface FunctionTypeFnFormTree extends AnyTreeNode {
+	readonly type: '_function_type_fn_form';
 }
 export interface MacroDefinitionParenTree extends AnyTreeNode {
 	readonly type: '_macro_definition_paren';
 }
-export interface MatchArmWithCommaTree extends AnyTreeNode {
-	readonly type: '_match_arm_with_comma';
+export interface MacroDefinitionBracketTree extends AnyTreeNode {
+	readonly type: '_macro_definition_bracket';
 }
-export interface MatchBlockArmsTree extends AnyTreeNode {
-	readonly type: '_match_block_arms';
-}
-export interface MatchPatternOptional1Tree extends AnyTreeNode {
-	readonly type: '_match_pattern_optional1';
+export interface MacroDefinitionBraceTree extends AnyTreeNode {
+	readonly type: '_macro_definition_brace';
 }
 export interface OrPatternBinaryTree extends AnyTreeNode {
 	readonly type: '_or_pattern_binary';
 }
 export interface OrPatternPrefixTree extends AnyTreeNode {
 	readonly type: '_or_pattern_prefix';
-}
-export interface _OrderedFieldDeclarationListGroup1Tree extends AnyTreeNode {
-	readonly type: '_ordered_field_declaration_list_group1';
-}
-export interface _ParametersGroup1Tree extends AnyTreeNode {
-	readonly type: '_parameters_group1';
 }
 export interface RangeExpressionBinaryTree extends AnyTreeNode {
 	readonly type: '_range_expression_binary';
@@ -5637,17 +5839,11 @@ export interface RangeExpressionPostfixTree extends AnyTreeNode {
 export interface RangeExpressionPrefixTree extends AnyTreeNode {
 	readonly type: '_range_expression_prefix';
 }
-export interface RangePatternLeftWithRightTree extends AnyTreeNode {
-	readonly type: '_range_pattern_left_with_right';
-}
 export interface RangePatternPrefixTree extends AnyTreeNode {
 	readonly type: '_range_pattern_prefix';
 }
-export interface ReferenceExpressionRawMutTree extends AnyTreeNode {
-	readonly type: '_reference_expression_raw_mut';
-}
-export interface _SlicePatternGroup1Tree extends AnyTreeNode {
-	readonly type: '_slice_pattern_group1';
+export interface RangePatternLeftWithRightTree extends AnyTreeNode {
+	readonly type: '_range_pattern_left_with_right';
 }
 export interface StructItemBraceTree extends AnyTreeNode {
 	readonly type: '_struct_item_brace';
@@ -5655,291 +5851,148 @@ export interface StructItemBraceTree extends AnyTreeNode {
 export interface StructItemTupleTree extends AnyTreeNode {
 	readonly type: '_struct_item_tuple';
 }
-export interface _StructPatternGroup1Tree extends AnyTreeNode {
-	readonly type: '_struct_pattern_group1';
+export interface VisibilityModifierPubTree extends AnyTreeNode {
+	readonly type: '_visibility_modifier_pub';
 }
-export interface TokenTreeBraceTree extends AnyTreeNode {
-	readonly type: '_token_tree_brace';
+export interface ExpressionStatementWithSemiTree extends AnyTreeNode {
+	readonly type: '_expression_statement_with_semi';
 }
-export interface TokenTreeBracketTree extends AnyTreeNode {
-	readonly type: '_token_tree_bracket';
+export interface MatchArmWithCommaTree extends AnyTreeNode {
+	readonly type: '_match_arm_with_comma';
 }
-export interface TokenTreeParenTree extends AnyTreeNode {
-	readonly type: '_token_tree_paren';
-}
-export interface TokenTreePatternBraceTree extends AnyTreeNode {
-	readonly type: '_token_tree_pattern_brace';
-}
-export interface TokenTreePatternBracketTree extends AnyTreeNode {
-	readonly type: '_token_tree_pattern_bracket';
+export interface LineCommentDocTree extends AnyTreeNode {
+	readonly type: '_line_comment_doc';
 }
 export interface TokenTreePatternParenTree extends AnyTreeNode {
 	readonly type: '_token_tree_pattern_paren';
 }
-export interface _TuplePatternGroup1Tree extends AnyTreeNode {
-	readonly type: '_tuple_pattern_group1';
+export interface TokenTreePatternBracketTree extends AnyTreeNode {
+	readonly type: '_token_tree_pattern_bracket';
+}
+export interface TokenTreePatternBraceTree extends AnyTreeNode {
+	readonly type: '_token_tree_pattern_brace';
+}
+export interface TokenTreeParenTree extends AnyTreeNode {
+	readonly type: '_token_tree_paren';
+}
+export interface TokenTreeBracketTree extends AnyTreeNode {
+	readonly type: '_token_tree_bracket';
+}
+export interface TokenTreeBraceTree extends AnyTreeNode {
+	readonly type: '_token_tree_brace';
+}
+export interface DelimTokenTreeParenTree extends AnyTreeNode {
+	readonly type: '_delim_token_tree_paren';
+}
+export interface DelimTokenTreeBracketTree extends AnyTreeNode {
+	readonly type: '_delim_token_tree_bracket';
+}
+export interface DelimTokenTreeBraceTree extends AnyTreeNode {
+	readonly type: '_delim_token_tree_brace';
+}
+export interface InPathTree extends AnyTreeNode {
+	readonly type: '_in_path';
+}
+export interface AttributedFieldDeclarationTree extends AnyTreeNode {
+	readonly type: '_attributed_field_declaration';
+}
+export interface AttributedEnumVariantTree extends AnyTreeNode {
+	readonly type: '_attributed_enum_variant';
+}
+export interface AttributedParameterTree extends AnyTreeNode {
+	readonly type: '_attributed_parameter';
+}
+export interface AttributedTypeParameterTree extends AnyTreeNode {
+	readonly type: '_attributed_type_parameter';
+}
+export interface AttributedArgumentTree extends AnyTreeNode {
+	readonly type: '_attributed_argument';
+}
+export interface AttributedOrderedFieldTree extends AnyTreeNode {
+	readonly type: '_attributed_ordered_field';
 }
 export interface TypeArgumentTree extends AnyTreeNode {
 	readonly type: '_type_argument';
 }
-export interface TypeParameterOptional1Tree extends AnyTreeNode {
-	readonly type: '_type_parameter_optional1';
+export interface MatchBlockArmsTree extends AnyTreeNode {
+	readonly type: '_match_block_arms';
 }
-export interface _UseBoundsGroup1Tree extends AnyTreeNode {
-	readonly type: '_use_bounds_group1';
-}
-export interface _UseListGroup1Tree extends AnyTreeNode {
-	readonly type: '_use_list_group1';
-}
-export interface UseWildcardClauseTree extends AnyTreeNode {
-	readonly type: '_use_wildcard_clause';
-}
-export interface UseWildcardGroup1Tree extends AnyTreeNode {
-	readonly type: '_use_wildcard_group1';
-}
-export interface VariadicParameterOptional1Tree extends AnyTreeNode {
-	readonly type: '_variadic_parameter_optional1';
-}
-export interface _VisibilityModifierGroup1Tree extends AnyTreeNode {
-	readonly type: '_visibility_modifier_group1';
-}
-export interface VisibilityModifierInPathTree extends AnyTreeNode {
-	readonly type: '_visibility_modifier_in_path';
-}
-export interface VisibilityModifierPubTree extends AnyTreeNode {
-	readonly type: '_visibility_modifier_pub';
-}
-export interface _WhereClauseGroup1Tree extends AnyTreeNode {
-	readonly type: '_where_clause_group1';
-}
-export interface AbstractTypeTree extends TreeNode<'abstract_type'> {}
-export interface ArgumentsTree extends TreeNode<'arguments'> {}
-export interface ArrayExpressionTree extends TreeNode<'array_expression'> {}
-export interface ArrayTypeTree extends TreeNode<'array_type'> {}
-export interface AssignmentExpressionTree extends TreeNode<'assignment_expression'> {}
-export interface AssociatedTypeTree extends TreeNode<'associated_type'> {}
-export interface AsyncBlockTree extends TreeNode<'async_block'> {}
-export interface AttributeTree extends TreeNode<'attribute'> {}
-export interface AttributeItemTree extends TreeNode<'attribute_item'> {}
-export interface AwaitExpressionTree extends TreeNode<'await_expression'> {}
-export interface BaseFieldInitializerTree extends TreeNode<'base_field_initializer'> {}
-export interface BinaryExpressionTree extends TreeNode<'binary_expression'> {}
-export interface BlockTree extends TreeNode<'block'> {}
-export interface BlockCommentTree extends TreeNode<'block_comment'> {}
-export interface BoundedTypeTree extends TreeNode<'bounded_type'> {}
-export interface BracketedTypeTree extends TreeNode<'bracketed_type'> {}
-export interface BreakExpressionTree extends TreeNode<'break_expression'> {}
-export interface CallExpressionTree extends TreeNode<'call_expression'> {}
-export interface CapturedPatternTree extends TreeNode<'captured_pattern'> {}
-export interface ClosureExpressionTree extends TreeNode<'closure_expression'> {}
-export interface ClosureParametersTree extends TreeNode<'closure_parameters'> {}
-export interface CommentTree extends AnyTreeNode {
-	readonly type: 'comment';
-}
-export interface CompoundAssignmentExprTree extends TreeNode<'compound_assignment_expr'> {}
-export interface ConstBlockTree extends TreeNode<'const_block'> {}
-export interface ConstItemTree extends TreeNode<'const_item'> {}
-export interface ConstParameterTree extends TreeNode<'const_parameter'> {}
-export interface ContinueExpressionTree extends TreeNode<'continue_expression'> {}
-export interface DeclarationListTree extends TreeNode<'declaration_list'> {}
-export interface DelimTokenTreeTree extends AnyTreeNode {
-	readonly type: 'delim_token_tree';
-}
-export interface DynamicTypeTree extends TreeNode<'dynamic_type'> {}
-export interface ElseClauseTree extends TreeNode<'else_clause'> {}
-export interface EnumItemTree extends TreeNode<'enum_item'> {}
-export interface EnumVariantTree extends TreeNode<'enum_variant'> {}
-export interface EnumVariantListTree extends TreeNode<'enum_variant_list'> {}
-export interface ExpressionStatementTree extends TreeNode<'expression_statement'> {}
-export interface ExternCrateDeclarationTree extends TreeNode<'extern_crate_declaration'> {}
-export interface ExternModifierTree extends TreeNode<'extern_modifier'> {}
-export interface FieldDeclarationTree extends TreeNode<'field_declaration'> {}
-export interface FieldDeclarationListTree extends TreeNode<'field_declaration_list'> {}
-export interface FieldExpressionTree extends TreeNode<'field_expression'> {}
-export interface FieldInitializerTree extends TreeNode<'field_initializer'> {}
-export interface FieldInitializerListTree extends TreeNode<'field_initializer_list'> {}
-export interface FieldPatternTree extends TreeNode<'field_pattern'> {}
-export interface ForExpressionTree extends TreeNode<'for_expression'> {}
-export interface ForLifetimesTree extends TreeNode<'for_lifetimes'> {}
-export interface ForeignModItemTree extends TreeNode<'foreign_mod_item'> {}
-export interface FunctionItemTree extends TreeNode<'function_item'> {}
-export interface FunctionModifiersTree extends TreeNode<'function_modifiers'> {}
-export interface FunctionSignatureItemTree extends TreeNode<'function_signature_item'> {}
-export interface FunctionTypeTree extends TreeNode<'function_type'> {}
-export interface GenBlockTree extends TreeNode<'gen_block'> {}
-export interface GenericFunctionTree extends TreeNode<'generic_function'> {}
-export interface GenericPatternTree extends TreeNode<'generic_pattern'> {}
-export interface GenericTypeTree extends TreeNode<'generic_type'> {}
-export interface GenericTypeWithTurbofishTree extends TreeNode<'generic_type_with_turbofish'> {}
-export interface HigherRankedTraitBoundTree extends TreeNode<'higher_ranked_trait_bound'> {}
-export interface IfExpressionTree extends TreeNode<'if_expression'> {}
-export interface ImplItemTree extends TreeNode<'impl_item'> {}
-export interface IndexExpressionTree extends TreeNode<'index_expression'> {}
-export interface InnerAttributeItemTree extends TreeNode<'inner_attribute_item'> {}
-export interface LabelTree extends TreeNode<'label'> {}
-export interface LastMatchArmTree extends AnyTreeNode {
-	readonly type: 'last_match_arm';
-}
-export interface LetConditionTree extends TreeNode<'let_condition'> {}
-export interface LetDeclarationTree extends TreeNode<'let_declaration'> {}
-export interface LifetimeTree extends TreeNode<'lifetime'> {}
-export interface LifetimeParameterTree extends TreeNode<'lifetime_parameter'> {}
-export interface LineCommentTree extends TreeNode<'line_comment'> {}
-export interface LoopExpressionTree extends TreeNode<'loop_expression'> {}
-export interface MacroDefinitionTree extends TreeNode<'macro_definition'> {}
-export interface MacroInvocationTree extends TreeNode<'macro_invocation'> {}
-export interface MacroRuleTree extends TreeNode<'macro_rule'> {}
-export interface MatchArmTree extends TreeNode<'match_arm'> {}
-export interface MatchBlockTree extends TreeNode<'match_block'> {}
-export interface MatchExpressionTree extends TreeNode<'match_expression'> {}
-export interface MatchPatternTree extends TreeNode<'match_pattern'> {}
-export interface ModItemTree extends TreeNode<'mod_item'> {}
-export interface MutPatternTree extends TreeNode<'mut_pattern'> {}
-export interface NegativeLiteralTree extends TreeNode<'negative_literal'> {}
-export interface OrPatternTree extends TreeNode<'or_pattern'> {}
-export interface OrderedFieldDeclarationListTree extends TreeNode<'ordered_field_declaration_list'> {}
-export interface ParameterTree extends TreeNode<'parameter'> {}
-export interface ParametersTree extends TreeNode<'parameters'> {}
-export interface ParenthesizedExpressionTree extends TreeNode<'parenthesized_expression'> {}
-export interface PointerTypeTree extends TreeNode<'pointer_type'> {}
-export interface QualifiedTypeTree extends TreeNode<'qualified_type'> {}
-export interface RangeExpressionTree extends TreeNode<'range_expression'> {}
-export interface RangePatternTree extends TreeNode<'range_pattern'> {}
-export interface RawStringLiteralTree extends TreeNode<'raw_string_literal'> {}
-export interface RefPatternTree extends TreeNode<'ref_pattern'> {}
-export interface ReferenceExpressionTree extends TreeNode<'reference_expression'> {}
-export interface ReferencePatternTree extends TreeNode<'reference_pattern'> {}
-export interface ReferenceTypeTree extends TreeNode<'reference_type'> {}
-export interface RemovedTraitBoundTree extends TreeNode<'removed_trait_bound'> {}
-export interface ReturnExpressionTree extends TreeNode<'return_expression'> {}
-export interface ScopedIdentifierTree extends TreeNode<'scoped_identifier'> {}
-export interface ScopedTypeIdentifierTree extends TreeNode<'scoped_type_identifier'> {}
-export interface ScopedTypeIdentifierInExpressionPositionTree extends AnyTreeNode {
-	readonly type: 'scoped_type_identifier_in_expression_position';
-}
-export interface ScopedUseListTree extends TreeNode<'scoped_use_list'> {}
-export interface SelfParameterTree extends TreeNode<'self_parameter'> {}
-export interface ShorthandFieldInitializerTree extends TreeNode<'shorthand_field_initializer'> {}
-export interface SlicePatternTree extends TreeNode<'slice_pattern'> {}
-export interface SourceFileTree extends TreeNode<'source_file'> {}
-export interface StaticItemTree extends TreeNode<'static_item'> {}
-export interface StringLiteralTree extends TreeNode<'string_literal'> {}
-export interface StructExpressionTree extends TreeNode<'struct_expression'> {}
-export interface StructItemTree extends TreeNode<'struct_item'> {}
-export interface StructPatternTree extends TreeNode<'struct_pattern'> {}
-export interface TokenBindingPatternTree extends TreeNode<'token_binding_pattern'> {}
-export interface TokenRepetitionTree extends TreeNode<'token_repetition'> {}
-export interface TokenRepetitionPatternTree extends TreeNode<'token_repetition_pattern'> {}
-export interface TokenTreeTree extends TreeNode<'token_tree'> {}
-export interface TokenTreePatternTree extends TreeNode<'token_tree_pattern'> {}
-export interface TraitBoundsTree extends TreeNode<'trait_bounds'> {}
-export interface TraitItemTree extends TreeNode<'trait_item'> {}
-export interface TryBlockTree extends TreeNode<'try_block'> {}
-export interface TryExpressionTree extends TreeNode<'try_expression'> {}
-export interface TupleExpressionTree extends TreeNode<'tuple_expression'> {}
-export interface TuplePatternTree extends TreeNode<'tuple_pattern'> {}
-export interface TupleStructPatternTree extends TreeNode<'tuple_struct_pattern'> {}
-export interface TupleTypeTree extends TreeNode<'tuple_type'> {}
-export interface TypeArgumentsTree extends TreeNode<'type_arguments'> {}
-export interface TypeBindingTree extends TreeNode<'type_binding'> {}
-export interface TypeCastExpressionTree extends TreeNode<'type_cast_expression'> {}
-export interface TypeItemTree extends TreeNode<'type_item'> {}
-export interface TypeParameterTree extends TreeNode<'type_parameter'> {}
-export interface TypeParametersTree extends TreeNode<'type_parameters'> {}
-export interface UnaryExpressionTree extends TreeNode<'unary_expression'> {}
-export interface UnionItemTree extends TreeNode<'union_item'> {}
-export interface UnsafeBlockTree extends TreeNode<'unsafe_block'> {}
-export interface UseAsClauseTree extends TreeNode<'use_as_clause'> {}
-export interface UseBoundsTree extends TreeNode<'use_bounds'> {}
-export interface UseDeclarationTree extends TreeNode<'use_declaration'> {}
-export interface UseListTree extends TreeNode<'use_list'> {}
-export interface UseWildcardTree extends TreeNode<'use_wildcard'> {}
-export interface VariadicParameterTree extends TreeNode<'variadic_parameter'> {}
-export interface VisibilityModifierTree extends TreeNode<'visibility_modifier'> {}
-export interface WhereClauseTree extends TreeNode<'where_clause'> {}
-export interface WherePredicateTree extends TreeNode<'where_predicate'> {}
-export interface WhileExpressionTree extends TreeNode<'while_expression'> {}
-export interface YieldExpressionTree extends TreeNode<'yield_expression'> {}
-export interface ArgumentsGroup1Tree extends TreeNode<'arguments_group1'> {}
-export interface VisibilityModifierGroup1Tree extends TreeNode<'visibility_modifier_group1'> {}
-export interface EnumVariantListGroup1Tree extends TreeNode<'enum_variant_list_group1'> {}
-export interface FieldDeclarationListGroup1Tree extends TreeNode<'field_declaration_list_group1'> {}
-export interface FieldInitializerListGroup1Tree extends TreeNode<'field_initializer_list_group1'> {}
-export interface OrderedFieldDeclarationListGroup1Tree extends TreeNode<'ordered_field_declaration_list_group1'> {}
-export interface ParametersGroup1Tree extends TreeNode<'parameters_group1'> {}
-export interface SlicePatternGroup1Tree extends TreeNode<'slice_pattern_group1'> {}
-export interface StructPatternGroup1Tree extends TreeNode<'struct_pattern_group1'> {}
-export interface TuplePatternGroup1Tree extends TreeNode<'tuple_pattern_group1'> {}
-export interface UseBoundsGroup1Tree extends TreeNode<'use_bounds_group1'> {}
-export interface UseListGroup1Tree extends TreeNode<'use_list_group1'> {}
-export interface WhereClauseGroup1Tree extends TreeNode<'where_clause_group1'> {}
 export interface VisibilityModifierPubParensTree extends AnyTreeNode {
 	readonly type: '_visibility_modifier_pub_parens';
 }
-export interface RangeExpressionBinaryOperatorTree extends AnyTreeNode {
-	readonly type: '__range_expression_binary_operator';
+export interface FragmentSpecifierTree extends TreeNode<'fragment_specifier'> {}
+export interface UnitTypeTree extends TreeNode<'unit_type'> {}
+export interface MutableSpecifierTree extends AnyTreeNode {
+	readonly type: 'mutable_specifier';
 }
-export interface CompoundAssignmentExprOperatorTree extends AnyTreeNode {
-	readonly type: '_compound_assignment_expr_operator';
-}
-export interface FieldIdentifierTree extends AnyTreeNode {
-	readonly type: '_field_identifier';
-}
-export interface LineCommentContentTree extends AnyTreeNode {
-	readonly type: '_line_comment_content';
-}
-export interface LineCommentRegularDslashTree extends AnyTreeNode {
-	readonly type: '_line_comment_regular_dslash';
-}
-export interface OperatorTree extends AnyTreeNode {
-	readonly type: '_operator';
-}
-export interface PrimitiveTypeTree extends AnyTreeNode {
-	readonly type: '_primitive_type';
-}
-export interface ReferenceExpressionRawConstTree extends AnyTreeNode {
-	readonly type: '_reference_expression_raw_const';
-}
+export interface UnitExpressionTree extends TreeNode<'unit_expression'> {}
+export interface IntegerLiteralTree extends TreeNode<'integer_literal'> {}
+export interface CharLiteralTree extends TreeNode<'char_literal'> {}
+export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
+export interface BooleanLiteralTree extends TreeNode<'boolean_literal'> {}
+export interface IdentifierTree extends TreeNode<'identifier'> {}
+export interface ShebangTree extends TreeNode<'shebang'> {}
 export interface ReservedIdentifierTree extends AnyTreeNode {
 	readonly type: '_reserved_identifier';
-}
-export interface TokenBindingPatternTypeTree extends AnyTreeNode {
-	readonly type: '_token_binding_pattern_type';
-}
-export interface TokenTreePunctuationTree extends AnyTreeNode {
-	readonly type: '_token_tree_punctuation';
 }
 export interface TypeIdentifierTree extends AnyTreeNode {
 	readonly type: '_type_identifier';
 }
-export interface UnaryExpressionOperatorTree extends AnyTreeNode {
-	readonly type: '_unary_expression_operator';
-}
-export interface BooleanLiteralTree extends TreeNode<'boolean_literal'> {}
-export interface CharLiteralTree extends TreeNode<'char_literal'> {}
-export interface CrateTree extends AnyTreeNode {
-	readonly type: 'crate';
-}
-export interface EscapeSequenceTree extends TreeNode<'escape_sequence'> {}
-export interface FragmentSpecifierTree extends TreeNode<'fragment_specifier'> {}
-export interface IdentifierTree extends TreeNode<'identifier'> {}
-export interface IntegerLiteralTree extends TreeNode<'integer_literal'> {}
-export interface MetavariableTree extends TreeNode<'metavariable'> {}
-export interface MutableSpecifierTree extends AnyTreeNode {
-	readonly type: 'mutable_specifier';
+export interface FieldIdentifierTree extends AnyTreeNode {
+	readonly type: '_field_identifier';
 }
 export interface SelfTree extends AnyTreeNode {
 	readonly type: 'self';
 }
-export interface ShebangTree extends TreeNode<'shebang'> {}
 export interface SuperTree extends AnyTreeNode {
 	readonly type: 'super';
 }
-export interface UnitExpressionTree extends TreeNode<'unit_expression'> {}
-export interface UnitTypeTree extends TreeNode<'unit_type'> {}
+export interface CrateTree extends AnyTreeNode {
+	readonly type: 'crate';
+}
+export interface MetavariableTree extends TreeNode<'metavariable'> {}
+export interface PrimitiveTypeTree extends AnyTreeNode {
+	readonly type: '_primitive_type';
+}
+export interface TokenBindingPatternTypeTree extends AnyTreeNode {
+	readonly type: '_token_binding_pattern_type';
+}
+export interface CompoundAssignmentExprOperatorTree extends AnyTreeNode {
+	readonly type: '_compound_assignment_expr_operator';
+}
+export interface TokenTreePunctuationTree extends AnyTreeNode {
+	readonly type: '_token_tree_punctuation';
+}
+export interface TokenKeywordsTree extends AnyTreeNode {
+	readonly type: '_token_keywords';
+}
+export interface ReferenceExpressionRawConstTree extends AnyTreeNode {
+	readonly type: '_reference_expression_raw_const';
+}
+export interface LineCommentRegularDslashTree extends AnyTreeNode {
+	readonly type: '_line_comment_regular_dslash';
+}
+export interface LineCommentContentTree extends AnyTreeNode {
+	readonly type: '_line_comment_content';
+}
+export interface OperatorTree extends AnyTreeNode {
+	readonly type: '_operator';
+}
+export interface UnaryExpressionOperatorTree extends AnyTreeNode {
+	readonly type: '_unary_expression_operator';
+}
+export interface RangeExpressionBinaryOperatorTree extends AnyTreeNode {
+	readonly type: '__range_expression_binary_operator';
+}
 export interface StringContentTree extends TreeNode<'string_content'> {}
+export interface RawStringLiteralStartTree extends AnyTreeNode {
+	readonly type: '_raw_string_literal_start';
+}
 export interface RawStringLiteralContentTree extends AnyTreeNode {
 	readonly type: 'raw_string_literal_content';
+}
+export interface RawStringLiteralEndTree extends AnyTreeNode {
+	readonly type: '_raw_string_literal_end';
 }
 export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
 export interface LineDocContentTree extends AnyTreeNode {
@@ -5948,65 +6001,14 @@ export interface LineDocContentTree extends AnyTreeNode {
 export interface ErrorSentinelTree extends AnyTreeNode {
 	readonly type: '_error_sentinel';
 }
-export interface ForTree extends AnyTreeNode {
-	readonly type: 'for';
+export interface ModTree extends AnyTreeNode {
+	readonly type: 'mod';
 }
-export interface AsTree extends AnyTreeNode {
-	readonly type: 'as';
+export interface StructTree extends AnyTreeNode {
+	readonly type: 'struct';
 }
-export interface FnTree extends AnyTreeNode {
-	readonly type: 'fn';
-}
-export interface UnsafeTree extends AnyTreeNode {
-	readonly type: 'unsafe';
-}
-export interface InTree extends AnyTreeNode {
-	readonly type: 'in';
-}
-export interface AsyncTree extends AnyTreeNode {
-	readonly type: 'async';
-}
-export interface MoveTree extends AnyTreeNode {
-	readonly type: 'move';
-}
-export interface PubTree extends AnyTreeNode {
-	readonly type: 'pub';
-}
-export interface StaticTree extends AnyTreeNode {
-	readonly type: 'static';
-}
-export interface ElseTree extends AnyTreeNode {
-	readonly type: 'else';
-}
-export interface IfTree extends AnyTreeNode {
-	readonly type: 'if';
-}
-export interface MutTree extends AnyTreeNode {
-	readonly type: 'mut';
-}
-export interface ConstTree extends AnyTreeNode {
-	readonly type: 'const';
-}
-export interface RawTree extends AnyTreeNode {
-	readonly type: 'raw';
-}
-export interface ImplTree extends AnyTreeNode {
-	readonly type: 'impl';
-}
-export interface TypeTree extends AnyTreeNode {
-	readonly type: 'type';
-}
-export interface AwaitTree extends AnyTreeNode {
-	readonly type: 'await';
-}
-export interface BreakTree extends AnyTreeNode {
-	readonly type: 'break';
-}
-export interface ContinueTree extends AnyTreeNode {
-	readonly type: 'continue';
-}
-export interface DynTree extends AnyTreeNode {
-	readonly type: 'dyn';
+export interface UnionTree extends AnyTreeNode {
+	readonly type: 'union';
 }
 export interface EnumTree extends AnyTreeNode {
 	readonly type: 'enum';
@@ -6014,150 +6016,149 @@ export interface EnumTree extends AnyTreeNode {
 export interface ExternTree extends AnyTreeNode {
 	readonly type: 'extern';
 }
+export interface ConstTree extends AnyTreeNode {
+	readonly type: 'const';
+}
+export interface StaticTree extends AnyTreeNode {
+	readonly type: 'static';
+}
 export interface RefTree extends AnyTreeNode {
 	readonly type: 'ref';
 }
-export interface GenTree extends AnyTreeNode {
-	readonly type: 'gen';
+export interface TypeTree extends AnyTreeNode {
+	readonly type: 'type';
 }
-export interface LetTree extends AnyTreeNode {
-	readonly type: 'let';
-}
-export interface LoopTree extends AnyTreeNode {
-	readonly type: 'loop';
-}
-export interface MatchTree extends AnyTreeNode {
-	readonly type: 'match';
-}
-export interface ModTree extends AnyTreeNode {
-	readonly type: 'mod';
-}
-export interface ReturnTree extends AnyTreeNode {
-	readonly type: 'return';
-}
-export interface StructTree extends AnyTreeNode {
-	readonly type: 'struct';
-}
-export interface TraitTree extends AnyTreeNode {
-	readonly type: 'trait';
-}
-export interface TryTree extends AnyTreeNode {
-	readonly type: 'try';
-}
-export interface UnionTree extends AnyTreeNode {
-	readonly type: 'union';
-}
-export interface UseTree extends AnyTreeNode {
-	readonly type: 'use';
+export interface FnTree extends AnyTreeNode {
+	readonly type: 'fn';
 }
 export interface WhereTree extends AnyTreeNode {
 	readonly type: 'where';
 }
-export interface WhileTree extends AnyTreeNode {
-	readonly type: 'while';
+export interface ImplTree extends AnyTreeNode {
+	readonly type: 'impl';
+}
+export interface TraitTree extends AnyTreeNode {
+	readonly type: 'trait';
+}
+export interface ForTree extends AnyTreeNode {
+	readonly type: 'for';
+}
+export interface LetTree extends AnyTreeNode {
+	readonly type: 'let';
+}
+export interface UseTree extends AnyTreeNode {
+	readonly type: 'use';
+}
+export interface AsTree extends AnyTreeNode {
+	readonly type: 'as';
+}
+export interface DynTree extends AnyTreeNode {
+	readonly type: 'dyn';
+}
+export interface MutTree extends AnyTreeNode {
+	readonly type: 'mut';
+}
+export interface ReturnTree extends AnyTreeNode {
+	readonly type: 'return';
 }
 export interface YieldTree extends AnyTreeNode {
 	readonly type: 'yield';
 }
+export interface IfTree extends AnyTreeNode {
+	readonly type: 'if';
+}
+export interface ElseTree extends AnyTreeNode {
+	readonly type: 'else';
+}
+export interface MatchTree extends AnyTreeNode {
+	readonly type: 'match';
+}
+export interface WhileTree extends AnyTreeNode {
+	readonly type: 'while';
+}
+export interface LoopTree extends AnyTreeNode {
+	readonly type: 'loop';
+}
+export interface InTree extends AnyTreeNode {
+	readonly type: 'in';
+}
+export interface AsyncTree extends AnyTreeNode {
+	readonly type: 'async';
+}
+export interface BreakTree extends AnyTreeNode {
+	readonly type: 'break';
+}
+export interface ContinueTree extends AnyTreeNode {
+	readonly type: 'continue';
+}
+export interface AwaitTree extends AnyTreeNode {
+	readonly type: 'await';
+}
+export interface UnsafeTree extends AnyTreeNode {
+	readonly type: 'unsafe';
+}
+export interface GenTree extends AnyTreeNode {
+	readonly type: 'gen';
+}
+export interface TryTree extends AnyTreeNode {
+	readonly type: 'try';
+}
+export interface RawTree extends AnyTreeNode {
+	readonly type: 'raw';
+}
+export interface PubTree extends AnyTreeNode {
+	readonly type: 'pub';
+}
+export interface MoveTree extends AnyTreeNode {
+	readonly type: 'move';
+}
 
 // Supertype unions
-export type Condition =
-	| UnaryExpression
-	| ReferenceExpression
-	| TryExpression
-	| BinaryExpression
-	| AssignmentExpression
-	| CompoundAssignmentExpr
-	| TypeCastExpression
-	| CallExpression
-	| ReturnExpression
-	| YieldExpression
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
-	| Identifier
-	| Self
-	| ScopedIdentifier
-	| GenericFunction
-	| AwaitExpression
-	| FieldExpression
-	| ArrayExpression
-	| TupleExpression
+export type Statement =
+	| ExpressionStatement
+	| ConstItem
 	| MacroInvocation
-	| UnitExpression
-	| BreakExpression
-	| ContinueExpression
-	| IndexExpression
-	| Metavariable
-	| ClosureExpression
-	| ParenthesizedExpression
-	| StructExpression
-	| UnsafeBlock
-	| AsyncBlock
-	| GenBlock
-	| TryBlock
-	| Block
-	| IfExpression
-	| MatchExpression
-	| WhileExpression
-	| LoopExpression
-	| ForExpression
-	| ConstBlock
-	| RangeExpression
-	| LetCondition
-	| LetChain;
+	| MacroDefinition
+	| AttributeItem
+	| InnerAttributeItem
+	| ModItem
+	| ForeignModItem
+	| StructItem
+	| UnionItem
+	| EnumItem
+	| TypeItem
+	| FunctionItem
+	| FunctionSignatureItem
+	| ImplItem
+	| TraitItem
+	| AssociatedType
+	| LetDeclaration
+	| UseDeclaration
+	| ExternCrateDeclaration
+	| StaticItem;
 
-export type ConditionTree =
-	| UnaryExpressionTree
-	| ReferenceExpressionTree
-	| TryExpressionTree
-	| BinaryExpressionTree
-	| AssignmentExpressionTree
-	| CompoundAssignmentExprTree
-	| TypeCastExpressionTree
-	| CallExpressionTree
-	| ReturnExpressionTree
-	| YieldExpressionTree
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| CharLiteralTree
-	| BooleanLiteralTree
-	| IntegerLiteralTree
-	| FloatLiteralTree
-	| IdentifierTree
-	| SelfTree
-	| ScopedIdentifierTree
-	| GenericFunctionTree
-	| AwaitExpressionTree
-	| FieldExpressionTree
-	| ArrayExpressionTree
-	| TupleExpressionTree
+export type StatementTree =
+	| ExpressionStatementTree
+	| ConstItemTree
 	| MacroInvocationTree
-	| UnitExpressionTree
-	| BreakExpressionTree
-	| ContinueExpressionTree
-	| IndexExpressionTree
-	| MetavariableTree
-	| ClosureExpressionTree
-	| ParenthesizedExpressionTree
-	| StructExpressionTree
-	| UnsafeBlockTree
-	| AsyncBlockTree
-	| GenBlockTree
-	| TryBlockTree
-	| BlockTree
-	| IfExpressionTree
-	| MatchExpressionTree
-	| WhileExpressionTree
-	| LoopExpressionTree
-	| ForExpressionTree
-	| ConstBlockTree
-	| RangeExpressionTree
-	| LetConditionTree
-	| LetChainTree;
+	| MacroDefinitionTree
+	| AttributeItemTree
+	| InnerAttributeItemTree
+	| ModItemTree
+	| ForeignModItemTree
+	| StructItemTree
+	| UnionItemTree
+	| EnumItemTree
+	| TypeItemTree
+	| FunctionItemTree
+	| FunctionSignatureItemTree
+	| ImplItemTree
+	| TraitItemTree
+	| AssociatedTypeTree
+	| LetDeclarationTree
+	| UseDeclarationTree
+	| ExternCrateDeclarationTree
+	| StaticItemTree;
 
 export type DeclarationStatement =
 	| ConstItem
@@ -6203,7 +6204,11 @@ export type DeclarationStatementTree =
 	| ExternCrateDeclarationTree
 	| StaticItemTree;
 
-export type DelimTokens =
+export type TokenPattern =
+	| TokenTreePattern
+	| TokenRepetitionPattern
+	| TokenBindingPattern
+	| Metavariable
 	| StringLiteral
 	| RawStringLiteral
 	| CharLiteral
@@ -6215,9 +6220,15 @@ export type DelimTokens =
 	| Self
 	| Super
 	| Crate
-	| DelimTokenTree;
+	| PrimitiveType
+	| TokenTreePunctuation
+	| TokenKeywords;
 
-export type DelimTokensTree =
+export type TokenPatternTree =
+	| TokenTreePatternTree
+	| TokenRepetitionPatternTree
+	| TokenBindingPatternTree
+	| MetavariableTree
 	| StringLiteralTree
 	| RawStringLiteralTree
 	| CharLiteralTree
@@ -6229,9 +6240,143 @@ export type DelimTokensTree =
 	| SelfTree
 	| SuperTree
 	| CrateTree
-	| DelimTokenTreeTree;
+	| PrimitiveTypeTree
+	| TokenTreePunctuationTree
+	| TokenKeywordsTree;
 
-export type Expression =
+export type Tokens =
+	| TokenTree
+	| TokenRepetition
+	| Metavariable
+	| StringLiteral
+	| RawStringLiteral
+	| CharLiteral
+	| BooleanLiteral
+	| IntegerLiteral
+	| FloatLiteral
+	| Identifier
+	| MutableSpecifier
+	| Self
+	| Super
+	| Crate
+	| PrimitiveType
+	| TokenTreePunctuation
+	| TokenKeywords;
+
+export type TokensTree =
+	| TokenTreeTree
+	| TokenRepetitionTree
+	| MetavariableTree
+	| StringLiteralTree
+	| RawStringLiteralTree
+	| CharLiteralTree
+	| BooleanLiteralTree
+	| IntegerLiteralTree
+	| FloatLiteralTree
+	| IdentifierTree
+	| MutableSpecifierTree
+	| SelfTree
+	| SuperTree
+	| CrateTree
+	| PrimitiveTypeTree
+	| TokenTreePunctuationTree
+	| TokenKeywordsTree;
+
+export type NonSpecialToken =
+	| StringLiteral
+	| RawStringLiteral
+	| CharLiteral
+	| BooleanLiteral
+	| IntegerLiteral
+	| FloatLiteral
+	| Identifier
+	| MutableSpecifier
+	| Self
+	| Super
+	| Crate
+	| PrimitiveType
+	| TokenTreePunctuation
+	| TokenKeywords;
+
+export type NonSpecialTokenTree =
+	| StringLiteralTree
+	| RawStringLiteralTree
+	| CharLiteralTree
+	| BooleanLiteralTree
+	| IntegerLiteralTree
+	| FloatLiteralTree
+	| IdentifierTree
+	| MutableSpecifierTree
+	| SelfTree
+	| SuperTree
+	| CrateTree
+	| PrimitiveTypeTree
+	| TokenTreePunctuationTree
+	| TokenKeywordsTree;
+
+export type UseClause =
+	| Self
+	| Identifier
+	| Metavariable
+	| Super
+	| Crate
+	| ScopedIdentifier
+	| ReservedIdentifier
+	| UseAsClause
+	| UseList
+	| ScopedUseList
+	| UseWildcard;
+
+export type UseClauseTree =
+	| SelfTree
+	| IdentifierTree
+	| MetavariableTree
+	| SuperTree
+	| CrateTree
+	| ScopedIdentifierTree
+	| ReservedIdentifierTree
+	| UseAsClauseTree
+	| UseListTree
+	| ScopedUseListTree
+	| UseWildcardTree;
+
+export type _Type =
+	| AbstractType
+	| ReferenceType
+	| Metavariable
+	| PointerType
+	| GenericType
+	| ScopedTypeIdentifier
+	| TupleType
+	| UnitType
+	| ArrayType
+	| FunctionType
+	| TypeIdentifier
+	| MacroInvocation
+	| DynamicType
+	| BoundedType
+	| RemovedTraitBound
+	| PrimitiveType;
+
+export type _TypeTree =
+	| AbstractTypeTree
+	| ReferenceTypeTree
+	| MetavariableTree
+	| PointerTypeTree
+	| GenericTypeTree
+	| ScopedTypeIdentifierTree
+	| TupleTypeTree
+	| UnitTypeTree
+	| ArrayTypeTree
+	| FunctionTypeTree
+	| TypeIdentifierTree
+	| MacroInvocationTree
+	| DynamicTypeTree
+	| BoundedTypeTree
+	| RemovedTraitBoundTree
+	| PrimitiveTypeTree;
+
+export type ExpressionExceptRange =
 	| UnaryExpression
 	| ReferenceExpression
 	| TryExpression
@@ -6249,6 +6394,102 @@ export type Expression =
 	| IntegerLiteral
 	| FloatLiteral
 	| Identifier
+	| ReservedIdentifier
+	| Self
+	| ScopedIdentifier
+	| GenericFunction
+	| AwaitExpression
+	| FieldExpression
+	| ArrayExpression
+	| TupleExpression
+	| MacroInvocation
+	| UnitExpression
+	| BreakExpression
+	| ContinueExpression
+	| IndexExpression
+	| Metavariable
+	| ClosureExpression
+	| ParenthesizedExpression
+	| StructExpression
+	| UnsafeBlock
+	| AsyncBlock
+	| GenBlock
+	| TryBlock
+	| Block
+	| IfExpression
+	| MatchExpression
+	| WhileExpression
+	| LoopExpression
+	| ForExpression
+	| ConstBlock;
+
+export type ExpressionExceptRangeTree =
+	| UnaryExpressionTree
+	| ReferenceExpressionTree
+	| TryExpressionTree
+	| BinaryExpressionTree
+	| AssignmentExpressionTree
+	| CompoundAssignmentExprTree
+	| TypeCastExpressionTree
+	| CallExpressionTree
+	| ReturnExpressionTree
+	| YieldExpressionTree
+	| StringLiteralTree
+	| RawStringLiteralTree
+	| CharLiteralTree
+	| BooleanLiteralTree
+	| IntegerLiteralTree
+	| FloatLiteralTree
+	| IdentifierTree
+	| ReservedIdentifierTree
+	| SelfTree
+	| ScopedIdentifierTree
+	| GenericFunctionTree
+	| AwaitExpressionTree
+	| FieldExpressionTree
+	| ArrayExpressionTree
+	| TupleExpressionTree
+	| MacroInvocationTree
+	| UnitExpressionTree
+	| BreakExpressionTree
+	| ContinueExpressionTree
+	| IndexExpressionTree
+	| MetavariableTree
+	| ClosureExpressionTree
+	| ParenthesizedExpressionTree
+	| StructExpressionTree
+	| UnsafeBlockTree
+	| AsyncBlockTree
+	| GenBlockTree
+	| TryBlockTree
+	| BlockTree
+	| IfExpressionTree
+	| MatchExpressionTree
+	| WhileExpressionTree
+	| LoopExpressionTree
+	| ForExpressionTree
+	| ConstBlockTree;
+
+export type Expression =
+	| ExpressionExceptRange
+	| UnaryExpression
+	| ReferenceExpression
+	| TryExpression
+	| BinaryExpression
+	| AssignmentExpression
+	| CompoundAssignmentExpr
+	| TypeCastExpression
+	| CallExpression
+	| ReturnExpression
+	| YieldExpression
+	| StringLiteral
+	| RawStringLiteral
+	| CharLiteral
+	| BooleanLiteral
+	| IntegerLiteral
+	| FloatLiteral
+	| Identifier
+	| ReservedIdentifier
 	| Self
 	| ScopedIdentifier
 	| GenericFunction
@@ -6279,6 +6520,7 @@ export type Expression =
 	| RangeExpression;
 
 export type ExpressionTree =
+	| ExpressionExceptRangeTree
 	| UnaryExpressionTree
 	| ReferenceExpressionTree
 	| TryExpressionTree
@@ -6296,6 +6538,7 @@ export type ExpressionTree =
 	| IntegerLiteralTree
 	| FloatLiteralTree
 	| IdentifierTree
+	| ReservedIdentifierTree
 	| SelfTree
 	| ScopedIdentifierTree
 	| GenericFunctionTree
@@ -6351,7 +6594,47 @@ export type ExpressionEndingWithBlockTree =
 	| ForExpressionTree
 	| ConstBlockTree;
 
-export type ExpressionExceptRange =
+export type DelimTokens = DelimTokenTree;
+
+export type DelimTokensTree = DelimTokenTreeTree;
+
+export type NonDelimToken =
+	| NonSpecialToken
+	| StringLiteral
+	| RawStringLiteral
+	| CharLiteral
+	| BooleanLiteral
+	| IntegerLiteral
+	| FloatLiteral
+	| Identifier
+	| MutableSpecifier
+	| Self
+	| Super
+	| Crate
+	| PrimitiveType
+	| TokenTreePunctuation
+	| TokenKeywords;
+
+export type NonDelimTokenTree =
+	| NonSpecialTokenTree
+	| StringLiteralTree
+	| RawStringLiteralTree
+	| CharLiteralTree
+	| BooleanLiteralTree
+	| IntegerLiteralTree
+	| FloatLiteralTree
+	| IdentifierTree
+	| MutableSpecifierTree
+	| SelfTree
+	| SuperTree
+	| CrateTree
+	| PrimitiveTypeTree
+	| TokenTreePunctuationTree
+	| TokenKeywordsTree;
+
+export type Condition =
+	| Expression
+	| ExpressionExceptRange
 	| UnaryExpression
 	| ReferenceExpression
 	| TryExpression
@@ -6397,9 +6680,14 @@ export type ExpressionExceptRange =
 	| WhileExpression
 	| LoopExpression
 	| ForExpression
-	| ConstBlock;
+	| ConstBlock
+	| RangeExpression
+	| LetCondition
+	| LetChain;
 
-export type ExpressionExceptRangeTree =
+export type ConditionTree =
+	| ExpressionTree
+	| ExpressionExceptRangeTree
 	| UnaryExpressionTree
 	| ReferenceExpressionTree
 	| TryExpressionTree
@@ -6445,7 +6733,60 @@ export type ExpressionExceptRangeTree =
 	| WhileExpressionTree
 	| LoopExpressionTree
 	| ForExpressionTree
-	| ConstBlockTree;
+	| ConstBlockTree
+	| RangeExpressionTree
+	| LetConditionTree
+	| LetChainTree;
+
+export type Pattern =
+	| StringLiteral
+	| RawStringLiteral
+	| CharLiteral
+	| BooleanLiteral
+	| IntegerLiteral
+	| FloatLiteral
+	| NegativeLiteral
+	| Identifier
+	| ScopedIdentifier
+	| GenericPattern
+	| TuplePattern
+	| TupleStructPattern
+	| StructPattern
+	| ReservedIdentifier
+	| RefPattern
+	| SlicePattern
+	| CapturedPattern
+	| ReferencePattern
+	| MutPattern
+	| RangePattern
+	| OrPattern
+	| ConstBlock
+	| MacroInvocation;
+
+export type PatternTree =
+	| StringLiteralTree
+	| RawStringLiteralTree
+	| CharLiteralTree
+	| BooleanLiteralTree
+	| IntegerLiteralTree
+	| FloatLiteralTree
+	| NegativeLiteralTree
+	| IdentifierTree
+	| ScopedIdentifierTree
+	| GenericPatternTree
+	| TuplePatternTree
+	| TupleStructPatternTree
+	| StructPatternTree
+	| ReservedIdentifierTree
+	| RefPatternTree
+	| SlicePatternTree
+	| CapturedPatternTree
+	| ReferencePatternTree
+	| MutPatternTree
+	| RangePatternTree
+	| OrPatternTree
+	| ConstBlockTree
+	| MacroInvocationTree;
 
 export type Literal = StringLiteral | RawStringLiteral | CharLiteral | BooleanLiteral | IntegerLiteral | FloatLiteral;
 
@@ -6475,33 +6816,18 @@ export type LiteralPatternTree =
 	| FloatLiteralTree
 	| NegativeLiteralTree;
 
-export type NonDelimToken =
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
-	| Identifier
-	| MutableSpecifier
-	| Self
-	| Super
-	| Crate;
+export type Path = Self | Identifier | Metavariable | Super | Crate | ScopedIdentifier | ReservedIdentifier;
 
-export type NonDelimTokenTree =
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| CharLiteralTree
-	| BooleanLiteralTree
-	| IntegerLiteralTree
-	| FloatLiteralTree
-	| IdentifierTree
-	| MutableSpecifierTree
+export type PathTree =
 	| SelfTree
+	| IdentifierTree
+	| MetavariableTree
 	| SuperTree
-	| CrateTree;
+	| CrateTree
+	| ScopedIdentifierTree
+	| ReservedIdentifierTree;
 
-export type NonSpecialToken =
+export type TokenPatternGroup1 =
 	| Literal
 	| StringLiteral
 	| RawStringLiteral
@@ -6515,9 +6841,10 @@ export type NonSpecialToken =
 	| Super
 	| Crate
 	| PrimitiveType
-	| TokenTreePunctuation;
+	| TokenTreePunctuation
+	| TokenKeywords;
 
-export type NonSpecialTokenTree =
+export type TokenPatternGroup1Tree =
 	| LiteralTree
 	| StringLiteralTree
 	| RawStringLiteralTree
@@ -6531,250 +6858,8 @@ export type NonSpecialTokenTree =
 	| SuperTree
 	| CrateTree
 	| PrimitiveTypeTree
-	| TokenTreePunctuationTree;
-
-export type Path = Self | Identifier | Metavariable | Super | Crate | ScopedIdentifier | ReservedIdentifier;
-
-export type PathTree =
-	| SelfTree
-	| IdentifierTree
-	| MetavariableTree
-	| SuperTree
-	| CrateTree
-	| ScopedIdentifierTree
-	| ReservedIdentifierTree;
-
-export type Pattern =
-	| LiteralPattern
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
-	| NegativeLiteral
-	| Identifier
-	| ScopedIdentifier
-	| GenericPattern
-	| TuplePattern
-	| TupleStructPattern
-	| StructPattern
-	| ReservedIdentifier
-	| RefPattern
-	| SlicePattern
-	| CapturedPattern
-	| ReferencePattern
-	| MutPattern
-	| RangePattern
-	| OrPattern
-	| ConstBlock
-	| MacroInvocation;
-
-export type PatternTree =
-	| LiteralPatternTree
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| CharLiteralTree
-	| BooleanLiteralTree
-	| IntegerLiteralTree
-	| FloatLiteralTree
-	| NegativeLiteralTree
-	| IdentifierTree
-	| ScopedIdentifierTree
-	| GenericPatternTree
-	| TuplePatternTree
-	| TupleStructPatternTree
-	| StructPatternTree
-	| ReservedIdentifierTree
-	| RefPatternTree
-	| SlicePatternTree
-	| CapturedPatternTree
-	| ReferencePatternTree
-	| MutPatternTree
-	| RangePatternTree
-	| OrPatternTree
-	| ConstBlockTree
-	| MacroInvocationTree;
-
-export type Statement =
-	| ExpressionStatement
-	| DeclarationStatement
-	| ConstItem
-	| MacroInvocation
-	| MacroDefinition
-	| AttributeItem
-	| InnerAttributeItem
-	| ModItem
-	| ForeignModItem
-	| StructItem
-	| UnionItem
-	| EnumItem
-	| TypeItem
-	| FunctionItem
-	| FunctionSignatureItem
-	| ImplItem
-	| TraitItem
-	| AssociatedType
-	| LetDeclaration
-	| UseDeclaration
-	| ExternCrateDeclaration
-	| StaticItem;
-
-export type StatementTree =
-	| ExpressionStatementTree
-	| DeclarationStatementTree
-	| ConstItemTree
-	| MacroInvocationTree
-	| MacroDefinitionTree
-	| AttributeItemTree
-	| InnerAttributeItemTree
-	| ModItemTree
-	| ForeignModItemTree
-	| StructItemTree
-	| UnionItemTree
-	| EnumItemTree
-	| TypeItemTree
-	| FunctionItemTree
-	| FunctionSignatureItemTree
-	| ImplItemTree
-	| TraitItemTree
-	| AssociatedTypeTree
-	| LetDeclarationTree
-	| UseDeclarationTree
-	| ExternCrateDeclarationTree
-	| StaticItemTree;
-
-export type TokenPattern =
-	| TokenTreePattern
-	| TokenRepetitionPattern
-	| TokenBindingPattern
-	| Metavariable
-	| NonSpecialToken
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
-	| Identifier
-	| MutableSpecifier
-	| Self
-	| Super
-	| Crate;
-
-export type TokenPatternTree =
-	| TokenTreePatternTree
-	| TokenRepetitionPatternTree
-	| TokenBindingPatternTree
-	| MetavariableTree
-	| NonSpecialTokenTree
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| CharLiteralTree
-	| BooleanLiteralTree
-	| IntegerLiteralTree
-	| FloatLiteralTree
-	| IdentifierTree
-	| MutableSpecifierTree
-	| SelfTree
-	| SuperTree
-	| CrateTree;
-
-export type Tokens =
-	| TokenTree
-	| TokenRepetition
-	| Metavariable
-	| NonSpecialToken
-	| StringLiteral
-	| RawStringLiteral
-	| CharLiteral
-	| BooleanLiteral
-	| IntegerLiteral
-	| FloatLiteral
-	| Identifier
-	| MutableSpecifier
-	| Self
-	| Super
-	| Crate;
-
-export type TokensTree =
-	| TokenTreeTree
-	| TokenRepetitionTree
-	| MetavariableTree
-	| NonSpecialTokenTree
-	| StringLiteralTree
-	| RawStringLiteralTree
-	| CharLiteralTree
-	| BooleanLiteralTree
-	| IntegerLiteralTree
-	| FloatLiteralTree
-	| IdentifierTree
-	| MutableSpecifierTree
-	| SelfTree
-	| SuperTree
-	| CrateTree;
-
-export type _Type =
-	| AbstractType
-	| ReferenceType
-	| Metavariable
-	| PointerType
-	| GenericType
-	| ScopedTypeIdentifier
-	| TupleType
-	| UnitType
-	| ArrayType
-	| FunctionType
-	| TypeIdentifier
-	| MacroInvocation
-	| DynamicType
-	| BoundedType
-	| RemovedTraitBound
-	| PrimitiveType;
-
-export type _TypeTree =
-	| AbstractTypeTree
-	| ReferenceTypeTree
-	| MetavariableTree
-	| PointerTypeTree
-	| GenericTypeTree
-	| ScopedTypeIdentifierTree
-	| TupleTypeTree
-	| UnitTypeTree
-	| ArrayTypeTree
-	| FunctionTypeTree
-	| TypeIdentifierTree
-	| MacroInvocationTree
-	| DynamicTypeTree
-	| BoundedTypeTree
-	| RemovedTraitBoundTree
-	| PrimitiveTypeTree;
-
-export type UseClause =
-	| Path
-	| Self
-	| Identifier
-	| Metavariable
-	| Super
-	| Crate
-	| ScopedIdentifier
-	| UseAsClause
-	| UseList
-	| ScopedUseList
-	| UseWildcard;
-
-export type UseClauseTree =
-	| PathTree
-	| SelfTree
-	| IdentifierTree
-	| MetavariableTree
-	| SuperTree
-	| CrateTree
-	| ScopedIdentifierTree
-	| UseAsClauseTree
-	| UseListTree
-	| ScopedUseListTree
-	| UseWildcardTree;
+	| TokenTreePunctuationTree
+	| TokenKeywordsTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
 export type EmptyStatement = Terminal<TSKindId.EmptyStatement>;
@@ -6789,614 +6874,738 @@ export type RemainingFieldPattern = Terminal<TSKindId.RemainingFieldPattern>;
 export interface RemainingFieldPatternTree extends AnyTreeNode {
 	readonly type: 'remaining_field_pattern';
 }
-export type TokSq = Terminal<"'">;
-export interface TokSqTree extends AnyTreeNode {
-	readonly type: "'";
-}
 export type TokDollar = Terminal<'$'>;
 export interface TokDollarTree extends AnyTreeNode {
 	readonly type: '$';
 }
 
 export type RustNode =
-	| AbstractTypeOptional1
-	| _ArgumentsGroup1
-	| ArrayExpressionList
-	| ArrayExpressionSemi
-	| ArrayTypeOptional1
-	| AttributedArgument
-	| AttributedEnumVariant
-	| AttributedFieldDeclaration
-	| AttributedOrderedField
-	| AttributedParameter
-	| AttributedTypeParameter
-	| BlockOptional1
-	| ClosureExpressionBlock
-	| ClosureExpressionExpr
-	| ClosureExpressionOptional1
-	| ConstItemOptional1
-	| ConstParameterOptional1
-	| DelimTokenTreeBrace
-	| DelimTokenTreeBracket
-	| DelimTokenTreeParen
-	| _EnumVariantListGroup1
-	| ExpressionStatementWithSemi
-	| ExternCrateDeclarationOptional1
-	| _FieldDeclarationListGroup1
-	| _FieldInitializerListGroup1
-	| FieldPatternNamed
-	| FunctionTypeFnForm
-	| FunctionTypeTraitForm
-	| ImplItemBody
-	| ImplItemGroup1
-	| ImplItemNegativeClause
-	| ImplItemPositiveClause
-	| InPath
+	| SourceFile
+	| ExpressionStatement
+	| MacroDefinition
+	| MacroRule
+	| TokenTreePattern
+	| TokenBindingPattern
+	| TokenRepetitionPattern
+	| TokenTree
+	| TokenRepetition
+	| AttributeItem
+	| InnerAttributeItem
+	| Attribute
+	| ModItem
+	| ForeignModItem
+	| DeclarationList
+	| StructItem
+	| UnionItem
+	| EnumItem
+	| EnumVariantList
+	| EnumVariant
+	| FieldDeclarationList
+	| FieldDeclaration
+	| OrderedFieldDeclarationList
+	| ExternCrateDeclaration
+	| ConstItem
+	| StaticItem
+	| TypeItem
+	| FunctionItem
+	| FunctionSignatureItem
+	| FunctionModifiers
+	| WhereClause
+	| WherePredicate
+	| ImplItem
+	| TraitItem
+	| AssociatedType
+	| TraitBounds
+	| HigherRankedTraitBound
+	| RemovedTraitBound
+	| TypeParameters
+	| ConstParameter
+	| TypeParameter
+	| LifetimeParameter
+	| LetDeclaration
+	| UseDeclaration
+	| ScopedUseList
+	| UseList
+	| UseAsClause
+	| UseWildcard
+	| Parameters
+	| SelfParameter
+	| VariadicParameter
+	| Parameter
+	| ExternModifier
+	| VisibilityModifier
+	| BracketedType
+	| QualifiedType
+	| Lifetime
+	| ArrayType
+	| ForLifetimes
+	| FunctionType
+	| TupleType
+	| GenericFunction
+	| GenericType
+	| GenericTypeWithTurbofish
+	| BoundedType
+	| UseBounds
+	| TypeArguments
+	| TypeBinding
+	| ReferenceType
+	| PointerType
+	| AbstractType
+	| DynamicType
+	| MacroInvocation
+	| DelimTokenTree
+	| ScopedIdentifier
+	| ScopedTypeIdentifierInExpressionPosition
+	| ScopedTypeIdentifier
+	| RangeExpression
+	| UnaryExpression
+	| TryExpression
+	| ReferenceExpression
+	| BinaryExpression
+	| AssignmentExpression
+	| CompoundAssignmentExpr
+	| TypeCastExpression
+	| ReturnExpression
+	| YieldExpression
+	| CallExpression
+	| Arguments
+	| ArrayExpression
+	| ParenthesizedExpression
+	| TupleExpression
+	| StructExpression
+	| FieldInitializerList
+	| ShorthandFieldInitializer
+	| FieldInitializer
+	| BaseFieldInitializer
+	| IfExpression
+	| LetCondition
 	| LetChain
+	| ElseClause
+	| MatchExpression
+	| MatchBlock
+	| MatchArm
+	| LastMatchArm
+	| MatchPattern
+	| WhileExpression
+	| LoopExpression
+	| ForExpression
+	| ConstBlock
+	| ClosureExpression
+	| ClosureParameters
+	| Label
+	| BreakExpression
+	| ContinueExpression
+	| IndexExpression
+	| AwaitExpression
+	| FieldExpression
+	| UnsafeBlock
+	| AsyncBlock
+	| GenBlock
+	| TryBlock
+	| Block
+	| GenericPattern
+	| TuplePattern
+	| SlicePattern
+	| TupleStructPattern
+	| StructPattern
+	| FieldPattern
+	| MutPattern
+	| RangePattern
+	| RefPattern
+	| CapturedPattern
+	| ReferencePattern
+	| OrPattern
+	| NegativeLiteral
+	| StringLiteral
+	| RawStringLiteral
+	| Comment
+	| LineComment
+	| BlockComment
+	| AttributeGroup1
+	| EnumVariantListGroup1
+	| EnumVariantOptional1
+	| FieldDeclarationListGroup1
+	| OrderedFieldDeclarationListGroup1
+	| ExternCrateDeclarationOptional1
+	| FunctionItemOptional1
+	| WhereClauseGroup1
+	| ConstParameterOptional1
+	| TypeParameterOptional1
 	| LetDeclarationOptional1
 	| LetDeclarationOptional2
-	| LineCommentDoc
-	| MacroDefinitionBrace
-	| MacroDefinitionBracket
-	| MacroDefinitionParen
-	| MatchArmWithComma
-	| MatchBlockArms
+	| UseListGroup1
+	| ParametersGroup1
+	| VariadicParameterOptional1
+	| VisibilityModifierGroup1
+	| ArrayTypeOptional1
+	| UseBoundsGroup1
+	| AbstractTypeOptional1
+	| ArgumentsGroup1
+	| ArrayExpressionGroup1
+	| FieldInitializerListGroup1
 	| MatchPatternOptional1
+	| WhileExpressionOptional1
+	| TuplePatternGroup1
+	| SlicePatternGroup1
+	| StructPatternGroup1
+	| RangePatternGroup2
+	| BlockCommentGroup1
+	| UseWildcardClause
+	| ReferenceExpressionRawMut
+	| ImplItemBody
+	| ImplItemPositiveClause
+	| ImplItemNegativeClause
+	| ArrayExpressionSemi
+	| ArrayExpressionList
+	| ClosureExpressionBlock
+	| ClosureExpressionExpr
+	| FieldPatternNamed
+	| FunctionTypeTraitForm
+	| FunctionTypeFnForm
+	| MacroDefinitionParen
+	| MacroDefinitionBracket
+	| MacroDefinitionBrace
 	| OrPatternBinary
 	| OrPatternPrefix
-	| _OrderedFieldDeclarationListGroup1
-	| _ParametersGroup1
 	| RangeExpressionBinary
 	| RangeExpressionPostfix
 	| RangeExpressionPrefix
-	| RangePatternLeftWithRight
 	| RangePatternPrefix
-	| ReferenceExpressionRawMut
-	| _SlicePatternGroup1
+	| RangePatternLeftWithRight
 	| StructItemBrace
 	| StructItemTuple
-	| _StructPatternGroup1
-	| TokenTreeBrace
-	| TokenTreeBracket
-	| TokenTreeParen
-	| TokenTreePatternBrace
-	| TokenTreePatternBracket
-	| TokenTreePatternParen
-	| _TuplePatternGroup1
-	| TypeArgument
-	| TypeParameterOptional1
-	| _UseBoundsGroup1
-	| _UseListGroup1
-	| UseWildcardClause
-	| UseWildcardGroup1
-	| VariadicParameterOptional1
-	| _VisibilityModifierGroup1
-	| VisibilityModifierInPath
 	| VisibilityModifierPub
-	| _WhereClauseGroup1
-	| AbstractType
-	| Arguments
-	| ArrayExpression
-	| ArrayType
-	| AssignmentExpression
-	| AssociatedType
-	| AsyncBlock
-	| Attribute
-	| AttributeItem
-	| AwaitExpression
-	| BaseFieldInitializer
-	| BinaryExpression
-	| Block
-	| BlockComment
-	| BoundedType
-	| BracketedType
-	| BreakExpression
-	| CallExpression
-	| CapturedPattern
-	| ClosureExpression
-	| ClosureParameters
-	| Comment
-	| CompoundAssignmentExpr
-	| ConstBlock
-	| ConstItem
-	| ConstParameter
-	| ContinueExpression
-	| DeclarationList
-	| DelimTokenTree
-	| DynamicType
-	| ElseClause
-	| EnumItem
-	| EnumVariant
-	| EnumVariantList
-	| ExpressionStatement
-	| ExternCrateDeclaration
-	| ExternModifier
-	| FieldDeclaration
-	| FieldDeclarationList
-	| FieldExpression
-	| FieldInitializer
-	| FieldInitializerList
-	| FieldPattern
-	| ForExpression
-	| ForLifetimes
-	| ForeignModItem
-	| FunctionItem
-	| FunctionModifiers
-	| FunctionSignatureItem
-	| FunctionType
-	| GenBlock
-	| GenericFunction
-	| GenericPattern
-	| GenericType
-	| GenericTypeWithTurbofish
-	| HigherRankedTraitBound
-	| IfExpression
-	| ImplItem
-	| IndexExpression
-	| InnerAttributeItem
-	| Label
-	| LastMatchArm
-	| LetCondition
-	| LetDeclaration
-	| Lifetime
-	| LifetimeParameter
-	| LineComment
-	| LoopExpression
-	| MacroDefinition
-	| MacroInvocation
-	| MacroRule
-	| MatchArm
-	| MatchBlock
-	| MatchExpression
-	| MatchPattern
-	| ModItem
-	| MutPattern
-	| NegativeLiteral
-	| OrPattern
-	| OrderedFieldDeclarationList
-	| Parameter
-	| Parameters
-	| ParenthesizedExpression
-	| PointerType
-	| QualifiedType
-	| RangeExpression
-	| RangePattern
-	| RawStringLiteral
-	| RefPattern
-	| ReferenceExpression
-	| ReferencePattern
-	| ReferenceType
-	| RemovedTraitBound
-	| ReturnExpression
-	| ScopedIdentifier
-	| ScopedTypeIdentifier
-	| ScopedTypeIdentifierInExpressionPosition
-	| ScopedUseList
-	| SelfParameter
-	| ShorthandFieldInitializer
-	| SlicePattern
-	| SourceFile
-	| StaticItem
-	| StringLiteral
-	| StructExpression
-	| StructItem
-	| StructPattern
-	| TokenBindingPattern
-	| TokenRepetition
-	| TokenRepetitionPattern
-	| TokenTree
-	| TokenTreePattern
-	| TraitBounds
-	| TraitItem
-	| TryBlock
-	| TryExpression
-	| TupleExpression
-	| TuplePattern
-	| TupleStructPattern
-	| TupleType
-	| TypeArguments
-	| TypeBinding
-	| TypeCastExpression
-	| TypeItem
-	| TypeParameter
-	| TypeParameters
-	| UnaryExpression
-	| UnionItem
-	| UnsafeBlock
-	| UseAsClause
-	| UseBounds
-	| UseDeclaration
-	| UseList
-	| UseWildcard
-	| VariadicParameter
-	| VisibilityModifier
-	| WhereClause
-	| WherePredicate
-	| WhileExpression
-	| YieldExpression
-	| ArgumentsGroup1
-	| VisibilityModifierGroup1
-	| EnumVariantListGroup1
-	| FieldDeclarationListGroup1
-	| FieldInitializerListGroup1
-	| OrderedFieldDeclarationListGroup1
-	| ParametersGroup1
-	| SlicePatternGroup1
-	| StructPatternGroup1
-	| TuplePatternGroup1
-	| UseBoundsGroup1
-	| UseListGroup1
-	| WhereClauseGroup1
+	| ExpressionStatementWithSemi
+	| MatchArmWithComma
+	| LineCommentDoc
+	| TokenTreePatternParen
+	| TokenTreePatternBracket
+	| TokenTreePatternBrace
+	| TokenTreeParen
+	| TokenTreeBracket
+	| TokenTreeBrace
+	| DelimTokenTreeParen
+	| DelimTokenTreeBracket
+	| DelimTokenTreeBrace
+	| InPath
+	| AttributedFieldDeclaration
+	| AttributedEnumVariant
+	| AttributedParameter
+	| AttributedTypeParameter
+	| AttributedArgument
+	| AttributedOrderedField
+	| TypeArgument
+	| MatchBlockArms
 	| VisibilityModifierPubParens;
 
 export interface KindMap {
-	_abstract_type_optional1: AbstractTypeOptional1;
-	_arguments_group1: _ArgumentsGroup1;
-	_array_expression_list: ArrayExpressionList;
-	_array_expression_semi: ArrayExpressionSemi;
-	_array_type_optional1: ArrayTypeOptional1;
-	_attributed_argument: AttributedArgument;
-	_attributed_enum_variant: AttributedEnumVariant;
-	_attributed_field_declaration: AttributedFieldDeclaration;
-	_attributed_ordered_field: AttributedOrderedField;
-	_attributed_parameter: AttributedParameter;
-	_attributed_type_parameter: AttributedTypeParameter;
-	_block_optional1: BlockOptional1;
-	_closure_expression_block: ClosureExpressionBlock;
-	_closure_expression_expr: ClosureExpressionExpr;
-	_closure_expression_optional1: ClosureExpressionOptional1;
-	_const_item_optional1: ConstItemOptional1;
-	_const_parameter_optional1: ConstParameterOptional1;
-	_delim_token_tree_brace: DelimTokenTreeBrace;
-	_delim_token_tree_bracket: DelimTokenTreeBracket;
-	_delim_token_tree_paren: DelimTokenTreeParen;
-	_enum_variant_list_group1: _EnumVariantListGroup1;
-	_expression_statement_with_semi: ExpressionStatementWithSemi;
-	_extern_crate_declaration_optional1: ExternCrateDeclarationOptional1;
-	_field_declaration_list_group1: _FieldDeclarationListGroup1;
-	_field_initializer_list_group1: _FieldInitializerListGroup1;
-	_field_pattern_named: FieldPatternNamed;
-	_function_type_fn_form: FunctionTypeFnForm;
-	_function_type_trait_form: FunctionTypeTraitForm;
-	_impl_item_body: ImplItemBody;
-	_impl_item_group1: ImplItemGroup1;
-	_impl_item_negative_clause: ImplItemNegativeClause;
-	_impl_item_positive_clause: ImplItemPositiveClause;
-	_in_path: InPath;
+	source_file: SourceFile;
+	expression_statement: ExpressionStatement;
+	macro_definition: MacroDefinition;
+	macro_rule: MacroRule;
+	token_tree_pattern: TokenTreePattern;
+	token_binding_pattern: TokenBindingPattern;
+	token_repetition_pattern: TokenRepetitionPattern;
+	token_tree: TokenTree;
+	token_repetition: TokenRepetition;
+	attribute_item: AttributeItem;
+	inner_attribute_item: InnerAttributeItem;
+	attribute: Attribute;
+	mod_item: ModItem;
+	foreign_mod_item: ForeignModItem;
+	declaration_list: DeclarationList;
+	struct_item: StructItem;
+	union_item: UnionItem;
+	enum_item: EnumItem;
+	enum_variant_list: EnumVariantList;
+	enum_variant: EnumVariant;
+	field_declaration_list: FieldDeclarationList;
+	field_declaration: FieldDeclaration;
+	ordered_field_declaration_list: OrderedFieldDeclarationList;
+	extern_crate_declaration: ExternCrateDeclaration;
+	const_item: ConstItem;
+	static_item: StaticItem;
+	type_item: TypeItem;
+	function_item: FunctionItem;
+	function_signature_item: FunctionSignatureItem;
+	function_modifiers: FunctionModifiers;
+	where_clause: WhereClause;
+	where_predicate: WherePredicate;
+	impl_item: ImplItem;
+	trait_item: TraitItem;
+	associated_type: AssociatedType;
+	trait_bounds: TraitBounds;
+	higher_ranked_trait_bound: HigherRankedTraitBound;
+	removed_trait_bound: RemovedTraitBound;
+	type_parameters: TypeParameters;
+	const_parameter: ConstParameter;
+	type_parameter: TypeParameter;
+	lifetime_parameter: LifetimeParameter;
+	let_declaration: LetDeclaration;
+	use_declaration: UseDeclaration;
+	scoped_use_list: ScopedUseList;
+	use_list: UseList;
+	use_as_clause: UseAsClause;
+	use_wildcard: UseWildcard;
+	parameters: Parameters;
+	self_parameter: SelfParameter;
+	variadic_parameter: VariadicParameter;
+	parameter: Parameter;
+	extern_modifier: ExternModifier;
+	visibility_modifier: VisibilityModifier;
+	bracketed_type: BracketedType;
+	qualified_type: QualifiedType;
+	lifetime: Lifetime;
+	array_type: ArrayType;
+	for_lifetimes: ForLifetimes;
+	function_type: FunctionType;
+	tuple_type: TupleType;
+	generic_function: GenericFunction;
+	generic_type: GenericType;
+	generic_type_with_turbofish: GenericTypeWithTurbofish;
+	bounded_type: BoundedType;
+	use_bounds: UseBounds;
+	type_arguments: TypeArguments;
+	type_binding: TypeBinding;
+	reference_type: ReferenceType;
+	pointer_type: PointerType;
+	abstract_type: AbstractType;
+	dynamic_type: DynamicType;
+	macro_invocation: MacroInvocation;
+	delim_token_tree: DelimTokenTree;
+	scoped_identifier: ScopedIdentifier;
+	scoped_type_identifier_in_expression_position: ScopedTypeIdentifierInExpressionPosition;
+	scoped_type_identifier: ScopedTypeIdentifier;
+	range_expression: RangeExpression;
+	unary_expression: UnaryExpression;
+	try_expression: TryExpression;
+	reference_expression: ReferenceExpression;
+	binary_expression: BinaryExpression;
+	assignment_expression: AssignmentExpression;
+	compound_assignment_expr: CompoundAssignmentExpr;
+	type_cast_expression: TypeCastExpression;
+	return_expression: ReturnExpression;
+	yield_expression: YieldExpression;
+	call_expression: CallExpression;
+	arguments: Arguments;
+	array_expression: ArrayExpression;
+	parenthesized_expression: ParenthesizedExpression;
+	tuple_expression: TupleExpression;
+	struct_expression: StructExpression;
+	field_initializer_list: FieldInitializerList;
+	shorthand_field_initializer: ShorthandFieldInitializer;
+	field_initializer: FieldInitializer;
+	base_field_initializer: BaseFieldInitializer;
+	if_expression: IfExpression;
+	let_condition: LetCondition;
 	_let_chain: LetChain;
+	else_clause: ElseClause;
+	match_expression: MatchExpression;
+	match_block: MatchBlock;
+	match_arm: MatchArm;
+	last_match_arm: LastMatchArm;
+	match_pattern: MatchPattern;
+	while_expression: WhileExpression;
+	loop_expression: LoopExpression;
+	for_expression: ForExpression;
+	const_block: ConstBlock;
+	closure_expression: ClosureExpression;
+	closure_parameters: ClosureParameters;
+	label: Label;
+	break_expression: BreakExpression;
+	continue_expression: ContinueExpression;
+	index_expression: IndexExpression;
+	await_expression: AwaitExpression;
+	field_expression: FieldExpression;
+	unsafe_block: UnsafeBlock;
+	async_block: AsyncBlock;
+	gen_block: GenBlock;
+	try_block: TryBlock;
+	block: Block;
+	generic_pattern: GenericPattern;
+	tuple_pattern: TuplePattern;
+	slice_pattern: SlicePattern;
+	tuple_struct_pattern: TupleStructPattern;
+	struct_pattern: StructPattern;
+	field_pattern: FieldPattern;
+	mut_pattern: MutPattern;
+	range_pattern: RangePattern;
+	ref_pattern: RefPattern;
+	captured_pattern: CapturedPattern;
+	reference_pattern: ReferencePattern;
+	or_pattern: OrPattern;
+	negative_literal: NegativeLiteral;
+	string_literal: StringLiteral;
+	raw_string_literal: RawStringLiteral;
+	comment: Comment;
+	line_comment: LineComment;
+	block_comment: BlockComment;
+	_attribute_group1: AttributeGroup1;
+	_enum_variant_list_group1: EnumVariantListGroup1;
+	_enum_variant_optional1: EnumVariantOptional1;
+	_field_declaration_list_group1: FieldDeclarationListGroup1;
+	_ordered_field_declaration_list_group1: OrderedFieldDeclarationListGroup1;
+	_extern_crate_declaration_optional1: ExternCrateDeclarationOptional1;
+	_function_item_optional1: FunctionItemOptional1;
+	_where_clause_group1: WhereClauseGroup1;
+	_const_parameter_optional1: ConstParameterOptional1;
+	_type_parameter_optional1: TypeParameterOptional1;
 	_let_declaration_optional1: LetDeclarationOptional1;
 	_let_declaration_optional2: LetDeclarationOptional2;
-	_line_comment_doc: LineCommentDoc;
-	_macro_definition_brace: MacroDefinitionBrace;
-	_macro_definition_bracket: MacroDefinitionBracket;
-	_macro_definition_paren: MacroDefinitionParen;
-	_match_arm_with_comma: MatchArmWithComma;
-	_match_block_arms: MatchBlockArms;
+	_use_list_group1: UseListGroup1;
+	_parameters_group1: ParametersGroup1;
+	_variadic_parameter_optional1: VariadicParameterOptional1;
+	_visibility_modifier_group1: VisibilityModifierGroup1;
+	_array_type_optional1: ArrayTypeOptional1;
+	_use_bounds_group1: UseBoundsGroup1;
+	_abstract_type_optional1: AbstractTypeOptional1;
+	_arguments_group1: ArgumentsGroup1;
+	_array_expression_group1: ArrayExpressionGroup1;
+	_field_initializer_list_group1: FieldInitializerListGroup1;
 	_match_pattern_optional1: MatchPatternOptional1;
+	_while_expression_optional1: WhileExpressionOptional1;
+	_tuple_pattern_group1: TuplePatternGroup1;
+	_slice_pattern_group1: SlicePatternGroup1;
+	_struct_pattern_group1: StructPatternGroup1;
+	_range_pattern_group2: RangePatternGroup2;
+	_block_comment_group1: BlockCommentGroup1;
+	_use_wildcard_clause: UseWildcardClause;
+	_reference_expression_raw_mut: ReferenceExpressionRawMut;
+	_impl_item_body: ImplItemBody;
+	_impl_item_positive_clause: ImplItemPositiveClause;
+	_impl_item_negative_clause: ImplItemNegativeClause;
+	_array_expression_semi: ArrayExpressionSemi;
+	_array_expression_list: ArrayExpressionList;
+	_closure_expression_block: ClosureExpressionBlock;
+	_closure_expression_expr: ClosureExpressionExpr;
+	_field_pattern_named: FieldPatternNamed;
+	_function_type_trait_form: FunctionTypeTraitForm;
+	_function_type_fn_form: FunctionTypeFnForm;
+	_macro_definition_paren: MacroDefinitionParen;
+	_macro_definition_bracket: MacroDefinitionBracket;
+	_macro_definition_brace: MacroDefinitionBrace;
 	_or_pattern_binary: OrPatternBinary;
 	_or_pattern_prefix: OrPatternPrefix;
-	_ordered_field_declaration_list_group1: _OrderedFieldDeclarationListGroup1;
-	_parameters_group1: _ParametersGroup1;
 	_range_expression_binary: RangeExpressionBinary;
 	_range_expression_postfix: RangeExpressionPostfix;
 	_range_expression_prefix: RangeExpressionPrefix;
-	_range_pattern_left_with_right: RangePatternLeftWithRight;
 	_range_pattern_prefix: RangePatternPrefix;
-	_reference_expression_raw_mut: ReferenceExpressionRawMut;
-	_slice_pattern_group1: _SlicePatternGroup1;
+	_range_pattern_left_with_right: RangePatternLeftWithRight;
 	_struct_item_brace: StructItemBrace;
 	_struct_item_tuple: StructItemTuple;
-	_struct_pattern_group1: _StructPatternGroup1;
-	_token_tree_brace: TokenTreeBrace;
-	_token_tree_bracket: TokenTreeBracket;
-	_token_tree_paren: TokenTreeParen;
-	_token_tree_pattern_brace: TokenTreePatternBrace;
-	_token_tree_pattern_bracket: TokenTreePatternBracket;
-	_token_tree_pattern_paren: TokenTreePatternParen;
-	_tuple_pattern_group1: _TuplePatternGroup1;
-	_type_argument: TypeArgument;
-	_type_parameter_optional1: TypeParameterOptional1;
-	_use_bounds_group1: _UseBoundsGroup1;
-	_use_list_group1: _UseListGroup1;
-	_use_wildcard_clause: UseWildcardClause;
-	_use_wildcard_group1: UseWildcardGroup1;
-	_variadic_parameter_optional1: VariadicParameterOptional1;
-	_visibility_modifier_group1: _VisibilityModifierGroup1;
-	_visibility_modifier_in_path: VisibilityModifierInPath;
 	_visibility_modifier_pub: VisibilityModifierPub;
-	_where_clause_group1: _WhereClauseGroup1;
-	abstract_type: AbstractType;
-	arguments: Arguments;
-	array_expression: ArrayExpression;
-	array_type: ArrayType;
-	assignment_expression: AssignmentExpression;
-	associated_type: AssociatedType;
-	async_block: AsyncBlock;
-	attribute: Attribute;
-	attribute_item: AttributeItem;
-	await_expression: AwaitExpression;
-	base_field_initializer: BaseFieldInitializer;
-	binary_expression: BinaryExpression;
-	block: Block;
-	block_comment: BlockComment;
-	bounded_type: BoundedType;
-	bracketed_type: BracketedType;
-	break_expression: BreakExpression;
-	call_expression: CallExpression;
-	captured_pattern: CapturedPattern;
-	closure_expression: ClosureExpression;
-	closure_parameters: ClosureParameters;
-	comment: Comment;
-	compound_assignment_expr: CompoundAssignmentExpr;
-	const_block: ConstBlock;
-	const_item: ConstItem;
-	const_parameter: ConstParameter;
-	continue_expression: ContinueExpression;
-	declaration_list: DeclarationList;
-	delim_token_tree: DelimTokenTree;
-	dynamic_type: DynamicType;
-	else_clause: ElseClause;
-	enum_item: EnumItem;
-	enum_variant: EnumVariant;
-	enum_variant_list: EnumVariantList;
-	expression_statement: ExpressionStatement;
-	extern_crate_declaration: ExternCrateDeclaration;
-	extern_modifier: ExternModifier;
-	field_declaration: FieldDeclaration;
-	field_declaration_list: FieldDeclarationList;
-	field_expression: FieldExpression;
-	field_initializer: FieldInitializer;
-	field_initializer_list: FieldInitializerList;
-	field_pattern: FieldPattern;
-	for_expression: ForExpression;
-	for_lifetimes: ForLifetimes;
-	foreign_mod_item: ForeignModItem;
-	function_item: FunctionItem;
-	function_modifiers: FunctionModifiers;
-	function_signature_item: FunctionSignatureItem;
-	function_type: FunctionType;
-	gen_block: GenBlock;
-	generic_function: GenericFunction;
-	generic_pattern: GenericPattern;
-	generic_type: GenericType;
-	generic_type_with_turbofish: GenericTypeWithTurbofish;
-	higher_ranked_trait_bound: HigherRankedTraitBound;
-	if_expression: IfExpression;
-	impl_item: ImplItem;
-	index_expression: IndexExpression;
-	inner_attribute_item: InnerAttributeItem;
-	label: Label;
-	last_match_arm: LastMatchArm;
-	let_condition: LetCondition;
-	let_declaration: LetDeclaration;
-	lifetime: Lifetime;
-	lifetime_parameter: LifetimeParameter;
-	line_comment: LineComment;
-	loop_expression: LoopExpression;
-	macro_definition: MacroDefinition;
-	macro_invocation: MacroInvocation;
-	macro_rule: MacroRule;
-	match_arm: MatchArm;
-	match_block: MatchBlock;
-	match_expression: MatchExpression;
-	match_pattern: MatchPattern;
-	mod_item: ModItem;
-	mut_pattern: MutPattern;
-	negative_literal: NegativeLiteral;
-	or_pattern: OrPattern;
-	ordered_field_declaration_list: OrderedFieldDeclarationList;
-	parameter: Parameter;
-	parameters: Parameters;
-	parenthesized_expression: ParenthesizedExpression;
-	pointer_type: PointerType;
-	qualified_type: QualifiedType;
-	range_expression: RangeExpression;
-	range_pattern: RangePattern;
-	raw_string_literal: RawStringLiteral;
-	ref_pattern: RefPattern;
-	reference_expression: ReferenceExpression;
-	reference_pattern: ReferencePattern;
-	reference_type: ReferenceType;
-	removed_trait_bound: RemovedTraitBound;
-	return_expression: ReturnExpression;
-	scoped_identifier: ScopedIdentifier;
-	scoped_type_identifier: ScopedTypeIdentifier;
-	scoped_type_identifier_in_expression_position: ScopedTypeIdentifierInExpressionPosition;
-	scoped_use_list: ScopedUseList;
-	self_parameter: SelfParameter;
-	shorthand_field_initializer: ShorthandFieldInitializer;
-	slice_pattern: SlicePattern;
-	source_file: SourceFile;
-	static_item: StaticItem;
-	string_literal: StringLiteral;
-	struct_expression: StructExpression;
-	struct_item: StructItem;
-	struct_pattern: StructPattern;
-	token_binding_pattern: TokenBindingPattern;
-	token_repetition: TokenRepetition;
-	token_repetition_pattern: TokenRepetitionPattern;
-	token_tree: TokenTree;
-	token_tree_pattern: TokenTreePattern;
-	trait_bounds: TraitBounds;
-	trait_item: TraitItem;
-	try_block: TryBlock;
-	try_expression: TryExpression;
-	tuple_expression: TupleExpression;
-	tuple_pattern: TuplePattern;
-	tuple_struct_pattern: TupleStructPattern;
-	tuple_type: TupleType;
-	type_arguments: TypeArguments;
-	type_binding: TypeBinding;
-	type_cast_expression: TypeCastExpression;
-	type_item: TypeItem;
-	type_parameter: TypeParameter;
-	type_parameters: TypeParameters;
-	unary_expression: UnaryExpression;
-	union_item: UnionItem;
-	unsafe_block: UnsafeBlock;
-	use_as_clause: UseAsClause;
-	use_bounds: UseBounds;
-	use_declaration: UseDeclaration;
-	use_list: UseList;
-	use_wildcard: UseWildcard;
-	variadic_parameter: VariadicParameter;
-	visibility_modifier: VisibilityModifier;
-	where_clause: WhereClause;
-	where_predicate: WherePredicate;
-	while_expression: WhileExpression;
-	yield_expression: YieldExpression;
-	arguments_group1: ArgumentsGroup1;
-	visibility_modifier_group1: VisibilityModifierGroup1;
-	enum_variant_list_group1: EnumVariantListGroup1;
-	field_declaration_list_group1: FieldDeclarationListGroup1;
-	field_initializer_list_group1: FieldInitializerListGroup1;
-	ordered_field_declaration_list_group1: OrderedFieldDeclarationListGroup1;
-	parameters_group1: ParametersGroup1;
-	slice_pattern_group1: SlicePatternGroup1;
-	struct_pattern_group1: StructPatternGroup1;
-	tuple_pattern_group1: TuplePatternGroup1;
-	use_bounds_group1: UseBoundsGroup1;
-	use_list_group1: UseListGroup1;
-	where_clause_group1: WhereClauseGroup1;
+	_expression_statement_with_semi: ExpressionStatementWithSemi;
+	_match_arm_with_comma: MatchArmWithComma;
+	_line_comment_doc: LineCommentDoc;
+	_token_tree_pattern_paren: TokenTreePatternParen;
+	_token_tree_pattern_bracket: TokenTreePatternBracket;
+	_token_tree_pattern_brace: TokenTreePatternBrace;
+	_token_tree_paren: TokenTreeParen;
+	_token_tree_bracket: TokenTreeBracket;
+	_token_tree_brace: TokenTreeBrace;
+	_delim_token_tree_paren: DelimTokenTreeParen;
+	_delim_token_tree_bracket: DelimTokenTreeBracket;
+	_delim_token_tree_brace: DelimTokenTreeBrace;
+	_in_path: InPath;
+	_attributed_field_declaration: AttributedFieldDeclaration;
+	_attributed_enum_variant: AttributedEnumVariant;
+	_attributed_parameter: AttributedParameter;
+	_attributed_type_parameter: AttributedTypeParameter;
+	_attributed_argument: AttributedArgument;
+	_attributed_ordered_field: AttributedOrderedField;
+	_type_argument: TypeArgument;
+	_match_block_arms: MatchBlockArms;
 	_visibility_modifier_pub_parens: VisibilityModifierPubParens;
-	__range_expression_binary_operator: RangeExpressionBinaryOperator;
-	_compound_assignment_expr_operator: CompoundAssignmentExprOperator;
-	_field_identifier: FieldIdentifier;
-	_line_comment_content: LineCommentContent;
-	_line_comment_regular_dslash: LineCommentRegularDslash;
-	_operator: Operator;
-	_primitive_type: PrimitiveType;
-	_reference_expression_raw_const: ReferenceExpressionRawConst;
-	_reserved_identifier: ReservedIdentifier;
-	_token_binding_pattern_type: TokenBindingPatternType;
-	_token_tree_punctuation: TokenTreePunctuation;
-	_type_identifier: TypeIdentifier;
-	_unary_expression_operator: UnaryExpressionOperator;
-	boolean_literal: BooleanLiteral;
-	char_literal: CharLiteral;
-	crate: Crate;
-	escape_sequence: EscapeSequence;
 	fragment_specifier: FragmentSpecifier;
-	identifier: Identifier;
-	integer_literal: IntegerLiteral;
-	metavariable: Metavariable;
-	mutable_specifier: MutableSpecifier;
-	self: Self;
-	shebang: Shebang;
-	super: Super;
-	unit_expression: UnitExpression;
 	unit_type: UnitType;
+	mutable_specifier: MutableSpecifier;
+	unit_expression: UnitExpression;
+	integer_literal: IntegerLiteral;
+	char_literal: CharLiteral;
+	escape_sequence: EscapeSequence;
+	boolean_literal: BooleanLiteral;
+	identifier: Identifier;
+	shebang: Shebang;
+	_reserved_identifier: ReservedIdentifier;
+	_type_identifier: TypeIdentifier;
+	_field_identifier: FieldIdentifier;
+	self: Self;
+	super: Super;
+	crate: Crate;
+	metavariable: Metavariable;
+	_primitive_type: PrimitiveType;
+	_token_binding_pattern_type: TokenBindingPatternType;
+	_compound_assignment_expr_operator: CompoundAssignmentExprOperator;
+	_token_tree_punctuation: TokenTreePunctuation;
+	_token_keywords: TokenKeywords;
+	_reference_expression_raw_const: ReferenceExpressionRawConst;
+	_line_comment_regular_dslash: LineCommentRegularDslash;
+	_line_comment_content: LineCommentContent;
+	_operator: Operator;
+	_unary_expression_operator: UnaryExpressionOperator;
+	__range_expression_binary_operator: RangeExpressionBinaryOperator;
 	string_content: StringContent;
+	_raw_string_literal_start: RawStringLiteralStart;
 	raw_string_literal_content: RawStringLiteralContent;
+	_raw_string_literal_end: RawStringLiteralEnd;
 	float_literal: FloatLiteral;
 	_line_doc_content: LineDocContent;
 	_error_sentinel: ErrorSentinel;
 }
 
 // Per-kind namespace interfaces — one computed base per kind (spec 008 US1)
-export interface AbstractTypeOptional1Ns extends NodeNs<
-	AbstractTypeOptional1,
+export interface SourceFileNs extends NodeNs<SourceFile, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExpressionStatementNs extends NodeNs<
+	ExpressionStatement,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface _ArgumentsGroup1Ns extends NodeNs<_ArgumentsGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ArrayExpressionListNs extends NodeNs<
-	ArrayExpressionList,
+export interface MacroDefinitionNs extends NodeNs<MacroDefinition, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MacroRuleNs extends NodeNs<MacroRule, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TokenTreePatternNs extends NodeNs<TokenTreePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TokenBindingPatternNs extends NodeNs<
+	TokenBindingPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface ArrayExpressionSemiNs extends NodeNs<
-	ArrayExpressionSemi,
+export interface TokenRepetitionPatternNs extends NodeNs<
+	TokenRepetitionPattern,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface ArrayTypeOptional1Ns extends NodeNs<ArrayTypeOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AttributedArgumentNs extends NodeNs<AttributedArgument, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AttributedEnumVariantNs extends NodeNs<
-	AttributedEnumVariant,
+export interface TokenTreeNs extends NodeNs<TokenTree, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TokenRepetitionNs extends NodeNs<TokenRepetition, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AttributeItemNs extends NodeNs<AttributeItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface InnerAttributeItemNs extends NodeNs<InnerAttributeItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AttributeNs extends NodeNs<Attribute, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ModItemNs extends NodeNs<ModItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ForeignModItemNs extends NodeNs<ForeignModItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface DeclarationListNs extends NodeNs<DeclarationList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface StructItemNs extends NodeNs<StructItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface UnionItemNs extends NodeNs<UnionItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface EnumItemNs extends NodeNs<EnumItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface EnumVariantListNs extends NodeNs<EnumVariantList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface EnumVariantNs extends NodeNs<EnumVariant, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FieldDeclarationListNs extends NodeNs<
+	FieldDeclarationList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface AttributedFieldDeclarationNs extends NodeNs<
-	AttributedFieldDeclaration,
+export interface FieldDeclarationNs extends NodeNs<FieldDeclaration, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface OrderedFieldDeclarationListNs extends NodeNs<
+	OrderedFieldDeclarationList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface AttributedOrderedFieldNs extends NodeNs<
-	AttributedOrderedField,
+export interface ExternCrateDeclarationNs extends NodeNs<
+	ExternCrateDeclaration,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface AttributedParameterNs extends NodeNs<
-	AttributedParameter,
+export interface ConstItemNs extends NodeNs<ConstItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface StaticItemNs extends NodeNs<StaticItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TypeItemNs extends NodeNs<TypeItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FunctionItemNs extends NodeNs<FunctionItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FunctionSignatureItemNs extends NodeNs<
+	FunctionSignatureItem,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface AttributedTypeParameterNs extends NodeNs<
-	AttributedTypeParameter,
+export interface FunctionModifiersNs extends NodeNs<FunctionModifiers, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface WhereClauseNs extends NodeNs<WhereClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface WherePredicateNs extends NodeNs<WherePredicate, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ImplItemNs extends NodeNs<ImplItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TraitItemNs extends NodeNs<TraitItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AssociatedTypeNs extends NodeNs<AssociatedType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TraitBoundsNs extends NodeNs<TraitBounds, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface HigherRankedTraitBoundNs extends NodeNs<
+	HigherRankedTraitBound,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface BlockOptional1Ns extends NodeNs<BlockOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ClosureExpressionBlockNs extends NodeNs<
-	ClosureExpressionBlock,
+export interface RemovedTraitBoundNs extends NodeNs<RemovedTraitBound, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TypeParametersNs extends NodeNs<TypeParameters, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ConstParameterNs extends NodeNs<ConstParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TypeParameterNs extends NodeNs<TypeParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface LifetimeParameterNs extends NodeNs<LifetimeParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface LetDeclarationNs extends NodeNs<LetDeclaration, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface UseDeclarationNs extends NodeNs<UseDeclaration, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ScopedUseListNs extends NodeNs<ScopedUseList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface UseListNs extends NodeNs<UseList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface UseAsClauseNs extends NodeNs<UseAsClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface UseWildcardNs extends NodeNs<UseWildcard, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ParametersNs extends NodeNs<Parameters, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface SelfParameterNs extends NodeNs<SelfParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface VariadicParameterNs extends NodeNs<VariadicParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ParameterNs extends NodeNs<Parameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ExternModifierNs extends NodeNs<ExternModifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface VisibilityModifierNs extends NodeNs<VisibilityModifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface BracketedTypeNs extends NodeNs<BracketedType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface QualifiedTypeNs extends NodeNs<QualifiedType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface LifetimeNs extends NodeNs<Lifetime, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ArrayTypeNs extends NodeNs<ArrayType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ForLifetimesNs extends NodeNs<ForLifetimes, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FunctionTypeNs extends NodeNs<FunctionType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TupleTypeNs extends NodeNs<TupleType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface GenericFunctionNs extends NodeNs<GenericFunction, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface GenericTypeNs extends NodeNs<GenericType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface GenericTypeWithTurbofishNs extends NodeNs<
+	GenericTypeWithTurbofish,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface ClosureExpressionExprNs extends NodeNs<
-	ClosureExpressionExpr,
+export interface BoundedTypeNs extends NodeNs<BoundedType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface UseBoundsNs extends NodeNs<UseBounds, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TypeArgumentsNs extends NodeNs<TypeArguments, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TypeBindingNs extends NodeNs<TypeBinding, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ReferenceTypeNs extends NodeNs<ReferenceType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface PointerTypeNs extends NodeNs<PointerType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AbstractTypeNs extends NodeNs<AbstractType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface DynamicTypeNs extends NodeNs<DynamicType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MacroInvocationNs extends NodeNs<MacroInvocation, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface DelimTokenTreeNs extends NodeNs<DelimTokenTree, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ScopedIdentifierNs extends NodeNs<ScopedIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ScopedTypeIdentifierInExpressionPositionNs extends NodeNs<
+	ScopedTypeIdentifierInExpressionPosition,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface ClosureExpressionOptional1Ns extends NodeNs<
-	ClosureExpressionOptional1,
+export interface ScopedTypeIdentifierNs extends NodeNs<
+	ScopedTypeIdentifier,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface ConstItemOptional1Ns extends NodeNs<ConstItemOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ConstParameterOptional1Ns extends NodeNs<
-	ConstParameterOptional1,
+export interface RangeExpressionNs extends NodeNs<RangeExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface UnaryExpressionNs extends NodeNs<UnaryExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TryExpressionNs extends NodeNs<TryExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ReferenceExpressionNs extends NodeNs<
+	ReferenceExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface DelimTokenTreeBraceNs extends NodeNs<
-	DelimTokenTreeBrace,
+export interface BinaryExpressionNs extends NodeNs<BinaryExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AssignmentExpressionNs extends NodeNs<
+	AssignmentExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface DelimTokenTreeBracketNs extends NodeNs<
-	DelimTokenTreeBracket,
+export interface CompoundAssignmentExprNs extends NodeNs<
+	CompoundAssignmentExpr,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface DelimTokenTreeParenNs extends NodeNs<
-	DelimTokenTreeParen,
+export interface TypeCastExpressionNs extends NodeNs<TypeCastExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ReturnExpressionNs extends NodeNs<ReturnExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface YieldExpressionNs extends NodeNs<YieldExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface CallExpressionNs extends NodeNs<CallExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ArgumentsNs extends NodeNs<Arguments, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ArrayExpressionNs extends NodeNs<ArrayExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ParenthesizedExpressionNs extends NodeNs<
+	ParenthesizedExpression,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface _EnumVariantListGroup1Ns extends NodeNs<
-	_EnumVariantListGroup1,
+export interface TupleExpressionNs extends NodeNs<TupleExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface StructExpressionNs extends NodeNs<StructExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FieldInitializerListNs extends NodeNs<
+	FieldInitializerList,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface ExpressionStatementWithSemiNs extends NodeNs<
-	ExpressionStatementWithSemi,
+export interface ShorthandFieldInitializerNs extends NodeNs<
+	ShorthandFieldInitializer,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface FieldInitializerNs extends NodeNs<FieldInitializer, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface BaseFieldInitializerNs extends NodeNs<
+	BaseFieldInitializer,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface IfExpressionNs extends NodeNs<IfExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface LetConditionNs extends NodeNs<LetCondition, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface LetChainNs extends NodeNs<LetChain, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ElseClauseNs extends NodeNs<ElseClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MatchExpressionNs extends NodeNs<MatchExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MatchBlockNs extends NodeNs<MatchBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MatchArmNs extends NodeNs<MatchArm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface LastMatchArmNs extends NodeNs<LastMatchArm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MatchPatternNs extends NodeNs<MatchPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface WhileExpressionNs extends NodeNs<WhileExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface LoopExpressionNs extends NodeNs<LoopExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ForExpressionNs extends NodeNs<ForExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ConstBlockNs extends NodeNs<ConstBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ClosureExpressionNs extends NodeNs<ClosureExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ClosureParametersNs extends NodeNs<ClosureParameters, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface LabelNs extends NodeNs<Label, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface BreakExpressionNs extends NodeNs<BreakExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ContinueExpressionNs extends NodeNs<ContinueExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface IndexExpressionNs extends NodeNs<IndexExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AwaitExpressionNs extends NodeNs<AwaitExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FieldExpressionNs extends NodeNs<FieldExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface UnsafeBlockNs extends NodeNs<UnsafeBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AsyncBlockNs extends NodeNs<AsyncBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface GenBlockNs extends NodeNs<GenBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TryBlockNs extends NodeNs<TryBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface BlockNs extends NodeNs<Block, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface GenericPatternNs extends NodeNs<GenericPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TuplePatternNs extends NodeNs<TuplePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface SlicePatternNs extends NodeNs<SlicePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TupleStructPatternNs extends NodeNs<TupleStructPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface StructPatternNs extends NodeNs<StructPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FieldPatternNs extends NodeNs<FieldPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MutPatternNs extends NodeNs<MutPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface RangePatternNs extends NodeNs<RangePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface RefPatternNs extends NodeNs<RefPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface CapturedPatternNs extends NodeNs<CapturedPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ReferencePatternNs extends NodeNs<ReferencePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface OrPatternNs extends NodeNs<OrPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface NegativeLiteralNs extends NodeNs<NegativeLiteral, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface StringLiteralNs extends NodeNs<StringLiteral, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface RawStringLiteralNs extends NodeNs<RawStringLiteral, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface CommentNs extends NodeNs<Comment, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface LineCommentNs extends NodeNs<LineComment, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface BlockCommentNs extends NodeNs<BlockComment, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AttributeGroup1Ns extends NodeNs<AttributeGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface EnumVariantListGroup1Ns extends NodeNs<
+	EnumVariantListGroup1,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface EnumVariantOptional1Ns extends NodeNs<
+	EnumVariantOptional1,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface FieldDeclarationListGroup1Ns extends NodeNs<
+	FieldDeclarationListGroup1,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface OrderedFieldDeclarationListGroup1Ns extends NodeNs<
+	OrderedFieldDeclarationListGroup1,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
@@ -7407,42 +7616,25 @@ export interface ExternCrateDeclarationOptional1Ns extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface _FieldDeclarationListGroup1Ns extends NodeNs<
-	_FieldDeclarationListGroup1,
+export interface FunctionItemOptional1Ns extends NodeNs<
+	FunctionItemOptional1,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface _FieldInitializerListGroup1Ns extends NodeNs<
-	_FieldInitializerListGroup1,
+export interface WhereClauseGroup1Ns extends NodeNs<WhereClauseGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ConstParameterOptional1Ns extends NodeNs<
+	ConstParameterOptional1,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface FieldPatternNamedNs extends NodeNs<FieldPatternNamed, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface FunctionTypeFnFormNs extends NodeNs<FunctionTypeFnForm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface FunctionTypeTraitFormNs extends NodeNs<
-	FunctionTypeTraitForm,
+export interface TypeParameterOptional1Ns extends NodeNs<
+	TypeParameterOptional1,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface ImplItemBodyNs extends NodeNs<ImplItemBody, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ImplItemGroup1Ns extends NodeNs<ImplItemGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ImplItemNegativeClauseNs extends NodeNs<
-	ImplItemNegativeClause,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface ImplItemPositiveClauseNs extends NodeNs<
-	ImplItemPositiveClause,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface InPathNs extends NodeNs<InPath, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface LetChainNs extends NodeNs<LetChain, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface LetDeclarationOptional1Ns extends NodeNs<
 	LetDeclarationOptional1,
 	LeafScalarMap,
@@ -7455,9 +7647,117 @@ export interface LetDeclarationOptional2Ns extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface LineCommentDocNs extends NodeNs<LineCommentDoc, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MacroDefinitionBraceNs extends NodeNs<
-	MacroDefinitionBrace,
+export interface UseListGroup1Ns extends NodeNs<UseListGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ParametersGroup1Ns extends NodeNs<ParametersGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface VariadicParameterOptional1Ns extends NodeNs<
+	VariadicParameterOptional1,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface VisibilityModifierGroup1Ns extends NodeNs<
+	VisibilityModifierGroup1,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface ArrayTypeOptional1Ns extends NodeNs<ArrayTypeOptional1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface UseBoundsGroup1Ns extends NodeNs<UseBoundsGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AbstractTypeOptional1Ns extends NodeNs<
+	AbstractTypeOptional1,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface ArgumentsGroup1Ns extends NodeNs<ArgumentsGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ArrayExpressionGroup1Ns extends NodeNs<
+	ArrayExpressionGroup1,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface FieldInitializerListGroup1Ns extends NodeNs<
+	FieldInitializerListGroup1,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface MatchPatternOptional1Ns extends NodeNs<
+	MatchPatternOptional1,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface WhileExpressionOptional1Ns extends NodeNs<
+	WhileExpressionOptional1,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface TuplePatternGroup1Ns extends NodeNs<TuplePatternGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface SlicePatternGroup1Ns extends NodeNs<SlicePatternGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface StructPatternGroup1Ns extends NodeNs<
+	StructPatternGroup1,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface RangePatternGroup2Ns extends NodeNs<RangePatternGroup2, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface BlockCommentGroup1Ns extends NodeNs<BlockCommentGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface UseWildcardClauseNs extends NodeNs<UseWildcardClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ReferenceExpressionRawMutNs extends NodeNs<
+	ReferenceExpressionRawMut,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface ImplItemBodyNs extends NodeNs<ImplItemBody, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface ImplItemPositiveClauseNs extends NodeNs<
+	ImplItemPositiveClause,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface ImplItemNegativeClauseNs extends NodeNs<
+	ImplItemNegativeClause,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface ArrayExpressionSemiNs extends NodeNs<
+	ArrayExpressionSemi,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface ArrayExpressionListNs extends NodeNs<
+	ArrayExpressionList,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface ClosureExpressionBlockNs extends NodeNs<
+	ClosureExpressionBlock,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface ClosureExpressionExprNs extends NodeNs<
+	ClosureExpressionExpr,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface FieldPatternNamedNs extends NodeNs<FieldPatternNamed, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface FunctionTypeTraitFormNs extends NodeNs<
+	FunctionTypeTraitForm,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface FunctionTypeFnFormNs extends NodeNs<FunctionTypeFnForm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MacroDefinitionParenNs extends NodeNs<
+	MacroDefinitionParen,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
@@ -7468,29 +7768,14 @@ export interface MacroDefinitionBracketNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface MacroDefinitionParenNs extends NodeNs<
-	MacroDefinitionParen,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface MatchArmWithCommaNs extends NodeNs<MatchArmWithComma, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MatchBlockArmsNs extends NodeNs<MatchBlockArms, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MatchPatternOptional1Ns extends NodeNs<
-	MatchPatternOptional1,
+export interface MacroDefinitionBraceNs extends NodeNs<
+	MacroDefinitionBrace,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
 export interface OrPatternBinaryNs extends NodeNs<OrPatternBinary, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface OrPatternPrefixNs extends NodeNs<OrPatternPrefix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _OrderedFieldDeclarationListGroup1Ns extends NodeNs<
-	_OrderedFieldDeclarationListGroup1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface _ParametersGroup1Ns extends NodeNs<_ParametersGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface RangeExpressionBinaryNs extends NodeNs<
 	RangeExpressionBinary,
 	LeafScalarMap,
@@ -7509,38 +7794,31 @@ export interface RangeExpressionPrefixNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
+export interface RangePatternPrefixNs extends NodeNs<RangePatternPrefix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface RangePatternLeftWithRightNs extends NodeNs<
 	RangePatternLeftWithRight,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface RangePatternPrefixNs extends NodeNs<RangePatternPrefix, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ReferenceExpressionRawMutNs extends NodeNs<
-	ReferenceExpressionRawMut,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface _SlicePatternGroup1Ns extends NodeNs<
-	_SlicePatternGroup1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
 export interface StructItemBraceNs extends NodeNs<StructItemBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface StructItemTupleNs extends NodeNs<StructItemTuple, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _StructPatternGroup1Ns extends NodeNs<
-	_StructPatternGroup1,
+export interface VisibilityModifierPubNs extends NodeNs<
+	VisibilityModifierPub,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface TokenTreeBraceNs extends NodeNs<TokenTreeBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TokenTreeBracketNs extends NodeNs<TokenTreeBracket, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TokenTreeParenNs extends NodeNs<TokenTreeParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TokenTreePatternBraceNs extends NodeNs<
-	TokenTreePatternBrace,
+export interface ExpressionStatementWithSemiNs extends NodeNs<
+	ExpressionStatementWithSemi,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface MatchArmWithCommaNs extends NodeNs<MatchArmWithComma, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface LineCommentDocNs extends NodeNs<LineCommentDoc, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TokenTreePatternParenNs extends NodeNs<
+	TokenTreePatternParen,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
@@ -7551,327 +7829,67 @@ export interface TokenTreePatternBracketNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface TokenTreePatternParenNs extends NodeNs<
-	TokenTreePatternParen,
+export interface TokenTreePatternBraceNs extends NodeNs<
+	TokenTreePatternBrace,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
-export interface _TuplePatternGroup1Ns extends NodeNs<
-	_TuplePatternGroup1,
+export interface TokenTreeParenNs extends NodeNs<TokenTreeParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TokenTreeBracketNs extends NodeNs<TokenTreeBracket, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface TokenTreeBraceNs extends NodeNs<TokenTreeBrace, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface DelimTokenTreeParenNs extends NodeNs<
+	DelimTokenTreeParen,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface DelimTokenTreeBracketNs extends NodeNs<
+	DelimTokenTreeBracket,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface DelimTokenTreeBraceNs extends NodeNs<
+	DelimTokenTreeBrace,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface InPathNs extends NodeNs<InPath, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AttributedFieldDeclarationNs extends NodeNs<
+	AttributedFieldDeclaration,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface AttributedEnumVariantNs extends NodeNs<
+	AttributedEnumVariant,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface AttributedParameterNs extends NodeNs<
+	AttributedParameter,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface AttributedTypeParameterNs extends NodeNs<
+	AttributedTypeParameter,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
+export interface AttributedArgumentNs extends NodeNs<AttributedArgument, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface AttributedOrderedFieldNs extends NodeNs<
+	AttributedOrderedField,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap
 > {}
 export interface TypeArgumentNs extends NodeNs<TypeArgument, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TypeParameterOptional1Ns extends NodeNs<
-	TypeParameterOptional1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface _UseBoundsGroup1Ns extends NodeNs<_UseBoundsGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface _UseListGroup1Ns extends NodeNs<_UseListGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface UseWildcardClauseNs extends NodeNs<UseWildcardClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface UseWildcardGroup1Ns extends NodeNs<UseWildcardGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface VariadicParameterOptional1Ns extends NodeNs<
-	VariadicParameterOptional1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface _VisibilityModifierGroup1Ns extends NodeNs<
-	_VisibilityModifierGroup1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface VisibilityModifierInPathNs extends NodeNs<
-	VisibilityModifierInPath,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface VisibilityModifierPubNs extends NodeNs<
-	VisibilityModifierPub,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface _WhereClauseGroup1Ns extends NodeNs<_WhereClauseGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AbstractTypeNs extends NodeNs<AbstractType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ArgumentsNs extends NodeNs<Arguments, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ArrayExpressionNs extends NodeNs<ArrayExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ArrayTypeNs extends NodeNs<ArrayType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AssignmentExpressionNs extends NodeNs<
-	AssignmentExpression,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface AssociatedTypeNs extends NodeNs<AssociatedType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AsyncBlockNs extends NodeNs<AsyncBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AttributeNs extends NodeNs<Attribute, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AttributeItemNs extends NodeNs<AttributeItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface AwaitExpressionNs extends NodeNs<AwaitExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface BaseFieldInitializerNs extends NodeNs<
-	BaseFieldInitializer,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface BinaryExpressionNs extends NodeNs<BinaryExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface BlockNs extends NodeNs<Block, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface BlockCommentNs extends NodeNs<BlockComment, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface BoundedTypeNs extends NodeNs<BoundedType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface BracketedTypeNs extends NodeNs<BracketedType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface BreakExpressionNs extends NodeNs<BreakExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface CallExpressionNs extends NodeNs<CallExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface CapturedPatternNs extends NodeNs<CapturedPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ClosureExpressionNs extends NodeNs<ClosureExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ClosureParametersNs extends NodeNs<ClosureParameters, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface CommentNs extends NodeNs<Comment, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface CompoundAssignmentExprNs extends NodeNs<
-	CompoundAssignmentExpr,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface ConstBlockNs extends NodeNs<ConstBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ConstItemNs extends NodeNs<ConstItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ConstParameterNs extends NodeNs<ConstParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ContinueExpressionNs extends NodeNs<ContinueExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DeclarationListNs extends NodeNs<DeclarationList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DelimTokenTreeNs extends NodeNs<DelimTokenTree, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface DynamicTypeNs extends NodeNs<DynamicType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ElseClauseNs extends NodeNs<ElseClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface EnumItemNs extends NodeNs<EnumItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface EnumVariantNs extends NodeNs<EnumVariant, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface EnumVariantListNs extends NodeNs<EnumVariantList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ExpressionStatementNs extends NodeNs<
-	ExpressionStatement,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface ExternCrateDeclarationNs extends NodeNs<
-	ExternCrateDeclaration,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface ExternModifierNs extends NodeNs<ExternModifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface FieldDeclarationNs extends NodeNs<FieldDeclaration, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface FieldDeclarationListNs extends NodeNs<
-	FieldDeclarationList,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface FieldExpressionNs extends NodeNs<FieldExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface FieldInitializerNs extends NodeNs<FieldInitializer, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface FieldInitializerListNs extends NodeNs<
-	FieldInitializerList,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface FieldPatternNs extends NodeNs<FieldPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ForExpressionNs extends NodeNs<ForExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ForLifetimesNs extends NodeNs<ForLifetimes, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ForeignModItemNs extends NodeNs<ForeignModItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface FunctionItemNs extends NodeNs<FunctionItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface FunctionModifiersNs extends NodeNs<FunctionModifiers, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface FunctionSignatureItemNs extends NodeNs<
-	FunctionSignatureItem,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface FunctionTypeNs extends NodeNs<FunctionType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface GenBlockNs extends NodeNs<GenBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface GenericFunctionNs extends NodeNs<GenericFunction, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface GenericPatternNs extends NodeNs<GenericPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface GenericTypeNs extends NodeNs<GenericType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface GenericTypeWithTurbofishNs extends NodeNs<
-	GenericTypeWithTurbofish,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface HigherRankedTraitBoundNs extends NodeNs<
-	HigherRankedTraitBound,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface IfExpressionNs extends NodeNs<IfExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ImplItemNs extends NodeNs<ImplItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface IndexExpressionNs extends NodeNs<IndexExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface InnerAttributeItemNs extends NodeNs<InnerAttributeItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface LabelNs extends NodeNs<Label, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface LastMatchArmNs extends NodeNs<LastMatchArm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface LetConditionNs extends NodeNs<LetCondition, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface LetDeclarationNs extends NodeNs<LetDeclaration, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface LifetimeNs extends NodeNs<Lifetime, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface LifetimeParameterNs extends NodeNs<LifetimeParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface LineCommentNs extends NodeNs<LineComment, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface LoopExpressionNs extends NodeNs<LoopExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MacroDefinitionNs extends NodeNs<MacroDefinition, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MacroInvocationNs extends NodeNs<MacroInvocation, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MacroRuleNs extends NodeNs<MacroRule, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MatchArmNs extends NodeNs<MatchArm, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MatchBlockNs extends NodeNs<MatchBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MatchExpressionNs extends NodeNs<MatchExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MatchPatternNs extends NodeNs<MatchPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ModItemNs extends NodeNs<ModItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface MutPatternNs extends NodeNs<MutPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface NegativeLiteralNs extends NodeNs<NegativeLiteral, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface OrPatternNs extends NodeNs<OrPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface OrderedFieldDeclarationListNs extends NodeNs<
-	OrderedFieldDeclarationList,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface ParameterNs extends NodeNs<Parameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ParametersNs extends NodeNs<Parameters, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ParenthesizedExpressionNs extends NodeNs<
-	ParenthesizedExpression,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface PointerTypeNs extends NodeNs<PointerType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface QualifiedTypeNs extends NodeNs<QualifiedType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface RangeExpressionNs extends NodeNs<RangeExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface RangePatternNs extends NodeNs<RangePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface RawStringLiteralNs extends NodeNs<RawStringLiteral, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface RefPatternNs extends NodeNs<RefPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ReferenceExpressionNs extends NodeNs<
-	ReferenceExpression,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface ReferencePatternNs extends NodeNs<ReferencePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ReferenceTypeNs extends NodeNs<ReferenceType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface RemovedTraitBoundNs extends NodeNs<RemovedTraitBound, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ReturnExpressionNs extends NodeNs<ReturnExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ScopedIdentifierNs extends NodeNs<ScopedIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ScopedTypeIdentifierNs extends NodeNs<
-	ScopedTypeIdentifier,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface ScopedTypeIdentifierInExpressionPositionNs extends NodeNs<
-	ScopedTypeIdentifierInExpressionPosition,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface ScopedUseListNs extends NodeNs<ScopedUseList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface SelfParameterNs extends NodeNs<SelfParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ShorthandFieldInitializerNs extends NodeNs<
-	ShorthandFieldInitializer,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface SlicePatternNs extends NodeNs<SlicePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface SourceFileNs extends NodeNs<SourceFile, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface StaticItemNs extends NodeNs<StaticItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface StringLiteralNs extends NodeNs<StringLiteral, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface StructExpressionNs extends NodeNs<StructExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface StructItemNs extends NodeNs<StructItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface StructPatternNs extends NodeNs<StructPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TokenBindingPatternNs extends NodeNs<
-	TokenBindingPattern,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface TokenRepetitionNs extends NodeNs<TokenRepetition, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TokenRepetitionPatternNs extends NodeNs<
-	TokenRepetitionPattern,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface TokenTreeNs extends NodeNs<TokenTree, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TokenTreePatternNs extends NodeNs<TokenTreePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TraitBoundsNs extends NodeNs<TraitBounds, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TraitItemNs extends NodeNs<TraitItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TryBlockNs extends NodeNs<TryBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TryExpressionNs extends NodeNs<TryExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TupleExpressionNs extends NodeNs<TupleExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TuplePatternNs extends NodeNs<TuplePattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TupleStructPatternNs extends NodeNs<TupleStructPattern, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TupleTypeNs extends NodeNs<TupleType, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TypeArgumentsNs extends NodeNs<TypeArguments, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TypeBindingNs extends NodeNs<TypeBinding, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TypeCastExpressionNs extends NodeNs<TypeCastExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TypeItemNs extends NodeNs<TypeItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TypeParameterNs extends NodeNs<TypeParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface TypeParametersNs extends NodeNs<TypeParameters, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface UnaryExpressionNs extends NodeNs<UnaryExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface UnionItemNs extends NodeNs<UnionItem, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface UnsafeBlockNs extends NodeNs<UnsafeBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface UseAsClauseNs extends NodeNs<UseAsClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface UseBoundsNs extends NodeNs<UseBounds, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface UseDeclarationNs extends NodeNs<UseDeclaration, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface UseListNs extends NodeNs<UseList, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface UseWildcardNs extends NodeNs<UseWildcard, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface VariadicParameterNs extends NodeNs<VariadicParameter, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface VisibilityModifierNs extends NodeNs<VisibilityModifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface WhereClauseNs extends NodeNs<WhereClause, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface WherePredicateNs extends NodeNs<WherePredicate, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface WhileExpressionNs extends NodeNs<WhileExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface YieldExpressionNs extends NodeNs<YieldExpression, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface ArgumentsGroup1Ns extends NodeNs<ArgumentsGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface VisibilityModifierGroup1Ns extends NodeNs<
-	VisibilityModifierGroup1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface EnumVariantListGroup1Ns extends NodeNs<
-	EnumVariantListGroup1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface FieldDeclarationListGroup1Ns extends NodeNs<
-	FieldDeclarationListGroup1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface FieldInitializerListGroup1Ns extends NodeNs<
-	FieldInitializerListGroup1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface OrderedFieldDeclarationListGroup1Ns extends NodeNs<
-	OrderedFieldDeclarationListGroup1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface ParametersGroup1Ns extends NodeNs<ParametersGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface SlicePatternGroup1Ns extends NodeNs<SlicePatternGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface StructPatternGroup1Ns extends NodeNs<
-	StructPatternGroup1,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap
-> {}
-export interface TuplePatternGroup1Ns extends NodeNs<TuplePatternGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface UseBoundsGroup1Ns extends NodeNs<UseBoundsGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface UseListGroup1Ns extends NodeNs<UseListGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface WhereClauseGroup1Ns extends NodeNs<WhereClauseGroup1, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface MatchBlockArmsNs extends NodeNs<MatchBlockArms, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface VisibilityModifierPubParensNs extends NodeNs<
 	VisibilityModifierPubParens,
 	LeafScalarMap,
@@ -7880,234 +7898,222 @@ export interface VisibilityModifierPubParensNs extends NodeNs<
 > {}
 
 export interface NamespaceMap {
-	_abstract_type_optional1: AbstractTypeOptional1Ns;
-	_arguments_group1: _ArgumentsGroup1Ns;
-	_array_expression_list: ArrayExpressionListNs;
-	_array_expression_semi: ArrayExpressionSemiNs;
-	_array_type_optional1: ArrayTypeOptional1Ns;
-	_attributed_argument: AttributedArgumentNs;
-	_attributed_enum_variant: AttributedEnumVariantNs;
-	_attributed_field_declaration: AttributedFieldDeclarationNs;
-	_attributed_ordered_field: AttributedOrderedFieldNs;
-	_attributed_parameter: AttributedParameterNs;
-	_attributed_type_parameter: AttributedTypeParameterNs;
-	_block_optional1: BlockOptional1Ns;
-	_closure_expression_block: ClosureExpressionBlockNs;
-	_closure_expression_expr: ClosureExpressionExprNs;
-	_closure_expression_optional1: ClosureExpressionOptional1Ns;
-	_const_item_optional1: ConstItemOptional1Ns;
-	_const_parameter_optional1: ConstParameterOptional1Ns;
-	_delim_token_tree_brace: DelimTokenTreeBraceNs;
-	_delim_token_tree_bracket: DelimTokenTreeBracketNs;
-	_delim_token_tree_paren: DelimTokenTreeParenNs;
-	_enum_variant_list_group1: _EnumVariantListGroup1Ns;
-	_expression_statement_with_semi: ExpressionStatementWithSemiNs;
-	_extern_crate_declaration_optional1: ExternCrateDeclarationOptional1Ns;
-	_field_declaration_list_group1: _FieldDeclarationListGroup1Ns;
-	_field_initializer_list_group1: _FieldInitializerListGroup1Ns;
-	_field_pattern_named: FieldPatternNamedNs;
-	_function_type_fn_form: FunctionTypeFnFormNs;
-	_function_type_trait_form: FunctionTypeTraitFormNs;
-	_impl_item_body: ImplItemBodyNs;
-	_impl_item_group1: ImplItemGroup1Ns;
-	_impl_item_negative_clause: ImplItemNegativeClauseNs;
-	_impl_item_positive_clause: ImplItemPositiveClauseNs;
-	_in_path: InPathNs;
+	source_file: SourceFileNs;
+	expression_statement: ExpressionStatementNs;
+	macro_definition: MacroDefinitionNs;
+	macro_rule: MacroRuleNs;
+	token_tree_pattern: TokenTreePatternNs;
+	token_binding_pattern: TokenBindingPatternNs;
+	token_repetition_pattern: TokenRepetitionPatternNs;
+	token_tree: TokenTreeNs;
+	token_repetition: TokenRepetitionNs;
+	attribute_item: AttributeItemNs;
+	inner_attribute_item: InnerAttributeItemNs;
+	attribute: AttributeNs;
+	mod_item: ModItemNs;
+	foreign_mod_item: ForeignModItemNs;
+	declaration_list: DeclarationListNs;
+	struct_item: StructItemNs;
+	union_item: UnionItemNs;
+	enum_item: EnumItemNs;
+	enum_variant_list: EnumVariantListNs;
+	enum_variant: EnumVariantNs;
+	field_declaration_list: FieldDeclarationListNs;
+	field_declaration: FieldDeclarationNs;
+	ordered_field_declaration_list: OrderedFieldDeclarationListNs;
+	extern_crate_declaration: ExternCrateDeclarationNs;
+	const_item: ConstItemNs;
+	static_item: StaticItemNs;
+	type_item: TypeItemNs;
+	function_item: FunctionItemNs;
+	function_signature_item: FunctionSignatureItemNs;
+	function_modifiers: FunctionModifiersNs;
+	where_clause: WhereClauseNs;
+	where_predicate: WherePredicateNs;
+	impl_item: ImplItemNs;
+	trait_item: TraitItemNs;
+	associated_type: AssociatedTypeNs;
+	trait_bounds: TraitBoundsNs;
+	higher_ranked_trait_bound: HigherRankedTraitBoundNs;
+	removed_trait_bound: RemovedTraitBoundNs;
+	type_parameters: TypeParametersNs;
+	const_parameter: ConstParameterNs;
+	type_parameter: TypeParameterNs;
+	lifetime_parameter: LifetimeParameterNs;
+	let_declaration: LetDeclarationNs;
+	use_declaration: UseDeclarationNs;
+	scoped_use_list: ScopedUseListNs;
+	use_list: UseListNs;
+	use_as_clause: UseAsClauseNs;
+	use_wildcard: UseWildcardNs;
+	parameters: ParametersNs;
+	self_parameter: SelfParameterNs;
+	variadic_parameter: VariadicParameterNs;
+	parameter: ParameterNs;
+	extern_modifier: ExternModifierNs;
+	visibility_modifier: VisibilityModifierNs;
+	bracketed_type: BracketedTypeNs;
+	qualified_type: QualifiedTypeNs;
+	lifetime: LifetimeNs;
+	array_type: ArrayTypeNs;
+	for_lifetimes: ForLifetimesNs;
+	function_type: FunctionTypeNs;
+	tuple_type: TupleTypeNs;
+	generic_function: GenericFunctionNs;
+	generic_type: GenericTypeNs;
+	generic_type_with_turbofish: GenericTypeWithTurbofishNs;
+	bounded_type: BoundedTypeNs;
+	use_bounds: UseBoundsNs;
+	type_arguments: TypeArgumentsNs;
+	type_binding: TypeBindingNs;
+	reference_type: ReferenceTypeNs;
+	pointer_type: PointerTypeNs;
+	abstract_type: AbstractTypeNs;
+	dynamic_type: DynamicTypeNs;
+	macro_invocation: MacroInvocationNs;
+	delim_token_tree: DelimTokenTreeNs;
+	scoped_identifier: ScopedIdentifierNs;
+	scoped_type_identifier_in_expression_position: ScopedTypeIdentifierInExpressionPositionNs;
+	scoped_type_identifier: ScopedTypeIdentifierNs;
+	range_expression: RangeExpressionNs;
+	unary_expression: UnaryExpressionNs;
+	try_expression: TryExpressionNs;
+	reference_expression: ReferenceExpressionNs;
+	binary_expression: BinaryExpressionNs;
+	assignment_expression: AssignmentExpressionNs;
+	compound_assignment_expr: CompoundAssignmentExprNs;
+	type_cast_expression: TypeCastExpressionNs;
+	return_expression: ReturnExpressionNs;
+	yield_expression: YieldExpressionNs;
+	call_expression: CallExpressionNs;
+	arguments: ArgumentsNs;
+	array_expression: ArrayExpressionNs;
+	parenthesized_expression: ParenthesizedExpressionNs;
+	tuple_expression: TupleExpressionNs;
+	struct_expression: StructExpressionNs;
+	field_initializer_list: FieldInitializerListNs;
+	shorthand_field_initializer: ShorthandFieldInitializerNs;
+	field_initializer: FieldInitializerNs;
+	base_field_initializer: BaseFieldInitializerNs;
+	if_expression: IfExpressionNs;
+	let_condition: LetConditionNs;
 	_let_chain: LetChainNs;
+	else_clause: ElseClauseNs;
+	match_expression: MatchExpressionNs;
+	match_block: MatchBlockNs;
+	match_arm: MatchArmNs;
+	last_match_arm: LastMatchArmNs;
+	match_pattern: MatchPatternNs;
+	while_expression: WhileExpressionNs;
+	loop_expression: LoopExpressionNs;
+	for_expression: ForExpressionNs;
+	const_block: ConstBlockNs;
+	closure_expression: ClosureExpressionNs;
+	closure_parameters: ClosureParametersNs;
+	label: LabelNs;
+	break_expression: BreakExpressionNs;
+	continue_expression: ContinueExpressionNs;
+	index_expression: IndexExpressionNs;
+	await_expression: AwaitExpressionNs;
+	field_expression: FieldExpressionNs;
+	unsafe_block: UnsafeBlockNs;
+	async_block: AsyncBlockNs;
+	gen_block: GenBlockNs;
+	try_block: TryBlockNs;
+	block: BlockNs;
+	generic_pattern: GenericPatternNs;
+	tuple_pattern: TuplePatternNs;
+	slice_pattern: SlicePatternNs;
+	tuple_struct_pattern: TupleStructPatternNs;
+	struct_pattern: StructPatternNs;
+	field_pattern: FieldPatternNs;
+	mut_pattern: MutPatternNs;
+	range_pattern: RangePatternNs;
+	ref_pattern: RefPatternNs;
+	captured_pattern: CapturedPatternNs;
+	reference_pattern: ReferencePatternNs;
+	or_pattern: OrPatternNs;
+	negative_literal: NegativeLiteralNs;
+	string_literal: StringLiteralNs;
+	raw_string_literal: RawStringLiteralNs;
+	comment: CommentNs;
+	line_comment: LineCommentNs;
+	block_comment: BlockCommentNs;
+	_attribute_group1: AttributeGroup1Ns;
+	_enum_variant_list_group1: EnumVariantListGroup1Ns;
+	_enum_variant_optional1: EnumVariantOptional1Ns;
+	_field_declaration_list_group1: FieldDeclarationListGroup1Ns;
+	_ordered_field_declaration_list_group1: OrderedFieldDeclarationListGroup1Ns;
+	_extern_crate_declaration_optional1: ExternCrateDeclarationOptional1Ns;
+	_function_item_optional1: FunctionItemOptional1Ns;
+	_where_clause_group1: WhereClauseGroup1Ns;
+	_const_parameter_optional1: ConstParameterOptional1Ns;
+	_type_parameter_optional1: TypeParameterOptional1Ns;
 	_let_declaration_optional1: LetDeclarationOptional1Ns;
 	_let_declaration_optional2: LetDeclarationOptional2Ns;
-	_line_comment_doc: LineCommentDocNs;
-	_macro_definition_brace: MacroDefinitionBraceNs;
-	_macro_definition_bracket: MacroDefinitionBracketNs;
-	_macro_definition_paren: MacroDefinitionParenNs;
-	_match_arm_with_comma: MatchArmWithCommaNs;
-	_match_block_arms: MatchBlockArmsNs;
+	_use_list_group1: UseListGroup1Ns;
+	_parameters_group1: ParametersGroup1Ns;
+	_variadic_parameter_optional1: VariadicParameterOptional1Ns;
+	_visibility_modifier_group1: VisibilityModifierGroup1Ns;
+	_array_type_optional1: ArrayTypeOptional1Ns;
+	_use_bounds_group1: UseBoundsGroup1Ns;
+	_abstract_type_optional1: AbstractTypeOptional1Ns;
+	_arguments_group1: ArgumentsGroup1Ns;
+	_array_expression_group1: ArrayExpressionGroup1Ns;
+	_field_initializer_list_group1: FieldInitializerListGroup1Ns;
 	_match_pattern_optional1: MatchPatternOptional1Ns;
+	_while_expression_optional1: WhileExpressionOptional1Ns;
+	_tuple_pattern_group1: TuplePatternGroup1Ns;
+	_slice_pattern_group1: SlicePatternGroup1Ns;
+	_struct_pattern_group1: StructPatternGroup1Ns;
+	_range_pattern_group2: RangePatternGroup2Ns;
+	_block_comment_group1: BlockCommentGroup1Ns;
+	_use_wildcard_clause: UseWildcardClauseNs;
+	_reference_expression_raw_mut: ReferenceExpressionRawMutNs;
+	_impl_item_body: ImplItemBodyNs;
+	_impl_item_positive_clause: ImplItemPositiveClauseNs;
+	_impl_item_negative_clause: ImplItemNegativeClauseNs;
+	_array_expression_semi: ArrayExpressionSemiNs;
+	_array_expression_list: ArrayExpressionListNs;
+	_closure_expression_block: ClosureExpressionBlockNs;
+	_closure_expression_expr: ClosureExpressionExprNs;
+	_field_pattern_named: FieldPatternNamedNs;
+	_function_type_trait_form: FunctionTypeTraitFormNs;
+	_function_type_fn_form: FunctionTypeFnFormNs;
+	_macro_definition_paren: MacroDefinitionParenNs;
+	_macro_definition_bracket: MacroDefinitionBracketNs;
+	_macro_definition_brace: MacroDefinitionBraceNs;
 	_or_pattern_binary: OrPatternBinaryNs;
 	_or_pattern_prefix: OrPatternPrefixNs;
-	_ordered_field_declaration_list_group1: _OrderedFieldDeclarationListGroup1Ns;
-	_parameters_group1: _ParametersGroup1Ns;
 	_range_expression_binary: RangeExpressionBinaryNs;
 	_range_expression_postfix: RangeExpressionPostfixNs;
 	_range_expression_prefix: RangeExpressionPrefixNs;
-	_range_pattern_left_with_right: RangePatternLeftWithRightNs;
 	_range_pattern_prefix: RangePatternPrefixNs;
-	_reference_expression_raw_mut: ReferenceExpressionRawMutNs;
-	_slice_pattern_group1: _SlicePatternGroup1Ns;
+	_range_pattern_left_with_right: RangePatternLeftWithRightNs;
 	_struct_item_brace: StructItemBraceNs;
 	_struct_item_tuple: StructItemTupleNs;
-	_struct_pattern_group1: _StructPatternGroup1Ns;
-	_token_tree_brace: TokenTreeBraceNs;
-	_token_tree_bracket: TokenTreeBracketNs;
-	_token_tree_paren: TokenTreeParenNs;
-	_token_tree_pattern_brace: TokenTreePatternBraceNs;
-	_token_tree_pattern_bracket: TokenTreePatternBracketNs;
-	_token_tree_pattern_paren: TokenTreePatternParenNs;
-	_tuple_pattern_group1: _TuplePatternGroup1Ns;
-	_type_argument: TypeArgumentNs;
-	_type_parameter_optional1: TypeParameterOptional1Ns;
-	_use_bounds_group1: _UseBoundsGroup1Ns;
-	_use_list_group1: _UseListGroup1Ns;
-	_use_wildcard_clause: UseWildcardClauseNs;
-	_use_wildcard_group1: UseWildcardGroup1Ns;
-	_variadic_parameter_optional1: VariadicParameterOptional1Ns;
-	_visibility_modifier_group1: _VisibilityModifierGroup1Ns;
-	_visibility_modifier_in_path: VisibilityModifierInPathNs;
 	_visibility_modifier_pub: VisibilityModifierPubNs;
-	_where_clause_group1: _WhereClauseGroup1Ns;
-	abstract_type: AbstractTypeNs;
-	arguments: ArgumentsNs;
-	array_expression: ArrayExpressionNs;
-	array_type: ArrayTypeNs;
-	assignment_expression: AssignmentExpressionNs;
-	associated_type: AssociatedTypeNs;
-	async_block: AsyncBlockNs;
-	attribute: AttributeNs;
-	attribute_item: AttributeItemNs;
-	await_expression: AwaitExpressionNs;
-	base_field_initializer: BaseFieldInitializerNs;
-	binary_expression: BinaryExpressionNs;
-	block: BlockNs;
-	block_comment: BlockCommentNs;
-	bounded_type: BoundedTypeNs;
-	bracketed_type: BracketedTypeNs;
-	break_expression: BreakExpressionNs;
-	call_expression: CallExpressionNs;
-	captured_pattern: CapturedPatternNs;
-	closure_expression: ClosureExpressionNs;
-	closure_parameters: ClosureParametersNs;
-	comment: CommentNs;
-	compound_assignment_expr: CompoundAssignmentExprNs;
-	const_block: ConstBlockNs;
-	const_item: ConstItemNs;
-	const_parameter: ConstParameterNs;
-	continue_expression: ContinueExpressionNs;
-	declaration_list: DeclarationListNs;
-	delim_token_tree: DelimTokenTreeNs;
-	dynamic_type: DynamicTypeNs;
-	else_clause: ElseClauseNs;
-	enum_item: EnumItemNs;
-	enum_variant: EnumVariantNs;
-	enum_variant_list: EnumVariantListNs;
-	expression_statement: ExpressionStatementNs;
-	extern_crate_declaration: ExternCrateDeclarationNs;
-	extern_modifier: ExternModifierNs;
-	field_declaration: FieldDeclarationNs;
-	field_declaration_list: FieldDeclarationListNs;
-	field_expression: FieldExpressionNs;
-	field_initializer: FieldInitializerNs;
-	field_initializer_list: FieldInitializerListNs;
-	field_pattern: FieldPatternNs;
-	for_expression: ForExpressionNs;
-	for_lifetimes: ForLifetimesNs;
-	foreign_mod_item: ForeignModItemNs;
-	function_item: FunctionItemNs;
-	function_modifiers: FunctionModifiersNs;
-	function_signature_item: FunctionSignatureItemNs;
-	function_type: FunctionTypeNs;
-	gen_block: GenBlockNs;
-	generic_function: GenericFunctionNs;
-	generic_pattern: GenericPatternNs;
-	generic_type: GenericTypeNs;
-	generic_type_with_turbofish: GenericTypeWithTurbofishNs;
-	higher_ranked_trait_bound: HigherRankedTraitBoundNs;
-	if_expression: IfExpressionNs;
-	impl_item: ImplItemNs;
-	index_expression: IndexExpressionNs;
-	inner_attribute_item: InnerAttributeItemNs;
-	label: LabelNs;
-	last_match_arm: LastMatchArmNs;
-	let_condition: LetConditionNs;
-	let_declaration: LetDeclarationNs;
-	lifetime: LifetimeNs;
-	lifetime_parameter: LifetimeParameterNs;
-	line_comment: LineCommentNs;
-	loop_expression: LoopExpressionNs;
-	macro_definition: MacroDefinitionNs;
-	macro_invocation: MacroInvocationNs;
-	macro_rule: MacroRuleNs;
-	match_arm: MatchArmNs;
-	match_block: MatchBlockNs;
-	match_expression: MatchExpressionNs;
-	match_pattern: MatchPatternNs;
-	mod_item: ModItemNs;
-	mut_pattern: MutPatternNs;
-	negative_literal: NegativeLiteralNs;
-	or_pattern: OrPatternNs;
-	ordered_field_declaration_list: OrderedFieldDeclarationListNs;
-	parameter: ParameterNs;
-	parameters: ParametersNs;
-	parenthesized_expression: ParenthesizedExpressionNs;
-	pointer_type: PointerTypeNs;
-	qualified_type: QualifiedTypeNs;
-	range_expression: RangeExpressionNs;
-	range_pattern: RangePatternNs;
-	raw_string_literal: RawStringLiteralNs;
-	ref_pattern: RefPatternNs;
-	reference_expression: ReferenceExpressionNs;
-	reference_pattern: ReferencePatternNs;
-	reference_type: ReferenceTypeNs;
-	removed_trait_bound: RemovedTraitBoundNs;
-	return_expression: ReturnExpressionNs;
-	scoped_identifier: ScopedIdentifierNs;
-	scoped_type_identifier: ScopedTypeIdentifierNs;
-	scoped_type_identifier_in_expression_position: ScopedTypeIdentifierInExpressionPositionNs;
-	scoped_use_list: ScopedUseListNs;
-	self_parameter: SelfParameterNs;
-	shorthand_field_initializer: ShorthandFieldInitializerNs;
-	slice_pattern: SlicePatternNs;
-	source_file: SourceFileNs;
-	static_item: StaticItemNs;
-	string_literal: StringLiteralNs;
-	struct_expression: StructExpressionNs;
-	struct_item: StructItemNs;
-	struct_pattern: StructPatternNs;
-	token_binding_pattern: TokenBindingPatternNs;
-	token_repetition: TokenRepetitionNs;
-	token_repetition_pattern: TokenRepetitionPatternNs;
-	token_tree: TokenTreeNs;
-	token_tree_pattern: TokenTreePatternNs;
-	trait_bounds: TraitBoundsNs;
-	trait_item: TraitItemNs;
-	try_block: TryBlockNs;
-	try_expression: TryExpressionNs;
-	tuple_expression: TupleExpressionNs;
-	tuple_pattern: TuplePatternNs;
-	tuple_struct_pattern: TupleStructPatternNs;
-	tuple_type: TupleTypeNs;
-	type_arguments: TypeArgumentsNs;
-	type_binding: TypeBindingNs;
-	type_cast_expression: TypeCastExpressionNs;
-	type_item: TypeItemNs;
-	type_parameter: TypeParameterNs;
-	type_parameters: TypeParametersNs;
-	unary_expression: UnaryExpressionNs;
-	union_item: UnionItemNs;
-	unsafe_block: UnsafeBlockNs;
-	use_as_clause: UseAsClauseNs;
-	use_bounds: UseBoundsNs;
-	use_declaration: UseDeclarationNs;
-	use_list: UseListNs;
-	use_wildcard: UseWildcardNs;
-	variadic_parameter: VariadicParameterNs;
-	visibility_modifier: VisibilityModifierNs;
-	where_clause: WhereClauseNs;
-	where_predicate: WherePredicateNs;
-	while_expression: WhileExpressionNs;
-	yield_expression: YieldExpressionNs;
-	arguments_group1: ArgumentsGroup1Ns;
-	visibility_modifier_group1: VisibilityModifierGroup1Ns;
-	enum_variant_list_group1: EnumVariantListGroup1Ns;
-	field_declaration_list_group1: FieldDeclarationListGroup1Ns;
-	field_initializer_list_group1: FieldInitializerListGroup1Ns;
-	ordered_field_declaration_list_group1: OrderedFieldDeclarationListGroup1Ns;
-	parameters_group1: ParametersGroup1Ns;
-	slice_pattern_group1: SlicePatternGroup1Ns;
-	struct_pattern_group1: StructPatternGroup1Ns;
-	tuple_pattern_group1: TuplePatternGroup1Ns;
-	use_bounds_group1: UseBoundsGroup1Ns;
-	use_list_group1: UseListGroup1Ns;
-	where_clause_group1: WhereClauseGroup1Ns;
+	_expression_statement_with_semi: ExpressionStatementWithSemiNs;
+	_match_arm_with_comma: MatchArmWithCommaNs;
+	_line_comment_doc: LineCommentDocNs;
+	_token_tree_pattern_paren: TokenTreePatternParenNs;
+	_token_tree_pattern_bracket: TokenTreePatternBracketNs;
+	_token_tree_pattern_brace: TokenTreePatternBraceNs;
+	_token_tree_paren: TokenTreeParenNs;
+	_token_tree_bracket: TokenTreeBracketNs;
+	_token_tree_brace: TokenTreeBraceNs;
+	_delim_token_tree_paren: DelimTokenTreeParenNs;
+	_delim_token_tree_bracket: DelimTokenTreeBracketNs;
+	_delim_token_tree_brace: DelimTokenTreeBraceNs;
+	_in_path: InPathNs;
+	_attributed_field_declaration: AttributedFieldDeclarationNs;
+	_attributed_enum_variant: AttributedEnumVariantNs;
+	_attributed_parameter: AttributedParameterNs;
+	_attributed_type_parameter: AttributedTypeParameterNs;
+	_attributed_argument: AttributedArgumentNs;
+	_attributed_ordered_field: AttributedOrderedFieldNs;
+	_type_argument: TypeArgumentNs;
+	_match_block_arms: MatchBlockArmsNs;
 	_visibility_modifier_pub_parens: VisibilityModifierPubParensNs;
 }
 
@@ -8118,159 +8124,1027 @@ export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];
 
 // Namespace sugar — merges with each data interface so consumers can write
 // <TypeName>.Config / .Fluent / .Loose / .Tree alongside using <TypeName> as a type.
-export namespace AbstractTypeOptional1 {
-	export type Config = ConfigFor<'_abstract_type_optional1'>;
-	export type Fluent = FluentFor<'_abstract_type_optional1'>;
-	export type Loose = LooseFor<'_abstract_type_optional1'>;
-	export type Tree = TreeFor<'_abstract_type_optional1'>;
-	export type Kind = '_abstract_type_optional1';
+export namespace SourceFile {
+	export type Config = ConfigFor<'source_file'>;
+	export type Fluent = FluentFor<'source_file'>;
+	export type Loose = LooseFor<'source_file'>;
+	export type Tree = TreeFor<'source_file'>;
+	export type Kind = 'source_file';
 }
-export namespace _ArgumentsGroup1 {
-	export type Config = ConfigFor<'_arguments_group1'>;
-	export type Fluent = FluentFor<'_arguments_group1'>;
-	export type Loose = LooseFor<'_arguments_group1'>;
-	export type Tree = TreeFor<'_arguments_group1'>;
-	export type Kind = '_arguments_group1';
+export namespace ExpressionStatement {
+	export type Config = ConfigFor<'expression_statement'>;
+	export type Fluent = FluentFor<'expression_statement'>;
+	export type Loose = LooseFor<'expression_statement'>;
+	export type Tree = TreeFor<'expression_statement'>;
+	export type Kind = 'expression_statement';
 }
-export namespace ArrayExpressionList {
-	export type Config = ConfigFor<'_array_expression_list'>;
-	export type Fluent = FluentFor<'_array_expression_list'>;
-	export type Loose = LooseFor<'_array_expression_list'>;
-	export type Tree = TreeFor<'_array_expression_list'>;
-	export type Kind = '_array_expression_list';
+export namespace MacroDefinition {
+	export type Config = ConfigFor<'macro_definition'>;
+	export type Fluent = FluentFor<'macro_definition'>;
+	export type Loose = LooseFor<'macro_definition'>;
+	export type Tree = TreeFor<'macro_definition'>;
+	export type Kind = 'macro_definition';
 }
-export namespace ArrayExpressionSemi {
-	export type Config = ConfigFor<'_array_expression_semi'>;
-	export type Fluent = FluentFor<'_array_expression_semi'>;
-	export type Loose = LooseFor<'_array_expression_semi'>;
-	export type Tree = TreeFor<'_array_expression_semi'>;
-	export type Kind = '_array_expression_semi';
+export namespace MacroRule {
+	export type Config = ConfigFor<'macro_rule'>;
+	export type Fluent = FluentFor<'macro_rule'>;
+	export type Loose = LooseFor<'macro_rule'>;
+	export type Tree = TreeFor<'macro_rule'>;
+	export type Kind = 'macro_rule';
 }
-export namespace ArrayTypeOptional1 {
-	export type Config = ConfigFor<'_array_type_optional1'>;
-	export type Fluent = FluentFor<'_array_type_optional1'>;
-	export type Loose = LooseFor<'_array_type_optional1'>;
-	export type Tree = TreeFor<'_array_type_optional1'>;
-	export type Kind = '_array_type_optional1';
+export namespace TokenTreePattern {
+	export type Config = ConfigFor<'token_tree_pattern'>;
+	export type Fluent = FluentFor<'token_tree_pattern'>;
+	export type Loose = LooseFor<'token_tree_pattern'>;
+	export type Tree = TreeFor<'token_tree_pattern'>;
+	export type Kind = 'token_tree_pattern';
 }
-export namespace AttributedArgument {
-	export type Config = ConfigFor<'_attributed_argument'>;
-	export type Fluent = FluentFor<'_attributed_argument'>;
-	export type Loose = LooseFor<'_attributed_argument'>;
-	export type Tree = TreeFor<'_attributed_argument'>;
-	export type Kind = '_attributed_argument';
+export namespace TokenBindingPattern {
+	export type Config = ConfigFor<'token_binding_pattern'>;
+	export type Fluent = FluentFor<'token_binding_pattern'>;
+	export type Loose = LooseFor<'token_binding_pattern'>;
+	export type Tree = TreeFor<'token_binding_pattern'>;
+	export type Kind = 'token_binding_pattern';
 }
-export namespace AttributedEnumVariant {
-	export type Config = ConfigFor<'_attributed_enum_variant'>;
-	export type Fluent = FluentFor<'_attributed_enum_variant'>;
-	export type Loose = LooseFor<'_attributed_enum_variant'>;
-	export type Tree = TreeFor<'_attributed_enum_variant'>;
-	export type Kind = '_attributed_enum_variant';
+export namespace TokenRepetitionPattern {
+	export type Config = ConfigFor<'token_repetition_pattern'>;
+	export type Fluent = FluentFor<'token_repetition_pattern'>;
+	export type Loose = LooseFor<'token_repetition_pattern'>;
+	export type Tree = TreeFor<'token_repetition_pattern'>;
+	export type Kind = 'token_repetition_pattern';
 }
-export namespace AttributedFieldDeclaration {
-	export type Config = ConfigFor<'_attributed_field_declaration'>;
-	export type Fluent = FluentFor<'_attributed_field_declaration'>;
-	export type Loose = LooseFor<'_attributed_field_declaration'>;
-	export type Tree = TreeFor<'_attributed_field_declaration'>;
-	export type Kind = '_attributed_field_declaration';
+export namespace TokenTree {
+	export type Config = ConfigFor<'token_tree'>;
+	export type Fluent = FluentFor<'token_tree'>;
+	export type Loose = LooseFor<'token_tree'>;
+	export type Tree = TreeFor<'token_tree'>;
+	export type Kind = 'token_tree';
 }
-export namespace AttributedOrderedField {
-	export type Config = ConfigFor<'_attributed_ordered_field'>;
-	export type Fluent = FluentFor<'_attributed_ordered_field'>;
-	export type Loose = LooseFor<'_attributed_ordered_field'>;
-	export type Tree = TreeFor<'_attributed_ordered_field'>;
-	export type Kind = '_attributed_ordered_field';
+export namespace TokenRepetition {
+	export type Config = ConfigFor<'token_repetition'>;
+	export type Fluent = FluentFor<'token_repetition'>;
+	export type Loose = LooseFor<'token_repetition'>;
+	export type Tree = TreeFor<'token_repetition'>;
+	export type Kind = 'token_repetition';
 }
-export namespace AttributedParameter {
-	export type Config = ConfigFor<'_attributed_parameter'>;
-	export type Fluent = FluentFor<'_attributed_parameter'>;
-	export type Loose = LooseFor<'_attributed_parameter'>;
-	export type Tree = TreeFor<'_attributed_parameter'>;
-	export type Kind = '_attributed_parameter';
+export namespace AttributeItem {
+	export type Config = ConfigFor<'attribute_item'>;
+	export type Fluent = FluentFor<'attribute_item'>;
+	export type Loose = LooseFor<'attribute_item'>;
+	export type Tree = TreeFor<'attribute_item'>;
+	export type Kind = 'attribute_item';
 }
-export namespace AttributedTypeParameter {
-	export type Config = ConfigFor<'_attributed_type_parameter'>;
-	export type Fluent = FluentFor<'_attributed_type_parameter'>;
-	export type Loose = LooseFor<'_attributed_type_parameter'>;
-	export type Tree = TreeFor<'_attributed_type_parameter'>;
-	export type Kind = '_attributed_type_parameter';
+export namespace InnerAttributeItem {
+	export type Config = ConfigFor<'inner_attribute_item'>;
+	export type Fluent = FluentFor<'inner_attribute_item'>;
+	export type Loose = LooseFor<'inner_attribute_item'>;
+	export type Tree = TreeFor<'inner_attribute_item'>;
+	export type Kind = 'inner_attribute_item';
 }
-export namespace BlockOptional1 {
-	export type Config = ConfigFor<'_block_optional1'>;
-	export type Fluent = FluentFor<'_block_optional1'>;
-	export type Loose = LooseFor<'_block_optional1'>;
-	export type Tree = TreeFor<'_block_optional1'>;
-	export type Kind = '_block_optional1';
+export namespace Attribute {
+	export type Config = ConfigFor<'attribute'>;
+	export type Fluent = FluentFor<'attribute'>;
+	export type Loose = LooseFor<'attribute'>;
+	export type Tree = TreeFor<'attribute'>;
+	export type Kind = 'attribute';
 }
-export namespace ClosureExpressionBlock {
-	export type Config = ConfigFor<'_closure_expression_block'>;
-	export type Fluent = FluentFor<'_closure_expression_block'>;
-	export type Loose = LooseFor<'_closure_expression_block'>;
-	export type Tree = TreeFor<'_closure_expression_block'>;
-	export type Kind = '_closure_expression_block';
+export namespace ModItem {
+	export type Config = ConfigFor<'mod_item'>;
+	export type Fluent = FluentFor<'mod_item'>;
+	export type Loose = LooseFor<'mod_item'>;
+	export type Tree = TreeFor<'mod_item'>;
+	export type Kind = 'mod_item';
 }
-export namespace ClosureExpressionExpr {
-	export type Config = ConfigFor<'_closure_expression_expr'>;
-	export type Fluent = FluentFor<'_closure_expression_expr'>;
-	export type Loose = LooseFor<'_closure_expression_expr'>;
-	export type Tree = TreeFor<'_closure_expression_expr'>;
-	export type Kind = '_closure_expression_expr';
+export namespace ForeignModItem {
+	export type Config = ConfigFor<'foreign_mod_item'>;
+	export type Fluent = FluentFor<'foreign_mod_item'>;
+	export type Loose = LooseFor<'foreign_mod_item'>;
+	export type Tree = TreeFor<'foreign_mod_item'>;
+	export type Kind = 'foreign_mod_item';
 }
-export namespace ClosureExpressionOptional1 {
-	export type Config = ConfigFor<'_closure_expression_optional1'>;
-	export type Fluent = FluentFor<'_closure_expression_optional1'>;
-	export type Loose = LooseFor<'_closure_expression_optional1'>;
-	export type Tree = TreeFor<'_closure_expression_optional1'>;
-	export type Kind = '_closure_expression_optional1';
+export namespace DeclarationList {
+	export type Config = ConfigFor<'declaration_list'>;
+	export type Fluent = FluentFor<'declaration_list'>;
+	export type Loose = LooseFor<'declaration_list'>;
+	export type Tree = TreeFor<'declaration_list'>;
+	export type Kind = 'declaration_list';
 }
-export namespace ConstItemOptional1 {
-	export type Config = ConfigFor<'_const_item_optional1'>;
-	export type Fluent = FluentFor<'_const_item_optional1'>;
-	export type Loose = LooseFor<'_const_item_optional1'>;
-	export type Tree = TreeFor<'_const_item_optional1'>;
-	export type Kind = '_const_item_optional1';
+export namespace StructItem {
+	export type Config = ConfigFor<'struct_item'>;
+	export type Fluent = FluentFor<'struct_item'>;
+	export type Loose = LooseFor<'struct_item'>;
+	export type Tree = TreeFor<'struct_item'>;
+	export type Kind = 'struct_item';
 }
-export namespace ConstParameterOptional1 {
-	export type Config = ConfigFor<'_const_parameter_optional1'>;
-	export type Fluent = FluentFor<'_const_parameter_optional1'>;
-	export type Loose = LooseFor<'_const_parameter_optional1'>;
-	export type Tree = TreeFor<'_const_parameter_optional1'>;
-	export type Kind = '_const_parameter_optional1';
+export namespace UnionItem {
+	export type Config = ConfigFor<'union_item'>;
+	export type Fluent = FluentFor<'union_item'>;
+	export type Loose = LooseFor<'union_item'>;
+	export type Tree = TreeFor<'union_item'>;
+	export type Kind = 'union_item';
 }
-export namespace DelimTokenTreeBrace {
-	export type Config = ConfigFor<'_delim_token_tree_brace'>;
-	export type Fluent = FluentFor<'_delim_token_tree_brace'>;
-	export type Loose = LooseFor<'_delim_token_tree_brace'>;
-	export type Tree = TreeFor<'_delim_token_tree_brace'>;
-	export type Kind = '_delim_token_tree_brace';
+export namespace EnumItem {
+	export type Config = ConfigFor<'enum_item'>;
+	export type Fluent = FluentFor<'enum_item'>;
+	export type Loose = LooseFor<'enum_item'>;
+	export type Tree = TreeFor<'enum_item'>;
+	export type Kind = 'enum_item';
 }
-export namespace DelimTokenTreeBracket {
-	export type Config = ConfigFor<'_delim_token_tree_bracket'>;
-	export type Fluent = FluentFor<'_delim_token_tree_bracket'>;
-	export type Loose = LooseFor<'_delim_token_tree_bracket'>;
-	export type Tree = TreeFor<'_delim_token_tree_bracket'>;
-	export type Kind = '_delim_token_tree_bracket';
+export namespace EnumVariantList {
+	export type Config = ConfigFor<'enum_variant_list'>;
+	export type Fluent = FluentFor<'enum_variant_list'>;
+	export type Loose = LooseFor<'enum_variant_list'>;
+	export type Tree = TreeFor<'enum_variant_list'>;
+	export type Kind = 'enum_variant_list';
 }
-export namespace DelimTokenTreeParen {
-	export type Config = ConfigFor<'_delim_token_tree_paren'>;
-	export type Fluent = FluentFor<'_delim_token_tree_paren'>;
-	export type Loose = LooseFor<'_delim_token_tree_paren'>;
-	export type Tree = TreeFor<'_delim_token_tree_paren'>;
-	export type Kind = '_delim_token_tree_paren';
+export namespace EnumVariant {
+	export type Config = ConfigFor<'enum_variant'>;
+	export type Fluent = FluentFor<'enum_variant'>;
+	export type Loose = LooseFor<'enum_variant'>;
+	export type Tree = TreeFor<'enum_variant'>;
+	export type Kind = 'enum_variant';
 }
-export namespace _EnumVariantListGroup1 {
+export namespace FieldDeclarationList {
+	export type Config = ConfigFor<'field_declaration_list'>;
+	export type Fluent = FluentFor<'field_declaration_list'>;
+	export type Loose = LooseFor<'field_declaration_list'>;
+	export type Tree = TreeFor<'field_declaration_list'>;
+	export type Kind = 'field_declaration_list';
+}
+export namespace FieldDeclaration {
+	export type Config = ConfigFor<'field_declaration'>;
+	export type Fluent = FluentFor<'field_declaration'>;
+	export type Loose = LooseFor<'field_declaration'>;
+	export type Tree = TreeFor<'field_declaration'>;
+	export type Kind = 'field_declaration';
+}
+export namespace OrderedFieldDeclarationList {
+	export type Config = ConfigFor<'ordered_field_declaration_list'>;
+	export type Fluent = FluentFor<'ordered_field_declaration_list'>;
+	export type Loose = LooseFor<'ordered_field_declaration_list'>;
+	export type Tree = TreeFor<'ordered_field_declaration_list'>;
+	export type Kind = 'ordered_field_declaration_list';
+}
+export namespace ExternCrateDeclaration {
+	export type Config = ConfigFor<'extern_crate_declaration'>;
+	export type Fluent = FluentFor<'extern_crate_declaration'>;
+	export type Loose = LooseFor<'extern_crate_declaration'>;
+	export type Tree = TreeFor<'extern_crate_declaration'>;
+	export type Kind = 'extern_crate_declaration';
+}
+export namespace ConstItem {
+	export type Config = ConfigFor<'const_item'>;
+	export type Fluent = FluentFor<'const_item'>;
+	export type Loose = LooseFor<'const_item'>;
+	export type Tree = TreeFor<'const_item'>;
+	export type Kind = 'const_item';
+}
+export namespace StaticItem {
+	export type Config = ConfigFor<'static_item'>;
+	export type Fluent = FluentFor<'static_item'>;
+	export type Loose = LooseFor<'static_item'>;
+	export type Tree = TreeFor<'static_item'>;
+	export type Kind = 'static_item';
+}
+export namespace TypeItem {
+	export type Config = ConfigFor<'type_item'>;
+	export type Fluent = FluentFor<'type_item'>;
+	export type Loose = LooseFor<'type_item'>;
+	export type Tree = TreeFor<'type_item'>;
+	export type Kind = 'type_item';
+}
+export namespace FunctionItem {
+	export type Config = ConfigFor<'function_item'>;
+	export type Fluent = FluentFor<'function_item'>;
+	export type Loose = LooseFor<'function_item'>;
+	export type Tree = TreeFor<'function_item'>;
+	export type Kind = 'function_item';
+}
+export namespace FunctionSignatureItem {
+	export type Config = ConfigFor<'function_signature_item'>;
+	export type Fluent = FluentFor<'function_signature_item'>;
+	export type Loose = LooseFor<'function_signature_item'>;
+	export type Tree = TreeFor<'function_signature_item'>;
+	export type Kind = 'function_signature_item';
+}
+export namespace FunctionModifiers {
+	export type Config = ConfigFor<'function_modifiers'>;
+	export type Fluent = FluentFor<'function_modifiers'>;
+	export type Loose = LooseFor<'function_modifiers'>;
+	export type Tree = TreeFor<'function_modifiers'>;
+	export type Kind = 'function_modifiers';
+}
+export namespace WhereClause {
+	export type Config = ConfigFor<'where_clause'>;
+	export type Fluent = FluentFor<'where_clause'>;
+	export type Loose = LooseFor<'where_clause'>;
+	export type Tree = TreeFor<'where_clause'>;
+	export type Kind = 'where_clause';
+}
+export namespace WherePredicate {
+	export type Config = ConfigFor<'where_predicate'>;
+	export type Fluent = FluentFor<'where_predicate'>;
+	export type Loose = LooseFor<'where_predicate'>;
+	export type Tree = TreeFor<'where_predicate'>;
+	export type Kind = 'where_predicate';
+}
+export namespace ImplItem {
+	export type Config = ConfigFor<'impl_item'>;
+	export type Fluent = FluentFor<'impl_item'>;
+	export type Loose = LooseFor<'impl_item'>;
+	export type Tree = TreeFor<'impl_item'>;
+	export type Kind = 'impl_item';
+}
+export namespace TraitItem {
+	export type Config = ConfigFor<'trait_item'>;
+	export type Fluent = FluentFor<'trait_item'>;
+	export type Loose = LooseFor<'trait_item'>;
+	export type Tree = TreeFor<'trait_item'>;
+	export type Kind = 'trait_item';
+}
+export namespace AssociatedType {
+	export type Config = ConfigFor<'associated_type'>;
+	export type Fluent = FluentFor<'associated_type'>;
+	export type Loose = LooseFor<'associated_type'>;
+	export type Tree = TreeFor<'associated_type'>;
+	export type Kind = 'associated_type';
+}
+export namespace TraitBounds {
+	export type Config = ConfigFor<'trait_bounds'>;
+	export type Fluent = FluentFor<'trait_bounds'>;
+	export type Loose = LooseFor<'trait_bounds'>;
+	export type Tree = TreeFor<'trait_bounds'>;
+	export type Kind = 'trait_bounds';
+}
+export namespace HigherRankedTraitBound {
+	export type Config = ConfigFor<'higher_ranked_trait_bound'>;
+	export type Fluent = FluentFor<'higher_ranked_trait_bound'>;
+	export type Loose = LooseFor<'higher_ranked_trait_bound'>;
+	export type Tree = TreeFor<'higher_ranked_trait_bound'>;
+	export type Kind = 'higher_ranked_trait_bound';
+}
+export namespace RemovedTraitBound {
+	export type Config = ConfigFor<'removed_trait_bound'>;
+	export type Fluent = FluentFor<'removed_trait_bound'>;
+	export type Loose = LooseFor<'removed_trait_bound'>;
+	export type Tree = TreeFor<'removed_trait_bound'>;
+	export type Kind = 'removed_trait_bound';
+}
+export namespace TypeParameters {
+	export type Config = ConfigFor<'type_parameters'>;
+	export type Fluent = FluentFor<'type_parameters'>;
+	export type Loose = LooseFor<'type_parameters'>;
+	export type Tree = TreeFor<'type_parameters'>;
+	export type Kind = 'type_parameters';
+}
+export namespace ConstParameter {
+	export type Config = ConfigFor<'const_parameter'>;
+	export type Fluent = FluentFor<'const_parameter'>;
+	export type Loose = LooseFor<'const_parameter'>;
+	export type Tree = TreeFor<'const_parameter'>;
+	export type Kind = 'const_parameter';
+}
+export namespace TypeParameter {
+	export type Config = ConfigFor<'type_parameter'>;
+	export type Fluent = FluentFor<'type_parameter'>;
+	export type Loose = LooseFor<'type_parameter'>;
+	export type Tree = TreeFor<'type_parameter'>;
+	export type Kind = 'type_parameter';
+}
+export namespace LifetimeParameter {
+	export type Config = ConfigFor<'lifetime_parameter'>;
+	export type Fluent = FluentFor<'lifetime_parameter'>;
+	export type Loose = LooseFor<'lifetime_parameter'>;
+	export type Tree = TreeFor<'lifetime_parameter'>;
+	export type Kind = 'lifetime_parameter';
+}
+export namespace LetDeclaration {
+	export type Config = ConfigFor<'let_declaration'>;
+	export type Fluent = FluentFor<'let_declaration'>;
+	export type Loose = LooseFor<'let_declaration'>;
+	export type Tree = TreeFor<'let_declaration'>;
+	export type Kind = 'let_declaration';
+}
+export namespace UseDeclaration {
+	export type Config = ConfigFor<'use_declaration'>;
+	export type Fluent = FluentFor<'use_declaration'>;
+	export type Loose = LooseFor<'use_declaration'>;
+	export type Tree = TreeFor<'use_declaration'>;
+	export type Kind = 'use_declaration';
+}
+export namespace ScopedUseList {
+	export type Config = ConfigFor<'scoped_use_list'>;
+	export type Fluent = FluentFor<'scoped_use_list'>;
+	export type Loose = LooseFor<'scoped_use_list'>;
+	export type Tree = TreeFor<'scoped_use_list'>;
+	export type Kind = 'scoped_use_list';
+}
+export namespace UseList {
+	export type Config = ConfigFor<'use_list'>;
+	export type Fluent = FluentFor<'use_list'>;
+	export type Loose = LooseFor<'use_list'>;
+	export type Tree = TreeFor<'use_list'>;
+	export type Kind = 'use_list';
+}
+export namespace UseAsClause {
+	export type Config = ConfigFor<'use_as_clause'>;
+	export type Fluent = FluentFor<'use_as_clause'>;
+	export type Loose = LooseFor<'use_as_clause'>;
+	export type Tree = TreeFor<'use_as_clause'>;
+	export type Kind = 'use_as_clause';
+}
+export namespace UseWildcard {
+	export type Config = ConfigFor<'use_wildcard'>;
+	export type Fluent = FluentFor<'use_wildcard'>;
+	export type Loose = LooseFor<'use_wildcard'>;
+	export type Tree = TreeFor<'use_wildcard'>;
+	export type Kind = 'use_wildcard';
+}
+export namespace Parameters {
+	export type Config = ConfigFor<'parameters'>;
+	export type Fluent = FluentFor<'parameters'>;
+	export type Loose = LooseFor<'parameters'>;
+	export type Tree = TreeFor<'parameters'>;
+	export type Kind = 'parameters';
+}
+export namespace SelfParameter {
+	export type Config = ConfigFor<'self_parameter'>;
+	export type Fluent = FluentFor<'self_parameter'>;
+	export type Loose = LooseFor<'self_parameter'>;
+	export type Tree = TreeFor<'self_parameter'>;
+	export type Kind = 'self_parameter';
+}
+export namespace VariadicParameter {
+	export type Config = ConfigFor<'variadic_parameter'>;
+	export type Fluent = FluentFor<'variadic_parameter'>;
+	export type Loose = LooseFor<'variadic_parameter'>;
+	export type Tree = TreeFor<'variadic_parameter'>;
+	export type Kind = 'variadic_parameter';
+}
+export namespace Parameter {
+	export type Config = ConfigFor<'parameter'>;
+	export type Fluent = FluentFor<'parameter'>;
+	export type Loose = LooseFor<'parameter'>;
+	export type Tree = TreeFor<'parameter'>;
+	export type Kind = 'parameter';
+}
+export namespace ExternModifier {
+	export type Config = ConfigFor<'extern_modifier'>;
+	export type Fluent = FluentFor<'extern_modifier'>;
+	export type Loose = LooseFor<'extern_modifier'>;
+	export type Tree = TreeFor<'extern_modifier'>;
+	export type Kind = 'extern_modifier';
+}
+export namespace VisibilityModifier {
+	export type Config = ConfigFor<'visibility_modifier'>;
+	export type Fluent = FluentFor<'visibility_modifier'>;
+	export type Loose = LooseFor<'visibility_modifier'>;
+	export type Tree = TreeFor<'visibility_modifier'>;
+	export type Kind = 'visibility_modifier';
+}
+export namespace BracketedType {
+	export type Config = ConfigFor<'bracketed_type'>;
+	export type Fluent = FluentFor<'bracketed_type'>;
+	export type Loose = LooseFor<'bracketed_type'>;
+	export type Tree = TreeFor<'bracketed_type'>;
+	export type Kind = 'bracketed_type';
+}
+export namespace QualifiedType {
+	export type Config = ConfigFor<'qualified_type'>;
+	export type Fluent = FluentFor<'qualified_type'>;
+	export type Loose = LooseFor<'qualified_type'>;
+	export type Tree = TreeFor<'qualified_type'>;
+	export type Kind = 'qualified_type';
+}
+export namespace Lifetime {
+	export type Config = ConfigFor<'lifetime'>;
+	export type Fluent = FluentFor<'lifetime'>;
+	export type Loose = LooseFor<'lifetime'>;
+	export type Tree = TreeFor<'lifetime'>;
+	export type Kind = 'lifetime';
+}
+export namespace ArrayType {
+	export type Config = ConfigFor<'array_type'>;
+	export type Fluent = FluentFor<'array_type'>;
+	export type Loose = LooseFor<'array_type'>;
+	export type Tree = TreeFor<'array_type'>;
+	export type Kind = 'array_type';
+}
+export namespace ForLifetimes {
+	export type Config = ConfigFor<'for_lifetimes'>;
+	export type Fluent = FluentFor<'for_lifetimes'>;
+	export type Loose = LooseFor<'for_lifetimes'>;
+	export type Tree = TreeFor<'for_lifetimes'>;
+	export type Kind = 'for_lifetimes';
+}
+export namespace FunctionType {
+	export type Config = ConfigFor<'function_type'>;
+	export type Fluent = FluentFor<'function_type'>;
+	export type Loose = LooseFor<'function_type'>;
+	export type Tree = TreeFor<'function_type'>;
+	export type Kind = 'function_type';
+}
+export namespace TupleType {
+	export type Config = ConfigFor<'tuple_type'>;
+	export type Fluent = FluentFor<'tuple_type'>;
+	export type Loose = LooseFor<'tuple_type'>;
+	export type Tree = TreeFor<'tuple_type'>;
+	export type Kind = 'tuple_type';
+}
+export namespace GenericFunction {
+	export type Config = ConfigFor<'generic_function'>;
+	export type Fluent = FluentFor<'generic_function'>;
+	export type Loose = LooseFor<'generic_function'>;
+	export type Tree = TreeFor<'generic_function'>;
+	export type Kind = 'generic_function';
+}
+export namespace GenericType {
+	export type Config = ConfigFor<'generic_type'>;
+	export type Fluent = FluentFor<'generic_type'>;
+	export type Loose = LooseFor<'generic_type'>;
+	export type Tree = TreeFor<'generic_type'>;
+	export type Kind = 'generic_type';
+}
+export namespace GenericTypeWithTurbofish {
+	export type Config = ConfigFor<'generic_type_with_turbofish'>;
+	export type Fluent = FluentFor<'generic_type_with_turbofish'>;
+	export type Loose = LooseFor<'generic_type_with_turbofish'>;
+	export type Tree = TreeFor<'generic_type_with_turbofish'>;
+	export type Kind = 'generic_type_with_turbofish';
+}
+export namespace BoundedType {
+	export type Config = ConfigFor<'bounded_type'>;
+	export type Fluent = FluentFor<'bounded_type'>;
+	export type Loose = LooseFor<'bounded_type'>;
+	export type Tree = TreeFor<'bounded_type'>;
+	export type Kind = 'bounded_type';
+}
+export namespace UseBounds {
+	export type Config = ConfigFor<'use_bounds'>;
+	export type Fluent = FluentFor<'use_bounds'>;
+	export type Loose = LooseFor<'use_bounds'>;
+	export type Tree = TreeFor<'use_bounds'>;
+	export type Kind = 'use_bounds';
+}
+export namespace TypeArguments {
+	export type Config = ConfigFor<'type_arguments'>;
+	export type Fluent = FluentFor<'type_arguments'>;
+	export type Loose = LooseFor<'type_arguments'>;
+	export type Tree = TreeFor<'type_arguments'>;
+	export type Kind = 'type_arguments';
+}
+export namespace TypeBinding {
+	export type Config = ConfigFor<'type_binding'>;
+	export type Fluent = FluentFor<'type_binding'>;
+	export type Loose = LooseFor<'type_binding'>;
+	export type Tree = TreeFor<'type_binding'>;
+	export type Kind = 'type_binding';
+}
+export namespace ReferenceType {
+	export type Config = ConfigFor<'reference_type'>;
+	export type Fluent = FluentFor<'reference_type'>;
+	export type Loose = LooseFor<'reference_type'>;
+	export type Tree = TreeFor<'reference_type'>;
+	export type Kind = 'reference_type';
+}
+export namespace PointerType {
+	export type Config = ConfigFor<'pointer_type'>;
+	export type Fluent = FluentFor<'pointer_type'>;
+	export type Loose = LooseFor<'pointer_type'>;
+	export type Tree = TreeFor<'pointer_type'>;
+	export type Kind = 'pointer_type';
+}
+export namespace AbstractType {
+	export type Config = ConfigFor<'abstract_type'>;
+	export type Fluent = FluentFor<'abstract_type'>;
+	export type Loose = LooseFor<'abstract_type'>;
+	export type Tree = TreeFor<'abstract_type'>;
+	export type Kind = 'abstract_type';
+}
+export namespace DynamicType {
+	export type Config = ConfigFor<'dynamic_type'>;
+	export type Fluent = FluentFor<'dynamic_type'>;
+	export type Loose = LooseFor<'dynamic_type'>;
+	export type Tree = TreeFor<'dynamic_type'>;
+	export type Kind = 'dynamic_type';
+}
+export namespace MacroInvocation {
+	export type Config = ConfigFor<'macro_invocation'>;
+	export type Fluent = FluentFor<'macro_invocation'>;
+	export type Loose = LooseFor<'macro_invocation'>;
+	export type Tree = TreeFor<'macro_invocation'>;
+	export type Kind = 'macro_invocation';
+}
+export namespace DelimTokenTree {
+	export type Config = ConfigFor<'delim_token_tree'>;
+	export type Fluent = FluentFor<'delim_token_tree'>;
+	export type Loose = LooseFor<'delim_token_tree'>;
+	export type Tree = TreeFor<'delim_token_tree'>;
+	export type Kind = 'delim_token_tree';
+}
+export namespace ScopedIdentifier {
+	export type Config = ConfigFor<'scoped_identifier'>;
+	export type Fluent = FluentFor<'scoped_identifier'>;
+	export type Loose = LooseFor<'scoped_identifier'>;
+	export type Tree = TreeFor<'scoped_identifier'>;
+	export type Kind = 'scoped_identifier';
+}
+export namespace ScopedTypeIdentifierInExpressionPosition {
+	export type Config = ConfigFor<'scoped_type_identifier_in_expression_position'>;
+	export type Fluent = FluentFor<'scoped_type_identifier_in_expression_position'>;
+	export type Loose = LooseFor<'scoped_type_identifier_in_expression_position'>;
+	export type Tree = TreeFor<'scoped_type_identifier_in_expression_position'>;
+	export type Kind = 'scoped_type_identifier_in_expression_position';
+}
+export namespace ScopedTypeIdentifier {
+	export type Config = ConfigFor<'scoped_type_identifier'>;
+	export type Fluent = FluentFor<'scoped_type_identifier'>;
+	export type Loose = LooseFor<'scoped_type_identifier'>;
+	export type Tree = TreeFor<'scoped_type_identifier'>;
+	export type Kind = 'scoped_type_identifier';
+}
+export namespace RangeExpression {
+	export type Config = ConfigFor<'range_expression'>;
+	export type Fluent = FluentFor<'range_expression'>;
+	export type Loose = LooseFor<'range_expression'>;
+	export type Tree = TreeFor<'range_expression'>;
+	export type Kind = 'range_expression';
+}
+export namespace UnaryExpression {
+	export type Config = ConfigFor<'unary_expression'>;
+	export type Fluent = FluentFor<'unary_expression'>;
+	export type Loose = LooseFor<'unary_expression'>;
+	export type Tree = TreeFor<'unary_expression'>;
+	export type Kind = 'unary_expression';
+}
+export namespace TryExpression {
+	export type Config = ConfigFor<'try_expression'>;
+	export type Fluent = FluentFor<'try_expression'>;
+	export type Loose = LooseFor<'try_expression'>;
+	export type Tree = TreeFor<'try_expression'>;
+	export type Kind = 'try_expression';
+}
+export namespace ReferenceExpression {
+	export type Config = ConfigFor<'reference_expression'>;
+	export type Fluent = FluentFor<'reference_expression'>;
+	export type Loose = LooseFor<'reference_expression'>;
+	export type Tree = TreeFor<'reference_expression'>;
+	export type Kind = 'reference_expression';
+}
+export namespace BinaryExpression {
+	export type Config = ConfigFor<'binary_expression'>;
+	export type Fluent = FluentFor<'binary_expression'>;
+	export type Loose = LooseFor<'binary_expression'>;
+	export type Tree = TreeFor<'binary_expression'>;
+	export type Kind = 'binary_expression';
+}
+export namespace AssignmentExpression {
+	export type Config = ConfigFor<'assignment_expression'>;
+	export type Fluent = FluentFor<'assignment_expression'>;
+	export type Loose = LooseFor<'assignment_expression'>;
+	export type Tree = TreeFor<'assignment_expression'>;
+	export type Kind = 'assignment_expression';
+}
+export namespace CompoundAssignmentExpr {
+	export type Config = ConfigFor<'compound_assignment_expr'>;
+	export type Fluent = FluentFor<'compound_assignment_expr'>;
+	export type Loose = LooseFor<'compound_assignment_expr'>;
+	export type Tree = TreeFor<'compound_assignment_expr'>;
+	export type Kind = 'compound_assignment_expr';
+}
+export namespace TypeCastExpression {
+	export type Config = ConfigFor<'type_cast_expression'>;
+	export type Fluent = FluentFor<'type_cast_expression'>;
+	export type Loose = LooseFor<'type_cast_expression'>;
+	export type Tree = TreeFor<'type_cast_expression'>;
+	export type Kind = 'type_cast_expression';
+}
+export namespace ReturnExpression {
+	export type Config = ConfigFor<'return_expression'>;
+	export type Fluent = FluentFor<'return_expression'>;
+	export type Loose = LooseFor<'return_expression'>;
+	export type Tree = TreeFor<'return_expression'>;
+	export type Kind = 'return_expression';
+}
+export namespace YieldExpression {
+	export type Config = ConfigFor<'yield_expression'>;
+	export type Fluent = FluentFor<'yield_expression'>;
+	export type Loose = LooseFor<'yield_expression'>;
+	export type Tree = TreeFor<'yield_expression'>;
+	export type Kind = 'yield_expression';
+}
+export namespace CallExpression {
+	export type Config = ConfigFor<'call_expression'>;
+	export type Fluent = FluentFor<'call_expression'>;
+	export type Loose = LooseFor<'call_expression'>;
+	export type Tree = TreeFor<'call_expression'>;
+	export type Kind = 'call_expression';
+}
+export namespace Arguments {
+	export type Config = ConfigFor<'arguments'>;
+	export type Fluent = FluentFor<'arguments'>;
+	export type Loose = LooseFor<'arguments'>;
+	export type Tree = TreeFor<'arguments'>;
+	export type Kind = 'arguments';
+}
+export namespace ArrayExpression {
+	export type Config = ConfigFor<'array_expression'>;
+	export type Fluent = FluentFor<'array_expression'>;
+	export type Loose = LooseFor<'array_expression'>;
+	export type Tree = TreeFor<'array_expression'>;
+	export type Kind = 'array_expression';
+}
+export namespace ParenthesizedExpression {
+	export type Config = ConfigFor<'parenthesized_expression'>;
+	export type Fluent = FluentFor<'parenthesized_expression'>;
+	export type Loose = LooseFor<'parenthesized_expression'>;
+	export type Tree = TreeFor<'parenthesized_expression'>;
+	export type Kind = 'parenthesized_expression';
+}
+export namespace TupleExpression {
+	export type Config = ConfigFor<'tuple_expression'>;
+	export type Fluent = FluentFor<'tuple_expression'>;
+	export type Loose = LooseFor<'tuple_expression'>;
+	export type Tree = TreeFor<'tuple_expression'>;
+	export type Kind = 'tuple_expression';
+}
+export namespace StructExpression {
+	export type Config = ConfigFor<'struct_expression'>;
+	export type Fluent = FluentFor<'struct_expression'>;
+	export type Loose = LooseFor<'struct_expression'>;
+	export type Tree = TreeFor<'struct_expression'>;
+	export type Kind = 'struct_expression';
+}
+export namespace FieldInitializerList {
+	export type Config = ConfigFor<'field_initializer_list'>;
+	export type Fluent = FluentFor<'field_initializer_list'>;
+	export type Loose = LooseFor<'field_initializer_list'>;
+	export type Tree = TreeFor<'field_initializer_list'>;
+	export type Kind = 'field_initializer_list';
+}
+export namespace ShorthandFieldInitializer {
+	export type Config = ConfigFor<'shorthand_field_initializer'>;
+	export type Fluent = FluentFor<'shorthand_field_initializer'>;
+	export type Loose = LooseFor<'shorthand_field_initializer'>;
+	export type Tree = TreeFor<'shorthand_field_initializer'>;
+	export type Kind = 'shorthand_field_initializer';
+}
+export namespace FieldInitializer {
+	export type Config = ConfigFor<'field_initializer'>;
+	export type Fluent = FluentFor<'field_initializer'>;
+	export type Loose = LooseFor<'field_initializer'>;
+	export type Tree = TreeFor<'field_initializer'>;
+	export type Kind = 'field_initializer';
+}
+export namespace BaseFieldInitializer {
+	export type Config = ConfigFor<'base_field_initializer'>;
+	export type Fluent = FluentFor<'base_field_initializer'>;
+	export type Loose = LooseFor<'base_field_initializer'>;
+	export type Tree = TreeFor<'base_field_initializer'>;
+	export type Kind = 'base_field_initializer';
+}
+export namespace IfExpression {
+	export type Config = ConfigFor<'if_expression'>;
+	export type Fluent = FluentFor<'if_expression'>;
+	export type Loose = LooseFor<'if_expression'>;
+	export type Tree = TreeFor<'if_expression'>;
+	export type Kind = 'if_expression';
+}
+export namespace LetCondition {
+	export type Config = ConfigFor<'let_condition'>;
+	export type Fluent = FluentFor<'let_condition'>;
+	export type Loose = LooseFor<'let_condition'>;
+	export type Tree = TreeFor<'let_condition'>;
+	export type Kind = 'let_condition';
+}
+export namespace LetChain {
+	export type Config = ConfigFor<'_let_chain'>;
+	export type Fluent = FluentFor<'_let_chain'>;
+	export type Loose = LooseFor<'_let_chain'>;
+	export type Tree = TreeFor<'_let_chain'>;
+	export type Kind = '_let_chain';
+}
+export namespace ElseClause {
+	export type Config = ConfigFor<'else_clause'>;
+	export type Fluent = FluentFor<'else_clause'>;
+	export type Loose = LooseFor<'else_clause'>;
+	export type Tree = TreeFor<'else_clause'>;
+	export type Kind = 'else_clause';
+}
+export namespace MatchExpression {
+	export type Config = ConfigFor<'match_expression'>;
+	export type Fluent = FluentFor<'match_expression'>;
+	export type Loose = LooseFor<'match_expression'>;
+	export type Tree = TreeFor<'match_expression'>;
+	export type Kind = 'match_expression';
+}
+export namespace MatchBlock {
+	export type Config = ConfigFor<'match_block'>;
+	export type Fluent = FluentFor<'match_block'>;
+	export type Loose = LooseFor<'match_block'>;
+	export type Tree = TreeFor<'match_block'>;
+	export type Kind = 'match_block';
+}
+export namespace MatchArm {
+	export type Config = ConfigFor<'match_arm'>;
+	export type Fluent = FluentFor<'match_arm'>;
+	export type Loose = LooseFor<'match_arm'>;
+	export type Tree = TreeFor<'match_arm'>;
+	export type Kind = 'match_arm';
+}
+export namespace LastMatchArm {
+	export type Config = ConfigFor<'last_match_arm'>;
+	export type Fluent = FluentFor<'last_match_arm'>;
+	export type Loose = LooseFor<'last_match_arm'>;
+	export type Tree = TreeFor<'last_match_arm'>;
+	export type Kind = 'last_match_arm';
+}
+export namespace MatchPattern {
+	export type Config = ConfigFor<'match_pattern'>;
+	export type Fluent = FluentFor<'match_pattern'>;
+	export type Loose = LooseFor<'match_pattern'>;
+	export type Tree = TreeFor<'match_pattern'>;
+	export type Kind = 'match_pattern';
+}
+export namespace WhileExpression {
+	export type Config = ConfigFor<'while_expression'>;
+	export type Fluent = FluentFor<'while_expression'>;
+	export type Loose = LooseFor<'while_expression'>;
+	export type Tree = TreeFor<'while_expression'>;
+	export type Kind = 'while_expression';
+}
+export namespace LoopExpression {
+	export type Config = ConfigFor<'loop_expression'>;
+	export type Fluent = FluentFor<'loop_expression'>;
+	export type Loose = LooseFor<'loop_expression'>;
+	export type Tree = TreeFor<'loop_expression'>;
+	export type Kind = 'loop_expression';
+}
+export namespace ForExpression {
+	export type Config = ConfigFor<'for_expression'>;
+	export type Fluent = FluentFor<'for_expression'>;
+	export type Loose = LooseFor<'for_expression'>;
+	export type Tree = TreeFor<'for_expression'>;
+	export type Kind = 'for_expression';
+}
+export namespace ConstBlock {
+	export type Config = ConfigFor<'const_block'>;
+	export type Fluent = FluentFor<'const_block'>;
+	export type Loose = LooseFor<'const_block'>;
+	export type Tree = TreeFor<'const_block'>;
+	export type Kind = 'const_block';
+}
+export namespace ClosureExpression {
+	export type Config = ConfigFor<'closure_expression'>;
+	export type Fluent = FluentFor<'closure_expression'>;
+	export type Loose = LooseFor<'closure_expression'>;
+	export type Tree = TreeFor<'closure_expression'>;
+	export type Kind = 'closure_expression';
+}
+export namespace ClosureParameters {
+	export type Config = ConfigFor<'closure_parameters'>;
+	export type Fluent = FluentFor<'closure_parameters'>;
+	export type Loose = LooseFor<'closure_parameters'>;
+	export type Tree = TreeFor<'closure_parameters'>;
+	export type Kind = 'closure_parameters';
+}
+export namespace Label {
+	export type Config = ConfigFor<'label'>;
+	export type Fluent = FluentFor<'label'>;
+	export type Loose = LooseFor<'label'>;
+	export type Tree = TreeFor<'label'>;
+	export type Kind = 'label';
+}
+export namespace BreakExpression {
+	export type Config = ConfigFor<'break_expression'>;
+	export type Fluent = FluentFor<'break_expression'>;
+	export type Loose = LooseFor<'break_expression'>;
+	export type Tree = TreeFor<'break_expression'>;
+	export type Kind = 'break_expression';
+}
+export namespace ContinueExpression {
+	export type Config = ConfigFor<'continue_expression'>;
+	export type Fluent = FluentFor<'continue_expression'>;
+	export type Loose = LooseFor<'continue_expression'>;
+	export type Tree = TreeFor<'continue_expression'>;
+	export type Kind = 'continue_expression';
+}
+export namespace IndexExpression {
+	export type Config = ConfigFor<'index_expression'>;
+	export type Fluent = FluentFor<'index_expression'>;
+	export type Loose = LooseFor<'index_expression'>;
+	export type Tree = TreeFor<'index_expression'>;
+	export type Kind = 'index_expression';
+}
+export namespace AwaitExpression {
+	export type Config = ConfigFor<'await_expression'>;
+	export type Fluent = FluentFor<'await_expression'>;
+	export type Loose = LooseFor<'await_expression'>;
+	export type Tree = TreeFor<'await_expression'>;
+	export type Kind = 'await_expression';
+}
+export namespace FieldExpression {
+	export type Config = ConfigFor<'field_expression'>;
+	export type Fluent = FluentFor<'field_expression'>;
+	export type Loose = LooseFor<'field_expression'>;
+	export type Tree = TreeFor<'field_expression'>;
+	export type Kind = 'field_expression';
+}
+export namespace UnsafeBlock {
+	export type Config = ConfigFor<'unsafe_block'>;
+	export type Fluent = FluentFor<'unsafe_block'>;
+	export type Loose = LooseFor<'unsafe_block'>;
+	export type Tree = TreeFor<'unsafe_block'>;
+	export type Kind = 'unsafe_block';
+}
+export namespace AsyncBlock {
+	export type Config = ConfigFor<'async_block'>;
+	export type Fluent = FluentFor<'async_block'>;
+	export type Loose = LooseFor<'async_block'>;
+	export type Tree = TreeFor<'async_block'>;
+	export type Kind = 'async_block';
+}
+export namespace GenBlock {
+	export type Config = ConfigFor<'gen_block'>;
+	export type Fluent = FluentFor<'gen_block'>;
+	export type Loose = LooseFor<'gen_block'>;
+	export type Tree = TreeFor<'gen_block'>;
+	export type Kind = 'gen_block';
+}
+export namespace TryBlock {
+	export type Config = ConfigFor<'try_block'>;
+	export type Fluent = FluentFor<'try_block'>;
+	export type Loose = LooseFor<'try_block'>;
+	export type Tree = TreeFor<'try_block'>;
+	export type Kind = 'try_block';
+}
+export namespace Block {
+	export type Config = ConfigFor<'block'>;
+	export type Fluent = FluentFor<'block'>;
+	export type Loose = LooseFor<'block'>;
+	export type Tree = TreeFor<'block'>;
+	export type Kind = 'block';
+}
+export namespace GenericPattern {
+	export type Config = ConfigFor<'generic_pattern'>;
+	export type Fluent = FluentFor<'generic_pattern'>;
+	export type Loose = LooseFor<'generic_pattern'>;
+	export type Tree = TreeFor<'generic_pattern'>;
+	export type Kind = 'generic_pattern';
+}
+export namespace TuplePattern {
+	export type Config = ConfigFor<'tuple_pattern'>;
+	export type Fluent = FluentFor<'tuple_pattern'>;
+	export type Loose = LooseFor<'tuple_pattern'>;
+	export type Tree = TreeFor<'tuple_pattern'>;
+	export type Kind = 'tuple_pattern';
+}
+export namespace SlicePattern {
+	export type Config = ConfigFor<'slice_pattern'>;
+	export type Fluent = FluentFor<'slice_pattern'>;
+	export type Loose = LooseFor<'slice_pattern'>;
+	export type Tree = TreeFor<'slice_pattern'>;
+	export type Kind = 'slice_pattern';
+}
+export namespace TupleStructPattern {
+	export type Config = ConfigFor<'tuple_struct_pattern'>;
+	export type Fluent = FluentFor<'tuple_struct_pattern'>;
+	export type Loose = LooseFor<'tuple_struct_pattern'>;
+	export type Tree = TreeFor<'tuple_struct_pattern'>;
+	export type Kind = 'tuple_struct_pattern';
+}
+export namespace StructPattern {
+	export type Config = ConfigFor<'struct_pattern'>;
+	export type Fluent = FluentFor<'struct_pattern'>;
+	export type Loose = LooseFor<'struct_pattern'>;
+	export type Tree = TreeFor<'struct_pattern'>;
+	export type Kind = 'struct_pattern';
+}
+export namespace FieldPattern {
+	export type Config = ConfigFor<'field_pattern'>;
+	export type Fluent = FluentFor<'field_pattern'>;
+	export type Loose = LooseFor<'field_pattern'>;
+	export type Tree = TreeFor<'field_pattern'>;
+	export type Kind = 'field_pattern';
+}
+export namespace MutPattern {
+	export type Config = ConfigFor<'mut_pattern'>;
+	export type Fluent = FluentFor<'mut_pattern'>;
+	export type Loose = LooseFor<'mut_pattern'>;
+	export type Tree = TreeFor<'mut_pattern'>;
+	export type Kind = 'mut_pattern';
+}
+export namespace RangePattern {
+	export type Config = ConfigFor<'range_pattern'>;
+	export type Fluent = FluentFor<'range_pattern'>;
+	export type Loose = LooseFor<'range_pattern'>;
+	export type Tree = TreeFor<'range_pattern'>;
+	export type Kind = 'range_pattern';
+}
+export namespace RefPattern {
+	export type Config = ConfigFor<'ref_pattern'>;
+	export type Fluent = FluentFor<'ref_pattern'>;
+	export type Loose = LooseFor<'ref_pattern'>;
+	export type Tree = TreeFor<'ref_pattern'>;
+	export type Kind = 'ref_pattern';
+}
+export namespace CapturedPattern {
+	export type Config = ConfigFor<'captured_pattern'>;
+	export type Fluent = FluentFor<'captured_pattern'>;
+	export type Loose = LooseFor<'captured_pattern'>;
+	export type Tree = TreeFor<'captured_pattern'>;
+	export type Kind = 'captured_pattern';
+}
+export namespace ReferencePattern {
+	export type Config = ConfigFor<'reference_pattern'>;
+	export type Fluent = FluentFor<'reference_pattern'>;
+	export type Loose = LooseFor<'reference_pattern'>;
+	export type Tree = TreeFor<'reference_pattern'>;
+	export type Kind = 'reference_pattern';
+}
+export namespace OrPattern {
+	export type Config = ConfigFor<'or_pattern'>;
+	export type Fluent = FluentFor<'or_pattern'>;
+	export type Loose = LooseFor<'or_pattern'>;
+	export type Tree = TreeFor<'or_pattern'>;
+	export type Kind = 'or_pattern';
+}
+export namespace NegativeLiteral {
+	export type Config = ConfigFor<'negative_literal'>;
+	export type Fluent = FluentFor<'negative_literal'>;
+	export type Loose = LooseFor<'negative_literal'>;
+	export type Tree = TreeFor<'negative_literal'>;
+	export type Kind = 'negative_literal';
+}
+export namespace StringLiteral {
+	export type Config = ConfigFor<'string_literal'>;
+	export type Fluent = FluentFor<'string_literal'>;
+	export type Loose = LooseFor<'string_literal'>;
+	export type Tree = TreeFor<'string_literal'>;
+	export type Kind = 'string_literal';
+}
+export namespace RawStringLiteral {
+	export type Config = ConfigFor<'raw_string_literal'>;
+	export type Fluent = FluentFor<'raw_string_literal'>;
+	export type Loose = LooseFor<'raw_string_literal'>;
+	export type Tree = TreeFor<'raw_string_literal'>;
+	export type Kind = 'raw_string_literal';
+}
+export namespace Comment {
+	export type Config = ConfigFor<'comment'>;
+	export type Fluent = FluentFor<'comment'>;
+	export type Loose = LooseFor<'comment'>;
+	export type Tree = TreeFor<'comment'>;
+	export type Kind = 'comment';
+}
+export namespace LineComment {
+	export type Config = ConfigFor<'line_comment'>;
+	export type Fluent = FluentFor<'line_comment'>;
+	export type Loose = LooseFor<'line_comment'>;
+	export type Tree = TreeFor<'line_comment'>;
+	export type Kind = 'line_comment';
+}
+export namespace BlockComment {
+	export type Config = ConfigFor<'block_comment'>;
+	export type Fluent = FluentFor<'block_comment'>;
+	export type Loose = LooseFor<'block_comment'>;
+	export type Tree = TreeFor<'block_comment'>;
+	export type Kind = 'block_comment';
+}
+export namespace AttributeGroup1 {
+	export type Config = ConfigFor<'_attribute_group1'>;
+	export type Fluent = FluentFor<'_attribute_group1'>;
+	export type Loose = LooseFor<'_attribute_group1'>;
+	export type Tree = TreeFor<'_attribute_group1'>;
+	export type Kind = '_attribute_group1';
+}
+export namespace EnumVariantListGroup1 {
 	export type Config = ConfigFor<'_enum_variant_list_group1'>;
 	export type Fluent = FluentFor<'_enum_variant_list_group1'>;
 	export type Loose = LooseFor<'_enum_variant_list_group1'>;
 	export type Tree = TreeFor<'_enum_variant_list_group1'>;
 	export type Kind = '_enum_variant_list_group1';
 }
-export namespace ExpressionStatementWithSemi {
-	export type Config = ConfigFor<'_expression_statement_with_semi'>;
-	export type Fluent = FluentFor<'_expression_statement_with_semi'>;
-	export type Loose = LooseFor<'_expression_statement_with_semi'>;
-	export type Tree = TreeFor<'_expression_statement_with_semi'>;
-	export type Kind = '_expression_statement_with_semi';
+export namespace EnumVariantOptional1 {
+	export type Config = ConfigFor<'_enum_variant_optional1'>;
+	export type Fluent = FluentFor<'_enum_variant_optional1'>;
+	export type Loose = LooseFor<'_enum_variant_optional1'>;
+	export type Tree = TreeFor<'_enum_variant_optional1'>;
+	export type Kind = '_enum_variant_optional1';
+}
+export namespace FieldDeclarationListGroup1 {
+	export type Config = ConfigFor<'_field_declaration_list_group1'>;
+	export type Fluent = FluentFor<'_field_declaration_list_group1'>;
+	export type Loose = LooseFor<'_field_declaration_list_group1'>;
+	export type Tree = TreeFor<'_field_declaration_list_group1'>;
+	export type Kind = '_field_declaration_list_group1';
+}
+export namespace OrderedFieldDeclarationListGroup1 {
+	export type Config = ConfigFor<'_ordered_field_declaration_list_group1'>;
+	export type Fluent = FluentFor<'_ordered_field_declaration_list_group1'>;
+	export type Loose = LooseFor<'_ordered_field_declaration_list_group1'>;
+	export type Tree = TreeFor<'_ordered_field_declaration_list_group1'>;
+	export type Kind = '_ordered_field_declaration_list_group1';
 }
 export namespace ExternCrateDeclarationOptional1 {
 	export type Config = ConfigFor<'_extern_crate_declaration_optional1'>;
@@ -8279,82 +9153,33 @@ export namespace ExternCrateDeclarationOptional1 {
 	export type Tree = TreeFor<'_extern_crate_declaration_optional1'>;
 	export type Kind = '_extern_crate_declaration_optional1';
 }
-export namespace _FieldDeclarationListGroup1 {
-	export type Config = ConfigFor<'_field_declaration_list_group1'>;
-	export type Fluent = FluentFor<'_field_declaration_list_group1'>;
-	export type Loose = LooseFor<'_field_declaration_list_group1'>;
-	export type Tree = TreeFor<'_field_declaration_list_group1'>;
-	export type Kind = '_field_declaration_list_group1';
+export namespace FunctionItemOptional1 {
+	export type Config = ConfigFor<'_function_item_optional1'>;
+	export type Fluent = FluentFor<'_function_item_optional1'>;
+	export type Loose = LooseFor<'_function_item_optional1'>;
+	export type Tree = TreeFor<'_function_item_optional1'>;
+	export type Kind = '_function_item_optional1';
 }
-export namespace _FieldInitializerListGroup1 {
-	export type Config = ConfigFor<'_field_initializer_list_group1'>;
-	export type Fluent = FluentFor<'_field_initializer_list_group1'>;
-	export type Loose = LooseFor<'_field_initializer_list_group1'>;
-	export type Tree = TreeFor<'_field_initializer_list_group1'>;
-	export type Kind = '_field_initializer_list_group1';
+export namespace WhereClauseGroup1 {
+	export type Config = ConfigFor<'_where_clause_group1'>;
+	export type Fluent = FluentFor<'_where_clause_group1'>;
+	export type Loose = LooseFor<'_where_clause_group1'>;
+	export type Tree = TreeFor<'_where_clause_group1'>;
+	export type Kind = '_where_clause_group1';
 }
-export namespace FieldPatternNamed {
-	export type Config = ConfigFor<'_field_pattern_named'>;
-	export type Fluent = FluentFor<'_field_pattern_named'>;
-	export type Loose = LooseFor<'_field_pattern_named'>;
-	export type Tree = TreeFor<'_field_pattern_named'>;
-	export type Kind = '_field_pattern_named';
+export namespace ConstParameterOptional1 {
+	export type Config = ConfigFor<'_const_parameter_optional1'>;
+	export type Fluent = FluentFor<'_const_parameter_optional1'>;
+	export type Loose = LooseFor<'_const_parameter_optional1'>;
+	export type Tree = TreeFor<'_const_parameter_optional1'>;
+	export type Kind = '_const_parameter_optional1';
 }
-export namespace FunctionTypeFnForm {
-	export type Config = ConfigFor<'_function_type_fn_form'>;
-	export type Fluent = FluentFor<'_function_type_fn_form'>;
-	export type Loose = LooseFor<'_function_type_fn_form'>;
-	export type Tree = TreeFor<'_function_type_fn_form'>;
-	export type Kind = '_function_type_fn_form';
-}
-export namespace FunctionTypeTraitForm {
-	export type Config = ConfigFor<'_function_type_trait_form'>;
-	export type Fluent = FluentFor<'_function_type_trait_form'>;
-	export type Loose = LooseFor<'_function_type_trait_form'>;
-	export type Tree = TreeFor<'_function_type_trait_form'>;
-	export type Kind = '_function_type_trait_form';
-}
-export namespace ImplItemBody {
-	export type Config = ConfigFor<'_impl_item_body'>;
-	export type Fluent = FluentFor<'_impl_item_body'>;
-	export type Loose = LooseFor<'_impl_item_body'>;
-	export type Tree = TreeFor<'_impl_item_body'>;
-	export type Kind = '_impl_item_body';
-}
-export namespace ImplItemGroup1 {
-	export type Config = ConfigFor<'_impl_item_group1'>;
-	export type Fluent = FluentFor<'_impl_item_group1'>;
-	export type Loose = LooseFor<'_impl_item_group1'>;
-	export type Tree = TreeFor<'_impl_item_group1'>;
-	export type Kind = '_impl_item_group1';
-}
-export namespace ImplItemNegativeClause {
-	export type Config = ConfigFor<'_impl_item_negative_clause'>;
-	export type Fluent = FluentFor<'_impl_item_negative_clause'>;
-	export type Loose = LooseFor<'_impl_item_negative_clause'>;
-	export type Tree = TreeFor<'_impl_item_negative_clause'>;
-	export type Kind = '_impl_item_negative_clause';
-}
-export namespace ImplItemPositiveClause {
-	export type Config = ConfigFor<'_impl_item_positive_clause'>;
-	export type Fluent = FluentFor<'_impl_item_positive_clause'>;
-	export type Loose = LooseFor<'_impl_item_positive_clause'>;
-	export type Tree = TreeFor<'_impl_item_positive_clause'>;
-	export type Kind = '_impl_item_positive_clause';
-}
-export namespace InPath {
-	export type Config = ConfigFor<'_in_path'>;
-	export type Fluent = FluentFor<'_in_path'>;
-	export type Loose = LooseFor<'_in_path'>;
-	export type Tree = TreeFor<'_in_path'>;
-	export type Kind = '_in_path';
-}
-export namespace LetChain {
-	export type Config = ConfigFor<'_let_chain'>;
-	export type Fluent = FluentFor<'_let_chain'>;
-	export type Loose = LooseFor<'_let_chain'>;
-	export type Tree = TreeFor<'_let_chain'>;
-	export type Kind = '_let_chain';
+export namespace TypeParameterOptional1 {
+	export type Config = ConfigFor<'_type_parameter_optional1'>;
+	export type Fluent = FluentFor<'_type_parameter_optional1'>;
+	export type Loose = LooseFor<'_type_parameter_optional1'>;
+	export type Tree = TreeFor<'_type_parameter_optional1'>;
+	export type Kind = '_type_parameter_optional1';
 }
 export namespace LetDeclarationOptional1 {
 	export type Config = ConfigFor<'_let_declaration_optional1'>;
@@ -8370,26 +9195,208 @@ export namespace LetDeclarationOptional2 {
 	export type Tree = TreeFor<'_let_declaration_optional2'>;
 	export type Kind = '_let_declaration_optional2';
 }
-export namespace LineCommentDoc {
-	export type Config = ConfigFor<'_line_comment_doc'>;
-	export type Fluent = FluentFor<'_line_comment_doc'>;
-	export type Loose = LooseFor<'_line_comment_doc'>;
-	export type Tree = TreeFor<'_line_comment_doc'>;
-	export type Kind = '_line_comment_doc';
+export namespace UseListGroup1 {
+	export type Config = ConfigFor<'_use_list_group1'>;
+	export type Fluent = FluentFor<'_use_list_group1'>;
+	export type Loose = LooseFor<'_use_list_group1'>;
+	export type Tree = TreeFor<'_use_list_group1'>;
+	export type Kind = '_use_list_group1';
 }
-export namespace MacroDefinitionBrace {
-	export type Config = ConfigFor<'_macro_definition_brace'>;
-	export type Fluent = FluentFor<'_macro_definition_brace'>;
-	export type Loose = LooseFor<'_macro_definition_brace'>;
-	export type Tree = TreeFor<'_macro_definition_brace'>;
-	export type Kind = '_macro_definition_brace';
+export namespace ParametersGroup1 {
+	export type Config = ConfigFor<'_parameters_group1'>;
+	export type Fluent = FluentFor<'_parameters_group1'>;
+	export type Loose = LooseFor<'_parameters_group1'>;
+	export type Tree = TreeFor<'_parameters_group1'>;
+	export type Kind = '_parameters_group1';
 }
-export namespace MacroDefinitionBracket {
-	export type Config = ConfigFor<'_macro_definition_bracket'>;
-	export type Fluent = FluentFor<'_macro_definition_bracket'>;
-	export type Loose = LooseFor<'_macro_definition_bracket'>;
-	export type Tree = TreeFor<'_macro_definition_bracket'>;
-	export type Kind = '_macro_definition_bracket';
+export namespace VariadicParameterOptional1 {
+	export type Config = ConfigFor<'_variadic_parameter_optional1'>;
+	export type Fluent = FluentFor<'_variadic_parameter_optional1'>;
+	export type Loose = LooseFor<'_variadic_parameter_optional1'>;
+	export type Tree = TreeFor<'_variadic_parameter_optional1'>;
+	export type Kind = '_variadic_parameter_optional1';
+}
+export namespace VisibilityModifierGroup1 {
+	export type Config = ConfigFor<'_visibility_modifier_group1'>;
+	export type Fluent = FluentFor<'_visibility_modifier_group1'>;
+	export type Loose = LooseFor<'_visibility_modifier_group1'>;
+	export type Tree = TreeFor<'_visibility_modifier_group1'>;
+	export type Kind = '_visibility_modifier_group1';
+}
+export namespace ArrayTypeOptional1 {
+	export type Config = ConfigFor<'_array_type_optional1'>;
+	export type Fluent = FluentFor<'_array_type_optional1'>;
+	export type Loose = LooseFor<'_array_type_optional1'>;
+	export type Tree = TreeFor<'_array_type_optional1'>;
+	export type Kind = '_array_type_optional1';
+}
+export namespace UseBoundsGroup1 {
+	export type Config = ConfigFor<'_use_bounds_group1'>;
+	export type Fluent = FluentFor<'_use_bounds_group1'>;
+	export type Loose = LooseFor<'_use_bounds_group1'>;
+	export type Tree = TreeFor<'_use_bounds_group1'>;
+	export type Kind = '_use_bounds_group1';
+}
+export namespace AbstractTypeOptional1 {
+	export type Config = ConfigFor<'_abstract_type_optional1'>;
+	export type Fluent = FluentFor<'_abstract_type_optional1'>;
+	export type Loose = LooseFor<'_abstract_type_optional1'>;
+	export type Tree = TreeFor<'_abstract_type_optional1'>;
+	export type Kind = '_abstract_type_optional1';
+}
+export namespace ArgumentsGroup1 {
+	export type Config = ConfigFor<'_arguments_group1'>;
+	export type Fluent = FluentFor<'_arguments_group1'>;
+	export type Loose = LooseFor<'_arguments_group1'>;
+	export type Tree = TreeFor<'_arguments_group1'>;
+	export type Kind = '_arguments_group1';
+}
+export namespace ArrayExpressionGroup1 {
+	export type Config = ConfigFor<'_array_expression_group1'>;
+	export type Fluent = FluentFor<'_array_expression_group1'>;
+	export type Loose = LooseFor<'_array_expression_group1'>;
+	export type Tree = TreeFor<'_array_expression_group1'>;
+	export type Kind = '_array_expression_group1';
+}
+export namespace FieldInitializerListGroup1 {
+	export type Config = ConfigFor<'_field_initializer_list_group1'>;
+	export type Fluent = FluentFor<'_field_initializer_list_group1'>;
+	export type Loose = LooseFor<'_field_initializer_list_group1'>;
+	export type Tree = TreeFor<'_field_initializer_list_group1'>;
+	export type Kind = '_field_initializer_list_group1';
+}
+export namespace MatchPatternOptional1 {
+	export type Config = ConfigFor<'_match_pattern_optional1'>;
+	export type Fluent = FluentFor<'_match_pattern_optional1'>;
+	export type Loose = LooseFor<'_match_pattern_optional1'>;
+	export type Tree = TreeFor<'_match_pattern_optional1'>;
+	export type Kind = '_match_pattern_optional1';
+}
+export namespace WhileExpressionOptional1 {
+	export type Config = ConfigFor<'_while_expression_optional1'>;
+	export type Fluent = FluentFor<'_while_expression_optional1'>;
+	export type Loose = LooseFor<'_while_expression_optional1'>;
+	export type Tree = TreeFor<'_while_expression_optional1'>;
+	export type Kind = '_while_expression_optional1';
+}
+export namespace TuplePatternGroup1 {
+	export type Config = ConfigFor<'_tuple_pattern_group1'>;
+	export type Fluent = FluentFor<'_tuple_pattern_group1'>;
+	export type Loose = LooseFor<'_tuple_pattern_group1'>;
+	export type Tree = TreeFor<'_tuple_pattern_group1'>;
+	export type Kind = '_tuple_pattern_group1';
+}
+export namespace SlicePatternGroup1 {
+	export type Config = ConfigFor<'_slice_pattern_group1'>;
+	export type Fluent = FluentFor<'_slice_pattern_group1'>;
+	export type Loose = LooseFor<'_slice_pattern_group1'>;
+	export type Tree = TreeFor<'_slice_pattern_group1'>;
+	export type Kind = '_slice_pattern_group1';
+}
+export namespace StructPatternGroup1 {
+	export type Config = ConfigFor<'_struct_pattern_group1'>;
+	export type Fluent = FluentFor<'_struct_pattern_group1'>;
+	export type Loose = LooseFor<'_struct_pattern_group1'>;
+	export type Tree = TreeFor<'_struct_pattern_group1'>;
+	export type Kind = '_struct_pattern_group1';
+}
+export namespace RangePatternGroup2 {
+	export type Config = ConfigFor<'_range_pattern_group2'>;
+	export type Fluent = FluentFor<'_range_pattern_group2'>;
+	export type Loose = LooseFor<'_range_pattern_group2'>;
+	export type Tree = TreeFor<'_range_pattern_group2'>;
+	export type Kind = '_range_pattern_group2';
+}
+export namespace BlockCommentGroup1 {
+	export type Config = ConfigFor<'_block_comment_group1'>;
+	export type Fluent = FluentFor<'_block_comment_group1'>;
+	export type Loose = LooseFor<'_block_comment_group1'>;
+	export type Tree = TreeFor<'_block_comment_group1'>;
+	export type Kind = '_block_comment_group1';
+}
+export namespace UseWildcardClause {
+	export type Config = ConfigFor<'_use_wildcard_clause'>;
+	export type Fluent = FluentFor<'_use_wildcard_clause'>;
+	export type Loose = LooseFor<'_use_wildcard_clause'>;
+	export type Tree = TreeFor<'_use_wildcard_clause'>;
+	export type Kind = '_use_wildcard_clause';
+}
+export namespace ReferenceExpressionRawMut {
+	export type Config = ConfigFor<'_reference_expression_raw_mut'>;
+	export type Fluent = FluentFor<'_reference_expression_raw_mut'>;
+	export type Loose = LooseFor<'_reference_expression_raw_mut'>;
+	export type Tree = TreeFor<'_reference_expression_raw_mut'>;
+	export type Kind = '_reference_expression_raw_mut';
+}
+export namespace ImplItemBody {
+	export type Config = ConfigFor<'_impl_item_body'>;
+	export type Fluent = FluentFor<'_impl_item_body'>;
+	export type Loose = LooseFor<'_impl_item_body'>;
+	export type Tree = TreeFor<'_impl_item_body'>;
+	export type Kind = '_impl_item_body';
+}
+export namespace ImplItemPositiveClause {
+	export type Config = ConfigFor<'_impl_item_positive_clause'>;
+	export type Fluent = FluentFor<'_impl_item_positive_clause'>;
+	export type Loose = LooseFor<'_impl_item_positive_clause'>;
+	export type Tree = TreeFor<'_impl_item_positive_clause'>;
+	export type Kind = '_impl_item_positive_clause';
+}
+export namespace ImplItemNegativeClause {
+	export type Config = ConfigFor<'_impl_item_negative_clause'>;
+	export type Fluent = FluentFor<'_impl_item_negative_clause'>;
+	export type Loose = LooseFor<'_impl_item_negative_clause'>;
+	export type Tree = TreeFor<'_impl_item_negative_clause'>;
+	export type Kind = '_impl_item_negative_clause';
+}
+export namespace ArrayExpressionSemi {
+	export type Config = ConfigFor<'_array_expression_semi'>;
+	export type Fluent = FluentFor<'_array_expression_semi'>;
+	export type Loose = LooseFor<'_array_expression_semi'>;
+	export type Tree = TreeFor<'_array_expression_semi'>;
+	export type Kind = '_array_expression_semi';
+}
+export namespace ArrayExpressionList {
+	export type Config = ConfigFor<'_array_expression_list'>;
+	export type Fluent = FluentFor<'_array_expression_list'>;
+	export type Loose = LooseFor<'_array_expression_list'>;
+	export type Tree = TreeFor<'_array_expression_list'>;
+	export type Kind = '_array_expression_list';
+}
+export namespace ClosureExpressionBlock {
+	export type Config = ConfigFor<'_closure_expression_block'>;
+	export type Fluent = FluentFor<'_closure_expression_block'>;
+	export type Loose = LooseFor<'_closure_expression_block'>;
+	export type Tree = TreeFor<'_closure_expression_block'>;
+	export type Kind = '_closure_expression_block';
+}
+export namespace ClosureExpressionExpr {
+	export type Config = ConfigFor<'_closure_expression_expr'>;
+	export type Fluent = FluentFor<'_closure_expression_expr'>;
+	export type Loose = LooseFor<'_closure_expression_expr'>;
+	export type Tree = TreeFor<'_closure_expression_expr'>;
+	export type Kind = '_closure_expression_expr';
+}
+export namespace FieldPatternNamed {
+	export type Config = ConfigFor<'_field_pattern_named'>;
+	export type Fluent = FluentFor<'_field_pattern_named'>;
+	export type Loose = LooseFor<'_field_pattern_named'>;
+	export type Tree = TreeFor<'_field_pattern_named'>;
+	export type Kind = '_field_pattern_named';
+}
+export namespace FunctionTypeTraitForm {
+	export type Config = ConfigFor<'_function_type_trait_form'>;
+	export type Fluent = FluentFor<'_function_type_trait_form'>;
+	export type Loose = LooseFor<'_function_type_trait_form'>;
+	export type Tree = TreeFor<'_function_type_trait_form'>;
+	export type Kind = '_function_type_trait_form';
+}
+export namespace FunctionTypeFnForm {
+	export type Config = ConfigFor<'_function_type_fn_form'>;
+	export type Fluent = FluentFor<'_function_type_fn_form'>;
+	export type Loose = LooseFor<'_function_type_fn_form'>;
+	export type Tree = TreeFor<'_function_type_fn_form'>;
+	export type Kind = '_function_type_fn_form';
 }
 export namespace MacroDefinitionParen {
 	export type Config = ConfigFor<'_macro_definition_paren'>;
@@ -8398,26 +9405,19 @@ export namespace MacroDefinitionParen {
 	export type Tree = TreeFor<'_macro_definition_paren'>;
 	export type Kind = '_macro_definition_paren';
 }
-export namespace MatchArmWithComma {
-	export type Config = ConfigFor<'_match_arm_with_comma'>;
-	export type Fluent = FluentFor<'_match_arm_with_comma'>;
-	export type Loose = LooseFor<'_match_arm_with_comma'>;
-	export type Tree = TreeFor<'_match_arm_with_comma'>;
-	export type Kind = '_match_arm_with_comma';
+export namespace MacroDefinitionBracket {
+	export type Config = ConfigFor<'_macro_definition_bracket'>;
+	export type Fluent = FluentFor<'_macro_definition_bracket'>;
+	export type Loose = LooseFor<'_macro_definition_bracket'>;
+	export type Tree = TreeFor<'_macro_definition_bracket'>;
+	export type Kind = '_macro_definition_bracket';
 }
-export namespace MatchBlockArms {
-	export type Config = ConfigFor<'_match_block_arms'>;
-	export type Fluent = FluentFor<'_match_block_arms'>;
-	export type Loose = LooseFor<'_match_block_arms'>;
-	export type Tree = TreeFor<'_match_block_arms'>;
-	export type Kind = '_match_block_arms';
-}
-export namespace MatchPatternOptional1 {
-	export type Config = ConfigFor<'_match_pattern_optional1'>;
-	export type Fluent = FluentFor<'_match_pattern_optional1'>;
-	export type Loose = LooseFor<'_match_pattern_optional1'>;
-	export type Tree = TreeFor<'_match_pattern_optional1'>;
-	export type Kind = '_match_pattern_optional1';
+export namespace MacroDefinitionBrace {
+	export type Config = ConfigFor<'_macro_definition_brace'>;
+	export type Fluent = FluentFor<'_macro_definition_brace'>;
+	export type Loose = LooseFor<'_macro_definition_brace'>;
+	export type Tree = TreeFor<'_macro_definition_brace'>;
+	export type Kind = '_macro_definition_brace';
 }
 export namespace OrPatternBinary {
 	export type Config = ConfigFor<'_or_pattern_binary'>;
@@ -8432,20 +9432,6 @@ export namespace OrPatternPrefix {
 	export type Loose = LooseFor<'_or_pattern_prefix'>;
 	export type Tree = TreeFor<'_or_pattern_prefix'>;
 	export type Kind = '_or_pattern_prefix';
-}
-export namespace _OrderedFieldDeclarationListGroup1 {
-	export type Config = ConfigFor<'_ordered_field_declaration_list_group1'>;
-	export type Fluent = FluentFor<'_ordered_field_declaration_list_group1'>;
-	export type Loose = LooseFor<'_ordered_field_declaration_list_group1'>;
-	export type Tree = TreeFor<'_ordered_field_declaration_list_group1'>;
-	export type Kind = '_ordered_field_declaration_list_group1';
-}
-export namespace _ParametersGroup1 {
-	export type Config = ConfigFor<'_parameters_group1'>;
-	export type Fluent = FluentFor<'_parameters_group1'>;
-	export type Loose = LooseFor<'_parameters_group1'>;
-	export type Tree = TreeFor<'_parameters_group1'>;
-	export type Kind = '_parameters_group1';
 }
 export namespace RangeExpressionBinary {
 	export type Config = ConfigFor<'_range_expression_binary'>;
@@ -8468,13 +9454,6 @@ export namespace RangeExpressionPrefix {
 	export type Tree = TreeFor<'_range_expression_prefix'>;
 	export type Kind = '_range_expression_prefix';
 }
-export namespace RangePatternLeftWithRight {
-	export type Config = ConfigFor<'_range_pattern_left_with_right'>;
-	export type Fluent = FluentFor<'_range_pattern_left_with_right'>;
-	export type Loose = LooseFor<'_range_pattern_left_with_right'>;
-	export type Tree = TreeFor<'_range_pattern_left_with_right'>;
-	export type Kind = '_range_pattern_left_with_right';
-}
 export namespace RangePatternPrefix {
 	export type Config = ConfigFor<'_range_pattern_prefix'>;
 	export type Fluent = FluentFor<'_range_pattern_prefix'>;
@@ -8482,19 +9461,12 @@ export namespace RangePatternPrefix {
 	export type Tree = TreeFor<'_range_pattern_prefix'>;
 	export type Kind = '_range_pattern_prefix';
 }
-export namespace ReferenceExpressionRawMut {
-	export type Config = ConfigFor<'_reference_expression_raw_mut'>;
-	export type Fluent = FluentFor<'_reference_expression_raw_mut'>;
-	export type Loose = LooseFor<'_reference_expression_raw_mut'>;
-	export type Tree = TreeFor<'_reference_expression_raw_mut'>;
-	export type Kind = '_reference_expression_raw_mut';
-}
-export namespace _SlicePatternGroup1 {
-	export type Config = ConfigFor<'_slice_pattern_group1'>;
-	export type Fluent = FluentFor<'_slice_pattern_group1'>;
-	export type Loose = LooseFor<'_slice_pattern_group1'>;
-	export type Tree = TreeFor<'_slice_pattern_group1'>;
-	export type Kind = '_slice_pattern_group1';
+export namespace RangePatternLeftWithRight {
+	export type Config = ConfigFor<'_range_pattern_left_with_right'>;
+	export type Fluent = FluentFor<'_range_pattern_left_with_right'>;
+	export type Loose = LooseFor<'_range_pattern_left_with_right'>;
+	export type Tree = TreeFor<'_range_pattern_left_with_right'>;
+	export type Kind = '_range_pattern_left_with_right';
 }
 export namespace StructItemBrace {
 	export type Config = ConfigFor<'_struct_item_brace'>;
@@ -8510,47 +9482,33 @@ export namespace StructItemTuple {
 	export type Tree = TreeFor<'_struct_item_tuple'>;
 	export type Kind = '_struct_item_tuple';
 }
-export namespace _StructPatternGroup1 {
-	export type Config = ConfigFor<'_struct_pattern_group1'>;
-	export type Fluent = FluentFor<'_struct_pattern_group1'>;
-	export type Loose = LooseFor<'_struct_pattern_group1'>;
-	export type Tree = TreeFor<'_struct_pattern_group1'>;
-	export type Kind = '_struct_pattern_group1';
+export namespace VisibilityModifierPub {
+	export type Config = ConfigFor<'_visibility_modifier_pub'>;
+	export type Fluent = FluentFor<'_visibility_modifier_pub'>;
+	export type Loose = LooseFor<'_visibility_modifier_pub'>;
+	export type Tree = TreeFor<'_visibility_modifier_pub'>;
+	export type Kind = '_visibility_modifier_pub';
 }
-export namespace TokenTreeBrace {
-	export type Config = ConfigFor<'_token_tree_brace'>;
-	export type Fluent = FluentFor<'_token_tree_brace'>;
-	export type Loose = LooseFor<'_token_tree_brace'>;
-	export type Tree = TreeFor<'_token_tree_brace'>;
-	export type Kind = '_token_tree_brace';
+export namespace ExpressionStatementWithSemi {
+	export type Config = ConfigFor<'_expression_statement_with_semi'>;
+	export type Fluent = FluentFor<'_expression_statement_with_semi'>;
+	export type Loose = LooseFor<'_expression_statement_with_semi'>;
+	export type Tree = TreeFor<'_expression_statement_with_semi'>;
+	export type Kind = '_expression_statement_with_semi';
 }
-export namespace TokenTreeBracket {
-	export type Config = ConfigFor<'_token_tree_bracket'>;
-	export type Fluent = FluentFor<'_token_tree_bracket'>;
-	export type Loose = LooseFor<'_token_tree_bracket'>;
-	export type Tree = TreeFor<'_token_tree_bracket'>;
-	export type Kind = '_token_tree_bracket';
+export namespace MatchArmWithComma {
+	export type Config = ConfigFor<'_match_arm_with_comma'>;
+	export type Fluent = FluentFor<'_match_arm_with_comma'>;
+	export type Loose = LooseFor<'_match_arm_with_comma'>;
+	export type Tree = TreeFor<'_match_arm_with_comma'>;
+	export type Kind = '_match_arm_with_comma';
 }
-export namespace TokenTreeParen {
-	export type Config = ConfigFor<'_token_tree_paren'>;
-	export type Fluent = FluentFor<'_token_tree_paren'>;
-	export type Loose = LooseFor<'_token_tree_paren'>;
-	export type Tree = TreeFor<'_token_tree_paren'>;
-	export type Kind = '_token_tree_paren';
-}
-export namespace TokenTreePatternBrace {
-	export type Config = ConfigFor<'_token_tree_pattern_brace'>;
-	export type Fluent = FluentFor<'_token_tree_pattern_brace'>;
-	export type Loose = LooseFor<'_token_tree_pattern_brace'>;
-	export type Tree = TreeFor<'_token_tree_pattern_brace'>;
-	export type Kind = '_token_tree_pattern_brace';
-}
-export namespace TokenTreePatternBracket {
-	export type Config = ConfigFor<'_token_tree_pattern_bracket'>;
-	export type Fluent = FluentFor<'_token_tree_pattern_bracket'>;
-	export type Loose = LooseFor<'_token_tree_pattern_bracket'>;
-	export type Tree = TreeFor<'_token_tree_pattern_bracket'>;
-	export type Kind = '_token_tree_pattern_bracket';
+export namespace LineCommentDoc {
+	export type Config = ConfigFor<'_line_comment_doc'>;
+	export type Fluent = FluentFor<'_line_comment_doc'>;
+	export type Loose = LooseFor<'_line_comment_doc'>;
+	export type Tree = TreeFor<'_line_comment_doc'>;
+	export type Kind = '_line_comment_doc';
 }
 export namespace TokenTreePatternParen {
 	export type Config = ConfigFor<'_token_tree_pattern_paren'>;
@@ -8559,12 +9517,110 @@ export namespace TokenTreePatternParen {
 	export type Tree = TreeFor<'_token_tree_pattern_paren'>;
 	export type Kind = '_token_tree_pattern_paren';
 }
-export namespace _TuplePatternGroup1 {
-	export type Config = ConfigFor<'_tuple_pattern_group1'>;
-	export type Fluent = FluentFor<'_tuple_pattern_group1'>;
-	export type Loose = LooseFor<'_tuple_pattern_group1'>;
-	export type Tree = TreeFor<'_tuple_pattern_group1'>;
-	export type Kind = '_tuple_pattern_group1';
+export namespace TokenTreePatternBracket {
+	export type Config = ConfigFor<'_token_tree_pattern_bracket'>;
+	export type Fluent = FluentFor<'_token_tree_pattern_bracket'>;
+	export type Loose = LooseFor<'_token_tree_pattern_bracket'>;
+	export type Tree = TreeFor<'_token_tree_pattern_bracket'>;
+	export type Kind = '_token_tree_pattern_bracket';
+}
+export namespace TokenTreePatternBrace {
+	export type Config = ConfigFor<'_token_tree_pattern_brace'>;
+	export type Fluent = FluentFor<'_token_tree_pattern_brace'>;
+	export type Loose = LooseFor<'_token_tree_pattern_brace'>;
+	export type Tree = TreeFor<'_token_tree_pattern_brace'>;
+	export type Kind = '_token_tree_pattern_brace';
+}
+export namespace TokenTreeParen {
+	export type Config = ConfigFor<'_token_tree_paren'>;
+	export type Fluent = FluentFor<'_token_tree_paren'>;
+	export type Loose = LooseFor<'_token_tree_paren'>;
+	export type Tree = TreeFor<'_token_tree_paren'>;
+	export type Kind = '_token_tree_paren';
+}
+export namespace TokenTreeBracket {
+	export type Config = ConfigFor<'_token_tree_bracket'>;
+	export type Fluent = FluentFor<'_token_tree_bracket'>;
+	export type Loose = LooseFor<'_token_tree_bracket'>;
+	export type Tree = TreeFor<'_token_tree_bracket'>;
+	export type Kind = '_token_tree_bracket';
+}
+export namespace TokenTreeBrace {
+	export type Config = ConfigFor<'_token_tree_brace'>;
+	export type Fluent = FluentFor<'_token_tree_brace'>;
+	export type Loose = LooseFor<'_token_tree_brace'>;
+	export type Tree = TreeFor<'_token_tree_brace'>;
+	export type Kind = '_token_tree_brace';
+}
+export namespace DelimTokenTreeParen {
+	export type Config = ConfigFor<'_delim_token_tree_paren'>;
+	export type Fluent = FluentFor<'_delim_token_tree_paren'>;
+	export type Loose = LooseFor<'_delim_token_tree_paren'>;
+	export type Tree = TreeFor<'_delim_token_tree_paren'>;
+	export type Kind = '_delim_token_tree_paren';
+}
+export namespace DelimTokenTreeBracket {
+	export type Config = ConfigFor<'_delim_token_tree_bracket'>;
+	export type Fluent = FluentFor<'_delim_token_tree_bracket'>;
+	export type Loose = LooseFor<'_delim_token_tree_bracket'>;
+	export type Tree = TreeFor<'_delim_token_tree_bracket'>;
+	export type Kind = '_delim_token_tree_bracket';
+}
+export namespace DelimTokenTreeBrace {
+	export type Config = ConfigFor<'_delim_token_tree_brace'>;
+	export type Fluent = FluentFor<'_delim_token_tree_brace'>;
+	export type Loose = LooseFor<'_delim_token_tree_brace'>;
+	export type Tree = TreeFor<'_delim_token_tree_brace'>;
+	export type Kind = '_delim_token_tree_brace';
+}
+export namespace InPath {
+	export type Config = ConfigFor<'_in_path'>;
+	export type Fluent = FluentFor<'_in_path'>;
+	export type Loose = LooseFor<'_in_path'>;
+	export type Tree = TreeFor<'_in_path'>;
+	export type Kind = '_in_path';
+}
+export namespace AttributedFieldDeclaration {
+	export type Config = ConfigFor<'_attributed_field_declaration'>;
+	export type Fluent = FluentFor<'_attributed_field_declaration'>;
+	export type Loose = LooseFor<'_attributed_field_declaration'>;
+	export type Tree = TreeFor<'_attributed_field_declaration'>;
+	export type Kind = '_attributed_field_declaration';
+}
+export namespace AttributedEnumVariant {
+	export type Config = ConfigFor<'_attributed_enum_variant'>;
+	export type Fluent = FluentFor<'_attributed_enum_variant'>;
+	export type Loose = LooseFor<'_attributed_enum_variant'>;
+	export type Tree = TreeFor<'_attributed_enum_variant'>;
+	export type Kind = '_attributed_enum_variant';
+}
+export namespace AttributedParameter {
+	export type Config = ConfigFor<'_attributed_parameter'>;
+	export type Fluent = FluentFor<'_attributed_parameter'>;
+	export type Loose = LooseFor<'_attributed_parameter'>;
+	export type Tree = TreeFor<'_attributed_parameter'>;
+	export type Kind = '_attributed_parameter';
+}
+export namespace AttributedTypeParameter {
+	export type Config = ConfigFor<'_attributed_type_parameter'>;
+	export type Fluent = FluentFor<'_attributed_type_parameter'>;
+	export type Loose = LooseFor<'_attributed_type_parameter'>;
+	export type Tree = TreeFor<'_attributed_type_parameter'>;
+	export type Kind = '_attributed_type_parameter';
+}
+export namespace AttributedArgument {
+	export type Config = ConfigFor<'_attributed_argument'>;
+	export type Fluent = FluentFor<'_attributed_argument'>;
+	export type Loose = LooseFor<'_attributed_argument'>;
+	export type Tree = TreeFor<'_attributed_argument'>;
+	export type Kind = '_attributed_argument';
+}
+export namespace AttributedOrderedField {
+	export type Config = ConfigFor<'_attributed_ordered_field'>;
+	export type Fluent = FluentFor<'_attributed_ordered_field'>;
+	export type Loose = LooseFor<'_attributed_ordered_field'>;
+	export type Tree = TreeFor<'_attributed_ordered_field'>;
+	export type Kind = '_attributed_ordered_field';
 }
 export namespace TypeArgument {
 	export type Config = ConfigFor<'_type_argument'>;
@@ -8573,1146 +9629,12 @@ export namespace TypeArgument {
 	export type Tree = TreeFor<'_type_argument'>;
 	export type Kind = '_type_argument';
 }
-export namespace TypeParameterOptional1 {
-	export type Config = ConfigFor<'_type_parameter_optional1'>;
-	export type Fluent = FluentFor<'_type_parameter_optional1'>;
-	export type Loose = LooseFor<'_type_parameter_optional1'>;
-	export type Tree = TreeFor<'_type_parameter_optional1'>;
-	export type Kind = '_type_parameter_optional1';
-}
-export namespace _UseBoundsGroup1 {
-	export type Config = ConfigFor<'_use_bounds_group1'>;
-	export type Fluent = FluentFor<'_use_bounds_group1'>;
-	export type Loose = LooseFor<'_use_bounds_group1'>;
-	export type Tree = TreeFor<'_use_bounds_group1'>;
-	export type Kind = '_use_bounds_group1';
-}
-export namespace _UseListGroup1 {
-	export type Config = ConfigFor<'_use_list_group1'>;
-	export type Fluent = FluentFor<'_use_list_group1'>;
-	export type Loose = LooseFor<'_use_list_group1'>;
-	export type Tree = TreeFor<'_use_list_group1'>;
-	export type Kind = '_use_list_group1';
-}
-export namespace UseWildcardClause {
-	export type Config = ConfigFor<'_use_wildcard_clause'>;
-	export type Fluent = FluentFor<'_use_wildcard_clause'>;
-	export type Loose = LooseFor<'_use_wildcard_clause'>;
-	export type Tree = TreeFor<'_use_wildcard_clause'>;
-	export type Kind = '_use_wildcard_clause';
-}
-export namespace UseWildcardGroup1 {
-	export type Config = ConfigFor<'_use_wildcard_group1'>;
-	export type Fluent = FluentFor<'_use_wildcard_group1'>;
-	export type Loose = LooseFor<'_use_wildcard_group1'>;
-	export type Tree = TreeFor<'_use_wildcard_group1'>;
-	export type Kind = '_use_wildcard_group1';
-}
-export namespace VariadicParameterOptional1 {
-	export type Config = ConfigFor<'_variadic_parameter_optional1'>;
-	export type Fluent = FluentFor<'_variadic_parameter_optional1'>;
-	export type Loose = LooseFor<'_variadic_parameter_optional1'>;
-	export type Tree = TreeFor<'_variadic_parameter_optional1'>;
-	export type Kind = '_variadic_parameter_optional1';
-}
-export namespace _VisibilityModifierGroup1 {
-	export type Config = ConfigFor<'_visibility_modifier_group1'>;
-	export type Fluent = FluentFor<'_visibility_modifier_group1'>;
-	export type Loose = LooseFor<'_visibility_modifier_group1'>;
-	export type Tree = TreeFor<'_visibility_modifier_group1'>;
-	export type Kind = '_visibility_modifier_group1';
-}
-export namespace VisibilityModifierInPath {
-	export type Config = ConfigFor<'_visibility_modifier_in_path'>;
-	export type Fluent = FluentFor<'_visibility_modifier_in_path'>;
-	export type Loose = LooseFor<'_visibility_modifier_in_path'>;
-	export type Tree = TreeFor<'_visibility_modifier_in_path'>;
-	export type Kind = '_visibility_modifier_in_path';
-}
-export namespace VisibilityModifierPub {
-	export type Config = ConfigFor<'_visibility_modifier_pub'>;
-	export type Fluent = FluentFor<'_visibility_modifier_pub'>;
-	export type Loose = LooseFor<'_visibility_modifier_pub'>;
-	export type Tree = TreeFor<'_visibility_modifier_pub'>;
-	export type Kind = '_visibility_modifier_pub';
-}
-export namespace _WhereClauseGroup1 {
-	export type Config = ConfigFor<'_where_clause_group1'>;
-	export type Fluent = FluentFor<'_where_clause_group1'>;
-	export type Loose = LooseFor<'_where_clause_group1'>;
-	export type Tree = TreeFor<'_where_clause_group1'>;
-	export type Kind = '_where_clause_group1';
-}
-export namespace AbstractType {
-	export type Config = ConfigFor<'abstract_type'>;
-	export type Fluent = FluentFor<'abstract_type'>;
-	export type Loose = LooseFor<'abstract_type'>;
-	export type Tree = TreeFor<'abstract_type'>;
-	export type Kind = 'abstract_type';
-}
-export namespace Arguments {
-	export type Config = ConfigFor<'arguments'>;
-	export type Fluent = FluentFor<'arguments'>;
-	export type Loose = LooseFor<'arguments'>;
-	export type Tree = TreeFor<'arguments'>;
-	export type Kind = 'arguments';
-}
-export namespace ArrayExpression {
-	export type Config = ConfigFor<'array_expression'>;
-	export type Fluent = FluentFor<'array_expression'>;
-	export type Loose = LooseFor<'array_expression'>;
-	export type Tree = TreeFor<'array_expression'>;
-	export type Kind = 'array_expression';
-}
-export namespace ArrayType {
-	export type Config = ConfigFor<'array_type'>;
-	export type Fluent = FluentFor<'array_type'>;
-	export type Loose = LooseFor<'array_type'>;
-	export type Tree = TreeFor<'array_type'>;
-	export type Kind = 'array_type';
-}
-export namespace AssignmentExpression {
-	export type Config = ConfigFor<'assignment_expression'>;
-	export type Fluent = FluentFor<'assignment_expression'>;
-	export type Loose = LooseFor<'assignment_expression'>;
-	export type Tree = TreeFor<'assignment_expression'>;
-	export type Kind = 'assignment_expression';
-}
-export namespace AssociatedType {
-	export type Config = ConfigFor<'associated_type'>;
-	export type Fluent = FluentFor<'associated_type'>;
-	export type Loose = LooseFor<'associated_type'>;
-	export type Tree = TreeFor<'associated_type'>;
-	export type Kind = 'associated_type';
-}
-export namespace AsyncBlock {
-	export type Config = ConfigFor<'async_block'>;
-	export type Fluent = FluentFor<'async_block'>;
-	export type Loose = LooseFor<'async_block'>;
-	export type Tree = TreeFor<'async_block'>;
-	export type Kind = 'async_block';
-}
-export namespace Attribute {
-	export type Config = ConfigFor<'attribute'>;
-	export type Fluent = FluentFor<'attribute'>;
-	export type Loose = LooseFor<'attribute'>;
-	export type Tree = TreeFor<'attribute'>;
-	export type Kind = 'attribute';
-}
-export namespace AttributeItem {
-	export type Config = ConfigFor<'attribute_item'>;
-	export type Fluent = FluentFor<'attribute_item'>;
-	export type Loose = LooseFor<'attribute_item'>;
-	export type Tree = TreeFor<'attribute_item'>;
-	export type Kind = 'attribute_item';
-}
-export namespace AwaitExpression {
-	export type Config = ConfigFor<'await_expression'>;
-	export type Fluent = FluentFor<'await_expression'>;
-	export type Loose = LooseFor<'await_expression'>;
-	export type Tree = TreeFor<'await_expression'>;
-	export type Kind = 'await_expression';
-}
-export namespace BaseFieldInitializer {
-	export type Config = ConfigFor<'base_field_initializer'>;
-	export type Fluent = FluentFor<'base_field_initializer'>;
-	export type Loose = LooseFor<'base_field_initializer'>;
-	export type Tree = TreeFor<'base_field_initializer'>;
-	export type Kind = 'base_field_initializer';
-}
-export namespace BinaryExpression {
-	export type Config = ConfigFor<'binary_expression'>;
-	export type Fluent = FluentFor<'binary_expression'>;
-	export type Loose = LooseFor<'binary_expression'>;
-	export type Tree = TreeFor<'binary_expression'>;
-	export type Kind = 'binary_expression';
-}
-export namespace Block {
-	export type Config = ConfigFor<'block'>;
-	export type Fluent = FluentFor<'block'>;
-	export type Loose = LooseFor<'block'>;
-	export type Tree = TreeFor<'block'>;
-	export type Kind = 'block';
-}
-export namespace BlockComment {
-	export type Config = ConfigFor<'block_comment'>;
-	export type Fluent = FluentFor<'block_comment'>;
-	export type Loose = LooseFor<'block_comment'>;
-	export type Tree = TreeFor<'block_comment'>;
-	export type Kind = 'block_comment';
-}
-export namespace BoundedType {
-	export type Config = ConfigFor<'bounded_type'>;
-	export type Fluent = FluentFor<'bounded_type'>;
-	export type Loose = LooseFor<'bounded_type'>;
-	export type Tree = TreeFor<'bounded_type'>;
-	export type Kind = 'bounded_type';
-}
-export namespace BracketedType {
-	export type Config = ConfigFor<'bracketed_type'>;
-	export type Fluent = FluentFor<'bracketed_type'>;
-	export type Loose = LooseFor<'bracketed_type'>;
-	export type Tree = TreeFor<'bracketed_type'>;
-	export type Kind = 'bracketed_type';
-}
-export namespace BreakExpression {
-	export type Config = ConfigFor<'break_expression'>;
-	export type Fluent = FluentFor<'break_expression'>;
-	export type Loose = LooseFor<'break_expression'>;
-	export type Tree = TreeFor<'break_expression'>;
-	export type Kind = 'break_expression';
-}
-export namespace CallExpression {
-	export type Config = ConfigFor<'call_expression'>;
-	export type Fluent = FluentFor<'call_expression'>;
-	export type Loose = LooseFor<'call_expression'>;
-	export type Tree = TreeFor<'call_expression'>;
-	export type Kind = 'call_expression';
-}
-export namespace CapturedPattern {
-	export type Config = ConfigFor<'captured_pattern'>;
-	export type Fluent = FluentFor<'captured_pattern'>;
-	export type Loose = LooseFor<'captured_pattern'>;
-	export type Tree = TreeFor<'captured_pattern'>;
-	export type Kind = 'captured_pattern';
-}
-export namespace ClosureExpression {
-	export type Config = ConfigFor<'closure_expression'>;
-	export type Fluent = FluentFor<'closure_expression'>;
-	export type Loose = LooseFor<'closure_expression'>;
-	export type Tree = TreeFor<'closure_expression'>;
-	export type Kind = 'closure_expression';
-}
-export namespace ClosureParameters {
-	export type Config = ConfigFor<'closure_parameters'>;
-	export type Fluent = FluentFor<'closure_parameters'>;
-	export type Loose = LooseFor<'closure_parameters'>;
-	export type Tree = TreeFor<'closure_parameters'>;
-	export type Kind = 'closure_parameters';
-}
-export namespace Comment {
-	export type Config = ConfigFor<'comment'>;
-	export type Fluent = FluentFor<'comment'>;
-	export type Loose = LooseFor<'comment'>;
-	export type Tree = TreeFor<'comment'>;
-	export type Kind = 'comment';
-}
-export namespace CompoundAssignmentExpr {
-	export type Config = ConfigFor<'compound_assignment_expr'>;
-	export type Fluent = FluentFor<'compound_assignment_expr'>;
-	export type Loose = LooseFor<'compound_assignment_expr'>;
-	export type Tree = TreeFor<'compound_assignment_expr'>;
-	export type Kind = 'compound_assignment_expr';
-}
-export namespace ConstBlock {
-	export type Config = ConfigFor<'const_block'>;
-	export type Fluent = FluentFor<'const_block'>;
-	export type Loose = LooseFor<'const_block'>;
-	export type Tree = TreeFor<'const_block'>;
-	export type Kind = 'const_block';
-}
-export namespace ConstItem {
-	export type Config = ConfigFor<'const_item'>;
-	export type Fluent = FluentFor<'const_item'>;
-	export type Loose = LooseFor<'const_item'>;
-	export type Tree = TreeFor<'const_item'>;
-	export type Kind = 'const_item';
-}
-export namespace ConstParameter {
-	export type Config = ConfigFor<'const_parameter'>;
-	export type Fluent = FluentFor<'const_parameter'>;
-	export type Loose = LooseFor<'const_parameter'>;
-	export type Tree = TreeFor<'const_parameter'>;
-	export type Kind = 'const_parameter';
-}
-export namespace ContinueExpression {
-	export type Config = ConfigFor<'continue_expression'>;
-	export type Fluent = FluentFor<'continue_expression'>;
-	export type Loose = LooseFor<'continue_expression'>;
-	export type Tree = TreeFor<'continue_expression'>;
-	export type Kind = 'continue_expression';
-}
-export namespace DeclarationList {
-	export type Config = ConfigFor<'declaration_list'>;
-	export type Fluent = FluentFor<'declaration_list'>;
-	export type Loose = LooseFor<'declaration_list'>;
-	export type Tree = TreeFor<'declaration_list'>;
-	export type Kind = 'declaration_list';
-}
-export namespace DelimTokenTree {
-	export type Config = ConfigFor<'delim_token_tree'>;
-	export type Fluent = FluentFor<'delim_token_tree'>;
-	export type Loose = LooseFor<'delim_token_tree'>;
-	export type Tree = TreeFor<'delim_token_tree'>;
-	export type Kind = 'delim_token_tree';
-}
-export namespace DynamicType {
-	export type Config = ConfigFor<'dynamic_type'>;
-	export type Fluent = FluentFor<'dynamic_type'>;
-	export type Loose = LooseFor<'dynamic_type'>;
-	export type Tree = TreeFor<'dynamic_type'>;
-	export type Kind = 'dynamic_type';
-}
-export namespace ElseClause {
-	export type Config = ConfigFor<'else_clause'>;
-	export type Fluent = FluentFor<'else_clause'>;
-	export type Loose = LooseFor<'else_clause'>;
-	export type Tree = TreeFor<'else_clause'>;
-	export type Kind = 'else_clause';
-}
-export namespace EnumItem {
-	export type Config = ConfigFor<'enum_item'>;
-	export type Fluent = FluentFor<'enum_item'>;
-	export type Loose = LooseFor<'enum_item'>;
-	export type Tree = TreeFor<'enum_item'>;
-	export type Kind = 'enum_item';
-}
-export namespace EnumVariant {
-	export type Config = ConfigFor<'enum_variant'>;
-	export type Fluent = FluentFor<'enum_variant'>;
-	export type Loose = LooseFor<'enum_variant'>;
-	export type Tree = TreeFor<'enum_variant'>;
-	export type Kind = 'enum_variant';
-}
-export namespace EnumVariantList {
-	export type Config = ConfigFor<'enum_variant_list'>;
-	export type Fluent = FluentFor<'enum_variant_list'>;
-	export type Loose = LooseFor<'enum_variant_list'>;
-	export type Tree = TreeFor<'enum_variant_list'>;
-	export type Kind = 'enum_variant_list';
-}
-export namespace ExpressionStatement {
-	export type Config = ConfigFor<'expression_statement'>;
-	export type Fluent = FluentFor<'expression_statement'>;
-	export type Loose = LooseFor<'expression_statement'>;
-	export type Tree = TreeFor<'expression_statement'>;
-	export type Kind = 'expression_statement';
-}
-export namespace ExternCrateDeclaration {
-	export type Config = ConfigFor<'extern_crate_declaration'>;
-	export type Fluent = FluentFor<'extern_crate_declaration'>;
-	export type Loose = LooseFor<'extern_crate_declaration'>;
-	export type Tree = TreeFor<'extern_crate_declaration'>;
-	export type Kind = 'extern_crate_declaration';
-}
-export namespace ExternModifier {
-	export type Config = ConfigFor<'extern_modifier'>;
-	export type Fluent = FluentFor<'extern_modifier'>;
-	export type Loose = LooseFor<'extern_modifier'>;
-	export type Tree = TreeFor<'extern_modifier'>;
-	export type Kind = 'extern_modifier';
-}
-export namespace FieldDeclaration {
-	export type Config = ConfigFor<'field_declaration'>;
-	export type Fluent = FluentFor<'field_declaration'>;
-	export type Loose = LooseFor<'field_declaration'>;
-	export type Tree = TreeFor<'field_declaration'>;
-	export type Kind = 'field_declaration';
-}
-export namespace FieldDeclarationList {
-	export type Config = ConfigFor<'field_declaration_list'>;
-	export type Fluent = FluentFor<'field_declaration_list'>;
-	export type Loose = LooseFor<'field_declaration_list'>;
-	export type Tree = TreeFor<'field_declaration_list'>;
-	export type Kind = 'field_declaration_list';
-}
-export namespace FieldExpression {
-	export type Config = ConfigFor<'field_expression'>;
-	export type Fluent = FluentFor<'field_expression'>;
-	export type Loose = LooseFor<'field_expression'>;
-	export type Tree = TreeFor<'field_expression'>;
-	export type Kind = 'field_expression';
-}
-export namespace FieldInitializer {
-	export type Config = ConfigFor<'field_initializer'>;
-	export type Fluent = FluentFor<'field_initializer'>;
-	export type Loose = LooseFor<'field_initializer'>;
-	export type Tree = TreeFor<'field_initializer'>;
-	export type Kind = 'field_initializer';
-}
-export namespace FieldInitializerList {
-	export type Config = ConfigFor<'field_initializer_list'>;
-	export type Fluent = FluentFor<'field_initializer_list'>;
-	export type Loose = LooseFor<'field_initializer_list'>;
-	export type Tree = TreeFor<'field_initializer_list'>;
-	export type Kind = 'field_initializer_list';
-}
-export namespace FieldPattern {
-	export type Config = ConfigFor<'field_pattern'>;
-	export type Fluent = FluentFor<'field_pattern'>;
-	export type Loose = LooseFor<'field_pattern'>;
-	export type Tree = TreeFor<'field_pattern'>;
-	export type Kind = 'field_pattern';
-}
-export namespace ForExpression {
-	export type Config = ConfigFor<'for_expression'>;
-	export type Fluent = FluentFor<'for_expression'>;
-	export type Loose = LooseFor<'for_expression'>;
-	export type Tree = TreeFor<'for_expression'>;
-	export type Kind = 'for_expression';
-}
-export namespace ForLifetimes {
-	export type Config = ConfigFor<'for_lifetimes'>;
-	export type Fluent = FluentFor<'for_lifetimes'>;
-	export type Loose = LooseFor<'for_lifetimes'>;
-	export type Tree = TreeFor<'for_lifetimes'>;
-	export type Kind = 'for_lifetimes';
-}
-export namespace ForeignModItem {
-	export type Config = ConfigFor<'foreign_mod_item'>;
-	export type Fluent = FluentFor<'foreign_mod_item'>;
-	export type Loose = LooseFor<'foreign_mod_item'>;
-	export type Tree = TreeFor<'foreign_mod_item'>;
-	export type Kind = 'foreign_mod_item';
-}
-export namespace FunctionItem {
-	export type Config = ConfigFor<'function_item'>;
-	export type Fluent = FluentFor<'function_item'>;
-	export type Loose = LooseFor<'function_item'>;
-	export type Tree = TreeFor<'function_item'>;
-	export type Kind = 'function_item';
-}
-export namespace FunctionModifiers {
-	export type Config = ConfigFor<'function_modifiers'>;
-	export type Fluent = FluentFor<'function_modifiers'>;
-	export type Loose = LooseFor<'function_modifiers'>;
-	export type Tree = TreeFor<'function_modifiers'>;
-	export type Kind = 'function_modifiers';
-}
-export namespace FunctionSignatureItem {
-	export type Config = ConfigFor<'function_signature_item'>;
-	export type Fluent = FluentFor<'function_signature_item'>;
-	export type Loose = LooseFor<'function_signature_item'>;
-	export type Tree = TreeFor<'function_signature_item'>;
-	export type Kind = 'function_signature_item';
-}
-export namespace FunctionType {
-	export type Config = ConfigFor<'function_type'>;
-	export type Fluent = FluentFor<'function_type'>;
-	export type Loose = LooseFor<'function_type'>;
-	export type Tree = TreeFor<'function_type'>;
-	export type Kind = 'function_type';
-}
-export namespace GenBlock {
-	export type Config = ConfigFor<'gen_block'>;
-	export type Fluent = FluentFor<'gen_block'>;
-	export type Loose = LooseFor<'gen_block'>;
-	export type Tree = TreeFor<'gen_block'>;
-	export type Kind = 'gen_block';
-}
-export namespace GenericFunction {
-	export type Config = ConfigFor<'generic_function'>;
-	export type Fluent = FluentFor<'generic_function'>;
-	export type Loose = LooseFor<'generic_function'>;
-	export type Tree = TreeFor<'generic_function'>;
-	export type Kind = 'generic_function';
-}
-export namespace GenericPattern {
-	export type Config = ConfigFor<'generic_pattern'>;
-	export type Fluent = FluentFor<'generic_pattern'>;
-	export type Loose = LooseFor<'generic_pattern'>;
-	export type Tree = TreeFor<'generic_pattern'>;
-	export type Kind = 'generic_pattern';
-}
-export namespace GenericType {
-	export type Config = ConfigFor<'generic_type'>;
-	export type Fluent = FluentFor<'generic_type'>;
-	export type Loose = LooseFor<'generic_type'>;
-	export type Tree = TreeFor<'generic_type'>;
-	export type Kind = 'generic_type';
-}
-export namespace GenericTypeWithTurbofish {
-	export type Config = ConfigFor<'generic_type_with_turbofish'>;
-	export type Fluent = FluentFor<'generic_type_with_turbofish'>;
-	export type Loose = LooseFor<'generic_type_with_turbofish'>;
-	export type Tree = TreeFor<'generic_type_with_turbofish'>;
-	export type Kind = 'generic_type_with_turbofish';
-}
-export namespace HigherRankedTraitBound {
-	export type Config = ConfigFor<'higher_ranked_trait_bound'>;
-	export type Fluent = FluentFor<'higher_ranked_trait_bound'>;
-	export type Loose = LooseFor<'higher_ranked_trait_bound'>;
-	export type Tree = TreeFor<'higher_ranked_trait_bound'>;
-	export type Kind = 'higher_ranked_trait_bound';
-}
-export namespace IfExpression {
-	export type Config = ConfigFor<'if_expression'>;
-	export type Fluent = FluentFor<'if_expression'>;
-	export type Loose = LooseFor<'if_expression'>;
-	export type Tree = TreeFor<'if_expression'>;
-	export type Kind = 'if_expression';
-}
-export namespace ImplItem {
-	export type Config = ConfigFor<'impl_item'>;
-	export type Fluent = FluentFor<'impl_item'>;
-	export type Loose = LooseFor<'impl_item'>;
-	export type Tree = TreeFor<'impl_item'>;
-	export type Kind = 'impl_item';
-}
-export namespace IndexExpression {
-	export type Config = ConfigFor<'index_expression'>;
-	export type Fluent = FluentFor<'index_expression'>;
-	export type Loose = LooseFor<'index_expression'>;
-	export type Tree = TreeFor<'index_expression'>;
-	export type Kind = 'index_expression';
-}
-export namespace InnerAttributeItem {
-	export type Config = ConfigFor<'inner_attribute_item'>;
-	export type Fluent = FluentFor<'inner_attribute_item'>;
-	export type Loose = LooseFor<'inner_attribute_item'>;
-	export type Tree = TreeFor<'inner_attribute_item'>;
-	export type Kind = 'inner_attribute_item';
-}
-export namespace Label {
-	export type Config = ConfigFor<'label'>;
-	export type Fluent = FluentFor<'label'>;
-	export type Loose = LooseFor<'label'>;
-	export type Tree = TreeFor<'label'>;
-	export type Kind = 'label';
-}
-export namespace LastMatchArm {
-	export type Config = ConfigFor<'last_match_arm'>;
-	export type Fluent = FluentFor<'last_match_arm'>;
-	export type Loose = LooseFor<'last_match_arm'>;
-	export type Tree = TreeFor<'last_match_arm'>;
-	export type Kind = 'last_match_arm';
-}
-export namespace LetCondition {
-	export type Config = ConfigFor<'let_condition'>;
-	export type Fluent = FluentFor<'let_condition'>;
-	export type Loose = LooseFor<'let_condition'>;
-	export type Tree = TreeFor<'let_condition'>;
-	export type Kind = 'let_condition';
-}
-export namespace LetDeclaration {
-	export type Config = ConfigFor<'let_declaration'>;
-	export type Fluent = FluentFor<'let_declaration'>;
-	export type Loose = LooseFor<'let_declaration'>;
-	export type Tree = TreeFor<'let_declaration'>;
-	export type Kind = 'let_declaration';
-}
-export namespace Lifetime {
-	export type Config = ConfigFor<'lifetime'>;
-	export type Fluent = FluentFor<'lifetime'>;
-	export type Loose = LooseFor<'lifetime'>;
-	export type Tree = TreeFor<'lifetime'>;
-	export type Kind = 'lifetime';
-}
-export namespace LifetimeParameter {
-	export type Config = ConfigFor<'lifetime_parameter'>;
-	export type Fluent = FluentFor<'lifetime_parameter'>;
-	export type Loose = LooseFor<'lifetime_parameter'>;
-	export type Tree = TreeFor<'lifetime_parameter'>;
-	export type Kind = 'lifetime_parameter';
-}
-export namespace LineComment {
-	export type Config = ConfigFor<'line_comment'>;
-	export type Fluent = FluentFor<'line_comment'>;
-	export type Loose = LooseFor<'line_comment'>;
-	export type Tree = TreeFor<'line_comment'>;
-	export type Kind = 'line_comment';
-}
-export namespace LoopExpression {
-	export type Config = ConfigFor<'loop_expression'>;
-	export type Fluent = FluentFor<'loop_expression'>;
-	export type Loose = LooseFor<'loop_expression'>;
-	export type Tree = TreeFor<'loop_expression'>;
-	export type Kind = 'loop_expression';
-}
-export namespace MacroDefinition {
-	export type Config = ConfigFor<'macro_definition'>;
-	export type Fluent = FluentFor<'macro_definition'>;
-	export type Loose = LooseFor<'macro_definition'>;
-	export type Tree = TreeFor<'macro_definition'>;
-	export type Kind = 'macro_definition';
-}
-export namespace MacroInvocation {
-	export type Config = ConfigFor<'macro_invocation'>;
-	export type Fluent = FluentFor<'macro_invocation'>;
-	export type Loose = LooseFor<'macro_invocation'>;
-	export type Tree = TreeFor<'macro_invocation'>;
-	export type Kind = 'macro_invocation';
-}
-export namespace MacroRule {
-	export type Config = ConfigFor<'macro_rule'>;
-	export type Fluent = FluentFor<'macro_rule'>;
-	export type Loose = LooseFor<'macro_rule'>;
-	export type Tree = TreeFor<'macro_rule'>;
-	export type Kind = 'macro_rule';
-}
-export namespace MatchArm {
-	export type Config = ConfigFor<'match_arm'>;
-	export type Fluent = FluentFor<'match_arm'>;
-	export type Loose = LooseFor<'match_arm'>;
-	export type Tree = TreeFor<'match_arm'>;
-	export type Kind = 'match_arm';
-}
-export namespace MatchBlock {
-	export type Config = ConfigFor<'match_block'>;
-	export type Fluent = FluentFor<'match_block'>;
-	export type Loose = LooseFor<'match_block'>;
-	export type Tree = TreeFor<'match_block'>;
-	export type Kind = 'match_block';
-}
-export namespace MatchExpression {
-	export type Config = ConfigFor<'match_expression'>;
-	export type Fluent = FluentFor<'match_expression'>;
-	export type Loose = LooseFor<'match_expression'>;
-	export type Tree = TreeFor<'match_expression'>;
-	export type Kind = 'match_expression';
-}
-export namespace MatchPattern {
-	export type Config = ConfigFor<'match_pattern'>;
-	export type Fluent = FluentFor<'match_pattern'>;
-	export type Loose = LooseFor<'match_pattern'>;
-	export type Tree = TreeFor<'match_pattern'>;
-	export type Kind = 'match_pattern';
-}
-export namespace ModItem {
-	export type Config = ConfigFor<'mod_item'>;
-	export type Fluent = FluentFor<'mod_item'>;
-	export type Loose = LooseFor<'mod_item'>;
-	export type Tree = TreeFor<'mod_item'>;
-	export type Kind = 'mod_item';
-}
-export namespace MutPattern {
-	export type Config = ConfigFor<'mut_pattern'>;
-	export type Fluent = FluentFor<'mut_pattern'>;
-	export type Loose = LooseFor<'mut_pattern'>;
-	export type Tree = TreeFor<'mut_pattern'>;
-	export type Kind = 'mut_pattern';
-}
-export namespace NegativeLiteral {
-	export type Config = ConfigFor<'negative_literal'>;
-	export type Fluent = FluentFor<'negative_literal'>;
-	export type Loose = LooseFor<'negative_literal'>;
-	export type Tree = TreeFor<'negative_literal'>;
-	export type Kind = 'negative_literal';
-}
-export namespace OrPattern {
-	export type Config = ConfigFor<'or_pattern'>;
-	export type Fluent = FluentFor<'or_pattern'>;
-	export type Loose = LooseFor<'or_pattern'>;
-	export type Tree = TreeFor<'or_pattern'>;
-	export type Kind = 'or_pattern';
-}
-export namespace OrderedFieldDeclarationList {
-	export type Config = ConfigFor<'ordered_field_declaration_list'>;
-	export type Fluent = FluentFor<'ordered_field_declaration_list'>;
-	export type Loose = LooseFor<'ordered_field_declaration_list'>;
-	export type Tree = TreeFor<'ordered_field_declaration_list'>;
-	export type Kind = 'ordered_field_declaration_list';
-}
-export namespace Parameter {
-	export type Config = ConfigFor<'parameter'>;
-	export type Fluent = FluentFor<'parameter'>;
-	export type Loose = LooseFor<'parameter'>;
-	export type Tree = TreeFor<'parameter'>;
-	export type Kind = 'parameter';
-}
-export namespace Parameters {
-	export type Config = ConfigFor<'parameters'>;
-	export type Fluent = FluentFor<'parameters'>;
-	export type Loose = LooseFor<'parameters'>;
-	export type Tree = TreeFor<'parameters'>;
-	export type Kind = 'parameters';
-}
-export namespace ParenthesizedExpression {
-	export type Config = ConfigFor<'parenthesized_expression'>;
-	export type Fluent = FluentFor<'parenthesized_expression'>;
-	export type Loose = LooseFor<'parenthesized_expression'>;
-	export type Tree = TreeFor<'parenthesized_expression'>;
-	export type Kind = 'parenthesized_expression';
-}
-export namespace PointerType {
-	export type Config = ConfigFor<'pointer_type'>;
-	export type Fluent = FluentFor<'pointer_type'>;
-	export type Loose = LooseFor<'pointer_type'>;
-	export type Tree = TreeFor<'pointer_type'>;
-	export type Kind = 'pointer_type';
-}
-export namespace QualifiedType {
-	export type Config = ConfigFor<'qualified_type'>;
-	export type Fluent = FluentFor<'qualified_type'>;
-	export type Loose = LooseFor<'qualified_type'>;
-	export type Tree = TreeFor<'qualified_type'>;
-	export type Kind = 'qualified_type';
-}
-export namespace RangeExpression {
-	export type Config = ConfigFor<'range_expression'>;
-	export type Fluent = FluentFor<'range_expression'>;
-	export type Loose = LooseFor<'range_expression'>;
-	export type Tree = TreeFor<'range_expression'>;
-	export type Kind = 'range_expression';
-}
-export namespace RangePattern {
-	export type Config = ConfigFor<'range_pattern'>;
-	export type Fluent = FluentFor<'range_pattern'>;
-	export type Loose = LooseFor<'range_pattern'>;
-	export type Tree = TreeFor<'range_pattern'>;
-	export type Kind = 'range_pattern';
-}
-export namespace RawStringLiteral {
-	export type Config = ConfigFor<'raw_string_literal'>;
-	export type Fluent = FluentFor<'raw_string_literal'>;
-	export type Loose = LooseFor<'raw_string_literal'>;
-	export type Tree = TreeFor<'raw_string_literal'>;
-	export type Kind = 'raw_string_literal';
-}
-export namespace RefPattern {
-	export type Config = ConfigFor<'ref_pattern'>;
-	export type Fluent = FluentFor<'ref_pattern'>;
-	export type Loose = LooseFor<'ref_pattern'>;
-	export type Tree = TreeFor<'ref_pattern'>;
-	export type Kind = 'ref_pattern';
-}
-export namespace ReferenceExpression {
-	export type Config = ConfigFor<'reference_expression'>;
-	export type Fluent = FluentFor<'reference_expression'>;
-	export type Loose = LooseFor<'reference_expression'>;
-	export type Tree = TreeFor<'reference_expression'>;
-	export type Kind = 'reference_expression';
-}
-export namespace ReferencePattern {
-	export type Config = ConfigFor<'reference_pattern'>;
-	export type Fluent = FluentFor<'reference_pattern'>;
-	export type Loose = LooseFor<'reference_pattern'>;
-	export type Tree = TreeFor<'reference_pattern'>;
-	export type Kind = 'reference_pattern';
-}
-export namespace ReferenceType {
-	export type Config = ConfigFor<'reference_type'>;
-	export type Fluent = FluentFor<'reference_type'>;
-	export type Loose = LooseFor<'reference_type'>;
-	export type Tree = TreeFor<'reference_type'>;
-	export type Kind = 'reference_type';
-}
-export namespace RemovedTraitBound {
-	export type Config = ConfigFor<'removed_trait_bound'>;
-	export type Fluent = FluentFor<'removed_trait_bound'>;
-	export type Loose = LooseFor<'removed_trait_bound'>;
-	export type Tree = TreeFor<'removed_trait_bound'>;
-	export type Kind = 'removed_trait_bound';
-}
-export namespace ReturnExpression {
-	export type Config = ConfigFor<'return_expression'>;
-	export type Fluent = FluentFor<'return_expression'>;
-	export type Loose = LooseFor<'return_expression'>;
-	export type Tree = TreeFor<'return_expression'>;
-	export type Kind = 'return_expression';
-}
-export namespace ScopedIdentifier {
-	export type Config = ConfigFor<'scoped_identifier'>;
-	export type Fluent = FluentFor<'scoped_identifier'>;
-	export type Loose = LooseFor<'scoped_identifier'>;
-	export type Tree = TreeFor<'scoped_identifier'>;
-	export type Kind = 'scoped_identifier';
-}
-export namespace ScopedTypeIdentifier {
-	export type Config = ConfigFor<'scoped_type_identifier'>;
-	export type Fluent = FluentFor<'scoped_type_identifier'>;
-	export type Loose = LooseFor<'scoped_type_identifier'>;
-	export type Tree = TreeFor<'scoped_type_identifier'>;
-	export type Kind = 'scoped_type_identifier';
-}
-export namespace ScopedTypeIdentifierInExpressionPosition {
-	export type Config = ConfigFor<'scoped_type_identifier_in_expression_position'>;
-	export type Fluent = FluentFor<'scoped_type_identifier_in_expression_position'>;
-	export type Loose = LooseFor<'scoped_type_identifier_in_expression_position'>;
-	export type Tree = TreeFor<'scoped_type_identifier_in_expression_position'>;
-	export type Kind = 'scoped_type_identifier_in_expression_position';
-}
-export namespace ScopedUseList {
-	export type Config = ConfigFor<'scoped_use_list'>;
-	export type Fluent = FluentFor<'scoped_use_list'>;
-	export type Loose = LooseFor<'scoped_use_list'>;
-	export type Tree = TreeFor<'scoped_use_list'>;
-	export type Kind = 'scoped_use_list';
-}
-export namespace SelfParameter {
-	export type Config = ConfigFor<'self_parameter'>;
-	export type Fluent = FluentFor<'self_parameter'>;
-	export type Loose = LooseFor<'self_parameter'>;
-	export type Tree = TreeFor<'self_parameter'>;
-	export type Kind = 'self_parameter';
-}
-export namespace ShorthandFieldInitializer {
-	export type Config = ConfigFor<'shorthand_field_initializer'>;
-	export type Fluent = FluentFor<'shorthand_field_initializer'>;
-	export type Loose = LooseFor<'shorthand_field_initializer'>;
-	export type Tree = TreeFor<'shorthand_field_initializer'>;
-	export type Kind = 'shorthand_field_initializer';
-}
-export namespace SlicePattern {
-	export type Config = ConfigFor<'slice_pattern'>;
-	export type Fluent = FluentFor<'slice_pattern'>;
-	export type Loose = LooseFor<'slice_pattern'>;
-	export type Tree = TreeFor<'slice_pattern'>;
-	export type Kind = 'slice_pattern';
-}
-export namespace SourceFile {
-	export type Config = ConfigFor<'source_file'>;
-	export type Fluent = FluentFor<'source_file'>;
-	export type Loose = LooseFor<'source_file'>;
-	export type Tree = TreeFor<'source_file'>;
-	export type Kind = 'source_file';
-}
-export namespace StaticItem {
-	export type Config = ConfigFor<'static_item'>;
-	export type Fluent = FluentFor<'static_item'>;
-	export type Loose = LooseFor<'static_item'>;
-	export type Tree = TreeFor<'static_item'>;
-	export type Kind = 'static_item';
-}
-export namespace StringLiteral {
-	export type Config = ConfigFor<'string_literal'>;
-	export type Fluent = FluentFor<'string_literal'>;
-	export type Loose = LooseFor<'string_literal'>;
-	export type Tree = TreeFor<'string_literal'>;
-	export type Kind = 'string_literal';
-}
-export namespace StructExpression {
-	export type Config = ConfigFor<'struct_expression'>;
-	export type Fluent = FluentFor<'struct_expression'>;
-	export type Loose = LooseFor<'struct_expression'>;
-	export type Tree = TreeFor<'struct_expression'>;
-	export type Kind = 'struct_expression';
-}
-export namespace StructItem {
-	export type Config = ConfigFor<'struct_item'>;
-	export type Fluent = FluentFor<'struct_item'>;
-	export type Loose = LooseFor<'struct_item'>;
-	export type Tree = TreeFor<'struct_item'>;
-	export type Kind = 'struct_item';
-}
-export namespace StructPattern {
-	export type Config = ConfigFor<'struct_pattern'>;
-	export type Fluent = FluentFor<'struct_pattern'>;
-	export type Loose = LooseFor<'struct_pattern'>;
-	export type Tree = TreeFor<'struct_pattern'>;
-	export type Kind = 'struct_pattern';
-}
-export namespace TokenBindingPattern {
-	export type Config = ConfigFor<'token_binding_pattern'>;
-	export type Fluent = FluentFor<'token_binding_pattern'>;
-	export type Loose = LooseFor<'token_binding_pattern'>;
-	export type Tree = TreeFor<'token_binding_pattern'>;
-	export type Kind = 'token_binding_pattern';
-}
-export namespace TokenRepetition {
-	export type Config = ConfigFor<'token_repetition'>;
-	export type Fluent = FluentFor<'token_repetition'>;
-	export type Loose = LooseFor<'token_repetition'>;
-	export type Tree = TreeFor<'token_repetition'>;
-	export type Kind = 'token_repetition';
-}
-export namespace TokenRepetitionPattern {
-	export type Config = ConfigFor<'token_repetition_pattern'>;
-	export type Fluent = FluentFor<'token_repetition_pattern'>;
-	export type Loose = LooseFor<'token_repetition_pattern'>;
-	export type Tree = TreeFor<'token_repetition_pattern'>;
-	export type Kind = 'token_repetition_pattern';
-}
-export namespace TokenTree {
-	export type Config = ConfigFor<'token_tree'>;
-	export type Fluent = FluentFor<'token_tree'>;
-	export type Loose = LooseFor<'token_tree'>;
-	export type Tree = TreeFor<'token_tree'>;
-	export type Kind = 'token_tree';
-}
-export namespace TokenTreePattern {
-	export type Config = ConfigFor<'token_tree_pattern'>;
-	export type Fluent = FluentFor<'token_tree_pattern'>;
-	export type Loose = LooseFor<'token_tree_pattern'>;
-	export type Tree = TreeFor<'token_tree_pattern'>;
-	export type Kind = 'token_tree_pattern';
-}
-export namespace TraitBounds {
-	export type Config = ConfigFor<'trait_bounds'>;
-	export type Fluent = FluentFor<'trait_bounds'>;
-	export type Loose = LooseFor<'trait_bounds'>;
-	export type Tree = TreeFor<'trait_bounds'>;
-	export type Kind = 'trait_bounds';
-}
-export namespace TraitItem {
-	export type Config = ConfigFor<'trait_item'>;
-	export type Fluent = FluentFor<'trait_item'>;
-	export type Loose = LooseFor<'trait_item'>;
-	export type Tree = TreeFor<'trait_item'>;
-	export type Kind = 'trait_item';
-}
-export namespace TryBlock {
-	export type Config = ConfigFor<'try_block'>;
-	export type Fluent = FluentFor<'try_block'>;
-	export type Loose = LooseFor<'try_block'>;
-	export type Tree = TreeFor<'try_block'>;
-	export type Kind = 'try_block';
-}
-export namespace TryExpression {
-	export type Config = ConfigFor<'try_expression'>;
-	export type Fluent = FluentFor<'try_expression'>;
-	export type Loose = LooseFor<'try_expression'>;
-	export type Tree = TreeFor<'try_expression'>;
-	export type Kind = 'try_expression';
-}
-export namespace TupleExpression {
-	export type Config = ConfigFor<'tuple_expression'>;
-	export type Fluent = FluentFor<'tuple_expression'>;
-	export type Loose = LooseFor<'tuple_expression'>;
-	export type Tree = TreeFor<'tuple_expression'>;
-	export type Kind = 'tuple_expression';
-}
-export namespace TuplePattern {
-	export type Config = ConfigFor<'tuple_pattern'>;
-	export type Fluent = FluentFor<'tuple_pattern'>;
-	export type Loose = LooseFor<'tuple_pattern'>;
-	export type Tree = TreeFor<'tuple_pattern'>;
-	export type Kind = 'tuple_pattern';
-}
-export namespace TupleStructPattern {
-	export type Config = ConfigFor<'tuple_struct_pattern'>;
-	export type Fluent = FluentFor<'tuple_struct_pattern'>;
-	export type Loose = LooseFor<'tuple_struct_pattern'>;
-	export type Tree = TreeFor<'tuple_struct_pattern'>;
-	export type Kind = 'tuple_struct_pattern';
-}
-export namespace TupleType {
-	export type Config = ConfigFor<'tuple_type'>;
-	export type Fluent = FluentFor<'tuple_type'>;
-	export type Loose = LooseFor<'tuple_type'>;
-	export type Tree = TreeFor<'tuple_type'>;
-	export type Kind = 'tuple_type';
-}
-export namespace TypeArguments {
-	export type Config = ConfigFor<'type_arguments'>;
-	export type Fluent = FluentFor<'type_arguments'>;
-	export type Loose = LooseFor<'type_arguments'>;
-	export type Tree = TreeFor<'type_arguments'>;
-	export type Kind = 'type_arguments';
-}
-export namespace TypeBinding {
-	export type Config = ConfigFor<'type_binding'>;
-	export type Fluent = FluentFor<'type_binding'>;
-	export type Loose = LooseFor<'type_binding'>;
-	export type Tree = TreeFor<'type_binding'>;
-	export type Kind = 'type_binding';
-}
-export namespace TypeCastExpression {
-	export type Config = ConfigFor<'type_cast_expression'>;
-	export type Fluent = FluentFor<'type_cast_expression'>;
-	export type Loose = LooseFor<'type_cast_expression'>;
-	export type Tree = TreeFor<'type_cast_expression'>;
-	export type Kind = 'type_cast_expression';
-}
-export namespace TypeItem {
-	export type Config = ConfigFor<'type_item'>;
-	export type Fluent = FluentFor<'type_item'>;
-	export type Loose = LooseFor<'type_item'>;
-	export type Tree = TreeFor<'type_item'>;
-	export type Kind = 'type_item';
-}
-export namespace TypeParameter {
-	export type Config = ConfigFor<'type_parameter'>;
-	export type Fluent = FluentFor<'type_parameter'>;
-	export type Loose = LooseFor<'type_parameter'>;
-	export type Tree = TreeFor<'type_parameter'>;
-	export type Kind = 'type_parameter';
-}
-export namespace TypeParameters {
-	export type Config = ConfigFor<'type_parameters'>;
-	export type Fluent = FluentFor<'type_parameters'>;
-	export type Loose = LooseFor<'type_parameters'>;
-	export type Tree = TreeFor<'type_parameters'>;
-	export type Kind = 'type_parameters';
-}
-export namespace UnaryExpression {
-	export type Config = ConfigFor<'unary_expression'>;
-	export type Fluent = FluentFor<'unary_expression'>;
-	export type Loose = LooseFor<'unary_expression'>;
-	export type Tree = TreeFor<'unary_expression'>;
-	export type Kind = 'unary_expression';
-}
-export namespace UnionItem {
-	export type Config = ConfigFor<'union_item'>;
-	export type Fluent = FluentFor<'union_item'>;
-	export type Loose = LooseFor<'union_item'>;
-	export type Tree = TreeFor<'union_item'>;
-	export type Kind = 'union_item';
-}
-export namespace UnsafeBlock {
-	export type Config = ConfigFor<'unsafe_block'>;
-	export type Fluent = FluentFor<'unsafe_block'>;
-	export type Loose = LooseFor<'unsafe_block'>;
-	export type Tree = TreeFor<'unsafe_block'>;
-	export type Kind = 'unsafe_block';
-}
-export namespace UseAsClause {
-	export type Config = ConfigFor<'use_as_clause'>;
-	export type Fluent = FluentFor<'use_as_clause'>;
-	export type Loose = LooseFor<'use_as_clause'>;
-	export type Tree = TreeFor<'use_as_clause'>;
-	export type Kind = 'use_as_clause';
-}
-export namespace UseBounds {
-	export type Config = ConfigFor<'use_bounds'>;
-	export type Fluent = FluentFor<'use_bounds'>;
-	export type Loose = LooseFor<'use_bounds'>;
-	export type Tree = TreeFor<'use_bounds'>;
-	export type Kind = 'use_bounds';
-}
-export namespace UseDeclaration {
-	export type Config = ConfigFor<'use_declaration'>;
-	export type Fluent = FluentFor<'use_declaration'>;
-	export type Loose = LooseFor<'use_declaration'>;
-	export type Tree = TreeFor<'use_declaration'>;
-	export type Kind = 'use_declaration';
-}
-export namespace UseList {
-	export type Config = ConfigFor<'use_list'>;
-	export type Fluent = FluentFor<'use_list'>;
-	export type Loose = LooseFor<'use_list'>;
-	export type Tree = TreeFor<'use_list'>;
-	export type Kind = 'use_list';
-}
-export namespace UseWildcard {
-	export type Config = ConfigFor<'use_wildcard'>;
-	export type Fluent = FluentFor<'use_wildcard'>;
-	export type Loose = LooseFor<'use_wildcard'>;
-	export type Tree = TreeFor<'use_wildcard'>;
-	export type Kind = 'use_wildcard';
-}
-export namespace VariadicParameter {
-	export type Config = ConfigFor<'variadic_parameter'>;
-	export type Fluent = FluentFor<'variadic_parameter'>;
-	export type Loose = LooseFor<'variadic_parameter'>;
-	export type Tree = TreeFor<'variadic_parameter'>;
-	export type Kind = 'variadic_parameter';
-}
-export namespace VisibilityModifier {
-	export type Config = ConfigFor<'visibility_modifier'>;
-	export type Fluent = FluentFor<'visibility_modifier'>;
-	export type Loose = LooseFor<'visibility_modifier'>;
-	export type Tree = TreeFor<'visibility_modifier'>;
-	export type Kind = 'visibility_modifier';
-}
-export namespace WhereClause {
-	export type Config = ConfigFor<'where_clause'>;
-	export type Fluent = FluentFor<'where_clause'>;
-	export type Loose = LooseFor<'where_clause'>;
-	export type Tree = TreeFor<'where_clause'>;
-	export type Kind = 'where_clause';
-}
-export namespace WherePredicate {
-	export type Config = ConfigFor<'where_predicate'>;
-	export type Fluent = FluentFor<'where_predicate'>;
-	export type Loose = LooseFor<'where_predicate'>;
-	export type Tree = TreeFor<'where_predicate'>;
-	export type Kind = 'where_predicate';
-}
-export namespace WhileExpression {
-	export type Config = ConfigFor<'while_expression'>;
-	export type Fluent = FluentFor<'while_expression'>;
-	export type Loose = LooseFor<'while_expression'>;
-	export type Tree = TreeFor<'while_expression'>;
-	export type Kind = 'while_expression';
-}
-export namespace YieldExpression {
-	export type Config = ConfigFor<'yield_expression'>;
-	export type Fluent = FluentFor<'yield_expression'>;
-	export type Loose = LooseFor<'yield_expression'>;
-	export type Tree = TreeFor<'yield_expression'>;
-	export type Kind = 'yield_expression';
-}
-export namespace ArgumentsGroup1 {
-	export type Config = ConfigFor<'arguments_group1'>;
-	export type Fluent = FluentFor<'arguments_group1'>;
-	export type Loose = LooseFor<'arguments_group1'>;
-	export type Tree = TreeFor<'arguments_group1'>;
-	export type Kind = 'arguments_group1';
-}
-export namespace VisibilityModifierGroup1 {
-	export type Config = ConfigFor<'visibility_modifier_group1'>;
-	export type Fluent = FluentFor<'visibility_modifier_group1'>;
-	export type Loose = LooseFor<'visibility_modifier_group1'>;
-	export type Tree = TreeFor<'visibility_modifier_group1'>;
-	export type Kind = 'visibility_modifier_group1';
-}
-export namespace EnumVariantListGroup1 {
-	export type Config = ConfigFor<'enum_variant_list_group1'>;
-	export type Fluent = FluentFor<'enum_variant_list_group1'>;
-	export type Loose = LooseFor<'enum_variant_list_group1'>;
-	export type Tree = TreeFor<'enum_variant_list_group1'>;
-	export type Kind = 'enum_variant_list_group1';
-}
-export namespace FieldDeclarationListGroup1 {
-	export type Config = ConfigFor<'field_declaration_list_group1'>;
-	export type Fluent = FluentFor<'field_declaration_list_group1'>;
-	export type Loose = LooseFor<'field_declaration_list_group1'>;
-	export type Tree = TreeFor<'field_declaration_list_group1'>;
-	export type Kind = 'field_declaration_list_group1';
-}
-export namespace FieldInitializerListGroup1 {
-	export type Config = ConfigFor<'field_initializer_list_group1'>;
-	export type Fluent = FluentFor<'field_initializer_list_group1'>;
-	export type Loose = LooseFor<'field_initializer_list_group1'>;
-	export type Tree = TreeFor<'field_initializer_list_group1'>;
-	export type Kind = 'field_initializer_list_group1';
-}
-export namespace OrderedFieldDeclarationListGroup1 {
-	export type Config = ConfigFor<'ordered_field_declaration_list_group1'>;
-	export type Fluent = FluentFor<'ordered_field_declaration_list_group1'>;
-	export type Loose = LooseFor<'ordered_field_declaration_list_group1'>;
-	export type Tree = TreeFor<'ordered_field_declaration_list_group1'>;
-	export type Kind = 'ordered_field_declaration_list_group1';
-}
-export namespace ParametersGroup1 {
-	export type Config = ConfigFor<'parameters_group1'>;
-	export type Fluent = FluentFor<'parameters_group1'>;
-	export type Loose = LooseFor<'parameters_group1'>;
-	export type Tree = TreeFor<'parameters_group1'>;
-	export type Kind = 'parameters_group1';
-}
-export namespace SlicePatternGroup1 {
-	export type Config = ConfigFor<'slice_pattern_group1'>;
-	export type Fluent = FluentFor<'slice_pattern_group1'>;
-	export type Loose = LooseFor<'slice_pattern_group1'>;
-	export type Tree = TreeFor<'slice_pattern_group1'>;
-	export type Kind = 'slice_pattern_group1';
-}
-export namespace StructPatternGroup1 {
-	export type Config = ConfigFor<'struct_pattern_group1'>;
-	export type Fluent = FluentFor<'struct_pattern_group1'>;
-	export type Loose = LooseFor<'struct_pattern_group1'>;
-	export type Tree = TreeFor<'struct_pattern_group1'>;
-	export type Kind = 'struct_pattern_group1';
-}
-export namespace TuplePatternGroup1 {
-	export type Config = ConfigFor<'tuple_pattern_group1'>;
-	export type Fluent = FluentFor<'tuple_pattern_group1'>;
-	export type Loose = LooseFor<'tuple_pattern_group1'>;
-	export type Tree = TreeFor<'tuple_pattern_group1'>;
-	export type Kind = 'tuple_pattern_group1';
-}
-export namespace UseBoundsGroup1 {
-	export type Config = ConfigFor<'use_bounds_group1'>;
-	export type Fluent = FluentFor<'use_bounds_group1'>;
-	export type Loose = LooseFor<'use_bounds_group1'>;
-	export type Tree = TreeFor<'use_bounds_group1'>;
-	export type Kind = 'use_bounds_group1';
-}
-export namespace UseListGroup1 {
-	export type Config = ConfigFor<'use_list_group1'>;
-	export type Fluent = FluentFor<'use_list_group1'>;
-	export type Loose = LooseFor<'use_list_group1'>;
-	export type Tree = TreeFor<'use_list_group1'>;
-	export type Kind = 'use_list_group1';
-}
-export namespace WhereClauseGroup1 {
-	export type Config = ConfigFor<'where_clause_group1'>;
-	export type Fluent = FluentFor<'where_clause_group1'>;
-	export type Loose = LooseFor<'where_clause_group1'>;
-	export type Tree = TreeFor<'where_clause_group1'>;
-	export type Kind = 'where_clause_group1';
+export namespace MatchBlockArms {
+	export type Config = ConfigFor<'_match_block_arms'>;
+	export type Fluent = FluentFor<'_match_block_arms'>;
+	export type Loose = LooseFor<'_match_block_arms'>;
+	export type Tree = TreeFor<'_match_block_arms'>;
+	export type Kind = '_match_block_arms';
 }
 export namespace VisibilityModifierPubParens {
 	export type Config = ConfigFor<'_visibility_modifier_pub_parens'>;
