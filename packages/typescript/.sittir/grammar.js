@@ -1140,6 +1140,7 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
   for (let i = 0; i < MAX_ITERATIONS; i++) {
     const before = r;
     r = applySymbolToField(ruleName, r, supertypeNames);
+    r = applyChoiceArmFieldWrap(ruleName, r, supertypeNames, rulesBag);
     r = applyOptionalKeyword(ruleName, r, kwRules, wordMatcher);
     if (r === before) {
       converged = true;
@@ -1192,6 +1193,80 @@ function extractSupertypeNames(base2, hasWrapper) {
   }
   if (Array.isArray(supertypes)) return harvestSupertypeNames(supertypes);
   return /* @__PURE__ */ new Set();
+}
+function isAnonymousLiteralShapedRule(name, rulesBag, seen) {
+  if (seen.has(name)) return false;
+  seen.add(name);
+  const rule = rulesBag[name];
+  if (!rule) return true;
+  return isAnonymousLiteralShapedContent(rule, rulesBag, seen);
+}
+function isAnonymousLiteralShapedContent(rule, rulesBag, seen) {
+  if (isStringType(rule.type) || rule.type === "PATTERN") return true;
+  if (isChoiceType(rule.type)) {
+    const members = rule.members;
+    return members.every((m) => isAnonymousLiteralShapedContent(m, rulesBag, seen));
+  }
+  if (isSymbolType(rule.type) && typeof rule.name === "string") {
+    return isAnonymousLiteralShapedRule(rule.name, rulesBag, seen);
+  }
+  return false;
+}
+function applyChoiceArmFieldWrap(ruleName, rule, supertypeNames, rulesBag) {
+  if (ruleName.startsWith("_")) return rule;
+  let cursor = rule;
+  const precStack = [];
+  while (isPrecWrapper(cursor)) {
+    precStack.push(cursor);
+    cursor = cursor.content;
+  }
+  if (!isChoiceType(cursor.type)) return rule;
+  const armMembers = cursor.members;
+  let anyArmChanged = false;
+  const newArms = armMembers.map((arm) => {
+    let armCursor = arm;
+    const armPrecStack = [];
+    while (isPrecWrapper(armCursor)) {
+      armPrecStack.push(armCursor);
+      armCursor = armCursor.content;
+    }
+    if (!isSeqType(armCursor.type)) return arm;
+    const seqMembers = armCursor.members;
+    const existing = collectFieldNamesRuntime(armCursor);
+    let armChanged = false;
+    const newSeqMembers = seqMembers.map((m) => {
+      const t = detectSymbolTarget(m);
+      if (!t) return m;
+      if (!isBareShapeTarget(m, t)) return m;
+      let fieldName = t.name;
+      if (t.name.startsWith("_")) {
+        const eligible = supertypeNames.has(t.name) || isAnonymousLiteralShapedRule(t.name, rulesBag, /* @__PURE__ */ new Set());
+        if (!eligible) return m;
+        fieldName = t.name.slice(1);
+      }
+      if (existing.has(fieldName)) {
+        reportSkip("choice-arm-field", ruleName, `field '${fieldName}' already exists`);
+        return m;
+      }
+      existing.add(fieldName);
+      armChanged = true;
+      const fieldNode = makeField(fieldName, t.symbolRule);
+      return t.wrap(fieldNode);
+    });
+    if (!armChanged) return arm;
+    anyArmChanged = true;
+    let rebuiltArm = { ...armCursor, members: newSeqMembers };
+    for (let i = armPrecStack.length - 1; i >= 0; i--) {
+      rebuiltArm = { ...armPrecStack[i], content: rebuiltArm };
+    }
+    return rebuiltArm;
+  });
+  if (!anyArmChanged) return rule;
+  let result = { ...cursor, members: newArms };
+  for (let i = precStack.length - 1; i >= 0; i--) {
+    result = { ...precStack[i], content: result };
+  }
+  return result;
 }
 function extractWordName(word) {
   if (typeof word === "string") return word;
@@ -3795,6 +3870,28 @@ var overrides_default = grammar(
           "1/0": variant("typed"),
           "1/1": variant("sequence")
         },
+        // export_statement: variant() adoption on all four branches.
+        // Path 0 is the JS-inherited `previous` (export default,
+        // export function, export from, …); paths 1/2/3 are
+        // `export type`, `export =`, `export as namespace`. Without
+        // labeling path 0, its base-JS branches render without the
+        // `export` prefix (parent template is just `$$$CHILDREN`,
+        // which filters to named children) — the wrapper becomes
+        // invisible at render time.
+        //
+        // `_export_statement_default`'s body is a top-level choice of
+        // TWO structurally distinct shapes:
+        //   arm 0 — `seq('export', choice(4 from-clause forms), _semicolon)`
+        //   arm 1 — `seq(decorator, 'export', choice(declaration | default value))`
+        // Splitting it further (e.g. `0/0` / `0/1` for these sub-arms)
+        // just moves the non-canonical flag one level deeper — each
+        // split arm STILL has inner choice-with-fields shapes
+        // (specifiers, from-clause forms, default value). Adoption on
+        // kinds synthesized by a parent polymorph adoption isn't
+        // supported end-to-end, so deferred for future work. The
+        // walker handles the shape via its per-branch + downgrade
+        // logic correctly; the audit flag surfaces real adoption
+        // opportunity but not a blocking bug.
         export_statement: {
           0: variant("default"),
           1: variant("type_export"),

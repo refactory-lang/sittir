@@ -3529,8 +3529,17 @@ var overrides_default = grammar(
         use_bounds: {
           2: field2("bounds")
         },
+        // last_match_arm: seq(repeat(attrs)[0], field('pattern')[1], '=>'[2],
+        //   field('value')[3], optional(',')[4]).
+        // Pos 4's optional trailing comma is an unnamed anonymous token — never
+        // captured, so a source last-arm's trailing ',' was silently dropped on
+        // render (3 corpus AST mismatches: [pattern,"=>",value,","] vs
+        // [pattern,"=>",value]). Field it ('4/0' = the optional's content) so
+        // read captures and render preserves it; same marker-promotion pattern
+        // as async_block's move_marker.
         last_match_arm: {
-          0: field2("attributes")
+          "0": field2("attributes"),
+          "4/0": field2("comma")
         },
         match_block: {
           "1/0/1": field2("last_arm")
@@ -3592,6 +3601,17 @@ var overrides_default = grammar(
           "1/0": variant("const"),
           "1/1": variant("mut")
         },
+        // string_literal deliberately NOT fielded: its opening token is
+        // `alias(/[bc]?"/, '"')` — a PATTERN carrying the b"/c" byte-/C-string
+        // prefixes, aliased to the constant '"'. Field-promoting it was tried
+        // (2026-07-28) and does NOT recover the prefix: slot classification
+        // keys off the ALIAS display string, minting a fixed `dquote`
+        // TERMINAL whose wire encoding is a presence boolean, so the render
+        // still emits the static '"' and c"..." renders as "..." (1 corpus
+        // AST mismatch). Needs a classification fix (alias-of-PATTERN whose
+        // regex isn't the alias string is content-bearing) — see specs/026
+        // progress notes.
+        // raw_string_literal: 3 field(s)
         raw_string_literal: {
           0: field2("raw_string_literal_start"),
           1: field2("string_content"),

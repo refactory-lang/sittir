@@ -156,12 +156,11 @@ describe('emitConsts', () => {
 			]
 		]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
-		// JSON.stringify (not hand-rolled single-quote escaping) — see
-		// emitConsts' "Enum values" block; a bare `'/g` replace only
+		// escForSource (not a bare `'/g` replace) — a bare replace only
 		// escaped single quotes, breaking on values containing a literal
 		// newline (the automatic-semicolon marker).
-		expect(output).toContain('"pub"');
-		expect(output).toContain('"crate"');
+		expect(output).toContain("'pub'");
+		expect(output).toContain("'crate'");
 	});
 
 	// ADR-0012 — bitflag const enum emission

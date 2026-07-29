@@ -89,8 +89,7 @@ describe('import_from_statement', () => {
 				$source: 2,
 				$named: true,
 				_import_prefix: { $type: TSKindId.ImportPrefix, $text: 'test', $source: 2, $named: true } as any
-			} as any,
-			wildcardImport: [{ $type: TSKindId.WildcardImport, $text: '*', $source: 2, $named: true } as any]
+			} as any
 		});
 		expect(node.$type).toBe(TSKindId.ImportFromStatement);
 		expect(node.$source).toBe(2);
@@ -103,8 +102,7 @@ describe('import_from_statement', () => {
 				$source: 2,
 				$named: true,
 				_import_prefix: { $type: TSKindId.ImportPrefix, $text: 'test', $source: 2, $named: true } as any
-			} as any,
-			wildcardImport: [{ $type: TSKindId.WildcardImport, $text: '*', $source: 2, $named: true } as any]
+			} as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -806,7 +804,7 @@ describe('dotted_name', () => {
 
 describe('case_pattern', () => {
 	it('factory produces correct type', () => {
-		const node = ir.casePattern({ type: '_as_pattern' } as never);
+		const node = ir.casePattern({ type: 'case_as_pattern' } as never);
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect(node.$source).toBe(2);
 	});
@@ -1903,6 +1901,44 @@ describe('case_list_pattern', () => {
 	it('factory produces correct type', () => {
 		const node = ir.caseListPattern();
 		expect(node.$type).toBe(TSKindId.CaseListPattern);
+		expect(node.$source).toBe(2);
+	});
+});
+
+describe('case_as_pattern', () => {
+	it('factory produces correct type', () => {
+		const node = ir.caseAsPattern({
+			casePattern: {
+				$type: TSKindId.CasePattern,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+			} as any,
+			identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$type).toBe(TSKindId.CaseAsPattern);
+		expect(node.$source).toBe(2);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.caseAsPattern({
+			casePattern: {
+				$type: TSKindId.CasePattern,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.True, $text: 'True', $source: 2, $named: true } as any
+			} as any,
+			identifier: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+		});
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('comprehension_clauses', () => {
+	it('factory produces correct type', () => {
+		const node = ir.comprehensionClauses();
+		expect(node.$type).toBe(TSKindId.ComprehensionClauses);
 		expect(node.$source).toBe(2);
 	});
 });

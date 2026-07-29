@@ -3198,6 +3198,11 @@ export const enum PrimaryTypeKind {
 	UnionType = 'union_type'
 }
 
+export const enum PropertyIdentifierKind {
+	JsxIdentifier = 'jsx_identifier',
+	Identifier = 'identifier'
+}
+
 // Node types — concrete interfaces
 export interface Program {
 	readonly $type: TSKindId.Program;
