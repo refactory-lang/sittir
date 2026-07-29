@@ -225,13 +225,16 @@ function drillInAll<T>(entries: readonly T[] | undefined, tree: TreeHandle): T[]
 	return arr.map((e) => drillIn(e, tree));
 }
 // drillAs — field-site unalias for grammar `alias($.source, $.target)`
-// declarations. The `asType` override rewrites $type from
-// tree-sitter's alias target back to the codegen-canonical source
-// name between the read and the wrap. Conditional rewrite: only
-// fires when the child's actual $type matches `fromType`; mixed-
-// union fields (e.g. Path | BracketedType | GenericTypeWithTurbofish)
-// pass through unchanged when the child arrived as a non-alias kind.
-function drillAs<T>(entry: unknown, tree: TreeHandle, fromType: string, toType: string): T {
+// declarations. `pairs` rewrites $type from one of possibly several
+// tree-sitter alias targets back to the codegen-canonical source
+// name between the read and the wrap (a polymorphic slot can have
+// several simultaneously-aliased candidate kinds — e.g. every arm
+// of a `choice()` aliasing onto its own shared canonical name).
+// Conditional rewrite: only fires when the child's actual $type
+// matches one pair's `from` (at most one can, since a given node
+// has exactly one real kind); mixed-union fields pass through
+// unchanged when the child arrived as a non-alias kind.
+function drillAs<T>(entry: unknown, tree: TreeHandle, pairs: readonly { from: string; to: string }[]): T {
 	if (!entry) return undefined as unknown as T;
 	const e = entry as _NodeData;
 	if (e.$nodeHandle == null || e.$childIndex == null) {
@@ -241,26 +244,24 @@ function drillAs<T>(entry: unknown, tree: TreeHandle, fromType: string, toType: 
 					? (KIND_NAMES.get(e.$type as never) ?? String(e.$type))
 					: (e.$type as unknown as string);
 			const hiddenCurrentType = currentType.startsWith('_') ? currentType.slice(1) : undefined;
+			const match = pairs.find((p) => currentType === p.from || hiddenCurrentType === p.from);
+			if (!match) return e as unknown as T;
 			let resolvedToId: number | undefined;
 			try {
-				resolvedToId = kindIdFromName(toType) as unknown as number;
+				resolvedToId = kindIdFromName(match.to) as unknown as number;
 			} catch {
 				resolvedToId = undefined;
 			}
-			const next =
-				currentType === fromType || hiddenCurrentType === fromType
-					? ({ ...e, $type: (resolvedToId ?? toType) as unknown as number } as _NodeData)
-					: e;
-			return next as unknown as T;
+			return { ...e, $type: (resolvedToId ?? match.to) as unknown as number } as _NodeData as unknown as T;
 		}
 		return entry as unknown as T;
 	}
-	return readTreeNode(tree, e.$nodeHandle, e.$childIndex, { from: fromType, to: toType }) as unknown as T;
+	return readTreeNode(tree, e.$nodeHandle, e.$childIndex, pairs) as unknown as T;
 }
-function drillAsAll<T>(entries: unknown, tree: TreeHandle, fromType: string, toType: string): T[] {
+function drillAsAll<T>(entries: unknown, tree: TreeHandle, pairs: readonly { from: string; to: string }[]): T[] {
 	if (!entries) return [];
 	const arr = Array.isArray(entries) ? entries : [entries];
-	return arr.map((e) => drillAs<T>(e, tree, fromType, toType));
+	return arr.map((e) => drillAs<T>(e, tree, pairs));
 }
 function projectKindEnumStorage<T>(value: T, textIds?: Readonly<Record<string, number>>): T {
 	if (!value) return value;
@@ -1040,12 +1041,17 @@ export function wrapExportStatement(
 			),
 
 			content() {
-				return drillIn<
+				return drillAs<
 					| T.ExportStatementDefault
 					| T.ExportStatementTypeExport
 					| T.ExportStatementEqualsExport
 					| T.ExportStatementNamespaceExport
-				>(this._content, tree);
+				>(this._content, tree, [
+					{ from: 'export_statement_default', to: '_export_statement_default' },
+					{ from: 'export_statement_type_export', to: '_export_statement_type_export' },
+					{ from: 'export_statement_equals_export', to: '_export_statement_equals_export' },
+					{ from: 'export_statement_namespace_export', to: '_export_statement_namespace_export' }
+				]);
 			},
 			$with: {
 				content: (v: NonNullable<T.ExportStatement['_content']>) => wrapExportStatement({ ...data, _content: v }, tree)
@@ -1099,12 +1105,9 @@ export function wrapExportClause(data: T.ExportClause, tree: TreeHandle) {
 			),
 
 			exportClauseGroup1() {
-				return drillAs<T.ExportClauseGroup1 | undefined>(
-					this._export_clause_group1,
-					tree,
-					'export_clause_group1',
-					'_export_clause_group1'
-				);
+				return drillAs<T.ExportClauseGroup1 | undefined>(this._export_clause_group1, tree, [
+					{ from: 'export_clause_group1', to: '_export_clause_group1' }
+				]);
 			},
 			$with: {
 				exportClauseGroup1: (v: NonNullable<T.ExportClause['_export_clause_group1']>) =>
@@ -1282,12 +1285,9 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle) {
 				return this._import_clause;
 			},
 			fromClause() {
-				return drillAs<T.ImportStatementGroup1 | T.ImportRequireClause | T.String>(
-					this._from_clause,
-					tree,
-					'import_statement_group1',
-					'_import_statement_group1'
-				);
+				return drillAs<T.ImportStatementGroup1 | T.ImportRequireClause | T.String>(this._from_clause, tree, [
+					{ from: 'import_statement_group1', to: '_import_statement_group1' }
+				]);
 			},
 			importAttribute() {
 				return drillIn<T.ImportAttribute | undefined>(this._import_attribute, tree);
@@ -1332,12 +1332,9 @@ export function wrapImportClause(
 			),
 
 			content() {
-				return drillAs<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>(
-					this._content,
-					tree,
-					'import_clause_default_import',
-					'_import_clause_default_import'
-				);
+				return drillAs<T.NamespaceImport | T.NamedImports | T.ImportClauseDefaultImport>(this._content, tree, [
+					{ from: 'import_clause_default_import', to: '_import_clause_default_import' }
+				]);
 			},
 			$with: {
 				content: (v: NonNullable<T.ImportClause['_content']>) => wrapImportClause({ ...data, _content: v }, tree)
@@ -1411,12 +1408,9 @@ export function wrapNamedImports(data: T.NamedImports, tree: TreeHandle) {
 			),
 
 			namedImportsGroup1() {
-				return drillAs<T.NamedImportsGroup1 | undefined>(
-					this._named_imports_group1,
-					tree,
-					'named_imports_group1',
-					'_named_imports_group1'
-				);
+				return drillAs<T.NamedImportsGroup1 | undefined>(this._named_imports_group1, tree, [
+					{ from: 'named_imports_group1', to: '_named_imports_group1' }
+				]);
 			},
 			$with: {
 				namedImportsGroup1: (v: NonNullable<T.NamedImports['_named_imports_group1']>) =>
@@ -1461,12 +1455,9 @@ export function wrapImportSpecifier(
 				return this._import_kind;
 			},
 			content() {
-				return drillAs<T.ImportIdentifier | T.ImportSpecifierAs>(
-					this._content,
-					tree,
-					'import_specifier_as',
-					'_import_specifier_as'
-				);
+				return drillAs<T.ImportIdentifier | T.ImportSpecifierAs>(this._content, tree, [
+					{ from: 'import_specifier_as', to: '_import_specifier_as' }
+				]);
 			},
 			$with: {
 				importKind: (v: NonNullable<T.ImportSpecifier['_import_kind']>) =>
@@ -1844,7 +1835,10 @@ export function wrapVariableDeclarator(
 			),
 
 			content() {
-				return drillIn<T.VariableDeclaratorGroup1 | T.VariableDeclaratorGroup2>(this._content, tree);
+				return drillAs<T.VariableDeclaratorGroup1 | T.VariableDeclaratorGroup2>(this._content, tree, [
+					{ from: 'variable_declarator_group1', to: '_variable_declarator_group1' },
+					{ from: 'variable_declarator_group2', to: '_variable_declarator_group2' }
+				]);
 			},
 			$with: {
 				content: (v: NonNullable<T.VariableDeclarator['_content']>) =>
@@ -2107,7 +2101,11 @@ export function wrapForInStatement(
 				return this._await_marker;
 			},
 			content() {
-				return drillIn<T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind>(this._content, tree);
+				return drillAs<T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind>(this._content, tree, [
+					{ from: 'for_header_lhs', to: '_for_header_lhs' },
+					{ from: 'for_header_var_kind', to: '_for_header_var_kind' },
+					{ from: 'for_header_let_const_kind', to: '_for_header_let_const_kind' }
+				]);
 			},
 			operator() {
 				return this._operator;
@@ -2170,7 +2168,11 @@ export function wrapForHeader(
 			}),
 
 			content() {
-				return drillIn<T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind>(this._content, tree);
+				return drillAs<T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind>(this._content, tree, [
+					{ from: 'for_header_lhs', to: '_for_header_lhs' },
+					{ from: 'for_header_var_kind', to: '_for_header_var_kind' },
+					{ from: 'for_header_let_const_kind', to: '_for_header_let_const_kind' }
+				]);
 			},
 			operator() {
 				return this._operator;
@@ -2373,7 +2375,9 @@ export function wrapBreakStatement(data: T.BreakStatement, tree: TreeHandle) {
 			),
 
 			label() {
-				return drillAs<T.Identifier | undefined>(this._label, tree, 'statement_identifier', 'identifier');
+				return drillAs<T.Identifier | undefined>(this._label, tree, [
+					{ from: 'statement_identifier', to: 'identifier' }
+				]);
 			},
 			semicolon() {
 				return this._semicolon;
@@ -2412,7 +2416,9 @@ export function wrapContinueStatement(data: T.ContinueStatement, tree: TreeHandl
 			),
 
 			label() {
-				return drillAs<T.Identifier | undefined>(this._label, tree, 'statement_identifier', 'identifier');
+				return drillAs<T.Identifier | undefined>(this._label, tree, [
+					{ from: 'statement_identifier', to: 'identifier' }
+				]);
 			},
 			semicolon() {
 				return this._semicolon;
@@ -2802,7 +2808,9 @@ export function wrapLabeledStatement(data: T.LabeledStatement, tree: TreeHandle)
 			}),
 
 			label() {
-				return drillAs<T.StatementIdentifier>(this._label, tree, 'statement_identifier', '_statement_identifier');
+				return drillAs<T.StatementIdentifier>(this._label, tree, [
+					{ from: 'statement_identifier', to: '_statement_identifier' }
+				]);
 			},
 			body() {
 				return drillIn<T.Statement>(this._body, tree);
@@ -2923,12 +2931,9 @@ export function wrapCatchClause(data: T.CatchClause, tree: TreeHandle) {
 			}),
 
 			catchClauseGroup1() {
-				return drillAs<T.CatchClauseGroup1 | undefined>(
-					this._catch_clause_group1,
-					tree,
-					'catch_clause_group1',
-					'_catch_clause_group1'
-				);
+				return drillAs<T.CatchClauseGroup1 | undefined>(this._catch_clause_group1, tree, [
+					{ from: 'catch_clause_group1', to: '_catch_clause_group1' }
+				]);
 			},
 			body() {
 				return drillIn<T.StatementBlock>(this._body, tree);
@@ -2994,7 +2999,7 @@ export function wrapParenthesizedExpression(
 			| T.Identifier
 			| T.DecoratorMemberExpression
 			| T.DecoratorCallExpression;
-		readonly _decorator_call_expression?:
+		readonly _call_expression?:
 			| T.ParenthesizedExpressionTyped
 			| T.SequenceExpression
 			| T.Identifier
@@ -3006,7 +3011,7 @@ export function wrapParenthesizedExpression(
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
-				'_decorator_call_expression',
+				'_call_expression',
 				'_identifier',
 				'_member_expression',
 				'_parenthesized_expression_typed',
@@ -3019,7 +3024,7 @@ export function wrapParenthesizedExpression(
 					data._sequence_expression ??
 					data._identifier ??
 					data._member_expression ??
-					data._decorator_call_expression,
+					data._call_expression,
 				'content',
 				true,
 				data.$type,
@@ -3027,13 +3032,17 @@ export function wrapParenthesizedExpression(
 			),
 
 			content() {
-				return drillIn<
+				return drillAs<
 					| T.ParenthesizedExpressionTyped
 					| T.SequenceExpression
 					| T.Identifier
 					| T.DecoratorMemberExpression
 					| T.DecoratorCallExpression
-				>(this._content, tree);
+				>(this._content, tree, [
+					{ from: 'parenthesized_expression_typed', to: '_parenthesized_expression_typed' },
+					{ from: 'member_expression', to: 'decorator_member_expression' },
+					{ from: 'call_expression', to: 'decorator_call_expression' }
+				]);
 			},
 			$with: {
 				content: (v: NonNullable<T.ParenthesizedExpression['_content']>) =>
@@ -3224,8 +3233,7 @@ export function wrapObject(data: T.Object, tree: TreeHandle) {
 				return drillAsAll<T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier>(
 					this._properties,
 					tree,
-					'shorthand_property_identifier',
-					'_shorthand_property_identifier'
+					[{ from: 'shorthand_property_identifier', to: '_shorthand_property_identifier' }]
 				);
 			},
 			$with: {
@@ -3261,7 +3269,9 @@ export function wrapObjectPattern(data: T.ObjectPattern, tree: TreeHandle) {
 			properties() {
 				return drillAsAll<
 					T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern
-				>(this._properties, tree, 'shorthand_property_identifier_pattern', '_shorthand_property_identifier_pattern');
+				>(this._properties, tree, [
+					{ from: 'shorthand_property_identifier_pattern', to: '_shorthand_property_identifier_pattern' }
+				]);
 			},
 			$with: {
 				properties: (...v: NonNullable<T.ObjectPattern['_properties']>[number][]) =>
@@ -3292,7 +3302,7 @@ export function wrapAssignmentPattern(data: T.AssignmentPattern, tree: TreeHandl
 			}),
 
 			left() {
-				return drillIn<T.Pattern>(this._left, tree);
+				return drillAs<T.Pattern>(this._left, tree, [{ from: 'for_header_group1', to: '_lhs_expression' }]);
 			},
 			right() {
 				return drillIn<T.Expression>(this._right, tree);
@@ -3326,12 +3336,9 @@ export function wrapObjectAssignmentPattern(data: T.ObjectAssignmentPattern, tre
 			}),
 
 			left() {
-				return drillAs<T.ShorthandPropertyIdentifierPattern | T.DestructuringPattern>(
-					this._left,
-					tree,
-					'shorthand_property_identifier_pattern',
-					'_shorthand_property_identifier_pattern'
-				);
+				return drillAs<T.ShorthandPropertyIdentifierPattern | T.DestructuringPattern>(this._left, tree, [
+					{ from: 'shorthand_property_identifier_pattern', to: '_shorthand_property_identifier_pattern' }
+				]);
 			},
 			right() {
 				return drillIn<T.Expression>(this._right, tree);
@@ -3431,10 +3438,9 @@ export function wrapArrayPattern(data: T.ArrayPattern, tree: TreeHandle) {
 			),
 
 			elements() {
-				return drillInAll<T.Pattern | T.AssignmentPattern>(
-					this._elements as readonly (T.Pattern | T.AssignmentPattern)[] | undefined,
-					tree
-				);
+				return drillAsAll<T.Pattern | T.AssignmentPattern>(this._elements, tree, [
+					{ from: 'for_header_group1', to: '_lhs_expression' }
+				]);
 			},
 			$with: {
 				elements: (...v: NonNullable<T.ArrayPattern['_elements']>[number][]) =>
@@ -3465,10 +3471,12 @@ export function wrapNestedIdentifier(data: T.NestedIdentifier, tree: TreeHandle)
 			}),
 
 			object() {
-				return drillAs<T.Identifier | T.NestedIdentifier>(this._object, tree, 'member_expression', 'nested_identifier');
+				return drillAs<T.Identifier | T.NestedIdentifier>(this._object, tree, [
+					{ from: 'member_expression', to: 'nested_identifier' }
+				]);
 			},
 			property() {
-				return drillAs<T.Identifier>(this._property, tree, 'property_identifier', 'identifier');
+				return drillAs<T.Identifier>(this._property, tree, [{ from: 'property_identifier', to: 'identifier' }]);
 			},
 			$with: {
 				object: (v: NonNullable<T.NestedIdentifier['_object']>) => wrapNestedIdentifier({ ...data, _object: v }, tree),
@@ -3521,7 +3529,7 @@ export function wrapClass(data: T.Class, tree: TreeHandle) {
 				return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree);
 			},
 			name() {
-				return drillAs<T.Identifier | undefined>(this._name, tree, 'type_identifier', 'identifier');
+				return drillAs<T.Identifier | undefined>(this._name, tree, [{ from: 'type_identifier', to: 'identifier' }]);
 			},
 			typeParameters() {
 				return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree);
@@ -3594,7 +3602,7 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
 				return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree);
 			},
 			name() {
-				return drillAs<T.Identifier>(this._name, tree, 'type_identifier', 'identifier');
+				return drillAs<T.Identifier>(this._name, tree, [{ from: 'type_identifier', to: 'identifier' }]);
 			},
 			typeParameters() {
 				return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree);
@@ -3646,12 +3654,9 @@ export function wrapClassHeritage(
 			),
 
 			content() {
-				return drillAs<T.ClassHeritageExtendsClause | T.ImplementsClause>(
-					this._content,
-					tree,
-					'class_heritage_extends_clause',
-					'_class_heritage_extends_clause'
-				);
+				return drillAs<T.ClassHeritageExtendsClause | T.ImplementsClause>(this._content, tree, [
+					{ from: 'class_heritage_extends_clause', to: '_class_heritage_extends_clause' }
+				]);
 			},
 			$with: {
 				content: (v: NonNullable<T.ClassHeritage['_content']>) => wrapClassHeritage({ ...data, _content: v }, tree)
@@ -4059,7 +4064,10 @@ export function wrapArrowFunction(
 				return this._async_marker;
 			},
 			content() {
-				return drillIn<T.ArrowFunctionParameter | T.ArrowFunctionUCallSignature>(this._content, tree);
+				return drillAs<T.ArrowFunctionParameter | T.ArrowFunctionUCallSignature>(this._content, tree, [
+					{ from: 'arrow_function_parameter', to: '_arrow_function_parameter' },
+					{ from: 'arrow_function__call_signature', to: '_arrow_function__call_signature' }
+				]);
 			},
 			body() {
 				return drillIn<T.Expression | T.StatementBlock>(this._body, tree);
@@ -4176,9 +4184,14 @@ export function wrapCallExpression(
 			),
 
 			content() {
-				return drillIn<T.CallExpressionCall | T.CallExpressionTemplateCall | T.CallExpressionMember>(
+				return drillAs<T.CallExpressionCall | T.CallExpressionTemplateCall | T.CallExpressionMember>(
 					this._content,
-					tree
+					tree,
+					[
+						{ from: 'call_expression_call', to: '_call_expression_call' },
+						{ from: 'call_expression_template_call', to: '_call_expression_template_call' },
+						{ from: 'call_expression_member', to: '_call_expression_member' }
+					]
 				);
 			},
 			$with: {
@@ -4215,7 +4228,9 @@ export function wrapNewExpression(data: T.NewExpression, tree: TreeHandle) {
 			}),
 
 			constructor_() {
-				return drillIn<T.PrimaryExpression>(this._constructor, tree);
+				return drillAs<T.PrimaryExpression>(this._constructor, tree, [
+					{ from: 'identifier', to: '_reserved_identifier' }
+				]);
 			},
 			typeArguments() {
 				return drillIn<T.TypeArguments | undefined>(this._type_arguments, tree);
@@ -4289,18 +4304,17 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 			}),
 
 			object() {
-				return drillIn<T.Expression | T.PrimaryExpression | T.Import>(this._object, tree);
+				return drillAs<T.Expression | T.PrimaryExpression | T.Import>(this._object, tree, [
+					{ from: 'identifier', to: '_reserved_identifier' }
+				]);
 			},
 			optionalChain() {
 				return this._optional_chain;
 			},
 			property() {
-				return drillAs<T.PrivatePropertyIdentifier | T.Identifier>(
-					this._property,
-					tree,
-					'property_identifier',
-					'identifier'
-				);
+				return drillAs<T.PrivatePropertyIdentifier | T.Identifier>(this._property, tree, [
+					{ from: 'property_identifier', to: 'identifier' }
+				]);
 			},
 			$with: {
 				object: (v: NonNullable<T.MemberExpression['_object']>) => wrapMemberExpression({ ...data, _object: v }, tree),
@@ -4342,7 +4356,9 @@ export function wrapSubscriptExpression(data: T.SubscriptExpression, tree: TreeH
 			}),
 
 			object() {
-				return drillIn<T.Expression | T.PrimaryExpression>(this._object, tree);
+				return drillAs<T.Expression | T.PrimaryExpression>(this._object, tree, [
+					{ from: 'identifier', to: '_reserved_identifier' }
+				]);
 			},
 			optionalChain() {
 				return this._optional_chain;
@@ -4453,7 +4469,7 @@ export function wrapLhsExpression(
 					| T.ReservedIdentifier
 					| T.DestructuringPattern
 					| T.NonNullExpression
-				>(this._content, tree, 'identifier', '_reserved_identifier');
+				>(this._content, tree, [{ from: 'identifier', to: '_reserved_identifier' }]);
 			},
 			$with: {
 				content: (v: NonNullable<T.LhsExpression['_content']>) => wrapLhsExpression({ ...data, _content: v }, tree)
@@ -4494,12 +4510,9 @@ export function wrapAssignmentExpression(data: T.AssignmentExpression, tree: Tre
 				return this._using_marker;
 			},
 			left() {
-				return drillAs<T.ParenthesizedExpression | T.LhsExpression>(
-					this._left,
-					tree,
-					'for_header_group1',
-					'_lhs_expression'
-				);
+				return drillAs<T.ParenthesizedExpression | T.LhsExpression>(this._left, tree, [
+					{ from: 'for_header_group1', to: '_lhs_expression' }
+				]);
 			},
 			right() {
 				return drillIn<T.Expression>(this._right, tree);
@@ -4587,7 +4600,7 @@ export function wrapAugmentedAssignmentExpression(data: T.AugmentedAssignmentExp
 					| T.Identifier
 					| T.ParenthesizedExpression
 					| T.NonNullExpression
-				>(this._left, tree, 'reserved_identifier', '_reserved_identifier');
+				>(this._left, tree, [{ from: 'reserved_identifier', to: '_reserved_identifier' }]);
 			},
 			operator() {
 				return this._operator;
@@ -4824,12 +4837,9 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 				return drillIn<T.Expression | undefined>(this._right, tree);
 			},
 			binaryExpressionGroup1() {
-				return drillAs<T.BinaryExpressionGroup1 | undefined>(
-					this._binary_expression_group1,
-					tree,
-					'binary_expression_group1',
-					'_binary_expression_group1'
-				);
+				return drillAs<T.BinaryExpressionGroup1 | undefined>(this._binary_expression_group1, tree, [
+					{ from: 'binary_expression_group1', to: '_binary_expression_group1' }
+				]);
 			},
 			$with: {
 				left: (v: NonNullable<T.BinaryExpression['_left']>) => wrapBinaryExpression({ ...data, _left: v }, tree),
@@ -4914,7 +4924,10 @@ export function wrapUpdateExpression(
 			),
 
 			content() {
-				return drillIn<T.UpdateExpressionPostfix | T.UpdateExpressionPrefix>(this._content, tree);
+				return drillAs<T.UpdateExpressionPostfix | T.UpdateExpressionPrefix>(this._content, tree, [
+					{ from: 'update_expression_postfix', to: '_update_expression_postfix' },
+					{ from: 'update_expression_prefix', to: '_update_expression_prefix' }
+				]);
 			},
 			$with: {
 				content: (v: NonNullable<T.UpdateExpression['_content']>) =>
@@ -5138,7 +5151,10 @@ export function wrapString(
 			),
 
 			content() {
-				return drillIn<T.StringDouble | T.StringSingle>(this._content, tree);
+				return drillAs<T.StringDouble | T.StringSingle>(this._content, tree, [
+					{ from: 'string_double', to: '_string_double' },
+					{ from: 'string_single', to: '_string_single' }
+				]);
 			},
 			$with: {
 				content: (v: NonNullable<T.String['_content']>) => wrapString({ ...data, _content: v }, tree)
@@ -5183,12 +5199,9 @@ export function wrapTemplateString(
 			),
 
 			contents() {
-				return drillAsAll<T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution>(
-					this._content,
-					tree,
-					'string_fragment',
-					'_template_chars'
-				);
+				return drillAsAll<T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution>(this._content, tree, [
+					{ from: 'string_fragment', to: '_template_chars' }
+				]);
 			},
 			$with: {
 				contents: (...v: NonNullable<T.TemplateString['_content']>[number][]) =>
@@ -5402,7 +5415,10 @@ export function wrapMetaProperty(
 			),
 
 			content() {
-				return drillIn<T.MetaPropertyGroup1 | T.MetaPropertyGroup2>(this._content, tree);
+				return drillAs<T.MetaPropertyGroup1 | T.MetaPropertyGroup2>(this._content, tree, [
+					{ from: 'meta_property_group1', to: '_meta_property_group1' },
+					{ from: 'meta_property_group2', to: '_meta_property_group2' }
+				]);
 			},
 			$with: {
 				content: (v: NonNullable<T.MetaProperty['_content']>) => wrapMetaProperty({ ...data, _content: v }, tree)
@@ -5496,7 +5512,7 @@ export function wrapDecorator(
 			| T.DecoratorMemberExpression
 			| T.DecoratorCallExpression
 			| T.DecoratorParenthesizedExpression;
-		readonly _decorator_call_expression?:
+		readonly _call_expression?:
 			| T.Identifier
 			| T.DecoratorMemberExpression
 			| T.DecoratorCallExpression
@@ -5511,18 +5527,13 @@ export function wrapDecorator(
 ) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, [
-				'_decorator_call_expression',
-				'_identifier',
-				'_member_expression',
-				'_parenthesized_expression'
-			]),
+			..._omitWrapKeys(data, ['_call_expression', '_identifier', '_member_expression', '_parenthesized_expression']),
 			$type: TSKindId.Decorator as const,
 			_content: normalizeSingularWrapSlot(
 				data._content ??
 					data._identifier ??
 					data._member_expression ??
-					data._decorator_call_expression ??
+					data._call_expression ??
 					data._parenthesized_expression,
 				'content',
 				true,
@@ -5531,9 +5542,13 @@ export function wrapDecorator(
 			),
 
 			content() {
-				return drillIn<
+				return drillAs<
 					T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression
-				>(this._content, tree);
+				>(this._content, tree, [
+					{ from: 'member_expression', to: 'decorator_member_expression' },
+					{ from: 'call_expression', to: 'decorator_call_expression' },
+					{ from: 'parenthesized_expression', to: 'decorator_parenthesized_expression' }
+				]);
 			},
 			$with: {
 				content: (v: NonNullable<T.Decorator['_content']>) => wrapDecorator({ ...data, _content: v }, tree)
@@ -5563,15 +5578,12 @@ export function wrapDecoratorMemberExpression(data: T.DecoratorMemberExpression,
 			}),
 
 			object() {
-				return drillAs<T.Identifier | T.DecoratorMemberExpression>(
-					this._object,
-					tree,
-					'member_expression',
-					'decorator_member_expression'
-				);
+				return drillAs<T.Identifier | T.DecoratorMemberExpression>(this._object, tree, [
+					{ from: 'member_expression', to: 'decorator_member_expression' }
+				]);
 			},
 			property() {
-				return drillAs<T.Identifier>(this._property, tree, 'property_identifier', 'identifier');
+				return drillAs<T.Identifier>(this._property, tree, [{ from: 'property_identifier', to: 'identifier' }]);
 			},
 			$with: {
 				object: (v: NonNullable<T.DecoratorMemberExpression['_object']>) =>
@@ -5610,12 +5622,9 @@ export function wrapDecoratorCallExpression(data: T.DecoratorCallExpression, tre
 			}),
 
 			function() {
-				return drillAs<T.Identifier | T.DecoratorMemberExpression>(
-					this._function,
-					tree,
-					'member_expression',
-					'decorator_member_expression'
-				);
+				return drillAs<T.Identifier | T.DecoratorMemberExpression>(this._function, tree, [
+					{ from: 'member_expression', to: 'decorator_member_expression' }
+				]);
 			},
 			typeArguments() {
 				return drillIn<T.TypeArguments | undefined>(this._type_arguments, tree);
@@ -5703,11 +5712,14 @@ export function wrapClassBody(
 			),
 
 			contents() {
-				return drillInAll<T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';'>(
-					this._content as
-						| readonly (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';')[]
-						| undefined,
-					tree
+				return drillAsAll<T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember | ';'>(
+					this._content,
+					tree,
+					[
+						{ from: 'class_body_method', to: '_class_body_method' },
+						{ from: 'class_body_method_sig', to: '_class_body_method_sig' },
+						{ from: 'class_body_member', to: '_class_body_member' }
+					]
 				);
 			},
 			$with: {
@@ -5734,12 +5746,9 @@ export function wrapFormalParameters(data: T.FormalParameters, tree: TreeHandle)
 			),
 
 			formalParametersGroup1() {
-				return drillAs<T.FormalParametersGroup1 | undefined>(
-					this._formal_parameters_group1,
-					tree,
-					'formal_parameters_group1',
-					'_formal_parameters_group1'
-				);
+				return drillAs<T.FormalParametersGroup1 | undefined>(this._formal_parameters_group1, tree, [
+					{ from: 'formal_parameters_group1', to: '_formal_parameters_group1' }
+				]);
 			},
 			$with: {
 				formalParametersGroup1: (v: NonNullable<T.FormalParameters['_formal_parameters_group1']>) =>
@@ -5953,7 +5962,7 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 				return this._accessor_kind;
 			},
 			name() {
-				return drillIn<T.PropertyName>(this._name, tree);
+				return drillAs<T.PropertyName>(this._name, tree, [{ from: 'property_identifier', to: '_property_identifier' }]);
 			},
 			optionalMarker() {
 				return this._optional_marker;
@@ -6022,7 +6031,7 @@ export function wrapPair(data: T.Pair, tree: TreeHandle) {
 			}),
 
 			key() {
-				return drillIn<T.PropertyName>(this._key, tree);
+				return drillAs<T.PropertyName>(this._key, tree, [{ from: 'property_identifier', to: '_property_identifier' }]);
 			},
 			value() {
 				return drillIn<T.Expression>(this._value, tree);
@@ -6056,10 +6065,12 @@ export function wrapPairPattern(data: T.PairPattern, tree: TreeHandle) {
 			}),
 
 			key() {
-				return drillIn<T.PropertyName>(this._key, tree);
+				return drillAs<T.PropertyName>(this._key, tree, [{ from: 'property_identifier', to: '_property_identifier' }]);
 			},
 			value() {
-				return drillIn<T.Pattern | T.AssignmentPattern>(this._value, tree);
+				return drillAs<T.Pattern | T.AssignmentPattern>(this._value, tree, [
+					{ from: 'for_header_group1', to: '_lhs_expression' }
+				]);
 			},
 			$with: {
 				key: (v: NonNullable<T.PairPattern['_key']>) => wrapPairPattern({ ...data, _key: v }, tree),
@@ -6327,40 +6338,39 @@ export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: T
 				return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree);
 			},
 			visibilityPrefix() {
-				return drillIn<T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst | undefined>(
+				return drillAs<T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst | undefined>(
 					this._visibility_prefix,
-					tree
+					tree,
+					[
+						{ from: 'public_field_definition_declare_first', to: '_public_field_definition_declare_first' },
+						{ from: 'public_field_definition_access_first', to: '_public_field_definition_access_first' }
+					]
 				);
 			},
 			accessorMarker() {
 				return this._accessor_marker;
 			},
 			publicFieldDefinitionStaticMods() {
-				return drillAs<T.PublicFieldDefinitionStaticMods | undefined>(
-					this._public_field_definition_static_mods,
-					tree,
-					'public_field_definition_static_mods',
-					'_public_field_definition_static_mods'
-				);
+				return drillAs<T.PublicFieldDefinitionStaticMods | undefined>(this._public_field_definition_static_mods, tree, [
+					{ from: 'public_field_definition_static_mods', to: '_public_field_definition_static_mods' }
+				]);
 			},
 			publicFieldDefinitionAbstractFirst() {
 				return drillAs<T.PublicFieldDefinitionAbstractFirst | undefined>(
 					this._public_field_definition_abstract_first,
 					tree,
-					'public_field_definition_abstract_first',
-					'_public_field_definition_abstract_first'
+					[{ from: 'public_field_definition_abstract_first', to: '_public_field_definition_abstract_first' }]
 				);
 			},
 			publicFieldDefinitionReadonlyFirst() {
 				return drillAs<T.PublicFieldDefinitionReadonlyFirst | undefined>(
 					this._public_field_definition_readonly_first,
 					tree,
-					'public_field_definition_readonly_first',
-					'_public_field_definition_readonly_first'
+					[{ from: 'public_field_definition_readonly_first', to: '_public_field_definition_readonly_first' }]
 				);
 			},
 			name() {
-				return drillIn<T.PropertyName>(this._name, tree);
+				return drillAs<T.PropertyName>(this._name, tree, [{ from: 'property_identifier', to: '_property_identifier' }]);
 			},
 			optionalityMarker() {
 				return this._optionality_marker;
@@ -6560,7 +6570,7 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle) {
 				return this._accessor_kind;
 			},
 			name() {
-				return drillIn<T.PropertyName>(this._name, tree);
+				return drillAs<T.PropertyName>(this._name, tree, [{ from: 'property_identifier', to: '_property_identifier' }]);
 			},
 			optionalMarker() {
 				return this._optional_marker;
@@ -6683,7 +6693,7 @@ export function wrapAbstractMethodSignature(data: T.AbstractMethodSignature, tre
 				return this._accessor_kind;
 			},
 			name() {
-				return drillIn<T.PropertyName>(this._name, tree);
+				return drillAs<T.PropertyName>(this._name, tree, [{ from: 'property_identifier', to: '_property_identifier' }]);
 			},
 			optionalMarker() {
 				return this._optional_marker;
@@ -6787,12 +6797,9 @@ export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandl
 				);
 			},
 			semicolon() {
-				return drillAs<T.Semicolon | '\n'>(
-					this._semicolon,
-					tree,
-					'function_signature_automatic_semicolon',
-					'_function_signature_automatic_semicolon'
-				);
+				return drillAs<T.Semicolon | '\n'>(this._semicolon, tree, [
+					{ from: 'function_signature_automatic_semicolon', to: '_function_signature_automatic_semicolon' }
+				]);
 			},
 			$with: {
 				asyncMarker: (v: NonNullable<T.FunctionSignature['_async_marker']>) =>
@@ -6817,16 +6824,16 @@ export function wrapDecoratorParenthesizedExpression(
 	data: T.DecoratorParenthesizedExpression & {
 		readonly _identifier?: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression;
 		readonly _member_expression?: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression;
-		readonly _decorator_call_expression?: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression;
+		readonly _call_expression?: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression;
 	},
 	tree: TreeHandle
 ) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_decorator_call_expression', '_identifier', '_member_expression']),
+			..._omitWrapKeys(data, ['_call_expression', '_identifier', '_member_expression']),
 			$type: TSKindId.DecoratorParenthesizedExpression as const,
 			_content: normalizeSingularWrapSlot(
-				data._content ?? data._identifier ?? data._member_expression ?? data._decorator_call_expression,
+				data._content ?? data._identifier ?? data._member_expression ?? data._call_expression,
 				'content',
 				true,
 				data.$type,
@@ -6834,12 +6841,10 @@ export function wrapDecoratorParenthesizedExpression(
 			),
 
 			content() {
-				return drillAs<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>(
-					this._content,
-					tree,
-					'member_expression',
-					'decorator_member_expression'
-				);
+				return drillAs<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>(this._content, tree, [
+					{ from: 'member_expression', to: 'decorator_member_expression' },
+					{ from: 'call_expression', to: 'decorator_call_expression' }
+				]);
 			},
 			$with: {
 				content: (v: NonNullable<T.DecoratorParenthesizedExpression['_content']>) =>
@@ -6909,7 +6914,10 @@ export function wrapAsExpression(data: T.AsExpression, tree: TreeHandle) {
 				return drillIn<T.Expression>(this._expression, tree);
 			},
 			typeAnnotation() {
-				return drillIn<'const' | T.Type>(this._type_annotation, tree);
+				return drillAs<'const' | T.Type>(this._type_annotation, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				expression: (v: NonNullable<T.AsExpression['_expression']>) =>
@@ -6945,7 +6953,10 @@ export function wrapSatisfiesExpression(data: T.SatisfiesExpression, tree: TreeH
 				return drillIn<T.Expression>(this._expression, tree);
 			},
 			typeAnnotation() {
-				return drillIn<T.Type>(this._type_annotation, tree);
+				return drillAs<T.Type>(this._type_annotation, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				expression: (v: NonNullable<T.SatisfiesExpression['_expression']>) =>
@@ -7148,7 +7159,7 @@ export function wrapExtendsClauseSingle(data: T.ExtendsClauseSingle, tree: TreeH
 export function wrapImplementsClause(
 	data: T.ImplementsClause & {
 		readonly _member_expression?: T.Type | readonly T.Type[];
-		readonly _type_query_call_expression_in_type_annotation?: T.Type | readonly T.Type[];
+		readonly _call_expression?: T.Type | readonly T.Type[];
 		readonly _this_type?: T.Type | readonly T.Type[];
 		readonly _parenthesized_type?: T.Type | readonly T.Type[];
 		readonly _predefined_type?: T.Type | readonly T.Type[];
@@ -7174,6 +7185,7 @@ export function wrapImplementsClause(
 		readonly _constructor_type?: T.Type | readonly T.Type[];
 		readonly _infer_type?: T.Type | readonly T.Type[];
 		readonly _type_query_member_expression_in_type_annotation?: T.Type | readonly T.Type[];
+		readonly _type_query_call_expression_in_type_annotation?: T.Type | readonly T.Type[];
 	},
 	tree: TreeHandle
 ) {
@@ -7181,6 +7193,7 @@ export function wrapImplementsClause(
 		{
 			..._omitWrapKeys(data, [
 				'_array_type',
+				'_call_expression',
 				'_conditional_type',
 				'_constructor_type',
 				'_existential_type',
@@ -7215,7 +7228,7 @@ export function wrapImplementsClause(
 						? _toArr(data._type)
 						: _concatInSourceOrder([
 								data._member_expression,
-								data._type_query_call_expression_in_type_annotation,
+								data._call_expression,
 								data._this_type,
 								data._parenthesized_type,
 								data._predefined_type,
@@ -7240,7 +7253,8 @@ export function wrapImplementsClause(
 								data._readonly_type,
 								data._constructor_type,
 								data._infer_type,
-								data._type_query_member_expression_in_type_annotation
+								data._type_query_member_expression_in_type_annotation,
+								data._type_query_call_expression_in_type_annotation
 							]),
 					[
 						'type',
@@ -7278,7 +7292,10 @@ export function wrapImplementsClause(
 			),
 
 			types() {
-				return drillInAll<T.Type>(this._type as readonly T.Type[] | undefined, tree);
+				return drillAsAll<T.Type>(this._type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				types: (...v: NonEmptyArray<NonNullable<T.ImplementsClause['_type']>[number]>) =>
@@ -7357,7 +7374,10 @@ export function wrapAmbientDeclaration(
 			),
 
 			content() {
-				return drillIn<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>(this._content, tree);
+				return drillAs<T.Declaration | T.AmbientDeclarationGlobal | T.AmbientDeclarationModule>(this._content, tree, [
+					{ from: 'ambient_declaration_global', to: '_ambient_declaration_global' },
+					{ from: 'ambient_declaration_module', to: '_ambient_declaration_module' }
+				]);
 			},
 			$with: {
 				content: (v: NonNullable<T.AmbientDeclaration['_content']>) =>
@@ -7409,7 +7429,7 @@ export function wrapAbstractClassDeclaration(data: T.AbstractClassDeclaration, t
 				return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree);
 			},
 			name() {
-				return drillAs<T.Identifier>(this._name, tree, 'type_identifier', 'identifier');
+				return drillAs<T.Identifier>(this._name, tree, [{ from: 'type_identifier', to: 'identifier' }]);
 			},
 			typeParameters() {
 				return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree);
@@ -7610,7 +7630,7 @@ export function wrapNestedTypeIdentifier(data: T.NestedTypeIdentifier, tree: Tre
 				return drillIn<T.Identifier | T.NestedIdentifier>(this._module, tree);
 			},
 			name() {
-				return drillAs<T.Identifier>(this._name, tree, 'type_identifier', 'identifier');
+				return drillAs<T.Identifier>(this._name, tree, [{ from: 'type_identifier', to: 'identifier' }]);
 			},
 			$with: {
 				module: (v: NonNullable<T.NestedTypeIdentifier['_module']>) =>
@@ -7655,7 +7675,7 @@ export function wrapInterfaceDeclaration(data: T.InterfaceDeclaration, tree: Tre
 			}),
 
 			name() {
-				return drillAs<T.Identifier>(this._name, tree, 'type_identifier', 'identifier');
+				return drillAs<T.Identifier>(this._name, tree, [{ from: 'type_identifier', to: 'identifier' }]);
 			},
 			typeParameters() {
 				return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree);
@@ -7664,7 +7684,7 @@ export function wrapInterfaceDeclaration(data: T.InterfaceDeclaration, tree: Tre
 				return drillIn<T.ExtendsTypeClause | undefined>(this._extends_type_clause, tree);
 			},
 			body() {
-				return drillAs<T.ObjectType>(this._body, tree, 'interface_body', 'object_type');
+				return drillAs<T.ObjectType>(this._body, tree, [{ from: 'interface_body', to: 'object_type' }]);
 			},
 			$with: {
 				name: (v: NonNullable<T.InterfaceDeclaration['_name']>) =>
@@ -7699,12 +7719,9 @@ export function wrapExtendsTypeClause(data: T.ExtendsTypeClause, tree: TreeHandl
 			),
 
 			types() {
-				return drillAsAll<T.Identifier | T.NestedTypeIdentifier | T.GenericType>(
-					this._type,
-					tree,
-					'type_identifier',
-					'identifier'
-				);
+				return drillAsAll<T.Identifier | T.NestedTypeIdentifier | T.GenericType>(this._type, tree, [
+					{ from: 'type_identifier', to: 'identifier' }
+				]);
 			},
 			$with: {
 				types: (...v: NonEmptyArray<NonNullable<T.ExtendsTypeClause['_type']>[number]>) =>
@@ -7776,12 +7793,9 @@ export function wrapEnumBody(data: T.EnumBody, tree: TreeHandle) {
 			}),
 
 			enumBodyGroup1() {
-				return drillAs<T.EnumBodyGroup1 | undefined>(
-					this._enum_body_group1,
-					tree,
-					'enum_body_group1',
-					'_enum_body_group1'
-				);
+				return drillAs<T.EnumBodyGroup1 | undefined>(this._enum_body_group1, tree, [
+					{ from: 'enum_body_group1', to: '_enum_body_group1' }
+				]);
 			},
 			$with: {
 				enumBodyGroup1: (v: NonNullable<T.EnumBody['_enum_body_group1']>) =>
@@ -7812,7 +7826,7 @@ export function wrapEnumAssignment(data: T.EnumAssignment, tree: TreeHandle) {
 			}),
 
 			name() {
-				return drillIn<T.PropertyName>(this._name, tree);
+				return drillAs<T.PropertyName>(this._name, tree, [{ from: 'property_identifier', to: '_property_identifier' }]);
 			},
 			value() {
 				return drillIn<T.Expression>(this._value, tree);
@@ -7862,13 +7876,16 @@ export function wrapTypeAliasDeclaration(data: T.TypeAliasDeclaration, tree: Tre
 			),
 
 			name() {
-				return drillAs<T.Identifier>(this._name, tree, 'type_identifier', 'identifier');
+				return drillAs<T.Identifier>(this._name, tree, [{ from: 'type_identifier', to: 'identifier' }]);
 			},
 			typeParameters() {
 				return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree);
 			},
 			value() {
-				return drillIn<T.Type>(this._value, tree);
+				return drillAs<T.Type>(this._value, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			semicolon() {
 				return this._semicolon;
@@ -7959,7 +7976,7 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
 				return this._readonly_marker;
 			},
 			pattern() {
-				return drillIn<T.Pattern | T.This>(this._pattern, tree);
+				return drillAs<T.Pattern | T.This>(this._pattern, tree, [{ from: 'for_header_group1', to: '_lhs_expression' }]);
 			},
 			type() {
 				return drillIn<T.TypeAnnotation | undefined>(this._type, tree);
@@ -8057,7 +8074,7 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
 				return this._readonly_marker;
 			},
 			pattern() {
-				return drillIn<T.Pattern | T.This>(this._pattern, tree);
+				return drillAs<T.Pattern | T.This>(this._pattern, tree, [{ from: 'for_header_group1', to: '_lhs_expression' }]);
 			},
 			type() {
 				return drillIn<T.TypeAnnotation | undefined>(this._type, tree);
@@ -8143,7 +8160,7 @@ export function wrapParameterName(data: T.ParameterName, tree: TreeHandle) {
 				return this._readonly_marker;
 			},
 			pattern() {
-				return drillIn<T.Pattern | T.This>(this._pattern, tree);
+				return drillAs<T.Pattern | T.This>(this._pattern, tree, [{ from: 'for_header_group1', to: '_lhs_expression' }]);
 			},
 			$with: {
 				decorators: (...v: NonNullable<T.ParameterName['_decorator']>[number][]) =>
@@ -8175,7 +8192,10 @@ export function wrapOmittingTypeAnnotation(data: T.OmittingTypeAnnotation, tree:
 			}),
 
 			type() {
-				return drillIn<T.Type>(this._type, tree);
+				return drillAs<T.Type>(this._type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				type: (v: NonNullable<T.OmittingTypeAnnotation['_type']>) =>
@@ -8200,7 +8220,10 @@ export function wrapAddingTypeAnnotation(data: T.AddingTypeAnnotation, tree: Tre
 			}),
 
 			type() {
-				return drillIn<T.Type>(this._type, tree);
+				return drillAs<T.Type>(this._type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				type: (v: NonNullable<T.AddingTypeAnnotation['_type']>) => wrapAddingTypeAnnotation({ ...data, _type: v }, tree)
@@ -8224,7 +8247,10 @@ export function wrapOptingTypeAnnotation(data: T.OptingTypeAnnotation, tree: Tre
 			}),
 
 			type() {
-				return drillIn<T.Type>(this._type, tree);
+				return drillAs<T.Type>(this._type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				type: (v: NonNullable<T.OptingTypeAnnotation['_type']>) => wrapOptingTypeAnnotation({ ...data, _type: v }, tree)
@@ -8248,7 +8274,10 @@ export function wrapTypeAnnotation(data: T.TypeAnnotation, tree: TreeHandle) {
 			}),
 
 			type() {
-				return drillIn<T.Type>(this._type, tree);
+				return drillAs<T.Type>(this._type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				type: (v: NonNullable<T.TypeAnnotation['_type']>) => wrapTypeAnnotation({ ...data, _type: v }, tree)
@@ -8281,17 +8310,17 @@ export function wrapTypeQueryMemberExpressionInTypeAnnotation(
 			}),
 
 			object() {
-				return drillIn<
+				return drillAs<
 					T.Import | T.TypeQueryMemberExpressionInTypeAnnotation | T.TypeQueryCallExpressionInTypeAnnotation
-				>(this._object, tree);
+				>(this._object, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			property() {
-				return drillAs<T.PrivatePropertyIdentifier | T.Identifier>(
-					this._property,
-					tree,
-					'property_identifier',
-					'identifier'
-				);
+				return drillAs<T.PrivatePropertyIdentifier | T.Identifier>(this._property, tree, [
+					{ from: 'property_identifier', to: 'identifier' }
+				]);
 			},
 			$with: {
 				object: (v: NonNullable<T.TypeQueryMemberExpressionInTypeAnnotation['_object']>) =>
@@ -8327,12 +8356,9 @@ export function wrapTypeQueryCallExpressionInTypeAnnotation(
 			}),
 
 			function() {
-				return drillAs<T.Import | T.TypeQueryMemberExpressionInTypeAnnotation>(
-					this._function,
-					tree,
-					'member_expression',
-					'_type_query_member_expression_in_type_annotation'
-				);
+				return drillAs<T.Import | T.TypeQueryMemberExpressionInTypeAnnotation>(this._function, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' }
+				]);
 			},
 			arguments() {
 				return drillIn<T.Arguments>(this._arguments, tree);
@@ -8528,7 +8554,10 @@ export function wrapOptionalType(data: T.OptionalType, tree: TreeHandle) {
 			}),
 
 			type() {
-				return drillIn<T.Type>(this._type, tree);
+				return drillAs<T.Type>(this._type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				type: (v: NonNullable<T.OptionalType['_type']>) => wrapOptionalType({ ...data, _type: v }, tree)
@@ -8552,7 +8581,10 @@ export function wrapRestType(data: T.RestType, tree: TreeHandle) {
 			}),
 
 			type() {
-				return drillIn<T.Type>(this._type, tree);
+				return drillAs<T.Type>(this._type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				type: (v: NonNullable<T.RestType['_type']>) => wrapRestType({ ...data, _type: v }, tree)
@@ -8639,7 +8671,10 @@ export function wrapConstructorType(data: T.ConstructorType, tree: TreeHandle) {
 				return drillIn<T.FormalParameters>(this._parameters, tree);
 			},
 			type() {
-				return drillIn<T.Type>(this._type, tree);
+				return drillAs<T.Type>(this._type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				abstractMarker: (v: NonNullable<T.ConstructorType['_abstract_marker']>) =>
@@ -8802,7 +8837,7 @@ export function wrapTemplateType(
 			),
 
 			content() {
-				return drillIn<T.PrimaryType | T.InferType>(this._content, tree);
+				return drillAs<T.PrimaryType | T.InferType>(this._content, tree, [{ from: 'this_type', to: 'this' }]);
 			},
 			$with: {
 				content: (v: NonNullable<T.TemplateType['_content']>) => wrapTemplateType({ ...data, _content: v }, tree)
@@ -8834,7 +8869,9 @@ export function wrapTemplateLiteralType(
 			),
 
 			contents() {
-				return drillAsAll<T.TemplateChars | T.TemplateType>(this._content, tree, 'string_fragment', '_template_chars');
+				return drillAsAll<T.TemplateChars | T.TemplateType>(this._content, tree, [
+					{ from: 'string_fragment', to: '_template_chars' }
+				]);
 			},
 			$with: {
 				contents: (...v: NonNullable<T.TemplateLiteralType['_content']>[number][]) =>
@@ -8865,10 +8902,13 @@ export function wrapInferType(data: T.InferType, tree: TreeHandle) {
 			}),
 
 			typeIdentifier() {
-				return drillAs<T.Identifier>(this._type_identifier, tree, 'type_identifier', 'identifier');
+				return drillAs<T.Identifier>(this._type_identifier, tree, [{ from: 'type_identifier', to: 'identifier' }]);
 			},
 			type() {
-				return drillIn<T.Type | undefined>(this._type, tree);
+				return drillAs<T.Type | undefined>(this._type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				typeIdentifier: (v: NonNullable<T.InferType['_type_identifier']>) =>
@@ -8912,16 +8952,28 @@ export function wrapConditionalType(data: T.ConditionalType, tree: TreeHandle) {
 			}),
 
 			left() {
-				return drillIn<T.Type>(this._left, tree);
+				return drillAs<T.Type>(this._left, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			right() {
-				return drillIn<T.Type>(this._right, tree);
+				return drillAs<T.Type>(this._right, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			consequence() {
-				return drillIn<T.Type>(this._consequence, tree);
+				return drillAs<T.Type>(this._consequence, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			alternative() {
-				return drillIn<T.Type>(this._alternative, tree);
+				return drillAs<T.Type>(this._alternative, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				left: (v: NonNullable<T.ConditionalType['_left']>) => wrapConditionalType({ ...data, _left: v }, tree),
@@ -8956,7 +9008,9 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle) {
 			}),
 
 			name() {
-				return drillAs<T.Identifier | T.NestedTypeIdentifier>(this._name, tree, 'type_identifier', 'identifier');
+				return drillAs<T.Identifier | T.NestedTypeIdentifier>(this._name, tree, [
+					{ from: 'type_identifier', to: 'identifier' }
+				]);
 			},
 			typeArguments() {
 				return drillIn<T.TypeArguments>(this._type_arguments, tree);
@@ -8994,7 +9048,10 @@ export function wrapTypePredicate(data: T.TypePredicate, tree: TreeHandle) {
 				return drillIn<T.Identifier | T.This | T.PredefinedType>(this._name, tree);
 			},
 			type() {
-				return drillIn<T.Type>(this._type, tree);
+				return drillAs<T.Type>(this._type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				name: (v: NonNullable<T.TypePredicate['_name']>) => wrapTypePredicate({ ...data, _name: v }, tree),
@@ -9066,24 +9123,25 @@ export function wrapTypeQueryMemberExpression(
 			}),
 
 			object() {
-				return drillIn<
+				return drillAs<
 					| T.Identifier
 					| T.This
 					| T.TypeQuerySubscriptExpression
 					| T.TypeQueryMemberExpression
 					| T.TypeQueryCallExpression
-				>(this._object, tree);
+				>(this._object, tree, [
+					{ from: 'subscript_expression', to: '_type_query_subscript_expression' },
+					{ from: 'member_expression', to: '_type_query_member_expression' },
+					{ from: 'call_expression', to: '_type_query_call_expression' }
+				]);
 			},
 			content() {
 				return this._content;
 			},
 			property() {
-				return drillAs<T.PrivatePropertyIdentifier | T.Identifier>(
-					this._property,
-					tree,
-					'property_identifier',
-					'identifier'
-				);
+				return drillAs<T.PrivatePropertyIdentifier | T.Identifier>(this._property, tree, [
+					{ from: 'property_identifier', to: 'identifier' }
+				]);
 			},
 			$with: {
 				object: (v: NonNullable<T.TypeQueryMemberExpression['_object']>) =>
@@ -9118,13 +9176,17 @@ export function wrapTypeQuerySubscriptExpression(data: T.TypeQuerySubscriptExpre
 			}),
 
 			object() {
-				return drillIn<
+				return drillAs<
 					| T.Identifier
 					| T.This
 					| T.TypeQuerySubscriptExpression
 					| T.TypeQueryMemberExpression
 					| T.TypeQueryCallExpression
-				>(this._object, tree);
+				>(this._object, tree, [
+					{ from: 'subscript_expression', to: '_type_query_subscript_expression' },
+					{ from: 'member_expression', to: '_type_query_member_expression' },
+					{ from: 'call_expression', to: '_type_query_call_expression' }
+				]);
 			},
 			index() {
 				return drillIn<T.PredefinedType | T.String | T.Number>(this._index, tree);
@@ -9160,9 +9222,13 @@ export function wrapTypeQueryCallExpression(data: T.TypeQueryCallExpression, tre
 			}),
 
 			function() {
-				return drillIn<T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(
+				return drillAs<T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(
 					this._function,
-					tree
+					tree,
+					[
+						{ from: 'member_expression', to: '_type_query_member_expression' },
+						{ from: 'subscript_expression', to: '_type_query_subscript_expression' }
+					]
 				);
 			},
 			arguments() {
@@ -9199,9 +9265,13 @@ export function wrapTypeQueryInstantiationExpression(data: T.TypeQueryInstantiat
 			}),
 
 			function() {
-				return drillIn<T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(
+				return drillAs<T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression>(
 					this._function,
-					tree
+					tree,
+					[
+						{ from: 'member_expression', to: '_type_query_member_expression' },
+						{ from: 'subscript_expression', to: '_type_query_subscript_expression' }
+					]
 				);
 			},
 			typeArguments() {
@@ -9235,14 +9305,14 @@ export function wrapTypeQuery(
 			| T.TypeQueryInstantiationExpression
 			| T.Identifier
 			| T.This;
-		readonly _type_query_call_expression?:
+		readonly _call_expression?:
 			| T.TypeQuerySubscriptExpression
 			| T.TypeQueryMemberExpression
 			| T.TypeQueryCallExpression
 			| T.TypeQueryInstantiationExpression
 			| T.Identifier
 			| T.This;
-		readonly _type_query_instantiation_expression?:
+		readonly _instantiation_expression?:
 			| T.TypeQuerySubscriptExpression
 			| T.TypeQueryMemberExpression
 			| T.TypeQueryCallExpression
@@ -9269,20 +9339,20 @@ export function wrapTypeQuery(
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
+				'_call_expression',
 				'_identifier',
+				'_instantiation_expression',
 				'_member_expression',
 				'_subscript_expression',
-				'_this',
-				'_type_query_call_expression',
-				'_type_query_instantiation_expression'
+				'_this'
 			]),
 			$type: TSKindId.TypeQuery as const,
 			_content: normalizeSingularWrapSlot(
 				data._content ??
 					data._subscript_expression ??
 					data._member_expression ??
-					data._type_query_call_expression ??
-					data._type_query_instantiation_expression ??
+					data._call_expression ??
+					data._instantiation_expression ??
 					data._identifier ??
 					data._this,
 				'content',
@@ -9292,14 +9362,19 @@ export function wrapTypeQuery(
 			),
 
 			content() {
-				return drillIn<
+				return drillAs<
 					| T.TypeQuerySubscriptExpression
 					| T.TypeQueryMemberExpression
 					| T.TypeQueryCallExpression
 					| T.TypeQueryInstantiationExpression
 					| T.Identifier
 					| T.This
-				>(this._content, tree);
+				>(this._content, tree, [
+					{ from: 'subscript_expression', to: '_type_query_subscript_expression' },
+					{ from: 'member_expression', to: '_type_query_member_expression' },
+					{ from: 'call_expression', to: '_type_query_call_expression' },
+					{ from: 'instantiation_expression', to: '_type_query_instantiation_expression' }
+				]);
 			},
 			$with: {
 				content: (v: NonNullable<T.TypeQuery['_content']>) => wrapTypeQuery({ ...data, _content: v }, tree)
@@ -9323,7 +9398,7 @@ export function wrapIndexTypeQuery(data: T.IndexTypeQuery, tree: TreeHandle) {
 			}),
 
 			primaryType() {
-				return drillIn<T.PrimaryType>(this._primary_type, tree);
+				return drillAs<T.PrimaryType>(this._primary_type, tree, [{ from: 'this_type', to: 'this' }]);
 			},
 			$with: {
 				primaryType: (v: NonNullable<T.IndexTypeQuery['_primary_type']>) =>
@@ -9354,10 +9429,13 @@ export function wrapLookupType(data: T.LookupType, tree: TreeHandle) {
 			}),
 
 			primaryType() {
-				return drillIn<T.PrimaryType>(this._primary_type, tree);
+				return drillAs<T.PrimaryType>(this._primary_type, tree, [{ from: 'this_type', to: 'this' }]);
 			},
 			indexType() {
-				return drillIn<T.Type>(this._index_type, tree);
+				return drillAs<T.Type>(this._index_type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				primaryType: (v: NonNullable<T.LookupType['_primary_type']>) =>
@@ -9395,13 +9473,19 @@ export function wrapMappedTypeClause(data: T.MappedTypeClause, tree: TreeHandle)
 			}),
 
 			name() {
-				return drillAs<T.Identifier>(this._name, tree, 'type_identifier', 'identifier');
+				return drillAs<T.Identifier>(this._name, tree, [{ from: 'type_identifier', to: 'identifier' }]);
 			},
 			type() {
-				return drillIn<T.Type>(this._type, tree);
+				return drillAs<T.Type>(this._type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			alias() {
-				return drillIn<T.Type | undefined>(this._alias, tree);
+				return drillAs<T.Type | undefined>(this._alias, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				name: (v: NonNullable<T.MappedTypeClause['_name']>) => wrapMappedTypeClause({ ...data, _name: v }, tree),
@@ -9446,12 +9530,9 @@ export function wrapLiteralType(
 			),
 
 			content() {
-				return drillAs<T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined>(
-					this._content,
-					tree,
-					'unary_expression',
-					'_number'
-				);
+				return drillAs<T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined>(this._content, tree, [
+					{ from: 'unary_expression', to: '_number' }
+				]);
 			},
 			$with: {
 				content: (v: NonNullable<T.LiteralType['_content']>) => wrapLiteralType({ ...data, _content: v }, tree)
@@ -9513,7 +9594,7 @@ export function wrapFlowMaybeType(data: T.FlowMaybeType, tree: TreeHandle) {
 			}),
 
 			primaryType() {
-				return drillIn<T.PrimaryType>(this._primary_type, tree);
+				return drillAs<T.PrimaryType>(this._primary_type, tree, [{ from: 'this_type', to: 'this' }]);
 			},
 			$with: {
 				primaryType: (v: NonNullable<T.FlowMaybeType['_primary_type']>) =>
@@ -9538,7 +9619,10 @@ export function wrapParenthesizedType(data: T.ParenthesizedType, tree: TreeHandl
 			}),
 
 			type() {
-				return drillIn<T.Type>(this._type, tree);
+				return drillAs<T.Type>(this._type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				type: (v: NonNullable<T.ParenthesizedType['_type']>) => wrapParenthesizedType({ ...data, _type: v }, tree)
@@ -9552,7 +9636,7 @@ export function wrapParenthesizedType(data: T.ParenthesizedType, tree: TreeHandl
 export function wrapTypeArguments(
 	data: T.TypeArguments & {
 		readonly _member_expression?: T.Type | readonly T.Type[];
-		readonly _type_query_call_expression_in_type_annotation?: T.Type | readonly T.Type[];
+		readonly _call_expression?: T.Type | readonly T.Type[];
 		readonly _this_type?: T.Type | readonly T.Type[];
 		readonly _parenthesized_type?: T.Type | readonly T.Type[];
 		readonly _predefined_type?: T.Type | readonly T.Type[];
@@ -9578,6 +9662,7 @@ export function wrapTypeArguments(
 		readonly _constructor_type?: T.Type | readonly T.Type[];
 		readonly _infer_type?: T.Type | readonly T.Type[];
 		readonly _type_query_member_expression_in_type_annotation?: T.Type | readonly T.Type[];
+		readonly _type_query_call_expression_in_type_annotation?: T.Type | readonly T.Type[];
 	},
 	tree: TreeHandle
 ) {
@@ -9585,6 +9670,7 @@ export function wrapTypeArguments(
 		{
 			..._omitWrapKeys(data, [
 				'_array_type',
+				'_call_expression',
 				'_conditional_type',
 				'_constructor_type',
 				'_existential_type',
@@ -9619,7 +9705,7 @@ export function wrapTypeArguments(
 						? _toArr(data._type)
 						: _concatInSourceOrder([
 								data._member_expression,
-								data._type_query_call_expression_in_type_annotation,
+								data._call_expression,
 								data._this_type,
 								data._parenthesized_type,
 								data._predefined_type,
@@ -9644,7 +9730,8 @@ export function wrapTypeArguments(
 								data._readonly_type,
 								data._constructor_type,
 								data._infer_type,
-								data._type_query_member_expression_in_type_annotation
+								data._type_query_member_expression_in_type_annotation,
+								data._type_query_call_expression_in_type_annotation
 							]),
 					[
 						'type',
@@ -9682,7 +9769,10 @@ export function wrapTypeArguments(
 			),
 
 			types() {
-				return drillInAll<T.Type>(this._type as readonly T.Type[] | undefined, tree);
+				return drillAsAll<T.Type>(this._type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				types: (...v: NonEmptyArray<NonNullable<T.TypeArguments['_type']>[number]>) =>
@@ -9870,7 +9960,7 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
 				return this._readonly_marker;
 			},
 			name() {
-				return drillIn<T.PropertyName>(this._name, tree);
+				return drillAs<T.PropertyName>(this._name, tree, [{ from: 'property_identifier', to: '_property_identifier' }]);
 			},
 			optionalMarker() {
 				return this._optional_marker;
@@ -9959,7 +10049,7 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
 				return this._const_marker;
 			},
 			name() {
-				return drillAs<T.Identifier>(this._name, tree, 'type_identifier', 'identifier');
+				return drillAs<T.Identifier>(this._name, tree, [{ from: 'type_identifier', to: 'identifier' }]);
 			},
 			constraint() {
 				return drillIn<T.Constraint | undefined>(this._constraint, tree);
@@ -9994,7 +10084,10 @@ export function wrapDefaultType(data: T.DefaultType, tree: TreeHandle) {
 			}),
 
 			type() {
-				return drillIn<T.Type>(this._type, tree);
+				return drillAs<T.Type>(this._type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				type: (v: NonNullable<T.DefaultType['_type']>) => wrapDefaultType({ ...data, _type: v }, tree)
@@ -10037,7 +10130,10 @@ export function wrapConstraint(
 				return this._content;
 			},
 			type() {
-				return drillIn<T.Type>(this._type, tree);
+				return drillAs<T.Type>(this._type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				content: (v: NonNullable<T.Constraint['_content']>) => wrapConstraint({ ...data, _content: v }, tree),
@@ -10147,12 +10243,9 @@ export function wrapIndexSignature(
 				return this._sign;
 			},
 			content() {
-				return drillAs<T.IndexSignatureColon | T.MappedTypeClause>(
-					this._content,
-					tree,
-					'index_signature_colon',
-					'_index_signature_colon'
-				);
+				return drillAs<T.IndexSignatureColon | T.MappedTypeClause>(this._content, tree, [
+					{ from: 'index_signature_colon', to: '_index_signature_colon' }
+				]);
 			},
 			type() {
 				return drillIn<T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation>(
@@ -10184,7 +10277,7 @@ export function wrapArrayType(data: T.ArrayType, tree: TreeHandle) {
 			}),
 
 			primaryType() {
-				return drillIn<T.PrimaryType>(this._primary_type, tree);
+				return drillAs<T.PrimaryType>(this._primary_type, tree, [{ from: 'this_type', to: 'this' }]);
 			},
 			$with: {
 				primaryType: (v: NonNullable<T.ArrayType['_primary_type']>) =>
@@ -10209,12 +10302,9 @@ export function wrapTupleType(data: T.TupleType, tree: TreeHandle) {
 			}),
 
 			tupleTypeGroup1() {
-				return drillAs<T.TupleTypeGroup1 | undefined>(
-					this._tuple_type_group1,
-					tree,
-					'tuple_type_group1',
-					'_tuple_type_group1'
-				);
+				return drillAs<T.TupleTypeGroup1 | undefined>(this._tuple_type_group1, tree, [
+					{ from: 'tuple_type_group1', to: '_tuple_type_group1' }
+				]);
 			},
 			$with: {
 				tupleTypeGroup1: (v: NonNullable<T.TupleType['_tuple_type_group1']>) =>
@@ -10239,7 +10329,10 @@ export function wrapReadonlyType(data: T.ReadonlyType, tree: TreeHandle) {
 			}),
 
 			type() {
-				return drillIn<T.Type>(this._type, tree);
+				return drillAs<T.Type>(this._type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				type: (v: NonNullable<T.ReadonlyType['_type']>) => wrapReadonlyType({ ...data, _type: v }, tree)
@@ -10269,10 +10362,16 @@ export function wrapUnionType(data: T.UnionType, tree: TreeHandle) {
 			}),
 
 			left() {
-				return drillIn<T.Type | undefined>(this._left, tree);
+				return drillAs<T.Type | undefined>(this._left, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			right() {
-				return drillIn<T.Type>(this._right, tree);
+				return drillAs<T.Type>(this._right, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				left: (v: NonNullable<T.UnionType['_left']>) => wrapUnionType({ ...data, _left: v }, tree),
@@ -10303,10 +10402,16 @@ export function wrapIntersectionType(data: T.IntersectionType, tree: TreeHandle)
 			}),
 
 			left() {
-				return drillIn<T.Type | undefined>(this._left, tree);
+				return drillAs<T.Type | undefined>(this._left, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			right() {
-				return drillIn<T.Type>(this._right, tree);
+				return drillAs<T.Type>(this._right, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				left: (v: NonNullable<T.IntersectionType['_left']>) => wrapIntersectionType({ ...data, _left: v }, tree),
@@ -10349,7 +10454,10 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle) {
 				return drillIn<T.FormalParameters>(this._parameters, tree);
 			},
 			returnType() {
-				return drillIn<T.Type | T.Asserts | T.TypePredicate>(this._return_type, tree);
+				return drillAs<T.Type | T.Asserts | T.TypePredicate>(this._return_type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				typeParameters: (v: NonNullable<T.FunctionType['_type_parameters']>) =>
@@ -10760,10 +10868,9 @@ export function wrapEnumBodyGroup1(
 			),
 
 			contents() {
-				return drillInAll<T.EnumAssignment | T.PropertyName>(
-					this._content as readonly (T.EnumAssignment | T.PropertyName)[] | undefined,
-					tree
-				);
+				return drillAsAll<T.EnumAssignment | T.PropertyName>(this._content, tree, [
+					{ from: 'property_identifier', to: '_property_identifier' }
+				]);
 			},
 			$with: {
 				contents: (...v: NonNullable<T.EnumBodyGroup1['_content']>[number][]) =>
@@ -10777,12 +10884,14 @@ export function wrapEnumBodyGroup1(
 
 export function wrapTupleTypeGroup1(
 	data: T.TupleTypeGroup1 & {
+		readonly _required_parameter?: T.TupleTypeMember;
+		readonly _optional_parameter?: T.TupleTypeMember;
 		readonly _tuple_parameter?: T.TupleTypeMember;
 		readonly _optional_tuple_parameter?: T.TupleTypeMember;
 		readonly _optional_type?: T.TupleTypeMember;
 		readonly _rest_type?: T.TupleTypeMember;
 		readonly _member_expression?: T.TupleTypeMember;
-		readonly _type_query_call_expression_in_type_annotation?: T.TupleTypeMember;
+		readonly _call_expression?: T.TupleTypeMember;
 		readonly _this_type?: T.TupleTypeMember;
 		readonly _parenthesized_type?: T.TupleTypeMember;
 		readonly _predefined_type?: T.TupleTypeMember;
@@ -10808,6 +10917,7 @@ export function wrapTupleTypeGroup1(
 		readonly _constructor_type?: T.TupleTypeMember;
 		readonly _infer_type?: T.TupleTypeMember;
 		readonly _type_query_member_expression_in_type_annotation?: T.TupleTypeMember;
+		readonly _type_query_call_expression_in_type_annotation?: T.TupleTypeMember;
 		readonly $other?: _NodeData['$other'];
 		readonly $span?: { start: number; end: number };
 	},
@@ -10817,12 +10927,14 @@ export function wrapTupleTypeGroup1(
 		data._tuple_type_member !== undefined
 			? _toArr(data._tuple_type_member)
 			: _concatInSourceOrder([
+					data._required_parameter,
+					data._optional_parameter,
 					data._tuple_parameter,
 					data._optional_tuple_parameter,
 					data._optional_type,
 					data._rest_type,
 					data._member_expression,
-					data._type_query_call_expression_in_type_annotation,
+					data._call_expression,
 					data._this_type,
 					data._parenthesized_type,
 					data._predefined_type,
@@ -10847,7 +10959,8 @@ export function wrapTupleTypeGroup1(
 					data._readonly_type,
 					data._constructor_type,
 					data._infer_type,
-					data._type_query_member_expression_in_type_annotation
+					data._type_query_member_expression_in_type_annotation,
+					data._type_query_call_expression_in_type_annotation
 				]),
 		true,
 		'tuple_type_member',
@@ -10857,6 +10970,7 @@ export function wrapTupleTypeGroup1(
 		{
 			..._omitWrapKeys(data, [
 				'_array_type',
+				'_call_expression',
 				'_conditional_type',
 				'_constructor_type',
 				'_existential_type',
@@ -10871,11 +10985,13 @@ export function wrapTupleTypeGroup1(
 				'_member_expression',
 				'_nested_type_identifier',
 				'_object_type',
+				'_optional_parameter',
 				'_optional_tuple_parameter',
 				'_optional_type',
 				'_parenthesized_type',
 				'_predefined_type',
 				'_readonly_type',
+				'_required_parameter',
 				'_rest_type',
 				'_template_literal_type',
 				'_this',
@@ -10893,7 +11009,10 @@ export function wrapTupleTypeGroup1(
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', false, 0),
 
 			tupleTypeMembers() {
-				return drillInAll<T.TupleTypeMember>(this._tuple_type_member as readonly T.TupleTypeMember[] | undefined, tree);
+				return drillAsAll<T.TupleTypeMember>(this._tuple_type_member, tree, [
+					{ from: 'required_parameter', to: 'tuple_parameter' },
+					{ from: 'optional_parameter', to: 'optional_tuple_parameter' }
+				]);
 			},
 			$with: {}
 		},
@@ -10955,10 +11074,13 @@ export function wrapAmbientDeclarationModule(data: T.AmbientDeclarationModule, t
 			),
 
 			name() {
-				return drillAs<T.Identifier>(this._name, tree, 'property_identifier', 'identifier');
+				return drillAs<T.Identifier>(this._name, tree, [{ from: 'property_identifier', to: 'identifier' }]);
 			},
 			type() {
-				return drillIn<T.Type>(this._type, tree);
+				return drillAs<T.Type>(this._type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			semicolon() {
 				return this._semicolon;
@@ -11105,7 +11227,10 @@ export function wrapExportStatementDefault(
 			),
 
 			content() {
-				return drillIn<T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm>(this._content, tree);
+				return drillAs<T.ExportStatementDefaultFromArm | T.ExportStatementDefaultDeclArm>(this._content, tree, [
+					{ from: 'export_statement_default_from_arm', to: '_export_statement_default_from_arm' },
+					{ from: 'export_statement_default_decl_arm', to: '_export_statement_default_decl_arm' }
+				]);
 			},
 			$with: {
 				content: (v: NonNullable<T.ExportStatementDefault['_content']>) =>
@@ -11130,12 +11255,9 @@ export function wrapArrowFunctionParameter(data: T.ArrowFunctionParameter, tree:
 			}),
 
 			parameter() {
-				return drillAs<T.ReservedIdentifier | T.Identifier>(
-					this._parameter,
-					tree,
-					'reserved_identifier',
-					'_reserved_identifier'
-				);
+				return drillAs<T.ReservedIdentifier | T.Identifier>(this._parameter, tree, [
+					{ from: 'reserved_identifier', to: '_reserved_identifier' }
+				]);
 			},
 			$with: {
 				parameter: (v: NonNullable<T.ArrowFunctionParameter['_parameter']>) =>
@@ -11260,12 +11382,9 @@ export function wrapImportClauseDefaultImport(
 				return drillIn<T.ImportIdentifier>(this._import_identifier, tree);
 			},
 			importClauseGroup1() {
-				return drillAs<T.ImportClauseGroup1 | undefined>(
-					this._import_clause_group1,
-					tree,
-					'import_clause_group1',
-					'_import_clause_group1'
-				);
+				return drillAs<T.ImportClauseGroup1 | undefined>(this._import_clause_group1, tree, [
+					{ from: 'import_clause_group1', to: '_import_clause_group1' }
+				]);
 			},
 			$with: {
 				importIdentifier: (v: NonNullable<T.ImportClauseDefaultImport['_import_identifier']>) =>
@@ -11332,15 +11451,15 @@ export function wrapIndexSignatureColon(data: T.IndexSignatureColon, tree: TreeH
 			}),
 
 			name() {
-				return drillAs<T.Identifier | T.ReservedIdentifier>(
-					this._name,
-					tree,
-					'reserved_identifier',
-					'_reserved_identifier'
-				);
+				return drillAs<T.Identifier | T.ReservedIdentifier>(this._name, tree, [
+					{ from: 'reserved_identifier', to: '_reserved_identifier' }
+				]);
 			},
 			indexType() {
-				return drillIn<T.Type>(this._index_type, tree);
+				return drillAs<T.Type>(this._index_type, tree, [
+					{ from: 'member_expression', to: '_type_query_member_expression_in_type_annotation' },
+					{ from: 'call_expression', to: '_type_query_call_expression_in_type_annotation' }
+				]);
 			},
 			$with: {
 				name: (v: NonNullable<T.IndexSignatureColon['_name']>) => wrapIndexSignatureColon({ ...data, _name: v }, tree),
@@ -11410,12 +11529,16 @@ export function wrapExportStatementDefaultFromArm(
 			),
 
 			content() {
-				return drillIn<
+				return drillAs<
 					| T.ExportStatementDefaultStarFrom
 					| T.ExportStatementDefaultNsFrom
 					| T.ExportStatementDefaultClauseFrom
 					| T.ExportClause
-				>(this._content, tree);
+				>(this._content, tree, [
+					{ from: 'export_statement_default_star_from', to: '_export_statement_default_star_from' },
+					{ from: 'export_statement_default_ns_from', to: '_export_statement_default_ns_from' },
+					{ from: 'export_statement_default_clause_from', to: '_export_statement_default_clause_from' }
+				]);
 			},
 			semicolon() {
 				return this._semicolon;
@@ -11461,12 +11584,9 @@ export function wrapExportStatementDefaultDeclArm(
 				return drillInAll<T.Decorator>(this._decorator as readonly T.Decorator[] | undefined, tree);
 			},
 			content() {
-				return drillAs<T.ExportStatementDefaultDefaultKw | T.Declaration>(
-					this._content,
-					tree,
-					'export_statement_default_default_kw',
-					'_export_statement_default_default_kw'
-				);
+				return drillAs<T.ExportStatementDefaultDefaultKw | T.Declaration>(this._content, tree, [
+					{ from: 'export_statement_default_default_kw', to: '_export_statement_default_default_kw' }
+				]);
 			},
 			$with: {
 				decorators: (...v: NonNullable<T.ExportStatementDefaultDeclArm['_decorator']>[number][]) =>
@@ -11597,12 +11717,9 @@ export function wrapExportStatementDefaultDefaultKw(
 			),
 
 			content() {
-				return drillAs<T.ExportStatementDefaultValue | T.Declaration>(
-					this._content,
-					tree,
-					'export_statement_default_value',
-					'_export_statement_default_value'
-				);
+				return drillAs<T.ExportStatementDefaultValue | T.Declaration>(this._content, tree, [
+					{ from: 'export_statement_default_value', to: '_export_statement_default_value' }
+				]);
 			},
 			$with: {
 				content: (v: NonNullable<T.ExportStatementDefaultDefaultKw['_content']>) =>
@@ -11727,12 +11844,9 @@ export function wrapClassBodyMethodSig(data: T.ClassBodyMethodSig, tree: TreeHan
 				return drillIn<T.MethodSignature>(this._method_signature, tree);
 			},
 			terminator() {
-				return drillAs<'\n' | ','>(
-					this._terminator,
-					tree,
-					'function_signature_automatic_semicolon',
-					'_function_signature_automatic_semicolon'
-				);
+				return drillAs<'\n' | ','>(this._terminator, tree, [
+					{ from: 'function_signature_automatic_semicolon', to: '_function_signature_automatic_semicolon' }
+				]);
 			},
 			$with: {
 				methodSignature: (v: NonNullable<T.ClassBodyMethodSig['_method_signature']>) =>
@@ -11836,12 +11950,9 @@ export function wrapForHeaderLhs(data: T.ForHeaderLhs, tree: TreeHandle) {
 			}),
 
 			left() {
-				return drillAs<T.LhsExpression | T.ParenthesizedExpression>(
-					this._left,
-					tree,
-					'for_header_group1',
-					'_lhs_expression'
-				);
+				return drillAs<T.LhsExpression | T.ParenthesizedExpression>(this._left, tree, [
+					{ from: 'for_header_group1', to: '_lhs_expression' }
+				]);
 			},
 			$with: {
 				left: (v: NonNullable<T.ForHeaderLhs['_left']>) => wrapForHeaderLhs({ ...data, _left: v }, tree)
@@ -12517,7 +12628,9 @@ export function wrapCallExpressionTemplateCall(data: T.CallExpressionTemplateCal
 			}),
 
 			function() {
-				return drillIn<T.PrimaryExpression | T.NewExpression>(this._function, tree);
+				return drillAs<T.PrimaryExpression | T.NewExpression>(this._function, tree, [
+					{ from: 'identifier', to: '_reserved_identifier' }
+				]);
 			},
 			arguments() {
 				return drillIn<T.TemplateString>(this._arguments, tree);
@@ -12559,7 +12672,7 @@ export function wrapCallExpressionMember(data: T.CallExpressionMember, tree: Tre
 			}),
 
 			function() {
-				return drillIn<T.PrimaryExpression>(this._function, tree);
+				return drillAs<T.PrimaryExpression>(this._function, tree, [{ from: 'identifier', to: '_reserved_identifier' }]);
 			},
 			typeArguments() {
 				return drillIn<T.TypeArguments | undefined>(this._type_arguments, tree);
@@ -13066,8 +13179,11 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 };
 
 const _aliasTargetToSource: Record<string, string> = {
+	_call_expression: '_type_query_call_expression_in_type_annotation',
 	_for_header_group1: '_lhs_expression',
 	_member_expression: 'nested_identifier',
+	_optional_parameter: 'optional_tuple_parameter',
+	_required_parameter: 'tuple_parameter',
 	_statement_identifier_group1: '_reserved_identifier',
 	_string: '_jsx_string',
 	_this_type: 'this',
@@ -13244,10 +13360,14 @@ export function readTreeNode(
 	tree: TreeHandle,
 	handle?: number,
 	childIndex?: number,
-	asType?: { from: string; to: string }
+	asType?: readonly { from: string; to: string }[]
 ): unknown {
 	let data = readNode(tree, handle, childIndex);
-	// asType comparison must handle both string and numeric $type.
+	// asType comparison must handle both string and numeric $type. A
+	// slot can have MULTIPLE simultaneously-aliased candidate kinds
+	// (e.g. a polymorphic choice where every arm aliases onto a
+	// shared canonical name) — try each pair in turn; at most one
+	// can match the node's actual (single) real kind.
 	// When numeric (native path), convert to kind-name first for comparison.
 	if (asType) {
 		const currentType =
@@ -13255,14 +13375,15 @@ export function readTreeNode(
 				? (KIND_NAMES.get(data.$type as never) ?? String(data.$type))
 				: (data.$type as unknown as string);
 		const hiddenCurrentType = currentType.startsWith('_') ? currentType.slice(1) : undefined;
-		if (currentType === asType.from || hiddenCurrentType === asType.from) {
+		const match = asType.find((p) => currentType === p.from || hiddenCurrentType === p.from);
+		if (match) {
 			let resolvedAsTypeId: number | undefined;
 			try {
-				resolvedAsTypeId = kindIdFromName(asType.to) as unknown as number;
+				resolvedAsTypeId = kindIdFromName(match.to) as unknown as number;
 			} catch {
 				resolvedAsTypeId = undefined;
 			}
-			data = { ...data, $type: (resolvedAsTypeId ?? asType.to) as unknown as number };
+			data = { ...data, $type: (resolvedAsTypeId ?? match.to) as unknown as number };
 		}
 	}
 	return wrapNode(data, tree);

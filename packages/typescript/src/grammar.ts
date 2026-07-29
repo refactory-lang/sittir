@@ -133,13 +133,13 @@ export type TypescriptGrammar = {
 		type: 'type';
 		named: true;
 		subtypes: [
+			{ type: 'call_expression'; named: true },
 			{ type: 'constructor_type'; named: true },
 			{ type: 'function_type'; named: true },
 			{ type: 'infer_type'; named: true },
 			{ type: 'member_expression'; named: true },
 			{ type: 'primary_type'; named: true },
-			{ type: 'readonly_type'; named: true },
-			{ type: 'type_query_call_expression_in_type_annotation'; named: true }
+			{ type: 'readonly_type'; named: true }
 		];
 	};
 	readonly abstract_class_declaration: {
@@ -498,10 +498,23 @@ export type TypescriptGrammar = {
 	readonly call_expression: {
 		type: 'call_expression';
 		named: true;
-		fields: {};
+		fields: {
+			arguments: { multiple: false; required: false; types: [{ type: 'arguments'; named: true }] };
+			function: {
+				multiple: false;
+				required: false;
+				types: [
+					{ type: 'identifier'; named: true },
+					{ type: 'import'; named: true },
+					{ type: 'member_expression'; named: true },
+					{ type: 'subscript_expression'; named: true }
+				];
+			};
+			type_arguments: { multiple: false; required: false; types: [{ type: 'type_arguments'; named: true }] };
+		};
 		children: {
 			multiple: false;
-			required: true;
+			required: false;
 			types: [
 				{ type: 'call_expression_call'; named: true },
 				{ type: 'call_expression_member'; named: true },
@@ -755,24 +768,11 @@ export type TypescriptGrammar = {
 			multiple: false;
 			required: true;
 			types: [
-				{ type: 'decorator_call_expression'; named: true },
+				{ type: 'call_expression'; named: true },
 				{ type: 'identifier'; named: true },
 				{ type: 'member_expression'; named: true },
 				{ type: 'parenthesized_expression'; named: true }
 			];
-		};
-	};
-	readonly decorator_call_expression: {
-		type: 'decorator_call_expression';
-		named: true;
-		fields: {
-			arguments: { multiple: false; required: true; types: [{ type: 'arguments'; named: true }] };
-			function: {
-				multiple: false;
-				required: true;
-				types: [{ type: 'identifier'; named: true }, { type: 'member_expression'; named: true }];
-			};
-			type_arguments: { multiple: false; required: false; types: [{ type: 'type_arguments'; named: true }] };
 		};
 	};
 	readonly default_type: {
@@ -1535,7 +1535,17 @@ export type TypescriptGrammar = {
 		type: 'instantiation_expression';
 		named: true;
 		fields: {
-			expression: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
+			expression: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
+			function: {
+				multiple: false;
+				required: false;
+				types: [
+					{ type: 'identifier'; named: true },
+					{ type: 'import'; named: true },
+					{ type: 'member_expression'; named: true },
+					{ type: 'subscript_expression'; named: true }
+				];
+			};
 			type_arguments: { multiple: false; required: true; types: [{ type: 'type_arguments'; named: true }] };
 		};
 	};
@@ -1653,12 +1663,7 @@ export type TypescriptGrammar = {
 			object: {
 				multiple: false;
 				required: true;
-				types: [
-					{ type: 'expression'; named: true },
-					{ type: 'import'; named: true },
-					{ type: 'type_query_call_expression'; named: true },
-					{ type: 'type_query_call_expression_in_type_annotation'; named: true }
-				];
+				types: [{ type: 'expression'; named: true }, { type: 'import'; named: true }];
 			};
 			optional_chain: { multiple: false; required: false; types: [{ type: 'optional_chain'; named: true }] };
 			property: {
@@ -1938,9 +1943,10 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			decorator: { multiple: true; required: false; types: [{ type: 'decorator'; named: true }] };
+			name: { multiple: false; required: false; types: [{ type: 'identifier'; named: true }] };
 			pattern: {
 				multiple: false;
-				required: true;
+				required: false;
 				types: [{ type: 'pattern'; named: true }, { type: 'this'; named: true }];
 			};
 			type: { multiple: false; required: false; types: [{ type: 'type_annotation'; named: true }] };
@@ -1950,14 +1956,6 @@ export type TypescriptGrammar = {
 			multiple: true;
 			required: false;
 			types: [{ type: 'accessibility_modifier'; named: true }, { type: 'override_modifier'; named: true }];
-		};
-	};
-	readonly optional_tuple_parameter: {
-		type: 'optional_tuple_parameter';
-		named: true;
-		fields: {
-			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
-			type: { multiple: false; required: true; types: [{ type: 'type_annotation'; named: true }] };
 		};
 	};
 	readonly optional_type: {
@@ -2014,7 +2012,7 @@ export type TypescriptGrammar = {
 			multiple: false;
 			required: true;
 			types: [
-				{ type: 'decorator_call_expression'; named: true },
+				{ type: 'call_expression'; named: true },
 				{ type: 'identifier'; named: true },
 				{ type: 'member_expression'; named: true },
 				{ type: 'parenthesized_expression_typed'; named: true },
@@ -2130,9 +2128,14 @@ export type TypescriptGrammar = {
 		named: true;
 		fields: {
 			decorator: { multiple: true; required: false; types: [{ type: 'decorator'; named: true }] };
+			name: {
+				multiple: false;
+				required: false;
+				types: [{ type: 'identifier'; named: true }, { type: 'rest_pattern'; named: true }];
+			};
 			pattern: {
 				multiple: false;
-				required: true;
+				required: false;
 				types: [{ type: 'pattern'; named: true }, { type: 'this'; named: true }];
 			};
 			type: { multiple: false; required: false; types: [{ type: 'type_annotation'; named: true }] };
@@ -2255,11 +2258,7 @@ export type TypescriptGrammar = {
 					{ type: 'string'; named: true }
 				];
 			};
-			object: {
-				multiple: false;
-				required: true;
-				types: [{ type: 'expression'; named: true }, { type: 'type_query_call_expression'; named: true }];
-			};
+			object: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
 			optional_chain: { multiple: false; required: false; types: [{ type: 'optional_chain'; named: true }] };
 		};
 	};
@@ -2377,18 +2376,6 @@ export type TypescriptGrammar = {
 			handler: { multiple: false; required: false; types: [{ type: 'catch_clause'; named: true }] };
 		};
 	};
-	readonly tuple_parameter: {
-		type: 'tuple_parameter';
-		named: true;
-		fields: {
-			name: {
-				multiple: false;
-				required: true;
-				types: [{ type: 'identifier'; named: true }, { type: 'rest_pattern'; named: true }];
-			};
-			type: { multiple: false; required: true; types: [{ type: 'type_annotation'; named: true }] };
-		};
-	};
 	readonly tuple_type: {
 		type: 'tuple_type';
 		named: true;
@@ -2403,10 +2390,10 @@ export type TypescriptGrammar = {
 			multiple: true;
 			required: true;
 			types: [
-				{ type: 'optional_tuple_parameter'; named: true },
+				{ type: 'optional_parameter'; named: true },
 				{ type: 'optional_type'; named: true },
+				{ type: 'required_parameter'; named: true },
 				{ type: 'rest_type'; named: true },
-				{ type: 'tuple_parameter'; named: true },
 				{ type: 'type'; named: true }
 			];
 		};
@@ -2494,59 +2481,13 @@ export type TypescriptGrammar = {
 			multiple: false;
 			required: true;
 			types: [
+				{ type: 'call_expression'; named: true },
 				{ type: 'identifier'; named: true },
+				{ type: 'instantiation_expression'; named: true },
 				{ type: 'member_expression'; named: true },
 				{ type: 'subscript_expression'; named: true },
-				{ type: 'this'; named: true },
-				{ type: 'type_query_call_expression'; named: true },
-				{ type: 'type_query_instantiation_expression'; named: true }
+				{ type: 'this'; named: true }
 			];
-		};
-	};
-	readonly type_query_call_expression: {
-		type: 'type_query_call_expression';
-		named: true;
-		fields: {
-			arguments: { multiple: false; required: true; types: [{ type: 'arguments'; named: true }] };
-			function: {
-				multiple: false;
-				required: true;
-				types: [
-					{ type: 'identifier'; named: true },
-					{ type: 'import'; named: true },
-					{ type: 'member_expression'; named: true },
-					{ type: 'subscript_expression'; named: true }
-				];
-			};
-		};
-	};
-	readonly type_query_call_expression_in_type_annotation: {
-		type: 'type_query_call_expression_in_type_annotation';
-		named: true;
-		fields: {
-			arguments: { multiple: false; required: true; types: [{ type: 'arguments'; named: true }] };
-			function: {
-				multiple: false;
-				required: true;
-				types: [{ type: 'import'; named: true }, { type: 'member_expression'; named: true }];
-			};
-		};
-	};
-	readonly type_query_instantiation_expression: {
-		type: 'type_query_instantiation_expression';
-		named: true;
-		fields: {
-			function: {
-				multiple: false;
-				required: true;
-				types: [
-					{ type: 'identifier'; named: true },
-					{ type: 'import'; named: true },
-					{ type: 'member_expression'; named: true },
-					{ type: 'subscript_expression'; named: true }
-				];
-			};
-			type_arguments: { multiple: false; required: true; types: [{ type: 'type_arguments'; named: true }] };
 		};
 	};
 	readonly unary_expression: {

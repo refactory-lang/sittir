@@ -1628,7 +1628,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[253, 'arguments'],
 	[254, 'decorator'],
 	[255, 'member_expression'],
-	[256, 'decorator_call_expression'],
+	[256, 'call_expression'],
 	[257, 'class_body'],
 	[258, 'formal_parameters'],
 	[259, 'class_static_block'],
@@ -1677,12 +1677,12 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[302, 'opting_type_annotation'],
 	[303, 'type_annotation'],
 	[304, 'member_expression'],
-	[305, 'type_query_call_expression_in_type_annotation'],
+	[305, 'call_expression'],
 	[306, 'asserts'],
 	[307, 'asserts_annotation'],
 	[308, 'type'],
-	[309, 'tuple_parameter'],
-	[310, 'optional_tuple_parameter'],
+	[309, 'required_parameter'],
+	[310, 'optional_parameter'],
 	[311, 'optional_type'],
 	[312, 'rest_type'],
 	[313, '_tuple_type_member'],
@@ -1697,8 +1697,8 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[322, 'type_predicate_annotation'],
 	[323, 'member_expression'],
 	[324, 'subscript_expression'],
-	[325, 'type_query_call_expression'],
-	[326, 'type_query_instantiation_expression'],
+	[325, 'call_expression'],
+	[326, 'instantiation_expression'],
 	[327, 'type_query'],
 	[328, 'index_type_query'],
 	[329, 'lookup_type'],
@@ -2833,12 +2833,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TemplateChars;
 		case 'function_signature_automatic_semicolon':
 			return TSKindId.FunctionSignatureAutomaticSemicolon;
-		case 'type_query_call_expression_in_type_annotation':
-			return TSKindId.TypeQueryCallExpressionInTypeAnnotation;
-		case 'type_query_call_expression':
-			return TSKindId.TypeQueryCallExpression;
-		case 'type_query_instantiation_expression':
-			return TSKindId.TypeQueryInstantiationExpression;
 		case 'export_clause_group1':
 			return TSKindId.ExportClauseGroup1;
 		case 'import_statement_group1':
@@ -5852,7 +5846,9 @@ export interface DecoratorTree extends TreeNode<'decorator'> {}
 export interface DecoratorMemberExpressionTree extends AnyTreeNode {
 	readonly type: 'decorator_member_expression';
 }
-export interface DecoratorCallExpressionTree extends TreeNode<'decorator_call_expression'> {}
+export interface DecoratorCallExpressionTree extends AnyTreeNode {
+	readonly type: 'decorator_call_expression';
+}
 export interface ClassBodyTree extends TreeNode<'class_body'> {}
 export interface FieldDefinitionTree extends AnyTreeNode {
 	readonly type: 'field_definition';
@@ -5917,8 +5913,12 @@ export interface TypeQueryCallExpressionInTypeAnnotationTree extends AnyTreeNode
 }
 export interface AssertsTree extends TreeNode<'asserts'> {}
 export interface AssertsAnnotationTree extends TreeNode<'asserts_annotation'> {}
-export interface TupleParameterTree extends TreeNode<'tuple_parameter'> {}
-export interface OptionalTupleParameterTree extends TreeNode<'optional_tuple_parameter'> {}
+export interface TupleParameterTree extends AnyTreeNode {
+	readonly type: 'tuple_parameter';
+}
+export interface OptionalTupleParameterTree extends AnyTreeNode {
+	readonly type: 'optional_tuple_parameter';
+}
 export interface OptionalTypeTree extends TreeNode<'optional_type'> {}
 export interface RestTypeTree extends TreeNode<'rest_type'> {}
 export interface ConstructorTypeTree extends TreeNode<'constructor_type'> {}

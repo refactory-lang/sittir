@@ -7,7 +7,7 @@ type ReadTreeNode = (
 	handle: unknown,
 	nodeHandle?: number,
 	childIndex?: number,
-	asType?: { from: string; to: string }
+	asType?: readonly { from: string; to: string }[]
 ) => unknown;
 
 interface CommonModule {

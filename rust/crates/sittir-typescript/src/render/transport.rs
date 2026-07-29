@@ -6087,6 +6087,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeTransport {
                     305 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
+                    231 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
+                        TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TypeTransport",
                     ))),
@@ -6207,6 +6210,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeTransport {
                     305 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
+                    231 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
+                        TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TypeTransport",
                     ))),
@@ -6309,7 +6315,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleTypeMemberTransport {
                     309 => Ok(Self::TupleParameter(
                         TupleParameterTransport::from_napi_value(env, napi_val)?
                     )),
+                    297 => Ok(Self::TupleParameter(
+                        TupleParameterTransport::from_napi_value(env, napi_val)?
+                    )),
                     310 => Ok(Self::OptionalTupleParameter(
+                        OptionalTupleParameterTransport::from_napi_value(env, napi_val)?
+                    )),
+                    298 => Ok(Self::OptionalTupleParameter(
                         OptionalTupleParameterTransport::from_napi_value(env, napi_val)?
                     )),
                     311 => Ok(Self::OptionalType(
@@ -6432,7 +6444,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for TupleTypeMemberTransport {
                     309 => Ok(Self::TupleParameter(
                         TupleParameterTransport::from_napi_value(env, napi_val)?
                     )),
+                    297 => Ok(Self::TupleParameter(
+                        TupleParameterTransport::from_napi_value(env, napi_val)?
+                    )),
                     310 => Ok(Self::OptionalTupleParameter(
+                        OptionalTupleParameterTransport::from_napi_value(env, napi_val)?
+                    )),
+                    298 => Ok(Self::OptionalTupleParameter(
                         OptionalTupleParameterTransport::from_napi_value(env, napi_val)?
                     )),
                     311 => Ok(Self::OptionalType(
@@ -9138,6 +9156,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                     256 => Ok(Self::DecoratorCallExpression(
                         DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
+                    231 => Ok(Self::DecoratorCallExpression(
+                        DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ParenthesizedExpressionContentTransportSlot",
                     ))),
@@ -9169,6 +9190,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     256 => Ok(Self::DecoratorCallExpression(
+                        DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    231 => Ok(Self::DecoratorCallExpression(
                         DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -15879,6 +15903,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratorContentTransportSlot {
                     256 => Ok(Self::DecoratorCallExpression(
                         DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
+                    231 => Ok(Self::DecoratorCallExpression(
+                        DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
                     273 => Ok(Self::DecoratorParenthesizedExpression(
                         DecoratorParenthesizedExpressionTransport::from_napi_value(env, napi_val)?
                     )),
@@ -15910,6 +15937,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratorContentTransportSlot {
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     256 => Ok(Self::DecoratorCallExpression(
+                        DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    231 => Ok(Self::DecoratorCallExpression(
                         DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     273 => Ok(Self::DecoratorParenthesizedExpression(
@@ -17082,6 +17112,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratorParenthesizedExpression
                     256 => Ok(Self::DecoratorCallExpression(
                         DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
+                    231 => Ok(Self::DecoratorCallExpression(
+                        DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in DecoratorParenthesizedExpressionContentTransportSlot",
                     ))),
@@ -17107,6 +17140,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for DecoratorParenthesizedExpression
                         DecoratorMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     256 => Ok(Self::DecoratorCallExpression(
+                        DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    231 => Ok(Self::DecoratorCallExpression(
                         DecoratorCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -18783,6 +18819,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionInTypeA
                     305 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
+                    231 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
+                        TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TypeQueryMemberExpressionInTypeAnnotationObjectTransportSlot",
                     ))),
@@ -18804,6 +18843,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionInTypeA
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     305 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
+                        TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
+                    )),
+                    231 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -20232,6 +20274,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionObjectT
                     325 => Ok(Self::TypeQueryCallExpression(
                         TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
+                    231 => Ok(Self::TypeQueryCallExpression(
+                        TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TypeQueryMemberExpressionObjectTransportSlot",
                     ))),
@@ -20266,6 +20311,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionObjectT
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     325 => Ok(Self::TypeQueryCallExpression(
+                        TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    231 => Ok(Self::TypeQueryCallExpression(
                         TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -20485,6 +20533,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionObje
                     325 => Ok(Self::TypeQueryCallExpression(
                         TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
+                    231 => Ok(Self::TypeQueryCallExpression(
+                        TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TypeQuerySubscriptExpressionObjectTransportSlot",
                     ))),
@@ -20519,6 +20570,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQuerySubscriptExpressionObje
                         TypeQueryMemberExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     325 => Ok(Self::TypeQueryCallExpression(
+                        TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    231 => Ok(Self::TypeQueryCallExpression(
                         TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -21064,7 +21118,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryContentTransportSlot {
                     325 => Ok(Self::TypeQueryCallExpression(
                         TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
+                    231 => Ok(Self::TypeQueryCallExpression(
+                        TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
                     326 => Ok(Self::TypeQueryInstantiationExpression(
+                        TypeQueryInstantiationExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    277 => Ok(Self::TypeQueryInstantiationExpression(
                         TypeQueryInstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -21103,7 +21163,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryContentTransportSlot {
                     325 => Ok(Self::TypeQueryCallExpression(
                         TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
                     )),
+                    231 => Ok(Self::TypeQueryCallExpression(
+                        TypeQueryCallExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
                     326 => Ok(Self::TypeQueryInstantiationExpression(
+                        TypeQueryInstantiationExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    277 => Ok(Self::TypeQueryInstantiationExpression(
                         TypeQueryInstantiationExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
