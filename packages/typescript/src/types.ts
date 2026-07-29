@@ -3057,7 +3057,7 @@ export const enum PrimaryExpressionKind {
 	NonNullExpression = 'non_null_expression'
 }
 
-export const enum JsxElementKind {
+export const enum _JsxElementKind {
 	JsxElement = 'jsx_element',
 	JsxSelfClosingElement = 'jsx_self_closing_element'
 }
@@ -3071,7 +3071,7 @@ export const enum JsxChildKind {
 	JsxExpression = 'jsx_expression'
 }
 
-export const enum JsxIdentifierKind {
+export const enum _JsxIdentifierKind {
 	JsxIdentifier = 'jsx_identifier',
 	Identifier = 'identifier'
 }
@@ -3084,7 +3084,7 @@ export const enum JsxElementNameKind {
 	JsxNamespaceName = 'jsx_namespace_name'
 }
 
-export const enum JsxAttributeKind {
+export const enum _JsxAttributeKind {
 	JsxAttribute = 'jsx_attribute',
 	JsxExpression = 'jsx_expression'
 }
@@ -3114,7 +3114,7 @@ export const enum DestructuringPatternKind {
 	ArrayPattern = 'array_pattern'
 }
 
-export const enum IdentifierKind {
+export const enum _IdentifierKind {
 	Undefined = 'undefined',
 	Identifier = 'identifier'
 }
@@ -3149,7 +3149,7 @@ export const enum ShorthandPropertyIdentifierPatternKind {
 	ReservedIdentifier = '_reserved_identifier'
 }
 
-export const enum PropertyIdentifierKind {
+export const enum _PropertyIdentifierKind {
 	Identifier = 'identifier',
 	ReservedIdentifier = '_reserved_identifier'
 }

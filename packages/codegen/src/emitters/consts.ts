@@ -12,7 +12,8 @@ import {
 	isMultiple,
 	keywordPresenceKind,
 	keywordPresenceValues,
-	keywordPresenceIsNonEmptyRepeat
+	keywordPresenceIsNonEmptyRepeat,
+	escForSource
 } from './shared.ts';
 import { collectCatalogKinds } from './kind-discriminant.ts';
 
@@ -166,7 +167,7 @@ export function emitConsts(config: EmitConstsConfig): string {
 		lines.push(`/** Valid values for \`${ek.kind}\` nodes. */`);
 		lines.push(`export const ${constName} = [`);
 		for (const v of ek.values) {
-			lines.push(`  '${v.replace(/'/g, "\\'")}',`);
+			lines.push(`  '${escForSource(v)}',`);
 		}
 		lines.push('] as const;');
 		// Emit the type alias only once per unique name — hidden kinds like

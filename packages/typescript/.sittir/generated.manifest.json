@@ -1,6 +1,6 @@
 {
   "grammar": "typescript",
-  "source_hash": "40edf0d09d201652ea50812c147ae7f78cf84b303b6e355dbd32c1dbf17e6ce5",
+  "source_hash": "ce00b787eac89d05c76831b8c70bda7969daee51ed425888ae258f1214bef621",
   "files": {
     "packages/typescript/.sittir/grammar-diagnostics.json": "f132517a8f4f1b39a8267a3af6a5cbe8a5ebe1b162e6744dd2d234adb3955e6a",
     "packages/typescript/.sittir/grammar.js": "151d6ad7bb23093cc0e0e333642030495224bc75fdb7f0579e6c876e82473644",
@@ -18,9 +18,9 @@
     "packages/typescript/src/.gitignore": "f88dc1e9a9e22edc543fca920b569a3ea4bef48d02700fd098ea1bf22b2e7102",
     "packages/typescript/src/backend.ts": "9239f7f7667dcedf7783d6d90b05d0a0953ba8e0275fe6e42fd1df97a21ff05a",
     "packages/typescript/src/boundary.ts": "b6af1716a00167f1f83f375781b58ef22fd510584f01a36e0315845c82800228",
-    "packages/typescript/src/consts.ts": "33d3b062518bcf1f75ea4ddbbb1185b875a0ae14d42fd715a6ee286ffd1119bf",
+    "packages/typescript/src/consts.ts": "2e50987937610013865192dae4fddd2870ffaccdcaf96af2fc443ef98fdfd816",
     "packages/typescript/src/engine.ts": "6b0239f4389dd1bf2ab850eeb31f5d264ae88e7efb76936db1434e3ff3248ca2",
-    "packages/typescript/src/factories.ts": "aeffd3648ec257dc9ea841eb991481040dd8dee1369bc43b13a8954ff18a212d",
+    "packages/typescript/src/factories.ts": "68f438cd48ae37c65018c37fe33fe30a83190d9ac86d0d5f0f263d8c95672ee6",
     "packages/typescript/src/from.ts": "124692eab11dcbd8ddda1044a84173da902a208f35de62d51e41968d7704f657",
     "packages/typescript/src/grammar.ts": "f31a6883a0abfb936ae56dda06884a7b760e4de29207bdcfd41b91522b360306",
     "packages/typescript/src/hash.ts": "538a1878069b2d46c1feff7c0fc4ba7d5b2c4d73464d9e7fcf877ece7a33e65e",
@@ -29,7 +29,7 @@
     "packages/typescript/src/is.ts": "0c382a2c2ed704f99740f4354c1a500c8950a1b6051d46e63b1b53ff218114f8",
     "packages/typescript/src/node-model.json5": "57ee87fbb46b63b886b99ffc3e8a4c4ca3c20a08ea45a02b959a826594f2a8f0",
     "packages/typescript/src/type-test.ts": "cdfaadd341fe4a9d58ba748342ede6afd3f44cff2881cb8aadf35af4484d00b4",
-    "packages/typescript/src/types.ts": "4f7b6931cde928c975fec39f260ad424e80d0cff674e02153886f646ba5d025d",
+    "packages/typescript/src/types.ts": "8bd612b8a3f35a5e2d05aa7fa7122f3e51df5d71edd2db3cf8bfb321d317690d",
     "packages/typescript/src/utils.ts": "d2538a7dadc51d6ab68a280f6f67e240854484580a17e992bb9206d1fa288276",
     "packages/typescript/src/wrap.ts": "a497de8dcefb3ad8ade5c0581fa4ed6221544a1b4d8508b84083c7dfea2ca512",
     "packages/typescript/templates/.gitkeep": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",

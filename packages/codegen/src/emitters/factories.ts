@@ -44,7 +44,8 @@ import {
 	collectAliasSourceKinds,
 	warnSkippedParserSymbol,
 	unnamedChildSlotFacts,
-	canonicalSeparatedListField
+	canonicalSeparatedListField,
+	escForSource
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -514,9 +515,23 @@ function setterValueSignature(f: AssembledNonterminal, elemType: string): string
 	return `value?: ${elemType}`;
 }
 
-function setterElemType(f: AssembledNonterminal, elemType: string, fn: string, nodeMap: NodeMap): string {
+// `fnTakesFieldDirectly` distinguishes the two factory calling conventions:
+// config-object factories (`fn(config)`) have `Parameters<typeof fn>[0]`
+// as the config object, so re-deriving the field's type means indexing it
+// by `configKey`; single-field factories (Gap 5, `fn(value)`) pass the
+// field's own value as that first parameter, so indexing by `configKey`
+// would reach into the value's own (non-object) type instead.
+function setterElemType(
+	f: AssembledNonterminal,
+	elemType: string,
+	fn: string,
+	nodeMap: NodeMap,
+	fnTakesFieldDirectly = false
+): string {
 	if (resolveFieldStorageInfo(f, nodeMap).kind !== 'verbatim') {
-		return `NonNullable<Parameters<typeof ${fn}>[0]>['${f.configKey}']`;
+		return fnTakesFieldDirectly
+			? `NonNullable<Parameters<typeof ${fn}>[0]>`
+			: `NonNullable<Parameters<typeof ${fn}>[0]>['${f.configKey}']`;
 	}
 	return elemType;
 }
@@ -630,7 +645,7 @@ function emitFieldCarryingFactory(
 			f === singleField
 				? slotStorageFromValueExpr(f, paramName, nodeMap, kindEntries)
 				: slotStorageFromValueExpr(f, autoStampExpression(f, nodeMap)!, nodeMap, kindEntries);
-		const setterType = setterElemType(singleField, elemType, fn, nodeMap);
+		const setterType = setterElemType(singleField, elemType, fn, nodeMap, true);
 		withLines = [
 			'    $with: {',
 			`      ${singleField.propertyName}: (${setterValueSignature(singleField, setterType)}) => ${fn}(value),`,
@@ -1033,10 +1048,6 @@ function emitTextFactory(
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-function escForSource(s: string): string {
-	return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-}
 
 function stripUselessEscapes(pattern: string): string {
 	let out = '';

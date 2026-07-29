@@ -835,3 +835,19 @@ export function wordCharAsciiTable(wordMatcher: RegExp): boolean[] {
 	}
 	return table;
 }
+
+/**
+ * Escapes a string for embedding inside a single-quoted JS/TS string literal
+ * in emitted source. Grammar values can contain literal control characters
+ * (e.g. the newline that stands for TypeScript's automatic-semicolon token) —
+ * escaping only backslash and `'` leaves those raw, producing an unterminated
+ * string literal in the generated file.
+ */
+export function escForSource(s: string): string {
+	return s
+		.replace(/\\/g, '\\\\')
+		.replace(/'/g, "\\'")
+		.replace(/\n/g, '\\n')
+		.replace(/\r/g, '\\r')
+		.replace(/\t/g, '\\t');
+}

@@ -3066,7 +3066,7 @@ export const enum UseClauseKind {
 	UseWildcard = 'use_wildcard'
 }
 
-export const enum TypeKind {
+export const enum _TypeKind {
 	AbstractType = 'abstract_type',
 	ReferenceType = 'reference_type',
 	Metavariable = 'metavariable',

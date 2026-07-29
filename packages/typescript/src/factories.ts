@@ -868,8 +868,7 @@ export function buildDebuggerStatement(semicolon: T.DebuggerStatement.Config['se
 				$named: true as const,
 				_semicolon,
 				$with: {
-					semicolon: (value: NonNullable<Parameters<typeof buildDebuggerStatement>[0]>['semicolon']) =>
-						buildDebuggerStatement(value)
+					semicolon: (value: NonNullable<Parameters<typeof buildDebuggerStatement>[0]>) => buildDebuggerStatement(value)
 				}
 			},
 			{

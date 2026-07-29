@@ -24,7 +24,8 @@ import {
 	slotKindNames,
 	keywordPresenceKind,
 	resolveFieldStorageInfo,
-	unnamedChildSlotFacts
+	unnamedChildSlotFacts,
+	escForSource
 } from './shared.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
 
@@ -394,7 +395,7 @@ function emitEnumTest(
 	if (!first) return;
 	lines.push(`describe('${kind}', () => {`);
 	lines.push(`  it('factory accepts valid value', () => {`);
-	lines.push(`    const node = ir.${key}('${first.replace(/'/g, "\\'")}');`);
+	lines.push(`    const node = ir.${key}('${escForSource(first)}');`);
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push('  });');

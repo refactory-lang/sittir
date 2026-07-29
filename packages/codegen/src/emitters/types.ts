@@ -162,9 +162,19 @@ export function emitTypes(config: EmitTypesConfig): string {
 	// 2. Scoped enums per supertype
 	if (supertypes.length > 0) {
 		lines.push('// Scoped enums per supertype');
+		const emittedKindEnums = new Set<string>();
 		for (const st of supertypes) {
-			const cleanName = st.kind.replace(/^_/, '');
-			const enumName = toPascal(cleanName) + 'Kind';
+			// Base the name on the node's own resolved typeName (same source
+			// emitSupertypeUnionDeclarations uses below) rather than
+			// re-deriving from `st.kind` — a hidden/visible pair sharing one
+			// cleaned name (e.g. `_property_identifier` / `property_identifier`)
+			// already got disambiguated typeNames upstream; stripping the `_`
+			// again here would collide the two into one duplicate enum.
+			const stNode = nodeMap.nodes.get(st.kind);
+			const typeName = stNode?.typeName ?? toPascal(st.kind.replace(/^_/, ''));
+			const enumName = typeName + 'Kind';
+			if (emittedKindEnums.has(enumName)) continue;
+			emittedKindEnums.add(enumName);
 			lines.push(`export const enum ${enumName} {`);
 			const seenSubMembers = new Set<string>();
 			for (const sub of st.subtypes) {
