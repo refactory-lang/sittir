@@ -3158,7 +3158,23 @@ function applyFlatPatches(original, patches) {
     return applyFlatPatchesToSeq(original, patches);
   }
   if (isChoiceType(t)) {
-    const newMembers = membersOf2(original).map((m) => applyFlatPatches(m, patches));
+    const members = membersOf2(original);
+    let anyApplied = false;
+    const newMembers = members.map((m) => {
+      try {
+        const patched = applyFlatPatches(m, patches);
+        anyApplied = true;
+        return patched;
+      } catch (e) {
+        if (e instanceof ApplyPathSkip) return m;
+        throw e;
+      }
+    });
+    if (!anyApplied) {
+      throw new Error(
+        `transform: flat-positional key(s) [${Object.keys(patches).join(", ")}] matched no choice arm out of ${members.length} \u2014 each arm was tried independently and none had all the target positions. Flat keys patch a position uniformly across every arm; they can't select ONE specific arm (a plain digit key on a choice does not mean "arm N"). To replace one specific arm, use path syntax instead (e.g. '${Object.keys(patches)[0]}' as a path segment, or '-1' for the last arm).`
+      );
+    }
     return reconstructContainer(original, newMembers);
   }
   if (isPrecWrapper(original)) {
@@ -3184,7 +3200,9 @@ function applyFlatPatchesToSeq(original, patches) {
     }
     const index = Number(key);
     if (index >= members.length) {
-      throw new Error(`transform: index ${index} out of bounds in ${original.type} of length ${members.length}`);
+      throw new ApplyPathSkip(
+        `transform: index ${index} out of bounds in ${original.type} of length ${members.length}`
+      );
     }
     members[index] = resolvePatch(patch, members[index]);
   }

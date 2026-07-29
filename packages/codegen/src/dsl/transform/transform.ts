@@ -28,7 +28,8 @@ import {
 	reconstructPrec,
 	reconstructContainer,
 	wrapInPrecStack,
-	getGroupLiftRuleBody
+	getGroupLiftRuleBody,
+	ApplyPathSkip
 } from './transform-path.ts';
 import { isFieldPlaceholder, maybeKeywordSymbol } from '../primitives/field.ts';
 import type { FieldPlaceholder } from '../primitives/field.ts';
@@ -342,10 +343,33 @@ function applyFlatPatches(original: RuntimeRule, patches: Record<number | string
 		return applyFlatPatchesToSeq(original, patches);
 	}
 
-	// Choice: apply transform to each member recursively. Reconstruct
-	// via native dsl so the choice keeps its runtime-correct shape.
+	// Choice: apply transform to each member recursively, uniformly — the
+	// same flat positions are attempted on every arm. Arms are heterogeneous
+	// by construction (different lengths/shapes), so a member that doesn't
+	// have one of the target positions is left UNCHANGED rather than
+	// aborting the whole patch (mirrors applyWildcardToMembers's per-member
+	// skip/require-at-least-one-match contract in transform-path.ts — same
+	// "some siblings won't match, that's fine" semantics, just for flat
+	// positional keys instead of path wildcards). Reconstruct via native
+	// dsl so the choice keeps its runtime-correct shape.
 	if (isChoiceType(t)) {
-		const newMembers = membersOf(original).map((m) => applyFlatPatches(m, patches));
+		const members = membersOf(original);
+		let anyApplied = false;
+		const newMembers = members.map((m) => {
+			try {
+				const patched = applyFlatPatches(m, patches);
+				anyApplied = true;
+				return patched;
+			} catch (e) {
+				if (e instanceof ApplyPathSkip) return m;
+				throw e;
+			}
+		});
+		if (!anyApplied) {
+			throw new Error(
+				`transform: flat-positional key(s) [${Object.keys(patches).join(', ')}] matched no choice arm out of ${members.length} — each arm was tried independently and none had all the target positions. Flat keys patch a position uniformly across every arm; they can't select ONE specific arm (a plain digit key on a choice does not mean "arm N"). To replace one specific arm, use path syntax instead (e.g. '${Object.keys(patches)[0]}' as a path segment, or '-1' for the last arm).`
+			);
+		}
 		return reconstructContainer(original, newMembers);
 	}
 
@@ -382,7 +406,17 @@ function applyFlatPatchesToSeq(original: RuntimeRule, patches: Record<number | s
 		}
 		const index = Number(key);
 		if (index >= members.length) {
-			throw new Error(`transform: index ${index} out of bounds in ${original.type} of length ${members.length}`);
+			// Skippable (not a hard Error): when this seq is one arm of an
+			// enclosing choice's flat-patch fan-out, an out-of-bounds index
+			// here just means THIS arm doesn't have that position — the
+			// choice-level recursion above catches ApplyPathSkip and leaves
+			// the arm unchanged. If this seq is the top-level patch target
+			// (no enclosing choice fan-out), ApplyPathSkip is never caught
+			// and still propagates out of transform() as an error, same as
+			// before — genuinely out-of-bounds against the ONE target shape.
+			throw new ApplyPathSkip(
+				`transform: index ${index} out of bounds in ${original.type} of length ${members.length}`
+			);
 		}
 		members[index] = resolvePatch(patch, members[index]!);
 	}
