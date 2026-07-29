@@ -2235,7 +2235,7 @@ export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config)
 }
 
 export function buildRangeExpression(
-	child: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix
+	child: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..'
 ) {
 	const _content = child;
 	return withMethods(
@@ -2246,7 +2246,7 @@ export function buildRangeExpression(
 				$named: true as const,
 				_content,
 				$with: {
-					$child: (v: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix) =>
+					$child: (v: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..') =>
 						buildRangeExpression(v)
 				}
 			},

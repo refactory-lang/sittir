@@ -1899,7 +1899,7 @@ export function coerceToScopedTypeIdentifier(
 }
 
 export function coerceToRangeExpression(
-	input?: (T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix) | T.RangeExpression
+	input?: (T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..') | T.RangeExpression
 ): ReturnType<typeof F.buildRangeExpression> {
 	if (isNodeData(input) && input.$type === TSKindId.RangeExpression) {
 		const data = input;

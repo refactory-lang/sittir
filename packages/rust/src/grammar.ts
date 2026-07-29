@@ -1487,14 +1487,16 @@ export type RustGrammar = {
 		fields: {};
 		children: {
 			multiple: false;
-			required: false;
+			required: true;
 			types: [
+				{ type: 'range_expression_bare'; named: true },
 				{ type: 'range_expression_binary'; named: true },
 				{ type: 'range_expression_postfix'; named: true },
 				{ type: 'range_expression_prefix'; named: true }
 			];
 		};
 	};
+	readonly range_expression_bare: { type: 'range_expression_bare'; named: true; fields: {} };
 	readonly range_expression_binary: {
 		type: 'range_expression_binary';
 		named: true;

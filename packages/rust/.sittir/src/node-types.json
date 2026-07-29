@@ -4333,8 +4333,12 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
+        {
+          "type": "range_expression_bare",
+          "named": true
+        },
         {
           "type": "range_expression_binary",
           "named": true
@@ -4349,6 +4353,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "range_expression_bare",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "range_expression_binary",

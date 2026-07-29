@@ -3790,6 +3790,18 @@ var overrides_default = grammar(
           "-1": alias2($._wildcard_pattern, $.wildcard_pattern)
         }),
         _wildcard_pattern: ($) => "_",
+        // range_expression's bare-'..' arm (RangeFull, e.g. `let x = ..;`) is
+        // the only choice arm that isn't a seq — arms 0-2 get auto-synthesized
+        // group kinds (range_expression_binary/postfix/prefix), but a bare
+        // literal produces an ANONYMOUS/unnamed token, so the wrap layer's
+        // `content` accessor never finds a value ("singular slot 'content' on
+        // 'range_expression' requires one value; got undefined"). Same fix as
+        // `_wildcard_pattern` just above: alias the literal into its own real,
+        // named node.
+        range_expression: ($, original) => transform2(original, {
+          "-1": alias2($._range_expression_bare, $.range_expression_bare)
+        }),
+        _range_expression_bare: ($) => "..",
         _reference_expression_raw_const: ($) => seq("raw", "const"),
         _reference_expression_raw_mut: ($) => seq("raw", $.mutable_specifier),
         reference_expression: ($) => prec(

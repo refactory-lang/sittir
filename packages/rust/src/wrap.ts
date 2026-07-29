@@ -5950,14 +5950,18 @@ export function wrapRangeExpression(
 			| T.RangeExpressionPostfix
 			| T.RangeExpressionPrefix
 			| '..';
-		readonly _dot_dot?: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..';
+		readonly _range_expression_bare?:
+			| T.RangeExpressionBinary
+			| T.RangeExpressionPostfix
+			| T.RangeExpressionPrefix
+			| '..';
 	},
 	tree: TreeHandle
 ) {
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
-				'_dot_dot',
+				'_range_expression_bare',
 				'_range_expression_binary',
 				'_range_expression_postfix',
 				'_range_expression_prefix'
@@ -5968,7 +5972,7 @@ export function wrapRangeExpression(
 					data._range_expression_binary ??
 					data._range_expression_postfix ??
 					data._range_expression_prefix ??
-					data._dot_dot,
+					data._range_expression_bare,
 				'content',
 				true,
 				data.$type,

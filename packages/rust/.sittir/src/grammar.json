@@ -5050,8 +5050,13 @@
             "value": "range_expression_prefix"
           },
           {
-            "type": "SYMBOL",
-            "name": "_kw_operator",
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_range_expression_bare"
+            },
+            "named": true,
+            "value": "range_expression_bare",
             "metadata": {
               "fieldSource": "override"
             }
@@ -10545,6 +10550,10 @@
       "type": "STRING",
       "value": "_"
     },
+    "_range_expression_bare": {
+      "type": "STRING",
+      "value": ".."
+    },
     "_reference_expression_raw_const": {
       "type": "SEQ",
       "members": [
@@ -11208,9 +11217,6 @@
           }
         ]
       }
-    },
-    "_range_expression_bare": {
-      "type": "BLANK"
     },
     "_range_pattern_prefix": {
       "type": "SEQ",
@@ -12471,6 +12477,7 @@
     "_match_pattern_optional1",
     "_while_expression_optional1",
     "_closure_parameters_optional1",
+    "_kw_operator",
     "_kw_comma",
     "_kw_move_marker",
     "_kw_static_marker",
@@ -12478,7 +12485,6 @@
     "_kw_pub",
     "_kw_in",
     "_kw_turbofish",
-    "_kw_operator",
     "_kw_reference",
     "_kw_mutable_specifier",
     "_kw_unsafe_marker"
