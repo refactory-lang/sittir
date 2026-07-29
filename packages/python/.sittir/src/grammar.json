@@ -2161,8 +2161,13 @@
             "name": "dotted_name"
           },
           {
-            "type": "STRING",
-            "value": "_"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_wildcard_pattern"
+            },
+            "named": true,
+            "value": "wildcard_pattern"
           }
         ]
       }
@@ -6926,6 +6931,10 @@
           ]
         }
       ]
+    },
+    "_wildcard_pattern": {
+      "type": "STRING",
+      "value": "_"
     },
     "_assignment_eq": {
       "type": "SEQ",

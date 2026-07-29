@@ -446,7 +446,9 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'_simple_pattern_negative',
 		'simple_pattern_negative',
 		'complex_pattern',
-		'dotted_name'
+		'dotted_name',
+		'_wildcard_pattern',
+		'wildcard_pattern'
 	]),
 	parameter: new Set([
 		'identifier',
@@ -3579,6 +3581,7 @@ export function wrapCasePattern(
 		readonly _case_as_pattern?: T.CaseAsPattern | T.KeywordPattern | T.SimplePattern;
 		readonly _keyword_pattern?: T.CaseAsPattern | T.KeywordPattern | T.SimplePattern;
 		readonly _simple_pattern_negative?: T.CaseAsPattern | T.KeywordPattern | T.SimplePattern;
+		readonly _wildcard_pattern?: T.CaseAsPattern | T.KeywordPattern | T.SimplePattern;
 		readonly _class_pattern?: T.CaseAsPattern | T.KeywordPattern | T.SimplePattern;
 		readonly _splat_pattern?: T.CaseAsPattern | T.KeywordPattern | T.SimplePattern;
 		readonly _union_pattern?: T.CaseAsPattern | T.KeywordPattern | T.SimplePattern;
@@ -3613,7 +3616,8 @@ export function wrapCasePattern(
 				'_splat_pattern',
 				'_string',
 				'_true',
-				'_union_pattern'
+				'_union_pattern',
+				'_wildcard_pattern'
 			]),
 			$type: TSKindId.CasePattern as const,
 			_content: normalizeSingularWrapSlot(
@@ -3621,6 +3625,7 @@ export function wrapCasePattern(
 					data._case_as_pattern ??
 					data._keyword_pattern ??
 					data._simple_pattern_negative ??
+					data._wildcard_pattern ??
 					data._class_pattern ??
 					data._splat_pattern ??
 					data._union_pattern ??
@@ -3671,7 +3676,9 @@ export function wrapSimplePattern(
 		'_simple_pattern_negative',
 		'simple_pattern_negative',
 		'complex_pattern',
-		'dotted_name'
+		'dotted_name',
+		'_wildcard_pattern',
+		'wildcard_pattern'
 	]) as T.SimplePattern | readonly T.SimplePattern[] | undefined;
 	const filtered =
 		kindKeyed ??
@@ -3690,7 +3697,9 @@ export function wrapSimplePattern(
 			'_simple_pattern_negative',
 			'simple_pattern_negative',
 			'complex_pattern',
-			'dotted_name'
+			'dotted_name',
+			'_wildcard_pattern',
+			'wildcard_pattern'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
 		return drillIn<T.SimplePattern>(data as T.SimplePattern, tree);
@@ -3709,6 +3718,7 @@ export function wrapSimplePattern(
 export function wrapUnionPattern(
 	data: T.UnionPattern & {
 		readonly _simple_pattern_negative?: T.SimplePattern | readonly T.SimplePattern[];
+		readonly _wildcard_pattern?: T.SimplePattern | readonly T.SimplePattern[];
 		readonly _class_pattern?: T.SimplePattern | readonly T.SimplePattern[];
 		readonly _splat_pattern?: T.SimplePattern | readonly T.SimplePattern[];
 		readonly _union_pattern?: T.SimplePattern | readonly T.SimplePattern[];
@@ -3741,7 +3751,8 @@ export function wrapUnionPattern(
 				'_splat_pattern',
 				'_string',
 				'_true',
-				'_union_pattern'
+				'_union_pattern',
+				'_wildcard_pattern'
 			]),
 			$type: TSKindId.UnionPattern as const,
 			_simple_pattern: normalizeRepeatedWrapSlot(
@@ -3750,6 +3761,7 @@ export function wrapUnionPattern(
 						? _toArr(data._simple_pattern)
 						: _concatInSourceOrder([
 								data._simple_pattern_negative,
+								data._wildcard_pattern,
 								data._class_pattern,
 								data._splat_pattern,
 								data._union_pattern,
@@ -3779,7 +3791,8 @@ export function wrapUnionPattern(
 						'none',
 						'_simple_pattern_negative',
 						'complex_pattern',
-						'dotted_name'
+						'dotted_name',
+						'_wildcard_pattern'
 					]
 				),
 				true,
@@ -4725,7 +4738,7 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle) {
 					'%': 56,
 					'//': 57,
 					'**': 37,
-					'|': 47,
+					'|': 46,
 					'&': 58,
 					'^': 59,
 					'<<': 60,
@@ -8648,6 +8661,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	comprehension_clauses: (d, t) => wrapComprehensionClauses(d as unknown as T.ComprehensionClauses, t),
 	print_statement_group1: (d, t) => wrapPrintStatementGroup1(d as unknown as T.PrintStatementGroup1, t),
 	print_statement_group2: (d, t) => wrapPrintStatementGroup2(d as unknown as T.PrintStatementGroup2, t),
+	_wildcard_pattern: (d) => ({ ...d, $type: TSKindId.WildcardPattern as const }),
 	_assignment_eq: (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),
 	_assignment_type: (d, t) => wrapAssignmentType(d as unknown as T.AssignmentType, t),
 	_assignment_typed: (d, t) => wrapAssignmentTyped(d as unknown as T.AssignmentTyped, t),
@@ -8716,6 +8730,7 @@ const _aliasTargetToSource: Record<string, string> = {
 	statement: '_statement',
 	statement_group1: '_simple_statements',
 	unary_operator_operator: '_unary_operator_operator',
+	wildcard_pattern: '_wildcard_pattern',
 	with_clause_bare: '_with_clause_bare',
 	with_clause_paren: '_with_clause_paren'
 };

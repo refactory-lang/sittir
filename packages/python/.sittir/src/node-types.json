@@ -997,7 +997,7 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "case_as_pattern",
@@ -1061,6 +1061,10 @@
         },
         {
           "type": "union_pattern",
+          "named": true
+        },
+        {
+          "type": "wildcard_pattern",
           "named": true
         }
       ]
@@ -1557,10 +1561,6 @@
         "required": true,
         "types": [
           {
-            "type": "_",
-            "named": false
-          },
-          {
             "type": "case_list_pattern",
             "named": true
           },
@@ -1614,6 +1614,10 @@
           },
           {
             "type": "union_pattern",
+            "named": true
+          },
+          {
+            "type": "wildcard_pattern",
             "named": true
           }
         ]
@@ -2704,10 +2708,6 @@
         "required": true,
         "types": [
           {
-            "type": "_",
-            "named": false
-          },
-          {
             "type": "case_list_pattern",
             "named": true
           },
@@ -2761,6 +2761,10 @@
           },
           {
             "type": "union_pattern",
+            "named": true
+          },
+          {
+            "type": "wildcard_pattern",
             "named": true
           }
         ]
@@ -3966,7 +3970,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "case_list_pattern",
@@ -4022,6 +4026,10 @@
         },
         {
           "type": "union_pattern",
+          "named": true
+        },
+        {
+          "type": "wildcard_pattern",
           "named": true
         }
       ]
@@ -4099,6 +4107,11 @@
   },
   {
     "type": "wildcard_import",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "wildcard_pattern",
     "named": true,
     "fields": {}
   },

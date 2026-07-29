@@ -403,7 +403,7 @@ const _supertype_namedExpressionLhs_ids = new Set<number>([1]);
 const _supertype_expressions_ids = new Set<number>([161]);
 const _supertype_compoundStatement_ids = new Set<number>([131, 137, 138, 139, 142, 145, 154, 158, 134]);
 const _supertype_simplePattern_ids = new Set<number>([
-	170, 169, 165, 246, 245, 166, 227, 226, 88, 89, 90, 259, 171, 162
+	170, 169, 165, 246, 245, 166, 227, 226, 88, 89, 90, 260, 171, 162, 251
 ]);
 const _supertype_parameter_ids = new Set<number>([1, 204, 178, 179, 180, 176, 181]);
 const _supertype_pattern_ids = new Set<number>([1, 201, 200, 180, 176, 177]);
@@ -597,6 +597,7 @@ const _kindIdByKind = new Map<string, number>([
 	['comprehension_clauses', TSKindId.ComprehensionClauses],
 	['print_statement_group1', TSKindId.PrintStatementGroup1],
 	['print_statement_group2', TSKindId.PrintStatementGroup2],
+	['_wildcard_pattern', TSKindId.WildcardPattern],
 	['_assignment_eq', TSKindId.AssignmentEq],
 	['_assignment_type', TSKindId.AssignmentType],
 	['_assignment_typed', TSKindId.AssignmentTyped],

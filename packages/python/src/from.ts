@@ -588,7 +588,7 @@ const _K10: readonly string[] = [
 ];
 const _K11: readonly string[] = ['string'];
 const _K12: readonly string[] = ['class_definition', 'function_definition'];
-const _K13: readonly string[] = ['true', 'false', 'none'];
+const _K13: readonly string[] = ['true', 'false', 'none', '_wildcard_pattern'];
 const _K14: readonly string[] = [
 	'class_pattern',
 	'splat_pattern',

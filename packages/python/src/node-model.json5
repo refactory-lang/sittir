@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 258,
+  "nodeCount": 259,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -3497,6 +3497,7 @@
       "hidden": true,
       "subtypes": [
         "_simple_pattern_negative",
+        "_wildcard_pattern",
         "case_list_pattern",
         "case_tuple_pattern",
         "class_pattern",
@@ -3813,6 +3814,17 @@
         "~"
       ],
       "factoryShape": "text"
+    },
+    {
+      "kind": "_wildcard_pattern",
+      "modelType": "keyword",
+      "typeName": "WildcardPattern",
+      "factoryName": "wildcardPattern",
+      "irKey": "wildcardPattern",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"_\" as const",
+      "text": "_"
     },
     {
       "kind": "_with_clause_bare",

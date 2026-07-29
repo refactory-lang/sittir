@@ -380,7 +380,7 @@ export type PythonGrammar = {
 		fields: {};
 		children: {
 			multiple: false;
-			required: false;
+			required: true;
 			types: [
 				{ type: 'case_as_pattern'; named: true },
 				{ type: 'case_list_pattern'; named: true },
@@ -397,7 +397,8 @@ export type PythonGrammar = {
 				{ type: 'splat_pattern'; named: true },
 				{ type: 'string'; named: true },
 				{ type: 'true'; named: true },
-				{ type: 'union_pattern'; named: true }
+				{ type: 'union_pattern'; named: true },
+				{ type: 'wildcard_pattern'; named: true }
 			];
 		};
 	};
@@ -578,7 +579,6 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: '_'; named: false },
 					{ type: 'case_list_pattern'; named: true },
 					{ type: 'case_tuple_pattern'; named: true },
 					{ type: 'class_pattern'; named: true },
@@ -592,7 +592,8 @@ export type PythonGrammar = {
 					{ type: 'splat_pattern'; named: true },
 					{ type: 'string'; named: true },
 					{ type: 'true'; named: true },
-					{ type: 'union_pattern'; named: true }
+					{ type: 'union_pattern'; named: true },
+					{ type: 'wildcard_pattern'; named: true }
 				];
 			};
 			value: { multiple: false; required: true; types: [{ type: 'case_pattern'; named: true }] };
@@ -1044,7 +1045,6 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: '_'; named: false },
 					{ type: 'case_list_pattern'; named: true },
 					{ type: 'case_tuple_pattern'; named: true },
 					{ type: 'class_pattern'; named: true },
@@ -1058,7 +1058,8 @@ export type PythonGrammar = {
 					{ type: 'splat_pattern'; named: true },
 					{ type: 'string'; named: true },
 					{ type: 'true'; named: true },
-					{ type: 'union_pattern'; named: true }
+					{ type: 'union_pattern'; named: true },
+					{ type: 'wildcard_pattern'; named: true }
 				];
 			};
 		};
@@ -1516,7 +1517,7 @@ export type PythonGrammar = {
 		fields: {};
 		children: {
 			multiple: true;
-			required: false;
+			required: true;
 			types: [
 				{ type: 'case_list_pattern'; named: true },
 				{ type: 'case_tuple_pattern'; named: true },
@@ -1531,7 +1532,8 @@ export type PythonGrammar = {
 				{ type: 'splat_pattern'; named: true },
 				{ type: 'string'; named: true },
 				{ type: 'true'; named: true },
-				{ type: 'union_pattern'; named: true }
+				{ type: 'union_pattern'; named: true },
+				{ type: 'wildcard_pattern'; named: true }
 			];
 		};
 	};
@@ -1561,6 +1563,7 @@ export type PythonGrammar = {
 		};
 	};
 	readonly wildcard_import: { type: 'wildcard_import'; named: true; fields: {} };
+	readonly wildcard_pattern: { type: 'wildcard_pattern'; named: true; fields: {} };
 	readonly with_clause: {
 		type: 'with_clause';
 		named: true;

@@ -3710,6 +3710,19 @@ var overrides_default = grammar(
           optional(",")
         ),
         print_statement: ($) => choice(prec(1, $.print_statement_group1), prec(-3, prec.dynamic(-1, $.print_statement_group2))),
+        // Base `_simple_pattern`'s last arm is the bare literal `'_'`
+        // (the match-statement wildcard pattern). Every other arm is a
+        // named rule (`$.dotted_name`, `$.string`, ...), so when
+        // `_simple_pattern` (hidden) inlines into `case_pattern`, those
+        // arms surface as a real named child that routes into
+        // `case_pattern`'s singular `content` slot — but a bare string
+        // literal produces an ANONYMOUS/unnamed token instead, which
+        // the wrap layer's `content` accessor never finds ("singular
+        // slot 'content' on 'case_pattern' requires one value; got
+        // undefined"). Same root-cause class, same fix, as rust's
+        // `_pattern`/`_wildcard_pattern` (packages/rust/overrides.ts):
+        // alias the literal into its own real, named node so it can
+        // fill the slot like every sibling arm.
         _simple_pattern: ($) => prec(
           1,
           choice(
@@ -3727,9 +3740,10 @@ var overrides_default = grammar(
             seq(optional("-"), choice($.integer, $.float)),
             $.complex_pattern,
             $.dotted_name,
-            "_"
+            alias($._wildcard_pattern, $.wildcard_pattern)
           )
-        )
+        ),
+        _wildcard_pattern: ($) => "_"
       }
     },
     enrichedBase
