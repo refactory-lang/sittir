@@ -2601,9 +2601,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                     137 => Ok(Self::Metavariable(
                         MetavariableTransport::from_napi_value(env, napi_val)?
                     )),
-                    170 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
-                    )),
                     312 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
@@ -2641,6 +2638,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     339 => Ok(Self::NonSpecialToken(
+                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    )),
+                    170 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     126 => Ok(Self::BooleanLiteral(
@@ -3066,9 +3066,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                     137 => Ok(Self::Metavariable(
                         MetavariableTransport::from_napi_value(env, napi_val)?
                     )),
-                    170 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
-                    )),
                     312 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
@@ -3106,6 +3103,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokenPatternTransport {
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     339 => Ok(Self::NonSpecialToken(
+                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    )),
+                    170 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     126 => Ok(Self::BooleanLiteral(
@@ -3531,9 +3531,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokensTransport {
                     137 => Ok(Self::Metavariable(
                         MetavariableTransport::from_napi_value(env, napi_val)?
                     )),
-                    170 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
-                    )),
                     312 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
@@ -3571,6 +3568,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokensTransport {
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     339 => Ok(Self::NonSpecialToken(
+                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    )),
+                    170 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     126 => Ok(Self::BooleanLiteral(
@@ -3930,9 +3930,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokensTransport {
                     137 => Ok(Self::Metavariable(
                         MetavariableTransport::from_napi_value(env, napi_val)?
                     )),
-                    170 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
-                    )),
                     312 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
@@ -3970,6 +3967,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokensTransport {
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     339 => Ok(Self::NonSpecialToken(
+                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    )),
+                    170 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     126 => Ok(Self::BooleanLiteral(
@@ -7256,9 +7256,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         }
                         Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in ExpressionTransport"))
                     },
-                    238 => Ok(Self::ExpressionExceptRange(
-                        ExpressionExceptRangeTransport::from_napi_value(env, napi_val)?
-                    )),
                     248 => Ok(Self::ExpressionExceptRange(
                         ExpressionExceptRangeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -7389,6 +7386,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         ExpressionExceptRangeTransport::from_napi_value(env, napi_val)?
                     )),
                     281 => Ok(Self::ExpressionExceptRange(
+                        ExpressionExceptRangeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    238 => Ok(Self::ExpressionExceptRange(
                         ExpressionExceptRangeTransport::from_napi_value(env, napi_val)?
                     )),
                     126 => Ok(Self::BooleanLiteral(
@@ -7718,9 +7718,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         }
                         Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in ExpressionTransport"))
                     },
-                    238 => Ok(Self::ExpressionExceptRange(
-                        ExpressionExceptRangeTransport::from_napi_value(env, napi_val)?
-                    )),
                     248 => Ok(Self::ExpressionExceptRange(
                         ExpressionExceptRangeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -7851,6 +7848,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         ExpressionExceptRangeTransport::from_napi_value(env, napi_val)?
                     )),
                     281 => Ok(Self::ExpressionExceptRange(
+                        ExpressionExceptRangeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    238 => Ok(Self::ExpressionExceptRange(
                         ExpressionExceptRangeTransport::from_napi_value(env, napi_val)?
                     )),
                     126 => Ok(Self::BooleanLiteral(
@@ -8173,9 +8173,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in DelimTokensTransport"))
                     },
-                    243 => Ok(Self::NonDelimToken(
-                        NonDelimTokenTransport::from_napi_value(env, napi_val)?
-                    )),
                     312 => Ok(Self::NonDelimToken(
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
@@ -8216,6 +8213,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     6 => Ok(Self::NonDelimToken(
+                        NonDelimTokenTransport::from_napi_value(env, napi_val)?
+                    )),
+                    243 => Ok(Self::NonDelimToken(
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     170 => Ok(Self::TokenPatternGroup1(
@@ -8257,9 +8257,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in DelimTokensTransport"))
                     },
-                    243 => Ok(Self::NonDelimToken(
-                        NonDelimTokenTransport::from_napi_value(env, napi_val)?
-                    )),
                     312 => Ok(Self::NonDelimToken(
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
@@ -8300,6 +8297,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     6 => Ok(Self::NonDelimToken(
+                        NonDelimTokenTransport::from_napi_value(env, napi_val)?
+                    )),
+                    243 => Ok(Self::NonDelimToken(
                         NonDelimTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     170 => Ok(Self::TokenPatternGroup1(
@@ -8492,9 +8492,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                         }
                         Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in NonDelimTokenTransport"))
                     },
-                    170 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
-                    )),
                     312 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
@@ -8532,6 +8529,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     339 => Ok(Self::NonSpecialToken(
+                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    )),
+                    170 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     126 => Ok(Self::BooleanLiteral(
@@ -8930,9 +8930,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                         }
                         Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in NonDelimTokenTransport"))
                     },
-                    170 => Ok(Self::NonSpecialToken(
-                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
-                    )),
                     312 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
@@ -8970,6 +8967,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     339 => Ok(Self::NonSpecialToken(
+                        NonSpecialTokenTransport::from_napi_value(env, napi_val)?
+                    )),
+                    170 => Ok(Self::NonSpecialToken(
                         NonSpecialTokenTransport::from_napi_value(env, napi_val)?
                     )),
                     126 => Ok(Self::BooleanLiteral(
@@ -9699,9 +9699,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         }
                         Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in ConditionTransport"))
                     },
-                    239 => Ok(Self::Expression(
-                        ExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
                     248 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
@@ -9835,6 +9832,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     247 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    239 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     238 => Ok(Self::ExpressionExceptRange(
@@ -10191,9 +10191,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         }
                         Err(::napi::Error::from_reason("unknown reserved supertype kind id {kind_id} in ConditionTransport"))
                     },
-                    239 => Ok(Self::Expression(
-                        ExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
                     248 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
@@ -10327,6 +10324,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConditionTransport {
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     247 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    239 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     238 => Ok(Self::ExpressionExceptRange(
@@ -10526,9 +10526,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in PatternTransport"))
                     },
-                    310 => Ok(Self::LiteralPattern(
-                        LiteralPatternTransport::from_napi_value(env, napi_val)?
-                    )),
                     312 => Ok(Self::LiteralPattern(
                         LiteralPatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -10548,6 +10545,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         LiteralPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     311 => Ok(Self::LiteralPattern(
+                        LiteralPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    310 => Ok(Self::LiteralPattern(
                         LiteralPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     126 => Ok(Self::BooleanLiteral(
@@ -10712,9 +10712,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in PatternTransport"))
                     },
-                    310 => Ok(Self::LiteralPattern(
-                        LiteralPatternTransport::from_napi_value(env, napi_val)?
-                    )),
                     312 => Ok(Self::LiteralPattern(
                         LiteralPatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -10734,6 +10731,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         LiteralPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     311 => Ok(Self::LiteralPattern(
+                        LiteralPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    310 => Ok(Self::LiteralPattern(
                         LiteralPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     126 => Ok(Self::BooleanLiteral(

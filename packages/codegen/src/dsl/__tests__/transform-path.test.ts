@@ -336,12 +336,10 @@ describe('transform() — object form (flat positional, backward-compat)', () =>
 
 describe('transform() — flat positional keys on a CHOICE with heterogeneous arms', () => {
 	it('patches every arm that has the position, leaves shorter arms untouched', () => {
-		// arm 0 has position 1, arm 1 (length 1) does not.
 		const rule = choice(seq(sym('a'), sym('b')), seq(sym('c')));
 		const result = transform(rule, { 1: fld('right', sym('b')) });
 		const r = result as any;
 		expect(r.members[0].members[1]).toMatchObject({ type: 'FIELD', name: 'right' });
-		// Untouched sibling arm — still its original bare symbol, not an error.
 		expect(r.members[1].members[0]).toMatchObject({ type: 'SYMBOL', name: 'c' });
 	});
 

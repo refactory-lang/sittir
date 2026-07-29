@@ -1,6 +1,6 @@
 {
   "grammar": "python",
-  "source_hash": "8aca4940048e9f04a3aa42f5bc0a6b9b93ea7a8dd8d476a199218b757e02a3f1",
+  "source_hash": "184c1aeba8f83db2aed711112b432a5503bb0e8e8657039a831dac395ff4f4de",
   "files": {
     "packages/python/.sittir/grammar-diagnostics.json": "4edda77734fbf984c97eb4c72e11e1385ce3ca2394f0a285998b5f2616f16036",
     "packages/python/.sittir/grammar.js": "0f4263c53519a91607dc829523fafaf1654c2e72c7692ab64451f97bbfefbbeb",
@@ -173,7 +173,7 @@
     "rust/crates/sittir-python/src/render/kind_ids.rs": "21e0d23246b7fc9ff289139c414fa8331fd06ec1af0a7e669ef9cdf42b76524a",
     "rust/crates/sittir-python/src/render/mod.rs": "14f77486eceadda25f32c7b9110cbd52271d83f5d56fbfde936ef9752667ed51",
     "rust/crates/sittir-python/src/render/templates.rs": "57f25823c26050ec0a039eda91deef0e533093a1fe9ebcf3b280a57b294a7153",
-    "rust/crates/sittir-python/src/render/transport.rs": "634c76fc29122dcc29a7061545a2a718a708e2e968ff85a8b15cb9114bdd1538",
+    "rust/crates/sittir-python/src/render/transport.rs": "531fdc21472e50b98dc071a879f16609374f4a9dbfabaedcc2a5b7a477aab2e3",
     "rust/crates/sittir-python/templates/_argument_list_group1.jinja": "17f94539b10c43bf640622e867bb2c6986d44ca806ee837888b62ceec35cb6d0",
     "rust/crates/sittir-python/templates/_assignment_eq.jinja": "150fdea50d889b1fbef4e38bb862aee38d11abdebb18b80b93550b3bf5cd7f94",
     "rust/crates/sittir-python/templates/_assignment_type.jinja": "9b64e165cdfe04a6df558cb44841bbfc31bf911bd4201f679ebf47fd010f747d",

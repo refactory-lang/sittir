@@ -69,6 +69,7 @@ import {
 	collectCatalogKinds,
 	findKindEntry,
 	findKindEntryForLiteral,
+	hasCatalogEntry,
 	kindIdMemberName,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
@@ -2221,25 +2222,19 @@ function emitSupertypeTransportEnum(
 				const variant = rustTypeIdent(subNode.typeName);
 				const typeName = rustTransportStructName(subNode);
 				// Owner-kind / supertype-membership ids stay name-resolved (spec §2.3
-				// keep-list); enum member ids are stamped facts (PR-K3b).
-				const acceptedKinds = new Set([subKind, ...collectConcreteTransportKinds(subKind, nodeMap)]);
-				const acceptedIds = [...acceptedKinds]
-					.map((k) => kindIdByKind.get(k))
-					.filter((id): id is number => id !== undefined);
-				// Aliased arm: also accept the parse name's id — the alias
-				// occurrence's own runtime symbol (`alias_sym_*`), the id
-				// tree-sitter actually emits at that arm's position. Resolved
-				// through THE kind-name chain (its `_`-prefix step is what maps
-				// a mint's visible name to its `alias_sym_*` catalog row).
-				const parseName = parseNames.get(subKind);
-				if (parseName !== undefined && kindEntries !== undefined) {
-					const parseEntry = findKindEntry(kindEntries, parseName);
-					const parseId = parseEntry?.parseId ?? parseEntry?.id;
-					if (parseId !== undefined) acceptedIds.push(parseId);
-				}
-				if (subNode instanceof AssembledEnum) {
-					acceptedIds.push(...enumMemberAcceptedIds(subNode));
-				}
+				// keep-list); enum member ids are stamped facts (PR-K3b). Aliased arm:
+				// `parseNames.get(subKind)` also accepts the parse name's id — the
+				// alias occurrence's own runtime symbol (`alias_sym_*`), the id
+				// tree-sitter actually emits at that arm's position.
+				const acceptedIds = resolveAcceptedTransportIds({
+					kind: subKind,
+					node: subNode,
+					nodeMap,
+					kindIdByKind,
+					kindEntries,
+					parseName: parseNames.get(subKind)
+				});
+				assertRoutableTransportIds(acceptedIds, subKind, variant, enumName, `under supertype '${ownerKind}'`, kindEntries);
 				const boxed = isBoxed(subKind, subNode);
 				for (const id of acceptedIds) {
 					if (emittedIds.has(id)) continue;
@@ -2399,6 +2394,89 @@ function collectConcreteTransportKinds(kind: string, nodeMap: NodeMap, seen: Set
 		}
 	}
 	return [...concreteKinds];
+}
+
+interface AcceptedTransportIdsInput {
+	kind: string;
+	node: AssembledNode;
+	nodeMap: NodeMap;
+	kindIdByKind: ReadonlyMap<string, number>;
+	kindEntries?: readonly KindEnumEntry[];
+	/** Per-reference-site mint stamp (slot values only) — authoritative when present. */
+	stampedIds?: readonly number[];
+	/** Name-derived alias map for this slot/field (`aliasTargetToSourceMapOf`), used to
+	 *  expand `kind`'s alias-site names when no mint stamp is available. */
+	parseAliases?: Readonly<Record<string, string>>;
+	/** This kind's own alias-occurrence parse name (e.g. supertype `subtypeParseNames`),
+	 *  when it's reached only via `alias($.kind, $.parseName)` at this position. */
+	parseName?: string;
+}
+
+/**
+ * Single derivation of "which numeric kind_ids should route to this concrete
+ * kind at this reference site" — shared by `emitPerSlotChildEnum` and
+ * `emitSupertypeTransportEnum`, which previously reimplemented slightly
+ * divergent versions of this chain (one had the mint-stamp fast path and the
+ * fixed-literal fallback; the other had parse-alias resolution but neither of
+ * those) — the exact kind of drift that let a routable kind silently resolve
+ * zero ids in one path and not the other.
+ */
+function resolveAcceptedTransportIds(input: AcceptedTransportIdsInput): number[] {
+	const { kind, node, nodeMap, kindIdByKind, kindEntries, stampedIds, parseAliases, parseName } = input;
+	const acceptedIds: number[] =
+		stampedIds !== undefined
+			? [...stampedIds]
+			: [
+					...new Set<string>([
+						...collectConcreteTransportKinds(kind, nodeMap),
+						...acceptedTransportKinds(kind, nodeMap, parseAliases)
+					])
+				].map((k) => kindIdByKind.get(k)).filter((id): id is number => id !== undefined);
+	if (parseName !== undefined && kindEntries !== undefined) {
+		const parseEntry = findKindEntry(kindEntries, parseName);
+		const parseId = parseEntry?.parseId ?? parseEntry?.id;
+		if (parseId !== undefined) acceptedIds.push(parseId);
+	}
+	if (node instanceof AssembledEnum) {
+		acceptedIds.push(...enumMemberAcceptedIds(node));
+	}
+	// A pattern whose sole realization is a fixed literal (e.g. `_semicolon` =
+	// `choice($._automatic_semicolon, ';')` → `';'`) has no catalog row under
+	// its own hidden name, so neither the mint stamp nor the name-derived
+	// chain above resolves an id for it. Resolve through the same
+	// literal-first chain already used for `entry.literals`.
+	if (node.modelType === 'pattern' && node.fixedLiteralText !== undefined && kindEntries !== undefined) {
+		const literalId = findKindEntryForLiteral(kindEntries, node.fixedLiteralText)?.id;
+		if (literalId !== undefined) acceptedIds.push(literalId);
+	}
+	return acceptedIds;
+}
+
+/**
+ * A concrete member kind that resolves zero ids would still get a variant in
+ * the enum but no match arm ever routes to it — any node of this kind
+ * arriving at this position falls through to the generated catch-all
+ * `Err("unknown kind id")`, silently, with no compile error and no coverage
+ * failure unless the corpus happens to exercise this exact shape. Kinds with
+ * no catalog entry at all (VAPORIZED / inline / synthesized — see
+ * `warnSkippedParserSymbol`) never had a parser symbol to route by in the
+ * first place; that's a separate, already-surfaced condition, not this
+ * check's concern.
+ */
+function assertRoutableTransportIds(
+	acceptedIds: readonly number[],
+	kind: string,
+	variant: string,
+	enumName: string,
+	context: string,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): void {
+	if (acceptedIds.length > 0 || !hasCatalogEntry(kindEntries, kind)) return;
+	throw new Error(
+		`${enumName}: storage kind '${kind}' (variant ${variant}) resolved zero kind_ids — ` +
+			`neither the mint-stamp chain, the name-derived alias chain, the parse-alias id, ` +
+			`enum-member ids, nor the fixed-literal fallback found a routable id for it ${context}`
+	);
 }
 
 function admitsVerbatimCollapse(kinds: readonly string[], nodeMap: NodeMap): boolean {
@@ -2593,26 +2671,16 @@ function emitPerSlotChildEnum(
 			// keyed alias redirects, per reference site). The name chain remains
 			// only for kinds with no value in hand (supertype-expanded arms) or
 			// id-less values.
-			const stampedIds = entry.acceptedIdsByKind.get(kind);
-			const acceptedIds =
-				stampedIds !== undefined
-					? [...stampedIds]
-					: [...new Set<string>(acceptedTransportKinds(kind, nodeMap, entry.parseAliases))]
-							.map((k) => kindIdByKind.get(k))
-							.filter((id): id is number => id !== undefined);
-			if (node instanceof AssembledEnum) {
-				acceptedIds.push(...enumMemberAcceptedIds(node));
-			}
-			// A pattern whose sole realization is a fixed literal (e.g.
-			// `_semicolon` = `choice($._automatic_semicolon, ';')` → `';'`)
-			// has no catalog row under its own hidden name, so neither the
-			// mint stamp nor the name-derived chain above resolves an id for
-			// it. Resolve through the same literal-first chain already used
-			// for `entry.literals` below (~3106-3110).
-			if (node.modelType === 'pattern' && node.fixedLiteralText !== undefined && kindEntries !== undefined) {
-				const literalId = findKindEntryForLiteral(kindEntries, node.fixedLiteralText)?.id;
-				if (literalId !== undefined) acceptedIds.push(literalId);
-			}
+			const acceptedIds = resolveAcceptedTransportIds({
+				kind,
+				node,
+				nodeMap,
+				kindIdByKind,
+				kindEntries,
+				stampedIds: entry.acceptedIdsByKind.get(kind),
+				parseAliases: entry.parseAliases
+			});
+			assertRoutableTransportIds(acceptedIds, kind, variant, enumName, `in ${ownerKind}.${entry.fieldName}`, kindEntries);
 			const boxed = isBoxed(kind, node);
 			for (const id of acceptedIds) {
 				if (emittedIds.has(id)) continue;

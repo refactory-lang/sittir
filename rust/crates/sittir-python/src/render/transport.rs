@@ -1835,9 +1835,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionsTransport {
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    184 => Ok(Self::Expression(
-                        ExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
                     192 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
@@ -1932,6 +1929,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionsTransport {
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     182 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    184 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     161 => Ok(Self::ExpressionList(
@@ -1952,9 +1952,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionsTransport {
                     ::napi::Error::from_reason("$type property missing in ExpressionsTransport")
                 )?;
                 match kind_id {
-                    184 => Ok(Self::Expression(
-                        ExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
                     192 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
@@ -2049,6 +2046,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionsTransport {
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     182 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    184 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     161 => Ok(Self::ExpressionList(
@@ -2935,9 +2935,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionWithinForInClauseTrans
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ExpressionWithinForInClauseTransport"))
                     },
-                    184 => Ok(Self::Expression(
-                        ExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
                     192 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
@@ -3032,6 +3029,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionWithinForInClauseTrans
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     182 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    184 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     194 => Ok(Self::LambdaWithinForInClause(
@@ -3061,9 +3061,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionWithinForInClauseTrans
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in ExpressionWithinForInClauseTransport"))
                     },
-                    184 => Ok(Self::Expression(
-                        ExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
                     192 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
@@ -3158,6 +3155,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionWithinForInClauseTrans
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     182 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    184 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     194 => Ok(Self::LambdaWithinForInClause(
@@ -3273,9 +3273,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     193 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    185 => Ok(Self::PrimaryExpression(
-                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
                     233 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
@@ -3349,6 +3346,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::PrimaryExpression(
+                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    185 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     225 => Ok(Self::ConditionalExpression(
@@ -3414,9 +3414,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     193 => Ok(Self::Lambda(
                         LambdaTransport::from_napi_value(env, napi_val)?
                     )),
-                    185 => Ok(Self::PrimaryExpression(
-                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
                     233 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
@@ -3490,6 +3487,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::PrimaryExpression(
+                        PrimaryExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    185 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     225 => Ok(Self::ConditionalExpression(
@@ -4028,9 +4028,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for LeftHandSideTransport {
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    175 => Ok(Self::Pattern(
-                        PatternTransport::from_napi_value(env, napi_val)?
-                    )),
                     1 => Ok(Self::Pattern(
                         PatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -4047,6 +4044,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for LeftHandSideTransport {
                         PatternTransport::from_napi_value(env, napi_val)?
                     )),
                     177 => Ok(Self::Pattern(
+                        PatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    175 => Ok(Self::Pattern(
                         PatternTransport::from_napi_value(env, napi_val)?
                     )),
                     197 => Ok(Self::PatternList(
@@ -4067,9 +4067,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for LeftHandSideTransport {
                     ::napi::Error::from_reason("$type property missing in LeftHandSideTransport")
                 )?;
                 match kind_id {
-                    175 => Ok(Self::Pattern(
-                        PatternTransport::from_napi_value(env, napi_val)?
-                    )),
                     1 => Ok(Self::Pattern(
                         PatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -4086,6 +4083,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for LeftHandSideTransport {
                         PatternTransport::from_napi_value(env, napi_val)?
                     )),
                     177 => Ok(Self::Pattern(
+                        PatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    175 => Ok(Self::Pattern(
                         PatternTransport::from_napi_value(env, napi_val)?
                     )),
                     197 => Ok(Self::PatternList(
@@ -4181,9 +4181,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for RightHandSideTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in RightHandSideTransport"))
                     },
-                    184 => Ok(Self::Expression(
-                        ExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
                     192 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
@@ -4278,6 +4275,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for RightHandSideTransport {
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     182 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    184 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     161 => Ok(Self::ExpressionList(
@@ -4331,9 +4331,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for RightHandSideTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in RightHandSideTransport"))
                     },
-                    184 => Ok(Self::Expression(
-                        ExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
                     192 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
@@ -4428,6 +4425,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for RightHandSideTransport {
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     182 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    184 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     161 => Ok(Self::ExpressionList(
@@ -4527,9 +4527,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for FExpressionTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in FExpressionTransport"))
                     },
-                    184 => Ok(Self::Expression(
-                        ExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
                     192 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
@@ -4624,6 +4621,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for FExpressionTransport {
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     182 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    184 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     161 => Ok(Self::ExpressionList(
@@ -4665,9 +4665,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for FExpressionTransport {
                         }
                         Err(::napi::Error::from_reason("unknown aliased kind id {kind_id} in FExpressionTransport"))
                     },
-                    184 => Ok(Self::Expression(
-                        ExpressionTransport::from_napi_value(env, napi_val)?
-                    )),
                     192 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
@@ -4762,6 +4759,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for FExpressionTransport {
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     182 => Ok(Self::Expression(
+                        ExpressionTransport::from_napi_value(env, napi_val)?
+                    )),
+                    184 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     161 => Ok(Self::ExpressionList(
