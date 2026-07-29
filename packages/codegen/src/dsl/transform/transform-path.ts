@@ -154,13 +154,23 @@ export function applyPath(
 	patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
 	precStack?: readonly RuntimeRule[]
 ): RuntimeRule {
+	// Precedence wrappers are transparent to path addressing EVEN AT THE TARGET
+	// POSITION (segments.length === 0), same as the group-lift-symbol and
+	// content-alias transparency below — a patch path resolves against the
+	// pre-mint structure, and enrich's PREC-descent mint (mintStructuredChoiceArm)
+	// now produces PREC(ALIAS(...)) arms whose precedence must ride through to
+	// the rebuilt result (descendThroughPrecWrapper's own recursion already
+	// re-wraps correctly; this check only needed to come BEFORE the
+	// segments.length === 0 leaf case below it used to fall through to, handing
+	// callers like resolvePatch's variant() branch the raw unpeeled PREC node
+	// instead of its content — see typescript's call_expression regression).
+	if (isPrecWrapperShape(rule)) {
+		return descendThroughPrecWrapper(rule, segments, patch, precStack);
+	}
+
 	if (segments.length === 0) {
 		// Reached the target position — apply the patch.
 		return typeof patch === 'function' ? patch(rule, precStack) : patch;
-	}
-
-	if (isPrecWrapperShape(rule)) {
-		return descendThroughPrecWrapper(rule, segments, patch, precStack);
 	}
 
 	// Enrich group-lift symbols are transparent to path addressing, like prec

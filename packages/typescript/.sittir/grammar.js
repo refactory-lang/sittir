@@ -138,11 +138,11 @@ function parsePath(pathStr) {
 var membersOf = (r) => r.members;
 var contentOf = (r) => r.content;
 function applyPath(rule, segments, patch, precStack) {
-  if (segments.length === 0) {
-    return typeof patch === "function" ? patch(rule, precStack) : patch;
-  }
   if (isPrecWrapper(rule)) {
     return descendThroughPrecWrapper(rule, segments, patch, precStack);
+  }
+  if (segments.length === 0) {
+    return typeof patch === "function" ? patch(rule, precStack) : patch;
   }
   if (isEnrichGroupLiftSymbol(rule)) {
     return descendThroughGroupLiftSymbol(rule, segments, patch, precStack);
@@ -2245,6 +2245,23 @@ function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, co
   const t = arm.type;
   if (typeof t !== "string") return null;
   if (armStartsWithSymbol(arm, collidingLeadingNames, rulesBag)) return null;
+  if (isPrecWrapper(arm)) {
+    const content = arm.content;
+    if (!content) return null;
+    const minted = mintStructuredChoiceArm(
+      content,
+      parentKind,
+      rulesBag,
+      clauseGroupRules,
+      counter,
+      groupDedupeMap,
+      visibleGroupHiddenNames,
+      clauseGroupOwners,
+      collidingLeadingNames
+    );
+    if (!minted) return null;
+    return { ...arm, content: minted };
+  }
   if (isSymbolType(t)) {
     const name = arm.name;
     if (typeof name !== "string" || !name.startsWith("_")) return null;
@@ -3430,6 +3447,39 @@ var overrides_default = grammar(
         [$.await_expression, $._update_expression_postfix],
         [$.await_expression, $._update_expression_group1],
         [$.arrow_function, $._update_expression_group1],
+        [$.await_expression, $._call_expression_call],
+        [$.instantiation_expression, $._call_expression_call],
+        [$.await_expression, $._binary_expression_group1],
+        [$.as_expression, $._binary_expression_group1],
+        [$._call_expression_call, $._binary_expression_group1],
+        // _binary_expression_group1 (the `in`-operator arm, freshly extracted —
+        // same PREC-descent mechanism as call_expression's arms above) mirrors
+        // binary_expression's own conflict set: every continuation that used to
+        // share LR state with the whole (unsplit) binary_expression choice needs
+        // the same explicit GLR declaration now that this one arm has its own
+        // symbol boundary.
+        [$.call_expression, $._binary_expression_group1, $.unary_expression, $.instantiation_expression],
+        [$.call_expression, $.await_expression, $._binary_expression_group1, $.instantiation_expression],
+        [$.call_expression, $._binary_expression_group1, $.update_expression, $.instantiation_expression],
+        [$.call_expression, $._binary_expression_group1, $.instantiation_expression],
+        [$._initializer, $._binary_expression_group1],
+        [$._binary_expression_group1, $.unary_expression, $.instantiation_expression, $._call_expression_call],
+        [$.await_expression, $._binary_expression_group1, $.instantiation_expression, $._call_expression_call],
+        [$._binary_expression_group1, $.update_expression, $.instantiation_expression, $._call_expression_call],
+        [$._binary_expression_group1, $.instantiation_expression, $._call_expression_call],
+        [$.subscript_expression, $._binary_expression_group1],
+        [$.member_expression, $._binary_expression_group1],
+        [$.member_expression, $.subscript_expression, $._binary_expression_group1],
+        [$.binary_expression, $.instantiation_expression, $._call_expression_call, $._binary_expression_group1],
+        [$.non_null_expression, $._binary_expression_group1],
+        [$.satisfies_expression, $._binary_expression_group1],
+        [$._binary_expression_group1, $._update_expression_postfix],
+        [$._binary_expression_group1, $._update_expression_prefix],
+        [$._binary_expression_group1, $._update_expression_group1],
+        [$.ternary_expression, $._binary_expression_group1],
+        [$.arrow_function, $._call_expression_call],
+        [$.arrow_function, $._binary_expression_group1],
+        [$.expression, $._call_expression_template_call],
         [$._variable_declarator_group1, $._for_header_group2],
         [$.primary_expression, $._for_header_group2],
         [$._variable_declarator_group1, $._for_header_let_const_kind],

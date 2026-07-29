@@ -319,7 +319,7 @@ function collapseOptionalRepeatInField(resolved: Rule<'evaluate'>): Rule<'evalua
 
 interface TokenFn {
 	(content: Input): TokenRule<'evaluate'>;
-	immediate: (content: Input) => TokenRule<'evaluate'>;
+	immediate: (content: Input) => Rule<'evaluate'>;
 }
 
 export const token: TokenFn = Object.assign(
@@ -327,14 +327,24 @@ export const token: TokenFn = Object.assign(
 		return { type: TOKEN, content: normalize(content), immediate: false };
 	},
 	{
-		immediate(content: Input): TokenRule<'evaluate'> {
-			return { type: TOKEN, content: normalize(content), immediate: true };
+		// Real IMMEDIATE_TOKEN node (tree-sitter's own dsl.js shape), not
+		// `{type: TOKEN, immediate: true}` — see the ImmediateTokenRule doc
+		// comment in types/rule.ts. `grammarFn`'s `normalizeImmediateTokens`
+		// folds this into TOKEN+immediate once enrich's minting decisions
+		// (which must see the same arm shape under both runtimes) are locked in.
+		immediate(content: Input): Rule<'evaluate'> {
+			return { type: 'IMMEDIATE_TOKEN', content: normalize(content) } as Rule<'evaluate'>;
 		}
 	}
 );
 
 // ---------------------------------------------------------------------------
-// Precedence — stripped; returns the content Rule<'evaluate'>
+// Precedence — wrapped as a transient Prec*Rule (PREC/PREC_LEFT/PREC_RIGHT/
+// PREC_DYNAMIC, matching tree-sitter's own dsl.js prec shape and the
+// grammar-shapes/grammar-json.ts family already modeled for it) so enrich's
+// minting decisions see the same arm shape under both runtimes. `grammarFn`
+// strips every Prec*Rule back to its content once enrich's minting pass
+// completes — see the doc comment on these types in types/rule.ts.
 // ---------------------------------------------------------------------------
 
 interface PrecFn {
@@ -344,26 +354,88 @@ interface PrecFn {
 	dynamic: (precedence: number, content: Input) => Rule<'evaluate'>;
 }
 
+function makePrecRule(
+	type: 'PREC' | 'PREC_LEFT' | 'PREC_RIGHT' | 'PREC_DYNAMIC',
+	value: number,
+	content: Input
+): Rule<'evaluate'> {
+	return { type, content: normalize(content), value } as Rule<'evaluate'>;
+}
+
 export const prec: PrecFn = Object.assign(
 	function prec(precedenceOrContent: number | Input, content?: Input): Rule<'evaluate'> {
 		if (content === undefined) return normalize(precedenceOrContent as Input);
-		return normalize(content);
+		return makePrecRule('PREC', precedenceOrContent as number, content);
 	},
 	{
 		left(precedenceOrContent: number | Input, content?: Input): Rule<'evaluate'> {
 			if (content == null) return normalize(precedenceOrContent as Input);
-			return normalize(content);
+			return makePrecRule('PREC_LEFT', precedenceOrContent as number, content);
 		},
 		right(precedenceOrContent: number | Input, content?: Input): Rule<'evaluate'> {
 			if (content == null) return normalize(precedenceOrContent as Input);
-			return normalize(content);
+			return makePrecRule('PREC_RIGHT', precedenceOrContent as number, content);
 		},
 		dynamic(precedenceOrContent: number | Input, content?: Input): Rule<'evaluate'> {
 			if (content == null) return normalize(precedenceOrContent as Input);
-			return normalize(content);
+			return makePrecRule('PREC_DYNAMIC', precedenceOrContent as number, content);
 		}
 	}
 );
+
+// Sittir-runtime-exclusive cleanup: by the time `grammarFn` calls this (right
+// after `evaluateRulesAndInjectSynthetics`, i.e. after enrich's minting
+// decisions over the Prec*Rule-shaped tree are locked in — see
+// `mintStructuredChoiceArm`'s PREC-descent branch in dsl/enrich.ts), every
+// Prec*Rule node has served its only purpose (letting enrich see the same arm
+// shape tree-sitter's CLI runtime sees). Tree-sitter's own compiler resolves
+// precedence directly from its OWN parallel evaluation of the same DSL
+// source, so sittir's IR has no further use for the wrapper — link/normalize/
+// simplify never need to see it. Strips every occurrence, not just the root:
+// a hidden group's registered body can itself be Prec*Rule-wrapped (see
+// `visibleGroupSynthName`'s `ambientPrec` re-wrap).
+function stripPrecedenceWrappers(rules: Record<string, Rule<'evaluate'>>): void {
+	const isPrecType = (t: string): boolean =>
+		t === 'PREC' || t === 'PREC_LEFT' || t === 'PREC_RIGHT' || t === 'PREC_DYNAMIC';
+	const peel = (r: Rule<'evaluate'>): Rule<'evaluate'> => {
+		let out = r;
+		while (isPrecType(out.type)) out = (out as unknown as { content: Rule<'evaluate'> }).content;
+		return out;
+	};
+	const walker = new RuleWalker<Rule<'evaluate'>>(rules);
+	for (const name of Object.keys(rules)) {
+		const rule = rules[name];
+		if (!rule) continue;
+		const stripped = peel(walker.map(rule, peel));
+		if (stripped !== rule) rules[name] = stripped;
+	}
+}
+
+// Sittir-runtime-exclusive normalization: folds every real IMMEDIATE_TOKEN
+// node (see ImmediateTokenRule's doc comment in types/rule.ts) into
+// TOKEN+`immediate: true` once enrich's dedup/equality decisions —
+// dsl/list-patterns.ts's `rulesEqual` dispatches purely on `type`, so it needs
+// the distinct IMMEDIATE_TOKEN tag to tell `token.immediate(x)` apart from
+// `token(x)` — are locked in. Downstream phases (Link onward) already expect
+// immediate-ness as TokenRule's boolean field, never a separate type tag —
+// see docs/glossary/compiler-model.md's `NodeRef.immediate`.
+function normalizeImmediateTokens(rules: Record<string, Rule<'evaluate'>>): void {
+	const toToken = (r: Rule<'evaluate'>): Rule<'evaluate'> =>
+		r.type === 'IMMEDIATE_TOKEN'
+			? ({
+					type: TOKEN,
+					content: (r as unknown as { content: Rule<'evaluate'> }).content,
+					immediate: true
+				} as Rule<'evaluate'>)
+			: r;
+	const walker = new RuleWalker<Rule<'evaluate'>>(rules);
+	for (const name of Object.keys(rules)) {
+		const rule = rules[name];
+		if (!rule) continue;
+		const normalized = toToken(walker.map(rule, toToken));
+		if (normalized !== rule) rules[name] = normalized;
+	}
+}
 
 // ---------------------------------------------------------------------------
 // Alias + blank (needed for grammar.js compatibility)
@@ -490,6 +562,8 @@ function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: G
 
 	const { roles: collectedRoles } = withRoleScope(() => {
 		evaluateRulesAndInjectSynthetics(rules, ctx);
+		stripPrecedenceWrappers(rules);
+		normalizeImmediateTokens(rules);
 		// adoptFinalBaseRules is now called inside evaluateRulesAndInjectSynthetics,
 		// before applyPatternReplacement, so body-patterns can match FIELD-wrapped
 		// bodies that were written back via group-lift during rule evaluation.
@@ -1535,9 +1609,9 @@ function rewriteVisibleExternalRefs(rule: Rule<'evaluate'>, ctx: VisibleExternal
 	}
 	switch (rule.type) {
 		case SEQ: {
-			const r = rule as SeqRule<'evaluate'>;
-			const members = rewriteVisibleExternalRefsInArray(r.members, ctx);
-			return members === r.members ? rule : ({ ...r, members } as Rule<'evaluate'>);
+			const r = rule;
+			const members = rewriteVisibleExternalRefsInArray(rule.members, ctx);
+			return members === r.members ? rule : { ...rule, members };
 		}
 		case CHOICE: {
 			const r = rule as ChoiceRule<'evaluate'>;
@@ -1984,6 +2058,17 @@ function identifyChildren(args: IdentifyParams & { readonly selfId: RuleId }): B
 		case VARIANT:
 		case GROUP:
 		case TOKEN:
+		/* PREC family: stripped by stripPrecedenceWrappers before
+		   buildRuleCatalog runs — unreachable at runtime, transparent
+		   single-child wrapper for exhaustiveness. */
+		case 'PREC':
+		case 'PREC_LEFT':
+		case 'PREC_RIGHT':
+		case 'PREC_DYNAMIC':
+		/* IMMEDIATE_TOKEN is folded into TOKEN+immediate by
+		   normalizeImmediateTokens before buildRuleCatalog runs —
+		   unreachable at runtime, transparent single-child wrapper. */
+		case 'IMMEDIATE_TOKEN':
 			return [childParams({ rule: params.rule.content, segment: { edge: 'content' } })];
 		case FIELD:
 			return [
@@ -2039,6 +2124,13 @@ function withIdentifiedChildren(args: {
 		case FIELD:
 		case ALIAS:
 		case TOKEN:
+		/* PREC family: stripped before this runs — unreachable at runtime,
+		   transparent single-child wrapper for exhaustiveness. */
+		case 'PREC':
+		case 'PREC_LEFT':
+		case 'PREC_RIGHT':
+		case 'PREC_DYNAMIC':
+		case 'IMMEDIATE_TOKEN':
 			return { ...rule, id, content: children[0]!.rule };
 		case SUPERTYPE:
 		case STRING:

@@ -64,6 +64,20 @@ export function classifyByType(
 		case OPTIONAL:
 		case VARIANT:
 		case GROUP:
+		/* PREC family is stripped by evaluate.ts's `stripPrecedenceWrappers`
+		   before this runs — see that function's doc comment — so these
+		   cases are unreachable at runtime. Transparent single-child wrapper,
+		   same as TOKEN/FIELD above. String literals (not rule-types.ts
+		   consts): that module is deprecated for new imports — see its
+		   header. */
+		case 'PREC':
+		case 'PREC_LEFT':
+		case 'PREC_RIGHT':
+		case 'PREC_DYNAMIC':
+		/* IMMEDIATE_TOKEN is folded into TOKEN+immediate by evaluate.ts's
+		   `normalizeImmediateTokens` before this runs — unreachable at
+		   runtime, transparent single-child wrapper like TOKEN. */
+		case 'IMMEDIATE_TOKEN':
 			return anyChildNonterminal ? 'nonterminal' : 'terminal';
 		default:
 			return assertNever(ruleType);
@@ -90,6 +104,14 @@ function ruleChildren<Phase extends PhaseName>(rule: Rule<Phase>): readonly Rule
 		case OPTIONAL:
 		case VARIANT:
 		case GROUP:
+		/* PREC family: stripped before this runs (see classifyByType's PREC
+		   comment) — unreachable at runtime, transparent single-child
+		   wrapper for exhaustiveness. */
+		case 'PREC':
+		case 'PREC_LEFT':
+		case 'PREC_RIGHT':
+		case 'PREC_DYNAMIC':
+		case 'IMMEDIATE_TOKEN':
 			/* No TERMINAL case: the Rule<'evaluate'> union has no TerminalRule
 			   variant. */
 			return [anyRule.content as Rule<Phase>];

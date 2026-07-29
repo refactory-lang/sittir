@@ -435,14 +435,10 @@ export type TypescriptGrammar = {
 		type: 'binary_expression';
 		named: true;
 		fields: {
-			left: {
-				multiple: false;
-				required: true;
-				types: [{ type: 'expression'; named: true }, { type: 'private_property_identifier'; named: true }];
-			};
+			left: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
 			operator: {
 				multiple: false;
-				required: true;
+				required: false;
 				types: [
 					{ type: '!='; named: false },
 					{ type: '!=='; named: false },
@@ -465,12 +461,25 @@ export type TypescriptGrammar = {
 					{ type: '>>>'; named: false },
 					{ type: '??'; named: false },
 					{ type: '^'; named: false },
-					{ type: 'in'; named: false },
 					{ type: 'instanceof'; named: false },
 					{ type: '|'; named: false },
 					{ type: '||'; named: false }
 				];
 			};
+			right: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
+		};
+		children: { multiple: false; required: false; types: [{ type: 'binary_expression_group1'; named: true }] };
+	};
+	readonly binary_expression_group1: {
+		type: 'binary_expression_group1';
+		named: true;
+		fields: {
+			left: {
+				multiple: false;
+				required: true;
+				types: [{ type: 'expression'; named: true }, { type: 'private_property_identifier'; named: true }];
+			};
+			operator: { multiple: false; required: true; types: [{ type: 'in'; named: false }] };
 			right: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
 		};
 	};
@@ -2563,11 +2572,12 @@ export type TypescriptGrammar = {
 	readonly variable_declarator: {
 		type: 'variable_declarator';
 		named: true;
-		fields: {
-			name: { multiple: false; required: false; types: [{ type: 'identifier'; named: true }] };
-			type: { multiple: false; required: false; types: [{ type: 'type_annotation'; named: true }] };
+		fields: {};
+		children: {
+			multiple: false;
+			required: true;
+			types: [{ type: 'variable_declarator_group1'; named: true }, { type: 'variable_declarator_group2'; named: true }];
 		};
-		children: { multiple: false; required: false; types: [{ type: 'variable_declarator_group1'; named: true }] };
 	};
 	readonly variable_declarator_group1: {
 		type: 'variable_declarator_group1';
@@ -2584,6 +2594,14 @@ export type TypescriptGrammar = {
 			};
 			type: { multiple: false; required: false; types: [{ type: 'type_annotation'; named: true }] };
 			value: { multiple: false; required: false; types: [{ type: 'expression'; named: true }] };
+		};
+	};
+	readonly variable_declarator_group2: {
+		type: 'variable_declarator_group2';
+		named: true;
+		fields: {
+			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
+			type: { multiple: false; required: true; types: [{ type: 'type_annotation'; named: true }] };
 		};
 	};
 	readonly while_statement: {

@@ -76,10 +76,10 @@
           "value": 1,
           "content": {
             "type": "SYMBOL",
-            "name": "_expression_ending_with_block"
-          },
-          "metadata": {
-            "fieldSource": "override"
+            "name": "_expression_ending_with_block",
+            "metadata": {
+              "fieldSource": "override"
+            }
           }
         }
       ]
@@ -716,13 +716,17 @@
           "value": "primitive_type"
         },
         {
-          "type": "ALIAS",
+          "type": "PREC_RIGHT",
+          "value": 0,
           "content": {
-            "type": "SYMBOL",
-            "name": "_token_tree_punctuation"
-          },
-          "named": true,
-          "value": "token_tree_punctuation"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_token_tree_punctuation"
+            },
+            "named": true,
+            "value": "token_tree_punctuation"
+          }
         },
         {
           "type": "SYMBOL",

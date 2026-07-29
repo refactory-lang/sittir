@@ -40,10 +40,14 @@ export interface RuleBuilder {
 export const structuralBuilder: RuleBuilder = {
 	seq: (members) => ({ type: SEQ, members }),
 	choice: (members) => ({ type: CHOICE, members }),
-	optional: (content) => ({ type: OPTIONAL, content }),
-	repeat: (content) => ({ type: REPEAT, content }),
-	repeat1: (content) => ({ type: REPEAT1, content }),
-	field: (name, content) => ({ type: FIELD, name, content })
+	// Cast, not narrow: `AnyRule = Rule<PhaseName>` distributes across every
+	// phase, while a single-content wrapper's own `content` field wants one
+	// specific phase — same "narrow via AnyRule, cast back" convention as
+	// rule-catalog.ts's `ruleChildren`.
+	optional: (content) => ({ type: OPTIONAL, content }) as AnyRule,
+	repeat: (content) => ({ type: REPEAT, content }) as AnyRule,
+	repeat1: (content) => ({ type: REPEAT1, content }) as AnyRule,
+	field: (name, content) => ({ type: FIELD, name, content }) as AnyRule
 };
 
 /* Phase contexts live in the compiler layer: compiler/ctx.ts holds
@@ -96,10 +100,14 @@ export function findRepeatFlag(rule: AnyRule, flag: 'trailing' | 'leading'): boo
 
 export function extractRepeatShape(rule: AnyRule): { repeat: RepeatRule | Repeat1Rule; nonEmpty: boolean } | null {
 	switch (rule.type) {
+		// Cast, not narrow: `AnyRule = Rule<PhaseName>` distributes REPEAT
+		// across every phase, while `RepeatRule`/`Repeat1Rule` (bare) default
+		// to the single 'link' phase — same "narrow via AnyRule, cast back"
+		// convention as rule-catalog.ts's `ruleChildren`.
 		case REPEAT:
-			return { repeat: rule, nonEmpty: false };
+			return { repeat: rule as RepeatRule, nonEmpty: false };
 		case REPEAT1:
-			return { repeat: rule, nonEmpty: true };
+			return { repeat: rule as Repeat1Rule, nonEmpty: true };
 		case OPTIONAL:
 		case VARIANT:
 		case GROUP:

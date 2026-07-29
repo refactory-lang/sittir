@@ -123,7 +123,12 @@ export type Rule<Phase extends PhaseName = 'normalize'> =
 	| RepeatRule<Phase>
 	| Repeat1Rule<Phase>
 	| AliasRule<Phase>
-	| TokenRule<Phase>;
+	| TokenRule<Phase>
+	| ImmediateTokenRule<Phase>
+	| PrecRule<Phase>
+	| PrecLeftRule<Phase>
+	| PrecRightRule<Phase>
+	| PrecDynamicRule<Phase>;
 
 export type RenderRule = Rule<'normalize'> & {
 	readonly __renderRule?: never;
@@ -329,6 +334,47 @@ export type TokenRule<Phase extends PhaseName = 'link'> = Phase extends WrapperP
 			readonly content: Rule<Phase>;
 			readonly immediate: boolean;
 		}
+	: never;
+
+// ImmediateTokenRule exists ONLY within the 'evaluate' phase view.
+// `token.immediate()` constructs this real IMMEDIATE_TOKEN-tagged node
+// (matching tree-sitter's own dsl.js shape, and grammar-shapes/grammar-json.ts's
+// existing `ImmediateTokenRule` model of it) instead of folding straight into
+// `TokenRule`'s `immediate: true` — so a dedup/equality check running during
+// enrich (e.g. dsl/list-patterns.ts's `rulesEqual`, which dispatches purely on
+// `type`) sees the SAME distinct tag under both runtimes, matching tree-sitter's
+// CLI-runtime `token.immediate()` which was never foldable to sittir's shape in
+// the first place. `grammarFn`'s `normalizeImmediateTokens` folds every
+// remaining IMMEDIATE_TOKEN into `TokenRule` + `immediate: true` once enrich's
+// decisions are locked in, matching what the compiler pipeline (Link onward)
+// already expects — see docs/glossary/compiler-model.md's `NodeRef.immediate`.
+export type ImmediateTokenRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate'
+	? RuleBase<Phase> & { readonly type: 'IMMEDIATE_TOKEN'; readonly content: Rule<Phase> }
+	: never;
+
+// Prec*Rule exist ONLY within the 'evaluate' phase view. `prec`/`prec.left`/
+// `prec.right`/`prec.dynamic` construct these (mirroring the PREC/PREC_LEFT/
+// PREC_RIGHT/PREC_DYNAMIC shape `grammar-shapes/grammar-json.ts` already
+// models for tree-sitter's own dsl.js prec, and that `isPrecWrapper`
+// — types/runtime-shapes.ts — already recognizes) so a choice arm's
+// precedence wrapping is visible to enrich's minting decisions under BOTH
+// runtimes identically. `enrich`'s existing `applyClauseHoist` already
+// descends through this exact shape and threads `ambientPrec` — that path
+// was previously dead on sittir's own runtime because sittir's `prec` never
+// produced a shape it could match. Downstream phases (Link onward) never see
+// these — every remaining Prec*Rule collapses back to its content once
+// enrich's minting pass completes.
+export type PrecRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate'
+	? RuleBase<Phase> & { readonly type: 'PREC'; readonly content: Rule<Phase>; readonly value: number }
+	: never;
+export type PrecLeftRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate'
+	? RuleBase<Phase> & { readonly type: 'PREC_LEFT'; readonly content: Rule<Phase>; readonly value: number }
+	: never;
+export type PrecRightRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate'
+	? RuleBase<Phase> & { readonly type: 'PREC_RIGHT'; readonly content: Rule<Phase>; readonly value: number }
+	: never;
+export type PrecDynamicRule<Phase extends PhaseName = 'evaluate'> = Phase extends 'evaluate'
+	? RuleBase<Phase> & { readonly type: 'PREC_DYNAMIC'; readonly content: Rule<Phase>; readonly value: number }
 	: never;
 
 // ---------------------------------------------------------------------------

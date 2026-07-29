@@ -227,7 +227,12 @@ function spliceFoldableRefs(
 			if (!target) return rule;
 			const body = resolveGroupOrMultiInlineTarget(target);
 			if (!body) return rule;
-			return materializeInlinedBody(rule, body, rule.name);
+			// Cast, not narrow: `resolveGroupOrMultiInlineTarget` returns the
+			// phase-erased `AnyRule` (dsl/rule-transforms.ts is phase-generic by
+			// design), while `target`/`body` share THIS function's 'link' phase
+			// by construction — same "narrow via AnyRule, cast back" convention
+			// as rule-catalog.ts's `ruleChildren`.
+			return materializeInlinedBody(rule, body as Rule<'link'>, rule.name);
 		}
 		case SEQ: {
 			let touched = false;

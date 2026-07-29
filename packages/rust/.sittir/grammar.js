@@ -150,11 +150,11 @@ function parsePath(pathStr) {
 var membersOf = (r) => r.members;
 var contentOf = (r) => r.content;
 function applyPath(rule, segments, patch, precStack) {
-  if (segments.length === 0) {
-    return typeof patch === "function" ? patch(rule, precStack) : patch;
-  }
   if (isPrecWrapper(rule)) {
     return descendThroughPrecWrapper(rule, segments, patch, precStack);
+  }
+  if (segments.length === 0) {
+    return typeof patch === "function" ? patch(rule, precStack) : patch;
   }
   if (isEnrichGroupLiftSymbol(rule)) {
     return descendThroughGroupLiftSymbol(rule, segments, patch, precStack);
@@ -2249,6 +2249,23 @@ function mintStructuredChoiceArm(arm, parentKind, rulesBag, clauseGroupRules, co
   const t = arm.type;
   if (typeof t !== "string") return null;
   if (armStartsWithSymbol(arm, collidingLeadingNames, rulesBag)) return null;
+  if (isPrecWrapper(arm)) {
+    const content = arm.content;
+    if (!content) return null;
+    const minted = mintStructuredChoiceArm(
+      content,
+      parentKind,
+      rulesBag,
+      clauseGroupRules,
+      counter,
+      groupDedupeMap,
+      visibleGroupHiddenNames,
+      clauseGroupOwners,
+      collidingLeadingNames
+    );
+    if (!minted) return null;
+    return { ...arm, content: minted };
+  }
   if (isSymbolType(t)) {
     const name = arm.name;
     if (typeof name !== "string" || !name.startsWith("_")) return null;

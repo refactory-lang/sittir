@@ -29,7 +29,7 @@ import {
 	TOKEN,
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
-import type { AnyRule, RenderRule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule } from '../types/rule.ts';
+import type { AnyRule, RenderRule, Rule, SimplifiedRule, ChoiceRule, SeqRule, FieldRule } from '../types/rule.ts';
 import { DiagnosticSink } from '../types/diagnostics.ts';
 import { deleteWrapper } from './wrapper-deletion.ts';
 import { withAttrsFrom, sharedArmAttrs } from '../dsl/rule-attrs.ts';
@@ -97,11 +97,14 @@ export const attributeBuilder: RuleBuilder = {
 		if (content.type === STRING && !isSlotPromotedLiteral(content)) {
 			return { type: SEQ, members: [] };
 		}
-		return deleteWrapper({ type: OPTIONAL, content }) as RenderRule;
+		// Cast, not narrow: `content: AnyRule` (RuleBuilder's phase-generic
+		// param) vs `deleteWrapper`'s `Rule<'link'>` — same "narrow via
+		// AnyRule, cast back" convention as rule-catalog.ts's `ruleChildren`.
+		return deleteWrapper({ type: OPTIONAL, content } as Rule<'link'>) as RenderRule;
 	},
-	repeat: (content) => deleteWrapper({ type: REPEAT, content }) as RenderRule,
-	repeat1: (content) => deleteWrapper({ type: REPEAT1, content }) as RenderRule,
-	field: (name, content) => deleteWrapper({ type: FIELD, name, content }) as RenderRule
+	repeat: (content) => deleteWrapper({ type: REPEAT, content } as Rule<'link'>) as RenderRule,
+	repeat1: (content) => deleteWrapper({ type: REPEAT1, content } as Rule<'link'>) as RenderRule,
+	field: (name, content) => deleteWrapper({ type: FIELD, name, content } as Rule<'link'>) as RenderRule
 };
 
 // ---------------------------------------------------------------------------
@@ -263,7 +266,11 @@ function extractFieldFromBranchesForChoice(perBranch: AnyRule[][], name: string,
 		let extracted: FieldRule | null = null;
 		for (const m of members) {
 			if (m.type === FIELD && m.name === name && extracted === null) {
-				extracted = m;
+				// Cast, not narrow: `AnyRule` distributes across every phase,
+				// while `FieldRule` (bare) defaults to a single phase — same
+				// "narrow via AnyRule, cast back" convention as
+				// rule-catalog.ts's `ruleChildren`.
+				extracted = m as FieldRule;
 				continue;
 			}
 			rest.push(m);
@@ -610,7 +617,7 @@ export function computeSimplifiedRules(ctx: SimplifyCtx): Record<string, Simplif
 		// Re-fuse head+repeat list pairs too — inlineRefs can splice a helper body
 		// and re-expose a non-adjacent head-single + tail-array of the same element.
 		const wrapperFree = fuseHeadRepeatLists(
-			deleteWrapper(canonicalizeSeqOfLeaves(rule) as AnyRule) as AnyRule
+			deleteWrapper(canonicalizeSeqOfLeaves(rule) as Rule<'link'>) as AnyRule
 		) as SimplifiedRule;
 		canonicalized[kind] = wrapperFree;
 	}

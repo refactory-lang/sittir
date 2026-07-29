@@ -200,12 +200,17 @@ describe('Evaluate — DSL functions', () => {
 			});
 		});
 
-		it('token.immediate produces a TokenRule with immediate=true', () => {
+		it('token.immediate produces a real IMMEDIATE_TOKEN node', () => {
+			// Real IMMEDIATE_TOKEN tag (tree-sitter's own dsl.js shape), not
+			// `{type: TOKEN, immediate: true}` — see the ImmediateTokenRule
+			// doc comment in types/rule.ts. grammarFn's normalizeImmediateTokens
+			// folds this into TOKEN+immediate once enrich's minting/dedup
+			// decisions (which need the distinct tag to tell token.immediate(x)
+			// apart from token(x)) are locked in.
 			const rule = token.immediate('x');
 			expect(rule).toEqual({
-				type: 'TOKEN',
-				content: { type: 'STRING', value: 'x' },
-				immediate: true
+				type: 'IMMEDIATE_TOKEN',
+				content: { type: 'STRING', value: 'x' }
 			});
 		});
 	});
@@ -345,24 +350,29 @@ describe('Evaluate — DSL functions', () => {
 	});
 
 	describe('prec', () => {
-		it('strips precedence and returns the content Rule', () => {
+		// Constructs a real PREC*-tagged node (matching tree-sitter's own
+		// dsl.js prec shape) rather than stripping immediately — enrich's
+		// choice-arm minting must see the same arm shape under both runtimes.
+		// `grammarFn`'s `stripPrecedenceWrappers` removes the wrapper once
+		// minting decisions are locked in (see its doc comment).
+		it('wraps content in a PREC node, preserving the precedence value', () => {
 			const rule = prec(1, 'x');
-			expect(rule).toEqual({ type: 'STRING', value: 'x' });
+			expect(rule).toEqual({ type: 'PREC', value: 1, content: { type: 'STRING', value: 'x' } });
 		});
 
-		it('prec.left strips precedence', () => {
+		it('prec.left wraps content in a PREC_LEFT node', () => {
 			const rule = prec.left(1, 'x');
-			expect(rule).toEqual({ type: 'STRING', value: 'x' });
+			expect(rule).toEqual({ type: 'PREC_LEFT', value: 1, content: { type: 'STRING', value: 'x' } });
 		});
 
-		it('prec.right strips precedence', () => {
+		it('prec.right wraps content in a PREC_RIGHT node', () => {
 			const rule = prec.right(1, 'x');
-			expect(rule).toEqual({ type: 'STRING', value: 'x' });
+			expect(rule).toEqual({ type: 'PREC_RIGHT', value: 1, content: { type: 'STRING', value: 'x' } });
 		});
 
-		it('prec.dynamic strips precedence', () => {
+		it('prec.dynamic wraps content in a PREC_DYNAMIC node', () => {
 			const rule = prec.dynamic(1, 'x');
-			expect(rule).toEqual({ type: 'STRING', value: 'x' });
+			expect(rule).toEqual({ type: 'PREC_DYNAMIC', value: 1, content: { type: 'STRING', value: 'x' } });
 		});
 	});
 });

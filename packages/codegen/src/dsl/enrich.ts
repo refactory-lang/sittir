@@ -2052,6 +2052,42 @@ function mintStructuredChoiceArm(
 	if (typeof t !== 'string') return null;
 	if (armStartsWithSymbol(arm, collidingLeadingNames, rulesBag)) return null;
 
+	// Descend through a precedence wrapper (PREC/PREC_LEFT/PREC_RIGHT/
+	// PREC_DYNAMIC — tree-sitter's own dsl.js prec shape, now matched under
+	// sittir's runtime too, see evaluate.ts's `prec`). Mint on the CONTENT,
+	// then re-wrap the resulting alias/symbol-ref IN THE SAME PREC — not the
+	// other way around. Tree-sitter's LR conflict resolution needs the
+	// precedence visible AT THE CHOICE-ARM POSITION (where this alternative
+	// competes against its siblings), not buried one level down inside the
+	// minted hidden rule's own body: a bare alias at the arm position carries
+	// NO precedence signal to the enclosing choice's own conflict resolution,
+	// which is exactly what broke typescript's `binary_expression`'s `in`
+	// arm — extracting it left `for (var x = y in z)` unable to disambiguate
+	// against `_initializer` (no explicit conflict references the new
+	// symbol). Embedding the alias inside the prec (not the reverse)
+	// preserves the SAME precedence signal, in the SAME position, that the
+	// un-extracted `prec.left(N, seq(...))` arm carried before minting.
+	// Without this branch at all, a PREC-wrapped arm's `type` matches neither
+	// `isSymbolType` nor `isSeqType`/`isChoiceType` below and this function
+	// declines — the original divergence this branch closes.
+	if (isPrecWrapper(arm as { type: string })) {
+		const content = (arm as { content?: Rule }).content;
+		if (!content) return null;
+		const minted = mintStructuredChoiceArm(
+			content,
+			parentKind,
+			rulesBag,
+			clauseGroupRules,
+			counter,
+			groupDedupeMap,
+			visibleGroupHiddenNames,
+			clauseGroupOwners,
+			collidingLeadingNames
+		);
+		if (!minted) return null;
+		return { ...arm, content: minted } as Rule;
+	}
+
 	if (isSymbolType(t)) {
 		const name = (arm as { name?: string }).name;
 		// Hidden-ness by NAME (`_` prefix — tree-sitter's own convention), NOT

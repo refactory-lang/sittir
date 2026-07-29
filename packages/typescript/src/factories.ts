@@ -5325,6 +5325,31 @@ export function buildVariableDeclaratorGroup1(config: T.VariableDeclaratorGroup1
 	);
 }
 
+export function buildVariableDeclaratorGroup2(config: T.VariableDeclaratorGroup2.Config) {
+	const _name = config.name;
+	const _type = config.type;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.VariableDeclaratorGroup2 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_name,
+				_type,
+				$with: {
+					name: (value: T.Identifier) => buildVariableDeclaratorGroup2({ ...config, name: value }),
+					type: (value: T.TypeAnnotation) => buildVariableDeclaratorGroup2({ ...config, type: value })
+				}
+			},
+			{
+				name: () => _name,
+				type: () => _type
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildCatchClauseGroup1(config: T.CatchClauseGroup1.Config) {
 	const _parameter = config.parameter;
 	const _type = config.type;
@@ -5345,6 +5370,35 @@ export function buildCatchClauseGroup1(config: T.CatchClauseGroup1.Config) {
 			{
 				parameter: () => _parameter,
 				type: () => _type
+			}
+		),
+		methodsEngine
+	);
+}
+
+export function buildBinaryExpressionGroup1(config: T.BinaryExpressionGroup1.Config) {
+	const _left = config.left;
+	const _operator = coerceKindEnumStorage('in' as const, [['in', TSKindId.In] as const]);
+	const _right = config.right;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.BinaryExpressionGroup1 as const,
+				$source: 2 as const,
+				$named: true as const,
+				_left,
+				_operator,
+				_right,
+				$with: {
+					left: (value: T.Expression | T.PrivatePropertyIdentifier) =>
+						buildBinaryExpressionGroup1({ ...config, left: value }),
+					right: (value: T.Expression) => buildBinaryExpressionGroup1({ ...config, right: value })
+				}
+			},
+			{
+				left: () => _left,
+				operator: () => _operator,
+				right: () => _right
 			}
 		),
 		methodsEngine
@@ -6824,7 +6878,9 @@ export type FluentKindMap = {
 	_import_clause_group1: FluentNode<'_import_clause_group1', T.ImportClauseGroup1.Config>;
 	_named_imports_group1: FluentNode<'_named_imports_group1', T.NamedImportsGroup1.Config>;
 	_variable_declarator_group1: T.VariableDeclaratorGroup1;
+	_variable_declarator_group2: T.VariableDeclaratorGroup2;
 	_catch_clause_group1: T.CatchClauseGroup1;
+	_binary_expression_group1: T.BinaryExpressionGroup1;
 	_meta_property_group1: T.MetaPropertyGroup1;
 	_meta_property_group2: T.MetaPropertyGroup2;
 	_formal_parameters_group1: FluentNode<'_formal_parameters_group1', T.FormalParametersGroup1.Config>;
@@ -7089,7 +7145,9 @@ export const _factoryMap = {
 	_import_clause_group1: buildImportClauseGroup1,
 	_named_imports_group1: buildNamedImportsGroup1,
 	_variable_declarator_group1: buildVariableDeclaratorGroup1,
+	_variable_declarator_group2: buildVariableDeclaratorGroup2,
 	_catch_clause_group1: buildCatchClauseGroup1,
+	_binary_expression_group1: buildBinaryExpressionGroup1,
 	_meta_property_group1: buildMetaPropertyGroup1,
 	_meta_property_group2: buildMetaPropertyGroup2,
 	_formal_parameters_group1: buildFormalParametersGroup1,
