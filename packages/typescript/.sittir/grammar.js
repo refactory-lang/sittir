@@ -3936,6 +3936,119 @@ var overrides_default = grammar(
             members: flatMembers
           };
         },
+        // Base tree-sitter-typescript/javascript deliberately reuses the
+        // `call_expression` kind name via alias() for THREE structurally
+        // different rules — decorator calls (`decorator`/
+        // `decorator_parenthesized_expression`) and two type-query call
+        // forms (`type_query`/`_type_query_member_expression`/
+        // `_type_query_subscript_expression` for `typeof foo()`, and
+        // `_type_query_member_expression_in_type_annotation`/`type` for
+        // `foo: import('x').y()`-style annotations) — none of which
+        // produce sittir's expected call_expression variant-group shape
+        // (call_expression_call | call_expression_template_call |
+        // call_expression_member); they use old-style flat
+        // function/type_arguments/arguments fields instead. content's
+        // accepted kinds never include that flat shape, so every one of
+        // these forms throws at wrap time ("singular slot 'content' on
+        // 'call_expression' requires one value; got undefined"). Per the
+        // `case_as_pattern` precedent (packages/python/overrides.ts):
+        // stop sharing the name — each colliding site keeps its own
+        // real, independently-visible kind instead. `decorator_call_expression`
+        // already has a natural (non-hidden) name of its own, so it's
+        // unaliased outright; the two hidden `_type_query_call_expression*`
+        // rules are aliased to a new distinct visible name instead of
+        // `call_expression`.
+        decorator: ($) => seq(
+          "@",
+          choice(
+            $.identifier,
+            alias($.decorator_member_expression, $.member_expression),
+            $.decorator_call_expression,
+            alias($.decorator_parenthesized_expression, $.parenthesized_expression)
+          )
+        ),
+        decorator_parenthesized_expression: ($) => seq(
+          "(",
+          choice(
+            $.identifier,
+            alias($.decorator_member_expression, $.member_expression),
+            $.decorator_call_expression
+          ),
+          ")"
+        ),
+        _type_query_member_expression: ($) => seq(
+          field(
+            "object",
+            choice(
+              $.identifier,
+              $.this,
+              alias($._type_query_subscript_expression, $.subscript_expression),
+              alias($._type_query_member_expression, $.member_expression),
+              alias($._type_query_call_expression, $.type_query_call_expression)
+            )
+          ),
+          choice(".", "?."),
+          field("property", choice($.private_property_identifier, alias($.identifier, $.property_identifier)))
+        ),
+        _type_query_subscript_expression: ($) => seq(
+          field(
+            "object",
+            choice(
+              $.identifier,
+              $.this,
+              alias($._type_query_subscript_expression, $.subscript_expression),
+              alias($._type_query_member_expression, $.member_expression),
+              alias($._type_query_call_expression, $.type_query_call_expression)
+            )
+          ),
+          optional("?."),
+          "[",
+          field("index", choice($.predefined_type, $.string, $.number)),
+          "]"
+        ),
+        type_query: ($) => prec.right(
+          seq(
+            "typeof",
+            choice(
+              alias($._type_query_subscript_expression, $.subscript_expression),
+              alias($._type_query_member_expression, $.member_expression),
+              alias($._type_query_call_expression, $.type_query_call_expression),
+              alias($._type_query_instantiation_expression, $.instantiation_expression),
+              $.identifier,
+              $.this
+            )
+          )
+        ),
+        _type_query_member_expression_in_type_annotation: ($) => seq(
+          field(
+            "object",
+            choice(
+              $.import,
+              alias($._type_query_member_expression_in_type_annotation, $.member_expression),
+              alias(
+                $._type_query_call_expression_in_type_annotation,
+                $.type_query_call_expression_in_type_annotation
+              )
+            )
+          ),
+          ".",
+          field("property", choice($.private_property_identifier, alias($.identifier, $.property_identifier)))
+        ),
+        type: ($) => choice(
+          $.primary_type,
+          $.function_type,
+          $.readonly_type,
+          $.constructor_type,
+          $.infer_type,
+          prec(-1, alias($._type_query_member_expression_in_type_annotation, $.member_expression)),
+          prec(
+            -1,
+            alias(
+              $._type_query_call_expression_in_type_annotation,
+              $.type_query_call_expression_in_type_annotation
+            )
+          )
+        ),
         jsx_namespace_name: ($) => seq(field("namespace", $._jsx_identifier), ":", field("name", $._jsx_identifier)),
         _ambient_declaration_global: ($) => seq("global", field("body", $.statement_block)),
         _ambient_declaration_module: ($) => prec.right(

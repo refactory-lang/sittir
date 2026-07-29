@@ -17009,6 +17009,541 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
+      "$type": 166,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 221,
+          "$source": 0,
+          "$named": true,
+          "_name": "Foo",
+          "_body": {
+            "$type": 257,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              5,
+              6
+            ],
+            "$span": {
+              "start": 10,
+              "end": 42
+            },
+            "$nodeHandle": 12,
+            "_content": [
+              {
+                "$type": 383,
+                "$source": 0,
+                "$named": true,
+                "_decorator": [
+                  {
+                    "$type": 254,
+                    "$source": 0,
+                    "$named": true,
+                    "$other": [
+                      111
+                    ],
+                    "$span": {
+                      "start": 14,
+                      "end": 23
+                    },
+                    "$nodeHandle": 14,
+                    "_content": {
+                      "$type": 256,
+                      "$source": 0,
+                      "$named": true,
+                      "_function": "bar",
+                      "_type_arguments": {
+                        "$type": 337,
+                        "$source": 0,
+                        "$named": true,
+                        "$other": [
+                          80,
+                          87
+                        ],
+                        "$span": {
+                          "start": 18,
+                          "end": 21
+                        },
+                        "$nodeHandle": 16,
+                        "_type": [
+                          "T"
+                        ]
+                      },
+                      "_arguments": {
+                        "$type": 253,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 21,
+                          "end": 23
+                        },
+                        "$nodeHandle": 17,
+                        "_arguments": []
+                      },
+                      "$span": {
+                        "start": 15,
+                        "end": 23
+                      },
+                      "$nodeHandle": 15
+                    }
+                  }
+                ],
+                "_method_definition": {
+                  "$type": 262,
+                  "$source": 0,
+                  "$named": true,
+                  "_name": "method",
+                  "_parameters": {
+                    "$type": 258,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "()",
+                    "$span": {
+                      "start": 32,
+                      "end": 34
+                    },
+                    "$nodeHandle": 19
+                  },
+                  "_body": {
+                    "$type": 186,
+                    "$source": 0,
+                    "$named": true,
+                    "_automatic_semicolon": true,
+                    "$other": [
+                      5,
+                      6
+                    ],
+                    "$span": {
+                      "start": 35,
+                      "end": 40
+                    },
+                    "$nodeHandle": 20,
+                    "_statements": []
+                  },
+                  "$span": {
+                    "start": 26,
+                    "end": 40
+                  },
+                  "$nodeHandle": 18
+                },
+                "_automatic_semicolon": 159,
+                "$span": {
+                  "start": 14,
+                  "end": 40
+                },
+                "$nodeHandle": 13
+              }
+            ]
+          },
+          "_automatic_semicolon": true,
+          "$other": [
+            45
+          ],
+          "$span": {
+            "start": 0,
+            "end": 42
+          },
+          "$nodeHandle": 11,
+          "_decorator": []
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 42
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "class Foo{ @bar<T>()method(){  }\n }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "class Foo {\n  @bar<T>()\n  method() {\n  }\n}",
+    "pattern": "program",
+    "edits": [],
+    "expectedSourceOut": "class Foo{ @bar<T>()method(){  }\n }",
+    "expectedReparseTree": "(program statements: (class_declaration name: (type_identifier) body: (class_body (class_body_method decorator: (decorator (decorator_call_expression function: (identifier) type_arguments: (type_arguments (type_identifier)) arguments: (arguments))) (method_definition name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) (automatic_semicolon))) automatic_semicolon: (automatic_semicolon)))",
+    "wrappedText": "class Foo{ @bar<T>()method(){  }\n }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 221,
+      "$source": 0,
+      "$named": true,
+      "_name": "Foo",
+      "_body": {
+        "$type": 257,
+        "$source": 0,
+        "$named": true,
+        "$other": [
+          5,
+          6
+        ],
+        "$span": {
+          "start": 10,
+          "end": 42
+        },
+        "$nodeHandle": 21,
+        "_content": [
+          {
+            "$type": 383,
+            "$source": 0,
+            "$named": true,
+            "_decorator": [
+              {
+                "$type": 254,
+                "$source": 0,
+                "$named": true,
+                "$other": [
+                  111
+                ],
+                "$span": {
+                  "start": 14,
+                  "end": 23
+                },
+                "$nodeHandle": 23,
+                "_content": {
+                  "$type": 256,
+                  "$source": 0,
+                  "$named": true,
+                  "_function": "bar",
+                  "_type_arguments": {
+                    "$type": 337,
+                    "$source": 0,
+                    "$named": true,
+                    "$other": [
+                      80,
+                      87
+                    ],
+                    "$span": {
+                      "start": 18,
+                      "end": 21
+                    },
+                    "$nodeHandle": 25,
+                    "_type": [
+                      "T"
+                    ]
+                  },
+                  "_arguments": {
+                    "$type": 253,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 21,
+                      "end": 23
+                    },
+                    "$nodeHandle": 26,
+                    "_arguments": []
+                  },
+                  "$span": {
+                    "start": 15,
+                    "end": 23
+                  },
+                  "$nodeHandle": 24
+                }
+              }
+            ],
+            "_method_definition": {
+              "$type": 262,
+              "$source": 0,
+              "$named": true,
+              "_name": "method",
+              "_parameters": {
+                "$type": 258,
+                "$source": 0,
+                "$named": true,
+                "$text": "()",
+                "$span": {
+                  "start": 32,
+                  "end": 34
+                },
+                "$nodeHandle": 28
+              },
+              "_body": {
+                "$type": 186,
+                "$source": 0,
+                "$named": true,
+                "_automatic_semicolon": true,
+                "$other": [
+                  5,
+                  6
+                ],
+                "$span": {
+                  "start": 35,
+                  "end": 40
+                },
+                "$nodeHandle": 29,
+                "_statements": []
+              },
+              "$span": {
+                "start": 26,
+                "end": 40
+              },
+              "$nodeHandle": 27
+            },
+            "_automatic_semicolon": 159,
+            "$span": {
+              "start": 14,
+              "end": 40
+            },
+            "$nodeHandle": 22
+          }
+        ]
+      },
+      "_automatic_semicolon": true,
+      "$other": [
+        45
+      ],
+      "$span": {
+        "start": 0,
+        "end": 42
+      },
+      "$nodeHandle": 1,
+      "_decorator": []
+    },
+    "expectedOutput": "class Foo{ @bar<T>()method(){  }\n }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "class Foo {\n  @bar<T>()\n  method() {\n  }\n}",
+    "pattern": "class_declaration",
+    "edits": [],
+    "expectedSourceOut": "class Foo{ @bar<T>()method(){  }\n }",
+    "expectedReparseTree": "(class_declaration name: (type_identifier) body: (class_body (class_body_method decorator: (decorator (decorator_call_expression function: (identifier) type_arguments: (type_arguments (type_identifier)) arguments: (arguments))) (method_definition name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) (automatic_semicolon))) automatic_semicolon: (automatic_semicolon))",
+    "wrappedText": "class Foo{ @bar<T>()method(){  }\n }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 257,
+      "$source": 0,
+      "$named": true,
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 10,
+        "end": 42
+      },
+      "$nodeHandle": 2,
+      "_content": [
+        {
+          "$type": 383,
+          "$source": 0,
+          "$named": true,
+          "_decorator": [
+            {
+              "$type": 254,
+              "$source": 0,
+              "$named": true,
+              "$other": [
+                111
+              ],
+              "$span": {
+                "start": 14,
+                "end": 23
+              },
+              "$nodeHandle": 31,
+              "_content": {
+                "$type": 256,
+                "$source": 0,
+                "$named": true,
+                "_function": "bar",
+                "_type_arguments": {
+                  "$type": 337,
+                  "$source": 0,
+                  "$named": true,
+                  "$other": [
+                    80,
+                    87
+                  ],
+                  "$span": {
+                    "start": 18,
+                    "end": 21
+                  },
+                  "$nodeHandle": 33,
+                  "_type": [
+                    "T"
+                  ]
+                },
+                "_arguments": {
+                  "$type": 253,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 21,
+                    "end": 23
+                  },
+                  "$nodeHandle": 34,
+                  "_arguments": []
+                },
+                "$span": {
+                  "start": 15,
+                  "end": 23
+                },
+                "$nodeHandle": 32
+              }
+            }
+          ],
+          "_method_definition": {
+            "$type": 262,
+            "$source": 0,
+            "$named": true,
+            "_name": "method",
+            "_parameters": {
+              "$type": 258,
+              "$source": 0,
+              "$named": true,
+              "$text": "()",
+              "$span": {
+                "start": 32,
+                "end": 34
+              },
+              "$nodeHandle": 36
+            },
+            "_body": {
+              "$type": 186,
+              "$source": 0,
+              "$named": true,
+              "_automatic_semicolon": true,
+              "$other": [
+                5,
+                6
+              ],
+              "$span": {
+                "start": 35,
+                "end": 40
+              },
+              "$nodeHandle": 37,
+              "_statements": []
+            },
+            "$span": {
+              "start": 26,
+              "end": 40
+            },
+            "$nodeHandle": 35
+          },
+          "_automatic_semicolon": 159,
+          "$span": {
+            "start": 14,
+            "end": 40
+          },
+          "$nodeHandle": 30
+        }
+      ]
+    },
+    "expectedOutput": "{ @bar<T>()method(){  }\n }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{\n  @bar<T>()\n  method() {\n  }\n}",
+    "pattern": "class_body",
+    "edits": [],
+    "expectedSourceOut": "{ @bar<T>()method(){  }\n }",
+    "expectedReparseTree": "(class_body (class_body_method decorator: (decorator (decorator_call_expression function: (identifier) type_arguments: (type_arguments (type_identifier)) arguments: (arguments))) (method_definition name: (property_identifier) parameters: (formal_parameters) body: (statement_block automatic_semicolon: (automatic_semicolon))) (automatic_semicolon)))",
+    "wrappedText": "class _C { @bar<T>()method(){  }\n }",
+    "wrappedOffset": 9
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 253,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 21,
+        "end": 23
+      },
+      "$nodeHandle": 7,
+      "_arguments": []
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "()",
+    "pattern": "arguments",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(arguments)",
+    "wrappedText": "_f();",
+    "wrappedOffset": 2
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 258,
+      "$source": 0,
+      "$named": true,
+      "$text": "()",
+      "$span": {
+        "start": 32,
+        "end": 34
+      },
+      "$nodeHandle": 9
+    },
+    "expectedOutput": "()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "()",
+    "pattern": "formal_parameters",
+    "edits": [],
+    "expectedSourceOut": "()",
+    "expectedReparseTree": "(formal_parameters)",
+    "wrappedText": "function _f() {}",
+    "wrappedOffset": 11
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 186,
+      "$source": 0,
+      "$named": true,
+      "_automatic_semicolon": true,
+      "$other": [
+        5,
+        6
+      ],
+      "$span": {
+        "start": 35,
+        "end": 40
+      },
+      "$nodeHandle": 10,
+      "_statements": []
+    },
+    "expectedOutput": "{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{\n  }",
+    "pattern": "statement_block",
+    "edits": [],
+    "expectedSourceOut": "{  }",
+    "expectedReparseTree": "(statement_block automatic_semicolon: (automatic_semicolon))",
+    "wrappedText": "{  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
       "$type": 341,
       "$source": 0,
       "$named": true,
@@ -86488,6 +87023,527 @@
     "expectedSourceOut": "(typeof Y)",
     "expectedReparseTree": "(parenthesized_type type: (type_query (identifier)))",
     "wrappedText": "type _X = (typeof Y);",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 166,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
+          "$type": 294,
+          "$source": 0,
+          "$named": true,
+          "_name": "Foo",
+          "_value": {
+            "$type": 351,
+            "$source": 0,
+            "$named": true,
+            "_left": {
+              "$type": 234,
+              "$source": 0,
+              "$named": true,
+              "_object": {
+                "$type": 305,
+                "$source": 0,
+                "$named": true,
+                "_function": {
+                  "$type": 173,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "import",
+                  "$span": {
+                    "start": 11,
+                    "end": 17
+                  },
+                  "$nodeHandle": 17
+                },
+                "_arguments": {
+                  "$type": 253,
+                  "$source": 0,
+                  "$named": true,
+                  "_arguments": [
+                    {
+                      "$type": 248,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 18,
+                        "end": 27
+                      },
+                      "$nodeHandle": 19,
+                      "_content": {
+                        "$type": 397,
+                        "$source": 0,
+                        "$named": true,
+                        "$other": [
+                          156,
+                          156
+                        ],
+                        "$span": {
+                          "start": 18,
+                          "end": 27
+                        },
+                        "$nodeHandle": 20,
+                        "_content": [
+                          "node:fs"
+                        ]
+                      }
+                    }
+                  ],
+                  "$other": [
+                    21,
+                    23
+                  ],
+                  "$span": {
+                    "start": 17,
+                    "end": 28
+                  },
+                  "$nodeHandle": 18
+                },
+                "$span": {
+                  "start": 11,
+                  "end": 28
+                },
+                "$nodeHandle": 16
+              },
+              "_property": "ReadStream",
+              "$other": [
+                44
+              ],
+              "$span": {
+                "start": 11,
+                "end": 39
+              },
+              "$nodeHandle": 15
+            },
+            "_right": {
+              "$type": 338,
+              "$source": 0,
+              "$named": true,
+              "_opening": 5,
+              "_members": {
+                "$type": 368,
+                "$source": 0,
+                "$named": true,
+                "$other": [
+                  22
+                ],
+                "$span": {
+                  "start": 46,
+                  "end": 52
+                },
+                "$nodeHandle": 22,
+                "_content": [
+                  {
+                    "$type": 270,
+                    "$source": 0,
+                    "$named": true,
+                    "_name": "bar",
+                    "_parameters": {
+                      "$type": 258,
+                      "$source": 0,
+                      "$named": true,
+                      "$text": "()",
+                      "$span": {
+                        "start": 49,
+                        "end": 51
+                      },
+                      "$nodeHandle": 24
+                    },
+                    "$span": {
+                      "start": 46,
+                      "end": 51
+                    },
+                    "$nodeHandle": 23
+                  }
+                ],
+                "_separator_kind": 22,
+                "_leading_sep": false,
+                "_trailing_sep": true
+              },
+              "_closing": 6,
+              "$span": {
+                "start": 42,
+                "end": 54
+              },
+              "$nodeHandle": 21
+            },
+            "$other": [
+              72
+            ],
+            "$span": {
+              "start": 11,
+              "end": 54
+            },
+            "$nodeHandle": 14
+          },
+          "_semicolon": 22,
+          "$other": [
+            7,
+            41
+          ],
+          "$span": {
+            "start": 0,
+            "end": 55
+          },
+          "$nodeHandle": 13
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 55
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "type Foo=import('node:fs').ReadStream&{bar();};"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "type Foo = import('node:fs').ReadStream & {\n  bar();\n};",
+    "pattern": "program",
+    "edits": [],
+    "expectedSourceOut": "type Foo=import('node:fs').ReadStream&{bar();};",
+    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (intersection_type left: (member_expression object: (type_query_call_expression_in_type_annotation function: (import) arguments: (arguments arguments: (string (string_single (unescaped_single_string_fragment))))) property: (property_identifier)) right: (object_type members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters)))))))",
+    "wrappedText": "type Foo=import('node:fs').ReadStream&{bar();};",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 294,
+      "$source": 0,
+      "$named": true,
+      "_name": "Foo",
+      "_value": {
+        "$type": 351,
+        "$source": 0,
+        "$named": true,
+        "_left": {
+          "$type": 234,
+          "$source": 0,
+          "$named": true,
+          "_object": {
+            "$type": 305,
+            "$source": 0,
+            "$named": true,
+            "_function": {
+              "$type": 173,
+              "$source": 0,
+              "$named": true,
+              "$text": "import",
+              "$span": {
+                "start": 11,
+                "end": 17
+              },
+              "$nodeHandle": 28
+            },
+            "_arguments": {
+              "$type": 253,
+              "$source": 0,
+              "$named": true,
+              "_arguments": [
+                {
+                  "$type": 248,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 18,
+                    "end": 27
+                  },
+                  "$nodeHandle": 30,
+                  "_content": {
+                    "$type": 397,
+                    "$source": 0,
+                    "$named": true,
+                    "$other": [
+                      156,
+                      156
+                    ],
+                    "$span": {
+                      "start": 18,
+                      "end": 27
+                    },
+                    "$nodeHandle": 31,
+                    "_content": [
+                      "node:fs"
+                    ]
+                  }
+                }
+              ],
+              "$other": [
+                21,
+                23
+              ],
+              "$span": {
+                "start": 17,
+                "end": 28
+              },
+              "$nodeHandle": 29
+            },
+            "$span": {
+              "start": 11,
+              "end": 28
+            },
+            "$nodeHandle": 27
+          },
+          "_property": "ReadStream",
+          "$other": [
+            44
+          ],
+          "$span": {
+            "start": 11,
+            "end": 39
+          },
+          "$nodeHandle": 26
+        },
+        "_right": {
+          "$type": 338,
+          "$source": 0,
+          "$named": true,
+          "_opening": 5,
+          "_members": {
+            "$type": 368,
+            "$source": 0,
+            "$named": true,
+            "$other": [
+              22
+            ],
+            "$span": {
+              "start": 46,
+              "end": 52
+            },
+            "$nodeHandle": 33,
+            "_content": [
+              {
+                "$type": 270,
+                "$source": 0,
+                "$named": true,
+                "_name": "bar",
+                "_parameters": {
+                  "$type": 258,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "()",
+                  "$span": {
+                    "start": 49,
+                    "end": 51
+                  },
+                  "$nodeHandle": 35
+                },
+                "$span": {
+                  "start": 46,
+                  "end": 51
+                },
+                "$nodeHandle": 34
+              }
+            ],
+            "_separator_kind": 22,
+            "_leading_sep": false,
+            "_trailing_sep": true
+          },
+          "_closing": 6,
+          "$span": {
+            "start": 42,
+            "end": 54
+          },
+          "$nodeHandle": 32
+        },
+        "$other": [
+          72
+        ],
+        "$span": {
+          "start": 11,
+          "end": 54
+        },
+        "$nodeHandle": 25
+      },
+      "_semicolon": 22,
+      "$other": [
+        7,
+        41
+      ],
+      "$span": {
+        "start": 0,
+        "end": 55
+      },
+      "$nodeHandle": 1
+    },
+    "expectedOutput": "type Foo=import('node:fs').ReadStream&{bar();};"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "type Foo = import('node:fs').ReadStream & {\n  bar();\n};",
+    "pattern": "type_alias_declaration",
+    "edits": [],
+    "expectedSourceOut": "type Foo=import('node:fs').ReadStream&{bar();};",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (intersection_type left: (member_expression object: (type_query_call_expression_in_type_annotation function: (import) arguments: (arguments arguments: (string (string_single (unescaped_single_string_fragment))))) property: (property_identifier)) right: (object_type members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters))))))",
+    "wrappedText": "type Foo=import('node:fs').ReadStream&{bar();};",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
+      "$type": 351,
+      "$source": 0,
+      "$named": true,
+      "_left": {
+        "$type": 234,
+        "$source": 0,
+        "$named": true,
+        "_object": {
+          "$type": 305,
+          "$source": 0,
+          "$named": true,
+          "_function": {
+            "$type": 173,
+            "$source": 0,
+            "$named": true,
+            "$text": "import",
+            "$span": {
+              "start": 11,
+              "end": 17
+            },
+            "$nodeHandle": 38
+          },
+          "_arguments": {
+            "$type": 253,
+            "$source": 0,
+            "$named": true,
+            "_arguments": [
+              {
+                "$type": 248,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 18,
+                  "end": 27
+                },
+                "$nodeHandle": 40,
+                "_content": {
+                  "$type": 397,
+                  "$source": 0,
+                  "$named": true,
+                  "$other": [
+                    156,
+                    156
+                  ],
+                  "$span": {
+                    "start": 18,
+                    "end": 27
+                  },
+                  "$nodeHandle": 41,
+                  "_content": [
+                    "node:fs"
+                  ]
+                }
+              }
+            ],
+            "$other": [
+              21,
+              23
+            ],
+            "$span": {
+              "start": 17,
+              "end": 28
+            },
+            "$nodeHandle": 39
+          },
+          "$span": {
+            "start": 11,
+            "end": 28
+          },
+          "$nodeHandle": 37
+        },
+        "_property": "ReadStream",
+        "$other": [
+          44
+        ],
+        "$span": {
+          "start": 11,
+          "end": 39
+        },
+        "$nodeHandle": 36
+      },
+      "_right": {
+        "$type": 338,
+        "$source": 0,
+        "$named": true,
+        "_opening": 5,
+        "_members": {
+          "$type": 368,
+          "$source": 0,
+          "$named": true,
+          "$other": [
+            22
+          ],
+          "$span": {
+            "start": 46,
+            "end": 52
+          },
+          "$nodeHandle": 43,
+          "_content": [
+            {
+              "$type": 270,
+              "$source": 0,
+              "$named": true,
+              "_name": "bar",
+              "_parameters": {
+                "$type": 258,
+                "$source": 0,
+                "$named": true,
+                "$text": "()",
+                "$span": {
+                  "start": 49,
+                  "end": 51
+                },
+                "$nodeHandle": 45
+              },
+              "$span": {
+                "start": 46,
+                "end": 51
+              },
+              "$nodeHandle": 44
+            }
+          ],
+          "_separator_kind": 22,
+          "_leading_sep": false,
+          "_trailing_sep": true
+        },
+        "_closing": 6,
+        "$span": {
+          "start": 42,
+          "end": 54
+        },
+        "$nodeHandle": 42
+      },
+      "$other": [
+        72
+      ],
+      "$span": {
+        "start": 11,
+        "end": 54
+      },
+      "$nodeHandle": 2
+    },
+    "expectedOutput": "import('node:fs').ReadStream&{bar();}"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "import('node:fs').ReadStream & {\n  bar();\n}",
+    "pattern": "intersection_type",
+    "edits": [],
+    "expectedSourceOut": "import('node:fs').ReadStream&{bar();}",
+    "expectedReparseTree": "(intersection_type left: (member_expression object: (type_query_call_expression_in_type_annotation function: (import) arguments: (arguments arguments: (string (string_single (unescaped_single_string_fragment))))) property: (property_identifier)) right: (object_type members: (object_type_content (method_signature name: (property_identifier) parameters: (formal_parameters)))))",
+    "wrappedText": "type _X = import('node:fs').ReadStream&{bar();};",
     "wrappedOffset": 10
   }
 ]

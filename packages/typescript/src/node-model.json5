@@ -164,6 +164,12 @@
         "ambient_declaration_module": "module"
       }
     },
+    "type_query": {
+      "definedBy": "override",
+      "childKind": {
+        "type_query_call_expression": "call_expression"
+      }
+    },
     "index_signature": {
       "definedBy": "override",
       "childKind": {
@@ -231,8 +237,7 @@
     },
     "parenthesized_expression.content": {
       "parenthesized_expression_typed": "_parenthesized_expression_typed",
-      "member_expression": "decorator_member_expression",
-      "call_expression": "decorator_call_expression"
+      "member_expression": "decorator_member_expression"
     },
     "object.properties": {
       "shorthand_property_identifier": "_shorthand_property_identifier"
@@ -314,7 +319,6 @@
     },
     "decorator.content": {
       "member_expression": "decorator_member_expression",
-      "call_expression": "decorator_call_expression",
       "parenthesized_expression": "decorator_parenthesized_expression"
     },
     "decorator_member_expression.object": {
@@ -357,8 +361,7 @@
       "function_signature_automatic_semicolon": "_function_signature_automatic_semicolon"
     },
     "decorator_parenthesized_expression.content": {
-      "member_expression": "decorator_member_expression",
-      "call_expression": "decorator_call_expression"
+      "member_expression": "decorator_member_expression"
     },
     "ambient_declaration.content": {
       "ambient_declaration_global": "_ambient_declaration_global",
@@ -387,7 +390,7 @@
     },
     "_type_query_member_expression_in_type_annotation.object": {
       "member_expression": "_type_query_member_expression_in_type_annotation",
-      "call_expression": "_type_query_call_expression_in_type_annotation"
+      "type_query_call_expression_in_type_annotation": "_type_query_call_expression_in_type_annotation"
     },
     "_type_query_member_expression_in_type_annotation.property": {
       "property_identifier": "identifier"
@@ -407,7 +410,7 @@
     "_type_query_member_expression.object": {
       "subscript_expression": "_type_query_subscript_expression",
       "member_expression": "_type_query_member_expression",
-      "call_expression": "_type_query_call_expression"
+      "type_query_call_expression": "_type_query_call_expression"
     },
     "_type_query_member_expression.property": {
       "property_identifier": "identifier"
@@ -415,7 +418,7 @@
     "_type_query_subscript_expression.object": {
       "subscript_expression": "_type_query_subscript_expression",
       "member_expression": "_type_query_member_expression",
-      "call_expression": "_type_query_call_expression"
+      "type_query_call_expression": "_type_query_call_expression"
     },
     "_type_query_call_expression.function": {
       "member_expression": "_type_query_member_expression",
@@ -428,7 +431,7 @@
     "type_query.content": {
       "subscript_expression": "_type_query_subscript_expression",
       "member_expression": "_type_query_member_expression",
-      "call_expression": "_type_query_call_expression",
+      "type_query_call_expression": "_type_query_call_expression",
       "instantiation_expression": "_type_query_instantiation_expression"
     },
     "mapped_type_clause.name": {
@@ -9427,7 +9430,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_call_expression",
-              "parseKind": "call_expression",
+              "parseKind": "type_query_call_expression",
               "unresolved": true
             }
           ],
@@ -9543,7 +9546,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_call_expression_in_type_annotation",
-              "parseKind": "call_expression",
+              "parseKind": "type_query_call_expression_in_type_annotation",
               "unresolved": true
             }
           ],
@@ -9644,7 +9647,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_call_expression",
-              "parseKind": "call_expression",
+              "parseKind": "type_query_call_expression",
               "unresolved": true
             }
           ],
@@ -13029,7 +13032,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "decorator_call_expression",
-              "parseKind": "call_expression",
+              "parseKind": "decorator_call_expression",
               "unresolved": true
             },
             {
@@ -13255,7 +13258,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "decorator_call_expression",
-              "parseKind": "call_expression",
+              "parseKind": "decorator_call_expression",
               "unresolved": true
             }
           ],
@@ -20025,7 +20028,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "decorator_call_expression",
-              "parseKind": "call_expression",
+              "parseKind": "decorator_call_expression",
               "unresolved": true
             }
           ],
@@ -23016,7 +23019,7 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_call_expression",
-              "parseKind": "call_expression",
+              "parseKind": "type_query_call_expression",
               "unresolved": true
             },
             {

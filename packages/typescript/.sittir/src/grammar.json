@@ -6200,13 +6200,8 @@
               "value": "member_expression"
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "decorator_call_expression"
-              },
-              "named": true,
-              "value": "call_expression"
+              "type": "SYMBOL",
+              "name": "decorator_call_expression"
             },
             {
               "type": "ALIAS",
@@ -7581,13 +7576,8 @@
               "value": "member_expression"
             },
             {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "decorator_call_expression"
-              },
-              "named": true,
-              "value": "call_expression"
+              "type": "SYMBOL",
+              "name": "decorator_call_expression"
             }
           ]
         },
@@ -8730,9 +8720,12 @@
                   "name": "_type_query_call_expression_in_type_annotation"
                 },
                 "named": true,
-                "value": "call_expression"
+                "value": "type_query_call_expression_in_type_annotation"
               }
             ]
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -8759,6 +8752,9 @@
                 "value": "property_identifier"
               }
             ]
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         }
       ]
@@ -8895,7 +8891,7 @@
               "name": "_type_query_call_expression_in_type_annotation"
             },
             "named": true,
-            "value": "call_expression"
+            "value": "type_query_call_expression_in_type_annotation"
           }
         }
       ]
@@ -9487,9 +9483,12 @@
                   "name": "_type_query_call_expression"
                 },
                 "named": true,
-                "value": "call_expression"
+                "value": "type_query_call_expression"
               }
             ]
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -9525,6 +9524,9 @@
                 "value": "property_identifier"
               }
             ]
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         }
       ]
@@ -9571,9 +9573,12 @@
                   "name": "_type_query_call_expression"
                 },
                 "named": true,
-                "value": "call_expression"
+                "value": "type_query_call_expression"
               }
             ]
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -9611,6 +9616,9 @@
                 "name": "number"
               }
             ]
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -9753,7 +9761,7 @@
                   "name": "_type_query_call_expression"
                 },
                 "named": true,
-                "value": "call_expression"
+                "value": "type_query_call_expression"
               },
               {
                 "type": "ALIAS",

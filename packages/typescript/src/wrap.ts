@@ -2994,7 +2994,7 @@ export function wrapParenthesizedExpression(
 			| T.Identifier
 			| T.DecoratorMemberExpression
 			| T.DecoratorCallExpression;
-		readonly _call_expression?:
+		readonly _decorator_call_expression?:
 			| T.ParenthesizedExpressionTyped
 			| T.SequenceExpression
 			| T.Identifier
@@ -3006,7 +3006,7 @@ export function wrapParenthesizedExpression(
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
-				'_call_expression',
+				'_decorator_call_expression',
 				'_identifier',
 				'_member_expression',
 				'_parenthesized_expression_typed',
@@ -3019,7 +3019,7 @@ export function wrapParenthesizedExpression(
 					data._sequence_expression ??
 					data._identifier ??
 					data._member_expression ??
-					data._call_expression,
+					data._decorator_call_expression,
 				'content',
 				true,
 				data.$type,
@@ -5496,7 +5496,7 @@ export function wrapDecorator(
 			| T.DecoratorMemberExpression
 			| T.DecoratorCallExpression
 			| T.DecoratorParenthesizedExpression;
-		readonly _call_expression?:
+		readonly _decorator_call_expression?:
 			| T.Identifier
 			| T.DecoratorMemberExpression
 			| T.DecoratorCallExpression
@@ -5511,13 +5511,18 @@ export function wrapDecorator(
 ) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_call_expression', '_identifier', '_member_expression', '_parenthesized_expression']),
+			..._omitWrapKeys(data, [
+				'_decorator_call_expression',
+				'_identifier',
+				'_member_expression',
+				'_parenthesized_expression'
+			]),
 			$type: TSKindId.Decorator as const,
 			_content: normalizeSingularWrapSlot(
 				data._content ??
 					data._identifier ??
 					data._member_expression ??
-					data._call_expression ??
+					data._decorator_call_expression ??
 					data._parenthesized_expression,
 				'content',
 				true,
@@ -6812,16 +6817,16 @@ export function wrapDecoratorParenthesizedExpression(
 	data: T.DecoratorParenthesizedExpression & {
 		readonly _identifier?: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression;
 		readonly _member_expression?: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression;
-		readonly _call_expression?: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression;
+		readonly _decorator_call_expression?: T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression;
 	},
 	tree: TreeHandle
 ) {
 	const _node = withMethods(
 		{
-			..._omitWrapKeys(data, ['_call_expression', '_identifier', '_member_expression']),
+			..._omitWrapKeys(data, ['_decorator_call_expression', '_identifier', '_member_expression']),
 			$type: TSKindId.DecoratorParenthesizedExpression as const,
 			_content: normalizeSingularWrapSlot(
-				data._content ?? data._identifier ?? data._member_expression ?? data._call_expression,
+				data._content ?? data._identifier ?? data._member_expression ?? data._decorator_call_expression,
 				'content',
 				true,
 				data.$type,
@@ -6829,7 +6834,12 @@ export function wrapDecoratorParenthesizedExpression(
 			),
 
 			content() {
-				return drillIn<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>(this._content, tree);
+				return drillAs<T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression>(
+					this._content,
+					tree,
+					'member_expression',
+					'decorator_member_expression'
+				);
 			},
 			$with: {
 				content: (v: NonNullable<T.DecoratorParenthesizedExpression['_content']>) =>
@@ -7138,7 +7148,7 @@ export function wrapExtendsClauseSingle(data: T.ExtendsClauseSingle, tree: TreeH
 export function wrapImplementsClause(
 	data: T.ImplementsClause & {
 		readonly _member_expression?: T.Type | readonly T.Type[];
-		readonly _call_expression?: T.Type | readonly T.Type[];
+		readonly _type_query_call_expression_in_type_annotation?: T.Type | readonly T.Type[];
 		readonly _this_type?: T.Type | readonly T.Type[];
 		readonly _parenthesized_type?: T.Type | readonly T.Type[];
 		readonly _predefined_type?: T.Type | readonly T.Type[];
@@ -7164,7 +7174,6 @@ export function wrapImplementsClause(
 		readonly _constructor_type?: T.Type | readonly T.Type[];
 		readonly _infer_type?: T.Type | readonly T.Type[];
 		readonly _type_query_member_expression_in_type_annotation?: T.Type | readonly T.Type[];
-		readonly _type_query_call_expression_in_type_annotation?: T.Type | readonly T.Type[];
 	},
 	tree: TreeHandle
 ) {
@@ -7172,7 +7181,6 @@ export function wrapImplementsClause(
 		{
 			..._omitWrapKeys(data, [
 				'_array_type',
-				'_call_expression',
 				'_conditional_type',
 				'_constructor_type',
 				'_existential_type',
@@ -7207,7 +7215,7 @@ export function wrapImplementsClause(
 						? _toArr(data._type)
 						: _concatInSourceOrder([
 								data._member_expression,
-								data._call_expression,
+								data._type_query_call_expression_in_type_annotation,
 								data._this_type,
 								data._parenthesized_type,
 								data._predefined_type,
@@ -7232,8 +7240,7 @@ export function wrapImplementsClause(
 								data._readonly_type,
 								data._constructor_type,
 								data._infer_type,
-								data._type_query_member_expression_in_type_annotation,
-								data._type_query_call_expression_in_type_annotation
+								data._type_query_member_expression_in_type_annotation
 							]),
 					[
 						'type',
@@ -9228,7 +9235,7 @@ export function wrapTypeQuery(
 			| T.TypeQueryInstantiationExpression
 			| T.Identifier
 			| T.This;
-		readonly _call_expression?:
+		readonly _type_query_call_expression?:
 			| T.TypeQuerySubscriptExpression
 			| T.TypeQueryMemberExpression
 			| T.TypeQueryCallExpression
@@ -9262,19 +9269,19 @@ export function wrapTypeQuery(
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
-				'_call_expression',
 				'_identifier',
 				'_instantiation_expression',
 				'_member_expression',
 				'_subscript_expression',
-				'_this'
+				'_this',
+				'_type_query_call_expression'
 			]),
 			$type: TSKindId.TypeQuery as const,
 			_content: normalizeSingularWrapSlot(
 				data._content ??
 					data._subscript_expression ??
 					data._member_expression ??
-					data._call_expression ??
+					data._type_query_call_expression ??
 					data._instantiation_expression ??
 					data._identifier ??
 					data._this,
@@ -9545,7 +9552,7 @@ export function wrapParenthesizedType(data: T.ParenthesizedType, tree: TreeHandl
 export function wrapTypeArguments(
 	data: T.TypeArguments & {
 		readonly _member_expression?: T.Type | readonly T.Type[];
-		readonly _call_expression?: T.Type | readonly T.Type[];
+		readonly _type_query_call_expression_in_type_annotation?: T.Type | readonly T.Type[];
 		readonly _this_type?: T.Type | readonly T.Type[];
 		readonly _parenthesized_type?: T.Type | readonly T.Type[];
 		readonly _predefined_type?: T.Type | readonly T.Type[];
@@ -9571,7 +9578,6 @@ export function wrapTypeArguments(
 		readonly _constructor_type?: T.Type | readonly T.Type[];
 		readonly _infer_type?: T.Type | readonly T.Type[];
 		readonly _type_query_member_expression_in_type_annotation?: T.Type | readonly T.Type[];
-		readonly _type_query_call_expression_in_type_annotation?: T.Type | readonly T.Type[];
 	},
 	tree: TreeHandle
 ) {
@@ -9579,7 +9585,6 @@ export function wrapTypeArguments(
 		{
 			..._omitWrapKeys(data, [
 				'_array_type',
-				'_call_expression',
 				'_conditional_type',
 				'_constructor_type',
 				'_existential_type',
@@ -9614,7 +9619,7 @@ export function wrapTypeArguments(
 						? _toArr(data._type)
 						: _concatInSourceOrder([
 								data._member_expression,
-								data._call_expression,
+								data._type_query_call_expression_in_type_annotation,
 								data._this_type,
 								data._parenthesized_type,
 								data._predefined_type,
@@ -9639,8 +9644,7 @@ export function wrapTypeArguments(
 								data._readonly_type,
 								data._constructor_type,
 								data._infer_type,
-								data._type_query_member_expression_in_type_annotation,
-								data._type_query_call_expression_in_type_annotation
+								data._type_query_member_expression_in_type_annotation
 							]),
 					[
 						'type',
@@ -10780,7 +10784,7 @@ export function wrapTupleTypeGroup1(
 		readonly _optional_type?: T.TupleTypeMember;
 		readonly _rest_type?: T.TupleTypeMember;
 		readonly _member_expression?: T.TupleTypeMember;
-		readonly _call_expression?: T.TupleTypeMember;
+		readonly _type_query_call_expression_in_type_annotation?: T.TupleTypeMember;
 		readonly _this_type?: T.TupleTypeMember;
 		readonly _parenthesized_type?: T.TupleTypeMember;
 		readonly _predefined_type?: T.TupleTypeMember;
@@ -10806,7 +10810,6 @@ export function wrapTupleTypeGroup1(
 		readonly _constructor_type?: T.TupleTypeMember;
 		readonly _infer_type?: T.TupleTypeMember;
 		readonly _type_query_member_expression_in_type_annotation?: T.TupleTypeMember;
-		readonly _type_query_call_expression_in_type_annotation?: T.TupleTypeMember;
 		readonly $other?: _NodeData['$other'];
 		readonly $span?: { start: number; end: number };
 	},
@@ -10823,7 +10826,7 @@ export function wrapTupleTypeGroup1(
 					data._optional_type,
 					data._rest_type,
 					data._member_expression,
-					data._call_expression,
+					data._type_query_call_expression_in_type_annotation,
 					data._this_type,
 					data._parenthesized_type,
 					data._predefined_type,
@@ -10848,8 +10851,7 @@ export function wrapTupleTypeGroup1(
 					data._readonly_type,
 					data._constructor_type,
 					data._infer_type,
-					data._type_query_member_expression_in_type_annotation,
-					data._type_query_call_expression_in_type_annotation
+					data._type_query_member_expression_in_type_annotation
 				]),
 		true,
 		'tuple_type_member',
@@ -10859,7 +10861,6 @@ export function wrapTupleTypeGroup1(
 		{
 			..._omitWrapKeys(data, [
 				'_array_type',
-				'_call_expression',
 				'_conditional_type',
 				'_constructor_type',
 				'_existential_type',
@@ -13071,7 +13072,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 };
 
 const _aliasTargetToSource: Record<string, string> = {
-	_call_expression: '_type_query_call_expression_in_type_annotation',
 	_for_header_group1: '_lhs_expression',
 	_member_expression: 'nested_identifier',
 	_optional_parameter: 'optional_tuple_parameter',
