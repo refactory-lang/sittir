@@ -361,11 +361,27 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			// outer-absent lookback): a boundary space's presence depends on
 			// whether optional neighbours render — runtime information the
 			// matrix could only simulate, and the writer simply observes.
+			// An INDENT member marks where this seq's content steps to a new
+			// depth (e.g. `_suite_block_with_indent` = seq(INDENT, block),
+			// `_match_block_block` = seq(INDENT, repeat(_statement), DEDENT)).
+			// Everything from right after it to the end of THIS seq's members
+			// is wrapped in an Askama `{% filter indent(...) %}` block, so the
+			// indent width is a property of the WRAPPING template text, not
+			// render-time state — nested INDENT sites each add their own
+			// `{% filter %}` layer, composing depth automatically through
+			// ordinary template nesting. A trailing DEDENT's own bare '\n'
+			// (see the INDENT/DEDENT/NEWLINE case above) rides inside the same
+			// wrapped span as the last line's terminator, so it never gets a
+			// spurious trailing prefix.
+			const indentMemberIdx = rule.members.findIndex((m) => m.type === INDENT);
 			const parts: string[] = [];
-			for (const m of rule.members) {
+			let indentPartIdx = -1;
+			rule.members.forEach((m, i) => {
 				const text = emitRule(m, ctx);
-				if (text !== '') parts.push(text);
-			}
+				if (text === '') return;
+				if (i === indentMemberIdx) indentPartIdx = parts.length;
+				parts.push(text);
+			});
 			if (parts.length === 0) return '';
 			// Static-static seams only (spec v2 note: "space baked into the
 			// literal"): askama compiles adjacent template literals into ONE
@@ -375,12 +391,23 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			// chars. Template syntax chars ('{' of '{%'/'{{') are not
 			// word-class, so conditional/slot boundaries fall through to the
 			// runtime writer untouched.
-			let seqBody = parts[0]!;
-			for (let i = 1; i < parts.length; i++) {
-				const l = seqBody[seqBody.length - 1]!;
-				const r = parts[i]![0]!;
-				if (ctx.isWordChar(l) && ctx.isWordChar(r)) seqBody += ' ';
-				seqBody += parts[i]!;
+			const joinParts = (segments: string[]): string => {
+				let body = segments[0]!;
+				for (let i = 1; i < segments.length; i++) {
+					const l = body[body.length - 1]!;
+					const r = segments[i]![0]!;
+					if (ctx.isWordChar(l) && ctx.isWordChar(r)) body += ' ';
+					body += segments[i]!;
+				}
+				return body;
+			};
+			let seqBody: string;
+			if (indentPartIdx !== -1 && indentPartIdx < parts.length - 1) {
+				const before = joinParts(parts.slice(0, indentPartIdx + 1));
+				const after = joinParts(parts.slice(indentPartIdx + 1));
+				seqBody = `${before}{% filter indent(2, true) %}${after}{% endfilter %}`;
+			} else {
+				seqBody = joinParts(parts);
 			}
 			// §D-2a seq-unit multiplicity (normalize inline hoist): a `seq` that
 			// carries its OWN `multiplicity` is an inlined group body whose
@@ -440,10 +467,39 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 		case CHOICE:
 			return emitChoice(rule, ctx);
 
+		// INDENT/DEDENT are structural whitespace tokens tree-sitter never
+		// gives real bytes to — they only mark WHERE a depth transition
+		// happens. The actual indent WIDTH is applied by the SEQ case above,
+		// which wraps everything after an INDENT member in an Askama
+		// `{% filter indent(...) %}` block. Askama's `indent` filter
+		// composes correctly for nested depth via ordinary template
+		// nesting (each nested `{% filter indent %}` block adds its own
+		// width on top of whatever already passes through it) with no
+		// render-time counter needed.
+		//
+		// INDENT contributes the bare newline the indented content needs
+		// before its first line. Emitted as an EXPRESSION (`{{ "\n" }}`),
+		// not raw template text: a kind whose own SEQ starts with INDENT
+		// (e.g. `_suite_block_with_indent`) has this newline as the
+		// literal FIRST character of its compiled template body, directly
+		// adjacent to the `{#- @generated ... -#}` header comment every
+		// template carries — and `-#}`'s whitespace trim eats ALL adjacent
+		// literal whitespace (not just one line), silently deleting a bare
+		// '\n' there. An expression tag is not whitespace, so the trim
+		// stops at its opening `{{` and the newline survives.
 		case INDENT:
-			return '\n  ';
+			return '{{ "\n" }}';
+		// DEDENT contributes NOTHING: in this grammar, INDENT/DEDENT only
+		// ever wrap a repeat of `_statement`-typed content, and every
+		// `_statement` shape already self-terminates with its own trailing
+		// newline (`_simple_statements.jinja` ends `{{ newline }}`; a
+		// compound statement's own suite ends the same way, transitively,
+		// via ITS block's DEDENT). A separate DEDENT newline here would
+		// duplicate that — invisibly, when the block is the very end of a
+		// rendered document (trimmed by the root render call), but as a
+		// spurious blank line whenever something follows.
 		case DEDENT:
-			return '\n';
+			return '';
 		case NEWLINE:
 			return '\n';
 
@@ -679,10 +735,44 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 		return escapeLiteral(rule.literal);
 	}
 
+	// A hidden, inline-flagged target with a real renderRule (e.g. rust's
+	// `struct_item.name` → `_type_identifier`, typescript's
+	// `*.semicolon` → `_semicolon`) inlines the SAME way regardless of
+	// whether the reference to it is a declared named FIELD or an unnamed
+	// group-lift helper — a hidden target is never a real slot value (it
+	// never surfaces as its own CST node), so treating a field-wrapped
+	// reference to it as an opaque scalar slot (the old behavior) produces
+	// an unresolvable template variable whenever the target isn't just a
+	// trivial single-value passthrough. Both branches below gate on this so
+	// the shared inlining logic further down (originally written only for
+	// the unnamed case) is the single place that decides.
+	//
+	// EXCLUDES a target whose own renderRule is a CHOICE (e.g. python's
+	// `_suite`, once its own indent-bearing arm is promoted to a real
+	// aliased kind — see `_suite: { 1: 'block_with_indent' }` in
+	// grammar.sittir.ts): a well-formed multi-arm choice is exactly what
+	// the union-slot machinery (`emitChoice`'s `unionBacked` routing) is
+	// built to route through a NORMAL slot reference on the outer field —
+	// inlining it here would bypass that machinery instead of exercising it,
+	// and `emitChoice` has no notion of gating on an arbitrary outer field
+	// name for a plain (non-union-backed) choice.
+	const isInlineableHiddenHelper =
+		rule.type === SYMBOL &&
+		rule.inline === true &&
+		(() => {
+			const target = ctx.nodeMap.nodes.get(rule.name);
+			return (
+				target !== undefined &&
+				'renderRule' in target &&
+				target.renderRule !== undefined &&
+				target.renderRule.type !== CHOICE
+			);
+		})();
+
 	// PR2 Task 3.B3: check leaf-level attributes pushed down from wrapper
 	// rules. fieldName is set when the symbol was formerly inside a FieldRule;
 	// multiplicity when inside a RepeatRule or OptionalRule.
-	if (symbolFieldName !== undefined) {
+	if (symbolFieldName !== undefined && !isInlineableHiddenHelper) {
 		// Prefer the registered slot (single source); fall back to the field
 		// name + leaf multiplicity only when no slot is registered.
 		const slot = lookupSlot(rule, ctx);
@@ -705,9 +795,10 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 	// group-lift inlining path below. The inferred-slot path fires because
 	// assemble registers a back-pointer for EVERY rule position it processes,
 	// including auto-synthesized helpers. We skip it here so the group-lift
-	// inline logic handles it correctly.
+	// inline logic handles it correctly. (Named fields wrapping an inlineable
+	// hidden helper take the same fall-through, for the reason above.)
 	const slot = lookupSlot(rule, ctx);
-	if (slot && !(slot.isUnnamed && rule.type === SYMBOL && rule.inline === true)) {
+	if (slot && !isInlineableHiddenHelper && !(slot.isUnnamed && rule.type === SYMBOL && rule.inline === true)) {
 		return emitSlotReference(rule, slot);
 	}
 	// Bug 2 fix: Group-lifted symbols that are auto-synthesized hidden helpers
@@ -743,7 +834,15 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 			ctx.visitingHelpers.add(rule.name);
 			try {
 				const helperRenderRule = (targetNode as { renderRule: RenderRule }).renderRule;
-				const helperBody = emitRule(helperRenderRule, ctx);
+				// The helper's own inner symbol references must resolve against
+				// the HELPER's own slots, not the outer node's — lookupSlot's
+				// ownerSlots fallback would otherwise silently misresolve (or
+				// fail to resolve) any inner name that doesn't happen to
+				// collide with one of the outer node's own field names.
+				// slotByRuleId (lookupSlot's primary path) is unaffected —
+				// this only matters for its ownerSlots fallback.
+				const helperCtx: EmitCtx = { ...ctx, ownerSlots: (targetNode as { slots?: EmitCtx['ownerSlots'] }).slots };
+				const helperBody = emitRule(helperRenderRule, helperCtx);
 				const multiplicity = (rule as { multiplicity?: Multiplicity }).multiplicity;
 				// Multiplicity is applied at the inlined SEQ UNIT (never the leaves —
 				// pushing past the seq distributes optional onto bare literals which
@@ -758,12 +857,19 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 				if (multiplicity === 'array' || multiplicity === 'nonEmptyArray') {
 					const listName = slot
 						? (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase()
-						: (pickConditionalKey(helperRenderRule, ctx) ?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase());
+						: (pickConditionalKey(helperRenderRule, helperCtx) ??
+							(rule.name.replace(/^_+/, '') || 'children').toLowerCase());
 					return emitListSlot(listName, rule, slot);
 				}
+				// symbolFieldName: when present, it's the outer FIELD's own name
+				// (e.g. `name`/`semicolon`) — prefer it over a condKey derived
+				// from the helper's inner content, since the outer field's
+				// presence is what the wire/read layer actually populates.
 				if (multiplicity === 'optional' && helperBody) {
 					const condKey =
-						pickConditionalKey(helperRenderRule, ctx) ?? (rule.name.replace(/^_+/, '') || 'children').toLowerCase();
+						symbolFieldName?.toLowerCase() ??
+						pickConditionalKey(helperRenderRule, helperCtx) ??
+						(rule.name.replace(/^_+/, '') || 'children').toLowerCase();
 					return `{% if ${condKey} | isPresent %}${helperBody}{% endif %}`;
 				}
 				return helperBody;

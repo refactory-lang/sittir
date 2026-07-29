@@ -648,9 +648,7 @@ export interface ExceptClauseTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _except_clause_group1?: ExceptClauseGroup1Transport
-  _simple_statements?: SimpleStatementsTransport
-  _block?: BlockTransport
-  _newline?: NewlineTransport
+  _content: ExceptClauseContentTransportSlot
 }
 
 export interface ExecStatementTransport {
@@ -1452,6 +1450,17 @@ export interface SubscriptTransport {
   _subscript: Array<SubscriptSubscriptTransportSlot>
 }
 
+export interface SuiteBlockWithIndentTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _block: BlockTransport
+}
+
 export interface SuiteTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1460,9 +1469,7 @@ export interface SuiteTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _simple_statements?: SimpleStatementsTransport
-  _block?: BlockTransport
-  _newline?: NewlineTransport
+  _content: SuiteContentTransportSlot
 }
 
 export interface TryStatementTransport {

@@ -314,6 +314,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	_expression_statement_tuple: TSKindId.ExpressionStatementTuple,
 	_with_clause_bare: TSKindId.WithClauseBare,
 	_with_clause_paren: TSKindId.WithClauseParen,
+	_suite_block_with_indent: TSKindId.SuiteBlockWithIndent,
 	_simple_pattern_negative: TSKindId.SimplePatternNegative
 };
 
@@ -417,6 +418,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildWithClauseBare(children as Parameters<typeof F.buildWithClauseBare>[0]);
 		case '_with_clause_paren':
 			return F.buildWithClauseParen(...(children as Parameters<typeof F.buildWithClauseParen>));
+		case '_suite_block_with_indent':
+			return F.buildSuiteBlockWithIndent(children[0] as Parameters<typeof F.buildSuiteBlockWithIndent>[0]);
 		case '_simple_pattern_negative':
 			return F.buildSimplePatternNegative(children[0] as Parameters<typeof F.buildSimplePatternNegative>[0]);
 		default:
@@ -575,7 +578,7 @@ const _K7: readonly string[] = [
 	'as_pattern',
 	'expression_list'
 ];
-const _K8: readonly string[] = ['_simple_statements', 'block'];
+const _K8: readonly string[] = ['_simple_statements', '_suite_block_with_indent'];
 const _K9: readonly string[] = ['elif_clause', 'else_clause'];
 const _K10: readonly string[] = [
 	'keyword_identifier',
@@ -946,7 +949,7 @@ export function coerceToIfStatement(input: T.IfStatement.Loose): ReturnType<type
 		consequence: _requireField(
 			'if_statement',
 			'consequence',
-			_resolveOne<T.SimpleStatements | T.Block | '\n'>(input.consequence, _K0, _K8)
+			_resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(input.consequence, _K0, _K8)
 		),
 		alternative: _resolveMany<T.ElifClause | T.ElseClause>(input.alternative, _K0, _K9)
 	});
@@ -959,7 +962,7 @@ export function coerceToElifClause(input: T.ElifClause.Loose): ReturnType<typeof
 		consequence: _requireField(
 			'elif_clause',
 			'consequence',
-			_resolveOne<T.SimpleStatements | T.Block | '\n'>(input.consequence, _K0, _K8)
+			_resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(input.consequence, _K0, _K8)
 		)
 	});
 }
@@ -971,7 +974,7 @@ export function coerceToElseClause(input: T.ElseClause.Loose): ReturnType<typeof
 		_requireField(
 			'else_clause',
 			'body',
-			_resolveOne<T.SimpleStatements | T.Block | '\n'>(
+			_resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'body' in input ? input.body : input,
 				_K0,
 				_K8
@@ -1000,7 +1003,7 @@ export function coerceToCaseClause(input: T.CaseClause.Loose): ReturnType<typeof
 		consequence: _requireField(
 			'case_clause',
 			'consequence',
-			_resolveOne<T.SimpleStatements | T.Block | '\n'>(input.consequence, _K0, _K8)
+			_resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(input.consequence, _K0, _K8)
 		)
 	});
 }
@@ -1014,7 +1017,7 @@ export function coerceToForStatement(input: T.ForStatement.Loose): ReturnType<ty
 		body: _requireField(
 			'for_statement',
 			'body',
-			_resolveOne<T.SimpleStatements | T.Block | '\n'>(input.body, _K0, _K8)
+			_resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(input.body, _K0, _K8)
 		),
 		alternative: _resolveOneBranch<T.ElseClause>(input.alternative, 'else_clause')
 	});
@@ -1027,7 +1030,7 @@ export function coerceToWhileStatement(input: T.WhileStatement.Loose): ReturnTyp
 		body: _requireField(
 			'while_statement',
 			'body',
-			_resolveOne<T.SimpleStatements | T.Block | '\n'>(input.body, _K0, _K8)
+			_resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(input.body, _K0, _K8)
 		),
 		alternative: _resolveOneBranch<T.ElseClause>(input.alternative, 'else_clause')
 	});
@@ -1039,7 +1042,7 @@ export function coerceToTryStatement(input: T.TryStatement.Loose): ReturnType<ty
 		body: _requireField(
 			'try_statement',
 			'body',
-			_resolveOne<T.SimpleStatements | T.Block | '\n'>(input.body, _K0, _K8)
+			_resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(input.body, _K0, _K8)
 		),
 		exceptClauses: _resolveManyBranch<T.ExceptClause>(input.exceptClauses, 'except_clause'),
 		elseClause: _resolveOneBranch<T.ElseClause>(input.elseClause, 'else_clause'),
@@ -1047,13 +1050,15 @@ export function coerceToTryStatement(input: T.TryStatement.Loose): ReturnType<ty
 	});
 }
 
-export function coerceToExceptClause(input?: T.ExceptClause.Loose): ReturnType<typeof F.buildExceptClause> {
-	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildExceptClause>;
+export function coerceToExceptClause(input: T.ExceptClause.Loose): ReturnType<typeof F.buildExceptClause> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildExceptClause>;
 	return F.buildExceptClause({
-		exceptClauseGroup1: _resolveOneBranch<T.ExceptClauseGroup1>(input?.exceptClauseGroup1, '_except_clause_group1'),
-		simpleStatements: _resolveOneBranch<T.SimpleStatements>(input?.simpleStatements, '_simple_statements'),
-		block: _resolveOneBranch<T.Block>(input?.block, 'block'),
-		newline: _resolveBooleanKeyword(input?.newline)
+		exceptClauseGroup1: _resolveOneBranch<T.ExceptClauseGroup1>(input.exceptClauseGroup1, '_except_clause_group1'),
+		content: _requireField(
+			'except_clause',
+			'content',
+			_resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(input.content, _K0, _K8)
+		)
 	});
 }
 
@@ -1064,7 +1069,7 @@ export function coerceToFinallyClause(input: T.FinallyClause.Loose): ReturnType<
 		_requireField(
 			'finally_clause',
 			'block',
-			_resolveOne<T.SimpleStatements | T.Block | '\n'>(
+			_resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'block' in input ? input.block : input,
 				_K0,
 				_K8
@@ -1085,7 +1090,7 @@ export function coerceToWithStatement(input: T.WithStatement.Loose): ReturnType<
 		body: _requireField(
 			'with_statement',
 			'body',
-			_resolveOne<T.SimpleStatements | T.Block | '\n'>(input.body, _K0, _K8)
+			_resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(input.body, _K0, _K8)
 		)
 	});
 }
@@ -1130,7 +1135,7 @@ export function coerceToFunctionDefinition(
 		body: _requireField(
 			'function_definition',
 			'body',
-			_resolveOne<T.SimpleStatements | T.Block | '\n'>(input.body, _K0, _K8)
+			_resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(input.body, _K0, _K8)
 		)
 	});
 }
@@ -1242,7 +1247,7 @@ export function coerceToClassDefinition(input: T.ClassDefinition.Loose): ReturnT
 		body: _requireField(
 			'class_definition',
 			'body',
-			_resolveOne<T.SimpleStatements | T.Block | '\n'>(input.body, _K0, _K8)
+			_resolveOne<T.SimpleStatements | T.SuiteBlockWithIndent | '\n'>(input.body, _K0, _K8)
 		)
 	});
 }

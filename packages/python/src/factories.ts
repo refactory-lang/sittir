@@ -453,7 +453,7 @@ export function buildIfStatement(config: T.IfStatement.Config) {
 				_alternative,
 				$with: {
 					condition: (value: T.Expression) => buildIfStatement({ ...config, condition: value }),
-					consequence: (value: T.SimpleStatements | T.Block | '\n') =>
+					consequence: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
 						buildIfStatement({ ...config, consequence: value }),
 					alternatives: (...values: (T.ElifClause | T.ElseClause)[]) =>
 						buildIfStatement({ ...config, alternative: values })
@@ -482,7 +482,7 @@ export function buildElifClause(config: T.ElifClause.Config) {
 				_consequence,
 				$with: {
 					condition: (value: T.Expression) => buildElifClause({ ...config, condition: value }),
-					consequence: (value: T.SimpleStatements | T.Block | '\n') =>
+					consequence: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
 						buildElifClause({ ...config, consequence: value })
 				}
 			},
@@ -577,7 +577,7 @@ export function buildCaseClause(config: T.CaseClause.Config) {
 					casePatterns: (...values: NonEmptyArray<T.CasePattern>) =>
 						buildCaseClause({ ...config, casePattern: values }),
 					guard: (value?: T.IfClause) => buildCaseClause({ ...config, guard: value }),
-					consequence: (value: T.SimpleStatements | T.Block | '\n') =>
+					consequence: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
 						buildCaseClause({ ...config, consequence: value })
 				}
 			},
@@ -613,7 +613,8 @@ export function buildForStatement(config: T.ForStatement.Config) {
 						buildForStatement({ ...config, asyncMarker: value }),
 					left: (value: T.LeftHandSide) => buildForStatement({ ...config, left: value }),
 					right: (value: T.Expressions) => buildForStatement({ ...config, right: value }),
-					body: (value: T.SimpleStatements | T.Block | '\n') => buildForStatement({ ...config, body: value }),
+					body: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
+						buildForStatement({ ...config, body: value }),
 					alternative: (value?: T.ElseClause) => buildForStatement({ ...config, alternative: value })
 				}
 			},
@@ -644,7 +645,8 @@ export function buildWhileStatement(config: T.WhileStatement.Config) {
 				_alternative,
 				$with: {
 					condition: (value: T.Expression) => buildWhileStatement({ ...config, condition: value }),
-					body: (value: T.SimpleStatements | T.Block | '\n') => buildWhileStatement({ ...config, body: value }),
+					body: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
+						buildWhileStatement({ ...config, body: value }),
 					alternative: (value?: T.ElseClause) => buildWhileStatement({ ...config, alternative: value })
 				}
 			},
@@ -674,7 +676,8 @@ export function buildTryStatement(config: T.TryStatement.Config) {
 				_else_clause,
 				_finally_clause,
 				$with: {
-					body: (value: T.SimpleStatements | T.Block | '\n') => buildTryStatement({ ...config, body: value }),
+					body: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
+						buildTryStatement({ ...config, body: value }),
 					exceptClauses: (...values: T.ExceptClause[]) => buildTryStatement({ ...config, exceptClauses: values }),
 					elseClause: (value?: T.ElseClause) => buildTryStatement({ ...config, elseClause: value }),
 					finallyClause: (value?: T.FinallyClause) => buildTryStatement({ ...config, finallyClause: value })
@@ -691,11 +694,9 @@ export function buildTryStatement(config: T.TryStatement.Config) {
 	);
 }
 
-export function buildExceptClause(config: Partial<T.ExceptClause.Config> = {}) {
+export function buildExceptClause(config: T.ExceptClause.Config) {
 	const _except_clause_group1 = config.exceptClauseGroup1;
-	const _simple_statements = config.simpleStatements;
-	const _block = config.block;
-	const _newline = coerceBooleanKeywordStorage(config.newline);
+	const _content = config.content;
 	return withMethods(
 		withAccessors(
 			{
@@ -703,23 +704,17 @@ export function buildExceptClause(config: Partial<T.ExceptClause.Config> = {}) {
 				$source: 2 as const,
 				$named: true as const,
 				_except_clause_group1,
-				_simple_statements,
-				_block,
-				_newline,
+				_content,
 				$with: {
 					exceptClauseGroup1: (value?: T.ExceptClauseGroup1) =>
 						buildExceptClause({ ...config, exceptClauseGroup1: value }),
-					simpleStatements: (value?: T.SimpleStatements) => buildExceptClause({ ...config, simpleStatements: value }),
-					block: (value?: T.Block) => buildExceptClause({ ...config, block: value }),
-					newline: (value?: NonNullable<Parameters<typeof buildExceptClause>[0]>['newline']) =>
-						buildExceptClause({ ...config, newline: value })
+					content: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
+						buildExceptClause({ ...config, content: value })
 				}
 			},
 			{
 				exceptClauseGroup1: () => _except_clause_group1,
-				simpleStatements: () => _simple_statements,
-				block: () => _block,
-				newline: () => _newline
+				content: () => _content
 			}
 		),
 		methodsEngine
@@ -764,7 +759,8 @@ export function buildWithStatement(config: T.WithStatement.Config) {
 					asyncMarker: (value?: NonNullable<Parameters<typeof buildWithStatement>[0]>['asyncMarker']) =>
 						buildWithStatement({ ...config, asyncMarker: value }),
 					withClause: (value: T.WithClause) => buildWithStatement({ ...config, withClause: value }),
-					body: (value: T.SimpleStatements | T.Block | '\n') => buildWithStatement({ ...config, body: value })
+					body: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
+						buildWithStatement({ ...config, body: value })
 				}
 			},
 			{
@@ -843,7 +839,8 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config) {
 					typeParameters: (value?: T.TypeParameter) => buildFunctionDefinition({ ...config, typeParameters: value }),
 					parameters: (value: T.Parameters) => buildFunctionDefinition({ ...config, parameters: value }),
 					returnType: (value?: T.Type) => buildFunctionDefinition({ ...config, returnType: value }),
-					body: (value: T.SimpleStatements | T.Block | '\n') => buildFunctionDefinition({ ...config, body: value })
+					body: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
+						buildFunctionDefinition({ ...config, body: value })
 				}
 			},
 			{
@@ -1051,7 +1048,8 @@ export function buildClassDefinition(config: T.ClassDefinition.Config) {
 					name: (value: T.Identifier) => buildClassDefinition({ ...config, name: value }),
 					typeParameters: (value?: T.TypeParameter) => buildClassDefinition({ ...config, typeParameters: value }),
 					superclasses: (value?: T.ArgumentList) => buildClassDefinition({ ...config, superclasses: value }),
-					body: (value: T.SimpleStatements | T.Block | '\n') => buildClassDefinition({ ...config, body: value })
+					body: (value: T.SimpleStatements | T.SuiteBlockWithIndent | '\n') =>
+						buildClassDefinition({ ...config, body: value })
 				}
 			},
 			{
@@ -3426,6 +3424,25 @@ export function buildMatchBlockBlock(config: Partial<T.MatchBlockBlock.Config> =
 	);
 }
 
+export function buildSuiteBlockWithIndent(child: T.Block) {
+	const _block = child;
+	return withMethods(
+		withAccessors(
+			{
+				$type: TSKindId.SuiteBlockWithIndent as const,
+				$source: 2 as const,
+				$named: true as const,
+				_block,
+				$with: { $child: (v: T.Block) => buildSuiteBlockWithIndent(v) }
+			},
+			{
+				block: () => _block
+			}
+		),
+		methodsEngine
+	);
+}
+
 export function buildSimplePatternNegative(child: T.Integer | T.Float) {
 	const _content = child;
 	return withMethods(
@@ -3792,6 +3809,7 @@ export type FluentKindMap = {
 	_with_clause_bare: FluentNode<'_with_clause_bare', T.WithClauseBare.Config>;
 	_with_clause_paren: FluentNode<'_with_clause_paren', T.WithClauseParen.Config>;
 	_match_block_block: T.MatchBlockBlock;
+	_suite_block_with_indent: FluentNode<'_suite_block_with_indent', T.SuiteBlockWithIndent.Config>;
 	_simple_pattern_negative: FluentNode<'_simple_pattern_negative', T.SimplePatternNegative.Config>;
 	_except_clause_list: FluentNode<'_except_clause_list', T.ExceptClauseList.Config>;
 	_comparison_operator_comparator: T.ComparisonOperatorComparator;
@@ -3954,6 +3972,7 @@ export const _factoryMap = {
 	_with_clause_bare: buildWithClauseBare,
 	_with_clause_paren: buildWithClauseParen,
 	_match_block_block: buildMatchBlockBlock,
+	_suite_block_with_indent: buildSuiteBlockWithIndent,
 	_simple_pattern_negative: buildSimplePatternNegative,
 	_except_clause_list: buildExceptClauseList,
 	_comparison_operator_comparator: buildComparisonOperatorComparator,

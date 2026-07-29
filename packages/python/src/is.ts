@@ -208,6 +208,9 @@ export interface IsGuards {
 	): v is T & { readonly $type: TSKindId.ExpressionStatementTuple };
 	WithClauseBare<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WithClauseBare };
 	WithClauseParen<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.WithClauseParen };
+	SuiteBlockWithIndent<T extends { readonly $type: number }>(
+		v: T
+	): v is T & { readonly $type: TSKindId.SuiteBlockWithIndent };
 	SimplePatternNegative<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.SimplePatternNegative };
@@ -367,6 +370,7 @@ export interface AssertGuards {
 	}): asserts v is { readonly $type: TSKindId.ExpressionStatementTuple };
 	WithClauseBare(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WithClauseBare };
 	WithClauseParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.WithClauseParen };
+	SuiteBlockWithIndent(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SuiteBlockWithIndent };
 	SimplePatternNegative(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.SimplePatternNegative };
 	ExceptClauseList(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.ExceptClauseList };
 	kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };
@@ -403,7 +407,7 @@ const _supertype_namedExpressionLhs_ids = new Set<number>([1]);
 const _supertype_expressions_ids = new Set<number>([161]);
 const _supertype_compoundStatement_ids = new Set<number>([131, 137, 138, 139, 142, 145, 154, 158, 134]);
 const _supertype_simplePattern_ids = new Set<number>([
-	170, 169, 165, 246, 245, 166, 227, 226, 88, 89, 90, 260, 171, 162, 251
+	170, 169, 165, 246, 245, 166, 227, 226, 88, 89, 90, 261, 171, 162, 251
 ]);
 const _supertype_parameter_ids = new Set<number>([1, 204, 178, 179, 180, 176, 181]);
 const _supertype_pattern_ids = new Set<number>([1, 201, 200, 180, 176, 177]);
@@ -605,6 +609,7 @@ const _kindIdByKind = new Map<string, number>([
 	['_with_clause_bare', TSKindId.WithClauseBare],
 	['_with_clause_paren', TSKindId.WithClauseParen],
 	['_match_block_block', TSKindId.MatchBlockBlock],
+	['_suite_block_with_indent', TSKindId.SuiteBlockWithIndent],
 	['_simple_pattern_negative', TSKindId.SimplePatternNegative],
 	['_except_clause_list', TSKindId.ExceptClauseList],
 	['_comparison_operator_comparator', TSKindId.ComparisonOperatorComparator]
@@ -734,6 +739,7 @@ export const is = {
 	ExpressionStatementTuple: _g(TSKindId.ExpressionStatementTuple),
 	WithClauseBare: _g(TSKindId.WithClauseBare),
 	WithClauseParen: _g(TSKindId.WithClauseParen),
+	SuiteBlockWithIndent: _g(TSKindId.SuiteBlockWithIndent),
 	SimplePatternNegative: _g(TSKindId.SimplePatternNegative),
 	ExceptClauseList: _g(TSKindId.ExceptClauseList),
 	kind: (v: { readonly $type: number }, k: string): boolean => {
@@ -903,6 +909,7 @@ export const assert = {
 	ExpressionStatementTuple: _makeAssert('ExpressionStatementTuple', is.ExpressionStatementTuple as _AnyGuard),
 	WithClauseBare: _makeAssert('WithClauseBare', is.WithClauseBare as _AnyGuard),
 	WithClauseParen: _makeAssert('WithClauseParen', is.WithClauseParen as _AnyGuard),
+	SuiteBlockWithIndent: _makeAssert('SuiteBlockWithIndent', is.SuiteBlockWithIndent as _AnyGuard),
 	SimplePatternNegative: _makeAssert('SimplePatternNegative', is.SimplePatternNegative as _AnyGuard),
 	ExceptClauseList: _makeAssert('ExceptClauseList', is.ExceptClauseList as _AnyGuard),
 	kind: _makeAssertKind(is.kind as _AnyGuard),

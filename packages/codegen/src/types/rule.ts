@@ -211,7 +211,6 @@ export type FieldRule<T extends PhaseName = 'link'> = T extends WrapperPhase
 			readonly type: typeof FIELD;
 			readonly name: string;
 			readonly content: Rule<T>;
-			readonly blockBearer?: boolean;
 			readonly _needsContent?: boolean;
 		}
 	: never;

@@ -2047,8 +2047,23 @@ function applyUnaliasDistinct(
 			// Only downgrade/record the diagnostic when at least one candidate in
 			// this bucket was actually acted on (dropped or retargeted); a bucket
 			// where every candidate was declined via the name-collision guard must
-			// keep firing at its original error severity, unchanged.
-			if (anyActed) diagnostics.push({ ...diagnostic, severity: 'info' });
+			// keep firing at its original error severity, unchanged. Rewrite the
+			// wording too, not just the severity — `diagnoseParseKindCollisions`
+			// phrases every diagnostic as a live, actionable problem ("collapses
+			// onto parse kind X", "give each colliding arm a distinct alias"),
+			// but this one describes the BASE grammar's alias shape and has
+			// already been fixed by the rewrite below — left as the original
+			// wording, it reads as an open issue in the compiled/enriched
+			// grammar when it is neither: it's a resolved fact about the
+			// upstream construct, kept only for audit visibility.
+			if (anyActed) {
+				diagnostics.push({
+					...diagnostic,
+					severity: 'info',
+					message: `${diagnostic.message} Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.`,
+					proposal: 'Already resolved by enrich() — no action needed.'
+				});
+			}
 		}
 	}
 

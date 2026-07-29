@@ -2214,7 +2214,14 @@ function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRule
         toRetarget.set(candidate, strippedName);
         anyActed = true;
       }
-      if (anyActed) diagnostics.push({ ...diagnostic, severity: "info" });
+      if (anyActed) {
+        diagnostics.push({
+          ...diagnostic,
+          severity: "info",
+          message: `${diagnostic.message} Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.`,
+          proposal: "Already resolved by enrich() \u2014 no action needed."
+        });
+      }
     }
   }
   if (toDrop.size === 0 && toRetarget.size === 0) return { rule, diagnostics: [] };
@@ -3506,6 +3513,17 @@ var grammar_sittir_default = grammar(
           1: "paren"
         },
         _match_block: { 0: "block" },
+        // `_suite`'s indent-bearing arm (`seq($._indent, $.block)`) has no
+        // identity of its own otherwise — it's an anonymous seq member of
+        // a CHOICE whose other two arms are themselves aliases (to
+        // `simple_statements`/`newline`). Promoting it to its own kind
+        // (same mechanism as `_match_block`'s `block` arm above) gives it
+        // a real template, walked normally by emitRule/emitOne, so its
+        // own INDENT member (`case INDENT` in templates.ts) renders
+        // correctly instead of being silently dropped by emitChoice's
+        // union-slot routing, which has no notion of "gate an anonymous
+        // seq arm with no discriminating field of its own."
+        _suite: { 1: "block_with_indent" },
         dict_pattern: { "1/0/0/0": "kv" },
         _simple_pattern: { "11": "negative" },
         except_clause: { "2/0/0": "as", "2/0/1": "list" }

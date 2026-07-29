@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 259,
+  "nodeCount": 260,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -102,14 +102,17 @@
     },
     "if_statement.consequence": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "elif_clause.consequence": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "else_clause.body": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "match_statement.body": {
@@ -121,35 +124,40 @@
     },
     "case_clause.consequence": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "for_statement.body": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "while_statement.body": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "try_statement.body": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "except_clause.except_clause_group1": {
       "except_clause_group1": "_except_clause_group1"
     },
-    "except_clause.simple_statements": {
-      "simple_statements": "_simple_statements"
-    },
-    "except_clause.newline": {
+    "except_clause.content": {
+      "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "finally_clause.block": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "with_statement.body": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "with_clause.content": {
@@ -158,6 +166,7 @@
     },
     "function_definition.body": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "parameters.parameters": {
@@ -168,6 +177,7 @@
     },
     "class_definition.body": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "parenthesized_list_splat.content": {
@@ -179,10 +189,9 @@
     "decorator.newline": {
       "newline": "_newline"
     },
-    "_suite.simple_statements": {
-      "simple_statements": "_simple_statements"
-    },
-    "_suite.newline": {
+    "_suite.content": {
+      "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "expression_list.tail": {
@@ -654,24 +663,10 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "simple_statements": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "block": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "newline": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -2094,6 +2089,15 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "_suite_block_with_indent": {
+      "block": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -3730,39 +3734,66 @@
       "hidden": false,
       "fields": [
         {
-          "name": "simple_statements",
-          "propertyName": "simpleStatements",
-          "paramName": "simpleStatements",
-          "required": false,
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_simple_statements",
               "parseKind": "simple_statements",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_newline",
+              "parseKind": "newline",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_simple_statements"
+              "_simple_statements",
+              "_suite_block_with_indent",
+              "_newline"
             ]
           }
-        },
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_suite_block_with_indent",
+      "modelType": "branch",
+      "typeName": "SuiteBlockWithIndent",
+      "factoryName": "suiteBlockWithIndent",
+      "irKey": "suiteBlockWithIndent",
+      "hidden": false,
+      "fields": [
         {
           "name": "block",
           "propertyName": "block",
           "paramName": "block",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "block",
               "parseKind": "block",
               "unresolved": true
@@ -3774,32 +3805,13 @@
               "block"
             ]
           }
-        },
-        {
-          "name": "newline",
-          "propertyName": "newline",
-          "paramName": "newline",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_newline",
-              "parseKind": "newline",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_newline"
-            ]
-          }
         }
       ],
-      "children": []
+      "children": [],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "block"
+      ]
     },
     {
       "kind": "_unary_operator_operator",
@@ -4938,8 +4950,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -4954,7 +4966,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -5242,8 +5254,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -5258,7 +5270,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -6392,8 +6404,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -6408,7 +6420,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -6468,8 +6480,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -6484,7 +6496,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -6555,62 +6567,30 @@
           }
         },
         {
-          "name": "simple_statements",
-          "propertyName": "simpleStatements",
-          "paramName": "simpleStatements",
-          "required": false,
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_simple_statements",
               "parseKind": "simple_statements",
               "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_simple_statements"
-            ]
-          }
-        },
-        {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "block",
-              "parseKind": "block",
+              "multiplicity": "single",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "block"
-            ]
-          }
-        },
-        {
-          "name": "newline",
-          "propertyName": "newline",
-          "paramName": "newline",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_newline",
               "parseKind": "newline",
               "unresolved": true
@@ -6619,6 +6599,8 @@
           "projection": {
             "typeName": "",
             "kinds": [
+              "_simple_statements",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -6628,8 +6610,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "except_clause_group1",
-        "simple_statements",
-        "block"
+        "content"
       ]
     },
     {
@@ -6917,8 +6898,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -6933,7 +6914,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -7145,8 +7126,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -7161,7 +7142,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -7394,8 +7375,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -7410,7 +7391,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -7787,8 +7768,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -7803,7 +7784,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -10463,8 +10444,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -10479,7 +10460,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -11233,8 +11214,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -11249,7 +11230,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -11463,8 +11444,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -11479,7 +11460,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }

@@ -48,6 +48,18 @@ export default grammar(
 
 				_match_block: { 0: 'block' },
 
+				// `_suite`'s indent-bearing arm (`seq($._indent, $.block)`) has no
+				// identity of its own otherwise — it's an anonymous seq member of
+				// a CHOICE whose other two arms are themselves aliases (to
+				// `simple_statements`/`newline`). Promoting it to its own kind
+				// (same mechanism as `_match_block`'s `block` arm above) gives it
+				// a real template, walked normally by emitRule/emitOne, so its
+				// own INDENT member (`case INDENT` in templates.ts) renders
+				// correctly instead of being silently dropped by emitChoice's
+				// union-slot routing, which has no notion of "gate an anonymous
+				// seq arm with no discriminating field of its own."
+				_suite: { 1: 'block_with_indent' },
+
 				dict_pattern: { '1/0/0/0': 'kv' },
 
 				_simple_pattern: { '11': 'negative' },

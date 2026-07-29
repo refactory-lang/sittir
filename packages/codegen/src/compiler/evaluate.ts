@@ -1033,8 +1033,7 @@ function rewriteFieldEnums(
 					// (debt PR-P1) Blind carry — `fieldSource` now lives inside the
 					// opaque `metadata` bag; this rebuild must not read/branch on it,
 					// just propagate it forward untouched.
-					metadata: rule.metadata,
-					blockBearer: rule.blockBearer
+					metadata: rule.metadata
 				} satisfies FieldRule<'evaluate'>;
 			}
 			// Content isn't an enum candidate — recurse to find nested fields.

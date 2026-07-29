@@ -28,7 +28,8 @@ describe('buildValidationReportEntries', () => {
 				grammar: 'typescript',
 				backend: 'native',
 				location: 'interface_body.-',
-				message: 'Separator is not a literal string.'
+				message: 'Separator is not a literal string.',
+				proposal: 'See PR-T.'
 			}
 		]);
 	});
@@ -56,7 +57,7 @@ describe('buildValidationReportEntries', () => {
 				grammar: 'rust',
 				backend: 'native',
 				stage: 'read-render-parse',
-				location: 'Async Block (async_block)',
+				label: 'Async Block (async_block)',
 				message: 're-parse error: "async "'
 			}
 		]);

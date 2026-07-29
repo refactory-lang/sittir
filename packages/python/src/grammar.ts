@@ -359,9 +359,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'block'; named: true },
 					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true }
+					{ type: 'simple_statements'; named: true },
+					{ type: 'suite_block_with_indent'; named: true }
 				];
 			};
 			guard: { multiple: false; required: false; types: [{ type: 'if_clause'; named: true }] };
@@ -421,9 +421,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'block'; named: true },
 					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true }
+					{ type: 'simple_statements'; named: true },
+					{ type: 'suite_block_with_indent'; named: true }
 				];
 			};
 			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
@@ -693,9 +693,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'block'; named: true },
 					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true }
+					{ type: 'simple_statements'; named: true },
+					{ type: 'suite_block_with_indent'; named: true }
 				];
 			};
 		};
@@ -708,9 +708,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'block'; named: true },
 					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true }
+					{ type: 'simple_statements'; named: true },
+					{ type: 'suite_block_with_indent'; named: true }
 				];
 			};
 		};
@@ -723,10 +723,10 @@ export type PythonGrammar = {
 			multiple: true;
 			required: true;
 			types: [
-				{ type: 'block'; named: true },
 				{ type: 'except_clause_group1'; named: true },
 				{ type: 'newline'; named: true },
-				{ type: 'simple_statements'; named: true }
+				{ type: 'simple_statements'; named: true },
+				{ type: 'suite_block_with_indent'; named: true }
 			];
 		};
 	};
@@ -817,9 +817,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'block'; named: true },
 					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true }
+					{ type: 'simple_statements'; named: true },
+					{ type: 'suite_block_with_indent'; named: true }
 				];
 			};
 		};
@@ -850,9 +850,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'block'; named: true },
 					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true }
+					{ type: 'simple_statements'; named: true },
+					{ type: 'suite_block_with_indent'; named: true }
 				];
 			};
 			left: {
@@ -899,9 +899,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'block'; named: true },
 					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true }
+					{ type: 'simple_statements'; named: true },
+					{ type: 'suite_block_with_indent'; named: true }
 				];
 			};
 			name: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
@@ -972,9 +972,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'block'; named: true },
 					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true }
+					{ type: 'simple_statements'; named: true },
+					{ type: 'suite_block_with_indent'; named: true }
 				];
 			};
 		};
@@ -1414,6 +1414,12 @@ export type PythonGrammar = {
 			value: { multiple: false; required: true; types: [{ type: 'primary_expression'; named: true }] };
 		};
 	};
+	readonly suite_block_with_indent: {
+		type: 'suite_block_with_indent';
+		named: true;
+		fields: {};
+		children: { multiple: false; required: true; types: [{ type: 'block'; named: true }] };
+	};
 	readonly try_statement: {
 		type: 'try_statement';
 		named: true;
@@ -1422,9 +1428,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'block'; named: true },
 					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true }
+					{ type: 'simple_statements'; named: true },
+					{ type: 'suite_block_with_indent'; named: true }
 				];
 			};
 			else_clause: { multiple: false; required: false; types: [{ type: 'else_clause'; named: true }] };
@@ -1554,9 +1560,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'block'; named: true },
 					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true }
+					{ type: 'simple_statements'; named: true },
+					{ type: 'suite_block_with_indent'; named: true }
 				];
 			};
 			condition: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
@@ -1599,9 +1605,9 @@ export type PythonGrammar = {
 				multiple: false;
 				required: true;
 				types: [
-					{ type: 'block'; named: true },
 					{ type: 'newline'; named: true },
-					{ type: 'simple_statements'; named: true }
+					{ type: 'simple_statements'; named: true },
+					{ type: 'suite_block_with_indent'; named: true }
 				];
 			};
 			with_clause: { multiple: false; required: true; types: [{ type: 'with_clause'; named: true }] };

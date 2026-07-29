@@ -411,13 +411,17 @@ describe('try_statement', () => {
 
 describe('except_clause', () => {
 	it('factory produces correct type', () => {
-		const node = ir.exceptClause({});
+		const node = ir.exceptClause({
+			content: { $type: TSKindId.Newline, $text: '\n', $source: 2, $named: true } as any
+		});
 		expect(node.$type).toBe(TSKindId.ExceptClause);
 		expect(node.$source).toBe(2);
 	});
-	it('render does not throw on minimal config', () => {
-		const node = ir.exceptClause({});
-		expect(() => node.$render!()).not.toThrow();
+	it('render produces non-empty string', () => {
+		const node = ir.exceptClause({
+			content: { $type: TSKindId.Newline, $text: '\n', $source: 2, $named: true } as any
+		});
+		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
 

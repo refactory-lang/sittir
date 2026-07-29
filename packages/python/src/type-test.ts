@@ -269,6 +269,8 @@ import type {
 	Subscript,
 	SubscriptTree,
 	Suite,
+	SuiteBlockWithIndent,
+	SuiteBlockWithIndentTree,
 	SuiteTree,
 	True,
 	TrueTree,
@@ -498,6 +500,9 @@ export type _Type_ExpressionStatementTuple = _TypeAssert<
 >;
 export type _Type_WithClauseBare = _TypeAssert<_TypeExtends<WithClauseBare['$type'], TSKindId.WithClauseBare>>;
 export type _Type_WithClauseParen = _TypeAssert<_TypeExtends<WithClauseParen['$type'], TSKindId.WithClauseParen>>;
+export type _Type_SuiteBlockWithIndent = _TypeAssert<
+	_TypeExtends<SuiteBlockWithIndent['$type'], TSKindId.SuiteBlockWithIndent>
+>;
 export type _Type_SimplePatternNegative = _TypeAssert<
 	_TypeExtends<SimplePatternNegative['$type'], TSKindId.SimplePatternNegative>
 >;
@@ -728,6 +733,9 @@ export type _Tree_ExpressionStatementTuple = _TypeAssert<
 >;
 export type _Tree_WithClauseBare = _TypeAssert<_TypeExtends<WithClauseBareTree['type'], '_with_clause_bare'>>;
 export type _Tree_WithClauseParen = _TypeAssert<_TypeExtends<WithClauseParenTree['type'], '_with_clause_paren'>>;
+export type _Tree_SuiteBlockWithIndent = _TypeAssert<
+	_TypeExtends<SuiteBlockWithIndentTree['type'], '_suite_block_with_indent'>
+>;
 export type _Tree_SimplePatternNegative = _TypeAssert<
 	_TypeExtends<SimplePatternNegativeTree['type'], '_simple_pattern_negative'>
 >;

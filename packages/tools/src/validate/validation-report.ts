@@ -32,11 +32,21 @@ export interface DiagnosticEntryBase {
 	readonly message: string;
 }
 
-/** Generic, pre-normalized grammar diagnostic input — decoupled from the real
- *  `GrammarDiagnostic` union in `@sittir/codegen/types/diagnostics.ts`. */
+/**
+ * Grammar diagnostic input — decoupled from the real `GrammarDiagnostic |
+ * CompilerDiagnostic` union in `@sittir/codegen/types/diagnostics.ts` (this
+ * module doesn't import codegen types), but NOT narrowed to a fixed field
+ * list either: `scope`, `phase`, `ownerKind`, `slotName`, `canProceed`,
+ * `details`, `ruleId`, `subject`, etc. all still exist on disk in
+ * `.sittir/grammar-diagnostics.json` (written verbatim by
+ * `writeGrammarDiagnosticsJson`) and are preserved through `readGrammarDiagnosticsEntries`
+ * — only `location` is a synthesized convenience field, added alongside the
+ * original fields rather than replacing them.
+ */
 export interface GrammarDiagnosticEntry extends DiagnosticEntryBase {
 	readonly location?: string;
 	readonly proposal?: string;
+	readonly [key: string]: unknown;
 }
 
 /**
@@ -45,29 +55,41 @@ export interface GrammarDiagnosticEntry extends DiagnosticEntryBase {
  * in `packages/tools/src/commands.ts`) assigns a distinct `code` per failure
  * kind rather than every validator failure being tagged with one generic
  * bucket code.
+ *
+ * `stage`/`label` are the only fields every source is guaranteed to add —
+ * each underlying validator result (read-render-parse errors/mismatches/
+ * accessor-throws, factory errors, coverage issues, …) has its OWN extra
+ * fields (`input`, `rendered`, `key`, `accessor`, `type`, …); those are
+ * preserved through via spread rather than being narrowed away.
  */
 export interface ValidatorDiagnostic extends DiagnosticEntryBase {
 	readonly stage: string;
 	readonly label: string;
-}
-
-export interface ValidationReportEntry {
-	readonly source: 'grammar' | 'validator';
-	readonly severity: 'error' | 'warning' | 'info' | 'fail';
-	readonly code: string;
-	readonly grammar: string;
-	readonly backend: string;
-	readonly stage?: string;
-	readonly location?: string;
-	readonly message: string;
+	readonly [key: string]: unknown;
 }
 
 /**
+ * `source`/`grammar`/`backend` are the only fields every entry is guaranteed
+ * to carry beyond `DiagnosticEntryBase` — everything else is whatever the
+ * originating diagnostic (`GrammarDiagnosticEntry` or `ValidatorDiagnostic`)
+ * actually has. Grammar and validator diagnostics aren't the same shape and
+ * don't need to be forced into one: a grammar diagnostic's `location`/
+ * `proposal` and a validator failure's `stage`/`label` are kept as their own
+ * fields rather than renamed/collapsed into a shared name (or dropped, as
+ * `proposal` previously was) to fit a homogenized entry shape.
+ */
+export type ValidationReportEntry = DiagnosticEntryBase & {
+	readonly source: 'grammar' | 'validator';
+	readonly grammar: string;
+	readonly backend: string;
+} & (Partial<Pick<GrammarDiagnosticEntry, 'location' | 'proposal'>> | Partial<Pick<ValidatorDiagnostic, 'stage' | 'label'>>);
+
+/**
  * Merge per-grammar static grammar diagnostics and per-grammar validator
- * failures into one flat array of `ValidationReportEntry`. Both sides keep
- * their own real `code`/`severity`, assigned at the source (`readGrammarDiagnosticsEntries`
- * / `collectValidatorFailuresForGrammar` in `packages/tools/src/commands.ts`)
- * rather than synthesized here.
+ * failures into one flat array of `ValidationReportEntry` — each entry is
+ * the original diagnostic object, spread as-is, tagged with only the shared
+ * `source`/`grammar`/`backend` fields. No hand-picked field list to keep in
+ * sync as either diagnostic shape grows.
  */
 export function buildValidationReportEntries(
 	grammarDiagnosticsByGrammar: Readonly<Record<string, readonly GrammarDiagnosticEntry[]>>,
@@ -76,31 +98,10 @@ export function buildValidationReportEntries(
 ): ValidationReportEntry[] {
 	const entries: ValidationReportEntry[] = [];
 	for (const [grammar, diagnostics] of Object.entries(grammarDiagnosticsByGrammar)) {
-		for (const d of diagnostics) {
-			entries.push({
-				source: 'grammar',
-				severity: d.severity,
-				code: d.code,
-				grammar,
-				backend,
-				location: d.location,
-				message: d.message
-			});
-		}
+		for (const d of diagnostics) entries.push({ source: 'grammar', grammar, backend, ...d });
 	}
 	for (const [grammar, failures] of Object.entries(validatorFailuresByGrammar)) {
-		for (const f of failures) {
-			entries.push({
-				source: 'validator',
-				severity: f.severity,
-				code: f.code,
-				grammar,
-				backend,
-				stage: f.stage,
-				location: f.label,
-				message: f.message
-			});
-		}
+		for (const f of failures) entries.push({ source: 'validator', grammar, backend, ...f });
 	}
 	return entries;
 }

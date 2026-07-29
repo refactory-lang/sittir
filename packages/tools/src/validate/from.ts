@@ -327,7 +327,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 				errors.push({
 					kind,
 					severity: 'error',
-					message: `read/wrap throws: ${(e as Error).message.slice(0, 120)}`
+					message: `read/wrap throws: ${(e as Error).message}`
 				});
 				continue;
 			}
@@ -423,7 +423,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 				errors.push({
 					kind,
 					severity: 'error',
-					message: `from() throws: ${(e as Error).message.slice(0, 80)}`
+					message: `from() throws: ${(e as Error).message}`
 				});
 			}
 		}

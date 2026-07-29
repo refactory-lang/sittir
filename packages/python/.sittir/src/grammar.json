@@ -1954,17 +1954,13 @@
           "value": "simple_statements"
         },
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_indent"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "block"
-            }
-          ]
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_suite_block_with_indent"
+          },
+          "named": true,
+          "value": "suite_block_with_indent"
         },
         {
           "type": "ALIAS",
@@ -7154,6 +7150,19 @@
         {
           "type": "SYMBOL",
           "name": "_dedent"
+        }
+      ]
+    },
+    "_suite_block_with_indent": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_indent"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "block"
         }
       ]
     },

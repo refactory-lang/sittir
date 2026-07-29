@@ -223,6 +223,7 @@ export const enum SyntaxKind {
 	WithClauseBare = '_with_clause_bare',
 	WithClauseParen = '_with_clause_paren',
 	MatchBlockBlock = '_match_block_block',
+	SuiteBlockWithIndent = '_suite_block_with_indent',
 	SimplePatternNegative = '_simple_pattern_negative',
 	ExceptClauseList = '_except_clause_list',
 	ComparisonOperatorComparator = '_comparison_operator_comparator',
@@ -555,45 +556,46 @@ export const enum TSKindId {
 	WithClauseBare = 256,
 	WithClauseParen = 257,
 	MatchBlockBlock = 258,
-	DictPatternKv = 259,
-	SimplePatternNegative = 260,
-	ExceptClauseList = 261,
-	ComparisonOperatorComparator = 262,
-	ModuleRepeat1 = 263,
-	_SimpleStatementsRepeat1 = 264,
-	ImportPrefixRepeat1 = 265,
-	_ImportListRepeat1 = 266,
-	AssertStatementRepeat1 = 267,
-	IfStatementRepeat1 = 268,
-	MatchStatementRepeat1 = 269,
-	CaseClauseRepeat1 = 270,
-	TryStatementRepeat1 = 271,
-	GlobalStatementRepeat1 = 272,
-	TypeParameterRepeat1 = 273,
-	DecoratedDefinitionRepeat1 = 274,
-	DottedNameRepeat1 = 275,
-	UnionPatternRepeat1 = 276,
-	_ParametersRepeat1 = 277,
-	_PatternsRepeat1 = 278,
-	ComparisonOperatorRepeat1 = 279,
-	SubscriptRepeat1 = 280,
-	_CollectionElementsRepeat1 = 281,
-	ForInClauseRepeat1 = 282,
-	ConcatenatedStringRepeat1 = 283,
-	StringRepeat1 = 284,
-	StringContentRepeat1 = 285,
-	FormatSpecifierRepeat1 = 286,
-	_ArgumentListGroup1Repeat1 = 287,
-	_DictPatternGroup2Repeat1 = 288,
-	_DictionaryGroup1Repeat1 = 289,
-	ComprehensionClausesRepeat1 = 290,
-	PrintStatementGroup1Repeat1 = 291,
-	_WithClauseBareRepeat1 = 292,
-	_MatchBlockBlockRepeat1 = 293,
-	_ExceptClauseListRepeat1 = 294,
-	_AsPatternTarget = 295,
-	_FormatExpression = 296,
-	_FutureImportStatementGroup1 = 297
+	SuiteBlockWithIndent = 259,
+	DictPatternKv = 260,
+	SimplePatternNegative = 261,
+	ExceptClauseList = 262,
+	ComparisonOperatorComparator = 263,
+	ModuleRepeat1 = 264,
+	_SimpleStatementsRepeat1 = 265,
+	ImportPrefixRepeat1 = 266,
+	_ImportListRepeat1 = 267,
+	AssertStatementRepeat1 = 268,
+	IfStatementRepeat1 = 269,
+	MatchStatementRepeat1 = 270,
+	CaseClauseRepeat1 = 271,
+	TryStatementRepeat1 = 272,
+	GlobalStatementRepeat1 = 273,
+	TypeParameterRepeat1 = 274,
+	DecoratedDefinitionRepeat1 = 275,
+	DottedNameRepeat1 = 276,
+	UnionPatternRepeat1 = 277,
+	_ParametersRepeat1 = 278,
+	_PatternsRepeat1 = 279,
+	ComparisonOperatorRepeat1 = 280,
+	SubscriptRepeat1 = 281,
+	_CollectionElementsRepeat1 = 282,
+	ForInClauseRepeat1 = 283,
+	ConcatenatedStringRepeat1 = 284,
+	StringRepeat1 = 285,
+	StringContentRepeat1 = 286,
+	FormatSpecifierRepeat1 = 287,
+	_ArgumentListGroup1Repeat1 = 288,
+	_DictPatternGroup2Repeat1 = 289,
+	_DictionaryGroup1Repeat1 = 290,
+	ComprehensionClausesRepeat1 = 291,
+	PrintStatementGroup1Repeat1 = 292,
+	_WithClauseBareRepeat1 = 293,
+	_MatchBlockBlockRepeat1 = 294,
+	_ExceptClauseListRepeat1 = 295,
+	_AsPatternTarget = 296,
+	_FormatExpression = 297,
+	_FutureImportStatementGroup1 = 298
 }
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -707,7 +709,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[108, 'module'],
 	[109, '_statement'],
 	[110, '_simple_statements'],
-	[298, '_simple_statements'],
+	[299, '_simple_statements'],
 	[111, 'import_statement'],
 	[112, 'import_prefix'],
 	[113, 'relative_import'],
@@ -856,45 +858,46 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[256, '_with_clause_bare'],
 	[257, '_with_clause_paren'],
 	[258, '_match_block_block'],
-	[259, '_dict_pattern_kv'],
-	[260, '_simple_pattern_negative'],
-	[261, '_except_clause_list'],
-	[262, '_comparison_operator_comparator'],
-	[263, 'module_repeat1'],
-	[264, '_simple_statements_repeat1'],
-	[265, 'import_prefix_repeat1'],
-	[266, '_import_list_repeat1'],
-	[267, 'assert_statement_repeat1'],
-	[268, 'if_statement_repeat1'],
-	[269, 'match_statement_repeat1'],
-	[270, 'case_clause_repeat1'],
-	[271, 'try_statement_repeat1'],
-	[272, 'global_statement_repeat1'],
-	[273, 'type_parameter_repeat1'],
-	[274, 'decorated_definition_repeat1'],
-	[275, 'dotted_name_repeat1'],
-	[276, 'union_pattern_repeat1'],
-	[277, '_parameters_repeat1'],
-	[278, '_patterns_repeat1'],
-	[279, 'comparison_operator_repeat1'],
-	[280, 'subscript_repeat1'],
-	[281, '_collection_elements_repeat1'],
-	[282, 'for_in_clause_repeat1'],
-	[283, 'concatenated_string_repeat1'],
-	[284, 'string_repeat1'],
-	[285, 'string_content_repeat1'],
-	[286, 'format_specifier_repeat1'],
-	[287, '_argument_list_group1_repeat1'],
-	[288, '_dict_pattern_group2_repeat1'],
-	[289, '_dictionary_group1_repeat1'],
-	[290, 'comprehension_clauses_repeat1'],
-	[291, 'print_statement_group1_repeat1'],
-	[292, '_with_clause_bare_repeat1'],
-	[293, '_match_block_block_repeat1'],
-	[294, '_except_clause_list_repeat1'],
-	[295, '_as_pattern_target'],
-	[296, '_format_expression'],
-	[297, '_future_import_statement_group1']
+	[259, '_suite_block_with_indent'],
+	[260, '_dict_pattern_kv'],
+	[261, '_simple_pattern_negative'],
+	[262, '_except_clause_list'],
+	[263, '_comparison_operator_comparator'],
+	[264, 'module_repeat1'],
+	[265, '_simple_statements_repeat1'],
+	[266, 'import_prefix_repeat1'],
+	[267, '_import_list_repeat1'],
+	[268, 'assert_statement_repeat1'],
+	[269, 'if_statement_repeat1'],
+	[270, 'match_statement_repeat1'],
+	[271, 'case_clause_repeat1'],
+	[272, 'try_statement_repeat1'],
+	[273, 'global_statement_repeat1'],
+	[274, 'type_parameter_repeat1'],
+	[275, 'decorated_definition_repeat1'],
+	[276, 'dotted_name_repeat1'],
+	[277, 'union_pattern_repeat1'],
+	[278, '_parameters_repeat1'],
+	[279, '_patterns_repeat1'],
+	[280, 'comparison_operator_repeat1'],
+	[281, 'subscript_repeat1'],
+	[282, '_collection_elements_repeat1'],
+	[283, 'for_in_clause_repeat1'],
+	[284, 'concatenated_string_repeat1'],
+	[285, 'string_repeat1'],
+	[286, 'string_content_repeat1'],
+	[287, 'format_specifier_repeat1'],
+	[288, '_argument_list_group1_repeat1'],
+	[289, '_dict_pattern_group2_repeat1'],
+	[290, '_dictionary_group1_repeat1'],
+	[291, 'comprehension_clauses_repeat1'],
+	[292, 'print_statement_group1_repeat1'],
+	[293, '_with_clause_bare_repeat1'],
+	[294, '_match_block_block_repeat1'],
+	[295, '_except_clause_list_repeat1'],
+	[296, '_as_pattern_target'],
+	[297, '_format_expression'],
+	[298, '_future_import_statement_group1']
 ]);
 
 /** Parser display-label variant of KIND_NAMES — for validator native/WASM bridging and the deprecated JS-backend template resolver ONLY. Never use for wrapNode dispatch. */
@@ -1009,7 +1012,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[108, 'module'],
 	[109, '_statement'],
 	[110, 'simple_statements'],
-	[298, 'simple_statements'],
+	[299, 'simple_statements'],
 	[111, 'import_statement'],
 	[112, 'import_prefix'],
 	[113, 'relative_import'],
@@ -1158,45 +1161,46 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[256, 'with_clause_bare'],
 	[257, 'with_clause_paren'],
 	[258, 'match_block_block'],
-	[259, 'dict_pattern_kv'],
-	[260, 'simple_pattern_negative'],
-	[261, 'except_clause_list'],
-	[262, 'comparison_operator_comparator'],
-	[263, 'module_repeat1'],
-	[264, '_simple_statements_repeat1'],
-	[265, 'import_prefix_repeat1'],
-	[266, '_import_list_repeat1'],
-	[267, 'assert_statement_repeat1'],
-	[268, 'if_statement_repeat1'],
-	[269, 'match_statement_repeat1'],
-	[270, 'case_clause_repeat1'],
-	[271, 'try_statement_repeat1'],
-	[272, 'global_statement_repeat1'],
-	[273, 'type_parameter_repeat1'],
-	[274, 'decorated_definition_repeat1'],
-	[275, 'dotted_name_repeat1'],
-	[276, 'union_pattern_repeat1'],
-	[277, '_parameters_repeat1'],
-	[278, '_patterns_repeat1'],
-	[279, 'comparison_operator_repeat1'],
-	[280, 'subscript_repeat1'],
-	[281, '_collection_elements_repeat1'],
-	[282, 'for_in_clause_repeat1'],
-	[283, 'concatenated_string_repeat1'],
-	[284, 'string_repeat1'],
-	[285, 'string_content_repeat1'],
-	[286, 'format_specifier_repeat1'],
-	[287, '_argument_list_group1_repeat1'],
-	[288, '_dict_pattern_group2_repeat1'],
-	[289, '_dictionary_group1_repeat1'],
-	[290, 'comprehension_clauses_repeat1'],
-	[291, 'print_statement_group1_repeat1'],
-	[292, '_with_clause_bare_repeat1'],
-	[293, '_match_block_block_repeat1'],
-	[294, '_except_clause_list_repeat1'],
-	[295, 'as_pattern_target'],
-	[296, 'format_expression'],
-	[297, 'future_import_statement_group1']
+	[259, 'suite_block_with_indent'],
+	[260, 'dict_pattern_kv'],
+	[261, 'simple_pattern_negative'],
+	[262, 'except_clause_list'],
+	[263, 'comparison_operator_comparator'],
+	[264, 'module_repeat1'],
+	[265, '_simple_statements_repeat1'],
+	[266, 'import_prefix_repeat1'],
+	[267, '_import_list_repeat1'],
+	[268, 'assert_statement_repeat1'],
+	[269, 'if_statement_repeat1'],
+	[270, 'match_statement_repeat1'],
+	[271, 'case_clause_repeat1'],
+	[272, 'try_statement_repeat1'],
+	[273, 'global_statement_repeat1'],
+	[274, 'type_parameter_repeat1'],
+	[275, 'decorated_definition_repeat1'],
+	[276, 'dotted_name_repeat1'],
+	[277, 'union_pattern_repeat1'],
+	[278, '_parameters_repeat1'],
+	[279, '_patterns_repeat1'],
+	[280, 'comparison_operator_repeat1'],
+	[281, 'subscript_repeat1'],
+	[282, '_collection_elements_repeat1'],
+	[283, 'for_in_clause_repeat1'],
+	[284, 'concatenated_string_repeat1'],
+	[285, 'string_repeat1'],
+	[286, 'string_content_repeat1'],
+	[287, 'format_specifier_repeat1'],
+	[288, '_argument_list_group1_repeat1'],
+	[289, '_dict_pattern_group2_repeat1'],
+	[290, '_dictionary_group1_repeat1'],
+	[291, 'comprehension_clauses_repeat1'],
+	[292, 'print_statement_group1_repeat1'],
+	[293, '_with_clause_bare_repeat1'],
+	[294, '_match_block_block_repeat1'],
+	[295, '_except_clause_list_repeat1'],
+	[296, 'as_pattern_target'],
+	[297, 'format_expression'],
+	[298, 'future_import_statement_group1']
 ]);
 
 export function kindIdFromName(kindName: string): TSKindId {
@@ -1717,6 +1721,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.WithClauseParen;
 		case '_match_block_block':
 			return TSKindId.MatchBlockBlock;
+		case '_suite_block_with_indent':
+			return TSKindId.SuiteBlockWithIndent;
 		case '_dict_pattern_kv':
 			return TSKindId.DictPatternKv;
 		case '_simple_pattern_negative':
@@ -1943,6 +1949,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.WithClauseParen;
 		case 'match_block_block':
 			return TSKindId.MatchBlockBlock;
+		case 'suite_block_with_indent':
+			return TSKindId.SuiteBlockWithIndent;
 		case 'dict_pattern_kv':
 			return TSKindId.DictPatternKv;
 		case 'simple_pattern_negative':
@@ -2250,25 +2258,25 @@ export interface RaiseStatement {
 export interface IfStatement {
 	readonly $type: TSKindId.IfStatement;
 	readonly _condition: Expression;
-	readonly _consequence: SimpleStatements | Block | '\n';
+	readonly _consequence: SimpleStatements | SuiteBlockWithIndent | '\n';
 	readonly _alternative?: readonly (ElifClause | ElseClause)[];
 	condition(): Expression;
-	consequence(): SimpleStatements | Block | '\n';
+	consequence(): SimpleStatements | SuiteBlockWithIndent | '\n';
 	alternatives(): readonly (ElifClause | ElseClause)[];
 }
 
 export interface ElifClause {
 	readonly $type: TSKindId.ElifClause;
 	readonly _condition: Expression;
-	readonly _consequence: SimpleStatements | Block | '\n';
+	readonly _consequence: SimpleStatements | SuiteBlockWithIndent | '\n';
 	condition(): Expression;
-	consequence(): SimpleStatements | Block | '\n';
+	consequence(): SimpleStatements | SuiteBlockWithIndent | '\n';
 }
 
 export interface ElseClause {
 	readonly $type: TSKindId.ElseClause;
-	readonly _body: SimpleStatements | Block | '\n';
-	body(): SimpleStatements | Block | '\n';
+	readonly _body: SimpleStatements | SuiteBlockWithIndent | '\n';
+	body(): SimpleStatements | SuiteBlockWithIndent | '\n';
 }
 
 export interface MatchStatement {
@@ -2289,10 +2297,10 @@ export interface CaseClause {
 	readonly $type: TSKindId.CaseClause;
 	readonly _case_pattern: NonEmptyArray<CasePattern>;
 	readonly _guard?: IfClause;
-	readonly _consequence: SimpleStatements | Block | '\n';
+	readonly _consequence: SimpleStatements | SuiteBlockWithIndent | '\n';
 	casePatterns(): NonEmptyArray<CasePattern>;
 	guard(): IfClause | undefined;
-	consequence(): SimpleStatements | Block | '\n';
+	consequence(): SimpleStatements | SuiteBlockWithIndent | '\n';
 }
 
 export interface ForStatement {
@@ -2300,7 +2308,7 @@ export interface ForStatement {
 	readonly _async_marker?: boolean;
 	readonly _left: LeftHandSide;
 	readonly _right: Expressions;
-	readonly _body: SimpleStatements | Block | '\n';
+	readonly _body: SimpleStatements | SuiteBlockWithIndent | '\n';
 	readonly _alternative?: ElseClause;
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
@@ -2308,27 +2316,27 @@ export interface ForStatement {
 	asyncMarker(): boolean | undefined;
 	left(): LeftHandSide;
 	right(): Expressions;
-	body(): SimpleStatements | Block | '\n';
+	body(): SimpleStatements | SuiteBlockWithIndent | '\n';
 	alternative(): ElseClause | undefined;
 }
 
 export interface WhileStatement {
 	readonly $type: TSKindId.WhileStatement;
 	readonly _condition: Expression;
-	readonly _body: SimpleStatements | Block | '\n';
+	readonly _body: SimpleStatements | SuiteBlockWithIndent | '\n';
 	readonly _alternative?: ElseClause;
 	condition(): Expression;
-	body(): SimpleStatements | Block | '\n';
+	body(): SimpleStatements | SuiteBlockWithIndent | '\n';
 	alternative(): ElseClause | undefined;
 }
 
 export interface TryStatement {
 	readonly $type: TSKindId.TryStatement;
-	readonly _body: SimpleStatements | Block | '\n';
+	readonly _body: SimpleStatements | SuiteBlockWithIndent | '\n';
 	readonly _except_clauses?: readonly ExceptClause[];
 	readonly _else_clause?: ElseClause;
 	readonly _finally_clause?: FinallyClause;
-	body(): SimpleStatements | Block | '\n';
+	body(): SimpleStatements | SuiteBlockWithIndent | '\n';
 	exceptClauses(): readonly ExceptClause[];
 	elseClause(): ElseClause | undefined;
 	finallyClause(): FinallyClause | undefined;
@@ -2337,35 +2345,28 @@ export interface TryStatement {
 export interface ExceptClause {
 	readonly $type: TSKindId.ExceptClause;
 	readonly _except_clause_group1?: ExceptClauseGroup1;
-	readonly _simple_statements?: SimpleStatements;
-	readonly _block?: Block;
-	readonly _newline?: boolean;
-	readonly __inputHints__?: {
-		readonly newline?: BooleanKeyword<'\n'>;
-	};
+	readonly _content: SimpleStatements | SuiteBlockWithIndent | '\n';
 	exceptClauseGroup1(): ExceptClauseGroup1 | undefined;
-	simpleStatements(): SimpleStatements | undefined;
-	block(): Block | undefined;
-	newline(): boolean | undefined;
+	content(): SimpleStatements | SuiteBlockWithIndent | '\n';
 }
 
 export interface FinallyClause {
 	readonly $type: TSKindId.FinallyClause;
-	readonly _block: SimpleStatements | Block | '\n';
-	block(): SimpleStatements | Block | '\n';
+	readonly _block: SimpleStatements | SuiteBlockWithIndent | '\n';
+	block(): SimpleStatements | SuiteBlockWithIndent | '\n';
 }
 
 export interface WithStatement {
 	readonly $type: TSKindId.WithStatement;
 	readonly _async_marker?: boolean;
 	readonly _with_clause: WithClause;
-	readonly _body: SimpleStatements | Block | '\n';
+	readonly _body: SimpleStatements | SuiteBlockWithIndent | '\n';
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
 	};
 	asyncMarker(): boolean | undefined;
 	withClause(): WithClause;
-	body(): SimpleStatements | Block | '\n';
+	body(): SimpleStatements | SuiteBlockWithIndent | '\n';
 }
 
 export interface WithClause {
@@ -2387,7 +2388,7 @@ export interface FunctionDefinition {
 	readonly _type_parameters?: TypeParameter;
 	readonly _parameters: Parameters;
 	readonly _return_type?: Type;
-	readonly _body: SimpleStatements | Block | '\n';
+	readonly _body: SimpleStatements | SuiteBlockWithIndent | '\n';
 	readonly __inputHints__?: {
 		readonly async_marker?: BooleanKeyword<'async'>;
 	};
@@ -2396,7 +2397,7 @@ export interface FunctionDefinition {
 	typeParameters(): TypeParameter | undefined;
 	parameters(): Parameters;
 	returnType(): Type | undefined;
-	body(): SimpleStatements | Block | '\n';
+	body(): SimpleStatements | SuiteBlockWithIndent | '\n';
 }
 
 export interface Parameters {
@@ -2461,11 +2462,11 @@ export interface ClassDefinition {
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameter;
 	readonly _superclasses?: ArgumentList;
-	readonly _body: SimpleStatements | Block | '\n';
+	readonly _body: SimpleStatements | SuiteBlockWithIndent | '\n';
 	name(): Identifier;
 	typeParameters(): TypeParameter | undefined;
 	superclasses(): ArgumentList | undefined;
-	body(): SimpleStatements | Block | '\n';
+	body(): SimpleStatements | SuiteBlockWithIndent | '\n';
 }
 
 export interface TypeParameter {
@@ -2504,15 +2505,8 @@ export interface Decorator {
 
 export interface Suite {
 	readonly $type: '_suite';
-	readonly _simple_statements?: SimpleStatements;
-	readonly _block?: Block;
-	readonly _newline?: boolean;
-	readonly __inputHints__?: {
-		readonly newline?: BooleanKeyword<'\n'>;
-	};
-	simpleStatements(): SimpleStatements | undefined;
-	block(): Block | undefined;
-	newline(): boolean | undefined;
+	readonly _content: SimpleStatements | SuiteBlockWithIndent | '\n';
+	content(): SimpleStatements | SuiteBlockWithIndent | '\n';
 }
 
 export interface Block {
@@ -3207,6 +3201,12 @@ export interface MatchBlockBlock {
 	alternatives(): readonly CaseClause[];
 }
 
+export interface SuiteBlockWithIndent {
+	readonly $type: TSKindId.SuiteBlockWithIndent;
+	readonly _block: Block;
+	block(): Block;
+}
+
 export interface SimplePatternNegative {
 	readonly $type: TSKindId.SimplePatternNegative;
 	readonly _content: Integer | Float;
@@ -3483,6 +3483,9 @@ export interface WithClauseParenTree extends AnyTreeNode {
 }
 export interface MatchBlockBlockTree extends AnyTreeNode {
 	readonly type: '_match_block_block';
+}
+export interface SuiteBlockWithIndentTree extends AnyTreeNode {
+	readonly type: '_suite_block_with_indent';
 }
 export interface SimplePatternNegativeTree extends AnyTreeNode {
 	readonly type: '_simple_pattern_negative';
@@ -4071,6 +4074,7 @@ export type PythonNode =
 	| WithClauseBare
 	| WithClauseParen
 	| MatchBlockBlock
+	| SuiteBlockWithIndent
 	| SimplePatternNegative
 	| ExceptClauseList
 	| ComparisonOperatorComparator;
@@ -4211,6 +4215,7 @@ export interface KindMap {
 	_with_clause_bare: WithClauseBare;
 	_with_clause_paren: WithClauseParen;
 	_match_block_block: MatchBlockBlock;
+	_suite_block_with_indent: SuiteBlockWithIndent;
 	_simple_pattern_negative: SimplePatternNegative;
 	_except_clause_list: ExceptClauseList;
 	_comparison_operator_comparator: ComparisonOperatorComparator;
@@ -4487,6 +4492,12 @@ export interface ExpressionStatementTupleNs extends NodeNs<
 export interface WithClauseBareNs extends NodeNs<WithClauseBare, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface WithClauseParenNs extends NodeNs<WithClauseParen, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface MatchBlockBlockNs extends NodeNs<MatchBlockBlock, LeafScalarMap, LeafStringMap, NamespaceMap> {}
+export interface SuiteBlockWithIndentNs extends NodeNs<
+	SuiteBlockWithIndent,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap
+> {}
 export interface SimplePatternNegativeNs extends NodeNs<
 	SimplePatternNegative,
 	LeafScalarMap,
@@ -4637,6 +4648,7 @@ export interface NamespaceMap {
 	_with_clause_bare: WithClauseBareNs;
 	_with_clause_paren: WithClauseParenNs;
 	_match_block_block: MatchBlockBlockNs;
+	_suite_block_with_indent: SuiteBlockWithIndentNs;
 	_simple_pattern_negative: SimplePatternNegativeNs;
 	_except_clause_list: ExceptClauseListNs;
 	_comparison_operator_comparator: ComparisonOperatorComparatorNs;
@@ -5593,6 +5605,13 @@ export namespace MatchBlockBlock {
 	export type Loose = LooseFor<'_match_block_block'>;
 	export type Tree = TreeFor<'_match_block_block'>;
 	export type Kind = '_match_block_block';
+}
+export namespace SuiteBlockWithIndent {
+	export type Config = ConfigFor<'_suite_block_with_indent'>;
+	export type Fluent = FluentFor<'_suite_block_with_indent'>;
+	export type Loose = LooseFor<'_suite_block_with_indent'>;
+	export type Tree = TreeFor<'_suite_block_with_indent'>;
+	export type Kind = '_suite_block_with_indent';
 }
 export namespace SimplePatternNegative {
 	export type Config = ConfigFor<'_simple_pattern_negative'>;

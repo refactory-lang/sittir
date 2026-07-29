@@ -241,6 +241,12 @@ pub struct SliceGroup1Template<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_suite_block_with_indent.jinja", escape = "none")]
+pub struct SuiteBlockWithIndentTemplate<'a> {
+    pub block: SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_with_clause_bare.jinja", escape = "none")]
 pub struct WithClauseBareTemplate<'a> {
     pub with_item: ListNonterminalView<'a>,
@@ -513,7 +519,7 @@ pub struct ElseClauseTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "except_clause.jinja", escape = "none")]
 pub struct ExceptClauseTemplate<'a> {
-    pub body: SingleNonterminalView<'a>,
+    pub content: SingleNonterminalView<'a>,
     pub except_clause_group1: OptionalNonterminalView<'a>,
 }
 

@@ -140,7 +140,7 @@ function reportGrammar(result: FactoryRenderParseResult, showAst: boolean): void
 		for (const [cls, { count, samples }] of [...buckets.entries()].sort((a, b) => b[1].count - a[1].count)) {
 			process.stdout.write(`\n  [${count}x] ${cls}\n`);
 			for (const s of samples) {
-				process.stdout.write(`    ${s.kind}${s.entry ? ` (${s.entry})` : ''}: ${s.message.slice(0, 120)}\n`);
+				process.stdout.write(`    ${s.kind}${s.entry ? ` (${s.entry})` : ''}: ${s.message}\n`);
 			}
 		}
 	}

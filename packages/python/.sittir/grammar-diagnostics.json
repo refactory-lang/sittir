@@ -56,24 +56,6 @@
     "code": "union-slot-nondegenerate-arm",
     "severity": "warning",
     "grammar": "python",
-    "ownerKind": "except_clause",
-    "message": "[collect-slots] kind 'except_clause': choice rule:_suite:root has unnamed-nonterminal arm(s) [simple_statements, newline] but cannot union-route — offending arm(s): structured seq[2](indent block). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
-    "canProceed": true
-  },
-  {
-    "scope": "grammar",
-    "code": "union-slot-nondegenerate-arm",
-    "severity": "warning",
-    "grammar": "python",
-    "ownerKind": "_suite",
-    "message": "[collect-slots] kind '_suite': choice rule:_suite:root has unnamed-nonterminal arm(s) [simple_statements, newline] but cannot union-route — offending arm(s): structured seq[2](indent block). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
-    "canProceed": true
-  },
-  {
-    "scope": "grammar",
-    "code": "union-slot-nondegenerate-arm",
-    "severity": "warning",
-    "grammar": "python",
     "ownerKind": "yield",
     "message": "[collect-slots] kind 'yield': choice rule:yield:root has unnamed-nonterminal arm(s) [_expressions] but cannot union-route — offending arm(s): structured seq[2](\"from\" expression). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
     "canProceed": true
@@ -165,8 +147,8 @@
     "grammar": "python",
     "ownerKind": "_suite",
     "slotName": "block",
-    "message": "Slot 'block' of kind '_suite' collapses [_simple_statements, block, _newline] onto parse kind 'block'.",
-    "proposal": "Slot 'block' of kind '_suite' collapses distinct storage kinds [_simple_statements, block, _newline] onto parse kind 'block'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
+    "message": "Slot 'block' of kind '_suite' collapses [_simple_statements, block, _newline] onto parse kind 'block'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
+    "proposal": "Already resolved by enrich() — no action needed.",
     "canProceed": true,
     "details": {
       "parseKind": "block",

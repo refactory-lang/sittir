@@ -627,7 +627,7 @@ function buildFactoryNodeData(
 		errors.push({
 			kind: renderedKind,
 			entry: entryName,
-			message: `factory threw: ${(e as Error)?.message?.slice(0, 100) ?? String(e)}`,
+			message: `factory threw: ${(e as Error)?.message ?? String(e)}`,
 			input: inputSource
 		});
 		return null;
@@ -728,7 +728,7 @@ function recordAstStructuralComparison(
 		astMismatches.push({
 			kind: renderedKind,
 			entry: entryName,
-			message: diff.slice(0, 160),
+			message: diff,
 			input: inputSource,
 			rendered
 		});
@@ -932,7 +932,7 @@ export async function validateFactoryRenderParse(
 					errors.push({
 						kind: renderedKind,
 						entry: entry.name,
-						message: `re-parse error: "${rendered.slice(0, 60)}"`,
+						message: `re-parse error`,
 						input: inputSource,
 						rendered
 					});
@@ -944,7 +944,7 @@ export async function validateFactoryRenderParse(
 					errors.push({
 						kind: renderedKind,
 						entry: entry.name,
-						message: `kind not found in re-parse (rendered: "${rendered.slice(0, 60)}")`,
+						message: `kind not found in re-parse`,
 						input: inputSource,
 						rendered
 					});
@@ -962,7 +962,7 @@ export async function validateFactoryRenderParse(
 				errors.push({
 					kind: renderedKind,
 					entry: entry.name,
-					message: `${(e as Error).message.slice(0, 80)}`,
+					message: `${(e as Error).message}`,
 					input: inputSource
 				});
 			}
@@ -993,12 +993,16 @@ export function formatFactoryRenderParseReport(result: FactoryRenderParseResult)
 	);
 	if (result.errors.length > 0) {
 		for (const e of result.errors) {
-			lines.push(`    x ${e.kind}: ${e.message}`);
+			lines.push(`    x ${e.entry ? `${e.entry} (${e.kind})` : e.kind}: ${e.message}`);
+			if (e.input) lines.push(`      source:   ${JSON.stringify(e.input)}`);
+			if (e.rendered) lines.push(`      rendered: ${JSON.stringify(e.rendered)}`);
 		}
 	}
 	if (result.astMismatches.length > 0) {
 		for (const e of result.astMismatches.slice(0, 20)) {
-			lines.push(`    ~ ${e.kind}: ${e.message}`);
+			lines.push(`    ~ ${e.entry ? `${e.entry} (${e.kind})` : e.kind}: ${e.message}`);
+			if (e.input) lines.push(`      source:   ${JSON.stringify(e.input)}`);
+			if (e.rendered) lines.push(`      rendered: ${JSON.stringify(e.rendered)}`);
 		}
 		if (result.astMismatches.length > 20) {
 			lines.push(`    … and ${result.astMismatches.length - 20} more`);

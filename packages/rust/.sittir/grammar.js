@@ -2212,7 +2212,14 @@ function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRule
         toRetarget.set(candidate, strippedName);
         anyActed = true;
       }
-      if (anyActed) diagnostics.push({ ...diagnostic, severity: "info" });
+      if (anyActed) {
+        diagnostics.push({
+          ...diagnostic,
+          severity: "info",
+          message: `${diagnostic.message} Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.`,
+          proposal: "Already resolved by enrich() \u2014 no action needed."
+        });
+      }
     }
   }
   if (toDrop.size === 0 && toRetarget.size === 0) return { rule, diagnostics: [] };
