@@ -105,10 +105,12 @@ function buildKindInterner(
 function emitNamespaceImports(lines: string[], kindEntries: readonly KindEnumEntry[] | undefined): void {
 	lines.push(`import * as F from './factories.js';`);
 	lines.push(`import type * as T from './types.js';`);
+	// `kindIdFromName` was a runtime kind-id resolver from before PR-K3d baked
+	// kind ids into generated from.ts statically (`kindIdExpr: TSKindId.<member>`
+	// above) — no call site references it anymore, so importing it here is
+	// dead weight that trips no-unused-vars.
 	if (kindEntries) {
-		lines.push(`import { TSKindId, kindIdFromName } from './types.js';`);
-	} else {
-		lines.push(`import { kindIdFromName } from './types.js';`);
+		lines.push(`import { TSKindId } from './types.js';`);
 	}
 	lines.push("import type { AnyNodeData } from '@sittir/types';");
 	lines.push("import { coerceKindEnumStorage, isNodeData } from './utils.js';");

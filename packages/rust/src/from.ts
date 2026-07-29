@@ -2,7 +2,7 @@
 
 import * as F from './factories.js';
 import type * as T from './types.js';
-import { TSKindId, kindIdFromName } from './types.js';
+import { TSKindId } from './types.js';
 import type { AnyNodeData } from '@sittir/types';
 import { coerceKindEnumStorage, isNodeData } from './utils.js';
 
