@@ -187,12 +187,16 @@ describe('import_specifier', () => {
 
 describe('import_attribute', () => {
 	it('factory produces correct type', () => {
-		const node = ir.importAttribute({ $type: TSKindId.Object, $text: 'test', $source: 2, $named: true } as any);
+		const node = ir.importAttribute({
+			object: { $type: TSKindId.Object, $text: 'test', $source: 2, $named: true } as any
+		});
 		expect(node.$type).toBe(TSKindId.ImportAttribute);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.importAttribute({ $type: TSKindId.Object, $text: 'test', $source: 2, $named: true } as any);
+		const node = ir.importAttribute({
+			object: { $type: TSKindId.Object, $text: 'test', $source: 2, $named: true } as any
+		});
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -600,12 +604,12 @@ describe('continue_statement', () => {
 // known-failing: #170 — _resolveOneLeaf cannot resolve the _semicolon stub
 describe.skip('debugger_statement', () => {
 	it('factory produces correct type', () => {
-		const node = ir.debuggerStatement('\n');
+		const node = ir.debuggerStatement({ semicolon: '\n' });
 		expect(node.$type).toBe(TSKindId.DebuggerStatement);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.debuggerStatement('\n');
+		const node = ir.debuggerStatement({ semicolon: '\n' });
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -2189,23 +2193,27 @@ describe('asserts', () => {
 describe('asserts_annotation', () => {
 	it('factory produces correct type', () => {
 		const node = ir.assertsAnnotation({
-			$type: TSKindId.Asserts,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		} as any);
+			asserts: {
+				$type: TSKindId.Asserts,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any
+		});
 		expect(node.$type).toBe(TSKindId.AssertsAnnotation);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.assertsAnnotation({
-			$type: TSKindId.Asserts,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
-		} as any);
+			asserts: {
+				$type: TSKindId.Asserts,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_content: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
+			} as any
+		});
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -2417,25 +2425,29 @@ describe('type_predicate', () => {
 describe('type_predicate_annotation', () => {
 	it('factory produces correct type', () => {
 		const node = ir.typePredicateAnnotation({
-			$type: TSKindId.TypePredicate,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			_type: { $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any
-		} as any);
+			typePredicate: {
+				$type: TSKindId.TypePredicate,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+				_type: { $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any
+			} as any
+		});
 		expect(node.$type).toBe(TSKindId.TypePredicateAnnotation);
 		expect(node.$source).toBe(2);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.typePredicateAnnotation({
-			$type: TSKindId.TypePredicate,
-			$text: 'test',
-			$source: 2,
-			$named: true,
-			_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
-			_type: { $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any
-		} as any);
+			typePredicate: {
+				$type: TSKindId.TypePredicate,
+				$text: 'test',
+				$source: 2,
+				$named: true,
+				_name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any,
+				_type: { $type: TSKindId.PredefinedType, $text: 'any', $source: 2, $named: true } as any
+			} as any
+		});
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });

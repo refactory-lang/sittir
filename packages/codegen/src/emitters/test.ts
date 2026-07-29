@@ -23,6 +23,7 @@ import {
 	isMultiple,
 	slotKindNames,
 	keywordPresenceKind,
+	kindEnumTextIdPairs,
 	resolveFieldStorageInfo,
 	unnamedChildSlotFacts,
 	escForSource
@@ -167,11 +168,23 @@ function emitBranchTest(
 
 	// Gap 5: single-field-no-children factories take the value directly.
 	// Detect and emit a direct-value call instead of a config-object.
+	//
+	// Excludes a sole field backed by a KindEnum (e.g. debugger_statement's
+	// `semicolon`, coerced via coerceKindEnumStorage in the emitted
+	// coerceToXxx — kindEnumTextIdPairs is non-empty for it): `ir.<key>`
+	// resolves to that coerce function, whose declared parameter type is
+	// `Xxx | {config}` (no bare-value variant), even though `Xxx`'s own
+	// builder does take the value directly — only `ir.<key>.strict(...)`
+	// (untested here) matches Gap 5's premise for that shape. The
+	// object-config form below is always type-correct regardless of field
+	// shape, since coerceToXxx checks `input.<fieldName>` first.
 	const singleFieldSlot = resolveSingleFieldFactorySlot(node, nodeMap);
+	const singleFieldIsKindEnum =
+		singleFieldSlot !== undefined && kindEnumTextIdPairs(singleFieldSlot, nodeMap, kindEntries).length > 0;
 
 	let typeConfigArg: string;
 	let renderConfigArg: string;
-	if (singleFieldSlot) {
+	if (singleFieldSlot && !singleFieldIsKindEnum) {
 		const sole = singleFieldSlot;
 		const dummy = dummyValue(sole, nodeMap, kindEntries);
 		// Optional field: type test passes no arg; render test passes dummy.
