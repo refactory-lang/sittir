@@ -13,7 +13,7 @@ pnpm exec tsx packages/cli/src/cli.ts gen --grammar python --all --output packag
 ## Debugging and triage
 
 - Use `pnpm exec tsx packages/cli/src/cli.ts tool probe-kind` before writing one-off probe scripts.
-- Prefer explicit `packages/<lang>/overrides.ts` structure over heuristics that infer grammar intent from parse output.
+- Prefer explicit `packages/<lang>/grammar.sittir.ts` structure over heuristics that infer grammar intent from parse output.
 - For template/from/round-trip failures, check in this order:
   1. existing override correctness
   2. earliest codegen phase that still has the needed information (`Evaluate → Link → Assemble`)
@@ -45,9 +45,9 @@ Keep separators inside the guarded conditional.
 - Extend conflicts with `...(previous ?? [])` or `previous.concat(...)`; do not replace the base grammar conflicts.
 - Use `field('semicolon', $._semicolon)` for hidden-semicolon drops.
 - If variant/conflict work changes parser shape, rerun the full transpile/generate/compile-parser/emit chain so `.sittir` artifacts and emitted TS stay aligned.
-- `enrich()` only changes the TS/codegen surface; it does not change the parser surface emitted from tree-sitter rule callbacks.
+- `enrich()` runs before tree-sitter's `grammar()` and DOES change the parser surface: its promoted fields and synthesized hidden rules (`_kw_*`, clause-hoist `_<parent>_optional<N>` / `_<parent>_group<N>`) are injected into the base rules, so the parser and the downstream codegen see the same enriched grammar. Clause hoisting (`applyClauseHoist` in `dsl/enrich.ts`) is the pre-generate minting path: inline-safe `optional(seq(...))` content hoists into a hidden helper; inline-unsafe (multi-slot) content becomes a visible kind via a hidden rule + `alias($._hidden, $.visible)`.
 - When a promoted keyword/token field causes LR conflicts, add a synthesized `_kw_<name>` rule to `inline:` instead of compensating with precedence/conflict noise.
-- When promoting a hidden rule via a reference-site alias (`alias($._hidden, $.visible)`), alias the BARE symbol directly inside `optional(...)` — never wrap it in `field()`. `mintContentAliasKinds` (`link.ts`) only mints when the alias is the IMMEDIATE content of `optional(...)`/`CHOICE[x, BLANK]`; a `field()` wrapper silently prevents the mint entirely (no error at regen — the kind just never appears in `node-model.json5`). Also pick a NON-natural visible name (not the underscore-stripped name of the hidden rule): a self-matching name triggers a classification bug that leaves the kind as a circular self-referencing `branch` instead of `separatedList`. See `packages/python/overrides.ts`'s Track B comment block for a worked example (`pattern_group`, `element_list`).
+- Content-alias minting in link (`mintContentAliasKinds`) is retired: an alias's hidden source rule stays the single source of truth, referenced via `aliasedFrom` provenance in `resolveRule`, and is promoted to user-facing visibility by assemble's alias-source mechanism once its slot reference hydrates. Do not author overrides that depend on link duplicating alias bodies into new top-level rules.
 
 ## Reporting expectations
 
@@ -60,6 +60,7 @@ For corpus-affecting iterations, report raw per-grammar counts, not just aggrega
 
 ## KindID / parser-symbol rules
 
+- Invariant: every kind name the generated model exposes should carry a parser-issued kindId. Link stamps ids while canonicalizing catalog refs; names it cannot stamp are reported per build as `kindid-unstamped-*` entries in `packages/<lang>/.sittir/grammar-diagnostics.json` (the phantom-kind inventory), and `packages/codegen/src/__tests__/phantom-kind-ratchet.test.ts` enforces shrink-only per-grammar ceilings — fix the minting site, never raise a ceiling.
 - For KindID work, `packages/<lang>/.sittir/src/parser.c` `enum ts_symbol_identifiers` is the authoritative parser identity source.
 - Do not derive identity from `ts_symbol_names[]` or `parser.wasm`.
 - Preserve parser-origin facts as metadata flags (`anon`, `aux`, `alias`, `hidden`) instead of baking them into cleanup heuristics.

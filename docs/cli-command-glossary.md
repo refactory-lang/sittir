@@ -488,7 +488,6 @@ Profile factory-render-parse failures
 **Options**
 
 - `-g, --grammar <name>` — Grammar to operate on — choices: `rust` | `typescript` | `python`
-- `--recursive` — Use recursive deep-read instead of shallow
 - `--ast` — Include AST mismatch breakdown
 
 **Example**

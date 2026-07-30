@@ -156,6 +156,23 @@ function isEmptyStorageValue(v: unknown): boolean {
 	return v === undefined || (Array.isArray(v) && v.length === 0);
 }
 
+/**
+ * A bare scalar and a single-element array are the SAME storage value, not
+ * a masked cardinality bug: the slot model owns arity and enforces it at
+ * construction on both sides being compared here — the wrap/read layer
+ * throws (`singular slot "x" requires one value; got array(len=2)`) and a
+ * factory's own `nodeToConfig`/slot-normalization path enforces the same
+ * slot model when building storage. Both the materialized reference and
+ * the factory-built node have therefore already passed arity validation
+ * for their kind's slots before reaching this comparator, so a scalar on
+ * one side and a matching one-element array on the other is a
+ * representational difference only (singular field vs. an unwrapped
+ * array-of-one), never a genuine cardinality divergence — a factory that
+ * built the wrong arity would already have failed upstream as a wrap/
+ * factory error, not slipped through here. Coalescing them for comparison
+ * mirrors this arity ownership rather than re-deriving it: this
+ * comparator's job is value equality, not a second arity check.
+ */
 function compareStorageValue(expected: unknown, actual: unknown, path: string, ctx: CompareCtx): string | null {
 	if (Array.isArray(expected) || Array.isArray(actual)) {
 		const ea = Array.isArray(expected) ? expected : isEmptyStorageValue(expected) ? [] : [expected];
@@ -328,8 +345,24 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 				if (kindNamesMap) {
 					kindNameFromId = (id: number) => kindNamesMap.get(id);
 				}
-			} catch {
-				// types module unavailable — resolver stays undefined.
+			} catch (e) {
+				// Without kindNameFromId every walked candidate is rejected (its
+				// numeric $type can't be resolved to a kind name), so the validator
+				// would silently report an empty 0/0 pass. Route this into the same
+				// failure path as a factory-module load failure instead of
+				// continuing with a resolver that can never succeed.
+				const message = `[validate-factory-roundtrip] failed to load ${typesModulePath}: ${(e as Error)?.message ?? e}`;
+				console.error(message);
+				return {
+					factoryMap,
+					factoryShapes,
+					fieldAliasMap,
+					factoryFields,
+					factorySlots,
+					polymorphVariants,
+					kindNameFromId,
+					importFailure: { message }
+				};
 			}
 		}
 		return {
@@ -512,7 +545,7 @@ function buildFactoryNodeData(
 export async function validateFactoryRenderParse(
 	grammar: string,
 	templatesPath: string,
-	backend?: 'native' | 'js'
+	backend: 'native' | 'js' = 'native'
 ): Promise<FactoryRenderParseResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
@@ -560,6 +593,40 @@ export async function validateFactoryRenderParse(
 		};
 	}
 
+	// This validator's storage comparison only has meaning against the
+	// wrapped NATIVE read path (readTreeNodeFn + handle.read). Without it,
+	// every candidate below would be silently rejected and the run would
+	// report a misleading "0/0 pass" instead of a real failure. Probe
+	// availability up front and fail loudly instead of skipping.
+	let readPathFailure: string | undefined;
+	if (!readTreeNodeFn) {
+		readPathFailure = `wrap module unavailable for '${grammar}' — no wrapped-tree read function`;
+	} else {
+		try {
+			const probeTree = parser.parse('') as TSTree;
+			const probeHandle = buildReadHandle(grammar, probeTree, '', backend, undefined);
+			if (!probeHandle.read) {
+				readPathFailure = `backend '${backend}' has no wrapped native read path (handle.read unavailable) — factory storage validation requires the native backend`;
+			}
+		} catch (e) {
+			readPathFailure = `failed to build native read handle: ${(e as Error)?.message ?? e}`;
+		}
+	}
+	if (readPathFailure || !readTreeNodeFn) {
+		const message = `[validate-factory-roundtrip] ${readPathFailure ?? 'wrap module unavailable — no wrapped-tree read function'}`;
+		errors.push({ kind: '(read-tree-unavailable)', message });
+		return {
+			grammar,
+			total: 0,
+			pass: 0,
+			fail: 1,
+			skip: 0,
+			astMatchPass: 0,
+			errors,
+			astMismatches: []
+		};
+	}
+
 	for (const entry of entries) {
 		const tree1 = parser.parse(entry.source) as TSTree;
 		if (tree1.rootNode.hasError) continue;
@@ -573,24 +640,22 @@ export async function validateFactoryRenderParse(
 		// native transport's "Missing field" errors once render was fixed
 		// to use the native engine).
 		const handle = buildReadHandle(grammar, tree1, entry.source, backend, undefined);
+		const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
 		const candidatesByKind = new Map<string, { start: number; end: number; node: WrappedNodeData }[]>();
-		if (readTreeNodeFn && handle.read) {
-			const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
-			const seen = new Set<string>();
-			walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
-				if (w.$named === false) return;
-				const sourceKind = kindNameFromId ? kindNameFromId(w.$type) : undefined;
-				if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
-				const span = (w as { $span?: { start: number; end: number } }).$span;
-				if (span == null) return;
-				const dedup = `${sourceKind}@${span.start}:${span.end}`;
-				if (seen.has(dedup)) return;
-				seen.add(dedup);
-				const list = candidatesByKind.get(sourceKind) ?? [];
-				list.push({ start: span.start, end: span.end, node: w });
-				candidatesByKind.set(sourceKind, list);
-			});
-		}
+		const seen = new Set<string>();
+		walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
+			if (w.$named === false) return;
+			const sourceKind = kindNameFromId ? kindNameFromId(w.$type) : undefined;
+			if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
+			const span = (w as { $span?: { start: number; end: number } }).$span;
+			if (span == null) return;
+			const dedup = `${sourceKind}@${span.start}:${span.end}`;
+			if (seen.has(dedup)) return;
+			seen.add(dedup);
+			const list = candidatesByKind.get(sourceKind) ?? [];
+			list.push({ start: span.start, end: span.end, node: w });
+			candidatesByKind.set(sourceKind, list);
+		});
 
 		for (const [kind, candidates] of candidatesByKind) {
 			for (const cand of candidates) {
