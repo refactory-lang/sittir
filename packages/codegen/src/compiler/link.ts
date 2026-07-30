@@ -340,31 +340,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	const stampMisses: KindIdStampMisses = { symbols: new Set(), literals: new Set() };
 	canonicalizeCatalogLiteralRefs(rules, kindEntries, stampMisses);
 	canonicalizeCatalogLiteralRefsInMap(topLevelAliasBodies, kindEntries, stampMisses);
-	// The unstampable-leaf report — the per-build phantom-kind inventory.
-	// One row per class keeps grammar-diagnostics.json diffs readable; the
-	// sorted name lists live in `details`. Expected members today: kinds
-	// synthesized after tree-sitter generate (evaluate's field-enums),
-	// `inline:`-listed rules, and VAPORIZED rules — these lack a parser-issued
-	// kindId by construction, not by bug (every OTHER kind name should carry
-	// one — that's the invariant this report ratchets against).
-	if (kindEntries.length > 0 && ctx?.diagnostics) {
-		if (stampMisses.symbols.size > 0) {
-			ctx.diagnostics.info({
-				code: 'kindid-unstamped-symbols',
-				message: `${stampMisses.symbols.size} referenced kind(s) resolved no parser kindId`,
-				canProceed: true,
-				details: { kinds: [...stampMisses.symbols].sort() }
-			});
-		}
-		if (stampMisses.literals.size > 0) {
-			ctx.diagnostics.info({
-				code: 'kindid-unstamped-literals',
-				message: `${stampMisses.literals.size} literal(s) resolved no parser kindId`,
-				canProceed: true,
-				details: { texts: [...stampMisses.literals].sort() }
-			});
-		}
-	}
+	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics);
 
 	// Validate refine() forms against the linked rule tree.
 	if (raw.refineForms && raw.refineForms.size > 0) {
@@ -542,6 +518,39 @@ export function canonicalizeRuleLiterals(
 		}
 		default:
 			return rule;
+	}
+}
+
+/**
+ * The unstampable-leaf report — the per-build phantom-kind inventory. One row
+ * per class keeps `grammar-diagnostics.json` diffs readable; the sorted name
+ * lists live in `details`. Expected members today: kinds synthesized after
+ * tree-sitter generate (evaluate's field-enums), `inline:`-listed rules, and
+ * VAPORIZED rules — these lack a parser-issued kindId by construction, not by
+ * bug (every OTHER kind name should carry one — that's the invariant this
+ * report ratchets against).
+ */
+function reportKindIdStampMisses(
+	stampMisses: KindIdStampMisses,
+	kindEntries: readonly GeneratedKindEntry[],
+	diagnostics: DiagnosticSink | undefined
+): void {
+	if (kindEntries.length === 0 || !diagnostics) return;
+	if (stampMisses.symbols.size > 0) {
+		diagnostics.info({
+			code: 'kindid-unstamped-symbols',
+			message: `${stampMisses.symbols.size} referenced kind(s) resolved no parser kindId`,
+			canProceed: true,
+			details: { kinds: [...stampMisses.symbols].sort() }
+		});
+	}
+	if (stampMisses.literals.size > 0) {
+		diagnostics.info({
+			code: 'kindid-unstamped-literals',
+			message: `${stampMisses.literals.size} literal(s) resolved no parser kindId`,
+			canProceed: true,
+			details: { texts: [...stampMisses.literals].sort() }
+		});
 	}
 }
 

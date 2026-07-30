@@ -5744,7 +5744,7 @@ The partition is the SINGLE predicate behind both the census tool
 (`sittir tool union-slot-census`) and the CHOICE-case routing decision: one
 source, one derivation.
 
-### `KindIdStampMisses` (`packages/codegen/src/compiler/link.ts:425`)
+### `KindIdStampMisses` (`packages/codegen/src/compiler/link.ts:401`)
 
 ```text
 /**
@@ -5755,7 +5755,7 @@ source, one derivation.
  */
 ```
 
-### `canonicalizeRuleLiterals` (`packages/codegen/src/compiler/link.ts:456`)
+### `canonicalizeRuleLiterals` (`packages/codegen/src/compiler/link.ts:426`)
 
 ```text
 /**
