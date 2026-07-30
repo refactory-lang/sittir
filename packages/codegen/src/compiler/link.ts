@@ -422,7 +422,7 @@ function createSyntheticExternalRules(rules: Record<string, Rule<'link'>>, exter
 	}
 }
 
-interface KindIdStampMisses {
+export interface KindIdStampMisses {
 	readonly symbols: Set<string>;
 	readonly literals: Set<string>;
 }
@@ -447,7 +447,7 @@ function canonicalizeCatalogLiteralRefsInMap(
 	}
 }
 
-function canonicalizeRuleLiterals(
+export function canonicalizeRuleLiterals(
 	rule: Rule<'link'>,
 	kindEntries: readonly GeneratedKindEntry[],
 	allowLiteralRewrite: boolean,
