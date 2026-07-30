@@ -16,7 +16,6 @@ import {
 	escForSource
 } from './shared.ts';
 import { collectCatalogKinds } from './kind-discriminant.ts';
-import { matchesWordShape } from '../util/word-matcher.ts';
 
 export interface EmitConstsConfig {
 	grammar: string;
@@ -54,25 +53,9 @@ export function emitConsts(config: EmitConstsConfig): string {
 				leafKinds.push(kind);
 				keywords.push(kind);
 				break;
-			case 'token': {
-				// Word-shape is a property of the token's LITERAL TEXT, not its
-				// kind name — a catalog-resolved anonymous token's kind name is
-				// the sanitized catalog spelling (`,` → `comma`), alphabetic
-				// regardless of whether the underlying literal is punctuation.
-				// The word predicate itself is the grammar's link-pinned
-				// wordMatcher — the same single source the spacing writer and
-				// node classification consume — never a local character-class
-				// heuristic. Fall back to `kind` only for the rare
-				// TokenRule-bodied (compound) token, whose kind IS its own
-				// declared name.
-				const shapeSource = (node as { text?: string }).text ?? kind;
-				if (matchesWordShape(shapeSource, nodeMap.wordMatcher)) {
-					keywords.push(kind);
-				} else {
-					operators.push(kind);
-				}
+			case 'token':
+				operators.push(kind);
 				break;
-			}
 			// supertype, group — not in any public const array
 		}
 	}
