@@ -1986,8 +1986,8 @@ export function coerceToBinaryExpression(input: T.BinaryExpression.Loose): Retur
 				[
 					['&&', TSKindId.AmpAmp] as const,
 					['||', TSKindId.PipePipe] as const,
-					['&', TSKindId.Amp2] as const,
-					['|', TSKindId.Pipe2] as const,
+					['&', TSKindId.Amp] as const,
+					['|', TSKindId.Pipe] as const,
 					['^', TSKindId.Caret] as const,
 					['==', TSKindId.EqEq] as const,
 					['!=', TSKindId.BangEq] as const,

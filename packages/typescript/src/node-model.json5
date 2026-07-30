@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 426,
+  "nodeCount": 423,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -4368,146 +4368,6 @@
   },
   "nodes": [
     {
-      "kind": "!",
-      "modelType": "token",
-      "typeName": "Bang",
-      "irKey": "bang",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"!\" as const",
-      "text": "!"
-    },
-    {
-      "kind": "\"",
-      "modelType": "token",
-      "typeName": "TokDq",
-      "irKey": "tokDq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"\\\"\" as const",
-      "text": "\""
-    },
-    {
-      "kind": "${",
-      "modelType": "token",
-      "typeName": "TokDollarLbr",
-      "irKey": "tokDollarLbr",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"${\" as const",
-      "text": "${"
-    },
-    {
-      "kind": "&",
-      "modelType": "token",
-      "typeName": "Amp",
-      "irKey": "amp",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"&\" as const",
-      "text": "&"
-    },
-    {
-      "kind": "'",
-      "modelType": "token",
-      "typeName": "TokSq",
-      "irKey": "tokSq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"'\" as const",
-      "text": "'"
-    },
-    {
-      "kind": "(",
-      "modelType": "token",
-      "typeName": "Paren",
-      "irKey": "paren",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"(\" as const",
-      "text": "("
-    },
-    {
-      "kind": ")",
-      "modelType": "token",
-      "typeName": "CloseParen",
-      "irKey": "closeParen",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\")\" as const",
-      "text": ")"
-    },
-    {
-      "kind": "*",
-      "modelType": "token",
-      "typeName": "Star",
-      "irKey": "star",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"*\" as const",
-      "text": "*"
-    },
-    {
-      "kind": "+?:",
-      "modelType": "token",
-      "typeName": "TokPlusQColon",
-      "irKey": "tokPlusQColon",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"+?:\" as const",
-      "text": "+?:"
-    },
-    {
-      "kind": ",",
-      "modelType": "token",
-      "typeName": "Comma",
-      "irKey": "comma",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\",\" as const",
-      "text": ","
-    },
-    {
-      "kind": "-?:",
-      "modelType": "token",
-      "typeName": "TokMinusQColon",
-      "irKey": "tokMinusQColon",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"-?:\" as const",
-      "text": "-?:"
-    },
-    {
-      "kind": ".",
-      "modelType": "token",
-      "typeName": "Dot",
-      "irKey": "dot",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\".\" as const",
-      "text": "."
-    },
-    {
-      "kind": "...",
-      "modelType": "token",
-      "typeName": "Ellipsis",
-      "irKey": "ellipsis",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"...\" as const",
-      "text": "..."
-    },
-    {
-      "kind": "/",
-      "modelType": "token",
-      "typeName": "Slash",
-      "irKey": "slash",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"/\" as const",
-      "text": "/"
-    },
-    {
       "kind": "/>",
       "modelType": "token",
       "typeName": "TokSlashGt",
@@ -4518,36 +4378,6 @@
       "text": "/>"
     },
     {
-      "kind": ":",
-      "modelType": "token",
-      "typeName": "Colon",
-      "irKey": "colon",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\":\" as const",
-      "text": ":"
-    },
-    {
-      "kind": ";",
-      "modelType": "token",
-      "typeName": "Semi",
-      "irKey": "semi",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\";\" as const",
-      "text": ";"
-    },
-    {
-      "kind": "<",
-      "modelType": "token",
-      "typeName": "Lt",
-      "irKey": "lt",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"<\" as const",
-      "text": "<"
-    },
-    {
       "kind": "</",
       "modelType": "token",
       "typeName": "TokLtSlash",
@@ -4556,96 +4386,6 @@
       "isParameterless": true,
       "stampExpression": "\"</\" as const",
       "text": "</"
-    },
-    {
-      "kind": "=",
-      "modelType": "token",
-      "typeName": "Eq",
-      "irKey": "eq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"=\" as const",
-      "text": "="
-    },
-    {
-      "kind": "=>",
-      "modelType": "token",
-      "typeName": "FatArrow",
-      "irKey": "fatArrow",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"=>\" as const",
-      "text": "=>"
-    },
-    {
-      "kind": ">",
-      "modelType": "token",
-      "typeName": "Gt",
-      "irKey": "gt",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\">\" as const",
-      "text": ">"
-    },
-    {
-      "kind": "?",
-      "modelType": "token",
-      "typeName": "Question",
-      "irKey": "question",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"?\" as const",
-      "text": "?"
-    },
-    {
-      "kind": "?.",
-      "modelType": "token",
-      "typeName": "TokQDot",
-      "irKey": "tokQDot",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"?.\" as const",
-      "text": "?."
-    },
-    {
-      "kind": "?:",
-      "modelType": "token",
-      "typeName": "TokQColon",
-      "irKey": "tokQColon",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"?:\" as const",
-      "text": "?:"
-    },
-    {
-      "kind": "@",
-      "modelType": "token",
-      "typeName": "At",
-      "irKey": "at",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"@\" as const",
-      "text": "@"
-    },
-    {
-      "kind": "[",
-      "modelType": "token",
-      "typeName": "Bracket",
-      "irKey": "bracket",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"[\" as const",
-      "text": "["
-    },
-    {
-      "kind": "]",
-      "modelType": "token",
-      "typeName": "CloseBracket",
-      "irKey": "closeBracket",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"]\" as const",
-      "text": "]"
     },
     {
       "kind": "__error_recovery",
@@ -10009,16 +9749,6 @@
       ]
     },
     {
-      "kind": "`",
-      "modelType": "token",
-      "typeName": "TokBt",
-      "irKey": "tokBt",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"`\" as const",
-      "text": "`"
-    },
-    {
       "kind": "abstract",
       "modelType": "keyword",
       "typeName": "Abstract",
@@ -10503,7 +10233,7 @@
     {
       "kind": "amp",
       "modelType": "token",
-      "typeName": "Amp2",
+      "typeName": "Amp",
       "irKey": "amp",
       "hidden": true,
       "isParameterless": true,
@@ -10519,6 +10249,61 @@
       "isParameterless": true,
       "stampExpression": "\"&&\" as const",
       "text": "&&"
+    },
+    {
+      "kind": "anon_asserts",
+      "modelType": "keyword",
+      "typeName": "AnonAsserts",
+      "irKey": "anonAsserts",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"asserts\" as const",
+      "text": "asserts",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "anon_class",
+      "modelType": "keyword",
+      "typeName": "AnonClass",
+      "irKey": "anonClass",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"class\" as const",
+      "text": "class",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "anon_import",
+      "modelType": "keyword",
+      "typeName": "AnonImport",
+      "irKey": "anonImport",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"import\" as const",
+      "text": "import",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "anon_module",
+      "modelType": "keyword",
+      "typeName": "AnonModule",
+      "irKey": "anonModule",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"module\" as const",
+      "text": "module",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "anon_type",
+      "modelType": "keyword",
+      "typeName": "AnonType",
+      "irKey": "anonType",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"type\" as const",
+      "text": "type",
+      "factoryShape": "text"
     },
     {
       "kind": "arguments",
@@ -11140,6 +10925,16 @@
       "factoryShape": "text"
     },
     {
+      "kind": "at",
+      "modelType": "token",
+      "typeName": "At",
+      "irKey": "at",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"@\" as const",
+      "text": "@"
+    },
+    {
       "kind": "augmented_assignment_expression",
       "modelType": "branch",
       "typeName": "AugmentedAssignmentExpression",
@@ -11313,6 +11108,16 @@
       "factoryFields": [
         "expression"
       ]
+    },
+    {
+      "kind": "bang",
+      "modelType": "token",
+      "typeName": "Bang",
+      "irKey": "bang",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"!\" as const",
+      "text": "!"
     },
     {
       "kind": "bang_eq",
@@ -11578,6 +11383,16 @@
         "right",
         "binary_expression_group1"
       ]
+    },
+    {
+      "kind": "bquote",
+      "modelType": "token",
+      "typeName": "Bquote",
+      "irKey": "bquote",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"`\" as const",
+      "text": "`"
     },
     {
       "kind": "break",
@@ -12369,9 +12184,19 @@
       ]
     },
     {
+      "kind": "colon",
+      "modelType": "token",
+      "typeName": "Colon",
+      "irKey": "colon",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\":\" as const",
+      "text": ":"
+    },
+    {
       "kind": "comma",
       "modelType": "token",
-      "typeName": "Comma2",
+      "typeName": "Comma",
       "irKey": "comma",
       "hidden": true,
       "isParameterless": true,
@@ -12913,6 +12738,16 @@
       "text": "-"
     },
     {
+      "kind": "dash_qmark_colon",
+      "modelType": "token",
+      "typeName": "DashQmarkColon",
+      "irKey": "dashQmarkColon",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"-?:\" as const",
+      "text": "-?:"
+    },
+    {
       "kind": "debugger",
       "modelType": "keyword",
       "typeName": "Debugger",
@@ -13422,14 +13257,44 @@
       ]
     },
     {
+      "kind": "dollar_lbrace",
+      "modelType": "token",
+      "typeName": "DollarLbrace",
+      "irKey": "dollarLbrace",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"${\" as const",
+      "text": "${"
+    },
+    {
       "kind": "dot",
       "modelType": "token",
-      "typeName": "Dot2",
+      "typeName": "Dot",
       "irKey": "dot",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\".\" as const",
       "text": "."
+    },
+    {
+      "kind": "dot_dot_dot",
+      "modelType": "token",
+      "typeName": "DotDotDot",
+      "irKey": "dotDotDot",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"...\" as const",
+      "text": "..."
+    },
+    {
+      "kind": "dquote",
+      "modelType": "token",
+      "typeName": "Dquote",
+      "irKey": "dquote",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\\"\" as const",
+      "text": "\""
     },
     {
       "kind": "else",
@@ -13687,6 +13552,16 @@
       ]
     },
     {
+      "kind": "eq",
+      "modelType": "token",
+      "typeName": "Eq",
+      "irKey": "eq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"=\" as const",
+      "text": "="
+    },
+    {
       "kind": "eq_eq",
       "modelType": "token",
       "typeName": "EqEq",
@@ -13705,6 +13580,16 @@
       "isParameterless": true,
       "stampExpression": "\"===\" as const",
       "text": "==="
+    },
+    {
+      "kind": "eq_gt",
+      "modelType": "token",
+      "typeName": "EqGt",
+      "irKey": "eqGt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"=>\" as const",
+      "text": "=>"
     },
     {
       "kind": "escape_sequence",
@@ -15805,7 +15690,7 @@
     {
       "kind": "gt",
       "modelType": "token",
-      "typeName": "Gt2",
+      "typeName": "Gt",
       "irKey": "gt",
       "hidden": true,
       "isParameterless": true,
@@ -17552,6 +17437,26 @@
       ]
     },
     {
+      "kind": "lbrace",
+      "modelType": "token",
+      "typeName": "Lbrace",
+      "irKey": "lbrace",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"{\" as const",
+      "text": "{"
+    },
+    {
+      "kind": "lbrack",
+      "modelType": "token",
+      "typeName": "Lbrack",
+      "irKey": "lbrack",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"[\" as const",
+      "text": "["
+    },
+    {
       "kind": "lexical_declaration",
       "modelType": "branch",
       "typeName": "LexicalDeclaration",
@@ -17786,9 +17691,19 @@
       ]
     },
     {
+      "kind": "lparen",
+      "modelType": "token",
+      "typeName": "Lparen",
+      "irKey": "lparen",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"(\" as const",
+      "text": "("
+    },
+    {
       "kind": "lt",
       "modelType": "token",
-      "typeName": "Lt2",
+      "typeName": "Lt",
       "irKey": "lt",
       "hidden": true,
       "isParameterless": true,
@@ -20125,7 +20040,7 @@
     {
       "kind": "pipe",
       "modelType": "token",
-      "typeName": "Pipe2",
+      "typeName": "Pipe",
       "irKey": "pipe",
       "hidden": true,
       "isParameterless": true,
@@ -20151,6 +20066,16 @@
       "isParameterless": true,
       "stampExpression": "\"+\" as const",
       "text": "+"
+    },
+    {
+      "kind": "plus_qmark_colon",
+      "modelType": "token",
+      "typeName": "PlusQmarkColon",
+      "irKey": "plusQmarkColon",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"+?:\" as const",
+      "text": "+?:"
     },
     {
       "kind": "predefined_type",
@@ -20754,6 +20679,36 @@
       ]
     },
     {
+      "kind": "qmark",
+      "modelType": "token",
+      "typeName": "Qmark",
+      "irKey": "qmark",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"?\" as const",
+      "text": "?"
+    },
+    {
+      "kind": "qmark_colon",
+      "modelType": "token",
+      "typeName": "QmarkColon",
+      "irKey": "qmarkColon",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"?:\" as const",
+      "text": "?:"
+    },
+    {
+      "kind": "qmark_dot",
+      "modelType": "token",
+      "typeName": "QmarkDot",
+      "irKey": "qmarkDot",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"?.\" as const",
+      "text": "?."
+    },
+    {
       "kind": "qmark_qmark",
       "modelType": "token",
       "typeName": "QmarkQmark",
@@ -20762,6 +20717,26 @@
       "isParameterless": true,
       "stampExpression": "\"??\" as const",
       "text": "??"
+    },
+    {
+      "kind": "rbrace",
+      "modelType": "token",
+      "typeName": "Rbrace",
+      "irKey": "rbrace",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"}\" as const",
+      "text": "}"
+    },
+    {
+      "kind": "rbrack",
+      "modelType": "token",
+      "typeName": "Rbrack",
+      "irKey": "rbrack",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"]\" as const",
+      "text": "]"
     },
     {
       "kind": "readonly",
@@ -21242,6 +21217,16 @@
       ]
     },
     {
+      "kind": "rparen",
+      "modelType": "token",
+      "typeName": "Rparen",
+      "irKey": "rparen",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\")\" as const",
+      "text": ")"
+    },
+    {
       "kind": "satisfies",
       "modelType": "keyword",
       "typeName": "Satisfies",
@@ -21315,6 +21300,16 @@
       ]
     },
     {
+      "kind": "semi",
+      "modelType": "token",
+      "typeName": "Semi",
+      "irKey": "semi",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\";\" as const",
+      "text": ";"
+    },
+    {
       "kind": "sequence_expression",
       "modelType": "branch",
       "typeName": "SequenceExpression",
@@ -21355,7 +21350,7 @@
     {
       "kind": "slash",
       "modelType": "token",
-      "typeName": "Slash2",
+      "typeName": "Slash",
       "irKey": "slash",
       "hidden": true,
       "isParameterless": true,
@@ -21401,9 +21396,19 @@
       ]
     },
     {
+      "kind": "squote",
+      "modelType": "token",
+      "typeName": "Squote",
+      "irKey": "squote",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"'\" as const",
+      "text": "'"
+    },
+    {
       "kind": "star",
       "modelType": "token",
-      "typeName": "Star2",
+      "typeName": "Star",
       "irKey": "star",
       "hidden": true,
       "isParameterless": true,
@@ -23635,26 +23640,6 @@
       ]
     },
     {
-      "kind": "{",
-      "modelType": "token",
-      "typeName": "Brace",
-      "irKey": "brace",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"{\" as const",
-      "text": "{"
-    },
-    {
-      "kind": "|",
-      "modelType": "token",
-      "typeName": "Pipe",
-      "irKey": "pipe",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"|\" as const",
-      "text": "|"
-    },
-    {
       "kind": "||",
       "modelType": "pattern",
       "typeName": "Oror",
@@ -23662,16 +23647,6 @@
       "irKey": "||",
       "hidden": false,
       "factoryShape": "text"
-    },
-    {
-      "kind": "}",
-      "modelType": "token",
-      "typeName": "CloseBrace",
-      "irKey": "closeBrace",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"}\" as const",
-      "text": "}"
     }
   ]
 }

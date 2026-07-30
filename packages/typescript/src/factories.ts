@@ -1722,7 +1722,7 @@ export function buildAwaitExpression(expression: T.AwaitExpression.Config['expre
 
 export function buildMemberExpression(config: T.MemberExpression.Config) {
 	const _object = config.object;
-	const _separator = coerceKindEnumStorage(config.separator, [['.', TSKindId.Dot2] as const]);
+	const _separator = coerceKindEnumStorage(config.separator, [['.', TSKindId.Dot] as const]);
 	const _property = config.property;
 	return withMethods(
 		withAccessors(
@@ -1983,23 +1983,23 @@ export function buildBinaryExpression(config: Partial<T.BinaryExpression.Config>
 		['>>', TSKindId.GtGt] as const,
 		['>>>', TSKindId.GtGtGt] as const,
 		['<<', TSKindId.LtLt] as const,
-		['&', TSKindId.Amp2] as const,
+		['&', TSKindId.Amp] as const,
 		['^', TSKindId.Caret] as const,
-		['|', TSKindId.Pipe2] as const,
+		['|', TSKindId.Pipe] as const,
 		['+', TSKindId.Plus] as const,
 		['-', TSKindId.Dash] as const,
-		['*', TSKindId.Star2] as const,
-		['/', TSKindId.Slash2] as const,
+		['*', TSKindId.Star] as const,
+		['/', TSKindId.Slash] as const,
 		['%', TSKindId.Percent] as const,
 		['**', TSKindId.StarStar] as const,
-		['<', TSKindId.Lt2] as const,
+		['<', TSKindId.Lt] as const,
 		['<=', TSKindId.LtEq] as const,
 		['==', TSKindId.EqEq] as const,
 		['===', TSKindId.EqEqEq] as const,
 		['!=', TSKindId.BangEq] as const,
 		['!==', TSKindId.BangEqEq] as const,
 		['>=', TSKindId.GtEq] as const,
-		['>', TSKindId.Gt2] as const,
+		['>', TSKindId.Gt] as const,
 		['??', TSKindId.QmarkQmark] as const,
 		['instanceof', TSKindId.Instanceof] as const
 	]);
@@ -2632,7 +2632,7 @@ export function buildMethodDefinition(config: T.MethodDefinition.Config) {
 	const _accessor_kind = coerceKindEnumStorage(config.accessorKind, [
 		['get', TSKindId.Get] as const,
 		['set', TSKindId.Set] as const,
-		['*', TSKindId.Star2] as const
+		['*', TSKindId.Star] as const
 	]);
 	const _name = config.name;
 	const _optional_marker = coerceBooleanKeywordStorage(config.optionalMarker);
@@ -2909,7 +2909,7 @@ export function buildMethodSignature(config: T.MethodSignature.Config) {
 	const _accessor_kind = coerceKindEnumStorage(config.accessorKind, [
 		['get', TSKindId.Get] as const,
 		['set', TSKindId.Set] as const,
-		['*', TSKindId.Star2] as const
+		['*', TSKindId.Star] as const
 	]);
 	const _name = config.name;
 	const _optional_marker = coerceBooleanKeywordStorage(config.optionalMarker);
@@ -2984,7 +2984,7 @@ export function buildAbstractMethodSignature(config: T.AbstractMethodSignature.C
 	const _accessor_kind = coerceKindEnumStorage(config.accessorKind, [
 		['get', TSKindId.Get] as const,
 		['set', TSKindId.Set] as const,
-		['*', TSKindId.Star2] as const
+		['*', TSKindId.Star] as const
 	]);
 	const _name = config.name;
 	const _optional_marker = coerceBooleanKeywordStorage(config.optionalMarker);
@@ -4318,7 +4318,7 @@ export function buildTypePredicateAnnotation(typePredicate: T.TypePredicateAnnot
 export function buildTypeQueryMemberExpression(config: T.TypeQueryMemberExpression.Config) {
 	const _object = config.object;
 	const _content = coerceKindEnumStorage(config.content, [
-		['.', TSKindId.Dot2] as const,
+		['.', TSKindId.Dot] as const,
 		['?.', TSKindId.QmarkDot] as const
 	]);
 	const _property = config.property;
@@ -5574,7 +5574,7 @@ export function buildObjectTypeContent(
 ) {
 	_assertNonEmpty(elements, 'object_type_content.elements');
 	const _content = elements;
-	const _separator_kind = ({ ',': TSKindId.Comma2, ';': TSKindId.Semi } as Record<string, number>)[
+	const _separator_kind = ({ ',': TSKindId.Comma, ';': TSKindId.Semi } as Record<string, number>)[
 		options.separatorKind ?? ','
 	];
 	const _leading_sep = options.leading ?? false;
@@ -6041,7 +6041,7 @@ export function buildClassBodyMember(config: T.ClassBodyMember.Config) {
 	const _terminator = coerceKindEnumStorage(config.terminator, [
 		['\n', TSKindId.AutomaticSemicolon] as const,
 		[';', TSKindId.Semi] as const,
-		[',', TSKindId.Comma2] as const
+		[',', TSKindId.Comma] as const
 	]);
 	return withMethods(
 		withAccessors(

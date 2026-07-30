@@ -873,7 +873,7 @@ export type _Type__AccessibilityModifier = _TypeAssert<
 	_TypeExtends<_AccessibilityModifier['$type'], TSKindId.Public | TSKindId.Private | TSKindId.Protected>
 >;
 export type _Type_AccessorKind = _TypeAssert<
-	_TypeExtends<AccessorKind['$type'], TSKindId.Get | TSKindId.Set | TSKindId.Star2>
+	_TypeExtends<AccessorKind['$type'], TSKindId.Get | TSKindId.Set | TSKindId.Star>
 >;
 export type _Type_PublicFieldDefinitionOptionalityMarker = _TypeAssert<
 	_TypeExtends<PublicFieldDefinitionOptionalityMarker['$type'], TSKindId.Qmark | TSKindId.Bang>

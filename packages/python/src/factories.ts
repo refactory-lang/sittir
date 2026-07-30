@@ -1348,7 +1348,7 @@ export function buildKeywordPattern(config: T.KeywordPattern.Config) {
 
 export function buildSplatPattern(config: T.SplatPattern.Config) {
 	const _operator = coerceKindEnumStorage(config.operator, [
-		['*', TSKindId.Star2] as const,
+		['*', TSKindId.Star] as const,
 		['**', TSKindId.StarStar] as const
 	]);
 	const _identifier = config.identifier;
@@ -1702,13 +1702,13 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config) {
 	const _operator = coerceKindEnumStorage(config.operator, [
 		['+', TSKindId.Plus] as const,
 		['-', TSKindId.Dash] as const,
-		['*', TSKindId.Star2] as const,
-		['@', TSKindId.At2] as const,
-		['/', TSKindId.Slash2] as const,
+		['*', TSKindId.Star] as const,
+		['@', TSKindId.At] as const,
+		['/', TSKindId.Slash] as const,
 		['%', TSKindId.Percent] as const,
 		['//', TSKindId.SlashSlash] as const,
 		['**', TSKindId.StarStar] as const,
-		['|', TSKindId.Pipe2] as const,
+		['|', TSKindId.Pipe] as const,
 		['&', TSKindId.Amp] as const,
 		['^', TSKindId.Caret] as const,
 		['<<', TSKindId.LtLt] as const,

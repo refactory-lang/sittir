@@ -103,6 +103,7 @@ export type LeafStringMap = {
 	_object_type_closing: '}' | '|}';
 	_operator: '++' | '--';
 	as: 'as';
+	anon_import: 'import';
 	from: 'from';
 	var: 'var';
 	else: 'else';
@@ -124,6 +125,7 @@ export type LeafStringMap = {
 	catch: 'catch';
 	finally: 'finally';
 	yield: 'yield';
+	anon_class: 'class';
 	function: 'function';
 	new: 'new';
 	using: 'using';
@@ -137,10 +139,13 @@ export type LeafStringMap = {
 	extends: 'extends';
 	implements: 'implements';
 	declare: 'declare';
+	anon_module: 'module';
 	namespace: 'namespace';
 	interface: 'interface';
 	enum: 'enum';
+	anon_type: 'type';
 	override: 'override';
+	anon_asserts: 'asserts';
 	infer: 'infer';
 	is: 'is';
 	typeof: 'typeof';
@@ -440,6 +445,7 @@ export const enum SyntaxKind {
 	JsxText = 'jsx_text',
 	ErrorRecovery = '__error_recovery',
 	As = 'as',
+	AnonImport = 'anon_import',
 	From = 'from',
 	Var = 'var',
 	Else = 'else',
@@ -461,6 +467,7 @@ export const enum SyntaxKind {
 	Catch = 'catch',
 	Finally = 'finally',
 	Yield = 'yield',
+	AnonClass = 'anon_class',
 	Function = 'function',
 	New = 'new',
 	Using = 'using',
@@ -474,10 +481,13 @@ export const enum SyntaxKind {
 	Extends = 'extends',
 	Implements = 'implements',
 	Declare = 'declare',
+	AnonModule = 'anon_module',
 	Namespace = 'namespace',
 	Interface = 'interface',
 	Enum = 'enum',
+	AnonType = 'anon_type',
 	Override = 'override',
+	AnonAsserts = 'anon_asserts',
 	Infer = 'infer',
 	Is = 'is',
 	Typeof = 'typeof',
@@ -492,7 +502,7 @@ export const enum SyntaxKind {
 export const enum TSKindId {
 	Identifier = 1,
 	HashBangLine = 2,
-	Star2 = 3,
+	Star = 3,
 	As = 4,
 	Lbrace = 5,
 	Rbrace = 6,
@@ -503,7 +513,7 @@ export const enum TSKindId {
 	With = 11,
 	Assert = 12,
 	Var = 13,
-	Comma2 = 14,
+	Comma = 14,
 	Let = 15,
 	Const = 16,
 	Else = 17,
@@ -533,7 +543,7 @@ export const enum TSKindId {
 	Eq = 41,
 	Lbrack = 42,
 	Rbrack = 43,
-	Dot2 = 44,
+	Dot = 44,
 	AnonClass = 45,
 	Function = 46,
 	Async = 47,
@@ -561,22 +571,22 @@ export const enum TSKindId {
 	GtGt = 69,
 	GtGtGt = 70,
 	LtLt = 71,
-	Amp2 = 72,
+	Amp = 72,
 	Caret = 73,
-	Pipe2 = 74,
+	Pipe = 74,
 	Plus = 75,
 	Dash = 76,
-	Slash2 = 77,
+	Slash = 77,
 	Percent = 78,
 	StarStar = 79,
-	Lt2 = 80,
+	Lt = 80,
 	LtEq = 81,
 	EqEq = 82,
 	EqEqEq = 83,
 	BangEq = 84,
 	BangEqEq = 85,
 	GtEq = 86,
-	Gt2 = 87,
+	Gt = 87,
 	QmarkQmark = 88,
 	Instanceof = 89,
 	Bang = 90,
@@ -589,7 +599,7 @@ export const enum TSKindId {
 	Comment = 97,
 	Bquote = 98,
 	DollarLbrace = 99,
-	Slash2_100 = 100,
+	Slash2 = 100,
 	RegexPattern = 101,
 	RegexFlags = 102,
 	Number = 103,
@@ -1820,7 +1830,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'hash_bang_line':
 			return TSKindId.HashBangLine;
 		case 'star':
-			return TSKindId.Star2;
+			return TSKindId.Star;
 		case 'as':
 			return TSKindId.As;
 		case 'lbrace':
@@ -1842,7 +1852,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'var':
 			return TSKindId.Var;
 		case 'comma':
-			return TSKindId.Comma2;
+			return TSKindId.Comma;
 		case 'let':
 			return TSKindId.Let;
 		case 'const':
@@ -1902,7 +1912,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'rbrack':
 			return TSKindId.Rbrack;
 		case 'dot':
-			return TSKindId.Dot2;
+			return TSKindId.Dot;
 		case 'anon_class':
 			return TSKindId.AnonClass;
 		case 'function':
@@ -1958,23 +1968,23 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'lt_lt':
 			return TSKindId.LtLt;
 		case 'amp':
-			return TSKindId.Amp2;
+			return TSKindId.Amp;
 		case 'caret':
 			return TSKindId.Caret;
 		case 'pipe':
-			return TSKindId.Pipe2;
+			return TSKindId.Pipe;
 		case 'plus':
 			return TSKindId.Plus;
 		case 'dash':
 			return TSKindId.Dash;
 		case 'slash':
-			return TSKindId.Slash2;
+			return TSKindId.Slash;
 		case 'percent':
 			return TSKindId.Percent;
 		case 'star_star':
 			return TSKindId.StarStar;
 		case 'lt':
-			return TSKindId.Lt2;
+			return TSKindId.Lt;
 		case 'lt_eq':
 			return TSKindId.LtEq;
 		case 'eq_eq':
@@ -1988,7 +1998,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'gt_eq':
 			return TSKindId.GtEq;
 		case 'gt':
-			return TSKindId.Gt2;
+			return TSKindId.Gt;
 		case 'qmark_qmark':
 			return TSKindId.QmarkQmark;
 		case 'instanceof':
@@ -2014,7 +2024,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'dollar_lbrace':
 			return TSKindId.DollarLbrace;
 		case 'slash2':
-			return TSKindId.Slash2_100;
+			return TSKindId.Slash2;
 		case 'regex_pattern':
 			return TSKindId.RegexPattern;
 		case 'regex_flags':
@@ -2692,13 +2702,13 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case '_type_identifier':
 			return TSKindId.TypeIdentifier;
 		case '*':
-			return TSKindId.Star2;
+			return TSKindId.Star;
 		case '{':
 			return TSKindId.Lbrace;
 		case '}':
 			return TSKindId.Rbrace;
 		case ',':
-			return TSKindId.Comma2;
+			return TSKindId.Comma;
 		case '(':
 			return TSKindId.Lparen;
 		case ';':
@@ -2714,7 +2724,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case ']':
 			return TSKindId.Rbrack;
 		case '.':
-			return TSKindId.Dot2;
+			return TSKindId.Dot;
 		case '=>':
 			return TSKindId.EqGt;
 		case '?.':
@@ -2762,23 +2772,23 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case '<<':
 			return TSKindId.LtLt;
 		case '&':
-			return TSKindId.Amp2;
+			return TSKindId.Amp;
 		case '^':
 			return TSKindId.Caret;
 		case '|':
-			return TSKindId.Pipe2;
+			return TSKindId.Pipe;
 		case '+':
 			return TSKindId.Plus;
 		case '-':
 			return TSKindId.Dash;
 		case '/':
-			return TSKindId.Slash2;
+			return TSKindId.Slash;
 		case '%':
 			return TSKindId.Percent;
 		case '**':
 			return TSKindId.StarStar;
 		case '<':
-			return TSKindId.Lt2;
+			return TSKindId.Lt;
 		case '<=':
 			return TSKindId.LtEq;
 		case '==':
@@ -2792,7 +2802,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case '>=':
 			return TSKindId.GtEq;
 		case '>':
-			return TSKindId.Gt2;
+			return TSKindId.Gt;
 		case '??':
 			return TSKindId.QmarkQmark;
 		case '!':
@@ -3869,7 +3879,7 @@ export interface MemberExpression {
 	readonly _separator: number;
 	readonly _property: PrivatePropertyIdentifier | Identifier;
 	readonly __inputHints__?: {
-		readonly separator: KindEnum<'.' | '?.', TSKindId.Dot2 | TSKindId.QmarkDot>;
+		readonly separator: KindEnum<'.' | '?.', TSKindId.Dot | TSKindId.QmarkDot>;
 	};
 	object(): Expression | PrimaryExpression | Import;
 	separator(): number;
@@ -4021,23 +4031,23 @@ export interface BinaryExpression {
 			| TSKindId.GtGt
 			| TSKindId.GtGtGt
 			| TSKindId.LtLt
-			| TSKindId.Amp2
+			| TSKindId.Amp
 			| TSKindId.Caret
-			| TSKindId.Pipe2
+			| TSKindId.Pipe
 			| TSKindId.Plus
 			| TSKindId.Dash
-			| TSKindId.Star2
-			| TSKindId.Slash2
+			| TSKindId.Star
+			| TSKindId.Slash
 			| TSKindId.Percent
 			| TSKindId.StarStar
-			| TSKindId.Lt2
+			| TSKindId.Lt
 			| TSKindId.LtEq
 			| TSKindId.EqEq
 			| TSKindId.EqEqEq
 			| TSKindId.BangEq
 			| TSKindId.BangEqEq
 			| TSKindId.GtEq
-			| TSKindId.Gt2
+			| TSKindId.Gt
 			| TSKindId.QmarkQmark
 			| TSKindId.Instanceof
 		>;
@@ -4207,7 +4217,7 @@ export interface MethodDefinition {
 		readonly override_modifier?: BooleanKeyword<'override'>;
 		readonly readonly_marker?: BooleanKeyword<'readonly'>;
 		readonly async_marker?: BooleanKeyword<'async'>;
-		readonly accessor_kind?: KindEnum<'get' | 'set' | '*', TSKindId.Get | TSKindId.Set | TSKindId.Star2>;
+		readonly accessor_kind?: KindEnum<'get' | 'set' | '*', TSKindId.Get | TSKindId.Set | TSKindId.Star>;
 		readonly optional_marker?: BooleanKeyword<'?'>;
 	};
 	accessibilityModifier(): number | undefined;
@@ -4308,7 +4318,7 @@ export interface MethodSignature {
 		readonly override_modifier?: BooleanKeyword<'override'>;
 		readonly readonly_marker?: BooleanKeyword<'readonly'>;
 		readonly async_marker?: BooleanKeyword<'async'>;
-		readonly accessor_kind?: KindEnum<'get' | 'set' | '*', TSKindId.Get | TSKindId.Set | TSKindId.Star2>;
+		readonly accessor_kind?: KindEnum<'get' | 'set' | '*', TSKindId.Get | TSKindId.Set | TSKindId.Star>;
 		readonly optional_marker?: BooleanKeyword<'?'>;
 	};
 	accessibilityModifier(): number | undefined;
@@ -4340,7 +4350,7 @@ export interface AbstractMethodSignature {
 			TSKindId.Public | TSKindId.Private | TSKindId.Protected
 		>;
 		readonly override_modifier?: BooleanKeyword<'override'>;
-		readonly accessor_kind?: KindEnum<'get' | 'set' | '*', TSKindId.Get | TSKindId.Set | TSKindId.Star2>;
+		readonly accessor_kind?: KindEnum<'get' | 'set' | '*', TSKindId.Get | TSKindId.Set | TSKindId.Star>;
 		readonly optional_marker?: BooleanKeyword<'?'>;
 	};
 	accessibilityModifier(): number | undefined;
@@ -4799,7 +4809,7 @@ export interface TypeQueryMemberExpression {
 	readonly _content: number;
 	readonly _property: PrivatePropertyIdentifier | Identifier;
 	readonly __inputHints__?: {
-		readonly content: KindEnum<'.' | '?.', TSKindId.Dot2 | TSKindId.QmarkDot>;
+		readonly content: KindEnum<'.' | '?.', TSKindId.Dot | TSKindId.QmarkDot>;
 	};
 	object(): Identifier | This | TypeQuerySubscriptExpression | TypeQueryMemberExpression | TypeQueryCallExpression;
 	content(): number;
@@ -5377,7 +5387,7 @@ export interface ClassBodyMember {
 	readonly _content: AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
 	readonly _terminator: number;
 	readonly __inputHints__?: {
-		readonly terminator: KindEnum<'\n' | ';' | ',', TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma2>;
+		readonly terminator: KindEnum<'\n' | ';' | ',', TSKindId.AutomaticSemicolon | TSKindId.Semi | TSKindId.Comma>;
 	};
 	content(): AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition;
 	terminator(): number;
@@ -5718,7 +5728,7 @@ export type _AccessibilityModifier = Terminal<
 	TSKindId.Public | TSKindId.Private | TSKindId.Protected,
 	'public' | 'private' | 'protected'
 >;
-export type AccessorKind = Terminal<TSKindId.Get | TSKindId.Set | TSKindId.Star2, 'get' | 'set' | '*'>;
+export type AccessorKind = Terminal<TSKindId.Get | TSKindId.Set | TSKindId.Star, 'get' | 'set' | '*'>;
 export type PublicFieldDefinitionOptionalityMarker = Terminal<TSKindId.Qmark | TSKindId.Bang, '?' | '!'>;
 export type ObjectTypeOpening = Terminal<TSKindId.Lbrace | TSKindId.LbracePipe, '{' | '{|'>;
 export type ObjectTypeClosing = Terminal<TSKindId.Rbrace | TSKindId.PipeRbrace, '}' | '|}'>;
@@ -6254,6 +6264,9 @@ export interface ErrorRecoveryTree extends AnyTreeNode {
 export interface AsTree extends AnyTreeNode {
 	readonly type: 'as';
 }
+export interface AnonImportTree extends AnyTreeNode {
+	readonly type: 'anon_import';
+}
 export interface FromTree extends AnyTreeNode {
 	readonly type: 'from';
 }
@@ -6317,6 +6330,9 @@ export interface FinallyTree extends AnyTreeNode {
 export interface YieldTree extends AnyTreeNode {
 	readonly type: 'yield';
 }
+export interface AnonClassTree extends AnyTreeNode {
+	readonly type: 'anon_class';
+}
 export interface FunctionTree extends AnyTreeNode {
 	readonly type: 'function';
 }
@@ -6356,6 +6372,9 @@ export interface ImplementsTree extends AnyTreeNode {
 export interface DeclareTree extends AnyTreeNode {
 	readonly type: 'declare';
 }
+export interface AnonModuleTree extends AnyTreeNode {
+	readonly type: 'anon_module';
+}
 export interface NamespaceTree extends AnyTreeNode {
 	readonly type: 'namespace';
 }
@@ -6365,8 +6384,14 @@ export interface InterfaceTree extends AnyTreeNode {
 export interface EnumTree extends AnyTreeNode {
 	readonly type: 'enum';
 }
+export interface AnonTypeTree extends AnyTreeNode {
+	readonly type: 'anon_type';
+}
 export interface OverrideTree extends AnyTreeNode {
 	readonly type: 'override';
+}
+export interface AnonAssertsTree extends AnyTreeNode {
+	readonly type: 'anon_asserts';
 }
 export interface InferTree extends AnyTreeNode {
 	readonly type: 'infer';

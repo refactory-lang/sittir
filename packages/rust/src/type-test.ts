@@ -819,8 +819,8 @@ export type _Type_TokenTreePunctuation = _TypeAssert<
 		| TSKindId.Percent
 		| TSKindId.Caret
 		| TSKindId.Bang
-		| TSKindId.Amp2
-		| TSKindId.Pipe2
+		| TSKindId.Amp
+		| TSKindId.Pipe
 		| TSKindId.AmpAmp
 		| TSKindId.PipePipe
 		| TSKindId.LtLt

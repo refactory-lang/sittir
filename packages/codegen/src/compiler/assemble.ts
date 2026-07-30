@@ -39,7 +39,12 @@ import { isLinkSymbol, isEnumChoiceRule } from '../types/rule.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
-import { collectGeneratedKindEntries, type GeneratedIdTables, type GeneratedKindEntry } from './generated-metadata.ts';
+import {
+	collectGeneratedKindEntries,
+	findEntryForLiteralText,
+	type GeneratedIdTables,
+	type GeneratedKindEntry
+} from './generated-metadata.ts';
 import type { AssembledNode, AssembledNonterminal, UnresolvedRef } from './model/node-map.ts';
 import {
 	AssembledBranch,
@@ -285,7 +290,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					break;
 				}
 				case 'supertype': {
-					const subtypes = resolveSupertypeSubtypes(assemblyRule, ctx);
+					const subtypes = resolveSupertypeSubtypes(assemblyRule, ctx, kindEntries);
 					nodes.set(
 						kind,
 						new AssembledSupertype(kind, assemblyRule as SupertypeRule<'link'> | ChoiceRule<'link'>, subtypes)
@@ -378,7 +383,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 				// stay resolved via `resolveHiddenSubtypes`'s existing
 				// flatten-through path.
 				if (!subRule || subRule.type !== SUPERTYPE) continue;
-				const subtypes = resolveSupertypeSubtypes(subRule, ctx);
+				const subtypes = resolveSupertypeSubtypes(subRule, ctx, kindEntries);
 				nodes.set(aliasName, new AssembledSupertype(aliasName, subRule, subtypes));
 			}
 		}
@@ -571,7 +576,11 @@ function collectOptionalBodyKinds(rules: Record<string, Rule<'link'>>): Readonly
 // Supertype + group assembly helpers
 // ---------------------------------------------------------------------------
 
-function resolveSupertypeSubtypes(rule: Rule<'link'>, ctx: AssembleCtx): string[] {
+function resolveSupertypeSubtypes(
+	rule: Rule<'link'>,
+	ctx: AssembleCtx,
+	kindEntries: readonly GeneratedKindEntry[]
+): string[] {
 	let subtypes: string[];
 	if (rule.type === SUPERTYPE) {
 		subtypes = rule.subtypes;
@@ -586,6 +595,7 @@ function resolveSupertypeSubtypes(rule: Rule<'link'>, ctx: AssembleCtx): string[
 	return resolveHiddenSubtypes(
 		subtypes,
 		ctx,
+		kindEntries,
 		rule.type === SUPERTYPE ? rule.name : undefined,
 		rule.type === SUPERTYPE ? rule.subtypeParseNames : undefined
 	);
@@ -622,6 +632,7 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
 function resolveHiddenSubtypes(
 	names: readonly string[],
 	ctx: AssembleCtx,
+	kindEntries: readonly GeneratedKindEntry[],
 	ownerName?: string,
 	subtypeParseNames?: Readonly<Record<string, string>>
 ): string[] {
@@ -700,7 +711,7 @@ function resolveHiddenSubtypes(
 			return;
 		}
 		if (topLevelAliasBodies.has(name)) out.push(name);
-		const resolved = resolveHiddenRuleContent(rule, new Set([name]), ctx);
+		const resolved = resolveHiddenRuleContent(rule, new Set([name]), ctx, kindEntries);
 		if (resolved.length === 0) {
 			if (!out.includes(name)) out.push(name);
 			return;
@@ -718,10 +729,15 @@ function resolveHiddenSubtypes(
 		}
 	};
 	for (const n of names) visit(n);
-	return includeAliasMemberKinds(out, ctx, ownerName);
+	return includeAliasMemberKinds(out, ctx, kindEntries, ownerName);
 }
 
-function includeAliasMemberKinds(subtypes: readonly string[], ctx: AssembleCtx, ownerName?: string): string[] {
+function includeAliasMemberKinds(
+	subtypes: readonly string[],
+	ctx: AssembleCtx,
+	kindEntries: readonly GeneratedKindEntry[],
+	ownerName?: string
+): string[] {
 	const { normalizedRules: rules } = ctx;
 	const out = [...subtypes];
 	const subtypeSet = new Set(subtypes);
@@ -732,7 +748,7 @@ function includeAliasMemberKinds(subtypes: readonly string[], ctx: AssembleCtx, 
 			if (!name.startsWith('_')) continue;
 			if (name === ownerName) continue;
 			if (subtypeSet.has(name)) continue;
-			if (!isAliasMemberKind(name, ctx, subtypeSet)) continue;
+			if (!isAliasMemberKind(name, ctx, subtypeSet, kindEntries)) continue;
 			out.push(name);
 			subtypeSet.add(name);
 			changed = true;
@@ -741,21 +757,27 @@ function includeAliasMemberKinds(subtypes: readonly string[], ctx: AssembleCtx, 
 	return out;
 }
 
-function isAliasMemberKind(name: string, ctx: AssembleCtx, subtypeSet: ReadonlySet<string>): boolean {
+function isAliasMemberKind(
+	name: string,
+	ctx: AssembleCtx,
+	subtypeSet: ReadonlySet<string>,
+	kindEntries: readonly GeneratedKindEntry[]
+): boolean {
 	const { normalizedRules: rules, topLevelAliasBodies } = ctx;
 	if (!topLevelAliasBodies.has(name)) return false;
 	const body = rules[name];
 	if (!body) return false;
-	const resolved = resolveHiddenRuleContent(body, new Set([name]), ctx);
+	const resolved = resolveHiddenRuleContent(body, new Set([name]), ctx, kindEntries);
 	if (resolved.length === 0) return false;
-	return resolved.every((member) => isCompatibleSubtypeMember(member, ctx, subtypeSet, new Set()));
+	return resolved.every((member) => isCompatibleSubtypeMember(member, ctx, subtypeSet, new Set(), kindEntries));
 }
 
 function isCompatibleSubtypeMember(
 	name: string,
 	ctx: AssembleCtx,
 	subtypeSet: ReadonlySet<string>,
-	seen: Set<string>
+	seen: Set<string>,
+	kindEntries: readonly GeneratedKindEntry[]
 ): boolean {
 	const { normalizedRules: rules } = ctx;
 	if (subtypeSet.has(name)) return true;
@@ -764,12 +786,17 @@ function isCompatibleSubtypeMember(
 	const rule = rules[name];
 	if (!rule) return false;
 	seen.add(name);
-	const resolved = resolveHiddenRuleContent(rule, new Set([name]), ctx);
+	const resolved = resolveHiddenRuleContent(rule, new Set([name]), ctx, kindEntries);
 	if (resolved.length === 0) return false;
-	return resolved.every((member) => isCompatibleSubtypeMember(member, ctx, subtypeSet, seen));
+	return resolved.every((member) => isCompatibleSubtypeMember(member, ctx, subtypeSet, seen, kindEntries));
 }
 
-function resolveHiddenRuleContent(rule: RenderRule, seen: Set<string>, ctx: AssembleCtx): string[] {
+function resolveHiddenRuleContent(
+	rule: RenderRule,
+	seen: Set<string>,
+	ctx: AssembleCtx,
+	kindEntries: readonly GeneratedKindEntry[]
+): string[] {
 	const rules = ctx.normalizedRules;
 	// Wrapper-opacity attribute checks — see doc comment. Must run BEFORE the
 	// type switch: a repeat/repeat1/optional can wrap ANY rule shape, and the
@@ -812,7 +839,7 @@ function resolveHiddenRuleContent(rule: RenderRule, seen: Set<string>, ctx: Asse
 			if (seen.has(refName)) return [];
 			seen.add(refName);
 			const target = rules[refName];
-			return target ? resolveHiddenRuleContent(target, seen, ctx) : [refName];
+			return target ? resolveHiddenRuleContent(target, seen, ctx, kindEntries) : [refName];
 		}
 		case SUPERTYPE:
 			return rule.subtypes.flatMap((s) => {
@@ -820,21 +847,30 @@ function resolveHiddenRuleContent(rule: RenderRule, seen: Set<string>, ctx: Asse
 				seen.add(s);
 				if (!s.startsWith('_')) return [s];
 				const target = rules[s];
-				return target ? resolveHiddenRuleContent(target, seen, ctx) : [s];
+				return target ? resolveHiddenRuleContent(target, seen, ctx, kindEntries) : [s];
 			});
 		case CHOICE:
-			return rule.members.flatMap((m) => resolveHiddenRuleContent(m, seen, ctx));
+			return rule.members.flatMap((m) => resolveHiddenRuleContent(m, seen, ctx, kindEntries));
 		case STRING: {
 			// Grammar-token shape (name vs literal) — routed through the
 			// grammar's own word-matcher (R12 Camp A); single source of
 			// truth via matchesWordShape, replacing the former hardcoded
 			// identifier-shape regex.
 			const isWordShape = ctx.wordMatcher ? ctx.wordMatcher(rule.value) : matchesWordShape(rule.value, undefined);
-			return isWordShape ? [] : [rule.value];
+			if (isWordShape) return [];
+			// Same catalog-first resolution `collectAnonymousNodes` keys its
+			// minted AssembledKeyword/AssembledToken nodes by — this literal's
+			// NodeMap key is the catalog row's kind name when one exists (e.g.
+			// `$` may dedupe under a sanitized/named catalog entry), not the
+			// raw literal text. Returning the raw text here when a resolved
+			// name exists would name a subtype the NodeMap never keys anything
+			// under.
+			const entry = findEntryForLiteralText(kindEntries, rule.value);
+			return [entry?.kind ?? rule.value];
 		}
 		case VARIANT:
 		case GROUP:
-			return resolveHiddenRuleContent(rule.content, seen, ctx);
+			return resolveHiddenRuleContent(rule.content, seen, ctx, kindEntries);
 		case SEQ:
 			// DECLARED opaque (not a `default:` fallthrough) — a bare multi-member
 			// SEQ is a real structural body, not a wrapper collapse, most commonly
@@ -1127,8 +1163,31 @@ function collectAnonymousNodes(
 	}
 
 	for (const [kindName, literalText] of seen) {
-		if (nodes.has(kindName)) continue; // Already classified as a named rule
 		if (literalText === '' || /^\s+$/.test(literalText)) continue; // Skip whitespace/empty
+
+		// Resolve through the catalog FIRST (anon-token-first chain — the same
+		// resolution AssembledKeyword/AssembledToken's own constructor uses to
+		// stamp resolvedKind/resolvedKindId) so the minted node is keyed by the
+		// catalog row's kind name, not the literal's raw text. Tree-sitter often
+		// sanitizes or dedupes anonymous literals under a different name
+		// (`,` → `comma`, `mut` → `mutable_specifier`) — keying by raw text mints
+		// a phantom name with no id row even though the token already has one.
+		const catalogEntry = findEntryForLiteralText(kindEntries, literalText);
+		const resolvedKind = catalogEntry?.kind ?? kindName;
+		if (nodes.has(resolvedKind)) continue; // Already classified as a named rule (or dedup target)
+
+		if (catalogEntry === undefined) {
+			// No catalog row for this literal — fall back to raw-text keying and
+			// surface it in the same grammar-diagnostics.json stream the link-time
+			// kindid-unstamped-* report uses, so this fallback is visible and
+			// ratcheted rather than silently minting a phantom.
+			recordAssembleWarning({
+				code: 'kindid-unstamped-anon-literal',
+				message: `[assemble] anonymous literal ${JSON.stringify(literalText)} resolved no parser kindId — keyed by raw text '${kindName}'`,
+				ownerKind: kindName,
+				details: { literalText }
+			});
+		}
 
 		const isWordShape = matchesWordShape(literalText, wordMatcher);
 		const syntheticStringRule: StringRule<'link'> = { type: STRING, value: literalText };
@@ -1136,10 +1195,10 @@ function collectAnonymousNodes(
 		if (isWordShape) {
 			// Keyword token (e.g., "if", "class", "pub")
 			// Anonymous keywords from grammar — no factory (hidden: no user construction path)
-			nodes.set(kindName, new AssembledKeyword(kindName, syntheticStringRule, { hidden: true, kindEntries }));
+			nodes.set(resolvedKind, new AssembledKeyword(resolvedKind, syntheticStringRule, { hidden: true, kindEntries }));
 		} else {
 			// Operator/punctuation token (e.g., "+", "->", "{")
-			nodes.set(kindName, new AssembledToken(kindName, syntheticStringRule, { kindEntries }));
+			nodes.set(resolvedKind, new AssembledToken(resolvedKind, syntheticStringRule, { kindEntries }));
 		}
 	}
 }

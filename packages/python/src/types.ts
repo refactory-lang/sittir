@@ -75,14 +75,18 @@ export type LeafStringMap = {
 	global: 'global';
 	nonlocal: 'nonlocal';
 	exec: 'exec';
+	anon_type: 'type';
 	class: 'class';
 	_: '_';
 	not: 'not';
 	and: 'and';
 	or: 'or';
+	anon_lambda: 'lambda';
+	anon_yield: 'yield';
 	True: 'True';
 	False: 'False';
 	None: 'None';
+	anon_await: 'await';
 	print: 'print';
 	async: 'async';
 };
@@ -285,14 +289,18 @@ export const enum SyntaxKind {
 	Global = 'global',
 	Nonlocal = 'nonlocal',
 	Exec = 'exec',
+	AnonType = 'anon_type',
 	Class = 'class',
 	Anonymous = '_',
 	Not = 'not',
 	And = 'and',
 	Or = 'or',
+	AnonLambda = 'anon_lambda',
+	AnonYield = 'anon_yield',
 	True2 = 'True',
 	False2 = 'False',
 	None2 = 'None',
+	AnonAwait = 'anon_await',
 	Print = 'print',
 	Async = 'async'
 }
@@ -306,9 +314,9 @@ export const enum TSKindId {
 	FutureU = 6,
 	Lparen = 7,
 	Rparen = 8,
-	Comma2 = 9,
+	Comma = 9,
 	As = 10,
-	Star2 = 11,
+	Star = 11,
 	GtGt = 12,
 	Assert = 13,
 	ColonEq = 14,
@@ -330,7 +338,7 @@ export const enum TSKindId {
 	While = 30,
 	Try = 31,
 	Except = 32,
-	Star2_33 = 33,
+	Star2 = 33,
 	Finally = 34,
 	With = 35,
 	Def = 36,
@@ -342,8 +350,8 @@ export const enum TSKindId {
 	Class = 42,
 	Lbrack = 43,
 	Rbrack = 44,
-	At2 = 45,
-	Pipe2 = 46,
+	At = 45,
+	Pipe = 46,
 	Lbrace = 47,
 	Rbrace = 48,
 	Anonymous = 49,
@@ -352,7 +360,7 @@ export const enum TSKindId {
 	Not = 52,
 	And = 53,
 	Or = 54,
-	Slash2 = 55,
+	Slash = 55,
 	Percent = 56,
 	SlashSlash = 57,
 	Amp = 58,
@@ -1222,11 +1230,11 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'rparen':
 			return TSKindId.Rparen;
 		case 'comma':
-			return TSKindId.Comma2;
+			return TSKindId.Comma;
 		case 'as':
 			return TSKindId.As;
 		case 'star':
-			return TSKindId.Star2;
+			return TSKindId.Star;
 		case 'gt_gt':
 			return TSKindId.GtGt;
 		case 'assert':
@@ -1270,7 +1278,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'except':
 			return TSKindId.Except;
 		case 'star2':
-			return TSKindId.Star2_33;
+			return TSKindId.Star2;
 		case 'finally':
 			return TSKindId.Finally;
 		case 'with':
@@ -1294,9 +1302,9 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'rbrack':
 			return TSKindId.Rbrack;
 		case 'at':
-			return TSKindId.At2;
+			return TSKindId.At;
 		case 'pipe':
-			return TSKindId.Pipe2;
+			return TSKindId.Pipe;
 		case 'lbrace':
 			return TSKindId.Lbrace;
 		case 'rbrace':
@@ -1314,7 +1322,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'or':
 			return TSKindId.Or;
 		case 'slash':
-			return TSKindId.Slash2;
+			return TSKindId.Slash;
 		case 'percent':
 			return TSKindId.Percent;
 		case 'slash_slash':
@@ -1810,9 +1818,9 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case ')':
 			return TSKindId.Rparen;
 		case ',':
-			return TSKindId.Comma2;
+			return TSKindId.Comma;
 		case '*':
-			return TSKindId.Star2;
+			return TSKindId.Star;
 		case '>>':
 			return TSKindId.GtGt;
 		case ':=':
@@ -1828,9 +1836,9 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case ']':
 			return TSKindId.Rbrack;
 		case '@':
-			return TSKindId.At2;
+			return TSKindId.At;
 		case '|':
-			return TSKindId.Pipe2;
+			return TSKindId.Pipe;
 		case '{':
 			return TSKindId.Lbrace;
 		case '}':
@@ -1840,7 +1848,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case '-':
 			return TSKindId.Dash;
 		case '/':
-			return TSKindId.Slash2;
+			return TSKindId.Slash;
 		case '%':
 			return TSKindId.Percent;
 		case '//':
@@ -2568,7 +2576,7 @@ export interface SplatPattern {
 	readonly _operator: number;
 	readonly _identifier: Identifier | '_';
 	readonly __inputHints__?: {
-		readonly operator: KindEnum<'*' | '**', TSKindId.Star2 | TSKindId.StarStar>;
+		readonly operator: KindEnum<'*' | '**', TSKindId.Star | TSKindId.StarStar>;
 	};
 	operator(): number;
 	identifier(): Identifier | '_';
@@ -2689,13 +2697,13 @@ export interface BinaryOperator {
 			'+' | '-' | '*' | '@' | '/' | '%' | '//' | '**' | '|' | '&' | '^' | '<<' | '>>',
 			| TSKindId.Plus
 			| TSKindId.Dash
-			| TSKindId.Star2
-			| TSKindId.At2
-			| TSKindId.Slash2
+			| TSKindId.Star
+			| TSKindId.At
+			| TSKindId.Slash
 			| TSKindId.Percent
 			| TSKindId.SlashSlash
 			| TSKindId.StarStar
-			| TSKindId.Pipe2
+			| TSKindId.Pipe
 			| TSKindId.Amp
 			| TSKindId.Caret
 			| TSKindId.LtLt
@@ -3277,7 +3285,7 @@ export type AugmentedAssignmentOperator = Terminal<
 	| TSKindId.PipeEq,
 	'+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|='
 >;
-export type SplatPatternOperator = Terminal<TSKindId.Star2 | TSKindId.StarStar, '*' | '**'>;
+export type SplatPatternOperator = Terminal<TSKindId.Star | TSKindId.StarStar, '*' | '**'>;
 export type ComplexPatternOperator = Terminal<TSKindId.Plus | TSKindId.Dash, '+' | '-'>;
 export type Indent = Terminal<TSKindId.Indent, string>;
 export type Dedent = Terminal<TSKindId.Dedent, string>;
@@ -3639,6 +3647,9 @@ export interface NonlocalTree extends AnyTreeNode {
 export interface ExecTree extends AnyTreeNode {
 	readonly type: 'exec';
 }
+export interface AnonTypeTree extends AnyTreeNode {
+	readonly type: 'anon_type';
+}
 export interface ClassTree extends AnyTreeNode {
 	readonly type: 'class';
 }
@@ -3651,6 +3662,12 @@ export interface AndTree extends AnyTreeNode {
 export interface OrTree extends AnyTreeNode {
 	readonly type: 'or';
 }
+export interface AnonLambdaTree extends AnyTreeNode {
+	readonly type: 'anon_lambda';
+}
+export interface AnonYieldTree extends AnyTreeNode {
+	readonly type: 'anon_yield';
+}
 export interface True2Tree extends AnyTreeNode {
 	readonly type: 'True';
 }
@@ -3659,6 +3676,9 @@ export interface False2Tree extends AnyTreeNode {
 }
 export interface None2Tree extends AnyTreeNode {
 	readonly type: 'None';
+}
+export interface AnonAwaitTree extends AnyTreeNode {
+	readonly type: 'anon_await';
 }
 export interface PrintTree extends AnyTreeNode {
 	readonly type: 'print';

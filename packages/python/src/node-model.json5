@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 260,
+  "nodeCount": 259,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -2129,16 +2129,6 @@
   },
   "nodes": [
     {
-      "kind": "(",
-      "modelType": "token",
-      "typeName": "Paren",
-      "irKey": "paren",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"(\" as const",
-      "text": "("
-    },
-    {
       "kind": ")",
       "modelType": "pattern",
       "typeName": "CloseParen",
@@ -2146,66 +2136,6 @@
       "irKey": ")",
       "hidden": false,
       "factoryShape": "text"
-    },
-    {
-      "kind": "*",
-      "modelType": "token",
-      "typeName": "Star",
-      "irKey": "star",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"*\" as const",
-      "text": "*"
-    },
-    {
-      "kind": "**",
-      "modelType": "token",
-      "typeName": "Starstar",
-      "irKey": "starstar",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"**\" as const",
-      "text": "**"
-    },
-    {
-      "kind": ",",
-      "modelType": "token",
-      "typeName": "Comma",
-      "irKey": "comma",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\",\" as const",
-      "text": ","
-    },
-    {
-      "kind": "-",
-      "modelType": "token",
-      "typeName": "Minus",
-      "irKey": "minus",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"-\" as const",
-      "text": "-"
-    },
-    {
-      "kind": "->",
-      "modelType": "token",
-      "typeName": "Arrow",
-      "irKey": "arrow",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"->\" as const",
-      "text": "->"
-    },
-    {
-      "kind": ".",
-      "modelType": "token",
-      "typeName": "Dot",
-      "irKey": "dot",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\".\" as const",
-      "text": "."
     },
     {
       "kind": "...",
@@ -2216,66 +2146,6 @@
       "isParameterless": true,
       "stampExpression": "\"...\" as const",
       "text": "..."
-    },
-    {
-      "kind": "/",
-      "modelType": "token",
-      "typeName": "Slash",
-      "irKey": "slash",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"/\" as const",
-      "text": "/"
-    },
-    {
-      "kind": ":",
-      "modelType": "token",
-      "typeName": "Colon",
-      "irKey": "colon",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\":\" as const",
-      "text": ":"
-    },
-    {
-      "kind": ":=",
-      "modelType": "token",
-      "typeName": "Coloneq",
-      "irKey": "coloneq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\":=\" as const",
-      "text": ":="
-    },
-    {
-      "kind": "=",
-      "modelType": "token",
-      "typeName": "Eq",
-      "irKey": "eq",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"=\" as const",
-      "text": "="
-    },
-    {
-      "kind": ">>",
-      "modelType": "token",
-      "typeName": "Shr",
-      "irKey": "shr",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\">>\" as const",
-      "text": ">>"
-    },
-    {
-      "kind": "@",
-      "modelType": "token",
-      "typeName": "At",
-      "irKey": "at",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"@\" as const",
-      "text": "@"
     },
     {
       "kind": "False",
@@ -2309,26 +2179,6 @@
       "stampExpression": "\"True\" as const",
       "text": "True",
       "factoryShape": "text"
-    },
-    {
-      "kind": "[",
-      "modelType": "token",
-      "typeName": "Bracket",
-      "irKey": "bracket",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"[\" as const",
-      "text": "["
-    },
-    {
-      "kind": "\\",
-      "modelType": "token",
-      "typeName": "TokBs",
-      "irKey": "tokBs",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"\\\\\" as const",
-      "text": "\\"
     },
     {
       "kind": "]",
@@ -3976,6 +3826,50 @@
       "factoryShape": "text"
     },
     {
+      "kind": "anon_await",
+      "modelType": "keyword",
+      "typeName": "AnonAwait",
+      "irKey": "anonAwait",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"await\" as const",
+      "text": "await",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "anon_lambda",
+      "modelType": "keyword",
+      "typeName": "AnonLambda",
+      "irKey": "anonLambda",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"lambda\" as const",
+      "text": "lambda",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "anon_type",
+      "modelType": "keyword",
+      "typeName": "AnonType",
+      "irKey": "anonType",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"type\" as const",
+      "text": "type",
+      "factoryShape": "text"
+    },
+    {
+      "kind": "anon_yield",
+      "modelType": "keyword",
+      "typeName": "AnonYield",
+      "irKey": "anonYield",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"yield\" as const",
+      "text": "yield",
+      "factoryShape": "text"
+    },
+    {
       "kind": "argument_list",
       "modelType": "branch",
       "typeName": "ArgumentList",
@@ -4227,7 +4121,7 @@
     {
       "kind": "at",
       "modelType": "token",
-      "typeName": "At2",
+      "typeName": "At",
       "irKey": "at",
       "hidden": true,
       "isParameterless": true,
@@ -4724,6 +4618,16 @@
       "stampExpression": "\"break\" as const",
       "text": "break",
       "factoryShape": "text"
+    },
+    {
+      "kind": "bslash",
+      "modelType": "token",
+      "typeName": "Bslash",
+      "irKey": "bslash",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"\\\\\" as const",
+      "text": "\\"
     },
     {
       "kind": "call",
@@ -5348,9 +5252,29 @@
       ]
     },
     {
+      "kind": "colon",
+      "modelType": "token",
+      "typeName": "Colon",
+      "irKey": "colon",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\":\" as const",
+      "text": ":"
+    },
+    {
+      "kind": "colon_eq",
+      "modelType": "token",
+      "typeName": "ColonEq",
+      "irKey": "colonEq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\":=\" as const",
+      "text": ":="
+    },
+    {
       "kind": "comma",
       "modelType": "token",
-      "typeName": "Comma2",
+      "typeName": "Comma",
       "irKey": "comma",
       "hidden": true,
       "isParameterless": true,
@@ -5814,6 +5738,16 @@
       "isParameterless": true,
       "stampExpression": "\"-\" as const",
       "text": "-"
+    },
+    {
+      "kind": "dash_gt",
+      "modelType": "token",
+      "typeName": "DashGt",
+      "irKey": "dashGt",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"->\" as const",
+      "text": "->"
     },
     {
       "kind": "decorated_definition",
@@ -6307,6 +6241,16 @@
       ]
     },
     {
+      "kind": "dot",
+      "modelType": "token",
+      "typeName": "Dot",
+      "irKey": "dot",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\".\" as const",
+      "text": "."
+    },
+    {
       "kind": "dotted_name",
       "modelType": "branch",
       "typeName": "DottedName",
@@ -6507,6 +6451,16 @@
       "factoryFields": [
         "body"
       ]
+    },
+    {
+      "kind": "eq",
+      "modelType": "token",
+      "typeName": "Eq",
+      "irKey": "eq",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"=\" as const",
+      "text": "="
     },
     {
       "kind": "escape_interpolation",
@@ -8458,6 +8412,26 @@
       ]
     },
     {
+      "kind": "lbrace",
+      "modelType": "token",
+      "typeName": "Lbrace",
+      "irKey": "lbrace",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"{\" as const",
+      "text": "{"
+    },
+    {
+      "kind": "lbrack",
+      "modelType": "token",
+      "typeName": "Lbrack",
+      "irKey": "lbrack",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"[\" as const",
+      "text": "["
+    },
+    {
       "kind": "line_continuation",
       "modelType": "pattern",
       "typeName": "LineContinuation",
@@ -8695,6 +8669,16 @@
       "factoryFields": [
         "content"
       ]
+    },
+    {
+      "kind": "lparen",
+      "modelType": "token",
+      "typeName": "Lparen",
+      "irKey": "lparen",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"(\" as const",
+      "text": "("
     },
     {
       "kind": "lt_lt",
@@ -9408,7 +9392,7 @@
     {
       "kind": "pipe",
       "modelType": "token",
-      "typeName": "Pipe2",
+      "typeName": "Pipe",
       "irKey": "pipe",
       "hidden": true,
       "isParameterless": true,
@@ -9701,6 +9685,26 @@
       ]
     },
     {
+      "kind": "rbrace",
+      "modelType": "token",
+      "typeName": "Rbrace",
+      "irKey": "rbrace",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"}\" as const",
+      "text": "}"
+    },
+    {
+      "kind": "rbrack",
+      "modelType": "token",
+      "typeName": "Rbrack",
+      "irKey": "rbrack",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"]\" as const",
+      "text": "]"
+    },
+    {
       "kind": "relative_import",
       "modelType": "branch",
       "typeName": "RelativeImport",
@@ -9812,6 +9816,16 @@
       ]
     },
     {
+      "kind": "rparen",
+      "modelType": "token",
+      "typeName": "Rparen",
+      "irKey": "rparen",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\")\" as const",
+      "text": ")"
+    },
+    {
       "kind": "set",
       "modelType": "branch",
       "typeName": "Set",
@@ -9914,7 +9928,7 @@
     {
       "kind": "slash",
       "modelType": "token",
-      "typeName": "Slash2",
+      "typeName": "Slash",
       "irKey": "slash",
       "hidden": true,
       "isParameterless": true,
@@ -10134,7 +10148,7 @@
     {
       "kind": "star",
       "modelType": "token",
-      "typeName": "Star2",
+      "typeName": "Star",
       "irKey": "star",
       "hidden": true,
       "isParameterless": true,
@@ -11518,26 +11532,6 @@
       "factoryFields": [
         "content"
       ]
-    },
-    {
-      "kind": "{",
-      "modelType": "token",
-      "typeName": "Brace",
-      "irKey": "brace",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"{\" as const",
-      "text": "{"
-    },
-    {
-      "kind": "|",
-      "modelType": "token",
-      "typeName": "Pipe",
-      "irKey": "pipe",
-      "hidden": true,
-      "isParameterless": true,
-      "stampExpression": "\"|\" as const",
-      "text": "|"
     },
     {
       "kind": "}",

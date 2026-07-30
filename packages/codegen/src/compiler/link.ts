@@ -104,6 +104,11 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	readonly derivations: DerivationLog;
 	readonly applyPromotedRules: boolean;
 	readonly hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>;
+	/** Same catalog `canonicalizeRuleLiterals` stamps ids from — carried here so
+	 *  hidden-choice classification (`collectSubtypeNames`) can key an anonymous
+	 *  literal subtype by its catalog kind name instead of its raw text, the
+	 *  same resolution `collectAnonymousNodes` (assemble.ts) applies. */
+	readonly kindEntries: readonly GeneratedKindEntry[];
 
 	constructor(
 		init: BaseCtxInit<'evaluate'> & {
@@ -113,6 +118,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 			derivations: DerivationLog;
 			applyPromotedRules: boolean;
 			hiddenChoicesWithNamedAliasMembers: ReadonlySet<string>;
+			kindEntries?: readonly GeneratedKindEntry[];
 		}
 	) {
 		super(init);
@@ -122,6 +128,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 		this.derivations = init.derivations;
 		this.applyPromotedRules = init.applyPromotedRules;
 		this.hiddenChoicesWithNamedAliasMembers = init.hiddenChoicesWithNamedAliasMembers;
+		this.kindEntries = init.kindEntries ?? [];
 	}
 
 	get rules(): Record<string, Rule<'evaluate'>> {
@@ -184,7 +191,8 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		inline: raw.inline,
 		derivations,
 		applyPromotedRules,
-		hiddenChoicesWithNamedAliasMembers
+		hiddenChoicesWithNamedAliasMembers,
+		kindEntries
 	});
 	const rules: Record<string, Rule<'link'>> = {};
 	for (const [name, rule] of Object.entries(raw.rules)) {
@@ -1523,7 +1531,13 @@ function collectSubtypeNames(
 				const isWordShape = ctx.wordMatcher
 					? ctx.wordMatcher(current.value)
 					: matchesWordShape(current.value, undefined);
-				if (!isWordShape) names.push(current.value);
+				if (isWordShape) return;
+				// Catalog-first: key this subtype by the same name
+				// `collectAnonymousNodes` (assemble.ts) mints the anonymous
+				// node under, not the literal's raw text — tree-sitter often
+				// sanitizes or dedupes the literal under a different name.
+				const entry = findEntryForLiteralText(ctx.kindEntries, current.value);
+				names.push(entry?.kind ?? current.value);
 				return;
 			}
 			case CHOICE:

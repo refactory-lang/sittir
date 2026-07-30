@@ -3932,7 +3932,7 @@ export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle) {
 			$type: TSKindId.SplatPattern as const,
 			_operator: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._operator ?? readTerminalFromOther(data, [TSKindId.Star2, TSKindId.StarStar]),
+					data._operator ?? readTerminalFromOther(data, [TSKindId.Star, TSKindId.StarStar]),
 					'operator',
 					true,
 					data.$type,
@@ -4720,13 +4720,13 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle) {
 						readTerminalFromOther(data, [
 							TSKindId.Plus,
 							TSKindId.Dash,
-							TSKindId.Star2,
-							TSKindId.At2,
-							TSKindId.Slash2,
+							TSKindId.Star,
+							TSKindId.At,
+							TSKindId.Slash,
 							TSKindId.Percent,
 							TSKindId.SlashSlash,
 							TSKindId.StarStar,
-							TSKindId.Pipe2,
+							TSKindId.Pipe,
 							TSKindId.Amp,
 							TSKindId.Caret,
 							TSKindId.LtLt,
