@@ -78,6 +78,17 @@ export interface EmitCtx {
 	readonly externals: readonly string[];
 	readonly rules: Record<string, RenderRule>;
 	readonly visitingHelpers: Set<string>;
+	// Array-shaped slots already emitted (as a `| join(...)` reference) during
+	// this kind's tree walk. Two DIFFERENT grammar-tree positions can resolve
+	// to the SAME merged array slot via `lookupSlot` — e.g. python's
+	// `if_statement` has `repeat(field('alternative', elif_clause))` and
+	// `optional(field('alternative', else_clause))` feeding one `alternative`
+	// slot, and rust's `tuple_expression` has three separate `elements`
+	// positions, one of them inside a CHOICE arm. Without this ctx-level
+	// (rather than SEQ-local) guard, `emitSlotReference` would re-emit the
+	// WHOLE merged array at each position, duplicating output. Cleared per
+	// node in `TemplateEmitter#emitNode` (mirrors `visitingHelpers`).
+	readonly emittedArraySlots: Set<AssembledNonterminal>;
 	readonly ownerSlots?: Readonly<Record<string, AssembledNonterminal>>;
 	readonly currentKind?: string;
 }
@@ -179,7 +190,8 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			})(),
 			externals: [...(config.nodeMap.externals ?? [])],
 			rules: config.nodeMap.normalizedRules ?? {},
-			visitingHelpers: new Set<string>()
+			visitingHelpers: new Set<string>(),
+			emittedArraySlots: new Set<AssembledNonterminal>()
 		};
 	}
 
@@ -208,6 +220,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		if (classifyTemplateEmission(node) !== 'emit') return;
 
 		this.#ctx.visitingHelpers.clear();
+		this.#ctx.emittedArraySlots.clear();
 		const newBody = emitOne(node, this.#ctx);
 
 		if (newBody === undefined) {
@@ -344,7 +357,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			// via field() → `{{ operator }}`, else the deterministic unnamed
 			// `content` fallback). emitSlotReference handles multiplicity.
 			const slot = lookupSlot(rule, ctx);
-			if (slot !== undefined) return emitSlotReference(rule, slot);
+			if (slot !== undefined) return emitSlotReference(rule, slot, ctx);
 			const patternFieldName = (rule as { fieldName?: string }).fieldName;
 			if (patternFieldName !== undefined) return emitFieldNameSlot(patternFieldName.toLowerCase(), rule);
 			return emitScalarSlot('content');
@@ -376,6 +389,12 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			const indentMemberIdx = rule.members.findIndex((m) => m.type === INDENT);
 			const parts: string[] = [];
 			let indentPartIdx = -1;
+			// Two DIFFERENT grammar-tree positions — possibly straddling a SEQ/
+			// CHOICE boundary — can carry the SAME fieldName and merge into ONE
+			// array slot at collect-slots time (see EmitCtx.emittedArraySlots'
+			// doc comment). `emitSlotReference` is the shared chokepoint that
+			// dedupes by slot identity, so a member whose subtree resolves to an
+			// already-emitted array slot simply emits '' here.
 			rule.members.forEach((m, i) => {
 				const text = emitRule(m, ctx);
 				if (text === '') return;
@@ -675,10 +694,15 @@ function emitScalarSlot(slotName: string): string {
 	return `{{ ${slotName} }}`;
 }
 
-function emitSlotReference(rule: RenderRule, slot: AssembledNonterminal): string {
+function emitSlotReference(rule: RenderRule, slot: AssembledNonterminal, ctx: EmitCtx): string {
 	const slotName = (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase();
 	const mult = (rule as { multiplicity?: string }).multiplicity;
 	if (mult === 'array' || mult === 'nonEmptyArray' || isMultiple(slot)) {
+		// See EmitCtx.emittedArraySlots' doc comment: multiple grammar-tree
+		// positions (possibly straddling a SEQ/CHOICE boundary) can resolve to
+		// this SAME merged array slot — emit the join only once per kind.
+		if (ctx.emittedArraySlots.has(slot)) return '';
+		ctx.emittedArraySlots.add(slot);
 		return emitListSlot(slotName, rule, slot);
 	}
 	if (mult === 'optional' || !isRequired(slot)) {
@@ -777,7 +801,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 		// name + leaf multiplicity only when no slot is registered.
 		const slot = lookupSlot(rule, ctx);
 		if (slot) {
-			return emitSlotReference(rule, slot);
+			return emitSlotReference(rule, slot, ctx);
 		}
 		return emitFieldNameSlot(symbolFieldName.toLowerCase(), rule);
 	}
@@ -799,7 +823,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 	// hidden helper take the same fall-through, for the reason above.)
 	const slot = lookupSlot(rule, ctx);
 	if (slot && !isInlineableHiddenHelper && !(slot.isUnnamed && rule.type === SYMBOL && rule.inline === true)) {
-		return emitSlotReference(rule, slot);
+		return emitSlotReference(rule, slot, ctx);
 	}
 	// Bug 2 fix: Group-lifted symbols that are auto-synthesized hidden helpers
 	// (e.g. `_function_item_optional1`, `_type_parameters_repeat1`) must be
@@ -1099,9 +1123,9 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 				const prev = blockByKey.get(key);
 				if (prev === undefined || block.length > prev.length) blockByKey.set(key, block);
 			}
-			return [...blockByKey.values()].join('') + emitSlotReference(rule, slot);
+			return [...blockByKey.values()].join('') + emitSlotReference(rule, slot, ctx);
 		}
-		return emitSlotReference(rule, slot);
+		return emitSlotReference(rule, slot, ctx);
 	}
 	// No back-pointer slot but a deleteWrapper-stamped fieldName (a `field()`
 	// around a choice whose members carry no fieldName): emit by the field
