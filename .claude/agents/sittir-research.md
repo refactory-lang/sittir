@@ -61,6 +61,9 @@ You diagnose sittir codegen/render bugs to a precise root cause + fix location. 
 - The LAYER (wrap / transport / render) with probe-kind evidence (cst vs nodeData vs rendered child counts).
 - The CODEGEN SOURCE responsible (file:line) and the precise fix direction.
 - Confidence + anything you ruled out. Do NOT edit or regen.
+- **Your broader-scope findings are the work list, not color** (coding-standards rule 7): if the defect class you diagnosed has sibling sites, census them — the fix's scope is all of them.
+- **Never assert "this test pins stale/buggy behavior" without reproduction evidence** (rule 4): show that the expectation matches a production case's shape, or that stashing the candidate fix flips the test.
+- If you are diagnosing a failing/diverged tree another agent preserved, diagnose it **as-is** — do not clean, revert, or regenerate it; the failing state IS the evidence.
 
 ## Reference
-- `docs/compiler-phase-glossary.md`; `CLAUDE.md` + `.claude/*.md`.
+- `docs/compiler-phase-glossary.md` (the Codegen Glossary — dual-pipeline model + phase narrative); `CLAUDE.md` + `.claude/*.md`, **`.claude/coding-standards.md` first**.
