@@ -59,7 +59,6 @@ import {
 import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts';
 import {
 	collectGeneratedKindEntries,
-	findGeneratedKindEntry,
 	findEntryForKindName,
 	findEntryForLiteralText,
 	type GeneratedIdTables,
@@ -504,10 +503,9 @@ function canonicalizeRuleLiterals(
 			const refName = rule.aliasedFrom ?? rule.name;
 			const storageEntry = findEntryForKindName(kindEntries, refName);
 			const parseEntry = refName === rule.name ? storageEntry : findEntryForKindName(kindEntries, rule.name);
-			if (storageEntry === undefined && parseEntry === undefined) {
-				misses.symbols.add(refName);
-				return rule;
-			}
+			if (storageEntry === undefined) misses.symbols.add(refName);
+			if (parseEntry === undefined && rule.name !== refName) misses.symbols.add(rule.name);
+			if (storageEntry === undefined && parseEntry === undefined) return rule;
 			return {
 				...rule,
 				storageKindId: storageEntry?.id,
@@ -516,7 +514,7 @@ function canonicalizeRuleLiterals(
 		}
 		case STRING: {
 			if (allowLiteralRewrite) {
-				const entry = findGeneratedKindEntry(kindEntries, rule.value);
+				const entry = findEntryForLiteralText(kindEntries, rule.value);
 				if (entry) {
 					return {
 						type: SYMBOL,

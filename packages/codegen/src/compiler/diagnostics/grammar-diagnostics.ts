@@ -187,7 +187,7 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 		})
 	);
 	const nodeMap = assemble(
-		AssembleCtx.from(normalized, undefined, undefined, loadGrammarJsonAliasMap(input.rawGrammar.name))
+		AssembleCtx.from(normalized, input.generatedIdTables, undefined, loadGrammarJsonAliasMap(input.rawGrammar.name))
 	);
 	const slotGroupingDiagnostics = drainSlotGroupingDiagnostics();
 	// §D-2c content-alias injectivity — sole consumer of the diagnostic-only

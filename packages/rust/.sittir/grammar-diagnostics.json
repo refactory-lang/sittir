@@ -129,7 +129,7 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "40 referenced kind(s) resolved no parser kindId",
+    "message": "42 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -161,6 +161,7 @@
         "_operator",
         "_operator__x2ex2e",
         "_path",
+        "_primitive_type",
         "_pub",
         "_reserved_identifier",
         "_self",
@@ -172,7 +173,8 @@
         "_unsafe_marker",
         "_variadic_parameter_optional1",
         "_visibility_modifier_pub_parens",
-        "_while_expression_optional1"
+        "_while_expression_optional1",
+        "in_path"
       ]
     },
     "severity": "info",

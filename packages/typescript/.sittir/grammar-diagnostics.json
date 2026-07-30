@@ -388,7 +388,7 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "53 referenced kind(s) resolved no parser kindId",
+    "message": "55 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -443,6 +443,8 @@
         "jsx_closing_element",
         "jsx_namespace_name",
         "jsx_opening_element",
+        "jsx_opening_element_content",
+        "jsx_start_opening_element_group1",
         "unescaped_double_jsx_string_fragment",
         "unescaped_single_jsx_string_fragment"
       ]
