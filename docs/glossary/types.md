@@ -761,18 +761,19 @@ narrowing guard.
 /** Stamped at link for fixed-literal patterns only — see StringRule. */
 ```
 
-### `storageKindId` (`packages/codegen/src/types/rule.ts:325`)
+### `kindId` (`packages/codegen/src/types/rule.ts:321`)
 
 ```text
-/** Parser-issued kindId of the STORAGE kind (`aliasedFrom ?? name`) —
- *  stamped once at link (`canonicalizeRuleLiterals`). Absent = the referenced kind
- *  has no parser symbol (phantom / inline / vaporized). */
+/** Parser-issued kindId of this occurrence's own name — stamped once at
+ *  link (`canonicalizeRuleLiterals`). Absent = `name` has no parser symbol
+ *  (phantom / inline / vaporized). */
 ```
 
-### `parseKindId` (`packages/codegen/src/types/rule.ts:329`)
+### `aliasedFromId` (`packages/codegen/src/types/rule.ts:322`)
 
 ```text
-/** Parser-issued kindId of the PARSE identity (`name` — the alias
- *  occurrence's own runtime symbol when this ref displays under an
- *  alias). Stamped at link alongside `storageKindId`. */
+/** Parser-issued kindId of `aliasedFrom`'s own occurrence, present ONLY
+ *  when `aliasedFrom` is set — no fallback to `kindId` (that fallback is a
+ *  consumer's job: `aliasedFromId ?? kindId` for whoever needs the
+ *  effective storage identity). Stamped at link alongside `kindId`. */
 ```
