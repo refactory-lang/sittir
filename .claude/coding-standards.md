@@ -17,6 +17,11 @@ scope.
    created, and consume the stamp downstream (e.g. kindIds are stamped at
    link/construction time, never re-resolved by name later). A missing fact
    fails at compile time with a diagnostic, never as an opaque runtime error.
+   This covers predicates and classifiers, not just values: canonical
+   predicates live on the model (word-shape is the grammar's link-pinned
+   `wordMatcher`; hiddenness and kind classification are model attributes) —
+   an inline regex or character-class heuristic re-implementing one in an
+   emitter is a re-derivation smell.
 
 4. **Never trust "this test is stale" on faith.** Before changing a test's
    expectation, independently reproduce that it pins buggy behavior: stash the
