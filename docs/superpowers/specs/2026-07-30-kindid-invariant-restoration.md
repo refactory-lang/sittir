@@ -40,7 +40,13 @@ lookups. The lookups agree today only by discipline, not by construction.
 ## Source inventory (audited)
 
 153 kind names across the three grammars have no kind-id row
-(rust 53, typescript 69, python 31), from five sources:
+(rust 53, typescript 69, python 31), from five sources. The mechanical
+ratchet's initial per-grammar ceilings (rust 54, typescript 70, python 31 —
+155 total; see `phantom-kind-ratchet.test.ts`'s first-committed `CEILINGS`)
+run 2 higher than this manual breakdown (1 each in rust and typescript) —
+the generated-consts scan the ratchet runs against is the authoritative
+count; treat 155 as the real starting baseline and this table as the
+composition of the 153 its five named sources account for:
 
 | # | Source (mint site) | Count | Nature |
 |---|---|---|---|
@@ -153,9 +159,11 @@ compile-time signal. Recommended order:
    its unstampable-leaf report is the live, always-current phantom inventory
    (regenerated per build into grammar-diagnostics.json) that scopes the
    later steps precisely — superseding one-off audits. Ratchet: the
-   diagnostic count starts at the audited 153 and may only shrink.
+   diagnostic count starts at the measured 155 (the ratchet's actual
+   first-committed ceiling; see the source-inventory note above) and may
+   only shrink.
 2. **Catalog-first anonymous-node naming (1b)** — pure naming, no parser
-   change, removes 94 of 153.
+   change, removes 94 of 155.
 3. **Pre-generate synthesis routing**, driven by the diagnostic, one
    synthesis source at a time (field-enums first — the
    `_member_expression_separator` class, 39 names), each behind the

@@ -11,10 +11,12 @@ Landed on `master`: commit `382907756` stamps `resolvedKindId` on
 `AssembledKeyword`/`AssembledToken` at construction (`node-map.ts:2314-2372`,
 via `findEntryForLiteralText`).
 
-In flight on branch `kindid-link-stamping` (PR-1a): a single walker,
-`canonicalizeRuleLiterals` (`packages/codegen/src/compiler/link.ts:467-564`),
-called from `canonicalizeCatalogLiteralRefs`/`...InMap` (`link.ts:342-343`
-inside `link()`), stamps every value-bearing leaf in one pass:
+In flight on branch `kindid-link-stamping`: a single walker,
+`canonicalizeRuleLiterals` (`packages/codegen/src/compiler/link.ts`, exported
+for direct unit testing), called from `canonicalizeCatalogLiteralRefs`/
+`...InMap` inside `link()`, stamps every value-bearing leaf in one pass
+(anchor by symbol name, not line number — both shift as the surrounding
+`link()` grows):
 
 - `SYMBOL` → `storageKindId` (by `aliasedFrom ?? name`) and `parseKindId`
   (by `name` / alias-occurrence row).
@@ -23,12 +25,12 @@ inside `link()`), stamps every value-bearing leaf in one pass:
 - Stamping is suppressed inside `TOKEN` bodies (their inner strings are
   lexeme fragments, not separate anon tokens — a miss there is meaningless).
 - Unstamped leaves collect into `KindIdStampMisses` and surface as
-  `kindid-unstamped-symbols` / `kindid-unstamped-literals` diagnostics
-  (`link.ts:350-367`), persisted to `grammar-diagnostics.json` via
+  `kindid-unstamped-symbols` / `kindid-unstamped-literals` diagnostics inside
+  `link()`, persisted to `grammar-diagnostics.json` via
   `collectGrammarDiagnosticsForGrammar`/`run-codegen.ts`. Typescript's file
   currently reports 53 unstamped symbols + 18 unstamped literals; rust's and
-  python's populate once PR-1a lands on those grammars too (don't block on
-  it — the ratchet test reads whichever counts exist at check time).
+  python's populate once this phase lands on those grammars too (don't block
+  on it — the ratchet test reads whichever counts exist at check time).
 - `packages/codegen/src/__tests__/phantom-kind-ratchet.test.ts` imports the
   generated consts and asserts counts stay at or below the audited ceilings.
 
@@ -40,7 +42,7 @@ all three grammars with `pnpm run validate:native`, run the full suite, and
 commit. (Tracked by the in-flight session; this plan assumes it lands before
 Phase 1 starts, but Phase 1's diffs are additive to it either way.)
 
-## Phase 1 (PR-1b) — flip consumers to stamp-reads
+## Phase 1 — flip consumers to stamp-reads
 
 **Goal:** every site that currently re-derives a kindId from a name or
 literal text at collect-slots/assemble/emit time instead reads the Phase-0
@@ -240,8 +242,9 @@ consumers (`from.ts`) are unaffected; full suite green.
 **Tasks:**
 
 - Ratchet ceilings (`phantom-kind-ratchet.test.ts`) drop from "may only
-  shrink from 153" to exact floors per grammar (ideally 0 non-excluded, plus
-  the principled `inline:`/VAPORIZED-accepted counts from Phase 4).
+  shrink from 155" (the first-committed baseline — see the spec's
+  source-inventory note) to exact floors per grammar (ideally 0 non-excluded,
+  plus the principled `inline:`/VAPORIZED-accepted counts from Phase 4).
 - `kindid-unstamped-*` diagnostics promoted from `info` to `warn`/fail for
   every class not on the accepted-exclusion list — the spec's "compile
   fails loudly... instead of deferring the gap to a native 'unknown kind
@@ -263,8 +266,8 @@ consumers (`from.ts`) are unaffected; full suite green.
 
 | Phase | Depends on | Phantom count killed | Parser change? | Gate |
 |---|---|---|---|---|
-| 0 — link stamping + diagnostic | — (in flight, PR-1a) | 0 (infra only) | No | byte-identical regen, ratchet test exists |
-| 1 (PR-1b) — consumer flip | Phase 0 closed | 0 (infra only) | No | byte-identical regen + full suite |
+| 0 — link stamping + diagnostic | — (in flight) | 0 (infra only) | No | byte-identical regen, ratchet test exists |
+| 1 — consumer flip | Phase 0 closed | 0 (infra only) | No | byte-identical regen + full suite |
 | 2 — catalog-first anon naming (S5) | Phase 0 (stamps exist to key against) | ~94 | No | ratchet drop, manifest diff review, `validate:native` |
 | 3 — pre-generate synthesis routing (S1) | Phase 2 (cleaner catalog to route into); per-grammar, smallest-first | 39 | Yes (new symbols) — LR-shift risk | node-types.json diff, corpus reparse, `validate:native`, ratchet drop, LR watch — per grammar, per source |
 | 4 — prune + model-only flags (S7/S6) | Phase 3 (ratchet mostly clean, easier to see the remainder) | 20 | No | ratchet floor, `_semicolon` consumer check |
