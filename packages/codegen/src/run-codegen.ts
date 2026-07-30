@@ -23,6 +23,7 @@ import { validateRenderableFromNodeMap, formatRenderableReport } from './validat
 import { generate } from './compiler/generate.ts';
 import { evaluate } from './compiler/evaluate.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from './compiler/resolve-grammar.ts';
+import { loadGeneratedIdTables } from './compiler/generated-metadata.ts';
 import {
 	collectGrammarDiagnosticsForGrammar,
 	GrammarDiagnosticError,
@@ -144,7 +145,11 @@ export async function runGrammarDiagnosticsPreflight(input: {
 		const unaliasDiagnostics = getEnrichUnaliasDiagnostics(rawGrammar).map((d) =>
 			fromParseKindCollision(input.grammar, d)
 		);
-		diagnostics = [...collectGrammarDiagnosticsForGrammar({ rawGrammar }).diagnostics, ...unaliasDiagnostics];
+		const generatedIdTables = await loadGeneratedIdTables(input.grammar);
+		diagnostics = [
+			...collectGrammarDiagnosticsForGrammar({ rawGrammar, generatedIdTables }).diagnostics,
+			...unaliasDiagnostics
+		];
 	}
 
 	const blockedSet = new Set(diagnostics.filter((d) => !input.allowDiagnostics.has(d.code) && d.canProceed === false));

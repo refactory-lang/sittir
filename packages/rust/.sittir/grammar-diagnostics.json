@@ -97,6 +97,107 @@
   },
   {
     "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
+    "ownerKind": "amp",
+    "message": "[assemble] typeName collision between visible kinds: 'amp' renamed 'Amp' → 'Amp2' (siblings: '&')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Amp",
+      "newType": "Amp2",
+      "siblingKinds": [
+        "&"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "rust",
+    "ownerKind": "pipe",
+    "message": "[assemble] typeName collision between visible kinds: 'pipe' renamed 'Pipe' → 'Pipe2' (siblings: '|')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Pipe",
+      "newType": "Pipe2",
+      "siblingKinds": [
+        "|"
+      ]
+    }
+  },
+  {
+    "code": "kindid-unstamped-symbols",
+    "message": "40 referenced kind(s) resolved no parser kindId",
+    "canProceed": true,
+    "details": {
+      "kinds": [
+        "__range_expression_binary_operator",
+        "_abstract_type_optional1",
+        "_array_type_optional1",
+        "_closure_expression_async_marker",
+        "_closure_expression_static_marker",
+        "_closure_parameters_optional1",
+        "_compound_assignment_expr_operator",
+        "_const_parameter_optional1",
+        "_crate",
+        "_declaration_statement",
+        "_enum_variant_optional1",
+        "_expression_ending_with_block",
+        "_extern_crate_declaration_optional1",
+        "_function_item_optional1",
+        "_generic_type_with_turbofish_turbofish",
+        "_in_path",
+        "_kw_ref_marker",
+        "_kw_reference",
+        "_last_match_arm_comma",
+        "_let_declaration_optional1",
+        "_let_declaration_optional2",
+        "_match_block_optional1",
+        "_match_pattern_optional1",
+        "_move_marker",
+        "_mutable_specifier",
+        "_operator",
+        "_operator__x2ex2e",
+        "_path",
+        "_pub",
+        "_reserved_identifier",
+        "_self",
+        "_static_item_mutable_specifier",
+        "_token_binding_pattern_type",
+        "_tokens",
+        "_type_parameter_optional1",
+        "_unary_expression_operator",
+        "_unsafe_marker",
+        "_variadic_parameter_optional1",
+        "_visibility_modifier_pub_parens",
+        "_while_expression_optional1"
+      ]
+    },
+    "severity": "info",
+    "scope": "grammar",
+    "grammar": "rust"
+  },
+  {
+    "code": "kindid-unstamped-literals",
+    "message": "5 literal(s) resolved no parser kindId",
+    "canProceed": true,
+    "details": {
+      "texts": [
+        "\"#",
+        "\\",
+        "b",
+        "mut",
+        "r#\""
+      ]
+    },
+    "severity": "info",
+    "scope": "grammar",
+    "grammar": "rust"
+  },
+  {
+    "scope": "grammar",
     "code": "parsekind-noninjective",
     "severity": "info",
     "grammar": "rust",

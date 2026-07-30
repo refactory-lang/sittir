@@ -142,6 +142,141 @@
   },
   {
     "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "star",
+    "message": "[assemble] typeName collision between visible kinds: 'star' renamed 'Star' → 'Star2' (siblings: '*')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Star",
+      "newType": "Star2",
+      "siblingKinds": [
+        "*"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "at",
+    "message": "[assemble] typeName collision between visible kinds: 'at' renamed 'At' → 'At2' (siblings: '@')",
+    "canProceed": true,
+    "details": {
+      "typeName": "At",
+      "newType": "At2",
+      "siblingKinds": [
+        "@"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "comma",
+    "message": "[assemble] typeName collision between visible kinds: 'comma' renamed 'Comma' → 'Comma2' (siblings: ',')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Comma",
+      "newType": "Comma2",
+      "siblingKinds": [
+        ","
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "slash",
+    "message": "[assemble] typeName collision between visible kinds: 'slash' renamed 'Slash' → 'Slash2' (siblings: '/')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Slash",
+      "newType": "Slash2",
+      "siblingKinds": [
+        "/"
+      ]
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "grammar": "python",
+    "ownerKind": "pipe",
+    "message": "[assemble] typeName collision between visible kinds: 'pipe' renamed 'Pipe' → 'Pipe2' (siblings: '|')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Pipe",
+      "newType": "Pipe2",
+      "siblingKinds": [
+        "|"
+      ]
+    }
+  },
+  {
+    "code": "kindid-unstamped-symbols",
+    "message": "17 referenced kind(s) resolved no parser kindId",
+    "canProceed": true,
+    "details": {
+      "kinds": [
+        "_async_marker",
+        "_augmented_assignment_operator",
+        "_complex_pattern_operator",
+        "_except_clause_as_optional1",
+        "_exec_statement_optional1",
+        "_expressions",
+        "_function_definition_optional1",
+        "_import_from_statement_wildcard_import",
+        "_kw_real",
+        "_left_hand_side",
+        "_raise_statement_optional1",
+        "_simple_statement",
+        "_splat_pattern_operator",
+        "_suite",
+        "_type_alias_statement_type",
+        "_unary_operator_operator",
+        "keyword_identifier"
+      ]
+    },
+    "severity": "info",
+    "scope": "grammar",
+    "grammar": "python"
+  },
+  {
+    "code": "kindid-unstamped-literals",
+    "message": "14 literal(s) resolved no parser kindId",
+    "canProceed": true,
+    "details": {
+      "texts": [
+        "\u0000",
+        "\n",
+        "\r",
+        "#",
+        "...",
+        "0B",
+        "0O",
+        "0X",
+        "0b",
+        "0o",
+        "0x",
+        "False",
+        "None",
+        "True"
+      ]
+    },
+    "severity": "info",
+    "scope": "grammar",
+    "grammar": "python"
+  },
+  {
+    "scope": "grammar",
     "code": "parsekind-noninjective",
     "severity": "info",
     "grammar": "python",

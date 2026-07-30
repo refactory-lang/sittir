@@ -60,6 +60,8 @@ import { normalizeEnumMembers, makeRuleMetadata } from '../dsl/rule-metadata.ts'
 import {
 	collectGeneratedKindEntries,
 	findGeneratedKindEntry,
+	findEntryForKindName,
+	findEntryForLiteralText,
 	type GeneratedIdTables,
 	type GeneratedKindEntry
 } from './generated-metadata.ts';
@@ -336,8 +338,33 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 		linkCtx,
 		complexAliasTargetHidden.size > 0 ? complexAliasTargetHidden : undefined
 	);
-	canonicalizeCatalogLiteralRefs(rules, kindEntries);
-	canonicalizeCatalogLiteralRefsInMap(topLevelAliasBodies, kindEntries);
+	const stampMisses: KindIdStampMisses = { symbols: new Set(), literals: new Set() };
+	canonicalizeCatalogLiteralRefs(rules, kindEntries, stampMisses);
+	canonicalizeCatalogLiteralRefsInMap(topLevelAliasBodies, kindEntries, stampMisses);
+	// The unstampable-leaf report — the per-build phantom-kind inventory.
+	// One row per class keeps grammar-diagnostics.json diffs readable; the
+	// sorted name lists live in `details`. Expected members today: kinds
+	// synthesized after tree-sitter generate (evaluate's field-enums),
+	// `inline:`-listed rules, and VAPORIZED rules — see
+	// docs/superpowers/specs/2026-07-30-kindid-invariant-restoration.md.
+	if (kindEntries.length > 0 && ctx?.diagnostics) {
+		if (stampMisses.symbols.size > 0) {
+			ctx.diagnostics.info({
+				code: 'kindid-unstamped-symbols',
+				message: `${stampMisses.symbols.size} referenced kind(s) resolved no parser kindId`,
+				canProceed: true,
+				details: { kinds: [...stampMisses.symbols].sort() }
+			});
+		}
+		if (stampMisses.literals.size > 0) {
+			ctx.diagnostics.info({
+				code: 'kindid-unstamped-literals',
+				message: `${stampMisses.literals.size} literal(s) resolved no parser kindId`,
+				canProceed: true,
+				details: { texts: [...stampMisses.literals].sort() }
+			});
+		}
+	}
 
 	// Validate refine() forms against the linked rule tree.
 	if (raw.refineForms && raw.refineForms.size > 0) {
@@ -395,66 +422,141 @@ function createSyntheticExternalRules(rules: Record<string, Rule<'link'>>, exter
 	}
 }
 
+/**
+ * Distinct names/texts the stamp pass could not resolve to a kindId — the
+ * per-build phantom-kind signal. Symbols are keyed by storage name
+ * (`aliasedFrom ?? name`); literals by their text. Fixed-literal PATTERN
+ * misses are NOT recorded (a real regex body has no anon token by design).
+ */
+interface KindIdStampMisses {
+	readonly symbols: Set<string>;
+	readonly literals: Set<string>;
+}
+
 function canonicalizeCatalogLiteralRefs(
 	rules: Record<string, Rule<'link'>>,
-	kindEntries: readonly GeneratedKindEntry[]
+	kindEntries: readonly GeneratedKindEntry[],
+	misses: KindIdStampMisses
 ): void {
 	for (const [name, rule] of Object.entries(rules)) {
-		rules[name] = canonicalizeRuleLiterals(rule, kindEntries, false);
+		rules[name] = canonicalizeRuleLiterals(rule, kindEntries, false, misses);
 	}
 }
 
 function canonicalizeCatalogLiteralRefsInMap(
 	rules: Map<string, Rule<'link'>>,
-	kindEntries: readonly GeneratedKindEntry[]
+	kindEntries: readonly GeneratedKindEntry[],
+	misses: KindIdStampMisses
 ): void {
 	for (const [name, rule] of rules.entries()) {
-		rules.set(name, canonicalizeRuleLiterals(rule, kindEntries, false));
+		rules.set(name, canonicalizeRuleLiterals(rule, kindEntries, false, misses));
 	}
 }
 
+/**
+ * One walk, two catalog jobs: rewrite catalog-known literals at FIELD
+ * positions into link-minted SYMBOLs, and stamp parser-issued kindIds onto
+ * every value-bearing leaf (`storageKindId`/`parseKindId` on SYMBOL,
+ * `resolvedKindId` on STRING/PATTERN) so downstream phases consume stamped
+ * facts instead of re-resolving names/texts per site. Leaves that resolve
+ * nothing are collected into `misses` — the link-time phantom-kind
+ * diagnostic. Stamping is suppressed inside TOKEN bodies: their inner
+ * strings are lexeme fragments of the token, not separate anon tokens, so
+ * a miss there is meaningless by construction.
+ */
 function canonicalizeRuleLiterals(
 	rule: Rule<'link'>,
 	kindEntries: readonly GeneratedKindEntry[],
-	allowLiteralRewrite: boolean
+	allowLiteralRewrite: boolean,
+	misses: KindIdStampMisses,
+	stampable = true
 ): Rule<'link'> {
 	switch (rule.type) {
 		case SEQ:
 			return {
 				...rule,
-				members: rule.members.map((member) => canonicalizeRuleLiterals(member, kindEntries, false))
+				members: rule.members.map((member) => canonicalizeRuleLiterals(member, kindEntries, false, misses, stampable))
 			};
 		case CHOICE:
 			return {
 				...rule,
-				members: rule.members.map((member) => canonicalizeRuleLiterals(member, kindEntries, allowLiteralRewrite))
+				members: rule.members.map((member) =>
+					canonicalizeRuleLiterals(member, kindEntries, allowLiteralRewrite, misses, stampable)
+				)
 			};
 		case OPTIONAL:
 		case REPEAT:
 		case REPEAT1:
 		case VARIANT:
 		case GROUP:
+			return {
+				...rule,
+				content: canonicalizeRuleLiterals(rule.content, kindEntries, allowLiteralRewrite, misses, stampable)
+			};
 		case TOKEN:
 			return {
 				...rule,
-				content: canonicalizeRuleLiterals(rule.content, kindEntries, allowLiteralRewrite)
+				content: canonicalizeRuleLiterals(rule.content, kindEntries, allowLiteralRewrite, misses, false)
 			};
 		case FIELD:
 			return {
 				...rule,
-				content: canonicalizeRuleLiterals(rule.content, kindEntries, true)
+				content: canonicalizeRuleLiterals(rule.content, kindEntries, true, misses, stampable)
 			};
-		case STRING: {
-			if (!allowLiteralRewrite) return rule;
-			const entry = findGeneratedKindEntry(kindEntries, rule.value);
-			if (!entry) return rule;
+		case SYMBOL: {
+			if (!stampable || kindEntries.length === 0) return rule;
+			// Link-minted literal symbol: its value IS the literal text, so the
+			// id resolves through the literal chain (anon token outranks a
+			// same-spelled NAMED rule) — same resolution deriveValuesForRule
+			// applies to these.
+			if (rule.literal !== undefined) {
+				const entry = findEntryForLiteralText(kindEntries, rule.literal);
+				if (entry === undefined) {
+					misses.literals.add(rule.literal);
+					return rule;
+				}
+				return { ...rule, storageKindId: entry.id, parseKindId: entry.parseId ?? entry.id };
+			}
+			const refName = rule.aliasedFrom ?? rule.name;
+			const storageEntry = findEntryForKindName(kindEntries, refName);
+			const parseEntry = refName === rule.name ? storageEntry : findEntryForKindName(kindEntries, rule.name);
+			if (storageEntry === undefined && parseEntry === undefined) {
+				misses.symbols.add(refName);
+				return rule;
+			}
 			return {
-				type: SYMBOL,
-				name: entry.kind,
-				literal: rule.value,
-				inline: isHiddenKind(entry.kind),
-				metadata: makeRuleMetadata({ symbolSource: 'link' })
+				...rule,
+				storageKindId: storageEntry?.id,
+				parseKindId: parseEntry?.parseId ?? parseEntry?.id
 			};
+		}
+		case STRING: {
+			if (allowLiteralRewrite) {
+				const entry = findGeneratedKindEntry(kindEntries, rule.value);
+				if (entry) {
+					return {
+						type: SYMBOL,
+						name: entry.kind,
+						literal: rule.value,
+						inline: isHiddenKind(entry.kind),
+						storageKindId: entry.id,
+						parseKindId: entry.parseId ?? entry.id,
+						metadata: makeRuleMetadata({ symbolSource: 'link' })
+					};
+				}
+			}
+			if (!stampable || kindEntries.length === 0) return rule;
+			const literalEntry = findEntryForLiteralText(kindEntries, rule.value);
+			if (literalEntry === undefined) {
+				misses.literals.add(rule.value);
+				return rule;
+			}
+			return { ...rule, resolvedKindId: literalEntry.id };
+		}
+		case PATTERN: {
+			if (!stampable || kindEntries.length === 0) return rule;
+			const patternEntry = findEntryForLiteralText(kindEntries, rule.value);
+			return patternEntry === undefined ? rule : { ...rule, resolvedKindId: patternEntry.id };
 		}
 		default:
 			return rule;
