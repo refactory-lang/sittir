@@ -90,4 +90,4 @@ pnpm run docs:md              # markdown output
 - [.claude/coding-standards.md](.claude/coding-standards.md) — repo-wide working standards
 - [.claude/codegen-conventions.md](.claude/codegen-conventions.md) — codegen/TS conventions
 - [.claude/grammar-workflow.md](.claude/grammar-workflow.md) — grammar, template, and override workflow
-- [docs/compiler-phase-glossary.md](docs/compiler-phase-glossary.md) — compiler phase narrative + function-glossary index
+- [docs/compiler-phase-glossary.md](docs/compiler-phase-glossary.md) — codegen glossary: DSL layer, dual-pipeline model, phase narrative, function-glossary index

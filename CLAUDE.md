@@ -23,7 +23,7 @@ CLI command reference: [docs/cli-command-glossary.md](docs/cli-command-glossary.
 ## Detailed instructions
 
 - [Working standards](.claude/coding-standards.md) — repo-wide coding rules (DRY, root fixes, stamped facts, verification gates, ratchets).
-- [Compiler phase glossary](docs/compiler-phase-glossary.md) — phase narrative + index into the per-directory function glossaries (`docs/glossary/`).
+- [Codegen glossary](docs/compiler-phase-glossary.md) — DSL layer + dual-pipeline execution model + compiler-phase narrative, with an index into the per-directory function glossaries (`docs/glossary/`).
 - [Architecture and data model](.claude/architecture.md)
 - [TypeScript and codegen conventions](.claude/codegen-conventions.md)
 - [Grammar, templates, and overrides workflow](.claude/grammar-workflow.md)
