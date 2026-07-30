@@ -1596,7 +1596,7 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 		return factory(drilled.$text ?? '');
 	}
 	const childConfig = nodeToConfig(drilled, { ...opts, _depth: _depth + 1 });
-	const childArgs = getChildFactoryArgs(kind, childConfig, opts.factorySlots);
+	const childArgs = getChildFactoryArgs(kind, childConfig, opts.factorySlots, opts.factoryFields);
 	// 'spread' shape: rest-params signature — spread `children`.
 	if (shape === 'spread') {
 		return factory(...childArgs);
