@@ -33,7 +33,6 @@ import {
 	isMultiple,
 	isRequired,
 	isNodeRef,
-	isTerminalValue,
 	kindsOf,
 	structuralFieldsOf,
 	allFormFieldsOf,
