@@ -21,6 +21,7 @@ import { applyWrapperDeletion, deleteWrapper } from '../wrapper-deletion.ts';
 import type { Rule, RepeatRule, Repeat1Rule } from '../../types/rule.ts';
 import type { SimplifiedGrammar } from '../types.ts';
 import { deriveSlots, isRequired, isMultiple, allSlotsOf, AssembledSeparatedList } from '../model/node-map.ts';
+import type { GeneratedIdTables, GeneratedIdEntry } from '../generated-metadata.ts';
 
 // Helper — fields-equivalent view over deriveSlots: every slot that came
 // from a grammar `field(name, ...)` wrapper (excludes kind-derived
@@ -864,5 +865,60 @@ describe('Assemble — assemble()', () => {
 		const fnNode = nodeMap.nodes.get('function_item')!;
 		expect(fnNode.typeName).toBe('FunctionItem');
 		expect(fnNode.factoryName).toBe('functionItem');
+	});
+});
+
+describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
+	function makeIdTables(kindIds: Record<string, GeneratedIdEntry>): GeneratedIdTables {
+		return { kindIds, sourceArtifact: 'test' };
+	}
+
+	function anonEntry(id: number, symbolName: string): GeneratedIdEntry {
+		return {
+			id,
+			parser: {
+				cSymbol: `anon_sym_${id}`,
+				parserName: symbolName,
+				symbolName,
+				anon: true,
+				aux: false,
+				alias: false,
+				hidden: false
+			}
+		};
+	}
+
+	it('keys an anonymous literal by its catalog kind name, not by raw text', () => {
+		const normalized = makeNormalized({
+			root: {
+				type: SEQ,
+				members: [
+					{ type: STRING, value: ',' },
+					{ type: SYMBOL, name: 'identifier' }
+				]
+			},
+			identifier: { type: PATTERN, value: '[a-z]+' }
+		});
+		const generatedIdTables = makeIdTables({ comma: anonEntry(5, ',') });
+		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
+		expect(nodeMap.nodes.has('comma')).toBe(true);
+		expect(nodeMap.nodes.has(',')).toBe(false);
+	});
+
+	it('falls back to raw-text keying and records a diagnosable warning when no catalog row resolves', () => {
+		const normalized = makeNormalized({
+			root: {
+				type: SEQ,
+				members: [
+					{ type: STRING, value: '::=' },
+					{ type: SYMBOL, name: 'identifier' }
+				]
+			},
+			identifier: { type: PATTERN, value: '[a-z]+' }
+		});
+		const generatedIdTables = makeIdTables({ unrelated: anonEntry(9, '@@') });
+		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
+		expect(nodeMap.nodes.has('::=')).toBe(true);
+		expect(nodeMap.assembleWarnings.some((w) => w.code === 'kindid-unstamped-anon-literal')).toBe(true);
 	});
 });

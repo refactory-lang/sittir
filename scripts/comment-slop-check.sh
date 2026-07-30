@@ -12,7 +12,8 @@
 #                   hits, caller decides whether that blocks)
 #   --content PATH  full file content on stdin (API-write gate — MCP
 #                   push_files/create_or_update_file never touch the index);
-#                   PATH is used for scoping + display only
+#                   diffed against PATH's current on-disk content (or, for a
+#                   brand-new file, every line counts as added)
 set -u
 
 mode="${1:---staged}"
@@ -48,6 +49,32 @@ report_and_exit() {
   exit 0
 }
 
+# Shared added-lines parser (unified diff, single file per invocation): reads
+# a `+++ b/<path>` header for display and `@@ -a,b +c,d @@` hunks for line
+# numbers, then scans `+` lines' comment text. Used by every mode so
+# --content can never drift from --staged/--working's added-only scope.
+scan_added_lines() {
+  awk -v pat="$pattern" -v line=1 '
+    /^\+\+\+ b\// { file = substr($0, 7); next }
+    /^@@/         { if (match($0, /\+[0-9]+/)) line = substr($0, RSTART + 1, RLENGTH - 1) + 0; next }
+    /^\+/ {
+      text = substr($0, 2)
+      # Comment text: after // (line comments), or a block-comment line.
+      comment = ""
+      if ((i = index(text, "//")) > 0)            comment = substr(text, i + 2)
+      else if (text ~ /^[ \t]*\*/ || index(text, "/*") > 0) comment = text
+      if (comment != "" && tolower(comment) ~ pat) {
+        hits++
+        printf "  %s:%d: %s\n", file, line, text
+      }
+      line++
+      next
+    }
+    { next }
+    END { exit (hits > 0 ? 1 : 0) }
+  '
+}
+
 if [ "$mode" = "--content" ]; then
   # Scope check mirrors the diff pathspec: code extensions, hand-written dirs.
   case "$content_path" in
@@ -59,39 +86,22 @@ if [ "$mode" = "--content" ]; then
     packages/*/.sittir/*|packages/*/tests/*) exit 0 ;;
     rust/crates/sittir-rust/*|rust/crates/sittir-typescript/*|rust/crates/sittir-python/*) exit 0 ;;
   esac
-  awk -v pat="$pattern" -v file="$content_path" '
-    {
-      line++
-      comment = ""
-      if ((i = index($0, "//")) > 0)                    comment = substr($0, i + 2)
-      else if ($0 ~ /^[ \t]*\*/ || index($0, "/*") > 0) comment = $0
-      if (comment != "" && tolower(comment) ~ pat) {
-        hits++
-        printf "  %s:%d: %s\n", file, line, $0
-      }
-    }
-    END { exit (hits > 0 ? 1 : 0) }
-  '
+
+  tmp_new=$(mktemp)
+  trap 'rm -f "$tmp_new"' EXIT
+  cat > "$tmp_new"
+  if [ -f "$content_path" ]; then
+    diff_stream=$(git diff --no-index -U0 -- "$content_path" "$tmp_new" 2>/dev/null)
+  else
+    # Brand-new file via MCP write: no on-disk baseline, so every line counts
+    # as added.
+    diff_stream=$(printf '+++ b/%s\n' "$content_path"; sed 's/^/+/' "$tmp_new")
+  fi
+  # Normalize the diff header to the real path — git diff --no-index prints
+  # the temp file's own path, and scan_added_lines only needs PATH for display.
+  printf '%s\n' "$diff_stream" | sed "s|^+++ b/.*|+++ b/$content_path|" | scan_added_lines
   report_and_exit $?
 fi
 
-"${diff_cmd[@]}" "${paths[@]}" 2>/dev/null | awk -v pat="$pattern" '
-  /^\+\+\+ b\// { file = substr($0, 7); next }
-  /^@@/         { if (match($0, /\+[0-9]+/)) line = substr($0, RSTART + 1, RLENGTH - 1) + 0; next }
-  /^\+/ {
-    text = substr($0, 2)
-    # Comment text: after // (line comments), or a block-comment line.
-    comment = ""
-    if ((i = index(text, "//")) > 0)            comment = substr(text, i + 2)
-    else if (text ~ /^[ \t]*\*/ || index(text, "/*") > 0) comment = text
-    if (comment != "" && tolower(comment) ~ pat) {
-      hits++
-      printf "  %s:%d: %s\n", file, line, text
-    }
-    line++
-    next
-  }
-  { next }
-  END { exit (hits > 0 ? 1 : 0) }
-'
+"${diff_cmd[@]}" "${paths[@]}" 2>/dev/null | scan_added_lines
 report_and_exit $?
