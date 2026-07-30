@@ -50,6 +50,15 @@ lookups. The lookups agree today only by discipline, not by construction.
 | d | VAPORIZED (in grammar.json, no parser symbol; mostly unreachable jsx in the non-tsx dialect) | 15 | dead surface — wants pruning/flagging, not id routing |
 | e | `collectAnonymousNodes` (assemble.ts) keying anonymous nodes by RAW literal text while the catalog names the same tokens sanitized (`comma`, `lparen`, ...) | 94 | naming-domain mismatch — the tokens HAVE ids under other names |
 
+Two further mint sites are zero-phantom today but are the invariant's live
+risk surface, and one of them is the feasibility proof for §1: auto-group
+synthesis (`applyAutoGroups`, dsl/wire) already runs on the wire path
+pre-generate AND deposits into evaluate — the exact dual-execution pattern
+field-enum routing needs, working in production. Body-pattern group /
+renderAs / visibleExternals injection is dual-registered the same way. Any
+IR-vs-grammar.js desugar divergence at these sites mints a phantom silently
+— the link diagnostic is their regression gate.
+
 Load-bearing: (a) and (c) are live on the TS construction surface
 (`from.ts` leaf-registry string dispatch; `kindIdFromName` throws
 `unknown kind name` if handed one). (d) is dead surface (templates and
@@ -68,7 +77,9 @@ Concretely for the field-enum class: the canonical-name computation and rule
 registration currently in evaluate's `synthesizeFieldEnumRules` run as a
 DSL finalization pass, so `_<parent>_<field>` / `_<field>` rules are present
 in the grammar tree-sitter compiles and receive real symbols
-(`sym__member_expression_separator`).
+(`sym__member_expression_separator`). This placement is proven in-repo:
+auto-group synthesis already runs on the wire path pre-generate and deposits
+the same rules into evaluate — zero phantoms from that class today.
 
 Parse behavior is unchanged by construction: hidden-symbol nodes are elided
 from the CST (children promoted to the parent), and tree-sitter propagates an
