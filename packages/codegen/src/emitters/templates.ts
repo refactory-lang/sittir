@@ -109,13 +109,13 @@ interface SlotLookupMiss {
 	readonly ruleId: string | undefined;
 	readonly name: string | undefined;
 	readonly fieldName: string | undefined;
-	readonly recoveredBy: 'fieldName' | 'symbol-name' | 'none';
+	readonly recoveredBy: 'fieldName' | 'symbol-name' | 'alias-source' | 'none';
 }
 const DBG_SLOT_MISS = process.env.DBG_SLOT_MISS === '1';
 const SLOT_MISS_LOG: SlotLookupMiss[] = [];
 function dumpSlotMissLog(grammar: string): void {
 	if (!DBG_SLOT_MISS || SLOT_MISS_LOG.length === 0) return;
-	const tally = { fieldName: 0, 'symbol-name': 0, none: 0 } as Record<string, number>;
+	const tally = { fieldName: 0, 'symbol-name': 0, 'alias-source': 0, none: 0 } as Record<string, number>;
 	for (const m of SLOT_MISS_LOG) tally[m.recoveredBy] = (tally[m.recoveredBy] ?? 0) + 1;
 	process.stderr.write(
 		`\n=== slotByRuleId MISS inventory [${grammar}] — ${SLOT_MISS_LOG.length} total ` +
@@ -581,6 +581,25 @@ function lookupSlot(rule: RenderRule, ctx: EmitCtx): AssembledNonterminal | unde
 			if (byExactName) {
 				recovered = byExactName;
 				recoveredBy = 'symbol-name';
+			}
+		}
+		// Fallback C: alias source → storageName. A singular `alias($._hidden,
+		// $.visible)` reference survives wrapper-deletion as
+		// `SYMBOL(visible, aliasedFrom='_hidden')` with no id (rebuilt, not
+		// preserved), so slotByRuleId, Fallback A (no fieldName), and Fallback B
+		// (slot is keyed by the HIDDEN target's name, not the visible alias name)
+		// all miss. The slot's own name derives from the same hidden target, so
+		// join on `aliasedFrom` instead of the alias's display name.
+		if (
+			recovered === undefined &&
+			rule.type === SYMBOL &&
+			(rule as { aliasedFrom?: string }).aliasedFrom !== undefined
+		) {
+			const aliasSourceName = (rule as { aliasedFrom: string }).aliasedFrom.replace(/^_+/, '').toLowerCase();
+			const byAliasSource = ctx.ownerSlots[aliasSourceName];
+			if (byAliasSource) {
+				recovered = byAliasSource;
+				recoveredBy = 'alias-source';
 			}
 		}
 	}
