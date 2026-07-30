@@ -97,7 +97,11 @@ function fieldTransportLiterals(
 			if (component.kind === 'literal') {
 				return [
 					{
-						literal: { kind: component.value, text: component.value, resolvedKindId: component.resolvedKindId },
+						literal: {
+							kind: component.rawKind ?? component.value,
+							text: component.value,
+							resolvedKindId: component.resolvedKindId
+						},
 						fromKind: false
 					}
 				];

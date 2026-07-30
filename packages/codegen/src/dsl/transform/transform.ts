@@ -725,11 +725,7 @@ function resolveFieldPlaceholder(
 			const reconstructed = nested.reconstruct(renamedField) as RuntimeRule;
 			return reconstructed;
 		}
-		// Not optional-shaped either — if this is a REAL choice (2+ real
-		// arms, no BLANK), any arm that's already its own enrich-shaped
-		// field under a DIFFERENT name needs relabeling to this override's
-		// name before wrapping, or it silently diverges from the other
-		// arms (see unifyChoiceArmFieldNames' doc comment).
+		// Not optional-shaped either — see unifyChoiceArmFieldNames' doc comment.
 		const unified = unifyChoiceArmFieldNames(content, patch.name);
 		if (unified !== content) {
 			content = unified;

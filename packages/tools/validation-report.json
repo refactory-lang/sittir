@@ -619,6 +619,202 @@
     "location": "_index_signature_group1.name"
   },
   {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "seq-with-nested-seq",
+    "severity": "error",
+    "ownerKind": "_dict_pattern_group2",
+    "ruleId": "rule:_dict_pattern_group2:root",
+    "message": "Kind '_dict_pattern_group2' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
+    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
+    "canProceed": true,
+    "details": {
+      "rawShape": "seq-with-nested-seq",
+      "ruleType": "SEQ",
+      "context": "fields"
+    },
+    "location": "_dict_pattern_group2"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "union-slot-mixed-row",
+    "severity": "warning",
+    "ownerKind": "future_import_statement",
+    "message": "[collect-slots] kind 'future_import_statement': choice rule:future_import_statement:root is a REPEATED (order-lossy) mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [future_import_statement_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "canProceed": true,
+    "location": "future_import_statement"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "union-slot-nondegenerate-arm",
+    "severity": "warning",
+    "ownerKind": "future_import_statement",
+    "message": "[collect-slots] kind 'future_import_statement': choice rule:future_import_statement:root has unnamed-nonterminal arm(s) [future_import_statement_group1] but cannot union-route — offending arm(s): structured seq[3](\"(\" _import_list \")\"). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
+    "canProceed": true,
+    "location": "future_import_statement"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "union-slot-mixed-row",
+    "severity": "warning",
+    "ownerKind": "import_from_statement",
+    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root is a REPEATED (order-lossy) mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [future_import_statement_group1] and degenerate arm(s) [field(wildcard_import):\"*\"]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "canProceed": true,
+    "location": "import_from_statement"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "union-slot-nondegenerate-arm",
+    "severity": "warning",
+    "ownerKind": "import_from_statement",
+    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root has unnamed-nonterminal arm(s) [future_import_statement_group1] but cannot union-route — offending arm(s): structured seq[3](\"(\" _import_list \")\"). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
+    "canProceed": true,
+    "location": "import_from_statement"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "union-slot-nondegenerate-arm",
+    "severity": "warning",
+    "ownerKind": "yield",
+    "message": "[collect-slots] kind 'yield': choice rule:yield:root has unnamed-nonterminal arm(s) [_expressions] but cannot union-route — offending arm(s): structured seq[2](\"from\" expression). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
+    "canProceed": true,
+    "location": "yield"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "ownerKind": "ellipsis",
+    "message": "[assemble] typeName collision between visible kinds: 'ellipsis' renamed 'Ellipsis' → 'Ellipsis2' (siblings: '...')",
+    "canProceed": true,
+    "details": {
+      "typeName": "Ellipsis",
+      "newType": "Ellipsis2",
+      "siblingKinds": [
+        "..."
+      ]
+    },
+    "location": "ellipsis"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "ownerKind": "_string_content",
+    "message": "[assemble] typeName collision: kind '_string_content' renamed 'StringContent' → '_StringContent' (visible sibling(s): 'string_content')",
+    "canProceed": true,
+    "details": {
+      "typeName": "StringContent",
+      "newType": "_StringContent",
+      "visibleKinds": [
+        "string_content"
+      ]
+    },
+    "location": "_string_content"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "ownerKind": "True",
+    "message": "[assemble] typeName collision between visible kinds: 'True' renamed 'True' → 'True2' (siblings: 'true')",
+    "canProceed": true,
+    "details": {
+      "typeName": "True",
+      "newType": "True2",
+      "siblingKinds": [
+        "true"
+      ]
+    },
+    "location": "True"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "ownerKind": "False",
+    "message": "[assemble] typeName collision between visible kinds: 'False' renamed 'False' → 'False2' (siblings: 'false')",
+    "canProceed": true,
+    "details": {
+      "typeName": "False",
+      "newType": "False2",
+      "siblingKinds": [
+        "false"
+      ]
+    },
+    "location": "False"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "typename-collision",
+    "severity": "info",
+    "ownerKind": "None",
+    "message": "[assemble] typeName collision between visible kinds: 'None' renamed 'None' → 'None2' (siblings: 'none')",
+    "canProceed": true,
+    "details": {
+      "typeName": "None",
+      "newType": "None2",
+      "siblingKinds": [
+        "none"
+      ]
+    },
+    "location": "None"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "scope": "grammar",
+    "code": "parsekind-noninjective",
+    "severity": "info",
+    "ownerKind": "_suite",
+    "slotName": "block",
+    "message": "Slot 'block' of kind '_suite' collapses [_simple_statements, block, _newline] onto parse kind 'block'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
+    "proposal": "Already resolved by enrich() — no action needed.",
+    "canProceed": true,
+    "details": {
+      "parseKind": "block",
+      "storageKinds": [
+        "_simple_statements",
+        "block",
+        "_newline"
+      ]
+    },
+    "location": "_suite.block"
+  },
+  {
     "source": "validator",
     "grammar": "rust",
     "backend": "native",
@@ -5315,202 +5511,6 @@
     "code": "coverage-missing-field",
     "severity": "error",
     "label": "required_parameter"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "seq-with-nested-seq",
-    "severity": "error",
-    "ownerKind": "_dict_pattern_group2",
-    "ruleId": "rule:_dict_pattern_group2:root",
-    "message": "Kind '_dict_pattern_group2' still contains a nested seq that should have been flattened, grouped, or normalized before derive.",
-    "proposal": "Introduce a visible group or normalize the nested seq earlier.",
-    "canProceed": true,
-    "details": {
-      "rawShape": "seq-with-nested-seq",
-      "ruleType": "SEQ",
-      "context": "fields"
-    },
-    "location": "_dict_pattern_group2"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-mixed-row",
-    "severity": "warning",
-    "ownerKind": "future_import_statement",
-    "message": "[collect-slots] kind 'future_import_statement': choice rule:future_import_statement:root is a REPEATED (order-lossy) mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [future_import_statement_group1]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
-    "canProceed": true,
-    "location": "future_import_statement"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-nondegenerate-arm",
-    "severity": "warning",
-    "ownerKind": "future_import_statement",
-    "message": "[collect-slots] kind 'future_import_statement': choice rule:future_import_statement:root has unnamed-nonterminal arm(s) [future_import_statement_group1] but cannot union-route — offending arm(s): structured seq[3](\"(\" _import_list \")\"). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
-    "canProceed": true,
-    "location": "future_import_statement"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-mixed-row",
-    "severity": "warning",
-    "ownerKind": "import_from_statement",
-    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root is a REPEATED (order-lossy) mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [future_import_statement_group1] and degenerate arm(s) [field(wildcard_import):\"*\"]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
-    "canProceed": true,
-    "location": "import_from_statement"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-nondegenerate-arm",
-    "severity": "warning",
-    "ownerKind": "import_from_statement",
-    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root has unnamed-nonterminal arm(s) [future_import_statement_group1] but cannot union-route — offending arm(s): structured seq[3](\"(\" _import_list \")\"). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
-    "canProceed": true,
-    "location": "import_from_statement"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "union-slot-nondegenerate-arm",
-    "severity": "warning",
-    "ownerKind": "yield",
-    "message": "[collect-slots] kind 'yield': choice rule:yield:root has unnamed-nonterminal arm(s) [_expressions] but cannot union-route — offending arm(s): structured seq[2](\"from\" expression). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
-    "canProceed": true,
-    "location": "yield"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "ellipsis",
-    "message": "[assemble] typeName collision between visible kinds: 'ellipsis' renamed 'Ellipsis' → 'Ellipsis2' (siblings: '...')",
-    "canProceed": true,
-    "details": {
-      "typeName": "Ellipsis",
-      "newType": "Ellipsis2",
-      "siblingKinds": [
-        "..."
-      ]
-    },
-    "location": "ellipsis"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_string_content",
-    "message": "[assemble] typeName collision: kind '_string_content' renamed 'StringContent' → '_StringContent' (visible sibling(s): 'string_content')",
-    "canProceed": true,
-    "details": {
-      "typeName": "StringContent",
-      "newType": "_StringContent",
-      "visibleKinds": [
-        "string_content"
-      ]
-    },
-    "location": "_string_content"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "True",
-    "message": "[assemble] typeName collision between visible kinds: 'True' renamed 'True' → 'True2' (siblings: 'true')",
-    "canProceed": true,
-    "details": {
-      "typeName": "True",
-      "newType": "True2",
-      "siblingKinds": [
-        "true"
-      ]
-    },
-    "location": "True"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "False",
-    "message": "[assemble] typeName collision between visible kinds: 'False' renamed 'False' → 'False2' (siblings: 'false')",
-    "canProceed": true,
-    "details": {
-      "typeName": "False",
-      "newType": "False2",
-      "siblingKinds": [
-        "false"
-      ]
-    },
-    "location": "False"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "None",
-    "message": "[assemble] typeName collision between visible kinds: 'None' renamed 'None' → 'None2' (siblings: 'none')",
-    "canProceed": true,
-    "details": {
-      "typeName": "None",
-      "newType": "None2",
-      "siblingKinds": [
-        "none"
-      ]
-    },
-    "location": "None"
-  },
-  {
-    "source": "grammar",
-    "grammar": "python",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "parsekind-noninjective",
-    "severity": "info",
-    "ownerKind": "_suite",
-    "slotName": "block",
-    "message": "Slot 'block' of kind '_suite' collapses [_simple_statements, block, _newline] onto parse kind 'block'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
-    "proposal": "Already resolved by enrich() — no action needed.",
-    "canProceed": true,
-    "details": {
-      "parseKind": "block",
-      "storageKinds": [
-        "_simple_statements",
-        "block",
-        "_newline"
-      ]
-    },
-    "location": "_suite.block"
   },
   {
     "source": "validator",

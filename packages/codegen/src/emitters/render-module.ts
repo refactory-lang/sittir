@@ -61,7 +61,8 @@ import {
 	classifyBranchSlots,
 	classifyPrimitiveField,
 	type PrimitiveFieldStorage,
-	wordCharAsciiTable
+	wordCharAsciiTable,
+	fieldTypeComponents
 } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
@@ -2449,18 +2450,6 @@ function resolveAcceptedTransportIds(input: AcceptedTransportIdsInput): number[]
 		const literalId = findKindEntryForLiteral(kindEntries, node.fixedLiteralText)?.id;
 		if (literalId !== undefined) acceptedIds.push(literalId);
 	}
-	// A field-promoted keyword/token synthesized by enrich (e.g. `_member_expression_separator`
-	// for the `?.` arm of a unified CHOICE field) has no parser catalog entry of its own and never
-	// receives a mint stamp, so none of the chains above resolve an id for it either — route through
-	// its own resolved kind or literal text, the same way `AssembledKeyword`/`AssembledToken` values
-	// are folded into `kindEnum` on the wrap side (see classifyFieldStorageInfo, emitters/shared.ts).
-	if ((node.modelType === 'keyword' || node.modelType === 'token') && kindEntries !== undefined) {
-		const id =
-			(node.resolvedKind !== undefined
-				? (findKindEntry(kindEntries, node.resolvedKind)?.id ?? kindIdByKind.get(node.resolvedKind))
-				: undefined) ?? (node.text !== undefined ? findKindEntryForLiteral(kindEntries, node.text)?.id : undefined);
-		if (id !== undefined) acceptedIds.push(id);
-	}
 	return acceptedIds;
 }
 
@@ -2573,25 +2562,38 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 	// named `<TypeName><FieldName>TransportSlot` (e.g. `AttributedParameterParameterTransportSlot`)
 	// — no special-case "Child" suffix anymore.
 	const consider = (typeName: string, ownerKind: string, field: AssembledNonterminal): void => {
-		const slotKinds = kindsOf(field);
+		// `fieldTypeComponents` is the single source of truth for "is this
+		// value a real child kind (its own transport type) or a literal" —
+		// already used to build the module-wide literal projection
+		// (`fieldTransportLiterals`/`collectTransportLiterals`). A node-ref to
+		// a HIDDEN keyword/token (e.g. an enrich-synthesized field-promotion
+		// helper like `_member_expression_separator`) collapses to a literal
+		// there via `resolveHiddenKeywordLiteral`; re-deriving kinds/literals
+		// from `kindsOf`+`isTerminalValue` here missed that collapse, so a
+		// hidden-keyword arm got treated as a "real" child needing its own
+		// boxed struct variant instead of joining the slot's other literal(s)
+		// — the exact gap `member_expression`'s unified `separator` field hit.
+		const slotKinds: string[] = [];
 		const literalSet = new Set<string>();
 		const literals: TransportLiteral[] = [];
-		// Iterate the terminal values directly (not slotLiteralValues) so the
-		// mint-time resolvedKindId stamp rides along (PR-K3a).
-		for (const v of field.values) {
-			if (!isTerminalValue(v)) continue;
-			const text = v.value;
-			const key = `${text}\0${text}`;
+		for (const component of fieldTypeComponents(field, nodeMap)) {
+			if (component.kind === 'nodeKind') {
+				if (!slotKinds.includes(component.rawKind)) slotKinds.push(component.rawKind);
+				continue;
+			}
+			if (component.kind !== 'literal') continue;
+			const literalKind = component.rawKind ?? component.value;
+			const key = `${literalKind}\0${component.value}`;
 			if (literalSet.has(key)) continue;
 			literalSet.add(key);
-			literals.push({ kind: text, text, resolvedKindId: v.resolvedKindId });
+			literals.push({ kind: literalKind, text: component.value, resolvedKindId: component.resolvedKindId });
 		}
 		// Mixed-content override: a slot with named kinds AND anonymous literal
 		// content is heterogeneous regardless of classifier.
 		const hasMixedContent = slotKinds.length > 0 && literals.length > 0;
 		const cls = hasMixedContent ? ({ tag: 'heterogeneous' } as const) : classifySlotForEmit(slotKinds, nodeMap);
 		if (cls.tag !== 'heterogeneous') return;
-		if (!hasAnyConcreteChildKind(slotKinds, nodeMap)) return;
+		if (!hasAnyConcreteChildKind(slotKinds, nodeMap) && literals.length === 0) return;
 		const enumName = perSlotEnumName(typeName, field.name);
 		if (seen.has(enumName)) return;
 		if (reservedTransportNames.has(enumName)) return;
@@ -2617,6 +2619,45 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 		}
 	}
 	return entries;
+}
+
+/**
+ * Single derivation of "which numeric kind_id backs this literal" — a
+ * literal's `.kind` is either the rendered TEXT itself (a bare terminal, no
+ * underlying kind) or the name of the real hidden kind it collapsed from
+ * (`_newline`, `_not_escape_sequence`, ...). In the latter case `.kind`
+ * uniquely identifies one catalog row; TEXT does not — two unrelated
+ * hidden kinds can render identical text (e.g. two single-backslash
+ * tokens), and matching by text first would silently pick whichever one
+ * the catalog happens to list first, leaving the other's id unroutable.
+ * Prefer the unambiguous kind-name lookup whenever one exists.
+ */
+function resolveLiteralKindId(
+	literal: TransportLiteral,
+	kindEntries: readonly KindEnumEntry[] | undefined,
+	kindIdByKind?: ReadonlyMap<string, number>
+): number | undefined {
+	if (literal.resolvedKindId !== undefined) return literal.resolvedKindId;
+	if (kindEntries === undefined) return kindIdByKind?.get(literal.kind);
+	const byText = (): number | undefined => findKindEntryForLiteral(kindEntries, literal.text)?.id;
+	const byKind = (): number | undefined => findKindEntry(kindEntries, literal.kind)?.id;
+	const isKindDerived = literal.kind !== literal.text;
+	const id = isKindDerived ? (byKind() ?? byText()) : (byText() ?? byKind());
+	// A kind-derived literal (collapsed from a real hidden keyword/token/
+	// pattern, not a bare grammar-inline string) has a catalog row by
+	// construction — if that row exists but resolution still failed, the
+	// derivation itself is broken, not a benign unrouted variant. Fail at
+	// codegen time rather than emit a match arm that silently can't be
+	// reached, deferring the same gap to an opaque native "unknown kind id"
+	// error at runtime.
+	if (id === undefined && isKindDerived && hasCatalogEntry(kindEntries, literal.kind)) {
+		throw new Error(
+			`resolveLiteralKindId: kind-derived literal '${literal.kind}' (text ${JSON.stringify(literal.text)}) ` +
+				`has a catalog entry but resolved zero routable ids — neither the mint stamp, kind-name lookup, ` +
+				`nor text lookup found one`
+		);
+	}
+	return id;
 }
 
 function emitPerSlotChildEnum(
@@ -2709,15 +2750,7 @@ function emitPerSlotChildEnum(
 			}
 		}
 		for (const literal of entry.literals) {
-			// PR-K3a: the mint stamp (resolvedKindId, minted through the same
-			// literal-first chain — #129) is authoritative when present. The
-			// emit-time chain remains only for stamp-less literals (kind-
-			// derived keyword/token texts) and the no-catalog fallback.
-			const id =
-				literal.resolvedKindId ??
-				(kindEntries !== undefined
-					? (findKindEntryForLiteral(kindEntries, literal.text) ?? findKindEntry(kindEntries, literal.kind))?.id
-					: kindIdByKind.get(literal.kind));
+			const id = resolveLiteralKindId(literal, kindEntries, kindIdByKind);
 			const variant = literalVariantByKey.get(`${literal.kind}\0${literal.text}`);
 			if (id === undefined || variant === undefined || emittedIds.has(id)) continue;
 			emittedIds.add(id);
@@ -2931,19 +2964,14 @@ function renderAnyTransportWithNapiFromValue(
 	// One match arm per literal kind — unit variants, no payload.
 	// The literal text is a compile-time constant; JS does not need to send it.
 	// Use the same emittedNodeIds set to skip KindIds already claimed by node arms.
-	// Resolution is literal-first (#129): `kindIdByKind` keys every entry by
-	// its catalog kind BEFORE symbolName, so a literal whose text equals a
-	// NAMED rule's name (python's `'type'`) resolved to the rule's id — which
-	// a node arm had already claimed, so the literal arm was deduped away and
-	// the anon token's id had NO arm at all. Resolve the literal TEXT through
-	// the anon-scoped lookup, falling back to the catalog-key form for
-	// literals keyed by parser-symbol name.
+	// Id resolution is `resolveLiteralKindId` — text-first for bare terminals
+	// (a literal whose text equals a NAMED rule's name, e.g. python's `'type'`,
+	// must resolve through the anon-token catalog row, not the rule's own id —
+	// #129), kind-name-first for hidden-keyword/token/pattern collapses (whose
+	// `.kind` uniquely identifies one row; TEXT does not when two such kinds
+	// render identical text).
 	for (const [index, literal] of literals.entries()) {
-		// PR-K3a: mint stamp first; emit-time chain only for stamp-less
-		// (kind-derived) literals.
-		const id =
-			literal.resolvedKindId ??
-			(findKindEntryForLiteral(kindEntries, literal.text) ?? findKindEntry(kindEntries, literal.kind))?.id;
+		const id = resolveLiteralKindId(literal, kindEntries, kindIdByKind);
 		if (id === undefined) continue;
 		if (emittedNodeIds.has(id)) continue; // T016: skip duplicate KindId
 		emittedNodeIds.add(id);

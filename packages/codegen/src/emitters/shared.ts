@@ -265,7 +265,11 @@ export type TypeComponent =
 	// `resolvedKindId` is the PR-K2 mint stamp carried off the terminal
 	// value (PR-K3a) — absent for hidden-keyword pre-inlined literals,
 	// whose ref ids describe the HIDDEN kind, not the literal's anon token.
-	| { kind: 'literal'; value: string; resolvedKindId?: number }
+	// `rawKind` is set for the latter case (the hidden kind's own name, e.g.
+	// `_newline`) so id resolution can still join on the KIND when the
+	// literal's TEXT collides with an unrelated kind's text elsewhere in the
+	// same catalog (two different kinds can render identical text).
+	| { kind: 'literal'; value: string; resolvedKindId?: number; rawKind?: string }
 	| { kind: 'missing'; value: string; rawKind: string };
 
 export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMap): TypeComponent[] {
@@ -279,7 +283,12 @@ export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMa
 		const t = storageKindOfRef(v.node);
 		const lit = resolveHiddenKeywordLiteral(t, nodeMap);
 		if (lit !== undefined) {
-			out.push({ kind: 'literal', value: lit });
+			// `v.storageKindId` is the mint-time stamp for this ref (assembled
+			// once, in `deriveValuesForRule`, via an unambiguous kind-NAME
+			// catalog lookup) — use it directly instead of re-deriving an id
+			// later from the collapsed literal's TEXT, which can collide with
+			// an unrelated kind rendering the same text.
+			out.push({ kind: 'literal', value: lit, rawKind: t, resolvedKindId: v.storageKindId });
 			continue;
 		}
 		const node = nodeMap.nodes.get(t);

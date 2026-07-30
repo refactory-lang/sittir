@@ -424,12 +424,12 @@ pub enum AnyTransport {
     Async(AsyncTransport),
     Literal0_74_79_70_65,
     Literal1_74_79_70_65_6f_66,
-    Literal2_0a,
+    Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     Literal3_3b,
     Literal4_61_77_61_69_74,
-    Literal5_61_73_79_6e_63,
+    Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
     Literal6_2e,
-    Literal7_3f_2e,
+    Literal7_5f_6d_65_6d_62_65_72_5f_65_78_70_72_65_73_73_69_6f_6e_5f_73_65_70_61_72_61_74_6f_72,
     Literal8_75_73_69_6e_67,
     Literal9_26_26,
     Literal10_7c_7c,
@@ -455,19 +455,23 @@ pub enum AnyTransport {
     Literal30_3e,
     Literal31_3f_3f,
     Literal32_69_6e_73_74_61_6e_63_65_6f_66,
-    Literal33_73_74_61_74_69_63,
-    Literal34_6f_76_65_72_72_69_64_65,
-    Literal35_72_65_61_64_6f_6e_6c_79,
-    Literal36_3f,
+    Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+    Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
+    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72,
     Literal37_61_63_63_65_73_73_6f_72,
-    Literal38_63_6f_6e_73_74,
-    Literal39_3a,
-    Literal40_61_62_73_74_72_61_63_74,
-    Literal41_65_78_74_65_6e_64_73,
-    Literal42_69_6e,
-    Literal43_2c,
-    Literal44_76_61_72,
-    Literal45_64_65_63_6c_61_72_65,
+    Literal38_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+    Literal39_63_6f_6e_73_74,
+    Literal40_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72,
+    Literal41_5f_61_73_73_65_72_74_73_5f_61_6e_6e_6f_74_61_74_69_6f_6e_5f_61_73_73_65_72_74_73,
+    Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
+    Literal43_3f_2e,
+    Literal44_65_78_74_65_6e_64_73,
+    Literal45_3a,
+    Literal46_69_6e,
+    Literal47_2c,
+    Literal48_76_61_72,
+    Literal49_64_65_63_6c_61_72_65,
     Verbatim(VerbatimTransport),
 }
 
@@ -2543,9 +2547,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                     202 => Ok(Self::EmptyStatement(
                         EmptyStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    22 => Ok(Self::EmptyStatement(
-                        EmptyStatementTransport::from_napi_value(env, napi_val)?
-                    )),
                     203 => Ok(Self::LabeledStatement(
                         LabeledStatementTransport::from_napi_value(env, napi_val)?
                     )),
@@ -2720,9 +2721,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                         ThrowStatementTransport::from_napi_value(env, napi_val)?
                     )),
                     202 => Ok(Self::EmptyStatement(
-                        EmptyStatementTransport::from_napi_value(env, napi_val)?
-                    )),
-                    22 => Ok(Self::EmptyStatement(
                         EmptyStatementTransport::from_napi_value(env, napi_val)?
                     )),
                     203 => Ok(Self::LabeledStatement(
@@ -6759,9 +6757,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryTypeTransport {
                     333 => Ok(Self::ExistentialType(
                         ExistentialTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    3 => Ok(Self::ExistentialType(
-                        ExistentialTypeTransport::from_napi_value(env, napi_val)?
-                    )),
                     331 => Ok(Self::LiteralType(
                         LiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -6925,9 +6920,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryTypeTransport {
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
                     333 => Ok(Self::ExistentialType(
-                        ExistentialTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    3 => Ok(Self::ExistentialType(
                         ExistentialTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     331 => Ok(Self::LiteralType(
@@ -7134,6 +7126,95 @@ impl RenderableTransport for ExportStatementContentTransportSlot {
             ExportStatementContentTransportSlot::ExportStatementTypeExport(inner) => render_export_statement_type_export(inner, dest),
             ExportStatementContentTransportSlot::ExportStatementEqualsExport(inner) => render_export_statement_equals_export(inner, dest),
             ExportStatementContentTransportSlot::ExportStatementNamespaceExport(inner) => render_export_statement_namespace_export(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ImportStatementImportClauseTransportSlot {
+    Literal0_74_79_70_65,
+    Literal1_74_79_70_65_6f_66,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ImportStatementImportClauseTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    7 => Ok(Self::Literal0_74_79_70_65),
+                    8 => Ok(Self::Literal1_74_79_70_65_6f_66),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ImportStatementImportClauseTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ImportStatementImportClauseTransportSlot")
+                )?;
+                match kind_id {
+                    7 => Ok(Self::Literal0_74_79_70_65),
+                    8 => Ok(Self::Literal1_74_79_70_65_6f_66),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ImportStatementImportClauseTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ImportStatementImportClauseTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ImportStatementImportClauseTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ImportStatementImportClauseTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ImportStatementImportClauseTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ImportStatementImportClauseTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportStatementImportClauseTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ImportStatementImportClauseTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn import_statement_import_clause_transport_slot_to_any(t: ImportStatementImportClauseTransportSlot) -> AnyTransport {
+    match t {
+        ImportStatementImportClauseTransportSlot::Literal0_74_79_70_65 => AnyTransport::Literal0_74_79_70_65,
+        ImportStatementImportClauseTransportSlot::Literal1_74_79_70_65_6f_66 => AnyTransport::Literal1_74_79_70_65_6f_66,
+    }
+}
+
+impl RenderableTransport for ImportStatementImportClauseTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ImportStatementImportClauseTransportSlot::Literal0_74_79_70_65 => dest.write_str("type").map_err(::askama::Error::from),
+            ImportStatementImportClauseTransportSlot::Literal1_74_79_70_65_6f_66 => dest.write_str("typeof").map_err(::askama::Error::from),
         }
     }
 }
@@ -7650,6 +7731,90 @@ impl RenderableTransport for VariableDeclaratorContentTransportSlot {
         match self {
             VariableDeclaratorContentTransportSlot::VariableDeclaratorGroup1(inner) => render_variable_declarator_group1(inner, dest),
             VariableDeclaratorContentTransportSlot::VariableDeclaratorGroup2(inner) => render_variable_declarator_group2(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum StatementBlockAutomaticSemicolonTransportSlot {
+    Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for StatementBlockAutomaticSemicolonTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    159 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in StatementBlockAutomaticSemicolonTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in StatementBlockAutomaticSemicolonTransportSlot")
+                )?;
+                match kind_id {
+                    159 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in StatementBlockAutomaticSemicolonTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("StatementBlockAutomaticSemicolonTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for StatementBlockAutomaticSemicolonTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("StatementBlockAutomaticSemicolonTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StatementBlockAutomaticSemicolonTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        StatementBlockAutomaticSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StatementBlockAutomaticSemicolonTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        StatementBlockAutomaticSemicolonTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn statement_block_automatic_semicolon_transport_slot_to_any(t: StatementBlockAutomaticSemicolonTransportSlot) -> AnyTransport {
+    match t {
+        StatementBlockAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+    }
+}
+
+impl RenderableTransport for StatementBlockAutomaticSemicolonTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            StatementBlockAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
         }
     }
 }
@@ -8486,9 +8651,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementConditionTransportSl
                     202 => Ok(Self::EmptyStatement(
                         EmptyStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    22 => Ok(Self::EmptyStatement(
-                        EmptyStatementTransport::from_napi_value(env, napi_val)?
-                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForStatementConditionTransportSlot",
                     ))),
@@ -8690,9 +8852,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementConditionTransportSl
                     202 => Ok(Self::EmptyStatement(
                         EmptyStatementTransport::from_napi_value(env, napi_val)?
                     )),
-                    22 => Ok(Self::EmptyStatement(
-                        EmptyStatementTransport::from_napi_value(env, napi_val)?
-                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForStatementConditionTransportSlot",
                     ))),
@@ -8826,6 +8985,90 @@ impl RenderableTransport for ForStatementConditionTransportSlot {
             ForStatementConditionTransportSlot::SequenceExpression(inner) => render_sequence_expression(inner, dest),
             ForStatementConditionTransportSlot::EmptyStatement(inner) => render_empty_statement(inner, dest),
             ForStatementConditionTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ForInStatementAwaitMarkerTransportSlot {
+    Literal4_61_77_61_69_74,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ForInStatementAwaitMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    24 => Ok(Self::Literal4_61_77_61_69_74),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ForInStatementAwaitMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ForInStatementAwaitMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    24 => Ok(Self::Literal4_61_77_61_69_74),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ForInStatementAwaitMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ForInStatementAwaitMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ForInStatementAwaitMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ForInStatementAwaitMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ForInStatementAwaitMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ForInStatementAwaitMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ForInStatementAwaitMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ForInStatementAwaitMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn for_in_statement_await_marker_transport_slot_to_any(t: ForInStatementAwaitMarkerTransportSlot) -> AnyTransport {
+    match t {
+        ForInStatementAwaitMarkerTransportSlot::Literal4_61_77_61_69_74 => AnyTransport::Literal4_61_77_61_69_74,
+    }
+}
+
+impl RenderableTransport for ForInStatementAwaitMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ForInStatementAwaitMarkerTransportSlot::Literal4_61_77_61_69_74 => dest.write_str("await").map_err(::askama::Error::from),
         }
     }
 }
@@ -11611,6 +11854,90 @@ impl RenderableTransport for JsxStringContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum ClassDeclarationAutomaticSemicolonTransportSlot {
+    Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ClassDeclarationAutomaticSemicolonTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    159 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ClassDeclarationAutomaticSemicolonTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ClassDeclarationAutomaticSemicolonTransportSlot")
+                )?;
+                match kind_id {
+                    159 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ClassDeclarationAutomaticSemicolonTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ClassDeclarationAutomaticSemicolonTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ClassDeclarationAutomaticSemicolonTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ClassDeclarationAutomaticSemicolonTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ClassDeclarationAutomaticSemicolonTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ClassDeclarationAutomaticSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassDeclarationAutomaticSemicolonTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ClassDeclarationAutomaticSemicolonTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn class_declaration_automatic_semicolon_transport_slot_to_any(t: ClassDeclarationAutomaticSemicolonTransportSlot) -> AnyTransport {
+    match t {
+        ClassDeclarationAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+    }
+}
+
+impl RenderableTransport for ClassDeclarationAutomaticSemicolonTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ClassDeclarationAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum ClassHeritageContentTransportSlot {
     ClassHeritageExtendsClause(ClassHeritageExtendsClauseTransport),
     ImplementsClause(ImplementsClauseTransport),
@@ -11703,6 +12030,90 @@ impl RenderableTransport for ClassHeritageContentTransportSlot {
         match self {
             ClassHeritageContentTransportSlot::ClassHeritageExtendsClause(inner) => render_class_heritage_extends_clause(inner, dest),
             ClassHeritageContentTransportSlot::ImplementsClause(inner) => render_implements_clause(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum FunctionExpressionAsyncMarkerTransportSlot {
+    Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for FunctionExpressionAsyncMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    47 => Ok(Self::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in FunctionExpressionAsyncMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in FunctionExpressionAsyncMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    47 => Ok(Self::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in FunctionExpressionAsyncMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("FunctionExpressionAsyncMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for FunctionExpressionAsyncMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("FunctionExpressionAsyncMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FunctionExpressionAsyncMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        FunctionExpressionAsyncMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionExpressionAsyncMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        FunctionExpressionAsyncMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn function_expression_async_marker_transport_slot_to_any(t: FunctionExpressionAsyncMarkerTransportSlot) -> AnyTransport {
+    match t {
+        FunctionExpressionAsyncMarkerTransportSlot::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for FunctionExpressionAsyncMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            FunctionExpressionAsyncMarkerTransportSlot::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
         }
     }
 }
@@ -11814,6 +12225,90 @@ impl RenderableTransport for FunctionExpressionReturnTypeTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum FunctionDeclarationAsyncMarkerTransportSlot {
+    Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for FunctionDeclarationAsyncMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    47 => Ok(Self::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in FunctionDeclarationAsyncMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in FunctionDeclarationAsyncMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    47 => Ok(Self::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in FunctionDeclarationAsyncMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("FunctionDeclarationAsyncMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for FunctionDeclarationAsyncMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("FunctionDeclarationAsyncMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FunctionDeclarationAsyncMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        FunctionDeclarationAsyncMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionDeclarationAsyncMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        FunctionDeclarationAsyncMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn function_declaration_async_marker_transport_slot_to_any(t: FunctionDeclarationAsyncMarkerTransportSlot) -> AnyTransport {
+    match t {
+        FunctionDeclarationAsyncMarkerTransportSlot::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for FunctionDeclarationAsyncMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            FunctionDeclarationAsyncMarkerTransportSlot::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum FunctionDeclarationReturnTypeTransportSlot {
     TypeAnnotation(TypeAnnotationTransport),
     AssertsAnnotation(AssertsAnnotationTransport),
@@ -11915,6 +12410,174 @@ impl RenderableTransport for FunctionDeclarationReturnTypeTransportSlot {
             FunctionDeclarationReturnTypeTransportSlot::TypeAnnotation(inner) => render_type_annotation(inner, dest),
             FunctionDeclarationReturnTypeTransportSlot::AssertsAnnotation(inner) => render_asserts_annotation(inner, dest),
             FunctionDeclarationReturnTypeTransportSlot::TypePredicateAnnotation(inner) => render_type_predicate_annotation(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum FunctionDeclarationAutomaticSemicolonTransportSlot {
+    Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for FunctionDeclarationAutomaticSemicolonTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    159 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in FunctionDeclarationAutomaticSemicolonTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in FunctionDeclarationAutomaticSemicolonTransportSlot")
+                )?;
+                match kind_id {
+                    159 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in FunctionDeclarationAutomaticSemicolonTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("FunctionDeclarationAutomaticSemicolonTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for FunctionDeclarationAutomaticSemicolonTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("FunctionDeclarationAutomaticSemicolonTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FunctionDeclarationAutomaticSemicolonTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        FunctionDeclarationAutomaticSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionDeclarationAutomaticSemicolonTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        FunctionDeclarationAutomaticSemicolonTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn function_declaration_automatic_semicolon_transport_slot_to_any(t: FunctionDeclarationAutomaticSemicolonTransportSlot) -> AnyTransport {
+    match t {
+        FunctionDeclarationAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+    }
+}
+
+impl RenderableTransport for FunctionDeclarationAutomaticSemicolonTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            FunctionDeclarationAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum GeneratorFunctionAsyncMarkerTransportSlot {
+    Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for GeneratorFunctionAsyncMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    47 => Ok(Self::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in GeneratorFunctionAsyncMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in GeneratorFunctionAsyncMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    47 => Ok(Self::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in GeneratorFunctionAsyncMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("GeneratorFunctionAsyncMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for GeneratorFunctionAsyncMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("GeneratorFunctionAsyncMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<GeneratorFunctionAsyncMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        GeneratorFunctionAsyncMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<GeneratorFunctionAsyncMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        GeneratorFunctionAsyncMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn generator_function_async_marker_transport_slot_to_any(t: GeneratorFunctionAsyncMarkerTransportSlot) -> AnyTransport {
+    match t {
+        GeneratorFunctionAsyncMarkerTransportSlot::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for GeneratorFunctionAsyncMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            GeneratorFunctionAsyncMarkerTransportSlot::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
         }
     }
 }
@@ -12026,6 +12689,90 @@ impl RenderableTransport for GeneratorFunctionReturnTypeTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum GeneratorFunctionDeclarationAsyncMarkerTransportSlot {
+    Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for GeneratorFunctionDeclarationAsyncMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    47 => Ok(Self::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in GeneratorFunctionDeclarationAsyncMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in GeneratorFunctionDeclarationAsyncMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    47 => Ok(Self::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in GeneratorFunctionDeclarationAsyncMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("GeneratorFunctionDeclarationAsyncMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for GeneratorFunctionDeclarationAsyncMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("GeneratorFunctionDeclarationAsyncMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<GeneratorFunctionDeclarationAsyncMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        GeneratorFunctionDeclarationAsyncMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<GeneratorFunctionDeclarationAsyncMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        GeneratorFunctionDeclarationAsyncMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn generator_function_declaration_async_marker_transport_slot_to_any(t: GeneratorFunctionDeclarationAsyncMarkerTransportSlot) -> AnyTransport {
+    match t {
+        GeneratorFunctionDeclarationAsyncMarkerTransportSlot::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for GeneratorFunctionDeclarationAsyncMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            GeneratorFunctionDeclarationAsyncMarkerTransportSlot::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum GeneratorFunctionDeclarationReturnTypeTransportSlot {
     TypeAnnotation(TypeAnnotationTransport),
     AssertsAnnotation(AssertsAnnotationTransport),
@@ -12127,6 +12874,174 @@ impl RenderableTransport for GeneratorFunctionDeclarationReturnTypeTransportSlot
             GeneratorFunctionDeclarationReturnTypeTransportSlot::TypeAnnotation(inner) => render_type_annotation(inner, dest),
             GeneratorFunctionDeclarationReturnTypeTransportSlot::AssertsAnnotation(inner) => render_asserts_annotation(inner, dest),
             GeneratorFunctionDeclarationReturnTypeTransportSlot::TypePredicateAnnotation(inner) => render_type_predicate_annotation(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum GeneratorFunctionDeclarationAutomaticSemicolonTransportSlot {
+    Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for GeneratorFunctionDeclarationAutomaticSemicolonTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    159 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in GeneratorFunctionDeclarationAutomaticSemicolonTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in GeneratorFunctionDeclarationAutomaticSemicolonTransportSlot")
+                )?;
+                match kind_id {
+                    159 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in GeneratorFunctionDeclarationAutomaticSemicolonTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("GeneratorFunctionDeclarationAutomaticSemicolonTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for GeneratorFunctionDeclarationAutomaticSemicolonTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("GeneratorFunctionDeclarationAutomaticSemicolonTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<GeneratorFunctionDeclarationAutomaticSemicolonTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        GeneratorFunctionDeclarationAutomaticSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<GeneratorFunctionDeclarationAutomaticSemicolonTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        GeneratorFunctionDeclarationAutomaticSemicolonTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn generator_function_declaration_automatic_semicolon_transport_slot_to_any(t: GeneratorFunctionDeclarationAutomaticSemicolonTransportSlot) -> AnyTransport {
+    match t {
+        GeneratorFunctionDeclarationAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+    }
+}
+
+impl RenderableTransport for GeneratorFunctionDeclarationAutomaticSemicolonTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            GeneratorFunctionDeclarationAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ArrowFunctionAsyncMarkerTransportSlot {
+    Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ArrowFunctionAsyncMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    47 => Ok(Self::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ArrowFunctionAsyncMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ArrowFunctionAsyncMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    47 => Ok(Self::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ArrowFunctionAsyncMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ArrowFunctionAsyncMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ArrowFunctionAsyncMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ArrowFunctionAsyncMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ArrowFunctionAsyncMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ArrowFunctionAsyncMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ArrowFunctionAsyncMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ArrowFunctionAsyncMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn arrow_function_async_marker_transport_slot_to_any(t: ArrowFunctionAsyncMarkerTransportSlot) -> AnyTransport {
+    match t {
+        ArrowFunctionAsyncMarkerTransportSlot::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for ArrowFunctionAsyncMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ArrowFunctionAsyncMarkerTransportSlot::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
         }
     }
 }
@@ -13245,9 +14160,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionObjectTransportS
                     173 => Ok(Self::Import(
                         ImportTransport::from_napi_value(env, napi_val)?
                     )),
-                    9 => Ok(Self::Import(
-                        ImportTransport::from_napi_value(env, napi_val)?
-                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MemberExpressionObjectTransportSlot",
                     ))),
@@ -13446,9 +14358,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionObjectTransportS
                     173 => Ok(Self::Import(
                         ImportTransport::from_napi_value(env, napi_val)?
                     )),
-                    9 => Ok(Self::Import(
-                        ImportTransport::from_napi_value(env, napi_val)?
-                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MemberExpressionObjectTransportSlot",
                     ))),
@@ -13586,8 +14495,8 @@ impl RenderableTransport for MemberExpressionObjectTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum MemberExpressionSeparatorTransportSlot {
-    MemberExpressionSeparator(MemberExpressionSeparatorTransport),
     Literal6_2e,
+    Literal7_5f_6d_65_6d_62_65_72_5f_65_78_70_72_65_73_73_69_6f_6e_5f_73_65_70_61_72_61_74_6f_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -13599,10 +14508,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionSeparatorTranspo
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    49 => Ok(Self::MemberExpressionSeparator(
-                        MemberExpressionSeparatorTransport::from_napi_value(env, napi_val)?
-                    )),
                     44 => Ok(Self::Literal6_2e),
+                    49 => Ok(Self::Literal7_5f_6d_65_6d_62_65_72_5f_65_78_70_72_65_73_73_69_6f_6e_5f_73_65_70_61_72_61_74_6f_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MemberExpressionSeparatorTransportSlot",
                     ))),
@@ -13614,10 +14521,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MemberExpressionSeparatorTranspo
                     ::napi::Error::from_reason("$type property missing in MemberExpressionSeparatorTransportSlot")
                 )?;
                 match kind_id {
-                    49 => Ok(Self::MemberExpressionSeparator(
-                        MemberExpressionSeparatorTransport::from_napi_value(env, napi_val)?
-                    )),
                     44 => Ok(Self::Literal6_2e),
+                    49 => Ok(Self::Literal7_5f_6d_65_6d_62_65_72_5f_65_78_70_72_65_73_73_69_6f_6e_5f_73_65_70_61_72_61_74_6f_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in MemberExpressionSeparatorTransportSlot",
                     ))),
@@ -13660,8 +14565,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<MemberExpressionSeparatorTrans
 
 fn member_expression_separator_transport_slot_to_any(t: MemberExpressionSeparatorTransportSlot) -> AnyTransport {
     match t {
-        MemberExpressionSeparatorTransportSlot::MemberExpressionSeparator(inner) => AnyTransport::MemberExpressionSeparator(inner),
         MemberExpressionSeparatorTransportSlot::Literal6_2e => AnyTransport::Literal6_2e,
+        MemberExpressionSeparatorTransportSlot::Literal7_5f_6d_65_6d_62_65_72_5f_65_78_70_72_65_73_73_69_6f_6e_5f_73_65_70_61_72_61_74_6f_72 => AnyTransport::Literal7_5f_6d_65_6d_62_65_72_5f_65_78_70_72_65_73_73_69_6f_6e_5f_73_65_70_61_72_61_74_6f_72,
     }
 }
 
@@ -13671,8 +14576,8 @@ impl RenderableTransport for MemberExpressionSeparatorTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            MemberExpressionSeparatorTransportSlot::MemberExpressionSeparator(inner) => render_member_expression_separator(inner, dest),
             MemberExpressionSeparatorTransportSlot::Literal6_2e => dest.write_str(".").map_err(::askama::Error::from),
+            MemberExpressionSeparatorTransportSlot::Literal7_5f_6d_65_6d_62_65_72_5f_65_78_70_72_65_73_73_69_6f_6e_5f_73_65_70_61_72_61_74_6f_72 => dest.write_str("?.").map_err(::askama::Error::from),
         }
     }
 }
@@ -14348,6 +15253,90 @@ impl RenderableTransport for SubscriptExpressionObjectTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum SubscriptExpressionOptionalChainTransportSlot {
+    Literal7_5f_6d_65_6d_62_65_72_5f_65_78_70_72_65_73_73_69_6f_6e_5f_73_65_70_61_72_61_74_6f_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for SubscriptExpressionOptionalChainTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    49 => Ok(Self::Literal7_5f_6d_65_6d_62_65_72_5f_65_78_70_72_65_73_73_69_6f_6e_5f_73_65_70_61_72_61_74_6f_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SubscriptExpressionOptionalChainTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in SubscriptExpressionOptionalChainTransportSlot")
+                )?;
+                match kind_id {
+                    49 => Ok(Self::Literal7_5f_6d_65_6d_62_65_72_5f_65_78_70_72_65_73_73_69_6f_6e_5f_73_65_70_61_72_61_74_6f_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SubscriptExpressionOptionalChainTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("SubscriptExpressionOptionalChainTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SubscriptExpressionOptionalChainTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("SubscriptExpressionOptionalChainTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SubscriptExpressionOptionalChainTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SubscriptExpressionOptionalChainTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SubscriptExpressionOptionalChainTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SubscriptExpressionOptionalChainTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn subscript_expression_optional_chain_transport_slot_to_any(t: SubscriptExpressionOptionalChainTransportSlot) -> AnyTransport {
+    match t {
+        SubscriptExpressionOptionalChainTransportSlot::Literal7_5f_6d_65_6d_62_65_72_5f_65_78_70_72_65_73_73_69_6f_6e_5f_73_65_70_61_72_61_74_6f_72 => AnyTransport::Literal7_5f_6d_65_6d_62_65_72_5f_65_78_70_72_65_73_73_69_6f_6e_5f_73_65_70_61_72_61_74_6f_72,
+    }
+}
+
+impl RenderableTransport for SubscriptExpressionOptionalChainTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            SubscriptExpressionOptionalChainTransportSlot::Literal7_5f_6d_65_6d_62_65_72_5f_65_78_70_72_65_73_73_69_6f_6e_5f_73_65_70_61_72_61_74_6f_72 => dest.write_str("?.").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum LhsExpressionContentTransportSlot {
     MemberExpression(MemberExpressionTransport),
     SubscriptExpression(SubscriptExpressionTransport),
@@ -14633,6 +15622,90 @@ impl RenderableTransport for LhsExpressionContentTransportSlot {
             LhsExpressionContentTransportSlot::ArrayPattern(inner) => render_array_pattern(inner, dest),
             LhsExpressionContentTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
             LhsExpressionContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum AssignmentExpressionUsingMarkerTransportSlot {
+    Literal8_75_73_69_6e_67,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for AssignmentExpressionUsingMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    154 => Ok(Self::Literal8_75_73_69_6e_67),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in AssignmentExpressionUsingMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in AssignmentExpressionUsingMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    154 => Ok(Self::Literal8_75_73_69_6e_67),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in AssignmentExpressionUsingMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("AssignmentExpressionUsingMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AssignmentExpressionUsingMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("AssignmentExpressionUsingMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AssignmentExpressionUsingMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        AssignmentExpressionUsingMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AssignmentExpressionUsingMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        AssignmentExpressionUsingMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn assignment_expression_using_marker_transport_slot_to_any(t: AssignmentExpressionUsingMarkerTransportSlot) -> AnyTransport {
+    match t {
+        AssignmentExpressionUsingMarkerTransportSlot::Literal8_75_73_69_6e_67 => AnyTransport::Literal8_75_73_69_6e_67,
+    }
+}
+
+impl RenderableTransport for AssignmentExpressionUsingMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            AssignmentExpressionUsingMarkerTransportSlot::Literal8_75_73_69_6e_67 => dest.write_str("using").map_err(::askama::Error::from),
         }
     }
 }
@@ -15008,6 +16081,205 @@ impl RenderableTransport for AugmentedAssignmentExpressionLeftTransportSlot {
             AugmentedAssignmentExpressionLeftTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
             AugmentedAssignmentExpressionLeftTransportSlot::NonNullExpression(inner) => render_non_null_expression(inner, dest),
             AugmentedAssignmentExpressionLeftTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum BinaryExpressionOperatorTransportSlot {
+    Literal9_26_26,
+    Literal10_7c_7c,
+    Literal11_3e_3e,
+    Literal12_3e_3e_3e,
+    Literal13_3c_3c,
+    Literal14_26,
+    Literal15_5e,
+    Literal16_7c,
+    Literal17_2b,
+    Literal18_2d,
+    Literal19_2a,
+    Literal20_2f,
+    Literal21_25,
+    Literal22_2a_2a,
+    Literal23_3c,
+    Literal24_3c_3d,
+    Literal25_3d_3d,
+    Literal26_3d_3d_3d,
+    Literal27_21_3d,
+    Literal28_21_3d_3d,
+    Literal29_3e_3d,
+    Literal30_3e,
+    Literal31_3f_3f,
+    Literal32_69_6e_73_74_61_6e_63_65_6f_66,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionOperatorTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    67 => Ok(Self::Literal9_26_26),
+                    68 => Ok(Self::Literal10_7c_7c),
+                    69 => Ok(Self::Literal11_3e_3e),
+                    70 => Ok(Self::Literal12_3e_3e_3e),
+                    71 => Ok(Self::Literal13_3c_3c),
+                    72 => Ok(Self::Literal14_26),
+                    73 => Ok(Self::Literal15_5e),
+                    74 => Ok(Self::Literal16_7c),
+                    75 => Ok(Self::Literal17_2b),
+                    76 => Ok(Self::Literal18_2d),
+                    3 => Ok(Self::Literal19_2a),
+                    77 => Ok(Self::Literal20_2f),
+                    78 => Ok(Self::Literal21_25),
+                    79 => Ok(Self::Literal22_2a_2a),
+                    80 => Ok(Self::Literal23_3c),
+                    81 => Ok(Self::Literal24_3c_3d),
+                    82 => Ok(Self::Literal25_3d_3d),
+                    83 => Ok(Self::Literal26_3d_3d_3d),
+                    84 => Ok(Self::Literal27_21_3d),
+                    85 => Ok(Self::Literal28_21_3d_3d),
+                    86 => Ok(Self::Literal29_3e_3d),
+                    87 => Ok(Self::Literal30_3e),
+                    88 => Ok(Self::Literal31_3f_3f),
+                    89 => Ok(Self::Literal32_69_6e_73_74_61_6e_63_65_6f_66),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in BinaryExpressionOperatorTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in BinaryExpressionOperatorTransportSlot")
+                )?;
+                match kind_id {
+                    67 => Ok(Self::Literal9_26_26),
+                    68 => Ok(Self::Literal10_7c_7c),
+                    69 => Ok(Self::Literal11_3e_3e),
+                    70 => Ok(Self::Literal12_3e_3e_3e),
+                    71 => Ok(Self::Literal13_3c_3c),
+                    72 => Ok(Self::Literal14_26),
+                    73 => Ok(Self::Literal15_5e),
+                    74 => Ok(Self::Literal16_7c),
+                    75 => Ok(Self::Literal17_2b),
+                    76 => Ok(Self::Literal18_2d),
+                    3 => Ok(Self::Literal19_2a),
+                    77 => Ok(Self::Literal20_2f),
+                    78 => Ok(Self::Literal21_25),
+                    79 => Ok(Self::Literal22_2a_2a),
+                    80 => Ok(Self::Literal23_3c),
+                    81 => Ok(Self::Literal24_3c_3d),
+                    82 => Ok(Self::Literal25_3d_3d),
+                    83 => Ok(Self::Literal26_3d_3d_3d),
+                    84 => Ok(Self::Literal27_21_3d),
+                    85 => Ok(Self::Literal28_21_3d_3d),
+                    86 => Ok(Self::Literal29_3e_3d),
+                    87 => Ok(Self::Literal30_3e),
+                    88 => Ok(Self::Literal31_3f_3f),
+                    89 => Ok(Self::Literal32_69_6e_73_74_61_6e_63_65_6f_66),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in BinaryExpressionOperatorTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("BinaryExpressionOperatorTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for BinaryExpressionOperatorTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("BinaryExpressionOperatorTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<BinaryExpressionOperatorTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        BinaryExpressionOperatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<BinaryExpressionOperatorTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        BinaryExpressionOperatorTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn binary_expression_operator_transport_slot_to_any(t: BinaryExpressionOperatorTransportSlot) -> AnyTransport {
+    match t {
+        BinaryExpressionOperatorTransportSlot::Literal9_26_26 => AnyTransport::Literal9_26_26,
+        BinaryExpressionOperatorTransportSlot::Literal10_7c_7c => AnyTransport::Literal10_7c_7c,
+        BinaryExpressionOperatorTransportSlot::Literal11_3e_3e => AnyTransport::Literal11_3e_3e,
+        BinaryExpressionOperatorTransportSlot::Literal12_3e_3e_3e => AnyTransport::Literal12_3e_3e_3e,
+        BinaryExpressionOperatorTransportSlot::Literal13_3c_3c => AnyTransport::Literal13_3c_3c,
+        BinaryExpressionOperatorTransportSlot::Literal14_26 => AnyTransport::Literal14_26,
+        BinaryExpressionOperatorTransportSlot::Literal15_5e => AnyTransport::Literal15_5e,
+        BinaryExpressionOperatorTransportSlot::Literal16_7c => AnyTransport::Literal16_7c,
+        BinaryExpressionOperatorTransportSlot::Literal17_2b => AnyTransport::Literal17_2b,
+        BinaryExpressionOperatorTransportSlot::Literal18_2d => AnyTransport::Literal18_2d,
+        BinaryExpressionOperatorTransportSlot::Literal19_2a => AnyTransport::Literal19_2a,
+        BinaryExpressionOperatorTransportSlot::Literal20_2f => AnyTransport::Literal20_2f,
+        BinaryExpressionOperatorTransportSlot::Literal21_25 => AnyTransport::Literal21_25,
+        BinaryExpressionOperatorTransportSlot::Literal22_2a_2a => AnyTransport::Literal22_2a_2a,
+        BinaryExpressionOperatorTransportSlot::Literal23_3c => AnyTransport::Literal23_3c,
+        BinaryExpressionOperatorTransportSlot::Literal24_3c_3d => AnyTransport::Literal24_3c_3d,
+        BinaryExpressionOperatorTransportSlot::Literal25_3d_3d => AnyTransport::Literal25_3d_3d,
+        BinaryExpressionOperatorTransportSlot::Literal26_3d_3d_3d => AnyTransport::Literal26_3d_3d_3d,
+        BinaryExpressionOperatorTransportSlot::Literal27_21_3d => AnyTransport::Literal27_21_3d,
+        BinaryExpressionOperatorTransportSlot::Literal28_21_3d_3d => AnyTransport::Literal28_21_3d_3d,
+        BinaryExpressionOperatorTransportSlot::Literal29_3e_3d => AnyTransport::Literal29_3e_3d,
+        BinaryExpressionOperatorTransportSlot::Literal30_3e => AnyTransport::Literal30_3e,
+        BinaryExpressionOperatorTransportSlot::Literal31_3f_3f => AnyTransport::Literal31_3f_3f,
+        BinaryExpressionOperatorTransportSlot::Literal32_69_6e_73_74_61_6e_63_65_6f_66 => AnyTransport::Literal32_69_6e_73_74_61_6e_63_65_6f_66,
+    }
+}
+
+impl RenderableTransport for BinaryExpressionOperatorTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            BinaryExpressionOperatorTransportSlot::Literal9_26_26 => dest.write_str("&&").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal10_7c_7c => dest.write_str("||").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal11_3e_3e => dest.write_str(">>").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal12_3e_3e_3e => dest.write_str(">>>").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal13_3c_3c => dest.write_str("<<").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal14_26 => dest.write_str("&").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal15_5e => dest.write_str("^").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal16_7c => dest.write_str("|").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal17_2b => dest.write_str("+").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal18_2d => dest.write_str("-").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal19_2a => dest.write_str("*").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal20_2f => dest.write_str("/").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal21_25 => dest.write_str("%").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal22_2a_2a => dest.write_str("**").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal23_3c => dest.write_str("<").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal24_3c_3d => dest.write_str("<=").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal25_3d_3d => dest.write_str("==").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal26_3d_3d_3d => dest.write_str("===").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal27_21_3d => dest.write_str("!=").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal28_21_3d_3d => dest.write_str("!==").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal29_3e_3d => dest.write_str(">=").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal30_3e => dest.write_str(">").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal31_3f_3f => dest.write_str("??").map_err(::askama::Error::from),
+            BinaryExpressionOperatorTransportSlot::Literal32_69_6e_73_74_61_6e_63_65_6f_66 => dest.write_str("instanceof").map_err(::askama::Error::from),
         }
     }
 }
@@ -16473,6 +17745,594 @@ impl RenderableTransport for ClassBodyContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum FieldDefinitionStaticMarkerTransportSlot {
+    Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for FieldDefinitionStaticMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    112 => Ok(Self::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in FieldDefinitionStaticMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in FieldDefinitionStaticMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    112 => Ok(Self::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in FieldDefinitionStaticMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("FieldDefinitionStaticMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for FieldDefinitionStaticMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("FieldDefinitionStaticMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FieldDefinitionStaticMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        FieldDefinitionStaticMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FieldDefinitionStaticMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        FieldDefinitionStaticMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn field_definition_static_marker_transport_slot_to_any(t: FieldDefinitionStaticMarkerTransportSlot) -> AnyTransport {
+    match t {
+        FieldDefinitionStaticMarkerTransportSlot::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for FieldDefinitionStaticMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            FieldDefinitionStaticMarkerTransportSlot::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ClassStaticBlockAutomaticSemicolonTransportSlot {
+    Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ClassStaticBlockAutomaticSemicolonTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    159 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ClassStaticBlockAutomaticSemicolonTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ClassStaticBlockAutomaticSemicolonTransportSlot")
+                )?;
+                match kind_id {
+                    159 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ClassStaticBlockAutomaticSemicolonTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ClassStaticBlockAutomaticSemicolonTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ClassStaticBlockAutomaticSemicolonTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ClassStaticBlockAutomaticSemicolonTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ClassStaticBlockAutomaticSemicolonTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ClassStaticBlockAutomaticSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassStaticBlockAutomaticSemicolonTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ClassStaticBlockAutomaticSemicolonTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn class_static_block_automatic_semicolon_transport_slot_to_any(t: ClassStaticBlockAutomaticSemicolonTransportSlot) -> AnyTransport {
+    match t {
+        ClassStaticBlockAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+    }
+}
+
+impl RenderableTransport for ClassStaticBlockAutomaticSemicolonTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ClassStaticBlockAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum MethodDefinitionStaticMarkerTransportSlot {
+    Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionStaticMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    112 => Ok(Self::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodDefinitionStaticMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in MethodDefinitionStaticMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    112 => Ok(Self::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodDefinitionStaticMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("MethodDefinitionStaticMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for MethodDefinitionStaticMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("MethodDefinitionStaticMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<MethodDefinitionStaticMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        MethodDefinitionStaticMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodDefinitionStaticMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        MethodDefinitionStaticMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn method_definition_static_marker_transport_slot_to_any(t: MethodDefinitionStaticMarkerTransportSlot) -> AnyTransport {
+    match t {
+        MethodDefinitionStaticMarkerTransportSlot::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for MethodDefinitionStaticMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            MethodDefinitionStaticMarkerTransportSlot::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum MethodDefinitionOverrideModifierTransportSlot {
+    Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionOverrideModifierTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    120 => Ok(Self::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodDefinitionOverrideModifierTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in MethodDefinitionOverrideModifierTransportSlot")
+                )?;
+                match kind_id {
+                    120 => Ok(Self::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodDefinitionOverrideModifierTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("MethodDefinitionOverrideModifierTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for MethodDefinitionOverrideModifierTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("MethodDefinitionOverrideModifierTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<MethodDefinitionOverrideModifierTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        MethodDefinitionOverrideModifierTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodDefinitionOverrideModifierTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        MethodDefinitionOverrideModifierTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn method_definition_override_modifier_transport_slot_to_any(t: MethodDefinitionOverrideModifierTransportSlot) -> AnyTransport {
+    match t {
+        MethodDefinitionOverrideModifierTransportSlot::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => AnyTransport::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
+    }
+}
+
+impl RenderableTransport for MethodDefinitionOverrideModifierTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            MethodDefinitionOverrideModifierTransportSlot::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => dest.write_str("override").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum MethodDefinitionReadonlyMarkerTransportSlot {
+    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionReadonlyMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    121 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodDefinitionReadonlyMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in MethodDefinitionReadonlyMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    121 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodDefinitionReadonlyMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("MethodDefinitionReadonlyMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for MethodDefinitionReadonlyMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("MethodDefinitionReadonlyMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<MethodDefinitionReadonlyMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        MethodDefinitionReadonlyMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodDefinitionReadonlyMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        MethodDefinitionReadonlyMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn method_definition_readonly_marker_transport_slot_to_any(t: MethodDefinitionReadonlyMarkerTransportSlot) -> AnyTransport {
+    match t {
+        MethodDefinitionReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for MethodDefinitionReadonlyMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            MethodDefinitionReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum MethodDefinitionAsyncMarkerTransportSlot {
+    Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionAsyncMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    47 => Ok(Self::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodDefinitionAsyncMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in MethodDefinitionAsyncMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    47 => Ok(Self::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodDefinitionAsyncMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("MethodDefinitionAsyncMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for MethodDefinitionAsyncMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("MethodDefinitionAsyncMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<MethodDefinitionAsyncMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        MethodDefinitionAsyncMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodDefinitionAsyncMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        MethodDefinitionAsyncMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn method_definition_async_marker_transport_slot_to_any(t: MethodDefinitionAsyncMarkerTransportSlot) -> AnyTransport {
+    match t {
+        MethodDefinitionAsyncMarkerTransportSlot::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for MethodDefinitionAsyncMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            MethodDefinitionAsyncMarkerTransportSlot::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum MethodDefinitionOptionalMarkerTransportSlot {
+    Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for MethodDefinitionOptionalMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    130 => Ok(Self::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodDefinitionOptionalMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in MethodDefinitionOptionalMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    130 => Ok(Self::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodDefinitionOptionalMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("MethodDefinitionOptionalMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for MethodDefinitionOptionalMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("MethodDefinitionOptionalMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<MethodDefinitionOptionalMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        MethodDefinitionOptionalMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodDefinitionOptionalMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        MethodDefinitionOptionalMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn method_definition_optional_marker_transport_slot_to_any(t: MethodDefinitionOptionalMarkerTransportSlot) -> AnyTransport {
+    match t {
+        MethodDefinitionOptionalMarkerTransportSlot::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72 => AnyTransport::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for MethodDefinitionOptionalMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            MethodDefinitionOptionalMarkerTransportSlot::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72 => dest.write_str("?").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum MethodDefinitionReturnTypeTransportSlot {
     TypeAnnotation(TypeAnnotationTransport),
     AssertsAnnotation(AssertsAnnotationTransport),
@@ -16782,6 +18642,510 @@ impl RenderableTransport for PublicFieldDefinitionVisibilityPrefixTransportSlot 
 }
 
 #[derive(Debug, Clone)]
+pub enum PublicFieldDefinitionAccessorMarkerTransportSlot {
+    Literal37_61_63_63_65_73_73_6f_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionAccessorMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    153 => Ok(Self::Literal37_61_63_63_65_73_73_6f_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PublicFieldDefinitionAccessorMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionAccessorMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    153 => Ok(Self::Literal37_61_63_63_65_73_73_6f_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PublicFieldDefinitionAccessorMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("PublicFieldDefinitionAccessorMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PublicFieldDefinitionAccessorMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("PublicFieldDefinitionAccessorMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PublicFieldDefinitionAccessorMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PublicFieldDefinitionAccessorMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionAccessorMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PublicFieldDefinitionAccessorMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn public_field_definition_accessor_marker_transport_slot_to_any(t: PublicFieldDefinitionAccessorMarkerTransportSlot) -> AnyTransport {
+    match t {
+        PublicFieldDefinitionAccessorMarkerTransportSlot::Literal37_61_63_63_65_73_73_6f_72 => AnyTransport::Literal37_61_63_63_65_73_73_6f_72,
+    }
+}
+
+impl RenderableTransport for PublicFieldDefinitionAccessorMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            PublicFieldDefinitionAccessorMarkerTransportSlot::Literal37_61_63_63_65_73_73_6f_72 => dest.write_str("accessor").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum MethodSignatureStaticMarkerTransportSlot {
+    Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureStaticMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    112 => Ok(Self::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodSignatureStaticMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in MethodSignatureStaticMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    112 => Ok(Self::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodSignatureStaticMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("MethodSignatureStaticMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for MethodSignatureStaticMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("MethodSignatureStaticMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<MethodSignatureStaticMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        MethodSignatureStaticMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodSignatureStaticMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        MethodSignatureStaticMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn method_signature_static_marker_transport_slot_to_any(t: MethodSignatureStaticMarkerTransportSlot) -> AnyTransport {
+    match t {
+        MethodSignatureStaticMarkerTransportSlot::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for MethodSignatureStaticMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            MethodSignatureStaticMarkerTransportSlot::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum MethodSignatureOverrideModifierTransportSlot {
+    Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureOverrideModifierTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    120 => Ok(Self::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodSignatureOverrideModifierTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in MethodSignatureOverrideModifierTransportSlot")
+                )?;
+                match kind_id {
+                    120 => Ok(Self::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodSignatureOverrideModifierTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("MethodSignatureOverrideModifierTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for MethodSignatureOverrideModifierTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("MethodSignatureOverrideModifierTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<MethodSignatureOverrideModifierTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        MethodSignatureOverrideModifierTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodSignatureOverrideModifierTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        MethodSignatureOverrideModifierTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn method_signature_override_modifier_transport_slot_to_any(t: MethodSignatureOverrideModifierTransportSlot) -> AnyTransport {
+    match t {
+        MethodSignatureOverrideModifierTransportSlot::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => AnyTransport::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
+    }
+}
+
+impl RenderableTransport for MethodSignatureOverrideModifierTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            MethodSignatureOverrideModifierTransportSlot::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => dest.write_str("override").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum MethodSignatureReadonlyMarkerTransportSlot {
+    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureReadonlyMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    121 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodSignatureReadonlyMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in MethodSignatureReadonlyMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    121 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodSignatureReadonlyMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("MethodSignatureReadonlyMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for MethodSignatureReadonlyMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("MethodSignatureReadonlyMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<MethodSignatureReadonlyMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        MethodSignatureReadonlyMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodSignatureReadonlyMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        MethodSignatureReadonlyMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn method_signature_readonly_marker_transport_slot_to_any(t: MethodSignatureReadonlyMarkerTransportSlot) -> AnyTransport {
+    match t {
+        MethodSignatureReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for MethodSignatureReadonlyMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            MethodSignatureReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum MethodSignatureAsyncMarkerTransportSlot {
+    Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureAsyncMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    47 => Ok(Self::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodSignatureAsyncMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in MethodSignatureAsyncMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    47 => Ok(Self::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodSignatureAsyncMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("MethodSignatureAsyncMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for MethodSignatureAsyncMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("MethodSignatureAsyncMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<MethodSignatureAsyncMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        MethodSignatureAsyncMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodSignatureAsyncMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        MethodSignatureAsyncMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn method_signature_async_marker_transport_slot_to_any(t: MethodSignatureAsyncMarkerTransportSlot) -> AnyTransport {
+    match t {
+        MethodSignatureAsyncMarkerTransportSlot::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for MethodSignatureAsyncMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            MethodSignatureAsyncMarkerTransportSlot::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum MethodSignatureOptionalMarkerTransportSlot {
+    Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for MethodSignatureOptionalMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    130 => Ok(Self::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodSignatureOptionalMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in MethodSignatureOptionalMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    130 => Ok(Self::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in MethodSignatureOptionalMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("MethodSignatureOptionalMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for MethodSignatureOptionalMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("MethodSignatureOptionalMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<MethodSignatureOptionalMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        MethodSignatureOptionalMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<MethodSignatureOptionalMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        MethodSignatureOptionalMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn method_signature_optional_marker_transport_slot_to_any(t: MethodSignatureOptionalMarkerTransportSlot) -> AnyTransport {
+    match t {
+        MethodSignatureOptionalMarkerTransportSlot::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72 => AnyTransport::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for MethodSignatureOptionalMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            MethodSignatureOptionalMarkerTransportSlot::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72 => dest.write_str("?").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum MethodSignatureReturnTypeTransportSlot {
     TypeAnnotation(TypeAnnotationTransport),
     AssertsAnnotation(AssertsAnnotationTransport),
@@ -16888,6 +19252,174 @@ impl RenderableTransport for MethodSignatureReturnTypeTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum AbstractMethodSignatureOverrideModifierTransportSlot {
+    Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureOverrideModifierTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    120 => Ok(Self::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in AbstractMethodSignatureOverrideModifierTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in AbstractMethodSignatureOverrideModifierTransportSlot")
+                )?;
+                match kind_id {
+                    120 => Ok(Self::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in AbstractMethodSignatureOverrideModifierTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("AbstractMethodSignatureOverrideModifierTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AbstractMethodSignatureOverrideModifierTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("AbstractMethodSignatureOverrideModifierTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AbstractMethodSignatureOverrideModifierTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        AbstractMethodSignatureOverrideModifierTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AbstractMethodSignatureOverrideModifierTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        AbstractMethodSignatureOverrideModifierTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn abstract_method_signature_override_modifier_transport_slot_to_any(t: AbstractMethodSignatureOverrideModifierTransportSlot) -> AnyTransport {
+    match t {
+        AbstractMethodSignatureOverrideModifierTransportSlot::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => AnyTransport::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
+    }
+}
+
+impl RenderableTransport for AbstractMethodSignatureOverrideModifierTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            AbstractMethodSignatureOverrideModifierTransportSlot::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => dest.write_str("override").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum AbstractMethodSignatureOptionalMarkerTransportSlot {
+    Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for AbstractMethodSignatureOptionalMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    130 => Ok(Self::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in AbstractMethodSignatureOptionalMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in AbstractMethodSignatureOptionalMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    130 => Ok(Self::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in AbstractMethodSignatureOptionalMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("AbstractMethodSignatureOptionalMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AbstractMethodSignatureOptionalMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("AbstractMethodSignatureOptionalMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AbstractMethodSignatureOptionalMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        AbstractMethodSignatureOptionalMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AbstractMethodSignatureOptionalMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        AbstractMethodSignatureOptionalMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn abstract_method_signature_optional_marker_transport_slot_to_any(t: AbstractMethodSignatureOptionalMarkerTransportSlot) -> AnyTransport {
+    match t {
+        AbstractMethodSignatureOptionalMarkerTransportSlot::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72 => AnyTransport::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for AbstractMethodSignatureOptionalMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            AbstractMethodSignatureOptionalMarkerTransportSlot::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72 => dest.write_str("?").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum AbstractMethodSignatureReturnTypeTransportSlot {
     TypeAnnotation(TypeAnnotationTransport),
     AssertsAnnotation(AssertsAnnotationTransport),
@@ -16989,6 +19521,90 @@ impl RenderableTransport for AbstractMethodSignatureReturnTypeTransportSlot {
             AbstractMethodSignatureReturnTypeTransportSlot::TypeAnnotation(inner) => render_type_annotation(inner, dest),
             AbstractMethodSignatureReturnTypeTransportSlot::AssertsAnnotation(inner) => render_asserts_annotation(inner, dest),
             AbstractMethodSignatureReturnTypeTransportSlot::TypePredicateAnnotation(inner) => render_type_predicate_annotation(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum FunctionSignatureAsyncMarkerTransportSlot {
+    Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureAsyncMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    47 => Ok(Self::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in FunctionSignatureAsyncMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in FunctionSignatureAsyncMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    47 => Ok(Self::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in FunctionSignatureAsyncMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("FunctionSignatureAsyncMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for FunctionSignatureAsyncMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("FunctionSignatureAsyncMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<FunctionSignatureAsyncMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        FunctionSignatureAsyncMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionSignatureAsyncMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        FunctionSignatureAsyncMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn function_signature_async_marker_transport_slot_to_any(t: FunctionSignatureAsyncMarkerTransportSlot) -> AnyTransport {
+    match t {
+        FunctionSignatureAsyncMarkerTransportSlot::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for FunctionSignatureAsyncMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            FunctionSignatureAsyncMarkerTransportSlot::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
         }
     }
 }
@@ -17102,7 +19718,7 @@ impl RenderableTransport for FunctionSignatureReturnTypeTransportSlot {
 #[derive(Debug, Clone)]
 pub enum FunctionSignatureSemicolonTransportSlot {
     Semicolon(SemicolonEnum),
-    FunctionSignatureAutomaticSemicolon(FunctionSignatureAutomaticSemicolonTransport),
+    Literal38_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -17120,9 +19736,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureSemicolonTransp
                     22 => Ok(Self::Semicolon(
                         SemicolonEnum::from_napi_value(env, napi_val)?
                     )),
-                    164 => Ok(Self::FunctionSignatureAutomaticSemicolon(
-                        FunctionSignatureAutomaticSemicolonTransport::from_napi_value(env, napi_val)?
-                    )),
+                    164 => Ok(Self::Literal38_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FunctionSignatureSemicolonTransportSlot",
                     ))),
@@ -17140,9 +19754,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionSignatureSemicolonTransp
                     22 => Ok(Self::Semicolon(
                         SemicolonEnum::from_napi_value(env, napi_val)?
                     )),
-                    164 => Ok(Self::FunctionSignatureAutomaticSemicolon(
-                        FunctionSignatureAutomaticSemicolonTransport::from_napi_value(env, napi_val)?
-                    )),
+                    164 => Ok(Self::Literal38_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FunctionSignatureSemicolonTransportSlot",
                     ))),
@@ -17186,7 +19798,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionSignatureSemicolonTran
 fn function_signature_semicolon_transport_slot_to_any(t: FunctionSignatureSemicolonTransportSlot) -> AnyTransport {
     match t {
         FunctionSignatureSemicolonTransportSlot::Semicolon(inner) => AnyTransport::Semicolon(inner),
-        FunctionSignatureSemicolonTransportSlot::FunctionSignatureAutomaticSemicolon(inner) => AnyTransport::FunctionSignatureAutomaticSemicolon(inner),
+        FunctionSignatureSemicolonTransportSlot::Literal38_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal38_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
     }
 }
 
@@ -17197,7 +19809,7 @@ impl RenderableTransport for FunctionSignatureSemicolonTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             FunctionSignatureSemicolonTransportSlot::Semicolon(inner) => render_semicolon(inner, dest),
-            FunctionSignatureSemicolonTransportSlot::FunctionSignatureAutomaticSemicolon(inner) => render_function_signature_automatic_semicolon(inner, dest),
+            FunctionSignatureSemicolonTransportSlot::Literal38_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
         }
     }
 }
@@ -17354,7 +19966,7 @@ pub enum AsExpressionTypeAnnotationTransportSlot {
     InferType(InferTypeTransport),
     TypeQueryMemberExpressionInTypeAnnotation(TypeQueryMemberExpressionInTypeAnnotationTransport),
     TypeQueryCallExpressionInTypeAnnotation(TypeQueryCallExpressionInTypeAnnotationTransport),
-    Literal38_63_6f_6e_73_74,
+    Literal39_63_6f_6e_73_74,
     Verbatim(VerbatimTransport),
 }
 
@@ -17436,9 +20048,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsExpressionTypeAnnotationTransp
                     333 => Ok(Self::ExistentialType(
                         ExistentialTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    3 => Ok(Self::ExistentialType(
-                        ExistentialTypeTransport::from_napi_value(env, napi_val)?
-                    )),
                     331 => Ok(Self::LiteralType(
                         LiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -17475,7 +20084,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsExpressionTypeAnnotationTransp
                     305 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    16 => Ok(Self::Literal38_63_6f_6e_73_74),
+                    16 => Ok(Self::Literal39_63_6f_6e_73_74),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AsExpressionTypeAnnotationTransportSlot",
                     ))),
@@ -17560,9 +20169,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsExpressionTypeAnnotationTransp
                     333 => Ok(Self::ExistentialType(
                         ExistentialTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    3 => Ok(Self::ExistentialType(
-                        ExistentialTypeTransport::from_napi_value(env, napi_val)?
-                    )),
                     331 => Ok(Self::LiteralType(
                         LiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -17599,7 +20205,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsExpressionTypeAnnotationTransp
                     305 => Ok(Self::TypeQueryCallExpressionInTypeAnnotation(
                         TypeQueryCallExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
-                    16 => Ok(Self::Literal38_63_6f_6e_73_74),
+                    16 => Ok(Self::Literal39_63_6f_6e_73_74),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AsExpressionTypeAnnotationTransportSlot",
                     ))),
@@ -17667,7 +20273,7 @@ fn as_expression_type_annotation_transport_slot_to_any(t: AsExpressionTypeAnnota
         AsExpressionTypeAnnotationTransportSlot::InferType(inner) => AnyTransport::InferType(inner),
         AsExpressionTypeAnnotationTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => AnyTransport::TypeQueryMemberExpressionInTypeAnnotation(inner),
         AsExpressionTypeAnnotationTransportSlot::TypeQueryCallExpressionInTypeAnnotation(inner) => AnyTransport::TypeQueryCallExpressionInTypeAnnotation(inner),
-        AsExpressionTypeAnnotationTransportSlot::Literal38_63_6f_6e_73_74 => AnyTransport::Literal38_63_6f_6e_73_74,
+        AsExpressionTypeAnnotationTransportSlot::Literal39_63_6f_6e_73_74 => AnyTransport::Literal39_63_6f_6e_73_74,
         AsExpressionTypeAnnotationTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -17703,7 +20309,7 @@ impl RenderableTransport for AsExpressionTypeAnnotationTransportSlot {
             AsExpressionTypeAnnotationTransportSlot::InferType(inner) => render_infer_type(inner, dest),
             AsExpressionTypeAnnotationTransportSlot::TypeQueryMemberExpressionInTypeAnnotation(inner) => render_type_query_member_expression_in_type_annotation(inner, dest),
             AsExpressionTypeAnnotationTransportSlot::TypeQueryCallExpressionInTypeAnnotation(inner) => render_type_query_call_expression_in_type_annotation(inner, dest),
-            AsExpressionTypeAnnotationTransportSlot::Literal38_63_6f_6e_73_74 => dest.write_str("const").map_err(::askama::Error::from),
+            AsExpressionTypeAnnotationTransportSlot::Literal39_63_6f_6e_73_74 => dest.write_str("const").map_err(::askama::Error::from),
             AsExpressionTypeAnnotationTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -18599,6 +21205,174 @@ impl RenderableTransport for ExtendsTypeClauseTypeTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum EnumDeclarationConstMarkerTransportSlot {
+    Literal40_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for EnumDeclarationConstMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    16 => Ok(Self::Literal40_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in EnumDeclarationConstMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in EnumDeclarationConstMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    16 => Ok(Self::Literal40_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in EnumDeclarationConstMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("EnumDeclarationConstMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for EnumDeclarationConstMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("EnumDeclarationConstMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<EnumDeclarationConstMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        EnumDeclarationConstMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<EnumDeclarationConstMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        EnumDeclarationConstMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn enum_declaration_const_marker_transport_slot_to_any(t: EnumDeclarationConstMarkerTransportSlot) -> AnyTransport {
+    match t {
+        EnumDeclarationConstMarkerTransportSlot::Literal40_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal40_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for EnumDeclarationConstMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            EnumDeclarationConstMarkerTransportSlot::Literal40_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72 => dest.write_str("const").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum RequiredParameterReadonlyMarkerTransportSlot {
+    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for RequiredParameterReadonlyMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    121 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in RequiredParameterReadonlyMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in RequiredParameterReadonlyMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    121 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in RequiredParameterReadonlyMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("RequiredParameterReadonlyMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for RequiredParameterReadonlyMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("RequiredParameterReadonlyMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<RequiredParameterReadonlyMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        RequiredParameterReadonlyMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<RequiredParameterReadonlyMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        RequiredParameterReadonlyMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn required_parameter_readonly_marker_transport_slot_to_any(t: RequiredParameterReadonlyMarkerTransportSlot) -> AnyTransport {
+    match t {
+        RequiredParameterReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for RequiredParameterReadonlyMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            RequiredParameterReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum RequiredParameterPatternTransportSlot {
     LhsExpression(LhsExpressionTransport),
     RestPattern(RestPatternTransport),
@@ -18705,6 +21479,90 @@ impl RenderableTransport for RequiredParameterPatternTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum OptionalParameterReadonlyMarkerTransportSlot {
+    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for OptionalParameterReadonlyMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    121 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in OptionalParameterReadonlyMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in OptionalParameterReadonlyMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    121 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in OptionalParameterReadonlyMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("OptionalParameterReadonlyMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for OptionalParameterReadonlyMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("OptionalParameterReadonlyMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<OptionalParameterReadonlyMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        OptionalParameterReadonlyMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<OptionalParameterReadonlyMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        OptionalParameterReadonlyMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn optional_parameter_readonly_marker_transport_slot_to_any(t: OptionalParameterReadonlyMarkerTransportSlot) -> AnyTransport {
+    match t {
+        OptionalParameterReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for OptionalParameterReadonlyMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            OptionalParameterReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum OptionalParameterPatternTransportSlot {
     LhsExpression(LhsExpressionTransport),
     RestPattern(RestPatternTransport),
@@ -18806,6 +21664,90 @@ impl RenderableTransport for OptionalParameterPatternTransportSlot {
             OptionalParameterPatternTransportSlot::LhsExpression(inner) => render_lhs_expression(inner, dest),
             OptionalParameterPatternTransportSlot::RestPattern(inner) => render_rest_pattern(inner, dest),
             OptionalParameterPatternTransportSlot::This(inner) => render_this(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ParameterNameReadonlyMarkerTransportSlot {
+    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ParameterNameReadonlyMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    121 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ParameterNameReadonlyMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ParameterNameReadonlyMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    121 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ParameterNameReadonlyMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ParameterNameReadonlyMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ParameterNameReadonlyMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ParameterNameReadonlyMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ParameterNameReadonlyMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ParameterNameReadonlyMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ParameterNameReadonlyMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ParameterNameReadonlyMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn parameter_name_readonly_marker_transport_slot_to_any(t: ParameterNameReadonlyMarkerTransportSlot) -> AnyTransport {
+    match t {
+        ParameterNameReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for ParameterNameReadonlyMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ParameterNameReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
         }
     }
 }
@@ -18935,9 +21877,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionInTypeA
                     173 => Ok(Self::Import(
                         ImportTransport::from_napi_value(env, napi_val)?
                     )),
-                    9 => Ok(Self::Import(
-                        ImportTransport::from_napi_value(env, napi_val)?
-                    )),
                     304 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
@@ -18962,9 +21901,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionInTypeA
                 )?;
                 match kind_id {
                     173 => Ok(Self::Import(
-                        ImportTransport::from_napi_value(env, napi_val)?
-                    )),
-                    9 => Ok(Self::Import(
                         ImportTransport::from_napi_value(env, napi_val)?
                     )),
                     304 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
@@ -19168,9 +22104,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryCallExpressionInTypeAnn
                     173 => Ok(Self::Import(
                         ImportTransport::from_napi_value(env, napi_val)?
                     )),
-                    9 => Ok(Self::Import(
-                        ImportTransport::from_napi_value(env, napi_val)?
-                    )),
                     304 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
                         TypeQueryMemberExpressionInTypeAnnotationTransport::from_napi_value(env, napi_val)?
                     )),
@@ -19189,9 +22122,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryCallExpressionInTypeAnn
                 )?;
                 match kind_id {
                     173 => Ok(Self::Import(
-                        ImportTransport::from_napi_value(env, napi_val)?
-                    )),
-                    9 => Ok(Self::Import(
                         ImportTransport::from_napi_value(env, napi_val)?
                     )),
                     304 => Ok(Self::TypeQueryMemberExpressionInTypeAnnotation(
@@ -19374,8 +22304,8 @@ impl RenderableTransport for AssertsContentTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum AssertsAnnotationAssertsTransportSlot {
-    AssertsAnnotationAsserts(AssertsAnnotationAssertsTransport),
     Asserts(AssertsTransport),
+    Literal41_5f_61_73_73_65_72_74_73_5f_61_6e_6e_6f_74_61_74_69_6f_6e_5f_61_73_73_65_72_74_73,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -19387,12 +22317,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertsAnnotationAssertsTranspor
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    35 => Ok(Self::AssertsAnnotationAsserts(
-                        AssertsAnnotationAssertsTransport::from_napi_value(env, napi_val)?
-                    )),
                     306 => Ok(Self::Asserts(
                         AssertsTransport::from_napi_value(env, napi_val)?
                     )),
+                    35 => Ok(Self::Literal41_5f_61_73_73_65_72_74_73_5f_61_6e_6e_6f_74_61_74_69_6f_6e_5f_61_73_73_65_72_74_73),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AssertsAnnotationAssertsTransportSlot",
                     ))),
@@ -19404,12 +22332,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertsAnnotationAssertsTranspor
                     ::napi::Error::from_reason("$type property missing in AssertsAnnotationAssertsTransportSlot")
                 )?;
                 match kind_id {
-                    35 => Ok(Self::AssertsAnnotationAsserts(
-                        AssertsAnnotationAssertsTransport::from_napi_value(env, napi_val)?
-                    )),
                     306 => Ok(Self::Asserts(
                         AssertsTransport::from_napi_value(env, napi_val)?
                     )),
+                    35 => Ok(Self::Literal41_5f_61_73_73_65_72_74_73_5f_61_6e_6e_6f_74_61_74_69_6f_6e_5f_61_73_73_65_72_74_73),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in AssertsAnnotationAssertsTransportSlot",
                     ))),
@@ -19452,8 +22378,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AssertsAnnotationAssertsTransp
 
 fn asserts_annotation_asserts_transport_slot_to_any(t: AssertsAnnotationAssertsTransportSlot) -> AnyTransport {
     match t {
-        AssertsAnnotationAssertsTransportSlot::AssertsAnnotationAsserts(inner) => AnyTransport::AssertsAnnotationAsserts(inner),
         AssertsAnnotationAssertsTransportSlot::Asserts(inner) => AnyTransport::Asserts(inner),
+        AssertsAnnotationAssertsTransportSlot::Literal41_5f_61_73_73_65_72_74_73_5f_61_6e_6e_6f_74_61_74_69_6f_6e_5f_61_73_73_65_72_74_73 => AnyTransport::Literal41_5f_61_73_73_65_72_74_73_5f_61_6e_6e_6f_74_61_74_69_6f_6e_5f_61_73_73_65_72_74_73,
     }
 }
 
@@ -19463,8 +22389,8 @@ impl RenderableTransport for AssertsAnnotationAssertsTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            AssertsAnnotationAssertsTransportSlot::AssertsAnnotationAsserts(inner) => render_asserts_annotation_asserts(inner, dest),
             AssertsAnnotationAssertsTransportSlot::Asserts(inner) => render_asserts(inner, dest),
+            AssertsAnnotationAssertsTransportSlot::Literal41_5f_61_73_73_65_72_74_73_5f_61_6e_6e_6f_74_61_74_69_6f_6e_5f_61_73_73_65_72_74_73 => dest.write_str(":").map_err(::askama::Error::from),
         }
     }
 }
@@ -19574,6 +22500,90 @@ impl RenderableTransport for TupleParameterNameTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum ConstructorTypeAbstractMarkerTransportSlot {
+    Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ConstructorTypeAbstractMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    131 => Ok(Self::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ConstructorTypeAbstractMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ConstructorTypeAbstractMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    131 => Ok(Self::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ConstructorTypeAbstractMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ConstructorTypeAbstractMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ConstructorTypeAbstractMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ConstructorTypeAbstractMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ConstructorTypeAbstractMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ConstructorTypeAbstractMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ConstructorTypeAbstractMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ConstructorTypeAbstractMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn constructor_type_abstract_marker_transport_slot_to_any(t: ConstructorTypeAbstractMarkerTransportSlot) -> AnyTransport {
+    match t {
+        ConstructorTypeAbstractMarkerTransportSlot::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for ConstructorTypeAbstractMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ConstructorTypeAbstractMarkerTransportSlot::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => dest.write_str("abstract").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum TemplateTypeContentTransportSlot {
     ParenthesizedType(ParenthesizedTypeTransport),
     PredefinedType(PredefinedTypeEnum),
@@ -19674,9 +22684,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateTypeContentTransportSlot
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
                     333 => Ok(Self::ExistentialType(
-                        ExistentialTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    3 => Ok(Self::ExistentialType(
                         ExistentialTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     331 => Ok(Self::LiteralType(
@@ -19782,9 +22789,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TemplateTypeContentTransportSlot
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
                     333 => Ok(Self::ExistentialType(
-                        ExistentialTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    3 => Ok(Self::ExistentialType(
                         ExistentialTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     331 => Ok(Self::LiteralType(
@@ -20294,8 +23298,8 @@ impl RenderableTransport for TypePredicateNameTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum TypePredicateAnnotationTypePredicateTransportSlot {
-    AssertsAnnotationAsserts(AssertsAnnotationAssertsTransport),
     TypePredicate(TypePredicateTransport),
+    Literal41_5f_61_73_73_65_72_74_73_5f_61_6e_6e_6f_74_61_74_69_6f_6e_5f_61_73_73_65_72_74_73,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -20307,12 +23311,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypePredicateAnnotationTypePredi
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    35 => Ok(Self::AssertsAnnotationAsserts(
-                        AssertsAnnotationAssertsTransport::from_napi_value(env, napi_val)?
-                    )),
                     321 => Ok(Self::TypePredicate(
                         TypePredicateTransport::from_napi_value(env, napi_val)?
                     )),
+                    35 => Ok(Self::Literal41_5f_61_73_73_65_72_74_73_5f_61_6e_6e_6f_74_61_74_69_6f_6e_5f_61_73_73_65_72_74_73),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TypePredicateAnnotationTypePredicateTransportSlot",
                     ))),
@@ -20324,12 +23326,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypePredicateAnnotationTypePredi
                     ::napi::Error::from_reason("$type property missing in TypePredicateAnnotationTypePredicateTransportSlot")
                 )?;
                 match kind_id {
-                    35 => Ok(Self::AssertsAnnotationAsserts(
-                        AssertsAnnotationAssertsTransport::from_napi_value(env, napi_val)?
-                    )),
                     321 => Ok(Self::TypePredicate(
                         TypePredicateTransport::from_napi_value(env, napi_val)?
                     )),
+                    35 => Ok(Self::Literal41_5f_61_73_73_65_72_74_73_5f_61_6e_6e_6f_74_61_74_69_6f_6e_5f_61_73_73_65_72_74_73),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TypePredicateAnnotationTypePredicateTransportSlot",
                     ))),
@@ -20372,8 +23372,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypePredicateAnnotationTypePre
 
 fn type_predicate_annotation_type_predicate_transport_slot_to_any(t: TypePredicateAnnotationTypePredicateTransportSlot) -> AnyTransport {
     match t {
-        TypePredicateAnnotationTypePredicateTransportSlot::AssertsAnnotationAsserts(inner) => AnyTransport::AssertsAnnotationAsserts(inner),
         TypePredicateAnnotationTypePredicateTransportSlot::TypePredicate(inner) => AnyTransport::TypePredicate(inner),
+        TypePredicateAnnotationTypePredicateTransportSlot::Literal41_5f_61_73_73_65_72_74_73_5f_61_6e_6e_6f_74_61_74_69_6f_6e_5f_61_73_73_65_72_74_73 => AnyTransport::Literal41_5f_61_73_73_65_72_74_73_5f_61_6e_6e_6f_74_61_74_69_6f_6e_5f_61_73_73_65_72_74_73,
     }
 }
 
@@ -20383,8 +23383,8 @@ impl RenderableTransport for TypePredicateAnnotationTypePredicateTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TypePredicateAnnotationTypePredicateTransportSlot::AssertsAnnotationAsserts(inner) => render_asserts_annotation_asserts(inner, dest),
             TypePredicateAnnotationTypePredicateTransportSlot::TypePredicate(inner) => render_type_predicate(inner, dest),
+            TypePredicateAnnotationTypePredicateTransportSlot::Literal41_5f_61_73_73_65_72_74_73_5f_61_6e_6e_6f_74_61_74_69_6f_6e_5f_61_73_73_65_72_74_73 => dest.write_str(":").map_err(::askama::Error::from),
         }
     }
 }
@@ -20644,6 +23644,95 @@ impl RenderableTransport for TypeQueryMemberExpressionPropertyTransportSlot {
             TypeQueryMemberExpressionPropertyTransportSlot::PrivatePropertyIdentifier(inner) => render_private_property_identifier(inner, dest),
             TypeQueryMemberExpressionPropertyTransportSlot::Identifier(inner) => render_identifier(inner, dest),
             TypeQueryMemberExpressionPropertyTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum TypeQueryMemberExpressionContentTransportSlot {
+    Literal6_2e,
+    Literal43_3f_2e,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryMemberExpressionContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    44 => Ok(Self::Literal6_2e),
+                    49 => Ok(Self::Literal43_3f_2e),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in TypeQueryMemberExpressionContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in TypeQueryMemberExpressionContentTransportSlot")
+                )?;
+                match kind_id {
+                    44 => Ok(Self::Literal6_2e),
+                    49 => Ok(Self::Literal43_3f_2e),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in TypeQueryMemberExpressionContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("TypeQueryMemberExpressionContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TypeQueryMemberExpressionContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("TypeQueryMemberExpressionContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TypeQueryMemberExpressionContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        TypeQueryMemberExpressionContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeQueryMemberExpressionContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        TypeQueryMemberExpressionContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn type_query_member_expression_content_transport_slot_to_any(t: TypeQueryMemberExpressionContentTransportSlot) -> AnyTransport {
+    match t {
+        TypeQueryMemberExpressionContentTransportSlot::Literal6_2e => AnyTransport::Literal6_2e,
+        TypeQueryMemberExpressionContentTransportSlot::Literal43_3f_2e => AnyTransport::Literal43_3f_2e,
+    }
+}
+
+impl RenderableTransport for TypeQueryMemberExpressionContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            TypeQueryMemberExpressionContentTransportSlot::Literal6_2e => dest.write_str(".").map_err(::askama::Error::from),
+            TypeQueryMemberExpressionContentTransportSlot::Literal43_3f_2e => dest.write_str("?.").map_err(::askama::Error::from),
         }
     }
 }
@@ -20991,9 +24080,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryCallExpressionFunctionT
                     173 => Ok(Self::Import(
                         ImportTransport::from_napi_value(env, napi_val)?
                     )),
-                    9 => Ok(Self::Import(
-                        ImportTransport::from_napi_value(env, napi_val)?
-                    )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -21025,9 +24111,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryCallExpressionFunctionT
                 )?;
                 match kind_id {
                     173 => Ok(Self::Import(
-                        ImportTransport::from_napi_value(env, napi_val)?
-                    )),
-                    9 => Ok(Self::Import(
                         ImportTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -21131,9 +24214,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryInstantiationExpression
                     173 => Ok(Self::Import(
                         ImportTransport::from_napi_value(env, napi_val)?
                     )),
-                    9 => Ok(Self::Import(
-                        ImportTransport::from_napi_value(env, napi_val)?
-                    )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -21165,9 +24245,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeQueryInstantiationExpression
                 )?;
                 match kind_id {
                     173 => Ok(Self::Import(
-                        ImportTransport::from_napi_value(env, napi_val)?
-                    )),
-                    9 => Ok(Self::Import(
                         ImportTransport::from_napi_value(env, napi_val)?
                     )),
                     1 => Ok(Self::Identifier(
@@ -21676,6 +24753,688 @@ impl RenderableTransport for CallSignatureReturnTypeTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum PropertySignatureStaticMarkerTransportSlot {
+    Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureStaticMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    112 => Ok(Self::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PropertySignatureStaticMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in PropertySignatureStaticMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    112 => Ok(Self::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PropertySignatureStaticMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("PropertySignatureStaticMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PropertySignatureStaticMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("PropertySignatureStaticMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PropertySignatureStaticMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PropertySignatureStaticMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PropertySignatureStaticMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PropertySignatureStaticMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn property_signature_static_marker_transport_slot_to_any(t: PropertySignatureStaticMarkerTransportSlot) -> AnyTransport {
+    match t {
+        PropertySignatureStaticMarkerTransportSlot::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for PropertySignatureStaticMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            PropertySignatureStaticMarkerTransportSlot::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum PropertySignatureOverrideModifierTransportSlot {
+    Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureOverrideModifierTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    120 => Ok(Self::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PropertySignatureOverrideModifierTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in PropertySignatureOverrideModifierTransportSlot")
+                )?;
+                match kind_id {
+                    120 => Ok(Self::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PropertySignatureOverrideModifierTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("PropertySignatureOverrideModifierTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PropertySignatureOverrideModifierTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("PropertySignatureOverrideModifierTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PropertySignatureOverrideModifierTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PropertySignatureOverrideModifierTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PropertySignatureOverrideModifierTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PropertySignatureOverrideModifierTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn property_signature_override_modifier_transport_slot_to_any(t: PropertySignatureOverrideModifierTransportSlot) -> AnyTransport {
+    match t {
+        PropertySignatureOverrideModifierTransportSlot::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => AnyTransport::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72,
+    }
+}
+
+impl RenderableTransport for PropertySignatureOverrideModifierTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            PropertySignatureOverrideModifierTransportSlot::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => dest.write_str("override").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum PropertySignatureReadonlyMarkerTransportSlot {
+    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureReadonlyMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    121 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PropertySignatureReadonlyMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in PropertySignatureReadonlyMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    121 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PropertySignatureReadonlyMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("PropertySignatureReadonlyMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PropertySignatureReadonlyMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("PropertySignatureReadonlyMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PropertySignatureReadonlyMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PropertySignatureReadonlyMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PropertySignatureReadonlyMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PropertySignatureReadonlyMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn property_signature_readonly_marker_transport_slot_to_any(t: PropertySignatureReadonlyMarkerTransportSlot) -> AnyTransport {
+    match t {
+        PropertySignatureReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for PropertySignatureReadonlyMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            PropertySignatureReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum PropertySignatureOptionalMarkerTransportSlot {
+    Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for PropertySignatureOptionalMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    130 => Ok(Self::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PropertySignatureOptionalMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in PropertySignatureOptionalMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    130 => Ok(Self::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PropertySignatureOptionalMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("PropertySignatureOptionalMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PropertySignatureOptionalMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("PropertySignatureOptionalMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PropertySignatureOptionalMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PropertySignatureOptionalMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PropertySignatureOptionalMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PropertySignatureOptionalMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn property_signature_optional_marker_transport_slot_to_any(t: PropertySignatureOptionalMarkerTransportSlot) -> AnyTransport {
+    match t {
+        PropertySignatureOptionalMarkerTransportSlot::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72 => AnyTransport::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for PropertySignatureOptionalMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            PropertySignatureOptionalMarkerTransportSlot::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72 => dest.write_str("?").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum TypeParameterConstMarkerTransportSlot {
+    Literal40_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for TypeParameterConstMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    16 => Ok(Self::Literal40_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in TypeParameterConstMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in TypeParameterConstMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    16 => Ok(Self::Literal40_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in TypeParameterConstMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("TypeParameterConstMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TypeParameterConstMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("TypeParameterConstMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<TypeParameterConstMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        TypeParameterConstMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeParameterConstMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        TypeParameterConstMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn type_parameter_const_marker_transport_slot_to_any(t: TypeParameterConstMarkerTransportSlot) -> AnyTransport {
+    match t {
+        TypeParameterConstMarkerTransportSlot::Literal40_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal40_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for TypeParameterConstMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            TypeParameterConstMarkerTransportSlot::Literal40_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72 => dest.write_str("const").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ConstraintContentTransportSlot {
+    Literal44_65_78_74_65_6e_64_73,
+    Literal45_3a,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ConstraintContentTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    134 => Ok(Self::Literal44_65_78_74_65_6e_64_73),
+                    35 => Ok(Self::Literal45_3a),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ConstraintContentTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ConstraintContentTransportSlot")
+                )?;
+                match kind_id {
+                    134 => Ok(Self::Literal44_65_78_74_65_6e_64_73),
+                    35 => Ok(Self::Literal45_3a),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ConstraintContentTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ConstraintContentTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ConstraintContentTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ConstraintContentTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ConstraintContentTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ConstraintContentTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ConstraintContentTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ConstraintContentTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn constraint_content_transport_slot_to_any(t: ConstraintContentTransportSlot) -> AnyTransport {
+    match t {
+        ConstraintContentTransportSlot::Literal44_65_78_74_65_6e_64_73 => AnyTransport::Literal44_65_78_74_65_6e_64_73,
+        ConstraintContentTransportSlot::Literal45_3a => AnyTransport::Literal45_3a,
+    }
+}
+
+impl RenderableTransport for ConstraintContentTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ConstraintContentTransportSlot::Literal44_65_78_74_65_6e_64_73 => dest.write_str("extends").map_err(::askama::Error::from),
+            ConstraintContentTransportSlot::Literal45_3a => dest.write_str(":").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ConstructSignatureAbstractMarkerTransportSlot {
+    Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ConstructSignatureAbstractMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    131 => Ok(Self::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ConstructSignatureAbstractMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ConstructSignatureAbstractMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    131 => Ok(Self::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ConstructSignatureAbstractMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ConstructSignatureAbstractMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ConstructSignatureAbstractMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ConstructSignatureAbstractMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ConstructSignatureAbstractMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ConstructSignatureAbstractMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ConstructSignatureAbstractMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ConstructSignatureAbstractMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn construct_signature_abstract_marker_transport_slot_to_any(t: ConstructSignatureAbstractMarkerTransportSlot) -> AnyTransport {
+    match t {
+        ConstructSignatureAbstractMarkerTransportSlot::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for ConstructSignatureAbstractMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ConstructSignatureAbstractMarkerTransportSlot::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => dest.write_str("abstract").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum IndexSignatureSignTransportSlot {
+    Literal18_2d,
+    Literal17_2b,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for IndexSignatureSignTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    76 => Ok(Self::Literal18_2d),
+                    75 => Ok(Self::Literal17_2b),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in IndexSignatureSignTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in IndexSignatureSignTransportSlot")
+                )?;
+                match kind_id {
+                    76 => Ok(Self::Literal18_2d),
+                    75 => Ok(Self::Literal17_2b),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in IndexSignatureSignTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("IndexSignatureSignTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for IndexSignatureSignTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("IndexSignatureSignTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<IndexSignatureSignTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        IndexSignatureSignTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<IndexSignatureSignTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        IndexSignatureSignTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn index_signature_sign_transport_slot_to_any(t: IndexSignatureSignTransportSlot) -> AnyTransport {
+    match t {
+        IndexSignatureSignTransportSlot::Literal18_2d => AnyTransport::Literal18_2d,
+        IndexSignatureSignTransportSlot::Literal17_2b => AnyTransport::Literal17_2b,
+    }
+}
+
+impl RenderableTransport for IndexSignatureSignTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            IndexSignatureSignTransportSlot::Literal18_2d => dest.write_str("-").map_err(::askama::Error::from),
+            IndexSignatureSignTransportSlot::Literal17_2b => dest.write_str("+").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum IndexSignatureTypeTransportSlot {
     TypeAnnotation(TypeAnnotationTransport),
     OmittingTypeAnnotation(OmittingTypeAnnotationTransport),
@@ -21997,9 +25756,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionTypeReturnTypeTransportS
                     333 => Ok(Self::ExistentialType(
                         ExistentialTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    3 => Ok(Self::ExistentialType(
-                        ExistentialTypeTransport::from_napi_value(env, napi_val)?
-                    )),
                     331 => Ok(Self::LiteralType(
                         LiteralTypeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -22124,9 +25880,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionTypeReturnTypeTransportS
                         ThisTransport::from_napi_value(env, napi_val)?
                     )),
                     333 => Ok(Self::ExistentialType(
-                        ExistentialTypeTransport::from_napi_value(env, napi_val)?
-                    )),
-                    3 => Ok(Self::ExistentialType(
                         ExistentialTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     331 => Ok(Self::LiteralType(
@@ -23175,6 +26928,90 @@ impl RenderableTransport for BinaryExpressionGroup1LeftTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum BinaryExpressionGroup1OperatorTransportSlot {
+    Literal46_69_6e,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for BinaryExpressionGroup1OperatorTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    25 => Ok(Self::Literal46_69_6e),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in BinaryExpressionGroup1OperatorTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in BinaryExpressionGroup1OperatorTransportSlot")
+                )?;
+                match kind_id {
+                    25 => Ok(Self::Literal46_69_6e),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in BinaryExpressionGroup1OperatorTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("BinaryExpressionGroup1OperatorTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for BinaryExpressionGroup1OperatorTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("BinaryExpressionGroup1OperatorTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<BinaryExpressionGroup1OperatorTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        BinaryExpressionGroup1OperatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<BinaryExpressionGroup1OperatorTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        BinaryExpressionGroup1OperatorTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn binary_expression_group1_operator_transport_slot_to_any(t: BinaryExpressionGroup1OperatorTransportSlot) -> AnyTransport {
+    match t {
+        BinaryExpressionGroup1OperatorTransportSlot::Literal46_69_6e => AnyTransport::Literal46_69_6e,
+    }
+}
+
+impl RenderableTransport for BinaryExpressionGroup1OperatorTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            BinaryExpressionGroup1OperatorTransportSlot::Literal46_69_6e => dest.write_str("in").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum JsxStartOpeningElementGroup1NameTransportSlot {
     Identifier(IdentifierTransport),
     NestedIdentifier(NestedIdentifierTransport),
@@ -23561,6 +27398,95 @@ impl RenderableTransport for EnumBodyGroup1ContentTransportSlot {
             EnumBodyGroup1ContentTransportSlot::Number(inner) => render_number(inner, dest),
             EnumBodyGroup1ContentTransportSlot::ComputedPropertyName(inner) => render_computed_property_name(inner, dest),
             EnumBodyGroup1ContentTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum IndexSignatureOptional1SignTransportSlot {
+    Literal18_2d,
+    Literal17_2b,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for IndexSignatureOptional1SignTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    76 => Ok(Self::Literal18_2d),
+                    75 => Ok(Self::Literal17_2b),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in IndexSignatureOptional1SignTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in IndexSignatureOptional1SignTransportSlot")
+                )?;
+                match kind_id {
+                    76 => Ok(Self::Literal18_2d),
+                    75 => Ok(Self::Literal17_2b),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in IndexSignatureOptional1SignTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("IndexSignatureOptional1SignTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for IndexSignatureOptional1SignTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("IndexSignatureOptional1SignTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<IndexSignatureOptional1SignTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        IndexSignatureOptional1SignTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<IndexSignatureOptional1SignTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        IndexSignatureOptional1SignTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn index_signature_optional1_sign_transport_slot_to_any(t: IndexSignatureOptional1SignTransportSlot) -> AnyTransport {
+    match t {
+        IndexSignatureOptional1SignTransportSlot::Literal18_2d => AnyTransport::Literal18_2d,
+        IndexSignatureOptional1SignTransportSlot::Literal17_2b => AnyTransport::Literal17_2b,
+    }
+}
+
+impl RenderableTransport for IndexSignatureOptional1SignTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            IndexSignatureOptional1SignTransportSlot::Literal18_2d => dest.write_str("-").map_err(::askama::Error::from),
+            IndexSignatureOptional1SignTransportSlot::Literal17_2b => dest.write_str("+").map_err(::askama::Error::from),
         }
     }
 }
@@ -25022,8 +28948,8 @@ impl RenderableTransport for ExportStatementDefaultDefaultKwContentTransportSlot
 
 #[derive(Debug, Clone)]
 pub enum ClassBodyMethodSigTerminatorTransportSlot {
-    FunctionSignatureAutomaticSemicolon(FunctionSignatureAutomaticSemicolonTransport),
-    Literal43_2c,
+    Literal38_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+    Literal47_2c,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -25035,10 +28961,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMethodSigTerminatorTran
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    164 => Ok(Self::FunctionSignatureAutomaticSemicolon(
-                        FunctionSignatureAutomaticSemicolonTransport::from_napi_value(env, napi_val)?
-                    )),
-                    14 => Ok(Self::Literal43_2c),
+                    164 => Ok(Self::Literal38_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+                    14 => Ok(Self::Literal47_2c),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ClassBodyMethodSigTerminatorTransportSlot",
                     ))),
@@ -25050,10 +28974,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMethodSigTerminatorTran
                     ::napi::Error::from_reason("$type property missing in ClassBodyMethodSigTerminatorTransportSlot")
                 )?;
                 match kind_id {
-                    164 => Ok(Self::FunctionSignatureAutomaticSemicolon(
-                        FunctionSignatureAutomaticSemicolonTransport::from_napi_value(env, napi_val)?
-                    )),
-                    14 => Ok(Self::Literal43_2c),
+                    164 => Ok(Self::Literal38_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+                    14 => Ok(Self::Literal47_2c),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ClassBodyMethodSigTerminatorTransportSlot",
                     ))),
@@ -25096,8 +29018,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassBodyMethodSigTerminatorTr
 
 fn class_body_method_sig_terminator_transport_slot_to_any(t: ClassBodyMethodSigTerminatorTransportSlot) -> AnyTransport {
     match t {
-        ClassBodyMethodSigTerminatorTransportSlot::FunctionSignatureAutomaticSemicolon(inner) => AnyTransport::FunctionSignatureAutomaticSemicolon(inner),
-        ClassBodyMethodSigTerminatorTransportSlot::Literal43_2c => AnyTransport::Literal43_2c,
+        ClassBodyMethodSigTerminatorTransportSlot::Literal38_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal38_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+        ClassBodyMethodSigTerminatorTransportSlot::Literal47_2c => AnyTransport::Literal47_2c,
     }
 }
 
@@ -25107,8 +29029,8 @@ impl RenderableTransport for ClassBodyMethodSigTerminatorTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ClassBodyMethodSigTerminatorTransportSlot::FunctionSignatureAutomaticSemicolon(inner) => render_function_signature_automatic_semicolon(inner, dest),
-            ClassBodyMethodSigTerminatorTransportSlot::Literal43_2c => dest.write_str(",").map_err(::askama::Error::from),
+            ClassBodyMethodSigTerminatorTransportSlot::Literal38_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            ClassBodyMethodSigTerminatorTransportSlot::Literal47_2c => dest.write_str(",").map_err(::askama::Error::from),
         }
     }
 }
@@ -25116,7 +29038,7 @@ impl RenderableTransport for ClassBodyMethodSigTerminatorTransportSlot {
 #[derive(Debug, Clone)]
 pub enum ClassBodyMemberTerminatorTransportSlot {
     Semicolon(SemicolonEnum),
-    Literal43_2c,
+    Literal47_2c,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -25134,7 +29056,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMemberTerminatorTranspo
                     22 => Ok(Self::Semicolon(
                         SemicolonEnum::from_napi_value(env, napi_val)?
                     )),
-                    14 => Ok(Self::Literal43_2c),
+                    14 => Ok(Self::Literal47_2c),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ClassBodyMemberTerminatorTransportSlot",
                     ))),
@@ -25152,7 +29074,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassBodyMemberTerminatorTranspo
                     22 => Ok(Self::Semicolon(
                         SemicolonEnum::from_napi_value(env, napi_val)?
                     )),
-                    14 => Ok(Self::Literal43_2c),
+                    14 => Ok(Self::Literal47_2c),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ClassBodyMemberTerminatorTransportSlot",
                     ))),
@@ -25196,7 +29118,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ClassBodyMemberTerminatorTrans
 fn class_body_member_terminator_transport_slot_to_any(t: ClassBodyMemberTerminatorTransportSlot) -> AnyTransport {
     match t {
         ClassBodyMemberTerminatorTransportSlot::Semicolon(inner) => AnyTransport::Semicolon(inner),
-        ClassBodyMemberTerminatorTransportSlot::Literal43_2c => AnyTransport::Literal43_2c,
+        ClassBodyMemberTerminatorTransportSlot::Literal47_2c => AnyTransport::Literal47_2c,
     }
 }
 
@@ -25207,7 +29129,7 @@ impl RenderableTransport for ClassBodyMemberTerminatorTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             ClassBodyMemberTerminatorTransportSlot::Semicolon(inner) => render_semicolon(inner, dest),
-            ClassBodyMemberTerminatorTransportSlot::Literal43_2c => dest.write_str(",").map_err(::askama::Error::from),
+            ClassBodyMemberTerminatorTransportSlot::Literal47_2c => dest.write_str(",").map_err(::askama::Error::from),
         }
     }
 }
@@ -25426,6 +29348,90 @@ impl RenderableTransport for ForHeaderLhsLeftTransportSlot {
         match self {
             ForHeaderLhsLeftTransportSlot::LhsExpression(inner) => render_lhs_expression(inner, dest),
             ForHeaderLhsLeftTransportSlot::ParenthesizedExpression(inner) => render_parenthesized_expression(inner, dest),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ForHeaderVarKindKindTransportSlot {
+    Literal48_76_61_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderVarKindKindTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    13 => Ok(Self::Literal48_76_61_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ForHeaderVarKindKindTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ForHeaderVarKindKindTransportSlot")
+                )?;
+                match kind_id {
+                    13 => Ok(Self::Literal48_76_61_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ForHeaderVarKindKindTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ForHeaderVarKindKindTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ForHeaderVarKindKindTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ForHeaderVarKindKindTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ForHeaderVarKindKindTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ForHeaderVarKindKindTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ForHeaderVarKindKindTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ForHeaderVarKindKindTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn for_header_var_kind_kind_transport_slot_to_any(t: ForHeaderVarKindKindTransportSlot) -> AnyTransport {
+    match t {
+        ForHeaderVarKindKindTransportSlot::Literal48_76_61_72 => AnyTransport::Literal48_76_61_72,
+    }
+}
+
+impl RenderableTransport for ForHeaderVarKindKindTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ForHeaderVarKindKindTransportSlot::Literal48_76_61_72 => dest.write_str("var").map_err(::askama::Error::from),
         }
     }
 }
@@ -25652,6 +29658,678 @@ impl RenderableTransport for ForHeaderLetConstKindLeftTransportSlot {
             ForHeaderLetConstKindLeftTransportSlot::ObjectPattern(inner) => render_object_pattern(inner, dest),
             ForHeaderLetConstKindLeftTransportSlot::ArrayPattern(inner) => render_array_pattern(inner, dest),
             ForHeaderLetConstKindLeftTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ForHeaderLetConstKindAutomaticSemicolonTransportSlot {
+    Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ForHeaderLetConstKindAutomaticSemicolonTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    159 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ForHeaderLetConstKindAutomaticSemicolonTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ForHeaderLetConstKindAutomaticSemicolonTransportSlot")
+                )?;
+                match kind_id {
+                    159 => Ok(Self::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ForHeaderLetConstKindAutomaticSemicolonTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ForHeaderLetConstKindAutomaticSemicolonTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ForHeaderLetConstKindAutomaticSemicolonTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ForHeaderLetConstKindAutomaticSemicolonTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ForHeaderLetConstKindAutomaticSemicolonTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ForHeaderLetConstKindAutomaticSemicolonTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ForHeaderLetConstKindAutomaticSemicolonTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ForHeaderLetConstKindAutomaticSemicolonTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn for_header_let_const_kind_automatic_semicolon_transport_slot_to_any(t: ForHeaderLetConstKindAutomaticSemicolonTransportSlot) -> AnyTransport {
+    match t {
+        ForHeaderLetConstKindAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e,
+    }
+}
+
+impl RenderableTransport for ForHeaderLetConstKindAutomaticSemicolonTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ForHeaderLetConstKindAutomaticSemicolonTransportSlot::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum PublicFieldDefinitionAccessFirstDeclareMarkerTransportSlot {
+    Literal49_64_65_63_6c_61_72_65,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionAccessFirstDeclareMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    115 => Ok(Self::Literal49_64_65_63_6c_61_72_65),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PublicFieldDefinitionAccessFirstDeclareMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionAccessFirstDeclareMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    115 => Ok(Self::Literal49_64_65_63_6c_61_72_65),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PublicFieldDefinitionAccessFirstDeclareMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("PublicFieldDefinitionAccessFirstDeclareMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PublicFieldDefinitionAccessFirstDeclareMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("PublicFieldDefinitionAccessFirstDeclareMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PublicFieldDefinitionAccessFirstDeclareMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PublicFieldDefinitionAccessFirstDeclareMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionAccessFirstDeclareMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PublicFieldDefinitionAccessFirstDeclareMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn public_field_definition_access_first_declare_marker_transport_slot_to_any(t: PublicFieldDefinitionAccessFirstDeclareMarkerTransportSlot) -> AnyTransport {
+    match t {
+        PublicFieldDefinitionAccessFirstDeclareMarkerTransportSlot::Literal49_64_65_63_6c_61_72_65 => AnyTransport::Literal49_64_65_63_6c_61_72_65,
+    }
+}
+
+impl RenderableTransport for PublicFieldDefinitionAccessFirstDeclareMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            PublicFieldDefinitionAccessFirstDeclareMarkerTransportSlot::Literal49_64_65_63_6c_61_72_65 => dest.write_str("declare").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum PublicFieldDefinitionStaticModsStaticMarkerTransportSlot {
+    Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionStaticModsStaticMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    112 => Ok(Self::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PublicFieldDefinitionStaticModsStaticMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionStaticModsStaticMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    112 => Ok(Self::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PublicFieldDefinitionStaticModsStaticMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("PublicFieldDefinitionStaticModsStaticMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PublicFieldDefinitionStaticModsStaticMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("PublicFieldDefinitionStaticModsStaticMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PublicFieldDefinitionStaticModsStaticMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PublicFieldDefinitionStaticModsStaticMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionStaticModsStaticMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PublicFieldDefinitionStaticModsStaticMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn public_field_definition_static_mods_static_marker_transport_slot_to_any(t: PublicFieldDefinitionStaticModsStaticMarkerTransportSlot) -> AnyTransport {
+    match t {
+        PublicFieldDefinitionStaticModsStaticMarkerTransportSlot::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for PublicFieldDefinitionStaticModsStaticMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            PublicFieldDefinitionStaticModsStaticMarkerTransportSlot::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot {
+    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    121 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    121 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn public_field_definition_static_mods_readonly_marker_transport_slot_to_any(t: PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot) -> AnyTransport {
+    match t {
+        PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            PublicFieldDefinitionStaticModsReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot {
+    Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    131 => Ok(Self::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    131 => Ok(Self::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn public_field_definition_abstract_first_abstract_marker_transport_slot_to_any(t: PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot) -> AnyTransport {
+    match t {
+        PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            PublicFieldDefinitionAbstractFirstAbstractMarkerTransportSlot::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => dest.write_str("abstract").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot {
+    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    121 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    121 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn public_field_definition_abstract_first_readonly_marker_transport_slot_to_any(t: PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot) -> AnyTransport {
+    match t {
+        PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            PublicFieldDefinitionAbstractFirstReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot {
+    Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    121 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    121 => Ok(Self::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn public_field_definition_readonly_first_readonly_marker_transport_slot_to_any(t: PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot) -> AnyTransport {
+    match t {
+        PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            PublicFieldDefinitionReadonlyFirstReadonlyMarkerTransportSlot::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot {
+    Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    131 => Ok(Self::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot")
+                )?;
+                match kind_id {
+                    131 => Ok(Self::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn public_field_definition_readonly_first_abstract_marker_transport_slot_to_any(t: PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot) -> AnyTransport {
+    match t {
+        PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => AnyTransport::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72,
+    }
+}
+
+impl RenderableTransport for PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            PublicFieldDefinitionReadonlyFirstAbstractMarkerTransportSlot::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => dest.write_str("abstract").map_err(::askama::Error::from),
         }
     }
 }
@@ -25892,9 +30570,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionCallFunctionTransp
                     173 => Ok(Self::Import(
                         ImportTransport::from_napi_value(env, napi_val)?
                     )),
-                    9 => Ok(Self::Import(
-                        ImportTransport::from_napi_value(env, napi_val)?
-                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in CallExpressionCallFunctionTransportSlot",
                     ))),
@@ -26091,9 +30766,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for CallExpressionCallFunctionTransp
                         YieldExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     173 => Ok(Self::Import(
-                        ImportTransport::from_napi_value(env, napi_val)?
-                    )),
-                    9 => Ok(Self::Import(
                         ImportTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -61140,12 +65812,12 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Async(t) => t.render_into(dest),
             AnyTransport::Literal0_74_79_70_65 => dest.write_str("type").map_err(::askama::Error::from),
             AnyTransport::Literal1_74_79_70_65_6f_66 => dest.write_str("typeof").map_err(::askama::Error::from),
-            AnyTransport::Literal2_0a => dest.write_str("\n").map_err(::askama::Error::from),
+            AnyTransport::Literal2_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
             AnyTransport::Literal3_3b => dest.write_str(";").map_err(::askama::Error::from),
             AnyTransport::Literal4_61_77_61_69_74 => dest.write_str("await").map_err(::askama::Error::from),
-            AnyTransport::Literal5_61_73_79_6e_63 => dest.write_str("async").map_err(::askama::Error::from),
+            AnyTransport::Literal5_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
             AnyTransport::Literal6_2e => dest.write_str(".").map_err(::askama::Error::from),
-            AnyTransport::Literal7_3f_2e => dest.write_str("?.").map_err(::askama::Error::from),
+            AnyTransport::Literal7_5f_6d_65_6d_62_65_72_5f_65_78_70_72_65_73_73_69_6f_6e_5f_73_65_70_61_72_61_74_6f_72 => dest.write_str("?.").map_err(::askama::Error::from),
             AnyTransport::Literal8_75_73_69_6e_67 => dest.write_str("using").map_err(::askama::Error::from),
             AnyTransport::Literal9_26_26 => dest.write_str("&&").map_err(::askama::Error::from),
             AnyTransport::Literal10_7c_7c => dest.write_str("||").map_err(::askama::Error::from),
@@ -61171,19 +65843,23 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Literal30_3e => dest.write_str(">").map_err(::askama::Error::from),
             AnyTransport::Literal31_3f_3f => dest.write_str("??").map_err(::askama::Error::from),
             AnyTransport::Literal32_69_6e_73_74_61_6e_63_65_6f_66 => dest.write_str("instanceof").map_err(::askama::Error::from),
-            AnyTransport::Literal33_73_74_61_74_69_63 => dest.write_str("static").map_err(::askama::Error::from),
-            AnyTransport::Literal34_6f_76_65_72_72_69_64_65 => dest.write_str("override").map_err(::askama::Error::from),
-            AnyTransport::Literal35_72_65_61_64_6f_6e_6c_79 => dest.write_str("readonly").map_err(::askama::Error::from),
-            AnyTransport::Literal36_3f => dest.write_str("?").map_err(::askama::Error::from),
+            AnyTransport::Literal33_5f_73_74_61_74_69_63_5f_6d_61_72_6b_65_72 => dest.write_str("static").map_err(::askama::Error::from),
+            AnyTransport::Literal34_5f_6f_76_65_72_72_69_64_65_5f_6d_6f_64_69_66_69_65_72 => dest.write_str("override").map_err(::askama::Error::from),
+            AnyTransport::Literal35_5f_72_65_61_64_6f_6e_6c_79_5f_6d_61_72_6b_65_72 => dest.write_str("readonly").map_err(::askama::Error::from),
+            AnyTransport::Literal36_5f_6f_70_74_69_6f_6e_61_6c_5f_6d_61_72_6b_65_72 => dest.write_str("?").map_err(::askama::Error::from),
             AnyTransport::Literal37_61_63_63_65_73_73_6f_72 => dest.write_str("accessor").map_err(::askama::Error::from),
-            AnyTransport::Literal38_63_6f_6e_73_74 => dest.write_str("const").map_err(::askama::Error::from),
-            AnyTransport::Literal39_3a => dest.write_str(":").map_err(::askama::Error::from),
-            AnyTransport::Literal40_61_62_73_74_72_61_63_74 => dest.write_str("abstract").map_err(::askama::Error::from),
-            AnyTransport::Literal41_65_78_74_65_6e_64_73 => dest.write_str("extends").map_err(::askama::Error::from),
-            AnyTransport::Literal42_69_6e => dest.write_str("in").map_err(::askama::Error::from),
-            AnyTransport::Literal43_2c => dest.write_str(",").map_err(::askama::Error::from),
-            AnyTransport::Literal44_76_61_72 => dest.write_str("var").map_err(::askama::Error::from),
-            AnyTransport::Literal45_64_65_63_6c_61_72_65 => dest.write_str("declare").map_err(::askama::Error::from),
+            AnyTransport::Literal38_5f_66_75_6e_63_74_69_6f_6e_5f_73_69_67_6e_61_74_75_72_65_5f_61_75_74_6f_6d_61_74_69_63_5f_73_65_6d_69_63_6f_6c_6f_6e => dest.write_str("\n").map_err(::askama::Error::from),
+            AnyTransport::Literal39_63_6f_6e_73_74 => dest.write_str("const").map_err(::askama::Error::from),
+            AnyTransport::Literal40_5f_63_6f_6e_73_74_5f_6d_61_72_6b_65_72 => dest.write_str("const").map_err(::askama::Error::from),
+            AnyTransport::Literal41_5f_61_73_73_65_72_74_73_5f_61_6e_6e_6f_74_61_74_69_6f_6e_5f_61_73_73_65_72_74_73 => dest.write_str(":").map_err(::askama::Error::from),
+            AnyTransport::Literal42_5f_61_62_73_74_72_61_63_74_5f_6d_61_72_6b_65_72 => dest.write_str("abstract").map_err(::askama::Error::from),
+            AnyTransport::Literal43_3f_2e => dest.write_str("?.").map_err(::askama::Error::from),
+            AnyTransport::Literal44_65_78_74_65_6e_64_73 => dest.write_str("extends").map_err(::askama::Error::from),
+            AnyTransport::Literal45_3a => dest.write_str(":").map_err(::askama::Error::from),
+            AnyTransport::Literal46_69_6e => dest.write_str("in").map_err(::askama::Error::from),
+            AnyTransport::Literal47_2c => dest.write_str(",").map_err(::askama::Error::from),
+            AnyTransport::Literal48_76_61_72 => dest.write_str("var").map_err(::askama::Error::from),
+            AnyTransport::Literal49_64_65_63_6c_61_72_65 => dest.write_str("declare").map_err(::askama::Error::from),
             AnyTransport::Verbatim(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
         }
     }
