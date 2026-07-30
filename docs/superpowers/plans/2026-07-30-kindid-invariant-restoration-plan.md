@@ -27,10 +27,10 @@ for direct unit testing), called from `canonicalizeCatalogLiteralRefs`/
 - Unstamped leaves collect into `KindIdStampMisses` and surface as
   `kindid-unstamped-symbols` / `kindid-unstamped-literals` diagnostics inside
   `link()`, persisted to `grammar-diagnostics.json` via
-  `collectGrammarDiagnosticsForGrammar`/`run-codegen.ts`. Typescript's file
-  currently reports 53 unstamped symbols + 18 unstamped literals; rust's and
-  python's populate once this phase lands on those grammars too (don't block
-  on it — the ratchet test reads whichever counts exist at check time).
+  `collectGrammarDiagnosticsForGrammar`/`run-codegen.ts`. Current persisted
+  counts (all three grammars regenerated): typescript 55 unstamped symbols +
+  18 unstamped literals, rust 42 + 5, python 17 + 14 (the ratchet test reads
+  whichever counts exist at check time, so these move as later phases land).
 - `packages/codegen/src/__tests__/phantom-kind-ratchet.test.ts` imports the
   generated consts and asserts counts stay at or below the audited ceilings.
 
@@ -55,10 +55,12 @@ byte-identical output.
    - `SYMBOL` case (`:1068-1125`): both branches (`rule.literal !== undefined`
      link-minted-literal arm, and the plain ref arm) already call
      `findEntryForLiteralText`/`findEntryForKindName` against
-     `ctx?.kindEntries`. Replace with reads of `rule.resolvedKindId` /
-     `rule.storageKindId` / `rule.parseKindId` off the leaf; keep
-     `ctx.kindEntries` only as a hard-assert fallback during migration (should
-     never fire once Phase 0 is closed for a grammar).
+     `ctx?.kindEntries`. Replace with reads of `rule.storageKindId` /
+     `rule.parseKindId` off the leaf (`SymbolRule` carries this pair, not
+     `resolvedKindId` — that field lives on `StringRule`/`PatternRule` only,
+     see the STRING/PATTERN bullet below); keep `ctx.kindEntries` only as a
+     hard-assert fallback during migration (should never fire once Phase 0 is
+     closed for a grammar).
    - `SUPERTYPE` case (`:1126-1145`): **no existing stamp to read** —
      `canonicalizeRuleLiterals` has no `SUPERTYPE` arm today, so this case
      still does a `findEntryForKindName` call per `subtypes` member on every
@@ -80,8 +82,8 @@ byte-identical output.
    undefined but a catalog entry exists for `rule.value` — that's a stamping
    bug, not an expected miss).
 3. Emit-time chains, `packages/codegen/src/emitters/render-module.ts`:
-   - `resolveLiteralKindId` (`:2635-2661`) and `resolveAcceptedTransportIds`
-     (`:2425-2454`) already have stamp fast paths
+   - `resolveLiteralKindId` (`:2623-2649`) and `resolveAcceptedTransportIds`
+     (`:2424-2453`) already have stamp fast paths
      (`literal.resolvedKindId !== undefined` / `stampedIds !== undefined`) —
      the Phase-0/K3-era partial flip. Their fallback chains (`byText`/`byKind`,
      the `parseAliases`/`parseName` name-derived path, and the fixed-literal

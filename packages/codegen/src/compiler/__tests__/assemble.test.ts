@@ -921,4 +921,42 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		expect(nodeMap.nodes.has('::=')).toBe(true);
 		expect(nodeMap.assembleWarnings.some((w) => w.code === 'kindid-unstamped-anon-literal')).toBe(true);
 	});
+
+	it('skips minting an anonymous node when the catalog-resolved kind name is already a named node', () => {
+		const normalized = makeNormalized({
+			comma: { type: PATTERN, value: '[,]' },
+			root: {
+				type: SEQ,
+				members: [
+					{ type: STRING, value: ',' },
+					{ type: SYMBOL, name: 'identifier' }
+				]
+			},
+			identifier: { type: PATTERN, value: '[a-z]+' }
+		});
+		const generatedIdTables = makeIdTables({ comma: anonEntry(5, ',') });
+		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
+		// The named 'comma' PATTERN rule keeps its own classification -- the
+		// anonymous ',' literal resolving to the same catalog kind name must
+		// not overwrite it with an AssembledToken/Keyword.
+		expect(nodeMap.nodes.get('comma')?.modelType).toBe('pattern');
+	});
+
+	it('materializes a nested-supertype parse alias as its own AssembledSupertype, with the catalog available', () => {
+		const normalized = makeNormalized({
+			_inner: { type: SUPERTYPE, name: '_inner', subtypes: ['identifier'] },
+			_outer: {
+				type: SUPERTYPE,
+				name: '_outer',
+				subtypes: ['_inner'],
+				subtypeParseNames: { _inner: 'inner_alias' }
+			},
+			identifier: { type: PATTERN, value: '[a-z]+' }
+		});
+		const generatedIdTables = makeIdTables({ identifier: anonEntry(7, 'identifier') });
+		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
+		const aliasNode = nodeMap.nodes.get('inner_alias');
+		expect(aliasNode?.modelType).toBe('supertype');
+		expect((aliasNode as { subtypes: string[] }).subtypes).toEqual(['identifier']);
+	});
 });
