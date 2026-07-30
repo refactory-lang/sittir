@@ -28,9 +28,10 @@
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 
-const REPO_ROOT = new URL('..', import.meta.url).pathname;
+const REPO_ROOT = fileURLToPath(new URL('..', import.meta.url));
 
 const EXCLUDED = [/^docs\/cli-command-glossary\.md$/, /^docs\/glossary\//, /^docs\/superpowers\//];
 

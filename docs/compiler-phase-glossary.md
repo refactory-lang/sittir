@@ -188,7 +188,7 @@ Reference: [glossary/compiler.md](glossary/compiler.md).
 
 ## Phase 3: Normalize (`compiler/normalize.ts`, `compiler/wrapper-deletion.ts`)
 
-`normalizeGrammar(linked, ctx?)` runs three steps and returns a
+`normalizeGrammar(linked, ctx?)` runs four steps and returns a
 `SimplifiedGrammar` carrying all three rule views. First
 `applyNormalizationPasses`: collapse degenerate wrappers, fan out
 `seq(a, choice(b, c), d)` into a choice of seqs, factor common
@@ -197,6 +197,9 @@ members, inline single-use hidden rules (fixpoint) — non-lossy on named
 content. Then `applyWrapperDeletion` pushes `optional` / `field` /
 `repeat` / `repeat1` / `alias` wrappers down to leaf `RuleBase` attributes
 ("outer wins", idempotent), producing the wrapper-free `RenderRule` view.
+Third, a fixed-point loop (up to 8 passes) of `inlineHiddenSeqRefs` splices
+hidden-seq refs into their use sites on the render view — each pass can
+expose fresh hidden-seq refs, and the keep-set is re-derived per pass.
 Finally it calls `computeSimplifiedRules` (Phase 3.5) and threads top-level
 alias bodies through the same three-step pipeline so Assemble reads
 snapshots and never re-simplifies per call.

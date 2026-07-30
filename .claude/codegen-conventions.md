@@ -85,7 +85,7 @@ the ADR by file path, not by bare number, so the reference stays resolvable):
 
 ```ts
 /**
- * @forFutureUse dehoisted NodeData surface (docs/adr/, accepted) — $with
+ * @forFutureUse dehoisted NodeData surface (docs/adr/0018-dehoist-nodedata-surface.md, accepted) — $with
  * update namespace. Not yet wired into generated output; scaffolding only.
  */
 ```
