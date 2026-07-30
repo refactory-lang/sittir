@@ -2449,6 +2449,18 @@ function resolveAcceptedTransportIds(input: AcceptedTransportIdsInput): number[]
 		const literalId = findKindEntryForLiteral(kindEntries, node.fixedLiteralText)?.id;
 		if (literalId !== undefined) acceptedIds.push(literalId);
 	}
+	// A field-promoted keyword/token synthesized by enrich (e.g. `_member_expression_separator`
+	// for the `?.` arm of a unified CHOICE field) has no parser catalog entry of its own and never
+	// receives a mint stamp, so none of the chains above resolve an id for it either — route through
+	// its own resolved kind or literal text, the same way `AssembledKeyword`/`AssembledToken` values
+	// are folded into `kindEnum` on the wrap side (see classifyFieldStorageInfo, emitters/shared.ts).
+	if ((node.modelType === 'keyword' || node.modelType === 'token') && kindEntries !== undefined) {
+		const id =
+			(node.resolvedKind !== undefined
+				? (findKindEntry(kindEntries, node.resolvedKind)?.id ?? kindIdByKind.get(node.resolvedKind))
+				: undefined) ?? (node.text !== undefined ? findKindEntryForLiteral(kindEntries, node.text)?.id : undefined);
+		if (id !== undefined) acceptedIds.push(id);
+	}
 	return acceptedIds;
 }
 

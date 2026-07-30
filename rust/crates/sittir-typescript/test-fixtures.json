@@ -18097,10 +18097,8 @@
                             "$source": 0,
                             "$named": true,
                             "_object": "this",
+                            "_separator": 44,
                             "_property": "#bar",
-                            "$other": [
-                              44
-                            ],
                             "$span": {
                               "start": 27,
                               "end": 36
@@ -18197,10 +18195,8 @@
                             "$source": 0,
                             "$named": true,
                             "_object": "this",
+                            "_separator": 44,
                             "_property": "baz",
-                            "$other": [
-                              44
-                            ],
                             "$span": {
                               "start": 62,
                               "end": 70
@@ -18339,10 +18335,8 @@
                         "$source": 0,
                         "$named": true,
                         "_object": "this",
+                        "_separator": 44,
                         "_property": "#bar",
-                        "$other": [
-                          44
-                        ],
                         "$span": {
                           "start": 27,
                           "end": 36
@@ -18439,10 +18433,8 @@
                         "$source": 0,
                         "$named": true,
                         "_object": "this",
+                        "_separator": 44,
                         "_property": "baz",
-                        "$other": [
-                          44
-                        ],
                         "$span": {
                           "start": 62,
                           "end": 70
@@ -18569,10 +18561,8 @@
                       "$source": 0,
                       "$named": true,
                       "_object": "this",
+                      "_separator": 44,
                       "_property": "#bar",
-                      "$other": [
-                        44
-                      ],
                       "$span": {
                         "start": 27,
                         "end": 36
@@ -18669,10 +18659,8 @@
                       "$source": 0,
                       "$named": true,
                       "_object": "this",
+                      "_separator": 44,
                       "_property": "baz",
-                      "$other": [
-                        44
-                      ],
                       "$span": {
                         "start": 62,
                         "end": 70
@@ -18770,10 +18758,8 @@
                 "$source": 0,
                 "$named": true,
                 "_object": "this",
+                "_separator": 44,
                 "_property": "#bar",
-                "$other": [
-                  44
-                ],
                 "$span": {
                   "start": 27,
                   "end": 36
@@ -18873,10 +18859,8 @@
                 "$source": 0,
                 "$named": true,
                 "_object": "this",
+                "_separator": 44,
                 "_property": "baz",
-                "$other": [
-                  44
-                ],
                 "$span": {
                   "start": 62,
                   "end": 70
@@ -18958,10 +18942,8 @@
             "$source": 0,
             "$named": true,
             "_object": "this",
+            "_separator": 44,
             "_property": "#bar",
-            "$other": [
-              44
-            ],
             "$span": {
               "start": 27,
               "end": 36
@@ -19044,10 +19026,8 @@
             "$source": 0,
             "$named": true,
             "_object": "this",
+            "_separator": 44,
             "_property": "baz",
-            "$other": [
-              44
-            ],
             "$span": {
               "start": 62,
               "end": 70
@@ -19107,10 +19087,8 @@
           "$source": 0,
           "$named": true,
           "_object": "this",
+          "_separator": 44,
           "_property": "#bar",
-          "$other": [
-            44
-          ],
           "$span": {
             "start": 27,
             "end": 36
@@ -19169,10 +19147,8 @@
       "$source": 0,
       "$named": true,
       "_object": "this",
+      "_separator": 44,
       "_property": "#bar",
-      "$other": [
-        44
-      ],
       "$span": {
         "start": 27,
         "end": 36
@@ -19200,10 +19176,8 @@
       "$source": 0,
       "$named": true,
       "_object": "this",
+      "_separator": 44,
       "_property": "baz",
-      "$other": [
-        44
-      ],
       "$span": {
         "start": 62,
         "end": 70
@@ -19281,10 +19255,8 @@
           "$source": 0,
           "$named": true,
           "_object": "this",
+          "_separator": 44,
           "_property": "baz",
-          "$other": [
-            44
-          ],
           "$span": {
             "start": 62,
             "end": 70
@@ -28463,10 +28435,8 @@
                   "$source": 0,
                   "$named": true,
                   "_object": "module",
+                  "_separator": 44,
                   "_property": "exports",
-                  "$other": [
-                    44
-                  ],
                   "$span": {
                     "start": 70,
                     "end": 84
@@ -28723,10 +28693,8 @@
               "$source": 0,
               "$named": true,
               "_object": "module",
+              "_separator": 44,
               "_property": "exports",
-              "$other": [
-                44
-              ],
               "$span": {
                 "start": 70,
                 "end": 84
@@ -28955,10 +28923,8 @@
             "$source": 0,
             "$named": true,
             "_object": "module",
+            "_separator": 44,
             "_property": "exports",
-            "$other": [
-              44
-            ],
             "$span": {
               "start": 70,
               "end": 84
@@ -29107,10 +29073,8 @@
           "$source": 0,
           "$named": true,
           "_object": "module",
+          "_separator": 44,
           "_property": "exports",
-          "$other": [
-            44
-          ],
           "$span": {
             "start": 70,
             "end": 84
@@ -29263,10 +29227,8 @@
         "$source": 0,
         "$named": true,
         "_object": "module",
+        "_separator": 44,
         "_property": "exports",
-        "$other": [
-          44
-        ],
         "$span": {
           "start": 70,
           "end": 84
@@ -29497,10 +29459,8 @@
       "$source": 0,
       "$named": true,
       "_object": "module",
+      "_separator": 44,
       "_property": "exports",
-      "$other": [
-        44
-      ],
       "$span": {
         "start": 70,
         "end": 84
@@ -30093,10 +30053,8 @@
               "$source": 0,
               "$named": true,
               "_object": "foo",
+              "_separator": 44,
               "_property": "length",
-              "$other": [
-                44
-              ],
               "$span": {
                 "start": 4,
                 "end": 14
@@ -30131,10 +30089,8 @@
               "$source": 0,
               "$named": true,
               "_object": "type",
+              "_separator": 44,
               "_property": "length",
-              "$other": [
-                44
-              ],
               "$span": {
                 "start": 20,
                 "end": 31
@@ -30169,10 +30125,8 @@
               "$source": 0,
               "$named": true,
               "_object": "string",
+              "_separator": 44,
               "_property": "length",
-              "$other": [
-                44
-              ],
               "$span": {
                 "start": 37,
                 "end": 50
@@ -30230,10 +30184,8 @@
           "$source": 0,
           "$named": true,
           "_object": "foo",
+          "_separator": 44,
           "_property": "length",
-          "$other": [
-            44
-          ],
           "$span": {
             "start": 4,
             "end": 14
@@ -30284,10 +30236,8 @@
           "$source": 0,
           "$named": true,
           "_object": "type",
+          "_separator": 44,
           "_property": "length",
-          "$other": [
-            44
-          ],
           "$span": {
             "start": 20,
             "end": 31
@@ -30338,10 +30288,8 @@
           "$source": 0,
           "$named": true,
           "_object": "string",
+          "_separator": 44,
           "_property": "length",
-          "$other": [
-            44
-          ],
           "$span": {
             "start": 37,
             "end": 50
@@ -30382,10 +30330,8 @@
         "$source": 0,
         "$named": true,
         "_object": "foo",
+        "_separator": 44,
         "_property": "length",
-        "$other": [
-          44
-        ],
         "$span": {
           "start": 4,
           "end": 14
@@ -30425,10 +30371,8 @@
         "$source": 0,
         "$named": true,
         "_object": "type",
+        "_separator": 44,
         "_property": "length",
-        "$other": [
-          44
-        ],
         "$span": {
           "start": 20,
           "end": 31
@@ -30468,10 +30412,8 @@
         "$source": 0,
         "$named": true,
         "_object": "string",
+        "_separator": 44,
         "_property": "length",
-        "$other": [
-          44
-        ],
         "$span": {
           "start": 37,
           "end": 50
@@ -30505,10 +30447,8 @@
       "$source": 0,
       "$named": true,
       "_object": "foo",
+      "_separator": 44,
       "_property": "length",
-      "$other": [
-        44
-      ],
       "$span": {
         "start": 4,
         "end": 14
@@ -30536,10 +30476,8 @@
       "$source": 0,
       "$named": true,
       "_object": "type",
+      "_separator": 44,
       "_property": "length",
-      "$other": [
-        44
-      ],
       "$span": {
         "start": 20,
         "end": 31
@@ -30567,10 +30505,8 @@
       "$source": 0,
       "$named": true,
       "_object": "string",
+      "_separator": 44,
       "_property": "length",
-      "$other": [
-        44
-      ],
       "$span": {
         "start": 37,
         "end": 50
@@ -30675,10 +30611,8 @@
                         },
                         "$nodeHandle": 19
                       },
+                      "_separator": 44,
                       "_property": "apply",
-                      "$other": [
-                        44
-                      ],
                       "$span": {
                         "start": 14,
                         "end": 28
@@ -30825,10 +30759,8 @@
                     },
                     "$nodeHandle": 28
                   },
+                  "_separator": 44,
                   "_property": "apply",
-                  "$other": [
-                    44
-                  ],
                   "$span": {
                     "start": 14,
                     "end": 28
@@ -30980,10 +30912,8 @@
                   },
                   "$nodeHandle": 35
                 },
+                "_separator": 44,
                 "_property": "apply",
-                "$other": [
-                  44
-                ],
                 "$span": {
                   "start": 14,
                   "end": 28
@@ -31080,10 +31010,8 @@
               },
               "$nodeHandle": 40
             },
+            "_separator": 44,
             "_property": "apply",
-            "$other": [
-              44
-            ],
             "$span": {
               "start": 14,
               "end": 28
@@ -31158,10 +31086,8 @@
             },
             "$nodeHandle": 44
           },
+          "_separator": 44,
           "_property": "apply",
-          "$other": [
-            44
-          ],
           "$span": {
             "start": 14,
             "end": 28
@@ -31222,10 +31148,8 @@
         },
         "$nodeHandle": 46
       },
+      "_separator": 44,
       "_property": "apply",
-      "$other": [
-        44
-      ],
       "$span": {
         "start": 14,
         "end": 28
@@ -33222,10 +33146,8 @@
               "$source": 0,
               "$named": true,
               "_object": "e",
+              "_separator": 44,
               "_property": "f",
-              "$other": [
-                44
-              ],
               "$span": {
                 "start": 12,
                 "end": 15
@@ -33380,10 +33302,8 @@
           "$source": 0,
           "$named": true,
           "_object": "e",
+          "_separator": 44,
           "_property": "f",
-          "$other": [
-            44
-          ],
           "$span": {
             "start": 12,
             "end": 15
@@ -33510,10 +33430,8 @@
         "$source": 0,
         "$named": true,
         "_object": "e",
+        "_separator": 44,
         "_property": "f",
-        "$other": [
-          44
-        ],
         "$span": {
           "start": 12,
           "end": 15
@@ -33591,10 +33509,8 @@
       "$source": 0,
       "$named": true,
       "_object": "e",
+      "_separator": 44,
       "_property": "f",
-      "$other": [
-        44
-      ],
       "$span": {
         "start": 12,
         "end": 15
@@ -34445,10 +34361,8 @@
                 "$source": 0,
                 "$named": true,
                 "_object": "a",
+                "_separator": 44,
                 "_property": "b",
-                "$other": [
-                  44
-                ],
                 "$span": {
                   "start": 0,
                   "end": 3
@@ -34657,10 +34571,8 @@
             "$source": 0,
             "$named": true,
             "_object": "a",
+            "_separator": 44,
             "_property": "b",
-            "$other": [
-              44
-            ],
             "$span": {
               "start": 0,
               "end": 3
@@ -34868,10 +34780,8 @@
           "$source": 0,
           "$named": true,
           "_object": "a",
+          "_separator": 44,
           "_property": "b",
-          "$other": [
-            44
-          ],
           "$span": {
             "start": 0,
             "end": 3
@@ -35054,10 +34964,8 @@
       "$source": 0,
       "$named": true,
       "_object": "a",
+      "_separator": 44,
       "_property": "b",
-      "$other": [
-        44
-      ],
       "$span": {
         "start": 0,
         "end": 3
@@ -38666,10 +38574,8 @@
                                   "$source": 0,
                                   "$named": true,
                                   "_object": "super",
+                                  "_separator": 44,
                                   "_property": "toString",
-                                  "$other": [
-                                    44
-                                  ],
                                   "$span": {
                                     "start": 123,
                                     "end": 137
@@ -38734,10 +38640,8 @@
                             "$source": 0,
                             "$named": true,
                             "_object": "this",
+                            "_separator": 44,
                             "_property": "y",
-                            "$other": [
-                              44
-                            ],
                             "$span": {
                               "start": 150,
                               "end": 156
@@ -39145,10 +39049,8 @@
                               "$source": 0,
                               "$named": true,
                               "_object": "super",
+                              "_separator": 44,
                               "_property": "toString",
-                              "$other": [
-                                44
-                              ],
                               "$span": {
                                 "start": 123,
                                 "end": 137
@@ -39213,10 +39115,8 @@
                         "$source": 0,
                         "$named": true,
                         "_object": "this",
+                        "_separator": 44,
                         "_property": "y",
-                        "$other": [
-                          44
-                        ],
                         "$span": {
                           "start": 150,
                           "end": 156
@@ -39575,10 +39475,8 @@
                             "$source": 0,
                             "$named": true,
                             "_object": "super",
+                            "_separator": 44,
                             "_property": "toString",
-                            "$other": [
-                              44
-                            ],
                             "$span": {
                               "start": 123,
                               "end": 137
@@ -39643,10 +39541,8 @@
                       "$source": 0,
                       "$named": true,
                       "_object": "this",
+                      "_separator": 44,
                       "_property": "y",
-                      "$other": [
-                        44
-                      ],
                       "$span": {
                         "start": 150,
                         "end": 156
@@ -40199,10 +40095,8 @@
                     "$source": 0,
                     "$named": true,
                     "_object": "super",
+                    "_separator": 44,
                     "_property": "toString",
-                    "$other": [
-                      44
-                    ],
                     "$span": {
                       "start": 123,
                       "end": 137
@@ -40267,10 +40161,8 @@
               "$source": 0,
               "$named": true,
               "_object": "this",
+              "_separator": 44,
               "_property": "y",
-              "$other": [
-                44
-              ],
               "$span": {
                 "start": 150,
                 "end": 156
@@ -40449,10 +40341,8 @@
           "$source": 0,
           "$named": true,
           "_object": "super",
+          "_separator": 44,
           "_property": "toString",
-          "$other": [
-            44
-          ],
           "$span": {
             "start": 123,
             "end": 137
@@ -40592,10 +40482,8 @@
                 "$source": 0,
                 "$named": true,
                 "_object": "super",
+                "_separator": 44,
                 "_property": "toString",
-                "$other": [
-                  44
-                ],
                 "$span": {
                   "start": 123,
                   "end": 137
@@ -40660,10 +40548,8 @@
           "$source": 0,
           "$named": true,
           "_object": "this",
+          "_separator": 44,
           "_property": "y",
-          "$other": [
-            44
-          ],
           "$span": {
             "start": 150,
             "end": 156
@@ -40719,10 +40605,8 @@
               "$source": 0,
               "$named": true,
               "_object": "super",
+              "_separator": 44,
               "_property": "toString",
-              "$other": [
-                44
-              ],
               "$span": {
                 "start": 123,
                 "end": 137
@@ -40787,10 +40671,8 @@
         "$source": 0,
         "$named": true,
         "_object": "this",
+        "_separator": 44,
         "_property": "y",
-        "$other": [
-          44
-        ],
         "$span": {
           "start": 150,
           "end": 156
@@ -40841,10 +40723,8 @@
             "$source": 0,
             "$named": true,
             "_object": "super",
+            "_separator": 44,
             "_property": "toString",
-            "$other": [
-              44
-            ],
             "$span": {
               "start": 123,
               "end": 137
@@ -40924,10 +40804,8 @@
       "$source": 0,
       "$named": true,
       "_object": "super",
+      "_separator": 44,
       "_property": "toString",
-      "$other": [
-        44
-      ],
       "$span": {
         "start": 123,
         "end": 137
@@ -40955,10 +40833,8 @@
       "$source": 0,
       "$named": true,
       "_object": "this",
+      "_separator": 44,
       "_property": "y",
-      "$other": [
-        44
-      ],
       "$span": {
         "start": 150,
         "end": 156
@@ -54713,10 +54589,8 @@
                       "$source": 0,
                       "$named": true,
                       "_object": "Symbol",
+                      "_separator": 44,
                       "_property": "for",
-                      "$other": [
-                        44
-                      ],
                       "$span": {
                         "start": 68,
                         "end": 78
@@ -55018,10 +54892,8 @@
                   "$source": 0,
                   "$named": true,
                   "_object": "Symbol",
+                  "_separator": 44,
                   "_property": "for",
-                  "$other": [
-                    44
-                  ],
                   "$span": {
                     "start": 68,
                     "end": 78
@@ -55296,10 +55168,8 @@
               "$source": 0,
               "$named": true,
               "_object": "Symbol",
+              "_separator": 44,
               "_property": "for",
-              "$other": [
-                44
-              ],
               "$span": {
                 "start": 68,
                 "end": 78
@@ -55560,10 +55430,8 @@
           "$source": 0,
           "$named": true,
           "_object": "Symbol",
+          "_separator": 44,
           "_property": "for",
-          "$other": [
-            44
-          ],
           "$span": {
             "start": 68,
             "end": 78
@@ -55845,10 +55713,8 @@
       "$source": 0,
       "$named": true,
       "_object": "Symbol",
+      "_separator": 44,
       "_property": "for",
-      "$other": [
-        44
-      ],
       "$span": {
         "start": 68,
         "end": 78
@@ -55966,20 +55832,16 @@
                             "_expression": "document"
                           }
                         },
+                        "_separator": 44,
                         "_property": "selection",
-                        "$other": [
-                          44
-                        ],
                         "$span": {
                           "start": 14,
                           "end": 39
                         },
                         "$nodeHandle": 19
                       },
+                      "_separator": 44,
                       "_property": "createRange",
-                      "$other": [
-                        44
-                      ],
                       "$span": {
                         "start": 14,
                         "end": 51
@@ -56135,20 +55997,16 @@
                         "_expression": "document"
                       }
                     },
+                    "_separator": 44,
                     "_property": "selection",
-                    "$other": [
-                      44
-                    ],
                     "$span": {
                       "start": 14,
                       "end": 39
                     },
                     "$nodeHandle": 30
                   },
+                  "_separator": 44,
                   "_property": "createRange",
-                  "$other": [
-                    44
-                  ],
                   "$span": {
                     "start": 14,
                     "end": 51
@@ -56291,20 +56149,16 @@
                     "_expression": "document"
                   }
                 },
+                "_separator": 44,
                 "_property": "selection",
-                "$other": [
-                  44
-                ],
                 "$span": {
                   "start": 14,
                   "end": 39
                 },
                 "$nodeHandle": 40
               },
+              "_separator": 44,
               "_property": "createRange",
-              "$other": [
-                44
-              ],
               "$span": {
                 "start": 14,
                 "end": 51
@@ -56425,20 +56279,16 @@
                 "_expression": "document"
               }
             },
+            "_separator": 44,
             "_property": "selection",
-            "$other": [
-              44
-            ],
             "$span": {
               "start": 14,
               "end": 39
             },
             "$nodeHandle": 48
           },
+          "_separator": 44,
           "_property": "createRange",
-          "$other": [
-            44
-          ],
           "$span": {
             "start": 14,
             "end": 51
@@ -56536,20 +56386,16 @@
             "_expression": "document"
           }
         },
+        "_separator": 44,
         "_property": "selection",
-        "$other": [
-          44
-        ],
         "$span": {
           "start": 14,
           "end": 39
         },
         "$nodeHandle": 54
       },
+      "_separator": 44,
       "_property": "createRange",
-      "$other": [
-        44
-      ],
       "$span": {
         "start": 14,
         "end": 51
@@ -56625,10 +56471,8 @@
           "_expression": "document"
         }
       },
+      "_separator": 44,
       "_property": "selection",
-      "$other": [
-        44
-      ],
       "$span": {
         "start": 14,
         "end": 39
@@ -91412,10 +91256,8 @@
                       "$source": 0,
                       "$named": true,
                       "_object": "this",
+                      "_separator": 44,
                       "_property": "colors",
-                      "$other": [
-                        44
-                      ],
                       "$span": {
                         "start": 100,
                         "end": 111
@@ -91819,10 +91661,8 @@
                   "$source": 0,
                   "$named": true,
                   "_object": "this",
+                  "_separator": 44,
                   "_property": "colors",
-                  "$other": [
-                    44
-                  ],
                   "$span": {
                     "start": 100,
                     "end": 111
@@ -92214,10 +92054,8 @@
                 "$source": 0,
                 "$named": true,
                 "_object": "this",
+                "_separator": 44,
                 "_property": "colors",
-                "$other": [
-                  44
-                ],
                 "$span": {
                   "start": 100,
                   "end": 111
@@ -93635,10 +93473,8 @@
       "$source": 0,
       "$named": true,
       "_object": "this",
+      "_separator": 44,
       "_property": "colors",
-      "$other": [
-        44
-      ],
       "$span": {
         "start": 100,
         "end": 111
@@ -93670,10 +93506,8 @@
         "$source": 0,
         "$named": true,
         "_object": "this",
+        "_separator": 44,
         "_property": "colors",
-        "$other": [
-          44
-        ],
         "$span": {
           "start": 100,
           "end": 111

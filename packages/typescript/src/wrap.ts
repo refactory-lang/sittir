@@ -4288,13 +4288,15 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 				slotName: 'object',
 				span: (data as _NodeData).$span
 			}),
-			_optional_chain: coerceBooleanKeywordStorage(
-				normalizeSingularWrapSlot(data._optional_chain, 'optional_chain', false, data.$type, {
-					tree,
-					nodeType: data.$type,
-					slotName: 'optional_chain',
-					span: (data as _NodeData).$span
-				})
+			_separator: projectKindEnumStorage(
+				normalizeSingularWrapSlot(
+					data._separator ?? readTerminalFromOther(data, [TSKindId.Dot2, TSKindId.QmarkDot]),
+					'separator',
+					true,
+					data.$type,
+					{ tree, nodeType: data.$type, slotName: 'separator', span: (data as _NodeData).$span }
+				),
+				{ '.': 44, '?.': 49 }
 			),
 			_property: normalizeSingularWrapSlot(data._property, 'property', true, data.$type, {
 				tree,
@@ -4308,8 +4310,8 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 					{ from: 'identifier', to: '_reserved_identifier' }
 				]);
 			},
-			optionalChain() {
-				return this._optional_chain;
+			separator() {
+				return this._separator;
 			},
 			property() {
 				return drillAs<T.PrivatePropertyIdentifier | T.Identifier>(this._property, tree, [
@@ -4318,8 +4320,8 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 			},
 			$with: {
 				object: (v: NonNullable<T.MemberExpression['_object']>) => wrapMemberExpression({ ...data, _object: v }, tree),
-				optionalChain: (v: NonNullable<T.MemberExpression['_optional_chain']>) =>
-					wrapMemberExpression({ ...data, _optional_chain: v }, tree),
+				separator: (v: NonNullable<T.MemberExpression['_separator']>) =>
+					wrapMemberExpression({ ...data, _separator: v }, tree),
 				property: (v: NonNullable<T.MemberExpression['_property']>) =>
 					wrapMemberExpression({ ...data, _property: v }, tree)
 			}
@@ -9107,7 +9109,7 @@ export function wrapTypeQueryMemberExpression(
 					data._content ??
 						data._dot ??
 						data._qmark_dot ??
-						readTerminalFromOther(data, [TSKindId.Dot, TSKindId.QmarkDot]),
+						readTerminalFromOther(data, [TSKindId.Dot2, TSKindId.QmarkDot]),
 					'content',
 					true,
 					data.$type,

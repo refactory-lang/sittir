@@ -1722,7 +1722,7 @@ export function buildAwaitExpression(expression: T.AwaitExpression.Config['expre
 
 export function buildMemberExpression(config: T.MemberExpression.Config) {
 	const _object = config.object;
-	const _optional_chain = coerceBooleanKeywordStorage(config.optionalChain);
+	const _separator = coerceKindEnumStorage(config.separator, [['.', TSKindId.Dot2] as const]);
 	const _property = config.property;
 	return withMethods(
 		withAccessors(
@@ -1731,20 +1731,20 @@ export function buildMemberExpression(config: T.MemberExpression.Config) {
 				$source: 2 as const,
 				$named: true as const,
 				_object,
-				_optional_chain,
+				_separator,
 				_property,
 				$with: {
 					object: (value: T.Expression | T.PrimaryExpression | T.Import) =>
 						buildMemberExpression({ ...config, object: value }),
-					optionalChain: (value?: NonNullable<Parameters<typeof buildMemberExpression>[0]>['optionalChain']) =>
-						buildMemberExpression({ ...config, optionalChain: value }),
+					separator: (value: NonNullable<Parameters<typeof buildMemberExpression>[0]>['separator']) =>
+						buildMemberExpression({ ...config, separator: value }),
 					property: (value: T.PrivatePropertyIdentifier | T.Identifier) =>
 						buildMemberExpression({ ...config, property: value })
 				}
 			},
 			{
 				object: () => _object,
-				optionalChain: () => _optional_chain,
+				separator: () => _separator,
 				property: () => _property
 			}
 		),
@@ -4318,7 +4318,7 @@ export function buildTypePredicateAnnotation(typePredicate: T.TypePredicateAnnot
 export function buildTypeQueryMemberExpression(config: T.TypeQueryMemberExpression.Config) {
 	const _object = config.object;
 	const _content = coerceKindEnumStorage(config.content, [
-		['.', TSKindId.Dot] as const,
+		['.', TSKindId.Dot2] as const,
 		['?.', TSKindId.QmarkDot] as const
 	]);
 	const _property = config.property;

@@ -1759,7 +1759,7 @@ export interface MemberExpressionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _object: Box<MemberExpressionObjectTransportSlot>
-  _optional_chain?: OptionalChainTransport
+  _separator: MemberExpressionSeparatorTransportSlot
   _property: MemberExpressionPropertyTransportSlot
 }
 
@@ -2416,7 +2416,7 @@ export interface SubscriptExpressionTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _object: Box<SubscriptExpressionObjectTransportSlot>
-  _optional_chain?: OptionalChainTransport
+  _optional_chain?: MemberExpressionSeparatorTransport
   _index: Box<ExpressionsTransport>
 }
 

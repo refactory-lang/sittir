@@ -1665,11 +1665,15 @@ export type TypescriptGrammar = {
 				required: true;
 				types: [{ type: 'expression'; named: true }, { type: 'import'; named: true }];
 			};
-			optional_chain: { multiple: false; required: false; types: [{ type: 'optional_chain'; named: true }] };
 			property: {
 				multiple: false;
 				required: true;
 				types: [{ type: 'private_property_identifier'; named: true }, { type: 'property_identifier'; named: true }];
+			};
+			separator: {
+				multiple: false;
+				required: false;
+				types: [{ type: '.'; named: false }, { type: 'optional_chain'; named: true }];
 			};
 		};
 	};

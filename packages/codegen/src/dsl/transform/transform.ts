@@ -627,6 +627,46 @@ function findEnrichShapedFieldThroughTransparentWrappers(
 	return null;
 }
 
+/**
+ * When an override wraps a REAL (non-optional-shaped) CHOICE in a field —
+ * e.g. `member_expression: { 1: field('separator') }` around
+ * `choice('.', field('optional_chain', $.optional_chain))` — tree-sitter's
+ * own field-wrapper-collapse semantics give a BARE arm the outer field name
+ * for free (nothing competes with it) but leave an ALREADY-fielded arm
+ * under its OWN inner name (the innermost field wins). That produces TWO
+ * different CST field names for what the override intends as one unified
+ * slot: the already-fielded arm silently keeps producing data under its old
+ * name, which no generated reader for the new field ever looks at (this is
+ * exactly what broke ts `member_expression`'s `optional_chain` arm — see
+ * docs/KNOWN_ISSUES.md).
+ *
+ * Relabel every enrich-shaped fielded arm to the override's chosen name so
+ * every arm converges on ONE field — matching sittir's own IR-side
+ * precedence (`wrapper-deletion.ts` stamps the OUTER field name) instead of
+ * diverging from it. A no-op for choices whose arms are all bare (pure
+ * kindEnum literal choices already get the outer name correctly with no
+ * help needed here) — this only fires when relabeling is actually required.
+ * Shallow — one level of arm descent, matching enrich's own
+ * `applyChoiceArmFieldWrap` convention; arms that are themselves nested
+ * choices are left alone.
+ */
+function unifyChoiceArmFieldNames(content: unknown, unifiedName: string): unknown {
+	const r = content as Record<string, unknown>;
+	if (!r || typeof r !== 'object' || !isChoiceType(r.type as string)) return content;
+	const members = r.members as unknown[] | undefined;
+	if (!Array.isArray(members)) return content;
+	let anyChanged = false;
+	const newMembers = members.map((m) => {
+		if (isEnrichShapedFieldWrapper(m) && m.name !== unifiedName) {
+			anyChanged = true;
+			return { ...m, name: unifiedName, metadata: makeRuleMetadata({ fieldSource: 'override' }) };
+		}
+		return m;
+	});
+	if (!anyChanged) return content;
+	return { ...r, members: newMembers };
+}
+
 function resolveFieldPlaceholder(
 	patch: FieldPlaceholder,
 	originalMember: RuntimeRule,
@@ -684,6 +724,15 @@ function resolveFieldPlaceholder(
 			};
 			const reconstructed = nested.reconstruct(renamedField) as RuntimeRule;
 			return reconstructed;
+		}
+		// Not optional-shaped either — if this is a REAL choice (2+ real
+		// arms, no BLANK), any arm that's already its own enrich-shaped
+		// field under a DIFFERENT name needs relabeling to this override's
+		// name before wrapping, or it silently diverges from the other
+		// arms (see unifyChoiceArmFieldNames' doc comment).
+		const unified = unifyChoiceArmFieldNames(content, patch.name);
+		if (unified !== content) {
+			content = unified;
 		}
 	}
 	const maybeSymbolized = maybeKeywordSymbol(patch.name, content, (body) => wrapInPrec(body, precStack));

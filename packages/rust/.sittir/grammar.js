@@ -2757,6 +2757,22 @@ function findEnrichShapedFieldThroughTransparentWrappers(node) {
   }
   return null;
 }
+function unifyChoiceArmFieldNames(content, unifiedName) {
+  const r = content;
+  if (!r || typeof r !== "object" || !isChoiceType(r.type)) return content;
+  const members = r.members;
+  if (!Array.isArray(members)) return content;
+  let anyChanged = false;
+  const newMembers = members.map((m) => {
+    if (isEnrichShapedFieldWrapper(m) && m.name !== unifiedName) {
+      anyChanged = true;
+      return { ...m, name: unifiedName, metadata: makeRuleMetadata({ fieldSource: "override" }) };
+    }
+    return m;
+  });
+  if (!anyChanged) return content;
+  return { ...r, members: newMembers };
+}
 function resolveFieldPlaceholder(patch, originalMember, precStack) {
   let content = originalMember;
   if (isEnrichShapedFieldWrapper(content)) {
@@ -2781,6 +2797,10 @@ function resolveFieldPlaceholder(patch, originalMember, precStack) {
       };
       const reconstructed = nested.reconstruct(renamedField);
       return reconstructed;
+    }
+    const unified = unifyChoiceArmFieldNames(content, patch.name);
+    if (unified !== content) {
+      content = unified;
     }
   }
   const maybeSymbolized = maybeKeywordSymbol(patch.name, content, (body) => wrapInPrec(body, precStack));

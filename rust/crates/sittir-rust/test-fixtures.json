@@ -105044,6 +105044,4697 @@
       "$named": true,
       "_statements": [
         {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_name": "high_order1",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "_parameters_group1": {
+              "$type": 327,
+              "$source": 0,
+              "$named": true,
+              "_attributed_parameter": [
+                {
+                  "$type": 391,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 15,
+                    "end": 25
+                  },
+                  "$nodeHandle": 77,
+                  "_content": {
+                    "$type": 214,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": "value",
+                    "_type": "i32",
+                    "$other": [
+                      5
+                    ],
+                    "$span": {
+                      "start": 15,
+                      "end": 25
+                    },
+                    "$nodeHandle": 79
+                  }
+                },
+                {
+                  "$type": 391,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 27,
+                    "end": 37
+                  },
+                  "$nodeHandle": 78,
+                  "_content": {
+                    "$type": 214,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": "f",
+                    "_type": {
+                      "$type": 223,
+                      "$source": 0,
+                      "$named": true,
+                      "_function_type_fn_form": {
+                        "$type": 356,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "fn",
+                        "$span": {
+                          "start": 30,
+                          "end": 32
+                        },
+                        "$nodeHandle": 82
+                      },
+                      "_parameters": {
+                        "$type": 211,
+                        "$source": 0,
+                        "$named": true,
+                        "_parameters_group1": {
+                          "$type": 327,
+                          "$source": 0,
+                          "$named": true,
+                          "_attributed_parameter": [
+                            {
+                              "$type": 391,
+                              "$source": 0,
+                              "$named": true,
+                              "$span": {
+                                "start": 33,
+                                "end": 36
+                              },
+                              "$nodeHandle": 85,
+                              "_content": "i32"
+                            }
+                          ],
+                          "$span": {
+                            "start": 33,
+                            "end": 36
+                          },
+                          "$nodeHandle": 84,
+                          "_trailing_sep": false
+                        },
+                        "$other": [
+                          7,
+                          8
+                        ],
+                        "$span": {
+                          "start": 32,
+                          "end": 37
+                        },
+                        "$nodeHandle": 83
+                      },
+                      "$span": {
+                        "start": 30,
+                        "end": 37
+                      },
+                      "$nodeHandle": 81
+                    },
+                    "$other": [
+                      5
+                    ],
+                    "$span": {
+                      "start": 27,
+                      "end": 37
+                    },
+                    "$nodeHandle": 80
+                  }
+                }
+              ],
+              "$other": [
+                69
+              ],
+              "$span": {
+                "start": 15,
+                "end": 37
+              },
+              "$nodeHandle": 76,
+              "_trailing_sep": false
+            },
+            "$other": [
+              7,
+              8
+            ],
+            "$span": {
+              "start": 14,
+              "end": 38
+            },
+            "$nodeHandle": 75
+          },
+          "_return_type": "i32",
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 46,
+              "end": 48
+            },
+            "$nodeHandle": 86,
+            "_statement": []
+          },
+          "$other": [
+            60,
+            138
+          ],
+          "$span": {
+            "start": 0,
+            "end": 48
+          },
+          "$nodeHandle": 71
+        },
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_name": "high_order2",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "_parameters_group1": {
+              "$type": 327,
+              "$source": 0,
+              "$named": true,
+              "_attributed_parameter": [
+                {
+                  "$type": 391,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 65,
+                    "end": 75
+                  },
+                  "$nodeHandle": 89,
+                  "_content": {
+                    "$type": 214,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": "value",
+                    "_type": "i32",
+                    "$other": [
+                      5
+                    ],
+                    "$span": {
+                      "start": 65,
+                      "end": 75
+                    },
+                    "$nodeHandle": 91
+                  }
+                },
+                {
+                  "$type": 391,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 77,
+                    "end": 94
+                  },
+                  "$nodeHandle": 90,
+                  "_content": {
+                    "$type": 214,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": "f",
+                    "_type": {
+                      "$type": 223,
+                      "$source": 0,
+                      "$named": true,
+                      "_function_type_fn_form": {
+                        "$type": 356,
+                        "$source": 0,
+                        "$named": true,
+                        "$text": "fn",
+                        "$span": {
+                          "start": 80,
+                          "end": 82
+                        },
+                        "$nodeHandle": 94
+                      },
+                      "_parameters": {
+                        "$type": 211,
+                        "$source": 0,
+                        "$named": true,
+                        "_parameters_group1": {
+                          "$type": 327,
+                          "$source": 0,
+                          "$named": true,
+                          "_attributed_parameter": [
+                            {
+                              "$type": 391,
+                              "$source": 0,
+                              "$named": true,
+                              "$span": {
+                                "start": 83,
+                                "end": 86
+                              },
+                              "$nodeHandle": 97,
+                              "_content": "i32"
+                            }
+                          ],
+                          "$span": {
+                            "start": 83,
+                            "end": 86
+                          },
+                          "$nodeHandle": 96,
+                          "_trailing_sep": false
+                        },
+                        "$other": [
+                          7,
+                          8
+                        ],
+                        "$span": {
+                          "start": 82,
+                          "end": 87
+                        },
+                        "$nodeHandle": 95
+                      },
+                      "_return_type": "i32",
+                      "$other": [
+                        138
+                      ],
+                      "$span": {
+                        "start": 80,
+                        "end": 94
+                      },
+                      "$nodeHandle": 93
+                    },
+                    "$other": [
+                      5
+                    ],
+                    "$span": {
+                      "start": 77,
+                      "end": 94
+                    },
+                    "$nodeHandle": 92
+                  }
+                }
+              ],
+              "$other": [
+                69
+              ],
+              "$span": {
+                "start": 65,
+                "end": 94
+              },
+              "$nodeHandle": 88,
+              "_trailing_sep": false
+            },
+            "$other": [
+              7,
+              8
+            ],
+            "$span": {
+              "start": 64,
+              "end": 95
+            },
+            "$nodeHandle": 87
+          },
+          "_return_type": "i32",
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "_trailing_expression": {
+              "$type": 257,
+              "$source": 0,
+              "$named": true,
+              "_function": "f",
+              "_arguments": {
+                "$type": 258,
+                "$source": 0,
+                "$named": true,
+                "_arguments_group1": {
+                  "$type": 330,
+                  "$source": 0,
+                  "$named": true,
+                  "_attributed_argument": [
+                    {
+                      "$type": 393,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 111,
+                        "end": 116
+                      },
+                      "$nodeHandle": 102,
+                      "_attribute_item": [],
+                      "_expression": "value"
+                    }
+                  ],
+                  "$span": {
+                    "start": 111,
+                    "end": 116
+                  },
+                  "$nodeHandle": 101,
+                  "_trailing_sep": false
+                },
+                "$other": [
+                  7,
+                  8
+                ],
+                "$span": {
+                  "start": 110,
+                  "end": 117
+                },
+                "$nodeHandle": 100
+              },
+              "$span": {
+                "start": 109,
+                "end": 117
+              },
+              "$nodeHandle": 99
+            },
+            "$other": [
+              50,
+              51
+            ],
+            "$span": {
+              "start": 103,
+              "end": 119
+            },
+            "$nodeHandle": 98,
+            "_statement": []
+          },
+          "$other": [
+            60,
+            138
+          ],
+          "$span": {
+            "start": 50,
+            "end": 119
+          },
+          "$nodeHandle": 72
+        },
+        {
+          "$type": 189,
+          "$source": 0,
+          "$named": true,
+          "_name": "high_order3",
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "_parameters_group1": {
+              "$type": 327,
+              "$source": 0,
+              "$named": true,
+              "_attributed_parameter": [
+                {
+                  "$type": 391,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 136,
+                    "end": 146
+                  },
+                  "$nodeHandle": 105,
+                  "_content": {
+                    "$type": 214,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": "value",
+                    "_type": "i32",
+                    "$other": [
+                      5
+                    ],
+                    "$span": {
+                      "start": 136,
+                      "end": 146
+                    },
+                    "$nodeHandle": 107
+                  }
+                },
+                {
+                  "$type": 391,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 148,
+                    "end": 170
+                  },
+                  "$nodeHandle": 106,
+                  "_content": {
+                    "$type": 214,
+                    "$source": 0,
+                    "$named": true,
+                    "_pattern": "f",
+                    "_type": {
+                      "$type": 233,
+                      "$source": 0,
+                      "$named": true,
+                      "_type": {
+                        "$type": 223,
+                        "$source": 0,
+                        "$named": true,
+                        "_function_type_trait_form": {
+                          "$type": 355,
+                          "$source": 0,
+                          "$named": true,
+                          "_trait": "FnOnce",
+                          "$span": {
+                            "start": 152,
+                            "end": 158
+                          },
+                          "$nodeHandle": 111
+                        },
+                        "_parameters": {
+                          "$type": 211,
+                          "$source": 0,
+                          "$named": true,
+                          "_parameters_group1": {
+                            "$type": 327,
+                            "$source": 0,
+                            "$named": true,
+                            "_attributed_parameter": [
+                              {
+                                "$type": 391,
+                                "$source": 0,
+                                "$named": true,
+                                "$span": {
+                                  "start": 159,
+                                  "end": 162
+                                },
+                                "$nodeHandle": 114,
+                                "_content": "i32"
+                              }
+                            ],
+                            "$span": {
+                              "start": 159,
+                              "end": 162
+                            },
+                            "$nodeHandle": 113,
+                            "_trailing_sep": false
+                          },
+                          "$other": [
+                            7,
+                            8
+                          ],
+                          "$span": {
+                            "start": 158,
+                            "end": 163
+                          },
+                          "$nodeHandle": 112
+                        },
+                        "_return_type": "i32",
+                        "$other": [
+                          138
+                        ],
+                        "$span": {
+                          "start": 152,
+                          "end": 170
+                        },
+                        "$nodeHandle": 110
+                      },
+                      "$other": [
+                        78
+                      ],
+                      "$span": {
+                        "start": 151,
+                        "end": 170
+                      },
+                      "$nodeHandle": 109
+                    },
+                    "$other": [
+                      5
+                    ],
+                    "$span": {
+                      "start": 148,
+                      "end": 170
+                    },
+                    "$nodeHandle": 108
+                  }
+                }
+              ],
+              "$other": [
+                69
+              ],
+              "$span": {
+                "start": 136,
+                "end": 170
+              },
+              "$nodeHandle": 104,
+              "_trailing_sep": false
+            },
+            "$other": [
+              7,
+              8
+            ],
+            "$span": {
+              "start": 135,
+              "end": 171
+            },
+            "$nodeHandle": 103
+          },
+          "_return_type": "i32",
+          "_body": {
+            "$type": 294,
+            "$source": 0,
+            "$named": true,
+            "_trailing_expression": {
+              "$type": 257,
+              "$source": 0,
+              "$named": true,
+              "_function": "f",
+              "_arguments": {
+                "$type": 258,
+                "$source": 0,
+                "$named": true,
+                "_arguments_group1": {
+                  "$type": 330,
+                  "$source": 0,
+                  "$named": true,
+                  "_attributed_argument": [
+                    {
+                      "$type": 393,
+                      "$source": 0,
+                      "$named": true,
+                      "$span": {
+                        "start": 187,
+                        "end": 192
+                      },
+                      "$nodeHandle": 119,
+                      "_attribute_item": [],
+                      "_expression": "value"
+                    }
+                  ],
+                  "$span": {
+                    "start": 187,
+                    "end": 192
+                  },
+                  "$nodeHandle": 118,
+                  "_trailing_sep": false
+                },
+                "$other": [
+                  7,
+                  8
+                ],
+                "$span": {
+                  "start": 186,
+                  "end": 193
+                },
+                "$nodeHandle": 117
+              },
+              "$span": {
+                "start": 185,
+                "end": 193
+              },
+              "$nodeHandle": 116
+            },
+            "$other": [
+              50,
+              51
+            ],
+            "$span": {
+              "start": 179,
+              "end": 195
+            },
+            "$nodeHandle": 115,
+            "_statement": []
+          },
+          "$other": [
+            60,
+            138
+          ],
+          "$span": {
+            "start": 121,
+            "end": 195
+          },
+          "$nodeHandle": 73
+        },
+        {
+          "$type": 188,
+          "$source": 0,
+          "$named": true,
+          "_name": "F",
+          "_type": {
+            "$type": 223,
+            "$source": 0,
+            "$named": true,
+            "_for_lifetimes": {
+              "$type": 222,
+              "$source": 0,
+              "$named": true,
+              "_lifetime": [
+                {
+                  "$type": 220,
+                  "$source": 0,
+                  "$named": true,
+                  "_identifier": "a",
+                  "$other": [
+                    76
+                  ],
+                  "$span": {
+                    "start": 210,
+                    "end": 212
+                  },
+                  "$nodeHandle": 122
+                },
+                {
+                  "$type": 220,
+                  "$source": 0,
+                  "$named": true,
+                  "_identifier": "b",
+                  "$other": [
+                    76
+                  ],
+                  "$span": {
+                    "start": 214,
+                    "end": 216
+                  },
+                  "$nodeHandle": 123
+                }
+              ],
+              "$other": [
+                67,
+                68,
+                69,
+                70
+              ],
+              "$span": {
+                "start": 206,
+                "end": 217
+              },
+              "$nodeHandle": 121
+            },
+            "_function_type_fn_form": {
+              "$type": 356,
+              "$source": 0,
+              "$named": true,
+              "$text": "fn",
+              "$span": {
+                "start": 218,
+                "end": 220
+              },
+              "$nodeHandle": 124
+            },
+            "_parameters": {
+              "$type": 211,
+              "$source": 0,
+              "$named": true,
+              "_parameters_group1": {
+                "$type": 327,
+                "$source": 0,
+                "$named": true,
+                "_attributed_parameter": [
+                  {
+                    "$type": 391,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 221,
+                      "end": 229
+                    },
+                    "$nodeHandle": 127,
+                    "_content": {
+                      "$type": 214,
+                      "$source": 0,
+                      "$named": true,
+                      "_pattern": "x",
+                      "_type": {
+                        "$type": 233,
+                        "$source": 0,
+                        "$named": true,
+                        "_lifetime": {
+                          "$type": 220,
+                          "$source": 0,
+                          "$named": true,
+                          "_identifier": "a",
+                          "$other": [
+                            76
+                          ],
+                          "$span": {
+                            "start": 225,
+                            "end": 227
+                          },
+                          "$nodeHandle": 131
+                        },
+                        "_type": "A",
+                        "$other": [
+                          78
+                        ],
+                        "$span": {
+                          "start": 224,
+                          "end": 229
+                        },
+                        "$nodeHandle": 130
+                      },
+                      "$other": [
+                        5
+                      ],
+                      "$span": {
+                        "start": 221,
+                        "end": 229
+                      },
+                      "$nodeHandle": 129
+                    }
+                  },
+                  {
+                    "$type": 391,
+                    "$source": 0,
+                    "$named": true,
+                    "$span": {
+                      "start": 231,
+                      "end": 251
+                    },
+                    "$nodeHandle": 128,
+                    "_content": {
+                      "$type": 214,
+                      "$source": 0,
+                      "$named": true,
+                      "_pattern": "y",
+                      "_type": {
+                        "$type": 233,
+                        "$source": 0,
+                        "$named": true,
+                        "_lifetime": {
+                          "$type": 220,
+                          "$source": 0,
+                          "$named": true,
+                          "_identifier": "a",
+                          "$other": [
+                            76
+                          ],
+                          "$span": {
+                            "start": 235,
+                            "end": 237
+                          },
+                          "$nodeHandle": 134
+                        },
+                        "_mutable_specifier": true,
+                        "_type": {
+                          "$type": 227,
+                          "$source": 0,
+                          "$named": true,
+                          "_type": "B",
+                          "_type_arguments": {
+                            "$type": 231,
+                            "$source": 0,
+                            "$named": true,
+                            "_type_argument": [
+                              {
+                                "$type": 395,
+                                "$source": 0,
+                                "$named": true,
+                                "$span": {
+                                  "start": 244,
+                                  "end": 246
+                                },
+                                "$nodeHandle": 137,
+                                "_content": {
+                                  "$type": 220,
+                                  "$source": 0,
+                                  "$named": true,
+                                  "_identifier": "i",
+                                  "$other": [
+                                    76
+                                  ],
+                                  "$span": {
+                                    "start": 244,
+                                    "end": 246
+                                  },
+                                  "$nodeHandle": 139
+                                }
+                              },
+                              {
+                                "$type": 395,
+                                "$source": 0,
+                                "$named": true,
+                                "$span": {
+                                  "start": 248,
+                                  "end": 250
+                                },
+                                "$nodeHandle": 138,
+                                "_content": {
+                                  "$type": 220,
+                                  "$source": 0,
+                                  "$named": true,
+                                  "_identifier": "t",
+                                  "$other": [
+                                    76
+                                  ],
+                                  "$span": {
+                                    "start": 248,
+                                    "end": 250
+                                  },
+                                  "$nodeHandle": 140
+                                }
+                              }
+                            ],
+                            "$other": [
+                              68,
+                              69,
+                              70
+                            ],
+                            "$span": {
+                              "start": 243,
+                              "end": 251
+                            },
+                            "$nodeHandle": 136
+                          },
+                          "$span": {
+                            "start": 242,
+                            "end": 251
+                          },
+                          "$nodeHandle": 135
+                        },
+                        "$other": [
+                          78
+                        ],
+                        "$span": {
+                          "start": 234,
+                          "end": 251
+                        },
+                        "$nodeHandle": 133
+                      },
+                      "$other": [
+                        5
+                      ],
+                      "$span": {
+                        "start": 231,
+                        "end": 251
+                      },
+                      "$nodeHandle": 132
+                    }
+                  }
+                ],
+                "$other": [
+                  69,
+                  69
+                ],
+                "$span": {
+                  "start": 221,
+                  "end": 252
+                },
+                "$nodeHandle": 126,
+                "_trailing_sep": true
+              },
+              "$other": [
+                7,
+                8
+              ],
+              "$span": {
+                "start": 220,
+                "end": 253
+              },
+              "$nodeHandle": 125
+            },
+            "_return_type": "C",
+            "$other": [
+              138
+            ],
+            "$span": {
+              "start": 206,
+              "end": 258
+            },
+            "$nodeHandle": 120
+          },
+          "$other": [
+            58,
+            59,
+            2
+          ],
+          "$span": {
+            "start": 197,
+            "end": 259
+          },
+          "$nodeHandle": 74
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 259
+      },
+      "$nodeHandle": 0
+    },
+    "expectedOutput": "fn high_order1(value:i32,f:fn(i32))->i32{  }fn high_order2(value:i32,f:fn(i32)->i32)->i32{ f(value) }fn high_order3(value:i32,f:&FnOnce(i32)->i32)->i32{ f(value) }type F=for<'a,'b>fn(x:&'a A,y:&'a mut B<'i,'t>,)->C;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "fn high_order1(value: i32, f: fn(i32)) -> i32 {}\n\nfn high_order2(value: i32, f: fn(i32) -> i32) -> i32 {\n    f(value)\n}\n\nfn high_order3(value: i32, f: &FnOnce(i32) -> i32) -> i32 {\n    f(value)\n}\n\ntype F = for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C;",
+    "pattern": "source_file",
+    "edits": [],
+    "expectedSourceOut": "fn high_order1(value:i32,f:fn(i32))->i32{  }fn high_order2(value:i32,f:fn(i32)->i32)->i32{ f(value) }fn high_order3(value:i32,f:&FnOnce(i32)->i32)->i32{ f(value) }type F=for<'a,'b>fn(x:&'a A,y:&'a mut B<'i,'t>,)->C;",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type))))))))) return_type: (primitive_type) body: (block)) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type)))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier))))))) statements: (function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type type: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type))))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier))))))) statements: (type_item name: (type_identifier) type: (function_type for_lifetimes: (for_lifetimes (lifetime identifier: (identifier)) (lifetime identifier: (identifier))) (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))) (type_argument (lifetime identifier: (identifier)))))))))) return_type: (type_identifier))))",
+    "wrappedText": "fn high_order1(value:i32,f:fn(i32))->i32{  }fn high_order2(value:i32,f:fn(i32)->i32)->i32{ f(value) }fn high_order3(value:i32,f:&FnOnce(i32)->i32)->i32{ f(value) }type F=for<'a,'b>fn(x:&'a A,y:&'a mut B<'i,'t>,)->C;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 189,
+      "$source": 0,
+      "$named": true,
+      "_name": "high_order1",
+      "_parameters": {
+        "$type": 211,
+        "$source": 0,
+        "$named": true,
+        "_parameters_group1": {
+          "$type": 327,
+          "$source": 0,
+          "$named": true,
+          "_attributed_parameter": [
+            {
+              "$type": 391,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 15,
+                "end": 25
+              },
+              "$nodeHandle": 143,
+              "_content": {
+                "$type": 214,
+                "$source": 0,
+                "$named": true,
+                "_pattern": "value",
+                "_type": "i32",
+                "$other": [
+                  5
+                ],
+                "$span": {
+                  "start": 15,
+                  "end": 25
+                },
+                "$nodeHandle": 145
+              }
+            },
+            {
+              "$type": 391,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 27,
+                "end": 37
+              },
+              "$nodeHandle": 144,
+              "_content": {
+                "$type": 214,
+                "$source": 0,
+                "$named": true,
+                "_pattern": "f",
+                "_type": {
+                  "$type": 223,
+                  "$source": 0,
+                  "$named": true,
+                  "_function_type_fn_form": {
+                    "$type": 356,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "fn",
+                    "$span": {
+                      "start": 30,
+                      "end": 32
+                    },
+                    "$nodeHandle": 148
+                  },
+                  "_parameters": {
+                    "$type": 211,
+                    "$source": 0,
+                    "$named": true,
+                    "_parameters_group1": {
+                      "$type": 327,
+                      "$source": 0,
+                      "$named": true,
+                      "_attributed_parameter": [
+                        {
+                          "$type": 391,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 33,
+                            "end": 36
+                          },
+                          "$nodeHandle": 151,
+                          "_content": "i32"
+                        }
+                      ],
+                      "$span": {
+                        "start": 33,
+                        "end": 36
+                      },
+                      "$nodeHandle": 150,
+                      "_trailing_sep": false
+                    },
+                    "$other": [
+                      7,
+                      8
+                    ],
+                    "$span": {
+                      "start": 32,
+                      "end": 37
+                    },
+                    "$nodeHandle": 149
+                  },
+                  "$span": {
+                    "start": 30,
+                    "end": 37
+                  },
+                  "$nodeHandle": 147
+                },
+                "$other": [
+                  5
+                ],
+                "$span": {
+                  "start": 27,
+                  "end": 37
+                },
+                "$nodeHandle": 146
+              }
+            }
+          ],
+          "$other": [
+            69
+          ],
+          "$span": {
+            "start": 15,
+            "end": 37
+          },
+          "$nodeHandle": 142,
+          "_trailing_sep": false
+        },
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 14,
+          "end": 38
+        },
+        "$nodeHandle": 141
+      },
+      "_return_type": "i32",
+      "_body": {
+        "$type": 294,
+        "$source": 0,
+        "$named": true,
+        "$span": {
+          "start": 46,
+          "end": 48
+        },
+        "$nodeHandle": 152,
+        "_statement": []
+      },
+      "$other": [
+        60,
+        138
+      ],
+      "$span": {
+        "start": 0,
+        "end": 48
+      },
+      "$nodeHandle": 1
+    },
+    "expectedOutput": "fn high_order1(value:i32,f:fn(i32))->i32{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "fn high_order1(value: i32, f: fn(i32)) -> i32 {}",
+    "pattern": "function_item",
+    "edits": [],
+    "expectedSourceOut": "fn high_order1(value:i32,f:fn(i32))->i32{  }",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type))))))))) return_type: (primitive_type) body: (block))",
+    "wrappedText": "fn high_order1(value:i32,f:fn(i32))->i32{  }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 189,
+      "$source": 0,
+      "$named": true,
+      "_name": "high_order2",
+      "_parameters": {
+        "$type": 211,
+        "$source": 0,
+        "$named": true,
+        "_parameters_group1": {
+          "$type": 327,
+          "$source": 0,
+          "$named": true,
+          "_attributed_parameter": [
+            {
+              "$type": 391,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 65,
+                "end": 75
+              },
+              "$nodeHandle": 155,
+              "_content": {
+                "$type": 214,
+                "$source": 0,
+                "$named": true,
+                "_pattern": "value",
+                "_type": "i32",
+                "$other": [
+                  5
+                ],
+                "$span": {
+                  "start": 65,
+                  "end": 75
+                },
+                "$nodeHandle": 157
+              }
+            },
+            {
+              "$type": 391,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 77,
+                "end": 94
+              },
+              "$nodeHandle": 156,
+              "_content": {
+                "$type": 214,
+                "$source": 0,
+                "$named": true,
+                "_pattern": "f",
+                "_type": {
+                  "$type": 223,
+                  "$source": 0,
+                  "$named": true,
+                  "_function_type_fn_form": {
+                    "$type": 356,
+                    "$source": 0,
+                    "$named": true,
+                    "$text": "fn",
+                    "$span": {
+                      "start": 80,
+                      "end": 82
+                    },
+                    "$nodeHandle": 160
+                  },
+                  "_parameters": {
+                    "$type": 211,
+                    "$source": 0,
+                    "$named": true,
+                    "_parameters_group1": {
+                      "$type": 327,
+                      "$source": 0,
+                      "$named": true,
+                      "_attributed_parameter": [
+                        {
+                          "$type": 391,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 83,
+                            "end": 86
+                          },
+                          "$nodeHandle": 163,
+                          "_content": "i32"
+                        }
+                      ],
+                      "$span": {
+                        "start": 83,
+                        "end": 86
+                      },
+                      "$nodeHandle": 162,
+                      "_trailing_sep": false
+                    },
+                    "$other": [
+                      7,
+                      8
+                    ],
+                    "$span": {
+                      "start": 82,
+                      "end": 87
+                    },
+                    "$nodeHandle": 161
+                  },
+                  "_return_type": "i32",
+                  "$other": [
+                    138
+                  ],
+                  "$span": {
+                    "start": 80,
+                    "end": 94
+                  },
+                  "$nodeHandle": 159
+                },
+                "$other": [
+                  5
+                ],
+                "$span": {
+                  "start": 77,
+                  "end": 94
+                },
+                "$nodeHandle": 158
+              }
+            }
+          ],
+          "$other": [
+            69
+          ],
+          "$span": {
+            "start": 65,
+            "end": 94
+          },
+          "$nodeHandle": 154,
+          "_trailing_sep": false
+        },
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 64,
+          "end": 95
+        },
+        "$nodeHandle": 153
+      },
+      "_return_type": "i32",
+      "_body": {
+        "$type": 294,
+        "$source": 0,
+        "$named": true,
+        "_trailing_expression": {
+          "$type": 257,
+          "$source": 0,
+          "$named": true,
+          "_function": "f",
+          "_arguments": {
+            "$type": 258,
+            "$source": 0,
+            "$named": true,
+            "_arguments_group1": {
+              "$type": 330,
+              "$source": 0,
+              "$named": true,
+              "_attributed_argument": [
+                {
+                  "$type": 393,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 111,
+                    "end": 116
+                  },
+                  "$nodeHandle": 168,
+                  "_attribute_item": [],
+                  "_expression": "value"
+                }
+              ],
+              "$span": {
+                "start": 111,
+                "end": 116
+              },
+              "$nodeHandle": 167,
+              "_trailing_sep": false
+            },
+            "$other": [
+              7,
+              8
+            ],
+            "$span": {
+              "start": 110,
+              "end": 117
+            },
+            "$nodeHandle": 166
+          },
+          "$span": {
+            "start": 109,
+            "end": 117
+          },
+          "$nodeHandle": 165
+        },
+        "$other": [
+          50,
+          51
+        ],
+        "$span": {
+          "start": 103,
+          "end": 119
+        },
+        "$nodeHandle": 164,
+        "_statement": []
+      },
+      "$other": [
+        60,
+        138
+      ],
+      "$span": {
+        "start": 50,
+        "end": 119
+      },
+      "$nodeHandle": 2
+    },
+    "expectedOutput": "fn high_order2(value:i32,f:fn(i32)->i32)->i32{ f(value) }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "fn high_order2(value: i32, f: fn(i32) -> i32) -> i32 {\n    f(value)\n}",
+    "pattern": "function_item",
+    "edits": [],
+    "expectedSourceOut": "fn high_order2(value:i32,f:fn(i32)->i32)->i32{ f(value) }",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type)))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)))))))",
+    "wrappedText": "fn high_order2(value:i32,f:fn(i32)->i32)->i32{ f(value) }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 189,
+      "$source": 0,
+      "$named": true,
+      "_name": "high_order3",
+      "_parameters": {
+        "$type": 211,
+        "$source": 0,
+        "$named": true,
+        "_parameters_group1": {
+          "$type": 327,
+          "$source": 0,
+          "$named": true,
+          "_attributed_parameter": [
+            {
+              "$type": 391,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 136,
+                "end": 146
+              },
+              "$nodeHandle": 171,
+              "_content": {
+                "$type": 214,
+                "$source": 0,
+                "$named": true,
+                "_pattern": "value",
+                "_type": "i32",
+                "$other": [
+                  5
+                ],
+                "$span": {
+                  "start": 136,
+                  "end": 146
+                },
+                "$nodeHandle": 173
+              }
+            },
+            {
+              "$type": 391,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 148,
+                "end": 170
+              },
+              "$nodeHandle": 172,
+              "_content": {
+                "$type": 214,
+                "$source": 0,
+                "$named": true,
+                "_pattern": "f",
+                "_type": {
+                  "$type": 233,
+                  "$source": 0,
+                  "$named": true,
+                  "_type": {
+                    "$type": 223,
+                    "$source": 0,
+                    "$named": true,
+                    "_function_type_trait_form": {
+                      "$type": 355,
+                      "$source": 0,
+                      "$named": true,
+                      "_trait": "FnOnce",
+                      "$span": {
+                        "start": 152,
+                        "end": 158
+                      },
+                      "$nodeHandle": 177
+                    },
+                    "_parameters": {
+                      "$type": 211,
+                      "$source": 0,
+                      "$named": true,
+                      "_parameters_group1": {
+                        "$type": 327,
+                        "$source": 0,
+                        "$named": true,
+                        "_attributed_parameter": [
+                          {
+                            "$type": 391,
+                            "$source": 0,
+                            "$named": true,
+                            "$span": {
+                              "start": 159,
+                              "end": 162
+                            },
+                            "$nodeHandle": 180,
+                            "_content": "i32"
+                          }
+                        ],
+                        "$span": {
+                          "start": 159,
+                          "end": 162
+                        },
+                        "$nodeHandle": 179,
+                        "_trailing_sep": false
+                      },
+                      "$other": [
+                        7,
+                        8
+                      ],
+                      "$span": {
+                        "start": 158,
+                        "end": 163
+                      },
+                      "$nodeHandle": 178
+                    },
+                    "_return_type": "i32",
+                    "$other": [
+                      138
+                    ],
+                    "$span": {
+                      "start": 152,
+                      "end": 170
+                    },
+                    "$nodeHandle": 176
+                  },
+                  "$other": [
+                    78
+                  ],
+                  "$span": {
+                    "start": 151,
+                    "end": 170
+                  },
+                  "$nodeHandle": 175
+                },
+                "$other": [
+                  5
+                ],
+                "$span": {
+                  "start": 148,
+                  "end": 170
+                },
+                "$nodeHandle": 174
+              }
+            }
+          ],
+          "$other": [
+            69
+          ],
+          "$span": {
+            "start": 136,
+            "end": 170
+          },
+          "$nodeHandle": 170,
+          "_trailing_sep": false
+        },
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 135,
+          "end": 171
+        },
+        "$nodeHandle": 169
+      },
+      "_return_type": "i32",
+      "_body": {
+        "$type": 294,
+        "$source": 0,
+        "$named": true,
+        "_trailing_expression": {
+          "$type": 257,
+          "$source": 0,
+          "$named": true,
+          "_function": "f",
+          "_arguments": {
+            "$type": 258,
+            "$source": 0,
+            "$named": true,
+            "_arguments_group1": {
+              "$type": 330,
+              "$source": 0,
+              "$named": true,
+              "_attributed_argument": [
+                {
+                  "$type": 393,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 187,
+                    "end": 192
+                  },
+                  "$nodeHandle": 185,
+                  "_attribute_item": [],
+                  "_expression": "value"
+                }
+              ],
+              "$span": {
+                "start": 187,
+                "end": 192
+              },
+              "$nodeHandle": 184,
+              "_trailing_sep": false
+            },
+            "$other": [
+              7,
+              8
+            ],
+            "$span": {
+              "start": 186,
+              "end": 193
+            },
+            "$nodeHandle": 183
+          },
+          "$span": {
+            "start": 185,
+            "end": 193
+          },
+          "$nodeHandle": 182
+        },
+        "$other": [
+          50,
+          51
+        ],
+        "$span": {
+          "start": 179,
+          "end": 195
+        },
+        "$nodeHandle": 181,
+        "_statement": []
+      },
+      "$other": [
+        60,
+        138
+      ],
+      "$span": {
+        "start": 121,
+        "end": 195
+      },
+      "$nodeHandle": 3
+    },
+    "expectedOutput": "fn high_order3(value:i32,f:&FnOnce(i32)->i32)->i32{ f(value) }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "fn high_order3(value: i32, f: &FnOnce(i32) -> i32) -> i32 {\n    f(value)\n}",
+    "pattern": "function_item",
+    "edits": [],
+    "expectedSourceOut": "fn high_order3(value:i32,f:&FnOnce(i32)->i32)->i32{ f(value) }",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type type: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type))))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)))))))",
+    "wrappedText": "fn high_order3(value:i32,f:&FnOnce(i32)->i32)->i32{ f(value) }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "_parameters_group1": {
+        "$type": 327,
+        "$source": 0,
+        "$named": true,
+        "_attributed_parameter": [
+          {
+            "$type": 391,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 15,
+              "end": 25
+            },
+            "$nodeHandle": 187,
+            "_content": {
+              "$type": 214,
+              "$source": 0,
+              "$named": true,
+              "_pattern": "value",
+              "_type": "i32",
+              "$other": [
+                5
+              ],
+              "$span": {
+                "start": 15,
+                "end": 25
+              },
+              "$nodeHandle": 189
+            }
+          },
+          {
+            "$type": 391,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 27,
+              "end": 37
+            },
+            "$nodeHandle": 188,
+            "_content": {
+              "$type": 214,
+              "$source": 0,
+              "$named": true,
+              "_pattern": "f",
+              "_type": {
+                "$type": 223,
+                "$source": 0,
+                "$named": true,
+                "_function_type_fn_form": {
+                  "$type": 356,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "fn",
+                  "$span": {
+                    "start": 30,
+                    "end": 32
+                  },
+                  "$nodeHandle": 192
+                },
+                "_parameters": {
+                  "$type": 211,
+                  "$source": 0,
+                  "$named": true,
+                  "_parameters_group1": {
+                    "$type": 327,
+                    "$source": 0,
+                    "$named": true,
+                    "_attributed_parameter": [
+                      {
+                        "$type": 391,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 33,
+                          "end": 36
+                        },
+                        "$nodeHandle": 195,
+                        "_content": "i32"
+                      }
+                    ],
+                    "$span": {
+                      "start": 33,
+                      "end": 36
+                    },
+                    "$nodeHandle": 194,
+                    "_trailing_sep": false
+                  },
+                  "$other": [
+                    7,
+                    8
+                  ],
+                  "$span": {
+                    "start": 32,
+                    "end": 37
+                  },
+                  "$nodeHandle": 193
+                },
+                "$span": {
+                  "start": 30,
+                  "end": 37
+                },
+                "$nodeHandle": 191
+              },
+              "$other": [
+                5
+              ],
+              "$span": {
+                "start": 27,
+                "end": 37
+              },
+              "$nodeHandle": 190
+            }
+          }
+        ],
+        "$other": [
+          69
+        ],
+        "$span": {
+          "start": 15,
+          "end": 37
+        },
+        "$nodeHandle": 186,
+        "_trailing_sep": false
+      },
+      "$other": [
+        7,
+        8
+      ],
+      "$span": {
+        "start": 14,
+        "end": 38
+      },
+      "$nodeHandle": 5
+    },
+    "expectedOutput": "(value:i32,f:fn(i32))"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(value: i32, f: fn(i32))",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "(value:i32,f:fn(i32))",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))))))))",
+    "wrappedText": "fn _f(value:i32,f:fn(i32)) {}",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "_parameters_group1": {
+        "$type": 327,
+        "$source": 0,
+        "$named": true,
+        "_attributed_parameter": [
+          {
+            "$type": 391,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 33,
+              "end": 36
+            },
+            "$nodeHandle": 197,
+            "_content": "i32"
+          }
+        ],
+        "$span": {
+          "start": 33,
+          "end": 36
+        },
+        "$nodeHandle": 196,
+        "_trailing_sep": false
+      },
+      "$other": [
+        7,
+        8
+      ],
+      "$span": {
+        "start": 32,
+        "end": 37
+      },
+      "$nodeHandle": 13
+    },
+    "expectedOutput": "(i32)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(i32)",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "(i32)",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (primitive_type))))",
+    "wrappedText": "fn _f(i32) {}",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "_parameters_group1": {
+        "$type": 327,
+        "$source": 0,
+        "$named": true,
+        "_attributed_parameter": [
+          {
+            "$type": 391,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 65,
+              "end": 75
+            },
+            "$nodeHandle": 199,
+            "_content": {
+              "$type": 214,
+              "$source": 0,
+              "$named": true,
+              "_pattern": "value",
+              "_type": "i32",
+              "$other": [
+                5
+              ],
+              "$span": {
+                "start": 65,
+                "end": 75
+              },
+              "$nodeHandle": 201
+            }
+          },
+          {
+            "$type": 391,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 77,
+              "end": 94
+            },
+            "$nodeHandle": 200,
+            "_content": {
+              "$type": 214,
+              "$source": 0,
+              "$named": true,
+              "_pattern": "f",
+              "_type": {
+                "$type": 223,
+                "$source": 0,
+                "$named": true,
+                "_function_type_fn_form": {
+                  "$type": 356,
+                  "$source": 0,
+                  "$named": true,
+                  "$text": "fn",
+                  "$span": {
+                    "start": 80,
+                    "end": 82
+                  },
+                  "$nodeHandle": 204
+                },
+                "_parameters": {
+                  "$type": 211,
+                  "$source": 0,
+                  "$named": true,
+                  "_parameters_group1": {
+                    "$type": 327,
+                    "$source": 0,
+                    "$named": true,
+                    "_attributed_parameter": [
+                      {
+                        "$type": 391,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 83,
+                          "end": 86
+                        },
+                        "$nodeHandle": 207,
+                        "_content": "i32"
+                      }
+                    ],
+                    "$span": {
+                      "start": 83,
+                      "end": 86
+                    },
+                    "$nodeHandle": 206,
+                    "_trailing_sep": false
+                  },
+                  "$other": [
+                    7,
+                    8
+                  ],
+                  "$span": {
+                    "start": 82,
+                    "end": 87
+                  },
+                  "$nodeHandle": 205
+                },
+                "_return_type": "i32",
+                "$other": [
+                  138
+                ],
+                "$span": {
+                  "start": 80,
+                  "end": 94
+                },
+                "$nodeHandle": 203
+              },
+              "$other": [
+                5
+              ],
+              "$span": {
+                "start": 77,
+                "end": 94
+              },
+              "$nodeHandle": 202
+            }
+          }
+        ],
+        "$other": [
+          69
+        ],
+        "$span": {
+          "start": 65,
+          "end": 94
+        },
+        "$nodeHandle": 198,
+        "_trailing_sep": false
+      },
+      "$other": [
+        7,
+        8
+      ],
+      "$span": {
+        "start": 64,
+        "end": 95
+      },
+      "$nodeHandle": 17
+    },
+    "expectedOutput": "(value:i32,f:fn(i32)->i32)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(value: i32, f: fn(i32) -> i32)",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "(value:i32,f:fn(i32)->i32)",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type))))))",
+    "wrappedText": "fn _f(value:i32,f:fn(i32)->i32) {}",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "_parameters_group1": {
+        "$type": 327,
+        "$source": 0,
+        "$named": true,
+        "_attributed_parameter": [
+          {
+            "$type": 391,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 83,
+              "end": 86
+            },
+            "$nodeHandle": 209,
+            "_content": "i32"
+          }
+        ],
+        "$span": {
+          "start": 83,
+          "end": 86
+        },
+        "$nodeHandle": 208,
+        "_trailing_sep": false
+      },
+      "$other": [
+        7,
+        8
+      ],
+      "$span": {
+        "start": 82,
+        "end": 87
+      },
+      "$nodeHandle": 25
+    },
+    "expectedOutput": "(i32)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(i32)",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "(i32)",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (primitive_type))))",
+    "wrappedText": "fn _f(i32) {}",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "_parameters_group1": {
+        "$type": 327,
+        "$source": 0,
+        "$named": true,
+        "_attributed_parameter": [
+          {
+            "$type": 391,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 136,
+              "end": 146
+            },
+            "$nodeHandle": 211,
+            "_content": {
+              "$type": 214,
+              "$source": 0,
+              "$named": true,
+              "_pattern": "value",
+              "_type": "i32",
+              "$other": [
+                5
+              ],
+              "$span": {
+                "start": 136,
+                "end": 146
+              },
+              "$nodeHandle": 213
+            }
+          },
+          {
+            "$type": 391,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 148,
+              "end": 170
+            },
+            "$nodeHandle": 212,
+            "_content": {
+              "$type": 214,
+              "$source": 0,
+              "$named": true,
+              "_pattern": "f",
+              "_type": {
+                "$type": 233,
+                "$source": 0,
+                "$named": true,
+                "_type": {
+                  "$type": 223,
+                  "$source": 0,
+                  "$named": true,
+                  "_function_type_trait_form": {
+                    "$type": 355,
+                    "$source": 0,
+                    "$named": true,
+                    "_trait": "FnOnce",
+                    "$span": {
+                      "start": 152,
+                      "end": 158
+                    },
+                    "$nodeHandle": 217
+                  },
+                  "_parameters": {
+                    "$type": 211,
+                    "$source": 0,
+                    "$named": true,
+                    "_parameters_group1": {
+                      "$type": 327,
+                      "$source": 0,
+                      "$named": true,
+                      "_attributed_parameter": [
+                        {
+                          "$type": 391,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 159,
+                            "end": 162
+                          },
+                          "$nodeHandle": 220,
+                          "_content": "i32"
+                        }
+                      ],
+                      "$span": {
+                        "start": 159,
+                        "end": 162
+                      },
+                      "$nodeHandle": 219,
+                      "_trailing_sep": false
+                    },
+                    "$other": [
+                      7,
+                      8
+                    ],
+                    "$span": {
+                      "start": 158,
+                      "end": 163
+                    },
+                    "$nodeHandle": 218
+                  },
+                  "_return_type": "i32",
+                  "$other": [
+                    138
+                  ],
+                  "$span": {
+                    "start": 152,
+                    "end": 170
+                  },
+                  "$nodeHandle": 216
+                },
+                "$other": [
+                  78
+                ],
+                "$span": {
+                  "start": 151,
+                  "end": 170
+                },
+                "$nodeHandle": 215
+              },
+              "$other": [
+                5
+              ],
+              "$span": {
+                "start": 148,
+                "end": 170
+              },
+              "$nodeHandle": 214
+            }
+          }
+        ],
+        "$other": [
+          69
+        ],
+        "$span": {
+          "start": 136,
+          "end": 170
+        },
+        "$nodeHandle": 210,
+        "_trailing_sep": false
+      },
+      "$other": [
+        7,
+        8
+      ],
+      "$span": {
+        "start": 135,
+        "end": 171
+      },
+      "$nodeHandle": 33
+    },
+    "expectedOutput": "(value:i32,f:&FnOnce(i32)->i32)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(value: i32, f: &FnOnce(i32) -> i32)",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "(value:i32,f:&FnOnce(i32)->i32)",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (primitive_type))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type type: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type)))))))",
+    "wrappedText": "fn _f(value:i32,f:&FnOnce(i32)->i32) {}",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "_parameters_group1": {
+        "$type": 327,
+        "$source": 0,
+        "$named": true,
+        "_attributed_parameter": [
+          {
+            "$type": 391,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 159,
+              "end": 162
+            },
+            "$nodeHandle": 222,
+            "_content": "i32"
+          }
+        ],
+        "$span": {
+          "start": 159,
+          "end": 162
+        },
+        "$nodeHandle": 221,
+        "_trailing_sep": false
+      },
+      "$other": [
+        7,
+        8
+      ],
+      "$span": {
+        "start": 158,
+        "end": 163
+      },
+      "$nodeHandle": 42
+    },
+    "expectedOutput": "(i32)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(i32)",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "(i32)",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (primitive_type))))",
+    "wrappedText": "fn _f(i32) {}",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 211,
+      "$source": 0,
+      "$named": true,
+      "_parameters_group1": {
+        "$type": 327,
+        "$source": 0,
+        "$named": true,
+        "_attributed_parameter": [
+          {
+            "$type": 391,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 221,
+              "end": 229
+            },
+            "$nodeHandle": 224,
+            "_content": {
+              "$type": 214,
+              "$source": 0,
+              "$named": true,
+              "_pattern": "x",
+              "_type": {
+                "$type": 233,
+                "$source": 0,
+                "$named": true,
+                "_lifetime": {
+                  "$type": 220,
+                  "$source": 0,
+                  "$named": true,
+                  "_identifier": "a",
+                  "$other": [
+                    76
+                  ],
+                  "$span": {
+                    "start": 225,
+                    "end": 227
+                  },
+                  "$nodeHandle": 228
+                },
+                "_type": "A",
+                "$other": [
+                  78
+                ],
+                "$span": {
+                  "start": 224,
+                  "end": 229
+                },
+                "$nodeHandle": 227
+              },
+              "$other": [
+                5
+              ],
+              "$span": {
+                "start": 221,
+                "end": 229
+              },
+              "$nodeHandle": 226
+            }
+          },
+          {
+            "$type": 391,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 231,
+              "end": 251
+            },
+            "$nodeHandle": 225,
+            "_content": {
+              "$type": 214,
+              "$source": 0,
+              "$named": true,
+              "_pattern": "y",
+              "_type": {
+                "$type": 233,
+                "$source": 0,
+                "$named": true,
+                "_lifetime": {
+                  "$type": 220,
+                  "$source": 0,
+                  "$named": true,
+                  "_identifier": "a",
+                  "$other": [
+                    76
+                  ],
+                  "$span": {
+                    "start": 235,
+                    "end": 237
+                  },
+                  "$nodeHandle": 231
+                },
+                "_mutable_specifier": true,
+                "_type": {
+                  "$type": 227,
+                  "$source": 0,
+                  "$named": true,
+                  "_type": "B",
+                  "_type_arguments": {
+                    "$type": 231,
+                    "$source": 0,
+                    "$named": true,
+                    "_type_argument": [
+                      {
+                        "$type": 395,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 244,
+                          "end": 246
+                        },
+                        "$nodeHandle": 234,
+                        "_content": {
+                          "$type": 220,
+                          "$source": 0,
+                          "$named": true,
+                          "_identifier": "i",
+                          "$other": [
+                            76
+                          ],
+                          "$span": {
+                            "start": 244,
+                            "end": 246
+                          },
+                          "$nodeHandle": 236
+                        }
+                      },
+                      {
+                        "$type": 395,
+                        "$source": 0,
+                        "$named": true,
+                        "$span": {
+                          "start": 248,
+                          "end": 250
+                        },
+                        "$nodeHandle": 235,
+                        "_content": {
+                          "$type": 220,
+                          "$source": 0,
+                          "$named": true,
+                          "_identifier": "t",
+                          "$other": [
+                            76
+                          ],
+                          "$span": {
+                            "start": 248,
+                            "end": 250
+                          },
+                          "$nodeHandle": 237
+                        }
+                      }
+                    ],
+                    "$other": [
+                      68,
+                      69,
+                      70
+                    ],
+                    "$span": {
+                      "start": 243,
+                      "end": 251
+                    },
+                    "$nodeHandle": 233
+                  },
+                  "$span": {
+                    "start": 242,
+                    "end": 251
+                  },
+                  "$nodeHandle": 232
+                },
+                "$other": [
+                  78
+                ],
+                "$span": {
+                  "start": 234,
+                  "end": 251
+                },
+                "$nodeHandle": 230
+              },
+              "$other": [
+                5
+              ],
+              "$span": {
+                "start": 231,
+                "end": 251
+              },
+              "$nodeHandle": 229
+            }
+          }
+        ],
+        "$other": [
+          69,
+          69
+        ],
+        "$span": {
+          "start": 221,
+          "end": 252
+        },
+        "$nodeHandle": 223,
+        "_trailing_sep": true
+      },
+      "$other": [
+        7,
+        8
+      ],
+      "$span": {
+        "start": 220,
+        "end": 253
+      },
+      "$nodeHandle": 55
+    },
+    "expectedOutput": "(x:&'a A,y:&'a mut B<'i,'t>,)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(x: &'a A, y: &'a mut B<'i, 't>,)",
+    "pattern": "parameters",
+    "edits": [],
+    "expectedSourceOut": "(x:&'a A,y:&'a mut B<'i,'t>,)",
+    "expectedReparseTree": "(parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))) (type_argument (lifetime identifier: (identifier))))))))))",
+    "wrappedText": "fn _f(x:&'a A,y:&'a mut B<'i,'t>,) {}",
+    "wrappedOffset": 5
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 214,
+      "$source": 0,
+      "$named": true,
+      "_pattern": "value",
+      "_type": "i32",
+      "$other": [
+        5
+      ],
+      "$span": {
+        "start": 15,
+        "end": 25
+      },
+      "$nodeHandle": 9
+    },
+    "expectedOutput": "value:i32"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "value: i32",
+    "pattern": "parameter",
+    "edits": [],
+    "expectedSourceOut": "value:i32",
+    "expectedReparseTree": "(parameter pattern: (identifier) type: (primitive_type))",
+    "wrappedText": "fn _f(value:i32) {}",
+    "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 214,
+      "$source": 0,
+      "$named": true,
+      "_pattern": "f",
+      "_type": {
+        "$type": 223,
+        "$source": 0,
+        "$named": true,
+        "_function_type_fn_form": {
+          "$type": 356,
+          "$source": 0,
+          "$named": true,
+          "$text": "fn",
+          "$span": {
+            "start": 30,
+            "end": 32
+          },
+          "$nodeHandle": 239
+        },
+        "_parameters": {
+          "$type": 211,
+          "$source": 0,
+          "$named": true,
+          "_parameters_group1": {
+            "$type": 327,
+            "$source": 0,
+            "$named": true,
+            "_attributed_parameter": [
+              {
+                "$type": 391,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 33,
+                  "end": 36
+                },
+                "$nodeHandle": 242,
+                "_content": "i32"
+              }
+            ],
+            "$span": {
+              "start": 33,
+              "end": 36
+            },
+            "$nodeHandle": 241,
+            "_trailing_sep": false
+          },
+          "$other": [
+            7,
+            8
+          ],
+          "$span": {
+            "start": 32,
+            "end": 37
+          },
+          "$nodeHandle": 240
+        },
+        "$span": {
+          "start": 30,
+          "end": 37
+        },
+        "$nodeHandle": 238
+      },
+      "$other": [
+        5
+      ],
+      "$span": {
+        "start": 27,
+        "end": 37
+      },
+      "$nodeHandle": 10
+    },
+    "expectedOutput": "f:fn(i32)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "f: fn(i32)",
+    "pattern": "parameter",
+    "edits": [],
+    "expectedSourceOut": "f:fn(i32)",
+    "expectedReparseTree": "(parameter pattern: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type))))))",
+    "wrappedText": "fn _f(f:fn(i32)) {}",
+    "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 214,
+      "$source": 0,
+      "$named": true,
+      "_pattern": "value",
+      "_type": "i32",
+      "$other": [
+        5
+      ],
+      "$span": {
+        "start": 65,
+        "end": 75
+      },
+      "$nodeHandle": 21
+    },
+    "expectedOutput": "value:i32"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "value: i32",
+    "pattern": "parameter",
+    "edits": [],
+    "expectedSourceOut": "value:i32",
+    "expectedReparseTree": "(parameter pattern: (identifier) type: (primitive_type))",
+    "wrappedText": "fn _f(value:i32) {}",
+    "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 214,
+      "$source": 0,
+      "$named": true,
+      "_pattern": "f",
+      "_type": {
+        "$type": 223,
+        "$source": 0,
+        "$named": true,
+        "_function_type_fn_form": {
+          "$type": 356,
+          "$source": 0,
+          "$named": true,
+          "$text": "fn",
+          "$span": {
+            "start": 80,
+            "end": 82
+          },
+          "$nodeHandle": 244
+        },
+        "_parameters": {
+          "$type": 211,
+          "$source": 0,
+          "$named": true,
+          "_parameters_group1": {
+            "$type": 327,
+            "$source": 0,
+            "$named": true,
+            "_attributed_parameter": [
+              {
+                "$type": 391,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 83,
+                  "end": 86
+                },
+                "$nodeHandle": 247,
+                "_content": "i32"
+              }
+            ],
+            "$span": {
+              "start": 83,
+              "end": 86
+            },
+            "$nodeHandle": 246,
+            "_trailing_sep": false
+          },
+          "$other": [
+            7,
+            8
+          ],
+          "$span": {
+            "start": 82,
+            "end": 87
+          },
+          "$nodeHandle": 245
+        },
+        "_return_type": "i32",
+        "$other": [
+          138
+        ],
+        "$span": {
+          "start": 80,
+          "end": 94
+        },
+        "$nodeHandle": 243
+      },
+      "$other": [
+        5
+      ],
+      "$span": {
+        "start": 77,
+        "end": 94
+      },
+      "$nodeHandle": 22
+    },
+    "expectedOutput": "f:fn(i32)->i32"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "f: fn(i32) -> i32",
+    "pattern": "parameter",
+    "edits": [],
+    "expectedSourceOut": "f:fn(i32)->i32",
+    "expectedReparseTree": "(parameter pattern: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type)))",
+    "wrappedText": "fn _f(f:fn(i32)->i32) {}",
+    "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 214,
+      "$source": 0,
+      "$named": true,
+      "_pattern": "value",
+      "_type": "i32",
+      "$other": [
+        5
+      ],
+      "$span": {
+        "start": 136,
+        "end": 146
+      },
+      "$nodeHandle": 37
+    },
+    "expectedOutput": "value:i32"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "value: i32",
+    "pattern": "parameter",
+    "edits": [],
+    "expectedSourceOut": "value:i32",
+    "expectedReparseTree": "(parameter pattern: (identifier) type: (primitive_type))",
+    "wrappedText": "fn _f(value:i32) {}",
+    "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 214,
+      "$source": 0,
+      "$named": true,
+      "_pattern": "f",
+      "_type": {
+        "$type": 233,
+        "$source": 0,
+        "$named": true,
+        "_type": {
+          "$type": 223,
+          "$source": 0,
+          "$named": true,
+          "_function_type_trait_form": {
+            "$type": 355,
+            "$source": 0,
+            "$named": true,
+            "_trait": "FnOnce",
+            "$span": {
+              "start": 152,
+              "end": 158
+            },
+            "$nodeHandle": 250
+          },
+          "_parameters": {
+            "$type": 211,
+            "$source": 0,
+            "$named": true,
+            "_parameters_group1": {
+              "$type": 327,
+              "$source": 0,
+              "$named": true,
+              "_attributed_parameter": [
+                {
+                  "$type": 391,
+                  "$source": 0,
+                  "$named": true,
+                  "$span": {
+                    "start": 159,
+                    "end": 162
+                  },
+                  "$nodeHandle": 253,
+                  "_content": "i32"
+                }
+              ],
+              "$span": {
+                "start": 159,
+                "end": 162
+              },
+              "$nodeHandle": 252,
+              "_trailing_sep": false
+            },
+            "$other": [
+              7,
+              8
+            ],
+            "$span": {
+              "start": 158,
+              "end": 163
+            },
+            "$nodeHandle": 251
+          },
+          "_return_type": "i32",
+          "$other": [
+            138
+          ],
+          "$span": {
+            "start": 152,
+            "end": 170
+          },
+          "$nodeHandle": 249
+        },
+        "$other": [
+          78
+        ],
+        "$span": {
+          "start": 151,
+          "end": 170
+        },
+        "$nodeHandle": 248
+      },
+      "$other": [
+        5
+      ],
+      "$span": {
+        "start": 148,
+        "end": 170
+      },
+      "$nodeHandle": 38
+    },
+    "expectedOutput": "f:&FnOnce(i32)->i32"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "f: &FnOnce(i32) -> i32",
+    "pattern": "parameter",
+    "edits": [],
+    "expectedSourceOut": "f:&FnOnce(i32)->i32",
+    "expectedReparseTree": "(parameter pattern: (identifier) type: (reference_type type: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type))))",
+    "wrappedText": "fn _f(f:&FnOnce(i32)->i32) {}",
+    "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 214,
+      "$source": 0,
+      "$named": true,
+      "_pattern": "x",
+      "_type": {
+        "$type": 233,
+        "$source": 0,
+        "$named": true,
+        "_lifetime": {
+          "$type": 220,
+          "$source": 0,
+          "$named": true,
+          "_identifier": "a",
+          "$other": [
+            76
+          ],
+          "$span": {
+            "start": 225,
+            "end": 227
+          },
+          "$nodeHandle": 255
+        },
+        "_type": "A",
+        "$other": [
+          78
+        ],
+        "$span": {
+          "start": 224,
+          "end": 229
+        },
+        "$nodeHandle": 254
+      },
+      "$other": [
+        5
+      ],
+      "$span": {
+        "start": 221,
+        "end": 229
+      },
+      "$nodeHandle": 59
+    },
+    "expectedOutput": "x:&'a A"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "x: &'a A",
+    "pattern": "parameter",
+    "edits": [],
+    "expectedSourceOut": "x:&'a A",
+    "expectedReparseTree": "(parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)))",
+    "wrappedText": "fn _f(x:&'a A) {}",
+    "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 214,
+      "$source": 0,
+      "$named": true,
+      "_pattern": "y",
+      "_type": {
+        "$type": 233,
+        "$source": 0,
+        "$named": true,
+        "_lifetime": {
+          "$type": 220,
+          "$source": 0,
+          "$named": true,
+          "_identifier": "a",
+          "$other": [
+            76
+          ],
+          "$span": {
+            "start": 235,
+            "end": 237
+          },
+          "$nodeHandle": 257
+        },
+        "_mutable_specifier": true,
+        "_type": {
+          "$type": 227,
+          "$source": 0,
+          "$named": true,
+          "_type": "B",
+          "_type_arguments": {
+            "$type": 231,
+            "$source": 0,
+            "$named": true,
+            "_type_argument": [
+              {
+                "$type": 395,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 244,
+                  "end": 246
+                },
+                "$nodeHandle": 260,
+                "_content": {
+                  "$type": 220,
+                  "$source": 0,
+                  "$named": true,
+                  "_identifier": "i",
+                  "$other": [
+                    76
+                  ],
+                  "$span": {
+                    "start": 244,
+                    "end": 246
+                  },
+                  "$nodeHandle": 262
+                }
+              },
+              {
+                "$type": 395,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 248,
+                  "end": 250
+                },
+                "$nodeHandle": 261,
+                "_content": {
+                  "$type": 220,
+                  "$source": 0,
+                  "$named": true,
+                  "_identifier": "t",
+                  "$other": [
+                    76
+                  ],
+                  "$span": {
+                    "start": 248,
+                    "end": 250
+                  },
+                  "$nodeHandle": 263
+                }
+              }
+            ],
+            "$other": [
+              68,
+              69,
+              70
+            ],
+            "$span": {
+              "start": 243,
+              "end": 251
+            },
+            "$nodeHandle": 259
+          },
+          "$span": {
+            "start": 242,
+            "end": 251
+          },
+          "$nodeHandle": 258
+        },
+        "$other": [
+          78
+        ],
+        "$span": {
+          "start": 234,
+          "end": 251
+        },
+        "$nodeHandle": 256
+      },
+      "$other": [
+        5
+      ],
+      "$span": {
+        "start": 231,
+        "end": 251
+      },
+      "$nodeHandle": 62
+    },
+    "expectedOutput": "y:&'a mut B<'i,'t>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "y: &'a mut B<'i, 't>",
+    "pattern": "parameter",
+    "edits": [],
+    "expectedSourceOut": "y:&'a mut B<'i,'t>",
+    "expectedReparseTree": "(parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))) (type_argument (lifetime identifier: (identifier)))))))",
+    "wrappedText": "fn _f(y:&'a mut B<'i,'t>) {}",
+    "wrappedOffset": 6
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 223,
+      "$source": 0,
+      "$named": true,
+      "_function_type_fn_form": {
+        "$type": 356,
+        "$source": 0,
+        "$named": true,
+        "$text": "fn",
+        "$span": {
+          "start": 30,
+          "end": 32
+        },
+        "$nodeHandle": 264
+      },
+      "_parameters": {
+        "$type": 211,
+        "$source": 0,
+        "$named": true,
+        "_parameters_group1": {
+          "$type": 327,
+          "$source": 0,
+          "$named": true,
+          "_attributed_parameter": [
+            {
+              "$type": 391,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 33,
+                "end": 36
+              },
+              "$nodeHandle": 267,
+              "_content": "i32"
+            }
+          ],
+          "$span": {
+            "start": 33,
+            "end": 36
+          },
+          "$nodeHandle": 266,
+          "_trailing_sep": false
+        },
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 32,
+          "end": 37
+        },
+        "$nodeHandle": 265
+      },
+      "$span": {
+        "start": 30,
+        "end": 37
+      },
+      "$nodeHandle": 11
+    },
+    "expectedOutput": "fn(i32)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "fn(i32)",
+    "pattern": "function_type",
+    "edits": [],
+    "expectedSourceOut": "fn(i32)",
+    "expectedReparseTree": "(function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))))",
+    "wrappedText": "type _X = fn(i32);",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 223,
+      "$source": 0,
+      "$named": true,
+      "_function_type_fn_form": {
+        "$type": 356,
+        "$source": 0,
+        "$named": true,
+        "$text": "fn",
+        "$span": {
+          "start": 80,
+          "end": 82
+        },
+        "$nodeHandle": 268
+      },
+      "_parameters": {
+        "$type": 211,
+        "$source": 0,
+        "$named": true,
+        "_parameters_group1": {
+          "$type": 327,
+          "$source": 0,
+          "$named": true,
+          "_attributed_parameter": [
+            {
+              "$type": 391,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 83,
+                "end": 86
+              },
+              "$nodeHandle": 271,
+              "_content": "i32"
+            }
+          ],
+          "$span": {
+            "start": 83,
+            "end": 86
+          },
+          "$nodeHandle": 270,
+          "_trailing_sep": false
+        },
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 82,
+          "end": 87
+        },
+        "$nodeHandle": 269
+      },
+      "_return_type": "i32",
+      "$other": [
+        138
+      ],
+      "$span": {
+        "start": 80,
+        "end": 94
+      },
+      "$nodeHandle": 23
+    },
+    "expectedOutput": "fn(i32)->i32"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "fn(i32) -> i32",
+    "pattern": "function_type",
+    "edits": [],
+    "expectedSourceOut": "fn(i32)->i32",
+    "expectedReparseTree": "(function_type (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type))",
+    "wrappedText": "type _X = fn(i32)->i32;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 223,
+      "$source": 0,
+      "$named": true,
+      "_function_type_trait_form": {
+        "$type": 355,
+        "$source": 0,
+        "$named": true,
+        "_trait": "FnOnce",
+        "$span": {
+          "start": 152,
+          "end": 158
+        },
+        "$nodeHandle": 272
+      },
+      "_parameters": {
+        "$type": 211,
+        "$source": 0,
+        "$named": true,
+        "_parameters_group1": {
+          "$type": 327,
+          "$source": 0,
+          "$named": true,
+          "_attributed_parameter": [
+            {
+              "$type": 391,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 159,
+                "end": 162
+              },
+              "$nodeHandle": 275,
+              "_content": "i32"
+            }
+          ],
+          "$span": {
+            "start": 159,
+            "end": 162
+          },
+          "$nodeHandle": 274,
+          "_trailing_sep": false
+        },
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 158,
+          "end": 163
+        },
+        "$nodeHandle": 273
+      },
+      "_return_type": "i32",
+      "$other": [
+        138
+      ],
+      "$span": {
+        "start": 152,
+        "end": 170
+      },
+      "$nodeHandle": 40
+    },
+    "expectedOutput": "FnOnce(i32)->i32"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "FnOnce(i32) -> i32",
+    "pattern": "function_type",
+    "edits": [],
+    "expectedSourceOut": "FnOnce(i32)->i32",
+    "expectedReparseTree": "(function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type))",
+    "wrappedText": "type _X = FnOnce(i32)->i32;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 223,
+      "$source": 0,
+      "$named": true,
+      "_for_lifetimes": {
+        "$type": 222,
+        "$source": 0,
+        "$named": true,
+        "_lifetime": [
+          {
+            "$type": 220,
+            "$source": 0,
+            "$named": true,
+            "_identifier": "a",
+            "$other": [
+              76
+            ],
+            "$span": {
+              "start": 210,
+              "end": 212
+            },
+            "$nodeHandle": 277
+          },
+          {
+            "$type": 220,
+            "$source": 0,
+            "$named": true,
+            "_identifier": "b",
+            "$other": [
+              76
+            ],
+            "$span": {
+              "start": 214,
+              "end": 216
+            },
+            "$nodeHandle": 278
+          }
+        ],
+        "$other": [
+          67,
+          68,
+          69,
+          70
+        ],
+        "$span": {
+          "start": 206,
+          "end": 217
+        },
+        "$nodeHandle": 276
+      },
+      "_function_type_fn_form": {
+        "$type": 356,
+        "$source": 0,
+        "$named": true,
+        "$text": "fn",
+        "$span": {
+          "start": 218,
+          "end": 220
+        },
+        "$nodeHandle": 279
+      },
+      "_parameters": {
+        "$type": 211,
+        "$source": 0,
+        "$named": true,
+        "_parameters_group1": {
+          "$type": 327,
+          "$source": 0,
+          "$named": true,
+          "_attributed_parameter": [
+            {
+              "$type": 391,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 221,
+                "end": 229
+              },
+              "$nodeHandle": 282,
+              "_content": {
+                "$type": 214,
+                "$source": 0,
+                "$named": true,
+                "_pattern": "x",
+                "_type": {
+                  "$type": 233,
+                  "$source": 0,
+                  "$named": true,
+                  "_lifetime": {
+                    "$type": 220,
+                    "$source": 0,
+                    "$named": true,
+                    "_identifier": "a",
+                    "$other": [
+                      76
+                    ],
+                    "$span": {
+                      "start": 225,
+                      "end": 227
+                    },
+                    "$nodeHandle": 286
+                  },
+                  "_type": "A",
+                  "$other": [
+                    78
+                  ],
+                  "$span": {
+                    "start": 224,
+                    "end": 229
+                  },
+                  "$nodeHandle": 285
+                },
+                "$other": [
+                  5
+                ],
+                "$span": {
+                  "start": 221,
+                  "end": 229
+                },
+                "$nodeHandle": 284
+              }
+            },
+            {
+              "$type": 391,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 231,
+                "end": 251
+              },
+              "$nodeHandle": 283,
+              "_content": {
+                "$type": 214,
+                "$source": 0,
+                "$named": true,
+                "_pattern": "y",
+                "_type": {
+                  "$type": 233,
+                  "$source": 0,
+                  "$named": true,
+                  "_lifetime": {
+                    "$type": 220,
+                    "$source": 0,
+                    "$named": true,
+                    "_identifier": "a",
+                    "$other": [
+                      76
+                    ],
+                    "$span": {
+                      "start": 235,
+                      "end": 237
+                    },
+                    "$nodeHandle": 289
+                  },
+                  "_mutable_specifier": true,
+                  "_type": {
+                    "$type": 227,
+                    "$source": 0,
+                    "$named": true,
+                    "_type": "B",
+                    "_type_arguments": {
+                      "$type": 231,
+                      "$source": 0,
+                      "$named": true,
+                      "_type_argument": [
+                        {
+                          "$type": 395,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 244,
+                            "end": 246
+                          },
+                          "$nodeHandle": 292,
+                          "_content": {
+                            "$type": 220,
+                            "$source": 0,
+                            "$named": true,
+                            "_identifier": "i",
+                            "$other": [
+                              76
+                            ],
+                            "$span": {
+                              "start": 244,
+                              "end": 246
+                            },
+                            "$nodeHandle": 294
+                          }
+                        },
+                        {
+                          "$type": 395,
+                          "$source": 0,
+                          "$named": true,
+                          "$span": {
+                            "start": 248,
+                            "end": 250
+                          },
+                          "$nodeHandle": 293,
+                          "_content": {
+                            "$type": 220,
+                            "$source": 0,
+                            "$named": true,
+                            "_identifier": "t",
+                            "$other": [
+                              76
+                            ],
+                            "$span": {
+                              "start": 248,
+                              "end": 250
+                            },
+                            "$nodeHandle": 295
+                          }
+                        }
+                      ],
+                      "$other": [
+                        68,
+                        69,
+                        70
+                      ],
+                      "$span": {
+                        "start": 243,
+                        "end": 251
+                      },
+                      "$nodeHandle": 291
+                    },
+                    "$span": {
+                      "start": 242,
+                      "end": 251
+                    },
+                    "$nodeHandle": 290
+                  },
+                  "$other": [
+                    78
+                  ],
+                  "$span": {
+                    "start": 234,
+                    "end": 251
+                  },
+                  "$nodeHandle": 288
+                },
+                "$other": [
+                  5
+                ],
+                "$span": {
+                  "start": 231,
+                  "end": 251
+                },
+                "$nodeHandle": 287
+              }
+            }
+          ],
+          "$other": [
+            69,
+            69
+          ],
+          "$span": {
+            "start": 221,
+            "end": 252
+          },
+          "$nodeHandle": 281,
+          "_trailing_sep": true
+        },
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 220,
+          "end": 253
+        },
+        "$nodeHandle": 280
+      },
+      "_return_type": "C",
+      "$other": [
+        138
+      ],
+      "$span": {
+        "start": 206,
+        "end": 258
+      },
+      "$nodeHandle": 50
+    },
+    "expectedOutput": "for<'a,'b>fn(x:&'a A,y:&'a mut B<'i,'t>,)->C"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C",
+    "pattern": "function_type",
+    "edits": [],
+    "expectedSourceOut": "for<'a,'b>fn(x:&'a A,y:&'a mut B<'i,'t>,)->C",
+    "expectedReparseTree": "(function_type for_lifetimes: (for_lifetimes (lifetime identifier: (identifier)) (lifetime identifier: (identifier))) (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))) (type_argument (lifetime identifier: (identifier)))))))))) return_type: (type_identifier))",
+    "wrappedText": "type _X = for<'a,'b>fn(x:&'a A,y:&'a mut B<'i,'t>,)->C;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 294,
+      "$source": 0,
+      "$named": true,
+      "$span": {
+        "start": 46,
+        "end": 48
+      },
+      "$nodeHandle": 16,
+      "_statement": []
+    },
+    "expectedOutput": "{  }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{}",
+    "pattern": "block",
+    "edits": [],
+    "expectedSourceOut": "{  }",
+    "expectedReparseTree": "(block)",
+    "wrappedText": "fn _f() { let _ = {  }; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 294,
+      "$source": 0,
+      "$named": true,
+      "_trailing_expression": {
+        "$type": 257,
+        "$source": 0,
+        "$named": true,
+        "_function": "f",
+        "_arguments": {
+          "$type": 258,
+          "$source": 0,
+          "$named": true,
+          "_arguments_group1": {
+            "$type": 330,
+            "$source": 0,
+            "$named": true,
+            "_attributed_argument": [
+              {
+                "$type": 393,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 111,
+                  "end": 116
+                },
+                "$nodeHandle": 299,
+                "_attribute_item": [],
+                "_expression": "value"
+              }
+            ],
+            "$span": {
+              "start": 111,
+              "end": 116
+            },
+            "$nodeHandle": 298,
+            "_trailing_sep": false
+          },
+          "$other": [
+            7,
+            8
+          ],
+          "$span": {
+            "start": 110,
+            "end": 117
+          },
+          "$nodeHandle": 297
+        },
+        "$span": {
+          "start": 109,
+          "end": 117
+        },
+        "$nodeHandle": 296
+      },
+      "$other": [
+        50,
+        51
+      ],
+      "$span": {
+        "start": 103,
+        "end": 119
+      },
+      "$nodeHandle": 28,
+      "_statement": []
+    },
+    "expectedOutput": "{ f(value) }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{\n    f(value)\n}",
+    "pattern": "block",
+    "edits": [],
+    "expectedSourceOut": "{ f(value) }",
+    "expectedReparseTree": "(block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier))))))",
+    "wrappedText": "fn _f() { let _ = { f(value) }; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 294,
+      "$source": 0,
+      "$named": true,
+      "_trailing_expression": {
+        "$type": 257,
+        "$source": 0,
+        "$named": true,
+        "_function": "f",
+        "_arguments": {
+          "$type": 258,
+          "$source": 0,
+          "$named": true,
+          "_arguments_group1": {
+            "$type": 330,
+            "$source": 0,
+            "$named": true,
+            "_attributed_argument": [
+              {
+                "$type": 393,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 187,
+                  "end": 192
+                },
+                "$nodeHandle": 303,
+                "_attribute_item": [],
+                "_expression": "value"
+              }
+            ],
+            "$span": {
+              "start": 187,
+              "end": 192
+            },
+            "$nodeHandle": 302,
+            "_trailing_sep": false
+          },
+          "$other": [
+            7,
+            8
+          ],
+          "$span": {
+            "start": 186,
+            "end": 193
+          },
+          "$nodeHandle": 301
+        },
+        "$span": {
+          "start": 185,
+          "end": 193
+        },
+        "$nodeHandle": 300
+      },
+      "$other": [
+        50,
+        51
+      ],
+      "$span": {
+        "start": 179,
+        "end": 195
+      },
+      "$nodeHandle": 45,
+      "_statement": []
+    },
+    "expectedOutput": "{ f(value) }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "{\n    f(value)\n}",
+    "pattern": "block",
+    "edits": [],
+    "expectedSourceOut": "{ f(value) }",
+    "expectedReparseTree": "(block trailing_expression: (call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier))))))",
+    "wrappedText": "fn _f() { let _ = { f(value) }; }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 257,
+      "$source": 0,
+      "$named": true,
+      "_function": "f",
+      "_arguments": {
+        "$type": 258,
+        "$source": 0,
+        "$named": true,
+        "_arguments_group1": {
+          "$type": 330,
+          "$source": 0,
+          "$named": true,
+          "_attributed_argument": [
+            {
+              "$type": 393,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 111,
+                "end": 116
+              },
+              "$nodeHandle": 306,
+              "_attribute_item": [],
+              "_expression": "value"
+            }
+          ],
+          "$span": {
+            "start": 111,
+            "end": 116
+          },
+          "$nodeHandle": 305,
+          "_trailing_sep": false
+        },
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 110,
+          "end": 117
+        },
+        "$nodeHandle": 304
+      },
+      "$span": {
+        "start": 109,
+        "end": 117
+      },
+      "$nodeHandle": 29
+    },
+    "expectedOutput": "f(value)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "f(value)",
+    "pattern": "call_expression",
+    "edits": [],
+    "expectedSourceOut": "f(value)",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)))))",
+    "wrappedText": "fn _f() { let _ = f(value); }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 257,
+      "$source": 0,
+      "$named": true,
+      "_function": "f",
+      "_arguments": {
+        "$type": 258,
+        "$source": 0,
+        "$named": true,
+        "_arguments_group1": {
+          "$type": 330,
+          "$source": 0,
+          "$named": true,
+          "_attributed_argument": [
+            {
+              "$type": 393,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 187,
+                "end": 192
+              },
+              "$nodeHandle": 309,
+              "_attribute_item": [],
+              "_expression": "value"
+            }
+          ],
+          "$span": {
+            "start": 187,
+            "end": 192
+          },
+          "$nodeHandle": 308,
+          "_trailing_sep": false
+        },
+        "$other": [
+          7,
+          8
+        ],
+        "$span": {
+          "start": 186,
+          "end": 193
+        },
+        "$nodeHandle": 307
+      },
+      "$span": {
+        "start": 185,
+        "end": 193
+      },
+      "$nodeHandle": 46
+    },
+    "expectedOutput": "f(value)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "f(value)",
+    "pattern": "call_expression",
+    "edits": [],
+    "expectedSourceOut": "f(value)",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (arguments_group1 (attributed_argument (identifier)))))",
+    "wrappedText": "fn _f() { let _ = f(value); }",
+    "wrappedOffset": 18
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 258,
+      "$source": 0,
+      "$named": true,
+      "_arguments_group1": {
+        "$type": 330,
+        "$source": 0,
+        "$named": true,
+        "_attributed_argument": [
+          {
+            "$type": 393,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 111,
+              "end": 116
+            },
+            "$nodeHandle": 311,
+            "_attribute_item": [],
+            "_expression": "value"
+          }
+        ],
+        "$span": {
+          "start": 111,
+          "end": 116
+        },
+        "$nodeHandle": 310,
+        "_trailing_sep": false
+      },
+      "$other": [
+        7,
+        8
+      ],
+      "$span": {
+        "start": 110,
+        "end": 117
+      },
+      "$nodeHandle": 30
+    },
+    "expectedOutput": "(value)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(value)",
+    "pattern": "arguments",
+    "edits": [],
+    "expectedSourceOut": "(value)",
+    "expectedReparseTree": "(arguments (arguments_group1 (attributed_argument (identifier))))",
+    "wrappedText": "f(value);",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 258,
+      "$source": 0,
+      "$named": true,
+      "_arguments_group1": {
+        "$type": 330,
+        "$source": 0,
+        "$named": true,
+        "_attributed_argument": [
+          {
+            "$type": 393,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 187,
+              "end": 192
+            },
+            "$nodeHandle": 313,
+            "_attribute_item": [],
+            "_expression": "value"
+          }
+        ],
+        "$span": {
+          "start": 187,
+          "end": 192
+        },
+        "$nodeHandle": 312,
+        "_trailing_sep": false
+      },
+      "$other": [
+        7,
+        8
+      ],
+      "$span": {
+        "start": 186,
+        "end": 193
+      },
+      "$nodeHandle": 47
+    },
+    "expectedOutput": "(value)"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "(value)",
+    "pattern": "arguments",
+    "edits": [],
+    "expectedSourceOut": "(value)",
+    "expectedReparseTree": "(arguments (arguments_group1 (attributed_argument (identifier))))",
+    "wrappedText": "f(value);",
+    "wrappedOffset": 1
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 233,
+      "$source": 0,
+      "$named": true,
+      "_type": {
+        "$type": 223,
+        "$source": 0,
+        "$named": true,
+        "_function_type_trait_form": {
+          "$type": 355,
+          "$source": 0,
+          "$named": true,
+          "_trait": "FnOnce",
+          "$span": {
+            "start": 152,
+            "end": 158
+          },
+          "$nodeHandle": 315
+        },
+        "_parameters": {
+          "$type": 211,
+          "$source": 0,
+          "$named": true,
+          "_parameters_group1": {
+            "$type": 327,
+            "$source": 0,
+            "$named": true,
+            "_attributed_parameter": [
+              {
+                "$type": 391,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 159,
+                  "end": 162
+                },
+                "$nodeHandle": 318,
+                "_content": "i32"
+              }
+            ],
+            "$span": {
+              "start": 159,
+              "end": 162
+            },
+            "$nodeHandle": 317,
+            "_trailing_sep": false
+          },
+          "$other": [
+            7,
+            8
+          ],
+          "$span": {
+            "start": 158,
+            "end": 163
+          },
+          "$nodeHandle": 316
+        },
+        "_return_type": "i32",
+        "$other": [
+          138
+        ],
+        "$span": {
+          "start": 152,
+          "end": 170
+        },
+        "$nodeHandle": 314
+      },
+      "$other": [
+        78
+      ],
+      "$span": {
+        "start": 151,
+        "end": 170
+      },
+      "$nodeHandle": 39
+    },
+    "expectedOutput": "&FnOnce(i32)->i32"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "&FnOnce(i32) -> i32",
+    "pattern": "reference_type",
+    "edits": [],
+    "expectedSourceOut": "&FnOnce(i32)->i32",
+    "expectedReparseTree": "(reference_type type: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (parameters_group1 (attributed_parameter (primitive_type)))) return_type: (primitive_type)))",
+    "wrappedText": "type _X = &FnOnce(i32)->i32;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 233,
+      "$source": 0,
+      "$named": true,
+      "_lifetime": {
+        "$type": 220,
+        "$source": 0,
+        "$named": true,
+        "_identifier": "a",
+        "$other": [
+          76
+        ],
+        "$span": {
+          "start": 225,
+          "end": 227
+        },
+        "$nodeHandle": 319
+      },
+      "_type": "A",
+      "$other": [
+        78
+      ],
+      "$span": {
+        "start": 224,
+        "end": 229
+      },
+      "$nodeHandle": 60
+    },
+    "expectedOutput": "&'a A"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "&'a A",
+    "pattern": "reference_type",
+    "edits": [],
+    "expectedSourceOut": "&'a A",
+    "expectedReparseTree": "(reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier))",
+    "wrappedText": "type _X = &'a A;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 233,
+      "$source": 0,
+      "$named": true,
+      "_lifetime": {
+        "$type": 220,
+        "$source": 0,
+        "$named": true,
+        "_identifier": "a",
+        "$other": [
+          76
+        ],
+        "$span": {
+          "start": 235,
+          "end": 237
+        },
+        "$nodeHandle": 320
+      },
+      "_mutable_specifier": true,
+      "_type": {
+        "$type": 227,
+        "$source": 0,
+        "$named": true,
+        "_type": "B",
+        "_type_arguments": {
+          "$type": 231,
+          "$source": 0,
+          "$named": true,
+          "_type_argument": [
+            {
+              "$type": 395,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 244,
+                "end": 246
+              },
+              "$nodeHandle": 323,
+              "_content": {
+                "$type": 220,
+                "$source": 0,
+                "$named": true,
+                "_identifier": "i",
+                "$other": [
+                  76
+                ],
+                "$span": {
+                  "start": 244,
+                  "end": 246
+                },
+                "$nodeHandle": 325
+              }
+            },
+            {
+              "$type": 395,
+              "$source": 0,
+              "$named": true,
+              "$span": {
+                "start": 248,
+                "end": 250
+              },
+              "$nodeHandle": 324,
+              "_content": {
+                "$type": 220,
+                "$source": 0,
+                "$named": true,
+                "_identifier": "t",
+                "$other": [
+                  76
+                ],
+                "$span": {
+                  "start": 248,
+                  "end": 250
+                },
+                "$nodeHandle": 326
+              }
+            }
+          ],
+          "$other": [
+            68,
+            69,
+            70
+          ],
+          "$span": {
+            "start": 243,
+            "end": 251
+          },
+          "$nodeHandle": 322
+        },
+        "$span": {
+          "start": 242,
+          "end": 251
+        },
+        "$nodeHandle": 321
+      },
+      "$other": [
+        78
+      ],
+      "$span": {
+        "start": 234,
+        "end": 251
+      },
+      "$nodeHandle": 63
+    },
+    "expectedOutput": "&'a mut B<'i,'t>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "&'a mut B<'i, 't>",
+    "pattern": "reference_type",
+    "edits": [],
+    "expectedSourceOut": "&'a mut B<'i,'t>",
+    "expectedReparseTree": "(reference_type lifetime: (lifetime identifier: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))) (type_argument (lifetime identifier: (identifier))))))",
+    "wrappedText": "type _X = &'a mut B<'i,'t>;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 188,
+      "$source": 0,
+      "$named": true,
+      "_name": "F",
+      "_type": {
+        "$type": 223,
+        "$source": 0,
+        "$named": true,
+        "_for_lifetimes": {
+          "$type": 222,
+          "$source": 0,
+          "$named": true,
+          "_lifetime": [
+            {
+              "$type": 220,
+              "$source": 0,
+              "$named": true,
+              "_identifier": "a",
+              "$other": [
+                76
+              ],
+              "$span": {
+                "start": 210,
+                "end": 212
+              },
+              "$nodeHandle": 329
+            },
+            {
+              "$type": 220,
+              "$source": 0,
+              "$named": true,
+              "_identifier": "b",
+              "$other": [
+                76
+              ],
+              "$span": {
+                "start": 214,
+                "end": 216
+              },
+              "$nodeHandle": 330
+            }
+          ],
+          "$other": [
+            67,
+            68,
+            69,
+            70
+          ],
+          "$span": {
+            "start": 206,
+            "end": 217
+          },
+          "$nodeHandle": 328
+        },
+        "_function_type_fn_form": {
+          "$type": 356,
+          "$source": 0,
+          "$named": true,
+          "$text": "fn",
+          "$span": {
+            "start": 218,
+            "end": 220
+          },
+          "$nodeHandle": 331
+        },
+        "_parameters": {
+          "$type": 211,
+          "$source": 0,
+          "$named": true,
+          "_parameters_group1": {
+            "$type": 327,
+            "$source": 0,
+            "$named": true,
+            "_attributed_parameter": [
+              {
+                "$type": 391,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 221,
+                  "end": 229
+                },
+                "$nodeHandle": 334,
+                "_content": {
+                  "$type": 214,
+                  "$source": 0,
+                  "$named": true,
+                  "_pattern": "x",
+                  "_type": {
+                    "$type": 233,
+                    "$source": 0,
+                    "$named": true,
+                    "_lifetime": {
+                      "$type": 220,
+                      "$source": 0,
+                      "$named": true,
+                      "_identifier": "a",
+                      "$other": [
+                        76
+                      ],
+                      "$span": {
+                        "start": 225,
+                        "end": 227
+                      },
+                      "$nodeHandle": 338
+                    },
+                    "_type": "A",
+                    "$other": [
+                      78
+                    ],
+                    "$span": {
+                      "start": 224,
+                      "end": 229
+                    },
+                    "$nodeHandle": 337
+                  },
+                  "$other": [
+                    5
+                  ],
+                  "$span": {
+                    "start": 221,
+                    "end": 229
+                  },
+                  "$nodeHandle": 336
+                }
+              },
+              {
+                "$type": 391,
+                "$source": 0,
+                "$named": true,
+                "$span": {
+                  "start": 231,
+                  "end": 251
+                },
+                "$nodeHandle": 335,
+                "_content": {
+                  "$type": 214,
+                  "$source": 0,
+                  "$named": true,
+                  "_pattern": "y",
+                  "_type": {
+                    "$type": 233,
+                    "$source": 0,
+                    "$named": true,
+                    "_lifetime": {
+                      "$type": 220,
+                      "$source": 0,
+                      "$named": true,
+                      "_identifier": "a",
+                      "$other": [
+                        76
+                      ],
+                      "$span": {
+                        "start": 235,
+                        "end": 237
+                      },
+                      "$nodeHandle": 341
+                    },
+                    "_mutable_specifier": true,
+                    "_type": {
+                      "$type": 227,
+                      "$source": 0,
+                      "$named": true,
+                      "_type": "B",
+                      "_type_arguments": {
+                        "$type": 231,
+                        "$source": 0,
+                        "$named": true,
+                        "_type_argument": [
+                          {
+                            "$type": 395,
+                            "$source": 0,
+                            "$named": true,
+                            "$span": {
+                              "start": 244,
+                              "end": 246
+                            },
+                            "$nodeHandle": 344,
+                            "_content": {
+                              "$type": 220,
+                              "$source": 0,
+                              "$named": true,
+                              "_identifier": "i",
+                              "$other": [
+                                76
+                              ],
+                              "$span": {
+                                "start": 244,
+                                "end": 246
+                              },
+                              "$nodeHandle": 346
+                            }
+                          },
+                          {
+                            "$type": 395,
+                            "$source": 0,
+                            "$named": true,
+                            "$span": {
+                              "start": 248,
+                              "end": 250
+                            },
+                            "$nodeHandle": 345,
+                            "_content": {
+                              "$type": 220,
+                              "$source": 0,
+                              "$named": true,
+                              "_identifier": "t",
+                              "$other": [
+                                76
+                              ],
+                              "$span": {
+                                "start": 248,
+                                "end": 250
+                              },
+                              "$nodeHandle": 347
+                            }
+                          }
+                        ],
+                        "$other": [
+                          68,
+                          69,
+                          70
+                        ],
+                        "$span": {
+                          "start": 243,
+                          "end": 251
+                        },
+                        "$nodeHandle": 343
+                      },
+                      "$span": {
+                        "start": 242,
+                        "end": 251
+                      },
+                      "$nodeHandle": 342
+                    },
+                    "$other": [
+                      78
+                    ],
+                    "$span": {
+                      "start": 234,
+                      "end": 251
+                    },
+                    "$nodeHandle": 340
+                  },
+                  "$other": [
+                    5
+                  ],
+                  "$span": {
+                    "start": 231,
+                    "end": 251
+                  },
+                  "$nodeHandle": 339
+                }
+              }
+            ],
+            "$other": [
+              69,
+              69
+            ],
+            "$span": {
+              "start": 221,
+              "end": 252
+            },
+            "$nodeHandle": 333,
+            "_trailing_sep": true
+          },
+          "$other": [
+            7,
+            8
+          ],
+          "$span": {
+            "start": 220,
+            "end": 253
+          },
+          "$nodeHandle": 332
+        },
+        "_return_type": "C",
+        "$other": [
+          138
+        ],
+        "$span": {
+          "start": 206,
+          "end": 258
+        },
+        "$nodeHandle": 327
+      },
+      "$other": [
+        58,
+        59,
+        2
+      ],
+      "$span": {
+        "start": 197,
+        "end": 259
+      },
+      "$nodeHandle": 4
+    },
+    "expectedOutput": "type F=for<'a,'b>fn(x:&'a A,y:&'a mut B<'i,'t>,)->C;"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "type F = for<'a, 'b> fn(x: &'a A, y: &'a mut B<'i, 't>,) -> C;",
+    "pattern": "type_item",
+    "edits": [],
+    "expectedSourceOut": "type F=for<'a,'b>fn(x:&'a A,y:&'a mut B<'i,'t>,)->C;",
+    "expectedReparseTree": "(type_item name: (type_identifier) type: (function_type for_lifetimes: (for_lifetimes (lifetime identifier: (identifier)) (lifetime identifier: (identifier))) (function_type_fn_form) parameters: (parameters (parameters_group1 (attributed_parameter (parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) type: (type_identifier)))) (attributed_parameter (parameter pattern: (identifier) type: (reference_type lifetime: (lifetime identifier: (identifier)) mutable_specifier: (mutable_specifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))) (type_argument (lifetime identifier: (identifier)))))))))) return_type: (type_identifier)))",
+    "wrappedText": "type F=for<'a,'b>fn(x:&'a A,y:&'a mut B<'i,'t>,)->C;",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 227,
+      "$source": 0,
+      "$named": true,
+      "_type": "B",
+      "_type_arguments": {
+        "$type": 231,
+        "$source": 0,
+        "$named": true,
+        "_type_argument": [
+          {
+            "$type": 395,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 244,
+              "end": 246
+            },
+            "$nodeHandle": 351,
+            "_content": {
+              "$type": 220,
+              "$source": 0,
+              "$named": true,
+              "_identifier": "i",
+              "$other": [
+                76
+              ],
+              "$span": {
+                "start": 244,
+                "end": 246
+              },
+              "$nodeHandle": 353
+            }
+          },
+          {
+            "$type": 395,
+            "$source": 0,
+            "$named": true,
+            "$span": {
+              "start": 248,
+              "end": 250
+            },
+            "$nodeHandle": 352,
+            "_content": {
+              "$type": 220,
+              "$source": 0,
+              "$named": true,
+              "_identifier": "t",
+              "$other": [
+                76
+              ],
+              "$span": {
+                "start": 248,
+                "end": 250
+              },
+              "$nodeHandle": 354
+            }
+          }
+        ],
+        "$other": [
+          68,
+          69,
+          70
+        ],
+        "$span": {
+          "start": 243,
+          "end": 251
+        },
+        "$nodeHandle": 350
+      },
+      "$span": {
+        "start": 242,
+        "end": 251
+      },
+      "$nodeHandle": 65
+    },
+    "expectedOutput": "B<'i,'t>"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "rust",
+    "sourceIn": "B<'i, 't>",
+    "pattern": "generic_type",
+    "edits": [],
+    "expectedSourceOut": "B<'i,'t>",
+    "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments (type_argument (lifetime identifier: (identifier))) (type_argument (lifetime identifier: (identifier)))))",
+    "wrappedText": "type _X = B<'i,'t>;",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "rust",
+    "input": {
+      "$type": 157,
+      "$source": 0,
+      "$named": true,
+      "_statements": [
+        {
           "$type": 188,
           "$source": 0,
           "$named": true,

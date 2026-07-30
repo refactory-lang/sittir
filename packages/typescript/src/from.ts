@@ -1705,7 +1705,11 @@ export function coerceToMemberExpression(input: T.MemberExpression.Loose): Retur
 			'object',
 			_resolveOne<T.Expression | T.PrimaryExpression | T.Import>(input.object, _K22, _K12)
 		),
-		optionalChain: _resolveBooleanKeyword(input.optionalChain),
+		separator: _requireField(
+			'member_expression',
+			'separator',
+			coerceKindEnumStorage(_resolveOne<'.' | '?.'>(input.separator, _K0, _K0), [['.', TSKindId.Dot2] as const])
+		),
 		property: _requireField(
 			'member_expression',
 			'property',

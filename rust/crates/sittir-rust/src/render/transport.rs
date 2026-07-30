@@ -1992,6 +1992,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                     187 => Ok(Self::DeclarationStatement(
                         DeclarationStatementTransport::from_napi_value(env, napi_val)?
                     )),
+                    2 => Ok(Self::EmptyStatement(
+                        EmptyStatementTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in StatementTransport",
                     ))),
@@ -2141,6 +2144,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for StatementTransport {
                     187 => Ok(Self::DeclarationStatement(
                         DeclarationStatementTransport::from_napi_value(env, napi_val)?
                     )),
+                    2 => Ok(Self::EmptyStatement(
+                        EmptyStatementTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in StatementTransport",
                     ))),
@@ -2236,6 +2242,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeclarationStatementTransport {
                     159 => Ok(Self::EmptyStatement(
                         EmptyStatementTransport::from_napi_value(env, napi_val)?
                     )),
+                    2 => Ok(Self::EmptyStatement(
+                        EmptyStatementTransport::from_napi_value(env, napi_val)?
+                    )),
                     171 => Ok(Self::AttributeItem(
                         AttributeItemTransport::from_napi_value(env, napi_val)?
                     )),
@@ -2308,6 +2317,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for DeclarationStatementTransport {
                         MacroDefinitionTransport::from_napi_value(env, napi_val)?
                     )),
                     159 => Ok(Self::EmptyStatement(
+                        EmptyStatementTransport::from_napi_value(env, napi_val)?
+                    )),
+                    2 => Ok(Self::EmptyStatement(
                         EmptyStatementTransport::from_napi_value(env, napi_val)?
                     )),
                     171 => Ok(Self::AttributeItem(
@@ -5589,6 +5601,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for _TypeTransport {
                     235 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
+                    48 => Ok(Self::NeverType(
+                        NeverTypeTransport::from_napi_value(env, napi_val)?
+                    )),
                     237 => Ok(Self::DynamicType(
                         DynamicTypeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -5755,6 +5770,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for _TypeTransport {
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
                     235 => Ok(Self::NeverType(
+                        NeverTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    48 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     237 => Ok(Self::DynamicType(
@@ -10598,6 +10616,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                     302 => Ok(Self::RemainingFieldPattern(
                         RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
                     )),
+                    106 => Ok(Self::RemainingFieldPattern(
+                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
                     303 => Ok(Self::MutPattern(
                         MutPatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -10614,6 +10635,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
                     341 => Ok(Self::WildcardPattern(
+                        WildcardPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    139 => Ok(Self::WildcardPattern(
                         WildcardPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -10784,6 +10808,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                     302 => Ok(Self::RemainingFieldPattern(
                         RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
                     )),
+                    106 => Ok(Self::RemainingFieldPattern(
+                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
                     303 => Ok(Self::MutPattern(
                         MutPatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -10800,6 +10827,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
                     341 => Ok(Self::WildcardPattern(
+                        WildcardPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    139 => Ok(Self::WildcardPattern(
                         WildcardPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -12676,6 +12706,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModItemContentTransportSlot {
                     360 => Ok(Self::ModItemExternal(
                         ModItemExternalTransport::from_napi_value(env, napi_val)?
                     )),
+                    2 => Ok(Self::ModItemExternal(
+                        ModItemExternalTransport::from_napi_value(env, napi_val)?
+                    )),
                     176 => Ok(Self::DeclarationList(
                         DeclarationListTransport::from_napi_value(env, napi_val)?
                     )),
@@ -12691,6 +12724,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModItemContentTransportSlot {
                 )?;
                 match kind_id {
                     360 => Ok(Self::ModItemExternal(
+                        ModItemExternalTransport::from_napi_value(env, napi_val)?
+                    )),
+                    2 => Ok(Self::ModItemExternal(
                         ModItemExternalTransport::from_napi_value(env, napi_val)?
                     )),
                     176 => Ok(Self::DeclarationList(
@@ -12773,6 +12809,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForeignModItemContentTransportSl
                     376 => Ok(Self::ForeignModItemSemi(
                         ForeignModItemSemiTransport::from_napi_value(env, napi_val)?
                     )),
+                    2 => Ok(Self::ForeignModItemSemi(
+                        ForeignModItemSemiTransport::from_napi_value(env, napi_val)?
+                    )),
                     176 => Ok(Self::DeclarationList(
                         DeclarationListTransport::from_napi_value(env, napi_val)?
                     )),
@@ -12788,6 +12827,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForeignModItemContentTransportSl
                 )?;
                 match kind_id {
                     376 => Ok(Self::ForeignModItemSemi(
+                        ForeignModItemSemiTransport::from_napi_value(env, napi_val)?
+                    )),
+                    2 => Ok(Self::ForeignModItemSemi(
                         ForeignModItemSemiTransport::from_napi_value(env, napi_val)?
                     )),
                     176 => Ok(Self::DeclarationList(
@@ -12877,6 +12919,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructItemContentTransportSlot {
                     371 => Ok(Self::StructItemUnit(
                         StructItemUnitTransport::from_napi_value(env, napi_val)?
                     )),
+                    2 => Ok(Self::StructItemUnit(
+                        StructItemUnitTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in StructItemContentTransportSlot",
                     ))),
@@ -12895,6 +12940,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructItemContentTransportSlot {
                         StructItemTupleTransport::from_napi_value(env, napi_val)?
                     )),
                     371 => Ok(Self::StructItemUnit(
+                        StructItemUnitTransport::from_napi_value(env, napi_val)?
+                    )),
+                    2 => Ok(Self::StructItemUnit(
                         StructItemUnitTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -13860,6 +13908,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemContentTransportSlot {
                     347 => Ok(Self::ImplItemSemi(
                         ImplItemSemiTransport::from_napi_value(env, napi_val)?
                     )),
+                    2 => Ok(Self::ImplItemSemi(
+                        ImplItemSemiTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ImplItemContentTransportSlot",
                     ))),
@@ -13875,6 +13926,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemContentTransportSlot {
                         ImplItemBodyTransport::from_napi_value(env, napi_val)?
                     )),
                     347 => Ok(Self::ImplItemSemi(
+                        ImplItemSemiTransport::from_napi_value(env, napi_val)?
+                    )),
+                    2 => Ok(Self::ImplItemSemi(
                         ImplItemSemiTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14008,6 +14062,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitBoundsBoundsTransportSlot {
                     235 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
+                    48 => Ok(Self::NeverType(
+                        NeverTypeTransport::from_napi_value(env, napi_val)?
+                    )),
                     237 => Ok(Self::DynamicType(
                         DynamicTypeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -14126,6 +14183,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitBoundsBoundsTransportSlot {
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
                     235 => Ok(Self::NeverType(
+                        NeverTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    48 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     237 => Ok(Self::DynamicType(
@@ -14577,6 +14637,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterPatternTransportSlot {
                     302 => Ok(Self::RemainingFieldPattern(
                         RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
                     )),
+                    106 => Ok(Self::RemainingFieldPattern(
+                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
                     303 => Ok(Self::MutPattern(
                         MutPatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -14593,6 +14656,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterPatternTransportSlot {
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
                     341 => Ok(Self::WildcardPattern(
+                        WildcardPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    139 => Ok(Self::WildcardPattern(
                         WildcardPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     134 => Ok(Self::Self_(
@@ -14682,6 +14748,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterPatternTransportSlot {
                     302 => Ok(Self::RemainingFieldPattern(
                         RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
                     )),
+                    106 => Ok(Self::RemainingFieldPattern(
+                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
                     303 => Ok(Self::MutPattern(
                         MutPatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -14698,6 +14767,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParameterPatternTransportSlot {
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
                     341 => Ok(Self::WildcardPattern(
+                        WildcardPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    139 => Ok(Self::WildcardPattern(
                         WildcardPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     134 => Ok(Self::Self_(
@@ -14980,6 +15052,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketedTypeContentTransportSlo
                     235 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
+                    48 => Ok(Self::NeverType(
+                        NeverTypeTransport::from_napi_value(env, napi_val)?
+                    )),
                     237 => Ok(Self::DynamicType(
                         DynamicTypeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -15095,6 +15170,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketedTypeContentTransportSlo
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
                     235 => Ok(Self::NeverType(
+                        NeverTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    48 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     237 => Ok(Self::DynamicType(
@@ -15661,6 +15739,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeLeftTransportSlot {
                     235 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
+                    48 => Ok(Self::NeverType(
+                        NeverTypeTransport::from_napi_value(env, napi_val)?
+                    )),
                     237 => Ok(Self::DynamicType(
                         DynamicTypeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -15779,6 +15860,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeLeftTransportSlot {
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
                     235 => Ok(Self::NeverType(
+                        NeverTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    48 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     237 => Ok(Self::DynamicType(
@@ -16014,6 +16098,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeRightTransportSlot {
                     235 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
+                    48 => Ok(Self::NeverType(
+                        NeverTypeTransport::from_napi_value(env, napi_val)?
+                    )),
                     237 => Ok(Self::DynamicType(
                         DynamicTypeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -16132,6 +16219,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for BoundedTypeRightTransportSlot {
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
                     235 => Ok(Self::NeverType(
+                        NeverTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    48 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     237 => Ok(Self::DynamicType(
@@ -16310,6 +16400,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PointerTypeContentTransportSlot 
                     374 => Ok(Self::PointerTypeConst(
                         PointerTypeConstTransport::from_napi_value(env, napi_val)?
                     )),
+                    56 => Ok(Self::PointerTypeConst(
+                        PointerTypeConstTransport::from_napi_value(env, napi_val)?
+                    )),
                     80 => Ok(Self::MutableSpecifier(
                         MutableSpecifierTransport::from_napi_value(env, napi_val)?
                     )),
@@ -16325,6 +16418,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PointerTypeContentTransportSlot 
                 )?;
                 match kind_id {
                     374 => Ok(Self::PointerTypeConst(
+                        PointerTypeConstTransport::from_napi_value(env, napi_val)?
+                    )),
+                    56 => Ok(Self::PointerTypeConst(
                         PointerTypeConstTransport::from_napi_value(env, napi_val)?
                     )),
                     80 => Ok(Self::MutableSpecifier(
@@ -17582,6 +17678,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangeExpressionContentTransportS
                     342 => Ok(Self::RangeExpressionBare(
                         RangeExpressionBareTransport::from_napi_value(env, napi_val)?
                     )),
+                    106 => Ok(Self::RangeExpressionBare(
+                        RangeExpressionBareTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in RangeExpressionContentTransportSlot",
                     ))),
@@ -17603,6 +17702,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangeExpressionContentTransportS
                         RangeExpressionPrefixTransport::from_napi_value(env, napi_val)?
                     )),
                     342 => Ok(Self::RangeExpressionBare(
+                        RangeExpressionBareTransport::from_napi_value(env, napi_val)?
+                    )),
+                    106 => Ok(Self::RangeExpressionBare(
                         RangeExpressionBareTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -19878,6 +19980,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClosureParametersParametersTrans
                     302 => Ok(Self::RemainingFieldPattern(
                         RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
                     )),
+                    106 => Ok(Self::RemainingFieldPattern(
+                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
                     303 => Ok(Self::MutPattern(
                         MutPatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -19894,6 +19999,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClosureParametersParametersTrans
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
                     341 => Ok(Self::WildcardPattern(
+                        WildcardPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    139 => Ok(Self::WildcardPattern(
                         WildcardPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     214 => Ok(Self::Parameter(
@@ -19983,6 +20091,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClosureParametersParametersTrans
                     302 => Ok(Self::RemainingFieldPattern(
                         RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
                     )),
+                    106 => Ok(Self::RemainingFieldPattern(
+                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
                     303 => Ok(Self::MutPattern(
                         MutPatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -19999,6 +20110,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClosureParametersParametersTrans
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
                     341 => Ok(Self::WildcardPattern(
+                        WildcardPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    139 => Ok(Self::WildcardPattern(
                         WildcardPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     214 => Ok(Self::Parameter(
@@ -21891,6 +22005,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TuplePatternGroup1ContentTranspo
                     302 => Ok(Self::RemainingFieldPattern(
                         RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
                     )),
+                    106 => Ok(Self::RemainingFieldPattern(
+                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
                     303 => Ok(Self::MutPattern(
                         MutPatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -21907,6 +22024,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TuplePatternGroup1ContentTranspo
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
                     341 => Ok(Self::WildcardPattern(
+                        WildcardPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    139 => Ok(Self::WildcardPattern(
                         WildcardPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     282 => Ok(Self::ClosureExpression(
@@ -21996,6 +22116,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TuplePatternGroup1ContentTranspo
                     302 => Ok(Self::RemainingFieldPattern(
                         RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
                     )),
+                    106 => Ok(Self::RemainingFieldPattern(
+                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
                     303 => Ok(Self::MutPattern(
                         MutPatternTransport::from_napi_value(env, napi_val)?
                     )),
@@ -22012,6 +22135,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TuplePatternGroup1ContentTranspo
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
                     341 => Ok(Self::WildcardPattern(
+                        WildcardPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    139 => Ok(Self::WildcardPattern(
                         WildcardPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     282 => Ok(Self::ClosureExpression(
@@ -22147,6 +22273,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructPatternGroup1ContentTransp
                     302 => Ok(Self::RemainingFieldPattern(
                         RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
                     )),
+                    106 => Ok(Self::RemainingFieldPattern(
+                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in StructPatternGroup1ContentTransportSlot",
                     ))),
@@ -22162,6 +22291,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructPatternGroup1ContentTransp
                         FieldPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     302 => Ok(Self::RemainingFieldPattern(
+                        RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
+                    )),
+                    106 => Ok(Self::RemainingFieldPattern(
                         RemainingFieldPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -22480,6 +22612,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternGroup2ContentTranspo
                     368 => Ok(Self::RangePatternLeftBare(
                         RangePatternLeftBareTransport::from_napi_value(env, napi_val)?
                     )),
+                    106 => Ok(Self::RangePatternLeftBare(
+                        RangePatternLeftBareTransport::from_napi_value(env, napi_val)?
+                    )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in RangePatternGroup2ContentTransportSlot",
                     ))),
@@ -22495,6 +22630,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternGroup2ContentTranspo
                         RangePatternLeftWithRightTransport::from_napi_value(env, napi_val)?
                     )),
                     368 => Ok(Self::RangePatternLeftBare(
+                        RangePatternLeftBareTransport::from_napi_value(env, napi_val)?
+                    )),
+                    106 => Ok(Self::RangePatternLeftBare(
                         RangePatternLeftBareTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -23988,6 +24126,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AttributedParameterContentTransp
                     235 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
+                    48 => Ok(Self::NeverType(
+                        NeverTypeTransport::from_napi_value(env, napi_val)?
+                    )),
                     237 => Ok(Self::DynamicType(
                         DynamicTypeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -24110,6 +24251,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AttributedParameterContentTransp
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
                     235 => Ok(Self::NeverType(
+                        NeverTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    48 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     237 => Ok(Self::DynamicType(
@@ -24473,6 +24617,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentContentTransportSlot
                     235 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
+                    48 => Ok(Self::NeverType(
+                        NeverTypeTransport::from_napi_value(env, napi_val)?
+                    )),
                     237 => Ok(Self::DynamicType(
                         DynamicTypeTransport::from_napi_value(env, napi_val)?
                     )),
@@ -24618,6 +24765,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentContentTransportSlot
                         MacroInvocationTransport::from_napi_value(env, napi_val)?
                     )),
                     235 => Ok(Self::NeverType(
+                        NeverTypeTransport::from_napi_value(env, napi_val)?
+                    )),
+                    48 => Ok(Self::NeverType(
                         NeverTypeTransport::from_napi_value(env, napi_val)?
                     )),
                     237 => Ok(Self::DynamicType(
@@ -52016,6 +52166,10 @@ fn render_for_lifetimes(node: &ForLifetimesTransport, dest: &mut dyn ::std::fmt:
 fn render_function_type(node: &FunctionTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = FunctionTypeTemplate {
         for_lifetimes: match &node.for_lifetimes {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
+        },
+        function_type_fn_form: match &node.function_type_fn_form {
             Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
             None => OptionalNonterminalView::Missing,
         },

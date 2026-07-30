@@ -533,7 +533,7 @@ export const enum TSKindId {
 	Eq = 41,
 	Lbrack = 42,
 	Rbrack = 43,
-	Dot = 44,
+	Dot2 = 44,
 	AnonClass = 45,
 	Function = 46,
 	Async = 47,
@@ -1902,7 +1902,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'rbrack':
 			return TSKindId.Rbrack;
 		case 'dot':
-			return TSKindId.Dot;
+			return TSKindId.Dot2;
 		case 'anon_class':
 			return TSKindId.AnonClass;
 		case 'function':
@@ -2714,7 +2714,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case ']':
 			return TSKindId.Rbrack;
 		case '.':
-			return TSKindId.Dot;
+			return TSKindId.Dot2;
 		case '=>':
 			return TSKindId.EqGt;
 		case '?.':
@@ -3866,13 +3866,13 @@ export interface AwaitExpression {
 export interface MemberExpression {
 	readonly $type: TSKindId.MemberExpression;
 	readonly _object: Expression | PrimaryExpression | Import;
-	readonly _optional_chain?: boolean;
+	readonly _separator: number;
 	readonly _property: PrivatePropertyIdentifier | Identifier;
 	readonly __inputHints__?: {
-		readonly optional_chain?: BooleanKeyword<'?.'>;
+		readonly separator: KindEnum<'.' | '?.', TSKindId.Dot2 | TSKindId.QmarkDot>;
 	};
 	object(): Expression | PrimaryExpression | Import;
-	optionalChain(): boolean | undefined;
+	separator(): number;
 	property(): PrivatePropertyIdentifier | Identifier;
 }
 
@@ -4799,7 +4799,7 @@ export interface TypeQueryMemberExpression {
 	readonly _content: number;
 	readonly _property: PrivatePropertyIdentifier | Identifier;
 	readonly __inputHints__?: {
-		readonly content: KindEnum<'.' | '?.', TSKindId.Dot | TSKindId.QmarkDot>;
+		readonly content: KindEnum<'.' | '?.', TSKindId.Dot2 | TSKindId.QmarkDot>;
 	};
 	object(): Identifier | This | TypeQuerySubscriptExpression | TypeQueryMemberExpression | TypeQueryCallExpression;
 	content(): number;
@@ -6742,10 +6742,6 @@ export type PropertyIdentifierTree = JsxIdentifierTree | IdentifierTree;
 export type EmptyStatement = Terminal<TSKindId.EmptyStatement>;
 export interface EmptyStatementTree extends AnyTreeNode {
 	readonly type: 'empty_statement';
-}
-export type OptionalChain = Terminal<TSKindId.OptionalChain>;
-export interface OptionalChainTree extends AnyTreeNode {
-	readonly type: 'optional_chain';
 }
 export type ExistentialType = Terminal<TSKindId.ExistentialType>;
 export interface ExistentialTypeTree extends AnyTreeNode {
