@@ -38,6 +38,7 @@ function makeCtx(overrides: Partial<EmitCtx> = {}): EmitCtx {
 		externals: [],
 		rules: {},
 		visitingHelpers: new Set<string>(),
+		emittedArraySlots: new Set(),
 		...overrides
 	};
 }

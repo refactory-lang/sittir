@@ -78,6 +78,17 @@ export interface EmitCtx {
 	readonly externals: readonly string[];
 	readonly rules: Record<string, RenderRule>;
 	readonly visitingHelpers: Set<string>;
+	// Array-shaped slots already emitted (as a `| join(...)` reference) during
+	// this kind's tree walk. Two DIFFERENT grammar-tree positions can resolve
+	// to the SAME merged array slot via `lookupSlot` — e.g. python's
+	// `if_statement` has `repeat(field('alternative', elif_clause))` and
+	// `optional(field('alternative', else_clause))` feeding one `alternative`
+	// slot, and rust's `tuple_expression` has three separate `elements`
+	// positions, one of them inside a CHOICE arm. Without this ctx-level
+	// (rather than SEQ-local) guard, `emitSlotReference` would re-emit the
+	// WHOLE merged array at each position, duplicating output. Cleared per
+	// node in `TemplateEmitter#emitNode` (mirrors `visitingHelpers`).
+	readonly emittedArraySlots: Set<AssembledNonterminal>;
 	readonly ownerSlots?: Readonly<Record<string, AssembledNonterminal>>;
 	readonly currentKind?: string;
 }
@@ -179,7 +190,8 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 			})(),
 			externals: [...(config.nodeMap.externals ?? [])],
 			rules: config.nodeMap.normalizedRules ?? {},
-			visitingHelpers: new Set<string>()
+			visitingHelpers: new Set<string>(),
+			emittedArraySlots: new Set<AssembledNonterminal>()
 		};
 	}
 
@@ -208,6 +220,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 		if (classifyTemplateEmission(node) !== 'emit') return;
 
 		this.#ctx.visitingHelpers.clear();
+		this.#ctx.emittedArraySlots.clear();
 		const newBody = emitOne(node, this.#ctx);
 
 		if (newBody === undefined) {
@@ -344,7 +357,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			// via field() → `{{ operator }}`, else the deterministic unnamed
 			// `content` fallback). emitSlotReference handles multiplicity.
 			const slot = lookupSlot(rule, ctx);
-			if (slot !== undefined) return emitSlotReference(rule, slot);
+			if (slot !== undefined) return emitSlotReference(rule, slot, ctx);
 			const patternFieldName = (rule as { fieldName?: string }).fieldName;
 			if (patternFieldName !== undefined) return emitFieldNameSlot(patternFieldName.toLowerCase(), rule);
 			return emitScalarSlot('content');
@@ -376,6 +389,12 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): string {
 			const indentMemberIdx = rule.members.findIndex((m) => m.type === INDENT);
 			const parts: string[] = [];
 			let indentPartIdx = -1;
+			// Two DIFFERENT grammar-tree positions — possibly straddling a SEQ/
+			// CHOICE boundary — can carry the SAME fieldName and merge into ONE
+			// array slot at collect-slots time (see EmitCtx.emittedArraySlots'
+			// doc comment). `emitSlotReference` is the shared chokepoint that
+			// dedupes by slot identity, so a member whose subtree resolves to an
+			// already-emitted array slot simply emits '' here.
 			rule.members.forEach((m, i) => {
 				const text = emitRule(m, ctx);
 				if (text === '') return;
@@ -675,10 +694,15 @@ function emitScalarSlot(slotName: string): string {
 	return `{{ ${slotName} }}`;
 }
 
-function emitSlotReference(rule: RenderRule, slot: AssembledNonterminal): string {
+function emitSlotReference(rule: RenderRule, slot: AssembledNonterminal, ctx: EmitCtx): string {
 	const slotName = (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase();
 	const mult = (rule as { multiplicity?: string }).multiplicity;
 	if (mult === 'array' || mult === 'nonEmptyArray' || isMultiple(slot)) {
+		// See EmitCtx.emittedArraySlots' doc comment: multiple grammar-tree
+		// positions (possibly straddling a SEQ/CHOICE boundary) can resolve to
+		// this SAME merged array slot — emit the join only once per kind.
+		if (ctx.emittedArraySlots.has(slot)) return '';
+		ctx.emittedArraySlots.add(slot);
 		return emitListSlot(slotName, rule, slot);
 	}
 	if (mult === 'optional' || !isRequired(slot)) {
@@ -777,7 +801,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 		// name + leaf multiplicity only when no slot is registered.
 		const slot = lookupSlot(rule, ctx);
 		if (slot) {
-			return emitSlotReference(rule, slot);
+			return emitSlotReference(rule, slot, ctx);
 		}
 		return emitFieldNameSlot(symbolFieldName.toLowerCase(), rule);
 	}
@@ -799,7 +823,7 @@ function emitSymbol(rule: Extract<RenderRule, { type: 'SYMBOL' }>, ctx: EmitCtx)
 	// hidden helper take the same fall-through, for the reason above.)
 	const slot = lookupSlot(rule, ctx);
 	if (slot && !isInlineableHiddenHelper && !(slot.isUnnamed && rule.type === SYMBOL && rule.inline === true)) {
-		return emitSlotReference(rule, slot);
+		return emitSlotReference(rule, slot, ctx);
 	}
 	// Bug 2 fix: Group-lifted symbols that are auto-synthesized hidden helpers
 	// (e.g. `_function_item_optional1`, `_type_parameters_repeat1`) must be
@@ -1032,6 +1056,17 @@ function scanArmBody(body: string): { key: string | undefined; needsGate: boolea
 // Those wrapper types no longer appear in RenderRule; their slot facts are
 // now leaf attributes on the inner rule, consumed by emitSymbol directly.
 
+// Reset `ctx.emittedArraySlots` to exactly the given snapshot. Used by
+// emitChoice's speculative per-arm probes (see its doc comments): a probe
+// whose body is discarded, or later superseded by a longer same-key body,
+// must not leave its `emitSlotReference` side effect behind — otherwise a
+// LATER reference to the same array slot (the trailing union reference, or
+// another arm) would wrongly see it as already-emitted and produce ''.
+function restoreEmittedArraySlots(ctx: EmitCtx, snapshot: ReadonlySet<AssembledNonterminal>): void {
+	ctx.emittedArraySlots.clear();
+	for (const s of snapshot) ctx.emittedArraySlots.add(s);
+}
+
 function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx): string {
 	// Every choice that surfaces as data is a registered slot — there is no
 	// "positional choice" anymore (kind-named slots). Look the slot up by the
@@ -1072,6 +1107,11 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 		if (unionBacked) {
 			const unionName = (slot.storageName.replace(/^_+/, '') || 'children').toLowerCase();
 			const blockByKey = new Map<string, string>();
+			// Array-slot marks produced by the WINNING body per key (see
+			// restoreEmittedArraySlots' doc comment) — only committed to
+			// `ctx.emittedArraySlots` for real once we know which bodies
+			// actually survive into the returned text.
+			const arraySlotDeltaByKey = new Map<string, AssembledNonterminal[]>();
 			for (const arm of rule.members) {
 				// The arm's EMITTED BODY is the authority on what it references —
 				// structural partitioning is unreliable here because the render
@@ -1091,17 +1131,26 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 				// onto the same slots and must reference them once (the phi2
 				// lesson: never one block per arm for arms sharing slots); the
 				// longest body wins (fullest literal shape).
+				const beforeSlots = new Set(ctx.emittedArraySlots);
 				const body = emitRule(arm as RenderRule, ctx);
+				const delta = [...ctx.emittedArraySlots].filter((s) => !beforeSlots.has(s));
+				restoreEmittedArraySlots(ctx, beforeSlots);
 				if (!body) continue;
 				const { key, needsGate } = scanArmBody(body);
 				if (key === undefined || key === unionName || ctx.ownerSlots?.[key] === undefined) continue;
 				const block = needsGate ? `{% if ${key} | isPresent %}${body}{% endif %}` : body;
 				const prev = blockByKey.get(key);
-				if (prev === undefined || block.length > prev.length) blockByKey.set(key, block);
+				if (prev === undefined || block.length > prev.length) {
+					blockByKey.set(key, block);
+					arraySlotDeltaByKey.set(key, delta);
+				}
 			}
-			return [...blockByKey.values()].join('') + emitSlotReference(rule, slot);
+			for (const delta of arraySlotDeltaByKey.values()) {
+				for (const s of delta) ctx.emittedArraySlots.add(s);
+			}
+			return [...blockByKey.values()].join('') + emitSlotReference(rule, slot, ctx);
 		}
-		return emitSlotReference(rule, slot);
+		return emitSlotReference(rule, slot, ctx);
 	}
 	// No back-pointer slot but a deleteWrapper-stamped fieldName (a `field()`
 	// around a choice whose members carry no fieldName): emit by the field
@@ -1142,9 +1191,16 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 	// the seq arm's bare `=` leaked into argument-form renders).
 	{
 		const blockByKey = new Map<string, string>();
+		// See the union-backed branch above for why array-slot marks must stay
+		// speculative (snapshot/restore per arm) until we know a body survives
+		// into the returned text.
+		const arraySlotDeltaByKey = new Map<string, AssembledNonterminal[]>();
 		let ungateableArm = false;
 		for (const arm of rule.members) {
+			const beforeSlots = new Set(ctx.emittedArraySlots);
 			const body = emitRule(arm as RenderRule, ctx);
+			const delta = [...ctx.emittedArraySlots].filter((s) => !beforeSlots.has(s));
+			restoreEmittedArraySlots(ctx, beforeSlots);
 			if (!body) continue;
 			const { key, needsGate } = scanArmBody(body);
 			if (key === undefined || ctx.ownerSlots?.[key] === undefined) {
@@ -1155,11 +1211,20 @@ function emitChoice(rule: Extract<RenderRule, { type: 'CHOICE' }>, ctx: EmitCtx)
 			}
 			const block = needsGate ? `{% if ${key} | isPresent %}${body}{% endif %}` : body;
 			const prev = blockByKey.get(key);
-			if (prev === undefined || block.length > prev.length) blockByKey.set(key, block);
+			if (prev === undefined || block.length > prev.length) {
+				blockByKey.set(key, block);
+				arraySlotDeltaByKey.set(key, delta);
+			}
 		}
 		if (!ungateableArm && blockByKey.size >= 2) {
+			for (const delta of arraySlotDeltaByKey.values()) {
+				for (const s of delta) ctx.emittedArraySlots.add(s);
+			}
 			return [...blockByKey.values()].join('');
 		}
+		// ungateableArm, or fewer than 2 distinct keys: falls through to the
+		// first-arm-wins loop below. Every per-arm probe above was already
+		// rolled back, so `ctx.emittedArraySlots` is unchanged by this block.
 	}
 	// Pure-literal or unregistered choice — emit the first non-empty arm's text.
 	for (const member of rule.members) {
