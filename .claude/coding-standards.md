@@ -46,3 +46,9 @@ scope.
 8. **Ratchets only tighten.** Baseline counts (phantom kinds, validation
    floors) may only shrink; a count above its ceiling means a change minted
    new debt — fix the source, never raise the ceiling.
+
+9. **Comments state live constraints, not provenance.** A comment never
+   explains the history of the code or why a change was made — that belongs
+   in the commit message. If removing a comment loses nothing a reader of
+   the current code needs, remove it; the declarations and names should
+   carry the obvious mappings themselves.
