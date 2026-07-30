@@ -750,8 +750,9 @@ narrowing guard.
 
 ```text
 /** Parser-issued anon-token kindId for `value` — stamped once at link
- *  (`canonicalizeRuleLiterals`); downstream phases consume this instead of
- *  re-resolving the literal against the catalog. */
+ *  (`canonicalizeRuleLiterals`); the fact prepared for downstream phases to
+ *  read instead of re-resolving the literal against the catalog (the
+ *  consumer-side migration is a separate, later change). */
 ```
 
 ### `resolvedKindId` (`packages/codegen/src/types/rule.ts:292`)

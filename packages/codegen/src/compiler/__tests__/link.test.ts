@@ -1056,4 +1056,14 @@ describe('canonicalizeRuleLiterals — kindId stamping', () => {
 		expect(patternResult.resolvedKindId).toBe(12);
 		expect(misses.literals.size).toBe(0);
 	});
+
+	it('suppresses stamping (and miss recording) inside a TOKEN body', () => {
+		const entries: GeneratedKindEntry[] = [{ kind: 'digits', id: 12 }];
+		const misses = noMisses();
+		const rule: Rule<'link'> = { type: TOKEN, content: { type: PATTERN, value: 'digits' }, immediate: false };
+		const result = canonicalizeRuleLiterals(rule, entries, false, misses) as { content: PatternRule<'link'> };
+		expect(result.content.resolvedKindId).toBeUndefined();
+		expect(misses.literals.size).toBe(0);
+		expect(misses.symbols.size).toBe(0);
+	});
 });
