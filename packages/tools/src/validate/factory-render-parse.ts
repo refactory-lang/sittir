@@ -156,6 +156,23 @@ function isEmptyStorageValue(v: unknown): boolean {
 	return v === undefined || (Array.isArray(v) && v.length === 0);
 }
 
+/**
+ * A bare scalar and a single-element array are the SAME storage value, not
+ * a masked cardinality bug: the slot model owns arity and enforces it at
+ * construction on both sides being compared here — the wrap/read layer
+ * throws (`singular slot "x" requires one value; got array(len=2)`) and a
+ * factory's own `nodeToConfig`/slot-normalization path enforces the same
+ * slot model when building storage. Both the materialized reference and
+ * the factory-built node have therefore already passed arity validation
+ * for their kind's slots before reaching this comparator, so a scalar on
+ * one side and a matching one-element array on the other is a
+ * representational difference only (singular field vs. an unwrapped
+ * array-of-one), never a genuine cardinality divergence — a factory that
+ * built the wrong arity would already have failed upstream as a wrap/
+ * factory error, not slipped through here. Coalescing them for comparison
+ * mirrors this arity ownership rather than re-deriving it: this
+ * comparator's job is value equality, not a second arity check.
+ */
 function compareStorageValue(expected: unknown, actual: unknown, path: string, ctx: CompareCtx): string | null {
 	if (Array.isArray(expected) || Array.isArray(actual)) {
 		const ea = Array.isArray(expected) ? expected : isEmptyStorageValue(expected) ? [] : [expected];
