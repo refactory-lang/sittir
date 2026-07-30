@@ -345,8 +345,9 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	// One row per class keeps grammar-diagnostics.json diffs readable; the
 	// sorted name lists live in `details`. Expected members today: kinds
 	// synthesized after tree-sitter generate (evaluate's field-enums),
-	// `inline:`-listed rules, and VAPORIZED rules — see
-	// docs/superpowers/specs/2026-07-30-kindid-invariant-restoration.md.
+	// `inline:`-listed rules, and VAPORIZED rules — these lack a parser-issued
+	// kindId by construction, not by bug (every OTHER kind name should carry
+	// one — that's the invariant this report ratchets against).
 	if (kindEntries.length > 0 && ctx?.diagnostics) {
 		if (stampMisses.symbols.size > 0) {
 			ctx.diagnostics.info({
@@ -422,12 +423,6 @@ function createSyntheticExternalRules(rules: Record<string, Rule<'link'>>, exter
 	}
 }
 
-/**
- * Distinct names/texts the stamp pass could not resolve to a kindId — the
- * per-build phantom-kind signal. Symbols are keyed by storage name
- * (`aliasedFrom ?? name`); literals by their text. Fixed-literal PATTERN
- * misses are NOT recorded (a real regex body has no anon token by design).
- */
 interface KindIdStampMisses {
 	readonly symbols: Set<string>;
 	readonly literals: Set<string>;
@@ -453,17 +448,6 @@ function canonicalizeCatalogLiteralRefsInMap(
 	}
 }
 
-/**
- * One walk, two catalog jobs: rewrite catalog-known literals at FIELD
- * positions into link-minted SYMBOLs, and stamp parser-issued kindIds onto
- * every value-bearing leaf (`storageKindId`/`parseKindId` on SYMBOL,
- * `resolvedKindId` on STRING/PATTERN) so downstream phases consume stamped
- * facts instead of re-resolving names/texts per site. Leaves that resolve
- * nothing are collected into `misses` — the link-time phantom-kind
- * diagnostic. Stamping is suppressed inside TOKEN bodies: their inner
- * strings are lexeme fragments of the token, not separate anon tokens, so
- * a miss there is meaningless by construction.
- */
 function canonicalizeRuleLiterals(
 	rule: Rule<'link'>,
 	kindEntries: readonly GeneratedKindEntry[],

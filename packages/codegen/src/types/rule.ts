@@ -280,16 +280,12 @@ export type GroupRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 export type StringRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof STRING;
 	readonly value: string;
-	/** Parser-issued anon-token kindId for `value` — stamped once at link
-	 *  (`stampKindIds`); downstream phases consume this instead of
-	 *  re-resolving the literal against the catalog. */
 	readonly resolvedKindId?: number;
 };
 
 export type PatternRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly type: typeof PATTERN;
 	readonly value: string;
-	/** Stamped at link for fixed-literal patterns only — see StringRule. */
 	readonly resolvedKindId?: number;
 };
 
@@ -322,13 +318,7 @@ export type SymbolRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly literal?: string;
 	readonly hidden?: boolean;
 	readonly aliasedFrom?: string;
-	/** Parser-issued kindId of the STORAGE kind (`aliasedFrom ?? name`) —
-	 *  stamped once at link (`stampKindIds`). Absent = the referenced kind
-	 *  has no parser symbol (phantom / inline / vaporized). */
 	readonly storageKindId?: number;
-	/** Parser-issued kindId of the PARSE identity (`name` — the alias
-	 *  occurrence's own runtime symbol when this ref displays under an
-	 *  alias). Stamped at link alongside `storageKindId`. */
 	readonly parseKindId?: number;
 };
 

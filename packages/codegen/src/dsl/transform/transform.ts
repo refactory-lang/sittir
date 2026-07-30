@@ -627,29 +627,6 @@ function findEnrichShapedFieldThroughTransparentWrappers(
 	return null;
 }
 
-/**
- * When an override wraps a REAL (non-optional-shaped) CHOICE in a field —
- * e.g. `member_expression: { 1: field('separator') }` around
- * `choice('.', field('optional_chain', $.optional_chain))` — tree-sitter's
- * own field-wrapper-collapse semantics give a BARE arm the outer field name
- * for free (nothing competes with it) but leave an ALREADY-fielded arm
- * under its OWN inner name (the innermost field wins). That produces TWO
- * different CST field names for what the override intends as one unified
- * slot: the already-fielded arm silently keeps producing data under its old
- * name, which no generated reader for the new field ever looks at (this is
- * exactly what broke ts `member_expression`'s `optional_chain` arm — see
- * docs/KNOWN_ISSUES.md).
- *
- * Relabel every enrich-shaped fielded arm to the override's chosen name so
- * every arm converges on ONE field — matching sittir's own IR-side
- * precedence (`wrapper-deletion.ts` stamps the OUTER field name) instead of
- * diverging from it. A no-op for choices whose arms are all bare (pure
- * kindEnum literal choices already get the outer name correctly with no
- * help needed here) — this only fires when relabeling is actually required.
- * Shallow — one level of arm descent, matching enrich's own
- * `applyChoiceArmFieldWrap` convention; arms that are themselves nested
- * choices are left alone.
- */
 function unifyChoiceArmFieldNames(content: unknown, unifiedName: string): unknown {
 	const r = content as Record<string, unknown>;
 	if (!r || typeof r !== 'object' || !isChoiceType(r.type as string)) return content;
@@ -725,7 +702,9 @@ function resolveFieldPlaceholder(
 			const reconstructed = nested.reconstruct(renamedField) as RuntimeRule;
 			return reconstructed;
 		}
-		// Not optional-shaped either — see unifyChoiceArmFieldNames' doc comment.
+		// Not optional-shaped either — unifyChoiceArmFieldNames covers the
+		// remaining case: an override-wrapped choice whose arms are already
+		// fielded under their own (differing) names.
 		const unified = unifyChoiceArmFieldNames(content, patch.name);
 		if (unified !== content) {
 			content = unified;

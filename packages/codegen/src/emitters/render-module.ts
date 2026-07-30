@@ -2621,17 +2621,6 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 	return entries;
 }
 
-/**
- * Single derivation of "which numeric kind_id backs this literal" — a
- * literal's `.kind` is either the rendered TEXT itself (a bare terminal, no
- * underlying kind) or the name of the real hidden kind it collapsed from
- * (`_newline`, `_not_escape_sequence`, ...). In the latter case `.kind`
- * uniquely identifies one catalog row; TEXT does not — two unrelated
- * hidden kinds can render identical text (e.g. two single-backslash
- * tokens), and matching by text first would silently pick whichever one
- * the catalog happens to list first, leaving the other's id unroutable.
- * Prefer the unambiguous kind-name lookup whenever one exists.
- */
 function resolveLiteralKindId(
 	literal: TransportLiteral,
 	kindEntries: readonly KindEnumEntry[] | undefined,
@@ -2966,8 +2955,8 @@ function renderAnyTransportWithNapiFromValue(
 	// Use the same emittedNodeIds set to skip KindIds already claimed by node arms.
 	// Id resolution is `resolveLiteralKindId` — text-first for bare terminals
 	// (a literal whose text equals a NAMED rule's name, e.g. python's `'type'`,
-	// must resolve through the anon-token catalog row, not the rule's own id —
-	// #129), kind-name-first for hidden-keyword/token/pattern collapses (whose
+	// must resolve through the anon-token catalog row, not the rule's own id),
+	// kind-name-first for hidden-keyword/token/pattern collapses (whose
 	// `.kind` uniquely identifies one row; TEXT does not when two such kinds
 	// render identical text).
 	for (const [index, literal] of literals.entries()) {

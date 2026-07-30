@@ -4,8 +4,7 @@ import { describe, expect, it } from 'vitest';
  * Phantom-kind ratchet — every kind name the generated model exposes should
  * have a parser-issued kindId row. Names without one ("phantom kinds") break
  * name-keyed id resolution and violate the every-kind-has-a-kindId
- * invariant; the restoration plan is
- * docs/superpowers/specs/2026-07-30-kindid-invariant-restoration.md.
+ * invariant.
  *
  * The ceilings are the audited baseline. Migrating a synthesis source
  * pre-generate, fixing anonymous-node naming, or pruning dead kinds lowers a

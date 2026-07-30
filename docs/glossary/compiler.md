@@ -5743,3 +5743,30 @@ Slot identity has exactly two sources, with disjoint parse routing:
 The partition is the SINGLE predicate behind both the census tool
 (`sittir tool union-slot-census`) and the CHOICE-case routing decision: one
 source, one derivation.
+
+### `KindIdStampMisses` (`packages/codegen/src/compiler/link.ts:425`)
+
+```text
+/**
+ * Distinct names/texts the stamp pass could not resolve to a kindId — the
+ * per-build phantom-kind signal. Symbols are keyed by storage name
+ * (`aliasedFrom ?? name`); literals by their text. Fixed-literal PATTERN
+ * misses are NOT recorded (a real regex body has no anon token by design).
+ */
+```
+
+### `canonicalizeRuleLiterals` (`packages/codegen/src/compiler/link.ts:456`)
+
+```text
+/**
+ * One walk, two catalog jobs: rewrite catalog-known literals at FIELD
+ * positions into link-minted SYMBOLs, and stamp parser-issued kindIds onto
+ * every value-bearing leaf (`storageKindId`/`parseKindId` on SYMBOL,
+ * `resolvedKindId` on STRING/PATTERN) so downstream phases consume stamped
+ * facts instead of re-resolving names/texts per site. Leaves that resolve
+ * nothing are collected into `misses` — the link-time phantom-kind
+ * diagnostic. Stamping is suppressed inside TOKEN bodies: their inner
+ * strings are lexeme fragments of the token, not separate anon tokens, so
+ * a miss there is meaningless by construction.
+ */
+```
