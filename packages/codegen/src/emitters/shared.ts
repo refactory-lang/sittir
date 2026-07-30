@@ -175,23 +175,30 @@ export function isAutoStampField(field: AssembledNonterminal, nodeMap: NodeMap):
 	return resolveEffectiveLiteral(field, nodeMap) !== undefined;
 }
 
-export function resolveHiddenKeywordLiteral(kindName: string, nodeMap: NodeMap): string | undefined {
+export function resolveHiddenKeywordLeaf(
+	kindName: string,
+	nodeMap: NodeMap
+): AssembledKeyword | AssembledToken | undefined {
 	if (!kindName.startsWith('_')) return undefined;
 	const node = nodeMap.nodes.get(kindName);
-	if (node instanceof AssembledKeyword) return node.text;
+	if (node instanceof AssembledKeyword) return node;
 	// Tokens with StringRule bodies are anonymous-string literals that
 	// the classifier routed through `token()` / `prec()` wrappers (the
 	// evaluator strips prec but token shape survives). They're
 	// functionally identical to keywords for inlining purposes — a
 	// single literal text the field accepts.
-	if (node instanceof AssembledToken) return node.text;
+	if (node instanceof AssembledToken && node.text !== undefined) return node;
 	// Single-subtype supertypes (e.g. `_semicolon` → `_automatic_semicolon`)
 	// — follow the chain so fields whose value is the supertype inherit the
 	// leaf/keyword/token literal for auto-stamp detection.
 	if (node instanceof AssembledSupertype && node.subtypes.length === 1) {
-		return resolveHiddenKeywordLiteral(node.subtypes[0]!, nodeMap);
+		return resolveHiddenKeywordLeaf(node.subtypes[0]!, nodeMap);
 	}
 	return undefined;
+}
+
+export function resolveHiddenKeywordLiteral(kindName: string, nodeMap: NodeMap): string | undefined {
+	return resolveHiddenKeywordLeaf(kindName, nodeMap)?.text;
 }
 
 export function isHiddenInfraSlot(slot: AssembledNonterminal, nodeMap: NodeMap): boolean {
@@ -281,14 +288,15 @@ export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMa
 		}
 		if (!isNodeRef(v)) continue;
 		const t = storageKindOfRef(v.node);
-		const lit = resolveHiddenKeywordLiteral(t, nodeMap);
-		if (lit !== undefined) {
-			// `v.storageKindId` is the mint-time stamp for this ref (assembled
-			// once, in `deriveValuesForRule`, via an unambiguous kind-NAME
-			// catalog lookup) — use it directly instead of re-deriving an id
-			// later from the collapsed literal's TEXT, which can collide with
-			// an unrelated kind rendering the same text.
-			out.push({ kind: 'literal', value: lit, rawKind: t, resolvedKindId: v.storageKindId });
+		const leaf = resolveHiddenKeywordLeaf(t, nodeMap);
+		if (leaf?.text !== undefined) {
+			// Two stamps, both minted at node/value construction, never
+			// re-derived from text here: `v.storageKindId` (the ref's own
+			// catalog row, when the hidden kind IS a parser symbol) and the
+			// leaf's `resolvedKindId` (the anon token's row, for
+			// compile-synthesized kinds like evaluate's field-enum names that
+			// have no parser symbol of their own).
+			out.push({ kind: 'literal', value: leaf.text, rawKind: t, resolvedKindId: v.storageKindId ?? leaf.resolvedKindId });
 			continue;
 		}
 		const node = nodeMap.nodes.get(t);

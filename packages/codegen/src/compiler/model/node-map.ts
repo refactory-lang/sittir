@@ -2314,6 +2314,10 @@ function collectFixedLiteral(
 export class AssembledKeyword extends AssembledLeaf<StringRule<'link'>> {
 	readonly modelType = 'keyword' as const;
 	readonly resolvedKind?: string;
+	/** Catalog id of `resolvedKind` — stamped once here, at construction, from
+	 *  the same literal-text lookup; consumers dispatch on this id instead of
+	 *  re-deriving one from the keyword's text later. */
+	readonly resolvedKindId?: number;
 
 	constructor(
 		kind: string,
@@ -2326,7 +2330,9 @@ export class AssembledKeyword extends AssembledLeaf<StringRule<'link'>> {
 		}
 	) {
 		super(kind, rule, opts);
-		this.resolvedKind = findEntryForLiteralText(opts?.kindEntries ?? [], rule.value)?.kind;
+		const entry = findEntryForLiteralText(opts?.kindEntries ?? [], rule.value);
+		this.resolvedKind = entry?.kind;
+		this.resolvedKindId = entry?.id;
 	}
 
 	get text(): string {
@@ -2351,6 +2357,8 @@ export class AssembledKeyword extends AssembledLeaf<StringRule<'link'>> {
 export class AssembledToken extends AssembledLeaf<StringRule<'link'> | TokenRule> {
 	readonly modelType = 'token' as const;
 	readonly resolvedKind?: string;
+	/** Catalog id of `resolvedKind` — stamped at construction; see AssembledKeyword. */
+	readonly resolvedKindId?: number;
 
 	constructor(
 		kind: string,
@@ -2358,8 +2366,9 @@ export class AssembledToken extends AssembledLeaf<StringRule<'link'> | TokenRule
 		opts?: { kindEntries?: readonly GeneratedKindEntry[] }
 	) {
 		super(kind, rule, { hidden: true });
-		this.resolvedKind =
-			rule.type === STRING ? findEntryForLiteralText(opts?.kindEntries ?? [], rule.value)?.kind : undefined;
+		const entry = rule.type === STRING ? findEntryForLiteralText(opts?.kindEntries ?? [], rule.value) : undefined;
+		this.resolvedKind = entry?.kind;
+		this.resolvedKindId = entry?.id;
 	}
 	// No emitFactory — tokens are always hidden, no factoryName.
 
