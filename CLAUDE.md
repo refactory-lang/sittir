@@ -19,10 +19,14 @@ CLI command reference: [docs/cli-command-glossary.md](docs/cli-command-glossary.
 - Generated artifacts are derived outputs. Do not hand-edit `packages/{rust,python,typescript}/src/*`, `packages/{rust,python,typescript}/templates/*.jinja`, `packages/{rust,python,typescript}/.sittir/*`, or `packages/{rust,python,typescript}/overrides.suggested.ts`; fix codegen or `packages/<lang>/grammar.sittir.ts` and regenerate.
 - TypeScript is ESM; local imports use `.ts` extensions.
 - Comments and documentation (glossary entries, ADRs, JSDoc, inline) must not reference spec/plan/PR/task numbers (e.g. "PR-137", "ADR-0009", "spec 026", "R11", "task 8"). Those planning artifacts get archived, renamed, or deleted — a numbered reference rots into a dangling pointer nobody can resolve. Describe the actual constraint, invariant, or rationale directly instead of citing where it was decided.
+- The grammar executes TWICE: tree-sitter's CLI runs the esbuild-bundled `.sittir/grammar.js`, and sittir's `evaluate()` re-runs the same DSL — both call the same bundled enrich/wire code, so DSL-layer synthesis reaches parser AND IR, while anything minted only in compile-time post-passes exists only on the sittir side (a phantom kind: a name with no parser-issued kindId). Ground truth for "did tree-sitter see it" is `.sittir/src/grammar.json`. Full model: [Codegen glossary](docs/compiler-phase-glossary.md).
+
+## Working standards
+
+@.claude/coding-standards.md
 
 ## Detailed instructions
 
-- [Working standards](.claude/coding-standards.md) — repo-wide coding rules (DRY, root fixes, stamped facts, verification gates, ratchets).
 - [Codegen glossary](docs/compiler-phase-glossary.md) — DSL layer + dual-pipeline execution model + compiler-phase narrative, with an index into the per-directory function glossaries (`docs/glossary/`).
 - [Architecture and data model](.claude/architecture.md)
 - [TypeScript and codegen conventions](.claude/codegen-conventions.md)
