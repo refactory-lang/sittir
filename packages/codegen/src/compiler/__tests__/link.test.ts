@@ -14,12 +14,22 @@ import {
 } from '../../types/rule-types.ts'; // @rule-type-consts
 // PR-P Task 2: TERMINAL removed from import — TerminalRule deleted from Rule union.
 import { describe, it, expect } from 'vitest';
-import { link, enrichPositions, computeParentSets, applyOverridePolymorphs, liftSeparators, LinkCtx } from '../link.ts';
+import {
+	link,
+	enrichPositions,
+	computeParentSets,
+	applyOverridePolymorphs,
+	liftSeparators,
+	LinkCtx,
+	canonicalizeRuleLiterals,
+	type KindIdStampMisses
+} from '../link.ts';
 import type { DerivationLog } from '../types.ts';
-import type { Rule, SymbolRef } from '../../types/rule.ts';
+import type { Rule, SymbolRef, SymbolRule, StringRule, PatternRule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
 import { makeRuleMetadata, readRuleMetadata } from '../../dsl/rule-metadata.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
+import type { GeneratedKindEntry } from '../generated-metadata.ts';
 
 function makeRaw(rules: Record<string, Rule<'evaluate'>>, overrides?: Partial<RawGrammar>): RawGrammar {
 	return {
@@ -949,5 +959,101 @@ describe('liftSeparators \u2014 flank absorption widened to structural rulesEqua
 		expect(lifted.type).toBe('REPEAT1');
 		expect(lifted.content).toEqual({ type: 'SYMBOL', name: 'member' });
 		expect(lifted.separator).toEqual({ value: choiceSep(), leading: 'optional' });
+	});
+});
+
+describe('canonicalizeRuleLiterals — kindId stamping', () => {
+	function noMisses(): KindIdStampMisses {
+		return { symbols: new Set(), literals: new Set() };
+	}
+
+	it('stamps storageKindId/parseKindId on a plain SYMBOL ref that resolves by name', () => {
+		const entries: GeneratedKindEntry[] = [{ kind: 'identifier', id: 5 }];
+		const misses = noMisses();
+		const rule: Rule<'link'> = { type: SYMBOL, name: 'identifier', inline: false };
+		const result = canonicalizeRuleLiterals(rule, entries, false, misses) as SymbolRule<'link'>;
+		expect(result.storageKindId).toBe(5);
+		expect(result.parseKindId).toBe(5);
+		expect(misses.symbols.size).toBe(0);
+	});
+
+	it('records a full miss (and leaves the rule unstamped) when neither identity resolves', () => {
+		// A non-empty catalog is required to engage stamping at all — an
+		// empty table means "no id tables supplied", which is a deliberate
+		// no-op, not a miss.
+		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
+		const misses = noMisses();
+		const rule: Rule<'link'> = { type: SYMBOL, name: 'unknown_kind', inline: false };
+		const result = canonicalizeRuleLiterals(rule, entries, false, misses);
+		expect(result).toBe(rule);
+		expect(misses.symbols.has('unknown_kind')).toBe(true);
+	});
+
+	it('records the storage-identity miss independently when only the parse identity resolves (per-identity miss recording)', () => {
+		// storageEntry and parseEntry resolve independently; a miss on one
+		// identity must not depend on whether the other also misses.
+		const entries: GeneratedKindEntry[] = [{ kind: 'occurrence_name', id: 9 }];
+		const misses = noMisses();
+		const rule: Rule<'link'> = {
+			type: SYMBOL,
+			name: 'occurrence_name',
+			aliasedFrom: 'missing_storage_target',
+			inline: false
+		};
+		const result = canonicalizeRuleLiterals(rule, entries, false, misses) as SymbolRule<'link'>;
+		expect(result.storageKindId).toBeUndefined();
+		expect(result.parseKindId).toBe(9);
+		expect(misses.symbols.has('missing_storage_target')).toBe(true);
+		expect(misses.symbols.has('occurrence_name')).toBe(false);
+	});
+
+	it('records the parse-identity miss independently when only the storage identity resolves', () => {
+		const entries: GeneratedKindEntry[] = [{ kind: 'real_target', id: 7 }];
+		const misses = noMisses();
+		const rule: Rule<'link'> = { type: SYMBOL, name: 'occurrence_name', aliasedFrom: 'real_target', inline: false };
+		const result = canonicalizeRuleLiterals(rule, entries, false, misses) as SymbolRule<'link'>;
+		expect(result.storageKindId).toBe(7);
+		expect(result.parseKindId).toBeUndefined();
+		expect(misses.symbols.has('occurrence_name')).toBe(true);
+		expect(misses.symbols.has('real_target')).toBe(false);
+	});
+
+	it('resolves a STRING->SYMBOL literal rewrite through the anon-token-first chain, not a same-spelled NAMED kind', () => {
+		// A literal's id always resolves anon-token-first: an anon token
+		// outranks a same-spelled NAMED rule, matching every other literal-text
+		// lookup in this function.
+		const entries: GeneratedKindEntry[] = [
+			{ kind: 'type', id: 3 }, // a NAMED kind spelled the same as the literal
+			{ kind: 'anon_type_tok', id: 4, anon: true, symbolName: 'type' } // the actual anon token for 'type'
+		];
+		const misses = noMisses();
+		const rule: Rule<'link'> = { type: STRING, value: 'type' };
+		const result = canonicalizeRuleLiterals(rule, entries, true, misses) as SymbolRule<'link'>;
+		expect(result.type).toBe(SYMBOL);
+		expect(result.name).toBe('anon_type_tok');
+		expect(result.storageKindId).toBe(4);
+	});
+
+	it('stamps resolvedKindId on a STRING/PATTERN leaf via the same anon-token-first chain', () => {
+		const entries: GeneratedKindEntry[] = [
+			{ kind: 'comma', id: 11, anon: true, symbolName: ',' },
+			{ kind: 'digits', id: 12 }
+		];
+		const misses = noMisses();
+		const stringResult = canonicalizeRuleLiterals(
+			{ type: STRING, value: ',' },
+			entries,
+			false,
+			misses
+		) as StringRule<'link'>;
+		expect(stringResult.resolvedKindId).toBe(11);
+		const patternResult = canonicalizeRuleLiterals(
+			{ type: PATTERN, value: 'digits' },
+			entries,
+			false,
+			misses
+		) as PatternRule<'link'>;
+		expect(patternResult.resolvedKindId).toBe(12);
+		expect(misses.literals.size).toBe(0);
 	});
 });
