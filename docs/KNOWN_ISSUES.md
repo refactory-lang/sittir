@@ -80,7 +80,7 @@ The generalization was verified safe for every CURRENT occurrence (`_suite`'s ow
 
 ## Comment fields aren't reconstructible through the factory API
 
-**Found during:** `factory-render-parse` redesign (2026-07-30, branch `fix-if-statement-duplicate-alternative`) — the validator now compares a factory-built node's storage directly against the materialized read reference instead of rendering + re-parsing (see PR #181's follow-up commits), which surfaces this precisely where the old render/reparse round-trip could not.
+**Found during:** the `factory-render-parse` storage-comparison redesign — the validator now compares a factory-built node's storage directly against the materialized read reference instead of rendering + re-parsing, which surfaces this precisely where the old render/reparse round-trip could not.
 
 A real parse+read consistently carries a `_comment` field (and, in one python case, `_line_continuation`) wherever a comment is attached to a node — confirmed across all three grammars: python `module` (×7, e.g. "Raw strings", "Format strings"), `case_clause` (×2), `block` (×2); rust `source_file` (×1), `block` (×1); typescript `program` (×5, e.g. "Ambient exports"), `function_declaration` (×1). In every case, calling that kind's factory with the SAME materialized data (via `nodeToConfig`) produces a node missing the `_comment` key entirely — `factoryData` and `factoryFields` never mention a comment field for these kinds, so `nodeToConfig` has nowhere to route it.
 
