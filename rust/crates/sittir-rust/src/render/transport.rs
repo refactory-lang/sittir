@@ -297,19 +297,19 @@ pub enum AnyTransport {
     ErrorSentinel(ErrorSentinelTransport),
     VisibilityModifierPubParens(VisibilityModifierPubParensTransport),
     Semi(SemiTransport),
-    TokMACROURULESBang(TokMACROURULESBangTransport),
-    FatArrow(FatArrowTransport),
+    MacroRulesBang(MacroRulesBangTransport),
+    EqGt(EqGtTransport),
     Colon(ColonTransport),
-    TokDollar(TokDollarTransport),
-    Paren(ParenTransport),
-    CloseParen(CloseParenTransport),
-    Hash(HashTransport),
-    Bracket(BracketTransport),
-    CloseBracket(CloseBracketTransport),
+    Dollar(DollarTransport),
+    Lparen(LparenTransport),
+    Rparen(RparenTransport),
+    Pound(PoundTransport),
+    Lbrack(LbrackTransport),
+    Rbrack(RbrackTransport),
     Bang(BangTransport),
     Mod(ModTransport),
-    Brace(BraceTransport),
-    CloseBrace(CloseBraceTransport),
+    Lbrace(LbraceTransport),
+    Rbrace(RbraceTransport),
     Struct(StructTransport),
     Union(UnionTransport),
     Enum(EnumTransport),
@@ -324,37 +324,35 @@ pub enum AnyTransport {
     Impl(ImplTransport),
     Trait(TraitTransport),
     For(ForTransport),
-    Question(QuestionTransport),
+    Qmark(QmarkTransport),
     Lt(LtTransport),
     Gt(GtTransport),
     Let(LetTransport),
     Use(UseTransport),
+    ColonColon(ColonColonTransport),
     As(AsTransport),
     Star(StarTransport),
     Amp(AmpTransport),
-    Ellipsis(EllipsisTransport),
-    TokSq(TokSqTransport),
+    DotDotDot(DotDotDotTransport),
+    Squote(SquoteTransport),
     Plus(PlusTransport),
     Dyn(DynTransport),
     Mut(MutTransport),
     AmpAmp(AmpAmpTransport),
     PipePipe(PipePipeTransport),
-    Amp2(Amp2Transport),
-    Pipe2(Pipe2Transport),
+    Pipe(PipeTransport),
     Caret(CaretTransport),
     Return(ReturnTransport),
     Yield(YieldTransport),
     Comma(CommaTransport),
-    Dotdot(DotdotTransport),
+    DotDot(DotDotTransport),
     If(IfTransport),
-    Andand(AndandTransport),
     Else(ElseTransport),
     Match(MatchTransport),
     While(WhileTransport),
     Loop(LoopTransport),
     In(InTransport),
     Async(AsyncTransport),
-    Pipe(PipeTransport),
     Break(BreakTransport),
     Continue(ContinueTransport),
     Dot(DotTransport),
@@ -363,15 +361,15 @@ pub enum AnyTransport {
     Gen(GenTransport),
     Try(TryTransport),
     At(AtTransport),
-    Minus(MinusTransport),
-    TokDq(TokDqTransport),
+    Dash(DashTransport),
+    Dquote(DquoteTransport),
     TokRHashDq(TokRHashDqTransport),
     TokDqHash(TokDqHashTransport),
-    Slashslash(SlashslashTransport),
+    SlashSlash(SlashSlashTransport),
     Slash(SlashTransport),
-    TokSlashStar(TokSlashStarTransport),
-    TokStarSlash(TokStarSlashTransport),
-    Arrow(ArrowTransport),
+    SlashStar(SlashStarTransport),
+    StarSlash(StarSlashTransport),
+    DashGt(DashGtTransport),
     Anonymous(AnonymousTransport),
     Raw(RawTransport),
     Pub(PubTransport),
@@ -1423,47 +1421,47 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 156 => Ok(AnyTransport::ErrorSentinel(
                     ErrorSentinelTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: ; (SEMI)
+                // kind: semi (SEMI)
                 2 => Ok(AnyTransport::Semi(
                     SemiTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: macro_rules! (TOK_M_A_C_R_O_U_R_U_L_E_S_BANG)
-                3 => Ok(AnyTransport::TokMACROURULESBang(
-                    TokMACROURULESBangTransport::from_napi_value(env, napi_val)?
+                // kind: macro_rules_bang (MACRO_RULES_BANG)
+                3 => Ok(AnyTransport::MacroRulesBang(
+                    MacroRulesBangTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: => (FAT_ARROW)
-                4 => Ok(AnyTransport::FatArrow(
-                    FatArrowTransport::from_napi_value(env, napi_val)?
+                // kind: eq_gt (EQ_GT)
+                4 => Ok(AnyTransport::EqGt(
+                    EqGtTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: : (COLON)
+                // kind: colon (COLON)
                 5 => Ok(AnyTransport::Colon(
                     ColonTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: $ (TOK_DOLLAR)
-                6 => Ok(AnyTransport::TokDollar(
-                    TokDollarTransport::from_napi_value(env, napi_val)?
+                // kind: dollar (DOLLAR)
+                6 => Ok(AnyTransport::Dollar(
+                    DollarTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: ( (PAREN)
-                7 => Ok(AnyTransport::Paren(
-                    ParenTransport::from_napi_value(env, napi_val)?
+                // kind: lparen (LPAREN)
+                7 => Ok(AnyTransport::Lparen(
+                    LparenTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: ) (CLOSE_PAREN)
-                8 => Ok(AnyTransport::CloseParen(
-                    CloseParenTransport::from_napi_value(env, napi_val)?
+                // kind: rparen (RPAREN)
+                8 => Ok(AnyTransport::Rparen(
+                    RparenTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: # (HASH)
-                45 => Ok(AnyTransport::Hash(
-                    HashTransport::from_napi_value(env, napi_val)?
+                // kind: pound (POUND)
+                45 => Ok(AnyTransport::Pound(
+                    PoundTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: [ (BRACKET)
-                46 => Ok(AnyTransport::Bracket(
-                    BracketTransport::from_napi_value(env, napi_val)?
+                // kind: lbrack (LBRACK)
+                46 => Ok(AnyTransport::Lbrack(
+                    LbrackTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: ] (CLOSE_BRACKET)
-                47 => Ok(AnyTransport::CloseBracket(
-                    CloseBracketTransport::from_napi_value(env, napi_val)?
+                // kind: rbrack (RBRACK)
+                47 => Ok(AnyTransport::Rbrack(
+                    RbrackTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: ! (BANG)
+                // kind: bang (BANG)
                 48 => Ok(AnyTransport::Bang(
                     BangTransport::from_napi_value(env, napi_val)?
                 )),
@@ -1471,13 +1469,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 49 => Ok(AnyTransport::Mod(
                     ModTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: { (BRACE)
-                50 => Ok(AnyTransport::Brace(
-                    BraceTransport::from_napi_value(env, napi_val)?
+                // kind: lbrace (LBRACE)
+                50 => Ok(AnyTransport::Lbrace(
+                    LbraceTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: } (CLOSE_BRACE)
-                51 => Ok(AnyTransport::CloseBrace(
-                    CloseBraceTransport::from_napi_value(env, napi_val)?
+                // kind: rbrace (RBRACE)
+                51 => Ok(AnyTransport::Rbrace(
+                    RbraceTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: struct (STRUCT)
                 52 => Ok(AnyTransport::Struct(
@@ -1511,7 +1509,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 58 => Ok(AnyTransport::Type(
                     TypeTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: = (EQ)
+                // kind: eq (EQ)
                 59 => Ok(AnyTransport::Eq(
                     EqTransport::from_napi_value(env, napi_val)?
                 )),
@@ -1535,15 +1533,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 67 => Ok(AnyTransport::For(
                     ForTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: ? (QUESTION)
-                12 => Ok(AnyTransport::Question(
-                    QuestionTransport::from_napi_value(env, napi_val)?
+                // kind: qmark (QMARK)
+                12 => Ok(AnyTransport::Qmark(
+                    QmarkTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: < (LT)
+                // kind: lt (LT)
                 68 => Ok(AnyTransport::Lt(
                     LtTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: > (GT)
+                // kind: gt (GT)
                 70 => Ok(AnyTransport::Gt(
                     GtTransport::from_napi_value(env, napi_val)?
                 )),
@@ -1555,27 +1553,31 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 72 => Ok(AnyTransport::Use(
                     UseTransport::from_napi_value(env, napi_val)?
                 )),
+                // kind: colon_colon (COLON_COLON)
+                73 => Ok(AnyTransport::ColonColon(
+                    ColonColonTransport::from_napi_value(env, napi_val)?
+                )),
                 // kind: as (AS)
                 74 => Ok(AnyTransport::As(
                     AsTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: * (STAR)
+                // kind: star (STAR)
                 11 => Ok(AnyTransport::Star(
                     StarTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: & (AMP)
+                // kind: amp (AMP)
                 78 => Ok(AnyTransport::Amp(
                     AmpTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: ... (ELLIPSIS)
-                75 => Ok(AnyTransport::Ellipsis(
-                    EllipsisTransport::from_napi_value(env, napi_val)?
+                // kind: dot_dot_dot (DOT_DOT_DOT)
+                75 => Ok(AnyTransport::DotDotDot(
+                    DotDotDotTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: ' (TOK_SQ)
-                76 => Ok(AnyTransport::TokSq(
-                    TokSqTransport::from_napi_value(env, napi_val)?
+                // kind: squote (SQUOTE)
+                76 => Ok(AnyTransport::Squote(
+                    SquoteTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: + (PLUS)
+                // kind: plus (PLUS)
                 10 => Ok(AnyTransport::Plus(
                     PlusTransport::from_napi_value(env, napi_val)?
                 )),
@@ -1591,9 +1593,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 83 => Ok(AnyTransport::PipePipe(
                     PipePipeTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: pipe (PIPE2)
-                84 => Ok(AnyTransport::Pipe2(
-                    Pipe2Transport::from_napi_value(env, napi_val)?
+                // kind: pipe (PIPE)
+                84 => Ok(AnyTransport::Pipe(
+                    PipeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: caret (CARET)
                 85 => Ok(AnyTransport::Caret(
@@ -1607,13 +1609,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 105 => Ok(AnyTransport::Yield(
                     YieldTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: , (COMMA)
+                // kind: comma (COMMA)
                 69 => Ok(AnyTransport::Comma(
                     CommaTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: .. (DOTDOT)
-                106 => Ok(AnyTransport::Dotdot(
-                    DotdotTransport::from_napi_value(env, napi_val)?
+                // kind: dot_dot (DOT_DOT)
+                106 => Ok(AnyTransport::DotDot(
+                    DotDotTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: if (IF)
                 107 => Ok(AnyTransport::If(
@@ -1651,7 +1653,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 114 => Ok(AnyTransport::Continue(
                     ContinueTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: . (DOT)
+                // kind: dot (DOT)
                 115 => Ok(AnyTransport::Dot(
                     DotTransport::from_napi_value(env, napi_val)?
                 )),
@@ -1671,37 +1673,37 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 118 => Ok(AnyTransport::Try(
                     TryTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: @ (AT)
+                // kind: at (AT)
                 120 => Ok(AnyTransport::At(
                     AtTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: - (MINUS)
-                81 => Ok(AnyTransport::Minus(
-                    MinusTransport::from_napi_value(env, napi_val)?
+                // kind: dash (DASH)
+                81 => Ok(AnyTransport::Dash(
+                    DashTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: " (TOK_DQ)
-                122 => Ok(AnyTransport::TokDq(
-                    TokDqTransport::from_napi_value(env, napi_val)?
+                // kind: dquote (DQUOTE)
+                123 => Ok(AnyTransport::Dquote(
+                    DquoteTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: // (SLASHSLASH)
-                128 => Ok(AnyTransport::Slashslash(
-                    SlashslashTransport::from_napi_value(env, napi_val)?
+                // kind: slash_slash (SLASH_SLASH)
+                128 => Ok(AnyTransport::SlashSlash(
+                    SlashSlashTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: / (SLASH)
+                // kind: slash (SLASH)
                 92 => Ok(AnyTransport::Slash(
                     SlashTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: /* (TOK_SLASH_STAR)
-                131 => Ok(AnyTransport::TokSlashStar(
-                    TokSlashStarTransport::from_napi_value(env, napi_val)?
+                // kind: slash_star (SLASH_STAR)
+                131 => Ok(AnyTransport::SlashStar(
+                    SlashStarTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: */ (TOK_STAR_SLASH)
-                132 => Ok(AnyTransport::TokStarSlash(
-                    TokStarSlashTransport::from_napi_value(env, napi_val)?
+                // kind: star_slash (STAR_SLASH)
+                132 => Ok(AnyTransport::StarSlash(
+                    StarSlashTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: -> (ARROW)
-                138 => Ok(AnyTransport::Arrow(
-                    ArrowTransport::from_napi_value(env, napi_val)?
+                // kind: dash_gt (DASH_GT)
+                138 => Ok(AnyTransport::DashGt(
+                    DashGtTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _ (_ANONYMOUS)
                 139 => Ok(AnyTransport::Anonymous(
@@ -1721,8 +1723,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 )),
                 // literal kind: default → "default"
                 62 => Ok(AnyTransport::Literal7_64_65_66_61_75_6c_74),
-                // literal kind: :: → "::"
-                73 => Ok(AnyTransport::Literal15_3a_3a),
                 // literal kind: == → "=="
                 86 => Ok(AnyTransport::Literal22_3d_3d),
                 // literal kind: != → "!="
@@ -8155,7 +8155,7 @@ impl RenderableTransport for ExpressionEndingWithBlockTransport {
 pub enum DelimTokensTransport {
     NonDelimToken(NonDelimTokenTransport),
     TokenPatternGroup1(TokenPatternGroup1Transport),
-    TokDollar(TokDollarTransport),
+    Dollar(DollarTransport),
     DelimTokenTree(DelimTokenTreeTransport),
     Verbatim(VerbatimTransport),
 }
@@ -8170,8 +8170,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
                     242 => {
-                        if let Ok(value) = TokDollarTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TokDollar(value));
+                        if let Ok(value) = DollarTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Dollar(value));
                         }
                         if let Ok(value) = DelimTokenTreeTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::DelimTokenTree(value));
@@ -8254,8 +8254,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelimTokensTransport {
                 )?;
                 match kind_id {
                     242 => {
-                        if let Ok(value) = TokDollarTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TokDollar(value));
+                        if let Ok(value) = DollarTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Dollar(value));
                         }
                         if let Ok(value) = DelimTokenTreeTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::DelimTokenTree(value));
@@ -8388,7 +8388,7 @@ pub enum NonDelimTokenTransport {
     PrimitiveType(PrimitiveTypeEnum),
     TokenTreePunctuation(TokenTreePunctuationEnum),
     TokenKeywords(TokenKeywordsEnum),
-    TokDollar(TokDollarTransport),
+    Dollar(DollarTransport),
     Verbatim(VerbatimTransport),
 }
 
@@ -8441,8 +8441,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        if let Ok(value) = TokDollarTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TokDollar(value));
+                        if let Ok(value) = DollarTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Dollar(value));
                         }
                         if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NonSpecialToken(value));
@@ -8492,8 +8492,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        if let Ok(value) = TokDollarTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TokDollar(value));
+                        if let Ok(value) = DollarTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Dollar(value));
                         }
                         if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NonSpecialToken(value));
@@ -8821,8 +8821,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                     110 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
-                    6 => Ok(Self::TokDollar(
-                        TokDollarTransport::from_napi_value(env, napi_val)?
+                    6 => Ok(Self::Dollar(
+                        DollarTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in NonDelimTokenTransport",
@@ -8879,8 +8879,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        if let Ok(value) = TokDollarTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TokDollar(value));
+                        if let Ok(value) = DollarTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Dollar(value));
                         }
                         if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NonSpecialToken(value));
@@ -8930,8 +8930,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                         if let Ok(value) = TokenKeywordsEnum::from_napi_value(env, napi_val) {
                             return Ok(Self::TokenKeywords(value));
                         }
-                        if let Ok(value) = TokDollarTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::TokDollar(value));
+                        if let Ok(value) = DollarTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::Dollar(value));
                         }
                         if let Ok(value) = NonSpecialTokenTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::NonSpecialToken(value));
@@ -9259,8 +9259,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonDelimTokenTransport {
                     110 => Ok(Self::TokenKeywords(
                         TokenKeywordsEnum::from_napi_value(env, napi_val)?
                     )),
-                    6 => Ok(Self::TokDollar(
-                        TokDollarTransport::from_napi_value(env, napi_val)?
+                    6 => Ok(Self::Dollar(
+                        DollarTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in NonDelimTokenTransport",
@@ -9319,7 +9319,7 @@ fn non_delim_token_transport_to_any(t: NonDelimTokenTransport) -> AnyTransport {
         NonDelimTokenTransport::PrimitiveType(inner) => AnyTransport::PrimitiveType(inner),
         NonDelimTokenTransport::TokenTreePunctuation(inner) => AnyTransport::TokenTreePunctuation(inner),
         NonDelimTokenTransport::TokenKeywords(inner) => AnyTransport::TokenKeywords(inner),
-        NonDelimTokenTransport::TokDollar(inner) => AnyTransport::TokDollar(inner),
+        NonDelimTokenTransport::Dollar(inner) => AnyTransport::Dollar(inner),
         NonDelimTokenTransport::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -45795,7 +45795,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SemiTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct TokMACROURULESBangTransport {
+pub struct MacroRulesBangTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -45805,7 +45805,7 @@ pub struct TokMACROURULESBangTransport {
     pub text: String,
 }
 
-impl RenderableTransport for TokMACROURULESBangTransport {
+impl RenderableTransport for MacroRulesBangTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -45815,7 +45815,7 @@ impl RenderableTransport for TokMACROURULESBangTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for TokMACROURULESBangTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for MacroRulesBangTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -45842,7 +45842,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokMACROURULESBangTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for TokMACROURULESBangTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for MacroRulesBangTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -45868,7 +45868,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokMACROURULESBangTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TokMACROURULESBangTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for MacroRulesBangTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -45878,27 +45878,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for TokMACROURULESBangTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TokMACROURULESBangTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<MacroRulesBangTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        TokMACROURULESBangTransport::from_napi_value(env, napi_val).map(Box::new)
+        MacroRulesBangTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TokMACROURULESBangTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<MacroRulesBangTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        TokMACROURULESBangTransport::to_napi_value(env, *val)
+        MacroRulesBangTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct FatArrowTransport {
+pub struct EqGtTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -45908,7 +45908,7 @@ pub struct FatArrowTransport {
     pub text: String,
 }
 
-impl RenderableTransport for FatArrowTransport {
+impl RenderableTransport for EqGtTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -45918,7 +45918,7 @@ impl RenderableTransport for FatArrowTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for FatArrowTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for EqGtTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -45945,7 +45945,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FatArrowTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for FatArrowTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for EqGtTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -45971,7 +45971,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FatArrowTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FatArrowTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for EqGtTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -45981,22 +45981,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for FatArrowTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<FatArrowTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<EqGtTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        FatArrowTransport::from_napi_value(env, napi_val).map(Box::new)
+        EqGtTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<FatArrowTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<EqGtTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        FatArrowTransport::to_napi_value(env, *val)
+        EqGtTransport::to_napi_value(env, *val)
     }
 }
 
@@ -46104,7 +46104,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ColonTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct TokDollarTransport {
+pub struct DollarTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -46114,7 +46114,7 @@ pub struct TokDollarTransport {
     pub text: String,
 }
 
-impl RenderableTransport for TokDollarTransport {
+impl RenderableTransport for DollarTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -46124,7 +46124,7 @@ impl RenderableTransport for TokDollarTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for TokDollarTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DollarTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -46151,7 +46151,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokDollarTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for TokDollarTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DollarTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -46177,7 +46177,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokDollarTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TokDollarTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for DollarTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -46187,27 +46187,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for TokDollarTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TokDollarTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DollarTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        TokDollarTransport::from_napi_value(env, napi_val).map(Box::new)
+        DollarTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TokDollarTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DollarTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        TokDollarTransport::to_napi_value(env, *val)
+        DollarTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct ParenTransport {
+pub struct LparenTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -46217,7 +46217,7 @@ pub struct ParenTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ParenTransport {
+impl RenderableTransport for LparenTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -46227,7 +46227,7 @@ impl RenderableTransport for ParenTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ParenTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for LparenTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -46254,7 +46254,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ParenTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for LparenTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -46280,7 +46280,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ParenTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for LparenTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -46290,27 +46290,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for ParenTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ParenTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LparenTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ParenTransport::from_napi_value(env, napi_val).map(Box::new)
+        LparenTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ParenTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LparenTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ParenTransport::to_napi_value(env, *val)
+        LparenTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct CloseParenTransport {
+pub struct RparenTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -46320,7 +46320,7 @@ pub struct CloseParenTransport {
     pub text: String,
 }
 
-impl RenderableTransport for CloseParenTransport {
+impl RenderableTransport for RparenTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -46330,7 +46330,7 @@ impl RenderableTransport for CloseParenTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for CloseParenTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for RparenTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -46357,7 +46357,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseParenTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for CloseParenTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for RparenTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -46383,7 +46383,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseParenTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CloseParenTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for RparenTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -46393,27 +46393,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for CloseParenTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CloseParenTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<RparenTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        CloseParenTransport::from_napi_value(env, napi_val).map(Box::new)
+        RparenTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CloseParenTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<RparenTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        CloseParenTransport::to_napi_value(env, *val)
+        RparenTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct HashTransport {
+pub struct PoundTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -46423,7 +46423,7 @@ pub struct HashTransport {
     pub text: String,
 }
 
-impl RenderableTransport for HashTransport {
+impl RenderableTransport for PoundTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -46433,7 +46433,7 @@ impl RenderableTransport for HashTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for HashTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for PoundTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -46460,7 +46460,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for HashTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for HashTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for PoundTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -46486,7 +46486,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for HashTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for HashTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for PoundTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -46496,27 +46496,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for HashTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<HashTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PoundTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        HashTransport::from_napi_value(env, napi_val).map(Box::new)
+        PoundTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<HashTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PoundTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        HashTransport::to_napi_value(env, *val)
+        PoundTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct BracketTransport {
+pub struct LbrackTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -46526,7 +46526,7 @@ pub struct BracketTransport {
     pub text: String,
 }
 
-impl RenderableTransport for BracketTransport {
+impl RenderableTransport for LbrackTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -46536,7 +46536,7 @@ impl RenderableTransport for BracketTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for BracketTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for LbrackTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -46563,7 +46563,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for BracketTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for LbrackTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -46589,7 +46589,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BracketTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for LbrackTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -46599,27 +46599,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for BracketTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BracketTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LbrackTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        BracketTransport::from_napi_value(env, napi_val).map(Box::new)
+        LbrackTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BracketTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LbrackTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        BracketTransport::to_napi_value(env, *val)
+        LbrackTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct CloseBracketTransport {
+pub struct RbrackTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -46629,7 +46629,7 @@ pub struct CloseBracketTransport {
     pub text: String,
 }
 
-impl RenderableTransport for CloseBracketTransport {
+impl RenderableTransport for RbrackTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -46639,7 +46639,7 @@ impl RenderableTransport for CloseBracketTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for CloseBracketTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for RbrackTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -46666,7 +46666,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBracketTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for CloseBracketTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for RbrackTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -46692,7 +46692,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBracketTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CloseBracketTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for RbrackTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -46702,22 +46702,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for CloseBracketTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CloseBracketTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<RbrackTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        CloseBracketTransport::from_napi_value(env, napi_val).map(Box::new)
+        RbrackTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CloseBracketTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<RbrackTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        CloseBracketTransport::to_napi_value(env, *val)
+        RbrackTransport::to_napi_value(env, *val)
     }
 }
 
@@ -46928,7 +46928,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ModTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct BraceTransport {
+pub struct LbraceTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -46938,7 +46938,7 @@ pub struct BraceTransport {
     pub text: String,
 }
 
-impl RenderableTransport for BraceTransport {
+impl RenderableTransport for LbraceTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -46948,7 +46948,7 @@ impl RenderableTransport for BraceTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for BraceTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for LbraceTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -46975,7 +46975,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BraceTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for BraceTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for LbraceTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -47001,7 +47001,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BraceTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for BraceTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for LbraceTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -47011,27 +47011,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for BraceTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<BraceTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<LbraceTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        BraceTransport::from_napi_value(env, napi_val).map(Box::new)
+        LbraceTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<BraceTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<LbraceTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        BraceTransport::to_napi_value(env, *val)
+        LbraceTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct CloseBraceTransport {
+pub struct RbraceTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -47041,7 +47041,7 @@ pub struct CloseBraceTransport {
     pub text: String,
 }
 
-impl RenderableTransport for CloseBraceTransport {
+impl RenderableTransport for RbraceTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -47051,7 +47051,7 @@ impl RenderableTransport for CloseBraceTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for CloseBraceTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for RbraceTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -47078,7 +47078,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBraceTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for CloseBraceTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for RbraceTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -47104,7 +47104,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBraceTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for CloseBraceTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for RbraceTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -47114,22 +47114,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for CloseBraceTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<CloseBraceTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<RbraceTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        CloseBraceTransport::from_napi_value(env, napi_val).map(Box::new)
+        RbraceTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<CloseBraceTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<RbraceTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        CloseBraceTransport::to_napi_value(env, *val)
+        RbraceTransport::to_napi_value(env, *val)
     }
 }
 
@@ -48576,7 +48576,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct QuestionTransport {
+pub struct QmarkTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -48586,7 +48586,7 @@ pub struct QuestionTransport {
     pub text: String,
 }
 
-impl RenderableTransport for QuestionTransport {
+impl RenderableTransport for QmarkTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -48596,7 +48596,7 @@ impl RenderableTransport for QuestionTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for QuestionTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for QmarkTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -48623,7 +48623,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QuestionTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for QuestionTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for QmarkTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -48649,7 +48649,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QuestionTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for QuestionTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for QmarkTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -48659,22 +48659,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for QuestionTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<QuestionTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<QmarkTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        QuestionTransport::from_napi_value(env, napi_val).map(Box::new)
+        QmarkTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<QuestionTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<QmarkTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        QuestionTransport::to_napi_value(env, *val)
+        QmarkTransport::to_napi_value(env, *val)
     }
 }
 
@@ -49091,6 +49091,109 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<UseTransport> {
 }
 
 #[derive(Debug, Clone)]
+pub struct ColonColonTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for ColonColonTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for ColonColonTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "::".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                obj.get("$text")?.unwrap_or_else(|| "::".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for ColonColonTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "::".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ColonColonTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ColonColonTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ColonColonTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ColonColonTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ColonColonTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct AsTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -49400,7 +49503,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AmpTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct EllipsisTransport {
+pub struct DotDotDotTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -49410,7 +49513,7 @@ pub struct EllipsisTransport {
     pub text: String,
 }
 
-impl RenderableTransport for EllipsisTransport {
+impl RenderableTransport for DotDotDotTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -49420,7 +49523,7 @@ impl RenderableTransport for EllipsisTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DotDotDotTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -49447,7 +49550,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DotDotDotTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -49473,7 +49576,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for EllipsisTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for DotDotDotTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -49483,27 +49586,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for EllipsisTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<EllipsisTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DotDotDotTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        EllipsisTransport::from_napi_value(env, napi_val).map(Box::new)
+        DotDotDotTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<EllipsisTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DotDotDotTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        EllipsisTransport::to_napi_value(env, *val)
+        DotDotDotTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct TokSqTransport {
+pub struct SquoteTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -49513,7 +49616,7 @@ pub struct TokSqTransport {
     pub text: String,
 }
 
-impl RenderableTransport for TokSqTransport {
+impl RenderableTransport for SquoteTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -49523,7 +49626,7 @@ impl RenderableTransport for TokSqTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for TokSqTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for SquoteTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -49550,7 +49653,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSqTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for TokSqTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for SquoteTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -49576,7 +49679,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSqTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TokSqTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for SquoteTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -49586,22 +49689,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for TokSqTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TokSqTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SquoteTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        TokSqTransport::from_napi_value(env, napi_val).map(Box::new)
+        SquoteTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TokSqTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SquoteTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        TokSqTransport::to_napi_value(env, *val)
+        SquoteTransport::to_napi_value(env, *val)
     }
 }
 
@@ -50121,7 +50224,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PipePipeTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct Amp2Transport {
+pub struct PipeTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -50131,7 +50234,7 @@ pub struct Amp2Transport {
     pub text: String,
 }
 
-impl RenderableTransport for Amp2Transport {
+impl RenderableTransport for PipeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -50141,110 +50244,7 @@ impl RenderableTransport for Amp2Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for Amp2Transport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "&".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                obj.get("$text")?.unwrap_or_else(|| "&".to_string())
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(false),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for Amp2Transport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "&".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Amp2Transport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<Amp2Transport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        Amp2Transport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<Amp2Transport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Amp2Transport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct Pipe2Transport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for Pipe2Transport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for Pipe2Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -50271,7 +50271,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for Pipe2Transport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for Pipe2Transport {
+impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -50297,7 +50297,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for Pipe2Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Pipe2Transport {
+impl ::napi::bindgen_prelude::ToNapiValue for PipeTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -50307,22 +50307,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for Pipe2Transport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<Pipe2Transport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<PipeTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        Pipe2Transport::from_napi_value(env, napi_val).map(Box::new)
+        PipeTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<Pipe2Transport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<PipeTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Pipe2Transport::to_napi_value(env, *val)
+        PipeTransport::to_napi_value(env, *val)
     }
 }
 
@@ -50739,7 +50739,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<CommaTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct DotdotTransport {
+pub struct DotDotTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -50749,7 +50749,7 @@ pub struct DotdotTransport {
     pub text: String,
 }
 
-impl RenderableTransport for DotdotTransport {
+impl RenderableTransport for DotDotTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -50759,7 +50759,7 @@ impl RenderableTransport for DotdotTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for DotdotTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DotDotTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -50786,7 +50786,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotdotTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for DotdotTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DotDotTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -50812,7 +50812,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotdotTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for DotdotTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for DotDotTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -50822,22 +50822,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for DotdotTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<DotdotTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DotDotTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        DotdotTransport::from_napi_value(env, napi_val).map(Box::new)
+        DotDotTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<DotdotTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DotDotTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        DotdotTransport::to_napi_value(env, *val)
+        DotDotTransport::to_napi_value(env, *val)
     }
 }
 
@@ -50941,109 +50941,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IfTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         IfTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct AndandTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for AndandTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AndandTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "&&".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                obj.get("$text")?.unwrap_or_else(|| "&&".to_string())
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(false),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AndandTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "&&".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AndandTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AndandTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        AndandTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AndandTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        AndandTransport::to_napi_value(env, *val)
     }
 }
 
@@ -51662,109 +51559,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AsyncTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         AsyncTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct PipeTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for PipeTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "|".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                obj.get("$text")?.unwrap_or_else(|| "|".to_string())
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(false),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "|".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for PipeTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<PipeTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        PipeTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<PipeTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        PipeTransport::to_napi_value(env, *val)
     }
 }
 
@@ -52593,7 +52387,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AtTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct MinusTransport {
+pub struct DashTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -52603,7 +52397,7 @@ pub struct MinusTransport {
     pub text: String,
 }
 
-impl RenderableTransport for MinusTransport {
+impl RenderableTransport for DashTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -52613,7 +52407,7 @@ impl RenderableTransport for MinusTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for MinusTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DashTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -52640,7 +52434,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MinusTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for MinusTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DashTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -52666,7 +52460,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MinusTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MinusTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for DashTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -52676,27 +52470,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for MinusTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<MinusTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DashTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        MinusTransport::from_napi_value(env, napi_val).map(Box::new)
+        DashTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<MinusTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DashTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        MinusTransport::to_napi_value(env, *val)
+        DashTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct TokDqTransport {
+pub struct DquoteTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -52706,7 +52500,7 @@ pub struct TokDqTransport {
     pub text: String,
 }
 
-impl RenderableTransport for TokDqTransport {
+impl RenderableTransport for DquoteTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -52716,7 +52510,7 @@ impl RenderableTransport for TokDqTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for TokDqTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DquoteTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -52743,7 +52537,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokDqTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for TokDqTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DquoteTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -52769,7 +52563,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokDqTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TokDqTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for DquoteTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -52779,22 +52573,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for TokDqTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TokDqTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DquoteTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        TokDqTransport::from_napi_value(env, napi_val).map(Box::new)
+        DquoteTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TokDqTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DquoteTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        TokDqTransport::to_napi_value(env, *val)
+        DquoteTransport::to_napi_value(env, *val)
     }
 }
 
@@ -53005,7 +52799,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TokDqHashTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct SlashslashTransport {
+pub struct SlashSlashTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -53015,7 +52809,7 @@ pub struct SlashslashTransport {
     pub text: String,
 }
 
-impl RenderableTransport for SlashslashTransport {
+impl RenderableTransport for SlashSlashTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -53025,7 +52819,7 @@ impl RenderableTransport for SlashslashTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for SlashslashTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for SlashSlashTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -53052,7 +52846,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashslashTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for SlashslashTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for SlashSlashTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -53078,7 +52872,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashslashTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SlashslashTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for SlashSlashTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -53088,22 +52882,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for SlashslashTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<SlashslashTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SlashSlashTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        SlashslashTransport::from_napi_value(env, napi_val).map(Box::new)
+        SlashSlashTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<SlashslashTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SlashSlashTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        SlashslashTransport::to_napi_value(env, *val)
+        SlashSlashTransport::to_napi_value(env, *val)
     }
 }
 
@@ -53211,7 +53005,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SlashTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct TokSlashStarTransport {
+pub struct SlashStarTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -53221,7 +53015,7 @@ pub struct TokSlashStarTransport {
     pub text: String,
 }
 
-impl RenderableTransport for TokSlashStarTransport {
+impl RenderableTransport for SlashStarTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -53231,7 +53025,7 @@ impl RenderableTransport for TokSlashStarTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for TokSlashStarTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for SlashStarTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -53258,7 +53052,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSlashStarTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for TokSlashStarTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for SlashStarTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -53284,7 +53078,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSlashStarTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TokSlashStarTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for SlashStarTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -53294,27 +53088,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for TokSlashStarTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TokSlashStarTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SlashStarTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        TokSlashStarTransport::from_napi_value(env, napi_val).map(Box::new)
+        SlashStarTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TokSlashStarTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SlashStarTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        TokSlashStarTransport::to_napi_value(env, *val)
+        SlashStarTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct TokStarSlashTransport {
+pub struct StarSlashTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -53324,7 +53118,7 @@ pub struct TokStarSlashTransport {
     pub text: String,
 }
 
-impl RenderableTransport for TokStarSlashTransport {
+impl RenderableTransport for StarSlashTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -53334,7 +53128,7 @@ impl RenderableTransport for TokStarSlashTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for TokStarSlashTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for StarSlashTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -53361,7 +53155,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokStarSlashTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for TokStarSlashTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for StarSlashTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -53387,7 +53181,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokStarSlashTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TokStarSlashTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for StarSlashTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -53397,27 +53191,27 @@ impl ::napi::bindgen_prelude::ToNapiValue for TokStarSlashTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<TokStarSlashTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StarSlashTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        TokStarSlashTransport::from_napi_value(env, napi_val).map(Box::new)
+        StarSlashTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<TokStarSlashTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StarSlashTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        TokStarSlashTransport::to_napi_value(env, *val)
+        StarSlashTransport::to_napi_value(env, *val)
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct ArrowTransport {
+pub struct DashGtTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<Span>,
@@ -53427,7 +53221,7 @@ pub struct ArrowTransport {
     pub text: String,
 }
 
-impl RenderableTransport for ArrowTransport {
+impl RenderableTransport for DashGtTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -53437,7 +53231,7 @@ impl RenderableTransport for ArrowTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for ArrowTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DashGtTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -53464,7 +53258,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowTransport {
 }
 
 #[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for ArrowTransport {
+impl ::napi::bindgen_prelude::FromNapiValue for DashGtTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
@@ -53490,7 +53284,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArrowTransport {
+impl ::napi::bindgen_prelude::ToNapiValue for DashGtTransport {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         _val: Self,
@@ -53500,22 +53294,22 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArrowTransport {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ArrowTransport> {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<DashGtTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        ArrowTransport::from_napi_value(env, napi_val).map(Box::new)
+        DashGtTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ArrowTransport> {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<DashGtTransport> {
     unsafe fn to_napi_value(
         env: ::napi::sys::napi_env,
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        ArrowTransport::to_napi_value(env, *val)
+        DashGtTransport::to_napi_value(env, *val)
     }
 }
 
@@ -57025,11 +56819,11 @@ fn render_semi(t: &SemiTransport, dest: &mut dyn ::std::fmt::Write) -> Result<()
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_tok_macrourulesbang(t: &TokMACROURULESBangTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_macro_rules_bang(t: &MacroRulesBangTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_fat_arrow(t: &FatArrowTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_eq_gt(t: &EqGtTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -57037,27 +56831,27 @@ fn render_colon(t: &ColonTransport, dest: &mut dyn ::std::fmt::Write) -> Result<
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_tok_dollar(t: &TokDollarTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_dollar(t: &DollarTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_paren(t: &ParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_lparen(t: &LparenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_close_paren(t: &CloseParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_rparen(t: &RparenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_hash(t: &HashTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_pound(t: &PoundTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_bracket(t: &BracketTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_lbrack(t: &LbrackTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_close_bracket(t: &CloseBracketTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_rbrack(t: &RbrackTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -57069,11 +56863,11 @@ fn render_mod(t: &ModTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), 
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_brace(t: &BraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_lbrace(t: &LbraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_close_brace(t: &CloseBraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_rbrace(t: &RbraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -57133,7 +56927,7 @@ fn render_for(t: &ForTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), 
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_question(t: &QuestionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_qmark(t: &QmarkTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -57153,6 +56947,10 @@ fn render_use(t: &UseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), 
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
+fn render_colon_colon(t: &ColonColonTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
 fn render_as(t: &AsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -57165,11 +56963,11 @@ fn render_amp(t: &AmpTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), 
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_ellipsis(t: &EllipsisTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_dot_dot_dot(t: &DotDotDotTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_tok_sq(t: &TokSqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_squote(t: &SquoteTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -57193,11 +56991,7 @@ fn render_pipe_pipe(t: &PipePipeTransport, dest: &mut dyn ::std::fmt::Write) -> 
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_amp2(t: &Amp2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render_pipe2(t: &Pipe2Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_pipe(t: &PipeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -57217,15 +57011,11 @@ fn render_comma(t: &CommaTransport, dest: &mut dyn ::std::fmt::Write) -> Result<
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_dotdot(t: &DotdotTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_dot_dot(t: &DotDotTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
 fn render_if(t: &IfTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render_andand(t: &AndandTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -57250,10 +57040,6 @@ fn render_in(t: &InTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::
 }
 
 fn render_async(t: &AsyncTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render_pipe(t: &PipeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -57289,11 +57075,11 @@ fn render_at(t: &AtTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_minus(t: &MinusTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_dash(t: &DashTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_tok_dq(t: &TokDqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_dquote(t: &DquoteTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -57305,7 +57091,7 @@ fn render_tok_dq_hash(t: &TokDqHashTransport, dest: &mut dyn ::std::fmt::Write) 
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_slashslash(t: &SlashslashTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_slash_slash(t: &SlashSlashTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -57313,15 +57099,15 @@ fn render_slash(t: &SlashTransport, dest: &mut dyn ::std::fmt::Write) -> Result<
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_tok_slash_star(t: &TokSlashStarTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_slash_star(t: &SlashStarTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_tok_star_slash(t: &TokStarSlashTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_star_slash(t: &StarSlashTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_arrow(t: &ArrowTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_dash_gt(t: &DashGtTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -57631,7 +57417,7 @@ fn render_delim_tokens(t: &DelimTokensTransport, dest: &mut dyn ::std::fmt::Writ
     match t {
         DelimTokensTransport::NonDelimToken(inner) => render_non_delim_token(inner, dest),
         DelimTokensTransport::TokenPatternGroup1(inner) => render_token_pattern_group1(inner, dest),
-        DelimTokensTransport::TokDollar(inner) => render_tok_dollar(inner, dest),
+        DelimTokensTransport::Dollar(inner) => render_dollar(inner, dest),
         DelimTokensTransport::DelimTokenTree(inner) => render_delim_token_tree(inner, dest),
         DelimTokensTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
@@ -57654,7 +57440,7 @@ fn render_non_delim_token(t: &NonDelimTokenTransport, dest: &mut dyn ::std::fmt:
         NonDelimTokenTransport::PrimitiveType(inner) => render_primitive_type(inner, dest),
         NonDelimTokenTransport::TokenTreePunctuation(inner) => render_token_tree_punctuation(inner, dest),
         NonDelimTokenTransport::TokenKeywords(inner) => render_token_keywords(inner, dest),
-        NonDelimTokenTransport::TokDollar(inner) => render_tok_dollar(inner, dest),
+        NonDelimTokenTransport::Dollar(inner) => render_dollar(inner, dest),
         NonDelimTokenTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
     }
 }
@@ -58091,19 +57877,19 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::ErrorSentinel(t) => t.render_into(dest),
             AnyTransport::VisibilityModifierPubParens(t) => render_visibility_modifier_pub_parens(t, dest),
             AnyTransport::Semi(t) => t.render_into(dest),
-            AnyTransport::TokMACROURULESBang(t) => t.render_into(dest),
-            AnyTransport::FatArrow(t) => t.render_into(dest),
+            AnyTransport::MacroRulesBang(t) => t.render_into(dest),
+            AnyTransport::EqGt(t) => t.render_into(dest),
             AnyTransport::Colon(t) => t.render_into(dest),
-            AnyTransport::TokDollar(t) => t.render_into(dest),
-            AnyTransport::Paren(t) => t.render_into(dest),
-            AnyTransport::CloseParen(t) => t.render_into(dest),
-            AnyTransport::Hash(t) => t.render_into(dest),
-            AnyTransport::Bracket(t) => t.render_into(dest),
-            AnyTransport::CloseBracket(t) => t.render_into(dest),
+            AnyTransport::Dollar(t) => t.render_into(dest),
+            AnyTransport::Lparen(t) => t.render_into(dest),
+            AnyTransport::Rparen(t) => t.render_into(dest),
+            AnyTransport::Pound(t) => t.render_into(dest),
+            AnyTransport::Lbrack(t) => t.render_into(dest),
+            AnyTransport::Rbrack(t) => t.render_into(dest),
             AnyTransport::Bang(t) => t.render_into(dest),
             AnyTransport::Mod(t) => t.render_into(dest),
-            AnyTransport::Brace(t) => t.render_into(dest),
-            AnyTransport::CloseBrace(t) => t.render_into(dest),
+            AnyTransport::Lbrace(t) => t.render_into(dest),
+            AnyTransport::Rbrace(t) => t.render_into(dest),
             AnyTransport::Struct(t) => t.render_into(dest),
             AnyTransport::Union(t) => t.render_into(dest),
             AnyTransport::Enum(t) => t.render_into(dest),
@@ -58118,37 +57904,35 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Impl(t) => t.render_into(dest),
             AnyTransport::Trait(t) => t.render_into(dest),
             AnyTransport::For(t) => t.render_into(dest),
-            AnyTransport::Question(t) => t.render_into(dest),
+            AnyTransport::Qmark(t) => t.render_into(dest),
             AnyTransport::Lt(t) => t.render_into(dest),
             AnyTransport::Gt(t) => t.render_into(dest),
             AnyTransport::Let(t) => t.render_into(dest),
             AnyTransport::Use(t) => t.render_into(dest),
+            AnyTransport::ColonColon(t) => t.render_into(dest),
             AnyTransport::As(t) => t.render_into(dest),
             AnyTransport::Star(t) => t.render_into(dest),
             AnyTransport::Amp(t) => t.render_into(dest),
-            AnyTransport::Ellipsis(t) => t.render_into(dest),
-            AnyTransport::TokSq(t) => t.render_into(dest),
+            AnyTransport::DotDotDot(t) => t.render_into(dest),
+            AnyTransport::Squote(t) => t.render_into(dest),
             AnyTransport::Plus(t) => t.render_into(dest),
             AnyTransport::Dyn(t) => t.render_into(dest),
             AnyTransport::Mut(t) => t.render_into(dest),
             AnyTransport::AmpAmp(t) => t.render_into(dest),
             AnyTransport::PipePipe(t) => t.render_into(dest),
-            AnyTransport::Amp2(t) => t.render_into(dest),
-            AnyTransport::Pipe2(t) => t.render_into(dest),
+            AnyTransport::Pipe(t) => t.render_into(dest),
             AnyTransport::Caret(t) => t.render_into(dest),
             AnyTransport::Return(t) => t.render_into(dest),
             AnyTransport::Yield(t) => t.render_into(dest),
             AnyTransport::Comma(t) => t.render_into(dest),
-            AnyTransport::Dotdot(t) => t.render_into(dest),
+            AnyTransport::DotDot(t) => t.render_into(dest),
             AnyTransport::If(t) => t.render_into(dest),
-            AnyTransport::Andand(t) => t.render_into(dest),
             AnyTransport::Else(t) => t.render_into(dest),
             AnyTransport::Match(t) => t.render_into(dest),
             AnyTransport::While(t) => t.render_into(dest),
             AnyTransport::Loop(t) => t.render_into(dest),
             AnyTransport::In(t) => t.render_into(dest),
             AnyTransport::Async(t) => t.render_into(dest),
-            AnyTransport::Pipe(t) => t.render_into(dest),
             AnyTransport::Break(t) => t.render_into(dest),
             AnyTransport::Continue(t) => t.render_into(dest),
             AnyTransport::Dot(t) => t.render_into(dest),
@@ -58157,15 +57941,15 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Gen(t) => t.render_into(dest),
             AnyTransport::Try(t) => t.render_into(dest),
             AnyTransport::At(t) => t.render_into(dest),
-            AnyTransport::Minus(t) => t.render_into(dest),
-            AnyTransport::TokDq(t) => t.render_into(dest),
+            AnyTransport::Dash(t) => t.render_into(dest),
+            AnyTransport::Dquote(t) => t.render_into(dest),
             AnyTransport::TokRHashDq(t) => t.render_into(dest),
             AnyTransport::TokDqHash(t) => t.render_into(dest),
-            AnyTransport::Slashslash(t) => t.render_into(dest),
+            AnyTransport::SlashSlash(t) => t.render_into(dest),
             AnyTransport::Slash(t) => t.render_into(dest),
-            AnyTransport::TokSlashStar(t) => t.render_into(dest),
-            AnyTransport::TokStarSlash(t) => t.render_into(dest),
-            AnyTransport::Arrow(t) => t.render_into(dest),
+            AnyTransport::SlashStar(t) => t.render_into(dest),
+            AnyTransport::StarSlash(t) => t.render_into(dest),
+            AnyTransport::DashGt(t) => t.render_into(dest),
             AnyTransport::Anonymous(t) => t.render_into(dest),
             AnyTransport::Raw(t) => t.render_into(dest),
             AnyTransport::Pub(t) => t.render_into(dest),
@@ -58491,19 +58275,19 @@ impl AnyTransport {
             Self::ErrorSentinel(t) => t.transport_named,
             Self::VisibilityModifierPubParens(t) => t.transport_named,
             Self::Semi(t) => t.transport_named,
-            Self::TokMACROURULESBang(t) => t.transport_named,
-            Self::FatArrow(t) => t.transport_named,
+            Self::MacroRulesBang(t) => t.transport_named,
+            Self::EqGt(t) => t.transport_named,
             Self::Colon(t) => t.transport_named,
-            Self::TokDollar(t) => t.transport_named,
-            Self::Paren(t) => t.transport_named,
-            Self::CloseParen(t) => t.transport_named,
-            Self::Hash(t) => t.transport_named,
-            Self::Bracket(t) => t.transport_named,
-            Self::CloseBracket(t) => t.transport_named,
+            Self::Dollar(t) => t.transport_named,
+            Self::Lparen(t) => t.transport_named,
+            Self::Rparen(t) => t.transport_named,
+            Self::Pound(t) => t.transport_named,
+            Self::Lbrack(t) => t.transport_named,
+            Self::Rbrack(t) => t.transport_named,
             Self::Bang(t) => t.transport_named,
             Self::Mod(t) => t.transport_named,
-            Self::Brace(t) => t.transport_named,
-            Self::CloseBrace(t) => t.transport_named,
+            Self::Lbrace(t) => t.transport_named,
+            Self::Rbrace(t) => t.transport_named,
             Self::Struct(t) => t.transport_named,
             Self::Union(t) => t.transport_named,
             Self::Enum(t) => t.transport_named,
@@ -58518,37 +58302,35 @@ impl AnyTransport {
             Self::Impl(t) => t.transport_named,
             Self::Trait(t) => t.transport_named,
             Self::For(t) => t.transport_named,
-            Self::Question(t) => t.transport_named,
+            Self::Qmark(t) => t.transport_named,
             Self::Lt(t) => t.transport_named,
             Self::Gt(t) => t.transport_named,
             Self::Let(t) => t.transport_named,
             Self::Use(t) => t.transport_named,
+            Self::ColonColon(t) => t.transport_named,
             Self::As(t) => t.transport_named,
             Self::Star(t) => t.transport_named,
             Self::Amp(t) => t.transport_named,
-            Self::Ellipsis(t) => t.transport_named,
-            Self::TokSq(t) => t.transport_named,
+            Self::DotDotDot(t) => t.transport_named,
+            Self::Squote(t) => t.transport_named,
             Self::Plus(t) => t.transport_named,
             Self::Dyn(t) => t.transport_named,
             Self::Mut(t) => t.transport_named,
             Self::AmpAmp(t) => t.transport_named,
             Self::PipePipe(t) => t.transport_named,
-            Self::Amp2(t) => t.transport_named,
-            Self::Pipe2(t) => t.transport_named,
+            Self::Pipe(t) => t.transport_named,
             Self::Caret(t) => t.transport_named,
             Self::Return(t) => t.transport_named,
             Self::Yield(t) => t.transport_named,
             Self::Comma(t) => t.transport_named,
-            Self::Dotdot(t) => t.transport_named,
+            Self::DotDot(t) => t.transport_named,
             Self::If(t) => t.transport_named,
-            Self::Andand(t) => t.transport_named,
             Self::Else(t) => t.transport_named,
             Self::Match(t) => t.transport_named,
             Self::While(t) => t.transport_named,
             Self::Loop(t) => t.transport_named,
             Self::In(t) => t.transport_named,
             Self::Async(t) => t.transport_named,
-            Self::Pipe(t) => t.transport_named,
             Self::Break(t) => t.transport_named,
             Self::Continue(t) => t.transport_named,
             Self::Dot(t) => t.transport_named,
@@ -58557,15 +58339,15 @@ impl AnyTransport {
             Self::Gen(t) => t.transport_named,
             Self::Try(t) => t.transport_named,
             Self::At(t) => t.transport_named,
-            Self::Minus(t) => t.transport_named,
-            Self::TokDq(t) => t.transport_named,
+            Self::Dash(t) => t.transport_named,
+            Self::Dquote(t) => t.transport_named,
             Self::TokRHashDq(t) => t.transport_named,
             Self::TokDqHash(t) => t.transport_named,
-            Self::Slashslash(t) => t.transport_named,
+            Self::SlashSlash(t) => t.transport_named,
             Self::Slash(t) => t.transport_named,
-            Self::TokSlashStar(t) => t.transport_named,
-            Self::TokStarSlash(t) => t.transport_named,
-            Self::Arrow(t) => t.transport_named,
+            Self::SlashStar(t) => t.transport_named,
+            Self::StarSlash(t) => t.transport_named,
+            Self::DashGt(t) => t.transport_named,
             Self::Anonymous(t) => t.transport_named,
             Self::Raw(t) => t.transport_named,
             Self::Pub(t) => t.transport_named,

@@ -1413,7 +1413,7 @@ export function coerceToSplatPattern(input: T.SplatPattern.Loose): ReturnType<ty
 			'splat_pattern',
 			'operator',
 			coerceKindEnumStorage(_resolveOneLeaf<T.SplatPatternOperator>(input.operator, '_splat_pattern_operator'), [
-				['*', TSKindId.Star2] as const,
+				['*', TSKindId.Star] as const,
 				['**', TSKindId.StarStar] as const
 			])
 		),
@@ -1571,13 +1571,13 @@ export function coerceToBinaryOperator(input: T.BinaryOperator.Loose): ReturnTyp
 				[
 					['+', TSKindId.Plus] as const,
 					['-', TSKindId.Dash] as const,
-					['*', TSKindId.Star2] as const,
-					['@', TSKindId.At2] as const,
-					['/', TSKindId.Slash2] as const,
+					['*', TSKindId.Star] as const,
+					['@', TSKindId.At] as const,
+					['/', TSKindId.Slash] as const,
 					['%', TSKindId.Percent] as const,
 					['//', TSKindId.SlashSlash] as const,
 					['**', TSKindId.StarStar] as const,
-					['|', TSKindId.Pipe2] as const,
+					['|', TSKindId.Pipe] as const,
 					['&', TSKindId.Amp] as const,
 					['^', TSKindId.Caret] as const,
 					['<<', TSKindId.LtLt] as const,

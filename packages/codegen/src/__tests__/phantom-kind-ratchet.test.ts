@@ -17,9 +17,9 @@ import { describe, expect, it } from 'vitest';
  * quoting differs).
  */
 const CEILINGS: Record<string, number> = {
-	rust: 54,
-	typescript: 70,
-	python: 31
+	rust: 18,
+	typescript: 40,
+	python: 14
 };
 
 interface ConstsModule {

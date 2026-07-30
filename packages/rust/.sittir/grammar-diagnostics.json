@@ -65,6 +65,978 @@
   },
   {
     "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": ";",
+    "message": "[assemble] anonymous literal \";\" resolved no parser kindId — keyed by raw text ';'",
+    "canProceed": true,
+    "details": {
+      "literalText": ";"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "macro_rules!",
+    "message": "[assemble] anonymous literal \"macro_rules!\" resolved no parser kindId — keyed by raw text 'macro_rules!'",
+    "canProceed": true,
+    "details": {
+      "literalText": "macro_rules!"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "=>",
+    "message": "[assemble] anonymous literal \"=>\" resolved no parser kindId — keyed by raw text '=>'",
+    "canProceed": true,
+    "details": {
+      "literalText": "=>"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": ":",
+    "message": "[assemble] anonymous literal \":\" resolved no parser kindId — keyed by raw text ':'",
+    "canProceed": true,
+    "details": {
+      "literalText": ":"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "$",
+    "message": "[assemble] anonymous literal \"$\" resolved no parser kindId — keyed by raw text '$'",
+    "canProceed": true,
+    "details": {
+      "literalText": "$"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "(",
+    "message": "[assemble] anonymous literal \"(\" resolved no parser kindId — keyed by raw text '('",
+    "canProceed": true,
+    "details": {
+      "literalText": "("
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": ")",
+    "message": "[assemble] anonymous literal \")\" resolved no parser kindId — keyed by raw text ')'",
+    "canProceed": true,
+    "details": {
+      "literalText": ")"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "#",
+    "message": "[assemble] anonymous literal \"#\" resolved no parser kindId — keyed by raw text '#'",
+    "canProceed": true,
+    "details": {
+      "literalText": "#"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "[",
+    "message": "[assemble] anonymous literal \"[\" resolved no parser kindId — keyed by raw text '['",
+    "canProceed": true,
+    "details": {
+      "literalText": "["
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "]",
+    "message": "[assemble] anonymous literal \"]\" resolved no parser kindId — keyed by raw text ']'",
+    "canProceed": true,
+    "details": {
+      "literalText": "]"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "!",
+    "message": "[assemble] anonymous literal \"!\" resolved no parser kindId — keyed by raw text '!'",
+    "canProceed": true,
+    "details": {
+      "literalText": "!"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "mod",
+    "message": "[assemble] anonymous literal \"mod\" resolved no parser kindId — keyed by raw text 'mod'",
+    "canProceed": true,
+    "details": {
+      "literalText": "mod"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "{",
+    "message": "[assemble] anonymous literal \"{\" resolved no parser kindId — keyed by raw text '{'",
+    "canProceed": true,
+    "details": {
+      "literalText": "{"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "}",
+    "message": "[assemble] anonymous literal \"}\" resolved no parser kindId — keyed by raw text '}'",
+    "canProceed": true,
+    "details": {
+      "literalText": "}"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "struct",
+    "message": "[assemble] anonymous literal \"struct\" resolved no parser kindId — keyed by raw text 'struct'",
+    "canProceed": true,
+    "details": {
+      "literalText": "struct"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "union",
+    "message": "[assemble] anonymous literal \"union\" resolved no parser kindId — keyed by raw text 'union'",
+    "canProceed": true,
+    "details": {
+      "literalText": "union"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "enum",
+    "message": "[assemble] anonymous literal \"enum\" resolved no parser kindId — keyed by raw text 'enum'",
+    "canProceed": true,
+    "details": {
+      "literalText": "enum"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "extern",
+    "message": "[assemble] anonymous literal \"extern\" resolved no parser kindId — keyed by raw text 'extern'",
+    "canProceed": true,
+    "details": {
+      "literalText": "extern"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "const",
+    "message": "[assemble] anonymous literal \"const\" resolved no parser kindId — keyed by raw text 'const'",
+    "canProceed": true,
+    "details": {
+      "literalText": "const"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "static",
+    "message": "[assemble] anonymous literal \"static\" resolved no parser kindId — keyed by raw text 'static'",
+    "canProceed": true,
+    "details": {
+      "literalText": "static"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "ref",
+    "message": "[assemble] anonymous literal \"ref\" resolved no parser kindId — keyed by raw text 'ref'",
+    "canProceed": true,
+    "details": {
+      "literalText": "ref"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "type",
+    "message": "[assemble] anonymous literal \"type\" resolved no parser kindId — keyed by raw text 'type'",
+    "canProceed": true,
+    "details": {
+      "literalText": "type"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "=",
+    "message": "[assemble] anonymous literal \"=\" resolved no parser kindId — keyed by raw text '='",
+    "canProceed": true,
+    "details": {
+      "literalText": "="
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "fn",
+    "message": "[assemble] anonymous literal \"fn\" resolved no parser kindId — keyed by raw text 'fn'",
+    "canProceed": true,
+    "details": {
+      "literalText": "fn"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "where",
+    "message": "[assemble] anonymous literal \"where\" resolved no parser kindId — keyed by raw text 'where'",
+    "canProceed": true,
+    "details": {
+      "literalText": "where"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "impl",
+    "message": "[assemble] anonymous literal \"impl\" resolved no parser kindId — keyed by raw text 'impl'",
+    "canProceed": true,
+    "details": {
+      "literalText": "impl"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "trait",
+    "message": "[assemble] anonymous literal \"trait\" resolved no parser kindId — keyed by raw text 'trait'",
+    "canProceed": true,
+    "details": {
+      "literalText": "trait"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "for",
+    "message": "[assemble] anonymous literal \"for\" resolved no parser kindId — keyed by raw text 'for'",
+    "canProceed": true,
+    "details": {
+      "literalText": "for"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "?",
+    "message": "[assemble] anonymous literal \"?\" resolved no parser kindId — keyed by raw text '?'",
+    "canProceed": true,
+    "details": {
+      "literalText": "?"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "<",
+    "message": "[assemble] anonymous literal \"<\" resolved no parser kindId — keyed by raw text '<'",
+    "canProceed": true,
+    "details": {
+      "literalText": "<"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": ">",
+    "message": "[assemble] anonymous literal \">\" resolved no parser kindId — keyed by raw text '>'",
+    "canProceed": true,
+    "details": {
+      "literalText": ">"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "let",
+    "message": "[assemble] anonymous literal \"let\" resolved no parser kindId — keyed by raw text 'let'",
+    "canProceed": true,
+    "details": {
+      "literalText": "let"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "use",
+    "message": "[assemble] anonymous literal \"use\" resolved no parser kindId — keyed by raw text 'use'",
+    "canProceed": true,
+    "details": {
+      "literalText": "use"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "::",
+    "message": "[assemble] anonymous literal \"::\" resolved no parser kindId — keyed by raw text '::'",
+    "canProceed": true,
+    "details": {
+      "literalText": "::"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "as",
+    "message": "[assemble] anonymous literal \"as\" resolved no parser kindId — keyed by raw text 'as'",
+    "canProceed": true,
+    "details": {
+      "literalText": "as"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "*",
+    "message": "[assemble] anonymous literal \"*\" resolved no parser kindId — keyed by raw text '*'",
+    "canProceed": true,
+    "details": {
+      "literalText": "*"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "&",
+    "message": "[assemble] anonymous literal \"&\" resolved no parser kindId — keyed by raw text '&'",
+    "canProceed": true,
+    "details": {
+      "literalText": "&"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "...",
+    "message": "[assemble] anonymous literal \"...\" resolved no parser kindId — keyed by raw text '...'",
+    "canProceed": true,
+    "details": {
+      "literalText": "..."
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "'",
+    "message": "[assemble] anonymous literal \"'\" resolved no parser kindId — keyed by raw text '''",
+    "canProceed": true,
+    "details": {
+      "literalText": "'"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "+",
+    "message": "[assemble] anonymous literal \"+\" resolved no parser kindId — keyed by raw text '+'",
+    "canProceed": true,
+    "details": {
+      "literalText": "+"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "dyn",
+    "message": "[assemble] anonymous literal \"dyn\" resolved no parser kindId — keyed by raw text 'dyn'",
+    "canProceed": true,
+    "details": {
+      "literalText": "dyn"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "mut",
+    "message": "[assemble] anonymous literal \"mut\" resolved no parser kindId — keyed by raw text 'mut'",
+    "canProceed": true,
+    "details": {
+      "literalText": "mut"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "amp_amp",
+    "message": "[assemble] anonymous literal \"&&\" resolved no parser kindId — keyed by raw text 'amp_amp'",
+    "canProceed": true,
+    "details": {
+      "literalText": "&&"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "pipe_pipe",
+    "message": "[assemble] anonymous literal \"||\" resolved no parser kindId — keyed by raw text 'pipe_pipe'",
+    "canProceed": true,
+    "details": {
+      "literalText": "||"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "amp",
+    "message": "[assemble] anonymous literal \"&\" resolved no parser kindId — keyed by raw text 'amp'",
+    "canProceed": true,
+    "details": {
+      "literalText": "&"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "pipe",
+    "message": "[assemble] anonymous literal \"|\" resolved no parser kindId — keyed by raw text 'pipe'",
+    "canProceed": true,
+    "details": {
+      "literalText": "|"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "caret",
+    "message": "[assemble] anonymous literal \"^\" resolved no parser kindId — keyed by raw text 'caret'",
+    "canProceed": true,
+    "details": {
+      "literalText": "^"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "return",
+    "message": "[assemble] anonymous literal \"return\" resolved no parser kindId — keyed by raw text 'return'",
+    "canProceed": true,
+    "details": {
+      "literalText": "return"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "yield",
+    "message": "[assemble] anonymous literal \"yield\" resolved no parser kindId — keyed by raw text 'yield'",
+    "canProceed": true,
+    "details": {
+      "literalText": "yield"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": ",",
+    "message": "[assemble] anonymous literal \",\" resolved no parser kindId — keyed by raw text ','",
+    "canProceed": true,
+    "details": {
+      "literalText": ","
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "..",
+    "message": "[assemble] anonymous literal \"..\" resolved no parser kindId — keyed by raw text '..'",
+    "canProceed": true,
+    "details": {
+      "literalText": ".."
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "if",
+    "message": "[assemble] anonymous literal \"if\" resolved no parser kindId — keyed by raw text 'if'",
+    "canProceed": true,
+    "details": {
+      "literalText": "if"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "&&",
+    "message": "[assemble] anonymous literal \"&&\" resolved no parser kindId — keyed by raw text '&&'",
+    "canProceed": true,
+    "details": {
+      "literalText": "&&"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "else",
+    "message": "[assemble] anonymous literal \"else\" resolved no parser kindId — keyed by raw text 'else'",
+    "canProceed": true,
+    "details": {
+      "literalText": "else"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "match",
+    "message": "[assemble] anonymous literal \"match\" resolved no parser kindId — keyed by raw text 'match'",
+    "canProceed": true,
+    "details": {
+      "literalText": "match"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "while",
+    "message": "[assemble] anonymous literal \"while\" resolved no parser kindId — keyed by raw text 'while'",
+    "canProceed": true,
+    "details": {
+      "literalText": "while"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "loop",
+    "message": "[assemble] anonymous literal \"loop\" resolved no parser kindId — keyed by raw text 'loop'",
+    "canProceed": true,
+    "details": {
+      "literalText": "loop"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "in",
+    "message": "[assemble] anonymous literal \"in\" resolved no parser kindId — keyed by raw text 'in'",
+    "canProceed": true,
+    "details": {
+      "literalText": "in"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "async",
+    "message": "[assemble] anonymous literal \"async\" resolved no parser kindId — keyed by raw text 'async'",
+    "canProceed": true,
+    "details": {
+      "literalText": "async"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "|",
+    "message": "[assemble] anonymous literal \"|\" resolved no parser kindId — keyed by raw text '|'",
+    "canProceed": true,
+    "details": {
+      "literalText": "|"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "break",
+    "message": "[assemble] anonymous literal \"break\" resolved no parser kindId — keyed by raw text 'break'",
+    "canProceed": true,
+    "details": {
+      "literalText": "break"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "continue",
+    "message": "[assemble] anonymous literal \"continue\" resolved no parser kindId — keyed by raw text 'continue'",
+    "canProceed": true,
+    "details": {
+      "literalText": "continue"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": ".",
+    "message": "[assemble] anonymous literal \".\" resolved no parser kindId — keyed by raw text '.'",
+    "canProceed": true,
+    "details": {
+      "literalText": "."
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "await",
+    "message": "[assemble] anonymous literal \"await\" resolved no parser kindId — keyed by raw text 'await'",
+    "canProceed": true,
+    "details": {
+      "literalText": "await"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "unsafe",
+    "message": "[assemble] anonymous literal \"unsafe\" resolved no parser kindId — keyed by raw text 'unsafe'",
+    "canProceed": true,
+    "details": {
+      "literalText": "unsafe"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "gen",
+    "message": "[assemble] anonymous literal \"gen\" resolved no parser kindId — keyed by raw text 'gen'",
+    "canProceed": true,
+    "details": {
+      "literalText": "gen"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "try",
+    "message": "[assemble] anonymous literal \"try\" resolved no parser kindId — keyed by raw text 'try'",
+    "canProceed": true,
+    "details": {
+      "literalText": "try"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "@",
+    "message": "[assemble] anonymous literal \"@\" resolved no parser kindId — keyed by raw text '@'",
+    "canProceed": true,
+    "details": {
+      "literalText": "@"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "-",
+    "message": "[assemble] anonymous literal \"-\" resolved no parser kindId — keyed by raw text '-'",
+    "canProceed": true,
+    "details": {
+      "literalText": "-"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "\"",
+    "message": "[assemble] anonymous literal \"\\\"\" resolved no parser kindId — keyed by raw text '\"'",
+    "canProceed": true,
+    "details": {
+      "literalText": "\""
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "r#\"",
+    "message": "[assemble] anonymous literal \"r#\\\"\" resolved no parser kindId — keyed by raw text 'r#\"'",
+    "canProceed": true,
+    "details": {
+      "literalText": "r#\""
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "\"#",
+    "message": "[assemble] anonymous literal \"\\\"#\" resolved no parser kindId — keyed by raw text '\"#'",
+    "canProceed": true,
+    "details": {
+      "literalText": "\"#"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "//",
+    "message": "[assemble] anonymous literal \"//\" resolved no parser kindId — keyed by raw text '//'",
+    "canProceed": true,
+    "details": {
+      "literalText": "//"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "/",
+    "message": "[assemble] anonymous literal \"/\" resolved no parser kindId — keyed by raw text '/'",
+    "canProceed": true,
+    "details": {
+      "literalText": "/"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "/*",
+    "message": "[assemble] anonymous literal \"/*\" resolved no parser kindId — keyed by raw text '/*'",
+    "canProceed": true,
+    "details": {
+      "literalText": "/*"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "*/",
+    "message": "[assemble] anonymous literal \"*/\" resolved no parser kindId — keyed by raw text '*/'",
+    "canProceed": true,
+    "details": {
+      "literalText": "*/"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "->",
+    "message": "[assemble] anonymous literal \"->\" resolved no parser kindId — keyed by raw text '->'",
+    "canProceed": true,
+    "details": {
+      "literalText": "->"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "_",
+    "message": "[assemble] anonymous literal \"_\" resolved no parser kindId — keyed by raw text '_'",
+    "canProceed": true,
+    "details": {
+      "literalText": "_"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "raw",
+    "message": "[assemble] anonymous literal \"raw\" resolved no parser kindId — keyed by raw text 'raw'",
+    "canProceed": true,
+    "details": {
+      "literalText": "raw"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "pub",
+    "message": "[assemble] anonymous literal \"pub\" resolved no parser kindId — keyed by raw text 'pub'",
+    "canProceed": true,
+    "details": {
+      "literalText": "pub"
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "kindid-unstamped-anon-literal",
+    "severity": "warning",
+    "grammar": "rust",
+    "ownerKind": "move",
+    "message": "[assemble] anonymous literal \"move\" resolved no parser kindId — keyed by raw text 'move'",
+    "canProceed": true,
+    "details": {
+      "literalText": "move"
+    }
+  },
+  {
+    "scope": "grammar",
     "code": "typename-collision",
     "severity": "info",
     "grammar": "rust",

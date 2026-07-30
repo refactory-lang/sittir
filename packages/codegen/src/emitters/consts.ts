@@ -53,13 +53,23 @@ export function emitConsts(config: EmitConstsConfig): string {
 				leafKinds.push(kind);
 				keywords.push(kind);
 				break;
-			case 'token':
-				if (/^[a-z_]+$/i.test(kind)) {
+			case 'token': {
+				// Word-shape is a property of the token's LITERAL TEXT, not its
+				// kind name — a catalog-resolved anonymous token's kind name is
+				// now the sanitized catalog spelling (`,` → `comma`), which is
+				// alphabetic regardless of whether the underlying literal is
+				// punctuation. Test the literal (`node.text`, present for every
+				// STRING-bodied token) and fall back to `kind` only for the rare
+				// TokenRule-bodied (compound) token, whose kind IS its own
+				// declared name.
+				const shapeSource = (node as { text?: string }).text ?? kind;
+				if (/^[a-z_]+$/i.test(shapeSource)) {
 					keywords.push(kind);
 				} else {
 					operators.push(kind);
 				}
 				break;
+			}
 			// supertype, group — not in any public const array
 		}
 	}

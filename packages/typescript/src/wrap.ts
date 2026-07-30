@@ -4290,7 +4290,7 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
 			}),
 			_separator: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._separator ?? readTerminalFromOther(data, [TSKindId.Dot2, TSKindId.QmarkDot]),
+					data._separator ?? readTerminalFromOther(data, [TSKindId.Dot, TSKindId.QmarkDot]),
 					'separator',
 					true,
 					data.$type,
@@ -4763,23 +4763,23 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 							TSKindId.GtGt,
 							TSKindId.GtGtGt,
 							TSKindId.LtLt,
-							TSKindId.Amp2,
+							TSKindId.Amp,
 							TSKindId.Caret,
-							TSKindId.Pipe2,
+							TSKindId.Pipe,
 							TSKindId.Plus,
 							TSKindId.Dash,
-							TSKindId.Star2,
-							TSKindId.Slash2,
+							TSKindId.Star,
+							TSKindId.Slash,
 							TSKindId.Percent,
 							TSKindId.StarStar,
-							TSKindId.Lt2,
+							TSKindId.Lt,
 							TSKindId.LtEq,
 							TSKindId.EqEq,
 							TSKindId.EqEqEq,
 							TSKindId.BangEq,
 							TSKindId.BangEqEq,
 							TSKindId.GtEq,
-							TSKindId.Gt2,
+							TSKindId.Gt,
 							TSKindId.QmarkQmark,
 							TSKindId.Instanceof
 						]),
@@ -5898,7 +5898,7 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
 			),
 			_accessor_kind: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._accessor_kind ?? readTerminalFromOther(data, [TSKindId.Get, TSKindId.Set, TSKindId.Star2]),
+					data._accessor_kind ?? readTerminalFromOther(data, [TSKindId.Get, TSKindId.Set, TSKindId.Star]),
 					'accessor_kind',
 					false,
 					data.$type,
@@ -6512,7 +6512,7 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle) {
 			),
 			_accessor_kind: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._accessor_kind ?? readTerminalFromOther(data, [TSKindId.Get, TSKindId.Set, TSKindId.Star2]),
+					data._accessor_kind ?? readTerminalFromOther(data, [TSKindId.Get, TSKindId.Set, TSKindId.Star]),
 					'accessor_kind',
 					false,
 					data.$type,
@@ -6644,7 +6644,7 @@ export function wrapAbstractMethodSignature(data: T.AbstractMethodSignature, tre
 			),
 			_accessor_kind: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._accessor_kind ?? readTerminalFromOther(data, [TSKindId.Get, TSKindId.Set, TSKindId.Star2]),
+					data._accessor_kind ?? readTerminalFromOther(data, [TSKindId.Get, TSKindId.Set, TSKindId.Star]),
 					'accessor_kind',
 					false,
 					data.$type,
@@ -9109,7 +9109,7 @@ export function wrapTypeQueryMemberExpression(
 					data._content ??
 						data._dot ??
 						data._qmark_dot ??
-						readTerminalFromOther(data, [TSKindId.Dot2, TSKindId.QmarkDot]),
+						readTerminalFromOther(data, [TSKindId.Dot, TSKindId.QmarkDot]),
 					'content',
 					true,
 					data.$type,
@@ -11177,7 +11177,7 @@ export function wrapObjectTypeContent(
 			]),
 			$type: TSKindId.ObjectTypeContent as const,
 			_content: _content,
-			_separator_kind: _separatorKindOf(data, [TSKindId.Comma2, TSKindId.Semi]),
+			_separator_kind: _separatorKindOf(data, [TSKindId.Comma, TSKindId.Semi]),
 			_leading_sep: _hasSeparatorFlank(data, _content, data.$other, 'leading', true, 0),
 			_trailing_sep: _hasSeparatorFlank(data, _content, data.$other, 'trailing', true, 0),
 
@@ -11909,8 +11909,7 @@ export function wrapClassBodyMember(
 			),
 			_terminator: projectKindEnumStorage(
 				normalizeSingularWrapSlot(
-					data._terminator ??
-						readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi, TSKindId.Comma2]),
+					data._terminator ?? readTerminalFromOther(data, [TSKindId.AutomaticSemicolon, TSKindId.Semi, TSKindId.Comma]),
 					'terminator',
 					true,
 					data.$type,

@@ -1708,7 +1708,7 @@ export function coerceToMemberExpression(input: T.MemberExpression.Loose): Retur
 		separator: _requireField(
 			'member_expression',
 			'separator',
-			coerceKindEnumStorage(_resolveOne<'.' | '?.'>(input.separator, _K0, _K0), [['.', TSKindId.Dot2] as const])
+			coerceKindEnumStorage(_resolveOne<'.' | '?.'>(input.separator, _K0, _K0), [['.', TSKindId.Dot] as const])
 		),
 		property: _requireField(
 			'member_expression',
@@ -1870,23 +1870,23 @@ export function coerceToBinaryExpression(input?: T.BinaryExpression.Loose): Retu
 				['>>', TSKindId.GtGt] as const,
 				['>>>', TSKindId.GtGtGt] as const,
 				['<<', TSKindId.LtLt] as const,
-				['&', TSKindId.Amp2] as const,
+				['&', TSKindId.Amp] as const,
 				['^', TSKindId.Caret] as const,
-				['|', TSKindId.Pipe2] as const,
+				['|', TSKindId.Pipe] as const,
 				['+', TSKindId.Plus] as const,
 				['-', TSKindId.Dash] as const,
-				['*', TSKindId.Star2] as const,
-				['/', TSKindId.Slash2] as const,
+				['*', TSKindId.Star] as const,
+				['/', TSKindId.Slash] as const,
 				['%', TSKindId.Percent] as const,
 				['**', TSKindId.StarStar] as const,
-				['<', TSKindId.Lt2] as const,
+				['<', TSKindId.Lt] as const,
 				['<=', TSKindId.LtEq] as const,
 				['==', TSKindId.EqEq] as const,
 				['===', TSKindId.EqEqEq] as const,
 				['!=', TSKindId.BangEq] as const,
 				['!==', TSKindId.BangEqEq] as const,
 				['>=', TSKindId.GtEq] as const,
-				['>', TSKindId.Gt2] as const,
+				['>', TSKindId.Gt] as const,
 				['??', TSKindId.QmarkQmark] as const,
 				['instanceof', TSKindId.Instanceof] as const
 			]
@@ -2188,7 +2188,7 @@ export function coerceToMethodDefinition(input: T.MethodDefinition.Loose): Retur
 		accessorKind: coerceKindEnumStorage(_resolveOneLeaf<T.AccessorKind>(input.accessorKind, '_accessor_kind'), [
 			['get', TSKindId.Get] as const,
 			['set', TSKindId.Set] as const,
-			['*', TSKindId.Star2] as const
+			['*', TSKindId.Star] as const
 		]),
 		name: _requireField('method_definition', 'name', _resolveOne<T.PropertyName>(input.name, _K27, _K28)),
 		optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
@@ -2315,7 +2315,7 @@ export function coerceToMethodSignature(input: T.MethodSignature.Loose): ReturnT
 		accessorKind: coerceKindEnumStorage(_resolveOneLeaf<T.AccessorKind>(input.accessorKind, '_accessor_kind'), [
 			['get', TSKindId.Get] as const,
 			['set', TSKindId.Set] as const,
-			['*', TSKindId.Star2] as const
+			['*', TSKindId.Star] as const
 		]),
 		name: _requireField('method_signature', 'name', _resolveOne<T.PropertyName>(input.name, _K27, _K28)),
 		optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
@@ -2347,7 +2347,7 @@ export function coerceToAbstractMethodSignature(
 		accessorKind: coerceKindEnumStorage(_resolveOneLeaf<T.AccessorKind>(input.accessorKind, '_accessor_kind'), [
 			['get', TSKindId.Get] as const,
 			['set', TSKindId.Set] as const,
-			['*', TSKindId.Star2] as const
+			['*', TSKindId.Star] as const
 		]),
 		name: _requireField('abstract_method_signature', 'name', _resolveOne<T.PropertyName>(input.name, _K27, _K28)),
 		optionalMarker: _resolveBooleanKeyword(input.optionalMarker),
@@ -3327,7 +3327,7 @@ export function coerceToObjectTypeContent(
 						._separator_kind;
 					return sk === undefined
 						? undefined
-						: ({ [TSKindId.Comma2]: ',', [TSKindId.Semi]: ';' } as Record<number, string>)[sk];
+						: ({ [TSKindId.Comma]: ',', [TSKindId.Semi]: ';' } as Record<number, string>)[sk];
 				})(),
 				leading: (data as unknown as { _separator_kind?: number; _leading_sep?: boolean; _trailing_sep?: boolean })
 					._leading_sep,

@@ -545,7 +545,7 @@ export type _Type_AugmentedAssignmentOperator = _TypeAssert<
 	>
 >;
 export type _Type_SplatPatternOperator = _TypeAssert<
-	_TypeExtends<SplatPatternOperator['$type'], TSKindId.Star2 | TSKindId.StarStar>
+	_TypeExtends<SplatPatternOperator['$type'], TSKindId.Star | TSKindId.StarStar>
 >;
 export type _Type_ComplexPatternOperator = _TypeAssert<
 	_TypeExtends<ComplexPatternOperator['$type'], TSKindId.Plus | TSKindId.Dash>

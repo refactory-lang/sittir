@@ -580,13 +580,13 @@ export const enum TSKindId {
 	DotDotDot = 75,
 	Squote = 76,
 	Lt2 = 77,
-	Amp2 = 78,
+	Amp = 78,
 	Dyn = 79,
 	MutableSpecifier = 80,
 	Dash = 81,
 	AmpAmp = 82,
 	PipePipe = 83,
-	Pipe2 = 84,
+	Pipe = 84,
 	Caret = 85,
 	EqEq = 86,
 	BangEq = 87,
@@ -1958,7 +1958,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'lt2':
 			return TSKindId.Lt2;
 		case 'amp':
-			return TSKindId.Amp2;
+			return TSKindId.Amp;
 		case 'dyn':
 			return TSKindId.Dyn;
 		case 'mutable_specifier':
@@ -1970,7 +1970,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case 'pipe_pipe':
 			return TSKindId.PipePipe;
 		case 'pipe':
-			return TSKindId.Pipe2;
+			return TSKindId.Pipe;
 		case 'caret':
 			return TSKindId.Caret;
 		case 'eq_eq':
@@ -2710,7 +2710,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case "'":
 			return TSKindId.Squote;
 		case '&':
-			return TSKindId.Amp2;
+			return TSKindId.Amp;
 		case '-':
 			return TSKindId.Dash;
 		case '&&':
@@ -2718,7 +2718,7 @@ export function kindIdFromName(kindName: string): TSKindId {
 		case '||':
 			return TSKindId.PipePipe;
 		case '|':
-			return TSKindId.Pipe2;
+			return TSKindId.Pipe;
 		case '^':
 			return TSKindId.Caret;
 		case '==':
@@ -3212,7 +3212,7 @@ export const enum ExpressionEndingWithBlockKind {
 export const enum DelimTokensKind {
 	NonDelimToken = '_non_delim_token',
 	TokenPatternGroup1 = 'token_pattern_group1',
-	TokDollar = '$',
+	Dollar = 'dollar',
 	DelimTokenTree = 'delim_token_tree'
 }
 
@@ -3233,7 +3233,7 @@ export const enum NonDelimTokenKind {
 	PrimitiveType = '_primitive_type',
 	TokenTreePunctuation = '_token_tree_punctuation',
 	TokenKeywords = '_token_keywords',
-	TokDollar = '$'
+	Dollar = 'dollar'
 }
 
 export const enum ConditionKind {
@@ -4205,8 +4205,8 @@ export interface BinaryExpression {
 			'&&' | '||' | '&' | '|' | '^' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '<<' | '>>' | '+' | '-' | '*' | '/' | '%',
 			| TSKindId.AmpAmp
 			| TSKindId.PipePipe
-			| TSKindId.Amp2
-			| TSKindId.Pipe2
+			| TSKindId.Amp
+			| TSKindId.Pipe
 			| TSKindId.Caret
 			| TSKindId.EqEq
 			| TSKindId.BangEq
@@ -5393,8 +5393,8 @@ export type TokenTreePunctuation = Terminal<
 	| TSKindId.Percent
 	| TSKindId.Caret
 	| TSKindId.Bang
-	| TSKindId.Amp2
-	| TSKindId.Pipe2
+	| TSKindId.Amp
+	| TSKindId.Pipe
 	| TSKindId.AmpAmp
 	| TSKindId.PipePipe
 	| TSKindId.LtLt
@@ -6886,9 +6886,9 @@ export type RemainingFieldPattern = Terminal<TSKindId.RemainingFieldPattern>;
 export interface RemainingFieldPatternTree extends AnyTreeNode {
 	readonly type: 'remaining_field_pattern';
 }
-export type TokDollar = Terminal<'$'>;
-export interface TokDollarTree extends AnyTreeNode {
-	readonly type: '$';
+export type Dollar = Terminal<TSKindId.Dollar>;
+export interface DollarTree extends AnyTreeNode {
+	readonly type: 'dollar';
 }
 
 export type RustNode =

@@ -1055,7 +1055,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'use',
 		'where',
 		'while',
-		'$',
+		'dollar',
 		'token_pattern_group1',
 		'delim_token_tree'
 	]),
@@ -1174,7 +1174,7 @@ const SUPERTYPE_MEMBERS: Record<string, ReadonlySet<string>> = {
 		'use',
 		'where',
 		'while',
-		'$'
+		'dollar'
 	]),
 	_condition: new Set([
 		'_expression',
@@ -5756,7 +5756,7 @@ export function wrapDelimTokens(
 		'_non_delim_token',
 		'non_delim_token',
 		'token_pattern_group1',
-		'$',
+		'dollar',
 		'delim_token_tree'
 	]) as T.DelimTokens | readonly T.DelimTokens[] | undefined;
 	const filtered =
@@ -5765,7 +5765,7 @@ export function wrapDelimTokens(
 			'_non_delim_token',
 			'non_delim_token',
 			'token_pattern_group1',
-			'$',
+			'dollar',
 			'delim_token_tree'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
@@ -5808,7 +5808,7 @@ export function wrapNonDelimToken(
 		'token_tree_punctuation',
 		'_token_keywords',
 		'token_keywords',
-		'$'
+		'dollar'
 	]) as T.NonDelimToken | readonly T.NonDelimToken[] | undefined;
 	const filtered =
 		kindKeyed ??
@@ -5834,7 +5834,7 @@ export function wrapNonDelimToken(
 			'token_tree_punctuation',
 			'_token_keywords',
 			'token_keywords',
-			'$'
+			'dollar'
 		]);
 	if (filtered === undefined && typeof (data as _NodeData).$text === 'string') {
 		return drillIn<T.NonDelimToken>(data as T.NonDelimToken, tree);
@@ -6176,8 +6176,8 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
 						readTerminalFromOther(data, [
 							TSKindId.AmpAmp,
 							TSKindId.PipePipe,
-							TSKindId.Amp2,
-							TSKindId.Pipe2,
+							TSKindId.Amp,
+							TSKindId.Pipe,
 							TSKindId.Caret,
 							TSKindId.EqEq,
 							TSKindId.BangEq,
@@ -11352,7 +11352,7 @@ export function wrapDelimTokenTreeParen(
 		readonly _super?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _crate?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _token_keywords?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _$?: T.DelimTokens | readonly T.DelimTokens[];
+		readonly _dollar?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _delim_token_tree?: T.DelimTokens | readonly T.DelimTokens[];
 	},
 	tree: TreeHandle
@@ -11360,11 +11360,11 @@ export function wrapDelimTokenTreeParen(
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
-				'_$',
 				'_boolean_literal',
 				'_char_literal',
 				'_crate',
 				'_delim_token_tree',
+				'_dollar',
 				'_float_literal',
 				'_identifier',
 				'_integer_literal',
@@ -11400,7 +11400,7 @@ export function wrapDelimTokenTreeParen(
 							data._super,
 							data._crate,
 							data._token_keywords,
-							data._$,
+							data._dollar,
 							data._delim_token_tree
 						]),
 				false,
@@ -11439,7 +11439,7 @@ export function wrapDelimTokenTreeBracket(
 		readonly _super?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _crate?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _token_keywords?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _$?: T.DelimTokens | readonly T.DelimTokens[];
+		readonly _dollar?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _delim_token_tree?: T.DelimTokens | readonly T.DelimTokens[];
 	},
 	tree: TreeHandle
@@ -11447,11 +11447,11 @@ export function wrapDelimTokenTreeBracket(
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
-				'_$',
 				'_boolean_literal',
 				'_char_literal',
 				'_crate',
 				'_delim_token_tree',
+				'_dollar',
 				'_float_literal',
 				'_identifier',
 				'_integer_literal',
@@ -11487,7 +11487,7 @@ export function wrapDelimTokenTreeBracket(
 							data._super,
 							data._crate,
 							data._token_keywords,
-							data._$,
+							data._dollar,
 							data._delim_token_tree
 						]),
 				false,
@@ -11526,7 +11526,7 @@ export function wrapDelimTokenTreeBrace(
 		readonly _super?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _crate?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _token_keywords?: T.DelimTokens | readonly T.DelimTokens[];
-		readonly _$?: T.DelimTokens | readonly T.DelimTokens[];
+		readonly _dollar?: T.DelimTokens | readonly T.DelimTokens[];
 		readonly _delim_token_tree?: T.DelimTokens | readonly T.DelimTokens[];
 	},
 	tree: TreeHandle
@@ -11534,11 +11534,11 @@ export function wrapDelimTokenTreeBrace(
 	const _node = withMethods(
 		{
 			..._omitWrapKeys(data, [
-				'_$',
 				'_boolean_literal',
 				'_char_literal',
 				'_crate',
 				'_delim_token_tree',
+				'_dollar',
 				'_float_literal',
 				'_identifier',
 				'_integer_literal',
@@ -11574,7 +11574,7 @@ export function wrapDelimTokenTreeBrace(
 							data._super,
 							data._crate,
 							data._token_keywords,
-							data._$,
+							data._dollar,
 							data._delim_token_tree
 						]),
 				false,
