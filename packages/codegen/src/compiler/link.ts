@@ -474,18 +474,28 @@ export function canonicalizeRuleLiterals(
 					misses.literals.add(rule.literal);
 					return rule;
 				}
-				return { ...rule, storageKindId: entry.id, parseKindId: entry.parseId ?? entry.id };
+				return { ...rule, kindId: entry.parseId ?? entry.id };
 			}
-			const refName = rule.aliasedFrom ?? rule.name;
-			const storageEntry = findEntryForKindName(kindEntries, refName);
-			const parseEntry = refName === rule.name ? storageEntry : findEntryForKindName(kindEntries, rule.name);
-			if (storageEntry === undefined) misses.symbols.add(refName);
-			if (parseEntry === undefined && rule.name !== refName) misses.symbols.add(rule.name);
-			if (storageEntry === undefined && parseEntry === undefined) return rule;
+			// kindId is always the id of this occurrence's own name; aliasedFromId
+			// is a SEPARATE fact that exists only when aliasedFrom is present — no
+			// fallback between the two (that fallback is a consumer's job:
+			// aliasedFromId ?? kindId for whoever needs the effective storage id).
+			const nameEntry = findEntryForKindName(kindEntries, rule.name);
+			if (nameEntry === undefined) misses.symbols.add(rule.name);
+			let aliasedFromId: number | undefined;
+			if (rule.aliasedFrom !== undefined) {
+				const aliasedFromEntry = findEntryForKindName(kindEntries, rule.aliasedFrom);
+				if (aliasedFromEntry === undefined) {
+					misses.symbols.add(rule.aliasedFrom);
+				} else {
+					aliasedFromId = aliasedFromEntry.id;
+				}
+			}
+			if (nameEntry === undefined && aliasedFromId === undefined) return rule;
 			return {
 				...rule,
-				storageKindId: storageEntry?.id,
-				parseKindId: parseEntry?.parseId ?? parseEntry?.id
+				kindId: nameEntry?.parseId ?? nameEntry?.id,
+				aliasedFromId
 			};
 		}
 		case STRING: {
@@ -497,8 +507,7 @@ export function canonicalizeRuleLiterals(
 						name: entry.kind,
 						literal: rule.value,
 						inline: isHiddenKind(entry.kind),
-						storageKindId: entry.id,
-						parseKindId: entry.parseId ?? entry.id,
+						kindId: entry.parseId ?? entry.id,
 						metadata: makeRuleMetadata({ symbolSource: 'link' })
 					};
 				}
@@ -1226,7 +1235,7 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rul
 			// under a different name than its underlying rule's own name" —
 			// render/read dispatch already resolves the correct numeric id
 			// via the alias occurrence's own `alias_sym_<value>` symbol
-			// (parseKindId), independent of whether the source rule survives
+			// (`kindId`), independent of whether the source rule survives
 			// as its own addressable parser symbol.
 			if (rule.named && rule.value && !rule.value.startsWith('_')) {
 				return resolveNamedAliasWithProvenance(rule.content, ctx, rule.value);
