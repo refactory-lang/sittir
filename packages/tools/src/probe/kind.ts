@@ -89,7 +89,8 @@ import {
 	loadReadTreeNode,
 	walkNativeForKind,
 	WASM_PATHS,
-	type TSNode
+	type TSNode,
+	type AccessorThrowRecord
 } from '../validate/common.ts';
 import type * as TS from 'web-tree-sitter';
 import type { AnyNodeData, AnyTreeNode } from '@sittir/types';
@@ -193,7 +194,8 @@ export async function run(opts: ProbeKindOptions): Promise<number> {
 			transport: deep.nativeTransport,
 			rendered: deep.rendered,
 			renderError: deep.renderError,
-			shipped: shippedReport
+			shipped: shippedReport,
+			accessorThrows: trace.accessorThrows
 		};
 		process.stdout.write(JSON.stringify(focused, null, opts.pretty ? 2 : undefined) + '\n');
 		return 0;
@@ -311,6 +313,8 @@ export interface ProbeTraceReport {
 		js?: ProbeTraceEngineReport;
 		native?: ProbeTraceEngineReport;
 	};
+	/** Accessor-throw occurrences hit while materializing this probe's wrapped node data — see `AccessorThrowRecord`'s doc comment. */
+	accessorThrows: AccessorThrowRecord[];
 }
 
 export interface CstNode {
@@ -637,6 +641,10 @@ export async function probeTrace(
 		};
 	}
 	const cst = dumpCst(targetNode, null);
+	const accessorThrows: AccessorThrowRecord[] = [];
+	const onAccessorThrow = (rec: AccessorThrowRecord): void => {
+		accessorThrows.push(rec);
+	};
 	// `wrap` (used by BOTH the native and TS flows) can throw — e.g. a required
 	// slot the parser didn't route into it, like `function_definition.block`.
 	// Catch per-engine so the CST (parser output) and the other engine still
@@ -644,7 +652,7 @@ export async function probeTrace(
 	const buildEngineTrace = async (engine: 'js' | 'native'): Promise<ProbeTraceEngineReport> => {
 		let read: Awaited<ReturnType<typeof readProbeNodeData>>;
 		try {
-			read = await readProbeNodeData(grammar, source, tree, targetNode, isRoot, engine, opts.kind);
+			read = await readProbeNodeData(grammar, source, tree, targetNode, isRoot, engine, opts.kind, onAccessorThrow);
 		} catch (e) {
 			return { wrapError: String((e as Error)?.message ?? e) };
 		}
@@ -679,7 +687,8 @@ export async function probeTrace(
 		probeRange,
 		cst,
 		sexp,
-		trace
+		trace,
+		accessorThrows
 	};
 }
 
@@ -743,12 +752,21 @@ async function deepReadProbeNode(
 	return data;
 }
 
-export function materializeProbeWrappedNodeData(root: unknown): unknown {
-	return stripStructuralNodeText(materializeWrappedNodeData(root));
+export function materializeProbeWrappedNodeData(
+	root: unknown,
+	onAccessorThrow?: (rec: AccessorThrowRecord) => void
+): unknown {
+	return stripStructuralNodeText(materializeWrappedNodeData(root, onAccessorThrow));
 }
 
-export function resolveNativeTraceNodeData(readTreeNodeRaw: unknown | undefined, legacyDeepNodeData: unknown): unknown {
-	return readTreeNodeRaw === undefined ? legacyDeepNodeData : materializeProbeWrappedNodeData(readTreeNodeRaw);
+export function resolveNativeTraceNodeData(
+	readTreeNodeRaw: unknown | undefined,
+	legacyDeepNodeData: unknown,
+	onAccessorThrow?: (rec: AccessorThrowRecord) => void
+): unknown {
+	return readTreeNodeRaw === undefined
+		? legacyDeepNodeData
+		: materializeProbeWrappedNodeData(readTreeNodeRaw, onAccessorThrow);
 }
 
 async function readProbeNodeData(
@@ -758,7 +776,8 @@ async function readProbeNodeData(
 	targetNode: any,
 	isRoot: boolean,
 	engine: 'js' | 'native',
-	targetKind?: string
+	targetKind?: string,
+	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): Promise<{ shallow: unknown; deep: unknown; deepReadTreeNodeRaw?: unknown; legacyDeepNodeData?: unknown }> {
 	if (engine === 'native') {
 		const nativeEngine = await loadNativeEngine(grammar);
@@ -768,7 +787,7 @@ async function readProbeNodeData(
 			const shallow = stripBigInts(handle.read?.());
 			const legacyDeepNodeData = stripStructuralNodeText(await deepReadProbeNode(handle, undefined, undefined));
 			const deepReadTreeNodeRaw = readTreeNodeFn ? readTreeNodeFn(handle) : undefined;
-			const deep = resolveNativeTraceNodeData(deepReadTreeNodeRaw, legacyDeepNodeData);
+			const deep = resolveNativeTraceNodeData(deepReadTreeNodeRaw, legacyDeepNodeData, onAccessorThrow);
 			return { shallow, deep, deepReadTreeNodeRaw, legacyDeepNodeData };
 		}
 		if (targetKind) {
@@ -785,12 +804,12 @@ async function readProbeNodeData(
 				const deepReadTreeNodeRaw = readTreeNodeFn
 					? readTreeNodeFn(handle, targetCandidate.coords.handle, targetCandidate.coords.childIndex)
 					: undefined;
-				const deep = resolveNativeTraceNodeData(deepReadTreeNodeRaw, legacyDeepNodeData);
+				const deep = resolveNativeTraceNodeData(deepReadTreeNodeRaw, legacyDeepNodeData, onAccessorThrow);
 				return { shallow, deep, deepReadTreeNodeRaw, legacyDeepNodeData };
 			}
 		}
 		const root = readTreeNodeFn
-			? materializeProbeWrappedNodeData(readTreeNodeFn(handle))
+			? materializeProbeWrappedNodeData(readTreeNodeFn(handle), onAccessorThrow)
 			: await deepReadProbeNode(handle, undefined, undefined);
 		const target = findInNodeDataByRange(root, targetNode.startIndex, targetNode.endIndex);
 		if (!target) throw new Error('probe-kind: no native node match in NodeData tree');
@@ -802,7 +821,7 @@ async function readProbeNodeData(
 		const deepReadTreeNodeRaw =
 			targetHandle && readTreeNodeFn ? readTreeNodeFn(handle, targetHandle.handle, targetHandle.childIndex) : undefined;
 		const deep =
-			readTreeNodeFn && !targetHandle ? target : resolveNativeTraceNodeData(deepReadTreeNodeRaw, legacyDeepNodeData);
+			readTreeNodeFn && !targetHandle ? target : resolveNativeTraceNodeData(deepReadTreeNodeRaw, legacyDeepNodeData, onAccessorThrow);
 		return { shallow, deep, deepReadTreeNodeRaw, legacyDeepNodeData };
 	}
 	const rawKindIdFromName = await loadKindIdFromName(grammar);

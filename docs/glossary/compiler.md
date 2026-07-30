@@ -1943,7 +1943,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * Evaluate a grammar.js (or overrides.ts) file and return a RawGrammar.
+ * Evaluate a grammar.js (or grammar.sittir.ts) file and return a RawGrammar.
  *
  * Injects DSL functions as globals, then imports the module.
  * Tree-sitter's grammar(base, { rules }) handles extension merging natively.
@@ -1979,7 +1979,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Import the grammar module at the given path and extract the RawGrammar
  * from its default or named export.
  *
- * @param entryPath - Absolute path to the grammar.js or overrides.ts file.
+ * @param entryPath - Absolute path to the grammar.js or grammar.sittir.ts file.
  * @returns The RawGrammar produced by the module's top-level `grammar()` call.
  */
 ```
@@ -2154,7 +2154,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Extra polymorph skip-set for the slot-grouping diagnostic.
  *
  * `polymorphsConfig` is the `polymorphs:` / `n:` declarative path-split config
- * from overrides.ts. Each entry `{ parent: { path: suffix } }` produces hidden
+ * from grammar.sittir.ts. Each entry `{ parent: { path: suffix } }` produces hidden
  * arm rules named `_${parent}_${suffix}` (via `polymorphHiddenName`). These
  * arms are already handled by the polymorph dispatch machinery; the diagnostic
  * must not flag their multi-slot seq bodies as violations. The parent kinds
@@ -3146,8 +3146,8 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /**
- * Resolve a grammar name to its overrides.ts path (if it exists).
- * Returns the path in packages/{grammar}/overrides.ts.
+ * Resolve a grammar name to its grammar.sittir.ts path (if it exists).
+ * Returns the path in packages/{grammar}/grammar.sittir.ts.
  */
 ```
 
@@ -3895,7 +3895,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * changes real output. Across all 3 grammars' hidden supertype/alias-mint
  * chains, exactly one diverges — python's `_simple_pattern` supertype loses
  * its `_simple_pattern_negative` subtype entry (the polymorph-variant-adopted
- * `-1`/`-1.0` match-pattern arm, `overrides.ts`'s `_simple_pattern: { '11':
+ * `-1`/`-1.0` match-pattern arm, `grammar.sittir.ts`'s `_simple_pattern: { '11':
  * 'negative' }`) and gains bogus `integer`/`float` entries instead — verified
  * via `pnpm exec tsx packages/cli/src/cli.ts gen --grammar python …`: the
  * regen diff shows `node-model.json5`'s `_simple_pattern.subtypes` changing,
@@ -4363,7 +4363,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 * Entries EXCLUDED from this filter still appear in the
 	 * `derivations` log (and therefore in `overrides.suggested.ts`)
 	 * so you can review what Link inferred and either adopt it into
-	 * overrides.ts or leave it in the log.
+	 * grammar.sittir.ts or leave it in the log.
 	 *
 	 * @example
 	 * // Strict base pipeline — no inference / promotion:
@@ -4748,7 +4748,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 /**
 	 * External-symbol → structural-whitespace role mapping. Populated
 	 * by the overrides extension via the `role()` DSL primitive —
-	 * e.g. `_indent: ($) => role('indent')` in python's overrides.ts.
+	 * e.g. `_indent: ($) => role('indent')` in python's grammar.sittir.ts.
 	 * Link reads this when resolving symbol references so indent-
 	 * sensitive grammars surface their externals as `indent`/`dedent`/
 	 * `newline` Rule nodes without the pipeline having to pattern-
@@ -4834,7 +4834,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 	 * for a specific kind, e.g. `{ 'content-collision': ['_object_type_group1'] }`.
 	 * Read directly by `collectGrammarDiagnostics`/`collectGrammarDiagnosticsForGrammar`
 	 * (`compiler/diagnostics/grammar-diagnostics.ts`) — grammar-scoped by
-	 * construction, since only the grammar whose OWN overrides.ts declares an
+	 * construction, since only the grammar whose OWN grammar.sittir.ts declares an
 	 * entry gets the exception. See docs/KNOWN_ISSUES.md for the canonical
 	 * example (typescript's `_object_type_group1`).
 	 */
@@ -5537,7 +5537,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * Sink for unnamed-choice-slot occurrences (Task C2). A naked choice (no
  * `fieldName`, not a polymorph) has no grammar-given name, so it falls back to
  * an unresolvable `content` slot — the grammar author must field-name it in
- * `packages/<lang>/overrides.ts`. Rather than emit a scattered per-occurrence
+ * `packages/<lang>/grammar.sittir.ts`. Rather than emit a scattered per-occurrence
  * warning, the default sink ACCUMULATES the owning kinds so the codegen run can
  * report them as one collected diagnostic (drain via {@link drainUnnamedChoiceSlots}).
  * Tests install a spy via {@link setUnnamedChoiceWarner}.

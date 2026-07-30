@@ -6891,7 +6891,7 @@ export type FluentKindMap = {
 	_export_statement_default: FluentNode<'_export_statement_default', T.ExportStatementDefault.Config>;
 	_arrow_function_parameter: FluentNode<'_arrow_function_parameter', T.ArrowFunctionParameter.Config>;
 	_arrow_function__call_signature: T.ArrowFunctionUCallSignature;
-	_class_heritage_extends_clause: FluentNode<'_class_heritage_extends_clause', T.ClassHeritageExtendsClause.Config>;
+	_class_heritage_extends_clause: T.ClassHeritageExtendsClause;
 	_import_clause_default_import: FluentNode<'_import_clause_default_import', T.ImportClauseDefaultImport.Config>;
 	_import_specifier_as: T.ImportSpecifierAs;
 	_index_signature_colon: T.IndexSignatureColon;
@@ -6929,12 +6929,9 @@ export type FluentKindMap = {
 	_public_field_definition_abstract_first: T.PublicFieldDefinitionAbstractFirst;
 	_public_field_definition_readonly_first: T.PublicFieldDefinitionReadonlyFirst;
 	_parenthesized_expression_typed: T.ParenthesizedExpressionTyped;
-	_export_statement_type_export: FluentNode<'_export_statement_type_export', T.ExportStatementTypeExport.Config>;
-	_export_statement_equals_export: FluentNode<'_export_statement_equals_export', T.ExportStatementEqualsExport.Config>;
-	_export_statement_namespace_export: FluentNode<
-		'_export_statement_namespace_export',
-		T.ExportStatementNamespaceExport.Config
-	>;
+	_export_statement_type_export: T.ExportStatementTypeExport;
+	_export_statement_equals_export: T.ExportStatementEqualsExport;
+	_export_statement_namespace_export: T.ExportStatementNamespaceExport;
 	_call_expression_call: T.CallExpressionCall;
 	_call_expression_template_call: T.CallExpressionTemplateCall;
 	_call_expression_member: T.CallExpressionMember;

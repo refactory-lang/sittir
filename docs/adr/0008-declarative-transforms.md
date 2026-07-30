@@ -33,7 +33,7 @@ The observation that collapsed the design: every override that's just `($, origi
 
 ## Alternatives Considered
 
-- **Static scan of rule-fn sources** (`.toString()` + regex). Works in our codebase. Rejected in favour of declarative shape because the knowledge lives in a regex rather than at the authoring surface — "grep for `field('x')` in overrides.ts" becomes "read the transforms block at the top." See ADR-0007 alternatives for the same reasoning.
+- **Static scan of rule-fn sources** (`.toString()` + regex). Works in our codebase. Rejected in favour of declarative shape because the knowledge lives in a regex rather than at the authoring surface — "grep for `field('x')` in grammar.sittir.ts" becomes "read the transforms block at the top." See ADR-0007 alternatives for the same reasoning.
 - **Explicit `keywords: Record<string, string>` block in `wire()`**. Author enumerates every field-name-to-keyword mapping. Scales linearly with override growth; has to be re-audited whenever a transform is added. Rejected — more maintenance burden than just making transforms themselves declarative.
 - **Keeping `installGrammarWrapper` with narrow `_kw_*` scope**. The pragmatic middle ground. ADR-0007's scope-reduction acknowledged this was where we landed. Replaced by this ADR because declarative transforms remove the dependency entirely rather than accepting it.
 - **`buildGrammar(base, opts)` explicit helper replacing the `globalThis` mutation**. Same pass-1/pass-2 logic as the wrapper, invoked by name rather than by monkey-patch. Rejected during ADR-0007 discussions; still rejected here — doesn't address the root issue (synthetic names aren't knowable until runtime) and retains the dry-run cost.
@@ -93,7 +93,7 @@ With every hidden rule name known at `wire()` return, tree-sitter's `ruleMap` sn
 ## Consequences
 
 - **Enables**: Full deletion of `installGrammarWrapper` and the pass-1/pass-2 dry-run. Removes `currentOptsRules` / `currentBlankFn` module state. Slims `dsl/index.ts` to pure re-exports with no module-load side effects.
-- **Enables**: Every synthetic hidden rule name in a grammar is grep-able from one config object. Given a kind name, the author (or a future reader) finds its declaration by searching within a ~50-line block at the top of overrides.ts rather than hunting through rule-fn bodies.
+- **Enables**: Every synthetic hidden rule name in a grammar is grep-able from one config object. Given a kind name, the author (or a future reader) finds its declaration by searching within a ~50-line block at the top of grammar.sittir.ts rather than hunting through rule-fn bodies.
 - **Costs**: Migration of every `($, original) => transform(original, {...})` rule fn into a `transforms:` entry. Three grammars, most rules — substantial but mechanical, subagent-friendly.
 - **Costs**: Rule bodies that go beyond a plain transform — full replacements, rules declaring hidden helpers, rules with conditional branching — stay in `rules:`. The split requires authors to know which rules are "just a transform" vs "actually a fn body." Clear in practice (grep for non-transform fn bodies) but adds a conceptual boundary.
 - **Costs**: The `($, original)` arg is implicit in the synthesized fn. Authors who wanted to reference `$` inside a patch value (e.g. `{ 0: $.something }`) can't — `$` is only valid inside a real rule fn. In practice, patch values are placeholders (`field`, `variant`, `alias`) or rule objects built from `$` references, which users already construct via `rules:` entries.

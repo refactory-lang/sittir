@@ -12,7 +12,7 @@
  * `docs/superpowers/specs/2026-07-02-rule-type-model-ssot-research.md`
  * decision 7.
  *
- * Usage in overrides.ts:
+ * Usage in grammar.sittir.ts:
  *
  *     closure_expression: ($, original) => transform(original,
  *         { 0: field('static'), 1: field('async'), 2: field('move') },

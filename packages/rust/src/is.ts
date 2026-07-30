@@ -280,9 +280,6 @@ export interface IsGuards {
 	MacroDefinitionBrace<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.MacroDefinitionBrace };
-	ExpressionStatementWithSemi<T extends { readonly $type: number }>(
-		v: T
-	): v is T & { readonly $type: TSKindId.ExpressionStatementWithSemi };
 	TokenTreePatternParen<T extends { readonly $type: number }>(
 		v: T
 	): v is T & { readonly $type: TSKindId.TokenTreePatternParen };
@@ -535,9 +532,6 @@ export interface AssertGuards {
 		readonly $type: number;
 	}): asserts v is { readonly $type: TSKindId.MacroDefinitionBracket };
 	MacroDefinitionBrace(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.MacroDefinitionBrace };
-	ExpressionStatementWithSemi(v: {
-		readonly $type: number;
-	}): asserts v is { readonly $type: TSKindId.ExpressionStatementWithSemi };
 	TokenTreePatternParen(v: { readonly $type: number }): asserts v is { readonly $type: TSKindId.TokenTreePatternParen };
 	TokenTreePatternBracket(v: {
 		readonly $type: number;
@@ -603,7 +597,7 @@ const _supertype_tokens_ids = new Set<number>([
 const _supertype_nonSpecialToken_ids = new Set<number>([312, 313, 124, 314, 121, 151, 1, 80, 134, 135, 136, 338, 339]);
 const _supertype_useClause_ids = new Set<number>([134, 1, 137, 135, 136, 244, 209, 208, 207, 210]);
 const _supertype_type_ids = new Set<number>([
-	236, 233, 137, 234, 227, 246, 224, 225, 221, 223, 429, 240, 237, 229, 199
+	236, 233, 137, 234, 227, 246, 224, 225, 221, 223, 430, 240, 237, 229, 199
 ]);
 const _supertype_expressionExceptRange_ids = new Set<number>([
 	248, 250, 249, 251, 252, 253, 254, 257, 255, 256, 312, 313, 124, 314, 121, 151, 1, 134, 244, 226, 288, 289, 259, 261,
@@ -1067,7 +1061,6 @@ export const is = {
 	MacroDefinitionParen: _g(TSKindId.MacroDefinitionParen),
 	MacroDefinitionBracket: _g(TSKindId.MacroDefinitionBracket),
 	MacroDefinitionBrace: _g(TSKindId.MacroDefinitionBrace),
-	ExpressionStatementWithSemi: _g(TSKindId.ExpressionStatementWithSemi),
 	TokenTreePatternParen: _g(TSKindId.TokenTreePatternParen),
 	TokenTreePatternBracket: _g(TSKindId.TokenTreePatternBracket),
 	TokenTreePatternBrace: _g(TSKindId.TokenTreePatternBrace),
@@ -1298,7 +1291,6 @@ export const assert = {
 	MacroDefinitionParen: _makeAssert('MacroDefinitionParen', is.MacroDefinitionParen as _AnyGuard),
 	MacroDefinitionBracket: _makeAssert('MacroDefinitionBracket', is.MacroDefinitionBracket as _AnyGuard),
 	MacroDefinitionBrace: _makeAssert('MacroDefinitionBrace', is.MacroDefinitionBrace as _AnyGuard),
-	ExpressionStatementWithSemi: _makeAssert('ExpressionStatementWithSemi', is.ExpressionStatementWithSemi as _AnyGuard),
 	TokenTreePatternParen: _makeAssert('TokenTreePatternParen', is.TokenTreePatternParen as _AnyGuard),
 	TokenTreePatternBracket: _makeAssert('TokenTreePatternBracket', is.TokenTreePatternBracket as _AnyGuard),
 	TokenTreePatternBrace: _makeAssert('TokenTreePatternBrace', is.TokenTreePatternBrace as _AnyGuard),

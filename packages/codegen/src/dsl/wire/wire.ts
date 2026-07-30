@@ -332,7 +332,7 @@ type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 // instantiate the precise `TransformsConfig<B>` mapped-type branch and
 // report "excessively deep". A call site that pins `B` to a lazy alias —
 // an explicit type-arg (`wire<EnrichedGrammar<RustGrammarShape>>(…)` in
-// overrides.ts) or a concrete `base` — evaluates that branch lazily and
+// grammar.sittir.ts) or a concrete `base` — evaluates that branch lazily and
 // stays shallow. The residual no-base artifact is editor-only typecheck
 // noise; runtime is unaffected (`config` is aliased to a loose
 // `WireConfig<any>` in the body below).

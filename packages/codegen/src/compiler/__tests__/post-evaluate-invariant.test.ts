@@ -1,7 +1,7 @@
 /**
  * post-evaluate-invariant.test.ts — structural guard for spec 006 Phase 8.
  *
- * After `evaluate()` runs on each grammar's overrides.ts, the resulting
+ * After `evaluate()` runs on each grammar's grammar.sittir.ts, the resulting
  * RawGrammar must contain ONLY tree-sitter-native rule constructs (in
  * sittir's UPPERCASE discriminant spelling — see debt PR-U — since
  * evaluate runs the sittir-injected grammarFn). Sittir-only metadata
@@ -130,7 +130,7 @@ describe('post-evaluate invariant', () => {
 				// visibleExternals: — externals auto-aliased visible with a
 				// fixed render body (drainVisibleExternalsMetadata).
 				'visibleExternals',
-				// Per-kind diagnostic exceptions from overrides.ts `expectDiagnostics:` —
+				// Per-kind diagnostic exceptions from grammar.sittir.ts `expectDiagnostics:` —
 				// read by collectGrammarDiagnostics (grammar-diagnostics.ts).
 				'expectDiagnostics',
 				// Per-kind known-failing generated-test declarations from

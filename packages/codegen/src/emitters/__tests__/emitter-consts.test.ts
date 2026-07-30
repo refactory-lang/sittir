@@ -156,6 +156,9 @@ describe('emitConsts', () => {
 			]
 		]);
 		const output = emitConsts({ grammar: 'test', nodeMap });
+		// escForSource (not a bare `'/g` replace) — a bare replace only
+		// escaped single quotes, breaking on values containing a literal
+		// newline (the automatic-semicolon marker).
 		expect(output).toContain("'pub'");
 		expect(output).toContain("'crate'");
 	});

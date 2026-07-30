@@ -157,7 +157,7 @@ export type RoundTripDiagnostic = import('../../codegen/src/emitters/suggested.t
 // (Generalizes the former `discover/pipeline.ts` `buildNodeMap`.)
 // ---------------------------------------------------------------------------
 
-/** Resolve a grammar's entry path, preferring `overrides.ts` over `grammar.js`. */
+/** Resolve a grammar's entry path, preferring `grammar.sittir.ts` over `grammar.js`. */
 export async function resolveEntryPath(grammar: string): Promise<string> {
 	const overrides = await invoke('resolveGrammar', 'resolveOverridesPath', grammar);
 	const grammarJs = await invoke('resolveGrammar', 'resolveGrammarJsPath', grammar);

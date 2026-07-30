@@ -18,7 +18,8 @@ import {
 	buildValidationReportEntries,
 	writeValidationReport,
 	type GrammarDiagnosticEntry,
-	type ValidatorDiagnostic
+	type ValidatorDiagnostic,
+	type ValidationReportEntry
 } from './validate/validation-report.ts';
 
 export const ALL_GRAMMARS: Grammar[] = ['rust', 'typescript', 'python'];
@@ -148,7 +149,7 @@ export function formatFirstFailures(
 			? `  ${stage} first failures (${max} of ${failures.length}):`
 			: `  ${stage} failures (${failures.length}):`;
 	const items = shown.map(({ label, message }) => {
-		const oneLine = message.replace(/\s+/g, ' ').slice(0, 100);
+		const oneLine = message.replace(/\s+/g, ' ');
 		return `    ${JSON.stringify(label)} — ${oneLine}`;
 	});
 	return [header, ...items].join('\n');
@@ -187,7 +188,7 @@ export async function grammarProbeFactory(grammar: Grammar, backend: Backend): P
 	for (const err of r.errors) {
 		const key = (err.message.split(':')[0] ?? '').slice(0, 60);
 		if (!buckets.has(key)) buckets.set(key, []);
-		buckets.get(key)!.push({ kind: err.kind, msg: err.message.slice(0, 140) });
+		buckets.get(key)!.push({ kind: err.kind, msg: err.message });
 	}
 	for (const [key, items] of [...buckets.entries()].sort((a, b) => b[1].length - a[1].length).slice(0, 8)) {
 		const byKind = new Map<string, number>();
@@ -310,9 +311,12 @@ export async function spawnIsolatedGrammarWorker(grammar: Grammar): Promise<{
  *
  * The on-disk shape is the real `GrammarDiagnostic | CompilerDiagnostic`
  * union (`packages/codegen/src/types/diagnostics.ts`) — it has NO `location`
- * field. `location` is derived here from `ownerKind`/`slotName`: `ownerKind`
- * alone when `slotName` is absent, `${ownerKind}.${slotName}` when both are
- * present, `undefined` when neither is.
+ * field, but every other field it does have (`scope`, `phase`, `canProceed`,
+ * `details`, `ruleId`, `subject`, `ownerKind`, `slotName`, …) is preserved
+ * through unchanged. `location` is the one synthesized field, derived from
+ * `ownerKind`/`slotName`: `ownerKind` alone when `slotName` is absent,
+ * `${ownerKind}.${slotName}` when both are present, `undefined` when neither
+ * is.
  *
  * Returns an empty array (rather than throwing) ONLY when the file doesn't
  * exist for a grammar — `gen` may not have been re-run for every grammar
@@ -330,17 +334,15 @@ export function readGrammarDiagnosticsEntries(grammar: Grammar): GrammarDiagnost
 	const path = resolvePath(join('packages', grammar, '.sittir', 'grammar-diagnostics.json'));
 	if (!existsSync(path)) return [];
 	try {
-		const raw = JSON.parse(readFileSync(path, 'utf8')) as ReadonlyArray<{
-			code: string;
-			severity: 'error' | 'warning' | 'info' | 'fail';
-			message: string;
-			proposal?: string;
-			ownerKind?: string;
-			slotName?: string;
-		}>;
+		const raw = JSON.parse(readFileSync(path, 'utf8')) as ReadonlyArray<
+			GrammarDiagnosticEntry & { ownerKind?: string; slotName?: string }
+		>;
+		// Every other field (scope, phase, canProceed, details, ruleId, subject, …)
+		// is preserved via the spread — `location` is the only synthesized field,
+		// added alongside `ownerKind`/`slotName` rather than replacing them.
 		return raw.map((d) => {
-			const location = d.ownerKind ? (d.slotName ? `${d.ownerKind}.${d.slotName}` : d.ownerKind) : undefined;
-			return { code: d.code, severity: d.severity, location, message: d.message, proposal: d.proposal };
+			const location = d.ownerKind ? (d.slotName ? `${d.ownerKind}.${d.slotName}` : d.ownerKind) : d.location;
+			return { ...d, location };
 		});
 	} catch (e) {
 		return [
@@ -370,56 +372,80 @@ export function readGrammarDiagnosticsEntries(grammar: Grammar): GrammarDiagnost
  */
 export function collectValidatorFailuresForGrammar(counts: GrammarCounts): ValidatorDiagnostic[] {
 	const { from, coverage, readRenderParse, readRenderParseShallow, factoryRenderParse } = counts;
+	// Every push spreads the original validator-result object first — each
+	// source (read-render-parse errors/mismatches/accessor-throws, factory
+	// errors, coverage issues, …) carries its own extra fields (`input`,
+	// `rendered`, `key`, `accessor`, `type`, …), and those are preserved
+	// rather than narrowed away to just `message`. `stage`/`code`/`severity`/
+	// `label` are added/overridden on top as the common tagging fields.
 	const failures: ValidatorDiagnostic[] = [];
 	for (const e of from.errors)
-		failures.push({ stage: 'from', code: 'from-error', severity: 'error', label: e.kind, message: e.message });
+		failures.push({ ...e, stage: 'from', code: 'from-error', severity: 'error', label: e.kind });
 	for (const e of readRenderParse.errors)
 		failures.push({
+			...e,
 			stage: 'read-render-parse',
 			code: 'read-render-parse-error',
 			severity: 'error',
-			label: e.name,
-			message: e.message
+			label: e.name
 		});
 	for (const m of readRenderParse.astMismatches)
 		failures.push({
+			...m,
 			stage: 'read-render-parse-ast-mismatch',
 			code: 'read-render-parse-ast-mismatch',
 			severity: 'error',
-			label: m.entry ? `${m.entry} (${m.kind})` : m.kind,
-			message: m.message
+			label: m.entry ? `${m.entry} (${m.kind})` : m.kind
+		});
+	// Slot-masking, not necessarily a hard round-trip failure on its own —
+	// 'warning' like the literal-leak coverage issues below, not 'error'.
+	for (const t of readRenderParse.accessorThrows)
+		failures.push({
+			...t,
+			stage: 'read-render-parse-accessor-throw',
+			code: 'accessor-throw',
+			severity: 'warning',
+			label: `${t.key} (${t.accessor}, type=${t.type})`
 		});
 	for (const e of readRenderParseShallow.errors)
 		failures.push({
+			...e,
 			stage: 'read-render-parse-shallow',
 			code: 'read-render-parse-shallow-error',
 			severity: 'error',
-			label: e.name,
-			message: e.message
+			label: e.name
 		});
 	for (const m of readRenderParseShallow.astMismatches)
 		failures.push({
+			...m,
 			stage: 'read-render-parse-shallow-ast-mismatch',
 			code: 'read-render-parse-shallow-ast-mismatch',
 			severity: 'error',
-			label: m.entry ? `${m.entry} (${m.kind})` : m.kind,
-			message: m.message
+			label: m.entry ? `${m.entry} (${m.kind})` : m.kind
+		});
+	for (const t of readRenderParseShallow.accessorThrows)
+		failures.push({
+			...t,
+			stage: 'read-render-parse-shallow-accessor-throw',
+			code: 'accessor-throw',
+			severity: 'warning',
+			label: `${t.key} (${t.accessor}, type=${t.type})`
 		});
 	for (const e of factoryRenderParse.errors)
 		failures.push({
+			...e,
 			stage: 'factory-render-parse',
 			code: 'factory-render-parse-error',
 			severity: 'error',
-			label: e.entry ? `${e.entry} (${e.kind})` : e.kind,
-			message: e.message
+			label: e.entry ? `${e.entry} (${e.kind})` : e.kind
 		});
 	for (const m of factoryRenderParse.astMismatches)
 		failures.push({
+			...m,
 			stage: 'factory-render-parse-ast-mismatch',
 			code: 'factory-render-parse-ast-mismatch',
 			severity: 'error',
-			label: m.entry ? `${m.entry} (${m.kind})` : m.kind,
-			message: m.message
+			label: m.entry ? `${m.entry} (${m.kind})` : m.kind
 		});
 	// `literal-leak` issues are a heuristic near-miss surfaced for visibility
 	// (a suspicious doubled-punctuation run), not a hard structural failure
@@ -428,11 +454,11 @@ export function collectValidatorFailuresForGrammar(counts: GrammarCounts): Valid
 	// uses.
 	for (const issue of coverage.issues)
 		failures.push({
+			...issue,
 			stage: 'coverage',
 			code: `coverage-${issue.type}`,
 			severity: issue.type === 'literal-leak' ? 'warning' : 'error',
-			label: issue.kind,
-			message: issue.message
+			label: issue.kind
 		});
 	return failures;
 }
@@ -486,6 +512,13 @@ export function extractIsolateReportJson(stdout: string): {
  * artifact (like `test-fixtures.json`) — it is committed after each
  * validation run so reviewers can diff diagnostic drift, not a stray
  * runtime file.
+ *
+ * Only replaces entries for `grammars` (the ones actually validated this
+ * run) — entries already on disk for OTHER grammars are preserved.
+ * `writeValidationReport` itself is a dumb full-overwrite primitive (see its
+ * own doc comment/test); running `validate counts <one-grammar>` used to
+ * blindly clobber every other grammar's entries because this was the only
+ * caller and it never read the existing file first.
  */
 export function writeMergedValidationReport(
 	grammars: readonly Grammar[],
@@ -494,8 +527,29 @@ export function writeMergedValidationReport(
 	if (grammars.length === 0) return;
 	const grammarDiagnosticsByGrammar: Record<string, GrammarDiagnosticEntry[]> = {};
 	for (const grammar of grammars) grammarDiagnosticsByGrammar[grammar] = readGrammarDiagnosticsEntries(grammar);
-	const reportEntries = buildValidationReportEntries(grammarDiagnosticsByGrammar, validatorFailuresByGrammar);
-	writeValidationReport(reportEntries, resolvePath(join('packages', 'tools', 'validation-report.json')));
+	const freshEntries = buildValidationReportEntries(grammarDiagnosticsByGrammar, validatorFailuresByGrammar);
+	const outPath = resolvePath(join('packages', 'tools', 'validation-report.json'));
+	const replacedGrammars = new Set<string>(grammars);
+	const preserved = readExistingValidationReportEntries(outPath).filter((e) => !replacedGrammars.has(e.grammar));
+	writeValidationReport([...preserved, ...freshEntries], outPath);
+}
+
+/**
+ * Read the current `validation-report.json`, if any — used by
+ * `writeMergedValidationReport` to preserve other grammars' entries. A
+ * missing file is a fresh/first run (empty, not an error); a file that
+ * exists but fails to parse is surfaced loudly rather than silently treated
+ * as empty, matching `readGrammarDiagnosticsEntries`'s convention — silently
+ * discarding a corrupt report would compound the very data-loss this
+ * function exists to prevent.
+ */
+function readExistingValidationReportEntries(path: string): ValidationReportEntry[] {
+	if (!existsSync(path)) return [];
+	try {
+		return JSON.parse(readFileSync(path, 'utf8')) as ValidationReportEntry[];
+	} catch (e) {
+		throw new Error(`writeMergedValidationReport: failed to read/parse existing report at ${path}: ${(e as Error).message}`);
+	}
 }
 
 /** Exported entry: counts subcommand — prints raw pass/total for all four validators. */

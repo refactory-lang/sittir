@@ -8,7 +8,7 @@ export const compareOverrides: CommandModule = {
 	register: (program) => {
 		defineCommand(program, compareOverrides)
 			.option('-g, --grammar <name>', 'Grammar(s) to compare: rust|python|typescript|all', 'all')
-			.option('--backup-dir <dir>', 'Directory containing <grammar>-overrides.ts backup files')
+			.option('--backup-dir <dir>', 'Directory containing <grammar>-grammar.sittir.ts backup files')
 			.option('--backup-rust <file>', 'Path to Rust overrides backup file')
 			.option('--backup-python <file>', 'Path to Python overrides backup file')
 			.option('--backup-typescript <file>', 'Path to TypeScript overrides backup file')

@@ -407,7 +407,7 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 	// former factory-map.json5 sections in here).
 	await writeFile(join(outDir, 'node-model.json5'), result.nodeModel);
 
-	// Write suggested overrides log (T042f) next to overrides.ts at the
+	// Write suggested overrides log (T042f) next to grammar.sittir.ts at the
 	// package root. This is a documentation file — not runnable. `undefined`
 	// means the emitter has nothing to suggest (emission disabled or empty
 	// result) — skip the write, and remove any stale file left by a prior
@@ -439,11 +439,11 @@ export async function runCodegen(opts: CodegenOptions): Promise<NodeMap> {
 
 	// Collected diagnostic: kinds whose CHOICE slot has no grammar field name.
 	// A naked choice falls back to an unresolvable `content` slot; the author must
-	// give it an explicit `field('<name>', ...)` in `packages/<lang>/overrides.ts`.
+	// give it an explicit `field('<name>', ...)` in `packages/<lang>/grammar.sittir.ts`.
 	const unnamedChoiceKinds = drainUnnamedChoiceSlots();
 	if (unnamedChoiceKinds.length > 0) {
 		console.warn(
-			`\n⚠ ${unnamedChoiceKinds.length} unnamed choice slot(s) in ${grammar} — give each choice an explicit field name in packages/${grammar}/overrides.ts:\n  ` +
+			`\n⚠ ${unnamedChoiceKinds.length} unnamed choice slot(s) in ${grammar} — give each choice an explicit field name in packages/${grammar}/grammar.sittir.ts:\n  ` +
 				unnamedChoiceKinds.join('\n  ')
 		);
 	}

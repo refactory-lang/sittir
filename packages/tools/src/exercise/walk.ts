@@ -7,7 +7,7 @@ type ReadTreeNode = (
 	handle: unknown,
 	nodeHandle?: number,
 	childIndex?: number,
-	asType?: { from: string; to: string }
+	asType?: readonly { from: string; to: string }[]
 ) => unknown;
 
 interface CommonModule {
@@ -20,7 +20,14 @@ interface CommonModule {
 	loadKindIdFromName(grammar: string): Promise<((name: string) => number) | undefined>;
 	loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined>;
 	loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined>;
-	materializeWrappedNodeData(root: unknown): AnyNodeData;
+	materializeWrappedNodeData(root: unknown, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyNodeData;
+}
+
+interface AccessorThrowRecord {
+	readonly key: string;
+	readonly accessor: string;
+	readonly type: unknown;
+	readonly message: string;
 }
 
 interface WalkNode {
@@ -151,6 +158,10 @@ export async function run(opts: WalkOptions): Promise<number> {
 	const counts = new Map<string, number>();
 	let total = 0;
 	let renderFailures = 0;
+	const accessorThrows: AccessorThrowRecord[] = [];
+	const onAccessorThrow = (rec: AccessorThrowRecord): void => {
+		accessorThrows.push(rec);
+	};
 
 	walkTree(root, (node) => {
 		const kind = resolveKindName(node, kindNameFromId);
@@ -158,7 +169,7 @@ export async function run(opts: WalkOptions): Promise<number> {
 		total += 1;
 		if (!render) return;
 		try {
-			const renderable = common.materializeWrappedNodeData(node);
+			const renderable = common.materializeWrappedNodeData(node, onAccessorThrow);
 			const rendered = renderNode(renderable);
 			process.stdout.write(`${kind}: ${JSON.stringify(rendered)}\n`);
 		} catch (error) {
@@ -170,6 +181,12 @@ export async function run(opts: WalkOptions): Promise<number> {
 	process.stdout.write('\nWrapped-tree kind counts:\n');
 	for (const [kind, count] of [...counts.entries()].sort(([left], [right]) => left.localeCompare(right))) {
 		process.stdout.write(`  ${String(count).padStart(3)}  ${kind}\n`);
+	}
+	if (accessorThrows.length > 0) {
+		process.stdout.write(`\n${accessorThrows.length} accessor-throw(s) (slot masked, fell back to raw stub):\n`);
+		for (const t of accessorThrows) {
+			process.stdout.write(`  key=${t.key} accessor=${t.accessor} type=${t.type}: ${t.message}\n`);
+		}
 	}
 	process.stdout.write(
 		`\n${total} node(s), ${counts.size} distinct kind(s)` +

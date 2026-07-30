@@ -840,7 +840,7 @@ function resolveHiddenRuleContent(rule: RenderRule, seen: Set<string>, ctx: Asse
 			// SEQ is a real structural body, not a wrapper collapse, most commonly
 			// a polymorph-variant-adopted arm materialized as its own hidden kind
 			// (e.g. python's `_simple_pattern_negative`, `SEQ[OPTIONAL('-'),
-			// CHOICE(integer, float)]` — `overrides.ts`'s `_simple_pattern: { '11':
+			// CHOICE(integer, float)]` — `grammar.sittir.ts`'s `_simple_pattern: { '11':
 			// 'negative' }`). Recursing into a SEQ's members here would be WRONG:
 			// the caller's "opaque → keep the hidden name as-is" fallback
 			// (`resolveHiddenSubtypes`'s `resolved.length === 0` branch) is what

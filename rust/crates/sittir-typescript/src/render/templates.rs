@@ -252,18 +252,21 @@ pub struct ExportStatementDefaultTemplate<'a> {
 #[template(path = "_export_statement_equals_export.jinja", escape = "none")]
 pub struct ExportStatementEqualsExportTemplate<'a> {
     pub expression: SingleNonterminalView<'a>,
+    pub semicolon: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_export_statement_namespace_export.jinja", escape = "none")]
 pub struct ExportStatementNamespaceExportTemplate<'a> {
     pub identifier: SingleNonterminalView<'a>,
+    pub semicolon: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_export_statement_type_export.jinja", escape = "none")]
 pub struct ExportStatementTypeExportTemplate<'a> {
     pub export_clause: SingleNonterminalView<'a>,
+    pub semicolon: SingleNonterminalView<'a>,
     pub source: OptionalNonterminalView<'a>,
 }
 

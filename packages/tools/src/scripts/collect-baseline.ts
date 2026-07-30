@@ -267,7 +267,7 @@ export async function collectParityFixtures(
 			// emitters/types.ts). KIND_DISPLAY_NAMES carries the parser's
 			// own display label, so grammar-aliased-at-a-reference-site
 			// kinds like python's `_patterns` (aliased to `pattern_group`
-			// via `alias($._patterns, $.pattern_group)` in overrides.ts)
+			// via `alias($._patterns, $.pattern_group)` in grammar.sittir.ts)
 			// resolve their template correctly. This tolerance branch
 			// stays as a general safety net for the JS backend regardless —
 			// any kind with NO emitted template at all (rather than a

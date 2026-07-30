@@ -35,11 +35,11 @@
   },
   {
     "scope": "grammar",
-    "code": "union-slot-nondegenerate-arm",
+    "code": "union-slot-mixed-row",
     "severity": "warning",
     "grammar": "python",
-    "ownerKind": "except_clause",
-    "message": "[collect-slots] kind 'except_clause': choice rule:_suite:root has unnamed-nonterminal arm(s) [simple_statements, newline] but cannot union-route — offending arm(s): structured seq[2](indent block). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
+    "ownerKind": "import_from_statement",
+    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root is a REPEATED (order-lossy) mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [future_import_statement_group1] and degenerate arm(s) [field(wildcard_import):\"*\"]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
     "canProceed": true
   },
   {
@@ -47,8 +47,8 @@
     "code": "union-slot-nondegenerate-arm",
     "severity": "warning",
     "grammar": "python",
-    "ownerKind": "_suite",
-    "message": "[collect-slots] kind '_suite': choice rule:_suite:root has unnamed-nonterminal arm(s) [simple_statements, newline] but cannot union-route — offending arm(s): structured seq[2](indent block). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
+    "ownerKind": "import_from_statement",
+    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root has unnamed-nonterminal arm(s) [future_import_statement_group1] but cannot union-route — offending arm(s): structured seq[3](\"(\" _import_list \")\"). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
     "canProceed": true
   },
   {
@@ -59,22 +59,6 @@
     "ownerKind": "yield",
     "message": "[collect-slots] kind 'yield': choice rule:yield:root has unnamed-nonterminal arm(s) [_expressions] but cannot union-route — offending arm(s): structured seq[2](\"from\" expression). Restructure via variant() / a real rule / field() in overrides, or await the PR 3 group-mint widening.",
     "canProceed": true
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "python",
-    "ownerKind": "_as_pattern",
-    "message": "[assemble] typeName collision: kind '_as_pattern' renamed 'AsPattern' → '_AsPattern' (visible sibling(s): 'as_pattern')",
-    "canProceed": true,
-    "details": {
-      "typeName": "AsPattern",
-      "newType": "_AsPattern",
-      "visibleKinds": [
-        "as_pattern"
-      ]
-    }
   },
   {
     "scope": "grammar",
@@ -163,8 +147,8 @@
     "grammar": "python",
     "ownerKind": "_suite",
     "slotName": "block",
-    "message": "Slot 'block' of kind '_suite' collapses [_simple_statements, block, _newline] onto parse kind 'block'.",
-    "proposal": "Slot 'block' of kind '_suite' collapses distinct storage kinds [_simple_statements, block, _newline] onto parse kind 'block'. Give each colliding arm a distinct alias (for example via variant()/alias()) so read-time dispatch stays injective.",
+    "message": "Slot 'block' of kind '_suite' collapses [_simple_statements, block, _newline] onto parse kind 'block'. Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.",
+    "proposal": "Already resolved by enrich() — no action needed.",
     "canProceed": true,
     "details": {
       "parseKind": "block",

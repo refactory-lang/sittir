@@ -63,7 +63,7 @@ function printNode(kind: string, node: AssembledNode): void {
 	process.stdout.write(`  ${kind}: modelType=${node.modelType} rule.type=${ruleType}\n`);
 
 	if (ruleObj !== undefined) {
-		const snippet = JSON.stringify(ruleObj, null, 2).slice(0, 500);
+		const snippet = JSON.stringify(ruleObj, null, 2);
 		// Indent the snippet for readability.
 		const indented = snippet
 			.split('\n')

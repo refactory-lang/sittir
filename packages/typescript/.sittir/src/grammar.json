@@ -11034,8 +11034,15 @@
           "value": "type"
         },
         {
-          "type": "SYMBOL",
-          "name": "export_clause"
+          "type": "FIELD",
+          "name": "export_clause",
+          "content": {
+            "type": "SYMBOL",
+            "name": "export_clause"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         },
         {
           "type": "CHOICE",
@@ -11050,8 +11057,15 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "_semicolon"
+          "type": "FIELD",
+          "name": "semicolon",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_semicolon"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         }
       ]
     },
@@ -11067,12 +11081,26 @@
           "value": "="
         },
         {
-          "type": "SYMBOL",
-          "name": "expression"
+          "type": "FIELD",
+          "name": "expression",
+          "content": {
+            "type": "SYMBOL",
+            "name": "expression"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         },
         {
-          "type": "SYMBOL",
-          "name": "_semicolon"
+          "type": "FIELD",
+          "name": "semicolon",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_semicolon"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         }
       ]
     },
@@ -11092,12 +11120,26 @@
           "value": "namespace"
         },
         {
-          "type": "SYMBOL",
-          "name": "identifier"
+          "type": "FIELD",
+          "name": "identifier",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         },
         {
-          "type": "SYMBOL",
-          "name": "_semicolon"
+          "type": "FIELD",
+          "name": "semicolon",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_semicolon"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         }
       ]
     },
@@ -11560,8 +11602,15 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "extends_clause"
+          "type": "FIELD",
+          "name": "extends_clause",
+          "content": {
+            "type": "SYMBOL",
+            "name": "extends_clause"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         },
         {
           "type": "CHOICE",
@@ -12762,8 +12811,15 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "extends_clause"
+          "type": "FIELD",
+          "name": "extends_clause",
+          "content": {
+            "type": "SYMBOL",
+            "name": "extends_clause"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         },
         {
           "type": "CHOICE",
@@ -13634,8 +13690,15 @@
           "value": "type"
         },
         {
-          "type": "SYMBOL",
-          "name": "export_clause"
+          "type": "FIELD",
+          "name": "export_clause",
+          "content": {
+            "type": "SYMBOL",
+            "name": "export_clause"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         },
         {
           "type": "CHOICE",
@@ -13650,8 +13713,15 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "_semicolon"
+          "type": "FIELD",
+          "name": "semicolon",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_semicolon"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         }
       ]
     },
@@ -13667,12 +13737,26 @@
           "value": "="
         },
         {
-          "type": "SYMBOL",
-          "name": "expression"
+          "type": "FIELD",
+          "name": "expression",
+          "content": {
+            "type": "SYMBOL",
+            "name": "expression"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         },
         {
-          "type": "SYMBOL",
-          "name": "_semicolon"
+          "type": "FIELD",
+          "name": "semicolon",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_semicolon"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         }
       ]
     },
@@ -13692,12 +13776,26 @@
           "value": "namespace"
         },
         {
-          "type": "SYMBOL",
-          "name": "identifier"
+          "type": "FIELD",
+          "name": "identifier",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         },
         {
-          "type": "SYMBOL",
-          "name": "_semicolon"
+          "type": "FIELD",
+          "name": "semicolon",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_semicolon"
+          },
+          "metadata": {
+            "fieldSource": "enriched"
+          }
         }
       ]
     },

@@ -491,7 +491,7 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		// simplify pipeline's cross-branch hoist + mergeBranchesForChoice
 		// handling same-shape merges directly, anonymous auto-tags
 		// served only to block those passes and to mask the grammar
-		// author's need to declare named `variant()` in overrides.ts.
+		// author's need to declare named `variant()` in grammar.sittir.ts.
 		// Link now leaves the choice structure alone — promotion happens
 		// via `applyOverridePolymorphs` on user-declared variants only.
 		const raw = makeRaw({

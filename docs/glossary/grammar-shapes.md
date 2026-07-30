@@ -111,7 +111,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /**
  * Authoring-surface input: what the sittir-owned DSL primitives (`seq`/`choice`/
- * `field`/…) accept and compose in `overrides.ts`. A superset of the recursive
+ * `field`/…) accept and compose in `grammar.sittir.ts`. A superset of the recursive
  * grammar-shape rules plus the bare literals tree-sitter allows. Deliberately
  * NOT tree-sitter's `RuleOrLiteral` (whose `Rule` members are MUTABLE, so our
  * readonly-tuple rule shapes aren't assignable to it — that mismatch is what

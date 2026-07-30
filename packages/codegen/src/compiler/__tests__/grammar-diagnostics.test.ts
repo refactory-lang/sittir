@@ -294,7 +294,7 @@ describe('grammar diagnostics preflight', () => {
 			]
 		};
 
-		// Mirrors the `expectDiagnostics:` block typescript's own overrides.ts
+		// Mirrors the `expectDiagnostics:` block typescript's own grammar.sittir.ts
 		// declares for `_object_type_group1` — the exception now lives entirely
 		// in the grammar's own declaration, not in a `grammar === 'typescript'`
 		// string comparison.
@@ -344,7 +344,7 @@ describe('grammar diagnostics preflight', () => {
 		});
 
 		it('content-collision becomes canProceed: false for _object_type_group1 when no expectDiagnostics is supplied (the real bug this guards against)', () => {
-			// Same kind name, same shape, but the calling grammar's own overrides.ts
+			// Same kind name, same shape, but the calling grammar's own grammar.sittir.ts
 			// never declared the exception — scoping is achieved by presence of the
 			// grammar's OWN expectDiagnostics declaration, not a grammar-name string
 			// comparison, so omitting it must not silently inherit the floor.

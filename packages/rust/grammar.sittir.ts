@@ -1,5 +1,5 @@
 /**
- * overrides.ts — Grammar extension for rust
+ * grammar.sittir.ts — Grammar extension for rust
  *
  * Converted from overrides.json. Each entry wraps an unnamed child
  * at a positional index with a named field.
@@ -131,8 +131,17 @@ export default grammar(
 				use_bounds: {
 					2: field('bounds')
 				},
+				// last_match_arm: seq(repeat(attrs)[0], field('pattern')[1], '=>'[2],
+				//   field('value')[3], optional(',')[4]).
+				// Pos 4's optional trailing comma is an unnamed anonymous token — never
+				// captured, so a source last-arm's trailing ',' was silently dropped on
+				// render (3 corpus AST mismatches: [pattern,"=>",value,","] vs
+				// [pattern,"=>",value]). Field it ('4/0' = the optional's content) so
+				// read captures and render preserves it; same marker-promotion pattern
+				// as async_block's move_marker.
 				last_match_arm: {
-					0: field('attributes')
+					'0': field('attributes'),
+					'4/0': field('comma')
 				},
 
 				match_block: {
@@ -215,6 +224,18 @@ export default grammar(
 					'1/1': variant('mut')
 				},
 
+				// string_literal deliberately NOT fielded: its opening token is
+				// `alias(/[bc]?"/, '"')` — a PATTERN carrying the b"/c" byte-/C-string
+				// prefixes, aliased to the constant '"'. Field-promoting it was tried
+				// (2026-07-28) and does NOT recover the prefix: slot classification
+				// keys off the ALIAS display string, minting a fixed `dquote`
+				// TERMINAL whose wire encoding is a presence boolean, so the render
+				// still emits the static '"' and c"..." renders as "..." (1 corpus
+				// AST mismatch). Needs a classification fix (alias-of-PATTERN whose
+				// regex isn't the alias string is content-bearing) — see specs/026
+				// progress notes.
+
+				// raw_string_literal: 3 field(s)
 				raw_string_literal: {
 					0: field('raw_string_literal_start'),
 					1: field('string_content'),
@@ -421,6 +442,21 @@ export default grammar(
 					}),
 
 				_wildcard_pattern: ($) => '_',
+
+				// range_expression's bare-'..' arm (RangeFull, e.g. `let x = ..;`) is
+				// the only choice arm that isn't a seq — arms 0-2 get auto-synthesized
+				// group kinds (range_expression_binary/postfix/prefix), but a bare
+				// literal produces an ANONYMOUS/unnamed token, so the wrap layer's
+				// `content` accessor never finds a value ("singular slot 'content' on
+				// 'range_expression' requires one value; got undefined"). Same fix as
+				// `_wildcard_pattern` just above: alias the literal into its own real,
+				// named node.
+				range_expression: ($, original) =>
+					transform(original, {
+						'-1': alias($._range_expression_bare, $.range_expression_bare)
+					}),
+
+				_range_expression_bare: ($) => '..',
 
 				_reference_expression_raw_const: ($) => seq('raw', 'const'),
 				_reference_expression_raw_mut: ($) => seq('raw', $.mutable_specifier),

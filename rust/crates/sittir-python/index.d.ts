@@ -91,18 +91,6 @@ export interface AsPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _case_pattern: Box<CasePatternTransport>
-  _identifier: IdentifierTransport
-}
-
-export interface AsPatternTransport {
-  '$source'?: Source
-  '$named'?: boolean
-  '$text'?: string
-  '$span'?: Span
-  '$nodeHandle'?: number
-  '$childIndex'?: number
-  '$triviaData'?: TransportTrivia
   _expression: Box<ExpressionTransport>
   _alias: Box<ExpressionTransport>
 }
@@ -247,6 +235,18 @@ export interface CallTransport {
   '$triviaData'?: TransportTrivia
   _function: Box<PrimaryExpressionTransport>
   _arguments: Box<CallArgumentsTransportSlot>
+}
+
+export interface CaseAsPatternTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _case_pattern: Box<CasePatternTransport>
+  _identifier: IdentifierTransport
 }
 
 export interface CaseClauseTransport {
@@ -648,9 +648,7 @@ export interface ExceptClauseTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _except_clause_group1?: ExceptClauseGroup1Transport
-  _simple_statements?: SimpleStatementsTransport
-  _block?: BlockTransport
-  _newline?: NewlineTransport
+  _content: ExceptClauseContentTransportSlot
 }
 
 export interface ExecStatementTransport {
@@ -869,7 +867,9 @@ export interface ImportFromStatementTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _module_name: ImportFromStatementModuleNameTransportSlot
-  _wildcard_import: Array<ImportFromStatementWildcardImportTransportSlot>
+  _wildcard_import?: boolean
+  _name?: Array<ImportFromStatementNameTransportSlot>
+  _import_list?: ImportListTransport
 }
 
 export interface ImportListTransport {
@@ -1450,6 +1450,17 @@ export interface SubscriptTransport {
   _subscript: Array<SubscriptSubscriptTransportSlot>
 }
 
+export interface SuiteBlockWithIndentTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  _block: BlockTransport
+}
+
 export interface SuiteTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -1458,9 +1469,7 @@ export interface SuiteTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _simple_statements?: SimpleStatementsTransport
-  _block?: BlockTransport
-  _newline?: NewlineTransport
+  _content: SuiteContentTransportSlot
 }
 
 export interface TryStatementTransport {

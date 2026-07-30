@@ -468,13 +468,21 @@ describe('emitRule — choice', () => {
 
 describe('emitRule — structural whitespace', () => {
 	it('emits an indent', () => {
+		// Expression form (`{{ "\n" }}`), not a raw literal — immune to a
+		// header comment's `-#}` whitespace trim when INDENT is the first
+		// thing in a kind's compiled template body. See emitRule's INDENT
+		// case comment.
 		const rule: IndentRule = { type: INDENT };
-		expect(emitRule(rule, makeCtx())).toBe('\n  ');
+		expect(emitRule(rule, makeCtx())).toBe('{{ "\n" }}');
 	});
 
 	it('emits a dedent', () => {
+		// DEDENT contributes nothing: the repeat content it closes
+		// (`_statement`-typed, always) already self-terminates its own
+		// trailing newline, so a separate DEDENT newline would duplicate
+		// it. See emitRule's DEDENT case comment.
 		const rule: DedentRule = { type: DEDENT };
-		expect(emitRule(rule, makeCtx())).toBe('\n');
+		expect(emitRule(rule, makeCtx())).toBe('');
 	});
 
 	it('emits a newline', () => {

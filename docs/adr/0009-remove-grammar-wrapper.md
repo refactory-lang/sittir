@@ -43,9 +43,9 @@ Wire (ADR-0007) and declarative transforms (ADR-0008) already handle
 Empirical state at the time of this ADR:
 
 - All three grammars (`rust`, `python`, `typescript`) wrap opts in
-  `wire({...})` (verified `grep 'default grammar' packages/*/overrides.ts`).
-- Zero inline `variant()` calls in any `overrides.ts`.
-- One inline `alias()` call (`rust/overrides.ts:515`) that uses
+  `wire({...})` (verified `grep 'default grammar' packages/*/grammar.sittir.ts`).
+- Zero inline `variant()` calls in any `grammar.sittir.ts`.
+- One inline `alias()` call (`rust/grammar.sittir.ts:515`) that uses
   tree-sitter's **native** two-arg `alias($.x, $.y)` form — not the
   sittir one-arg placeholder, so it never touches
   `registerSyntheticRule`.
@@ -147,7 +147,7 @@ catch regressions early.
     callback must now either extend `wire()` declaratively or install a
     wire context manually — the wrapper's "just works" convenience is
     gone.
-  - Any third-party `overrides.ts` not yet migrated to `wire()` will
+  - Any third-party `grammar.sittir.ts` not yet migrated to `wire()` will
     break. Currently moot (only in-repo grammars exist), but the
     contract is stricter.
 
@@ -180,7 +180,7 @@ catch regressions early.
 
   - **Deprecate inline `transform()` in overrides; all transforms flow
     through `wire({ transforms })`.** The four current inline sites
-    (`rust/overrides.ts:438/448/464/514`) exist only because wire's
+    (`rust/grammar.sittir.ts:438/448/464/514`) exist only because wire's
     `transforms:` composition runs AFTER `polymorphs:` wrapping, so
     path expressions that reach pre-alias structure (`'2/_expression'`,
     `'0/0'`) don't resolve declaratively today. Two paths to fix:

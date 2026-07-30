@@ -747,8 +747,7 @@ export type RustGrammar = {
 	readonly expression_statement_with_semi: {
 		type: 'expression_statement_with_semi';
 		named: true;
-		fields: {};
-		children: { multiple: false; required: true; types: [{ type: '_expression'; named: true }] };
+		fields: { expression: { multiple: false; required: true; types: [{ type: '_expression'; named: true }] } };
 	};
 	readonly extern_crate_declaration: {
 		type: 'extern_crate_declaration';
@@ -1145,6 +1144,7 @@ export type RustGrammar = {
 				required: false;
 				types: [{ type: 'attribute_item'; named: true }, { type: 'inner_attribute_item'; named: true }];
 			};
+			comma: { multiple: false; required: false; types: [{ type: ','; named: false }] };
 			pattern: { multiple: false; required: true; types: [{ type: 'match_pattern'; named: true }] };
 			value: { multiple: false; required: true; types: [{ type: '_expression'; named: true }] };
 		};
@@ -1487,14 +1487,16 @@ export type RustGrammar = {
 		fields: {};
 		children: {
 			multiple: false;
-			required: false;
+			required: true;
 			types: [
+				{ type: 'range_expression_bare'; named: true },
 				{ type: 'range_expression_binary'; named: true },
 				{ type: 'range_expression_postfix'; named: true },
 				{ type: 'range_expression_prefix'; named: true }
 			];
 		};
 	};
+	readonly range_expression_bare: { type: 'range_expression_bare'; named: true; fields: {} };
 	readonly range_expression_binary: {
 		type: 'range_expression_binary';
 		named: true;
@@ -1654,8 +1656,7 @@ export type RustGrammar = {
 	readonly return_expression: {
 		type: 'return_expression';
 		named: true;
-		fields: {};
-		children: { multiple: false; required: false; types: [{ type: '_expression'; named: true }] };
+		fields: { expression: { multiple: false; required: false; types: [{ type: '_expression'; named: true }] } };
 	};
 	readonly scoped_identifier: {
 		type: 'scoped_identifier';
@@ -2451,8 +2452,7 @@ export type RustGrammar = {
 	readonly yield_expression: {
 		type: 'yield_expression';
 		named: true;
-		fields: {};
-		children: { multiple: false; required: false; types: [{ type: '_expression'; named: true }] };
+		fields: { expression: { multiple: false; required: false; types: [{ type: '_expression'; named: true }] } };
 	};
 	readonly '_anonymous_!': { type: '!'; named: false };
 	readonly '_anonymous_!=': { type: '!='; named: false };

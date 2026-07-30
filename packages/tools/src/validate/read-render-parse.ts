@@ -34,7 +34,8 @@ import {
 	loadNodeModel,
 	type TSNode,
 	type TSTree,
-	type WrappedNodeData
+	type WrappedNodeData,
+	type AccessorThrowRecord
 } from './common.ts';
 
 /**
@@ -133,7 +134,7 @@ function firstParseDefect(node: TSNode): string | null {
 		return `MISSING "${node.type}" in ${node.parent?.type ?? 'root'}`;
 	}
 	if (node.isError) {
-		const tokenHead = node.text.replace(/\s+/g, ' ').slice(0, 20);
+		const tokenHead = node.text.replace(/\s+/g, ' ');
 		return `ERROR in ${node.parent?.type ?? 'root'} at "${tokenHead}"`;
 	}
 	for (let i = 0; i < node.childCount; i++) {
@@ -264,6 +265,14 @@ export interface ReadRenderParseResult {
 		input?: string;
 		rendered?: string;
 	}[];
+	/**
+	 * Accessor-throw occurrences hit while materializing wrapped nodes for
+	 * this run (see `AccessorThrowRecord`'s doc comment). Each throw masks
+	 * its whole slot behind a raw stub fallback — not necessarily a hard
+	 * round-trip failure on its own, but a real signal worth surfacing
+	 * beyond the transient stderr line.
+	 */
+	accessorThrows: AccessorThrowRecord[];
 }
 
 /**
@@ -447,6 +456,10 @@ export async function validateReadRenderParse(
 		input?: string;
 		rendered?: string;
 	}[] = [];
+	const accessorThrows: AccessorThrowRecord[] = [];
+	const onAccessorThrow = (rec: AccessorThrowRecord): void => {
+		accessorThrows.push(rec);
+	};
 	let pass = 0;
 	let astMatchPass = 0;
 	let skip = 0;
@@ -488,7 +501,7 @@ export async function validateReadRenderParse(
 					const list = candidatesByKind.get(sourceKind) ?? [];
 					list.push({ start: span.start, end: span.end, node: w });
 					candidatesByKind.set(sourceKind, list);
-				});
+				}, onAccessorThrow);
 			}
 			const testableKinds = [...candidatesByKind.keys()];
 
@@ -560,11 +573,12 @@ export async function validateReadRenderParse(
 							cand.node.$childIndex != null &&
 							handle.read
 								? (handle.read(cand.node.$nodeHandle, cand.node.$childIndex) as unknown as AnyNodeData)
-								: (stripStructuralNodeText(materializeWrappedNodeData(cand.node)) as AnyNodeData);
+								: (stripStructuralNodeText(materializeWrappedNodeData(cand.node, onAccessorThrow)) as AnyNodeData);
 					} catch (e) {
 						kindErrors.push({
 							name: `${entry.name} [${kind}]`,
-							message: `read: ${(e as Error).message.slice(0, 100)}`
+							message: `read: ${(e as Error).message}`,
+							input: inputSource
 						});
 						continue;
 					}
@@ -607,7 +621,7 @@ export async function validateReadRenderParse(
 						if (tree2.rootNode.hasError) {
 							const failure = {
 								name: `${entry.name} [${renderedKind}]`,
-								message: `re-parse error [${firstParseDefect(tree2.rootNode) ?? 'unlocated'}]: "${rendered.slice(0, 80)}"`,
+								message: `re-parse error [${firstParseDefect(tree2.rootNode) ?? 'unlocated'}]`,
 								input: inputSource,
 								rendered
 							};
@@ -684,7 +698,7 @@ export async function validateReadRenderParse(
 							kindAstMismatches.push({
 								kind: renderedKind,
 								entry: entry.name,
-								message: diff.slice(0, 160),
+								message: diff,
 								input: inputSource,
 								rendered
 							});
@@ -718,7 +732,8 @@ export async function validateReadRenderParse(
 					} catch (e) {
 						const failure = {
 							name: `${entry.name} [${renderedKind}]`,
-							message: `render: ${(e as Error).message.slice(0, 100)}`
+							message: `render: ${(e as Error).message}`,
+							input: inputSource
 						};
 						kindErrors.push(failure);
 						reportFailure(options, {
@@ -802,7 +817,8 @@ export async function validateReadRenderParse(
 		} catch (e) {
 			errors.push({
 				name: entry.name,
-				message: `${(e as Error).message.slice(0, 100)}`
+				message: `${(e as Error).message}`,
+				input: entry.source
 			});
 			if (options.stopOnFirstFailure === true) break;
 		}
@@ -824,7 +840,8 @@ export async function validateReadRenderParse(
 		skip,
 		astMatchPass,
 		errors,
-		astMismatches
+		astMismatches,
+		accessorThrows
 	};
 }
 
@@ -846,8 +863,8 @@ export function formatReadRenderParseReport(result: ReadRenderParseResult): stri
 		lines.push('    Failures:');
 		for (const e of result.errors) {
 			lines.push(`    x ${e.name}: ${e.message}`);
-			if (e.input) lines.push(`      source:   ${JSON.stringify(e.input.slice(0, 80))}`);
-			if (e.rendered) lines.push(`      rendered: ${JSON.stringify(e.rendered.slice(0, 80))}`);
+			if (e.input) lines.push(`      source:   ${JSON.stringify(e.input)}`);
+			if (e.rendered) lines.push(`      rendered: ${JSON.stringify(e.rendered)}`);
 		}
 	}
 	if (result.astMismatches.length > 0) {
@@ -855,8 +872,8 @@ export function formatReadRenderParseReport(result: ReadRenderParseResult): stri
 		lines.push('    AST mismatches:');
 		for (const e of result.astMismatches.slice(0, 20)) {
 			lines.push(`    ~ ${e.entry ? `${e.entry} (${e.kind})` : e.kind}: ${e.message}`);
-			if (e.input) lines.push(`      source:   ${JSON.stringify(e.input.slice(0, 80))}`);
-			if (e.rendered) lines.push(`      rendered: ${JSON.stringify(e.rendered.slice(0, 80))}`);
+			if (e.input) lines.push(`      source:   ${JSON.stringify(e.input)}`);
+			if (e.rendered) lines.push(`      rendered: ${JSON.stringify(e.rendered)}`);
 		}
 		if (result.astMismatches.length > 20) {
 			lines.push(`    … and ${result.astMismatches.length - 20} more`);

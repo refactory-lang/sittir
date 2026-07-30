@@ -949,6 +949,7 @@ pub struct LabelTemplate<'a> {
 #[template(path = "last_match_arm.jinja", escape = "none")]
 pub struct LastMatchArmTemplate<'a> {
     pub attributes: ListNonterminalView<'a>,
+    pub comma: OptionalNonterminalView<'a>,
     pub pattern: SingleNonterminalView<'a>,
     pub value: SingleNonterminalView<'a>,
 }

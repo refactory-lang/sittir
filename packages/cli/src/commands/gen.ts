@@ -40,7 +40,7 @@ export const gen: CommandModule = {
 			.option('-n, --nodes <list>', 'Comma-separated node kinds to generate')
 			.option('-a, --all', 'Generate TS + native render-module artifacts (full chain)')
 			.option('--tests-dir <dir>', 'Output directory for test files')
-			.option('--transpile', 'Transpile overrides.ts → .sittir/grammar.js')
+			.option('--transpile', 'Transpile grammar.sittir.ts → .sittir/grammar.js')
 			.option('--compile-parser', 'Compile override grammar to .sittir/parser.wasm')
 			.option('--ts-generate', "Run 'tree-sitter generate' in .sittir/")
 			.option('--skip-ts-chain', 'Skip the auto transpile + tree-sitter generate chain')

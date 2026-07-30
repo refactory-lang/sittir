@@ -69,7 +69,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  * never disagree about what counts as "generated."
  *
  * Intentional exclusions vs cleanup-rules.md §A1:
- *   - `overrides.ts` (hand-edited adjuster) — never generated.
+ *   - `grammar.sittir.ts` (hand-edited adjuster) — never generated.
  *   - `overrides.suggested.ts` — written by the codegen CLI AFTER its
  *     internal validation runs (it embeds validator diagnostics). Including
  *     it would force the manifest to be written twice per codegen invocation,
@@ -200,7 +200,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /**
 	 * SHA256 of the source inputs that drove this generation —
-	 * `packages/<grammar>/overrides.ts` (hand-edited adjuster) +
+	 * `packages/<grammar>/grammar.sittir.ts` (hand-edited adjuster) +
 	 * `packages/<grammar>/package.json` (pins the upstream tree-sitter version).
 	 * If either changes, source_hash changes; verifiers detect the mismatch
 	 * and require a regen. This is the cross-layer synchronicity guarantee:

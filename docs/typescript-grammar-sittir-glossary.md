@@ -1,6 +1,6 @@
 # TypeScript Overrides Glossary
 
-Per-rule reference for `packages/typescript/overrides.ts`: every named rule
+Per-rule reference for `packages/typescript/grammar.sittir.ts`: every named rule
 override, conflict, and precedence declaration significant enough to need
 explanation. Each entry covers what the rule/conflict addresses, why it's
 needed (the specific ambiguity or shape mismatch), and what would break if
@@ -8,11 +8,11 @@ it were removed.
 
 See [AGENTS.md § Wave-style decomposition before commits](../AGENTS.md) for
 the convention this glossary exists to serve — long rationale comments in
-`overrides.ts` move here instead of living inline.
+`grammar.sittir.ts` move here instead of living inline.
 
 ---
 
-### `base` import (`packages/typescript/overrides.ts:11`)
+### `base` import (`packages/typescript/grammar.sittir.ts:11`)
 
 The import points at the **typescript** (non-tsx) grammar so the codegen
 surface matches the reparse target — `WASM_PATHS.typescript` loads the non-tsx
@@ -20,7 +20,7 @@ wasm. Pointing it at `tsx/grammar.js` is harmless for a non-JSX corpus but a
 latent mismatch: anything JSX-shaped would reparse-fail. One grammar,
 end-to-end.
 
-### `enrichedBase` (`packages/typescript/overrides.ts:19`)
+### `enrichedBase` (`packages/typescript/grammar.sittir.ts:19`)
 
 `enrich(base)` is bound once and the SAME enriched grammar is handed to both
 `grammar()` and `wire()` (matching rust). `wire` needs the enriched base so its
@@ -29,7 +29,7 @@ enrich-hoisted-clause inline registration — operate on the post-enrich shape.
 Without the second argument those passes silently no-op, leaving
 enrich-hoisted clause groups un-inlined and producing LR conflicts.
 
-### `conflicts` (`packages/typescript/overrides.ts:25`)
+### `conflicts` (`packages/typescript/grammar.sittir.ts:25`)
 
 Conflict markers for `variant()` adoption on kinds where splitting exposes
 LR(1) ambiguities the unsplit grammar resolved via shared state. Each entry
@@ -116,7 +116,7 @@ Per-entry rationale for the sittir-added groups:
   each `_for_header` sub-variant inherits the for-header's identifier-prefix
   ambiguity.
 
-### `inline` (`packages/typescript/overrides.ts:232`)
+### `inline` (`packages/typescript/grammar.sittir.ts:232`)
 
 ```text
 			// Inline `public_field_definition`'s polymorph-synthesized variant
@@ -149,7 +149,7 @@ warning for each, and they should be dropped on the next overrides sweep.
 auto-inlines them whenever field promotion synthesizes them, so only the
 polymorph helpers need to appear explicitly.
 
-### `_export_statement_default` (`packages/typescript/overrides.ts:305`)
+### `_export_statement_default` (`packages/typescript/grammar.sittir.ts:305`)
 
 ```text
 				// PR 3 (2026-07-21 union-slot design): `_export_statement_default`
@@ -202,7 +202,7 @@ polymorph helpers need to appear explicitly.
 				//   )`
 ```
 
-### `class_body` (`packages/typescript/overrides.ts:363`)
+### `class_body` (`packages/typescript/grammar.sittir.ts:363`)
 
 ```text
 				// class_body body: `seq('{', repeat(choice(5 arms)), '}')`.
@@ -211,7 +211,7 @@ polymorph helpers need to appear explicitly.
 				// so the choice becomes symbol-like across all arms.
 ```
 
-### `_for_header` (`packages/typescript/overrides.ts:373`)
+### `_for_header` (`packages/typescript/grammar.sittir.ts:373`)
 
 ```text
 				// _for_header body (base-grammar hidden):
@@ -224,7 +224,7 @@ polymorph helpers need to appear explicitly.
 				// Split each arm so the outer choice becomes all symbol-like.
 ```
 
-### `public_field_definition` (`packages/typescript/overrides.ts:387`)
+### `public_field_definition` (`packages/typescript/grammar.sittir.ts:387`)
 
 ```text
 				// public_field_definition body position 1:
@@ -248,7 +248,7 @@ polymorph helpers need to appear explicitly.
 				// tree-sitter parses the same tree as before.
 ```
 
-### `1/0/0/0` (`packages/typescript/overrides.ts:407`)
+### `1/0/0/0` (`packages/typescript/grammar.sittir.ts:407`)
 
 ```text
 					// Paths carry an extra '/0' hop at position 1 vs. the raw base
@@ -261,13 +261,13 @@ polymorph helpers need to appear explicitly.
 					// under position 1 by one segment.
 ```
 
-### `2/0` (`packages/typescript/overrides.ts:417`)
+### `2/0` (`packages/typescript/grammar.sittir.ts:417`)
 
 ```text
 					// Position 2: a four-arm modifier choice (heterogeneous).
 ```
 
-### `jsx_opening_element_content` (`packages/typescript/overrides.ts:425`)
+### `jsx_opening_element_content` (`packages/typescript/grammar.sittir.ts:425`)
 
 ```text
 				// __jsx_start_opening_element_optional1 is the inline two-slot helper for
@@ -285,13 +285,13 @@ polymorph helpers need to appear explicitly.
 				// `body-pattern-zero-match`).
 ```
 
-### `arguments` (`packages/typescript/overrides.ts:448`)
+### `arguments` (`packages/typescript/grammar.sittir.ts:448`)
 
 ```text
 				// Naked-choice field names (was unresolvable `content` slots).
 ```
 
-### `class_body` (`packages/typescript/overrides.ts:471`)
+### `class_body` (`packages/typescript/grammar.sittir.ts:471`)
 
 ```text
 				// class_body: repeat-choice arm 3 is the upstream inline
@@ -304,7 +304,7 @@ polymorph helpers need to appear explicitly.
 				// arm 3 → arm-seq pos 1 (terminator choice).
 ```
 
-### `1/0/1/1` (`packages/typescript/overrides.ts:480`)
+### `1/0/1/1` (`packages/typescript/grammar.sittir.ts:480`)
 
 ```text
 					// Arm 1 (method_signature) terminates with the unnamed mixed
@@ -317,7 +317,7 @@ polymorph helpers need to appear explicitly.
 					// name as arm 3 (the expression_list/pattern_list precedent).
 ```
 
-### `abstract_class_declaration` (`packages/typescript/overrides.ts:492`)
+### `abstract_class_declaration` (`packages/typescript/grammar.sittir.ts:492`)
 
 ```text
 				// abstract_class_declaration: wrap pos 5 (class_heritage choice).
@@ -325,7 +325,7 @@ polymorph helpers need to appear explicitly.
 				// base-grammar field and the original override clobbered it.
 ```
 
-### `abstract_method_signature` (`packages/typescript/overrides.ts:497`)
+### `abstract_method_signature` (`packages/typescript/grammar.sittir.ts:497`)
 
 ```text
 				// abstract_method_signature: seq(
@@ -342,7 +342,7 @@ polymorph helpers need to appear explicitly.
 				// a required literal at pos 1, not optional.
 ```
 
-### `ambient_declaration` (`packages/typescript/overrides.ts:514`)
+### `ambient_declaration` (`packages/typescript/grammar.sittir.ts:514`)
 
 ```text
 				// ambient_declaration: split the heterogeneous declaration choice
@@ -350,37 +350,37 @@ polymorph helpers need to appear explicitly.
 				// `declare module.<name>: <type>;`, or direct declaration).
 ```
 
-### `array_type` (`packages/typescript/overrides.ts:524`)
+### `array_type` (`packages/typescript/grammar.sittir.ts:524`)
 
 ```text
 				// array_type: 1 field(s)
 ```
 
-### `as_expression` (`packages/typescript/overrides.ts:527`)
+### `as_expression` (`packages/typescript/grammar.sittir.ts:527`)
 
 ```text
 				// as_expression: 2 field(s)
 ```
 
-### `asserts_annotation` (`packages/typescript/overrides.ts:532`)
+### `asserts_annotation` (`packages/typescript/grammar.sittir.ts:532`)
 
 ```text
 				// asserts_annotation: 1 field(s)
 ```
 
-### `await_expression` (`packages/typescript/overrides.ts:537`)
+### `await_expression` (`packages/typescript/grammar.sittir.ts:537`)
 
 ```text
 				// await_expression: 1 field(s)
 ```
 
-### `class` (`packages/typescript/overrides.ts:540`)
+### `class` (`packages/typescript/grammar.sittir.ts:540`)
 
 ```text
 				// class: wrap pos 4 (class_heritage choice). pos 0 is decorator repeat.
 ```
 
-### `class_declaration` (`packages/typescript/overrides.ts:543`)
+### `class_declaration` (`packages/typescript/grammar.sittir.ts:543`)
 
 ```text
 				// class_declaration: wrap pos 4 (class_heritage choice) and pos 6
@@ -388,19 +388,19 @@ polymorph helpers need to appear explicitly.
 				// alone so the base 'decorator' field survives.
 ```
 
-### `computed_property_name` (`packages/typescript/overrides.ts:550`)
+### `computed_property_name` (`packages/typescript/grammar.sittir.ts:550`)
 
 ```text
 				// computed_property_name: 1 field(s)
 ```
 
-### `else_clause` (`packages/typescript/overrides.ts:553`)
+### `else_clause` (`packages/typescript/grammar.sittir.ts:553`)
 
 ```text
 				// else_clause: 1 field(s)
 ```
 
-### `enum_body` (`packages/typescript/overrides.ts:556`)
+### `enum_body` (`packages/typescript/grammar.sittir.ts:556`)
 
 ```text
 				// enum_body — NO override field. Upstream each member is already
@@ -417,79 +417,79 @@ polymorph helpers need to appear explicitly.
 				// change for the uncorpused mixed-enum case; left as a latent gap.)
 ```
 
-### `flow_maybe_type` (`packages/typescript/overrides.ts:570`)
+### `flow_maybe_type` (`packages/typescript/grammar.sittir.ts:570`)
 
 ```text
 				// flow_maybe_type: 1 field(s)
 ```
 
-### `import_alias` (`packages/typescript/overrides.ts:573`)
+### `import_alias` (`packages/typescript/grammar.sittir.ts:573`)
 
 ```text
 				// import_alias: 3 field(s)
 ```
 
-### `import_attribute` (`packages/typescript/overrides.ts:580`)
+### `import_attribute` (`packages/typescript/grammar.sittir.ts:580`)
 
 ```text
 				// import_attribute: 1 field(s)
 ```
 
-### `import_require_clause` (`packages/typescript/overrides.ts:585`)
+### `import_require_clause` (`packages/typescript/grammar.sittir.ts:585`)
 
 ```text
 				// import_require_clause: 1 field(s)
 ```
 
-### `import_statement` (`packages/typescript/overrides.ts:588`)
+### `import_statement` (`packages/typescript/grammar.sittir.ts:588`)
 
 ```text
 				// import_statement: 4 field(s)
 ```
 
-### `index_type_query` (`packages/typescript/overrides.ts:595`)
+### `index_type_query` (`packages/typescript/grammar.sittir.ts:595`)
 
 ```text
 				// index_type_query: 1 field(s)
 ```
 
-### `infer_type` (`packages/typescript/overrides.ts:598`)
+### `infer_type` (`packages/typescript/grammar.sittir.ts:598`)
 
 ```text
 				// infer_type: 2 field(s)
 ```
 
-### `instantiation_expression` (`packages/typescript/overrides.ts:604`)
+### `instantiation_expression` (`packages/typescript/grammar.sittir.ts:604`)
 
 ```text
 				// instantiation_expression: 1 field(s)
 ```
 
-### `interface_declaration` (`packages/typescript/overrides.ts:607`)
+### `interface_declaration` (`packages/typescript/grammar.sittir.ts:607`)
 
 ```text
 				// interface_declaration: 1 field(s)
 ```
 
-### `intersection_type` (`packages/typescript/overrides.ts:610`)
+### `intersection_type` (`packages/typescript/grammar.sittir.ts:610`)
 
 ```text
 				// intersection_type: 2 field(s)
 ```
 
-### `lexical_declaration` (`packages/typescript/overrides.ts:616`)
+### `lexical_declaration` (`packages/typescript/grammar.sittir.ts:616`)
 
 ```text
 				// lexical_declaration: 2 field(s)
 ```
 
-### `lookup_type` (`packages/typescript/overrides.ts:622`)
+### `lookup_type` (`packages/typescript/grammar.sittir.ts:622`)
 
 ```text
 				// lookup_type: 2 field(s)
 ```
 
-### `method_definition` (`packages/typescript/overrides.ts:627`)
+### `method_definition` (`packages/typescript/grammar.sittir.ts:627`)
 
 ```text
 				// method_definition: prec.left(seq(
@@ -522,7 +522,7 @@ polymorph helpers need to appear explicitly.
 				// the FIELD wrapper for the parse tree.
 ```
 
-### `method_signature` (`packages/typescript/overrides.ts:663`)
+### `method_signature` (`packages/typescript/grammar.sittir.ts:663`)
 
 ```text
 				// method_signature: seq(
@@ -543,25 +543,25 @@ polymorph helpers need to appear explicitly.
 				// (`?` not identifier-shaped).
 ```
 
-### `namespace_import` (`packages/typescript/overrides.ts:685`)
+### `namespace_import` (`packages/typescript/grammar.sittir.ts:685`)
 
 ```text
 				// namespace_import: 1 field(s)
 ```
 
-### `non_null_expression` (`packages/typescript/overrides.ts:688`)
+### `non_null_expression` (`packages/typescript/grammar.sittir.ts:688`)
 
 ```text
 				// non_null_expression: 1 field(s)
 ```
 
-### `program` (`packages/typescript/overrides.ts:693`)
+### `program` (`packages/typescript/grammar.sittir.ts:693`)
 
 ```text
 				// program: 2 field(s)
 ```
 
-### `property_signature` (`packages/typescript/overrides.ts:699`)
+### `property_signature` (`packages/typescript/grammar.sittir.ts:699`)
 
 ```text
 				// property_signature: seq(
@@ -578,55 +578,55 @@ polymorph helpers need to appear explicitly.
 				// Kept entries: optional_marker (`?` non-identifier).
 ```
 
-### `satisfies_expression` (`packages/typescript/overrides.ts:716`)
+### `satisfies_expression` (`packages/typescript/grammar.sittir.ts:716`)
 
 ```text
 				// satisfies_expression: 2 field(s)
 ```
 
-### `spread_element` (`packages/typescript/overrides.ts:721`)
+### `spread_element` (`packages/typescript/grammar.sittir.ts:721`)
 
 ```text
 				// spread_element: 1 field(s)
 ```
 
-### `statement_block` (`packages/typescript/overrides.ts:724`)
+### `statement_block` (`packages/typescript/grammar.sittir.ts:724`)
 
 ```text
 				// statement_block: 2 field(s)
 ```
 
-### `type_assertion` (`packages/typescript/overrides.ts:730`)
+### `type_assertion` (`packages/typescript/grammar.sittir.ts:730`)
 
 ```text
 				// type_assertion: 2 field(s)
 ```
 
-### `type_predicate_annotation` (`packages/typescript/overrides.ts:733`)
+### `type_predicate_annotation` (`packages/typescript/grammar.sittir.ts:733`)
 
 ```text
 				// type_predicate_annotation: 1 field(s)
 ```
 
-### `union_type` (`packages/typescript/overrides.ts:738`)
+### `union_type` (`packages/typescript/grammar.sittir.ts:738`)
 
 ```text
 				// union_type: 2 field(s)
 ```
 
-### `variable_declaration` (`packages/typescript/overrides.ts:744`)
+### `variable_declaration` (`packages/typescript/grammar.sittir.ts:744`)
 
 ```text
 				// variable_declaration: 2 field(s)
 ```
 
-### `yield_expression` (`packages/typescript/overrides.ts:750`)
+### `yield_expression` (`packages/typescript/grammar.sittir.ts:750`)
 
 ```text
 				// yield_expression: 1 field(s)
 ```
 
-### `expression_statement` (`packages/typescript/overrides.ts:755`)
+### `expression_statement` (`packages/typescript/grammar.sittir.ts:755`)
 
 ```text
 				// expression_statement: label the trailing `_semicolon` so the
@@ -636,7 +636,7 @@ polymorph helpers need to appear explicitly.
 				// and the `;` drops. Grammar: `seq(_expressions, _semicolon)`.
 ```
 
-### `type_alias_declaration` (`packages/typescript/overrides.ts:764`)
+### `type_alias_declaration` (`packages/typescript/grammar.sittir.ts:764`)
 
 ```text
 				// type_alias_declaration: same semicolon-drop pattern. Grammar:
@@ -644,20 +644,20 @@ polymorph helpers need to appear explicitly.
 				// field('value'), _semicolon)` — label pos 5.
 ```
 
-### `return_statement` (`packages/typescript/overrides.ts:771`)
+### `return_statement` (`packages/typescript/grammar.sittir.ts:771`)
 
 ```text
 				// return_statement: seq('return', optional(_expressions),
 				// _semicolon). Label pos 2.
 ```
 
-### `throw_statement` (`packages/typescript/overrides.ts:777`)
+### `throw_statement` (`packages/typescript/grammar.sittir.ts:777`)
 
 ```text
 				// throw_statement: seq('throw', _expressions, _semicolon).
 ```
 
-### `function_signature` (`packages/typescript/overrides.ts:782`)
+### `function_signature` (`packages/typescript/grammar.sittir.ts:782`)
 
 ```text
 				// function_signature: seq(
@@ -673,7 +673,7 @@ polymorph helpers need to appear explicitly.
 				// Model the real read surface instead of forcing a missing slot.
 ```
 
-### JS-inherited function family — `async_marker` promotion (`packages/typescript/overrides.ts`)
+### JS-inherited function family — `async_marker` promotion (`packages/typescript/grammar.sittir.ts`)
 
 `function_expression`, `function_declaration`, `generator_function`, and
 `generator_function_declaration` all start with `optional('async')` at
@@ -699,7 +699,7 @@ The same rule governs the other standalone optional-punct markers
 `construct_signature`, `type_parameter`, `for_in_statement`, and
 `_parameter_name` are covered by enrich.
 
-### `function_expression` (`packages/typescript/overrides.ts:826`)
+### `function_expression` (`packages/typescript/grammar.sittir.ts:826`)
 
 ```text
 				// function_expression: prec('literal', seq(
@@ -707,7 +707,7 @@ The same rule governs the other standalone optional-punct markers
 				//   $._call_signature, field('body', $.statement_block)))
 ```
 
-### `function_declaration` (`packages/typescript/overrides.ts:833`)
+### `function_declaration` (`packages/typescript/grammar.sittir.ts:833`)
 
 ```text
 				// function_declaration: prec.right('declaration', seq(
@@ -716,7 +716,7 @@ The same rule governs the other standalone optional-punct markers
 				//   optional($._automatic_semicolon)))
 ```
 
-### `generator_function` (`packages/typescript/overrides.ts:841`)
+### `generator_function` (`packages/typescript/grammar.sittir.ts:841`)
 
 ```text
 				// generator_function: prec('literal', seq(
@@ -725,7 +725,7 @@ The same rule governs the other standalone optional-punct markers
 				//   $._call_signature, field('body', $.statement_block)))
 ```
 
-### `generator_function_declaration` (`packages/typescript/overrides.ts:849`)
+### `generator_function_declaration` (`packages/typescript/grammar.sittir.ts:849`)
 
 ```text
 				// generator_function_declaration: prec.right('declaration', seq(
@@ -734,26 +734,26 @@ The same rule governs the other standalone optional-punct markers
 				//   optional($._automatic_semicolon)))
 ```
 
-### `break_statement` (`packages/typescript/overrides.ts:861`)
+### `break_statement` (`packages/typescript/grammar.sittir.ts:861`)
 
 ```text
 				// break_statement: seq('break', field('label', optional(...)),
 				// _semicolon). Label the trailing `;` at pos 2.
 ```
 
-### `continue_statement` (`packages/typescript/overrides.ts:867`)
+### `continue_statement` (`packages/typescript/grammar.sittir.ts:867`)
 
 ```text
 				// continue_statement: seq('continue', field('label', ...), _semicolon).
 ```
 
-### `debugger_statement` (`packages/typescript/overrides.ts:872`)
+### `debugger_statement` (`packages/typescript/grammar.sittir.ts:872`)
 
 ```text
 				// debugger_statement: seq('debugger', _semicolon).
 ```
 
-### `do_statement` (`packages/typescript/overrides.ts:877`)
+### `do_statement` (`packages/typescript/grammar.sittir.ts:877`)
 
 ```text
 				// do_statement: seq('do', field('body'), 'while', field('condition'),
@@ -761,7 +761,7 @@ The same rule governs the other standalone optional-punct markers
 				// a semicolon field lets the template emit it when present.
 ```
 
-### `constructor_type` (`packages/typescript/overrides.ts:892`)
+### `constructor_type` (`packages/typescript/grammar.sittir.ts:892`)
 
 ```text
 				// constructor_type: prec.left(seq(
@@ -770,7 +770,7 @@ The same rule governs the other standalone optional-punct markers
 				// prec.left wrapper hides the seq from enrich; hand-promoted here.
 ```
 
-### `enum_declaration` (`packages/typescript/overrides.ts:906`)
+### `enum_declaration` (`packages/typescript/grammar.sittir.ts:906`)
 
 ```text
 				// enum_declaration: seq(
@@ -781,7 +781,7 @@ The same rule governs the other standalone optional-punct markers
 				// content shape diverges).
 ```
 
-### `function_signature` (`packages/typescript/overrides.ts:916`)
+### `function_signature` (`packages/typescript/grammar.sittir.ts:916`)
 
 ```text
 				// function_signature: seq(optional('async'), 'function',
@@ -796,7 +796,7 @@ The same rule governs the other standalone optional-punct markers
 				// field-keyed and the terminator classifies as the same enum.
 ```
 
-### `assignment_expression` (`packages/typescript/overrides.ts:930`)
+### `assignment_expression` (`packages/typescript/grammar.sittir.ts:930`)
 
 ```text
 				// assignment_expression: prec.right('assign', seq(
@@ -805,7 +805,7 @@ The same rule governs the other standalone optional-punct markers
 				// prec.right wrapper hides the seq from enrich; hand-promoted here.
 ```
 
-### `export_specifier` (`packages/typescript/overrides.ts:938`)
+### `export_specifier` (`packages/typescript/grammar.sittir.ts:938`)
 
 ```text
 				// export_specifier: seq(
@@ -819,7 +819,7 @@ The same rule governs the other standalone optional-punct markers
 				// strip the FIELD around the bare-STRING choice arms.
 ```
 
-### `import_specifier` (`packages/typescript/overrides.ts:951`)
+### `import_specifier` (`packages/typescript/grammar.sittir.ts:951`)
 
 ```text
 				// import_specifier: seq(
@@ -828,7 +828,7 @@ The same rule governs the other standalone optional-punct markers
 				// Same caveat as export_specifier above re: choice-of-strings.
 ```
 
-### `public_field_definition` (`packages/typescript/overrides.ts:959`)
+### `public_field_definition` (`packages/typescript/grammar.sittir.ts:959`)
 
 ```text
 				// public_field_definition: seq(
@@ -857,7 +857,7 @@ The same rule governs the other standalone optional-punct markers
 				// position 1 by one segment.
 ```
 
-### `_type_query_subscript_expression` — deferred promotion (`packages/typescript/overrides.ts`)
+### `_type_query_subscript_expression` — deferred promotion (`packages/typescript/grammar.sittir.ts`)
 
 Tree-sitter aliases this hidden rule to the public `subscript_expression` kind
 via `alias($._type_query_subscript_expression, $.subscript_expression)`, and
@@ -871,7 +871,7 @@ validator flags the unreferenced `optional_chain_marker` field. Promoting at
 the alias source needs either coalescing both field names downstream, or
 overriding the canonical rule too.
 
-### `parenthesized_expression` (`packages/typescript/overrides.ts:1001`)
+### `parenthesized_expression` (`packages/typescript/grammar.sittir.ts:1001`)
 
 ```text
 				// parenthesized_expression: variant() adoption. Shape is
@@ -882,7 +882,7 @@ overriding the canonical rule too.
 				// Path 1/N targets choice alt N inside the seq's member 1.
 ```
 
-### `export_statement` (`packages/typescript/overrides.ts:1012`)
+### `export_statement` (`packages/typescript/grammar.sittir.ts:1012`)
 
 ```text
 				// export_statement: variant() adoption on all four branches.
@@ -909,7 +909,7 @@ overriding the canonical rule too.
 				// opportunity but not a blocking bug.
 ```
 
-### `call_expression` (`packages/typescript/overrides.ts:1041`)
+### `call_expression` (`packages/typescript/grammar.sittir.ts:1041`)
 
 ```text
 				// call_expression: variant() adoption on three per-prec
@@ -919,7 +919,7 @@ overriding the canonical rule too.
 				// base grammar's conflict resolution carries through.
 ```
 
-### `string` (`packages/typescript/overrides.ts:1052`)
+### `string` (`packages/typescript/grammar.sittir.ts:1052`)
 
 ```text
 				// string: variant() adoption on the quote-style choice. Base
@@ -953,13 +953,13 @@ overriding the canonical rule too.
 				// lexical ambiguity for tree-sitter to resolve at runtime.
 ```
 
-### `update_expression` (`packages/typescript/overrides.ts:1086`)
+### `update_expression` (`packages/typescript/grammar.sittir.ts:1086`)
 
 ```text
 				// update_expression: postfix vs prefix `++` / `--`.
 ```
 
-### `visibleExternals` (`packages/typescript/overrides.ts:1092`)
+### `visibleExternals` (`packages/typescript/grammar.sittir.ts:1092`)
 
 ```text
 			// Sittir-side rule bodies for external scanner symbols. The grammar's
@@ -979,14 +979,14 @@ overriding the canonical rule too.
 			// on re-parse.
 ```
 
-### `expectTestFailures` (`packages/typescript/overrides.ts:1111`)
+### `expectTestFailures` (`packages/typescript/grammar.sittir.ts:1111`)
 
 ```text
 			// Known-failing generated nodes.test.ts kinds — tracked defects, not
 			// silenced mysteries. Remove an entry + regen when its issue is fixed.
 ```
 
-### `expectDiagnostics` (`packages/typescript/overrides.ts:1120`)
+### `expectDiagnostics` (`packages/typescript/grammar.sittir.ts:1120`)
 
 ```text
 			// PR 3 (2026-07-21 union-slot design): `_export_statement_group2` is an
@@ -1004,7 +1004,7 @@ overriding the canonical rule too.
 			// tracked there rather than implemented here.
 ```
 
-### `_reserved_identifier` (`packages/typescript/overrides.ts:1137`)
+### `_reserved_identifier` (`packages/typescript/grammar.sittir.ts:1137`)
 
 ```text
 				// _reserved_identifier — upstream shape is
@@ -1027,7 +1027,7 @@ overriding the canonical rule too.
 				// so this stays correct if upstream's own list ever changes).
 ```
 
-### `jsx_namespace_name` (`packages/typescript/overrides.ts:1194`)
+### `jsx_namespace_name` (`packages/typescript/grammar.sittir.ts:1194`)
 
 ```text
 				// optional_parameter: position 0 is the hidden `_parameter_name`
@@ -1046,7 +1046,7 @@ overriding the canonical rule too.
 				// `name`) — two genuinely distinct positions, not a union.
 ```
 
-### `public_field_definition` (`packages/typescript/overrides.ts:1224`)
+### `public_field_definition` (`packages/typescript/grammar.sittir.ts:1224`)
 
 ```text
 				// public_field_definition: pos 0 is decorator repeat (real base
@@ -1056,7 +1056,7 @@ overriding the canonical rule too.
 				// nested choices and don't have stable raw positions.
 ```
 
-### `required_parameter` (`packages/typescript/overrides.ts:1231`)
+### `required_parameter` (`packages/typescript/grammar.sittir.ts:1231`)
 
 ```text
 				// required_parameter: same shape as optional_parameter modulo the
@@ -1064,7 +1064,7 @@ overriding the canonical rule too.
 				// let the walker inline the `_parameter_name` helper's fields.
 ```
 
-### `object_type` (`packages/typescript/overrides.ts:1236`)
+### `object_type` (`packages/typescript/grammar.sittir.ts:1236`)
 
 ```text
 				// object_type — full manual rewrite (deviates from author intent).
@@ -1102,7 +1102,7 @@ overriding the canonical rule too.
 				// auto-stamped, restoring `ir.objectType.curly()` / `.flow()`.
 ```
 
-### `object_type_content` (`packages/typescript/overrides.ts:1282`)
+### `object_type_content` (`packages/typescript/grammar.sittir.ts:1282`)
 
 ```text
 				// object_type_content — a single visible rule whose separator is
@@ -1122,7 +1122,7 @@ overriding the canonical rule too.
 				// see the design doc).
 ```
 
-### `interface_body` — no override possible (`packages/typescript/overrides.ts`)
+### `interface_body` — no override possible (`packages/typescript/grammar.sittir.ts`)
 
 `interface_body` is a tree-sitter alias target of `object_type`; it has no base
 rule of its own, so there is nothing an override callback can refine. It

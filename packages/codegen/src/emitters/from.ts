@@ -41,7 +41,7 @@ import {
 } from './shared.ts';
 import { fieldElementType, childElementType, kindEnumTextMapExpr } from './factories.ts';
 import { buildSeparatedListContentSlot, collectSeparatorCandidateKindNames } from './wrap.ts';
-import { isNodeRef, isTerminalValue, storageKindIdByNameOf, storageKindOfRef } from '../compiler/model/node-map.ts';
+import { isNodeRef, storageKindIdByNameOf, storageKindOfRef } from '../compiler/model/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/model/node-map.ts';
 import type { CodegenEmitter } from './emitter.ts';
 

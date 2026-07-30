@@ -198,7 +198,7 @@ export async function runRoundtripProbes(grammar: string, templatesDir: string, 
 			nodeMap,
 			roundTripFailures: diagnostics
 		});
-		// overrides.suggested.ts lives at the package root, next to overrides.ts —
+		// overrides.suggested.ts lives at the package root, next to grammar.sittir.ts —
 		// i.e. the parent of the templates directory. `undefined` means the
 		// emitter has nothing to suggest (emission disabled) — skip the write
 		// and clear any stale file from a prior run.

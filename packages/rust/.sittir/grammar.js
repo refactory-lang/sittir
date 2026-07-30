@@ -27,12 +27,12 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// packages/rust/overrides.ts
-var overrides_exports = {};
-__export(overrides_exports, {
-  default: () => overrides_default
+// packages/rust/grammar.sittir.ts
+var grammar_sittir_exports = {};
+__export(grammar_sittir_exports, {
+  default: () => grammar_sittir_default
 });
-module.exports = __toCommonJS(overrides_exports);
+module.exports = __toCommonJS(grammar_sittir_exports);
 
 // packages/rust/base.ts
 var import_grammar = __toESM(require("tree-sitter-rust/grammar.js"), 1);
@@ -1144,6 +1144,7 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
   for (let i = 0; i < MAX_ITERATIONS; i++) {
     const before = r;
     r = applySymbolToField(ruleName, r, supertypeNames);
+    r = applyChoiceArmFieldWrap(ruleName, r, supertypeNames, rulesBag);
     r = applyOptionalKeyword(ruleName, r, kwRules, wordMatcher);
     if (r === before) {
       converged = true;
@@ -1196,6 +1197,80 @@ function extractSupertypeNames(base2, hasWrapper) {
   }
   if (Array.isArray(supertypes)) return harvestSupertypeNames(supertypes);
   return /* @__PURE__ */ new Set();
+}
+function isAnonymousLiteralShapedRule(name, rulesBag, seen) {
+  if (seen.has(name)) return false;
+  seen.add(name);
+  const rule = rulesBag[name];
+  if (!rule) return true;
+  return isAnonymousLiteralShapedContent(rule, rulesBag, seen);
+}
+function isAnonymousLiteralShapedContent(rule, rulesBag, seen) {
+  if (isStringType(rule.type) || rule.type === "PATTERN") return true;
+  if (isChoiceType(rule.type)) {
+    const members = rule.members;
+    return members.every((m) => isAnonymousLiteralShapedContent(m, rulesBag, seen));
+  }
+  if (isSymbolType(rule.type) && typeof rule.name === "string") {
+    return isAnonymousLiteralShapedRule(rule.name, rulesBag, seen);
+  }
+  return false;
+}
+function applyChoiceArmFieldWrap(ruleName, rule, supertypeNames, rulesBag) {
+  if (ruleName.startsWith("_")) return rule;
+  let cursor = rule;
+  const precStack = [];
+  while (isPrecWrapper(cursor)) {
+    precStack.push(cursor);
+    cursor = cursor.content;
+  }
+  if (!isChoiceType(cursor.type)) return rule;
+  const armMembers = cursor.members;
+  let anyArmChanged = false;
+  const newArms = armMembers.map((arm) => {
+    let armCursor = arm;
+    const armPrecStack = [];
+    while (isPrecWrapper(armCursor)) {
+      armPrecStack.push(armCursor);
+      armCursor = armCursor.content;
+    }
+    if (!isSeqType(armCursor.type)) return arm;
+    const seqMembers = armCursor.members;
+    const existing = collectFieldNamesRuntime(armCursor);
+    let armChanged = false;
+    const newSeqMembers = seqMembers.map((m) => {
+      const t = detectSymbolTarget(m);
+      if (!t) return m;
+      if (!isBareShapeTarget(m, t)) return m;
+      let fieldName = t.name;
+      if (t.name.startsWith("_")) {
+        const eligible = supertypeNames.has(t.name) || isAnonymousLiteralShapedRule(t.name, rulesBag, /* @__PURE__ */ new Set());
+        if (!eligible) return m;
+        fieldName = t.name.slice(1);
+      }
+      if (existing.has(fieldName)) {
+        reportSkip("choice-arm-field", ruleName, `field '${fieldName}' already exists`);
+        return m;
+      }
+      existing.add(fieldName);
+      armChanged = true;
+      const fieldNode = makeField(fieldName, t.symbolRule);
+      return t.wrap(fieldNode);
+    });
+    if (!armChanged) return arm;
+    anyArmChanged = true;
+    let rebuiltArm = { ...armCursor, members: newSeqMembers };
+    for (let i = armPrecStack.length - 1; i >= 0; i--) {
+      rebuiltArm = { ...armPrecStack[i], content: rebuiltArm };
+    }
+    return rebuiltArm;
+  });
+  if (!anyArmChanged) return rule;
+  let result = { ...cursor, members: newArms };
+  for (let i = precStack.length - 1; i >= 0; i--) {
+    result = { ...precStack[i], content: result };
+  }
+  return result;
 }
 function extractWordName(word) {
   if (typeof word === "string") return word;
@@ -2137,7 +2212,14 @@ function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRule
         toRetarget.set(candidate, strippedName);
         anyActed = true;
       }
-      if (anyActed) diagnostics.push({ ...diagnostic, severity: "info" });
+      if (anyActed) {
+        diagnostics.push({
+          ...diagnostic,
+          severity: "info",
+          message: `${diagnostic.message} Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.`,
+          proposal: "Already resolved by enrich() \u2014 no action needed."
+        });
+      }
     }
   }
   if (toDrop.size === 0 && toRetarget.size === 0) return { rule, diagnostics: [] };
@@ -2500,7 +2582,23 @@ function applyFlatPatches(original, patches) {
     return applyFlatPatchesToSeq(original, patches);
   }
   if (isChoiceType(t)) {
-    const newMembers = membersOf2(original).map((m) => applyFlatPatches(m, patches));
+    const members = membersOf2(original);
+    let anyApplied = false;
+    const newMembers = members.map((m) => {
+      try {
+        const patched = applyFlatPatches(m, patches);
+        anyApplied = true;
+        return patched;
+      } catch (e) {
+        if (e instanceof ApplyPathSkip) return m;
+        throw e;
+      }
+    });
+    if (!anyApplied) {
+      throw new Error(
+        `transform: flat-positional key(s) [${Object.keys(patches).join(", ")}] matched no choice arm out of ${members.length} \u2014 each arm was tried independently and none had all the target positions. Flat keys patch a position uniformly across every arm; they can't select ONE specific arm (a plain digit key on a choice does not mean "arm N"). To replace one specific arm, use path syntax instead (e.g. '${Object.keys(patches)[0]}' as a path segment, or '-1' for the last arm).`
+      );
+    }
     return reconstructContainer(original, newMembers);
   }
   if (isPrecWrapper(original)) {
@@ -2526,7 +2624,9 @@ function applyFlatPatchesToSeq(original, patches) {
     }
     const index = Number(key);
     if (index >= members.length) {
-      throw new Error(`transform: index ${index} out of bounds in ${original.type} of length ${members.length}`);
+      throw new ApplyPathSkip(
+        `transform: index ${index} out of bounds in ${original.type} of length ${members.length}`
+      );
     }
     members[index] = resolvePatch(patch, members[index]);
   }
@@ -3365,9 +3465,9 @@ var prec = globalThis.prec;
 var token = globalThis.token;
 var grammar = globalThis.grammar;
 
-// packages/rust/overrides.ts
+// packages/rust/grammar.sittir.ts
 var enrichedBase = enrich(base_default);
-var overrides_default = grammar(
+var grammar_sittir_default = grammar(
   enrichedBase,
   wire(
     {
@@ -3454,8 +3554,17 @@ var overrides_default = grammar(
         use_bounds: {
           2: field2("bounds")
         },
+        // last_match_arm: seq(repeat(attrs)[0], field('pattern')[1], '=>'[2],
+        //   field('value')[3], optional(',')[4]).
+        // Pos 4's optional trailing comma is an unnamed anonymous token — never
+        // captured, so a source last-arm's trailing ',' was silently dropped on
+        // render (3 corpus AST mismatches: [pattern,"=>",value,","] vs
+        // [pattern,"=>",value]). Field it ('4/0' = the optional's content) so
+        // read captures and render preserves it; same marker-promotion pattern
+        // as async_block's move_marker.
         last_match_arm: {
-          0: field2("attributes")
+          "0": field2("attributes"),
+          "4/0": field2("comma")
         },
         match_block: {
           "1/0/1": field2("last_arm")
@@ -3517,6 +3626,17 @@ var overrides_default = grammar(
           "1/0": variant("const"),
           "1/1": variant("mut")
         },
+        // string_literal deliberately NOT fielded: its opening token is
+        // `alias(/[bc]?"/, '"')` — a PATTERN carrying the b"/c" byte-/C-string
+        // prefixes, aliased to the constant '"'. Field-promoting it was tried
+        // (2026-07-28) and does NOT recover the prefix: slot classification
+        // keys off the ALIAS display string, minting a fixed `dquote`
+        // TERMINAL whose wire encoding is a presence boolean, so the render
+        // still emits the static '"' and c"..." renders as "..." (1 corpus
+        // AST mismatch). Needs a classification fix (alias-of-PATTERN whose
+        // regex isn't the alias string is content-bearing) — see specs/026
+        // progress notes.
+        // raw_string_literal: 3 field(s)
         raw_string_literal: {
           0: field2("raw_string_literal_start"),
           1: field2("string_content"),
@@ -3695,6 +3815,18 @@ var overrides_default = grammar(
           "-1": alias2($._wildcard_pattern, $.wildcard_pattern)
         }),
         _wildcard_pattern: ($) => "_",
+        // range_expression's bare-'..' arm (RangeFull, e.g. `let x = ..;`) is
+        // the only choice arm that isn't a seq — arms 0-2 get auto-synthesized
+        // group kinds (range_expression_binary/postfix/prefix), but a bare
+        // literal produces an ANONYMOUS/unnamed token, so the wrap layer's
+        // `content` accessor never finds a value ("singular slot 'content' on
+        // 'range_expression' requires one value; got undefined"). Same fix as
+        // `_wildcard_pattern` just above: alias the literal into its own real,
+        // named node.
+        range_expression: ($, original) => transform2(original, {
+          "-1": alias2($._range_expression_bare, $.range_expression_bare)
+        }),
+        _range_expression_bare: ($) => "..",
         _reference_expression_raw_const: ($) => seq("raw", "const"),
         _reference_expression_raw_mut: ($) => seq("raw", $.mutable_specifier),
         reference_expression: ($) => prec(

@@ -14,7 +14,7 @@ These emerged from concrete decisions in `docs/adr/`. When an ADR says "we did X
 
 **Prompt shape**: "What external tool or consumer will also read this artifact? What shape does it require? Does my design produce that shape, or am I assuming a translation layer I haven't built yet?"
 
-**Seen in**: ADR-0001 (tree-sitter must read overrides.ts), ADR-0004 (post-transform grammar is tree-sitter input), ADR-0005 (transpile to grammar.js because tree-sitter expects JS).
+**Seen in**: ADR-0001 (tree-sitter must read grammar.sittir.ts), ADR-0004 (post-transform grammar is tree-sitter input), ADR-0005 (transpile to grammar.js because tree-sitter expects JS).
 
 ---
 
@@ -62,7 +62,7 @@ These emerged from concrete decisions in `docs/adr/`. When an ADR says "we did X
 
 **Prompt shape**: "Is this information already expressed somewhere else? If yes, can I read it from there instead of restating it? If I must restate, what enforces the agreement?"
 
-**Seen in**: ADR-0001 (overrides.ts is the only grammar-extension file), ADR-0003 (role declarations live next to their symbols, not in a sidecar).
+**Seen in**: ADR-0001 (grammar.sittir.ts is the only grammar-extension file), ADR-0003 (role declarations live next to their symbols, not in a sidecar).
 
 ---
 

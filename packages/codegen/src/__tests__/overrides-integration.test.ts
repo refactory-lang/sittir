@@ -5,13 +5,13 @@ import { resolveOverridesPath, resolveGrammarJsPath } from '../compiler/resolve-
 import { existsSync } from 'node:fs';
 
 describe('Overrides integration', () => {
-	it('evaluates Python with overrides.ts', async () => {
+	it('evaluates Python with grammar.sittir.ts', async () => {
 		const overridesPath = resolveOverridesPath('python');
 		console.log('Overrides path:', overridesPath);
 		console.log('Exists:', existsSync(overridesPath));
 
 		if (!existsSync(overridesPath)) {
-			console.log('SKIP: no overrides.ts');
+			console.log('SKIP: no grammar.sittir.ts');
 			return;
 		}
 

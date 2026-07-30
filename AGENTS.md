@@ -254,7 +254,7 @@ hand-edit generated output to work around a problem:
 
 If one of these files is wrong, the fix lives in `packages/codegen/src/`
 (walker, emitter, link, assemble, evaluate — per the pipeline above) or
-in the relevant `packages/<lang>/overrides.ts`. Regenerate via the
+in the relevant `packages/<lang>/grammar.sittir.ts`. Regenerate via the
 commands in "Commands" above. MEMORY.md's `feedback_no_hand_edit_yaml`
 captures the long-form rationale.
 
@@ -273,7 +273,7 @@ disagree with your code, the fix is either:
 Allowed exceptions:
 
 - `as const` — legitimate narrowing, not a cast.
-- `@ts-nocheck` on `overrides.ts` files — the tree-sitter grammar.js
+- `@ts-nocheck` on `grammar.sittir.ts` files — the tree-sitter grammar.js
   shape is untyped by design; we bypass intentionally there.
 - `as unknown as Foo` inside `dsl/` cross-runtime shape bridging where
   `runtime-shapes.ts` guards narrow dual-case shapes. Annotate why in a
@@ -307,13 +307,13 @@ rules (see `rules/`) to enumerate candidates (JSDoc-above-function,
 3+ line in-method comment blocks) programmatically rather than
 re-deriving the search by hand each wave.
 
-**Same convention applies to `overrides.ts`** (rust/typescript/python),
+**Same convention applies to `grammar.sittir.ts`** (rust/typescript/python),
 targeting a per-grammar glossary instead: `docs/<lang>-overrides-glossary.md`
 (mirrors `compiler-phase-glossary.md`'s format — one entry per rule,
 conflict, or override, keyed by name). Long rationale comments explaining
 why a specific override/conflict/precedence exists move there; source
 keeps only a short one-line pointer or nothing. The in-method → extract-
-to-helper half of this rule applies only where `overrides.ts` actually
+to-helper half of this rule applies only where `grammar.sittir.ts` actually
 has extractable function bodies (most of the file is object/array
 literals passed as config, not imperative code) — don't force an
 extraction that doesn't fit the shape.
@@ -330,7 +330,7 @@ surface for CST / NodeData / render / reparse inspection.
 
 When render/codegen logic is trying to guess grammar intent, stop and
 ask whether the structure should be made explicit in
-`packages/<lang>/overrides.ts` instead. Favor explicit grammar
+`packages/<lang>/grammar.sittir.ts` instead. Favor explicit grammar
 overrides over heuristics that reverse-engineer intent from parse
 output. Every heuristic removed is one less wrong-answer site.
 
@@ -372,7 +372,7 @@ Use `{% elif %}` and keep separators **inside** the conditional.
 `enrich()` operates on post-evaluation `Rule` objects. It updates the
 TS-side codegen surface (`types.ts`, factories, templates, wrap) but it
 does **not** modify the parser surface that tree-sitter generates from
-rule callbacks. Do not retire parser-relevant `overrides.ts` entries
+rule callbacks. Do not retire parser-relevant `grammar.sittir.ts` entries
 just because enrich now produces the same field name on the TS side —
 the parser still needs the pre-generation patch.
 
@@ -385,9 +385,9 @@ still needs the bare token, add `_kw_<name>` to the grammar's
 while folding the hidden rule away in LR-table generation. Prefer this
 over compensating with extra precedence or conflict noise.
 
-### `overrides.ts` recurring patterns
+### `grammar.sittir.ts` recurring patterns
 
-Before editing `packages/<lang>/overrides.ts`, keep these defaults in
+Before editing `packages/<lang>/grammar.sittir.ts`, keep these defaults in
 mind:
 
 - use `variant()` for choice arms with different literals / delimiters /
@@ -422,9 +422,9 @@ Aggregate totals can hide kinds falling out of the validation universe.
 - TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + `@sittir/core`, `@sittir/types`, `@sittir/codegen`; tree-sitter grammars (grammar.json + node-types.json) (004-yaml-render-templates)
 - File system (per-rule `.jinja` templates at `packages/{lang}/templates/<kind>.jinja`, read at render time by Nunjucks) (011-jinja-template-migration, supersedes 004's YAML templates)
 - TypeScript 6.0.2 (ESM, `.ts` extensions in imports) + None at runtime (zero-dep). Dev: vitest, oxlint, oxfmt, tsgo (005-five-phase-compiler)
-- File system (grammar.js input, overrides.ts, generated .ts/.yaml output) (005-five-phase-compiler)
+- File system (grammar.js input, grammar.sittir.ts, generated .ts/.yaml output) (005-five-phase-compiler)
 - TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + `@sittir/core`, `@sittir/types`, `@sittir/codegen`; tree-sitter grammar packages (`tree-sitter-rust`, `tree-sitter-typescript`, `tree-sitter-python`); tree-sitter CLI for CI validation (006-override-dsl-enrich)
-- File system — `packages/<lang>/overrides.ts` (hand-authored source), `packages/<lang>/.sittir/grammar.js` (transpiled output, gitignored), generated `.ts`/`.yaml` artifacts (006-override-dsl-enrich)
+- File system — `packages/<lang>/grammar.sittir.ts` (hand-authored source), `packages/<lang>/.sittir/grammar.js` (transpiled output, gitignored), generated `.ts`/`.yaml` artifacts (006-override-dsl-enrich)
 - TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + tree-sitter-cli ^0.26.7, web-tree-sitter ^0.26.7, esbuild (transpile bridge from spec 006), Emscripten (emsdk, for WASM compilation) (007-override-compiled-parser)
 - File system — `.sittir/` directory per grammar for transpiled grammar.js, compiled parser WASM, parser.c, node-types.json (007-override-compiled-parser)
 - TypeScript 6.0.2 (ESM, `.ts` extensions in imports) + `@sittir/core`, `@sittir/types`, `@sittir/codegen` (workspace packages — no new deps) (008-factory-ergonomic-cleanup)

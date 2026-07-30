@@ -205,7 +205,7 @@ interface ResolveSlotDrillConfig {
 	readonly elemType: string;
 	readonly required: boolean;
 	readonly nonEmpty?: boolean;
-	readonly alias?: readonly [string, string];
+	readonly alias?: readonly (readonly [string, string])[];
 	readonly storageInfo?: ReturnType<typeof resolveFieldStorageInfo>;
 	readonly allowedKinds?: readonly string[];
 	readonly candidateStorageKeys?: readonly string[];
@@ -279,17 +279,17 @@ function resolveSlotDrillExprs(
 		};
 	}
 	if (config.alias) {
-		const [fromType, toType] = config.alias;
+		const pairsExpr = `[${config.alias.map(([from, to]) => `{ from: ${JSON.stringify(from)}, to: ${JSON.stringify(to)} }`).join(', ')}]`;
 		if (slot.arity === 'many') {
 			return {
 				storeExpr: normalizedStoreExpr,
-				accessorBody: `return drillAsAll<${config.elemType}>(this.${slot.storageKey}, tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)})`
+				accessorBody: `return drillAsAll<${config.elemType}>(this.${slot.storageKey}, tree, ${pairsExpr})`
 			};
 		}
 		const returnType = config.required ? config.elemType : `${config.elemType} | undefined`;
 		return {
 			storeExpr: normalizedStoreExpr,
-			accessorBody: `return drillAs<${returnType}>(this.${slot.storageKey}, tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)})`
+			accessorBody: `return drillAs<${returnType}>(this.${slot.storageKey}, tree, ${pairsExpr})`
 		};
 	}
 	return {
@@ -307,6 +307,7 @@ interface UnnamedChildrenSlotConfig {
 	readonly required: boolean;
 	readonly nonEmpty: boolean;
 	readonly allowedKinds: readonly string[];
+	readonly alias?: readonly (readonly [string, string])[];
 }
 
 function resolveUnnamedSlotConfig(
@@ -323,7 +324,8 @@ function resolveUnnamedSlotConfig(
 		elemType: childElementType({ children }, nodeMap),
 		required: cardinality.required,
 		nonEmpty: cardinality.nonEmpty,
-		allowedKinds: [...new Set(children.flatMap((child) => deriveChildrenKinds(child, nodeMap)))]
+		allowedKinds: [...new Set(children.flatMap((child) => deriveChildrenKinds(child, nodeMap)))],
+		alias: resolveChildrenAliasRewrite(children, nodeMap)
 	};
 }
 
@@ -331,10 +333,49 @@ function bitflagTextsExpr(texts: readonly string[]): string {
 	return `[${texts.map((text) => JSON.stringify(text)).join(', ')}]`;
 }
 
-function resolveSlotAliasRewrite(slot: AssembledNonterminal): readonly [string, string] | undefined {
-	const aliases = Object.entries(aliasTargetToSourceMapOf(slot));
-	if (aliases.length !== 1) return undefined;
-	return aliases[0];
+function resolveSlotAliasRewrite(
+	slot: AssembledNonterminal,
+	nodeMap: NodeMap
+): readonly (readonly [string, string])[] | undefined {
+	// A slot can have MULTIPLE simultaneously-aliased candidate kinds — e.g. a
+	// polymorphic choice where several (or all) arms each alias onto their own
+	// shared canonical name (type_query's content: subscript_expression,
+	// member_expression, call_expression, and instantiation_expression are ALL
+	// aliased). Return every pair — drillAs/drillAsAll try each in turn and at
+	// most one can match a given node's actual (single) real kind.
+	const pairs: (readonly [string, string])[] = Object.entries(aliasTargetToSourceMapOf(slot));
+	// A slot can ALSO reference a hidden rule (e.g. `_tuple_type_member`,
+	// `type`) that's itself modeled as a supertype-like node (an inlined
+	// hidden choice, same mechanism tree-sitter's own `supertype` nodes use)
+	// rather than expanding directly into concrete arm NodeRefs — the slot's
+	// OWN .values then contains one opaque unresolved-ref whose parseKind
+	// equals its storageKind (no divergence visible at THIS level). The real
+	// per-arm alias info lives one level down, in that node's
+	// `subtypeParseNames` map (storageKind -> parseKind), which already
+	// records exactly which arms diverge (e.g. `tuple_parameter` ->
+	// `required_parameter`). Expand through it.
+	for (const parseKind of valueParseKindsOf(slot)) {
+		const normalized = parseKind.startsWith('_') ? parseKind.slice(1) : parseKind;
+		const node = nodeMap.nodes.get(parseKind) ?? nodeMap.nodes.get(normalized);
+		if (node?.modelType !== 'supertype') continue;
+		for (const [storageKind, parseName] of Object.entries(node.subtypeParseNames ?? {})) {
+			if (storageKind !== parseName) pairs.push([parseName, storageKind]);
+		}
+	}
+	return pairs.length > 0 ? pairs : undefined;
+}
+
+// Same alias-rewrite need as resolveSlotAliasRewrite, but for the unnamed
+// "children" ($other) slot, which is built from potentially several
+// AssembledNonterminal children rather than one field — merge pairs across
+// all of them (e.g. `_tuple_type_member`'s `required_parameter`/
+// `optional_parameter` arms each need their own rewrite).
+function resolveChildrenAliasRewrite(
+	children: readonly AssembledNonterminal[],
+	nodeMap: NodeMap
+): readonly (readonly [string, string])[] | undefined {
+	const pairs = children.flatMap((child) => resolveSlotAliasRewrite(child, nodeMap) ?? []);
+	return pairs.length > 0 ? pairs : undefined;
 }
 
 function collectConcreteStorageKeys(slot: AssembledNonterminal, nodeMap: NodeMap): readonly string[] | undefined {
@@ -680,6 +721,7 @@ function emitSeparatedListWrap(
 		required: node.nonEmpty,
 		nonEmpty: node.nonEmpty,
 		storageInfo,
+		alias: resolveSlotAliasRewrite(contentSlot, nodeMap),
 		candidateStorageKeys: candidateStorageKeys.length > 0 ? candidateStorageKeys : undefined,
 		// Multi-field kinds (see doc comment above) route each field through
 		// emitFieldStorageLines/emitFieldAccessorLines separately — `_content`
@@ -802,7 +844,7 @@ function emitFieldStorageLines(
 	const collidedReclaimKinds = computeCollidedReclaimKinds(fields, ownerKind, nodeMap, kindEntries);
 	for (const f of fields) {
 		// f IS AssembledNonterminal — read getters directly (DRY: single source for arity/storageKey).
-		const aliasRewrite = resolveSlotAliasRewrite(f);
+		const aliasRewrite = resolveSlotAliasRewrite(f, nodeMap);
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
 		const allowedKinds =
@@ -851,7 +893,7 @@ function emitFieldAccessorLines(
 ): void {
 	for (const f of fields) {
 		const propName = f.propertyName;
-		const aliasRewrite = resolveSlotAliasRewrite(f);
+		const aliasRewrite = resolveSlotAliasRewrite(f, nodeMap);
 		const storageInfo = resolveFieldStorageInfo(f, nodeMap, kindEntries);
 		const hasSeparatorMetadata = f.values.some((value) => value.separator !== undefined);
 		const allowedKinds =
@@ -936,7 +978,8 @@ function emitFieldCarryingWrap(
 			elemType: childrenConfig.elemType,
 			required: childrenConfig.required,
 			nonEmpty: childrenConfig.nonEmpty,
-			allowedKinds: childrenConfig.allowedKinds
+			allowedKinds: childrenConfig.allowedKinds,
+			alias: childrenConfig.alias
 		});
 		lines.push(`    $other: ${storeExpr},`);
 	}
@@ -951,7 +994,8 @@ function emitFieldCarryingWrap(
 			elemType: childrenConfig.elemType,
 			required: childrenConfig.required,
 			nonEmpty: childrenConfig.nonEmpty,
-			allowedKinds: childrenConfig.allowedKinds
+			allowedKinds: childrenConfig.allowedKinds,
+			alias: childrenConfig.alias
 		});
 		lines.push(`    children() { ${accessorBody}; },`);
 	}
@@ -1369,13 +1413,16 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			...(usesDrillAs
 				? [
 						'// drillAs — field-site unalias for grammar `alias($.source, $.target)`',
-						'// declarations. The `asType` override rewrites $type from',
-						"// tree-sitter's alias target back to the codegen-canonical source",
-						'// name between the read and the wrap. Conditional rewrite: only',
-						"// fires when the child's actual $type matches `fromType`; mixed-",
-						'// union fields (e.g. Path | BracketedType | GenericTypeWithTurbofish)',
-						'// pass through unchanged when the child arrived as a non-alias kind.',
-						'function drillAs<T>(entry: unknown, tree: TreeHandle, fromType: string, toType: string): T {',
+						'// declarations. `pairs` rewrites $type from one of possibly several',
+						"// tree-sitter alias targets back to the codegen-canonical source",
+						'// name between the read and the wrap (a polymorphic slot can have',
+						'// several simultaneously-aliased candidate kinds — e.g. every arm',
+						'// of a `choice()` aliasing onto its own shared canonical name).',
+						'// Conditional rewrite: only fires when the child\'s actual $type',
+						'// matches one pair\'s `from` (at most one can, since a given node',
+						'// has exactly one real kind); mixed-union fields pass through',
+						'// unchanged when the child arrived as a non-alias kind.',
+						'function drillAs<T>(entry: unknown, tree: TreeHandle, pairs: readonly { from: string; to: string }[]): T {',
 						'  if (!entry) return undefined as unknown as T;',
 						'  const e = entry as _NodeData;',
 						'  if (e.$nodeHandle == null || e.$childIndex == null) {',
@@ -1384,25 +1431,24 @@ export class WrapEmitter implements CodegenEmitter<string> {
 						'        ? KIND_NAMES.get(e.$type as never) ?? String(e.$type)',
 						'        : (e.$type as unknown as string);',
 						'      const hiddenCurrentType = currentType.startsWith("_") ? currentType.slice(1) : undefined;',
+						'      const match = pairs.find(p => currentType === p.from || hiddenCurrentType === p.from);',
+						'      if (!match) return e as unknown as T;',
 						'      let resolvedToId: number | undefined;',
-						'      try { resolvedToId = kindIdFromName(toType) as unknown as number; } catch { resolvedToId = undefined; }',
-						'      const next = currentType === fromType || hiddenCurrentType === fromType',
-						'        ? ({ ...e, $type: (resolvedToId ?? toType) as unknown as number } as _NodeData)',
-						'        : e;',
-						'      return next as unknown as T;',
+						'      try { resolvedToId = kindIdFromName(match.to) as unknown as number; } catch { resolvedToId = undefined; }',
+						'      return ({ ...e, $type: (resolvedToId ?? match.to) as unknown as number } as _NodeData) as unknown as T;',
 						'    }',
 						'    return entry as unknown as T;',
 						'  }',
-						'  return readTreeNode(tree, e.$nodeHandle, e.$childIndex, { from: fromType, to: toType }) as unknown as T;',
+						'  return readTreeNode(tree, e.$nodeHandle, e.$childIndex, pairs) as unknown as T;',
 						'}'
 					]
 				: []),
 			...(usesDrillAsAll
 				? [
-						'function drillAsAll<T>(entries: unknown, tree: TreeHandle, fromType: string, toType: string): T[] {',
+						'function drillAsAll<T>(entries: unknown, tree: TreeHandle, pairs: readonly { from: string; to: string }[]): T[] {',
 						'  if (!entries) return [];',
 						'  const arr = Array.isArray(entries) ? entries : [entries];',
-						'  return arr.map(e => drillAs<T>(e, tree, fromType, toType));',
+						'  return arr.map(e => drillAs<T>(e, tree, pairs));',
 						'}'
 					]
 				: []),
@@ -1744,10 +1790,14 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		lines.push('  tree: TreeHandle,');
 		lines.push('  handle?: number,');
 		lines.push('  childIndex?: number,');
-		lines.push('  asType?: { from: string; to: string },');
+		lines.push('  asType?: readonly { from: string; to: string }[],');
 		lines.push('): unknown {');
 		lines.push('  let data = readNode(tree, handle, childIndex);');
-		lines.push('  // asType comparison must handle both string and numeric $type.');
+		lines.push('  // asType comparison must handle both string and numeric $type. A');
+		lines.push('  // slot can have MULTIPLE simultaneously-aliased candidate kinds');
+		lines.push('  // (e.g. a polymorphic choice where every arm aliases onto a');
+		lines.push('  // shared canonical name) — try each pair in turn; at most one');
+		lines.push("  // can match the node's actual (single) real kind.");
 		lines.push('  // When numeric (native path), convert to kind-name first for comparison.');
 		if (this.#kindEntries) {
 			lines.push('  if (asType) {');
@@ -1755,17 +1805,23 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			lines.push('      ? KIND_NAMES.get(data.$type as never) ?? String(data.$type)');
 			lines.push('      : (data.$type as unknown as string);');
 			lines.push('    const hiddenCurrentType = currentType.startsWith("_") ? currentType.slice(1) : undefined;');
-			lines.push('    if (currentType === asType.from || hiddenCurrentType === asType.from) {');
+			lines.push(
+				'    const match = asType.find(p => currentType === p.from || hiddenCurrentType === p.from);'
+			);
+			lines.push('    if (match) {');
 			lines.push('      let resolvedAsTypeId: number | undefined;');
 			lines.push(
-				'      try { resolvedAsTypeId = kindIdFromName(asType.to) as unknown as number; } catch { resolvedAsTypeId = undefined; }'
+				'      try { resolvedAsTypeId = kindIdFromName(match.to) as unknown as number; } catch { resolvedAsTypeId = undefined; }'
 			);
-			lines.push('      data = { ...data, $type: (resolvedAsTypeId ?? asType.to) as unknown as number };');
+			lines.push('      data = { ...data, $type: (resolvedAsTypeId ?? match.to) as unknown as number };');
 			lines.push('    }');
 			lines.push('  }');
 		} else {
-			lines.push('  if (asType && (data.$type as unknown as string) === asType.from) {');
-			lines.push('    data = { ...data, $type: asType.to as unknown as number };');
+			lines.push('  if (asType) {');
+			lines.push('    const match = asType.find(p => (data.$type as unknown as string) === p.from);');
+			lines.push('    if (match) {');
+			lines.push('      data = { ...data, $type: match.to as unknown as number };');
+			lines.push('    }');
 			lines.push('  }');
 		}
 		lines.push('  return wrapNode(data, tree);');

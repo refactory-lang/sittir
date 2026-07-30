@@ -334,6 +334,38 @@ describe('transform() — object form (flat positional, backward-compat)', () =>
 	});
 });
 
+describe('transform() — flat positional keys on a CHOICE with heterogeneous arms', () => {
+	it('patches every arm that has the position, leaves shorter arms untouched', () => {
+		const rule = choice(seq(sym('a'), sym('b')), seq(sym('c')));
+		const result = transform(rule, { 1: fld('right', sym('b')) });
+		const r = result as any;
+		expect(r.members[0].members[1]).toMatchObject({ type: 'FIELD', name: 'right' });
+		expect(r.members[1].members[0]).toMatchObject({ type: 'SYMBOL', name: 'c' });
+	});
+
+	it('throws a clear error when NO arm has the target position (not a misleading out-of-bounds crash on an unrelated arm)', () => {
+		// Neither arm has position 5 — this used to crash blaming whichever
+		// arm the recursion happened to visit first ("index 5 out of bounds
+		// in SEQ of length 2"), not the real problem (flat keys can't select
+		// one specific choice arm).
+		const rule = choice(seq(sym('a'), sym('b')), seq(sym('c'), sym('d')));
+		expect(() => transform(rule, { 5: fld('x', sym('y')) })).toThrow(/matched no choice arm/);
+	});
+
+	it('a bare literal/symbol arm is silently left unchanged, not treated as a match', () => {
+		const rule = choice(seq(sym('a'), sym('b')), str('_'));
+		const result = transform(rule, { 1: fld('right', sym('b')) });
+		const r = result as any;
+		expect(r.members[0].members[1]).toMatchObject({ type: 'FIELD', name: 'right' });
+		expect(r.members[1]).toMatchObject({ type: 'STRING', value: '_' });
+	});
+
+	it('still throws immediately when the SEQ is the direct top-level target (no enclosing choice to fall back to)', () => {
+		const rule = seq(sym('a'), sym('b'));
+		expect(() => transform(rule, { 5: fld('x', sym('y')) })).toThrow(/out of bounds/);
+	});
+});
+
 describe('applyPath() — kind-match + negative index', () => {
 	it('kind-match wraps every occurrence recursively (new (name) syntax)', async () => {
 		const { field: oneArgField } = await import('../primitives/field.ts');

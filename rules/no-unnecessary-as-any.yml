@@ -9,9 +9,9 @@ message: >
   before flagging as slop.
 files:
   - packages/codegen/src/**
-  - packages/rust/overrides.ts
-  - packages/typescript/overrides.ts
-  - packages/python/overrides.ts
+  - packages/rust/grammar.sittir.ts
+  - packages/typescript/grammar.sittir.ts
+  - packages/python/grammar.sittir.ts
   - packages/rust/base.ts
 ignores:
   - "**/__tests__/**"

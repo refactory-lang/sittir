@@ -2235,7 +2235,7 @@ export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config)
 }
 
 export function buildRangeExpression(
-	child: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix
+	child: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..'
 ) {
 	const _content = child;
 	return withMethods(
@@ -2246,7 +2246,7 @@ export function buildRangeExpression(
 				$named: true as const,
 				_content,
 				$with: {
-					$child: (v: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix) =>
+					$child: (v: T.RangeExpressionBinary | T.RangeExpressionPostfix | T.RangeExpressionPrefix | '..') =>
 						buildRangeExpression(v)
 				}
 			},
@@ -2475,8 +2475,8 @@ export function buildTypeCastExpression(config: T.TypeCastExpression.Config) {
 	);
 }
 
-export function buildReturnExpression(child?: T.Expression) {
-	const _expression = child;
+export function buildReturnExpression(expression?: T.ReturnExpression.Config['expression']) {
+	const _expression = expression;
 	return withMethods(
 		withAccessors(
 			{
@@ -2484,7 +2484,9 @@ export function buildReturnExpression(child?: T.Expression) {
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
-				$with: { $child: (v: T.Expression) => buildReturnExpression(v) }
+				$with: {
+					expression: (value?: T.ReturnExpression.Config['expression']) => buildReturnExpression(value)
+				}
 			},
 			{
 				expression: () => _expression
@@ -2494,8 +2496,8 @@ export function buildReturnExpression(child?: T.Expression) {
 	);
 }
 
-export function buildYieldExpression(child?: T.Expression) {
-	const _expression = child;
+export function buildYieldExpression(expression?: T.YieldExpression.Config['expression']) {
+	const _expression = expression;
 	return withMethods(
 		withAccessors(
 			{
@@ -2503,7 +2505,9 @@ export function buildYieldExpression(child?: T.Expression) {
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
-				$with: { $child: (v: T.Expression) => buildYieldExpression(v) }
+				$with: {
+					expression: (value?: T.YieldExpression.Config['expression']) => buildYieldExpression(value)
+				}
 			},
 			{
 				expression: () => _expression
@@ -2936,6 +2940,7 @@ export function buildLastMatchArm(config: T.LastMatchArm.Config) {
 	const _attributes = config.attributes ?? [];
 	const _pattern = config.pattern;
 	const _value = config.value;
+	const _comma = coerceBooleanKeywordStorage(config.comma);
 	return withMethods(
 		withAccessors(
 			{
@@ -2945,17 +2950,21 @@ export function buildLastMatchArm(config: T.LastMatchArm.Config) {
 				_attributes,
 				_pattern,
 				_value,
+				_comma,
 				$with: {
 					attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) =>
 						buildLastMatchArm({ ...config, attributes: values }),
 					pattern: (value: T.MatchPattern) => buildLastMatchArm({ ...config, pattern: value }),
-					value: (value: T.Expression) => buildLastMatchArm({ ...config, value: value })
+					value: (value: T.Expression) => buildLastMatchArm({ ...config, value: value }),
+					comma: (value?: NonNullable<Parameters<typeof buildLastMatchArm>[0]>['comma']) =>
+						buildLastMatchArm({ ...config, comma: value })
 				}
 			},
 			{
 				attributes: () => _attributes,
 				pattern: () => _pattern,
-				value: () => _value
+				value: () => _value,
+				comma: () => _comma
 			}
 		),
 		methodsEngine
@@ -5121,8 +5130,8 @@ export function buildVisibilityModifierPub(config: Partial<T.VisibilityModifierP
 	);
 }
 
-export function buildExpressionStatementWithSemi(child: T.Expression) {
-	const _expression = child;
+export function buildExpressionStatementWithSemi(config: T.ExpressionStatementWithSemi.Config) {
+	const _expression = config.expression;
 	return withMethods(
 		withAccessors(
 			{
@@ -5130,7 +5139,9 @@ export function buildExpressionStatementWithSemi(child: T.Expression) {
 				$source: 2 as const,
 				$named: true as const,
 				_expression,
-				$with: { $child: (v: T.Expression) => buildExpressionStatementWithSemi(v) }
+				$with: {
+					expression: (value: T.Expression) => buildExpressionStatementWithSemi({ ...config, expression: value })
+				}
 			},
 			{
 				expression: () => _expression
@@ -5913,7 +5924,7 @@ export type FluentKindMap = {
 	_struct_item_brace: T.StructItemBrace;
 	_struct_item_tuple: T.StructItemTuple;
 	_visibility_modifier_pub: T.VisibilityModifierPub;
-	_expression_statement_with_semi: FluentNode<'_expression_statement_with_semi', T.ExpressionStatementWithSemi.Config>;
+	_expression_statement_with_semi: T.ExpressionStatementWithSemi;
 	_match_arm_with_comma: T.MatchArmWithComma;
 	_line_comment_regular_dslash: T.LineCommentRegularDslash;
 	_line_comment_doc: T.LineCommentDoc;

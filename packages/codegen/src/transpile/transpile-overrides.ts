@@ -2,13 +2,13 @@
  * transpile/transpile-overrides.ts — TypeScript → CommonJS bridge for
  * tree-sitter CLI consumption.
  *
- * Sittir's pipeline loads `packages/<lang>/overrides.ts` directly via
+ * Sittir's pipeline loads `packages/<lang>/grammar.sittir.ts` directly via
  * `import()` (handled by tsx/Node's TS loader). Tree-sitter's CLI
  * cannot — it expects a CommonJS `grammar.js` file that calls the
  * baseline DSL functions (`grammar`, `seq`, `choice`, ...) which it
  * provides as globals via its own runtime.
  *
- * This transpile step bridges the two: it reads `overrides.ts`, runs
+ * This transpile step bridges the two: it reads `grammar.sittir.ts`, runs
  * esbuild in CJS+bundle mode, and writes
  * `packages/<lang>/.sittir/grammar.js`. The `.sittir/` directory is
  * gitignored — it's a build artifact, not source.
@@ -44,12 +44,12 @@ export interface TranspileResult {
 
 export async function transpileOverrides(opts: TranspileOptions): Promise<TranspileResult> {
 	const root = opts.packagesRoot ?? packagesRoot;
-	const inputPath = join(root, opts.grammar, 'overrides.ts');
+	const inputPath = join(root, opts.grammar, 'grammar.sittir.ts');
 	const outputDir = join(root, opts.grammar, '.sittir');
 	const outputPath = join(outputDir, 'grammar.js');
 
 	if (!existsSync(inputPath)) {
-		throw new Error(`transpileOverrides: no overrides.ts at ${inputPath}`);
+		throw new Error(`transpileOverrides: no grammar.sittir.ts at ${inputPath}`);
 	}
 
 	mkdirSync(outputDir, { recursive: true });
@@ -156,7 +156,7 @@ export async function transpileOverrides(opts: TranspileOptions): Promise<Transp
 	// esbuild's metafile uses path strings (relative to cwd) as keys
 	// and doesn't guarantee that the entry point is the first entry —
 	// synthesized helpers and re-exports can precede it.
-	const inputKey = Object.keys(meta.inputs).find((k) => k.endsWith('overrides.ts'));
+	const inputKey = Object.keys(meta.inputs).find((k) => k.endsWith('grammar.sittir.ts'));
 	const outputKey = Object.keys(meta.outputs).find((k) => k.endsWith('grammar.js'));
 	const inputMeta = inputKey ? meta.inputs[inputKey] : undefined;
 	const outputMeta = outputKey ? meta.outputs[outputKey] : undefined;

@@ -1,6 +1,6 @@
 # Python Overrides Glossary
 
-Per-rule reference for `packages/python/overrides.ts`: every named rule
+Per-rule reference for `packages/python/grammar.sittir.ts`: every named rule
 override, conflict, and precedence declaration significant enough to need
 explanation. Each entry covers what the rule/conflict addresses, why it's
 needed (the specific ambiguity or shape mismatch), and what would break if
@@ -8,11 +8,11 @@ it were removed.
 
 See [AGENTS.md § Wave-style decomposition before commits](../AGENTS.md) for
 the convention this glossary exists to serve — long rationale comments in
-`overrides.ts` move here instead of living inline.
+`grammar.sittir.ts` move here instead of living inline.
 
 ---
 
-### `enrichedBase` (`packages/python/overrides.ts:14`)
+### `enrichedBase` (`packages/python/grammar.sittir.ts:14`)
 
 `enrich(base)` is bound once and the SAME enriched grammar is handed to both
 `grammar()` and `wire()` (matching rust and typescript). `wire`'s
@@ -21,7 +21,7 @@ enrich-hoisted-clause inline registration — must see the post-enrich shape;
 enriching twice, or wiring against the raw base, desynchronises them from the
 grammar tree-sitter actually compiles.
 
-### `externals` (`packages/python/overrides.ts:20`)
+### `externals` (`packages/python/grammar.sittir.ts:20`)
 
 Binds structural-whitespace roles onto python's existing base externals.
 `role(symbolRef, name)` records the binding on a per-grammar accumulator that
@@ -33,7 +33,7 @@ The callback returns `prev` directly rather than spreading it alongside the
 list, so a spread would emit every token twice and the generated `parser.c`
 would fail to compile.
 
-### `conflicts` (`packages/python/overrides.ts:26`)
+### `conflicts` (`packages/python/grammar.sittir.ts:26`)
 
 Every entry declares a GLR fork that only became necessary because a variant
 arm was lifted out of a rule tree-sitter had previously merged into a single
@@ -52,7 +52,7 @@ LR(1) state.
   `expression_list`; this is the fork tree-sitter itself suggests for the
   yield/tuple overlap.
 
-### `inline` (`packages/python/overrides.ts:69`)
+### `inline` (`packages/python/grammar.sittir.ts:69`)
 
 ```text
 			// EXPERIMENT (see `_except_clause_as` in `rules`). The real fix is enrich
@@ -62,7 +62,7 @@ LR(1) state.
 			// needed — the `as` is inline in `_except_clause_as` at parse time).
 ```
 
-### `visibleExternals` (`packages/python/overrides.ts:75`)
+### `visibleExternals` (`packages/python/grammar.sittir.ts:75`)
 
 ```text
 			// _newline is python's statement-terminator EXTERNAL (the scanner
@@ -74,7 +74,7 @@ LR(1) state.
 			// automatic_semicolon pattern applied to newline-as-syntax.
 ```
 
-### `expression_statement` (`packages/python/overrides.ts:88`)
+### `expression_statement` (`packages/python/grammar.sittir.ts:88`)
 
 ```text
 				// expression_statement: bare expression / comma-separated tuple
@@ -90,7 +90,7 @@ LR(1) state.
 				// continuation only the tuple form accepts.
 ```
 
-### `with_clause` (`packages/python/overrides.ts:103`)
+### `with_clause` (`packages/python/grammar.sittir.ts:103`)
 
 ```text
 				// with_clause: bare (`a, b, c`) vs parenthesized (`(a, b, c)`).
@@ -98,7 +98,7 @@ LR(1) state.
 				// '(' ... ')'. Split per variant so each owns its template.
 ```
 
-### `_match_block` (`packages/python/overrides.ts:111`)
+### `_match_block` (`packages/python/grammar.sittir.ts:111`)
 
 ```text
 				// _match_block: base rule is
@@ -112,7 +112,7 @@ LR(1) state.
 				// symbol-like (alias + symbol) — canonical.
 ```
 
-### `dict_pattern` (`packages/python/overrides.ts:122`)
+### `dict_pattern` (`packages/python/grammar.sittir.ts:122`)
 
 ```text
 				// dict_pattern: base rule is
@@ -130,7 +130,7 @@ LR(1) state.
 				// descent in applyPath.
 ```
 
-### `_simple_pattern` (`packages/python/overrides.ts:137`)
+### `_simple_pattern` (`packages/python/grammar.sittir.ts:137`)
 
 ```text
 				// _simple_pattern: base rule is
@@ -165,7 +165,7 @@ LR(1) state.
 				// The visible variant kind is `simple_pattern_negative`.
 ```
 
-### `except_clause` (`packages/python/overrides.ts:169`)
+### `except_clause` (`packages/python/grammar.sittir.ts:169`)
 
 ```text
 				// except_clause: base rule is
@@ -186,7 +186,7 @@ LR(1) state.
 				// `conflicts`.
 ```
 
-### `comparison_operator_comparator` (`packages/python/overrides.ts:188`)
+### `comparison_operator_comparator` (`packages/python/grammar.sittir.ts:188`)
 
 ```text
 				// comparison_operator: each comparator pair is
@@ -202,7 +202,7 @@ LR(1) state.
 				// intrinsic; the first groups: registration in python overrides.
 ```
 
-### `argument_list` (`packages/python/overrides.ts:221`)
+### `argument_list` (`packages/python/grammar.sittir.ts:221`)
 
 ```text
 				// argument_list: name the naked args choice (was an unresolvable
@@ -210,7 +210,7 @@ LR(1) state.
 				// parenthesized_expression | keyword_argument
 ```
 
-### `expression_list` (`packages/python/overrides.ts:228`)
+### `expression_list` (`packages/python/grammar.sittir.ts:228`)
 
 ```text
 				// expression_list / pattern_list: `seq(member, choice(',',
@@ -225,7 +225,7 @@ LR(1) state.
 				// headless group renders via its captured leading flank.
 ```
 
-### `complex_pattern` (`packages/python/overrides.ts:256`)
+### `complex_pattern` (`packages/python/grammar.sittir.ts:256`)
 
 ```text
 				// complex_pattern: real/imaginary (0,1) + the `+`/`-` operator enum (2)
@@ -234,13 +234,13 @@ LR(1) state.
 				// sanctioned `content` (base-rule field, complex_pattern is not a polymorph).
 ```
 
-### `dictionary` (`packages/python/overrides.ts:284`)
+### `dictionary` (`packages/python/grammar.sittir.ts:284`)
 
 ```text
 				// dictionary: name the naked entries choice (pair | dictionary_splat)
 ```
 
-### `exec_statement` (`packages/python/overrides.ts:289`)
+### `exec_statement` (`packages/python/grammar.sittir.ts:289`)
 
 ```text
 				// exec_statement: grammar is seq('exec', code, optional(seq('in', exprs)))
@@ -250,7 +250,7 @@ LR(1) state.
 				// whole clause (`in` + exprs) renders only when present.
 ```
 
-### `for_in_clause` (`packages/python/overrides.ts:128`)
+### `for_in_clause` (`packages/python/grammar.sittir.ts:128`)
 
 `for_in_clause` is `prec.left(seq(optional('async'), 'for', …))`. The
 `prec.left` wrapper hides the seq from enrich's auto-promotion walker, so the
@@ -261,7 +261,7 @@ LR(1) state.
 auto-promotes them as `field('async_marker', SYMBOL(_kw_async_marker))` and
 they need no entry in `transforms`.
 
-### `splat_pattern` (`packages/python/overrides.ts:343`)
+### `splat_pattern` (`packages/python/grammar.sittir.ts:343`)
 
 ```text
 				// splat_pattern: base is `seq(choice('*', '**'), choice($.identifier, '_'))`.
@@ -277,7 +277,7 @@ they need no entry in `transforms`.
 				// same convention as `argument_list`'s naked-choice `1: field(...)` above.
 ```
 
-### `type_alias_statement` (`packages/python/overrides.ts:369`)
+### `type_alias_statement` (`packages/python/grammar.sittir.ts:369`)
 
 ```text
 				// type_alias_statement: wrap base position 0 (bare 'type' literal)
@@ -289,7 +289,7 @@ they need no entry in `transforms`.
 				// assumes the wrapped form.
 ```
 
-### `_except_clause_as` (`packages/python/overrides.ts:397`)
+### `_except_clause_as` (`packages/python/grammar.sittir.ts:397`)
 
 ```text
 				// EXPERIMENT (manual; real fix = enrich should auto-hoist an inline-safe
@@ -302,7 +302,7 @@ they need no entry in `transforms`.
 				// inline+gates the `as`.
 ```
 
-### `parameters` (`packages/python/overrides.ts:408`)
+### `parameters` (`packages/python/grammar.sittir.ts:408`)
 
 ```text
 				// Track B (separator-as-slot follow-up): _collection_elements/
@@ -385,7 +385,7 @@ they need no entry in `transforms`.
 				// paper over.
 ```
 
-### `lambda_parameters` (`packages/python/overrides.ts:487`)
+### `lambda_parameters` (`packages/python/grammar.sittir.ts:487`)
 
 ```text
 				// `lambda_parameters`'s base definition is the bare symbol
@@ -402,7 +402,7 @@ they need no entry in `transforms`.
 				// to resolve through the same alias.)
 ```
 
-### `set` (`packages/python/overrides.ts:503`)
+### `set` (`packages/python/grammar.sittir.ts:503`)
 
 ```text
 				// `set`'s reference is MANDATORY (base: `seq('{', $._collection_elements, '}')`,
@@ -411,7 +411,7 @@ they need no entry in `transforms`.
 				// mint the kind; this site just resolves through the same alias.
 ```
 
-### `case_tuple_pattern` (`packages/python/overrides.ts:510`)
+### `case_tuple_pattern` (`packages/python/grammar.sittir.ts:510`)
 
 ```text
 				// Case-context tuple/list pattern split (KNOWN_ISSUES "two-rules-one-
@@ -442,7 +442,7 @@ they need no entry in `transforms`.
 				// this body and addresses the negative-literal arm by index.
 ```
 
-### `print_statement_group1` (`packages/python/overrides.ts:541`)
+### `print_statement_group1` (`packages/python/grammar.sittir.ts:541`)
 
 ```text
 				// print_statement: base is a bare `choice(prec(1, seq('print',

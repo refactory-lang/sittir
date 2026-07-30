@@ -2191,16 +2191,17 @@
   {
     "type": "expression_statement_with_semi",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "_expression",
-          "named": true
-        }
-      ]
+    "fields": {
+      "expression": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -3365,6 +3366,16 @@
           }
         ]
       },
+      "comma": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": ",",
+            "named": false
+          }
+        ]
+      },
       "pattern": {
         "multiple": false,
         "required": true,
@@ -4322,8 +4333,12 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
+        {
+          "type": "range_expression_bare",
+          "named": true
+        },
         {
           "type": "range_expression_binary",
           "named": true
@@ -4338,6 +4353,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "range_expression_bare",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "range_expression_binary",
@@ -4765,16 +4785,17 @@
   {
     "type": "return_expression",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "_expression",
-          "named": true
-        }
-      ]
+    "fields": {
+      "expression": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -6872,16 +6893,17 @@
   {
     "type": "yield_expression",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "_expression",
-          "named": true
-        }
-      ]
+    "fields": {
+      "expression": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {

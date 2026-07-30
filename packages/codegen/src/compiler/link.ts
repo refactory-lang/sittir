@@ -41,8 +41,7 @@ import type {
 	Repeat1Rule,
 	SymbolRule,
 	StringRule,
-	RepeatRule,
-	AliasRule
+	RepeatRule
 } from '../types/rule.ts';
 import {
 	isSeq,
@@ -330,8 +329,6 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	// verification this re-keying was checked against.
 	applyOverridePolymorphs(rules, derivations);
 
-	hoistIndentIntoRepeat(rules);
-	annotateBlockBearerFields(rules);
 	collectRepeatedShapes(rules, derivations.repeatedShapes);
 	const complexAliasTargetHidden = deriveComplexAliasTargetHidden(raw.rules);
 	const topLevelAliasBodies = collectTopLevelAliasBodies(
@@ -668,7 +665,7 @@ function extractAliasedFromName(content: Rule<'link'>, supertypes: ReadonlySet<s
 
 // tagVariants / isStructurallyHomogeneousChoice removed.
 // Auto-wrapping heuristics replaced by explicit user-declared
-// `variant()` / `polymorphs:` in overrides.ts. See commit
+// `variant()` / `polymorphs:` in grammar.sittir.ts. See commit
 // "013: disable tagAllRulesVariants — auto-tagging masked real
 // adoption work" for the rationale.
 
@@ -1495,201 +1492,6 @@ export function computeParentSets(refs: SymbolRef[]): Map<string, SymbolRef[]> {
 }
 
 // ---------------------------------------------------------------------------
-// hoistIndentIntoRepeat — push `indent` siblings into repeat.separator
-// ---------------------------------------------------------------------------
-//
-// Rewrites `seq(..., indent, X, ...)` where X is a `repeat` (directly, via
-// symbol ref, or through a wrapping seq in the referenced rule) so that
-// the repeat carries `separator: '\n  '`. This is the rule-level encoding
-// of "each element of this block appears on its own indented line". The
-// template emitter's existing joinBy path then renders multi-statement
-// blocks as `stmt1\n  stmt2\n  stmt3` without any template-side hacks.
-
-// Raw newline separator. The renderer re-indents substituted values
-// based on the placeholder's column in the surrounding template, so
-// joinBy carries no whitespace — nested blocks compound indent levels
-// automatically without baking depth into the rule tree.
-const BLOCK_SEPARATOR = '\n';
-
-function hoistIndentIntoRepeat(rules: Record<string, Rule<'link'>>): void {
-	for (const [, rule] of Object.entries(rules)) {
-		walkForIndentHoist(rule, rules);
-	}
-}
-
-function walkForIndentHoist(rule: Rule<'link'>, rules: Record<string, Rule<'link'>>): void {
-	switch (rule.type) {
-		case SEQ: {
-			// Find every `indent` member; for each, promote the nearest
-			// following repeat-bearing member by setting its separator.
-			for (let i = 0; i < rule.members.length; i++) {
-				if (rule.members[i]!.type !== INDENT) continue;
-				for (let j = i + 1; j < rule.members.length; j++) {
-					if (assignRepeatSeparator(rule.members[j]!, rules, new Set())) break;
-					if (rule.members[j]!.type === DEDENT) break;
-				}
-			}
-			for (const m of rule.members) walkForIndentHoist(m, rules);
-			return;
-		}
-		case CHOICE:
-			for (const m of rule.members) walkForIndentHoist(m, rules);
-			return;
-		case FIELD:
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case VARIANT:
-		case GROUP:
-		case TOKEN:
-		case ALIAS:
-			walkForIndentHoist(rule.content, rules);
-			return;
-		default:
-			return;
-	}
-}
-
-function assignRepeatSeparator(rule: Rule<'link'>, rules: Record<string, Rule<'link'>>, visited: Set<string>): boolean {
-	if (rule.type === REPEAT || rule.type === REPEAT1) {
-		// Fresh block separator: neither trailing nor leading set, matching
-		// the prior behavior of leaving those undefined.
-		if (!rule.separator)
-			(rule as { separator?: { value: Rule<'link'> } }).separator = {
-				value: { type: STRING, value: BLOCK_SEPARATOR } as Rule<'link'>
-			};
-		return true;
-	}
-	if (rule.type === SYMBOL) {
-		if (visited.has(rule.name)) return false;
-		const target = rules[rule.name];
-		if (!target) return false;
-		visited.add(rule.name);
-		const found = assignRepeatSeparator(target, rules, visited);
-		visited.delete(rule.name);
-		return found;
-	}
-	if (rule.type === SEQ) {
-		for (const m of rule.members) {
-			if (assignRepeatSeparator(m, rules, visited)) return true;
-		}
-		return false;
-	}
-	if (rule.type === OPTIONAL || rule.type === GROUP || rule.type === FIELD) {
-		return assignRepeatSeparator(rule.content, rules, visited);
-	}
-	return false;
-}
-
-// ---------------------------------------------------------------------------
-// annotateBlockBearerFields — mark fields whose content reaches `indent`
-// ---------------------------------------------------------------------------
-//
-// Python-style `class X:\n  body` requires a newline + indent before the
-// block's rendered content. The template walker emits `\n  $BODY` for a
-// field whose content resolves (via symbol deref) to a subtree containing
-// an `indent` Rule<'link'> node. This pass computes the set of "block-bearer"
-// kinds by reachability and tags every matching field with `blockBearer: true`.
-
-function computeHiddenBearerSet(rules: Record<string, Rule<'link'>>): Set<string> {
-	const bearers = new Set<string>();
-	for (const [name, rule] of Object.entries(rules)) {
-		if (name.startsWith('_') && containsIndent(rule)) bearers.add(name);
-	}
-	let changed = true;
-	while (changed) {
-		changed = false;
-		for (const [name, rule] of Object.entries(rules)) {
-			if (!name.startsWith('_')) continue;
-			if (bearers.has(name)) continue;
-			if (referencesBearer(rule, bearers)) {
-				bearers.add(name);
-				changed = true;
-			}
-		}
-	}
-	return bearers;
-}
-
-function annotateBlockBearerFields(rules: Record<string, Rule<'link'>>): void {
-	const bearers = computeHiddenBearerSet(rules);
-	// Mutate fields whose content reaches a bearer through hidden-only
-	// intermediates. `markBlockBearerFields` recurses so nested visible
-	// rules get their own fields inspected independently.
-	for (const [, rule] of Object.entries(rules)) {
-		markBlockBearerFields(rule, bearers);
-	}
-}
-
-function containsIndent(rule: Rule<'link'>): boolean {
-	switch (rule.type) {
-		case INDENT:
-			return true;
-		case SEQ:
-		case CHOICE:
-			return rule.members.some(containsIndent);
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case FIELD:
-		case VARIANT:
-		case GROUP:
-		case TOKEN:
-		case ALIAS:
-			return containsIndent(rule.content);
-		default:
-			return false;
-	}
-}
-
-function referencesBearer(rule: Rule<'link'>, bearers: ReadonlySet<string>): boolean {
-	switch (rule.type) {
-		case SYMBOL:
-			return bearers.has(rule.name);
-		case SEQ:
-		case CHOICE:
-			return rule.members.some((m) => referencesBearer(m, bearers));
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case FIELD:
-		case VARIANT:
-		case GROUP:
-		case TOKEN:
-		case ALIAS:
-			return referencesBearer(rule.content, bearers);
-		default:
-			return false;
-	}
-}
-
-function markBlockBearerFields(rule: Rule<'link'>, bearers: ReadonlySet<string>): void {
-	switch (rule.type) {
-		case FIELD:
-			if (referencesBearer(rule.content, bearers)) {
-				(rule as { blockBearer?: boolean }).blockBearer = true;
-			}
-			markBlockBearerFields(rule.content, bearers);
-			return;
-		case SEQ:
-		case CHOICE:
-			for (const m of rule.members) markBlockBearerFields(m, bearers);
-			return;
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case VARIANT:
-		case GROUP:
-		case TOKEN:
-		case ALIAS:
-			markBlockBearerFields(rule.content, bearers);
-			return;
-		default:
-			return;
-	}
-}
-
-// ---------------------------------------------------------------------------
 // collectRepeatedShapes — suggestion pass for shared supertypes/groups
 // ---------------------------------------------------------------------------
 
@@ -2027,7 +1829,7 @@ export function liftSeparators(rule: Rule<'link'>, ctx: LinkCtx): Rule<'link'> {
  *     alias/variant/clause/group)
  *
  * Throws if any segment fails to address. Mirrors path semantics used
- * by `polymorphs:` / `transforms:` in `overrides.ts`.
+ * by `polymorphs:` / `transforms:` in `grammar.sittir.ts`.
  */
 
 export function resolveGroupPath(rule: Rule<'link'>, path: string): Rule<'link'> {

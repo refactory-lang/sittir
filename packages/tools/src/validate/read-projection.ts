@@ -326,7 +326,7 @@ export async function validateReadProjection(grammar: string): Promise<ReadProje
 				issues.push({
 					kind,
 					instance: entry.name,
-					message: `readNode threw: ${(e as Error).message.slice(0, 80)}`
+					message: `readNode threw: ${(e as Error).message}`
 				});
 				continue;
 			}

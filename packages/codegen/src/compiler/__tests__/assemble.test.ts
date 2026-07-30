@@ -463,7 +463,7 @@ describe('Assemble — classifyNode', () => {
 	// PR-137 follow-on-4 regression fixture (2026-07-05): reproduces python's
 	// `_simple_pattern` supertype chain, whose subtype resolution reaches
 	// `_simple_pattern_negative` (the polymorph-variant-adopted `-1`/`-1.0`
-	// match-pattern arm — `overrides.ts`'s `_simple_pattern: { '11':
+	// match-pattern arm — `grammar.sittir.ts`'s `_simple_pattern: { '11':
 	// 'negative' }`), a SEQ containing one anonymous optional literal ('-')
 	// plus one nonterminal (a CHOICE of `integer`/`float`). On the
 	// `normalizedRules` view (wrapper-deletion only) this stays a top-level

@@ -14,9 +14,9 @@ message: >
   restriction — flag everything in scope; pass 2 decides case by case.
 files:
   - packages/codegen/src/**
-  - packages/rust/overrides.ts
-  - packages/typescript/overrides.ts
-  - packages/python/overrides.ts
+  - packages/rust/grammar.sittir.ts
+  - packages/typescript/grammar.sittir.ts
+  - packages/python/grammar.sittir.ts
   - packages/rust/base.ts
 ignores:
   - "**/__tests__/**"

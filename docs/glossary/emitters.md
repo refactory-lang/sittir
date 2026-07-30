@@ -3229,7 +3229,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /**
  * Format the `suggestedGroups` export block. All entries are held —
- * the author copies them into the overrides.ts `groups:` block to activate.
+ * the author copies them into the grammar.sittir.ts `groups:` block to activate.
  */
 ```
 
@@ -4609,7 +4609,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ```text
 /** Kind → reason for known-failing generated tests (`expectTestFailures:`
-	 *  in overrides.ts) — threaded to `emitTests` for `describe.skip` emission. */
+	 *  in grammar.sittir.ts) — threaded to `emitTests` for `describe.skip` emission. */
 ```
 
 ### `CodegenEmitter` (`packages/codegen/src/emitters/emitter.ts:3`)
@@ -5470,7 +5470,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /**
 	 * Kind → reason for known-failing tests (`expectTestFailures:` in the
-	 * grammar's overrides.ts). Listed kinds emit `describe.skip` with the
+	 * grammar's grammar.sittir.ts). Listed kinds emit `describe.skip` with the
 	 * reason inline so the suite stays green on tracked defects without
 	 * masking regressions in other kinds.
 	 */

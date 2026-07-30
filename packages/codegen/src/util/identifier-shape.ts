@@ -2,7 +2,7 @@
  * util/identifier-shape.ts — fixed ASCII identifier predicate, grammar-INDEPENDENT.
  *
  * Answers "is `value` a valid identifier in EMITTED code (TS / Rust) or in
- * authored config (overrides.ts paths / discriminators)?" — a fixed lexical
+ * authored config (grammar.sittir.ts paths / discriminators)?" — a fixed lexical
  * shape (`/^[A-Za-z_][A-Za-z0-9_]*$/`: letter/underscore start, no leading
  * digit), independent of any grammar.
  *

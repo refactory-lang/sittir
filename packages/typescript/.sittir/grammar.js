@@ -27,12 +27,12 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// packages/typescript/overrides.ts
-var overrides_exports = {};
-__export(overrides_exports, {
-  default: () => overrides_default
+// packages/typescript/grammar.sittir.ts
+var grammar_sittir_exports = {};
+__export(grammar_sittir_exports, {
+  default: () => grammar_sittir_default
 });
-module.exports = __toCommonJS(overrides_exports);
+module.exports = __toCommonJS(grammar_sittir_exports);
 var import_grammar = __toESM(require("tree-sitter-typescript/typescript/grammar.js"), 1);
 
 // packages/codegen/src/types/runtime-shapes.ts
@@ -1140,6 +1140,7 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
   for (let i = 0; i < MAX_ITERATIONS; i++) {
     const before = r;
     r = applySymbolToField(ruleName, r, supertypeNames);
+    r = applyChoiceArmFieldWrap(ruleName, r, supertypeNames, rulesBag);
     r = applyOptionalKeyword(ruleName, r, kwRules, wordMatcher);
     if (r === before) {
       converged = true;
@@ -1192,6 +1193,80 @@ function extractSupertypeNames(base2, hasWrapper) {
   }
   if (Array.isArray(supertypes)) return harvestSupertypeNames(supertypes);
   return /* @__PURE__ */ new Set();
+}
+function isAnonymousLiteralShapedRule(name, rulesBag, seen) {
+  if (seen.has(name)) return false;
+  seen.add(name);
+  const rule = rulesBag[name];
+  if (!rule) return true;
+  return isAnonymousLiteralShapedContent(rule, rulesBag, seen);
+}
+function isAnonymousLiteralShapedContent(rule, rulesBag, seen) {
+  if (isStringType(rule.type) || rule.type === "PATTERN") return true;
+  if (isChoiceType(rule.type)) {
+    const members = rule.members;
+    return members.every((m) => isAnonymousLiteralShapedContent(m, rulesBag, seen));
+  }
+  if (isSymbolType(rule.type) && typeof rule.name === "string") {
+    return isAnonymousLiteralShapedRule(rule.name, rulesBag, seen);
+  }
+  return false;
+}
+function applyChoiceArmFieldWrap(ruleName, rule, supertypeNames, rulesBag) {
+  if (ruleName.startsWith("_")) return rule;
+  let cursor = rule;
+  const precStack = [];
+  while (isPrecWrapper(cursor)) {
+    precStack.push(cursor);
+    cursor = cursor.content;
+  }
+  if (!isChoiceType(cursor.type)) return rule;
+  const armMembers = cursor.members;
+  let anyArmChanged = false;
+  const newArms = armMembers.map((arm) => {
+    let armCursor = arm;
+    const armPrecStack = [];
+    while (isPrecWrapper(armCursor)) {
+      armPrecStack.push(armCursor);
+      armCursor = armCursor.content;
+    }
+    if (!isSeqType(armCursor.type)) return arm;
+    const seqMembers = armCursor.members;
+    const existing = collectFieldNamesRuntime(armCursor);
+    let armChanged = false;
+    const newSeqMembers = seqMembers.map((m) => {
+      const t = detectSymbolTarget(m);
+      if (!t) return m;
+      if (!isBareShapeTarget(m, t)) return m;
+      let fieldName = t.name;
+      if (t.name.startsWith("_")) {
+        const eligible = supertypeNames.has(t.name) || isAnonymousLiteralShapedRule(t.name, rulesBag, /* @__PURE__ */ new Set());
+        if (!eligible) return m;
+        fieldName = t.name.slice(1);
+      }
+      if (existing.has(fieldName)) {
+        reportSkip("choice-arm-field", ruleName, `field '${fieldName}' already exists`);
+        return m;
+      }
+      existing.add(fieldName);
+      armChanged = true;
+      const fieldNode = makeField(fieldName, t.symbolRule);
+      return t.wrap(fieldNode);
+    });
+    if (!armChanged) return arm;
+    anyArmChanged = true;
+    let rebuiltArm = { ...armCursor, members: newSeqMembers };
+    for (let i = armPrecStack.length - 1; i >= 0; i--) {
+      rebuiltArm = { ...armPrecStack[i], content: rebuiltArm };
+    }
+    return rebuiltArm;
+  });
+  if (!anyArmChanged) return rule;
+  let result = { ...cursor, members: newArms };
+  for (let i = precStack.length - 1; i >= 0; i--) {
+    result = { ...precStack[i], content: result };
+  }
+  return result;
 }
 function extractWordName(word) {
   if (typeof word === "string") return word;
@@ -2133,7 +2208,14 @@ function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRule
         toRetarget.set(candidate, strippedName);
         anyActed = true;
       }
-      if (anyActed) diagnostics.push({ ...diagnostic, severity: "info" });
+      if (anyActed) {
+        diagnostics.push({
+          ...diagnostic,
+          severity: "info",
+          message: `${diagnostic.message} Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.`,
+          proposal: "Already resolved by enrich() \u2014 no action needed."
+        });
+      }
     }
   }
   if (toDrop.size === 0 && toRetarget.size === 0) return { rule, diagnostics: [] };
@@ -3082,7 +3164,23 @@ function applyFlatPatches(original, patches) {
     return applyFlatPatchesToSeq(original, patches);
   }
   if (isChoiceType(t)) {
-    const newMembers = membersOf2(original).map((m) => applyFlatPatches(m, patches));
+    const members = membersOf2(original);
+    let anyApplied = false;
+    const newMembers = members.map((m) => {
+      try {
+        const patched = applyFlatPatches(m, patches);
+        anyApplied = true;
+        return patched;
+      } catch (e) {
+        if (e instanceof ApplyPathSkip) return m;
+        throw e;
+      }
+    });
+    if (!anyApplied) {
+      throw new Error(
+        `transform: flat-positional key(s) [${Object.keys(patches).join(", ")}] matched no choice arm out of ${members.length} \u2014 each arm was tried independently and none had all the target positions. Flat keys patch a position uniformly across every arm; they can't select ONE specific arm (a plain digit key on a choice does not mean "arm N"). To replace one specific arm, use path syntax instead (e.g. '${Object.keys(patches)[0]}' as a path segment, or '-1' for the last arm).`
+      );
+    }
     return reconstructContainer(original, newMembers);
   }
   if (isPrecWrapper(original)) {
@@ -3108,7 +3206,9 @@ function applyFlatPatchesToSeq(original, patches) {
     }
     const index = Number(key);
     if (index >= members.length) {
-      throw new Error(`transform: index ${index} out of bounds in ${original.type} of length ${members.length}`);
+      throw new ApplyPathSkip(
+        `transform: index ${index} out of bounds in ${original.type} of length ${members.length}`
+      );
     }
     members[index] = resolvePatch(patch, members[index]);
   }
@@ -3377,9 +3477,9 @@ function refine(original, forms) {
   return original;
 }
 
-// packages/typescript/overrides.ts
+// packages/typescript/grammar.sittir.ts
 var enrichedBase = enrich(import_grammar.default);
-var overrides_default = grammar(
+var grammar_sittir_default = grammar(
   enrichedBase,
   wire(
     {
@@ -3795,6 +3895,28 @@ var overrides_default = grammar(
           "1/0": variant("typed"),
           "1/1": variant("sequence")
         },
+        // export_statement: variant() adoption on all four branches.
+        // Path 0 is the JS-inherited `previous` (export default,
+        // export function, export from, …); paths 1/2/3 are
+        // `export type`, `export =`, `export as namespace`. Without
+        // labeling path 0, its base-JS branches render without the
+        // `export` prefix (parent template is just `$$$CHILDREN`,
+        // which filters to named children) — the wrapper becomes
+        // invisible at render time.
+        //
+        // `_export_statement_default`'s body is a top-level choice of
+        // TWO structurally distinct shapes:
+        //   arm 0 — `seq('export', choice(4 from-clause forms), _semicolon)`
+        //   arm 1 — `seq(decorator, 'export', choice(declaration | default value))`
+        // Splitting it further (e.g. `0/0` / `0/1` for these sub-arms)
+        // just moves the non-canonical flag one level deeper — each
+        // split arm STILL has inner choice-with-fields shapes
+        // (specifiers, from-clause forms, default value). Adoption on
+        // kinds synthesized by a parent polymorph adoption isn't
+        // supported end-to-end, so deferred for future work. The
+        // walker handles the shape via its per-branch + downgrade
+        // logic correctly; the audit flag surfaces real adoption
+        // opportunity but not a blocking bug.
         export_statement: {
           0: variant("default"),
           1: variant("type_export"),

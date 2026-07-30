@@ -41,6 +41,29 @@
  *      accidentally labelling multi-symbol seqs. Same uniqueness +
  *      claimed-name guards as pass 1.
  *
+ *   5. Choice-arm terminal field wrapping — pass 1 only inspects a
+ *      rule's OWN top-level body when it's a bare seq (or repeat(seq)).
+ *      A seq buried as an ARM of a top-level CHOICE (e.g.
+ *      `export_statement: choice(previous, seq('export','type',
+ *      $.export_clause,optional($._from_clause),$._semicolon), ...)`)
+ *      never gets pass 1's treatment, even once that arm is later
+ *      promoted into its own visible node kind by a downstream
+ *      choice-arm-promotion mechanism. This pass applies pass 1's Shape-1
+ *      (bare SYMBOL only) decision independently to each seq-shaped
+ *      choice arm. Also widens eligibility for underscore-prefixed
+ *      targets beyond `supertypeNames` (tree-sitter's declared
+ *      `supertypes:` list) to any hidden rule that is "terminal-shaped"
+ *      — built entirely from anonymous literals and/or references to
+ *      other terminal-shaped hidden rules, recursively (see
+ *      `isAnonymousLiteralShapedRule`) — since a rule like `_semicolon
+ *      = choice($._automatic_semicolon, ';')` is exactly this shape but
+ *      was never a declared supertype. One level of choice-arm descent
+ *      only (an arm that is itself a further CHOICE is left alone).
+ *      Doesn't share pass 1's numbered-duplicate / nested-repeat
+ *      disqualification machinery — choice arms are simple,
+ *      single-occurrence positions in practice; per-arm collisions still
+ *      skip via `reportSkip`.
+ *
  * All passes collision-aware: skip (stderr notification) when the
  * promotion would shadow an existing field name. Strictly local — no
  * cross-rule analysis, no thresholds. All enrich-added FIELDs carry
@@ -352,6 +375,12 @@ function applyEnrichPasses(
 	for (let i = 0; i < MAX_ITERATIONS; i++) {
 		const before = r;
 		r = applySymbolToField(ruleName, r, supertypeNames);
+		// Choice-arm terminal field wrapping (pass 5) — see
+		// `applyChoiceArmFieldWrap`'s doc comment. Mutually exclusive with
+		// `applySymbolToField` at the top level (a rule's own body is
+		// either a seq/repeat(seq) or a choice, never both), so ordering
+		// within this loop doesn't matter.
+		r = applyChoiceArmFieldWrap(ruleName, r, supertypeNames, rulesBag);
 		// Bare leading-keyword pass intentionally omitted — the docstring
 		// above explains why: wrapping bare leading literals as FIELD(SYM)
 		// adds `_kw_<name>` hidden rules that shift tree-sitter's parser-
@@ -435,6 +464,156 @@ function extractSupertypeNames(base: unknown, hasWrapper: boolean): ReadonlySet<
 	return new Set();
 }
 
+/**
+ * @internal — true when `name` (an underscore-prefixed hidden-rule
+ * reference, e.g. `_semicolon`) is "terminal-shaped": its own body is
+ * built ENTIRELY from anonymous literals (STRING/PATTERN) and/or SYMBOL
+ * references to other terminal-shaped hidden rules, recursively (e.g.
+ * `_semicolon = choice($._automatic_semicolon, ';')`). A SYMBOL with no
+ * entry in `rulesBag` is presumed to be an external-scanner token (e.g.
+ * `_automatic_semicolon`, `_function_signature_automatic_semicolon`) —
+ * these have no rule body of their own (they're declared in `externals:`,
+ * not `rules:`), but are exactly as terminal/anonymous-shaped as a bare
+ * STRING for this purpose.
+ *
+ * This is a WIDER net than `supertypeNames` (tree-sitter's own declared
+ * `supertypes:` list, which only covers real NAMED-node unions like
+ * `_expression`/`_statement`) — a hidden rule can be "purely a choice of
+ * anonymous alternatives" without ever being declared a supertype, and
+ * `applySymbolToField`'s existing `supertypeNames.has()` gate wrongly
+ * treats such rules the same as any other unclassified hidden helper,
+ * blocking a bare `$._semicolon`-shaped reference from ever being
+ * auto-fielded even when the containing rule IS a top-level seq.
+ */
+function isAnonymousLiteralShapedRule(name: string, rulesBag: Record<string, Rule>, seen: Set<string>): boolean {
+	if (seen.has(name)) return false; // cycle guard — never seen in practice, but don't hang if it occurs
+	seen.add(name);
+	const rule = rulesBag[name];
+	if (!rule) return true; // no rule body — presumed external scanner token
+	return isAnonymousLiteralShapedContent(rule, rulesBag, seen);
+}
+
+function isAnonymousLiteralShapedContent(rule: Rule, rulesBag: Record<string, Rule>, seen: Set<string>): boolean {
+	if (isStringType(rule.type) || rule.type === 'PATTERN') return true;
+	if (isChoiceType(rule.type)) {
+		const members = (rule as unknown as { members: Rule[] }).members;
+		return members.every((m) => isAnonymousLiteralShapedContent(m, rulesBag, seen));
+	}
+	if (isSymbolType(rule.type) && typeof (rule as { name?: unknown }).name === 'string') {
+		return isAnonymousLiteralShapedRule((rule as { name: string }).name, rulesBag, seen);
+	}
+	return false;
+}
+
+/**
+ * Pass 5 (choice-arm terminal field wrapping). Pass 1
+ * (`applySymbolToField`) only inspects a rule's OWN top-level body when
+ * it's (optionally prec-wrapped) a bare seq, or a repeat/repeat1 wrapping
+ * one (`tryPromoteInRepeatSeq`) — it never descends into individual arms
+ * of a top-level CHOICE. `export_statement`'s body is
+ * `choice(previous, seq('export','type',$.export_clause,
+ * optional($._from_clause),$._semicolon), seq(...), seq(...))` — a
+ * top-level CHOICE with the semicolon-bearing seq buried as one arm. Pass
+ * 1 never sees it, so when that arm is later promoted into its own
+ * visible node kind (`_export_statement_type_export`) by a downstream
+ * choice-arm-promotion mechanism, it inherits a body where `semicolon`
+ * was never fielded — a real bug: `automatic_semicolon` is a NAMED node
+ * type, so the native reader routes an unfielded occurrence of it to its
+ * own kind-keyed `_automatic_semicolon` field, a different key than
+ * generated wrap code checks (which only catches the anonymous `;`
+ * alternative via the generic `$other` bucket). Explicit `;` worked; ASI
+ * (no trailing `;`) threw.
+ *
+ * This pass mirrors pass 1's per-member decision (Shape 1 / bare SYMBOL
+ * only — the same restriction pass 1 applies to underscore-prefixed
+ * targets, since wrapping Shape 2/3 nested inside an OPTIONAL breaks
+ * override `transform()` patches that expect a direct enriched FIELD),
+ * applied independently to each seq-shaped CHOICE arm instead of only a
+ * rule's own top-level seq. Non-underscore bare symbols use their own
+ * kind name; underscore-prefixed ones are eligible when either a real
+ * declared supertype OR (new) `isAnonymousLiteralShapedRule`.
+ *
+ * Deliberately ONE level of choice-arm descent (arms that are themselves
+ * a nested CHOICE, rather than a SEQ, are left alone) — matches the
+ * concrete need (`export_statement`'s arms are each a flat seq) without
+ * open-ended recursion into arbitrarily deep choice-of-choice shapes.
+ * Deliberately omits pass 1's numbered-duplicate and nested-repeat
+ * disqualification machinery — choice arms in practice are simple,
+ * single-occurrence positions; a per-arm collision (`existing.has`) still
+ * skips with `reportSkip` rather than risk stamping a wrong/colliding
+ * field name.
+ */
+function applyChoiceArmFieldWrap(
+	ruleName: string,
+	rule: Rule,
+	supertypeNames: ReadonlySet<string>,
+	rulesBag: Record<string, Rule>
+): Rule {
+	if (ruleName.startsWith('_')) return rule; // skip hidden helpers — same gate as pass 1
+	let cursor: Rule = rule;
+	const precStack: Rule[] = [];
+	while (isPrecWrapper(cursor as { type: string })) {
+		precStack.push(cursor);
+		cursor = (cursor as unknown as { content: Rule }).content;
+	}
+	if (!isChoiceType(cursor.type)) return rule;
+	const armMembers = (cursor as unknown as { members: Rule[] }).members;
+	let anyArmChanged = false;
+	const newArms = armMembers.map((arm) => {
+		let armCursor: Rule = arm;
+		const armPrecStack: Rule[] = [];
+		while (isPrecWrapper(armCursor as { type: string })) {
+			armPrecStack.push(armCursor);
+			armCursor = (armCursor as unknown as { content: Rule }).content;
+		}
+		if (!isSeqType(armCursor.type)) return arm;
+		const seqMembers = (armCursor as unknown as { members: Rule[] }).members;
+		const existing = collectFieldNamesRuntime(armCursor);
+		let armChanged = false;
+		const newSeqMembers = seqMembers.map((m) => {
+			const t = detectSymbolTarget(m);
+			if (!t) return m;
+			if (!isBareShapeTarget(m, t)) return m; // Shape 1 only, same as pass 1's underscore restriction
+			let fieldName = t.name;
+			if (t.name.startsWith('_')) {
+				const eligible = supertypeNames.has(t.name) || isAnonymousLiteralShapedRule(t.name, rulesBag, new Set());
+				if (!eligible) return m;
+				fieldName = t.name.slice(1);
+			}
+			if (existing.has(fieldName)) {
+				reportSkip('choice-arm-field', ruleName, `field '${fieldName}' already exists`);
+				return m;
+			}
+			existing.add(fieldName);
+			armChanged = true;
+			const fieldNode = makeField(fieldName, t.symbolRule);
+			return t.wrap(fieldNode);
+		});
+		if (!armChanged) return arm;
+		anyArmChanged = true;
+		let rebuiltArm: Rule = { ...armCursor, members: newSeqMembers } as Rule;
+		for (let i = armPrecStack.length - 1; i >= 0; i--) {
+			rebuiltArm = { ...armPrecStack[i]!, content: rebuiltArm } as Rule;
+		}
+		return rebuiltArm;
+	});
+	if (!anyArmChanged) return rule;
+	let result: Rule = { ...cursor, members: newArms } as Rule;
+	for (let i = precStack.length - 1; i >= 0; i--) {
+		result = { ...precStack[i]!, content: result } as Rule;
+	}
+	return result;
+}
+
+/**
+ * Resolve the grammar's `word` declaration to a rule NAME across both
+ * runtimes. Under sittir's grammarFn it is already a string; in the emitted
+ * `.sittir/grammar.js` (which runs enrich BEFORE tree-sitter's native
+ * `grammar()`) it is still the raw `$ => $.identifier` callback — invoke it
+ * with the same symbol-shaped proxy `extractSupertypeNames` uses and take
+ * the returned symbol's name. Returns null when absent/unresolvable (the
+ * word matcher then falls back via matchesWordShape).
+ */
 function extractWordName(word: unknown): string | null {
 	if (typeof word === 'string') return word;
 	if (typeof word !== 'function') return null;
@@ -1868,8 +2047,23 @@ function applyUnaliasDistinct(
 			// Only downgrade/record the diagnostic when at least one candidate in
 			// this bucket was actually acted on (dropped or retargeted); a bucket
 			// where every candidate was declined via the name-collision guard must
-			// keep firing at its original error severity, unchanged.
-			if (anyActed) diagnostics.push({ ...diagnostic, severity: 'info' });
+			// keep firing at its original error severity, unchanged. Rewrite the
+			// wording too, not just the severity — `diagnoseParseKindCollisions`
+			// phrases every diagnostic as a live, actionable problem ("collapses
+			// onto parse kind X", "give each colliding arm a distinct alias"),
+			// but this one describes the BASE grammar's alias shape and has
+			// already been fixed by the rewrite below — left as the original
+			// wording, it reads as an open issue in the compiled/enriched
+			// grammar when it is neither: it's a resolved fact about the
+			// upstream construct, kept only for audit visibility.
+			if (anyActed) {
+				diagnostics.push({
+					...diagnostic,
+					severity: 'info',
+					message: `${diagnostic.message} Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.`,
+					proposal: 'Already resolved by enrich() — no action needed.'
+				});
+			}
 		}
 	}
 

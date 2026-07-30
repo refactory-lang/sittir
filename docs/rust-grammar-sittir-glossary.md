@@ -1,6 +1,6 @@
 # Rust Overrides Glossary
 
-Per-rule reference for `packages/rust/overrides.ts`: every named rule
+Per-rule reference for `packages/rust/grammar.sittir.ts`: every named rule
 override, conflict, and precedence declaration significant enough to need
 explanation. Each entry covers what the rule/conflict addresses, why it's
 needed (the specific ambiguity or shape mismatch), and what would break if
@@ -8,11 +8,11 @@ it were removed.
 
 See [AGENTS.md § Wave-style decomposition before commits](../AGENTS.md) for
 the convention this glossary exists to serve — long rationale comments in
-`overrides.ts` move here instead of living inline.
+`grammar.sittir.ts` move here instead of living inline.
 
 ---
 
-### Module preamble — where the DSL globals come from (`packages/rust/overrides.ts:9`)
+### Module preamble — where the DSL globals come from (`packages/rust/grammar.sittir.ts:9`)
 
 Tree-sitter's ambient DSL (`Rule` / `RuleOrLiteral` / `GrammarSchema` /
 `GrammarSymbols` / `RuleBuilder` plus `seq` / `choice` / `repeat` / `repeat1` /
@@ -29,14 +29,14 @@ as overloads across files the way `declare function` does, and tree-sitter's
 `grammar()` expects a flat `GrammarSchema` base rather than `enrich()`'s
 `{ grammar: { … } }` shape.
 
-### `string` (`packages/rust/overrides.ts:26`)
+### `string` (`packages/rust/grammar.sittir.ts:26`)
 
 `string` is the ONE DSL primitive with no ambient or exported declaration: it
 is a runtime global injected by tree-sitter's `grammar()`, used solely inside
 the `renderAs` callback. Everything else is either ambient (see the module
 preamble entry above) or imported, so this is the only stub the file needs.
 
-### `enrichedBase` (`packages/rust/overrides.ts:28`)
+### `enrichedBase` (`packages/rust/grammar.sittir.ts:28`)
 
 Two reasons this is a named binding declared before the wire payload rather
 than an inline `enrich(base)` argument.
@@ -58,7 +58,7 @@ pattern-replacing passthroughs. Without the base arg, unoverridden base rules
 bypass pattern replacement and tree-sitter never emits the `alias()`-wrapped
 visible kinds.
 
-### `wire<EnrichedGrammar<RustGrammarShape>>` (`packages/rust/overrides.ts:32`)
+### `wire<EnrichedGrammar<RustGrammarShape>>` (`packages/rust/grammar.sittir.ts:32`)
 
 The explicit type-arg binds `B` to the lazy `EnrichedGrammar<RustGrammarShape>`
 alias rather than letting it reach `WireConfig<B>` as a fresh generic
@@ -76,7 +76,7 @@ runtime-injected `grammarFn` — its real two-arg contract is
 `GrammarSchema`-based overloads — so `enrichedBase`'s `{ grammar: { … } }`
 shape needs no suppression at this call site.
 
-### `conflicts` (`packages/rust/overrides.ts:35`)
+### `conflicts` (`packages/rust/grammar.sittir.ts:35`)
 
 `previous` is the base grammar's conflicts list — concat so the base entries
 (`$._type`, `$._pattern`, etc.) aren't dropped. The sittir-added entries:
@@ -113,7 +113,7 @@ shape needs no suppression at this call site.
   structural unit as call arguments; the declaration lets GLR disambiguate at
   parse time.
 
-### `polymorphs` (`packages/rust/overrides.ts:145`)
+### `polymorphs` (`packages/rust/grammar.sittir.ts:145`)
 
 Widened choice-arm mints that land in Rust's `identifier '::' …` position hit
 one of the grammar's most heavily hand-tuned ambiguities: turbofish generics vs
@@ -136,13 +136,13 @@ no longer produced, so there is currently nothing here to dissolve — but the
 ambiguity cluster and the inlining remedy both remain live if a mint lands in
 that position again.
 
-### `impl_item` — no polymorph entry (`packages/rust/overrides.ts`)
+### `impl_item` — no polymorph entry (`packages/rust/grammar.sittir.ts`)
 
 `impl_item` is de-polymorphed: it is expressed as a full `rules:` replacement
 instead, because its co-optional trait clause has to render as a unit. See the
 `_impl_item_unsafe_marker` entry below.
 
-### `range_pattern` (`packages/rust/overrides.ts:187`)
+### `range_pattern` (`packages/rust/grammar.sittir.ts:187`)
 
 ```text
 				// range_pattern: the base rule is
@@ -158,7 +158,7 @@ instead, because its co-optional trait clause has to render as a unit. See the
 				// bare `..` doesn't) means these are genuine structural variants.
 ```
 
-### `visibility_modifier` (`packages/rust/overrides.ts:204`)
+### `visibility_modifier` (`packages/rust/grammar.sittir.ts:204`)
 
 ```text
 				// visibility_modifier — three variants at two nesting depths,
@@ -180,7 +180,7 @@ instead, because its co-optional trait clause has to render as a unit. See the
 				// deepest paths first.
 ```
 
-### `_visibility_modifier_pub` (`packages/rust/overrides.ts:228`)
+### `_visibility_modifier_pub` (`packages/rust/grammar.sittir.ts:228`)
 
 ```text
 				// visibility_modifier — lift the inner optional(seq('(', choice, ')'))
@@ -190,7 +190,7 @@ instead, because its co-optional trait clause has to render as a unit. See the
 				// See: docs/superpowers/specs/2026-05-15-024-assembled-group-synthesis-design.md
 ```
 
-### `in_path` (`packages/rust/overrides.ts:237`)
+### `in_path` (`packages/rust/grammar.sittir.ts:237`)
 
 ```text
 				// visibility_modifier_group1's choice is
@@ -201,7 +201,7 @@ instead, because its co-optional trait clause has to render as a unit. See the
 				// (Followup: enrich should auto-lift structural choice arms.)
 ```
 
-### `groups` — body-pattern entries (`packages/rust/overrides.ts`)
+### `groups` — body-pattern entries (`packages/rust/grammar.sittir.ts`)
 
 Every function-valued entry in `groups:` declares a STRUCTURAL PATTERN rather
 than a rule body. Codegen creates `_<key>` as the hidden rule body and rewrites
@@ -216,7 +216,7 @@ Two positions are covered entirely by this mechanism and therefore have no
 `type_parameters` (via `attributed_type_parameter`, whose `metavariable`
 overlap with `_type` is declared in `conflicts:`).
 
-### `attributed_field_declaration` (`packages/rust/overrides.ts:253`)
+### `attributed_field_declaration` (`packages/rust/grammar.sittir.ts:253`)
 
 ```text
 				// Pattern: attribute_item(s) attached to a struct field.
@@ -226,7 +226,7 @@ overlap with `_type` is declared in `conflicts:`).
 				// joined by commas (e.g. `#[attr],y: i32` instead of `#[attr] y: i32`).
 ```
 
-### `attributed_enum_variant` (`packages/rust/overrides.ts:260`)
+### `attributed_enum_variant` (`packages/rust/grammar.sittir.ts:260`)
 
 ```text
 				// Pattern: attribute_item(s) attached to an enum variant.
@@ -234,7 +234,7 @@ overlap with `_type` is declared in `conflicts:`).
 				// inline at every comma-separated position.
 ```
 
-### `attributed_parameter` (`packages/rust/overrides.ts:265`)
+### `attributed_parameter` (`packages/rust/grammar.sittir.ts:265`)
 
 ```text
 				// Pattern: optional attribute_item attached to a function parameter.
@@ -244,7 +244,7 @@ overlap with `_type` is declared in `conflicts:`).
 				// '_' wildcard | _type (anonymous type).
 ```
 
-### `attributed_type_parameter` (`packages/rust/overrides.ts:273`)
+### `attributed_type_parameter` (`packages/rust/grammar.sittir.ts:273`)
 
 ```text
 				// Pattern: attribute_item(s) attached to a type parameter.
@@ -253,7 +253,7 @@ overlap with `_type` is declared in `conflicts:`).
 				// comma-separated position.
 ```
 
-### `attributed_argument` (`packages/rust/overrides.ts:283`)
+### `attributed_argument` (`packages/rust/grammar.sittir.ts:283`)
 
 ```text
 				// arguments: each call arg is seq(repeat(attribute_item), _expression).
@@ -270,7 +270,7 @@ overlap with `_type` is declared in `conflicts:`).
 				// elements stay in the bare seq form that this pattern can match.
 ```
 
-### `attributed_ordered_field` (`packages/rust/overrides.ts:297`)
+### `attributed_ordered_field` (`packages/rust/grammar.sittir.ts:297`)
 
 ```text
 				// ordered_field_declaration_list: each comma-separated position is
@@ -283,7 +283,7 @@ overlap with `_type` is declared in `conflicts:`).
 				// parse can be reconstructed; this is step 1 of making multiplicity intrinsic.
 ```
 
-### `type_argument` (`packages/rust/overrides.ts:308`)
+### `type_argument` (`packages/rust/grammar.sittir.ts:308`)
 
 ```text
 				// type_arguments: each comma-separated position after the first is
@@ -300,7 +300,7 @@ overlap with `_type` is declared in `conflicts:`).
 				// to use lookahead.
 ```
 
-### `match_block_arms` (`packages/rust/overrides.ts:323`)
+### `match_block_arms` (`packages/rust/grammar.sittir.ts:323`)
 
 ```text
 				// match_block: optional(seq(repeat(match_arm), alias(last_match_arm, match_arm))).
@@ -318,7 +318,7 @@ overlap with `_type` is declared in `conflicts:`).
 				// Fixes Copilot PR review comments #1–#3 (template gating + render order).
 ```
 
-### `token_repetition` (`packages/rust/overrides.ts:339`)
+### `token_repetition` (`packages/rust/grammar.sittir.ts:339`)
 
 ```text
 				// token_repetition: `$( _tokens* ) <sep>? <op>` —
@@ -330,7 +330,7 @@ overlap with `_type` is declared in `conflicts:`).
 				// Name them so each gets its own slot.
 ```
 
-### `token_repetition_pattern` (`packages/rust/overrides.ts:351`)
+### `token_repetition_pattern` (`packages/rust/grammar.sittir.ts:351`)
 
 ```text
 				// token_repetition_pattern: same shape as token_repetition — the optional
@@ -338,27 +338,27 @@ overlap with `_type` is declared in `conflicts:`).
 				// both unnamed → 2 `content` slots. Name them.
 ```
 
-### `field_initializer_list` (`packages/rust/overrides.ts:359`)
+### `field_initializer_list` (`packages/rust/grammar.sittir.ts:359`)
 
 ```text
 				// field_initializer_list: name the naked initializers choice (was an
 				// unresolvable `content` slot).
 ```
 
-### `tuple_pattern` (`packages/rust/overrides.ts:365`)
+### `tuple_pattern` (`packages/rust/grammar.sittir.ts:365`)
 
 ```text
 				// tuple_pattern: name the naked elements choice (was an unresolvable
 				// `content` slot).
 ```
 
-### `closure_parameters` (`packages/rust/overrides.ts:371`)
+### `closure_parameters` (`packages/rust/grammar.sittir.ts:371`)
 
 ```text
 				// Naked-choice field names (was unresolvable `content` slots).
 ```
 
-### `match_block` (`packages/rust/overrides.ts:388`)
+### `match_block` (`packages/rust/grammar.sittir.ts:388`)
 
 ```text
 				// match_block: seq('{', optional(seq(repeat(match_arm),
@@ -371,7 +371,7 @@ overlap with `_type` is declared in `conflicts:`).
 				// member 1 (optional) → its content seq → member 1 (the alias).
 ```
 
-### `async_block` (`packages/rust/overrides.ts:400`)
+### `async_block` (`packages/rust/grammar.sittir.ts:400`)
 
 ```text
 				// async_block: seq('async', optional('move'), $.block).
@@ -385,7 +385,7 @@ overlap with `_type` is declared in `conflicts:`).
 				// only with this entry).
 ```
 
-### `array_expression` (`packages/rust/overrides.ts:413`)
+### `array_expression` (`packages/rust/grammar.sittir.ts:413`)
 
 ```text
 				// array_expression polymorph splits '2/0' (semi) / '2/1' (list).
@@ -397,7 +397,7 @@ overlap with `_type` is declared in `conflicts:`).
 				// does for call arguments.
 ```
 
-### `attribute` (`packages/rust/overrides.ts:426`)
+### `attribute` (`packages/rust/grammar.sittir.ts:426`)
 
 ```text
 				// attribute: seq(_path, optional(choice(seq('=', field('value',
@@ -408,7 +408,7 @@ overlap with `_type` is declared in `conflicts:`).
 				// has inner field() wrappers and stays as $children.
 ```
 
-### `block` (`packages/rust/overrides.ts:436`)
+### `block` (`packages/rust/grammar.sittir.ts:436`)
 
 ```text
 				// block: seq(optional(seq(field('label', label), ':')), '{',
@@ -419,13 +419,13 @@ overlap with `_type` is declared in `conflicts:`).
 				// as $children.
 ```
 
-### `bounded_type` (`packages/rust/overrides.ts:446`)
+### `bounded_type` (`packages/rust/grammar.sittir.ts:446`)
 
 ```text
 				// bounded_type: 2 field(s)
 ```
 
-### `closure_expression` (`packages/rust/overrides.ts:452`)
+### `closure_expression` (`packages/rust/grammar.sittir.ts:452`)
 
 ```text
 				// closure_expression: prec(closure, seq(
@@ -458,13 +458,13 @@ overlap with `_type` is declared in `conflicts:`).
 				// || async move {}` from regressing to ERROR.
 ```
 
-### `extern_modifier` (`packages/rust/overrides.ts:486`)
+### `extern_modifier` (`packages/rust/grammar.sittir.ts:486`)
 
 ```text
 				// extern_modifier: 1 field(s)
 ```
 
-### `function_modifiers` (`packages/rust/overrides.ts:489`)
+### `function_modifiers` (`packages/rust/grammar.sittir.ts:489`)
 
 ```text
 				// function_modifiers — base is
@@ -476,7 +476,7 @@ overlap with `_type` is declared in `conflicts:`).
 				// (ADR-0012) rather than dropping the anonymous arms from $children.
 ```
 
-### `_` (`packages/rust/overrides.ts:497`)
+### `_` (`packages/rust/grammar.sittir.ts:497`)
 
 ```text
 					// Wildcard `_` forces path-mode (a pure numeric key `0`
@@ -498,7 +498,7 @@ overlap with `_type` is declared in `conflicts:`).
 					// combination, not just seq-positioned boolean-keyword slots.
 ```
 
-### `visibility_modifier` (`packages/rust/overrides.ts:517`)
+### `visibility_modifier` (`packages/rust/grammar.sittir.ts:517`)
 
 ```text
 				// visibility_modifier — replaces the hand-authored rule below
@@ -532,7 +532,7 @@ overlap with `_type` is declared in `conflicts:`).
 				//   )
 ```
 
-### `function_type` (`packages/rust/overrides.ts:551`)
+### `function_type` (`packages/rust/grammar.sittir.ts:551`)
 
 ```text
 				// function_type: top-level seq is
@@ -546,7 +546,7 @@ overlap with `_type` is declared in `conflicts:`).
 				// the choice inside.
 ```
 
-### `gen_block` (`packages/rust/overrides.ts:562`)
+### `gen_block` (`packages/rust/grammar.sittir.ts:562`)
 
 ```text
 				// gen_block: seq('gen', optional('move'), $.block).
@@ -556,7 +556,7 @@ overlap with `_type` is declared in `conflicts:`).
 				// reason as async_block (see note above).
 ```
 
-### `generic_type` (`packages/rust/overrides.ts`)
+### `generic_type` (`packages/rust/grammar.sittir.ts`)
 
 The base rule is deliberately left unchanged. Dispatch happens via `drillAs` at
 alias-declared field sites, so consumers see source-typed views — a
@@ -565,19 +565,19 @@ the wrapped tree, rewrite `$type` to source, and use the
 `generic_type_with_turbofish` reparse wrapper, which accepts a turbofish in a
 scoped-path context.
 
-### `index_expression` (`packages/rust/overrides.ts:604`)
+### `index_expression` (`packages/rust/grammar.sittir.ts:604`)
 
 ```text
 				// index_expression: 2 field(s)
 ```
 
-### `macro_invocation` (`packages/rust/overrides.ts:610`)
+### `macro_invocation` (`packages/rust/grammar.sittir.ts:610`)
 
 ```text
 				// macro_invocation: 1 field(s)
 ```
 
-### `mod_item` (`packages/rust/overrides.ts:615`)
+### `mod_item` (`packages/rust/grammar.sittir.ts:615`)
 
 ```text
 				// mod_item: two forms — `mod name;` (external) vs `mod name { ... }`
@@ -585,13 +585,13 @@ scoped-path context.
 				// right terminator (trailing `;` vs `{...}` body).
 ```
 
-### `negative_literal` (`packages/rust/overrides.ts:620`)
+### `negative_literal` (`packages/rust/grammar.sittir.ts:620`)
 
 ```text
 				// negative_literal: 2 field(s)
 ```
 
-### `ordered_field_declaration_list` (`packages/rust/overrides.ts:625`)
+### `ordered_field_declaration_list` (`packages/rust/grammar.sittir.ts:625`)
 
 ```text
 				// ordered_field_declaration_list: 1 field(s)
@@ -604,14 +604,14 @@ scoped-path context.
 				// incorrect. Only wrapping position 1 (the per-element group).
 ```
 
-### `or_pattern` (`packages/rust/overrides.ts:637`)
+### `or_pattern` (`packages/rust/grammar.sittir.ts:637`)
 
 ```text
 				// or_pattern polymorph splits '0' (binary) / '1' (prefix).
 				// Field labels land on base-shape choice arms pre-alias.
 ```
 
-### `pointer_type` (`packages/rust/overrides.ts:645`)
+### `pointer_type` (`packages/rust/grammar.sittir.ts:645`)
 
 ```text
 				// pointer_type: position 1 is `choice('const', $.mutable_specifier)`.
@@ -621,32 +621,32 @@ scoped-path context.
 				// actual qualifier text instead of hardcoding "const".
 ```
 
-### `raw_string_literal` (`packages/rust/overrides.ts:655`)
+### `raw_string_literal` (`packages/rust/grammar.sittir.ts:655`)
 
 ```text
 				// raw_string_literal: 3 field(s)
 ```
 
-### `range_expression` (`packages/rust/overrides.ts:662`)
+### `range_expression` (`packages/rust/grammar.sittir.ts:662`)
 
 ```text
 				// range_expression polymorph splits '0'..'3'. Field labels
 				// land on base-shape choice arms pre-alias.
 ```
 
-### `reference_pattern` (`packages/rust/overrides.ts:681`)
+### `reference_pattern` (`packages/rust/grammar.sittir.ts:681`)
 
 ```text
 				// reference_pattern: 2 field(s)
 ```
 
-### `reference_type` (`packages/rust/overrides.ts:686`)
+### `reference_type` (`packages/rust/grammar.sittir.ts:686`)
 
 ```text
 				// reference_type: 2 field(s)
 ```
 
-### `self_parameter` (`packages/rust/overrides.ts:689`)
+### `self_parameter` (`packages/rust/grammar.sittir.ts:689`)
 
 ```text
 				// self_parameter: canonical tree-sitter-rust has no fields here;
@@ -656,32 +656,32 @@ scoped-path context.
 				// name to avoid colliding with pos 0's label.
 ```
 
-### `shorthand_field_initializer` (`packages/rust/overrides.ts:698`)
+### `shorthand_field_initializer` (`packages/rust/grammar.sittir.ts:698`)
 
 ```text
 				// shorthand_field_initializer: 2 field(s)
 ```
 
-### `source_file` (`packages/rust/overrides.ts:704`)
+### `source_file` (`packages/rust/grammar.sittir.ts:704`)
 
 ```text
 				// source_file: 2 field(s)
 ```
 
-### `static_item` (`packages/rust/overrides.ts:709`)
+### `static_item` (`packages/rust/grammar.sittir.ts:709`)
 
 ```text
 				// static_item: 2 field(s)
 ```
 
-### `struct_item` (`packages/rust/overrides.ts`)
+### `struct_item` (`packages/rust/grammar.sittir.ts`)
 
 Three body shapes: brace (`{ … }`), tuple (`(…)` + `;`), and unit (`;`). Each
 is polymorph-split into its own visible variant so the trailing `;` on the
 tuple and unit forms gets rendered — the flat template dropped it, because `;`
 is an anonymous token not routed to any field.
 
-### `trait_item` (`packages/rust/overrides.ts:720`)
+### `trait_item` (`packages/rust/grammar.sittir.ts:720`)
 
 ```text
 				// trait_item: seq(
@@ -696,14 +696,14 @@ is an anonymous token not routed to any field.
 				// (see note above).
 ```
 
-### `try_expression` (`packages/rust/overrides.ts:734`)
+### `try_expression` (`packages/rust/grammar.sittir.ts:734`)
 
 ```text
 				// try_block: 1 field(s)
 				// try_expression: 2 field(s)
 ```
 
-### `tuple_expression` (`packages/rust/overrides.ts:740`)
+### `tuple_expression` (`packages/rust/grammar.sittir.ts:740`)
 
 ```text
 				// tuple_expression: flat list of expressions comma-separated.
@@ -711,7 +711,7 @@ is an anonymous token not routed to any field.
 				// capturing the `,` separators (same pattern as array_expression).
 ```
 
-### `tuple_type` (`packages/rust/overrides.ts:748`)
+### `tuple_type` (`packages/rust/grammar.sittir.ts:748`)
 
 ```text
 				// tuple_type: seq('(', sepBy1(',', $._type), optional(','), ')').
@@ -724,13 +724,13 @@ is an anonymous token not routed to any field.
 				// Uses transforms: (not rules:) so the parse is unchanged.
 ```
 
-### `type_item` (`packages/rust/overrides.ts:760`)
+### `type_item` (`packages/rust/grammar.sittir.ts:760`)
 
 ```text
 				// type_item: 3 field(s)
 ```
 
-### `unary_expression` (`packages/rust/overrides.ts:771`)
+### `unary_expression` (`packages/rust/grammar.sittir.ts:771`)
 
 ```text
 				// unary_expression — label both the operator token (pos 0) and
@@ -740,13 +740,13 @@ is an anonymous token not routed to any field.
 				// `$OPERATOR $$$CHILDREN` (which reads empty after field promotion).
 ```
 
-### `variadic_parameter` (`packages/rust/overrides.ts:786`)
+### `variadic_parameter` (`packages/rust/grammar.sittir.ts:786`)
 
 ```text
 				// variadic_parameter: 1 field(s)
 ```
 
-### `expression_statement` (`packages/rust/overrides.ts:789`)
+### `expression_statement` (`packages/rust/grammar.sittir.ts:789`)
 
 ```text
 				// expression_statement: choice(seq(_expression, ';'),
@@ -756,7 +756,7 @@ is an anonymous token not routed to any field.
 				// own variant child kind.
 ```
 
-### `foreign_mod_item` (`packages/rust/overrides.ts:799`)
+### `foreign_mod_item` (`packages/rust/grammar.sittir.ts:799`)
 
 ```text
 				// foreign_mod_item: choice at pos 2 between ';' (bare extern
@@ -764,7 +764,7 @@ is an anonymous token not routed to any field.
 				// Variant-adopt so each arm owns its own template.
 ```
 
-### `match_arm` (`packages/rust/overrides.ts:807`)
+### `match_arm` (`packages/rust/grammar.sittir.ts:807`)
 
 ```text
 				// match_arm: seq(repeat(choice(attribute_item, inner_attribute_item)),
@@ -777,7 +777,7 @@ is an anonymous token not routed to any field.
 				// (path mode) via array-of-patch-sets.
 ```
 
-### `line_comment` (`packages/rust/overrides.ts:817`)
+### `line_comment` (`packages/rust/grammar.sittir.ts:817`)
 
 ```text
 				// line_comment: choice at pos 1 between regular double-slash,
@@ -785,7 +785,7 @@ is an anonymous token not routed to any field.
 				// distinct literal prefix.
 ```
 
-### `token_tree_pattern` (`packages/rust/overrides.ts:826`)
+### `token_tree_pattern` (`packages/rust/grammar.sittir.ts:826`)
 
 ```text
 				// token_tree_pattern / token_tree / delim_token_tree: each is
@@ -794,7 +794,7 @@ is an anonymous token not routed to any field.
 				// arm, same inner content. Split so each arm owns its template.
 ```
 
-### `block_comment` — no variant entry (`packages/rust/overrides.ts`)
+### `block_comment` — no variant entry (`packages/rust/grammar.sittir.ts`)
 
 Deliberately absent from `variants:`. The inner choice at `1/0` branches on the
 doc-marker form vs a bare `_block_comment_content`, but the latter is an
@@ -804,7 +804,7 @@ tree-sitter rejects that as "used as both an external token and a non-terminal
 rule". Supporting it needs either conflicts-awareness in the hoist or a
 merge-branches path that leaves the external-token branch unextracted.
 
-### `_token_tree_punctuation` (`packages/rust/overrides.ts:867`)
+### `_token_tree_punctuation` (`packages/rust/grammar.sittir.ts:867`)
 
 ```text
 				// _token_tree_punctuation — the punctuation choice previously
@@ -823,7 +823,7 @@ merge-branches path that leaves the external-token branch unextracted.
 				// compiled grammar.json directly, not by trusting the doc comment.)
 ```
 
-### `_non_special_token` (`packages/rust/overrides.ts:929`)
+### `_non_special_token` (`packages/rust/grammar.sittir.ts:929`)
 
 ```text
 				// _non_special_token — the punctuation run inside a token tree (`,`,
@@ -900,7 +900,7 @@ merge-branches path that leaves the external-token branch unextracted.
 				// `_token_pattern_quote` rule).
 ```
 
-### `use_wildcard` (`packages/rust/overrides.ts:1045`)
+### `use_wildcard` (`packages/rust/grammar.sittir.ts:1045`)
 
 ```text
 				// use_wildcard — re-authored as a VISIBLE clause group. Base was the
@@ -913,7 +913,7 @@ merge-branches path that leaves the external-token branch unextracted.
 				// or `*`. (Drops the ~invalid bare-path `use ::*` form, which was never valid.)
 ```
 
-### `_where_clause_group1` (`packages/rust/overrides.ts:1056`)
+### `_where_clause_group1` (`packages/rust/grammar.sittir.ts:1056`)
 
 ```text
 				// _where_clause_group1 — enrich's visible-group hoist extracts base
@@ -926,7 +926,7 @@ merge-branches path that leaves the external-token branch unextracted.
 				// shift at `, • '`, not end the group).
 ```
 
-### `_pattern` (`packages/rust/overrides.ts:1066`)
+### `_pattern` (`packages/rust/grammar.sittir.ts:1066`)
 
 ```text
 				// Hidden `_kw_*` rules that previously sat here
@@ -956,7 +956,7 @@ merge-branches path that leaves the external-token branch unextracted.
 				// literal time, before `$` exists. See ADR-0009 §Task-7.
 ```
 
-### `_wildcard_pattern` (`packages/rust/overrides.ts:1096`)
+### `_wildcard_pattern` (`packages/rust/grammar.sittir.ts:1096`)
 
 ```text
 				// The hidden rule `_wildcard_pattern` is just the `_` literal;
@@ -964,7 +964,7 @@ merge-branches path that leaves the external-token branch unextracted.
 				// `wildcard_pattern` kind at parse time.
 ```
 
-### `_reference_expression_raw_const` (`packages/rust/overrides.ts:1101`)
+### `_reference_expression_raw_const` (`packages/rust/grammar.sittir.ts:1101`)
 
 ```text
 				// reference_expression — reference-mode is a SINGLE optional choice slot.
@@ -978,7 +978,7 @@ merge-branches path that leaves the external-token branch unextracted.
 				// submethods derive from the choice arms as sugar.
 ```
 
-### `_impl_item_unsafe_marker` (`packages/rust/overrides.ts:1128`)
+### `_impl_item_unsafe_marker` (`packages/rust/grammar.sittir.ts:1128`)
 
 ```text
 				// impl_item — full rule replacement (de-polymorph). The co-optional trait
@@ -986,7 +986,7 @@ merge-branches path that leaves the external-token branch unextracted.
 				// unit (no conditional-key-on-sub-optional bug); body/semi arms are alias kinds.
 ```
 
-### `_let_chain` (`packages/rust/overrides.ts:1157`)
+### `_let_chain` (`packages/rust/grammar.sittir.ts:1157`)
 
 ```text
 				// _let_chain — left-recursive `left && right` chain where each
@@ -1004,7 +1004,7 @@ merge-branches path that leaves the external-token branch unextracted.
 				// tree-sitter-rust's `PREC.and`.
 ```
 
-### `expectTestFailures` (`packages/rust/overrides.ts:1183`)
+### `expectTestFailures` (`packages/rust/grammar.sittir.ts:1183`)
 
 ```text
 			// renderAs — sittir-side rule bodies for external scanner symbols.
@@ -1035,7 +1035,7 @@ merge-branches path that leaves the external-token branch unextracted.
 			// silenced mysteries. Remove an entry + regen when its issue is fixed.
 ```
 
-### `_raw_string_literal_start` (`packages/rust/overrides.ts:1223`)
+### `_raw_string_literal_start` (`packages/rust/grammar.sittir.ts:1223`)
 
 ```text
 				// Raw string literal delimiters — static (1-hash form only).

@@ -1,7 +1,7 @@
 /**
  * intellisense-demo.test-d.ts — SCRATCH demonstration that the derived
  * (post-Enrich) rule shapes give authoring IntelliSense.
- * This is a PROOF artifact, not wired into the real overrides.ts.
+ * This is a PROOF artifact, not wired into the real grammar.sittir.ts.
  *
  *   B-half: direct rule-shape navigation (hover/navigate a rule's recursive
  *           structure) — `EnrichRule<RawShape['rule']>` is a fully-resolved,

@@ -27,12 +27,12 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// packages/python/overrides.ts
-var overrides_exports = {};
-__export(overrides_exports, {
-  default: () => overrides_default
+// packages/python/grammar.sittir.ts
+var grammar_sittir_exports = {};
+__export(grammar_sittir_exports, {
+  default: () => grammar_sittir_default
 });
-module.exports = __toCommonJS(overrides_exports);
+module.exports = __toCommonJS(grammar_sittir_exports);
 var import_grammar = __toESM(require("tree-sitter-python/grammar.js"), 1);
 
 // packages/codegen/src/types/runtime-shapes.ts
@@ -1146,6 +1146,7 @@ function applyEnrichPasses(ruleName, rule, kwRules, supertypeNames, rulesBag, cl
   for (let i = 0; i < MAX_ITERATIONS; i++) {
     const before = r;
     r = applySymbolToField(ruleName, r, supertypeNames);
+    r = applyChoiceArmFieldWrap(ruleName, r, supertypeNames, rulesBag);
     r = applyOptionalKeyword(ruleName, r, kwRules, wordMatcher);
     if (r === before) {
       converged = true;
@@ -1198,6 +1199,80 @@ function extractSupertypeNames(base2, hasWrapper) {
   }
   if (Array.isArray(supertypes)) return harvestSupertypeNames(supertypes);
   return /* @__PURE__ */ new Set();
+}
+function isAnonymousLiteralShapedRule(name, rulesBag, seen) {
+  if (seen.has(name)) return false;
+  seen.add(name);
+  const rule = rulesBag[name];
+  if (!rule) return true;
+  return isAnonymousLiteralShapedContent(rule, rulesBag, seen);
+}
+function isAnonymousLiteralShapedContent(rule, rulesBag, seen) {
+  if (isStringType(rule.type) || rule.type === "PATTERN") return true;
+  if (isChoiceType(rule.type)) {
+    const members = rule.members;
+    return members.every((m) => isAnonymousLiteralShapedContent(m, rulesBag, seen));
+  }
+  if (isSymbolType(rule.type) && typeof rule.name === "string") {
+    return isAnonymousLiteralShapedRule(rule.name, rulesBag, seen);
+  }
+  return false;
+}
+function applyChoiceArmFieldWrap(ruleName, rule, supertypeNames, rulesBag) {
+  if (ruleName.startsWith("_")) return rule;
+  let cursor = rule;
+  const precStack = [];
+  while (isPrecWrapper(cursor)) {
+    precStack.push(cursor);
+    cursor = cursor.content;
+  }
+  if (!isChoiceType(cursor.type)) return rule;
+  const armMembers = cursor.members;
+  let anyArmChanged = false;
+  const newArms = armMembers.map((arm) => {
+    let armCursor = arm;
+    const armPrecStack = [];
+    while (isPrecWrapper(armCursor)) {
+      armPrecStack.push(armCursor);
+      armCursor = armCursor.content;
+    }
+    if (!isSeqType(armCursor.type)) return arm;
+    const seqMembers = armCursor.members;
+    const existing = collectFieldNamesRuntime(armCursor);
+    let armChanged = false;
+    const newSeqMembers = seqMembers.map((m) => {
+      const t = detectSymbolTarget(m);
+      if (!t) return m;
+      if (!isBareShapeTarget(m, t)) return m;
+      let fieldName = t.name;
+      if (t.name.startsWith("_")) {
+        const eligible = supertypeNames.has(t.name) || isAnonymousLiteralShapedRule(t.name, rulesBag, /* @__PURE__ */ new Set());
+        if (!eligible) return m;
+        fieldName = t.name.slice(1);
+      }
+      if (existing.has(fieldName)) {
+        reportSkip("choice-arm-field", ruleName, `field '${fieldName}' already exists`);
+        return m;
+      }
+      existing.add(fieldName);
+      armChanged = true;
+      const fieldNode = makeField(fieldName, t.symbolRule);
+      return t.wrap(fieldNode);
+    });
+    if (!armChanged) return arm;
+    anyArmChanged = true;
+    let rebuiltArm = { ...armCursor, members: newSeqMembers };
+    for (let i = armPrecStack.length - 1; i >= 0; i--) {
+      rebuiltArm = { ...armPrecStack[i], content: rebuiltArm };
+    }
+    return rebuiltArm;
+  });
+  if (!anyArmChanged) return rule;
+  let result = { ...cursor, members: newArms };
+  for (let i = precStack.length - 1; i >= 0; i--) {
+    result = { ...precStack[i], content: result };
+  }
+  return result;
 }
 function extractWordName(word) {
   if (typeof word === "string") return word;
@@ -2139,7 +2214,14 @@ function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRule
         toRetarget.set(candidate, strippedName);
         anyActed = true;
       }
-      if (anyActed) diagnostics.push({ ...diagnostic, severity: "info" });
+      if (anyActed) {
+        diagnostics.push({
+          ...diagnostic,
+          severity: "info",
+          message: `${diagnostic.message} Found in the base grammar; automatically resolved by giving each colliding arm its own distinct alias.`,
+          proposal: "Already resolved by enrich() \u2014 no action needed."
+        });
+      }
     }
   }
   if (toDrop.size === 0 && toRetarget.size === 0) return { rule, diagnostics: [] };
@@ -3083,7 +3165,23 @@ function applyFlatPatches(original, patches) {
     return applyFlatPatchesToSeq(original, patches);
   }
   if (isChoiceType(t)) {
-    const newMembers = membersOf2(original).map((m) => applyFlatPatches(m, patches));
+    const members = membersOf2(original);
+    let anyApplied = false;
+    const newMembers = members.map((m) => {
+      try {
+        const patched = applyFlatPatches(m, patches);
+        anyApplied = true;
+        return patched;
+      } catch (e) {
+        if (e instanceof ApplyPathSkip) return m;
+        throw e;
+      }
+    });
+    if (!anyApplied) {
+      throw new Error(
+        `transform: flat-positional key(s) [${Object.keys(patches).join(", ")}] matched no choice arm out of ${members.length} \u2014 each arm was tried independently and none had all the target positions. Flat keys patch a position uniformly across every arm; they can't select ONE specific arm (a plain digit key on a choice does not mean "arm N"). To replace one specific arm, use path syntax instead (e.g. '${Object.keys(patches)[0]}' as a path segment, or '-1' for the last arm).`
+      );
+    }
     return reconstructContainer(original, newMembers);
   }
   if (isPrecWrapper(original)) {
@@ -3109,7 +3207,9 @@ function applyFlatPatchesToSeq(original, patches) {
     }
     const index = Number(key);
     if (index >= members.length) {
-      throw new Error(`transform: index ${index} out of bounds in ${original.type} of length ${members.length}`);
+      throw new ApplyPathSkip(
+        `transform: index ${index} out of bounds in ${original.type} of length ${members.length}`
+      );
     }
     members[index] = resolvePatch(patch, members[index]);
   }
@@ -3379,9 +3479,9 @@ function role(symbol, roleName) {
   return symbol;
 }
 
-// packages/python/overrides.ts
+// packages/python/grammar.sittir.ts
 var enrichedBase = enrich(import_grammar.default);
-var overrides_default = grammar(
+var grammar_sittir_default = grammar(
   enrichedBase,
   wire(
     {
@@ -3413,6 +3513,17 @@ var overrides_default = grammar(
           1: "paren"
         },
         _match_block: { 0: "block" },
+        // `_suite`'s indent-bearing arm (`seq($._indent, $.block)`) has no
+        // identity of its own otherwise — it's an anonymous seq member of
+        // a CHOICE whose other two arms are themselves aliases (to
+        // `simple_statements`/`newline`). Promoting it to its own kind
+        // (same mechanism as `_match_block`'s `block` arm above) gives it
+        // a real template, walked normally by emitRule/emitOne, so its
+        // own INDENT member (`case INDENT` in templates.ts) renders
+        // correctly instead of being silently dropped by emitChoice's
+        // union-slot routing, which has no notion of "gate an anonymous
+        // seq arm with no discriminating field of its own."
+        _suite: { 1: "block_with_indent" },
         dict_pattern: { "1/0/0/0": "kv" },
         _simple_pattern: { "11": "negative" },
         except_clause: { "2/0/0": "as", "2/0/1": "list" }
@@ -3487,8 +3598,18 @@ var overrides_default = grammar(
         generic_type: {
           0: field("identifier")
         },
+        // import_from_statement: 1 field(s)
+        // Path-scoped to choice arm 0 (the bare `$.wildcard_import` symbol).
+        // The previous flat `3: field('wildcard_import')` wrapped the WHOLE
+        // position-3 choice, so in the parenthesized arm
+        // (`seq('(', $._import_list, ')')`) the field landed on the anonymous
+        // '(' / ',' / ')' tokens (the named imports inside `_import_list`
+        // already carry their own field('name')) — the wildcard_import slot
+        // then filtered those out and threw "repeated slot 'wildcard_import'
+        // requires at least one value" for `from a import (b, c)`.
         import_from_statement: {
-          3: field("wildcard_import")
+          "3/0": field("wildcard_import")
+          // wildcard_import [struct=0]
         },
         keyword_pattern: {
           2: field("simple_pattern")
@@ -3538,6 +3659,85 @@ var overrides_default = grammar(
         tuple: ($) => seq("(", optional(alias($._collection_elements, $.element_list)), ")"),
         case_tuple_pattern: ($) => seq("(", optional(seq($.case_pattern, repeat(seq(",", $.case_pattern)), optional(","))), ")"),
         case_list_pattern: ($) => seq("[", optional(seq($.case_pattern, repeat(seq(",", $.case_pattern)), optional(","))), "]"),
+        // Case-context as-pattern split — same two-rules-one-parse-kind class
+        // as `case_tuple_pattern`/`case_list_pattern` just above. Base
+        // `case_pattern` arm 0 is `alias($._as_pattern, $.as_pattern)`:
+        // match-statement `X as name` patterns parse to the SAME `as_pattern`
+        // kind as the expression-context rule (`seq($.expression, 'as',
+        // field('alias', alias($.expression, $.as_pattern_target)))`), whose
+        // wrap requires an `expression` child the case shape
+        // (`seq($.case_pattern, 'as', $.identifier)`) never produces — every
+        // case-context as-pattern threw at wrap time ("singular slot
+        // 'expression' on 'as_pattern' requires one value"). Declare the case
+        // shape as its own REAL visible rule (per the precedent above, a
+        // choice-arm position can't mint a content alias, so `alias($._x, …)`
+        // would never enter the NodeMap). Non-natural name: the natural
+        // stripped name `as_pattern` is taken by the expression-context kind.
+        case_as_pattern: ($) => seq($.case_pattern, "as", $.identifier),
+        case_pattern: ($) => prec(1, choice($.case_as_pattern, $.keyword_pattern, $._simple_pattern)),
+        // Comprehension-clause visibility (hidden-repeat-helper class): the
+        // base `_comprehension_clauses` (`seq($.for_in_clause,
+        // repeat(choice($.for_in_clause, $.if_clause)))`) is a hidden rule
+        // referenced as a MANDATORY seq member from all four comprehension
+        // kinds — tree-sitter inlines it (children flatten onto the parent),
+        // but sittir models it as a singular `comprehension_clauses` slot,
+        // and the native read never reassembles the flattened
+        // for_in_clause/if_clause children into that slot: every
+        // comprehension threw at wrap time ("singular slot
+        // 'comprehension_clauses' … requires one value; got undefined").
+        // A Track-B reference-site alias can't help here — every reference
+        // is mandatory (no `optional(...)` site to satisfy
+        // `parentIsOptionalSeq`, see the `set`/`element_list` note above) —
+        // so declare it as a REAL visible rule (natural stripped name, per
+        // the `print_statement_group1/2` precedent: it's what the generated
+        // model already expects) and reference it directly.
+        // Body is `repeat1(choice(...))`, NOT the base's
+        // `seq($.for_in_clause, repeat(choice(...)))`: the seq shape derives
+        // TWO slots (position-0 `for_in_clause` + the repeat as `content`),
+        // but the native reader can only fill ONE bucket from the flat
+        // children, and the generated render fn papers over the missing
+        // slot by feeding BOTH template slots the same buffer — duplicating
+        // every clause on deep render (`(x for x in y for x in y)`).
+        // repeat1 is a deliberate, slight acceptance-widening (a leading
+        // if_clause becomes grammatical to the override parser; base
+        // rejects it) — it can't reject anything the base accepts, so no
+        // override-parser ERROR regressions are possible from it.
+        comprehension_clauses: ($) => repeat1(choice($.for_in_clause, $.if_clause)),
+        list_comprehension: ($) => seq("[", field("body", $.expression), $.comprehension_clauses, "]"),
+        dictionary_comprehension: ($) => seq("{", field("body", $.pair), $.comprehension_clauses, "}"),
+        set_comprehension: ($) => seq("{", field("body", $.expression), $.comprehension_clauses, "}"),
+        generator_expression: ($) => seq("(", field("body", $.expression), $.comprehension_clauses, ")"),
+        // print_statement: base is a bare `choice(prec(1, seq('print',
+        // chevron, ...)), prec(-3, prec.dynamic(-1, seq('print',
+        // commaSep1(field('argument', expression)), ...))))` — TWO
+        // anonymous seq arms, neither BLANK. Sittir's own IR auto-names
+        // these `_print_statement_group1`/`_print_statement_group2` and
+        // (per the multi-slot/single-slot visible-group rule) models
+        // `content` as a union referencing both — but since neither
+        // arm is authored as its own named rule OR wrapped in
+        // `alias($._x, $.x)`, tree-sitter's native grammar compiler
+        // just flattens both arms' fields (chevron / argument) directly
+        // onto `print_statement` itself. The `_print_statement_group1`/
+        // `_print_statement_group2` node-refs in the IR's `content`
+        // field never resolve against the real parser output —
+        // `hydrateSlots` (assemble.ts) correctly detects this as its
+        // documented "inlined-before-assemble" category and leaves
+        // them `UnresolvedRef`, but nothing downstream falls back to
+        // the flattened fields, so `wrapPrintStatement`'s `_content`
+        // accessor chain (`_content ?? _print_statement_group1 ??
+        // _print_statement_group2`) never finds a value — every
+        // print-statement form throws at wrap time.
+        //
+        // Per the `case_tuple_pattern`/`case_list_pattern` precedent
+        // just above (same file, same root cause class): a CHOICE ARM
+        // position is NOT the `optional(...)`/`CHOICE[x, BLANK]` shape
+        // `mintContentAliasKinds` requires to register a
+        // reference-site alias — an `alias($._x, ...)` here would
+        // never enter the NodeMap. The fix is to declare each arm as
+        // its OWN real, independently-visible rule (natural stripped
+        // names — already what the generated types/wrap model
+        // expects) and reference them directly by symbol, matching
+        // the base grammar's arms verbatim (including precedence).
         print_statement_group1: ($) => seq("print", $.chevron, repeat(seq(",", field("argument", $.expression))), optional(",")),
         print_statement_group2: ($) => seq(
           "print",
@@ -3546,6 +3746,19 @@ var overrides_default = grammar(
           optional(",")
         ),
         print_statement: ($) => choice(prec(1, $.print_statement_group1), prec(-3, prec.dynamic(-1, $.print_statement_group2))),
+        // Base `_simple_pattern`'s last arm is the bare literal `'_'`
+        // (the match-statement wildcard pattern). Every other arm is a
+        // named rule (`$.dotted_name`, `$.string`, ...), so when
+        // `_simple_pattern` (hidden) inlines into `case_pattern`, those
+        // arms surface as a real named child that routes into
+        // `case_pattern`'s singular `content` slot — but a bare string
+        // literal produces an ANONYMOUS/unnamed token instead, which
+        // the wrap layer's `content` accessor never finds ("singular
+        // slot 'content' on 'case_pattern' requires one value; got
+        // undefined"). Same root-cause class, same fix, as rust's
+        // `_pattern`/`_wildcard_pattern` (packages/rust/grammar.sittir.ts):
+        // alias the literal into its own real, named node so it can
+        // fill the slot like every sibling arm.
         _simple_pattern: ($) => prec(
           1,
           choice(
@@ -3563,9 +3776,10 @@ var overrides_default = grammar(
             seq(optional("-"), choice($.integer, $.float)),
             $.complex_pattern,
             $.dotted_name,
-            "_"
+            alias($._wildcard_pattern, $.wildcard_pattern)
           )
-        )
+        ),
+        _wildcard_pattern: ($) => "_"
       }
     },
     enrichedBase

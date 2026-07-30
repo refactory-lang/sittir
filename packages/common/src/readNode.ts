@@ -9,7 +9,7 @@
  * the grammar-author-declared field names. Anonymous identifier-shaped
  * tokens get promoted to keyword fields via `promoteAnonymousKeyword`.
  * No routing map: override-based kind-to-field routing is baked into
- * the compiled grammar at codegen time (overrides.ts → .sittir/grammar.js
+ * the compiled grammar at codegen time (grammar.sittir.ts → .sittir/grammar.js
  * → compiled parser), so tree-sitter itself surfaces those fields.
  *
  * No recursion — lazy getters in wrap.ts call readNode again when needed.

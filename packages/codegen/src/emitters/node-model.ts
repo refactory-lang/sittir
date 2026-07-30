@@ -31,7 +31,7 @@ import {
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { NodeMap } from '../compiler/types.ts';
 import type { Rule, SeparatorFlankMode } from '../types/rule.ts';
-import type { AssembledNode, AssembledNonterminal, NodeOrTerminal, UnresolvedRef } from '../compiler/model/node-map.ts';
+import type { AssembledNode, AssembledNonterminal, NodeOrTerminal } from '../compiler/model/node-map.ts';
 import {
 	isNodeRef,
 	isUnresolvedRef,

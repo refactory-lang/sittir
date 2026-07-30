@@ -129,7 +129,7 @@ export function diagnoseSlotGrouping(
 					// Always blocking here — accepted-floor exceptions are applied later,
 					// in grammar-diagnostics.ts's `collectGrammarDiagnostics`, driven by
 					// the grammar's OWN `expectDiagnostics:` declaration in its
-					// overrides.ts. This function has no grammar identity, so a
+					// grammar.sittir.ts. This function has no grammar identity, so a
 					// kind-name-only check here would incorrectly except a same-named
 					// kind in ANY grammar.
 					canProceed: false,
@@ -138,7 +138,7 @@ export function diagnoseSlotGrouping(
 					proposal:
 						`Kind '${ownerKind}' has ${contentCount} anonymous 'content' slots that would share ` +
 						`the '_content' storage key (an unemittable ambiguity). ` +
-						`field()-name at least one in overrides.ts.`
+						`field()-name at least one in grammar.sittir.ts.`
 				});
 			}
 		}
@@ -333,7 +333,7 @@ function checkRepeatOfSymbol(
 		proposal:
 			`Kind '${ownerKind}' has a repeat(${symName}) without a field name. ` +
 			`This fragments at read by concrete kind. ` +
-			`Propose: add transforms: { '(${symName})': field('<name>') } in overrides.ts.`
+			`Propose: add transforms: { '(${symName})': field('<name>') } in grammar.sittir.ts.`
 	});
 }
 

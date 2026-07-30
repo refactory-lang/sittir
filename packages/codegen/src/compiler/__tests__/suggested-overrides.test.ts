@@ -55,12 +55,12 @@ describe.skip('US6 — supertype promotion candidates (T068)', () => {
 });
 
 describe.skip('US6 — manual overrides win over inference (T069 / T069a)', () => {
-	it('omits entries already present in overrides.ts', async () => {
+	it('omits entries already present in grammar.sittir.ts', async () => {
 		const result = await generate({
 			grammar: 'rust',
 			outputDir: '/tmp/rust-manual'
 		});
-		// Link sees overrides.ts as the source of truth. Every
+		// Link sees grammar.sittir.ts as the source of truth. Every
 		// field the user manually labeled carries source='override'
 		// and is filtered out of the derivation log before it
 		// reaches suggested.ts. Check that a few known manually

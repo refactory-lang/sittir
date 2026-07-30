@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 258,
+  "nodeCount": 260,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -66,12 +66,6 @@
         "expression_list_group1": "group1"
       }
     },
-    "case_pattern": {
-      "definedBy": "override",
-      "childKind": {
-        "case_pattern_group1": "group1"
-      }
-    },
     "assignment": {
       "definedBy": "override",
       "childKind": {
@@ -100,7 +94,7 @@
     "future_import_statement.import_list": {
       "future_import_statement_group1": "_import_list"
     },
-    "import_from_statement.wildcard_import": {
+    "import_from_statement.import_list": {
       "future_import_statement_group1": "_import_list"
     },
     "expression_statement.content": {
@@ -108,14 +102,17 @@
     },
     "if_statement.consequence": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "elif_clause.consequence": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "else_clause.body": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "match_statement.body": {
@@ -127,35 +124,40 @@
     },
     "case_clause.consequence": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "for_statement.body": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "while_statement.body": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "try_statement.body": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "except_clause.except_clause_group1": {
       "except_clause_group1": "_except_clause_group1"
     },
-    "except_clause.simple_statements": {
-      "simple_statements": "_simple_statements"
-    },
-    "except_clause.newline": {
+    "except_clause.content": {
+      "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "finally_clause.block": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "with_statement.body": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "with_clause.content": {
@@ -164,6 +166,7 @@
     },
     "function_definition.body": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "parameters.parameters": {
@@ -174,6 +177,7 @@
     },
     "class_definition.body": {
       "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "parenthesized_list_splat.content": {
@@ -185,18 +189,13 @@
     "decorator.newline": {
       "newline": "_newline"
     },
-    "_suite.simple_statements": {
-      "simple_statements": "_simple_statements"
-    },
-    "_suite.newline": {
+    "_suite.content": {
+      "simple_statements": "_simple_statements",
+      "suite_block_with_indent": "_suite_block_with_indent",
       "newline": "_newline"
     },
     "expression_list.tail": {
       "expression_list_group1": "_expression_list_group1"
-    },
-    "case_pattern.content": {
-      "as_pattern": "_as_pattern",
-      "case_pattern_group1": "_simple_pattern"
     },
     "dict_pattern.dict_pattern_group2": {
       "dict_pattern_group2": "_dict_pattern_group2"
@@ -340,9 +339,23 @@
       "wildcard_import": {
         "unnamed": false,
         "slotCount": 1,
-        "required": true,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "name": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
         "multiple": true,
-        "nonEmpty": true
+        "nonEmpty": false
+      },
+      "import_list": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": false,
+        "nonEmpty": false
       }
     },
     "_import_list": {
@@ -650,24 +663,10 @@
         "multiple": false,
         "nonEmpty": false
       },
-      "simple_statements": {
+      "content": {
         "unnamed": false,
         "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "block": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "newline": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
+        "required": true,
         "multiple": false,
         "nonEmpty": false
       }
@@ -984,22 +983,6 @@
     },
     "case_pattern": {
       "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
-    "_as_pattern": {
-      "case_pattern": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      },
-      "identifier": {
         "unnamed": false,
         "slotCount": 1,
         "required": true,
@@ -1712,15 +1695,6 @@
         "nonEmpty": false
       }
     },
-    "_comprehension_clauses": {
-      "content": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": false,
-        "multiple": true,
-        "nonEmpty": false
-      }
-    },
     "parenthesized_expression": {
       "content": {
         "unnamed": false,
@@ -1998,6 +1972,31 @@
         "nonEmpty": false
       }
     },
+    "case_as_pattern": {
+      "case_pattern": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      },
+      "identifier": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
+        "nonEmpty": false
+      }
+    },
+    "comprehension_clauses": {
+      "content": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": false,
+        "multiple": true,
+        "nonEmpty": false
+      }
+    },
     "print_statement_group1": {
       "chevron": {
         "unnamed": false,
@@ -2090,6 +2089,15 @@
         "slotCount": 1,
         "required": false,
         "multiple": true,
+        "nonEmpty": false
+      }
+    },
+    "_suite_block_with_indent": {
+      "block": {
+        "unnamed": false,
+        "slotCount": 1,
+        "required": true,
+        "multiple": false,
         "nonEmpty": false
       }
     },
@@ -2370,68 +2378,6 @@
         "keyword_argument"
       ],
       "factoryShape": "spread"
-    },
-    {
-      "kind": "_as_pattern",
-      "modelType": "branch",
-      "typeName": "_AsPattern",
-      "factoryName": "_asPattern",
-      "irKey": "_asPattern",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "case_pattern",
-          "propertyName": "casePattern",
-          "paramName": "casePattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "case_pattern",
-              "parseKind": "case_pattern",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "case_pattern"
-            ]
-          }
-        },
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "identifier"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "config",
-      "factoryFields": [
-        "case_pattern",
-        "identifier"
-      ]
     },
     {
       "kind": "_assignment_eq",
@@ -2778,52 +2724,6 @@
         "try_statement",
         "while_statement",
         "with_statement"
-      ]
-    },
-    {
-      "kind": "_comprehension_clauses",
-      "modelType": "branch",
-      "typeName": "ComprehensionClauses",
-      "factoryName": "comprehensionClauses",
-      "irKey": "comprehensionClauses",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "content",
-          "propertyName": "contents",
-          "paramName": "contents",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "for_in_clause",
-              "parseKind": "for_in_clause",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "if_clause",
-              "parseKind": "if_clause",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "for_in_clause",
-              "if_clause"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "spread",
-      "factoryFields": [
-        "content"
       ]
     },
     {
@@ -3277,7 +3177,8 @@
       "typeName": "IsNot",
       "factoryName": "isNot",
       "irKey": "isNot",
-      "hidden": false
+      "hidden": false,
+      "text": "is not"
     },
     {
       "kind": "_key_value_pattern",
@@ -3491,7 +3392,8 @@
       "typeName": "NotIn",
       "factoryName": "notIn",
       "irKey": "notIn",
-      "hidden": false
+      "hidden": false,
+      "text": "not in"
     },
     {
       "kind": "_parameters",
@@ -3599,6 +3501,7 @@
       "hidden": true,
       "subtypes": [
         "_simple_pattern_negative",
+        "_wildcard_pattern",
         "case_list_pattern",
         "case_tuple_pattern",
         "class_pattern",
@@ -3831,39 +3734,66 @@
       "hidden": false,
       "fields": [
         {
-          "name": "simple_statements",
-          "propertyName": "simpleStatements",
-          "paramName": "simpleStatements",
-          "required": false,
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_simple_statements",
               "parseKind": "simple_statements",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_newline",
+              "parseKind": "newline",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_simple_statements"
+              "_simple_statements",
+              "_suite_block_with_indent",
+              "_newline"
             ]
           }
-        },
+        }
+      ],
+      "children": []
+    },
+    {
+      "kind": "_suite_block_with_indent",
+      "modelType": "branch",
+      "typeName": "SuiteBlockWithIndent",
+      "factoryName": "suiteBlockWithIndent",
+      "irKey": "suiteBlockWithIndent",
+      "hidden": false,
+      "fields": [
         {
           "name": "block",
           "propertyName": "block",
           "paramName": "block",
-          "required": false,
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "block",
               "parseKind": "block",
               "unresolved": true
@@ -3875,32 +3805,13 @@
               "block"
             ]
           }
-        },
-        {
-          "name": "newline",
-          "propertyName": "newline",
-          "paramName": "newline",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_newline",
-              "parseKind": "newline",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_newline"
-            ]
-          }
         }
       ],
-      "children": []
+      "children": [],
+      "factoryShape": "direct",
+      "factoryFields": [
+        "block"
+      ]
     },
     {
       "kind": "_unary_operator_operator",
@@ -3915,6 +3826,17 @@
         "~"
       ],
       "factoryShape": "text"
+    },
+    {
+      "kind": "_wildcard_pattern",
+      "modelType": "keyword",
+      "typeName": "WildcardPattern",
+      "factoryName": "wildcardPattern",
+      "irKey": "wildcardPattern",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"_\" as const",
+      "text": "_"
     },
     {
       "kind": "_with_clause_bare",
@@ -4895,6 +4817,68 @@
       "factoryShape": "text"
     },
     {
+      "kind": "case_as_pattern",
+      "modelType": "branch",
+      "typeName": "CaseAsPattern",
+      "factoryName": "caseAsPattern",
+      "irKey": "caseAsPattern",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "case_pattern",
+          "propertyName": "casePattern",
+          "paramName": "casePattern",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "case_pattern",
+              "parseKind": "case_pattern",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "case_pattern"
+            ]
+          }
+        },
+        {
+          "name": "identifier",
+          "propertyName": "identifier",
+          "paramName": "identifier",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "parseKind": "identifier",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "identifier"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "config",
+      "factoryFields": [
+        "case_pattern",
+        "identifier"
+      ]
+    },
+    {
       "kind": "case_clause",
       "modelType": "branch",
       "typeName": "CaseClause",
@@ -4966,8 +4950,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -4982,7 +4966,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -5053,8 +5037,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_as_pattern",
-              "parseKind": "as_pattern",
+              "name": "case_as_pattern",
+              "parseKind": "case_as_pattern",
               "unresolved": true
             },
             {
@@ -5068,14 +5052,14 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_simple_pattern",
-              "parseKind": "case_pattern_group1",
+              "parseKind": "_simple_pattern",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_as_pattern",
+              "case_as_pattern",
               "keyword_pattern",
               "_simple_pattern"
             ]
@@ -5270,8 +5254,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -5286,7 +5270,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -5563,6 +5547,52 @@
       "factoryFields": [
         "imaginary",
         "operator",
+        "content"
+      ]
+    },
+    {
+      "kind": "comprehension_clauses",
+      "modelType": "branch",
+      "typeName": "ComprehensionClauses",
+      "factoryName": "comprehensionClauses",
+      "irKey": "comprehensionClauses",
+      "hidden": false,
+      "fields": [
+        {
+          "name": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
+          "required": false,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "for_in_clause",
+              "parseKind": "for_in_clause",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "if_clause",
+              "parseKind": "if_clause",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "for_in_clause",
+              "if_clause"
+            ]
+          }
+        }
+      ],
+      "children": [],
+      "factoryShape": "spread",
+      "factoryFields": [
         "content"
       ]
     },
@@ -6164,15 +6194,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_comprehension_clauses",
-              "parseKind": "_comprehension_clauses",
+              "name": "comprehension_clauses",
+              "parseKind": "comprehension_clauses",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_comprehension_clauses"
+              "comprehension_clauses"
             ]
           }
         }
@@ -6374,8 +6404,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -6390,7 +6420,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -6450,8 +6480,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -6466,7 +6496,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -6537,62 +6567,30 @@
           }
         },
         {
-          "name": "simple_statements",
-          "propertyName": "simpleStatements",
-          "paramName": "simpleStatements",
-          "required": false,
+          "name": "content",
+          "propertyName": "content",
+          "paramName": "content",
+          "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_simple_statements",
               "parseKind": "simple_statements",
               "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "_simple_statements"
-            ]
-          }
-        },
-        {
-          "name": "block",
-          "propertyName": "block",
-          "paramName": "block",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "block",
-              "parseKind": "block",
+              "multiplicity": "single",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "block"
-            ]
-          }
-        },
-        {
-          "name": "newline",
-          "propertyName": "newline",
-          "paramName": "newline",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
-              "multiplicity": "optional",
+              "multiplicity": "single",
               "name": "_newline",
               "parseKind": "newline",
               "unresolved": true
@@ -6601,6 +6599,8 @@
           "projection": {
             "typeName": "",
             "kinds": [
+              "_simple_statements",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -6610,8 +6610,7 @@
       "factoryShape": "config",
       "factoryFields": [
         "except_clause_group1",
-        "simple_statements",
-        "block"
+        "content"
       ]
     },
     {
@@ -6899,8 +6898,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -6915,7 +6914,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -7127,8 +7126,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -7143,7 +7142,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -7376,8 +7375,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -7392,7 +7391,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -7520,15 +7519,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_comprehension_clauses",
-              "parseKind": "_comprehension_clauses",
+              "name": "comprehension_clauses",
+              "parseKind": "comprehension_clauses",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_comprehension_clauses"
+              "comprehension_clauses"
             ]
           }
         }
@@ -7769,8 +7768,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -7785,7 +7784,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -7882,36 +7881,42 @@
         },
         {
           "name": "wildcard_import",
-          "propertyName": "wildcardImports",
-          "paramName": "wildcardImports",
-          "required": true,
+          "propertyName": "wildcardImport",
+          "paramName": "wildcardImport",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "optional",
+              "value": "*",
+              "parseKind": "star"
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": []
+          }
+        },
+        {
+          "name": "name",
+          "propertyName": "names",
+          "paramName": "names",
+          "required": false,
           "multiple": true,
-          "nonEmpty": true,
+          "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "wildcard_import",
-              "parseKind": "wildcard_import",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
-              "name": "_import_list",
-              "parseKind": "future_import_statement_group1",
-              "unresolved": true
-            },
-            {
-              "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "dotted_name",
               "parseKind": "dotted_name",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "nonEmptyArray",
+              "multiplicity": "array",
               "name": "aliased_import",
               "parseKind": "aliased_import",
               "unresolved": true
@@ -7920,10 +7925,31 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "wildcard_import",
-              "_import_list",
               "dotted_name",
               "aliased_import"
+            ]
+          }
+        },
+        {
+          "name": "import_list",
+          "propertyName": "importList",
+          "paramName": "importList",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_import_list",
+              "parseKind": "future_import_statement_group1",
+              "unresolved": true
+            }
+          ],
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_import_list"
             ]
           }
         }
@@ -7932,7 +7958,8 @@
       "factoryShape": "config",
       "factoryFields": [
         "module_name",
-        "wildcard_import"
+        "name",
+        "import_list"
       ]
     },
     {
@@ -8519,15 +8546,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_comprehension_clauses",
-              "parseKind": "_comprehension_clauses",
+              "name": "comprehension_clauses",
+              "parseKind": "comprehension_clauses",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_comprehension_clauses"
+              "comprehension_clauses"
             ]
           }
         }
@@ -9864,15 +9891,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_comprehension_clauses",
-              "parseKind": "_comprehension_clauses",
+              "name": "comprehension_clauses",
+              "parseKind": "comprehension_clauses",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_comprehension_clauses"
+              "comprehension_clauses"
             ]
           }
         }
@@ -10417,8 +10444,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -10433,7 +10460,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -11187,8 +11214,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -11203,7 +11230,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }
@@ -11417,8 +11444,8 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "block",
-              "parseKind": "block",
+              "name": "_suite_block_with_indent",
+              "parseKind": "suite_block_with_indent",
               "unresolved": true
             },
             {
@@ -11433,7 +11460,7 @@
             "typeName": "",
             "kinds": [
               "_simple_statements",
-              "block",
+              "_suite_block_with_indent",
               "_newline"
             ]
           }

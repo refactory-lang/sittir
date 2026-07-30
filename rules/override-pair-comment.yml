@@ -7,9 +7,9 @@ message: >
   scripts/wave5-relocate-overrides-comments.mts walks backward over the raw
   text to recover the run's true start).
 files:
-  - packages/rust/overrides.ts
-  - packages/typescript/overrides.ts
-  - packages/python/overrides.ts
+  - packages/rust/grammar.sittir.ts
+  - packages/typescript/grammar.sittir.ts
+  - packages/python/grammar.sittir.ts
 rule:
   kind: comment
   precedes:

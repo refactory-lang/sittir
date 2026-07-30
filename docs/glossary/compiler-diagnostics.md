@@ -14,9 +14,9 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 ```text
 /**
  * Is `ownerKind` declared as an expected (non-blocking) exception for `code`?
- * `expectDiagnostics` comes from the grammar's OWN `overrides.ts` (`wire()`'s
+ * `expectDiagnostics` comes from the grammar's OWN `grammar.sittir.ts` (`wire()`'s
  * `expectDiagnostics:` block, threaded through `RawGrammar.expectDiagnostics`)
- * — grammar-scoped by construction, since only the grammar whose overrides.ts
+ * — grammar-scoped by construction, since only the grammar whose grammar.sittir.ts
  * declares an entry ever supplies a non-empty `expectDiagnostics` here. See
  * docs/KNOWN_ISSUES.md for the canonical example (typescript's
  * `_object_type_group1`, exempted from both `content-collision` and

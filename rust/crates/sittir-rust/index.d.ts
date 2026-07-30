@@ -1215,6 +1215,7 @@ export interface LastMatchArmTransport {
   _attributes?: Array<LastMatchArmAttributesTransportSlot>
   _pattern: Box<MatchPatternTransport>
   _value: Box<ExpressionTransport>
+  _comma?: boolean
 }
 
 export interface LetChainTransport {

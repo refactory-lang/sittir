@@ -689,12 +689,8 @@ export type TypescriptGrammar = {
 	readonly class_heritage_extends_clause: {
 		type: 'class_heritage_extends_clause';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: true;
-			types: [{ type: 'extends_clause'; named: true }, { type: 'implements_clause'; named: true }];
-		};
+		fields: { extends_clause: { multiple: false; required: true; types: [{ type: 'extends_clause'; named: true }] } };
+		children: { multiple: false; required: false; types: [{ type: 'implements_clause'; named: true }] };
 	};
 	readonly class_static_block: {
 		type: 'class_static_block';
@@ -977,31 +973,38 @@ export type TypescriptGrammar = {
 	readonly export_statement_equals_export: {
 		type: 'export_statement_equals_export';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: true;
-			types: [{ type: 'automatic_semicolon'; named: true }, { type: 'expression'; named: true }];
+		fields: {
+			expression: { multiple: false; required: true; types: [{ type: 'expression'; named: true }] };
+			semicolon: {
+				multiple: false;
+				required: true;
+				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
+			};
 		};
 	};
 	readonly export_statement_namespace_export: {
 		type: 'export_statement_namespace_export';
 		named: true;
-		fields: {};
-		children: {
-			multiple: true;
-			required: true;
-			types: [{ type: 'automatic_semicolon'; named: true }, { type: 'identifier'; named: true }];
+		fields: {
+			identifier: { multiple: false; required: true; types: [{ type: 'identifier'; named: true }] };
+			semicolon: {
+				multiple: false;
+				required: true;
+				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
+			};
 		};
 	};
 	readonly export_statement_type_export: {
 		type: 'export_statement_type_export';
 		named: true;
-		fields: { source: { multiple: false; required: false; types: [{ type: 'string'; named: true }] } };
-		children: {
-			multiple: true;
-			required: true;
-			types: [{ type: 'automatic_semicolon'; named: true }, { type: 'export_clause'; named: true }];
+		fields: {
+			export_clause: { multiple: false; required: true; types: [{ type: 'export_clause'; named: true }] };
+			semicolon: {
+				multiple: false;
+				required: true;
+				types: [{ type: ';'; named: false }, { type: 'automatic_semicolon'; named: true }];
+			};
+			source: { multiple: false; required: false; types: [{ type: 'string'; named: true }] };
 		};
 	};
 	readonly expression_statement: {

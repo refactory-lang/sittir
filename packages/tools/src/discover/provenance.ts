@@ -42,7 +42,7 @@ interface GrammarJson {
 
 /**
  * (debt PR-P1) `FIELD.source` is gone from the emitted `grammar.json`
- * shape too — tree-sitter round-trips whatever `overrides.ts` produced,
+ * shape too — tree-sitter round-trips whatever `grammar.sittir.ts` produced,
  * and sittir's field-rule provenance now lives in `metadata.fieldSource`
  * (opaque to the compiler; this diagnostics tool is a sanctioned reader of
  * the real shape via `dsl/rule-metadata.ts`'s `readRuleMetadata`). Grammar
