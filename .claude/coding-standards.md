@@ -35,6 +35,12 @@ scope.
    3. the full unit suite, with any new failure isolated via stash-and-rerun
       before accepting it as pre-existing.
 
+5b. **A failed gate stops the work for review — it is never auto-reverted.**
+   An unexpected diff under a supposed no-behavior-change edit, or a
+   validation metric that moves when it shouldn't, is evidence of a real
+   latent divergence. Preserve the failing state intact (no revert, reset,
+   stash, or cleanup) and review it; discarding it destroys the finding.
+
 6. **Generated outputs are never hand-edited.** Fix the source or the
    generator and regenerate, even when nondeterministic regen churn makes that
    annoying.
