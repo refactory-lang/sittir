@@ -2413,6 +2413,30 @@ interface AcceptedTransportIdsInput {
 	parseName?: string;
 }
 
+// ---------------------------------------------------------------------------
+// Fast-path coverage (env-gated via `DBG_KINDID_FASTPATH=1`): tallies how
+// often `resolveLiteralKindId`/`resolveAcceptedTransportIds` are satisfied by
+// their link-time mint-stamp fast path versus falling through to the
+// name/text derivation chains. The fallback chains stay load-bearing (not
+// every kind routes through the catalog yet) — this is measurement only.
+// ---------------------------------------------------------------------------
+const DBG_KINDID_FASTPATH = process.env.DBG_KINDID_FASTPATH === '1';
+let literalKindIdFastPathHits = 0;
+let literalKindIdFallbackHits = 0;
+let transportIdsFastPathHits = 0;
+let transportIdsFallbackHits = 0;
+let kindidFastPathDumpRegistered = false;
+function registerKindIdFastPathDump(): void {
+	if (kindidFastPathDumpRegistered) return;
+	kindidFastPathDumpRegistered = true;
+	process.once('exit', () => {
+		process.stderr.write(
+			`[DBG_KINDID_FASTPATH] resolveLiteralKindId: stamp=${literalKindIdFastPathHits} fallback=${literalKindIdFallbackHits}; ` +
+				`resolveAcceptedTransportIds: stamp=${transportIdsFastPathHits} fallback=${transportIdsFallbackHits}\n`
+		);
+	});
+}
+
 /**
  * Single derivation of "which numeric kind_ids should route to this concrete
  * kind at this reference site" — shared by `emitPerSlotChildEnum` and
@@ -2424,15 +2448,20 @@ interface AcceptedTransportIdsInput {
  */
 function resolveAcceptedTransportIds(input: AcceptedTransportIdsInput): number[] {
 	const { kind, node, nodeMap, kindIdByKind, kindEntries, stampedIds, parseAliases, parseName } = input;
-	const acceptedIds: number[] =
-		stampedIds !== undefined
-			? [...stampedIds]
-			: [
-					...new Set<string>([
-						...collectConcreteTransportKinds(kind, nodeMap),
-						...acceptedTransportKinds(kind, nodeMap, parseAliases)
-					])
-				].map((k) => kindIdByKind.get(k)).filter((id): id is number => id !== undefined);
+	if (DBG_KINDID_FASTPATH) registerKindIdFastPathDump();
+	let acceptedIds: number[];
+	if (stampedIds !== undefined) {
+		if (DBG_KINDID_FASTPATH) transportIdsFastPathHits++;
+		acceptedIds = [...stampedIds];
+	} else {
+		if (DBG_KINDID_FASTPATH) transportIdsFallbackHits++;
+		acceptedIds = [
+			...new Set<string>([
+				...collectConcreteTransportKinds(kind, nodeMap),
+				...acceptedTransportKinds(kind, nodeMap, parseAliases)
+			])
+		].map((k) => kindIdByKind.get(k)).filter((id): id is number => id !== undefined);
+	}
 	if (parseName !== undefined && kindEntries !== undefined) {
 		const parseEntry = findKindEntry(kindEntries, parseName);
 		const parseId = parseEntry?.parseId ?? parseEntry?.id;
@@ -2626,7 +2655,12 @@ function resolveLiteralKindId(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	kindIdByKind?: ReadonlyMap<string, number>
 ): number | undefined {
-	if (literal.resolvedKindId !== undefined) return literal.resolvedKindId;
+	if (DBG_KINDID_FASTPATH) registerKindIdFastPathDump();
+	if (literal.resolvedKindId !== undefined) {
+		if (DBG_KINDID_FASTPATH) literalKindIdFastPathHits++;
+		return literal.resolvedKindId;
+	}
+	if (DBG_KINDID_FASTPATH) literalKindIdFallbackHits++;
 	if (kindEntries === undefined) return kindIdByKind?.get(literal.kind);
 	const byText = (): number | undefined => findKindEntryForLiteral(kindEntries, literal.text)?.id;
 	const byKind = (): number | undefined => findKindEntry(kindEntries, literal.kind)?.id;

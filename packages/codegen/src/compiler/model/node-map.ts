@@ -1059,6 +1059,31 @@ export function isSyntheticFieldWrapper(content: Rule<'link'>): boolean {
 	return content.members.some(isField);
 }
 
+// ---------------------------------------------------------------------------
+// `deriveValuesForRule`'s SYMBOL/STRING/PATTERN cases read the ids
+// `canonicalizeRuleLiterals` (link.ts) already stamped onto the leaf instead
+// of re-deriving them from `ctx.kindEntries`. The catalog lookup survives
+// ONLY as a fallback for rules that never passed through that stamping pass
+// (hand-built fixtures, and SYNTHESIZED leaves minted after link, e.g.
+// assemble's anonymous-node collection) — the env-gated diagnostic below
+// surfaces when that fallback resolves an id the stamp missed, since for a
+// post-link rule that signals a stamping bug rather than an expected miss.
+// ---------------------------------------------------------------------------
+const DBG_KINDID_FALLBACK = process.env.DBG_KINDID_FALLBACK === '1';
+function noteKindIdFallbackHit(hit: { site: string; name: string }): void {
+	if (!DBG_KINDID_FALLBACK) return;
+	process.stderr.write(
+		`[DBG_KINDID_FALLBACK] ${hit.site}: literal/name lookup resolved an id for '${hit.name}' with no stamp present\n`
+	);
+}
+
+function findKindEntryById(lookup: {
+	entries: readonly GeneratedKindEntry[];
+	id: number;
+}): GeneratedKindEntry | undefined {
+	return lookup.entries.find((entry) => entry.id === lookup.id);
+}
+
 export function deriveValuesForRule(
 	rule: Rule<'link'>,
 	ctx: DeriveCtx | undefined,
@@ -1083,12 +1108,25 @@ export function deriveValuesForRule(
 			// only writer — so `literal !== undefined` alone is the exact same
 			// condition, structurally, not an inference.
 			if (rule.literal !== undefined) {
-				// The value is the literal text, so its id resolves through the
-				// LITERAL chain (anon token wins a same-spelled NAMED rule);
-				// `resolvedKind`/`parseKind` keep the link-minted alias-target
-				// NAME (`rule.name`) as before — ids are stamped facts, not a
-				// re-derivation of the name (KindId-NodeRefs §2.1).
+				// The value is the literal text; its id was stamped at link time
+				// onto `storageKindId`/`parseKindId` by the same LITERAL chain
+				// (anon token wins a same-spelled NAMED rule) — read those facts
+				// instead of re-resolving them here. `resolvedKind`/`parseKind`
+				// keep the link-minted alias-target NAME (`rule.name`) as before.
+				if (rule.storageKindId !== undefined || rule.parseKindId !== undefined) {
+					return [
+						{
+							value: rule.literal,
+							resolvedKind: rule.name,
+							resolvedKindId: rule.storageKindId,
+							parseKind: { kind: 'unresolved-ref', name: rule.name },
+							parseKindId: rule.parseKindId,
+							multiplicity
+						}
+					];
+				}
 				const entry = findEntryForLiteralText(ctx?.kindEntries ?? [], rule.literal);
+				if (entry !== undefined) noteKindIdFallbackHit({ site: 'SYMBOL(literal)', name: rule.literal });
 				return [
 					{
 						value: rule.literal,
@@ -1104,15 +1142,27 @@ export function deriveValuesForRule(
 			// symbol came from an alias). Only source kinds exist in
 			// rules post-synthesis-removal.
 			const refName = rule.aliasedFrom ?? rule.name;
+			if (rule.storageKindId !== undefined || rule.parseKindId !== undefined) {
+				return [
+					{
+						node: { kind: 'unresolved-ref', name: refName },
+						storageKindId: rule.storageKindId,
+						// parse-as kind = the alias TARGET (`rule.name`); `node` is the
+						// render/source (`refName`). For `_suite`: node=_simple_statements,
+						// parseKind=block (the CST kind). §7.3 / §4g.
+						parseKind: { kind: 'unresolved-ref', name: rule.name },
+						parseKindId: rule.parseKindId,
+						multiplicity: relaxForOptionalBody(refName, multiplicity)
+					}
+				];
+			}
 			const storageEntry = findEntryForKindName(ctx?.kindEntries ?? [], refName);
 			const parseEntry = refName === rule.name ? storageEntry : findEntryForKindName(ctx?.kindEntries ?? [], rule.name);
+			if (storageEntry !== undefined || parseEntry !== undefined) noteKindIdFallbackHit({ site: 'SYMBOL(ref)', name: refName });
 			return [
 				{
 					node: { kind: 'unresolved-ref', name: refName },
 					storageKindId: storageEntry?.id,
-					// parse-as kind = the alias TARGET (`rule.name`); `node` is the
-					// render/source (`refName`). For `_suite`: node=_simple_statements,
-					// parseKind=block (the CST kind). §7.3 / §4g.
 					// `parseEntry.parseId` (falling back to `.id`) — an alias
 					// occurrence carries its OWN distinct runtime symbol id,
 					// separate from the source rule's storage id; dispatch must
@@ -1125,7 +1175,9 @@ export function deriveValuesForRule(
 		}
 		case SUPERTYPE:
 			// Supertype refs expand to their subtype list — each subtype is a
-			// valid concrete kind the slot can hold.
+			// valid concrete kind the slot can hold. No link-time stamp exists
+			// for these ids yet (`canonicalizeRuleLiterals` has no SUPERTYPE
+			// arm), so this case still re-derives per call, same as before.
 			return rule.subtypes.map((name) => {
 				const entry = findEntryForKindName(ctx?.kindEntries ?? [], name);
 				// Aliased arm: the flatten stamped the parse name the arm
@@ -1150,7 +1202,26 @@ export function deriveValuesForRule(
 		// pattern slot had no values and was elided (e.g. token_repetition's
 		// separator pattern never became a slot).
 		case PATTERN: {
+			// Stamped leaf: `resolvedKindId` was already resolved through the
+			// literal chain at link time — look the entry up BY that id (not by
+			// re-matching `rule.value` against the catalog) to recover the
+			// display name/parse id, since the id is the trusted key here.
+			if (rule.resolvedKindId !== undefined) {
+				const entry = findKindEntryById({ entries: ctx?.kindEntries ?? [], id: rule.resolvedKindId });
+				const rk = entry?.kind;
+				return [
+					{
+						value: rule.value,
+						resolvedKind: rk,
+						resolvedKindId: rule.resolvedKindId,
+						parseKind: rk !== undefined ? { kind: 'unresolved-ref', name: rk } : undefined,
+						parseKindId: entry?.parseId ?? rule.resolvedKindId,
+						multiplicity
+					}
+				];
+			}
 			const entry = findEntryForLiteralText(ctx?.kindEntries ?? [], rule.value);
+			if (entry !== undefined) noteKindIdFallbackHit({ site: 'STRING/PATTERN', name: rule.value });
 			const rk = entry?.kind;
 			return [
 				{
@@ -2330,9 +2401,22 @@ export class AssembledKeyword extends AssembledLeaf<StringRule<'link'>> {
 		}
 	) {
 		super(kind, rule, opts);
-		const entry = findEntryForLiteralText(opts?.kindEntries ?? [], rule.value);
-		this.resolvedKind = entry?.kind;
-		this.resolvedKindId = entry?.id;
+		// Stamped leaf: `rule.resolvedKindId` was already resolved through the
+		// literal chain at link time — look the catalog entry up BY that id
+		// (unambiguous) to recover the display kind name, instead of re-matching
+		// `rule.value` against the catalog.
+		if (rule.resolvedKindId !== undefined) {
+			this.resolvedKindId = rule.resolvedKindId;
+			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;
+		} else {
+			// SYNTHESIZED StringRule (e.g. assemble's anonymous-node collection
+			// builds `{ type: STRING, value }` fresh, never reaching link-time
+			// stamping) — the literal-text lookup genuinely still fires here.
+			const entry = findEntryForLiteralText(opts?.kindEntries ?? [], rule.value);
+			if (entry !== undefined) noteKindIdFallbackHit({ site: 'AssembledKeyword', name: rule.value });
+			this.resolvedKind = entry?.kind;
+			this.resolvedKindId = entry?.id;
+		}
 	}
 
 	get text(): string {
@@ -2366,9 +2450,17 @@ export class AssembledToken extends AssembledLeaf<StringRule<'link'> | TokenRule
 		opts?: { kindEntries?: readonly GeneratedKindEntry[] }
 	) {
 		super(kind, rule, { hidden: true });
-		const entry = rule.type === STRING ? findEntryForLiteralText(opts?.kindEntries ?? [], rule.value) : undefined;
-		this.resolvedKind = entry?.kind;
-		this.resolvedKindId = entry?.id;
+		if (rule.type === STRING && rule.resolvedKindId !== undefined) {
+			this.resolvedKindId = rule.resolvedKindId;
+			this.resolvedKind = findKindEntryById({ entries: opts?.kindEntries ?? [], id: rule.resolvedKindId })?.kind;
+		} else {
+			// SYNTHESIZED StringRule (never link-stamped) or a TOKEN rule (no
+			// `resolvedKindId` field at all) — literal-text lookup as before.
+			const entry = rule.type === STRING ? findEntryForLiteralText(opts?.kindEntries ?? [], rule.value) : undefined;
+			if (entry !== undefined) noteKindIdFallbackHit({ site: 'AssembledToken', name: rule.type === STRING ? rule.value : '' });
+			this.resolvedKind = entry?.kind;
+			this.resolvedKindId = entry?.id;
+		}
 	}
 	// No emitFactory — tokens are always hidden, no factoryName.
 
