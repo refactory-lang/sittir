@@ -363,7 +363,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							const fieldNames = factoryFields[kind];
 							const rawName = fieldNames?.[0];
 							const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
-							const childArgs = getChildFactoryArgs(kind, config, factorySlots);
+							const childArgs = getChildFactoryArgs(kind, config, factorySlots, factoryFields);
 							const value = camelName ? (config as Record<string, unknown>)[camelName] : childArgs[0];
 							factoryResult = (factory as (v: unknown) => AnyNodeData)(value);
 						} else {
@@ -386,7 +386,7 @@ export async function validateFrom(grammar: string, backend?: 'native' | 'js'): 
 							polymorphVariants: polymorphVariants as any,
 							kindNameFromId
 						});
-						const childArgs = getChildFactoryArgs(kind, config, factorySlots);
+						const childArgs = getChildFactoryArgs(kind, config, factorySlots, factoryFields);
 						factoryResult = (factory as (...args: unknown[]) => AnyNodeData)(...childArgs);
 					}
 				} catch {

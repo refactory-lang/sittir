@@ -106,9 +106,18 @@ const FLOORS = {
 		// success. Gap vs LEGACY_BASELINE is the real outstanding
 		// debt — nothing in the pipeline regressed, we just stopped
 		// hiding the failures.
-		factoryPass: 39,
-		factoryAstMatchPass: 28,
-		factoryTotal: 100,
+		// FLOOR RESET (2026-07-30, factory-render-parse redesign): the
+		// factory validator no longer renders factory output and
+		// re-parses it — it compares the factory-built node's storage
+		// directly against the materialized read reference (same read
+		// path as rrp), and requires an explicit 'native' backend (see
+		// the two calls above). The prior floors were measuring a
+		// different, JS-render-contaminated pipeline; astMatchPass is
+		// now always equal to pass (storage-identity is a single-tier
+		// check — see FactoryRenderParseResult's doc comment).
+		factoryPass: 810,
+		factoryAstMatchPass: 810,
+		factoryTotal: 842,
 		// R1 ceilings (2026-04-24): fromTotal 117 → 114, fromPass
 		// 110 → 107 — 013's variant() adoption consolidated kinds out
 		// of the validation universe (fewer kinds, fewer pass, total
@@ -133,9 +142,10 @@ const FLOORS = {
 		// resolved numeric dispatch for form/synthesized kinds.
 		// Factory totals jumped (135→1084) because synthesized enum
 		// kinds expanded the validation universe.
-		factoryPass: 127,
-		factoryAstMatchPass: 123,
-		factoryTotal: 135,
+		// FLOOR RESET (2026-07-30) — see python's factoryPass comment above.
+		factoryPass: 1048,
+		factoryAstMatchPass: 1048,
+		factoryTotal: 1087,
 		fromPass: 132,
 		fromTotal: 157,
 		// 2026-07-17 floor reset — see header.
@@ -154,9 +164,10 @@ const FLOORS = {
 		covTotal: 164
 	},
 	typescript: {
-		factoryPass: 121,
-		factoryAstMatchPass: 121,
-		factoryTotal: 126,
+		// FLOOR RESET (2026-07-30) — see python's factoryPass comment above.
+		factoryPass: 933,
+		factoryAstMatchPass: 933,
+		factoryTotal: 975,
 		fromPass: 102,
 		fromTotal: 113,
 		// 2026-07-17 floor reset — see header.
@@ -215,14 +226,14 @@ describe.each(Object.keys(FLOORS) as GrammarName[])('corpus validation floor —
 		// missing field surface, children slot not plumbed through
 		// the factory signature.
 		const templatesPath = resolveTemplatesPath(grammar);
-		const result = await validateFactoryRenderParse(grammar, templatesPath);
+		const result = await validateFactoryRenderParse(grammar, templatesPath, 'native');
 
 		expect(result.astMatchPass).toBeGreaterThanOrEqual(floors.factoryAstMatchPass);
 	}, 60000);
 
 	it(`factory render-parse passes at least ${floors.factoryPass}/${floors.factoryTotal}`, async () => {
 		const templatesPath = resolveTemplatesPath(grammar);
-		const result = await validateFactoryRenderParse(grammar, templatesPath);
+		const result = await validateFactoryRenderParse(grammar, templatesPath, 'native');
 
 		expect(result.total).toBeGreaterThanOrEqual(floors.factoryTotal);
 		expect(result.pass).toBeGreaterThanOrEqual(floors.factoryPass);
