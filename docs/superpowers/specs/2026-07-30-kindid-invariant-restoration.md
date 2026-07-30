@@ -118,17 +118,20 @@ Constraints:
 ### 1b. Catalog-first naming for anonymous nodes (largest class, no parser change)
 
 `collectAnonymousNodes` resolves each literal through the catalog
-(`findGeneratedKindEntry`) and keys the node by the catalog row's kind name,
-falling back to raw text only with a diagnostic. Kills the 94-name class (e)
-outright — these tokens already have ids; only the naming domain diverged.
+(`findEntryForLiteralText`, anon-token-first) and keys the node by the
+catalog row's kind name, falling back to raw text only with a diagnostic.
+Kills the 94-name class (e) outright — these tokens already have ids; only
+the naming domain diverged.
 
 ### 2. Link is the single stamping point (ids are consumed uniformly)
 
 `link()` already receives `generatedIdTables` (parsed from `parser.c`). A
 link pass stamps every value-bearing rule-tree leaf:
 
-- `SYMBOL` → `storageKindId` (by `aliasedFrom ?? name`) and `parseKindId`
-  (by `name` / alias-occurrence row) — the same pair `deriveValuesForRule`
+- `SYMBOL` → `kindId` (by `name`, always) and `aliasedFromId` (by
+  `aliasedFrom`, only when present — no fallback baked into the stamp; a
+  consumer needing the effective storage identity computes
+  `aliasedFromId ?? kindId` itself) — the same pair `deriveValuesForRule`
   computes today, moved to the tree.
 - `STRING` / fixed-literal `PATTERN` → `resolvedKindId` (by literal text,
   anon-token-first).

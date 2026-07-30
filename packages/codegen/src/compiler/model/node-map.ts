@@ -1109,18 +1109,18 @@ export function deriveValuesForRule(
 			// condition, structurally, not an inference.
 			if (rule.literal !== undefined) {
 				// The value is the literal text; its id was stamped at link time
-				// onto `storageKindId`/`parseKindId` by the same LITERAL chain
-				// (anon token wins a same-spelled NAMED rule) — read those facts
-				// instead of re-resolving them here. `resolvedKind`/`parseKind`
-				// keep the link-minted alias-target NAME (`rule.name`) as before.
-				if (rule.storageKindId !== undefined || rule.parseKindId !== undefined) {
+				// onto `kindId` by the same LITERAL chain (anon token wins a
+				// same-spelled NAMED rule) — read that fact instead of
+				// re-resolving it here. `resolvedKind`/`parseKind` keep the
+				// link-minted alias-target NAME (`rule.name`) as before.
+				if (rule.kindId !== undefined || rule.aliasedFromId !== undefined) {
 					return [
 						{
 							value: rule.literal,
 							resolvedKind: rule.name,
-							resolvedKindId: rule.storageKindId,
+							resolvedKindId: rule.aliasedFromId ?? rule.kindId,
 							parseKind: { kind: 'unresolved-ref', name: rule.name },
-							parseKindId: rule.parseKindId,
+							parseKindId: rule.kindId,
 							multiplicity
 						}
 					];
@@ -1142,16 +1142,16 @@ export function deriveValuesForRule(
 			// symbol came from an alias). Only source kinds exist in
 			// rules post-synthesis-removal.
 			const refName = rule.aliasedFrom ?? rule.name;
-			if (rule.storageKindId !== undefined || rule.parseKindId !== undefined) {
+			if (rule.kindId !== undefined || rule.aliasedFromId !== undefined) {
 				return [
 					{
 						node: { kind: 'unresolved-ref', name: refName },
-						storageKindId: rule.storageKindId,
+						storageKindId: rule.aliasedFromId ?? rule.kindId,
 						// parse-as kind = the alias TARGET (`rule.name`); `node` is the
 						// render/source (`refName`). For `_suite`: node=_simple_statements,
 						// parseKind=block (the CST kind). §7.3 / §4g.
 						parseKind: { kind: 'unresolved-ref', name: rule.name },
-						parseKindId: rule.parseKindId,
+						parseKindId: rule.kindId,
 						multiplicity: relaxForOptionalBody(refName, multiplicity)
 					}
 				];

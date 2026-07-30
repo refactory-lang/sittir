@@ -318,8 +318,8 @@ export type SymbolRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly literal?: string;
 	readonly hidden?: boolean;
 	readonly aliasedFrom?: string;
-	readonly storageKindId?: number;
-	readonly parseKindId?: number;
+	readonly kindId?: number;
+	readonly aliasedFromId?: number;
 };
 
 export type AliasRule<Phase extends PhaseName = 'link'> = Phase extends WrapperPhase

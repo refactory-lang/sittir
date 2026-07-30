@@ -18,8 +18,10 @@ for direct unit testing), called from `canonicalizeCatalogLiteralRefs`/
 (anchor by symbol name, not line number — both shift as the surrounding
 `link()` grows):
 
-- `SYMBOL` → `storageKindId` (by `aliasedFrom ?? name`) and `parseKindId`
-  (by `name` / alias-occurrence row).
+- `SYMBOL` → `kindId` (by `name`, always) and `aliasedFromId` (by
+  `aliasedFrom`, only when present — no fallback between the two; a consumer
+  needing the effective storage identity computes `aliasedFromId ?? kindId`
+  itself).
 - `STRING` / fixed-literal `PATTERN` → `resolvedKindId` (literal-text lookup,
   anon-token-first).
 - Stamping is suppressed inside `TOKEN` bodies (their inner strings are
@@ -35,7 +37,7 @@ for direct unit testing), called from `canonicalizeCatalogLiteralRefs`/
   generated consts and asserts counts stay at or below the audited ceilings.
 
 Types added: `StringRule.resolvedKindId`, `PatternRule.resolvedKindId`,
-`SymbolRule.storageKindId`/`.parseKindId` (`packages/codegen/src/types/rule.ts`).
+`SymbolRule.kindId`/`.aliasedFromId` (`packages/codegen/src/types/rule.ts`).
 
 **Remaining before Phase 0 is closeable:** verify byte-identical regen across
 all three grammars with `pnpm run validate:native`, run the full suite, and
@@ -55,18 +57,20 @@ byte-identical output.
    - `SYMBOL` case (`:1068-1125`): both branches (`rule.literal !== undefined`
      link-minted-literal arm, and the plain ref arm) already call
      `findEntryForLiteralText`/`findEntryForKindName` against
-     `ctx?.kindEntries`. Replace with reads of `rule.storageKindId` /
-     `rule.parseKindId` off the leaf (`SymbolRule` carries this pair, not
+     `ctx?.kindEntries`. Replace with reads of `rule.kindId` /
+     `rule.aliasedFromId` off the leaf (`SymbolRule` carries this pair, not
      `resolvedKindId` — that field lives on `StringRule`/`PatternRule` only,
-     see the STRING/PATTERN bullet below); keep `ctx.kindEntries` only as a
-     hard-assert fallback during migration (should never fire once Phase 0 is
-     closed for a grammar).
+     see the STRING/PATTERN bullet below); the output `NodeOrTerminal`'s own
+     `storageKindId` becomes `rule.aliasedFromId ?? rule.kindId` (the
+     effective storage identity) and its `parseKindId` becomes `rule.kindId`
+     directly. Keep `ctx.kindEntries` only as a hard-assert fallback during
+     migration (should never fire once Phase 0 is closed for a grammar).
    - `SUPERTYPE` case (`:1126-1145`): **no existing stamp to read** —
      `canonicalizeRuleLiterals` has no `SUPERTYPE` arm today, so this case
      still does a `findEntryForKindName` call per `subtypes` member on every
      `deriveValuesForRule` invocation. Decide here: add a `SUPERTYPE` case to
-     `canonicalizeRuleLiterals` that stamps `subtypeStorageKindIds?:
-     Readonly<Record<string, number>>` / `subtypeParseKindIds?:
+     `canonicalizeRuleLiterals` that stamps `subtypeKindIds?:
+     Readonly<Record<string, number>>` / `subtypeAliasedFromIds?:
      Readonly<Record<string, number>>` (mirroring the `SYMBOL` pair, keyed by
      `subtypes`/`subtypeParseNames`), then have this case read the maps. This
      is new stamping surface, not a pure read-flip — treat it as its own

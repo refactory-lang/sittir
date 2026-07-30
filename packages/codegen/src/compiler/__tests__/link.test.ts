@@ -967,13 +967,13 @@ describe('canonicalizeRuleLiterals — kindId stamping', () => {
 		return { symbols: new Set(), literals: new Set() };
 	}
 
-	it('stamps storageKindId/parseKindId on a plain SYMBOL ref that resolves by name', () => {
+	it('stamps kindId on a plain SYMBOL ref that resolves by name; aliasedFromId stays unset with no aliasedFrom', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'identifier', id: 5 }];
 		const misses = noMisses();
 		const rule: Rule<'link'> = { type: SYMBOL, name: 'identifier', inline: false };
 		const result = canonicalizeRuleLiterals(rule, entries, false, misses) as SymbolRule<'link'>;
-		expect(result.storageKindId).toBe(5);
-		expect(result.parseKindId).toBe(5);
+		expect(result.kindId).toBe(5);
+		expect(result.aliasedFromId).toBeUndefined();
 		expect(misses.symbols.size).toBe(0);
 	});
 
@@ -989,9 +989,10 @@ describe('canonicalizeRuleLiterals — kindId stamping', () => {
 		expect(misses.symbols.has('unknown_kind')).toBe(true);
 	});
 
-	it('records the storage-identity miss independently when only the parse identity resolves (per-identity miss recording)', () => {
-		// storageEntry and parseEntry resolve independently; a miss on one
-		// identity must not depend on whether the other also misses.
+	it('records the aliasedFrom-identity miss independently when the name identity resolves (per-identity miss recording)', () => {
+		// kindId (this occurrence's own name) and aliasedFromId (the alias
+		// source, when present) resolve independently; a miss on one identity
+		// must not depend on whether the other also misses.
 		const entries: GeneratedKindEntry[] = [{ kind: 'occurrence_name', id: 9 }];
 		const misses = noMisses();
 		const rule: Rule<'link'> = {
@@ -1001,19 +1002,19 @@ describe('canonicalizeRuleLiterals — kindId stamping', () => {
 			inline: false
 		};
 		const result = canonicalizeRuleLiterals(rule, entries, false, misses) as SymbolRule<'link'>;
-		expect(result.storageKindId).toBeUndefined();
-		expect(result.parseKindId).toBe(9);
+		expect(result.kindId).toBe(9);
+		expect(result.aliasedFromId).toBeUndefined();
 		expect(misses.symbols.has('missing_storage_target')).toBe(true);
 		expect(misses.symbols.has('occurrence_name')).toBe(false);
 	});
 
-	it('records the parse-identity miss independently when only the storage identity resolves', () => {
+	it('records the name-identity miss independently when only the aliasedFrom identity resolves', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'real_target', id: 7 }];
 		const misses = noMisses();
 		const rule: Rule<'link'> = { type: SYMBOL, name: 'occurrence_name', aliasedFrom: 'real_target', inline: false };
 		const result = canonicalizeRuleLiterals(rule, entries, false, misses) as SymbolRule<'link'>;
-		expect(result.storageKindId).toBe(7);
-		expect(result.parseKindId).toBeUndefined();
+		expect(result.kindId).toBeUndefined();
+		expect(result.aliasedFromId).toBe(7);
 		expect(misses.symbols.has('occurrence_name')).toBe(true);
 		expect(misses.symbols.has('real_target')).toBe(false);
 	});
@@ -1031,7 +1032,7 @@ describe('canonicalizeRuleLiterals — kindId stamping', () => {
 		const result = canonicalizeRuleLiterals(rule, entries, true, misses) as SymbolRule<'link'>;
 		expect(result.type).toBe(SYMBOL);
 		expect(result.name).toBe('anon_type_tok');
-		expect(result.storageKindId).toBe(4);
+		expect(result.kindId).toBe(4);
 	});
 
 	it('stamps resolvedKindId on a STRING/PATTERN leaf via the same anon-token-first chain', () => {

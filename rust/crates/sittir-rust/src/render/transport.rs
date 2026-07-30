@@ -19409,9 +19409,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for LetChainLeftTransportSlot {
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    270 => Ok(Self::LetChain(
-                        LetChainTransport::from_napi_value(env, napi_val)?
-                    )),
                     428 => Ok(Self::LetChain(
                         LetChainTransport::from_napi_value(env, napi_val)?
                     )),
@@ -19583,9 +19580,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for LetChainLeftTransportSlot {
                     ::napi::Error::from_reason("$type property missing in LetChainLeftTransportSlot")
                 )?;
                 match kind_id {
-                    270 => Ok(Self::LetChain(
-                        LetChainTransport::from_napi_value(env, napi_val)?
-                    )),
                     428 => Ok(Self::LetChain(
                         LetChainTransport::from_napi_value(env, napi_val)?
                     )),
