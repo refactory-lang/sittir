@@ -349,7 +349,7 @@ export function link(raw: RawGrammar, ctx?: LinkOptions): LinkedGrammar {
 	const stampMisses: KindIdStampMisses = { symbols: new Set(), literals: new Set() };
 	canonicalizeCatalogLiteralRefs(rules, kindEntries, stampMisses);
 	canonicalizeCatalogLiteralRefsInMap(topLevelAliasBodies, kindEntries, stampMisses);
-	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics);
+	reportKindIdStampMisses(stampMisses, kindEntries, ctx?.diagnostics, new Set(raw.inline));
 
 	// Validate refine() forms against the linked rule tree.
 	if (raw.refineForms && raw.refineForms.size > 0) {
@@ -548,10 +548,11 @@ export function canonicalizeRuleLiterals(
  * bug (every OTHER kind name should carry one — that's the invariant this
  * report ratchets against).
  */
-function reportKindIdStampMisses(
+export function reportKindIdStampMisses(
 	stampMisses: KindIdStampMisses,
 	kindEntries: readonly GeneratedKindEntry[],
-	diagnostics: DiagnosticSink | undefined
+	diagnostics: DiagnosticSink | undefined,
+	inlineKinds: ReadonlySet<string>
 ): void {
 	if (kindEntries.length === 0 || !diagnostics) return;
 	if (stampMisses.symbols.size > 0) {
@@ -568,6 +569,31 @@ function reportKindIdStampMisses(
 			message: `${stampMisses.literals.size} literal(s) resolved no parser kindId`,
 			canProceed: true,
 			details: { texts: [...stampMisses.literals].sort() }
+		});
+	}
+	// VAPORIZED (dead grammar surface, e.g. jsx nodes unreachable in the
+	// non-tsx dialect): a stamp miss whose kind is NOT in the grammar's
+	// `inline:` array. Tree-sitter deliberately issues no symbol for either
+	// class, but `inline:` membership is a principled, grammar-declared
+	// exclusion — this is the remainder. Reported alongside (not instead of)
+	// the unstamped diagnostics above so existing consumers are unaffected;
+	// this is the accepted-exclusion signal a future ratchet reads.
+	const vaporizedSymbols = [...stampMisses.symbols].filter((k) => !inlineKinds.has(k)).sort();
+	const vaporizedLiterals = [...stampMisses.literals].filter((k) => !inlineKinds.has(k)).sort();
+	if (vaporizedSymbols.length > 0) {
+		diagnostics.info({
+			code: 'kindid-vaporized-symbols',
+			message: `${vaporizedSymbols.length} referenced kind(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)`,
+			canProceed: true,
+			details: { kinds: vaporizedSymbols }
+		});
+	}
+	if (vaporizedLiterals.length > 0) {
+		diagnostics.info({
+			code: 'kindid-vaporized-literals',
+			message: `${vaporizedLiterals.length} literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)`,
+			canProceed: true,
+			details: { texts: vaporizedLiterals }
 		});
 	}
 }

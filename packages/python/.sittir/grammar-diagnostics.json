@@ -240,6 +240,51 @@
     "grammar": "python"
   },
   {
+    "code": "kindid-vaporized-symbols",
+    "message": "7 referenced kind(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "details": {
+      "kinds": [
+        "_async_marker",
+        "_expressions",
+        "_left_hand_side",
+        "_simple_statement",
+        "_suite",
+        "_unary_operator_operator",
+        "keyword_identifier"
+      ]
+    },
+    "severity": "info",
+    "scope": "grammar",
+    "grammar": "python"
+  },
+  {
+    "code": "kindid-vaporized-literals",
+    "message": "14 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "details": {
+      "texts": [
+        "\u0000",
+        "\n",
+        "\r",
+        "#",
+        "...",
+        "0B",
+        "0O",
+        "0X",
+        "0b",
+        "0o",
+        "0x",
+        "False",
+        "None",
+        "True"
+      ]
+    },
+    "severity": "info",
+    "scope": "grammar",
+    "grammar": "python"
+  },
+  {
     "scope": "grammar",
     "code": "parsekind-noninjective",
     "severity": "info",

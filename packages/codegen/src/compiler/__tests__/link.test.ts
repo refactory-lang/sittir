@@ -22,6 +22,7 @@ import {
 	liftSeparators,
 	LinkCtx,
 	canonicalizeRuleLiterals,
+	reportKindIdStampMisses,
 	type KindIdStampMisses
 } from '../link.ts';
 import type { DerivationLog } from '../types.ts';
@@ -1066,5 +1067,62 @@ describe('canonicalizeRuleLiterals — kindId stamping', () => {
 		expect(result.content.resolvedKindId).toBeUndefined();
 		expect(misses.literals.size).toBe(0);
 		expect(misses.symbols.size).toBe(0);
+	});
+});
+
+describe('reportKindIdStampMisses — VAPORIZED classification', () => {
+	function stampDiagnostics(sink: DiagnosticSink): { code: string; details: unknown }[] {
+		return sink.all().map((d) => ({ code: d.code, details: d.details }));
+	}
+
+	it('reports an inline-array kind as unstamped only, not vaporized', () => {
+		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
+		const misses: KindIdStampMisses = { symbols: new Set(['_declaration_statement']), literals: new Set() };
+		const sink = new DiagnosticSink();
+		reportKindIdStampMisses(misses, entries, sink, new Set(['_declaration_statement']));
+		const diagnostics = stampDiagnostics(sink);
+		expect(diagnostics).toContainEqual({
+			code: 'kindid-unstamped-symbols',
+			details: { kinds: ['_declaration_statement'] }
+		});
+		expect(diagnostics.some((d) => d.code === 'kindid-vaporized-symbols')).toBe(false);
+	});
+
+	it('reports a non-inline kind as both unstamped and vaporized (dead surface)', () => {
+		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
+		const misses: KindIdStampMisses = { symbols: new Set(['comment']), literals: new Set() };
+		const sink = new DiagnosticSink();
+		reportKindIdStampMisses(misses, entries, sink, new Set());
+		const diagnostics = stampDiagnostics(sink);
+		expect(diagnostics).toContainEqual({ code: 'kindid-unstamped-symbols', details: { kinds: ['comment'] } });
+		expect(diagnostics).toContainEqual({ code: 'kindid-vaporized-symbols', details: { kinds: ['comment'] } });
+	});
+
+	it('splits a mixed miss set: inline kinds excluded from the vaporized bucket, literals handled the same way', () => {
+		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
+		const misses: KindIdStampMisses = {
+			symbols: new Set(['_declaration_statement', 'comment', 'mut']),
+			literals: new Set(['r#"', '_kw_operator'])
+		};
+		const sink = new DiagnosticSink();
+		reportKindIdStampMisses(misses, entries, sink, new Set(['_declaration_statement', '_kw_operator']));
+		const diagnostics = stampDiagnostics(sink);
+		expect(diagnostics).toContainEqual({
+			code: 'kindid-vaporized-symbols',
+			details: { kinds: ['comment', 'mut'] }
+		});
+		expect(diagnostics).toContainEqual({
+			code: 'kindid-vaporized-literals',
+			details: { texts: ['r#"'] }
+		});
+	});
+
+	it('emits nothing when every miss is inline-excluded', () => {
+		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
+		const misses: KindIdStampMisses = { symbols: new Set(['_suite']), literals: new Set() };
+		const sink = new DiagnosticSink();
+		reportKindIdStampMisses(misses, entries, sink, new Set(['_suite']));
+		const diagnostics = stampDiagnostics(sink);
+		expect(diagnostics.some((d) => d.code.startsWith('kindid-vaporized'))).toBe(false);
 	});
 });

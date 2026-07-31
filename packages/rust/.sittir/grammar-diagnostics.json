@@ -179,6 +179,50 @@
     "grammar": "rust"
   },
   {
+    "code": "kindid-vaporized-symbols",
+    "message": "15 referenced kind(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "details": {
+      "kinds": [
+        "_async_marker",
+        "_compound_assignment_expr_operator",
+        "_declaration_statement",
+        "_expression_ending_with_block",
+        "_in_path",
+        "_move_marker",
+        "_path",
+        "_primitive_type",
+        "_ref_marker",
+        "_reserved_identifier",
+        "_static_marker",
+        "_tokens",
+        "_unsafe_marker",
+        "_visibility_modifier_pub_parens",
+        "in_path"
+      ]
+    },
+    "severity": "info",
+    "scope": "grammar",
+    "grammar": "rust"
+  },
+  {
+    "code": "kindid-vaporized-literals",
+    "message": "5 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "details": {
+      "texts": [
+        "\"#",
+        "\\",
+        "b",
+        "mut",
+        "r#\""
+      ]
+    },
+    "severity": "info",
+    "scope": "grammar",
+    "grammar": "rust"
+  },
+  {
     "scope": "grammar",
     "code": "parsekind-noninjective",
     "severity": "info",
