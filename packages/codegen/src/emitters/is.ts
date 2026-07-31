@@ -197,7 +197,7 @@ export function emitIs(config: EmitIsConfig): string {
 		// for Phase A coexistence guards.
 		const memberKinds: string[] = [];
 		const memberIds: number[] = [];
-		for (const sub of st.subtypes) {
+		for (const sub of st.subtypeNames) {
 			const subNode = nodeMap.nodes.get(sub);
 			if (!subNode) continue;
 			memberKinds.push(sub);

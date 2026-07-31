@@ -45,7 +45,7 @@ import {
 	type GeneratedIdTables,
 	type GeneratedKindEntry
 } from './generated-metadata.ts';
-import type { AssembledNode, AssembledNonterminal, UnresolvedRef } from './model/node-map.ts';
+import type { AssembledNode, AssembledNonterminal, NodeOrTerminal, UnresolvedRef } from './model/node-map.ts';
 import {
 	AssembledBranch,
 	AssembledPattern,
@@ -293,7 +293,12 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 					const subtypes = resolveSupertypeSubtypes(assemblyRule, ctx, kindEntries);
 					nodes.set(
 						kind,
-						new AssembledSupertype(kind, assemblyRule as SupertypeRule<'link'> | ChoiceRule<'link'>, subtypes)
+						new AssembledSupertype(
+							kind,
+							assemblyRule as SupertypeRule<'link'> | ChoiceRule<'link'>,
+							subtypes,
+							kindEntries
+						)
 					);
 					break;
 				}
@@ -904,6 +909,9 @@ export function hydrateSlotRefs(nodeMap: NodeMap): void {
 		if (node.modelType === 'branch' || node.modelType === 'group') {
 			hydrateSlots(kind, node.slots, nodeMap.nodes, externals);
 		}
+		if (node.modelType === 'supertype') {
+			hydrateValues(node.subtypes, { parentKind: kind, siteLabel: 'subtypes', nodes: nodeMap.nodes, externals });
+		}
 	}
 }
 
@@ -914,53 +922,65 @@ function hydrateSlots(
 	externals: ReadonlySet<string>
 ): void {
 	for (const slot of Object.values(slots)) {
-		for (const v of slot.values) {
-			if (!isNodeRef(v)) continue;
-			if (!isUnresolvedRef(v.node)) continue;
-			const targetName = v.node.name;
-			const target = nodes.get(targetName);
-			if (target) {
-				(v as { node: AssembledNode | UnresolvedRef }).node = target;
-				continue;
-			}
-			// PR-K3f: the historical `_<name>` retry (visible alias-target name →
-			// hidden MODEL node) was probed across all three grammars and fired
-			// ZERO times — the mint now resolves canonical names, so every
-			// hydratable ref hits the primary lookup above. Retired per the
-			// KindId-NodeRefs spec §2.3 retire-list. A future grammar that
-			// reintroduces visible→hidden refs surfaces below as the loud
-			// unresolved-slot-reference diagnostic, not a silent rewire.
-			// Three legitimate categories where the target ISN'T in the
-			// assembled NodeMap and we leave the `UnresolvedRef` in place:
-			//
-			//   1. External tokens (lexer-callback symbols) — no rule body,
-			//      just a name. Tracked in `nodeMap.externals`.
-			//   2. Parser-only leaf kinds — the parser symbol table knows
-			//      them but codegen has no rule body to assemble (e.g.
-			//      `_as_pattern_target` in python). These behave like
-			//      externals from the consumer's POV.
-			//   3. Inlined-before-assemble kinds referenced by overrides —
-			//      a known deferred case (see e.g. `_block_comment_content`
-			//      in rust). Should be cleaned up at the override layer.
-			//
-			// Distinguishing (1) from (2)/(3) without threading the parser
-			// kind catalog isn't possible here. Logging a single line per
-			// occurrence surfaces the (3) cases for follow-up; (1) and (2)
-			// are expected and harmless. Consumers that walk
-			// `slot.values[*]` already handle `isUnresolvedRef` defensively,
-			// so leaving these as `UnresolvedRef` matches prior
-			// behavior.
-			if (externals.has(targetName)) continue;
-			if (!process.env.SITTIR_QUIET) {
-				process.stderr.write(
-					`hydrateSlotRefs: unresolved slot reference — kind ` +
-						`'${parentKind}' slot '${slot.name}' references kind ` +
-						`'${targetName}' which is absent from the assembled ` +
-						`node map (likely parser-only leaf kind, alias collapse, ` +
-						`or override referencing an inlined kind). Leaving as ` +
-						`UnresolvedRef.\n`
-				);
-			}
+		hydrateValues(slot.values, { parentKind, siteLabel: `slot '${slot.name}'`, nodes, externals });
+	}
+}
+
+interface HydrateValuesCtx {
+	readonly parentKind: string;
+	readonly siteLabel: string;
+	readonly nodes: Map<string, AssembledNode>;
+	readonly externals: ReadonlySet<string>;
+}
+
+function hydrateValues(values: readonly NodeOrTerminal[], ctx: HydrateValuesCtx): void {
+	const { parentKind, siteLabel, nodes, externals } = ctx;
+	for (const v of values) {
+		if (!isNodeRef(v)) continue;
+		if (!isUnresolvedRef(v.node)) continue;
+		const targetName = v.node.name;
+		const target = nodes.get(targetName);
+		if (target) {
+			(v as { node: AssembledNode | UnresolvedRef }).node = target;
+			continue;
+		}
+		// PR-K3f: the historical `_<name>` retry (visible alias-target name →
+		// hidden MODEL node) was probed across all three grammars and fired
+		// ZERO times — the mint now resolves canonical names, so every
+		// hydratable ref hits the primary lookup above. Retired per the
+		// KindId-NodeRefs spec §2.3 retire-list. A future grammar that
+		// reintroduces visible→hidden refs surfaces below as the loud
+		// unresolved-slot-reference diagnostic, not a silent rewire.
+		// Three legitimate categories where the target ISN'T in the
+		// assembled NodeMap and we leave the `UnresolvedRef` in place:
+		//
+		//   1. External tokens (lexer-callback symbols) — no rule body,
+		//      just a name. Tracked in `nodeMap.externals`.
+		//   2. Parser-only leaf kinds — the parser symbol table knows
+		//      them but codegen has no rule body to assemble (e.g.
+		//      `_as_pattern_target` in python). These behave like
+		//      externals from the consumer's POV.
+		//   3. Inlined-before-assemble kinds referenced by overrides —
+		//      a known deferred case (see e.g. `_block_comment_content`
+		//      in rust). Should be cleaned up at the override layer.
+		//
+		// Distinguishing (1) from (2)/(3) without threading the parser
+		// kind catalog isn't possible here. Logging a single line per
+		// occurrence surfaces the (3) cases for follow-up; (1) and (2)
+		// are expected and harmless. Consumers that walk
+		// `slot.values[*]` already handle `isUnresolvedRef` defensively,
+		// so leaving these as `UnresolvedRef` matches prior
+		// behavior.
+		if (externals.has(targetName)) continue;
+		if (!process.env.SITTIR_QUIET) {
+			process.stderr.write(
+				`hydrateSlotRefs: unresolved slot reference — kind ` +
+					`'${parentKind}' ${siteLabel} references kind ` +
+					`'${targetName}' which is absent from the assembled ` +
+					`node map (likely parser-only leaf kind, alias collapse, ` +
+					`or override referencing an inlined kind). Leaving as ` +
+					`UnresolvedRef.\n`
+			);
 		}
 	}
 }
