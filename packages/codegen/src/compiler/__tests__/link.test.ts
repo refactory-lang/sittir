@@ -155,7 +155,10 @@ describe('Link — hidden rule classification', () => {
 		expect(linked.rules['_expression']).toEqual({
 			type: 'SUPERTYPE',
 			name: '_expression',
-			subtypes: ['binary_expression', 'identifier']
+			subtypes: [
+				{ type: 'SYMBOL', name: 'binary_expression' },
+				{ type: 'SYMBOL', name: 'identifier' }
+			]
 		});
 	});
 
@@ -209,12 +212,14 @@ describe('Link — hidden rule classification', () => {
 			expect(linked.rules['_simple_pattern']).toEqual({
 				type: 'SUPERTYPE',
 				name: '_simple_pattern',
-				subtypes: ['identifier', '_simple_pattern_negative'],
-				// The flatten stamps the aliased arm's storage→parse pair
-				// alongside variantArms — the parse name carries the alias
-				// occurrence's own runtime symbol id for dispatch (see
-				// `SupertypeRule.subtypeParseNames`).
-				subtypeParseNames: { _simple_pattern_negative: 'simple_pattern_negative' },
+				// Each subtype ref stamps its own storage→parse alias inline
+				// (`aliasedFrom`) rather than a separate parallel map — the
+				// parse name carries the alias occurrence's own runtime symbol
+				// id for dispatch (see `SymbolRule.aliasedFrom`/`aliasedFromId`).
+				subtypes: [
+					{ type: 'SYMBOL', name: 'identifier' },
+					{ type: 'SYMBOL', name: 'simple_pattern_negative', aliasedFrom: '_simple_pattern_negative' }
+				],
 				variantArms: ['_simple_pattern_negative']
 			});
 		});

@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "source_hash": "8e451568d1996ee281a721f25832889600e6725c9563c1309ee9cbe7386a302e",
+  "source_hash": "7235b54107362fd503b77fff3c32c5279997f76edd1524fe9827ae0ccc6caf7e",
   "files": {
     "packages/rust/.sittir/grammar-diagnostics.json": "bfbbe028532b4ddec1a6cb802001fa4131a261992f2602bf759551996363b2d7",
     "packages/rust/.sittir/grammar.js": "efa846f0bbd6be6a17cba27ec34c8bbebaed42211da4bf5cc254544ac99a74f5",

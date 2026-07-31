@@ -35,7 +35,7 @@ import type {
 	EnumRule,
 	SupertypeRule
 } from '../types/rule.ts';
-import { isLinkSymbol, isEnumChoiceRule } from '../types/rule.ts';
+import { isLinkSymbol, isEnumChoiceRule, subtypeParseNamesOf } from '../types/rule.ts';
 import { isNonterminalRuleType } from './rule-catalog.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
 import type { RuleId } from '../types/rule.ts';
@@ -376,8 +376,8 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		// `_token_pattern` all alias `_non_special_token` to
 		// "token_pattern_group1") register it exactly once.
 		for (const rule of Object.values(normalized.linkRules)) {
-			if (rule.type !== SUPERTYPE || !rule.subtypeParseNames) continue;
-			for (const [subName, aliasName] of Object.entries(rule.subtypeParseNames)) {
+			if (rule.type !== SUPERTYPE) continue;
+			for (const [subName, aliasName] of Object.entries(subtypeParseNamesOf(rule))) {
 				if (nodes.has(aliasName)) continue;
 				const subRule = normalized.linkRules[subName];
 				// Only nested SUPERTYPE arms materialize their own node —
@@ -588,7 +588,7 @@ function resolveSupertypeSubtypes(
 ): string[] {
 	let subtypes: string[];
 	if (rule.type === SUPERTYPE) {
-		subtypes = rule.subtypes;
+		subtypes = rule.subtypes.map((s) => s.aliasedFrom ?? s.name);
 	} else if (rule.type === CHOICE) {
 		subtypes = rule.members
 			.map((m) => (m.type === VARIANT ? m.content : m))
@@ -602,7 +602,7 @@ function resolveSupertypeSubtypes(
 		ctx,
 		kindEntries,
 		rule.type === SUPERTYPE ? rule.name : undefined,
-		rule.type === SUPERTYPE ? rule.subtypeParseNames : undefined
+		rule.type === SUPERTYPE ? subtypeParseNamesOf(rule) : undefined
 	);
 }
 
@@ -694,8 +694,10 @@ function resolveHiddenSubtypes(
 		// exists — so it still recurses via `visit` as before.
 		if (rule.type === SUPERTYPE) {
 			out.push(name);
-			for (const sub of rule.subtypes) {
-				const parseName = rule.subtypeParseNames?.[sub];
+			const nestedParseNames = subtypeParseNamesOf(rule);
+			for (const subRef of rule.subtypes) {
+				const sub = subRef.aliasedFrom ?? subRef.name;
+				const parseName = nestedParseNames[sub];
 				const subRule = sub.startsWith('_') ? rules[sub] : undefined;
 				if (parseName !== undefined && subRule?.type === SUPERTYPE) {
 					if (!seen.has(parseName)) {
@@ -847,7 +849,8 @@ function resolveHiddenRuleContent(
 			return target ? resolveHiddenRuleContent(target, seen, ctx, kindEntries) : [refName];
 		}
 		case SUPERTYPE:
-			return rule.subtypes.flatMap((s) => {
+			return rule.subtypes.flatMap((symbolRef) => {
+				const s = symbolRef.aliasedFrom ?? symbolRef.name;
 				if (seen.has(s)) return [];
 				seen.add(s);
 				if (!s.startsWith('_')) return [s];

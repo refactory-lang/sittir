@@ -63,13 +63,14 @@ import type {
 	RepeatRule,
 	Repeat1Rule,
 	StringRule,
+	SymbolRule,
 	TokenRule,
 	SupertypeRule,
 	Multiplicity,
 	RuleId,
 	SeparatorFlankMode
 } from '../../types/rule.ts';
-import { isSeq, isField, literalTextOf, isEnumChoiceRule, isLinkSymbol } from '../../types/rule.ts';
+import { isSeq, isField, literalTextOf, isEnumChoiceRule, isLinkSymbol, subtypeParseNamesOf } from '../../types/rule.ts';
 import { isStringType } from '../../types/runtime-shapes.ts';
 import type { RuleMetadata } from '../../types/rule-metadata-brand.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
@@ -1175,18 +1176,30 @@ export function deriveValuesForRule(
 		}
 		case SUPERTYPE:
 			// Supertype refs expand to their subtype list — each subtype is a
-			// valid concrete kind the slot can hold. No link-time stamp exists
-			// for these ids yet (`canonicalizeRuleLiterals` has no SUPERTYPE
-			// arm), so this case still re-derives per call, same as before.
-			return rule.subtypes.map((name) => {
+			// valid concrete kind the slot can hold. Each subtype ref's own
+			// kindId/aliasedFromId is stamped at link (canonicalizeRuleLiterals's
+			// SUPERTYPE arm) — read that fact first, catalog fallback only for
+			// refs that weren't stamped (mirrors the SYMBOL(ref) case above).
+			return rule.subtypes.map((subRef) => {
+				const name = subRef.aliasedFrom ?? subRef.name;
+				if (subRef.kindId !== undefined || subRef.aliasedFromId !== undefined) {
+					return {
+						node: { kind: 'unresolved-ref' as const, name },
+						storageKindId: subRef.aliasedFromId ?? subRef.kindId,
+						parseKind: { kind: 'unresolved-ref' as const, name: subRef.name },
+						parseKindId: subRef.kindId,
+						multiplicity: relaxForOptionalBody(name, multiplicity)
+					};
+				}
 				const entry = findEntryForKindName(ctx?.kindEntries ?? [], name);
 				// Aliased arm: the flatten stamped the parse name the arm
-				// displays under (`subtypeParseNames`); its catalog row carries
-				// the alias occurrence's own runtime id, which is what dispatch
-				// must key on — mirrors the SYMBOL case's aliasedFrom/name pair
-				// above.
-				const parseName = rule.subtypeParseNames?.[name];
+				// displays under (`aliasedFrom`/`name` on the ref itself); its
+				// catalog row carries the alias occurrence's own runtime id,
+				// which is what dispatch must key on — mirrors the SYMBOL
+				// case's aliasedFrom/name pair above.
+				const parseName = subRef.name !== name ? subRef.name : undefined;
 				const parseEntry = parseName === undefined ? entry : findEntryForKindName(ctx?.kindEntries ?? [], parseName);
+				if (entry !== undefined || parseEntry !== undefined) noteKindIdFallbackHit({ site: 'SUPERTYPE(subtype)', name });
 				return {
 					node: { kind: 'unresolved-ref' as const, name },
 					storageKindId: entry?.id,
@@ -2577,13 +2590,24 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule<'link'> 
 	) {
 		// Supertypes are always hidden — they're dispatch points, not user-constructable nodes.
 		super(kind, rule as SupertypeRule<'link'>, { hidden: true });
-		this.#subtypes = subtypeNames.map(
-			(name): NodeOrTerminal => ({
+		// rule.subtypes carries link-stamped SymbolRefs for the DIRECTLY
+		// declared arms; `subtypeNames` (flattened, may include names reached
+		// only by expanding a nested hidden supertype) can list more entries
+		// than that — index by storage name (`aliasedFrom ?? name`) and read
+		// the stamp when a direct match exists, catalog-lookup fallback
+		// (AssembledToken/AssembledKeyword's own pattern) otherwise.
+		const stampedByStorageName = new Map<string, SymbolRule<'link'>>();
+		if (rule.type === SUPERTYPE) {
+			for (const s of rule.subtypes) stampedByStorageName.set(s.aliasedFrom ?? s.name, s);
+		}
+		this.#subtypes = subtypeNames.map((name): NodeOrTerminal => {
+			const stamped = stampedByStorageName.get(name);
+			return {
 				node: { kind: 'unresolved-ref', name },
-				storageKindId: findEntryForKindName(kindEntries, name)?.id,
+				storageKindId: stamped ? (stamped.aliasedFromId ?? stamped.kindId) : findEntryForKindName(kindEntries, name)?.id,
 				multiplicity: 'single'
-			})
-		);
+			};
+		});
 	}
 
 	get subtypes(): readonly NodeOrTerminal[] {
@@ -2595,7 +2619,9 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule<'link'> 
 	}
 
 	get subtypeParseNames(): Readonly<Record<string, string>> | undefined {
-		return this.rule.type === SUPERTYPE ? this.rule.subtypeParseNames : undefined;
+		if (this.rule.type !== SUPERTYPE) return undefined;
+		const pairs = subtypeParseNamesOf(this.rule);
+		return Object.keys(pairs).length > 0 ? pairs : undefined;
 	}
 }
 
