@@ -100,7 +100,8 @@ import {
 	typeEq
 } from '../types/runtime-shapes.ts';
 import type { RuntimeRule } from '../types/runtime-shapes.ts';
-import { detectRepeatSeparator, firstStringOfChoice, rulesEqual } from './list-patterns.ts';
+import { detectRepeatSeparator, firstStringOfChoice } from './list-patterns.ts';
+import { ruleKey } from './shared.ts';
 import {
 	diagnoseParseKindCollisions,
 	type ParseKindCollisionDiagnostic,
@@ -1824,16 +1825,16 @@ function applyClauseHoist(
 // ---------------------------------------------------------------------------
 
 export function clusterSignatures(values: readonly RuntimeRule[]): string[] {
+	const indexByKey = new Map<string, number>();
 	const clusterOf: string[] = [];
-	const representatives: RuntimeRule[] = [];
 	for (const value of values) {
-		const existingIdx = representatives.findIndex((rep) => rulesEqual(rep, value));
-		if (existingIdx === -1) {
-			representatives.push(value);
-			clusterOf.push(String(representatives.length - 1));
-		} else {
-			clusterOf.push(String(existingIdx));
+		const key = ruleKey(value);
+		let idx = indexByKey.get(key);
+		if (idx === undefined) {
+			idx = indexByKey.size;
+			indexByKey.set(key, idx);
 		}
+		clusterOf.push(String(idx));
 	}
 	return clusterOf;
 }
@@ -2525,10 +2526,22 @@ function buildCanonicalEnumNames(occurrences: FieldEnumOccurrence[], rules: Reco
 		group.push(occ);
 	}
 
+	// One O(rules) pass building memberKey → existing rule name, rather than
+	// rescanning every rule for every distinct occurrence group below.
+	// First-registration-wins mirrors the equivalent per-group linear scan's
+	// Object.entries iteration order.
+	const existingRuleNameByMemberKey = new Map<string, string>();
+	for (const [name, rule] of Object.entries(rules)) {
+		const resolved = resolveToEnumMembersOneLevelDeep(rule);
+		if (resolved === null) continue;
+		const key = buildEnumMemberKey(resolved);
+		if (!existingRuleNameByMemberKey.has(key)) existingRuleNameByMemberKey.set(key, name);
+	}
+
 	const result = new Map<string, string>();
 	const groups = Array.from(byKey.entries()).map(([memberKey, group], index) => {
 		const first = group[0]!;
-		const candidate = deriveCandidateName(group, rules, first);
+		const candidate = deriveCandidateName(group, existingRuleNameByMemberKey, first);
 		return { memberKey, group, first, index, ...candidate };
 	});
 
@@ -2621,7 +2634,7 @@ function enumMemberKeySlug(memberKey: string): string {
 
 function deriveCandidateName(
 	group: FieldEnumOccurrence[],
-	rules: Record<string, Rule>,
+	existingRuleNameByMemberKey: ReadonlyMap<string, string>,
 	first: FieldEnumOccurrence
 ): { name: string; priority: number } {
 	// Priority 0: some existing rule, anywhere in the grammar, already has
@@ -2632,7 +2645,7 @@ function deriveCandidateName(
 	// creates a real, separately-symbolized duplicate the LR table
 	// generator then has to disambiguate against the original (e.g.
 	// `_accessibility_modifier` vs the pre-existing `accessibility_modifier`).
-	const existingName = findExistingEnumRuleName(rules, first.memberKey);
+	const existingName = existingRuleNameByMemberKey.get(first.memberKey);
 	if (existingName !== undefined) {
 		if (existingName !== first.fieldName && !process.env.SITTIR_QUIET) {
 			process.stderr.write(
@@ -2653,14 +2666,6 @@ function deriveCandidateName(
 
 	// Priority 3: fallback — first parent + field name.
 	return { name: fallbackName(first), priority: 3 };
-}
-
-function findExistingEnumRuleName(rules: Record<string, Rule>, memberKey: string): string | undefined {
-	for (const [name, rule] of Object.entries(rules)) {
-		const resolved = resolveToEnumMembersOneLevelDeep(rule);
-		if (resolved !== null && buildEnumMemberKey(resolved) === memberKey) return name;
-	}
-	return undefined;
 }
 
 interface FieldEnumSweepState {

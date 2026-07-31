@@ -638,60 +638,36 @@ function normalizeEnumMembers(members, provenance) {
   };
 }
 
+// packages/codegen/src/dsl/shared.ts
+function ruleKey(rule) {
+  return JSON.stringify(canonicalize(rule));
+}
+function canonicalize(rule) {
+  if (typeof rule !== "object" || rule === null) return rule;
+  const r = rule;
+  const type = r.type ?? null;
+  const name = typeof r.name === "string" ? r.name : null;
+  const value = typeof r.value === "string" || typeof r.value === "number" ? r.value : null;
+  const named = typeof r.named === "boolean" ? r.named : null;
+  const separator = "separator" in r ? canonicalizeSeparator(r.separator) : null;
+  const members = r.members;
+  if (members !== void 0) return [type, name, value, named, separator, members.map(canonicalize)];
+  const content = r.content;
+  if (content !== void 0) return [type, name, value, named, separator, [canonicalize(content)]];
+  return [type, name, value, named, separator, null];
+}
+function canonicalizeSeparator(separator) {
+  if (typeof separator !== "object" || separator === null) return separator;
+  const sep = separator;
+  return [
+    "fact",
+    typeof sep.trailing === "string" ? sep.trailing : null,
+    typeof sep.leading === "string" ? sep.leading : null,
+    canonicalize(sep.value)
+  ];
+}
+
 // packages/codegen/src/dsl/list-patterns.ts
-function separatorFactsEqual(a, b) {
-  if (a === void 0 || b === void 0) return a === b;
-  return a.trailing === b.trailing && a.leading === b.leading && rulesEqual(a.value, b.value);
-}
-function rulesEqual(a, b) {
-  const ta = a.type.toLowerCase();
-  if (ta !== b.type.toLowerCase()) return false;
-  const A = a;
-  const B = b;
-  switch (ta) {
-    case "string":
-    case "pattern":
-      return A.value === B.value;
-    case "symbol":
-      return A.name === B.name;
-    case "enum": {
-      const am = A.members;
-      const bm = B.members;
-      return am.length === bm.length && am.every((m, i) => m.value === bm[i].value);
-    }
-    case "seq":
-    case "choice": {
-      const am = A.members;
-      const bm = B.members;
-      return am.length === bm.length && am.every((m, i) => rulesEqual(m, bm[i]));
-    }
-    case "optional":
-      return rulesEqual(A.content, B.content);
-    case "repeat":
-    case "repeat1": {
-      const aObj = typeof A.separator === "object" && A.separator !== null;
-      const bObj = typeof B.separator === "object" && B.separator !== null;
-      const sepEqual = aObj && bObj ? separatorFactsEqual(A.separator, B.separator) : A.separator === B.separator;
-      return sepEqual && rulesEqual(A.content, B.content);
-    }
-    case "field":
-      return A.name === B.name && rulesEqual(A.content, B.content);
-    case "blank":
-      return true;
-    case "token":
-    case "immediate_token":
-      return rulesEqual(A.content, B.content);
-    case "prec":
-    case "prec_left":
-    case "prec_right":
-    case "prec_dynamic":
-      return A.value === B.value && rulesEqual(A.content, B.content);
-    case "alias":
-      return A.value === B.value && A.named === B.named && rulesEqual(A.content, B.content);
-    default:
-      return false;
-  }
-}
 function firstStringOfChoice(r) {
   if (!typeEq(r.type, "CHOICE")) return null;
   const members = r.members ?? [];
@@ -2082,16 +2058,16 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
   return rule;
 }
 function clusterSignatures(values) {
+  const indexByKey = /* @__PURE__ */ new Map();
   const clusterOf = [];
-  const representatives = [];
   for (const value of values) {
-    const existingIdx = representatives.findIndex((rep) => rulesEqual(rep, value));
-    if (existingIdx === -1) {
-      representatives.push(value);
-      clusterOf.push(String(representatives.length - 1));
-    } else {
-      clusterOf.push(String(existingIdx));
+    const key = ruleKey(value);
+    let idx = indexByKey.get(key);
+    if (idx === void 0) {
+      idx = indexByKey.size;
+      indexByKey.set(key, idx);
     }
+    clusterOf.push(String(idx));
   }
   return clusterOf;
 }
@@ -2472,10 +2448,17 @@ function buildCanonicalEnumNames(occurrences, rules) {
     }
     group.push(occ);
   }
+  const existingRuleNameByMemberKey = /* @__PURE__ */ new Map();
+  for (const [name, rule] of Object.entries(rules)) {
+    const resolved = resolveToEnumMembersOneLevelDeep(rule);
+    if (resolved === null) continue;
+    const key = buildEnumMemberKey(resolved);
+    if (!existingRuleNameByMemberKey.has(key)) existingRuleNameByMemberKey.set(key, name);
+  }
   const result = /* @__PURE__ */ new Map();
   const groups = Array.from(byKey.entries()).map(([memberKey, group], index) => {
     const first = group[0];
-    const candidate = deriveCandidateName(group, rules, first);
+    const candidate = deriveCandidateName(group, existingRuleNameByMemberKey, first);
     return { memberKey, group, first, index, ...candidate };
   });
   groups.sort((a, b) => a.priority - b.priority || a.index - b.index);
@@ -2539,8 +2522,8 @@ function enumMemberKeySlug(memberKey) {
     return encoded.length > 0 ? encoded : "empty";
   }).join("__");
 }
-function deriveCandidateName(group, rules, first) {
-  const existingName = findExistingEnumRuleName(rules, first.memberKey);
+function deriveCandidateName(group, existingRuleNameByMemberKey, first) {
+  const existingName = existingRuleNameByMemberKey.get(first.memberKey);
   if (existingName !== void 0) {
     if (existingName !== first.fieldName && !process.env.SITTIR_QUIET) {
       process.stderr.write(
@@ -2558,13 +2541,6 @@ function deriveCandidateName(group, rules, first) {
     }
   }
   return { name: fallbackName(first), priority: 3 };
-}
-function findExistingEnumRuleName(rules, memberKey) {
-  for (const [name, rule] of Object.entries(rules)) {
-    const resolved = resolveToEnumMembersOneLevelDeep(rule);
-    if (resolved !== null && buildEnumMemberKey(resolved) === memberKey) return name;
-  }
-  return void 0;
 }
 function rewriteFieldEnums(rule, parentKind, sweep) {
   const { rules, newRules, memberKeyToCanonicalName, conflictingSites } = sweep;
