@@ -278,7 +278,7 @@ function serializeNode(node: AssembledNode): SerializedNode {
 			return {
 				...base,
 				modelType: 'supertype',
-				subtypes: [...node.subtypes].sort()
+				subtypes: [...node.subtypeNames].sort()
 			};
 		case 'multi':
 			return {

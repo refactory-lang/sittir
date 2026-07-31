@@ -20,7 +20,7 @@ import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { applyWrapperDeletion, deleteWrapper } from '../wrapper-deletion.ts';
 import type { Rule, RepeatRule, Repeat1Rule } from '../../types/rule.ts';
 import type { SimplifiedGrammar } from '../types.ts';
-import { deriveSlots, isRequired, isMultiple, allSlotsOf, AssembledSeparatedList } from '../model/node-map.ts';
+import { deriveSlots, isRequired, isMultiple, allSlotsOf, AssembledSeparatedList, AssembledSupertype } from '../model/node-map.ts';
 import type { GeneratedIdTables, GeneratedIdEntry } from '../generated-metadata.ts';
 
 // Helper — fields-equivalent view over deriveSlots: every slot that came
@@ -351,7 +351,7 @@ describe('Assemble — classifyNode', () => {
 		);
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_property_name');
 		expect(node?.modelType).toBe('supertype');
-		expect((node as any).subtypes).toEqual(['identifier', 'string', '_property_identifier']);
+		expect((node as any).subtypeNames).toEqual(['identifier', 'string', '_property_identifier']);
 	});
 
 	it('includes nested alias-member hidden kinds in supertype subtype expansion', () => {
@@ -399,7 +399,7 @@ describe('Assemble — classifyNode', () => {
 		);
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_property_name');
 		expect(node?.modelType).toBe('supertype');
-		expect((node as any).subtypes).toEqual(['identifier', 'string', '_type_identifier', '_property_identifier']);
+		expect((node as any).subtypeNames).toEqual(['identifier', 'string', '_type_identifier', '_property_identifier']);
 	});
 
 	// PR-137 grammar-phase-ctx regression fixture (2026-07-05): reproduces
@@ -448,7 +448,7 @@ describe('Assemble — classifyNode', () => {
 		});
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_delim_tokens');
 		expect(node?.modelType).toBe('supertype');
-		const subtypes = (node as any).subtypes as string[];
+		const subtypes = (node as any).subtypeNames as string[];
 		expect(subtypes).not.toContain('%');
 		expect(subtypes).not.toContain('+');
 		// `_non_delim_token` and `_non_special_token` are transparent CHOICE
@@ -509,7 +509,7 @@ describe('Assemble — classifyNode', () => {
 		});
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_simple_pattern');
 		expect(node?.modelType).toBe('supertype');
-		const subtypes = (node as any).subtypes as string[];
+		const subtypes = (node as any).subtypeNames as string[];
 		expect(subtypes).not.toContain('integer');
 		expect(subtypes).not.toContain('float');
 		// The SEQ arm resolves to nothing (opaque), so the "keep the hidden
@@ -957,6 +957,7 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
 		const aliasNode = nodeMap.nodes.get('inner_alias');
 		expect(aliasNode?.modelType).toBe('supertype');
-		expect((aliasNode as { subtypes: string[] }).subtypes).toEqual(['identifier']);
+		expect(aliasNode).toBeInstanceOf(AssembledSupertype);
+		expect((aliasNode as AssembledSupertype).subtypeNames).toEqual(['identifier']);
 	});
 });

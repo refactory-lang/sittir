@@ -2558,16 +2558,40 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule<'link'> 
 	// #subtypes stores the RESOLVED subtype list (hidden names expanded to
 	// their concrete kinds) — this differs from rule.subtypes which carries
 	// the raw names as declared in the grammar. Do NOT replace with rule.subtypes.
-	readonly #subtypes: string[];
+	//
+	// Each entry's `.node` starts as an `UnresolvedRef` — supertypes are
+	// constructed in the same single forward-referencing pass as every other
+	// kind (assemble.ts), so a subtype's own `AssembledNode` may not exist yet
+	// — and is hydrated to the real node by `hydrateSlotRefs` once the full
+	// node map exists, the same two-pass pattern branch/group slot values
+	// already use. `storageKindId` is stamped here, once, from the catalog —
+	// the same construction-time stamping AssembledToken/AssembledKeyword do
+	// — so consumers read the id off the ref instead of re-resolving by name.
+	readonly #subtypes: readonly NodeOrTerminal[];
 
-	constructor(kind: string, rule: SupertypeRule<'link'> | ChoiceRule<'link'>, subtypes: string[]) {
+	constructor(
+		kind: string,
+		rule: SupertypeRule<'link'> | ChoiceRule<'link'>,
+		subtypeNames: readonly string[],
+		kindEntries: readonly GeneratedKindEntry[] = []
+	) {
 		// Supertypes are always hidden — they're dispatch points, not user-constructable nodes.
 		super(kind, rule as SupertypeRule<'link'>, { hidden: true });
-		this.#subtypes = subtypes;
+		this.#subtypes = subtypeNames.map(
+			(name): NodeOrTerminal => ({
+				node: { kind: 'unresolved-ref', name },
+				storageKindId: findEntryForKindName(kindEntries, name)?.id,
+				multiplicity: 'single'
+			})
+		);
 	}
 
-	get subtypes(): string[] {
+	get subtypes(): readonly NodeOrTerminal[] {
 		return this.#subtypes;
+	}
+
+	get subtypeNames(): readonly string[] {
+		return this.#subtypes.filter(isNodeRef).map((v) => storageKindOfRef(v.node));
 	}
 
 	get subtypeParseNames(): Readonly<Record<string, string>> | undefined {

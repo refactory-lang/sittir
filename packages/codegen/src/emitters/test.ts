@@ -432,7 +432,7 @@ function resolveConcreteKind(
 		if (!node) continue;
 		// Supertypes: expand to subtypes.
 		if (node.modelType === 'supertype') {
-			queue.push(...node.subtypes);
+			queue.push(...node.subtypeNames);
 			continue;
 		}
 		// TSGrammar-only: skip when kindEntries present and this kind has no parser symbol.
