@@ -6,20 +6,26 @@ import { describe, expect, it } from 'vitest';
  * name-keyed id resolution and violate the every-kind-has-a-kindId
  * invariant.
  *
- * The ceilings are the audited baseline. Migrating a synthesis source
- * pre-generate, fixing anonymous-node naming, or pruning dead kinds lowers a
- * grammar's count — ratchet the ceiling down with it. A count above the
- * ceiling means a change minted NEW parser-invisible kinds; fix the minting
- * site rather than raising the ceiling.
+ * The ceilings are EXACT FLOORS (Phase 5 of
+ * docs/superpowers/plans/2026-07-30-kindid-invariant-restoration-plan.md),
+ * not an audited baseline with slack — every remaining phantom in this count
+ * is either the grammar's `inline:`-array class (S6) or genuinely
+ * unreachable VAPORIZED dead surface (S7), per the classified
+ * kindid-inline-excluded-* / kindid-vaporized-* diagnostics in
+ * grammar-diagnostics.json. Migrating a synthesis source pre-generate,
+ * fixing anonymous-node naming, or pruning dead kinds lowers a grammar's
+ * count — ratchet the ceiling down with it. A count above the ceiling means
+ * a change minted NEW parser-invisible kinds; fix the minting site rather
+ * than raising the ceiling.
  *
  * Counting imports the generated consts modules directly — no text parsing
  * (regex scans of consts.ts overcount; id rows span lines and OPERATORS
  * quoting differs).
  */
 const CEILINGS: Record<string, number> = {
-	rust: 18,
-	typescript: 40,
-	python: 14
+	rust: 11,
+	typescript: 28,
+	python: 11
 };
 
 interface ConstsModule {
