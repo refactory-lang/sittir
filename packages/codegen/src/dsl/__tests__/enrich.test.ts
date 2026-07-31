@@ -352,6 +352,71 @@ describe('enrich()', () => {
 			}
 		});
 
+		it('reuses an existing base-grammar rule at `_kw_<x>_marker` instead of minting a duplicate', () => {
+			const input = mkGrammar({
+				_kw_async_marker: { type: STRING, value: 'async' },
+				function_definition: {
+					type: SEQ,
+					members: [
+						{ type: OPTIONAL, content: { type: STRING, value: 'async' } },
+						{ type: STRING, value: 'function' },
+						{ type: SYMBOL, name: 'name' }
+					]
+				}
+			});
+			const out = runEnrich(input);
+			const rule = out.grammar.rules.function_definition as { type: 'SEQ'; members: Rule[] };
+			expect(rule.members[0]).toMatchObject({
+				type: 'OPTIONAL',
+				content: {
+					type: 'FIELD',
+					name: 'async_marker',
+					content: { type: 'SYMBOL', name: '_kw_async_marker' }
+				}
+			});
+			// The pre-existing base-grammar rule is untouched, not replaced —
+			// confirms reuse rather than a mint-over-it.
+			expect(out.grammar.rules._kw_async_marker).toMatchObject({ type: 'STRING', value: 'async' });
+		});
+
+		it('declines the promotion when an existing `_kw_<x>_marker` rule has different content, reports to stderr', () => {
+			const savedQuiet = process.env.SITTIR_QUIET;
+			delete process.env.SITTIR_QUIET;
+			try {
+				const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+				const input = mkGrammar({
+					_kw_async_marker: { type: STRING, value: 'unrelated_content' },
+					function_definition: {
+						type: SEQ,
+						members: [
+							{ type: OPTIONAL, content: { type: STRING, value: 'async' } },
+							{ type: STRING, value: 'function' },
+							{ type: SYMBOL, name: 'name' }
+						]
+					}
+				});
+				const out = runEnrich(input);
+				const rule = out.grammar.rules.function_definition as { type: 'SEQ'; members: Rule[] };
+				// Left unpromoted — the reserved name collides with unrelated content.
+				expect(rule.members[0]).toMatchObject({
+					type: 'OPTIONAL',
+					content: { type: 'STRING', value: 'async' }
+				});
+				// The colliding base-grammar rule is untouched, not overwritten.
+				expect(out.grammar.rules._kw_async_marker).toMatchObject({ type: 'STRING', value: 'unrelated_content' });
+				const calls = stderrSpy.mock.calls.map((c) => String(c[0]));
+				expect(
+					calls.some(
+						(c) =>
+							c.includes('skipped optional-keyword-prefix on function_definition') &&
+							c.includes("rule '_kw_async_marker' already exists in base.grammar.rules with different content")
+					)
+				).toBe(true);
+			} finally {
+				if (savedQuiet !== undefined) process.env.SITTIR_QUIET = savedQuiet;
+			}
+		});
+
 		it('recurses into choice members', () => {
 			const input = mkGrammar({
 				stmt: {
