@@ -1837,7 +1837,7 @@ function absorbTrailingListSeparators(members) {
   }
   return changed ? out : null;
 }
-function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, ambientPrec) {
+function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMap, counter, groupDedupeMap, visibleGroupHiddenNames, clauseGroupOwners, ambientPrec, enclosingFieldName) {
   const peeled = peelOptionalSeq(rule);
   if (peeled !== null) {
     const recursedSeqBody = applyClauseHoist(
@@ -1850,7 +1850,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       groupDedupeMap,
       visibleGroupHiddenNames,
       clauseGroupOwners,
-      ambientPrec
+      ambientPrec,
+      enclosingFieldName
     );
     if (ruleMatchesEmpty(recursedSeqBody)) {
       counter.opt += 1;
@@ -1887,7 +1888,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         counter,
         rulesBag,
         clauseGroupRules,
-        ambientPrec
+        ambientPrec,
+        enclosingFieldName
       );
       if (names !== null) {
         visibleGroupHiddenNames.add(names.hiddenName);
@@ -1927,7 +1929,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
         groupDedupeMap,
         visibleGroupHiddenNames,
         clauseGroupOwners,
-        ambientPrec
+        ambientPrec,
+        enclosingFieldName
       );
       const promoted = mintStructuredChoiceArm(
         recursed,
@@ -2036,7 +2039,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       groupDedupeMap,
       visibleGroupHiddenNames,
       clauseGroupOwners,
-      innerAmbientPrec
+      innerAmbientPrec,
+      enclosingFieldName
     );
     if (newContent === content) return rule;
     return { ...rule, content: newContent };
@@ -2054,7 +2058,8 @@ function applyClauseHoist(parentKind, rule, rulesBag, clauseGroupRules, dedupeMa
       groupDedupeMap,
       visibleGroupHiddenNames,
       clauseGroupOwners,
-      ambientPrec
+      ambientPrec,
+      rule.name
     );
     if (newContent === content) return rule;
     return { ...rule, content: newContent };
@@ -2251,7 +2256,7 @@ function clauseHoistSynthName(seqBody, parentKind, dedupeMap, counter, rulesBag,
   clauseGroupRules[name] = seqBody;
   return name;
 }
-function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, ambientPrec) {
+function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, ambientPrec, enclosingFieldName) {
   const key = ruleKey(content);
   const registeredBody = ambientPrec ? { ...ambientPrec, content } : content;
   const existing = groupDedupeMap[key];
@@ -2260,8 +2265,19 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
     if (!(hiddenName2 in clauseGroupRules)) clauseGroupRules[hiddenName2] = registeredBody;
     return { visibleName: existing, hiddenName: hiddenName2 };
   }
+  const base2 = parentKind.replace(/^_+/, "");
+  const register = (visibleName2) => {
+    const hiddenName2 = `_${visibleName2}`;
+    groupDedupeMap[key] = visibleName2;
+    clauseGroupRules[hiddenName2] = registeredBody;
+    return { visibleName: visibleName2, hiddenName: hiddenName2 };
+  };
+  if (enclosingFieldName !== void 0) {
+    const visibleName2 = `${base2}_${enclosingFieldName}`;
+    if (!(visibleName2 in rulesBag) && !(`_${visibleName2}` in rulesBag)) return register(visibleName2);
+  }
   counter.grp += 1;
-  const visibleName = `${parentKind.replace(/^_+/, "")}_group${counter.grp}`;
+  const visibleName = `${base2}_group${counter.grp}`;
   const hiddenName = `_${visibleName}`;
   if (visibleName in rulesBag || hiddenName in rulesBag) {
     process.stderr.write(
@@ -2270,9 +2286,7 @@ function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rul
     );
     return null;
   }
-  groupDedupeMap[key] = visibleName;
-  clauseGroupRules[hiddenName] = registeredBody;
-  return { visibleName, hiddenName };
+  return register(visibleName);
 }
 function promoteExistingHiddenRuleName(existingHiddenName, parentKind, groupDedupeMap, counter, rulesBag) {
   const existing = groupDedupeMap[existingHiddenName];

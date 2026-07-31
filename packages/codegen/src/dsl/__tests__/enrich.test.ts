@@ -803,4 +803,122 @@ describe('enrich()', () => {
 			expect(Object.keys(out.grammar.rules)).not.toContain('_public_field_definition_modifier');
 		});
 	});
+
+	describe('visible-group naming', () => {
+		it('names a visible group after its wrapping field when one exists at enrich time', () => {
+			const input = mkGrammar({
+				call: {
+					type: FIELD,
+					name: 'body',
+					content: {
+						type: OPTIONAL,
+						content: {
+							type: SEQ,
+							members: [
+								{ type: SYMBOL, name: 'a' },
+								{ type: SYMBOL, name: 'b' }
+							]
+						}
+					}
+				},
+				a: { type: STRING, value: 'a' },
+				b: { type: STRING, value: 'b' }
+			});
+			const out = runEnrich(input);
+			// Named after the field it fills (`_call_body`), not an opaque
+			// `_call_group1` ordinal.
+			expect(out.grammar.rules._call_body).toMatchObject({
+				type: 'SEQ',
+				members: [
+					{ type: 'SYMBOL', name: 'a' },
+					{ type: 'SYMBOL', name: 'b' }
+				]
+			});
+			expect(out.grammar.rules._call_group1).toBeUndefined();
+			expect(out.grammar.rules.call_group1).toBeUndefined();
+			const field = out.grammar.rules.call as { type: 'FIELD'; content: Rule };
+			expect(field.content).toMatchObject({
+				type: 'OPTIONAL',
+				content: {
+					type: 'ALIAS',
+					value: 'call_body',
+					named: true,
+					content: { type: 'SYMBOL', name: '_call_body' }
+				}
+			});
+		});
+
+		it('falls back to the ordinal name when the wrapping field name collides with an existing rule', () => {
+			const input = mkGrammar({
+				call: {
+					type: FIELD,
+					name: 'body',
+					content: {
+						type: OPTIONAL,
+						content: {
+							type: SEQ,
+							members: [
+								{ type: SYMBOL, name: 'a' },
+								{ type: SYMBOL, name: 'b' }
+							]
+						}
+					}
+				},
+				// Collides with the field-derived name `call_body`.
+				call_body: { type: STRING, value: 'unrelated' },
+				a: { type: STRING, value: 'a' },
+				b: { type: STRING, value: 'b' }
+			});
+			const out = runEnrich(input);
+			expect(out.grammar.rules._call_group1).toMatchObject({
+				type: 'SEQ',
+				members: [
+					{ type: 'SYMBOL', name: 'a' },
+					{ type: 'SYMBOL', name: 'b' }
+				]
+			});
+			// The pre-existing colliding rule is untouched.
+			expect(out.grammar.rules.call_body).toMatchObject({ type: 'STRING', value: 'unrelated' });
+		});
+
+		it('does NOT use a field name from a seq/choice member position (only the direct enclosing field)', () => {
+			const input = mkGrammar({
+				// `field('items', ...)` wraps a SEQ; the optional(seq(...)) inside
+				// one of that seq's OWN members is a distinct position, not "the
+				// field's content" as a whole, so it must fall back to `_group1`.
+				call: {
+					type: FIELD,
+					name: 'items',
+					content: {
+						type: SEQ,
+						members: [
+							{ type: SYMBOL, name: 'head' },
+							{
+								type: OPTIONAL,
+								content: {
+									type: SEQ,
+									members: [
+										{ type: SYMBOL, name: 'a' },
+										{ type: SYMBOL, name: 'b' }
+									]
+								}
+							}
+						]
+					}
+				},
+				head: { type: STRING, value: 'head' },
+				a: { type: STRING, value: 'a' },
+				b: { type: STRING, value: 'b' }
+			});
+			const out = runEnrich(input);
+			expect(out.grammar.rules._call_group1).toMatchObject({
+				type: 'SEQ',
+				members: [
+					{ type: 'SYMBOL', name: 'a' },
+					{ type: 'SYMBOL', name: 'b' }
+				]
+			});
+			expect(out.grammar.rules._call_items).toBeUndefined();
+		});
+	});
 });
