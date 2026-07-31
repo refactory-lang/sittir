@@ -399,7 +399,7 @@ function applyEnrichPasses(
 		// adds `_kw_<name>` hidden rules that shift tree-sitter's parser-
 		// generator tables, breaking unrelated rules' reparse (rust corpus
 		// regresses by ~47/136 with this pass on).
-		r = applyOptionalKeyword(ruleName, r, kwRules, wordMatcher);
+		r = applyOptionalKeyword(ruleName, r, kwRules, rulesBag, wordMatcher);
 		if (r === before) {
 			converged = true;
 			break;
@@ -689,12 +689,29 @@ function makeSymbol(name: string): Rule {
 	return symFn(name);
 }
 
-function registerKwRule(stringLiteral: Rule, keyword: string, kwRules: Record<string, Rule>): Rule {
+function registerKwRule(
+	stringLiteral: Rule,
+	keyword: string,
+	kwRules: Record<string, Rule>,
+	rulesBag: Record<string, Rule>
+): Rule | null {
 	const hiddenName = `_kw_${keyword}`;
-	if (!(hiddenName in kwRules)) {
+	if (hiddenName in kwRules) return makeSymbol(hiddenName);
+	const existing = rulesBag[hiddenName];
+	if (existing === undefined) {
 		kwRules[hiddenName] = stringLiteral;
+		return makeSymbol(hiddenName);
 	}
-	return makeSymbol(hiddenName);
+	// `_kw_` is a naming convention, not a reservation — a base grammar can
+	// define its own rule at this exact name. Reuse it when it structurally
+	// IS this keyword (ruleKey covers type/named along with value, so an
+	// existing rule that displays the same text but visibly — e.g. a
+	// `named: true` ALIAS — correctly does NOT match); only decline on a
+	// genuine, unrelated collision.
+	if (ruleKey(existing as RuntimeRule) === ruleKey(stringLiteral as RuntimeRule)) {
+		return makeSymbol(hiddenName);
+	}
+	return null;
 }
 
 // ---------------------------------------------------------------------------
@@ -1184,12 +1201,13 @@ function applyOptionalKeyword(
 	ruleName: string,
 	rule: Rule,
 	kwRules: Record<string, Rule>,
+	rulesBag: Record<string, Rule>,
 	wordMatcher: RegExp | undefined
 ): Rule {
 	// Peel prec wrappers so claimed-name set covers the inner seq.
 	const inner = peelPrec(rule);
 	const claimed = isSeqType(inner.type) ? collectFieldNamesRuntime(inner) : new Set<string>();
-	return walkOptionalKeyword(ruleName, rule, claimed, kwRules, wordMatcher) ?? rule;
+	return walkOptionalKeyword(ruleName, rule, claimed, kwRules, rulesBag, wordMatcher) ?? rule;
 }
 
 function peelPrec(rule: Rule): Rule {
@@ -1205,13 +1223,14 @@ function walkOptionalKeyword(
 	rule: Rule,
 	claimedAtSeqLevel: Set<string>,
 	kwRules: Record<string, Rule>,
+	rulesBag: Record<string, Rule>,
 	wordMatcher: RegExp | undefined
 ): Rule | null {
 	if (isSeqType(rule.type)) {
 		const members = (rule as unknown as { members: Rule[] }).members;
 		let changed = false;
 		const newMembers = members.map((m) => {
-			const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules, wordMatcher);
+			const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
 			if (out === null) return m;
 			changed = true;
 			return out;
@@ -1222,7 +1241,7 @@ function walkOptionalKeyword(
 		const members = (rule as unknown as { members: Rule[] }).members;
 		let changed = false;
 		const newMembers = members.map((m) => {
-			const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules, wordMatcher);
+			const out = walkOptionalKeyword(ruleName, m, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
 			if (out === null) return m;
 			changed = true;
 			return out;
@@ -1231,9 +1250,17 @@ function walkOptionalKeyword(
 	}
 	const peeled = peelOptional(rule);
 	if (peeled.isOptional) {
-		const replacement = tryPromoteInnerKeyword(ruleName, rule, peeled.inner, claimedAtSeqLevel, kwRules, wordMatcher);
+		const replacement = tryPromoteInnerKeyword(
+			ruleName,
+			rule,
+			peeled.inner,
+			claimedAtSeqLevel,
+			kwRules,
+			rulesBag,
+			wordMatcher
+		);
 		if (replacement !== null) return replacement;
-		const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules, wordMatcher);
+		const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
 		if (innerRewritten !== null) {
 			return rebuildOptional(rule, innerRewritten);
 		}
@@ -1241,14 +1268,14 @@ function walkOptionalKeyword(
 	}
 	if (isRepeatType(rule.type) || isFieldType(rule.type)) {
 		const content = (rule as unknown as { content: Rule }).content;
-		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, wordMatcher);
+		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
 		if (out === null) return null;
 		return { ...rule, content: out } as Rule;
 	}
 	// Descend through prec wrappers to reach inner seqs.
 	if (isPrecWrapper(rule as { type: string })) {
 		const content = (rule as unknown as { content: Rule }).content;
-		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, wordMatcher);
+		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules, rulesBag, wordMatcher);
 		if (out === null) return null;
 		return { ...rule, content: out } as Rule;
 	}
@@ -1261,6 +1288,7 @@ function tryPromoteInnerKeyword(
 	inner: Rule,
 	claimed: Set<string>,
 	kwRules: Record<string, Rule>,
+	rulesBag: Record<string, Rule>,
 	wordMatcher: RegExp | undefined
 ): Rule | null {
 	const innerNorm = normalizeMember(inner);
@@ -1274,7 +1302,15 @@ function tryPromoteInnerKeyword(
 		return null;
 	}
 	claimed.add(fieldName);
-	const symbolRef = registerKwRule(inner, fieldName, kwRules);
+	const symbolRef = registerKwRule(inner, fieldName, kwRules, rulesBag);
+	if (symbolRef === null) {
+		reportSkip(
+			'optional-keyword-prefix',
+			ruleName,
+			`rule '_kw_${fieldName}' already exists in base.grammar.rules with different content`
+		);
+		return null;
+	}
 	const fieldNode = makeField(fieldName, symbolRef);
 	return rebuildOptional(optionalRule, fieldNode);
 }
