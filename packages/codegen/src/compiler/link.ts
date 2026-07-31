@@ -555,8 +555,20 @@ export function reportKindIdStampMisses(
 	inlineKinds: ReadonlySet<string>
 ): void {
 	if (kindEntries.length === 0 || !diagnostics) return;
+	// Promoted from `info` to `warning`: a stamp miss means a referenced
+	// kind or literal never resolved a parser kindId — visible now instead
+	// of deferring the gap to a native "unknown kind id" render error, per
+	// the invariant's end-state goal. Reports the full miss set (NOT
+	// split by exclusion class): `vaporizedSymbols`/`inlineExcludedSymbols`
+	// below are each a subset of this same set, computed from `inlineKinds`
+	// membership alone — a purely structural signal, not a check that a
+	// given miss is genuinely dead surface. There is no cheap way to prove
+	// reachability here, so "not inline" cannot be narrowed to "known-dead"
+	// without silently swallowing a real future regression; readers
+	// cross-reference kindid-vaporized-*/kindid-inline-excluded-* against
+	// this diagnostic to see which entries already have an accepted reason.
 	if (stampMisses.symbols.size > 0) {
-		diagnostics.info({
+		diagnostics.warn({
 			code: 'kindid-unstamped-symbols',
 			message: `${stampMisses.symbols.size} referenced kind(s) resolved no parser kindId`,
 			canProceed: true,
@@ -564,7 +576,7 @@ export function reportKindIdStampMisses(
 		});
 	}
 	if (stampMisses.literals.size > 0) {
-		diagnostics.info({
+		diagnostics.warn({
 			code: 'kindid-unstamped-literals',
 			message: `${stampMisses.literals.size} literal(s) resolved no parser kindId`,
 			canProceed: true,
@@ -575,9 +587,7 @@ export function reportKindIdStampMisses(
 	// non-tsx dialect): a stamp miss whose kind is NOT in the grammar's
 	// `inline:` array. Tree-sitter deliberately issues no symbol for either
 	// class, but `inline:` membership is a principled, grammar-declared
-	// exclusion — this is the remainder. Reported alongside (not instead of)
-	// the unstamped diagnostics above so existing consumers are unaffected;
-	// this is the accepted-exclusion signal a future ratchet reads.
+	// exclusion — this is the remainder.
 	const vaporizedSymbols = [...stampMisses.symbols].filter((k) => !inlineKinds.has(k)).sort();
 	const vaporizedLiterals = [...stampMisses.literals].filter((k) => !inlineKinds.has(k)).sort();
 	if (vaporizedSymbols.length > 0) {

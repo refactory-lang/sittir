@@ -209,7 +209,7 @@
         "keyword_identifier"
       ]
     },
-    "severity": "info",
+    "severity": "warning",
     "scope": "grammar",
     "grammar": "python"
   },
@@ -235,7 +235,7 @@
         "True"
       ]
     },
-    "severity": "info",
+    "severity": "warning",
     "scope": "grammar",
     "grammar": "python"
   },

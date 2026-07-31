@@ -300,7 +300,7 @@
         "unescaped_single_jsx_string_fragment"
       ]
     },
-    "severity": "info",
+    "severity": "warning",
     "scope": "grammar",
     "grammar": "typescript"
   },
@@ -330,7 +330,7 @@
         "n"
       ]
     },
-    "severity": "info",
+    "severity": "warning",
     "scope": "grammar",
     "grammar": "typescript"
   },
