@@ -77,7 +77,14 @@ describe('deriveValuesForRule — kind-id stamps at the mint (PR-K2)', () => {
 	});
 
 	it('supertype subtype refs each stamp their own id', () => {
-		const rule: Rule = { type: SUPERTYPE, name: '_statement', subtypes: ['identifier', 'block'] };
+		const rule: Rule = {
+			type: SUPERTYPE,
+			name: '_statement',
+			subtypes: [
+				{ type: SYMBOL, name: 'identifier' },
+				{ type: SYMBOL, name: 'block' }
+			]
+		};
 		const out = deriveValuesForRule(rule, ctx, 'single');
 		expect(out.map((v) => v.storageKindId)).toEqual([1, 6]);
 		expect(out.map((v) => v.parseKindId)).toEqual([1, 6]);

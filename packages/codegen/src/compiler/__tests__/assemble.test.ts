@@ -236,7 +236,7 @@ describe('Assemble — classifyNode', () => {
 		const rule: Rule<'link'> = {
 			type: SUPERTYPE,
 			name: '_expression',
-			subtypes: ['binary_expression', 'identifier']
+			subtypes: [{ type: SYMBOL, name: 'binary_expression' }, { type: SYMBOL, name: 'identifier' }]
 		};
 		expect(classifyNode('_expression', rule)).toBe('supertype');
 	});
@@ -247,7 +247,7 @@ describe('Assemble — classifyNode', () => {
 		const rule: Rule<'link'> = {
 			type: SUPERTYPE,
 			name: 'expression',
-			subtypes: ['binary_expression', 'identifier']
+			subtypes: [{ type: SYMBOL, name: 'binary_expression' }, { type: SYMBOL, name: 'identifier' }]
 		};
 		expect(classifyNode('expression', rule)).toBe('supertype');
 		expect(classifyNode('_expression', rule)).toBe('supertype');
@@ -335,12 +335,12 @@ describe('Assemble — classifyNode', () => {
 				_property_name: {
 					type: SUPERTYPE,
 					name: '_property_name',
-					subtypes: ['identifier', 'string']
+					subtypes: [{ type: SYMBOL, name: 'identifier' }, { type: SYMBOL, name: 'string' }]
 				},
 				_property_identifier: {
 					type: SUPERTYPE,
 					name: '_property_identifier',
-					subtypes: ['identifier']
+					subtypes: [{ type: SYMBOL, name: 'identifier' }]
 				},
 				identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' },
 				string: { type: PATTERN, value: '".*"' }
@@ -360,22 +360,26 @@ describe('Assemble — classifyNode', () => {
 				_property_name: {
 					type: SUPERTYPE,
 					name: '_property_name',
-					subtypes: ['identifier', 'string']
+					subtypes: [{ type: SYMBOL, name: 'identifier' }, { type: SYMBOL, name: 'string' }]
 				},
 				_type_identifier: {
 					type: SUPERTYPE,
 					name: '_type_identifier',
-					subtypes: ['identifier']
+					subtypes: [{ type: SYMBOL, name: 'identifier' }]
 				},
 				_reserved_identifier: {
 					type: SUPERTYPE,
 					name: '_reserved_identifier',
-					subtypes: ['identifier']
+					subtypes: [{ type: SYMBOL, name: 'identifier' }]
 				},
 				_property_identifier: {
 					type: SUPERTYPE,
 					name: '_property_identifier',
-					subtypes: ['_type_identifier', '_reserved_identifier', 'identifier']
+					subtypes: [
+						{ type: SYMBOL, name: '_type_identifier' },
+						{ type: SYMBOL, name: '_reserved_identifier' },
+						{ type: SYMBOL, name: 'identifier' }
+					]
 				},
 				identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' },
 				string: { type: PATTERN, value: '".*"' }
@@ -422,7 +426,7 @@ describe('Assemble — classifyNode', () => {
 			_delim_tokens: {
 				type: SUPERTYPE,
 				name: '_delim_tokens',
-				subtypes: ['_non_delim_token', 'identifier']
+				subtypes: [{ type: SYMBOL, name: '_non_delim_token' }, { type: SYMBOL, name: 'identifier' }]
 			},
 			_non_delim_token: {
 				type: CHOICE,
@@ -488,7 +492,7 @@ describe('Assemble — classifyNode', () => {
 			_simple_pattern: {
 				type: SUPERTYPE,
 				name: '_simple_pattern',
-				subtypes: ['identifier', '_simple_pattern_negative']
+				subtypes: [{ type: SYMBOL, name: 'identifier' }, { type: SYMBOL, name: '_simple_pattern_negative' }]
 			},
 			_simple_pattern_negative: {
 				type: SEQ,
@@ -944,12 +948,11 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 
 	it('materializes a nested-supertype parse alias as its own AssembledSupertype, with the catalog available', () => {
 		const normalized = makeNormalized({
-			_inner: { type: SUPERTYPE, name: '_inner', subtypes: ['identifier'] },
+			_inner: { type: SUPERTYPE, name: '_inner', subtypes: [{ type: SYMBOL, name: 'identifier' }] },
 			_outer: {
 				type: SUPERTYPE,
 				name: '_outer',
-				subtypes: ['_inner'],
-				subtypeParseNames: { _inner: 'inner_alias' }
+				subtypes: [{ type: SYMBOL, name: 'inner_alias', aliasedFrom: '_inner' }]
 			},
 			identifier: { type: PATTERN, value: '[a-z]+' }
 		});
