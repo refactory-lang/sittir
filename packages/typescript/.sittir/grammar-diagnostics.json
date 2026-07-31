@@ -402,6 +402,27 @@
     "grammar": "typescript"
   },
   {
+    "code": "kindid-inline-excluded-symbols",
+    "message": "9 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "canProceed": true,
+    "details": {
+      "kinds": [
+        "__jsx_start_opening_element_optional1",
+        "_export_specifier_optional1",
+        "_index_signature_optional1",
+        "_infer_type_optional1",
+        "_jsx_attribute_optional1",
+        "_kw_asserts",
+        "_kw_optional_marker",
+        "_kw_type_predicate",
+        "_mapped_type_clause_optional1"
+      ]
+    },
+    "severity": "info",
+    "scope": "grammar",
+    "grammar": "typescript"
+  },
+  {
     "scope": "grammar",
     "code": "parsekind-noninjective",
     "severity": "info",

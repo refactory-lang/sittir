@@ -280,6 +280,24 @@
     "grammar": "python"
   },
   {
+    "code": "kindid-inline-excluded-symbols",
+    "message": "6 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "canProceed": true,
+    "details": {
+      "kinds": [
+        "_except_clause_as_optional1",
+        "_exec_statement_optional1",
+        "_function_definition_optional1",
+        "_kw_real",
+        "_kw_type",
+        "_raise_statement_optional1"
+      ]
+    },
+    "severity": "info",
+    "scope": "grammar",
+    "grammar": "python"
+  },
+  {
     "scope": "grammar",
     "code": "parsekind-noninjective",
     "severity": "info",
