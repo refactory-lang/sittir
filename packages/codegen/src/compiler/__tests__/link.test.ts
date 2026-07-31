@@ -1117,12 +1117,46 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 		});
 	});
 
-	it('emits nothing when every miss is inline-excluded', () => {
+	it('emits nothing vaporized when every miss is inline-excluded, but tags it kindid-inline-excluded-symbols instead', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
 		const misses: KindIdStampMisses = { symbols: new Set(['_suite']), literals: new Set() };
 		const sink = new DiagnosticSink();
 		reportKindIdStampMisses(misses, entries, sink, new Set(['_suite']));
 		const diagnostics = stampDiagnostics(sink);
 		expect(diagnostics.some((d) => d.code.startsWith('kindid-vaporized'))).toBe(false);
+		expect(diagnostics).toContainEqual({
+			code: 'kindid-inline-excluded-symbols',
+			details: { kinds: ['_suite'] }
+		});
+	});
+
+	it('partitions a mixed miss set exhaustively: every miss lands in exactly one of vaporized or inline-excluded', () => {
+		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
+		const misses: KindIdStampMisses = {
+			symbols: new Set(['_declaration_statement', 'comment', 'mut']),
+			literals: new Set(['r#"', '_kw_operator'])
+		};
+		const sink = new DiagnosticSink();
+		reportKindIdStampMisses(misses, entries, sink, new Set(['_declaration_statement', '_kw_operator']));
+		const diagnostics = stampDiagnostics(sink);
+		expect(diagnostics).toContainEqual({
+			code: 'kindid-inline-excluded-symbols',
+			details: { kinds: ['_declaration_statement'] }
+		});
+		expect(diagnostics).toContainEqual({
+			code: 'kindid-inline-excluded-literals',
+			details: { texts: ['_kw_operator'] }
+		});
+		// exhaustiveness: vaporized ∪ inline-excluded == the full miss set, no overlap
+		const vaporizedSymbols = (
+			diagnostics.find((d) => d.code === 'kindid-vaporized-symbols')?.details as { kinds: string[] } | undefined
+		)?.kinds ?? [];
+		const inlineSymbols = (
+			diagnostics.find((d) => d.code === 'kindid-inline-excluded-symbols')?.details as
+				| { kinds: string[] }
+				| undefined
+		)?.kinds ?? [];
+		expect([...vaporizedSymbols, ...inlineSymbols].sort()).toEqual([...misses.symbols].sort());
+		expect(vaporizedSymbols.filter((k) => inlineSymbols.includes(k))).toEqual([]);
 	});
 });

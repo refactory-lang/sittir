@@ -596,6 +596,30 @@ export function reportKindIdStampMisses(
 			details: { texts: vaporizedLiterals }
 		});
 	}
+	// The complementary half of the same partition: misses that ARE in the
+	// grammar's `inline:` array. Tree-sitter deliberately issues no symbol
+	// for an inline rule — this is model-only surface by grammar
+	// declaration, not a gap, so it gets its own accepted-exclusion label
+	// rather than reading as "missing something" alongside the vaporized
+	// class above.
+	const inlineExcludedSymbols = [...stampMisses.symbols].filter((k) => inlineKinds.has(k)).sort();
+	const inlineExcludedLiterals = [...stampMisses.literals].filter((k) => inlineKinds.has(k)).sort();
+	if (inlineExcludedSymbols.length > 0) {
+		diagnostics.info({
+			code: 'kindid-inline-excluded-symbols',
+			message: `${inlineExcludedSymbols.length} referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)`,
+			canProceed: true,
+			details: { kinds: inlineExcludedSymbols }
+		});
+	}
+	if (inlineExcludedLiterals.length > 0) {
+		diagnostics.info({
+			code: 'kindid-inline-excluded-literals',
+			message: `${inlineExcludedLiterals.length} literal(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)`,
+			canProceed: true,
+			details: { texts: inlineExcludedLiterals }
+		});
+	}
 }
 
 function classifyAndLogHiddenRules(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {

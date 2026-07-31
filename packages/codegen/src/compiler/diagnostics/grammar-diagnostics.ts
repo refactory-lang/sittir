@@ -199,7 +199,12 @@ export function collectGrammarDiagnosticsForGrammar(input: {
 	const orphanedSyntheticGroups = new Set(input.rawGrammar.orphanedSyntheticGroups ?? []);
 	const kindIdStampDiagnostics: GrammarDiagnostic[] = linkSink
 		.all()
-		.filter((d) => d.code.startsWith('kindid-unstamped') || d.code.startsWith('kindid-vaporized'))
+		.filter(
+			(d) =>
+				d.code.startsWith('kindid-unstamped') ||
+				d.code.startsWith('kindid-vaporized') ||
+				d.code.startsWith('kindid-inline-excluded')
+		)
 		.map((d) => ({ ...d, scope: 'grammar' as const, grammar: input.rawGrammar.name }));
 	const allDiagnostics = [
 		...collectGrammarDiagnostics({
