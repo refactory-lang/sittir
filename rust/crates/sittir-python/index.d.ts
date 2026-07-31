@@ -729,7 +729,7 @@ export interface ForInClauseTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _async_marker?: KwAsyncMarkerTransport
+  _async_marker?: AsyncMarkerTransport
   _left: LeftHandSideTransport
   _right: Array<ExpressionWithinForInClauseTransport>
 }
@@ -753,7 +753,7 @@ export interface ForStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _async_marker?: KwAsyncMarkerTransport
+  _async_marker?: AsyncMarkerTransport
   _left: LeftHandSideTransport
   _right: ExpressionsTransport
   _body: ForStatementBodyTransportSlot
@@ -779,7 +779,7 @@ export interface FunctionDefinitionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _async_marker?: KwAsyncMarkerTransport
+  _async_marker?: AsyncMarkerTransport
   _name: IdentifierTransport
   _type_parameters?: TypeParameterTransport
   _parameters: ParametersTransport
@@ -1669,7 +1669,7 @@ export interface WithStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _async_marker?: KwAsyncMarkerTransport
+  _async_marker?: AsyncMarkerTransport
   _with_clause: WithClauseTransport
   _body: WithStatementBodyTransportSlot
 }

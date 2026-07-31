@@ -271,7 +271,7 @@ describe('enrich()', () => {
 				type: 'SEQ';
 				members: Rule[];
 			};
-			// optional(field('<kw>_marker', SYMBOL(_kw_<kw>_marker))) —
+			// optional(field('<kw>_marker', SYMBOL(_<kw>_marker))) —
 			// the FIELD's content is a synthesized SYMBOL reference so
 			// tree-sitter's normalizer preserves it. The `_marker` suffix
 			// is the canonical semantic name (avoids JS-reserved-keyword
@@ -281,7 +281,7 @@ describe('enrich()', () => {
 				content: {
 					type: 'FIELD',
 					name: 'async_marker',
-					content: { type: 'SYMBOL', name: '_kw_async_marker' }
+					content: { type: 'SYMBOL', name: '_async_marker' }
 				}
 			});
 			expect(
@@ -352,9 +352,9 @@ describe('enrich()', () => {
 			}
 		});
 
-		it('reuses an existing base-grammar rule at `_kw_<x>_marker` instead of minting a duplicate', () => {
+		it('reuses an existing base-grammar rule at `_<x>_marker` instead of minting a duplicate', () => {
 			const input = mkGrammar({
-				_kw_async_marker: { type: STRING, value: 'async' },
+				_async_marker: { type: STRING, value: 'async' },
 				function_definition: {
 					type: SEQ,
 					members: [
@@ -371,21 +371,21 @@ describe('enrich()', () => {
 				content: {
 					type: 'FIELD',
 					name: 'async_marker',
-					content: { type: 'SYMBOL', name: '_kw_async_marker' }
+					content: { type: 'SYMBOL', name: '_async_marker' }
 				}
 			});
 			// The pre-existing base-grammar rule is untouched, not replaced —
 			// confirms reuse rather than a mint-over-it.
-			expect(out.grammar.rules._kw_async_marker).toMatchObject({ type: 'STRING', value: 'async' });
+			expect(out.grammar.rules._async_marker).toMatchObject({ type: 'STRING', value: 'async' });
 		});
 
-		it('declines the promotion when an existing `_kw_<x>_marker` rule has different content, reports to stderr', () => {
+		it('declines the promotion when an existing `_<x>_marker` rule has different content, reports to stderr', () => {
 			const savedQuiet = process.env.SITTIR_QUIET;
 			delete process.env.SITTIR_QUIET;
 			try {
 				const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
 				const input = mkGrammar({
-					_kw_async_marker: { type: STRING, value: 'unrelated_content' },
+					_async_marker: { type: STRING, value: 'unrelated_content' },
 					function_definition: {
 						type: SEQ,
 						members: [
@@ -403,13 +403,13 @@ describe('enrich()', () => {
 					content: { type: 'STRING', value: 'async' }
 				});
 				// The colliding base-grammar rule is untouched, not overwritten.
-				expect(out.grammar.rules._kw_async_marker).toMatchObject({ type: 'STRING', value: 'unrelated_content' });
+				expect(out.grammar.rules._async_marker).toMatchObject({ type: 'STRING', value: 'unrelated_content' });
 				const calls = stderrSpy.mock.calls.map((c) => String(c[0]));
 				expect(
 					calls.some(
 						(c) =>
 							c.includes('skipped optional-keyword-prefix on function_definition') &&
-							c.includes("rule '_kw_async_marker' already exists in base.grammar.rules with different content")
+							c.includes("rule '_async_marker' already exists in base.grammar.rules with different content")
 					)
 				).toBe(true);
 			} finally {
@@ -481,7 +481,7 @@ describe('enrich()', () => {
 			// field wrappers) and leaves the structural shape alone, so
 			// the repeat's seq content is preserved and the inner
 			// optional-keyword promotion still wraps the 'pub' string as
-			// FIELD(SYMBOL(_kw_pub)).
+			// FIELD(SYMBOL(_pub_marker)).
 			const rule = out.grammar.rules.block as {
 				type: 'REPEAT';
 				content: { type: 'SEQ'; members: Rule[] };

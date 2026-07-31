@@ -693,7 +693,7 @@ const _K13: readonly string[] = [
 	'bounded_type',
 	'removed_trait_bound'
 ];
-const _K14: readonly string[] = ['_kw_ref_marker', 'mutable_specifier'];
+const _K14: readonly string[] = ['_ref_marker', 'mutable_specifier'];
 const _K15: readonly string[] = ['identifier', 'metavariable'];
 const _K16: readonly string[] = ['identifier', '_primitive_type'];
 const _K17: readonly string[] = [

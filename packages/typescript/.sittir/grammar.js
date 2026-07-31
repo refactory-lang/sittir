@@ -1304,7 +1304,7 @@ function makeSymbol(name) {
   return symFn(name);
 }
 function registerKwRule(stringLiteral, keyword, kwRules, rulesBag) {
-  const hiddenName = `_kw_${keyword}`;
+  const hiddenName = `_${keyword}`;
   if (hiddenName in kwRules) return makeSymbol(hiddenName);
   const existing = rulesBag[hiddenName];
   if (existing === void 0) {
@@ -1740,7 +1740,7 @@ function tryPromoteInnerKeyword(ruleName, optionalRule, inner, claimed, kwRules,
     reportSkip(
       "optional-keyword-prefix",
       ruleName,
-      `rule '_kw_${fieldName}' already exists in base.grammar.rules with different content`
+      `rule '_${fieldName}' already exists in base.grammar.rules with different content`
     );
     return null;
   }

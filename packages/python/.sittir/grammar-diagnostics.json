@@ -194,11 +194,11 @@
     "canProceed": true,
     "details": {
       "kinds": [
+        "_async_marker",
         "_except_clause_as_optional1",
         "_exec_statement_optional1",
         "_expressions",
         "_function_definition_optional1",
-        "_kw_async_marker",
         "_kw_real",
         "_kw_type",
         "_left_hand_side",

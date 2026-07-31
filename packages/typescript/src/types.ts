@@ -68,11 +68,11 @@ export type LeafStringMap = {
 		| 'unknown'
 		| 'never'
 		| 'object';
-	_kw_async_marker: 'async';
-	_kw_static_marker: 'static';
-	_kw_readonly_marker: 'readonly';
-	_kw_abstract_marker: 'abstract';
-	_kw_const_marker: 'const';
+	_async_marker: 'async';
+	_static_marker: 'static';
+	_readonly_marker: 'readonly';
+	_abstract_marker: 'abstract';
+	_const_marker: 'const';
 	_kind: 'let' | 'const';
 	__for_header_operator: 'in' | 'of';
 	_augmented_assignment_expression_operator:
@@ -409,11 +409,11 @@ export const enum SyntaxKind {
 	OverrideModifier = 'override_modifier',
 	PredefinedType = 'predefined_type',
 	TypeIdentifier = '_type_identifier',
-	KwAsyncMarker = '_kw_async_marker',
-	KwStaticMarker = '_kw_static_marker',
-	KwReadonlyMarker = '_kw_readonly_marker',
-	KwAbstractMarker = '_kw_abstract_marker',
-	KwConstMarker = '_kw_const_marker',
+	AsyncMarker = '_async_marker',
+	StaticMarker = '_static_marker',
+	ReadonlyMarker = '_readonly_marker',
+	AbstractMarker = '_abstract_marker',
+	ConstMarker = '_const_marker',
 	MetaPropertyGroup1 = '_meta_property_group1',
 	MetaPropertyGroup2 = '_meta_property_group2',
 	Kind = '_kind',

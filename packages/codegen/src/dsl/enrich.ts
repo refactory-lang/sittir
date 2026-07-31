@@ -239,8 +239,9 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 			recordUnaliasDiagnostic(unaliasSink, diagnostic);
 		}
 	}
-	// Inject `_kw_<name>` hidden rules — user rules NEVER shadow them
-	// (they start with `_kw_`, a reserved prefix).
+	// Inject `_<kw>_marker` hidden rules — `registerKwRule` already checked
+	// each one against `rulesBag` (reusing or declining on collision), so
+	// nothing here can shadow a base-grammar rule of the same name.
 	// Inject clause-group rules — user rules NEVER shadow them either
 	// (they start with `_<parentKind>_optional`, a synthesized prefix).
 	const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
@@ -375,7 +376,7 @@ function applyEnrichPasses(
 ): Rule {
 	// Fixed-point loop. The current pass set has well-defined
 	// non-overlapping outputs (symbol-to-field wraps SYMBOLs as FIELD;
-	// optional-keyword wraps optional(STRING) as FIELD(SYMBOL(_kw_<x>))),
+	// optional-keyword wraps optional(STRING) as FIELD(SYMBOL(_<x>_marker))),
 	// so a single iteration converges in practice. Looping is defensive:
 	// if a pass's output ever exposes new candidates for an earlier
 	// pass (e.g. structural simplification creates a new top-level
@@ -695,19 +696,19 @@ function registerKwRule(
 	kwRules: Record<string, Rule>,
 	rulesBag: Record<string, Rule>
 ): Rule | null {
-	const hiddenName = `_kw_${keyword}`;
+	const hiddenName = `_${keyword}`;
 	if (hiddenName in kwRules) return makeSymbol(hiddenName);
 	const existing = rulesBag[hiddenName];
 	if (existing === undefined) {
 		kwRules[hiddenName] = stringLiteral;
 		return makeSymbol(hiddenName);
 	}
-	// `_kw_` is a naming convention, not a reservation — a base grammar can
-	// define its own rule at this exact name. Reuse it when it structurally
-	// IS this keyword (ruleKey covers type/named along with value, so an
-	// existing rule that displays the same text but visibly — e.g. a
-	// `named: true` ALIAS — correctly does NOT match); only decline on a
-	// genuine, unrelated collision.
+	// The name is a convention (`_<kw>_marker`), not a reservation — a base
+	// grammar can define its own rule at this exact name. Reuse it when it
+	// structurally IS this keyword (ruleKey covers type/named along with
+	// value, so an existing rule that displays the same text but visibly —
+	// e.g. a `named: true` ALIAS — correctly does NOT match); only decline
+	// on a genuine, unrelated collision.
 	if (ruleKey(existing as RuntimeRule) === ruleKey(stringLiteral as RuntimeRule)) {
 		return makeSymbol(hiddenName);
 	}
@@ -1307,7 +1308,7 @@ function tryPromoteInnerKeyword(
 		reportSkip(
 			'optional-keyword-prefix',
 			ruleName,
-			`rule '_kw_${fieldName}' already exists in base.grammar.rules with different content`
+			`rule '_${fieldName}' already exists in base.grammar.rules with different content`
 		);
 		return null;
 	}
