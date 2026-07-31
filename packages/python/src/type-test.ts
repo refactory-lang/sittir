@@ -168,8 +168,6 @@ import type {
 	IsNotTree,
 	KeywordArgument,
 	KeywordArgumentTree,
-	KeywordIdentifier,
-	KeywordIdentifierTree,
 	KeywordPattern,
 	KeywordPatternTree,
 	Lambda,
@@ -463,7 +461,6 @@ export type _Type_String = _TypeAssert<_TypeExtends<String['$type'], TSKindId.St
 export type _Type_StringContent = _TypeAssert<_TypeExtends<StringContent['$type'], TSKindId.StringContent>>;
 export type _Type_Interpolation = _TypeAssert<_TypeExtends<Interpolation['$type'], TSKindId.Interpolation>>;
 export type _Type_FormatSpecifier = _TypeAssert<_TypeExtends<FormatSpecifier['$type'], TSKindId.FormatSpecifier>>;
-export type _Type_KeywordIdentifier = _TypeAssert<_TypeExtends<KeywordIdentifier['$type'], 'keyword_identifier'>>;
 export type _Type_Await = _TypeAssert<_TypeExtends<Await['$type'], TSKindId.Await>>;
 export type _Type_ExceptClauseGroup1 = _TypeAssert<
 	_TypeExtends<ExceptClauseGroup1['$type'], TSKindId.ExceptClauseGroup1>
@@ -690,7 +687,6 @@ export type _Tree_String = _TypeAssert<_TypeExtends<StringTree['type'], 'string'
 export type _Tree_StringContent = _TypeAssert<_TypeExtends<StringContentTree['type'], 'string_content'>>;
 export type _Tree_Interpolation = _TypeAssert<_TypeExtends<InterpolationTree['type'], 'interpolation'>>;
 export type _Tree_FormatSpecifier = _TypeAssert<_TypeExtends<FormatSpecifierTree['type'], 'format_specifier'>>;
-export type _Tree_KeywordIdentifier = _TypeAssert<_TypeExtends<KeywordIdentifierTree['type'], 'keyword_identifier'>>;
 export type _Tree_Await = _TypeAssert<_TypeExtends<AwaitTree['type'], 'await'>>;
 export type _Tree_ExceptClauseGroup1 = _TypeAssert<
 	_TypeExtends<ExceptClauseGroup1Tree['type'], '_except_clause_group1'>

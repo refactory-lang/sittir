@@ -1384,6 +1384,19 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 		const result = opts.inline.call($, $, baseInline);
 		if (Array.isArray(result)) {
 			for (const i of result) {
+				// Accept BOTH shapes — same reasoning as the supertypes case
+				// above: the callback's `previous` param carries already-
+				// normalized string names from the base grammar, while
+				// `$.foo` references added in the override normalize to
+				// `{ type: 'SYMBOL', name: 'foo' }`. An override body like
+				// `previous.concat([$.foo])` produces a mixed array; without
+				// the string branch the base-inherited inline names silently
+				// drop (normalize() turns a bare string into a STRING rule,
+				// never SYMBOL, so `n.type === SYMBOL` is always false for them).
+				if (typeof i === 'string') {
+					appendDedup(sinks.inline, i);
+					continue;
+				}
 				const n = normalize(i);
 				if (n.type === SYMBOL) appendDedup(sinks.inline, n.name);
 			}
