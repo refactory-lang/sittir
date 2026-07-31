@@ -47,11 +47,13 @@ keeps the two sides in agreement. Consequences:
 - **Code inside the DSL execution reaches both sides.** Anything enrich,
   wire, clause-hoist, or the overrides do at module load (field promotion,
   `_kw_*` synthesis, hoisted `_<parent>_optional<N>` / `_<parent>_group<N>`
-  helpers, alias injection) is seen by the parser AND by the IR.
+  helpers, field-enum synthesis, alias injection) is seen by the parser AND
+  by the IR.
 - **Anything minted only in evaluate's post-passes exists only on the
-  sittir side** (e.g. synthesized field-enum rules): it has no parser
-  symbol and therefore no parser-issued kindId — the phantom-kind class
-  the ratchet tracks (see Link).
+  sittir side**: it has no parser symbol and therefore no parser-issued
+  kindId — the phantom-kind class the ratchet tracks (see Link). Field-enum
+  synthesis moved from an evaluate-only post-pass to `enrich()` for exactly
+  this reason — see Phase 0.
 - The two runtimes normalize differently (sittir keeps a lowercase
   `optional` wrapper; tree-sitter lowers it to `CHOICE[x, BLANK]`), so
   DSL-side passes use the dual-case predicates in
@@ -144,6 +146,18 @@ when it carries multiple slots. Enrich-added fields carry
 `source: 'enriched'`; collisions skip with a notification. Enrich stamps no
 derived slot attributes — those are wrapper-deletion's job.
 
+Runs last, over the fully merged rules bag (base + `_kw_*` + clause-hoist
+groups): `synthesizeFieldEnumRules` mints a named, `prec(-1, …)`-wrapped
+hidden rule for an inline field-enum (`field('operator', choice('+', '-',
+…))`), giving tree-sitter a real symbol for a shape that would otherwise
+collapse to anonymous tokens with no catalog row. Canonical naming prefers,
+in order: an existing rule anywhere in the grammar with the identical
+member set (reused verbatim, regardless of field name — the general fix
+for what would otherwise be a duplicate, separately-symbolized production);
+a field name shared by ≥2 distinct parent kinds; else `_<parent>_<field>`.
+The low precedence defers to whatever else the same literal could
+previously start, without a `conflicts:` entry per migrated occurrence.
+
 Reference: [glossary/dsl.md](glossary/dsl.md).
 
 ## Phase 1: Evaluate (`compiler/evaluate.ts`, `dsl/wire/wire.ts`, `types/runtime-shapes.ts`)
@@ -152,9 +166,11 @@ Reference: [glossary/dsl.md](glossary/dsl.md).
 grammar.sittir.ts) with sittir extensions (`role()`, `variant()`,
 `transform()`) and produces a `RawGrammar`. The DSL constructors normalize
 as they build (degenerate-nesting collapse, `choice(x, blank())` →
-optional, all-string choices → enum, comma-separated seq lift); post-passes
-synthesize hidden rules for non-bare alias sources and field-enum choices.
-`wire(config, base?)` folds the declarative override config (rules,
+optional, all-string choices → enum, comma-separated seq lift); a
+post-pass synthesizes hidden rules for non-bare alias sources
+(`synthesizeInlineAliasSources`) — field-enum synthesis is `enrich()`'s job
+(Phase 0), not evaluate's, so the same rule tree-sitter compiled reaches
+the IR unchanged. `wire(config, base?)` folds the declarative override config (rules,
 polymorphs, transforms, groups, renderAs, conflicts, inline) into the
 options object before tree-sitter sees it, and exposes the collected
 metadata to the later phases via its wire context. The DSL globals run in
