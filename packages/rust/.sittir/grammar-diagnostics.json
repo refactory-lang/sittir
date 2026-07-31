@@ -219,7 +219,7 @@
   },
   {
     "code": "kindid-inline-excluded-symbols",
-    "message": "19 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "24 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -227,7 +227,9 @@
         "_array_type_optional1",
         "_closure_parameters_optional1",
         "_const_parameter_optional1",
+        "_declaration_statement",
         "_enum_variant_optional1",
+        "_expression_ending_with_block",
         "_extern_crate_declaration_optional1",
         "_function_item_optional1",
         "_kw_comma",
@@ -239,6 +241,9 @@
         "_let_declaration_optional2",
         "_match_block_optional1",
         "_match_pattern_optional1",
+        "_path",
+        "_reserved_identifier",
+        "_tokens",
         "_type_parameter_optional1",
         "_variadic_parameter_optional1",
         "_while_expression_optional1"
