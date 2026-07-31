@@ -3096,7 +3096,7 @@ export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHan
 					data.$type,
 					{ tree, nodeType: data.$type, slotName: 'type', span: (data as _NodeData).$span }
 				),
-				{ type: 79 }
+				{ type: 66 }
 			),
 			_left: normalizeSingularWrapSlot(data._left, 'left', true, data.$type, {
 				tree,
@@ -5009,19 +5009,19 @@ export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeH
 					{ tree, nodeType: data.$type, slotName: 'operator', span: (data as _NodeData).$span }
 				),
 				{
-					'+=': 64,
-					'-=': 65,
-					'*=': 66,
-					'/=': 67,
-					'@=': 68,
-					'//=': 69,
-					'%=': 70,
-					'**=': 71,
-					'>>=': 72,
-					'<<=': 73,
-					'&=': 74,
-					'^=': 75,
-					'|=': 76
+					'+=': 81,
+					'-=': 82,
+					'*=': 83,
+					'/=': 84,
+					'@=': 85,
+					'//=': 86,
+					'%=': 87,
+					'**=': 88,
+					'>>=': 89,
+					'<<=': 90,
+					'&=': 91,
+					'^=': 92,
+					'|=': 93
 				}
 			),
 			_right: normalizeSingularWrapSlot(data._right, 'right', true, data.$type, {
@@ -8674,6 +8674,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	await: (d, t) => wrapAwait(d as unknown as T.Await, t),
 	comment: (d) => ({ ...d, $type: TSKindId.Comment as const }),
 	line_continuation: (d) => ({ ...d, $type: TSKindId.LineContinuation as const }),
+	_augmented_assignment_operator: (d) => ({ ...d, $type: TSKindId.AugmentedAssignmentOperator as const }),
 	_except_clause_group1: (d, t) => wrapExceptClauseGroup1(d as unknown as T.ExceptClauseGroup1, t),
 	_argument_list_group1: (d, t) => wrapArgumentListGroup1(d as unknown as T.ArgumentListGroup1, t),
 	_expression_list_group1: (d, t) => wrapExpressionListGroup1(d as unknown as T.ExpressionListGroup1, t),

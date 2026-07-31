@@ -84,7 +84,7 @@
 
 import type { Rule, AnyRule } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
-import { makeRuleMetadata } from './rule-metadata.ts';
+import { makeRuleMetadata, normalizeEnumMembers } from './rule-metadata.ts';
 import type { GrammarJson } from '../grammar-shapes/grammar-json.ts';
 import type { EnrichRule } from '../grammar-shapes/enrich-type.ts';
 import {
@@ -128,6 +128,11 @@ export type EnrichedGrammar<B> = B extends GrammarJson
 				: B[K];
 		}
 	: B;
+
+// Grammars migrated onto enrich-time field-enum synthesis (see
+// `synthesizeFieldEnumRules`'s doc comment) — add a name here only after that
+// grammar's `tree-sitter generate` + node-types.json byte-identity gate pass.
+const FIELD_ENUM_SYNTHESIS_GRAMMARS = new Set(['python']);
 
 export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	const base = baseInput as unknown as GrammarResult;
@@ -243,6 +248,23 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	// Inject clause-group rules — user rules NEVER shadow them either
 	// (they start with `_<parentKind>_optional`, a synthesized prefix).
 	const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
+	// Mint inline field-enum choices (`field('operator', choice('+', '-', …))`)
+	// as named hidden rules directly into `mergedRules`, pre-generate — see
+	// `synthesizeFieldEnumRules`'s doc comment. Runs last so it also sees
+	// clause-hoist-minted rules from the merge above.
+	//
+	// Gated to FIELD_ENUM_SYNTHESIS_GRAMMARS: migrating this pre-generate is
+	// done one grammar at a time (docs/superpowers/specs/2026-07-30-kindid-invariant-restoration.md
+	// §1) — a new non-inlined hidden rule can shift LR states, so each grammar
+	// needs its own byte-identity + `tree-sitter generate` gate before it's
+	// added here. typescript already hits a real LR conflict
+	// (`'let' '['` — `_kind` vs `primary_expression`) from at least one
+	// occurrence; rust is unverified. Un-migrated grammars are unaffected —
+	// `compiler/evaluate.ts`'s own `synthesizeFieldEnumRules` still mints
+	// their field-enums exactly as before.
+	if (FIELD_ENUM_SYNTHESIS_GRAMMARS.has((hasWrapper ? base.grammar?.name : (base as { name?: string }).name) ?? '')) {
+		synthesizeFieldEnumRules(mergedRules);
+	}
 	// Register the merged rule-map so transform()/groups path-descent can resolve
 	// (and patch) enrich group-lift symbol bodies by name — the lookup that lets a
 	// path patch travel THROUGH a hoisted `_<parent>_<kind><N>` symbol into its
@@ -2398,4 +2420,385 @@ function makeVisibleGroupAlias(symbolRef: Rule, name: string): Rule {
 	// is REQUIRED for transform-path's path-descent (see doc comment above) —
 	// the runtime alias() doesn't add it, so stamp it on the cased result.
 	return { ...aliasFn(symbolRef, symbol(name)), metadata: makeRuleMetadata({ author: 'enrich' }) };
+}
+
+// ---------------------------------------------------------------------------
+// Field-enum synthesis — promote inline field-enums to named hidden rules
+// ---------------------------------------------------------------------------
+//
+// `field('operator', choice('+', '-', …))` has no catalog row of its own —
+// tree-sitter never sees a name for the choice, only the anon tokens it
+// collapses to — the phantom-kind class documented in
+// docs/superpowers/specs/2026-07-30-kindid-invariant-restoration.md §1.
+// Mints a named hidden rule for each distinct field-enum member set directly
+// into the rules bag here, at enrich time, so BOTH runtimes (tree-sitter's
+// CLI and sittir's evaluate()) see the same name and tree-sitter issues it a
+// real symbol. `compiler/evaluate.ts`'s own `synthesizeFieldEnumRules` still
+// runs afterward over the fully wire-merged rules — its
+// `canReuseExistingEnumName` check recognizes a rule already minted here (same
+// canonical name, same member set) and skips re-registering it; it only still
+// mints when an override introduces a field-enum shape this pass never saw.
+//
+// Ported from evaluate.ts's post-pass version of the same name; differs only
+// in operating on the enrich-time `Rule` shape (dual-runtime, pre-link) and
+// dropping evaluate's `EvaluateCtx`/provenance bookkeeping and its
+// multi-generation `purgeSupersededEnumRules` cleanup — enrich runs exactly
+// once per grammar load, so neither applies here.
+
+function synthesizeFieldEnumRules(rules: Record<string, Rule>): void {
+	const fieldOccurrences = collectFieldEnumOccurrences(rules);
+	const conflictingSites = collectConflictingFieldEnumSites(fieldOccurrences);
+	const memberKeyToCanonicalName = buildCanonicalEnumNames(fieldOccurrences, rules);
+
+	const rewrites = new Map<string, Rule>();
+	const newRules = new Map<string, Rule>();
+	const sweep: FieldEnumSweepState = { rules, newRules, memberKeyToCanonicalName, conflictingSites };
+	for (const [parentKind, rule] of Object.entries(rules)) {
+		const rewritten = rewriteFieldEnums(rule, parentKind, sweep);
+		if (rewritten !== rule) rewrites.set(parentKind, rewritten);
+	}
+
+	for (const [kind, newRule] of rewrites) {
+		rules[kind] = newRule;
+	}
+	for (const [kindName, enumRule] of newRules) {
+		if (!rules[kindName]) {
+			rules[kindName] = enumRule;
+		}
+	}
+}
+
+interface FieldEnumOccurrence {
+	readonly parentKind: string;
+	readonly fieldName: string;
+	readonly memberKey: string;
+	readonly members: StringRule[];
+}
+
+function collectFieldEnumOccurrences(rules: Record<string, Rule>): FieldEnumOccurrence[] {
+	const occurrences: FieldEnumOccurrence[] = [];
+	for (const [parentKind, rule] of Object.entries(rules)) {
+		walkFieldEnums(rule, rules, parentKind, occurrences);
+	}
+	return occurrences;
+}
+
+function walkFieldEnums(
+	rule: Rule,
+	rules: Record<string, Rule>,
+	parentKind: string,
+	out: FieldEnumOccurrence[]
+): void {
+	switch (rule.type as string) {
+		case 'FIELD': {
+			const fieldRule = rule as unknown as { name: string; content: Rule };
+			// Peel one level of repeat/repeat1 wrapper so that
+			// `field(name, repeat(choice('a','b')))` is treated the same as
+			// `field(name, choice('a','b'))` for occurrence collection purposes.
+			// The repeat wrapper is preserved in the rewrite pass below.
+			const enumContent = peelRepeatWrapper(fieldRule.content);
+			const members = resolveToEnumMembers(enumContent, rules);
+			if (members !== null && members.length > 0) {
+				const memberKey = buildEnumMemberKey(members);
+				out.push({ parentKind, fieldName: fieldRule.name, memberKey, members });
+			}
+			// Always recurse into content — a field can nest other fields.
+			walkFieldEnums(fieldRule.content, rules, parentKind, out);
+			return;
+		}
+		case 'SEQ':
+		case 'CHOICE':
+			for (const m of (rule as unknown as { members: Rule[] }).members) walkFieldEnums(m, rules, parentKind, out);
+			return;
+		case 'OPTIONAL':
+		case 'REPEAT':
+		case 'REPEAT1':
+		case 'VARIANT':
+		case 'GROUP':
+		case 'TOKEN':
+			walkFieldEnums((rule as unknown as { content: Rule }).content, rules, parentKind, out);
+			return;
+		default:
+			return;
+	}
+}
+
+function buildCanonicalEnumNames(occurrences: FieldEnumOccurrence[], rules: Record<string, Rule>): Map<string, string> {
+	// Group occurrences by memberKey.
+	const byKey = new Map<string, FieldEnumOccurrence[]>();
+	for (const occ of occurrences) {
+		let group = byKey.get(occ.memberKey);
+		if (!group) {
+			group = [];
+			byKey.set(occ.memberKey, group);
+		}
+		group.push(occ);
+	}
+
+	const result = new Map<string, string>();
+	const groups = Array.from(byKey.entries()).map(([memberKey, group], index) => {
+		const first = group[0]!;
+		const candidate = deriveCandidateName(group, rules, first);
+		return { memberKey, group, first, index, ...candidate };
+	});
+
+	groups.sort((a, b) => a.priority - b.priority || a.index - b.index);
+
+	const claimedNames = new Set<string>();
+	for (const group of groups) {
+		const chosenName = claimUniqueEnumName(group.name, rules, group.memberKey, claimedNames);
+		claimedNames.add(chosenName);
+		result.set(group.memberKey, chosenName);
+	}
+
+	return result;
+}
+
+function fallbackName(occ: FieldEnumOccurrence): string {
+	return `_${occ.parentKind}_${occ.fieldName}`;
+}
+
+function fieldEnumSiteKey(parentKind: string, fieldName: string): string {
+	return `${parentKind} ${fieldName}`;
+}
+
+function collectConflictingFieldEnumSites(occurrences: readonly FieldEnumOccurrence[]): ReadonlySet<string> {
+	const memberKeysBySite = new Map<string, Set<string>>();
+	for (const occ of occurrences) {
+		const siteKey = fieldEnumSiteKey(occ.parentKind, occ.fieldName);
+		let keys = memberKeysBySite.get(siteKey);
+		if (!keys) {
+			keys = new Set<string>();
+			memberKeysBySite.set(siteKey, keys);
+		}
+		keys.add(occ.memberKey);
+	}
+	const conflicting = new Set<string>();
+	for (const [siteKey, keys] of memberKeysBySite) {
+		if (keys.size > 1) conflicting.add(siteKey);
+	}
+	return conflicting;
+}
+
+function claimUniqueEnumName(
+	baseName: string,
+	rules: Record<string, Rule>,
+	memberKey: string,
+	claimedNames: ReadonlySet<string>
+): string {
+	if (!claimedNames.has(baseName) && canReuseExistingEnumName(baseName, rules, memberKey)) {
+		return baseName;
+	}
+	const slug = enumMemberKeySlug(memberKey);
+	let candidate = `${baseName}__${slug}`;
+	let attempt = 2;
+	while (
+		claimedNames.has(candidate) ||
+		(!canReuseExistingEnumName(candidate, rules, memberKey) && Object.prototype.hasOwnProperty.call(rules, candidate))
+	) {
+		candidate = `${baseName}__${slug}_${attempt}`;
+		attempt++;
+	}
+	return candidate;
+}
+
+function canReuseExistingEnumName(name: string, rules: Record<string, Rule>, memberKey: string): boolean {
+	const existing = rules[name];
+	if (existing === undefined) return true;
+	const members = resolveToEnumMembersOneLevelDeep(existing);
+	if (members === null) return false;
+	return buildEnumMemberKey(members) === memberKey;
+}
+
+function buildEnumMemberKey(members: readonly StringRule[]): string {
+	return [...members]
+		.map((m) => m.value)
+		.sort()
+		.join(',');
+}
+
+function enumMemberKeySlug(memberKey: string): string {
+	return memberKey
+		.split(',')
+		.map((member) => {
+			const encoded = Array.from(member)
+				.map((ch) => (/[A-Za-z0-9]/.test(ch) ? ch.toLowerCase() : `x${ch.codePointAt(0)!.toString(16)}`))
+				.join('');
+			return encoded.length > 0 ? encoded : 'empty';
+		})
+		.join('__');
+}
+
+function deriveCandidateName(
+	group: FieldEnumOccurrence[],
+	rules: Record<string, Rule>,
+	first: FieldEnumOccurrence
+): { name: string; priority: number } {
+	const allSameFieldName = group.every((o) => o.fieldName === first.fieldName);
+
+	if (allSameFieldName) {
+		// Priority 1: field name matches an existing grammar rule with same members.
+		const existingMatch = fieldNameMatchesGrammarRule(first.fieldName, rules, first.members);
+		if (existingMatch) {
+			return { name: `_${first.fieldName}`, priority: 1 };
+		}
+
+		// Priority 2: shared field name across ≥2 distinct parent kinds.
+		const distinctParents = new Set(group.map((o) => o.parentKind)).size;
+		if (distinctParents >= 2) {
+			return { name: `_${first.fieldName}`, priority: 2 };
+		}
+	}
+
+	// Priority 3: fallback — first parent + field name.
+	return { name: fallbackName(first), priority: 3 };
+}
+
+function fieldNameMatchesGrammarRule(fieldName: string, rules: Record<string, Rule>, members: StringRule[]): boolean {
+	const rule = rules[fieldName];
+	if (rule === undefined) return false;
+
+	const resolved = resolveToEnumMembersOneLevelDeep(rule);
+	if (resolved === null) return false;
+
+	const targetKey = [...members]
+		.map((m) => m.value)
+		.sort()
+		.join(',');
+	const ruleKey = buildEnumMemberKey(resolved);
+	return ruleKey === targetKey;
+}
+
+interface FieldEnumSweepState {
+	readonly rules: Record<string, Rule>;
+	readonly newRules: Map<string, Rule>;
+	readonly memberKeyToCanonicalName: Map<string, string>;
+	readonly conflictingSites: ReadonlySet<string>;
+}
+
+function rewriteFieldEnums(rule: Rule, parentKind: string, sweep: FieldEnumSweepState): Rule {
+	const { rules, newRules, memberKeyToCanonicalName, conflictingSites } = sweep;
+	const recurse = (r: Rule): Rule => rewriteFieldEnums(r, parentKind, sweep);
+
+	switch (rule.type as string) {
+		case 'FIELD': {
+			const fieldRule = rule as unknown as { name: string; content: Rule; metadata?: unknown };
+			const synthesized = conflictingSites.has(fieldEnumSiteKey(parentKind, fieldRule.name))
+				? null
+				: tryExtractFieldEnum(fieldRule.content, rules, memberKeyToCanonicalName);
+			if (synthesized !== null) {
+				const { enumKindName, synthesizedRule, replacementContent } = synthesized;
+				if (!newRules.has(enumKindName)) {
+					newRules.set(enumKindName, synthesizedRule);
+				}
+				// Replace the field's inline content with the replacement content rule.
+				// For bare enum: symbol(enumKindName).
+				// For repeat/repeat1(enum): repeat/repeat1(symbol(enumKindName)).
+				return {
+					type: 'FIELD',
+					name: fieldRule.name,
+					content: replacementContent,
+					metadata: fieldRule.metadata
+				} as unknown as Rule;
+			}
+			// Content isn't an enum candidate — recurse to find nested fields.
+			const newContent = recurse(fieldRule.content);
+			if (newContent === fieldRule.content) return rule;
+			return { ...rule, content: newContent } as unknown as Rule;
+		}
+		case 'SEQ':
+		case 'CHOICE': {
+			const members = (rule as unknown as { members: Rule[] }).members;
+			const newMembers = members.map(recurse);
+			if (newMembers.every((m, i) => m === members[i])) return rule;
+			return { ...rule, members: newMembers } as unknown as Rule;
+		}
+		case 'OPTIONAL':
+		case 'REPEAT':
+		case 'REPEAT1':
+		case 'VARIANT':
+		case 'GROUP':
+		case 'TOKEN': {
+			const content = (rule as unknown as { content: Rule }).content;
+			const newContent = recurse(content);
+			if (newContent === content) return rule;
+			return { ...rule, content: newContent } as unknown as Rule;
+		}
+		default:
+			return rule;
+	}
+}
+
+function tryExtractFieldEnum(
+	content: Rule,
+	rules: Record<string, Rule>,
+	memberKeyToCanonicalName: Map<string, string>
+): { enumKindName: string; synthesizedRule: Rule; replacementContent: Rule } | null {
+	// Peel one level of repeat/repeat1 wrapper so `field(name, repeat(enum))`
+	// is handled alongside `field(name, enum)`. The wrapper type is remembered
+	// so the rewrite can restore it around the synthesized symbol reference.
+	const contentType = content.type as string;
+	const repeatWrapperType = contentType === 'REPEAT' || contentType === 'REPEAT1' ? contentType : null;
+	const innerContent = repeatWrapperType !== null ? (content as unknown as { content: Rule }).content : content;
+
+	const members = resolveToEnumMembers(innerContent, rules);
+	if (members === null || members.length === 0) return null;
+
+	const memberKey = buildEnumMemberKey(members);
+	const enumKindName = memberKeyToCanonicalName.get(memberKey);
+	if (enumKindName === undefined) return null;
+
+	const synthesizedRule = normalizeEnumMembers(members, { author: 'grammar' }) as unknown as Rule;
+
+	const symRule = { type: 'SYMBOL', name: enumKindName, hidden: true } as unknown as Rule;
+	const replacementContent: Rule =
+		repeatWrapperType === null ? symRule : ({ ...(content as object), content: symRule } as unknown as Rule);
+
+	return { enumKindName, synthesizedRule, replacementContent };
+}
+
+function peelRepeatWrapper(rule: Rule): Rule {
+	const ruleType = rule.type as string;
+	if (ruleType === 'REPEAT' || ruleType === 'REPEAT1') return (rule as unknown as { content: Rule }).content;
+	return rule;
+}
+
+function resolveToEnumMembers(rule: Rule, rules: Record<string, Rule>): StringRule[] | null {
+	switch (rule.type as string) {
+		case 'CHOICE': {
+			const members = (rule as unknown as { members: Rule[] }).members;
+			if (members.length < 2) return null;
+			const allStrings = members.every((m): m is StringRule => m.type === 'STRING');
+			return allStrings ? (members as unknown as StringRule[]) : null;
+		}
+		// A bare single STRING is never a field-enum candidate — that's exactly
+		// the class of hidden single-literal rules (e.g. `_kw_<name>`) already
+		// minted by an earlier enrich pass. A genuine field-enum is inherently a
+		// CHOICE of ≥2 alternatives; unlike evaluate.ts's post-pass, this
+		// enrich-time pass runs against those very hidden rules, so it must not
+		// match STRING here or one level through SYMBOL (below) — doing so once
+		// hijacked `_kw_async`'s reference into a spurious re-synthesized name.
+		case 'SYMBOL': {
+			// Follow one level of symbol indirection.
+			const name = (rule as unknown as { name: string }).name;
+			const target = rules[name];
+			if (target === undefined) return null;
+			return resolveToEnumMembersOneLevelDeep(target);
+		}
+		default:
+			return null;
+	}
+}
+
+function resolveToEnumMembersOneLevelDeep(target: Rule): StringRule[] | null {
+	switch (target.type as string) {
+		case 'CHOICE': {
+			const members = (target as unknown as { members: Rule[] }).members;
+			if (members.length < 2) return null;
+			const allStrings = members.every((m): m is StringRule => m.type === 'STRING');
+			return allStrings ? (members as unknown as StringRule[]) : null;
+		}
+		default:
+			return null;
+	}
 }

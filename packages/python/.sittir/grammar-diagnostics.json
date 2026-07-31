@@ -190,12 +190,11 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "17 referenced kind(s) resolved no parser kindId",
+    "message": "16 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
         "_async_marker",
-        "_augmented_assignment_operator",
         "_complex_pattern_operator",
         "_except_clause_as_optional1",
         "_exec_statement_optional1",

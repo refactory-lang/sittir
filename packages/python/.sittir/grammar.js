@@ -629,6 +629,14 @@ var RuleWalker = class {
 function makeRuleMetadata(shape) {
   return shape;
 }
+function normalizeEnumMembers(members, provenance) {
+  if (members.length === 1) return members[0];
+  return {
+    type: CHOICE,
+    members,
+    ...provenance !== void 0 ? { metadata: makeRuleMetadata(provenance) } : {}
+  };
+}
 
 // packages/codegen/src/dsl/list-patterns.ts
 function separatorFactsEqual(a, b) {
@@ -1030,6 +1038,7 @@ function escapeRegexLiteral(s) {
 }
 
 // packages/codegen/src/dsl/enrich.ts
+var FIELD_ENUM_SYNTHESIS_GRAMMARS = /* @__PURE__ */ new Set(["python"]);
 function enrich(baseInput) {
   const base2 = baseInput;
   if (!base2 || typeof base2 !== "object") {
@@ -1076,6 +1085,9 @@ function enrich(baseInput) {
     }
   }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
+  if (FIELD_ENUM_SYNTHESIS_GRAMMARS.has((hasWrapper ? base2.grammar?.name : base2.name) ?? "")) {
+    synthesizeFieldEnumRules(mergedRules);
+  }
   setGroupLiftRuleMap({
     get: (n) => mergedRules[n],
     set: (n, b) => {
@@ -2396,6 +2408,263 @@ function makeVisibleGroupAlias(symbolRef, name) {
   const aliasFn = nativeRuleFn("alias");
   const symbol = nativeRuleFn("symbol", "sym");
   return { ...aliasFn(symbolRef, symbol(name)), metadata: makeRuleMetadata({ author: "enrich" }) };
+}
+function synthesizeFieldEnumRules(rules) {
+  const fieldOccurrences = collectFieldEnumOccurrences(rules);
+  const conflictingSites = collectConflictingFieldEnumSites(fieldOccurrences);
+  const memberKeyToCanonicalName = buildCanonicalEnumNames(fieldOccurrences, rules);
+  const rewrites = /* @__PURE__ */ new Map();
+  const newRules = /* @__PURE__ */ new Map();
+  const sweep = { rules, newRules, memberKeyToCanonicalName, conflictingSites };
+  for (const [parentKind, rule] of Object.entries(rules)) {
+    const rewritten = rewriteFieldEnums(rule, parentKind, sweep);
+    if (rewritten !== rule) rewrites.set(parentKind, rewritten);
+  }
+  for (const [kind, newRule] of rewrites) {
+    rules[kind] = newRule;
+  }
+  for (const [kindName, enumRule] of newRules) {
+    if (!rules[kindName]) {
+      rules[kindName] = enumRule;
+    }
+  }
+}
+function collectFieldEnumOccurrences(rules) {
+  const occurrences = [];
+  for (const [parentKind, rule] of Object.entries(rules)) {
+    walkFieldEnums(rule, rules, parentKind, occurrences);
+  }
+  return occurrences;
+}
+function walkFieldEnums(rule, rules, parentKind, out) {
+  switch (rule.type) {
+    case "FIELD": {
+      const fieldRule = rule;
+      const enumContent = peelRepeatWrapper(fieldRule.content);
+      const members = resolveToEnumMembers(enumContent, rules);
+      if (members !== null && members.length > 0) {
+        const memberKey = buildEnumMemberKey(members);
+        out.push({ parentKind, fieldName: fieldRule.name, memberKey, members });
+      }
+      walkFieldEnums(fieldRule.content, rules, parentKind, out);
+      return;
+    }
+    case "SEQ":
+    case "CHOICE":
+      for (const m of rule.members) walkFieldEnums(m, rules, parentKind, out);
+      return;
+    case "OPTIONAL":
+    case "REPEAT":
+    case "REPEAT1":
+    case "VARIANT":
+    case "GROUP":
+    case "TOKEN":
+      walkFieldEnums(rule.content, rules, parentKind, out);
+      return;
+    default:
+      return;
+  }
+}
+function buildCanonicalEnumNames(occurrences, rules) {
+  const byKey = /* @__PURE__ */ new Map();
+  for (const occ of occurrences) {
+    let group = byKey.get(occ.memberKey);
+    if (!group) {
+      group = [];
+      byKey.set(occ.memberKey, group);
+    }
+    group.push(occ);
+  }
+  const result = /* @__PURE__ */ new Map();
+  const groups = Array.from(byKey.entries()).map(([memberKey, group], index) => {
+    const first = group[0];
+    const candidate = deriveCandidateName(group, rules, first);
+    return { memberKey, group, first, index, ...candidate };
+  });
+  groups.sort((a, b) => a.priority - b.priority || a.index - b.index);
+  const claimedNames = /* @__PURE__ */ new Set();
+  for (const group of groups) {
+    const chosenName = claimUniqueEnumName(group.name, rules, group.memberKey, claimedNames);
+    claimedNames.add(chosenName);
+    result.set(group.memberKey, chosenName);
+  }
+  return result;
+}
+function fallbackName(occ) {
+  return `_${occ.parentKind}_${occ.fieldName}`;
+}
+function fieldEnumSiteKey(parentKind, fieldName) {
+  return `${parentKind}\0${fieldName}`;
+}
+function collectConflictingFieldEnumSites(occurrences) {
+  const memberKeysBySite = /* @__PURE__ */ new Map();
+  for (const occ of occurrences) {
+    const siteKey = fieldEnumSiteKey(occ.parentKind, occ.fieldName);
+    let keys = memberKeysBySite.get(siteKey);
+    if (!keys) {
+      keys = /* @__PURE__ */ new Set();
+      memberKeysBySite.set(siteKey, keys);
+    }
+    keys.add(occ.memberKey);
+  }
+  const conflicting = /* @__PURE__ */ new Set();
+  for (const [siteKey, keys] of memberKeysBySite) {
+    if (keys.size > 1) conflicting.add(siteKey);
+  }
+  return conflicting;
+}
+function claimUniqueEnumName(baseName, rules, memberKey, claimedNames) {
+  if (!claimedNames.has(baseName) && canReuseExistingEnumName(baseName, rules, memberKey)) {
+    return baseName;
+  }
+  const slug = enumMemberKeySlug(memberKey);
+  let candidate = `${baseName}__${slug}`;
+  let attempt = 2;
+  while (claimedNames.has(candidate) || !canReuseExistingEnumName(candidate, rules, memberKey) && Object.prototype.hasOwnProperty.call(rules, candidate)) {
+    candidate = `${baseName}__${slug}_${attempt}`;
+    attempt++;
+  }
+  return candidate;
+}
+function canReuseExistingEnumName(name, rules, memberKey) {
+  const existing = rules[name];
+  if (existing === void 0) return true;
+  const members = resolveToEnumMembersOneLevelDeep(existing);
+  if (members === null) return false;
+  return buildEnumMemberKey(members) === memberKey;
+}
+function buildEnumMemberKey(members) {
+  return [...members].map((m) => m.value).sort().join(",");
+}
+function enumMemberKeySlug(memberKey) {
+  return memberKey.split(",").map((member) => {
+    const encoded = Array.from(member).map((ch) => /[A-Za-z0-9]/.test(ch) ? ch.toLowerCase() : `x${ch.codePointAt(0).toString(16)}`).join("");
+    return encoded.length > 0 ? encoded : "empty";
+  }).join("__");
+}
+function deriveCandidateName(group, rules, first) {
+  const allSameFieldName = group.every((o) => o.fieldName === first.fieldName);
+  if (allSameFieldName) {
+    const existingMatch = fieldNameMatchesGrammarRule(first.fieldName, rules, first.members);
+    if (existingMatch) {
+      return { name: `_${first.fieldName}`, priority: 1 };
+    }
+    const distinctParents = new Set(group.map((o) => o.parentKind)).size;
+    if (distinctParents >= 2) {
+      return { name: `_${first.fieldName}`, priority: 2 };
+    }
+  }
+  return { name: fallbackName(first), priority: 3 };
+}
+function fieldNameMatchesGrammarRule(fieldName, rules, members) {
+  const rule = rules[fieldName];
+  if (rule === void 0) return false;
+  const resolved = resolveToEnumMembersOneLevelDeep(rule);
+  if (resolved === null) return false;
+  const targetKey = [...members].map((m) => m.value).sort().join(",");
+  const ruleKey = buildEnumMemberKey(resolved);
+  return ruleKey === targetKey;
+}
+function rewriteFieldEnums(rule, parentKind, sweep) {
+  const { rules, newRules, memberKeyToCanonicalName, conflictingSites } = sweep;
+  const recurse = (r) => rewriteFieldEnums(r, parentKind, sweep);
+  switch (rule.type) {
+    case "FIELD": {
+      const fieldRule = rule;
+      const synthesized = conflictingSites.has(fieldEnumSiteKey(parentKind, fieldRule.name)) ? null : tryExtractFieldEnum(fieldRule.content, rules, memberKeyToCanonicalName);
+      if (synthesized !== null) {
+        const { enumKindName, synthesizedRule, replacementContent } = synthesized;
+        if (!newRules.has(enumKindName)) {
+          newRules.set(enumKindName, synthesizedRule);
+        }
+        return {
+          type: "FIELD",
+          name: fieldRule.name,
+          content: replacementContent,
+          metadata: fieldRule.metadata
+        };
+      }
+      const newContent = recurse(fieldRule.content);
+      if (newContent === fieldRule.content) return rule;
+      return { ...rule, content: newContent };
+    }
+    case "SEQ":
+    case "CHOICE": {
+      const members = rule.members;
+      const newMembers = members.map(recurse);
+      if (newMembers.every((m, i) => m === members[i])) return rule;
+      return { ...rule, members: newMembers };
+    }
+    case "OPTIONAL":
+    case "REPEAT":
+    case "REPEAT1":
+    case "VARIANT":
+    case "GROUP":
+    case "TOKEN": {
+      const content = rule.content;
+      const newContent = recurse(content);
+      if (newContent === content) return rule;
+      return { ...rule, content: newContent };
+    }
+    default:
+      return rule;
+  }
+}
+function tryExtractFieldEnum(content, rules, memberKeyToCanonicalName) {
+  const contentType = content.type;
+  const repeatWrapperType = contentType === "REPEAT" || contentType === "REPEAT1" ? contentType : null;
+  const innerContent = repeatWrapperType !== null ? content.content : content;
+  const members = resolveToEnumMembers(innerContent, rules);
+  if (members === null || members.length === 0) return null;
+  const memberKey = buildEnumMemberKey(members);
+  const enumKindName = memberKeyToCanonicalName.get(memberKey);
+  if (enumKindName === void 0) return null;
+  const synthesizedRule = normalizeEnumMembers(members, { author: "grammar" });
+  const symRule = { type: "SYMBOL", name: enumKindName, hidden: true };
+  const replacementContent = repeatWrapperType === null ? symRule : { ...content, content: symRule };
+  return { enumKindName, synthesizedRule, replacementContent };
+}
+function peelRepeatWrapper(rule) {
+  const ruleType = rule.type;
+  if (ruleType === "REPEAT" || ruleType === "REPEAT1") return rule.content;
+  return rule;
+}
+function resolveToEnumMembers(rule, rules) {
+  switch (rule.type) {
+    case "CHOICE": {
+      const members = rule.members;
+      if (members.length < 2) return null;
+      const allStrings = members.every((m) => m.type === "STRING");
+      return allStrings ? members : null;
+    }
+    // A bare single STRING is never a field-enum candidate — that's exactly
+    // the class of hidden single-literal rules (e.g. `_kw_<name>`) already
+    // minted by an earlier enrich pass. A genuine field-enum is inherently a
+    // CHOICE of ≥2 alternatives; unlike evaluate.ts's post-pass, this
+    // enrich-time pass runs against those very hidden rules, so it must not
+    // match STRING here or one level through SYMBOL (below) — doing so once
+    // hijacked `_kw_async`'s reference into a spurious re-synthesized name.
+    case "SYMBOL": {
+      const name = rule.name;
+      const target = rules[name];
+      if (target === void 0) return null;
+      return resolveToEnumMembersOneLevelDeep(target);
+    }
+    default:
+      return null;
+  }
+}
+function resolveToEnumMembersOneLevelDeep(target) {
+  switch (target.type) {
+    case "CHOICE": {
+      const members = target.members;
+      if (members.length < 2) return null;
+      const allStrings = members.every((m) => m.type === "STRING");
+      return allStrings ? members : null;
+    }
+    default:
+      return null;
+  }
 }
 
 // packages/codegen/src/dsl/wire/wire.ts

@@ -2909,6 +2909,20 @@ export function buildLineContinuation(text: string) {
 	);
 }
 
+export function buildAugmentedAssignmentOperator(
+	text: '+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|='
+) {
+	return withMethods(
+		{
+			$type: TSKindId.AugmentedAssignmentOperator as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
 export function buildExceptClauseGroup1(child: T.ExceptClauseAs | T.ExceptClauseList) {
 	const _content = child;
 	return withMethods(
@@ -3787,6 +3801,7 @@ export type FluentKindMap = {
 	await: FluentNode<'await', T.Await.Config>;
 	comment: T.Comment;
 	line_continuation: T.LineContinuation;
+	_augmented_assignment_operator: T.AugmentedAssignmentOperator;
 	_except_clause_group1: FluentNode<'_except_clause_group1', T.ExceptClauseGroup1.Config>;
 	_argument_list_group1: FluentNode<'_argument_list_group1', T.ArgumentListGroup1.Config>;
 	_expression_list_group1: FluentNode<'_expression_list_group1', T.ExpressionListGroup1.Config>;
@@ -3950,6 +3965,7 @@ export const _factoryMap = {
 	await: buildAwait,
 	comment: buildComment,
 	line_continuation: buildLineContinuation,
+	_augmented_assignment_operator: buildAugmentedAssignmentOperator,
 	_except_clause_group1: buildExceptClauseGroup1,
 	_argument_list_group1: buildArgumentListGroup1,
 	_expression_list_group1: buildExpressionListGroup1,

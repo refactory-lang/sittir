@@ -407,14 +407,14 @@ const _supertype_namedExpressionLhs_ids = new Set<number>([1]);
 const _supertype_expressions_ids = new Set<number>([161]);
 const _supertype_compoundStatement_ids = new Set<number>([131, 137, 138, 139, 142, 145, 154, 158, 134]);
 const _supertype_simplePattern_ids = new Set<number>([
-	170, 169, 165, 246, 245, 166, 227, 226, 88, 89, 90, 261, 171, 162, 251
+	170, 169, 165, 247, 246, 166, 227, 226, 75, 76, 77, 262, 171, 162, 252
 ]);
 const _supertype_parameter_ids = new Set<number>([1, 204, 178, 179, 180, 176, 181]);
 const _supertype_pattern_ids = new Set<number>([1, 201, 200, 180, 176, 177]);
 const _supertype_expressionWithinForInClause_ids = new Set<number>([194]);
 const _supertype_expression_ids = new Set<number>([192, 186, 187, 193, 225, 123, 182]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	233, 188, 1, 227, 226, 84, 85, 88, 89, 90, 189, 200, 201, 203, 212, 217, 215, 218, 213, 219, 214, 221, 220, 180
+	233, 188, 1, 227, 226, 71, 72, 75, 76, 77, 189, 200, 201, 203, 212, 217, 215, 218, 213, 219, 214, 221, 220, 180
 ]);
 const _supertype_leftHandSide_ids = new Set<number>([197]);
 const _supertype_rightHandSide_ids = new Set<number>([161, 195, 196, 197, 199]);
@@ -598,6 +598,7 @@ const _kindIdByKind = new Map<string, number>([
 	['_pattern_list_group1', TSKindId.PatternListGroup1],
 	['_slice_group1', TSKindId.SliceGroup1],
 	['_dictionary_group1', TSKindId.DictionaryGroup1],
+	['_augmented_assignment_operator', TSKindId.AugmentedAssignmentOperator],
 	['_except_clause_as', TSKindId.ExceptClauseAs],
 	['case_tuple_pattern', TSKindId.CaseTuplePattern],
 	['case_list_pattern', TSKindId.CaseListPattern],
