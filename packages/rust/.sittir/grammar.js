@@ -1740,24 +1740,6 @@ function rebuildOptional(optionalRule, newInner) {
   });
   return { ...optionalRule, members: newMembers };
 }
-function canonicalStringifyClause(value) {
-  if (value === null || typeof value !== "object") {
-    return JSON.stringify(value);
-  }
-  if (Array.isArray(value)) {
-    return "[" + value.map((v) => canonicalStringifyClause(v)).join(",") + "]";
-  }
-  const obj = value;
-  const keys = Object.keys(obj).sort();
-  const parts = [];
-  for (const k of keys) {
-    if (k === "id" || k === "_ref" || k === "metadata" || k === "hidden" || k === "inline") continue;
-    const v = obj[k];
-    if (typeof v === "function" || typeof v === "undefined") continue;
-    parts.push(JSON.stringify(k) + ":" + canonicalStringifyClause(v));
-  }
-  return "{" + parts.join(",") + "}";
-}
 function peelOptionalSeq(rule) {
   if (isOptionalType(rule.type)) {
     const content = rule.content;
@@ -2224,7 +2206,7 @@ function applyUnaliasDistinct(ruleName, rule, rulesBag, kwRules, clauseGroupRule
   return { rule: result, diagnostics };
 }
 function clauseHoistSynthName(seqBody, parentKind, dedupeMap, counter, rulesBag, clauseGroupRules) {
-  const key = canonicalStringifyClause(seqBody);
+  const key = ruleKey(seqBody);
   const existing = dedupeMap[key];
   if (existing !== void 0) {
     if (!(existing in clauseGroupRules)) {
@@ -2246,7 +2228,7 @@ function clauseHoistSynthName(seqBody, parentKind, dedupeMap, counter, rulesBag,
   return name;
 }
 function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, ambientPrec) {
-  const key = canonicalStringifyClause(content);
+  const key = ruleKey(content);
   const registeredBody = ambientPrec ? { ...ambientPrec, content } : content;
   const existing = groupDedupeMap[key];
   if (existing !== void 0) {

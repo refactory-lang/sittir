@@ -1349,41 +1349,6 @@ interface ClauseHoistCounter {
 	readonly supertypeNames?: ReadonlySet<string>;
 }
 
-function canonicalStringifyClause(value: unknown): string {
-	if (value === null || typeof value !== 'object') {
-		return JSON.stringify(value);
-	}
-	if (Array.isArray(value)) {
-		return '[' + value.map((v) => canonicalStringifyClause(v)).join(',') + ']';
-	}
-	const obj = value as Record<string, unknown>;
-	const keys = Object.keys(obj).sort();
-	const parts: string[] = [];
-	for (const k of keys) {
-		// Runtime-only provenance stamps must not leak into this dedupe key.
-		// The sittir runtime's `createProxy` (compiler/evaluate.ts) stamps
-		// every `$.foo` reference with `_ref: { refType: 'symbol', from:
-		// currentRule, to: name }` — baking the PARENT rule's name into the
-		// body used for `visibleGroupSynthName`'s dedupe hash. Tree-sitter's
-		// own dsl.js runtime doesn't stamp this, so the two runtimes computed
-		// DIFFERENT hashes for the SAME structural body when a group is
-		// shared across parents (e.g. rust's `slice_pattern` and
-		// `tuple_struct_pattern` share one group body) — the sittir side
-		// would then mint a phantom per-parent duplicate the wire never
-		// populates, rendering as silently empty. `id`/`_ref` are the
-		// decisive keys to strip; `metadata`/`hidden`/`inline` are
-		// belt-and-braces (identical for identical structures, so stripping
-		// them can't change any dedupe decision). This function also keys
-		// `clauseDedupeMap`, so this fix realigns clause-hoist naming too —
-		// expected, not a separate concern.
-		if (k === 'id' || k === '_ref' || k === 'metadata' || k === 'hidden' || k === 'inline') continue;
-		const v = obj[k];
-		if (typeof v === 'function' || typeof v === 'undefined') continue;
-		parts.push(JSON.stringify(k) + ':' + canonicalStringifyClause(v));
-	}
-	return '{' + parts.join(',') + '}';
-}
-
 function peelOptionalSeq(rule: Rule): {
 	seqBody: Rule;
 	form: 'optional' | 'choice';
@@ -2106,7 +2071,7 @@ function clauseHoistSynthName(
 	rulesBag: Record<string, Rule>,
 	clauseGroupRules: Record<string, Rule>
 ): string | null {
-	const key = canonicalStringifyClause(seqBody);
+	const key = ruleKey(seqBody as RuntimeRule);
 	const existing = dedupeMap[key];
 	if (existing !== undefined) {
 		// Dedupe hit: reuse the already-assigned name. Do NOT increment the
@@ -2149,7 +2114,7 @@ function visibleGroupSynthName(
 	// didn't exist in the un-extracted grammar.
 	ambientPrec?: Rule
 ): { visibleName: string; hiddenName: string } | null {
-	const key = canonicalStringifyClause(content);
+	const key = ruleKey(content as RuntimeRule);
 	const registeredBody = ambientPrec ? ({ ...ambientPrec, content } as Rule) : content;
 	const existing = groupDedupeMap[key];
 	if (existing !== undefined) {
