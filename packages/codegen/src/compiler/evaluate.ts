@@ -966,10 +966,15 @@ function deriveCandidateName(
 	const allSameFieldName = group.every((o) => o.fieldName === first.fieldName);
 
 	if (allSameFieldName) {
-		// Priority 1: field name matches an existing grammar rule with same members.
+		// Priority 1: field name matches an existing grammar rule with same
+		// members — reuse THAT rule's own name verbatim (never re-prefixed).
+		// Underscore-prefixing here would mint a redundant duplicate rule
+		// alongside the real one it's supposed to reuse (see
+		// dsl/enrich.ts's `synthesizeFieldEnumRules`'s identical fix — this
+		// pass and that one must agree on canonical names by construction).
 		const existingMatch = fieldNameMatchesGrammarRule(first.fieldName, ctx, first.members);
 		if (existingMatch) {
-			return { name: `_${first.fieldName}`, priority: 1 };
+			return { name: first.fieldName, priority: 1 };
 		}
 
 		// Priority 2: shared field name across ≥2 distinct parent kinds.

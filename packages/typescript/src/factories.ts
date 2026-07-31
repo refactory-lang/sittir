@@ -2808,6 +2808,30 @@ export function buildReservedIdentifier(
 	);
 }
 
+export function buildKind(text: 'let' | 'const') {
+	return withMethods(
+		{
+			$type: TSKindId.Kind as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildForHeaderOperator(text: 'in' | 'of') {
+	return withMethods(
+		{
+			$type: TSKindId.ForHeaderOperator as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
 export function buildPublicFieldDefinition(config: T.PublicFieldDefinition.Config) {
 	const _decorator = config.decorator ?? [];
 	const _visibility_prefix = config.visibilityPrefix;
@@ -6787,6 +6811,8 @@ export type FluentKindMap = {
 	pair_pattern: FluentNode<'pair_pattern', T.PairPattern.Config>;
 	computed_property_name: FluentNode<'computed_property_name', T.ComputedPropertyName.Config>;
 	_reserved_identifier: T.ReservedIdentifier;
+	_kind: T.Kind;
+	__for_header_operator: T.ForHeaderOperator;
 	public_field_definition: FluentNode<'public_field_definition', T.PublicFieldDefinition.Config>;
 	non_null_expression: FluentNode<'non_null_expression', T.NonNullExpression.Config>;
 	method_signature: FluentNode<'method_signature', T.MethodSignature.Config>;
@@ -7054,6 +7080,8 @@ export const _factoryMap = {
 	pair_pattern: buildPairPattern,
 	computed_property_name: buildComputedPropertyName,
 	_reserved_identifier: buildReservedIdentifier,
+	_kind: buildKind,
+	__for_header_operator: buildForHeaderOperator,
 	public_field_definition: buildPublicFieldDefinition,
 	non_null_expression: buildNonNullExpression,
 	method_signature: buildMethodSignature,

@@ -23,6 +23,7 @@ export default grammar(
 				[$.sequence_expression, $._parenthesized_expression_group1],
 				[$.primary_expression, $.arrow_function],
 				[$.primary_expression, $._property_name],
+				[$.primary_expression, $._kind],
 				[$.labeled_statement, $._property_name],
 				[$.object, $.object_pattern],
 				[$.primary_expression, $.method_definition],

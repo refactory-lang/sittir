@@ -1036,7 +1036,6 @@ function escapeRegexLiteral(s) {
 }
 
 // packages/codegen/src/dsl/enrich.ts
-var FIELD_ENUM_SYNTHESIS_GRAMMARS = /* @__PURE__ */ new Set(["python"]);
 function enrich(baseInput) {
   const base2 = baseInput;
   if (!base2 || typeof base2 !== "object") {
@@ -1083,9 +1082,7 @@ function enrich(baseInput) {
     }
   }
   const mergedRules = { ...enrichedRules, ...kwRules, ...clauseGroupRules };
-  if (FIELD_ENUM_SYNTHESIS_GRAMMARS.has((hasWrapper ? base2.grammar?.name : base2.name) ?? "")) {
-    synthesizeFieldEnumRules(mergedRules);
-  }
+  synthesizeFieldEnumRules(mergedRules);
   setGroupLiftRuleMap({
     get: (n) => mergedRules[n],
     set: (n, b) => {
@@ -2545,7 +2542,7 @@ function deriveCandidateName(group, rules, first) {
   if (allSameFieldName) {
     const existingMatch = fieldNameMatchesGrammarRule(first.fieldName, rules, first.members);
     if (existingMatch) {
-      return { name: `_${first.fieldName}`, priority: 1 };
+      return { name: first.fieldName, priority: 1 };
     }
     const distinctParents = new Set(group.map((o) => o.parentKind)).size;
     if (distinctParents >= 2) {

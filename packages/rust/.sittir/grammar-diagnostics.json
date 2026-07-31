@@ -116,24 +116,8 @@
     }
   },
   {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "rust",
-    "ownerKind": "_mutable_specifier",
-    "message": "[assemble] typeName collision: kind '_mutable_specifier' renamed 'MutableSpecifier' → '_MutableSpecifier' (visible sibling(s): 'mutable_specifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "MutableSpecifier",
-      "newType": "_MutableSpecifier",
-      "visibleKinds": [
-        "mutable_specifier"
-      ]
-    }
-  },
-  {
     "code": "kindid-unstamped-symbols",
-    "message": "42 referenced kind(s) resolved no parser kindId",
+    "message": "39 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -145,7 +129,6 @@
         "_closure_parameters_optional1",
         "_compound_assignment_expr_operator",
         "_const_parameter_optional1",
-        "_crate",
         "_declaration_statement",
         "_enum_variant_optional1",
         "_expression_ending_with_block",
@@ -161,14 +144,12 @@
         "_match_block_optional1",
         "_match_pattern_optional1",
         "_move_marker",
-        "_mutable_specifier",
         "_operator",
         "_operator__x2ex2e",
         "_path",
         "_primitive_type",
         "_pub",
         "_reserved_identifier",
-        "_self",
         "_static_item_mutable_specifier",
         "_token_binding_pattern_type",
         "_tokens",

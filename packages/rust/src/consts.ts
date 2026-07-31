@@ -194,7 +194,6 @@ export const LEAF_KINDS = [
 	'_line_comment_regular_dslash',
 	'_line_doc_content',
 	'_move_marker',
-	'_mutable_specifier',
 	'_operator',
 	'_pointer_type_const',
 	'_primitive_type',
@@ -272,7 +271,6 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 export const KEYWORDS = [
 	'_',
 	'_move_marker',
-	'_mutable_specifier',
 	'_pointer_type_const',
 	'_unsafe_marker',
 	'_wildcard_pattern',

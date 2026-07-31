@@ -766,7 +766,7 @@ export interface ExternCrateDeclarationTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _visibility_modifier?: VisibilityModifierTransport
-  _crate: string
+  _crate: CrateTransport
   _name: IdentifierTransport
   _alias?: IdentifierTransport
 }
@@ -887,7 +887,7 @@ export interface FieldPatternTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _ref_marker?: boolean
-  _mutable_specifier?: _MutableSpecifierTransport
+  _mutable_specifier?: MutableSpecifierTransport
   _content: FieldPatternContentTransportSlot
 }
 
@@ -1272,7 +1272,7 @@ export interface LetDeclarationTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _mutable_specifier?: _MutableSpecifierTransport
+  _mutable_specifier?: MutableSpecifierTransport
   _pattern: PatternTransport
   _type?: _TypeTransport
   _value?: ExpressionTransport
@@ -1511,7 +1511,7 @@ export interface MutPatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _mutable_specifier: _MutableSpecifierTransport
+  _mutable_specifier: MutableSpecifierTransport
   _pattern: Box<PatternTransport>
 }
 
@@ -1615,7 +1615,7 @@ export interface ParameterTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _mutable_specifier?: _MutableSpecifierTransport
+  _mutable_specifier?: MutableSpecifierTransport
   _pattern: ParameterPatternTransportSlot
   _type: _TypeTransport
 }
@@ -1792,7 +1792,7 @@ export interface ReferencePatternTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _mutable_specifier?: _MutableSpecifierTransport
+  _mutable_specifier?: MutableSpecifierTransport
   _pattern: Box<PatternTransport>
 }
 
@@ -1805,7 +1805,7 @@ export interface ReferenceTypeTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   _lifetime?: LifetimeTransport
-  _mutable_specifier?: _MutableSpecifierTransport
+  _mutable_specifier?: MutableSpecifierTransport
   _type: Box<_TypeTransport>
 }
 
@@ -1900,8 +1900,8 @@ export interface SelfParameterTransport {
   '$triviaData'?: TransportTrivia
   _reference?: boolean
   _lifetime?: LifetimeTransport
-  _mutable_specifier?: _MutableSpecifierTransport
-  _self: string
+  _mutable_specifier?: MutableSpecifierTransport
+  _self: Self_Transport
 }
 
 export interface ShorthandFieldInitializerTransport {
@@ -2533,7 +2533,7 @@ export interface VariadicParameterTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _mutable_specifier?: _MutableSpecifierTransport
+  _mutable_specifier?: MutableSpecifierTransport
   _pattern?: PatternTransport
 }
 

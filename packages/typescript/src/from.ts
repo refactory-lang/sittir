@@ -2174,7 +2174,7 @@ export function coerceToMethodDefinition(input: T.MethodDefinition.Loose): Retur
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildMethodDefinition>;
 	return F.buildMethodDefinition({
 		accessibilityModifier: coerceKindEnumStorage(
-			_resolveOneLeaf<T._AccessibilityModifier>(input.accessibilityModifier, '_accessibility_modifier'),
+			_resolveOneLeaf<T.AccessibilityModifier>(input.accessibilityModifier, 'accessibility_modifier'),
 			[
 				['public', TSKindId.Public] as const,
 				['private', TSKindId.Private] as const,
@@ -2301,7 +2301,7 @@ export function coerceToMethodSignature(input: T.MethodSignature.Loose): ReturnT
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildMethodSignature>;
 	return F.buildMethodSignature({
 		accessibilityModifier: coerceKindEnumStorage(
-			_resolveOneLeaf<T._AccessibilityModifier>(input.accessibilityModifier, '_accessibility_modifier'),
+			_resolveOneLeaf<T.AccessibilityModifier>(input.accessibilityModifier, 'accessibility_modifier'),
 			[
 				['public', TSKindId.Public] as const,
 				['private', TSKindId.Private] as const,
@@ -2336,7 +2336,7 @@ export function coerceToAbstractMethodSignature(
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildAbstractMethodSignature>;
 	return F.buildAbstractMethodSignature({
 		accessibilityModifier: coerceKindEnumStorage(
-			_resolveOneLeaf<T._AccessibilityModifier>(input.accessibilityModifier, '_accessibility_modifier'),
+			_resolveOneLeaf<T.AccessibilityModifier>(input.accessibilityModifier, 'accessibility_modifier'),
 			[
 				['public', TSKindId.Public] as const,
 				['private', TSKindId.Private] as const,
@@ -3125,7 +3125,7 @@ export function coerceToPropertySignature(
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildPropertySignature>;
 	return F.buildPropertySignature({
 		accessibilityModifier: coerceKindEnumStorage(
-			_resolveOneLeaf<T._AccessibilityModifier>(input.accessibilityModifier, '_accessibility_modifier'),
+			_resolveOneLeaf<T.AccessibilityModifier>(input.accessibilityModifier, 'accessibility_modifier'),
 			[
 				['public', TSKindId.Public] as const,
 				['private', TSKindId.Private] as const,

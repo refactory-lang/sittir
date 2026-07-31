@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 369,
+  "nodeCount": 368,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -6269,18 +6269,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "_mutable_specifier",
-      "modelType": "keyword",
-      "typeName": "_MutableSpecifier",
-      "factoryName": "_mutableSpecifier",
-      "irKey": "_mutableSpecifier",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"mut\" as const",
-      "text": "mut",
-      "factoryShape": "text"
-    },
-    {
       "kind": "_non_delim_token",
       "modelType": "supertype",
       "typeName": "NonDelimToken",
@@ -11147,15 +11135,18 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "crate",
-              "parseKind": "crate"
+              "name": "crate",
+              "parseKind": "crate",
+              "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "crate"
+            ]
           }
         },
         {
@@ -11616,15 +11607,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_mutable_specifier",
-              "parseKind": "_mutable_specifier",
+              "name": "mutable_specifier",
+              "parseKind": "mutable_specifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_mutable_specifier"
+              "mutable_specifier"
             ]
           }
         },
@@ -13699,15 +13690,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_mutable_specifier",
-              "parseKind": "_mutable_specifier",
+              "name": "mutable_specifier",
+              "parseKind": "mutable_specifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_mutable_specifier"
+              "mutable_specifier"
             ]
           }
         },
@@ -14711,15 +14702,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
-              "name": "_mutable_specifier",
-              "parseKind": "_mutable_specifier",
+              "name": "mutable_specifier",
+              "parseKind": "mutable_specifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_mutable_specifier"
+              "mutable_specifier"
             ]
           }
         },
@@ -14924,15 +14915,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_mutable_specifier",
-              "parseKind": "_mutable_specifier",
+              "name": "mutable_specifier",
+              "parseKind": "mutable_specifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_mutable_specifier"
+              "mutable_specifier"
             ]
           }
         },
@@ -15609,15 +15600,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_mutable_specifier",
-              "parseKind": "_mutable_specifier",
+              "name": "mutable_specifier",
+              "parseKind": "mutable_specifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_mutable_specifier"
+              "mutable_specifier"
             ]
           }
         },
@@ -15693,15 +15684,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_mutable_specifier",
-              "parseKind": "_mutable_specifier",
+              "name": "mutable_specifier",
+              "parseKind": "mutable_specifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_mutable_specifier"
+              "mutable_specifier"
             ]
           }
         },
@@ -16223,15 +16214,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_mutable_specifier",
-              "parseKind": "_mutable_specifier",
+              "name": "mutable_specifier",
+              "parseKind": "mutable_specifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_mutable_specifier"
+              "mutable_specifier"
             ]
           }
         },
@@ -16244,15 +16235,18 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "single",
-              "value": "self",
-              "parseKind": "self"
+              "name": "self",
+              "parseKind": "self",
+              "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "self"
+            ]
           }
         }
       ],
@@ -18966,15 +18960,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_mutable_specifier",
-              "parseKind": "_mutable_specifier",
+              "name": "mutable_specifier",
+              "parseKind": "mutable_specifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_mutable_specifier"
+              "mutable_specifier"
             ]
           }
         },

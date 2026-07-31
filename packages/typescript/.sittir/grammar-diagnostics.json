@@ -239,38 +239,6 @@
   },
   {
     "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_accessibility_modifier",
-    "message": "[assemble] typeName collision: kind '_accessibility_modifier' renamed 'AccessibilityModifier' → '_AccessibilityModifier' (visible sibling(s): 'accessibility_modifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "AccessibilityModifier",
-      "newType": "_AccessibilityModifier",
-      "visibleKinds": [
-        "accessibility_modifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "grammar": "typescript",
-    "ownerKind": "_override_modifier",
-    "message": "[assemble] typeName collision: kind '_override_modifier' renamed 'OverrideModifier' → '_OverrideModifier' (visible sibling(s): 'override_modifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "OverrideModifier",
-      "newType": "_OverrideModifier",
-      "visibleKinds": [
-        "override_modifier"
-      ]
-    }
-  },
-  {
-    "scope": "grammar",
     "code": "multi-slot-nested-seq",
     "severity": "warning",
     "grammar": "typescript",
@@ -284,16 +252,14 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "55 referenced kind(s) resolved no parser kindId",
+    "message": "51 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
         "__binary_expression_group1_operator",
-        "__for_header_operator",
         "__jsx_start_opening_element_optional1",
         "__number_operator",
         "_abstract_marker",
-        "_accessibility_modifier",
         "_accessor_kind",
         "_asserts_annotation_asserts",
         "_assignment_expression_using_marker",
@@ -320,7 +286,6 @@
         "_jsx_opening_element_content",
         "_jsx_start_opening_element",
         "_jsx_start_opening_element_group1",
-        "_kind",
         "_kind__var",
         "_mapped_type_clause_optional1",
         "_member_expression_separator",
@@ -328,7 +293,6 @@
         "_object_type_opening",
         "_operator",
         "_optional_marker",
-        "_override_modifier",
         "_public_field_definition_accessor_marker",
         "_public_field_definition_optionality_marker",
         "_readonly_marker",

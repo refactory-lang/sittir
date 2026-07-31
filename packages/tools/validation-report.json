@@ -143,27 +143,8 @@
     "source": "grammar",
     "grammar": "rust",
     "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_mutable_specifier",
-    "message": "[assemble] typeName collision: kind '_mutable_specifier' renamed 'MutableSpecifier' → '_MutableSpecifier' (visible sibling(s): 'mutable_specifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "MutableSpecifier",
-      "newType": "_MutableSpecifier",
-      "visibleKinds": [
-        "mutable_specifier"
-      ]
-    },
-    "location": "_mutable_specifier"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
     "code": "kindid-unstamped-symbols",
-    "message": "42 referenced kind(s) resolved no parser kindId",
+    "message": "39 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
@@ -175,7 +156,6 @@
         "_closure_parameters_optional1",
         "_compound_assignment_expr_operator",
         "_const_parameter_optional1",
-        "_crate",
         "_declaration_statement",
         "_enum_variant_optional1",
         "_expression_ending_with_block",
@@ -191,14 +171,12 @@
         "_match_block_optional1",
         "_match_pattern_optional1",
         "_move_marker",
-        "_mutable_specifier",
         "_operator",
         "_operator__x2ex2e",
         "_path",
         "_primitive_type",
         "_pub",
         "_reserved_identifier",
-        "_self",
         "_static_item_mutable_specifier",
         "_token_binding_pattern_type",
         "_tokens",
@@ -572,44 +550,6 @@
     "grammar": "typescript",
     "backend": "native",
     "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_accessibility_modifier",
-    "message": "[assemble] typeName collision: kind '_accessibility_modifier' renamed 'AccessibilityModifier' → '_AccessibilityModifier' (visible sibling(s): 'accessibility_modifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "AccessibilityModifier",
-      "newType": "_AccessibilityModifier",
-      "visibleKinds": [
-        "accessibility_modifier"
-      ]
-    },
-    "location": "_accessibility_modifier"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_override_modifier",
-    "message": "[assemble] typeName collision: kind '_override_modifier' renamed 'OverrideModifier' → '_OverrideModifier' (visible sibling(s): 'override_modifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "OverrideModifier",
-      "newType": "_OverrideModifier",
-      "visibleKinds": [
-        "override_modifier"
-      ]
-    },
-    "location": "_override_modifier"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
     "code": "multi-slot-nested-seq",
     "severity": "warning",
     "ownerKind": "_type_identifier",
@@ -626,16 +566,14 @@
     "grammar": "typescript",
     "backend": "native",
     "code": "kindid-unstamped-symbols",
-    "message": "55 referenced kind(s) resolved no parser kindId",
+    "message": "51 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
         "__binary_expression_group1_operator",
-        "__for_header_operator",
         "__jsx_start_opening_element_optional1",
         "__number_operator",
         "_abstract_marker",
-        "_accessibility_modifier",
         "_accessor_kind",
         "_asserts_annotation_asserts",
         "_assignment_expression_using_marker",
@@ -662,7 +600,6 @@
         "_jsx_opening_element_content",
         "_jsx_start_opening_element",
         "_jsx_start_opening_element_group1",
-        "_kind",
         "_kind__var",
         "_mapped_type_clause_optional1",
         "_member_expression_separator",
@@ -670,7 +607,6 @@
         "_object_type_opening",
         "_operator",
         "_optional_marker",
-        "_override_modifier",
         "_public_field_definition_accessor_marker",
         "_public_field_definition_optionality_marker",
         "_readonly_marker",
@@ -2986,7 +2922,7 @@
     "grammar": "typescript",
     "backend": "native",
     "name": "Accessibility modifiers as pair keywords [program]",
-    "message": "render: alias-wrapper kind id 434 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap on ObjectTransport._properties on AssignmentExpressionTransport._right on ExpressionStatementTransport._expressions on ProgramTransport._statements",
+    "message": "render: alias-wrapper kind id 436 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap on ObjectTransport._properties on AssignmentExpressionTransport._right on ExpressionStatementTransport._expressions on ProgramTransport._statements",
     "input": "x = { name, description, private: private_ }",
     "stage": "read-render-parse",
     "code": "read-render-parse-error",
@@ -3071,7 +3007,7 @@
     "grammar": "typescript",
     "backend": "native",
     "name": "Enum declarations [program]",
-    "message": "render: unknown kind id 426 in EnumBodyGroup1ContentTransportSlot on EnumBodyGroup1Transport._content on EnumBodyTransport._enum_body_group1 on EnumDeclarationTransport._body on ProgramTransport._statements",
+    "message": "render: unknown kind id 428 in EnumBodyGroup1ContentTransportSlot on EnumBodyGroup1Transport._content on EnumBodyTransport._enum_body_group1 on EnumDeclarationTransport._body on ProgramTransport._statements",
     "input": "enum Test {\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}\n\nenum Style {\n    None = 0,\n    Bold = 1,\n    Italic = 2,\n    Underline = 4,\n    Emphasis = Bold | Italic,\n    Hyperlink = Bold | Underline\n}",
     "stage": "read-render-parse",
     "code": "read-render-parse-error",
@@ -3885,12 +3821,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_static_mods\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"static\"), string(\"readonly\")]) — at 4:3 — near \"public static readonly 'hello'?: int = 'string'\"",
     "stage": "read-render-parse-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -3898,12 +3834,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_static_mods\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"static\"), string(\"readonly\")]) — at 5:3 — near \"static readonly 'hello'?: int = 'string'\"",
     "stage": "read-render-parse-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -3924,12 +3860,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_static_mods\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"static\"), string(\"readonly\")]) — at 4:3 — near \"public static readonly 'hello'?: int = 'string'\"",
     "stage": "read-render-parse-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -3937,12 +3873,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_static_mods\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"static\"), string(\"readonly\")]) — at 5:3 — near \"static readonly 'hello'?: int = 'string'\"",
     "stage": "read-render-parse-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -3976,12 +3912,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_readonly_first\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"readonly\"), string(\"abstract\")]) — at 5:5 — near \"readonly abstract prop: string\"",
     "stage": "read-render-parse-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -3989,12 +3925,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_readonly_first\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"readonly\"), string(\"abstract\")]) — at 5:5 — near \"readonly abstract prop: string\"",
     "stage": "read-render-parse-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -4115,7 +4051,7 @@
     "grammar": "typescript",
     "backend": "native",
     "name": "Accessibility modifiers as pair keywords [program]",
-    "message": "render: alias-wrapper kind id 434 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap on ObjectTransport._properties on AssignmentExpressionTransport._right on ExpressionStatementTransport._expressions on ProgramTransport._statements",
+    "message": "render: alias-wrapper kind id 436 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap on ObjectTransport._properties on AssignmentExpressionTransport._right on ExpressionStatementTransport._expressions on ProgramTransport._statements",
     "input": "x = { name, description, private: private_ }",
     "stage": "read-render-parse-shallow",
     "code": "read-render-parse-shallow-error",
@@ -4200,7 +4136,7 @@
     "grammar": "typescript",
     "backend": "native",
     "name": "Enum declarations [program]",
-    "message": "render: unknown kind id 426 in EnumBodyGroup1ContentTransportSlot on EnumBodyGroup1Transport._content on EnumBodyTransport._enum_body_group1 on EnumDeclarationTransport._body on ProgramTransport._statements",
+    "message": "render: unknown kind id 428 in EnumBodyGroup1ContentTransportSlot on EnumBodyGroup1Transport._content on EnumBodyTransport._enum_body_group1 on EnumDeclarationTransport._body on ProgramTransport._statements",
     "input": "enum Test {\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}\n\nenum Style {\n    None = 0,\n    Bold = 1,\n    Italic = 2,\n    Underline = 4,\n    Emphasis = Bold | Italic,\n    Hyperlink = Bold | Underline\n}",
     "stage": "read-render-parse-shallow",
     "code": "read-render-parse-shallow-error",
@@ -5014,12 +4950,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_static_mods\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"static\"), string(\"readonly\")]) — at 4:3 — near \"public static readonly 'hello'?: int = 'string'\"",
     "stage": "read-render-parse-shallow-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -5027,12 +4963,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_static_mods\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"static\"), string(\"readonly\")]) — at 5:3 — near \"static readonly 'hello'?: int = 'string'\"",
     "stage": "read-render-parse-shallow-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -5053,12 +4989,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_static_mods\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"static\"), string(\"readonly\")]) — at 4:3 — near \"public static readonly 'hello'?: int = 'string'\"",
     "stage": "read-render-parse-shallow-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -5066,12 +5002,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_static_mods\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"static\"), string(\"readonly\")]) — at 5:3 — near \"static readonly 'hello'?: int = 'string'\"",
     "stage": "read-render-parse-shallow-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -5105,12 +5041,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_readonly_first\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"readonly\"), string(\"abstract\")]) — at 5:5 — near \"readonly abstract prop: string\"",
     "stage": "read-render-parse-shallow-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -5118,12 +5054,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_readonly_first\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"readonly\"), string(\"abstract\")]) — at 5:5 — near \"readonly abstract prop: string\"",
     "stage": "read-render-parse-shallow-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -5326,7 +5262,7 @@
     "backend": "native",
     "kind": "class_static_block",
     "entry": "Classes with static blocks",
-    "message": "root._body: shape mismatch (node vs scalar) — expected {\"$type\":186,\"$source\":0,\"$named\":true,\"_statements\":[{\"$type\":182,\"$source\":0,\"$named\":true,\"_semicolon\":22,\"$text\":\"this.#bar = '';\",\"$span\":{\"start\":27,\"end\":42},\"$nodeHandle\":67,\"_expressions\":{\"$type\":237,\"$source\":0,\"$named\":true,\"_left\":{\"$type\":236,\"$source\":0,\"$named\":true,\"$text\":\"this.#bar\",\"$span\":{\"start\":27,\"end\":36},\"$nodeHandle\":69,\"_content\":{\"$type\":234,\"$source\":0,\"$named\":true,\"_object\":\"this\",\"_separator\":44,\"_property\":\"#bar\",\"$text\":\"this.#bar\",\"$span\":{\"start\":27,\"end\":36},\"$nodeHandle\":70}},\"_right\":{\"$type\":248,\"$source\":0,\"$named\":true,\"$text\":\"''\",\"$span\":{\"start\":39,\"end\":41},\"$nodeHandle\":71,\"_content\":{\"$type\":397,\"$source\":0,\"$named\":true,\"$text\":\"''\",\"$span\":{\"start\":39,\"end\":41},\"$nodeHandle\":72,\"_content\":[]}},\"$other\":[41],\"$text\":\"this.#bar = ''\",\"$span\":{\"start\":27,\"end\":41},\"$nodeHandle\":68}}],\"_automatic_semicolon\":true,\"$other\":[5,6],\"$text\":\"{\\n    this.#bar = '';\\n  }\",\"$span\":{\"start\":21,\"end\":46},\"$nodeHandle\":66}, got undefined",
+    "message": "root._body: shape mismatch (node vs scalar) — expected {\"$type\":186,\"$source\":0,\"$named\":true,\"_statements\":[{\"$type\":182,\"$source\":0,\"$named\":true,\"_semicolon\":20,\"$text\":\"this.#bar = '';\",\"$span\":{\"start\":27,\"end\":42},\"$nodeHandle\":67,\"_expressions\":{\"$type\":237,\"$source\":0,\"$named\":true,\"_left\":{\"$type\":236,\"$source\":0,\"$named\":true,\"$text\":\"this.#bar\",\"$span\":{\"start\":27,\"end\":36},\"$nodeHandle\":69,\"_content\":{\"$type\":234,\"$source\":0,\"$named\":true,\"_object\":\"this\",\"_separator\":40,\"_property\":\"#bar\",\"$text\":\"this.#bar\",\"$span\":{\"start\":27,\"end\":36},\"$nodeHandle\":70}},\"_right\":{\"$type\":248,\"$source\":0,\"$named\":true,\"$text\":\"''\",\"$span\":{\"start\":39,\"end\":41},\"$nodeHandle\":71,\"_content\":{\"$type\":399,\"$source\":0,\"$named\":true,\"$text\":\"''\",\"$span\":{\"start\":39,\"end\":41},\"$nodeHandle\":72,\"_content\":[]}},\"$other\":[37],\"$text\":\"this.#bar = ''\",\"$span\":{\"start\":27,\"end\":41},\"$nodeHandle\":68}}],\"_automatic_semicolon\":true,\"$other\":[5,6],\"$text\":\"{\\n    this.#bar = '';\\n  }\",\"$span\":{\"start\":21,\"end\":46},\"$nodeHandle\":66}, got undefined",
     "input": "static {\n    this.#bar = '';\n  }",
     "stage": "factory-render-parse-ast-mismatch",
     "code": "factory-render-parse-ast-mismatch",

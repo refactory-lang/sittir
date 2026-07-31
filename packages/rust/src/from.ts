@@ -1252,6 +1252,11 @@ export function coerceToExternCrateDeclaration(
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildExternCrateDeclaration>;
 	return F.buildExternCrateDeclaration({
 		visibilityModifier: _resolveOneBranch<T.VisibilityModifier>(input.visibilityModifier, 'visibility_modifier'),
+		crate: _requireField(
+			'extern_crate_declaration',
+			'crate',
+			coerceKindEnumStorage(_resolveOneLeaf<T.Crate>(input.crate, 'crate'), [])
+		),
 		name: _requireField('extern_crate_declaration', 'name', _resolveOneLeaf<T.Identifier>(input.name, 'identifier')),
 		alias: _resolveOneLeaf<T.Identifier>(input.alias, 'identifier')
 	});
@@ -1553,12 +1558,17 @@ export function coerceToParameters(input?: T.ParametersGroup1 | T.Parameters): R
 	return F.buildParameters(input as Parameters<typeof F.buildParameters>[0]);
 }
 
-export function coerceToSelfParameter(input?: T.SelfParameter.Loose): ReturnType<typeof F.buildSelfParameter> {
-	if (input !== undefined && isNodeData(input)) return input as unknown as ReturnType<typeof F.buildSelfParameter>;
+export function coerceToSelfParameter(input: T.SelfParameter.Loose): ReturnType<typeof F.buildSelfParameter> {
+	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildSelfParameter>;
 	return F.buildSelfParameter({
-		reference: _resolveBooleanKeyword(input?.reference),
-		lifetime: _resolveOneBranch<T.Lifetime>(input?.lifetime, 'lifetime'),
-		mutableSpecifier: _resolveBooleanKeyword(input?.mutableSpecifier)
+		reference: _resolveBooleanKeyword(input.reference),
+		lifetime: _resolveOneBranch<T.Lifetime>(input.lifetime, 'lifetime'),
+		mutableSpecifier: _resolveBooleanKeyword(input.mutableSpecifier),
+		self: _requireField(
+			'self_parameter',
+			'self',
+			coerceKindEnumStorage(_resolveOneLeaf<T.Self>(input.self, 'self'), [])
+		)
 	});
 }
 
@@ -2571,7 +2581,7 @@ export function coerceToStructPattern(input: T.StructPattern.Loose): ReturnType<
 }
 
 export function coerceToFieldPattern(
-	input?: ('mut' | T.Identifier | T.FieldPatternNamed) | T.FieldPattern
+	input?: (T.MutableSpecifier | T.Identifier | T.FieldPatternNamed) | T.FieldPattern
 ): ReturnType<typeof F.buildFieldPattern> {
 	if (isNodeData(input) && input.$type === TSKindId.FieldPattern) {
 		const data = input;

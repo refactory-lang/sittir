@@ -71,8 +71,8 @@ export interface AbstractMethodSignatureTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _accessibility_modifier?: _AccessibilityModifierEnum
-  _override_modifier?: _OverrideModifierTransport
+  _accessibility_modifier?: AccessibilityModifierEnum
+  _override_modifier?: OverrideModifierTransport
   _accessor_kind?: AccessorKindEnum
   _name: PropertyNameTransport
   _optional_marker?: OptionalMarkerTransport
@@ -1782,9 +1782,9 @@ export interface MethodDefinitionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _accessibility_modifier?: _AccessibilityModifierEnum
+  _accessibility_modifier?: AccessibilityModifierEnum
   _static_marker?: StaticMarkerTransport
-  _override_modifier?: _OverrideModifierTransport
+  _override_modifier?: OverrideModifierTransport
   _readonly_marker?: ReadonlyMarkerTransport
   _async_marker?: AsyncMarkerTransport
   _accessor_kind?: AccessorKindEnum
@@ -1804,9 +1804,9 @@ export interface MethodSignatureTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _accessibility_modifier?: _AccessibilityModifierEnum
+  _accessibility_modifier?: AccessibilityModifierEnum
   _static_marker?: StaticMarkerTransport
-  _override_modifier?: _OverrideModifierTransport
+  _override_modifier?: OverrideModifierTransport
   _readonly_marker?: ReadonlyMarkerTransport
   _async_marker?: AsyncMarkerTransport
   _accessor_kind?: AccessorKindEnum
@@ -2162,9 +2162,9 @@ export interface PropertySignatureTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
-  _accessibility_modifier?: _AccessibilityModifierEnum
+  _accessibility_modifier?: AccessibilityModifierEnum
   _static_marker?: StaticMarkerTransport
-  _override_modifier?: _OverrideModifierTransport
+  _override_modifier?: OverrideModifierTransport
   _readonly_marker?: ReadonlyMarkerTransport
   _name: PropertyNameTransport
   _optional_marker?: OptionalMarkerTransport

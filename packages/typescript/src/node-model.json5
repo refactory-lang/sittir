@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 423,
+  "nodeCount": 421,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -4434,20 +4434,6 @@
       "factoryShape": "text"
     },
     {
-      "kind": "_accessibility_modifier",
-      "modelType": "enum",
-      "typeName": "_AccessibilityModifier",
-      "factoryName": "_accessibilityModifier",
-      "irKey": "_accessibilityModifier",
-      "hidden": false,
-      "values": [
-        "public",
-        "private",
-        "protected"
-      ],
-      "factoryShape": "text"
-    },
-    {
       "kind": "_accessor_kind",
       "modelType": "enum",
       "typeName": "AccessorKind",
@@ -8071,18 +8057,6 @@
       "text": "?"
     },
     {
-      "kind": "_override_modifier",
-      "modelType": "keyword",
-      "typeName": "_OverrideModifier",
-      "factoryName": "_overrideModifier",
-      "irKey": "_overrideModifier",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"override\" as const",
-      "text": "override",
-      "factoryShape": "text"
-    },
-    {
       "kind": "_parameter_name",
       "modelType": "group",
       "typeName": "ParameterName",
@@ -9912,15 +9886,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_accessibility_modifier",
-              "parseKind": "_accessibility_modifier",
+              "name": "accessibility_modifier",
+              "parseKind": "accessibility_modifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_accessibility_modifier"
+              "accessibility_modifier"
             ]
           }
         },
@@ -9935,15 +9909,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_override_modifier",
-              "parseKind": "_override_modifier",
+              "name": "override_modifier",
+              "parseKind": "override_modifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_override_modifier"
+              "override_modifier"
             ]
           }
         },
@@ -17996,15 +17970,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_accessibility_modifier",
-              "parseKind": "_accessibility_modifier",
+              "name": "accessibility_modifier",
+              "parseKind": "accessibility_modifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_accessibility_modifier"
+              "accessibility_modifier"
             ]
           }
         },
@@ -18042,15 +18016,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_override_modifier",
-              "parseKind": "_override_modifier",
+              "name": "override_modifier",
+              "parseKind": "override_modifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_override_modifier"
+              "override_modifier"
             ]
           }
         },
@@ -18309,15 +18283,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_accessibility_modifier",
-              "parseKind": "_accessibility_modifier",
+              "name": "accessibility_modifier",
+              "parseKind": "accessibility_modifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_accessibility_modifier"
+              "accessibility_modifier"
             ]
           }
         },
@@ -18355,15 +18329,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_override_modifier",
-              "parseKind": "_override_modifier",
+              "name": "override_modifier",
+              "parseKind": "override_modifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_override_modifier"
+              "override_modifier"
             ]
           }
         },
@@ -20261,15 +20235,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_accessibility_modifier",
-              "parseKind": "_accessibility_modifier",
+              "name": "accessibility_modifier",
+              "parseKind": "accessibility_modifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_accessibility_modifier"
+              "accessibility_modifier"
             ]
           }
         },
@@ -20307,15 +20281,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_override_modifier",
-              "parseKind": "_override_modifier",
+              "name": "override_modifier",
+              "parseKind": "override_modifier",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_override_modifier"
+              "override_modifier"
             ]
           }
         },

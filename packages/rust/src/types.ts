@@ -160,7 +160,6 @@ export type LeafStringMap = {
 	_pointer_type_const: 'const';
 	_operator: '+' | '*' | '?';
 	_unsafe_marker: 'unsafe';
-	_mutable_specifier: 'mut';
 	_unary_expression_operator: '-' | '*' | '!';
 	_move_marker: 'move';
 	__range_expression_binary_operator: '..' | '...' | '..=';
@@ -451,7 +450,6 @@ export const enum SyntaxKind {
 	LineCommentContent = '_line_comment_content',
 	Operator = '_operator',
 	UnsafeMarker = '_unsafe_marker',
-	_MutableSpecifier = '_mutable_specifier',
 	UnaryExpressionOperator = '_unary_expression_operator',
 	MoveMarker = '_move_marker',
 	RangeExpressionBinaryOperator = '__range_expression_binary_operator',
@@ -3621,14 +3619,14 @@ export interface OrderedFieldDeclarationList {
 export interface ExternCrateDeclaration {
 	readonly $type: TSKindId.ExternCrateDeclaration;
 	readonly _visibility_modifier?: VisibilityModifier;
-	readonly _crate: AutoStamp<number>;
+	readonly _crate: number;
 	readonly _name: Identifier;
 	readonly _alias?: Identifier;
 	readonly __inputHints__?: {
-		readonly crate: AutoStamp<KindEnum<'crate', TSKindId.Crate>>;
+		readonly crate: KindEnum<'crate', TSKindId.Crate>;
 	};
 	visibilityModifier(): VisibilityModifier | undefined;
-	crate(): AutoStamp<number>;
+	crate(): number;
 	name(): Identifier;
 	alias(): Identifier | undefined;
 }
@@ -3923,16 +3921,16 @@ export interface SelfParameter {
 	readonly _reference?: boolean;
 	readonly _lifetime?: Lifetime;
 	readonly _mutable_specifier?: boolean;
-	readonly _self: AutoStamp<number>;
+	readonly _self: number;
 	readonly __inputHints__?: {
 		readonly reference?: BooleanKeyword<'&'>;
 		readonly mutable_specifier?: BooleanKeyword<'mut'>;
-		readonly self: AutoStamp<KindEnum<'self', TSKindId.Self>>;
+		readonly self: KindEnum<'self', TSKindId.Self>;
 	};
 	reference(): boolean | undefined;
 	lifetime(): Lifetime | undefined;
 	mutableSpecifier(): boolean | undefined;
-	self(): AutoStamp<number>;
+	self(): number;
 }
 
 export interface VariadicParameter {
@@ -4631,9 +4629,9 @@ export interface FieldPattern {
 
 export interface MutPattern {
 	readonly $type: TSKindId.MutPattern;
-	readonly _mutable_specifier: AutoStamp<'mut'>;
+	readonly _mutable_specifier: MutableSpecifier;
 	readonly _pattern: Pattern;
-	mutableSpecifier(): AutoStamp<'mut'>;
+	mutableSpecifier(): MutableSpecifier;
 	pattern(): Pattern;
 }
 

@@ -8543,7 +8543,7 @@ export function wrapMutPattern(data: T.MutPattern, tree: TreeHandle) {
 			}),
 
 			mutableSpecifier() {
-				return drillIn<'mut'>(this._mutable_specifier, tree);
+				return drillIn<T.MutableSpecifier>(this._mutable_specifier, tree);
 			},
 			pattern() {
 				return drillAs<T.Pattern>(this._pattern, tree, [{ from: 'wildcard_pattern', to: '_wildcard_pattern' }]);

@@ -455,9 +455,7 @@ import type {
 	WithStatement,
 	WithStatementTree,
 	YieldExpression,
-	YieldExpressionTree,
-	_AccessibilityModifier,
-	_AccessibilityModifierTree
+	YieldExpressionTree
 } from './types.js';
 import { TSKindId } from './types.js';
 
@@ -863,14 +861,12 @@ export type _Type_MetaPropertyGroup1 = _TypeAssert<
 export type _Type_MetaPropertyGroup2 = _TypeAssert<
 	_TypeExtends<MetaPropertyGroup2['$type'], TSKindId.MetaPropertyGroup2>
 >;
+export type _Type_Operator = _TypeAssert<_TypeExtends<Operator['$type'], TSKindId.PlusPlus | TSKindId.DashDash>>;
 export type _Type_ExportSpecifierExportKind = _TypeAssert<
 	_TypeExtends<ExportSpecifierExportKind['$type'], TSKindId.AnonType | TSKindId.Typeof>
 >;
 export type _Type_ImportAttributeObject = _TypeAssert<
 	_TypeExtends<ImportAttributeObject['$type'], TSKindId.With | TSKindId.Assert>
->;
-export type _Type__AccessibilityModifier = _TypeAssert<
-	_TypeExtends<_AccessibilityModifier['$type'], TSKindId.Public | TSKindId.Private | TSKindId.Protected>
 >;
 export type _Type_AccessorKind = _TypeAssert<
 	_TypeExtends<AccessorKind['$type'], TSKindId.Get | TSKindId.Set | TSKindId.Star>
@@ -884,7 +880,6 @@ export type _Type_ObjectTypeOpening = _TypeAssert<
 export type _Type_ObjectTypeClosing = _TypeAssert<
 	_TypeExtends<ObjectTypeClosing['$type'], TSKindId.Rbrace | TSKindId.PipeRbrace>
 >;
-export type _Type_Operator = _TypeAssert<_TypeExtends<Operator['$type'], TSKindId.PlusPlus | TSKindId.DashDash>>;
 export type _Type_TemplateChars = _TypeAssert<_TypeExtends<TemplateChars['$type'], TSKindId.TemplateChars>>;
 export type _Type_TernaryQmark = _TypeAssert<_TypeExtends<TernaryQmark['$type'], TSKindId.TernaryQmark>>;
 export type _Type_HtmlComment = _TypeAssert<_TypeExtends<HtmlComment['$type'], TSKindId.HtmlComment>>;
@@ -1219,14 +1214,12 @@ export type _Tree_MetaPropertyGroup1 = _TypeAssert<
 export type _Tree_MetaPropertyGroup2 = _TypeAssert<
 	_TypeExtends<MetaPropertyGroup2Tree['type'], '_meta_property_group2'>
 >;
+export type _Tree_Operator = _TypeAssert<_TypeExtends<OperatorTree['type'], '_operator'>>;
 export type _Tree_ExportSpecifierExportKind = _TypeAssert<
 	_TypeExtends<ExportSpecifierExportKindTree['type'], '_export_specifier_export_kind'>
 >;
 export type _Tree_ImportAttributeObject = _TypeAssert<
 	_TypeExtends<ImportAttributeObjectTree['type'], '_import_attribute_object'>
->;
-export type _Tree__AccessibilityModifier = _TypeAssert<
-	_TypeExtends<_AccessibilityModifierTree['type'], '_accessibility_modifier'>
 >;
 export type _Tree_AccessorKind = _TypeAssert<_TypeExtends<AccessorKindTree['type'], '_accessor_kind'>>;
 export type _Tree_PublicFieldDefinitionOptionalityMarker = _TypeAssert<
@@ -1234,7 +1227,6 @@ export type _Tree_PublicFieldDefinitionOptionalityMarker = _TypeAssert<
 >;
 export type _Tree_ObjectTypeOpening = _TypeAssert<_TypeExtends<ObjectTypeOpeningTree['type'], '_object_type_opening'>>;
 export type _Tree_ObjectTypeClosing = _TypeAssert<_TypeExtends<ObjectTypeClosingTree['type'], '_object_type_closing'>>;
-export type _Tree_Operator = _TypeAssert<_TypeExtends<OperatorTree['type'], '_operator'>>;
 export type _Tree_TemplateChars = _TypeAssert<_TypeExtends<TemplateCharsTree['type'], '_template_chars'>>;
 export type _Tree_TernaryQmark = _TypeAssert<_TypeExtends<TernaryQmarkTree['type'], '_ternary_qmark'>>;
 export type _Tree_HtmlComment = _TypeAssert<_TypeExtends<HtmlCommentTree['type'], 'html_comment'>>;

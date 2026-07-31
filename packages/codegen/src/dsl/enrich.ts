@@ -129,11 +129,6 @@ export type EnrichedGrammar<B> = B extends GrammarJson
 		}
 	: B;
 
-// Grammars migrated onto enrich-time field-enum synthesis (see
-// `synthesizeFieldEnumRules`'s doc comment) — add a name here only after that
-// grammar's `tree-sitter generate` + node-types.json byte-identity gate pass.
-const FIELD_ENUM_SYNTHESIS_GRAMMARS = new Set(['python']);
-
 export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	const base = baseInput as unknown as GrammarResult;
 	if (!base || typeof base !== 'object') {
@@ -251,20 +246,15 @@ export function enrich<B = GrammarResult>(baseInput: B): EnrichedGrammar<B> {
 	// Mint inline field-enum choices (`field('operator', choice('+', '-', …))`)
 	// as named hidden rules directly into `mergedRules`, pre-generate — see
 	// `synthesizeFieldEnumRules`'s doc comment. Runs last so it also sees
-	// clause-hoist-minted rules from the merge above.
-	//
-	// Gated to FIELD_ENUM_SYNTHESIS_GRAMMARS: migrating this pre-generate is
-	// done one grammar at a time (docs/superpowers/specs/2026-07-30-kindid-invariant-restoration.md
-	// §1) — a new non-inlined hidden rule can shift LR states, so each grammar
-	// needs its own byte-identity + `tree-sitter generate` gate before it's
-	// added here. typescript already hits a real LR conflict
-	// (`'let' '['` — `_kind` vs `primary_expression`) from at least one
-	// occurrence; rust is unverified. Un-migrated grammars are unaffected —
-	// `compiler/evaluate.ts`'s own `synthesizeFieldEnumRules` still mints
-	// their field-enums exactly as before.
-	if (FIELD_ENUM_SYNTHESIS_GRAMMARS.has((hasWrapper ? base.grammar?.name : (base as { name?: string }).name) ?? '')) {
-		synthesizeFieldEnumRules(mergedRules);
-	}
+	// clause-hoist-minted rules from the merge above. Verified across all
+	// three grammars (docs/superpowers/specs/2026-07-30-kindid-invariant-restoration.md
+	// §1): `tree-sitter generate` succeeds and `node-types.json` is
+	// byte-identical for rust, typescript, and python. A new non-inlined
+	// hidden rule can locally shift LR states — typescript needed one
+	// `conflicts:` entry (`[$.primary_expression, $._kind]`, the standard
+	// tree-sitter mechanism for a real local ambiguity, which keeps the
+	// rule's own parser symbol rather than suppressing it).
+	synthesizeFieldEnumRules(mergedRules);
 	// Register the merged rule-map so transform()/groups path-descent can resolve
 	// (and patch) enrich group-lift symbol bodies by name — the lookup that lets a
 	// path patch travel THROUGH a hoisted `_<parent>_<kind><N>` symbol into its
@@ -2637,10 +2627,16 @@ function deriveCandidateName(
 	const allSameFieldName = group.every((o) => o.fieldName === first.fieldName);
 
 	if (allSameFieldName) {
-		// Priority 1: field name matches an existing grammar rule with same members.
+		// Priority 1: field name matches an existing grammar rule with same
+		// members — reuse THAT rule's own name verbatim (never re-prefixed).
+		// Underscore-prefixing here would mint a redundant duplicate rule
+		// alongside the real one it's supposed to reuse (harmless while this
+		// synthesis stayed sittir-only/phantom, but pre-generate it mints a
+		// second real symbol tree-sitter now has to disambiguate against the
+		// original — e.g. `_accessibility_modifier` vs `accessibility_modifier`).
 		const existingMatch = fieldNameMatchesGrammarRule(first.fieldName, rules, first.members);
 		if (existingMatch) {
-			return { name: `_${first.fieldName}`, priority: 1 };
+			return { name: first.fieldName, priority: 1 };
 		}
 
 		// Priority 2: shared field name across ≥2 distinct parent kinds.

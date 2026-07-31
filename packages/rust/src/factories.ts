@@ -707,7 +707,7 @@ export function buildOrderedFieldDeclarationList(attributes?: T.OrderedFieldDecl
 
 export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Config) {
 	const _visibility_modifier = config.visibilityModifier;
-	const _crate = coerceKindEnumStorage('crate' as const, [['crate', TSKindId.Crate] as const]);
+	const _crate = coerceKindEnumStorage('crate' as const, []);
 	const _name = config.name;
 	const _alias = config.alias;
 	return withMethods(
@@ -1502,7 +1502,7 @@ export function buildSelfParameter(config: Partial<T.SelfParameter.Config> = {})
 	const _reference = coerceBooleanKeywordStorage(config.reference);
 	const _lifetime = config.lifetime;
 	const _mutable_specifier = coerceBooleanKeywordStorage(config.mutableSpecifier);
-	const _self = coerceKindEnumStorage('self' as const, [['self', TSKindId.Self] as const]);
+	const _self = coerceKindEnumStorage('self' as const, []);
 	return withMethods(
 		withAccessors(
 			{
@@ -3545,7 +3545,7 @@ export function buildStructPattern(config: T.StructPattern.Config) {
 	);
 }
 
-export function buildFieldPattern(child?: 'mut' | T.Identifier | T.FieldPatternNamed) {
+export function buildFieldPattern(child?: T.MutableSpecifier | T.Identifier | T.FieldPatternNamed) {
 	const _ref_marker = child;
 	return withMethods(
 		withAccessors(
@@ -3554,7 +3554,7 @@ export function buildFieldPattern(child?: 'mut' | T.Identifier | T.FieldPatternN
 				$source: 2 as const,
 				$named: true as const,
 				_ref_marker,
-				$with: { $child: (v: 'mut' | T.Identifier | T.FieldPatternNamed) => buildFieldPattern(v) }
+				$with: { $child: (v: T.MutableSpecifier | T.Identifier | T.FieldPatternNamed) => buildFieldPattern(v) }
 			},
 			{
 				refMarker: () => _ref_marker

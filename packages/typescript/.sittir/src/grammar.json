@@ -802,17 +802,9 @@
           "type": "FIELD",
           "name": "kind",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "let"
-              },
-              {
-                "type": "STRING",
-                "value": "const"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "_kind",
+            "hidden": true
           }
         },
         {
@@ -1250,17 +1242,9 @@
           "type": "FIELD",
           "name": "operator",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "in"
-              },
-              {
-                "type": "STRING",
-                "value": "of"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "__for_header_operator",
+            "hidden": true
           }
         },
         {
@@ -7261,7 +7245,8 @@
               "name": "accessibility_modifier",
               "content": {
                 "type": "SYMBOL",
-                "name": "accessibility_modifier"
+                "name": "accessibility_modifier",
+                "hidden": true
               },
               "metadata": {
                 "fieldSource": "enriched"
@@ -7410,7 +7395,8 @@
               "name": "accessibility_modifier",
               "content": {
                 "type": "SYMBOL",
-                "name": "accessibility_modifier"
+                "name": "accessibility_modifier",
+                "hidden": true
               },
               "metadata": {
                 "fieldSource": "enriched"
@@ -10199,7 +10185,8 @@
               "name": "accessibility_modifier",
               "content": {
                 "type": "SYMBOL",
-                "name": "accessibility_modifier"
+                "name": "accessibility_modifier",
+                "hidden": true
               },
               "metadata": {
                 "fieldSource": "enriched"
@@ -11475,17 +11462,9 @@
           "type": "FIELD",
           "name": "kind",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "let"
-              },
-              {
-                "type": "STRING",
-                "value": "const"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "_kind",
+            "hidden": true
           }
         },
         {
@@ -12489,6 +12468,38 @@
         }
       ]
     },
+    "_kind": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "let"
+        },
+        {
+          "type": "STRING",
+          "value": "const"
+        }
+      ],
+      "metadata": {
+        "author": "grammar"
+      }
+    },
+    "__for_header_operator": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "in"
+        },
+        {
+          "type": "STRING",
+          "value": "of"
+        }
+      ],
+      "metadata": {
+        "author": "grammar"
+      }
+    },
     "_ambient_declaration_global": {
       "type": "SEQ",
       "members": [
@@ -13359,17 +13370,9 @@
           "type": "FIELD",
           "name": "kind",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "let"
-              },
-              {
-                "type": "STRING",
-                "value": "const"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "_kind",
+            "hidden": true
           }
         },
         {
@@ -14347,6 +14350,10 @@
     [
       "primary_expression",
       "_property_name"
+    ],
+    [
+      "primary_expression",
+      "_kind"
     ],
     [
       "labeled_statement",
