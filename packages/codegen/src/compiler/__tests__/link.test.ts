@@ -1079,27 +1079,41 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 		return sink.all().map((d) => ({ code: d.code, details: d.details }));
 	}
 
-	it('reports an inline-array kind as unstamped only, not vaporized', () => {
+	it('reports an inline-array kind as unstamped (warning) and inline-excluded (info), not vaporized', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
 		const misses: KindIdStampMisses = { symbols: new Set(['_declaration_statement']), literals: new Set() };
 		const sink = new DiagnosticSink();
 		reportKindIdStampMisses(misses, entries, sink, new Set(['_declaration_statement']));
-		const diagnostics = stampDiagnostics(sink);
-		expect(diagnostics).toContainEqual({
-			code: 'kindid-unstamped-symbols',
+		const all = sink.all();
+		const unstamped = all.find((d) => d.code === 'kindid-unstamped-symbols');
+		expect(unstamped?.details).toEqual({ kinds: ['_declaration_statement'] });
+		expect(unstamped?.severity).toBe('warning');
+		expect(all).toContainEqual({
+			code: 'kindid-inline-excluded-symbols',
+			message: expect.any(String),
+			severity: 'info',
+			canProceed: true,
 			details: { kinds: ['_declaration_statement'] }
 		});
-		expect(diagnostics.some((d) => d.code === 'kindid-vaporized-symbols')).toBe(false);
+		expect(all.some((d) => d.code === 'kindid-vaporized-symbols')).toBe(false);
 	});
 
-	it('reports a non-inline kind as both unstamped and vaporized (dead surface)', () => {
+	it('reports a non-inline kind as unstamped (warning) and vaporized (info)', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
 		const misses: KindIdStampMisses = { symbols: new Set(['comment']), literals: new Set() };
 		const sink = new DiagnosticSink();
 		reportKindIdStampMisses(misses, entries, sink, new Set());
-		const diagnostics = stampDiagnostics(sink);
-		expect(diagnostics).toContainEqual({ code: 'kindid-unstamped-symbols', details: { kinds: ['comment'] } });
-		expect(diagnostics).toContainEqual({ code: 'kindid-vaporized-symbols', details: { kinds: ['comment'] } });
+		const all = sink.all();
+		const unstamped = all.find((d) => d.code === 'kindid-unstamped-symbols');
+		expect(unstamped?.details).toEqual({ kinds: ['comment'] });
+		expect(unstamped?.severity).toBe('warning');
+		expect(all).toContainEqual({
+			code: 'kindid-vaporized-symbols',
+			message: expect.any(String),
+			severity: 'info',
+			canProceed: true,
+			details: { kinds: ['comment'] }
+		});
 	});
 
 	it('splits a mixed miss set: inline kinds excluded from the vaporized bucket, literals handled the same way', () => {

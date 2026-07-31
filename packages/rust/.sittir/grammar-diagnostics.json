@@ -157,7 +157,7 @@
         "in_path"
       ]
     },
-    "severity": "info",
+    "severity": "warning",
     "scope": "grammar",
     "grammar": "rust"
   },
@@ -174,7 +174,7 @@
         "r#\""
       ]
     },
-    "severity": "info",
+    "severity": "warning",
     "scope": "grammar",
     "grammar": "rust"
   },
