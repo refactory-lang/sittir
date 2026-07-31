@@ -7246,7 +7246,7 @@
               "content": {
                 "type": "SYMBOL",
                 "name": "accessibility_modifier",
-                "hidden": true
+                "hidden": false
               },
               "metadata": {
                 "fieldSource": "enriched"
@@ -7396,7 +7396,7 @@
               "content": {
                 "type": "SYMBOL",
                 "name": "accessibility_modifier",
-                "hidden": true
+                "hidden": false
               },
               "metadata": {
                 "fieldSource": "enriched"
@@ -10186,7 +10186,7 @@
               "content": {
                 "type": "SYMBOL",
                 "name": "accessibility_modifier",
-                "hidden": true
+                "hidden": false
               },
               "metadata": {
                 "fieldSource": "enriched"
@@ -12469,36 +12469,44 @@
       ]
     },
     "_kind": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "let"
-        },
-        {
-          "type": "STRING",
-          "value": "const"
+      "type": "PREC",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "let"
+          },
+          {
+            "type": "STRING",
+            "value": "const"
+          }
+        ],
+        "metadata": {
+          "author": "grammar"
         }
-      ],
-      "metadata": {
-        "author": "grammar"
-      }
+      },
+      "value": -1
     },
     "__for_header_operator": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "in"
-        },
-        {
-          "type": "STRING",
-          "value": "of"
+      "type": "PREC",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "in"
+          },
+          {
+            "type": "STRING",
+            "value": "of"
+          }
+        ],
+        "metadata": {
+          "author": "grammar"
         }
-      ],
-      "metadata": {
-        "author": "grammar"
-      }
+      },
+      "value": -1
     },
     "_ambient_declaration_global": {
       "type": "SEQ",
@@ -14350,10 +14358,6 @@
     [
       "primary_expression",
       "_property_name"
-    ],
-    [
-      "primary_expression",
-      "_kind"
     ],
     [
       "labeled_statement",

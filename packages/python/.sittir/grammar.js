@@ -2540,12 +2540,18 @@ function enumMemberKeySlug(memberKey) {
   }).join("__");
 }
 function deriveCandidateName(group, rules, first) {
+  const existingName = findExistingEnumRuleName(rules, first.memberKey);
+  if (existingName !== void 0) {
+    if (existingName !== first.fieldName && !process.env.SITTIR_QUIET) {
+      process.stderr.write(
+        `enrich: field '${first.fieldName}' on '${first.parentKind}' reuses existing rule '${existingName}' (identical member set) instead of minting a new one
+`
+      );
+    }
+    return { name: existingName, priority: 0 };
+  }
   const allSameFieldName = group.every((o) => o.fieldName === first.fieldName);
   if (allSameFieldName) {
-    const existingMatch = fieldNameMatchesGrammarRule(first.fieldName, rules, first.members);
-    if (existingMatch) {
-      return { name: first.fieldName, priority: 1 };
-    }
     const distinctParents = new Set(group.map((o) => o.parentKind)).size;
     if (distinctParents >= 2) {
       return { name: `_${first.fieldName}`, priority: 2 };
@@ -2553,14 +2559,12 @@ function deriveCandidateName(group, rules, first) {
   }
   return { name: fallbackName(first), priority: 3 };
 }
-function fieldNameMatchesGrammarRule(fieldName, rules, members) {
-  const rule = rules[fieldName];
-  if (rule === void 0) return false;
-  const resolved = resolveToEnumMembersOneLevelDeep(rule);
-  if (resolved === null) return false;
-  const targetKey = [...members].map((m) => m.value).sort().join(",");
-  const ruleKey = buildEnumMemberKey(resolved);
-  return ruleKey === targetKey;
+function findExistingEnumRuleName(rules, memberKey) {
+  for (const [name, rule] of Object.entries(rules)) {
+    const resolved = resolveToEnumMembersOneLevelDeep(rule);
+    if (resolved !== null && buildEnumMemberKey(resolved) === memberKey) return name;
+  }
+  return void 0;
 }
 function rewriteFieldEnums(rule, parentKind, sweep) {
   const { rules, newRules, memberKeyToCanonicalName, conflictingSites } = sweep;
@@ -2616,8 +2620,12 @@ function tryExtractFieldEnum(content, rules, memberKeyToCanonicalName) {
   const memberKey = buildEnumMemberKey(members);
   const enumKindName = memberKeyToCanonicalName.get(memberKey);
   if (enumKindName === void 0) return null;
-  const synthesizedRule = normalizeEnumMembers(members, { author: "grammar" });
-  const symRule = { type: "SYMBOL", name: enumKindName, hidden: true };
+  const synthesizedRule = {
+    type: "PREC",
+    content: normalizeEnumMembers(members, { author: "grammar" }),
+    value: -1
+  };
+  const symRule = { type: "SYMBOL", name: enumKindName, hidden: enumKindName.startsWith("_") };
   const replacementContent = repeatWrapperType === null ? symRule : { ...content, content: symRule };
   return { enumKindName, synthesizedRule, replacementContent };
 }
@@ -2652,9 +2660,10 @@ function resolveToEnumMembers(rule, rules) {
   }
 }
 function resolveToEnumMembersOneLevelDeep(target) {
-  switch (target.type) {
+  const unwrapped = target.type === "PREC" ? target.content : target;
+  switch (unwrapped.type) {
     case "CHOICE": {
-      const members = target.members;
+      const members = unwrapped.members;
       if (members.length < 2) return null;
       const allStrings = members.every((m) => m.type === "STRING");
       return allStrings ? members : null;

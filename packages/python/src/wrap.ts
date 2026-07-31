@@ -5775,7 +5775,7 @@ export function wrapSplatType(data: T.SplatType, tree: TreeHandle) {
 			}),
 
 			identifier() {
-				return drillIn<T.SplatPatternOperator | T.Identifier>(this._identifier, tree);
+				return drillIn<'*' | '**' | T.Identifier>(this._identifier, tree);
 			},
 			$with: {
 				identifier: (v: NonNullable<T.SplatType['_identifier']>) => wrapSplatType({ ...data, _identifier: v }, tree)
@@ -8674,7 +8674,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	await: (d, t) => wrapAwait(d as unknown as T.Await, t),
 	comment: (d) => ({ ...d, $type: TSKindId.Comment as const }),
 	line_continuation: (d) => ({ ...d, $type: TSKindId.LineContinuation as const }),
-	_augmented_assignment_operator: (d) => ({ ...d, $type: TSKindId.AugmentedAssignmentOperator as const }),
 	_except_clause_group1: (d, t) => wrapExceptClauseGroup1(d as unknown as T.ExceptClauseGroup1, t),
 	_argument_list_group1: (d, t) => wrapArgumentListGroup1(d as unknown as T.ArgumentListGroup1, t),
 	_expression_list_group1: (d, t) => wrapExpressionListGroup1(d as unknown as T.ExpressionListGroup1, t),
@@ -8683,6 +8682,7 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_pattern_list_group1: (d, t) => wrapPatternListGroup1(d as unknown as T.PatternListGroup1, t),
 	_slice_group1: (d, t) => wrapSliceGroup1(d as unknown as T.SliceGroup1, t),
 	_dictionary_group1: (d, t) => wrapDictionaryGroup1(d as unknown as T.DictionaryGroup1, t),
+	_augmented_assignment_operator: (d) => ({ ...d, $type: TSKindId.AugmentedAssignmentOperator as const }),
 	_except_clause_as: (d, t) => wrapExceptClauseAs(d as unknown as T.ExceptClauseAs, t),
 	case_tuple_pattern: (d, t) => wrapCaseTuplePattern(d as unknown as T.CaseTuplePattern, t),
 	case_list_pattern: (d, t) => wrapCaseListPattern(d as unknown as T.CaseListPattern, t),
@@ -8724,11 +8724,9 @@ const _aliasTargetToSource: Record<string, string> = {
 	assignment_eq: '_assignment_eq',
 	assignment_type: '_assignment_type',
 	assignment_typed: '_assignment_typed',
-	async_marker: '_async_marker',
 	augmented_assignment_operator: '_augmented_assignment_operator',
 	collection_elements: '_collection_elements',
 	comparison_operator_comparator: '_comparison_operator_comparator',
-	complex_pattern_operator: '_complex_pattern_operator',
 	dict_pattern_group1: '_key_value_pattern',
 	dict_pattern_group2: '_dict_pattern_group2',
 	dict_pattern_kv: '_dict_pattern_kv',
@@ -8743,6 +8741,7 @@ const _aliasTargetToSource: Record<string, string> = {
 	f_expression: '_f_expression',
 	import_list: '_import_list',
 	key_value_pattern: '_key_value_pattern',
+	kw_async_marker: '_kw_async_marker',
 	left_hand_side: '_left_hand_side',
 	list_pattern_group1: '_list_pattern_group1',
 	match_block: '_match_block',
@@ -8756,7 +8755,6 @@ const _aliasTargetToSource: Record<string, string> = {
 	simple_statement: '_simple_statement',
 	simple_statements: '_simple_statements',
 	slice_group1: '_slice_group1',
-	splat_pattern_operator: '_splat_pattern_operator',
 	statement: '_statement',
 	statement_group1: '_simple_statements',
 	suite_block_with_indent: '_suite_block_with_indent',

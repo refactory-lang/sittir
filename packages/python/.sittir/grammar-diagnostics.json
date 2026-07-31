@@ -39,7 +39,7 @@
     "severity": "warning",
     "grammar": "python",
     "ownerKind": "import_from_statement",
-    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root is a REPEATED (order-lossy) mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [future_import_statement_group1] and degenerate arm(s) [field(wildcard_import):\"*\"]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root is a REPEATED (order-lossy) mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [future_import_statement_group1] and degenerate arm(s) [field(wildcard_import):wildcard_import]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
     "canProceed": true
   },
   {
@@ -190,24 +190,21 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "16 referenced kind(s) resolved no parser kindId",
+    "message": "13 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
-        "_async_marker",
-        "_complex_pattern_operator",
         "_except_clause_as_optional1",
         "_exec_statement_optional1",
         "_expressions",
         "_function_definition_optional1",
-        "_import_from_statement_wildcard_import",
+        "_kw_async_marker",
         "_kw_real",
+        "_kw_type",
         "_left_hand_side",
         "_raise_statement_optional1",
         "_simple_statement",
-        "_splat_pattern_operator",
         "_suite",
-        "_type_alias_statement_type",
         "_unary_operator_operator",
         "keyword_identifier"
       ]

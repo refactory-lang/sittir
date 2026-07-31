@@ -469,39 +469,6 @@ describe('Evaluate — evaluate()', () => {
 		expect(raw.word).toBeNull();
 	});
 
-	it('detects enum from choice of strings and synthesizes hidden enum rule', async () => {
-		const raw = await evaluate(fixture('test-grammar.js'));
-		// binary_expression has field('operator', choice('+', '-', '*', '/'))
-		// After synthesis, the field's content is replaced by a SymbolRule
-		// and a hidden rule `_binary_expression_operator` is added to raw.rules.
-		const binExpr = raw.rules['binary_expression'];
-		expect(binExpr!.type).toBe('SEQ');
-		const operatorField = (binExpr as any).members.find((m: any) => m.type === 'FIELD' && m.name === 'operator');
-		// Field content is now a SymbolRule pointing to the synthesized kind.
-		expect(operatorField.content).toEqual(
-			expect.objectContaining({
-				type: 'SYMBOL',
-				name: '_binary_expression_operator',
-				hidden: true
-			})
-		);
-		// The synthesized enum rule exists in raw.rules.
-		// PR-P: type is now 'choice', source moved to metadata.
-		// (debt: source-homonym resolution, decision 6) metadata.source → metadata.author.
-		expect(raw.rules['_binary_expression_operator']).toEqual(
-			expect.objectContaining({
-				type: 'CHOICE',
-				members: [
-					expect.objectContaining({ type: 'STRING', value: '+' }),
-					expect.objectContaining({ type: 'STRING', value: '-' }),
-					expect.objectContaining({ type: 'STRING', value: '*' }),
-					expect.objectContaining({ type: 'STRING', value: '/' })
-				],
-				metadata: { author: 'grammar' }
-			})
-		);
-	});
-
 	it('keeps conflicting same-parent field literal sets inline so simplify can merge them later', async () => {
 		const dir = mkdtempSync(resolve(tmpdir(), 'sittir-evaluate-'));
 		const entry = resolve(dir, 'grammar.js');

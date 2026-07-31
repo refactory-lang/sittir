@@ -189,24 +189,18 @@ export const LEAF_KINDS = [
 	'__error_recovery',
 	'__for_header_operator',
 	'__number_operator',
-	'_abstract_marker',
-	'_accessor_kind',
-	'_async_marker',
 	'_augmented_assignment_expression_operator',
-	'_const_marker',
-	'_export_specifier_export_kind',
-	'_import_attribute_object',
 	'_kind',
+	'_kw_abstract_marker',
+	'_kw_async_marker',
+	'_kw_const_marker',
+	'_kw_readonly_marker',
+	'_kw_static_marker',
 	'_meta_property_group1',
 	'_meta_property_group2',
-	'_object_type_closing',
-	'_object_type_opening',
 	'_operator',
-	'_public_field_definition_optionality_marker',
-	'_readonly_marker',
 	'_reserved_identifier',
 	'_semicolon',
-	'_static_marker',
 	'_template_chars',
 	'_ternary_qmark',
 	'_type_identifier',
@@ -298,11 +292,11 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 
 /** Language keywords (alphabetic anonymous tokens). */
 export const KEYWORDS = [
-	'_abstract_marker',
-	'_async_marker',
-	'_const_marker',
-	'_readonly_marker',
-	'_static_marker',
+	'_kw_abstract_marker',
+	'_kw_async_marker',
+	'_kw_const_marker',
+	'_kw_readonly_marker',
+	'_kw_static_marker',
 	'abstract',
 	'accessor',
 	'anon_asserts',
@@ -370,11 +364,9 @@ export const KEYWORDS = [
 export const OPERATORS = [
 	'/>',
 	'</',
-	'_asserts_annotation_asserts',
 	'_automatic_semicolon',
 	'_function_signature_automatic_semicolon',
-	'_member_expression_separator',
-	'_optional_marker',
+	'_kw_optional_marker',
 	'amp',
 	'amp_amp',
 	'at',
@@ -3120,10 +3112,6 @@ export type ForHeaderOperatorValue = (typeof __FOR_HEADER_OPERATORS)[number];
 export const __NUMBER_OPERATORS = ['-', '+'] as const;
 export type NumberOperatorValue = (typeof __NUMBER_OPERATORS)[number];
 
-/** Valid values for `_accessor_kind` nodes. */
-export const _ACCESSOR_KINDS = ['get', 'set', '*'] as const;
-export type AccessorKindValue = (typeof _ACCESSOR_KINDS)[number];
-
 /** Valid values for `_augmented_assignment_expression_operator` nodes. */
 export const _AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATORS = [
 	'+=',
@@ -3144,33 +3132,13 @@ export const _AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATORS = [
 ] as const;
 export type AugmentedAssignmentExpressionOperatorValue = (typeof _AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATORS)[number];
 
-/** Valid values for `_export_specifier_export_kind` nodes. */
-export const _EXPORT_SPECIFIER_EXPORT_KINDS = ['type', 'typeof'] as const;
-export type ExportSpecifierExportKindValue = (typeof _EXPORT_SPECIFIER_EXPORT_KINDS)[number];
-
-/** Valid values for `_import_attribute_object` nodes. */
-export const _IMPORT_ATTRIBUTE_OBJECTS = ['with', 'assert'] as const;
-export type ImportAttributeObjectValue = (typeof _IMPORT_ATTRIBUTE_OBJECTS)[number];
-
 /** Valid values for `_kind` nodes. */
 export const _KINDS = ['let', 'const'] as const;
 export type KindValue = (typeof _KINDS)[number];
 
-/** Valid values for `_object_type_closing` nodes. */
-export const _OBJECT_TYPE_CLOSINGS = ['}', '|}'] as const;
-export type ObjectTypeClosingValue = (typeof _OBJECT_TYPE_CLOSINGS)[number];
-
-/** Valid values for `_object_type_opening` nodes. */
-export const _OBJECT_TYPE_OPENINGS = ['{', '{|'] as const;
-export type ObjectTypeOpeningValue = (typeof _OBJECT_TYPE_OPENINGS)[number];
-
 /** Valid values for `_operator` nodes. */
 export const _OPERATORS = ['++', '--'] as const;
 export type OperatorValue = (typeof _OPERATORS)[number];
-
-/** Valid values for `_public_field_definition_optionality_marker` nodes. */
-export const _PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKERS = ['?', '!'] as const;
-export type PublicFieldDefinitionOptionalityMarkerValue = (typeof _PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKERS)[number];
 
 /** Valid values for `_reserved_identifier` nodes. */
 export const _RESERVED_IDENTIFIERS = [

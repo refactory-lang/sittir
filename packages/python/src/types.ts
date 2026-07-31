@@ -30,6 +30,7 @@ export type LeafStringMap = {
 	true: 'True';
 	false: 'False';
 	none: 'None';
+	_kw_async_marker: 'async';
 	_unary_operator_operator: '+' | '-' | '~';
 	_augmented_assignment_operator:
 		| '+='
@@ -46,9 +47,6 @@ export type LeafStringMap = {
 		| '^='
 		| '|=';
 	_wildcard_pattern: '_';
-	_async_marker: 'async';
-	_splat_pattern_operator: '*' | '**';
-	_complex_pattern_operator: '+' | '-';
 	import: 'import';
 	from: 'from';
 	__future__: '__future__';
@@ -87,8 +85,8 @@ export type LeafStringMap = {
 	False: 'False';
 	None: 'None';
 	anon_await: 'await';
-	print: 'print';
 	async: 'async';
+	print: 'print';
 };
 
 export const enum SyntaxKind {
@@ -247,12 +245,10 @@ export const enum SyntaxKind {
 	None = 'none',
 	Comment = 'comment',
 	LineContinuation = 'line_continuation',
+	KwAsyncMarker = '_kw_async_marker',
 	UnaryOperatorOperator = '_unary_operator_operator',
 	AugmentedAssignmentOperator = '_augmented_assignment_operator',
 	WildcardPattern = '_wildcard_pattern',
-	AsyncMarker = '_async_marker',
-	SplatPatternOperator = '_splat_pattern_operator',
-	ComplexPatternOperator = '_complex_pattern_operator',
 	Indent = '_indent',
 	Dedent = '_dedent',
 	StringStart = 'string_start',
@@ -301,8 +297,8 @@ export const enum SyntaxKind {
 	False2 = 'False',
 	None2 = 'None',
 	AnonAwait = 'anon_await',
-	Print = 'print',
-	Async = 'async'
+	Async = 'async',
+	Print = 'print'
 }
 
 export const enum TSKindId {
@@ -2855,8 +2851,8 @@ export interface Type {
 
 export interface SplatType {
 	readonly $type: TSKindId.SplatType;
-	readonly _identifier: SplatPatternOperator | Identifier;
-	identifier(): SplatPatternOperator | Identifier;
+	readonly _identifier: '*' | '**' | Identifier;
+	identifier(): '*' | '**' | Identifier;
 }
 
 export interface GenericType {
@@ -3290,8 +3286,6 @@ export type AugmentedAssignmentOperator = Terminal<
 	| TSKindId.PipeEq,
 	'+=' | '-=' | '*=' | '/=' | '@=' | '//=' | '%=' | '**=' | '>>=' | '<<=' | '&=' | '^=' | '|='
 >;
-export type SplatPatternOperator = Terminal<TSKindId.Star | TSKindId.StarStar, '*' | '**'>;
-export type ComplexPatternOperator = Terminal<TSKindId.Plus | TSKindId.Dash, '+' | '-'>;
 export type Indent = Terminal<TSKindId.Indent, string>;
 export type Dedent = Terminal<TSKindId.Dedent, string>;
 export type StringStart = Terminal<TSKindId.StringStart, string>;
@@ -3547,12 +3541,6 @@ export interface UnaryOperatorOperatorTree extends AnyTreeNode {
 export interface AugmentedAssignmentOperatorTree extends AnyTreeNode {
 	readonly type: '_augmented_assignment_operator';
 }
-export interface SplatPatternOperatorTree extends AnyTreeNode {
-	readonly type: '_splat_pattern_operator';
-}
-export interface ComplexPatternOperatorTree extends AnyTreeNode {
-	readonly type: '_complex_pattern_operator';
-}
 export interface IndentTree extends AnyTreeNode {
 	readonly type: '_indent';
 }
@@ -3685,11 +3673,11 @@ export interface None2Tree extends AnyTreeNode {
 export interface AnonAwaitTree extends AnyTreeNode {
 	readonly type: 'anon_await';
 }
-export interface PrintTree extends AnyTreeNode {
-	readonly type: 'print';
-}
 export interface AsyncTree extends AnyTreeNode {
 	readonly type: 'async';
+}
+export interface PrintTree extends AnyTreeNode {
+	readonly type: 'print';
 }
 
 // Supertype unions
@@ -3950,6 +3938,10 @@ export type DictPatternKv = KeyValuePattern | SplatPattern;
 export type DictPatternKvTree = KeyValuePatternTree | SplatPatternTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
+export type WildcardImport = Terminal<TSKindId.WildcardImport>;
+export interface WildcardImportTree extends AnyTreeNode {
+	readonly type: 'wildcard_import';
+}
 export type Ellipsis2 = Terminal<TSKindId.Ellipsis2>;
 export interface Ellipsis2Tree extends AnyTreeNode {
 	readonly type: 'ellipsis';
@@ -4262,8 +4254,6 @@ export interface KindMap {
 	line_continuation: LineContinuation;
 	_unary_operator_operator: UnaryOperatorOperator;
 	_augmented_assignment_operator: AugmentedAssignmentOperator;
-	_splat_pattern_operator: SplatPatternOperator;
-	_complex_pattern_operator: ComplexPatternOperator;
 	_indent: Indent;
 	_dedent: Dedent;
 	string_start: StringStart;

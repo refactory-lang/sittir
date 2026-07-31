@@ -590,7 +590,7 @@ export function buildForStatement(config: T.ForStatement.Config) {
 				_increment,
 				_body,
 				$with: {
-					initializer: (value: T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | ';') =>
+					initializer: (value: T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | T.EmptyStatement) =>
 						buildForStatement({ ...config, initializer: value }),
 					condition: (value: T.Expressions | T.EmptyStatement) => buildForStatement({ ...config, condition: value }),
 					increment: (value?: T.Expressions) => buildForStatement({ ...config, increment: value }),
@@ -2800,30 +2800,6 @@ export function buildReservedIdentifier(
 	return withMethods(
 		{
 			$type: TSKindId.ReservedIdentifier as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildKind(text: 'let' | 'const') {
-	return withMethods(
-		{
-			$type: TSKindId.Kind as const,
-			$source: 2 as const,
-			$named: true as const,
-			$text: text
-		},
-		methodsEngine
-	);
-}
-
-export function buildForHeaderOperator(text: 'in' | 'of') {
-	return withMethods(
-		{
-			$type: TSKindId.ForHeaderOperator as const,
 			$source: 2 as const,
 			$named: true as const,
 			$text: text
@@ -5531,6 +5507,30 @@ export function buildTupleTypeGroup1(elements: NonEmptyArray<T.TupleTypeMember>,
 	);
 }
 
+export function buildKind(text: 'let' | 'const') {
+	return withMethods(
+		{
+			$type: TSKindId.Kind as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
+export function buildForHeaderOperator(text: 'in' | 'of') {
+	return withMethods(
+		{
+			$type: TSKindId.ForHeaderOperator as const,
+			$source: 2 as const,
+			$named: true as const,
+			$text: text
+		},
+		methodsEngine
+	);
+}
+
 export function buildAmbientDeclarationGlobal(config: T.AmbientDeclarationGlobal.Config) {
 	const _body = config.body;
 	return withMethods(
@@ -6811,8 +6811,6 @@ export type FluentKindMap = {
 	pair_pattern: FluentNode<'pair_pattern', T.PairPattern.Config>;
 	computed_property_name: FluentNode<'computed_property_name', T.ComputedPropertyName.Config>;
 	_reserved_identifier: T.ReservedIdentifier;
-	_kind: T.Kind;
-	__for_header_operator: T.ForHeaderOperator;
 	public_field_definition: FluentNode<'public_field_definition', T.PublicFieldDefinition.Config>;
 	non_null_expression: FluentNode<'non_null_expression', T.NonNullExpression.Config>;
 	method_signature: FluentNode<'method_signature', T.MethodSignature.Config>;
@@ -6911,6 +6909,8 @@ export type FluentKindMap = {
 	_formal_parameters_group1: FluentNode<'_formal_parameters_group1', T.FormalParametersGroup1.Config>;
 	_enum_body_group1: T.EnumBodyGroup1;
 	_tuple_type_group1: FluentNode<'_tuple_type_group1', T.TupleTypeGroup1.Config>;
+	_kind: T.Kind;
+	__for_header_operator: T.ForHeaderOperator;
 	_ambient_declaration_global: T.AmbientDeclarationGlobal;
 	_ambient_declaration_module: T.AmbientDeclarationModule;
 	object_type_content: FluentNode<'object_type_content', T.ObjectTypeContent.Config>;
@@ -7080,8 +7080,6 @@ export const _factoryMap = {
 	pair_pattern: buildPairPattern,
 	computed_property_name: buildComputedPropertyName,
 	_reserved_identifier: buildReservedIdentifier,
-	_kind: buildKind,
-	__for_header_operator: buildForHeaderOperator,
 	public_field_definition: buildPublicFieldDefinition,
 	non_null_expression: buildNonNullExpression,
 	method_signature: buildMethodSignature,
@@ -7177,6 +7175,8 @@ export const _factoryMap = {
 	_formal_parameters_group1: buildFormalParametersGroup1,
 	_enum_body_group1: buildEnumBodyGroup1,
 	_tuple_type_group1: buildTupleTypeGroup1,
+	_kind: buildKind,
+	__for_header_operator: buildForHeaderOperator,
 	_ambient_declaration_global: buildAmbientDeclarationGlobal,
 	_ambient_declaration_module: buildAmbientDeclarationModule,
 	object_type_content: buildObjectTypeContent,

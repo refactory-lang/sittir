@@ -61,8 +61,6 @@ import type {
 	ComparisonOperator,
 	ComparisonOperatorTree,
 	ComplexPattern,
-	ComplexPatternOperator,
-	ComplexPatternOperatorTree,
 	ComplexPatternTree,
 	ComprehensionClauses,
 	ComprehensionClausesTree,
@@ -253,8 +251,6 @@ import type {
 	SliceGroup1Tree,
 	SliceTree,
 	SplatPattern,
-	SplatPatternOperator,
-	SplatPatternOperatorTree,
 	SplatPatternTree,
 	SplatType,
 	SplatTypeTree,
@@ -544,12 +540,6 @@ export type _Type_AugmentedAssignmentOperator = _TypeAssert<
 		| TSKindId.PipeEq
 	>
 >;
-export type _Type_SplatPatternOperator = _TypeAssert<
-	_TypeExtends<SplatPatternOperator['$type'], TSKindId.Star | TSKindId.StarStar>
->;
-export type _Type_ComplexPatternOperator = _TypeAssert<
-	_TypeExtends<ComplexPatternOperator['$type'], TSKindId.Plus | TSKindId.Dash>
->;
 export type _Type_Indent = _TypeAssert<_TypeExtends<Indent['$type'], TSKindId.Indent>>;
 export type _Type_Dedent = _TypeAssert<_TypeExtends<Dedent['$type'], TSKindId.Dedent>>;
 export type _Type_StringStart = _TypeAssert<_TypeExtends<StringStart['$type'], TSKindId.StringStart>>;
@@ -761,12 +751,6 @@ export type _Tree_UnaryOperatorOperator = _TypeAssert<
 >;
 export type _Tree_AugmentedAssignmentOperator = _TypeAssert<
 	_TypeExtends<AugmentedAssignmentOperatorTree['type'], '_augmented_assignment_operator'>
->;
-export type _Tree_SplatPatternOperator = _TypeAssert<
-	_TypeExtends<SplatPatternOperatorTree['type'], '_splat_pattern_operator'>
->;
-export type _Tree_ComplexPatternOperator = _TypeAssert<
-	_TypeExtends<ComplexPatternOperatorTree['type'], '_complex_pattern_operator'>
 >;
 export type _Tree_Indent = _TypeAssert<_TypeExtends<IndentTree['type'], '_indent'>>;
 export type _Tree_Dedent = _TypeAssert<_TypeExtends<DedentTree['type'], '_dedent'>>;

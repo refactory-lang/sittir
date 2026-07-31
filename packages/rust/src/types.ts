@@ -64,22 +64,8 @@ export type LeafStringMap = {
 		| 'bool'
 		| 'str'
 		| 'char';
-	_token_binding_pattern_type:
-		| 'block'
-		| 'expr'
-		| 'expr_2021'
-		| 'ident'
-		| 'item'
-		| 'lifetime'
-		| 'literal'
-		| 'meta'
-		| 'pat'
-		| 'pat_param'
-		| 'path'
-		| 'stmt'
-		| 'tt'
-		| 'ty'
-		| 'vis';
+	_kw_ref_marker: 'ref';
+	_kw_move_marker: 'move';
 	_compound_assignment_expr_operator: '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=';
 	_token_tree_punctuation:
 		| '+'
@@ -158,11 +144,6 @@ export type LeafStringMap = {
 		| 'while';
 	_wildcard_pattern: '_';
 	_pointer_type_const: 'const';
-	_operator: '+' | '*' | '?';
-	_unsafe_marker: 'unsafe';
-	_unary_expression_operator: '-' | '*' | '!';
-	_move_marker: 'move';
-	__range_expression_binary_operator: '..' | '...' | '..=';
 	mod: 'mod';
 	struct: 'struct';
 	union: 'union';
@@ -170,10 +151,10 @@ export type LeafStringMap = {
 	extern: 'extern';
 	const: 'const';
 	static: 'static';
-	ref: 'ref';
 	type: 'type';
 	fn: 'fn';
 	where: 'where';
+	unsafe: 'unsafe';
 	impl: 'impl';
 	trait: 'trait';
 	for: 'for';
@@ -194,13 +175,13 @@ export type LeafStringMap = {
 	break: 'break';
 	continue: 'continue';
 	await: 'await';
-	unsafe: 'unsafe';
 	gen: 'gen';
 	try: 'try';
+	ref: 'ref';
+	move: 'move';
 	_: '_';
 	raw: 'raw';
 	pub: 'pub';
-	move: 'move';
 };
 
 export const enum SyntaxKind {
@@ -439,7 +420,8 @@ export const enum SyntaxKind {
 	Crate = 'crate',
 	Metavariable = 'metavariable',
 	PrimitiveType = '_primitive_type',
-	TokenBindingPatternType = '_token_binding_pattern_type',
+	KwRefMarker = '_kw_ref_marker',
+	KwMoveMarker = '_kw_move_marker',
 	CompoundAssignmentExprOperator = '_compound_assignment_expr_operator',
 	TokenTreePunctuation = '_token_tree_punctuation',
 	TokenKeywords = '_token_keywords',
@@ -448,15 +430,8 @@ export const enum SyntaxKind {
 	PointerTypeConst = '_pointer_type_const',
 	LineCommentRegularDslash = '_line_comment_regular_dslash',
 	LineCommentContent = '_line_comment_content',
-	Operator = '_operator',
-	UnsafeMarker = '_unsafe_marker',
-	UnaryExpressionOperator = '_unary_expression_operator',
-	MoveMarker = '_move_marker',
-	RangeExpressionBinaryOperator = '__range_expression_binary_operator',
 	StringContent = 'string_content',
-	RawStringLiteralStart = '_raw_string_literal_start',
 	RawStringLiteralContent = 'raw_string_literal_content',
-	RawStringLiteralEnd = '_raw_string_literal_end',
 	FloatLiteral = 'float_literal',
 	LineDocContent = '_line_doc_content',
 	ErrorSentinel = '_error_sentinel',
@@ -467,10 +442,10 @@ export const enum SyntaxKind {
 	Extern = 'extern',
 	Const = 'const',
 	Static = 'static',
-	Ref = 'ref',
 	Type = 'type',
 	Fn = 'fn',
 	Where = 'where',
+	Unsafe = 'unsafe',
 	Impl = 'impl',
 	Trait = 'trait',
 	For = 'for',
@@ -491,13 +466,13 @@ export const enum SyntaxKind {
 	Break = 'break',
 	Continue = 'continue',
 	Await = 'await',
-	Unsafe = 'unsafe',
 	Gen = 'gen',
 	Try = 'try',
+	Ref = 'ref',
+	Move = 'move',
 	Anonymous = '_',
 	Raw = 'raw',
-	Pub = 'pub',
-	Move = 'move'
+	Pub = 'pub'
 }
 
 export const enum TSKindId {
@@ -5338,38 +5313,6 @@ export type PrimitiveType = Terminal<
 	| 'str'
 	| 'char'
 >;
-export type TokenBindingPatternType = Terminal<
-	| TSKindId.AnonBlock
-	| TSKindId.Expr
-	| TSKindId.Expr2021
-	| TSKindId.Ident
-	| TSKindId.Item
-	| TSKindId.AnonLifetime
-	| TSKindId.Literal
-	| TSKindId.Meta
-	| TSKindId.Pat
-	| TSKindId.PatParam
-	| TSKindId.Path
-	| TSKindId.Stmt
-	| TSKindId.Tt
-	| TSKindId.Ty
-	| TSKindId.Vis,
-	| 'block'
-	| 'expr'
-	| 'expr_2021'
-	| 'ident'
-	| 'item'
-	| 'lifetime'
-	| 'literal'
-	| 'meta'
-	| 'pat'
-	| 'pat_param'
-	| 'path'
-	| 'stmt'
-	| 'tt'
-	| 'ty'
-	| 'vis'
->;
 export type CompoundAssignmentExprOperator = Terminal<
 	| TSKindId.PlusEq
 	| TSKindId.DashEq
@@ -5536,16 +5479,8 @@ export type TokenKeywords = Terminal<
 export type ReferenceExpressionRawConst = Terminal<TSKindId.ReferenceExpressionRawConst, string>;
 export type LineCommentRegularDslash = Terminal<TSKindId.LineCommentRegularDslash, string>;
 export type LineCommentContent = Terminal<TSKindId.LineCommentContent, string>;
-export type Operator = Terminal<TSKindId.Plus | TSKindId.Star | TSKindId.Qmark, '+' | '*' | '?'>;
-export type UnaryExpressionOperator = Terminal<TSKindId.Dash | TSKindId.Star | TSKindId.Bang, '-' | '*' | '!'>;
-export type RangeExpressionBinaryOperator = Terminal<
-	TSKindId.DotDot | TSKindId.DotDotDot | TSKindId.DotDotEq,
-	'..' | '...' | '..='
->;
 export type StringContent = Terminal<TSKindId.StringContent, string>;
-export type RawStringLiteralStart = Terminal<TSKindId.RawStringLiteralStart, string>;
 export type RawStringLiteralContent = Terminal<TSKindId.RawStringLiteralContent, string>;
-export type RawStringLiteralEnd = Terminal<TSKindId.RawStringLiteralEnd, string>;
 export type FloatLiteral = Terminal<TSKindId.FloatLiteral, string>;
 export type LineDocContent = Terminal<TSKindId.LineDocContent, string>;
 export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
@@ -5964,9 +5899,6 @@ export interface MetavariableTree extends TreeNode<'metavariable'> {}
 export interface PrimitiveTypeTree extends AnyTreeNode {
 	readonly type: '_primitive_type';
 }
-export interface TokenBindingPatternTypeTree extends AnyTreeNode {
-	readonly type: '_token_binding_pattern_type';
-}
 export interface CompoundAssignmentExprOperatorTree extends AnyTreeNode {
 	readonly type: '_compound_assignment_expr_operator';
 }
@@ -5985,24 +5917,9 @@ export interface LineCommentRegularDslashTree extends AnyTreeNode {
 export interface LineCommentContentTree extends AnyTreeNode {
 	readonly type: '_line_comment_content';
 }
-export interface OperatorTree extends AnyTreeNode {
-	readonly type: '_operator';
-}
-export interface UnaryExpressionOperatorTree extends AnyTreeNode {
-	readonly type: '_unary_expression_operator';
-}
-export interface RangeExpressionBinaryOperatorTree extends AnyTreeNode {
-	readonly type: '__range_expression_binary_operator';
-}
 export interface StringContentTree extends TreeNode<'string_content'> {}
-export interface RawStringLiteralStartTree extends AnyTreeNode {
-	readonly type: '_raw_string_literal_start';
-}
 export interface RawStringLiteralContentTree extends AnyTreeNode {
 	readonly type: 'raw_string_literal_content';
-}
-export interface RawStringLiteralEndTree extends AnyTreeNode {
-	readonly type: '_raw_string_literal_end';
 }
 export interface FloatLiteralTree extends TreeNode<'float_literal'> {}
 export interface LineDocContentTree extends AnyTreeNode {
@@ -6032,9 +5949,6 @@ export interface ConstTree extends AnyTreeNode {
 export interface StaticTree extends AnyTreeNode {
 	readonly type: 'static';
 }
-export interface RefTree extends AnyTreeNode {
-	readonly type: 'ref';
-}
 export interface TypeTree extends AnyTreeNode {
 	readonly type: 'type';
 }
@@ -6043,6 +5957,9 @@ export interface FnTree extends AnyTreeNode {
 }
 export interface WhereTree extends AnyTreeNode {
 	readonly type: 'where';
+}
+export interface UnsafeTree extends AnyTreeNode {
+	readonly type: 'unsafe';
 }
 export interface ImplTree extends AnyTreeNode {
 	readonly type: 'impl';
@@ -6104,23 +6021,23 @@ export interface ContinueTree extends AnyTreeNode {
 export interface AwaitTree extends AnyTreeNode {
 	readonly type: 'await';
 }
-export interface UnsafeTree extends AnyTreeNode {
-	readonly type: 'unsafe';
-}
 export interface GenTree extends AnyTreeNode {
 	readonly type: 'gen';
 }
 export interface TryTree extends AnyTreeNode {
 	readonly type: 'try';
 }
+export interface RefTree extends AnyTreeNode {
+	readonly type: 'ref';
+}
+export interface MoveTree extends AnyTreeNode {
+	readonly type: 'move';
+}
 export interface RawTree extends AnyTreeNode {
 	readonly type: 'raw';
 }
 export interface PubTree extends AnyTreeNode {
 	readonly type: 'pub';
-}
-export interface MoveTree extends AnyTreeNode {
-	readonly type: 'move';
 }
 
 // Supertype unions
@@ -7344,20 +7261,14 @@ export interface KindMap {
 	crate: Crate;
 	metavariable: Metavariable;
 	_primitive_type: PrimitiveType;
-	_token_binding_pattern_type: TokenBindingPatternType;
 	_compound_assignment_expr_operator: CompoundAssignmentExprOperator;
 	_token_tree_punctuation: TokenTreePunctuation;
 	_token_keywords: TokenKeywords;
 	_reference_expression_raw_const: ReferenceExpressionRawConst;
 	_line_comment_regular_dslash: LineCommentRegularDslash;
 	_line_comment_content: LineCommentContent;
-	_operator: Operator;
-	_unary_expression_operator: UnaryExpressionOperator;
-	__range_expression_binary_operator: RangeExpressionBinaryOperator;
 	string_content: StringContent;
-	_raw_string_literal_start: RawStringLiteralStart;
 	raw_string_literal_content: RawStringLiteralContent;
-	_raw_string_literal_end: RawStringLiteralEnd;
 	float_literal: FloatLiteral;
 	_line_doc_content: LineDocContent;
 	_error_sentinel: ErrorSentinel;

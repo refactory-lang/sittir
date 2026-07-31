@@ -141,14 +141,12 @@ export const LEAF_KINDS = [
 	']',
 	'_',
 	'__future__',
-	'_async_marker',
 	'_augmented_assignment_operator',
-	'_complex_pattern_operator',
 	'_dedent',
 	'_indent',
 	'_is_not',
+	'_kw_async_marker',
 	'_not_in',
-	'_splat_pattern_operator',
 	'_string_content',
 	'_unary_operator_operator',
 	'_wildcard_pattern',
@@ -218,7 +216,7 @@ export const KEYWORDS = [
 	'True',
 	'_',
 	'__future__',
-	'_async_marker',
+	'_kw_async_marker',
 	'_wildcard_pattern',
 	'and',
 	'anon_await',
@@ -2010,14 +2008,6 @@ export const _AUGMENTED_ASSIGNMENT_OPERATORS = [
 	'|='
 ] as const;
 export type AugmentedAssignmentOperatorValue = (typeof _AUGMENTED_ASSIGNMENT_OPERATORS)[number];
-
-/** Valid values for `_complex_pattern_operator` nodes. */
-export const _COMPLEX_PATTERN_OPERATORS = ['+', '-'] as const;
-export type ComplexPatternOperatorValue = (typeof _COMPLEX_PATTERN_OPERATORS)[number];
-
-/** Valid values for `_splat_pattern_operator` nodes. */
-export const _SPLAT_PATTERN_OPERATORS = ['*', '**'] as const;
-export type SplatPatternOperatorValue = (typeof _SPLAT_PATTERN_OPERATORS)[number];
 
 /** Valid values for `_unary_operator_operator` nodes. */
 export const _UNARY_OPERATOR_OPERATORS = ['+', '-', '~'] as const;

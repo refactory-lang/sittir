@@ -730,9 +730,8 @@ const _K22: readonly string[] = [
 ];
 const _K23: readonly string[] = ['generator_expression', 'argument_list'];
 const _K24: readonly string[] = ['list_splat_pattern', 'dictionary_splat_pattern'];
-const _K25: readonly string[] = ['_splat_pattern_operator', 'identifier'];
-const _K26: readonly string[] = ['interpolation', 'string_content'];
-const _K27: readonly string[] = [
+const _K25: readonly string[] = ['interpolation', 'string_content'];
+const _K26: readonly string[] = [
 	'comparison_operator',
 	'not_operator',
 	'boolean_operator',
@@ -1412,7 +1411,7 @@ export function coerceToSplatPattern(input: T.SplatPattern.Loose): ReturnType<ty
 		operator: _requireField(
 			'splat_pattern',
 			'operator',
-			coerceKindEnumStorage(_resolveOneLeaf<T.SplatPatternOperator>(input.operator, '_splat_pattern_operator'), [
+			coerceKindEnumStorage(_resolveOne<'*' | '**'>(input.operator, _K0, _K0), [
 				['*', TSKindId.Star] as const,
 				['**', TSKindId.StarStar] as const
 			])
@@ -1445,7 +1444,7 @@ export function coerceToComplexPattern(input: T.ComplexPattern.Loose): ReturnTyp
 		operator: _requireField(
 			'complex_pattern',
 			'operator',
-			coerceKindEnumStorage(_resolveOneLeaf<T.ComplexPatternOperator>(input.operator, '_complex_pattern_operator'), [
+			coerceKindEnumStorage(_resolveOne<'+' | '-'>(input.operator, _K0, _K0), [
 				['+', TSKindId.Plus] as const,
 				['-', TSKindId.Dash] as const
 			])
@@ -1776,12 +1775,11 @@ export function coerceToSplatType(input: T.SplatType.Loose): ReturnType<typeof F
 		_requireField(
 			'splat_type',
 			'identifier',
-			_resolveOne<T.SplatPatternOperator | T.Identifier>(
+			_resolveOneLeaf<'*' | '**' | T.Identifier>(
 				input !== null && typeof input === 'object' && !isNodeData(input) && 'identifier' in input
 					? input.identifier
 					: input,
-				_K25,
-				_K0
+				'identifier'
 			)
 		)
 	);
@@ -2006,7 +2004,7 @@ export function coerceToString(input: T.String.Loose): ReturnType<typeof F.build
 			'stringStart',
 			_resolveOneLeaf<T.StringStart>(input.stringStart, 'string_start')
 		),
-		content: _resolveMany<T.Interpolation | T.StringContent>(input.content, _K0, _K26),
+		content: _resolveMany<T.Interpolation | T.StringContent>(input.content, _K0, _K25),
 		stringEnd: _requireField('string', 'stringEnd', _resolveOneLeaf<T.StringEnd>(input.stringEnd, 'string_end'))
 	});
 }
@@ -2026,7 +2024,7 @@ export function coerceToStringContent(
 export function coerceToInterpolation(input: T.Interpolation.Loose): ReturnType<typeof F.buildInterpolation> {
 	if (isNodeData(input)) return input as unknown as ReturnType<typeof F.buildInterpolation>;
 	return F.buildInterpolation({
-		expression: _requireField('interpolation', 'expression', _resolveOne<T.FExpression>(input.expression, _K3, _K27)),
+		expression: _requireField('interpolation', 'expression', _resolveOne<T.FExpression>(input.expression, _K3, _K26)),
 		typeConversion: _resolveOneLeaf<T.TypeConversion>(input.typeConversion, 'type_conversion'),
 		formatSpecifier: _resolveOneBranch<T.FormatSpecifier>(input.formatSpecifier, 'format_specifier')
 	});

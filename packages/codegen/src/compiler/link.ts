@@ -47,6 +47,7 @@ import {
 	isSeq,
 	isChoice,
 	isEnumChoiceRule,
+	literalTextOf,
 	sym,
 	replaceAtPath,
 	isSymbol,
@@ -2611,10 +2612,14 @@ function validateSelection(
 	}
 }
 function unwrapToStringValue(rule: Rule<'link'>): string | undefined {
-	if (isString(rule)) return rule.value;
+	// STRING and literal-carrying link SYMBOLs (canonicalizeRuleLiterals's
+	// anon-token rewrite) are both terminal-valued — literalTextOf covers
+	// both shapes uniformly, same as isEnumChoiceRule's own member check.
+	const literal = literalTextOf(rule);
+	if (literal !== undefined) return literal;
 	if (rule.type === VARIANT) {
 		const inner = (rule as { content: Rule<'link'> }).content;
-		if (isString(inner)) return inner.value;
+		return literalTextOf(inner);
 	}
 	return undefined;
 }

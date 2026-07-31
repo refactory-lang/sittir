@@ -2624,21 +2624,26 @@ function deriveCandidateName(
 	rules: Record<string, Rule>,
 	first: FieldEnumOccurrence
 ): { name: string; priority: number } {
-	const allSameFieldName = group.every((o) => o.fieldName === first.fieldName);
-
-	if (allSameFieldName) {
-		// Priority 1: field name matches an existing grammar rule with same
-		// members — reuse THAT rule's own name verbatim (never re-prefixed).
-		// Underscore-prefixing here would mint a redundant duplicate rule
-		// alongside the real one it's supposed to reuse (harmless while this
-		// synthesis stayed sittir-only/phantom, but pre-generate it mints a
-		// second real symbol tree-sitter now has to disambiguate against the
-		// original — e.g. `_accessibility_modifier` vs `accessibility_modifier`).
-		const existingMatch = fieldNameMatchesGrammarRule(first.fieldName, rules, first.members);
-		if (existingMatch) {
-			return { name: first.fieldName, priority: 1 };
+	// Priority 0: some existing rule, anywhere in the grammar, already has
+	// this exact member set — reuse ITS name verbatim (whatever it is,
+	// visible or hidden), regardless of whether this occurrence's field
+	// happens to share that name. Two rules with identical string-choice
+	// bodies are the same production to tree-sitter; minting a second one
+	// creates a real, separately-symbolized duplicate the LR table
+	// generator then has to disambiguate against the original (e.g.
+	// `_accessibility_modifier` vs the pre-existing `accessibility_modifier`).
+	const existingName = findExistingEnumRuleName(rules, first.memberKey);
+	if (existingName !== undefined) {
+		if (existingName !== first.fieldName && !process.env.SITTIR_QUIET) {
+			process.stderr.write(
+				`enrich: field '${first.fieldName}' on '${first.parentKind}' reuses existing rule '${existingName}' (identical member set) instead of minting a new one\n`
+			);
 		}
+		return { name: existingName, priority: 0 };
+	}
 
+	const allSameFieldName = group.every((o) => o.fieldName === first.fieldName);
+	if (allSameFieldName) {
 		// Priority 2: shared field name across ≥2 distinct parent kinds.
 		const distinctParents = new Set(group.map((o) => o.parentKind)).size;
 		if (distinctParents >= 2) {
@@ -2650,19 +2655,12 @@ function deriveCandidateName(
 	return { name: fallbackName(first), priority: 3 };
 }
 
-function fieldNameMatchesGrammarRule(fieldName: string, rules: Record<string, Rule>, members: StringRule[]): boolean {
-	const rule = rules[fieldName];
-	if (rule === undefined) return false;
-
-	const resolved = resolveToEnumMembersOneLevelDeep(rule);
-	if (resolved === null) return false;
-
-	const targetKey = [...members]
-		.map((m) => m.value)
-		.sort()
-		.join(',');
-	const ruleKey = buildEnumMemberKey(resolved);
-	return ruleKey === targetKey;
+function findExistingEnumRuleName(rules: Record<string, Rule>, memberKey: string): string | undefined {
+	for (const [name, rule] of Object.entries(rules)) {
+		const resolved = resolveToEnumMembersOneLevelDeep(rule);
+		if (resolved !== null && buildEnumMemberKey(resolved) === memberKey) return name;
+	}
+	return undefined;
 }
 
 interface FieldEnumSweepState {
@@ -2744,9 +2742,15 @@ function tryExtractFieldEnum(
 	const enumKindName = memberKeyToCanonicalName.get(memberKey);
 	if (enumKindName === undefined) return null;
 
-	const synthesizedRule = normalizeEnumMembers(members, { author: 'grammar' }) as unknown as Rule;
+	// Low precedence so this newly-real rule defers to whatever else the
+	// same literal can start, without a `conflicts:` entry per occurrence.
+	const synthesizedRule = {
+		type: 'PREC',
+		content: normalizeEnumMembers(members, { author: 'grammar' }),
+		value: -1
+	} as unknown as Rule;
 
-	const symRule = { type: 'SYMBOL', name: enumKindName, hidden: true } as unknown as Rule;
+	const symRule = { type: 'SYMBOL', name: enumKindName, hidden: enumKindName.startsWith('_') } as unknown as Rule;
 	const replacementContent: Rule =
 		repeatWrapperType === null ? symRule : ({ ...(content as object), content: symRule } as unknown as Rule);
 
@@ -2787,9 +2791,13 @@ function resolveToEnumMembers(rule: Rule, rules: Record<string, Rule>): StringRu
 }
 
 function resolveToEnumMembersOneLevelDeep(target: Rule): StringRule[] | null {
-	switch (target.type as string) {
+	// A synthesized field-enum's own body is `prec(-1, …)`-wrapped; peel it
+	// so it still resolves as a reusable CHOICE/STRING enum.
+	const unwrapped =
+		(target.type as string) === 'PREC' ? (target as unknown as { content: Rule }).content : target;
+	switch (unwrapped.type as string) {
 		case 'CHOICE': {
-			const members = (target as unknown as { members: Rule[] }).members;
+			const members = (unwrapped as unknown as { members: Rule[] }).members;
 			if (members.length < 2) return null;
 			const allStrings = members.every((m): m is StringRule => m.type === 'STRING');
 			return allStrings ? (members as unknown as StringRule[]) : null;

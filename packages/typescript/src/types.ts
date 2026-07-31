@@ -55,6 +55,24 @@ export type LeafStringMap = {
 		| 'static'
 		| 'let';
 	_semicolon: '\n' | ';';
+	accessibility_modifier: 'public' | 'private' | 'protected';
+	override_modifier: 'override';
+	predefined_type:
+		| 'any'
+		| 'number'
+		| 'boolean'
+		| 'string'
+		| 'symbol'
+		| 'unique symbol'
+		| 'void'
+		| 'unknown'
+		| 'never'
+		| 'object';
+	_kw_async_marker: 'async';
+	_kw_static_marker: 'static';
+	_kw_readonly_marker: 'readonly';
+	_kw_abstract_marker: 'abstract';
+	_kw_const_marker: 'const';
 	_kind: 'let' | 'const';
 	__for_header_operator: 'in' | 'of';
 	_augmented_assignment_expression_operator:
@@ -74,32 +92,8 @@ export type LeafStringMap = {
 		| '||='
 		| '??=';
 	_unary_expression_operator: '!' | '~' | '-' | '+' | 'typeof' | 'void' | 'delete';
-	accessibility_modifier: 'public' | 'private' | 'protected';
-	override_modifier: 'override';
-	predefined_type:
-		| 'any'
-		| 'number'
-		| 'boolean'
-		| 'string'
-		| 'symbol'
-		| 'unique symbol'
-		| 'void'
-		| 'unknown'
-		| 'never'
-		| 'object';
 	__number_operator: '-' | '+';
 	_operator: '++' | '--';
-	_export_specifier_export_kind: 'type' | 'typeof';
-	_import_attribute_object: 'with' | 'assert';
-	_async_marker: 'async';
-	_static_marker: 'static';
-	_readonly_marker: 'readonly';
-	_accessor_kind: 'get' | 'set' | '*';
-	_public_field_definition_optionality_marker: '?' | '!';
-	_const_marker: 'const';
-	_abstract_marker: 'abstract';
-	_object_type_opening: '{' | '{|';
-	_object_type_closing: '}' | '|}';
 	as: 'as';
 	anon_import: 'import';
 	from: 'from';
@@ -150,9 +144,9 @@ export type LeafStringMap = {
 	keyof: 'keyof';
 	in: 'in';
 	readonly: 'readonly';
+	async: 'async';
 	global: 'global';
 	export: 'export';
-	async: 'async';
 };
 
 export const enum SyntaxKind {
@@ -411,29 +405,23 @@ export const enum SyntaxKind {
 	Undefined = 'undefined',
 	ReservedIdentifier = '_reserved_identifier',
 	Semicolon = '_semicolon',
-	Kind = '_kind',
-	ForHeaderOperator = '__for_header_operator',
-	AugmentedAssignmentExpressionOperator = '_augmented_assignment_expression_operator',
-	UnaryExpressionOperator = '_unary_expression_operator',
 	AccessibilityModifier = 'accessibility_modifier',
 	OverrideModifier = 'override_modifier',
 	PredefinedType = 'predefined_type',
 	TypeIdentifier = '_type_identifier',
-	NumberOperator = '__number_operator',
+	KwAsyncMarker = '_kw_async_marker',
+	KwStaticMarker = '_kw_static_marker',
+	KwReadonlyMarker = '_kw_readonly_marker',
+	KwAbstractMarker = '_kw_abstract_marker',
+	KwConstMarker = '_kw_const_marker',
 	MetaPropertyGroup1 = '_meta_property_group1',
 	MetaPropertyGroup2 = '_meta_property_group2',
+	Kind = '_kind',
+	ForHeaderOperator = '__for_header_operator',
+	AugmentedAssignmentExpressionOperator = '_augmented_assignment_expression_operator',
+	UnaryExpressionOperator = '_unary_expression_operator',
+	NumberOperator = '__number_operator',
 	Operator = '_operator',
-	ExportSpecifierExportKind = '_export_specifier_export_kind',
-	ImportAttributeObject = '_import_attribute_object',
-	AsyncMarker = '_async_marker',
-	StaticMarker = '_static_marker',
-	ReadonlyMarker = '_readonly_marker',
-	AccessorKind = '_accessor_kind',
-	PublicFieldDefinitionOptionalityMarker = '_public_field_definition_optionality_marker',
-	ConstMarker = '_const_marker',
-	AbstractMarker = '_abstract_marker',
-	ObjectTypeOpening = '_object_type_opening',
-	ObjectTypeClosing = '_object_type_closing',
 	TemplateChars = '_template_chars',
 	TernaryQmark = '_ternary_qmark',
 	HtmlComment = 'html_comment',
@@ -490,9 +478,9 @@ export const enum SyntaxKind {
 	Keyof = 'keyof',
 	In = 'in',
 	Readonly = 'readonly',
+	Async = 'async',
 	Global = 'global',
-	Export = 'export',
-	Async = 'async'
+	Export = 'export'
 }
 
 export const enum TSKindId {
@@ -3320,8 +3308,8 @@ export interface ImportSpecifier {
 
 export interface ImportAttribute {
 	readonly $type: TSKindId.ImportAttribute;
-	readonly _object: ImportAttributeObject | Object;
-	object(): ImportAttributeObject | Object;
+	readonly _object: 'with' | 'assert' | Object;
+	object(): 'with' | 'assert' | Object;
 }
 
 export interface ExpressionStatement {
@@ -3403,11 +3391,11 @@ export interface SwitchStatement {
 
 export interface ForStatement {
 	readonly $type: TSKindId.ForStatement;
-	readonly _initializer: LexicalDeclaration | VariableDeclaration | Expressions | ';';
+	readonly _initializer: LexicalDeclaration | VariableDeclaration | Expressions | EmptyStatement;
 	readonly _condition: Expressions | EmptyStatement;
 	readonly _increment?: Expressions;
 	readonly _body: Statement;
-	initializer(): LexicalDeclaration | VariableDeclaration | Expressions | ';';
+	initializer(): LexicalDeclaration | VariableDeclaration | Expressions | EmptyStatement;
 	condition(): Expressions | EmptyStatement;
 	increment(): Expressions | undefined;
 	body(): Statement;
@@ -5682,6 +5670,27 @@ export type ReservedIdentifier = Terminal<
 	| 'let'
 >;
 export type Semicolon = Terminal<TSKindId.AutomaticSemicolon | TSKindId.Semi, '\n' | ';'>;
+export type AccessibilityModifier = Terminal<
+	TSKindId.Public | TSKindId.Private | TSKindId.Protected,
+	'public' | 'private' | 'protected'
+>;
+export type OverrideModifier = Terminal<TSKindId.OverrideModifier, 'override'>;
+export type PredefinedType = Terminal<
+	| TSKindId.Any
+	| TSKindId.AnonNumber
+	| TSKindId.Boolean
+	| TSKindId.AnonString
+	| TSKindId.Symbol
+	| TSKindId.Unique
+	| TSKindId.Void
+	| TSKindId.Unknown
+	| TSKindId.Never
+	| TSKindId.AnonObject,
+	'any' | 'number' | 'boolean' | 'string' | 'symbol' | 'unique symbol' | 'void' | 'unknown' | 'never' | 'object'
+>;
+export type TypeIdentifier = Terminal<TSKindId.TypeIdentifier, string>;
+export type MetaPropertyGroup1 = Terminal<TSKindId.MetaPropertyGroup1, string>;
+export type MetaPropertyGroup2 = Terminal<TSKindId.MetaPropertyGroup2, string>;
 export type Kind = Terminal<TSKindId.Let | TSKindId.Const, 'let' | 'const'>;
 export type ForHeaderOperator = Terminal<TSKindId.In | TSKindId.Of, 'in' | 'of'>;
 export type AugmentedAssignmentExpressionOperator = Terminal<
@@ -5706,35 +5715,8 @@ export type UnaryExpressionOperator = Terminal<
 	TSKindId.Bang | TSKindId.Tilde | TSKindId.Dash | TSKindId.Plus | TSKindId.Typeof | TSKindId.Void | TSKindId.Delete,
 	'!' | '~' | '-' | '+' | 'typeof' | 'void' | 'delete'
 >;
-export type AccessibilityModifier = Terminal<
-	TSKindId.Public | TSKindId.Private | TSKindId.Protected,
-	'public' | 'private' | 'protected'
->;
-export type OverrideModifier = Terminal<TSKindId.OverrideModifier, 'override'>;
-export type PredefinedType = Terminal<
-	| TSKindId.Any
-	| TSKindId.AnonNumber
-	| TSKindId.Boolean
-	| TSKindId.AnonString
-	| TSKindId.Symbol
-	| TSKindId.Unique
-	| TSKindId.Void
-	| TSKindId.Unknown
-	| TSKindId.Never
-	| TSKindId.AnonObject,
-	'any' | 'number' | 'boolean' | 'string' | 'symbol' | 'unique symbol' | 'void' | 'unknown' | 'never' | 'object'
->;
-export type TypeIdentifier = Terminal<TSKindId.TypeIdentifier, string>;
 export type NumberOperator = Terminal<TSKindId.Dash | TSKindId.Plus, '-' | '+'>;
-export type MetaPropertyGroup1 = Terminal<TSKindId.MetaPropertyGroup1, string>;
-export type MetaPropertyGroup2 = Terminal<TSKindId.MetaPropertyGroup2, string>;
 export type Operator = Terminal<TSKindId.PlusPlus | TSKindId.DashDash, '++' | '--'>;
-export type ExportSpecifierExportKind = Terminal<TSKindId.AnonType | TSKindId.Typeof, 'type' | 'typeof'>;
-export type ImportAttributeObject = Terminal<TSKindId.With | TSKindId.Assert, 'with' | 'assert'>;
-export type AccessorKind = Terminal<TSKindId.Get | TSKindId.Set | TSKindId.Star, 'get' | 'set' | '*'>;
-export type PublicFieldDefinitionOptionalityMarker = Terminal<TSKindId.Qmark | TSKindId.Bang, '?' | '!'>;
-export type ObjectTypeOpening = Terminal<TSKindId.Lbrace | TSKindId.LbracePipe, '{' | '{|'>;
-export type ObjectTypeClosing = Terminal<TSKindId.Rbrace | TSKindId.PipeRbrace, '}' | '|}'>;
 export type TemplateChars = Terminal<TSKindId.TemplateChars, string>;
 export type TernaryQmark = Terminal<TSKindId.TernaryQmark, string>;
 export type HtmlComment = Terminal<TSKindId.HtmlComment, string>;
@@ -6194,6 +6176,20 @@ export interface ReservedIdentifierTree extends AnyTreeNode {
 export interface SemicolonTree extends AnyTreeNode {
 	readonly type: '_semicolon';
 }
+export interface AccessibilityModifierTree extends TreeNode<'accessibility_modifier'> {}
+export interface OverrideModifierTree extends AnyTreeNode {
+	readonly type: 'override_modifier';
+}
+export interface PredefinedTypeTree extends TreeNode<'predefined_type'> {}
+export interface TypeIdentifierTree extends AnyTreeNode {
+	readonly type: '_type_identifier';
+}
+export interface MetaPropertyGroup1Tree extends AnyTreeNode {
+	readonly type: '_meta_property_group1';
+}
+export interface MetaPropertyGroup2Tree extends AnyTreeNode {
+	readonly type: '_meta_property_group2';
+}
 export interface KindTree extends AnyTreeNode {
 	readonly type: '_kind';
 }
@@ -6206,43 +6202,11 @@ export interface AugmentedAssignmentExpressionOperatorTree extends AnyTreeNode {
 export interface UnaryExpressionOperatorTree extends AnyTreeNode {
 	readonly type: '_unary_expression_operator';
 }
-export interface AccessibilityModifierTree extends TreeNode<'accessibility_modifier'> {}
-export interface OverrideModifierTree extends AnyTreeNode {
-	readonly type: 'override_modifier';
-}
-export interface PredefinedTypeTree extends TreeNode<'predefined_type'> {}
-export interface TypeIdentifierTree extends AnyTreeNode {
-	readonly type: '_type_identifier';
-}
 export interface NumberOperatorTree extends AnyTreeNode {
 	readonly type: '__number_operator';
 }
-export interface MetaPropertyGroup1Tree extends AnyTreeNode {
-	readonly type: '_meta_property_group1';
-}
-export interface MetaPropertyGroup2Tree extends AnyTreeNode {
-	readonly type: '_meta_property_group2';
-}
 export interface OperatorTree extends AnyTreeNode {
 	readonly type: '_operator';
-}
-export interface ExportSpecifierExportKindTree extends AnyTreeNode {
-	readonly type: '_export_specifier_export_kind';
-}
-export interface ImportAttributeObjectTree extends AnyTreeNode {
-	readonly type: '_import_attribute_object';
-}
-export interface AccessorKindTree extends AnyTreeNode {
-	readonly type: '_accessor_kind';
-}
-export interface PublicFieldDefinitionOptionalityMarkerTree extends AnyTreeNode {
-	readonly type: '_public_field_definition_optionality_marker';
-}
-export interface ObjectTypeOpeningTree extends AnyTreeNode {
-	readonly type: '_object_type_opening';
-}
-export interface ObjectTypeClosingTree extends AnyTreeNode {
-	readonly type: '_object_type_closing';
 }
 export interface TemplateCharsTree extends AnyTreeNode {
 	readonly type: '_template_chars';
@@ -6410,14 +6374,14 @@ export interface InTree extends AnyTreeNode {
 export interface ReadonlyTree extends AnyTreeNode {
 	readonly type: 'readonly';
 }
+export interface AsyncTree extends AnyTreeNode {
+	readonly type: 'async';
+}
 export interface GlobalTree extends AnyTreeNode {
 	readonly type: 'global';
 }
 export interface ExportTree extends AnyTreeNode {
 	readonly type: 'export';
-}
-export interface AsyncTree extends AnyTreeNode {
-	readonly type: 'async';
 }
 
 // refine() per-form Tree aliases — same shape as the base kind Tree.
@@ -6766,6 +6730,10 @@ export type PropertyIdentifierTree = JsxIdentifierTree | IdentifierTree;
 export type EmptyStatement = Terminal<TSKindId.EmptyStatement>;
 export interface EmptyStatementTree extends AnyTreeNode {
 	readonly type: 'empty_statement';
+}
+export type OptionalChain = Terminal<TSKindId.OptionalChain>;
+export interface OptionalChainTree extends AnyTreeNode {
+	readonly type: 'optional_chain';
 }
 export type ExistentialType = Terminal<TSKindId.ExistentialType>;
 export interface ExistentialTypeTree extends AnyTreeNode {
@@ -7262,24 +7230,18 @@ export interface KindMap {
 	undefined: Undefined;
 	_reserved_identifier: ReservedIdentifier;
 	_semicolon: Semicolon;
-	_kind: Kind;
-	__for_header_operator: ForHeaderOperator;
-	_augmented_assignment_expression_operator: AugmentedAssignmentExpressionOperator;
-	_unary_expression_operator: UnaryExpressionOperator;
 	accessibility_modifier: AccessibilityModifier;
 	override_modifier: OverrideModifier;
 	predefined_type: PredefinedType;
 	_type_identifier: TypeIdentifier;
-	__number_operator: NumberOperator;
 	_meta_property_group1: MetaPropertyGroup1;
 	_meta_property_group2: MetaPropertyGroup2;
+	_kind: Kind;
+	__for_header_operator: ForHeaderOperator;
+	_augmented_assignment_expression_operator: AugmentedAssignmentExpressionOperator;
+	_unary_expression_operator: UnaryExpressionOperator;
+	__number_operator: NumberOperator;
 	_operator: Operator;
-	_export_specifier_export_kind: ExportSpecifierExportKind;
-	_import_attribute_object: ImportAttributeObject;
-	_accessor_kind: AccessorKind;
-	_public_field_definition_optionality_marker: PublicFieldDefinitionOptionalityMarker;
-	_object_type_opening: ObjectTypeOpening;
-	_object_type_closing: ObjectTypeClosing;
 	_template_chars: TemplateChars;
 	_ternary_qmark: TernaryQmark;
 	html_comment: HtmlComment;

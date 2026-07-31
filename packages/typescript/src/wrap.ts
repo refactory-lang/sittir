@@ -1483,7 +1483,7 @@ export function wrapImportAttribute(data: T.ImportAttribute, tree: TreeHandle) {
 			}),
 
 			object() {
-				return drillIn<T.ImportAttributeObject | T.Object>(this._object, tree);
+				return drillIn<'with' | 'assert' | T.Object>(this._object, tree);
 			},
 			$with: {
 				object: (v: NonNullable<T.ImportAttribute['_object']>) => wrapImportAttribute({ ...data, _object: v }, tree)
@@ -2023,7 +2023,10 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
 			}),
 
 			initializer() {
-				return drillIn<T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | ';'>(this._initializer, tree);
+				return drillIn<T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | T.EmptyStatement>(
+					this._initializer,
+					tree
+				);
 			},
 			condition() {
 				return drillIn<T.Expressions | T.EmptyStatement>(this._condition, tree);
@@ -13006,8 +13009,6 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_shorthand_property_identifier_pattern: (d, t) =>
 		wrapShorthandPropertyIdentifierPattern(d as unknown as T.ShorthandPropertyIdentifierPattern, t),
 	_property_identifier: (d, t) => wrap_PropertyIdentifier(d as unknown as T._PropertyIdentifier, t),
-	_kind: (d) => ({ ...d, $type: TSKindId.Kind as const }),
-	__for_header_operator: (d) => ({ ...d, $type: TSKindId.ForHeaderOperator as const }),
 	public_field_definition: (d, t) => wrapPublicFieldDefinition(d as unknown as T.PublicFieldDefinition, t),
 	_import_identifier: (d, t) => wrapImportIdentifier(d as unknown as T.ImportIdentifier, t),
 	non_null_expression: (d, t) => wrapNonNullExpression(d as unknown as T.NonNullExpression, t),
@@ -13113,6 +13114,8 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 	_formal_parameters_group1: (d, t) => wrapFormalParametersGroup1(d as unknown as T.FormalParametersGroup1, t),
 	_enum_body_group1: (d, t) => wrapEnumBodyGroup1(d as unknown as T.EnumBodyGroup1, t),
 	_tuple_type_group1: (d, t) => wrapTupleTypeGroup1(d as unknown as T.TupleTypeGroup1, t),
+	_kind: (d) => ({ ...d, $type: TSKindId.Kind as const }),
+	__for_header_operator: (d) => ({ ...d, $type: TSKindId.ForHeaderOperator as const }),
 	_ambient_declaration_global: (d, t) => wrapAmbientDeclarationGlobal(d as unknown as T.AmbientDeclarationGlobal, t),
 	_ambient_declaration_module: (d, t) => wrapAmbientDeclarationModule(d as unknown as T.AmbientDeclarationModule, t),
 	object_type_content: (d, t) => wrapObjectTypeContent(d as unknown as T.ObjectTypeContent, t),
@@ -13190,13 +13193,10 @@ const _aliasTargetToSource: Record<string, string> = {
 	_statement_identifier_group1: '_reserved_identifier',
 	_string: '_jsx_string',
 	_this_type: 'this',
-	abstract_marker: '_abstract_marker',
-	accessor_kind: '_accessor_kind',
 	ambient_declaration_global: '_ambient_declaration_global',
 	ambient_declaration_module: '_ambient_declaration_module',
 	arrow_function__call_signature: '_arrow_function__call_signature',
 	arrow_function_parameter: '_arrow_function_parameter',
-	async_marker: '_async_marker',
 	augmented_assignment_expression_operator: '_augmented_assignment_expression_operator',
 	binary_expression_group1: '_binary_expression_group1',
 	call_expression_call: '_call_expression_call',
@@ -13207,11 +13207,9 @@ const _aliasTargetToSource: Record<string, string> = {
 	class_body_method: '_class_body_method',
 	class_body_method_sig: '_class_body_method_sig',
 	class_heritage_extends_clause: '_class_heritage_extends_clause',
-	const_marker: '_const_marker',
 	destructuring_pattern: '_destructuring_pattern',
 	enum_body_group1: '_enum_body_group1',
 	export_clause_group1: '_export_clause_group1',
-	export_specifier_export_kind: '_export_specifier_export_kind',
 	export_statement_default: '_export_statement_default',
 	export_statement_default_clause_from: '_export_statement_default_clause_from',
 	export_statement_default_decl_arm: '_export_statement_default_decl_arm',
@@ -13231,7 +13229,6 @@ const _aliasTargetToSource: Record<string, string> = {
 	for_header_var_kind: '_for_header_var_kind',
 	formal_parameter: '_formal_parameter',
 	formal_parameters_group1: '_formal_parameters_group1',
-	import_attribute_object: '_import_attribute_object',
 	import_clause_default_import: '_import_clause_default_import',
 	import_clause_group1: '_import_clause_group1',
 	import_identifier: '_import_identifier',
@@ -13245,31 +13242,31 @@ const _aliasTargetToSource: Record<string, string> = {
 	jsx_opening_element_content: '_jsx_opening_element_content',
 	jsx_start_opening_element_group1: '_jsx_start_opening_element_group1',
 	kind: '_kind',
+	kw_abstract_marker: '_kw_abstract_marker',
+	kw_async_marker: '_kw_async_marker',
+	kw_const_marker: '_kw_const_marker',
+	kw_readonly_marker: '_kw_readonly_marker',
+	kw_static_marker: '_kw_static_marker',
 	lhs_expression: '_lhs_expression',
 	meta_property_group1: '_meta_property_group1',
 	meta_property_group2: '_meta_property_group2',
 	module_export_name: '_module_export_name',
 	named_imports_group1: '_named_imports_group1',
 	number_operator: '__number_operator',
-	object_type_closing: '_object_type_closing',
-	object_type_opening: '_object_type_opening',
 	operator: '_operator',
 	parenthesized_expression_typed: '_parenthesized_expression_typed',
 	property_name: '_property_name',
 	public_field_definition_abstract_first: '_public_field_definition_abstract_first',
 	public_field_definition_access_first: '_public_field_definition_access_first',
 	public_field_definition_declare_first: '_public_field_definition_declare_first',
-	public_field_definition_optionality_marker: '_public_field_definition_optionality_marker',
 	public_field_definition_readonly_first: '_public_field_definition_readonly_first',
 	public_field_definition_static_mods: '_public_field_definition_static_mods',
-	readonly_marker: '_readonly_marker',
 	reserved_identifier: '_reserved_identifier',
 	semicolon: '_semicolon',
 	shorthand_property_identifier: '_shorthand_property_identifier',
 	shorthand_property_identifier_pattern: '_shorthand_property_identifier_pattern',
 	statement_identifier: '_statement_identifier',
 	statement_identifier_group1: '_reserved_identifier',
-	static_marker: '_static_marker',
 	string_double: '_string_double',
 	string_single: '_string_single',
 	template_chars: '_template_chars',

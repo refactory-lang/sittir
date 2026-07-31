@@ -36,8 +36,6 @@ exports[`@sittir/python — API surface snapshot (SC-008) > top-level exports 1`
   "TSFieldId": "object",
   "TSKindId": "object",
   "_AUGMENTED_ASSIGNMENT_OPERATORS": "array",
-  "_COMPLEX_PATTERN_OPERATORS": "array",
-  "_SPLAT_PATTERN_OPERATORS": "array",
   "_UNARY_OPERATOR_OPERATORS": "array",
   "_fromMap": "object",
   "applyEdits": "function",

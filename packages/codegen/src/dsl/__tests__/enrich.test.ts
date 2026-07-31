@@ -649,4 +649,93 @@ describe('enrich()', () => {
 			expect(out.grammar.rules.alias_rule).toEqual(input.grammar.rules.alias_rule);
 		});
 	});
+
+	describe('field-enum synthesis', () => {
+		it('detects enum from choice of strings and synthesizes hidden enum rule', () => {
+			const input = mkGrammar({
+				binary_expression: {
+					type: SEQ,
+					members: [
+						{ type: FIELD, name: 'left', content: { type: SYMBOL, name: 'identifier' } },
+						{
+							type: FIELD,
+							name: 'operator',
+							content: {
+								type: CHOICE,
+								members: [
+									{ type: STRING, value: '+' },
+									{ type: STRING, value: '-' },
+									{ type: STRING, value: '*' },
+									{ type: STRING, value: '/' }
+								]
+							}
+						},
+						{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'identifier' } }
+					]
+				},
+				identifier: { type: SYMBOL, name: 'identifier' }
+			});
+			const out = runEnrich(input);
+			const binExpr = out.grammar.rules.binary_expression as { type: 'SEQ'; members: Rule[] };
+			const operatorField = binExpr.members.find(
+				(m) => (m as { type: string; name?: string }).type === 'FIELD' && (m as { name?: string }).name === 'operator'
+			) as { type: 'FIELD'; name: string; content: Rule } | undefined;
+			// Field content is now a SymbolRule pointing to the synthesized kind.
+			expect(operatorField!.content).toEqual(
+				expect.objectContaining({
+					type: 'SYMBOL',
+					name: '_binary_expression_operator',
+					hidden: true
+				})
+			);
+			// The synthesized enum rule exists in the enriched rules bag, low
+			// precedence so it defers to whatever else the same literal starts.
+			expect(out.grammar.rules._binary_expression_operator).toEqual({
+				type: 'PREC',
+				content: {
+					type: 'CHOICE',
+					members: [
+						{ type: 'STRING', value: '+' },
+						{ type: 'STRING', value: '-' },
+						{ type: 'STRING', value: '*' },
+						{ type: 'STRING', value: '/' }
+					],
+					metadata: { author: 'grammar' }
+				},
+				value: -1
+			});
+		});
+
+		it('reuses an existing rule with an identical member set instead of minting a duplicate', () => {
+			const input = mkGrammar({
+				accessibility_modifier: {
+					type: CHOICE,
+					members: [
+						{ type: STRING, value: 'public' },
+						{ type: STRING, value: 'private' },
+						{ type: STRING, value: 'protected' }
+					]
+				},
+				public_field_definition: {
+					type: FIELD,
+					name: 'modifier',
+					content: {
+						type: CHOICE,
+						members: [
+							{ type: STRING, value: 'public' },
+							{ type: STRING, value: 'private' },
+							{ type: STRING, value: 'protected' }
+						]
+					}
+				}
+			});
+			const out = runEnrich(input);
+			const field = out.grammar.rules.public_field_definition as { type: 'FIELD'; content: Rule };
+			// Reuses the pre-existing VISIBLE rule directly -- no new
+			// `_public_field_definition_modifier` (or similarly prefixed)
+			// duplicate gets minted alongside it.
+			expect(field.content).toEqual({ type: 'SYMBOL', name: 'accessibility_modifier', hidden: false });
+			expect(Object.keys(out.grammar.rules)).not.toContain('_public_field_definition_modifier');
+		});
+	});
 });
