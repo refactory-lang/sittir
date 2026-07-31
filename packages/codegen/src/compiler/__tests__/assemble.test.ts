@@ -963,4 +963,20 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		expect(aliasNode).toBeInstanceOf(AssembledSupertype);
 		expect((aliasNode as AssembledSupertype).subtypeNames).toEqual(['identifier']);
 	});
+
+	it('AssembledSupertype constructor reads storageKindId off pre-stamped subtype refs, not the catalog', () => {
+		const rule: Rule<'link'> = {
+			type: SUPERTYPE,
+			name: '_expression',
+			subtypes: [
+				{ type: SYMBOL, name: 'identifier', kindId: 99 },
+				{ type: SYMBOL, name: 'block', aliasedFrom: '_simple_statements', kindId: 42, aliasedFromId: 77 }
+			]
+		};
+		// Empty kindEntries: if the constructor fell back to a catalog lookup
+		// instead of reading the stamp off each ref, storageKindId would come
+		// out undefined for both entries.
+		const node = new AssembledSupertype('_expression', rule, ['identifier', '_simple_statements'], []);
+		expect(node.subtypes.map((s) => s.storageKindId)).toEqual([99, 77]);
+	});
 });
