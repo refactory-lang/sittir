@@ -8,8 +8,6 @@ import type {
 	AbstractMethodSignatureTree,
 	AccessibilityModifier,
 	AccessibilityModifierTree,
-	AccessorKind,
-	AccessorKindTree,
 	AddingTypeAnnotation,
 	AddingTypeAnnotationTree,
 	AmbientDeclaration,
@@ -107,8 +105,6 @@ import type {
 	ExportClauseGroup1Tree,
 	ExportClauseTree,
 	ExportSpecifier,
-	ExportSpecifierExportKind,
-	ExportSpecifierExportKindTree,
 	ExportSpecifierTree,
 	ExportStatement,
 	ExportStatementDefault,
@@ -178,8 +174,6 @@ import type {
 	ImportAlias,
 	ImportAliasTree,
 	ImportAttribute,
-	ImportAttributeObject,
-	ImportAttributeObjectTree,
 	ImportAttributeTree,
 	ImportClause,
 	ImportClauseDefaultImport,
@@ -289,12 +283,8 @@ import type {
 	ObjectPatternTree,
 	ObjectTree,
 	ObjectType,
-	ObjectTypeClosing,
-	ObjectTypeClosingTree,
 	ObjectTypeContent,
 	ObjectTypeContentTree,
-	ObjectTypeOpening,
-	ObjectTypeOpeningTree,
 	ObjectTypeTree,
 	OmittingTypeAnnotation,
 	OmittingTypeAnnotationTree,
@@ -331,8 +321,6 @@ import type {
 	PublicFieldDefinition,
 	PublicFieldDefinitionDeclareFirst,
 	PublicFieldDefinitionDeclareFirstTree,
-	PublicFieldDefinitionOptionalityMarker,
-	PublicFieldDefinitionOptionalityMarkerTree,
 	PublicFieldDefinitionTree,
 	ReadonlyType,
 	ReadonlyTypeTree,
@@ -455,9 +443,7 @@ import type {
 	WithStatement,
 	WithStatementTree,
 	YieldExpression,
-	YieldExpressionTree,
-	_AccessibilityModifier,
-	_AccessibilityModifierTree
+	YieldExpressionTree
 } from './types.js';
 import { TSKindId } from './types.js';
 
@@ -808,6 +794,32 @@ export type _Type_ReservedIdentifier = _TypeAssert<
 export type _Type_Semicolon = _TypeAssert<
 	_TypeExtends<Semicolon['$type'], TSKindId.AutomaticSemicolon | TSKindId.Semi>
 >;
+export type _Type_AccessibilityModifier = _TypeAssert<
+	_TypeExtends<AccessibilityModifier['$type'], TSKindId.Public | TSKindId.Private | TSKindId.Protected>
+>;
+export type _Type_OverrideModifier = _TypeAssert<_TypeExtends<OverrideModifier['$type'], TSKindId.OverrideModifier>>;
+export type _Type_PredefinedType = _TypeAssert<
+	_TypeExtends<
+		PredefinedType['$type'],
+		| TSKindId.Any
+		| TSKindId.AnonNumber
+		| TSKindId.Boolean
+		| TSKindId.AnonString
+		| TSKindId.Symbol
+		| TSKindId.Unique
+		| TSKindId.Void
+		| TSKindId.Unknown
+		| TSKindId.Never
+		| TSKindId.AnonObject
+	>
+>;
+export type _Type_TypeIdentifier = _TypeAssert<_TypeExtends<TypeIdentifier['$type'], TSKindId.TypeIdentifier>>;
+export type _Type_MetaPropertyGroup1 = _TypeAssert<
+	_TypeExtends<MetaPropertyGroup1['$type'], TSKindId.MetaPropertyGroup1>
+>;
+export type _Type_MetaPropertyGroup2 = _TypeAssert<
+	_TypeExtends<MetaPropertyGroup2['$type'], TSKindId.MetaPropertyGroup2>
+>;
 export type _Type_Kind = _TypeAssert<_TypeExtends<Kind['$type'], TSKindId.Let | TSKindId.Const>>;
 export type _Type_ForHeaderOperator = _TypeAssert<_TypeExtends<ForHeaderOperator['$type'], TSKindId.In | TSKindId.Of>>;
 export type _Type_AugmentedAssignmentExpressionOperator = _TypeAssert<
@@ -836,54 +848,7 @@ export type _Type_UnaryExpressionOperator = _TypeAssert<
 		TSKindId.Bang | TSKindId.Tilde | TSKindId.Dash | TSKindId.Plus | TSKindId.Typeof | TSKindId.Void | TSKindId.Delete
 	>
 >;
-export type _Type_AccessibilityModifier = _TypeAssert<
-	_TypeExtends<AccessibilityModifier['$type'], TSKindId.Public | TSKindId.Private | TSKindId.Protected>
->;
-export type _Type_OverrideModifier = _TypeAssert<_TypeExtends<OverrideModifier['$type'], TSKindId.OverrideModifier>>;
-export type _Type_PredefinedType = _TypeAssert<
-	_TypeExtends<
-		PredefinedType['$type'],
-		| TSKindId.Any
-		| TSKindId.AnonNumber
-		| TSKindId.Boolean
-		| TSKindId.AnonString
-		| TSKindId.Symbol
-		| TSKindId.Unique
-		| TSKindId.Void
-		| TSKindId.Unknown
-		| TSKindId.Never
-		| TSKindId.AnonObject
-	>
->;
-export type _Type_TypeIdentifier = _TypeAssert<_TypeExtends<TypeIdentifier['$type'], TSKindId.TypeIdentifier>>;
 export type _Type_NumberOperator = _TypeAssert<_TypeExtends<NumberOperator['$type'], TSKindId.Dash | TSKindId.Plus>>;
-export type _Type_MetaPropertyGroup1 = _TypeAssert<
-	_TypeExtends<MetaPropertyGroup1['$type'], TSKindId.MetaPropertyGroup1>
->;
-export type _Type_MetaPropertyGroup2 = _TypeAssert<
-	_TypeExtends<MetaPropertyGroup2['$type'], TSKindId.MetaPropertyGroup2>
->;
-export type _Type_ExportSpecifierExportKind = _TypeAssert<
-	_TypeExtends<ExportSpecifierExportKind['$type'], TSKindId.AnonType | TSKindId.Typeof>
->;
-export type _Type_ImportAttributeObject = _TypeAssert<
-	_TypeExtends<ImportAttributeObject['$type'], TSKindId.With | TSKindId.Assert>
->;
-export type _Type__AccessibilityModifier = _TypeAssert<
-	_TypeExtends<_AccessibilityModifier['$type'], TSKindId.Public | TSKindId.Private | TSKindId.Protected>
->;
-export type _Type_AccessorKind = _TypeAssert<
-	_TypeExtends<AccessorKind['$type'], TSKindId.Get | TSKindId.Set | TSKindId.Star>
->;
-export type _Type_PublicFieldDefinitionOptionalityMarker = _TypeAssert<
-	_TypeExtends<PublicFieldDefinitionOptionalityMarker['$type'], TSKindId.Qmark | TSKindId.Bang>
->;
-export type _Type_ObjectTypeOpening = _TypeAssert<
-	_TypeExtends<ObjectTypeOpening['$type'], TSKindId.Lbrace | TSKindId.LbracePipe>
->;
-export type _Type_ObjectTypeClosing = _TypeAssert<
-	_TypeExtends<ObjectTypeClosing['$type'], TSKindId.Rbrace | TSKindId.PipeRbrace>
->;
 export type _Type_Operator = _TypeAssert<_TypeExtends<Operator['$type'], TSKindId.PlusPlus | TSKindId.DashDash>>;
 export type _Type_TemplateChars = _TypeAssert<_TypeExtends<TemplateChars['$type'], TSKindId.TemplateChars>>;
 export type _Type_TernaryQmark = _TypeAssert<_TypeExtends<TernaryQmark['$type'], TSKindId.TernaryQmark>>;
@@ -1198,6 +1163,18 @@ export type _Tree_ReservedIdentifier = _TypeAssert<
 	_TypeExtends<ReservedIdentifierTree['type'], '_reserved_identifier'>
 >;
 export type _Tree_Semicolon = _TypeAssert<_TypeExtends<SemicolonTree['type'], '_semicolon'>>;
+export type _Tree_AccessibilityModifier = _TypeAssert<
+	_TypeExtends<AccessibilityModifierTree['type'], 'accessibility_modifier'>
+>;
+export type _Tree_OverrideModifier = _TypeAssert<_TypeExtends<OverrideModifierTree['type'], 'override_modifier'>>;
+export type _Tree_PredefinedType = _TypeAssert<_TypeExtends<PredefinedTypeTree['type'], 'predefined_type'>>;
+export type _Tree_TypeIdentifier = _TypeAssert<_TypeExtends<TypeIdentifierTree['type'], '_type_identifier'>>;
+export type _Tree_MetaPropertyGroup1 = _TypeAssert<
+	_TypeExtends<MetaPropertyGroup1Tree['type'], '_meta_property_group1'>
+>;
+export type _Tree_MetaPropertyGroup2 = _TypeAssert<
+	_TypeExtends<MetaPropertyGroup2Tree['type'], '_meta_property_group2'>
+>;
 export type _Tree_Kind = _TypeAssert<_TypeExtends<KindTree['type'], '_kind'>>;
 export type _Tree_ForHeaderOperator = _TypeAssert<_TypeExtends<ForHeaderOperatorTree['type'], '__for_header_operator'>>;
 export type _Tree_AugmentedAssignmentExpressionOperator = _TypeAssert<
@@ -1206,34 +1183,7 @@ export type _Tree_AugmentedAssignmentExpressionOperator = _TypeAssert<
 export type _Tree_UnaryExpressionOperator = _TypeAssert<
 	_TypeExtends<UnaryExpressionOperatorTree['type'], '_unary_expression_operator'>
 >;
-export type _Tree_AccessibilityModifier = _TypeAssert<
-	_TypeExtends<AccessibilityModifierTree['type'], 'accessibility_modifier'>
->;
-export type _Tree_OverrideModifier = _TypeAssert<_TypeExtends<OverrideModifierTree['type'], 'override_modifier'>>;
-export type _Tree_PredefinedType = _TypeAssert<_TypeExtends<PredefinedTypeTree['type'], 'predefined_type'>>;
-export type _Tree_TypeIdentifier = _TypeAssert<_TypeExtends<TypeIdentifierTree['type'], '_type_identifier'>>;
 export type _Tree_NumberOperator = _TypeAssert<_TypeExtends<NumberOperatorTree['type'], '__number_operator'>>;
-export type _Tree_MetaPropertyGroup1 = _TypeAssert<
-	_TypeExtends<MetaPropertyGroup1Tree['type'], '_meta_property_group1'>
->;
-export type _Tree_MetaPropertyGroup2 = _TypeAssert<
-	_TypeExtends<MetaPropertyGroup2Tree['type'], '_meta_property_group2'>
->;
-export type _Tree_ExportSpecifierExportKind = _TypeAssert<
-	_TypeExtends<ExportSpecifierExportKindTree['type'], '_export_specifier_export_kind'>
->;
-export type _Tree_ImportAttributeObject = _TypeAssert<
-	_TypeExtends<ImportAttributeObjectTree['type'], '_import_attribute_object'>
->;
-export type _Tree__AccessibilityModifier = _TypeAssert<
-	_TypeExtends<_AccessibilityModifierTree['type'], '_accessibility_modifier'>
->;
-export type _Tree_AccessorKind = _TypeAssert<_TypeExtends<AccessorKindTree['type'], '_accessor_kind'>>;
-export type _Tree_PublicFieldDefinitionOptionalityMarker = _TypeAssert<
-	_TypeExtends<PublicFieldDefinitionOptionalityMarkerTree['type'], '_public_field_definition_optionality_marker'>
->;
-export type _Tree_ObjectTypeOpening = _TypeAssert<_TypeExtends<ObjectTypeOpeningTree['type'], '_object_type_opening'>>;
-export type _Tree_ObjectTypeClosing = _TypeAssert<_TypeExtends<ObjectTypeClosingTree['type'], '_object_type_closing'>>;
 export type _Tree_Operator = _TypeAssert<_TypeExtends<OperatorTree['type'], '_operator'>>;
 export type _Tree_TemplateChars = _TypeAssert<_TypeExtends<TemplateCharsTree['type'], '_template_chars'>>;
 export type _Tree_TernaryQmark = _TypeAssert<_TypeExtends<TernaryQmarkTree['type'], '_ternary_qmark'>>;

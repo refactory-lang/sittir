@@ -143,67 +143,40 @@
     "source": "grammar",
     "grammar": "rust",
     "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_mutable_specifier",
-    "message": "[assemble] typeName collision: kind '_mutable_specifier' renamed 'MutableSpecifier' → '_MutableSpecifier' (visible sibling(s): 'mutable_specifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "MutableSpecifier",
-      "newType": "_MutableSpecifier",
-      "visibleKinds": [
-        "mutable_specifier"
-      ]
-    },
-    "location": "_mutable_specifier"
-  },
-  {
-    "source": "grammar",
-    "grammar": "rust",
-    "backend": "native",
     "code": "kindid-unstamped-symbols",
-    "message": "42 referenced kind(s) resolved no parser kindId",
+    "message": "34 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
-        "__range_expression_binary_operator",
         "_abstract_type_optional1",
         "_array_type_optional1",
-        "_closure_expression_async_marker",
-        "_closure_expression_static_marker",
+        "_async_marker",
         "_closure_parameters_optional1",
         "_compound_assignment_expr_operator",
         "_const_parameter_optional1",
-        "_crate",
         "_declaration_statement",
         "_enum_variant_optional1",
         "_expression_ending_with_block",
         "_extern_crate_declaration_optional1",
         "_function_item_optional1",
-        "_generic_type_with_turbofish_turbofish",
         "_in_path",
-        "_kw_ref_marker",
+        "_kw_comma",
+        "_kw_operator",
+        "_kw_pub",
         "_kw_reference",
-        "_last_match_arm_comma",
+        "_kw_turbofish",
         "_let_declaration_optional1",
         "_let_declaration_optional2",
         "_match_block_optional1",
         "_match_pattern_optional1",
         "_move_marker",
-        "_mutable_specifier",
-        "_operator",
-        "_operator__x2ex2e",
         "_path",
         "_primitive_type",
-        "_pub",
+        "_ref_marker",
         "_reserved_identifier",
-        "_self",
-        "_static_item_mutable_specifier",
-        "_token_binding_pattern_type",
+        "_static_marker",
         "_tokens",
         "_type_parameter_optional1",
-        "_unary_expression_operator",
         "_unsafe_marker",
         "_variadic_parameter_optional1",
         "_visibility_modifier_pub_parens",
@@ -211,7 +184,7 @@
         "in_path"
       ]
     },
-    "severity": "info",
+    "severity": "warning",
     "scope": "grammar"
   },
   {
@@ -230,7 +203,102 @@
         "r#\""
       ]
     },
+    "severity": "warning",
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "code": "kindid-inline-excluded-symbols",
+    "message": "24 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "canProceed": true,
     "severity": "info",
+    "details": {
+      "kinds": [
+        "_abstract_type_optional1",
+        "_array_type_optional1",
+        "_closure_parameters_optional1",
+        "_const_parameter_optional1",
+        "_declaration_statement",
+        "_enum_variant_optional1",
+        "_expression_ending_with_block",
+        "_extern_crate_declaration_optional1",
+        "_function_item_optional1",
+        "_kw_comma",
+        "_kw_operator",
+        "_kw_pub",
+        "_kw_reference",
+        "_kw_turbofish",
+        "_let_declaration_optional1",
+        "_let_declaration_optional2",
+        "_match_block_optional1",
+        "_match_pattern_optional1",
+        "_path",
+        "_reserved_identifier",
+        "_tokens",
+        "_type_parameter_optional1",
+        "_variadic_parameter_optional1",
+        "_while_expression_optional1"
+      ]
+    },
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "code": "kindid-vaporized-symbols",
+    "message": "1 referenced kind(s) have no parser symbol, are not in the grammar's inline: array, and are unreachable from the grammar root (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "severity": "info",
+    "details": {
+      "kinds": [
+        "in_path"
+      ]
+    },
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "code": "kindid-vaporized-literals",
+    "message": "5 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "severity": "info",
+    "details": {
+      "texts": [
+        "\"#",
+        "\\",
+        "b",
+        "mut",
+        "r#\""
+      ]
+    },
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "rust",
+    "backend": "native",
+    "code": "kindid-unclassified-symbols",
+    "message": "9 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "canProceed": true,
+    "severity": "warning",
+    "details": {
+      "kinds": [
+        "_async_marker",
+        "_compound_assignment_expr_operator",
+        "_in_path",
+        "_move_marker",
+        "_primitive_type",
+        "_ref_marker",
+        "_static_marker",
+        "_unsafe_marker",
+        "_visibility_modifier_pub_parens"
+      ]
+    },
     "scope": "grammar"
   },
   {
@@ -572,44 +640,6 @@
     "grammar": "typescript",
     "backend": "native",
     "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_accessibility_modifier",
-    "message": "[assemble] typeName collision: kind '_accessibility_modifier' renamed 'AccessibilityModifier' → '_AccessibilityModifier' (visible sibling(s): 'accessibility_modifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "AccessibilityModifier",
-      "newType": "_AccessibilityModifier",
-      "visibleKinds": [
-        "accessibility_modifier"
-      ]
-    },
-    "location": "_accessibility_modifier"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
-    "code": "typename-collision",
-    "severity": "info",
-    "ownerKind": "_override_modifier",
-    "message": "[assemble] typeName collision: kind '_override_modifier' renamed 'OverrideModifier' → '_OverrideModifier' (visible sibling(s): 'override_modifier')",
-    "canProceed": true,
-    "details": {
-      "typeName": "OverrideModifier",
-      "newType": "_OverrideModifier",
-      "visibleKinds": [
-        "override_modifier"
-      ]
-    },
-    "location": "_override_modifier"
-  },
-  {
-    "source": "grammar",
-    "grammar": "typescript",
-    "backend": "native",
-    "scope": "grammar",
     "code": "multi-slot-nested-seq",
     "severity": "warning",
     "ownerKind": "_type_identifier",
@@ -626,30 +656,22 @@
     "grammar": "typescript",
     "backend": "native",
     "code": "kindid-unstamped-symbols",
-    "message": "55 referenced kind(s) resolved no parser kindId",
+    "message": "50 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
-        "__binary_expression_group1_operator",
-        "__for_header_operator",
         "__jsx_start_opening_element_optional1",
         "__number_operator",
         "_abstract_marker",
-        "_accessibility_modifier",
-        "_accessor_kind",
-        "_asserts_annotation_asserts",
-        "_assignment_expression_using_marker",
+        "_accessor_marker",
         "_async_marker",
         "_augmented_assignment_expression_operator",
+        "_await_marker",
         "_const_marker",
         "_declare_marker",
-        "_export_specifier_export_kind",
         "_export_specifier_optional1",
         "_expressions",
-        "_for_in_statement_await_marker",
-        "_for_statement_initializer",
         "_identifier",
-        "_import_attribute_object",
         "_index_signature_optional1",
         "_infer_type_optional1",
         "_jsx_attribute",
@@ -657,37 +679,40 @@
         "_jsx_attribute_optional1",
         "_jsx_attribute_value",
         "_jsx_child",
+        "_jsx_element",
         "_jsx_element_name",
         "_jsx_identifier",
         "_jsx_opening_element_content",
         "_jsx_start_opening_element",
         "_jsx_start_opening_element_group1",
-        "_kind",
-        "_kind__var",
+        "_jsx_string",
+        "_kw_asserts",
+        "_kw_optional_marker",
+        "_kw_type_predicate",
         "_mapped_type_clause_optional1",
-        "_member_expression_separator",
-        "_object_type_closing",
-        "_object_type_opening",
         "_operator",
-        "_optional_marker",
-        "_override_modifier",
-        "_public_field_definition_accessor_marker",
-        "_public_field_definition_optionality_marker",
         "_readonly_marker",
         "_semicolon",
         "_static_marker",
         "_unary_expression_operator",
+        "_using_marker",
         "html_character_reference",
+        "jsx_attribute",
         "jsx_closing_element",
+        "jsx_element",
+        "jsx_expression",
+        "jsx_identifier",
         "jsx_namespace_name",
         "jsx_opening_element",
         "jsx_opening_element_content",
+        "jsx_self_closing_element",
         "jsx_start_opening_element_group1",
+        "statement_identifier_group1",
         "unescaped_double_jsx_string_fragment",
         "unescaped_single_jsx_string_fragment"
       ]
     },
-    "severity": "info",
+    "severity": "warning",
     "scope": "grammar"
   },
   {
@@ -719,7 +744,131 @@
         "n"
       ]
     },
+    "severity": "warning",
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "code": "kindid-inline-excluded-symbols",
+    "message": "18 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "canProceed": true,
     "severity": "info",
+    "details": {
+      "kinds": [
+        "__jsx_start_opening_element_optional1",
+        "_export_specifier_optional1",
+        "_expressions",
+        "_identifier",
+        "_index_signature_optional1",
+        "_infer_type_optional1",
+        "_jsx_attribute",
+        "_jsx_attribute_name",
+        "_jsx_attribute_optional1",
+        "_jsx_attribute_value",
+        "_jsx_child",
+        "_jsx_element",
+        "_jsx_element_name",
+        "_jsx_identifier",
+        "_jsx_start_opening_element",
+        "_kw_optional_marker",
+        "_mapped_type_clause_optional1",
+        "_semicolon"
+      ]
+    },
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "code": "kindid-vaporized-symbols",
+    "message": "17 referenced kind(s) have no parser symbol, are not in the grammar's inline: array, and are unreachable from the grammar root (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "severity": "info",
+    "details": {
+      "kinds": [
+        "_jsx_opening_element_content",
+        "_jsx_start_opening_element_group1",
+        "_jsx_string",
+        "html_character_reference",
+        "jsx_attribute",
+        "jsx_closing_element",
+        "jsx_element",
+        "jsx_expression",
+        "jsx_identifier",
+        "jsx_namespace_name",
+        "jsx_opening_element",
+        "jsx_opening_element_content",
+        "jsx_self_closing_element",
+        "jsx_start_opening_element_group1",
+        "statement_identifier_group1",
+        "unescaped_double_jsx_string_fragment",
+        "unescaped_single_jsx_string_fragment"
+      ]
+    },
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "code": "kindid-vaporized-literals",
+    "message": "18 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "severity": "info",
+    "details": {
+      "texts": [
+        "\n",
+        "#",
+        "/*",
+        "//",
+        "/>",
+        "0",
+        "0B",
+        "0O",
+        "0X",
+        "0b",
+        "0o",
+        "0x",
+        "</",
+        "E",
+        "\\",
+        "_",
+        "e",
+        "n"
+      ]
+    },
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "typescript",
+    "backend": "native",
+    "code": "kindid-unclassified-symbols",
+    "message": "15 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "canProceed": true,
+    "severity": "warning",
+    "details": {
+      "kinds": [
+        "__number_operator",
+        "_abstract_marker",
+        "_accessor_marker",
+        "_async_marker",
+        "_augmented_assignment_expression_operator",
+        "_await_marker",
+        "_const_marker",
+        "_declare_marker",
+        "_kw_asserts",
+        "_kw_type_predicate",
+        "_operator",
+        "_readonly_marker",
+        "_static_marker",
+        "_unary_expression_operator",
+        "_using_marker"
+      ]
+    },
     "scope": "grammar"
   },
   {
@@ -920,7 +1069,7 @@
     "code": "union-slot-mixed-row",
     "severity": "warning",
     "ownerKind": "import_from_statement",
-    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root is a REPEATED (order-lossy) mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [future_import_statement_group1] and degenerate arm(s) [field(wildcard_import):\"*\"]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
+    "message": "[collect-slots] kind 'import_from_statement': choice rule:import_from_statement:root is a REPEATED (order-lossy) mixed row — structured named arm(s) [field(name):choice[2]] alongside union arm(s) [future_import_statement_group1] and degenerate arm(s) [field(wildcard_import):wildcard_import]. Keeping status quo. END-STATE: structured named arm(s) get an inlined kind (PR 3 mint) and join one kind-dispatched union slot.",
     "canProceed": true,
     "location": "import_from_statement"
   },
@@ -1108,30 +1257,28 @@
     "grammar": "python",
     "backend": "native",
     "code": "kindid-unstamped-symbols",
-    "message": "17 referenced kind(s) resolved no parser kindId",
+    "message": "15 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
         "_async_marker",
-        "_augmented_assignment_operator",
-        "_complex_pattern_operator",
+        "_compound_statement",
         "_except_clause_as_optional1",
         "_exec_statement_optional1",
         "_expressions",
         "_function_definition_optional1",
-        "_import_from_statement_wildcard_import",
         "_kw_real",
+        "_kw_type",
         "_left_hand_side",
         "_raise_statement_optional1",
         "_simple_statement",
-        "_splat_pattern_operator",
         "_suite",
-        "_type_alias_statement_type",
         "_unary_operator_operator",
-        "keyword_identifier"
+        "keyword_identifier",
+        "statement_group1"
       ]
     },
-    "severity": "info",
+    "severity": "warning",
     "scope": "grammar"
   },
   {
@@ -1159,7 +1306,92 @@
         "True"
       ]
     },
+    "severity": "warning",
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "code": "kindid-inline-excluded-symbols",
+    "message": "12 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "canProceed": true,
     "severity": "info",
+    "details": {
+      "kinds": [
+        "_compound_statement",
+        "_except_clause_as_optional1",
+        "_exec_statement_optional1",
+        "_expressions",
+        "_function_definition_optional1",
+        "_kw_real",
+        "_kw_type",
+        "_left_hand_side",
+        "_raise_statement_optional1",
+        "_simple_statement",
+        "_suite",
+        "keyword_identifier"
+      ]
+    },
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "code": "kindid-vaporized-symbols",
+    "message": "1 referenced kind(s) have no parser symbol, are not in the grammar's inline: array, and are unreachable from the grammar root (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "severity": "info",
+    "details": {
+      "kinds": [
+        "statement_group1"
+      ]
+    },
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "code": "kindid-vaporized-literals",
+    "message": "14 literal(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "canProceed": true,
+    "severity": "info",
+    "details": {
+      "texts": [
+        "\u0000",
+        "\n",
+        "\r",
+        "#",
+        "...",
+        "0B",
+        "0O",
+        "0X",
+        "0b",
+        "0o",
+        "0x",
+        "False",
+        "None",
+        "True"
+      ]
+    },
+    "scope": "grammar"
+  },
+  {
+    "source": "grammar",
+    "grammar": "python",
+    "backend": "native",
+    "code": "kindid-unclassified-symbols",
+    "message": "2 referenced kind(s) resolved no parser kindId, are reachable from the grammar root, and are not in the inline: array — genuine gap, not an accepted exclusion",
+    "canProceed": true,
+    "severity": "warning",
+    "details": {
+      "kinds": [
+        "_async_marker",
+        "_unary_operator_operator"
+      ]
+    },
     "scope": "grammar"
   },
   {
@@ -2950,18 +3182,6 @@
     "source": "validator",
     "grammar": "typescript",
     "backend": "native",
-    "name": "Ambient declarations [program]",
-    "message": "render: unknown kind id 202 in ForStatementInitializerTransportSlot on ForStatementTransport._initializer on StatementBlockTransport._statements on ModuleTransport._body on AmbientDeclarationTransport._content on ProgramTransport._statements",
-    "input": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}",
-    "stage": "read-render-parse",
-    "code": "read-render-parse-error",
-    "severity": "error",
-    "label": "Ambient declarations [program]"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
     "name": "Typeof types [program]",
     "message": "render: Missing field `_static_marker` on PublicFieldDefinitionTransport._public_field_definition_static_mods on ClassBodyMemberTransport._content on ClassBodyTransport._content on ClassDeclarationTransport._body on AmbientDeclarationTransport._content on ProgramTransport._statements",
     "input": "declare class Linter {\n    static findConfiguration: typeof findConfiguration;\n}",
@@ -2987,7 +3207,7 @@
     "grammar": "typescript",
     "backend": "native",
     "name": "Accessibility modifiers as pair keywords [program]",
-    "message": "render: alias-wrapper kind id 434 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap on ObjectTransport._properties on AssignmentExpressionTransport._right on ExpressionStatementTransport._expressions on ProgramTransport._statements",
+    "message": "render: alias-wrapper kind id 436 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap on ObjectTransport._properties on AssignmentExpressionTransport._right on ExpressionStatementTransport._expressions on ProgramTransport._statements",
     "input": "x = { name, description, private: private_ }",
     "stage": "read-render-parse",
     "code": "read-render-parse-error",
@@ -3072,7 +3292,7 @@
     "grammar": "typescript",
     "backend": "native",
     "name": "Enum declarations [program]",
-    "message": "render: unknown kind id 426 in EnumBodyGroup1ContentTransportSlot on EnumBodyGroup1Transport._content on EnumBodyTransport._enum_body_group1 on EnumDeclarationTransport._body on ProgramTransport._statements",
+    "message": "render: unknown kind id 428 in EnumBodyGroup1ContentTransportSlot on EnumBodyGroup1Transport._content on EnumBodyTransport._enum_body_group1 on EnumDeclarationTransport._body on ProgramTransport._statements",
     "input": "enum Test {\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}\n\nenum Style {\n    None = 0,\n    Bold = 1,\n    Italic = 2,\n    Underline = 4,\n    Emphasis = Bold | Italic,\n    Hyperlink = Bold | Underline\n}",
     "stage": "read-render-parse",
     "code": "read-render-parse-error",
@@ -3154,6 +3374,20 @@
     "code": "read-render-parse-error",
     "severity": "error",
     "label": "Import assert [program]"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "internal_module",
+    "entry": "Ambient declarations",
+    "message": "internal_module[2].statement_block: childCount 7 ≠ 6 [\"{\",function_signature,lexical_declaration,interface_declaration,interface_declaration,\"}\",automatic_semicolon] vs [\"{\",function_signature,lexical_declaration,interface_declaration,interface_declaration,\"}\"]",
+    "input": "namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}",
+    "rendered": "namespace myLib{ function makeGreeting(s:string):string;let numberOfGreetings:number;interface LogOptions{verbose?:boolean;}interface AlertOptions{modal:boolean;title?:string;color?:string;} }",
+    "stage": "read-render-parse-ast-mismatch",
+    "code": "read-render-parse-ast-mismatch",
+    "severity": "error",
+    "label": "Ambient declarations (internal_module)"
   },
   {
     "source": "validator",
@@ -3886,12 +4120,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_static_mods\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"static\"), string(\"readonly\")]) — at 4:3 — near \"public static readonly 'hello'?: int = 'string'\"",
     "stage": "read-render-parse-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -3899,12 +4133,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_static_mods\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"static\"), string(\"readonly\")]) — at 5:3 — near \"static readonly 'hello'?: int = 'string'\"",
     "stage": "read-render-parse-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -3925,12 +4159,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_static_mods\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"static\"), string(\"readonly\")]) — at 4:3 — near \"public static readonly 'hello'?: int = 'string'\"",
     "stage": "read-render-parse-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -3938,12 +4172,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_static_mods\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"static\"), string(\"readonly\")]) — at 5:3 — near \"static readonly 'hello'?: int = 'string'\"",
     "stage": "read-render-parse-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -3977,12 +4211,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_readonly_first\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"readonly\"), string(\"abstract\")]) — at 5:5 — near \"readonly abstract prop: string\"",
     "stage": "read-render-parse-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -3990,12 +4224,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_readonly_first\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"readonly\"), string(\"abstract\")]) — at 5:5 — near \"readonly abstract prop: string\"",
     "stage": "read-render-parse-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -4074,18 +4308,6 @@
     "code": "accessor-throw",
     "severity": "warning",
     "label": "_pattern (pattern, type=297)"
-  },
-  {
-    "source": "validator",
-    "grammar": "typescript",
-    "backend": "native",
-    "name": "Ambient declarations [program]",
-    "message": "render: unknown kind id 202 in ForStatementInitializerTransportSlot on ForStatementTransport._initializer on StatementBlockTransport._statements on ModuleTransport._body on AmbientDeclarationTransport._content on ProgramTransport._statements",
-    "input": "declare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n      case 1:\n          break;\n      default:\n          break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}",
-    "stage": "read-render-parse-shallow",
-    "code": "read-render-parse-shallow-error",
-    "severity": "error",
-    "label": "Ambient declarations [program]"
   },
   {
     "source": "validator",
@@ -4116,7 +4338,7 @@
     "grammar": "typescript",
     "backend": "native",
     "name": "Accessibility modifiers as pair keywords [program]",
-    "message": "render: alias-wrapper kind id 434 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap on ObjectTransport._properties on AssignmentExpressionTransport._right on ExpressionStatementTransport._expressions on ProgramTransport._statements",
+    "message": "render: alias-wrapper kind id 436 in ObjectPropertiesTransportSlot: no kind-keyed child slot to unwrap on ObjectTransport._properties on AssignmentExpressionTransport._right on ExpressionStatementTransport._expressions on ProgramTransport._statements",
     "input": "x = { name, description, private: private_ }",
     "stage": "read-render-parse-shallow",
     "code": "read-render-parse-shallow-error",
@@ -4201,7 +4423,7 @@
     "grammar": "typescript",
     "backend": "native",
     "name": "Enum declarations [program]",
-    "message": "render: unknown kind id 426 in EnumBodyGroup1ContentTransportSlot on EnumBodyGroup1Transport._content on EnumBodyTransport._enum_body_group1 on EnumDeclarationTransport._body on ProgramTransport._statements",
+    "message": "render: unknown kind id 428 in EnumBodyGroup1ContentTransportSlot on EnumBodyGroup1Transport._content on EnumBodyTransport._enum_body_group1 on EnumDeclarationTransport._body on ProgramTransport._statements",
     "input": "enum Test {\n    A,\n    'B',\n    'C' = Math.floor(Math.random() * 1000),\n    D = 10,\n    E\n}\n\nenum Style {\n    None = 0,\n    Bold = 1,\n    Italic = 2,\n    Underline = 4,\n    Emphasis = Bold | Italic,\n    Hyperlink = Bold | Underline\n}",
     "stage": "read-render-parse-shallow",
     "code": "read-render-parse-shallow-error",
@@ -4283,6 +4505,20 @@
     "code": "read-render-parse-shallow-error",
     "severity": "error",
     "label": "Import assert [program]"
+  },
+  {
+    "source": "validator",
+    "grammar": "typescript",
+    "backend": "native",
+    "kind": "internal_module",
+    "entry": "Ambient declarations",
+    "message": "internal_module[2].statement_block: childCount 7 ≠ 6 [\"{\",function_signature,lexical_declaration,interface_declaration,interface_declaration,\"}\",automatic_semicolon] vs [\"{\",function_signature,lexical_declaration,interface_declaration,interface_declaration,\"}\"]",
+    "input": "namespace myLib {\n    function makeGreeting(s: string): string;\n    let numberOfGreetings: number;\n\n    interface LogOptions {\n      verbose?: boolean;\n    }\n    interface AlertOptions {\n      modal: boolean;\n      title?: string;\n      color?: string;\n    }\n}",
+    "rendered": "namespace myLib{ function makeGreeting(s:string):string;let numberOfGreetings:number;interface LogOptions{verbose?:boolean;}interface AlertOptions{modal:boolean;title?:string;color?:string;} }",
+    "stage": "read-render-parse-shallow-ast-mismatch",
+    "code": "read-render-parse-shallow-ast-mismatch",
+    "severity": "error",
+    "label": "Ambient declarations (internal_module)"
   },
   {
     "source": "validator",
@@ -5015,12 +5251,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_static_mods\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"static\"), string(\"readonly\")]) — at 4:3 — near \"public static readonly 'hello'?: int = 'string'\"",
     "stage": "read-render-parse-shallow-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -5028,12 +5264,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_static_mods\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"static\"), string(\"readonly\")]) — at 5:3 — near \"static readonly 'hello'?: int = 'string'\"",
     "stage": "read-render-parse-shallow-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -5054,12 +5290,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_static_mods\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"static\"), string(\"readonly\")]) — at 4:3 — near \"public static readonly 'hello'?: int = 'string'\"",
     "stage": "read-render-parse-shallow-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -5067,12 +5303,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_static_mods\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"static\"), string(\"readonly\")]) — at 5:3 — near \"static readonly 'hello'?: int = 'string'\"",
     "stage": "read-render-parse-shallow-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -5106,12 +5342,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_readonly_first\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"readonly\"), string(\"abstract\")]) — at 5:5 — near \"readonly abstract prop: string\"",
     "stage": "read-render-parse-shallow-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -5119,12 +5355,12 @@
     "backend": "native",
     "key": "_content",
     "accessor": "content",
-    "type": 385,
+    "type": 387,
     "message": "singular slot \"public_field_definition_readonly_first\" on \"public_field_definition\" received 2 values; got array(len=2, items=[string(\"readonly\"), string(\"abstract\")]) — at 5:5 — near \"readonly abstract prop: string\"",
     "stage": "read-render-parse-shallow-accessor-throw",
     "code": "accessor-throw",
     "severity": "warning",
-    "label": "_content (content, type=385)"
+    "label": "_content (content, type=387)"
   },
   {
     "source": "validator",
@@ -5327,7 +5563,7 @@
     "backend": "native",
     "kind": "class_static_block",
     "entry": "Classes with static blocks",
-    "message": "root._body: shape mismatch (node vs scalar) — expected {\"$type\":186,\"$source\":0,\"$named\":true,\"_statements\":[{\"$type\":182,\"$source\":0,\"$named\":true,\"_semicolon\":22,\"$text\":\"this.#bar = '';\",\"$span\":{\"start\":27,\"end\":42},\"$nodeHandle\":67,\"_expressions\":{\"$type\":237,\"$source\":0,\"$named\":true,\"_left\":{\"$type\":236,\"$source\":0,\"$named\":true,\"$text\":\"this.#bar\",\"$span\":{\"start\":27,\"end\":36},\"$nodeHandle\":69,\"_content\":{\"$type\":234,\"$source\":0,\"$named\":true,\"_object\":\"this\",\"_separator\":44,\"_property\":\"#bar\",\"$text\":\"this.#bar\",\"$span\":{\"start\":27,\"end\":36},\"$nodeHandle\":70}},\"_right\":{\"$type\":248,\"$source\":0,\"$named\":true,\"$text\":\"''\",\"$span\":{\"start\":39,\"end\":41},\"$nodeHandle\":71,\"_content\":{\"$type\":397,\"$source\":0,\"$named\":true,\"$text\":\"''\",\"$span\":{\"start\":39,\"end\":41},\"$nodeHandle\":72,\"_content\":[]}},\"$other\":[41],\"$text\":\"this.#bar = ''\",\"$span\":{\"start\":27,\"end\":41},\"$nodeHandle\":68}}],\"_automatic_semicolon\":true,\"$other\":[5,6],\"$text\":\"{\\n    this.#bar = '';\\n  }\",\"$span\":{\"start\":21,\"end\":46},\"$nodeHandle\":66}, got undefined",
+    "message": "root._body: shape mismatch (node vs scalar) — expected {\"$type\":186,\"$source\":0,\"$named\":true,\"_statements\":[{\"$type\":182,\"$source\":0,\"$named\":true,\"_semicolon\":20,\"$text\":\"this.#bar = '';\",\"$span\":{\"start\":27,\"end\":42},\"$nodeHandle\":67,\"_expressions\":{\"$type\":237,\"$source\":0,\"$named\":true,\"_left\":{\"$type\":236,\"$source\":0,\"$named\":true,\"$text\":\"this.#bar\",\"$span\":{\"start\":27,\"end\":36},\"$nodeHandle\":69,\"_content\":{\"$type\":234,\"$source\":0,\"$named\":true,\"_object\":\"this\",\"_separator\":40,\"_property\":\"#bar\",\"$text\":\"this.#bar\",\"$span\":{\"start\":27,\"end\":36},\"$nodeHandle\":70}},\"_right\":{\"$type\":248,\"$source\":0,\"$named\":true,\"$text\":\"''\",\"$span\":{\"start\":39,\"end\":41},\"$nodeHandle\":71,\"_content\":{\"$type\":399,\"$source\":0,\"$named\":true,\"$text\":\"''\",\"$span\":{\"start\":39,\"end\":41},\"$nodeHandle\":72,\"_content\":[]}},\"$other\":[37],\"$text\":\"this.#bar = ''\",\"$span\":{\"start\":27,\"end\":41},\"$nodeHandle\":68}}],\"_automatic_semicolon\":true,\"$other\":[5,6],\"$text\":\"{\\n    this.#bar = '';\\n  }\",\"$span\":{\"start\":21,\"end\":46},\"$nodeHandle\":66}, got undefined",
     "input": "static {\n    this.#bar = '';\n  }",
     "stage": "factory-render-parse-ast-mismatch",
     "code": "factory-render-parse-ast-mismatch",

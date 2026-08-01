@@ -386,6 +386,7 @@ describe('ordered_field_declaration_list', () => {
 describe('extern_crate_declaration', () => {
 	it('factory produces correct type', () => {
 		const node = ir.externCrateDeclaration({
+			crate: 'crate',
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$type).toBe(TSKindId.ExternCrateDeclaration);
@@ -393,6 +394,7 @@ describe('extern_crate_declaration', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.externCrateDeclaration({
+			crate: 'crate',
 			name: { $type: TSKindId.Identifier, $text: 'test', $source: 2, $named: true } as any
 		});
 		expect(node.$render!().length).toBeGreaterThan(0);

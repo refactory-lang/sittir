@@ -275,7 +275,9 @@ describe('enrich()', () => {
 			// the FIELD's content is a synthesized SYMBOL reference so
 			// tree-sitter's normalizer preserves it. The `_marker` suffix
 			// is the canonical semantic name (avoids JS-reserved-keyword
-			// collisions like `async` / `static` / `const`).
+			// collisions like `async` / `static` / `const`); the `_kw_`
+			// prefix is the reserved-namespace convention shared with
+			// dsl/primitives/field.ts and dsl/wire/wire.ts.
 			expect(rule.members[0]).toMatchObject({
 				type: 'OPTIONAL',
 				content: {
@@ -352,6 +354,71 @@ describe('enrich()', () => {
 			}
 		});
 
+		it('reuses an existing base-grammar rule at `_kw_<x>_marker` instead of minting a duplicate', () => {
+			const input = mkGrammar({
+				_kw_async_marker: { type: STRING, value: 'async' },
+				function_definition: {
+					type: SEQ,
+					members: [
+						{ type: OPTIONAL, content: { type: STRING, value: 'async' } },
+						{ type: STRING, value: 'function' },
+						{ type: SYMBOL, name: 'name' }
+					]
+				}
+			});
+			const out = runEnrich(input);
+			const rule = out.grammar.rules.function_definition as { type: 'SEQ'; members: Rule[] };
+			expect(rule.members[0]).toMatchObject({
+				type: 'OPTIONAL',
+				content: {
+					type: 'FIELD',
+					name: 'async_marker',
+					content: { type: 'SYMBOL', name: '_kw_async_marker' }
+				}
+			});
+			// The pre-existing base-grammar rule is untouched, not replaced —
+			// confirms reuse rather than a mint-over-it.
+			expect(out.grammar.rules._kw_async_marker).toMatchObject({ type: 'STRING', value: 'async' });
+		});
+
+		it('declines the promotion when an existing `_kw_<x>_marker` rule has different content, reports to stderr', () => {
+			const savedQuiet = process.env.SITTIR_QUIET;
+			delete process.env.SITTIR_QUIET;
+			try {
+				const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+				const input = mkGrammar({
+					_kw_async_marker: { type: STRING, value: 'unrelated_content' },
+					function_definition: {
+						type: SEQ,
+						members: [
+							{ type: OPTIONAL, content: { type: STRING, value: 'async' } },
+							{ type: STRING, value: 'function' },
+							{ type: SYMBOL, name: 'name' }
+						]
+					}
+				});
+				const out = runEnrich(input);
+				const rule = out.grammar.rules.function_definition as { type: 'SEQ'; members: Rule[] };
+				// Left unpromoted — the reserved name collides with unrelated content.
+				expect(rule.members[0]).toMatchObject({
+					type: 'OPTIONAL',
+					content: { type: 'STRING', value: 'async' }
+				});
+				// The colliding base-grammar rule is untouched, not overwritten.
+				expect(out.grammar.rules._kw_async_marker).toMatchObject({ type: 'STRING', value: 'unrelated_content' });
+				const calls = stderrSpy.mock.calls.map((c) => String(c[0]));
+				expect(
+					calls.some(
+						(c) =>
+							c.includes('skipped optional-keyword-prefix on function_definition') &&
+							c.includes("rule '_kw_async_marker' already exists in base.grammar.rules with different content")
+					)
+				).toBe(true);
+			} finally {
+				if (savedQuiet !== undefined) process.env.SITTIR_QUIET = savedQuiet;
+			}
+		});
+
 		it('recurses into choice members', () => {
 			const input = mkGrammar({
 				stmt: {
@@ -416,7 +483,7 @@ describe('enrich()', () => {
 			// field wrappers) and leaves the structural shape alone, so
 			// the repeat's seq content is preserved and the inner
 			// optional-keyword promotion still wraps the 'pub' string as
-			// FIELD(SYMBOL(_kw_pub)).
+			// FIELD(SYMBOL(_pub_marker)).
 			const rule = out.grammar.rules.block as {
 				type: 'REPEAT';
 				content: { type: 'SEQ'; members: Rule[] };
@@ -647,6 +714,394 @@ describe('enrich()', () => {
 			});
 			const out = runEnrich(input);
 			expect(out.grammar.rules.alias_rule).toEqual(input.grammar.rules.alias_rule);
+		});
+	});
+
+	describe('field-enum synthesis', () => {
+		it('detects enum from choice of strings and synthesizes hidden enum rule', () => {
+			const input = mkGrammar({
+				binary_expression: {
+					type: SEQ,
+					members: [
+						{ type: FIELD, name: 'left', content: { type: SYMBOL, name: 'identifier' } },
+						{
+							type: FIELD,
+							name: 'operator',
+							content: {
+								type: CHOICE,
+								members: [
+									{ type: STRING, value: '+' },
+									{ type: STRING, value: '-' },
+									{ type: STRING, value: '*' },
+									{ type: STRING, value: '/' }
+								]
+							}
+						},
+						{ type: FIELD, name: 'right', content: { type: SYMBOL, name: 'identifier' } }
+					]
+				},
+				identifier: { type: SYMBOL, name: 'identifier' }
+			});
+			const out = runEnrich(input);
+			const binExpr = out.grammar.rules.binary_expression as { type: 'SEQ'; members: Rule[] };
+			const operatorField = binExpr.members.find(
+				(m) => (m as { type: string; name?: string }).type === 'FIELD' && (m as { name?: string }).name === 'operator'
+			) as { type: 'FIELD'; name: string; content: Rule } | undefined;
+			// Field content is now a SymbolRule pointing to the synthesized kind.
+			expect(operatorField!.content).toEqual(
+				expect.objectContaining({
+					type: 'SYMBOL',
+					name: '_binary_expression_operator',
+					hidden: true
+				})
+			);
+			// The synthesized enum rule exists in the enriched rules bag, low
+			// precedence so it defers to whatever else the same literal starts.
+			expect(out.grammar.rules._binary_expression_operator).toEqual({
+				type: 'PREC',
+				content: {
+					type: 'CHOICE',
+					members: [
+						{ type: 'STRING', value: '+' },
+						{ type: 'STRING', value: '-' },
+						{ type: 'STRING', value: '*' },
+						{ type: 'STRING', value: '/' }
+					],
+					metadata: { author: 'enrich' }
+				},
+				value: -1
+			});
+		});
+
+		it('reuses an existing rule with an identical member set instead of minting a duplicate', () => {
+			const input = mkGrammar({
+				accessibility_modifier: {
+					type: CHOICE,
+					members: [
+						{ type: STRING, value: 'public' },
+						{ type: STRING, value: 'private' },
+						{ type: STRING, value: 'protected' }
+					]
+				},
+				public_field_definition: {
+					type: FIELD,
+					name: 'modifier',
+					content: {
+						type: CHOICE,
+						members: [
+							{ type: STRING, value: 'public' },
+							{ type: STRING, value: 'private' },
+							{ type: STRING, value: 'protected' }
+						]
+					}
+				}
+			});
+			const out = runEnrich(input);
+			const field = out.grammar.rules.public_field_definition as { type: 'FIELD'; content: Rule };
+			// Reuses the pre-existing VISIBLE rule directly -- no new
+			// `_public_field_definition_modifier` (or similarly prefixed)
+			// duplicate gets minted alongside it.
+			// Full `sym()` output, not a partial match: `inline` must be stamped
+			// too (see `tryExtractFieldEnum`'s doc comment) — a partial-object
+			// assertion here would silently accept a symbol ref missing it.
+			expect(field.content).toEqual({
+				type: 'SYMBOL',
+				name: 'accessibility_modifier',
+				hidden: false,
+				inline: false
+			});
+			expect(Object.keys(out.grammar.rules)).not.toContain('_public_field_definition_modifier');
+		});
+	});
+
+	describe('visible-group naming', () => {
+		it('names a visible group after its wrapping field when one exists at enrich time', () => {
+			const input = mkGrammar({
+				call: {
+					type: FIELD,
+					name: 'body',
+					content: {
+						type: OPTIONAL,
+						content: {
+							type: SEQ,
+							members: [
+								{ type: SYMBOL, name: 'a' },
+								{ type: SYMBOL, name: 'b' }
+							]
+						}
+					}
+				},
+				a: { type: STRING, value: 'a' },
+				b: { type: STRING, value: 'b' }
+			});
+			const out = runEnrich(input);
+			// Named after the field it fills (`_call_body`), not an opaque
+			// `_call_group1` ordinal.
+			expect(out.grammar.rules._call_body).toMatchObject({
+				type: 'SEQ',
+				members: [
+					{ type: 'SYMBOL', name: 'a' },
+					{ type: 'SYMBOL', name: 'b' }
+				]
+			});
+			expect(out.grammar.rules._call_group1).toBeUndefined();
+			expect(out.grammar.rules.call_group1).toBeUndefined();
+			const field = out.grammar.rules.call as { type: 'FIELD'; content: Rule };
+			expect(field.content).toMatchObject({
+				type: 'OPTIONAL',
+				content: {
+					type: 'ALIAS',
+					value: 'call_body',
+					named: true,
+					content: { type: 'SYMBOL', name: '_call_body' }
+				}
+			});
+		});
+
+		it('falls back to the ordinal name when the wrapping field name collides with an existing rule', () => {
+			const input = mkGrammar({
+				call: {
+					type: FIELD,
+					name: 'body',
+					content: {
+						type: OPTIONAL,
+						content: {
+							type: SEQ,
+							members: [
+								{ type: SYMBOL, name: 'a' },
+								{ type: SYMBOL, name: 'b' }
+							]
+						}
+					}
+				},
+				// Collides with the field-derived name `call_body`.
+				call_body: { type: STRING, value: 'unrelated' },
+				a: { type: STRING, value: 'a' },
+				b: { type: STRING, value: 'b' }
+			});
+			const out = runEnrich(input);
+			expect(out.grammar.rules._call_group1).toMatchObject({
+				type: 'SEQ',
+				members: [
+					{ type: 'SYMBOL', name: 'a' },
+					{ type: 'SYMBOL', name: 'b' }
+				]
+			});
+			// The pre-existing colliding rule is untouched.
+			expect(out.grammar.rules.call_body).toMatchObject({ type: 'STRING', value: 'unrelated' });
+		});
+
+		it('names a visible group after its wrapping field for optional(choice(...)) content, not just optional(seq(...))', () => {
+			// `optional(seq(...))` is peeled to the seq body before the mint path
+			// below ever runs (a separate branch above this one) — this covers the
+			// sibling case: a non-seq (CHOICE) body directly inside the field's
+			// optional, which reaches mintStructuredChoiceArm via the "optional
+			// position with a non-seq body" path and must carry the same
+			// enclosing-field name through. Both choice arms are symbol-bearing
+			// (matching rust's real `attribute`: `optional(choice(seq('=', value),
+			// arguments))`) so the choice has two real slots and isn't collapsed
+			// to a single inline-safe slot before reaching the outer arm mint.
+			const input = mkGrammar({
+				call: {
+					type: FIELD,
+					name: 'body',
+					content: {
+						type: OPTIONAL,
+						content: {
+							type: CHOICE,
+							members: [
+								{
+									type: SEQ,
+									members: [
+										{ type: STRING, value: '=' },
+										{ type: SYMBOL, name: 'value' }
+									]
+								},
+								{ type: SYMBOL, name: 'arguments' }
+							]
+						}
+					}
+				},
+				value: { type: STRING, value: 'v' },
+				arguments: { type: STRING, value: 'args' }
+			});
+			const out = runEnrich(input);
+			expect(out.grammar.rules._call_body).toBeDefined();
+			expect(out.grammar.rules._call_group1).toBeUndefined();
+			expect(out.grammar.rules.call_group1).toBeUndefined();
+		});
+
+		it('falls back to the ordinal when a DIFFERENT group body already claimed the field-derived name', () => {
+			// Two distinct choice arms under the same parent each wrap a
+			// STRUCTURALLY DIFFERENT optional(seq(...)) in field('body', ...) —
+			// both compute the same candidate name `call_body`. The first claims
+			// it; `rulesBag` alone can't see that (a synthesized hidden name only
+			// ever lands in `clauseGroupRules`), so without checking
+			// `clauseGroupRules` too, the second silently overwrites the first
+			// arm's body instead of falling back to an ordinal.
+			const input = mkGrammar({
+				call: {
+					type: CHOICE,
+					members: [
+						{
+							type: SEQ,
+							members: [
+								{ type: STRING, value: 'k1' },
+								{
+									type: FIELD,
+									name: 'body',
+									content: {
+										type: OPTIONAL,
+										content: {
+											type: SEQ,
+											members: [
+												{ type: SYMBOL, name: 'a' },
+												{ type: SYMBOL, name: 'b' }
+											]
+										}
+									}
+								}
+							]
+						},
+						{
+							type: SEQ,
+							members: [
+								{ type: STRING, value: 'k2' },
+								{
+									type: FIELD,
+									name: 'body',
+									content: {
+										type: OPTIONAL,
+										content: {
+											type: SEQ,
+											members: [
+												{ type: SYMBOL, name: 'c' },
+												{ type: SYMBOL, name: 'd' }
+											]
+										}
+									}
+								}
+							]
+						}
+					]
+				},
+				a: { type: STRING, value: 'a' },
+				b: { type: STRING, value: 'b' },
+				c: { type: STRING, value: 'c' },
+				d: { type: STRING, value: 'd' }
+			});
+			const out = runEnrich(input);
+			// The first arm's body claims `_call_body` and keeps its own content.
+			expect(out.grammar.rules._call_body).toMatchObject({
+				type: 'SEQ',
+				members: [
+					{ type: 'SYMBOL', name: 'a' },
+					{ type: 'SYMBOL', name: 'b' }
+				]
+			});
+			// The second arm falls back to an ordinal instead of overwriting it.
+			expect(out.grammar.rules._call_group1).toMatchObject({
+				type: 'SEQ',
+				members: [
+					{ type: 'SYMBOL', name: 'c' },
+					{ type: 'SYMBOL', name: 'd' }
+				]
+			});
+		});
+
+		it('does not dedupe identical content registered under different ambient precedence', () => {
+			// `rule_a`'s hoisted body sits under an enclosing PREC_LEFT wrapper;
+			// `rule_b`'s body is byte-for-byte identical but has no such wrapper.
+			// Deduping by the BARE content (ignoring the registered body's own
+			// ambientPrec) would make whichever rule enriches first silently
+			// donate — or withhold — its precedence to the other, since the
+			// dedupe-hit path reuses the first-registered hidden rule's body
+			// wholesale. The key must be computed on the REGISTERED body
+			// (content + ambientPrec), not the bare content, so these two stay
+			// distinct hidden rules.
+			const sharedBody = {
+				type: OPTIONAL,
+				content: {
+					type: SEQ,
+					members: [
+						{ type: SYMBOL, name: 'a' },
+						{ type: SYMBOL, name: 'b' }
+					]
+				}
+			};
+			const input = mkGrammar({
+				rule_a: {
+					type: 'PREC_LEFT',
+					value: -2,
+					content: { type: FIELD, name: 'body', content: sharedBody }
+				} as unknown as Rule<'evaluate'>,
+				rule_b: {
+					type: FIELD,
+					name: 'body',
+					content: sharedBody
+				},
+				a: { type: STRING, value: 'a' },
+				b: { type: STRING, value: 'b' }
+			});
+			const out = runEnrich(input);
+			expect(out.grammar.rules._rule_a_body).toMatchObject({
+				type: 'PREC_LEFT',
+				value: -2,
+				content: {
+					type: 'SEQ',
+					members: [
+						{ type: 'SYMBOL', name: 'a' },
+						{ type: 'SYMBOL', name: 'b' }
+					]
+				}
+			});
+			expect(out.grammar.rules._rule_b_body).toMatchObject({
+				type: 'SEQ',
+				members: [
+					{ type: 'SYMBOL', name: 'a' },
+					{ type: 'SYMBOL', name: 'b' }
+				]
+			});
+		});
+
+		it('does NOT use a field name from a seq/choice member position (only the direct enclosing field)', () => {
+			const input = mkGrammar({
+				// `field('items', ...)` wraps a SEQ; the optional(seq(...)) inside
+				// one of that seq's OWN members is a distinct position, not "the
+				// field's content" as a whole, so it must fall back to `_group1`.
+				call: {
+					type: FIELD,
+					name: 'items',
+					content: {
+						type: SEQ,
+						members: [
+							{ type: SYMBOL, name: 'head' },
+							{
+								type: OPTIONAL,
+								content: {
+									type: SEQ,
+									members: [
+										{ type: SYMBOL, name: 'a' },
+										{ type: SYMBOL, name: 'b' }
+									]
+								}
+							}
+						]
+					}
+				},
+				head: { type: STRING, value: 'head' },
+				a: { type: STRING, value: 'a' },
+				b: { type: STRING, value: 'b' }
+			});
+			const out = runEnrich(input);
+			expect(out.grammar.rules._call_group1).toMatchObject({
+				type: 'SEQ',
+				members: [
+					{ type: 'SYMBOL', name: 'a' },
+					{ type: 'SYMBOL', name: 'b' }
+				]
+			});
+			expect(out.grammar.rules._call_items).toBeUndefined();
 		});
 	});
 });

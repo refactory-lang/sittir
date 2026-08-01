@@ -497,7 +497,7 @@ describe('emitRule — exhaustive default', () => {
 		const rule: Rule = {
 			type: SUPERTYPE,
 			name: '_expression',
-			subtypes: ['binary_expression']
+			subtypes: [{ type: SYMBOL, name: 'binary_expression' }]
 		};
 		expect(emitRule(rule, makeCtx())).toBe('');
 	});
