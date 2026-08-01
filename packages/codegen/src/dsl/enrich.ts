@@ -2178,8 +2178,12 @@ function visibleGroupSynthName(
 	// author already chose, rather than minting a fresh one.
 	enclosingFieldName?: string
 ): { visibleName: string; hiddenName: string } | null {
-	const key = ruleKey(content as RuntimeRule);
 	const registeredBody = ambientPrec ? ({ ...ambientPrec, content } as Rule) : content;
+	// Key on the registered body, not the bare content: two occurrences of
+	// the identical content under different ambient precedence must NOT
+	// dedupe to one hidden rule, or the second occurrence's precedence
+	// silently vanishes (first-registered body wins at line below).
+	const key = ruleKey(registeredBody as RuntimeRule);
 	const existing = groupDedupeMap[key];
 	if (existing !== undefined) {
 		const hiddenName = `_${existing}`;

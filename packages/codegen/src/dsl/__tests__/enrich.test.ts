@@ -1001,6 +1001,61 @@ describe('enrich()', () => {
 			});
 		});
 
+		it('does not dedupe identical content registered under different ambient precedence', () => {
+			// `rule_a`'s hoisted body sits under an enclosing PREC_LEFT wrapper;
+			// `rule_b`'s body is byte-for-byte identical but has no such wrapper.
+			// Deduping by the BARE content (ignoring the registered body's own
+			// ambientPrec) would make whichever rule enriches first silently
+			// donate — or withhold — its precedence to the other, since the
+			// dedupe-hit path reuses the first-registered hidden rule's body
+			// wholesale. The key must be computed on the REGISTERED body
+			// (content + ambientPrec), not the bare content, so these two stay
+			// distinct hidden rules.
+			const sharedBody = {
+				type: OPTIONAL,
+				content: {
+					type: SEQ,
+					members: [
+						{ type: SYMBOL, name: 'a' },
+						{ type: SYMBOL, name: 'b' }
+					]
+				}
+			};
+			const input = mkGrammar({
+				rule_a: {
+					type: 'PREC_LEFT',
+					value: -2,
+					content: { type: FIELD, name: 'body', content: sharedBody }
+				} as unknown as Rule<'evaluate'>,
+				rule_b: {
+					type: FIELD,
+					name: 'body',
+					content: sharedBody
+				},
+				a: { type: STRING, value: 'a' },
+				b: { type: STRING, value: 'b' }
+			});
+			const out = runEnrich(input);
+			expect(out.grammar.rules._rule_a_body).toMatchObject({
+				type: 'PREC_LEFT',
+				value: -2,
+				content: {
+					type: 'SEQ',
+					members: [
+						{ type: 'SYMBOL', name: 'a' },
+						{ type: 'SYMBOL', name: 'b' }
+					]
+				}
+			});
+			expect(out.grammar.rules._rule_b_body).toMatchObject({
+				type: 'SEQ',
+				members: [
+					{ type: 'SYMBOL', name: 'a' },
+					{ type: 'SYMBOL', name: 'b' }
+				]
+			});
+		});
+
 		it('does NOT use a field name from a seq/choice member position (only the direct enclosing field)', () => {
 			const input = mkGrammar({
 				// `field('items', ...)` wraps a SEQ; the optional(seq(...)) inside

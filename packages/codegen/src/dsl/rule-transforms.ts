@@ -5,19 +5,24 @@
 import {
 	ALIAS,
 	CHOICE,
+	DEDENT,
 	FIELD,
 	GROUP,
+	INDENT,
+	NEWLINE,
 	OPTIONAL,
 	PATTERN,
 	REPEAT,
 	REPEAT1,
 	SEQ,
 	STRING,
+	SUPERTYPE,
 	SYMBOL,
 	TOKEN,
 	VARIANT
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, RepeatRule, Repeat1Rule, SeqRule, SeparatorFlankMode } from '../types/rule.ts';
+import { assertNever } from '../polymorph-variant.ts';
 import { RuleWalker } from './rule-walker.ts';
 
 // `'single'` is the canonical required-one value (rule.ts `Multiplicity`); a
@@ -135,8 +140,16 @@ export function hasAnyField(rule: Rule<'link'>): boolean {
 		case ALIAS:
 		case TOKEN:
 			return hasAnyField(rule.content);
-		default:
+		case SYMBOL:
+		case SUPERTYPE:
+		case STRING:
+		case PATTERN:
+		case INDENT:
+		case DEDENT:
+		case NEWLINE:
 			return false;
+		default:
+			return assertNever(rule);
 	}
 }
 

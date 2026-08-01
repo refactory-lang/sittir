@@ -2259,8 +2259,8 @@ function clauseHoistSynthName(seqBody, parentKind, dedupeMap, counter, rulesBag,
   return name;
 }
 function visibleGroupSynthName(content, parentKind, groupDedupeMap, counter, rulesBag, clauseGroupRules, ambientPrec, enclosingFieldName) {
-  const key = ruleKey(content);
   const registeredBody = ambientPrec ? { ...ambientPrec, content } : content;
+  const key = ruleKey(registeredBody);
   const existing = groupDedupeMap[key];
   if (existing !== void 0) {
     const hiddenName2 = `_${existing}`;
