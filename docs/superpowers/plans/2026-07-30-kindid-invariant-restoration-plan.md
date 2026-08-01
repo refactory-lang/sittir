@@ -252,9 +252,18 @@ consumers (`from.ts`) are unaffected; full suite green.
   source-inventory note) to exact floors per grammar (ideally 0 non-excluded,
   plus the principled `inline:`/VAPORIZED-accepted counts from Phase 4).
 - `kindid-unstamped-*` diagnostics promoted from `info` to `warn`/fail for
-  every class not on the accepted-exclusion list — the spec's "compile
-  fails loudly... instead of deferring the gap to a native 'unknown kind
-  id' render error."
+  the full miss set — the spec's "compile fails loudly... instead of
+  deferring the gap to a native 'unknown kind id' render error." Landed as
+  full-set promotion, not a subtraction of the accepted-exclusion classes:
+  `kindid-vaporized-*`/`kindid-inline-excluded-*` partition the SAME miss
+  set completely (every miss is either in the grammar's `inline:` array or
+  not — there is no third bucket), so "misses minus both exclusion
+  classes" is provably always empty by construction, not merely empty in
+  practice today. Implementing the literal "not on the accepted-exclusion
+  list" wording would silently swallow every future regression under
+  whichever exclusion label it happened to land in. The two informational
+  sub-buckets stay as cross-reference labels a reader checks against the
+  warning, not a severity gate of their own.
 - Delete the now-dead fallback chains flagged (not removed) in Phase 1:
   `resolveLiteralKindId`'s `byText`/`byKind` chain and
   `resolveAcceptedTransportIds`'s `parseAliases`/fixed-literal fallback in

@@ -190,11 +190,12 @@
   },
   {
     "code": "kindid-unstamped-symbols",
-    "message": "13 referenced kind(s) resolved no parser kindId",
+    "message": "15 referenced kind(s) resolved no parser kindId",
     "canProceed": true,
     "details": {
       "kinds": [
         "_async_marker",
+        "_compound_statement",
         "_except_clause_as_optional1",
         "_exec_statement_optional1",
         "_expressions",
@@ -206,7 +207,8 @@
         "_simple_statement",
         "_suite",
         "_unary_operator_operator",
-        "keyword_identifier"
+        "keyword_identifier",
+        "statement_group1"
       ]
     },
     "severity": "warning",
@@ -241,17 +243,13 @@
   },
   {
     "code": "kindid-vaporized-symbols",
-    "message": "7 referenced kind(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
+    "message": "3 referenced kind(s) have no parser symbol and are not in the grammar's inline: array (dead surface, accepted exclusion)",
     "canProceed": true,
     "details": {
       "kinds": [
         "_async_marker",
-        "_expressions",
-        "_left_hand_side",
-        "_simple_statement",
-        "_suite",
         "_unary_operator_operator",
-        "keyword_identifier"
+        "statement_group1"
       ]
     },
     "severity": "info",
@@ -286,16 +284,22 @@
   },
   {
     "code": "kindid-inline-excluded-symbols",
-    "message": "6 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
+    "message": "12 referenced kind(s) have no parser symbol because they are in the grammar's inline: array (model-only, accepted exclusion)",
     "canProceed": true,
     "details": {
       "kinds": [
+        "_compound_statement",
         "_except_clause_as_optional1",
         "_exec_statement_optional1",
+        "_expressions",
         "_function_definition_optional1",
         "_kw_real",
         "_kw_type",
-        "_raise_statement_optional1"
+        "_left_hand_side",
+        "_raise_statement_optional1",
+        "_simple_statement",
+        "_suite",
+        "keyword_identifier"
       ]
     },
     "severity": "info",
