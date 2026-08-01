@@ -20,9 +20,12 @@
  *      accumulators + the optional-body and audit-context module pointers.
  *   2. Slot model & derivation — `NodeRef`/`NodeOrTerminal`/`FieldStorageInfo`
  *      content types, cardinality (`deriveSlotCardinality`…), value guards,
- *      naming utilities (`snakeToCamel`/`pluralize`), the Rule<'link'> walkers
- *      (`hasAnyField`/`hasAnyChild`), and the Rule<'link'> → slots/values derivation
- *      (`deriveSlots`, `deriveValuesForRule`, `dedupeValues`, separators, `nameNode`).
+ *      naming utilities (`snakeToCamel`/`pluralize`), and the Rule<'link'> →
+ *      slots/values derivation (`deriveSlots`, `deriveValuesForRule`,
+ *      `dedupeValues`, separators, `nameNode`). `hasAnyField` (the Rule<'link'>
+ *      wrapper walker `isContainerShape` below still needs) lives in
+ *      `dsl/rule-transforms.ts` — this module holds the assembled-node data
+ *      model, not general rule-shape predicates.
  *   3. AssembledNonterminal & naming projection — the slot class + `kindsOf`/
  *      `valueParseKindsOf` + the `projectSlotNaming` projection.
  *   4. AssembledNode class hierarchy — `AssembledBranch`/`Polymorph`/`Pattern`/
@@ -86,6 +89,7 @@ import {
 	type ParseKindCollisionValue
 } from '../../types/parsekind-collisions.ts';
 import { describeDeriveShape, type DeriveShapeDiagnostic } from '../diagnostics/derive-shapes.ts';
+import { hasAnyField } from '../../dsl/rule-transforms.ts';
 
 // ============================================================================
 // 1. Diagnostics & module state
@@ -530,43 +534,6 @@ const TS_RESERVED = new Set([
 
 export function safeParamName(name: string): string {
 	return TS_RESERVED.has(name) ? `${name}_` : name;
-}
-
-export function hasAnyField(rule: Rule<'link'>): boolean {
-	switch (rule.type) {
-		case FIELD:
-			return true;
-		case SEQ:
-		case CHOICE:
-			return rule.members.some(hasAnyField);
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case VARIANT:
-		case GROUP:
-			return hasAnyField(rule.content);
-		default:
-			return false;
-	}
-}
-
-export function hasAnyChild(rule: Rule<'link'>): boolean {
-	switch (rule.type) {
-		case SYMBOL:
-		case SUPERTYPE:
-			return true;
-		case SEQ:
-		case CHOICE:
-			return rule.members.some(hasAnyChild);
-		case OPTIONAL:
-		case REPEAT:
-		case REPEAT1:
-		case VARIANT:
-		case GROUP:
-			return hasAnyChild(rule.content);
-		default:
-			return false;
-	}
 }
 
 const DERIVE_AUDIT = process.env.SITTIR_AUDIT_DERIVE === '1';
