@@ -469,39 +469,6 @@ describe('Evaluate — evaluate()', () => {
 		expect(raw.word).toBeNull();
 	});
 
-	it('detects enum from choice of strings and synthesizes hidden enum rule', async () => {
-		const raw = await evaluate(fixture('test-grammar.js'));
-		// binary_expression has field('operator', choice('+', '-', '*', '/'))
-		// After synthesis, the field's content is replaced by a SymbolRule
-		// and a hidden rule `_binary_expression_operator` is added to raw.rules.
-		const binExpr = raw.rules['binary_expression'];
-		expect(binExpr!.type).toBe('SEQ');
-		const operatorField = (binExpr as any).members.find((m: any) => m.type === 'FIELD' && m.name === 'operator');
-		// Field content is now a SymbolRule pointing to the synthesized kind.
-		expect(operatorField.content).toEqual(
-			expect.objectContaining({
-				type: 'SYMBOL',
-				name: '_binary_expression_operator',
-				hidden: true
-			})
-		);
-		// The synthesized enum rule exists in raw.rules.
-		// PR-P: type is now 'choice', source moved to metadata.
-		// (debt: source-homonym resolution, decision 6) metadata.source → metadata.author.
-		expect(raw.rules['_binary_expression_operator']).toEqual(
-			expect.objectContaining({
-				type: 'CHOICE',
-				members: [
-					expect.objectContaining({ type: 'STRING', value: '+' }),
-					expect.objectContaining({ type: 'STRING', value: '-' }),
-					expect.objectContaining({ type: 'STRING', value: '*' }),
-					expect.objectContaining({ type: 'STRING', value: '/' })
-				],
-				metadata: { author: 'grammar' }
-			})
-		);
-	});
-
 	it('keeps conflicting same-parent field literal sets inline so simplify can merge them later', async () => {
 		const dir = mkdtempSync(resolve(tmpdir(), 'sittir-evaluate-'));
 		const entry = resolve(dir, 'grammar.js');
@@ -690,6 +657,48 @@ module.exports = grammar(base, {
 			expect(overrideContainer.provenance).toBe('override-authored-or-replaced');
 			expect(overrideOnly.provenance).toBe('override-authored-or-replaced');
 			expect(synthesized.provenance).toBe('evaluate-synthesized');
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
+	});
+
+	it('preserves base grammar inline names when an extension callback appends its own', async () => {
+		// `inline`'s callback receives `previous` as already-normalized STRING
+		// names from the base grammar, while `$.bar` (added in the override)
+		// normalizes to a SYMBOL. `[...previous, $.bar]` is exactly the mixed
+		// shape appendCallbackMetadataNames (evaluate.ts) must handle without
+		// dropping the inherited string.
+		const dir = mkdtempSync(resolve(tmpdir(), 'sittir-inline-inherit-'));
+		const baseEntry = resolve(dir, 'base.js');
+		const overrideEntry = resolve(dir, 'override.js');
+		writeFileSync(
+			baseEntry,
+			`module.exports = grammar({
+  name: "inline_inherit_test",
+  inline: ($) => [$.foo],
+  rules: {
+    source_file: ($) => $.container,
+    container: ($) => $.foo,
+    foo: ($) => 'foo',
+  },
+});\n`,
+			'utf8'
+		);
+		writeFileSync(
+			overrideEntry,
+			`const base = require(${JSON.stringify(baseEntry)});
+module.exports = grammar(base, {
+  name: 'inline_inherit_test',
+  inline: ($, previous) => [...previous, $.bar],
+  rules: {
+    bar: ($) => 'bar',
+  },
+});\n`,
+			'utf8'
+		);
+		try {
+			const raw = await evaluate(overrideEntry);
+			expect(raw.inline).toEqual(['foo', 'bar']);
 		} finally {
 			rmSync(dir, { recursive: true, force: true });
 		}

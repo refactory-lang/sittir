@@ -12,6 +12,7 @@ import type {
 	ExpressionWithinForInClause,
 	Expressions,
 	FExpression,
+	KeywordIdentifier,
 	LeftHandSide,
 	NamedExpressionLhs,
 	Parameter,
@@ -230,6 +231,7 @@ export interface IsGuards {
 	leftHandSide(v: { readonly $type: string | number }): v is LeftHandSide;
 	rightHandSide(v: { readonly $type: string | number }): v is RightHandSide;
 	fExpression(v: { readonly $type: string | number }): v is FExpression;
+	keywordIdentifier(v: { readonly $type: string | number }): v is KeywordIdentifier;
 	dictPatternKv(v: { readonly $type: string | number }): v is DictPatternKv;
 }
 
@@ -388,6 +390,7 @@ export interface AssertGuards {
 	leftHandSide(v: { readonly $type: string | number }): asserts v is LeftHandSide;
 	rightHandSide(v: { readonly $type: string | number }): asserts v is RightHandSide;
 	fExpression(v: { readonly $type: string | number }): asserts v is FExpression;
+	keywordIdentifier(v: { readonly $type: string | number }): asserts v is KeywordIdentifier;
 	dictPatternKv(v: { readonly $type: string | number }): asserts v is DictPatternKv;
 }
 
@@ -407,18 +410,19 @@ const _supertype_namedExpressionLhs_ids = new Set<number>([1]);
 const _supertype_expressions_ids = new Set<number>([161]);
 const _supertype_compoundStatement_ids = new Set<number>([131, 137, 138, 139, 142, 145, 154, 158, 134]);
 const _supertype_simplePattern_ids = new Set<number>([
-	170, 169, 165, 246, 245, 166, 227, 226, 88, 89, 90, 261, 171, 162, 251
+	170, 169, 165, 247, 246, 166, 227, 226, 75, 76, 77, 262, 171, 162, 252
 ]);
 const _supertype_parameter_ids = new Set<number>([1, 204, 178, 179, 180, 176, 181]);
 const _supertype_pattern_ids = new Set<number>([1, 201, 200, 180, 176, 177]);
 const _supertype_expressionWithinForInClause_ids = new Set<number>([194]);
 const _supertype_expression_ids = new Set<number>([192, 186, 187, 193, 225, 123, 182]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	233, 188, 1, 227, 226, 84, 85, 88, 89, 90, 189, 200, 201, 203, 212, 217, 215, 218, 213, 219, 214, 221, 220, 180
+	233, 188, 1, 227, 226, 71, 72, 75, 76, 77, 189, 200, 201, 203, 212, 217, 215, 218, 213, 219, 214, 221, 220, 180
 ]);
 const _supertype_leftHandSide_ids = new Set<number>([197]);
 const _supertype_rightHandSide_ids = new Set<number>([161, 195, 196, 197, 199]);
 const _supertype_fExpression_ids = new Set<number>([161, 197, 199]);
+const _supertype_keywordIdentifier_ids = new Set<number>([1]);
 const _supertype_dictPatternKv_ids = new Set<number>([167, 169]);
 
 const _kindIdByKind = new Map<string, number>([
@@ -598,6 +602,7 @@ const _kindIdByKind = new Map<string, number>([
 	['_pattern_list_group1', TSKindId.PatternListGroup1],
 	['_slice_group1', TSKindId.SliceGroup1],
 	['_dictionary_group1', TSKindId.DictionaryGroup1],
+	['_augmented_assignment_operator', TSKindId.AugmentedAssignmentOperator],
 	['_except_clause_as', TSKindId.ExceptClauseAs],
 	['case_tuple_pattern', TSKindId.CaseTuplePattern],
 	['case_list_pattern', TSKindId.CaseListPattern],
@@ -764,6 +769,7 @@ export const is = {
 	leftHandSide: _sg(_supertype_leftHandSide_ids),
 	rightHandSide: _sg(_supertype_rightHandSide_ids),
 	fExpression: _sg(_supertype_fExpression_ids),
+	keywordIdentifier: _sg(_supertype_keywordIdentifier_ids),
 	dictPatternKv: _sg(_supertype_dictPatternKv_ids)
 } as unknown as IsGuards;
 
@@ -931,6 +937,7 @@ export const assert = {
 	leftHandSide: _makeAssert('leftHandSide', is.leftHandSide as _AnyGuard),
 	rightHandSide: _makeAssert('rightHandSide', is.rightHandSide as _AnyGuard),
 	fExpression: _makeAssert('fExpression', is.fExpression as _AnyGuard),
+	keywordIdentifier: _makeAssert('keywordIdentifier', is.keywordIdentifier as _AnyGuard),
 	dictPatternKv: _makeAssert('dictPatternKv', is.dictPatternKv as _AnyGuard)
 } as unknown as AssertGuards;
 

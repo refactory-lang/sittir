@@ -20,7 +20,7 @@ import { DiagnosticSink } from '../../types/diagnostics.ts';
 import { applyWrapperDeletion, deleteWrapper } from '../wrapper-deletion.ts';
 import type { Rule, RepeatRule, Repeat1Rule } from '../../types/rule.ts';
 import type { SimplifiedGrammar } from '../types.ts';
-import { deriveSlots, isRequired, isMultiple, allSlotsOf, AssembledSeparatedList } from '../model/node-map.ts';
+import { deriveSlots, isRequired, isMultiple, allSlotsOf, AssembledSeparatedList, AssembledSupertype } from '../model/node-map.ts';
 import type { GeneratedIdTables, GeneratedIdEntry } from '../generated-metadata.ts';
 
 // Helper — fields-equivalent view over deriveSlots: every slot that came
@@ -134,7 +134,7 @@ describe('Assemble — classifyNode', () => {
 				}
 			]
 		};
-		expect(classifyNode('function_item', rule)).toBe('branch');
+		expect(classifyNode('function_item', deleteWrapper(rule))).toBe('branch');
 	});
 
 	it('classifies visible repeat as branch (container-shape)', () => {
@@ -146,7 +146,7 @@ describe('Assemble — classifyNode', () => {
 			type: REPEAT,
 			content: { type: SYMBOL, name: 'item' }
 		};
-		expect(classifyNode('items', rule)).toBe('branch');
+		expect(classifyNode('items', deleteWrapper(rule))).toBe('branch');
 	});
 
 	it('does NOT classify a bare repeat with no separator as separatedList', () => {
@@ -154,7 +154,7 @@ describe('Assemble — classifyNode', () => {
 			type: REPEAT,
 			content: { type: SYMBOL, name: 'item' }
 		};
-		expect(classifyNode('items_no_sep', rule)).toBe('branch');
+		expect(classifyNode('items_no_sep', deleteWrapper(rule))).toBe('branch');
 	});
 
 	it('classifies visible choice with same field set as branch', () => {
@@ -203,22 +203,22 @@ describe('Assemble — classifyNode', () => {
 				}
 			]
 		};
-		expect(classifyNode('binary_op', rule)).toBe('branch');
+		expect(classifyNode('binary_op', deleteWrapper(rule))).toBe('branch');
 	});
 
 	it('classifies visible pattern as pattern', () => {
 		const rule: Rule<'link'> = { type: PATTERN, value: '[a-z]+' };
-		expect(classifyNode('identifier', rule)).toBe('pattern');
+		expect(classifyNode('identifier', deleteWrapper(rule))).toBe('pattern');
 	});
 
 	it('classifies visible single alphanumeric string as keyword', () => {
 		const rule: Rule<'link'> = { type: STRING, value: 'true' };
-		expect(classifyNode('true', rule)).toBe('keyword');
+		expect(classifyNode('true', deleteWrapper(rule))).toBe('keyword');
 	});
 
 	it('classifies visible non-alphanumeric string as token (T027b)', () => {
 		const rule: Rule<'link'> = { type: STRING, value: '->' };
-		expect(classifyNode('arrow', rule)).toBe('token');
+		expect(classifyNode('arrow', deleteWrapper(rule))).toBe('token');
 	});
 
 	it('classifies enum as enum', () => {
@@ -229,16 +229,16 @@ describe('Assemble — classifyNode', () => {
 				{ type: STRING, value: 'crate' }
 			]
 		};
-		expect(classifyNode('visibility', rule)).toBe('enum');
+		expect(classifyNode('visibility', deleteWrapper(rule))).toBe('enum');
 	});
 
 	it('classifies hidden choice as supertype when already SupertypeRule', () => {
 		const rule: Rule<'link'> = {
 			type: SUPERTYPE,
 			name: '_expression',
-			subtypes: ['binary_expression', 'identifier']
+			subtypes: [{ type: SYMBOL, name: 'binary_expression' }, { type: SYMBOL, name: 'identifier' }]
 		};
-		expect(classifyNode('_expression', rule)).toBe('supertype');
+		expect(classifyNode('_expression', deleteWrapper(rule))).toBe('supertype');
 	});
 
 	it('classifies SupertypeRule (from Link) as supertype regardless of name', () => {
@@ -247,11 +247,12 @@ describe('Assemble — classifyNode', () => {
 		const rule: Rule<'link'> = {
 			type: SUPERTYPE,
 			name: 'expression',
-			subtypes: ['binary_expression', 'identifier']
+			subtypes: [{ type: SYMBOL, name: 'binary_expression' }, { type: SYMBOL, name: 'identifier' }]
 		};
-		expect(classifyNode('expression', rule)).toBe('supertype');
-		expect(classifyNode('_expression', rule)).toBe('supertype');
-		expect(classifyNode('anything', rule)).toBe('supertype');
+		const renderRule = deleteWrapper(rule);
+		expect(classifyNode('expression', renderRule)).toBe('supertype');
+		expect(classifyNode('_expression', renderRule)).toBe('supertype');
+		expect(classifyNode('anything', renderRule)).toBe('supertype');
 	});
 
 	it('classifies hidden seq with fields as group', () => {
@@ -269,7 +270,7 @@ describe('Assemble — classifyNode', () => {
 				]
 			}
 		};
-		expect(classifyNode('_sig', rule)).toBe('group');
+		expect(classifyNode('_sig', deleteWrapper(rule))).toBe('group');
 	});
 
 	it('assembles hidden alias sources from their captured leaf body', () => {
@@ -335,12 +336,12 @@ describe('Assemble — classifyNode', () => {
 				_property_name: {
 					type: SUPERTYPE,
 					name: '_property_name',
-					subtypes: ['identifier', 'string']
+					subtypes: [{ type: SYMBOL, name: 'identifier' }, { type: SYMBOL, name: 'string' }]
 				},
 				_property_identifier: {
 					type: SUPERTYPE,
 					name: '_property_identifier',
-					subtypes: ['identifier']
+					subtypes: [{ type: SYMBOL, name: 'identifier' }]
 				},
 				identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' },
 				string: { type: PATTERN, value: '".*"' }
@@ -351,7 +352,7 @@ describe('Assemble — classifyNode', () => {
 		);
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_property_name');
 		expect(node?.modelType).toBe('supertype');
-		expect((node as any).subtypes).toEqual(['identifier', 'string', '_property_identifier']);
+		expect((node as any).subtypeNames).toEqual(['identifier', 'string', '_property_identifier']);
 	});
 
 	it('includes nested alias-member hidden kinds in supertype subtype expansion', () => {
@@ -360,22 +361,26 @@ describe('Assemble — classifyNode', () => {
 				_property_name: {
 					type: SUPERTYPE,
 					name: '_property_name',
-					subtypes: ['identifier', 'string']
+					subtypes: [{ type: SYMBOL, name: 'identifier' }, { type: SYMBOL, name: 'string' }]
 				},
 				_type_identifier: {
 					type: SUPERTYPE,
 					name: '_type_identifier',
-					subtypes: ['identifier']
+					subtypes: [{ type: SYMBOL, name: 'identifier' }]
 				},
 				_reserved_identifier: {
 					type: SUPERTYPE,
 					name: '_reserved_identifier',
-					subtypes: ['identifier']
+					subtypes: [{ type: SYMBOL, name: 'identifier' }]
 				},
 				_property_identifier: {
 					type: SUPERTYPE,
 					name: '_property_identifier',
-					subtypes: ['_type_identifier', '_reserved_identifier', 'identifier']
+					subtypes: [
+						{ type: SYMBOL, name: '_type_identifier' },
+						{ type: SYMBOL, name: '_reserved_identifier' },
+						{ type: SYMBOL, name: 'identifier' }
+					]
 				},
 				identifier: { type: PATTERN, value: '[A-Za-z_]\\w*' },
 				string: { type: PATTERN, value: '".*"' }
@@ -399,7 +404,7 @@ describe('Assemble — classifyNode', () => {
 		);
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_property_name');
 		expect(node?.modelType).toBe('supertype');
-		expect((node as any).subtypes).toEqual(['identifier', 'string', '_type_identifier', '_property_identifier']);
+		expect((node as any).subtypeNames).toEqual(['identifier', 'string', '_type_identifier', '_property_identifier']);
 	});
 
 	// PR-137 grammar-phase-ctx regression fixture (2026-07-05): reproduces
@@ -422,7 +427,7 @@ describe('Assemble — classifyNode', () => {
 			_delim_tokens: {
 				type: SUPERTYPE,
 				name: '_delim_tokens',
-				subtypes: ['_non_delim_token', 'identifier']
+				subtypes: [{ type: SYMBOL, name: '_non_delim_token' }, { type: SYMBOL, name: 'identifier' }]
 			},
 			_non_delim_token: {
 				type: CHOICE,
@@ -448,7 +453,7 @@ describe('Assemble — classifyNode', () => {
 		});
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_delim_tokens');
 		expect(node?.modelType).toBe('supertype');
-		const subtypes = (node as any).subtypes as string[];
+		const subtypes = (node as any).subtypeNames as string[];
 		expect(subtypes).not.toContain('%');
 		expect(subtypes).not.toContain('+');
 		// `_non_delim_token` and `_non_special_token` are transparent CHOICE
@@ -488,7 +493,7 @@ describe('Assemble — classifyNode', () => {
 			_simple_pattern: {
 				type: SUPERTYPE,
 				name: '_simple_pattern',
-				subtypes: ['identifier', '_simple_pattern_negative']
+				subtypes: [{ type: SYMBOL, name: 'identifier' }, { type: SYMBOL, name: '_simple_pattern_negative' }]
 			},
 			_simple_pattern_negative: {
 				type: SEQ,
@@ -509,7 +514,7 @@ describe('Assemble — classifyNode', () => {
 		});
 		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_simple_pattern');
 		expect(node?.modelType).toBe('supertype');
-		const subtypes = (node as any).subtypes as string[];
+		const subtypes = (node as any).subtypeNames as string[];
 		expect(subtypes).not.toContain('integer');
 		expect(subtypes).not.toContain('float');
 		// The SEQ arm resolves to nothing (opaque), so the "keep the hidden
@@ -534,7 +539,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				}
 			}
 		};
-		expect(classifyNode('member_list', rule)).toBe('separatedList');
+		expect(classifyNode('member_list', deleteWrapper(rule))).toBe('separatedList');
 	});
 
 	it('classifies a rule with a literal separator and an optional trailing flank as separatedList', () => {
@@ -546,7 +551,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				trailing: 'optional'
 			}
 		};
-		expect(classifyNode('member_list', rule)).toBe('separatedList');
+		expect(classifyNode('member_list', deleteWrapper(rule))).toBe('separatedList');
 	});
 
 	it('classifies a rule with a literal separator and an optional leading flank as separatedList', () => {
@@ -558,7 +563,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				leading: 'optional'
 			}
 		};
-		expect(classifyNode('member_list', rule)).toBe('separatedList');
+		expect(classifyNode('member_list', deleteWrapper(rule))).toBe('separatedList');
 	});
 
 	it('does NOT classify a rule with a literal separator and no flank as separatedList', () => {
@@ -569,7 +574,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				value: { type: STRING, value: ',' }
 			}
 		};
-		expect(classifyNode('member_list', rule)).toBe('branch');
+		expect(classifyNode('member_list', deleteWrapper(rule))).toBe('branch');
 	});
 
 	it('does NOT classify a branch with one array-multiplicity field among several named fields as separatedList', () => {
@@ -595,7 +600,7 @@ describe('Assemble — classifyNode — separatedList', () => {
 				}
 			]
 		};
-		expect(classifyNode('some_branch', rule)).toBe('branch');
+		expect(classifyNode('some_branch', deleteWrapper(rule))).toBe('branch');
 	});
 });
 
@@ -707,7 +712,7 @@ describe('Assemble — T027a empty seq after stripping', () => {
 				{ type: STRING, value: '}' }
 			]
 		};
-		const modelType = classifyNode('braces', rule);
+		const modelType = classifyNode('braces', deleteWrapper(rule));
 		expect(modelType).toBe('pattern');
 	});
 });
@@ -944,12 +949,11 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 
 	it('materializes a nested-supertype parse alias as its own AssembledSupertype, with the catalog available', () => {
 		const normalized = makeNormalized({
-			_inner: { type: SUPERTYPE, name: '_inner', subtypes: ['identifier'] },
+			_inner: { type: SUPERTYPE, name: '_inner', subtypes: [{ type: SYMBOL, name: 'identifier' }] },
 			_outer: {
 				type: SUPERTYPE,
 				name: '_outer',
-				subtypes: ['_inner'],
-				subtypeParseNames: { _inner: 'inner_alias' }
+				subtypes: [{ type: SYMBOL, name: 'inner_alias', aliasedFrom: '_inner' }]
 			},
 			identifier: { type: PATTERN, value: '[a-z]+' }
 		});
@@ -957,6 +961,52 @@ describe('Assemble — collectAnonymousNodes catalog-first naming', () => {
 		const nodeMap = assemble(AssembleCtx.from(normalized, generatedIdTables));
 		const aliasNode = nodeMap.nodes.get('inner_alias');
 		expect(aliasNode?.modelType).toBe('supertype');
-		expect((aliasNode as { subtypes: string[] }).subtypes).toEqual(['identifier']);
+		expect(aliasNode).toBeInstanceOf(AssembledSupertype);
+		expect((aliasNode as AssembledSupertype).subtypeNames).toEqual(['identifier']);
+	});
+
+	it('AssembledSupertype constructor trusts each pre-stamped SubtypeRef directly, no re-derivation', () => {
+		const rule: Rule<'link'> = {
+			type: SUPERTYPE,
+			name: '_expression',
+			subtypes: [
+				{ type: SYMBOL, name: 'identifier', kindId: 99 },
+				{ type: SYMBOL, name: 'block', aliasedFrom: '_simple_statements', kindId: 42, aliasedFromId: 77 }
+			]
+		};
+		const node = new AssembledSupertype('_expression', rule, [
+			{ name: 'identifier', storageKindId: 99 },
+			{ name: '_simple_statements', storageKindId: 77 }
+		]);
+		expect(node.subtypes.map((s) => s.storageKindId)).toEqual([99, 77]);
+	});
+
+	it('carries a nested supertype arm\'s own stamped kindId through to the flattened subtype list', () => {
+		// `_outer` never directly references `identifier` / `_simple_statements` —
+		// they're reachable ONLY through `_inner`'s own `subtypes`. Before the
+		// stamped-SubtypeRef chain, only names directly in the OUTER rule's
+		// `rule.subtypes` got their id re-derived by AssembledSupertype's
+		// constructor; a flattened, nested-arm name silently landed with
+		// storageKindId undefined. No kindEntries/catalog is passed anywhere
+		// here — every id below must come from a ref stamp.
+		const normalized = makeNormalized({
+			_outer: {
+				type: SUPERTYPE,
+				name: '_outer',
+				subtypes: [{ type: SYMBOL, name: '_inner', kindId: 10 }]
+			},
+			_inner: {
+				type: SUPERTYPE,
+				name: '_inner',
+				subtypes: [
+					{ type: SYMBOL, name: 'identifier', kindId: 99 },
+					{ type: SYMBOL, name: 'block', aliasedFrom: '_simple_statements', kindId: 42, aliasedFromId: 77 }
+				]
+			}
+		});
+		const node = assemble(AssembleCtx.from(normalized)).nodes.get('_outer') as AssembledSupertype;
+		expect(node.modelType).toBe('supertype');
+		expect(node.subtypeNames).toEqual(['_inner', 'identifier', '_simple_statements']);
+		expect(node.subtypes.map((s) => s.storageKindId)).toEqual([10, 99, 77]);
 	});
 });

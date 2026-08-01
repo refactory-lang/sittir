@@ -145,7 +145,6 @@ pub enum AnyTransport {
     Integer(IntegerTransport),
     Float(FloatTransport),
     Identifier(IdentifierTransport),
-    KeywordIdentifier(KeywordIdentifierTransport),
     True(TrueTransport),
     False(FalseTransport),
     None(NoneTransport),
@@ -154,8 +153,7 @@ pub enum AnyTransport {
     LineContinuation(LineContinuationTransport),
     PositionalSeparator(PositionalSeparatorTransport),
     KeywordSeparator(KeywordSeparatorTransport),
-    UnaryOperatorOperator(UnaryOperatorOperatorEnum),
-    AugmentedAssignmentOperator(AugmentedAssignmentOperatorEnum),
+    KwAsyncMarker(KwAsyncMarkerTransport),
     RaiseStatementOptional1(RaiseStatementOptional1Transport),
     ExceptClauseGroup1(ExceptClauseGroup1Transport),
     FunctionDefinitionOptional1(FunctionDefinitionOptional1Transport),
@@ -166,6 +164,8 @@ pub enum AnyTransport {
     PatternListGroup1(PatternListGroup1Transport),
     SliceGroup1(SliceGroup1Transport),
     DictionaryGroup1(DictionaryGroup1Transport),
+    UnaryOperatorOperator(UnaryOperatorOperatorEnum),
+    AugmentedAssignmentOperator(AugmentedAssignmentOperatorEnum),
     ExceptClauseAs(ExceptClauseAsTransport),
     ExceptClauseAsOptional1(ExceptClauseAsOptional1Transport),
     CaseTuplePattern(CaseTuplePatternTransport),
@@ -187,9 +187,6 @@ pub enum AnyTransport {
     ExceptClauseList(ExceptClauseListTransport),
     ComparisonOperatorComparator(ComparisonOperatorComparatorTransport),
     Newline(NewlineTransport),
-    AsyncMarker(AsyncMarkerTransport),
-    SplatPatternOperator(SplatPatternOperatorEnum),
-    ComplexPatternOperator(ComplexPatternOperatorEnum),
     Indent(IndentTransport),
     Dedent(DedentTransport),
     StringStart(StringStartTransport),
@@ -205,8 +202,8 @@ pub enum AnyTransport {
     FutureU(FutureUTransport),
     Lparen(LparenTransport),
     Rparen(RparenTransport),
-    Star(StarTransport),
     As(AsTransport),
+    Star(StarTransport),
     GtGt(GtGtTransport),
     Assert(AssertTransport),
     ColonEq(ColonEqTransport),
@@ -264,24 +261,24 @@ pub enum AnyTransport {
     False2(False2Transport),
     None2(None2Transport),
     AnonAwait(AnonAwaitTransport),
+    Async(AsyncTransport),
     DashGt(DashGtTransport),
     Print(PrintTransport),
-    Async(AsyncTransport),
     Literal0_5f_6e_65_77_6c_69_6e_65,
-    Literal1_2a,
-    Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
-    Literal3_74_79_70_65,
-    Literal4_2c,
-    Literal5_5f,
-    Literal6_2d,
-    Literal7_61_6e_64,
-    Literal8_6f_72,
-    Literal9_2b,
-    Literal10_40,
-    Literal11_2f,
-    Literal12_25,
-    Literal13_2f_2f,
-    Literal14_2a_2a,
+    Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    Literal2_74_79_70_65,
+    Literal3_2c,
+    Literal4_2a,
+    Literal5_2a_2a,
+    Literal6_5f,
+    Literal7_2d,
+    Literal8_2b,
+    Literal9_61_6e_64,
+    Literal10_6f_72,
+    Literal11_40,
+    Literal12_2f,
+    Literal13_25,
+    Literal14_2f_2f,
     Literal15_7c,
     Literal16_26,
     Literal17_5e,
@@ -663,7 +660,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     SliceTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: ellipsis (ELLIPSIS2)
-                78 => Ok(AnyTransport::Ellipsis2(
+                65 => Ok(AnyTransport::Ellipsis2(
                     Ellipsis2Transport::from_napi_value(env, napi_val)?
                 )),
                 // kind: call (CALL)
@@ -775,7 +772,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     InterpolationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: escape_sequence (ESCAPE_SEQUENCE)
-                80 => Ok(AnyTransport::EscapeSequence(
+                67 => Ok(AnyTransport::EscapeSequence(
                     EscapeSequenceTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _not_escape_sequence (_NOT_ESCAPE_SEQUENCE)
@@ -787,15 +784,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     FormatSpecifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: type_conversion (TYPE_CONVERSION)
-                83 => Ok(AnyTransport::TypeConversion(
+                70 => Ok(AnyTransport::TypeConversion(
                     TypeConversionTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: integer (INTEGER)
-                84 => Ok(AnyTransport::Integer(
+                71 => Ok(AnyTransport::Integer(
                     IntegerTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: float (FLOAT)
-                85 => Ok(AnyTransport::Float(
+                72 => Ok(AnyTransport::Float(
                     FloatTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: identifier (IDENTIFIER)
@@ -803,15 +800,15 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     IdentifierTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: true (TRUE)
-                88 => Ok(AnyTransport::True(
+                75 => Ok(AnyTransport::True(
                     TrueTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: false (FALSE)
-                89 => Ok(AnyTransport::False(
+                76 => Ok(AnyTransport::False(
                     FalseTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: none (NONE)
-                90 => Ok(AnyTransport::None(
+                77 => Ok(AnyTransport::None(
                     NoneTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: await (AWAIT)
@@ -819,11 +816,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     AwaitTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: comment (COMMENT)
-                91 => Ok(AnyTransport::Comment(
+                78 => Ok(AnyTransport::Comment(
                     CommentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: line_continuation (LINE_CONTINUATION)
-                92 => Ok(AnyTransport::LineContinuation(
+                79 => Ok(AnyTransport::LineContinuation(
                     LineContinuationTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: positional_separator (POSITIONAL_SEPARATOR)
@@ -866,80 +863,84 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 243 => Ok(AnyTransport::DictionaryGroup1(
                     DictionaryGroup1Transport::from_napi_value(env, napi_val)?
                 )),
+                // kind: _augmented_assignment_operator (_AUGMENTED_ASSIGNMENT_OPERATOR)
+                244 => Ok(AnyTransport::AugmentedAssignmentOperator(
+                    AugmentedAssignmentOperatorEnum::from_napi_value(env, napi_val)?
+                )),
                 // kind: _except_clause_as (_EXCEPT_CLAUSE_AS)
-                244 => Ok(AnyTransport::ExceptClauseAs(
+                245 => Ok(AnyTransport::ExceptClauseAs(
                     ExceptClauseAsTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: case_tuple_pattern (CASE_TUPLE_PATTERN)
-                245 => Ok(AnyTransport::CaseTuplePattern(
+                246 => Ok(AnyTransport::CaseTuplePattern(
                     CaseTuplePatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: case_list_pattern (CASE_LIST_PATTERN)
-                246 => Ok(AnyTransport::CaseListPattern(
+                247 => Ok(AnyTransport::CaseListPattern(
                     CaseListPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: case_as_pattern (CASE_AS_PATTERN)
-                247 => Ok(AnyTransport::CaseAsPattern(
+                248 => Ok(AnyTransport::CaseAsPattern(
                     CaseAsPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: comprehension_clauses (COMPREHENSION_CLAUSES)
-                248 => Ok(AnyTransport::ComprehensionClauses(
+                249 => Ok(AnyTransport::ComprehensionClauses(
                     ComprehensionClausesTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: print_statement_group1 (PRINT_STATEMENT_GROUP1)
-                249 => Ok(AnyTransport::PrintStatementGroup1(
+                250 => Ok(AnyTransport::PrintStatementGroup1(
                     PrintStatementGroup1Transport::from_napi_value(env, napi_val)?
                 )),
                 // kind: print_statement_group2 (PRINT_STATEMENT_GROUP2)
-                250 => Ok(AnyTransport::PrintStatementGroup2(
+                251 => Ok(AnyTransport::PrintStatementGroup2(
                     PrintStatementGroup2Transport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _wildcard_pattern (_WILDCARD_PATTERN)
-                251 => Ok(AnyTransport::WildcardPattern(
+                252 => Ok(AnyTransport::WildcardPattern(
                     WildcardPatternTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _assignment_eq (_ASSIGNMENT_EQ)
-                252 => Ok(AnyTransport::AssignmentEq(
+                253 => Ok(AnyTransport::AssignmentEq(
                     AssignmentEqTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _assignment_type (_ASSIGNMENT_TYPE)
-                253 => Ok(AnyTransport::AssignmentType(
+                254 => Ok(AnyTransport::AssignmentType(
                     AssignmentTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _assignment_typed (_ASSIGNMENT_TYPED)
-                254 => Ok(AnyTransport::AssignmentTyped(
+                255 => Ok(AnyTransport::AssignmentTyped(
                     AssignmentTypedTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _expression_statement_tuple (_EXPRESSION_STATEMENT_TUPLE)
-                255 => Ok(AnyTransport::ExpressionStatementTuple(
+                256 => Ok(AnyTransport::ExpressionStatementTuple(
                     ExpressionStatementTupleTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _with_clause_bare (_WITH_CLAUSE_BARE)
-                256 => Ok(AnyTransport::WithClauseBare(
+                257 => Ok(AnyTransport::WithClauseBare(
                     WithClauseBareTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _with_clause_paren (_WITH_CLAUSE_PAREN)
-                257 => Ok(AnyTransport::WithClauseParen(
+                258 => Ok(AnyTransport::WithClauseParen(
                     WithClauseParenTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _match_block_block (_MATCH_BLOCK_BLOCK)
-                258 => Ok(AnyTransport::MatchBlockBlock(
+                259 => Ok(AnyTransport::MatchBlockBlock(
                     MatchBlockBlockTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _suite_block_with_indent (_SUITE_BLOCK_WITH_INDENT)
-                259 => Ok(AnyTransport::SuiteBlockWithIndent(
+                260 => Ok(AnyTransport::SuiteBlockWithIndent(
                     SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _simple_pattern_negative (_SIMPLE_PATTERN_NEGATIVE)
-                261 => Ok(AnyTransport::SimplePatternNegative(
+                262 => Ok(AnyTransport::SimplePatternNegative(
                     SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _except_clause_list (_EXCEPT_CLAUSE_LIST)
-                262 => Ok(AnyTransport::ExceptClauseList(
+                263 => Ok(AnyTransport::ExceptClauseList(
                     ExceptClauseListTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _comparison_operator_comparator (_COMPARISON_OPERATOR_COMPARATOR)
-                263 => Ok(AnyTransport::ComparisonOperatorComparator(
+                264 => Ok(AnyTransport::ComparisonOperatorComparator(
                     ComparisonOperatorComparatorTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: _newline (_NEWLINE)
@@ -1002,13 +1003,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                 7 => Ok(AnyTransport::Lparen(
                     LparenTransport::from_napi_value(env, napi_val)?
                 )),
-                // kind: star (STAR)
-                11 => Ok(AnyTransport::Star(
-                    StarTransport::from_napi_value(env, napi_val)?
-                )),
                 // kind: as (AS)
                 10 => Ok(AnyTransport::As(
                     AsTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: star (STAR)
+                11 => Ok(AnyTransport::Star(
+                    StarTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: gt_gt (GT_GT)
                 12 => Ok(AnyTransport::GtGt(
@@ -1115,7 +1116,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     ExecTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: anon_type (ANON_TYPE)
-                79 => Ok(AnyTransport::AnonType(
+                66 => Ok(AnyTransport::AnonType(
                     AnonTypeTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: eq (EQ)
@@ -1199,7 +1200,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     AnonLambdaTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: anon_yield (ANON_YIELD)
-                77 => Ok(AnyTransport::AnonYield(
+                64 => Ok(AnyTransport::AnonYield(
                     AnonYieldTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: dot (DOT)
@@ -1207,24 +1208,24 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
                     DotTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: bslash (BSLASH)
-                81 => Ok(AnyTransport::Bslash(
+                68 => Ok(AnyTransport::Bslash(
                     BslashTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: anon_await (ANON_AWAIT)
-                87 => Ok(AnyTransport::AnonAwait(
+                74 => Ok(AnyTransport::AnonAwait(
                     AnonAwaitTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: dash_gt (DASH_GT)
-                93 => Ok(AnyTransport::DashGt(
-                    DashGtTransport::from_napi_value(env, napi_val)?
-                )),
-                // kind: print (PRINT)
-                86 => Ok(AnyTransport::Print(
-                    PrintTransport::from_napi_value(env, napi_val)?
                 )),
                 // kind: async (ASYNC)
                 27 => Ok(AnyTransport::Async(
                     AsyncTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: dash_gt (DASH_GT)
+                80 => Ok(AnyTransport::DashGt(
+                    DashGtTransport::from_napi_value(env, napi_val)?
+                )),
+                // kind: print (PRINT)
+                73 => Ok(AnyTransport::Print(
+                    PrintTransport::from_napi_value(env, napi_val)?
                 )),
                 // literal kind: < → "<"
                 94 => Ok(AnyTransport::Literal22_3c),
@@ -1880,19 +1881,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionsTransport {
                     226 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Expression(
+                    71 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Expression(
+                    72 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::Expression(
+                    75 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::Expression(
+                    76 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::Expression(
+                    77 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::Expression(
@@ -1934,7 +1935,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionsTransport {
                     220 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Expression(
+                    65 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::Expression(
@@ -1997,19 +1998,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionsTransport {
                     226 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Expression(
+                    71 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Expression(
+                    72 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::Expression(
+                    75 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::Expression(
+                    76 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::Expression(
+                    77 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::Expression(
@@ -2051,7 +2052,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionsTransport {
                     220 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Expression(
+                    65 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::Expression(
@@ -2356,10 +2357,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternTransport {
                     165 => Ok(Self::UnionPattern(
                         UnionPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::CaseListPattern(
+                    247 => Ok(Self::CaseListPattern(
                         CaseListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::CaseTuplePattern(
+                    246 => Ok(Self::CaseTuplePattern(
                         CaseTuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
                     166 => Ok(Self::DictPattern(
@@ -2371,16 +2372,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternTransport {
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
-                    261 => Ok(Self::SimplePatternNegative(
+                    262 => Ok(Self::SimplePatternNegative(
                         SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                     )),
                     171 => Ok(Self::ComplexPattern(
@@ -2389,7 +2390,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternTransport {
                     162 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    251 => Ok(Self::WildcardPattern(
+                    252 => Ok(Self::WildcardPattern(
                         WildcardPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2460,10 +2461,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternTransport {
                     165 => Ok(Self::UnionPattern(
                         UnionPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::CaseListPattern(
+                    247 => Ok(Self::CaseListPattern(
                         CaseListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::CaseTuplePattern(
+                    246 => Ok(Self::CaseTuplePattern(
                         CaseTuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
                     166 => Ok(Self::DictPattern(
@@ -2475,16 +2476,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternTransport {
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
-                    261 => Ok(Self::SimplePatternNegative(
+                    262 => Ok(Self::SimplePatternNegative(
                         SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                     )),
                     171 => Ok(Self::ComplexPattern(
@@ -2493,7 +2494,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternTransport {
                     162 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    251 => Ok(Self::WildcardPattern(
+                    252 => Ok(Self::WildcardPattern(
                         WildcardPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -2771,9 +2772,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
-                        if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::KeywordIdentifier(value));
-                        }
                         if let Ok(value) = SubscriptTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Subscript(value));
                         }
@@ -2782,6 +2780,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         }
                         if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ListSplatPattern(value));
+                        }
+                        if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::KeywordIdentifier(value));
                         }
                         if let Ok(value) = TuplePatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::TuplePattern(value));
@@ -2828,9 +2829,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
-                        if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::KeywordIdentifier(value));
-                        }
                         if let Ok(value) = SubscriptTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Subscript(value));
                         }
@@ -2839,6 +2837,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternTransport {
                         }
                         if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ListSplatPattern(value));
+                        }
+                        if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::KeywordIdentifier(value));
                         }
                         if let Ok(value) = TuplePatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::TuplePattern(value));
@@ -2909,7 +2910,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PatternTransport> {
 fn pattern_transport_to_any(t: PatternTransport) -> AnyTransport {
     match t {
         PatternTransport::Identifier(inner) => AnyTransport::Identifier(inner),
-        PatternTransport::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
+        PatternTransport::KeywordIdentifier(inner) => keyword_identifier_transport_to_any(inner),
         PatternTransport::Subscript(inner) => AnyTransport::Subscript(inner),
         PatternTransport::Attribute(inner) => AnyTransport::Attribute(inner),
         PatternTransport::ListSplatPattern(inner) => AnyTransport::ListSplatPattern(inner),
@@ -2980,19 +2981,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionWithinForInClauseTrans
                     226 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Expression(
+                    71 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Expression(
+                    72 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::Expression(
+                    75 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::Expression(
+                    76 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::Expression(
+                    77 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::Expression(
@@ -3034,7 +3035,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionWithinForInClauseTrans
                     220 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Expression(
+                    65 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::Expression(
@@ -3106,19 +3107,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionWithinForInClauseTrans
                     226 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Expression(
+                    71 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Expression(
+                    72 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::Expression(
+                    75 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::Expression(
+                    76 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::Expression(
+                    77 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::Expression(
@@ -3160,7 +3161,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionWithinForInClauseTrans
                     220 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Expression(
+                    65 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::Expression(
@@ -3306,19 +3307,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     226 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::PrimaryExpression(
+                    71 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::PrimaryExpression(
+                    72 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::PrimaryExpression(
+                    75 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::PrimaryExpression(
+                    76 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::PrimaryExpression(
+                    77 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::PrimaryExpression(
@@ -3360,7 +3361,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     220 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::PrimaryExpression(
+                    65 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::PrimaryExpression(
@@ -3447,19 +3448,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     226 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::PrimaryExpression(
+                    71 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::PrimaryExpression(
+                    72 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::PrimaryExpression(
+                    75 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::PrimaryExpression(
+                    76 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::PrimaryExpression(
+                    77 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::PrimaryExpression(
@@ -3501,7 +3502,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport {
                     220 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::PrimaryExpression(
+                    65 => Ok(Self::PrimaryExpression(
                         PrimaryExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::PrimaryExpression(
@@ -3632,9 +3633,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
-                        if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::KeywordIdentifier(value));
-                        }
                         if let Ok(value) = StringTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::String(value));
                         }
@@ -3692,6 +3690,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                         if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ListSplatPattern(value));
                         }
+                        if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::KeywordIdentifier(value));
+                        }
                         if let Ok(value) = ListTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::List(value));
                         }
@@ -3718,19 +3719,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::UnaryOperator(
@@ -3772,7 +3773,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Ellipsis2(
+                    65 => Ok(Self::Ellipsis2(
                         Ellipsis2Transport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
@@ -3803,9 +3804,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                         if let Ok(value) = IdentifierTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::Identifier(value));
                         }
-                        if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
-                            return Ok(Self::KeywordIdentifier(value));
-                        }
                         if let Ok(value) = StringTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::String(value));
                         }
@@ -3863,6 +3861,9 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                         if let Ok(value) = ListSplatPatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::ListSplatPattern(value));
                         }
+                        if let Ok(value) = KeywordIdentifierTransport::from_napi_value(env, napi_val) {
+                            return Ok(Self::KeywordIdentifier(value));
+                        }
                         if let Ok(value) = ListTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::List(value));
                         }
@@ -3889,19 +3890,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::UnaryOperator(
@@ -3943,7 +3944,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrimaryExpressionTransport {
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Ellipsis2(
+                    65 => Ok(Self::Ellipsis2(
                         Ellipsis2Transport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
@@ -3994,7 +3995,7 @@ fn primary_expression_transport_to_any(t: PrimaryExpressionTransport) -> AnyTran
         PrimaryExpressionTransport::Await(inner) => AnyTransport::Await(inner),
         PrimaryExpressionTransport::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
         PrimaryExpressionTransport::Identifier(inner) => AnyTransport::Identifier(inner),
-        PrimaryExpressionTransport::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
+        PrimaryExpressionTransport::KeywordIdentifier(inner) => keyword_identifier_transport_to_any(inner),
         PrimaryExpressionTransport::String(inner) => AnyTransport::String(inner),
         PrimaryExpressionTransport::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
         PrimaryExpressionTransport::Integer(inner) => AnyTransport::Integer(inner),
@@ -4226,19 +4227,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for RightHandSideTransport {
                     226 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Expression(
+                    71 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Expression(
+                    72 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::Expression(
+                    75 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::Expression(
+                    76 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::Expression(
+                    77 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::Expression(
@@ -4280,7 +4281,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RightHandSideTransport {
                     220 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Expression(
+                    65 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::Expression(
@@ -4376,19 +4377,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for RightHandSideTransport {
                     226 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Expression(
+                    71 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Expression(
+                    72 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::Expression(
+                    75 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::Expression(
+                    76 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::Expression(
+                    77 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::Expression(
@@ -4430,7 +4431,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RightHandSideTransport {
                     220 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Expression(
+                    65 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::Expression(
@@ -4572,19 +4573,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for FExpressionTransport {
                     226 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Expression(
+                    71 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Expression(
+                    72 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::Expression(
+                    75 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::Expression(
+                    76 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::Expression(
+                    77 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::Expression(
@@ -4626,7 +4627,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FExpressionTransport {
                     220 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Expression(
+                    65 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::Expression(
@@ -4710,19 +4711,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for FExpressionTransport {
                     226 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Expression(
+                    71 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Expression(
+                    72 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::Expression(
+                    75 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::Expression(
+                    76 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::Expression(
+                    77 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::Expression(
@@ -4764,7 +4765,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FExpressionTransport {
                     220 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Expression(
+                    65 => Ok(Self::Expression(
                         ExpressionTransport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::Expression(
@@ -4841,6 +4842,98 @@ impl RenderableTransport for FExpressionTransport {
 }
 
 #[derive(Debug, Clone)]
+pub enum KeywordIdentifierTransport {
+    Identifier(IdentifierTransport),
+    Verbatim(VerbatimTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for KeywordIdentifierTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in KeywordIdentifierTransport",
+                    ))),
+                }
+            }
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                Ok(Self::Verbatim(VerbatimTransport { text }))
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in KeywordIdentifierTransport")
+                )?;
+                match kind_id {
+                    1 => Ok(Self::Identifier(
+                        IdentifierTransport::from_napi_value(env, napi_val)?
+                    )),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in KeywordIdentifierTransport",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("KeywordIdentifierTransport: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for KeywordIdentifierTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("KeywordIdentifierTransport is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<KeywordIdentifierTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        KeywordIdentifierTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<KeywordIdentifierTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        KeywordIdentifierTransport::to_napi_value(env, *val)
+    }
+}
+
+fn keyword_identifier_transport_to_any(t: KeywordIdentifierTransport) -> AnyTransport {
+    match t {
+        KeywordIdentifierTransport::Identifier(inner) => AnyTransport::Identifier(inner),
+        KeywordIdentifierTransport::Verbatim(inner) => AnyTransport::Verbatim(inner),
+    }
+}
+
+impl RenderableTransport for KeywordIdentifierTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_keyword_identifier(self, dest)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum DictPatternKvTransport {
     KeyValuePattern(KeyValuePatternTransport),
     SplatPattern(SplatPatternTransport),
@@ -4855,7 +4948,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DictPatternKvTransport {
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    260 => {
+                    261 => {
                         if let Ok(value) = KeyValuePatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::KeyValuePattern(value));
                         }
@@ -4881,7 +4974,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DictPatternKvTransport {
                     ::napi::Error::from_reason("$type property missing in DictPatternKvTransport")
                 )?;
                 match kind_id {
-                    260 => {
+                    261 => {
                         if let Ok(value) = KeyValuePatternTransport::from_napi_value(env, napi_val) {
                             return Ok(Self::KeyValuePattern(value));
                         }
@@ -5322,90 +5415,6 @@ impl RenderableTransport for ImportFromStatementModuleNameTransportSlot {
 }
 
 #[derive(Debug, Clone)]
-pub enum ImportFromStatementWildcardImportTransportSlot {
-    Literal1_2a,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ImportFromStatementWildcardImportTransportSlot {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                match u16::from_napi_value(env, napi_val)? {
-                    11 => Ok(Self::Literal1_2a),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ImportFromStatementWildcardImportTransportSlot",
-                    ))),
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
-                    ::napi::Error::from_reason("$type property missing in ImportFromStatementWildcardImportTransportSlot")
-                )?;
-                match kind_id {
-                    11 => Ok(Self::Literal1_2a),
-                    other => Err(::napi::Error::from_reason(format!(
-                        "unknown kind id {other} in ImportFromStatementWildcardImportTransportSlot",
-                    ))),
-                }
-            }
-            _ => Err(::napi::Error::from_reason("ImportFromStatementWildcardImportTransportSlot: expected u16 kind_id, string, or object with $type")),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ImportFromStatementWildcardImportTransportSlot {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ImportFromStatementWildcardImportTransportSlot is receive-only"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<ImportFromStatementWildcardImportTransportSlot> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        ImportFromStatementWildcardImportTransportSlot::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<ImportFromStatementWildcardImportTransportSlot> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ImportFromStatementWildcardImportTransportSlot::to_napi_value(env, *val)
-    }
-}
-
-fn import_from_statement_wildcard_import_transport_slot_to_any(t: ImportFromStatementWildcardImportTransportSlot) -> AnyTransport {
-    match t {
-        ImportFromStatementWildcardImportTransportSlot::Literal1_2a => AnyTransport::Literal1_2a,
-    }
-}
-
-impl RenderableTransport for ImportFromStatementWildcardImportTransportSlot {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        match self {
-            ImportFromStatementWildcardImportTransportSlot::Literal1_2a => dest.write_str("*").map_err(::askama::Error::from),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum ImportFromStatementNameTransportSlot {
     DottedName(DottedNameTransport),
     AliasedImport(AliasedImportTransport),
@@ -5614,10 +5623,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintStatementContentTransportSl
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    249 => Ok(Self::PrintStatementGroup1(
+                    250 => Ok(Self::PrintStatementGroup1(
                         PrintStatementGroup1Transport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::PrintStatementGroup2(
+                    251 => Ok(Self::PrintStatementGroup2(
                         PrintStatementGroup2Transport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5631,10 +5640,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintStatementContentTransportSl
                     ::napi::Error::from_reason("$type property missing in PrintStatementContentTransportSlot")
                 )?;
                 match kind_id {
-                    249 => Ok(Self::PrintStatementGroup1(
+                    250 => Ok(Self::PrintStatementGroup1(
                         PrintStatementGroup1Transport::from_napi_value(env, napi_val)?
                     )),
-                    250 => Ok(Self::PrintStatementGroup2(
+                    251 => Ok(Self::PrintStatementGroup2(
                         PrintStatementGroup2Transport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -5705,7 +5714,6 @@ pub enum ExpressionStatementContentTransportSlot {
     Await(AwaitTransport),
     BinaryOperator(BinaryOperatorTransport),
     Identifier(IdentifierTransport),
-    KeywordIdentifier(KeywordIdentifierTransport),
     String(StringTransport),
     ConcatenatedString(ConcatenatedStringTransport),
     Integer(IntegerTransport),
@@ -5774,19 +5782,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::UnaryOperator(
@@ -5828,7 +5836,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Ellipsis2(
+                    65 => Ok(Self::Ellipsis2(
                         Ellipsis2Transport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
@@ -5843,7 +5851,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
                     182 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    255 => Ok(Self::ExpressionStatementTuple(
+                    256 => Ok(Self::ExpressionStatementTuple(
                         ExpressionStatementTupleTransport::from_napi_value(env, napi_val)?
                     )),
                     195 => Ok(Self::Assignment(
@@ -5897,19 +5905,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::UnaryOperator(
@@ -5951,7 +5959,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Ellipsis2(
+                    65 => Ok(Self::Ellipsis2(
                         Ellipsis2Transport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
@@ -5966,7 +5974,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementContentTransp
                     182 => Ok(Self::AsPattern(
                         AsPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    255 => Ok(Self::ExpressionStatementTuple(
+                    256 => Ok(Self::ExpressionStatementTuple(
                         ExpressionStatementTupleTransport::from_napi_value(env, napi_val)?
                     )),
                     195 => Ok(Self::Assignment(
@@ -6027,7 +6035,6 @@ fn expression_statement_content_transport_slot_to_any(t: ExpressionStatementCont
         ExpressionStatementContentTransportSlot::Await(inner) => AnyTransport::Await(inner),
         ExpressionStatementContentTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
         ExpressionStatementContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ExpressionStatementContentTransportSlot::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
         ExpressionStatementContentTransportSlot::String(inner) => AnyTransport::String(inner),
         ExpressionStatementContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
         ExpressionStatementContentTransportSlot::Integer(inner) => AnyTransport::Integer(inner),
@@ -6074,7 +6081,6 @@ impl RenderableTransport for ExpressionStatementContentTransportSlot {
             ExpressionStatementContentTransportSlot::Await(inner) => render_await(inner, dest),
             ExpressionStatementContentTransportSlot::BinaryOperator(inner) => render_binary_operator(inner, dest),
             ExpressionStatementContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ExpressionStatementContentTransportSlot::KeywordIdentifier(inner) => render_keyword_identifier(inner, dest),
             ExpressionStatementContentTransportSlot::String(inner) => render_string(inner, dest),
             ExpressionStatementContentTransportSlot::ConcatenatedString(inner) => render_concatenated_string(inner, dest),
             ExpressionStatementContentTransportSlot::Integer(inner) => render_integer(inner, dest),
@@ -6128,10 +6134,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfStatementConsequenceTransportS
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -6149,10 +6155,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfStatementConsequenceTransportS
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -6333,10 +6339,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElifClauseConsequenceTransportSl
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -6354,10 +6360,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElifClauseConsequenceTransportSl
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -6441,10 +6447,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseClauseBodyTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -6462,10 +6468,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseClauseBodyTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -6545,7 +6551,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchBlockContentTransportSlot {
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    258 => Ok(Self::MatchBlockBlock(
+                    259 => Ok(Self::MatchBlockBlock(
                         MatchBlockBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -6560,7 +6566,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchBlockContentTransportSlot {
                     ::napi::Error::from_reason("$type property missing in MatchBlockContentTransportSlot")
                 )?;
                 match kind_id {
-                    258 => Ok(Self::MatchBlockBlock(
+                    259 => Ok(Self::MatchBlockBlock(
                         MatchBlockBlockTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -6642,10 +6648,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseClauseConsequenceTransportSl
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -6663,10 +6669,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseClauseConsequenceTransportSl
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -6733,7 +6739,7 @@ impl RenderableTransport for CaseClauseConsequenceTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum ForStatementAsyncMarkerTransportSlot {
-    Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -6745,7 +6751,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementAsyncMarkerTransport
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    27 => Ok(Self::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    27 => Ok(Self::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForStatementAsyncMarkerTransportSlot",
                     ))),
@@ -6757,7 +6763,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementAsyncMarkerTransport
                     ::napi::Error::from_reason("$type property missing in ForStatementAsyncMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    27 => Ok(Self::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    27 => Ok(Self::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForStatementAsyncMarkerTransportSlot",
                     ))),
@@ -6800,7 +6806,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForStatementAsyncMarkerTranspo
 
 fn for_statement_async_marker_transport_slot_to_any(t: ForStatementAsyncMarkerTransportSlot) -> AnyTransport {
     match t {
-        ForStatementAsyncMarkerTransportSlot::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+        ForStatementAsyncMarkerTransportSlot::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -6810,7 +6816,7 @@ impl RenderableTransport for ForStatementAsyncMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ForStatementAsyncMarkerTransportSlot::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+            ForStatementAsyncMarkerTransportSlot::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
         }
     }
 }
@@ -6834,10 +6840,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementBodyTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -6855,10 +6861,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForStatementBodyTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -6942,10 +6948,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileStatementBodyTransportSlot 
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -6963,10 +6969,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileStatementBodyTransportSlot 
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -7050,10 +7056,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryStatementBodyTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -7071,10 +7077,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryStatementBodyTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -7158,10 +7164,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseContentTransportSlot
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -7179,10 +7185,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseContentTransportSlot
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -7266,10 +7272,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyClauseBlockTransportSlot 
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -7287,10 +7293,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyClauseBlockTransportSlot 
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -7357,7 +7363,7 @@ impl RenderableTransport for FinallyClauseBlockTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum WithStatementAsyncMarkerTransportSlot {
-    Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -7369,7 +7375,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithStatementAsyncMarkerTranspor
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    27 => Ok(Self::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    27 => Ok(Self::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in WithStatementAsyncMarkerTransportSlot",
                     ))),
@@ -7381,7 +7387,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithStatementAsyncMarkerTranspor
                     ::napi::Error::from_reason("$type property missing in WithStatementAsyncMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    27 => Ok(Self::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    27 => Ok(Self::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in WithStatementAsyncMarkerTransportSlot",
                     ))),
@@ -7424,7 +7430,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<WithStatementAsyncMarkerTransp
 
 fn with_statement_async_marker_transport_slot_to_any(t: WithStatementAsyncMarkerTransportSlot) -> AnyTransport {
     match t {
-        WithStatementAsyncMarkerTransportSlot::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+        WithStatementAsyncMarkerTransportSlot::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -7434,7 +7440,7 @@ impl RenderableTransport for WithStatementAsyncMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            WithStatementAsyncMarkerTransportSlot::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+            WithStatementAsyncMarkerTransportSlot::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
         }
     }
 }
@@ -7458,10 +7464,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithStatementBodyTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -7479,10 +7485,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithStatementBodyTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -7562,10 +7568,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithClauseContentTransportSlot {
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    256 => Ok(Self::WithClauseBare(
+                    257 => Ok(Self::WithClauseBare(
                         WithClauseBareTransport::from_napi_value(env, napi_val)?
                     )),
-                    257 => Ok(Self::WithClauseParen(
+                    258 => Ok(Self::WithClauseParen(
                         WithClauseParenTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -7579,10 +7585,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithClauseContentTransportSlot {
                     ::napi::Error::from_reason("$type property missing in WithClauseContentTransportSlot")
                 )?;
                 match kind_id {
-                    256 => Ok(Self::WithClauseBare(
+                    257 => Ok(Self::WithClauseBare(
                         WithClauseBareTransport::from_napi_value(env, napi_val)?
                     )),
-                    257 => Ok(Self::WithClauseParen(
+                    258 => Ok(Self::WithClauseParen(
                         WithClauseParenTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -7646,7 +7652,7 @@ impl RenderableTransport for WithClauseContentTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum FunctionDefinitionAsyncMarkerTransportSlot {
-    Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -7658,7 +7664,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionDefinitionAsyncMarkerTra
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    27 => Ok(Self::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    27 => Ok(Self::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FunctionDefinitionAsyncMarkerTransportSlot",
                     ))),
@@ -7670,7 +7676,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionDefinitionAsyncMarkerTra
                     ::napi::Error::from_reason("$type property missing in FunctionDefinitionAsyncMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    27 => Ok(Self::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    27 => Ok(Self::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in FunctionDefinitionAsyncMarkerTransportSlot",
                     ))),
@@ -7713,7 +7719,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<FunctionDefinitionAsyncMarkerT
 
 fn function_definition_async_marker_transport_slot_to_any(t: FunctionDefinitionAsyncMarkerTransportSlot) -> AnyTransport {
     match t {
-        FunctionDefinitionAsyncMarkerTransportSlot::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+        FunctionDefinitionAsyncMarkerTransportSlot::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -7723,7 +7729,7 @@ impl RenderableTransport for FunctionDefinitionAsyncMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            FunctionDefinitionAsyncMarkerTransportSlot::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+            FunctionDefinitionAsyncMarkerTransportSlot::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
         }
     }
 }
@@ -7747,10 +7753,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionDefinitionBodyTransportS
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -7768,10 +7774,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for FunctionDefinitionBodyTransportS
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -7942,7 +7948,7 @@ impl RenderableTransport for ExecStatementCodeTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum TypeAliasStatementTypeTransportSlot {
-    Literal3_74_79_70_65,
+    Literal2_74_79_70_65,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -7954,7 +7960,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeAliasStatementTypeTransportS
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    79 => Ok(Self::Literal3_74_79_70_65),
+                    66 => Ok(Self::Literal2_74_79_70_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TypeAliasStatementTypeTransportSlot",
                     ))),
@@ -7966,7 +7972,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeAliasStatementTypeTransportS
                     ::napi::Error::from_reason("$type property missing in TypeAliasStatementTypeTransportSlot")
                 )?;
                 match kind_id {
-                    79 => Ok(Self::Literal3_74_79_70_65),
+                    66 => Ok(Self::Literal2_74_79_70_65),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in TypeAliasStatementTypeTransportSlot",
                     ))),
@@ -8009,7 +8015,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<TypeAliasStatementTypeTranspor
 
 fn type_alias_statement_type_transport_slot_to_any(t: TypeAliasStatementTypeTransportSlot) -> AnyTransport {
     match t {
-        TypeAliasStatementTypeTransportSlot::Literal3_74_79_70_65 => AnyTransport::Literal3_74_79_70_65,
+        TypeAliasStatementTypeTransportSlot::Literal2_74_79_70_65 => AnyTransport::Literal2_74_79_70_65,
     }
 }
 
@@ -8019,7 +8025,7 @@ impl RenderableTransport for TypeAliasStatementTypeTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            TypeAliasStatementTypeTransportSlot::Literal3_74_79_70_65 => dest.write_str("type").map_err(::askama::Error::from),
+            TypeAliasStatementTypeTransportSlot::Literal2_74_79_70_65 => dest.write_str("type").map_err(::askama::Error::from),
         }
     }
 }
@@ -8043,10 +8049,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassDefinitionBodyTransportSlot
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -8064,10 +8070,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassDefinitionBodyTransportSlot
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -8435,10 +8441,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuiteContentTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -8456,10 +8462,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuiteContentTransportSlot {
                     110 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    299 => Ok(Self::SimpleStatements(
+                    300 => Ok(Self::SimpleStatements(
                         SimpleStatementsTransport::from_napi_value(env, napi_val)?
                     )),
-                    259 => Ok(Self::SuiteBlockWithIndent(
+                    260 => Ok(Self::SuiteBlockWithIndent(
                         SuiteBlockWithIndentTransport::from_napi_value(env, napi_val)?
                     )),
                     101 => Ok(Self::Literal0_5f_6e_65_77_6c_69_6e_65),
@@ -8527,7 +8533,7 @@ impl RenderableTransport for SuiteContentTransportSlot {
 #[derive(Debug, Clone)]
 pub enum ExpressionListTailTransportSlot {
     ExpressionListGroup1(ExpressionListGroup1Transport),
-    Literal4_2c,
+    Literal3_2c,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -8542,7 +8548,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionListTailTransportSlot 
                     238 => Ok(Self::ExpressionListGroup1(
                         ExpressionListGroup1Transport::from_napi_value(env, napi_val)?
                     )),
-                    9 => Ok(Self::Literal4_2c),
+                    9 => Ok(Self::Literal3_2c),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ExpressionListTailTransportSlot",
                     ))),
@@ -8557,7 +8563,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionListTailTransportSlot 
                     238 => Ok(Self::ExpressionListGroup1(
                         ExpressionListGroup1Transport::from_napi_value(env, napi_val)?
                     )),
-                    9 => Ok(Self::Literal4_2c),
+                    9 => Ok(Self::Literal3_2c),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ExpressionListTailTransportSlot",
                     ))),
@@ -8601,7 +8607,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ExpressionListTailTransportSlo
 fn expression_list_tail_transport_slot_to_any(t: ExpressionListTailTransportSlot) -> AnyTransport {
     match t {
         ExpressionListTailTransportSlot::ExpressionListGroup1(inner) => AnyTransport::ExpressionListGroup1(inner),
-        ExpressionListTailTransportSlot::Literal4_2c => AnyTransport::Literal4_2c,
+        ExpressionListTailTransportSlot::Literal3_2c => AnyTransport::Literal3_2c,
     }
 }
 
@@ -8612,7 +8618,7 @@ impl RenderableTransport for ExpressionListTailTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             ExpressionListTailTransportSlot::ExpressionListGroup1(inner) => render_expression_list_group1(inner, dest),
-            ExpressionListTailTransportSlot::Literal4_2c => dest.write_str(",").map_err(::askama::Error::from),
+            ExpressionListTailTransportSlot::Literal3_2c => dest.write_str(",").map_err(::askama::Error::from),
         }
     }
 }
@@ -8647,7 +8653,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    247 => Ok(Self::CaseAsPattern(
+                    248 => Ok(Self::CaseAsPattern(
                         CaseAsPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     168 => Ok(Self::KeywordPattern(
@@ -8662,10 +8668,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
                     165 => Ok(Self::UnionPattern(
                         UnionPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::CaseListPattern(
+                    247 => Ok(Self::CaseListPattern(
                         CaseListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::CaseTuplePattern(
+                    246 => Ok(Self::CaseTuplePattern(
                         CaseTuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
                     166 => Ok(Self::DictPattern(
@@ -8677,16 +8683,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
-                    261 => Ok(Self::SimplePatternNegative(
+                    262 => Ok(Self::SimplePatternNegative(
                         SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                     )),
                     171 => Ok(Self::ComplexPattern(
@@ -8695,7 +8701,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
                     162 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    251 => Ok(Self::WildcardPattern(
+                    252 => Ok(Self::WildcardPattern(
                         WildcardPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -8709,7 +8715,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
                     ::napi::Error::from_reason("$type property missing in CasePatternContentTransportSlot")
                 )?;
                 match kind_id {
-                    247 => Ok(Self::CaseAsPattern(
+                    248 => Ok(Self::CaseAsPattern(
                         CaseAsPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     168 => Ok(Self::KeywordPattern(
@@ -8724,10 +8730,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
                     165 => Ok(Self::UnionPattern(
                         UnionPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    246 => Ok(Self::CaseListPattern(
+                    247 => Ok(Self::CaseListPattern(
                         CaseListPatternTransport::from_napi_value(env, napi_val)?
                     )),
-                    245 => Ok(Self::CaseTuplePattern(
+                    246 => Ok(Self::CaseTuplePattern(
                         CaseTuplePatternTransport::from_napi_value(env, napi_val)?
                     )),
                     166 => Ok(Self::DictPattern(
@@ -8739,16 +8745,16 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
-                    261 => Ok(Self::SimplePatternNegative(
+                    262 => Ok(Self::SimplePatternNegative(
                         SimplePatternNegativeTransport::from_napi_value(env, napi_val)?
                     )),
                     171 => Ok(Self::ComplexPattern(
@@ -8757,7 +8763,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CasePatternContentTransportSlot 
                     162 => Ok(Self::DottedName(
                         DottedNameTransport::from_napi_value(env, napi_val)?
                     )),
-                    251 => Ok(Self::WildcardPattern(
+                    252 => Ok(Self::WildcardPattern(
                         WildcardPatternTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -8850,9 +8856,98 @@ impl RenderableTransport for CasePatternContentTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum SplatPatternOperatorTransportSlot {
+    Literal4_2a,
+    Literal5_2a_2a,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternOperatorTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    11 => Ok(Self::Literal4_2a),
+                    37 => Ok(Self::Literal5_2a_2a),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SplatPatternOperatorTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in SplatPatternOperatorTransportSlot")
+                )?;
+                match kind_id {
+                    11 => Ok(Self::Literal4_2a),
+                    37 => Ok(Self::Literal5_2a_2a),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in SplatPatternOperatorTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("SplatPatternOperatorTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for SplatPatternOperatorTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("SplatPatternOperatorTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<SplatPatternOperatorTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        SplatPatternOperatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<SplatPatternOperatorTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        SplatPatternOperatorTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn splat_pattern_operator_transport_slot_to_any(t: SplatPatternOperatorTransportSlot) -> AnyTransport {
+    match t {
+        SplatPatternOperatorTransportSlot::Literal4_2a => AnyTransport::Literal4_2a,
+        SplatPatternOperatorTransportSlot::Literal5_2a_2a => AnyTransport::Literal5_2a_2a,
+    }
+}
+
+impl RenderableTransport for SplatPatternOperatorTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            SplatPatternOperatorTransportSlot::Literal4_2a => dest.write_str("*").map_err(::askama::Error::from),
+            SplatPatternOperatorTransportSlot::Literal5_2a_2a => dest.write_str("**").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum SplatPatternIdentifierTransportSlot {
     Identifier(IdentifierTransport),
-    Literal5_5f,
+    Literal6_5f,
     Verbatim(VerbatimTransport),
 }
 
@@ -8868,7 +8963,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternIdentifierTransportS
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    49 => Ok(Self::Literal5_5f),
+                    49 => Ok(Self::Literal6_5f),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in SplatPatternIdentifierTransportSlot",
                     ))),
@@ -8887,7 +8982,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternIdentifierTransportS
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
-                    49 => Ok(Self::Literal5_5f),
+                    49 => Ok(Self::Literal6_5f),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in SplatPatternIdentifierTransportSlot",
                     ))),
@@ -8931,7 +9026,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SplatPatternIdentifierTranspor
 fn splat_pattern_identifier_transport_slot_to_any(t: SplatPatternIdentifierTransportSlot) -> AnyTransport {
     match t {
         SplatPatternIdentifierTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        SplatPatternIdentifierTransportSlot::Literal5_5f => AnyTransport::Literal5_5f,
+        SplatPatternIdentifierTransportSlot::Literal6_5f => AnyTransport::Literal6_5f,
         SplatPatternIdentifierTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -8943,7 +9038,7 @@ impl RenderableTransport for SplatPatternIdentifierTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             SplatPatternIdentifierTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            SplatPatternIdentifierTransportSlot::Literal5_5f => dest.write_str("_").map_err(::askama::Error::from),
+            SplatPatternIdentifierTransportSlot::Literal6_5f => dest.write_str("_").map_err(::askama::Error::from),
             SplatPatternIdentifierTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -8951,7 +9046,7 @@ impl RenderableTransport for SplatPatternIdentifierTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum ComplexPatternRealTransportSlot {
-    Literal6_2d,
+    Literal7_2d,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -8963,7 +9058,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternRealTransportSlot 
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    51 => Ok(Self::Literal6_2d),
+                    51 => Ok(Self::Literal7_2d),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComplexPatternRealTransportSlot",
                     ))),
@@ -8975,7 +9070,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternRealTransportSlot 
                     ::napi::Error::from_reason("$type property missing in ComplexPatternRealTransportSlot")
                 )?;
                 match kind_id {
-                    51 => Ok(Self::Literal6_2d),
+                    51 => Ok(Self::Literal7_2d),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ComplexPatternRealTransportSlot",
                     ))),
@@ -9018,7 +9113,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ComplexPatternRealTransportSlo
 
 fn complex_pattern_real_transport_slot_to_any(t: ComplexPatternRealTransportSlot) -> AnyTransport {
     match t {
-        ComplexPatternRealTransportSlot::Literal6_2d => AnyTransport::Literal6_2d,
+        ComplexPatternRealTransportSlot::Literal7_2d => AnyTransport::Literal7_2d,
     }
 }
 
@@ -9028,7 +9123,7 @@ impl RenderableTransport for ComplexPatternRealTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ComplexPatternRealTransportSlot::Literal6_2d => dest.write_str("-").map_err(::askama::Error::from),
+            ComplexPatternRealTransportSlot::Literal7_2d => dest.write_str("-").map_err(::askama::Error::from),
         }
     }
 }
@@ -9049,10 +9144,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternImaginaryTransport
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9070,10 +9165,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternImaginaryTransport
                     ::napi::Error::from_reason("$type property missing in ComplexPatternImaginaryTransportSlot")
                 )?;
                 match kind_id {
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9138,6 +9233,95 @@ impl RenderableTransport for ComplexPatternImaginaryTransportSlot {
 }
 
 #[derive(Debug, Clone)]
+pub enum ComplexPatternOperatorTransportSlot {
+    Literal8_2b,
+    Literal7_2d,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternOperatorTransportSlot {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                match u16::from_napi_value(env, napi_val)? {
+                    50 => Ok(Self::Literal8_2b),
+                    51 => Ok(Self::Literal7_2d),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ComplexPatternOperatorTransportSlot",
+                    ))),
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                let kind_id: u16 = obj.get("$type")?.ok_or_else(||
+                    ::napi::Error::from_reason("$type property missing in ComplexPatternOperatorTransportSlot")
+                )?;
+                match kind_id {
+                    50 => Ok(Self::Literal8_2b),
+                    51 => Ok(Self::Literal7_2d),
+                    other => Err(::napi::Error::from_reason(format!(
+                        "unknown kind id {other} in ComplexPatternOperatorTransportSlot",
+                    ))),
+                }
+            }
+            _ => Err(::napi::Error::from_reason("ComplexPatternOperatorTransportSlot: expected u16 kind_id, string, or object with $type")),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ComplexPatternOperatorTransportSlot {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ComplexPatternOperatorTransportSlot is receive-only"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<ComplexPatternOperatorTransportSlot> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        ComplexPatternOperatorTransportSlot::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<ComplexPatternOperatorTransportSlot> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ComplexPatternOperatorTransportSlot::to_napi_value(env, *val)
+    }
+}
+
+fn complex_pattern_operator_transport_slot_to_any(t: ComplexPatternOperatorTransportSlot) -> AnyTransport {
+    match t {
+        ComplexPatternOperatorTransportSlot::Literal8_2b => AnyTransport::Literal8_2b,
+        ComplexPatternOperatorTransportSlot::Literal7_2d => AnyTransport::Literal7_2d,
+    }
+}
+
+impl RenderableTransport for ComplexPatternOperatorTransportSlot {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        match self {
+            ComplexPatternOperatorTransportSlot::Literal8_2b => dest.write_str("+").map_err(::askama::Error::from),
+            ComplexPatternOperatorTransportSlot::Literal7_2d => dest.write_str("-").map_err(::askama::Error::from),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum ComplexPatternContentTransportSlot {
     Integer(IntegerTransport),
     Float(FloatTransport),
@@ -9153,10 +9337,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternContentTransportSl
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9174,10 +9358,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternContentTransportSl
                     ::napi::Error::from_reason("$type property missing in ComplexPatternContentTransportSlot")
                 )?;
                 match kind_id {
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9573,8 +9757,8 @@ impl RenderableTransport for DictionarySplatPatternContentTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum BooleanOperatorOperatorTransportSlot {
-    Literal7_61_6e_64,
-    Literal8_6f_72,
+    Literal9_61_6e_64,
+    Literal10_6f_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -9586,8 +9770,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for BooleanOperatorOperatorTransport
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    53 => Ok(Self::Literal7_61_6e_64),
-                    54 => Ok(Self::Literal8_6f_72),
+                    53 => Ok(Self::Literal9_61_6e_64),
+                    54 => Ok(Self::Literal10_6f_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in BooleanOperatorOperatorTransportSlot",
                     ))),
@@ -9599,8 +9783,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for BooleanOperatorOperatorTransport
                     ::napi::Error::from_reason("$type property missing in BooleanOperatorOperatorTransportSlot")
                 )?;
                 match kind_id {
-                    53 => Ok(Self::Literal7_61_6e_64),
-                    54 => Ok(Self::Literal8_6f_72),
+                    53 => Ok(Self::Literal9_61_6e_64),
+                    54 => Ok(Self::Literal10_6f_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in BooleanOperatorOperatorTransportSlot",
                     ))),
@@ -9643,8 +9827,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BooleanOperatorOperatorTranspo
 
 fn boolean_operator_operator_transport_slot_to_any(t: BooleanOperatorOperatorTransportSlot) -> AnyTransport {
     match t {
-        BooleanOperatorOperatorTransportSlot::Literal7_61_6e_64 => AnyTransport::Literal7_61_6e_64,
-        BooleanOperatorOperatorTransportSlot::Literal8_6f_72 => AnyTransport::Literal8_6f_72,
+        BooleanOperatorOperatorTransportSlot::Literal9_61_6e_64 => AnyTransport::Literal9_61_6e_64,
+        BooleanOperatorOperatorTransportSlot::Literal10_6f_72 => AnyTransport::Literal10_6f_72,
     }
 }
 
@@ -9654,22 +9838,22 @@ impl RenderableTransport for BooleanOperatorOperatorTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            BooleanOperatorOperatorTransportSlot::Literal7_61_6e_64 => dest.write_str("and").map_err(::askama::Error::from),
-            BooleanOperatorOperatorTransportSlot::Literal8_6f_72 => dest.write_str("or").map_err(::askama::Error::from),
+            BooleanOperatorOperatorTransportSlot::Literal9_61_6e_64 => dest.write_str("and").map_err(::askama::Error::from),
+            BooleanOperatorOperatorTransportSlot::Literal10_6f_72 => dest.write_str("or").map_err(::askama::Error::from),
         }
     }
 }
 
 #[derive(Debug, Clone)]
 pub enum BinaryOperatorOperatorTransportSlot {
-    Literal9_2b,
-    Literal6_2d,
-    Literal1_2a,
-    Literal10_40,
-    Literal11_2f,
-    Literal12_25,
-    Literal13_2f_2f,
-    Literal14_2a_2a,
+    Literal8_2b,
+    Literal7_2d,
+    Literal4_2a,
+    Literal11_40,
+    Literal12_2f,
+    Literal13_25,
+    Literal14_2f_2f,
+    Literal5_2a_2a,
     Literal15_7c,
     Literal16_26,
     Literal17_5e,
@@ -9686,14 +9870,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryOperatorOperatorTransportS
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    50 => Ok(Self::Literal9_2b),
-                    51 => Ok(Self::Literal6_2d),
-                    11 => Ok(Self::Literal1_2a),
-                    45 => Ok(Self::Literal10_40),
-                    55 => Ok(Self::Literal11_2f),
-                    56 => Ok(Self::Literal12_25),
-                    57 => Ok(Self::Literal13_2f_2f),
-                    37 => Ok(Self::Literal14_2a_2a),
+                    50 => Ok(Self::Literal8_2b),
+                    51 => Ok(Self::Literal7_2d),
+                    11 => Ok(Self::Literal4_2a),
+                    45 => Ok(Self::Literal11_40),
+                    55 => Ok(Self::Literal12_2f),
+                    56 => Ok(Self::Literal13_25),
+                    57 => Ok(Self::Literal14_2f_2f),
+                    37 => Ok(Self::Literal5_2a_2a),
                     46 => Ok(Self::Literal15_7c),
                     58 => Ok(Self::Literal16_26),
                     59 => Ok(Self::Literal17_5e),
@@ -9710,14 +9894,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BinaryOperatorOperatorTransportS
                     ::napi::Error::from_reason("$type property missing in BinaryOperatorOperatorTransportSlot")
                 )?;
                 match kind_id {
-                    50 => Ok(Self::Literal9_2b),
-                    51 => Ok(Self::Literal6_2d),
-                    11 => Ok(Self::Literal1_2a),
-                    45 => Ok(Self::Literal10_40),
-                    55 => Ok(Self::Literal11_2f),
-                    56 => Ok(Self::Literal12_25),
-                    57 => Ok(Self::Literal13_2f_2f),
-                    37 => Ok(Self::Literal14_2a_2a),
+                    50 => Ok(Self::Literal8_2b),
+                    51 => Ok(Self::Literal7_2d),
+                    11 => Ok(Self::Literal4_2a),
+                    45 => Ok(Self::Literal11_40),
+                    55 => Ok(Self::Literal12_2f),
+                    56 => Ok(Self::Literal13_25),
+                    57 => Ok(Self::Literal14_2f_2f),
+                    37 => Ok(Self::Literal5_2a_2a),
                     46 => Ok(Self::Literal15_7c),
                     58 => Ok(Self::Literal16_26),
                     59 => Ok(Self::Literal17_5e),
@@ -9765,14 +9949,14 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<BinaryOperatorOperatorTranspor
 
 fn binary_operator_operator_transport_slot_to_any(t: BinaryOperatorOperatorTransportSlot) -> AnyTransport {
     match t {
-        BinaryOperatorOperatorTransportSlot::Literal9_2b => AnyTransport::Literal9_2b,
-        BinaryOperatorOperatorTransportSlot::Literal6_2d => AnyTransport::Literal6_2d,
-        BinaryOperatorOperatorTransportSlot::Literal1_2a => AnyTransport::Literal1_2a,
-        BinaryOperatorOperatorTransportSlot::Literal10_40 => AnyTransport::Literal10_40,
-        BinaryOperatorOperatorTransportSlot::Literal11_2f => AnyTransport::Literal11_2f,
-        BinaryOperatorOperatorTransportSlot::Literal12_25 => AnyTransport::Literal12_25,
-        BinaryOperatorOperatorTransportSlot::Literal13_2f_2f => AnyTransport::Literal13_2f_2f,
-        BinaryOperatorOperatorTransportSlot::Literal14_2a_2a => AnyTransport::Literal14_2a_2a,
+        BinaryOperatorOperatorTransportSlot::Literal8_2b => AnyTransport::Literal8_2b,
+        BinaryOperatorOperatorTransportSlot::Literal7_2d => AnyTransport::Literal7_2d,
+        BinaryOperatorOperatorTransportSlot::Literal4_2a => AnyTransport::Literal4_2a,
+        BinaryOperatorOperatorTransportSlot::Literal11_40 => AnyTransport::Literal11_40,
+        BinaryOperatorOperatorTransportSlot::Literal12_2f => AnyTransport::Literal12_2f,
+        BinaryOperatorOperatorTransportSlot::Literal13_25 => AnyTransport::Literal13_25,
+        BinaryOperatorOperatorTransportSlot::Literal14_2f_2f => AnyTransport::Literal14_2f_2f,
+        BinaryOperatorOperatorTransportSlot::Literal5_2a_2a => AnyTransport::Literal5_2a_2a,
         BinaryOperatorOperatorTransportSlot::Literal15_7c => AnyTransport::Literal15_7c,
         BinaryOperatorOperatorTransportSlot::Literal16_26 => AnyTransport::Literal16_26,
         BinaryOperatorOperatorTransportSlot::Literal17_5e => AnyTransport::Literal17_5e,
@@ -9787,14 +9971,14 @@ impl RenderableTransport for BinaryOperatorOperatorTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            BinaryOperatorOperatorTransportSlot::Literal9_2b => dest.write_str("+").map_err(::askama::Error::from),
-            BinaryOperatorOperatorTransportSlot::Literal6_2d => dest.write_str("-").map_err(::askama::Error::from),
-            BinaryOperatorOperatorTransportSlot::Literal1_2a => dest.write_str("*").map_err(::askama::Error::from),
-            BinaryOperatorOperatorTransportSlot::Literal10_40 => dest.write_str("@").map_err(::askama::Error::from),
-            BinaryOperatorOperatorTransportSlot::Literal11_2f => dest.write_str("/").map_err(::askama::Error::from),
-            BinaryOperatorOperatorTransportSlot::Literal12_25 => dest.write_str("%").map_err(::askama::Error::from),
-            BinaryOperatorOperatorTransportSlot::Literal13_2f_2f => dest.write_str("//").map_err(::askama::Error::from),
-            BinaryOperatorOperatorTransportSlot::Literal14_2a_2a => dest.write_str("**").map_err(::askama::Error::from),
+            BinaryOperatorOperatorTransportSlot::Literal8_2b => dest.write_str("+").map_err(::askama::Error::from),
+            BinaryOperatorOperatorTransportSlot::Literal7_2d => dest.write_str("-").map_err(::askama::Error::from),
+            BinaryOperatorOperatorTransportSlot::Literal4_2a => dest.write_str("*").map_err(::askama::Error::from),
+            BinaryOperatorOperatorTransportSlot::Literal11_40 => dest.write_str("@").map_err(::askama::Error::from),
+            BinaryOperatorOperatorTransportSlot::Literal12_2f => dest.write_str("/").map_err(::askama::Error::from),
+            BinaryOperatorOperatorTransportSlot::Literal13_25 => dest.write_str("%").map_err(::askama::Error::from),
+            BinaryOperatorOperatorTransportSlot::Literal14_2f_2f => dest.write_str("//").map_err(::askama::Error::from),
+            BinaryOperatorOperatorTransportSlot::Literal5_2a_2a => dest.write_str("**").map_err(::askama::Error::from),
             BinaryOperatorOperatorTransportSlot::Literal15_7c => dest.write_str("|").map_err(::askama::Error::from),
             BinaryOperatorOperatorTransportSlot::Literal16_26 => dest.write_str("&").map_err(::askama::Error::from),
             BinaryOperatorOperatorTransportSlot::Literal17_5e => dest.write_str("^").map_err(::askama::Error::from),
@@ -9820,13 +10004,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentContentTransportSlot {
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    252 => Ok(Self::AssignmentEq(
+                    253 => Ok(Self::AssignmentEq(
                         AssignmentEqTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::AssignmentType(
+                    254 => Ok(Self::AssignmentType(
                         AssignmentTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    254 => Ok(Self::AssignmentTyped(
+                    255 => Ok(Self::AssignmentTyped(
                         AssignmentTypedTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9840,13 +10024,13 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentContentTransportSlot {
                     ::napi::Error::from_reason("$type property missing in AssignmentContentTransportSlot")
                 )?;
                 match kind_id {
-                    252 => Ok(Self::AssignmentEq(
+                    253 => Ok(Self::AssignmentEq(
                         AssignmentEqTransport::from_napi_value(env, napi_val)?
                     )),
-                    253 => Ok(Self::AssignmentType(
+                    254 => Ok(Self::AssignmentType(
                         AssignmentTypeTransport::from_napi_value(env, napi_val)?
                     )),
-                    254 => Ok(Self::AssignmentTyped(
+                    255 => Ok(Self::AssignmentTyped(
                         AssignmentTypedTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -9913,7 +10097,7 @@ impl RenderableTransport for AssignmentContentTransportSlot {
 #[derive(Debug, Clone)]
 pub enum PatternListTailTransportSlot {
     PatternListGroup1(PatternListGroup1Transport),
-    Literal4_2c,
+    Literal3_2c,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -9928,7 +10112,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternListTailTransportSlot {
                     241 => Ok(Self::PatternListGroup1(
                         PatternListGroup1Transport::from_napi_value(env, napi_val)?
                     )),
-                    9 => Ok(Self::Literal4_2c),
+                    9 => Ok(Self::Literal3_2c),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PatternListTailTransportSlot",
                     ))),
@@ -9943,7 +10127,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PatternListTailTransportSlot {
                     241 => Ok(Self::PatternListGroup1(
                         PatternListGroup1Transport::from_napi_value(env, napi_val)?
                     )),
-                    9 => Ok(Self::Literal4_2c),
+                    9 => Ok(Self::Literal3_2c),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in PatternListTailTransportSlot",
                     ))),
@@ -9987,7 +10171,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PatternListTailTransportSlot> 
 fn pattern_list_tail_transport_slot_to_any(t: PatternListTailTransportSlot) -> AnyTransport {
     match t {
         PatternListTailTransportSlot::PatternListGroup1(inner) => AnyTransport::PatternListGroup1(inner),
-        PatternListTailTransportSlot::Literal4_2c => AnyTransport::Literal4_2c,
+        PatternListTailTransportSlot::Literal3_2c => AnyTransport::Literal3_2c,
     }
 }
 
@@ -9998,7 +10182,7 @@ impl RenderableTransport for PatternListTailTransportSlot {
     ) -> Result<(), ::askama::Error> {
         match self {
             PatternListTailTransportSlot::PatternListGroup1(inner) => render_pattern_list_group1(inner, dest),
-            PatternListTailTransportSlot::Literal4_2c => dest.write_str(",").map_err(::askama::Error::from),
+            PatternListTailTransportSlot::Literal3_2c => dest.write_str(",").map_err(::askama::Error::from),
         }
     }
 }
@@ -10012,7 +10196,6 @@ pub enum YieldContentTransportSlot {
     Await(AwaitTransport),
     BinaryOperator(BinaryOperatorTransport),
     Identifier(IdentifierTransport),
-    KeywordIdentifier(KeywordIdentifierTransport),
     String(StringTransport),
     ConcatenatedString(ConcatenatedStringTransport),
     Integer(IntegerTransport),
@@ -10078,19 +10261,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldContentTransportSlot {
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::UnaryOperator(
@@ -10132,7 +10315,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldContentTransportSlot {
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Ellipsis2(
+                    65 => Ok(Self::Ellipsis2(
                         Ellipsis2Transport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
@@ -10192,19 +10375,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldContentTransportSlot {
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::UnaryOperator(
@@ -10246,7 +10429,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldContentTransportSlot {
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Ellipsis2(
+                    65 => Ok(Self::Ellipsis2(
                         Ellipsis2Transport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
@@ -10313,7 +10496,6 @@ fn yield_content_transport_slot_to_any(t: YieldContentTransportSlot) -> AnyTrans
         YieldContentTransportSlot::Await(inner) => AnyTransport::Await(inner),
         YieldContentTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
         YieldContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        YieldContentTransportSlot::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
         YieldContentTransportSlot::String(inner) => AnyTransport::String(inner),
         YieldContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
         YieldContentTransportSlot::Integer(inner) => AnyTransport::Integer(inner),
@@ -10357,7 +10539,6 @@ impl RenderableTransport for YieldContentTransportSlot {
             YieldContentTransportSlot::Await(inner) => render_await(inner, dest),
             YieldContentTransportSlot::BinaryOperator(inner) => render_binary_operator(inner, dest),
             YieldContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            YieldContentTransportSlot::KeywordIdentifier(inner) => render_keyword_identifier(inner, dest),
             YieldContentTransportSlot::String(inner) => render_string(inner, dest),
             YieldContentTransportSlot::ConcatenatedString(inner) => render_concatenated_string(inner, dest),
             YieldContentTransportSlot::Integer(inner) => render_integer(inner, dest),
@@ -10398,7 +10579,6 @@ pub enum SubscriptSubscriptTransportSlot {
     Await(AwaitTransport),
     BinaryOperator(BinaryOperatorTransport),
     Identifier(IdentifierTransport),
-    KeywordIdentifier(KeywordIdentifierTransport),
     String(StringTransport),
     ConcatenatedString(ConcatenatedStringTransport),
     Integer(IntegerTransport),
@@ -10464,19 +10644,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptSubscriptTransportSlot 
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::UnaryOperator(
@@ -10518,7 +10698,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptSubscriptTransportSlot 
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Ellipsis2(
+                    65 => Ok(Self::Ellipsis2(
                         Ellipsis2Transport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
@@ -10578,19 +10758,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptSubscriptTransportSlot 
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::UnaryOperator(
@@ -10632,7 +10812,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SubscriptSubscriptTransportSlot 
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Ellipsis2(
+                    65 => Ok(Self::Ellipsis2(
                         Ellipsis2Transport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
@@ -10699,7 +10879,6 @@ fn subscript_subscript_transport_slot_to_any(t: SubscriptSubscriptTransportSlot)
         SubscriptSubscriptTransportSlot::Await(inner) => AnyTransport::Await(inner),
         SubscriptSubscriptTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
         SubscriptSubscriptTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        SubscriptSubscriptTransportSlot::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
         SubscriptSubscriptTransportSlot::String(inner) => AnyTransport::String(inner),
         SubscriptSubscriptTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
         SubscriptSubscriptTransportSlot::Integer(inner) => AnyTransport::Integer(inner),
@@ -10743,7 +10922,6 @@ impl RenderableTransport for SubscriptSubscriptTransportSlot {
             SubscriptSubscriptTransportSlot::Await(inner) => render_await(inner, dest),
             SubscriptSubscriptTransportSlot::BinaryOperator(inner) => render_binary_operator(inner, dest),
             SubscriptSubscriptTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            SubscriptSubscriptTransportSlot::KeywordIdentifier(inner) => render_keyword_identifier(inner, dest),
             SubscriptSubscriptTransportSlot::String(inner) => render_string(inner, dest),
             SubscriptSubscriptTransportSlot::ConcatenatedString(inner) => render_concatenated_string(inner, dest),
             SubscriptSubscriptTransportSlot::Integer(inner) => render_integer(inner, dest),
@@ -10994,7 +11172,6 @@ pub enum TypeContentTransportSlot {
     Await(AwaitTransport),
     BinaryOperator(BinaryOperatorTransport),
     Identifier(IdentifierTransport),
-    KeywordIdentifier(KeywordIdentifierTransport),
     String(StringTransport),
     ConcatenatedString(ConcatenatedStringTransport),
     Integer(IntegerTransport),
@@ -11064,19 +11241,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeContentTransportSlot {
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::UnaryOperator(
@@ -11118,7 +11295,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeContentTransportSlot {
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Ellipsis2(
+                    65 => Ok(Self::Ellipsis2(
                         Ellipsis2Transport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
@@ -11190,19 +11367,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeContentTransportSlot {
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::UnaryOperator(
@@ -11244,7 +11421,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeContentTransportSlot {
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Ellipsis2(
+                    65 => Ok(Self::Ellipsis2(
                         Ellipsis2Transport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
@@ -11323,7 +11500,6 @@ fn type_content_transport_slot_to_any(t: TypeContentTransportSlot) -> AnyTranspo
         TypeContentTransportSlot::Await(inner) => AnyTransport::Await(inner),
         TypeContentTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
         TypeContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        TypeContentTransportSlot::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
         TypeContentTransportSlot::String(inner) => AnyTransport::String(inner),
         TypeContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
         TypeContentTransportSlot::Integer(inner) => AnyTransport::Integer(inner),
@@ -11371,7 +11547,6 @@ impl RenderableTransport for TypeContentTransportSlot {
             TypeContentTransportSlot::Await(inner) => render_await(inner, dest),
             TypeContentTransportSlot::BinaryOperator(inner) => render_binary_operator(inner, dest),
             TypeContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            TypeContentTransportSlot::KeywordIdentifier(inner) => render_keyword_identifier(inner, dest),
             TypeContentTransportSlot::String(inner) => render_string(inner, dest),
             TypeContentTransportSlot::ConcatenatedString(inner) => render_concatenated_string(inner, dest),
             TypeContentTransportSlot::Integer(inner) => render_integer(inner, dest),
@@ -11409,8 +11584,9 @@ impl RenderableTransport for TypeContentTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum SplatTypeIdentifierTransportSlot {
-    SplatPatternOperator(SplatPatternOperatorEnum),
     Identifier(IdentifierTransport),
+    Literal4_2a,
+    Literal5_2a_2a,
     Verbatim(VerbatimTransport),
 }
 
@@ -11423,15 +11599,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatTypeIdentifierTransportSlot
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    11 => Ok(Self::SplatPatternOperator(
-                        SplatPatternOperatorEnum::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::SplatPatternOperator(
-                        SplatPatternOperatorEnum::from_napi_value(env, napi_val)?
-                    )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    11 => Ok(Self::Literal4_2a),
+                    37 => Ok(Self::Literal5_2a_2a),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in SplatTypeIdentifierTransportSlot",
                     ))),
@@ -11447,15 +11619,11 @@ impl ::napi::bindgen_prelude::FromNapiValue for SplatTypeIdentifierTransportSlot
                     ::napi::Error::from_reason("$type property missing in SplatTypeIdentifierTransportSlot")
                 )?;
                 match kind_id {
-                    11 => Ok(Self::SplatPatternOperator(
-                        SplatPatternOperatorEnum::from_napi_value(env, napi_val)?
-                    )),
-                    37 => Ok(Self::SplatPatternOperator(
-                        SplatPatternOperatorEnum::from_napi_value(env, napi_val)?
-                    )),
                     1 => Ok(Self::Identifier(
                         IdentifierTransport::from_napi_value(env, napi_val)?
                     )),
+                    11 => Ok(Self::Literal4_2a),
+                    37 => Ok(Self::Literal5_2a_2a),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in SplatTypeIdentifierTransportSlot",
                     ))),
@@ -11498,8 +11666,9 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<SplatTypeIdentifierTransportSl
 
 fn splat_type_identifier_transport_slot_to_any(t: SplatTypeIdentifierTransportSlot) -> AnyTransport {
     match t {
-        SplatTypeIdentifierTransportSlot::SplatPatternOperator(inner) => AnyTransport::SplatPatternOperator(inner),
         SplatTypeIdentifierTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
+        SplatTypeIdentifierTransportSlot::Literal4_2a => AnyTransport::Literal4_2a,
+        SplatTypeIdentifierTransportSlot::Literal5_2a_2a => AnyTransport::Literal5_2a_2a,
         SplatTypeIdentifierTransportSlot::Verbatim(inner) => AnyTransport::Verbatim(inner),
     }
 }
@@ -11510,8 +11679,9 @@ impl RenderableTransport for SplatTypeIdentifierTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            SplatTypeIdentifierTransportSlot::SplatPatternOperator(inner) => render_splat_pattern_operator(inner, dest),
             SplatTypeIdentifierTransportSlot::Identifier(inner) => render_identifier(inner, dest),
+            SplatTypeIdentifierTransportSlot::Literal4_2a => dest.write_str("*").map_err(::askama::Error::from),
+            SplatTypeIdentifierTransportSlot::Literal5_2a_2a => dest.write_str("**").map_err(::askama::Error::from),
             SplatTypeIdentifierTransportSlot::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
         }
     }
@@ -11526,7 +11696,6 @@ pub enum ParenthesizedExpressionContentTransportSlot {
     Await(AwaitTransport),
     BinaryOperator(BinaryOperatorTransport),
     Identifier(IdentifierTransport),
-    KeywordIdentifier(KeywordIdentifierTransport),
     String(StringTransport),
     ConcatenatedString(ConcatenatedStringTransport),
     Integer(IntegerTransport),
@@ -11594,19 +11763,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::UnaryOperator(
@@ -11648,7 +11817,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Ellipsis2(
+                    65 => Ok(Self::Ellipsis2(
                         Ellipsis2Transport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
@@ -11714,19 +11883,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::UnaryOperator(
@@ -11768,7 +11937,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenthesizedExpressionContentTr
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Ellipsis2(
+                    65 => Ok(Self::Ellipsis2(
                         Ellipsis2Transport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
@@ -11841,7 +12010,6 @@ fn parenthesized_expression_content_transport_slot_to_any(t: ParenthesizedExpres
         ParenthesizedExpressionContentTransportSlot::Await(inner) => AnyTransport::Await(inner),
         ParenthesizedExpressionContentTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
         ParenthesizedExpressionContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ParenthesizedExpressionContentTransportSlot::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
         ParenthesizedExpressionContentTransportSlot::String(inner) => AnyTransport::String(inner),
         ParenthesizedExpressionContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
         ParenthesizedExpressionContentTransportSlot::Integer(inner) => AnyTransport::Integer(inner),
@@ -11887,7 +12055,6 @@ impl RenderableTransport for ParenthesizedExpressionContentTransportSlot {
             ParenthesizedExpressionContentTransportSlot::Await(inner) => render_await(inner, dest),
             ParenthesizedExpressionContentTransportSlot::BinaryOperator(inner) => render_binary_operator(inner, dest),
             ParenthesizedExpressionContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ParenthesizedExpressionContentTransportSlot::KeywordIdentifier(inner) => render_keyword_identifier(inner, dest),
             ParenthesizedExpressionContentTransportSlot::String(inner) => render_string(inner, dest),
             ParenthesizedExpressionContentTransportSlot::ConcatenatedString(inner) => render_concatenated_string(inner, dest),
             ParenthesizedExpressionContentTransportSlot::Integer(inner) => render_integer(inner, dest),
@@ -11930,7 +12097,6 @@ pub enum CollectionElementsContentTransportSlot {
     Await(AwaitTransport),
     BinaryOperator(BinaryOperatorTransport),
     Identifier(IdentifierTransport),
-    KeywordIdentifier(KeywordIdentifierTransport),
     String(StringTransport),
     ConcatenatedString(ConcatenatedStringTransport),
     Integer(IntegerTransport),
@@ -11998,19 +12164,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for CollectionElementsContentTranspo
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::UnaryOperator(
@@ -12052,7 +12218,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CollectionElementsContentTranspo
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Ellipsis2(
+                    65 => Ok(Self::Ellipsis2(
                         Ellipsis2Transport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
@@ -12118,19 +12284,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for CollectionElementsContentTranspo
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::UnaryOperator(
@@ -12172,7 +12338,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CollectionElementsContentTranspo
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Ellipsis2(
+                    65 => Ok(Self::Ellipsis2(
                         Ellipsis2Transport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
@@ -12245,7 +12411,6 @@ fn collection_elements_content_transport_slot_to_any(t: CollectionElementsConten
         CollectionElementsContentTransportSlot::Await(inner) => AnyTransport::Await(inner),
         CollectionElementsContentTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
         CollectionElementsContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        CollectionElementsContentTransportSlot::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
         CollectionElementsContentTransportSlot::String(inner) => AnyTransport::String(inner),
         CollectionElementsContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
         CollectionElementsContentTransportSlot::Integer(inner) => AnyTransport::Integer(inner),
@@ -12291,7 +12456,6 @@ impl RenderableTransport for CollectionElementsContentTransportSlot {
             CollectionElementsContentTransportSlot::Await(inner) => render_await(inner, dest),
             CollectionElementsContentTransportSlot::BinaryOperator(inner) => render_binary_operator(inner, dest),
             CollectionElementsContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            CollectionElementsContentTransportSlot::KeywordIdentifier(inner) => render_keyword_identifier(inner, dest),
             CollectionElementsContentTransportSlot::String(inner) => render_string(inner, dest),
             CollectionElementsContentTransportSlot::ConcatenatedString(inner) => render_concatenated_string(inner, dest),
             CollectionElementsContentTransportSlot::Integer(inner) => render_integer(inner, dest),
@@ -12327,7 +12491,7 @@ impl RenderableTransport for CollectionElementsContentTransportSlot {
 
 #[derive(Debug, Clone)]
 pub enum ForInClauseAsyncMarkerTransportSlot {
-    Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+    Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -12339,7 +12503,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseAsyncMarkerTransportS
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    27 => Ok(Self::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    27 => Ok(Self::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForInClauseAsyncMarkerTransportSlot",
                     ))),
@@ -12351,7 +12515,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForInClauseAsyncMarkerTransportS
                     ::napi::Error::from_reason("$type property missing in ForInClauseAsyncMarkerTransportSlot")
                 )?;
                 match kind_id {
-                    27 => Ok(Self::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
+                    27 => Ok(Self::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72),
                     other => Err(::napi::Error::from_reason(format!(
                         "unknown kind id {other} in ForInClauseAsyncMarkerTransportSlot",
                     ))),
@@ -12394,7 +12558,7 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<ForInClauseAsyncMarkerTranspor
 
 fn for_in_clause_async_marker_transport_slot_to_any(t: ForInClauseAsyncMarkerTransportSlot) -> AnyTransport {
     match t {
-        ForInClauseAsyncMarkerTransportSlot::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
+        ForInClauseAsyncMarkerTransportSlot::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => AnyTransport::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72,
     }
 }
 
@@ -12404,7 +12568,7 @@ impl RenderableTransport for ForInClauseAsyncMarkerTransportSlot {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         match self {
-            ForInClauseAsyncMarkerTransportSlot::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+            ForInClauseAsyncMarkerTransportSlot::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
         }
     }
 }
@@ -12534,7 +12698,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentContentTransportSlo
                     106 => Ok(Self::EscapeInterpolation(
                         EscapeInterpolationTransport::from_napi_value(env, napi_val)?
                     )),
-                    80 => Ok(Self::EscapeSequence(
+                    67 => Ok(Self::EscapeSequence(
                         EscapeSequenceTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::_StringContent(
@@ -12559,7 +12723,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentContentTransportSlo
                     106 => Ok(Self::EscapeInterpolation(
                         EscapeInterpolationTransport::from_napi_value(env, napi_val)?
                     )),
-                    80 => Ok(Self::EscapeSequence(
+                    67 => Ok(Self::EscapeSequence(
                         EscapeSequenceTransport::from_napi_value(env, napi_val)?
                     )),
                     105 => Ok(Self::_StringContent(
@@ -12649,7 +12813,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierContentTransportS
                     229 => Ok(Self::Interpolation(
                         InterpolationTransport::from_napi_value(env, napi_val)?
                     )),
-                    297 => Ok(Self::Interpolation(
+                    298 => Ok(Self::Interpolation(
                         InterpolationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -12666,7 +12830,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FormatSpecifierContentTransportS
                     229 => Ok(Self::Interpolation(
                         InterpolationTransport::from_napi_value(env, napi_val)?
                     )),
-                    297 => Ok(Self::Interpolation(
+                    298 => Ok(Self::Interpolation(
                         InterpolationTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -12743,10 +12907,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseGroup1ContentTranspo
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    244 => Ok(Self::ExceptClauseAs(
+                    245 => Ok(Self::ExceptClauseAs(
                         ExceptClauseAsTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::ExceptClauseList(
+                    263 => Ok(Self::ExceptClauseList(
                         ExceptClauseListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -12760,10 +12924,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptClauseGroup1ContentTranspo
                     ::napi::Error::from_reason("$type property missing in ExceptClauseGroup1ContentTransportSlot")
                 )?;
                 match kind_id {
-                    244 => Ok(Self::ExceptClauseAs(
+                    245 => Ok(Self::ExceptClauseAs(
                         ExceptClauseAsTransport::from_napi_value(env, napi_val)?
                     )),
-                    262 => Ok(Self::ExceptClauseList(
+                    263 => Ok(Self::ExceptClauseList(
                         ExceptClauseListTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -12834,7 +12998,6 @@ pub enum ArgumentListGroup1ContentTransportSlot {
     Await(AwaitTransport),
     BinaryOperator(BinaryOperatorTransport),
     Identifier(IdentifierTransport),
-    KeywordIdentifier(KeywordIdentifierTransport),
     String(StringTransport),
     ConcatenatedString(ConcatenatedStringTransport),
     Integer(IntegerTransport),
@@ -12903,19 +13066,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentListGroup1ContentTranspo
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::UnaryOperator(
@@ -12957,7 +13120,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentListGroup1ContentTranspo
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Ellipsis2(
+                    65 => Ok(Self::Ellipsis2(
                         Ellipsis2Transport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
@@ -13026,19 +13189,19 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentListGroup1ContentTranspo
                     226 => Ok(Self::ConcatenatedString(
                         ConcatenatedStringTransport::from_napi_value(env, napi_val)?
                     )),
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
-                    88 => Ok(Self::True(
+                    75 => Ok(Self::True(
                         TrueTransport::from_napi_value(env, napi_val)?
                     )),
-                    89 => Ok(Self::False(
+                    76 => Ok(Self::False(
                         FalseTransport::from_napi_value(env, napi_val)?
                     )),
-                    90 => Ok(Self::None(
+                    77 => Ok(Self::None(
                         NoneTransport::from_napi_value(env, napi_val)?
                     )),
                     189 => Ok(Self::UnaryOperator(
@@ -13080,7 +13243,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArgumentListGroup1ContentTranspo
                     220 => Ok(Self::GeneratorExpression(
                         GeneratorExpressionTransport::from_napi_value(env, napi_val)?
                     )),
-                    78 => Ok(Self::Ellipsis2(
+                    65 => Ok(Self::Ellipsis2(
                         Ellipsis2Transport::from_napi_value(env, napi_val)?
                     )),
                     180 => Ok(Self::ListSplatPattern(
@@ -13156,7 +13319,6 @@ fn argument_list_group1_content_transport_slot_to_any(t: ArgumentListGroup1Conte
         ArgumentListGroup1ContentTransportSlot::Await(inner) => AnyTransport::Await(inner),
         ArgumentListGroup1ContentTransportSlot::BinaryOperator(inner) => AnyTransport::BinaryOperator(inner),
         ArgumentListGroup1ContentTransportSlot::Identifier(inner) => AnyTransport::Identifier(inner),
-        ArgumentListGroup1ContentTransportSlot::KeywordIdentifier(inner) => AnyTransport::KeywordIdentifier(inner),
         ArgumentListGroup1ContentTransportSlot::String(inner) => AnyTransport::String(inner),
         ArgumentListGroup1ContentTransportSlot::ConcatenatedString(inner) => AnyTransport::ConcatenatedString(inner),
         ArgumentListGroup1ContentTransportSlot::Integer(inner) => AnyTransport::Integer(inner),
@@ -13203,7 +13365,6 @@ impl RenderableTransport for ArgumentListGroup1ContentTransportSlot {
             ArgumentListGroup1ContentTransportSlot::Await(inner) => render_await(inner, dest),
             ArgumentListGroup1ContentTransportSlot::BinaryOperator(inner) => render_binary_operator(inner, dest),
             ArgumentListGroup1ContentTransportSlot::Identifier(inner) => render_identifier(inner, dest),
-            ArgumentListGroup1ContentTransportSlot::KeywordIdentifier(inner) => render_keyword_identifier(inner, dest),
             ArgumentListGroup1ContentTransportSlot::String(inner) => render_string(inner, dest),
             ArgumentListGroup1ContentTransportSlot::ConcatenatedString(inner) => render_concatenated_string(inner, dest),
             ArgumentListGroup1ContentTransportSlot::Integer(inner) => render_integer(inner, dest),
@@ -13545,10 +13706,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternNegativeContentTran
         match transport_value_type(env, napi_val)? {
             ::napi::ValueType::Number => {
                 match u16::from_napi_value(env, napi_val)? {
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -13566,10 +13727,10 @@ impl ::napi::bindgen_prelude::FromNapiValue for SimplePatternNegativeContentTran
                     ::napi::Error::from_reason("$type property missing in SimplePatternNegativeContentTransportSlot")
                 )?;
                 match kind_id {
-                    84 => Ok(Self::Integer(
+                    71 => Ok(Self::Integer(
                         IntegerTransport::from_napi_value(env, napi_val)?
                     )),
-                    85 => Ok(Self::Float(
+                    72 => Ok(Self::Float(
                         FloatTransport::from_napi_value(env, napi_val)?
                     )),
                     other => Err(::napi::Error::from_reason(format!(
@@ -14145,7 +14306,7 @@ pub struct ImportFromStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_module_name"))]
     pub module_name: ImportFromStatementModuleNameTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_wildcard_import"))]
-    pub wildcard_import: Option<bool>,
+    pub wildcard_import: Option<WildcardImportTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: Option<Vec<ImportFromStatementNameTransportSlot>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_import_list"))]
@@ -14313,6 +14474,12 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardImportTransport {
             ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
             // Raw kind_id: value-less leaf sent as its numeric kind tag.
             ::napi::ValueType::Number => "*".to_string(),
+            ::napi::ValueType::Boolean => {
+                if !bool::from_napi_value(env, napi_val)? {
+                    return Err(::napi::Error::from_reason("WildcardImportTransport received false; omit the field instead of sending false"));
+                }
+                "*".to_string()
+            }
             _ => {
                 let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
                 obj.get("$text")?.unwrap_or_else(|| "*".to_string())
@@ -14336,6 +14503,35 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardImportTransport {
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => {
+                let text = String::from_napi_value(env, napi_val)?;
+                return Ok(Self {
+                    transport_source: None,
+                    transport_named: Some(false),
+                    transport_span: None,
+                    transport_node_handle: None,
+                    transport_child_index: None,
+                    transport_trivia_data: None,
+                    text,
+                });
+            }
+            ::napi::ValueType::Boolean => {
+                if !bool::from_napi_value(env, napi_val)? {
+                    return Err(::napi::Error::from_reason("WildcardImportTransport received false; omit the field instead of sending false"));
+                }
+                return Ok(Self {
+                    transport_source: None,
+                    transport_named: Some(false),
+                    transport_span: None,
+                    transport_node_handle: None,
+                    transport_child_index: None,
+                    transport_trivia_data: None,
+                    text: "*".to_string(),
+                });
+            }
+            _ => {}
+        }
         let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
         let text: String = obj.get("$text")?.unwrap_or_else(|| "*".to_string());
         let transport_source = obj.get("$source")?;
@@ -15429,7 +15625,7 @@ pub struct ForStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
-    pub async_marker: Option<AsyncMarkerTransport>,
+    pub async_marker: Option<KwAsyncMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: LeftHandSideTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
@@ -15699,7 +15895,7 @@ pub struct WithStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
-    pub async_marker: Option<AsyncMarkerTransport>,
+    pub async_marker: Option<KwAsyncMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_with_clause"))]
     pub with_clause: WithClauseTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_body"))]
@@ -15853,7 +16049,7 @@ pub struct FunctionDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
-    pub async_marker: Option<AsyncMarkerTransport>,
+    pub async_marker: Option<KwAsyncMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_type_parameters"))]
@@ -17085,7 +17281,7 @@ pub struct SplatPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
-    pub operator: SplatPatternOperatorEnum,
+    pub operator: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
     pub identifier: SplatPatternIdentifierTransportSlot,
 }
@@ -17193,7 +17389,7 @@ pub struct ComplexPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_imaginary"))]
     pub imaginary: ComplexPatternImaginaryTransportSlot,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_operator"))]
-    pub operator: ComplexPatternOperatorEnum,
+    pub operator: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_content"))]
     pub content: ComplexPatternContentTransportSlot,
 }
@@ -19160,7 +19356,7 @@ pub struct KeywordArgumentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_name"))]
-    pub name: IdentifierTransport,
+    pub name: KeywordIdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_value"))]
     pub value: ExpressionTransport,
 }
@@ -19774,7 +19970,7 @@ pub struct ForInClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
     pub transport_trivia_data: Option<TransportTrivia>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_async_marker"))]
-    pub async_marker: Option<AsyncMarkerTransport>,
+    pub async_marker: Option<KwAsyncMarkerTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_left"))]
     pub left: LeftHandSideTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "_right"))]
@@ -20780,56 +20976,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<IdentifierTransport> {
     }
 }
 
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct KeywordIdentifierTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "_identifier"))]
-    pub identifier: IdentifierTransport,
-}
-
-impl RenderableTransport for KeywordIdentifierTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_keyword_identifier(self, dest))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<KeywordIdentifierTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        KeywordIdentifierTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<KeywordIdentifierTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        KeywordIdentifierTransport::to_napi_value(env, *val)
-    }
-}
-
 #[derive(Debug, Clone)]
 pub struct TrueTransport {
     pub transport_source: Option<Source>,
@@ -21597,269 +21743,141 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<KeywordSeparatorTransport> {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum UnaryOperatorOperatorEnum {
-    Plus,
-    Minus,
-    Tilde,
+#[derive(Debug, Clone)]
+pub struct KwAsyncMarkerTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
 }
 
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for UnaryOperatorOperatorEnum {
+impl RenderableTransport for KwAsyncMarkerTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "async".to_string(),
+            ::napi::ValueType::Boolean => {
+                if !bool::from_napi_value(env, napi_val)? {
+                    return Err(::napi::Error::from_reason("KwAsyncMarkerTransport received false; omit the field instead of sending false"));
+                }
+                "async".to_string()
+            }
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                obj.get("$text")?.unwrap_or_else(|| "async".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(true),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
         match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-                    match kind_id {
-                        50 => return Ok(Self::Plus), // "+"
-                        51 => return Ok(Self::Minus), // "-"
-                        61 => return Ok(Self::Tilde), // "~"
-                        _ => {}
-                    }
-                }
-            }
             ::napi::ValueType::String => {
-                match String::from_napi_value(env, napi_val)?.as_str() {
-                    "+" => return Ok(Self::Plus),
-                    "-" => return Ok(Self::Minus),
-                    "~" => return Ok(Self::Tilde),
-                    _ => {}
-                }
+                let text = String::from_napi_value(env, napi_val)?;
+                return Ok(Self {
+                    transport_source: None,
+                    transport_named: Some(true),
+                    transport_span: None,
+                    transport_node_handle: None,
+                    transport_child_index: None,
+                    transport_trivia_data: None,
+                    text,
+                });
             }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                if let Some(kind_id) = obj.get::<u16>("$type")? {
-                    match kind_id {
-                        50 => return Ok(Self::Plus), // "+"
-                        51 => return Ok(Self::Minus), // "-"
-                        61 => return Ok(Self::Tilde), // "~"
-                        _ => {}
-                    }
+            ::napi::ValueType::Boolean => {
+                if !bool::from_napi_value(env, napi_val)? {
+                    return Err(::napi::Error::from_reason("KwAsyncMarkerTransport received false; omit the field instead of sending false"));
                 }
-                if let Some(text) = obj.get::<String>("$text")? {
-                    match text.as_str() {
-                        "+" => return Ok(Self::Plus),
-                        "-" => return Ok(Self::Minus),
-                        "~" => return Ok(Self::Tilde),
-                        _ => {}
-                    }
-                }
-                if obj.get::<::napi::bindgen_prelude::Object>("_+")?.is_some() { return Ok(Self::Plus); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_-")?.is_some() { return Ok(Self::Minus); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_~")?.is_some() { return Ok(Self::Tilde); }
+                return Ok(Self {
+                    transport_source: None,
+                    transport_named: Some(true),
+                    transport_span: None,
+                    transport_node_handle: None,
+                    transport_child_index: None,
+                    transport_trivia_data: None,
+                    text: "async".to_string(),
+                });
             }
             _ => {}
         }
-        Err(::napi::Error::from_reason("unknown enum payload for UnaryOperatorOperatorEnum"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for UnaryOperatorOperatorEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("UnaryOperatorOperatorEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for UnaryOperatorOperatorEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::Plus => "+",
-            Self::Minus => "-",
-            Self::Tilde => "~",
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "async".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
         })
     }
 }
 
-impl RenderableTransport for UnaryOperatorOperatorEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::Plus => "+",
-            Self::Minus => "-",
-            Self::Tilde => "~",
-        }).map_err(::askama::Error::from)
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for KwAsyncMarkerTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum AugmentedAssignmentOperatorEnum {
-    PlusEq,
-    MinusEq,
-    StarEq,
-    SlashEq,
-    V40_3d,
-    V2f_2f_3d,
-    PercentEq,
-    V2a_2a_3d,
-    GtGtEq,
-    LtLtEq,
-    AmpEq,
-    CaretEq,
-    PipeEq,
-}
-
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentOperatorEnum {
+impl ::napi::bindgen_prelude::FromNapiValue for Box<KwAsyncMarkerTransport> {
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-                    match kind_id {
-                        64 => return Ok(Self::PlusEq), // "+="
-                        65 => return Ok(Self::MinusEq), // "-="
-                        66 => return Ok(Self::StarEq), // "*="
-                        67 => return Ok(Self::SlashEq), // "/="
-                        68 => return Ok(Self::V40_3d), // "@="
-                        69 => return Ok(Self::V2f_2f_3d), // "//="
-                        70 => return Ok(Self::PercentEq), // "%="
-                        71 => return Ok(Self::V2a_2a_3d), // "**="
-                        72 => return Ok(Self::GtGtEq), // ">>="
-                        73 => return Ok(Self::LtLtEq), // "<<="
-                        74 => return Ok(Self::AmpEq), // "&="
-                        75 => return Ok(Self::CaretEq), // "^="
-                        76 => return Ok(Self::PipeEq), // "|="
-                        _ => {}
-                    }
-                }
-            }
-            ::napi::ValueType::String => {
-                match String::from_napi_value(env, napi_val)?.as_str() {
-                    "+=" => return Ok(Self::PlusEq),
-                    "-=" => return Ok(Self::MinusEq),
-                    "*=" => return Ok(Self::StarEq),
-                    "/=" => return Ok(Self::SlashEq),
-                    "@=" => return Ok(Self::V40_3d),
-                    "//=" => return Ok(Self::V2f_2f_3d),
-                    "%=" => return Ok(Self::PercentEq),
-                    "**=" => return Ok(Self::V2a_2a_3d),
-                    ">>=" => return Ok(Self::GtGtEq),
-                    "<<=" => return Ok(Self::LtLtEq),
-                    "&=" => return Ok(Self::AmpEq),
-                    "^=" => return Ok(Self::CaretEq),
-                    "|=" => return Ok(Self::PipeEq),
-                    _ => {}
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                if let Some(kind_id) = obj.get::<u16>("$type")? {
-                    match kind_id {
-                        64 => return Ok(Self::PlusEq), // "+="
-                        65 => return Ok(Self::MinusEq), // "-="
-                        66 => return Ok(Self::StarEq), // "*="
-                        67 => return Ok(Self::SlashEq), // "/="
-                        68 => return Ok(Self::V40_3d), // "@="
-                        69 => return Ok(Self::V2f_2f_3d), // "//="
-                        70 => return Ok(Self::PercentEq), // "%="
-                        71 => return Ok(Self::V2a_2a_3d), // "**="
-                        72 => return Ok(Self::GtGtEq), // ">>="
-                        73 => return Ok(Self::LtLtEq), // "<<="
-                        74 => return Ok(Self::AmpEq), // "&="
-                        75 => return Ok(Self::CaretEq), // "^="
-                        76 => return Ok(Self::PipeEq), // "|="
-                        _ => {}
-                    }
-                }
-                if let Some(text) = obj.get::<String>("$text")? {
-                    match text.as_str() {
-                        "+=" => return Ok(Self::PlusEq),
-                        "-=" => return Ok(Self::MinusEq),
-                        "*=" => return Ok(Self::StarEq),
-                        "/=" => return Ok(Self::SlashEq),
-                        "@=" => return Ok(Self::V40_3d),
-                        "//=" => return Ok(Self::V2f_2f_3d),
-                        "%=" => return Ok(Self::PercentEq),
-                        "**=" => return Ok(Self::V2a_2a_3d),
-                        ">>=" => return Ok(Self::GtGtEq),
-                        "<<=" => return Ok(Self::LtLtEq),
-                        "&=" => return Ok(Self::AmpEq),
-                        "^=" => return Ok(Self::CaretEq),
-                        "|=" => return Ok(Self::PipeEq),
-                        _ => {}
-                    }
-                }
-                if obj.get::<::napi::bindgen_prelude::Object>("_+=")?.is_some() { return Ok(Self::PlusEq); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_-=")?.is_some() { return Ok(Self::MinusEq); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_*=")?.is_some() { return Ok(Self::StarEq); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_/=")?.is_some() { return Ok(Self::SlashEq); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_@=")?.is_some() { return Ok(Self::V40_3d); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_//=")?.is_some() { return Ok(Self::V2f_2f_3d); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_%=")?.is_some() { return Ok(Self::PercentEq); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_**=")?.is_some() { return Ok(Self::V2a_2a_3d); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_>>=")?.is_some() { return Ok(Self::GtGtEq); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_<<=")?.is_some() { return Ok(Self::LtLtEq); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_&=")?.is_some() { return Ok(Self::AmpEq); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_^=")?.is_some() { return Ok(Self::CaretEq); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_|=")?.is_some() { return Ok(Self::PipeEq); }
-            }
-            _ => {}
-        }
-        Err(::napi::Error::from_reason("unknown enum payload for AugmentedAssignmentOperatorEnum"))
+        KwAsyncMarkerTransport::from_napi_value(env, napi_val).map(Box::new)
     }
 }
 
 #[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AugmentedAssignmentOperatorEnum {
+impl ::napi::bindgen_prelude::ToNapiValue for Box<KwAsyncMarkerTransport> {
     unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
+        env: ::napi::sys::napi_env,
+        val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("AugmentedAssignmentOperatorEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for AugmentedAssignmentOperatorEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::PlusEq => "+=",
-            Self::MinusEq => "-=",
-            Self::StarEq => "*=",
-            Self::SlashEq => "/=",
-            Self::V40_3d => "@=",
-            Self::V2f_2f_3d => "//=",
-            Self::PercentEq => "%=",
-            Self::V2a_2a_3d => "**=",
-            Self::GtGtEq => ">>=",
-            Self::LtLtEq => "<<=",
-            Self::AmpEq => "&=",
-            Self::CaretEq => "^=",
-            Self::PipeEq => "|=",
-        })
-    }
-}
-
-impl RenderableTransport for AugmentedAssignmentOperatorEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::PlusEq => "+=",
-            Self::MinusEq => "-=",
-            Self::StarEq => "*=",
-            Self::SlashEq => "/=",
-            Self::V40_3d => "@=",
-            Self::V2f_2f_3d => "//=",
-            Self::PercentEq => "%=",
-            Self::V2a_2a_3d => "**=",
-            Self::GtGtEq => ">>=",
-            Self::LtLtEq => "<<=",
-            Self::AmpEq => "&=",
-            Self::CaretEq => "^=",
-            Self::PipeEq => "|=",
-        }).map_err(::askama::Error::from)
+        KwAsyncMarkerTransport::to_napi_value(env, *val)
     }
 }
 
@@ -22372,6 +22390,272 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<DictionaryGroup1Transport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         DictionaryGroup1Transport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum UnaryOperatorOperatorEnum {
+    Plus,
+    Minus,
+    Tilde,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for UnaryOperatorOperatorEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+                    match kind_id {
+                        50 => return Ok(Self::Plus), // "+"
+                        51 => return Ok(Self::Minus), // "-"
+                        61 => return Ok(Self::Tilde), // "~"
+                        _ => {}
+                    }
+                }
+            }
+            ::napi::ValueType::String => {
+                match String::from_napi_value(env, napi_val)?.as_str() {
+                    "+" => return Ok(Self::Plus),
+                    "-" => return Ok(Self::Minus),
+                    "~" => return Ok(Self::Tilde),
+                    _ => {}
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                if let Some(kind_id) = obj.get::<u16>("$type")? {
+                    match kind_id {
+                        50 => return Ok(Self::Plus), // "+"
+                        51 => return Ok(Self::Minus), // "-"
+                        61 => return Ok(Self::Tilde), // "~"
+                        _ => {}
+                    }
+                }
+                if let Some(text) = obj.get::<String>("$text")? {
+                    match text.as_str() {
+                        "+" => return Ok(Self::Plus),
+                        "-" => return Ok(Self::Minus),
+                        "~" => return Ok(Self::Tilde),
+                        _ => {}
+                    }
+                }
+                if obj.get::<::napi::bindgen_prelude::Object>("_+")?.is_some() { return Ok(Self::Plus); }
+                if obj.get::<::napi::bindgen_prelude::Object>("_-")?.is_some() { return Ok(Self::Minus); }
+                if obj.get::<::napi::bindgen_prelude::Object>("_~")?.is_some() { return Ok(Self::Tilde); }
+            }
+            _ => {}
+        }
+        Err(::napi::Error::from_reason("unknown enum payload for UnaryOperatorOperatorEnum"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for UnaryOperatorOperatorEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("UnaryOperatorOperatorEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for UnaryOperatorOperatorEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::Plus => "+",
+            Self::Minus => "-",
+            Self::Tilde => "~",
+        })
+    }
+}
+
+impl RenderableTransport for UnaryOperatorOperatorEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::Plus => "+",
+            Self::Minus => "-",
+            Self::Tilde => "~",
+        }).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum AugmentedAssignmentOperatorEnum {
+    PlusEq,
+    MinusEq,
+    StarEq,
+    SlashEq,
+    V40_3d,
+    V2f_2f_3d,
+    PercentEq,
+    V2a_2a_3d,
+    GtGtEq,
+    LtLtEq,
+    AmpEq,
+    CaretEq,
+    PipeEq,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for AugmentedAssignmentOperatorEnum {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::Number => {
+                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
+                    match kind_id {
+                        81 => return Ok(Self::PlusEq), // "+="
+                        82 => return Ok(Self::MinusEq), // "-="
+                        83 => return Ok(Self::StarEq), // "*="
+                        84 => return Ok(Self::SlashEq), // "/="
+                        85 => return Ok(Self::V40_3d), // "@="
+                        86 => return Ok(Self::V2f_2f_3d), // "//="
+                        87 => return Ok(Self::PercentEq), // "%="
+                        88 => return Ok(Self::V2a_2a_3d), // "**="
+                        89 => return Ok(Self::GtGtEq), // ">>="
+                        90 => return Ok(Self::LtLtEq), // "<<="
+                        91 => return Ok(Self::AmpEq), // "&="
+                        92 => return Ok(Self::CaretEq), // "^="
+                        93 => return Ok(Self::PipeEq), // "|="
+                        _ => {}
+                    }
+                }
+            }
+            ::napi::ValueType::String => {
+                match String::from_napi_value(env, napi_val)?.as_str() {
+                    "+=" => return Ok(Self::PlusEq),
+                    "-=" => return Ok(Self::MinusEq),
+                    "*=" => return Ok(Self::StarEq),
+                    "/=" => return Ok(Self::SlashEq),
+                    "@=" => return Ok(Self::V40_3d),
+                    "//=" => return Ok(Self::V2f_2f_3d),
+                    "%=" => return Ok(Self::PercentEq),
+                    "**=" => return Ok(Self::V2a_2a_3d),
+                    ">>=" => return Ok(Self::GtGtEq),
+                    "<<=" => return Ok(Self::LtLtEq),
+                    "&=" => return Ok(Self::AmpEq),
+                    "^=" => return Ok(Self::CaretEq),
+                    "|=" => return Ok(Self::PipeEq),
+                    _ => {}
+                }
+            }
+            ::napi::ValueType::Object => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                if let Some(kind_id) = obj.get::<u16>("$type")? {
+                    match kind_id {
+                        81 => return Ok(Self::PlusEq), // "+="
+                        82 => return Ok(Self::MinusEq), // "-="
+                        83 => return Ok(Self::StarEq), // "*="
+                        84 => return Ok(Self::SlashEq), // "/="
+                        85 => return Ok(Self::V40_3d), // "@="
+                        86 => return Ok(Self::V2f_2f_3d), // "//="
+                        87 => return Ok(Self::PercentEq), // "%="
+                        88 => return Ok(Self::V2a_2a_3d), // "**="
+                        89 => return Ok(Self::GtGtEq), // ">>="
+                        90 => return Ok(Self::LtLtEq), // "<<="
+                        91 => return Ok(Self::AmpEq), // "&="
+                        92 => return Ok(Self::CaretEq), // "^="
+                        93 => return Ok(Self::PipeEq), // "|="
+                        _ => {}
+                    }
+                }
+                if let Some(text) = obj.get::<String>("$text")? {
+                    match text.as_str() {
+                        "+=" => return Ok(Self::PlusEq),
+                        "-=" => return Ok(Self::MinusEq),
+                        "*=" => return Ok(Self::StarEq),
+                        "/=" => return Ok(Self::SlashEq),
+                        "@=" => return Ok(Self::V40_3d),
+                        "//=" => return Ok(Self::V2f_2f_3d),
+                        "%=" => return Ok(Self::PercentEq),
+                        "**=" => return Ok(Self::V2a_2a_3d),
+                        ">>=" => return Ok(Self::GtGtEq),
+                        "<<=" => return Ok(Self::LtLtEq),
+                        "&=" => return Ok(Self::AmpEq),
+                        "^=" => return Ok(Self::CaretEq),
+                        "|=" => return Ok(Self::PipeEq),
+                        _ => {}
+                    }
+                }
+                if obj.get::<::napi::bindgen_prelude::Object>("_+=")?.is_some() { return Ok(Self::PlusEq); }
+                if obj.get::<::napi::bindgen_prelude::Object>("_-=")?.is_some() { return Ok(Self::MinusEq); }
+                if obj.get::<::napi::bindgen_prelude::Object>("_*=")?.is_some() { return Ok(Self::StarEq); }
+                if obj.get::<::napi::bindgen_prelude::Object>("_/=")?.is_some() { return Ok(Self::SlashEq); }
+                if obj.get::<::napi::bindgen_prelude::Object>("_@=")?.is_some() { return Ok(Self::V40_3d); }
+                if obj.get::<::napi::bindgen_prelude::Object>("_//=")?.is_some() { return Ok(Self::V2f_2f_3d); }
+                if obj.get::<::napi::bindgen_prelude::Object>("_%=")?.is_some() { return Ok(Self::PercentEq); }
+                if obj.get::<::napi::bindgen_prelude::Object>("_**=")?.is_some() { return Ok(Self::V2a_2a_3d); }
+                if obj.get::<::napi::bindgen_prelude::Object>("_>>=")?.is_some() { return Ok(Self::GtGtEq); }
+                if obj.get::<::napi::bindgen_prelude::Object>("_<<=")?.is_some() { return Ok(Self::LtLtEq); }
+                if obj.get::<::napi::bindgen_prelude::Object>("_&=")?.is_some() { return Ok(Self::AmpEq); }
+                if obj.get::<::napi::bindgen_prelude::Object>("_^=")?.is_some() { return Ok(Self::CaretEq); }
+                if obj.get::<::napi::bindgen_prelude::Object>("_|=")?.is_some() { return Ok(Self::PipeEq); }
+            }
+            _ => {}
+        }
+        Err(::napi::Error::from_reason("unknown enum payload for AugmentedAssignmentOperatorEnum"))
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AugmentedAssignmentOperatorEnum {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("AugmentedAssignmentOperatorEnum is receive-only"))
+    }
+}
+
+impl ::std::fmt::Display for AugmentedAssignmentOperatorEnum {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(match self {
+            Self::PlusEq => "+=",
+            Self::MinusEq => "-=",
+            Self::StarEq => "*=",
+            Self::SlashEq => "/=",
+            Self::V40_3d => "@=",
+            Self::V2f_2f_3d => "//=",
+            Self::PercentEq => "%=",
+            Self::V2a_2a_3d => "**=",
+            Self::GtGtEq => ">>=",
+            Self::LtLtEq => "<<=",
+            Self::AmpEq => "&=",
+            Self::CaretEq => "^=",
+            Self::PipeEq => "|=",
+        })
+    }
+}
+
+impl RenderableTransport for AugmentedAssignmentOperatorEnum {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        dest.write_str(match self {
+            Self::PlusEq => "+=",
+            Self::MinusEq => "-=",
+            Self::StarEq => "*=",
+            Self::SlashEq => "/=",
+            Self::V40_3d => "@=",
+            Self::V2f_2f_3d => "//=",
+            Self::PercentEq => "%=",
+            Self::V2a_2a_3d => "**=",
+            Self::GtGtEq => ">>=",
+            Self::LtLtEq => "<<=",
+            Self::AmpEq => "&=",
+            Self::CaretEq => "^=",
+            Self::PipeEq => "|=",
+        }).map_err(::askama::Error::from)
     }
 }
 
@@ -23542,314 +23826,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<NewlineTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         NewlineTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct AsyncMarkerTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for AsyncMarkerTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AsyncMarkerTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "async".to_string(),
-            ::napi::ValueType::Boolean => {
-                if !bool::from_napi_value(env, napi_val)? {
-                    return Err(::napi::Error::from_reason("AsyncMarkerTransport received false; omit the field instead of sending false"));
-                }
-                "async".to_string()
-            }
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                obj.get("$text")?.unwrap_or_else(|| "async".to_string())
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AsyncMarkerTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => {
-                let text = String::from_napi_value(env, napi_val)?;
-                return Ok(Self {
-                    transport_source: None,
-                    transport_named: Some(true),
-                    transport_span: None,
-                    transport_node_handle: None,
-                    transport_child_index: None,
-                    transport_trivia_data: None,
-                    text,
-                });
-            }
-            ::napi::ValueType::Boolean => {
-                if !bool::from_napi_value(env, napi_val)? {
-                    return Err(::napi::Error::from_reason("AsyncMarkerTransport received false; omit the field instead of sending false"));
-                }
-                return Ok(Self {
-                    transport_source: None,
-                    transport_named: Some(true),
-                    transport_span: None,
-                    transport_node_handle: None,
-                    transport_child_index: None,
-                    transport_trivia_data: None,
-                    text: "async".to_string(),
-                });
-            }
-            _ => {}
-        }
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "async".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AsyncMarkerTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AsyncMarkerTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        AsyncMarkerTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AsyncMarkerTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        AsyncMarkerTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SplatPatternOperatorEnum {
-    Star,
-    V2a_2a,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for SplatPatternOperatorEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-                    match kind_id {
-                        11 => return Ok(Self::Star), // "*"
-                        37 => return Ok(Self::V2a_2a), // "**"
-                        _ => {}
-                    }
-                }
-            }
-            ::napi::ValueType::String => {
-                match String::from_napi_value(env, napi_val)?.as_str() {
-                    "*" => return Ok(Self::Star),
-                    "**" => return Ok(Self::V2a_2a),
-                    _ => {}
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                if let Some(kind_id) = obj.get::<u16>("$type")? {
-                    match kind_id {
-                        11 => return Ok(Self::Star), // "*"
-                        37 => return Ok(Self::V2a_2a), // "**"
-                        _ => {}
-                    }
-                }
-                if let Some(text) = obj.get::<String>("$text")? {
-                    match text.as_str() {
-                        "*" => return Ok(Self::Star),
-                        "**" => return Ok(Self::V2a_2a),
-                        _ => {}
-                    }
-                }
-                if obj.get::<::napi::bindgen_prelude::Object>("_*")?.is_some() { return Ok(Self::Star); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_**")?.is_some() { return Ok(Self::V2a_2a); }
-            }
-            _ => {}
-        }
-        Err(::napi::Error::from_reason("unknown enum payload for SplatPatternOperatorEnum"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for SplatPatternOperatorEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("SplatPatternOperatorEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for SplatPatternOperatorEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::Star => "*",
-            Self::V2a_2a => "**",
-        })
-    }
-}
-
-impl RenderableTransport for SplatPatternOperatorEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::Star => "*",
-            Self::V2a_2a => "**",
-        }).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ComplexPatternOperatorEnum {
-    Plus,
-    Minus,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ComplexPatternOperatorEnum {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::Number => {
-                if let Ok(kind_id) = u16::from_napi_value(env, napi_val) {
-                    match kind_id {
-                        50 => return Ok(Self::Plus), // "+"
-                        51 => return Ok(Self::Minus), // "-"
-                        _ => {}
-                    }
-                }
-            }
-            ::napi::ValueType::String => {
-                match String::from_napi_value(env, napi_val)?.as_str() {
-                    "+" => return Ok(Self::Plus),
-                    "-" => return Ok(Self::Minus),
-                    _ => {}
-                }
-            }
-            ::napi::ValueType::Object => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                if let Some(kind_id) = obj.get::<u16>("$type")? {
-                    match kind_id {
-                        50 => return Ok(Self::Plus), // "+"
-                        51 => return Ok(Self::Minus), // "-"
-                        _ => {}
-                    }
-                }
-                if let Some(text) = obj.get::<String>("$text")? {
-                    match text.as_str() {
-                        "+" => return Ok(Self::Plus),
-                        "-" => return Ok(Self::Minus),
-                        _ => {}
-                    }
-                }
-                if obj.get::<::napi::bindgen_prelude::Object>("_+")?.is_some() { return Ok(Self::Plus); }
-                if obj.get::<::napi::bindgen_prelude::Object>("_-")?.is_some() { return Ok(Self::Minus); }
-            }
-            _ => {}
-        }
-        Err(::napi::Error::from_reason("unknown enum payload for ComplexPatternOperatorEnum"))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ComplexPatternOperatorEnum {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ComplexPatternOperatorEnum is receive-only"))
-    }
-}
-
-impl ::std::fmt::Display for ComplexPatternOperatorEnum {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(match self {
-            Self::Plus => "+",
-            Self::Minus => "-",
-        })
-    }
-}
-
-impl RenderableTransport for ComplexPatternOperatorEnum {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        dest.write_str(match self {
-            Self::Plus => "+",
-            Self::Minus => "-",
-        }).map_err(::askama::Error::from)
     }
 }
 
@@ -25379,109 +25355,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<RparenTransport> {
 }
 
 #[derive(Debug, Clone)]
-pub struct StarTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for StarTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "*".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                obj.get("$text")?.unwrap_or_else(|| "*".to_string())
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(false),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "*".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for StarTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<StarTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        StarTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<StarTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        StarTransport::to_napi_value(env, *val)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub struct AsTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -25581,6 +25454,109 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AsTransport> {
         val: Self,
     ) -> ::napi::Result<::napi::sys::napi_value> {
         AsTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct StarTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for StarTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "*".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                obj.get("$text")?.unwrap_or_else(|| "*".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(false),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "*".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for StarTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<StarTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        StarTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<StarTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        StarTransport::to_napi_value(env, *val)
     }
 }
 
@@ -31456,6 +31432,109 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<AnonAwaitTransport> {
 }
 
 #[derive(Debug, Clone)]
+pub struct AsyncTransport {
+    pub transport_source: Option<Source>,
+    pub transport_named: Option<bool>,
+    pub transport_span: Option<Span>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<TransportTrivia>,
+    pub text: String,
+}
+
+impl RenderableTransport for AsyncTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
+impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let text = match transport_value_type(env, napi_val)? {
+            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
+            // Raw kind_id: value-less leaf sent as its numeric kind tag.
+            ::napi::ValueType::Number => "async".to_string(),
+            _ => {
+                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+                obj.get("$text")?.unwrap_or_else(|| "async".to_string())
+            }
+        };
+        Ok(Self {
+            transport_source: None,
+            transport_named: Some(true),
+            transport_span: None,
+            transport_node_handle: None,
+            transport_child_index: None,
+            transport_trivia_data: None,
+            text,
+        })
+    }
+}
+
+#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
+impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let text: String = obj.get("$text")?.unwrap_or_else(|| "async".to_string());
+        let transport_source = obj.get("$source")?;
+        let transport_named = obj.get("$named")?;
+        let transport_span = obj.get("$span")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data = obj.get("$triviaData")?;
+        Ok(Self {
+            transport_source,
+            transport_named,
+            transport_span,
+            transport_node_handle,
+            transport_child_index,
+            transport_trivia_data,
+            text,
+        })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for AsyncTransport {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for Box<AsyncTransport> {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        AsyncTransport::from_napi_value(env, napi_val).map(Box::new)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for Box<AsyncTransport> {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        AsyncTransport::to_napi_value(env, *val)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct DashGtTransport {
     pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
@@ -31661,109 +31740,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for Box<PrintTransport> {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct AsyncTransport {
-    pub transport_source: Option<Source>,
-    pub transport_named: Option<bool>,
-    pub transport_span: Option<Span>,
-    pub transport_node_handle: Option<f64>,
-    pub transport_child_index: Option<f64>,
-    pub transport_trivia_data: Option<TransportTrivia>,
-    pub text: String,
-}
-
-impl RenderableTransport for AsyncTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]
-impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let text = match transport_value_type(env, napi_val)? {
-            ::napi::ValueType::String => String::from_napi_value(env, napi_val)?,
-            // Raw kind_id: value-less leaf sent as its numeric kind tag.
-            ::napi::ValueType::Number => "async".to_string(),
-            _ => {
-                let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-                obj.get("$text")?.unwrap_or_else(|| "async".to_string())
-            }
-        };
-        Ok(Self {
-            transport_source: None,
-            transport_named: Some(true),
-            transport_span: None,
-            transport_node_handle: None,
-            transport_child_index: None,
-            transport_trivia_data: None,
-            text,
-        })
-    }
-}
-
-#[cfg(all(feature = "napi-bindings", feature = "debug-transport"))]
-impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let text: String = obj.get("$text")?.unwrap_or_else(|| "async".to_string());
-        let transport_source = obj.get("$source")?;
-        let transport_named = obj.get("$named")?;
-        let transport_span = obj.get("$span")?;
-        let transport_node_handle = obj.get("$nodeHandle")?;
-        let transport_child_index = obj.get("$childIndex")?;
-        let transport_trivia_data = obj.get("$triviaData")?;
-        Ok(Self {
-            transport_source,
-            transport_named,
-            transport_span,
-            transport_node_handle,
-            transport_child_index,
-            transport_trivia_data,
-            text,
-        })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for AsyncTransport {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for Box<AsyncTransport> {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        AsyncTransport::from_napi_value(env, napi_val).map(Box::new)
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for Box<AsyncTransport> {
-    unsafe fn to_napi_value(
-        env: ::napi::sys::napi_env,
-        val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        AsyncTransport::to_napi_value(env, *val)
-    }
-}
-
 
 #[derive(Debug, Clone, Copy)]
 pub enum Renderable<'a> {
@@ -31907,10 +31883,9 @@ fn render_import_from_statement(node: &ImportFromStatementTransport, dest: &mut 
             leading: false,
             trailing: false,
         },
-        wildcard_import: if node.wildcard_import.unwrap_or(false) {
-            OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("*"))
-        } else {
-            OptionalNonterminalView::Missing
+        wildcard_import: match &node.wildcard_import {
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -32544,7 +32519,7 @@ fn render_keyword_pattern(node: &KeywordPatternTransport, dest: &mut dyn ::std::
 fn render_splat_pattern(node: &SplatPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = SplatPatternTemplate {
         identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
-        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
+        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.operator.as_ref())),
     };
     template.render_into(dest)
 }
@@ -32564,7 +32539,7 @@ fn render_complex_pattern(node: &ComplexPatternTransport, dest: &mut dyn ::std::
     let template = ComplexPatternTemplate {
         content: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.content)),
         imaginary: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.imaginary)),
-        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
+        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.operator.as_ref())),
         real: if node.real.unwrap_or(false) {
             OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("-"))
         } else {
@@ -33198,13 +33173,6 @@ fn render_identifier(t: &IdentifierTransport, dest: &mut dyn ::std::fmt::Write) 
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_keyword_identifier(node: &KeywordIdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let template = KeywordIdentifierTemplate {
-        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
-    };
-    template.render_into(dest)
-}
-
 fn render_true(t: &TrueTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -33240,12 +33208,8 @@ fn render_keyword_separator(t: &KeywordSeparatorTransport, dest: &mut dyn ::std:
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_unary_operator_operator(t: &UnaryOperatorOperatorEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.to_string()).map_err(::askama::Error::from)
-}
-
-fn render_augmented_assignment_operator(t: &AugmentedAssignmentOperatorEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.to_string()).map_err(::askama::Error::from)
+fn render_kw_async_marker(t: &KwAsyncMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
 fn render_raise_statement_optional1(node: &RaiseStatementOptional1Transport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -33397,6 +33361,14 @@ fn render_dictionary_group1(node: &DictionaryGroup1Transport, dest: &mut dyn ::s
         },
     };
     template.render_into(dest)
+}
+
+fn render_unary_operator_operator(t: &UnaryOperatorOperatorEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.to_string()).map_err(::askama::Error::from)
+}
+
+fn render_augmented_assignment_operator(t: &AugmentedAssignmentOperatorEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.to_string()).map_err(::askama::Error::from)
 }
 
 fn render_except_clause_as(node: &ExceptClauseAsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -33677,18 +33649,6 @@ fn render_newline(t: &NewlineTransport, dest: &mut dyn ::std::fmt::Write) -> Res
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_async_marker(t: &AsyncMarkerTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render_splat_pattern_operator(t: &SplatPatternOperatorEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.to_string()).map_err(::askama::Error::from)
-}
-
-fn render_complex_pattern_operator(t: &ComplexPatternOperatorEnum, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.to_string()).map_err(::askama::Error::from)
-}
-
 fn render_indent(t: &IndentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
@@ -33749,11 +33709,11 @@ fn render_rparen(t: &RparenTransport, dest: &mut dyn ::std::fmt::Write) -> Resul
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_star(t: &StarTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_as(t: &AsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
-fn render_as(t: &AsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+fn render_star(t: &StarTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -33985,15 +33945,15 @@ fn render_anon_await(t: &AnonAwaitTransport, dest: &mut dyn ::std::fmt::Write) -
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
+fn render_async(t: &AsyncTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    dest.write_str(&t.text).map_err(::askama::Error::from)
+}
+
 fn render_dash_gt(t: &DashGtTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
 fn render_print(t: &PrintTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    dest.write_str(&t.text).map_err(::askama::Error::from)
-}
-
-fn render_async(t: &AsyncTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     dest.write_str(&t.text).map_err(::askama::Error::from)
 }
 
@@ -34196,6 +34156,13 @@ fn render_fexpression(t: &FExpressionTransport, dest: &mut dyn ::std::fmt::Write
     }
 }
 
+fn render_keyword_identifier(t: &KeywordIdentifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    match t {
+        KeywordIdentifierTransport::Identifier(inner) => render_identifier(inner, dest),
+        KeywordIdentifierTransport::Verbatim(inner) => dest.write_str(&inner.text).map_err(::askama::Error::from),
+    }
+}
+
 fn render_dict_pattern_kv(t: &DictPatternKvTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
         DictPatternKvTransport::KeyValuePattern(inner) => render_key_value_pattern(inner, dest),
@@ -34348,7 +34315,6 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Integer(t) => t.render_into(dest),
             AnyTransport::Float(t) => t.render_into(dest),
             AnyTransport::Identifier(t) => t.render_into(dest),
-            AnyTransport::KeywordIdentifier(t) => render_keyword_identifier(t, dest),
             AnyTransport::True(t) => t.render_into(dest),
             AnyTransport::False(t) => t.render_into(dest),
             AnyTransport::None(t) => t.render_into(dest),
@@ -34357,8 +34323,7 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::LineContinuation(t) => t.render_into(dest),
             AnyTransport::PositionalSeparator(t) => t.render_into(dest),
             AnyTransport::KeywordSeparator(t) => t.render_into(dest),
-            AnyTransport::UnaryOperatorOperator(t) => t.render_into(dest),
-            AnyTransport::AugmentedAssignmentOperator(t) => t.render_into(dest),
+            AnyTransport::KwAsyncMarker(t) => t.render_into(dest),
             AnyTransport::RaiseStatementOptional1(t) => render_raise_statement_optional1(t, dest),
             AnyTransport::ExceptClauseGroup1(t) => render_except_clause_group1(t, dest),
             AnyTransport::FunctionDefinitionOptional1(t) => render_function_definition_optional1(t, dest),
@@ -34369,6 +34334,8 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::PatternListGroup1(t) => render_pattern_list_group1(t, dest),
             AnyTransport::SliceGroup1(t) => render_slice_group1(t, dest),
             AnyTransport::DictionaryGroup1(t) => render_dictionary_group1(t, dest),
+            AnyTransport::UnaryOperatorOperator(t) => t.render_into(dest),
+            AnyTransport::AugmentedAssignmentOperator(t) => t.render_into(dest),
             AnyTransport::ExceptClauseAs(t) => render_except_clause_as(t, dest),
             AnyTransport::ExceptClauseAsOptional1(t) => render_except_clause_as_optional1(t, dest),
             AnyTransport::CaseTuplePattern(t) => render_case_tuple_pattern(t, dest),
@@ -34390,9 +34357,6 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::ExceptClauseList(t) => render_except_clause_list(t, dest),
             AnyTransport::ComparisonOperatorComparator(t) => render_comparison_operator_comparator(t, dest),
             AnyTransport::Newline(t) => t.render_into(dest),
-            AnyTransport::AsyncMarker(t) => t.render_into(dest),
-            AnyTransport::SplatPatternOperator(t) => t.render_into(dest),
-            AnyTransport::ComplexPatternOperator(t) => t.render_into(dest),
             AnyTransport::Indent(t) => t.render_into(dest),
             AnyTransport::Dedent(t) => t.render_into(dest),
             AnyTransport::StringStart(t) => t.render_into(dest),
@@ -34408,8 +34372,8 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::FutureU(t) => t.render_into(dest),
             AnyTransport::Lparen(t) => t.render_into(dest),
             AnyTransport::Rparen(t) => t.render_into(dest),
-            AnyTransport::Star(t) => t.render_into(dest),
             AnyTransport::As(t) => t.render_into(dest),
+            AnyTransport::Star(t) => t.render_into(dest),
             AnyTransport::GtGt(t) => t.render_into(dest),
             AnyTransport::Assert(t) => t.render_into(dest),
             AnyTransport::ColonEq(t) => t.render_into(dest),
@@ -34467,24 +34431,24 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::False2(t) => t.render_into(dest),
             AnyTransport::None2(t) => t.render_into(dest),
             AnyTransport::AnonAwait(t) => t.render_into(dest),
+            AnyTransport::Async(t) => t.render_into(dest),
             AnyTransport::DashGt(t) => t.render_into(dest),
             AnyTransport::Print(t) => t.render_into(dest),
-            AnyTransport::Async(t) => t.render_into(dest),
             AnyTransport::Literal0_5f_6e_65_77_6c_69_6e_65 => dest.write_str("\n").map_err(::askama::Error::from),
-            AnyTransport::Literal1_2a => dest.write_str("*").map_err(::askama::Error::from),
-            AnyTransport::Literal2_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
-            AnyTransport::Literal3_74_79_70_65 => dest.write_str("type").map_err(::askama::Error::from),
-            AnyTransport::Literal4_2c => dest.write_str(",").map_err(::askama::Error::from),
-            AnyTransport::Literal5_5f => dest.write_str("_").map_err(::askama::Error::from),
-            AnyTransport::Literal6_2d => dest.write_str("-").map_err(::askama::Error::from),
-            AnyTransport::Literal7_61_6e_64 => dest.write_str("and").map_err(::askama::Error::from),
-            AnyTransport::Literal8_6f_72 => dest.write_str("or").map_err(::askama::Error::from),
-            AnyTransport::Literal9_2b => dest.write_str("+").map_err(::askama::Error::from),
-            AnyTransport::Literal10_40 => dest.write_str("@").map_err(::askama::Error::from),
-            AnyTransport::Literal11_2f => dest.write_str("/").map_err(::askama::Error::from),
-            AnyTransport::Literal12_25 => dest.write_str("%").map_err(::askama::Error::from),
-            AnyTransport::Literal13_2f_2f => dest.write_str("//").map_err(::askama::Error::from),
-            AnyTransport::Literal14_2a_2a => dest.write_str("**").map_err(::askama::Error::from),
+            AnyTransport::Literal1_5f_6b_77_5f_61_73_79_6e_63_5f_6d_61_72_6b_65_72 => dest.write_str("async").map_err(::askama::Error::from),
+            AnyTransport::Literal2_74_79_70_65 => dest.write_str("type").map_err(::askama::Error::from),
+            AnyTransport::Literal3_2c => dest.write_str(",").map_err(::askama::Error::from),
+            AnyTransport::Literal4_2a => dest.write_str("*").map_err(::askama::Error::from),
+            AnyTransport::Literal5_2a_2a => dest.write_str("**").map_err(::askama::Error::from),
+            AnyTransport::Literal6_5f => dest.write_str("_").map_err(::askama::Error::from),
+            AnyTransport::Literal7_2d => dest.write_str("-").map_err(::askama::Error::from),
+            AnyTransport::Literal8_2b => dest.write_str("+").map_err(::askama::Error::from),
+            AnyTransport::Literal9_61_6e_64 => dest.write_str("and").map_err(::askama::Error::from),
+            AnyTransport::Literal10_6f_72 => dest.write_str("or").map_err(::askama::Error::from),
+            AnyTransport::Literal11_40 => dest.write_str("@").map_err(::askama::Error::from),
+            AnyTransport::Literal12_2f => dest.write_str("/").map_err(::askama::Error::from),
+            AnyTransport::Literal13_25 => dest.write_str("%").map_err(::askama::Error::from),
+            AnyTransport::Literal14_2f_2f => dest.write_str("//").map_err(::askama::Error::from),
             AnyTransport::Literal15_7c => dest.write_str("|").map_err(::askama::Error::from),
             AnyTransport::Literal16_26 => dest.write_str("&").map_err(::askama::Error::from),
             AnyTransport::Literal17_5e => dest.write_str("^").map_err(::askama::Error::from),
@@ -34634,7 +34598,6 @@ impl AnyTransport {
             Self::Integer(t) => t.transport_named,
             Self::Float(t) => t.transport_named,
             Self::Identifier(t) => t.transport_named,
-            Self::KeywordIdentifier(t) => t.transport_named,
             Self::True(t) => t.transport_named,
             Self::False(t) => t.transport_named,
             Self::None(t) => t.transport_named,
@@ -34643,6 +34606,7 @@ impl AnyTransport {
             Self::LineContinuation(t) => t.transport_named,
             Self::PositionalSeparator(t) => t.transport_named,
             Self::KeywordSeparator(t) => t.transport_named,
+            Self::KwAsyncMarker(t) => t.transport_named,
             Self::RaiseStatementOptional1(t) => t.transport_named,
             Self::ExceptClauseGroup1(t) => t.transport_named,
             Self::FunctionDefinitionOptional1(t) => t.transport_named,
@@ -34674,7 +34638,6 @@ impl AnyTransport {
             Self::ExceptClauseList(t) => t.transport_named,
             Self::ComparisonOperatorComparator(t) => t.transport_named,
             Self::Newline(t) => t.transport_named,
-            Self::AsyncMarker(t) => t.transport_named,
             Self::Indent(t) => t.transport_named,
             Self::Dedent(t) => t.transport_named,
             Self::StringStart(t) => t.transport_named,
@@ -34690,8 +34653,8 @@ impl AnyTransport {
             Self::FutureU(t) => t.transport_named,
             Self::Lparen(t) => t.transport_named,
             Self::Rparen(t) => t.transport_named,
-            Self::Star(t) => t.transport_named,
             Self::As(t) => t.transport_named,
+            Self::Star(t) => t.transport_named,
             Self::GtGt(t) => t.transport_named,
             Self::Assert(t) => t.transport_named,
             Self::ColonEq(t) => t.transport_named,
@@ -34749,9 +34712,9 @@ impl AnyTransport {
             Self::False2(t) => t.transport_named,
             Self::None2(t) => t.transport_named,
             Self::AnonAwait(t) => t.transport_named,
+            Self::Async(t) => t.transport_named,
             Self::DashGt(t) => t.transport_named,
             Self::Print(t) => t.transport_named,
-            Self::Async(t) => t.transport_named,
             _ => None,
         }
     }

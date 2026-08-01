@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 259,
+  "nodeCount": 257,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -15,6 +15,7 @@
     "_simple_statement",
     "_statement",
     "expression",
+    "keyword_identifier",
     "parameter",
     "pattern",
     "primary_expression"
@@ -1841,15 +1842,6 @@
         "nonEmpty": false
       }
     },
-    "keyword_identifier": {
-      "identifier": {
-        "unnamed": false,
-        "slotCount": 1,
-        "required": true,
-        "multiple": false,
-        "nonEmpty": false
-      }
-    },
     "await": {
       "primary_expression": {
         "unnamed": false,
@@ -2371,18 +2363,6 @@
       ]
     },
     {
-      "kind": "_async_marker",
-      "modelType": "keyword",
-      "typeName": "AsyncMarker",
-      "factoryName": "asyncMarker",
-      "irKey": "asyncMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"async\" as const",
-      "text": "async",
-      "factoryShape": "text"
-    },
-    {
       "kind": "_augmented_assignment_operator",
       "modelType": "enum",
       "typeName": "AugmentedAssignmentOperator",
@@ -2544,19 +2524,6 @@
         "operators",
         "primary_expression"
       ]
-    },
-    {
-      "kind": "_complex_pattern_operator",
-      "modelType": "enum",
-      "typeName": "ComplexPatternOperator",
-      "factoryName": "complexPatternOperator",
-      "irKey": "complexPatternOperator",
-      "hidden": false,
-      "values": [
-        "+",
-        "-"
-      ],
-      "factoryShape": "text"
     },
     {
       "kind": "_compound_statement",
@@ -3094,6 +3061,18 @@
       ]
     },
     {
+      "kind": "_kw_async_marker",
+      "modelType": "keyword",
+      "typeName": "KwAsyncMarker",
+      "factoryName": "kwAsyncMarker",
+      "irKey": "kwAsyncMarker",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"async\" as const",
+      "text": "async",
+      "factoryShape": "text"
+    },
+    {
       "kind": "_left_hand_side",
       "modelType": "supertype",
       "typeName": "LeftHandSide",
@@ -3532,19 +3511,6 @@
       "factoryFields": [
         "expression"
       ]
-    },
-    {
-      "kind": "_splat_pattern_operator",
-      "modelType": "enum",
-      "typeName": "SplatPatternOperator",
-      "factoryName": "splatPatternOperator",
-      "irKey": "splatPatternOperator",
-      "hidden": false,
-      "values": [
-        "*",
-        "**"
-      ],
-      "factoryShape": "text"
     },
     {
       "kind": "_statement",
@@ -5420,18 +5386,21 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_complex_pattern_operator",
-              "parseKind": "_complex_pattern_operator",
-              "unresolved": true
+              "value": "+",
+              "parseKind": "plus"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "-",
+              "parseKind": "dash"
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_complex_pattern_operator"
-            ]
+            "kinds": []
           }
         },
         {
@@ -6212,6 +6181,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
+              "name": "keyword_identifier",
+              "parseKind": "keyword_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
               "name": "subscript",
               "parseKind": "subscript",
               "unresolved": true
@@ -6228,6 +6204,7 @@
             "typeName": "",
             "kinds": [
               "identifier",
+              "keyword_identifier",
               "subscript",
               "attribute"
             ]
@@ -6919,15 +6896,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_async_marker",
-              "parseKind": "_async_marker",
+              "name": "_kw_async_marker",
+              "parseKind": "_kw_async_marker",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_async_marker"
+              "_kw_async_marker"
             ]
           }
         },
@@ -7004,15 +6981,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_async_marker",
-              "parseKind": "_async_marker",
+              "name": "_kw_async_marker",
+              "parseKind": "_kw_async_marker",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_async_marker"
+              "_kw_async_marker"
             ]
           }
         },
@@ -7207,15 +7184,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_async_marker",
-              "parseKind": "_async_marker",
+              "name": "_kw_async_marker",
+              "parseKind": "_kw_async_marker",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_async_marker"
+              "_kw_async_marker"
             ]
           }
         },
@@ -7842,15 +7819,18 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "terminal",
+              "kind": "node-ref",
               "multiplicity": "optional",
-              "value": "*",
-              "parseKind": "star"
+              "name": "wildcard_import",
+              "parseKind": "wildcard_import",
+              "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": []
+            "kinds": [
+              "wildcard_import"
+            ]
           }
         },
         {
@@ -8099,12 +8079,20 @@
               "name": "identifier",
               "parseKind": "identifier",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "keyword_identifier",
+              "parseKind": "keyword_identifier",
+              "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "identifier"
+              "identifier",
+              "keyword_identifier"
             ]
           }
         },
@@ -8141,39 +8129,11 @@
     },
     {
       "kind": "keyword_identifier",
-      "modelType": "branch",
+      "modelType": "supertype",
       "typeName": "KeywordIdentifier",
-      "factoryName": "keywordIdentifier",
       "irKey": "keywordIdentifier",
-      "hidden": false,
-      "fields": [
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "paramName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "parseKind": "identifier",
-              "unresolved": true
-            }
-          ],
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "identifier"
-            ]
-          }
-        }
-      ],
-      "children": [],
-      "factoryShape": "direct",
-      "factoryFields": [
+      "hidden": true,
+      "subtypes": [
         "identifier"
       ]
     },
@@ -8642,6 +8602,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
+              "name": "keyword_identifier",
+              "parseKind": "keyword_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
               "name": "subscript",
               "parseKind": "subscript",
               "unresolved": true
@@ -8658,6 +8625,7 @@
             "typeName": "",
             "kinds": [
               "identifier",
+              "keyword_identifier",
               "subscript",
               "attribute"
             ]
@@ -10048,18 +10016,21 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_splat_pattern_operator",
-              "parseKind": "_splat_pattern_operator",
-              "unresolved": true
+              "value": "*",
+              "parseKind": "star"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "**",
+              "parseKind": "star_star"
             }
           ],
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_splat_pattern_operator"
-            ]
+            "kinds": []
           }
         },
         {
@@ -10116,11 +10087,16 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_splat_pattern_operator",
-              "parseKind": "_splat_pattern_operator",
-              "unresolved": true
+              "value": "*",
+              "parseKind": "star"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "**",
+              "parseKind": "star_star"
             },
             {
               "kind": "node-ref",
@@ -10133,7 +10109,6 @@
           "projection": {
             "typeName": "",
             "kinds": [
-              "_splat_pattern_operator",
               "identifier"
             ]
           }
@@ -11405,15 +11380,15 @@
             {
               "kind": "node-ref",
               "multiplicity": "optional",
-              "name": "_async_marker",
-              "parseKind": "_async_marker",
+              "name": "_kw_async_marker",
+              "parseKind": "_kw_async_marker",
               "unresolved": true
             }
           ],
           "projection": {
             "typeName": "",
             "kinds": [
-              "_async_marker"
+              "_kw_async_marker"
             ]
           }
         },
