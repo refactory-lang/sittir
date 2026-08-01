@@ -1,3 +1,4 @@
+import { dirname, join } from 'node:path';
 import {
 	ALIAS,
 	CHOICE,
@@ -22,14 +23,18 @@ import {
 	liftSeparators,
 	LinkCtx,
 	canonicalizeRuleLiterals,
+	reportKindIdStampMisses,
 	type KindIdStampMisses
 } from '../link.ts';
 import type { DerivationLog } from '../types.ts';
 import type { Rule, SymbolRef, SymbolRule, StringRule, PatternRule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
 import { makeRuleMetadata, readRuleMetadata } from '../../dsl/rule-metadata.ts';
-import { DiagnosticSink } from '../../types/diagnostics.ts';
+import { DiagnosticSink, type CompilerDiagnostic } from '../../types/diagnostics.ts';
 import type { GeneratedKindEntry } from '../generated-metadata.ts';
+import { loadGeneratedIdTables } from '../generated-metadata.ts';
+import { evaluate } from '../evaluate.ts';
+import { resolveOverridesPath } from '../resolve-grammar.ts';
 
 function makeRaw(rules: Record<string, Rule<'evaluate'>>, overrides?: Partial<RawGrammar>): RawGrammar {
 	return {
@@ -1066,5 +1071,104 @@ describe('canonicalizeRuleLiterals — kindId stamping', () => {
 		expect(result.content.resolvedKindId).toBeUndefined();
 		expect(misses.literals.size).toBe(0);
 		expect(misses.symbols.size).toBe(0);
+	});
+});
+
+describe('reportKindIdStampMisses — VAPORIZED classification', () => {
+	function stampDiagnostics(sink: DiagnosticSink): { code: string; details: unknown }[] {
+		return sink.all().map((d) => ({ code: d.code, details: d.details }));
+	}
+
+	it('reports an inline-array kind as unstamped only, not vaporized', () => {
+		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
+		const misses: KindIdStampMisses = { symbols: new Set(['_declaration_statement']), literals: new Set() };
+		const sink = new DiagnosticSink();
+		reportKindIdStampMisses(misses, entries, sink, new Set(['_declaration_statement']));
+		const diagnostics = stampDiagnostics(sink);
+		expect(diagnostics).toContainEqual({
+			code: 'kindid-unstamped-symbols',
+			details: { kinds: ['_declaration_statement'] }
+		});
+		expect(diagnostics.some((d) => d.code === 'kindid-vaporized-symbols')).toBe(false);
+	});
+
+	it('reports a non-inline kind as both unstamped and vaporized (dead surface)', () => {
+		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
+		const misses: KindIdStampMisses = { symbols: new Set(['comment']), literals: new Set() };
+		const sink = new DiagnosticSink();
+		reportKindIdStampMisses(misses, entries, sink, new Set());
+		const diagnostics = stampDiagnostics(sink);
+		expect(diagnostics).toContainEqual({ code: 'kindid-unstamped-symbols', details: { kinds: ['comment'] } });
+		expect(diagnostics).toContainEqual({ code: 'kindid-vaporized-symbols', details: { kinds: ['comment'] } });
+	});
+
+	it('splits a mixed miss set: inline kinds excluded from the vaporized bucket, literals handled the same way', () => {
+		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
+		const misses: KindIdStampMisses = {
+			symbols: new Set(['_declaration_statement', 'comment', 'mut']),
+			literals: new Set(['r#"', '_kw_operator'])
+		};
+		const sink = new DiagnosticSink();
+		reportKindIdStampMisses(misses, entries, sink, new Set(['_declaration_statement', '_kw_operator']));
+		const diagnostics = stampDiagnostics(sink);
+		expect(diagnostics).toContainEqual({
+			code: 'kindid-vaporized-symbols',
+			details: { kinds: ['comment', 'mut'] }
+		});
+		expect(diagnostics).toContainEqual({
+			code: 'kindid-vaporized-literals',
+			details: { texts: ['r#"'] }
+		});
+	});
+
+	it('emits nothing when every miss is inline-excluded', () => {
+		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
+		const misses: KindIdStampMisses = { symbols: new Set(['_suite']), literals: new Set() };
+		const sink = new DiagnosticSink();
+		reportKindIdStampMisses(misses, entries, sink, new Set(['_suite']));
+		const diagnostics = stampDiagnostics(sink);
+		expect(diagnostics.some((d) => d.code.startsWith('kindid-vaporized'))).toBe(false);
+	});
+
+	// End-to-end through link() itself (not a hand-built inlineKinds set):
+	// `raw.inline` (evaluate's own DSL-level record) drops inherited
+	// base-grammar inline entries, so link() must read the grammar's
+	// COMPILED inline list (grammar.json) instead. These five kinds are all
+	// declared inline in typescript's compiled grammar via base-grammar
+	// inheritance, not typescript's own raw.inline — a regression back to
+	// `new Set(raw.inline)` reports every one of them as VAPORIZED.
+	it('link() classifies base-grammar-inherited inline kinds as inline-excluded, not VAPORIZED', async () => {
+		// loadGeneratedIdTables/loadGrammarJsonInlineList resolve
+		// packages/<grammar>/... relative to process.cwd() — chdir to the repo
+		// root for this call so the test passes regardless of which directory
+		// the test runner was invoked from (this package's own vitest.config.ts
+		// notes the parser/WASM setup assumes the root config's cwd).
+		const repoRoot = join(dirname(resolveOverridesPath('typescript')), '..', '..');
+		const originalCwd = process.cwd();
+		process.chdir(repoRoot);
+		let diagnostics: DiagnosticSink;
+		try {
+			const raw = await evaluate(resolveOverridesPath('typescript'));
+			const generatedIdTables = await loadGeneratedIdTables('typescript');
+			diagnostics = new DiagnosticSink();
+			link(raw, { diagnostics, generatedIdTables });
+		} finally {
+			process.chdir(originalCwd);
+		}
+		const vaporized = diagnostics
+			.all()
+			.filter((d): d is CompilerDiagnostic & { details: { kinds?: string[]; texts?: string[] } } =>
+				d.code.startsWith('kindid-vaporized')
+			)
+			.flatMap((d) => [...(d.details.kinds ?? []), ...(d.details.texts ?? [])]);
+		for (const kind of [
+			'_reserved_identifier',
+			'_jsx_start_opening_element',
+			'_semicolon',
+			'_suite',
+			'keyword_identifier'
+		]) {
+			expect(vaporized).not.toContain(kind);
+		}
 	});
 });
