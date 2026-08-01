@@ -687,7 +687,11 @@ function emitStampMissDiagnostic(entry: {
 // rather than silently absorbed into "vaporized", so a future regression
 // can't hide there. Literals have no rule-name identity to test reachability
 // against (a bare literal isn't itself a graph node), so they stay
-// classified purely by inline-array membership.
+// classified purely by inline-array membership — matched by raw text against
+// `inlineKinds` (a name set), which only agrees for a literal whose text
+// happens to equal a rule name. In practice every literal miss lands in
+// kindid-vaporized-literals; inline-excluded-literals stays populated only by
+// that accidental-collision case.
 function reportVaporizedKinds(
 	stampMisses: KindIdStampMisses,
 	inlineKinds: ReadonlySet<string>,

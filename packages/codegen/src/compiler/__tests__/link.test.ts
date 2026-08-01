@@ -1135,10 +1135,10 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
 		const misses: KindIdStampMisses = {
 			symbols: new Set(['_declaration_statement', 'comment', 'mut']),
-			literals: new Set(['r#"', '_kw_operator'])
+			literals: new Set(['r#"'])
 		};
 		const sink = new DiagnosticSink();
-		reportKindIdStampMisses(misses, entries, sink, new Set(['_declaration_statement', '_kw_operator']), new Set());
+		reportKindIdStampMisses(misses, entries, sink, new Set(['_declaration_statement']), new Set());
 		const diagnostics = stampDiagnostics(sink);
 		expect(diagnostics).toContainEqual({
 			code: 'kindid-vaporized-symbols',
@@ -1165,9 +1165,14 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 
 	it('partitions a mixed miss set exhaustively: every symbol lands in exactly one of inline-excluded, vaporized, or unclassified', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
+		// `r#"` is a bare anonymous-token miss — literal text, not a rule name,
+		// so it can never appear in `inlineKinds` (a name set) except by
+		// accidental string collision; it lands in vaporized-literals regardless
+		// of the `inlineKinds`/`reachableFromRoot` args below (literals stay a
+		// 2-way split — see reportVaporizedKinds' doc comment).
 		const misses: KindIdStampMisses = {
 			symbols: new Set(['_declaration_statement', 'comment', 'mut']),
-			literals: new Set(['r#"', '_kw_operator'])
+			literals: new Set(['r#"'])
 		};
 		const sink = new DiagnosticSink();
 		// `comment` is reachable from the grammar root (real evidence it's live,
@@ -1177,21 +1182,15 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 		// against the old two-bucket design: vaporized ∪ inline-excluded used
 		// to be defined as complementary by construction, so a reachable-but-
 		// unaccounted miss like `comment` had no way to surface as a real gap.
-		reportKindIdStampMisses(
-			misses,
-			entries,
-			sink,
-			new Set(['_declaration_statement', '_kw_operator']),
-			new Set(['comment'])
-		);
+		reportKindIdStampMisses(misses, entries, sink, new Set(['_declaration_statement']), new Set(['comment']));
 		const diagnostics = stampDiagnostics(sink);
 		expect(diagnostics).toContainEqual({
 			code: 'kindid-inline-excluded-symbols',
 			details: { kinds: ['_declaration_statement'] }
 		});
 		expect(diagnostics).toContainEqual({
-			code: 'kindid-inline-excluded-literals',
-			details: { texts: ['_kw_operator'] }
+			code: 'kindid-vaporized-literals',
+			details: { texts: ['r#"'] }
 		});
 		expect(diagnostics).toContainEqual({
 			code: 'kindid-vaporized-symbols',
