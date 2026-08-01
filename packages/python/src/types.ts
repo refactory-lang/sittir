@@ -198,7 +198,6 @@ export const enum SyntaxKind {
 	StringContent = 'string_content',
 	Interpolation = 'interpolation',
 	FormatSpecifier = 'format_specifier',
-	KeywordIdentifier = 'keyword_identifier',
 	Await = 'await',
 	RaiseStatementOptional1 = '_raise_statement_optional1',
 	ExceptClauseGroup1 = '_except_clause_group1',
@@ -2141,6 +2140,10 @@ export const enum FExpressionKind {
 	Yield = 'yield'
 }
 
+export const enum KeywordIdentifierKind {
+	Identifier = 'identifier'
+}
+
 export const enum DictPatternKvKind {
 	KeyValuePattern = '_key_value_pattern',
 	SplatPattern = 'splat_pattern'
@@ -2651,14 +2654,14 @@ export interface TypedDefaultParameter {
 
 export interface ListSplatPattern {
 	readonly $type: TSKindId.ListSplatPattern;
-	readonly _content: Identifier | Subscript | Attribute;
-	content(): Identifier | Subscript | Attribute;
+	readonly _content: Identifier | KeywordIdentifier | Subscript | Attribute;
+	content(): Identifier | KeywordIdentifier | Subscript | Attribute;
 }
 
 export interface DictionarySplatPattern {
 	readonly $type: TSKindId.DictionarySplatPattern;
-	readonly _content: Identifier | Subscript | Attribute;
-	content(): Identifier | Subscript | Attribute;
+	readonly _content: Identifier | KeywordIdentifier | Subscript | Attribute;
+	content(): Identifier | KeywordIdentifier | Subscript | Attribute;
 }
 
 export interface AsPattern {
@@ -2889,9 +2892,9 @@ export interface MemberType {
 
 export interface KeywordArgument {
 	readonly $type: TSKindId.KeywordArgument;
-	readonly _name: Identifier;
+	readonly _name: Identifier | KeywordIdentifier;
 	readonly _value: Expression;
-	name(): Identifier;
+	name(): Identifier | KeywordIdentifier;
 	value(): Expression;
 }
 
@@ -3036,12 +3039,6 @@ export interface FormatSpecifier {
 	readonly $type: TSKindId.FormatSpecifier;
 	readonly _content?: readonly ('[^{}\\n]+' | Interpolation)[];
 	contents(): readonly ('[^{}\\n]+' | Interpolation)[];
-}
-
-export interface KeywordIdentifier {
-	readonly $type: 'keyword_identifier';
-	readonly _identifier: Identifier;
-	identifier(): Identifier;
 }
 
 export interface Await {
@@ -3424,9 +3421,6 @@ export interface StringTree extends TreeNode<'string'> {}
 export interface StringContentTree extends TreeNode<'string_content'> {}
 export interface InterpolationTree extends TreeNode<'interpolation'> {}
 export interface FormatSpecifierTree extends TreeNode<'format_specifier'> {}
-export interface KeywordIdentifierTree extends AnyTreeNode {
-	readonly type: 'keyword_identifier';
-}
 export interface AwaitTree extends TreeNode<'await'> {}
 export interface RaiseStatementOptional1Tree extends AnyTreeNode {
 	readonly type: '_raise_statement_optional1';
@@ -3741,9 +3735,9 @@ export type SimpleStatementTree =
 	| ExecStatementTree
 	| TypeAliasStatementTree;
 
-export type NamedExpressionLhs = Identifier | KeywordIdentifier;
+export type NamedExpressionLhs = Identifier;
 
-export type NamedExpressionLhsTree = IdentifierTree | KeywordIdentifierTree;
+export type NamedExpressionLhsTree = IdentifierTree;
 
 export type Expressions = ExpressionList;
 
@@ -3821,18 +3815,10 @@ export type ParameterTree =
 	| TuplePatternTree
 	| DictionarySplatPatternTree;
 
-export type Pattern =
-	| Identifier
-	| KeywordIdentifier
-	| Subscript
-	| Attribute
-	| ListSplatPattern
-	| TuplePattern
-	| ListPattern;
+export type Pattern = Identifier | Subscript | Attribute | ListSplatPattern | TuplePattern | ListPattern;
 
 export type PatternTree =
 	| IdentifierTree
-	| KeywordIdentifierTree
 	| SubscriptTree
 	| AttributeTree
 	| ListSplatPatternTree
@@ -3865,7 +3851,6 @@ export type PrimaryExpression =
 	| Await
 	| BinaryOperator
 	| Identifier
-	| KeywordIdentifier
 	| String
 	| ConcatenatedString
 	| Integer
@@ -3892,7 +3877,6 @@ export type PrimaryExpressionTree =
 	| AwaitTree
 	| BinaryOperatorTree
 	| IdentifierTree
-	| KeywordIdentifierTree
 	| StringTree
 	| ConcatenatedStringTree
 	| IntegerTree
@@ -3932,6 +3916,10 @@ export type RightHandSideTree =
 export type FExpression = Expression | ExpressionList | PatternList | Yield;
 
 export type FExpressionTree = ExpressionTree | ExpressionListTree | PatternListTree | YieldTree;
+
+export type KeywordIdentifier = Identifier;
+
+export type KeywordIdentifierTree = IdentifierTree;
 
 export type DictPatternKv = KeyValuePattern | SplatPattern;
 
@@ -4064,7 +4052,6 @@ export type PythonNode =
 	| StringContent
 	| Interpolation
 	| FormatSpecifier
-	| KeywordIdentifier
 	| Await
 	| RaiseStatementOptional1
 	| ExceptClauseGroup1
@@ -4205,7 +4192,6 @@ export interface KindMap {
 	string_content: StringContent;
 	interpolation: Interpolation;
 	format_specifier: FormatSpecifier;
-	keyword_identifier: KeywordIdentifier;
 	await: Await;
 	_raise_statement_optional1: RaiseStatementOptional1;
 	_except_clause_group1: ExceptClauseGroup1;
@@ -4440,7 +4426,6 @@ export interface StringNs extends NodeNs<String, LeafScalarMap, LeafStringMap, N
 export interface StringContentNs extends NodeNs<StringContent, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface InterpolationNs extends NodeNs<Interpolation, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface FormatSpecifierNs extends NodeNs<FormatSpecifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
-export interface KeywordIdentifierNs extends NodeNs<KeywordIdentifier, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface AwaitNs extends NodeNs<Await, LeafScalarMap, LeafStringMap, NamespaceMap> {}
 export interface RaiseStatementOptional1Ns extends NodeNs<
 	RaiseStatementOptional1,
@@ -4636,7 +4621,6 @@ export interface NamespaceMap {
 	string_content: StringContentNs;
 	interpolation: InterpolationNs;
 	format_specifier: FormatSpecifierNs;
-	keyword_identifier: KeywordIdentifierNs;
 	await: AwaitNs;
 	_raise_statement_optional1: RaiseStatementOptional1Ns;
 	_except_clause_group1: ExceptClauseGroup1Ns;
@@ -5431,13 +5415,6 @@ export namespace FormatSpecifier {
 	export type Loose = LooseFor<'format_specifier'>;
 	export type Tree = TreeFor<'format_specifier'>;
 	export type Kind = 'format_specifier';
-}
-export namespace KeywordIdentifier {
-	export type Config = ConfigFor<'keyword_identifier'>;
-	export type Fluent = FluentFor<'keyword_identifier'>;
-	export type Loose = LooseFor<'keyword_identifier'>;
-	export type Tree = TreeFor<'keyword_identifier'>;
-	export type Kind = 'keyword_identifier';
 }
 export namespace Await {
 	export type Config = ConfigFor<'await'>;
