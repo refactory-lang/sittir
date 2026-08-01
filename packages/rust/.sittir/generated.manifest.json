@@ -1,8 +1,8 @@
 {
   "grammar": "rust",
-  "source_hash": "62bc275c25862f0d4b07635a7006054571eb38f3a87399840d0a5acc68fea6e8",
+  "source_hash": "41f0dcad8deb58d082b9e535aa2098e0b89749ad2d9ddf2bc534b823d1f23003",
   "files": {
-    "packages/rust/.sittir/grammar-diagnostics.json": "4c9bea699f386c5f93cda371c17842237c2da64cfe49c1c1bd03c4a810549b1e",
+    "packages/rust/.sittir/grammar-diagnostics.json": "e4009b88ea57a15303f7d6cc3a1ada89b429ddcd5b6d342540e8621fb6256e2d",
     "packages/rust/.sittir/grammar.js": "efa846f0bbd6be6a17cba27ec34c8bbebaed42211da4bf5cc254544ac99a74f5",
     "packages/rust/.sittir/package.json": "bdab057c3301bd235e9a388063623685881661f0809682fc361a510fd47f531a",
     "packages/rust/.sittir/parser.wasm": "17f1adba72dee214f20a69e1abb1e12fb736ce282bb5ab55c1944e9e82cdf0a5",

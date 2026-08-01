@@ -656,12 +656,6 @@ pub struct KeywordArgumentTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "keyword_identifier.jinja", escape = "none")]
-pub struct KeywordIdentifierTemplate<'a> {
-    pub identifier: SingleNonterminalView<'a>,
-}
-
-#[derive(::askama::Template)]
 #[template(path = "keyword_pattern.jinja", escape = "none")]
 pub struct KeywordPatternTemplate<'a> {
     pub identifier: SingleNonterminalView<'a>,

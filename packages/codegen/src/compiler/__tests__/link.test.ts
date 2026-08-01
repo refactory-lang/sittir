@@ -155,7 +155,10 @@ describe('Link — hidden rule classification', () => {
 		expect(linked.rules['_expression']).toEqual({
 			type: 'SUPERTYPE',
 			name: '_expression',
-			subtypes: ['binary_expression', 'identifier']
+			subtypes: [
+				{ type: 'SYMBOL', name: 'binary_expression' },
+				{ type: 'SYMBOL', name: 'identifier' }
+			]
 		});
 	});
 
@@ -209,12 +212,14 @@ describe('Link — hidden rule classification', () => {
 			expect(linked.rules['_simple_pattern']).toEqual({
 				type: 'SUPERTYPE',
 				name: '_simple_pattern',
-				subtypes: ['identifier', '_simple_pattern_negative'],
-				// The flatten stamps the aliased arm's storage→parse pair
-				// alongside variantArms — the parse name carries the alias
-				// occurrence's own runtime symbol id for dispatch (see
-				// `SupertypeRule.subtypeParseNames`).
-				subtypeParseNames: { _simple_pattern_negative: 'simple_pattern_negative' },
+				// Each subtype ref stamps its own storage→parse alias inline
+				// (`aliasedFrom`) rather than a separate parallel map — the
+				// parse name carries the alias occurrence's own runtime symbol
+				// id for dispatch (see `SymbolRule.aliasedFrom`/`aliasedFromId`).
+				subtypes: [
+					{ type: 'SYMBOL', name: 'identifier' },
+					{ type: 'SYMBOL', name: 'simple_pattern_negative', aliasedFrom: '_simple_pattern_negative' }
+				],
 				variantArms: ['_simple_pattern_negative']
 			});
 		});
@@ -1075,27 +1080,51 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 		return sink.all().map((d) => ({ code: d.code, details: d.details }));
 	}
 
-	it('reports an inline-array kind as unstamped only, not vaporized', () => {
+	it('reports an inline-array kind as unstamped (warning) and inline-excluded (info), not vaporized', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
 		const misses: KindIdStampMisses = { symbols: new Set(['_declaration_statement']), literals: new Set() };
 		const sink = new DiagnosticSink();
 		reportKindIdStampMisses(misses, entries, sink, new Set(['_declaration_statement']));
-		const diagnostics = stampDiagnostics(sink);
-		expect(diagnostics).toContainEqual({
-			code: 'kindid-unstamped-symbols',
+		const all = sink.all();
+		const unstamped = all.find((d) => d.code === 'kindid-unstamped-symbols');
+		expect(unstamped?.details).toEqual({ kinds: ['_declaration_statement'] });
+		expect(unstamped?.severity).toBe('warning');
+		expect(all).toContainEqual({
+			code: 'kindid-inline-excluded-symbols',
+			message: expect.any(String),
+			severity: 'info',
+			canProceed: true,
 			details: { kinds: ['_declaration_statement'] }
 		});
-		expect(diagnostics.some((d) => d.code === 'kindid-vaporized-symbols')).toBe(false);
+		expect(all.some((d) => d.code === 'kindid-vaporized-symbols')).toBe(false);
 	});
 
-	it('reports a non-inline kind as both unstamped and vaporized (dead surface)', () => {
+	it('reports a non-inline kind as unstamped (warning) and vaporized (info)', () => {
 		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
 		const misses: KindIdStampMisses = { symbols: new Set(['comment']), literals: new Set() };
 		const sink = new DiagnosticSink();
 		reportKindIdStampMisses(misses, entries, sink, new Set());
-		const diagnostics = stampDiagnostics(sink);
-		expect(diagnostics).toContainEqual({ code: 'kindid-unstamped-symbols', details: { kinds: ['comment'] } });
-		expect(diagnostics).toContainEqual({ code: 'kindid-vaporized-symbols', details: { kinds: ['comment'] } });
+		const all = sink.all();
+		const unstamped = all.find((d) => d.code === 'kindid-unstamped-symbols');
+		expect(unstamped?.details).toEqual({ kinds: ['comment'] });
+		expect(unstamped?.severity).toBe('warning');
+		expect(all).toContainEqual({
+			code: 'kindid-vaporized-symbols',
+			message: expect.any(String),
+			severity: 'info',
+			canProceed: true,
+			details: { kinds: ['comment'] }
+		});
+	});
+
+	it('reports an unstamped literal as warning severity too', () => {
+		const entries: GeneratedKindEntry[] = [{ kind: 'unrelated', id: 1 }];
+		const misses: KindIdStampMisses = { symbols: new Set(), literals: new Set(['r#"']) };
+		const sink = new DiagnosticSink();
+		reportKindIdStampMisses(misses, entries, sink, new Set());
+		const unstampedLiterals = sink.all().find((d) => d.code === 'kindid-unstamped-literals');
+		expect(unstampedLiterals?.details).toEqual({ texts: ['r#"'] });
+		expect(unstampedLiterals?.severity).toBe('warning');
 	});
 
 	it('splits a mixed miss set: inline kinds excluded from the vaporized bucket, literals handled the same way', () => {

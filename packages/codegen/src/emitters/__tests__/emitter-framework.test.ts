@@ -63,8 +63,8 @@ function makeHiddenSupertypeNodeMap(): NodeMap {
 	nodes.set(
 		'_export_statement_default',
 		new AssembledSupertype('_export_statement_default', supertypeRule, [
-			'_export_statement_default_from_arm',
-			'_export_statement_default_decl_arm'
+			{ name: '_export_statement_default_from_arm' },
+			{ name: '_export_statement_default_decl_arm' }
 		]) as unknown as AssembledNode
 	);
 	nodes.set(

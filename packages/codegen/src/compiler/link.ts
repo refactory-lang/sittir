@@ -74,7 +74,7 @@ import type {
 	RepeatedShapeEntry,
 	RefineForm
 } from './types.ts';
-import { hasAnyField } from './model/node-map.ts';
+import { hasAnyField } from '../dsl/rule-transforms.ts';
 
 import { isAsciiIdentifier } from '../util/identifier-shape.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
@@ -432,6 +432,46 @@ function canonicalizeCatalogLiteralRefsInMap(
 	}
 }
 
+function stampSymbolRefKindIds(
+	rule: SymbolRule<'link'>,
+	kindEntries: readonly GeneratedKindEntry[],
+	misses: KindIdStampMisses
+): SymbolRule<'link'> {
+	// Link-minted literal symbol: its value IS the literal text, so the
+	// id resolves through the literal chain (anon token outranks a
+	// same-spelled NAMED rule) — same resolution deriveValuesForRule
+	// applies to these.
+	if (rule.literal !== undefined) {
+		const entry = findEntryForLiteralText(kindEntries, rule.literal);
+		if (entry === undefined) {
+			misses.literals.add(rule.literal);
+			return rule;
+		}
+		return { ...rule, kindId: entry.parseId ?? entry.id };
+	}
+	// kindId is always the id of this occurrence's own name; aliasedFromId
+	// is a SEPARATE fact that exists only when aliasedFrom is present — no
+	// fallback between the two (that fallback is a consumer's job:
+	// aliasedFromId ?? kindId for whoever needs the effective storage id).
+	const nameEntry = findEntryForKindName(kindEntries, rule.name);
+	if (nameEntry === undefined) misses.symbols.add(rule.name);
+	let aliasedFromId: number | undefined;
+	if (rule.aliasedFrom !== undefined) {
+		const aliasedFromEntry = findEntryForKindName(kindEntries, rule.aliasedFrom);
+		if (aliasedFromEntry === undefined) {
+			misses.symbols.add(rule.aliasedFrom);
+		} else {
+			aliasedFromId = aliasedFromEntry.id;
+		}
+	}
+	if (nameEntry === undefined && aliasedFromId === undefined) return rule;
+	return {
+		...rule,
+		kindId: nameEntry?.parseId ?? nameEntry?.id,
+		aliasedFromId
+	};
+}
+
 export function canonicalizeRuleLiterals(
 	rule: Rule<'link'>,
 	kindEntries: readonly GeneratedKindEntry[],
@@ -471,42 +511,15 @@ export function canonicalizeRuleLiterals(
 				...rule,
 				content: canonicalizeRuleLiterals(rule.content, kindEntries, true, misses, stampable)
 			};
-		case SYMBOL: {
-			if (!stampable || kindEntries.length === 0) return rule;
-			// Link-minted literal symbol: its value IS the literal text, so the
-			// id resolves through the literal chain (anon token outranks a
-			// same-spelled NAMED rule) — same resolution deriveValuesForRule
-			// applies to these.
-			if (rule.literal !== undefined) {
-				const entry = findEntryForLiteralText(kindEntries, rule.literal);
-				if (entry === undefined) {
-					misses.literals.add(rule.literal);
-					return rule;
-				}
-				return { ...rule, kindId: entry.parseId ?? entry.id };
-			}
-			// kindId is always the id of this occurrence's own name; aliasedFromId
-			// is a SEPARATE fact that exists only when aliasedFrom is present — no
-			// fallback between the two (that fallback is a consumer's job:
-			// aliasedFromId ?? kindId for whoever needs the effective storage id).
-			const nameEntry = findEntryForKindName(kindEntries, rule.name);
-			if (nameEntry === undefined) misses.symbols.add(rule.name);
-			let aliasedFromId: number | undefined;
-			if (rule.aliasedFrom !== undefined) {
-				const aliasedFromEntry = findEntryForKindName(kindEntries, rule.aliasedFrom);
-				if (aliasedFromEntry === undefined) {
-					misses.symbols.add(rule.aliasedFrom);
-				} else {
-					aliasedFromId = aliasedFromEntry.id;
-				}
-			}
-			if (nameEntry === undefined && aliasedFromId === undefined) return rule;
-			return {
-				...rule,
-				kindId: nameEntry?.parseId ?? nameEntry?.id,
-				aliasedFromId
-			};
-		}
+		case SYMBOL:
+			return !stampable || kindEntries.length === 0 ? rule : stampSymbolRefKindIds(rule, kindEntries, misses);
+		case SUPERTYPE:
+			// Each subtype ref stamps exactly like a top-level SYMBOL occurrence —
+			// same catalog, same helper — since collectSubtypeRefs mints these
+			// before this pass runs and doesn't stamp them itself.
+			return !stampable || kindEntries.length === 0
+				? rule
+				: { ...rule, subtypes: rule.subtypes.map((s) => stampSymbolRefKindIds(s, kindEntries, misses)) };
 		case STRING: {
 			if (allowLiteralRewrite) {
 				const entry = findEntryForLiteralText(kindEntries, rule.value);
@@ -555,8 +568,11 @@ export function reportKindIdStampMisses(
 	inlineKinds: ReadonlySet<string>
 ): void {
 	if (kindEntries.length === 0 || !diagnostics) return;
+	// warning severity, reports the FULL miss set — see "Diagnostics" in
+	// docs/compiler-phase-glossary.md for the severity/exclusion-class
+	// rationale.
 	if (stampMisses.symbols.size > 0) {
-		diagnostics.info({
+		diagnostics.warn({
 			code: 'kindid-unstamped-symbols',
 			message: `${stampMisses.symbols.size} referenced kind(s) resolved no parser kindId`,
 			canProceed: true,
@@ -564,7 +580,7 @@ export function reportKindIdStampMisses(
 		});
 	}
 	if (stampMisses.literals.size > 0) {
-		diagnostics.info({
+		diagnostics.warn({
 			code: 'kindid-unstamped-literals',
 			message: `${stampMisses.literals.size} literal(s) resolved no parser kindId`,
 			canProceed: true,
@@ -575,9 +591,7 @@ export function reportKindIdStampMisses(
 	// non-tsx dialect): a stamp miss whose kind is NOT in the grammar's
 	// `inline:` array. Tree-sitter deliberately issues no symbol for either
 	// class, but `inline:` membership is a principled, grammar-declared
-	// exclusion — this is the remainder. Reported alongside (not instead of)
-	// the unstamped diagnostics above so existing consumers are unaffected;
-	// this is the accepted-exclusion signal a future ratchet reads.
+	// exclusion — this is the remainder.
 	const vaporizedSymbols = [...stampMisses.symbols].filter((k) => !inlineKinds.has(k)).sort();
 	const vaporizedLiterals = [...stampMisses.literals].filter((k) => !inlineKinds.has(k)).sort();
 	if (vaporizedSymbols.length > 0) {
@@ -1475,7 +1489,7 @@ function classifyHiddenChoiceRule(
 		m.type === SYMBOL || isEnumChoiceRule(m) || m.type === STRING;
 	const allCompatible = rule.members.every(supertypeCompatible);
 	if (allCompatible || supertypes.has(name)) {
-		const { names: subtypes, parseNames: subtypeParseNames } = collectSubtypeNames(rule, ctx);
+		const subtypes = collectSubtypeRefs(rule, ctx);
 		// Only promote if we actually resolved subtype names. An empty
 		// subtypes list means the choice members aren't symbols and we
 		// can't project a union — fall through to leave-as-is.
@@ -1489,8 +1503,9 @@ function classifyHiddenChoiceRule(
 			// `isAliasMintedRef` condition `variant-structural.ts`'s
 			// CHOICE-arm predicate uses, shared not re-derived) names its
 			// subtype-list entry (`aliasedFrom ?? name` for SYMBOL, matching
-			// `collectSubtypeNames`'s own per-arm naming exactly, so
-			// `variantArms` entries are always a subset of `subtypes`).
+			// `collectSubtypeRefs`'s own per-arm naming exactly, so
+			// `variantArms` entries are always a subset of `subtypes`'
+			// `aliasedFrom ?? name` set).
 			//
 			// This surfaces MORE alias-minted arms than the wire channel ever
 			// registered for SUPERTYPE parents: every `alias($.hidden,
@@ -1513,7 +1528,7 @@ function classifyHiddenChoiceRule(
 					const core = m.type === VARIANT ? m.content : m;
 					if (!isAliasMintedRef(core, rules)) return null;
 					// Named ALIAS arm: record the HIDDEN symbol name (content.name),
-					// matching collectSubtypeNames' per-arm naming — variantArms
+					// matching collectSubtypeRefs' per-arm naming — variantArms
 					// entries must stay a subset of `subtypes`, and assemble's
 					// lookup keys on the hidden name. (Effectively unreachable
 					// today — resolveRule collapses raw alias arms to
@@ -1531,10 +1546,6 @@ function classifyHiddenChoiceRule(
 					type: SUPERTYPE,
 					name,
 					subtypes,
-					// Storage→parse pairs for aliased arms, stamped at the moment
-					// the flatten erases them (same pattern as `variantArms`
-					// below) — see `collectSubtypeNames`' doc comment.
-					...(Object.keys(subtypeParseNames).length > 0 ? { subtypeParseNames } : {}),
 					...(variantArms.length > 0 ? { variantArms } : {})
 				} satisfies SupertypeRule<'link'>,
 				classification: 'supertype',
@@ -1558,21 +1569,16 @@ function classifyHiddenSeqRule(name: string, rule: SeqRule<'link'>): Rule<'link'
 	return rule;
 }
 
-function collectSubtypeNames(
-	rule: Rule<'link'>,
-	ctx: LinkCtx
-): { names: string[]; parseNames: Record<string, string> } {
-	const names: string[] = [];
-	const parseNames: Record<string, string> = {};
+function collectSubtypeRefs(rule: Rule<'link'>, ctx: LinkCtx): SymbolRule<'link'>[] {
+	const subtypes: SymbolRule<'link'>[] = [];
 	const visit = (current: Rule<'link'>): void => {
 		switch (current.type) {
 			case SYMBOL:
 				// `aliasedFrom` = the alias SOURCE (storage kind), `name` = the
 				// alias target (parse kind) — see `resolveNamedAliasWithProvenance`.
-				names.push(current.aliasedFrom ?? current.name);
-				if (current.aliasedFrom !== undefined && current.aliasedFrom !== current.name) {
-					parseNames[current.aliasedFrom] ??= current.name;
-				}
+				// Kept as the real ref; kindId/aliasedFromId stamp onto it later
+				// (canonicalizeRuleLiterals' SUPERTYPE case).
+				subtypes.push(current);
 				return;
 			case ALIAS:
 				// Effectively unreachable today — resolveRule collapses raw
@@ -1582,10 +1588,14 @@ function collectSubtypeNames(
 				// unresolved ALIAS arriving here behaves identically.
 				if (!current.named) return;
 				if (current.content.type === SYMBOL) {
-					names.push(current.content.name);
-					if (typeof current.value === 'string' && current.value.length > 0 && current.value !== current.content.name) {
-						parseNames[current.content.name] ??= current.value;
-					}
+					const storageName = current.content.name;
+					const parseName =
+						typeof current.value === 'string' && current.value.length > 0 ? current.value : undefined;
+					subtypes.push(
+						parseName !== undefined && parseName !== storageName
+							? { type: SYMBOL, name: parseName, aliasedFrom: storageName }
+							: { type: SYMBOL, name: storageName }
+					);
 				} else {
 					visit(current.content);
 				}
@@ -1602,9 +1612,13 @@ function collectSubtypeNames(
 				// Catalog-first: key this subtype by the same name
 				// `collectAnonymousNodes` (assemble.ts) mints the anonymous
 				// node under, not the literal's raw text — tree-sitter often
-				// sanitizes or dedupes the literal under a different name.
+				// sanitizes or dedupes the literal under a different name. No
+				// natural SymbolRule exists for a bare literal arm, so synthesize
+				// one carrying the literal — canonicalizeRuleLiterals' SYMBOL
+				// literal branch stamps its kindId the same way it does for any
+				// other link-minted literal symbol.
 				const entry = findEntryForLiteralText(ctx.kindEntries, current.value);
-				names.push(entry?.kind ?? current.value);
+				subtypes.push({ type: SYMBOL, name: entry?.kind ?? current.value, literal: current.value });
 				return;
 			}
 			case CHOICE:
@@ -1625,7 +1639,7 @@ function collectSubtypeNames(
 		}
 	};
 	visit(rule);
-	return { names, parseNames };
+	return subtypes;
 }
 
 // ---------------------------------------------------------------------------
@@ -1668,7 +1682,12 @@ function collectRepeatedShapes(rules: Record<string, Rule<'link'>>, out: Repeate
 	const existingSupertypeKeys = new Set<string>();
 	for (const rule of Object.values(rules)) {
 		if (rule.type === SUPERTYPE) {
-			existingSupertypeKeys.add([...rule.subtypes].sort().join('\n'));
+			existingSupertypeKeys.add(
+				rule.subtypes
+					.map((s) => s.aliasedFrom ?? s.name)
+					.sort()
+					.join('\n')
+			);
 		}
 	}
 
@@ -1734,7 +1753,7 @@ function directContentKinds(rule: Rule<'link'>): string[] {
 		case SYMBOL:
 			return [rule.name];
 		case SUPERTYPE:
-			return [...rule.subtypes];
+			return rule.subtypes.map((s) => s.aliasedFrom ?? s.name);
 		case CHOICE:
 			return rule.members.flatMap(directContentKinds);
 		case OPTIONAL:
